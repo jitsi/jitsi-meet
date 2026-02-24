@@ -94,7 +94,7 @@ const styles = (theme: Theme) => {
             display: 'flex',
             flexDirection: 'column' as const,
             background: '#1E1E1E',
-            color: theme.palette.text01
+            color: theme.palette.dialInText
         },
         scrollable: {
             height: '100dvh',

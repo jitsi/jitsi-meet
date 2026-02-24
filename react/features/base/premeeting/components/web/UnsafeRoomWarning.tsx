@@ -11,8 +11,8 @@ import { setUnsafeRoomConsent } from '../../actions.web';
 const useStyles = makeStyles()(theme => {
     return {
         warning: {
-            backgroundColor: theme.palette.warning01,
-            color: theme.palette.text04,
+            backgroundColor: theme.palette.prejoinWarningBackground,
+            color: theme.palette.prejoinWarningText,
             ...theme.typography.bodyShortRegular,
             padding: theme.spacing(3),
             borderRadius: theme.shape.borderRadius,

@@ -114,6 +114,10 @@
         "error": "Erro: a sua mensagem não foi enviada. Motivo: {{error}}",
         "everyone": "Todos",
         "fieldPlaceHolder": "Aa",
+        "fileAccessibleTitle": "{{user}} carregou um ficheiro",
+        "fileAccessibleTitleMe": "carreguei um arquivo",
+        "fileDeleted": "Um ficheiro foi eliminado",
+        "guestsChatIndicator": "(convidado)",
         "lobbyChatMessageTo": "Mensagem de chat na sala de espera para {{recipient}}",
         "message": "Mensagem",
         "messageAccessibleTitle": "{{user}} disse:",
@@ -122,8 +126,16 @@
         "messagebox": "Escreva uma mensagem",
         "newMessages": "Novas mensagens",
         "nickname": {
+            "featureChat": "chat",
+            "featureClosedCaptions": "legendas ocultas",
+            "featureFileSharing": "partilha de ficheiros",
+            "featurePolls": "sondagens",
             "popover": "Escolha um apelido",
             "title": "Introduza um apelido para usar o chat",
+            "titleWith1Features": "Insira um apelido para usar {{feature1}}",
+            "titleWith2Features": "Insira um apelido para usar {{feature1}} e {{feature2}}",
+            "titleWith3Features": "Insira um apelido para usar {{feature1}}, {{feature2}} e {{feature3}}",
+            "titleWith4Features": "Insira um apelido para usar {{feature1}}, {{feature2}}, {{feature3}} e {{feature4}}",
             "titleWithCC": "Insira um apelido para usar o chat e as legendas ocultas",
             "titleWithPolls": "Digite um apelido para usar o chat e as sondagens",
             "titleWithPollsAndCC": "Insira um apelido para utilizar o chat, as sondagens e as legendas ocultas",
@@ -279,7 +291,6 @@
         "Submit": "Submeter",
         "Understand": "Entendo, mantenha-me em silêncio por enquanto.",
         "UnderstandAndUnmute": "Entendo, por favor, desative o silêncio.",
-        "WaitForHostMsg": "A conferência ainda não começou porque ainda não chegaram moderadores. Se quiser ser um moderador, inicie a sessão. Caso contrário, aguarde.",
         "WaitForHostNoAuthMsg": "A conferência ainda não começou porque ainda não chegaram os moderadores. Por favor, aguarde.",
         "WaitingForHostButton": "Esperar pelo moderador",
         "WaitingForHostTitle": "À espera de um moderador…",
@@ -522,6 +533,7 @@
         "tokenAuthFailedWithReasons": "Lamentamos, mas não está autorizado a participar nesta chamada. Razões possíveis: {{reason}}",
         "tokenAuthUnsupported": "O URL de token não é suportado.",
         "transcribing": "Transcrição",
+        "unauthenticatedAccessDisabled": "Esta chamada requer autenticação. Por favor, inicie sessão para prosseguir.",
         "unlockRoom": "Retirar reunião $t(lockRoomPassword)",
         "user": "Utilizador",
         "userIdentifier": "Identificador do utilizador",
@@ -566,13 +578,17 @@
         "downloadFailedDescription": "Por favor, tente novamente.",
         "downloadFailedTitle": "Falha no descarregar",
         "downloadFile": "Descarregar",
+        "downloadStarted": "O download do ficheiro foi iniciado",
         "dragAndDrop": "Arraste e solte os ficheiros aqui ou em qualquer lugar do ecrã",
         "fileAlreadyUploaded": "O ficheiro já foi carregado para esta reunião.",
+        "fileRemovedByOther": "O seu ficheiro '{{ fileName }}' foi removido",
         "fileTooLargeDescription": "Certifique-se de que o ficheiro não exceda {{ maxFileSize }}.",
         "fileTooLargeTitle": "O ficheiro selecionado é muito grande",
         "fileUploadProgress": "Progresso do envio do ficheiro",
         "fileUploadedSuccessfully": "Ficheiro carregado com sucesso",
+        "newFileNotification": "{{ participantName }} partilhou '{{ fileName }}'",
         "removeFile": "Remover",
+        "removeFileSuccess": "Ficheiro removido com sucesso",
         "uploadFailedDescription": "Por favor, tente novamente.",
         "uploadFailedTitle": "Falha ao carregar",
         "uploadFile": "Partilhar ficheiro"
@@ -745,7 +761,8 @@
         "notificationTitle": "Sala de espera",
         "passwordJoinButton": "Solicitar",
         "title": "Sala de espera",
-        "toggleLabel": "Ativar sala de espera"
+        "toggleLabel": "Ativar sala de espera",
+        "waitForModerator": "A conferência ainda não começou porque não chegou nenhum moderador. Se deseja tornar-se um moderador, faça login. Caso contrário, aguarde."
     },
     "localRecording": {
         "clientState": {
@@ -862,6 +879,7 @@
         "oldElectronClientDescription1": "Parece estar a utilizar uma versão antiga do cliente Jitsi Meet que tem vulnerabilidades de segurança conhecidas. Por favor, certifique-se de que actualiza a nossa ",
         "oldElectronClientDescription2": "compilação mais recente",
         "oldElectronClientDescription3": " agora!",
+        "openChat": "Abrir chat",
         "participantWantsToJoin": "Deseja juntar-se à reunião",
         "participantsWantToJoin": "Desejam juntar-se à reunião",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removido por outro participante",
@@ -960,6 +978,9 @@
         "by": "Por {{ name }}",
         "closeButton": "Fechar sondagem",
         "create": {
+            "accessibilityLabel": {
+                "send": "Enviar sondagem"
+            },
             "addOption": "Adicionar opção",
             "answerPlaceholder": "Opção {{index}}",
             "cancel": "Cancelar",
@@ -968,8 +989,7 @@
             "pollQuestion": "Pergunta de Sondagem",
             "questionPlaceholder": "Faça uma pergunta",
             "removeOption": "Remover opção",
-            "save": "Guardar",
-            "send": "Enviar"
+            "save": "Guardar"
         },
         "errors": {
             "notUniqueOption": "As opções devem ser únicas"
@@ -1338,7 +1358,7 @@
             "muteEveryoneElsesVideo": "Parar o vídeo de todos os outros",
             "muteEveryonesVideo": "Parar o vídeo de todos",
             "muteGUMPending": "A ligar o seu microfone",
-            "noiseSuppression": "Supressão extra de ruído (BETA)",
+            "noiseSuppression": "Supressão extra de ruído",
             "openChat": "Abrir chat",
             "participants": "Abrir painel de participantes. {{participantsCount}} participantes",
             "pip": "Mudar para o modo Picture-in-Picture",
@@ -1376,6 +1396,20 @@
             "videounmute": "Iniciar câmara"
         },
         "addPeople": "Adicione pessoas à sua chamada",
+        "advancedAudioSettings": {
+            "aec": {
+                "label": "Cancelamento de eco acústico"
+            },
+            "agc": {
+                "label": "Controlo automático de ganho"
+            },
+            "ns": {
+                "label": "Supressão de ruído"
+            },
+            "stereo": {
+                "label": "Estéreo"
+            }
+        },
         "audioOnlyOff": "Desativar modo de largura de banda baixa",
         "audioOnlyOn": "Ativar modo de largura de banda baixa",
         "audioRoute": "Selecionar o dispositivo de som",
@@ -1389,20 +1423,21 @@
         "closeParticipantsPane": "Fechar painel de participantes",
         "closeReactionsMenu": "Fechar menu de reações",
         "closedCaptions": "Legendas ocultas",
-        "disableNoiseSuppression": "Desativar supressão de ruído extra (BETA)",
+        "disableNoiseSuppression": "Desativar supressão de ruído extra",
         "disableReactionSounds": "Pode desactivar os sons de reacção para esta reunião",
         "documentClose": "Fechar documento partilhado",
         "documentOpen": "Abrir documento partilhado",
         "download": "Descarregar as nossas aplicações",
         "e2ee": "Criptografia ponta a ponta",
         "embedMeeting": "Incorporar reunião",
-        "enableNoiseSuppression": "Ativar supressão extra de ruído (BETA)",
+        "enableNoiseSuppression": "Ativar supressão extra de ruído",
         "endConference": "Terminar reunião para todos",
         "enterFullScreen": "Ver em ecrã completo",
         "enterTileView": "Ver em quadrícula",
         "exitFullScreen": "Sair de ecrã completo",
         "exitTileView": "Sair de quadrícula",
         "feedback": "Deixar comentários",
+        "fileSharing": "Partilha de ficheiros",
         "giphy": "Ativar/Desativar o menu GIPHY",
         "hangup": "Sair da reunião",
         "help": "Ajuda",
@@ -1431,13 +1466,14 @@
         "noAudioSignalDialInDesc": "Também pode marcar usando:",
         "noAudioSignalDialInLinkDesc": "Números de marcação",
         "noAudioSignalTitle": "Não há nenhuma entrada vinda do seu microfone!",
-        "noiseSuppression": "Supressão extra de ruído (BETA)",
+        "noiseSuppression": "Supressão extra de ruído",
         "noisyAudioInputDesc": "Parece que o seu microfone está a fazer barulho, por favor considere silenciar ou mudar de dispositivo.",
         "noisyAudioInputTitle": "Seu microfone parece estar barulhento!",
         "openChat": "Abrir chat",
         "openReactionsMenu": "Abrir menu de reações",
         "participants": "Participantes",
         "pip": "Entrar no modo Picture-in-Picture",
+        "polls": "Sondagens",
         "privateMessage": "Enviar mensagem privada",
         "profile": "Editar o seu perfil",
         "raiseHand": "Levantar a mão",
@@ -1447,6 +1483,7 @@
         "reactionHeart": "Enviar reação com coração",
         "reactionLaugh": "Enviar reação de risos",
         "reactionLike": "Enviar reação de aprovado",
+        "reactionLove": "Enviar reação de amor",
         "reactionSilence": "Enviar reação de silêncio",
         "reactionSurprised": "Enviar reação de surpreendido",
         "reactions": "Reações",
@@ -1598,6 +1635,8 @@
             "noMainParticipantsTitle": "Esta reunião ainda não começou.",
             "noVisitorLobby": "Não é possível aderir enquanto houver uma sala de espera activada para a reunião.",
             "notAllowedPromotion": "É necessário que um participante autorize primeiro o seu pedido.",
+            "requestToJoin": "Mão levantada",
+            "requestToJoinDescription": "A sua solicitação foi enviada aos moderadores. Aguarde um momento!",
             "title": "É um espectador na reunião"
         },
         "waitingMessage": "Participará na reunião assim que esta estiver em direto!"

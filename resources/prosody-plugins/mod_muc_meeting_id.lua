@@ -16,6 +16,7 @@ local is_transcriber = util.is_transcriber;
 local QUEUE_MAX_SIZE = 500;
 
 module:depends("jitsi_permissions");
+module:depends("jitsi_session");
 
 -- Common module for all logic that can be loaded under the conference muc component.
 --
@@ -175,14 +176,17 @@ local function filterTranscriptionResult(event)
 
     local room = get_room_from_jid(stanza.attr.to);
     if not room then
-        module:log('warn', 'No room found found for %s', stanza.attr.to);
+        module:log('warn', 'No room found for %s', stanza.attr.to);
         return;
     end
 
     local occupant_jid = stanza.attr.from;
     local occupant = room:get_occupant_by_real_jid(occupant_jid);
     if not occupant then
-        module:log("error", "Occupant sending msg %s was not found in room %s", occupant_jid, room.jid)
+        -- skip logs for messages coming from s2s
+        if event.origin.type == 'c2s' then
+            module:log("error", "Occupant sending msg %s was not found in room %s", occupant_jid, room.jid);
+        end
         return;
     end
 
@@ -209,39 +213,39 @@ local function filterTranscriptionResult(event)
             -- Do not fire the event, but forward the message
             return
         end
-    end
 
-    if msg_obj.transcript ~= nil then
-        local transcription = msg_obj;
+        if msg_obj.transcript ~= nil then
+            local transcription = msg_obj;
 
-        -- in case of the string matching optimization above failed
-        if transcription.is_interim then
-            return;
+            -- in case of the string matching optimization above failed
+            if transcription.is_interim then
+                return;
+            end
+
+            -- TODO what if we have multiple alternative transcriptions not just 1
+            local text_message = transcription.transcript[1].text;
+            --do not send empty messages
+            if text_message == '' then
+                return;
+            end
+
+            local user_id = transcription.participant.id;
+            local who = room:get_occupant_by_nick(jid.bare(room.jid)..'/'..user_id);
+
+            transcription.jid = who and who.jid;
+            transcription.session_id = room._data.meetingId;
+
+            local tenant, conference_name, id = extract_subdomain(jid.node(room.jid));
+            if tenant then
+                transcription.fqn = tenant..'/'..conference_name;
+            else
+                transcription.fqn = conference_name;
+            end
+            transcription.customer_id = id;
+
+            return module:fire_event('jitsi-transcript-received', {
+                room = room, occupant = occupant, transcription = transcription, stanza = stanza });
         end
-
-        -- TODO what if we have multiple alternative transcriptions not just 1
-        local text_message = transcription.transcript[1].text;
-        --do not send empty messages
-        if text_message == '' then
-            return;
-        end
-
-        local user_id = transcription.participant.id;
-        local who = room:get_occupant_by_nick(jid.bare(room.jid)..'/'..user_id);
-
-        transcription.jid = who and who.jid;
-        transcription.session_id = room._data.meetingId;
-
-        local tenant, conference_name, id = extract_subdomain(jid.node(room.jid));
-        if tenant then
-            transcription.fqn = tenant..'/'..conference_name;
-        else
-            transcription.fqn = conference_name;
-        end
-        transcription.customer_id = id;
-
-        return module:fire_event('jitsi-transcript-received', {
-            room = room, occupant = occupant, transcription = transcription, stanza = stanza });
     end
 
     return module:fire_event('jitsi-endpoint-message-received', {

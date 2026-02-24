@@ -47,7 +47,7 @@ const useStyles = makeStyles()(theme => {
             border: 0,
             borderRadius: theme.shape.borderRadius,
             display: 'flex',
-            backgroundColor: theme.palette.ui03
+            backgroundColor: theme.palette.prejoinCountryPickerBorder
         },
 
         input: {
@@ -55,7 +55,7 @@ const useStyles = makeStyles()(theme => {
             margin: 0,
             border: 0,
             background: 'transparent',
-            color: theme.palette.text01,
+            color: theme.palette.prejoinCountryPickerText,
             flexGrow: 1,
             ...theme.typography.bodyShortRegular
         }

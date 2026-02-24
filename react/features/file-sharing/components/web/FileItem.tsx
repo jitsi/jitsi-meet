@@ -84,7 +84,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         fileItem: {
-            backgroundColor: theme.palette.ui02,
+            backgroundColor: theme.palette.fileSharingItemBackground,
             borderRadius: theme.shape.borderRadius,
             boxSizing: 'border-box',
             display: 'flex',
@@ -106,7 +106,7 @@ const useStyles = makeStyles()(theme => {
             },
 
             '&:hover': {
-                backgroundColor: theme.palette.ui03,
+                backgroundColor: theme.palette.fileSharingItemBorder,
 
                 '& .actionIconVisibility': {
                     opacity: 1
@@ -186,7 +186,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         progressBar: {
-            backgroundColor: theme.palette.ui03,
+            backgroundColor: theme.palette.fileSharingItemBorder,
             borderRadius: theme.shape.borderRadius,
             height: 4,
             overflow: 'hidden',
@@ -275,7 +275,7 @@ const FileItem = ({
                     <>
                         <div className = { classes.fileIconContainer }>
                             <Icon
-                                color = { BaseTheme.palette.icon01 }
+                                color = { BaseTheme.palette.fileSharingText }
                                 size = { iconSize }
                                 src = { getFileIcon(file.fileType) } />
                         </div>
@@ -320,7 +320,7 @@ const FileItem = ({
                                                 onClick = { handleDownload }
                                                 type = 'button'>
                                                 <Icon
-                                                    color = { BaseTheme.palette.icon01 }
+                                                    color = { BaseTheme.palette.fileSharingText }
                                                     size = { 24 }
                                                     src = { IconDownload } />
                                             </button>
@@ -335,7 +335,7 @@ const FileItem = ({
                                                 onClick = { handleRemove }
                                                 type = 'button'>
                                                 <Icon
-                                                    color = { BaseTheme.palette.icon01 }
+                                                    color = { BaseTheme.palette.fileSharingText }
                                                     size = { 24 }
                                                     src = { IconTrash } />
                                             </button>

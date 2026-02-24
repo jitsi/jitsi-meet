@@ -28,13 +28,13 @@ const useStyles = makeStyles()(theme => {
     return {
         itemContainer: {
             display: 'flex',
-            color: theme.palette.text02,
+            color: theme.palette.dialogSecondaryText,
             alignItems: 'center',
             fontSize: '0.875rem',
             cursor: 'pointer',
             padding: '5px 0',
             '&:hover': {
-                backgroundColor: theme.palette.ui04
+                backgroundColor: theme.palette.languageSelectorHover
             }
         },
         iconWrapper: {

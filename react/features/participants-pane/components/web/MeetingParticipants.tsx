@@ -13,7 +13,7 @@ import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../b
 import { isButtonEnabled, showOverflowDrawer } from '../../../toolbox/functions.web';
 import { iAmVisitor } from '../../../visitors/functions';
 import { getSortedParticipantIds, isCurrentRoomRenamable, shouldRenderInviteButton } from '../../functions';
-import { useParticipantDrawer } from '../../hooks';
+import { useParticipantDrawer } from '../../hooks.web';
 import RenameButton from '../breakout-rooms/components/web/RenameButton';
 
 import { InviteButton } from './InviteButton';
@@ -23,10 +23,10 @@ import MeetingParticipantItems from './MeetingParticipantItems';
 const useStyles = makeStyles()(theme => {
     return {
         headingW: {
-            color: theme.palette.warning02
+            color: theme.palette.participantWarningText
         },
         heading: {
-            color: theme.palette.text02,
+            color: theme.palette.participantSectionText,
             ...theme.typography.bodyShortBold,
             marginBottom: theme.spacing(3),
 

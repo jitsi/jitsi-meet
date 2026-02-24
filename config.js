@@ -151,6 +151,9 @@ var config = {
     // Disables self-view settings in UI
     // disableSelfViewSettings: false,
 
+    // Shows/hides the moderator setting for chat permissions.
+    // showChatPermissionsModeratorSetting: false,
+
     // screenshotCapture : {
     //      Enables the screensharing capture feature.
     //      enabled: false,
@@ -520,9 +523,6 @@ var config = {
     //     // Note: Starting transcriptions from the recording dialog will still work.
     //     disableClosedCaptions: false,
 
-    //     // Whether to invite jigasi when backend transcriptions are enabled (asyncTranscription is true in metadata).
-    //     // By default, we invite it.
-    //     inviteJigasiOnBackendTranscribing: true,
     // },
 
     // Misc
@@ -907,6 +907,8 @@ var config = {
     //     alwaysVisible: false,
     //     // Indicates whether the toolbar should still autohide when chat is open
     //     autoHideWhileChatIsOpen: false,
+    //     // Default background color for the main toolbar. Accepts any valid CSS color.
+    //     // backgroundColor: '#ffffff',
     // },
 
     // Overrides the buttons displayed in the main toolbar. Depending on the screen size the number of displayed
@@ -924,6 +926,14 @@ var config = {
     //     [ 'microphone', 'camera', 'chat' ],
     //     [ 'microphone', 'camera' ]
     // ],
+
+    // Enable reduced UI on web.
+    // reducedUIEnabled: true,
+
+    // Overrides the buttons displayed in the main toolbar for reduced UI.
+    // When there isn't an override for a certain configuration the default jitsi-meet configuration will be used.
+    // The order of the buttons in the array is preserved.
+    // reducedUImainToolbarButtons: [ 'microphone', 'camera' ],
 
     // Toolbar buttons which have their click/tap event exposed through the API on
     // `toolbarButtonClicked`. Passing a string for the button key will
@@ -1590,6 +1600,8 @@ var config = {
     // An option to get for user info (name, picture, email) in the token outside the user context.
     // Can be used with Firebase tokens.
     // tokenGetUserInfoOutOfContext: false,
+    // An option to pass the token in the iframe API directly instead of using the redirect flow.
+    // tokenAuthInline: false,
 
     // You can put an array of values to target different entity types in the invite dialog.
     // Valid values are "phone", "room", "sip", "user", "videosipgw" and "email"

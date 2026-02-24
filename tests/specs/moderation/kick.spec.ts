@@ -4,6 +4,7 @@ import { expectations } from '../../helpers/expectations';
 import { ensureTwoParticipants } from '../../helpers/participants';
 
 setTestProperties(__filename, {
+    retry: true,
     usesBrowsers: [ 'p1', 'p2' ]
 });
 

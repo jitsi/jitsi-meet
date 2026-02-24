@@ -497,6 +497,26 @@ export function isDialOutEnabled(state: IReduxState): boolean {
 }
 
 /**
+ * Determines if dial out is currently enabled or not.
+ *
+ * @param {IReduxState} state - Current state.
+ * @returns {boolean} Indication of whether dial out is currently enabled.
+ */
+export function isDialInEnabled(state: IReduxState): boolean {
+    const dialInDisabled = state['features/base/conference']
+        .conference?.getMetadataHandler()?.getMetadata()?.dialinEnabled === false;
+
+    if (dialInDisabled) {
+        return false;
+    }
+
+    const { dialInConfCodeUrl, dialInNumbersUrl, hosts } = state['features/base/config'];
+    const mucURL = hosts?.muc;
+
+    return Boolean(dialInConfCodeUrl && dialInNumbersUrl && mucURL);
+}
+
+/**
  * Determines if inviting sip endpoints is enabled or not.
  *
  * @param {IReduxState} state - Current state.
@@ -634,7 +654,7 @@ export function getShareInfoText(
     const { locationURL = {} } = state['features/base/connection'];
     const mucURL = hosts?.muc;
 
-    if (skipDialIn || !dialInConfCodeUrl || !dialInNumbersUrl || !mucURL) {
+    if (skipDialIn || !isDialInEnabled(state)) {
         // URLs for fetching dial in numbers not defined.
         return Promise.resolve(infoText);
     }

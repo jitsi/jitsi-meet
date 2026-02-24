@@ -74,17 +74,7 @@ local function verify_user(session, stanza)
         or allowlist:contains(user_bare_jid)
 
         -- allow main participants in visitor mode
-        or session.type == 's2sin'
-
-        -- Let Jigasi or transcriber pass throw
-        or util.is_sip_jigasi(stanza)
-        or util.is_transcriber_jigasi(stanza)
-
-        -- is jibri
-        or util.is_jibri(user_jid)
-
-        -- Let Sip Jibri pass through
-        or util.is_sip_jibri_join(stanza) then
+        or session.type == 's2sin' then
         if DEBUG then module:log("debug", "Token not required from user in allow list: %s", user_jid); end
         return true;
     end

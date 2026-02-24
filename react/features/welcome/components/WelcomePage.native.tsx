@@ -2,7 +2,6 @@ import React from 'react';
 import {
     Animated,
     NativeSyntheticEvent,
-    SafeAreaView,
     StyleProp,
     TextInputFocusEventData,
     TextStyle,
@@ -10,6 +9,7 @@ import {
     View,
     ViewStyle
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import { getName } from '../../app/functions.native';
@@ -333,30 +333,30 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                     isSettingsScreenFocused && styles.roomNameInputContainer,
                     { opacity: this.state.roomNameInputAnimation }
                 ] as StyleProp<ViewStyle> }>
-                <SafeAreaView style = { styles.roomContainer as StyleProp<ViewStyle> }>
-                    <View style = { styles.joinControls } >
-                        <Text style = { styles.enterRoomText as StyleProp<TextStyle> }>
-                            { t('welcomepage.roomname') }
-                        </Text>
-                        <Input
-                            accessibilityLabel = { t(roomnameAccLabel) }
-                            autoCapitalize = { 'none' }
-                            autoFocus = { false }
-                            customStyles = {{ input: styles.customInput }}
-                            onBlur = { this._onFieldBlur }
-                            onChange = { this._onRoomChange }
-                            onFocus = { this._onFieldFocus }
-                            onSubmitEditing = { this._onJoin }
-                            placeholder = { this.state.roomPlaceholder }
-                            returnKeyType = { 'go' }
-                            value = { this.state.room } />
-                        {
-                            this._renderInsecureRoomNameWarning()
-                        }
-                        {
-                            this._renderHintBox()
-                        }
-                    </View>
+                <SafeAreaView
+                    edges = { [ 'left', 'right' ] }
+                    style = { styles.roomContainer as StyleProp<ViewStyle> }>
+                    <Text style = { styles.enterRoomText as StyleProp<TextStyle> }>
+                        { t('welcomepage.roomname') }
+                    </Text>
+                    <Input
+                        accessibilityLabel = { t(roomnameAccLabel) }
+                        autoCapitalize = { 'none' }
+                        autoFocus = { false }
+                        customStyles = {{ input: styles.customInput }}
+                        onBlur = { this._onFieldBlur }
+                        onChange = { this._onRoomChange }
+                        onFocus = { this._onFieldFocus }
+                        onSubmitEditing = { this._onJoin }
+                        placeholder = { this.state.roomPlaceholder }
+                        returnKeyType = { 'go' }
+                        value = { this.state.room } />
+                    {
+                        this._renderInsecureRoomNameWarning()
+                    }
+                    {
+                        this._renderHintBox()
+                    }
                 </SafeAreaView>
             </Animated.View>
         );

@@ -15,8 +15,8 @@ const useStyles = makeStyles()(theme => {
         },
 
         message: {
-            backgroundColor: theme.palette.uiBackground,
-            color: theme.palette.text01,
+            backgroundColor: theme.palette.conferenceNoticeBackground,
+            color: theme.palette.conferenceNoticeText,
             padding: '3px',
             borderRadius: '5px'
         }
@@ -25,9 +25,10 @@ const useStyles = makeStyles()(theme => {
 
 const Notice = () => {
     const message = useSelector((state: IReduxState) => state['features/base/config'].noticeMessage);
+    const { reducedUI } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
     const { classes } = useStyles();
 
-    if (!message) {
+    if (!message || reducedUI) {
         return null;
     }
 

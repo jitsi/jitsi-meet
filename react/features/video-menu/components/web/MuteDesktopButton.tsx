@@ -47,7 +47,7 @@ const MuteDesktopButton = ({
                 'participant_id': participantID
             }));
 
-        dispatch(openDialog(MuteRemoteParticipantsDesktopDialog, { participantID }));
+        dispatch(openDialog('MuteRemoteParticipantsDesktopDialog', MuteRemoteParticipantsDesktopDialog, { participantID }));
     }, [ dispatch, notifyClick, notifyClick, participantID, sendAnalytics ]);
 
     if (trackMuted) {

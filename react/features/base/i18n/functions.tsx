@@ -8,13 +8,14 @@ import i18next from './i18next';
  *
  * @param {string} language - The language e.g. 'en', 'fr'.
  * @param {string} url - The url of the translation bundle.
+ * @param {string} ns - The namespace of the translation bundle.
  * @returns {void}
  */
-export async function changeLanguageBundle(language: string, url: string) {
+export async function changeLanguageBundle(language: string, url: string, ns = 'main') {
     const res = await fetch(url);
     const bundle = await res.json();
 
-    i18next.addResourceBundle(language, 'main', bundle, true, true);
+    i18next.addResourceBundle(language, ns, bundle, true, true);
 }
 
 /**

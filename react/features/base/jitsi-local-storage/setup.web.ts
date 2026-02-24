@@ -3,13 +3,14 @@ import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { safeJsonParse } from '@jitsi/js-utils/json';
+import { pick } from 'lodash-es';
 
 import { browser } from '../lib-jitsi-meet';
 import { isEmbedded } from '../util/embedUtils';
 import { parseURLParams } from '../util/parseURLParams';
 
 import logger from './logger';
-
+import WHITELIST from './whitelist';
 
 /**
  * Handles changes of the fake local storage.
@@ -61,7 +62,7 @@ function setupJitsiLocalStorage() {
 
     if (shouldUseHostPageLocalStorage(urlParams)) {
         try {
-            const localStorageContent = safeJsonParse(urlParams['appData.localStorageContent']);
+            let localStorageContent = safeJsonParse(urlParams['appData.localStorageContent']);
 
             // We need to disable the local storage before setting the data in case the browser local storage doesn't
             // throw exception (in some cases when this happens the local storage may be cleared for every session.
@@ -71,6 +72,10 @@ function setupJitsiLocalStorage() {
             jitsiLocalStorage.setLocalStorageDisabled(true);
 
             if (typeof localStorageContent === 'object') {
+                if (!isEmbedded()) {
+                    localStorageContent = pick(localStorageContent, WHITELIST);
+                }
+
                 Object.keys(localStorageContent).forEach(key => {
                     jitsiLocalStorage.setItem(key, localStorageContent[key]);
                 });

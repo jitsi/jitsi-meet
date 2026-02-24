@@ -38,8 +38,9 @@ export default class WebhookProxy {
 
         this.ws.on('error', console.error);
 
-        this.ws.on('open', function open() {
+        this.ws.on('open', () => {
             console.log('WebhookProxy connected');
+            this.logInfo('connected');
         });
 
         this.ws.on('message', (data: any) => {
@@ -176,6 +177,7 @@ export default class WebhookProxy {
      * @param value
      */
     set defaultMeetingSettings(value: {
+        asyncTranscriptions?: boolean;
         autoAudioRecording?: boolean;
         autoTranscriptions?: boolean;
         autoVideoRecording?: boolean;

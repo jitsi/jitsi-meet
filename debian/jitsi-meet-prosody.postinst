@@ -124,10 +124,17 @@ case "$1" in
                 ln -s $PROSODY_HOST_CONFIG /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua
             fi
             PROSODY_CREATE_JICOFO_USER="true"
+        fi
+
+        if ! grep -q "VirtualHost \"$JVB_HOSTNAME\"" $PROSODY_CONFIG_OLD; then
             # on some distributions main prosody config doesn't include configs
             # from conf.d folder enable it as this where we put our config by default
+            # also when upgrading to new prosody version from prosody repo we need to add it again
             if ! grep -q "Include \"conf\.d\/\*\.cfg.lua\"" $PROSODY_CONFIG_OLD; then
                 echo -e "\nInclude \"conf.d/*.cfg.lua\"" >> $PROSODY_CONFIG_OLD
+
+                # trigger a restart
+                PROSODY_CONFIG_PRESENT="false"
             fi
         fi
 
@@ -277,13 +284,17 @@ case "$1" in
             # and drop the wait and the prosody restart
             sleep 1
             invoke-rc.d prosody restart || true
-
-            # In case we had updated the certificates and restarted prosody, let's restart and the bridge and jicofo if possible
-            if [ -d /run/systemd/system ] && [ "$CERT_ADDED_TO_TRUST" = "true" ]; then
+        fi
+    ;;
+    triggered)
+        for trigger in $2; do
+            if [ "$trigger" = "update-ca-certificates-java" ]; then
+                echo "Java certificates updated, restarting Jitsi components..."
                 systemctl restart jitsi-videobridge2.service >/dev/null || true
                 systemctl restart jicofo.service >/dev/null || true
             fi
-        fi
+        done
+        exit 0
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

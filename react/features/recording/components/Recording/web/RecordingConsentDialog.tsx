@@ -10,6 +10,7 @@ import { grantRecordingConsent, grantRecordingConsentAndUnmute } from '../../../
 
 /**
  * Component that renders the dialog for explicit consent for recordings.
+ * The prejoin mute state is read from Redux by the action creator.
  *
  * @returns {JSX.Element}
  */

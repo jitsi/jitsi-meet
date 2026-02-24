@@ -50,6 +50,13 @@ export function setToolboxVisible(visible: boolean) {
             type: SET_TOOLBOX_VISIBLE,
             visible
         });
+        // Notify external API consumers about the change in toolbox visibility
+        // if the old legacy APP.API bridge is available.
+        /* eslint-disable no-undef */
+        if (typeof APP !== 'undefined' && APP.API && typeof APP.API.notifyToolbarVisibilityChanged === 'function') {
+            APP.API.notifyToolbarVisibilityChanged(visible);
+        }
+        /* eslint-enable no-undef */
     };
 }
 
@@ -72,6 +79,18 @@ export function toggleToolboxVisible() {
         dispatch({
             type: TOGGLE_TOOLBOX_VISIBLE
         });
+
+        // After toggling, read the updated state and notify external API
+        // about the current visibility. This mirrors the behavior of
+        // setToolboxVisible and ensures consumers are informed when the
+        // visibility changes via toggle.
+        /* eslint-disable no-undef */
+        if (typeof APP !== 'undefined' && APP.API && typeof APP.API.notifyToolbarVisibilityChanged === 'function') {
+            const { visible: newVisible } = getState()['features/toolbox'];
+
+            APP.API.notifyToolbarVisibilityChanged(newVisible);
+        }
+        /* eslint-enable no-undef */
     };
 }
 

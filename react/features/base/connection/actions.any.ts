@@ -17,6 +17,7 @@ import {
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
     CONNECTION_PROPERTIES_UPDATED,
+    CONNECTION_TOKEN_EXPIRED,
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL,
     SET_PREFER_VISITOR
@@ -239,6 +240,9 @@ export function _connectInternal(id?: string, password?: string) {
             connection.addEventListener(
                 JitsiConnectionEvents.PROPERTIES_UPDATED,
                 _onPropertiesUpdate);
+            connection.addEventListener(
+                JitsiConnectionEvents.CONNECTION_TOKEN_EXPIRED,
+                _onTokenExpired);
 
             /**
              * Unsubscribe the connection instance from
@@ -324,6 +328,16 @@ export function _connectInternal(id?: string, password?: string) {
             }
 
             /**
+             * Connection will resume.
+             *
+             * @private
+             * @returns {void}
+             */
+            function _onTokenExpired(): void {
+                dispatch(_connectionTokenExpired(connection));
+            }
+
+            /**
              * Connection properties were updated.
              *
              * @param {Object} properties - The properties which were updated.
@@ -360,6 +374,23 @@ export function _connectInternal(id?: string, password?: string) {
 function _connectionWillConnect(connection: Object) {
     return {
         type: CONNECTION_WILL_CONNECT,
+        connection
+    };
+}
+
+/**
+ * Create an action for when a connection token is expired.
+ *
+ * @param {JitsiConnection} connection - The {@code JitsiConnection} token is expired.
+ * @private
+ * @returns {{
+ *     type: CONNECTION_TOKEN_EXPIRED,
+ *     connection: JitsiConnection
+ * }}
+ */
+function _connectionTokenExpired(connection: Object) {
+    return {
+        type: CONNECTION_TOKEN_EXPIRED,
         connection
     };
 }

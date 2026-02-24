@@ -44,7 +44,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             flexDirection: 'column',
             padding: `${PADDINGS.topBottom}px ${PADDINGS.leftRight}px`,
             maxWidth: 410,
-            color: theme.palette.text01
+            color: theme.palette.deepLinkingText
         },
         launchingMeetingLabel: {
             marginTop: 24,
@@ -89,7 +89,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             marginTop: '32px',
             height: 1,
             width: `calc(100% + ${2 * PADDINGS.leftRight}px)`,
-            background: theme.palette.ui03
+            background: theme.palette.deepLinkingSeparator
         }
     };
 });

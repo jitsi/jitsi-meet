@@ -22,12 +22,12 @@ const useStyles = makeStyles()(theme => {
         },
         header: {
             ...theme.typography.heading6,
-            color: theme.palette.text01,
+            color: theme.palette.pollsTitle,
             margin: '24px 0 16px'
         },
         questionContainer: {
             paddingBottom: '24px',
-            borderBottom: `1px solid ${theme.palette.ui03}`
+            borderBottom: `1px solid ${theme.palette.pollsSeparator}`
         },
         answerList: {
             listStyleType: 'none',

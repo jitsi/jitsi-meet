@@ -3,11 +3,10 @@ import React, { useCallback } from 'react';
 import {
     BackHandler,
     NativeModules,
-    SafeAreaView,
     View,
     ViewStyle
 } from 'react-native';
-import { EdgeInsets, withSafeAreaInsets } from 'react-native-safe-area-context';
+import { Edge, EdgeInsets, SafeAreaView, withSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect, useDispatch } from 'react-redux';
 
 import { appNavigate } from '../../../app/actions.native';
@@ -228,7 +227,8 @@ class Conference extends AbstractConference<IProps, State> {
         const {
             _audioOnlyEnabled,
             _showLobby,
-            _startCarMode
+            _startCarMode,
+            navigation
         } = this.props;
 
         if (!prevProps._showLobby && _showLobby) {
@@ -237,10 +237,10 @@ class Conference extends AbstractConference<IProps, State> {
 
         if (prevProps._showLobby && !_showLobby) {
             if (_audioOnlyEnabled && _startCarMode) {
-                return;
+                navigation.navigate(screen.conference.carmode);
+            } else {
+                navigate(screen.conference.main);
             }
-
-            navigate(screen.conference.main);
         }
     }
 
@@ -436,6 +436,7 @@ class Conference extends AbstractConference<IProps, State> {
                 </View>
 
                 <SafeAreaView
+                    edges = { [ 'left', 'right', 'top' ] }
                     pointerEvents = 'box-none'
                     style = {
                         (_toolboxVisible
@@ -444,6 +445,7 @@ class Conference extends AbstractConference<IProps, State> {
                     <TitleBar _createOnPress = { this._createOnPress } />
                 </SafeAreaView>
                 <SafeAreaView
+                    edges = { [ 'bottom', 'left', 'right', !_toolboxVisible && 'top' ].filter(Boolean) as Edge[] }
                     pointerEvents = 'box-none'
                     style = {
                         (_toolboxVisible

@@ -8,6 +8,10 @@ export interface IRoom {
             displayName: string;
             jid: string;
             role: string;
+            userContext?: {
+                id?: string;
+                name?: string;
+            };
         };
     };
 }
@@ -33,4 +37,8 @@ export interface IRoomInfoParticipant {
     id: string;
     jid: string;
     role: string;
+    userContext?: {
+        id?: string;
+        name?: string;
+    };
 }

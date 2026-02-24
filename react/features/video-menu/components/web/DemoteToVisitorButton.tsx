@@ -48,7 +48,7 @@ export default function DemoteToVisitorButton({
         if (notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
             return;
         }
-        dispatch(openDialog(DemoteToVisitorDialog, { participantID }));
+        dispatch(openDialog('DemoteToVisitorDialog', DemoteToVisitorDialog, { participantID }));
     }, [ dispatch, notifyClick, notifyMode, participantID ]);
 
     return (

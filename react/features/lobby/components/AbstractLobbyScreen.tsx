@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 
 import { IReduxState, IStore } from '../../app/types';
-import { conferenceWillJoin } from '../../base/conference/actions';
+import { conferenceWillJoin } from '../../base/conference/actions.any';
 import { getConferenceName } from '../../base/conference/functions';
 import { IJitsiConference } from '../../base/conference/reducer';
 import { getSecurityUiConfig } from '../../base/config/functions.any';
@@ -11,9 +11,8 @@ import { getLocalParticipant } from '../../base/participants/functions';
 import { getFieldValue } from '../../base/react/functions';
 import { updateSettings } from '../../base/settings/actions';
 import { IMessage } from '../../chat/types';
-import { isDeviceStatusVisible } from '../../prejoin/functions';
+import { isDeviceStatusVisible } from '../../prejoin/functions.any';
 import { cancelKnocking, joinWithPassword, onSendMessage, setPasswordJoinFailed, startKnocking } from '../actions';
-import { getLobbyConfig } from '../functions';
 
 export const SCREEN_STATES = {
     EDIT: 1,
@@ -27,11 +26,6 @@ export interface IProps {
      * Indicates whether the device status should be visible.
      */
     _deviceStatusVisible: boolean;
-
-    /**
-     * Whether to show the hangup button.
-     */
-    _hangUp?: boolean;
 
     /**
      * Indicates whether the message that display name is required is shown.
@@ -456,7 +450,6 @@ export function _mapStateToProps(state: IReduxState) {
     const { disableLobbyPassword } = getSecurityUiConfig(state);
     const showCopyUrlButton = inviteEnabledFlag || !disableInviteFunctions;
     const deviceStatusVisible = isDeviceStatusVisible(state);
-    const { showHangUp = true } = getLobbyConfig(state);
     const { membersOnly, lobbyWaitingForHost } = state['features/base/conference'];
     const { isLobbyChatActive, lobbyMessageRecipient, messages } = state['features/chat'];
     const { showModeratorLogin } = state['features/authentication'];
@@ -468,7 +461,6 @@ export function _mapStateToProps(state: IReduxState) {
         _lobbyChatMessages: messages,
         _lobbyMessageRecipient: lobbyMessageRecipient?.name,
         _login: showModeratorLogin && !state['features/base/jwt'].jwt,
-        _hangUp: showHangUp,
         _isLobbyChatActive: isLobbyChatActive,
         _meetingName: getConferenceName(state),
         _membersOnlyConference: membersOnly,

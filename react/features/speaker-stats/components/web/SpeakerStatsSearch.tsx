@@ -20,7 +20,7 @@ const useStyles = makeStyles()(theme => {
             [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
                 display: 'block',
                 position: 'absolute',
-                color: theme.palette.text03,
+                color: theme.palette.speakerStatsSearchPlaceholder,
                 left: 16,
                 top: 13,
                 width: 20,
@@ -28,16 +28,16 @@ const useStyles = makeStyles()(theme => {
             }
         },
         speakerStatsSearch: {
-            backgroundColor: theme.palette.field01,
+            backgroundColor: theme.palette.speakerStatsSearchBackground,
             border: '1px solid',
             borderRadius: 6,
-            borderColor: theme.palette.ui05,
-            color: theme.palette.text01,
+            borderColor: theme.palette.speakerStatsSearchBorder,
+            color: theme.palette.speakerStatsSearchText,
             padding: '10px 16px',
             width: '100%',
             height: 40,
             '&::placeholder': {
-                color: theme.palette.text03,
+                color: theme.palette.speakerStatsSearchPlaceholder,
                 ...theme.typography.bodyShortRegular
             },
             [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
@@ -103,7 +103,7 @@ function SpeakerStatsSearch({ onSearch }: IProps) {
         <div className = { classes.speakerStatsSearchContainer }>
             <Icon
                 className = { classes.searchIcon }
-                color = { theme.palette.icon03 }
+                color = { theme.palette.speakerStatsSearchIcon }
                 src = { IconSearch } />
             <input
                 aria-describedby = { inputDescriptionId }

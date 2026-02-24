@@ -7,7 +7,7 @@ const useStyles = makeStyles()(theme => {
     return {
         timer: {
             ...theme.typography.labelRegular,
-            color: theme.palette.text01,
+            color: theme.palette.conferenceTimerText,
             padding: '6px 8px',
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             boxSizing: 'border-box',

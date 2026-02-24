@@ -78,7 +78,7 @@ export function openCameraCaptureDialog(callback: Function, componentProps: ICam
             return;
         }
 
-        dispatch(openDialog(CameraCaptureDialog, {
+        dispatch(openDialog('CameraCaptureDialog', CameraCaptureDialog, {
             callback,
             componentProps
         }));

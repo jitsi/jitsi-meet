@@ -85,7 +85,7 @@ function process_set_affiliation(event)
         occupant_session.granted_jitsi_meet_context_group_id = nil;
 
         -- on revoke
-        if not session.auth_token then
+        if not occupant_session.auth_token then
             occupant_session.jitsi_meet_context_features = nil;
         end
     end

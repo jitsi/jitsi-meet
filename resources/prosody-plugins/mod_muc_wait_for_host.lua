@@ -12,6 +12,7 @@ local is_admin = util.is_admin;
 local is_healthcheck_room = util.is_healthcheck_room;
 local is_moderated = util.is_moderated;
 local process_host_module = util.process_host_module;
+local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 
 local disable_auto_owners = module:get_option_boolean('wait_for_host_disable_auto_owners', false);
 
@@ -56,7 +57,10 @@ module:hook('muc-occupant-pre-join', function (event)
 
     local has_host = false;
     for _, o in room:each_occupant() do
-        if jid.host(o.bare_jid) == muc_domain_base then
+        -- the main virtual host that requires tokens
+        if jid.host(o.bare_jid) == muc_domain_base
+            -- or this is anonymous that upgraded by passing token which we validated
+            or prosody.full_sessions[o.jid].auth_token then
             room.has_host = true;
         end
     end
@@ -78,7 +82,7 @@ module:hook('muc-occupant-pre-join', function (event)
             module:fire_event('room_host_arrived', room.jid, session);
             lobby_host:fire_event('destroy-lobby-room', {
                 room = room,
-                newjid = room.jid,
+                newjid = internal_room_jid_match_rewrite(room.jid),
                 message = 'Host arrived.',
             });
         elseif not room:get_members_only() then

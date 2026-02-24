@@ -125,20 +125,6 @@ export default class Filmstrip extends BasePageObject {
     }
 
     /**
-     * Returns true if the endpoint is dominant speaker and false otherwise.
-     * Uses the dominant-speaker class on the video thumbnail in order to check.
-     *
-     * @param {string} endpointId - The endpoint id of the participant we want to check.
-     * @returns {boolean} - True if the endpoint is dominant speaker and false otherwise.
-     */
-    async isDominantSpeaker(endpointId: string) {
-        const elem = this.participant.driver.$(
-            `//span[@id='participant_${endpointId}' and contains(@class,'dominant-speaker')]`);
-
-        return await elem.isExisting();
-    }
-
-    /**
      * Grants moderator rights to a participant.
      * @param participant
      */

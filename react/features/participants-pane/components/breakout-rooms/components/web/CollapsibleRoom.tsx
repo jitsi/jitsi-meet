@@ -95,7 +95,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         arrowContainer: {
-            backgroundColor: theme.palette.ui03,
+            backgroundColor: theme.palette.breakoutRoomArrowBackground,
             width: '24px',
             height: '24px',
             borderRadius: '6px',

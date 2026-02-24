@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ViewStyle } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Edge, SafeAreaView } from 'react-native-safe-area-context';
 import { connect, useSelector } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
@@ -60,6 +60,7 @@ function Toolbox(props: IProps) {
 
     const { clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
     const { customToolbarButtons } = useSelector((state: IReduxState) => state['features/base/config']);
+    const toolbarBackgroundColor = useSelector((state: IReduxState) => state['features/base/config'].toolbarConfig?.backgroundColor);
     const {
         mainToolbarButtonsThresholds,
         toolbarButtons
@@ -78,6 +79,11 @@ function Toolbox(props: IProps) {
     const bottomEdge = Platform.OS === 'ios' && _visible;
     const { buttonStylesBorderless, hangupButtonStyles } = _styles;
     const style = { ...styles.toolbox };
+
+    // Allow overriding the toolbox background color from config (configOverwrite/overwriteConfig).
+    if (toolbarBackgroundColor) {
+        style.backgroundColor = toolbarBackgroundColor as any;
+    }
 
     // We have only hangup and raisehand button in _iAmVisitor mode
     if (_iAmVisitor) {
@@ -111,9 +117,7 @@ function Toolbox(props: IProps) {
             style = { styles.toolboxContainer as ViewStyle }>
             <SafeAreaView
                 accessibilityRole = 'toolbar'
-
-                // @ts-ignore
-                edges = { [ bottomEdge && 'bottom' ].filter(Boolean) }
+                edges = { [ bottomEdge && 'bottom' ].filter(Boolean) as Edge[] }
                 pointerEvents = 'box-none'
                 style = { style as ViewStyle }>
                 { renderToolboxButtons() }

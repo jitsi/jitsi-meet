@@ -37,7 +37,7 @@ class RecordButton extends AbstractRecordButton<Props> {
         const { _isRecordingRunning, dispatch } = this.props;
 
         if (_isRecordingRunning) {
-            dispatch(openDialog(StopRecordingDialog));
+            dispatch(openDialog('StopRecordingDialog', StopRecordingDialog));
         } else {
             navigate(screen.conference.recording);
         }

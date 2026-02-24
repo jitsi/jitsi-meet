@@ -517,6 +517,10 @@ export interface IConfig {
     peopleSearchQueryTypes?: string[];
     peopleSearchTokenLocation?: string;
     peopleSearchUrl?: string;
+    pip?: {
+        disabled?: boolean;
+        showOnPrejoin?: boolean;
+    };
     preferBosh?: boolean;
     preferVisitor?: boolean;
     preferredTranscribeLanguage?: string;
@@ -555,6 +559,8 @@ export interface IConfig {
         skipConsentInMeeting?: boolean;
         suggestRecording?: boolean;
     };
+    reducedUIEnabled?: boolean;
+    reducedUImainToolbarButtons?: Array<string>;
     remoteVideoMenu?: {
         disableDemote?: boolean;
         disableGrantModerator?: boolean;
@@ -577,6 +583,7 @@ export interface IConfig {
     };
     serviceUrl?: string;
     sharedVideoAllowedURLDomains?: Array<string>;
+    showChatPermissionsModeratorSetting?: boolean;
     sipInviteUrl?: string;
     speakerStats?: {
         disableSearch?: boolean;
@@ -609,6 +616,7 @@ export interface IConfig {
         disabled?: boolean;
         numberOfVisibleTiles?: number;
     };
+    tokenAuthInline?: boolean;
     tokenAuthUrl?: string;
     tokenAuthUrlAutoRedirect?: string;
     tokenGetUserInfoOutOfContext?: boolean;
@@ -618,6 +626,10 @@ export interface IConfig {
     toolbarConfig?: {
         alwaysVisible?: boolean;
         autoHideWhileChatIsOpen?: boolean;
+        /**
+         * Background color for the main toolbar. Accepts any valid CSS color.
+         */
+        backgroundColor?: string;
         initialTimeout?: number;
         timeout?: number;
     };
@@ -628,7 +640,6 @@ export interface IConfig {
         autoTranscribeOnRecord?: boolean;
         disableClosedCaptions?: boolean;
         enabled?: boolean;
-        inviteJigasiOnBackendTranscribing?: boolean;
         preferredLanguage?: string;
         translationLanguages?: Array<string>;
         translationLanguagesHead?: Array<string>;

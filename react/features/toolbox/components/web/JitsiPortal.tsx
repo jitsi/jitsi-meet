@@ -32,7 +32,7 @@ const useStyles = makeStyles()(theme => {
 
             '&::after': {
                 content: '""',
-                backgroundColor: theme.palette.ui01,
+                backgroundColor: theme.palette.toolboxBackground,
                 marginBottom: 'env(safe-area-inset-bottom, 0)'
             }
         }

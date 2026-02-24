@@ -107,7 +107,7 @@ const styles = (theme: Theme) => {
 
         title: {
             ...theme.typography.heading6,
-            color: `${theme.palette.text01} !important`,
+            color: `${theme.palette.settingsTabText} !important`,
             marginBottom: theme.spacing(3)
         },
 

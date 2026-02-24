@@ -1,5 +1,5 @@
 import React, { ComponentType, PureComponent } from 'react';
-import { SafeAreaView, TouchableWithoutFeedback, View } from 'react-native';
+import { TouchableWithoutFeedback, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
@@ -80,25 +80,23 @@ class ReactionMenuDialog extends PureComponent<IProps> {
      * @returns {ReactElement}
      */
     override render() {
-        const { _styles, _width, _height, _participantCount } = this.props;
+        const { _height, _participantCount, _styles, _width } = this.props;
 
         return (
-            <SafeAreaView style = { _styles }>
-                <TouchableWithoutFeedback
-                    onPress = { this._onCancel }>
-                    <View style = { _styles }>
-                        <View
-                            style = {{
-                                left: (_width - 360) / 2,
-                                top: _height - (_participantCount > 1 ? 144 : 80) - 80
-                            }}>
-                            <ReactionMenu
-                                onCancel = { this._onCancel }
-                                overflowMenu = { false } />
-                        </View>
-                    </View>
-                </TouchableWithoutFeedback>
-            </SafeAreaView>
+            <TouchableWithoutFeedback
+                onPress = { this._onCancel }>
+                <View
+                    style = { [
+                        _styles,
+                        {
+                            left: (_width - 360) / 2,
+                            top: _height - (_participantCount > 1 ? 144 : 80) - 80
+                        } ] }>
+                    <ReactionMenu
+                        onCancel = { this._onCancel }
+                        overflowMenu = { false } />
+                </View>
+            </TouchableWithoutFeedback>
         );
     }
 
@@ -110,7 +108,7 @@ class ReactionMenuDialog extends PureComponent<IProps> {
      */
     _onCancel() {
         if (this.props._isOpen) {
-            this.props.dispatch(hideDialog(ReactionMenu_));
+            this.props.dispatch(hideDialog('ReactionMenu_', ReactionMenu_));
 
             return true;
         }

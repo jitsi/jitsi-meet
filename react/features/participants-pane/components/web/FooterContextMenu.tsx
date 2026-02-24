@@ -56,7 +56,7 @@ const useStyles = makeStyles()(theme => {
 
         text: {
             ...theme.typography.bodyShortRegular,
-            color: theme.palette.text02,
+            color: theme.palette.participantSectionText,
             padding: '10px 16px',
             height: '40px',
             overflow: 'hidden',
@@ -112,10 +112,10 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
     const { classes } = useStyles();
 
     const muteAllVideo = useCallback(
-        () => dispatch(openDialog(MuteEveryonesVideoDialog)), [ dispatch ]);
+        () => dispatch(openDialog('MuteEveryonesVideoDialog', MuteEveryonesVideoDialog)), [ dispatch ]);
 
     const muteAllDesktop = useCallback(
-        () => dispatch(openDialog(MuteEveryonesDesktopDialog)), [ dispatch ]);
+        () => dispatch(openDialog('MuteEveryonesDesktopDialog', MuteEveryonesDesktopDialog)), [ dispatch ]);
 
     const openModeratorSettings = () => dispatch(openSettingsDialog(SETTINGS_TABS.MODERATOR));
 

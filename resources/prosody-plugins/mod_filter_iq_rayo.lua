@@ -95,26 +95,27 @@ module:hook("pre-iq/full", function(event)
             local room_jid = jid.bare(stanza.attr.to);
             local room_real_jid = room_jid_match_rewrite(room_jid);
             local room = main_muc_service.get_room_from_jid(room_real_jid);
-            local is_sender_in_room = room:get_occupant_jid(stanza.attr.from) ~= nil;
-
-            if not room or not is_sender_in_room then
-                module:log("warn", "Filtering stanza dial, stanza:%s", tostring(stanza));
-                session.send(st.error_reply(stanza, "auth", "forbidden"));
-                return true;
-            end
-
             local feature = dial.attr.to == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call';
-            local is_session_allowed = is_feature_allowed(
+            local error_message = nil;
+
+            if not room or room:get_occupant_jid(stanza.attr.from) == nil then
+                error_message = "not in room";
+            elseif roomName == nil then
+                error_message = OUT_ROOM_NAME_ATTR_NAME.." header missing";
+            elseif roomName ~= room_jid then
+                error_message = OUT_ROOM_NAME_ATTR_NAME.." header mismatch";
+            elseif (token ~= nil and not token_util:verify_room(session, room_real_jid)) then
+                error_message = "no token or token room mismatch";
+            elseif not is_feature_allowed(
                 feature,
                 session.jitsi_meet_context_features,
-                room:get_affiliation(stanza.attr.from) == 'owner');
+                room:get_affiliation(stanza.attr.from) == 'owner') then
 
-            if roomName == nil
-                or roomName ~= room_jid
-                or (token ~= nil and not token_util:verify_room(session, room_real_jid))
-                or not is_session_allowed
-            then
-                module:log("warn", "Filtering stanza dial, stanza:%s", tostring(stanza));
+                error_message = "feature not allowed";
+            end
+
+            if error_message then
+                module:log("warn", "Filtering stanza dial, %s, stanza:%s", error_message, tostring(stanza));
                 session.send(st.error_reply(stanza, "auth", "forbidden"));
                 return true;
             end

@@ -47,7 +47,7 @@ const useStyles = makeStyles()(theme => {
     return {
         formControl: {
             ...theme.typography.bodyLongRegular,
-            color: theme.palette.text01,
+            color: theme.palette.checkboxLabel,
             display: 'inline-flex',
             alignItems: 'center',
 
@@ -76,10 +76,10 @@ const useStyles = makeStyles()(theme => {
                 backgroundColor: 'transparent',
                 margin: '3px',
                 font: 'inherit',
-                color: theme.palette.icon03,
+                color: theme.palette.checkboxBorder,
                 width: '18px',
                 height: '18px',
-                border: `2px solid ${theme.palette.icon03}`,
+                border: `2px solid ${theme.palette.checkboxBorder}`,
                 borderRadius: '3px',
 
                 display: 'grid',
@@ -90,7 +90,7 @@ const useStyles = makeStyles()(theme => {
                     width: '18px',
                     height: '18px',
                     opacity: 0,
-                    backgroundColor: theme.palette.action01,
+                    backgroundColor: theme.palette.checkboxChecked,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -104,11 +104,11 @@ const useStyles = makeStyles()(theme => {
                 },
 
                 '&:disabled': {
-                    backgroundColor: theme.palette.ui03,
-                    borderColor: theme.palette.ui04,
+                    backgroundColor: theme.palette.checkboxDisabledBackground,
+                    borderColor: theme.palette.checkboxDisabledBorder,
 
                     '&::before': {
-                        backgroundColor: theme.palette.ui04
+                        backgroundColor: theme.palette.checkboxDisabledChecked
                     }
                 },
 
@@ -173,7 +173,7 @@ const Checkbox = ({
                 <Icon
                     aria-hidden = { true }
                     className = 'checkmark'
-                    color = { disabled ? theme.palette.icon03 : theme.palette.icon01 }
+                    color = { disabled ? theme.palette.checkboxIconDisabled : theme.palette.checkboxIcon }
                     size = { 18 }
                     src = { IconCheck } />
             </div>

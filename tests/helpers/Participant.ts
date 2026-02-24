@@ -35,6 +35,8 @@ export const P1 = 'p1';
 export const P2 = 'p2';
 export const P3 = 'p3';
 export const P4 = 'p4';
+export const P5 = 'p5';
+export const P6 = 'p6';
 
 /**
  * Participant.
@@ -112,9 +114,6 @@ export class Participant {
             useStunTurn: false
         },
         pcStatsInterval: 1500,
-        prejoinConfig: {
-            enabled: false
-        },
         toolbarConfig: {
             alwaysVisible: true
         }
@@ -252,6 +251,9 @@ export class Participant {
             // For the iFrame API the tenant is passed in a different way.
             url = `/${options.tenant}/${url}`;
         }
+        if (options.urlAppendString) {
+            url = `${url}${options.urlAppendString}`;
+        }
 
         await this.driver.url(url);
 
@@ -259,6 +261,20 @@ export class Participant {
 
         if (this._iFrameApi) {
             await this.switchToIFrame();
+        }
+
+        if (!options.skipPrejoinButtonClick
+            // @ts-ignore
+            && !Boolean(await this.execute(() => config.prejoinConfig?.enabled === false))) {
+            // if prejoin is enabled we want to click the join button
+            const p1PreJoinScreen = this.getPreJoinScreen();
+
+            await p1PreJoinScreen.waitForLoading();
+
+            const joinButton = p1PreJoinScreen.getJoinButton();
+
+            await joinButton.waitForDisplayed();
+            await joinButton.click();
         }
 
         if (!options.skipWaitToJoin) {
@@ -496,7 +512,7 @@ export class Participant {
     }
 
     /**
-     * Waits until the number of participants is exactly the given number.
+     * Waits until the number of remote participants is exactly the given number.
      *
      * @param {number} number - The number of participant to wait for.
      * @param {string} msg - A custom message to use.
@@ -504,7 +520,7 @@ export class Participant {
      */
     waitForParticipants(number: number, msg?: string): Promise<boolean> {
         return this.driver.waitUntil(
-            () => this.execute(count => (APP?.conference?.listMembers()?.length ?? -1) === count, number),
+            () => this.execute(count => (window.APP?.conference?.listMembers()?.length ?? -1) === count, number),
             {
                 timeout: 15_000,
                 timeoutMsg: msg || `not the expected participants ${number} in 15s for ${this.name}`
@@ -674,13 +690,17 @@ export class Participant {
         return new IframeAPI(this);
     }
 
+    async getRoomMetadata() {
+        return this.execute(() => window.APP?.conference?._room?.getMetadataHandler()?.getMetadata());
+    }
+
     /**
      * Hangups the participant by leaving the page. base.html is an empty page on all deployments.
      */
     async hangup() {
-        console.log('Hanging up');
+        console.log(`Hanging up (${this.name})`);
         if ((await this.driver.getUrl()).endsWith('/base.html')) {
-            console.log('Already hung up');
+            console.log(`Already hung up (${this.name})`);
 
             return;
         }
@@ -705,7 +725,7 @@ export class Participant {
                 timeoutMsg: `${this.name} failed to hang up`
             }
         );
-        console.log('Hung up');
+        console.log(`Hung up (${this.name})`);
 
         await this.driver.url('/base.html')
 

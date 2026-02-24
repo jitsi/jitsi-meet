@@ -1,4 +1,4 @@
-import { P1, P2, P3, P4, Participant } from './Participant';
+import { P1, P2, P3, P4, P5, P6, Participant } from './Participant';
 import { config } from './TestsConfig';
 import { IJoinOptions, IParticipantOptions } from './types';
 
@@ -123,6 +123,50 @@ export async function ensureFourParticipants(options?: IJoinOptions): Promise<vo
 }
 
 /**
+ * Ensure that there are six participants.
+ *
+ * @param {IJoinOptions} options - The options to use when joining the participant.
+ * @returns {Promise<void>}
+ */
+export async function ensureSixParticipants(options?: IJoinOptions): Promise<void> {
+    await ensureOneParticipant(options);
+
+    // Join participants in batches
+    await Promise.all([
+        joinParticipant({ name: P2 }, options),
+        joinParticipant({ name: P3 }, options),
+        joinParticipant({ name: P4 }, options)
+    ]);
+
+    await Promise.all([
+        joinParticipant({ name: P5 }, options),
+        joinParticipant({ name: P6 }, options)
+    ]);
+
+    if (options?.skipInMeetingChecks) {
+        return Promise.resolve();
+    }
+
+    await Promise.all([
+        ctx.p1.waitForIceConnected(),
+        ctx.p2.waitForIceConnected(),
+        ctx.p3.waitForIceConnected(),
+        ctx.p4.waitForIceConnected(),
+        ctx.p5.waitForIceConnected(),
+        ctx.p6.waitForIceConnected()
+    ]);
+    await Promise.all([
+        ctx.p1.waitForSendReceiveData().then(() => ctx.p1.waitForRemoteStreams(1)),
+        ctx.p2.waitForSendReceiveData().then(() => ctx.p2.waitForRemoteStreams(1)),
+        ctx.p3.waitForSendReceiveData().then(() => ctx.p3.waitForRemoteStreams(1)),
+        ctx.p4.waitForSendReceiveData().then(() => ctx.p4.waitForRemoteStreams(1)),
+        ctx.p5.waitForSendReceiveData().then(() => ctx.p5.waitForRemoteStreams(1)),
+        ctx.p6.waitForSendReceiveData().then(() => ctx.p6.waitForRemoteStreams(1))
+    ]);
+}
+
+
+/**
  * Ensure that there are two participants.
  *
  * @param {IJoinOptions} options - The options to join.
@@ -244,10 +288,16 @@ export async function checkForScreensharingTile(sharer: Participant, observer: P
 }
 
 /**
- * Hangs up all participants (p1, p2, p3 and p4)
+ * Hangs up all participants (p1, p2, p3, p4, p5, and p6)
  * @returns {Promise<void>}
  */
 export function hangupAllParticipants() {
-    return Promise.all([ ctx.p1?.hangup(), ctx.p2?.hangup(), ctx.p3?.hangup(), ctx.p4?.hangup() ]
-        .map(p => p ?? Promise.resolve()));
+    return Promise.all([
+        ctx.p1?.hangup(),
+        ctx.p2?.hangup(),
+        ctx.p3?.hangup(),
+        ctx.p4?.hangup(),
+        ctx.p5?.hangup(),
+        ctx.p6?.hangup()
+    ].map(p => p ?? Promise.resolve()));
 }

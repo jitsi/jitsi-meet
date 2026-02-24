@@ -33,7 +33,7 @@ class DemoteToVisitorButton extends AbstractButton<IProps> {
     override _handleClick() {
         const { dispatch, participantID } = this.props;
 
-        dispatch(openDialog(DemoteToVisitorDialog, { participantID }));
+        dispatch(openDialog('DemoteToVisitorDialog', DemoteToVisitorDialog, { participantID }));
     }
 }
 

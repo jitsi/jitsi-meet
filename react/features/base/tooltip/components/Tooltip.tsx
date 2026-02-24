@@ -22,11 +22,11 @@ interface IProps {
 const useStyles = makeStyles()(theme => {
     return {
         container: {
-            backgroundColor: theme.palette.uiBackground,
+            backgroundColor: theme.palette.tooltipBackground,
             borderRadius: '3px',
             padding: theme.spacing(2),
             ...theme.typography.labelRegular,
-            color: theme.palette.text01,
+            color: theme.palette.tooltipText,
             position: 'relative',
 
             '&.mounting-animation': {

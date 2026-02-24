@@ -1,10 +1,14 @@
 import { maybeRedirectToWelcomePage } from '../app/actions.web';
 import { IStore } from '../app/types';
 import { openDialog } from '../base/dialog/actions';
+import { setJWT } from '../base/jwt/actions';
 import { browser } from '../base/lib-jitsi-meet';
+import { showErrorNotification } from '../notifications/actions';
 
 import { CANCEL_LOGIN } from './actionTypes';
 import LoginQuestionDialog from './components/web/LoginQuestionDialog';
+import { isTokenAuthInline } from './functions.any';
+import logger from './logger';
 
 export * from './actions.any';
 
@@ -47,6 +51,147 @@ export function redirectToDefaultLocation() {
 }
 
 /**
+ * Generates a cryptographic nonce.
+ *
+ * @returns {string} The generated nonce.
+ */
+function generateNonce(): string {
+    const array = new Uint8Array(32);
+
+    crypto.getRandomValues(array);
+
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Performs login with a popup window.
+ *
+ * @param {string} tokenAuthServiceUrl - Authentication service URL.
+ * @returns {Promise<any>} A promise that resolves with the authentication
+ * result or rejects with an error.
+ */
+export function loginWithPopup(tokenAuthServiceUrl: string): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+        // Open popup
+        const width = 500;
+        const height = 600;
+        const left = window.screen.width / 2 - width / 2;
+        const top = window.screen.height / 2 - height / 2;
+
+        let nonceParam = '';
+
+        try {
+            const nonce = generateNonce();
+
+            sessionStorage.setItem('oauth_nonce', nonce);
+
+            nonceParam = `&nonce=${nonce}`;
+        } catch (e) {
+            if (e instanceof DOMException && e.name === 'SecurityError') {
+                logger.warn(
+                    'sessionStorage access denied (cross-origin or restricted context) enable it to improve security',
+                    e);
+            } else {
+                logger.error('Unable to save nonce in session storage', e);
+            }
+        }
+
+        const popup = window.open(
+            `${tokenAuthServiceUrl}${nonceParam}`,
+            `Auth-${Date.now()}`,
+            `width=${width},height=${height},left=${left},top=${top}`
+        );
+
+        if (!popup) {
+            reject(new Error('Popup blocked'));
+
+            return;
+        }
+
+        let closedPollInterval: ReturnType<typeof setInterval> | undefined = undefined;
+        const cleanup = (handler: (event: MessageEvent) => void) => {
+            window.removeEventListener('message', handler);
+            clearInterval(closedPollInterval);
+            popup.close();
+
+            try {
+                sessionStorage.removeItem('oauth_nonce');
+            } catch (e) {
+                // ignore
+            }
+            try {
+                sessionStorage.removeItem('code_verifier');
+            } catch (e) {
+                // ignore
+            }
+        };
+
+        const handler = (event: MessageEvent) => {
+            // Verify origin
+            if (event.origin !== window.location.origin) {
+                return;
+            }
+
+            if (event.data.type === 'oauth-success') {
+                cleanup(handler);
+
+                resolve({
+                    accessToken: event.data.accessToken,
+                    idToken: event.data.idToken,
+                    refreshToken: event.data.refreshToken
+                });
+            } else if (event.data.type === 'oauth-error') {
+                cleanup(handler);
+
+                reject(new Error(event.data.error));
+            }
+        };
+
+        // Listen for messages from the popup
+        window.addEventListener('message', handler);
+
+        // Detect manual popup close before authentication completes
+        closedPollInterval = setInterval(() => {
+            if (popup.closed) {
+                cleanup(handler);
+                reject(new Error('Login cancelled'));
+            }
+        }, 500);
+    });
+}
+
+/**
+ * Performs silent logout by loading the token authentication logout service URL in an
+ * invisible iframe.
+ *
+ * @param {string} tokenAuthLogoutServiceUrl - Logout service URL.
+ * @returns {Promise<any>} A promise that resolves when logout is complete.
+ */
+export function silentLogout(tokenAuthLogoutServiceUrl: string): any {
+    return new Promise<void>(resolve => {
+        const iframe = document.createElement('iframe');
+
+        iframe.style.display = 'none';
+        iframe.src = tokenAuthLogoutServiceUrl;
+        document.body.appendChild(iframe);
+
+        // Listen for logout completion
+        const handler = (event: any) => {
+            if (event.origin !== window.location.origin) return;
+
+            if (event.data.type === 'logout-success') {
+                window.removeEventListener('message', handler);
+                document.body.removeChild(iframe);
+
+                resolve();
+            }
+        };
+
+        window.addEventListener('message', handler);
+    });
+}
+
+/**
  * Opens token auth URL page.
  *
  * @param {string} tokenAuthServiceUrl - Authentication service URL.
@@ -63,9 +208,45 @@ export function openTokenAuthUrl(tokenAuthServiceUrl: string): any {
             }
         };
 
+        if (!browser.isElectron() && isTokenAuthInline(getState()['features/base/config'])) {
+            loginWithPopup(tokenAuthServiceUrl)
+                .then((result: { accessToken: string; idToken: string; refreshToken?: string; }) => {
+                    // @ts-ignore
+                    const token: string = result.accessToken;
+                    const idToken: string = result.idToken;
+                    const refreshToken: string | undefined = result.refreshToken;
+
+                    // @ts-ignore
+                    dispatch(setJWT(token, idToken, refreshToken));
+
+                    logger.info('Reconnecting to conference with new token.');
+
+                    const { connection } = getState()['features/base/connection'];
+
+                    connection?.refreshToken(token).then(
+                        () => {
+                            const { membersOnly } = getState()['features/base/conference'];
+
+                            membersOnly?.join();
+                        })
+                        .catch((err: any) => {
+                            dispatch(setJWT());
+                            logger.error(err);
+                        });
+                })
+                .catch(err => {
+                    dispatch(showErrorNotification({
+                        titleKey: 'dialog.loginFailed'
+                    }));
+                    logger.error(err);
+                });
+
+            return;
+        }
+
         // Show warning for leaving conference only when in a conference.
         if (!browser.isElectron() && getState()['features/base/conference'].conference) {
-            dispatch(openDialog(LoginQuestionDialog, {
+            dispatch(openDialog('LoginQuestionDialog', LoginQuestionDialog, {
                 handler: () => {
                     // Give time for the dialog to close.
                     setTimeout(() => redirect(), 500);

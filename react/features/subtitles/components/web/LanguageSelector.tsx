@@ -28,7 +28,7 @@ const useStyles = makeStyles()(theme => {
         },
         label: {
             ...theme.typography.bodyShortRegular,
-            color: theme.palette.text01,
+            color: theme.palette.languageSelectorText,
             whiteSpace: 'nowrap'
         }
     };
@@ -39,7 +39,6 @@ const useStyles = makeStyles()(theme => {
  * Uses the same language options as LanguageSelectorDialog and
  * updates the subtitles language preference in Redux.
  *
- * @param {IProps} props - The component props.
  * @returns {JSX.Element} - The rendered component.
  */
 function LanguageSelector() {
@@ -51,6 +50,13 @@ function LanguageSelector() {
         state,
         selectedLanguage?.replace('translation-languages:', '')
     ));
+    const isAsyncTranscriptionEnabled = useSelector((state: IReduxState) =>
+        state['features/base/conference'].conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription);
+
+    // Hide the "Translate to" option when asyncTranscription is enabled
+    if (isAsyncTranscriptionEnabled) {
+        return null;
+    }
 
     /**
      * Maps available languages to Select component options format.

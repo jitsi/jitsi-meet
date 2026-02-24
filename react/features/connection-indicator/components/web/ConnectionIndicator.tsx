@@ -179,7 +179,7 @@ const styles = (theme: Theme) => {
             },
 
             '&.status-lost': {
-                backgroundColor: theme.palette.ui05
+                backgroundColor: theme.palette.connectionIndicatorLost
             },
 
             '&.status-other': {

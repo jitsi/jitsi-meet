@@ -24,7 +24,7 @@ const useStyles = makeStyles()(theme => {
             backgroundColor: theme.palette.support05,
             borderRadius: theme.shape.borderRadius,
             ...theme.typography.bodyShortRegular,
-            color: theme.palette.text01
+            color: theme.palette.chatRecipientText
         },
 
         text: {

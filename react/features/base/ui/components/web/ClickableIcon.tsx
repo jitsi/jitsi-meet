@@ -16,22 +16,22 @@ const useStyles = makeStyles()(theme => {
     return {
         button: {
             padding: '2px',
-            backgroundColor: theme.palette.action03,
+            backgroundColor: theme.palette.clickableIconBackground,
             border: 0,
             outline: 0,
             borderRadius: `${theme.shape.borderRadius}px`,
 
             '&:hover': {
-                backgroundColor: theme.palette.ui02
+                backgroundColor: theme.palette.clickableIconHover
             },
 
             '&.focus-visible': {
                 outline: 0,
-                boxShadow: `0px 0px 0px 2px ${theme.palette.focus01}`
+                boxShadow: `0px 0px 0px 2px ${theme.palette.clickableIconFocus}`
             },
 
             '&:active': {
-                backgroundColor: theme.palette.ui03
+                backgroundColor: theme.palette.clickableIconActive
             },
 
             '&.is-mobile': {

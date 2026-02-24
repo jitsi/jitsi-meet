@@ -29,13 +29,13 @@ const useStyles = makeStyles()(theme => {
 
         tab: {
             ...theme.typography.bodyShortBold,
-            color: theme.palette.text02,
+            color: theme.palette.tabText,
             flex: 1,
             padding: '14px',
             background: 'none',
             border: 0,
             appearance: 'none',
-            borderBottom: `2px solid ${theme.palette.ui05}`,
+            borderBottom: `2px solid ${theme.palette.tabBorder}`,
             transition: 'color, border-color 0.2s',
             display: 'flex',
             alignItems: 'center',
@@ -43,25 +43,25 @@ const useStyles = makeStyles()(theme => {
             borderRadius: 0,
 
             '&:hover': {
-                color: theme.palette.text01,
-                borderColor: theme.palette.ui10
+                color: theme.palette.tabTextHover,
+                borderColor: theme.palette.tabBorderHover
             },
 
             '&.focus-visible': {
                 outline: 0,
-                boxShadow: `0px 0px 0px 2px ${theme.palette.focus01}`,
+                boxShadow: `0px 0px 0px 2px ${theme.palette.tabFocus}`,
                 border: 0,
-                color: theme.palette.text01
+                color: theme.palette.tabTextSelected
             },
 
             '&.selected': {
-                color: theme.palette.text01,
-                borderColor: theme.palette.action01
+                color: theme.palette.tabTextSelected,
+                borderColor: theme.palette.tabBorderSelected
             },
 
             '&:disabled': {
-                color: theme.palette.text03,
-                borderColor: theme.palette.ui05
+                color: theme.palette.tabTextDisabled,
+                borderColor: theme.palette.tabBorderDisabled
             },
 
             '&.is-mobile': {
@@ -72,9 +72,9 @@ const useStyles = makeStyles()(theme => {
         badge: {
             ...theme.typography.labelBold,
             alignItems: 'center',
-            backgroundColor: theme.palette.warning01,
+            backgroundColor: theme.palette.tabBadgeBackground,
             borderRadius: theme.spacing(2),
-            color: theme.palette.text04,
+            color: theme.palette.tabBadgeText,
             display: 'inline-flex',
             height: theme.spacing(3),
             justifyContent: 'center',

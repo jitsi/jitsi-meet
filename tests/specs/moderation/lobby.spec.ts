@@ -49,7 +49,7 @@ describe('Lobby', () => {
         // media is being receiving and there are two remote streams
         await p3.waitToJoinMUC();
         await p3.waitForIceConnected();
-        await p3.waitForSendReceiveData();
+        await p3.waitForReceiveMedia();
         await p3.waitForRemoteStreams(2);
 
         // now check third one display name in the room, is the one set in the prejoin screen
@@ -107,10 +107,9 @@ describe('Lobby', () => {
         // media is being receiving and there are two remote streams
         await p3.waitToJoinMUC();
         await p3.waitForIceConnected();
-        await p3.waitForSendReceiveData();
+        await p3.waitForReceiveMedia();
         await p3.waitForRemoteStreams(2);
 
-        // now check third one display name in the room, is the one set in the prejoin screen
         // now check third one display name in the room, is the one set in the prejoin screen
         const name = await p1.getFilmstrip().getRemoteDisplayName(await p3.getEndpointId());
 
@@ -154,15 +153,17 @@ describe('Lobby', () => {
         await p1.getNotifications().waitForHideOfKnockingParticipants();
     });
 
-    it('conference ended in lobby', async () => {
+    it('lobby persistence', async () => {
         const { p1, p2 } = ctx;
 
         await enterLobby(p1, false);
 
+        const { p3 } = ctx;
+
+        expect(await p3.getLobbyScreen().isLobbyRoomJoined()).toBe(true);
+
         await p1.hangup();
         await p2.hangup();
-
-        const { p3 } = ctx;
 
         await p3.driver.$('.dialog.leaveReason').isExisting();
 
@@ -170,7 +171,7 @@ describe('Lobby', () => {
             async () => !await p3.getLobbyScreen().isLobbyRoomJoined(),
             {
                 timeout: 2000,
-                timeoutMsg: 'p2 did not leave lobby'
+                timeoutMsg: 'p3 did not leave lobby'
             }
         );
 
@@ -274,7 +275,7 @@ describe('Lobby', () => {
 
         await p3.waitToJoinMUC();
         await p3.waitForIceConnected();
-        await p3.waitForSendReceiveData();
+        await p3.waitForReceiveMedia();
     });
 
     it('enable with more than two participants', async () => {
@@ -429,19 +430,18 @@ async function enableLobby() {
 async function enterLobby(participant: Participant, enterDisplayName = false, usePreJoin = false) {
     const options: IJoinOptions = { };
 
-    if (usePreJoin) {
-        options.configOverwrite = {
-            prejoinConfig: {
-                enabled: true
-            }
-        };
-    }
+    options.configOverwrite = {
+        prejoinConfig: {
+            enabled: usePreJoin
+        }
+    };
 
     await ensureThreeParticipants({
         ...options,
         skipDisplayName: true,
         skipWaitToJoin: true,
-        skipInMeetingChecks: true
+        skipInMeetingChecks: true,
+        skipPrejoinButtonClick: true
     });
 
     const { p3 } = ctx;

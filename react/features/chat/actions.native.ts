@@ -22,7 +22,7 @@ export function openChat(participant?: IParticipant | undefined | Object, disabl
         if (disablePolls) {
             navigate(screen.conference.chat);
         } else {
-            navigate(screen.conference.chatandpolls.main);
+            navigate(screen.conference.chatTabs.main);
         }
 
         dispatch(setFocusedTab(ChatTabs.CHAT));

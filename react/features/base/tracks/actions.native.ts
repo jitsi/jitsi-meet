@@ -6,6 +6,7 @@ import { setScreenshareMuted } from '../media/actions';
 
 import { addLocalTrack, replaceLocalTrack } from './actions.any';
 import { getLocalDesktopTrack, getTrackState } from './functions.native';
+import logger from './logger';
 
 
 export * from './actions.any';
@@ -63,6 +64,6 @@ async function _startScreenSharing(dispatch: IStore['dispatch'], state: IReduxSt
             }, NOTIFICATION_TIMEOUT_TYPE.LONG));
         }
     } catch (error: any) {
-        console.log('ERROR creating screen-sharing stream ', error);
+        logger.error('Error creating screen-sharing stream', error);
     }
 }

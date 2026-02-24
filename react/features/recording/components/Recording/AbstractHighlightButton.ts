@@ -82,7 +82,7 @@ export default class AbstractHighlightButton<P extends IProps, S={}> extends Com
                     const dialogShown = dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
 
                     if (!dialogShown) {
-                        dispatch(openDialog(StartRecordingDialog));
+                        dispatch(openDialog('StartRecordingDialog', StartRecordingDialog));
                     }
                 } ],
                 appearance: NOTIFICATION_TYPE.NORMAL

@@ -19,6 +19,7 @@ import {
 import {
     getJwtDisabledButtons,
     getVisibleButtons,
+    getVisibleButtonsForReducedUI,
     isButtonEnabled,
     isToolboxVisible
 } from '../../functions.web';
@@ -36,6 +37,11 @@ import Separator from './Separator';
  * The type of the React {@code Component} props of {@link Toolbox}.
  */
 interface IProps {
+
+    /**
+     * Optional toolbar background color passed as a prop.
+     */
+    toolbarBackgroundColor?: string;
 
     /**
      * Explicitly passed array with the buttons which this Toolbox should display.
@@ -65,7 +71,8 @@ const useStyles = makeStyles()(() => {
  * @returns {ReactElement}
  */
 export default function Toolbox({
-    toolbarButtons
+    toolbarButtons,
+    toolbarBackgroundColor: toolbarBackgroundColorProp
 }: IProps) {
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -76,8 +83,7 @@ export default function Toolbox({
     const isNarrowLayout = useSelector((state: IReduxState) => state['features/base/responsive-ui'].isNarrowLayout);
     const videoSpaceWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].videoSpaceWidth);
     const isModerator = useSelector(isLocalParticipantModerator);
-    const customToolbarButtons = useSelector(
-        (state: IReduxState) => state['features/base/config'].customToolbarButtons);
+    const customToolbarButtons = useSelector((state: IReduxState) => state['features/base/config'].customToolbarButtons);
     const iAmRecorder = useSelector((state: IReduxState) => state['features/base/config'].iAmRecorder);
     const iAmSipGateway = useSelector((state: IReduxState) => state['features/base/config'].iAmSipGateway);
     const overflowDrawer = useSelector((state: IReduxState) => state['features/toolbox'].overflowDrawer);
@@ -92,7 +98,10 @@ export default function Toolbox({
     const localParticipant = useSelector(getLocalParticipant);
     const transcribing = useSelector(isTranscribing);
     const _isCCTabEnabled = useSelector(isCCTabEnabled);
-
+    // Read toolbar background color from config (if provided) or from props.
+    const toolbarBackgroundColorFromConfig = useSelector((state: IReduxState) =>
+        state['features/base/config'].toolbarConfig?.backgroundColor);
+    const toolbarBackgroundColor = toolbarBackgroundColorProp || toolbarBackgroundColorFromConfig;
     // Do not convert to selector, it returns new array and will cause re-rendering of toolbox on every action.
     const jwtDisabledButtons = getJwtDisabledButtons(transcribing, _isCCTabEnabled, localParticipant?.features);
 
@@ -101,6 +110,8 @@ export default function Toolbox({
     const toolbarVisible = useSelector(isToolboxVisible);
     const mainToolbarButtonsThresholds
         = useSelector((state: IReduxState) => state['features/toolbox'].mainToolbarButtonsThresholds);
+    const { reducedUImainToolbarButtons } = useSelector((state: IReduxState) => state['features/base/config']);
+    const reducedUI = useSelector((state: IReduxState) => state['features/base/responsive-ui'].reducedUI);
     const allButtons = useToolboxButtons(customToolbarButtons);
     const isMobile = isMobileBrowser();
     const endConferenceSupported = Boolean(conference?.isEndConferenceSupported() && isModerator);
@@ -224,7 +235,7 @@ export default function Toolbox({
     const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
     const containerClassName = `toolbox-content${isMobile || isNarrowLayout ? ' toolbox-content-mobile' : ''}`;
 
-    const { mainMenuButtons, overflowMenuButtons } = getVisibleButtons({
+    const normalUIButtons = getVisibleButtons({
         allButtons,
         buttonsWithNotifyClick,
         toolbarButtons: toolbarButtonsToUse,
@@ -232,6 +243,20 @@ export default function Toolbox({
         jwtDisabledButtons,
         mainToolbarButtonsThresholds
     });
+
+    const reducedUIButtons = getVisibleButtonsForReducedUI({
+        allButtons,
+        buttonsWithNotifyClick,
+        jwtDisabledButtons,
+        reducedUImainToolbarButtons,
+    });
+
+    const mainMenuButtons = reducedUI
+        ? reducedUIButtons.mainMenuButtons
+        : normalUIButtons.mainMenuButtons;
+    const overflowMenuButtons = reducedUI
+        ? []
+        : normalUIButtons.overflowMenuButtons;
     const raiseHandInOverflowMenu = overflowMenuButtons.some(({ key }) => key === 'raisehand');
     const showReactionsInOverflowMenu = _shouldDisplayReactionsButtons
         && (
@@ -242,7 +267,8 @@ export default function Toolbox({
     return (
         <div
             className = { cx(rootClassNames, shiftUp && 'shift-up') }
-            id = 'new-toolbox'>
+            id = 'new-toolbox'
+            style = { toolbarBackgroundColor ? { backgroundColor: toolbarBackgroundColor } : undefined }>
             <div className = { containerClassName }>
                 <div
                     className = 'toolbox-content-wrapper'

@@ -4,7 +4,7 @@ import { StyleProp, Text, TextStyle, View } from 'react-native';
 import { navigationStyles } from './styles';
 
 interface ITabBarLabelCounterProps {
-    activeUnreadNr: boolean;
+    activeUnreadNr?: boolean;
     isFocused: boolean;
     label: string;
     unreadCount?: number;

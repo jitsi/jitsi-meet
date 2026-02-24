@@ -8,7 +8,7 @@ export default {
 
     button: {
         marginBottom: BaseTheme.spacing[4],
-        marginHorizontal: BaseTheme.spacing[2]
+        marginHorizontal: BaseTheme.spacing[3]
     },
 
     collapsibleList: {

@@ -6,7 +6,7 @@ const useStyles = makeStyles()(theme => {
     return {
         warning: {
             bottom: 0,
-            color: theme.palette.text03,
+            color: theme.palette.prejoinRecordingWarningText,
             display: 'flex',
             justifyContent: 'center',
             ...theme.typography.bodyShortRegular,

@@ -1,6 +1,7 @@
 import AllureReporter from '@wdio/allure-reporter';
 import { multiremotebrowser } from '@wdio/globals';
 import { Buffer } from 'buffer';
+import fs from 'fs';
 import { glob } from 'glob';
 import path from 'node:path';
 import process from 'node:process';
@@ -67,7 +68,7 @@ const specs = [
  */
 function generateCapabilitiesFromSpecs(): Record<string, any> {
     const allSpecFiles: string[] = [];
-    const browsers = [ 'p1', 'p2', 'p3', 'p4' ];
+    const browsers = [ 'p1', 'p2', 'p3', 'p4', 'p5', 'p6' ];
 
     for (const pattern of specs) {
         const matches = glob.sync(pattern, { cwd: path.join(__dirname) });
@@ -86,7 +87,9 @@ function generateCapabilitiesFromSpecs(): Record<string, any> {
         p1: new Set(),
         p2: new Set(),
         p3: new Set(),
-        p4: new Set()
+        p4: new Set(),
+        p5: new Set(),
+        p6: new Set()
     };
 
     for (const file of allSpecFiles) {
@@ -193,6 +196,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
         } ]
     ],
 
+    execArgv: [ '--stack-trace-limit=100' ],
+
     // =====
     // Hooks
     // =====
@@ -285,8 +290,22 @@ export const config: WebdriverIO.MultiremoteConfig = {
         keepAlive.forEach(clearInterval);
     },
 
-    beforeSession(c, capabilities_, specs_, cid) {
+    async beforeSession(c, capabilities_, spec, cid) {
         const originalBefore = c.before;
+
+        if (spec && spec.length == 1) {
+            const testFilePath = spec[0].replace(/^file:\/\//, '');
+            const testProperties = await getTestProperties(testFilePath);
+
+            if (testProperties.retry) {
+                c.specFileRetries = 1;
+                c.specFileRetriesDeferred = true;
+                c.specFileRetriesDelay = 1;
+                console.log(`Enabling retry for ${testFilePath}`);
+            }
+        } else {
+            console.log('No test file or multiple test files specified, will not enable retries');
+        }
 
         if (!originalBefore || !Array.isArray(originalBefore) || originalBefore.length !== 1) {
             console.warn('No before hook found or more than one found, skipping');
@@ -322,7 +341,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @param {Object} context - The context object.
      */
     beforeTest(test, context) {
-        // Use the directory under 'tests/specs' as the parent suite
+        // Extract directory to use as parent suite and describe block name as suite
         const dirMatch = test.file.match(/.*\/tests\/specs\/([^\/]+)\//);
         const dir = dirMatch ? dirMatch[1] : false;
         const fileMatch = test.file.match(/.*\/tests\/specs\/(.*)/);
@@ -336,8 +355,10 @@ export const config: WebdriverIO.MultiremoteConfig = {
             AllureReporter.addLink(`https://github.com/jitsi/jitsi-meet/blob/master/tests/specs/${file}`, 'Code');
         }
 
-        if (dir) {
+        // For Allure v3: set directory as parent suite and describe block as suite
+        if (dir && test.parent) {
             AllureReporter.addParentSuite(dir);
+            AllureReporter.addSuite(test.parent);
         }
 
         if (ctx.skipSuiteTests) {
@@ -381,24 +402,25 @@ export const config: WebdriverIO.MultiremoteConfig = {
             }));
 
             const allProcessing: Promise<any>[] = [];
+            const attachments: { content: string | Buffer; filename: string; type: string; }[] = [];
 
             multiremotebrowser.instances.forEach((instance: string) => {
                 const bInstance = multiremotebrowser.getInstance(instance);
 
                 allProcessing.push(bInstance.takeScreenshot().then(shot => {
-                    AllureReporter.addAttachment(
-                        `Screenshot-${instance}`,
-                        Buffer.from(shot, 'base64'),
-                        'image/png');
+                    attachments.push({
+                        filename: `${instance}-screenshot`,
+                        content: Buffer.from(shot, 'base64'),
+                        type: 'image/png' });
                 }));
 
                 // @ts-ignore
                 allProcessing.push(bInstance.execute(() => typeof APP !== 'undefined' && APP.connection?.getLogs())
                     .then(logs =>
-                        logs && AllureReporter.addAttachment(
-                            `debug-logs-${instance}`,
-                            JSON.stringify(logs, null, '    '),
-                            'text/plain'))
+                        logs && attachments.push({
+                            filename: `${instance}-debug-logs`,
+                            content: JSON.stringify(logs, null, '    '),
+                            type: 'text/plain' }))
                     .catch(e => console.error('Failed grabbing debug logs', e)));
 
                 allProcessing.push(
@@ -407,15 +429,29 @@ export const config: WebdriverIO.MultiremoteConfig = {
                             saveLogs(bInstance, res);
                         }
 
-                        AllureReporter.addAttachment(`console-logs-${instance}`, getLogs(bInstance) || '', 'text/plain');
+                        attachments.push({
+                            filename: `${instance}-console-logs`,
+                            content: getLogs(bInstance) || '',
+                            type: 'text/plain' });
                     }));
 
                 allProcessing.push(bInstance.getPageSource().then(source => {
-                    AllureReporter.addAttachment(`html-source-${instance}`, pretty(source), 'text/plain');
+                    attachments.push({
+                        filename: `${instance}-html-source`,
+                        content: pretty(source),
+                        type: 'text/plain' });
                 }));
             });
 
             await Promise.allSettled(allProcessing);
+            attachments.sort(
+                (a, b) => {
+                    return a.filename < b.filename ? -1 : 1;
+                }).forEach(
+                a => {
+                    AllureReporter.addAttachment(a.filename, a.content, a.type);
+                }
+            );
         }
     },
 
@@ -439,6 +475,34 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @returns {Promise<void>}
      */
     onComplete() {
+        // Clean up duplicate parentSuite labels from Allure results
+        const resultsDir = `${TEST_RESULTS_DIR}/allure-results`;
+        const resultFiles = fs.readdirSync(resultsDir).filter(f => f.endsWith('-result.json'));
+
+        resultFiles.forEach(file => {
+            const filePath = path.join(resultsDir, file);
+            const result = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+            // Keep only the LAST parentSuite label (the manual one with directory name)
+            // Remove the automatic one from WebDriverIO (describe block name)
+            const parentSuiteLabels: any[] = [];
+            const otherLabels: any[] = [];
+
+            result.labels.forEach((label: any) => {
+                if (label.name === 'parentSuite') {
+                    parentSuiteLabels.push(label);
+                } else {
+                    otherLabels.push(label);
+                }
+            });
+
+            // Keep only the last parentSuite (the directory name we manually added)
+            if (parentSuiteLabels.length > 1) {
+                result.labels = [ ...otherLabels, parentSuiteLabels[parentSuiteLabels.length - 1] ];
+                fs.writeFileSync(filePath, JSON.stringify(result));
+            }
+        });
+
         const reportError = new Error('Could not generate Allure report');
         const generation = allure([
             'generate', `${TEST_RESULTS_DIR}/allure-results`,
@@ -460,6 +524,15 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 }
 
                 console.log('Allure report successfully generated');
+
+                // An ugly hack to sort by test order by default in the allure report.
+                const content = fs.readFileSync(`${TEST_RESULTS_DIR}/allure-report/index.html`, 'utf8');
+                const modifiedContent = content.replace('<body>',
+                    '<body><script>localStorage.setItem("ALLURE_REPORT_SETTINGS_SUITES", \'{"treeSorting":{"sorter":"sorter.order","ascending":true}}\')</script>'
+                );
+
+                fs.writeFileSync(`${TEST_RESULTS_DIR}/allure-report/index.html`, modifiedContent);
+
                 resolve();
             });
         });

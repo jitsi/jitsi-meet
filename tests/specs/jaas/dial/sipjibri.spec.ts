@@ -20,13 +20,6 @@ describe('SIP jibri invite', () => {
     it('setup', async () => {
         const room = ctx.roomName;
 
-        if (true) {
-            // This is temporary until we figure out how to fix it and configure it properly.
-            ctx.skipSuiteTests = 'This test is disabled as the code doesn\'t work anymore.';
-
-            return;
-        }
-
         if (!dialOutUrl) {
             ctx.skipSuiteTests = 'SIP_JIBRI_DIAL_OUT_URL is not set.';
 

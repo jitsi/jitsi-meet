@@ -1,5 +1,5 @@
 .always-on-top-toolbox {
-    background-color: $newToolbarBackgroundColor;
+    background-color: var(--toolbox-background-color, $newToolbarBackgroundColor);
     border-radius: 3px;
     display: flex;
     z-index: $toolbarZ;

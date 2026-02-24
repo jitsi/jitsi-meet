@@ -17,7 +17,7 @@ interface IProps {
     /**
      * The children component(s) of the Modal, to be rendered.
      */
-    children: React.ReactNode;
+    children?: React.ReactNode;
 
     /**
      * Additional style to be appended to the KeyboardAvoidingView content container.
@@ -63,7 +63,7 @@ const JitsiScreen = ({
     footerComponent,
     hasBottomTextInput = false,
     hasExtraHeaderHeight = false,
-    safeAreaInsets = [ 'left', 'right' ],
+    safeAreaInsets = [ 'bottom', 'left', 'right' ],
     style
 }: IProps) => {
     const renderContent = () => (
@@ -78,8 +78,8 @@ const JitsiScreen = ({
                 edges = { safeAreaInsets }
                 style = { styles.safeArea }>
                 { children }
+                { footerComponent?.() }
             </SafeAreaView>
-            { footerComponent?.() }
         </JitsiKeyboardAvoidingView>
     );
 

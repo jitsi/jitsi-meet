@@ -88,14 +88,14 @@ interface IProps extends WithTranslation {
 const styles = (theme: Theme) => {
     return {
         dialog: {
-            color: theme.palette.text01
+            color: theme.palette.videoQualityText
         },
         dialogDetails: {
             ...theme.typography.bodyShortRegularLarge,
             marginBottom: 16
         },
         dialogContents: {
-            background: theme.palette.ui01,
+            background: theme.palette.videoQualityBackground,
             padding: '16px 16px 48px 16px'
         },
         sliderDescription: {
