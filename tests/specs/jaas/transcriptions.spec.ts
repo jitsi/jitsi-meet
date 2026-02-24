@@ -44,9 +44,11 @@ for (const asyncTranscriptions of asyncTranscriptionValues) {
                 if (!expectedOn && !asyncTranscriptions) {
                     // The "stopped" event is sometimes fired before the jigasi participant leaves. If we re-start
                     // transcription before jigasi has left, jicofo will reject the request.
+                    await p.switchToIFrame()
                     await p.waitForParticipants(
                         1,
                         'Unexpected number of participants. Jigasi failed to leave?');
+                    await p.switchToMainFrame()
                 }
             }
         }
