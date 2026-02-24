@@ -8,8 +8,9 @@ import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
 import { IReduxState, IStore } from '../../../app/types';
 import { getConferenceNameForTitle } from '../../../base/conference/functions';
 import { hangup } from '../../../base/connection/actions.web';
-import { isMobileBrowser } from '../../../base/environment/utils';
+import { isMobileBrowser } from '../../../base/environment/utils.web';
 import { translate } from '../../../base/i18n/functions';
+import AudioTracksContainer from '../../../base/media/components/web/AudioTracksContainer';
 import { setColorAlpha } from '../../../base/util/helpers';
 import { openChat, setFocusedTab } from '../../../chat/actions.web';
 import Chat from '../../../chat/components/web/Chat';
@@ -258,10 +259,8 @@ class Conference extends AbstractConference<IProps, any> {
                             id = 'videospace'
                             onTouchStart = { this._onVideospaceTouchStart }>
                             <LargeVideo />
-                            <StageFilmstrip />
-                            <ScreenshareFilmstrip />
-                            <MainFilmstrip />
                         </div>
+                        <AudioTracksContainer />
                         <span
                             aria-level = { 1 }
                             className = 'sr-only'
@@ -300,7 +299,7 @@ class Conference extends AbstractConference<IProps, any> {
                             </>)
                         }
                     </div>
-
+                    <AudioTracksContainer />
                     { _showPrejoin || _showLobby || (
                         <>
                             <span
@@ -319,9 +318,7 @@ class Conference extends AbstractConference<IProps, any> {
                         </JitsiPortal>
                         : this.renderNotificationsContainer())
                     }
-
                     <CalleeInfoContainer />
-
                     { shouldShowPrejoin(this.props) && <Prejoin />}
                     { (_showLobby && !_showVisitorsQueue) && <LobbyScreen />}
                     { _showVisitorsQueue && <VisitorsQueue />}
