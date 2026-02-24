@@ -81,6 +81,12 @@ import { IConferenceMetadata } from './reducer';
 let beforeUnloadHandler: ((e?: any) => void) | undefined;
 
 /**
+ * Handler for unload event. Dispatches conferenceWillLeave only when
+ * the user confirms leaving the page.
+ */
+let unloadHandler: (() => void) | undefined;
+
+/**
  * A simple flag to avoid retrying more than once to join as a visitor when hitting max occupants reached.
  */
 let retryAsVisitorOnMaxError = true;
@@ -356,6 +362,17 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
                 e.returnValue = null;
             }
         }
+        // Dispatch conferenceWillLeave only when the page is actually closing,
+        // i.e. the user confirmed leaving. This prevents disconnecting the user
+        // when they cancel the browser close dialog.
+        if (disableBeforeUnloadHandlers) {
+            dispatch(conferenceWillLeave(conference));
+        }
+    };
+
+    // This fires ONLY when the page actually closes (user confirmed leaving).
+    // conferenceWillLeave belongs here, not in beforeUnloadHandler.
+    unloadHandler = () => {
         dispatch(conferenceWillLeave(conference));
     };
 
@@ -366,6 +383,11 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
     }
 
     window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
+
+    // Only register the unload handler when beforeunload is active (cancel is possible).
+    if (!disableBeforeUnloadHandlers) {
+        window.addEventListener('unload', unloadHandler);
+    }
 
     if (requireDisplayName
         && !getLocalParticipant(getState)?.name
@@ -632,6 +654,11 @@ function _removeUnloadHandler(getState: IStore['getState']) {
 
         window.removeEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
         beforeUnloadHandler = undefined;
+    }
+
+    if (typeof unloadHandler !== 'undefined') {
+        window.removeEventListener('unload', unloadHandler);
+        unloadHandler = undefined;
     }
 }
 
