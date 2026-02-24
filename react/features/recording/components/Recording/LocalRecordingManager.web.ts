@@ -279,6 +279,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
             // The stop event is emitted when the recorder is done, and _after_ the last buffered
             // data has been handed over to the dataavailable event.
             this.recorder = undefined;
+            this.audioContext?.close();
             this.audioContext = undefined;
             this.audioDestination = undefined;
             this.startTime = undefined;
