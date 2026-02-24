@@ -252,7 +252,7 @@
         "noDesktopApp": "S’e keni aplikacionin?",
         "noMobileApp": "S’e keni aplikacionin?",
         "or": "OR",
-        "termsAndConditions": "Duke vazhduar, pajtoheni me <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>terms & conditions.</a> tona",
+        "termsAndConditions": "Duke vazhduar, pajtoheni me <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>terma & kushte.</a>",
         "title": "Po niset takimi juaj në {{app}}…",
         "titleNew": "Po niset takimi juaj…",
         "tryAgainButton": "Riprovoni në desktop",
@@ -594,10 +594,10 @@
         "newFileNotification": "{{ participantName }} ndau '{{ fileName }}' me të tjerë",
         "removeFile": "Hiqe",
         "removeFileSuccess": "Kartela u hoq me sukses",
-        "uploadDisabled": "S’lejoheni të ngarkoni kartela. Kërkojini një moderatori të drejta lejimi të këtij veprimi."
+        "uploadDisabled": "S’lejoheni të ngarkoni kartela. Kërkojini një moderatori të drejta lejimi të këtij veprimi.",
         "uploadFailedDescription": "Ju lutemi, riprovoni.",
         "uploadFailedTitle": "Ngarkimi dështoi",
-        "uploadFile": "Ndani kartelë",
+        "uploadFile": "Ndani kartelë"
     },
     "filmstrip": {
         "accessibilityLabel": {
@@ -964,11 +964,11 @@
             "visitorRequests": " (kërkesa {{count}})",
             "visitors": "Parës {{count}}",
             "visitorsList": "Parës ({{count}})",
-            "waitingLobby": "Duke pritur në holl ({{count}})",
+            "waitingLobby": "Duke pritur në holl ({{count}})"
         },
         "search": "Kërkoni te pjesëmarrësit",
-        "searchDescription": "Që të filtrohen pjesëmarrës, filloni të shtypni në tastierë"
-        "title": "Pjesëmarrës",
+        "searchDescription": "Që të filtrohen pjesëmarrës, filloni të shtypni në tastierë",
+        "title": "Pjesëmarrës"
     },
     "passwordDigitsOnly": "Deri në {{number}} shifra",
     "passwordSetRemotely": "Caktuar nga një tjetër pjesëmarrës",
@@ -1233,7 +1233,7 @@
         "startVideoMuted": "Gjithkush fillon i fshehur",
         "talkWhileMuted": "Flisni, teksa jeni i heshtuar",
         "title": "Rregullime",
-        "video": "Video",
+        "video": "Video"
     },
     "settingsView": {
         "advanced": "Të mëtejshme",
@@ -1291,7 +1291,7 @@
         "seconds": "{{count}}s",
         "speakerStats": "Statistika Folësi",
         "speakerTime": "Kohë Folësi",
-        "surprised": "I befasuar",
+        "surprised": "I befasuar"
     },
     "startupoverlay": {
         "genericTitle": "Takimi lyp përdorimin e mikrofonit dhe kamerës tuaj.",
@@ -1400,7 +1400,7 @@
             "videoblur": "Aktivizo/Çaktivizo turbullim videoje",
             "videomute": "Ndal kamerën",
             "videomuteGUMPending": "Po lidhet kamera juaj",
-            "videounmute": "Nis kamerën",
+            "videounmute": "Nis kamerën"
         },
         "addPeople": "Shtoni persona te thirrja juaj",
         "advancedAudioSettings": {
@@ -1481,7 +1481,7 @@
         "openChat": "Hapni fjalosje",
         "openReactionsMenu": "Hap menu reagimesh",
         "participants": "Pjesëmarrës",
-        "pip": "Kalo nën mënyrën “Picture-in-Picture”",
+	"pip": "Kalo nën mënyrën “Picture-in-Picture”",
         "polls": "Pyetësorë",
         "privateMessage": "Dërgoni mesazh privat",
         "profile": "Përpunoni profilin tuaj",
@@ -1519,7 +1519,7 @@
         "videoSettings": "Rregullime videoje",
         "videomute": "Ndalni kamerën",
         "videomuteGUMPending": "Po lidhet kamera juaj",
-        "videounmute": "Nisni kamerën",
+        "videounmute": "Nisni kamerën"
     },
     "transcribing": {
         "ccButtonTooltip": "Ndali / Nisi titrat",
@@ -1599,7 +1599,7 @@
         "unpinFromStage": "Çfiksoje",
         "verify": "Verifikoni pjesëmarrës",
         "videoMuted": "Kamera e çaktivizuar",
-        "videomute": "Pjesëmarrësi ka ndalur kamerën",
+        "videomute": "Pjesëmarrësi ka ndalur kamerën"
     },
     "virtualBackground": {
         "accessibilityLabel": {
@@ -1645,8 +1645,8 @@
             "noVisitorLobby": "S’mund të hyni, teksa ka një holl të hapur për takimin.",
             "notAllowedPromotion": "Lypset që së pari një pjesëmarrës të lejojë kërkesën tuaj.",
             "requestToJoin": "U ngrit Dorë",
-            "requestToJoinDescription": "Kërkesa juaj iu dërgua moderatorëve. Mos i largoni!"
-            "title": "Jeni një parës te takimi",
+            "requestToJoinDescription": "Kërkesa juaj iu dërgua moderatorëve. Mos u largoni!",
+            "title": "Jeni një parës te takimi"
         },
         "waitingMessage": "Do të merrni pjesë në këta takim sapo të fillojë!"
     },
