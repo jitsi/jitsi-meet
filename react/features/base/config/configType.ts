@@ -637,13 +637,13 @@ export interface IConfig {
     transcription?: {
         autoCaptionOnTranscribe?: boolean;
         autoTranscribeOnRecord?: boolean;
+        customLanguages?: object;
         disableClosedCaptions?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
         translationLanguages?: Array<string>;
         translationLanguagesHead?: Array<string>;
         useAppLanguage?: boolean;
-        customLanguages?:object
     };
     useHostPageLocalStorage?: boolean;
     useTurnUdp?: boolean;
