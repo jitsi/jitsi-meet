@@ -7,7 +7,7 @@ import { LOBBY_CHAT_INITIALIZED } from '../lobby/constants';
 import {
     ADD_MESSAGE,
     ADD_MESSAGE_REACTION,
-    CLEAR_MESSAGES,
+    CLEAR_CHAT_STATE,
     CLOSE_CHAT,
     EDIT_MESSAGE,
     NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
@@ -93,15 +93,15 @@ export function editMessage(message: Object) {
 }
 
 /**
- * Clears the chat messages in Redux.
+ * Clears the chat features state from Redux.
  *
  * @returns {{
- *     type: CLEAR_MESSAGES
+ *     type: CLEAR_CHAT_STATE
  * }}
  */
-export function clearMessages() {
+export function clearChatState() {
     return {
-        type: CLEAR_MESSAGES
+        type: CLEAR_CHAT_STATE
     };
 }
 
