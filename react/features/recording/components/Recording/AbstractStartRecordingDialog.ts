@@ -5,6 +5,8 @@ import { createRecordingDialogEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
+import { MEET_FEATURES } from '../../../base/jwt/constants';
+import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { updateDropboxToken } from '../../../dropbox/actions';
 import { getDropboxData, getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropbox/functions.any';
@@ -480,7 +482,9 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
         _isDropboxEnabled: isDropboxEnabled(state),
         _localRecordingEnabled: !localRecording?.disable,
         _rToken: state['features/dropbox'].rToken ?? '',
-        recordAudioAndVideo: _ownProps.recordAudioAndVideo ?? recordings?.recordAudioAndVideo ?? true,
+        recordAudioAndVideo:
+            isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false)
+                ? _ownProps.recordAudioAndVideo ?? recordings?.recordAudioAndVideo ?? true : false,
         _subtitlesLanguage,
         _tokenExpireDate: state['features/dropbox'].expireDate,
         _token: state['features/dropbox'].token ?? ''
