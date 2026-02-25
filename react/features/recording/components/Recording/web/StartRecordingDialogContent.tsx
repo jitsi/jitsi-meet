@@ -107,7 +107,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         }
 
         const { showAdvancedOptions } = this.state;
-        const { shouldRecordAudioAndVideo, shouldRecordTranscription, t } = this.props;
+        const { _renderRecording, shouldRecordAudioAndVideo, shouldRecordTranscription, t } = this.props;
 
         return (
             <>
@@ -139,18 +139,20 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                                 id = 'recording-switch-transcription'
                                 onChange = { this._onTranscriptionSwitchChange } />
                         </div>
-                        <div className = 'recording-header space-top'>
-                            <label
-                                className = 'recording-title'
-                                htmlFor = 'recording-switch-audio-video'>
-                                { t('recording.recordAudioAndVideo') }
-                            </label>
-                            <Switch
-                                checked = { shouldRecordAudioAndVideo }
-                                className = 'recording-switch'
-                                id = 'recording-switch-audio-video'
-                                onChange = { this._onRecordAudioAndVideoSwitchChange } />
-                        </div>
+                        {_renderRecording && (
+                            <div className = 'recording-header space-top'>
+                                <label
+                                    className = 'recording-title'
+                                    htmlFor = 'recording-switch-audio-video'>
+                                    { t('recording.recordAudioAndVideo') }
+                                </label>
+                                <Switch
+                                    checked = { shouldRecordAudioAndVideo }
+                                    className = 'recording-switch'
+                                    id = 'recording-switch-audio-video'
+                                    onChange = { this._onRecordAudioAndVideoSwitchChange } />
+                            </div>
+                        )}
                     </>
                 )}
             </>
