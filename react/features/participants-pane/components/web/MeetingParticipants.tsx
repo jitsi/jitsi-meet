@@ -89,9 +89,9 @@ function MeetingParticipants({
     const [ lowerMenu, , toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu<string>();
     const [ drawerParticipant, closeDrawer, openDrawerForParticipant ] = useParticipantDrawer();
 
-    // Translation strings are passed as props to avoid useTranslation in each child component.
-    // This, combined with virtualization in MeetingParticipantItems, ensures good performance
-    // even with 500+ participants.
+    // Where possible, translation strings are passed as props to reduce per-row useTranslation calls
+    // in child components. This, combined with virtualization in MeetingParticipantItems, helps ensure
+    // good performance even with 500+ participants.
     const participantActionEllipsisLabel = t('participantsPane.actions.moreParticipantOptions');
     const youText = t('chat.you');
     const isBreakoutRoom = useSelector(isInBreakoutRoom);

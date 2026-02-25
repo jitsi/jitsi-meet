@@ -1,6 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
+
+import { IReduxState } from '../../../app/types';
+import { participantMatchesSearch } from '../../functions';
 
 import MeetingParticipantItem from './MeetingParticipantItem';
 
@@ -93,18 +97,41 @@ function MeetingParticipantItems({
     searchString,
     youText
 }: IProps) {
+    // Get participants map from Redux state for filtering
+    const participants = useSelector((state: IReduxState) => state['features/base/participants']);
+
+    // Pre-filter participant IDs based on search string to avoid empty gaps in virtualized list.
+    // This is necessary because react-window reserves height for each item regardless of whether
+    // the component renders content or not.
+    const filteredParticipantIds = useMemo(() => {
+        if (!searchString) {
+            return participantIds;
+        }
+
+        return participantIds.filter(id => {
+            const participant = participants.get(id);
+
+            return participantMatchesSearch(participant, searchString);
+        });
+    }, [ participantIds, searchString, participants ]);
+
+    /**
+     * Returns the participant ID for a given index, used as itemKey for FixedSizeList.
+     * This ensures proper component state preservation when the list is reordered.
+     */
+    const getItemKey = useCallback((index: number) => filteredParticipantIds[index], [ filteredParticipantIds ]);
+
     /**
      * Renders a single participant row for the virtualized list.
      */
     const Row = useCallback(({ index, style }: ListChildComponentProps) => {
-        const id = participantIds[index];
+        const id = filteredParticipantIds[index];
 
         return (
             <div style = { style }>
                 <MeetingParticipantItem
                     isHighlighted = { raiseContextId === id }
                     isInBreakoutRoom = { isInBreakoutRoom }
-                    key = { id }
                     onContextMenu = { toggleMenu(id) }
                     onLeave = { lowerMenu }
                     openDrawerForParticipant = { openDrawerForParticipant }
@@ -116,7 +143,7 @@ function MeetingParticipantItems({
             </div>
         );
     }, [
-        participantIds,
+        filteredParticipantIds,
         raiseContextId,
         isInBreakoutRoom,
         toggleMenu,
@@ -135,10 +162,10 @@ function MeetingParticipantItems({
     };
 
     // For small lists (< 20 items), render without virtualization for simplicity
-    if (participantIds.length < 20) {
+    if (filteredParticipantIds.length < 20) {
         return (
             <>
-                {participantIds.map(id => (
+                {filteredParticipantIds.map(id => (
                     <MeetingParticipantItem
                         isHighlighted = { raiseContextId === id }
                         isInBreakoutRoom = { isInBreakoutRoom }
@@ -163,7 +190,8 @@ function MeetingParticipantItems({
                 {({ height, width }) => (
                     <FixedSizeList
                         height = { Math.max(height, 200) }
-                        itemCount = { participantIds.length }
+                        itemCount = { filteredParticipantIds.length }
+                        itemKey = { getItemKey }
                         itemSize = { PARTICIPANT_ITEM_HEIGHT }
                         style = { listStyle }
                         width = { width }>
