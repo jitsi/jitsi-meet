@@ -618,7 +618,6 @@ export interface IConfig {
     };
     tokenAuthInline?: boolean;
     tokenAuthUrl?: string;
-    tokenAuthUrlAutoRedirect?: string;
     tokenGetUserInfoOutOfContext?: boolean;
     tokenLogoutUrl?: string;
     tokenRespectTenant?: boolean;

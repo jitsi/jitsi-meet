@@ -1601,9 +1601,6 @@ var config = {
     //          - electron=true (when web is loaded in electron app)
     // If there is a logout service you can specify its URL with:
     // tokenLogoutUrl: 'https://myservice.com/logout'
-    // You can enable tokenAuthUrlAutoRedirect which will detect that you have logged in successfully before
-    // and will automatically redirect to the token service to get the token for the meeting.
-    // tokenAuthUrlAutoRedirect: false
     // An option to respect the context.tenant jwt field compared to the current tenant from the url
     // tokenRespectTenant: false,
     // An option to get for user info (name, picture, email) in the token outside the user context.
