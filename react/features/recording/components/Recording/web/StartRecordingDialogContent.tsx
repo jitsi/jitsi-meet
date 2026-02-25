@@ -38,12 +38,15 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      */
     override render() {
         const {
+            _canStartTranscribing,
             _localRecordingAvailable,
             _renderRecording,
             integrationsEnabled,
             t
         } = this.props;
-        const noServiceAvailable = !_renderRecording && !_localRecordingAvailable && !integrationsEnabled;
+        const hasRecordingService = _renderRecording || _localRecordingAvailable || integrationsEnabled;
+        const noServiceAvailable = !hasRecordingService && !_canStartTranscribing;
+        const transcriptionOnly = !hasRecordingService && _canStartTranscribing;
 
         return (
             <Container className = 'recording-dialog'>
@@ -68,8 +71,34 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                     </>
                 )}
                 { this._renderLocalRecordingContent() }
-                { (_renderRecording || this.props._localRecordingAvailable) && <> { this._renderAdvancedOptions() } </> }
+                { transcriptionOnly && this._renderTranscriptionOnly() }
+                { hasRecordingService && <> { this._renderAdvancedOptions() } </> }
             </Container>
+        );
+    }
+
+    /**
+     * Renders the transcription toggle directly when no recording service
+     * is available but transcription is.
+     *
+     * @returns {React$Component}
+     */
+    _renderTranscriptionOnly() {
+        const { shouldRecordTranscription, t } = this.props;
+
+        return (
+            <div className = 'recording-header'>
+                <label
+                    className = 'recording-title-no-space'
+                    htmlFor = 'recording-switch-transcription'>
+                    { t('recording.recordTranscription') }
+                </label>
+                <Switch
+                    checked = { shouldRecordTranscription }
+                    className = 'recording-switch'
+                    id = 'recording-switch-transcription'
+                    onChange = { this._onTranscriptionSwitchChange } />
+            </div>
         );
     }
 
@@ -79,11 +108,15 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     _renderAdvancedOptions() {
+        if (!this._canStartTranscribing()) {
+            return null;
+        }
         const { selectedRecordingService } = this.props;
+        const validService = selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE
+            || selectedRecordingService === RECORDING_TYPES.LOCAL
+            || !selectedRecordingService;
 
-        if ((selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE
-                && selectedRecordingService !== RECORDING_TYPES.LOCAL)
-            || !this._canStartTranscribing()) {
+        if (!validService) {
             return null;
         }
 
