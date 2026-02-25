@@ -42,6 +42,12 @@ const useStyles = makeStyles()(theme => {
                 textAlign: 'center',
                 paddingRight: '16px'
             }
+        },
+
+        listContainer: {
+            flex: 1,
+            minHeight: '200px',
+            maxHeight: '100%'
         }
     };
 });
@@ -83,12 +89,9 @@ function MeetingParticipants({
     const [ lowerMenu, , toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu<string>();
     const [ drawerParticipant, closeDrawer, openDrawerForParticipant ] = useParticipantDrawer();
 
-    // FIXME:
-    // It seems that useTranslation is not very scalable. Unmount 500 components that have the useTranslation hook is
-    // taking more than 10s. To workaround the issue we need to pass the texts as props. This is temporary and dirty
-    // solution!!!
-    // One potential proper fix would be to use react-window component in order to lower the number of components
-    // mounted.
+    // Translation strings are passed as props to avoid useTranslation in each child component.
+    // This, combined with virtualization in MeetingParticipantItems, ensures good performance
+    // even with 500+ participants.
     const participantActionEllipsisLabel = t('participantsPane.actions.moreParticipantOptions');
     const youText = t('chat.you');
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
@@ -123,7 +126,7 @@ function MeetingParticipants({
                 onChange = { setSearchString }
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />
-            <div>
+            <div className = { styles.listContainer }>
                 <MeetingParticipantItems
                     isInBreakoutRoom = { isBreakoutRoom }
                     lowerMenu = { lowerMenu }
