@@ -126,7 +126,7 @@
         "messagebox": "Typ een bericht",
         "newMessages": "Nieuwe berichten",
         "nickname": {
-            "featureChat": "chat",
+            "featureChat": "gesprek",
             "featureClosedCaptions": "ondertiteling",
             "featureFileSharing": "bestandsdeling",
             "featurePolls": "peilingen",
@@ -734,7 +734,7 @@
     },
     "lobby": {
         "backToKnockModeButton": "Vraag om deel te mogen nemen",
-        "chat": "Chat",
+        "chat": "Gesprek",
         "dialogTitle": "Wachtruimte-modus",
         "disableDialogContent": "Wachtruimte-modus is momenteel ingeschakeld. Deze functie zorgt ervoor dat ongewenste deelnemers niet aan uw vergadering kunnen deelnemen. Wilt u het uitschakelen?",
         "disableDialogSubmit": "Uitschakelen",
@@ -1107,7 +1107,7 @@
         },
         "type": {
             "account": "Account",
-            "contact": "Contact",
+            "contact": "Contactpersoon",
             "lead": "Potentiële klant",
             "opportunity": "Kans",
             "owner": "Eigenaar"
@@ -1279,7 +1279,7 @@
         "displayEmotions": "Emoties weergeven",
         "fearful": "Angstig",
         "happy": "Blij",
-        "hours": "{{count}}h",
+        "hours": "{{count}}u",
         "labelTooltip": "Aantal deelnemers: {{count}}",
         "minutes": "{{count}}m",
         "name": "Naam",
