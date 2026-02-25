@@ -643,6 +643,7 @@ export interface IConfig {
         translationLanguages?: Array<string>;
         translationLanguagesHead?: Array<string>;
         useAppLanguage?: boolean;
+        customLanguages?:object
     };
     useHostPageLocalStorage?: boolean;
     useTurnUdp?: boolean;
