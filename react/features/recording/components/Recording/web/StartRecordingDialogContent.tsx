@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
-import { IconArrowDown, IconArrowRight, IconWarning } from '../../../../base/icons/svg';
+import { IconArrowDown, IconArrowRight } from '../../../../base/icons/svg';
 import Container from '../../../../base/react/components/web/Container';
 import Image from '../../../../base/react/components/web/Image';
 import LoadingIndicator from '../../../../base/react/components/web/LoadingIndicator';
@@ -41,27 +41,13 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
             _canStartTranscribing,
             _localRecordingAvailable,
             _renderRecording,
-            integrationsEnabled,
-            t
+            integrationsEnabled
         } = this.props;
         const hasRecordingService = _renderRecording || _localRecordingAvailable || integrationsEnabled;
-        const noServiceAvailable = !hasRecordingService && !_canStartTranscribing;
         const transcriptionOnly = !hasRecordingService && _canStartTranscribing;
 
         return (
             <Container className = 'recording-dialog'>
-                { noServiceAvailable && (
-                    <div className = 'recording-no-service'>
-                        <Icon
-                            className = 'recording-no-service-icon'
-                            color = '#F8AE1A'
-                            size = { 20 }
-                            src = { IconWarning } />
-                        <Text>
-                            { t('recording.noRecordingServiceAvailable') }
-                        </Text>
-                    </div>
-                )}
                 { _renderRecording && (
                     <>
                         { this._renderNoIntegrationsContent() }
