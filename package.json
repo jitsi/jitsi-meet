@@ -204,6 +204,9 @@
     "npm": ">=10.0.0"
   },
   "license": "Apache-2.0",
+  "overrides": {
+    "zip-stream": "7.0.2"
+  },
   "scripts": {
     "lint": "eslint --ext .js,.ts,.tsx --max-warnings 0 . && tsc --noEmit",
     "tsc:web": "tsc --noEmit --project tsconfig.web.json",
