@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
+import { openSheet } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
 import Linkify from '../../../base/react/components/native/Linkify';
 import { isGifEnabled, isGifMessage } from '../../../gifs/functions.native';
@@ -18,6 +19,7 @@ import {
 } from '../../functions';
 import { IChatMessageProps } from '../../types';
 
+import ChatMessageMenu from './ChatMessageMenu.native';
 import GifMessage from './GifMessage';
 import PrivateMessageButton from './PrivateMessageButton';
 import styles from './styles';
@@ -150,6 +152,7 @@ class ChatMessage extends Component<IChatMessageProps> {
             return (
                 <Text
                     selectable = { true }
+                    onLongPress={ this._onLongPress }
                     style = { styles.chatMessage }>
                     { messageText }
                 </Text>
@@ -159,11 +162,24 @@ class ChatMessage extends Component<IChatMessageProps> {
         return (
             <Linkify
                 linkStyle = { styles.chatLink }
+                onLongPress = { this._onLongPress }
                 style = { styles.chatMessage }>
                 { replaceNonUnicodeEmojis(messageText) }
             </Linkify>
         );
     }
+
+    /**
+     * Handles the list's navigate action.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onLongPress = () => {
+        const { dispatch, message } = this.props;
+
+        dispatch?.(openSheet(ChatMessageMenu, { message }));
+    };
 
     /**
      * Renders the message privacy notice, if necessary.
