@@ -59,7 +59,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
             ...this.state,
 
             generateRoomNames:
-                interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE
+                interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE,
+            isSubmitted: false
         };
 
         /**
@@ -251,6 +252,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                     aria-label = 'Start meeting'
                                     className = 'welcome-page-button'
                                     id = 'enter_room_button'
+                                    disabled={this.state.isSubmitted}
                                     onClick = { this._onFormSubmit }
                                     tabIndex = { 0 }
                                     type = 'button'>
@@ -329,6 +331,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      */
     _onFormSubmit(event: React.FormEvent) {
         event.preventDefault();
+        this.setState({ isSubmitted: true }); // prevent multiple submissions
 
         if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
             this._onJoin();
