@@ -51,7 +51,7 @@ import {
 import {
     addMessage,
     addMessageReaction,
-    clearMessages,
+    clearChatState,
     closeChat,
     notifyPrivateRecipientsChanged,
     openChat,
@@ -352,7 +352,7 @@ StateListenerRegistry.register(
             }
 
             // Clear chat messages.
-            dispatch(clearMessages());
+            dispatch(clearChatState());
         }
     });
 
