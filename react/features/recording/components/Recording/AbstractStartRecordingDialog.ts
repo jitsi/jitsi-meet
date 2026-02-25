@@ -173,10 +173,8 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
 
         let selectedRecordingService = '';
 
-        // TODO: Potentially check if we need to handle changes of
-        // _fileRecordingsServiceEnabled and _areIntegrationsEnabled()
-        if (this.props._fileRecordingsServiceEnabled
-                || !this._areIntegrationsEnabled()) {
+        // Select the default recording service based on what's actually available.
+        if (this.props._fileRecordingsServiceEnabled) {
             selectedRecordingService = RECORDING_TYPES.JITSI_REC_SERVICE;
         } else if (this._areIntegrationsEnabled()) {
             if (props._localRecordingEnabled && supportsLocalRecording()) {
@@ -184,7 +182,12 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             } else {
                 selectedRecordingService = RECORDING_TYPES.DROPBOX;
             }
+        } else if (props._localRecordingEnabled && supportsLocalRecording()) {
+            selectedRecordingService = RECORDING_TYPES.LOCAL;
         }
+        // If no service is available, selectedRecordingService stays '' and
+        // the Start Recording button will be disabled.
+
 
         this.state = {
             isTokenValid: false,
