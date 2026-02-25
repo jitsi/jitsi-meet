@@ -201,7 +201,8 @@ export function canStopRecording(state: IReduxState) {
     }
 
     if (isCloudRecordingRunning(state) || isRecorderTranscriptionsRunning(state)) {
-        return isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false);
+        return isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false)
+            || isJwtFeatureEnabled(state, MEET_FEATURES.TRANSCRIPTION, false);
     }
 
     return false;
