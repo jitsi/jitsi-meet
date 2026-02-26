@@ -267,6 +267,12 @@ export default {
         ...BaseTheme.typography.bodyShortRegular,
         color: BaseTheme.palette.text01,
         flex: 1
+    },
+
+    seeMoreClickableText: {
+        ...BaseTheme.typography.bodyShortRegular,
+        color: BaseTheme.palette.link01,
+        fontWeight: 'bold'
     }
 };
 
