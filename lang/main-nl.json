@@ -1145,7 +1145,6 @@
         "localRecordingWarning": "Zorg ervoor dat u het huidige tabblad selecteert om de juiste video en audio te gebruiken.",
         "loggedIn": "Aangemeld als {{userName}}",
         "noMicPermission": "Microfoontrack kon niet worden gemaakt. Geef toestemming om de microfoon te gebruiken.",
-        "noStreams": "Geen audio - of videostream gedetecteerd.",
         "off": "Opname gestopt",
         "offBy": "{{name}} heeft de opname gestopt",
         "on": "Opnemen",
