@@ -172,3 +172,13 @@ export const SET_CHAT_IS_RESIZING = 'SET_CHAT_IS_RESIZING';
   * }
   */
  export const NOTIFY_PRIVATE_RECIPIENTS_CHANGED = 'NOTIFY_PRIVATE_RECIPIENTS_CHANGED';
+
+/**
+ * The type of action which sets the chat search string.
+ *
+ * {
+ *     type: SET_CHAT_SEARCH_STRING,
+ *     searchString: string
+ * }
+ */
+export const SET_CHAT_SEARCH_STRING = 'SET_CHAT_SEARCH_STRING';

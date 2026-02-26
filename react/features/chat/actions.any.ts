@@ -15,6 +15,7 @@ import {
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SEND_MESSAGE,
     SEND_REACTION,
+    SET_CHAT_SEARCH_STRING,
     SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
@@ -313,6 +314,22 @@ export function notifyPrivateRecipientsChanged() {
             type: NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
             payload: timestamp
         });
+    };
+}
+
+/**
+ * Sets the chat search string for filtering messages.
+ *
+ * @param {string} searchString - The search string to filter messages.
+ * @returns {{
+ *     type: SET_CHAT_SEARCH_STRING,
+ *     searchString: string
+ * }}
+ */
+export function setChatSearchString(searchString: string) {
+    return {
+        type: SET_CHAT_SEARCH_STRING,
+        searchString
     };
 }
 
