@@ -59,8 +59,5 @@ do
 done
 
 # Restart all prosody visitor instances
-for (( i=1 ; i<=${NUMBER_OF_INSTANCES} ; i++ ));
-do
-  systemctl restart prosody-v@${i}.service
-done
+systemctl restart prosody-v@*
 systemctl restart jicofo
