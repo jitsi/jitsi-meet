@@ -32,7 +32,10 @@ buildscript {
         googleServicesEnabled = project.file('app/google-services.json').exists() && !libreBuild
 
         //React Native and Hermes Version
-        rnVersion = "0.79.7"
+        rnVersion = "0.83.0"
+        // Hermes has its own version, decoupled from RN since 0.76.
+        // Source: node_modules/react-native/sdks/hermes-engine/version.properties
+        hermesVersion = "0.14.0"
 
         // Java dependencies
         javaVersion = JavaVersion.VERSION_17
