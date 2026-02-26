@@ -1,4 +1,4 @@
-import { ComponentType } from 'react';
+import { ComponentType } from "react";
 
 export interface IToolboxButton {
     Content: ComponentType<any>;
@@ -16,51 +16,53 @@ export interface IToolboxNativeButton {
     text?: string;
 }
 
-export type ToolbarButton = 'camera' |
-    'chat' |
-    'closedcaptions' |
-    'custom-panel' |
-    'desktop' |
-    'download' |
-    'embedmeeting' |
-    'etherpad' |
-    'feedback' |
-    'filesharing' |
-    'filmstrip' |
-    'fullscreen' |
-    'hangup' |
-    'help' |
-    'highlight' |
-    'invite' |
-    'linktosalesforce' |
-    'livestreaming' |
-    'microphone' |
-    'mute-everyone' |
-    'mute-video-everyone' |
-    'noisesuppression' |
-    'overflowmenu' |
-    'participants-pane' |
-    'polls' |
-    'profile' |
-    'raisehand' |
-    'reactions' |
-    'recording' |
-    'security' |
-    'select-background' |
-    'settings' |
-    'shareaudio' |
-    'sharedvideo' |
-    'shortcuts' |
-    'stats' |
-    'tileview' |
-    'toggle-camera' |
-    'videoquality' |
-    'whiteboard' |
-    '__end';
+export type ToolbarButton =
+    | "camera"
+    | "chat"
+    | "closedcaptions"
+    | "custom-panel"
+    | "desktop"
+    | "document-pip"
+    | "download"
+    | "embedmeeting"
+    | "etherpad"
+    | "feedback"
+    | "filesharing"
+    | "filmstrip"
+    | "fullscreen"
+    | "hangup"
+    | "help"
+    | "highlight"
+    | "invite"
+    | "linktosalesforce"
+    | "livestreaming"
+    | "microphone"
+    | "mute-everyone"
+    | "mute-video-everyone"
+    | "noisesuppression"
+    | "overflowmenu"
+    | "participants-pane"
+    | "polls"
+    | "profile"
+    | "raisehand"
+    | "reactions"
+    | "recording"
+    | "security"
+    | "select-background"
+    | "settings"
+    | "shareaudio"
+    | "sharedvideo"
+    | "shortcuts"
+    | "stats"
+    | "tileview"
+    | "toggle-camera"
+    | "videoquality"
+    | "whiteboard"
+    | "__end";
 
 export enum NOTIFY_CLICK_MODE {
-    ONLY_NOTIFY = 'ONLY_NOTIFY',
-    PREVENT_AND_NOTIFY = 'PREVENT_AND_NOTIFY'
+    ONLY_NOTIFY = "ONLY_NOTIFY",
+    PREVENT_AND_NOTIFY = "PREVENT_AND_NOTIFY",
 }
 
 export type IMainToolbarButtonThresholds = Array<{
@@ -83,17 +85,18 @@ export interface ICustomToolbarButton {
     text: string;
 }
 
-export type NativeToolbarButton = 'camera' |
-    'chat' |
-    'microphone' |
-    'raisehand' |
-    'desktop' |
-    'tileview' |
-    'overflowmenu' |
-    'hangup';
+export type NativeToolbarButton =
+    | "camera"
+    | "chat"
+    | "microphone"
+    | "raisehand"
+    | "desktop"
+    | "tileview"
+    | "overflowmenu"
+    | "hangup";
 
 export interface IGetVisibleNativeButtonsParams {
-    allButtons: { [key: string]: IToolboxNativeButton; };
+    allButtons: { [key: string]: IToolboxNativeButton };
     clientWidth: number;
     iAmVisitor: boolean;
     mainToolbarButtonsThresholds: IMainToolbarButtonThresholds;
@@ -101,7 +104,7 @@ export interface IGetVisibleNativeButtonsParams {
 }
 
 export interface IGetVisibleButtonsParams {
-    allButtons: { [key: string]: IToolboxButton; };
+    allButtons: { [key: string]: IToolboxButton };
     buttonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>;
     clientWidth: number;
     jwtDisabledButtons: string[];
@@ -110,7 +113,7 @@ export interface IGetVisibleButtonsParams {
 }
 
 export interface IGetVisibleButtonsForReducedUIParams {
-    allButtons: { [key: string]: IToolboxButton; };
+    allButtons: { [key: string]: IToolboxButton };
     buttonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>;
     jwtDisabledButtons: string[];
     reducedUImainToolbarButtons?: string[];

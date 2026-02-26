@@ -1,0 +1,108 @@
+.document-pip-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background: #1a1a2e;
+    overflow: hidden;
+    font-family:
+        "Inter",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.document-pip-video-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: #0f0f23;
+}
+
+.document-pip-video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.document-pip-no-video {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: #e0e0e0;
+    font-size: 14px;
+    gap: 8px;
+}
+
+.document-pip-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.document-pip-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.document-pip-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        transform 0.1s ease;
+    font-size: 16px;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.document-pip-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
+}
+
+.document-pip-btn:active {
+    transform: scale(0.95);
+}
+
+.document-pip-btn.muted {
+    background: #ef4444;
+}
+
+.document-pip-btn.muted:hover {
+    background: #dc2626;
+}
+
+.document-pip-btn.close-btn {
+    background: #ef4444;
+}
+
+.document-pip-btn.close-btn:hover {
+    background: #dc2626;
+}
