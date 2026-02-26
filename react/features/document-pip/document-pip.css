@@ -31,6 +31,10 @@
     object-fit: contain;
 }
 
+.document-pip-video.mirror {
+    transform: scaleX(-1);
+}
+
 .document-pip-no-video {
     display: flex;
     flex-direction: column;
@@ -80,6 +84,10 @@
     font-size: 16px;
     color: #ffffff;
     background: rgba(255, 255, 255, 0.15);
+}
+
+.document-pip-btn svg {
+    fill: #ffffff;
 }
 
 .document-pip-btn:hover {

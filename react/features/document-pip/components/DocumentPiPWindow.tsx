@@ -3,8 +3,10 @@ import { createPortal } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { IReduxState, IStore } from "../../app/types";
+import { IconMic, IconMicSlash, IconVideo, IconVideoOff, IconCloseLarge } from "../../base/icons/svg";
+import Icon from "../../base/icons/components/Icon";
 import { MEDIA_TYPE } from "../../base/media/constants";
-import { getParticipantDisplayName } from "../../base/participants/functions";
+import { getLocalParticipant, getParticipantDisplayName } from "../../base/participants/functions";
 import { getTrackByMediaTypeAndParticipant } from "../../base/tracks/functions.any";
 import { isLocalTrackMuted } from "../../base/tracks/functions.any";
 import { handleToggleVideoMuted } from "../../toolbox/actions.any";
@@ -29,6 +31,7 @@ const DocumentPiPWindow: React.FC = () => {
     // Redux state
     const isActive = useSelector((state: IReduxState) => state["features/document-pip"]?.isActive);
     const largeVideoParticipant = useSelector(getLargeVideoParticipant);
+    const localParticipant = useSelector((state: IReduxState) => getLocalParticipant(state));
     const tracks = useSelector((state: IReduxState) => state["features/base/tracks"]);
     const audioMuted = useSelector((state: IReduxState) =>
         isLocalTrackMuted(state["features/base/tracks"], MEDIA_TYPE.AUDIO),
@@ -38,6 +41,7 @@ const DocumentPiPWindow: React.FC = () => {
     );
 
     const participantId = largeVideoParticipant?.id;
+    const isLocalVideo = participantId === localParticipant?.id;
     const displayName = useSelector((state: IReduxState) =>
         participantId ? getParticipantDisplayName(state, participantId) : "Participant",
     );
@@ -118,17 +122,14 @@ const DocumentPiPWindow: React.FC = () => {
               .substring(0, 2)
         : "?";
 
+    // Mirror local video to match the main Jitsi self-view.
+    const videoClassName = `document-pip-video${isLocalVideo ? " mirror" : ""}`;
+
     return createPortal(
         <div className="document-pip-container">
             <div className="document-pip-video-wrapper">
                 {hasVideo ? (
-                    <video
-                        autoPlay={true}
-                        className="document-pip-video"
-                        muted={true}
-                        playsInline={true}
-                        ref={videoRef}
-                    />
+                    <video autoPlay={true} className={videoClassName} muted={true} playsInline={true} ref={videoRef} />
                 ) : (
                     <div className="document-pip-no-video">
                         <div className="document-pip-avatar">{initials}</div>
@@ -142,17 +143,17 @@ const DocumentPiPWindow: React.FC = () => {
                     onClick={onToggleAudio}
                     title={audioMuted ? "Unmute audio" : "Mute audio"}
                 >
-                    {audioMuted ? "🔇" : "🎤"}
+                    <Icon size={20} src={audioMuted ? IconMicSlash : IconMic} />
                 </button>
                 <button
                     className={`document-pip-btn ${videoMuted ? "muted" : ""}`}
                     onClick={onToggleVideo}
                     title={videoMuted ? "Start video" : "Stop video"}
                 >
-                    {videoMuted ? "📷" : "🎥"}
+                    <Icon size={20} src={videoMuted ? IconVideoOff : IconVideo} />
                 </button>
                 <button className="document-pip-btn close-btn" onClick={onClose} title="Close PiP">
-                    ✕
+                    <Icon size={20} src={IconCloseLarge} />
                 </button>
             </div>
         </div>,
