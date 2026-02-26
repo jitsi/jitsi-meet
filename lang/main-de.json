@@ -383,6 +383,8 @@
         "lockRoom": "Konferenz$t(lockRoomPassword) hinzufügen",
         "lockTitle": "Sperren fehlgeschlagen",
         "login": "Anmelden",
+        "loginFailed": "Anmeldung fehlgeschlagen.",
+        "loginOnResume": "Ihre Anmeldung ist abgelaufen. Sie müssen sich neu anmelden um weiter an der Konferenz teilzunehmen.",
         "loginQuestion": "Sind Sie sicher, dass sie sich anmelden und die Konferenz verlassen möchten?",
         "logoutQuestion": "Sind Sie sicher, dass Sie sich abmelden und die Konferenz verlassen möchten?",
         "logoutTitle": "Abmelden",
