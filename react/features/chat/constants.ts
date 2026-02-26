@@ -6,7 +6,7 @@ export const CHAR_LIMIT = 500;
 /**
  * The initial size of the chat.
  */
-export const CHAT_SIZE = 315;
+export const CHAT_SIZE = 420;
 
 /**
  * The audio ID of the audio element for which the {@link playAudio} action is
