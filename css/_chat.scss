@@ -218,3 +218,25 @@
     background: #36383C;
     border-radius: 3px;
 }
+
+.chat-header-search {
+    display: flex;
+    align-items: center;
+    margin-right: 8px;
+
+    .chat-search-input {
+        width: 150px;
+        font-size: 14px;
+    }
+}
+
+.chat-no-search-results {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #A4B8D1;
+    font-size: 14px;
+    text-align: center;
+    padding: 16px;
+}

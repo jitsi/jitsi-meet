@@ -1,13 +1,15 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Icon from '../../../base/icons/components/Icon';
-import { IconCloseLarge } from '../../../base/icons/svg';
+import { IconCloseLarge, IconSearch } from '../../../base/icons/svg';
+import Input from '../../../base/ui/components/web/Input';
 import { isFileSharingEnabled } from '../../../file-sharing/functions.any';
-import { toggleChat } from '../../actions.web';
+import { setChatSearchString, toggleChat } from '../../actions.web';
 import { ChatTabs } from '../../constants';
 import { getFocusedTab, isChatDisabled } from '../../functions';
+import { IReduxState } from '../../../app/types';
 
 interface IProps {
 
@@ -43,6 +45,8 @@ function ChatHeader({ className, isCCTabEnabled, isPollsEnabled }: IProps) {
     const _isChatDisabled = useSelector(isChatDisabled);
     const focusedTab = useSelector(getFocusedTab);
     const fileSharingTabEnabled = useSelector(isFileSharingEnabled);
+    const searchString = useSelector((state: IReduxState) => state['features/chat'].searchString);
+    const [ isSearchVisible, setIsSearchVisible ] = useState(false);
 
     const onCancel = useCallback(() => {
         dispatch(toggleChat());
@@ -53,6 +57,17 @@ function ChatHeader({ className, isCCTabEnabled, isPollsEnabled }: IProps) {
             e.preventDefault();
             onCancel();
         }
+    }, []);
+
+    const toggleSearch = useCallback(() => {
+        setIsSearchVisible(prev => !prev);
+        if (isSearchVisible) {
+            dispatch(setChatSearchString(''));
+        }
+    }, [ isSearchVisible ]);
+
+    const onSearchChange = useCallback((value: string) => {
+        dispatch(setChatSearchString(value));
     }, []);
 
     let title = 'chat.title';
@@ -80,6 +95,28 @@ function ChatHeader({ className, isCCTabEnabled, isPollsEnabled }: IProps) {
                 role = 'heading'>
                 { t(title) }
             </span>
+            {focusedTab === ChatTabs.CHAT && (
+                <div className = 'chat-header-search'>
+                    {isSearchVisible ? (
+                        <Input
+                            autoFocus = { true }
+                            className = 'chat-search-input'
+                            clearable = { true }
+                            id = 'chat-search'
+                            onChange = { onSearchChange }
+                            placeholder = { t('chat.searchPlaceholder') }
+                            value = { searchString }
+                        />
+                    ) : (
+                        <Icon
+                            ariaLabel = { t('chat.search') }
+                            onClick = { toggleSearch }
+                            role = 'button'
+                            src = { IconSearch }
+                            tabIndex = { 0 } />
+                    )}
+                </div>
+            )}
             <Icon
                 ariaLabel = { t('toolbar.closeChat') }
                 onClick = { onCancel }

@@ -14,6 +14,7 @@ import {
     OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SET_CHAT_IS_RESIZING,
+    SET_CHAT_SEARCH_STRING,
     SET_CHAT_WIDTH,
     SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
@@ -37,6 +38,7 @@ const DEFAULT_STATE = {
     isLobbyChatActive: false,
     focusedTab: undefined,
     isResizing: false,
+    searchString: '',
     width: {
         current: CHAT_SIZE,
         userSet: null
@@ -57,6 +59,7 @@ export interface IChatState {
     messages: IMessage[];
     notifyPrivateRecipientsChangedTimestamp?: number;
     privateMessageRecipient?: IParticipant | IVisitorChatParticipant;
+    searchString: string;
     unreadFilesCount: number;
     unreadMessagesCount: number;
     width: {
@@ -274,6 +277,12 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         return {
             ...state,
             notifyPrivateRecipientsChangedTimestamp: action.payload
+        };
+
+    case SET_CHAT_SEARCH_STRING:
+        return {
+            ...state,
+            searchString: action.searchString
         };
 
     case ADD_FILE:
