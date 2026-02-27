@@ -24,17 +24,17 @@ public class RNNewArchitectureFeatureFlags extends ReactNativeNewArchitectureFea
 
     @Override
     public boolean enableBridgelessArchitecture() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean enableFabricRenderer() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean useFabricInterop() {
-        return false;
+        return true;
     }
 
     @Override
@@ -44,11 +44,11 @@ public class RNNewArchitectureFeatureFlags extends ReactNativeNewArchitectureFea
 
     @Override
     public boolean useTurboModuleInterop() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean useTurboModules() {
-        return false;
+        return true;
     }
 }

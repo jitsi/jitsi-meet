@@ -22,6 +22,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.startup.Initializer;
 
+import com.facebook.react.ReactHost;
 import com.facebook.react.internal.featureflags.ReactNativeFeatureFlags;
 
 import com.facebook.soloader.SoLoader;
@@ -55,9 +56,13 @@ public class JitsiInitializer implements Initializer<Boolean> {
         // Register activity lifecycle handler for the orientation locker module.
         ((Application) context).registerActivityLifecycleCallbacks(OrientationActivityLifecycle.getInstance());
 
-        // Initialize ReactInstanceManager during application startup
-        // This ensures it's ready before any Activity onCreate is called
+        // Initialize ReactHost during application startup and start loading the JS bundle.
+        // This ensures it's ready before any Activity onCreate is called.
         ReactInstanceManagerHolder.initReactInstanceManager((Application) context);
+        ReactHost reactHost = ReactInstanceManagerHolder.getReactHost();
+        if (reactHost != null) {
+            reactHost.start();
+        }
 
         return true;
     }

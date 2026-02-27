@@ -75,6 +75,12 @@ allprojects {
                     if (details.requested.name == 'react-android') {
                         details.useVersion rootProject.ext.rnVersion
                     }
+                    // In RN 0.76+, Hermes moved to com.facebook.hermes group with independent
+                    // versioning. Some third-party RN modules still pull in the old
+                    // com.facebook.react:hermes-android transitively; redirect to the correct artifact.
+                    if (details.requested.name == 'hermes-android') {
+                        details.useTarget "com.facebook.hermes:hermes-android:$hermesVersion"
+                    }
                 }
             }
         }
