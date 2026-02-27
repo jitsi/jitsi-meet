@@ -23,9 +23,11 @@ export default {
         let locale;
 
         if (parts.length >= 3) {
-            locale = `${lang}${region}`;
+            // e.g. zh-Hans-CN (iOS) -> zh-CN
+            locale = `${lang}-${region}`;
         } else if (parts.length === 2) {
-            locale = `${lang}${regionOrScript}`;
+            // e.g. zh-CN (Android) -> zh-CN
+            locale = `${lang}-${regionOrScript}`;
         } else {
             locale = lang;
         }
