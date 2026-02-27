@@ -23,6 +23,12 @@ interface IProps {
      * The extra styles to be applied to text.
      */
     style?: StyleType;
+
+
+    /**
+     * Long press handler for text messages.
+     */
+    onLongPress?: (event: any) => void;
 }
 
 /**
@@ -51,6 +57,7 @@ export default class Linkify extends Component<IProps> {
                 componentDecorator = { this._componentDecorator }>
                 <Text
                     selectable = { true }
+                    onLongPress={ this.props.onLongPress }
                     style = { this.props.style }>
                     { this.props.children }
                 </Text>
