@@ -206,7 +206,15 @@ export function joinConference(options?: Object, ignoreJoiningInProgress = false
             dispatch(setJoiningInProgress(true));
         }
 
+        // FORCE camera & mic ON
+       options = {
+            ...(options || {}),
+            startWithAudioMuted: false,
+            startWithVideoMuted: false
+    };
+
         options && dispatch(updateConfig(options));
+        
 
         logger.info('Dispatching connect from joinConference.');
         dispatch(connect(jid, password))
@@ -258,10 +266,29 @@ export function joinConferenceWithoutAudio() {
         }
 
         logger.info('Dispatching joinConference action with startSilent=true from joinConferenceWithoutAudio.');
+        
+        const isWebOS =
+        navigator.userAgent.toLowerCase().includes('webos');
+
+        if (isWebOS && navigator.mediaDevices?.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true
+        }).catch(error => {
+            console.warn('WebOS permission request failed', error);
+        });
+    }
 
         dispatch(joinConference({
-            startSilent: true
+            // startSilent: true
+             startWithAudioMuted: false,
+            startWithVideoMuted: false
         }, true));
+
+
+
+
+        
     };
 }
 

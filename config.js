@@ -364,7 +364,30 @@ var config = {
 
     // Start calls with video muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
-    // startWithVideoMuted: false,
+    // var config = {
+
+    //  startWithVideoMuted: false,
+    //  startWithAudioMuted: false,
+    // }
+
+
+// config: {
+//     startWithAudioMuted: false,
+//     startWithVideoMuted: false,
+// }
+
+
+      
+            hosts: {
+                domain: 'localhost',
+                muc: 'conference.localhost'
+            },
+
+            startWithAudioMuted: false,
+            startWithVideoMuted: false,
+
+        };
+
 
     // Desktop sharing
 

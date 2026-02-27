@@ -1,5 +1,9 @@
 import i18n from 'i18next';
 import { AnyAction } from 'redux';
+import {
+    getLocalAudioTrack,
+    getLocalVideoTrack
+} from '../tracks/functions.web';
 
 // @ts-ignore
 import { MIN_ASSUMED_BANDWIDTH_BPS } from '../../../../modules/API/constants';
@@ -97,7 +101,24 @@ MiddlewareRegistry.register(store => next => action => {
         return _conferenceFailed(store, next, action);
 
     case CONFERENCE_JOINED:
-        return _conferenceJoined(store, next, action);
+          const state = store.getState();
+
+    const videoTrack =
+        getLocalVideoTrack(state['features/base/tracks']);
+
+    if (videoTrack && videoTrack.jitsiTrack?.isMuted()) {
+        videoTrack.jitsiTrack.unmute();
+    }
+
+    const audioTrack =
+        getLocalAudioTrack(state['features/base/tracks']);
+
+    if (audioTrack && audioTrack.jitsiTrack?.isMuted()) {
+        audioTrack.jitsiTrack.unmute();
+    }
+
+    break;
+        // return _conferenceJoined(store, next, action);
 
     case CONNECTION_ESTABLISHED:
         return _connectionEstablished(store, next, action);
