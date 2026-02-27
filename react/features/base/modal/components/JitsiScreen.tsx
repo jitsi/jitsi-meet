@@ -1,8 +1,9 @@
-import React from 'react';
-import { View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Keyboard, Platform, View } from 'react-native';
 import { Edge, SafeAreaView } from 'react-native-safe-area-context';
 
 import { StyleType } from '../../styles/functions.any';
+import BaseTheme from '../../ui/components/BaseTheme.native';
 
 import JitsiKeyboardAvoidingView from './JitsiKeyboardAvoidingView';
 import styles from './styles';
@@ -35,6 +36,11 @@ interface IProps {
     footerComponent?: Function;
 
     /**
+     * Extra bottom padding applied to the footer when keyboard is visible.
+     */
+    footerKeyboardSpacing?: number;
+
+    /**
      * Is a text input rendered at the bottom of the screen?
      */
     hasBottomTextInput?: boolean;
@@ -61,11 +67,27 @@ const JitsiScreen = ({
     children,
     disableForcedKeyboardDismiss = false,
     footerComponent,
+    footerKeyboardSpacing = BaseTheme.spacing[4],
     hasBottomTextInput = false,
     hasExtraHeaderHeight = false,
     safeAreaInsets = [ 'bottom', 'left', 'right' ],
     style
 }: IProps) => {
+    const [ keyboardVisible, setKeyboardVisible ] = useState(false);
+
+    useEffect(() => {
+        const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+        const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+        
+        const showSub = Keyboard.addListener(showEvent, () => setKeyboardVisible(true));
+        const hideSub = Keyboard.addListener(hideEvent, () => setKeyboardVisible(false));
+
+        return () => {
+            showSub.remove();
+            hideSub.remove();
+        };
+    }, []);
+
     const renderContent = () => (
         <JitsiKeyboardAvoidingView
             addBottomPadding = { addBottomPadding }
@@ -78,7 +100,11 @@ const JitsiScreen = ({
                 edges = { safeAreaInsets }
                 style = { styles.safeArea }>
                 { children }
-                { footerComponent?.() }
+                { footerComponent && (
+                    <View style = { keyboardVisible && { paddingBottom: footerKeyboardSpacing } }>
+                        { footerComponent() }
+                    </View>
+                ) }
             </SafeAreaView>
         </JitsiKeyboardAvoidingView>
     );
