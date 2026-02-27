@@ -13,6 +13,7 @@ import {
     NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
     OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
+    REMOVE_MESSAGE_REACTION,
     SET_CHAT_IS_RESIZING,
     SET_CHAT_WIDTH,
     SET_FOCUSED_TAB,
@@ -124,6 +125,41 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
                     participants.add(participantId);
                 });
+
+                return {
+                    ...message,
+                    reactions: newReactions
+                };
+            }
+
+            return message;
+        });
+
+        return {
+            ...state,
+            messages
+        };
+    }
+
+    case REMOVE_MESSAGE_REACTION: {
+        const { participantId, reaction, messageId } = action;
+
+        const messages = state.messages.map(message => {
+            if (messageId === message.messageId) {
+                const newReactions = new Map(message.reactions);
+                const participants = newReactions.get(reaction);
+
+                if (participants) {
+                    const newParticipants = new Set(participants);
+
+                    newParticipants.delete(participantId);
+
+                    if (newParticipants.size === 0) {
+                        newReactions.delete(reaction);
+                    } else {
+                        newReactions.set(reaction, newParticipants);
+                    }
+                }
 
                 return {
                     ...message,

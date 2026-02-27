@@ -13,6 +13,7 @@ import {
     NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
     OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
+    REMOVE_MESSAGE_REACTION,
     SEND_MESSAGE,
     SEND_REACTION,
     SET_FOCUSED_TAB,
@@ -71,6 +72,27 @@ export function addMessage(messageDetails: Object) {
 export function addMessageReaction(reactionDetails: Object) {
     return {
         type: ADD_MESSAGE_REACTION,
+        ...reactionDetails
+    };
+}
+
+/**
+ * Removes a reaction from a chat message.
+ *
+ * @param {Object} reactionDetails - The reaction to remove.
+ * @param {string} reactionDetails.participantId - The ID of the participant removing the reaction.
+ * @param {string} reactionDetails.reaction - The reaction emoji to remove.
+ * @param {string} reactionDetails.messageId - The message ID.
+ * @returns {{
+ *     type: REMOVE_MESSAGE_REACTION,
+ *     participantId: string,
+ *     reaction: string,
+ *     messageId: string
+ * }}
+ */
+export function removeMessageReaction(reactionDetails: Object) {
+    return {
+        type: REMOVE_MESSAGE_REACTION,
         ...reactionDetails
     };
 }
