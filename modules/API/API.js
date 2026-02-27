@@ -2325,6 +2325,7 @@ class API {
      * @returns {void}
      */
     notifyPictureInPictureRequested() {
+        logger.debug('Sending _pip-requested event to External API');
         this._sendEvent({
             name: '_pip-requested'
         });
@@ -2336,6 +2337,7 @@ class API {
      * @returns {void}
      */
     notifyPictureInPictureEntered() {
+        logger.debug('Sending pip-entered event to External API');
         this._sendEvent({
             name: 'pip-entered'
         });
@@ -2347,6 +2349,7 @@ class API {
      * @returns {void}
      */
     notifyPictureInPictureLeft() {
+        logger.debug('Sending pip-left event to External API');
         this._sendEvent({
             name: 'pip-left'
         });
