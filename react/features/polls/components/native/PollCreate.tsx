@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FlatList, SafeAreaView, TextInput, View, ViewStyle } from 'react-native';
+import { FlatList, Keyboard, Platform, SafeAreaView, TextInput, View, ViewStyle } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
@@ -11,6 +11,7 @@ import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
 import AbstractPollCreate, { AbstractProps } from '../AbstractPollCreate';
 
 import { dialogStyles, pollsStyles } from './styles';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 const PollCreate = (props: AbstractProps) => {
     const {
@@ -30,6 +31,20 @@ const PollCreate = (props: AbstractProps) => {
 
     const answerListRef = useRef<FlatList>(null);
     const dispatch = useDispatch();
+    const [ keyboardVisible, setKeyboardVisible ] = useState(false);
+
+    useEffect(() => {
+        if (Platform.OS !== 'android') {
+            return;
+        }
+        const showSub = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
+        const hideSub = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
+
+        return () => {
+            showSub.remove();
+            hideSub.remove();
+        };
+    }, []);
 
     /*
      * This ref stores the Array of answer input fields, allowing us to focus on them.
@@ -166,7 +181,9 @@ const PollCreate = (props: AbstractProps) => {
                     keyExtractor = { (item, index) => index.toString() }
                     ref = { answerListRef }
                     renderItem = { renderListItem } />
-                <View style = { pollsStyles.pollCreateButtonsContainer as ViewStyle }>
+                <View style = { [ 
+                    pollsStyles.pollCreateButtonsContainer as ViewStyle,
+                    keyboardVisible && { marginBottom: BaseTheme.spacing[8] } ] }>
                     <Button
                         accessibilityLabel = 'polls.create.addOption'
                         disabled = { answers.length >= ANSWERS_LIMIT }
