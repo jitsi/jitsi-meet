@@ -9,7 +9,7 @@ import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
 import i18next from '../base/i18n/i18next';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
-import { getParticipantById, isPrivateChatEnabled, getLocalParticipant, isLocalParticipantModerator} from '../base/participants/functions';
+import { getLocalParticipant, getParticipantById, isLocalParticipantModerator, isPrivateChatEnabled } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
 import { escapeRegexp } from '../base/util/helpers';
 import { arePollsDisabled } from '../conference/functions.any';
