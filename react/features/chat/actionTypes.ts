@@ -26,6 +26,18 @@ export const ADD_MESSAGE = 'ADD_MESSAGE';
 export const ADD_MESSAGE_REACTION = 'ADD_MESSAGE_REACTION';
 
 /**
+ * The type of the action that removes a reaction from a chat message.
+ *
+ * {
+ *     type: REMOVE_MESSAGE_REACTION,
+ *     reaction: string,
+ *     messageId: string,
+ *     participantId: string,
+ * }
+ */
+export const REMOVE_MESSAGE_REACTION = 'REMOVE_MESSAGE_REACTION';
+
+/**
  * The type of the action which signals to clear Redux.
  *
  * {

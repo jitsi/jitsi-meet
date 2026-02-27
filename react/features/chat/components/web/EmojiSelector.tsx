@@ -6,19 +6,28 @@ interface IProps {
     onSelect: (emoji: string) => void;
 }
 
+const EMOJIS = [ '👍', '👎', '❤️', '😂', '😮', '👋' ];
+
 const useStyles = makeStyles()((theme: Theme) => {
     return {
-        emojiGrid: {
+        container: {
             display: 'flex',
-            flexDirection: 'row',
-            borderRadius: '4px',
-            backgroundColor: theme.palette.chatInputBackground
+            alignItems: 'center',
+            gap: '2px'
         },
 
         emojiButton: {
+            background: 'none',
+            border: 'none',
             cursor: 'pointer',
-            padding: '5px',
-            fontSize: '1.5em'
+            fontSize: '1.2em',
+            padding: '3px',
+            borderRadius: '4px',
+
+            '&:hover': {
+                backgroundColor: theme.palette.action03,
+                transform: 'scale(1.2)'
+            }
         }
     };
 });
@@ -26,32 +35,22 @@ const useStyles = makeStyles()((theme: Theme) => {
 const EmojiSelector: React.FC<IProps> = ({ onSelect }) => {
     const { classes } = useStyles();
 
-    const emojiMap: Record<string, string> = {
-        thumbsUp: '👍',
-        redHeart: '❤️',
-        faceWithTearsOfJoy: '😂',
-        faceWithOpenMouth: '😮',
-        fire: '🔥'
-    };
-    const emojiNames = Object.keys(emojiMap);
-
     const handleSelect = useCallback(
-        (emoji: string) => (event: React.MouseEvent<HTMLSpanElement>) => {
-            event.preventDefault();
+        (emoji: string) => () => {
             onSelect(emoji);
         },
         [ onSelect ]
     );
 
     return (
-        <div className = { classes.emojiGrid }>
-            {emojiNames.map(name => (
-                <span
+        <div className = { classes.container }>
+            {EMOJIS.map(emoji => (
+                <button
                     className = { classes.emojiButton }
-                    key = { name }
-                    onClick = { handleSelect(emojiMap[name]) }>
-                    {emojiMap[name]}
-                </span>
+                    key = { emoji }
+                    onClick = { handleSelect(emoji) }>
+                    {emoji}
+                </button>
             ))}
         </div>
     );

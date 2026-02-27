@@ -55,6 +55,7 @@ import {
     closeChat,
     notifyPrivateRecipientsChanged,
     openChat,
+    removeMessageReaction,
     setPrivateMessageRecipient
 } from './actions';
 import { ChatPrivacyDialog } from './components';
@@ -315,6 +316,27 @@ MiddlewareRegistry.register(store => next => action => {
             const { reaction, messageId, receiverId } = action;
 
             conference.sendReaction(reaction, messageId, receiverId);
+
+            // Toggle locally: if already reacted, remove; otherwise add.
+            if (localParticipant?.id) {
+                const messages = state['features/chat'].messages;
+                const targetMsg = messages.find((m: any) => m.messageId === messageId);
+                const alreadyReacted = targetMsg?.reactions?.get(reaction)?.has(localParticipant.id);
+
+                if (alreadyReacted) {
+                    dispatch(removeMessageReaction({
+                        participantId: localParticipant.id,
+                        reaction,
+                        messageId
+                    }));
+                } else {
+                    dispatch(addMessageReaction({
+                        participantId: localParticipant.id,
+                        reactionList: [ reaction ],
+                        messageId
+                    }));
+                }
+            }
         }
         break;
     }
@@ -505,6 +527,14 @@ function _onConferenceMessageReceived(store: IStore,
  */
 function _onReactionReceived(store: IStore, { participantId, reactionList, messageId }: {
     messageId: string; participantId: string; reactionList: string[]; }) {
+
+    const state = store.getState();
+    const localParticipant = getLocalParticipant(state);
+
+    // Skip reactions from the local participant — already handled locally in SEND_REACTION.
+    if (localParticipant?.id === participantId) {
+        return;
+    }
 
     const reactionPayload = {
         participantId,

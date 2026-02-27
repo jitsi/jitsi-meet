@@ -1,15 +1,16 @@
 import { Theme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { getParticipantById, getParticipantDisplayName, isPrivateChatEnabled } from '../../../base/participants/functions';
+import { getLocalParticipant, getParticipantById, getParticipantDisplayName, isPrivateChatEnabled } from '../../../base/participants/functions';
 import Popover from '../../../base/popover/components/Popover.web';
 import Message from '../../../base/react/components/web/Message';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
 import { getDisplayNameSuffix, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage, isFileMessage } from '../../functions';
+import { sendReaction } from '../../actions.any';
 import { IChatMessageProps } from '../../types';
 
 import FileMessage from './FileMessage';
@@ -217,6 +218,8 @@ const ChatMessage = ({
     t
 }: IProps) => {
     const { classes, cx } = useStyles();
+    const dispatch = useDispatch();
+    const localParticipant = state ? getLocalParticipant(state) : undefined;
     const [ isHovered, setIsHovered ] = useState(false);
     const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
 
@@ -325,6 +328,8 @@ const ChatMessage = ({
             </div>
         );
 
+        const localId = localParticipant?.id;
+
         return (
             <Popover
                 content = { reactionsContent }
@@ -334,9 +339,30 @@ const ChatMessage = ({
                 trigger = 'hover'
                 visible = { isReactionsOpen }>
                 <div className = { classes.reactionBox }>
-                    {reactionsArray.slice(0, numReactionsDisplayed).map(({ reaction }, index) =>
-                        <p key = { index }>{reaction}</p>
-                    )}
+                    {reactionsArray.map(({ reaction, participants }) => {
+                        const iReacted = Boolean(localId && participants.has(localId));
+
+                        return (
+                            <button
+                                key = { reaction }
+                                onClick = { () => dispatch(sendReaction(reaction, message.messageId, '')) }
+                                style = { {
+                                    background: iReacted ? 'rgba(0,120,215,0.25)' : 'transparent',
+                                    border: iReacted ? '1px solid #0078d7' : '1px solid transparent',
+                                    borderRadius: '12px',
+                                    cursor: 'pointer',
+                                    padding: '2px 6px',
+                                    fontSize: '14px',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '3px',
+                                    color: 'inherit'
+                                } }>
+                                {reaction}
+                                <span style = { { fontSize: '11px' } }>{participants.size}</span>
+                            </button>
+                        );
+                    })}
                     {reactionsArray.length > numReactionsDisplayed && (
                         <p className = { classes.reactionCount }>
                             +{totalReactions - numReactionsDisplayed}
@@ -345,7 +371,7 @@ const ChatMessage = ({
                 </div>
             </Popover>
         );
-    }, [ message?.reactions, isHovered, isReactionsOpen ]);
+    }, [ message?.reactions, isHovered, isReactionsOpen, localParticipant?.id ]);
 
     return (
         <div
@@ -356,15 +382,25 @@ const ChatMessage = ({
             tabIndex = { -1 }>
             <div className = { classes.sideBySideContainer }>
                 {!shouldDisplayMenuOnRight && (
-                    <div className = { classes.optionsButtonContainer }>
-                        {isHovered && <MessageMenu
-                            displayName = { message.displayName }
-                            enablePrivateChat = { Boolean(enablePrivateChat) }
-                            isFileMessage = { isFileMessage(message) }
-                            isFromVisitor = { message.isFromVisitor }
-                            isLobbyMessage = { message.lobbyChat }
-                            message = { message.message }
-                            participantId = { message.participantId } />}
+                    <div className = { classes.sideBySideContainer }>
+                        <div className = { classes.optionsButtonContainer }>
+                            {isHovered && <MessageMenu
+                                displayName = { message.displayName }
+                                enablePrivateChat = { Boolean(enablePrivateChat) }
+                                isFileMessage = { isFileMessage(message) }
+                                isFromVisitor = { message.isFromVisitor }
+                                isLobbyMessage = { message.lobbyChat }
+                                message = { message.message }
+                                participantId = { message.participantId } />}
+                        </div>
+                        {!message.privateMessage && !message.lobbyChat
+                        && !message.isReaction && <div>
+                            <div className = { classes.optionsButtonContainer }>
+                                {isHovered && <ReactButton
+                                    messageId = { message.messageId }
+                                    receiverId = { '' } />}
+                            </div>
+                        </div>}
                     </div>
                 )}
                 <div
