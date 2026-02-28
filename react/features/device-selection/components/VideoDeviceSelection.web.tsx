@@ -112,6 +112,11 @@ interface IState {
      * The error message from trying to use a video input device.
      */
     previewVideoTrackError: string | null;
+
+    /**
+     * Whether camera permission is granted locally.
+     */
+    localHasVideoPermission: boolean | null;
 }
 
 const styles = (theme: Theme) => {
@@ -148,6 +153,15 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
     _unMounted: boolean;
 
     /**
+     * Stores the current camera permission status.
+     *
+     * This is used to track whether video permissions are granted, denied,
+     * or still unknown, so that the component can react correctly when the
+     * permission state changes.
+     */
+    _permissionStatus: PermissionStatus | null = null;
+
+    /**
      * Initializes a new DeviceSelection instance.
      *
      * @param {Object} props - The read-only React Component props with which
@@ -158,11 +172,14 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
 
         this.state = {
             previewVideoTrack: null,
-            previewVideoTrackError: null
+            previewVideoTrackError: null,
+            localHasVideoPermission: null
         };
-        this._unMounted = true;
 
+        this._unMounted = true;
         this._onFramerateItemSelect = this._onFramerateItemSelect.bind(this);
+        this._onPermissionChange = this._onPermissionChange.bind(this);
+
     }
 
     /**
@@ -172,10 +189,13 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      */
     override componentDidMount() {
         this._unMounted = false;
+
+        this._setupPermissionListener();
+
         Promise.all([
             this._createVideoInputTrack(this.props.selectedVideoInputId)
         ])
-        .catch(err => logger.warn('Failed to initialize preview tracks', err))
+            .catch(err => logger.warn('Failed to initialize preview tracks', err))
             .then(() => {
                 this.props.dispatch(getAvailableDevices());
             });
@@ -204,6 +224,54 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
     override componentWillUnmount() {
         this._unMounted = true;
         this._disposeVideoInputPreview();
+
+        if (this._permissionStatus) {
+            this._permissionStatus.removeEventListener('change', this._onPermissionChange);
+        }
+    }
+
+    /**
+     * Sets up listener for camera permission changes.
+     */
+    async _setupPermissionListener() {
+        try {
+            this._permissionStatus = await navigator.permissions.query({
+                name: 'camera' as PermissionName
+            });
+
+            this.setState({
+                localHasVideoPermission: this._permissionStatus.state === 'granted'
+            });
+
+            this._permissionStatus.addEventListener('change', this._onPermissionChange);
+        } catch (error) {
+            console.warn('[VideoDeviceSelection] Permissions API not supported:', error);
+        }
+    }
+
+    /**
+     * Called when camera permission changes.
+     */
+    _onPermissionChange() {
+        if (this._unMounted || !this._permissionStatus) {
+            return;
+        }
+
+        const isGranted = this._permissionStatus.state === 'granted';
+
+        this.setState({ localHasVideoPermission: isGranted });
+
+        if (isGranted) {
+            this._createVideoInputTrack(this.props.selectedVideoInputId);
+            this.props.dispatch(getAvailableDevices());
+        } else {
+            this._disposeVideoInputPreview().then(() => {
+                this.setState({
+                    previewVideoTrack: null,
+                    previewVideoTrackError: this.props.t('deviceSelection.previewUnavailable')
+                });
+            });
+        }
     }
 
     /**
@@ -313,10 +381,15 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      */
     _renderVideoSelector() {
         const { availableDevices, hasVideoPermission } = this.props;
+        const { localHasVideoPermission } = this.state;
+
+        const effectivePermission = localHasVideoPermission !== null
+            ? localHasVideoPermission
+            : hasVideoPermission;
 
         const videoConfig = {
             devices: availableDevices.videoInput,
-            hasPermission: hasVideoPermission,
+            hasPermission: effectivePermission,
             icon: 'icon-camera',
             isDisabled: this.props.disableVideoInputSelect || this.props.disableDeviceChange,
             key: 'videoInput',
