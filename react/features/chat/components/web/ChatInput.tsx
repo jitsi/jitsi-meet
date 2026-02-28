@@ -15,6 +15,28 @@ import { areSmileysDisabled, isSendGroupChatDisabled } from '../../functions';
 
 import SmileysPanel from './SmileysPanel';
 
+const SUPPORTED_LANGUAGES = [
+    'javascript',
+    'typescript',
+    'python',
+    'java',
+    'cpp',
+    'csharp',
+    'html',
+    'css',
+    'json',
+    'bash',
+    'shell',
+    'sql',
+    'go',
+    'rust',
+    'php',
+    'ruby',
+    'kotlin',
+    'swift',
+    'yaml',
+    'xml',
+];
 
 const styles = (_theme: Theme, { _chatWidth }: IProps) => {
     return {
@@ -37,11 +59,115 @@ const styles = (_theme: Theme, { _chatWidth }: IProps) => {
             }
         },
         chatDisabled: {
-            borderTop: `1px solid ${_theme.palette.chatInputBorder}`,
+            borderTop: `1px solid ${_theme.palette.ui02}`,
             boxSizing: 'border-box' as const,
             padding: _theme.spacing(4),
             textAlign: 'center' as const,
-        }
+        },
+        chatInputInner: {
+            position: 'relative' as const,
+        },
+        formattingToolbar: {
+            display: 'flex' as const,
+            flexDirection: 'row' as const,
+            gap: '4px',
+            paddingBottom: '4px',
+            paddingLeft: '2px',
+        },
+        formattingButton: {
+            background: 'transparent',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '4px',
+            color: 'rgba(255,255,255,0.7)',
+            cursor: 'pointer',
+            fontFamily: 'monospace',
+            fontSize: '12px',
+            fontWeight: 'bold' as const,
+            height: '24px',
+            minWidth: '28px',
+            padding: '0 6px',
+            transition: 'background 0.15s, color 0.15s',
+
+            '&:hover': {
+                background: 'rgba(255,255,255,0.15)',
+                color: '#fff',
+            }
+        },
+        formattingButtonItalic: {
+            fontStyle: 'italic',
+        },
+        codeZone: {
+            background: '#1e1e1e',
+            border: '1px solid #444',
+            borderRadius: '6px',
+            bottom: '100%',
+            boxSizing: 'border-box' as const,
+            left: '0',
+            marginBottom: '4px',
+            padding: '12px',
+            position: 'absolute' as const,
+            right: '0',
+            zIndex: 300,
+        },
+        codeZoneHeader: {
+            alignItems: 'center' as const,
+            display: 'flex' as const,
+            flexDirection: 'row' as const,
+            gap: '8px',
+            justifyContent: 'space-between' as const,
+            marginBottom: '8px',
+        },
+        codeZoneTitle: {
+            color: '#ccc',
+            fontSize: '13px',
+            fontWeight: 'bold' as const,
+        },
+        codeZoneControls: {
+            alignItems: 'center' as const,
+            display: 'flex' as const,
+            flexDirection: 'row' as const,
+            gap: '8px',
+        },
+        langSelect: {
+            background: '#2d2d2d',
+            border: '1px solid #555',
+            borderRadius: '4px',
+            color: '#ccc',
+            fontSize: '12px',
+            padding: '3px 6px',
+        },
+        closeButton: {
+            background: 'transparent',
+            border: 'none',
+            color: '#aaa',
+            cursor: 'pointer',
+            fontSize: '16px',
+            lineHeight: 1,
+            padding: '0 4px',
+
+            '&:hover': {
+                color: '#fff',
+            }
+        },
+        codeZoneTextarea: {
+            background: '#2d2d2d',
+            border: 'none',
+            borderRadius: '4px',
+            boxSizing: 'border-box' as const,
+            color: '#ccc',
+            fontFamily: 'monospace',
+            fontSize: '13px',
+            minHeight: '96px',
+            outline: 'none',
+            padding: '8px',
+            resize: 'vertical' as const,
+            width: '100%',
+        },
+        codeZoneFooter: {
+            display: 'flex' as const,
+            justifyContent: 'flex-end' as const,
+            marginTop: '8px',
+        },
     };
 };
 
@@ -90,9 +216,24 @@ interface IProps extends WithTranslation {
 interface IState {
 
     /**
+     * Content of the code zone textarea.
+     */
+    codeContent: string;
+
+    /**
+     * Currently selected language in the code zone.
+     */
+    codeLanguage: string;
+
+    /**
      * User provided nickname when the input text is provided in the view.
      */
     message: string;
+
+    /**
+     * Whether the code zone popup is visible.
+     */
+    showCodeZone: boolean;
 
     /**
      * Whether or not the smiley selector is visible.
@@ -109,7 +250,10 @@ class ChatInput extends Component<IProps, IState> {
     _textArea?: RefObject<HTMLTextAreaElement>;
 
     override state = {
+        codeContent: '',
+        codeLanguage: '',
         message: '',
+        showCodeZone: false,
         showSmileysPanel: false
     };
 
@@ -125,7 +269,17 @@ class ChatInput extends Component<IProps, IState> {
         this._textArea = React.createRef<HTMLTextAreaElement>();
 
         // Bind event handlers so they are only bound once for every instance.
+        this._insertCodeBlock = this._insertCodeBlock.bind(this);
+        this._insertFormatting = this._insertFormatting.bind(this);
+        this._onBoldClick = this._onBoldClick.bind(this);
+        this._onInsertCodeBlock = this._onInsertCodeBlock.bind(this);
+        this._onCloseCodeZone = this._onCloseCodeZone.bind(this);
+        this._onCodeBlockClick = this._onCodeBlockClick.bind(this);
+        this._onCodeContentChange = this._onCodeContentChange.bind(this);
+        this._onCodeLanguageChange = this._onCodeLanguageChange.bind(this);
         this._onDetectSubmit = this._onDetectSubmit.bind(this);
+        this._onInlineCodeClick = this._onInlineCodeClick.bind(this);
+        this._onItalicClick = this._onItalicClick.bind(this);
         this._onMessageChange = this._onMessageChange.bind(this);
         this._onSmileySelect = this._onSmileySelect.bind(this);
         this._onSubmitMessage = this._onSubmitMessage.bind(this);
@@ -175,19 +329,91 @@ class ChatInput extends Component<IProps, IState> {
             );
         }
 
+        const { codeContent, codeLanguage, showCodeZone } = this.state;
+
         return (
             <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
-                <div id = 'chat-input' >
+                <div
+                    className = { classes.chatInputInner }
+                    id = 'chat-input'>
                     {!this.props._areSmileysDisabled && this.state.showSmileysPanel && (
-                        <div
-                            className = 'smiley-input'>
-                            <div
-                                className = { classes.smileysPanel } >
+                        <div className = 'smiley-input'>
+                            <div className = { classes.smileysPanel }>
                                 <SmileysPanel
                                     onSmileySelect = { this._onSmileySelect } />
                             </div>
                         </div>
                     )}
+
+                    { showCodeZone && (
+                        <div className = { classes.codeZone }>
+                            <div className = { classes.codeZoneHeader }>
+                                <span className = { classes.codeZoneTitle }>Code Block</span>
+                                <div className = { classes.codeZoneControls }>
+                                    <select
+                                        className = { classes.langSelect }
+                                        onChange = { this._onCodeLanguageChange }
+                                        value = { codeLanguage }>
+                                        <option value = ''>Auto</option>
+                                        { SUPPORTED_LANGUAGES.map(lang => (
+                                            <option
+                                                key = { lang }
+                                                value = { lang }>
+                                                { lang }
+                                            </option>
+                                        )) }
+                                    </select>
+                                    <button
+                                        className = { classes.closeButton }
+                                        onClick = { this._onCloseCodeZone }
+                                        title = 'Close'>
+                                        &#x2715;
+                                    </button>
+                                </div>
+                            </div>
+                            <textarea
+                                className = { classes.codeZoneTextarea }
+                                onChange = { this._onCodeContentChange }
+                                placeholder = 'Paste or type your code here...'
+                                rows = { 4 }
+                                value = { codeContent } />
+                            <div className = { classes.codeZoneFooter }>
+                                <Button
+                                    accessibilityLabel = 'Insert into chat'
+                                    label = 'Insert into chat'
+                                    onClick = { this._onInsertCodeBlock }
+                                    size = 'medium' />
+                            </div>
+                        </div>
+                    ) }
+
+                    <div className = { classes.formattingToolbar }>
+                        <button
+                            className = { classes.formattingButton }
+                            onClick = { this._onBoldClick }
+                            title = 'Bold'>
+                            B
+                        </button>
+                        <button
+                            className = { `${classes.formattingButton} ${classes.formattingButtonItalic}` }
+                            onClick = { this._onItalicClick }
+                            title = 'Italic'>
+                            I
+                        </button>
+                        <button
+                            className = { classes.formattingButton }
+                            onClick = { this._onInlineCodeClick }
+                            title = 'Inline code'>
+                            {'</>'}
+                        </button>
+                        <button
+                            className = { classes.formattingButton }
+                            onClick = { this._onCodeBlockClick }
+                            title = 'Code block'>
+                            {'```'}
+                        </button>
+                    </div>
+
                     <Input
                         className = 'chat-input'
                         icon = { this.props._areSmileysDisabled ? undefined : IconFaceSmile }
@@ -222,35 +448,122 @@ class ChatInput extends Component<IProps, IState> {
     }
 
     /**
-     * Submits the message to the chat window.
+     * OnClick handler that inserts a fenced code block into the message from the code zone.
      *
+     * @private
      * @returns {void}
      */
-    _onSubmitMessage() {
-        const {
-            _isSendGroupChatDisabled,
-            _privateMessageRecipientId,
-            onSend
-        } = this.props;
+    _onInsertCodeBlock() {
+        this._insertCodeBlock();
+    }
 
-        if (_isSendGroupChatDisabled && !_privateMessageRecipientId) {
+    /**
+     * Inserts a fenced code block into the message from the code zone.
+     *
+     * @private
+     * @returns {void}
+     */
+    _insertCodeBlock() {
+        const { codeContent, codeLanguage, message } = this.state;
+        const fence = codeLanguage ? `\`\`\`${codeLanguage}\n` : '```\n';
+        const block = `${fence}${codeContent}\n\`\`\``;
+
+        this.setState({
+            codeContent: '',
+            codeLanguage: '',
+            message: message ? `${message}\n${block}` : block,
+            showCodeZone: false
+        });
+    }
+
+    /**
+     * Wraps currently selected text in the textarea with prefix/suffix markers,
+     * or inserts them at the cursor position.
+     *
+     * @param {string} prefix - Opening marker.
+     * @param {string} suffix - Closing marker.
+     * @private
+     * @returns {void}
+     */
+    _insertFormatting(prefix: string, suffix: string) {
+        const textarea = this._textArea?.current;
+
+        if (!textarea) {
             return;
         }
 
-        const trimmed = this.state.message.trim();
+        const { selectionStart, selectionEnd, value } = textarea;
+        const selected = value.slice(selectionStart, selectionEnd);
+        const replacement = selected
+            ? `${prefix}${selected}${suffix}`
+            : `${prefix}${suffix}`;
 
-        if (trimmed) {
-            onSend(trimmed);
+        const newValue
+            = value.slice(0, selectionStart) + replacement + value.slice(selectionEnd);
+        const newCursor = selected
+            ? selectionStart + replacement.length
+            : selectionStart + prefix.length;
 
-            this.setState({ message: '' });
+        this.setState({ message: newValue }, () => {
+            textarea.focus();
+            textarea.setSelectionRange(newCursor, newCursor);
+        });
+    }
 
-            // Keep the textarea in focus when sending messages via submit button.
-            this._focus();
+    /**
+     * Handles click on the Bold formatting button.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onBoldClick() {
+        this._insertFormatting('**', '**');
+    }
 
-            // Hide the Emojis box after submitting the message
-            this.setState({ showSmileysPanel: false });
-        }
+    /**
+     * Closes the code zone popup and resets its state.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onCloseCodeZone() {
+        this.setState({
+            codeContent: '',
+            codeLanguage: '',
+            showCodeZone: false
+        });
+    }
 
+    /**
+     * Handles click on the Code Block formatting button.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onCodeBlockClick() {
+        this.setState({ showCodeZone: true });
+    }
+
+    /**
+     * Handles changes to the code zone textarea.
+     *
+     * @param {React.ChangeEvent<HTMLTextAreaElement>} event - The change event.
+     * @private
+     * @returns {void}
+     */
+    _onCodeContentChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
+        this.setState({ codeContent: event.target.value });
+    }
+
+    /**
+     * Handles changes to the language selector in the code zone.
+     *
+     * @param {React.ChangeEvent<HTMLSelectElement>} event - The change event.
+     * @private
+     * @returns {void}
+     */
+    _onCodeLanguageChange(event: React.ChangeEvent<HTMLSelectElement>) {
+        this.setState({ codeLanguage: event.target.value });
     }
 
     /**
@@ -285,6 +598,26 @@ class ChatInput extends Component<IProps, IState> {
     }
 
     /**
+     * Handles click on the Inline Code formatting button.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onInlineCodeClick() {
+        this._insertFormatting('`', '`');
+    }
+
+    /**
+     * Handles click on the Italic formatting button.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onItalicClick() {
+        this._insertFormatting('*', '*');
+    }
+
+    /**
      * Updates the known message the user is drafting.
      *
      * @param {string} value - Keyboard event.
@@ -316,6 +649,38 @@ class ChatInput extends Component<IProps, IState> {
         }
 
         this._focus();
+    }
+
+    /**
+     * Submits the message to the chat window.
+     *
+     * @returns {void}
+     */
+    _onSubmitMessage() {
+        const {
+            _isSendGroupChatDisabled,
+            _privateMessageRecipientId,
+            onSend
+        } = this.props;
+
+        if (_isSendGroupChatDisabled && !_privateMessageRecipientId) {
+            return;
+        }
+
+        const trimmed = this.state.message.trim();
+
+        if (trimmed) {
+            onSend(trimmed);
+
+            this.setState({ message: '' });
+
+            // Keep the textarea in focus when sending messages via submit button.
+            this._focus();
+
+            // Hide the Emojis box after submitting the message
+            this.setState({ showSmileysPanel: false });
+        }
+
     }
 
     /**
