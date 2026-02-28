@@ -6,6 +6,10 @@ local formdecode = require "util.http".formdecode;
 local region_header_name = module:get_option_string('region_header_name', 'x_proxy_region');
 local accept_token_from_query = module:get_option_boolean('accept_token_from_query', false);
 
+if accept_token_from_query then
+    module:log("warn", "Security configuration: accept_token_from_query is enabled. Tokens passed via URL query parameters are a security risk: they appear in server logs, browser history, and HTTP Referer headers.");
+end
+
 -- Extract the following parameters from the URL and set them in the session:
 -- * previd: for session resumption
 function init_session(event)
