@@ -7,6 +7,7 @@ import Icon from '../../../icons/components/Icon';
 interface ITabProps {
     accessibilityLabel: string;
     className?: string;
+    iconColor?: string;
     onChange: (id: string) => void;
     selected: string;
     tabs: Array<{
@@ -93,6 +94,7 @@ const useStyles = makeStyles()(theme => {
 const Tabs = ({
     accessibilityLabel,
     className,
+    iconColor,
     onChange,
     selected,
     tabs
@@ -150,6 +152,7 @@ const Tabs = ({
                         {
                             tab.icon && <Icon
                                 className = { classes.icon }
+                                color = { iconColor }
                                 src = { tab.icon } />
                         }
                         { tab.label }

@@ -36,6 +36,7 @@ const DEFAULT_STATE: ISettingsState = {
     soundsParticipantLeft: true,
     soundsTalkWhileMuted: true,
     soundsReactions: true,
+    chatTheme: 'dark' as 'dark' | 'light',
     startAudioOnly: false,
     startCarMode: false,
     startWithAudioMuted: false,
@@ -82,6 +83,7 @@ export interface ISettingsState {
     soundsParticipantLeft?: boolean;
     soundsReactions?: boolean;
     soundsTalkWhileMuted?: boolean;
+    chatTheme?: 'dark' | 'light';
     startAudioOnly?: boolean;
     startCarMode?: boolean;
     startWithAudioMuted?: boolean;
