@@ -53,7 +53,13 @@ export default {
         flexDirection: 'column',
         flexGrow: 0,
         justifyContent: 'flex-end',
-        margin: BoxModel.margin
+        margin: BoxModel.margin,
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: BaseTheme.spacing[3],
+        zIndex: 1000,
+        elevation: 1000
     },
 
     itemsContainer: {
