@@ -1,5 +1,6 @@
 import { maybeRedirectToWelcomePage } from '../app/actions.web';
 import { IStore } from '../app/types';
+import { connect } from '../base/connection/actions';
 import { openDialog } from '../base/dialog/actions';
 import { setJWT } from '../base/jwt/actions';
 import { browser } from '../base/lib-jitsi-meet';
@@ -223,16 +224,20 @@ export function openTokenAuthUrl(tokenAuthServiceUrl: string): any {
 
                     const { connection } = getState()['features/base/connection'];
 
-                    connection?.refreshToken(token).then(
-                        () => {
-                            const { membersOnly } = getState()['features/base/conference'];
+                    if (connection) {
+                        connection.refreshToken(token).then(
+                            () => {
+                                const { membersOnly } = getState()['features/base/conference'];
 
-                            membersOnly?.join();
-                        })
-                        .catch((err: any) => {
-                            dispatch(setJWT());
-                            logger.error(err);
-                        });
+                                membersOnly?.join();
+                            })
+                            .catch((err: any) => {
+                                dispatch(setJWT());
+                                logger.error(err);
+                            });
+                    } else {
+                        dispatch(connect());
+                    }
                 })
                 .catch(err => {
                     dispatch(showErrorNotification({

@@ -38,6 +38,11 @@ interface IProps {
     ariaControls: string;
 
     /**
+     * Aria label for the Button.
+     */
+    ariaLabel?: string;
+
+    /**
      * Information about the buttons that need to be rendered in the overflow menu.
      */
     buttons: Object[];

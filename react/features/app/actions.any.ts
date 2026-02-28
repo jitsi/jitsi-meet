@@ -150,8 +150,8 @@ export function maybeRedirectToTokenAuthUrl(
 
                 return dispatch(openTokenAuthUrl(tokenAuthServiceUrl));
             })
-            .catch(() => {
-                failureCallback();
+            .catch(e => {
+                failureCallback(e);
             });
 
         return true;

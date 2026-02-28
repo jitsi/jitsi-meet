@@ -86,10 +86,6 @@ function send_metadata(occupant, room, json_msg)
                 participants:append(room._data.participants);
             end
 
-            if room._data.moderator_id then
-                moderators:push(room._data.moderator_id);
-            end
-
             if room._data.moderators then
                 moderators:append(room._data.moderators);
             end
