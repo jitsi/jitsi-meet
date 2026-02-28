@@ -81,6 +81,12 @@ import { IConferenceMetadata } from './reducer';
 let beforeUnloadHandler: ((e?: any) => void) | undefined;
 
 /**
+ * Handler for unload event. Dispatches conferenceWillLeave only when
+ * the user confirms leaving the page.
+ */
+let unloadHandler: (() => void) | undefined;
+
+/**
  * A simple flag to avoid retrying more than once to join as a visitor when hitting max occupants reached.
  */
 let retryAsVisitorOnMaxError = true;
@@ -350,11 +356,26 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
     // implement the conferenceWillLeave action for web.
     beforeUnloadHandler = (e?: any) => {
         if (LocalRecordingManager.isRecordingLocally()) {
-            dispatch(stopLocalVideoRecording());
             if (e) {
                 e.preventDefault();
                 e.returnValue = null;
             }
+        }
+        // When beforeunload is disabled, this fires on 'unload' directly
+        // so we must handle everything here since cancel is not possible.
+        if (disableBeforeUnloadHandlers) {
+            if (LocalRecordingManager.isRecordingLocally()) {
+                dispatch(stopLocalVideoRecording());
+            }
+            dispatch(conferenceWillLeave(conference));
+        }
+    };
+
+    // This fires ONLY when the page actually closes (user confirmed leaving).
+    // conferenceWillLeave belongs here, not in beforeUnloadHandler.
+    unloadHandler = () => {
+        if (LocalRecordingManager.isRecordingLocally()) {
+            dispatch(stopLocalVideoRecording());
         }
         dispatch(conferenceWillLeave(conference));
     };
@@ -366,6 +387,11 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
     }
 
     window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
+
+    // Only register the unload handler when beforeunload is active (cancel is possible).
+    if (!disableBeforeUnloadHandlers) {
+        window.addEventListener('unload', unloadHandler);
+    }
 
     if (requireDisplayName
         && !getLocalParticipant(getState)?.name
@@ -632,6 +658,11 @@ function _removeUnloadHandler(getState: IStore['getState']) {
 
         window.removeEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
         beforeUnloadHandler = undefined;
+    }
+
+    if (typeof unloadHandler !== 'undefined') {
+        window.removeEventListener('unload', unloadHandler);
+        unloadHandler = undefined;
     }
 }
 
