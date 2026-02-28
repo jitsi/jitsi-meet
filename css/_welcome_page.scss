@@ -240,7 +240,7 @@ body.welcome-page {
         color: $welcomePageDescriptionColor;
         padding: 4px;
         position: absolute;
-        top: calc(35px - #{$welcomePageHeaderContainerMarginTop});
+        top: calc(20px - #{$welcomePageHeaderContainerMarginTop});
         right: 0;
         z-index: $zindex2;
 
