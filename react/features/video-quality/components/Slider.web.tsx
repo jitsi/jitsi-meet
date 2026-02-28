@@ -86,7 +86,7 @@ const useStyles = makeStyles()(theme => {
         slider: {
             // Use an additional class here to override global CSS specificity
             '&.custom-slider': {
-                '-webkit-appearance': 'none',
+                WebkitAppearance: 'none',
                 background: 'transparent',
                 height,
                 left: 0,
@@ -104,11 +104,11 @@ const useStyles = makeStyles()(theme => {
                 },
 
                 '&::-webkit-slider-runnable-track': {
-                    '-webkit-appearance': 'none',
+                    WebkitAppearance: 'none',
                     ...inputTrack
                 },
                 '&::-webkit-slider-thumb': {
-                    '-webkit-appearance': 'none',
+                    WebkitAppearance: 'none',
                     position: 'relative',
                     top: -6,
                     ...inputThumb

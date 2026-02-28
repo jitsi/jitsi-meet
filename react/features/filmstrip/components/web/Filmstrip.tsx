@@ -122,7 +122,7 @@ function styles(theme: Theme, props: IProps) {
             margin: 0,
             border: 'none',
 
-            '-webkit-appearance': 'none',
+            WebkitAppearance: 'none' as const,
 
             '& svg': {
                 fill: theme.palette.icon01
