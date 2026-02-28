@@ -30,7 +30,6 @@ const DocumentPiPWindow: React.FC = () => {
 
     // Redux state
     const isActive = useSelector((state: IReduxState) => state["features/document-pip"]?.isActive);
-    const largeVideoParticipant = useSelector(getLargeVideoParticipant);
     const localParticipant = useSelector((state: IReduxState) => getLocalParticipant(state));
     const tracks = useSelector((state: IReduxState) => state["features/base/tracks"]);
     const audioMuted = useSelector((state: IReduxState) =>
@@ -40,7 +39,25 @@ const DocumentPiPWindow: React.FC = () => {
         isLocalTrackMuted(state["features/base/tracks"], MEDIA_TYPE.VIDEO),
     );
 
-    const participantId = largeVideoParticipant?.id;
+    // Read dominant speaker ID directly from Redux (bypasses large-video guards
+    // like isStageFilmstripAvailable which can block updates).
+    const dominantSpeakerId = useSelector((state: IReduxState) => state["features/base/participants"].dominantSpeaker);
+    const largeVideoParticipant = useSelector(getLargeVideoParticipant);
+
+    // Pick the participant to show in PiP:
+    // 1. Dominant speaker if they are REMOTE (not yourself)
+    // 2. Large video participant (fallback)
+    // 3. Local participant (last resort)
+    let participantId: string | undefined;
+
+    if (dominantSpeakerId && dominantSpeakerId !== localParticipant?.id) {
+        participantId = dominantSpeakerId;
+    } else if (largeVideoParticipant && largeVideoParticipant.id !== localParticipant?.id) {
+        participantId = largeVideoParticipant.id;
+    } else {
+        participantId = largeVideoParticipant?.id ?? localParticipant?.id;
+    }
+
     const isLocalVideo = participantId === localParticipant?.id;
     const displayName = useSelector((state: IReduxState) =>
         participantId ? getParticipantDisplayName(state, participantId) : "Participant",
@@ -50,6 +67,20 @@ const DocumentPiPWindow: React.FC = () => {
     const videoTrack = participantId
         ? getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId)
         : undefined;
+
+    // Debug: log participant/track changes (remove after testing).
+    console.log(
+        "[DocumentPiP] dominant:",
+        dominantSpeakerId,
+        "largeVideo:",
+        largeVideoParticipant?.id,
+        "selected:",
+        participantId,
+        "local:",
+        localParticipant?.id,
+        "hasTrack:",
+        !!videoTrack?.jitsiTrack,
+    );
 
     /**
      * Effect: attach/detach video track on the PiP window's video element.
@@ -70,11 +101,14 @@ const DocumentPiPWindow: React.FC = () => {
             }
         }
 
-        // Attach new track.
+        // Attach new track or clear stale video.
         if (videoTrack?.jitsiTrack) {
             videoTrack.jitsiTrack.attach(videoElement).catch((error: Error) => {
                 logger.error("Error attaching video track:", error);
             });
+        } else {
+            // Clear the video element so it doesn't show the previous speaker's last frame.
+            videoElement.srcObject = null;
         }
 
         previousTrackRef.current = videoTrack;
@@ -88,7 +122,7 @@ const DocumentPiPWindow: React.FC = () => {
                 }
             }
         };
-    }, [videoTrack, isActive]);
+    }, [videoTrack, participantId, isActive]);
 
     const onToggleAudio = useCallback(() => {
         dispatch(muteLocal(!audioMuted, MEDIA_TYPE.AUDIO));

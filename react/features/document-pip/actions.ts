@@ -50,9 +50,11 @@ export function openDocumentPiP() {
             pipWindow = newWindow;
 
             // Copy stylesheets from the main document so our components render correctly.
-            [...document.styleSheets].forEach((styleSheet) => {
+            Array.from(document.styleSheets).forEach((styleSheet) => {
                 try {
-                    const cssRules = [...styleSheet.cssRules].map((rule) => rule.cssText).join("");
+                    const cssRules = Array.from(styleSheet.cssRules)
+                        .map((rule) => rule.cssText)
+                        .join("");
                     const style = newWindow.document.createElement("style");
 
                     style.textContent = cssRules;
