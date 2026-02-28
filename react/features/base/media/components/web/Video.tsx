@@ -175,7 +175,7 @@ interface IProps {
  */
 class Video extends Component<IProps> {
     _videoElement?: HTMLVideoElement | null;
-    _mounted: boolean;
+    _mounted: boolean = false;
 
     /**
      * Default values for {@code Video} component's properties.

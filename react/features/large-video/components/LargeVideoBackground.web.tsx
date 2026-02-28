@@ -67,7 +67,7 @@ interface IProps {
  * @augments Component
  */
 export class LargeVideoBackground extends Component<IProps> {
-    _canvasEl: HTMLCanvasElement;
+    _canvasEl!: HTMLCanvasElement;
 
     _updateCanvasInterval: number | undefined;
 
