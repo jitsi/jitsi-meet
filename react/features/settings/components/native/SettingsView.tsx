@@ -4,6 +4,7 @@ import {
     Text,
     TextStyle,
     TouchableHighlight,
+    useWindowDimensions,
     View,
     ViewStyle
 } from 'react-native';
@@ -41,6 +42,15 @@ const SettingsView = ({ isInWelcomePage }: IProps) => {
     const localParticipant = useSelector((state: IReduxState) => getLocalParticipant(state));
     const showModeratorSettings = useSelector((state: IReduxState) => shouldShowModeratorSettings(state));
     const { visible } = useSelector((state: IReduxState) => state['features/settings']);
+    const { height, width } = useWindowDimensions();
+    const isTablet = Math.min(height, width) >= 768;
+
+    const tabletContentWrapper = {
+        alignSelf: 'center',
+        maxWidth: 640,
+        width: '100%',
+        flex: 1
+    };
 
     const addBottomInset = !isInWelcomePage;
     const localParticipantId = localParticipant?.id;
@@ -52,47 +62,49 @@ const SettingsView = ({ isInWelcomePage }: IProps) => {
 
     return (
         <JitsiScreen
-            disableForcedKeyboardDismiss = { true }
-            safeAreaInsets = { [ addBottomInset && 'bottom', 'left', 'right' ].filter(Boolean) as Edge[] }
-            style = { styles.settingsViewContainer }>
-            <ScrollView bounces = { scrollBounces }>
-                <View style = { styles.profileContainerWrapper as ViewStyle }>
-                    <TouchableHighlight
+            disableForcedKeyboardDismiss={true}
+            safeAreaInsets={[addBottomInset && 'bottom', 'left', 'right'].filter(Boolean) as Edge[]}
+            style={styles.settingsViewContainer}>
+            <ScrollView bounces={scrollBounces}>
+                <View style={(isTablet ? tabletContentWrapper : null) as ViewStyle}>
+                    <View style={styles.profileContainerWrapper as ViewStyle}>
+                        <TouchableHighlight
 
-                        /* eslint-disable react/jsx-no-bind */
-                        onPress = { () => navigate(screen.settings.profile) }>
-                        <View
-                            style = { styles.profileContainer as ViewStyle }>
-                            <Avatar
-                                participantId = { localParticipantId }
-                                size = { AVATAR_SIZE } />
-                            <Text style = { styles.displayName as TextStyle }>
-                                { displayName }
-                            </Text>
-                            <Icon
-                                size = { 24 }
-                                src = { IconArrowRight }
-                                style = { styles.profileViewArrow } />
-                        </View>
-                    </TouchableHighlight>
+                            /* eslint-disable react/jsx-no-bind */
+                            onPress={() => navigate(screen.settings.profile)}>
+                            <View
+                                style={styles.profileContainer as ViewStyle}>
+                                <Avatar
+                                    participantId={localParticipantId}
+                                    size={AVATAR_SIZE} />
+                                <Text style={styles.displayName as TextStyle}>
+                                    {displayName}
+                                </Text>
+                                <Icon
+                                    size={24}
+                                    src={IconArrowRight}
+                                    style={styles.profileViewArrow} />
+                            </View>
+                        </TouchableHighlight>
+                    </View>
+                    <GeneralSection />
+                    {isInWelcomePage && <>
+                        <Divider style={styles.fieldSeparator as ViewStyle} />
+                        <ConferenceSection />
+                    </>}
+                    <Divider style={styles.fieldSeparator as ViewStyle} />
+                    <NotificationsSection />
+
+                    {showModeratorSettings
+                        && <>
+                            <Divider style={styles.fieldSeparator as ViewStyle} />
+                            <ModeratorSection />
+                        </>}
+                    <Divider style={styles.fieldSeparator as ViewStyle} />
+                    <AdvancedSection />
+                    <Divider style={styles.fieldSeparator as ViewStyle} />
+                    <LinksSection />
                 </View>
-                <GeneralSection />
-                { isInWelcomePage && <>
-                    <Divider style = { styles.fieldSeparator as ViewStyle } />
-                    <ConferenceSection />
-                </> }
-                <Divider style = { styles.fieldSeparator as ViewStyle } />
-                <NotificationsSection />
-
-                { showModeratorSettings
-                    && <>
-                        <Divider style = { styles.fieldSeparator as ViewStyle } />
-                        <ModeratorSection />
-                    </> }
-                <Divider style = { styles.fieldSeparator as ViewStyle } />
-                <AdvancedSection />
-                <Divider style = { styles.fieldSeparator as ViewStyle } />
-                <LinksSection />
             </ScrollView>
         </JitsiScreen>
     );
