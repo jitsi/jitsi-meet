@@ -3,6 +3,7 @@ import React, { useCallback } from 'react';
 import {
     BackHandler,
     NativeModules,
+    StatusBar,
     View,
     ViewStyle
 } from 'react-native';
@@ -267,8 +268,11 @@ class Conference extends AbstractConference<IProps, State> {
      */
     override render() {
         const {
+            _aspectRatio,
             _brandingStyles,
         } = this.props;
+
+        const isLandscape = _aspectRatio === ASPECT_RATIO_WIDE;
 
         return (
             <Container
@@ -276,6 +280,9 @@ class Conference extends AbstractConference<IProps, State> {
                     styles.conference,
                     _brandingStyles
                 ] }>
+                <StatusBar
+                    animated = { true }
+                    hidden = { isLandscape } />
                 <BrandingImageBackground />
                 { this._renderContent() }
             </Container>
