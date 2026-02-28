@@ -191,12 +191,20 @@ function GifsMenu({ columns = 2, parent }: IProps) {
         e.stopPropagation();
     }, []);
 
+    // Prevent clicks inside the GIFs menu content (including the search input)
+    // from bubbling to the global window click handler used by Popover for
+    // outside-click dismissal.
+    const stopClickPropagation = useCallback((e: React.MouseEvent) => {
+        e.stopPropagation();
+    }, []);
+
     const gifMenu = (
         <div
             className = { cx(styles.gifsMenu,
                 parent === IReactionsMenuParent.OverflowDrawer && styles.overflowDrawerMenu,
                 parent === IReactionsMenuParent.OverflowMenu && styles.overflowMenu
-            ) }>
+            ) }
+            onClick = { stopClickPropagation }>
             <Input
                 autoFocus = { true }
                 className = { cx(styles.searchField, 'gif-input') }
