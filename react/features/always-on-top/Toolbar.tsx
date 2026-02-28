@@ -4,7 +4,7 @@ import AudioMuteButton from './AudioMuteButton';
 import HangupButton from './HangupButton';
 import VideoMuteButton from './VideoMuteButton';
 
-const { api } = window.alwaysOnTop;
+const api = window.alwaysOnTop!.api;
 
 /**
  * The type of the React {@code Component} props of {@link Toolbar}.

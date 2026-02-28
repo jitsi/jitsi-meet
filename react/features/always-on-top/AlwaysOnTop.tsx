@@ -8,7 +8,7 @@ import { DEFAULT_ICON } from '../base/icons/svg/constants';
 
 import Toolbar from './Toolbar';
 
-const { api } = window.alwaysOnTop;
+const api = window.alwaysOnTop!.api;
 
 /**
  * The timeout in ms for hiding the toolbar.

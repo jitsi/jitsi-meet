@@ -7,7 +7,7 @@ import { IProps } from '../base/toolbox/components/AbstractButton';
 
 import ToolbarButton from './ToolbarButton';
 
-const { api } = window.alwaysOnTop;
+const api = window.alwaysOnTop!.api;
 
 type Props = Partial<IProps>;
 

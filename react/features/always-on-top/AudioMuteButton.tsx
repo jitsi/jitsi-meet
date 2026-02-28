@@ -8,7 +8,7 @@ import { IProps } from '../base/toolbox/components/AbstractButton';
 
 import ToolbarButton from './ToolbarButton';
 
-const { api } = window.alwaysOnTop;
+const api = window.alwaysOnTop!.api;
 
 /**
  * The type of the React {@code Component} state of {@link AudioMuteButton}.

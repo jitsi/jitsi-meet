@@ -1,5 +1,6 @@
 import { IStore } from "./react/features/app/types";
 import { IConfig } from "./react/features/base/config/configType";
+import { IAlwaysOnTopAPI } from "./react/features/always-on-top/types";
 
 export {};
 
@@ -23,7 +24,7 @@ declare global {
         ReactNativeWebView?: any;
         // selenium tests handler
         _sharedVideoPlayer: any;
-        alwaysOnTop: { api: any };
+        alwaysOnTop?: { api: IAlwaysOnTopAPI };
     }
 
     interface Document {
@@ -36,7 +37,7 @@ declare global {
     const JitsiMeetJS: any;
 
     interface HTMLMediaElement {
-        setSinkId: (id: string) => Promise<undefined>;
+        setSinkId: (id: string) => Promise<void>;
         stop: () => void;
     }
 }
