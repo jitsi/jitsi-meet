@@ -4,6 +4,11 @@ module:set_global();
 
 local formdecode = require "util.http".formdecode;
 local region_header_name = module:get_option_string('region_header_name', 'x_proxy_region');
+local accept_token_from_query = module:get_option_boolean('accept_token_from_query', false);
+
+if accept_token_from_query then
+    module:log("warn", "Security configuration: accept_token_from_query is enabled. Tokens passed via URL query parameters are a security risk: they appear in server logs, browser history, and HTTP Referer headers.");
+end
 
 -- Extract the following parameters from the URL and set them in the session:
 -- * previd: for session resumption
@@ -15,8 +20,10 @@ function init_session(event)
 
     -- extract token from Authorization header
     if request.headers["authorization"] then
-        -- assumes the header value starts with "Bearer "
-        token = request.headers["authorization"]:sub(8,#request.headers["authorization"])
+        local auth_header = request.headers["authorization"];
+        if auth_header:sub(1, 7):lower() == "bearer " then
+            token = auth_header:sub(8, #auth_header);
+        end
     end
 
     if query ~= nil then
@@ -39,7 +46,12 @@ function init_session(event)
         -- other fields will be extracted from the token and set in the session
 
         if params and params.token then
-            token = params.token;
+            if accept_token_from_query then
+                -- Fallback to token from query parameter if explicitely enabled
+                token = params.token;
+            else
+                module:log("warn", "Token auth via URL query parameter is disabled due to security risks. To enable it, set accept_token_from_query = true");
+            end
         end
 
     end
