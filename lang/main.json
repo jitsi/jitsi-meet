@@ -1200,6 +1200,7 @@
         "desktopShareFramerate": "Desktop sharing frame rate",
         "desktopShareHighFpsWarning": "A higher frame rate for desktop sharing might affect your bandwidth. You need to restart the screen share for the new settings to take effect.",
         "desktopShareWarning": "You need to restart the screen share for the new settings to take effect.",
+        "enableBeforeUnloadConfirmation": "Warn before leaving a meeting",
         "devices": "Devices",
         "followMe": "Everyone follows me",
         "followMeRecorder": "Recorder follows me",

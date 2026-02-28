@@ -352,6 +352,7 @@ export interface IConfig {
         maxMessagesPerSecond?: number;
         numRequests?: number;
     };
+    enableBeforeUnloadConfirmation?: boolean;
     enableCalendarIntegration?: boolean;
     enableClosePage?: boolean;
     enableDisplayNameInStats?: boolean;

@@ -42,6 +42,7 @@ import {
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks/actionTypes';
+import { getPropertyValue } from '../settings/functions.any';
 import { parseURIString } from '../util/uri';
 
 import {
@@ -79,6 +80,11 @@ import { IConferenceMetadata } from './reducer';
  * Handler for before unload event.
  */
 let beforeUnloadHandler: ((e?: any) => void) | undefined;
+
+/**
+ * Handler for unload event.
+ */
+let unloadHandler: (() => void) | undefined;
 
 /**
  * A simple flag to avoid retrying more than once to join as a visitor when hitting max occupants reached.
@@ -333,7 +339,6 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
     const { conference } = action;
     const { pendingSubjectChange } = getState()['features/base/conference'];
     const {
-        disableBeforeUnloadHandlers = false,
         requireDisplayName
     } = getState()['features/base/config'];
 
@@ -349,13 +354,34 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
     // that should cover the described use case as part of the effort to
     // implement the conferenceWillLeave action for web.
     beforeUnloadHandler = (e?: any) => {
+        const isBeforeUnload = e?.type === 'beforeunload';
+
+        if (isBeforeUnload) {
+            // Trigger the browser's "Are you sure?" prompt.
+            e.preventDefault();
+
+            // Most modern browsers will ignore this string and show their own,
+            // but we'll set it anyway for older browsers or better compatibility.
+            e.returnValue = 'You are in an active meeting. Do you really want to leave?';
+
+            // We MUST return here and NOT clean up the conference state yet.
+            // If we clean it up now, the app might break even if the user stays.
+            return;
+        }
+    };
+
+    /**
+     * Handles the actual unloading of the page.
+     *
+     * @returns {void}
+     */
+    unloadHandler = () => {
+        // Stop recording only when we are sure the user is leaving.
+        // Doing this in 'unload' avoids freezing the 'beforeunload' prompt.
         if (LocalRecordingManager.isRecordingLocally()) {
             dispatch(stopLocalVideoRecording());
-            if (e) {
-                e.preventDefault();
-                e.returnValue = null;
-            }
         }
+
         dispatch(conferenceWillLeave(conference));
     };
 
@@ -365,10 +391,15 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
         dispatch(overwriteConfig({ disableFocus: false }));
     }
 
-    window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
+    if (typeof window !== 'undefined') {
+        if (getPropertyValue(getState, 'enableBeforeUnloadConfirmation')) {
+            window.addEventListener('beforeunload', beforeUnloadHandler);
+        }
+        window.addEventListener('unload', unloadHandler);
+    }
 
     if (requireDisplayName
-        && !getLocalParticipant(getState)?.name
+        && !getLocalParticipant(getState())?.name
         && !conference.isHidden()) {
         dispatch(openDisplayNamePrompt({
             validateInput: hasDisplayName
@@ -623,15 +654,22 @@ function _pinParticipant({ getState }: IStore, next: Function, action: AnyAction
 /**
  * Removes the unload handler.
  *
- * @param {Function} getState - The redux getState function.
+ * @param {Function} _getState - The redux getState function.
  * @returns {void}
  */
-function _removeUnloadHandler(getState: IStore['getState']) {
-    if (typeof beforeUnloadHandler !== 'undefined') {
-        const { disableBeforeUnloadHandlers = false } = getState()['features/base/config'];
+function _removeUnloadHandler(_getState: IStore['getState']) {
+    if (typeof window === 'undefined') {
+        return;
+    }
 
-        window.removeEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
+    if (typeof beforeUnloadHandler !== 'undefined') {
+        window.removeEventListener('beforeunload', beforeUnloadHandler);
         beforeUnloadHandler = undefined;
+    }
+
+    if (typeof unloadHandler !== 'undefined') {
+        window.removeEventListener('unload', unloadHandler);
+        unloadHandler = undefined;
     }
 }
 
@@ -758,7 +796,7 @@ function _updateLocalParticipantInConference({ dispatch, getState }: IStore, nex
     const { participant } = action;
     const result = next(action);
 
-    const localParticipant = getLocalParticipant(getState);
+    const localParticipant = getLocalParticipant(getState());
 
     if (conference && participant.id === localParticipant?.id) {
         if ('name' in participant) {
