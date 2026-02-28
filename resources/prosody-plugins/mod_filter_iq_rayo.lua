@@ -257,21 +257,15 @@ module:hook('jitsi-metadata-allow-moderation', function (event)
         -- if it is recording we want to allow setting in metadata if not moderator but features
         -- are present
         if session.jitsi_meet_context_features
-            and occupant.role ~= 'moderator'
-            and is_feature_allowed('transcription', session.jitsi_meet_context_features)
-            and is_feature_allowed('recording', session.jitsi_meet_context_features) then
+            and is_feature_allowed('transcription', session.jitsi_meet_context_features) then
                 local res = {};
                 res.isTranscribingEnabled = data.isTranscribingEnabled;
                 return res;
         elseif not session.jitsi_meet_context_features and occupant.role == 'moderator' then
             return data;
         else
-            return nil;
+            return false;
         end
-    end
-
-    if occupant.role == 'moderator' then
-        return data;
     end
 
     return nil;

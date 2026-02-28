@@ -545,6 +545,15 @@ StateListenerRegistry.register(
                         propertyHandlers[propertyName](participant, newValue);
                     }
                 });
+            conference.on(JitsiConferenceEvents.PERMISSIONS_RECEIVED, (p: Object) => {
+                const localParticipant = getLocalParticipant(store.getState());
+
+                localParticipant && store.dispatch(participantUpdated({
+                    id: localParticipant.id,
+                    local: true,
+                    features: p
+                }));
+            });
         } else {
             const localParticipantId = getLocalParticipant(store.getState)?.id;
 

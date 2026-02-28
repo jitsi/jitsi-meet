@@ -618,7 +618,6 @@ export interface IConfig {
     };
     tokenAuthInline?: boolean;
     tokenAuthUrl?: string;
-    tokenAuthUrlAutoRedirect?: string;
     tokenGetUserInfoOutOfContext?: boolean;
     tokenLogoutUrl?: string;
     tokenRespectTenant?: boolean;
@@ -638,6 +637,7 @@ export interface IConfig {
     transcription?: {
         autoCaptionOnTranscribe?: boolean;
         autoTranscribeOnRecord?: boolean;
+        customLanguages?: object;
         disableClosedCaptions?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
