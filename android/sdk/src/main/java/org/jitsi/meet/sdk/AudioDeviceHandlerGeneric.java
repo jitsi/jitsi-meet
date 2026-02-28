@@ -20,9 +20,11 @@ import android.media.AudioAttributes;
 import android.media.AudioDeviceInfo;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
+import android.os.Build;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
@@ -55,6 +57,12 @@ class AudioDeviceHandlerGeneric implements
      * The value of: AudioDeviceInfo.TYPE_USB_HEADSET
      */
     private static final int TYPE_USB_HEADSET = 22;
+
+    /**
+     * Constant defining a remote submix. Only available on API level >= 23.
+     * The value of: AudioDeviceInfo.TYPE_REMOTE_SUBMIX
+     */
+    private static final int TYPE_REMOTE_SUBMIX = 25;
 
     /**
      * Indicator that we have lost audio focus.
@@ -94,6 +102,11 @@ class AudioDeviceHandlerGeneric implements
                     case TYPE_HEARING_AID:
                     case TYPE_USB_HEADSET:
                         devices.add(AudioModeModule.DEVICE_HEADPHONES);
+                        break;
+                    case TYPE_REMOTE_SUBMIX:
+                        if (info.isSink()) {
+                            devices.add(AudioModeModule.DEVICE_REMOTE_SUBMIX);
+                        }
                         break;
                 }
             }
@@ -184,6 +197,35 @@ class AudioDeviceHandlerGeneric implements
         }
     }
 
+    /**
+     * Helper method to set the output route to a remote submix device.
+     */
+    private void setRemoteSubmixAudioRoute() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            JitsiMeetLogger.w(TAG + " Remote submix routing not supported on API < 31");
+            return;
+        }
+
+        try {
+            List<AudioDeviceInfo> availableDevices =
+                audioManager.getAvailableCommunicationDevices();
+            for (AudioDeviceInfo info : availableDevices) {
+                if (info.getType() == TYPE_REMOTE_SUBMIX && info.isSink()) {
+                    boolean success = audioManager.setCommunicationDevice(info);
+                    if (success) {
+                        JitsiMeetLogger.i(TAG + " Set remote submix communication device");
+                    } else {
+                        JitsiMeetLogger.w(TAG + " Failed to set remote submix communication device");
+                    }
+                    return;
+                }
+            }
+            JitsiMeetLogger.w(TAG + " Remote submix communication device not found");
+        } catch (Throwable tr) {
+            JitsiMeetLogger.w(tr, TAG + " Failed to set remote submix audio route");
+        }
+    }
+
     @Override
     public void start(AudioModeModule audioModeModule) {
         JitsiMeetLogger.i("Using " + TAG + " as the audio device handler");
@@ -209,6 +251,11 @@ class AudioDeviceHandlerGeneric implements
 
         // Turn bluetooth on / off
         setBluetoothAudioRoute(device.equals(AudioModeModule.DEVICE_BLUETOOTH));
+
+        // Handle remote submix device
+        if (device.equals(AudioModeModule.DEVICE_REMOTE_SUBMIX)) {
+            setRemoteSubmixAudioRoute();
+        }
     }
 
     @Override
