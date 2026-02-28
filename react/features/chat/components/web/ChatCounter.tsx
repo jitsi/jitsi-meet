@@ -1,6 +1,4 @@
-import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
 import { IReduxState } from '../../../app/types';
 import { getUnreadPollCount } from '../../../polls/functions';
 import { getUnreadCount, getUnreadFilesCount } from '../../functions';
@@ -11,7 +9,7 @@ import { getUnreadCount, getUnreadFilesCount } from '../../functions';
 interface IProps {
 
     /**
-     * The value of to display as a count.
+     * The value to display as a count.
      */
     _count: number;
 
@@ -22,32 +20,24 @@ interface IProps {
 }
 
 /**
- * Implements a React {@link Component} which displays a count of the number of
+ * Implements a React functional component which displays a count of the number of
  * unread chat messages.
  *
- * @augments Component
+ * @returns {React.ReactElement}
  */
-class ChatCounter extends Component<IProps> {
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    override render() {
-        return (
-            <span className = 'badge-round'>
+const ChatCounter = (props : IProps): React.ReactElement => {
+    return (
+        <span className = 'badge-round'>
 
                 <span>
                     {
-                        !this.props._isOpen
-                        && (this.props._count || null)
+                        !props._isOpen
+                        && (props._count || null)
                     }
                 </span>
             </span>
-        );
-    }
+    );
+
 }
 
 /**
@@ -57,7 +47,8 @@ class ChatCounter extends Component<IProps> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _count: number
+ *     _count: number,
+ *     _isOpen: boolean
  * }}
  */
 function _mapStateToProps(state: IReduxState) {
@@ -72,3 +63,4 @@ function _mapStateToProps(state: IReduxState) {
 }
 
 export default connect(_mapStateToProps)(ChatCounter);
+
