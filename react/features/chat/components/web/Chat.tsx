@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
+import { CHAT_LIGHT_THEME } from '../../chatTheme';
 import { IReduxState } from '../../../app/types';
 import { isTouchDevice, shouldEnableResize } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
@@ -47,6 +48,11 @@ import MessageRecipient from './MessageRecipient';
 
 
 interface IProps extends AbstractProps {
+
+    /**
+     * The current chat panel theme ('dark' or 'light').
+     */
+    _chatTheme: 'dark' | 'light';
 
     /**
      * The currently focused tab.
@@ -254,6 +260,7 @@ const useStyles = makeStyles<{
 });
 
 const Chat = ({
+    _chatTheme,
     _isModal,
     _isOpen,
     _isPollsEnabled,
@@ -608,6 +615,7 @@ const Chat = ({
                     })
                     : t('chat.title')
                 }
+                iconColor = { _chatTheme === 'light' ? '#1C2025' : undefined }
                 onChange = { onChangeTab }
                 selected = { _focusedTab }
                 tabs = { tabs } />
@@ -618,11 +626,19 @@ const Chat = ({
         return null;
     }
 
+    const isLightTheme = _chatTheme === 'light';
+    const lightThemeStyle = isLightTheme ? {
+        backgroundColor: CHAT_LIGHT_THEME.background,
+        color: CHAT_LIGHT_THEME.messageText
+    } : undefined;
+
     return (
         _isOpen ? <div
             className = { classes.container }
+            data-chat-theme = { _chatTheme }
             id = 'sideToolbarContainer'
-            onKeyDown = { onEscClick } >
+            onKeyDown = { onEscClick }
+            style = { lightThemeStyle } >
             <ChatHeader
                 className = { cx('chat-header', classes.chatHeader) }
                 isCCTabEnabled = { _isCCTabEnabled }
@@ -677,6 +693,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { reducedUI } = state['features/base/responsive-ui'];
 
     return {
+        _chatTheme: (state['features/base/settings'].chatTheme ?? 'dark') as 'dark' | 'light',
         _isModal: window.innerWidth <= SMALL_WIDTH_THRESHOLD,
         _isOpen: isOpen,
         _isPollsEnabled: !arePollsDisabled(state),

@@ -2,8 +2,10 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../../base/icons/svg';
+import { updateSettings } from '../../../base/settings/actions';
 import { isFileSharingEnabled } from '../../../file-sharing/functions.any';
 import { toggleChat } from '../../actions.web';
 import { ChatTabs } from '../../constants';
@@ -43,10 +45,15 @@ function ChatHeader({ className, isCCTabEnabled, isPollsEnabled }: IProps) {
     const _isChatDisabled = useSelector(isChatDisabled);
     const focusedTab = useSelector(getFocusedTab);
     const fileSharingTabEnabled = useSelector(isFileSharingEnabled);
+    const chatTheme = useSelector((state: IReduxState) => state['features/base/settings'].chatTheme ?? 'dark');
 
     const onCancel = useCallback(() => {
         dispatch(toggleChat());
     }, []);
+
+    const onToggleTheme = useCallback(() => {
+        dispatch(updateSettings({ chatTheme: chatTheme === 'dark' ? 'light' : 'dark' }));
+    }, [ chatTheme ]);
 
     const onKeyPressHandler = useCallback(e => {
         if (onCancel && (e.key === ' ' || e.key === 'Enter')) {
@@ -72,21 +79,45 @@ function ChatHeader({ className, isCCTabEnabled, isPollsEnabled }: IProps) {
         return null;
     }
 
+    const isLight = chatTheme === 'light';
+    const iconColor = isLight ? '#1C2025' : undefined;
+
     return (
         <div
-            className = { className || 'chat-dialog-header' }>
+            className = { className || 'chat-dialog-header' }
+            style = { isLight ? { backgroundColor: '#E8E8E8', color: '#1C2025' } : undefined }>
             <span
                 aria-level = { 1 }
-                role = 'heading'>
+                role = 'heading'
+                style = { isLight ? { color: '#1C2025' } : undefined }>
                 { t(title) }
             </span>
-            <Icon
-                ariaLabel = { t('toolbar.closeChat') }
-                onClick = { onCancel }
-                onKeyPress = { onKeyPressHandler }
-                role = 'button'
-                src = { IconCloseLarge }
-                tabIndex = { 0 } />
+            <div style = {{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button
+                    aria-label = { t('chat.toggleTheme') }
+                    onClick = { onToggleTheme }
+                    style = {{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '18px',
+                        padding: '4px',
+                        borderRadius: '4px',
+                        display: 'flex',
+                        alignItems: 'center'
+                    }}
+                    title = { t('chat.toggleTheme') }>
+                    { isLight ? '🌙' : '☀️' }
+                </button>
+                <Icon
+                    ariaLabel = { t('toolbar.closeChat') }
+                    color = { iconColor }
+                    onClick = { onCancel }
+                    onKeyPress = { onKeyPressHandler }
+                    role = 'button'
+                    src = { IconCloseLarge }
+                    tabIndex = { 0 } />
+            </div>
         </div>
     );
 }

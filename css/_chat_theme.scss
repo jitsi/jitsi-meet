@@ -1,0 +1,132 @@
+/**
+ * Light theme overrides for the chat panel.
+ * Applied when [data-chat-theme="light"] is set on the chat container.
+ *
+ * Uses high-specificity selectors to override MUI makeStyles generated classes.
+ * NOTE: Icon component sets fill as inline attribute on <svg>, so we must
+ * target child elements (path, rect, circle, polygon) to override it.
+ */
+
+#sideToolbarContainer[data-chat-theme="light"] {
+    background-color: #F5F5F5 !important;
+    color: #1C2025 !important;
+
+    /* Override CSS variable for jitsi-icon-default */
+    --icon-svg-fill: #1C2025;
+
+    /* ---- Header ---- */
+    & .chat-header {
+        background-color: #E8E8E8 !important;
+        color: #1C2025 !important;
+    }
+
+    /*
+     * Target SVG child elements — this overrides the inline fill attribute
+     * that Icon component sets directly on the <svg> tag.
+     */
+    & svg path,
+    & svg rect,
+    & svg circle,
+    & svg polygon,
+    & svg polyline,
+    & svg ellipse,
+    & svg line {
+        fill: #1C2025 !important;
+    }
+
+    /* ---- Tabs (Chat / Polls / CC / Files) ---- */
+    /* The tab container row */
+    & [role="tablist"] {
+        background-color: #E0E0E0 !important;
+        border-bottom-color: #CCCCCC !important;
+    }
+
+    /* Each tab button — unselected */
+    & [role="tab"] {
+        color: #555555 !important;
+        border-bottom-color: #BBBBBB !important;
+        background: none !important;
+
+        & svg path,
+        & svg rect,
+        & svg circle,
+        & svg polygon {
+            fill: #555555 !important;
+        }
+    }
+
+    /* Selected tab */
+    & [role="tab"].selected,
+    & [role="tab"][aria-selected="true"] {
+        color: #1C2025 !important;
+        border-bottom-color: #1C2025 !important;
+        background-color: #F5F5F5 !important;
+
+        & svg path,
+        & svg rect,
+        & svg circle,
+        & svg polygon {
+            fill: #1C2025 !important;
+        }
+    }
+
+    /* ---- Message bubbles ---- */
+    & .chatmessage {
+        &.localuser {
+            background-color: #DCF8C6 !important;
+            color: #1C2025 !important;
+        }
+        &.remoteuser {
+            background-color: #FFFFFF !important;
+            color: #1C2025 !important;
+        }
+    }
+
+    & .display-name {
+        color: #555555 !important;
+    }
+
+    & .timestamp {
+        color: #888888 !important;
+    }
+
+    /* ---- Chat input area ---- */
+    & .chat-input-container {
+        background-color: #F5F5F5 !important;
+    }
+
+    & .chat-input {
+        background-color: #FFFFFF !important;
+        color: #1C2025 !important;
+        border-color: #CCCCCC !important;
+
+        & textarea,
+        & input {
+            color: #1C2025 !important;
+            background-color: #FFFFFF !important;
+        }
+    }
+
+    & .chat-message-group {
+        color: #1C2025 !important;
+    }
+
+    & a {
+        color: #1A73E8 !important;
+    }
+
+    & .chat-recipient {
+        background-color: #E0E0E0 !important;
+        color: #1C2025 !important;
+    }
+
+    /* ---- Smiley / emoji panel ---- */
+    & #smileysContainer {
+        background-color: #FFFFFF !important;
+        border-top-color: #CCCCCC !important;
+    }
+
+    & .new-messages-button {
+        background-color: #1A73E8 !important;
+    }
+}
