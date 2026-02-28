@@ -8,7 +8,7 @@ import { isTouchDevice, shouldEnableResize } from '../../../base/environment/uti
 import { translate } from '../../../base/i18n/functions';
 import { IconInfo, IconMessage, IconShareDoc, IconSubtitles } from '../../../base/icons/svg';
 import { getLocalParticipant, getRemoteParticipants, isPrivateChatEnabledSelf } from '../../../base/participants/functions';
-import Select from '../../../base/ui/components/web/Select';
+import ChatRecipientDropdown from './ChatRecipientDropdown';
 import Tabs from '../../../base/ui/components/web/Tabs';
 import { arePollsDisabled } from '../../../conference/functions.any';
 import FileSharing from '../../../file-sharing/components/web/FileSharing';
@@ -248,7 +248,7 @@ const useStyles = makeStyles<{
         },
 
         privateMessageRecipientsList: {
-            padding: '0 16px 5px'
+            padding: '0'
         }
     };
 });
@@ -448,9 +448,7 @@ const Chat = ({
     }, [ dispatch ]);
 
 
-    const onSelectedRecipientChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selected = e.target.value;
-
+    const onSelectedRecipientChange = useCallback((selected: string) => {
         if (selected === OPTION_GROUPCHAT) {
             dispatch(setPrivateMessageRecipient());
         } else {
@@ -486,9 +484,7 @@ const Chat = ({
                         messages = { _messages } />
                     <MessageRecipient />
                     {isPrivateChatAllowed && (
-                        <Select
-                            containerClassName = { cx(classes.privateMessageRecipientsList) }
-                            id = 'select-chat-recipient'
+                        <ChatRecipientDropdown
                             onChange = { onSelectedRecipientChange }
                             options = { options }
                             value = { privateMessageRecipient?.id || OPTION_GROUPCHAT } />
