@@ -21,12 +21,15 @@
 package org.jitsi.meet.sdk;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.os.Build;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Locale;
 
 /**
  * Module which provides information about the system locale.
@@ -35,6 +38,22 @@ class LocaleDetector extends ReactContextBaseJavaModule {
 
     public LocaleDetector(ReactApplicationContext reactContext) {
         super(reactContext);
+    }
+
+    // Configuration.locale is deprecated (API 24); on N+ use Configuration.getLocales().get(0)
+    // and continue returning full language tags via Locale.toLanguageTag() for JS compatibility.
+    private String getCurrentLocaleTag(Context context) {
+        Configuration config = context.getResources().getConfiguration();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (config.getLocales() != null && !config.getLocales().isEmpty()) {
+                // Use the first locale from the LocaleList
+                return config.getLocales().get(0).toLanguageTag();
+            }
+        }
+
+        Locale locale = config.locale != null ? config.locale : Locale.getDefault();
+        return locale.toLanguageTag();
     }
 
     /**
@@ -47,7 +66,7 @@ class LocaleDetector extends ReactContextBaseJavaModule {
     public Map<String, Object> getConstants() {
         Context context = getReactApplicationContext();
         HashMap<String,Object> constants = new HashMap<>();
-        constants.put("locale", context.getResources().getConfiguration().locale.toLanguageTag());
+        constants.put("locale", getCurrentLocaleTag(context));
         return constants;
     }
 
