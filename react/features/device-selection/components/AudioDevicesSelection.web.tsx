@@ -134,7 +134,15 @@ interface IProps extends AbstractDialogTabProps, WithTranslation {
      */
     selectedAudioOutputId: string;
 }
-
+/**
+ * The type of the React {@code Component} state of {@link AudioDeviceSelection}.
+ */
+interface IState{
+    /**
+     * Whether microphone permission is granted locally.
+     */
+    localHasAudioPermission: boolean | null;
+}
 
 const styles = (theme: Theme) => {
     return {
@@ -182,7 +190,7 @@ const styles = (theme: Theme) => {
  *
  * @augments Component
  */
-class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
+class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
 
     /**
      * Whether current component is mounted or not.
@@ -196,6 +204,15 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
     _unMounted: boolean;
 
     /**
+     * Stores the current microphone permission status.
+     *
+     * This is used to track whether audio permissions are granted, denied,
+     * or still unknown, so that the component can react correctly when the
+     * permission state changes.
+     */
+    _permissionStatus: PermissionStatus | null = null;
+
+    /**
      * Initializes a new DeviceSelection instance.
      *
      * @param {Object} props - The read-only React Component props with which
@@ -204,7 +221,13 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
     constructor(props: IProps) {
         super(props);
 
+        this.state = {
+          localHasAudioPermission : null
+        }
+
         this._unMounted = true;
+        this._onPermissionChange = this._onPermissionChange.bind(this);
+
     }
 
     /**
@@ -214,6 +237,9 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
      */
     override componentDidMount() {
         this._unMounted = false;
+
+        this._setupPermissionListener();
+
         Promise.all([
             this._createAudioInputTrack(this.props.selectedAudioInputId)
         ])
@@ -245,6 +271,48 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
     override componentWillUnmount() {
         this._unMounted = true;
         disposeTrack(this.props.previewAudioTrack);
+
+        if (this._permissionStatus) {
+            this._permissionStatus.removeEventListener('change', this._onPermissionChange);
+        }
+    }
+
+    /**
+     * Sets up listener for microphone permission changes.
+     */
+    async _setupPermissionListener() {
+        try {
+            this._permissionStatus = await navigator.permissions.query({
+                name: 'microphone' as PermissionName
+            });
+
+            // This is the initial permission state
+            this.setState({
+                localHasAudioPermission: this._permissionStatus.state === 'granted'
+            });
+
+            this._permissionStatus.addEventListener('change', this._onPermissionChange);
+        } catch (error) {
+            console.warn(' Permissions API not supported for AudioDeviceSelection ', error);
+        }
+    }
+
+
+    /**
+     * Called when microphone permission changes.
+     */
+    _onPermissionChange() {
+        if (this._unMounted || !this._permissionStatus) {
+            return;
+        }
+
+        const isGranted = this._permissionStatus.state === 'granted';
+        this.setState({ localHasAudioPermission: isGranted });
+
+        if (isGranted) {
+            this._createAudioInputTrack(this.props.selectedAudioInputId);
+            this.props.dispatch(getAvailableDevices());
+        }
     }
 
     /**
@@ -310,6 +378,11 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
             t
         } = this.props;
         const { audioInput, audioOutput } = this._getSelectors();
+        const { localHasAudioPermission } = this.state;
+
+        const effectivePermission = localHasAudioPermission !== null
+            ? localHasAudioPermission
+            : hasAudioPermission;
 
         const classes = withStyles.getClasses(this.props);
 
@@ -328,7 +401,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
                     {this._renderSelector(audioInput)}
                 </div>}
 
-                {!hideAudioInputPreview && hasAudioPermission && !iAmVisitor
+                {!hideAudioInputPreview && effectivePermission && !iAmVisitor
                                     && <AudioInputPreview
                                         track = { this.props.previewAudioTrack } />}
 
@@ -385,7 +458,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
                     aria-live = 'polite'
                     className = { classes.outputContainer }>
                     {this._renderSelector(audioOutput)}
-                    {!hideAudioOutputPreview && hasAudioPermission
+                    {!hideAudioOutputPreview && effectivePermission
                         && <AudioOutputPreview
                             className = { classes.outputButton }
                             deviceId = { selectedAudioOutputId } />}
@@ -450,10 +523,15 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
      */
     _getSelectors() {
         const { availableDevices, hasAudioPermission } = this.props;
+        const { localHasAudioPermission } = this.state;
+
+        const effectivePermission = localHasAudioPermission !== null
+            ? localHasAudioPermission
+            : hasAudioPermission;
 
         const audioInput = {
             devices: availableDevices.audioInput,
-            hasPermission: hasAudioPermission,
+            hasPermission: effectivePermission,
             icon: 'icon-microphone',
             isDisabled: this.props.disableAudioInputChange || this.props.disableDeviceChange,
             key: 'audioInput',
@@ -468,7 +546,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
         if (!this.props.hideAudioOutputSelect) {
             audioOutput = {
                 devices: availableDevices.audioOutput,
-                hasPermission: hasAudioPermission,
+                hasPermission: effectivePermission,
                 icon: 'icon-speaker',
                 isDisabled: this.props.disableDeviceChange,
                 key: 'audioOutput',
