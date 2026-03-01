@@ -41,8 +41,11 @@ export const getKeyboardKey = (e: KeyboardEvent): string => {
 
     const replacedKey = code.replace('Key', '');
 
-    if (altKey) {
-        return `:${replacedKey}`;
+        if (altKey) {
+        const mappings = (window as any).config?.keyboardShortcutsMappings ?? {};
+        const mappedKey = mappings[replacedKey] ?? replacedKey;
+
+        return `:${mappedKey}`;
     }
 
     // If e.key is a string, then it is assumed it already plainly states
