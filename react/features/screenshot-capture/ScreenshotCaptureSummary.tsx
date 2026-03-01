@@ -48,11 +48,12 @@ export default class ScreenshotCaptureSummary {
         let workerUrl = `${baseUrl}screenshot-capture-worker.min.js`;
 
         // @ts-ignore
-        const workerBlob = new Blob([ `importScripts("${workerUrl}");` ], { type: 'application/javascript' });
+        const workerBlob = new Blob([`importScripts("${workerUrl}");`], { type: 'application/javascript' });
 
         // @ts-ignore
         workerUrl = window.URL.createObjectURL(workerBlob);
         this._streamWorker = new Worker(workerUrl, { name: 'Screenshot capture worker' });
+        window.URL.revokeObjectURL(workerUrl);
         this._streamWorker.onmessage = this._handleWorkerAction;
 
         this._initializedRegion = false;
@@ -126,6 +127,7 @@ export default class ScreenshotCaptureSummary {
      */
     stop() {
         this._streamWorker.postMessage({ id: CLEAR_TIMEOUT });
+        this._streamWorker.terminate();
     }
 
     /**
