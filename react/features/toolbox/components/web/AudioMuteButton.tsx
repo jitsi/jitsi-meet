@@ -1,22 +1,27 @@
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
-import { withStyles } from 'tss-react/mui';
+import React, { useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { ACTION_SHORTCUT_TRIGGERED, AUDIO_MUTE, createShortcutEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
-import { translate } from '../../../base/i18n/functions';
+import { AUDIO_MUTE_BUTTON_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
+import { IconMic, IconMicSlash } from '../../../base/icons/svg';
+import { MEDIA_TYPE } from '../../../base/media/constants';
 import { IGUMPendingState } from '../../../base/media/types';
-import AbstractButton from '../../../base/toolbox/components/AbstractButton';
+import { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import ToolboxItem from '../../../base/toolbox/components/ToolboxItem.web';
+import { isLocalTrackMuted } from '../../../base/tracks/functions';
 import Spinner from '../../../base/ui/components/web/Spinner';
+import { TOOLTIP_POSITION } from '../../../base/ui/constants.any';
 import { registerShortcut, unregisterShortcut } from '../../../keyboard-shortcuts/actions';
+import { muteLocal } from '../../../video-menu/actions';
 import { SPINNER_COLOR } from '../../constants';
-import AbstractAudioMuteButton, {
-    IProps as AbstractAudioMuteButtonProps,
-    mapStateToProps as abstractMapStateToProps
-} from '../AbstractAudioMuteButton';
+import { isAudioMuteButtonDisabled } from '../../functions';
 
-const styles = () => {
+const useStyles = makeStyles()(() => {
     return {
         pendingContainer: {
             position: 'absolute' as const,
@@ -24,132 +29,51 @@ const styles = () => {
             right: '3px'
         }
     };
-};
+});
 
 /**
  * The type of the React {@code Component} props of {@link AudioMuteButton}.
  */
-interface IProps extends AbstractAudioMuteButtonProps {
+interface IProps extends Partial<AbstractButtonProps> {
 
     /**
-   * The gumPending state from redux.
-   */
-    _gumPending: IGUMPendingState;
-
-    /**
-   * An object containing the CSS classes.
-   */
-    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
-
+     * External handler for click action.
+     */
+    handleClick?: Function;
 }
 
 /**
  * Component that renders a toolbar button for toggling audio mute.
  *
- * @augments AbstractAudioMuteButton
+ * @returns {JSX.Element}
  */
-class AudioMuteButton extends AbstractAudioMuteButton<IProps> {
+const AudioMuteButton = (props: IProps) => {
+    const { classes } = useStyles();
+    const { t, i18n, ready: tReady } = useTranslation();
+    const dispatch = useDispatch();
 
-    /**
-     * Initializes a new {@code AudioMuteButton} instance.
-     *
-     * @param {IProps} props - The read-only React {@code Component} props with
-     * which the new instance is to be initialized.
-     */
-    constructor(props: IProps) {
-        super(props);
+    const _audioMuted = useSelector((state: IReduxState) => isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO));
+    const _disabled = useSelector((state: IReduxState) => isAudioMuteButtonDisabled(state));
+    const _gumPending = useSelector((state: IReduxState) => state['features/base/media'].audio.gumPending);
+    const visible = useSelector((state: IReduxState) => getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true));
 
-        // Bind event handlers so they are only bound once per instance.
-        this._onKeyboardShortcut = this._onKeyboardShortcut.bind(this);
-        this._getTooltip = this._getLabel;
-    }
+    const isAudioMuted = _gumPending === IGUMPendingState.PENDING_UNMUTE ? false : _audioMuted;
 
-    /**
-     * Registers the keyboard shortcut that toggles the audio muting.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    override componentDidMount() {
-        this.props.dispatch(registerShortcut({
-            character: 'M',
-            helpDescription: 'keyboardShortcuts.mute',
-            handler: this._onKeyboardShortcut
-        }));
-    }
-
-    /**
-     * Unregisters the keyboard shortcut that toggles the audio muting.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    override componentWillUnmount() {
-        this.props.dispatch(unregisterShortcut('M'));
-    }
-
-    /**
-     * Gets the current accessibility label, taking the toggled and GUM pending state into account. If no toggled label
-     * is provided, the regular accessibility label will also be used in the toggled state.
-     *
-     * The accessibility label is not visible in the UI, it is meant to be used by assistive technologies, mainly screen
-     * readers.
-     *
-     * @private
-     * @returns {string}
-     */
-    override _getAccessibilityLabel() {
-        const { _gumPending } = this.props;
-
-        if (_gumPending === IGUMPendingState.NONE) {
-            return super._getAccessibilityLabel();
+    const onClick = useCallback(() => {
+        if (props.handleClick) {
+            props.handleClick();
         }
 
-        return 'toolbar.accessibilityLabel.muteGUMPending';
-    }
+        dispatch(muteLocal(!isAudioMuted, MEDIA_TYPE.AUDIO));
 
-    /**
-     * Gets the current label, taking the toggled and GUM pending state into account. If no
-     * toggled label is provided, the regular label will also be used in the toggled state.
-     *
-     * @private
-     * @returns {string}
-     */
-    override _getLabel() {
-        const { _gumPending } = this.props;
-
-        if (_gumPending === IGUMPendingState.NONE) {
-            return super._getLabel();
+        if (props.afterClick) {
+            props.afterClick();
         }
+    }, [ dispatch, isAudioMuted, props.handleClick, props.afterClick ]);
 
-        return 'toolbar.muteGUMPending';
-    }
-
-    /**
-     * Indicates if audio is currently muted or not.
-     *
-     * @override
-     * @protected
-     * @returns {boolean}
-     */
-    override _isAudioMuted() {
-        if (this.props._gumPending === IGUMPendingState.PENDING_UNMUTE) {
-            return false;
-        }
-
-        return super._isAudioMuted();
-    }
-
-    /**
-     * Creates an analytics keyboard shortcut event and dispatches an action to
-     * toggle the audio muting.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onKeyboardShortcut() {
+    const onKeyboardShortcut = useCallback(() => {
         // Ignore keyboard shortcuts if the audio button is disabled.
-        if (this._isDisabled()) {
+        if (_disabled) {
             return;
         }
 
@@ -157,49 +81,74 @@ class AudioMuteButton extends AbstractAudioMuteButton<IProps> {
             createShortcutEvent(
                 AUDIO_MUTE,
                 ACTION_SHORTCUT_TRIGGERED,
-                { enable: !this._isAudioMuted() }));
+                { enable: !isAudioMuted }));
 
-        AbstractButton.prototype._onClick.call(this);
+        onClick();
+    }, [ _disabled, isAudioMuted, onClick ]);
+
+    useEffect(() => {
+        dispatch(registerShortcut({
+            character: 'M',
+            helpDescription: 'keyboardShortcuts.mute',
+            handler: onKeyboardShortcut
+        }));
+
+        return () => {
+            dispatch(unregisterShortcut('M'));
+        };
+    }, [ dispatch, onKeyboardShortcut ]);
+
+    const accessibilityLabel = _gumPending === IGUMPendingState.NONE
+        ? (isAudioMuted ? 'toolbar.accessibilityLabel.unmute' : 'toolbar.accessibilityLabel.mute')
+        : 'toolbar.accessibilityLabel.muteGUMPending';
+
+    const label = _gumPending === IGUMPendingState.NONE
+        ? (isAudioMuted ? 'toolbar.unmute' : 'toolbar.mute')
+        : 'toolbar.muteGUMPending';
+
+    const icon = isAudioMuted ? IconMicSlash : IconMic;
+    const toggled = isAudioMuted;
+
+    const onKeyDown = useCallback((e?: React.KeyboardEvent) => {
+        if (e?.key === ' ' || e?.key === 'Enter') {
+            onClick();
+        }
+    }, [ onClick ]);
+
+    if (!visible) {
+        return null;
     }
 
-    /**
-     * Returns a spinner if there is pending GUM.
-     *
-     * @returns {ReactElement | null}
-     */
-    override _getElementAfter(): ReactElement | null {
-        const { _gumPending } = this.props;
-        const classes = withStyles.getClasses(this.props);
+    const elementAfter = _gumPending === IGUMPendingState.NONE ? null
+        : (
+            <div className = { classes.pendingContainer }>
+                <Spinner
+                    color = { SPINNER_COLOR }
+                    size = 'small' />
+            </div>
+        );
 
-        return _gumPending === IGUMPendingState.NONE ? null
-            : (
-                <div className = { classes.pendingContainer }>
-                    <Spinner
-                        color = { SPINNER_COLOR }
-                        size = 'small' />
-                </div>
-            );
-    }
-}
+    return (
+        <ToolboxItem
+            accessibilityLabel = { t(accessibilityLabel) }
+            disabled = { _disabled }
+            elementAfter = { elementAfter }
+            icon = { icon }
+            label = { t(label) }
+            labelProps = { {} }
+            onClick = { onClick }
+            onKeyDown = { onKeyDown }
+            showLabel = { props.showLabel ?? false }
+            toggled = { toggled }
+            tooltip = { t(label) }
+            tooltipPosition = { props.tooltipPosition as TOOLTIP_POSITION ?? 'top' }
+            visible = { true }
+            { ...props as any }
+            dispatch = { dispatch }
+            i18n = { i18n }
+            t = { t }
+            tReady = { tReady } />
+    );
+};
 
-/**
- * Maps (parts of) the redux state to the associated props for the
- * {@code AudioMuteButton} component.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{
- *     _audioMuted: boolean,
- *     _disabled: boolean
- * }}
- */
-function _mapStateToProps(state: IReduxState) {
-    const { gumPending } = state['features/base/media'].audio;
-
-    return {
-        ...abstractMapStateToProps(state),
-        _gumPending: gumPending
-    };
-}
-
-export default withStyles(translate(connect(_mapStateToProps)(AudioMuteButton)), styles);
+export default AudioMuteButton;
