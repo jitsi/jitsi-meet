@@ -9,5 +9,5 @@ import { NativeModules } from 'react-native';
 export function isExternalAPIAvailable() {
     const { ExternalAPI } = NativeModules;
 
-    return ExternalAPI !== null;
+    return ExternalAPI !== null && ExternalAPI !== undefined;
 }

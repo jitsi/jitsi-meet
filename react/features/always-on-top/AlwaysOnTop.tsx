@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 // We need to reference these files directly to avoid loading things that are not available
 // in this environment (e.g. JitsiMeetJS or interfaceConfig)
@@ -8,7 +8,7 @@ import { DEFAULT_ICON } from '../base/icons/svg/constants';
 
 import Toolbar from './Toolbar';
 
-const { api } = window.alwaysOnTop;
+const { api } = window.alwaysOnTop!;
 
 /**
  * The timeout in ms for hiding the toolbar.
@@ -16,166 +16,121 @@ const { api } = window.alwaysOnTop;
 const TOOLBAR_TIMEOUT = 4000;
 
 /**
- * The type of the React {@code Component} state of {@link AlwaysOnTop}.
- */
-interface IState {
-    avatarURL: string;
-    customAvatarBackgrounds: Array<string>;
-    displayName: string;
-    formattedDisplayName: string;
-    isVideoDisplayed: boolean;
-    userID: string;
-    visible: boolean;
-}
-
-/**
  * Represents the always on top page.
  *
- * @class AlwaysOnTop
- * @augments Component
+ * @returns {JSX.Element}
  */
-export default class AlwaysOnTop extends Component<any, IState> {
-    _hovered: boolean;
+const AlwaysOnTop = () => {
+    const [ avatarURL, setAvatarURL ] = useState('');
+    const [ customAvatarBackgrounds, setCustomAvatarBackgrounds ] = useState<string[]>([]);
+    const [ displayName, setDisplayNameState ] = useState('');
+    const [ formattedDisplayName, setFormattedDisplayName ] = useState('');
+    const [ isVideoDisplayed, setIsVideoDisplayed ] = useState(true);
+    const [ userID, setUserID ] = useState('');
+    const [ visible, setVisible ] = useState(true);
 
-    /**
-     * Initializes a new {@code AlwaysOnTop} instance.
-     *
-     * @param {*} props - The read-only properties with which the new instance
-     * is to be initialized.
-     */
-    constructor(props: any) {
-        super(props);
+    const hovered = useRef(false);
+    const hideTimeoutRef = useRef<number | null>(null);
 
-        this.state = {
-            avatarURL: '',
-            customAvatarBackgrounds: [],
-            displayName: '',
-            formattedDisplayName: '',
-            isVideoDisplayed: true,
-            userID: '',
-            visible: true
-        };
-
-        // Bind event handlers so they are only bound once per instance.
-        this._avatarChangedListener = this._avatarChangedListener.bind(this);
-        this._displayNameChangedListener
-            = this._displayNameChangedListener.bind(this);
-        this._videoChangedListener
-            = this._videoChangedListener.bind(this);
-        this._mouseMove = this._mouseMove.bind(this);
-        this._onMouseOut = this._onMouseOut.bind(this);
-        this._onMouseOver = this._onMouseOver.bind(this);
-    }
-
-    /**
-     * Handles avatar changed api events.
-     *
-     * @returns {void}
-     */
-    _avatarChangedListener({ avatarURL, id }: { avatarURL: string; id: string; }) {
-        if (api._getOnStageParticipant() === id
-                && avatarURL !== this.state.avatarURL) {
-            this.setState({ avatarURL });
+    const hideToolbarAfterTimeout = useCallback(() => {
+        if (hideTimeoutRef.current) {
+            clearTimeout(hideTimeoutRef.current);
         }
-    }
 
-    /**
-     * Handles display name changed api events.
-     *
-     * @returns {void}
-     */
-    _displayNameChangedListener({ displayname, formattedDisplayName, id }: { displayname: string;
-        formattedDisplayName: string; id: string; }) {
-        if (api._getOnStageParticipant() === id
-                && (formattedDisplayName !== this.state.formattedDisplayName
-                    || displayname !== this.state.displayName)) {
-            // I think the API has a typo using lowercase n for the displayname
-            this.setState({
-                displayName: displayname,
-                formattedDisplayName
-            });
-        }
-    }
-
-    /**
-     * Hides the toolbar after a timeout.
-     *
-     * @returns {void}
-     */
-    _hideToolbarAfterTimeout() {
-        setTimeout(
+        hideTimeoutRef.current = window.setTimeout(
             () => {
-                if (this._hovered) {
-                    this._hideToolbarAfterTimeout();
+                if (hovered.current) {
+                    hideToolbarAfterTimeout();
                 } else {
-                    this.setState({ visible: false });
+                    setVisible(false);
                 }
             },
             TOOLBAR_TIMEOUT);
-    }
+    }, []);
 
-    /**
-     * Handles large video changed api events.
-     *
-     * @returns {void}
-     */
-    _videoChangedListener() {
-        const userID = api._getOnStageParticipant();
-        const avatarURL = api.getAvatarURL(userID);
-        const displayName = api.getDisplayName(userID);
-        const formattedDisplayName = api._getFormattedDisplayName(userID);
-        const isVideoDisplayed = Boolean(api._getPrejoinVideo?.() || api._getLargeVideo());
+    const avatarChangedListener = useCallback(({ avatarURL: newAvatarURL, id }: { avatarURL: string; id: string; }) => {
+        if (api._getOnStageParticipant() === id) {
+            setAvatarURL(newAvatarURL);
+        }
+    }, []);
 
-        this.setState({
-            avatarURL,
-            displayName,
-            formattedDisplayName,
-            isVideoDisplayed,
-            userID
+    const displayNameChangedListener = useCallback(({ displayname, formattedDisplayName: newFormattedDisplayName, id }: { displayname: string;
+        formattedDisplayName: string; id: string; }) => {
+        if (api._getOnStageParticipant() === id) {
+            setDisplayNameState(displayname);
+            setFormattedDisplayName(newFormattedDisplayName);
+        }
+    }, []);
+
+    const videoChangedListener = useCallback(() => {
+        const stageID = api._getOnStageParticipant();
+        const stageAvatarURL = api.getAvatarURL(stageID);
+        const stageDisplayName = api.getDisplayName(stageID);
+        const stageFormattedDisplayName = api._getFormattedDisplayName(stageID);
+        const stageIsVideoDisplayed = Boolean(api._getPrejoinVideo?.() || api._getLargeVideo());
+
+        setAvatarURL(stageAvatarURL);
+        setDisplayNameState(stageDisplayName);
+        setFormattedDisplayName(stageFormattedDisplayName);
+        setIsVideoDisplayed(stageIsVideoDisplayed);
+        setUserID(stageID);
+    }, []);
+
+    const mouseMove = useCallback(() => {
+        setVisible(prevVisible => {
+            if (!prevVisible) {
+                return true;
+            }
+
+            return prevVisible;
         });
-    }
+    }, []);
 
-    /**
-     * Handles mouse move events.
-     *
-     * @returns {void}
-     */
-    _mouseMove() {
-        this.state.visible || this.setState({ visible: true });
-    }
+    const onMouseOut = useCallback(() => {
+        hovered.current = false;
+    }, []);
 
-    /**
-     * Toolbar mouse out handler.
-     *
-     * @returns {void}
-     */
-    _onMouseOut() {
-        this._hovered = false;
-    }
+    const onMouseOver = useCallback(() => {
+        hovered.current = true;
+    }, []);
 
-    /**
-     * Toolbar mouse over handler.
-     *
-     * @returns {void}
-     */
-    _onMouseOver() {
-        this._hovered = true;
-    }
+    useEffect(() => {
+        api.on('avatarChanged', avatarChangedListener);
+        api.on('displayNameChange', displayNameChangedListener);
+        api.on('largeVideoChanged', videoChangedListener);
+        api.on('prejoinVideoChanged', videoChangedListener);
+        api.on('videoConferenceJoined', videoChangedListener);
 
-    /**
-     * Renders display name and avatar for the on stage participant.
-     *
-     * @returns {ReactElement}
-     */
-    _renderVideoNotAvailableScreen() {
-        const {
-            avatarURL,
-            customAvatarBackgrounds,
-            displayName,
-            formattedDisplayName,
-            isVideoDisplayed
-        } = this.state;
+        videoChangedListener();
 
+        window.addEventListener('mousemove', mouseMove);
+
+        api.getCustomAvatarBackgrounds()
+            .then((res: { avatarBackgrounds?: string[]; }) =>
+                setCustomAvatarBackgrounds(res.avatarBackgrounds || []))
+            .catch(console.error);
+
+        return () => {
+            api.removeListener('avatarChanged', avatarChangedListener);
+            api.removeListener('displayNameChange', displayNameChangedListener);
+            api.removeListener('largeVideoChanged', videoChangedListener);
+            api.removeListener('prejoinVideoChanged', videoChangedListener);
+            api.removeListener('videoConferenceJoined', videoChangedListener);
+
+            window.removeEventListener('mousemove', mouseMove);
+            if (hideTimeoutRef.current) {
+                clearTimeout(hideTimeoutRef.current);
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (visible) {
+            hideToolbarAfterTimeout();
+        }
+    }, [ visible, hideToolbarAfterTimeout ]);
+
+    const renderVideoNotAvailableScreen = () => {
         if (isVideoDisplayed) {
             return null;
         }
@@ -188,7 +143,7 @@ export default class AlwaysOnTop extends Component<any, IState> {
                         iconUser = { DEFAULT_ICON.IconUser }
                         id = 'avatar'
                         initials = { getInitials(displayName) }
-                        url = { avatarURL } />)
+                        url = { avatarURL } />
                 </div>
                 <div
                     className = 'displayname'
@@ -197,85 +152,17 @@ export default class AlwaysOnTop extends Component<any, IState> {
                 </div>
             </div>
         );
-    }
+    };
 
-    /**
-     * Sets mouse move listener and initial toolbar timeout.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    override componentDidMount() {
-        api.on('avatarChanged', this._avatarChangedListener);
-        api.on('displayNameChange', this._displayNameChangedListener);
-        api.on('largeVideoChanged', this._videoChangedListener);
-        api.on('prejoinVideoChanged', this._videoChangedListener);
-        api.on('videoConferenceJoined', this._videoChangedListener);
+    return (
+        <div id = 'alwaysOnTop'>
+            <Toolbar
+                className = { visible ? 'fadeIn' : 'fadeOut' }
+                onMouseOut = { onMouseOut }
+                onMouseOver = { onMouseOver } />
+            { renderVideoNotAvailableScreen() }
+        </div>
+    );
+};
 
-        this._videoChangedListener();
-
-        window.addEventListener('mousemove', this._mouseMove);
-
-        this._hideToolbarAfterTimeout();
-        api.getCustomAvatarBackgrounds()
-            .then((res: { avatarBackgrounds?: string[]; }) =>
-                this.setState({
-                    customAvatarBackgrounds: res.avatarBackgrounds || []
-                }))
-            .catch(console.error);
-    }
-
-    /**
-     * Sets a timeout to hide the toolbar when the toolbar is shown.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    override componentDidUpdate(_prevProps: any, prevState: IState) {
-        if (!prevState.visible && this.state.visible) {
-            this._hideToolbarAfterTimeout();
-        }
-    }
-
-    /**
-     * Removes all listeners.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    override componentWillUnmount() {
-        api.removeListener('avatarChanged', this._avatarChangedListener);
-        api.removeListener(
-            'displayNameChange',
-            this._displayNameChangedListener);
-        api.removeListener(
-            'largeVideoChanged',
-            this._videoChangedListener);
-        api.removeListener(
-            'prejoinVideoChanged',
-            this._videoChangedListener);
-        api.removeListener(
-            'videoConferenceJoined',
-            this._videoChangedListener);
-
-        window.removeEventListener('mousemove', this._mouseMove);
-    }
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    override render() {
-        return (
-            <div id = 'alwaysOnTop'>
-                <Toolbar
-                    className = { this.state.visible ? 'fadeIn' : 'fadeOut' }
-                    onMouseOut = { this._onMouseOut }
-                    onMouseOver = { this._onMouseOver } />
-                { this._renderVideoNotAvailableScreen() }
-            </div>
-        );
-    }
-}
+export default AlwaysOnTop;
