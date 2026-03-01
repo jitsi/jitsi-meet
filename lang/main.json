@@ -593,6 +593,8 @@
         "fileUploadedSuccessfully": "File uploaded successfully",
         "newFileNotification": "{{ participantName }} shared '{{ fileName }}'",
         "removeFile": "Remove",
+        "removeFileFailedDescription": "The file metadata was removed but the file data may still exist on the server. Please try again.",
+        "removeFileFailedTitle": "Failed to remove file from server",
         "removeFileSuccess": "File removed successfully",
         "uploadDisabled": "Not allowed to upload files. Ask a moderator for permission rights for that operation.",
         "uploadFailedDescription": "Please try again.",
