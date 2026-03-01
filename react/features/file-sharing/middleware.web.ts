@@ -212,6 +212,12 @@ MiddlewareRegistry.register(store => next => action => {
         })
         .catch((error: any) => {
             logger.warn('Could not delete file:', error);
+
+            store.dispatch(showErrorNotification({
+                titleKey: 'fileSharing.removeFileFailedTitle',
+                descriptionKey: 'fileSharing.removeFileFailedDescription',
+                appearance: NOTIFICATION_TYPE.ERROR
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
         });
 
         return next(action);
@@ -230,7 +236,13 @@ MiddlewareRegistry.register(store => next => action => {
                 'Authorization': `Bearer ${token}`
             }
         }))
-        .then((response: any) => response.json())
+        .then((response: any) => {
+            if (!response.ok) {
+                throw new Error(`Failed to fetch file metadata: ${response.status} ${response.statusText}`);
+            }
+
+            return response.json();
+        })
         .then((data: { fileName: string; presignedUrl: string; }) => {
             const { presignedUrl, fileName } = data;
 
