@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Keyboard, Platform } from 'react-native';
 
+const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
 /**
  * A hook that tracks whether the native keyboard is visible.
  *
@@ -8,8 +11,6 @@ import { Keyboard, Platform } from 'react-native';
  */
 export const useKeyboardVisible = (): boolean => {
     const [ keyboardVisible, setKeyboardVisible ] = useState(false);
-    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
-    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
 
     useEffect(() => {
         const showSub = Keyboard.addListener(showEvent, () => setKeyboardVisible(true));
