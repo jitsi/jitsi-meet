@@ -16,27 +16,6 @@ import DialInSummary from './DialInSummary';
  * @augments BaseApp
  */
 
-function decodeRoomName(room: string): string {
-    let decoded = room;
-
-    try {
-        // Decode repeatedly to handle double-encoded values (e.g. %2520 -> %20 -> space)
-        while (/%[0-9A-Fa-f]{2}/.test(decoded)) {
-            const next = decodeURIComponent(decoded);
-
-            if (next === decoded) {
-                break;
-            }
-
-            decoded = next;
-        }
-    } catch {
-        // If decoding fails, return the original value
-        return room;
-    }
-
-    return decoded;
-}
 export default class DialInSummaryApp extends BaseApp<any> {
     /**
      * Navigates to {@link Prejoin} upon mount.
@@ -48,22 +27,31 @@ export default class DialInSummaryApp extends BaseApp<any> {
 
         // @ts-ignore
         const { room } = parseURLParams(window.location, true, 'search');
+        let normalizedRoom = room;
+        try {
+            normalizedRoom = decodeURIComponent(room);
+        } catch (e) {
+            // keep original if malformed
+        }
+
         const { href } = window.location;
         const ix = href.indexOf(DIAL_IN_INFO_PAGE_PATH_NAME);
-        const url = (ix > 0 ? href.substring(0, ix) : href) + room;
+        const baseUrl = ix > 0 ? href.substring(0, ix) : href;
+
+        // Encode ONCE at URL boundary
+        const url = `${baseUrl}${encodeURIComponent(normalizedRoom)}`;
 
         super._navigate({
             component: () => (<>
                 {room
                     ? <DialInSummary
-                        className = 'dial-in-page'
-                        clickableNumbers = { isMobileBrowser() }
-                        room={decodeRoomName(room)}
-
-                        scrollable = { true }
-                        showTitle = { true }
-                        url = { url } />
-                    : <NoRoomError className = 'dial-in-page' />}
+                        className='dial-in-page'
+                        clickableNumbers={isMobileBrowser()}
+                        room={normalizedRoom}
+                        scrollable={true}
+                        showTitle={true}
+                        url={url} />
+                    : <NoRoomError className='dial-in-page' />}
             </>)
         });
     }
