@@ -539,11 +539,6 @@ export interface IConfig {
         disableRemoveRaisedHandOnFocus?: boolean;
     };
     readOnlyName?: boolean;
-    recordingLimit?: {
-        appName?: string;
-        appURL?: string;
-        limit?: number;
-    };
     recordingService?: {
         enabled?: boolean;
         hideStorageWarning?: boolean;
@@ -618,7 +613,6 @@ export interface IConfig {
     };
     tokenAuthInline?: boolean;
     tokenAuthUrl?: string;
-    tokenAuthUrlAutoRedirect?: string;
     tokenGetUserInfoOutOfContext?: boolean;
     tokenLogoutUrl?: string;
     tokenRespectTenant?: boolean;

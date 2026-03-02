@@ -714,8 +714,6 @@
         "googlePrivacyPolicy": "Google गोपनीयता नीति",
         "inProgress": "रिकॉर्डिंग या लाइव स्ट्रीमिंग जारी है",
         "invalidStreamKey": "लाइव स्ट्रीम कुंजी गलत हो सकती है।",
-        "limitNotificationDescriptionNative": "आपकी स्ट्रीमिंग {{limit}} मिनट तक सीमित होगी। असीमित स्ट्रीमिंग के लिए {{app}} आज़माएँ।",
-        "limitNotificationDescriptionWeb": "अधिक मांग के कारण आपकी स्ट्रीमिंग {{limit}} मिनट तक सीमित होगी। असीमित स्ट्रीमिंग के लिए <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a> आज़माएँ।",
         "off": "लाइव स्ट्रीमिंग बंद हो गई",
         "offBy": "{{name}} ने लाइव स्ट्रीमिंग बंद कर दी",
         "on": "लाइव स्ट्रीमिंग शुरू हो गई",

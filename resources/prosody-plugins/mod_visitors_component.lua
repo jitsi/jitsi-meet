@@ -99,18 +99,14 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
             -- Let's do the force_promote checks if requested
             -- if it is vpaas meeting we trust the moderator computation from visitor node (value of force_promote_requested)
             -- if it is not vpaas we need to check further settings only if they exist
-            if is_vpaas(room) or (not room._data.moderator_id and not room._data.moderators)
-                -- _data.moderator_id can be used from external modules to set single moderator for a meeting
-                -- or a whole group of moderators
-                or (room._data.moderator_id
-                    and room._data.moderator_id == user_id or room._data.moderator_id == group_id)
-
+            if is_vpaas(room) or not room._data.moderators
                 -- all moderators are allowed to auto promote, the fact that user_id and force_promote_requested are set
                 -- means that the user has token and is moderator on visitor node side
                 or room._data.allModerators
 
-                -- can be used by external modules to set multiple moderator ids (table of values)
+                -- can be used by external modules to set multiple moderator ids (table of values) or a group
                 or table_find(room._data.moderators, user_id)
+                or table_find(room._data.moderators, group_id)
             then
                 force_promote = true;
             end
@@ -519,8 +515,6 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
             or is_sip_jigasi(stanza)
             or is_sip_jibri_join(stanza)
             or table_find(room._data.moderators, session.jitsi_meet_context_user and session.jitsi_meet_context_user.id)
-            or (room._data.moderator_id and room._data.moderator_id == (session.jitsi_meet_context_user and session.jitsi_meet_context_user.id))
-            or (room._data.moderator_id and room._data.moderator_id == session.jitsi_meet_context_group)
             or table_find(room._data.participants, session.jitsi_meet_context_user and session.jitsi_meet_context_user.id) then
             if DEBUG then
                 module:log('debug', 'Auto-allowing visitor %s in room %s', stanza.attr.from, room.jid);

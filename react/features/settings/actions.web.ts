@@ -1,8 +1,8 @@
 import { batch } from 'react-redux';
 
 import { IStore } from '../app/types';
-import { setTokenAuthUrlSuccess, silentLogout } from '../authentication/actions.web';
-import { isTokenAuthEnabled, isTokenAuthInline } from '../authentication/functions';
+import { silentLogout } from '../authentication/actions.web';
+import { isTokenAuthInline } from '../authentication/functions';
 import {
     setStartMutedPolicy,
     setStartReactionsMuted
@@ -53,7 +53,7 @@ export function openLogoutDialog() {
         const logoutUrl = config.tokenLogoutUrl;
 
         const { conference } = state['features/base/conference'];
-        const { jwt, idToken } = state['features/base/jwt'];
+        const { idToken } = state['features/base/jwt'];
 
         if (!browser.isElectron() && logoutUrl && isTokenAuthInline(config)) {
             let url = logoutUrl;
@@ -65,7 +65,6 @@ export function openLogoutDialog() {
             silentLogout(url)
                 .then(() => {
                     dispatch(setJWT());
-                    dispatch(setTokenAuthUrlSuccess(false));
                 })
                 .catch(() => logger.error('logout failed'));
 
@@ -74,12 +73,6 @@ export function openLogoutDialog() {
 
         dispatch(openDialog('LogoutDialog', LogoutDialog, {
             onLogout() {
-                if (isTokenAuthEnabled(state) && config.tokenAuthUrlAutoRedirect && jwt) {
-
-                    // user is logging out remove auto redirect indication
-                    dispatch(setTokenAuthUrlSuccess(false));
-                }
-
                 if (logoutUrl && browser.isElectron()) {
                     const url = appendURLHashParam(logoutUrl, 'electron', 'true');
 

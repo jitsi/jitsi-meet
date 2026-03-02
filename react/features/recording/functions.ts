@@ -201,7 +201,8 @@ export function canStopRecording(state: IReduxState) {
     }
 
     if (isCloudRecordingRunning(state) || isRecorderTranscriptionsRunning(state)) {
-        return isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false);
+        return isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false)
+            || isJwtFeatureEnabled(state, MEET_FEATURES.TRANSCRIPTION, false);
     }
 
     return false;
@@ -255,17 +256,21 @@ export function getRecordButtonProps(state: IReduxState) {
     // its own to be visible or not.
     const {
         recordingService,
-        localRecording
+        localRecording,
+        transcription
     } = state['features/base/config'];
     const localRecordingEnabled = !localRecording?.disable && supportsLocalRecording();
 
     const dropboxEnabled = isDropboxEnabled(state);
     const recordingEnabled = recordingService?.enabled || dropboxEnabled;
+    const transcriptionEnabled = transcription?.enabled;
 
     if (localRecordingEnabled) {
         visible = true;
     } else if (isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false)) {
         visible = recordingEnabled;
+    } else if (isJwtFeatureEnabled(state, MEET_FEATURES.TRANSCRIPTION, false)) {
+        visible = transcriptionEnabled;
     }
 
     // disable the button if the livestreaming is running.
