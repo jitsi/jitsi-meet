@@ -68,20 +68,6 @@ const DocumentPiPWindow: React.FC = () => {
         ? getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId)
         : undefined;
 
-    // Debug: log participant/track changes (remove after testing).
-    console.log(
-        "[DocumentPiP] dominant:",
-        dominantSpeakerId,
-        "largeVideo:",
-        largeVideoParticipant?.id,
-        "selected:",
-        participantId,
-        "local:",
-        localParticipant?.id,
-        "hasTrack:",
-        !!videoTrack?.jitsiTrack,
-    );
-
     /**
      * Effect: attach/detach video track on the PiP window's video element.
      */
