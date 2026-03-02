@@ -200,8 +200,8 @@
     "webpack-dev-server": "5.2.1"
   },
   "engines": {
-    "node": ">=22.0.0",
-    "npm": ">=10.0.0"
+    "node": ">=24.0.0",
+    "npm": ">=11.0.0"
   },
   "license": "Apache-2.0",
   "scripts": {
