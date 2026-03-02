@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FlatList, SafeAreaView, TextInput, View, ViewStyle } from 'react-native';
+import { FlatList, Platform, SafeAreaView, TextInput, View, ViewStyle } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
+import { useKeyboardVisible } from '../../../base/modal/hooks.native';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
@@ -30,6 +32,7 @@ const PollCreate = (props: AbstractProps) => {
 
     const answerListRef = useRef<FlatList>(null);
     const dispatch = useDispatch();
+    const keyboardVisible = Platform.OS === 'android' && useKeyboardVisible();
 
     /*
      * This ref stores the Array of answer input fields, allowing us to focus on them.
@@ -166,7 +169,11 @@ const PollCreate = (props: AbstractProps) => {
                     keyExtractor = { (item, index) => index.toString() }
                     ref = { answerListRef }
                     renderItem = { renderListItem } />
-                <View style = { pollsStyles.pollCreateButtonsContainer as ViewStyle }>
+                <View
+                    style = { [
+                        pollsStyles.pollCreateButtonsContainer,
+                        keyboardVisible && { marginBottom: BaseTheme.spacing[8] }
+                    ] as ViewStyle[] }>
                     <Button
                         accessibilityLabel = 'polls.create.addOption'
                         disabled = { answers.length >= ANSWERS_LIMIT }
