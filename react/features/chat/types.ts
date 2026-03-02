@@ -4,7 +4,16 @@ import { IStore } from '../app/types';
 import { IFileMetadata } from '../file-sharing/types';
 
 export interface IMessage {
+    deleted?: boolean;
+    deletedBy?: string;
+    deletedTimestamp?: number;
     displayName: string;
+    editHistory?: Array<{
+        editedAt: number;
+        message?: string;
+    }>;
+    editTimestamp?: number;
+    edited?: boolean;
     error?: Object;
     fileMetadata?: IFileMetadata;
     isFromGuest?: boolean;
@@ -14,6 +23,14 @@ export interface IMessage {
     message: string;
     messageId: string;
     messageType: string;
+    moderation?: {
+        flagged?: boolean;
+        flaggedAt?: number;
+        flaggedBy?: string;
+        redacted?: boolean;
+        redactedAt?: number;
+        redactedBy?: string;
+    };
     participantId: string;
     privateMessage: boolean;
     reactions: Map<string, Set<string>>;
