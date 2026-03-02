@@ -74,6 +74,13 @@ android {
         }
     }
 
+    packagingOptions {
+        pickFirst 'lib/x86/libfbjni.so'
+        pickFirst 'lib/x86_64/libfbjni.so'
+        pickFirst 'lib/armeabi-v7a/libfbjni.so'
+        pickFirst 'lib/arm64-v8a/libfbjni.so'
+    }
+
     compileOptions {
         sourceCompatibility rootProject.ext.javaVersion
         targetCompatibility rootProject.ext.javaVersion
@@ -106,6 +113,10 @@ dependencies {
     }
 
     implementation project(':sdk')
+    // Explicitly declare hermes-android here so AGP merges libhermesvm.so into the final APK.
+    // Without this, native libs from transitive AAR dependencies of library modules may not
+    // be propagated to the application APK.
+    implementation "com.facebook.hermes:hermes-android:$rootProject.ext.hermesVersion"
 }
 
 gradle.projectsEvaluated {

@@ -21,14 +21,14 @@ import android.app.Application;
 
 import androidx.annotation.Nullable;
 
-import com.facebook.hermes.reactexecutor.HermesExecutorFactory;
-import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.common.LifecycleState;
+import com.facebook.react.defaults.DefaultReactHost;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.facebook.react.runtime.hermes.HermesInstance;
 import com.facebook.react.uimanager.ViewManager;
 import com.oney.WebRTCModule.EglUtils;
 import com.oney.WebRTCModule.WebRTCModuleOptions;
@@ -46,15 +46,10 @@ class ReactInstanceManagerHolder {
     private static final String TAG = ReactInstanceManagerHolder.class.getSimpleName();
 
     /**
-     * FIXME (from linter): Do not place Android context classes in static
-     * fields (static reference to ReactInstanceManager which has field
-     * mApplicationContext pointing to Context); this is a memory leak (and
-     * also breaks Instant Run).
-     *
-     * React Native bridge. The instance manager allows embedding applications
-     * to create multiple root views off the same JavaScript bundle.
+     * ReactHost is the new architecture replacement for ReactInstanceManager.
+     * It manages the React Native runtime in bridgeless (Fabric + TurboModules) mode.
      */
-    private static ReactInstanceManager reactInstanceManager;
+    private static ReactHost reactHost;
 
     private static List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> nativeModules
@@ -152,6 +147,10 @@ class ReactInstanceManagerHolder {
         return packages;
     }
 
+    static ReactHost getReactHost() {
+        return reactHost;
+    }
+
     /**
      * Helper function to send an event to JavaScript.
      *
@@ -161,12 +160,9 @@ class ReactInstanceManagerHolder {
     static void emitEvent(
             String eventName,
             @Nullable Object data) {
-        ReactInstanceManager reactInstanceManager
-            = ReactInstanceManagerHolder.getReactInstanceManager();
-
-        if (reactInstanceManager != null) {
+        if (reactHost != null) {
             @SuppressLint("VisibleForTests") ReactContext reactContext
-                = reactInstanceManager.getCurrentReactContext();
+                = reactHost.getCurrentReactContext();
 
             if (reactContext != null) {
                 reactContext
@@ -180,36 +176,32 @@ class ReactInstanceManagerHolder {
      * Finds a native React module for given class.
      *
      * @param nativeModuleClass the native module's class for which an instance
-     * is to be retrieved from the {@link #reactInstanceManager}.
+     * is to be retrieved from the {@link #reactHost}.
      * @param <T> the module's type.
      * @return {@link NativeModule} instance for given interface type or
      * {@code null} if no instance for this interface is available, or if
-     * {@link #reactInstanceManager} has not been initialized yet.
+     * {@link #reactHost} has not been initialized yet.
      */
     static <T extends NativeModule> T getNativeModule(
             Class<T> nativeModuleClass) {
         @SuppressLint("VisibleForTests") ReactContext reactContext
-            = reactInstanceManager != null
-                ? reactInstanceManager.getCurrentReactContext() : null;
+            = reactHost != null
+                ? reactHost.getCurrentReactContext() : null;
 
         return reactContext != null
                 ? reactContext.getNativeModule(nativeModuleClass) : null;
     }
 
-    static ReactInstanceManager getReactInstanceManager() {
-        return reactInstanceManager;
-    }
-
     /**
-     * Internal method to initialize the React Native instance manager. We
-     * create a single instance in order to load the JavaScript bundle a single
-     * time. All {@code ReactRootView} instances will be tied to the one and
-     * only {@code ReactInstanceManager}.
+     * Internal method to initialize the React Native host. We create a single
+     * instance in order to load the JavaScript bundle a single time. All
+     * {@code ReactSurface} instances will be tied to the one and only
+     * {@code ReactHost}.
      *
      * @param app {@code Application}
      */
     static void initReactInstanceManager(Application app) {
-        if (reactInstanceManager != null) {
+        if (reactHost != null) {
             return;
         }
 
@@ -228,16 +220,23 @@ class ReactInstanceManagerHolder {
 
         JitsiMeetLogger.d(TAG, "initializing RN");
 
-        reactInstanceManager
-            = ReactInstanceManager.builder()
-                .setApplication(app)
-                .setCurrentActivity(null)
-                .setBundleAssetName("index.android.bundle")
-                .setJSMainModulePath("index.android")
-                .setJavaScriptExecutorFactory(new HermesExecutorFactory())
-                .addPackages(getReactNativePackages())
-                .setUseDeveloperSupport(BuildConfig.DEBUG)
-                .setInitialLifecycleState(LifecycleState.BEFORE_CREATE)
-                .build();
+        // In RN 0.76+, ReactInstanceManager is replaced by ReactHost.
+        // DefaultReactHost.getDefaultReactHost creates a ReactHostImpl using the
+        // new bridgeless architecture (Fabric + TurboModules).
+        reactHost = DefaultReactHost.getDefaultReactHost(
+            app,
+            getReactNativePackages(),
+            "index.android",            // jsMainModulePath
+            "index.android.bundle",     // jsBundleAssetPath
+            null,                       // jsBundleFile (filesystem path, null = use assets)
+            new HermesInstance(),       // JSRuntimeFactory
+            BuildConfig.DEBUG,          // isDev
+            Collections.emptyList(),    // cxxReactPackageProviders
+            e -> {
+                JitsiMeetLogger.e(e, "React exception");
+                return kotlin.Unit.INSTANCE;
+            },
+            null                        // BindingsInstaller
+        );
     }
 }

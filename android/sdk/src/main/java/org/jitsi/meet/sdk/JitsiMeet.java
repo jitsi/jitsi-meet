@@ -20,7 +20,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactHost;
 
 import com.splashview.SplashView;
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
@@ -71,11 +71,10 @@ public class JitsiMeet {
      * Used in development mode. It displays the React Native development menu.
      */
     public static void showDevOptions() {
-        ReactInstanceManager reactInstanceManager
-            = ReactInstanceManagerHolder.getReactInstanceManager();
+        ReactHost reactHost = ReactInstanceManagerHolder.getReactHost();
 
-        if (reactInstanceManager != null) {
-            reactInstanceManager.showDevOptionsDialog();
+        if (reactHost != null) {
+            reactHost.getDevSupportManager().showDevOptionsDialog();
         }
     }
 

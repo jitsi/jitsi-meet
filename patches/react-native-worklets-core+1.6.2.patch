@@ -1,0 +1,46 @@
+--- a/node_modules/react-native-worklets-core/android/CMakeLists.txt
++++ b/node_modules/react-native-worklets-core/android/CMakeLists.txt
+@@ -93,10 +93,20 @@
+ 
+   string(APPEND CMAKE_CXX_FLAGS " -DJS_RUNTIME_HERMES=1")
+ 
+-  target_link_libraries(
+-    ${PACKAGE_NAME}
+-    hermes-engine::libhermes
+-  )
++  # In RN 0.83.0+, com.facebook.hermes:hermes-android:0.14.0 exports the prefab
++  # module as "hermesvm" (providing libhermesvm.so) instead of the older "libhermes".
++  # Use the available target based on what was found by find_package.
++  if(TARGET hermes-engine::hermesvm)
++    target_link_libraries(
++      ${PACKAGE_NAME}
++      hermes-engine::hermesvm
++    )
++  else()
++    target_link_libraries(
++      ${PACKAGE_NAME}
++      hermes-engine::libhermes
++    )
++  endif()
+ 
+   if(${HERMES_ENABLE_DEBUGGER})
+     if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
+--- a/node_modules/react-native-worklets-core/android/build.gradle
++++ b/node_modules/react-native-worklets-core/android/build.gradle
+@@ -149,6 +149,7 @@
+       "**/libfolly_runtime.so",
+       "**/libglog.so",
+       "**/libhermes.so",
++      "**/libhermesvm.so",
+       "**/libhermes-executor-debug.so",
+       "**/libhermes_executor.so",
+       "**/libhermestooling.so",
+@@ -174,7 +175,7 @@
+ dependencies {
+   implementation "com.facebook.react:react-android"
+   if (JS_RUNTIME == "hermes") {
+-    implementation "com.facebook.react:hermes-android:0.77.2"
++    implementation "com.facebook.hermes:hermes-android:0.14.0"
+   }
+ }
+ 

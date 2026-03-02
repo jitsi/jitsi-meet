@@ -22,6 +22,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.startup.Initializer;
 
+import com.facebook.react.ReactHost;
+import com.facebook.react.internal.featureflags.ReactNativeFeatureFlags;
+
 import com.facebook.soloader.SoLoader;
 import com.facebook.react.soloader.OpenSourceMergedSoMapping;
 import org.wonday.orientation.OrientationActivityLifecycle;
@@ -43,15 +46,23 @@ public class JitsiInitializer implements Initializer<Boolean> {
             throw new RuntimeException(e);
         }
 
+        // Override React Native feature flags for new architecture
+        RNNewArchitectureFeatureFlags newArchitectureFeatureFlags = new RNNewArchitectureFeatureFlags();
+        ReactNativeFeatureFlags.override(newArchitectureFeatureFlags);
+
         // Register our uncaught exception handler.
         JitsiMeetUncaughtExceptionHandler.register();
 
         // Register activity lifecycle handler for the orientation locker module.
         ((Application) context).registerActivityLifecycleCallbacks(OrientationActivityLifecycle.getInstance());
 
-        // Initialize ReactInstanceManager during application startup
-        // This ensures it's ready before any Activity onCreate is called
+        // Initialize ReactHost during application startup and start loading the JS bundle.
+        // This ensures it's ready before any Activity onCreate is called.
         ReactInstanceManagerHolder.initReactInstanceManager((Application) context);
+        ReactHost reactHost = ReactInstanceManagerHolder.getReactHost();
+        if (reactHost != null) {
+            reactHost.start();
+        }
 
         return true;
     }
