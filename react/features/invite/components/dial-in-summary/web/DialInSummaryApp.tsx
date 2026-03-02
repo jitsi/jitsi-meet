@@ -28,6 +28,7 @@ export default class DialInSummaryApp extends BaseApp<any> {
         // @ts-ignore
         const { room } = parseURLParams(window.location, true, 'search');
         let normalizedRoom = room;
+
         try {
             normalizedRoom = decodeURIComponent(room);
         } catch (e) {
@@ -45,13 +46,13 @@ export default class DialInSummaryApp extends BaseApp<any> {
             component: () => (<>
                 {room
                     ? <DialInSummary
-                        className='dial-in-page'
-                        clickableNumbers={isMobileBrowser()}
-                        room={normalizedRoom}
-                        scrollable={true}
-                        showTitle={true}
-                        url={url} />
-                    : <NoRoomError className='dial-in-page' />}
+                        className = 'dial-in-page'
+                        clickableNumbers = { isMobileBrowser() }
+                        room = { normalizedRoom }
+                        scrollable = { true }
+                        showTitle = { true }
+                        url = { url } />
+                    : <NoRoomError className = 'dial-in-page' />}
             </>)
         });
     }
