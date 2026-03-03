@@ -33,6 +33,7 @@ const PollAnswer = (props: AbstractProps) => {
     const dispatch = useDispatch();
     const localParticipant = useSelector(getLocalParticipant);
     const { PRIMARY, SECONDARY } = BUTTON_TYPES;
+    const switchProps = (pollsStyles as any).switchProps;
 
     return (
         <>
@@ -59,6 +60,7 @@ const PollAnswer = (props: AbstractProps) => {
                             key = { index }
                             style = { pollsStyles.switchRow as ViewStyle } >
                             <Switch
+                                { ...(switchProps ?? {}) }
                                 checked = { checkBoxStates[index] }
                                 disabled = { poll.saved }
                                 id = 'answer-switch'

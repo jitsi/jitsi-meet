@@ -26,7 +26,13 @@ const IconButton: React.FC<IIconButtonProps> = ({
     let underlayColor;
     let iconButtonContainerStyles;
 
-    if (type === PRIMARY) {
+    const typeConfig = (styles as any).iconButtonTypeConfig?.[type as string];
+
+    if (typeConfig) {
+        color = typeConfig.color;
+        iconButtonContainerStyles = typeConfig.containerStyle;
+        underlayColor = typeConfig.underlayColor;
+    } else if (type === PRIMARY) {
         color = BaseTheme.palette.icon01;
         iconButtonContainerStyles = styles.iconButtonContainerPrimary;
         underlayColor = BaseTheme.palette.action01;
@@ -44,8 +50,8 @@ const IconButton: React.FC<IIconButtonProps> = ({
     }
 
     if (disabled) {
-        color = BaseTheme.palette.icon03;
-        iconButtonContainerStyles = styles.iconButtonContainerDisabled;
+        color = typeConfig?.disabledColor ?? BaseTheme.palette.icon03;
+        iconButtonContainerStyles = typeConfig?.disabledContainerStyle ?? styles.iconButtonContainerDisabled;
         underlayColor = 'transparent';
     }
 

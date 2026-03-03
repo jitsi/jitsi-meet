@@ -363,6 +363,7 @@ export interface IConfig {
     enableSaveLogs?: boolean;
     enableTalkWhileMuted?: boolean;
     enableTcc?: boolean;
+    enableTileViewOneOnOne?: boolean;
     enableWebHIDFeature?: boolean;
     enableWelcomePage?: boolean;
     etherpad_base?: string;

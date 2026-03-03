@@ -1,0 +1,26 @@
+{
+    "include": [
+        "react/features/**/*.ts",
+        "react/features/**/*.tsx",
+        "fishmeet/react/features/**/*.ts",
+        "fishmeet/react/features/**/*.tsx",
+        "./custom.d.ts",
+        "./globals.d.ts",
+        "./globals.native.d.ts"
+    ],
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "target": "es2020",
+        "jsx": "react",
+        "lib": [ "ES2020", "DOM" ],
+        "skipLibCheck": true,
+        "moduleResolution": "Node",
+        "strict": true,
+        "noImplicitAny": true,
+        "strictPropertyInitialization": false,
+        "resolveJsonModule": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

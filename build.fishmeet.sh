@@ -18,10 +18,10 @@ if [ -d "$FISHMEET_DIR/css" ]; then
     cp -v "$FISHMEET_DIR/css/"_*.scss "$PROJECT_DIR/css/"
 fi
 
-# Copy SVG overrides
-if [ -d "$FISHMEET_DIR/react/features/base/icons/svg" ]; then
-    echo "Copying SVG overrides..."
-    cp -v "$FISHMEET_DIR/react/features/base/icons/svg/"*.svg "$PROJECT_DIR/react/features/base/icons/svg/"
+# Copy react/ overrides (SVGs, styles, components, etc.)
+if [ -d "$FISHMEET_DIR/react" ]; then
+    echo "Copying react/ overrides..."
+    rsync -r "$FISHMEET_DIR/react/" "$PROJECT_DIR/react/"
 fi
 
 # Stamp build date into fishmeet/index.html in place.

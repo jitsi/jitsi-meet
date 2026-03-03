@@ -24,8 +24,8 @@ copy_fishmeet_overrides() {
     echo -e "${YELLOW}Copying fishmeet CSS overrides...${NC}"
     cp fishmeet/css/_*.scss css/
 
-    echo -e "${YELLOW}Copying fishmeet SVG overrides...${NC}"
-    cp fishmeet/react/features/base/icons/svg/*.svg react/features/base/icons/svg/
+    echo -e "${YELLOW}Copying fishmeet react/ overrides...${NC}"
+    rsync -r fishmeet/react/ react/
 }
 
 # Function to execute script and handle errors

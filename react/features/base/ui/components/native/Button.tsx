@@ -42,7 +42,12 @@ const Button: React.FC<IProps> = ({
     let buttonStyles;
     let color;
 
-    if (type === PRIMARY) {
+    const typeConfig = (styles as any).buttonTypeConfig?.[type as string];
+
+    if (typeConfig) {
+        buttonLabelStyles = typeConfig.labelStyle;
+        color = mode === CONTAINED && typeConfig.color;
+    } else if (type === PRIMARY) {
         buttonLabelStyles = mode === TEXT
             ? styles.buttonLabelPrimaryText
             : styles.buttonLabelPrimary;

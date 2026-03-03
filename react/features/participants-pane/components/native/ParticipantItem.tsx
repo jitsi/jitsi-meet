@@ -105,7 +105,7 @@ function ParticipantItem({
                 <Avatar
                     displayName = { displayName }
                     participantId = { participantID }
-                    size = { 32 } />
+                    size = { 50 } />
                 <View
                     style = { [
                         styles.participantDetailsContainer,
@@ -113,7 +113,7 @@ function ParticipantItem({
                     ] as StyleProp<ViewStyle> }>
                     <View style = { participantNameContainerStyles as StyleProp<ViewStyle> }>
                         <Text
-                            numberOfLines = { 1 }
+                            numberOfLines = { 2 }
                             style = { styles.participantName as StyleProp<TextStyle> }>
                             { displayName }
                             { local && ` (${t('chat.you')})` }

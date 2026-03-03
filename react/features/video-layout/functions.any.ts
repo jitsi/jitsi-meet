@@ -97,7 +97,8 @@ export function shouldDisplayTileView(state: IReduxState) {
         || getPinnedParticipant(state)
 
         // It's a 1-on-1 meeting
-        || participantCount < 3
+        || (!(navigator.product === 'ReactNative' && state['features/base/config'].enableTileViewOneOnOne)
+            && participantCount < 3)
 
         // There is a shared YouTube video in the meeting
         || isVideoPlaying(state)

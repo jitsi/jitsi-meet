@@ -94,7 +94,8 @@ twa/*.apk
 twa/*.aab
 twa/assetlinks.json
 
-tsconfig.json
+# tsconfig.json is committed as a source file in this repo (covers fishmeet overrides for eslint/tsc)
+# tsconfig.json
 
 # React Native SDK
 #

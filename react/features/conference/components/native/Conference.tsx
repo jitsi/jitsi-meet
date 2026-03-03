@@ -432,9 +432,10 @@ class Conference extends AbstractConference<IProps, State> {
 
                     {
                         _shouldDisplayTileView
-                        || (_isDisplayNameVisible && (
+                        || (((styles as any).displayNameProps?.show ?? _isDisplayNameVisible) && (
                             <Container style = { styles.displayNameContainer }>
                                 <DisplayNameLabel
+                                    contained = { (styles as any).displayNameProps?.contained }
                                     participantId = { _largeVideoParticipantId } />
                             </Container>
                         ))

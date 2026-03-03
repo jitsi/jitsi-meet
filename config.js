@@ -1494,6 +1494,10 @@ var config = {
     // If true, tile view will not be enabled automatically when the participants count threshold is reached.
     // disableTileView: true,
 
+    // If true, tile view will be preserved for 1-on-1 calls on mobile (overrides the default
+    // behaviour of switching to large-video layout when there are fewer than 3 participants).
+    enableTileViewOneOnOne: true,
+
     // If true, the tiles will be displayed contained within the available space rather than enlarged to cover it,
     // with a 16:9 aspect ratio (old behaviour).
     // disableTileEnlargement: true,
