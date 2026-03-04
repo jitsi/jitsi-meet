@@ -121,6 +121,27 @@
             justify-content: center;
             flex-grow: 0;
             margin-right: 16px;
+            gap: 8px;
+            min-width: 48px;
+        }
+
+        .meetings-list-desktop-link {
+            border: 0;
+            background: transparent;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            cursor: pointer;
+
+            svg {
+                fill: #0074e0;
+            }
+
+            &:hover svg,
+            &:focus svg {
+                fill: #4687ED;
+            }
         }
 
         &.with-click-handler {
@@ -153,8 +174,8 @@
 
     .delete-meeting {
         display: none;
-        margin-right: 16px;
-        position: absolute;
+        margin-right: 0;
+        position: static;
 
         &>svg {
             fill: #0074e0;
