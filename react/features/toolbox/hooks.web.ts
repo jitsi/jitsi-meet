@@ -4,7 +4,8 @@ import { batch, useDispatch, useSelector } from 'react-redux';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IReduxState } from '../app/types';
-import { toggleDialog } from '../base/dialog/actions';
+import { hideDialog, openDialog, toggleDialog } from '../base/dialog/actions';
+import { isDialogOpen } from '../base/dialog/functions';
 import { isIosMobileBrowser, isIpadMobileBrowser } from '../base/environment/utils';
 import { HELP_BUTTON_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
@@ -24,9 +25,13 @@ import { useFileSharingButton } from '../file-sharing/hooks.web';
 import { setGifMenuVisibility } from '../gifs/actions';
 import { isGifEnabled } from '../gifs/function.any';
 import InviteButton from '../invite/components/add-people-dialog/web/InviteButton';
+import AddPeopleDialog from '../invite/components/add-people-dialog/web/AddPeopleDialog';
+import { beginAddPeople, hideAddPeopleDialog } from '../invite/actions.any';
 import { registerShortcut, unregisterShortcut } from '../keyboard-shortcuts/actions';
 import { useKeyboardShortcutsButton } from '../keyboard-shortcuts/hooks';
 import NoiseSuppressionButton from '../noise-suppression/components/NoiseSuppressionButton';
+import { toggleNoiseSuppression } from '../noise-suppression/actions';
+import { isNoiseSuppressionEnabled } from '../noise-suppression/functions';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
@@ -44,12 +49,19 @@ import { REACTIONS } from '../reactions/constants';
 import { shouldDisplayReactionsButtons } from '../reactions/functions.any';
 import { useReactionsButton } from '../reactions/hooks.web';
 import { useLiveStreamingButton, useRecordingButton } from '../recording/hooks.web';
+import { isRecordingRunning, getRecordButtonProps } from '../recording/functions';
+import StartRecordingDialog from '../recording/components/Recording/web/StartRecordingDialog';
+import StopRecordingDialog from '../recording/components/Recording/web/StopRecordingDialog';
 import { isSalesforceEnabled } from '../salesforce/functions';
 import { startScreenShareFlow } from '../screen-share/actions.web';
 import ShareAudioButton from '../screen-share/components/web/ShareAudioButton';
 import { isScreenAudioSupported, isScreenVideoShared } from '../screen-share/functions';
+import { toggleSecurityDialog } from '../security/actions';
 import { useSecurityDialogButton } from '../security/hooks.web';
 import SettingsButton from '../settings/components/web/SettingsButton';
+import SettingsDialog from '../settings/components/web/SettingsDialog';
+import { openSettingsDialog } from '../settings/actions.web';
+import { SETTINGS_TABS } from '../settings/constants';
 import { useSharedVideoButton } from '../shared-video/hooks';
 import SpeakerStats from '../speaker-stats/components/web/SpeakerStats';
 import { isSpeakerStatsDisabled } from '../speaker-stats/functions';
@@ -62,6 +74,8 @@ import VideoQualityButton from '../video-quality/components/VideoQualityButton.w
 import VideoQualityDialog from '../video-quality/components/VideoQualityDialog.web';
 import { useVirtualBackgroundButton } from '../virtual-background/hooks';
 import { useWhiteboardButton } from '../whiteboard/hooks';
+import { toggleWhiteboard } from '../whiteboard/actions.web';
+import { isWhiteboardAllowed, isWhiteboardOpen } from '../whiteboard/functions';
 
 import { setFullScreen } from './actions.web';
 import DownloadButton from './components/DownloadButton';
@@ -385,6 +399,21 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
     const desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
     const fullScreen = useSelector((state: IReduxState) => state['features/toolbox'].fullScreen);
     const gifsEnabled = useSelector(isGifEnabled);
+    const noiseSuppressionEnabled = useSelector(isNoiseSuppressionEnabled);
+    const recordingRunning = useSelector(isRecordingRunning);
+    const recordingButtonProps = useSelector(getRecordButtonProps);
+    const virtualBackgroundEnabled = useSelector(
+        (state: IReduxState) => Boolean(state['features/virtual-background'].backgroundEffectEnabled));
+    const whiteboardAllowed = useSelector(isWhiteboardAllowed);
+    const whiteboardOpen = useSelector(isWhiteboardOpen);
+    const inviteDialogOpen = useSelector(
+        (state: IReduxState) => isDialogOpen(state, AddPeopleDialog as any));
+    const settingsDialogOpen = useSelector(
+        (state: IReduxState) => isDialogOpen(state, SettingsDialog as any));
+    const startRecordingDialogOpen = useSelector(
+        (state: IReduxState) => isDialogOpen(state, StartRecordingDialog as any));
+    const stopRecordingDialogOpen = useSelector(
+        (state: IReduxState) => isDialogOpen(state, StopRecordingDialog as any));
     const participantsPaneOpen = useSelector(getParticipantsPaneOpen);
     const raisedHand = useSelector((state: IReduxState) => hasRaisedHand(getLocalParticipant(state)));
     const screenSharing = useSelector(isScreenVideoShared);
@@ -531,6 +560,131 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
 
     /**
      * Creates an analytics keyboard shortcut event and dispatches an action for
+     * toggling noise suppression.
+     *
+     * @private
+     * @returns {void}
+     */
+    function onToggleNoiseSuppression() {
+        sendAnalytics(createShortcutEvent(
+            'toggle.noise.suppression',
+            ACTION_SHORTCUT_TRIGGERED,
+            { enable: !noiseSuppressionEnabled }));
+
+        dispatch(toggleNoiseSuppression());
+    }
+
+    /**
+     * Creates an analytics keyboard shortcut event and dispatches an action for
+     * toggling the virtual background settings dialog open/close.
+     *
+     * @private
+     * @returns {void}
+     */
+    function onToggleVirtualBackground() {
+        sendAnalytics(createShortcutEvent(
+            'toggle.virtual.background',
+            ACTION_SHORTCUT_TRIGGERED,
+            { enable: !virtualBackgroundEnabled }));
+
+        if (settingsDialogOpen) {
+            dispatch(hideDialog('SettingsDialog', SettingsDialog as any));
+        } else {
+            dispatch(openSettingsDialog(SETTINGS_TABS.VIRTUAL_BACKGROUND));
+        }
+    }
+
+    /**
+     * Creates an analytics keyboard shortcut event and dispatches an action for
+     * toggling the invite dialog open/close.
+     *
+     * @private
+     * @returns {void}
+     */
+    function onOpenInviteDialog() {
+        sendAnalytics(createShortcutEvent('toggle.invite.dialog'));
+
+        if (inviteDialogOpen) {
+            dispatch(hideAddPeopleDialog());
+        } else {
+            dispatch(beginAddPeople());
+        }
+    }
+
+    /**
+     * Creates an analytics keyboard shortcut event and dispatches an action for
+     * toggling recording (start/stop).
+     * Uses key 'X' (Shift modifier not supported by the shortcut engine).
+     *
+     * @private
+     * @returns {void}
+     */
+    function onToggleRecording() {
+        if (!recordingButtonProps.visible || recordingButtonProps.disabled) {
+            return;
+        }
+
+        sendAnalytics(createShortcutEvent(
+            'toggle.recording',
+            ACTION_SHORTCUT_TRIGGERED,
+            { running: recordingRunning }));
+
+        // If the start dialog is already open, close it.
+        if (startRecordingDialogOpen) {
+            dispatch(hideDialog('StartRecordingDialog', StartRecordingDialog as any));
+
+            return;
+        }
+
+        // If the stop dialog is already open, close it.
+        if (stopRecordingDialogOpen) {
+            dispatch(hideDialog('StopRecordingDialog', StopRecordingDialog as any));
+
+            return;
+        }
+
+        // Open the appropriate dialog based on recording state.
+        if (recordingRunning) {
+            dispatch(openDialog('StopRecordingDialog', StopRecordingDialog));
+        } else {
+            dispatch(openDialog('StartRecordingDialog', StartRecordingDialog));
+        }
+    }
+
+    /**
+     * Creates an analytics keyboard shortcut event and dispatches an action for
+     * toggling the security/lobby dialog.
+     *
+     * @private
+     * @returns {void}
+     */
+    function onToggleSecurityOptions() {
+        sendAnalytics(createShortcutEvent('toggle.security.options'));
+        dispatch(toggleSecurityDialog());
+    }
+
+    /**
+     * Creates an analytics keyboard shortcut event and dispatches an action for
+     * toggling the whiteboard (Alt+W).
+     *
+     * @private
+     * @returns {void}
+     */
+    function onToggleWhiteboard() {
+        if (!whiteboardAllowed) {
+            return;
+        }
+
+        sendAnalytics(createShortcutEvent(
+            'toggle.whiteboard',
+            ACTION_SHORTCUT_TRIGGERED,
+            { open: !whiteboardOpen }));
+
+        dispatch(toggleWhiteboard());
+    }
+
+    /**
+     * Creates an analytics keyboard shortcut event and dispatches an action for
      * toggling speaker stats.
      *
      * @private
@@ -587,6 +741,31 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
                 character: 'T',
                 exec: onSpeakerStats,
                 helpDescription: 'keyboardShortcuts.showSpeakerStats'
+            },
+            isButtonEnabled('noisesuppression', _toolbarButtons) && {
+                character: 'N',
+                exec: onToggleNoiseSuppression,
+                helpDescription: 'keyboardShortcuts.noiseSuppression'
+            },
+            isButtonEnabled('select-background', _toolbarButtons) && {
+                character: 'B',
+                exec: onToggleVirtualBackground,
+                helpDescription: 'keyboardShortcuts.toggleVirtualBackground'
+            },
+            isButtonEnabled('invite', _toolbarButtons) && {
+                character: 'I',
+                exec: onOpenInviteDialog,
+                helpDescription: 'keyboardShortcuts.toggleInviteDialog'
+            },
+            isButtonEnabled('recording', _toolbarButtons) && {
+                character: 'X',
+                exec: onToggleRecording,
+                helpDescription: 'keyboardShortcuts.toggleRecording'
+            },
+            isButtonEnabled('security', _toolbarButtons) && {
+                character: 'L',
+                exec: onToggleSecurityOptions,
+                helpDescription: 'keyboardShortcuts.toggleSecurityOptions'
             }
         ];
 
@@ -599,6 +778,17 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
                 }));
             }
         });
+
+        // Register Alt+W for whiteboard toggle.
+        if (isButtonEnabled('whiteboard', _toolbarButtons)) {
+            dispatch(registerShortcut({
+                alt: true,
+                character: 'W',
+                helpCharacter: 'Alt+W',
+                handler: onToggleWhiteboard,
+                helpDescription: 'keyboardShortcuts.toggleWhiteboard'
+            }));
+        }
 
         // If the buttons for sending reactions are not displayed we should disable the shortcuts too.
         if (_shouldDisplayReactionsButtons) {
@@ -644,8 +834,11 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
         }
 
         return () => {
-            [ 'A', 'C', 'D', 'P', 'R', 'S', 'W', 'T', 'G' ].forEach(letter =>
+            [ 'A', 'B', 'C', 'D', 'I', 'L', 'N', 'P', 'R', 'S', 'W', 'T', 'G', 'X' ].forEach(letter =>
                 dispatch(unregisterShortcut(letter)));
+
+            // Unregister Alt+W (whiteboard).
+            dispatch(unregisterShortcut('W', true));
 
             if (_shouldDisplayReactionsButtons) {
                 Object.keys(REACTIONS).map(key => REACTIONS[key].shortcutChar)
@@ -660,9 +853,18 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
         desktopSharingEnabled,
         fullScreen,
         gifsEnabled,
+        inviteDialogOpen,
+        noiseSuppressionEnabled,
         participantsPaneOpen,
         raisedHand,
+        recordingRunning,
         screenSharing,
-        tileViewEnabled
+        settingsDialogOpen,
+        startRecordingDialogOpen,
+        stopRecordingDialogOpen,
+        tileViewEnabled,
+        virtualBackgroundEnabled,
+        whiteboardAllowed,
+        whiteboardOpen
     ]);
 };
