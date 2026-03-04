@@ -6,9 +6,9 @@ import { IGUMPendingState } from '../base/media/types';
 import { isScreenMediaShared } from '../screen-share/functions';
 import { isWhiteboardVisible } from '../whiteboard/functions';
 
-import { MAIN_TOOLBAR_BUTTONS_PRIORITY, TOOLBAR_TIMEOUT } from './constants';
+import { DEFAULT_REDUCED_UI_MAIN_TOOLBAR_BUTTONS, MAIN_TOOLBAR_BUTTONS_PRIORITY, TOOLBAR_TIMEOUT } from './constants';
 import { isButtonEnabled } from './functions.any';
-import { IGetVisibleButtonsParams, IToolboxButton, NOTIFY_CLICK_MODE } from './types';
+import { IGetVisibleButtonsForReducedUIParams, IGetVisibleButtonsParams, IToolboxButton, NOTIFY_CLICK_MODE } from './types';
 
 export * from './functions.any';
 
@@ -198,6 +198,41 @@ export function getVisibleButtons({
     return {
         mainMenuButtons,
         overflowMenuButtons
+    };
+}
+
+/**
+ * Returns buttons that need to be rendered for reduced UI mode.
+ *
+ * @param {IGetVisibleButtonsForReducedUIParams} params - The parameters needed to extract the visible buttons.
+ * @returns {Object} - The visible buttons for reduced ui.
+ */
+export function getVisibleButtonsForReducedUI({
+    allButtons,
+    buttonsWithNotifyClick,
+    jwtDisabledButtons,
+    reducedUImainToolbarButtons
+}: IGetVisibleButtonsForReducedUIParams) {
+    setButtonsNotifyClickMode(allButtons, buttonsWithNotifyClick);
+
+    if (!Array.isArray(reducedUImainToolbarButtons) || reducedUImainToolbarButtons.length === 0) {
+        const defaultButtons = DEFAULT_REDUCED_UI_MAIN_TOOLBAR_BUTTONS.map(key => allButtons[key]);
+
+        return {
+            mainMenuButtons: defaultButtons
+        };
+    }
+
+    const filteredButtons = reducedUImainToolbarButtons.filter(key =>
+        typeof key !== 'undefined'
+        && !jwtDisabledButtons.includes(key)
+        && isButtonEnabled(key, reducedUImainToolbarButtons)
+        && allButtons[key]);
+
+    const mainMenuButtons = filteredButtons.map(key => allButtons[key]);
+
+    return {
+        mainMenuButtons
     };
 }
 

@@ -323,7 +323,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @param {Object} context - The context object.
      */
     beforeTest(test, context) {
-        // Use the directory under 'tests/specs' as the parent suite
+        // Extract directory to use as parent suite and describe block name as suite
         const dirMatch = test.file.match(/.*\/tests\/specs\/([^\/]+)\//);
         const dir = dirMatch ? dirMatch[1] : false;
         const fileMatch = test.file.match(/.*\/tests\/specs\/(.*)/);
@@ -337,8 +337,10 @@ export const config: WebdriverIO.MultiremoteConfig = {
             AllureReporter.addLink(`https://github.com/jitsi/jitsi-meet/blob/master/tests/specs/${file}`, 'Code');
         }
 
-        if (dir) {
+        // For Allure v3: set directory as parent suite and describe block as suite
+        if (dir && test.parent) {
             AllureReporter.addParentSuite(dir);
+            AllureReporter.addSuite(test.parent);
         }
 
         if (ctx.skipSuiteTests) {
@@ -455,6 +457,34 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @returns {Promise<void>}
      */
     onComplete() {
+        // Clean up duplicate parentSuite labels from Allure results
+        const resultsDir = `${TEST_RESULTS_DIR}/allure-results`;
+        const resultFiles = fs.readdirSync(resultsDir).filter(f => f.endsWith('-result.json'));
+
+        resultFiles.forEach(file => {
+            const filePath = path.join(resultsDir, file);
+            const result = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+            // Keep only the LAST parentSuite label (the manual one with directory name)
+            // Remove the automatic one from WebDriverIO (describe block name)
+            const parentSuiteLabels: any[] = [];
+            const otherLabels: any[] = [];
+
+            result.labels.forEach((label: any) => {
+                if (label.name === 'parentSuite') {
+                    parentSuiteLabels.push(label);
+                } else {
+                    otherLabels.push(label);
+                }
+            });
+
+            // Keep only the last parentSuite (the directory name we manually added)
+            if (parentSuiteLabels.length > 1) {
+                result.labels = [ ...otherLabels, parentSuiteLabels[parentSuiteLabels.length - 1] ];
+                fs.writeFileSync(filePath, JSON.stringify(result));
+            }
+        });
+
         const reportError = new Error('Could not generate Allure report');
         const generation = allure([
             'generate', `${TEST_RESULTS_DIR}/allure-results`,

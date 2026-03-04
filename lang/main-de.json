@@ -109,9 +109,15 @@
         }
     },
     "chat": {
+        "disabled": "Chat-Nachrichten sind deaktiviert.",
         "enter": "Chat-Raum betreten",
         "error": "Fehler: Ihre Nachricht wurde nicht versendet. Grund: {{error}}",
+        "everyone": "Alle",
         "fieldPlaceHolder": "Geben Sie Ihre Nachricht hier ein",
+        "fileAccessibleTitle": "{{user}} hat eine Datei hochgeladen",
+        "fileAccessibleTitleMe": "Ich habe eine Datei hochgeladen",
+        "fileDeleted": "Eine Datei wurde gelöscht",
+        "guestsChatIndicator": "(Gast)",
         "lobbyChatMessageTo": "Lobby-Nachricht an {{recipient}}",
         "message": "Nachricht",
         "messageAccessibleTitle": "{{user}} sagt:",
@@ -120,11 +126,20 @@
         "messagebox": "Nachricht eingeben",
         "newMessages": "Neue Nachrichten",
         "nickname": {
+            "featureChat": "Chat",
+            "featureClosedCaptions": "Untertitel",
+            "featureFileSharing": "Dateien",
+            "featurePolls": "Umfragen",
             "popover": "Wähle einen Alias",
             "title": "Geben Sie einen Alias zum Chatten ein",
+            "titleWith1Features": "Geben Sie einen Alias ein, um {{feature1}} zu nutzen",
+            "titleWith2Features": "Geben Sie einen Alias ein, um {{feature1}} und {{feature2}} zu nutzen",
+            "titleWith3Features": "Geben Sie einen Alias ein, um {{feature1}}, {{feature2}} und {{feature3}} zu nutzen",
+            "titleWith4Features": "Geben Sie einen Alias ein, um {{feature1}}, {{feature2}}, {{feature3}} und {{feature4}} zu nutzen",
             "titleWithCC": "Geben Sie einen Alias zum Chatten und für Untertitel ein",
             "titleWithPolls": "Geben Sie einen Alias zum Chatten und für Umfragen ein",
-            "titleWithPollsAndCC": "Geben Sie einen Alias zum Chatten, für Umfragen und Untertitel ein"
+            "titleWithPollsAndCC": "Geben Sie einen Alias zum Chatten, für Umfragen und Untertitel ein",
+            "titleWithPollsAndCCAndFileSharing": "Geben Sie einen Alias zum Chatten, für Umfragen, Untertitel und Dateien ein"
         },
         "noMessagesMessage": "Es gibt noch keine Nachricht in dieser Konferenz. Starten Sie hier eine Unterhaltung!",
         "privateNotice": "Private Nachricht an {{recipient}}",
@@ -132,14 +147,16 @@
         "smileysPanel": "Emoji-Auswahl",
         "systemDisplayName": "System",
         "tabs": {
-            "chat": "Chatten",
+            "chat": "Chat",
             "closedCaptions": "Untertitel",
+            "fileSharing": "Dateien",
             "polls": "Umfragen"
         },
-        "title": "Chatten",
-        "titleWithCC": "Chatten und Untertitel",
-        "titleWithPolls": "Chatten und Umfragen",
-        "titleWithPollsAndCC": "Chatten, Umfragen und Untertitel",
+        "title": "Chat",
+        "titleWithCC": "Untertitel",
+        "titleWithFeatures": "Chat und",
+        "titleWithFileSharing": "Dateien",
+        "titleWithPolls": "Umfragen",
         "you": "Sie"
     },
     "chromeExtensionBanner": {
@@ -274,7 +291,6 @@
         "Submit": "OK",
         "Understand": "Verstanden, Stummschaltung beibehalten",
         "UnderstandAndUnmute": "Verstanden, bitte Stummschaltung aufheben",
-        "WaitForHostMsg": "Die Konferenz wurde noch nicht gestartet. Falls Sie die Konferenz leiten, authentifizieren Sie sich bitte. Warten Sie andernfalls, bis die Konferenz gestartet wird.",
         "WaitForHostNoAuthMsg": "Die Konferenz wurde noch nicht gestartet. Bitte warten Sie, bis die Konferenz gestartet wird.",
         "WaitingForHostButton": "Auf Moderation warten",
         "WaitingForHostTitle": "Warten auf den Beginn der Konferenz …",
@@ -296,6 +312,12 @@
         "alreadySharedVideoTitle": "Nur ein geteiltes Video gleichzeitig",
         "applicationWindow": "Anwendungsfenster",
         "authenticationRequired": "Authentifizierung benötigt",
+        "cameraCaptureDialog": {
+            "description": "Ein Bild mit Ihrer Kamera aufnehmen und senden",
+            "ok": "Kamera starten",
+            "reject": "Jetzt nicht",
+            "title": "Ein Bild aufnehmen"
+        },
         "cameraConstraintFailedError": "Ihre Kamera erfüllt die notwendigen Anforderungen nicht.",
         "cameraNotFoundError": "Kamera nicht gefunden.",
         "cameraNotSendingData": "Die Kamera ist nicht verfügbar. Bitte prüfen, ob eine andere Applikation die Kamera verwendet, eine andere Kamera vom Einstellungs-Menü auswählen oder die Applikation neu laden.",
@@ -371,22 +393,34 @@
         "micTimeoutError": "Audioquelle konnte nicht gestartet werden. Zeitüberschreitung",
         "micUnknownError": "Das Mikrofon kann aus einem unbekannten Grund nicht verwendet werden.",
         "moderationAudioLabel": "Erlaube Anwesenden die Stummschaltung für sich aufzuheben",
+        "moderationDesktopLabel": "Erlaube Anwesenden ihren Bildschirm freizugeben",
         "moderationVideoLabel": "Erlaube Anwesenden ihre Kamera einzuschalten",
         "muteEveryoneDialog": "Wollen Sie wirklich alle stummschalten? Sie können deren Stummschaltung nicht mehr beenden, aber sie können ihre Stummschaltung jederzeit selbst beenden.",
         "muteEveryoneDialogModerationOn": "Die Anwesenden können eine Anfrage zum Sprechen jederzeit senden.",
         "muteEveryoneElseDialog": "Einmal stummgeschaltet, können Sie deren Stummschaltung nicht mehr beenden, aber sie können ihre Stummschaltung jederzeit selbst beenden.",
         "muteEveryoneElseTitle": "Alle außer {{whom}} stummschalten?",
+        "muteEveryoneElsesDesktopDialog": "Sobald die Bildschirmfreigaben beendet sind, können Sie diese nicht mehr starten, aber die anderen können sie jederzeit wieder starten.",
+        "muteEveryoneElsesDesktopTitle": "Alle Bildschirmfreigaben außer {{whom}} beenden?",
         "muteEveryoneElsesVideoDialog": "Sobald die Kamera für alle anderen Personen deaktiviert ist, können Sie diese nicht wieder für alle einschalten, die anderen Personen können ihre Kamera aber jederzeit wieder einschalten.",
         "muteEveryoneElsesVideoTitle": "Die Kamera von allen außer {{whom}} ausschalten?",
         "muteEveryoneSelf": "sich selbst",
         "muteEveryoneStartMuted": "Alle beginnen von jetzt an stummgeschaltet",
         "muteEveryoneTitle": "Alle stummschalten?",
+        "muteEveryonesDesktopDialog": "Die Anwesenden können ihren Bildschirm jederzeit freigeben.",
+        "muteEveryonesDesktopDialogModerationOn": "Die Anwesenden können jederzeit eine Anfrage zur Bildschirmfreigabe senden.",
+        "muteEveryonesDesktopTitle": "Alle Bildschirmfreigaben beenden?",
         "muteEveryonesVideoDialog": "Sind Sie sicher, dass Sie die Kamera von allen Personen deaktivieren möchten? Sie können dies nicht wieder rückgängig machen, jede Personen kann ihre Kamera aber jederzeit wieder einschalten.",
         "muteEveryonesVideoDialogModerationOn": "Die Anwesenden können jederzeit eine Anfrage senden, um ihre Kamera einzuschalten.",
         "muteEveryonesVideoDialogOk": "deaktivieren",
         "muteEveryonesVideoTitle": "Die Kamera von allen anderen ausschalten?",
         "muteParticipantBody": "Sie können die Stummschaltung anderer Personen nicht aufheben, aber eine Person kann ihre eigene Stummschaltung jederzeit beenden.",
         "muteParticipantButton": "Stummschalten",
+        "muteParticipantsDesktopBody": "Sie können Bildschirmfreigaben von anderen nicht starten, sie können dies aber jederzeit.",
+        "muteParticipantsDesktopBodyModerationOn": "Weder Sie noch andere Anwesende können Bildschirmfreigaben starten.",
+        "muteParticipantsDesktopButton": "Bildschirmfreigabe beenden",
+        "muteParticipantsDesktopDialog": "Sind Sie sicher, dass Sie die Bildschirmfreigabe von dieser Person beenden möchten? Sie können diese nicht mehr starten, die Person aber jederzeit.",
+        "muteParticipantsDesktopDialogModerationOn": "Sind Sie sicher, dass Sie die Bildschirmfreigabe von dieser Person beenden möchten? Weder Sie noch die Person kann die Bildschirmfreigabe wieder starten.",
+        "muteParticipantsDesktopTitle": "Bildschirmfreigabe von dieser Person beenden?",
         "muteParticipantsVideoBody": "Sie können die Kamera nicht wieder einschalten, die Person kann ihre Kamera aber jederzeit wieder einschalten.",
         "muteParticipantsVideoBodyModerationOn": "Sie können die Kamera nicht wieder aktivieren und die Person selbst auch nicht.",
         "muteParticipantsVideoButton": "Kamera ausschalten",
@@ -499,6 +533,7 @@
         "tokenAuthFailedWithReasons": "Teilnahme an der Konferenz fehlgeschlagen. Möglicher Grund: {{reason}}",
         "tokenAuthUnsupported": "Token-Authentifizierung wird nicht unterstützt.",
         "transcribing": "Wird transkribiert",
+        "unauthenticatedAccessDisabled": "Zur Teilnahme an dieser Konferenz müssen Sie sich anmelden.",
         "unlockRoom": "Konferenz$t(lockRoomPassword) entfernen",
         "user": "Anmeldename",
         "userIdentifier": "Benutzername",
@@ -538,6 +573,25 @@
         "star": "Sterne",
         "veryBad": "Sehr schlecht",
         "veryGood": "Sehr gut"
+    },
+    "fileSharing": {
+        "downloadFailedDescription": "Bitte nochmals versuchen.",
+        "downloadFailedTitle": "Download fehlgeschlagen",
+        "downloadFile": "Download",
+        "downloadStarted": "Download gestartet",
+        "dragAndDrop": "Dateien hier oder irgendwo auf dem Bildschirm loslassen",
+        "fileAlreadyUploaded": "Datei wurde schon zur Konferenz hochgeladen.",
+        "fileRemovedByOther": "Ihre Datei '{{ fileName }}' wurde entfernt",
+        "fileTooLargeDescription": "Bitte stellen Sie sicher, dass Ihre Datei nicht die Maximalgröße von {{ maxFileSize }} überschreitet.",
+        "fileTooLargeTitle": "Die ausgewählte Datei ist zu groß",
+        "fileUploadProgress": "Datei wird hochgeladen",
+        "fileUploadedSuccessfully": "Datei erfolgreich hochgeladen",
+        "newFileNotification": "{{ participantName }} hat Datei '{{ fileName }}' hochgeladen",
+        "removeFile": "Entfernen",
+        "removeFileSuccess": "Datei erfolgreich entfernt",
+        "uploadFailedDescription": "Bitte versuchen Sie es erneut.",
+        "uploadFailedTitle": "Dateiupload fehlgeschlagen",
+        "uploadFile": "Datei hochladen"
     },
     "filmstrip": {
         "accessibilityLabel": {
@@ -707,7 +761,8 @@
         "notificationTitle": "Lobby",
         "passwordJoinButton": "Beitreten",
         "title": "Lobby",
-        "toggleLabel": "Lobby aktivieren"
+        "toggleLabel": "Lobby aktivieren",
+        "waitForModerator": "Die Konferenz wurde noch nicht gestartet, da noch keine Moderation anwesend ist. Wenn Sie zur Moderation gehören, melden Sie sich bitte an, ansonsten warten Sie bitte."
     },
     "localRecording": {
         "clientState": {
@@ -750,8 +805,9 @@
     "me": "ich",
     "notify": {
         "OldElectronAPPTitle": "Sicherheitslücke!",
+        "allowAll": "Alles einschalten",
         "allowAudio": "Mikrofon einschalten",
-        "allowBoth": "Beides",
+        "allowDesktop": "Bildschirmfreigabe einschalten",
         "allowVideo": "Kamera einschalten",
         "allowedUnmute": "Sie können die Stummschaltung aufheben, Ihre Kamera einschalten oder Ihren Bildschirm teilen.",
         "audioUnmuteBlockedDescription": "Díe Stummschaltung kann aus Überlastungsschutzgründen temporär nicht aufgehoben werden.",
@@ -765,6 +821,7 @@
         "dataChannelClosedDescription": "Die Steuerungsverbindung (Bridge Channel) wurde unterbrochen, daher ist die Videoqulität auf die schlechteste Stufe limitiert.",
         "dataChannelClosedDescriptionWithAudio": "Die Steuerungsverbindung (Bridge Channel) wurde unterbrochen, daher können Video- und Tonprobleme auftreten.",
         "dataChannelClosedWithAudio": "Ton- und Videoqualität können beeinträchtigt sein",
+        "desktopMutedRemotelyTitle": "Ihre Bildschirmfreigabe wurde von {{participantDisplayName}} gestoppt",
         "disabledIframe": "Die Einbettung ist nur für Demo-Zwecke vorgesehen. Diese Konferenz wird in {{timeout}} Minuten beendet.",
         "disabledIframeSecondaryNative": "Die Einbettung von {{domain}} ist nur für Demo-Zwecke vorgesehen. Diese Konferenz wird in {{timeout}} Minuten beendet.",
         "disabledIframeSecondaryWeb": "Die Einbettung von {{domain}} ist nur für Demo-Zwecke vorgesehen. Diese Konferenz wird in {{timeout}} Minuten beendet. Bitte nutzen Sie <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> für produktive Zwecke!",
@@ -822,6 +879,7 @@
         "oldElectronClientDescription1": "Sie scheinen eine alte Version des Jitsi-Meet-Clients zu nutzen. Diese hat bekannte Schwachstellen. Bitte aktualisieren Sie auf unsere ",
         "oldElectronClientDescription2": "aktuelle Version",
         "oldElectronClientDescription3": "!",
+        "openChat": "Chat öffnen",
         "participantWantsToJoin": "Möchte an der Konferenz teilnehmen",
         "participantsWantToJoin": "Möchten an der Konferenz teilnehmen",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) von einer anderen Person entfernt",
@@ -845,6 +903,7 @@
         "suggestRecordingDescription": "Möchten Sie eine Aufzeichnung starten?",
         "suggestRecordingTitle": "Konferenz aufzeichnen",
         "unmute": "Stummschaltung aufheben",
+        "unmuteScreen": "Bildschirmfreigabe starten",
         "unmuteVideo": "Kamera einschalten",
         "videoMutedRemotelyDescription": "Sie können sie jederzeit wieder einschalten.",
         "videoMutedRemotelyTitle": "Ihre Kamera wurde von {{participantDisplayName}} ausgeschaltet!",
@@ -864,11 +923,14 @@
             "admit": "Zulassen",
             "admitAll": "Alle zulassen",
             "allow": "Anwesenden erlauben:",
+            "allowDesktop": "Bildschirm freizugeben",
             "allowVideo": "Kamera einschalten",
+            "askDesktop": "Anfragen, Bildschirm freizugeben",
             "askUnmute": "Anfragen, Stummschaltung aufzuheben",
             "audioModeration": "Für sich selbst die Stummschaltung aufzuheben",
             "blockEveryoneMicCamera": "Kamera und Mikrofon von allen sperren",
             "breakoutRooms": "Breakout-Räume",
+            "desktopModeration": "Bildschirmfreigabe",
             "goLive": "Live gehen",
             "invite": "Person einladen",
             "lowerAllHands": "Alle Hände senken",
@@ -880,6 +942,8 @@
             "muteAll": "Alle stummschalten",
             "muteEveryoneElse": "Alle anderen stummschalten",
             "reject": "Ablehnen",
+            "stopDesktop": "Bildschirmfreigabe beenden",
+            "stopEveryonesDesktop": "Alle Bildschirmfreigaben beenden",
             "stopEveryonesVideo": "Alle Kameras ausschalten",
             "stopVideo": "Kamera ausschalten",
             "unblockEveryoneMicCamera": "Kamera und Mikrofon von allen entsperren",
@@ -889,9 +953,11 @@
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Anwesende ({{count}})",
+            "viewerRequests": "Zuschaueranfragen {{count}}",
             "visitorInQueue": " (Wartende Gäste {{count}})",
             "visitorRequests": " (Anfragen {{count}})",
             "visitors": "Gäste ({{count}})",
+            "visitorsList": "Zuschauer ({{count}})",
             "waitingLobby": "In der Lobby ({{count}})"
         },
         "search": "Suche Anwesende",
@@ -912,6 +978,9 @@
         "by": "Von {{ name }}",
         "closeButton": "Umfrage schließen",
         "create": {
+            "accessibilityLabel": {
+                "send": "Umfrage erstellen"
+            },
             "addOption": "Antwort hinzufügen",
             "answerPlaceholder": "Antwort {{index}}",
             "cancel": "Abbrechen",
@@ -920,8 +989,7 @@
             "pollQuestion": "Frage",
             "questionPlaceholder": "Eine Frage stellen",
             "removeOption": "Antwort entfernen",
-            "save": "Erstellen",
-            "send": "Senden"
+            "save": "Erstellen"
         },
         "errors": {
             "notUniqueOption": "Optionen müssen einzigartig sein"
@@ -1122,7 +1190,7 @@
             "signedIn": "Momentan wird auf Kalendertermine von {{email}} zugegriffen. Klicken Sie auf die folgende Schaltfläche „Trennen“, um den Zugriff auf die Kalendertermine zu stoppen.",
             "title": "Kalender"
         },
-        "chatWithPermissions": "Chat mit Freigaben",
+        "chatWithPermissions": "Chat nur für Moderation erlauben",
         "desktopShareFramerate": "Framerate für Bildschirmfreigabe",
         "desktopShareHighFpsWarning": "Eine höhere Framerate könnte sich auf Ihre Datenrate auswirken. Sie müssen die Bildschirmfreigabe neustarten, damit die Einstellung übernommen wird.",
         "desktopShareWarning": "Sie müssen die Bildschirmfreigabe neustarten, damit die Einstellung übernommen wird.",
@@ -1328,6 +1396,20 @@
             "videounmute": "Kamera einschalten"
         },
         "addPeople": "Personen zur Konferenz hinzufügen",
+        "advancedAudioSettings": {
+            "aec": {
+                "label": "Echounterdrückung"
+            },
+            "agc": {
+                "label": "Automatische Mikrofonlautstärke"
+            },
+            "ns": {
+                "label": "Rauschunterdrückung"
+            },
+            "stereo": {
+                "label": "Stereo"
+            }
+        },
         "audioOnlyOff": "Modus „Nur Audio“ deaktivieren",
         "audioOnlyOn": "Modus „Nur Audio“ aktivieren",
         "audioRoute": "Audiogerät auswählen",
@@ -1355,6 +1437,7 @@
         "exitFullScreen": "Vollbildmodus verlassen",
         "exitTileView": "Kachelansicht ausschalten",
         "feedback": "Feedback hinterlassen",
+        "fileSharing": "Dateien",
         "giphy": "GIPHY ein-/ausschalten",
         "hangup": "Konferenz verlassen",
         "help": "Hilfe",
@@ -1390,6 +1473,7 @@
         "openReactionsMenu": "Interaktionsmenü öffnen",
         "participants": "Anwesende",
         "pip": "Bild-in-Bild-Modus einschalten",
+        "polls": "Umfragen",
         "privateMessage": "Private Nachricht senden",
         "profile": "Profil bearbeiten",
         "raiseHand": "Hand heben",
@@ -1399,6 +1483,7 @@
         "reactionHeart": "Herz senden",
         "reactionLaugh": "Lachen senden",
         "reactionLike": "Daumen hoch senden",
+        "reactionLove": "Liebe senden",
         "reactionSilence": "Stille senden",
         "reactionSurprised": "Überrascht senden",
         "reactions": "Interaktionen",
@@ -1484,7 +1569,8 @@
         "connectionInfo": "Verbindungsinformationen",
         "demote": "Zu Gästen verschieben",
         "domute": "Stummschalten",
-        "domuteDesktopOfOthers": "Bildschirm freigeben für alle beenden",
+        "domuteDesktop": "Bildschirmfreigabe beenden",
+        "domuteDesktopOfOthers": "Bildschirmfreigabe für alle beenden",
         "domuteOthers": "Alle anderen stummschalten",
         "domuteVideo": "Kamera ausschalten",
         "domuteVideoOfOthers": "Alle anderen Kameras auschalten",
@@ -1549,6 +1635,8 @@
             "noMainParticipantsTitle": "Diese Konferenz wurde noch nicht gestartet.",
             "noVisitorLobby": "Sie können nicht teilnehmen, solange die Lobby für diese Konferenz aktiviert ist.",
             "notAllowedPromotion": "Eine Person muss Ihre Anfrage erst erlauben.",
+            "requestToJoin": "Hand gehoben",
+            "requestToJoinDescription": "Ihre Anfrage wurde an die Moderation gesendet, bitte warten Sie.",
             "title": "Sie sind Gast in der Konferenz"
         },
         "waitingMessage": "Sie werden der Konferenz beitreten, sobald sie gestartet ist!"

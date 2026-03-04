@@ -80,3 +80,8 @@ export const LOWER_HAND_AUDIO_LEVEL = 0.2;
  * Icon URL for the whiteboard participant.
  */
 export const WHITEBOARD_PARTICIPANT_ICON = IconWhiteboard;
+
+/**
+ * The ID used for non-participant (system) messages coming from a transcriber.
+ */
+export const TRANSCRIBER_ID = 'transcriber';

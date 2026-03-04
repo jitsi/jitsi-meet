@@ -33,15 +33,6 @@ local main_domain = module:get_option_string('main_domain');
 -- only the visitor prosody has main_domain setting
 local is_visitor_prosody = main_domain ~= nil;
 
--- Logs a warning and returns true if a room does not
--- have poll data associated with it.
-local function check_polls(room)
-    if room.polls == nil then
-        module:log("warn", "no polls data in room");
-        return true;
-    end
-    return false;
-end
 
 local function validate_polls(data)
     if type(data) ~= 'table' then
@@ -53,7 +44,7 @@ local function validate_polls(data)
     if data.command ~= 'new-poll' and data.command ~= 'answer-poll' then
         return false;
     end
-    if type(data.answers) ~= 'table' then
+    if type(data.answers) ~= 'table' or #data.answers == 0 then
         return false;
     end
 
@@ -152,17 +143,15 @@ end
 
             occupant = main_room:get_occupant_by_real_jid(occupant_jid);
 
-            if main_room._data.breakout_rooms_active then
+            if main_room._data.breakout_rooms_active and not occupant then
                 -- let's find is this participant in the main room or in some breakout room
-                if not occupant then
-                    -- not in main room, let's check breakout rooms
-                    for breakout_room_jid, subject in pairs(main_room._data.breakout_rooms or {}) do
-                        local breakout_room = get_room_from_jid(breakout_room_jid);
-                        occupant = breakout_room:get_occupant_by_real_jid(occupant_jid);
-                        if occupant then
-                            room = breakout_room;
-                            break;
-                        end
+                -- not in main room, let's check breakout rooms
+                for breakout_room_jid, subject in pairs(main_room._data.breakout_rooms or {}) do
+                    local breakout_room = get_room_from_jid(breakout_room_jid);
+                    occupant = breakout_room:get_occupant_by_real_jid(occupant_jid);
+                    if occupant then
+                        room = breakout_room;
+                        break;
                     end
                 end
             else
@@ -176,7 +165,7 @@ end
         end
 
         if not room then
-            module:log('warn', 'No room found found for %s %s', session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+            module:log('warn', 'No room found for %s %s', session.jitsi_web_query_room, session.jitsi_web_query_prefix);
             return;
         end
 
@@ -221,8 +210,6 @@ end
                 session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll cannot be created by visitor node'));
                 return true;
             end
-
-            if check_polls(room) then return end
 
             local poll_creator = occupant_details;
 
@@ -286,8 +273,6 @@ end
 
             module:context(jid.host(room.jid)):fire_event('poll-created', pollData);
         elseif data.command == "answer-poll" then
-            if check_polls(room) then return end
-
             local poll = room.polls.by_id[data.pollId];
             if poll == nil then
                 module:log("warn", "answering inexistent poll %s", data.pollId);

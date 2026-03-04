@@ -2,7 +2,6 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { SET_DYNAMIC_BRANDING_DATA } from '../../dynamic-branding/actionTypes';
-import { setUserFilmstripWidth } from '../../filmstrip/actions.web';
 import { getFeatureFlag } from '../flags/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { updateSettings } from '../settings/actions';
@@ -80,28 +79,7 @@ function _setConfig({ dispatch, getState }: IStore, next: Function, action: AnyA
         }));
     }
 
-    const { initialWidth, stageFilmstripParticipants } = action.config.filmstrip || {};
-
-    if (stageFilmstripParticipants !== undefined) {
-        dispatch(updateSettings({
-            maxStageParticipants: stageFilmstripParticipants
-        }));
-    }
-
-    if (initialWidth) {
-        dispatch(setUserFilmstripWidth(initialWidth));
-    }
-
     dispatch(updateConfig(config));
-
-    // FIXME On Web we rely on the global 'config' variable which gets altered
-    // multiple times, before it makes it to the reducer. At some point it may
-    // not be the global variable which is being modified anymore due to
-    // different merge methods being used along the way. The global variable
-    // must be synchronized with the final state resolved by the reducer.
-    if (typeof window.config !== 'undefined') {
-        window.config = state['features/base/config'];
-    }
 
     return result;
 }

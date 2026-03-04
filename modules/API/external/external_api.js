@@ -2,6 +2,7 @@ import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import EventEmitter from 'events';
 
 import { urlObjectToString } from '../../../react/features/base/util/uri';
+import { isPiPEnabled } from '../../../react/features/pip/external-api.shared';
 import {
     PostMessageTransportBackend,
     Transport
@@ -46,6 +47,7 @@ const commands = {
     localSubject: 'local-subject',
     kickParticipant: 'kick-participant',
     muteEveryone: 'mute-everyone',
+    muteRemoteParticipant: 'mute-remote-participant',
     overwriteConfig: 'overwrite-config',
     overwriteNames: 'overwrite-names',
     password: 'password',
@@ -94,7 +96,9 @@ const commands = {
     toggleTileView: 'toggle-tile-view',
     toggleVirtualBackgroundDialog: 'toggle-virtual-background',
     toggleVideo: 'toggle-video',
-    toggleWhiteboard: 'toggle-whiteboard'
+    toggleWhiteboard: 'toggle-whiteboard',
+    showPiP: 'show-pip',
+    hidePiP: 'hide-pip'
 };
 
 /**
@@ -102,6 +106,9 @@ const commands = {
  * events expected by jitsi-meet.
  */
 const events = {
+    '_pip-requested': '_pipRequested',
+    'pip-entered': 'pipEntered',
+    'pip-left': 'pipLeft',
     'avatar-changed': 'avatarChanged',
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
@@ -144,6 +151,7 @@ const events = {
     'participant-joined': 'participantJoined',
     'participant-kicked-out': 'participantKickedOut',
     'participant-left': 'participantLeft',
+    'participant-muted': 'participantMuted',
     'participant-role-changed': 'participantRoleChanged',
     'participants-pane-toggled': 'participantsPaneToggled',
     'password-required': 'passwordRequired',
@@ -167,6 +175,7 @@ const events = {
     'suspend-detected': 'suspendDetected',
     'tile-view-changed': 'tileViewChanged',
     'toolbar-button-clicked': 'toolbarButtonClicked',
+    'toolbar-visibility-changed': 'toolbarVisibilityChanged',
     'transcribing-status-changed': 'transcribingStatusChanged',
     'transcription-chunk-received': 'transcriptionChunkReceived',
     'whiteboard-status-changed': 'whiteboardStatusChanged'
@@ -329,6 +338,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._myUserID = undefined;
         this._onStageParticipant = undefined;
         this._iAmvisitor = undefined;
+        this._pipConfig = configOverwrite?.pip;
         this._setupListeners();
         id++;
     }
@@ -648,6 +658,56 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 this.emit(requestName, data, callback);
             }
         });
+
+        this._setupIntersectionObserver();
+    }
+
+    /**
+     * Sets up IntersectionObserver to monitor iframe visibility.
+     * Calls showPiP/hidePiP based on visibility.
+     *
+     * @private
+     * @returns {void}
+     */
+    _setupIntersectionObserver() {
+        if (!isPiPEnabled(this._pipConfig)) {
+            return;
+        }
+
+        // Don't create duplicate observers.
+        if (this._intersectionObserver) {
+            return;
+        }
+
+        this._isIntersecting = true;
+
+        this._intersectionObserver = new IntersectionObserver(entries => {
+            const entry = entries[entries.length - 1];
+            const wasIntersecting = this._isIntersecting;
+
+            this._isIntersecting = entry.isIntersecting;
+
+            if (!entry.isIntersecting && wasIntersecting) {
+                this.showPiP();
+            } else if (entry.isIntersecting && !wasIntersecting) {
+                this.hidePiP();
+            }
+        });
+
+        this._intersectionObserver.observe(this._frame);
+    }
+
+    /**
+     * Tears down IntersectionObserver.
+     *
+     * @private
+     * @returns {void}
+     */
+    _teardownIntersectionObserver() {
+        if (this._intersectionObserver) {
+            this._intersectionObserver.disconnect();
+            this._intersectionObserver = null;
+        }
     }
 
     /**
@@ -850,6 +910,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this.emit('_willDispose');
         this._transport.dispose();
         this.removeAllListeners();
+        this._teardownIntersectionObserver();
+
         if (this._frame && this._frame.parentNode) {
             this._frame.parentNode.removeChild(this._frame);
         }
@@ -878,10 +940,47 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
             return;
         }
+
+        // Handle pip config changes locally.
+        // We update local state, send command to iframe, then handle PiP show/hide
+        // so the iframe config is updated before we try to show PiP.
+        let pipTransition = null;
+
+        if (name === 'overwriteConfig' && args[0]?.pip !== undefined) {
+            const wasEnabled = isPiPEnabled(this._pipConfig);
+
+            this._pipConfig = {
+                ...this._pipConfig,
+                ...args[0].pip
+            };
+
+            const isEnabled = isPiPEnabled(this._pipConfig);
+
+            if (!wasEnabled && isEnabled) {
+                this._setupIntersectionObserver();
+                pipTransition = 'enabled';
+            } else if (wasEnabled && !isEnabled) {
+                this._teardownIntersectionObserver();
+                pipTransition = 'disabled';
+            }
+        }
+
+        // Send command to iframe first.
         this._transport.sendEvent({
             data: args,
             name: commands[name]
         });
+
+        // Handle PiP state after command is sent so iframe config is updated.
+        if (pipTransition === 'enabled') {
+            // Show PiP if iframe is currently not visible.
+            if (!this._isIntersecting) {
+                this.showPiP();
+            }
+        } else if (pipTransition === 'disabled') {
+            // Hide any open PiP window.
+            this.hidePiP();
+        }
     }
 
     /**
@@ -1493,6 +1592,24 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     */
     setVirtualBackground(enabled, backgroundImage) {
         this.executeCommand('setVirtualBackground', enabled, backgroundImage);
+    }
+
+    /**
+     * Shows Picture-in-Picture window.
+     *
+     * @returns {void}
+     */
+    showPiP() {
+        this.executeCommand('showPiP');
+    }
+
+    /**
+     * Hides Picture-in-Picture window.
+     *
+     * @returns {void}
+     */
+    hidePiP() {
+        this.executeCommand('hidePiP');
     }
 
     /**

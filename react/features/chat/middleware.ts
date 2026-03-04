@@ -240,6 +240,13 @@ MiddlewareRegistry.register(store => next => action => {
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT:
     case PARTICIPANT_UPDATED: {
+        if (action.type === PARTICIPANT_LEFT) {
+            const { privateMessageRecipient } = store.getState()['features/chat'];
+
+            if (action.participant?.id === privateMessageRecipient?.id) {
+                store.dispatch(setPrivateMessageRecipient());
+            }
+        }
         if (_shouldNotifyPrivateRecipientsChanged(store, action)) {
             const result = next(action);
 
@@ -255,7 +262,7 @@ MiddlewareRegistry.register(store => next => action => {
         const conference = getCurrentConference(state);
 
         if (conference) {
-            // There may be cases when we intend to send a private message but we forget to set the
+            // There may be cases when we intend to send a private message, but we forgot to set the
             // recipient. This logic tries to mitigate this risk.
             const shouldSendPrivateMessageTo = _shouldSendPrivateMessageTo(state, action);
 
@@ -269,29 +276,32 @@ MiddlewareRegistry.register(store => next => action => {
                         isFromVisitor: shouldSendPrivateMessageTo.isFromVisitor,
                         displayName: shouldSendPrivateMessageTo.name
                     }));
+
+                    // the dialog will take care of sending the message after user confirmation
+                    break;
                 }
+            }
+
+            // Sending the message if privacy notice doesn't need to be shown.
+
+            const { privateMessageRecipient, isLobbyChatActive, lobbyMessageRecipient }
+                = state['features/chat'];
+
+            if (typeof APP !== 'undefined') {
+                APP.API.notifySendingChatMessage(action.message, Boolean(privateMessageRecipient));
+            }
+
+            if (isLobbyChatActive && lobbyMessageRecipient) {
+                conference.sendLobbyMessage({
+                    type: LOBBY_CHAT_MESSAGE,
+                    message: action.message
+                }, lobbyMessageRecipient.id);
+                _persistSentPrivateMessage(store, lobbyMessageRecipient, action.message, true);
+            } else if (privateMessageRecipient) {
+                conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient));
+                _persistSentPrivateMessage(store, privateMessageRecipient, action.message);
             } else {
-                // Sending the message if privacy notice doesn't need to be shown.
-
-                const { privateMessageRecipient, isLobbyChatActive, lobbyMessageRecipient }
-                    = state['features/chat'];
-
-                if (typeof APP !== 'undefined') {
-                    APP.API.notifySendingChatMessage(action.message, Boolean(privateMessageRecipient));
-                }
-
-                if (isLobbyChatActive && lobbyMessageRecipient) {
-                    conference.sendLobbyMessage({
-                        type: LOBBY_CHAT_MESSAGE,
-                        message: action.message
-                    }, lobbyMessageRecipient.id);
-                    _persistSentPrivateMessage(store, lobbyMessageRecipient, action.message, true);
-                } else if (privateMessageRecipient) {
-                    conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient));
-                    _persistSentPrivateMessage(store, privateMessageRecipient, action.message);
-                } else {
-                    conference.sendTextMessage(action.message);
-                }
+                conference.sendTextMessage(action.message);
             }
         }
         break;

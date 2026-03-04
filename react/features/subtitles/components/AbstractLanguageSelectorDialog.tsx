@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState, IStore } from '../../app/types';
+import { openDialog } from '../../base/dialog/actions';
+import { StartRecordingDialog } from '../../recording/components/Recording/index';
 import { setRequestingSubtitles } from '../actions.any';
 import { getAvailableSubtitlesLanguages } from '../functions.any';
-
 
 export interface IAbstractLanguageSelectorDialogProps {
     dispatch: IStore['dispatch'];
@@ -44,14 +45,21 @@ const AbstractLanguageSelectorDialog = (Component: ComponentType<IAbstractLangua
                 selected: lang === selected
             };
         });
+    const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
 
     const onLanguageSelected = useCallback((value: string) => {
         const _selectedLanguage = value === noLanguageLabel ? null : value;
         const enabled = Boolean(_selectedLanguage);
         const displaySubtitles = enabled;
 
-        dispatch(setRequestingSubtitles(enabled, displaySubtitles, _selectedLanguage));
-    }, [ language ]);
+        if (conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription) {
+            dispatch(openDialog('StartRecordingDialog', StartRecordingDialog, {
+                recordAudioAndVideo: false
+            }));
+        } else {
+            dispatch(setRequestingSubtitles(enabled, displaySubtitles, _selectedLanguage));
+        }
+    }, [ conference, language ]);
 
     return (
         <Component

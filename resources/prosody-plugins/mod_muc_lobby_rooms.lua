@@ -48,6 +48,7 @@ local NOTIFY_LOBBY_ACCESS_DENIED = 'LOBBY-ACCESS-DENIED';
 local util = module:require "util";
 local ends_with = util.ends_with;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
+local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 local is_healthcheck_room = util.is_healthcheck_room;
 local presence_check_status = util.presence_check_status;
@@ -412,11 +413,16 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
     host_module:hook('host-disco-info-node', function (event)
         local session, reply, node = event.origin, event.reply, event.node;
         if node == LOBBY_IDENTITY_TYPE
-            and session.jitsi_web_query_room
-            and check_display_name_required then
+            and session.jitsi_web_query_room then
             local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
 
-            if room and room._data.lobbyroom then
+            if room and room._data.lobby_disabled then
+                -- we cannot remove the child from the stanza so let's just change the type
+                local lobby_identity = reply:get_child_with_attr('identity', nil, 'type', LOBBY_IDENTITY_TYPE);
+                lobby_identity.attr.type = 'DISABLED_'..LOBBY_IDENTITY_TYPE;
+            end
+
+            if check_display_name_required and room and room._data.lobbyroom then
                 reply:tag('feature', { var = DISPLAY_NAME_REQUIRED_FEATURE }):up();
             end
         end
@@ -488,6 +494,11 @@ process_host_module(main_muc_component_config, function(host_module, host)
         end
         local members_only = event.fields['muc#roomconfig_membersonly'] and true or nil;
         if members_only then
+            -- if lobby disabled just ignore and return
+            if room._data.lobby_disabled then
+                module:log('warn', 'Lobby is disabled for room %s, cannot enable members only', room.jid);
+                return;
+            end
             local lobby_created = attach_lobby_room(room, actor);
             if lobby_created then
                 module:fire_event('jitsi-lobby-enabled', { room = room; });
@@ -502,7 +513,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
                 host_module:fire_event('room-metadata-changed', { room = room; });
             end
         elseif room._data.lobbyroom then
-            destroy_lobby_room(room, room.jid, nil);
+            destroy_lobby_room(room, internal_room_jid_match_rewrite(room.jid), nil); --
             module:fire_event('jitsi-lobby-disabled', { room = room; });
             notify_lobby_enabled(room, actor, false);
         end

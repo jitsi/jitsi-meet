@@ -101,13 +101,6 @@ export default {
         paddingTop: 10
     },
 
-    /**
-     * A view that contains the field and hint box.
-     */
-    joinControls: {
-        padding: BoxModel.padding
-    },
-
     messageContainer: {
         backgroundColor: BaseTheme.palette.ui03,
         borderRadius: BaseTheme.shape.borderRadius,
@@ -149,7 +142,7 @@ export default {
     roomContainer: {
         alignSelf: 'stretch',
         flexDirection: 'column',
-        marginHorizontal: BaseTheme.spacing[2]
+        padding: BaseTheme.spacing[3]
     },
 
     /**

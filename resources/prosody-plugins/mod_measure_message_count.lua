@@ -106,7 +106,7 @@ function on_message(event)
     -- get room name with tenant and find room.
     local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
     if not room then
-        module:log('warn', 'No room found found for %s/%s',
+        module:log('warn', 'No room found for %s/%s',
             session.jitsi_web_query_prefix, session.jitsi_web_query_room);
         return;
     end
@@ -138,7 +138,7 @@ function poll_created(event)
     -- get room name with tenant and find room.
     local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
     if not room then
-        module:log('warn', 'No room found found for %s/%s',
+        module:log('warn', 'No room found for %s/%s',
             session.jitsi_web_query_prefix, session.jitsi_web_query_room);
         return false;
     end

@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, Text, TouchableHighlight, View, ViewStyle } from 'react-native';
+import { Edge } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -45,9 +46,7 @@ const LanguageSelectView = ({ isInWelcomePage }: { isInWelcomePage?: boolean; })
     return (
         <JitsiScreen
             disableForcedKeyboardDismiss = { true }
-
-            // @ts-ignore
-            safeAreaInsets = { [ !isInWelcomePage && 'bottom', 'left', 'right' ].filter(Boolean) }
+            safeAreaInsets = { [ !isInWelcomePage && 'bottom', 'left', 'right' ].filter(Boolean) as Edge[] }
             style = { styles.settingsViewContainer }>
             <ScrollView
                 bounces = { isInWelcomePage }

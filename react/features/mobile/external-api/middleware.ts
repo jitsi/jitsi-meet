@@ -58,7 +58,7 @@ import { isEnabled as isDropboxEnabled } from '../../dropbox/functions.native';
 import { hideNotification, showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../notifications/constants';
 import { RECORDING_SESSION_UPDATED } from '../../recording/actionTypes';
-import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../recording/constants';
+import { RECORDING_TYPES } from '../../recording/constants';
 import { getActiveSession } from '../../recording/functions';
 import { setRequestingSubtitles } from '../../subtitles/actions.any';
 import { CUSTOM_BUTTON_PRESSED } from '../../toolbox/actionTypes';
@@ -588,10 +588,7 @@ function _registerForNativeEvents(store: IStore) {
         }
 
         if (transcription) {
-            store.dispatch(setRequestingSubtitles(true, false, null, true));
-            conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                isTranscribingEnabled: true
-            });
+            store.dispatch(setRequestingSubtitles(true, false, null));
         }
     });
 
@@ -607,9 +604,6 @@ function _registerForNativeEvents(store: IStore) {
 
         if (transcription) {
             store.dispatch(setRequestingSubtitles(false, false, null));
-            conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                isTranscribingEnabled: false
-            });
         }
 
         if (![ JitsiRecordingConstants.mode.FILE, JitsiRecordingConstants.mode.STREAM ].includes(mode)) {

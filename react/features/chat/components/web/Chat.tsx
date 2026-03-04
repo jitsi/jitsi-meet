@@ -79,6 +79,11 @@ interface IProps extends AbstractProps {
     _isResizing: boolean;
 
     /**
+     * The indicator which determines whether the UI is reduced.
+     */
+    _reducedUI: boolean;
+
+    /**
      * Whether or not to block chat access with a nickname input form.
      */
     _showNamePrompt: boolean;
@@ -227,6 +232,7 @@ const Chat = ({
     _focusedTab,
     _isResizing,
     _messages,
+    _reducedUI,
     _unreadMessagesCount,
     _unreadPollsCount,
     _unreadFilesCount,
@@ -567,6 +573,10 @@ const Chat = ({
         );
     }
 
+    if (_reducedUI) {
+        return null;
+    }
+
     return (
         _isOpen ? <div
             className = { classes.container }
@@ -623,6 +633,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { isOpen, messages, unreadMessagesCount, unreadFilesCount, width, isResizing } = state['features/chat'];
     const { unreadPollsCount } = state['features/polls'];
     const _localParticipant = getLocalParticipant(state);
+    const { reducedUI } = state['features/base/responsive-ui'];
 
     return {
         _isModal: window.innerWidth <= SMALL_WIDTH_THRESHOLD,
@@ -633,6 +644,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _isFileSharingTabEnabled: isFileSharingEnabled(state),
         _focusedTab: getFocusedTab(state),
         _messages: messages,
+        _reducedUI: reducedUI,
         _unreadMessagesCount: unreadMessagesCount,
         _unreadPollsCount: unreadPollsCount,
         _unreadFilesCount: unreadFilesCount,

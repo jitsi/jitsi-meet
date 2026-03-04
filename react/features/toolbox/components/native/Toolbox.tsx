@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ViewStyle } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Edge, SafeAreaView } from 'react-native-safe-area-context';
 import { connect, useSelector } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
@@ -117,9 +117,7 @@ function Toolbox(props: IProps) {
             style = { styles.toolboxContainer as ViewStyle }>
             <SafeAreaView
                 accessibilityRole = 'toolbar'
-
-                // @ts-ignore
-                edges = { [ bottomEdge && 'bottom' ].filter(Boolean) }
+                edges = { [ bottomEdge && 'bottom' ].filter(Boolean) as Edge[] }
                 pointerEvents = 'box-none'
                 style = { style as ViewStyle }>
                 { renderToolboxButtons() }

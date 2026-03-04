@@ -151,7 +151,7 @@ function on_message(event)
     local room = get_room_from_jid(room_jid_match_rewrite(roomJid));
 
     if not room then
-        module:log('warn', 'No room found found for %s/%s',
+        module:log('warn', 'No room found for %s/%s',
                 session.jitsi_web_query_prefix, session.jitsi_web_query_room);
         return false;
     end

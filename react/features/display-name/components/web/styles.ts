@@ -121,3 +121,19 @@ export function scaleFontProperty(
 
     return parseFloat(calculatedRemValue.toFixed(3));
 }
+
+
+/**
+ * Default text color for display name.
+ */
+export const DISPLAY_NAME_DEFAULT_COLOR = '#FFFFFF';
+
+/**
+ * Returns the text color for display name from the theme.
+ *
+ * @param {Theme} theme - The MUI theme.
+ * @returns {string} The text color.
+ */
+export const getDisplayNameColor = (theme: Theme): string =>
+    theme.palette?.text01 || DISPLAY_NAME_DEFAULT_COLOR;
+

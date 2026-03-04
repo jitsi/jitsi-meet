@@ -73,6 +73,11 @@ export function muteRemote(participantId: string, mediaType: MediaType) {
         const muteMediaType = mediaType === MEDIA_TYPE.SCREENSHARE ? 'desktop' : mediaType;
 
         dispatch(muteRemoteParticipant(participantId, muteMediaType));
+
+        // Notify external API that participant was muted by moderator
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyParticipantMuted(participantId, true, muteMediaType, false);
+        }
     };
 }
 

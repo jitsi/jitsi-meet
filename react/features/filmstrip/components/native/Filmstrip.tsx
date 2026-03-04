@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { FlatList, ViewStyle, ViewToken } from 'react-native';
-import { SafeAreaView, withSafeAreaInsets } from 'react-native-safe-area-context';
+import { Edge, SafeAreaView, withSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
@@ -272,8 +272,8 @@ class Filmstrip extends PureComponent<IProps> {
         }
 
         return (
-            <SafeAreaView // @ts-ignore
-                edges = { [ bottomEdge && 'bottom', 'left', 'right' ].filter(Boolean) }
+            <SafeAreaView
+                edges = { [ bottomEdge && 'bottom', 'left', 'right' ].filter(Boolean) as Edge[] }
                 style = { filmstripStyle as ViewStyle }>
                 {
                     this._separateLocalThumbnail

@@ -28,11 +28,6 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
-     * Whether to hide chat with permissions.
-     */
-    disableChatWithPermissions: boolean;
-
-    /**
      * If set hides the reactions moderation setting.
      */
     disableReactionsModeration: boolean;
@@ -56,6 +51,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
      * Whether the user has selected the Follow Me Recorder feature to be enabled.
      */
     followMeRecorderEnabled: boolean;
+
+    /**
+     * Whether to hide chat with permissions.
+     */
+    hideChatWithPermissions: boolean;
 
     /**
      * Whether or not the user has selected the Start Audio Muted feature to be
@@ -210,12 +210,12 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
         const {
             audioModerationEnabled,
             chatWithPermissionsEnabled,
-            disableChatWithPermissions,
             disableReactionsModeration,
             followMeActive,
             followMeEnabled,
             followMeRecorderActive,
             followMeRecorderEnabled,
+            hideChatWithPermissions,
             startAudioMuted,
             startVideoMuted,
             startReactionsMuted,
@@ -266,7 +266,7 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
                             label = { t('settings.startReactionsMuted') }
                             name = 'start-reactions-muted'
                             onChange = { this._onStartReactionsMutedChanged } /> }
-                { !disableChatWithPermissions
+                { !hideChatWithPermissions
                     && <Checkbox
                         checked = { chatWithPermissionsEnabled }
                         className = { classes.checkbox }

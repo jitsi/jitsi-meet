@@ -22,17 +22,35 @@ export function preloadImage(
     return new Promise((resolve, reject) => {
         const image = document.createElement('img');
 
+        // Cleanup function to release resources and prevent memory leaks
+        const cleanup = () => {
+            // Clear event handlers to break circular references
+            image.onload = null;
+            image.onerror = null;
+
+            // Clear src to stop any pending load and allow GC
+            image.src = '';
+        };
+
         if (useCORS) {
             image.setAttribute('crossOrigin', '');
         }
-        image.onload = () => resolve({
-            src,
-            isUsingCORS: useCORS
-        });
+
+        image.onload = () => {
+            cleanup();
+            resolve({
+                src,
+                isUsingCORS: useCORS
+            });
+        };
+
         image.onerror = error => {
+            cleanup();
+
             if (tryOnce) {
                 reject(error);
             } else {
+                // Retry with different CORS mode
                 preloadImage(src, !useCORS, true)
                     .then(resolve)
                     .catch(reject);
