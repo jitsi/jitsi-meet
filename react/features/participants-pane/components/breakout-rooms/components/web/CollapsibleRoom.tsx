@@ -33,6 +33,11 @@ interface IProps {
     isHighlighted?: boolean;
 
     /**
+     * Closes the room participant context menu.
+     */
+    lowerParticipantMenu: Function;
+
+    /**
      * Callback for when the mouse leaves this component.
      */
     onLeave?: (e?: React.MouseEvent) => void;
@@ -74,11 +79,6 @@ interface IProps {
      * Participants search string.
      */
     searchString: string;
-
-    /**
-     * Closes the room participant context menu.
-     */
-    lowerParticipantMenu: Function;
 
     /**
      * Toggles the room participant context menu.
@@ -161,6 +161,21 @@ export const CollapsibleRoom = ({
         participantName: displayName
     }), [ room, moderator ]);
 
+    const getEllipsisClickHandler = useCallback(
+        (jid: string, displayName: string) => {
+            if (participantContextEntity?.jid === jid) {
+                return lowerParticipantMenu;
+            }
+
+            return toggleParticipantMenu({
+                room,
+                jid,
+                participantName: displayName
+            });
+        },
+        [ participantContextEntity, lowerParticipantMenu, toggleParticipantMenu, room ]
+    );
+
     return (<>
         <ListItem
             actions = { children }
@@ -190,11 +205,7 @@ export const CollapsibleRoom = ({
                         {!overflowDrawer && moderator && (
                             <ParticipantActionEllipsis
                                 accessibilityLabel = { t('breakoutRoom.more') }
-                                onClick = { participantContextEntity?.jid === p.jid
-                                    ? () => lowerParticipantMenu(true)
-                                    : toggleParticipantMenu({ room,
-                                        jid: p.jid,
-                                        participantName: p.displayName }) } />
+                                onClick = { getEllipsisClickHandler(p.jid, p.displayName) } />
                         )}
                     </ParticipantItem>
                 ))
