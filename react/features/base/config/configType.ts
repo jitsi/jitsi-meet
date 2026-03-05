@@ -61,10 +61,10 @@ type NotifyClickButtonKey = string |
     ParticipantMenuButtonsWithNotifyClick;
 
 export type NotifyClickButton = NotifyClickButtonKey |
-    {
-        key: NotifyClickButtonKey;
-        preventExecution: boolean;
-    };
+{
+    key: NotifyClickButtonKey;
+    preventExecution: boolean;
+};
 
 export type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
     'E2EE_OFF_SOUND' |
@@ -555,6 +555,7 @@ export interface IConfig {
         suggestRecording?: boolean;
     };
     reducedUIEnabled?: boolean;
+    reducedUIThreshold?: number;
     reducedUImainToolbarButtons?: Array<string>;
     remoteVideoMenu?: {
         disableDemote?: boolean;
