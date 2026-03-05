@@ -240,5 +240,15 @@ export default {
 
     backBtn: {
         marginLeft: BaseTheme.spacing[3]
+    },
+
+    /**
+     * Style for the tablet layout container.
+     */
+    tabletSettingsContainer: {
+        alignSelf: 'center',
+        flex: 1,
+        maxWidth: 640,
+        width: '100%'
     }
 };
