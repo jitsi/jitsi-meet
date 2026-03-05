@@ -76,6 +76,11 @@ interface IProps {
     searchString: string;
 
     /**
+     * Closes the room participant context menu.
+     */
+    lowerParticipantMenu: Function;
+
+    /**
      * Toggles the room participant context menu.
      */
     toggleParticipantMenu: Function;
@@ -118,6 +123,7 @@ export const CollapsibleRoom = ({
     raiseParticipantContextMenu,
     room,
     searchString,
+    lowerParticipantMenu,
     toggleParticipantMenu
 }: IProps) => {
     const { t } = useTranslation();
@@ -184,9 +190,11 @@ export const CollapsibleRoom = ({
                         {!overflowDrawer && moderator && (
                             <ParticipantActionEllipsis
                                 accessibilityLabel = { t('breakoutRoom.more') }
-                                onClick = { toggleParticipantMenu({ room,
-                                    jid: p.jid,
-                                    participantName: p.displayName }) } />
+                                onClick = { participantContextEntity?.jid === p.jid
+                                    ? () => lowerParticipantMenu(true)
+                                    : toggleParticipantMenu({ room,
+                                        jid: p.jid,
+                                        participantName: p.displayName }) } />
                         )}
                     </ParticipantItem>
                 ))
