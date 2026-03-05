@@ -58,6 +58,7 @@ export interface ITrack {
         uid?: string;
     };
     participantId: string;
+    stream?: any;
     streamingStatus?: string;
     videoStarted: boolean;
     videoType?: string | null;
