@@ -38,6 +38,7 @@ local util = module:require 'util';
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local is_healthcheck_room = util.is_healthcheck_room;
 local process_host_module = util.process_host_module;
+local is_admin = util.is_admin;
 
 local BREAKOUT_ROOMS_IDENTITY_TYPE = 'breakout_rooms';
 -- Available breakout room functionality
@@ -109,7 +110,7 @@ function get_participants(room)
     if room then
         for room_nick, occupant in room:each_occupant() do
             -- Filter focus as we keep it as a hidden participant
-            if jid_node(occupant.jid) ~= 'focus' then
+            if not is_admin(occupant.bare_jid) then
                 local display_name = occupant:get_presence():get_child_text(
                     'nick', 'http://jabber.org/protocol/nick');
                 local real_nick = internal_room_jid_match_rewrite(room_nick);
@@ -184,7 +185,7 @@ function broadcast_breakout_rooms(room_jid)
         end
 
         for _, occupant in main_room:each_occupant() do
-            if jid_node(occupant.jid) ~= 'focus' then
+            if not is_admin(occupant.bare_jid) then
                 send_json_msg(occupant.jid, json_msg)
             end
         end
@@ -193,7 +194,7 @@ function broadcast_breakout_rooms(room_jid)
             local room = breakout_rooms_muc_service.get_room_from_jid(breakout_room_jid);
             if room then
                 for _, occupant in room:each_occupant() do
-                    if jid_node(occupant.jid) ~= 'focus' then
+                    if not is_admin(occupant.bare_jid) then
                         send_json_msg(occupant.jid, json_msg)
                     end
                 end
@@ -404,9 +405,10 @@ function on_occupant_joined(event)
     end
 
     local main_room, main_room_jid = get_main_room(room.jid);
+    local isFocus = is_admin(occupant.bare_jid);
 
     if main_room and main_room._data.breakout_rooms_active then
-        if jid_node(event.occupant.jid) ~= 'focus' then
+        if not isFocus then
             broadcast_breakout_rooms(main_room_jid);
         end
 
@@ -426,7 +428,7 @@ function exist_occupants_in_room(room)
         return false;
     end
     for _, occupant in room:each_occupant() do
-        if jid_node(occupant.jid) ~= 'focus' then
+        if not is_admin(occupant.bare_jid) then
             return true;
         end
     end
@@ -476,7 +478,7 @@ function on_occupant_left(event)
         return;
     end
 
-    if main_room._data.breakout_rooms_active and jid_node(event.occupant.jid) ~= 'focus' then
+    if main_room._data.breakout_rooms_active and not is_admin(event.occupant.bare_jid) then
         broadcast_breakout_rooms(main_room_jid);
     end
 
