@@ -20,12 +20,12 @@ export class AudioMixerEffect {
     /**
      * MediaStreamTrack obtained from mixed stream.
      */
-    _mixedMediaTrack: Object;
+    _mixedMediaTrack!: Object;
 
     /**
      * Original MediaStream from the JitsiLocalTrack that uses this effect.
      */
-    _originalStream: Object;
+    _originalStream!: Object;
 
     /**
      * MediaStreamTrack obtained from the original MediaStream.
