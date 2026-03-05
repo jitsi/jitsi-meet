@@ -201,4 +201,5 @@ module:hook_global('c2s-session-updated', function (event)
     session.jitsi_meet_str_tenant = from_session.jitsi_meet_str_tenant;
     session.jitsi_meet_domain = from_session.jitsi_meet_domain;
     session.jitsi_meet_tenant_mismatch = from_session.jitsi_meet_tenant_mismatch;
+    session.jitsi_breakout_main_jid = from_session.jitsi_breakout_main_jid;
 end, 1);
