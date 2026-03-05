@@ -24,18 +24,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
+import android.app.PendingIntent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.core.app.NotificationCompat;
 
 import com.facebook.react.modules.core.PermissionListener;
 
@@ -60,6 +53,10 @@ public class JitsiMeetActivity extends AppCompatActivity
 
     private static final String ACTION_JITSI_MEET_CONFERENCE = "org.jitsi.meet.CONFERENCE";
     private static final String JITSI_MEET_CONFERENCE_OPTIONS = "JitsiMeetConferenceOptions";
+
+    private static final int SCREEN_SHARE_NOTIFICATION_ID = 1001;
+
+    private static boolean notificationChannelCreated = false;
 
     private boolean isReadyToClose;
 
@@ -435,6 +432,12 @@ public class JitsiMeetActivity extends AppCompatActivity
                 case READY_TO_CLOSE:
                     onReadyToClose();
                     break;
+                case SHOW_NOTIFICATION:
+                    onShowNotification(event.getData());
+                    break;
+                case HIDE_NOTIFICATION:
+                    onHideNotification(event.getData());
+                    break;
                 // case TRANSCRIPTION_CHUNK_RECEIVED:
                 //    onTranscriptionChunkReceived(event.getData());
                 //    break;
@@ -449,5 +452,45 @@ public class JitsiMeetActivity extends AppCompatActivity
                 //     break;
             }
         }
+    }
+
+    private void onShowNotification(Bundle data) {
+        // Create notification channel for Android 8.0+ (only once)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !notificationChannelCreated) {
+            android.app.NotificationChannel channel = new android.app.NotificationChannel(
+                "screen_share_channel",
+                "Screen Sharing",
+                android.app.NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("Notifications for screen sharing controls");
+            android.app.NotificationManager notificationManager = getSystemService(android.app.NotificationManager.class);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+                notificationChannelCreated = true;
+            }
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "screen_share_channel")
+            .setSmallIcon(android.R.drawable.ic_menu_share)
+            .setContentTitle("Screen Sharing")
+            .setContentText("You are sharing your screen")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setOngoing(true);
+
+        Intent stopIntent = BroadcastIntentHelper.buildToggleScreenShareIntent(false);
+        PendingIntent stopPendingIntent = PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        builder.addAction(android.R.drawable.ic_menu_close_clear_cancel, "Stop", stopPendingIntent);
+
+        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+        homeIntent.addCategory(Intent.CATEGORY_HOME);
+        PendingIntent homePendingIntent = PendingIntent.getActivity(this, 0, homeIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        builder.addAction(android.R.drawable.ic_menu_revert, "Hide", homePendingIntent);
+
+        android.app.NotificationManager notificationManager = (android.app.NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(SCREEN_SHARE_NOTIFICATION_ID, builder.build());
+    }
+
+    private void onHideNotification(Bundle data) {
+        android.app.NotificationManager notificationManager = (android.app.NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(SCREEN_SHARE_NOTIFICATION_ID);
     }
 }
