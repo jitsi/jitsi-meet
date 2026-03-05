@@ -398,7 +398,7 @@ function on_breakout_room_pre_create(event)
 end
 
 function on_occupant_joined(event)
-    local occupant, room = event.occupant, event.room;
+    local occupant, room, session = event.occupant, event.room, event.origin;
 
     if is_healthcheck_room(room.jid) then
         return;
@@ -420,6 +420,12 @@ function on_occupant_joined(event)
 
         -- clear any switching state for this occupant, we always store main room / resource
         switching_room_cache:set(main_room_jid..'/'..jid_resource(occupant.nick), nil);
+    end
+
+    -- check if this is joining main room or breakout room
+    if main_room == room and not isFocus then
+        -- mark that this session was in the main room
+        session.jitsi_breakout_main_jid = main_room_jid;
     end
 end
 
@@ -567,6 +573,7 @@ end
 -- conflict with a jid which is currently in switching state or already in another room.
 function on_occupant_pre_join_or_change(e)
     local room, stanza, origin = e.room, e.stanza, e.origin;
+    local occupant = e.dest_occupant or e.occupant;
     local requested_jid = stanza.attr.to;
 
     local main_room = get_main_room(room.jid);
@@ -575,6 +582,10 @@ function on_occupant_pre_join_or_change(e)
     if not main_room then
         origin.send(st.error_reply(stanza, 'cancel', 'service-unavailable'));
         return true;
+    end
+
+    if is_admin(occupant.bare_jid) then
+        return;
     end
 
     local main_room_requested_jid = main_room.jid..'/'..jid_resource(requested_jid);
@@ -597,6 +608,12 @@ function on_occupant_pre_join_or_change(e)
             end
         end
     else
+        if origin.jitsi_breakout_main_jid ~= main_room.jid then
+            -- this session did not come from the main room
+            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed'));
+            return true;
+        end
+
         -- this is a breakout room let's check the main room
         if check_for_existing_occupant_in_room(main_room, jid_resource(requested_jid), bare_jid, stanza, origin) then
             return true;
