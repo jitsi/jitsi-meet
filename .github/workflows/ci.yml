@@ -22,7 +22,7 @@ jobs:
     - name: Get changed lang files
       id: lang-files
       run: echo "all=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -oE 'lang\/\S+' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
-    - run: npm install
+    - run: npm ci
     - name: Check git status
       run: git status
     - name: Normalize lang files to ensure sorted
@@ -51,7 +51,7 @@ jobs:
       run: |
         node -v
         npm -v
-    - run: npm install
+    - run: npm ci
     - run: make
     - name: Check config.js syntax
       run: node config.js
@@ -68,7 +68,7 @@ jobs:
       run: |
         node -v
         npm -v
-    - run: npm install
+    - run: npm ci
     - run: npx react-native bundle --entry-file react/index.native.js --platform android --bundle-output /tmp/android.bundle --reset-cache
   ios-rn-bundle-build:
     name: Build mobile bundle (iOS)
@@ -83,7 +83,7 @@ jobs:
       run: |
         node -v
         npm -v
-    - run: npm install
+    - run: npm ci
     - name: setup Xcode
       run: |
         uname -a
@@ -125,7 +125,7 @@ jobs:
       run: |
         node -v
         npm -v
-    - run: npm install
+    - run: npm ci
     - run: |
         cd android
         ./gradlew :sdk:clean
@@ -146,7 +146,7 @@ jobs:
       run: |
         node -v
         npm -v
-    - run: npm install
+    - run: npm ci
     - name: setup Xcode
       run: |
         uname -a
@@ -196,7 +196,7 @@ jobs:
       run: |
         node -v
         npm -v
-    - run: npm install
+    - run: npm ci
     - run: make
     - run: sudo apt-get install -y debhelper
     - run: dpkg-buildpackage -A -rfakeroot -us -uc -d
