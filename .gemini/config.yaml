@@ -1,0 +1,35 @@
+# Gemini Code Assist Configuration
+review:
+  # Minimum severity to post a comment on the PR. 
+  # Set to MEDIUM to ensure style guide alignment is always reported.
+  min_severity: "MEDIUM"
+
+  # Define how Gemini should prioritize specific violations
+  severity_overrides:
+    # Any manual change to core react/ or css/ folders is a major risk to upgrades
+    - pattern: "(react/|css/)"
+      severity: "CRITICAL"
+      reason: "Direct modification of core files bypasses the Fishmeet override mechanism."
+
+    # Hardcoded hex colors instead of using the Fishmeet palette
+    - pattern: "#[0-9a-fA-F]{3,6}"
+      severity: "HIGH"
+      reason: "Branding must use BaseTheme.palette.fishMeet tokens."
+
+    # Missing fishmeet annotations in stylesheets
+    - pattern: "styles.ts"
+      severity: "MEDIUM"
+      reason: "Ensure all changes are annotated with // fishmeet: was <original value>."
+
+  # Files to ignore during the automated review to reduce noise
+  ignore_file_patterns:
+    - "**/node_modules/**"
+    - "**/dist/**"
+    - "**/ios/**"
+    - "**/android/**"
+    - "package-lock.json"
+    - "yarn.lock"
+
+# Context settings for the AI agent
+shorthands:
+  customization_guide: "Refer to CUSTOMIZATION.md for the overlay architecture rules."
