@@ -483,6 +483,7 @@ const Chat = ({
                     role = 'tabpanel'
                     tabIndex = { 0 }>
                     <MessageContainer
+                        isVisible = { _focusedTab === ChatTabs.CHAT }
                         messages = { _messages } />
                     <MessageRecipient />
                     {isPrivateChatAllowed && (
