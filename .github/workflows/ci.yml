@@ -96,9 +96,18 @@ jobs:
         ruby-version: '3.4'
         bundler-cache: true
     - run: npx react-native info
+    - name: Cache CocoaPods
+      uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57
+      with:
+        path: |
+          ios/Pods
+          ~/Library/Caches/CocoaPods
+        key: ${{ runner.os }}-cocoapods-${{ hashFiles('ios/Podfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cocoapods-
     - name: Install Pods
       working-directory: ./ios
-      run: bundle exec pod install --repo-update --deployment
+      run: bundle exec pod install --deployment
     - run: npx react-native bundle --entry-file react/index.native.js --platform ios --bundle-output /tmp/ios.bundle --reset-cache
   android-sdk-build:
     name: Build mobile SDK (Android)
