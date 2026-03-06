@@ -9,7 +9,7 @@ import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
 import i18next from '../base/i18n/i18next';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
-import { getParticipantById, isPrivateChatEnabled } from '../base/participants/functions';
+import { getLocalParticipant, getParticipantById, isLocalParticipantModerator, isPrivateChatEnabled } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
 import { escapeRegexp } from '../base/util/helpers';
 import { arePollsDisabled } from '../conference/functions.any';
@@ -352,4 +352,73 @@ export function getDisplayNameSuffix(message: IMessage): string {
  */
 export function isFileMessage(message: IMessage): boolean {
     return Boolean(message?.fileMetadata);
+}
+
+/**
+ * Returns whether a message can be edited by the local user.
+ * Only the message author can edit their own messages.
+ * File messages, private messages, lobby chat messages, and already deleted messages cannot be edited.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {IMessage} message - The message to be checked.
+ * @returns {boolean}
+ */
+export function canEditMessage(state: IReduxState, message: IMessage): boolean {
+    if (message.messageType !== MESSAGE_TYPE_LOCAL) {
+        return false;
+    }
+    if (isFileMessage(message)) {
+        return false;
+    }
+    if (message.privateMessage || message.lobbyChat) {
+        return false;
+    }
+    if ((message as any).deleted) {
+        return false;
+    }
+
+    const localParticipant = getLocalParticipant(state);
+
+    if (!localParticipant) {
+        return false;
+    }
+
+    // Only the author can edit their own message
+    return message.participantId === localParticipant.id;
+}
+
+/**
+ * Returns whether a message can be deleted by the local user.
+ * Moderators can delete any message, regular users can only delete their own.
+ * File messages, private messages, lobby chat messages, and already deleted messages cannot be deleted.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {IMessage} message - The message to be checked.
+ * @returns {boolean}
+ */
+export function canDeleteMessage(state: IReduxState, message: IMessage): boolean {
+    if (isFileMessage(message)) {
+        return false;
+    }
+
+    if (message.privateMessage || message.lobbyChat) {
+        return false;
+    }
+
+    if ((message as any).deleted) {
+        return false;
+    }
+
+    const localParticipant = getLocalParticipant(state);
+
+    if (!localParticipant) {
+        return false;
+    }
+
+    // Moderators can delete any message, users can only delete their own
+    if (isLocalParticipantModerator(state)) {
+        return true;
+    }
+
+    return message.participantId === localParticipant.id;
 }
