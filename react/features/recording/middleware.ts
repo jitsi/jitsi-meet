@@ -40,7 +40,6 @@ import {
     markConsentRequested,
     showPendingRecordingNotification,
     showRecordingError,
-    showRecordingLimitNotification,
     showRecordingWarning,
     showStartRecordingNotification,
     showStartedRecordingNotification,
@@ -208,8 +207,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         // but we want to indicate those in case of sip gateway
         const {
             iAmRecorder,
-            iAmSipGateway,
-            recordingLimit
+            iAmSipGateway
         } = state['features/base/config'];
 
         if (iAmRecorder && !iAmSipGateway) {
@@ -242,11 +240,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             // FIXME: simplify checks when the backend start sending only one status ON update containing
             // the initiator.
             if (initiator && !oldSessionData?.initiator) {
-                if (typeof recordingLimit === 'object') {
-                    dispatch(showRecordingLimitNotification(mode));
-                } else {
-                    dispatch(showStartedRecordingNotification(mode, initiator, action.sessionData.id));
-                }
+                dispatch(showStartedRecordingNotification(mode, initiator, action.sessionData.id));
             }
 
             if (oldSessionData?.status !== ON) {

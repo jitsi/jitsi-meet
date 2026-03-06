@@ -25,6 +25,11 @@ export function determineTranscriptionLanguage(config: IConfig) {
         return undefined;
     }
 
+    const transcriberLangs = {
+        ...TRANSCRIBER_LANGS,
+        ...(transcription.customLanguages ?? {})
+    };
+
     // Depending on the config either use the language that the app automatically detected or the hardcoded
     // config BCP47 value.
     // Jitsi language detections uses custom language tags, but the transcriber expects BCP-47 compliant tags,
@@ -34,7 +39,7 @@ export function determineTranscriptionLanguage(config: IConfig) {
         : transcription?.preferredLanguage;
 
     // Check if the obtained language is supported by the transcriber
-    let safeBCP47Locale = TRANSCRIBER_LANGS[bcp47Locale as keyof typeof TRANSCRIBER_LANGS] && bcp47Locale;
+    let safeBCP47Locale = transcriberLangs[bcp47Locale as keyof typeof transcriberLangs] && bcp47Locale;
 
     if (!safeBCP47Locale) {
         safeBCP47Locale = DEFAULT_TRANSCRIBER_LANG;

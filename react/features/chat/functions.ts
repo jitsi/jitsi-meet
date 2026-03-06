@@ -99,7 +99,7 @@ export function replaceNonUnicodeEmojis(message: string): string {
  * @param {IReduxState} state - The redux state.
  * @returns {number} The number of unread messages.
  */
-export function getUnreadCount(state: IReduxState) {
+export function getUnreadCount(state: IReduxState): number {
     const { lastReadMessage, messages } = state['features/chat'];
     const messagesCount = messages.length;
 
@@ -150,7 +150,7 @@ export function getUnreadFilesCount(state: IReduxState): number {
  * @param {IReduxState} state - The redux state.
  * @returns {boolean} The disabled flag.
  */
-export function areSmileysDisabled(state: IReduxState) {
+export function areSmileysDisabled(state: IReduxState): boolean {
     const disableChatSmileys = state['features/base/config']?.disableChatSmileys === true;
 
     return disableChatSmileys;
@@ -209,7 +209,7 @@ export function getFocusedTab(state: IReduxState): ChatTabs | undefined {
  * @param {IMessage} message - The message from which to get the timestamp.
  * @returns {string}
  */
-export function getFormattedTimestamp(message: IMessage) {
+export function getFormattedTimestamp(message: IMessage): string {
     return getLocalizedDateFormatter(new Date(message.timestamp))
         .format(TIMESTAMP_FORMAT);
 }
@@ -220,7 +220,7 @@ export function getFormattedTimestamp(message: IMessage) {
  * @param {IMessage} message - The message from which to get the text.
  * @returns {string}
  */
-export function getMessageText(message: IMessage) {
+export function getMessageText(message: IMessage): string {
     return message.messageType === MESSAGE_TYPE_ERROR
         ? i18next.t('chat.error', {
             error: message.message
@@ -236,7 +236,7 @@ export function getMessageText(message: IMessage) {
  * @param {IMessage} message - The message to be checked.
  * @returns {boolean}
  */
-export function getCanReplyToMessage(state: IReduxState, message: IMessage) {
+export function getCanReplyToMessage(state: IReduxState, message: IMessage): boolean {
     const { knocking } = state['features/lobby'];
     const participant = getParticipantById(state, message.participantId);
 
@@ -266,7 +266,7 @@ export function getCanReplyToMessage(state: IReduxState, message: IMessage) {
  * @param {IMessage} message - The message to be checked.
  * @returns {string}
  */
-export function getPrivateNoticeMessage(message: IMessage) {
+export function getPrivateNoticeMessage(message: IMessage): string {
     let recipient;
 
     if (message.messageType === MESSAGE_TYPE_LOCAL) {
@@ -290,7 +290,7 @@ export function getPrivateNoticeMessage(message: IMessage) {
  * @param {IReduxState} state - The redux state.
  * @returns {boolean} - Returns true if the participant is not allowed to send group messages.
  */
-export function isSendGroupChatDisabled(state: IReduxState) {
+export function isSendGroupChatDisabled(state: IReduxState): boolean {
     const { groupChatRequiresPermission } = state['features/dynamic-branding'];
 
     if (!groupChatRequiresPermission) {
@@ -308,7 +308,7 @@ export function isSendGroupChatDisabled(state: IReduxState) {
  * @returns {number} The maximum width in pixels available for the chat panel. Returns 0 if there
  * is no space available.
  */
-export function getChatMaxSize(state: IReduxState) {
+export function getChatMaxSize(state: IReduxState): number {
     const { clientWidth } = state['features/base/responsive-ui'];
 
     return Math.max(clientWidth - getParticipantsPaneWidth(state) - VIDEO_SPACE_MIN_SIZE, 0);

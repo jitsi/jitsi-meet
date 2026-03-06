@@ -80,7 +80,7 @@ class StartLiveStreamDialog
      * @inheritdoc
      */
     override render() {
-        const { _googleApiApplicationClientID } = this.props;
+        const { _googleApiApplicationClientID, t } = this.props;
 
         return (
             <Dialog
@@ -91,6 +91,9 @@ class StartLiveStreamDialog
                 <div className = 'live-stream-dialog'>
                     { _googleApiApplicationClientID
                         ? this._renderYouTubePanel() : null }
+                    <div className = 'youtube-go-live-warning'>
+                        { t('liveStreaming.youTubeGoLiveWarning') }
+                    </div>
                     <StreamKeyForm
                         onChange = { this._onStreamKeyChange }
                         value = {

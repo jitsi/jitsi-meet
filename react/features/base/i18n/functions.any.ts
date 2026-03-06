@@ -29,18 +29,3 @@ export function translate<P extends WithTranslation>(component: React.ComponentT
     // Use the default list of namespaces.
     return withTranslation([ 'main', 'languages', 'countries' ])(component);
 }
-
-/**
- * Translates a specific key to text containing HTML via a specific translate
- * function.
- *
- * @param {Function} t - The translate function.
- * @param {string} key - The key to translate.
- * @param {Array<*>} options - The options, if any, to pass to {@link t}.
- * @returns {ReactElement} A ReactElement which depicts the translated HTML
- * text.
- */
-export function translateToHTML(t: Function, key: string, options: Object = {}) {
-    // eslint-disable-next-line react/no-danger
-    return <span dangerouslySetInnerHTML = {{ __html: t(key, options) }} />;
-}

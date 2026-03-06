@@ -20,15 +20,21 @@ export function setDelayedLoadOfAvatarUrl(avatarUrl?: string) {
  * Stores a specific JSON Web Token (JWT) into the redux store.
  *
  * @param {string} [jwt] - The JSON Web Token (JWT) to store.
+ * @param {string} idToken - The ID Token to store.
+ * @param {string} refreshToken - The Refresh Token to store.
  * @returns {{
  *     type: SET_JWT,
- *     jwt: (string|undefined)
+ *     jwt: (string|undefined),
+ *     idToken: (string|undefined),
+ *     refreshToken: (string|undefined)
  * }}
  */
-export function setJWT(jwt?: string) {
+export function setJWT(jwt?: string, idToken?: string, refreshToken?: string) {
     return {
         type: SET_JWT,
-        jwt
+        jwt,
+        idToken,
+        refreshToken
     };
 }
 

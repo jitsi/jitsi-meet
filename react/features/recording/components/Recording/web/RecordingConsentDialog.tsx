@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../../app/types';
-import { translateToHTML } from '../../../../base/i18n/functions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
 import { grantRecordingConsent, grantRecordingConsentAndUnmute } from '../../../actions.web';
 
@@ -19,9 +18,6 @@ export default function RecordingConsentDialog() {
     const dispatch = useDispatch();
     const { recordings } = useSelector((state: IReduxState) => state['features/base/config']);
     const { consentLearnMoreLink } = recordings ?? {};
-    const learnMore = consentLearnMoreLink
-        ? ` (<a href="${consentLearnMoreLink}" target="_blank" rel="noopener noreferrer">${t('dialog.learnMore')}</a>)`
-        : '';
 
     useEffect(() => {
         APP.API.notifyRecordingConsentDialogOpen(true);
@@ -53,7 +49,19 @@ export default function RecordingConsentDialog() {
             ok = {{ translationKey: 'dialog.Understand' }}
             onSubmit = { consent }
             titleKey = 'dialog.recordingInProgressTitle'>
-            { translateToHTML(t, 'dialog.recordingInProgressDescription', { learnMore }) }
+            { t('dialog.recordingInProgressDescription') }
+            { consentLearnMoreLink && (
+                <>
+                    {' '}
+                    <a
+                        href = { consentLearnMoreLink }
+                        rel = 'noopener noreferrer'
+                        target = '_blank'>
+                        { t('dialog.learnMore') }
+                    </a>
+                    {'.'}
+                </>
+            ) }
         </Dialog>
     );
 }

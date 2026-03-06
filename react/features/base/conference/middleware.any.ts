@@ -14,6 +14,7 @@ import { sendAnalytics } from '../../analytics/functions';
 import { reloadNow } from '../../app/actions';
 import { IStore } from '../../app/types';
 import { login } from '../../authentication/actions.any';
+import { isTokenAuthEnabled } from '../../authentication/functions.any';
 import { removeLobbyChatParticipant } from '../../chat/actions.any';
 import { openDisplayNamePrompt } from '../../display-name/actions';
 import { isVpaasMeeting } from '../../jaas/functions';
@@ -266,8 +267,11 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
             descriptionKey = 'dialog.errorRoomCreationRestriction';
         } else if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.ROOM_UNAUTHENTICATED_ACCESS_DISABLED) {
             titleKey = 'dialog.unauthenticatedAccessDisabled';
-            customActionNameKey = [ 'toolbar.login' ];
-            customActionHandler = [ () => dispatch(login()) ];
+
+            if (isTokenAuthEnabled(getState())) {
+                customActionNameKey = [ 'toolbar.login' ];
+                customActionHandler = [ () => dispatch(login()) ]; // show login button if not jaas
+            }
         }
 
         dispatch(showErrorNotification({
@@ -402,7 +406,8 @@ async function _connectionEstablished({ dispatch, getState }: IStore, next: Func
             email = getLocalParticipant(getState())?.email;
         }
 
-        dispatch(authStatusChanged(true, email || ''));
+        // it may happen to be already set
+        dispatch(authStatusChanged(true, email || getState()['features/base/conference'].authLogin || ''));
     }
 
     // FIXME: Workaround for the web version. Currently, the creation of the

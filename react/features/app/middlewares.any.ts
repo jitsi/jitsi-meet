@@ -3,7 +3,7 @@ import '../authentication/middleware';
 import '../av-moderation/middleware';
 import '../base/conference/middleware';
 import '../base/i18n/middleware';
-import '../base/jwt/middleware';
+import '../base/jwt/middleware.any';
 import '../base/known-domains/middleware';
 import '../base/lastn/middleware';
 import '../base/lib-jitsi-meet/middleware';

@@ -3,6 +3,8 @@ import { IStateful } from '../base/app/types';
 import { hasAvailableDevices } from '../base/devices/functions.native';
 import { TOOLBOX_ALWAYS_VISIBLE, TOOLBOX_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
+import { MEET_FEATURES } from '../base/jwt/constants';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { getParticipantCountWithFake } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { isLocalVideoTrackDesktop } from '../base/tracks/functions.native';
@@ -22,8 +24,9 @@ export * from './functions.any';
 export function isDesktopShareButtonDisabled(state: IReduxState) {
     const { muted, unmuteBlocked } = state['features/base/media'].video;
     const videoOrShareInProgress = !muted || isLocalVideoTrackDesktop(state);
+    const enabledInJwt = isJwtFeatureEnabled(state, MEET_FEATURES.SCREEN_SHARING, true);
 
-    return unmuteBlocked && !videoOrShareInProgress;
+    return !enabledInJwt || (unmuteBlocked && !videoOrShareInProgress);
 }
 
 /**
