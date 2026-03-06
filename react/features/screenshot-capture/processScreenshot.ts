@@ -5,6 +5,6 @@
  * @param {Object} options - Custom options required for processing.
  * @returns {Promise<void>}
  */
-export async function processScreenshot(imageBlob, options) { // eslint-disable-line no-unused-vars
+export async function processScreenshot(imageBlob: Blob, options: any): Promise<void> { // eslint-disable-line no-unused-vars
     return await Promise.resolve();
 }

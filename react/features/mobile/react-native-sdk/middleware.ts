@@ -1,5 +1,7 @@
 import { NativeModules } from 'react-native';
+import { AnyAction } from 'redux';
 
+import { IReduxState } from '../../app/types';
 import { getAppProp } from '../../base/app/functions';
 import {
     CONFERENCE_BLURRED,
@@ -27,7 +29,7 @@ const { JMOngoingConference } = NativeModules;
  * Check if native modules are being used or not.
  * If not, then the init of middleware doesn't happen.
  */
-!externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
+!externalAPIEnabled && MiddlewareRegistry.register(store => next => (action: AnyAction) => {
     const result = next(action);
     const { type } = action;
     const rnSdkHandlers = getAppProp(store, 'rnSdkHandlers');
@@ -94,8 +96,8 @@ const { JMOngoingConference } = NativeModules;
  * we need to check if native modules are being used or not.
  */
 JMOngoingConference && !externalAPIEnabled && StateListenerRegistry.register(
-    state => state['features/base/conference'].conference,
-    (conference, previousConference) => {
+    (state: IReduxState) => state['features/base/conference'].conference,
+    (conference, _store, previousConference) => {
         if (!conference) {
             JMOngoingConference.abort();
         } else if (conference && !previousConference) {

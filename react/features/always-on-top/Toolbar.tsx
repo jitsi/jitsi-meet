@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import AudioMuteButton from './AudioMuteButton';
 import HangupButton from './HangupButton';
 import VideoMuteButton from './VideoMuteButton';
 
-const { api } = window.alwaysOnTop;
+const { api } = window.alwaysOnTop!;
 
 /**
  * The type of the React {@code Component} props of {@link Toolbar}.
@@ -28,63 +28,17 @@ interface IProps {
 }
 
 /**
- * The type of the React {@code Component} state of {@link Toolbar}.
- */
-interface IState {
-
-    /**
-     * Whether audio button to be shown or not.
-     */
-    showAudioButton: boolean;
-
-    /**
-     * Whether video button to be shown or not.
-     */
-    showVideoButton: boolean;
-}
-
-type Props = Partial<IProps>;
-
-/**
  * Represents the toolbar in the Always On Top window.
  *
- * @augments Component
+ * @param {Partial<IProps>} props - The props of the component.
+ * @returns {JSX.Element}
  */
-export default class Toolbar extends Component<Props, IState> {
-    /**
-     * Initializes a new {@code Toolbar} instance.
-     *
-     * @param {IProps} props - The React {@code Component} props to initialize the new {@code Toolbar} instance with.
-     */
-    constructor(props: Props) {
-        super(props);
+const Toolbar = (props: Partial<IProps>) => {
+    const { className = '', onMouseOut, onMouseOver } = props;
+    const [ showAudioButton, setShowAudioButton ] = useState(true);
+    const [ showVideoButton, setShowVideoButton ] = useState(true);
 
-        this.state = {
-            showAudioButton: true,
-            showVideoButton: true
-        };
-
-        this._videoConferenceJoinedListener = this._videoConferenceJoinedListener.bind(this);
-    }
-
-    /**
-     * Sets listens for changing meetings while showing the toolbar.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    override componentDidMount() {
-        api.on('videoConferenceJoined', this._videoConferenceJoinedListener);
-
-        this._videoConferenceJoinedListener();
-    }
-
-    /**
-     * Handles is visitor changes.
-     *
-     * @returns {void}
-     */
-    _videoConferenceJoinedListener() {
+    const videoConferenceJoinedListener = useCallback(() => {
         // for electron clients that embed the api and are not updated
         if (!api.isVisitor) {
             console.warn('external API not updated');
@@ -94,44 +48,30 @@ export default class Toolbar extends Component<Props, IState> {
 
         const isNotVisitor = !api.isVisitor();
 
-        this.setState({
-            showAudioButton: isNotVisitor,
-            showVideoButton: isNotVisitor
-        });
-    }
+        setShowAudioButton(isNotVisitor);
+        setShowVideoButton(isNotVisitor);
+    }, []);
 
-    /**
-     * Removes all listeners.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    override componentWillUnmount() {
-        api.removeListener('videoConferenceJoined', this._videoConferenceJoinedListener);
-    }
+    useEffect(() => {
+        api.on('videoConferenceJoined', videoConferenceJoinedListener);
 
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    override render() {
-        const {
-            className = '',
-            onMouseOut,
-            onMouseOver
-        } = this.props;
+        videoConferenceJoinedListener();
 
-        return (
-            <div
-                className = { `toolbox-content-items always-on-top-toolbox ${className}` }
-                onMouseOut = { onMouseOut }
-                onMouseOver = { onMouseOver }>
-                { this.state.showAudioButton && <AudioMuteButton /> }
-                { this.state.showVideoButton && <VideoMuteButton /> }
-                <HangupButton customClass = 'hangup-button' />
-            </div>
-        );
-    }
-}
+        return () => {
+            api.removeListener('videoConferenceJoined', videoConferenceJoinedListener);
+        };
+    }, []);
+
+    return (
+        <div
+            className = { `toolbox-content-items always-on-top-toolbox ${className}` }
+            onMouseOut = { onMouseOut }
+            onMouseOver = { onMouseOver }>
+            { showAudioButton && <AudioMuteButton /> }
+            { showVideoButton && <VideoMuteButton /> }
+            <HangupButton />
+        </div>
+    );
+};
+
+export default Toolbar;

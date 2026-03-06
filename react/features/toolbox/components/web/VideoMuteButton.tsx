@@ -1,22 +1,27 @@
-import React, { ReactElement } from 'react';
-import { connect } from 'react-redux';
-import { withStyles } from 'tss-react/mui';
+import React, { useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { ACTION_SHORTCUT_TRIGGERED, VIDEO_MUTE, createShortcutEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
-import { translate } from '../../../base/i18n/functions';
+import { VIDEO_MUTE_BUTTON_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
+import { IconVideo, IconVideoOff } from '../../../base/icons/svg';
+import { MEDIA_TYPE } from '../../../base/media/constants';
 import { IGUMPendingState } from '../../../base/media/types';
-import AbstractButton from '../../../base/toolbox/components/AbstractButton';
+import { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import ToolboxItem from '../../../base/toolbox/components/ToolboxItem.web';
+import { isLocalTrackMuted } from '../../../base/tracks/functions';
 import Spinner from '../../../base/ui/components/web/Spinner';
+import { TOOLTIP_POSITION } from '../../../base/ui/constants.any';
 import { registerShortcut, unregisterShortcut } from '../../../keyboard-shortcuts/actions';
+import { muteLocal } from '../../../video-menu/actions';
 import { SPINNER_COLOR } from '../../constants';
-import AbstractVideoMuteButton, {
-    IProps as AbstractVideoMuteButtonProps,
-    mapStateToProps as abstractMapStateToProps
-} from '../AbstractVideoMuteButton';
+import { isVideoMuteButtonDisabled } from '../../functions';
 
-const styles = () => {
+const useStyles = makeStyles()(() => {
     return {
         pendingContainer: {
             position: 'absolute' as const,
@@ -24,150 +29,51 @@ const styles = () => {
             right: '3px'
         }
     };
-};
+});
 
 /**
  * The type of the React {@code Component} props of {@link VideoMuteButton}.
  */
-export interface IProps extends AbstractVideoMuteButtonProps {
+interface IProps extends Partial<AbstractButtonProps> {
 
     /**
-     * The gumPending state from redux.
+     * External handler for click action.
      */
-    _gumPending: IGUMPendingState;
-
-    /**
-     * An object containing the CSS classes.
-     */
-    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
+    handleClick?: Function;
 }
 
 /**
  * Component that renders a toolbar button for toggling video mute.
  *
- * @augments AbstractVideoMuteButton
+ * @returns {JSX.Element}
  */
-class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
+const VideoMuteButton = (props: IProps) => {
+    const { classes } = useStyles();
+    const { t, i18n, ready: tReady } = useTranslation();
+    const dispatch = useDispatch();
 
-    /**
-     * Initializes a new {@code VideoMuteButton} instance.
-     *
-     * @param {IProps} props - The read-only React {@code Component} props with
-     * which the new instance is to be initialized.
-     */
-    constructor(props: IProps) {
-        super(props);
+    const _videoMuted = useSelector((state: IReduxState) => isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO));
+    const _disabled = useSelector((state: IReduxState) => isVideoMuteButtonDisabled(state));
+    const _gumPending = useSelector((state: IReduxState) => state['features/base/media'].video.gumPending);
+    const visible = useSelector((state: IReduxState) => getFeatureFlag(state, VIDEO_MUTE_BUTTON_ENABLED, true));
 
-        // Bind event handlers so they are only bound once per instance.
-        this._onKeyboardShortcut = this._onKeyboardShortcut.bind(this);
-        this._getTooltip = this._getLabel;
-    }
+    const isVideoMuted = _gumPending === IGUMPendingState.PENDING_UNMUTE ? false : _videoMuted;
 
-    /**
-     * Registers the keyboard shortcut that toggles the video muting.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    override componentDidMount() {
-        this.props.dispatch(registerShortcut({
-            character: 'V',
-            helpDescription: 'keyboardShortcuts.videoMute',
-            handler: this._onKeyboardShortcut
-        }));
-    }
-
-    /**
-     * Unregisters the keyboard shortcut that toggles the video muting.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    override componentWillUnmount() {
-        this.props.dispatch(unregisterShortcut('V'));
-    }
-
-    /**
-     * Gets the current accessibility label, taking the toggled and GUM pending state into account. If no toggled label
-     * is provided, the regular accessibility label will also be used in the toggled state.
-     *
-     * The accessibility label is not visible in the UI, it is meant to be used by assistive technologies, mainly screen
-     * readers.
-     *
-     * @private
-     * @returns {string}
-     */
-    override _getAccessibilityLabel() {
-        const { _gumPending } = this.props;
-
-        if (_gumPending === IGUMPendingState.NONE) {
-            return super._getAccessibilityLabel();
+    const onClick = useCallback(() => {
+        if (props.handleClick) {
+            props.handleClick();
         }
 
-        return 'toolbar.accessibilityLabel.videomuteGUMPending';
-    }
+        dispatch(muteLocal(!isVideoMuted, MEDIA_TYPE.VIDEO));
 
-    /**
-     * Gets the current label, taking the toggled and GUM pending state into account. If no
-     * toggled label is provided, the regular label will also be used in the toggled state.
-     *
-     * @private
-     * @returns {string}
-     */
-    override _getLabel() {
-        const { _gumPending } = this.props;
-
-        if (_gumPending === IGUMPendingState.NONE) {
-            return super._getLabel();
+        if (props.afterClick) {
+            props.afterClick();
         }
+    }, [ dispatch, isVideoMuted, props.handleClick, props.afterClick ]);
 
-        return 'toolbar.videomuteGUMPending';
-    }
-
-    /**
-     * Indicates if video is currently muted or not.
-     *
-     * @override
-     * @protected
-     * @returns {boolean}
-     */
-    override _isVideoMuted() {
-        if (this.props._gumPending === IGUMPendingState.PENDING_UNMUTE) {
-            return false;
-        }
-
-        return super._isVideoMuted();
-    }
-
-    /**
-     * Returns a spinner if there is pending GUM.
-     *
-     * @returns {ReactElement | null}
-     */
-    override _getElementAfter(): ReactElement | null {
-        const { _gumPending } = this.props;
-        const classes = withStyles.getClasses(this.props);
-
-        return _gumPending === IGUMPendingState.NONE ? null
-            : (
-                <div className = { classes.pendingContainer }>
-                    <Spinner
-                        color = { SPINNER_COLOR }
-                        size = 'small' />
-                </div>
-            );
-    }
-
-    /**
-     * Creates an analytics keyboard shortcut event and dispatches an action to
-     * toggle the video muting.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onKeyboardShortcut() {
+    const onKeyboardShortcut = useCallback(() => {
         // Ignore keyboard shortcuts if the video button is disabled.
-        if (this._isDisabled()) {
+        if (_disabled) {
             return;
         }
 
@@ -175,29 +81,74 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
             createShortcutEvent(
                 VIDEO_MUTE,
                 ACTION_SHORTCUT_TRIGGERED,
-                { enable: !this._isVideoMuted() }));
+                { enable: !isVideoMuted }));
 
-        AbstractButton.prototype._onClick.call(this);
+        onClick();
+    }, [ _disabled, isVideoMuted, onClick ]);
+
+    useEffect(() => {
+        dispatch(registerShortcut({
+            character: 'V',
+            helpDescription: 'keyboardShortcuts.videoMute',
+            handler: onKeyboardShortcut
+        }));
+
+        return () => {
+            dispatch(unregisterShortcut('V'));
+        };
+    }, [ dispatch, onKeyboardShortcut ]);
+
+    const accessibilityLabel = _gumPending === IGUMPendingState.NONE
+        ? (isVideoMuted ? 'toolbar.accessibilityLabel.unmuteVideo' : 'toolbar.accessibilityLabel.muteVideo')
+        : 'toolbar.accessibilityLabel.videomuteGUMPending';
+
+    const label = _gumPending === IGUMPendingState.NONE
+        ? (isVideoMuted ? 'toolbar.unmuteVideo' : 'toolbar.muteVideo')
+        : 'toolbar.videomuteGUMPending';
+
+    const icon = isVideoMuted ? IconVideoOff : IconVideo;
+    const toggled = isVideoMuted;
+
+    const onKeyDown = useCallback((e?: React.KeyboardEvent) => {
+        if (e?.key === ' ' || e?.key === 'Enter') {
+            onClick();
+        }
+    }, [ onClick ]);
+
+    if (!visible) {
+        return null;
     }
-}
 
-/**
- * Maps (parts of) the redux state to the associated props for the
- * {@code VideoMuteButton} component.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{
- *     _videoMuted: boolean
- * }}
- */
-function _mapStateToProps(state: IReduxState) {
-    const { gumPending } = state['features/base/media'].video;
+    const elementAfter = _gumPending === IGUMPendingState.NONE ? null
+        : (
+            <div className = { classes.pendingContainer }>
+                <Spinner
+                    color = { SPINNER_COLOR }
+                    size = 'small' />
+            </div>
+        );
 
-    return {
-        ...abstractMapStateToProps(state),
-        _gumPending: gumPending
-    };
-}
+    return (
+        <ToolboxItem
+            accessibilityLabel = { t(accessibilityLabel) }
+            disabled = { _disabled }
+            elementAfter = { elementAfter }
+            icon = { icon }
+            label = { t(label) }
+            labelProps = { {} }
+            onClick = { onClick }
+            onKeyDown = { onKeyDown }
+            showLabel = { props.showLabel ?? false }
+            toggled = { toggled }
+            tooltip = { t(label) }
+            tooltipPosition = { props.tooltipPosition as TOOLTIP_POSITION ?? 'top' }
+            visible = { true }
+            { ...props as any }
+            dispatch = { dispatch }
+            i18n = { i18n }
+            t = { t }
+            tReady = { tReady } />
+    );
+};
 
-export default withStyles(translate(connect(_mapStateToProps)(VideoMuteButton)), styles);
+export default VideoMuteButton;
