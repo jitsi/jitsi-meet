@@ -68,8 +68,10 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
     const { t } = useTranslation();
     const [ isPopoverOpen, setIsPopoverOpen ] = useState(false);
     const [ showCopiedMessage, setShowCopiedMessage ] = useState(false);
-    const [ popupPosition, setPopupPosition ] = useState({ top: 0,
-        left: 0 });
+    const [ popupPosition, setPopupPosition ] = useState({
+        top: 0,
+        left: 0
+    });
     const buttonRef = useRef<HTMLDivElement>(null);
 
     const participant = useSelector((state: IReduxState) => getParticipantById(state, participantId));
@@ -135,19 +137,39 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
         handleClose();
     }, [ message ]);
 
+    const handlePrivateKeyDown = useCallback((e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handlePrivateClick();
+        }
+    }, [ handlePrivateClick ]);
+
+    const handleCopyKeyDown = useCallback((e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleCopyClick();
+        }
+    }, [ handleCopyClick ]);
+
     const popoverContent = (
         <div className = { classes.menuPanel }>
             {enablePrivateChat && (
                 <div
+                    aria-label = { t('toolbar.accessibilityLabel.privateMessage') }
                     className = { classes.menuItem }
-                    onClick = { handlePrivateClick }>
+                    onClick = { handlePrivateClick }
+                    onKeyDown = { handlePrivateKeyDown }
+                    role = 'menuitem'
+                    tabIndex = { 0 }>
                     {t('Private Message')}
                 </div>
             )}
             {!isFileMessage && (
                 <div
+                    aria-label = { t('dialog.copy') }
                     className = { classes.menuItem }
-                    onClick = { handleCopyClick }>
+                    onClick = { handleCopyClick }
+                    onKeyDown = { handleCopyKeyDown }
+                    role = 'menuitem'
+                    tabIndex = { 0 }>
                     {t('Copy')}
                 </div>
             )}
@@ -175,8 +197,10 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
             {showCopiedMessage && ReactDOM.createPortal(
                 <div
                     className = { cx(classes.copiedMessage, { [classes.showCopiedMessage]: showCopiedMessage }) }
-                    style = {{ top: `${popupPosition.top}px`,
-                        left: `${popupPosition.left}px` }}>
+                    style = {{
+                        top: `${popupPosition.top}px`,
+                        left: `${popupPosition.left}px`
+                    }}>
                     {t('Message Copied')}
                 </div>,
                 document.body
