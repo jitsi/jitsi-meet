@@ -2,6 +2,7 @@ import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD } from '../base/i18n/i18next';
 import { toState } from '../base/redux/functions';
+import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { canAddTranscriber, isTranscribing } from '../transcribing/functions';
 
 /**
@@ -67,5 +68,5 @@ export function areClosedCaptionsEnabled(state: IReduxState) {
 export function isCCTabEnabled(state: IReduxState) {
     const { showSubtitlesOnStage = false } = state['features/base/settings'];
 
-    return areClosedCaptionsEnabled(state) && !showSubtitlesOnStage;
+    return areClosedCaptionsEnabled(state) && !showSubtitlesOnStage && !isInBreakoutRoom(state);
 }

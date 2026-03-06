@@ -8,7 +8,6 @@ import {
     ENABLE_MODERATOR_LOGIN,
     LOGIN,
     LOGOUT,
-    SET_TOKEN_AUTH_URL_SUCCESS,
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED,
@@ -241,17 +240,4 @@ export function waitForOwner() {
  */
 export function openLoginDialog() {
     return openDialog('LoginDialog', LoginDialog);
-}
-
-/**
- * Updates the config with new options.
- *
- * @param {boolean} value - The new value.
- * @returns {Function}
- */
-export function setTokenAuthUrlSuccess(value: boolean) {
-    return {
-        type: SET_TOKEN_AUTH_URL_SUCCESS,
-        value
-    };
 }

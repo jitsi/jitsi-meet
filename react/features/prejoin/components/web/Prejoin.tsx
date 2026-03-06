@@ -502,7 +502,8 @@ function mapStateToProps(state: IReduxState) {
     const { joiningInProgress } = state['features/prejoin'];
     const { room } = state['features/base/conference'];
     const { unsafeRoomConsent } = state['features/base/premeeting'];
-    const { showPrejoinWarning: showRecordingWarning } = state['features/base/config'].recordings ?? {};
+    const config = state['features/base/config'];
+    const { showPrejoinWarning: showRecordingWarning } = config.recordings ?? {};
 
     return {
         deviceStatusVisible: isDeviceStatusVisible(state),

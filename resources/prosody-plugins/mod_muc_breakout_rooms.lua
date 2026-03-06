@@ -38,6 +38,7 @@ local util = module:require 'util';
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local is_healthcheck_room = util.is_healthcheck_room;
 local process_host_module = util.process_host_module;
+local is_admin = util.is_admin;
 
 local BREAKOUT_ROOMS_IDENTITY_TYPE = 'breakout_rooms';
 -- Available breakout room functionality
@@ -109,7 +110,7 @@ function get_participants(room)
     if room then
         for room_nick, occupant in room:each_occupant() do
             -- Filter focus as we keep it as a hidden participant
-            if jid_node(occupant.jid) ~= 'focus' then
+            if not is_admin(occupant.bare_jid) then
                 local display_name = occupant:get_presence():get_child_text(
                     'nick', 'http://jabber.org/protocol/nick');
                 local real_nick = internal_room_jid_match_rewrite(room_nick);
@@ -184,7 +185,7 @@ function broadcast_breakout_rooms(room_jid)
         end
 
         for _, occupant in main_room:each_occupant() do
-            if jid_node(occupant.jid) ~= 'focus' then
+            if not is_admin(occupant.bare_jid) then
                 send_json_msg(occupant.jid, json_msg)
             end
         end
@@ -193,7 +194,7 @@ function broadcast_breakout_rooms(room_jid)
             local room = breakout_rooms_muc_service.get_room_from_jid(breakout_room_jid);
             if room then
                 for _, occupant in room:each_occupant() do
-                    if jid_node(occupant.jid) ~= 'focus' then
+                    if not is_admin(occupant.bare_jid) then
                         send_json_msg(occupant.jid, json_msg)
                     end
                 end
@@ -397,16 +398,17 @@ function on_breakout_room_pre_create(event)
 end
 
 function on_occupant_joined(event)
-    local occupant, room = event.occupant, event.room;
+    local occupant, room, session = event.occupant, event.room, event.origin;
 
     if is_healthcheck_room(room.jid) then
         return;
     end
 
     local main_room, main_room_jid = get_main_room(room.jid);
+    local isFocus = is_admin(occupant.bare_jid);
 
     if main_room and main_room._data.breakout_rooms_active then
-        if jid_node(event.occupant.jid) ~= 'focus' then
+        if not isFocus then
             broadcast_breakout_rooms(main_room_jid);
         end
 
@@ -419,6 +421,12 @@ function on_occupant_joined(event)
         -- clear any switching state for this occupant, we always store main room / resource
         switching_room_cache:set(main_room_jid..'/'..jid_resource(occupant.nick), nil);
     end
+
+    -- check if this is joining main room or breakout room
+    if main_room == room and not isFocus then
+        -- mark that this session was in the main room
+        session.jitsi_breakout_main_jid = main_room_jid;
+    end
 end
 
 function exist_occupants_in_room(room)
@@ -426,7 +434,7 @@ function exist_occupants_in_room(room)
         return false;
     end
     for _, occupant in room:each_occupant() do
-        if jid_node(occupant.jid) ~= 'focus' then
+        if not is_admin(occupant.bare_jid) then
             return true;
         end
     end
@@ -476,7 +484,7 @@ function on_occupant_left(event)
         return;
     end
 
-    if main_room._data.breakout_rooms_active and jid_node(event.occupant.jid) ~= 'focus' then
+    if main_room._data.breakout_rooms_active and not is_admin(event.occupant.bare_jid) then
         broadcast_breakout_rooms(main_room_jid);
     end
 
@@ -565,6 +573,7 @@ end
 -- conflict with a jid which is currently in switching state or already in another room.
 function on_occupant_pre_join_or_change(e)
     local room, stanza, origin = e.room, e.stanza, e.origin;
+    local occupant = e.dest_occupant or e.occupant;
     local requested_jid = stanza.attr.to;
 
     local main_room = get_main_room(room.jid);
@@ -573,6 +582,10 @@ function on_occupant_pre_join_or_change(e)
     if not main_room then
         origin.send(st.error_reply(stanza, 'cancel', 'service-unavailable'));
         return true;
+    end
+
+    if is_admin(occupant.bare_jid) then
+        return;
     end
 
     local main_room_requested_jid = main_room.jid..'/'..jid_resource(requested_jid);
@@ -595,6 +608,12 @@ function on_occupant_pre_join_or_change(e)
             end
         end
     else
+        if origin.jitsi_breakout_main_jid ~= main_room.jid then
+            -- this session did not come from the main room
+            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed'));
+            return true;
+        end
+
         -- this is a breakout room let's check the main room
         if check_for_existing_occupant_in_room(main_room, jid_resource(requested_jid), bare_jid, stanza, origin) then
             return true;

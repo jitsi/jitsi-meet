@@ -1,4 +1,6 @@
+import { maybeRedirectToTokenAuthUrl } from '../../app/actions.any';
 import { IReduxState, IStore } from '../../app/types';
+import { isTokenAuthInline } from '../../authentication/functions.any';
 import { readyToClose } from '../../mobile/external-api/actions';
 import { transcriberJoined, transcriberLeft } from '../../transcribing/actions';
 import { setIAmVisitor } from '../../visitors/actions';
@@ -354,7 +356,7 @@ export function e2eRttChanged(participant: Object, rtt: number) {
  *     authLogin: string
  * }}
  */
-export function authStatusChanged(authEnabled: boolean, authLogin: string) {
+export function authStatusChanged(authEnabled: boolean, authLogin?: string) {
     return {
         type: AUTH_STATUS_CHANGED,
         authEnabled,
@@ -1078,6 +1080,15 @@ export function redirect(vnode: string, focusJid: string, username: string) {
             .then(() => {
                 dispatch(conferenceWillInit());
                 logger.info(`Dispatching connect from redirect (visitor = ${Boolean(vnode)}).`);
+
+                // obtaining the new token just before joining the main room from a visitor one will work
+                // only when using inline auth and will not work when using redirection
+                if (isTokenAuthInline(getState()['features/base/config'])
+                        && maybeRedirectToTokenAuthUrl(dispatch, getState, (e: Error) => {
+                            logger.error('Token is expired and there was an error refreshing it.', e);
+                        })) {
+                    return;
+                }
 
                 return dispatch(connect());
             })
