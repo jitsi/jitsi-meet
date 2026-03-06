@@ -26,6 +26,22 @@ map $arg_vnode $prosody_node {
     v7 v7;
     v8 v8;
 }
+# Matches any URI or Referer with some matches and redacts the whole
+# query string. log_format and map must be at the http context level.
+map $request_uri $loggable_uri {
+    ~^(?P<path>[^?]*)\?.*(?:jwt|token)=  "${path}?[params_redacted]";
+    default $request_uri;
+}
+
+map $http_referer $loggable_referer {
+    ~^(?P<url>[^?]*)\?.*(?:jwt|token)=  "${url}?[params_redacted]";
+    default $http_referer;
+}
+
+log_format jitsi_log '$remote_addr - $remote_user [$time_local] '
+    '"$request_method $loggable_uri $server_protocol" '
+    '$status $body_bytes_sent "$loggable_referer" "$http_user_agent"';
+
 server {
     listen 80;
     listen [::]:80;
@@ -65,6 +81,8 @@ server {
     ssl_certificate_key /etc/jitsi/meet/jitsi-meet.example.com.key;
 
     root /usr/share/jitsi-meet;
+
+    access_log /var/log/nginx/access.log jitsi_log;
 
     # ssi on with javascript for multidomain variables in config.js
     ssi on;

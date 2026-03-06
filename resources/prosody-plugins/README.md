@@ -89,6 +89,7 @@
 - visitors_destroy_timer - A timer used to destroy the room when there are no main occupants or visitors left. It is set by mod_fmuc.lua to clean up the room after a certain period of inactivity.
 
 # session fields added by jitsi
+- jitsi_breakout_main_jid - Once an occupant joins main room we mark this to check it when joining breakout rooms.
 - jitsi_meet_context_user - The context from the jwt token, added after token verify.
 - jitsi_meet_context_group - The group from the jwt context, added after token verify.
 - jitsi_meet_context_features - The features from the context, added after token verify.
