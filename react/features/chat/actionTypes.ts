@@ -6,7 +6,7 @@
  *     displayName: string
  *     hasRead: boolean,
  *     id: string,
- *     messageType: string,
+ *     messageType: ChatMessageType,
  *     message: string,
  *     timestamp: string,
  * }
