@@ -7,10 +7,12 @@ import {
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
-    ENDPOINT_MESSAGE_RECEIVED
+    ENDPOINT_MESSAGE_RECEIVED,
+    KICKED_OUT
 } from '../../base/conference/actionTypes';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants/actionTypes';
+import { getLocalParticipant } from '../../base/participants/functions';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
 import { READY_TO_CLOSE } from '../external-api/actionTypes';
@@ -79,6 +81,24 @@ const { JMOngoingConference } = NativeModules;
         const { id } = participant ?? {};
 
         rnSdkHandlers?.onParticipantLeft?.({ id });
+        break;
+    }
+    case KICKED_OUT: {
+        const { participant: kicker } = action;
+        const state = store.getState();
+        const localParticipant = getLocalParticipant(state);
+
+        rnSdkHandlers?.onParticipantKickedOut?.({
+            kicked: localParticipant
+                ? participantToParticipantInfo(localParticipant)
+                : undefined,
+            kicker: kicker
+                ? {
+                    participantId: kicker.getId(),
+                    name: kicker.getDisplayName()
+                }
+                : undefined
+        });
         break;
     }
     case READY_TO_CLOSE:
