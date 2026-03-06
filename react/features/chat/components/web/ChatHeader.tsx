@@ -37,23 +37,26 @@ interface IProps {
  *
  * @returns {React$Element<any>}
  */
-function ChatHeader({ className, isCCTabEnabled, isPollsEnabled }: IProps) {
+function ChatHeader({ className, isCCTabEnabled, isPollsEnabled }: IProps): JSX.Element | null {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const _isChatDisabled = useSelector(isChatDisabled);
     const focusedTab = useSelector(getFocusedTab);
     const fileSharingTabEnabled = useSelector(isFileSharingEnabled);
 
-    const onCancel = useCallback(() => {
+    const onCancel = useCallback((): void => {
         dispatch(toggleChat());
-    }, []);
+    }, [ dispatch ]);
 
-    const onKeyPressHandler = useCallback(e => {
-        if (onCancel && (e.key === ' ' || e.key === 'Enter')) {
-            e.preventDefault();
-            onCancel();
-        }
-    }, []);
+    const onKeyPressHandler = useCallback(
+        (e: React.KeyboardEvent<HTMLElement>): void => {
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                onCancel();
+            }
+        },
+        [ onCancel ]
+    );
 
     let title = 'chat.title';
 
