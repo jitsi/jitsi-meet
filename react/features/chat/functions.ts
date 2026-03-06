@@ -9,7 +9,7 @@ import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
 import i18next from '../base/i18n/i18next';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
-import { getParticipantById, isPrivateChatEnabled } from '../base/participants/functions';
+import { getParticipantById, getLocalParticipant, isPrivateChatEnabled } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
 import { escapeRegexp } from '../base/util/helpers';
 import { arePollsDisabled } from '../conference/functions.any';
@@ -352,4 +352,23 @@ export function getDisplayNameSuffix(message: IMessage): string {
  */
 export function isFileMessage(message: IMessage): boolean {
     return Boolean(message?.fileMetadata);
+}
+
+/**
+ * Gets filtered messages based on search string.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {IMessage[]} The filtered messages based on search string.
+ */
+export function getFilteredMessages(state: IReduxState): IMessage[] {
+    const { messages, searchString } = state['features/chat'];
+
+    // if there is no search string, return all the messages
+    if (!searchString || searchString.trim() === '') {
+        return messages;
+    }
+
+    const searchTerm = searchString.toLowerCase().trim();
+
+    return messages.filter(message =>  message.message.toLowerCase().includes(searchTerm));
 }

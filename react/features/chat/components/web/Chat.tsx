@@ -34,7 +34,7 @@ import {
     OPTION_GROUPCHAT,
     SMALL_WIDTH_THRESHOLD
 } from '../../constants';
-import { getChatMaxSize, getFocusedTab, isChatDisabled } from '../../functions';
+import { getChatMaxSize, getFocusedTab, isChatDisabled, getFilteredMessages } from '../../functions';
 import { IChatProps as AbstractProps } from '../../types';
 
 import ChatHeader from './ChatHeader';
@@ -107,6 +107,11 @@ interface IProps extends AbstractProps {
      * Number of unread poll messages.
      */
     _unreadPollsCount: number;
+
+    /**
+     * The current search string.
+     */
+    _searchString: string;
 
     /**
      * The current width of the chat panel.
@@ -263,6 +268,7 @@ const Chat = ({
     _focusedTab,
     _isResizing,
     _messages,
+    _searchString,
     _reducedUI,
     _unreadMessagesCount,
     _unreadPollsCount,
@@ -483,7 +489,8 @@ const Chat = ({
                     role = 'tabpanel'
                     tabIndex = { 0 }>
                     <MessageContainer
-                        messages = { _messages } />
+                        messages = { _messages }
+                        searchString = { _searchString } />
                     <MessageRecipient />
                     {isPrivateChatAllowed && (
                         <Select
@@ -671,10 +678,12 @@ const Chat = ({
  * }}
  */
 function _mapStateToProps(state: IReduxState, _ownProps: any) {
-    const { isOpen, messages, unreadMessagesCount, unreadFilesCount, width, isResizing } = state['features/chat'];
+    const { isOpen, unreadMessagesCount, unreadFilesCount, width, isResizing, searchString, messages } = state['features/chat'];
     const { unreadPollsCount } = state['features/polls'];
     const _localParticipant = getLocalParticipant(state);
     const { reducedUI } = state['features/base/responsive-ui'];
+
+    const messagesToDisplay = searchString ? getFilteredMessages(state) : messages;
 
     return {
         _isModal: window.innerWidth <= SMALL_WIDTH_THRESHOLD,
@@ -684,7 +693,8 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _isChatDisabled: isChatDisabled(state),
         _isFileSharingTabEnabled: isFileSharingEnabled(state),
         _focusedTab: getFocusedTab(state),
-        _messages: messages,
+        _messages: messagesToDisplay,
+        _searchString: searchString,
         _reducedUI: reducedUI,
         _unreadMessagesCount: unreadMessagesCount,
         _unreadPollsCount: unreadPollsCount,
