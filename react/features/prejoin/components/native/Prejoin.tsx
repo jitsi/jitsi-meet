@@ -37,6 +37,7 @@ import HeaderNavigationButton from '../../../mobile/navigation/components/Header
 import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
+import HangupContainerButtons from '../../../toolbox/components/native/HangupContainerButtons';
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
 import { isDisplayNameRequired, isRoomNameEnabled } from '../../functions.native';
 import { IPrejoinProps } from '../../types';
@@ -61,16 +62,16 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const roomName = useSelector((state: IReduxState) => getConferenceName(state));
     const roomNameEnabled = useSelector((state: IReduxState) => isRoomNameEnabled(state));
     const participantName = localParticipant?.name;
-    const [ displayName, setDisplayName ]
+    const [displayName, setDisplayName]
         = useState(participantName || '');
     const isDisplayNameMissing = useMemo(
-        () => !displayName && isDisplayNameMandatory, [ displayName, isDisplayNameMandatory ]);
+        () => !displayName && isDisplayNameMandatory, [displayName, isDisplayNameMandatory]);
     const showDisplayNameError = useMemo(
         () => !isDisplayNameReadonly && isDisplayNameMissing && isDisplayNameVisible,
-        [ isDisplayNameMissing, isDisplayNameReadonly, isDisplayNameVisible ]);
+        [isDisplayNameMissing, isDisplayNameReadonly, isDisplayNameVisible]);
     const showDisplayNameInput = useMemo(
         () => isDisplayNameVisible && (displayName || !isDisplayNameReadonly),
-        [ displayName, isDisplayNameReadonly, isDisplayNameVisible ]);
+        [displayName, isDisplayNameReadonly, isDisplayNameVisible]);
     const onChangeDisplayName = useCallback(event => {
         const fieldValue = getFieldValue(event);
 
@@ -78,12 +79,12 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         dispatch(updateSettings({
             displayName: fieldValue
         }));
-    }, [ displayName ]);
+    }, [displayName]);
 
     const onJoin = useCallback(() => {
         dispatch(connect());
         navigateRoot(screen.conference.root);
-    }, [ dispatch ]);
+    }, [dispatch]);
 
     const maybeJoin = useCallback(() => {
         if (isDisplayNameMissing) {
@@ -94,18 +95,18 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         } else {
             onJoin();
         }
-    }, [ dispatch, hasDisplayName, isDisplayNameMissing, onJoin ]);
+    }, [dispatch, hasDisplayName, isDisplayNameMissing, onJoin]);
 
     const onJoinLowBandwidth = useCallback(() => {
         dispatch(setAudioOnly(true));
         maybeJoin();
-    }, [ dispatch ]);
+    }, [dispatch]);
 
     const goBack = useCallback(() => {
         dispatch(appNavigate(undefined));
 
         return true;
-    }, [ dispatch ]);
+    }, [dispatch]);
 
     const { PRIMARY, TERTIARY } = BUTTON_TYPES;
 
@@ -124,15 +125,15 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         if (Platform.OS === 'ios') {
             return (
                 <HeaderNavigationButton
-                    label = { t('dialog.close') }
-                    onPress = { goBack } />
+                    label={t('dialog.close')}
+                    onPress={goBack} />
             );
         }
 
         return (
             <HeaderNavigationButton
-                onPress = { goBack }
-                src = { IconCloseLarge } />
+                onPress={goBack}
+                src={IconCloseLarge} />
         );
     };
 
@@ -141,7 +142,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
             headerLeft,
             headerTitle: t('prejoin.joinMeeting')
         });
-    }, [ navigation ]);
+    }, [navigation]);
 
     let contentContainerStyles = styles.contentContainer;
     let largeVideoContainerStyles = styles.largeVideoContainer;
@@ -154,20 +155,20 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
 
     return (
         <JitsiScreen
-            addBottomPadding = { false }
-            safeAreaInsets = { [ 'right' ] }
-            style = { styles.contentWrapper }>
+            addBottomPadding={false}
+            safeAreaInsets={['right']}
+            style={styles.contentWrapper}>
             <BrandingImageBackground />
             {
                 isFocused
-                && <View style = { largeVideoContainerStyles as StyleProp<ViewStyle> }>
-                    <View style = { styles.conferenceInfo as StyleProp<ViewStyle> }>
+                && <View style={largeVideoContainerStyles as StyleProp<ViewStyle>}>
+                    <View style={styles.conferenceInfo as StyleProp<ViewStyle>}>
                         {roomNameEnabled && (
-                            <View style = { styles.displayRoomNameBackdrop as StyleProp<TextStyle> }>
+                            <View style={styles.displayRoomNameBackdrop as StyleProp<TextStyle>}>
                                 <Text
-                                    numberOfLines = { 1 }
-                                    style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
-                                    { roomName }
+                                    numberOfLines={1}
+                                    style={styles.preJoinRoomName as StyleProp<TextStyle>}>
+                                    {roomName}
                                 </Text>
                             </View>
                         )}
@@ -175,45 +176,47 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                     <LargeVideo />
                 </View>
             }
-            <View style = { contentContainerStyles as ViewStyle }>
-                <View style = { styles.toolboxContainer as ViewStyle }>
+            <View style={contentContainerStyles as ViewStyle}>
+                <View style={styles.toolboxContainer as ViewStyle}>
                     <AudioMuteButton
-                        styles = { styles.buttonStylesBorderless } />
+                        styles={styles.buttonStylesBorderless} />
                     <VideoMuteButton
-                        styles = { styles.buttonStylesBorderless } />
+                        styles={styles.buttonStylesBorderless} />
+                    <HangupContainerButtons
+                        styles={styles.hangupButtonStyles} />
                 </View>
                 {
                     showDisplayNameInput && <Input
-                        customStyles = {{ input: styles.customInput }}
-                        disabled = { isDisplayNameReadonly }
-                        error = { showDisplayNameError }
-                        onChange = { onChangeDisplayName }
-                        placeholder = { t('dialog.enterDisplayName') }
-                        value = { displayName } />
+                        customStyles={{ input: styles.customInput }}
+                        disabled={isDisplayNameReadonly}
+                        error={showDisplayNameError}
+                        onChange={onChangeDisplayName}
+                        placeholder={t('dialog.enterDisplayName')}
+                        value={displayName} />
                 }
                 {
                     showDisplayNameError && (
-                        <View style = { styles.errorContainer as StyleProp<ViewStyle> }>
-                            <Text style = { styles.error as StyleProp<TextStyle> }>
-                                { t('prejoin.errorMissingName') }
+                        <View style={styles.errorContainer as StyleProp<ViewStyle>}>
+                            <Text style={styles.error as StyleProp<TextStyle>}>
+                                {t('prejoin.errorMissingName')}
                             </Text>
                         </View>
                     )
                 }
                 <Button
-                    accessibilityLabel = 'prejoin.joinMeeting'
-                    disabled = { showDisplayNameError }
-                    labelKey = 'prejoin.joinMeeting'
-                    onClick = { maybeJoin }
-                    style = { styles.joinButton }
-                    type = { PRIMARY } />
+                    accessibilityLabel='prejoin.joinMeeting'
+                    disabled={showDisplayNameError}
+                    labelKey='prejoin.joinMeeting'
+                    onClick={maybeJoin}
+                    style={styles.joinButton}
+                    type={PRIMARY} />
                 <Button
-                    accessibilityLabel = 'prejoin.joinMeetingInLowBandwidthMode'
-                    disabled = { showDisplayNameError }
-                    labelKey = 'prejoin.joinMeetingInLowBandwidthMode'
-                    onClick = { onJoinLowBandwidth }
-                    style = { styles.joinButton }
-                    type = { TERTIARY } />
+                    accessibilityLabel='prejoin.joinMeetingInLowBandwidthMode'
+                    disabled={showDisplayNameError}
+                    labelKey='prejoin.joinMeetingInLowBandwidthMode'
+                    onClick={onJoinLowBandwidth}
+                    style={styles.joinButton}
+                    type={TERTIARY} />
             </View>
         </JitsiScreen>
     );
