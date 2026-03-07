@@ -123,6 +123,7 @@
         "messageAccessibleTitle": "{{user}} says:",
         "messageAccessibleTitleMe": "me says:",
         "messageTo": "Private message to {{recipient}}",
+        "sendTo": "Send to",
         "messagebox": "Type a message",
         "newMessages": "New messages",
         "nickname": {
