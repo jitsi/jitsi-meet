@@ -16,6 +16,7 @@ import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { toggleChat } from '../chat/actions.web';
 import { isChatDisabled } from '../chat/functions';
 import { useChatButton } from '../chat/hooks.web';
+import { useCommandPaletteShortcut } from '../command-palette/hooks.web';
 import { useCustomPanelButton } from '../custom-panel/hooks.web';
 import { useEmbedButton } from '../embed-meeting/hooks';
 import { useEtherpadButton } from '../etherpad/hooks';
@@ -373,6 +374,7 @@ export function useToolboxButtons(
 
 
 export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
+    useCommandPaletteShortcut();
     const dispatch = useDispatch();
     const _isSpeakerStatsDisabled = useSelector(isSpeakerStatsDisabled);
     const _isParticipantsPaneEnabled = useSelector(isParticipantsPaneEnabled);
