@@ -51,6 +51,11 @@ export interface IChatMessageProps extends WithTranslation {
     canReply?: boolean;
 
     /**
+     * The Redux dispatch function.
+     */
+    dispatch?: IStore['dispatch'];
+
+    /**
      * Whether gifs are enabled or not.
      */
     gifEnabled?: boolean;
