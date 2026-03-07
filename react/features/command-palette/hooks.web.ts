@@ -19,11 +19,7 @@ export function useCommandPaletteShortcut(): void {
             character: SHORTCUT_KEY,
             helpCharacter: 'Ctrl+Shift+P',
             helpDescription: 'commandPalette.openPalette',
-            handler: () => {
-                // No-op: actual handling is done by the keydown listener below
-                // because the shortcut system uses keyup and cannot prevent
-                // browser default behavior or distinguish Shift modifier.
-            }
+            handler: () => {}
         }));
 
         const handleKeyDown = (e: KeyboardEvent) => {
