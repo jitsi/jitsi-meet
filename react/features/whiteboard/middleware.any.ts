@@ -1,3 +1,5 @@
+import { isEqual } from 'lodash-es';
+
 import { createOpenWhiteboardEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
@@ -17,6 +19,7 @@ import {
 import { WHITEBOARD_ID } from './constants';
 import {
     generateCollabServerUrl,
+    getCollabDetails,
     isWhiteboardOpen,
     shouldEnforceUserLimit,
     shouldNotifyUserLimit
@@ -43,11 +46,18 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
         const { metadata } = action;
 
         if (metadata?.[WHITEBOARD_ID]) {
+            const existingCollabDetails = getCollabDetails(state);
+            const { collabDetails } = metadata[WHITEBOARD_ID];
+            const hasNewCollabDetails = !isEqual(existingCollabDetails, collabDetails);
+
             store.dispatch(setupWhiteboard({
-                collabDetails: metadata[WHITEBOARD_ID].collabDetails,
+                collabDetails,
                 collabServerUrl: generateCollabServerUrl(store.getState())
             }));
-            store.dispatch(setWhiteboardOpen(true));
+
+            if (hasNewCollabDetails) {
+                store.dispatch(setWhiteboardOpen(true));
+            }
         }
 
         break;
