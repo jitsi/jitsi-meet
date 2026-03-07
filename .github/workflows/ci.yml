@@ -135,6 +135,13 @@ jobs:
         node -v
         npm -v
     - run: npm install
+    - name: Cache Gradle dependencies
+      uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57
+      with:
+        path: /root/.gradle
+        key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*', 'android/gradle.properties', 'android/gradle/wrapper/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
     - run: |
         cd android
         ./gradlew :sdk:clean
