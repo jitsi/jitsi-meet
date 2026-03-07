@@ -67,6 +67,7 @@ interface IState {
     hintBoxAnimation?: any;
     insecureRoomName: boolean;
     isSettingsScreenFocused?: boolean;
+    isSubmitted?: boolean;
     joining: boolean;
     room: string;
     roomNameInputAnimation?: any;
