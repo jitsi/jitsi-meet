@@ -14,6 +14,7 @@ import Button from '../../../base/ui/components/native/Button';
 import IconButton from '../../../base/ui/components/native/IconButton';
 import { BUTTON_MODES, BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { CHAR_LIMIT } from '../../../chat/constants';
+import { NOTIFICATION_CHAR_LIMIT } from '../../constants';
 import { replaceNonUnicodeEmojis } from '../../../chat/functions';
 import { NOTIFICATION_ICON, NOTIFICATION_TYPE } from '../../constants';
 import { INotificationProps } from '../../types';
@@ -133,15 +134,30 @@ const Notification = ({
         return src;
     };
 
-    const _getDescription = () => {
-        const descriptionArray = [];
+    const _getDescription = (): string[] => {
+        const descriptionArray: string[] = [];
 
         descriptionKey
             && descriptionArray.push(t(descriptionKey, descriptionArguments));
 
-        description && descriptionArray.push(description);
+        if (description && typeof description === 'string') {
+            descriptionArray.push(description);
+        }
 
         return descriptionArray;
+    };
+
+    /**
+     * Truncates message for notification display.
+     *
+     * @param {string} line - The message line to process.
+     * @returns {string} The processed message.
+     */
+    const _processMessage = (line: string): string => {
+        if (line.length > NOTIFICATION_CHAR_LIMIT) {
+            return `${line.slice(0, NOTIFICATION_CHAR_LIMIT)}...`;
+        }
+        return replaceNonUnicodeEmojis(line);
     };
 
     // eslint-disable-next-line react/no-multi-comp
@@ -162,7 +178,7 @@ const Notification = ({
                             <Text
                                 key = { index }
                                 style = { styles.contentText }>
-                                { line.length >= CHAR_LIMIT ? line : replaceNonUnicodeEmojis(line) }
+                                { _processMessage(line) }
                             </Text>
                         ))
                     }
@@ -176,7 +192,7 @@ const Notification = ({
                             <Text
                                 key = { index }
                                 style = { styles.contentTextDescription }>
-                                { line.length >= CHAR_LIMIT ? line : replaceNonUnicodeEmojis(line) }
+                                { _processMessage(line) }
                             </Text>
                         ))
                     }
