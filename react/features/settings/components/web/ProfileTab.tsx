@@ -14,6 +14,7 @@ import AbstractDialogTab, {
 import { translate } from '../../../base/i18n/functions';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
+import { EMAIL_REGEX } from '../../constants';
 
 /**
  * The type of the React {@code Component} props of {@link ProfileTab}.
@@ -49,6 +50,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
      * The email to display for the local participant.
      */
     email: string;
+
+    /**
+     * Whether there's an email validation error.
+     */
+    emailError?: boolean;
 
     /**
      * Whether to hide the email input in the profile settings.
@@ -122,6 +128,31 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
         this._onAuthToggle = this._onAuthToggle.bind(this);
         this._onDisplayNameChange = this._onDisplayNameChange.bind(this);
         this._onEmailChange = this._onEmailChange.bind(this);
+        this._onEmailBlur = this._onEmailBlur.bind(this);
+    }
+
+    /**
+     * Validates the email address.
+     *
+     * @param {string} email - The email to validate.
+     * @returns {boolean} 
+     */
+    _isValidEmail(email: string): boolean {
+        return email === '' || EMAIL_REGEX.test(email);
+    }
+
+    /**
+     * Handles the blur event on the email input to validate the email.
+     *
+     * @returns {void}
+     */
+    _onEmailBlur() {
+        const { email } = this.props;
+        const isValid = this._isValidEmail(email);
+
+        if (!isValid) {
+            super._onChange({ emailError: true });
+        }
     }
 
     /**
@@ -143,7 +174,7 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
      * @returns {void}
      */
     _onEmailChange(value: string) {
-        super._onChange({ email: value });
+        super._onChange({ email: value, emailError: false });
     }
 
     /**
@@ -157,6 +188,7 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
             authEnabled,
             displayName,
             email,
+            emailError,
             hideEmailInSettings,
             id,
             readOnlyName,
@@ -184,9 +216,11 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
                 {!hideEmailInSettings && <div className = 'profile-edit-field'>
                     <Input
                         className = { classes.bottomMargin }
+                        error = { emailError }
                         id = 'setEmail'
                         label = { t('profile.setEmailLabel') }
                         name = 'email'
+                        onBlur = { this._onEmailBlur }
                         onChange = { this._onEmailChange }
                         placeholder = { t('profile.setEmailInput') }
                         type = 'text'
