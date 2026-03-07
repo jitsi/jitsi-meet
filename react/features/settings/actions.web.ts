@@ -164,6 +164,10 @@ export function submitMoreTab(newState: any) {
         if (newState.showSubtitlesOnStage !== currentState.showSubtitlesOnStage) {
             dispatch(updateSettings({ showSubtitlesOnStage: newState.showSubtitlesOnStage }));
         }
+
+        if (newState.enableBeforeUnloadConfirmation !== currentState.enableBeforeUnloadConfirmation) {
+            dispatch(updateSettings({ enableBeforeUnloadConfirmation: newState.enableBeforeUnloadConfirmation }));
+        }
     };
 }
 

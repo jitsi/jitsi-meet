@@ -138,6 +138,7 @@ export default [
     'e2eeLabels',
     'e2ee',
     'e2eping',
+    'enableBeforeUnloadConfirmation',
     'enableCalendarIntegration',
     'enableDisplayNameInStats',
     'enableEmailInStats',
