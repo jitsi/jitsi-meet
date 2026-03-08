@@ -5,6 +5,7 @@ import { config } from './TestsConfig';
 
 const defaultExpectations = {
     dialIn: {
+        disableMoreNumbersPageCheck: false,
         /*
          * The dial-in functionality is enabled.
          * true -> assert the config is enabled, the UI elements are displayed, and the feature works.
