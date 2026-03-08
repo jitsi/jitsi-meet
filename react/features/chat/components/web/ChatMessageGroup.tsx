@@ -18,6 +18,11 @@ interface IProps {
      * The messages to display as a group.
      */
     messages: Array<IMessage>;
+    
+    /**
+     * The active search term used to highlight matching text in messages.
+     */
+    searchTerm?: string;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -54,7 +59,7 @@ const useStyles = makeStyles()(theme => {
 });
 
 
-const ChatMessageGroup = ({ className = '', messages }: IProps) => {
+const ChatMessageGroup = ({ className = '', messages, searchTerm }: IProps) => {
     const { classes } = useStyles();
     const messagesLength = messages.length;
 
@@ -74,6 +79,7 @@ const ChatMessageGroup = ({ className = '', messages }: IProps) => {
                         className = { className }
                         key = { i }
                         message = { message }
+                        searchTerm = { searchTerm }
                         showDisplayName = { i === 0 }
                         showTimestamp = { i === messages.length - 1 } />
                 ))}
