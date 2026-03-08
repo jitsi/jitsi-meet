@@ -23,6 +23,7 @@ import {
 } from './actionTypes';
 import { CHAT_SIZE, ChatTabs } from './constants';
 import { IMessage } from './types';
+import { updateMessageById } from './utils';
 
 const DEFAULT_STATE = {
     groupChatWithPermissions: false,
@@ -110,8 +111,10 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
     case ADD_MESSAGE_REACTION: {
         const { participantId, reactionList, messageId } = action;
 
-        const messages = state.messages.map(message => {
-            if (messageId === message.messageId) {
+        const messages = updateMessageById(
+            state.messages,
+            messageId,
+            message => {
                 const newReactions = new Map(message.reactions);
 
                 reactionList.forEach((reaction: string) => {
@@ -130,9 +133,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
                     reactions: newReactions
                 };
             }
-
-            return message;
-        });
+        );
 
         return {
             ...state,
@@ -147,22 +148,21 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         };
 
     case EDIT_MESSAGE: {
-        let found = false;
+
         const newMessage = action.message;
-        const messages = state.messages.map(m => {
-            if (m.messageId === newMessage.messageId) {
-                found = true;
+        const exists = state.messages.some(m =>
+            m.messageId === newMessage.messageId
+        );
 
-                return newMessage;
-            }
-
-            return m;
-        });
-
-        // no change
-        if (!found) {
+        if (!exists) {
             return state;
         }
+
+        const messages = updateMessageById(
+            state.messages,
+            newMessage.messageId,
+            () => newMessage
+        );
 
         return {
             ...state,
