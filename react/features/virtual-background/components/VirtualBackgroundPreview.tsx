@@ -1,4 +1,5 @@
 import { Theme } from '@mui/material';
+import cx from 'classnames';
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -16,7 +17,6 @@ import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { toggleBackgroundEffect } from '../actions';
 import logger from '../logger';
 import { IVirtualBackground } from '../reducer';
-import cx from 'classnames';
 /**
  * The type of the React {@code PureComponent} props of {@link VirtualBackgroundPreview}.
  */
@@ -243,7 +243,7 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
 
         return (
             <Video
-                className={cx(classes.previewVideo, 'flipVideoX')}
+                className = { cx(classes.previewVideo, 'flipVideoX') }
                 id = 'virtual_background_preview'
                 playsinline = { true }
                 videoTrack = {{ jitsiTrack: data }} />
