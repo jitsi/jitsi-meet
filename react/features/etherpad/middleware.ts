@@ -1,3 +1,5 @@
+import { sanitizeUrl as _sanitizePath } from '@braintree/sanitize-url';
+
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
@@ -6,6 +8,7 @@ import { sanitizeUrl } from '../base/util/uri';
 
 import { TOGGLE_DOCUMENT_EDITING } from './actionTypes';
 import { setDocumentUrl } from './actions';
+import logger from './logger';
 
 const ETHERPAD_COMMAND = 'etherpad';
 
@@ -27,6 +30,16 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 let url;
                 const { etherpad_base: etherpadBase } = getState()['features/base/config'];
                 const etherpadBaseUrl = sanitizeUrl(etherpadBase);
+
+                try {
+                    new URL(_sanitizePath(value));
+
+                    logger.warn(`Received suspicious value for etherpad command: ${value}`);
+
+                    return;
+                } catch (e) {
+                    // we should receive a relative path for the URL and should not be able to construct a url from it
+                }
 
                 if (etherpadBaseUrl) {
                     const urlObj = new URL(value, etherpadBaseUrl.toString());
