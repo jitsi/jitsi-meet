@@ -5,7 +5,6 @@ import { config } from './TestsConfig';
 
 const defaultExpectations = {
     dialIn: {
-        disableMoreNumbersPageCheck: false,
         /*
          * The dial-in functionality is enabled.
          * true -> assert the config is enabled, the UI elements are displayed, and the feature works.
@@ -13,7 +12,10 @@ const defaultExpectations = {
          * null -> if the config is enabled, assert the UI elements are displayed and the feature works.
          */
         enabled: null,
-        minPinLength: 8
+        minPinLength: 8,
+        /* Whether to verify that the "more numbers" page is displayed. Note that only the positive verification is
+         performed: when set to 'false' we do not assert that the "more numbers" page is not displayed. */
+        moreNumbersPage: true
     },
     iframe: {
         // Whether the iframe integration is enabled (the inverse of `disableIframeAPI` from config.js)
