@@ -5,8 +5,9 @@ const amplitude = createInstance();
 
 export default amplitude;
 
-const stripParam = (url: any) => {
+function stripParam(url?: string): string | undefined {
     if (!url) return url;
+
     try {
         const u = new URL(url);
 
@@ -17,7 +18,7 @@ const stripParam = (url: any) => {
     } catch {
         return url.split('#')[0].split('?')[0];
     }
-};
+}
 
 class StripParamsPlugin implements EnrichmentPlugin {
     name: 'strip-params-plugin';
@@ -28,11 +29,16 @@ class StripParamsPlugin implements EnrichmentPlugin {
     }
 
     async execute(event: Event): Promise<Event | null> {
-        if (event.event_properties) {
-            // @ts-ignore
-            event.event_properties['[Amplitude] Page Location'] = stripParam(event.event_properties['[Amplitude] Page Location']);
-            // @ts-ignore
-            event.event_properties['[Amplitude] Page URL'] = stripParam(event.event_properties['[Amplitude] Page URL']);
+        const { event_properties } = event;
+
+        if (event_properties) {
+            // These are only needed to make TS happy.
+            type EventPropertiesKey = keyof typeof event_properties;
+            const PAGE_LOCATION_KEY = '[Amplitude] Page Location' as EventPropertiesKey;
+            const PAGE_URL_KEY = '[Amplitude] Page URL' as EventPropertiesKey;
+
+            event_properties[PAGE_LOCATION_KEY] = stripParam(event_properties[PAGE_LOCATION_KEY]);
+            event_properties[PAGE_URL_KEY] = stripParam(event_properties[PAGE_URL_KEY]);
         }
 
         return event;
