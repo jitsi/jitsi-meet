@@ -68,6 +68,7 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
     const { t } = useTranslation();
     const [ isPopoverOpen, setIsPopoverOpen ] = useState(false);
     const [ showCopiedMessage, setShowCopiedMessage ] = useState(false);
+    const [ copyFailed, setCopyFailed ] = useState(false);
     const [ popupPosition, setPopupPosition ] = useState({ top: 0,
         left: 0 });
     const buttonRef = useRef<HTMLDivElement>(null);
@@ -135,6 +136,15 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
                     }, 2000);
                 } else {
                     logger.error('Failed to copy text');
+                    setCopyFailed(true);
+                    
+                    // Clear any existing timeout and set new one for error message
+                    if (timeoutRef.current) {
+                        clearTimeout(timeoutRef.current);
+                    }
+                    timeoutRef.current = setTimeout(() => {
+                        setCopyFailed(false);
+                    }, 2000);
                 }
             })
             .catch((error: Error) => {
@@ -195,6 +205,15 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
                     style = {{ top: `${popupPosition.top}px`,
                         left: `${popupPosition.left}px` }}>
                     {t('Message Copied')}
+                </div>,
+                document.body
+            )}
+            {copyFailed && ReactDOM.createPortal(
+                <div
+                    className = { cx(classes.copiedMessage, { [classes.showCopiedMessage]: copyFailed }) }
+                    style = {{ top: `${popupPosition.top}px`,
+                        left: `${popupPosition.left}px` }}>
+                    {t('Failed to copy text')}
                 </div>,
                 document.body
             )}
