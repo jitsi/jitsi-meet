@@ -27,12 +27,21 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         conference.addCommandListener(ETHERPAD_COMMAND,
             ({ value }: { value: string; }) => {
+                if (!value) {
+                    return;
+                }
+
                 let url;
                 const { etherpad_base: etherpadBase } = getState()['features/base/config'];
                 const etherpadBaseUrl = sanitizeUrl(etherpadBase);
 
                 try {
-                    new URL(_sanitizePath(value));
+                    const newValue = _sanitizePath(value);
+
+                    // The sanitizeUrl function will return 'about:blank' for invalid URLs
+                    if (newValue !== 'about:blank' && !newValue.startsWith('//')) {
+                        new URL(newValue);
+                    }
 
                     logger.warn(`Received suspicious value for etherpad command: ${value}`);
 
@@ -57,6 +66,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 }
 
                 dispatch(setDocumentUrl(url));
+
+                if (typeof APP !== 'undefined') {
+                    logger.log('Etherpad is enabled');
+                    APP.UI.initEtherpad();
+                }
             }
         );
         break;
