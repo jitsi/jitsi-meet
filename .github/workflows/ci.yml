@@ -173,10 +173,19 @@ jobs:
       with:
         ruby-version: '3.4'
         bundler-cache: true
+    - name: Cache CocoaPods
+      uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 #v4.2.0
+      with:
+        path: |
+          ios/Pods
+          ~/Library/Caches/CocoaPods
+        key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock', 'Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pods-
     - run: npx react-native info
     - name: Install Pods
       working-directory: ./ios
-      run: bundle exec pod install --repo-update --deployment
+      run: bundle exec pod install --deployment
     - run: |
         xcodebuild -downloadPlatform iOS -buildVersion 18.2
         xcodebuild archive \
