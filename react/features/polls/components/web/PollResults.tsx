@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import AbstractPollResults, { AbstractProps } from '../AbstractPollResults';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
+import AbstractPollResults, { AbstractProps, AnswerInfo } from '../AbstractPollResults';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -120,6 +122,54 @@ const PollResults = ({
     toggleIsDetailed
 }: AbstractProps) => {
     const { classes } = useStyles();
+    const exportResults = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const csvRows: string[] = [];
+
+        csvRows.push(`"Question:","${question}"`);
+        csvRows.push(`"Created By:","${creatorName}"`);
+        csvRows.push('');
+
+        const headers: string[] = [ 'Option', 'Voter Count', 'Valid Voters (with email)', 'Other Voters' ];
+
+        csvRows.push(headers.map(h => `"${h}"`).join(','));
+
+        answers.forEach((answer: AnswerInfo) => {
+            const validVoters = answer.voters
+                ?.filter(voter => voter.email)
+                .map(voter => `${voter.name} (${voter.email})`)
+                .join('; ') || '';
+
+            const otherVoters = answer.voters
+                ?.filter(voter => !voter.email)
+                .map(voter => voter.name)
+                .join('; ') || '';
+
+            const row = [
+                `"${answer.name}"`,
+                answer.voterCount.toString(),
+                `"${validVoters}"`,
+                `"${otherVoters}"`
+            ];
+
+            csvRows.push(row.join(','));
+        });
+
+        const csvContent = csvRows.join('\n');
+        const blob = new Blob([ csvContent ], { type: 'text/csv;charset=utf-8;' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+
+
+        link.href = url;
+        link.setAttribute('download', `poll-results-${pollId}.csv`);
+        link.click();
+        window.URL.revokeObjectURL(url);
+    }, [ answers, question, creatorName, pollId ]);
+
+    const isModerator = useSelector(isLocalParticipantModerator);
 
     return (
         <div
@@ -153,22 +203,33 @@ const PollResults = ({
                         </div>
                         {showDetails && voters && voterCount > 0
                         && <ul className = { classes.voters }>
-                            { voters.map(voter =>
-                                <li key = { voter.id }>{ voter.name }</li>
+                            {voters.map(voter =>
+                                <li key = { voter.id }>{voter.name}</li>
                             )}
                         </ul>}
                     </li>)
                 )}
             </ul>
             <div className = { classes.buttonsContainer }>
-                <button
-                    onClick = { toggleIsDetailed }>
-                    {showDetails ? t('polls.results.hideDetailedResults') : t('polls.results.showDetailedResults')}
+                <button onClick = { toggleIsDetailed }>
+                    {showDetails
+                        ? t('polls.results.hideDetailedResults')
+                        : t('polls.results.showDetailedResults')}
                 </button>
-                <button
-                    onClick = { changeVote }>
-                    {haveVoted ? t('polls.results.changeVote') : t('polls.results.vote')}
+
+                <button onClick = { changeVote }>
+                    {haveVoted
+                        ? t('polls.results.changeVote')
+                        : t('polls.results.vote')}
                 </button>
+
+                {isModerator && (
+                    <button
+                        onClick = { exportResults }
+                        type = 'button'>
+                        {t('polls.results.exportResults')}
+                    </button>
+                )}
             </div>
         </div>
     );
