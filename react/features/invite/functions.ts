@@ -729,7 +729,13 @@ export function getDialInfoPageURL(state: IReduxState, roomName?: string) {
     const conferenceName = roomName ?? getRoomName(state);
     const { locationURL } = state['features/base/connection'];
     const { href = '' } = locationURL ?? {};
-    const room = _decodeRoomURI(conferenceName ?? '');
+    let room = _decodeRoomURI(conferenceName ?? '');
+
+    try {
+        room = decodeURIComponent(room);
+    } catch {
+        // ignore malformed encoding
+    }
 
     const url = didPageUrl || `${href.substring(0, href.lastIndexOf('/'))}/${DIAL_IN_INFO_PAGE_PATH_NAME}`;
 
