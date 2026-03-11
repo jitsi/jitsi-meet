@@ -539,11 +539,6 @@ export interface IConfig {
         disableRemoveRaisedHandOnFocus?: boolean;
     };
     readOnlyName?: boolean;
-    recordingLimit?: {
-        appName?: string;
-        appURL?: string;
-        limit?: number;
-    };
     recordingService?: {
         enabled?: boolean;
         hideStorageWarning?: boolean;

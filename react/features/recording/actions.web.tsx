@@ -1,9 +1,7 @@
-import React from 'react';
 import { batch } from 'react-redux';
 
 import { IStore } from '../app/types';
 import { hideDialog, openDialog } from '../base/dialog/actions';
-import JitsiMeetJS from '../base/lib-jitsi-meet';
 import {
     setAudioMuted,
     setAudioUnmutePermissions,
@@ -11,12 +9,9 @@ import {
     setVideoUnmutePermissions
 } from '../base/media/actions';
 import { VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
-import { showNotification } from '../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { showStartRecordingNotificationWithCallback } from './actions.any';
 import { StartRecordingDialog } from './components/Recording';
-import RecordingLimitNotificationDescription from './components/web/RecordingLimitNotificationDescription';
 
 export * from './actions.any';
 
@@ -59,23 +54,6 @@ export function grantRecordingConsentAndUnmute() {
             dispatch(hideDialog());
         });
     };
-}
-
-/**
- * Signals that a started recording notification should be shown on the
- * screen for a given period.
- *
- * @param {string} streamType - The type of the stream ({@code file} or
- * {@code stream}).
- * @returns {showNotification}
- */
-export function showRecordingLimitNotification(streamType: string) {
-    const isLiveStreaming = streamType === JitsiMeetJS.constants.recording.mode.STREAM;
-
-    return showNotification({
-        description: <RecordingLimitNotificationDescription isLiveStreaming = { isLiveStreaming } />,
-        titleKey: isLiveStreaming ? 'dialog.liveStreaming' : 'dialog.recording'
-    }, NOTIFICATION_TIMEOUT_TYPE.LONG);
 }
 
 /**

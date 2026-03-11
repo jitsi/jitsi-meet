@@ -12,6 +12,11 @@ interface IProps {
         messages: ISubtitle[];
         senderId: string;
     }>;
+
+    /**
+     * Whether the subtitles container is currently visible to the user.
+     */
+    isVisible: boolean;
     messages: ISubtitle[];
 }
 
@@ -46,12 +51,13 @@ const useStyles = makeStyles()(() => {
  *
  * @returns {JSX.Element} - A React component displaying subtitles messages with scroll functionality.
  */
-export function SubtitlesMessagesContainer({ messages, groups }: IProps) {
+export function SubtitlesMessagesContainer({ messages, groups, isVisible }: IProps) {
     const { classes } = useStyles();
     const [ hasNewMessages, setHasNewMessages ] = useState(false);
     const [ isScrolledToBottom, setIsScrolledToBottom ] = useState(true);
     const [ observer, setObserver ] = useState<IntersectionObserver | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const hasInitiallyScrolled = useRef(false);
 
     const scrollToElement = useCallback((withAnimation: boolean, element: Element | null) => {
         const scrollTo = element ? element : messagesEndRef.current;
@@ -97,7 +103,16 @@ export function SubtitlesMessagesContainer({ messages, groups }: IProps) {
     };
 
     useEffect(() => {
-        scrollToElement(false, null);
+        // Only scroll on mount if the component is visible, since scrollIntoView
+        // silently does nothing on hidden (display: none) elements. If hidden,
+        // the isVisible useEffect below will handle scrolling when it first becomes visible.
+        if (isVisible) {
+            hasInitiallyScrolled.current = true;
+            requestAnimationFrame(() => {
+                scrollToElement(false, null);
+            });
+        }
+
         createBottomListObserver();
 
         return () => {
@@ -107,6 +122,15 @@ export function SubtitlesMessagesContainer({ messages, groups }: IProps) {
             }
         };
     }, []);
+
+    useEffect(() => {
+        if (isVisible && !hasInitiallyScrolled.current) {
+            hasInitiallyScrolled.current = true;
+            requestAnimationFrame(() => {
+                scrollToElement(false, null);
+            });
+        }
+    }, [ isVisible, scrollToElement ]);
 
     const previousMessages = useRef(messages);
 
