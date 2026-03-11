@@ -1499,6 +1499,54 @@ var config = {
     // Sets the background transparency level. '0' is fully transparent, '1' is opaque.
     // backgroundAlpha: 1,
 
+    // Virtual background V2 options (MediaPipe body-segmentation + WebGL compositor).
+    // All fields are optional; omitting a field uses the default/auto-detected value.
+    virtualBackground: {
+
+        // Enable the V2 processing engine. When false (default), the legacy
+        // TFLite WASM engine (V1) is used. Set to true to opt in to V2.
+        // enableV2: false,
+
+        // Force a specific device tier regardless of what the browser supports.
+        // Useful for testing lower-tier behaviour on high-end hardware.
+        // Values: 'high' | 'medium' | 'low' — null means auto-detect (default).
+        // tierOverride: null,
+
+        // Override the segmentation canvas dimensions (pixels). Applies to MEDIUM and HIGH
+        // tiers only (TF.js input canvas). LOW tier (ORT WASM) always runs at 192x192,
+        // fixed by the PP-HumanSeg model and not affected by this setting.
+        // segmentationWidth: null,   // auto: 512 (high) / 384 (medium)
+        // segmentationHeight: null,  // auto: 288 (high) / 216 (medium)
+
+        // Override the target frame rate for the effect.
+        // targetFps: null,           // auto: 30 (all tiers)
+
+        // Temporal mask blend ratio (0-1). Higher = smoother edges, slower to
+        // respond to fast movement. 0 = raw mask each frame (no smoothing).
+        // temporalBlendRatio: 0.85,
+
+        // Smoothstep edge thresholds for the WebGL compositor (0-1).
+        // Pixels with segmentation confidence below edgeLow are fully background;
+        // above edgeHigh they are fully foreground; between the two they feather.
+        // Lowering edgeLow captures more hair (MediaPipe gives hair 0.15-0.40 confidence).
+        // Lowering edgeHigh makes hair appear more solid at the cost of a slightly softer boundary.
+        // edgeLow: 0.20,    // default 0.20
+        // edgeHigh: 0.55,   // default 0.55
+
+        // Insertable Streams (MediaStreamTrackProcessor/Generator) is used by default
+        // when available. It reduces latency by ~1-2 frames and eliminates the keepalive
+        // Web Worker. Set to false to force the legacy captureStream path instead.
+        // useInsertableStreams: false,
+
+        // LOW tier (ORT WASM) inference stride. Inference is skipped on every Nth frame;
+        // all other (N-1) frames run inference. Higher N = better pipeline FPS, fewer
+        // inference calls per second. Set to 1 (or omit) to run inference every frame.
+        //   1 = no skipping   (inference every frame,    ~13 fps pipeline)
+        //   2 = skip 1 of 2   (inference on 1/2 frames,  ~25 fps pipeline)
+        //   3 = skip 1 of 3   (inference on 2/3 frames,  ~40 fps pipeline)  ← default
+        // ortInferenceStride: 3,  // default 3
+    },
+
     // The URL of the moderated rooms microservice, if available. If it
     // is present, a link to the service will be rendered on the welcome page,
     // otherwise the app doesn't render it.

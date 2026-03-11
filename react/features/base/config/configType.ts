@@ -721,6 +721,19 @@ export interface IConfig {
         mobileCodecPreferenceOrder?: Array<string>;
         persist?: boolean;
     };
+    virtualBackground?: {
+        edgeHigh?: number;
+        edgeLow?: number;
+        enableV2?: boolean;
+        ortSkipStride?: number;
+        segmentationHeight?: number;
+        segmentationWidth?: number;
+        targetFps?: number;
+        temporalBlendRatio?: number;
+        testMode?: boolean;
+        tierOverride?: 'high' | 'low' | 'medium';
+        useInsertableStreams?: boolean;
+    };
     visitors?: {
         enableMediaOnPromote?: {
             audio?: boolean;

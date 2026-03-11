@@ -297,7 +297,7 @@ function getDevServerConfig() {
         static: {
             directory: process.cwd(),
             watch: {
-                ignored: file => file.endsWith('.log')
+                ignored: file => file.endsWith('.log') || file.includes('node_modules')
             }
         }
     };
@@ -383,6 +383,16 @@ module.exports = (_env, argv) => {
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'face-landmarks-worker')
             ],
             performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2) },
+        { ...config,
+            entry: {
+                'vb-inference-worker':
+                    './react/features/stream-effects/virtual-background/VBInferenceWorker.ts'
+            },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'vb-inference-worker')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 10) },
         { ...config, /**
              * The NoiseSuppressorWorklet is loaded in an audio worklet which doesn't have the same
              * context as a normal window, (e.g. self/window is not defined).

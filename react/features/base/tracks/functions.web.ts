@@ -1,3 +1,6 @@
+import { showWarningNotification } from '../../../features/notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../../features/notifications/constants';
+import { backgroundEnabled } from '../../../features/virtual-background/actions';
 import { IStore } from '../../app/types';
 import { IStateful } from '../app/types';
 import { isAdvancedAudioSettingsEnabled } from '../config/functions.any';
@@ -79,7 +82,15 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore, 
             }
 
             // Filter any undefined values returned by Promise.resolve().
-            const effects = effectsArray.filter(effect => Boolean(effect));
+            const allEffects = effectsArray.filter(effect => Boolean(effect));
+
+            // Effects that set requiresPostConstructionApplication=true (e.g. V2 insertable streams path) cannot
+            // be passed to the JitsiLocalTrack constructor: their startEffect() returns a
+            // MediaStreamTrackGenerator whose getSettings() is empty until frames flow, crashing the
+            // constraint-caching code in the constructor. Split them out and apply via setEffect() after the
+            // tracks are created.
+            const effects = allEffects.filter((e: any) => !e.requiresPostConstructionApplication);
+            const postEffects = allEffects.filter((e: any) => Boolean(e.requiresPostConstructionApplication));
 
             return JitsiMeetJS.createLocalTracks(
                 {
@@ -101,6 +112,39 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore, 
                 logger.error('Failed to create local tracks', options.devices, err);
 
                 return Promise.reject(err);
+            })
+            .then(async (localTracks: any[]) => {
+                // Apply post-construction effects (IS path) via setEffect on the video track.
+                for (const effect of postEffects as any[]) {
+                    const videoTrack = localTracks.find((t: any) => effect.isEnabled(t));
+
+                    if (videoTrack) {
+                        try {
+                            await videoTrack.setEffect(effect);
+
+                            // V2 effects initialise asynchronously (worker spawn + model load).
+                            if ((effect as any).initPromise instanceof Promise) {
+                                await (effect as any).initPromise;
+                            }
+                        } catch (err) {
+                            logger.error('Failed to apply post-construction effect', err);
+
+                            try {
+                                await videoTrack.setEffect(undefined);
+                            } catch (cleanupErr) {
+                                logger.warn('Failed to clear effect after init failure', cleanupErr);
+                            }
+
+                            store!.dispatch(backgroundEnabled(false));
+                            store!.dispatch(showWarningNotification(
+                                { titleKey: 'virtualBackground.backgroundEffectError' },
+                                NOTIFICATION_TIMEOUT_TYPE.LONG
+                            ));
+                        }
+                    }
+                }
+
+                return localTracks;
             });
         }));
 }

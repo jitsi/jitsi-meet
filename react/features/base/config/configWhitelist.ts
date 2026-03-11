@@ -242,6 +242,7 @@ export default [
     'useHostPageLocalStorage',
     'useTurnUdp',
     'videoQuality',
+    'virtualBackground',
     'visitors.enableMediaOnPromote',
     'visitors.hideVisitorCountForVisitors',
     'visitors.showJoinMeetingDialog',

@@ -9,6 +9,8 @@ EXCALIDRAW_DIR = node_modules/@jitsi/excalidraw/dist/prod
 EXCALIDRAW_DIR_DEV = node_modules/@jitsi/excalidraw/dist/dev
 TFLITE_WASM = react/features/stream-effects/virtual-background/vendor/tflite
 MEET_MODELS_DIR  = react/features/stream-effects/virtual-background/vendor/models
+ORT_WASM_DIR = node_modules/onnxruntime-web/dist
+MEDIAPIPE_SEGMENTATION_DIR = node_modules/@mediapipe/selfie_segmentation
 FACE_MODELS_DIR = node_modules/@vladmandic/human-models/models
 NODE_SASS = ./node_modules/.bin/sass
 NPM = npm
@@ -34,7 +36,7 @@ clean:
 	rm -fr $(BUILD_DIR)
 
 .NOTPARALLEL:
-deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-excalidraw deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-css deploy-local deploy-face-landmarks
+deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-excalidraw deploy-tflite deploy-meet-models deploy-mediapipe-segmentation deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-ort-wasm deploy-css deploy-local deploy-face-landmarks
 
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
@@ -96,8 +98,22 @@ deploy-excalidraw-dev:
 
 deploy-meet-models:
 	cp \
-		$(MEET_MODELS_DIR)/*.tflite \
+		$(MEET_MODELS_DIR)/selfie_segmentation_landscape.tflite \
+		$(MEET_MODELS_DIR)/pp_humanseg_192x192.onnx \
 		$(DEPLOY_DIR)
+
+deploy-ort-wasm:
+	mkdir -p $(DEPLOY_DIR)/ort
+	cp \
+		$(ORT_WASM_DIR)/ort-wasm.wasm \
+		$(ORT_WASM_DIR)/ort-wasm-simd.wasm \
+		$(DEPLOY_DIR)/ort
+
+deploy-mediapipe-segmentation:
+	mkdir -p $(DEPLOY_DIR)/mediapipe-segmentation
+	cp \
+		$(MEDIAPIPE_SEGMENTATION_DIR)/selfie_segmentation* \
+		$(DEPLOY_DIR)/mediapipe-segmentation
 
 deploy-face-landmarks:
 	cp \
@@ -116,7 +132,7 @@ deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-excalidraw-dev deploy-face-landmarks
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-mediapipe-segmentation deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-ort-wasm deploy-excalidraw-dev deploy-face-landmarks
 	$(WEBPACK_DEV_SERVER)
 
 source-package: compile deploy

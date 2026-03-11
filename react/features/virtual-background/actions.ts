@@ -1,4 +1,6 @@
 import { IStore } from '../app/types';
+import { showWarningNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { createVirtualBackgroundEffect } from '../stream-effects/virtual-background';
 
 import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes';
@@ -15,6 +17,9 @@ import { IVirtualBackground } from './reducer';
  */
 export function toggleBackgroundEffect(options: IVirtualBackground, jitsiTrack: any) {
     return async function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
+        // Snapshot state before mutations so we can restore it if the effect fails to init.
+        const prevBackground = getState()['features/virtual-background'];
+
         dispatch(backgroundEnabled(options.backgroundEffectEnabled));
         dispatch(setVirtualBackground(options));
         const state = getState();
@@ -23,14 +28,39 @@ export function toggleBackgroundEffect(options: IVirtualBackground, jitsiTrack: 
         if (jitsiTrack) {
             try {
                 if (options.backgroundEffectEnabled) {
-                    await jitsiTrack.setEffect(await createVirtualBackgroundEffect(virtualBackground, dispatch));
+                    const effect = await createVirtualBackgroundEffect(virtualBackground, dispatch);
+
+                    await jitsiTrack.setEffect(effect);
+
+                    // V2 effects initialise asynchronously (worker spawn + model load). Await the
+                    // init promise so failures propagate here instead of being silently swallowed.
+                    if (effect && (effect as any).initPromise instanceof Promise) {
+                        await (effect as any).initPromise;
+                    }
                 } else {
                     await jitsiTrack.setEffect(undefined);
                     dispatch(backgroundEnabled(false));
                 }
             } catch (error) {
-                dispatch(backgroundEnabled(false));
                 logger.error('Error on apply background effect:', error);
+
+                // Revert Redux state to the values that were active before the failed toggle.
+                dispatch(backgroundEnabled(prevBackground.backgroundEffectEnabled));
+                dispatch(setVirtualBackground(prevBackground));
+
+                // Remove any partially-applied effect so the video track is restored.
+                if (options.backgroundEffectEnabled) {
+                    try {
+                        await jitsiTrack.setEffect(undefined);
+                    } catch (cleanupErr) {
+                        logger.warn('[VirtualBackground] Failed to clear effect after init failure:', cleanupErr);
+                    }
+                }
+
+                dispatch(showWarningNotification(
+                    { titleKey: 'virtualBackground.backgroundEffectError' },
+                    NOTIFICATION_TIMEOUT_TYPE.LONG
+                ));
             }
         }
     };
