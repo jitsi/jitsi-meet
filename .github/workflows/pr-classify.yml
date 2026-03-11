@@ -1,0 +1,143 @@
+name: PR Classification
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Collect PR context
+        id: context
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          # Get the list of changed files and diff stat
+          DIFF_STAT=$(git diff "origin/$BASE_REF"...HEAD --stat 2>/dev/null || echo "Unable to compute diff stat")
+          CHANGED_FILES=$(git diff "origin/$BASE_REF"...HEAD --name-only 2>/dev/null || echo "")
+
+          # Write to files to avoid shell escaping issues when passing to the action
+          echo "$DIFF_STAT" > /tmp/diff_stat.txt
+          echo "$CHANGED_FILES" > /tmp/changed_files.txt
+
+      - name: Classify PR
+        id: classifier
+        continue-on-error: true
+        uses: anthropics/claude-code-action@beta
+        with:
+          model: claude-haiku-4-5-20251001
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          direct_prompt: |
+            You are classifying a pull request for jitsi-meet, an open-source WebRTC
+            video conferencing platform built with React/Redux for web and React Native for mobile.
+
+            PR Title: ${{ github.event.pull_request.title }}
+            PR Body: ${{ github.event.pull_request.body }}
+
+            Changed files:
+            $(cat /tmp/changed_files.txt)
+
+            Diff stat:
+            $(cat /tmp/diff_stat.txt)
+
+            Platform hints for changed files:
+            - Files in android/, *.android.ts → platform: android
+            - Files in ios/, *.ios.ts → platform: ios
+            - Files matching *.native.ts or in react-native-sdk/ → platform: native
+            - Files matching *.web.ts, *.web.tsx, css/, webpack.config.js, modules/ → platform: web
+            - Files matching *.any.ts or in react/features/ with no platform suffix → could be multiple platforms
+
+            Based ONLY on the PR title, body, and changed files listed above, respond with ONLY
+            valid JSON (no explanation, no markdown fences):
+            {
+              "type": "<feature-request|fix|chore|refactor|localization|documentation|test|security>",
+              "platforms": ["<web|android|ios|native>"],
+              "summary": "<1-2 sentence plain English summary of what this PR does>"
+            }
+
+      - name: Apply labels and post comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue_number = pr.number;
+
+            // --- Parse classifier output ---
+            const classifierOutput = '${{ steps.classifier.outputs.output }}';
+            let typeLabel = null;
+            let platformLabels = [];
+            let summary = null;
+            let parseError = false;
+
+            if (classifierOutput) {
+              try {
+                // Extract JSON even if there's surrounding text
+                const match = classifierOutput.match(/\{[\s\S]*\}/);
+                if (match) {
+                  const parsed = JSON.parse(match[0]);
+                  const validTypes = ['feature-request', 'fix', 'chore', 'refactor', 'localization', 'documentation', 'test', 'security'];
+                  const validPlatforms = ['web', 'android', 'ios', 'native'];
+
+                  if (validTypes.includes(parsed.type)) {
+                    typeLabel = parsed.type;
+                  }
+                  if (Array.isArray(parsed.platforms)) {
+                    platformLabels = parsed.platforms
+                      .filter(p => validPlatforms.includes(p));
+                  }
+                  summary = parsed.summary || null;
+                }
+              } catch (e) {
+                parseError = true;
+                core.warning(`Failed to parse classifier output: ${e.message}`);
+              }
+            }
+
+            // --- Remove old managed labels ---
+            const existingLabels = await github.rest.issues.listLabelsOnIssue({ owner, repo, issue_number });
+            const managedLabels = new Set(['feature-request', 'fix', 'chore', 'refactor', 'localization', 'documentation', 'test', 'security', 'web', 'android', 'ios', 'native']);
+            const toRemove = existingLabels.data
+              .filter(l => managedLabels.has(l.name))
+              .map(l => l.name);
+
+            for (const label of toRemove) {
+              try {
+                await github.rest.issues.removeLabel({ owner, repo, issue_number, name: label });
+              } catch (e) {
+                // ignore if label was already removed
+              }
+            }
+
+            // --- Apply new labels ---
+            const labelsToAdd = [typeLabel, ...platformLabels].filter(Boolean);
+            if (labelsToAdd.length > 0) {
+              await github.rest.issues.addLabels({ owner, repo, issue_number, labels: labelsToAdd });
+            }
+
+            // --- Post classification comment ---
+            if (parseError || !typeLabel) {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number,
+                body: `> [!WARNING]\n> **PR classification** could not determine the PR type. Please apply a type label manually.`
+              });
+            } else if (summary) {
+              const platformStr = platformLabels.length > 0
+                ? `\n> **Platforms:** ${platformLabels.map(p => '`' + p + '`').join(', ')}`
+                : '';
+              await github.rest.issues.createComment({
+                owner, repo, issue_number,
+                body: `> [!NOTE]\n> **PR classification:** \`${typeLabel}\`${platformStr}\n>\n> ${summary}`
+              });
+            }
