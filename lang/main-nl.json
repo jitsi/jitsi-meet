@@ -385,6 +385,7 @@
         "login": "Inloggen",
         "loginFailed": "Inloggen is mislukt.",
         "loginOnResume": "Uw authenticatiesessie is verlopen. U moet opnieuw inloggen om de vergadering voort te zetten.",
+        "loginPopupBlocked": "Inloggen-popup werd geblokkeerd door uw browser.",
         "loginQuestion": "Weet u zeker dat u wilt inloggen en de conferentie verlaten?",
         "logoutQuestion": "Weet u zeker dat u zich wilt afmelden en de conferentie wilt stoppen?",
         "logoutTitle": "Afmelden",
@@ -726,6 +727,7 @@
         "streamIdHelp": "Wat is dit?",
         "title": "Livestream",
         "unavailableTitle": "Livestreamen niet beschikbaar",
+        "youTubeGoLiveWarning": "Vergeet niet om op 'Go Live' te klikken in YouTube Studio als Auto-Start/Auto-Stop is uitgeschakeld. Anders begint de stream niet met opnemen.",
         "youtubeTerms": "Servicevoorwaarden YouTube"
     },
     "lobby": {
@@ -991,7 +993,7 @@
             "pollQuestion": "Peiling vraag",
             "questionPlaceholder": "Stel een vraag",
             "removeOption": "Optie verwijderen",
-            "send": "Opslaan"
+            "save": "Opslaan"
         },
         "errors": {
             "notUniqueOption": "Opties moeten uniek zijn"
@@ -1603,6 +1605,7 @@
         "addBackground": "Achtergrond toevoegen",
         "apply": "Toepassen",
         "backgroundEffectError": "Toepassen van achtergrondeffect niet gelukt.",
+        "backgroundLimitReached": "Aangepaste achtergrondlimiet bereikt",
         "blur": "Vervagen",
         "deleteImage": "Afbeelding verwijderen",
         "desktopShare": "Bureaublad delen",
@@ -1615,6 +1618,7 @@
         "image6": "Bos ",
         "image7": "Zonsopkomst",
         "none": "Geen",
+        "oldestBackgroundRemoved": "De oudste aangepaste achtergrond is verwijderd om de nieuwe toe te voegen.",
         "pleaseWait": "Even geduld a.u.b…",
         "removeBackground": "Verwijder achtergrond",
         "slightBlur": "Licht vervagen",
