@@ -434,6 +434,7 @@ StateListenerRegistry.register(
         batch(() => {
             for (const [ id, p ] of getRemoteParticipants(getState())) {
                 (!conference || p.conference !== conference)
+                    && !conference
                     && dispatch(participantLeft(id, p.conference, {
                         isReplaced: p.isReplaced
                     }));
