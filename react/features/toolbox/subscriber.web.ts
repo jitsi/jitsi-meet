@@ -23,12 +23,15 @@ StateListenerRegistry.register(
 
 
 const checkToolboxOverlap = (clientHeight: number, store: IStore) => {
+    if(typeof document === 'undefined') {
+        return;
+    }
     let toolboxRect = document.querySelector('.toolbox-content-items')?.getBoundingClientRect();
 
     if (!toolboxRect) {
         return;
     }
-    const tiles = document.querySelectorAll('span.videocontainer');
+    const tiles = document.querySelectorAll<HTMLSpanElement>('span.videocontainer');
 
     if (!tiles.length) {
         return;
@@ -50,8 +53,9 @@ const checkToolboxOverlap = (clientHeight: number, store: IStore) => {
 
     const rows = store.getState()['features/filmstrip'].tileViewDimensions?.gridDimensions?.rows;
     const noOfTilesToCheck = rows === 1 ? tiles.length : DEFAULT_MAX_COLUMNS - 1;
+    const limit = Math.min(noOfTilesToCheck, tiles.length);
 
-    for (let i = 1; i < Math.max(noOfTilesToCheck, tiles.length); i++) {
+    for (let i = 1; i <= limit; i++) {
         const tile = tiles[tiles.length - i];
         const indicatorsRect = tile?.querySelector('.bottom-indicators')?.getBoundingClientRect();
 
