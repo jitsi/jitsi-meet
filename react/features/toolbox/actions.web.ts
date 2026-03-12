@@ -88,7 +88,7 @@ export function hideToolbox(force = false) {
         const hoverSelector = isLayoutTileView(state)
             ? '.remotevideomenu:hover'
             : '.filmstrip:hover,.remotevideomenu:hover';
-        const hoveredElem = document.querySelector(hoverSelector);
+        const hoveredElem = typeof document !== 'undefined' ? document.querySelector(hoverSelector) : null;
 
         if (!force
                 && (hovered
