@@ -529,6 +529,7 @@ export default reactReduxConnect(_mapStateToProps)(translate(props => {
 
     return (
         <div
+            data-testid = 'conference-drag-zone'
             onDragEnter = { handleDragEnter }
             onDragLeave = { handleDragLeave }
             onDragOver = { handleDragOver }
