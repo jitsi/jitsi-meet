@@ -8,6 +8,7 @@ import { IConfig } from '../../react/features/base/config/configType';
 import { urlObjectToString } from '../../react/features/base/util/uri';
 import BreakoutRooms from '../pageobjects/BreakoutRooms';
 import ChatPanel from '../pageobjects/ChatPanel';
+import FileSharingPanel from '../pageobjects/FileSharingPanel';
 import Filmstrip from '../pageobjects/Filmstrip';
 import IframeAPI from '../pageobjects/IframeAPI';
 import InviteDialog from '../pageobjects/InviteDialog';
@@ -532,6 +533,13 @@ export class Participant {
      */
     getChatPanel(): ChatPanel {
         return new ChatPanel(this);
+    }
+
+    /**
+     * Returns the file sharing panel for this participant.
+     */
+    getFileSharingPanel(): FileSharingPanel {
+        return new FileSharingPanel(this);
     }
 
     /**

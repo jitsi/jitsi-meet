@@ -22,6 +22,7 @@ const defaultExpectations = {
         enabled: true
     },
     jaas: {
+        fileSharingEnabled: true,
         liveStreamingEnabled: true,
         recordingEnabled: true,
         transcriptionEnabled: true,
