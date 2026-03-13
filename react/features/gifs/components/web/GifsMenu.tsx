@@ -95,7 +95,7 @@ interface IProps {
 function GifsMenu({ columns = 2, parent }: IProps) {
     const API_KEY = useSelector(getGifAPIKey);
     const giphyFetch = new GiphyFetch(API_KEY);
-    const [ searchKey, setSearchKey ] = useState<string>();
+    const [ searchKey, setSearchKey ] = useState<string>(''); // Initialize as empty string to properly trigger Grid component
     const { classes: styles, cx } = useStyles();
     const dispatch = useDispatch();
     const { t } = useTranslation();
@@ -111,7 +111,7 @@ function GifsMenu({ columns = 2, parent }: IProps) {
             rating
         };
 
-        if (!searchKey) {
+        if (searchKey.trim() === '') {
             return await giphyFetch.trending(options);
         }
 
@@ -182,10 +182,6 @@ function GifsMenu({ columns = 2, parent }: IProps) {
 
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, []);
-
-    // For some reason, the Grid component does not do an initial call on mobile.
-    // This fixes that.
-    useEffect(() => setSearchKey(''), []);
 
     const onInputKeyPress = useCallback((e: React.KeyboardEvent) => {
         e.stopPropagation();
