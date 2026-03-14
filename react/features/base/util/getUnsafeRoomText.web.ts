@@ -1,6 +1,8 @@
 import { translateToHTML } from '../i18n/functions';
 
-import { SECURITY_URL } from './contants';
+import { getSecurityUrl } from './contants';
+
+declare const APP: any;
 
 /**
  * Gets the unsafe room text for the given context.
@@ -10,7 +12,7 @@ import { SECURITY_URL } from './contants';
  * @returns {string}
  */
 export default function getUnsafeRoomText(t: Function, context: 'meeting' | 'prejoin' | 'welcome') {
-    const securityUrl = APP.store.getState()['features/base/config'].legalUrls?.security ?? SECURITY_URL;
+    const securityUrl = APP.store.getState()['features/base/config'].legalUrls?.security ?? getSecurityUrl();
     const options = {
         recommendAction: t(`security.unsafeRoomActions.${context}`),
         securityUrl
