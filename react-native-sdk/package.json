@@ -2,7 +2,8 @@
     "name": "@jitsi/react-native-sdk",
     "version": "0.0.0",
     "description": "React Native SDK for Jitsi Meet.",
-    "main": "index.tsx",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "license": "Apache-2.0",
     "author": "",
     "homepage": "https://jitsi.org",
@@ -92,9 +93,27 @@
         "@babel/plugin-proposal-optional-chaining": "0.0.0"
     },
     "scripts": {
+        "build": "tsc -p tsconfig.json",
         "postinstall": "node sdk_instructions.js",
-        "prepare": "node prepare_sdk.js"
+        "prepare": "node prepare_sdk.js && npm run build"
     },
+    "files": [
+        "dist",
+        "android",
+        "ios",
+        "index.tsx",
+        "jitsi-meet-rnsdk.podspec",
+        "prepare_sdk.js",
+        "sdk_instructions.js",
+        "update_dependencies.js",
+        "update_sdk_dependencies.js",
+        "README.md",
+        "images",
+        "sounds",
+        "lang",
+        "modules",
+        "react"
+    ],
     "bugs": {
         "url": "https://github.com/jitsi/jitsi-meet/issues"
     },
