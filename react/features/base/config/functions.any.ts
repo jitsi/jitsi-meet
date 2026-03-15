@@ -450,6 +450,19 @@ export function getLegalUrls(state: IReduxState) {
 }
 
 /**
+ * Gets the security URL from config or returns default.
+ * Uses the existing legalUrls.security config field to support custom security endpoints.
+ *
+ * @returns {string} The security URL to use.
+ */
+export function getSecurityUrl(): string {
+    // @ts-expect-error APP is global
+    const config = APP.store.getState()['features/base/config'];
+
+    return config?.legalUrls?.security ?? DEFAULT_SECURITY_URL;
+}
+
+/**
  * Utility function to debounce the execution of a callback function.
  *
  * @param {Function} callback - The callback to debounce.
