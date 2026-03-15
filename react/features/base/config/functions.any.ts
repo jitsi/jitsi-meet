@@ -16,6 +16,7 @@ import CONFIG_WHITELIST from './configWhitelist';
 import {
     DEFAULT_HELP_CENTRE_URL,
     DEFAULT_PRIVACY_URL,
+    DEFAULT_SECURITY_URL,
     DEFAULT_TERMS_URL,
     FEATURE_FLAGS,
     _CONFIG_STORE_PREFIX
@@ -443,7 +444,8 @@ export function getLegalUrls(state: IReduxState) {
     return {
         privacy: configLegalUrls?.privacy || DEFAULT_PRIVACY_URL,
         helpCentre: helpCentreURL || configLegalUrls?.helpCentre || DEFAULT_HELP_CENTRE_URL,
-        terms: configLegalUrls?.terms || DEFAULT_TERMS_URL
+        terms: configLegalUrls?.terms || DEFAULT_TERMS_URL,
+        security: configLegalUrls?.security || DEFAULT_SECURITY_URL
     };
 }
 
