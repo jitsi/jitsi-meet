@@ -469,6 +469,8 @@
         "screenSharingFailed": "Oops! Something went wrong, we weren't able to start screen sharing!",
         "screenSharingFailedTitle": "Screen sharing failed!",
         "screenSharingPermissionDeniedError": "Oops! Something went wrong with your screen sharing permissions. Please reload and try again.",
+        "screenshareStoppedDiskSpace": "This happens if you used the macOS's floating toolbar to stop screen sharing. It may also be due to low disk space.",
+        "screenshareStoppedTitle": "Screen sharing stopped via system",
         "searchInSalesforce": "Search in Salesforce",
         "searchResults": "Search results({{count}})",
         "searchResultsDetailsError": "Something went wrong while retrieving owner data.",
