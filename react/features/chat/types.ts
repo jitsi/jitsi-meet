@@ -20,6 +20,10 @@ export interface IMessage {
     recipient: string;
     sentToVisitor?: boolean;
     timestamp: number;
+    edited?: boolean;
+    editHistory?: string[];
+    isDeleted?: boolean;
+    reported?: boolean;
 }
 
 /**
