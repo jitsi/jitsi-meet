@@ -281,6 +281,46 @@ end
 
             local voter = occupant_details;
 
+            -- Capture the voter's current vote state so we can detect changes.
+            local previous_answers = {};
+            for idx, answer in ipairs(poll.answers) do
+                previous_answers[idx] = false;
+                if answer.voters then
+                    for _, v in ipairs(answer.voters) do
+                        if v.id == voter.occupant_id then
+                            previous_answers[idx] = true;
+                            break;
+                        end
+                    end
+                end
+            end
+
+            -- Skip processing if the vote is identical to the previous one.
+            local vote_changed = false;
+            for idx, vote_flag in ipairs(data.answers) do
+                if previous_answers[idx] ~= vote_flag then
+                    vote_changed = true;
+                    break;
+                end
+            end
+            if not vote_changed then
+                return true;
+            end
+
+            -- Remove any previous votes by this voter before recording new ones,
+            -- preventing duplicate votes for the same option.
+            for _, answer in ipairs(poll.answers) do
+                if answer.voters then
+                    local filtered = {};
+                    for _, v in ipairs(answer.voters) do
+                        if v.id ~= voter.occupant_id then
+                            table.insert(filtered, v);
+                        end
+                    end
+                    answer.voters = filtered;
+                end
+            end
+
             local answers = {};
             for vote_option_idx, vote_flag in ipairs(data.answers) do
                 local answer = poll.answers[vote_option_idx]

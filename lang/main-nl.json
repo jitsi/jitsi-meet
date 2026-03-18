@@ -373,7 +373,7 @@
         "kickParticipantTitle": "Deze deelnemer verwijderen?",
         "kickSystemTitle": "Oei! U bent uit de vergadering verwijderd",
         "kickTitle": "Oei! {{participantDisplayName}} heeft u uit de vergadering verwijderd",
-        "learnMore": "meer informatie",
+        "learnMore": "Meer informatie",
         "linkMeeting": "Vergadering koppelen",
         "linkMeetingTitle": "Vergadering koppelen aan Salesforce",
         "liveStreaming": "Livestreamen",
@@ -385,6 +385,7 @@
         "login": "Inloggen",
         "loginFailed": "Inloggen is mislukt.",
         "loginOnResume": "Uw authenticatiesessie is verlopen. U moet opnieuw inloggen om de vergadering voort te zetten.",
+        "loginPopupBlocked": "Inloggen-popup werd geblokkeerd door uw browser.",
         "loginQuestion": "Weet u zeker dat u wilt inloggen en de conferentie verlaten?",
         "logoutQuestion": "Weet u zeker dat u zich wilt afmelden en de conferentie wilt stoppen?",
         "logoutTitle": "Afmelden",
@@ -445,9 +446,7 @@
         "recentlyUsedObjects": "Uw recent gebruikte objecten",
         "recording": "Opname",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Niet mogelijk tijdens een livestream",
-        "recordingInProgressDescription": "Deze bijeenkomst wordt opgenomen en geanalyseerd door AI{{learnMore}}. Uw audio en video zijn gedempt. Als u ervoor kiest om de demping op te heffen, stemt u ermee in dat u wordt opgenomen.",
-        "recordingInProgressDescriptionFirstHalf": "Deze bijeenkomst wordt opgenomen en geanalyseerd door AI",
-        "recordingInProgressDescriptionSecondHalf": ". Uw audio en video zijn gedempt. Als u ervoor kiest om de demping op te heffen, stemt u ermee in dat u wordt opgenomen.",
+        "recordingInProgressDescription": "Deze bijeenkomst wordt opgenomen en geanalyseerd door AI. Uw audio en video zijn gedempt. Als u ervoor kiest om de demping op te heffen, stemt u ermee in dat u wordt opgenomen.",
         "recordingInProgressTitle": "Opname loopt",
         "rejoinNow": "Nu opnieuw deelnemen",
         "remoteControlAllowedMessage": "{{user}} heeft uw verzoek om extern beheer geaccepteerd.",
@@ -712,8 +711,6 @@
         "googlePrivacyPolicy": "Privacybeleid Google",
         "inProgress": "Opname of livestreaming gaande",
         "invalidStreamKey": "Livestream-sleutel is mogelijk onjuist.",
-        "limitNotificationDescriptionNative": "Uw stream zal beperkt worden tot {{limit}} min. Voor ongelimiteerd streamen, probeer {{app}}.",
-        "limitNotificationDescriptionWeb": "Vanwege een grote vraag zal uw stream beperkt worden tot {{limit}} min. Voor ongelimiteerd streamen, probeer <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "off": "Livestream gestopt",
         "offBy": "{{name}} heeft de livestream gestopt.",
         "on": "Livestream",
@@ -730,6 +727,7 @@
         "streamIdHelp": "Wat is dit?",
         "title": "Livestream",
         "unavailableTitle": "Livestreamen niet beschikbaar",
+        "youTubeGoLiveWarning": "Vergeet niet om op 'Go Live' te klikken in YouTube Studio als Auto-Start/Auto-Stop is uitgeschakeld. Anders begint de stream niet met opnemen.",
         "youtubeTerms": "Servicevoorwaarden YouTube"
     },
     "lobby": {
@@ -995,7 +993,7 @@
             "pollQuestion": "Peiling vraag",
             "questionPlaceholder": "Stel een vraag",
             "removeOption": "Optie verwijderen",
-            "send": "Opslaan"
+            "save": "Opslaan"
         },
         "errors": {
             "notUniqueOption": "Opties moeten uniek zijn"
@@ -1133,8 +1131,6 @@
         "highlightMomentSuccess": "Moment gemarkeerd",
         "highlightMomentSucessDescription": "Uw gemarkeerde moment wordt toegevoegd aan de samenvatting van de vergadering.",
         "inProgress": "Opname of live streaming in uitvoering",
-        "limitNotificationDescriptionNative": "Vanwege een grote vraag wordt uw opname beperkt tot {{limit}} min. Voor ongelimiteerde opnamen, probeer <3>{{app}}</3>.",
-        "limitNotificationDescriptionWeb": "Vanwege een grote vraag wordt uw opname beperkt tot {{limit}} min. Voor ongelimiteerde opnamen, probeer <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Wij hebben een link naar uw opname gegenereerd.",
         "localRecordingNoNotificationWarning": "De opname wordt niet aan andere deelnemers bekendgemaakt. U moet hen laten weten dat de vergadering is opgenomen.",
         "localRecordingNoVideo": "Video wordt niet opgenomen",
@@ -1609,6 +1605,7 @@
         "addBackground": "Achtergrond toevoegen",
         "apply": "Toepassen",
         "backgroundEffectError": "Toepassen van achtergrondeffect niet gelukt.",
+        "backgroundLimitReached": "Aangepaste achtergrondlimiet bereikt",
         "blur": "Vervagen",
         "deleteImage": "Afbeelding verwijderen",
         "desktopShare": "Bureaublad delen",
@@ -1621,6 +1618,7 @@
         "image6": "Bos ",
         "image7": "Zonsopkomst",
         "none": "Geen",
+        "oldestBackgroundRemoved": "De oudste aangepaste achtergrond is verwijderd om de nieuwe toe te voegen.",
         "pleaseWait": "Even geduld a.u.b…",
         "removeBackground": "Verwijder achtergrond",
         "slightBlur": "Licht vervagen",

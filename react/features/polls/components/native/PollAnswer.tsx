@@ -2,10 +2,9 @@
 
 import React from 'react';
 import { Text, TextStyle, View, ViewStyle } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { IconCloseLarge } from '../../../base/icons/svg';
-import { getLocalParticipant } from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/native/Button';
 import IconButton from '../../../base/ui/components/native/IconButton';
 import Switch from '../../../base/ui/components/native/Switch';
@@ -19,6 +18,7 @@ import { dialogStyles, pollsStyles } from './styles';
 const PollAnswer = (props: AbstractProps) => {
     const {
         checkBoxStates,
+        creatorName,
         poll,
         sendPoll,
         setCheckbox,
@@ -30,7 +30,6 @@ const PollAnswer = (props: AbstractProps) => {
     } = props;
     const { changingVote, saved: pollSaved } = poll;
     const dispatch = useDispatch();
-    const localParticipant = useSelector(getLocalParticipant);
     const { PRIMARY, SECONDARY } = BUTTON_TYPES;
 
     return (
@@ -39,7 +38,7 @@ const PollAnswer = (props: AbstractProps) => {
                 <View>
                     <Text style = { dialogStyles.questionText as TextStyle } >{ poll.question }</Text>
                     <Text style = { dialogStyles.questionOwnerText as TextStyle } >{
-                        t('polls.by', { name: localParticipant?.name })
+                        t('polls.by', { name: creatorName })
                     }
                     </Text>
                 </View>

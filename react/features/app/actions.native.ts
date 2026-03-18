@@ -18,7 +18,7 @@ import isInsecureRoomName from '../base/util/isInsecureRoomName';
 import { parseURLParams } from '../base/util/parseURLParams';
 import {
     appendURLParam,
-    getBackendSafeRoomName,
+    getNormalizedRoomName,
     parseURIString,
     toURLString
 } from '../base/util/uri';
@@ -110,7 +110,7 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
         let url = `${baseURL}config.js`;
 
         // XXX In order to support multiple shards, tell the room to the deployment.
-        room && (url = appendURLParam(url, 'room', getBackendSafeRoomName(room) ?? ''));
+        room && (url = appendURLParam(url, 'room', getNormalizedRoomName(room) ?? ''));
 
         const { release } = parseURLParams(location, true, 'search');
 

@@ -9,7 +9,8 @@ import { isEmbedded } from '../util/embedUtils';
 import { parseURLParams } from '../util/parseURLParams';
 import {
     appendURLParam,
-    getBackendSafeRoomName
+    getBackendSafeRoomName,
+    getNormalizedRoomName
 } from '../util/uri';
 
 import {
@@ -142,7 +143,7 @@ export function constructOptions(state: IReduxState) {
     const { room } = state['features/base/conference'];
 
     if (serviceUrl && room) {
-        const roomName = getBackendSafeRoomName(room);
+        const roomName = getNormalizedRoomName(room);
 
         options.serviceUrl = appendURLParam(serviceUrl, 'room', roomName ?? '');
 

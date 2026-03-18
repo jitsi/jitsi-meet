@@ -3,6 +3,8 @@ import { View } from 'react-native';
 import { Edge, SafeAreaView } from 'react-native-safe-area-context';
 
 import { StyleType } from '../../styles/functions.any';
+import BaseTheme from '../../ui/components/BaseTheme.native';
+import { useKeyboardVisible } from '../hooks.native';
 
 import JitsiKeyboardAvoidingView from './JitsiKeyboardAvoidingView';
 import styles from './styles';
@@ -35,6 +37,11 @@ interface IProps {
     footerComponent?: Function;
 
     /**
+     * Extra bottom padding applied to the footer when keyboard is visible.
+     */
+    footerKeyboardSpacing?: number;
+
+    /**
      * Is a text input rendered at the bottom of the screen?
      */
     hasBottomTextInput?: boolean;
@@ -61,11 +68,14 @@ const JitsiScreen = ({
     children,
     disableForcedKeyboardDismiss = false,
     footerComponent,
+    footerKeyboardSpacing = BaseTheme.spacing[4],
     hasBottomTextInput = false,
     hasExtraHeaderHeight = false,
     safeAreaInsets = [ 'bottom', 'left', 'right' ],
     style
 }: IProps) => {
+    const keyboardVisible = useKeyboardVisible();
+
     const renderContent = () => (
         <JitsiKeyboardAvoidingView
             addBottomPadding = { addBottomPadding }
@@ -78,7 +88,11 @@ const JitsiScreen = ({
                 edges = { safeAreaInsets }
                 style = { styles.safeArea }>
                 { children }
-                { footerComponent?.() }
+                { footerComponent && (
+                    <View style = { keyboardVisible && { paddingBottom: footerKeyboardSpacing } }>
+                        { footerComponent() }
+                    </View>
+                ) }
             </SafeAreaView>
         </JitsiKeyboardAvoidingView>
     );

@@ -122,9 +122,8 @@ export function maybeRedirectToTokenAuthUrl(
     const refreshToken = state['features/base/jwt'].refreshToken;
     const expirationDate = getJwtExpirationDate(jwt);
 
-    // if there is jwt and its expiration time is less than 3 minutes away
-    // let's obtain new token
-    if (expirationDate && expirationDate.getTime() - Date.now() < 3 * 60 * 1000) {
+    // if there is jwt token, and it is expired let's obtain a new one
+    if (expirationDate && expirationDate.getTime() <= Date.now()) {
         const room = state['features/base/conference'].room;
         const { tenant } = parseURIString(locationURL.href) || {};
 
@@ -150,8 +149,8 @@ export function maybeRedirectToTokenAuthUrl(
 
                 return dispatch(openTokenAuthUrl(tokenAuthServiceUrl));
             })
-            .catch(() => {
-                failureCallback();
+            .catch(e => {
+                failureCallback(e);
             });
 
         return true;

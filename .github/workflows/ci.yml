@@ -7,8 +7,8 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
-    - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -42,8 +42,8 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest]
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
-    - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -59,8 +59,8 @@ jobs:
     name: Build mobile bundle (Android)
     runs-on: macos-15
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
-    - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -74,8 +74,8 @@ jobs:
     name: Build mobile bundle (iOS)
     runs-on: macos-15
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
-    - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -96,9 +96,18 @@ jobs:
         ruby-version: '3.4'
         bundler-cache: true
     - run: npx react-native info
+    - name: Cache CocoaPods
+      uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
+      with:
+        path: |
+          ios/Pods
+          ~/Library/Caches/CocoaPods
+        key: ${{ runner.os }}-cocoapods-${{ hashFiles('ios/Podfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cocoapods-
     - name: Install Pods
       working-directory: ./ios
-      run: bundle exec pod install --repo-update --deployment
+      run: bundle exec pod install --deployment
     - run: npx react-native bundle --entry-file react/index.native.js --platform ios --bundle-output /tmp/ios.bundle --reset-cache
   android-sdk-build:
     name: Build mobile SDK (Android)
@@ -116,8 +125,8 @@ jobs:
         rm -rf /host/usr/share/dotnet
         rm -rf /host/usr/share/swift
         df -h /
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
-    - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -137,8 +146,8 @@ jobs:
     name: Build mobile SDK (iOS)
     runs-on: macos-15
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
-    - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -164,10 +173,19 @@ jobs:
       with:
         ruby-version: '3.4'
         bundler-cache: true
+    - name: Cache CocoaPods
+      uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 #v4.2.0
+      with:
+        path: |
+          ios/Pods
+          ~/Library/Caches/CocoaPods
+        key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock', 'Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pods-
     - run: npx react-native info
     - name: Install Pods
       working-directory: ./ios
-      run: bundle exec pod install --repo-update --deployment
+      run: bundle exec pod install --deployment
     - run: |
         xcodebuild -downloadPlatform iOS -buildVersion 18.2
         xcodebuild archive \
@@ -187,8 +205,8 @@ jobs:
     name: Test Debian packages build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
-    - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'

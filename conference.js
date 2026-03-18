@@ -1641,12 +1641,6 @@ export default {
             JitsiE2ePingEvents.E2E_RTT_CHANGED,
             (...args) => APP.store.dispatch(e2eRttChanged(...args)));
 
-        room.addCommandListener(this.commands.defaults.ETHERPAD,
-            ({ value }) => {
-                APP.UI.initEtherpad(value);
-            }
-        );
-
         room.addCommandListener(this.commands.defaults.EMAIL, (data, from) => {
             APP.store.dispatch(participantUpdated({
                 conference: room,
@@ -1720,15 +1714,7 @@ export default {
             }
         );
 
-        room.on(JitsiConferenceEvents.PERMISSIONS_RECEIVED, p => {
-            const localParticipant = getLocalParticipant(APP.store.getState());
 
-            APP.store.dispatch(participantUpdated({
-                id: localParticipant.id,
-                local: true,
-                features: p
-            }));
-        });
     },
 
     /**
