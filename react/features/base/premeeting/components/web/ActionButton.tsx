@@ -122,12 +122,12 @@ const useStyles = makeStyles()(theme => {
             '&.disabled': {
                 background: theme.palette.prejoinActionButtonDisabled,
                 border: '1px solid #5E6D7A',
-                color: '#AFB6BC',
+                color: theme.palette.prejoinActionButtonDisabledText,
                 cursor: 'initial',
 
                 '.icon': {
                     '& > svg': {
-                        fill: '#AFB6BC'
+                        fill: theme.palette.prejoinActionButtonDisabledText
                     }
                 }
             },
