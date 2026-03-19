@@ -92,12 +92,17 @@ export function commonUserJoinedHandling(
         const isReplacing = user?.isReplacing();
         const isPromoted = conference?.getMetadataHandler().getMetadata()?.visitors?.promoted?.[id];
 
+        const jwtId = user.getIdentity()?.user?.id;
+
+        console.log('GT: remote user joined - id:', id, 'jwtId:', jwtId, 'displayName:', displayName, 'identity:', JSON.stringify(user.getIdentity()), 'role:', user.getRole(), 'properties:', JSON.stringify(user.getProperty && [ 'id', 'jwtId', 'jwt_id', 'user_id' ].map(k => ({ [k]: user.getProperty(k) }))));
+
         // the identity and avatar come from jwt and never change in the presence
         dispatch(participantJoined({
             avatarURL: user.getIdentity()?.user?.avatar,
             botType: user.getBotType(),
             conference,
             id,
+            jwtId,
             name: displayName,
             presence: user.getStatus(),
             role: user.getRole(),

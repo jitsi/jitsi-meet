@@ -180,6 +180,13 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
 
                     const newUser = user ? { ...user } : {};
 
+                    // Fishmeet extension: delegate avatar URL resolution to config function
+                    const { fishmeetGetAvatarUrl } = state['features/base/config'];
+
+                    if (fishmeetGetAvatarUrl && !newUser.avatarURL) {
+                        newUser.avatarURL = fishmeetGetAvatarUrl(context.user) || newUser.avatarURL;
+                    }
+
                     let features = context.features;
 
                     // eslint-disable-next-line max-depth

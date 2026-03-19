@@ -393,6 +393,7 @@ export interface IConfig {
         minParticipantCountForTopPanel?: number;
     };
     filmstripToggleIcons?: string[];
+    fishmeetGetAvatarUrl?: (user: object) => string | undefined;
     flags?: {
         ssrcRewritingEnabled: boolean;
     };
@@ -446,6 +447,7 @@ export interface IConfig {
     jaasConferenceCreatorUrl?: string;
     jaasFeedbackMetadataURL?: string;
     jaasTokenUrl?: string;
+    largeVideoHorizontalPadding?: number;
     legalUrls?: {
         helpCentre: string;
         privacy: string;

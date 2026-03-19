@@ -67,7 +67,10 @@ function devServerProxyBypass({ path }) {
     let tpath = path;
 
     // Serve the main HTML page and config.js locally
-    if ([ '/interface_config.js', '/index.html', '/config.js', '/' ].indexOf(tpath) !== -1) {
+    if ([
+        '/interface_config.js', '/index.html', '/config.js',
+        '/', '/pwa-worker.js', '/manifest.json'
+    ].indexOf(tpath) !== -1) {
         console.log('GT: Serving main HTML page locally:', tpath);
 
         return tpath;

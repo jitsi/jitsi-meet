@@ -70,6 +70,14 @@ interface IProps {
     _isScreenSharing: boolean;
 
     /**
+     * Optional horizontal padding (px) applied on each side of the large video container.
+     * Used by fishmeet to create a framed card layout. When set, the container is also
+     * shifted left by this amount via CSS, so width is reduced by 2× this value plus
+     * the filmstrip width.
+     */
+    _largeVideoHPad?: number;
+
+    /**
      * The large video participant id.
      */
     _largeVideoParticipantId: string;
@@ -330,7 +338,17 @@ class LargeVideo extends Component<IProps> {
             styles.backgroundSize = 'cover';
         }
 
-        if (_visibleFilmstrip && Number(_verticalFilmstripWidth) >= FILMSTRIP_BREAKPOINT) {
+        const hPad = this.props._largeVideoHPad || 0;
+
+        if (hPad && _visibleFilmstrip) {
+            // Padding active: always use _verticalViewMaxWidth (has default fallback) so
+            // the filmstrip is excluded even before the user resizes it above FILMSTRIP_BREAKPOINT.
+            // Only subtract hPad once (for the CSS left offset) — no right gap; large video
+            // extends flush to the filmstrip left edge.
+            styles.width = `calc(100% - ${(_verticalViewMaxWidth || 0) + hPad}px)`;
+        } else if (hPad) {
+            styles.width = `calc(100% - ${hPad}px)`;
+        } else if (_visibleFilmstrip && Number(_verticalFilmstripWidth) >= FILMSTRIP_BREAKPOINT) {
             styles.width = `calc(100% - ${_verticalViewMaxWidth || 0}px)`;
         }
 
@@ -380,6 +398,7 @@ function _mapStateToProps(state: IReduxState) {
 
     return {
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
+        _largeVideoHPad: state['features/base/config'].largeVideoHorizontalPadding,
         _customBackgroundColor: backgroundColor,
         _customBackgroundImageUrl: backgroundImageUrl,
         _displayScreenSharingPlaceholder:

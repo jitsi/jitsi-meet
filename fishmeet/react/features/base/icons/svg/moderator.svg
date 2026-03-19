@@ -1,0 +1,10 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 3 heads -->
+  <circle cx="4.5" cy="3.5" r="2" fill="currentColor"/>
+  <circle cx="12" cy="3.5" r="2" fill="currentColor"/>
+  <circle cx="19.5" cy="3.5" r="2" fill="currentColor"/>
+  <!-- 3 tall body arches: gap ~1px from dots, taller walls -->
+  <path d="M1 24 C1 7 8 7 8 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M8.5 24 C8.5 7 15.5 7 15.5 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M16 24 C16 7 23 7 23 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+</svg>
