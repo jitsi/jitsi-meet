@@ -95,13 +95,13 @@ const useStyles = makeStyles()((theme: Theme) => {
 });
 
 const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
+    const dispatch = useDispatch();
     const deeplinkingCfg = useSelector((state: IReduxState) =>
         state['features/base/config']?.deeplinking || {} as IDeeplinkingConfig);
     const { hideLogo } = deeplinkingCfg;
-    const deepLinkingUrl: string = useSelector(generateDeepLinkingURL);
+    const deepLinkingUrl: string | undefined = useSelector(generateDeepLinkingURL);
     const room = useSelector((state: IReduxState) => decodeURIComponent(state['features/base/conference'].room || ''));
     const url = useSelector((state: IReduxState) => state['features/base/connection'] || {});
-    const dispatch = useDispatch();
     const { classes: styles } = useStyles();
 
     const generateDownloadURL = useCallback(() => {
@@ -128,7 +128,10 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
         sendAnalytics(
             createDeepLinkingPageEvent(
                 'clicked', 'openAppButton', { isMobileBrowser: true }));
-    }, []);
+        if (!deepLinkingUrl) {
+            dispatch(openWebApp());
+        }
+    }, [ deepLinkingUrl ]);
 
     const onOpenLinkProperties = useMemo(() => {
         const { downloadLink }
