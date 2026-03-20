@@ -120,6 +120,10 @@
         "messagebox": "Введите сообщение",
         "newMessages": "Новые сообщения",
         "nickname": {
+            "featureChat": "чат",
+            "featureClosedCaptions": "субтитры",
+            "featureFileSharing": "файлы",
+            "featurePolls": "опросы",
             "popover": "Выберите имя",
             "title": "Введите имя для использования чата",
             "titleWithPolls": "Введите имя для использования чата"
@@ -130,6 +134,8 @@
         "smileysPanel": "Emoji панель",
         "tabs": {
             "chat": "Чат",
+            "closedCaptions": "СС",
+            "fileSharing": "Файлы",
             "polls": "Опросы"
         },
         "title": "Чат",
@@ -142,6 +148,10 @@
         "close": "Закрыть",
         "dontShowAgain": "Не показывай мне это снова",
         "installExtensionText": "Установите расширение для интеграции с Google Календарь и Office 365"
+    },
+    "closedCaptionsTab": {
+        "emptyState": "Субтитры будут доступны после запуска модератором",
+        "startClosedCaptionsButton": "Показать субтитры"
     },
     "connectingOverlay": {
         "joiningRoom": "Пытаемся присоединиться к вашей конференции…"
@@ -1191,7 +1201,8 @@
             "closeChat": "Закрыть чат",
             "closeMoreActions": "Закрыть меню дополнительных действий",
             "closeParticipantsPane": "Закрыть панель участников",
-            "collapse": "Крах",
+            "closedCaptions": "Субтитры",
+            "collapse": "Коллапс",
             "document": "Закрыть общий документ",
             "documentClose": "Закрыть общий документ",
             "documentOpen": "Открыть общий документ",
@@ -1279,6 +1290,7 @@
         "closeChat": "Закрыть чат",
         "closeParticipantsPane": "Закрыть панель участников",
         "closeReactionsMenu": "Закрыть меню реакций",
+        "closedCaptions": "Субтитры",
         "disableNoiseSuppression": "Выключить шумоподавление",
         "disableReactionSounds": "Выключить звуки реакций",
         "documentClose": "Закрыть общий документ",
@@ -1288,6 +1300,9 @@
         "embedMeeting": "Встроить встречу",
         "enableNoiseSuppression": "Включить шумоподавление",
         "endConference": "Завершить встречу для всех",
+        "endConferenceCancel": "Отменить",
+        "endConferenceConfirm": "Подтвердить",
+        "endConferenceConfirmTitle": "Вы уверены, что хотите завершить конференцию?",
         "enterFullScreen": "На полный экран",
         "enterTileView": "Общий план",
         "exitFullScreen": "Полный экран",
