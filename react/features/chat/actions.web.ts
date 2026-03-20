@@ -10,6 +10,7 @@ import {
 } from './actionTypes';
 import { closeChat, setFocusedTab } from './actions.any';
 import { ChatTabs } from './constants';
+import { beginAddPeople } from "../invite/actions.any";
 
 export * from './actions.any';
 
@@ -50,6 +51,17 @@ export function toggleChat() {
 
         // Recompute the large video size whenever we toggle the chat, as it takes chat state into account.
         VideoLayout.onResize();
+    };
+}
+
+/**
+ * Show invite screen
+ *
+ * @returns {Function}
+ */
+export function showInviteScreen() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        dispatch(beginAddPeople());
     };
 }
 

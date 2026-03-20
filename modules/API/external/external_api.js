@@ -86,6 +86,7 @@ const commands = {
     toggleChat: 'toggle-chat',
     toggleE2EE: 'toggle-e2ee',
     toggleFilmStrip: 'toggle-film-strip',
+    toggleInvite: 'toggle-invite',
     toggleLobby: 'toggle-lobby',
     toggleModeration: 'toggle-moderation',
     toggleNoiseSuppression: 'toggle-noise-suppression',

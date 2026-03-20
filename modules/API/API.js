@@ -73,7 +73,7 @@ import {
     setPrivateMessageRecipient,
     toggleChat
 } from '../../react/features/chat/actions';
-import { openChat } from '../../react/features/chat/actions.web';
+import { openChat, showInviteScreen } from '../../react/features/chat/actions.web';
 import { showDesktopPicker } from '../../react/features/desktop-picker/actions';
 import {
     processExternalDeviceRequest
@@ -461,6 +461,10 @@ function initCommands() {
         'toggle-chat': () => {
             sendAnalytics(createApiEvent('chat.toggled'));
             APP.store.dispatch(toggleChat());
+        },
+        'toggle-invite': () => {
+            sendAnalytics(createApiEvent('invite.opened'));
+            APP.store.dispatch(showInviteScreen());
         },
         'toggle-moderation': (enabled, mediaType) => {
             const state = APP.store.getState();
