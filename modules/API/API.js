@@ -124,6 +124,7 @@ import { SETTINGS_TABS } from '../../react/features/settings/constants';
 import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions';
 import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functions';
 import { setRequestingSubtitles, toggleRequestingSubtitles } from '../../react/features/subtitles/actions';
+import { isTranscribing } from '../../react/features/transcribing/functions';
 import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';
 import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
 import { muteAllParticipants, muteRemote } from '../../react/features/video-menu/actions';
@@ -1082,6 +1083,31 @@ function initCommands() {
             }
             callback({
                 livestreamUrl
+            });
+            break;
+        }
+        case 'get-recording-status': {
+            const state = APP.store.getState();
+            const conference = getCurrentConference(state);
+            const { FILE, STREAM } = JitsiRecordingConstants.mode;
+            let fileRecording = null;
+            let streamRecording = null;
+            let transcribing = false;
+
+            if (conference) {
+                const fileSession = getActiveSession(state, FILE);
+                const streamSession = getActiveSession(state, STREAM);
+
+                fileRecording = fileSession?.status ?? null;
+                streamRecording = streamSession?.status ?? null;
+                transcribing = isTranscribing(state);
+            } else {
+                logger.error('Conference is not defined');
+            }
+            callback({
+                fileRecording,
+                streamRecording,
+                transcribing
             });
             break;
         }
