@@ -26,9 +26,7 @@ export function generateDeepLinkingURL(state: IReduxState): string | undefined {
 
     const { appScheme, appPackage } = mobileConfig;
 
-    if (!appScheme) {
-        return undefined;
-    }
+    const scheme = appScheme || 'https';
 
     // Android: use an intent link, custom schemes don't work in all browsers.
     // https://developer.chrome.com/multidevice/android/intents
@@ -36,11 +34,11 @@ export function generateDeepLinkingURL(state: IReduxState): string | undefined {
         // https://meet.jit.si/foo -> meet.jit.si/foo
         const url = href.replace(regex, '').substr(2);
 
-        return `intent://${url}#Intent;scheme=${appScheme};package=${appPackage};end`;
+        return `intent://${url}#Intent;scheme=${scheme};package=${appPackage};end`;
     }
 
     // iOS: Replace the protocol part with the app scheme.
-    return href.replace(regex, `${appScheme}:`);
+    return href.replace(regex, `${scheme}:`);
 }
 
 /**

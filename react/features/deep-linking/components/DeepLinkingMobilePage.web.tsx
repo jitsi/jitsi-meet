@@ -128,10 +128,7 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
         sendAnalytics(
             createDeepLinkingPageEvent(
                 'clicked', 'openAppButton', { isMobileBrowser: true }));
-        if (!deepLinkingUrl) {
-            dispatch(openWebApp());
-        }
-    }, [ deepLinkingUrl ]);
+    }, []);
 
     const onOpenLinkProperties = useMemo(() => {
         const { downloadLink }
