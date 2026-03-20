@@ -1,12 +1,10 @@
-import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import React from 'react';
 import { useStyles } from 'tss-react/mui';
 
 import Icon from '../../../base/icons/components/Icon';
 import { IconConnection, IconConnectionInactive } from '../../../base/icons/svg';
-import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
-import { trackStreamingStatusChanged } from '../../../base/tracks/actions.web';
 import { ITrack } from '../../../base/tracks/types';
+import { useTrackStreamingStatus } from '../../hooks';
 
 interface IProps {
 
@@ -50,33 +48,10 @@ export const ConnectionIndicatorIcon = ({
     track
 }: IProps) => {
     const { cx } = useStyles();
-    const dispatch = useDispatch();
-    const sourceName = track?.jitsiTrack?.getSourceName();
 
-    const handleTrackStreamingStatusChanged = (jitsiTrack: any, streamingStatus: string) => {
-        dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus));
-    };
-
-    // TODO: replace this with a custom hook to be reused where track streaming status is needed.
-    // TODO: In the hood the listener should updates a local track streaming status instead of that in redux store.
-    useEffect(() => {
-        if (track && !track.local) {
-            track.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, handleTrackStreamingStatusChanged);
-
-            dispatch(trackStreamingStatusChanged(track.jitsiTrack, track.jitsiTrack.getTrackStreamingStatus?.()));
-        }
-
-        return () => {
-            if (track && !track.local) {
-                track.jitsiTrack.off(
-                    JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                    handleTrackStreamingStatusChanged
-                );
-
-                dispatch(trackStreamingStatusChanged(track.jitsiTrack, track.jitsiTrack.getTrackStreamingStatus?.()));
-            }
-        };
-    }, [ sourceName ]);
+    // The hook internally maintains local state and listens to track streaming status changes,
+    // answering the FIXME replacing the massive inline Redux dispatch pattern.
+    useTrackStreamingStatus(track);
 
     if (isConnectionStatusInactive) {
         if (connectionIndicatorInactiveDisabled) {
