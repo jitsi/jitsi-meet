@@ -36,6 +36,7 @@ export default class JitsiStreamBackgroundEffect {
     _segmentationMaskCanvas: HTMLCanvasElement;
     _virtualImage: HTMLImageElement;
     _virtualVideo: HTMLVideoElement;
+    _isUsingRVFC: boolean;
 
     /**
      * Optional callback ID for the requestVideoFrameCallback API.
@@ -78,8 +79,12 @@ export default class JitsiStreamBackgroundEffect {
      * @returns {void}
      */
     _onMaskFrameTimer(response: { data: { id: number; }; }) {
-        if (response.data.id === TIMEOUT_TICK) {
+        if (response.data.id === TIMEOUT_TICK && !this._isUsingRVFC) {
             this._renderMask();
+            this._maskFrameTimerWorker.postMessage({
+                id: SET_TIMEOUT,
+                timeMs: 1000 / 30
+            });
         }
     }
 
@@ -173,14 +178,9 @@ export default class JitsiStreamBackgroundEffect {
         this.runInference();
         this.runPostProcessing();
 
-        if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
+        if (this._isUsingRVFC) {
             // @ts-ignore
             this._frameCallbackId = this._inputVideoElement.requestVideoFrameCallback(this._renderMask);
-        } else {
-            this._maskFrameTimerWorker.postMessage({
-                id: SET_TIMEOUT,
-                timeMs: 1000 / 30
-            });
         }
     }
 
@@ -256,7 +256,9 @@ export default class JitsiStreamBackgroundEffect {
         this._inputVideoElement.autoplay = true;
         this._inputVideoElement.srcObject = this._stream;
         this._inputVideoElement.onloadeddata = () => {
-            if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
+            this._isUsingRVFC = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
+
+            if (this._isUsingRVFC) {
                 // @ts-ignore
                 this._frameCallbackId = this._inputVideoElement.requestVideoFrameCallback(this._renderMask);
             } else {
