@@ -700,7 +700,6 @@
         "durationNA": "N/A",
         "encoding": "인코딩",
         "label": "LOR",
-        "labelToolTip": "로컬 녹화가 진행 중입니다",
         "localRecording": "로컬 녹화",
         "me": "나",
         "messages": {
@@ -1218,7 +1217,6 @@
             "closeChat": "채팅 닫기",
             "closeMoreActions": "추가 작업 메뉴 닫기",
             "closeParticipantsPane": "참가자 패널 닫기",
-            "collapse": "축소",
             "document": "문서  전환",
             "documentClose": "공유 문서 닫기",
             "documentOpen": "공유 문서 열기",
@@ -1398,7 +1396,6 @@
         "ccButtonTooltip": "자막 시작/종료",
         "expandedLabel": "현재 스크립트 작성 중",
         "failed": "자막 작성 실패",
-        "labelToolTip": "회의가 기록되고 있습니다.",
         "sourceLanguageDesc": "현재 회의 언어는 <b>{{sourceLanguage}}</b>로 설정되어 있습니다. <br/> 변경하려면 ",
         "sourceLanguageHere": "여기에서",
         "start": "자막 표시 시작",

@@ -687,7 +687,6 @@
         "durationNA": "Ekki tiltækt",
         "encoding": "Kóðun",
         "label": "LOR",
-        "labelToolTip": "Upptaka á tölvunni er í gangi",
         "localRecording": "Upptaka á tölvunni",
         "me": "Ég",
         "messages": {
@@ -1177,7 +1176,6 @@
             "closeChat": "Loka spjalli",
             "closeMoreActions": "Loka valmynd fyrir fleiri aðgerðir",
             "closeParticipantsPane": "Loka spjaldi með þátttakendum",
-            "collapse": "Fella saman",
             "document": "Víxla deildu skjali af/á",
             "documentClose": "Loka deildu skjali",
             "documentOpen": "Opna deilt skjal",
@@ -1354,7 +1352,6 @@
         "error": "Umritun mistókst. Reyndu aftur.",
         "expandedLabel": "Umritun er virk",
         "failedToStart": "Tókst ekki að ræsa umritun",
-        "labelToolTip": "Verið er að taka umrita (transcribe) fundinn",
         "off": "Umritun stöðvuð",
         "on": "Umritun hafin",
         "pending": "Undirbý að taka umrita fundinn…",

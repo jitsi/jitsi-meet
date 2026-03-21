@@ -779,7 +779,6 @@
         "durationNA": "N.v.t.",
         "encoding": "Codering",
         "label": "LOO",
-        "labelToolTip": "Lokale opname is ingeschakeld",
         "localRecording": "Lokale Opname",
         "me": "Ik",
         "messages": {
@@ -1321,7 +1320,6 @@
             "closeMoreActions": "Menu Meer acties sluiten",
             "closeParticipantsPane": "Deelnemrsvenster sluiten",
             "closedCaptions": "Ondertiteling",
-            "collapse": "Inklappen",
             "document": "Gedeeld document in- of uitschakelen",
             "documentClose": "Gedeeld document sluiten",
             "documentOpen": "Gedeeld document openne",

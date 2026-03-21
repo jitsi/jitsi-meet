@@ -478,7 +478,6 @@
         "durationNA": "neznáma",
         "encoding": "Kódovanie",
         "label": "",
-        "labelToolTip": "Lokálne nahrávanie je aktivovaný",
         "localRecording": "Lokálne nahrávanie",
         "me": "Ja",
         "messages": {
@@ -825,7 +824,6 @@
         "error": "Prepisovanie zlyhalo. Skúsiť znovu.",
         "expandedLabel": "Prepisovanie je zapnuté",
         "failedToStart": "Prepisovanie sa nepodarilo naštartovať",
-        "labelToolTip": "Stretnutie je prepisované",
         "off": "Prepisovanie sa skončilo",
         "pending": "Pripravuje sa prepisovanie stretnutia…",
         "start": "Začni zobrazovať titulky",

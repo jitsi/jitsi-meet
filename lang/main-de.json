@@ -777,7 +777,6 @@
         "durationNA": "N. v.",
         "encoding": "Kodierung",
         "label": "LOR",
-        "labelToolTip": "Lokale Aufzeichnung ist aktiviert",
         "localRecording": "Lokale Aufzeichnung",
         "me": "Ich",
         "messages": {
@@ -1319,7 +1318,6 @@
             "closeMoreActions": "„Weitere Einstellungen“ schließen",
             "closeParticipantsPane": "Anwesendenliste schließen",
             "closedCaptions": "Untertitel",
-            "collapse": "Einklappen",
             "document": "Geteiltes Dokument schließen",
             "documentClose": "Geteiltes Dokument schließen",
             "documentOpen": "Geteiltes Dokument öffnen",

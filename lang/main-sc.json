@@ -757,7 +757,6 @@
         "durationNA": "Non a disponimentu",
         "encoding": "Codìfica",
         "label": "Registr. locale",
-        "labelToolTip": "Sa registratzione in locale est funtzionende",
         "localRecording": "Registratzione in locale",
         "me": "Deo",
         "messages": {
@@ -1296,7 +1295,6 @@
             "closeMoreActions": "Serra su menù de àteras optziones",
             "closeParticipantsPane": "Serra su pannellu de partetzipantes",
             "closedCaptions": "Sutatìtulos",
-            "collapse": "Mìnima",
             "document": "Càmbia documentu cumpartzidu",
             "documentClose": "Serra su documentu cumpartzidu",
             "documentOpen": "Aberi su documentu cumpartzidu",

@@ -771,7 +771,6 @@
         "durationNA": "Ж/Қ",
         "encoding": "Кодтау",
         "label": "LOR",
-        "labelToolTip": "Жергілікті жазу іске қосылды",
         "localRecording": "Жергілікті жазу",
         "me": "Мен",
         "messages": {
@@ -1312,7 +1311,6 @@
             "closeMoreActions": "Көбірек әрекеттер мәзірін жабу",
             "closeParticipantsPane": "Қатысушылар тақтасын жабу",
             "closedCaptions": "Субтитрлер",
-            "collapse": "Жию",
             "document": "Бөлісілген құжатты ауыстыру",
             "documentClose": "Бөлісілген құжатты жабу",
             "documentOpen": "Бөлісілген құжатты ашу",

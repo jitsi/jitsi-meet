@@ -694,7 +694,6 @@
         "durationNA": "Không",
         "encoding": "Mã hóa",
         "label": "Ghi hình",
-        "labelToolTip": "Ghi hình cục bộ đang bận",
         "localRecording": "Ghi hình cục bộ",
         "me": "Tôi",
         "messages": {
@@ -1189,7 +1188,6 @@
             "closeChat": "Đóng chat",
             "closeMoreActions": "Đóng menu hành động khác",
             "closeParticipantsPane": "Đóng khung người tham gia",
-            "collapse": "Thu gọn",
             "document": "Mở/Đóng tài liệu được chia sẻ",
             "documentClose": "Đóng tài liệu được chia sẻ",
             "documentOpen": "Mở tài liệu được chia sẻ",
@@ -1365,7 +1363,6 @@
         "ccButtonTooltip": "Chạy/Dừng phụ đề",
         "expandedLabel": "Phiên âm đang bật",
         "failedToStart": "Khởi chạy phiên âm thất bại",
-        "labelToolTip": "Cuộc họp đang được phiên âm",
         "sourceLanguageDesc": "Hiện tại ngôn ngữ của cuộc họp được đặt là <b>{{sourceLanguage}}</b>. <br/> Bạn có thể thay đổi nó từ",
         "sourceLanguageHere": "đây",
         "start": "Bắt đầu hiển thị phụ đề",

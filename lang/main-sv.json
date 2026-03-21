@@ -760,7 +760,6 @@
         "durationNA": "N/A",
         "encoding": "Kodning",
         "label": "LOR",
-        "labelToolTip": "Lokal inspelning aktiverad",
         "localRecording": "Lokal inspelning",
         "me": "Jag",
         "messages": {
@@ -1301,7 +1300,6 @@
             "closeMoreActions": "Stäng menyn för fler åtgärder",
             "closeParticipantsPane": "Stäng deltagarfönstret",
             "closedCaptions": "Undertexter",
-            "collapse": "Minimera",
             "document": "Växla delat dokument",
             "documentClose": "Stäng delat dokument",
             "documentOpen": "Öppna delat dokument",

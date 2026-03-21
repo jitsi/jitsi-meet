@@ -504,7 +504,6 @@
         "durationNA": "E/E",
         "encoding": "Kodeketa",
         "label": "GLO",
-        "labelToolTip": "Tokiko grabazioa gaituta dago",
         "localRecording": "Grabazio lokala",
         "me": "Ni",
         "messages": {
@@ -791,7 +790,6 @@
             "callQuality": "Kudeatu bideoaren kalitatea",
             "cc": "Txandakatu azpitituluak",
             "chat": "Txandakatu txat leihoa",
-            "collapse": "Batu",
             "document": "Txandakatu partekatutako dokumentua",
             "download": "Gure aplikazioak deskargatu",
             "embedMeeting": "Embed meeting",
@@ -906,7 +904,6 @@
         "error": "Transkripzioak huts egin du. Saiatu berriro.",
         "expandedLabel": "Transkripzioa aktibatuta",
         "failedToStart": "Ezin da transkripzioa hasi",
-        "labelToolTip": "Bilera transkribatzen ari da",
         "off": "Transkripzioa gelditu da",
         "pending": "Bileraren transkripzioa prestatzen…",
         "start": "Erakutsi azpitituluak",

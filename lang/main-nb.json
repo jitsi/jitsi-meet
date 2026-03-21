@@ -701,7 +701,6 @@
         "durationNA": "Ikke tilgjengelig",
         "encoding": "Koding",
         "label": "LOR",
-        "labelToolTip": "Lokalt opptak er aktivert",
         "localRecording": "Lokalt opptak",
         "me": "Meg",
         "messages": {
@@ -1220,7 +1219,6 @@
             "closeChat": "Lukk chat",
             "closeMoreActions": "Lukk menyen for flere handlinger",
             "closeParticipantsPane": "Lukk deltakerpanelet",
-            "collapse": "Skjul",
             "document": "Veksle delt dokument",
             "documentClose": "Lukk delt dokument",
             "documentOpen": "Åpne delt dokument",
@@ -1400,7 +1398,6 @@
         "ccButtonTooltip": "Start / Stopp undertekster",
         "expandedLabel": "Transkribering er for øyeblikket på",
         "failed": "Transkribering mislyktes",
-        "labelToolTip": "Møtet blir transkribert",
         "sourceLanguageDesc": "For øyeblikket er møtespråket satt til <b>{{sourceLanguage}}</b>. <br/> Du kan endre det ",
         "sourceLanguageHere": "her",
         "start": "Start visning av undertekster",

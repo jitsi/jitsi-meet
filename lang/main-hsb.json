@@ -597,7 +597,6 @@
         "durationNA": "p.w.",
         "encoding": "koděrowanje",
         "label": "LOR",
-        "labelToolTip": "lokalne nahrawanje aktiwěrowane",
         "localRecording": "lokalne nahrawanje",
         "me": "ja",
         "messages": {
@@ -1030,7 +1029,6 @@
             "cc": "podtitule zapnyć/hasnyć",
             "chat": "chat-woknješko pokazać/schować",
             "clap": "placać",
-            "collapse": "pomjeńšić",
             "document": "dźěleny dokument začinić",
             "download": "naše aplikacije downloadować ",
             "embedMeeting": "konferencu integrować",
@@ -1175,7 +1173,6 @@
         "error": "Nahrawanje njeje fungowało. Prošu spytajće znowa.",
         "expandedLabel": "transkriběrowanje je aktiwne",
         "failedToStart": "transkriběrowanje njehodźeše so startować",
-        "labelToolTip": "konferenca so transkriběruje",
         "off": "transkriběrowanje stopowane",
         "pending": " transkriběrowanje konferency so přihotuje…",
         "start": "pokazku podtitulow startować",

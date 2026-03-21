@@ -631,7 +631,6 @@
         "durationNA": "N/D",
         "encoding": "Kodowanie",
         "label": "LOR",
-        "labelToolTip": "Nagrywanie lokalne jest włączone",
         "localRecording": "Nagrywanie lokalne",
         "me": "To ja",
         "messages": {
@@ -1111,7 +1110,6 @@
             "closeChat": "Zamknij czat",
             "closeMoreActions": "Zamknij rozszerzone menu opcji",
             "closeParticipantsPane": "Zamknij okno uczestników",
-            "collapse": "Zwiń",
             "document": "Przełączanie wspólnego dokumentu",
             "documentClose": "Zamknij udostępniony dokument",
             "documentOpen": "Otwórz udostępniony dokument",
@@ -1288,7 +1286,6 @@
         "error": "Przepisywanie nie powiodło się. Proszę spróbować ponownie.",
         "expandedLabel": "Transkrypcja jest obecnie włączona",
         "failedToStart": "Błąd uruchomienia transkrypcji",
-        "labelToolTip": "Spotkanie jest transkrybowane",
         "off": "Transkrypcja została zatrzymana",
         "pending": "Przygotowanie do transkrypcji spotkania…",
         "sourceLanguageDesc": "Obecnie język spotkania jest ustawiony na <b>{{sourceLanguage}}</b>. <br/> Możesz to zmienić ",

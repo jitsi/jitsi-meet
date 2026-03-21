@@ -771,7 +771,6 @@
         "durationNA": "nav zināms",
         "encoding": "Kodējums",
         "label": "Kreisais/labais",
-        "labelToolTip": "Lokālais ieraksts ir ieslēgts",
         "localRecording": "Lokālais ieraksts",
         "me": "Es",
         "messages": {
@@ -1312,7 +1311,6 @@
             "closeMoreActions": "Aizvērt vairāk darbību izvēlni",
             "closeParticipantsPane": "Aizvērt dalībnieku paneli",
             "closedCaptions": "Slēgtie subtitri",
-            "collapse": "Sakļaut",
             "document": "Kopīgotais dokuments (iesl./izsl.)",
             "documentClose": "Aizvērt kopīgoto dokumentu",
             "documentOpen": "Atvērt kopīgoto dokumentu",
