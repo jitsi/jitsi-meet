@@ -34,12 +34,13 @@ export function checkVirtualBackgroundEnabled(state: IReduxState) {
  * Convert blob to base64.
  *
  * @param {Blob} blob - The link to add info with.
- * @returns {Promise<string>}
+ * @returns {Promise<string | undefined>} - Explicit return type prevents typescript from inferring 'unknown'.
  */
-export const blobToData = (blob: Blob) =>
+export const blobToData = (blob: Blob): Promise<string | undefined> =>
     new Promise(resolve => {
         const reader = new FileReader();
 
+        // reader.result can be null/undefined, so we ensure the generic Promise type handles it safely.
         reader.onloadend = () => resolve(reader.result?.toString());
         reader.readAsDataURL(blob);
     });
@@ -61,12 +62,12 @@ export const toDataURL = async (url: string) => {
 /**
  * Resize image and adjust original aspect ratio.
  *
- * @param {Object} base64image - Base64 image extraction.
+ * @param {string} base64image - Base64 image extraction. We use string instead of 'any' to enforce data-uri formatting.
  * @param {number} width - Value for resizing the image width.
  * @param {number} height - Value for resizing the image height.
  * @returns {Promise<string>}
  */
-export function resizeImage(base64image: any, width = 1920, height = 1080): Promise<string> {
+export function resizeImage(base64image: string, width = 1920, height = 1080): Promise<string> {
 
     // In order to work on Firefox browser we need to handle the asynchronous nature of image loading;  We need to use
     // a promise mechanism. The reason why it 'works' without this mechanism in Chrome is actually 'by accident' because
@@ -102,11 +103,12 @@ export function resizeImage(base64image: any, width = 1920, height = 1080): Prom
  * @param {number} milliseconds - The number of milliseconds to wait the specified
  * {@code promise} to settle before automatically rejecting the returned
  * {@code Promise}.
- * @param {Promise} promise - The {@code Promise} for which automatic rejecting
- * after the specified timeout is to be implemented.
- * @returns {Promise}
+ * @template T - The type of the value returned by the promise.
+ * @param {Promise<T>} promise - The {@code Promise} for which automatic rejecting
+ * after the specified timeout is to be implemented. We use Generics to preserve the original promise return type.
+ * @returns {Promise<T>}
  */
-export function timeout(milliseconds: number, promise: Promise<any>): Promise<Object> {
+export function timeout<T>(milliseconds: number, promise: Promise<T>): Promise<T> {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             reject(new Error('408'));
