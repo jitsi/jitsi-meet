@@ -735,6 +735,10 @@ var config = {
     // Disable app shortcuts that are registered upon joining a conference
     // disableShortcuts: false,
 
+    // An array with alternative key codes for hot keys.
+    // type:  Array<{ key: string; alt: string; }>
+    // alternativeShortcutKeys: [],
+
     // Disable initial browser getUserMedia requests.
     // This is useful for scenarios where users might want to start a conference for screensharing only
     // disableInitialGUM: false,
