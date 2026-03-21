@@ -1615,11 +1615,12 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Enable or disable the virtual background with a custom base64 image.
      *
      * @param {boolean} enabled - The boolean value to enable or disable.
-     * @param {string} backgroundImage - The base64 image.
+     * @param {string} backgroundType - 'image' | 'blur' | 'desktop-blur' | 'none'.
+     * @param {string} virtualSource - URL or base64 image for image backgrounds.
      * @returns {void}
     */
-    setVirtualBackground(enabled, backgroundImage) {
-        this.executeCommand('setVirtualBackground', enabled, backgroundImage);
+    setVirtualBackground(enabled, backgroundType, virtualSource) {
+        this.executeCommand('setVirtualBackground', enabled, backgroundType, virtualSource);
     }
 
     /**
