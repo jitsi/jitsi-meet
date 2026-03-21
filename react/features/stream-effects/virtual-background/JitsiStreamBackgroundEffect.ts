@@ -38,6 +38,11 @@ export default class JitsiStreamBackgroundEffect {
     _virtualVideo: HTMLVideoElement;
 
     /**
+     * Optional callback ID for the requestVideoFrameCallback API.
+     */
+    _frameCallbackId?: number;
+
+    /**
      * Represents a modified video MediaStream track.
      *
      * @class
@@ -57,6 +62,7 @@ export default class JitsiStreamBackgroundEffect {
 
         // Bind event handler so it is only bound once for every instance.
         this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this);
+        this._renderMask = this._renderMask.bind(this);
 
         // Workaround for FF issue https://bugzilla.mozilla.org/show_bug.cgi?id=1388974
         this._outputCanvasElement = document.createElement('canvas');
@@ -167,10 +173,15 @@ export default class JitsiStreamBackgroundEffect {
         this.runInference();
         this.runPostProcessing();
 
-        this._maskFrameTimerWorker.postMessage({
-            id: SET_TIMEOUT,
-            timeMs: 1000 / 30
-        });
+        if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
+            // @ts-ignore
+            this._frameCallbackId = this._inputVideoElement.requestVideoFrameCallback(this._renderMask);
+        } else {
+            this._maskFrameTimerWorker.postMessage({
+                id: SET_TIMEOUT,
+                timeMs: 1000 / 30
+            });
+        }
     }
 
     /**
@@ -245,10 +256,15 @@ export default class JitsiStreamBackgroundEffect {
         this._inputVideoElement.autoplay = true;
         this._inputVideoElement.srcObject = this._stream;
         this._inputVideoElement.onloadeddata = () => {
-            this._maskFrameTimerWorker.postMessage({
-                id: SET_TIMEOUT,
-                timeMs: 1000 / 30
-            });
+            if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
+                // @ts-ignore
+                this._frameCallbackId = this._inputVideoElement.requestVideoFrameCallback(this._renderMask);
+            } else {
+                this._maskFrameTimerWorker.postMessage({
+                    id: SET_TIMEOUT,
+                    timeMs: 1000 / 30
+                });
+            }
         };
 
         return this._outputCanvasElement.captureStream(parseInt(frameRate, 10));
@@ -260,6 +276,11 @@ export default class JitsiStreamBackgroundEffect {
      * @returns {void}
      */
     stopEffect() {
+        if (this._frameCallbackId !== undefined && 'cancelVideoFrameCallback' in HTMLVideoElement.prototype) {
+            // @ts-ignore
+            this._inputVideoElement.cancelVideoFrameCallback(this._frameCallbackId);
+        }
+
         this._maskFrameTimerWorker.postMessage({
             id: CLEAR_TIMEOUT
         });
