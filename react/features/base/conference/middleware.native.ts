@@ -35,11 +35,15 @@ MiddlewareRegistry.register(store => next => action => {
 
         const [ reason ] = error.params;
 
-        const reasonKey = Object.keys(TRIGGER_READY_TO_CLOSE_REASONS)[
+        let localizedReason = Object.keys(TRIGGER_READY_TO_CLOSE_REASONS)[
             Object.values(TRIGGER_READY_TO_CLOSE_REASONS).indexOf(reason)
         ];
 
-        dispatch(notifyConferenceFailed(reasonKey, () => {
+        if (reason === TRIGGER_READY_TO_CLOSE_REASONS['dialog.sessTerminatedReason']) {
+            localizedReason = '';
+        }
+
+        dispatch(notifyConferenceFailed(localizedReason, () => {
             dispatch(conferenceLeft(action.conference));
             dispatch(appNavigate(undefined));
         }));
