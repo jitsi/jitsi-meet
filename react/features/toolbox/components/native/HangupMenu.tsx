@@ -8,14 +8,15 @@ import { appNavigate } from '../../../app/actions';
 import { IReduxState } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { endConference } from '../../../base/conference/actions';
-import { hideSheet } from '../../../base/dialog/actions';
+import { hideSheet, openDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
-import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
-import { getLocalParticipant } from '../../../base/participants/functions';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { moveToRoom } from '../../../breakout-rooms/actions';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
+
+import EndConferenceDialog from './EndConferenceDialog';
 
 /**
  * Menu presenting options to leave a room or meeting and to end meeting.
@@ -27,13 +28,19 @@ function HangupMenu() {
     const _styles: any = useSelector((state: IReduxState) => ColorSchemeRegistry.get(state, 'Toolbox'));
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const isModerator = useSelector((state: IReduxState) =>
-        getLocalParticipant(state)?.role === PARTICIPANT_ROLE.MODERATOR);
+        isLocalParticipantModerator(state));
     const { DESTRUCTIVE, SECONDARY } = BUTTON_TYPES;
 
     const handleEndConference = useCallback(() => {
         dispatch(hideSheet());
-        sendAnalytics(createToolbarEvent('endmeeting'));
-        dispatch(endConference());
+        dispatch(openDialog(EndConferenceDialog, {
+            confirm: () => {
+                sendAnalytics(createToolbarEvent('endmeeting'));
+                dispatch(endConference());
+
+                return true;
+            }
+        }));
     }, [ hideSheet ]);
 
     const handleLeaveConference = useCallback(() => {

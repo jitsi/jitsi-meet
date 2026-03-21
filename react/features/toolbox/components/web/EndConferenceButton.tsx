@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { endConference } from '../../../base/conference/actions';
+import { hideDialog, openDialog } from '../../../base/dialog/actions';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 
+import EndConferenceDialog from './EndConferenceDialog';
 import { HangupContextMenuItem } from './HangupContextMenuItem';
 
 /**
@@ -40,8 +42,13 @@ export const EndConferenceButton = (props: IProps) => {
     const _isInBreakoutRoom = useSelector(isInBreakoutRoom);
 
     const onEndConference = useCallback(() => {
-        dispatch(endConference());
-    }, [ dispatch ]);
+        dispatch(openDialog(EndConferenceDialog, {
+            confirm: () => {
+                dispatch(endConference());
+                dispatch(hideDialog(EndConferenceDialog));
+            }
+        }));
+    }, []);
 
     return (<>
         { !_isInBreakoutRoom && _isLocalParticipantModerator && <HangupContextMenuItem
