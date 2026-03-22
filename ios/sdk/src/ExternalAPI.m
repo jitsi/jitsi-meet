@@ -134,17 +134,17 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     NSArray *participantsInfoArray = data[@"participantsInfo"];
     NSString *completionHandlerId = data[@"requestId"];
 
-    void (^completionHandler)(NSArray*) = participantInfoCompletionHandlers[completionHandlerId];
+    void (^completionHandler)(NSArray*) = [participantInfoCompletionHandlers objectForKey:completionHandlerId];
     if (completionHandler) {
         completionHandler(participantsInfoArray);
     }
-    participantInfoCompletionHandlers[completionHandlerId] = nil;
+    [participantInfoCompletionHandlers removeObjectForKey:completionHandlerId];
 }
 
 - (void) onRecordingStatusRetrieved:(NSDictionary *)data {
     NSString *completionHandlerId = data[@"requestId"];
 
-    void (^completionHandler)(NSDictionary*) = recordingStatusCompletionHandlers[completionHandlerId];
+    void (^completionHandler)(NSDictionary*) = [recordingStatusCompletionHandlers objectForKey:completionHandlerId];
     if (completionHandler) {
         NSDictionary *result = @{
             @"fileRecording": data[@"fileRecording"] ?: @"off",
@@ -153,21 +153,21 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
         };
         completionHandler(result);
     }
-    recordingStatusCompletionHandlers[completionHandlerId] = nil;
+    [recordingStatusCompletionHandlers removeObjectForKey:completionHandlerId];
 }
 
 - (void)getRecordingStatus:(void (^)(NSDictionary*))completionHandler {
     NSString *completionHandlerId = NSUUID.UUID.UUIDString;
     NSDictionary *data = @{ @"requestId": completionHandlerId };
 
-    recordingStatusCompletionHandlers[completionHandlerId] = [completionHandler copy];
+    [recordingStatusCompletionHandlers setObject:[completionHandler copy] forKey:completionHandlerId];
     [self sendEventWithName:getRecordingStatusAction body:data];
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)),
                    dispatch_get_main_queue(), ^{
-        if (recordingStatusCompletionHandlers[completionHandlerId] != nil) {
+        if ([recordingStatusCompletionHandlers objectForKey:completionHandlerId] != nil) {
             NSLog(@"[ExternalAPI] getRecordingStatus timed out, requestId: %@", completionHandlerId);
-            recordingStatusCompletionHandlers[completionHandlerId] = nil;
+            [recordingStatusCompletionHandlers removeObjectForKey:completionHandlerId];
         }
     });
 }
@@ -201,7 +201,7 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     NSString *completionHandlerId = [[NSUUID UUID] UUIDString];
     NSDictionary *data = @{ @"requestId": completionHandlerId};
     
-    participantInfoCompletionHandlers[completionHandlerId] = [completionHandler copy];
+    [participantInfoCompletionHandlers setObject:[completionHandler copy] forKey:completionHandlerId];
     
     [self sendEventWithName:retrieveParticipantsInfoAction body:data];
 }
