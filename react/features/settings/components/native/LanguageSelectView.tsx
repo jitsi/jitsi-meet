@@ -6,7 +6,8 @@ import { Edge } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import i18next, { DEFAULT_LANGUAGE, LANGUAGES } from '../../../base/i18n/i18next';
+import i18next, { DEFAULT_LANGUAGE } from '../../../base/i18n/i18next';
+import { getSupportedLanguages } from '../../../base/i18n/functions.any';
 import { IconArrowLeft } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import BaseThemeNative from '../../../base/ui/components/BaseTheme.native';
@@ -22,6 +23,7 @@ const LanguageSelectView = ({ goBack, isInWelcomePage }: {
     const navigation = useNavigation();
     const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
     const { language: currentLanguage = DEFAULT_LANGUAGE } = i18next;
+    const displayLanguages = useSelector(getSupportedLanguages);
 
     const setLanguage = useCallback(language => () => {
         i18next.changeLanguage(language);
@@ -53,7 +55,7 @@ const LanguageSelectView = ({ goBack, isInWelcomePage }: {
                 bounces = { isInWelcomePage }
                 contentContainerStyle = { styles.profileView as ViewStyle }>
                 {
-                    LANGUAGES.map(language => (
+                    displayLanguages.map(language => (
                         <TouchableHighlight
                             disabled = { currentLanguage === language }
                             key = { language }
