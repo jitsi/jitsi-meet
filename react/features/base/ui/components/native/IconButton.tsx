@@ -6,6 +6,7 @@ import styles from '../../../react/components/native/styles';
 import { IIconButtonProps } from '../../../react/types';
 import { BUTTON_TYPES } from '../../constants.native';
 import BaseTheme from '../BaseTheme.native';
+import { ColorPalette } from "../../../styles/components/styles/ColorPalette";
 
 
 const IconButton: React.FC<IIconButtonProps> = ({
@@ -20,7 +21,7 @@ const IconButton: React.FC<IIconButtonProps> = ({
     tapColor,
     type
 }: IIconButtonProps) => {
-    const { PRIMARY, SECONDARY, TERTIARY } = BUTTON_TYPES;
+    const { PRIMARY, SECONDARY, TERTIARY, DESTRUCTIVE } = BUTTON_TYPES;
 
     let color;
     let underlayColor;
@@ -38,6 +39,10 @@ const IconButton: React.FC<IIconButtonProps> = ({
         color = iconColor;
         iconButtonContainerStyles = styles.iconButtonContainer;
         underlayColor = BaseTheme.palette.action03;
+    } else if (type === DESTRUCTIVE) {
+            color = BaseTheme.palette.icon01;
+            iconButtonContainerStyles = styles.iconButtonContainerDestructive;
+            underlayColor = ColorPalette.darkGrey;
     } else {
         color = iconColor;
         underlayColor = tapColor;
