@@ -189,7 +189,9 @@ function UploadImageButton({
                     image = { rawImage }
                     onClose = { onFramingClose }
                     onSuccess = { onFramingSuccess }
-                    ratio = { trackRatio } />
+                    ratio = { trackRatio }
+                    targetHeight = { height }
+                    targetWidth = { width } />
             )}
         </>
     );

@@ -76,7 +76,11 @@ interface IProps {
     onSuccess: (dataURL: string) => void;
     onClose: () => void;
     ratio: number;
+    targetWidth?: number;
+    targetHeight?: number;
 }
+
+const MIN_SIZE = 100; // Minimum allowed crop size in pixels.
 
 const TARGET_RATIO = 16 / 9; // Unused, keeping as fallback if needed
 
@@ -112,6 +116,17 @@ function VirtualBackgroundFramingDialog({ image, onSuccess, onClose, ratio }: IP
         };
         img.src = image;
     }, [ image ]);
+
+    /**
+     * Global listener to stop dragging/resizing if the mouse is released outside the dialog.
+     */
+    useEffect(() => {
+        const stop = () => setInteraction(prev => ({ ...prev, mode: 'none' }));
+
+        window.addEventListener('mouseup', stop);
+
+        return () => window.removeEventListener('mouseup', stop);
+    }, []);
 
     useEffect(() => {
         if (imgRef.current && imgDimensions.width > 0) {
@@ -165,45 +180,45 @@ function VirtualBackgroundFramingDialog({ image, onSuccess, onClose, ratio }: IP
             newX = Math.max(displayDimensions.left, Math.min(newX, displayDimensions.left + displayDimensions.width - crop.w));
             newY = Math.max(displayDimensions.top, Math.min(newY, displayDimensions.top + displayDimensions.height - crop.h));
 
-            setCrop({ ...crop, x: newX, y: newY });
+            setCrop(prev => ({ ...prev, x: newX, y: newY }));
         } else if (interaction.mode === 'resizing') {
             let newW = startCrop.w;
             let newX = startCrop.x;
             let newY = startCrop.y;
 
             if (interaction.handle === 'se') {
-                newW = Math.max(50, startCrop.w + dx);
+                newW = Math.max(MIN_SIZE, startCrop.w + dx);
                 newW = Math.min(newW, displayDimensions.left + displayDimensions.width - startCrop.x);
                 newW = Math.min(newW, (displayDimensions.top + displayDimensions.height - startCrop.y) * ratio);
             } else if (interaction.handle === 'sw') {
-                newW = Math.max(50, startCrop.w - dx);
+                newW = Math.max(MIN_SIZE, startCrop.w - dx);
                 newW = Math.min(newW, startCrop.x + startCrop.w - displayDimensions.left);
                 newW = Math.min(newW, (displayDimensions.top + displayDimensions.height - startCrop.y) * ratio);
                 newX = startCrop.x + startCrop.w - newW;
             } else if (interaction.handle === 'ne') {
-                newW = Math.max(50, startCrop.w + dx);
+                newW = Math.max(MIN_SIZE, startCrop.w + dx);
                 newW = Math.min(newW, displayDimensions.left + displayDimensions.width - startCrop.x);
                 newW = Math.min(newW, (startCrop.y + startCrop.h - displayDimensions.top) * ratio);
                 newY = startCrop.y + startCrop.h - (newW / ratio);
             } else if (interaction.handle === 'nw') {
-                newW = Math.max(50, startCrop.w - dx);
+                newW = Math.max(MIN_SIZE, startCrop.w - dx);
                 newW = Math.min(newW, startCrop.x + startCrop.w - displayDimensions.left);
                 newW = Math.min(newW, (startCrop.y + startCrop.h - displayDimensions.top) * ratio);
                 newX = startCrop.x + startCrop.w - newW;
                 newY = startCrop.y + startCrop.h - (newW / ratio);
             }
 
-            setCrop({
+            setCrop(prev => ({
                 x: newX,
                 y: newY,
                 w: newW,
                 h: newW / ratio
-            });
+            }));
         }
     };
 
     const stopInteraction = () => {
-        setInteraction({ ...interaction, mode: 'none' });
+        setInteraction(prev => ({ ...prev, mode: 'none' }));
     };
 
     /**
@@ -223,17 +238,18 @@ function VirtualBackgroundFramingDialog({ image, onSuccess, onClose, ratio }: IP
         const sWidth = crop.w * scale;
         const sHeight = crop.h * scale;
 
-        // We use a high-quality 1920px width for the output, maintaining the camera's ratio.
-        const targetWidth = 1920;
-        const targetHeight = 1920 / ratio;
+        // Output resolution for the final background.
+        // We prefer matching the user's native camera resolution for optimal performance.
+        const finalWidth = targetWidth || 1920;
+        const finalHeight = targetHeight || Math.round(finalWidth / ratio);
 
         // Generate the final background image using our cropping utility.
-        const croppedUrl = await cropAndResizeImage(image, targetWidth, targetHeight, sx, sy, sWidth, sHeight);
+        const croppedUrl = await cropAndResizeImage(image, finalWidth, finalHeight, sx, sy, sWidth, sHeight);
 
         if (croppedUrl) {
             onSuccess(croppedUrl);
         }
-    }, [ image, imgDimensions, displayDimensions, crop, onSuccess, ratio ]);
+    }, [ image, imgDimensions, displayDimensions, crop, onSuccess, ratio, targetWidth, targetHeight ]);
 
     return (
         <Dialog
