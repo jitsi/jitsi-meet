@@ -86,10 +86,67 @@ export function resizeImage(base64image: any, width = 1920, height = 1080): Prom
             canvas.height = height;
 
             // Draw source image into the off-screen canvas.
-            // TODO: keep aspect ratio and implement object-fit: cover.
-            context?.drawImage(img as any, 0, 0, width, height);
+            // Proportional scaling for object-fit: cover.
+            const scale = Math.max(width / img.width, height / img.height);
+            const x = (width / 2) - (img.width / 2) * scale;
+            const y = (height / 2) - (img.height / 2) * scale;
+
+            context?.drawImage(img as any, x, y, img.width * scale, img.height * scale);
 
             // Encode image to data-uri with base64 version of compressed image.
+            resolve(canvas.toDataURL('image/jpeg', 0.5));
+        };
+        img.src = base64image;
+    });
+}
+
+/**
+ * Resizes an image and crops it based on the specified coordinates.
+ *
+ * @param {string} base64image - Base64 encoded image.
+ * @param {number} width - Target width.
+ * @param {number} height - Target height.
+ * @param {number} sx - Source x.
+ * @param {number} sy - Source y.
+ * @param {number} sWidth - Source width.
+ * @param {number} sHeight - Source height.
+ * @returns {Promise<string>}
+ */
+export function cropAndResizeImage(
+        base64image: string,
+        width: number,
+        height: number,
+        sx: number,
+        sy: number,
+        sWidth: number,
+        sHeight: number): Promise<string | undefined> {
+    return new Promise(resolve => {
+        const img = document.createElement('img');
+
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+
+            // Use Math.round to ensure the target dimensions are strictly integers.
+            // This prevents the 'vertical lines' caused by sub-pixel gaps at the canvas edges.
+            const targetWidth = Math.round(width);
+            const targetHeight = Math.round(height);
+
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+
+            // Mirror the context so that the output image is pre-flipped.
+            // This ensures that when Jitsi mirrors the local video using CSS scaleX(-1),
+            // the background appears in the correct orientation to the user while
+            // the framing tool itself remains un-flipped.
+            context?.save();
+            context?.scale(-1, 1);
+            context?.translate(-targetWidth, 0);
+
+            context?.drawImage(img as any, sx, sy, sWidth, sHeight, 0, 0, targetWidth, targetHeight);
+
+            context?.restore();
+
             resolve(canvas.toDataURL('image/jpeg', 0.5));
         };
         img.src = base64image;

@@ -3,14 +3,28 @@ import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 import { v4 as uuidv4 } from 'uuid';
 
+import { IStore } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconPlus } from '../../base/icons/svg';
+import { setVirtualBackground, toggleBackgroundEffect } from '../actions';
 import { type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { resizeImage } from '../functions';
 import logger from '../logger';
 
+import VirtualBackgroundFramingDialog from './VirtualBackgroundFramingDialog';
+
 interface IProps extends WithTranslation {
+
+    /**
+     * Redux dispatch function.
+     */
+    dispatch: IStore['dispatch'];
+
+    /**
+     * The local video track.
+     */
+    localVideoTrack: any;
 
     /**
      * Callback used to set the 'loading' state of the parent component.
@@ -70,6 +84,8 @@ const useStyles = makeStyles()(theme => {
  * @returns {React$Node}
  */
 function UploadImageButton({
+    dispatch,
+    localVideoTrack,
     setLoading,
     setOptions,
     setStoredImages,
@@ -78,6 +94,7 @@ function UploadImageButton({
     t
 }: IProps) {
     const { classes } = useStyles();
+    const [ rawImage, setRawImage ] = React.useState<string | null>(null);
     const uploadImageButton = useRef<HTMLInputElement>(null);
     const uploadImageKeyPress = useCallback(e => {
         if (uploadImageButton.current && (e.key === ' ' || e.key === 'Enter')) {
@@ -98,22 +115,7 @@ function UploadImageButton({
 
         reader.readAsDataURL(imageFile[0]);
         reader.onload = async () => {
-            const url = await resizeImage(reader.result);
-            const uuId = uuidv4();
-
-            setStoredImages([
-                ...storedImages,
-                {
-                    id: uuId,
-                    src: url
-                }
-            ]);
-            setOptions({
-                backgroundEffectEnabled: true,
-                backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
-                selectedThumbnail: uuId,
-                virtualSource: url
-            });
+            setRawImage(reader.result as string);
         };
         logger.info('New virtual background image uploaded!');
 
@@ -122,6 +124,40 @@ function UploadImageButton({
             logger.error('Failed to upload virtual image!');
         };
     }, [ storedImages ]);
+
+    const onFramingSuccess = useCallback((url: string) => {
+        const uuId = uuidv4();
+        const options = {
+            backgroundEffectEnabled: true,
+            backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
+            selectedThumbnail: uuId,
+            virtualSource: url
+        };
+
+        setStoredImages([
+            ...storedImages,
+            {
+                id: uuId,
+                src: url
+            }
+        ]);
+        setOptions(options);
+
+        // Sync with global meeting background instantly
+        dispatch(toggleBackgroundEffect(options, localVideoTrack));
+
+        setRawImage(null);
+    }, [ storedImages, setStoredImages, setOptions, dispatch, localVideoTrack ]);
+
+    const onFramingClose = useCallback(() => {
+        setRawImage(null);
+        setLoading(false);
+    }, [ setLoading ]);
+
+    // Retrieve the active track's dimensions to calculate the aspect ratio.
+    // We use optional chaining and fallbacks to prevent crashes if the track is not yet initialized.
+    const { width, height } = localVideoTrack?.getSettings?.() || localVideoTrack?.getConstraints?.() || {};
+    const trackRatio = (width && height) ? width / height : 16 / 9;
 
     return (
         <>
@@ -145,6 +181,13 @@ function UploadImageButton({
                 ref = { uploadImageButton }
                 role = 'button'
                 type = 'file' />
+            {rawImage && (
+                <VirtualBackgroundFramingDialog
+                    image = { rawImage }
+                    onClose = { onFramingClose }
+                    onSuccess = { onFramingSuccess }
+                    ratio = { trackRatio } />
+            )}
         </>
     );
 }
