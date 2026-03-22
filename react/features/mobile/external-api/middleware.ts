@@ -62,6 +62,7 @@ import { RECORDING_TYPES } from '../../recording/constants';
 import { getActiveSession } from '../../recording/functions';
 import { setRequestingSubtitles } from '../../subtitles/actions.any';
 import { CUSTOM_BUTTON_PRESSED } from '../../toolbox/actionTypes';
+import { isTranscribing } from '../../transcribing/functions';
 import { muteLocal } from '../../video-menu/actions.native';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture/actionTypes';
 // @ts-ignore
@@ -110,6 +111,11 @@ const PARTICIPANTS_INFO_RETRIEVED = 'PARTICIPANTS_INFO_RETRIEVED';
  * Event which will be emitted on the native side to indicate the recording status has changed.
  */
 const RECORDING_STATUS_CHANGED = 'RECORDING_STATUS_CHANGED';
+
+/**
+ * Event which will be emitted on the native side with the recording status response.
+ */
+const RECORDING_STATUS_RETRIEVED = 'RECORDING_STATUS_RETRIEVED';
 
 const externalAPIEnabled = isExternalAPIAvailable();
 
@@ -645,6 +651,31 @@ function _registerForNativeEvents(store: IStore) {
             facingMode
         });
     });
+
+    eventEmitter.addListener(ExternalAPI.GET_RECORDING_STATUS, ({ requestId }: { requestId: string; }) => {
+        const state = getState();
+        const conference = getCurrentConference(state);
+        const { FILE, STREAM } = JitsiRecordingConstants.mode;
+        const { OFF } = JitsiRecordingConstants.status;
+        let fileRecording = OFF;
+        let streamRecording = OFF;
+        let transcribing = false;
+
+        if (conference) {
+            fileRecording = getActiveSession(state, FILE)?.status ?? OFF;
+            streamRecording = getActiveSession(state, STREAM)?.status ?? OFF;
+            transcribing = isTranscribing(state);
+        } else {
+            logger.warn('GET_RECORDING_STATUS: no active conference, returning empty status');
+        }
+
+        sendEvent(store, RECORDING_STATUS_RETRIEVED, {
+            fileRecording,
+            requestId,
+            streamRecording,
+            transcribing
+        });
+    });
 }
 
 /**
@@ -671,6 +702,7 @@ function _unregisterForNativeEvents() {
     eventEmitter.removeAllListeners(ExternalAPI.STOP_RECORDING);
     eventEmitter.removeAllListeners(ExternalAPI.OVERWRITE_CONFIG);
     eventEmitter.removeAllListeners(ExternalAPI.SEND_CAMERA_FACING_MODE_MESSAGE);
+    eventEmitter.removeAllListeners(ExternalAPI.GET_RECORDING_STATUS);
 }
 
 /**
