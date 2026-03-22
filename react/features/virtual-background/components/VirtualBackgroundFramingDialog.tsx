@@ -93,7 +93,7 @@ const TARGET_RATIO = 16 / 9; // Unused, keeping as fallback if needed
  *
  * @returns {ReactElement}
  */
-function VirtualBackgroundFramingDialog({ image, onSuccess, onClose, ratio }: IProps) {
+function VirtualBackgroundFramingDialog({ image, onSuccess, onClose, ratio, targetWidth, targetHeight }: IProps) {
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
     const [ imgDimensions, setImgDimensions ] = useState({ width: 0, height: 0 });
@@ -144,24 +144,25 @@ function VirtualBackgroundFramingDialog({ image, onSuccess, onClose, ratio }: IP
                 h = w / ratio;
             }
 
-            setCrop({
+            setCrop(() => ({
                 x: offsetLeft + (offsetWidth - w) / 2,
                 y: offsetTop + (offsetHeight - h) / 2,
                 w,
                 h
-            });
+            }));
         }
     }, [ imgDimensions ]);
 
     const startInteraction = (e: React.MouseEvent, mode: 'dragging' | 'resizing', handle?: string) => {
         e.stopPropagation();
-        setInteraction({
+        setInteraction(prev => ({
+            ...prev,
             mode,
             handle,
             startX: e.clientX,
             startY: e.clientY,
             startCrop: { ...crop }
-        });
+        }));
     };
 
     const handleMouseMove = (e: React.MouseEvent) => {
