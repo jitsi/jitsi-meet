@@ -213,8 +213,9 @@ function VirtualBackgroundFramingDialog({ image, onSuccess, onClose, ratio }: IP
         // Calculate the scale between the displayed image and the original source image.
         const scale = imgDimensions.width / displayDimensions.width;
 
-        // sx and sy are the starting coordinates in the original image.
-        // Derived by comparing the viewfinder's position relative to the displayed image's top-left.
+        // Convert crop rectangle from displayed image coordinates
+        // to original image coordinates using the scale factor.
+        // This ensures we crop the correct region from the full resolution image.
         const sx = (crop.x - displayDimensions.left) * scale;
         const sy = (crop.y - displayDimensions.top) * scale;
 

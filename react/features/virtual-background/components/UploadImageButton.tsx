@@ -115,6 +115,9 @@ function UploadImageButton({
 
         reader.readAsDataURL(imageFile[0]);
         reader.onload = async () => {
+            // After uploading an image, we open a framing dialog so the user can
+            // select the exact portion of the image to use as the virtual background.
+            // The crop maintains the same aspect ratio as the user's camera.
             setRawImage(reader.result as string);
         };
         logger.info('New virtual background image uploaded!');

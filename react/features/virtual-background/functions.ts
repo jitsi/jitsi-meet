@@ -135,10 +135,9 @@ export function cropAndResizeImage(
             canvas.width = targetWidth;
             canvas.height = targetHeight;
 
-            // Mirror the context so that the output image is pre-flipped.
-            // This ensures that when Jitsi mirrors the local video using CSS scaleX(-1),
-            // the background appears in the correct orientation to the user while
-            // the framing tool itself remains un-flipped.
+            // Mirror the cropped image horizontally so that when the local video
+            // is mirrored via CSS in Jitsi, the background appears correctly aligned
+            // with the user's preview.
             context?.save();
             context?.scale(-1, 1);
             context?.translate(-targetWidth, 0);
