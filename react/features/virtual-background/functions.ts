@@ -127,24 +127,10 @@ export function cropAndResizeImage(
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
 
-            // Use Math.round to ensure the target dimensions are strictly integers.
-            // This prevents the 'vertical lines' caused by sub-pixel gaps at the canvas edges.
-            const targetWidth = Math.round(width);
-            const targetHeight = Math.round(height);
+            canvas.width = width;
+            canvas.height = height;
 
-            canvas.width = targetWidth;
-            canvas.height = targetHeight;
-
-            // Mirror the cropped image horizontally so that when the local video
-            // is mirrored via CSS in Jitsi, the background appears correctly aligned
-            // with the user's preview.
-            context?.save();
-            context?.scale(-1, 1);
-            context?.translate(-targetWidth, 0);
-
-            context?.drawImage(img as any, sx, sy, sWidth, sHeight, 0, 0, targetWidth, targetHeight);
-
-            context?.restore();
+            context?.drawImage(img as any, sx, sy, sWidth, sHeight, 0, 0, width, height);
 
             resolve(canvas.toDataURL('image/jpeg', 0.5));
         };

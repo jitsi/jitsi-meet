@@ -225,9 +225,9 @@ function VirtualBackgroundFramingDialog({ image, onSuccess, onClose, ratio }: IP
 
         // We use a high-quality 1920px width for the output, maintaining the camera's ratio.
         const targetWidth = 1920;
-        const targetHeight = Math.round(1920 / ratio);
+        const targetHeight = 1920 / ratio;
 
-        // Generate the final image. This also handles pre-mirroring internally for local preview sync.
+        // Generate the final background image using our cropping utility.
         const croppedUrl = await cropAndResizeImage(image, targetWidth, targetHeight, sx, sy, sWidth, sHeight);
 
         if (croppedUrl) {
