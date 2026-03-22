@@ -42,7 +42,7 @@ export const EndConferenceButton = (props: IProps) => {
     const _isInBreakoutRoom = useSelector(isInBreakoutRoom);
 
     const onEndConference = useCallback(() => {
-        dispatch(openDialog(EndConferenceDialog, {
+        dispatch(openDialog('endConference', EndConferenceDialog, {
             confirm: () => {
                 dispatch(endConference());
                 dispatch(hideDialog(EndConferenceDialog));

@@ -33,7 +33,7 @@ function HangupMenu() {
 
     const handleEndConference = useCallback(() => {
         dispatch(hideSheet());
-        dispatch(openDialog(EndConferenceDialog, {
+        dispatch(openDialog('endConference', EndConferenceDialog, {
             confirm: () => {
                 sendAnalytics(createToolbarEvent('endmeeting'));
                 dispatch(endConference());
