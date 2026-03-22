@@ -42,7 +42,8 @@ public class BroadcastAction {
         START_RECORDING("org.jitsi.meet.START_RECORDING"),
         STOP_RECORDING("org.jitsi.meet.STOP_RECORDING"),
         OVERWRITE_CONFIG("org.jitsi.meet.OVERWRITE_CONFIG"),
-        SEND_CAMERA_FACING_MODE_MESSAGE("org.jitsi.meet.SEND_CAMERA_FACING_MODE_MESSAGE");
+        SEND_CAMERA_FACING_MODE_MESSAGE("org.jitsi.meet.SEND_CAMERA_FACING_MODE_MESSAGE"),
+        GET_RECORDING_STATUS("org.jitsi.meet.GET_RECORDING_STATUS");
 
         private final String action;
 

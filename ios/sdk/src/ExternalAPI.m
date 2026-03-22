@@ -34,14 +34,17 @@ static NSString * const startRecordingAction = @"org.jitsi.meet.START_RECORDING"
 static NSString * const stopRecordingAction = @"org.jitsi.meet.STOP_RECORDING";
 static NSString * const overwriteConfigAction = @"org.jitsi.meet.OVERWRITE_CONFIG";
 static NSString * const sendCameraFacingModeMessageAction = @"org.jitsi.meet.SEND_CAMERA_FACING_MODE_MESSAGE";
+static NSString * const getRecordingStatusAction = @"org.jitsi.meet.GET_RECORDING_STATUS";
 
 @implementation ExternalAPI
 
 static NSMapTable<NSString*, void (^)(NSArray* participantsInfo)> *participantInfoCompletionHandlers;
+static NSMapTable<NSString*, void (^)(NSDictionary* recordingStatus)> *recordingStatusCompletionHandlers;
 
 __attribute__((constructor))
 static void initializeViewsMap(void) {
     participantInfoCompletionHandlers = [NSMapTable strongToStrongObjectsMapTable];
+    recordingStatusCompletionHandlers = [NSMapTable strongToStrongObjectsMapTable];
 }
 
 RCT_EXPORT_MODULE();
@@ -64,7 +67,8 @@ RCT_EXPORT_MODULE();
         @"START_RECORDING": startRecordingAction,
         @"STOP_RECORDING": stopRecordingAction,
         @"OVERWRITE_CONFIG": overwriteConfigAction,
-        @"SEND_CAMERA_FACING_MODE_MESSAGE": sendCameraFacingModeMessageAction
+        @"SEND_CAMERA_FACING_MODE_MESSAGE": sendCameraFacingModeMessageAction,
+        @"GET_RECORDING_STATUS": getRecordingStatusAction
     };
 };
 
@@ -96,7 +100,8 @@ RCT_EXPORT_MODULE();
               startRecordingAction,
               stopRecordingAction,
               overwriteConfigAction,
-              sendCameraFacingModeMessageAction
+              sendCameraFacingModeMessageAction,
+              getRecordingStatusAction
     ];
 }
 
@@ -114,19 +119,57 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
         [self onParticipantsInfoRetrieved: data];
         return;
     }
-    
+
+    if ([name isEqual: @"RECORDING_STATUS_RETRIEVED"]) {
+        [self onRecordingStatusRetrieved: data];
+        return;
+    }
+
     [[NSNotificationCenter defaultCenter] postNotificationName:sendEventNotificationName
                                                         object:nil
                                                       userInfo:@{@"name": name, @"data": data}];
 }
 
 - (void) onParticipantsInfoRetrieved:(NSDictionary *)data {
-    NSArray *participantsInfoArray = [data objectForKey:@"participantsInfo"];
-    NSString *completionHandlerId = [data objectForKey:@"requestId"];
-    
-    void (^completionHandler)(NSArray*) = [participantInfoCompletionHandlers objectForKey:completionHandlerId];
-    completionHandler(participantsInfoArray);
-    [participantInfoCompletionHandlers removeObjectForKey:completionHandlerId];
+    NSArray *participantsInfoArray = data[@"participantsInfo"];
+    NSString *completionHandlerId = data[@"requestId"];
+
+    void (^completionHandler)(NSArray*) = participantInfoCompletionHandlers[completionHandlerId];
+    if (completionHandler) {
+        completionHandler(participantsInfoArray);
+    }
+    participantInfoCompletionHandlers[completionHandlerId] = nil;
+}
+
+- (void) onRecordingStatusRetrieved:(NSDictionary *)data {
+    NSString *completionHandlerId = data[@"requestId"];
+
+    void (^completionHandler)(NSDictionary*) = recordingStatusCompletionHandlers[completionHandlerId];
+    if (completionHandler) {
+        NSDictionary *result = @{
+            @"fileRecording": data[@"fileRecording"] ?: @"off",
+            @"streamRecording": data[@"streamRecording"] ?: @"off",
+            @"transcribing": data[@"transcribing"] ?: @NO
+        };
+        completionHandler(result);
+    }
+    recordingStatusCompletionHandlers[completionHandlerId] = nil;
+}
+
+- (void)getRecordingStatus:(void (^)(NSDictionary*))completionHandler {
+    NSString *completionHandlerId = NSUUID.UUID.UUIDString;
+    NSDictionary *data = @{ @"requestId": completionHandlerId };
+
+    recordingStatusCompletionHandlers[completionHandlerId] = [completionHandler copy];
+    [self sendEventWithName:getRecordingStatusAction body:data];
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)),
+                   dispatch_get_main_queue(), ^{
+        if (recordingStatusCompletionHandlers[completionHandlerId] != nil) {
+            NSLog(@"[ExternalAPI] getRecordingStatus timed out, requestId: %@", completionHandlerId);
+            recordingStatusCompletionHandlers[completionHandlerId] = nil;
+        }
+    });
 }
 
 - (void)sendHangUp {
@@ -158,7 +201,7 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     NSString *completionHandlerId = [[NSUUID UUID] UUIDString];
     NSDictionary *data = @{ @"requestId": completionHandlerId};
     
-    [participantInfoCompletionHandlers setObject:[completionHandler copy] forKey:completionHandlerId];
+    participantInfoCompletionHandlers[completionHandlerId] = [completionHandler copy];
     
     [self sendEventWithName:retrieveParticipantsInfoAction body:data];
 }
@@ -217,26 +260,24 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
 }
 
 - (void)startRecording:(NSString*)mode :(NSString*)dropboxToken :(BOOL)shouldShare :(NSString*)rtmpStreamKey :(NSString*)rtmpBroadcastID :(NSString*)youtubeStreamKey :(NSString*)youtubeBroadcastID :(NSDictionary*)extraMetadata :(BOOL)transcription {
-    NSDictionary *data = @{
-        @"mode": mode,
-        @"dropboxToken": dropboxToken,
-        @"shouldShare": @(shouldShare),
-        @"rtmpStreamKey": rtmpStreamKey,
-        @"rtmpBroadcastID": rtmpBroadcastID,
-        @"youtubeStreamKey": youtubeStreamKey,
-        @"youtubeBroadcastID": youtubeBroadcastID,
-        @"extraMetadata": extraMetadata,
-        @"transcription": @(transcription)
-    };
-    
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    if (mode) data[@"mode"] = mode;
+    if (dropboxToken) data[@"dropboxToken"] = dropboxToken;
+    data[@"shouldShare"] = @(shouldShare);
+    if (rtmpStreamKey) data[@"rtmpStreamKey"] = rtmpStreamKey;
+    if (rtmpBroadcastID) data[@"rtmpBroadcastID"] = rtmpBroadcastID;
+    if (youtubeStreamKey) data[@"youtubeStreamKey"] = youtubeStreamKey;
+    if (youtubeBroadcastID) data[@"youtubeBroadcastID"] = youtubeBroadcastID;
+    if (extraMetadata) data[@"extraMetadata"] = extraMetadata;
+    data[@"transcription"] = @(transcription);
+
     [self sendEventWithName:startRecordingAction body:data];
 }
 
 - (void)stopRecording:(NSString*)mode :(BOOL)transcription {
-    NSDictionary *data = @{
-        @"mode": mode,
-        @"transcription": @(transcription)
-    };
+    NSMutableDictionary *data = NSMutableDictionary.new;
+    if (mode) data[@"mode"] = mode;
+    data[@"transcription"] = @(transcription);
     
     [self sendEventWithName:stopRecordingAction body:data];
 }
