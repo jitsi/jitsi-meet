@@ -12,6 +12,17 @@ export interface IBackgroundEffectOptions {
     virtualBackground: {
         backgroundType?: string;
         blurValue?: number;
+        studioLightOptions?: {
+            bgDimming?: number;
+            brightness?: number;
+            contrast?: number;
+            glowIntensity?: number;
+            saturation?: number;
+            skinSmoothing?: number;
+            toneB?: number;
+            toneG?: number;
+            toneR?: number;
+        };
         virtualSource?: string;
     };
     width: number;

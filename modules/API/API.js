@@ -128,7 +128,11 @@ import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/function
 import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
 import { muteAllParticipants, muteRemote } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality/actions';
-import { toggleBackgroundEffect, toggleBlurredBackgroundEffect } from '../../react/features/virtual-background/actions';
+import {
+    toggleBackgroundEffect,
+    toggleBlurredBackgroundEffect,
+    toggleStudioLightEffect
+} from '../../react/features/virtual-background/actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../react/features/virtual-background/constants';
 import { toggleWhiteboard } from '../../react/features/whiteboard/actions.web';
 import { getJitsiMeetTransport } from '../transport';
@@ -923,6 +927,12 @@ function initCommands() {
                 backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
                 virtualSource: backgroundImage
             }, jitsiTrack));
+        },
+        'set-studio-light': (enabled, preset) => {
+            const tracks = APP.store.getState()['features/base/tracks'];
+            const jitsiTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
+
+            APP.store.dispatch(toggleStudioLightEffect(jitsiTrack, enabled, preset));
         },
         'show-pip': () => {
             APP.store.dispatch(showPiP());

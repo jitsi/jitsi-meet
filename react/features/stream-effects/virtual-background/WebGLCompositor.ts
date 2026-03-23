@@ -11,7 +11,7 @@ const VERTEX_SHADER_SOURCE = `
 `;
 
 // GLSL ES 1.0 — compatible with both WebGL 1 and WebGL 2.
-const FRAGMENT_SHADER_SOURCE = `
+const VB_FRAGMENT_SHADER_SOURCE = `
     precision mediump float;
 
     uniform sampler2D u_camera;
@@ -54,6 +54,132 @@ const FRAGMENT_SHADER_SOURCE = `
     }
 `;
 
+// Studio light fragment shader — applies brightness, contrast, skin smoothing,
+// tone correction and edge glow to the person region identified by the mask.
+const STUDIO_LIGHT_FRAGMENT_SHADER_SOURCE = `
+    precision mediump float;
+
+    uniform sampler2D u_camera;
+    uniform sampler2D u_mask;
+    uniform sampler2D u_prevMask;
+    uniform float     u_temporalRatio;
+    uniform float     u_edgeLow;
+    uniform float     u_edgeHigh;
+    uniform vec2      u_maskTexelSize;
+
+    uniform float u_brightness;
+    uniform float u_contrast;
+    uniform float u_glowIntensity;
+    uniform float u_saturation;
+    uniform float u_skinSmoothing;
+    uniform vec3  u_toneRGB;
+    uniform vec2  u_cameraTexelSize;
+    uniform float u_bgDimming;
+
+    // Face focus: radial falloff concentrates the effect on the face region.
+    // u_focusCenter is the UV center of the face area (default 0.5, 0.35 — upper-center).
+    // u_focusRadius controls the inner (full-effect) and outer (fade-to-zero) radii.
+    // The aspect ratio correction ensures a circular falloff on non-square frames.
+    uniform vec2  u_focusCenter;
+    uniform float u_focusInnerRadius;
+    uniform float u_focusOuterRadius;
+    uniform float u_aspectRatio;
+
+    varying vec2 v_texCoord;
+
+    float sampleMask(sampler2D tex, vec2 tc) {
+        vec2 t = u_maskTexelSize;
+        // When maskTexelSize is (0,0) all taps collapse — no blur, crisp edges.
+        return
+            texture2D(tex, tc + vec2(-t.x, -t.y)).r * 0.0625 +
+            texture2D(tex, tc + vec2( 0.0, -t.y)).r * 0.125  +
+            texture2D(tex, tc + vec2( t.x, -t.y)).r * 0.0625 +
+            texture2D(tex, tc + vec2(-t.x,  0.0)).r * 0.125  +
+            texture2D(tex, tc                    ).r * 0.25   +
+            texture2D(tex, tc + vec2( t.x,  0.0)).r * 0.125  +
+            texture2D(tex, tc + vec2(-t.x,  t.y)).r * 0.0625 +
+            texture2D(tex, tc + vec2( 0.0,  t.y)).r * 0.125  +
+            texture2D(tex, tc + vec2( t.x,  t.y)).r * 0.0625;
+    }
+
+    vec4 sampleCameraBlurred(vec2 tc) {
+        vec2 t = u_cameraTexelSize * 2.0;
+        vec4 s = vec4(0.0);
+        s += texture2D(u_camera, tc + vec2(-2.0*t.x, -2.0*t.y)) * 0.003;
+        s += texture2D(u_camera, tc + vec2(-1.0*t.x, -2.0*t.y)) * 0.013;
+        s += texture2D(u_camera, tc + vec2( 0.0,     -2.0*t.y)) * 0.022;
+        s += texture2D(u_camera, tc + vec2( 1.0*t.x, -2.0*t.y)) * 0.013;
+        s += texture2D(u_camera, tc + vec2( 2.0*t.x, -2.0*t.y)) * 0.003;
+        s += texture2D(u_camera, tc + vec2(-2.0*t.x, -1.0*t.y)) * 0.013;
+        s += texture2D(u_camera, tc + vec2(-1.0*t.x, -1.0*t.y)) * 0.060;
+        s += texture2D(u_camera, tc + vec2( 0.0,     -1.0*t.y)) * 0.098;
+        s += texture2D(u_camera, tc + vec2( 1.0*t.x, -1.0*t.y)) * 0.060;
+        s += texture2D(u_camera, tc + vec2( 2.0*t.x, -1.0*t.y)) * 0.013;
+        s += texture2D(u_camera, tc + vec2(-2.0*t.x,  0.0     )) * 0.022;
+        s += texture2D(u_camera, tc + vec2(-1.0*t.x,  0.0     )) * 0.098;
+        s += texture2D(u_camera, tc                              ) * 0.162;
+        s += texture2D(u_camera, tc + vec2( 1.0*t.x,  0.0     )) * 0.098;
+        s += texture2D(u_camera, tc + vec2( 2.0*t.x,  0.0     )) * 0.022;
+        s += texture2D(u_camera, tc + vec2(-2.0*t.x,  1.0*t.y)) * 0.013;
+        s += texture2D(u_camera, tc + vec2(-1.0*t.x,  1.0*t.y)) * 0.060;
+        s += texture2D(u_camera, tc + vec2( 0.0,      1.0*t.y)) * 0.098;
+        s += texture2D(u_camera, tc + vec2( 1.0*t.x,  1.0*t.y)) * 0.060;
+        s += texture2D(u_camera, tc + vec2( 2.0*t.x,  1.0*t.y)) * 0.013;
+        s += texture2D(u_camera, tc + vec2(-2.0*t.x,  2.0*t.y)) * 0.003;
+        s += texture2D(u_camera, tc + vec2(-1.0*t.x,  2.0*t.y)) * 0.013;
+        s += texture2D(u_camera, tc + vec2( 0.0,      2.0*t.y)) * 0.022;
+        s += texture2D(u_camera, tc + vec2( 1.0*t.x,  2.0*t.y)) * 0.013;
+        s += texture2D(u_camera, tc + vec2( 2.0*t.x,  2.0*t.y)) * 0.003;
+        return s;
+    }
+
+    void main() {
+        vec4 original = texture2D(u_camera, v_texCoord);
+
+        float curAlpha  = sampleMask(u_mask, v_texCoord);
+        float prevAlpha = sampleMask(u_prevMask, v_texCoord);
+        float blended   = mix(curAlpha, prevAlpha, u_temporalRatio);
+        float alpha     = smoothstep(u_edgeLow, u_edgeHigh, blended);
+
+        // Face focus: radial falloff from u_focusCenter.
+        // Aspect-ratio-correct distance so the falloff is circular, not elliptical.
+        vec2 diff = v_texCoord - u_focusCenter;
+        diff.x *= u_aspectRatio;
+        float dist = length(diff);
+        float focusWeight = 1.0 - smoothstep(u_focusInnerRadius, u_focusOuterRadius, dist);
+
+        alpha *= focusWeight;
+
+        // 1. Skin smoothing: blend original with blurred version within mask.
+        vec4 blurred = sampleCameraBlurred(v_texCoord);
+        vec4 smoothed = mix(original, blurred, u_skinSmoothing * alpha);
+
+        // 2. Brightness and contrast.
+        vec3 adjusted = (smoothed.rgb - 0.5) * u_contrast + 0.5 + u_brightness;
+        adjusted = clamp(adjusted, 0.0, 1.0);
+
+        // 3. Tone correction (RGB gains).
+        adjusted *= u_toneRGB;
+        adjusted = clamp(adjusted, 0.0, 1.0);
+
+        // 4. Saturation: shift toward/away from luminance.
+        float luma = dot(adjusted, vec3(0.2126, 0.7152, 0.0722));
+        adjusted = mix(vec3(luma), adjusted, u_saturation);
+        adjusted = clamp(adjusted, 0.0, 1.0);
+
+        // 5. Edge glow: peaks at mask boundary where alpha*(1-alpha) is max.
+        float edgeMask = alpha * (1.0 - alpha) * 4.0;
+        adjusted += adjusted * u_glowIntensity * edgeMask;
+        adjusted = clamp(adjusted, 0.0, 1.0);
+
+        // Dim background proportional to how far outside the person mask.
+        vec3 bg = original.rgb * (1.0 - u_bgDimming * (1.0 - alpha));
+
+        // Mix: person region gets studio-lit version, background dimmed.
+        gl_FragColor = vec4(mix(bg, adjusted, alpha), 1.0);
+    }
+`;
+
 // Full-screen quad: two triangles covering clip space [-1,1].
 const QUAD_VERTICES = new Float32Array([
     -1, -1, 0, 1,
@@ -80,9 +206,9 @@ function compileShader(gl: WebGLRenderingContext, type: number, source: string):
     return shader;
 }
 
-function createProgram(gl: WebGLRenderingContext): WebGLProgram {
+function createProgram(gl: WebGLRenderingContext, fragmentSource: string): WebGLProgram {
     const vert = compileShader(gl, gl.VERTEX_SHADER, VERTEX_SHADER_SOURCE);
-    const frag = compileShader(gl, gl.FRAGMENT_SHADER, FRAGMENT_SHADER_SOURCE);
+    const frag = compileShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
     const program = gl.createProgram();
 
     if (!program) {
@@ -148,7 +274,7 @@ export default class WebGLCompositor {
     _aPosition = -1;
     _aTexCoord = -1;
 
-    // Uniform locations — resolved once after program link.
+    // Uniform locations — VB program, resolved once after program link.
     _uBackground: WebGLUniformLocation | null = null;
     _uCamera: WebGLUniformLocation | null = null;
     _uEdgeHigh: WebGLUniformLocation | null = null;
@@ -157,6 +283,28 @@ export default class WebGLCompositor {
     _uMaskTexelSize: WebGLUniformLocation | null = null;
     _uPrevMask: WebGLUniformLocation | null = null;
     _uTemporalRatio: WebGLUniformLocation | null = null;
+
+    // Studio light program and uniform locations.
+    _studioProgram: WebGLProgram | null = null;
+    _uStAspectRatio: WebGLUniformLocation | null = null;
+    _uStBgDimming: WebGLUniformLocation | null = null;
+    _uStBrightness: WebGLUniformLocation | null = null;
+    _uStCamera: WebGLUniformLocation | null = null;
+    _uStCameraTexelSize: WebGLUniformLocation | null = null;
+    _uStContrast: WebGLUniformLocation | null = null;
+    _uStEdgeHigh: WebGLUniformLocation | null = null;
+    _uStEdgeLow: WebGLUniformLocation | null = null;
+    _uStFocusCenter: WebGLUniformLocation | null = null;
+    _uStFocusInnerRadius: WebGLUniformLocation | null = null;
+    _uStFocusOuterRadius: WebGLUniformLocation | null = null;
+    _uStGlowIntensity: WebGLUniformLocation | null = null;
+    _uStMask: WebGLUniformLocation | null = null;
+    _uStMaskTexelSize: WebGLUniformLocation | null = null;
+    _uStPrevMask: WebGLUniformLocation | null = null;
+    _uStSaturation: WebGLUniformLocation | null = null;
+    _uStSkinSmoothing: WebGLUniformLocation | null = null;
+    _uStTemporalRatio: WebGLUniformLocation | null = null;
+    _uStToneRGB: WebGLUniformLocation | null = null;
 
     /**
      * Creates a WebGLCompositor targeting the given canvas.
@@ -277,6 +425,123 @@ export default class WebGLCompositor {
     }
 
     /**
+     * Composites the camera frame with studio light effects applied to the person region.
+     *
+     * @param {TexImageSource} cameraSource - Live camera frame.
+     * @param {ImageData} maskData - Current-frame segmentation mask.
+     * @param {number} temporalRatio - Blend weight toward previous mask.
+     * @param {number} edgeLow - Smoothstep lower threshold.
+     * @param {number} edgeHigh - Smoothstep upper threshold.
+     * @param {boolean} isFirstFrame - Seeds previous-mask from current on first frame.
+     * @param {number} maskBlurRadius - Gaussian blur radius in mask-texture pixels.
+     * @param {number} brightness - Brightness offset.
+     * @param {number} contrast - Contrast multiplier.
+     * @param {number} skinSmoothing - Skin smoothing blend factor (0-1).
+     * @param {number} glowIntensity - Edge glow intensity.
+     * @param {number} toneR - Red channel gain.
+     * @param {number} toneG - Green channel gain.
+     * @param {number} toneB - Blue channel gain.
+     * @param {number} saturation - Color saturation (1.0 = normal, greater is more vivid, less is muted).
+     * @param {number} bgDimming - Background dimming factor (0.0 = none, 1.0 = fully black).
+     * @returns {void}
+     */
+    compositeStudioLight(
+            cameraSource: TexImageSource,
+            maskData: ImageData,
+            temporalRatio: number,
+            edgeLow: number,
+            edgeHigh: number,
+            isFirstFrame: boolean,
+            maskBlurRadius: number,
+            brightness: number,
+            contrast: number,
+            skinSmoothing: number,
+            glowIntensity: number,
+            toneR: number,
+            toneG: number,
+            toneB: number,
+            saturation: number,
+            bgDimming = 0
+    ): void {
+        const gl = this._gl;
+
+        if (!gl || !this._studioProgram) {
+            return;
+        }
+
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.viewport(0, 0, this._canvas.width, this._canvas.height);
+        gl.useProgram(this._studioProgram);
+
+        // Camera texture
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, this._texCamera);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cameraSource);
+        gl.uniform1i(this._uStCamera, 0);
+
+        // Current mask — raw Uint8Array upload bypasses premultiplied-alpha.
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, this._texMask);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, maskData.width, maskData.height,
+            0, gl.RGBA, gl.UNSIGNED_BYTE, maskData.data);
+        gl.uniform1i(this._uStMask, 1);
+
+        // Previous mask — GPU ping-pong via _texMaskB.
+        gl.activeTexture(gl.TEXTURE2);
+        gl.bindTexture(gl.TEXTURE_2D, this._texMaskB);
+        if (isFirstFrame) {
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, maskData.width, maskData.height,
+                0, gl.RGBA, gl.UNSIGNED_BYTE, maskData.data);
+        }
+        gl.uniform1i(this._uStPrevMask, 2);
+
+        // Mask uniforms
+        gl.uniform1f(this._uStTemporalRatio, temporalRatio);
+        gl.uniform1f(this._uStEdgeLow, edgeLow);
+        gl.uniform1f(this._uStEdgeHigh, edgeHigh);
+        gl.uniform2f(this._uStMaskTexelSize,
+            maskBlurRadius / maskData.width, maskBlurRadius / maskData.height);
+
+        // Studio light uniforms
+        gl.uniform1f(this._uStBrightness, brightness);
+        gl.uniform1f(this._uStContrast, contrast);
+        gl.uniform1f(this._uStSaturation, saturation);
+        gl.uniform1f(this._uStSkinSmoothing, skinSmoothing);
+        gl.uniform1f(this._uStGlowIntensity, glowIntensity);
+        gl.uniform3f(this._uStToneRGB, toneR, toneG, toneB);
+        gl.uniform1f(this._uStBgDimming, bgDimming);
+        gl.uniform2f(this._uStCameraTexelSize,
+            1.0 / this._canvas.width, 1.0 / this._canvas.height);
+
+        // Face focus: radial falloff concentrates effect on upper-center (face).
+        const w = this._canvas.width;
+        const h = this._canvas.height;
+
+        gl.uniform2f(this._uStFocusCenter, 0.5, 0.35);
+        gl.uniform1f(this._uStFocusInnerRadius, 0.18);
+        gl.uniform1f(this._uStFocusOuterRadius, 0.40);
+        gl.uniform1f(this._uStAspectRatio, w / h);
+
+        this._bindQuadState(gl);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+        // GPU ping-pong: swap _texMask and _texMaskB.
+        const tmp = this._texMask;
+
+        this._texMask = this._texMaskB;
+        this._texMaskB = tmp;
+    }
+
+    /**
+     * Returns true if the studio light shader program compiled successfully.
+     *
+     * @returns {boolean}
+     */
+    get isStudioLightAvailable(): boolean {
+        return this._studioProgram !== null && this.isAvailable;
+    }
+
+    /**
      * Releases all WebGL resources.
      *
      * @returns {void}
@@ -304,6 +569,7 @@ export default class WebGLCompositor {
         gl.deleteTexture(this._texMaskB);
         gl.deleteBuffer(this._quadBuffer);
         gl.deleteProgram(this._program);
+        gl.deleteProgram(this._studioProgram);
 
         this._texCamera = null;
         this._texBackground = null;
@@ -311,6 +577,7 @@ export default class WebGLCompositor {
         this._texMaskB = null;
         this._quadBuffer = null;
         this._program = null;
+        this._studioProgram = null;
         this._gl = null;
     }
 
@@ -332,12 +599,20 @@ export default class WebGLCompositor {
         this._gl = gl;
 
         try {
-            this._program = createProgram(gl);
+            this._program = createProgram(gl, VB_FRAGMENT_SHADER_SOURCE);
         } catch (err) {
-            logger.error('[VirtualBackground] WebGLCompositor: shader build failed', err);
+            logger.error('[VirtualBackground] WebGLCompositor: VB shader build failed', err);
             this._gl = null;
 
             return;
+        }
+
+        try {
+            this._studioProgram = createProgram(gl, STUDIO_LIGHT_FRAGMENT_SHADER_SOURCE);
+        } catch (err) {
+            logger.warn('[VirtualBackground] WebGLCompositor: studio light shader build failed', err);
+
+            // Non-fatal — VB still works. Studio light compositing will fall back to Canvas 2D.
         }
 
         // Vertex buffer — shared position + texCoord interleaved
@@ -352,7 +627,7 @@ export default class WebGLCompositor {
         // draw call so TF.js cannot permanently corrupt our attribute state.
         this._bindQuadState(gl);
 
-        // Resolve uniform locations
+        // Resolve VB uniform locations.
         gl.useProgram(this._program);
         this._uCamera = gl.getUniformLocation(this._program, 'u_camera');
         this._uBackground = gl.getUniformLocation(this._program, 'u_background');
@@ -362,6 +637,30 @@ export default class WebGLCompositor {
         this._uTemporalRatio = gl.getUniformLocation(this._program, 'u_temporalRatio');
         this._uEdgeLow = gl.getUniformLocation(this._program, 'u_edgeLow');
         this._uEdgeHigh = gl.getUniformLocation(this._program, 'u_edgeHigh');
+
+        // Resolve studio light uniform locations.
+        if (this._studioProgram) {
+            gl.useProgram(this._studioProgram);
+            this._uStCamera = gl.getUniformLocation(this._studioProgram, 'u_camera');
+            this._uStMask = gl.getUniformLocation(this._studioProgram, 'u_mask');
+            this._uStPrevMask = gl.getUniformLocation(this._studioProgram, 'u_prevMask');
+            this._uStTemporalRatio = gl.getUniformLocation(this._studioProgram, 'u_temporalRatio');
+            this._uStEdgeLow = gl.getUniformLocation(this._studioProgram, 'u_edgeLow');
+            this._uStEdgeHigh = gl.getUniformLocation(this._studioProgram, 'u_edgeHigh');
+            this._uStMaskTexelSize = gl.getUniformLocation(this._studioProgram, 'u_maskTexelSize');
+            this._uStBgDimming = gl.getUniformLocation(this._studioProgram, 'u_bgDimming');
+            this._uStBrightness = gl.getUniformLocation(this._studioProgram, 'u_brightness');
+            this._uStContrast = gl.getUniformLocation(this._studioProgram, 'u_contrast');
+            this._uStGlowIntensity = gl.getUniformLocation(this._studioProgram, 'u_glowIntensity');
+            this._uStSaturation = gl.getUniformLocation(this._studioProgram, 'u_saturation');
+            this._uStSkinSmoothing = gl.getUniformLocation(this._studioProgram, 'u_skinSmoothing');
+            this._uStToneRGB = gl.getUniformLocation(this._studioProgram, 'u_toneRGB');
+            this._uStCameraTexelSize = gl.getUniformLocation(this._studioProgram, 'u_cameraTexelSize');
+            this._uStFocusCenter = gl.getUniformLocation(this._studioProgram, 'u_focusCenter');
+            this._uStFocusInnerRadius = gl.getUniformLocation(this._studioProgram, 'u_focusInnerRadius');
+            this._uStFocusOuterRadius = gl.getUniformLocation(this._studioProgram, 'u_focusOuterRadius');
+            this._uStAspectRatio = gl.getUniformLocation(this._studioProgram, 'u_aspectRatio');
+        }
 
         // Allocate textures
         this._texCamera = createTexture(gl);
@@ -384,6 +683,7 @@ export default class WebGLCompositor {
         // Null the JS references so the GC can collect the wrapper objects.
         this._gl = null;
         this._program = null;
+        this._studioProgram = null;
         this._quadBuffer = null;
         this._texCamera = null;
         this._texBackground = null;

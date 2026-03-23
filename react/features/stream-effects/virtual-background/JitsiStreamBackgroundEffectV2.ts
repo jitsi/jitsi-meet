@@ -1,6 +1,6 @@
 import { IConfig } from '../../base/config/configType';
 import { getBaseUrl } from '../../base/util/helpers';
-import { VIRTUAL_BACKGROUND_TYPE } from '../../virtual-background/constants';
+import { STUDIO_LIGHT_DEFAULTS, VIRTUAL_BACKGROUND_TYPE } from '../../virtual-background/constants';
 import logger from '../../virtual-background/logger';
 
 import {
@@ -38,6 +38,19 @@ const DEFAULT_EDGE_LOW = 0.20;
  * transparent, giving more natural-looking hair coverage.
  */
 const DEFAULT_EDGE_HIGH = 0.55;
+
+/**
+ * Smoothstep lower threshold for studio light. Slightly higher than VB default (0.20) for a
+ * tighter mask, but low enough to allow smooth feathering at the person boundary — especially
+ * important when background dimming is active because the bright/dark edge is very conspicuous.
+ */
+const STUDIO_LIGHT_EDGE_LOW = 0.25;
+
+/**
+ * Smoothstep upper threshold for studio light. The 0.25–0.60 gap provides a gradual transition
+ * that hides mask aliasing without making the boundary look blurry.
+ */
+const STUDIO_LIGHT_EDGE_HIGH = 0.60;
 
 /**
  * Target Gaussian feathering radius expressed in camera-output pixels. The inference worker
@@ -136,6 +149,9 @@ export default class JitsiStreamBackgroundEffectV2 {
             this._virtualImage.crossOrigin = 'anonymous';
             this._virtualImage.src = virtualBackground.virtualSource ?? '';
         }
+
+        // Studio light uses the same segmentation pipeline but no background image.
+        // _virtualImage stays null — _prepareBackground is skipped for this mode.
 
         // Workaround for FF issue https://bugzilla.mozilla.org/show_bug.cgi?id=1388974
         this._outputCanvasElement = document.createElement('canvas');
@@ -613,37 +629,63 @@ export default class JitsiStreamBackgroundEffectV2 {
                 return;
             }
 
-            // --- Prepare background canvas ---
-            this._prepareBackground();
+            const isStudioLight = this._options.backgroundType === VIRTUAL_BACKGROUND_TYPE.STUDIO_LIGHT;
+            const maskBlurRadius = Math.round(
+                TARGET_BLUR_CAMERA_PX * maskData.width / this._outputCanvasElement.width
+            );
 
-            // --- Composite ---
-            if (this._compositor?.isAvailable && this._webglCanvas) {
-                // CPU EMA (_applyMaskEMA) is applied inside _inferWithWorker for all tiers —
-                // the mask is already smoothed, so gpuTemporalRatio=0 (no GPU ping-pong blending).
-                // maskBlurRadius scales from the target camera-pixel radius to mask-space pixels
-                // so feathering is visually consistent regardless of the tier's seg resolution.
-                const maskBlurRadius = Math.round(
-                    TARGET_BLUR_CAMERA_PX * maskData.width / this._outputCanvasElement.width
-                );
+            if (isStudioLight) {
+                // Studio light: apply lighting/beauty effects to person region, no background swap.
+                if (this._compositor?.isStudioLightAvailable && this._webglCanvas) {
+                    const opts = this._options.studioLightOptions ?? STUDIO_LIGHT_DEFAULTS;
 
-                this._compositor.compositeFromImageData(
-                    this._inputVideoElement,
-                    this._backgroundCanvas,
-                    maskData,
-                    0,
-                    this._edgeLow,
-                    this._edgeHigh,
-                    this._firstMaskFrame,
-                    maskBlurRadius
-                );
-
-                // Blit the WebGL canvas to the output canvas. The output canvas
-                // has a 2D context (Firefox captureStream workaround) so WebGL
-                // cannot render directly to it. drawImage is GPU-accelerated and
-                // the cost is negligible.
-                this._outputCanvasCtx?.drawImage(this._webglCanvas, 0, 0);
+                    this._compositor.compositeStudioLight(
+                        this._inputVideoElement,
+                        maskData,
+                        0,
+                        STUDIO_LIGHT_EDGE_LOW,
+                        STUDIO_LIGHT_EDGE_HIGH,
+                        this._firstMaskFrame,
+                        maskBlurRadius,
+                        opts.brightness ?? STUDIO_LIGHT_DEFAULTS.brightness,
+                        opts.contrast ?? STUDIO_LIGHT_DEFAULTS.contrast,
+                        opts.skinSmoothing ?? STUDIO_LIGHT_DEFAULTS.skinSmoothing,
+                        opts.glowIntensity ?? STUDIO_LIGHT_DEFAULTS.glowIntensity,
+                        opts.toneR ?? STUDIO_LIGHT_DEFAULTS.toneR,
+                        opts.toneG ?? STUDIO_LIGHT_DEFAULTS.toneG,
+                        opts.toneB ?? STUDIO_LIGHT_DEFAULTS.toneB,
+                        opts.saturation ?? STUDIO_LIGHT_DEFAULTS.saturation,
+                        opts.bgDimming ?? STUDIO_LIGHT_DEFAULTS.bgDimming
+                    );
+                    this._outputCanvasCtx?.drawImage(this._webglCanvas, 0, 0);
+                } else {
+                    this._compositeFallbackStudioLight(maskData);
+                }
             } else {
-                this._compositeFallback(maskData);
+                // --- Prepare background canvas ---
+                this._prepareBackground();
+
+                // --- Composite ---
+                if (this._compositor?.isAvailable && this._webglCanvas) {
+                    this._compositor.compositeFromImageData(
+                        this._inputVideoElement,
+                        this._backgroundCanvas,
+                        maskData,
+                        0,
+                        this._edgeLow,
+                        this._edgeHigh,
+                        this._firstMaskFrame,
+                        maskBlurRadius
+                    );
+
+                    // Blit the WebGL canvas to the output canvas. The output canvas
+                    // has a 2D context (Firefox captureStream workaround) so WebGL
+                    // cannot render directly to it. drawImage is GPU-accelerated and
+                    // the cost is negligible.
+                    this._outputCanvasCtx?.drawImage(this._webglCanvas, 0, 0);
+                } else {
+                    this._compositeFallback(maskData);
+                }
             }
 
             // Must be cleared after compositing in BOTH the WebGL and Canvas 2D fallback branches.
@@ -741,6 +783,101 @@ export default class JitsiStreamBackgroundEffectV2 {
         // Draw background behind the person
         ctx.globalCompositeOperation = 'destination-over';
         ctx.drawImage(this._backgroundCanvas, 0, 0, width, height);
+    }
+
+    /**
+     * Canvas 2D fallback for studio light mode (used when WebGL is unavailable).
+     *
+     * Applies brightness and contrast via CSS filter on the person-masked region.
+     * Skin smoothing and glow are not available in Canvas 2D — this is acceptable
+     * degradation for the LOW tier fallback path.
+     *
+     * @private
+     * @param {ImageData | null} maskData - Segmentation mask.
+     * @param {CanvasImageSource} [source] - Camera frame source.
+     * @returns {void}
+     */
+    _compositeFallbackStudioLight(
+            maskData: ImageData | null,
+            source: CanvasImageSource = this._inputVideoElement): void {
+        const ctx = this._outputCanvasCtx;
+
+        if (!ctx) {
+            return;
+        }
+
+        const { width, height } = this._outputCanvasElement;
+        const opts = this._options.studioLightOptions ?? STUDIO_LIGHT_DEFAULTS;
+
+        // Draw original frame as base.
+        ctx.globalCompositeOperation = 'copy';
+        ctx.filter = 'none';
+        ctx.drawImage(source, 0, 0, width, height);
+
+        if (!maskData) {
+            return;
+        }
+
+        // Lazily create the mask canvas once and reuse every frame.
+        if (!this._maskCanvas) {
+            this._maskCanvas = document.createElement('canvas');
+            this._maskCanvasCtx = this._maskCanvas.getContext('2d');
+        }
+
+        if (this._maskCanvas.width !== maskData.width || this._maskCanvas.height !== maskData.height) {
+            this._maskCanvas.width = maskData.width;
+            this._maskCanvas.height = maskData.height;
+        }
+
+        this._maskCanvasCtx?.putImageData(maskData, 0, 0);
+
+        // Save state, clip to person region via mask, draw brightness/contrast adjusted frame.
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+
+        // Draw mask as alpha channel.
+        ctx.globalCompositeOperation = 'destination-in';
+        ctx.filter = 'blur(4px)';
+        ctx.drawImage(this._maskCanvas, 0, 0, width, height);
+
+        // Now only the person region is visible. Draw the adjusted frame on top using source-atop
+        // so it only affects the visible (person) area.
+        ctx.globalCompositeOperation = 'source-atop';
+        const brightnessVal = 1.0 + (opts.brightness ?? STUDIO_LIGHT_DEFAULTS.brightness);
+        const contrastVal = opts.contrast ?? STUDIO_LIGHT_DEFAULTS.contrast;
+
+        ctx.filter = `brightness(${brightnessVal}) contrast(${contrastVal})`;
+        ctx.drawImage(source, 0, 0, width, height);
+
+        // Restore background behind person.
+        ctx.globalCompositeOperation = 'destination-over';
+        ctx.filter = 'none';
+        ctx.drawImage(source, 0, 0, width, height);
+        ctx.restore();
+
+        // Background dimming: overlay semi-transparent black on the entire frame, then
+        // redraw the bright person region on top. This approximates the WebGL shader's
+        // per-pixel (1 - bgDimming * (1 - alpha)) dimming.
+        const bgDimming = opts.bgDimming ?? STUDIO_LIGHT_DEFAULTS.bgDimming;
+
+        if (bgDimming > 0) {
+            // Dim the whole frame.
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = `rgba(0,0,0,${bgDimming})`;
+            ctx.fillRect(0, 0, width, height);
+
+            // Punch person region back through via mask clip.
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.filter = 'blur(4px)';
+            ctx.drawImage(this._maskCanvas, 0, 0, width, height);
+            ctx.filter = 'none';
+
+            // Fill person back in with the adjusted (bright) source.
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.filter = `brightness(${brightnessVal}) contrast(${contrastVal})`;
+            ctx.drawImage(source, 0, 0, width, height);
+            ctx.filter = 'none';
+        }
     }
 
     /**
@@ -1040,31 +1177,78 @@ export default class JitsiStreamBackgroundEffectV2 {
             }
         }
 
-        // VideoFrame is CanvasImageSource — pass directly (no ImageBitmap needed).
-        this._prepareBackground(frame);
+        const isStudioLight = this._options.backgroundType === VIRTUAL_BACKGROUND_TYPE.STUDIO_LIGHT;
 
-        if (maskData && this._compositor?.isAvailable && this._webglCanvas) {
+        if (maskData) {
             const maskBlurRadius = Math.round(
                 TARGET_BLUR_CAMERA_PX * maskData.width / this._outputCanvasElement.width);
 
-            this._compositor.compositeFromImageData(
-                frame,
-                this._backgroundCanvas,
-                maskData,
-                0,
-                this._edgeLow,
-                this._edgeHigh,
-                this._firstMaskFrame,
-                maskBlurRadius
-            );
-            this._firstMaskFrame = false;
+            if (isStudioLight) {
+                if (this._compositor?.isStudioLightAvailable && this._webglCanvas) {
+                    const opts = this._options.studioLightOptions ?? STUDIO_LIGHT_DEFAULTS;
 
-            return new VideoFrame(this._webglCanvas, { timestamp: frame.timestamp });
+                    this._compositor.compositeStudioLight(
+                        frame,
+                        maskData,
+                        0,
+                        STUDIO_LIGHT_EDGE_LOW,
+                        STUDIO_LIGHT_EDGE_HIGH,
+                        this._firstMaskFrame,
+                        maskBlurRadius,
+                        opts.brightness ?? STUDIO_LIGHT_DEFAULTS.brightness,
+                        opts.contrast ?? STUDIO_LIGHT_DEFAULTS.contrast,
+                        opts.skinSmoothing ?? STUDIO_LIGHT_DEFAULTS.skinSmoothing,
+                        opts.glowIntensity ?? STUDIO_LIGHT_DEFAULTS.glowIntensity,
+                        opts.toneR ?? STUDIO_LIGHT_DEFAULTS.toneR,
+                        opts.toneG ?? STUDIO_LIGHT_DEFAULTS.toneG,
+                        opts.toneB ?? STUDIO_LIGHT_DEFAULTS.toneB,
+                        opts.saturation ?? STUDIO_LIGHT_DEFAULTS.saturation,
+                        opts.bgDimming ?? STUDIO_LIGHT_DEFAULTS.bgDimming
+                    );
+                    this._firstMaskFrame = false;
+
+                    return new VideoFrame(this._webglCanvas, { timestamp: frame.timestamp });
+                }
+
+                this._compositeFallbackStudioLight(maskData, frame);
+                this._firstMaskFrame = false;
+
+                return new VideoFrame(this._outputCanvasElement, { timestamp: frame.timestamp });
+            }
+
+            // Virtual background path.
+            // VideoFrame is CanvasImageSource — pass directly (no ImageBitmap needed).
+            this._prepareBackground(frame);
+
+            if (this._compositor?.isAvailable && this._webglCanvas) {
+                this._compositor.compositeFromImageData(
+                    frame,
+                    this._backgroundCanvas,
+                    maskData,
+                    0,
+                    this._edgeLow,
+                    this._edgeHigh,
+                    this._firstMaskFrame,
+                    maskBlurRadius
+                );
+                this._firstMaskFrame = false;
+
+                return new VideoFrame(this._webglCanvas, { timestamp: frame.timestamp });
+            }
+        } else {
+            // No mask yet — prepare background for VB passthrough (not needed for studio light).
+            if (!isStudioLight) {
+                this._prepareBackground(frame);
+            }
         }
 
         // Canvas 2D fallback — VideoFrame is CanvasImageSource for drawImage.
         // Also handles null mask (shows background only).
-        this._compositeFallback(maskData, frame);
+        if (isStudioLight) {
+            this._compositeFallbackStudioLight(maskData, frame);
+        } else {
+            this._compositeFallback(maskData, frame);
+        }
 
         // Must be cleared in the fallback path too. Leaving it true would permanently
         // suppress EMA smoothing if the compositor is unavailable.

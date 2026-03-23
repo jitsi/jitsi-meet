@@ -5,11 +5,25 @@ import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes';
 
 const STORE_NAME = 'features/virtual-background';
 
+export interface IStudioLightOptions {
+    bgDimming?: number;
+    brightness?: number;
+    contrast?: number;
+    glowIntensity?: number;
+    preset?: string;
+    saturation?: number;
+    skinSmoothing?: number;
+    toneB?: number;
+    toneG?: number;
+    toneR?: number;
+}
+
 export interface IVirtualBackground {
     backgroundEffectEnabled?: boolean;
     backgroundType?: string;
     blurValue?: number;
     selectedThumbnail?: string;
+    studioLightOptions?: IStudioLightOptions;
     virtualSource?: string;
 }
 
@@ -25,7 +39,8 @@ export interface IVirtualBackground {
  * specified action.
  */
 ReducerRegistry.register<IVirtualBackground>(STORE_NAME, (state = {}, action): IVirtualBackground => {
-    const { virtualSource, backgroundEffectEnabled, blurValue, backgroundType, selectedThumbnail } = action;
+    const { virtualSource, backgroundEffectEnabled, blurValue, backgroundType, selectedThumbnail,
+        studioLightOptions } = action;
 
     /**
      * Sets up the persistence of the feature {@code virtual-background}.
@@ -39,7 +54,8 @@ ReducerRegistry.register<IVirtualBackground>(STORE_NAME, (state = {}, action): I
             virtualSource,
             blurValue,
             backgroundType,
-            selectedThumbnail
+            selectedThumbnail,
+            studioLightOptions
         };
     }
     case BACKGROUND_ENABLED: {

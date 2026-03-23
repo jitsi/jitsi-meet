@@ -4,7 +4,7 @@ import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { createVirtualBackgroundEffect } from '../stream-effects/virtual-background';
 
 import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes';
-import { VIRTUAL_BACKGROUND_TYPE } from './constants';
+import { STUDIO_LIGHT_PRESETS, VIRTUAL_BACKGROUND_TYPE } from './constants';
 import logger from './logger';
 import { IVirtualBackground } from './reducer';
 
@@ -83,7 +83,8 @@ export function setVirtualBackground(options?: IVirtualBackground) {
         virtualSource: options?.virtualSource,
         blurValue: options?.blurValue,
         backgroundType: options?.backgroundType,
-        selectedThumbnail: options?.selectedThumbnail
+        selectedThumbnail: options?.selectedThumbnail,
+        studioLightOptions: options?.studioLightOptions
     };
 }
 
@@ -129,6 +130,39 @@ export function toggleBlurredBackgroundEffect(videoTrack: any, blurType: 'slight
                 backgroundType: VIRTUAL_BACKGROUND_TYPE.BLUR,
                 blurValue: blurType === 'blur' ? 25 : 8,
                 selectedThumbnail: blurType
+            }, videoTrack));
+        }
+    };
+}
+
+/**
+ * Toggles studio light effect on the given video track. Used by the external API.
+ *
+ * @param {Object} videoTrack - The targeted video track.
+ * @param {boolean} enabled - Whether to enable or disable studio light.
+ * @param {string} [preset] - Preset name ('natural', 'spotlight', 'soft-focus'). Defaults to 'natural'.
+ * @returns {Function}
+ */
+export function toggleStudioLightEffect(videoTrack: any, enabled: boolean, preset?: string) {
+    return async function(dispatch: IStore['dispatch']) {
+        if (!videoTrack) {
+            return;
+        }
+
+        if (!enabled) {
+            dispatch(toggleBackgroundEffect({
+                backgroundEffectEnabled: false,
+                selectedThumbnail: 'none'
+            }, videoTrack));
+        } else {
+            const presetKey = preset ?? 'natural';
+            const presetOptions = STUDIO_LIGHT_PRESETS[presetKey] ?? STUDIO_LIGHT_PRESETS.natural;
+
+            dispatch(toggleBackgroundEffect({
+                backgroundEffectEnabled: true,
+                backgroundType: VIRTUAL_BACKGROUND_TYPE.STUDIO_LIGHT,
+                selectedThumbnail: `studio-light-${presetKey}`,
+                studioLightOptions: presetOptions
             }, videoTrack));
         }
     };

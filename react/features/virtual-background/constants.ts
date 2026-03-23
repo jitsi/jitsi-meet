@@ -4,9 +4,72 @@
  * @enum {string}
  */
 export const VIRTUAL_BACKGROUND_TYPE = {
-    IMAGE: 'image',
     BLUR: 'blur',
-    NONE: 'none'
+    IMAGE: 'image',
+    NONE: 'none',
+    STUDIO_LIGHT: 'studio-light'
+};
+
+/**
+ * Studio light preset identifiers.
+ *
+ * @enum {string}
+ */
+export enum StudioLightPreset {
+    NATURAL = 'natural',
+    SOFT_FOCUS = 'soft-focus',
+    SPOTLIGHT = 'spotlight'
+}
+
+/**
+ * Studio light shader parameter defaults (used when no preset is selected).
+ */
+export const STUDIO_LIGHT_DEFAULTS = {
+    bgDimming: 0.0,
+    brightness: 0.06,
+    contrast: 1.08,
+    glowIntensity: 0.03,
+    preset: StudioLightPreset.NATURAL,
+    saturation: 1.0,
+    skinSmoothing: 0.1,
+    toneB: 1.0,
+    toneG: 1.0,
+    toneR: 1.0
+};
+
+/**
+ * Maps each preset name to its shader parameters.
+ *
+ * Natural: clean, minimal enhancement — barely noticeable, background untouched.
+ * Spotlight: face pops against dimmed background, warm tone, pro studio lighting feel.
+ * Soft Focus: beauty/glamour filter — skin smoothing, glow bloom, lower contrast.
+ */
+export const STUDIO_LIGHT_PRESETS: Record<string, typeof STUDIO_LIGHT_DEFAULTS> = {
+    [StudioLightPreset.NATURAL]: { ...STUDIO_LIGHT_DEFAULTS },
+    [StudioLightPreset.SOFT_FOCUS]: {
+        bgDimming: 0.0,
+        brightness: 0.04,
+        contrast: 0.92,
+        glowIntensity: 0.18,
+        preset: StudioLightPreset.SOFT_FOCUS,
+        saturation: 1.08,
+        skinSmoothing: 0.55,
+        toneB: 1.0,
+        toneG: 1.0,
+        toneR: 1.0
+    },
+    [StudioLightPreset.SPOTLIGHT]: {
+        bgDimming: 0.4,
+        brightness: 0.14,
+        contrast: 1.12,
+        glowIntensity: 0.04,
+        preset: StudioLightPreset.SPOTLIGHT,
+        saturation: 1.05,
+        skinSmoothing: 0.15,
+        toneB: 0.96,
+        toneG: 1.0,
+        toneR: 1.04
+    }
 };
 
 
