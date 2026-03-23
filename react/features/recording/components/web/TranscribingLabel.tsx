@@ -32,14 +32,14 @@ interface IProps extends AbstractProps {
 /**
  * Creates the styles for the component.
  *
- * @param {Object} _theme - The current UI theme.
+ * @param {Object} theme - The current UI theme.
  *
  * @returns {Object}
  */
-const styles = (_theme: Theme) => {
+const styles = (theme: Theme) => {
     return {
         transcribing: {
-            background: '#4CAF50' // Green background for transcription
+            background: theme.palette.transcriptionIndicator
         }
     };
 };

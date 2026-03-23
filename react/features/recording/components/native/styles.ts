@@ -14,5 +14,15 @@ export default createStyleSheet({
         marginLeft: 0,
         marginBottom: 0,
         backgroundColor: BaseTheme.palette.iconError
+    },
+
+    /**
+     * Style for the transcription indicator.
+     */
+    transcribingIndicatorStyle: {
+        marginRight: 4,
+        marginLeft: 0,
+        marginBottom: 0,
+        backgroundColor: BaseTheme.palette.transcriptionIndicator
     }
 });
