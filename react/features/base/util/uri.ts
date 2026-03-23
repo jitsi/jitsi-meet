@@ -660,7 +660,7 @@ export function appendURLParam(url: string, name: string, value: string) {
 
     newUrl.searchParams.append(name, value);
 
-    return newUrl.toString();
+    return newUrl.toString().replace(/\+/g, "%20");
 }
 
 /**
