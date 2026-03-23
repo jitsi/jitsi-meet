@@ -60,15 +60,15 @@ export const STUDIO_LIGHT_PRESETS: Record<string, typeof STUDIO_LIGHT_DEFAULTS> 
     },
     [StudioLightPreset.SPOTLIGHT]: {
         bgDimming: 0.4,
-        brightness: 0.14,
-        contrast: 1.12,
-        glowIntensity: 0.04,
+        brightness: 0.10,
+        contrast: 1.10,
+        glowIntensity: 0.03,
         preset: StudioLightPreset.SPOTLIGHT,
-        saturation: 1.05,
-        skinSmoothing: 0.15,
-        toneB: 0.96,
+        saturation: 1.02,
+        skinSmoothing: 0.12,
+        toneB: 0.99,
         toneG: 1.0,
-        toneR: 1.04
+        toneR: 1.01
     }
 };
 

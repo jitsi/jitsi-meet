@@ -56,6 +56,8 @@ deploy-appbundle:
 		$(BUILD_DIR)/noise-suppressor-worklet.min.js.map \
 		$(BUILD_DIR)/screenshot-capture-worker.min.js \
 		$(BUILD_DIR)/screenshot-capture-worker.min.js.map \
+		$(BUILD_DIR)/vb-inference-worker.min.js \
+		$(BUILD_DIR)/vb-inference-worker.min.js.map \
 		$(DEPLOY_DIR)
 	cp \
 		$(BUILD_DIR)/close3.min.js \
@@ -103,11 +105,10 @@ deploy-meet-models:
 		$(DEPLOY_DIR)
 
 deploy-ort-wasm:
-	mkdir -p $(DEPLOY_DIR)/ort
 	cp \
 		$(ORT_WASM_DIR)/ort-wasm.wasm \
 		$(ORT_WASM_DIR)/ort-wasm-simd.wasm \
-		$(DEPLOY_DIR)/ort
+		$(DEPLOY_DIR)
 
 deploy-mediapipe-segmentation:
 	mkdir -p $(DEPLOY_DIR)/mediapipe-segmentation

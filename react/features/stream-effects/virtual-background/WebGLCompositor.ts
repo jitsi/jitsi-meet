@@ -22,6 +22,7 @@ const VB_FRAGMENT_SHADER_SOURCE = `
     uniform float     u_edgeLow;
     uniform float     u_edgeHigh;
     uniform vec2      u_maskTexelSize;
+    uniform vec2      u_cameraTexelSize;
 
     varying vec2 v_texCoord;
 
@@ -41,11 +42,36 @@ const VB_FRAGMENT_SHADER_SOURCE = `
             texture2D(tex, tc + vec2( t.x,  t.y)).r * 0.0625;
     }
 
+    // Luminance gradient magnitude at this pixel using a simple cross-pattern sample.
+    // Returns values in roughly [0, 0.5] — strong camera edges (e.g. shirt vs chair) hit 0.2+.
+    float cameraEdgeStrength(vec2 tc) {
+        vec2 t  = u_cameraTexelSize;
+        vec3 lv = vec3(0.299, 0.587, 0.114);
+        float lL = dot(texture2D(u_camera, tc - vec2(t.x, 0.0)).rgb, lv);
+        float lR = dot(texture2D(u_camera, tc + vec2(t.x, 0.0)).rgb, lv);
+        float lU = dot(texture2D(u_camera, tc - vec2(0.0, t.y)).rgb, lv);
+        float lD = dot(texture2D(u_camera, tc + vec2(0.0, t.y)).rgb, lv);
+        return length(vec2(lR - lL, lD - lU));
+    }
+
     void main() {
-        vec4  fg        = texture2D(u_camera,     v_texCoord);
-        vec4  bg        = texture2D(u_background, v_texCoord);
-        float curAlpha  = sampleMaskBlurred(u_mask,     v_texCoord);
-        float prevAlpha = sampleMaskBlurred(u_prevMask, v_texCoord);
+        vec4 fg = texture2D(u_camera,     v_texCoord);
+        vec4 bg = texture2D(u_background, v_texCoord);
+
+        // Blurred mask — wide feathering for smooth regions (hair, soft edges).
+        float curBlurred  = sampleMaskBlurred(u_mask,     v_texCoord);
+        float prevBlurred = sampleMaskBlurred(u_prevMask, v_texCoord);
+
+        // Raw (unblurred) mask — used to snap the edge at sharp camera boundaries.
+        float curRaw  = texture2D(u_mask,     v_texCoord).r;
+        float prevRaw = texture2D(u_prevMask, v_texCoord).r;
+
+        // At strong camera color edges (e.g. dark chair vs bright shirt) snap toward the raw mask
+        // so the person boundary aligns with the actual image edge. At smooth regions (hair, skin)
+        // keep the blurred mask for natural feathering.
+        float snapT   = smoothstep(0.05, 0.20, cameraEdgeStrength(v_texCoord));
+        float curAlpha  = mix(curBlurred,  curRaw,  snapT);
+        float prevAlpha = mix(prevBlurred, prevRaw, snapT);
 
         float blended = mix(curAlpha, prevAlpha, u_temporalRatio);
         float alpha   = smoothstep(u_edgeLow, u_edgeHigh, blended);
@@ -75,15 +101,6 @@ const STUDIO_LIGHT_FRAGMENT_SHADER_SOURCE = `
     uniform vec3  u_toneRGB;
     uniform vec2  u_cameraTexelSize;
     uniform float u_bgDimming;
-
-    // Face focus: radial falloff concentrates the effect on the face region.
-    // u_focusCenter is the UV center of the face area (default 0.5, 0.35 — upper-center).
-    // u_focusRadius controls the inner (full-effect) and outer (fade-to-zero) radii.
-    // The aspect ratio correction ensures a circular falloff on non-square frames.
-    uniform vec2  u_focusCenter;
-    uniform float u_focusInnerRadius;
-    uniform float u_focusOuterRadius;
-    uniform float u_aspectRatio;
 
     varying vec2 v_texCoord;
 
@@ -140,15 +157,6 @@ const STUDIO_LIGHT_FRAGMENT_SHADER_SOURCE = `
         float prevAlpha = sampleMask(u_prevMask, v_texCoord);
         float blended   = mix(curAlpha, prevAlpha, u_temporalRatio);
         float alpha     = smoothstep(u_edgeLow, u_edgeHigh, blended);
-
-        // Face focus: radial falloff from u_focusCenter.
-        // Aspect-ratio-correct distance so the falloff is circular, not elliptical.
-        vec2 diff = v_texCoord - u_focusCenter;
-        diff.x *= u_aspectRatio;
-        float dist = length(diff);
-        float focusWeight = 1.0 - smoothstep(u_focusInnerRadius, u_focusOuterRadius, dist);
-
-        alpha *= focusWeight;
 
         // 1. Skin smoothing: blend original with blurred version within mask.
         vec4 blurred = sampleCameraBlurred(v_texCoord);
@@ -277,6 +285,7 @@ export default class WebGLCompositor {
     // Uniform locations — VB program, resolved once after program link.
     _uBackground: WebGLUniformLocation | null = null;
     _uCamera: WebGLUniformLocation | null = null;
+    _uCameraTexelSize: WebGLUniformLocation | null = null;
     _uEdgeHigh: WebGLUniformLocation | null = null;
     _uEdgeLow: WebGLUniformLocation | null = null;
     _uMask: WebGLUniformLocation | null = null;
@@ -286,7 +295,6 @@ export default class WebGLCompositor {
 
     // Studio light program and uniform locations.
     _studioProgram: WebGLProgram | null = null;
-    _uStAspectRatio: WebGLUniformLocation | null = null;
     _uStBgDimming: WebGLUniformLocation | null = null;
     _uStBrightness: WebGLUniformLocation | null = null;
     _uStCamera: WebGLUniformLocation | null = null;
@@ -294,9 +302,6 @@ export default class WebGLCompositor {
     _uStContrast: WebGLUniformLocation | null = null;
     _uStEdgeHigh: WebGLUniformLocation | null = null;
     _uStEdgeLow: WebGLUniformLocation | null = null;
-    _uStFocusCenter: WebGLUniformLocation | null = null;
-    _uStFocusInnerRadius: WebGLUniformLocation | null = null;
-    _uStFocusOuterRadius: WebGLUniformLocation | null = null;
     _uStGlowIntensity: WebGLUniformLocation | null = null;
     _uStMask: WebGLUniformLocation | null = null;
     _uStMaskTexelSize: WebGLUniformLocation | null = null;
@@ -413,6 +418,7 @@ export default class WebGLCompositor {
         gl.uniform1f(this._uEdgeLow, edgeLow);
         gl.uniform1f(this._uEdgeHigh, edgeHigh);
         gl.uniform2f(this._uMaskTexelSize, maskBlurRadius / maskData.width, maskBlurRadius / maskData.height);
+        gl.uniform2f(this._uCameraTexelSize, 1.0 / this._canvas.width, 1.0 / this._canvas.height);
 
         this._bindQuadState(gl);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -512,15 +518,6 @@ export default class WebGLCompositor {
         gl.uniform1f(this._uStBgDimming, bgDimming);
         gl.uniform2f(this._uStCameraTexelSize,
             1.0 / this._canvas.width, 1.0 / this._canvas.height);
-
-        // Face focus: radial falloff concentrates effect on upper-center (face).
-        const w = this._canvas.width;
-        const h = this._canvas.height;
-
-        gl.uniform2f(this._uStFocusCenter, 0.5, 0.35);
-        gl.uniform1f(this._uStFocusInnerRadius, 0.18);
-        gl.uniform1f(this._uStFocusOuterRadius, 0.40);
-        gl.uniform1f(this._uStAspectRatio, w / h);
 
         this._bindQuadState(gl);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -631,6 +628,7 @@ export default class WebGLCompositor {
         gl.useProgram(this._program);
         this._uCamera = gl.getUniformLocation(this._program, 'u_camera');
         this._uBackground = gl.getUniformLocation(this._program, 'u_background');
+        this._uCameraTexelSize = gl.getUniformLocation(this._program, 'u_cameraTexelSize');
         this._uMask = gl.getUniformLocation(this._program, 'u_mask');
         this._uMaskTexelSize = gl.getUniformLocation(this._program, 'u_maskTexelSize');
         this._uPrevMask = gl.getUniformLocation(this._program, 'u_prevMask');
@@ -656,10 +654,6 @@ export default class WebGLCompositor {
             this._uStSkinSmoothing = gl.getUniformLocation(this._studioProgram, 'u_skinSmoothing');
             this._uStToneRGB = gl.getUniformLocation(this._studioProgram, 'u_toneRGB');
             this._uStCameraTexelSize = gl.getUniformLocation(this._studioProgram, 'u_cameraTexelSize');
-            this._uStFocusCenter = gl.getUniformLocation(this._studioProgram, 'u_focusCenter');
-            this._uStFocusInnerRadius = gl.getUniformLocation(this._studioProgram, 'u_focusInnerRadius');
-            this._uStFocusOuterRadius = gl.getUniformLocation(this._studioProgram, 'u_focusOuterRadius');
-            this._uStAspectRatio = gl.getUniformLocation(this._studioProgram, 'u_aspectRatio');
         }
 
         // Allocate textures

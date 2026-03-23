@@ -7,7 +7,7 @@ import logger from '../../virtual-background/logger';
 
 import { DeviceTier, detectDeviceTier } from './DeviceTierDetector.web';
 import JitsiStreamBackgroundEffect, { IBackgroundEffectOptions } from './JitsiStreamBackgroundEffect';
-import type JitsiStreamBackgroundEffectV2 from './JitsiStreamBackgroundEffectV2';
+import JitsiStreamBackgroundEffectV2 from './JitsiStreamBackgroundEffectV2';
 // @ts-ignore
 import createTFLiteModule from './vendor/tflite/tflite';
 // @ts-ignore
@@ -149,9 +149,7 @@ async function createVirtualBackgroundEffectV2(
     }
 
     try {
-        const { default: V2Effect } = await import('./JitsiStreamBackgroundEffectV2');
-
-        return new V2Effect(virtualBackground, config, capabilities);
+        return new JitsiStreamBackgroundEffectV2(virtualBackground, config, capabilities);
     } catch (err) {
         logger.error('[VirtualBackground] Failed to create V2 effect', err);
         dispatch?.(showWarningNotification({

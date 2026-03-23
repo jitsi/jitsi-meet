@@ -25,41 +25,42 @@ const BENCHMARK_LOG_INTERVAL = 60;
 const DEFAULT_TEMPORAL_BLEND_RATIO = 0.85;
 
 /**
- * Default smoothstep lower threshold. MediaPipe Selfie Segmentation gives hair-boundary regions
- * confidence in the 0.15–0.40 range. Setting edgeLow to 0.20 ensures those low-confidence hair
- * pixels enter the feathering zone rather than being hard-clipped to zero.
+ * Default smoothstep lower threshold. Pixels with EMA-smoothed confidence below this value are
+ * fully transparent. Set to 0.30 to reject low-confidence background detections (distant objects,
+ * chair backs, wall decorations that the model assigns 0.15–0.25 confidence) while still allowing
+ * hair-boundary pixels (0.30–0.50 confidence) to enter the feathering zone.
  */
-const DEFAULT_EDGE_LOW = 0.20;
+const DEFAULT_EDGE_LOW = 0.30;
 
 /**
- * Default smoothstep upper threshold. Lowering this to 0.55 (from 0.65) means pixels with
- * confidence ≥ 0.55 are fully opaque. The body interior (confidence ≈ 0.9) is unaffected;
- * the net effect is that hair at 0.40–0.55 confidence appears semi-solid rather than nearly
- * transparent, giving more natural-looking hair coverage.
+ * Default smoothstep upper threshold. Pixels with confidence above this value are fully opaque.
+ * The 0.30–0.65 window (span 0.35) gives a gradual transition at hair and clothing edges.
+ * Body interior pixels (confidence ≈ 0.9) are unaffected.
  */
-const DEFAULT_EDGE_HIGH = 0.55;
+const DEFAULT_EDGE_HIGH = 0.65;
 
 /**
- * Smoothstep lower threshold for studio light. Slightly higher than VB default (0.20) for a
- * tighter mask, but low enough to allow smooth feathering at the person boundary — especially
- * important when background dimming is active because the bright/dark edge is very conspicuous.
+ * Smoothstep lower threshold for studio light. Matches the VB default (0.30) so low-confidence
+ * edge pixels receive no effect rather than a partial glow that bleeds into the background.
  */
-const STUDIO_LIGHT_EDGE_LOW = 0.25;
+const STUDIO_LIGHT_EDGE_LOW = 0.35;
 
 /**
- * Smoothstep upper threshold for studio light. The 0.25–0.60 gap provides a gradual transition
- * that hides mask aliasing without making the boundary look blurry.
+ * Smoothstep upper threshold for studio light. The 0.35–0.70 window gives a gradual transition
+ * at high-confidence boundaries while keeping the effect tight.
  */
-const STUDIO_LIGHT_EDGE_HIGH = 0.60;
+const STUDIO_LIGHT_EDGE_HIGH = 0.70;
 
 /**
  * Target Gaussian feathering radius expressed in camera-output pixels. The inference worker
  * returns a mask at the tier's segmentation resolution (e.g. 512×288 for HIGH). The compositor
  * shader applies the blur in mask-pixel space, so the radius is scaled down proportionally:
- *   maskBlurRadius = TARGET_BLUR_CAMERA_PX × maskWidth / outputWidth
+ *   maskBlurRadius = TARGET_BLUR_CAMERA_PX x maskWidth / outputWidth
  * This keeps the physical blur width constant regardless of the mask-to-output scale ratio.
+ * Kept small (16px) so the feathering zone is tight — the edge-guided shader snapping handles
+ * hard object boundaries while the EMA temporal smoothing handles flicker.
  */
-const TARGET_BLUR_CAMERA_PX = 32;
+const TARGET_BLUR_CAMERA_PX = 16;
 
 /**
  * V2 virtual background stream effect.
@@ -932,7 +933,10 @@ export default class JitsiStreamBackgroundEffectV2 {
      * @returns {Promise<void>} Resolves when the worker backend is ready for inference.
      */
     async _initInferenceWorker(): Promise<void> {
-        const workerUrl = `${getBaseUrl()}libs/vb-inference-worker.min.js`;
+        // Ensure base URL always ends with '/' so path concatenation is correct regardless
+        // of whether getBaseUrl() returns a trailing slash (varies by deployment).
+        const base = getBaseUrl().replace(/\/?$/, '/');
+        const workerUrl = `${base}libs/vb-inference-worker.min.js`;
 
         // Blob URL wrapper so the worker can call importScripts on the same origin.
         const blob = new Blob([ `importScripts("${workerUrl}");` ], { type: 'application/javascript' } as any);
@@ -959,9 +963,9 @@ export default class JitsiStreamBackgroundEffectV2 {
             this._inferenceWorker!.addEventListener('message', handler);
             this._inferenceWorker!.postMessage({
                 backend: this._capabilities!.backend,
-                modelPath: `${getBaseUrl()}libs/pp_humanseg_192x192.onnx`,
+                modelPath: `${base}libs/pp_humanseg_192x192.onnx`,
                 modelType: this._capabilities!.modelType,
-                ortWasmPath: `${getBaseUrl()}libs/ort/`,
+                ortWasmPath: `${base}libs/`,
                 segHeight: this._capabilities!.segHeight,
                 segWidth: this._capabilities!.segWidth,
                 type: 'init'
