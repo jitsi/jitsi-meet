@@ -184,6 +184,11 @@ static NSString *recordingModeToString(RecordingMode mode);
     [externalAPI hideNotification:uid];
 }
 
+- (void)getRecordingStatus:(void (^ _Nonnull)(NSDictionary * _Nullable))completionHandler {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI getRecordingStatus:completionHandler];
+}
+
 - (void)startRecording:(RecordingMode)mode :(NSString * _Nullable)dropboxToken :(BOOL)shouldShare :(NSString * _Nullable)rtmpStreamKey :(NSString * _Nullable)rtmpBroadcastID :(NSString * _Nullable)youtubeStreamKey :(NSString * _Nullable)youtubeBroadcastID :(NSDictionary * _Nullable)extraMetadata :(BOOL)transcription {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI startRecording:recordingModeToString(mode) :dropboxToken :shouldShare :rtmpStreamKey :rtmpBroadcastID :youtubeStreamKey :youtubeBroadcastID :extraMetadata :transcription];
