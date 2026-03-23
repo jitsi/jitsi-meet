@@ -199,6 +199,18 @@ static NSString *recordingModeToString(RecordingMode mode);
     [externalAPI stopRecording:recordingModeToString(mode) :transcription];
 }
 
+- (void)startTranscription {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    // mode=nil: the START_RECORDING event is sent without a "mode" key,
+    // so the JS middleware skips video/file recording and only starts transcription.
+    [externalAPI startRecording:nil :nil :NO :nil :nil :nil :nil :nil :YES];
+}
+
+- (void)stopTranscription {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI stopRecording:nil :YES];
+}
+
 - (void)overwriteConfig:(NSDictionary * _Nonnull)config {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI overwriteConfig:config];
