@@ -178,9 +178,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         // let's subscribe for visitor waiting queue
         const { room } = getState()['features/base/conference'];
-        const { disableBeforeUnloadHandlers = false } = getState()['features/base/config'];
         const conferenceJid = `${room}@${hosts?.muc}`;
-        const beforeUnloadHandler = () => {
+        const unloadHandler = () => {
             WebsocketClient.getInstance().disconnect();
         };
 
@@ -194,9 +193,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
                         WebsocketClient.getInstance().disconnect()
                             .then(() => {
-                                window.removeEventListener(
-                                    disableBeforeUnloadHandlers ? 'unload' : 'beforeunload',
-                                    beforeUnloadHandler);
+                                window.removeEventListener('unload', unloadHandler);
                                 let delay = 0;
 
                                 // now let's connect to meeting
@@ -226,7 +223,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         /**
          * Disconnecting the WebSocket client when the user closes the page.
          */
-        window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
+        window.addEventListener('unload', unloadHandler);
 
 
         break;

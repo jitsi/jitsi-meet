@@ -39,6 +39,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     disableHideSelfView: boolean;
 
     /**
+     * Whether or not the beforeunload confirmation is enabled.
+     */
+    enableBeforeUnloadConfirmation: boolean;
+
+    /**
      * Whether or not follow me is currently active (enabled by some other participant).
      */
     followMeActive: boolean;
@@ -126,6 +131,7 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
         this._onMaxStageParticipantsSelect = this._onMaxStageParticipantsSelect.bind(this);
         this._onHideSelfViewChanged = this._onHideSelfViewChanged.bind(this);
         this._onShowSubtitlesOnStageChanged = this._onShowSubtitlesOnStageChanged.bind(this);
+        this._onEnableBeforeUnloadConfirmationChanged = this._onEnableBeforeUnloadConfirmationChanged.bind(this);
         this._onLanguageItemSelect = this._onLanguageItemSelect.bind(this);
     }
 
@@ -141,6 +147,7 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
             disableHideSelfView,
             iAmVisitor,
             hideSelfView,
+            enableBeforeUnloadConfirmation,
             showLanguageSettings,
             showSubtitlesOnStage,
             t
@@ -166,6 +173,12 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
                     label = { t('settings.showSubtitlesOnStage') }
                     name = 'show-subtitles-button'
                     onChange = { this._onShowSubtitlesOnStageChanged } /> }
+                <Checkbox
+                    checked = { enableBeforeUnloadConfirmation }
+                    className = { classes.checkbox }
+                    label = { t('settings.enableBeforeUnloadConfirmation') }
+                    name = 'enable-before-unload-confirmation'
+                    onChange = { this._onEnableBeforeUnloadConfirmationChanged } />
                 {showLanguageSettings && this._renderLanguageSelect()}
             </div>
         );
@@ -204,6 +217,17 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
      */
     _onShowSubtitlesOnStageChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
         super._onChange({ showSubtitlesOnStage: checked });
+    }
+
+    /**
+     * Callback invoked to select if beforeunload confirmation should be enabled.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onEnableBeforeUnloadConfirmationChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
+        super._onChange({ enableBeforeUnloadConfirmation: checked });
     }
 
     /**

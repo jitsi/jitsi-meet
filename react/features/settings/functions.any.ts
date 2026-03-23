@@ -134,6 +134,7 @@ export function getMoreTabProps(stateful: IStateful) {
         areClosedCaptionsEnabled: areClosedCaptionsEnabled(state),
         currentLanguage: language,
         disableHideSelfView: disableSelfViewSettings || disableSelfView,
+        enableBeforeUnloadConfirmation: state['features/base/settings'].enableBeforeUnloadConfirmation,
         hideSelfView: getHideSelfView(state),
         iAmVisitor: iAmVisitor(state),
         languages: LANGUAGES,

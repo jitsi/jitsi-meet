@@ -48,6 +48,7 @@ const DEFAULT_STATE: ISettingsState = {
     userSelectedNotifications: {
         'notify.chatMessages': true
     },
+    enableBeforeUnloadConfirmation: undefined,
     userSelectedMicDeviceLabel: undefined
 };
 
@@ -69,6 +70,7 @@ export interface ISettingsState {
     disableSelfView?: boolean;
     displayName?: string;
     email?: string;
+    enableBeforeUnloadConfirmation?: boolean;
     hideShareAudioHelper?: boolean;
     localFlipX?: boolean;
     maxStageParticipants?: number;
