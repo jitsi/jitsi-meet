@@ -18,6 +18,7 @@ export interface IMessage {
     privateMessage: boolean;
     reactions: Map<string, Set<string>>;
     recipient: string;
+    replyToMessageId?: string;
     sentToVisitor?: boolean;
     timestamp: number;
 }
