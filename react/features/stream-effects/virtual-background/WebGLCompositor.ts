@@ -264,7 +264,7 @@ export default class WebGLCompositor {
     _gl: WebGLRenderingContext | null = null;
 
     // Bound event handlers — stored so they can be removed in dispose().
-    _onContextLostBound: (() => void) | null = null;
+    _onContextLostBound: ((event: Event) => void) | null = null;
     _onContextRestoredBound: (() => void) | null = null;
 
     _program: WebGLProgram | null = null;
@@ -668,10 +668,12 @@ export default class WebGLCompositor {
     /**
      * Handles WebGL context loss.
      *
+     * @param {Event} event - The webglcontextlost event.
      * @private
      * @returns {void}
      */
-    _onContextLost(): void {
+    _onContextLost(event: Event): void {
+        event.preventDefault();
         logger.warn('[VirtualBackground] WebGLCompositor: context lost');
         // The browser automatically destroys all GL objects on context loss.
         // Null the JS references so the GC can collect the wrapper objects.

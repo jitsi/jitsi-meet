@@ -107,6 +107,7 @@ export default class JitsiStreamBackgroundEffectV2 {
     _isPassthrough = false;
     _isReady = false;
     _isRunning = false;
+    _pendingInferResolve: ((value: ImageData | null) => void) | null = null;
     _useInsertableStreams = false;
 
     /**
@@ -350,6 +351,11 @@ export default class JitsiStreamBackgroundEffectV2 {
 
         this._cancelRVFC();
         this._stopKeepalive();
+
+        // Abort any in-flight _inferWithWorker call so the IS loop exits immediately rather than
+        // waiting for a worker reply that will never arrive after the worker is terminated.
+        this._pendingInferResolve?.(null);
+        this._pendingInferResolve = null;
 
         // Shut down inference worker (all tiers).
         if (this._inferenceWorker) {
@@ -1033,15 +1039,23 @@ export default class JitsiStreamBackgroundEffectV2 {
                 return;
             }
 
+            this._pendingInferResolve = resolve;
+
             const handler = (e: MessageEvent) => {
                 if (e.data.type === 'mask') {
                     this._inferenceWorker?.removeEventListener('message', handler);
+                    if (this._pendingInferResolve === resolve) {
+                        this._pendingInferResolve = null;
+                    }
                     const imgData = new ImageData(e.data.data as Uint8ClampedArray,
                         e.data.width as number, e.data.height as number);
 
                     resolve(this._applyMaskEMA(imgData));
                 } else if (e.data.type === 'infer_error') {
                     this._inferenceWorker?.removeEventListener('message', handler);
+                    if (this._pendingInferResolve === resolve) {
+                        this._pendingInferResolve = null;
+                    }
                     logger.warn('[VirtualBackground] Worker inference error:', e.data.error);
                     resolve(null);
                 }

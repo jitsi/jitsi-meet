@@ -112,7 +112,7 @@ async function createVirtualBackgroundEffectV1(virtualBackground: IBackgroundEff
  * Creates a new V2 instance of the virtual background effect.
  *
  * Device tier detection runs first and selects the appropriate backend. All tiers run inference
- * inside a dedicated VBInferenceWorker: LOW tier uses ORT WASM (PP-HumanSeg FP32) and MEDIUM/HIGH
+ * inside a dedicated VBInferenceWorker: LOW tier uses TFLite WASM (selfie_segmenter FP16) and MEDIUM/HIGH
  * tiers use TF.js with WebGL/WebGPU backends. Pre-detected capabilities are passed to the
  * constructor so {@link JitsiStreamBackgroundEffectV2._initAsync} does not need to re-probe.
  *
