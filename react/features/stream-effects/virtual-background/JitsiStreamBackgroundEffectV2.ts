@@ -21,8 +21,8 @@ import WebGLCompositor from './WebGLCompositor';
 /** Benchmark log interval in frames. */
 const BENCHMARK_LOG_INTERVAL = 60;
 
-/** Default temporal blend ratio — 85 % toward previous blended mask. */
-const DEFAULT_TEMPORAL_BLEND_RATIO = 0.85;
+/** Default temporal blend ratio — 75 % toward previous blended mask. */
+const DEFAULT_TEMPORAL_BLEND_RATIO = 0.75;
 
 /**
  * Default smoothstep lower threshold. Pixels with EMA-smoothed confidence below this value are
@@ -30,11 +30,11 @@ const DEFAULT_TEMPORAL_BLEND_RATIO = 0.85;
  * chair backs, wall decorations that the model assigns 0.15–0.25 confidence) while still allowing
  * hair-boundary pixels (0.30–0.50 confidence) to enter the feathering zone.
  */
-const DEFAULT_EDGE_LOW = 0.30;
+const DEFAULT_EDGE_LOW = 0.48;
 
 /**
  * Default smoothstep upper threshold. Pixels with confidence above this value are fully opaque.
- * The 0.30–0.65 window (span 0.35) gives a gradual transition at hair and clothing edges.
+ * The 0.40–0.70 window (span 0.30) gives a gradual transition at hair and clothing edges.
  * Body interior pixels (confidence ≈ 0.9) are unaffected.
  */
 const DEFAULT_EDGE_HIGH = 0.65;
@@ -60,14 +60,13 @@ const STUDIO_LIGHT_EDGE_HIGH = 0.70;
  * Kept small (16px) so the feathering zone is tight — the edge-guided shader snapping handles
  * hard object boundaries while the EMA temporal smoothing handles flicker.
  */
-const TARGET_BLUR_CAMERA_PX = 16;
+const TARGET_BLUR_CAMERA_PX = 20;
 
 /**
  * V2 virtual background stream effect.
  *
  * All tiers run inference in a single {@link VBInferenceWorker}: MEDIUM/HIGH tiers use TF.js
- * body-segmentation with WebGL/WebGPU; LOW tier uses TFLite WASM (ML Kit Selfie Segmentation FP16
- * at 256×256).
+ * body-segmentation with WebGL/WebGPU; LOW tier uses TFLite WASM (selfie_segmenter FP16 at 256×256).
  * Running all inference in a Worker keeps the main thread free for UI events. For GPU tiers,
  * the Worker's OffscreenCanvas WebGL context is not subject to Chrome's tab-visibility GPU
  * scheduling throttle that affects main-document contexts.
@@ -274,7 +273,7 @@ export default class JitsiStreamBackgroundEffectV2 {
         // Assigned here so it is available for both the LOW-tier TFLite path and the MEDIUM/HIGH TF.js path.
         this._outputCanvasCtx = this._outputCanvasElement.getContext('2d');
 
-        // All tiers: WebGL compositor + VBInferenceWorker (TFLite ML Kit for LOW, TF.js for MEDIUM/HIGH).
+        // All tiers: WebGL compositor + VBInferenceWorker (TFLite selfie_segmenter for LOW, TF.js for MEDIUM/HIGH).
         // The worker runs inference in a dedicated thread — the main thread is never blocked.
         // For GPU tiers, the Worker's OffscreenCanvas WebGL context is not subject to Chrome's
         // tab-visibility GPU scheduling throttle.
@@ -977,13 +976,19 @@ export default class JitsiStreamBackgroundEffectV2 {
 
             this._inferenceWorker!.addEventListener('message', handler);
 
+            const tfliteModelPath = `${base}libs/selfie_segmenter.tflite`;
+
+            logger.debug(
+                `[VirtualBackground] Initialising inference worker — backend: ${this._capabilities!.backend}`
+                + ` | model: ${tfliteModelPath}`
+                + ` | seg: ${this._capabilities!.segWidth}×${this._capabilities!.segHeight}`);
+
             this._inferenceWorker!.postMessage({
                 backend: this._capabilities!.backend,
                 modelType: this._capabilities!.modelType,
                 segHeight: this._capabilities!.segHeight,
                 segWidth: this._capabilities!.segWidth,
-                tfliteModelPath:
-                    `${base}libs/selfiesegmentation_mlkit-256x256-2021_01_19-v1215.f16.tflite`,
+                tfliteModelPath,
                 tfliteWasmBase: `${base}libs/`,
                 type: 'init'
             });

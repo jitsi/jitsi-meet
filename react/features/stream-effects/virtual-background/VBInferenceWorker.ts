@@ -2,7 +2,7 @@
  * Virtual Background V2 — inference worker.
  *
  * Handles TF.js body-segmentation (MEDIUM/HIGH tiers via WebGL/WebGPU) and TFLite WASM
- * (LOW tier via ML Kit Selfie Segmentation FP16) in a single dedicated Web Worker. Running
+ * (LOW tier via selfie_segmenter FP16) in a single dedicated Web Worker. Running
  * all inference in a Worker keeps the main thread free for UI events. For GPU tiers, the
  * Worker's OffscreenCanvas-backed WebGL context is not subject to Chrome's tab-visibility
  * GPU scheduling throttle.
@@ -156,7 +156,7 @@ function workerPost(msg: any, transfer?: Transferable[]): void {
  * @param {string} data.modelType - 'general' or 'landscape' (TF.js tiers only).
  * @param {number} data.segHeight - Segmentation canvas height.
  * @param {number} data.segWidth - Segmentation canvas width.
- * @param {string} data.tfliteModelPath - Absolute URL of the ML Kit TFLite model.
+ * @param {string} data.tfliteModelPath - Absolute URL of the TFLite segmentation model.
  * @param {string} data.tfliteWasmBase - Base URL for tflite*.wasm binaries (trailing slash).
  * @returns {Promise<void>}
  */
@@ -201,7 +201,7 @@ async function handleInit(data: {
  * unavailable). Chrome does not apply tab-visibility GPU throttling to Worker GPU contexts.
  *
  * If the requested GPU backend is unavailable (no GPU, OffscreenCanvas WebGL unsupported, etc.),
- * falls back to TFLite WASM using the ML Kit model path supplied in the init message. This covers
+ * falls back to TFLite WASM using the TFLite model path supplied in the init message. This covers
  * servers and VMs where the main-thread tier detector passes GPU checks (software rasteriser) but
  * the Worker's OffscreenCanvas context creation fails.
  *
@@ -274,7 +274,7 @@ function detectSimd(): boolean {
 }
 
 /**
- * Initialises the TFLite WASM backend for LOW tier using the ML Kit Selfie Segmentation model.
+ * Initialises the TFLite WASM backend for LOW tier using the selfie_segmenter model.
  *
  * Loads the appropriate WASM runtime (SIMD or standard) using the createTFLiteModule /
  * createTFLiteSIMDModule factory with a locateFile override so the .wasm binary is resolved
@@ -283,9 +283,9 @@ function detectSimd(): boolean {
  * Pre-computes HEAPF32 input/output offsets and creates an OffscreenCanvas for pixel readback.
  *
  * @param {Object} data - Init message payload for the TFLITE tier.
- * @param {string} data.modelPath - Absolute URL of the ML Kit TFLite model.
- * @param {number} data.segHeight - Segmentation canvas height (256 for ML Kit).
- * @param {number} data.segWidth - Segmentation canvas width (256 for ML Kit).
+ * @param {string} data.modelPath - Absolute URL of the TFLite segmentation model.
+ * @param {number} data.segHeight - Segmentation canvas height.
+ * @param {number} data.segWidth - Segmentation canvas width.
  * @param {string} data.tfliteWasmBase - Base URL for tflite*.wasm binaries (trailing slash).
  * @returns {Promise<void>}
  */
@@ -412,7 +412,7 @@ async function handleInferTfjs(bitmap: ImageBitmap): Promise<void> {
  *
  * Draws the bitmap to an OffscreenCanvas, fills the TFLite HEAPF32 input buffer with NHWC
  * float32 RGB values normalised to [0,1], calls _runInference(), and reads the single-channel
- * output (ML Kit Selfie Segmentation outputs one float per pixel: person confidence in [0,1]).
+ * output (selfie_segmenter outputs one float per pixel: person confidence in [0,1]).
  * Writes the confidence value to both R and A channels of the returned Uint8ClampedArray so
  * it is compatible with both the WebGL compositor (reads .r) and the Canvas 2D fallback (reads alpha).
  *
@@ -445,7 +445,7 @@ async function handleInferTflite(bitmap: ImageBitmap): Promise<void> {
         tfliteModule._runInference();
 
         // Read single-channel output: one float per pixel (person confidence in [0, 1]).
-        // ML Kit selfie segmentation model outputs probabilities directly — no softmax needed.
+        // selfie_segmenter outputs probabilities directly — no softmax needed.
         const maskBytes = new Uint8ClampedArray(pixelCount * 4);
 
         for (let i = 0; i < pixelCount; i++) {
