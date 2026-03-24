@@ -45,7 +45,7 @@ export const EndConferenceButton = (props: IProps) => {
         dispatch(openDialog('endConference', EndConferenceDialog, {
             confirm: () => {
                 dispatch(endConference());
-                dispatch(hideDialog(EndConferenceDialog));
+                dispatch(hideDialog('endConference'));
             }
         }));
     }, []);
