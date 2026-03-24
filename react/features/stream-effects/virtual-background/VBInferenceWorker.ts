@@ -1,23 +1,25 @@
 /**
  * Virtual Background V2 — inference worker.
  *
- * Handles TF.js body-segmentation (MEDIUM/HIGH tiers via WebGL/WebGPU) and ORT WASM
- * (LOW tier via PP-HumanSeg FP32) in a single dedicated Web Worker. Running all inference
- * in a Worker keeps the main thread free for UI events. For GPU tiers, the Worker's
- * OffscreenCanvas-backed WebGL context is not subject to Chrome's tab-visibility GPU
- * scheduling throttle.
+ * Handles TF.js body-segmentation (MEDIUM/HIGH tiers via WebGL/WebGPU) and TFLite WASM
+ * (LOW tier via ML Kit Selfie Segmentation FP16) in a single dedicated Web Worker. Running
+ * all inference in a Worker keeps the main thread free for UI events. For GPU tiers, the
+ * Worker's OffscreenCanvas-backed WebGL context is not subject to Chrome's tab-visibility
+ * GPU scheduling throttle.
  */
 /*
  * Message protocol
  *
  *   Main -> Worker:
  *     { type: 'init', backend: string, modelType: string, segWidth: number, segHeight: number,
- *       modelPath?: string, ortWasmPath?: string }
+ *       tfliteModelPath: string, tfliteWasmBase: string }
  *     { type: 'infer', bitmap: ImageBitmap }   (bitmap is transferred -- zero-copy)
  *     { type: 'stop' }
  *
  *   Worker -> Main:
- *     { type: 'init_done' }
+ *     { type: 'init_done', backend: string, segHeight: number, segWidth: number }
+ *       backend/segHeight/segWidth reflect the actual tier used (may differ from requested
+ *       backend when the Worker fell back to TFLite because the GPU backend was unavailable)
  *     { type: 'init_error', error: string }
  *     { type: 'mask', data: Uint8ClampedArray, width: number, height: number }
  *       (data.buffer is transferred -- zero-copy)
@@ -32,6 +34,12 @@ import type { BodySegmenter, MediaPipeSelfieSegmentationTfjsModelConfig }
 import * as bs from '@tensorflow-models/body-segmentation';
 
 import { BackendType } from './DeviceTierDetector.web';
+/* eslint-disable lines-around-comment */
+// @ts-ignore
+import createTFLiteModule from './vendor/tflite/tflite';
+// @ts-ignore
+import createTFLiteSIMDModule from './vendor/tflite/tflite-simd';
+/* eslint-enable lines-around-comment */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -75,34 +83,34 @@ function isSameOriginUrl(url: string): boolean {
     }
 }
 
-/** Active TF.js segmenter (MEDIUM/HIGH tiers). Null when using ORT backend. */
+/** Active TF.js segmenter (MEDIUM/HIGH tiers). Null when using TFLite backend. */
 let segmenter: BodySegmenter | null = null;
 
-/** Active ORT inference session (LOW tier). Null when using TF.js backend. */
-let ortSession: any = null;
+/** Active TFLite module (LOW tier, TFLITE backend). Null when using TF.js. */
+let tfliteModule: any = null;
 
-/** ORT module reference — needed to construct Tensor objects at inference time. */
-let ortModule: any = null;
+/** TFLite input HEAPF32 offset (byte offset / 4). Pre-computed after model load. */
+let tfliteInputOffset = 0;
 
-/** Pre-allocated NCHW float32 input buffer — reused every frame to avoid GC pressure. */
-let ortInputBuffer: Float32Array | null = null;
+/** TFLite output HEAPF32 offset (byte offset / 4). Pre-computed after model load. */
+let tfliteOutputOffset = 0;
 
-/** Total pixel count for the ORT segmentation canvas (segWidth x segHeight). */
-let ortPixelCount = 0;
+/** TFLite segmentation pixel count (segWidth x segHeight). */
+let tflitePixelCount = 0;
 
-/** ORT segmentation canvas width (from init message). */
-let ortSegWidth = 0;
+/** TFLite segmentation canvas width. */
+let tfliteSegWidth = 0;
 
-/** ORT segmentation canvas height (from init message). */
-let ortSegHeight = 0;
+/** TFLite segmentation canvas height. */
+let tfliteSegHeight = 0;
 
-/** OffscreenCanvas for downscaling frames before ORT inference. */
-let ortReadCanvas: any = null;
+/** OffscreenCanvas for downscaling frames before TFLite inference. */
+let tfliteReadCanvas: any = null;
 
-/** 2D rendering context for ortReadCanvas. */
-let ortReadCtx: any = null;
+/** 2D context for tfliteReadCanvas. */
+let tfliteReadCtx: any = null;
 
-/** Active backend type. WASM selects ORT; WEBGL or WEBGPU selects TF.js. Empty when stopped. */
+/** Active backend type. TFLITE selects TFLite WASM; WEBGL/WEBGPU selects TF.js. */
 let currentBackend: BackendType | '' = '';
 
 /**
@@ -139,28 +147,29 @@ function workerPost(msg: any, transfer?: Transferable[]): void {
 /**
  * Initialises the worker backend based on the tier signalled by the main thread.
  *
- * Routes to the ORT WASM handler for LOW tier (backend 'wasm') or the TF.js handler
- * for MEDIUM/HIGH tiers (backend 'webgl' or 'webgpu').
+ * Routes to the TFLite handler for LOW tier (backend 'tflite') or the TF.js handler for
+ * MEDIUM/HIGH tiers (backend 'webgl' or 'webgpu'). The TFLite model path and WASM base are
+ * always passed so the TF.js handler can fall back to TFLite if GPU init fails in the Worker.
  *
  * @param {Object} data - Init message payload.
- * @param {string} data.backend - 'webgl', 'webgpu', or 'wasm'.
- * @param {string} [data.modelPath] - Absolute URL of the ONNX model (WASM tier only).
+ * @param {string} data.backend - 'tflite', 'webgl', or 'webgpu'.
  * @param {string} data.modelType - 'general' or 'landscape' (TF.js tiers only).
- * @param {string} [data.ortWasmPath] - Base URL for ORT WASM binaries (WASM tier only).
  * @param {number} data.segHeight - Segmentation canvas height.
  * @param {number} data.segWidth - Segmentation canvas width.
+ * @param {string} data.tfliteModelPath - Absolute URL of the ML Kit TFLite model.
+ * @param {string} data.tfliteWasmBase - Base URL for tflite*.wasm binaries (trailing slash).
  * @returns {Promise<void>}
  */
 async function handleInit(data: {
     backend: BackendType;
-    modelPath?: string;
     modelType: string;
-    ortWasmPath?: string;
     segHeight: number;
     segWidth: number;
+    tfliteModelPath: string;
+    tfliteWasmBase: string;
 }): Promise<void> {
-    // Whitelist backend — rejects unknown values before they reach tf.setBackend() or ORT.
-    if (data.backend !== BackendType.WASM
+    // Whitelist backend — rejects unknown values before they reach tf.setBackend() or TFLite.
+    if (data.backend !== BackendType.TFLITE
             && data.backend !== BackendType.WEBGL
             && data.backend !== BackendType.WEBGPU) {
         workerPost({ error: `Unknown backend: "${data.backend}"`, type: 'init_error' });
@@ -179,13 +188,8 @@ async function handleInit(data: {
 
     currentBackend = data.backend;
 
-    if (data.backend === BackendType.WASM) {
-        await handleInitOrt(data as {
-            modelPath: string;
-            ortWasmPath: string;
-            segHeight: number;
-            segWidth: number;
-        });
+    if (data.backend === BackendType.TFLITE) {
+        await handleInitTflite(data);
     } else {
         await handleInitTfjs(data);
     }
@@ -196,11 +200,18 @@ async function handleInit(data: {
  * In a Worker, TF.js automatically uses OffscreenCanvas for its WebGL context (document is
  * unavailable). Chrome does not apply tab-visibility GPU throttling to Worker GPU contexts.
  *
+ * If the requested GPU backend is unavailable (no GPU, OffscreenCanvas WebGL unsupported, etc.),
+ * falls back to TFLite WASM using the ML Kit model path supplied in the init message. This covers
+ * servers and VMs where the main-thread tier detector passes GPU checks (software rasteriser) but
+ * the Worker's OffscreenCanvas context creation fails.
+ *
  * @param {Object} data - Init message payload.
  * @param {string} data.backend - 'webgl' (MEDIUM tier) or 'webgpu' (HIGH tier).
  * @param {string} data.modelType - 'general' or 'landscape'.
  * @param {number} data.segWidth - Unused here; inference at bitmap resolution.
  * @param {number} data.segHeight - Unused here; inference at bitmap resolution.
+ * @param {string} data.tfliteModelPath - TFLite model URL used if GPU fallback is triggered.
+ * @param {string} data.tfliteWasmBase - TFLite WASM base URL used if GPU fallback is triggered.
  * @returns {Promise<void>}
  */
 async function handleInitTfjs(data: {
@@ -208,19 +219,20 @@ async function handleInitTfjs(data: {
     modelType: string;
     segHeight: number;
     segWidth: number;
+    tfliteModelPath: string;
+    tfliteWasmBase: string;
 }): Promise<void> {
-    try {
-        const { backend, modelType } = data;
+    const { backend, modelType, tfliteModelPath, tfliteWasmBase } = data;
 
+    try {
         const backendSet = await tf.setBackend(backend);
 
         await tf.ready();
 
         if (!backendSet || tf.getBackend() !== backend) {
-            workerPost({
-                error: `Backend "${backend}" unavailable — active: "${tf.getBackend()}"`,
-                type: 'init_error'
-            });
+            // GPU backend unavailable in this Worker context — fall back to TFLite.
+            currentBackend = BackendType.TFLITE;
+            await handleInitTflite({ segHeight: 256, segWidth: 256, tfliteModelPath, tfliteWasmBase });
 
             return;
         }
@@ -230,183 +242,117 @@ async function handleInitTfjs(data: {
             { modelType, runtime: 'tfjs' } as MediaPipeSelfieSegmentationTfjsModelConfig
         );
 
-        workerPost({ type: 'init_done' });
+        workerPost({ backend: currentBackend, segHeight: data.segHeight, segWidth: data.segWidth, type: 'init_done' });
     } catch (err) {
-        workerPost({ error: String(err), type: 'init_error' });
+        // GPU init threw (e.g. OffscreenCanvas WebGL context creation failed) — fall back to TFLite.
+        currentBackend = BackendType.TFLITE;
+        try {
+            await handleInitTflite({ segHeight: 256, segWidth: 256, tfliteModelPath, tfliteWasmBase });
+        } catch (tfliteErr) {
+            workerPost({ error: String(tfliteErr), type: 'init_error' });
+        }
     }
 }
 
 /**
- * Initialises the ORT WASM backend for LOW tier using PP-HumanSeg FP32.
+ * Returns true when the runtime supports WebAssembly SIMD instructions.
  *
- * Loads onnxruntime-web dynamically and configures single-threaded WASM execution
- * (numThreads=1 avoids SharedArrayBuffer / COOP-COEP header requirements). Creates
- * an ORT InferenceSession from the provided model URL, pre-allocates an OffscreenCanvas
- * for pixel readback, and a NCHW float32 input buffer that is reused every frame.
+ * Uses WebAssembly.validate with a minimal module containing a v128.const SIMD instruction.
+ * Returns false on any error (older browsers, WASM disabled, etc.).
  *
- * @param {Object} data - Init message payload for the WASM tier.
- * @param {string} data.modelPath - Absolute URL of the PP-HumanSeg ONNX model.
- * @param {string} data.ortWasmPath - Base URL for ORT WASM binaries (ort-wasm*.wasm).
- * @param {number} data.segHeight - Segmentation canvas height.
- * @param {number} data.segWidth - Segmentation canvas width.
+ * @returns {boolean}
+ */
+function detectSimd(): boolean {
+    try {
+        return WebAssembly.validate(new Uint8Array([
+            0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 96, 0, 1, 123,
+            3, 2, 1, 0, 10, 10, 1, 8, 0, 65, 0, 253, 15, 253, 98, 11
+        ]));
+    } catch {
+        return false;
+    }
+}
+
+/**
+ * Initialises the TFLite WASM backend for LOW tier using the ML Kit Selfie Segmentation model.
+ *
+ * Loads the appropriate WASM runtime (SIMD or standard) using the createTFLiteModule /
+ * createTFLiteSIMDModule factory with a locateFile override so the .wasm binary is resolved
+ * from the deployment libs/ directory rather than from the (unusable) blob: worker origin.
+ * Fetches the .tflite model, writes it to the TFLite HEAPU8 buffer, and calls _loadModel().
+ * Pre-computes HEAPF32 input/output offsets and creates an OffscreenCanvas for pixel readback.
+ *
+ * @param {Object} data - Init message payload for the TFLITE tier.
+ * @param {string} data.modelPath - Absolute URL of the ML Kit TFLite model.
+ * @param {number} data.segHeight - Segmentation canvas height (256 for ML Kit).
+ * @param {number} data.segWidth - Segmentation canvas width (256 for ML Kit).
+ * @param {string} data.tfliteWasmBase - Base URL for tflite*.wasm binaries (trailing slash).
  * @returns {Promise<void>}
  */
-async function handleInitOrt(data: {
-    modelPath: string;
-    ortWasmPath: string;
+async function handleInitTflite(data: {
     segHeight: number;
     segWidth: number;
+    tfliteModelPath: string;
+    tfliteWasmBase: string;
 }): Promise<void> {
     try {
-        const { modelPath, ortWasmPath, segHeight, segWidth } = data;
+        const { segHeight, segWidth, tfliteModelPath, tfliteWasmBase } = data;
 
-        // Validate URLs are same-origin — prevents loading model/WASM binaries from external servers.
-        if (!isSameOriginUrl(modelPath) || !isSameOriginUrl(ortWasmPath)) {
-            workerPost({ error: 'Model or WASM path must be same-origin', type: 'init_error' });
+        if (!isSameOriginUrl(tfliteModelPath) || !isSameOriginUrl(`${tfliteWasmBase}tflite.wasm`)) {
+            workerPost({ error: 'TFLite model or WASM path must be same-origin', type: 'init_error' });
 
             return;
         }
 
-        // onnxruntime-web v1.17 uses `document` as a bare global in its Emscripten bootstrap
-        // (WASM path resolution, WebGL detection, dynamic <script> injection). Workers lack
-        // `document`, so any access throws ReferenceError. Static stubs fail because ORT
-        // accesses document through unpredictable property chains that vary by code path.
-        //
-        // Fix: install a Proxy-based recursive "DOM node" factory before the dynamic import.
-        // makeNode() returns a Proxy whose target is a no-op function (so the proxy itself is
-        // callable). Unknown property accesses return another makeNode(), so any chain of the
-        // form doc.head.parentNode.childNodes[0].appendChild(el) is silently absorbed.
-        //
-        // Known-value overrides on the document proxy:
-        //   createElement('canvas') → OffscreenCanvas  (WebGL check; getContext returns null)
-        //   getElementsByTagName('script') → {length:0} (skip script-URL detection; wasmPaths wins)
-        //   currentScript → null
-        //   readyState    → 'complete'
-        //   everything else → makeNode()  (head, body, getElementById, etc.)
-        // ORT's Emscripten bootstrap accesses several Node.js / browser globals that are absent
-        // in DedicatedWorkerGlobalScope. Polyfill them before the dynamic import so that ORT
-        // module-level code (which runs inside the import() call with eager mode) does not throw.
-        //
-        //   window      — not defined in Workers; alias self so window.x chains resolve.
-        //   __filename  — Node.js global; ORT may read it via new Function / eval outside
-        //                 webpack's module wrapper (where webpack's own polyfill does not apply).
-        //   __dirname   — paired with __filename in Node.js idioms.
-        if (typeof window === 'undefined') {
-            (self as any).window = self;
-        }
-        if (typeof (self as any).__filename === 'undefined') {
-            (self as any).__filename = 'vb-inference-worker.js';
-        }
-        if (typeof (self as any).__dirname === 'undefined') {
-            (self as any).__dirname = '/';
-        }
+        // Select SIMD-optimised runtime when available — roughly 2x faster than standard WASM.
+        const simdSupported = detectSimd();
+        const tfliteFactory = simdSupported ? createTFLiteSIMDModule : createTFLiteModule;
 
-        if (typeof document === 'undefined') {
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            const makeNode = (): any => new Proxy(
-                // Function target makes the proxy itself callable (e.g. addEventListener callbacks).
-                // eslint-disable-next-line @typescript-eslint/no-use-before-define
-                // eslint-disable-next-line func-style
-                (function nodeStub() {
-                    return makeNode();
-                }) as any,
-                {
-                    apply: () => makeNode(),
-                    get: (_t: any, prop: string) => {
-                        if (prop === 'length') {
-                            return 0;
-                        }
-                        if (prop === 'getAttribute') {
-                            return () => null;
-                        }
-                        if (prop === 'setAttribute'
-                                || prop === 'removeAttribute'
-                                || prop === 'appendChild'
-                                || prop === 'removeChild'
-                                || prop === 'insertBefore') {
-                            return () => undefined;
-                        }
-                        if (prop === 'addEventListener') {
-                            return () => undefined;
-                        }
-                        if (prop === 'src' || prop === 'href' || prop === 'type') {
-                            return '';
-                        }
-
-                        return makeNode();
-                    }
-                }
-            );
-
-            (self as any).document = new Proxy(
-                {} as any,
-                {
-                    get: (_t: any, prop: string) => {
-                        if (prop === 'createElement') {
-                            return (tag: string) => (
-                                tag === 'canvas' ? new OffscreenCanvas(1, 1) : makeNode()
-                            );
-                        }
-                        if (prop === 'getElementsByTagName') {
-                            // Return empty list for 'script' — ORT skips URL detection and
-                            // uses wasmPaths instead. Other tags return a safe node.
-                            return (tag: string) => (tag === 'script' ? { length: 0 } : makeNode());
-                        }
-                        if (prop === 'currentScript') {
-                            return null;
-                        }
-                        if (prop === 'readyState') {
-                            return 'complete';
-                        }
-
-                        return makeNode();
-                    }
-                }
-            );
-        }
-
-        // webpackMode:"eager" inlines onnxruntime-web directly into this bundle instead of
-        // splitting it into a separate chunk. Without this, webpack generates an importScripts()
-        // call for the ORT chunk. In a blob-URL Worker, importScripts() executes the chunk script
-        // synchronously and any module-level throw (e.g. `window` / `document` access before our
-        // polyfills) surfaces only as a generic ChunkLoadError, masking the real cause. With
-        // eager mode the module code runs inline inside the import() call, after our polyfills are
-        // installed, and any error propagates as-is without the chunk-loading wrapper.
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        ortModule = await import(/* webpackChunkName: "ort-eager" */ /* webpackMode: "eager" */ 'onnxruntime-web');
-        ortModule.env.wasm.numThreads = 1;
-        ortModule.env.wasm.wasmPaths = ortWasmPath;
-
-        ortSession = await ortModule.InferenceSession.create(modelPath, {
-            executionMode: 'sequential',
-            executionProviders: [ 'wasm' ],
-            graphOptimizationLevel: 'all'
+        // locateFile overrides WASM path resolution — required because the worker runs from a
+        // blob: URL whose origin is "null", making relative path resolution fail.
+        tfliteModule = await tfliteFactory({
+            locateFile: (path: string) => `${tfliteWasmBase}${path}`
         });
 
-        ortSegWidth = segWidth;
-        ortSegHeight = segHeight;
-        ortPixelCount = segWidth * segHeight;
-        ortInputBuffer = new Float32Array(3 * ortPixelCount);
+        // Fetch and load model into TFLite WASM heap.
+        const modelResponse = await fetch(tfliteModelPath, { credentials: 'same-origin' });
 
-        // OffscreenCanvas is the worker-side equivalent of document.createElement('canvas').
-        ortReadCanvas = new OffscreenCanvas(segWidth, segHeight);
-        ortReadCtx = ortReadCanvas.getContext('2d', { willReadFrequently: true });
+        if (!modelResponse.ok) {
+            workerPost({ error: `TFLite model fetch failed: HTTP ${modelResponse.status}`, type: 'init_error' });
 
-        workerPost({ type: 'init_done' });
+            return;
+        }
+
+        const modelBuffer = await modelResponse.arrayBuffer();
+
+        tfliteModule.HEAPU8.set(new Uint8Array(modelBuffer), tfliteModule._getModelBufferMemoryOffset());
+        tfliteModule._loadModel(modelBuffer.byteLength);
+
+        // Pre-compute HEAPF32 offsets to avoid divide-by-4 on every frame.
+        tfliteInputOffset = tfliteModule._getInputMemoryOffset() / 4;
+        tfliteOutputOffset = tfliteModule._getOutputMemoryOffset() / 4;
+        tfliteSegWidth = segWidth;
+        tfliteSegHeight = segHeight;
+        tflitePixelCount = segWidth * segHeight;
+
+        tfliteReadCanvas = new OffscreenCanvas(segWidth, segHeight);
+        tfliteReadCtx = tfliteReadCanvas.getContext('2d', { willReadFrequently: true });
+
+        workerPost({ backend: currentBackend, segHeight: tfliteSegHeight, segWidth: tfliteSegWidth, type: 'init_done' });
     } catch (err) {
         workerPost({ error: String(err), type: 'init_error' });
     }
 }
 
 /**
- * Dispatches an inference call to the TF.js or ORT handler based on the active backend.
+ * Dispatches an inference call to the TFLite or TF.js handler based on the active backend.
  *
  * @param {ImageBitmap} bitmap - Pre-scaled camera frame at the tier's segmentation resolution.
  * @returns {Promise<void>}
  */
 async function handleInfer(bitmap: ImageBitmap): Promise<void> {
-    if (currentBackend === BackendType.WASM) {
-        await handleInferOrt(bitmap);
+    if (currentBackend === BackendType.TFLITE) {
+        await handleInferTflite(bitmap);
     } else {
         await handleInferTfjs(bitmap);
     }
@@ -462,75 +408,60 @@ async function handleInferTfjs(bitmap: ImageBitmap): Promise<void> {
 }
 
 /**
- * Runs one ORT WASM inference cycle on the transferred ImageBitmap.
+ * Runs one TFLite inference cycle on the transferred ImageBitmap.
  *
- * Downscales the bitmap via OffscreenCanvas, builds a NCHW float32 input tensor with RGB
- * channels normalised to [-1,1] (PP-HumanSeg OpenCV zoo convention), runs the ORT session,
- * and returns a Uint8ClampedArray with person confidence in the R and A channels.
- * EMA temporal smoothing is deferred to the main thread so all tiers share the same path.
+ * Draws the bitmap to an OffscreenCanvas, fills the TFLite HEAPF32 input buffer with NHWC
+ * float32 RGB values normalised to [0,1], calls _runInference(), and reads the single-channel
+ * output (ML Kit Selfie Segmentation outputs one float per pixel: person confidence in [0,1]).
+ * Writes the confidence value to both R and A channels of the returned Uint8ClampedArray so
+ * it is compatible with both the WebGL compositor (reads .r) and the Canvas 2D fallback (reads alpha).
  *
  * @param {ImageBitmap} bitmap - Pre-scaled camera frame at seg resolution.
  * @returns {Promise<void>}
  */
-async function handleInferOrt(bitmap: ImageBitmap): Promise<void> {
-    if (!ortSession || !ortModule || !ortReadCtx || !ortInputBuffer) {
+async function handleInferTflite(bitmap: ImageBitmap): Promise<void> {
+    if (!tfliteModule || !tfliteReadCtx) {
         bitmap.close();
-        workerPost({ error: 'ORT not initialised', type: 'infer_error' });
+        workerPost({ error: 'TFLite not initialised', type: 'infer_error' });
 
         return;
     }
 
     try {
-        // 1. Draw bitmap to OffscreenCanvas and read RGBA pixels.
-        ortReadCtx.drawImage(bitmap, 0, 0, ortSegWidth, ortSegHeight);
-        const imageData = ortReadCtx.getImageData(0, 0, ortSegWidth, ortSegHeight);
+        // Draw pre-scaled bitmap to the read canvas and extract RGBA pixels.
+        tfliteReadCtx.drawImage(bitmap, 0, 0, tfliteSegWidth, tfliteSegHeight);
+        const imageData = tfliteReadCtx.getImageData(0, 0, tfliteSegWidth, tfliteSegHeight);
 
-        // 2. Build NCHW float32 input: [1, 3, H, W], RGB channel order, normalised to [-1,1].
-        // PP-HumanSeg (OpenCV zoo) expects RGB with (pixel / 128 - 1) normalisation.
-        const buf = ortInputBuffer;
-        const pixelCount = ortPixelCount;
+        // Fill NHWC float32 input [1, H, W, 3] with RGB channels normalised to [0, 1].
+        const pixelCount = tflitePixelCount;
 
         for (let i = 0; i < pixelCount; i++) {
-            buf[i] = imageData.data[i * 4] / 128 - 1;
-            buf[pixelCount + i] = imageData.data[i * 4 + 1] / 128 - 1;
-            buf[pixelCount * 2 + i] = imageData.data[i * 4 + 2] / 128 - 1;
+            tfliteModule.HEAPF32[tfliteInputOffset + i * 3] = imageData.data[i * 4] / 255;
+            tfliteModule.HEAPF32[tfliteInputOffset + i * 3 + 1] = imageData.data[i * 4 + 1] / 255;
+            tfliteModule.HEAPF32[tfliteInputOffset + i * 3 + 2] = imageData.data[i * 4 + 2] / 255;
         }
 
-        // 3. Run ORT inference (async — resolves after WASM completes in the Worker thread).
-        // The input tensor wraps a WASM-backed copy of buf; dispose() frees it after run().
-        const inputName = ortSession.inputNames[0];
-        const inputTensor = new ortModule.Tensor('float32', buf, [ 1, 3, ortSegHeight, ortSegWidth ]);
-        const results = await ortSession.run({ [inputName]: inputTensor });
+        // Run TFLite inference (synchronous WASM call).
+        tfliteModule._runInference();
 
-        inputTensor.dispose?.();
-
-        // 4. Extract person confidence from NCHW output [1, 2, H, W].
-        // Person channel is at index pixelCount+i (channel 1). PP-HumanSeg includes Softmax
-        // in the ONNX graph, so values are already [0,1] probabilities.
-        // R channel: read by the WebGL compositor shader (u_mask sampler reads .r).
-        // A channel: used by the Canvas 2D fallback compositing path.
-        // outputTensor.data is a view into the WASM heap — read all values before dispose().
-        const outputTensor = results[ortSession.outputNames[0]];
-        const outputData = outputTensor.data as Float32Array;
+        // Read single-channel output: one float per pixel (person confidence in [0, 1]).
+        // ML Kit selfie segmentation model outputs probabilities directly — no softmax needed.
         const maskBytes = new Uint8ClampedArray(pixelCount * 4);
 
         for (let i = 0; i < pixelCount; i++) {
-            const v = Math.round(outputData[pixelCount + i] * 255);
+            const v = Math.round(tfliteModule.HEAPF32[tfliteOutputOffset + i] * 255);
 
-            maskBytes[i * 4] = v;
-            maskBytes[i * 4 + 3] = v;
+            maskBytes[i * 4] = v; // R — read by WebGL compositor shader (.r channel)
+            maskBytes[i * 4 + 3] = v; // A — read by Canvas 2D fallback compositing path
         }
 
-        outputTensor.dispose?.();
-
         workerPost(
-            { data: maskBytes, height: ortSegHeight, type: 'mask', width: ortSegWidth },
+            { data: maskBytes, height: tfliteSegHeight, type: 'mask', width: tfliteSegWidth },
             [ maskBytes.buffer ]
         );
     } catch (err) {
         workerPost({ error: String(err), type: 'infer_error' });
     } finally {
-        // Close unconditionally — ensures the bitmap is always released even if drawImage throws.
         bitmap.close();
     }
 }
@@ -544,12 +475,10 @@ function handleStop(): void {
     segmenter?.dispose();
     segmenter = null;
 
-    // ORT: InferenceSession has no release() in onnxruntime-web 1.17; null refs allow GC.
-    ortSession = null;
-    ortModule = null;
-    ortInputBuffer = null;
-    ortReadCanvas = null;
-    ortReadCtx = null;
+    // TFLite: module has no explicit dispose API; null refs allow GC.
+    tfliteModule = null;
+    tfliteReadCanvas = null;
+    tfliteReadCtx = null;
 
     currentBackend = '';
 }

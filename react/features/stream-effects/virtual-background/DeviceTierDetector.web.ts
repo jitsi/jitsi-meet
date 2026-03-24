@@ -2,7 +2,7 @@ import { IConfig } from '../../base/config/configType';
 import logger from '../../virtual-background/logger';
 
 export enum BackendType {
-    WASM = 'wasm',
+    TFLITE = 'tflite',
     WEBGL = 'webgl',
     WEBGPU = 'webgpu'
 }
@@ -57,10 +57,10 @@ const TIER_PROFILES: Record<Exclude<DeviceTier, DeviceTier.UNSUPPORTED>, ITierPr
         targetFps: 30
     },
     [DeviceTier.LOW]: {
-        backend: BackendType.WASM,
+        backend: BackendType.TFLITE,
         modelType: ModelType.LANDSCAPE,
-        segHeight: 192,
-        segWidth: 192,
+        segHeight: 256,
+        segWidth: 256,
         targetFps: 30
     },
     [DeviceTier.MEDIUM]: {
@@ -235,7 +235,7 @@ export async function detectDeviceTier(config: IConfig): Promise<IDeviceCapabili
 
         if (!probeResult) {
             return {
-                backend: BackendType.WASM,
+                backend: BackendType.TFLITE,
                 modelType: ModelType.LANDSCAPE,
                 overridesApplied: false,
                 reason: 'No WebGPU, WebGL, or WASM available — virtual background disabled',

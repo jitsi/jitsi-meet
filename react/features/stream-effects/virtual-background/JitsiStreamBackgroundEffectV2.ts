@@ -66,7 +66,8 @@ const TARGET_BLUR_CAMERA_PX = 16;
  * V2 virtual background stream effect.
  *
  * All tiers run inference in a single {@link VBInferenceWorker}: MEDIUM/HIGH tiers use TF.js
- * body-segmentation with WebGL/WebGPU; LOW tier uses ORT WASM (PP-HumanSeg FP32 at 192×192).
+ * body-segmentation with WebGL/WebGPU; LOW tier uses TFLite WASM (ML Kit Selfie Segmentation FP16
+ * at 256×256).
  * Running all inference in a Worker keeps the main thread free for UI events. For GPU tiers,
  * the Worker's OffscreenCanvas WebGL context is not subject to Chrome's tab-visibility GPU
  * scheduling throttle that affects main-document contexts.
@@ -270,10 +271,10 @@ export default class JitsiStreamBackgroundEffectV2 {
         }
 
         // 2D output context is needed for the Canvas 2D compositing fallback and for blitting after WebGL.
-        // Assigned here so it is available for both the LOW-tier ORT path and the MEDIUM/HIGH TF.js path.
+        // Assigned here so it is available for both the LOW-tier TFLite path and the MEDIUM/HIGH TF.js path.
         this._outputCanvasCtx = this._outputCanvasElement.getContext('2d');
 
-        // All tiers: WebGL compositor + VBInferenceWorker (ORT WASM for LOW, TF.js for MEDIUM/HIGH).
+        // All tiers: WebGL compositor + VBInferenceWorker (TFLite ML Kit for LOW, TF.js for MEDIUM/HIGH).
         // The worker runs inference in a dedicated thread — the main thread is never blocked.
         // For GPU tiers, the Worker's OffscreenCanvas WebGL context is not subject to Chrome's
         // tab-visibility GPU scheduling throttle.
@@ -584,17 +585,16 @@ export default class JitsiStreamBackgroundEffectV2 {
 
             const frameStart = performance.now();
 
-            // ORT (LOW tier) skip: run inference every N frames, reuse the cached mask in between.
+            // CPU-backend skip: run inference every N frames, reuse the cached mask in between.
             // For GPU tiers (MEDIUM/HIGH) the stride is always 1 — inference is fast enough.
-            const stride = this._capabilities?.backend === BackendType.WASM
-                ? (this._config.virtualBackground?.ortSkipStride ?? 2)
-                : 1;
+            const isCpuBackend = this._capabilities?.backend === BackendType.TFLITE;
+            const stride = isCpuBackend ? (this._config.virtualBackground?.ortSkipStride ?? 2) : 1;
             const runInference = this._ortSkipCounter % stride === 0;
 
             this._ortSkipCounter++;
 
             if (runInference) {
-                // All tiers: inference via VBInferenceWorker (ORT for LOW, TF.js for MEDIUM/HIGH).
+                // All tiers: inference via VBInferenceWorker (ORT/TFLite for LOW, TF.js for MEDIUM/HIGH).
                 // createImageBitmap pre-scales the frame to the tier's seg resolution so the
                 // worker transfers a smaller payload and skips internal model resize.
                 try {
@@ -951,8 +951,23 @@ export default class JitsiStreamBackgroundEffectV2 {
                 if (e.data.type === 'init_done') {
                     this._inferenceWorker?.removeEventListener('message', handler);
                     this._workerReady = true;
+
+                    // Worker may have fallen back to TFLite if the GPU backend was unavailable.
+                    // Update capabilities so isCpuBackend and maskBlurRadius scaling are correct.
+                    if (this._capabilities && e.data.backend
+                            && e.data.backend !== this._capabilities.backend) {
+                        logger.debug('[VirtualBackground] Worker fell back from'
+                            + ` ${this._capabilities.backend} to ${e.data.backend}`);
+                        this._capabilities = {
+                            ...this._capabilities,
+                            backend: e.data.backend as BackendType,
+                            segHeight: e.data.segHeight ?? this._capabilities.segHeight,
+                            segWidth: e.data.segWidth ?? this._capabilities.segWidth
+                        };
+                    }
+
                     logger.debug('[VirtualBackground] Inference worker ready'
-                        + ` (tier: ${this._capabilities?.tier})`);
+                        + ` (tier: ${this._capabilities?.tier}, backend: ${this._capabilities?.backend})`);
                     resolve();
                 } else if (e.data.type === 'init_error') {
                     this._inferenceWorker?.removeEventListener('message', handler);
@@ -961,13 +976,15 @@ export default class JitsiStreamBackgroundEffectV2 {
             };
 
             this._inferenceWorker!.addEventListener('message', handler);
+
             this._inferenceWorker!.postMessage({
                 backend: this._capabilities!.backend,
-                modelPath: `${base}libs/pp_humanseg_192x192.onnx`,
                 modelType: this._capabilities!.modelType,
-                ortWasmPath: `${base}libs/`,
                 segHeight: this._capabilities!.segHeight,
                 segWidth: this._capabilities!.segWidth,
+                tfliteModelPath:
+                    `${base}libs/selfiesegmentation_mlkit-256x256-2021_01_19-v1215.f16.tflite`,
+                tfliteWasmBase: `${base}libs/`,
                 type: 'init'
             });
         });
@@ -1142,11 +1159,10 @@ export default class JitsiStreamBackgroundEffectV2 {
         let maskData: ImageData | null = null;
         const frameStart = performance.now();
 
-        // ORT (LOW tier) skip: run inference every N frames, reuse the cached mask in between.
+        // CPU-backend skip: run inference every N frames, reuse the cached mask in between.
         // For GPU tiers (MEDIUM/HIGH) the stride is always 1 — inference is fast enough.
-        const stride = this._capabilities?.backend === BackendType.WASM
-            ? (this._config.virtualBackground?.ortSkipStride ?? 2)
-            : 1;
+        const isCpuBackend = this._capabilities?.backend === BackendType.TFLITE;
+        const stride = isCpuBackend ? (this._config.virtualBackground?.ortSkipStride ?? 2) : 1;
         const runInference = this._workerReady && (this._ortSkipCounter % stride === 0);
 
         this._ortSkipCounter++;
