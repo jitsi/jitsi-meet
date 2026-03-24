@@ -25,17 +25,25 @@ const BENCHMARK_LOG_INTERVAL = 60;
 const DEFAULT_TEMPORAL_BLEND_RATIO = 0.75;
 
 /**
- * Default smoothstep lower threshold. Pixels with EMA-smoothed confidence below this value are
- * fully transparent. Set to 0.30 to reject low-confidence background detections (distant objects,
- * chair backs, wall decorations that the model assigns 0.15–0.25 confidence) while still allowing
- * hair-boundary pixels (0.30–0.50 confidence) to enter the feathering zone.
+ * Default smoothstep lower threshold for the LOW tier (TFLite selfie_segmenter).
+ * The TFLite model assigns 0.30–0.45 confidence to background artifacts near the person
+ * (chair backs, wall decorations, clothing edges). A floor of 0.48 rejects these while
+ * still allowing high-confidence hair pixels (0.48–0.65) into the feathering zone.
  */
-const DEFAULT_EDGE_LOW = 0.48;
+const DEFAULT_EDGE_LOW_TFLITE = 0.48;
 
 /**
- * Default smoothstep upper threshold. Pixels with confidence above this value are fully opaque.
- * The 0.40–0.70 window (span 0.30) gives a gradual transition at hair and clothing edges.
- * Body interior pixels (confidence ≈ 0.9) are unaffected.
+ * Default smoothstep lower threshold for MEDIUM/HIGH tiers (TF.js MediaPipe body-segmentation).
+ * The TF.js model outputs more binary values — background pixels near edges are typically
+ * below 0.25 and hair/edge pixels fall in the 0.28–0.65 range. A floor of 0.28 keeps
+ * fine hair and soft clothing boundaries without introducing background bleed.
+ */
+const DEFAULT_EDGE_LOW_GPU = 0.28;
+
+/**
+ * Default smoothstep upper threshold (all tiers). Pixels with confidence above this value are
+ * fully opaque. Body interior pixels (confidence ≈ 0.9) are unaffected. The window from the
+ * edgeLow default to 0.65 gives a gradual feathering zone at person boundaries.
  */
 const DEFAULT_EDGE_HIGH = 0.65;
 
@@ -142,7 +150,14 @@ export default class JitsiStreamBackgroundEffectV2 {
 
         this._temporalBlendRatio = config.virtualBackground?.temporalBlendRatio
             ?? DEFAULT_TEMPORAL_BLEND_RATIO;
-        this._edgeLow = config.virtualBackground?.edgeLow ?? DEFAULT_EDGE_LOW;
+
+        // LOW tier uses TFLite (selfie_segmenter) which has a wider confidence spread near
+        // boundaries — background artifacts cluster at 0.30–0.45 so we need a higher floor.
+        // MEDIUM/HIGH use TF.js MediaPipe which is more binary; a lower floor retains fine hair.
+        const defaultEdgeLow = capabilities?.tier === DeviceTier.LOW
+            ? DEFAULT_EDGE_LOW_TFLITE : DEFAULT_EDGE_LOW_GPU;
+
+        this._edgeLow = config.virtualBackground?.edgeLow ?? defaultEdgeLow;
         this._edgeHigh = config.virtualBackground?.edgeHigh ?? DEFAULT_EDGE_HIGH;
 
         if (virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {

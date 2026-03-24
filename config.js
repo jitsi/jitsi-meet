@@ -1513,38 +1513,40 @@ var config = {
         // tierOverride: null,
 
         // Override the segmentation canvas dimensions (pixels). Applies to MEDIUM and HIGH
-        // tiers only (TF.js input canvas). LOW tier (ORT WASM) always runs at 192x192,
-        // fixed by the PP-HumanSeg model and not affected by this setting.
+        // tiers only (TF.js input canvas). LOW tier (TFLite) always runs at 256×256,
+        // fixed by the selfie_segmenter model and not affected by this setting.
         // segmentationWidth: null,   // auto: 512 (high) / 384 (medium)
         // segmentationHeight: null,  // auto: 288 (high) / 216 (medium)
 
         // Override the target frame rate for the effect.
         // targetFps: null,           // auto: 30 (all tiers)
 
-        // Temporal mask blend ratio (0-1). Higher = smoother edges, slower to
-        // respond to fast movement. 0 = raw mask each frame (no smoothing).
-        // temporalBlendRatio: 0.85,
+        // Temporal mask blend ratio (0-1). Higher = smoother motion, slower to respond
+        // to fast movement. 0 = raw mask each frame (no temporal smoothing).
+        // temporalBlendRatio: 0.75,
 
         // Smoothstep edge thresholds for the WebGL compositor (0-1).
-        // Pixels with segmentation confidence below edgeLow are fully background;
-        // above edgeHigh they are fully foreground; between the two they feather.
-        // Lowering edgeLow captures more hair (MediaPipe gives hair 0.15-0.40 confidence).
-        // Lowering edgeHigh makes hair appear more solid at the cost of a slightly softer boundary.
-        // edgeLow: 0.20,    // default 0.20
-        // edgeHigh: 0.55,   // default 0.55
+        // Pixels with segmentation confidence below edgeLow are fully transparent;
+        // above edgeHigh they are fully opaque; between the two they feather.
+        // Defaults are tier-specific:
+        //   LOW  tier (TFLite):      edgeLow = 0.48, edgeHigh = 0.65
+        //   MEDIUM/HIGH (TF.js):     edgeLow = 0.28, edgeHigh = 0.65
+        // Lower edgeLow = more hair retained at the cost of slight background bleed.
+        // Higher edgeHigh = harder edge transition.
+        // edgeLow: 0.28,
+        // edgeHigh: 0.65,
 
         // Insertable Streams (MediaStreamTrackProcessor/Generator) is used by default
         // when available. It reduces latency by ~1-2 frames and eliminates the keepalive
         // Web Worker. Set to false to force the legacy captureStream path instead.
         // useInsertableStreams: false,
 
-        // LOW tier (ORT WASM) inference stride. Inference is skipped on every Nth frame;
-        // all other (N-1) frames run inference. Higher N = better pipeline FPS, fewer
-        // inference calls per second. Set to 1 (or omit) to run inference every frame.
-        //   1 = no skipping   (inference every frame,    ~13 fps pipeline)
-        //   2 = skip 1 of 2   (inference on 1/2 frames,  ~25 fps pipeline)
-        //   3 = skip 1 of 3   (inference on 2/3 frames,  ~40 fps pipeline)  ← default
-        // ortInferenceStride: 3,  // default 3
+        // LOW tier (TFLite) inference stride. Inference is skipped on alternate frames;
+        // skipped frames reuse the previous mask. Higher values = lower CPU usage at the
+        // cost of reduced mask update frequency. Set to 1 to run inference every frame.
+        //   1 = every frame    (24 fps mask updates, ~37 ms slack per frame)  ← default
+        //   2 = every 2 frames (12 fps mask updates, ~74 ms slack per frame)
+        // inferenceStride: 1,
     },
 
     // The URL of the moderated rooms microservice, if available. If it
