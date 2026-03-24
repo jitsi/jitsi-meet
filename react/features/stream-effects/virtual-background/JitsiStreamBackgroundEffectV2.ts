@@ -607,8 +607,7 @@ export default class JitsiStreamBackgroundEffectV2 {
 
             // CPU-backend skip: run inference every N frames, reuse the cached mask in between.
             // For GPU tiers (MEDIUM/HIGH) the stride is always 1 — inference is fast enough.
-            const isCpuBackend = this._capabilities?.backend === BackendType.TFLITE;
-            const stride = isCpuBackend ? (this._config.virtualBackground?.ortSkipStride ?? 2) : 1;
+            const stride = this._config.virtualBackground?.inferenceStride ?? 1;
             const runInference = this._ortSkipCounter % stride === 0;
 
             this._ortSkipCounter++;
@@ -1196,7 +1195,7 @@ export default class JitsiStreamBackgroundEffectV2 {
         // CPU-backend skip: run inference every N frames, reuse the cached mask in between.
         // For GPU tiers (MEDIUM/HIGH) the stride is always 1 — inference is fast enough.
         const isCpuBackend = this._capabilities?.backend === BackendType.TFLITE;
-        const stride = isCpuBackend ? (this._config.virtualBackground?.ortSkipStride ?? 2) : 1;
+        const stride = isCpuBackend ? (this._config.virtualBackground?.inferenceStride ?? 2) : 1;
         const runInference = this._workerReady && (this._ortSkipCounter % stride === 0);
 
         this._ortSkipCounter++;
