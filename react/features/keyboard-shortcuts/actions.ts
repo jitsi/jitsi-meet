@@ -197,7 +197,7 @@ export function initKeyboardShortcuts() {
             else {
                 const pKey = getPrimaryShortcutKey(state, key);
 
-                if (shortcuts.has(pKey)) {
+                if (pKey && shortcuts.has(pKey)) {
                     shortcuts.get(pKey)?.handler(e);
                 }
             }
