@@ -13,11 +13,17 @@ import { _openDesktopApp } from './openDesktopApp.web';
 /**
  * Generates a deep linking URL based on the current window URL.
  *
- * @param {IReduxState} state - The current state of the app.
+ * @param {Object} state - Object containing current redux state.
  *
- * @returns {string|undefined} - The generated URL, or undefined if no scheme is configured.
+ * @returns {string} - The generated URL.
  */
-export function generateDeepLinkingURL(state: IReduxState): string | undefined {
+export function generateDeepLinkingURL(state: IReduxState) {
+    // If the user installed the app while this Component was displayed
+    // (e.g. the user clicked the Download the App button), then we would
+    // like to open the current URL in the mobile app. The only way to do it
+    // appears to be a link with an app-specific scheme, not a Universal
+    // Link.
+
     const { href } = window.location;
     const regex = new RegExp(URI_PROTOCOL_PATTERN, 'gi');
 
@@ -25,10 +31,6 @@ export function generateDeepLinkingURL(state: IReduxState): string | undefined {
     const mobileConfig = state['features/base/config'].deeplinking?.[Platform.OS] || {};
 
     const { appScheme, appPackage } = mobileConfig;
-
-    if (!appScheme) {
-        return undefined;
-    }
 
     // Android: use an intent link, custom schemes don't work in all browsers.
     // https://developer.chrome.com/multidevice/android/intents
