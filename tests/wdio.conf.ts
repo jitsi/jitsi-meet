@@ -559,7 +559,6 @@ export const config: WebdriverIO.MultiremoteConfig = {
             }
         });
 
-        const reportError = new Error('Could not generate Allure report');
         const generation = allure([
             'generate', `${TEST_RESULTS_DIR}/allure-results`,
             '--clean', '--single-file',
@@ -568,15 +567,15 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         return new Promise<void>((resolve, reject) => {
             const generationTimeout = setTimeout(
-                () => reject(reportError),
-                5000);
+                () => reject(new Error('Could not generate Allure report: timed out after 60s')),
+                60_000);
 
             // @ts-ignore
             generation.on('exit', eCode => {
                 clearTimeout(generationTimeout);
 
                 if (eCode !== 0) {
-                    return reject(reportError);
+                    return reject(new Error(`Could not generate Allure report: allure exited with code ${eCode}`));
                 }
 
                 console.log('Allure report successfully generated');
