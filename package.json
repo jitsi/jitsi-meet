@@ -184,7 +184,7 @@
     "eslint-plugin-typescript-sort-keys": "3.3.0",
     "jetifier": "1.6.4",
     "jsonwebtoken": "9.0.2",
-    "junit-report-builder": "^5.1.1",
+    "junit-report-builder": "5.1.1",
     "patch-package": "6.4.7",
     "pretty": "2.0.0",
     "process": "0.11.10",
