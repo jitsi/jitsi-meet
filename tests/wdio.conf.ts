@@ -4,6 +4,7 @@ import { Buffer } from 'buffer';
 import fs from 'fs';
 import { glob } from 'glob';
 import junitReportBuilder from 'junit-report-builder';
+import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 import process from 'node:process';
 import pretty from 'pretty';
@@ -490,14 +491,37 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }
 
         const specName = workerSpecs?.[0] ? path.basename(workerSpecs[0], '.spec.ts') : 'unknown';
+        const dirMatch = workerSpecs?.[0]?.match(/\/tests\/specs\/([^/]+)\//);
+        const dir = dirMatch ? dirMatch[1] : 'unknown';
+        const message = `Worker exited with code ${exitCode} before results were written. Test result is unknown - tests may have passed.`;
+
         const b = junitReportBuilder.newBuilder();
 
         b.testSuite().name(specName).testCase()
             .name('Test runner crashed')
             .className(specName)
-            .error(`Worker exited with code ${exitCode} before results were written. Test result is unknown - tests may have passed.`);
+            .error(message);
         b.writeTo(xmlPath);
-        console.log(`[onWorkerEnd] Wrote error XML for crashed worker ${cid} (spec: ${specName})`);
+
+        const allureResult = {
+            uuid: randomUUID(),
+            name: 'Test runner crashed',
+            status: 'broken',
+            statusDetails: { message },
+            stage: 'finished',
+            steps: [],
+            attachments: [],
+            parameters: [],
+            labels: [
+                { name: 'parentSuite', value: dir },
+                { name: 'suite', value: specName }
+            ],
+            links: []
+        };
+        const allurePath = path.join(TEST_RESULTS_DIR, 'allure-results', `${allureResult.uuid}-result.json`);
+
+        fs.writeFileSync(allurePath, JSON.stringify(allureResult));
+        console.log(`[onWorkerEnd] Wrote error XML and allure result for crashed worker ${cid} (spec: ${specName})`);
     },
 
     /**
