@@ -494,8 +494,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
             `<testsuites name="${specName}" tests="1" failures="0" errors="1" skipped="0" time="0">`,
             `  <testsuite name="${specName}" tests="1" failures="0" errors="1" skipped="0" time="0">`,
             `    <testcase name="Test runner crashed" classname="${specName}" time="0">`,
-            '      <error message="Worker crashed before results were written (likely WebDriver session'
-                + ' DELETE timed out during cleanup). Test result is unknown - tests may have passed."/>',
+            '      <error message="Worker crashed before results were written. Test result is unknown - tests may have passed."/>',
             '    </testcase>',
             '  </testsuite>',
             '</testsuites>'
