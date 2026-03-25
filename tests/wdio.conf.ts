@@ -491,18 +491,18 @@ export const config: WebdriverIO.MultiremoteConfig = {
         const specName = workerSpecs?.[0] ? path.basename(workerSpecs[0], '.spec.ts') : 'unknown';
         const xml = [
             '<?xml version="1.0" encoding="UTF-8"?>',
-            `<testsuites name="${specName}" tests="1" failures="1" errors="0" skipped="0" time="0">`,
-            `  <testsuite name="${specName}" tests="1" failures="1" errors="0" skipped="0" time="0">`,
+            `<testsuites name="${specName}" tests="1" failures="0" errors="1" skipped="0" time="0">`,
+            `  <testsuite name="${specName}" tests="1" failures="0" errors="1" skipped="0" time="0">`,
             `    <testcase name="Test runner crashed" classname="${specName}" time="0">`,
-            '      <failure message="Worker exited with error before results were written.'
-                + ' Likely cause: WebDriver session DELETE timed out during cleanup."/>',
+            '      <error message="Worker crashed before results were written (likely WebDriver session'
+                + ' DELETE timed out during cleanup). Test result is unknown - tests may have passed."/>',
             '    </testcase>',
             '  </testsuite>',
             '</testsuites>'
         ].join('\n');
 
         fs.writeFileSync(xmlPath, xml);
-        console.log(`[onWorkerEnd] Wrote failure XML for crashed worker ${cid} (spec: ${specName})`);
+        console.log(`[onWorkerEnd] Wrote error XML for crashed worker ${cid} (spec: ${specName})`);
     },
 
     /**
