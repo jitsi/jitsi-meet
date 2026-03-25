@@ -469,6 +469,43 @@ export const config: WebdriverIO.MultiremoteConfig = {
     },
 
     /**
+     * Gets executed after a worker process has exited.
+     * If the worker crashed (e.g. session DELETE timeout), the JUnit reporter never flushes,
+     * leaving a zero-byte XML file. This hook detects that and writes a failure entry so the
+     * report generator has something to show.
+     */
+    onWorkerEnd(cid, exitCode, specs) {
+        if (exitCode === 0) {
+            return;
+        }
+        const xmlPath = path.join(TEST_RESULTS_DIR, `results-${cid}.xml`);
+
+        try {
+            if (fs.statSync(xmlPath).size > 0) {
+                return;
+            }
+        } catch {
+            // file doesn't exist yet — fall through and create it
+        }
+
+        const specName = specs?.[0] ? path.basename(specs[0], '.spec.ts') : 'unknown';
+        const xml = [
+            '<?xml version="1.0" encoding="UTF-8"?>',
+            `<testsuites name="${specName}" tests="1" failures="1" errors="0" skipped="0" time="0">`,
+            `  <testsuite name="${specName}" tests="1" failures="1" errors="0" skipped="0" time="0">`,
+            `    <testcase name="Test runner crashed" classname="${specName}" time="0">`,
+            '      <failure message="Worker exited with error before results were written.'
+                + ' Likely cause: WebDriver session DELETE timed out during cleanup."/>',
+            '    </testcase>',
+            '  </testsuite>',
+            '</testsuites>'
+        ].join('\n');
+
+        fs.writeFileSync(xmlPath, xml);
+        console.log(`[onWorkerEnd] Wrote failure XML for crashed worker ${cid} (spec: ${specName})`);
+    },
+
+    /**
      * Gets executed after all workers have shut down and the process is about to exit.
      * An error thrown in the `onComplete` hook will result in the test run failing.
      *
