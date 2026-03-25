@@ -894,7 +894,8 @@
         "setDisplayNameLabel": "Нэрээ оруулна уу",
         "setEmailInput": "И-мэйл оруулна уу",
         "setEmailLabel": "И-мэйл хаягаа оруулна уу",
-        "title": "Профайл"
+        "title": "Профайл",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Ярьмаар байна",
     "raisedHandsLabel": "Гараа өргөсөн тоо",

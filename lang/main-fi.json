@@ -1091,7 +1091,8 @@
         "setDisplayNameLabel": "Määritä näyttönimi",
         "setEmailInput": "Anna sähköpostiosoite",
         "setEmailLabel": "Määritä Gravatar-sähköposti",
-        "title": "Profiili"
+        "title": "Profiili",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Haluaa puhua",
     "raisedHandsLabel": "Nostettujen käsien määrä",

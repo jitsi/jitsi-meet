@@ -1093,7 +1093,8 @@
         "setDisplayNameLabel": "نام",
         "setEmailInput": "رایانامه را وارد کنید",
         "setEmailLabel": "رایانامهٔ Gravatar",
-        "title": "نمایه"
+        "title": "نمایه",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "تمایل به صحبت",
     "raisedHandsLabel": "تعداد دست‌های بلندشده",

@@ -1087,7 +1087,8 @@
         "setDisplayNameLabel": "Nome",
         "setEmailInput": "Inserisci email",
         "setEmailLabel": "Email Gravatar",
-        "title": "Profilo"
+        "title": "Profilo",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Vorrebbe parlare",
     "raisedHandsLabel": "Numero di mani alzate",

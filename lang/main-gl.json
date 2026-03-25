@@ -478,7 +478,8 @@
         "setDisplayNameLabel": "Escoller o seu nome en pantalla",
         "setEmailInput": "Escribir correo-e",
         "setEmailLabel": "Estabelecer o seu correo Gravatar",
-        "title": "Perfil"
+        "title": "Perfil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Gustaríalle falar",
     "recording": {

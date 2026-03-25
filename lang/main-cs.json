@@ -999,7 +999,8 @@
         "setDisplayNameLabel": "Nastavte si jméno",
         "setEmailInput": "Zadejte email",
         "setEmailLabel": "Nastavte si email vašeho Gravataru",
-        "title": "Profil"
+        "title": "Profil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Chtěl(a) bych mluvit",
     "raisedHandsLabel": "Počet zvednutých rukou",

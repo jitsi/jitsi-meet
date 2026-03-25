@@ -1071,7 +1071,8 @@
         "setDisplayNameLabel": "Cunfigura su nòmine visìbile tuo",
         "setEmailInput": "Inserta unu contu de posta eletrònica",
         "setEmailLabel": "Cunfigura indiritzu eletrònicu de gravatar",
-        "title": "Profilu"
+        "title": "Profilu",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Bolet chistionare",
     "raisedHandsLabel": "Nùmeru de manos artziadas",

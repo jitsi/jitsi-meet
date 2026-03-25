@@ -1071,7 +1071,8 @@
         "setDisplayNameLabel": "Задайте екранното си име",
         "setEmailInput": "Въведете е-поща",
         "setEmailLabel": "Задайте е-пощата си в „Gravatar“",
-        "title": "Профил"
+        "title": "Профил",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Иска думата",
     "raisedHandsLabel": "Брой вдигнати ръце",

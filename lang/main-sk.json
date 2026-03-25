@@ -603,7 +603,8 @@
         "setDisplayNameLabel": "Nastavte si meno",
         "setEmailInput": "Zadajte email",
         "setEmailLabel": "Nastavte si email vašeho gravataru",
-        "title": "Profil"
+        "title": "Profil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Chcel by som hovoriť",
     "recording": {

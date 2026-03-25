@@ -860,7 +860,8 @@
         "setDisplayNameLabel": "حدد اسمك المراد عرضه",
         "setEmailInput": "أدخل بريدك الإلكتروني",
         "setEmailLabel": "حدد الصورة الرمزية (gravatar) لبريدك الإلكتروني",
-        "title": "الملف الشخصي"
+        "title": "الملف الشخصي",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "يرد التحدث",
     "raisedHandsLabel": "عدد الأيدي المرفوعة",

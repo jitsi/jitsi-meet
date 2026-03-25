@@ -502,7 +502,8 @@
         "setDisplayNameLabel": "Якое адлюстроўваецца імя",
         "setEmailInput": "Калі ласка, увядзіце email",
         "setEmailLabel": "Email для Gravatar",
-        "title": "Профіль"
+        "title": "Профіль",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Хоча гаварыць",
     "recording": {

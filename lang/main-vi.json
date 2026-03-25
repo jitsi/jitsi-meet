@@ -971,7 +971,8 @@
         "setDisplayNameLabel": "Nhập tên hiển thị của bạn",
         "setEmailInput": "Nhập địa chỉ email",
         "setEmailLabel": "Nhập địa chỉ email tài khoản Gravatar của bạn",
-        "title": "Hồ sơ"
+        "title": "Hồ sơ",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Muốn phát biểu",
     "raisedHandsLabel": "Số lượng tay giơ lên",

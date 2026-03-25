@@ -809,7 +809,8 @@
         "setDisplayNameLabel": "表示名を設定してください",
         "setEmailInput": "メールアドレスを入力してください",
         "setEmailLabel": "Gravatar に登録したメールアドレスを入力してください",
-        "title": "プロフィール"
+        "title": "プロフィール",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "話したいそうです",
     "raisedHandsLabel": "挙手の数",

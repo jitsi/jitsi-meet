@@ -1076,7 +1076,8 @@
         "setDisplayNameLabel": "Ange ditt visningsnamn",
         "setEmailInput": "Skriv e-postadress",
         "setEmailLabel": "Ange din gravatar-e-postadress",
-        "title": "Profil"
+        "title": "Profil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Räck upp handen",
     "raisedHandsLabel": "Antal uppräckta händer",

@@ -1093,7 +1093,8 @@
         "setDisplayNameLabel": "Anzeigename festlegen",
         "setEmailInput": "E-Mail eingeben",
         "setEmailLabel": "E-Mail-Adresse für Gravatar",
-        "title": "Profil"
+        "title": "Profil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Ich möchte sprechen",
     "raisedHandsLabel": "Anzahl gehobener Hände",

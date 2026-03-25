@@ -1087,7 +1087,8 @@
         "setDisplayNameLabel": "Vārds",
         "setEmailInput": "Ierakstiet e-pasta adresi",
         "setEmailLabel": "E-pasts priekš gravatar",
-        "title": "Profils"
+        "title": "Profils",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Vēlas izteikties/runāt",
     "raisedHandsLabel": "Pacelto roku skaits",
