@@ -469,6 +469,8 @@
         "screenSharingFailed": "Oeps! Er is iets misgegaan, de schermdeling kon niet worden gestart!",
         "screenSharingFailedTitle": "Schermdeling mislukt!",
         "screenSharingPermissionDeniedError": "Oeps! Er is iets misgegaan met uw toegangsrechten voor schermdeling. Herlaad en probeer opnieuw.",
+        "screenshareStoppedDiskSpace": "Dit gebeurt als u de zwevende werkbalk van macOS hebt gebruikt om het delen van schermen te stoppen. Het kan ook te wijten zijn aan een lage schijfruimte.",
+        "screenshareStoppedTitle": "Scherm delen gestopt via systeem",
         "searchInSalesforce": "Zoeken in Salesforce",
         "searchResults": "Zoekresultaten({{count}})",
         "searchResultsDetailsError": "Er ging iets mis bij het ophalen van eigenaargegevens.",
