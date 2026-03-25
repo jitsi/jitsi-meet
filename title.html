@@ -1,9 +1,25 @@
 <title>Jitsi Meet</title>
 <meta property="og:title" content="Jitsi Meet"/>
-<meta property="og:image" content="images/jitsilogo.png?v=1"/>
+<meta property="og:image" id="ogimagemeta" content="images/jitsilogo.png?v=1"/>
 <meta property="og:description" content="Join a WebRTC video conference powered by the Jitsi Videobridge"/>
 <meta description="Join a WebRTC video conference powered by the Jitsi Videobridge"/>
 <meta itemprop="name" content="Jitsi Meet"/>
 <meta itemprop="description" content="Join a WebRTC video conference powered by the Jitsi Videobridge"/>
-<meta itemprop="image" content="images/jitsilogo.png?v=1"/>
+<meta itemprop="image" id="itempropimagemeta" content="images/jitsilogo.png?v=1"/>
+<script>
+    (function() {
+        var location = window.location;
+        var pathname = location.pathname;
+        var contextPath = pathname.substring(0, pathname.lastIndexOf('/') + 1);
+        var absoluteUrl = location.origin + contextPath + 'images/jitsilogo.png?v=1';
+        var ogimagemeta = document.getElementById('ogimagemeta');
+        var itempropimagemeta = document.getElementById('itempropimagemeta');
+        if (ogimagemeta) {
+            ogimagemeta.setAttribute('content', absoluteUrl);
+        }
+        if (itempropimagemeta) {
+            itempropimagemeta.setAttribute('content', absoluteUrl);
+        }
+    })();
+</script>
 <link rel="icon" href="images/favicon.svg?v=1">

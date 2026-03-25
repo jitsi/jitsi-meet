@@ -4,6 +4,8 @@ body.welcome-page {
 }
 
 .welcome {
+    -webkit-user-select: text;
+    user-select: text;
     background-image: $welcomePageBackground;
     background-color: #fff;
     display: flex;
