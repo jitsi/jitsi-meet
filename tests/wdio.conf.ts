@@ -3,6 +3,7 @@ import { multiremotebrowser } from '@wdio/globals';
 import { Buffer } from 'buffer';
 import fs from 'fs';
 import { glob } from 'glob';
+import junitReportBuilder from 'junit-report-builder';
 import path from 'node:path';
 import process from 'node:process';
 import pretty from 'pretty';
@@ -489,18 +490,13 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }
 
         const specName = workerSpecs?.[0] ? path.basename(workerSpecs[0], '.spec.ts') : 'unknown';
-        const xml = [
-            '<?xml version="1.0" encoding="UTF-8"?>',
-            `<testsuites name="${specName}" tests="1" failures="0" errors="1" skipped="0" time="0">`,
-            `  <testsuite name="${specName}" tests="1" failures="0" errors="1" skipped="0" time="0">`,
-            `    <testcase name="Test runner crashed" classname="${specName}" time="0">`,
-            '      <error message="Worker crashed before results were written. Test result is unknown - tests may have passed."/>',
-            '    </testcase>',
-            '  </testsuite>',
-            '</testsuites>'
-        ].join('\n');
+        const b = junitReportBuilder.newBuilder();
 
-        fs.writeFileSync(xmlPath, xml);
+        b.testSuite().name(specName).testCase()
+            .name('Test runner crashed')
+            .className(specName)
+            .error(`Worker exited with code ${exitCode} before results were written. Test result is unknown - tests may have passed.`);
+        b.writeTo(xmlPath);
         console.log(`[onWorkerEnd] Wrote error XML for crashed worker ${cid} (spec: ${specName})`);
     },
 
