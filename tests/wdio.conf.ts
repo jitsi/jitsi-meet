@@ -474,7 +474,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * leaving a zero-byte XML file. This hook detects that and writes a failure entry so the
      * report generator has something to show.
      */
-    onWorkerEnd(cid, exitCode, specs) {
+    onWorkerEnd(cid, exitCode, workerSpecs) {
         if (exitCode === 0) {
             return;
         }
@@ -488,7 +488,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
             // file doesn't exist yet — fall through and create it
         }
 
-        const specName = specs?.[0] ? path.basename(specs[0], '.spec.ts') : 'unknown';
+        const specName = workerSpecs?.[0] ? path.basename(workerSpecs[0], '.spec.ts') : 'unknown';
         const xml = [
             '<?xml version="1.0" encoding="UTF-8"?>',
             `<testsuites name="${specName}" tests="1" failures="1" errors="0" skipped="0" time="0">`,
