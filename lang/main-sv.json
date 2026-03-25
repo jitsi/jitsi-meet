@@ -128,7 +128,15 @@
             "titleWithCC": "Skriv in ett namn för att börja använda chatten och för undertexter",
             "titleWithPolls": "Skriv in ett namn för att börja använda chatten och omröstningar",
             "titleWithPollsAndCC": "Skriv in ett namn för att börja använda chatten, omröstningar och undertexter",
-            "titleWithPollsAndCCAndFileSharing": "Skriv in ett namn för att börja använda chatten, omröstningar, undertexter och fildelning"
+            "titleWithPollsAndCCAndFileSharing": "Skriv in ett namn för att börja använda chatten, omröstningar, undertexter och fildelning",
+            "featureChat": "chatt",
+            "featureClosedCaptions": "textning",
+            "featureFileSharing": "fildelning",
+            "featurePolls": "omröstningar",
+            "titleWith1Features": "Ange ett smeknamn för att använda {{feature1}}",
+            "titleWith2Features": "Ange ett smeknamn för att använda {{feature1}} och {{feature2}}",
+            "titleWith3Features": "Ange ett smeknamn för att använda {{feature1}}, {{feature2}} och {{feature3}}",
+            "titleWith4Features": "Ange ett smeknamn för att använda {{feature1}}, {{feature2}}, {{feature3}} och {{feature4}}"
         },
         "noMessagesMessage": "Det finns ännu inga meddelanden i mötet. Påbörja en konversation!",
         "privateNotice": "Privat meddelande till {{recipient}}",
@@ -146,7 +154,10 @@
         "titleWithFeatures": "Chatt och",
         "titleWithFileSharing": "Filer",
         "titleWithPolls": "Omröstningar",
-        "you": "dig"
+        "you": "dig",
+        "fileAccessibleTitle": "{{user}} laddade upp en fil",
+        "fileAccessibleTitleMe": "jag laddade upp en fil",
+        "fileDeleted": "En fil raderades"
     },
     "chromeExtensionBanner": {
         "buttonText": "Installera Chrome-tillägg",
@@ -537,7 +548,12 @@
         "whiteboardLimitReference": "För mer information besök",
         "whiteboardLimitReferenceUrl": "vår webplats",
         "whiteboardLimitTitle": "Användande av whiteboard har begränsats",
-        "yourEntireScreen": "Helskärm"
+        "yourEntireScreen": "Helskärm",
+        "loginFailed": "Inloggningen misslyckades.",
+        "loginOnResume": "Din autentiseringssession har gått ut. Du måste logga in igen för att fortsätta mötet.",
+        "loginPopupBlocked": "Inloggningsfönstret blockerades av din webbläsare.",
+        "screenshareStoppedDiskSpace": "Det här händer om du använde macOS flytande verktygsfält för att stoppa skärmdelningen. Det har inte stöd för att starta den igen.",
+        "screenshareStoppedTitle": "Skärmdelningen stoppades via systemet"
     },
     "documentSharing": {
         "title": "Delade dokument"
@@ -578,7 +594,8 @@
         "removeFileSuccess": "Filen togs bort",
         "uploadFailedDescription": "Snälla försök igen.",
         "uploadFailedTitle": "Överföring misslyckades",
-        "uploadFile": "Dela fil"
+        "uploadFile": "Dela fil",
+        "uploadDisabled": "Inte tillåtet att ladda upp filer. Be en moderator om behörighet för den åtgärden."
     },
     "filmstrip": {
         "accessibilityLabel": {
@@ -709,7 +726,8 @@
         "streamIdHelp": "Vad är det här?",
         "title": "Direktsändning",
         "unavailableTitle": "Livesändning otillgänglig",
-        "youtubeTerms": "Tjänstevillkor för YouTube"
+        "youtubeTerms": "Tjänstevillkor för YouTube",
+        "youTubeGoLiveWarning": "Kom ihåg att klicka på \"Gå live\" i YouTube Studio om autostart/autostopp är inaktiverade."
     },
     "lobby": {
         "backToKnockModeButton": "Tillbaka till väntrum",
@@ -1376,7 +1394,8 @@
             "videoblur": "Växla videooskärpa",
             "videomute": "Stoppa kamera",
             "videomuteGUMPending": "Ansluter din kamera",
-            "videounmute": "Starta kameran"
+            "videounmute": "Starta kameran",
+            "closeCustomPanel": "Stäng"
         },
         "addPeople": "Lägg till personer i samtal",
         "advancedAudioSettings": {
@@ -1491,7 +1510,11 @@
         "videoSettings": "Videoinställningar",
         "videomute": "Inaktivera kameran",
         "videomuteGUMPending": "Ansluter din kamera",
-        "videounmute": "Aktivera kameran"
+        "videounmute": "Aktivera kameran",
+        "closeCustomPanel": "Stäng",
+        "copilot": "Copilot",
+        "fileSharing": "Fildelning",
+        "polls": "Omröstningar"
     },
     "transcribing": {
         "ccButtonTooltip": "Aktivera / Inaktivera undertexter",
@@ -1599,7 +1622,9 @@
         "title": "Virtuella bakgrunder",
         "uploadedImage": "Uppladdad bild {{index}}",
         "webAssemblyWarning": "WebAssembly stöds inte",
-        "webAssemblyWarningDescription": "WebAssembly inaktiverad eller stöds inte av den här webbläsaren"
+        "webAssemblyWarningDescription": "WebAssembly inaktiverad eller stöds inte av den här webbläsaren",
+        "backgroundLimitReached": "Gränsen för anpassade bakgrunder har nåtts",
+        "oldestBackgroundRemoved": "Den äldsta anpassade bakgrunden har tagits bort för att lägga till den nya."
     },
     "visitors": {
         "chatIndicator": "(besökare)",
@@ -1680,5 +1705,8 @@
             "heading": "Whiteboard"
         },
         "screenTitle": "Whiteboard"
+    },
+    "customPanel": {
+        "close": "Stäng"
     }
 }
