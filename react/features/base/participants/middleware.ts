@@ -619,17 +619,12 @@ function _localParticipantJoined({ getState, dispatch }: IStore, next: Function,
     const settings = state['features/base/settings'];
     const jwtUser = state['features/base/jwt']?.user;
 
-    const userContext = jwtUser ? {
-        id: jwtUser.id,
-        name: jwtUser.name
-    } : undefined;
-
     dispatch(localParticipantJoined({
         avatarURL: settings.avatarURL,
         email: settings.email,
         name: settings.displayName,
         id: '',
-        userContext
+        userContext: jwtUser
     }));
 
     return result;

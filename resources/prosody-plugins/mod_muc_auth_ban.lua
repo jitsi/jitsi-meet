@@ -12,8 +12,7 @@ local http = require "net.http";
 local inspect = require 'inspect';
 
 local util = module:require 'util';
-local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
-local is_vpaas = util.is_vpaas;
+local starts_with = util.starts_with;
 
 local ban_check_count = module:measure("muc_auth_ban_check", "rate")
 local ban_check_users_banned_count = module:measure("muc_auth_ban_users_banned", "rate")
@@ -49,11 +48,7 @@ local function shouldAllow(session)
             return false;
         end
 
-        local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
-        if not room then
-            return nil;
-        end
-        if not is_vpaas(room) then
+        if not starts_with(session.jitsi_web_query_prefix, 'vpaas-magic-cookie-') then
             return true;
         end
 

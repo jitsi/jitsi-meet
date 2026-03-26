@@ -1,10 +1,11 @@
 import { createTrackMutedEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IStore } from '../../app/types';
-import { showErrorNotification, showNotification } from '../../notifications/actions';
+import { showErrorNotification, showNotification, showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT, NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { getCurrentConference } from '../conference/functions';
 import { IJitsiConference } from '../conference/reducer';
+import { isMacOS } from '../environment/environment';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
 import { setAudioMuted, setScreenshareMuted, setVideoMuted } from '../media/actions';
 import {
@@ -439,6 +440,12 @@ export function trackAdded(track: any) {
             track.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED,
                 () => {
                     logger.debug(`Local track stopped: ${track}, removing it from the conference`);
+                    if (mediaType === MEDIA_TYPE.SCREENSHARE && isMacOS()) {
+                        dispatch(showWarningNotification({
+                            descriptionKey: 'dialog.screenshareStoppedDiskSpace',
+                            titleKey: 'dialog.screenshareStoppedTitle'
+                        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+                    }
                     dispatch({
                         type: TRACK_STOPPED,
                         track: {
