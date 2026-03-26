@@ -5,8 +5,10 @@ import { IFileMetadata } from '../file-sharing/types';
 
 export interface IMessage {
     displayName: string;
+    editedAt?: number;
     error?: Object;
     fileMetadata?: IFileMetadata;
+    isEdited?: boolean;
     isFromGuest?: boolean;
     isFromVisitor?: boolean;
     isReaction: boolean;
