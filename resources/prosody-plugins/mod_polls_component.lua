@@ -141,6 +141,11 @@ end
             local main_room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
             local occupant_jid = stanza.attr.from;
 
+            if not main_room then
+                module:log('warn', 'No main room found for %s %s', session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+                return;
+            end
+
             occupant = main_room:get_occupant_by_real_jid(occupant_jid);
 
             if main_room._data.breakout_rooms_active and not occupant then
@@ -148,10 +153,13 @@ end
                 -- not in main room, let's check breakout rooms
                 for breakout_room_jid, subject in pairs(main_room._data.breakout_rooms or {}) do
                     local breakout_room = get_room_from_jid(breakout_room_jid);
-                    occupant = breakout_room:get_occupant_by_real_jid(occupant_jid);
-                    if occupant then
-                        room = breakout_room;
-                        break;
+
+                    if breakout_room then
+                        occupant = breakout_room:get_occupant_by_real_jid(occupant_jid);
+                        if occupant then
+                            room = breakout_room;
+                            break;
+                        end
                     end
                 end
             else
