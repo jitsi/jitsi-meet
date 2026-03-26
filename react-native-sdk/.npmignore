@@ -1,1 +1,11 @@
 *.tgz
+.git
+.gitignore
+.npmrc
+node_modules
+dist
+build
+*.log
+.env
+.DS_Store
+tsconfig*.json
