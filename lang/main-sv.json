@@ -817,7 +817,7 @@
         "focusFail": "{{component}} inte tillgänglig – försöker igen om {{ms}} sek",
         "gifsMenu": "GIPHY",
         "groupTitle": "Notifieringar",
-        "hostAskedUnmute": "Värden vill att du ska stänga av ljudet",
+        "hostAskedUnmute": "Värden vill att du ska starta din mikrofon",
         "invalidTenant": "Ogiltig tenant",
         "invalidTenantHyphenDescription": "Tenant du använder har ogiltiga tecken (startar eller slutar med '-').",
         "invalidTenantLengthDescription": "Tenant du använder är för lång",
