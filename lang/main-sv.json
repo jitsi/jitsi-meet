@@ -114,6 +114,9 @@
         "error": "Fel: ditt meddelande skickades inte. Orsak: {{error}}",
         "everyone": "Alla",
         "fieldPlaceHolder": "Skriv ditt meddelande här",
+        "fileAccessibleTitle": "{{user}} laddade upp en fil",
+        "fileAccessibleTitleMe": "jag laddade upp en fil",
+        "fileDeleted": "En fil raderades",
         "guestsChatIndicator": "(gäst)",
         "lobbyChatMessageTo": "Skicka meddelande",
         "message": "Meddelande",
@@ -123,20 +126,20 @@
         "messagebox": "Skriv ett meddelande",
         "newMessages": "Nytt meddelande",
         "nickname": {
-            "popover": "Välj ett namn",
-            "title": "Skriv in ett namn för att börja använda chatten",
-            "titleWithCC": "Skriv in ett namn för att börja använda chatten och för undertexter",
-            "titleWithPolls": "Skriv in ett namn för att börja använda chatten och omröstningar",
-            "titleWithPollsAndCC": "Skriv in ett namn för att börja använda chatten, omröstningar och undertexter",
-            "titleWithPollsAndCCAndFileSharing": "Skriv in ett namn för att börja använda chatten, omröstningar, undertexter och fildelning",
             "featureChat": "chatt",
             "featureClosedCaptions": "textning",
             "featureFileSharing": "fildelning",
             "featurePolls": "omröstningar",
+            "popover": "Välj ett namn",
+            "title": "Skriv in ett namn för att börja använda chatten",
             "titleWith1Features": "Ange ett smeknamn för att använda {{feature1}}",
             "titleWith2Features": "Ange ett smeknamn för att använda {{feature1}} och {{feature2}}",
             "titleWith3Features": "Ange ett smeknamn för att använda {{feature1}}, {{feature2}} och {{feature3}}",
-            "titleWith4Features": "Ange ett smeknamn för att använda {{feature1}}, {{feature2}}, {{feature3}} och {{feature4}}"
+            "titleWith4Features": "Ange ett smeknamn för att använda {{feature1}}, {{feature2}}, {{feature3}} och {{feature4}}",
+            "titleWithCC": "Skriv in ett namn för att börja använda chatten och för undertexter",
+            "titleWithPolls": "Skriv in ett namn för att börja använda chatten och omröstningar",
+            "titleWithPollsAndCC": "Skriv in ett namn för att börja använda chatten, omröstningar och undertexter",
+            "titleWithPollsAndCCAndFileSharing": "Skriv in ett namn för att börja använda chatten, omröstningar, undertexter och fildelning"
         },
         "noMessagesMessage": "Det finns ännu inga meddelanden i mötet. Påbörja en konversation!",
         "privateNotice": "Privat meddelande till {{recipient}}",
@@ -154,10 +157,7 @@
         "titleWithFeatures": "Chatt och",
         "titleWithFileSharing": "Filer",
         "titleWithPolls": "Omröstningar",
-        "you": "dig",
-        "fileAccessibleTitle": "{{user}} laddade upp en fil",
-        "fileAccessibleTitleMe": "jag laddade upp en fil",
-        "fileDeleted": "En fil raderades"
+        "you": "dig"
     },
     "chromeExtensionBanner": {
         "buttonText": "Installera Chrome-tillägg",
@@ -226,6 +226,9 @@
         "transport_plural": "Transporter:",
         "video_ssrc": "Video SSRC:",
         "yes": "Ja"
+    },
+    "customPanel": {
+        "close": "Stäng"
     },
     "dateUtils": {
         "earlier": "Tidigare",
@@ -380,6 +383,9 @@
         "lockRoom": "Lägg till möte $t(lockRoomPasswordUppercase)",
         "lockTitle": "Låsning misslyckades",
         "login": "Logga in",
+        "loginFailed": "Inloggningen misslyckades.",
+        "loginOnResume": "Din autentiseringssession har gått ut. Du måste logga in igen för att fortsätta mötet.",
+        "loginPopupBlocked": "Inloggningsfönstret blockerades av din webbläsare.",
         "loginQuestion": "Är du säker på att du vill logga in och lämna mötet",
         "logoutQuestion": "Är du säker på att du vill logga ut och lämna konferensen?",
         "logoutTitle": "Logga ut",
@@ -463,6 +469,8 @@
         "screenSharingFailed": "Oops! Något gick fel, skärmdelning kunde ej startas.",
         "screenSharingFailedTitle": "Skärmdelning misslyckades!",
         "screenSharingPermissionDeniedError": "Något är fel med åtkomstinställningarna för skärmdelningen. Ladda om sidan och försök igen.",
+        "screenshareStoppedDiskSpace": "Det här händer om du använde macOS flytande verktygsfält för att stoppa skärmdelningen. Det har inte stöd för att starta den igen.",
+        "screenshareStoppedTitle": "Skärmdelningen stoppades via systemet",
         "searchInSalesforce": "Sök i Salesforce",
         "searchResults": "Sökresultat ({{count}})",
         "searchResultsDetailsError": "Något gick fel när ägardata hämtades.",
@@ -548,12 +556,7 @@
         "whiteboardLimitReference": "För mer information besök",
         "whiteboardLimitReferenceUrl": "vår webplats",
         "whiteboardLimitTitle": "Användande av whiteboard har begränsats",
-        "yourEntireScreen": "Helskärm",
-        "loginFailed": "Inloggningen misslyckades.",
-        "loginOnResume": "Din autentiseringssession har gått ut. Du måste logga in igen för att fortsätta mötet.",
-        "loginPopupBlocked": "Inloggningsfönstret blockerades av din webbläsare.",
-        "screenshareStoppedDiskSpace": "Det här händer om du använde macOS flytande verktygsfält för att stoppa skärmdelningen. Det har inte stöd för att starta den igen.",
-        "screenshareStoppedTitle": "Skärmdelningen stoppades via systemet"
+        "yourEntireScreen": "Helskärm"
     },
     "documentSharing": {
         "title": "Delade dokument"
@@ -592,10 +595,10 @@
         "newFileNotification": "{{ participantName }} delade '{{ fileName }}'",
         "removeFile": "Ta bort",
         "removeFileSuccess": "Filen togs bort",
+        "uploadDisabled": "Inte tillåtet att ladda upp filer. Be en moderator om behörighet för den åtgärden.",
         "uploadFailedDescription": "Snälla försök igen.",
         "uploadFailedTitle": "Överföring misslyckades",
-        "uploadFile": "Dela fil",
-        "uploadDisabled": "Inte tillåtet att ladda upp filer. Be en moderator om behörighet för den åtgärden."
+        "uploadFile": "Dela fil"
     },
     "filmstrip": {
         "accessibilityLabel": {
@@ -726,8 +729,8 @@
         "streamIdHelp": "Vad är det här?",
         "title": "Direktsändning",
         "unavailableTitle": "Livesändning otillgänglig",
-        "youtubeTerms": "Tjänstevillkor för YouTube",
-        "youTubeGoLiveWarning": "Kom ihåg att klicka på \"Gå live\" i YouTube Studio om autostart/autostopp är inaktiverade."
+        "youTubeGoLiveWarning": "Kom ihåg att klicka på \"Gå live\" i YouTube Studio om autostart/autostopp är inaktiverade.",
+        "youtubeTerms": "Tjänstevillkor för YouTube"
     },
     "lobby": {
         "backToKnockModeButton": "Tillbaka till väntrum",
@@ -1316,6 +1319,7 @@
             "chat": "Öppna eller stäng chattfönster",
             "clap": "Applådera",
             "closeChat": "Stäng chatten",
+            "closeCustomPanel": "Stäng",
             "closeMoreActions": "Stäng menyn för fler åtgärder",
             "closeParticipantsPane": "Stäng deltagarfönstret",
             "closedCaptions": "Undertexter",
@@ -1394,8 +1398,7 @@
             "videoblur": "Växla videooskärpa",
             "videomute": "Stoppa kamera",
             "videomuteGUMPending": "Ansluter din kamera",
-            "videounmute": "Starta kameran",
-            "closeCustomPanel": "Stäng"
+            "videounmute": "Starta kameran"
         },
         "addPeople": "Lägg till personer i samtal",
         "advancedAudioSettings": {
@@ -1422,9 +1425,11 @@
         "chat": "Öppna / stäng chatten",
         "clap": "Klappa",
         "closeChat": "Stäng chatt",
+        "closeCustomPanel": "Stäng",
         "closeParticipantsPane": "Stäng deltagarrutan",
         "closeReactionsMenu": "Stäng meny för reaktioner",
         "closedCaptions": "Undertexter",
+        "copilot": "Copilot",
         "disableNoiseSuppression": "Inaktivera brusreducering",
         "disableReactionSounds": "Du kan inaktivera reaktionsljud för det här mötet",
         "documentClose": "Stäng delat dokument",
@@ -1439,6 +1444,7 @@
         "exitFullScreen": "Stäng fullskärm",
         "exitTileView": "Stäng panelvy",
         "feedback": "Lämna återkoppling",
+        "fileSharing": "Fildelning",
         "giphy": "Växla GIPHY-menyn",
         "hangup": "Lämna",
         "help": "Hjälp",
@@ -1474,6 +1480,7 @@
         "openReactionsMenu": "Öppna meny för reaktioner",
         "participants": "Deltagare",
         "pip": "Öppna bild-i-bild-läge",
+        "polls": "Omröstningar",
         "privateMessage": "Skicka privat meddelande",
         "profile": "Redigera din profil",
         "raiseHand": "Räck upp / ta ner din hand",
@@ -1510,11 +1517,7 @@
         "videoSettings": "Videoinställningar",
         "videomute": "Inaktivera kameran",
         "videomuteGUMPending": "Ansluter din kamera",
-        "videounmute": "Aktivera kameran",
-        "closeCustomPanel": "Stäng",
-        "copilot": "Copilot",
-        "fileSharing": "Fildelning",
-        "polls": "Omröstningar"
+        "videounmute": "Aktivera kameran"
     },
     "transcribing": {
         "ccButtonTooltip": "Aktivera / Inaktivera undertexter",
@@ -1604,6 +1607,7 @@
         "addBackground": "Lägg till bakgrund",
         "apply": "Tillämpa",
         "backgroundEffectError": "Det gick inte att tillämpa bakgrundseffekt.",
+        "backgroundLimitReached": "Gränsen för anpassade bakgrunder har nåtts",
         "blur": "Oskärpa",
         "deleteImage": "Ta bort bild",
         "desktopShare": "Dela skrivbord",
@@ -1616,15 +1620,14 @@
         "image6": "Skog",
         "image7": "Soluppgång",
         "none": "Ingen",
+        "oldestBackgroundRemoved": "Den äldsta anpassade bakgrunden har tagits bort för att lägga till den nya.",
         "pleaseWait": "Var god vänta…",
         "removeBackground": "Ta bort bakgrunden",
         "slightBlur": "Lätt oskärpa",
         "title": "Virtuella bakgrunder",
         "uploadedImage": "Uppladdad bild {{index}}",
         "webAssemblyWarning": "WebAssembly stöds inte",
-        "webAssemblyWarningDescription": "WebAssembly inaktiverad eller stöds inte av den här webbläsaren",
-        "backgroundLimitReached": "Gränsen för anpassade bakgrunder har nåtts",
-        "oldestBackgroundRemoved": "Den äldsta anpassade bakgrunden har tagits bort för att lägga till den nya."
+        "webAssemblyWarningDescription": "WebAssembly inaktiverad eller stöds inte av den här webbläsaren"
     },
     "visitors": {
         "chatIndicator": "(besökare)",
@@ -1705,8 +1708,5 @@
             "heading": "Whiteboard"
         },
         "screenTitle": "Whiteboard"
-    },
-    "customPanel": {
-        "close": "Stäng"
     }
 }
