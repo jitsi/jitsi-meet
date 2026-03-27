@@ -13,6 +13,7 @@ import { getParticipantById, isPrivateChatEnabled } from '../base/participants/f
 import { IParticipant } from '../base/participants/types';
 import { escapeRegexp } from '../base/util/helpers';
 import { arePollsDisabled } from '../conference/functions.any';
+import { getCustomPanelWidth } from '../custom-panel/functions';
 import { isFileSharingEnabled } from '../file-sharing/functions.any';
 import { getParticipantsPaneWidth } from '../participants-pane/functions';
 import { isCCTabEnabled } from '../subtitles/functions.any';
@@ -311,7 +312,10 @@ export function isSendGroupChatDisabled(state: IReduxState): boolean {
 export function getChatMaxSize(state: IReduxState): number {
     const { clientWidth } = state['features/base/responsive-ui'];
 
-    return Math.max(clientWidth - getParticipantsPaneWidth(state) - VIDEO_SPACE_MIN_SIZE, 0);
+    return Math.max(
+        clientWidth - getParticipantsPaneWidth(state) - getCustomPanelWidth(state) - VIDEO_SPACE_MIN_SIZE,
+        0
+    );
 }
 
 /**
