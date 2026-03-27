@@ -695,7 +695,7 @@ var config = {
     // hideAddRoomButton: false,
 
     // Require users to always specify a display name.
-    // requireDisplayName: true,
+    requireDisplayName: true,
 
     // Enables webhid functionality for Audio.
     // enableWebHIDFeature: false,
