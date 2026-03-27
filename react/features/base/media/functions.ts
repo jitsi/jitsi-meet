@@ -146,6 +146,10 @@ export function shouldRenderVideoTrack(
  * @returns {string}
  */
 export const getSoundFileSrc = (file: string, language: string): string => {
+    if (!language) {
+        return file;
+    }
+
     // Normalize language code: 'fr-CA' -> 'frCA' to match AudioSupportedLanguage enum and file naming
     const normalizedLanguage = language.replace('-', '');
 

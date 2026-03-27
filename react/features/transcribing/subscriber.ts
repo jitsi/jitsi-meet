@@ -20,7 +20,12 @@ import { isRecorderTranscriptionsRunning, isTranscribing } from './functions';
  */
 StateListenerRegistry.register(
     /* selector */ isRecorderTranscriptionsRunning,
-    /* listener */ (isRecorderTranscriptionsRunningValue, { getState, dispatch }) => {
+    /* listener */ (isRecorderTranscriptionsRunningValue, { getState, dispatch }, previousValue) => {
+        // Only emit notifications on actual changes, not on initial state
+        if (previousValue === undefined) {
+            return;
+        }
+
         if (isRecorderTranscriptionsRunningValue) {
             maybeEmitRecordingNotification(dispatch, getState, true);
         } else {
@@ -30,7 +35,12 @@ StateListenerRegistry.register(
 );
 StateListenerRegistry.register(
     /* selector */ isTranscribing,
-    /* listener */ (isTranscribingValue, { getState }) => {
+    /* listener */ (isTranscribingValue, { getState }, previousValue) => {
+        // Only notify on actual changes, not on initial state
+        if (previousValue === undefined) {
+            return;
+        }
+
         if (isTranscribingValue) {
             notifyTranscribingStatusChanged(getState, true);
         } else {

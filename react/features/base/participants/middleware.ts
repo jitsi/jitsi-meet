@@ -789,8 +789,9 @@ function _localRecordingUpdated({ dispatch, getState }: IStore, conference: IJit
         participantId: string, newValue: boolean) {
     const state = getState();
     const participant = getParticipantById(state, participantId);
+    const currentValue = participant?.localRecording ?? false;
 
-    if (participant?.localRecording === newValue) {
+    if (currentValue === newValue) {
         return;
     }
 

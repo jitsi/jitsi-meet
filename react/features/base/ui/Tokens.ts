@@ -370,7 +370,7 @@ export const colorMap = {
     recordingHighlightButtonIconDisabled: 'text03', // Recording highlight button disabled icon color
     recordingNotificationText: 'surface01',  // Recording notification text color
     recordingNotificationAction: 'action01', // Recording notification action color
-    transcriptionIndicator: 'success02',     // Transcription indicator background
+    transcriptionIndicator: 'success01',     // Transcription indicator background
 
     // Virtual Background
     virtualBackgroundBackground: 'ui01',     // Virtual background picker background
