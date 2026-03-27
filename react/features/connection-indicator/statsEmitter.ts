@@ -1,11 +1,19 @@
-import { union } from 'lodash-es';
-
 import { IJitsiConference } from '../base/conference/reducer';
 import {
     JitsiConnectionQualityEvents
 } from '../base/lib-jitsi-meet';
 import { trackCodecChanged } from '../base/tracks/actions.any';
 import { getLocalTracks } from '../base/tracks/functions.any';
+
+import { expandLocalConnectionQualityStatsBatch } from './expandLocalConnectionQualityStatsBatch';
+
+/**
+ * Connection-quality stats passed to subscribers after normalization.
+ * For {@code LOCAL_STATS_UPDATED}, framerate / resolution / codec are
+ * per-participant values; lib-jitsi-meet supplies them as participant-id maps
+ * and {@link expandLocalConnectionQualityStatsBatch} flattens them first.
+ */
+export type IConnectionQualitySubscriberStats = Record<string, unknown>;
 
 /**
  * Contains all the callbacks to be notified when stats are updated.
@@ -16,13 +24,7 @@ import { getLocalTracks } from '../base/tracks/functions.any';
  * }
  * ```
  */
-const subscribers: any = {};
-
-interface IStats {
-    codec?: Object;
-    framerate?: Object;
-    resolution?: Object;
-}
+const subscribers: { [id: string]: Array<Function>; } = {};
 
 /**
  * A singleton that acts as a pub/sub service for connection stat updates.
@@ -38,10 +40,11 @@ const statsEmitter = {
      */
     startListeningForStats(conference: IJitsiConference) {
         conference.on(JitsiConnectionQualityEvents.LOCAL_STATS_UPDATED,
-            (stats: IStats) => this._onStatsUpdated(conference.myUserId(), stats));
+            (stats: Record<string, unknown>) =>
+                this._onStatsUpdated(conference.myUserId(), stats));
 
         conference.on(JitsiConnectionQualityEvents.REMOTE_STATS_UPDATED,
-            (id: string, stats: IStats) => this._emitStatsUpdate(id, stats));
+            (id: string, stats: Record<string, unknown>) => this._emitStatsUpdate(id, stats));
     },
 
     /**
@@ -98,7 +101,7 @@ const statsEmitter = {
      * @param {Object} stats - New connection stats for the user.
      * @returns {void}
      */
-    _emitStatsUpdate(id: string, stats: IStats = {}) {
+    _emitStatsUpdate(id: string, stats: IConnectionQualitySubscriberStats = {}) {
         const callbacks = subscribers[id] || [];
 
         callbacks.forEach((callback: Function) => {
@@ -116,58 +119,20 @@ const statsEmitter = {
      * by the library.
      * @returns {void}
      */
-    _onStatsUpdated(localUserId: string, stats: IStats) {
-        const allUserFramerates = stats.framerate || {};
-        const allUserResolutions = stats.resolution || {};
-        const allUserCodecs = stats.codec || {};
+    _onStatsUpdated(localUserId: string, stats: Record<string, unknown>) {
+        const { localStats, remoteEmissions } = expandLocalConnectionQualityStatsBatch(
+            localUserId, stats);
 
-        // FIXME resolution and framerate are maps keyed off of user ids with
-        // stat values. Receivers of stats expect resolution and framerate to
-        // be primitives, not maps, so here we override the 'lib-jitsi-meet'
-        // stats objects.
-        const modifiedLocalStats = Object.assign({}, stats, {
-            framerate: allUserFramerates[localUserId as keyof typeof allUserFramerates],
-            resolution: allUserResolutions[localUserId as keyof typeof allUserResolutions],
-            codec: allUserCodecs[localUserId as keyof typeof allUserCodecs]
+        const localCodec = localStats.codec;
+
+        localCodec && Object.keys(localCodec as object).length
+            && this._updateLocalCodecs(localCodec);
+
+        this._emitStatsUpdate(localUserId, localStats);
+
+        remoteEmissions.forEach(({ participantId, partialStats }) => {
+            this._emitStatsUpdate(participantId, partialStats);
         });
-
-        modifiedLocalStats.codec
-            && Object.keys(modifiedLocalStats.codec).length
-            && this._updateLocalCodecs(modifiedLocalStats.codec);
-
-        this._emitStatsUpdate(localUserId, modifiedLocalStats);
-
-        // Get all the unique user ids from the framerate and resolution stats
-        // and update remote user stats as needed.
-        const framerateUserIds = Object.keys(allUserFramerates);
-        const resolutionUserIds = Object.keys(allUserResolutions);
-        const codecUserIds = Object.keys(allUserCodecs);
-
-        union(framerateUserIds, resolutionUserIds, codecUserIds)
-            .filter(id => id !== localUserId)
-            .forEach(id => {
-                const remoteUserStats: IStats = {};
-
-                const framerate = allUserFramerates[id as keyof typeof allUserFramerates];
-
-                if (framerate) {
-                    remoteUserStats.framerate = framerate;
-                }
-
-                const resolution = allUserResolutions[id as keyof typeof allUserResolutions];
-
-                if (resolution) {
-                    remoteUserStats.resolution = resolution;
-                }
-
-                const codec = allUserCodecs[id as keyof typeof allUserCodecs];
-
-                if (codec) {
-                    remoteUserStats.codec = codec;
-                }
-
-                this._emitStatsUpdate(id, remoteUserStats);
-            });
     },
 
     /**
