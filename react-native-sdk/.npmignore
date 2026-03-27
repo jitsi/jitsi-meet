@@ -1,6 +1,1 @@
 *.tgz
-tsconfig.json
-.npmrc
-.git
-.gitignore
-node_modules
