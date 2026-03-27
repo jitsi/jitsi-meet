@@ -83,6 +83,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             privateMessage: action.privateMessage,
             lobbyChat: action.lobbyChat,
             recipient: action.recipient,
+            replyToMessageId: action.replyToMessageId,
             sentToVisitor: Boolean(action.sentToVisitor),
             timestamp: action.timestamp
         };
