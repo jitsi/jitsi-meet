@@ -45,6 +45,7 @@ import {
     CLOSE_CHAT,
     OPEN_CHAT,
     SEND_MESSAGE,
+    SEND_MESSAGE_EDIT,
     SEND_REACTION,
     SET_FOCUSED_TAB
 } from './actionTypes';
@@ -53,6 +54,7 @@ import {
     addMessageReaction,
     clearChatState,
     closeChat,
+    editMessage,
     notifyPrivateRecipientsChanged,
     openChat,
     setPrivateMessageRecipient
@@ -60,6 +62,7 @@ import {
 import { ChatPrivacyDialog } from './components';
 import {
     ChatTabs,
+    ENDPOINT_CHAT_EDIT_NAME,
     INCOMING_MSG_SOUND_ID,
     LOBBY_CHAT_MESSAGE,
     MESSAGE_TYPE_ERROR,
@@ -142,21 +145,33 @@ MiddlewareRegistry.register(store => next => action => {
 
     case ENDPOINT_MESSAGE_RECEIVED: {
         const state = store.getState();
+        const { participant, data } = action;
+        const participantId = participant?.getId?.();
+
+        if (data?.name === ENDPOINT_CHAT_EDIT_NAME && participantId) {
+            _onMessageEditReceived(store, {
+                editedAt: data.editedAt,
+                message: data.message,
+                messageId: data.messageId,
+                participantId,
+                versions: data.versions
+            });
+
+            break;
+        }
 
         if (!isReactionsEnabled(state)) {
             return next(action);
         }
 
-        const { participant, data } = action;
-
-        if (data?.name === ENDPOINT_REACTION_NAME) {
+        if (data?.name === ENDPOINT_REACTION_NAME && participantId) {
             // Skip duplicates, keep just 3.
             const reactions = Array.from(new Set(data.reactions)).slice(0, 3) as string[];
 
             store.dispatch(pushReactions(reactions));
 
             _handleReceivedMessage(store, {
-                participantId: participant.getId(),
+                participantId,
                 message: getReactionMessageFromBuffer(reactions),
                 privateMessage: false,
                 lobbyChat: false,
@@ -315,6 +330,24 @@ MiddlewareRegistry.register(store => next => action => {
             const { reaction, messageId, receiverId } = action;
 
             conference.sendReaction(reaction, messageId, receiverId);
+        }
+        break;
+    }
+
+    case SEND_MESSAGE_EDIT: {
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+
+        if (conference) {
+            const { message } = action;
+
+            conference.sendEndpointMessage('', {
+                editedAt: message.lastEditedTimestamp,
+                message: message.message,
+                messageId: message.messageId,
+                name: ENDPOINT_CHAT_EDIT_NAME,
+                versions: message.versions ?? []
+            });
         }
         break;
     }
@@ -513,6 +546,64 @@ function _onReactionReceived(store: IStore, { participantId, reactionList, messa
     };
 
     store.dispatch(addMessageReaction(reactionPayload));
+}
+
+/**
+ * Handles receiving an edited chat message over endpoint transport.
+ *
+ * @param {IStore} store - The Redux store.
+ * @param {Object} payload - Incoming message edit payload.
+ * @param {number} payload.editedAt - Edit timestamp.
+ * @param {string} payload.message - Edited message text.
+ * @param {string} payload.messageId - Message id to update.
+ * @param {string} payload.participantId - Participant id who edited the message.
+ * @param {Array<Object>} payload.versions - Full version history of previous texts.
+ * @returns {void}
+ */
+function _onMessageEditReceived(store: IStore, {
+    editedAt,
+    message,
+    messageId,
+    participantId,
+    versions
+}: {
+    editedAt?: number;
+    message?: string;
+    messageId?: string;
+    participantId: string;
+    versions?: Array<{ editedAt: number; message: string; }>;
+}) {
+    if (!messageId || typeof message !== 'string') {
+        return;
+    }
+
+    const { dispatch, getState } = store;
+    const { messages } = getState()['features/chat'];
+    const original = messages.find(chatMessage => chatMessage.messageId === messageId);
+
+    // Only allow message authors to edit their own non-file, non-reaction messages.
+    if (!original
+        || original.participantId !== participantId
+        || original.messageType !== MESSAGE_TYPE_REMOTE
+        || original.privateMessage
+        || original.lobbyChat
+        || original.isReaction
+        || original.fileMetadata) {
+        return;
+    }
+
+    // Ignore out-of-order edits to avoid reverting to older versions.
+    if (editedAt && original.lastEditedTimestamp && editedAt <= original.lastEditedTimestamp) {
+        return;
+    }
+
+    dispatch(editMessage({
+        ...original,
+        isEdited: true,
+        lastEditedTimestamp: editedAt ?? Date.now(),
+        message,
+        versions: versions ?? original.versions ?? []
+    }));
 }
 
 /**

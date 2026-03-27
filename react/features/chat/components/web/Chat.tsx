@@ -22,6 +22,7 @@ import {
     setPrivateMessageRecipient,
     setPrivateMessageRecipientById,
     setUserChatWidth,
+    submitEditedMessage,
     toggleChat
 } from '../../actions.web';
 import {
@@ -415,6 +416,17 @@ const Chat = ({
     }, []);
 
     /**
+    * Saves the edited message text.
+    *
+    * @param {string} messageId - The message id to update.
+    * @param {string} text - The edited message text.
+    * @returns {void}
+    */
+    const onEditMessage = useCallback((messageId: string, text: string) => {
+        dispatch(submitEditedMessage(messageId, text));
+    }, [ dispatch ]);
+
+    /**
     * Toggles the chat window.
     *
     * @returns {Function}
@@ -495,6 +507,7 @@ const Chat = ({
                             value = { privateMessageRecipient?.id || OPTION_GROUPCHAT } />
                     )}
                     <ChatInput
+                        onEdit = { onEditMessage }
                         onSend = { onSendMessage } />
                 </div>) }
                 { _isPollsEnabled && (

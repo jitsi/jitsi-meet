@@ -8,6 +8,7 @@ import {
     ADD_MESSAGE,
     ADD_MESSAGE_REACTION,
     CLEAR_CHAT_STATE,
+    CLEAR_EDIT_MESSAGE_TARGET,
     CLOSE_CHAT,
     EDIT_MESSAGE,
     NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
@@ -15,6 +16,7 @@ import {
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SET_CHAT_IS_RESIZING,
     SET_CHAT_WIDTH,
+    SET_EDIT_MESSAGE_TARGET,
     SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
@@ -25,6 +27,7 @@ import { CHAT_SIZE, ChatTabs } from './constants';
 import { IMessage } from './types';
 
 const DEFAULT_STATE = {
+    editMessageTarget: undefined,
     groupChatWithPermissions: false,
     isOpen: false,
     messages: [],
@@ -44,6 +47,10 @@ const DEFAULT_STATE = {
 };
 
 export interface IChatState {
+    editMessageTarget?: {
+        message: string;
+        messageId: string;
+    };
     focusedTab?: ChatTabs;
     groupChatWithPermissions: boolean;
     isLobbyChatActive: boolean;
@@ -74,8 +81,10 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             fileMetadata: action.fileMetadata,
             isFromGuest: Boolean(action.isFromGuest),
             isFromVisitor: Boolean(action.isFromVisitor),
+            isEdited: Boolean(action.isEdited),
             participantId: action.participantId,
             isReaction: action.isReaction,
+            lastEditedTimestamp: action.lastEditedTimestamp,
             messageId: action.messageId,
             messageType: action.messageType,
             message: action.message,
@@ -84,7 +93,8 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             lobbyChat: action.lobbyChat,
             recipient: action.recipient,
             sentToVisitor: Boolean(action.sentToVisitor),
-            timestamp: action.timestamp
+            timestamp: action.timestamp,
+            versions: action.versions
         };
 
         // React native, unlike web, needs a reverse sorted message list.
@@ -169,6 +179,21 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             messages
         };
     }
+
+    case SET_EDIT_MESSAGE_TARGET:
+        return {
+            ...state,
+            editMessageTarget: {
+                message: action.message,
+                messageId: action.messageId
+            }
+        };
+
+    case CLEAR_EDIT_MESSAGE_TARGET:
+        return {
+            ...state,
+            editMessageTarget: undefined
+        };
 
     case SET_PRIVATE_MESSAGE_RECIPIENT:
         return {

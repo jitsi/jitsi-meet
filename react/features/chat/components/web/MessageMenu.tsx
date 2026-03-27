@@ -15,13 +15,17 @@ import { handleLobbyChatInitialized, openChat } from '../../actions.web';
 import logger from '../../logger';
 
 export interface IProps {
+    canEditMessage?: boolean;
     className?: string;
     displayName?: string;
     enablePrivateChat: boolean;
+    hasEditHistory?: boolean;
     isFileMessage?: boolean;
     isFromVisitor?: boolean;
     isLobbyMessage: boolean;
     message: string;
+    onEditMessage?: () => void;
+    onShowEditHistory?: () => void;
     participantId: string;
 }
 
@@ -62,7 +66,19 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, enablePrivateChat, displayName, isFileMessage }: IProps) => {
+const MessageMenu = ({
+    canEditMessage,
+    message,
+    participantId,
+    isFromVisitor,
+    isLobbyMessage,
+    enablePrivateChat,
+    displayName,
+    hasEditHistory,
+    isFileMessage,
+    onEditMessage,
+    onShowEditHistory
+}: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -75,7 +91,12 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
     const participant = useSelector((state: IReduxState) => getParticipantById(state, participantId));
 
     // If no menu items will be shown, don't render the menu button.
-    if (!enablePrivateChat && isFileMessage) {
+    const hasMenuItems = enablePrivateChat
+        || !isFileMessage
+        || Boolean(canEditMessage)
+        || Boolean(hasEditHistory);
+
+    if (!hasMenuItems) {
         return null;
     }
 
@@ -135,6 +156,16 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
         handleClose();
     }, [ message ]);
 
+    const handleEditClick = useCallback(() => {
+        onEditMessage?.();
+        handleClose();
+    }, [ onEditMessage, handleClose ]);
+
+    const handleShowHistoryClick = useCallback(() => {
+        onShowEditHistory?.();
+        handleClose();
+    }, [ onShowEditHistory, handleClose ]);
+
     const popoverContent = (
         <div className = { classes.menuPanel }>
             {enablePrivateChat && (
@@ -149,6 +180,20 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
                     className = { classes.menuItem }
                     onClick = { handleCopyClick }>
                     {t('Copy')}
+                </div>
+            )}
+            {canEditMessage && (
+                <div
+                    className = { classes.menuItem }
+                    onClick = { handleEditClick }>
+                    {t('chat.editMessage')}
+                </div>
+            )}
+            {hasEditHistory && (
+                <div
+                    className = { classes.menuItem }
+                    onClick = { handleShowHistoryClick }>
+                    {t('chat.viewEditHistory')}
                 </div>
             )}
         </div>

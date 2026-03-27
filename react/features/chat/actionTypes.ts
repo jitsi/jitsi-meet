@@ -35,6 +35,15 @@ export const ADD_MESSAGE_REACTION = 'ADD_MESSAGE_REACTION';
 export const CLEAR_CHAT_STATE = 'CLEAR_CHAT_STATE';
 
 /**
+ * The type of the action which clears the currently edited chat message target.
+ *
+ * {
+ *     type: CLEAR_EDIT_MESSAGE_TARGET
+ * }
+ */
+export const CLEAR_EDIT_MESSAGE_TARGET = 'CLEAR_EDIT_MESSAGE_TARGET';
+
+/**
  * The type of the action which signals the cancellation the chat panel.
  *
  * {
@@ -52,6 +61,17 @@ export const CLOSE_CHAT = 'CLOSE_CHAT';
  * }
  */
 export const EDIT_MESSAGE = 'EDIT_MESSAGE';
+
+/**
+ * The type of the action which sets the chat message being edited.
+ *
+ * {
+ *     type: SET_EDIT_MESSAGE_TARGET,
+ *     message: string,
+ *     messageId: string
+ * }
+ */
+export const SET_EDIT_MESSAGE_TARGET = 'SET_EDIT_MESSAGE_TARGET';
 
 /**
  * The type of the action which signals to display the chat panel.
@@ -73,6 +93,16 @@ export const OPEN_CHAT = 'OPEN_CHAT';
  * }
  */
 export const SEND_MESSAGE = 'SEND_MESSAGE';
+
+/**
+ * The type of action which signals broadcasting an edited group chat message.
+ *
+ * {
+ *     type: SEND_MESSAGE_EDIT,
+ *     message: Object
+ * }
+ */
+export const SEND_MESSAGE_EDIT = 'SEND_MESSAGE_EDIT';
 
 /**
  * The type of the action which signals a reaction to a message.

@@ -59,6 +59,14 @@ interface IProps extends WithTranslation {
     _chatWidth: number;
 
     /**
+     * The currently edited message target, if any.
+     */
+    _editMessageTarget?: {
+        message: string;
+        messageId: string;
+    };
+
+    /**
      * Whether sending group chat messages is disabled.
      */
     _isSendGroupChatDisabled: boolean;
@@ -77,6 +85,11 @@ interface IProps extends WithTranslation {
      * Invoked to send chat messages.
      */
     dispatch: IStore['dispatch'];
+
+    /**
+     * Callback to invoke on message edit save.
+     */
+    onEdit?: (messageId: string, text: string) => void;
 
     /**
      * Callback to invoke on message send.
@@ -155,6 +168,14 @@ class ChatInput extends Component<IProps, IState> {
         if (prevProps._privateMessageRecipientId !== this.props._privateMessageRecipientId) {
             this._textArea?.current?.focus();
         }
+
+        const previousEditId = prevProps._editMessageTarget?.messageId;
+        const currentEditId = this.props._editMessageTarget?.messageId;
+
+        if (previousEditId !== currentEditId) {
+            this.setState({ message: this.props._editMessageTarget?.message ?? '' });
+            this._textArea?.current?.focus();
+        }
     }
 
     /**
@@ -228,8 +249,10 @@ class ChatInput extends Component<IProps, IState> {
      */
     _onSubmitMessage() {
         const {
+            _editMessageTarget,
             _isSendGroupChatDisabled,
             _privateMessageRecipientId,
+            onEdit,
             onSend
         } = this.props;
 
@@ -240,7 +263,11 @@ class ChatInput extends Component<IProps, IState> {
         const trimmed = this.state.message.trim();
 
         if (trimmed) {
-            onSend(trimmed);
+            if (_editMessageTarget && onEdit) {
+                onEdit(_editMessageTarget.messageId, trimmed);
+            } else {
+                onSend(trimmed);
+            }
 
             this.setState({ message: '' });
 
@@ -342,11 +369,12 @@ class ChatInput extends Component<IProps, IState> {
  * }}
  */
 const mapStateToProps = (state: IReduxState) => {
-    const { privateMessageRecipient, width } = state['features/chat'];
+    const { editMessageTarget, privateMessageRecipient, width } = state['features/chat'];
     const isGroupChatDisabled = isSendGroupChatDisabled(state);
 
     return {
         _areSmileysDisabled: areSmileysDisabled(state),
+        _editMessageTarget: editMessageTarget,
         _privateMessageRecipientId: privateMessageRecipient?.id,
         _isSendGroupChatDisabled: isGroupChatDisabled,
         _chatWidth: width.current ?? CHAT_SIZE,

@@ -3,13 +3,20 @@ import { WithTranslation } from 'react-i18next';
 import { IStore } from '../app/types';
 import { IFileMetadata } from '../file-sharing/types';
 
+export interface IMessageVersion {
+    editedAt: number;
+    message: string;
+}
+
 export interface IMessage {
     displayName: string;
     error?: Object;
     fileMetadata?: IFileMetadata;
+    isEdited?: boolean;
     isFromGuest?: boolean;
     isFromVisitor?: boolean;
     isReaction: boolean;
+    lastEditedTimestamp?: number;
     lobbyChat: boolean;
     message: string;
     messageId: string;
@@ -20,6 +27,7 @@ export interface IMessage {
     recipient: string;
     sentToVisitor?: boolean;
     timestamp: number;
+    versions?: IMessageVersion[];
 }
 
 /**

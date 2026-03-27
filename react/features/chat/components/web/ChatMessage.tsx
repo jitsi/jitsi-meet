@@ -1,6 +1,6 @@
 import { Theme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
-import { connect } from 'react-redux';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
@@ -8,6 +8,7 @@ import { translate } from '../../../base/i18n/functions';
 import { getParticipantById, getParticipantDisplayName, isPrivateChatEnabled } from '../../../base/participants/functions';
 import Popover from '../../../base/popover/components/Popover.web';
 import Message from '../../../base/react/components/web/Message';
+import { setEditMessageTarget } from '../../actions.web';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
 import { getDisplayNameSuffix, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage, isFileMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
@@ -172,6 +173,31 @@ const useStyles = makeStyles()((theme: Theme) => {
             whiteSpace: 'nowrap',
             flexShrink: 0
         },
+        editedLabel: {
+            ...theme.typography.labelRegular,
+            color: theme.palette.chatTimestamp,
+            marginTop: theme.spacing(1),
+            whiteSpace: 'nowrap'
+        },
+        editHistoryPopover: {
+            padding: theme.spacing(2),
+            backgroundColor: theme.palette.chatInputBackground,
+            borderRadius: theme.shape.borderRadius,
+            maxWidth: '250px',
+            maxHeight: '400px',
+            overflowY: 'auto',
+            color: theme.palette.chatMessageText
+        },
+        editHistoryItem: {
+            marginBottom: theme.spacing(1),
+            paddingBottom: theme.spacing(1),
+            borderBottom: `1px solid ${theme.palette.divider}`,
+            '&:last-child': {
+                borderBottom: 'none',
+                paddingBottom: 0,
+                marginBottom: 0
+            }
+        },
         reactionsPopover: {
             padding: theme.spacing(2),
             backgroundColor: theme.palette.chatInputBackground,
@@ -217,8 +243,33 @@ const ChatMessage = ({
     t
 }: IProps) => {
     const { classes, cx } = useStyles();
+    const dispatch = useDispatch();
+    const historyCardRef = useRef<HTMLDivElement>(null);
     const [ isHovered, setIsHovered ] = useState(false);
     const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
+    const [ isHistoryOpen, setIsHistoryOpen ] = useState(false);
+
+    useEffect(() => {
+        if (!isHistoryOpen) {
+            return;
+        }
+
+        const handleDocumentPointerDown = (event: PointerEvent) => {
+            const target = event.target as Node;
+
+            if (historyCardRef.current?.contains(target)) {
+                return;
+            }
+
+            setIsHistoryOpen(false);
+        };
+
+        document.addEventListener('pointerdown', handleDocumentPointerDown);
+
+        return () => {
+            document.removeEventListener('pointerdown', handleDocumentPointerDown);
+        };
+    }, [ isHistoryOpen ]);
 
     const handleMouseEnter = useCallback(() => {
         setIsHovered(true);
@@ -234,6 +285,21 @@ const ChatMessage = ({
 
     const handleReactionsClose = useCallback(() => {
         setIsReactionsOpen(false);
+    }, []);
+
+    const handleEditMessage = useCallback(() => {
+        setIsHistoryOpen(false);
+        dispatch(setEditMessageTarget(message.messageId));
+    }, [ dispatch, message.messageId ]);
+
+    const handleToggleHistory = useCallback(() => {
+        setIsHistoryOpen(value => !value);
+    }, []);
+
+    const handleHistoryKeyDown = useCallback((event: React.KeyboardEvent) => {
+        if (event.key === 'Escape') {
+            setIsHistoryOpen(false);
+        }
     }, []);
 
     /**
@@ -280,6 +346,36 @@ const ChatMessage = ({
             </div>
         );
     }
+
+    const editedLabel = message.isEdited
+        ? (
+            <span className = { classes.editedLabel }>
+                {t('chat.editedLabel')}
+            </span>
+        )
+        : null;
+
+    const editHistory = (isHistoryOpen && message.versions?.length)
+        ? (
+            <div
+                aria-label = { t('chat.viewEditHistory') }
+                aria-modal = { false }
+                className = { classes.editHistoryPopover }
+                onKeyDown = { handleHistoryKeyDown }
+                ref = { historyCardRef }
+                role = 'dialog'
+                tabIndex = { -1 }>
+                {message.versions.map((version, index) => (
+                    <div
+                        className = { classes.editHistoryItem }
+                        key = { `${version.editedAt}-${index}` }>
+                        <p>{new Date(version.editedAt).toLocaleString()}</p>
+                        <p>{version.message}</p>
+                    </div>
+                ))}
+            </div>
+        )
+        : null;
 
     /**
      * Renders the reactions for the message.
@@ -347,6 +443,13 @@ const ChatMessage = ({
         );
     }, [ message?.reactions, isHovered, isReactionsOpen ]);
 
+    const canEditMessage = message.messageType === MESSAGE_TYPE_LOCAL
+        && !message.privateMessage
+        && !message.lobbyChat
+        && !message.isReaction
+        && !isFileMessage(message);
+    const hasEditHistory = Boolean(message.versions?.length);
+
     return (
         <div
             className = { cx(classes.chatMessageWrapper, className) }
@@ -358,13 +461,18 @@ const ChatMessage = ({
                 {!shouldDisplayMenuOnRight && (
                     <div className = { classes.optionsButtonContainer }>
                         {isHovered && <MessageMenu
+                            canEditMessage = { canEditMessage }
                             displayName = { message.displayName }
                             enablePrivateChat = { Boolean(enablePrivateChat) }
+                            hasEditHistory = { hasEditHistory }
                             isFileMessage = { isFileMessage(message) }
                             isFromVisitor = { message.isFromVisitor }
                             isLobbyMessage = { message.lobbyChat }
                             message = { message.message }
+                            onEditMessage = { handleEditMessage }
+                            onShowEditHistory = { handleToggleHistory }
                             participantId = { message.participantId } />}
+                        {editHistory}
                     </div>
                 )}
                 <div
@@ -407,6 +515,7 @@ const ChatMessage = ({
                                                 {renderReactions}
                                             </>
                                         )}
+                                        {editedLabel}
                                     </div>
                                     {_renderTimestamp()}
                                 </div>
@@ -427,13 +536,18 @@ const ChatMessage = ({
                         <div>
                             <div className = { classes.optionsButtonContainer }>
                                 {isHovered && <MessageMenu
+                                    canEditMessage = { canEditMessage }
                                     displayName = { message.displayName }
                                     enablePrivateChat = { Boolean(enablePrivateChat) }
+                                    hasEditHistory = { hasEditHistory }
                                     isFileMessage = { isFileMessage(message) }
                                     isFromVisitor = { message.isFromVisitor }
                                     isLobbyMessage = { message.lobbyChat }
                                     message = { message.message }
+                                    onEditMessage = { handleEditMessage }
+                                    onShowEditHistory = { handleToggleHistory }
                                     participantId = { message.participantId } />}
+                                {editHistory}
                             </div>
                         </div>
                     </div>

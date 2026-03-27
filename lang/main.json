@@ -110,6 +110,8 @@
     },
     "chat": {
         "disabled": "Sending chat messages is disabled.",
+        "editMessage": "Edit message",
+        "editedLabel": "(edited)",
         "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
         "everyone": "Everyone",
@@ -157,6 +159,7 @@
         "titleWithFeatures": "Chat and",
         "titleWithFileSharing": "Files",
         "titleWithPolls": "Polls",
+        "viewEditHistory": "View edit history",
         "you": "you"
     },
     "chromeExtensionBanner": {

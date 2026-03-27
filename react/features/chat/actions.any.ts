@@ -8,19 +8,23 @@ import {
     ADD_MESSAGE,
     ADD_MESSAGE_REACTION,
     CLEAR_CHAT_STATE,
+    CLEAR_EDIT_MESSAGE_TARGET,
     CLOSE_CHAT,
     EDIT_MESSAGE,
     NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
     OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SEND_MESSAGE,
+    SEND_MESSAGE_EDIT,
     SEND_REACTION,
+    SET_EDIT_MESSAGE_TARGET,
     SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
-import { ChatTabs } from './constants';
+import { ChatTabs, MESSAGE_TYPE_LOCAL } from './constants';
+import { IMessage } from './types';
 
 /**
  * Adds a chat message to the collection of messages.
@@ -78,17 +82,122 @@ export function addMessageReaction(reactionDetails: Object) {
 /**
  * Edits an existing chat message.
  *
- * @param {Object} message - The chat message to edit/override. The messages will be matched from the state
+ * @param {IMessage} message - The chat message to edit/override. The messages will be matched from the state
  * comparing the messageId.
  * @returns {{
  *     type: EDIT_MESSAGE,
- *     message: Object
+ *     message: IMessage
  * }}
  */
-export function editMessage(message: Object) {
+export function editMessage(message: IMessage) {
     return {
         type: EDIT_MESSAGE,
         message
+    };
+}
+
+/**
+ * Finds a local, editable (non-reaction, non-file, non-private, non-lobby) message by id.
+ *
+ * @param {IMessage[]} messages - The list of messages to search.
+ * @param {string} messageId - The id of the message to find.
+ * @returns {IMessage | undefined}
+ */
+function _findEditableLocalMessage(messages: IMessage[], messageId: string): IMessage | undefined {
+    return messages.find(m =>
+        m.messageId === messageId
+        && m.messageType === MESSAGE_TYPE_LOCAL
+        && !m.privateMessage
+        && !m.lobbyChat
+        && !m.isReaction
+        && !m.fileMetadata
+    );
+}
+
+/**
+ * Sets a local message as the active editing target.
+ *
+ * @param {string} messageId - The id of the message to edit.
+ * @returns {Function}
+ */
+export function setEditMessageTarget(messageId: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { messages } = getState()['features/chat'];
+        const messageToEdit = _findEditableLocalMessage(messages, messageId);
+
+        if (!messageToEdit) {
+            return;
+        }
+
+        dispatch({
+            type: SET_EDIT_MESSAGE_TARGET,
+            messageId,
+            message: messageToEdit.message
+        });
+    };
+}
+
+/**
+ * Clears the active chat message editing target.
+ *
+ * @returns {{
+ *     type: CLEAR_EDIT_MESSAGE_TARGET
+ * }}
+ */
+export function clearEditMessageTarget() {
+    return {
+        type: CLEAR_EDIT_MESSAGE_TARGET
+    };
+}
+
+/**
+ * Submits an updated text for a local chat message.
+ *
+ * @param {string} messageId - The id of the message being edited.
+ * @param {string} updatedText - The new message text.
+ * @returns {Function}
+ */
+export function submitEditedMessage(messageId: string, updatedText: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const trimmedText = updatedText.trim();
+        const { messages } = getState()['features/chat'];
+        const messageToEdit = _findEditableLocalMessage(messages, messageId);
+
+        if (!messageToEdit) {
+            dispatch(clearEditMessageTarget());
+
+            return;
+        }
+
+        if (!trimmedText || trimmedText === messageToEdit.message) {
+            dispatch(clearEditMessageTarget());
+
+            return;
+        }
+
+        const editedAt = Date.now();
+        const versions = [
+            ...(messageToEdit.versions ?? []),
+            {
+                editedAt,
+                message: messageToEdit.message
+            }
+        ];
+
+        const editedMessage = {
+            ...messageToEdit,
+            isEdited: true,
+            lastEditedTimestamp: editedAt,
+            message: trimmedText,
+            versions
+        };
+
+        dispatch(editMessage(editedMessage));
+        dispatch({
+            type: SEND_MESSAGE_EDIT,
+            message: editedMessage
+        });
+        dispatch(clearEditMessageTarget());
     };
 }
 

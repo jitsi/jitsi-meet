@@ -74,3 +74,8 @@ export const TIMESTAMP_FORMAT = 'H:mm';
 export const MESSAGE_TYPE_SYSTEM = 'system_chat_message';
 
 export const OPTION_GROUPCHAT = 'groupchat';
+
+/**
+ * The payload name for endpoint/datachannel chat message edit events.
+ */
+export const ENDPOINT_CHAT_EDIT_NAME = 'endpoint-chat-edit';
