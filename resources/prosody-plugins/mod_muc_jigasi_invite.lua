@@ -2,7 +2,7 @@
 -- jwt is used to validate access
 -- Copyright (C) 2023-present 8x8, Inc.
 
-local jid_split = require "util.jid".split;
+local jid = require "util.jid";
 local hashes = require "util.hashes";
 local random = require "util.random";
 local st = require("util.stanza");
@@ -18,7 +18,6 @@ local muc_domain = module:get_option_string("muc_internal_domain_base", 'interna
 
 local jigasi_brewery_room_jid = module:get_option_string("muc_jigasi_brewery_jid", 'jigasibrewery@' .. muc_domain);
 
-local jigasi_bare_jid = module:get_option_string("muc_jigasi_jid", "jigasi@auth." .. muc_domain_base);
 local focus_jid = module:get_option_string("muc_jicofo_brewery_jid", jigasi_brewery_room_jid .. "/focus");
 
 local main_muc_service;
@@ -43,9 +42,9 @@ local function invite_jigasi(conference, phone_no)
 
     --select least stressed Jigasi
     local least_stressed_value = math.huge;
-    local least_stressed_jigasi_jid;
+    local least_stressed_jigasi_occupant;
     for occupant_jid, occupant in jigasi_brewery_room:each_occupant() do
-        local _, _, resource = jid_split(occupant_jid);
+        local _, _, resource = jid.split(occupant_jid);
         if resource ~= 'focus' then
             local occ = occupant:get_presence();
             local stats_child = occ:get_child("stats", "http://jitsi.org/protocol/colibri")
@@ -63,7 +62,7 @@ local function invite_jigasi(conference, phone_no)
                         local stress_level = tonumber(stats_tag.attr.value);
                         module:log("debug", "Stressed level %s %s ", stress_level, occupant_jid)
                         if stress_level < least_stressed_value then
-                            least_stressed_jigasi_jid = occupant_jid
+                            least_stressed_jigasi_occupant = occupant;
                             least_stressed_value = stress_level
                         end
                     end
@@ -71,18 +70,15 @@ local function invite_jigasi(conference, phone_no)
             end
         end
     end
-    module:log("debug", "Least stressed jigasi selected jid %s value %s", least_stressed_jigasi_jid, least_stressed_value)
-    if not least_stressed_jigasi_jid then
+    module:log("debug", "Least stressed jigasi selected jid %s value %s", least_stressed_jigasi_occupant.jid, least_stressed_value)
+    if not least_stressed_jigasi_occupant then
         module:log("error", "Cannot invite jigasi from room %s", jigasi_brewery_room.jid)
         return 404, 'Jigasi not found'
     end
 
     -- invite Jigasi to join the conference
-    local _, _, jigasi_res = jid_split(least_stressed_jigasi_jid)
-    local jigasi_full_jid = jigasi_bare_jid .. "/" .. jigasi_res;
     local stanza_id = hashes.sha256(random.bytes(8), true);
-
-    local invite_jigasi_stanza = st.iq({ xmlns = "jabber:client", type = "set", to = jigasi_full_jid, from = focus_jid, id = stanza_id })
+    local invite_jigasi_stanza = st.iq({ xmlns = "jabber:client", type = "set", to = least_stressed_jigasi_occupant.jid, from = focus_jid, id = stanza_id })
                                    :tag("dial", { xmlns = "urn:xmpp:rayo:1", from = "fromnumber", to = phone_no })
                                    :tag("header", { xmlns = "urn:xmpp:rayo:1", name = "JvbRoomName", value = conference })
 
