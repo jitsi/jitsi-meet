@@ -434,7 +434,8 @@ export function getSecurityUiConfig(state: IReduxState) {
  * @returns {{
  *  privacy: string,
  *  helpCentre: string,
- *  terms: string
+ *  terms: string,
+ *  security: string
  * }}
  */
 export function getLegalUrls(state: IReduxState) {
@@ -456,8 +457,8 @@ export function getLegalUrls(state: IReduxState) {
  * @param {IReduxState} state - The state of the application.
  * @returns {string} The security URL to use.
  */
-export function getSecurityUrl(state?: IReduxState): string {
-    const config = state?.['features/base/config'] || APP.store.getState()['features/base/config'];
+export function getSecurityUrl(state: IReduxState): string {
+    const config = state['features/base/config'];
 
     return config?.legalUrls?.security ?? DEFAULT_SECURITY_URL;
 }
