@@ -1,5 +1,10 @@
 const generateDownloadUrl = async (url: string) => {
     const resp = await fetch(url);
+
+    if (!resp.ok) {
+        throw new Error(`Failed to download file: ${resp.status} ${resp.statusText}`);
+    }
+
     const respBlob = await resp.blob();
 
     const blob = new Blob([ respBlob ]);
@@ -8,13 +13,13 @@ const generateDownloadUrl = async (url: string) => {
 };
 
 export const downloadFile = async (url: string, fileName: string) => {
-    const dowloadUrl = await generateDownloadUrl(url);
+    const downloadUrl = await generateDownloadUrl(url);
     const link = document.createElement('a');
 
     if (fileName) {
         link.download = fileName;
     }
-    link.href = dowloadUrl;
+    link.href = downloadUrl;
 
     document.body.appendChild(link);
     link.click();
@@ -22,6 +27,6 @@ export const downloadFile = async (url: string, fileName: string) => {
 
     // fix for certain browsers
     setTimeout(() => {
-        URL.revokeObjectURL(dowloadUrl);
+        URL.revokeObjectURL(downloadUrl);
     }, 0);
 };
