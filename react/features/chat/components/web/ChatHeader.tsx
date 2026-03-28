@@ -50,9 +50,9 @@ function ChatHeader({ className, isCCTabEnabled, isPollsEnabled }: IProps): JSX.
 
     const onKeyPressHandler = useCallback(
         (e: React.KeyboardEvent<HTMLElement>): void => {
-            if (e.key === ' ' || e.key === 'Enter') {
+            if ((e.key === ' ' || e.key === 'Enter') && onCancel) {
                 e.preventDefault();
-                onCancel?.();
+                onCancel();
             }
         },
         [ onCancel ]
