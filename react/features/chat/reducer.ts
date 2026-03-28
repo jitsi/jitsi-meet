@@ -29,7 +29,7 @@ const DEFAULT_STATE = {
     isOpen: false,
     messages: [],
     notifyPrivateRecipientsChangedTimestamp: undefined,
-    reactions: {},
+    reactions: new Map(),
     unreadMessagesCount: 0,
     unreadFilesCount: 0,
     privateMessageRecipient: undefined,
@@ -79,7 +79,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             messageId: action.messageId,
             messageType: action.messageType,
             message: action.message,
-            reactions: action.reactions,
+            reactions: action.reactions ?? new Map(),
             privateMessage: action.privateMessage,
             lobbyChat: action.lobbyChat,
             recipient: action.recipient,
@@ -112,7 +112,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
         const messages = state.messages.map(message => {
             if (messageId === message.messageId) {
-                const newReactions = new Map(message.reactions);
+                const newReactions = new Map(message.reactions ?? []);
 
                 reactionList.forEach((reaction: string) => {
                     let participants = newReactions.get(reaction);
