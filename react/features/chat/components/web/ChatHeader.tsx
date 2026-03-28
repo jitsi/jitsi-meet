@@ -52,7 +52,7 @@ function ChatHeader({ className, isCCTabEnabled, isPollsEnabled }: IProps): JSX.
         (e: React.KeyboardEvent<HTMLElement>): void => {
             if (e.key === ' ' || e.key === 'Enter') {
                 e.preventDefault();
-                onCancel();
+                onCancel?.();
             }
         },
         [ onCancel ]
