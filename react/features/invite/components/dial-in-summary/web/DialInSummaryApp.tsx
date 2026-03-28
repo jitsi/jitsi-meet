@@ -4,7 +4,6 @@ import BaseApp from '../../../../base/app/components/BaseApp';
 import { isMobileBrowser } from '../../../../base/environment/utils';
 import GlobalStyles from '../../../../base/ui/components/GlobalStyles.web';
 import JitsiThemeProvider from '../../../../base/ui/components/JitsiThemeProvider.web';
-import { parseURLParams } from '../../../../base/util/parseURLParams';
 import { DIAL_IN_INFO_PAGE_PATH_NAME } from '../../../constants';
 import NoRoomError from '../../dial-in-info-page/NoRoomError.web';
 
@@ -25,7 +24,8 @@ export default class DialInSummaryApp extends BaseApp<any> {
         await super.componentDidMount();
 
         // @ts-ignore
-        const { room } = parseURLParams(window.location, true, 'search');
+        const params = new URLSearchParams(window.location.search);
+        const room = params.get('room') || '';
         const { href } = window.location;
         const ix = href.indexOf(DIAL_IN_INFO_PAGE_PATH_NAME);
         const url = (ix > 0 ? href.substring(0, ix) : href) + room;
@@ -36,7 +36,7 @@ export default class DialInSummaryApp extends BaseApp<any> {
                     ? <DialInSummary
                         className = 'dial-in-page'
                         clickableNumbers = { isMobileBrowser() }
-                        room = { decodeURIComponent(room) }
+                        room = { room }
                         scrollable = { true }
                         showTitle = { true }
                         url = { url } />

@@ -17,6 +17,7 @@ import { parseURLParams } from '../base/util/parseURLParams';
 import {
     StatusCode,
     appendURLParam,
+    getNormalizedRoomName,
     parseURIString
 } from '../base/util/uri';
 import { isVpaasMeeting } from '../jaas/functions';
@@ -729,7 +730,7 @@ export function getDialInfoPageURL(state: IReduxState, roomName?: string) {
     const conferenceName = roomName ?? getRoomName(state);
     const { locationURL } = state['features/base/connection'];
     const { href = '' } = locationURL ?? {};
-    const room = _decodeRoomURI(conferenceName ?? '');
+    const room = getNormalizedRoomName(conferenceName) ?? '';
 
     const url = didPageUrl || `${href.substring(0, href.lastIndexOf('/'))}/${DIAL_IN_INFO_PAGE_PATH_NAME}`;
 

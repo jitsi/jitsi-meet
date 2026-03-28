@@ -95,12 +95,6 @@ export function commonUserJoinedHandling(
         const isPromoted = conference?.getMetadataHandler().getMetadata()?.visitors?.promoted?.[id];
         const userIdentity = user.getIdentity()?.user;
 
-        // Map identity from JWT context to userContext for external API
-        const userContext = userIdentity ? {
-            id: userIdentity.id,
-            name: userIdentity.name
-        } : undefined;
-
         // the identity and avatar come from jwt and never change in the presence
         dispatch(participantJoined({
             avatarURL: userIdentity?.avatar,
@@ -113,7 +107,7 @@ export function commonUserJoinedHandling(
             isPromoted,
             isReplacing,
             sources: user.getSources(),
-            userContext
+            userContext: userIdentity
         }));
     }
 }

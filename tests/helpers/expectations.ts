@@ -12,13 +12,17 @@ const defaultExpectations = {
          * null -> if the config is enabled, assert the UI elements are displayed and the feature works.
          */
         enabled: null,
-        minPinLength: 8
+        minPinLength: 8,
+        /* Whether to verify that the "more numbers" page is displayed. Note that only the positive verification is
+         performed: when set to 'false' we do not assert that the "more numbers" page is not displayed. */
+        moreNumbersPage: true
     },
     iframe: {
         // Whether the iframe integration is enabled (the inverse of `disableIframeAPI` from config.js)
         enabled: true
     },
     jaas: {
+        fileSharingEnabled: true,
         liveStreamingEnabled: true,
         recordingEnabled: true,
         transcriptionEnabled: true,
