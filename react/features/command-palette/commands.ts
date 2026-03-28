@@ -51,76 +51,76 @@ export function useCommands(): ICommand[] {
     const desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
 
     return useMemo(() => {
-            const commands: ICommand[] = [];
+        const commands: ICommand[] = [];
 
+        commands.push({
+            id: 'toggle-audio',
+            label: audioMuted ? 'commandPalette.unmute' : 'commandPalette.mute',
+            execute: () => dispatch(muteLocal(!audioMuted, MEDIA_TYPE.AUDIO))
+        });
+
+        commands.push({
+            id: 'toggle-video',
+            label: videoMuted ? 'commandPalette.startCamera' : 'commandPalette.stopCamera',
+            execute: () => dispatch(muteLocal(!videoMuted, MEDIA_TYPE.VIDEO))
+        });
+
+        if (desktopSharingEnabled && isButtonEnabled('desktop', toolbarButtons)) {
             commands.push({
-                id: 'toggle-audio',
-                label: audioMuted ? 'commandPalette.unmute' : 'commandPalette.mute',
-                execute: () => dispatch(muteLocal(!audioMuted, MEDIA_TYPE.AUDIO))
+                id: 'toggle-screen-share',
+                label: screenSharing ? 'commandPalette.stopScreenShare' : 'commandPalette.startScreenShare',
+                execute: () => dispatch(startScreenShareFlow(!screenSharing))
             });
+        }
 
+        if (!_isChatDisabled && isButtonEnabled('chat', toolbarButtons)) {
             commands.push({
-                id: 'toggle-video',
-                label: videoMuted ? 'commandPalette.startCamera' : 'commandPalette.stopCamera',
-                execute: () => dispatch(muteLocal(!videoMuted, MEDIA_TYPE.VIDEO))
+                id: 'toggle-chat',
+                label: chatOpen ? 'commandPalette.closeChat' : 'commandPalette.openChat',
+                execute: () => dispatch(toggleChat())
             });
+        }
 
-            if (desktopSharingEnabled && isButtonEnabled('desktop', toolbarButtons)) {
-                commands.push({
-                    id: 'toggle-screen-share',
-                    label: screenSharing ? 'commandPalette.stopScreenShare' : 'commandPalette.startScreenShare',
-                    execute: () => dispatch(startScreenShareFlow(!screenSharing))
-                });
-            }
+        if (isButtonEnabled('raisehand', toolbarButtons)) {
+            commands.push({
+                id: 'toggle-raise-hand',
+                label: raisedHand ? 'commandPalette.lowerHand' : 'commandPalette.raiseHand',
+                execute: () => dispatch(raiseHand(!raisedHand))
+            });
+        }
 
-            if (!_isChatDisabled && isButtonEnabled('chat', toolbarButtons)) {
-                commands.push({
-                    id: 'toggle-chat',
-                    label: chatOpen ? 'commandPalette.closeChat' : 'commandPalette.openChat',
-                    execute: () => dispatch(toggleChat())
-                });
-            }
-
-            if (isButtonEnabled('raisehand', toolbarButtons)) {
-                commands.push({
-                    id: 'toggle-raise-hand',
-                    label: raisedHand ? 'commandPalette.lowerHand' : 'commandPalette.raiseHand',
-                    execute: () => dispatch(raiseHand(!raisedHand))
-                });
-            }
-
-            if (_isParticipantsPaneEnabled
+        if (_isParticipantsPaneEnabled
                 && isButtonEnabled('participants-pane', toolbarButtons)) {
-                commands.push({
-                    id: 'toggle-participants-pane',
-                    label: participantsPaneOpen ? 'commandPalette.closeParticipantsPane' : 'commandPalette.openParticipantsPane',
-                    execute: () => {
-                        if (participantsPaneOpen) {
-                            dispatch(closeParticipantsPane());
-                        } else {
-                            dispatch(openParticipantsPane());
-                        }
+            commands.push({
+                id: 'toggle-participants-pane',
+                label: participantsPaneOpen ? 'commandPalette.closeParticipantsPane' : 'commandPalette.openParticipantsPane',
+                execute: () => {
+                    if (participantsPaneOpen) {
+                        dispatch(closeParticipantsPane());
+                    } else {
+                        dispatch(openParticipantsPane());
                     }
-                });
-            }
+                }
+            });
+        }
 
-            if (isButtonEnabled('noisesuppression', toolbarButtons)) {
-                commands.push({
-                    id: 'toggle-noise-suppression',
-                    label: noiseSuppressionOn ? 'commandPalette.disableNoiseSuppression' : 'commandPalette.enableNoiseSuppression',
-                    execute: () => dispatch(toggleNoiseSuppression())
-                });
-            }
+        if (isButtonEnabled('noisesuppression', toolbarButtons)) {
+            commands.push({
+                id: 'toggle-noise-suppression',
+                label: noiseSuppressionOn ? 'commandPalette.disableNoiseSuppression' : 'commandPalette.enableNoiseSuppression',
+                execute: () => dispatch(toggleNoiseSuppression())
+            });
+        }
 
-            if (isButtonEnabled('invite', toolbarButtons)) {
-                commands.push({
-                    id: 'invite-people',
-                    label: 'commandPalette.invitePeople',
-                    execute: () => dispatch(beginAddPeople())
-                });
-            }
+        if (isButtonEnabled('invite', toolbarButtons)) {
+            commands.push({
+                id: 'invite-people',
+                label: 'commandPalette.invitePeople',
+                execute: () => dispatch(beginAddPeople())
+            });
+        }
 
-            return commands;
-        }, [ audioMuted, chatOpen, desktopSharingEnabled, dispatch, _isChatDisabled, _isParticipantsPaneEnabled, noiseSuppressionOn, participantsPaneOpen, raisedHand, screenSharing, toolbarButtons, videoMuted ]
+        return commands;
+    }, [ audioMuted, chatOpen, desktopSharingEnabled, dispatch, _isChatDisabled, _isParticipantsPaneEnabled, noiseSuppressionOn, participantsPaneOpen, raisedHand, screenSharing, toolbarButtons, videoMuted ]
     );
 }
