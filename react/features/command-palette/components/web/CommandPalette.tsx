@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-bind */
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -70,14 +70,22 @@ const CommandPalette = () => {
      * @param {number} index - Index in the filtered list.
      * @returns {void}
      */
-    function run(index: number): void {
+    const run = useCallback((index: number) => {
         if (index >= 0 && index < filtered.length) {
             dispatch(hideDialog());
             filtered[index].execute();
         }
-    }
+    }, [ dispatch, filtered ]);
 
-    function onKeyDown(e: React.KeyboardEvent): void {
+    const onQueryChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setQuery(e.target.value);
+    }, []);
+
+    const onCommandClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+        run(Number(e.currentTarget.dataset.index));
+    }, [ run ]);
+
+    const onKeyDown = useCallback((e: React.KeyboardEvent) => {
         if (e.key === 'ArrowDown') {
             e.preventDefault();
             setSelected(s => Math.min(s + 1, filtered.length - 1));
@@ -89,7 +97,7 @@ const CommandPalette = () => {
             e.stopPropagation();
             run(selected);
         }
-    }
+    }, [ filtered.length, run, selected ]);
 
     return (
         <Dialog
@@ -103,7 +111,7 @@ const CommandPalette = () => {
                     autoComplete = 'off'
                     autoFocus = { true }
                     className = { classes.search }
-                    onChange = { e => setQuery(e.target.value) }
+                    onChange = { onQueryChange }
                     placeholder = { t('commandPalette.placeholder') }
                     type = 'text'
                     value = { query } />
@@ -111,8 +119,9 @@ const CommandPalette = () => {
                     {filtered.map((cmd, i) => (
                         <div
                             className = { cx(classes.commandItem, i === selected && 'selected') }
+                            data-index = { i }
                             key = { cmd.id }
-                            onClick = { () => run(i) }>
+                            onClick = { onCommandClick }>
                             {t(cmd.label)}
                         </div>
                     ))}
