@@ -97,6 +97,10 @@
     padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
+.toolbox-button .toolbox-icon.disabled svg {
+    fill: var(--overflow-menu-item-disabled-color, #929292);
+}
+
 .overflow-menu-hr {
     border-top: 1px solid #4C4D50;
     border-bottom: 0;
