@@ -102,8 +102,8 @@ export default class AbstractStopRecordingDialog<P extends IProps>
             if (localRecordingVideoStop) {
                 dispatch(setVideoMuted(true));
             }
-        } else if (_fileRecordingSession) {
-            _conference?.stopRecording(_fileRecordingSession.id);
+        } else {
+            _conference?.stopRecording(_fileRecordingSession?.id);
             this._toggleScreenshotCapture();
         }
 
