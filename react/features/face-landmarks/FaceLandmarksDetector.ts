@@ -98,13 +98,14 @@ class FaceLandmarksDetector {
         let workerUrl = `${baseUrl}face-landmarks-worker.min.js`;
 
         // @ts-ignore
-        const workerBlob = new Blob([ `importScripts("${workerUrl}");` ], { type: 'application/javascript' });
+        const workerBlob = new Blob([`importScripts("${workerUrl}");`], { type: 'application/javascript' });
         const state = getState();
         const addToBuffer = Boolean(state['features/base/config'].webhookProxyUrl);
 
         // @ts-ignore
         workerUrl = window.URL.createObjectURL(workerBlob);
         this.worker = new Worker(workerUrl, { name: 'Face Landmarks Worker' });
+        window.URL.revokeObjectURL(workerUrl);
         this.worker.onmessage = ({ data }: MessageEvent<any>) => {
             const { faceExpression, faceBox, faceCount } = data;
             const messageTimestamp = Date.now();
@@ -118,10 +119,10 @@ class FaceLandmarksDetector {
 
                 if (this.noDetectionCount === NO_FACE_DETECTION_THRESHOLD && this.noDetectionStartTimestamp) {
                     this.addFaceLandmarks(
-                            dispatch,
-                            this.noDetectionStartTimestamp,
-                            NO_DETECTION,
-                            addToBuffer
+                        dispatch,
+                        this.noDetectionStartTimestamp,
+                        NO_DETECTION,
+                        addToBuffer
                     );
                 }
 
@@ -264,6 +265,9 @@ class FaceLandmarksDetector {
         this.detectionInterval = null;
         this.imageCapture = null;
         this.recognitionActive = false;
+        this.worker?.terminate();
+        this.worker = null;
+        this.initialized = false;
         logger.log('Stop face landmarks detection');
     }
 
@@ -277,10 +281,10 @@ class FaceLandmarksDetector {
      * @returns {void}
      */
     private addFaceLandmarks(
-            dispatch: IStore['dispatch'],
-            endTimestamp: number,
-            newFaceExpression: string | null,
-            addToBuffer = false) {
+        dispatch: IStore['dispatch'],
+        endTimestamp: number,
+        newFaceExpression: string | null,
+        addToBuffer = false) {
         if (this.lastFaceExpression && this.lastFaceExpressionTimestamp) {
             dispatch(addFaceLandmarks(
                 {
