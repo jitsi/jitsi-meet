@@ -1,4 +1,4 @@
-import { getLegalUrls } from '../config/functions.any';
+import { getSecurityUrl } from '../config/functions.any';
 import { translateToHTML } from '../i18n/functions.web';
 
 declare const APP: any;
@@ -11,7 +11,7 @@ declare const APP: any;
  * @returns {string}
  */
 export default function getUnsafeRoomText(t: Function, context: 'meeting' | 'prejoin' | 'welcome') {
-    const securityUrl = getLegalUrls(APP.store.getState()).security;
+    const securityUrl = getSecurityUrl(APP.store.getState());
     const options = {
         recommendAction: t(`security.unsafeRoomActions.${context}`),
         securityUrl
