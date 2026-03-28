@@ -2,7 +2,7 @@ import React from 'react';
 import { Text } from 'react-native';
 
 import { IReduxState } from '../../app/types';
-import { getLegalUrls } from '../config/functions.any';
+import { getSecurityUrl } from '../config/functions.any';
 import Link from '../react/components/native/Link';
 import BaseTheme from '../ui/components/BaseTheme.native';
 
@@ -15,7 +15,7 @@ import BaseTheme from '../ui/components/BaseTheme.native';
  * @returns {Text}
  */
 export default function getUnsafeRoomText(state: IReduxState, t: Function, context: 'meeting' | 'prejoin' | 'welcome') {
-    const securityUrl = getLegalUrls(state).security;
+    const securityUrl = getSecurityUrl(state);
     const link = React.createElement(Link, {
         url: securityUrl,
         children: 'here',
