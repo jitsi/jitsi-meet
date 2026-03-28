@@ -582,7 +582,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 const user = this._participants[userID];
 
                 if (user) {
-                    user.displayName = data.displayname;
+                    user.displayName = data.displayName ?? data.displayname;
                     user.formattedDisplayName = data.formattedDisplayName;
                 }
                 break;
@@ -1065,11 +1065,13 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * information like participant id, display name, avatar URL and email.
      */
     getParticipantsInfo() {
-    return Object.entries(this._participants).map(([id, participant]) => ({
-        participantId: id,
-        ...participant
-    }));
-}
+        return Object.entries(this._participants).map(([ participantId, participant ]) => {
+            return {
+                participantId,
+                ...participant
+            };
+        });
+    }
 
     /**
      * Returns the current video quality setting.
