@@ -23,7 +23,6 @@ import {
 } from './actionTypes';
 import { CHAT_SIZE, ChatTabs } from './constants';
 import { IMessage } from './types';
-import { updateMessageById } from './utils';
 
 const DEFAULT_STATE = {
     groupChatWithPermissions: false,
@@ -111,10 +110,8 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
     case ADD_MESSAGE_REACTION: {
         const { participantId, reactionList, messageId } = action;
 
-        const messages = updateMessageById(
-            state.messages,
-            messageId,
-            message => {
+        const messages = state.messages.map(message => {
+            if (message.messageId === messageId) {
                 const newReactions = new Map(message.reactions);
 
                 reactionList.forEach((reaction: string) => {
@@ -133,7 +130,9 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
                     reactions: newReactions
                 };
             }
-        );
+
+            return message;
+        });
 
         return {
             ...state,
@@ -158,10 +157,8 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             return state;
         }
 
-        const messages = updateMessageById(
-            state.messages,
-            newMessage.messageId,
-            () => newMessage
+        const messages = state.messages.map(m =>
+            m.messageId === newMessage.messageId ? newMessage : m
         );
 
         return {
