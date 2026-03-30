@@ -5,6 +5,11 @@ import { urlObjectToString } from "../../../react/features/base/util/uri";
 import { isPiPEnabled } from "../../../react/features/pip/external-api.shared";
 import { PostMessageTransportBackend, Transport } from "../../transport";
 
+
+import IframeTransport from './transport/IframeTransport';
+import DirectTransport from './transport/DirectTransport';
+
+
 import {
     getAvailableDevices,
     getCurrentDevices,
@@ -340,15 +345,43 @@ if (!this._frame || !this._frame.contentWindow) {
     console.warn("GSoC: Falling back to global window (iframe not available)");
 }
 
-this._transport = new Transport({
-    backend: new PostMessageTransportBackend({
-        postisOptions: {
-            allowedOrigin: new URL(this._url).origin,
-            scope: `jitsi_meet_external_api_${id}`,
-            window: targetWindow,
-        },
-    }),
-});
+// this._transport = new Transport({
+//     backend: new PostMessageTransportBackend({
+//         postisOptions: {
+//             allowedOrigin: new URL(this._url).origin,
+//             scope: `jitsi_meet_external_api_${id}`,
+//             window: targetWindow,
+//         },
+//     }),
+// });
+
+const useDirectTransport = options?.useDirectTransport === true;
+
+let transport;
+
+if (useDirectTransport) {
+    console.warn('[ExternalAPI] Using DirectTransport');
+
+    transport = new DirectTransport({
+        window: window
+    });
+} else {
+    const iframeWindow = this._iframe?.contentWindow;
+
+    if (!iframeWindow) {
+        console.warn('[ExternalAPI] iframe missing, falling back to DirectTransport');
+
+        transport = new DirectTransport({
+            window: window
+        });
+    } else {
+        transport = new IframeTransport({
+            window: iframeWindow
+        });
+    }
+}
+
+this._transport = transport;
 
         if (Array.isArray(invitees) && invitees.length > 0) {
             this.invite(invitees);
