@@ -217,7 +217,10 @@ function getConfig(options = {}) {
                 'react-dom': resolve(__dirname, 'node_modules/react-dom'),
                 'roughjs/bin/rough': 'roughjs/bin/rough.js',
                 'roughjs/bin/generator': 'roughjs/bin/generator.js',
-                'roughjs/bin/math': 'roughjs/bin/math.js'
+                'roughjs/bin/math': 'roughjs/bin/math.js',
+                'firebase/app': false,
+                'firebase/firestore': false,
+                'firebase/storage': false
             },
             aliasFields: [
                 'browser'
