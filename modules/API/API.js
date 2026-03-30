@@ -1489,19 +1489,29 @@ class API {
      * @returns {void}
      */
     notifyReceivedChatMessage(
-            { body, from, nick, privateMessage, ts } = {}) {
+            { body, from, nick, privateMessage, ts, messageId, replyToMessageId } = {}) {
         if (APP.conference.isLocalId(from)) {
             return;
         }
 
-        this._sendEvent({
+        const event = {
             name: 'incoming-message',
             from,
             message: body,
             nick,
             privateMessage,
             stamp: ts
-        });
+        };
+
+        if (typeof messageId === 'string' && messageId !== '') {
+            event.messageId = messageId;
+        }
+
+        if (typeof replyToMessageId === 'string' && replyToMessageId !== '') {
+            event.replyToMessageId = replyToMessageId;
+        }
+
+        this._sendEvent(event);
     }
 
     /**

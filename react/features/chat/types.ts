@@ -18,6 +18,10 @@ export interface IMessage {
     privateMessage: boolean;
     reactions: Map<string, Set<string>>;
     recipient: string;
+    /**
+     * When set, XMPP message id of the message this one replies to (XEP-0461), from lib-jitsi-meet.
+     */
+    replyToMessageId?: string;
     sentToVisitor?: boolean;
     timestamp: number;
 }
