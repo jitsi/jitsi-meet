@@ -362,18 +362,20 @@ let transport;
 if (useDirectTransport) {
     console.warn('[ExternalAPI] Using DirectTransport');
 
-    transport = new DirectTransport({
-        window: window
-    });
+   transport = new DirectTransport({
+    window: window,
+    api: this  
+});
 } else {
     const iframeWindow = this._iframe?.contentWindow;
 
     if (!iframeWindow) {
         console.warn('[ExternalAPI] iframe missing, falling back to DirectTransport');
 
-        transport = new DirectTransport({
-            window: window
-        });
+      transport = new DirectTransport({
+    window: window,
+    api: this   
+});
     } else {
         transport = new IframeTransport({
             window: iframeWindow
@@ -1013,11 +1015,12 @@ if (typeof name !== 'string') {
             }
         }
 
-        // Send command to iframe first.
-        this._transport.sendEvent({
-            data: args,
-            name: commands[name],
-        });
+   this._transport.send({
+    type: 'command',
+    name: commands[name], // mapped command
+    originalName: name,
+    args
+});
 
         // Handle PiP state after command is sent so iframe config is updated.
         if (pipTransition === "enabled") {
