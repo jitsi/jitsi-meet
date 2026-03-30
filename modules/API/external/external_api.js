@@ -925,11 +925,15 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     executeCommand(name, ...args) {
-        if (!(name in commands)) {
-            console.error("Not supported command name.");
+       if (!(name in commands)) {
+    console.error(`GSoC: Invalid command '${name}'. Supported commands are: ${Object.keys(commands).join(', ')}`);
+    return;
+}
 
-            return;
-        }
+if (typeof name !== 'string') {
+    console.error("GSoC: Command name must be a string");
+    return;
+}
 
         // Handle pip config changes locally.
         // We update local state, send command to iframe, then handle PiP show/hide
