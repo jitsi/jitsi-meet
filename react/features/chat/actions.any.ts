@@ -42,7 +42,7 @@ import { ChatTabs } from './constants';
  *     displayName: string,
  *     hasRead: boolean,
  *     message: string,
- *     messageType: string,
+ *     messageType: ChatMessageType,
  *     timestamp: string,
  *     isReaction: boolean
  * }}
