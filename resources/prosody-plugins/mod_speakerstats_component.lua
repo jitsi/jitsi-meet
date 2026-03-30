@@ -5,7 +5,7 @@ local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local is_jibri = util.is_jibri;
 local is_healthcheck_room = util.is_healthcheck_room;
 local process_host_module = util.process_host_module;
-local is_transcriber_jigasi = util.is_transcriber_jigasi;
+local is_transcriber = util.is_transcriber;
 local jid_resource = require "util.jid".resource;
 local st = require "util.stanza";
 local socket = require "socket";
@@ -226,7 +226,7 @@ function occupant_joined(event)
 
     if is_healthcheck_room(room.jid)
         or is_admin(occupant.bare_jid)
-        or is_transcriber_jigasi(stanza)
+        or is_transcriber(occupant.jid)
         or is_jibri(occupant) then
         return;
     end

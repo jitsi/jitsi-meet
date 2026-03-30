@@ -503,27 +503,6 @@ function is_sip_jigasi(stanza)
     return stanza:get_child('initiator', 'http://jitsi.org/protocol/jigasi');
 end
 
--- This requires presence stanza being passed
-function is_transcriber_jigasi(stanza)
-    if not stanza then
-        return false;
-    end
-
-    local features = stanza:get_child('features');
-    if not features then
-        return false;
-    end
-
-    for i = 1, #features do
-        local feature = features[i];
-        if feature.attr and feature.attr.var and feature.attr.var == 'http://jitsi.org/protocol/transcriber' then
-            return true;
-        end
-    end
-
-    return false;
-end
-
 function is_transcriber(jid)
     return starts_with_one_of(jid, TRANSCRIBER_PREFIXES);
 end
@@ -738,7 +717,6 @@ return {
     is_sip_jibri_join = is_sip_jibri_join;
     is_sip_jigasi = is_sip_jigasi;
     is_transcriber = is_transcriber;
-    is_transcriber_jigasi = is_transcriber_jigasi;
     is_vpaas = is_vpaas;
     get_focus_occupant = get_focus_occupant;
     get_ip = get_ip;
