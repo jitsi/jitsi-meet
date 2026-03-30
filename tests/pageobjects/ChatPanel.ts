@@ -204,4 +204,62 @@ export default class ChatPanel extends BasePageObject {
     async getResult(pollId: string, optionIndex: number) {
         return await this.participant.driver.$(`#poll-result-${pollId}-${optionIndex}`).getText();
     }
+
+    /**
+     * Selects a private message recipient using the recipient dropdown.
+     * @param recipientEndpointId - The endpoint ID of the recipient participant.
+     */
+    async selectPrivateMessageRecipient(recipientEndpointId: string) {
+        if (!await this.isOpen()) {
+            await this.pressShortcut();
+        }
+
+        const select = this.participant.driver.$('#select-chat-recipient');
+
+        await select.waitForExist({ timeout: 3000, timeoutMsg: 'Private chat recipient dropdown not found' });
+        await select.selectByAttribute('value', recipientEndpointId);
+    }
+
+    /**
+     * Waits for the private message recipient indicator to appear.
+     */
+    async waitForPrivateMessageIndicator() {
+        await this.participant.driver.$('#chat-recipient').waitForDisplayed({
+            timeout: 3000,
+            timeoutMsg: 'Private message recipient indicator not displayed'
+        });
+    }
+
+    /**
+     * Waits for a private message with the given text to appear in the chat.
+     * @param message - The expected message text.
+     */
+    async waitForPrivateMessage(message: string) {
+        await this.participant.driver.waitUntil(
+            async () => {
+                const msgs = await this.participant.driver.$$('.privatemessage .usermessage');
+
+                for (const msg of msgs) {
+                    const text = await msg.getText();
+
+                    if (text.includes(message)) {
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+            { timeout: 5000, timeoutMsg: `Private message "${message}" not found` }
+        );
+    }
+
+    /**
+     * Cancels private chat by clicking the close button on the recipient indicator.
+     */
+    async cancelPrivateChat() {
+        const recipient = this.participant.driver.$('#chat-recipient');
+
+        await recipient.waitForExist({ timeout: 3000 });
+        await recipient.$('button').click();
+    }
 }
