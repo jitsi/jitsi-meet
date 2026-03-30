@@ -1,11 +1,12 @@
 import { ExcalidrawApp } from '@jitsi/excalidraw';
 import i18next from 'i18next';
 import React, { useCallback, useRef } from 'react';
-import "@jitsi/excalidraw/index.css";
 import { useSelector } from 'react-redux';
-import { getStorageBackendUrl } from '../../functions';
-import { WHITEBOARD_UI_OPTIONS } from '../../constants';
+import '@jitsi/excalidraw/index.css';
+
 import { IReduxState } from '../../../app/types';
+import { WHITEBOARD_UI_OPTIONS } from '../../constants';
+import { getStorageBackendUrl } from '../../functions';
 
 /**
  * Whiteboard wrapper for mobile.
@@ -26,7 +27,6 @@ const WhiteboardWrapper = ({
     collabServerUrl: string;
     localParticipantName: string;
 }) => {
-    const excalidrawRef = useRef<any>(null);
     const excalidrawAPIRef = useRef<any>(null);
     const collabAPIRef = useRef<any>(null);
     const storageBackendUrl = useSelector(getStorageBackendUrl);

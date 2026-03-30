@@ -4,7 +4,7 @@ const generateDownloadUrl = async (url: string) => {
 
     const blob = new Blob([ respBlob ]);
 
-    return URL.createObjectURL(blob);
+    return (URL as typeof window.URL).createObjectURL(blob);
 };
 
 export const downloadFile = async (url: string, fileName: string) => {
@@ -22,6 +22,6 @@ export const downloadFile = async (url: string, fileName: string) => {
 
     // fix for certain browsers
     setTimeout(() => {
-        URL.revokeObjectURL(dowloadUrl);
+        (URL as typeof window.URL).revokeObjectURL(dowloadUrl);
     }, 0);
 };

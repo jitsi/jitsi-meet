@@ -4,12 +4,13 @@ import i18next from 'i18next';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { useSelector, useStore } from 'react-redux';
-import "@jitsi/excalidraw/index.css";
+import '@jitsi/excalidraw/index.css';
 
 // @ts-expect-error
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
 import { IReduxState } from '../../../app/types';
-import { translate } from '../../../base/i18n/functions';
+import { getCurrentConference } from '../../../base/conference/functions';
+import { translate } from '../../../base/i18n/functions.web';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
 import { getToolboxHeight } from '../../../toolbox/functions.web';
@@ -22,7 +23,6 @@ import {
     isWhiteboardOpen,
     isWhiteboardVisible
 } from '../../functions';
-import { getCurrentConference } from '../../../base/conference/functions';
 
 /**
  * Space taken by meeting elements like the subject and the watermark.
@@ -39,9 +39,9 @@ interface IDimensions {
 }
 
 interface IMeetingDetails {
-    sessionId: string;
-    roomJid: string;
     jwt: string;
+    roomJid: string;
+    sessionId: string;
 }
 
 /**
@@ -51,7 +51,6 @@ interface IMeetingDetails {
  * @returns {JSX.Element} - The React component.
  */
 const Whiteboard = (props: WithTranslation): JSX.Element => {
-    const excalidrawRef = useRef<any>(null);
     const excalidrawAPIRef = useRef<any>(null);
     const collabAPIRef = useRef<any>(null);
 
@@ -175,12 +174,10 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                             }}
                             getCollabAPI = { getCollabAPI }
                             getExcalidrawAPI = { getExcalidrawAPI }
-                            storageBackendUrl = { storageBackendUrl }
                             meetingDetails = { meetingDetails }
-                            />
+                            storageBackendUrl = { storageBackendUrl } />
                     </div>
-                )
-            }
+                )}
         </div>
     );
 };

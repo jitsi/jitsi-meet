@@ -145,8 +145,8 @@ export interface IWhiteboardConfig {
     collabServerBaseUrl?: string;
     enabled?: boolean;
     limitUrl?: string;
-    userLimit?: number;
     storageBackendUrl?: string;
+    userLimit?: number;
 }
 
 export interface IWatchRTCConfiguration {
