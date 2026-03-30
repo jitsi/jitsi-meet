@@ -310,24 +310,45 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         });
 
         this._createIFrame(height, width, sandbox);
-       console.log("GSoC: Initializing External API transport");
-        this._transport = new Transport({
-            backend: new PostMessageTransportBackend({
-                postisOptions: {
-                    allowedOrigin: new URL(this._url).origin,
-                    scope: `jitsi_meet_external_api_${id}`,
-                    // window: this._frame.contentWindow
+    //    console.log("GSoC: Initializing External API transport");
+    //     this._transport = new Transport({
+    //         backend: new PostMessageTransportBackend({
+    //             postisOptions: {
+    //                 allowedOrigin: new URL(this._url).origin,
+    //                 scope: `jitsi_meet_external_api_${id}`,
+    //                 // window: this._frame.contentWindow
                     
-                    window:
-                        this._frame && this._frame.contentWindow
-                            ? this._frame.contentWindow
-                            : (() => {
-                                  console.error("GSoC: iframe contentWindow not available");
-                                  return null;
-                              })(),
-                },
-            }),
-        });
+    //                 window:
+    //                     this._frame && this._frame.contentWindow
+    //                         ? this._frame.contentWindow
+    //                         : (() => {
+    //                               console.error("GSoC: iframe contentWindow not available");
+    //                               return null;
+    //                           })(),
+    //             },
+    //         }),
+    //     });
+
+    console.log("GSoC: Initializing External API transport");
+
+const targetWindow =
+    this._frame && this._frame.contentWindow
+        ? this._frame.contentWindow
+        : window;
+
+if (!this._frame || !this._frame.contentWindow) {
+    console.warn("GSoC: Falling back to global window (iframe not available)");
+}
+
+this._transport = new Transport({
+    backend: new PostMessageTransportBackend({
+        postisOptions: {
+            allowedOrigin: new URL(this._url).origin,
+            scope: `jitsi_meet_external_api_${id}`,
+            window: targetWindow,
+        },
+    }),
+});
 
         if (Array.isArray(invitees) && invitees.length > 0) {
             this.invite(invitees);
