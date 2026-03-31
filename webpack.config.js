@@ -158,7 +158,7 @@ function getConfig(options = {}) {
                 test: /\.woff2$/,
                 type: 'asset/resource',
                 generator: {
-                    filename: (pathData) => {
+                    filename: pathData => {
                         const match = pathData.filename?.match(/\/fonts\/(.*)/);
 
                         return match ? `excalidraw/fonts/${match[1]}` : 'excalidraw/fonts/[name][ext]';
