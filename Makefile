@@ -59,6 +59,7 @@ deploy-appbundle:
 		$(BUILD_DIR)/close3.min.js \
 		$(BUILD_DIR)/close3.min.js.map \
 		$(DEPLOY_DIR) || true
+	cp -r $(BUILD_DIR)/chunks $(DEPLOY_DIR)/chunks
 
 deploy-lib-jitsi-meet:
 	cp \
@@ -86,14 +87,12 @@ deploy-tflite:
 		$(DEPLOY_DIR)
 
 deploy-excalidraw:
-	cp -R \
-		$(EXCALIDRAW_DIR) \
-		$(DEPLOY_DIR)/
+	mkdir -p $(DEPLOY_DIR)/excalidraw
+	cp -R $(EXCALIDRAW_DIR)/fonts $(DEPLOY_DIR)/excalidraw/
 
 deploy-excalidraw-dev:
-	cp -R \
-		$(EXCALIDRAW_DIR_DEV) \
-		$(DEPLOY_DIR)/
+	mkdir -p $(DEPLOY_DIR)/excalidraw
+	cp -R $(EXCALIDRAW_DIR_DEV)/fonts $(DEPLOY_DIR)/excalidraw/
 
 deploy-meet-models:
 	cp \
