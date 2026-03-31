@@ -152,16 +152,16 @@ function getConfig(options = {}) {
                 test: /\.(j|t)sx?$/,
                 exclude: /node_modules/
             }, {
-                // Emit woff2 fonts to prod/fonts/ preserving the subdirectory structure
-                // so they land at the same path that deploy-excalidraw copies them to
-                // (libs/prod/fonts/...) and the CSS @font-face URLs resolve correctly.
+                // Emit woff2 fonts to excalidraw/fonts/ preserving the subdirectory
+                // structure so they land at the same path that deploy-excalidraw copies
+                // them to (libs/excalidraw/fonts/...) and CSS @font-face URLs resolve.
                 test: /\.woff2$/,
                 type: 'asset/resource',
                 generator: {
                     filename: (pathData) => {
                         const match = pathData.filename?.match(/\/fonts\/(.*)/);
 
-                        return match ? `prod/fonts/${match[1]}` : 'prod/fonts/[name][ext]';
+                        return match ? `excalidraw/fonts/${match[1]}` : 'excalidraw/fonts/[name][ext]';
                     }
                 }
             }, {
