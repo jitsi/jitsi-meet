@@ -136,7 +136,7 @@ class ThumbnailWrapper extends Component<IProps> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, ownProps: { columnIndex: number;
-    data: { filmstripType: string; }; index?: number; rowIndex: number; }) {
+    data: { filmstripType: string; remoteParticipants?: string[]; }; index?: number; rowIndex: number; }) {
     const _currentLayout = getCurrentLayout(state);
     const { remoteParticipants: remote } = state['features/filmstrip'];
     const activeParticipants = getActiveParticipantsIds(state);
@@ -145,7 +145,16 @@ function _mapStateToProps(state: IReduxState, ownProps: { columnIndex: number;
     const filmstripType = ownProps.data?.filmstripType;
     const stageFilmstrip = filmstripType === FILMSTRIP_TYPE.STAGE;
     const sortedActiveParticipants = activeParticipants.sort();
-    const remoteParticipants = stageFilmstrip ? sortedActiveParticipants : remote;
+
+    // Use the remoteParticipants snapshot passed via itemData to ensure
+    // consistency with Filmstrip's itemKey functions, which reference
+    // the same array from the parent's render cycle. Reading directly
+    // from Redux could yield a newer array if the store updated between
+    // the parent render and this selector call, causing key/participant
+    // mismatches (wrong video shown in a tile).
+    const remoteParticipants = stageFilmstrip
+        ? sortedActiveParticipants
+        : (ownProps.data?.remoteParticipants ?? remote);
     const remoteParticipantsLength = remoteParticipants.length;
     const localId = getLocalParticipant(state)?.id;
 
