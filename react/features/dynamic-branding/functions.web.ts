@@ -53,8 +53,13 @@ export function createMuiBrandingTheme(customTheme: Theme) {
         spacing: customSpacing
     } = customTheme;
 
-    const newPalette = createColorTokens(colorMap);
+    // Pass customPalette to createColorTokens so that custom colors are merged
+    // BEFORE token resolution. This ensures that semantic tokens (like prejoinActionButtonPrimary)
+    // that reference base tokens (like action01) will resolve to the custom color values.
+    const newPalette = createColorTokens(colorMap, customPalette);
 
+    // Also apply overwriteRecurrsive for any direct palette key overrides that may not be
+    // handled through token resolution (e.g., if customer provides semantic token names directly).
     if (customPalette) {
         overwriteRecurrsive(newPalette, customPalette);
     }
