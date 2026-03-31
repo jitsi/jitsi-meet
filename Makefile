@@ -87,14 +87,12 @@ deploy-tflite:
 		$(DEPLOY_DIR)
 
 deploy-excalidraw:
-	cp -R \
-		$(EXCALIDRAW_DIR) \
-		$(DEPLOY_DIR)/
+	mkdir -p $(DEPLOY_DIR)/prod
+	cp -R $(EXCALIDRAW_DIR)/fonts $(DEPLOY_DIR)/prod/
 
 deploy-excalidraw-dev:
-	cp -R \
-		$(EXCALIDRAW_DIR_DEV) \
-		$(DEPLOY_DIR)/
+	mkdir -p $(DEPLOY_DIR)/dev
+	cp -R $(EXCALIDRAW_DIR_DEV)/fonts $(DEPLOY_DIR)/dev/
 
 deploy-meet-models:
 	cp \
