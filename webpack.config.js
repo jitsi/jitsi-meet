@@ -212,7 +212,15 @@ function getConfig(options = {}) {
         resolve: {
             alias: {
                 'focus-visible': 'focus-visible/dist/focus-visible.min.js',
-                '@giphy/js-analytics': resolve(__dirname, 'giphy-analytics-stub.js')
+                '@giphy/js-analytics': resolve(__dirname, 'giphy-analytics-stub.js'),
+                'react': resolve(__dirname, 'node_modules/react'),
+                'react-dom': resolve(__dirname, 'node_modules/react-dom'),
+                'roughjs/bin/rough': 'roughjs/bin/rough.js',
+                'roughjs/bin/generator': 'roughjs/bin/generator.js',
+                'roughjs/bin/math': 'roughjs/bin/math.js',
+                'firebase/app': false,
+                'firebase/firestore': false,
+                'firebase/storage': false
             },
             aliasFields: [
                 'browser'
@@ -323,7 +331,7 @@ module.exports = (_env, argv) => {
                 })
             ],
 
-            performance: getPerformanceHints(perfHintOptions, 5 * 1024 * 1024) },
+            performance: getPerformanceHints(perfHintOptions, 6 * 1024 * 1024) },
         { ...config,
             entry: {
                 'alwaysontop': './react/features/always-on-top/index.tsx'

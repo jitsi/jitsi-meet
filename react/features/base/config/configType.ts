@@ -145,6 +145,7 @@ export interface IWhiteboardConfig {
     collabServerBaseUrl?: string;
     enabled?: boolean;
     limitUrl?: string;
+    storageBackendUrl?: string;
     userLimit?: number;
 }
 
