@@ -53,12 +53,12 @@ const IconButton: React.FC<IIconButtonProps> = ({
         <TouchableHighlight
             accessibilityLabel = { accessibilityLabel }
             disabled = { disabled }
-            id = { id }
             onPress = { onPress }
             style = { [
                 iconButtonContainerStyles,
                 style
             ] as ViewStyle[] }
+            testID = { id }
             underlayColor = { underlayColor }>
             <Icon
                 color = { color }
