@@ -1,12 +1,11 @@
 import i18next from 'i18next';
-import { MD_ITEM_MARGIN_PADDING } from '../dialog/components/native/styles';
 
 /**
  * The builtin languages.
  */
 const _LANGUAGES = {
 
-    // Afrikaans    
+    // Afrikaans
     'af': {
         main: require('../../../../lang/main-af')
     },
@@ -14,7 +13,7 @@ const _LANGUAGES = {
     'be': {
         main: require('../../../../lang/main-be')
     },
-    //  Bulgarian 
+    //  Bulgarian
     'bg': {
         main: require('../../../../lang/main-bg')
     },
