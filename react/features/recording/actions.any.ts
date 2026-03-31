@@ -256,14 +256,37 @@ export function showStartedRecordingNotification(
             const recordingSharingUrl = getRecordingSharingUrl(state);
             const iAmRecordingInitiator = getLocalParticipant(state)?.id === initiatorId;
             const { showRecordingLink } = state['features/base/config'].recordings || {};
+            const isTranscribing = isRecorderTranscriptionsRunning(state);
+            const isRecording = isRecordingRunning(state);
 
-            notifyProps.dialogProps = {
-                customActionHandler: undefined,
-                customActionNameKey: undefined,
-                descriptionKey: participantName ? 'recording.onBy' : 'recording.on',
-                descriptionArguments: { name: participantName },
-                titleKey: 'dialog.recording'
-            };
+            // Case 1: Transcription only (no recording)
+            if (isTranscribing && !isRecording) {
+                notifyProps.dialogProps = {
+                    customActionHandler: undefined,
+                    customActionNameKey: undefined,
+                    descriptionKey: participantName ? 'transcribing.onBy' : 'transcribing.on',
+                    descriptionArguments: { name: participantName },
+                    titleKey: 'dialog.recording'
+                };
+            } else if (isTranscribing && isRecording) {
+                // Case 2: Recording + transcription
+                notifyProps.dialogProps = {
+                    customActionHandler: undefined,
+                    customActionNameKey: undefined,
+                    descriptionKey: participantName ? 'recording.onByWithTranscription' : 'recording.onWithTranscription',
+                    descriptionArguments: { name: participantName },
+                    titleKey: 'dialog.recording'
+                };
+            } else {
+                // Case 3: Recording only (no transcription)
+                notifyProps.dialogProps = {
+                    customActionHandler: undefined,
+                    customActionNameKey: undefined,
+                    descriptionKey: participantName ? 'recording.onBy' : 'recording.on',
+                    descriptionArguments: { name: participantName },
+                    titleKey: 'dialog.recording'
+                };
+            }
 
             // fetch the recording link from the server for recording initiators in jaas meetings
             if (recordingSharingUrl
