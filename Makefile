@@ -59,6 +59,7 @@ deploy-appbundle:
 		$(BUILD_DIR)/close3.min.js \
 		$(BUILD_DIR)/close3.min.js.map \
 		$(DEPLOY_DIR) || true
+	cp -r $(BUILD_DIR)/chunks $(DEPLOY_DIR)/chunks
 
 deploy-lib-jitsi-meet:
 	cp \
