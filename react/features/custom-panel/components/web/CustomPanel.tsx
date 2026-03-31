@@ -5,9 +5,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { isTouchDevice, shouldEnableResize } from '../../../base/environment/utils';
-import { IconCloseLarge } from '../../../base/icons/svg';
-import ClickableIcon from '../../../base/ui/components/web/ClickableIcon';
-import { close, setCustomPanelIsResizing, setUserCustomPanelWidth } from '../../actions.web';
+import { setCustomPanelIsResizing, setUserCustomPanelWidth } from '../../actions.web';
 import {
     CUSTOM_PANEL_DRAG_HANDLE_HEIGHT,
     CUSTOM_PANEL_DRAG_HANDLE_OFFSET,
@@ -74,31 +72,6 @@ const useStyles = makeStyles<IStylesProps>()((theme, { isResizing, isTouch, resi
                 top: 0,
                 width: '100%',
                 zIndex: 301
-            }
-        },
-
-        header: {
-            alignItems: 'center',
-            boxSizing: 'border-box',
-            display: 'flex',
-            height: '48px',
-            padding: '12px',
-            justifyContent: 'flex-end',
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            zIndex: 1,
-
-            '& button': {
-                backgroundColor: 'rgba(0, 0, 0, 0.85)',
-                borderRadius: '6px',
-                padding: '8px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
-
-                '&:hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.95)'
-                }
             }
         },
 
@@ -262,15 +235,6 @@ export default function CustomPanel(): JSX.Element | null {
         };
     }, [ onDragPointerUp, onPanelResize ]);
 
-    /**
-     * Handles closing the custom panel.
-     *
-     * @returns {void}
-     */
-    const onClosePane = useCallback(() => {
-        dispatch(close());
-    }, [ dispatch ]);
-
     if (!enabled || !paneOpen) {
         return null;
     }
@@ -287,12 +251,6 @@ export default function CustomPanel(): JSX.Element | null {
                 ) }
                 onPointerDown = { onDragHandlePointerDown }>
                 <div className = { cx(classes.dragHandle, 'customPanelDragHandle') } />
-            </div>
-            <div className = { classes.header }>
-                <ClickableIcon
-                    accessibilityLabel = 'Close'
-                    icon = { IconCloseLarge }
-                    onClick = { onClosePane } />
             </div>
             <div className = { classes.contentContainer }>
                 <CustomPanelContent />

@@ -11,6 +11,7 @@ import {
  * Action to close the custom panel.
  *
  * @returns {Object} The action object.
+ * NOTE: this action is used in the branding files.
  */
 export function close() {
     return {
