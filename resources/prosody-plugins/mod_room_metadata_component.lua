@@ -222,7 +222,20 @@ function process_main_muc_loaded(main_muc, host_module)
         local room = event.room;
         local json_msg = getMetadataJSON(room);
 
-        module:log('info', 'Metadata changed internally in room:%s,meeting_id:%s - broadcasting data:%s', room.jid, room._data.meetingId, json_msg);
+        local log_json = json_msg;
+        if room.jitsiMetadata and room.jitsiMetadata.transcription
+                and room.jitsiMetadata.transcription.httpHeaders then
+            local metadata_copy = table_shallow_copy(room.jitsiMetadata);
+            local transcription_copy = table_shallow_copy(metadata_copy.transcription);
+            local headers_redacted = {};
+            for k, _ in pairs(transcription_copy.httpHeaders) do
+                headers_redacted[k] = '***';
+            end
+            transcription_copy.httpHeaders = headers_redacted;
+            metadata_copy.transcription = transcription_copy;
+            log_json = getMetadataJSON(room, metadata_copy) or log_json;
+        end
+        module:log('info', 'Metadata changed internally in room:%s,meeting_id:%s - broadcasting data:%s', room.jid, room._data.meetingId, log_json);
         broadcastMetadata(room, json_msg);
     end);
 
