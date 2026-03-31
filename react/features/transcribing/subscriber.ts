@@ -7,7 +7,10 @@ import { playSound } from '../base/sounds/actions';
 import { showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { INotificationProps } from '../notifications/types';
-import { RECORDING_OFF_SOUND_ID, RECORDING_ON_SOUND_ID } from '../recording/constants';
+import {
+    TRANSCRIPTION_OFF_SOUND_ID,
+    TRANSCRIPTION_ON_SOUND_ID
+} from '../recording/constants';
 import { isLiveStreamingRunning, isRecordingRunning } from '../recording/functions';
 
 import { isRecorderTranscriptionsRunning, isTranscribing } from './functions';
@@ -17,7 +20,12 @@ import { isRecorderTranscriptionsRunning, isTranscribing } from './functions';
  */
 StateListenerRegistry.register(
     /* selector */ isRecorderTranscriptionsRunning,
-    /* listener */ (isRecorderTranscriptionsRunningValue, { getState, dispatch }) => {
+    /* listener */ (isRecorderTranscriptionsRunningValue, { getState, dispatch }, previousValue) => {
+        // Only emit notifications on actual changes, not on initial state
+        if (previousValue === undefined) {
+            return;
+        }
+
         if (isRecorderTranscriptionsRunningValue) {
             maybeEmitRecordingNotification(dispatch, getState, true);
         } else {
@@ -27,7 +35,12 @@ StateListenerRegistry.register(
 );
 StateListenerRegistry.register(
     /* selector */ isTranscribing,
-    /* listener */ (isTranscribingValue, { getState }) => {
+    /* listener */ (isTranscribingValue, { getState }, previousValue) => {
+        // Only notify on actual changes, not on initial state
+        if (previousValue === undefined) {
+            return;
+        }
+
         if (isTranscribingValue) {
             notifyTranscribingStatusChanged(getState, true);
         } else {
@@ -56,14 +69,15 @@ function maybeEmitRecordingNotification(dispatch: IStore['dispatch'], getState: 
         return;
     }
 
+    // Show transcription-specific notification when there's no recording
     const notifyProps: INotificationProps = {
-        descriptionKey: on ? 'recording.on' : 'recording.off',
+        descriptionKey: on ? 'transcribing.on' : 'transcribing.off',
         titleKey: 'dialog.recording'
     };
 
     batch(() => {
         dispatch(showNotification(notifyProps, NOTIFICATION_TIMEOUT_TYPE.SHORT));
-        dispatch(playSound(on ? RECORDING_ON_SOUND_ID : RECORDING_OFF_SOUND_ID));
+        dispatch(playSound(on ? TRANSCRIPTION_ON_SOUND_ID : TRANSCRIPTION_OFF_SOUND_ID));
     });
 }
 

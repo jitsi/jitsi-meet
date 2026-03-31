@@ -25,3 +25,31 @@ export const RECORDING_OFF_SOUND_FILE = 'recordingOff.mp3';
  * @type {string}
  */
 export const RECORDING_ON_SOUND_FILE = 'recordingOn.mp3';
+
+/**
+ * The name of the bundled audio file which will be played for when transcription is stopped.
+ *
+ * @type {string}
+ */
+export const TRANSCRIPTION_OFF_SOUND_FILE = 'transcriptionOff.mp3';
+
+/**
+ * The name of the bundled audio file which will be played for when transcription is started.
+ *
+ * @type {string}
+ */
+export const TRANSCRIPTION_ON_SOUND_FILE = 'transcriptionOn.mp3';
+
+/**
+ * The name of the bundled audio file which will be played for when recording and transcription are stopped.
+ *
+ * @type {string}
+ */
+export const RECORDING_AND_TRANSCRIPTION_OFF_SOUND_FILE = 'recordingAndTranscriptionOff.mp3';
+
+/**
+ * The name of the bundled audio file which will be played for when recording and transcription are started.
+ *
+ * @type {string}
+ */
+export const RECORDING_AND_TRANSCRIPTION_ON_SOUND_FILE = 'recordingAndTranscriptionOn.mp3';
