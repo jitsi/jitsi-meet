@@ -48,7 +48,7 @@
     "@tensorflow/tfjs-core": "3.13.0",
     "@vladmandic/human": "2.6.5",
     "@vladmandic/human-models": "2.5.9",
-    "@xmldom/xmldom": "0.8.7",
+    "@xmldom/xmldom": "0.8.12",
     "abab": "2.0.6",
     "allure-commandline": "2.32.0",
     "amplitude-js": "8.21.9",
