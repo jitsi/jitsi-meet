@@ -1,10 +1,8 @@
-import { ExcalidrawApp } from '@jitsi/excalidraw';
 import clsx from 'clsx';
 import i18next from 'i18next';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { Suspense, useCallback, useEffect, useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { useSelector, useStore } from 'react-redux';
-import '@jitsi/excalidraw/index.css';
 
 // @ts-expect-error
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
@@ -23,6 +21,15 @@ import {
     isWhiteboardOpen,
     isWhiteboardVisible
 } from '../../functions';
+
+const LazyExcalidrawApp = React.lazy(async () => {
+    const [ { ExcalidrawApp } ] = await Promise.all([
+        import(/* webpackChunkName: "excalidraw" */ '@jitsi/excalidraw'),
+        import(/* webpackChunkName: "excalidraw" */ '@jitsi/excalidraw/index.css')
+    ]);
+
+    return { default: ExcalidrawApp };
+});
 
 /**
  * Space taken by meeting elements like the subject and the watermark.
@@ -163,19 +170,21 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                                 { props.t('whiteboard.accessibilityLabel.heading') }
                             </span>
                         }
-                        <ExcalidrawApp
-                            collabDetails = { collabDetails }
-                            collabServerUrl = { collabServerUrl }
-                            excalidraw = {{
-                                isCollaborating: true,
-                                langCode: i18next.language,
-                                theme: 'light',
-                                UIOptions: WHITEBOARD_UI_OPTIONS
-                            }}
-                            getCollabAPI = { getCollabAPI }
-                            getExcalidrawAPI = { getExcalidrawAPI }
-                            meetingDetails = { meetingDetails }
-                            storageBackendUrl = { storageBackendUrl } />
+                        <Suspense fallback = { null }>
+                            <LazyExcalidrawApp
+                                collabDetails = { collabDetails }
+                                collabServerUrl = { collabServerUrl }
+                                excalidraw = {{
+                                    isCollaborating: true,
+                                    langCode: i18next.language,
+                                    theme: 'light',
+                                    UIOptions: WHITEBOARD_UI_OPTIONS
+                                }}
+                                getCollabAPI = { getCollabAPI }
+                                getExcalidrawAPI = { getExcalidrawAPI }
+                                meetingDetails = { meetingDetails }
+                                storageBackendUrl = { storageBackendUrl } />
+                        </Suspense>
                     </div>
                 )}
         </div>
