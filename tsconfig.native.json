@@ -2,6 +2,7 @@
     "include": ["react/features/**/*.ts", "react/features/**/*.tsx", "./custom.d.ts", "./globals.native.d.ts"],
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
+        "module": "es2020",
         "target": "es2020",
         "jsx": "react-native",
         "lib": [ "ES2020", "ES2024.Promise" ],
