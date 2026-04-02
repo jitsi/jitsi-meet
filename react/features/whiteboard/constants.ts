@@ -20,7 +20,7 @@ export const WHITEBOARD_UI_OPTIONS = {
             'cut', 'deleteSelectedElements', 'redo', 'selectAll', 'undo'
         ],
         disableAlignItems: true,
-        disableFileDrop: false,
+        disableFileDrop: true,
         disableGrouping: true,
         disableHints: true,
         disableLink: true,
