@@ -1,0 +1,13 @@
+diff --git a/node_modules/@jitsi/excalidraw/dist/dev/index.js b/node_modules/@jitsi/excalidraw/dist/dev/index.js
+index 25668
+--- a/node_modules/@jitsi/excalidraw/dist/dev/index.js
++++ b/node_modules/@jitsi/excalidraw/dist/dev/index.js
+@@ -25665,7 +25665,7 @@
+               type: "radio",
+               name: props.name,
+               "aria-label": props["aria-label"],
+-              ...props.disableShortcuts ? {} : { ariaKeyshortcuts: props["aria-keyshortcuts"] },
++              ...props.disableShortcuts ? {} : { "aria-keyshortcuts": props["aria-keyshortcuts"] },
+               "data-testid": props["data-testid"],
+               id: `${excalId}-${props.id}`,
+               onChange: () => {
