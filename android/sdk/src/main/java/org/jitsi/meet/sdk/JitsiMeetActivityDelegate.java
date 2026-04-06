@@ -19,9 +19,7 @@ package org.jitsi.meet.sdk;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.facebook.react.ReactInstanceManager;
-import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.ReactHost;
 import com.facebook.react.modules.core.PermissionListener;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
@@ -62,11 +60,10 @@ public class JitsiMeetActivityDelegate {
             int requestCode,
             int resultCode,
             Intent data) {
-        ReactInstanceManager reactInstanceManager
-                = ReactInstanceManagerHolder.getReactInstanceManager();
+        ReactHost reactHost = ReactHostHolder.getReactHost();
 
-        if (reactInstanceManager != null) {
-            reactInstanceManager.onActivityResult(activity, requestCode, resultCode, data);
+        if (reactHost != null) {
+            reactHost.onActivityResult(activity, requestCode, resultCode, data);
         }
     }
 
@@ -80,11 +77,10 @@ public class JitsiMeetActivityDelegate {
      * {@code super}'s implementation.
      */
     public static void onBackPressed() {
-        ReactInstanceManager reactInstanceManager
-            = ReactInstanceManagerHolder.getReactInstanceManager();
+        ReactHost reactHost = ReactHostHolder.getReactHost();
 
-        if (reactInstanceManager != null) {
-            reactInstanceManager.onBackPressed();
+        if (reactHost != null) {
+            reactHost.onBackPressed();
         }
     }
 
@@ -96,11 +92,10 @@ public class JitsiMeetActivityDelegate {
      * @param activity {@code Activity} being destroyed.
      */
     public static void onHostDestroy(Activity activity) {
-        ReactInstanceManager reactInstanceManager
-            = ReactInstanceManagerHolder.getReactInstanceManager();
+        ReactHost reactHost = ReactHostHolder.getReactHost();
 
-        if (reactInstanceManager != null) {
-            reactInstanceManager.onHostDestroy(activity);
+        if (reactHost != null) {
+            reactHost.onHostDestroy(activity);
         }
     }
 
@@ -111,18 +106,12 @@ public class JitsiMeetActivityDelegate {
      * @param activity {@code Activity} being paused.
      */
     public static void onHostPause(Activity activity) {
-        ReactInstanceManager reactInstanceManager
-            = ReactInstanceManagerHolder.getReactInstanceManager();
+        ReactHost reactHost = ReactHostHolder.getReactHost();
 
-        if (reactInstanceManager != null) {
+        if (reactHost != null) {
             try {
-                reactInstanceManager.onHostPause(activity);
+                reactHost.onHostPause(activity);
             } catch (AssertionError e) {
-                // There seems to be a problem in RN when resuming an Activity when
-                // rotation is involved and the planets align. There doesn't seem to
-                // be a proper solution, but since the activity is going away anyway,
-                // we'll YOLO-ignore the exception and hope fo the best.
-                // Ref: https://github.com/facebook/react-native/search?q=Pausing+an+activity+that+is+not+the+current+activity%2C+this+is+incorrect%21&type=issues
                 JitsiMeetLogger.e(e, "Error running onHostPause, ignoring");
             }
         }
@@ -135,11 +124,10 @@ public class JitsiMeetActivityDelegate {
      * @param activity {@code Activity} being resumed.
      */
     public static void onHostResume(Activity activity) {
-        ReactInstanceManager reactInstanceManager
-            = ReactInstanceManagerHolder.getReactInstanceManager();
+        ReactHost reactHost = ReactHostHolder.getReactHost();
 
-        if (reactInstanceManager != null) {
-            reactInstanceManager.onHostResume(activity, new DefaultHardwareBackBtnHandlerImpl(activity));
+        if (reactHost != null) {
+            reactHost.onHostResume(activity, new DefaultHardwareBackBtnHandlerImpl(activity));
         }
     }
 
@@ -153,18 +141,17 @@ public class JitsiMeetActivityDelegate {
      * @param intent {@code Intent} instance which was received.
      */
     public static void onNewIntent(Intent intent) {
-        ReactInstanceManager reactInstanceManager
-            = ReactInstanceManagerHolder.getReactInstanceManager();
+        ReactHost reactHost = ReactHostHolder.getReactHost();
 
-        if (reactInstanceManager != null) {
-            reactInstanceManager.onNewIntent(intent);
+        if (reactHost != null) {
+            reactHost.onNewIntent(intent);
         }
     }
 
     public static void onRequestPermissionsResult(
             final int requestCode, final String[] permissions, final int[] grantResults) {
         // Invoke the callback immediately
-        if (permissionListener != null && permissionListener.onRequestPermissionsResult(requestCode, permissions, grantResults)) {  
+        if (permissionListener != null && permissionListener.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
             permissionListener = null;
         }
     }

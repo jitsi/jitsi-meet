@@ -55,7 +55,7 @@ public class ParticipantsService extends android.content.BroadcastReceiver {
         String actionName = BroadcastAction.Type.RETRIEVE_PARTICIPANTS_INFO.getAction();
         WritableMap data = Arguments.createMap();
         data.putString(REQUEST_ID, callbackKey);
-        ReactInstanceManagerHolder.emitEvent(actionName, data);
+        ReactHostHolder.emitEvent(actionName, data);
     }
 
     @Override
