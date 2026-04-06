@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "codegen_app_build",
+		"source" : "/Users/cchitu/Work/jitsi-meet/android/sdk/build/generated/source/codegen/jni"
+	}
+}

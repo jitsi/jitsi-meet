@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "ReactNativeKCKeepAwakeSpec_autolinked_build",
+		"source" : "/Users/cchitu/Work/jitsi-meet/node_modules/@sayem314/react-native-keep-awake/android/build/generated/source/codegen/jni"
+	}
+}

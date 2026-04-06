@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "rnclipboard_autolinked_build",
+		"source" : "/Users/cchitu/Work/jitsi-meet/node_modules/@react-native-clipboard/clipboard/android/build/generated/source/codegen/jni"
+	}
+}

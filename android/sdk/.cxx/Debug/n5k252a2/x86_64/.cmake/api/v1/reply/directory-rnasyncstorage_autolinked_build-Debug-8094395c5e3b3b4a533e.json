@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "rnasyncstorage_autolinked_build",
+		"source" : "/Users/cchitu/Work/jitsi-meet/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni"
+	}
+}

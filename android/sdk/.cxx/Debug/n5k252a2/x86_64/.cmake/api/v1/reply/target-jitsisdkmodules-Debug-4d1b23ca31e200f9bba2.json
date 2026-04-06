@@ -1,0 +1,1179 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/build/intermediates/cxx/Debug/n5k252a2/obj/x86_64/libjitsisdkmodules.so"
+		}
+	],
+	"backtrace" : 3,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"include",
+			"target_link_libraries",
+			"target_compile_options",
+			"target_compile_reactnative_options",
+			"target_compile_definitions",
+			"target_include_directories"
+		],
+		"files" : 
+		[
+			"/Users/cchitu/Work/jitsi-meet/node_modules/react-native/ReactAndroid/cmake-utils/ReactNative-application.cmake",
+			"CMakeLists.txt",
+			"/Users/cchitu/Work/jitsi-meet/node_modules/react-native/ReactCommon/cmake-utils/react-native-flags.cmake",
+			"/Users/cchitu/Work/jitsi-meet/node_modules/@react-native-community/slider/android/src/main/jni/CMakeLists.txt",
+			"/Users/cchitu/Work/jitsi-meet/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
+			"/Users/cchitu/Work/jitsi-meet/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 5,
+				"parent" : 0
+			},
+			{
+				"file" : 0,
+				"parent" : 1
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 64,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 95,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 81,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 105,
+				"parent" : 2
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 71,
+				"parent" : 2
+			},
+			{
+				"command" : 3,
+				"file" : 2,
+				"line" : 30,
+				"parent" : 7
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 111,
+				"parent" : 2
+			},
+			{
+				"command" : 5,
+				"file" : 2,
+				"line" : 33,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 0,
+				"line" : 66,
+				"parent" : 2
+			},
+			{
+				"file" : 3
+			},
+			{
+				"command" : 6,
+				"file" : 3,
+				"line" : 89,
+				"parent" : 12
+			},
+			{
+				"file" : 4
+			},
+			{
+				"command" : 6,
+				"file" : 4,
+				"line" : 62,
+				"parent" : 14
+			},
+			{
+				"file" : 5
+			},
+			{
+				"command" : 6,
+				"file" : 5,
+				"line" : 85,
+				"parent" : 16
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-Wall"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-Werror"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-fexceptions"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-frtti"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-std=c++20"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-DFOLLY_NO_CONFIG=1"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-DLOG_TAG=\\\"ReactNative\\\""
+				},
+				{
+					"backtrace" : 9,
+					"fragment" : "-DREACT_NATIVE_APP_CODEGEN_HEADER=\\\"SdkSpec.h\\\""
+				},
+				{
+					"backtrace" : 9,
+					"fragment" : "-DREACT_NATIVE_APP_COMPONENT_DESCRIPTORS_HEADER=\\\"react/renderer/components/SdkSpec/ComponentDescriptors.h\\\""
+				},
+				{
+					"backtrace" : 9,
+					"fragment" : "-DREACT_NATIVE_APP_COMPONENT_REGISTRATION=SdkSpec_registerComponentDescriptorsFromCodegen"
+				},
+				{
+					"backtrace" : 9,
+					"fragment" : "-DREACT_NATIVE_APP_MODULE_PROVIDER=SdkSpec_ModuleProvider"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_HAVE_CLOCK_GETTIME=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_USE_LIBCPP=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_CFG_NO_COROUTINES=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_MOBILE=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_HAVE_RECVMMSG=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_HAVE_PTHREAD=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_HAVE_XSI_STRERROR_R=1"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 10,
+					"define" : "RN_SERIALIZABLE_STATE"
+				},
+				{
+					"define" : "jitsisdkmodules_EXPORTS"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 11,
+					"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/src/main/jni"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/build/generated/autolinking/src/main/jni"
+				},
+				{
+					"backtrace" : 13,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@react-native-community/slider/android/src/main/jni"
+				},
+				{
+					"backtrace" : 15,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-safe-area-context/android/src/main/jni"
+				},
+				{
+					"backtrace" : 17,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-screens/android/src/main/jni"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@giphy/react-native-sdk/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@giphy/react-native-sdk/android/build/generated/source/codegen/jni/react/renderer/components/GiphyReactNativeSDKSpec"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@amplitude/analytics-react-native/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@amplitude/analytics-react-native/android/build/generated/source/codegen/jni/react/renderer/components/AmplitudeReactNative"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/react/renderer/components/rnasyncstorage"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@react-native-clipboard/clipboard/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@react-native-clipboard/clipboard/android/build/generated/source/codegen/jni/react/renderer/components/rnclipboard"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@react-native-community/netinfo/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@react-native-community/netinfo/android/build/generated/source/codegen/jni/react/renderer/components/RNCNetInfoSpec"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@react-native-community/slider/android/src/main/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@react-native-community/slider/android/src/main/jni/../../../../common/cpp"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@react-native-community/slider/android/src/main/jni/../../../build/generated/source/codegen/jni"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@react-native-community/slider/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/RNCSlider"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@sayem314/react-native-keep-awake/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/@sayem314/react-native-keep-awake/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeKCKeepAwakeSpec"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/react/renderer/components/rngesturehandler_codegen"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-pager-view/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-pager-view/android/build/generated/source/codegen/jni/react/renderer/components/pagerview"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-performance/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-performance/android/build/generated/source/codegen/jni/react/renderer/components/RNPerformanceSpec"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-safe-area-context/android/src/main/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-safe-area-context/android/src/main/jni/../../../../common/cpp"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-safe-area-context/android/src/main/jni/../../../build/generated/source/codegen/jni"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-safe-area-context/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/safeareacontext"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-screens/android/src/main/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-screens/android/src/main/jni/../../../../common/cpp"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-screens/android/src/main/jni/../../../build/generated/source/codegen/jni"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-screens/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnscreens"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-sound/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-sound/android/build/generated/source/codegen/jni/react/renderer/components/RNSoundSpec"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-splash-view/android/generated/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-splash-view/android/generated/jni/react/renderer/components/RNSplashViewSpec"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-svg/android/src/main/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-svg/android/src/main/jni/../../../../common/cpp"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-svg/android/src/main/jni/../../../build/generated/source/codegen/jni"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-svg/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnsvg"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-svg/android/src/main/jni"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-webview/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-webview/android/build/generated/source/codegen/jni/react/renderer/components/RNCWebViewSpec"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-worklets-core/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-worklets-core/android/build/generated/source/codegen/jni/react/renderer/components/RNWorkletsSpec"
+				},
+				{
+					"backtrace" : 6,
+					"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 6,
+					"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/build/generated/source/codegen/jni/react/renderer/components/SdkSpec"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "/Users/cchitu/.gradle/caches/8.14/transforms/a6cbaecce00aebcd57e25dc95a74d45b/transformed/jetified-fbjni-0.7.0/prefab/modules/fbjni/include"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "/Users/cchitu/.gradle/caches/8.14/transforms/aeec0d30d14d7ff7fed7f02b9fd7454a/transformed/jetified-react-android-0.85.2-debug/prefab/modules/jsi/include"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "/Users/cchitu/.gradle/caches/8.14/transforms/aeec0d30d14d7ff7fed7f02b9fd7454a/transformed/jetified-react-android-0.85.2-debug/prefab/modules/reactnative/include"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0,
+				1
+			],
+			"sysroot" : 
+			{
+				"path" : "/Users/cchitu/Library/Android/sdk/ndk/27.1.12297006/toolchains/llvm/prebuilt/darwin-x86_64/sysroot"
+			}
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_GiphyReactNativeSDKSpec::@c3d8305be7238287760b"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_AmplitudeReactNative::@be17332771edac5faade"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rnasyncstorage::@1596841e19ec5b9eeffe"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rnclipboard::@6385240493dfcaf22ab7"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNCNetInfoSpec::@c36c96bfd5b5770618a5"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNCSlider::@4898bc4726ecf1751b6a"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_ReactNativeKCKeepAwakeSpec::@fc71bda14d9393fd9853"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rngesturehandler_codegen::@39f233abcd2c728bc6ec"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_pagerview::@7032a8921530ec438d60"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNPerformanceSpec::@d01f01d8a1a6d620d5fb"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_safeareacontext::@7984cd80db47aa7b952a"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rnscreens::@25bcbd507e98d3a854ad"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNSoundSpec::@a7dfabff99aa762d23e8"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNSplashViewSpec::@0fe49ba6cc0511d99ffd"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rnsvg::@4f40eb209d0c0b4a3b65"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNCWebViewSpec::@eb48929f9f7453740a6c"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNWorkletsSpec::@c787b30dd2b0f948dced"
+		},
+		{
+			"backtrace" : 6,
+			"id" : "react_codegen_SdkSpec::@d7e081e776fcf37281b1"
+		}
+	],
+	"id" : "jitsisdkmodules::@6890427a1f51a3e7e1df",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-Wl,-z,max-page-size=16384 -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "/Users/cchitu/Work/jitsi-meet/android/sdk/build/intermediates/cxx/Debug/n5k252a2/obj/x86_64/libreact_codegen_RNCSlider.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "/Users/cchitu/Work/jitsi-meet/android/sdk/build/intermediates/cxx/Debug/n5k252a2/obj/x86_64/libreact_codegen_safeareacontext.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "/Users/cchitu/Work/jitsi-meet/android/sdk/build/intermediates/cxx/Debug/n5k252a2/obj/x86_64/libreact_codegen_rnscreens.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "/Users/cchitu/Work/jitsi-meet/android/sdk/build/intermediates/cxx/Debug/n5k252a2/obj/x86_64/libreact_codegen_rnsvg.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "/Users/cchitu/.gradle/caches/8.14/transforms/a6cbaecce00aebcd57e25dc95a74d45b/transformed/jetified-fbjni-0.7.0/prefab/modules/fbjni/libs/android.x86_64/libfbjni.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "/Users/cchitu/.gradle/caches/8.14/transforms/aeec0d30d14d7ff7fed7f02b9fd7454a/transformed/jetified-react-android-0.85.2-debug/prefab/modules/jsi/libs/android.x86_64/libjsi.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "/Users/cchitu/.gradle/caches/8.14/transforms/aeec0d30d14d7ff7fed7f02b9fd7454a/transformed/jetified-react-android-0.85.2-debug/prefab/modules/reactnative/libs/android.x86_64/libreactnative.so",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-latomic -lm",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX",
+		"sysroot" : 
+		{
+			"path" : "/Users/cchitu/Library/Android/sdk/ndk/27.1.12297006/toolchains/llvm/prebuilt/darwin-x86_64/sysroot"
+		}
+	},
+	"name" : "jitsisdkmodules",
+	"nameOnDisk" : "libjitsisdkmodules.so",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1
+			]
+		},
+		{
+			"name" : "Object Libraries",
+			"sourceIndexes" : 
+			[
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				22,
+				23,
+				24,
+				25,
+				26,
+				27,
+				28,
+				29,
+				30,
+				31,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				39,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				46,
+				47,
+				48,
+				49,
+				50,
+				51,
+				52,
+				53,
+				54,
+				55,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				65,
+				66,
+				67,
+				68,
+				69,
+				70,
+				71,
+				72,
+				73,
+				74,
+				75,
+				76,
+				77,
+				78,
+				79,
+				80,
+				81
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 3,
+			"compileGroupIndex" : 0,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/build/generated/autolinking/src/main/jni/autolinking.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 3,
+			"compileGroupIndex" : 0,
+			"path" : "JitsiTurboModuleProvider.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/GiphyReactNativeSDKSpec_autolinked_build/CMakeFiles/react_codegen_GiphyReactNativeSDKSpec.dir/GiphyReactNativeSDKSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/GiphyReactNativeSDKSpec_autolinked_build/CMakeFiles/react_codegen_GiphyReactNativeSDKSpec.dir/react/renderer/components/GiphyReactNativeSDKSpec/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/GiphyReactNativeSDKSpec_autolinked_build/CMakeFiles/react_codegen_GiphyReactNativeSDKSpec.dir/react/renderer/components/GiphyReactNativeSDKSpec/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/GiphyReactNativeSDKSpec_autolinked_build/CMakeFiles/react_codegen_GiphyReactNativeSDKSpec.dir/react/renderer/components/GiphyReactNativeSDKSpec/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/GiphyReactNativeSDKSpec_autolinked_build/CMakeFiles/react_codegen_GiphyReactNativeSDKSpec.dir/react/renderer/components/GiphyReactNativeSDKSpec/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/GiphyReactNativeSDKSpec_autolinked_build/CMakeFiles/react_codegen_GiphyReactNativeSDKSpec.dir/react/renderer/components/GiphyReactNativeSDKSpec/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/AmplitudeReactNative_autolinked_build/CMakeFiles/react_codegen_AmplitudeReactNative.dir/AmplitudeReactNative-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/AmplitudeReactNative_autolinked_build/CMakeFiles/react_codegen_AmplitudeReactNative.dir/react/renderer/components/AmplitudeReactNative/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/AmplitudeReactNative_autolinked_build/CMakeFiles/react_codegen_AmplitudeReactNative.dir/react/renderer/components/AmplitudeReactNative/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/AmplitudeReactNative_autolinked_build/CMakeFiles/react_codegen_AmplitudeReactNative.dir/react/renderer/components/AmplitudeReactNative/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/AmplitudeReactNative_autolinked_build/CMakeFiles/react_codegen_AmplitudeReactNative.dir/react/renderer/components/AmplitudeReactNative/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/AmplitudeReactNative_autolinked_build/CMakeFiles/react_codegen_AmplitudeReactNative.dir/react/renderer/components/AmplitudeReactNative/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/rnasyncstorage-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rnclipboard_autolinked_build/CMakeFiles/react_codegen_rnclipboard.dir/react/renderer/components/rnclipboard/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rnclipboard_autolinked_build/CMakeFiles/react_codegen_rnclipboard.dir/react/renderer/components/rnclipboard/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rnclipboard_autolinked_build/CMakeFiles/react_codegen_rnclipboard.dir/react/renderer/components/rnclipboard/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rnclipboard_autolinked_build/CMakeFiles/react_codegen_rnclipboard.dir/react/renderer/components/rnclipboard/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rnclipboard_autolinked_build/CMakeFiles/react_codegen_rnclipboard.dir/react/renderer/components/rnclipboard/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rnclipboard_autolinked_build/CMakeFiles/react_codegen_rnclipboard.dir/rnclipboard-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNCNetInfoSpec_autolinked_build/CMakeFiles/react_codegen_RNCNetInfoSpec.dir/RNCNetInfoSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNCNetInfoSpec_autolinked_build/CMakeFiles/react_codegen_RNCNetInfoSpec.dir/react/renderer/components/RNCNetInfoSpec/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNCNetInfoSpec_autolinked_build/CMakeFiles/react_codegen_RNCNetInfoSpec.dir/react/renderer/components/RNCNetInfoSpec/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNCNetInfoSpec_autolinked_build/CMakeFiles/react_codegen_RNCNetInfoSpec.dir/react/renderer/components/RNCNetInfoSpec/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNCNetInfoSpec_autolinked_build/CMakeFiles/react_codegen_RNCNetInfoSpec.dir/react/renderer/components/RNCNetInfoSpec/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNCNetInfoSpec_autolinked_build/CMakeFiles/react_codegen_RNCNetInfoSpec.dir/react/renderer/components/RNCNetInfoSpec/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/ReactNativeKCKeepAwakeSpec_autolinked_build/CMakeFiles/react_codegen_ReactNativeKCKeepAwakeSpec.dir/ReactNativeKCKeepAwakeSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/ReactNativeKCKeepAwakeSpec_autolinked_build/CMakeFiles/react_codegen_ReactNativeKCKeepAwakeSpec.dir/react/renderer/components/ReactNativeKCKeepAwakeSpec/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/ReactNativeKCKeepAwakeSpec_autolinked_build/CMakeFiles/react_codegen_ReactNativeKCKeepAwakeSpec.dir/react/renderer/components/ReactNativeKCKeepAwakeSpec/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/ReactNativeKCKeepAwakeSpec_autolinked_build/CMakeFiles/react_codegen_ReactNativeKCKeepAwakeSpec.dir/react/renderer/components/ReactNativeKCKeepAwakeSpec/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/ReactNativeKCKeepAwakeSpec_autolinked_build/CMakeFiles/react_codegen_ReactNativeKCKeepAwakeSpec.dir/react/renderer/components/ReactNativeKCKeepAwakeSpec/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/ReactNativeKCKeepAwakeSpec_autolinked_build/CMakeFiles/react_codegen_ReactNativeKCKeepAwakeSpec.dir/react/renderer/components/ReactNativeKCKeepAwakeSpec/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/rngesturehandler_codegen-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/pagerview_autolinked_build/CMakeFiles/react_codegen_pagerview.dir/pagerview-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/pagerview_autolinked_build/CMakeFiles/react_codegen_pagerview.dir/react/renderer/components/pagerview/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/pagerview_autolinked_build/CMakeFiles/react_codegen_pagerview.dir/react/renderer/components/pagerview/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/pagerview_autolinked_build/CMakeFiles/react_codegen_pagerview.dir/react/renderer/components/pagerview/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/pagerview_autolinked_build/CMakeFiles/react_codegen_pagerview.dir/react/renderer/components/pagerview/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/pagerview_autolinked_build/CMakeFiles/react_codegen_pagerview.dir/react/renderer/components/pagerview/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNPerformanceSpec_autolinked_build/CMakeFiles/react_codegen_RNPerformanceSpec.dir/RNPerformanceSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNPerformanceSpec_autolinked_build/CMakeFiles/react_codegen_RNPerformanceSpec.dir/react/renderer/components/RNPerformanceSpec/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNPerformanceSpec_autolinked_build/CMakeFiles/react_codegen_RNPerformanceSpec.dir/react/renderer/components/RNPerformanceSpec/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNPerformanceSpec_autolinked_build/CMakeFiles/react_codegen_RNPerformanceSpec.dir/react/renderer/components/RNPerformanceSpec/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNPerformanceSpec_autolinked_build/CMakeFiles/react_codegen_RNPerformanceSpec.dir/react/renderer/components/RNPerformanceSpec/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNPerformanceSpec_autolinked_build/CMakeFiles/react_codegen_RNPerformanceSpec.dir/react/renderer/components/RNPerformanceSpec/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNSoundSpec_autolinked_build/CMakeFiles/react_codegen_RNSoundSpec.dir/RNSoundSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNSoundSpec_autolinked_build/CMakeFiles/react_codegen_RNSoundSpec.dir/react/renderer/components/RNSoundSpec/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNSoundSpec_autolinked_build/CMakeFiles/react_codegen_RNSoundSpec.dir/react/renderer/components/RNSoundSpec/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNSoundSpec_autolinked_build/CMakeFiles/react_codegen_RNSoundSpec.dir/react/renderer/components/RNSoundSpec/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNSoundSpec_autolinked_build/CMakeFiles/react_codegen_RNSoundSpec.dir/react/renderer/components/RNSoundSpec/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNSoundSpec_autolinked_build/CMakeFiles/react_codegen_RNSoundSpec.dir/react/renderer/components/RNSoundSpec/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNSplashViewSpec_autolinked_build/CMakeFiles/react_codegen_RNSplashViewSpec.dir/RNSplashViewSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNSplashViewSpec_autolinked_build/CMakeFiles/react_codegen_RNSplashViewSpec.dir/react/renderer/components/RNSplashViewSpec/RNSplashViewSpecJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/RNCWebViewSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNWorkletsSpec_autolinked_build/CMakeFiles/react_codegen_RNWorkletsSpec.dir/RNWorkletsSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNWorkletsSpec_autolinked_build/CMakeFiles/react_codegen_RNWorkletsSpec.dir/react/renderer/components/RNWorkletsSpec/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNWorkletsSpec_autolinked_build/CMakeFiles/react_codegen_RNWorkletsSpec.dir/react/renderer/components/RNWorkletsSpec/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNWorkletsSpec_autolinked_build/CMakeFiles/react_codegen_RNWorkletsSpec.dir/react/renderer/components/RNWorkletsSpec/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNWorkletsSpec_autolinked_build/CMakeFiles/react_codegen_RNWorkletsSpec.dir/react/renderer/components/RNWorkletsSpec/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/RNWorkletsSpec_autolinked_build/CMakeFiles/react_codegen_RNWorkletsSpec.dir/react/renderer/components/RNWorkletsSpec/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 6,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/codegen_app_build/CMakeFiles/react_codegen_SdkSpec.dir/SdkSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 6,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/codegen_app_build/CMakeFiles/react_codegen_SdkSpec.dir/react/renderer/components/SdkSpec/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 6,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/codegen_app_build/CMakeFiles/react_codegen_SdkSpec.dir/react/renderer/components/SdkSpec/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 6,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/codegen_app_build/CMakeFiles/react_codegen_SdkSpec.dir/react/renderer/components/SdkSpec/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 6,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/codegen_app_build/CMakeFiles/react_codegen_SdkSpec.dir/react/renderer/components/SdkSpec/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 6,
+			"isGenerated" : true,
+			"path" : "/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/x86_64/codegen_app_build/CMakeFiles/react_codegen_SdkSpec.dir/react/renderer/components/SdkSpec/States.cpp.o",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "SHARED_LIBRARY"
+}

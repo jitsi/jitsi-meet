@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "RNSplashViewSpec_autolinked_build",
+		"source" : "/Users/cchitu/Work/jitsi-meet/node_modules/react-native-splash-view/android/generated/jni"
+	}
+}

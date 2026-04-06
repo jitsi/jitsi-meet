@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "RNCSlider_autolinked_build",
+		"source" : "/Users/cchitu/Work/jitsi-meet/node_modules/@react-native-community/slider/android/src/main/jni"
+	}
+}

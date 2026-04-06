@@ -1,0 +1,4 @@
+/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir
+/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir
+/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/edit_cache.dir
+/Users/cchitu/Work/jitsi-meet/android/sdk/.cxx/Debug/n5k252a2/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/rebuild_cache.dir
