@@ -86,8 +86,6 @@ post_install do |installer|
     :mac_catalyst_enabled => false,
     # :ccache_enabled => true
   )
-
-
   installer.pods_project.targets.each do |target|
     # https://github.com/CocoaPods/CocoaPods/issues/11402
     if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
