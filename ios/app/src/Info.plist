@@ -76,6 +76,8 @@
 	<array>
 		<string>org.jitsi.JitsiMeet.ios.conference</string>
 	</array>
+	<key>RCTNewArchEnabled</key>
+	<true/>
 	<key>RTCAppGroupIdentifier</key>
 	<string>group.org.jitsi.meet.appgroup</string>
 	<key>RTCScreenSharingExtension</key>
