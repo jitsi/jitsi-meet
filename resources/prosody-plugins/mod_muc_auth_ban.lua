@@ -42,7 +42,7 @@ end);
 local function shouldAllow(session)
     local token = session.auth_token;
 
-    if token ~= nil and session.jitsi_web_query_room and session.jitsi_web_query_prefix then
+    if token ~= nil then
         -- cached tokens are banned
         if cache:get(token) then
             return false;
