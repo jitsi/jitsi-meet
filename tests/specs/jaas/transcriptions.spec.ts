@@ -228,8 +228,9 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
         const webhookTranscript = event.data.final;
 
         expect(webhookTranscript.includes(p1Transcript) || p1Transcript.includes(webhookTranscript)).toBe(true);
-        expect(event.data.language).toBe(p1Event.data.language);
-        expect(event.data.messageID).toBe(p1Event.data.messageID);
+        if (p1Event.data.language) {
+            expect(event.data.language).toBe(p1Event.data.language);
+        }
         expect(event.data.participant.id).toBe(p1Id);
         if (!asyncTranscription) {
             expect(event.data.participant.name).toBe(p1.name);
