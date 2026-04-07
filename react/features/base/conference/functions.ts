@@ -160,10 +160,9 @@ export function forEachConference(
         if (v && typeof v === 'object') {
             const url: URL = v[JITSI_CONFERENCE_URL_KEY];
 
-            // XXX The Web version of Jitsi Meet does not utilize
-            // JITSI_CONFERENCE_URL_KEY at the time of this writing. An
-            // alternative is necessary then to recognize JitsiConference
-            // instances and myUserId is as good as any other property.
+            // XXX JITSI_CONFERENCE_URL_KEY is set in createConference for the
+            // normal join path; when it is missing (legacy or unusual paths),
+            // myUserId is used to recognize JitsiConference instances.
             if ((url || typeof v.myUserId === 'function')
                     && !predicate(v, url)) {
                 return false;
