@@ -26,6 +26,7 @@ import SecurityDialog from '../pageobjects/SecurityDialog';
 import SettingsDialog from '../pageobjects/SettingsDialog';
 import Toolbar from '../pageobjects/Toolbar';
 import VideoQualityDialog from '../pageobjects/VideoQualityDialog';
+import VirtualBackgroundDialog from '../pageobjects/VirtualBackgroundDialog';
 import Visitors from '../pageobjects/Visitors';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
@@ -635,6 +636,13 @@ export class Participant {
      */
     getPasswordDialog(): PasswordDialog {
         return new PasswordDialog(this);
+    }
+
+    /**
+     * Returns the virtual background dialog.
+     */
+    getVirtualBackgroundDialog(): VirtualBackgroundDialog {
+        return new VirtualBackgroundDialog(this);
     }
 
     /**
