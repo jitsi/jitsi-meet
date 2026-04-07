@@ -72,10 +72,22 @@ globalNS.entryPoints = {
     WHITEBOARD: WhiteboardApp
 };
 
+/**
+ * React 18 concurrent mode allows only one root per DOM node. Cache roots by
+ * element ID so {@code renderEntryPoint} never calls {@code createRoot} twice
+ * on the same element.
+ */
+const _roots = new Map();
+
 globalNS.renderEntryPoint = ({
     Component,
     props = {},
     elementId = 'react'
 }) => {
-    createRoot(document.getElementById(elementId)).render(<Component { ...props } />);
+    const element = document.getElementById(elementId);
+
+    if (!_roots.has(elementId)) {
+        _roots.set(elementId, createRoot(element));
+    }
+    _roots.get(elementId).render(<Component { ...props } />);
 };
