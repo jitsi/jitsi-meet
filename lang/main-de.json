@@ -1176,8 +1176,8 @@
         "pullToRefresh": "Ziehen, um zu aktualisieren"
     },
     "security": {
-        "about": "Sie können Ihre Konferenz mit $t(lockRoomPassword) sichern. Personen müssen $t(lockRoomPassword) eingeben, bevor sie an der Konferenz teilnehmen dürfen.",
-        "aboutReadOnly": "Mit Moderationsrechten kann die Konferenz mit $t(lockRoomPassword) gesichert werden. Personen müssen $t(lockRoomPassword) eingeben, bevor sie an der Konferenz teilnehmen dürfen.",
+        "about": "Sie können Ihre Konferenz mit einem $t(lockRoomPassword) sichern. Personen müssen das $t(lockRoomPassword) eingeben, bevor sie an der Konferenz teilnehmen dürfen.",
+        "aboutReadOnly": "Mit Moderationsrechten kann die Konferenz mit einem $t(lockRoomPassword) gesichert werden. Personen müssen das $t(lockRoomPassword) eingeben, bevor sie an der Konferenz teilnehmen dürfen.",
         "insecureRoomNameWarningNative": "Der Raumname ist unsicher. Unerwünschte Personen könnten Ihrer Konferenz beitreten. {{recommendAction}} Lernen Sie mehr über die Absicherung Ihrer Konferenz ",
         "insecureRoomNameWarningWeb": "Der Raumname ist unsicher. Unerwünschte Personen könnten Ihrer Konferenz beitreten {{recommendAction}} Lernen Sie <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">hier</a> mehr über die Absicherung Ihrer Konferenz.",
         "title": "Sicherheitsoptionen",
@@ -1365,7 +1365,7 @@
             "muteEveryoneElse": "Alle anderen stummschalten",
             "muteEveryoneElsesVideoStream": "Alle anderen Kameras ausschalten",
             "muteEveryonesVideoStream": "Alle Kameras ausschalten",
-            "muteGUMPending": "Verbinde Ihr Mikrofon",
+            "muteGUMPending": "Mikrofon verbinden",
             "noiseSuppression": "Rauschunterdrückung",
             "openChat": "Chat öffnen",
             "participants": "Anwesenheitsliste öffnen. {{participantsCount}} anwesend",
@@ -1400,7 +1400,7 @@
             "unmute": "Stummschaltung aufheben",
             "videoblur": "Unscharfer Hintergrund ein-/ausschalten",
             "videomute": "Kamera stoppen",
-            "videomuteGUMPending": "Verbinde Ihre Kamera",
+            "videomuteGUMPending": "Kamera verbinden",
             "videounmute": "Kamera einschalten"
         },
         "addPeople": "Personen zur Konferenz hinzufügen",
@@ -1470,7 +1470,7 @@
         "mute": "Audio stummschalten",
         "muteEveryone": "Alle stummschalten",
         "muteEveryonesVideo": "Alle Kameras ausschalten",
-        "muteGUMPending": "Verbinde Ihre Kamera",
+        "muteGUMPending": "Mikrofon verbinden",
         "noAudioSignalDesc": "Wenn Sie das Gerät nicht absichtlich über die Systemeinstellungen oder die Hardware stumm geschaltet haben, sollten Sie einen Wechsel des Geräts in Erwägung ziehen.",
         "noAudioSignalDescSuggestion": "Wenn Sie das Gerät nicht absichtlich über die Systemeinstellungen oder die Hardware stummgeschaltet haben, sollten Sie einen Wechsel auf das vorgeschlagene Gerät in Erwägung ziehen.",
         "noAudioSignalDialInDesc": "Sie können sich auch über die Einwahlnummer einwählen:",
@@ -1519,7 +1519,7 @@
         "unmute": "Stummschaltung aufheben",
         "videoSettings": "Kamera-Einstellungen",
         "videomute": "Kamera stoppen",
-        "videomuteGUMPending": "Verbinde Ihre Kamera",
+        "videomuteGUMPending": "Kamera verbinden",
         "videounmute": "Kamera einschalten"
     },
     "transcribing": {
