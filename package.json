@@ -206,16 +206,13 @@
   },
   "license": "Apache-2.0",
   "scripts": {
+    "android-autolinking": "mkdir -p android/build/generated/autolinking && npx react-native config > android/build/generated/autolinking/autolinking.json",
     "lint": "eslint --ext .js,.ts,.tsx --max-warnings 0 . && tsc --noEmit",
-    "tsc:web": "tsc --noEmit --project tsconfig.web.json",
-    "tsc:native": "tsc --noEmit --project tsconfig.native.json",
-    "tsc:ci": "npm run tsc:web && npm run tsc:native",
     "lint:ci": "eslint --ext .js,.ts,.tsx --max-warnings 0 .",
     "lint:lang": "for file in lang/*.json; do npx --yes jsonlint -q $file || exit 1; done",
     "lang-sort": "./resources/lang-sort.sh",
     "lint-fix": "eslint --ext .js,.ts,.tsx --max-warnings 0 --fix .",
-    "postinstall": "patch-package --error-on-fail && jetify",
-    "validate": "npm ls",
+    "postinstall": "patch-package --error-on-fail && jetify && npm run android-autolinking",
     "start": "make dev",
     "test": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.conf.ts",
     "test-single": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.conf.ts --spec",
@@ -226,7 +223,11 @@
     "test-grid": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.conf.ts",
     "test-grid-single": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.conf.ts --spec",
     "test-grid-ff": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.firefox.conf.ts",
-    "test-grid-ff-single": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.firefox.conf.ts --spec"
+    "test-grid-ff-single": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.firefox.conf.ts --spec",
+    "tsc:web": "tsc --noEmit --project tsconfig.web.json",
+    "tsc:native": "tsc --noEmit --project tsconfig.native.json",
+    "tsc:ci": "npm run tsc:web && npm run tsc:native",
+    "validate": "npm ls"
   },
   "resolutions": {
     "@types/react": "17.0.14",
