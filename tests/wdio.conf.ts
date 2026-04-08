@@ -68,9 +68,10 @@ const specs = [
  * Analyzes test files at config construction time to determine browser requirements
  * and generate capabilities with appropriate exclusions.
  */
-function generateCapabilitiesFromSpecs(): Record<string, any> {
+function generateCapabilitiesFromSpecs(): { capabilities: Record<string, any>; excludedSpecs: string[]; } {
     const allSpecFiles: string[] = [];
     const browsers = [ 'p1', 'p2', 'p3', 'p4', 'p5', 'p6' ];
+    const excludedSpecs: string[] = [];
 
     for (const pattern of specs) {
         const matches = glob.sync(pattern, { cwd: path.join(__dirname) });
@@ -98,6 +99,12 @@ function generateCapabilitiesFromSpecs(): Record<string, any> {
         const props = testProperties[file];
         const relativeFile = path.relative(__dirname, file);
 
+        // If a test requires JaaS but JaaS is not configured, exclude it at the top level so no worker is created.
+        if (props?.useJaas && !testsConfig.jaas.enabled) {
+            excludedSpecs.push(relativeFile);
+            continue;
+        }
+
         // If a test doesn't use a particular browser, add it to exclusions for that browser
         if (props?.usesBrowsers) {
             browsers.forEach(browser => {
@@ -108,25 +115,28 @@ function generateCapabilitiesFromSpecs(): Record<string, any> {
         }
     }
 
-    return Object.fromEntries(
-        browsers.map(browser => [
-            browser,
-            {
-                capabilities: {
-                    browserName: 'chrome',
-                    ...(browser === 'p1' && process.env.BROWSER_CHROME_BETA ? { browserVersion: 'beta' } : {}),
-                    'goog:chromeOptions': {
-                        args: chromeArgs,
-                        prefs: chromePreferences
-                    },
-                    'wdio:exclude': Array.from(browserExclusions[browser] || [])
+    return {
+        capabilities: Object.fromEntries(
+            browsers.map(browser => [
+                browser,
+                {
+                    capabilities: {
+                        browserName: 'chrome',
+                        ...(browser === 'p1' && process.env.BROWSER_CHROME_BETA ? { browserVersion: 'beta' } : {}),
+                        'goog:chromeOptions': {
+                            args: chromeArgs,
+                            prefs: chromePreferences
+                        },
+                        'wdio:exclude': Array.from(browserExclusions[browser] || [])
+                    }
                 }
-            }
-        ])
-    );
+            ])
+        ),
+        excludedSpecs
+    };
 }
 
-const capabilities = generateCapabilitiesFromSpecs();
+const { capabilities, excludedSpecs } = generateCapabilitiesFromSpecs();
 
 const TEST_RESULTS_DIR = 'test-results';
 
@@ -137,6 +147,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
     runner: 'local',
 
     specs,
+    exclude: excludedSpecs,
 
     maxInstances: parseInt(process.env.MAX_INSTANCES || '1', 10), // if changing check onWorkerStart logic
 
