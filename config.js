@@ -1492,6 +1492,15 @@ var config = {
     // When true, virtual background feature will be disabled.
     // disableVirtualBackground: false,
 
+    /**
+     * Options for the virtual background feature.
+     */
+    // virtualBackground: {
+    //     // Enables the test specific features and
+    //     // virtual background performance metrics.
+    //     testMode: false
+    // },
+
     // When true the user cannot add more images to be used as virtual background.
     // Only the default ones from will be available.
     // disableAddingBackgroundImages: false,

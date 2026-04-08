@@ -1,4 +1,6 @@
 import { VIRTUAL_BACKGROUND_TYPE } from '../../virtual-background/constants';
+import logger from '../../virtual-background/logger';
+
 
 import {
     CLEAR_TIMEOUT,
@@ -9,6 +11,7 @@ import {
 
 export interface IBackgroundEffectOptions {
     height: number;
+    measurePerformance?: boolean;
     virtualBackground: {
         backgroundType?: string;
         blurValue?: number;
@@ -37,6 +40,16 @@ export default class JitsiStreamBackgroundEffect {
     _virtualImage: HTMLImageElement;
     _virtualVideo: HTMLVideoElement;
 
+    // Performance metrics used for evaluating TFLite model performance against newer models
+    // Tracks the total time taken for inferences across a batch of frames
+    _inferenceTimeSum: number;
+    // Tracks the total time taken for post processing across a batch of frames
+    _postProcessingTimeSum: number;
+    // Tracks the number of frames processed in the current interval
+    _frameCount: number;
+    // Timestamp (in ms) of the last reported logging event
+    _lastReportTime: number;
+
     /**
      * Represents a modified video MediaStream track.
      *
@@ -60,8 +73,14 @@ export default class JitsiStreamBackgroundEffect {
 
         // Workaround for FF issue https://bugzilla.mozilla.org/show_bug.cgi?id=1388974
         this._outputCanvasElement = document.createElement('canvas');
-        this._outputCanvasElement.getContext('2d');
+        this._outputCanvasElement.getContext('2d', { willReadFrequently: true });
         this._inputVideoElement = document.createElement('video');
+
+        // Initialize performance metric tracking variables for the effect
+        this._inferenceTimeSum = 0;
+        this._postProcessingTimeSum = 0;
+        this._frameCount = 0;
+        this._lastReportTime = performance.now();
     }
 
     /**
@@ -92,8 +111,12 @@ export default class JitsiStreamBackgroundEffect {
             return;
         }
 
-        this._outputCanvasElement.height = height;
-        this._outputCanvasElement.width = width;
+        if (this._outputCanvasElement.height !== height) {
+            this._outputCanvasElement.height = height;
+        }
+        if (this._outputCanvasElement.width !== width) {
+            this._outputCanvasElement.width = width;
+        }
         this._outputCanvasCtx.globalCompositeOperation = 'copy';
 
         // Draw segmentation mask.
@@ -164,8 +187,46 @@ export default class JitsiStreamBackgroundEffect {
      */
     _renderMask() {
         this.resizeSource();
-        this.runInference();
-        this.runPostProcessing();
+
+        if (this._options.measurePerformance) {
+            const inferenceStart = performance.now();
+
+            this.runInference();
+            const inferenceEnd = performance.now();
+
+            this._inferenceTimeSum += (inferenceEnd - inferenceStart);
+
+            const postProcessingStart = performance.now();
+
+            this.runPostProcessing();
+            const postProcessingEnd = performance.now();
+
+            this._postProcessingTimeSum += (postProcessingEnd - postProcessingStart);
+
+            this._frameCount++;
+
+            if (this._frameCount >= 30) {
+                const now = performance.now();
+                const elapsedMs = now - this._lastReportTime;
+
+                const fps = (this._frameCount / elapsedMs) * 1000;
+                const avgInference = this._inferenceTimeSum / this._frameCount;
+                const avgPostProcessing = this._postProcessingTimeSum / this._frameCount;
+
+                logger.debug(
+                    `[VB] Avg inference: ${avgInference.toFixed(2)} ms, `
+                    + `Avg post-processing: ${avgPostProcessing.toFixed(2)} ms | FPS: ${fps.toFixed(1)}`
+                );
+
+                this._inferenceTimeSum = 0;
+                this._postProcessingTimeSum = 0;
+                this._frameCount = 0;
+                this._lastReportTime = now;
+            }
+        } else {
+            this.runInference();
+            this.runPostProcessing();
+        }
 
         this._maskFrameTimerWorker.postMessage({
             id: SET_TIMEOUT,
@@ -235,16 +296,17 @@ export default class JitsiStreamBackgroundEffect {
         this._segmentationMaskCanvas = document.createElement('canvas');
         this._segmentationMaskCanvas.width = this._options.width;
         this._segmentationMaskCanvas.height = this._options.height;
-        this._segmentationMaskCtx = this._segmentationMaskCanvas.getContext('2d');
+        this._segmentationMaskCtx = this._segmentationMaskCanvas.getContext('2d', { willReadFrequently: true });
 
         this._outputCanvasElement.width = parseInt(width, 10);
         this._outputCanvasElement.height = parseInt(height, 10);
-        this._outputCanvasCtx = this._outputCanvasElement.getContext('2d');
+        this._outputCanvasCtx = this._outputCanvasElement.getContext('2d', { willReadFrequently: true });
         this._inputVideoElement.width = parseInt(width, 10);
         this._inputVideoElement.height = parseInt(height, 10);
         this._inputVideoElement.autoplay = true;
         this._inputVideoElement.srcObject = this._stream;
         this._inputVideoElement.onloadeddata = () => {
+            this._lastReportTime = performance.now();
             this._maskFrameTimerWorker.postMessage({
                 id: SET_TIMEOUT,
                 timeMs: 1000 / 30
