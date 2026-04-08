@@ -48,7 +48,7 @@ describe('Start muted', () => {
         await joinSecondParticipant(options);
 
         // Enable screenshare on p1.
-        p1.getToolbar().clickDesktopSharingButton();
+        await p1.getToolbar().clickDesktopSharingButton();
         await checkForScreensharingTile(p1, p1);
 
         const { p2 } = ctx;
