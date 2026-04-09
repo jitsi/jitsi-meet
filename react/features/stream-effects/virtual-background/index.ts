@@ -148,15 +148,7 @@ async function createVirtualBackgroundEffectV2(
         return;
     }
 
-    try {
-        return new JitsiStreamBackgroundEffectV2(virtualBackground, config, capabilities);
-    } catch (err) {
-        logger.error('[VirtualBackground] Failed to create V2 effect', err);
-        dispatch?.(showWarningNotification({
-            titleKey: 'virtualBackground.backgroundEffectError'
-        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
-        throw err;
-    }
+    return new JitsiStreamBackgroundEffectV2(virtualBackground, config, capabilities);
 }
 
 /**

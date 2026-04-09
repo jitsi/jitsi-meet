@@ -575,6 +575,10 @@ export default class WebGLCompositor {
         this._quadBuffer = null;
         this._program = null;
         this._studioProgram = null;
+
+        // Explicitly release the WebGL context so it no longer counts against the browser's
+        // ~16 concurrent context limit. Without this the context stays alive until GC.
+        gl.getExtension('WEBGL_lose_context')?.loseContext();
         this._gl = null;
     }
 

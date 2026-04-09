@@ -107,6 +107,7 @@ export default class JitsiStreamBackgroundEffectV2 {
     _isPassthrough = false;
     _isReady = false;
     _isRunning = false;
+    _pendingInferHandler: ((e: MessageEvent) => void) | null = null;
     _pendingInferResolve: ((value: ImageData | null) => void) | null = null;
     _useInsertableStreams = false;
 
@@ -121,7 +122,7 @@ export default class JitsiStreamBackgroundEffectV2 {
     _outputCanvasElement: HTMLCanvasElement;
     _outputCanvasCtx: CanvasRenderingContext2D | null = null;
     _frameCount = 0;
-    _ortSkipCounter = 0;
+    _inferenceSkipCounter = 0;
     _processingFrame = false;
     _rVFCHandle: number | null = null;
 
@@ -354,6 +355,11 @@ export default class JitsiStreamBackgroundEffectV2 {
 
         // Abort any in-flight _inferWithWorker call so the IS loop exits immediately rather than
         // waiting for a worker reply that will never arrive after the worker is terminated.
+        // Remove the message listener first to prevent leaks.
+        if (this._pendingInferHandler && this._inferenceWorker) {
+            this._inferenceWorker.removeEventListener('message', this._pendingInferHandler);
+        }
+        this._pendingInferHandler = null;
         this._pendingInferResolve?.(null);
         this._pendingInferResolve = null;
 
@@ -385,7 +391,7 @@ export default class JitsiStreamBackgroundEffectV2 {
         this._cachedMaskData = null;
         this._firstMaskFrame = true;
         this._maskAccumF32 = null;
-        this._ortSkipCounter = 0;
+        this._inferenceSkipCounter = 0;
         this._webglCanvas = null;
         this._maskCanvas = null;
         this._maskCanvasCtx = null;
@@ -608,9 +614,9 @@ export default class JitsiStreamBackgroundEffectV2 {
             // CPU-backend skip: run inference every N frames, reuse the cached mask in between.
             // For GPU tiers (MEDIUM/HIGH) the stride is always 1 — inference is fast enough.
             const stride = this._config.virtualBackground?.inferenceStride ?? 1;
-            const runInference = this._ortSkipCounter % stride === 0;
+            const runInference = this._inferenceSkipCounter % stride === 0;
 
-            this._ortSkipCounter++;
+            this._inferenceSkipCounter++;
 
             if (runInference) {
                 // All tiers: inference via VBInferenceWorker (ORT/TFLite for LOW, TF.js for MEDIUM/HIGH).
@@ -1043,6 +1049,9 @@ export default class JitsiStreamBackgroundEffectV2 {
             const handler = (e: MessageEvent) => {
                 if (e.data.type === 'mask') {
                     this._inferenceWorker?.removeEventListener('message', handler);
+                    if (this._pendingInferHandler === handler) {
+                        this._pendingInferHandler = null;
+                    }
                     if (this._pendingInferResolve === resolve) {
                         this._pendingInferResolve = null;
                     }
@@ -1052,6 +1061,9 @@ export default class JitsiStreamBackgroundEffectV2 {
                     resolve(this._applyMaskEMA(imgData));
                 } else if (e.data.type === 'infer_error') {
                     this._inferenceWorker?.removeEventListener('message', handler);
+                    if (this._pendingInferHandler === handler) {
+                        this._pendingInferHandler = null;
+                    }
                     if (this._pendingInferResolve === resolve) {
                         this._pendingInferResolve = null;
                     }
@@ -1060,6 +1072,7 @@ export default class JitsiStreamBackgroundEffectV2 {
                 }
             };
 
+            this._pendingInferHandler = handler;
             this._inferenceWorker.addEventListener('message', handler);
             this._inferenceWorker.postMessage({ bitmap, type: 'infer' }, [ bitmap as unknown as Transferable ]);
         });
@@ -1196,9 +1209,9 @@ export default class JitsiStreamBackgroundEffectV2 {
         // For GPU tiers (MEDIUM/HIGH) the stride is always 1 — inference is fast enough.
         const isCpuBackend = this._capabilities?.backend === BackendType.TFLITE;
         const stride = isCpuBackend ? (this._config.virtualBackground?.inferenceStride ?? 2) : 1;
-        const runInference = this._workerReady && (this._ortSkipCounter % stride === 0);
+        const runInference = this._workerReady && (this._inferenceSkipCounter % stride === 0);
 
-        this._ortSkipCounter++;
+        this._inferenceSkipCounter++;
 
         if (runInference) {
             // All tiers: inference in VBInferenceWorker (Worker thread).
