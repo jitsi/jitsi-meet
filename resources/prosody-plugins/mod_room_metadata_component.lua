@@ -355,6 +355,8 @@ if breakout_rooms_component_host then
     end);
 end
 
+-- checks whether the event is from an occupant of the room specified in the session,
+-- if not, it returns an error and stops the processing of the event
 local function check_occupant(event)
     local origin, stanza = event.origin, event.stanza;
 
