@@ -27,36 +27,44 @@ export default class VirtualBackgroundDialog extends BaseDialog {
     }
 
     /**
+     * Clicks a thumbnail and waits for it to become aria-checked.
+     * Ensures React has finished re-rendering before the next click, preventing
+     * rapid clicks from being swallowed during reconciliation.
+     *
+     * @param {string} selector - CSS selector for the thumbnail.
+     * @param {string} label - Human-readable label for logging.
+     */
+    private async clickAndWaitChecked(selector: string, label: string): Promise<void> {
+        await this.participant.log(`VirtualBackgroundDialog: clicking ${label} thumbnail`);
+        const el = this.participant.driver.$(selector);
+
+        await el.waitForClickable({ timeout: 3000, timeoutMsg: `${label} thumbnail not clickable` });
+        await el.click();
+        await this.participant.driver.waitUntil(
+            async () => (await el.getAttribute('aria-checked')) === 'true',
+            { timeout: 2000, timeoutMsg: `${label} thumbnail did not become checked after click` }
+        );
+    }
+
+    /**
      * Clicks the "Remove background" (None) thumbnail.
      */
-    async clickNone(): Promise<void> {
-        await this.participant.log('VirtualBackgroundDialog: clicking None thumbnail');
-        const el = this.participant.driver.$(NONE_THUMBNAIL);
-
-        await el.waitForClickable({ timeout: 3000, timeoutMsg: 'None thumbnail not clickable' });
-        await el.click();
+    clickNone(): Promise<void> {
+        return this.clickAndWaitChecked(NONE_THUMBNAIL, 'None');
     }
 
     /**
      * Clicks the "Half Blur" (slight blur) thumbnail.
      */
-    async clickSlightBlur(): Promise<void> {
-        await this.participant.log('VirtualBackgroundDialog: clicking Slight Blur thumbnail');
-        const el = this.participant.driver.$(SLIGHT_BLUR_THUMBNAIL);
-
-        await el.waitForClickable({ timeout: 3000, timeoutMsg: 'Slight Blur thumbnail not clickable' });
-        await el.click();
+    clickSlightBlur(): Promise<void> {
+        return this.clickAndWaitChecked(SLIGHT_BLUR_THUMBNAIL, 'Slight Blur');
     }
 
     /**
      * Clicks the "Blur" (full blur) thumbnail.
      */
-    async clickBlur(): Promise<void> {
-        await this.participant.log('VirtualBackgroundDialog: clicking Blur thumbnail');
-        const el = this.participant.driver.$(BLUR_THUMBNAIL);
-
-        await el.waitForClickable({ timeout: 3000, timeoutMsg: 'Blur thumbnail not clickable' });
-        await el.click();
+    clickBlur(): Promise<void> {
+        return this.clickAndWaitChecked(BLUR_THUMBNAIL, 'Blur');
     }
 
     /**
