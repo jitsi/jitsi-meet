@@ -4,6 +4,9 @@ const VB_DIALOG_CONTAINER = '#virtual-background-dialog';
 const NONE_THUMBNAIL = '[aria-label="Remove background"]';
 const SLIGHT_BLUR_THUMBNAIL = '[aria-label="Half Blur"]';
 const BLUR_THUMBNAIL = '[aria-label="Blur"]';
+const STUDIO_NATURAL_THUMBNAIL = '[aria-label="Natural"]';
+const STUDIO_SPOTLIGHT_THUMBNAIL = '[aria-label="Spotlight"]';
+const STUDIO_SOFT_FOCUS_THUMBNAIL = '[aria-label="Soft Focus"]';
 
 /**
  * Page object for the Virtual Background tab inside the settings dialog.
@@ -99,6 +102,57 @@ export default class VirtualBackgroundDialog extends BaseDialog {
      */
     isBlurChecked(): Promise<boolean> {
         return this.isThumbnailChecked(BLUR_THUMBNAIL);
+    }
+
+    /**
+     * Clicks the "Natural" studio light preset thumbnail.
+     */
+    clickStudioNatural(): Promise<void> {
+        return this.clickAndWaitChecked(STUDIO_NATURAL_THUMBNAIL, 'Studio Natural');
+    }
+
+    /**
+     * Clicks the "Spotlight" studio light preset thumbnail.
+     */
+    clickStudioSpotlight(): Promise<void> {
+        return this.clickAndWaitChecked(STUDIO_SPOTLIGHT_THUMBNAIL, 'Studio Spotlight');
+    }
+
+    /**
+     * Clicks the "Soft Focus" studio light preset thumbnail.
+     */
+    clickStudioSoftFocus(): Promise<void> {
+        return this.clickAndWaitChecked(STUDIO_SOFT_FOCUS_THUMBNAIL, 'Studio Soft Focus');
+    }
+
+    /**
+     * Returns true if the Natural studio light thumbnail is currently selected.
+     */
+    isStudioNaturalChecked(): Promise<boolean> {
+        return this.isThumbnailChecked(STUDIO_NATURAL_THUMBNAIL);
+    }
+
+    /**
+     * Returns true if the Spotlight studio light thumbnail is currently selected.
+     */
+    isStudioSpotlightChecked(): Promise<boolean> {
+        return this.isThumbnailChecked(STUDIO_SPOTLIGHT_THUMBNAIL);
+    }
+
+    /**
+     * Returns true if the Soft Focus studio light thumbnail is currently selected.
+     */
+    isStudioSoftFocusChecked(): Promise<boolean> {
+        return this.isThumbnailChecked(STUDIO_SOFT_FOCUS_THUMBNAIL);
+    }
+
+    /**
+     * Returns true if any studio light thumbnails are visible in the dialog.
+     */
+    async isStudioLightSectionVisible(): Promise<boolean> {
+        const el = this.participant.driver.$(STUDIO_NATURAL_THUMBNAIL);
+
+        return el.isExisting();
     }
 
     /**
