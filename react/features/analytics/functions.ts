@@ -187,6 +187,7 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
         overwritesLiveStreamingUrls?: boolean;
         overwritesSupportUrl?: boolean;
         server?: string;
+        supportsTurnInRoomMetadata?: boolean;
         tenant?: string;
         wasLobbyVisible?: boolean;
         wasPrejoinDisplayed?: boolean;
@@ -223,6 +224,8 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
     // Setting visitor properties to false by default. We will update them later if it turns out we are visitor.
     permanentProperties.isVisitor = false;
     permanentProperties.isPromotedFromVisitor = false;
+
+    permanentProperties.supportsTurnInRoomMetadata = true;
 
     // TODO: Temporary metric. To be removed once we don't need it.
     permanentProperties.overwritesSupportUrl = 'interfaceConfig.SUPPORT_URL' in params;
