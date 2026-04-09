@@ -20,6 +20,12 @@ local process_host_module = util.process_host_module;
 local table_shallow_copy = util.table_shallow_copy;
 local table_add = util.table_add;
 local table_equals = util.table_equals;
+local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
+local get_occupant_by_real_jid = util.get_occupant_by_real_jid;
+
+local dt = require "prosody.util.datetime";
+local ext_services = module:depends("external_services");
+local get_services = ext_services.get_services;
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
 local COMPONENT_IDENTITY_TYPE = 'room_metadata';
@@ -39,6 +45,8 @@ if not main_virtual_host then
 end
 
 local breakout_rooms_component_host = module:get_option_string('breakout_rooms_component');
+-- TODO: flip default once mobile clients update to latest ljm that supports transition of turn data in metadata
+local extdisco_occpuant_check = module:get_option_boolean('extdisco_occpuant_check', false);
 
 module:log("info", "Starting room metadata for %s", muc_component_host);
 
@@ -72,9 +80,9 @@ function broadcastMetadata(room, json_msg)
     end
 end
 
-function send_metadata(occupant, room, json_msg)
+function send_metadata(occupant, room, json_msg, include_services)
     if not json_msg or is_admin(occupant.bare_jid) then
-        local metadata_to_send = room.jitsiMetadata or {};
+        local metadata_to_send = table_shallow_copy(room.jitsiMetadata) or {};
 
         -- we want to send the main meeting participants only to jicofo
         if is_admin(occupant.bare_jid) then
@@ -90,11 +98,25 @@ function send_metadata(occupant, room, json_msg)
                 moderators:append(room._data.moderators);
             end
 
-            metadata_to_send = table_shallow_copy(metadata_to_send);
             metadata_to_send.participants = participants;
             metadata_to_send.moderators = moderators;
 
             module:log('info', 'Sending metadata to jicofo room=%s,meeting_id=%s', room.jid, room._data.meetingId);
+        elseif include_services then
+            metadata_to_send.services = {};
+
+            for _, srv in ipairs(get_services()) do
+                table.insert(metadata_to_send.services, {
+                    type = srv.type;
+                    transport = srv.transport;
+                    host = srv.host;
+                    port = srv.port and string.format('%d', srv.port) or nil;
+                    username = srv.username;
+                    password = srv.password;
+                    expires = srv.expires and dt.datetime(srv.expires) or nil;
+                    restricted = srv.restricted and '1' or nil;
+                });
+            end
         end
 
         json_msg = getMetadataJSON(room, metadata_to_send);
@@ -333,6 +355,34 @@ if breakout_rooms_component_host then
     end);
 end
 
+local function check_occupant(event)
+    local origin, stanza = event.origin, event.stanza;
+
+    local room_name = origin.jitsi_web_query_room;
+    if not room_name then
+        module:log('warn', 'No room in session: %s', origin.full_jid);
+        origin.send(st.error_reply(stanza, 'auth', 'forbidden'));
+        return true;
+    end
+
+    local subdomain = origin.jitsi_web_query_prefix or '';
+    local room = get_room_by_name_and_subdomain(room_name, subdomain);
+    if not room then
+        module:log('warn', 'Room not found (%s/%s) for %s', subdomain, room_name, origin.full_jid);
+        origin.send(st.error_reply(stanza, 'auth', 'forbidden'));
+        return true;
+    end
+
+    local from = stanza.attr.from or origin.full_jid;
+    local occupant = get_occupant_by_real_jid(room, from);
+
+    if not occupant then
+        module:log('warn', '%s not an occupant of %s/%s', from, subdomain, room_name);
+        origin.send(st.error_reply(stanza, 'auth', 'forbidden'));
+        return true;
+    end
+end
+
 -- Send a message update for metadata before sending the first self presence
 function filter_stanza(stanza, session)
     if not stanza.attr or not stanza.attr.to or stanza.name ~= 'presence' or stanza.attr.type == 'unavailable' then
@@ -369,7 +419,7 @@ function filter_stanza(stanza, session)
 
     room.sent_initial_metadata[bare_to] = true;
 
-    send_metadata(occupant, room);
+    send_metadata(occupant, room, nil, true);
 
     return stanza;
 end
@@ -383,7 +433,16 @@ end
 filters.add_filter_hook(filter_session);
 
 process_host_module(main_virtual_host, function(host_module)
-    module:context(host_module.host):fire_event('jitsi-add-identity', {
+    local main_host_module = module:context(host_module.host);
+    main_host_module:fire_event('jitsi-add-identity', {
         name = 'room_metadata'; host = module.host;
     });
+
+    if extdisco_occpuant_check then
+        -- Hook at priority 100 so we run before mod_external_services (default priority 0) for both XEP-0215 v2 and legacy v1.
+        main_host_module:hook('iq-get/host/urn:xmpp:extdisco:2:services', check_occupant, 100);
+        main_host_module:hook('iq-get/host/urn:xmpp:extdisco:2:service',  check_occupant, 100);
+        main_host_module:hook('iq-get/host/urn:xmpp:extdisco:1:services', check_occupant, 100);
+        main_host_module:hook('iq-get/host/urn:xmpp:extdisco:1:service',  check_occupant, 100);
+    end
 end);
