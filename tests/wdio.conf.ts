@@ -70,7 +70,7 @@ const specs = [
  */
 function generateCapabilitiesFromSpecs(): { capabilities: Record<string, any>; excludedSpecs: string[]; } {
     const allSpecFiles: string[] = [];
-    const browsers = [ 'p1', 'p2', 'p3', 'p4', 'p5', 'p6' ];
+    const allBrowsers = [ 'p1', 'p2', 'p3', 'p4', 'p5', 'p6' ];
     const excludedSpecs: string[] = [];
 
     for (const pattern of specs) {
@@ -85,15 +85,73 @@ function generateCapabilitiesFromSpecs(): { capabilities: Record<string, any>; e
     // Import TestProperties to access the populated registry
     const { testProperties } = require('./helpers/TestProperties');
 
+    // Detect if specific spec files are targeted via --spec CLI argument (e.g. npm run test-single).
+    // When targeted, only create capabilities for the browsers those specs actually need.
+    const targetedSpecFiles: string[] = [];
+
+    for (let i = 0; i < process.argv.length; i++) {
+        if (process.argv[i] === '--spec') {
+            // Collect all consecutive non-flag arguments after --spec (wdio accepts space-separated specs).
+            let j = i + 1;
+
+            while (j < process.argv.length && !process.argv[j].startsWith('--')) {
+                process.argv[j].split(',').forEach(f => {
+                    const normalized = f.trim().replace(/\\/g, '/');
+                    // Try exact resolution first, then fall back to case-insensitive suffix matching
+                    // (macOS filesystem is case-insensitive but string comparison is not).
+                    const resolved = path.resolve(normalized);
+                    const resolvedLower = resolved.toLowerCase();
+                    const normalizedLower = normalized.toLowerCase();
+                    const match = allSpecFiles.find(sf => {
+                        const sfNormalized = sf.replace(/\\/g, '/');
+
+                        return sfNormalized === resolved.replace(/\\/g, '/')
+                            || sfNormalized.toLowerCase() === resolvedLower.replace(/\\/g, '/')
+                            || sfNormalized.toLowerCase().endsWith(`/${normalizedLower}`);
+                    });
+
+                    if (match) {
+                        targetedSpecFiles.push(match);
+                    } else {
+                        console.warn(`[wdio] --spec file not found in spec list: ${f}`);
+                    }
+                });
+                j++;
+            }
+            i = j - 1;
+        }
+    }
+
+    console.log(`[wdio] process.argv: ${process.argv.join(' ')}`);
+    console.log(`[wdio] targeted specs: ${targetedSpecFiles.join(', ') || '(all)'}`);
+
+    const scopedFiles = targetedSpecFiles.length > 0 ? targetedSpecFiles : allSpecFiles;
+    const requiredBrowsers = new Set<string>();
+
+    for (const file of scopedFiles) {
+        const props = testProperties[file];
+
+        if (props?.useJaas && !testsConfig.jaas.enabled) {
+            continue;
+        }
+        if (props?.usesBrowsers) {
+            props.usesBrowsers.forEach((b: string) => requiredBrowsers.add(b));
+        } else {
+            requiredBrowsers.add('p1');
+        }
+    }
+
+    // Preserve the predefined browser order; fall back to all browsers if nothing was determined.
+    const browsers = requiredBrowsers.size > 0
+        ? allBrowsers.filter(b => requiredBrowsers.has(b))
+        : allBrowsers;
+
     // Determine which browsers need which exclusions
-    const browserExclusions: Record<string, Set<string>> = {
-        p1: new Set(),
-        p2: new Set(),
-        p3: new Set(),
-        p4: new Set(),
-        p5: new Set(),
-        p6: new Set()
-    };
+    const browserExclusions: Record<string, Set<string>> = {};
+
+    browsers.forEach(b => {
+        browserExclusions[b] = new Set();
+    });
 
     for (const file of allSpecFiles) {
         const props = testProperties[file];
@@ -232,7 +290,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
             .replace(/\//g, '-');
         const testProperties = await getTestProperties(testFilePath);
 
-        console.log(`Running test: ${testName} via worker: ${cid}`);
+        console.log(`Running test: ${testName} via worker: ${cid} browser instances:${multiremotebrowser.instances.length}`);
 
         const globalAny: any = global;
 
