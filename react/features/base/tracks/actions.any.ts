@@ -384,6 +384,7 @@ export function trackAdded(track: any) {
             JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED,
             (type: VideoType) => dispatch(trackVideoTypeChanged(track, type)));
         const local = track.isLocal();
+        const state = getState();
         const mediaType = track.getVideoType() === VIDEO_TYPE.DESKTOP
             ? MEDIA_TYPE.SCREENSHARE
             : track.getType();
@@ -407,7 +408,7 @@ export function trackAdded(track: any) {
             // Reset the no data from src notification state when we change the track, as it's context is set
             // on a per device basis.
             dispatch(setNoSrcDataNotificationUid());
-            const participant = getLocalParticipant(getState);
+            const participant = getLocalParticipant(state);
 
             if (participant) {
                 participantId = participant.id;
