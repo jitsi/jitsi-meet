@@ -8,6 +8,8 @@ require Pod::Executable.execute_command('node', ['-p',
 platform :ios, '15.1'
 workspace 'jitsi-meet'
 
+ENV['RCT_NEW_ARCH_ENABLED'] = '1'
+
 install! 'cocoapods', :deterministic_uuids => false
 
 def cocoa_utilities
@@ -28,12 +30,11 @@ target 'JitsiMeetSDK' do
   #
 
   config = use_native_modules!
-  flags = get_default_flags()
   use_react_native!(
     :path => config[:reactNativePath],
     :hermes_enabled => true,
-    :fabric_enabled => false,
-    :new_arch_enabled => false,
+    :fabric_enabled => true,
+    :new_arch_enabled => true,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
@@ -65,8 +66,8 @@ target 'JitsiMeetSDKLite' do
     use_react_native!(
       :path => config[:reactNativePath],
       :hermes_enabled => true,
-      :fabric_enabled => false,
-      :new_arch_enabled => false,
+      :fabric_enabled => true,
+      :new_arch_enabled => true,
       # An absolute path to your application root.
       :app_path => "#{Pod::Config.instance.installation_root}/.."
     )

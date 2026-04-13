@@ -1,5 +1,36 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.facebook.react'
 apply plugin: 'kotlin-android'
+
+// We need com.facebook.react for C++ auto-linking (OnLoad.cpp / TurboModules),
+// Delete generated Java files to avoid compile errors from missing transitive deps.
+afterEvaluate {
+    ["generateAutolinkingPackageList", "generateReactNativeEntryPoint"].each { taskName ->
+        tasks.matching { it.name == taskName }.configureEach {
+            doLast {
+                file("${buildDir}/generated/autolinking/src/main/java").deleteDir()
+            }
+        }
+    }
+}
+
+// Cmake references codegen JNI dirs from library modules that may not exist yet.
+// Ensure cmake tasks run after all libraries generate their codegen artifacts,
+// and clear stale .cxx cache before each configure to avoid variant mismatch.
+gradle.projectsEvaluated {
+    def codegenTasks = rootProject.subprojects.collectMany { sub ->
+        sub.tasks.matching { it.name == "generateCodegenArtifactsFromSchema" }
+    }
+    tasks.configureEach {
+        if (it.name.startsWith("configureCMake") || it.name.startsWith("buildCMake") ||
+            it.name.startsWith("externalNativeBuildClean")) {
+            it.dependsOn(codegenTasks)
+        }
+        if (it.name.startsWith("configureCMake")) {
+            it.doFirst { delete file('.cxx') }
+        }
+    }
+}
 
 // Crashlytics integration is done as part of Firebase now, so it gets
 // automagically activated with google-services.json
@@ -55,7 +86,7 @@ android {
         }
         release {
             // Uncomment the following line for signing a test release build.
-            // signingConfig signingConfigs.debug
+            //signingConfig signingConfigs.debug
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
             buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"

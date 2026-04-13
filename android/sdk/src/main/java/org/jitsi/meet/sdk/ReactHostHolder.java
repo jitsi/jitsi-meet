@@ -16,18 +16,16 @@
 
 package org.jitsi.meet.sdk;
 
-import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.annotation.Nullable;
 
-import com.facebook.hermes.reactexecutor.HermesExecutorFactory;
-import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.common.LifecycleState;
+import com.facebook.react.defaults.DefaultReactHost;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ViewManager;
 import com.oney.WebRTCModule.EglUtils;
@@ -42,19 +40,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-class ReactInstanceManagerHolder {
-    private static final String TAG = ReactInstanceManagerHolder.class.getSimpleName();
+class ReactHostHolder {
+    private static final String TAG = ReactHostHolder.class.getSimpleName();
 
     /**
-     * FIXME (from linter): Do not place Android context classes in static
-     * fields (static reference to ReactInstanceManager which has field
-     * mApplicationContext pointing to Context); this is a memory leak (and
-     * also breaks Instant Run).
-     *
-     * React Native bridge. The instance manager allows embedding applications
-     * to create multiple root views off the same JavaScript bundle.
+     * {@link ReactHost} is the new architecture replacement for ReactInstanceManager.
+     * It manages the React Native runtime in bridgeless (Fabric + TurboModules) mode.
      */
-    private static ReactInstanceManager reactInstanceManager;
+    private static ReactHost reactHost;
 
     private static List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> nativeModules
@@ -111,11 +104,11 @@ class ReactInstanceManagerHolder {
             new ReactPackageAdapter() {
                 @Override
                 public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-                    return ReactInstanceManagerHolder.createNativeModules(reactContext);
+                    return ReactHostHolder.createNativeModules(reactContext);
                 }
                 @Override
                 public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
-                    return ReactInstanceManagerHolder.createViewManagers(reactContext);
+                    return ReactHostHolder.createViewManagers(reactContext);
                 }
             }));
 
@@ -161,12 +154,8 @@ class ReactInstanceManagerHolder {
     static void emitEvent(
             String eventName,
             @Nullable Object data) {
-        ReactInstanceManager reactInstanceManager
-            = ReactInstanceManagerHolder.getReactInstanceManager();
-
-        if (reactInstanceManager != null) {
-            @SuppressLint("VisibleForTests") ReactContext reactContext
-                = reactInstanceManager.getCurrentReactContext();
+        if (reactHost != null) {
+            ReactContext reactContext = reactHost.getCurrentReactContext();
 
             if (reactContext != null) {
                 reactContext
@@ -180,36 +169,35 @@ class ReactInstanceManagerHolder {
      * Finds a native React module for given class.
      *
      * @param nativeModuleClass the native module's class for which an instance
-     * is to be retrieved from the {@link #reactInstanceManager}.
+     * is to be retrieved from the {@link ReactHost}.
      * @param <T> the module's type.
      * @return {@link NativeModule} instance for given interface type or
      * {@code null} if no instance for this interface is available, or if
-     * {@link #reactInstanceManager} has not been initialized yet.
+     * the host has not been initialized yet.
      */
     static <T extends NativeModule> T getNativeModule(
             Class<T> nativeModuleClass) {
-        @SuppressLint("VisibleForTests") ReactContext reactContext
-            = reactInstanceManager != null
-                ? reactInstanceManager.getCurrentReactContext() : null;
+        ReactContext reactContext
+            = reactHost != null
+                ? reactHost.getCurrentReactContext() : null;
 
         return reactContext != null
                 ? reactContext.getNativeModule(nativeModuleClass) : null;
     }
 
-    static ReactInstanceManager getReactInstanceManager() {
-        return reactInstanceManager;
+    static ReactHost getReactHost() {
+        return reactHost;
     }
 
     /**
-     * Internal method to initialize the React Native instance manager. We
-     * create a single instance in order to load the JavaScript bundle a single
-     * time. All {@code ReactRootView} instances will be tied to the one and
-     * only {@code ReactInstanceManager}.
+     * Initializes WebRTC options, obtains the {@link ReactHost}, and starts
+     * the React Native runtime. If the app extends {@link JitsiApplication},
+     * the ReactHost is obtained from it; otherwise a new one is created.
      *
-     * @param app {@code Application}
+     * @param app {@code Application} instance
      */
-    static void initReactInstanceManager(Application app) {
-        if (reactInstanceManager != null) {
+    static void initReactHost(Application app) {
+        if (reactHost != null) {
             return;
         }
 
@@ -228,16 +216,25 @@ class ReactInstanceManagerHolder {
 
         JitsiMeetLogger.d(TAG, "initializing RN");
 
-        reactInstanceManager
-            = ReactInstanceManager.builder()
-                .setApplication(app)
-                .setCurrentActivity(null)
-                .setBundleAssetName("index.android.bundle")
-                .setJSMainModulePath("index.android")
-                .setJavaScriptExecutorFactory(new HermesExecutorFactory())
-                .addPackages(getReactNativePackages())
-                .setUseDeveloperSupport(BuildConfig.DEBUG)
-                .setInitialLifecycleState(LifecycleState.BEFORE_CREATE)
-                .build();
+        if (app instanceof JitsiApplication) {
+            reactHost = ((JitsiApplication) app).getReactHost();
+        } else {
+            reactHost = DefaultReactHost.getDefaultReactHost(
+                app,
+                getReactNativePackages(),
+                "index.android",       /* jsMainModulePath */
+                "index.android.bundle", /* jsBundleAssetPath */
+                null,                   /* jsBundleFilePath */
+                null,                   /* jsRuntimeFactory (defaults to Hermes) */
+                BuildConfig.DEBUG, /* useDevSupport */
+                Collections.emptyList(), /* cxxReactPackageProviders */
+                e -> { throw new RuntimeException(e); }, /* exceptionHandler */
+                null                    /* bindingsInstaller */
+            );
+        }
+
+        if (reactHost != null) {
+            reactHost.start();
+        }
     }
 }
