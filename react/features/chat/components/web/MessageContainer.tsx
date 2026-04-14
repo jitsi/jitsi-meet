@@ -2,6 +2,7 @@ import { throttle } from 'lodash-es';
 import React, { Component, RefObject } from 'react';
 import { scrollIntoView } from 'seamless-scroll-polyfill';
 
+import i18next from '../../../base/i18n/i18next';
 import { groupMessagesBySender } from '../../../base/util/messageGrouping';
 import { MESSAGE_TYPE_LOCAL, MESSAGE_TYPE_REMOTE } from '../../constants';
 import { IMessage } from '../../types';
@@ -18,6 +19,7 @@ interface IProps {
      */
     isVisible?: boolean;
     messages: IMessage[];
+    searchString?: string;
 }
 
 interface IState {
@@ -78,6 +80,7 @@ export default class MessageContainer extends Component<IProps, IState> {
     _hasInitiallyScrolled: boolean;
 
     static defaultProps = {
+        searchString: ''
         isVisible: true,
         messages: [] as IMessage[]
     };
@@ -109,16 +112,20 @@ export default class MessageContainer extends Component<IProps, IState> {
      * @inheritdoc
      */
     override render() {
+        const { messages, searchString } = this.props;
         const groupedMessages = this._getMessagesGroupedBySender();
+
+        const showNoResults = searchString && messages.length === 0;
+
         const content = groupedMessages.map((group, index) => {
-            const { messages } = group;
-            const messageType = messages[0]?.messageType;
+            const { messages: groupMessages } = group;
+            const messageType = groupMessages[0]?.messageType;
 
             return (
                 <ChatMessageGroup
                     className = { messageType || MESSAGE_TYPE_REMOTE }
                     key = { index }
-                    messages = { messages } />
+                    messages = { groupMessages } />
             );
         });
 
@@ -131,11 +138,19 @@ export default class MessageContainer extends Component<IProps, IState> {
                     ref = { this._messageListRef }
                     role = 'log'
                     tabIndex = { 0 }>
-                    { content }
+                    {showNoResults ? (
+                        <div className = 'chat-no-search-results'>
+                            <span>{i18next.t('chat.noSearchResults', { searchString })}</span>
+                        </div>
+                    ) : (
+                        <>
+                            { content }
 
-                    { !this.state.isScrolledToBottom && this.state.hasNewMessages
-                        && <NewMessagesButton
-                            onGoToFirstUnreadMessage = { this._onGoToFirstUnreadMessage } /> }
+                            { !this.state.isScrolledToBottom && this.state.hasNewMessages
+                                && <NewMessagesButton
+                                    onGoToFirstUnreadMessage = { this._onGoToFirstUnreadMessage } /> }
+                        </>
+                    )}
                     <div
                         id = 'messagesListEnd'
                         ref = { this._messagesListEndRef } />

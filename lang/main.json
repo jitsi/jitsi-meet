@@ -157,7 +157,10 @@
         "titleWithFeatures": "Chat and",
         "titleWithFileSharing": "Files",
         "titleWithPolls": "Polls",
-        "you": "you"
+        "you": "you",
+        "search": "Search messages",
+        "searchPlaceholder": "Search messages...",
+        "noSearchResults": "No messages found for \"{{searchString}}\""
     },
     "chromeExtensionBanner": {
         "buttonText": "Install Chrome Extension",
