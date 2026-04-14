@@ -113,7 +113,7 @@ jobs:
     name: Build mobile SDK (Android)
     runs-on: ubuntu-latest
     container: 
-      image: reactnativecommunity/react-native-android:v15.0
+      image: reactnativecommunity/react-native-android:v18.0
       volumes:
         - /usr:/host/usr
     steps:

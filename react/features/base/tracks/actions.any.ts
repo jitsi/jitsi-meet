@@ -6,7 +6,7 @@ import { NOTIFICATION_TIMEOUT, NOTIFICATION_TIMEOUT_TYPE } from '../../notificat
 import { getCurrentConference } from '../conference/functions';
 import { IJitsiConference } from '../conference/reducer';
 import { isMacOS } from '../environment/environment';
-import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
+import { JitsiTrackErrors, JitsiTrackEvents, JitsiTrackStreamingStatus } from '../lib-jitsi-meet';
 import { setAudioMuted, setScreenshareMuted, setVideoMuted } from '../media/actions';
 import {
     CAMERA_FACING_MODE,
@@ -384,6 +384,7 @@ export function trackAdded(track: any) {
             JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED,
             (type: VideoType) => dispatch(trackVideoTypeChanged(track, type)));
         const local = track.isLocal();
+        const state = getState();
         const mediaType = track.getVideoType() === VIDEO_TYPE.DESKTOP
             ? MEDIA_TYPE.SCREENSHARE
             : track.getType();
@@ -407,7 +408,7 @@ export function trackAdded(track: any) {
             // Reset the no data from src notification state when we change the track, as it's context is set
             // on a per device basis.
             dispatch(setNoSrcDataNotificationUid());
-            const participant = getLocalParticipant(getState);
+            const participant = getLocalParticipant(state);
 
             if (participant) {
                 participantId = participant.id;
@@ -468,6 +469,7 @@ export function trackAdded(track: any) {
                 muted: track.isMuted(),
                 noDataFromSourceNotificationInfo,
                 participantId,
+                streamingStatus: local ? undefined : (track.isP2P ? JitsiTrackStreamingStatus.ACTIVE : track.getTrackStreamingStatus()),
                 videoStarted: false,
                 videoType: track.videoType
             }

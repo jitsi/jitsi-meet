@@ -261,6 +261,13 @@ export class Participant {
 
         await this.waitForPageToLoad();
 
+        // If the URL changed, wait for the new page to load before proceeding.
+        const currentUrl = await this.driver.getUrl();
+
+        if (!currentUrl.includes(url)) {
+            await this.waitForPageToLoad();
+        }
+
         if (this._iFrameApi) {
             await this.switchToIFrame();
         }
