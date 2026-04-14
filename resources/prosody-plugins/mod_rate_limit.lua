@@ -117,12 +117,13 @@ end
 
 -- Throttles reading from the connection of a specific session.
 local function throttle_session(session, rate, timeout)
-    if not session.jitsi_throttle then
+    if not session.jitsi_throttle and not session.jitsi_throttle_setlimit then
         if (session.conn and session.conn.setlimit) then
             session.jitsi_throttle_counter = session.jitsi_throttle_counter + 1;
             module:log("info", "Enabling throttle (%s bytes/s) via setlimit, session=%s, ip=%s, counter=%s.",
                 rate, session.id, session.ip, session.jitsi_throttle_counter);
             session.conn:setlimit(rate);
+            session.jitsi_throttle_setlimit = true;
             if timeout then
                 if session.jitsi_throttle_timer then
                     -- if there was a timer stop it as we will schedule a new one
@@ -134,6 +135,7 @@ local function throttle_session(session, rate, timeout)
                         module:log("info", "Stop throttling session=%s, ip=%s.", session.id, session.ip);
                         session.conn:setlimit(0);
                     end
+                    session.jitsi_throttle_setlimit = nil;
                     session.jitsi_throttle_timer = nil;
                 end);
             end
@@ -146,7 +148,9 @@ local function throttle_session(session, rate, timeout)
         end
 	else
 		-- update the throttling start
-		session.jitsi_throttle.start = gettime();
+        if session.jitsi_throttle then
+            session.jitsi_throttle.start = gettime();
+        end
 	end
 end
 
