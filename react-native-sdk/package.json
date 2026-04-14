@@ -66,7 +66,7 @@
         "@react-native-google-signin/google-signin": "0.0.0",
         "@sayem314/react-native-keep-awake": "0.0.0",
         "react-native": "0.0.0",
-        "react": "*",
+        "react": "0.0.0",
         "react-native-background-timer": "0.0.0",
         "react-native-calendar-events": "0.0.0",
         "react-native-default-preference": "0.0.0",
@@ -82,7 +82,6 @@
         "react-native-splash-view": "0.0.0",
         "react-native-svg": "0.0.0",
         "react-native-video": "0.0.0",
-        "react-native-watch-connectivity": "0.0.0",
         "react-native-webrtc": "0.0.0",
         "react-native-webview": "0.0.0",
         "react-native-worklets-core": "0.0.0"
