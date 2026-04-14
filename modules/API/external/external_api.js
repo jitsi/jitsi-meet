@@ -1063,6 +1063,21 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns the current recording and transcribing status.
+     *
+     * @returns {Promise<{fileRecording: string|null, streamRecording: string|null, transcribing: boolean}>}
+     * - Resolves with an object containing:
+     *   - fileRecording: recording status for file mode ('on', 'off', 'pending') or null if no session exists.
+     *   - streamRecording: recording status for stream mode ('on', 'off', 'pending') or null if no session exists.
+     *   - transcribing: true if a transcriber is currently active in the conference.
+     */
+    getRecordingStatus() {
+        return this._transport.sendRequest({
+            name: 'get-recording-status'
+        });
+    }
+
+    /**
      * Returns the conference participants information.
      *
      * @returns {Array<Object>} - Returns an array containing participants
