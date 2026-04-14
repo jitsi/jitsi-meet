@@ -66,7 +66,7 @@ PODS:
   - fmt (11.0.2)
   - Giphy (2.2.16):
     - libwebp
-  - giphy-react-native-sdk (4.1.0):
+  - giphy-react-native-sdk (5.0.1):
     - DoubleConversion
     - Giphy (= 2.2.16)
     - glog
@@ -2418,7 +2418,7 @@ SPEC CHECKSUMS:
   FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
   Giphy: 55914215541027873875757f350530e6d8986fba
-  giphy-react-native-sdk: 3c4af6c67ca504cf9facc784e6569784aacdfbdf
+  giphy-react-native-sdk: 96979a55db8fa26e03f8c5208e3cfa8f62193770
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   GoogleAppMeasurement: 4c19f031220c72464d460c9daa1fb5d1acce958e
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a

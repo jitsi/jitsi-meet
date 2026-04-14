@@ -23,7 +23,7 @@
     "@emotion/styled": "11.10.6",
     "@giphy/js-fetch-api": "4.9.3",
     "@giphy/react-components": "6.9.4",
-    "@giphy/react-native-sdk": "4.1.0",
+    "@giphy/react-native-sdk": "5.0.1",
     "@jitsi/excalidraw": "https://github.com/jitsi/excalidraw/releases/download/0.18.5/jitsi-excalidraw-v0.18.5.tgz",
     "@jitsi/js-utils": "2.6.7",
     "@jitsi/logger": "2.1.1",
