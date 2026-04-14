@@ -914,14 +914,17 @@ function initCommands() {
         'toggle-whiteboard': () => {
             APP.store.dispatch(toggleWhiteboard());
         },
-        'set-virtual-background': (enabled, backgroundImage) => {
+        'set-virtual-background': (enabled, backgroundType, virtualSource) => {
             const tracks = APP.store.getState()['features/base/tracks'];
             const jitsiTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
+            const bgType = backgroundType || (enabled
+                ? VIRTUAL_BACKGROUND_TYPE.IMAGE
+                : VIRTUAL_BACKGROUND_TYPE.NONE);
 
             APP.store.dispatch(toggleBackgroundEffect({
                 backgroundEffectEnabled: enabled,
-                backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
-                virtualSource: backgroundImage
+                backgroundType: bgType,
+                virtualSource
             }, jitsiTrack));
         },
         'show-pip': () => {
