@@ -270,10 +270,19 @@ const DialogWithTabs = ({
     }, [ tabStates ]);
 
     const onSubmit = useCallback(() => {
+        let allValid = true;
+
         tabs.forEach(({ submit }, idx) => {
-            submit?.(tabStates[idx]);
+            const result = submit?.(tabStates[idx]);
+
+            if (result === false) {
+                allValid = false;
+            }
         });
-        onClose(false);
+
+        if (allValid) {
+            onClose(false);
+        }
     }, [ tabs, tabStates ]);
 
     const selectedTabIndex = useMemo(() => {
