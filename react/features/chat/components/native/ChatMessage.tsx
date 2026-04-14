@@ -17,6 +17,15 @@ import {
     replaceNonUnicodeEmojis
 } from '../../functions';
 import { IChatMessageProps } from '../../types';
+import i18next from '../../../base/i18n/i18next';
+
+interface IState {
+
+    /**
+     * Whether the message is expanded to show full text.
+     */
+    expanded: boolean;
+}
 
 import GifMessage from './GifMessage';
 import PrivateMessageButton from './PrivateMessageButton';
@@ -26,7 +35,11 @@ import styles from './styles';
 /**
  * Renders a single chat message.
  */
-class ChatMessage extends Component<IChatMessageProps> {
+class ChatMessage extends Component<IChatMessageProps, IState> {
+    state = {
+        expanded: false
+    };
+
     /**
      * Implements {@code Component#render}.
      *
@@ -145,13 +158,30 @@ class ChatMessage extends Component<IChatMessageProps> {
      * @returns {React.ReactElement<*>}
      */
     _renderMessageTextComponent(messageText: string) {
+        const { expanded } = this.state;
 
         if (messageText.length >= CHAR_LIMIT) {
+            if (expanded) {
+                return (
+                    <Text selectable = { true } style = { styles.chatMessage }>
+                        { messageText }
+                        <Text
+                            onPress = { this._toggleExpanded }
+                            style = { styles.seeMoreClickableText }>
+                            {' '}{i18next.t('chat.seeLess')}
+                        </Text>
+                    </Text>
+                );
+            }
+
             return (
-                <Text
-                    selectable = { true }
-                    style = { styles.chatMessage }>
-                    { messageText }
+                <Text selectable = { true } style = { styles.chatMessage }>
+                    { messageText.slice(0, (CHAR_LIMIT - 10)) }
+                    <Text
+                        onPress = { this._toggleExpanded }
+                        style = { styles.seeMoreClickableText }>
+                        {' '}...{i18next.t('chat.seeMore')}
+                    </Text>
                 </Text>
             );
         }
@@ -164,6 +194,15 @@ class ChatMessage extends Component<IChatMessageProps> {
             </Linkify>
         );
     }
+
+    /**
+     * Toggles the expanded state of the message.
+     *
+     * @returns {void}
+     */
+    _toggleExpanded = () => {
+        this.setState(prevState => ({ expanded: !prevState.expanded }));
+    };
 
     /**
      * Renders the message privacy notice, if necessary.

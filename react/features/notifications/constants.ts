@@ -135,3 +135,8 @@ export const SILENT_JOIN_THRESHOLD = 30;
  * Amount of participants beyond which no left notification will be emitted.
  */
 export const SILENT_LEFT_THRESHOLD = 30;
+
+/**
+ * Maximum character limit for notification message description.
+ */
+export const NOTIFICATION_CHAR_LIMIT = 150;
