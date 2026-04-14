@@ -13,6 +13,21 @@ body.welcome-page {
     min-height: 100dvh;
     position: relative;
 
+    /**
+     * Enable text selection only for key welcome-page text.
+     * Overrides global user-select: none for user-facing readable content.
+     */
+     div,
+    .header-text-title,
+    .header-text-subtitle,
+    .welcome-footer-row-1-text,
+    .not-allow-title-character-text,
+    .insecure-room-name-warning span {
+        user-select: text;
+        -webkit-user-select: text;
+        -moz-user-select: text;
+    }
+
     .header {
         background-image: $welcomePageHeaderBackground;
         background-position: $welcomePageHeaderBackgroundPosition;
@@ -48,6 +63,7 @@ body.welcome-page {
             margin-bottom: $welcomePageHeaderTextTitleMarginBottom;
             max-width: $welcomePageHeaderTitleMaxWidth;
             opacity: $welcomePageHeaderTextTitleOpacity;
+            position: relative;
             text-align: $welcomePageHeaderTextAlign;
         }
 
@@ -57,6 +73,7 @@ body.welcome-page {
             font-weight: 600;
             line-height: 1.625rem;
             margin: 16px 0 32px 0;
+            position: relative;
             text-align: $welcomePageHeaderTextAlign;
 
         }
