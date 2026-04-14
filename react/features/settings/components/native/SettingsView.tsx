@@ -7,6 +7,7 @@ import {
     View,
     ViewStyle
 } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import { Divider } from 'react-native-paper';
 import { Edge } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
@@ -41,6 +42,7 @@ const SettingsView = ({ isInWelcomePage }: IProps) => {
     const localParticipant = useSelector((state: IReduxState) => getLocalParticipant(state));
     const showModeratorSettings = useSelector((state: IReduxState) => shouldShowModeratorSettings(state));
     const { visible } = useSelector((state: IReduxState) => state['features/settings']);
+    const isTablet = DeviceInfo.isTablet();
 
     const addBottomInset = !isInWelcomePage;
     const localParticipantId = localParticipant?.id;
@@ -55,7 +57,9 @@ const SettingsView = ({ isInWelcomePage }: IProps) => {
             disableForcedKeyboardDismiss = { true }
             safeAreaInsets = { [ addBottomInset && 'bottom', 'left', 'right' ].filter(Boolean) as Edge[] }
             style = { styles.settingsViewContainer }>
-            <ScrollView bounces = { scrollBounces }>
+            <ScrollView
+                bounces = { scrollBounces }
+                contentContainerStyle = { isTablet ? styles.tabletSettingsContainer as ViewStyle : undefined }>
                 <View style = { styles.profileContainerWrapper as ViewStyle }>
                     <TouchableHighlight
 
