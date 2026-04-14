@@ -64,11 +64,11 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 7.7)
     - PromisesObjC (< 3.0, >= 1.2)
   - fmt (11.0.2)
-  - Giphy (2.2.16):
+  - Giphy (2.3.0):
     - libwebp
-  - giphy-react-native-sdk (4.1.0):
+  - giphy-react-native-sdk (5.0.2):
     - DoubleConversion
-    - Giphy (= 2.2.16)
+    - Giphy (= 2.3.0)
     - glog
     - hermes-engine
     - RCT-Folly (= 2024.11.18.00)
@@ -2417,8 +2417,8 @@ SPEC CHECKSUMS:
   FirebaseCrashlytics: feb07e4e9187be3c23c6a846cce4824e5ce2dd0b
   FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
-  Giphy: 55914215541027873875757f350530e6d8986fba
-  giphy-react-native-sdk: 3c4af6c67ca504cf9facc784e6569784aacdfbdf
+  Giphy: 980856ee41d0a96def9cf9dcf341fce36d5fa5af
+  giphy-react-native-sdk: e8613543d0c7fa117df19e9fa838aa2ad43c9c6e
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   GoogleAppMeasurement: 4c19f031220c72464d460c9daa1fb5d1acce958e
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
