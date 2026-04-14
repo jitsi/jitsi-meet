@@ -6,7 +6,7 @@ import { NOTIFICATION_TIMEOUT, NOTIFICATION_TIMEOUT_TYPE } from '../../notificat
 import { getCurrentConference } from '../conference/functions';
 import { IJitsiConference } from '../conference/reducer';
 import { isMacOS } from '../environment/environment';
-import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
+import { JitsiTrackErrors, JitsiTrackEvents, JitsiTrackStreamingStatus } from '../lib-jitsi-meet';
 import { setAudioMuted, setScreenshareMuted, setVideoMuted } from '../media/actions';
 import {
     CAMERA_FACING_MODE,
@@ -469,6 +469,7 @@ export function trackAdded(track: any) {
                 muted: track.isMuted(),
                 noDataFromSourceNotificationInfo,
                 participantId,
+                streamingStatus: local ? undefined : (track.isP2P ? JitsiTrackStreamingStatus.ACTIVE : track.getTrackStreamingStatus()),
                 videoStarted: false,
                 videoType: track.videoType
             }
