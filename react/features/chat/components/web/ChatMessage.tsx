@@ -8,6 +8,7 @@ import { translate } from '../../../base/i18n/functions';
 import { getParticipantById, getParticipantDisplayName, isPrivateChatEnabled } from '../../../base/participants/functions';
 import Popover from '../../../base/popover/components/Popover.web';
 import Message from '../../../base/react/components/web/Message';
+import { escapeRegexp } from '../../../base/util/helpers';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
 import { getDisplayNameSuffix, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage, isFileMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
@@ -19,6 +20,7 @@ import ReactButton from './ReactButton';
 interface IProps extends IChatMessageProps {
     className?: string;
     enablePrivateChat?: boolean;
+    searchTerm?: string;
     shouldDisplayMenuOnRight?: boolean;
     state?: IReduxState;
 }
@@ -202,6 +204,11 @@ const useStyles = makeStyles()((theme: Theme) => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
+        },
+        highlight: {
+            color: theme.palette.chatSearchHighlightText,
+            borderRadius: '2px',
+            padding: '0 1px'
         }
     };
 });
@@ -209,6 +216,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 const ChatMessage = ({
     className = '',
     message,
+    searchTerm,
     state,
     showDisplayName,
     shouldDisplayMenuOnRight,
@@ -219,6 +227,31 @@ const ChatMessage = ({
     const { classes, cx } = useStyles();
     const [ isHovered, setIsHovered ] = useState(false);
     const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
+
+    /**
+     * Splits a plain-text string by the search term and returns an array of
+     * React nodes with matching portions wrapped in a highlighted <mark>.
+     *
+     * @param {string} text - The message text to highlight.
+     * @returns {Array<React.ReactNode>}
+     */
+
+    function _renderHighlightedText(text: string): React.ReactNode {
+        if (!searchTerm) {
+            return text;
+        }
+
+        const regex = new RegExp(`(${escapeRegexp(searchTerm)})`, 'gi');
+        const parts = text.split(regex);
+
+        return parts.map((part, i) =>
+            regex.test(part)
+                ? <mark
+                    className = { classes.highlight }
+                    key = { i }>{part}</mark>
+                : part
+        );
+    }
 
     const handleMouseEnter = useCallback(() => {
         setIsHovered(true);
@@ -389,6 +422,16 @@ const ChatMessage = ({
                                                 user: message.displayName
                                             })
                                         } />
+                                ) : searchTerm ? (
+                                    <p>
+                                        <span className = 'sr-only'>
+                                            {message.messageType === MESSAGE_TYPE_LOCAL
+                                                ? t('chat.messageAccessibleTitleMe')
+                                                : t('chat.messageAccessibleTitle', { user: message.displayName })
+                                            }
+                                        </span>
+                                        {_renderHighlightedText(getMessageText(message))}
+                                    </p>
                                 ) : (
                                     <Message
                                         screenReaderHelpText = { message.messageType === MESSAGE_TYPE_LOCAL

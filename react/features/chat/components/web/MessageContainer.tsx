@@ -18,6 +18,7 @@ interface IProps {
      */
     isVisible?: boolean;
     messages: IMessage[];
+    searchTerm?: string;
 }
 
 interface IState {
@@ -109,6 +110,7 @@ export default class MessageContainer extends Component<IProps, IState> {
      * @inheritdoc
      */
     override render() {
+        const { searchTerm } = this.props;
         const groupedMessages = this._getMessagesGroupedBySender();
         const content = groupedMessages.map((group, index) => {
             const { messages } = group;
@@ -118,7 +120,8 @@ export default class MessageContainer extends Component<IProps, IState> {
                 <ChatMessageGroup
                     className = { messageType || MESSAGE_TYPE_REMOTE }
                     key = { index }
-                    messages = { messages } />
+                    messages = { messages } 
+                    searchTerm = { searchTerm } />
             );
         });
 

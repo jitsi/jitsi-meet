@@ -83,6 +83,7 @@ export interface IPalette {
     chatRecipientContainer: string;
     chatRecipientText: string;
     chatReplyIcon: string;
+    chatSearchHighlightText: string;
     chatSenderName: string;
     chatTimestamp: string;
     dialogBackground: string;

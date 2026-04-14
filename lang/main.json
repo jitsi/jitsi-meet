@@ -143,6 +143,7 @@
         },
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateNotice": "Private message to {{recipient}}",
+        "searchPlaceholder": "Search in chat…",
         "sendButton": "Send",
         "smileysPanel": "Emoji panel",
         "systemDisplayName": "System",
