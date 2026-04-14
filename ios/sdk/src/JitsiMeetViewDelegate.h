@@ -70,6 +70,14 @@
 - (void)participantLeft:(NSDictionary *)data;
 
 /**
+ * Called when a participant has been kicked out of the conference.
+ *
+ * The `data` dictionary contains a `kicked` key with the kicked participant info
+ * and a `kicker` key with the kicker's participantId and name.
+ */
+- (void)participantKickedOut:(NSDictionary *)data;
+
+/**
  * Called when audioMuted state changed.
  *
  * The `data` dictionary contains a `muted` key with state of the audioMuted for the localParticipant.
