@@ -148,19 +148,27 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         };
 
     case EDIT_MESSAGE: {
+        const editedMessage = action.message;
         let found = false;
-        const newMessage = action.message;
-        const messages = state.messages.map(m => {
-            if (m.messageId === newMessage.messageId) {
-                found = true;
 
-                return newMessage;
+        const messages = state.messages.map(m => {
+            if (m.messageId !== editedMessage.messageId) {
+                return m;
             }
 
-            return m;
+            found = true;
+
+            return {
+                ...m,
+                message: editedMessage.message,
+                participantId: m.participantId,
+                timestamp: m.timestamp,
+
+                isEdited: true,
+                editedTimestamp: editedMessage.editedTimestamp ?? Date.now()
+            };
         });
 
-        // no change
         if (!found) {
             return state;
         }
