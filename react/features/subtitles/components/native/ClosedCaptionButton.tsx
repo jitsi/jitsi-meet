@@ -8,6 +8,7 @@ import { IconSubtitles } from '../../../base/icons/svg';
 import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
+import { canStartSubtitles, isCCTabEnabled } from '../../functions.any';
 import {
     AbstractClosedCaptionButton,
     _abstractMapStateToProps
@@ -48,7 +49,11 @@ class ClosedCaptionButton
  */
 export function mapStateToProps(state: IReduxState, ownProps: any) {
     const enabled = getFeatureFlag(state, CLOSE_CAPTIONS_ENABLED, true);
-    const abstractProps = _abstractMapStateToProps(state, ownProps);
+    const { visible = canStartSubtitles(state) || isCCTabEnabled(state) } = ownProps;
+    const abstractProps = _abstractMapStateToProps(state, {
+        ...ownProps,
+        visible
+    });
 
     return {
         ...abstractProps,
