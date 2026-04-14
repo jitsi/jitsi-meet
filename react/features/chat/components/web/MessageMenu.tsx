@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -68,9 +68,11 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
     const { t } = useTranslation();
     const [ isPopoverOpen, setIsPopoverOpen ] = useState(false);
     const [ showCopiedMessage, setShowCopiedMessage ] = useState(false);
+    const [ copyFailed, setCopyFailed ] = useState(false);
     const [ popupPosition, setPopupPosition ] = useState({ top: 0,
         left: 0 });
     const buttonRef = useRef<HTMLDivElement>(null);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const participant = useSelector((state: IReduxState) => getParticipantById(state, participantId));
 
@@ -122,18 +124,43 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
                         });
                     }
                     setShowCopiedMessage(true);
-                    setTimeout(() => {
+                    
+                    // Clear any existing timeout
+                    if (timeoutRef.current) {
+                        clearTimeout(timeoutRef.current);
+                    }
+                    
+                    // Set new timeout and store reference
+                    timeoutRef.current = setTimeout(() => {
                         setShowCopiedMessage(false);
                     }, 2000);
                 } else {
                     logger.error('Failed to copy text');
+                    setCopyFailed(true);
+                    
+                    // Clear any existing timeout and set new one for error message
+                    if (timeoutRef.current) {
+                        clearTimeout(timeoutRef.current);
+                    }
+                    timeoutRef.current = setTimeout(() => {
+                        setCopyFailed(false);
+                    }, 2000);
                 }
             })
             .catch((error: Error) => {
                 logger.error('Error copying text', error);
             });
         handleClose();
-    }, [ message ]);
+    }, [ message, handleClose ]);
+
+    // Cleanup timeout on component unmount
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, []);
 
     const popoverContent = (
         <div className = { classes.menuPanel }>
@@ -178,6 +205,15 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
                     style = {{ top: `${popupPosition.top}px`,
                         left: `${popupPosition.left}px` }}>
                     {t('Message Copied')}
+                </div>,
+                document.body
+            )}
+            {copyFailed && ReactDOM.createPortal(
+                <div
+                    className = { cx(classes.copiedMessage, { [classes.showCopiedMessage]: copyFailed }) }
+                    style = {{ top: `${popupPosition.top}px`,
+                        left: `${popupPosition.left}px` }}>
+                    {t('Failed to copy text')}
                 </div>,
                 document.body
             )}
