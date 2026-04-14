@@ -16,6 +16,7 @@ import CONFIG_WHITELIST from './configWhitelist';
 import {
     DEFAULT_HELP_CENTRE_URL,
     DEFAULT_PRIVACY_URL,
+    DEFAULT_SECURITY_URL,
     DEFAULT_TERMS_URL,
     FEATURE_FLAGS,
     _CONFIG_STORE_PREFIX
@@ -433,7 +434,8 @@ export function getSecurityUiConfig(state: IReduxState) {
  * @returns {{
  *  privacy: string,
  *  helpCentre: string,
- *  terms: string
+ *  terms: string,
+ *  security: string
  * }}
  */
 export function getLegalUrls(state: IReduxState) {
@@ -443,8 +445,22 @@ export function getLegalUrls(state: IReduxState) {
     return {
         privacy: configLegalUrls?.privacy || DEFAULT_PRIVACY_URL,
         helpCentre: helpCentreURL || configLegalUrls?.helpCentre || DEFAULT_HELP_CENTRE_URL,
-        terms: configLegalUrls?.terms || DEFAULT_TERMS_URL
+        terms: configLegalUrls?.terms || DEFAULT_TERMS_URL,
+        security: configLegalUrls?.security || DEFAULT_SECURITY_URL
     };
+}
+
+/**
+ * Gets the security URL from config or returns default.
+ * Uses the existing legalUrls.security config field to support custom security endpoints.
+ *
+ * @param {IReduxState} state - The state of the application.
+ * @returns {string} The security URL to use.
+ */
+export function getSecurityUrl(state: IReduxState): string {
+    const config = state['features/base/config'];
+
+    return config?.legalUrls?.security ?? DEFAULT_SECURITY_URL;
 }
 
 /**

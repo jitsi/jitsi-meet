@@ -38,6 +38,11 @@ export const DEFAULT_TERMS_URL = 'https://jitsi.org/meet/terms';
 export const DEFAULT_PRIVACY_URL = 'https://jitsi.org/meet/privacy';
 
 /**
- * The URL at which the help centre is available to the user.
+ * The URL at which help centre is available to the user.
  */
 export const DEFAULT_HELP_CENTRE_URL = 'https://web-cdn.jitsi.net/faq/meet-faq.html';
+
+/**
+ * The URL at which security documentation is available to the user.
+ */
+export const DEFAULT_SECURITY_URL = 'https://jitsi.org/security/';

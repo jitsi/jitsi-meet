@@ -12,7 +12,7 @@ import RecentList from '../../recent-list/components/RecentList.web';
 import SettingsButton from '../../settings/components/web/SettingsButton';
 import { SETTINGS_TABS } from '../../settings/constants';
 
-import { AbstractWelcomePage, IProps, _mapStateToProps } from './AbstractWelcomePage';
+import { IProps as AbstractProps, AbstractWelcomePage, _mapStateToProps as _abstractMapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
 
 /**
@@ -21,6 +21,17 @@ import Tabs from './Tabs';
  * @type {string}
  */
 export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
+
+/**
+ * The type of the React {@code Component} props of {@link WelcomePage}.
+ */
+interface IProps extends AbstractProps {
+
+    /**
+     * Function for getting the unsafe room text.
+     */
+    getUnsafeRoomTextFn: Function;
+}
 
 /**
  * The Web container rendering the welcome page.
@@ -309,12 +320,12 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      *
      * @inheritdoc
      */
-    override _doRenderInsecureRoomNameWarning() {
+    _doRenderInsecureRoomNameWarning() {
         return (
             <div className = 'insecure-room-name-warning'>
                 <Icon src = { IconWarning } />
                 <span>
-                    {getUnsafeRoomText(this.props.t, 'welcome')}
+                    {this.props.getUnsafeRoomTextFn(this.props.t)}
                 </span>
             </div>
         );
@@ -543,6 +554,21 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
             && this._additionalToolbarContentTemplate?.content
             && this._additionalToolbarContentTemplate?.innerHTML.trim();
     }
+}
+
+/**
+ * Maps (parts of) the redux state to the React {@code Component} props of
+ * {@code WelcomePage}.
+ *
+ * @param {Object} state - The redux state.
+ * @protected
+ * @returns {IProps}
+ */
+export function _mapStateToProps(state: IReduxState) {
+    return {
+        ..._abstractMapStateToProps(state),
+        getUnsafeRoomTextFn: (t: Function) => getUnsafeRoomText(state, t, 'welcome')
+    };
 }
 
 export default translate(connect(_mapStateToProps)(WelcomePage));
