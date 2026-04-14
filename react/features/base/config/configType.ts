@@ -609,6 +609,7 @@ export interface IConfig {
         suggestRecording?: boolean;
     };
     reducedUIEnabled?: boolean;
+    reducedUIThreshold?: number;
     reducedUImainToolbarButtons?: Array<string>;
     remoteVideoMenu?: {
         disableDemote?: boolean;
