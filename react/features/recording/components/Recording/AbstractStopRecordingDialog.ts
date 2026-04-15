@@ -112,6 +112,7 @@ export default class AbstractStopRecordingDialog<P extends IProps>
             setRequestingSubtitles(Boolean(_displaySubtitles), _displaySubtitles, _subtitlesLanguage, true));
 
         this.props._conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+            isRecordingRequested: false,
             isTranscribingEnabled: false
         });
 

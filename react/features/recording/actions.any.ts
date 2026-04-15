@@ -25,12 +25,13 @@ import {
     SET_MEETING_HIGHLIGHT_BUTTON_STATE,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
     SET_SELECTED_RECORDING_SERVICE,
+    SET_START_RECORDING_INTENT,
     SET_START_RECORDING_NOTIFICATION_SHOWN,
     SET_STREAM_KEY,
     START_LOCAL_RECORDING,
     STOP_LOCAL_RECORDING
 } from './actionTypes';
-import { START_RECORDING_NOTIFICATION_ID } from './constants';
+import { RECORDING_METADATA_ID, START_RECORDING_NOTIFICATION_ID } from './constants';
 import {
     getRecordButtonProps,
     getRecordingLink,
@@ -42,6 +43,7 @@ import {
     shouldAutoTranscribeOnRecord
 } from './functions';
 import logger from './logger';
+import { IStartRecordingIntent } from './reducer';
 
 
 /**
@@ -499,13 +501,23 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
                     const { conference } = state['features/base/conference'];
                     const autoTranscribeOnRecord = shouldAutoTranscribeOnRecord(state);
 
+                    dispatch(setStartRecordingIntent({
+                        recording: true,
+                        transcription: autoTranscribeOnRecord
+                    }));
+
                     conference?.startRecording({
                         mode: JitsiRecordingConstants.mode.FILE,
                         appData: JSON.stringify(options)
                     });
 
                     if (autoTranscribeOnRecord) {
-                        dispatch(setRequestingSubtitles(true, false, null));
+                        dispatch(setRequestingSubtitles(true, false, null, false, true));
+                    } else {
+                        conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                            isRecordingRequested: true,
+                            isTranscribingEnabled: false
+                        });
                     }
                 } else {
                     openRecordingDialog();
@@ -529,5 +541,19 @@ export function markConsentRequested(sessionId: string) {
     return {
         type: MARK_CONSENT_REQUESTED,
         sessionId
+    };
+}
+
+/**
+ * Sets the user's recording + transcription intent from the dialog.
+ * Used to coordinate sound/notification timing when both services are requested.
+ *
+ * @param {Object|null} intent - The intent, or null to clear.
+ * @returns {Object}
+ */
+export function setStartRecordingIntent(intent: IStartRecordingIntent | null) {
+    return {
+        type: SET_START_RECORDING_INTENT,
+        intent
     };
 }

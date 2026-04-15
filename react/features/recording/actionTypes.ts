@@ -102,3 +102,14 @@ export const STOP_LOCAL_RECORDING = 'STOP_LOCAL_RECORDING';
  * }
  */
 export const SET_START_RECORDING_NOTIFICATION_SHOWN = 'SET_START_RECORDING_NOTIFICATION_SHOWN';
+
+/**
+ * Stores the user's intent when starting recording (with or without transcription).
+ * Set synchronously before any async operations begin.
+ *
+ * {
+ *     type: SET_START_RECORDING_INTENT,
+ *     intent: Object | null
+ * }
+ */
+export const SET_START_RECORDING_INTENT = 'SET_START_RECORDING_INTENT';

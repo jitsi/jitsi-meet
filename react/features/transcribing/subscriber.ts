@@ -12,6 +12,7 @@ import {
     TRANSCRIPTION_ON_SOUND_ID
 } from '../recording/constants';
 import { isLiveStreamingRunning, isRecordingRunning } from '../recording/functions';
+import { maybeNotifyRecordingStart } from '../recording/middleware';
 
 import { isRecorderTranscriptionsRunning, isTranscribing } from './functions';
 
@@ -27,7 +28,10 @@ StateListenerRegistry.register(
         }
 
         if (isRecorderTranscriptionsRunningValue) {
-            maybeEmitRecordingNotification(dispatch, getState, true);
+            // Always go through maybeNotifyRecordingStart which checks metadata for the
+            // full intent before deciding what sound/notification to play. This ensures
+            // we never play a transcription-only sound when recording was also requested.
+            maybeNotifyRecordingStart(dispatch, getState);
         } else {
             maybeEmitRecordingNotification(dispatch, getState, false);
         }
@@ -62,7 +66,15 @@ StateListenerRegistry.register(
 function maybeEmitRecordingNotification(dispatch: IStore['dispatch'], getState: IStore['getState'], on: boolean) {
     const state = getState();
     const { sessionDatas } = state['features/recording'];
+    const localIntent = state['features/recording'].startRecordingIntent;
+    const metadata = state['features/base/conference'].metadata?.recording;
     const { mode: modeConstants, status: statusConstants } = JitsiRecordingConstants;
+
+    // If a coordinated recording+transcription start is in progress (local or remote), suppress.
+    // maybeNotifyRecordingStart will emit the appropriate combined notification instead.
+    if (localIntent?.recording || metadata?.isRecordingRequested) {
+        return;
+    }
 
     if (sessionDatas.some(sd => sd.mode === modeConstants.FILE
         && (sd.status === statusConstants.ON || sd.status === statusConstants.PENDING))) {
