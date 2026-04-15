@@ -8,7 +8,6 @@ import {
     hangupAllParticipants
 } from '../../helpers/participants';
 import type { IJoinOptions } from '../../helpers/types';
-import type PreMeetingScreen from '../../pageobjects/PreMeetingScreen';
 
 setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2', 'p3' ]
@@ -445,10 +444,8 @@ async function enterLobby(participant: Participant, enterDisplayName = false, us
     });
 
     const { p3 } = ctx;
-    let screen: PreMeetingScreen;
+    let screen;
 
-    // WebParticipant participant3 = getParticipant3();
-    // ParentPreMeetingScreen lobbyScreen;
     if (usePreJoin) {
         screen = p3.getPreJoinScreen();
     } else {
@@ -469,7 +466,7 @@ async function enterLobby(participant: Participant, enterDisplayName = false, us
     expect(await joinButton.isExisting()).toBe(true);
 
     if (enterDisplayName) {
-        let classes = await joinButton.getAttribute('class');
+        let classes = await joinButton.getAttribute('class') || '';
 
         if (!usePreJoin) {
             // check join button is disabled
@@ -483,7 +480,7 @@ async function enterLobby(participant: Participant, enterDisplayName = false, us
         await screen.enterDisplayName(P3);
 
         // check join button is enabled
-        classes = await joinButton.getAttribute('class');
+        classes = await joinButton.getAttribute('class') || '';
         expect(classes.includes('disabled')).toBe(false);
     }
 
