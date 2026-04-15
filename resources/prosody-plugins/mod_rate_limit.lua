@@ -170,11 +170,11 @@ function filter_stanza(stanza, session)
                     module:log("warn", "%s rate exceeded %d times while throttled for %s, closing connection.",
                         stanza.name, session.jitsi_throttle_violations, session.full_jid);
                     session:close({ condition = "policy-violation", text = "Rate limit exceeded" });
+                    return;
                 end
-            else
-                module:log("info", "%s rate exceeded for %s, limiting.", stanza.name, session.full_jid);
-                throttle_session(session, config.session_rate, config.timeout);
             end
+            module:log("info", "%s rate exceeded for %s, limiting.", stanza.name, session.full_jid);
+            throttle_session(session, config.session_rate, config.timeout);
         end
     end
 
