@@ -80,6 +80,7 @@ StateListenerRegistry.register(
     /* listener */ (conference, { dispatch }) => {
         if (!conference) {
             dispatch(clearRecordingSessions());
+            sessionsWithTranscription.clear();
         }
     }
 );
@@ -239,6 +240,41 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         dispatch(hidePendingRecordingNotification(mode));
 
         if (updatedSessionData?.status === ON) {
+            const sessionId = action.sessionData.id;
+
+            // Determine willTranscribe once for consistent sound + notification.
+            // On the first ON update we compute and store it; on subsequent ON
+            // updates (e.g. the jicofo update that carries the initiator) we
+            // read the stored value so the notification text matches the sound.
+            let willTranscribe: boolean | undefined;
+
+            if (mode === JitsiRecordingConstants.mode.FILE) {
+                if (oldSessionData?.status !== ON) {
+                    const isTranscribing = isRecorderTranscriptionsRunning(state);
+                    const isRequestingTranscription = state['features/subtitles']._requestingSubtitles;
+
+                    willTranscribe = isTranscribing || isRequestingTranscription;
+
+                    if (sessionId) {
+                        sessionsWithTranscription.set(sessionId, willTranscribe);
+                    }
+                } else {
+                    // On subsequent ON updates, start from the stored value
+                    // but also re-check live state: if transcription started
+                    // between the first and second ON update, upgrade to true
+                    // so the notification text reflects reality.
+                    const storedValue = sessionId
+                        ? sessionsWithTranscription.get(sessionId) : undefined;
+                    const currentlyTranscribing = isRecorderTranscriptionsRunning(state)
+                        || state['features/subtitles']._requestingSubtitles;
+
+                    willTranscribe = storedValue || currentlyTranscribing;
+
+                    if (willTranscribe && !storedValue && sessionId) {
+                        sessionsWithTranscription.set(sessionId, true);
+                    }
+                }
+            }
 
             // We receive 2 updates of the session status ON. The first one is from jibri when it joins.
             // The second one is from jicofo which will deliver the initiator value. Since the start
@@ -247,25 +283,15 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             // FIXME: simplify checks when the backend start sending only one status ON update containing
             // the initiator.
             if (initiator && !oldSessionData?.initiator) {
-                dispatch(showStartedRecordingNotification(mode, initiator, action.sessionData.id));
+                dispatch(showStartedRecordingNotification(mode, initiator, sessionId, willTranscribe));
             }
 
             if (oldSessionData?.status !== ON) {
                 sendAnalytics(createRecordingEvent('start', mode));
 
                 let soundID;
-                const isTranscribing = isRecorderTranscriptionsRunning(state);
-                const isRequestingTranscription = state['features/subtitles']._requestingSubtitles;
-                const willTranscribe = isTranscribing || isRequestingTranscription;
 
-                // Store whether transcription was enabled when recording started
                 if (mode === JitsiRecordingConstants.mode.FILE) {
-                    const sessionId = action.sessionData.id;
-
-                    if (sessionId) {
-                        sessionsWithTranscription.set(sessionId, willTranscribe);
-                    }
-
                     if (willTranscribe) {
                         soundID = RECORDING_AND_TRANSCRIPTION_ON_SOUND_ID;
                     } else {
@@ -281,7 +307,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
                 if (typeof APP !== 'undefined') {
                     APP.API.notifyRecordingStatusChanged(
-                        true, mode, undefined, isRecorderTranscriptionsRunning(state));
+                        true, mode, undefined,
+                        willTranscribe ?? isRecorderTranscriptionsRunning(state));
                 }
             }
         } else if (updatedSessionData?.status === OFF && oldSessionData?.status !== OFF) {
@@ -289,7 +316,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 ? getParticipantDisplayName(state, getResourceId(terminator))
                 : undefined;
 
-            dispatch(showStoppedRecordingNotification(mode, participantName));
+            // Check if transcription was enabled when the recording started
+            const sessionId = action.sessionData.id;
+            const wasWithTranscription = sessionId ? sessionsWithTranscription.get(sessionId) ?? false : false;
+
+            dispatch(showStoppedRecordingNotification(mode, participantName, wasWithTranscription));
 
             let duration = 0, soundOff, soundOn;
 
@@ -298,10 +329,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     = (Date.now() / 1000) - oldSessionData.timestamp;
             }
             sendAnalytics(createRecordingEvent('stop', mode, duration));
-
-            // Check if transcription was enabled when the recording started
-            const sessionId = action.sessionData.id;
-            const wasWithTranscription = sessionId ? sessionsWithTranscription.get(sessionId) ?? false : false;
 
             if (mode === JitsiRecordingConstants.mode.FILE) {
                 if (wasWithTranscription) {

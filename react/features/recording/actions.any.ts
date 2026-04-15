@@ -204,21 +204,36 @@ export function showRecordingWarning(props: Object) {
  * @param {string} streamType - The type of the stream ({@code file} or
  * {@code stream}).
  * @param {string?} participantName - The participant name stopping the recording.
+ * @param {boolean} wasWithTranscription - Whether transcription was active alongside
+ * recording when it was started.
  * @returns {showNotification}
  */
-export function showStoppedRecordingNotification(streamType: string, participantName?: string) {
+export function showStoppedRecordingNotification(
+        streamType: string, participantName?: string, wasWithTranscription?: boolean) {
     const isLiveStreaming
         = streamType === JitsiMeetJS.constants.recording.mode.STREAM;
     const descriptionArguments = { name: participantName };
-    const dialogProps = isLiveStreaming ? {
-        descriptionKey: participantName ? 'liveStreaming.offBy' : 'liveStreaming.off',
-        descriptionArguments,
-        titleKey: 'dialog.liveStreaming'
-    } : {
-        descriptionKey: participantName ? 'recording.offBy' : 'recording.off',
-        descriptionArguments,
-        titleKey: 'dialog.recording'
-    };
+    let dialogProps;
+
+    if (isLiveStreaming) {
+        dialogProps = {
+            descriptionKey: participantName ? 'liveStreaming.offBy' : 'liveStreaming.off',
+            descriptionArguments,
+            titleKey: 'dialog.liveStreaming'
+        };
+    } else if (wasWithTranscription) {
+        dialogProps = {
+            descriptionKey: participantName ? 'recording.offByWithTranscription' : 'recording.offWithTranscription',
+            descriptionArguments,
+            titleKey: 'dialog.recording'
+        };
+    } else {
+        dialogProps = {
+            descriptionKey: participantName ? 'recording.offBy' : 'recording.off',
+            descriptionArguments,
+            titleKey: 'dialog.recording'
+        };
+    }
 
     return showNotification(dialogProps, NOTIFICATION_TIMEOUT_TYPE.SHORT);
 }
@@ -230,12 +245,16 @@ export function showStoppedRecordingNotification(streamType: string, participant
  * @param {string} mode - The type of the recording: Stream of File.
  * @param {string | Object } initiator - The participant who started recording.
  * @param {string} sessionId - The recording session id.
+ * @param {boolean} willTranscribe - Whether transcription is/will be active alongside recording,
+ * as determined by the middleware when the sound was played. Ensures the notification text matches
+ * the audio cue.
  * @returns {Function}
  */
 export function showStartedRecordingNotification(
         mode: string,
         initiator: { getId: Function; } | string,
-        sessionId: string) {
+        sessionId: string,
+        willTranscribe?: boolean) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const initiatorId = getResourceId(initiator);
@@ -256,7 +275,11 @@ export function showStartedRecordingNotification(
             const recordingSharingUrl = getRecordingSharingUrl(state);
             const iAmRecordingInitiator = getLocalParticipant(state)?.id === initiatorId;
             const { showRecordingLink } = state['features/base/config'].recordings || {};
-            const isTranscribing = isRecorderTranscriptionsRunning(state);
+
+            // Use the willTranscribe value passed from the middleware for consistency
+            // with the sound that was already played. Fall back to live state check
+            // if not provided.
+            const isTranscribing = willTranscribe ?? isRecorderTranscriptionsRunning(state);
             const isRecording = isRecordingRunning(state);
 
             // Case 1: Transcription only (no recording)

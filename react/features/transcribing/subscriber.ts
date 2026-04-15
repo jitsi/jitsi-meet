@@ -64,8 +64,18 @@ function maybeEmitRecordingNotification(dispatch: IStore['dispatch'], getState: 
     const { sessionDatas } = state['features/recording'];
     const { mode: modeConstants, status: statusConstants } = JitsiRecordingConstants;
 
-    if (sessionDatas.some(sd => sd.mode === modeConstants.FILE && sd.status === statusConstants.ON)) {
-        // If a recording is still ongoing, don't send any notification.
+    if (sessionDatas.some(sd => sd.mode === modeConstants.FILE
+        && (sd.status === statusConstants.ON || sd.status === statusConstants.PENDING))) {
+        // If a recording is ongoing or about to start, don't send a transcription-only notification.
+        // The recording middleware will emit the appropriate combined notification instead.
+        return;
+    }
+
+    // When transcription is turning off and a FILE recording recently stopped (status OFF),
+    // the recording middleware already played the combined stop sound/notification.
+    // Suppress the duplicate transcription-only stop notification.
+    if (!on && sessionDatas.some(sd => sd.mode === modeConstants.FILE
+        && sd.status === statusConstants.OFF)) {
         return;
     }
 
@@ -91,11 +101,24 @@ function maybeEmitRecordingNotification(dispatch: IStore['dispatch'], getState: 
 function notifyTranscribingStatusChanged(getState: IStore['getState'], on: boolean) {
     if (typeof APP !== 'undefined') {
         const state = getState();
+        const { sessionDatas } = state['features/recording'];
+        const { mode: modeConstants, status: statusConstants } = JitsiRecordingConstants;
         const isRecording = isRecordingRunning(state);
         const isStreaming = isLiveStreamingRunning(state);
-        const mode = isRecording ? JitsiRecordingConstants.mode.FILE : JitsiRecordingConstants.mode.STREAM;
 
-        APP.API.notifyRecordingStatusChanged(isRecording || isStreaming, mode, undefined, on);
+        // Only call notifyRecordingStatusChanged when there is no active FILE recording
+        // session. During recording session transitions (ON/PENDING), the recording
+        // middleware already reports the recording + transcription state accurately.
+        // This avoids duplicate or contradictory API calls.
+        const hasActiveFileSession = sessionDatas.some(sd => sd.mode === modeConstants.FILE
+            && (sd.status === statusConstants.ON || sd.status === statusConstants.PENDING));
+
+        if (!hasActiveFileSession) {
+            const mode = isRecording ? modeConstants.FILE : modeConstants.STREAM;
+
+            APP.API.notifyRecordingStatusChanged(isRecording || isStreaming, mode, undefined, on);
+        }
+
         APP.API.notifyTranscribingStatusChanged(on);
     }
 }
