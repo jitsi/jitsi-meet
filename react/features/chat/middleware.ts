@@ -85,7 +85,9 @@ import './subscriber';
  * message after we have received a private message in the last 20 seconds.
  */
 const PRIVACY_NOTICE_TIMEOUT = 20 * 1000;
-
+function sanitizeMessage(msg) {
+  return msg.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+}
 /**
  * Implements the middleware of the chat feature.
  *
@@ -301,7 +303,7 @@ MiddlewareRegistry.register(store => next => action => {
                 conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient));
                 _persistSentPrivateMessage(store, privateMessageRecipient, action.message);
             } else {
-                conference.sendTextMessage(action.message);
+                conference.sendTextMessage(sanitizeMessage(action.message));
             }
         }
         break;
