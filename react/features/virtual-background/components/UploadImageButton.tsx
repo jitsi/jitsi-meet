@@ -98,6 +98,9 @@ function UploadImageButton({
 
         reader.readAsDataURL(imageFile[0]);
         reader.onload = async () => {
+            if (typeof reader.result !== 'string') {
+                return;
+            }
             const url = await resizeImage(reader.result);
             const uuId = uuidv4();
 

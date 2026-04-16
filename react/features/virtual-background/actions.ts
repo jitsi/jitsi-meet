@@ -19,11 +19,12 @@ export function toggleBackgroundEffect(options: IVirtualBackground, jitsiTrack: 
         dispatch(setVirtualBackground(options));
         const state = getState();
         const virtualBackground = state['features/virtual-background'];
+        const config = state['features/base/config'];
 
         if (jitsiTrack) {
             try {
                 if (options.backgroundEffectEnabled) {
-                    await jitsiTrack.setEffect(await createVirtualBackgroundEffect(virtualBackground, dispatch));
+                    await jitsiTrack.setEffect(await createVirtualBackgroundEffect(virtualBackground, dispatch, config));
                 } else {
                     await jitsiTrack.setEffect(undefined);
                     dispatch(backgroundEnabled(false));
