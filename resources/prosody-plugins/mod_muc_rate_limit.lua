@@ -90,6 +90,13 @@ module:hook("muc-occupant-pre-join", function (event)
         return nil;
     end
 
+    if room.join_rate_queue_timer then
+        -- timer is running, we are already rate limiting, no need to check the throttle
+        -- if add fails as queue is full we return false and the event will continue processing, we risk re-order
+        -- but not losing it
+        return add_item_to_queue(room.join_rate_presence_queue, event, room, stanza.attr.from, true);
+    end
+
     local throttle = room.join_rate_throttle;
     if not room.join_rate_throttle then
         throttle = new_throttle(join_rate_per_conference, 1); -- rate per one second
@@ -108,53 +115,43 @@ module:hook("muc-occupant-pre-join", function (event)
             return nil;
         end
 
-        if not room.join_rate_queue_timer then
-            timer.add_task(1, function ()
-                if room.destroying then
-                    -- if room was destroyed in the mean time, ignore
-                    return;
-                end
+        timer.add_task(1, function ()
+            if room.destroying then
+                -- if room was destroyed in the mean time, ignore
+                return;
+            end
 
-                local status, result = pcall(
-                    timer_process_queue_elements,
-                    join_rate_per_conference,
-                    room.join_rate_presence_queue,
-                    function(ev)
-                        -- if the connection was closed while waiting in the queue, ignore
-                        if ev.origin.conn then
-                            -- we mark what we pass here so we can skip it on the next muc-occupant-pre-join event
-                            ev.stanza.delayed_join_skip = true;
-                            room:handle_normal_presence(ev.origin, ev.stanza);
-                        end
-                    end,
-                    function() -- empty callback
-                        room.join_rate_queue_timer = false;
+            local status, result = pcall(
+                timer_process_queue_elements,
+                join_rate_per_conference,
+                room.join_rate_presence_queue,
+                function(ev)
+                    -- if the connection was closed while waiting in the queue, ignore
+                    if ev.origin.conn then
+                        -- we mark what we pass here so we can skip it on the next muc-occupant-pre-join event
+                        ev.stanza.delayed_join_skip = true;
+                        room:handle_normal_presence(ev.origin, ev.stanza);
                     end
-                );
-                if not status then
-                    -- there was an error in the timer function
-                    module:log('error', 'Error processing join queue: %s', result);
-
-                    measure_errors_processing_queue();
-
-                    -- let's re-schedule timer so we do not lose the queue
-                    return 1;
+                end,
+                function() -- empty callback
+                    room.join_rate_queue_timer = false;
                 end
+            );
+            if not status then
+                -- there was an error in the timer function
+                module:log('error', 'Error processing join queue: %s', result);
 
-                return result;
-            end);
-            room.join_rate_queue_timer = true;
-        end
+                measure_errors_processing_queue();
+
+                -- let's re-schedule timer so we do not lose the queue
+                return 1;
+            end
+
+            return result;
+        end);
+        room.join_rate_queue_timer = true;
 
         return true; -- we stop execution, so we do not process this join at the moment
-    end
-
-    if room.join_rate_queue_timer then
-        -- there is timer so we need to order the presences, put it in the queue
-
-        -- if add fails as queue is full we return false and the event will continue processing, we risk re-order
-        -- but not losing it
-        return add_item_to_queue(room.join_rate_presence_queue, event, room, stanza.attr.from, true);
     end
 
 end, 9); -- as we will rate limit joins we need to be the first to execute
