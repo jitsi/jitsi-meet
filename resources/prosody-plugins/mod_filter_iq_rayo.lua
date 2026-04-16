@@ -260,6 +260,7 @@ module:hook('jitsi-metadata-allow-moderation', function (event)
             and is_feature_allowed('transcription', session.jitsi_meet_context_features) then
                 local res = {};
                 res.isTranscribingEnabled = data.isTranscribingEnabled;
+                res.isRecordingRequested = data.isRecordingRequested;
                 return res;
         elseif not session.jitsi_meet_context_features and occupant.role == 'moderator' then
             return data;
