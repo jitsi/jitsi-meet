@@ -18,7 +18,7 @@ jobs:
         npm -v
     - name: Get changed files
       id: changed-files
-      uses: jitsi/changed-files@main
+      uses: jitsi/changed-files@531f5f7d163941f0c1c04e0ff4d8bb243ac4366f  # main
     - name: Get changed lang files
       id: lang-files
       run: echo "all=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -oE 'lang\/\S+' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
@@ -91,7 +91,7 @@ jobs:
         sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
         xcodebuild -version
     - name: setup-cocoapods
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@7372622e62b60b3cb750dcd2b9e32c247ffec26a  # v1
       with:
         ruby-version: '3.4'
         bundler-cache: true
