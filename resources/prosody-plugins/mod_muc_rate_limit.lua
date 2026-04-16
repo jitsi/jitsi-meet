@@ -65,6 +65,8 @@ local function timer_process_queue_elements (rate, queue, process, queue_empty_c
         local ev = queue:pop();
         if ev then
             process(ev);
+        else
+            break;
         end
     end
 
