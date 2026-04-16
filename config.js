@@ -1922,7 +1922,7 @@ var config = {
 
 // Set the default values for JaaS customers
 if (enableJaaS) {
-    config.dialInNumbersUrl = 'https://api-vo.cloudflare.jitsi.net/vmms-conference-mapper/v1/access/dids';
+    config.dialInNumbersUrl = 'https://8x8.vc/v1/_jaas/vmms-conference-mapper/v1/access/dids';
     config.dialInConfCodeUrl = 'https://api-vo.cloudflare.jitsi.net/vmms-conference-mapper/v1/access';
     config.roomPasswordNumberOfDigits = 10; // skip re-adding it (do not remove comment)
 }
