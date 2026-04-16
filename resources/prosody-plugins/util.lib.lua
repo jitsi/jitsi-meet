@@ -157,6 +157,32 @@ function get_room_by_name_and_subdomain(room_name, subdomain)
     return get_room_from_jid(room_address);
 end
 
+-- Returns the occupant and the room (main or one of its active breakout rooms)
+-- where the given real full JID is found. Returns nil, nil if not found anywhere.
+-- @param room the main room object
+-- @param real_jid the full real JID to look up
+-- @return occupant, found_room
+function get_occupant_by_real_jid(room, real_jid)
+    local occupant = room:get_occupant_by_real_jid(real_jid);
+    if occupant then
+        return occupant, room;
+    end
+
+    if room._data.breakout_rooms_active then
+        for breakout_room_jid in pairs(room._data.breakout_rooms or {}) do
+            local breakout_room = get_room_from_jid(breakout_room_jid);
+            if breakout_room then
+                occupant = breakout_room:get_occupant_by_real_jid(real_jid);
+                if occupant then
+                    return occupant, breakout_room;
+                end
+            end
+        end
+    end
+
+    return nil, nil;
+end
+
 function async_handler_wrapper(event, handler)
     if not have_async then
         module:log("error", "requires a version of Prosody with util.async");
@@ -722,6 +748,7 @@ return {
     get_ip = get_ip;
     get_room_from_jid = get_room_from_jid;
     get_room_by_name_and_subdomain = get_room_by_name_and_subdomain;
+    get_occupant_by_real_jid = get_occupant_by_real_jid;
     get_sip_jibri_email_prefix = get_sip_jibri_email_prefix;
     async_handler_wrapper = async_handler_wrapper;
     presence_check_status = presence_check_status;
