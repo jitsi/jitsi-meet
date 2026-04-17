@@ -34,6 +34,13 @@ import { iAmVisitor } from '../visitors/functions';
 import './subscriber';
 
 /**
+ * Track the current unload handler so it can be removed
+ * before registering a new one on each SET_CONFIG dispatch.
+ */
+let _location: string | undefined;
+let _unloadHandler: (() => void) | undefined;
+
+/**
  * The middleware of the feature {@code external-api}.
  *
  * @returns {Function}
@@ -240,15 +247,26 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_CONFIG: {
         const state = store.getState();
         const { disableBeforeUnloadHandlers = false } = state['features/base/config'];
+        const eventName = disableBeforeUnloadHandlers ? 'unload' : 'beforeunload';
+
+        // Remove the previous unload handler to avoid duplicate listeners
+        // accumulating across multiple SET_CONFIG dispatches.
+        if (_location && _unloadHandler) {
+            window.removeEventListener(_location, _unloadHandler);
+        }
+
+        _location = eventName;
 
         /**
          * Disposing the API when the user closes the page.
          */
-        window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', () => {
+        _unloadHandler = () => {
             APP.API.notifyConferenceLeft(APP.conference.roomName);
             APP.API.dispose();
             getJitsiMeetTransport().dispose();
-        });
+        };
+
+        window.addEventListener(eventName, _unloadHandler);
 
         break;
     }
