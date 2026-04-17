@@ -184,6 +184,11 @@ static NSString *recordingModeToString(RecordingMode mode);
     [externalAPI hideNotification:uid];
 }
 
+- (void)getRecordingStatus:(void (^ _Nonnull)(NSDictionary * _Nullable))completionHandler {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI getRecordingStatus:completionHandler];
+}
+
 - (void)startRecording:(RecordingMode)mode :(NSString * _Nullable)dropboxToken :(BOOL)shouldShare :(NSString * _Nullable)rtmpStreamKey :(NSString * _Nullable)rtmpBroadcastID :(NSString * _Nullable)youtubeStreamKey :(NSString * _Nullable)youtubeBroadcastID :(NSDictionary * _Nullable)extraMetadata :(BOOL)transcription {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI startRecording:recordingModeToString(mode) :dropboxToken :shouldShare :rtmpStreamKey :rtmpBroadcastID :youtubeStreamKey :youtubeBroadcastID :extraMetadata :transcription];
@@ -192,6 +197,18 @@ static NSString *recordingModeToString(RecordingMode mode);
 - (void)stopRecording:(RecordingMode)mode :(BOOL)transcription {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI stopRecording:recordingModeToString(mode) :transcription];
+}
+
+- (void)startTranscription {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    // mode=nil: the START_RECORDING event is sent without a "mode" key,
+    // so the JS middleware skips video/file recording and only starts transcription.
+    [externalAPI startRecording:nil :nil :NO :nil :nil :nil :nil :nil :YES];
+}
+
+- (void)stopTranscription {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI stopRecording:nil :YES];
 }
 
 - (void)overwriteConfig:(NSDictionary * _Nonnull)config {

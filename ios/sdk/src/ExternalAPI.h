@@ -25,6 +25,7 @@ static NSString * const sendEventNotificationName = @"org.jitsi.meet.SendEvent";
 - (void)sendEndpointTextMessage:(NSString*)message :(NSString*)to;
 - (void)toggleScreenShare:(BOOL)enabled;
 - (void)retrieveParticipantsInfo:(void (^)(NSArray*))completion;
+- (void)getRecordingStatus:(void (^)(NSDictionary*))completion;
 - (void)openChat:(NSString*)to;
 - (void)closeChat;
 - (void)sendChatMessage:(NSString*)message :(NSString*)to;

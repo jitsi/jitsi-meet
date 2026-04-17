@@ -54,6 +54,7 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
         broadcastReceiver = new BroadcastReceiver(reactContext);
 
         ParticipantsService.init(reactContext);
+        RecordingStatusService.init(reactContext);
     }
 
     @ReactMethod
@@ -103,6 +104,7 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
         constants.put("STOP_RECORDING", BroadcastAction.Type.STOP_RECORDING.getAction());
         constants.put("OVERWRITE_CONFIG", BroadcastAction.Type.OVERWRITE_CONFIG.getAction());
         constants.put("SEND_CAMERA_FACING_MODE_MESSAGE", BroadcastAction.Type.SEND_CAMERA_FACING_MODE_MESSAGE.getAction());
+        constants.put("GET_RECORDING_STATUS", BroadcastAction.Type.GET_RECORDING_STATUS.getAction());
 
         return constants;
     }
