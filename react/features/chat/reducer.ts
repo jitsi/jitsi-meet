@@ -148,22 +148,54 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         };
 
     case EDIT_MESSAGE: {
-        let found = false;
-        const newMessage = action.message;
+        const updatedMessage = action.message;
+
         const messages = state.messages.map(m => {
-            if (m.messageId === newMessage.messageId) {
-                found = true;
-
-                return newMessage;
+            if (m.messageId === updatedMessage.messageId) {
+                return {
+                    ...m,
+                    message: updatedMessage.message,
+                    edited: true,
+                    editHistory: [...(m.editHistory || []), m.message]
+                };
             }
-
             return m;
         });
 
-        // no change
-        if (!found) {
-            return state;
-        }
+        return {
+            ...state,
+            messages
+        };
+    }
+
+    case 'DELETE_MESSAGE': {
+        const messages = state.messages.map(m => {
+            if (m.messageId === action.messageId) {
+                return {
+                    ...m,
+                    message: '[Message Deleted]',
+                    isDeleted: true
+                };
+            }
+            return m;
+        });
+
+        return {
+            ...state,
+            messages
+        };
+    }
+
+    case 'REPORT_MESSAGE': {
+        const messages = state.messages.map(m => {
+            if (m.messageId === action.messageId) {
+                return {
+                    ...m,
+                    reported: true
+                };
+            }
+            return m;
+        });
 
         return {
             ...state,

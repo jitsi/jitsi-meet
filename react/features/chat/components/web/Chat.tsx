@@ -284,6 +284,7 @@ const Chat = ({
     const [ isMouseDown, setIsMouseDown ] = useState(false);
     const [ mousePosition, setMousePosition ] = useState<number | null>(null);
     const [ dragChatWidth, setDragChatWidth ] = useState<number | null>(null);
+    const [searchText, setSearchText] = useState('');
     const maxChatWidth = useSelector(getChatMaxSize);
     const notifyTimestamp = useSelector((state: IReduxState) =>
         state['features/chat'].notifyPrivateRecipientsChangedTimestamp
@@ -482,9 +483,16 @@ const Chat = ({
                     id = { `${ChatTabs.CHAT}-panel` }
                     role = 'tabpanel'
                     tabIndex = { 0 }>
+                    <input
+                        placeholder="Search messages..."
+                        value={searchText}
+                        onChange={(e) => setSearchText(e.target.value)}
+                    />
                     <MessageContainer
                         isVisible = { _focusedTab === ChatTabs.CHAT }
-                        messages = { _messages } />
+                        messages={_messages.filter(m =>
+                            m.message.toLowerCase().includes(searchText.toLowerCase())
+                        )}/>
                     <MessageRecipient />
                     {isPrivateChatAllowed && (
                         <Select
