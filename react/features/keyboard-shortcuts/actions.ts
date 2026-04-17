@@ -15,7 +15,7 @@ import {
     REGISTER_KEYBOARD_SHORTCUT,
     UNREGISTER_KEYBOARD_SHORTCUT
 } from './actionTypes';
-import { areKeyboardShortcutsEnabled, getKeyboardShortcuts } from './functions';
+import { areKeyboardShortcutsEnabled, getKeyboardShortcuts, getPrimaryShortcutKey } from './functions';
 import logger from './logger';
 import { IKeyboardShortcut } from './types';
 import { getKeyboardKey, getPriorityFocusedElement } from './utils';
@@ -193,6 +193,13 @@ export function initKeyboardShortcuts() {
 
             if (shortcuts.has(key)) {
                 shortcuts.get(key)?.handler(e);
+            }
+            else {
+                const pKey = getPrimaryShortcutKey(state, key);
+
+                if (pKey && shortcuts.has(pKey)) {
+                    shortcuts.get(pKey)?.handler(e);
+                }
             }
         };
 
