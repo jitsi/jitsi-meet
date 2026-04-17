@@ -112,7 +112,7 @@ export function maybeNotifyRecordingStart(dispatch: IStore['dispatch'], getState
     const wantsRecording = localIntent?.recording ?? metadata?.isRecordingRequested ?? false;
     const wantsTranscription = localIntent?.transcription ?? metadata?.isTranscribingEnabled ?? false;
 
-    // No intent from either source — nothing to coordinate.
+    // No intent from either source — nothing to coordinate. Most probably we haven't received the metadata yet.
     if (!wantsRecording && !wantsTranscription) {
         return;
     }
@@ -133,6 +133,10 @@ export function maybeNotifyRecordingStart(dispatch: IStore['dispatch'], getState
     const transcriptionResolved = !wantsTranscription || transcriptionOn || transcriptionFailed;
 
     // Wait until all intended services have resolved.
+    // Note: In theory (it should never happen here) wantsTranscription/wantsRecording might be false and in the same
+    // time the transcriptionOn/recordingOn might be true. In this case we would play a notification no matter that
+    // wantsTranscription/wantsRecording is false. This is better because the recording/transcription are on and the
+    // user has to be informed. Also if this ever happens it will be noticeable and we will be able to debug/fix.
     if (!recordingResolved || !transcriptionResolved) {
         return;
     }
@@ -166,8 +170,11 @@ export function maybeNotifyRecordingStart(dispatch: IStore['dispatch'], getState
         const finalWillTranscribe = recordingOn && transcriptionOn;
 
         dispatch(showStartedRecordingNotification(
-            pendingNotificationMode, pendingNotificationInitiator,
-            pendingNotificationSessionId, finalWillTranscribe));
+            pendingNotificationMode,
+            pendingNotificationInitiator,
+            pendingNotificationSessionId,
+            finalWillTranscribe));
+
         pendingNotificationInitiator = undefined;
         pendingNotificationSessionId = undefined;
         pendingNotificationMode = undefined;

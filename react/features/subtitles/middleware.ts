@@ -93,7 +93,10 @@ MiddlewareRegistry.register(store => next => action => {
         const { transcription } = store.getState()['features/base/config'];
 
         if (transcription?.autoCaptionOnTranscribe) {
-            store.dispatch(setRequestingSubtitles(true));
+            // The transcriber was started by someone else — skip metadata update
+            // to avoid overwriting the initiator's isRecordingRequested flag.
+            store.dispatch(setRequestingSubtitles(
+                true, undefined, undefined, undefined, undefined, true));
         }
 
         break;
@@ -101,7 +104,8 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_REQUESTING_SUBTITLES:
         _requestingSubtitlesChange(
             store, action.enabled, action.language,
-            action.forceBackendRecordingOn, action.isRecordingRequested);
+            action.forceBackendRecordingOn, action.isRecordingRequested,
+            action.skipMetadataUpdate);
         break;
     }
 
@@ -351,6 +355,9 @@ function _getPrimaryLanguageCode(language: string) {
  * we start recording, stopping is based on whether isTranscribingEnabled is already set.
  * @param {boolean} isRecordingRequested - Whether recording was also requested alongside transcription.
  * Passed through to metadata so remote clients receive both intent fields in a single atomic update.
+ * @param {boolean} skipMetadataUpdate - When true, skips setting room metadata. Used when reacting
+ * to a transcriber started by someone else (e.g. autoCaptionOnTranscribe) to avoid overwriting
+ * the initiator's metadata.
  * @private
  * @returns {void}
  */
@@ -359,7 +366,8 @@ function _requestingSubtitlesChange(
         enabled: boolean,
         language?: string | null,
         forceBackendRecordingOn: boolean = false,
-        isRecordingRequested: boolean = false) {
+        isRecordingRequested: boolean = false,
+        skipMetadataUpdate: boolean = false) {
     const state = getState();
     const { conference } = state['features/base/conference'];
     const backendRecordingOn = conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription;
@@ -395,7 +403,7 @@ function _requestingSubtitlesChange(
                 });
         }
 
-        if (backendRecordingOn || forceBackendRecordingOn) {
+        if (!skipMetadataUpdate && (backendRecordingOn || forceBackendRecordingOn)) {
             conference?.getMetadataHandler()?.setMetadata(RECORDING_METADATA_ID, {
                 isTranscribingEnabled: true,
                 ...(isRecordingRequested && { isRecordingRequested: true })

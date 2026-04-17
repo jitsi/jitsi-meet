@@ -86,13 +86,17 @@ export function toggleRequestingSubtitles() {
  * @param {boolean} forceBackendRecordingOn - Whether to force that backend recording is on.
  * @param {boolean} isRecordingRequested - Whether recording was also requested alongside transcription.
  * Passed through to metadata so remote clients receive both intent fields in a single atomic update.
+ * @param {boolean} skipMetadataUpdate - When true, skips setting room metadata. Used when reacting
+ * to a transcriber started by someone else (e.g. autoCaptionOnTranscribe) to avoid overwriting
+ * the initiator's metadata.
  * @returns {{
  *    type: SET_REQUESTING_SUBTITLES,
  *    backendRecordingOn: boolean,
  *    enabled: boolean,
  *    displaySubtitles: boolean,
  *    isRecordingRequested: boolean,
- *    language: string
+ *    language: string,
+ *    skipMetadataUpdate: boolean
  * }}
  */
 export function setRequestingSubtitles(
@@ -100,14 +104,16 @@ export function setRequestingSubtitles(
         displaySubtitles = true,
         language: string | null = `translation-languages:${DEFAULT_LANGUAGE}`,
         forceBackendRecordingOn: boolean = false,
-        isRecordingRequested: boolean = false) {
+        isRecordingRequested: boolean = false,
+        skipMetadataUpdate: boolean = false) {
     return {
         type: SET_REQUESTING_SUBTITLES,
         displaySubtitles,
         enabled,
         forceBackendRecordingOn,
         isRecordingRequested,
-        language
+        language,
+        skipMetadataUpdate
     };
 }
 
