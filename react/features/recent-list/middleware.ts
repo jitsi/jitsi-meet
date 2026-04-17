@@ -87,31 +87,19 @@ function _conferenceWillLeave({ dispatch, getState }: IStore, next: Function, ac
     const { doNotStoreRoom } = state['features/base/config'];
 
     if (!doNotStoreRoom && !isEmbedded()) {
-        let locationURL;
+        const { conference } = action;
 
-        /**
-         * FIXME:
-         * It is better to use action.conference[JITSI_CONFERENCE_URL_KEY]
-         * in order to make sure we get the url the conference is leaving
-         * from (i.e. The room we are leaving from) because if the order of events
-         * is different, we cannot be guaranteed that the location URL in base
-         * connection is the url we are leaving from... Not the one we are going to
-         * (the latter happens on mobile -- if we use the web implementation);
-         * however, the conference object on web does not have
-         * JITSI_CONFERENCE_URL_KEY so we cannot call it and must use the other way.
-         */
-        if (typeof APP === 'undefined') {
-            const { conference } = action;
+        // Prefer the URL attached to the JitsiConference at join time
+        // (see createConference in base/conference/actions.any.ts). That value
+        // identifies the room we are leaving even if base/connection.locationURL
+        // has already moved to a different target (e.g. fast leave -> join).
+        const urlFromConference = conference?.[JITSI_CONFERENCE_URL_KEY];
+        const { locationURL } = state['features/base/connection'];
+        const locationURLForDuration = urlFromConference ?? locationURL;
 
-            // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-            locationURL = conference && conference[JITSI_CONFERENCE_URL_KEY];
-        } else {
-            locationURL = state['features/base/connection'].locationURL;
+        if (locationURLForDuration?.href) {
+            dispatch(_updateConferenceDuration(locationURLForDuration));
         }
-        dispatch(
-            _updateConferenceDuration(
-                locationURL
-            ));
     }
 
     return next(action);
