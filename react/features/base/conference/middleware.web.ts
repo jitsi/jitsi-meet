@@ -136,7 +136,13 @@ MiddlewareRegistry.register(store => next => action => {
                 Object.values(TRIGGER_READY_TO_CLOSE_REASONS).indexOf(reason)
             ];
 
-            dispatch(hangup(true, i18next.t(titlekey) || reason, notifyOnConferenceDestruction));
+            let localizedReason: string = i18next.t(titlekey) || reason;
+
+            if (reason === TRIGGER_READY_TO_CLOSE_REASONS['dialog.sessTerminatedReason']) {
+                localizedReason = '';
+            }
+
+            dispatch(hangup(true, localizedReason, notifyOnConferenceDestruction));
         }
 
         releaseScreenLock();
