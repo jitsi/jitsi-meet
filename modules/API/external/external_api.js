@@ -1069,15 +1069,11 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * information like participant id, display name, avatar URL and email.
      */
     getParticipantsInfo() {
-        const participantIds = Object.keys(this._participants);
-        const participantsInfo = Object.values(this._participants);
-
-        participantsInfo.forEach((participant, idx) => {
-            participant.participantId = participantIds[idx];
-        });
-
-        return participantsInfo;
-    }
+    return Object.entries(this._participants).map(([id, participant]) => ({
+        participantId: id,
+        ...participant
+    }));
+}
 
     /**
      * Returns the current video quality setting.
