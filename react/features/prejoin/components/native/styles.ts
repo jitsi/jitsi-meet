@@ -22,6 +22,23 @@ export const preJoinStyles = {
         underlayColor: 'transparent'
     },
 
+    hangupButtonStyles: {
+        iconStyle: {
+            color: BaseTheme.palette.icon01,
+            fontSize: BaseTheme.spacing[4]
+        },
+        style: {
+            backgroundColor: BaseTheme.palette.actionDanger,
+            borderRadius: BaseTheme.shape.borderRadius,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            margin: BaseTheme.spacing[3],
+            height: BaseTheme.spacing[4],
+            width: BaseTheme.spacing[4]
+        },
+        underlayColor: BaseTheme.palette.actionDangerHover
+    },
+
     contentWrapper: {
         flex: 1,
         flexDirection: 'row'
