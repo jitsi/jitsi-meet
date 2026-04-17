@@ -21,6 +21,7 @@ import { toDataURL } from '../functions';
 import logger from '../logger';
 import { IVirtualBackground } from '../reducer';
 
+import { getLocalVideoTrack } from '../../base/tracks/functions';
 import UploadImageButton from './UploadImageButton';
 import VirtualBackgroundPreview from './VirtualBackgroundPreview';
 /* eslint-enable lines-around-comment */
@@ -56,6 +57,11 @@ interface IProps extends WithTranslation {
      * Returns the selected thumbnail identifier.
      */
     selectedThumbnail: string;
+
+    /**
+     * The local video track.
+     */
+    _localVideoTrack: any;
 
     /**
      * The id of the selected video device.
@@ -182,6 +188,7 @@ const useStyles = makeStyles()(theme => {
  */
 function VirtualBackgrounds({
     _images,
+    _localVideoTrack,
     _showUploadButton,
     onOptionsChange,
     options,
@@ -378,6 +385,8 @@ function VirtualBackgrounds({
                     </span>
                     {_showUploadButton
                     && <UploadImageButton
+                        dispatch = { dispatch }
+                        localVideoTrack = { _localVideoTrack }
                         setLoading = { setLoading }
                         setOptions = { onOptionsChange }
                         setStoredImages = { setStoredImages }
@@ -503,6 +512,7 @@ function _mapStateToProps(state: IReduxState) {
 
     return {
         _images: (hasBrandingImages && dynamicBrandingImages) || IMAGES,
+        _localVideoTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack,
         _showUploadButton: !state['features/base/config'].disableAddingBackgroundImages
     };
 }

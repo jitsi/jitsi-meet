@@ -86,10 +86,61 @@ export function resizeImage(base64image: any, width = 1920, height = 1080): Prom
             canvas.height = height;
 
             // Draw source image into the off-screen canvas.
-            // TODO: keep aspect ratio and implement object-fit: cover.
-            context?.drawImage(img as any, 0, 0, width, height);
+            // Proportional scaling for object-fit: cover.
+            const scale = Math.max(width / img.width, height / img.height);
+            const x = (width / 2) - (img.width / 2) * scale;
+            const y = (height / 2) - (img.height / 2) * scale;
+
+            context?.drawImage(img as any, x, y, img.width * scale, img.height * scale);
 
             // Encode image to data-uri with base64 version of compressed image.
+            resolve(canvas.toDataURL('image/jpeg', 0.5));
+        };
+        img.src = base64image;
+    });
+}
+
+/**
+ * Resizes an image and crops it based on the specified coordinates.
+ *
+ * @param {string} base64image - Base64 encoded image.
+ * @param {number} width - Target width.
+ * @param {number} height - Target height.
+ * @param {number} sx - Source x.
+ * @param {number} sy - Source y.
+ * @param {number} sWidth - Source width.
+ * @param {number} sHeight - Source height.
+ * @returns {Promise<string>}
+ */
+export function cropAndResizeImage(
+        base64image: string,
+        width: number,
+        height: number,
+        sx: number,
+        sy: number,
+        sWidth: number,
+        sHeight: number): Promise<string | undefined> {
+    return new Promise(resolve => {
+        const img = document.createElement('img');
+
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+
+            canvas.width = width;
+            canvas.height = height;
+
+            // Mirror the cropped image horizontally so that when the local video
+            // is mirrored via CSS in Jitsi, the background appears correctly aligned
+            // with the user's preview.
+            context?.save();
+            context?.scale(-1, 1);
+            context?.translate(-width, 0);
+
+            context?.drawImage(img as any, sx, sy, sWidth, sHeight, 0, 0, width, height);
+
+            context?.restore();
+
             resolve(canvas.toDataURL('image/jpeg', 0.5));
         };
         img.src = base64image;
