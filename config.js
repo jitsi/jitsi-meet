@@ -764,6 +764,12 @@ var config = {
     // For iframe integrations, use the `lang` option directly instead.
     // defaultLanguage: 'en',
 
+    // List of supported languages displayed in the UI language selector.
+    // The order of the array defines the order in the list.
+    // If not set, all available languages are shown.
+    // Available language codes can be found in lang/languages.json.
+    // supportedLanguages: [ 'en', 'ru', 'de', 'fr' ],
+
     // Disables profile and the edit of all fields from the profile settings (display name and email)
     // disableProfile: false,
 

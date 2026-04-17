@@ -261,6 +261,7 @@ export interface IConfig {
     customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
     deeplinking?: IDeeplinkingConfig;
     defaultLanguage?: string;
+    supportedLanguages?: Array<string>;
     defaultLocalDisplayName?: string;
     defaultLogoUrl?: string;
     defaultRemoteDisplayName?: string;

@@ -5,7 +5,7 @@ import { IStateful } from '../base/app/types';
 import { isNameReadOnly } from '../base/config/functions.any';
 import { SERVER_URL_CHANGE_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
-import i18next, { DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n/i18next';
+import i18next, { DEFAULT_LANGUAGE, LANGUAGES, SUPPORTED_LANGUAGES } from '../base/i18n/i18next';
 import { getLocalParticipant } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { getHideSelfView } from '../base/settings/functions.any';
@@ -136,7 +136,7 @@ export function getMoreTabProps(stateful: IStateful) {
         disableHideSelfView: disableSelfViewSettings || disableSelfView,
         hideSelfView: getHideSelfView(state),
         iAmVisitor: iAmVisitor(state),
-        languages: LANGUAGES,
+        languages: SUPPORTED_LANGUAGES,
         maxStageParticipants: state['features/base/settings'].maxStageParticipants,
         showLanguageSettings: configuredTabs.includes('language'),
         showSubtitlesOnStage: state['features/base/settings'].showSubtitlesOnStage,

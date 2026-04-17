@@ -1,21 +1,20 @@
 import BrowserLanguageDetector from 'i18next-browser-languagedetector';
 import { noop } from 'lodash-es';
 
-import LANGUAGES_RESOURCES from '../../../../lang/languages.json';
-
 import configLanguageDetector from './configLanguageDetector';
+import { LANGUAGES } from './supportedLanguages';
 
-// Map from lowercased key → original key (e.g. 'fr-ca' → 'fr-CA') for
-// case-insensitive lookup that still returns the exact casing i18next expects.
-const SUPPORTED_LANGUAGES = new Map(
-    Object.keys(LANGUAGES_RESOURCES).map(lang => [ lang.toLowerCase(), lang ])
+// Map from lowercased key → original key (e.g. 'fr-CA' → 'fr-CA') for
+// case-insensitive normalization before passing to i18next.
+// Filtering against config.supportedLanguages is handled by i18next whitelist.
+const LANG_NORMALIZE_MAP = new Map(
+    LANGUAGES.map(lang => [ lang.toLowerCase(), lang ])
 );
 
 /**
- * Custom querystring language detector that validates the raw `lang` query
- * parameter against the application's supported-language allowlist before
- * returning it. This prevents unsanitized user-controlled input from reaching
- * i18next internals (defence-in-depth on top of i18next's own whitelist).
+ * Custom querystring language detector that normalizes the raw `lang` query
+ * parameter to the exact casing i18next expects (e.g. 'fr-ca' → 'fr-CA').
+ * Filtering against config.supportedLanguages is delegated to i18next whitelist.
  */
 const safeLangQueryDetector = {
     name: 'safeLangQuery',
@@ -23,7 +22,7 @@ const safeLangQueryDetector = {
     lookup() {
         const value = new URLSearchParams(window.location.search).get('lang');
 
-        const lang = value && SUPPORTED_LANGUAGES.get(value.toLowerCase());
+        const lang = value && LANG_NORMALIZE_MAP.get(value.toLowerCase());
 
         if (lang) {
             return lang;
