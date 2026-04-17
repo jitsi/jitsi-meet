@@ -85,7 +85,7 @@ class ReactInstanceManagerHolder {
         return Collections.emptyList();
     }
 
-    static List<ReactPackage> getReactNativePackages() {
+    static List<ReactPackage> getReactNativePackages(Application app) {
         List<ReactPackage> packages
             = new ArrayList<>(Arrays.asList(
             new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
@@ -144,16 +144,37 @@ class ReactInstanceManagerHolder {
         }
 
         // RNGoogleSignInPackage
+        // Skip on devices without Google Mobile Services (e.g. Huawei) to avoid unnecessary alerts.
         try {
-            Class<?> googlePackageClass = Class.forName("com.reactnativegooglesignin.RNGoogleSigninPackage");
-            Constructor<?> constructor = googlePackageClass.getConstructor();
-            packages.add((ReactPackage)constructor.newInstance());
+            if (isGooglePlayServicesAvailable(app)) {
+                Class<?> googlePackageClass = Class.forName("com.reactnativegooglesignin.RNGoogleSigninPackage");
+                Constructor<?> constructor = googlePackageClass.getConstructor();
+                packages.add((ReactPackage) constructor.newInstance());
+            } else {
+                JitsiMeetLogger.d(TAG, "Skipping RNGoogleSignInPackage: GMS not available");
+            }
         } catch (Exception e) {
             // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
             JitsiMeetLogger.d(TAG, "Not loading RNGoogleSignInPackage");
         }
 
         return packages;
+    }
+
+    /**
+     * Checks whether Google Play Services (GMS) are available on this device.
+     * Uses PackageManager — no GMS dependency, safe to call on Huawei/AOSP devices.
+     *
+     * @param context {@code Context} to use for PackageManager query.
+     * @return {@code true} if GMS package is installed, {@code false} otherwise.
+     */
+    private static boolean isGooglePlayServicesAvailable(android.content.Context context) {
+        try {
+            context.getPackageManager().getPackageInfo("com.google.android.gms", 0);
+            return true;
+        } catch (android.content.pm.PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
     /**
@@ -239,7 +260,7 @@ class ReactInstanceManagerHolder {
                 .setBundleAssetName("index.android.bundle")
                 .setJSMainModulePath("index.android")
                 .setJavaScriptExecutorFactory(new HermesExecutorFactory())
-                .addPackages(getReactNativePackages())
+                .addPackages(getReactNativePackages(app))
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.BEFORE_CREATE);
 
