@@ -9,6 +9,7 @@ import {
     SET_SELECTED_RECORDING_SERVICE,
     SET_START_RECORDING_INTENT,
     SET_START_RECORDING_NOTIFICATION_SHOWN,
+    SET_STOP_RECORDING_INTENT,
     SET_STREAM_KEY
 } from './actionTypes';
 
@@ -40,6 +41,16 @@ export interface IStartRecordingIntent {
     transcription: boolean;
 }
 
+/**
+ * Tracks what is being stopped (recording and/or transcription). Mirrors
+ * IStartRecordingIntent. Used by maybeNotifyRecordingStop to coordinate the
+ * off-sound/notification across the recording and transcription stop events.
+ */
+export interface IStopRecordingIntent {
+    recording: boolean;
+    transcription: boolean;
+}
+
 export interface IRecordingState {
     consentRequested: Set<any>;
     disableHighlightMeetingMoment: boolean;
@@ -49,6 +60,7 @@ export interface IRecordingState {
     selectedRecordingService: string;
     sessionDatas: Array<ISessionData>;
     startRecordingIntent?: IStartRecordingIntent | null;
+    stopRecordingIntent?: IStopRecordingIntent | null;
     streamKey?: string;
     wasStartRecordingSuggested?: boolean;
 }
@@ -77,7 +89,8 @@ ReducerRegistry.register<IRecordingState>(STORE_NAME,
             return {
                 ...state,
                 sessionDatas: [],
-                startRecordingIntent: null
+                startRecordingIntent: null,
+                stopRecordingIntent: null
             };
 
         case MARK_CONSENT_REQUESTED:
@@ -132,6 +145,12 @@ ReducerRegistry.register<IRecordingState>(STORE_NAME,
             return {
                 ...state,
                 startRecordingIntent: action.intent
+            };
+
+        case SET_STOP_RECORDING_INTENT:
+            return {
+                ...state,
+                stopRecordingIntent: action.intent
             };
 
         case SET_START_RECORDING_NOTIFICATION_SHOWN:

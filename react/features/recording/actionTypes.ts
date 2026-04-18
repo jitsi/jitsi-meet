@@ -113,3 +113,15 @@ export const SET_START_RECORDING_NOTIFICATION_SHOWN = 'SET_START_RECORDING_NOTIF
  * }
  */
 export const SET_START_RECORDING_INTENT = 'SET_START_RECORDING_INTENT';
+
+/**
+ * Stores what the user is stopping (recording and/or transcription). Mirrors
+ * SET_START_RECORDING_INTENT. Seeded from the stop dialog on the local side and
+ * from metadata true→false transitions on remote observers.
+ *
+ * {
+ *     type: SET_STOP_RECORDING_INTENT,
+ *     intent: Object | null
+ * }
+ */
+export const SET_STOP_RECORDING_INTENT = 'SET_STOP_RECORDING_INTENT';

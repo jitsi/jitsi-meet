@@ -1,6 +1,6 @@
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { showErrorNotification } from '../notifications/actions';
-import { maybeNotifyRecordingStart } from '../recording/middleware';
+import { maybeNotifyRecordingStart, maybeNotifyRecordingStop } from '../recording/middleware';
 import { setSubtitlesError } from '../subtitles/actions.any';
 
 import { TRANSCRIBER_LEFT } from './actionTypes';
@@ -23,11 +23,19 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             // TRANSCRIBER_LEFT resets subtitles state to default (_hasError: false).
             // If we're in the coordinated start flow, we need _hasError = true
             // so maybeNotifyRecordingStart sees transcription as resolved-failed.
-            const intent = getState()['features/recording'].startRecordingIntent;
+            const startIntent = getState()['features/recording'].startRecordingIntent;
 
-            if (intent) {
+            if (startIntent) {
                 dispatch(setSubtitlesError(true));
                 maybeNotifyRecordingStart(dispatch, getState);
+            }
+
+            // If we're in the coordinated stop flow, the transcriber leaving is
+            // the transcription resolution — re-evaluate.
+            const stopIntent = getState()['features/recording'].stopRecordingIntent;
+
+            if (stopIntent) {
+                maybeNotifyRecordingStop(dispatch, getState);
             }
         }
         break;

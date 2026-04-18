@@ -27,6 +27,7 @@ import {
     SET_SELECTED_RECORDING_SERVICE,
     SET_START_RECORDING_INTENT,
     SET_START_RECORDING_NOTIFICATION_SHOWN,
+    SET_STOP_RECORDING_INTENT,
     SET_STREAM_KEY,
     START_LOCAL_RECORDING,
     STOP_LOCAL_RECORDING
@@ -43,7 +44,7 @@ import {
     shouldAutoTranscribeOnRecord
 } from './functions';
 import logger from './logger';
-import { IStartRecordingIntent } from './reducer';
+import { IStartRecordingIntent, IStopRecordingIntent } from './reducer';
 
 
 /**
@@ -554,6 +555,21 @@ export function markConsentRequested(sessionId: string) {
 export function setStartRecordingIntent(intent: IStartRecordingIntent | null) {
     return {
         type: SET_START_RECORDING_INTENT,
+        intent
+    };
+}
+
+/**
+ * Sets what the user is stopping (recording and/or transcription). Mirrors
+ * {@link setStartRecordingIntent}. Consumed by {@code maybeNotifyRecordingStop}
+ * to coordinate the off-sound/notification across stop events.
+ *
+ * @param {Object|null} intent - The intent, or null to clear.
+ * @returns {Object}
+ */
+export function setStopRecordingIntent(intent: IStopRecordingIntent | null) {
+    return {
+        type: SET_STOP_RECORDING_INTENT,
         intent
     };
 }
