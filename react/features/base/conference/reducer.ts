@@ -66,6 +66,7 @@ export interface IConferenceMetadata {
         };
     };
     recording?: {
+        isRecordingRequested?: boolean;
         isTranscribingEnabled: boolean;
     };
     visitors?: {

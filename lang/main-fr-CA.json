@@ -1120,6 +1120,8 @@
         "noStreams": "Aucun flux audio ou vidéo détectés.",
         "off": "L'enregistrement est arrêté",
         "offBy": "{{name}} a arrêté l'enregistrement",
+        "offByWithTranscription": "{{name}} a arrêté l'enregistrement et la transcription",
+        "offWithTranscription": "L'enregistrement et la transcription sont arrêtés",
         "on": "Enregistrement",
         "onBy": "{{name}} a démarré l'enregistrement",
         "onlyRecordSelf": "Enregistrer seulement mon audio et ma vidéo.",

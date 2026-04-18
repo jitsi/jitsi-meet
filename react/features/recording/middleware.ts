@@ -31,13 +31,15 @@ import {
 import { TRACK_ADDED } from '../base/tracks/actionTypes';
 import { hideNotification, showErrorNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
-import { isRecorderTranscriptionsRunning } from '../transcribing/functions';
+import { isRecorderTranscriptionsRunning, isTranscribing } from '../transcribing/functions';
 
 import { RECORDING_SESSION_UPDATED, START_LOCAL_RECORDING, STOP_LOCAL_RECORDING } from './actionTypes';
 import {
     clearRecordingSessions,
     hidePendingRecordingNotification,
     markConsentRequested,
+    setStartRecordingIntent,
+    setStopRecordingIntent,
     showPendingRecordingNotification,
     showRecordingError,
     showRecordingWarning,
@@ -55,7 +57,9 @@ import {
     RECORDING_AND_TRANSCRIPTION_ON_SOUND_ID,
     RECORDING_OFF_SOUND_ID,
     RECORDING_ON_SOUND_ID,
-    START_RECORDING_NOTIFICATION_ID
+    START_RECORDING_NOTIFICATION_ID,
+    TRANSCRIPTION_OFF_SOUND_ID,
+    TRANSCRIPTION_ON_SOUND_ID
 } from './constants';
 import {
     getResourceId,
@@ -65,11 +69,211 @@ import {
     unregisterRecordingAudioFiles
 } from './functions';
 import logger from './logger';
+import { ISessionData } from './reducer';
 
 /**
- * Map to track which recording sessions have transcription enabled.
+ * Evaluates whether all intended services (recording and/or transcription) have
+ * resolved (succeeded or failed) and plays the appropriate start sound and notification.
+ *
+ * Intent source: {@code startRecordingIntent} — populated on the local side by the
+ * start dialog / auto-start callback, and on remote observers by the metadata listener
+ * when a false→true transition of isRecordingRequested / isTranscribingEnabled is seen.
+ *
+ * Resolution is derived from existing Redux state — no separate tracking needed.
+ * The recording notification's "started by …" name is read directly from the active
+ * FILE session in {@code sessionDatas}. When recording is on but the initiator has not
+ * yet been delivered by jicofo, the function waits — keeping the intent alive.
+ *
+ * Called from:
+ *  - Recording middleware when RECORDING_SESSION_UPDATED arrives with the initiator
+ *    (jicofo update) or with an error.
+ *  - Transcription subscriber when isRecorderTranscriptionsRunning becomes true.
+ *  - Subtitles middleware when conference.dial() fails.
+ *  - Transcribing middleware when TRANSCRIBER_LEFT abruptly.
+ *  - Metadata change listener when room metadata updates.
+ *
+ * @param {Function} dispatch - Redux dispatch.
+ * @param {Function} getState - Redux getState.
+ * @returns {void}
  */
-const sessionsWithTranscription = new Map<string, boolean>();
+export function maybeNotifyRecordingStart(dispatch: IStore['dispatch'], getState: IStore['getState']) {
+    const state = getState();
+
+    const intent = state['features/recording'].startRecordingIntent;
+
+    const wantsRecording = Boolean(intent?.recording);
+    const wantsTranscription = Boolean(intent?.transcription);
+
+    // No intent — nothing to coordinate.
+    if (!wantsRecording && !wantsTranscription) {
+        return;
+    }
+
+    const { sessionDatas } = state['features/recording'];
+    const { mode: modeConstants, status: statusConstants } = JitsiRecordingConstants;
+
+    // Locate the active FILE recording session (if any) and derive its state.
+    const fileSession = sessionDatas.find(sd => sd.mode === modeConstants.FILE
+        && (sd.status === statusConstants.ON || sd.error));
+    const recordingOn = fileSession?.status === statusConstants.ON;
+    const recordingFailed = Boolean(fileSession?.error);
+    const recordingResolved = !wantsRecording || recordingOn || recordingFailed;
+
+    // Derive transcription resolution from existing state.
+    const transcriptionOn = isRecorderTranscriptionsRunning(state) || isTranscribing(state);
+    const transcriptionFailed = state['features/subtitles']._hasError;
+    const transcriptionResolved = !wantsTranscription || transcriptionOn || transcriptionFailed;
+
+    // Wait until all intended services have resolved.
+    // Note: In theory (it should never happen here) wantsTranscription/wantsRecording might be false and in the same
+    // time the transcriptionOn/recordingOn might be true. In this case we would play a notification no matter that
+    // wantsTranscription/wantsRecording is false. This is better because the recording/transcription are on and the
+    // user has to be informed. Also if this ever happens it will be noticeable and we will be able to debug/fix.
+    if (!recordingResolved || !transcriptionResolved) {
+        return;
+    }
+
+    // Recording is on but jicofo hasn't yet delivered the initiator. Wait for it
+    // so the notification text reflects who started the recording.
+    if (recordingOn && (!fileSession?.initiator || !fileSession.id)) {
+        return;
+    }
+
+    // Clear the intent BEFORE dispatching below to avoid a re-entrancy double
+    // fire — see the matching comment in maybeNotifyRecordingStop.
+    if (intent) {
+        dispatch(setStartRecordingIntent(null));
+    }
+
+    // Determine sound to play now that all intended services have resolved.
+    let soundID: string | undefined;
+
+    if (recordingOn && transcriptionOn) {
+        soundID = RECORDING_AND_TRANSCRIPTION_ON_SOUND_ID;
+    } else if (recordingOn) {
+        soundID = RECORDING_ON_SOUND_ID;
+    } else if (transcriptionOn) {
+        soundID = TRANSCRIPTION_ON_SOUND_ID;
+    }
+    // If both failed — no start sound (error notifications handle it).
+
+    if (soundID) {
+        dispatch(playSound(soundID));
+    }
+
+    if (recordingOn && fileSession?.initiator && fileSession.id) {
+        dispatch(showStartedRecordingNotification(
+            modeConstants.FILE,
+            fileSession.initiator,
+            fileSession.id,
+            recordingOn && transcriptionOn));
+    } else if (transcriptionOn && !recordingOn) {
+        // Transcription-only case (recording failed or wasn't requested).
+        dispatch(showNotification({
+            descriptionKey: 'transcribing.on',
+            titleKey: 'dialog.recording'
+        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+    }
+}
+
+/**
+ * Evaluates whether all intended services (recording and/or transcription) that
+ * are being stopped have resolved, and plays the appropriate off sound and
+ * notification. Mirror of {@link maybeNotifyRecordingStart}.
+ *
+ * Intent source: {@code stopRecordingIntent} — populated on the local side by the
+ * stop dialog, and on remote observers by the metadata listener when a true→false
+ * transition of isRecordingRequested / isTranscribingEnabled is seen.
+ *
+ * Called from:
+ *  - Metadata change listener on true→false transitions.
+ *  - Recording middleware when RECORDING_SESSION_UPDATED arrives with OFF.
+ *  - Transcription subscriber when isRecorderTranscriptionsRunning becomes false.
+ *  - Transcribing middleware when TRANSCRIBER_LEFT abruptly.
+ *
+ * @param {Function} dispatch - Redux dispatch.
+ * @param {Function} getState - Redux getState.
+ * @returns {void}
+ */
+export function maybeNotifyRecordingStop(dispatch: IStore['dispatch'], getState: IStore['getState']) {
+    const state = getState();
+    const intent = state['features/recording'].stopRecordingIntent;
+
+    if (!intent) {
+        return;
+    }
+
+    const { sessionDatas } = state['features/recording'];
+    const { mode: modeConstants, status: statusConstants } = JitsiRecordingConstants;
+
+    // Recording resolves when there's no active/pending FILE session.
+    const activeFileSession = sessionDatas.find(sd =>
+        sd.mode === modeConstants.FILE
+        && (sd.status === statusConstants.ON || sd.status === statusConstants.PENDING));
+    const recordingResolved = !intent.recording || !activeFileSession;
+
+    // Transcription resolves when the selector flips false.
+    const transcriptionResolved = !intent.transcription || !isRecorderTranscriptionsRunning(state);
+
+    if (!recordingResolved || !transcriptionResolved) {
+        return;
+    }
+
+    // Determine sounds + notification.
+    let onSoundID: string | undefined;
+    let offSoundID: string | undefined;
+
+    if (intent.recording && intent.transcription) {
+        onSoundID = RECORDING_AND_TRANSCRIPTION_ON_SOUND_ID;
+        offSoundID = RECORDING_AND_TRANSCRIPTION_OFF_SOUND_ID;
+    } else if (intent.recording) {
+        onSoundID = RECORDING_ON_SOUND_ID;
+        offSoundID = RECORDING_OFF_SOUND_ID;
+    } else if (intent.transcription) {
+        onSoundID = TRANSCRIPTION_ON_SOUND_ID;
+        offSoundID = TRANSCRIPTION_OFF_SOUND_ID;
+    }
+
+    // Clear the intent BEFORE dispatching below. Otherwise the first dispatch
+    // re-enters StateListenerRegistry synchronously; the isRecorderTranscriptionsRunning
+    // subscriber (in ../transcribing/subscriber) can fire in that nested walk
+    // with an unresolved prevSel and call back into this function while intent
+    // is still set — producing a duplicate notification. Reading intent into a
+    // local const above keeps the branches below correct.
+    dispatch(setStopRecordingIntent(null));
+
+    if (offSoundID) {
+        if (onSoundID) {
+            dispatch(stopSound(onSoundID));
+        }
+        dispatch(playSound(offSoundID));
+    }
+
+    if (intent.recording) {
+        // Pick the most recent FILE OFF session so the "stopped by …" name
+        // reflects the current stop, not a stale earlier cycle left in
+        // sessionDatas. sessionDatas is append-order, so the last match wins.
+        let offSession: ISessionData | undefined;
+
+        sessionDatas.forEach(sd => {
+            if (sd.mode === modeConstants.FILE && sd.status === statusConstants.OFF) {
+                offSession = sd;
+            }
+        });
+
+        const participantName = offSession?.terminator
+            ? getParticipantDisplayName(state, getResourceId(offSession.terminator))
+            : undefined;
+
+        dispatch(showStoppedRecordingNotification(
+            modeConstants.FILE, participantName, intent.transcription));
+    } else if (intent.transcription) {
+        dispatch(showNotification({
+            descriptionKey: 'transcribing.off',
+            titleKey: 'dialog.recording'
+        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+    }
+}
 
 /**
  * StateListenerRegistry provides a reliable way to detect the leaving of a
@@ -80,6 +284,52 @@ StateListenerRegistry.register(
     /* listener */ (conference, { dispatch }) => {
         if (!conference) {
             dispatch(clearRecordingSessions());
+        }
+    }
+);
+
+/**
+ * Listen for metadata changes to coordinate start/stop sound on the remote side.
+ * Detects false↔true transitions for {@code isRecordingRequested} and
+ * {@code isTranscribingEnabled} and seeds the corresponding intent for remote
+ * observers. Local initiators already have the intent set synchronously from
+ * their dialog — the {@code if (!existing)} guard prevents clobbering.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/conference'].metadata?.recording,
+    /* listener */ (recordingMetadata, { dispatch, getState }, previousValue) => {
+        const prevRec = Boolean(previousValue?.isRecordingRequested);
+        const prevTrans = Boolean(previousValue?.isTranscribingEnabled);
+        const curRec = Boolean(recordingMetadata?.isRecordingRequested);
+        const curTrans = Boolean(recordingMetadata?.isTranscribingEnabled);
+
+        const recordingStarting = !prevRec && curRec;
+        const transcriptionStarting = !prevTrans && curTrans;
+        const recordingStopping = prevRec && !curRec;
+        const transcriptionStopping = prevTrans && !curTrans;
+
+        if (recordingStarting || transcriptionStarting) {
+            const existing = getState()['features/recording'].startRecordingIntent;
+
+            if (!existing) {
+                dispatch(setStartRecordingIntent({
+                    recording: recordingStarting,
+                    transcription: transcriptionStarting
+                }));
+            }
+            maybeNotifyRecordingStart(dispatch, getState);
+        }
+
+        if (recordingStopping || transcriptionStopping) {
+            const existing = getState()['features/recording'].stopRecordingIntent;
+
+            if (!existing) {
+                dispatch(setStopRecordingIntent({
+                    recording: recordingStopping,
+                    transcription: transcriptionStopping
+                }));
+            }
+            maybeNotifyRecordingStop(dispatch, getState);
         }
     }
 );
@@ -239,7 +489,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         dispatch(hidePendingRecordingNotification(mode));
 
         if (updatedSessionData?.status === ON) {
-
             // We receive 2 updates of the session status ON. The first one is from jibri when it joins.
             // The second one is from jicofo which will deliver the initiator value. Since the start
             // recording notification uses the initiator value we skip the jibri update and show the
@@ -247,37 +496,19 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             // FIXME: simplify checks when the backend start sending only one status ON update containing
             // the initiator.
             if (initiator && !oldSessionData?.initiator) {
-                dispatch(showStartedRecordingNotification(mode, initiator, action.sessionData.id));
+                // Initiator just became known — let maybeNotifyRecordingStart
+                // decide whether to emit the notification now. It reads the
+                // initiator directly from sessionDatas and gates on its presence.
+                maybeNotifyRecordingStart(dispatch, getState);
             }
 
             if (oldSessionData?.status !== ON) {
                 sendAnalytics(createRecordingEvent('start', mode));
 
-                let soundID;
-                const isTranscribing = isRecorderTranscriptionsRunning(state);
-                const isRequestingTranscription = state['features/subtitles']._requestingSubtitles;
-                const willTranscribe = isTranscribing || isRequestingTranscription;
-
-                // Store whether transcription was enabled when recording started
-                if (mode === JitsiRecordingConstants.mode.FILE) {
-                    const sessionId = action.sessionData.id;
-
-                    if (sessionId) {
-                        sessionsWithTranscription.set(sessionId, willTranscribe);
-                    }
-
-                    if (willTranscribe) {
-                        soundID = RECORDING_AND_TRANSCRIPTION_ON_SOUND_ID;
-                    } else {
-                        soundID = RECORDING_ON_SOUND_ID;
-                    }
-                } else if (mode === JitsiRecordingConstants.mode.STREAM) {
-                    soundID = LIVE_STREAMING_ON_SOUND_ID;
+                if (mode === JitsiRecordingConstants.mode.STREAM) {
+                    dispatch(playSound(LIVE_STREAMING_ON_SOUND_ID));
                 }
-
-                if (soundID) {
-                    dispatch(playSound(soundID));
-                }
+                // FILE: no call here — handled by the initiator branch above with maybeNotifyRecordingStart.
 
                 if (typeof APP !== 'undefined') {
                     APP.API.notifyRecordingStatusChanged(
@@ -285,13 +516,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 }
             }
         } else if (updatedSessionData?.status === OFF && oldSessionData?.status !== OFF) {
-            const participantName = terminator
-                ? getParticipantDisplayName(state, getResourceId(terminator))
-                : undefined;
-
-            dispatch(showStoppedRecordingNotification(mode, participantName));
-
-            let duration = 0, soundOff, soundOn;
+            let duration = 0;
 
             if (oldSessionData?.timestamp) {
                 duration
@@ -299,31 +524,19 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             }
             sendAnalytics(createRecordingEvent('stop', mode, duration));
 
-            // Check if transcription was enabled when the recording started
-            const sessionId = action.sessionData.id;
-            const wasWithTranscription = sessionId ? sessionsWithTranscription.get(sessionId) ?? false : false;
-
             if (mode === JitsiRecordingConstants.mode.FILE) {
-                if (wasWithTranscription) {
-                    soundOff = RECORDING_AND_TRANSCRIPTION_OFF_SOUND_ID;
-                    soundOn = RECORDING_AND_TRANSCRIPTION_ON_SOUND_ID;
-                } else {
-                    soundOff = RECORDING_OFF_SOUND_ID;
-                    soundOn = RECORDING_ON_SOUND_ID;
-                }
-
-                // Clean up the entry when recording stops
-                if (sessionId) {
-                    sessionsWithTranscription.delete(sessionId);
-                }
+                // Recording OFF is one of the resolution points — let the stop
+                // coordinator decide which sound/notification to play based on
+                // stopRecordingIntent (combined vs recording-only).
+                maybeNotifyRecordingStop(dispatch, getState);
             } else if (mode === JitsiRecordingConstants.mode.STREAM) {
-                soundOff = LIVE_STREAMING_OFF_SOUND_ID;
-                soundOn = LIVE_STREAMING_ON_SOUND_ID;
-            }
+                const participantName = terminator
+                    ? getParticipantDisplayName(state, getResourceId(terminator))
+                    : undefined;
 
-            if (soundOff && soundOn) {
-                dispatch(stopSound(soundOn));
-                dispatch(playSound(soundOff));
+                dispatch(showStoppedRecordingNotification(mode, participantName, false));
+                dispatch(stopSound(LIVE_STREAMING_ON_SOUND_ID));
+                dispatch(playSound(LIVE_STREAMING_OFF_SOUND_ID));
             }
 
             if (typeof APP !== 'undefined') {
@@ -434,6 +647,15 @@ function _showRecordingErrorNotification(session: any, dispatch: IStore['dispatc
 
     if (typeof APP !== 'undefined') {
         APP.API.notifyRecordingStatusChanged(false, mode, error, isRecorderTranscriptionsRunning(getState()));
+    }
+
+    // Recording failed — re-evaluate. maybeNotifyRecordingStart derives state from
+    // sessionDatas (which now has the error) and will play transcription-only sound
+    // if transcription succeeded.
+    const intent = getState()['features/recording'].startRecordingIntent;
+
+    if (intent) {
+        maybeNotifyRecordingStart(dispatch, getState);
     }
 }
 
