@@ -12,7 +12,7 @@ import { updateDropboxToken } from '../../../dropbox/actions';
 import { getDropboxData, getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropbox/functions.any';
 import { showErrorNotification } from '../../../notifications/actions';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
-import { setSelectedRecordingService, startLocalVideoRecording } from '../../actions';
+import { setSelectedRecordingService, setStartRecordingIntent, startLocalVideoRecording } from '../../actions';
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../constants';
 import { isRecordingSharingEnabled, shouldAutoTranscribeOnRecord, supportsLocalRecording } from '../../functions';
 
@@ -367,6 +367,13 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             type?: string;
         } = {};
 
+        // Dispatch intent synchronously before any async operations.
+        // This coordinates sound/notification timing between recording and transcription.
+        dispatch(setStartRecordingIntent({
+            recording: this.state.shouldRecordAudioAndVideo,
+            transcription: this.state.shouldRecordTranscription
+        }));
+
         if (this.state.shouldRecordAudioAndVideo) {
             switch (this.state.selectedRecordingService) {
             case RECORDING_TYPES.DROPBOX: {
@@ -423,9 +430,12 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
 
         if (this.state.selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE
                 && this.state.shouldRecordTranscription) {
-            dispatch(setRequestingSubtitles(true, _displaySubtitles, _subtitlesLanguage, true));
+            dispatch(setRequestingSubtitles(
+                true, _displaySubtitles, _subtitlesLanguage, true,
+                this.state.shouldRecordAudioAndVideo));
         } else {
             _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                isRecordingRequested: this.state.shouldRecordAudioAndVideo,
                 isTranscribingEnabled: this.state.shouldRecordTranscription
             });
         }
