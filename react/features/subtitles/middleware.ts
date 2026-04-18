@@ -9,6 +9,7 @@ import { TRANSCRIBER_ID } from '../base/participants/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { showErrorNotification } from '../notifications/actions';
 import { RECORDING_METADATA_ID } from '../recording/constants';
+import { maybeNotifyRecordingStart } from '../recording/middleware';
 import { TRANSCRIBER_JOINED } from '../transcribing/actionTypes';
 
 import {
@@ -92,13 +93,19 @@ MiddlewareRegistry.register(store => next => action => {
         const { transcription } = store.getState()['features/base/config'];
 
         if (transcription?.autoCaptionOnTranscribe) {
-            store.dispatch(setRequestingSubtitles(true));
+            // The transcriber was started by someone else — skip metadata update
+            // to avoid overwriting the initiator's isRecordingRequested flag.
+            store.dispatch(setRequestingSubtitles(
+                true, undefined, undefined, undefined, undefined, true));
         }
 
         break;
     }
     case SET_REQUESTING_SUBTITLES:
-        _requestingSubtitlesChange(store, action.enabled, action.language, action.forceBackendRecordingOn);
+        _requestingSubtitlesChange(
+            store, action.enabled, action.language,
+            action.forceBackendRecordingOn, action.isRecordingRequested,
+            action.skipMetadataUpdate);
         break;
     }
 
@@ -346,6 +353,11 @@ function _getPrimaryLanguageCode(language: string) {
  * @param {string} language - The language to use for translation.
  * @param {boolean} forceBackendRecordingOn - Whether to force backend recording is on or not. This is used only when
  * we start recording, stopping is based on whether isTranscribingEnabled is already set.
+ * @param {boolean} isRecordingRequested - Whether recording was also requested alongside transcription.
+ * Passed through to metadata so remote clients receive both intent fields in a single atomic update.
+ * @param {boolean} skipMetadataUpdate - When true, skips setting room metadata. Used when reacting
+ * to a transcriber started by someone else (e.g. autoCaptionOnTranscribe) to avoid overwriting
+ * the initiator's metadata.
  * @private
  * @returns {void}
  */
@@ -353,7 +365,9 @@ function _requestingSubtitlesChange(
         { dispatch, getState }: IStore,
         enabled: boolean,
         language?: string | null,
-        forceBackendRecordingOn: boolean = false) {
+        forceBackendRecordingOn: boolean = false,
+        isRecordingRequested: boolean = false,
+        skipMetadataUpdate: boolean = false) {
     const state = getState();
     const { conference } = state['features/base/conference'];
     const backendRecordingOn = conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription;
@@ -377,12 +391,22 @@ function _requestingSubtitlesChange(
                         titleKey: 'transcribing.failed'
                     }));
                     dispatch(setSubtitlesError(true));
+
+                    // Transcription failed — re-evaluate. _hasError is now true,
+                    // so maybeNotifyRecordingStart will see transcription as resolved-failed
+                    // and play recording-only sound if recording succeeded.
+                    const intent = getState()['features/recording'].startRecordingIntent;
+
+                    if (intent) {
+                        maybeNotifyRecordingStart(dispatch, getState);
+                    }
                 });
         }
 
-        if (backendRecordingOn || forceBackendRecordingOn) {
+        if (!skipMetadataUpdate && (backendRecordingOn || forceBackendRecordingOn)) {
             conference?.getMetadataHandler()?.setMetadata(RECORDING_METADATA_ID, {
-                isTranscribingEnabled: true
+                isTranscribingEnabled: true,
+                ...(isRecordingRequested && { isRecordingRequested: true })
             });
         }
     }
@@ -396,6 +420,7 @@ function _requestingSubtitlesChange(
     if (!enabled && (backendRecordingOn || forceBackendRecordingOn)
         && conference?.getMetadataHandler()?.getMetadata()[RECORDING_METADATA_ID]?.isTranscribingEnabled) {
         conference?.getMetadataHandler()?.setMetadata(RECORDING_METADATA_ID, {
+            isRecordingRequested: false,
             isTranscribingEnabled: false
         });
     }
