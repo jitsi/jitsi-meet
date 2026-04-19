@@ -1147,6 +1147,8 @@
         "noStreams": "Kein Ton oder Video erkannt.",
         "off": "Aufnahme gestoppt",
         "offBy": "{{name}} stoppte die Aufnahme",
+        "offByWithTranscription": "{{name}} hat die Aufnahme und Transkription gestoppt",
+        "offWithTranscription": "Aufnahme und Transkription gestoppt",
         "on": "Aufnahme",
         "onBy": "{{name}} startete die Aufnahme",
         "onByWithTranscription": "{{name}} startete die Aufnahme. Ein Transkript wird nach der Konferenz verfügbar sein.",
