@@ -36,7 +36,7 @@ export const fishMeetToolbarButtonIcon = {
 const fishMeetStyles = {
     fishMeetToolbox: {
         alignItems: 'center',
-        backgroundColor: BaseTheme.palette.fishMeetUiBackground,
+        backgroundColor: BaseTheme.palette.customizedUiBackground,
         borderTopLeftRadius: 3,
         borderTopRightRadius: 3,
         flexDirection: 'row',
@@ -46,7 +46,7 @@ const fishMeetStyles = {
 
     fishMeetToolboxContainer: {
         flexDirection: 'row',
-        backgroundColor: BaseTheme.palette.fishMeetMainColor02,
+        backgroundColor: BaseTheme.palette.customizedUiMainColor02,
         borderRadius: 30,
         paddingLeft: 8, // fishmeet: was 10 — reduced to fit 5 buttons on 375pt screens
         paddingRight: 8, // fishmeet: was 10 — reduced to fit 5 buttons on 375pt screens

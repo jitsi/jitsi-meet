@@ -107,7 +107,7 @@ interface IProps {
 const useStyles = makeStyles()(theme => {
     return {
         text: {
-            color: theme.palette.text02,
+            color: theme.palette.customizedUiText01, // fishmeet: was text01
             padding: '10px 16px',
             height: '40px',
             overflow: 'hidden',
@@ -339,7 +339,7 @@ const ParticipantContextMenu = ({
 
     return (
         <ContextMenu
-            className = { className }
+            className = { `participant-ctx-menu ${className}` }
             entity = { participant }
             hidden = { thumbnailMenu ? false : undefined }
             inDrawer = { thumbnailMenu && _overflowDrawer }

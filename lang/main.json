@@ -312,6 +312,8 @@
         "alreadySharedVideoTitle": "Only one shared video is allowed at a time",
         "applicationWindow": "Application window",
         "authenticationRequired": "Authentication required",
+        "autoBreakoutRoomCountLabel": "Number of breakout rooms",
+        "autoBreakoutRoomCountTitle": "Auto breakout rooms",
         "cameraCaptureDialog": {
             "description": "Take and send a picture using your mobile camera",
             "ok": "Open camera",

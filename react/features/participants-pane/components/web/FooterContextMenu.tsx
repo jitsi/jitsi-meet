@@ -147,7 +147,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
     return (
         <ContextMenu
             activateFocusTrap = { true }
-            className = { classes.contextMenu }
+            className = { `footer-ctx-menu ${classes.contextMenu}` }
             hidden = { !isOpen }
             isDrawerOpen = { isOpen }
             onDrawerClose = { onDrawerClose }

@@ -156,7 +156,7 @@ const Checkbox = ({
     const isMobile = isMobileBrowser();
 
     return (
-        <label className = { cx(styles.formControl, isMobile && 'is-mobile', className) }>
+        <label className = { cx(styles.formControl, isMobile && 'is-mobile', className, 'form-control-checkbox') }>
             <div className = { cx(styles.activeArea, isMobile && 'is-mobile', disabled && styles.disabled) }>
                 <input
                     checked = { checked }

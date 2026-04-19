@@ -1,0 +1,87 @@
+/* Participants pane styling */
+#participants-pane {
+    background-color: #424350 !important;
+}
+
+#participants-pane .jitsi-icon {
+
+    &-dominant-speaker {
+        background-color: #1EC26A;
+        border-radius: 3px;
+    }
+}
+
+#participants-pane button {
+    border-radius: 32px !important;
+}
+
+#participants-search-input {
+    border-radius: 32px !important;
+}
+
+#participants-pane {
+
+    /* Participants list item container */
+    .list-item-container {
+        box-shadow: none;
+        padding: 8px 8px;
+        margin: 0 -10px;
+
+        &:hover {
+            background-color: #33333F;
+        }
+    }
+
+    .breakout-room-container.list-item-container {
+        box-shadow: none;
+        margin: 4px -10px;
+        padding-left: 8px;
+        padding-right: 8px;
+        background-color: #656876;
+    }
+
+    .breakout-room-container.list-item-container .arrow-container {
+        display: none;
+    }
+
+    .breakout-room-container.list-item-container .arrow-container .jitsi-icon {
+        color: #E7EEF2;
+    }
+
+    /* Breakout rooms list button styling */
+    #breakout-rooms-list button[type=button],
+    .list-item-container .actions button[type=button] {
+        background: transparent;
+        border: 1px solid #E7EEF2;
+    }
+
+    /* Participants list item actions container */
+    .list-item-container .actions {
+        box-shadow: none;
+        background: transparent;
+    }
+
+    /* Footer context menu text color */
+    .footer-ctx-menu span {
+        color: #424350;
+    }
+}
+
+/* Participants pane header close icon */
+.participants-pane-header .jitsi-icon {
+    color: #E7EEF2;
+}
+
+/* Participants pane container overflow handling */
+.participants-pane-container {
+    overflow-y: visible !important;
+}
+
+.participants-pane-container:has(.context-menu-hidden.participant-ctx-menu) {
+    overflow-y: auto !important;
+}
+
+/* Audio settings dialog noise suppression checkbox color */
+#audio-settings-dialog .noise-suppression-checkbox {
+    color: #424350;
+}

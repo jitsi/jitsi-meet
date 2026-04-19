@@ -48,7 +48,7 @@ interface IStylesProps {
 const useStyles = makeStyles<IStylesProps>()((theme, { isChatOpen }) => {
     return {
         participantsPane: {
-            backgroundColor: theme.palette.ui01,
+            backgroundColor: theme.palette.customizedUiBackground, // fishmeet: was ui01
             flexShrink: 0,
             position: 'relative',
             transition: 'width .16s ease-in-out',
@@ -98,7 +98,8 @@ const useStyles = makeStyles<IStylesProps>()((theme, { isChatOpen }) => {
             alignItems: 'center',
             boxSizing: 'border-box',
             display: 'flex',
-            height: '60px',
+            height: 'min-content', // fishmeet: was 60px
+            marginTop: `${participantsPaneTheme.panePadding}px`, // fishmeet: was nil
             padding: `0 ${participantsPaneTheme.panePadding}px`,
             justifyContent: 'flex-end'
         },
@@ -189,13 +190,13 @@ const ParticipantsPane = () => {
         <div
             className = { classes.participantsPane }
             id = 'participants-pane'>
-            <div className = { classes.header }>
+            <div className = { `participants-pane-header ${classes.header}` }>
                 <ClickableIcon
                     accessibilityLabel = { t('participantsPane.close', 'Close') }
                     icon = { IconCloseLarge }
                     onClick = { onClosePane } />
             </div>
-            <div className = { classes.container }>
+            <div className = { `participants-pane-container ${classes.container}` }>
                 <VisitorsList />
                 <br className = { classes.antiCollapse } />
                 <LobbyParticipants />

@@ -312,6 +312,8 @@
         "alreadySharedVideoTitle": "同一时间只允许一个视频分享",
         "applicationWindow": "应用程序窗口",
         "authenticationRequired": "需要身份验证",
+        "autoBreakoutRoomCountLabel": "分组讨论室数量",
+        "autoBreakoutRoomCountTitle": "自动分组讨论室",
         "cameraConstraintFailedError": "你的摄像头未满足某些必要条件。",
         "cameraNotFoundError": "找不到摄像头",
         "cameraNotSendingData": "我们无法访问你的摄像头，请检查是否有其他应用程序正在使用此设备，从设置菜单中选择另一个设备，或尝试重新加载应用程序。",

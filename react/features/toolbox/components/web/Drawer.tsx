@@ -44,7 +44,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         drawer: {
-            backgroundColor: theme.palette.ui01,
+            backgroundColor: theme.palette.customizedUiMainColor02, // fishmeet was: ui01
             maxHeight: `calc(${DRAWER_MAX_HEIGHT})`,
             borderRadius: '24px 24px 0 0',
             overflowY: 'auto',

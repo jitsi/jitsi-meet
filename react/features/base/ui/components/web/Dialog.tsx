@@ -25,7 +25,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         title: {
-            color: theme.palette.text01,
+            color: theme.palette.customizedUiText01, // fishmeet: was theme.palette.text01,
             ...withPixelLineHeight(theme.typography.heading5),
             margin: 0,
             padding: 0
@@ -150,7 +150,7 @@ const Dialog = ({
                 {children}
             </div>
             <div
-                className = { classes.footer }
+                className = { `dialog-footer ${classes.footer}` }
                 data-autofocus-inside = 'true'>
                 {!back.hidden && <Button
                     accessibilityLabel = { t(back.translationKey ?? '') }

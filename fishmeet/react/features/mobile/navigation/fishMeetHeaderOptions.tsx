@@ -13,6 +13,7 @@ export const fishMeetHeaderOptions = {
                 { options.title }
             </Text>
             <TouchableOpacity
+            // eslint-disable-next-line react/jsx-no-bind
                 onPress = { () => navigation.goBack() }
                 style = { styleHeader.touchStyle as ViewStyle }>
                 <Icon

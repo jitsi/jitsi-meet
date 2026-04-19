@@ -123,11 +123,11 @@ const useStyles = makeStyles()(theme => {
             },
 
             '&:hover': {
-                backgroundColor: theme.palette.ui02
+                backgroundColor: theme.palette.customizedUiAction01 // fishmeet: was ui02
             },
 
             '&:active': {
-                backgroundColor: theme.palette.ui03
+                backgroundColor: theme.palette.customizedUiAction01 // fishmeet: was ui03
             },
 
             '&.focus-visible': {
@@ -138,7 +138,7 @@ const useStyles = makeStyles()(theme => {
         selected: {
             borderLeft: `3px solid ${theme.palette.action01Hover}`,
             paddingLeft: '13px',
-            backgroundColor: theme.palette.ui02
+            backgroundColor: theme.palette.customizedUiAction01 // fishmeet: was ui02
         },
 
         contextMenuItemDisabled: {
@@ -147,7 +147,7 @@ const useStyles = makeStyles()(theme => {
 
         contextMenuItemIconDisabled: {
             '& svg': {
-                fill: `${theme.palette.text03} !important`
+                fill: `${theme.palette.customizedUiText01} !important`
             }
         },
 
@@ -169,13 +169,13 @@ const useStyles = makeStyles()(theme => {
 
         contextMenuItemIcon: {
             '& svg': {
-                fill: theme.palette.icon01
+                // fill: theme.palette.icon01 /* fishmeet: was nil,  customized the background color, so there is no need to set the color here */
             }
         },
 
         text: {
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
-            color: theme.palette.text01
+            color: theme.palette.customizedUiText01 // fishmeet: was icon01
         },
 
         drawerText: {
@@ -252,7 +252,7 @@ const ContextMenuItem = ({
             {customIcon ? customIcon
                 : icon && <Icon
                     className = { cx(styles.contextMenuItemIcon,
-                        disabled && styles.contextMenuItemIconDisabled) }
+                        disabled && styles.contextMenuItemIconDisabled, 'context-menu-icon') }
                     size = { 20 }
                     src = { icon } />}
             {text && (

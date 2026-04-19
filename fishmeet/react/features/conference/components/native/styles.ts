@@ -39,7 +39,7 @@ export default {
      */
     conference: {
         alignSelf: 'stretch',
-        backgroundColor: BaseTheme.palette.fishMeetUiBackground, // fishmeet: was uiBackground
+        backgroundColor: BaseTheme.palette.customizedUiBackground, // fishmeet: was uiBackground
         flex: 1
     },
 
@@ -112,7 +112,7 @@ export default {
 
     titleBarSafeViewColor: {
         ...titleBarSafeView,
-        backgroundColor: BaseTheme.palette.fishMeetUiBackground // fishmeet: was uiBackground
+        backgroundColor: BaseTheme.palette.customizedUiBackground // fishmeet: was uiBackground
     },
 
     titleBarSafeViewTransparent: {

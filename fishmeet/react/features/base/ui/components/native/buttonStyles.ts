@@ -20,7 +20,7 @@ const buttonLabel = {
 const pillButtonLabel = {
     ...buttonLabel,
     textTransform: 'capitalize',
-    color: BaseTheme.palette.fishMeetText01
+    color: BaseTheme.palette.customizedUiText01
 };
 
 export default {
@@ -87,15 +87,15 @@ export default {
     // per-type config: label style and background color for NativePaperButton
     buttonTypeConfig: {
         [BUTTON_TYPES.PRIMARY]: {
-            color: BaseTheme.palette.fishMeetMainColor01,
+            color: BaseTheme.palette.customizedUiMainColor01,
             labelStyle: pillButtonLabel
         },
         [BUTTON_TYPES.SECONDARY]: {
-            color: BaseTheme.palette.fishMeetAction01,
+            color: BaseTheme.palette.customizedUiAction01,
             labelStyle: pillButtonLabel
         },
         [BUTTON_TYPES.TERTIARY]: {
-            color: BaseTheme.palette.fishMeetMainColor02,
+            color: BaseTheme.palette.customizedUiMainColor02,
             labelStyle: pillButtonLabel
         },
         [BUTTON_TYPES.DESTRUCTIVE]: {

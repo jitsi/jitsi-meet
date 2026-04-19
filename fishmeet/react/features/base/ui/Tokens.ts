@@ -6,13 +6,19 @@ export const colorMap = {
     //  - JitsiMeetView.m
     //  - JitsiMeetView.java
     uiBackground: 'surface01',
-    fishMeetUiBackground: '#42434F',
-    fishMeetMainColor01: '#FE9C75',
-    fishMeetMainColor02: '#C8D7EC',
-    fishMeetAction01: '#E7EEF2',
-    fishMeetText01: '#424350',
-    fishMeetText02: '#28262C',
-    fishMeetText03: '#33333F',
+
+    // GraceTech Customization design token
+    // Do not hardcode the colors:
+    // define them at type GraceTechCustomizedPalette: react/features/base/ui/functions.web.ts:9
+    // config them at fishmeet-config.js -》 config.customTheme
+    customizedUiBackground: 'customizedUiBackground',
+    customizedUiSecBackground: 'customizedUiSecBackground',
+    customizedUiMainColor01: 'customizedUiMainColor01',
+    customizedUiMainColor02: 'customizedUiMainColor02',
+    customizedUiAction01: 'customizedUiAction01',
+    customizedUiText01: 'customizedUiText01',
+    customizedUiText02: 'customizedUiText02',
+    customizedUiText03: 'customizedUiText03',
 
     // Container backgrounds
     ui01: 'surface02',

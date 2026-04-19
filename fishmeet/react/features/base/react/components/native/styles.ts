@@ -169,9 +169,9 @@ export default {
             color: 'transparent',
             containerStyle: {
                 ...iconFishmeetButtonContainer,
-                backgroundColor: BaseTheme.palette.fishMeetMainColor01
+                backgroundColor: BaseTheme.palette.customizedUiMainColor01
             },
-            underlayColor: BaseTheme.palette.fishMeetMainColor01,
+            underlayColor: BaseTheme.palette.customizedUiMainColor01,
             disabledColor: 'transparent',
             disabledContainerStyle: {
                 ...iconFishmeetButtonContainer,
@@ -179,12 +179,12 @@ export default {
             }
         },
         [BUTTON_TYPES.SECONDARY]: {
-            color: BaseTheme.palette.fishMeetText01,
+            color: BaseTheme.palette.customizedUiText01,
             containerStyle: {
                 ...iconFishmeetButtonContainer,
-                backgroundColor: BaseTheme.palette.fishMeetMainColor01
+                backgroundColor: BaseTheme.palette.customizedUiMainColor01
             },
-            underlayColor: BaseTheme.palette.fishMeetMainColor01,
+            underlayColor: BaseTheme.palette.customizedUiMainColor01,
             disabledColor: 'transparent',
             disabledContainerStyle: {
                 ...iconFishmeetButtonContainer,
@@ -195,9 +195,9 @@ export default {
             color: 'transparent',
             containerStyle: {
                 ...iconFishmeetButtonContainer,
-                backgroundColor: BaseTheme.palette.fishMeetMainColor02
+                backgroundColor: BaseTheme.palette.customizedUiMainColor02
             },
-            underlayColor: BaseTheme.palette.fishMeetMainColor02,
+            underlayColor: BaseTheme.palette.customizedUiMainColor02,
             disabledColor: 'transparent',
             disabledContainerStyle: {
                 ...iconFishmeetButtonContainer,

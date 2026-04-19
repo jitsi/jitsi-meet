@@ -135,8 +135,8 @@ export const pollsStyles = createStyleSheet({
     },
 
     pollItemContainer: {
-        backgroundColor: BaseTheme.palette.fishMeetText03,
-        borderColor: BaseTheme.palette.fishMeetText03,
+        backgroundColor: BaseTheme.palette.customizedUiText03,
+        borderColor: BaseTheme.palette.customizedUiText03,
         borderRadius: 30,
         borderWidth: 1,
         padding: BaseTheme.spacing[2],
@@ -144,9 +144,10 @@ export const pollsStyles = createStyleSheet({
     },
 
     switchProps: {
-        thumbColor: BaseTheme.palette.fishMeetText03,
+        thumbColor: BaseTheme.palette.customizedUiText03,
+        // @ts-ignore
         trackColor: {
-            true: BaseTheme.palette.fishMeetMainColor02,
+            true: BaseTheme.palette.customizedUiMainColor02,
             false: '#C8D7EC80'
         }
     },
@@ -228,7 +229,7 @@ export const pollsStyles = createStyleSheet({
     },
 
     pollPaneContainer: {
-        backgroundColor: BaseTheme.palette.fishMeetUiBackground, // fishmeet: was ui01
+        backgroundColor: BaseTheme.palette.customizedUiBackground, // fishmeet: was ui01
         flex: 1
     },
 

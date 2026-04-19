@@ -21,4 +21,7 @@ actionTypes.ts
 # It's not complete until all files are copied at build time.
 react-native-sdk/
 
+# fishmeet src will overwrite the original project for ESLint check
+fishmeet/
+
 *.d.ts

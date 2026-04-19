@@ -60,6 +60,7 @@ const ParticipantsPaneFooter = (): JSX.Element => {
                 && <Button
                     accessibilityLabel = 'participantsPane.actions.breakoutRooms'
                     labelKey = 'participantsPane.actions.breakoutRooms'
+                    // eslint-disable-next-line react/jsx-no-bind
                     onClick = { () => navigate(screen.conference.fishMeetBreakoutRooms) }
                     style = { styles.breakoutRoomsButton }
                     type = { BUTTON_TYPES.SECONDARY } />

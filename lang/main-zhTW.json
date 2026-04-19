@@ -312,6 +312,8 @@
         "alreadySharedVideoTitle": "同一時間只允許一位影像分享",
         "applicationWindow": "應用程式視窗",
         "authenticationRequired": "需要驗證",
+        "autoBreakoutRoomCountLabel": "分組討論室數量",
+        "autoBreakoutRoomCountTitle": "自動分組討論室",
         "cameraConstraintFailedError": "您的網路攝影機不符合要求。",
         "cameraNotFoundError": "找不到網路攝影機。",
         "cameraNotSendingData": "我們無法存取您的網路攝影機，請檢查是否有其他應用程式正在使用這個裝置，並從裝置選單裡選擇其他設備或者重新載入。",

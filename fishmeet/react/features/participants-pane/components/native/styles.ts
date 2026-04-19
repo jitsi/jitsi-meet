@@ -193,7 +193,7 @@ export default {
     },
 
     participantsPaneContainer: {
-        backgroundColor: BaseTheme.palette.fishMeetUiBackground, // fishmeet: was ui01
+        backgroundColor: BaseTheme.palette.customizedUiBackground, // fishmeet: was ui01
         flex: 1,
         flexDirection: 'column',
         paddingVertical: BaseTheme.spacing[2]
@@ -284,7 +284,7 @@ export default {
     centerInput: {
         paddingRight: BaseTheme.spacing[3],
         textAlign: 'left', // fishmeet: was 'center'
-        backgroundColor: BaseTheme.palette.fishMeetUiBackground,
+        backgroundColor: BaseTheme.palette.customizedUiBackground,
         borderColor: '#fff',
         borderWidth: 0.5,
         borderRadius: 30

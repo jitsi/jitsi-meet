@@ -33,6 +33,18 @@ jobs:
       run: npm run lint:lang
     - name: Check if the git repository is clean
       run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
+    - name: Copy Fishmeet CSS overrides
+      run: |
+        if [ -d "fishmeet/css" ]; then
+            echo "Copying CSS overrides from fishmeet/css/ to css/..."
+            cp -v "fishmeet/css/"_*.scss "css/"
+        fi
+    - name: Copy Fishmeet react overrides
+      run: |
+        if [ -d "fishmeet/react" ]; then
+            echo "Copying react overrides..."
+            rsync -r "fishmeet/react/" "react/"
+        fi
     - run: npm run lint:ci && npm run tsc:ci
   frontend:
     # disabled for gracetech to save GitHub action minutes
@@ -189,6 +201,18 @@ jobs:
         node -v
         npm -v
     - run: npm install
+    - name: Copy Fishmeet CSS overrides
+      run: |
+        if [ -d "fishmeet/css" ]; then
+            echo "Copying CSS overrides from fishmeet/css/ to css/..."
+            cp -v "fishmeet/css/"_*.scss "css/"
+        fi
+    - name: Copy Fishmeet react overrides
+      run: |
+        if [ -d "fishmeet/react" ]; then
+            echo "Copying react overrides..."
+            rsync -r "fishmeet/react/" "react/"
+        fi
     - run: make
     - run: sudo apt-get install -y debhelper
     - run: dpkg-buildpackage -A -rfakeroot -us -uc -d

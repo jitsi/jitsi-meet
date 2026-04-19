@@ -40,7 +40,7 @@ body {
  * but it will still show up on keyboard focus, thus preserving accessibility.
  */
 .js-focus-visible :focus:not(.focus-visible) {
-  outline: none;
+    outline: none;
 }
 
 /**
@@ -82,18 +82,29 @@ p {
     margin: 0;
 }
 
-body, input, textarea, keygen, select, button {
+body,
+input,
+textarea,
+keygen,
+select,
+button {
     font-family: $baseFontFamily !important;
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
     margin: 0;
     vertical-align: baseline;
     font-size: 1em;
 }
 
-button, select, input[type="button"],
-input[type="reset"], input[type="submit"] {
+button,
+select,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
     cursor: pointer;
 }
 
@@ -103,9 +114,13 @@ textarea {
     line-height: 1.5em;
 }
 
-input[type='text'], input[type='password'], textarea {
-    outline: none; /* removes the default outline */
-    resize: none; /* prevents the user-resizing, adjust to taste */
+input[type='text'],
+input[type='password'],
+textarea {
+    outline: none;
+    /* removes the default outline */
+    resize: none;
+    /* prevents the user-resizing, adjust to taste */
 }
 
 button {
@@ -136,7 +151,7 @@ form {
 
 .leftwatermark {
     max-width: 140px;
-    max-height:70px;
+    max-height: 70px;
     left: 32px;
     top: 32px;
     background-position: center left;
@@ -144,8 +159,8 @@ form {
     background-size: contain;
 
     &.no-margin {
-        left:0;
-        top:0;
+        left: 0;
+        top: 0;
     }
 }
 
@@ -160,7 +175,7 @@ form {
     left: 25;
     bottom: 7;
     font-size: 0.875rem;
-    color: rgba(255,255,255,.50);
+    color: rgba(255, 255, 255, .50);
     text-decoration: none;
     z-index: $watermarkZ;
 }
@@ -216,6 +231,16 @@ form {
     /* width controlled by JS (accounts for filmstrip width + 24px padding) */
 }
 
+/* In vertical layout, the background of the large video container is dark gray */
+.vertical-filmstrip #largeVideoContainer {
+    background-color: #424350 !important;
+}
+
+/* In tile-view, the large video container is transparent, */
+.tile-view #largeVideoContainer {
+    background-color: transparent !important;
+}
+
 /* Filmstrip thumbnail tiles: rounded corners per Figma.
    display:block required so overflow:hidden actually clips children (span is inline by default).
    Also apply border-radius directly to inner elements because the tss-react containerBackground
@@ -226,7 +251,7 @@ form {
     overflow: hidden !important;
 }
 
-.filmstrip__videos .videocontainer > div,
+.filmstrip__videos .videocontainer>div,
 .filmstrip__videos .videocontainer video {
     border-radius: 13px !important;
 }
@@ -255,6 +280,18 @@ form {
             height: 16px !important;
         }
     }
+
+    /* Tile-view mode: displayname styling */
+    .tile-view-mode & {
+        margin: 0 0 16px 16px;
+
+        .displayname {
+            background: #C8D7EC;
+            padding: 4px 8px;
+            border-radius: 10px;
+            color: #424350;
+        }
+    }
 }
 
 .bottom-indicators .displayname {
@@ -269,7 +306,7 @@ form {
     padding-left: 10px !important;
 
     /* Name badge pill styling */
-    > div {
+    >div {
         background: #C8D7EC !important;
         border-radius: 22px !important;
         color: #424350 !important;
@@ -403,19 +440,6 @@ body:has(.filmstrip.hidden) #largeVideoContainer {
     }
 }
 
-/* Participants pane styling */
-.participants_pane {
-    background-color: #424350 !important;
-}
-
-#participants-pane button {
-    border-radius: 32px !important;
-}
-
-#participants-search-input {
-    border-radius: 32px !important;
-}
-
 .sr-only {
     border: 0 !important;
     clip: rect(1px, 1px, 1px, 1px) !important;
@@ -427,4 +451,101 @@ body:has(.filmstrip.hidden) #largeVideoContainer {
     position: absolute !important;
     width: 1px !important;
     white-space: nowrap !important;
+}
+
+
+svg {
+
+    /* Context menu  kickout anticipant icon */
+    .kicklink .context-menu-icon & {
+        fill: #D93B2C !important;
+    }
+
+    /* Participants pane stop video icon color */
+    .participants-pane-context-menu-stop-video & {
+        fill: transparent !important;
+    }
+
+    /* Chat tab icon color */
+    #polls-tab &,
+    #chat-tab & {
+        color: #E7EEF2 !important;
+        fill: #E7EEF2 !important;
+    }
+}
+
+
+/* Conference participants tile container */
+.thumbnail-container {
+
+    /* tile's gap */
+    .thumbnail-container-background {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        height: calc(100% - 10px);
+        width: calc(100% - 10px);
+        background-color: #42434F;
+    }
+
+    /* tile's gap */
+    .raised-hand-border,
+    .active-speaker-indicator {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        height: calc(100% - 10px);
+        width: calc(100% - 10px);
+    }
+}
+
+/* Base dialog modal */
+.base-dialog-modal {
+    #modal-header-close-button:hover {
+        background-color: transparent;
+    }
+
+    /* Dialog footer buttons center */
+    .dialog-footer {
+        justify-content: center;
+    }
+
+    /* Dialog footer buttons style */
+    button[type="button"],
+    button[type="button"]:hover,
+    button[type="submit"],
+    button[type="submit"]:hover {
+        color: #424350;
+        background-color: #E7EEF2;
+        border-radius: 20px;
+        min-width: 8em;
+    }
+}
+
+.context-menu {
+
+    /* Context menu checkbox color */
+    .form-control-checkbox,
+    td {
+        color: #424350;
+    }
+}
+
+/* Chat input container icon color */
+.chat-input-container button .jitsi-icon {
+    color: transparent;
+
+    svg {
+        fill: #424350;
+    }
+}
+
+/* Base dialog modal form control input color */
+.base-dialog-modal .form-ctrl-input {
+    background-color: transparent;
+    color: #424350;
+    box-shadow: 0px 0px 0px 1px #424350;
+    border-radius: 20px;
 }

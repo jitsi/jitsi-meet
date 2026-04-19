@@ -2,7 +2,7 @@ import BaseTheme from '../../../../../base/ui/components/BaseTheme.native';
 
 export const styleHeader = {
     viewStyle: {
-        backgroundColor: BaseTheme.palette.fishMeetUiBackground,
+        backgroundColor: BaseTheme.palette.customizedUiBackground,
         height: 60,
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,

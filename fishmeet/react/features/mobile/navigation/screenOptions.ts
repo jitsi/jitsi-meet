@@ -67,10 +67,10 @@ export const visitorsScreenOptions = fullScreenOptions;
 export const chatTabBarOptions = {
     swipeEnabled: false,
     tabBarIndicatorStyle: {
-        backgroundColor: BaseTheme.palette.fishMeetMainColor02
+        backgroundColor: BaseTheme.palette.customizedUiMainColor02
     },
     tabBarStyle: {
-        backgroundColor: BaseTheme.palette.fishMeetUiBackground,
+        backgroundColor: BaseTheme.palette.customizedUiBackground,
         borderBottomColor: '#C8D7EC80',
         borderBottomWidth: 0.4
     }

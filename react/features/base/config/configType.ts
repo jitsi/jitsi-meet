@@ -247,6 +247,7 @@ export interface IConfig {
     };
     corsAvatarURLs?: Array<string>;
     customParticipantMenuButtons?: Array<{ icon: string; id: string; text: string; }>;
+    customTheme?: any; // support custom theme from config.js
     customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
     deeplinking?: IDeeplinkingConfig;
     defaultLanguage?: string;

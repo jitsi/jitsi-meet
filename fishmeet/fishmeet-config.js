@@ -31,7 +31,16 @@ config.customTheme = {
         action01: '#FE9C75',
         action01Hover: '#E88B64',
         // Override warning colors (used for raised hand)
-        warning02: '#FE9C75'
+        warning02: '#FE9C75',
+
+        customizedUiBackground: '#42434F',
+        customizedUiSecBackground: '#656876',
+        customizedUiMainColor01: '#FE9C75',
+        customizedUiMainColor02: '#C8D7EC',
+        customizedUiAction01: '#E7EEF2',
+        customizedUiText01: '#424350',
+        customizedUiText02: '#28262C',
+        customizedUiText03: '#33333F',
     }
 };
 

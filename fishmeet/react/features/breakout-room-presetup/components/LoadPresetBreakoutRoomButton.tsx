@@ -86,7 +86,7 @@ export const LoadPresetBreakoutRoomButton = () => {
             fullWidth = { true }
             labelKey = 'presetBreakoutRooms.actions.load'
             onClick = { onBtnClick }
-            type = { BUTTON_TYPES.PRIMARY } />
+            type = { BUTTON_TYPES.SECONDARY } />
     );
 };
 

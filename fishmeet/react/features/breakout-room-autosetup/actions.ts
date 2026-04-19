@@ -1,8 +1,9 @@
-import { isEmpty, map } from 'lodash-es';
+import { filter, isEmpty, map, size } from 'lodash-es';
 
 import { IStore } from '../app/types';
 import { autoAssignToBreakoutRooms, createBreakoutRoom, removeBreakoutRoom, sendParticipantToRoom } from '../breakout-rooms/actions';
 import { getBreakoutRooms, getMainRoom } from '../breakout-rooms/functions';
+import logger from '../breakout-rooms/logger';
 import { IRoomInfoParticipant } from '../breakout-rooms/types';
 
 import { _AVAILABLE_AUTO_SET_BREAKOUT_ROOMS, _AVAILABLE_REMOVE_ALL_BREAKOUT_ROOMS, _AVAILABLE_REMOVE_ALL_BREAKOUT_ROOMS_AND_ADD } from './actionTypes';
@@ -31,14 +32,11 @@ export function availableReassign(value: IAutosetupBreakoutRoomsState['available
 
 export function executeAutoBreakoutRoom() {
     return async (dispatch: IStore['dispatch'], _getState: IStore['getState']) => {
-        dispatch(availableAutoToSetup(false));
-
         // even if waiting for the middleware callback, it still takes some time to create rooms
         await new Promise(r => setTimeout(r, 100));
         dispatch(autoAssignToBreakoutRooms());
     };
 }
-
 
 export function sendAllParticipantsToMainRoom() {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
@@ -112,6 +110,36 @@ export function prepareReassignRemove(params: { assignRoomCount: number; }) {
             addReady: false,
             assignRoomCount: params.assignRoomCount,
         }));
+    };
+}
+
+export function launchAutoSetup(params: { assignRoomCount: number; }) {
+    const { assignRoomCount } = params;
+
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState'],) => {
+        const state = getState();
+
+        const rooms = getBreakoutRooms(state);
+        const subRoomsSize = size(filter(rooms, room => !room.isMainRoom));
+
+        // Check whether the number of rooms to assign is valid
+        if (!assignRoomCount || isNaN(assignRoomCount) || assignRoomCount < 1) {
+            return;
+        }
+
+        logger.debug('[GTS] AutoDiscuss click', { shouldAssignRoomCount: assignRoomCount, subRoomsSize });
+
+        if (assignRoomCount > subRoomsSize) {
+            dispatch(prepareReassignAdd({
+                assignRoomCount: assignRoomCount - subRoomsSize
+            }));
+        } else if (assignRoomCount === subRoomsSize) {
+            dispatch(autoAssignToBreakoutRooms());
+
+        } else {
+            // we'll close all rooms if there is too many, and then recreate
+            dispatch(triggerReassign({ assignRoomCount: assignRoomCount }));
+        }
     };
 }
 

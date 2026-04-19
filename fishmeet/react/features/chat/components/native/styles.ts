@@ -101,7 +101,7 @@ export default {
 
     chatMessage: {
         ...BaseTheme.typography.bodyShortRegular,
-        color: BaseTheme.palette.fishMeetText02 // fishmeet: was text01
+        color: BaseTheme.palette.customizedUiText02 // fishmeet: was text01
     },
 
     /**
@@ -155,8 +155,8 @@ export default {
 
     // fishmeet: input field styling
     customInput: {
-        backgroundColor: BaseTheme.palette.fishMeetUiBackground,
-        borderColor: BaseTheme.palette.fishMeetMainColor02,
+        backgroundColor: BaseTheme.palette.customizedUiBackground,
+        borderColor: BaseTheme.palette.customizedUiMainColor02,
         borderRadius: 30,
         borderWidth: 1
     },
@@ -210,7 +210,7 @@ export default {
      * Text node for the timestamp.
      */
     timeText: {
-        color: BaseTheme.palette.fishMeetMainColor02, // fishmeet: was text03
+        color: BaseTheme.palette.customizedUiMainColor02, // fishmeet: was text03
         fontSize: 13
     },
 
@@ -222,7 +222,7 @@ export default {
 
     // fishmeet: use brand background instead of ui01
     chatContainer: {
-        backgroundColor: BaseTheme.palette.fishMeetUiBackground,
+        backgroundColor: BaseTheme.palette.customizedUiBackground,
         flex: 1
     },
 
@@ -258,11 +258,11 @@ export default {
 
     senderDisplayName: {
         ...BaseTheme.typography.bodyShortBold,
-        color: BaseTheme.palette.fishMeetText02 // fishmeet: was text02
+        color: BaseTheme.palette.customizedUiText02 // fishmeet: was text02
     },
 
     localMessageBubble: {
-        backgroundColor: BaseTheme.palette.fishMeetMainColor02, // fishmeet: was ui04
+        backgroundColor: BaseTheme.palette.customizedUiMainColor02, // fishmeet: was ui04
         borderTopRightRadius: 0
     },
 

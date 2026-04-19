@@ -1064,7 +1064,7 @@ class Thumbnail extends Component<IProps, IState> {
 
         return (
             <span
-                className = { containerClassName }
+                className = { `${containerClassName} thumbnail-container` }
                 id = { local
                     ? `localVideoContainer${filmstripType === FILMSTRIP_TYPE.MAIN ? '' : `_${filmstripType}`}`
                     : `participant_${id}${filmstripType === FILMSTRIP_TYPE.MAIN ? '' : `_${filmstripType}`}`
@@ -1100,7 +1100,7 @@ class Thumbnail extends Component<IProps, IState> {
                 {!_gifSrc && (local
                     ? <span id = 'localVideoWrapper'>{video}</span>
                     : video)}
-                <div className = { classes.containerBackground } />
+                <div className = { `${classes.containerBackground} thumbnail-container-background` } />
                 {/* put the bottom container before the top container in the dom,
                 because it contains the participant name that should be announced first by screen readers */}
                 <div

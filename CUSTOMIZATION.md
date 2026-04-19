@@ -112,7 +112,7 @@ in `react/` after rsync. The key categories:
 #### Design tokens / palette
 `fishmeet/react/features/base/ui/Tokens.ts`
 Overrides `BaseTheme.palette` to inject fishmeet brand colors
-(`fishMeetUiBackground`, `fishMeetMainColor02`, `fishMeetText03`, etc.).
+(`customizedUiBackground`, `customizedUiMainColor02`, `customizedUiText03`, etc.).
 This is the **single source of truth** for all brand colors — reference palette
 tokens in stylesheets rather than hardcoding hex values.
 
@@ -135,7 +135,7 @@ fishmeet-specific values. Changed properties are annotated with
 #### Constants overrides
 `fishmeet/react/features/participants-pane/constants.tsx`
 Replaces `AudioStateIcons` and `VideoStateIcons` with fishmeet circular icon
-containers (37×37 px, `fishMeetMainColor02` background).
+containers (37×37 px, `customizedUiMainColor02` background).
 
 #### Navigation overrides
 | Override file | What it customizes |
@@ -195,6 +195,21 @@ PollAnswer is: **read an optional property from the stylesheet via
 jitsi), behavior is unchanged. If it is present (set in a fishmeet stylesheet
 override), the fishmeet customization applies. This keeps the extension point
 generic and the core change minimal.
+
+
+Supplementary Note: Fishmeet for Web added 3 new features: **breakout-room-autosetup**, **breakout-room-presetup**, **toggle-video-stream**, which need to be configured and registered at all levels of Jitsi, diff scope:
+- react/features/app/reducers.any.ts
+- react/features/app/types.ts
+- react/features/toolbox/hooks.web.ts
+- react/features/toolbox/types.ts
+- react/features/base/flags/constants.ts
+
+All the above diffs share the following characteristics:
+1. No logical operations are performed, only import or register actions.
+2. Only new additions are made with no modifications to existing content.
+3. The changes are small, less than 5 lines (excluding comment lines).
+
+If all above conditions are met, direct modifications can be made in the source code project as appropriate.
 
 ---
 

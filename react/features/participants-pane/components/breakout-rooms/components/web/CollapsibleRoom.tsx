@@ -138,7 +138,7 @@ export const CollapsibleRoom = ({
         aria-label = { collapsed ? t('breakoutRooms.hideParticipantList', 'Hide participant list')
             : t('breakoutRooms.showParticipantList', 'Show participant list')
         }
-        className = { styles.arrowContainer }>
+        className = { `arrow-container ${styles.arrowContainer}` }>
         <Icon
             size = { 14 }
             src = { collapsed ? IconArrowDown : IconArrowUp } />

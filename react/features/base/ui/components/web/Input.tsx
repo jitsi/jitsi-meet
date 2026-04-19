@@ -50,7 +50,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         label: {
-            color: theme.palette.text01,
+            color: theme.palette.customizedUiText01, // fishmeet: was text01
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             marginBottom: theme.spacing(2),
 
@@ -65,8 +65,9 @@ const useStyles = makeStyles()(theme => {
         },
 
         input: {
-            backgroundColor: theme.palette.ui03,
-            background: theme.palette.ui03,
+            backgroundColor: theme.palette.customizedUiSecBackground, // fishmeet: was ui03
+            background: theme.palette.customizedUiSecBackground, // fishmeet: was ui03
+            boxShadow: `0px 0px 0px 2px ${theme.palette.focus01}`, // fishmeet: was nil
             color: theme.palette.text01,
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             padding: '10px 16px',
@@ -248,7 +249,7 @@ const Input = React.forwardRef<any, IProps>(({
                         autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
                         className = { cx(styles.input, isMobile && 'is-mobile',
-                            error && 'error', showClearIcon && 'clearable-input', icon && 'icon-input') }
+                            error && 'error', showClearIcon && 'clearable-input', icon && 'icon-input', 'form-ctrl-input') }
                         data-testid = { testId }
                         disabled = { disabled }
                         id = { id }

@@ -15,7 +15,7 @@ const useStyles = makeStyles()(theme => {
             width: '100%',
             height: '100%',
             position: 'fixed',
-            color: theme.palette.text01,
+            color: theme.palette.customizedUiText01, // fishmeet: was theme.palette.text01,
             ...withPixelLineHeight(theme.typography.bodyLongRegular),
             top: 0,
             left: 0,
@@ -55,7 +55,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         modal: {
-            backgroundColor: theme.palette.ui01,
+            backgroundColor: theme.palette.customizedUiMainColor02, // fishmeet: was theme.palette.ui01,
             border: `1px solid ${theme.palette.ui03}`,
             boxShadow: '0px 4px 25px 4px rgba(20, 20, 20, 0.6)',
             borderRadius: `${theme.shape.borderRadius}px`,
@@ -204,7 +204,7 @@ const BaseDialog = ({
                     aria-description = { description }
                     aria-label = { title ?? t(titleKey ?? '') }
                     aria-modal = { true }
-                    className = { cx(classes.modal, isUnmounting && 'unmount', size, className) }
+                    className = { cx(classes.modal, isUnmounting && 'unmount', size, className, 'base-dialog-modal') }
                     data-autofocus = { true }
                     role = 'dialog'
                     tabIndex = { -1 }>

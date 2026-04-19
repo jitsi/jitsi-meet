@@ -63,7 +63,7 @@ export const QUICK_ACTION_BUTTON: {
 
 // fishmeet: icon state style for circular icon containers
 const iconState: ViewStyle = {
-    backgroundColor: '#C8D7EC', // fishMeetMainColor02
+    backgroundColor: '#C8D7EC', // customizedUiMainColor02
     height: 37,
     width: 37,
     borderRadius: 20,

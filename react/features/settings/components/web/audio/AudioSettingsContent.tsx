@@ -330,6 +330,7 @@ const AudioSettingsContent = ({
                         onClick = { e => e.stopPropagation() }>
                         <Checkbox
                             checked = { noiseSuppressionEnabled }
+                            className = { 'noise-suppression-checkbox' }
                             label = { t('toolbar.noiseSuppression') }
                             onChange = { toggleSuppression } />
                     </div>
