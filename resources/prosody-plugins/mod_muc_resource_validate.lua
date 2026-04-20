@@ -88,6 +88,6 @@ end
 
 module:log("info", "module loaded (anonymous_strict=%s)", tostring(anonymous_strict));
 
-module:hook("muc-occupant-pre-join", check_resource, 10);
+module:hook("muc-occupant-pre-join", check_resource, 11);
 
 module:hook_global("config-reloaded", load_config);
