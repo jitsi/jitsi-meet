@@ -1082,7 +1082,8 @@
         "setDisplayNameLabel": "姓名",
         "setEmailInput": "输入电子邮件",
         "setEmailLabel": "Gravatar 电子邮件",
-        "title": "个人资料"
+        "title": "个人资料",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "想要发言",
     "raisedHandsLabel": "举手人数",

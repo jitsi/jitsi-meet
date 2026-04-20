@@ -867,7 +867,8 @@
         "setDisplayNameLabel": "Indiqueu el nom visible",
         "setEmailInput": "Introduïu una adreça electrònica",
         "setEmailLabel": "Indiqueu l'adreça electrònica de Gravatar",
-        "title": "Perfil"
+        "title": "Perfil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Vull parlar",
     "raisedHandsLabel": "Nombre de mans aixecades",

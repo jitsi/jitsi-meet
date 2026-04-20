@@ -16,6 +16,13 @@ import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 
 /**
+ * A regular expression for basic email format validation.
+ * Checks for the pattern: non-empty local part @ non-empty domain with at least one dot.
+ */
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+/**
  * The type of the React {@code Component} props of {@link ProfileTab}.
  */
 export interface IProps extends AbstractDialogTabProps, WithTranslation {
@@ -118,6 +125,10 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
     constructor(props: IProps) {
         super(props);
 
+        this.state = {
+            emailDirty: false
+        };
+
         // Bind event handlers so they are only bound once for every instance.
         this._onAuthToggle = this._onAuthToggle.bind(this);
         this._onDisplayNameChange = this._onDisplayNameChange.bind(this);
@@ -136,13 +147,14 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
     }
 
     /**
-     * Changes email of the user.
+     * Changes email of the user and validates its format.
      *
      * @param {string} value - The key event to handle.
      *
      * @returns {void}
      */
     _onEmailChange(value: string) {
+        this.setState({ emailDirty: true });
         super._onChange({ email: value });
     }
 
@@ -163,6 +175,8 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
             t
         } = this.props;
         const classes = withStyles.getClasses(this.props);
+        const emailDirty = this.state.emailDirty as boolean;
+        const emailError = emailDirty && email.length > 0 && !EMAIL_REGEX.test(email);
 
         return (
             <div className = { classes.container } >
@@ -183,13 +197,15 @@ class ProfileTab extends AbstractDialogTab<IProps, any> {
                     value = { displayName } />
                 {!hideEmailInSettings && <div className = 'profile-edit-field'>
                     <Input
+                        bottomLabel = { emailError ? t('profile.invalidEmailFormat') : undefined }
                         className = { classes.bottomMargin }
+                        error = { emailError }
                         id = 'setEmail'
                         label = { t('profile.setEmailLabel') }
                         name = 'email'
                         onChange = { this._onEmailChange }
                         placeholder = { t('profile.setEmailInput') }
-                        type = 'text'
+                        type = 'email'
                         value = { email } />
                 </div>}
                 { authEnabled && this._renderAuth() }

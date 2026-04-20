@@ -1097,7 +1097,8 @@
         "setDisplayNameLabel": "Naam",
         "setEmailInput": "E-mailadres invoeren",
         "setEmailLabel": "Gravatar e-mailadres",
-        "title": "Profiel"
+        "title": "Profiel",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Wil graag spreken",
     "raisedHandsLabel": "Aantal handen omhoog",

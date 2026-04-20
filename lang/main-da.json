@@ -1087,7 +1087,8 @@
         "setDisplayNameLabel": "Navn",
         "setEmailInput": "Indtast e-mail",
         "setEmailLabel": "Gravatar email",
-        "title": "Profil"
+        "title": "Profil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Vil gerne tale",
     "raisedHandsLabel": "Antal hævede hænder",

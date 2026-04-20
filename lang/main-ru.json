@@ -973,7 +973,8 @@
         "setDisplayNameLabel": "Отображаемое имя",
         "setEmailInput": "Введите email",
         "setEmailLabel": "Email для Gravatar",
-        "title": "Профиль"
+        "title": "Профиль",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Хочет говорить",
     "raisedHandsLabel": "Количество поднятых рук",

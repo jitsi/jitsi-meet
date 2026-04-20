@@ -999,7 +999,8 @@
         "setDisplayNameLabel": "Causissètz vòstre escais",
         "setEmailInput": "Picatz lo corrièl",
         "setEmailLabel": "Definissètz vòstre corrièl per Gravatar",
-        "title": "Perfil"
+        "title": "Perfil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Volriá charrar",
     "raisedHandsLabel": "Nombre de mans levadas",

@@ -668,7 +668,8 @@
         "setDisplayNameLabel": "Ezarri zure bistaratze-izena",
         "setEmailInput": "Sartu e-posta",
         "setEmailLabel": "Ezarri zure gravatar e-posta",
-        "title": "Profila"
+        "title": "Profila",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Hitz egin nahiko luke",
     "recording": {

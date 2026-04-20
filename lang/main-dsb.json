@@ -867,7 +867,8 @@
         "setDisplayNameLabel": "zjawne mě wustajiś",
         "setEmailInput": "e-mail zapódaś",
         "setEmailLabel": "e-mailowa adresa za grawatar",
-        "title": "profil"
+        "title": "profil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Ja cu powědaś",
     "raisedHandsLabel": "licba zwignjonych rukow",

@@ -849,7 +849,8 @@
         "setDisplayNameLabel": "zjawne mjeno postajić",
         "setEmailInput": "e-mejl zapodać",
         "setEmailLabel": "e-mejl za gravatara",
-        "title": "profil"
+        "title": "profil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "ruku zběhnyć",
     "raisedHandsLabel": "ličba zběhnjenych rukow",

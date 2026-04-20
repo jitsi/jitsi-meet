@@ -451,7 +451,8 @@
         "setDisplayNameLabel": "Նշանակել Ձեր երևացող անունը",
         "setEmailInput": "Մուտքագրեք էլ.հասցե",
         "setEmailLabel": "Սահմանեք Ձեր Gravatar էլ.փոստը",
-        "title": "Պրոֆայլ"
+        "title": "Պրոֆայլ",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "recording": {
         "authDropboxText": "",

@@ -993,7 +993,8 @@
         "setDisplayNameLabel": "Görünür adınızı ayarlayın",
         "setEmailInput": "E-posta adresinizi girin",
         "setEmailLabel": "Gravatar e-postanızı ayarlayın",
-        "title": "Profil"
+        "title": "Profil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Konuşmak ister misiniz?",
     "raisedHandsLabel": "Kaldırılan ellerin sayısı",

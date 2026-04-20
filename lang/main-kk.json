@@ -1087,7 +1087,8 @@
         "setDisplayNameLabel": "Аты",
         "setEmailInput": "Электрондық поштаны енгізіңіз",
         "setEmailLabel": "Gravatar электрондық поштасы",
-        "title": "Профиль"
+        "title": "Профиль",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Сөйлегісі келеді",
     "raisedHandsLabel": "Көтерілген қолдар саны",

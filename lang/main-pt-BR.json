@@ -958,7 +958,8 @@
         "setDisplayNameLabel": "Definir seu nome de exibição",
         "setEmailInput": "Digite email",
         "setEmailLabel": "Definir seu email de Gravatar",
-        "title": "Perfil"
+        "title": "Perfil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Gostaria de falar",
     "raisedHandsLabel": "Número de mãos levantadas",
