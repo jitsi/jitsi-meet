@@ -18,6 +18,16 @@ declare global {
         JITSI_MEET_LITE_SDK?: boolean;
         interfaceConfig?: any;
         JitsiMeetJS?: any;
+        MediaStreamTrackGenerator: {
+            new(options: { kind: string }): MediaStreamTrack & {
+                writable: WritableStream<VideoFrame>;
+            };
+        };
+        MediaStreamTrackProcessor: {
+            new(options: { track: MediaStreamTrack; maxBufferSize?: number }): {
+                readable: ReadableStream<VideoFrame>;
+            };
+        };
         PressureObserver?: any;
         PressureRecord?: any;
         ReactNativeWebView?: any;
