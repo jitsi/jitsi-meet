@@ -85,7 +85,7 @@ allprojects {
     // on and which are not available in third-party Maven repositories need to
     // be deployed in a Maven repository of ours.
 
-    if (project.name.startsWith('react-native-')) {
+    if (project.name.contains('react-native')) {
         apply plugin: 'maven-publish'
         publishing {
             publications {}
@@ -116,7 +116,7 @@ allprojects {
             }
         }
 
-        if (project.name.startsWith('react-native-')) {
+        if (project.name.contains('react-native')) {
             def npmManifest = project.file('../package.json')
             def json = new JsonSlurper().parseText(npmManifest.text)
 
