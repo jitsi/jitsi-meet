@@ -1,8 +1,7 @@
 -- Validates the resourcepart of client JIDs when joining a MUC.
 -- Copyright (C) 2024-present 8x8, Inc.
 --
--- Hooks into muc-occupant-pre-join (and muc-room-pre-create for the first
--- user) and rejects joins whose resource part is invalid.
+-- Hooks into muc-occupant-pre-join and rejects joins whose MUC resource is invalid.
 --
 -- A valid resource consists only of alphanumerics and underscores and must
 -- NOT start with an underscore: ^[a-zA-Z0-9][a-zA-Z0-9_]*$
@@ -18,8 +17,6 @@
 --
 --   Component "conference.meet.jitsi" "muc"
 --       modules_enabled = { "muc_resource_validate" }
---       -- Domains/bare-JIDs exempt from all checks (e.g. focus, jibri)
---       muc_resource_whitelist = { "auth.meet.jitsi", "recorder@recorder.meet.jitsi" }
 --       -- Enable strict anonymous-user check
 --       anonymous_strict = true
 
@@ -32,11 +29,9 @@ local is_healthcheck_room = util.is_healthcheck_room;
 local VALID_RESOURCE_PATTERN = "^[a-zA-Z0-9][a-zA-Z0-9_]*$";
 
 local anonymous_strict;
-local whitelist;
 
 local function load_config()
     anonymous_strict = module:get_option_boolean("anonymous_strict", false);
-    whitelist = module:get_option_set("muc_resource_whitelist", {});
 end
 load_config();
 
@@ -69,11 +64,6 @@ local function check_resource(event)
         return;
     end
 
-    -- Whitelisted domains or bare JIDs skip all checks.
-    if whitelist:contains(domain) or whitelist:contains(user .. "@" .. domain) then
-        return;
-    end
-
     -- 1. Validate the resource part of the MUC JID (the occupant nickname).
     if not muc_resource or not muc_resource:match(VALID_RESOURCE_PATTERN) then
         module:log("warn", "Rejecting join with invalid MUC resource from %s (muc_resource: %s)",
@@ -91,23 +81,13 @@ local function check_resource(event)
             origin.send(st.error_reply(stanza, "cancel", "not-allowed", "Invalid anonymous user ID"));
             return true;
         end
+        module:log("info", "[muc_resource_validate] PASS anonymous strict check for %s (muc_resource: %s)", stanza.attr.from, muc_resource);
     end
+
+    module:log("info", "[muc_resource_validate] PASS all checks for %s (muc_resource: %s)", stanza.attr.from, muc_resource);
 end
 
--- Also fire for the first occupant who implicitly creates the room.
 module:log("info", "module loaded (anonymous_strict=%s)", tostring(anonymous_strict));
-
-module:hook("muc-room-pre-create", function(event)
-    -- muc-room-pre-create has no event.room yet; construct a minimal proxy so
-    -- is_healthcheck_room can inspect the target JID.
-    local stanza = event.stanza;
-    local fake_room = { jid = stanza.attr.to };
-    return check_resource({
-        room    = fake_room,
-        origin  = event.origin,
-        stanza  = stanza,
-    });
-end, 10);
 
 module:hook("muc-occupant-pre-join", check_resource, 10);
 
