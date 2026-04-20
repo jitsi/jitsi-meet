@@ -172,3 +172,13 @@ export const SET_CHAT_IS_RESIZING = 'SET_CHAT_IS_RESIZING';
   * }
   */
  export const NOTIFY_PRIVATE_RECIPIENTS_CHANGED = 'NOTIFY_PRIVATE_RECIPIENTS_CHANGED';
+
+/**
+ * The type of action which signals to set the reply message.
+ *
+ * {
+ *     type: SET_REPLY_MESSAGE,
+ *     message: IMessage
+ * }
+ */
+export const SET_REPLY_MESSAGE = 'SET_REPLY_MESSAGE';

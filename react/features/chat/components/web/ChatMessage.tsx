@@ -126,6 +126,35 @@ const useStyles = makeStyles()((theme: Theme) => {
         replyButton: {
             padding: '2px'
         },
+        replyPreview: {
+            display: 'flex',
+            flexDirection: 'column',
+            backgroundColor: 'rgba(0, 0, 0, 0.1)',
+            padding: theme.spacing(1),
+            borderRadius: '4px',
+            borderLeft: `3px solid ${theme.palette.chatSenderName}`,
+            marginBottom: theme.spacing(1),
+            cursor: 'pointer',
+            maxWidth: '100%',
+            overflow: 'hidden'
+        },
+        replyPreviewName: {
+            ...theme.typography.labelBold,
+            color: theme.palette.chatSenderName,
+            fontSize: '0.75rem',
+            marginBottom: '2px',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            overflow: 'hidden'
+        },
+        replyPreviewText: {
+            ...theme.typography.labelRegular,
+            color: theme.palette.chatMessageText,
+            fontSize: '0.85rem',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            overflow: 'hidden'
+        },
         replyWrapper: {
             display: 'flex',
             flexDirection: 'row' as const,
@@ -282,6 +311,34 @@ const ChatMessage = ({
     }
 
     /**
+     * Renders a preview of the message being replied to.
+     *
+     * @returns {React$Element<*>}
+     */
+    function _renderReplyPreview() {
+        if (!message.replyToMessageId || !state) {
+            return null;
+        }
+
+        const originalMessage = state['features/chat']?.messages?.find(
+            (m: any) => m.messageId === message.replyToMessageId
+        );
+
+        return (
+            <div className = { cx(classes.replyPreview) }>
+                <span className = { cx(classes.replyPreviewName) }>
+                    { originalMessage?.displayName ?? 'Unknown' }
+                </span>
+                <span className = { cx(classes.replyPreviewText) }>
+                    { originalMessage
+                        ? (isFileMessage(originalMessage) ? '📎 File' : (originalMessage.message ?? 'Original message'))
+                        : 'Original message' }
+                </span>
+            </div>
+        );
+    }
+
+    /**
      * Renders the reactions for the message.
      *
      * @returns {React$Element<*>}
@@ -364,6 +421,7 @@ const ChatMessage = ({
                             isFromVisitor = { message.isFromVisitor }
                             isLobbyMessage = { message.lobbyChat }
                             message = { message.message }
+                            messageId = { message.messageId }
                             participantId = { message.participantId } />}
                     </div>
                 )}
@@ -379,6 +437,7 @@ const ChatMessage = ({
                     <div className = { classes.replyWrapper }>
                         <div className = { cx('messagecontent', classes.messageContent) }>
                             {showDisplayName && _renderDisplayName()}
+                            {message.replyToMessageId && _renderReplyPreview()}
                             <div className = { cx('usermessage', classes.userMessage) }>
                                 {isFileMessage(message) ? (
                                     <FileMessage
@@ -433,6 +492,7 @@ const ChatMessage = ({
                                     isFromVisitor = { message.isFromVisitor }
                                     isLobbyMessage = { message.lobbyChat }
                                     message = { message.message }
+                                    messageId = { message.messageId }
                                     participantId = { message.participantId } />}
                             </div>
                         </div>

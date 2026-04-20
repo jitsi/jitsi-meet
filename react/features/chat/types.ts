@@ -19,6 +19,7 @@ export interface IMessage {
     reactions: Map<string, Set<string>>;
     recipient: string;
     sentToVisitor?: boolean;
+    replyToMessageId?: string;
     timestamp: number;
 }
 

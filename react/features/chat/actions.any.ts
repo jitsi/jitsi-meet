@@ -18,9 +18,11 @@ import {
     SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
-    SET_PRIVATE_MESSAGE_RECIPIENT
+    SET_PRIVATE_MESSAGE_RECIPIENT,
+    SET_REPLY_MESSAGE
 } from './actionTypes';
 import { ChatTabs } from './constants';
+import { IMessage } from './types';
 
 /**
  * Adds a chat message to the collection of messages.
@@ -129,11 +131,12 @@ export function closeChat() {
  *     message: string
  * }}
  */
-export function sendMessage(message: string, ignorePrivacy = false) {
+export function sendMessage(message: string, ignorePrivacy = false, replyToMessageId?: string) {
     return {
         type: SEND_MESSAGE,
         ignorePrivacy,
-        message
+        message,
+        replyToMessageId
     };
 }
 
@@ -383,5 +386,21 @@ export function handleLobbyChatInitialized(participantId: string) {
 
         // notify other moderators.
         return conference?.sendLobbyMessage(payload);
+    };
+}
+
+/**
+ * Sets the message that is being replied to.
+ *
+ * @param {IMessage} message - The message to reply to.
+ * @returns {{
+ *     type: SET_REPLY_MESSAGE,
+ *     message: IMessage
+ * }}
+ */
+export function setReplyMessage(message?: IMessage) {
+    return {
+        type: SET_REPLY_MESSAGE,
+        message
     };
 }

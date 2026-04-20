@@ -12,6 +12,7 @@ import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 import { CHAT_SIZE } from '../../constants';
 import { areSmileysDisabled, isSendGroupChatDisabled } from '../../functions';
+import { setReplyMessage } from '../../actions.any';
 
 import SmileysPanel from './SmileysPanel';
 
@@ -67,6 +68,8 @@ interface IProps extends WithTranslation {
      * The id of the message recipient, if any.
      */
     _privateMessageRecipientId?: string;
+
+    _replyMessage?: any;
 
     /**
      * An object containing the CSS classes.
@@ -164,19 +167,56 @@ class ChatInput extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     override render() {
+        const { _replyMessage, dispatch, t } = this.props;
         const classes = withStyles.getClasses(this.props);
         const hideInput = this.props._isSendGroupChatDisabled && !this.props._privateMessageRecipientId;
 
         if (hideInput) {
             return (
                 <div className = { classes.chatDisabled }>
-                    {this.props.t('chat.disabled')}
+                    {t('chat.disabled')}
                 </div>
             );
         }
 
         return (
             <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
+                {_replyMessage && (
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '6px 12px',
+                        backgroundColor: 'rgba(255,255,255,0.08)',
+                        borderLeft: '3px solid #1e90ff',
+                        marginBottom: '4px',
+                        fontSize: '0.8rem',
+                        color: 'white'
+                    }}>
+                        <div style={{ overflow: 'hidden' }}>
+                            <div style={{ fontWeight: 'bold', color: '#1e90ff' }}>
+                                {_replyMessage.displayName ?? 'Unknown'}
+                            </div>
+                            <div style={{
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
+                            }}>
+                                {_replyMessage.message}
+                            </div>
+                        </div>
+                        <div
+                            onClick={() => dispatch(setReplyMessage(undefined))}
+                            style={{
+                                cursor: 'pointer',
+                                padding: '4px 8px',
+                                fontSize: '1rem',
+                                color: 'white'
+                            }}>
+                            ✕
+                        </div>
+                    </div>
+                )}
                 <div id = 'chat-input' >
                     {!this.props._areSmileysDisabled && this.state.showSmileysPanel && (
                         <div
@@ -196,12 +236,12 @@ class ChatInput extends Component<IProps, IState> {
                         maxRows = { 5 }
                         onChange = { this._onMessageChange }
                         onKeyPress = { this._onDetectSubmit }
-                        placeholder = { this.props.t('chat.messagebox') }
+                        placeholder = { t('chat.messagebox') }
                         ref = { this._textArea }
                         textarea = { true }
                         value = { this.state.message } />
                     <Button
-                        accessibilityLabel = { this.props.t('chat.sendButton') }
+                        accessibilityLabel = { t('chat.sendButton') }
                         disabled = { !this.state.message.trim() }
                         icon = { IconSend }
                         onClick = { this._onSubmitMessage }
@@ -240,7 +280,11 @@ class ChatInput extends Component<IProps, IState> {
         const trimmed = this.state.message.trim();
 
         if (trimmed) {
-            onSend(trimmed);
+            onSend(trimmed, this.props._replyMessage?.messageId);
+
+            if (this.props._replyMessage) {
+                this.props.dispatch(setReplyMessage(undefined));
+            }
 
             this.setState({ message: '' });
 
@@ -342,7 +386,7 @@ class ChatInput extends Component<IProps, IState> {
  * }}
  */
 const mapStateToProps = (state: IReduxState) => {
-    const { privateMessageRecipient, width } = state['features/chat'];
+    const { privateMessageRecipient, width, replyMessage } = state['features/chat'];
     const isGroupChatDisabled = isSendGroupChatDisabled(state);
 
     return {
@@ -350,6 +394,7 @@ const mapStateToProps = (state: IReduxState) => {
         _privateMessageRecipientId: privateMessageRecipient?.id,
         _isSendGroupChatDisabled: isGroupChatDisabled,
         _chatWidth: width.current ?? CHAT_SIZE,
+        _replyMessage: replyMessage
     };
 };
 

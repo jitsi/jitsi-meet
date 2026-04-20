@@ -410,8 +410,8 @@ const Chat = ({
     * @returns {void}
     * @type {Function}
     */
-    const onSendMessage = useCallback((text: string) => {
-        dispatch(sendMessage(text));
+    const onSendMessage = useCallback((text: string, replyToMessageId?: string) => {
+        dispatch(sendMessage(text, false, replyToMessageId));
     }, []);
 
     /**

@@ -19,6 +19,7 @@ import {
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
     SET_PRIVATE_MESSAGE_RECIPIENT,
+    SET_REPLY_MESSAGE,
     SET_USER_CHAT_WIDTH
 } from './actionTypes';
 import { CHAT_SIZE, ChatTabs } from './constants';
@@ -37,6 +38,7 @@ const DEFAULT_STATE = {
     isLobbyChatActive: false,
     focusedTab: undefined,
     isResizing: false,
+    replyMessage: undefined,
     width: {
         current: CHAT_SIZE,
         userSet: null
@@ -57,6 +59,7 @@ export interface IChatState {
     messages: IMessage[];
     notifyPrivateRecipientsChangedTimestamp?: number;
     privateMessageRecipient?: IParticipant | IVisitorChatParticipant;
+    replyMessage?: IMessage;
     unreadFilesCount: number;
     unreadMessagesCount: number;
     width: {
@@ -84,7 +87,8 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             lobbyChat: action.lobbyChat,
             recipient: action.recipient,
             sentToVisitor: Boolean(action.sentToVisitor),
-            timestamp: action.timestamp
+            timestamp: action.timestamp,
+            replyToMessageId: action.replyToMessageId
         };
 
         // React native, unlike web, needs a reverse sorted message list.
@@ -292,6 +296,11 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             unreadFilesCount: remoteFilesCount
         };
     }
+    case SET_REPLY_MESSAGE:
+    return {
+        ...state,
+        replyMessage: action.message
+    };
     }
 
     return state;

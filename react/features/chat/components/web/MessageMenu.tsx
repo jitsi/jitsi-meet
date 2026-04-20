@@ -11,7 +11,7 @@ import Popover from '../../../base/popover/components/Popover.web';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import { copyText } from '../../../base/util/copyText.web';
-import { handleLobbyChatInitialized, openChat } from '../../actions.web';
+import { handleLobbyChatInitialized, openChat, setReplyMessage } from '../../actions.web';
 import logger from '../../logger';
 
 export interface IProps {
@@ -22,6 +22,7 @@ export interface IProps {
     isFromVisitor?: boolean;
     isLobbyMessage: boolean;
     message: string;
+    messageId?: string;
     participantId: string;
 }
 
@@ -62,7 +63,7 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, enablePrivateChat, displayName, isFileMessage }: IProps) => {
+const MessageMenu = ({ message, messageId, participantId, isFromVisitor, isLobbyMessage, enablePrivateChat, displayName, isFileMessage }: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -135,8 +136,27 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
         handleClose();
     }, [ message ]);
 
+    const handleReplyClick = useCallback(() => {
+    handleClose();
+    setTimeout(() => {
+        dispatch(setReplyMessage({
+            message,
+            messageId,
+            participantId,
+            displayName
+        } as any));
+    }, 50);
+}, [ dispatch, message, messageId, participantId, displayName ]);
+
     const popoverContent = (
         <div className = { classes.menuPanel }>
+            {!isFileMessage && (
+            <div
+                className = { classes.menuItem }
+                onClick = { handleReplyClick }>
+                {t('Reply')}
+            </div>
+        )}
             {enablePrivateChat && (
                 <div
                     className = { classes.menuItem }
