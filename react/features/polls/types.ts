@@ -92,6 +92,11 @@ export interface IPollData extends IPoll {
  */
 export interface IVoterData {
     /**
+     * The email of the voter.
+     */
+    email?: string;
+
+    /**
      * The id of the voter.
      */
     id: string;
@@ -100,6 +105,7 @@ export interface IVoterData {
      * Voter name if voter is not in the meeting.
      */
     name: string;
+
 }
 
 /**

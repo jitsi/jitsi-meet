@@ -76,10 +76,13 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
             const percentage = allVoters.size > 0 ? Math.round(nrOfVotersPerAnswer / allVoters.size * 100) : 0;
 
             const voters = answer.voters?.reduce((acc, v) => {
+                const participant = getParticipantById(reduxState, v.id);
+
                 acc.push({
                     id: v.id,
-                    name: getParticipantById(reduxState, v.id)
-                        ? getParticipantDisplayName(reduxState, v.id) : v.name
+                    name: participant
+                        ? getParticipantDisplayName(reduxState, v.id) : v.name,
+                    email: participant?.email
                 });
 
                 return acc;
