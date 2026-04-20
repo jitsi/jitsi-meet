@@ -20,6 +20,7 @@ local process_host_module = util.process_host_module;
 local respond_iq_result = util.respond_iq_result;
 local split_string = util.split_string;
 local new_id = require 'util.id'.medium;
+local uuid_generate = require 'util.uuid'.generate;
 local json = require 'cjson.safe';
 local inspect = require 'inspect';
 
@@ -116,7 +117,7 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
         if time and time > 0 and force_promote then
             --  we are in auto-allow mode, let's reply with accept
             -- we store where the request is coming from so we can send back the response
-            local username = new_id():lower();
+            local username = uuid_generate();
             visitors_promotion_map[room.jid][username] = {
                 from = from_vnode;
                 jid = from_jid;
@@ -385,7 +386,7 @@ local function process_promotion_response(room, id, approved)
     end
 
     -- lets reply to participant that requested promotion
-    local username = new_id():lower();
+    local username = uuid_generate();
     visitors_promotion_map[room.jid][username] = {
         from = visitors_promotion_requests[room.jid][id].from;
         jid = id;
