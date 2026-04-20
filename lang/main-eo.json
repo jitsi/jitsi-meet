@@ -686,7 +686,6 @@
         "durationNA": "neaplikebla",
         "encoding": "Kodprezento",
         "label": "REG",
-        "labelToolTip": "Loka registrado estas aktiva",
         "localRecording": "Loka registrado",
         "me": "Mi",
         "messages": {
@@ -1178,7 +1177,6 @@
             "closeChat": "Eliri babilejon",
             "closeMoreActions": "Fermi agan dialogujon",
             "closeParticipantsPane": "Fermi fenestro de partoprenantoj",
-            "collapse": "Maletendi",
             "document": "Baskuligi kundividitan dokumenton",
             "documentClose": "Fermi kunhavatan dokumenton",
             "documentOpen": "Malfermi kunhavatan dokumenton",
@@ -1355,7 +1353,6 @@
         "error": "Transskribado malsukcesis. Bonvolu provi denove.",
         "expandedLabel": "Transskribado estas ŝaltita",
         "failedToStart": "Transskribado ne sukcesis komenciĝi",
-        "labelToolTip": "La kunveno estas transskribata",
         "off": "Transskribado ĉesis",
         "pending": "Prepariĝo por transskribado de la kunveno…",
         "sourceLanguageDesc": "La kunvenlingvo nun estas agordita al <b>{{sourceLanguage}}</b>. <br/> Vi povas ŝanĝi ĝin de ",

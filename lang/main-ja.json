@@ -567,7 +567,6 @@
         "durationNA": "不明",
         "encoding": "エンコーディング",
         "label": "LOR",
-        "labelToolTip": "録画中",
         "localRecording": "録画",
         "me": "自分",
         "messages": {
@@ -981,7 +980,6 @@
             "cc": "字幕の切り替え",
             "chat": "チャットを開く / 閉じる",
             "clap": "拍手",
-            "collapse": "縮小",
             "document": "共有ドキュメントの切り替え",
             "download": "アプリのダウンロード",
             "embedMeeting": "ミーティングの埋め込み",
@@ -1119,7 +1117,6 @@
         "error": "文字起こしに失敗しました。もう一度お試しください。",
         "expandedLabel": "文字起こしは現在有効です",
         "failedToStart": "文字起こしを開始できませんでした",
-        "labelToolTip": "ミーティングの文字起こしが行われています",
         "off": "文字起こしが停止されています",
         "pending": "ミーティングの文字起こしの準備中…",
         "start": "字幕の表示を開始",

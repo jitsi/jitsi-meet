@@ -495,7 +495,6 @@
         "durationNA": "N/A",
         "encoding": "ఎన్‌కోడింగు",
         "label": "LOR",
-        "labelToolTip": "స్థానిక రికార్డింగు నడుస్తూన్నది",
         "localRecording": "స్థానిక రికార్డింగు",
         "me": "నేను",
         "messages": {
@@ -889,7 +888,6 @@
         "error": "Transcribing failed. Please try again.",
         "expandedLabel": "Transcribing is currently on",
         "failedToStart": "Transcribing failed to start",
-        "labelToolTip": "The meeting is being transcribed",
         "off": "Transcribing stopped",
         "pending": "Preparing to transcribe the meeting…",
         "start": "Start showing subtitles",

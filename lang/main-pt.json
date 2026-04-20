@@ -771,7 +771,6 @@
         "durationNA": "N/D",
         "encoding": "Codificando",
         "label": "LOR",
-        "labelToolTip": "Gravação local ativada",
         "localRecording": "Gravação local",
         "me": "Eu",
         "messages": {
@@ -1312,7 +1311,6 @@
             "closeMoreActions": "Fechar menu de mais ações",
             "closeParticipantsPane": "Fechar painel de participantes",
             "closedCaptions": "Legendas ocultas",
-            "collapse": "Colapsar",
             "document": "Mudar para documento partilhado",
             "documentClose": "Fechar documento partilhado",
             "documentOpen": "Abrir documento partilhado",

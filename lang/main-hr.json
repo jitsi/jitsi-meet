@@ -607,7 +607,6 @@
         "durationNA": "--",
         "encoding": "Kodiranje",
         "label": "LOR",
-        "labelToolTip": "Lokalno snimanje je aktivirano",
         "localRecording": "Lokalno snimanje",
         "me": "Ja",
         "messages": {
@@ -1064,7 +1063,6 @@
             "cc": "Uključi/Isključi titlove",
             "chat": "Otvori/Zatvori chat",
             "clap": "Plješći",
-            "collapse": "Sklopi",
             "document": "Uključi/Isključi dijeljeni dokument",
             "download": "Preuzmi naše aplikacije",
             "embedMeeting": "Ugradi sastanak",
@@ -1217,7 +1215,6 @@
         "error": "Transkribiranje neuspjelo. Pokušaj ponovo.",
         "expandedLabel": "Transkribiranje je trenutačno uključeno",
         "failedToStart": "Neuspjelo pokretanje transkribiranja",
-        "labelToolTip": "Sastanak se transkribira",
         "off": "Transkribiranje je prekinuto",
         "pending": "Priprema za transkribiranje sastanka …",
         "sourceLanguageDesc": "Trenutačno je jezik sastanka postavljen na <b>{{sourceLanguage}}</b>. <br/> Možeš ga promijeniti ",

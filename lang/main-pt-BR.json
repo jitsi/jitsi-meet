@@ -687,7 +687,6 @@
         "durationNA": "N/D",
         "encoding": "Codificando",
         "label": "LOR",
-        "labelToolTip": "Gravação local ativada",
         "localRecording": "Gravação local",
         "me": "Eu",
         "messages": {
@@ -1175,7 +1174,6 @@
             "closeChat": "Fechar chat",
             "closeMoreActions": "Fechar o menu de mais ações",
             "closeParticipantsPane": "Fechar painel de participantes",
-            "collapse": "Recolher",
             "document": "Alternar para documento compartilhado",
             "documentClose": "Fechar documento compartilhado",
             "documentOpen": "Abrir documento compartilhado",
@@ -1352,7 +1350,6 @@
         "error": "Transcrição falhou. Tente novamente.",
         "expandedLabel": "Transcrição ativada",
         "failedToStart": "Transcrição falhou ao iniciar",
-        "labelToolTip": "A reunião esta sendo transcrita",
         "off": "Transcrição parada",
         "pending": "Preparando a transcrição da reunião…",
         "sourceLanguageDesc": "No momento o idioma da reunião está definido para <b>{{sourceLanguage}}</b>. <br/> Você pode alterar-lo ",

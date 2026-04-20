@@ -409,7 +409,6 @@
         "durationNA": "N/A",
         "encoding": "Kodavimas ",
         "label": "LOR",
-        "labelToolTip": "Vietinis įrašymas yra užimtas",
         "localRecording": "Vietinis įrašymas",
         "me": "Aš",
         "messages": {
@@ -693,7 +692,6 @@
         "error": "Titrų atpažinimas nesuveikė. Bandykite dar kartą.",
         "expandedLabel": "Šiuo metu vyksta perrašymas",
         "failedToStart": "Perrašymas neprasidėjo",
-        "labelToolTip": "Susitikimas yra perrašomas",
         "off": "Perrašymas sustojo",
         "pending": "Ruošiama perrašyti susitikimą…",
         "start": "Pradėti rodyti subtitrus",

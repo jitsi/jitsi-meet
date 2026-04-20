@@ -400,7 +400,6 @@
         "durationNA": "N/D",
         "encoding": "Codificando",
         "label": "GRVLOC",
-        "labelToolTip": "A gravación local está disposta",
         "localRecording": "Gravación local",
         "me": "Eu",
         "messages": {
@@ -673,7 +672,6 @@
         "error": "Fallou a transcrición. Ténteo de novo.",
         "expandedLabel": "A transcrición está agora activa.",
         "failedToStart": "A transcrición non puido arrincar",
-        "labelToolTip": "A reunión está sendo transcrita",
         "off": "Transcrición parada",
         "pending": "Preparando a transcrición da reunión…",
         "start": "Comezar a amosar subtítulos",

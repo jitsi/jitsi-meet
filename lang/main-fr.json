@@ -774,7 +774,6 @@
         "durationNA": "N/A",
         "encoding": "Encodage",
         "label": "ENR-LOC",
-        "labelToolTip": "L'enregistrement local est démarré",
         "localRecording": "Enregistrement local",
         "me": "Moi",
         "messages": {
@@ -1318,7 +1317,6 @@
             "closeMoreActions": "Fermer le menu plus d'actions",
             "closeParticipantsPane": "Fermer le panneau des participants",
             "closedCaptions": "Sous-titres",
-            "collapse": "Plier",
             "document": "Activer / Désactiver le document partagé",
             "documentClose": "Fermer le document partagé",
             "documentOpen": "Ouvrir le document partagé",

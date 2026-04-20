@@ -387,7 +387,6 @@
         "durationNA": "непознато",
         "encoding": "кодирање",
         "label": "Лијеви/Десни",
-        "labelToolTip": "Локално снимање активно",
         "localRecording": "Локално снимање",
         "me": "Ја",
         "messages": {
@@ -683,7 +682,6 @@
         "error": "Емитовање уживо нијe успјeло. Покушајтe поново.",
         "expandedLabel": "",
         "failedToStart": "",
-        "labelToolTip": "",
         "off": "",
         "pending": "",
         "start": "",

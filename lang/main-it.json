@@ -771,7 +771,6 @@
         "durationNA": "N/D",
         "encoding": "Codifica",
         "label": "LOR",
-        "labelToolTip": "Registrazione avviata",
         "localRecording": "Registrazione",
         "me": "Io",
         "messages": {
@@ -1312,7 +1311,6 @@
             "closeMoreActions": "Chiudi menu avanzato",
             "closeParticipantsPane": "Chiudi pannello partecipanti",
             "closedCaptions": "Sottotitoli",
-            "collapse": "Riduci",
             "document": "Mostra documenti condivisi",
             "documentClose": "Chiudi documento condiviso",
             "documentOpen": "Apri documento condiviso",

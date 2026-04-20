@@ -416,7 +416,6 @@
         "durationNA": "N/A",
         "encoding": "Codificare",
         "label": "LOR",
-        "labelToolTip": "Înregistrarea este activată",
         "localRecording": "Înregistrare",
         "me": "Eu",
         "messages": {
@@ -686,7 +685,6 @@
         "error": "Copiere eșuată. Vă rugăm încercați mai tărziu.",
         "expandedLabel": "Copierea este activată",
         "failedToStart": "Inițierea copierii a eșuat",
-        "labelToolTip": "Conversația este copiată",
         "off": "Copiere încheiată",
         "pending": "Se pregătește copierea apelului video…",
         "start": "Afișați subtitrări",

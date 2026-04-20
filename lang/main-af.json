@@ -378,7 +378,6 @@
         "durationNA": "",
         "encoding": "Enkodering",
         "label": "",
-        "labelToolTip": "",
         "localRecording": "Plaaslike opname",
         "me": "Ek",
         "messages": {
@@ -633,7 +632,6 @@
         "error": "Opname het misluk. Probeer gerus weer.",
         "expandedLabel": "",
         "failedToStart": "",
-        "labelToolTip": "Die vergadering word getranskribeer",
         "off": "",
         "pending": "Berei tans voor om die vergadering te transkribeer…",
         "start": "",

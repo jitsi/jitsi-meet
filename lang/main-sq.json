@@ -777,7 +777,6 @@
         "durationNA": "N/A",
         "encoding": "Kodim",
         "label": "LOR",
-        "labelToolTip": "Po bëhet regjistrim vendor",
         "localRecording": "Regjistrim Vendor",
         "me": "Unë",
         "messages": {
@@ -1319,7 +1318,6 @@
             "closeMoreActions": "Mbyll menunë Më Tepër Veprime",
             "closeParticipantsPane": "Mbyll kuadratin pjesëmarrës",
             "closedCaptions": "Titra të mbyllur",
-            "collapse": "Tkurre",
             "document": "Shfaq/Fshih dokument të ndarë",
             "documentClose": "Mbylle dokumentin e ndarë",
             "documentOpen": "Hap dokument të ndarë",

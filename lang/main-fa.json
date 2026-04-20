@@ -773,7 +773,6 @@
         "durationNA": "دردسترس نیست",
         "encoding": "رمزگذاری",
         "label": "ضبط محلی",
-        "labelToolTip": "ضبط محلی درگیر است",
         "localRecording": "ضبط محلی",
         "me": "من",
         "messages": {
@@ -1320,7 +1319,6 @@
             "closeMoreActions": "ببند فهرست اقدامات بیش‌تر",
             "closeParticipantsPane": "ببند تابلوی شرکت‌کنندگان",
             "closedCaptions": "زیرنویس",
-            "collapse": "فروپاشی",
             "document": "تغییر وضعیت سند اشتراک‌گذاری‌شده",
             "documentClose": "ببند سند اشتراک‌گذاری‌شده",
             "documentOpen": "بازکردن سند اشتراک‌گذاری‌شده",
@@ -1518,7 +1516,6 @@
         "ccButtonTooltip": "شروع / توقف زیرنویس‌ها",
         "expandedLabel": "رونویسی درحال حاضر روشن است",
         "failed": "رونویسی ناموفق بود",
-        "labelToolTip": "جلسه درحال رونویسی است.",
         "labelTooltipExtra": "علاوه بر این، یک رونوشت بعدا در دسترس خواهد بود.",
         "openClosedCaptions": "باز کردن زیرنویس",
         "original": "اصلی",

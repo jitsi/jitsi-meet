@@ -701,7 +701,6 @@
         "durationNA": "N/A",
         "encoding": "Encodatge",
         "label": "ENR-LOC",
-        "labelToolTip": "Enregistrament local començat",
         "localRecording": "Enregistrament local",
         "me": "Ieu",
         "messages": {
@@ -1219,7 +1218,6 @@
             "closeChat": "Tampar la discussion",
             "closeMoreActions": "Tampar lo menú d'accions",
             "closeParticipantsPane": "Tampar lo panèl de participants",
-            "collapse": "Plegar",
             "document": "Tampar los documents partejats",
             "documentClose": "Tampar lo document partejat",
             "documentOpen": "Dorbir lo document partejat",
@@ -1399,7 +1397,6 @@
         "ccButtonTooltip": "Aviar / Arrestat los sostítols",
         "expandedLabel": "La transcripcion es activada",
         "failed": "La transcipcion a pas capitat",
-        "labelToolTip": "La reünion es a èsser transcricha",
         "sourceLanguageDesc": "La lenga actuala de la reünion es definida a <b>{{sourceLanguage}}</b>.<br/>La podètz cambiar a partir d' ",
         "sourceLanguageHere": "aquí",
         "start": "Mostrar los sostítols",
