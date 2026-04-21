@@ -26,11 +26,13 @@ import { stopLocalVideoRecording } from '../../recording/actions.any';
 import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager';
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { iAmVisitor } from '../../visitors/functions';
-import { overwriteConfig } from '../config/actions';
+import { configWillLoad, overwriteConfig, setConfig } from '../config/actions';
+import { buildConfigURL } from '../config/functions.any';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, CONNECTION_WILL_CONNECT } from '../connection/actionTypes';
 import { connect, connectionDisconnected, disconnect, setPreferVisitor } from '../connection/actions';
 import { validateJwt } from '../jwt/functions';
 import { JitsiConferenceErrors, JitsiConferenceEvents, JitsiConnectionErrors } from '../lib-jitsi-meet';
+import { loadConfig } from '../lib-jitsi-meet/functions';
 import { MEDIA_TYPE } from '../media/constants';
 import { PARTICIPANT_UPDATED, PIN_PARTICIPANT } from '../participants/actionTypes';
 import { PARTICIPANT_ROLE } from '../participants/constants';
@@ -310,6 +312,31 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
             || error?.name === JitsiConnectionErrors.SHARD_CHANGED_ERROR)) {
         dispatch(conferenceWillLeave(conference));
         dispatch(reloadNow());
+    } else if (!enableForcedReload && error?.name === JitsiConnectionErrors.SHARD_CHANGED_ERROR) {
+        // we need to reconnect, but make sure we update config before that
+        const { locationURL } = getState()['features/base/connection'];
+
+        if (!locationURL) {
+            logger.error('No locationURL!');
+
+            return result;
+        }
+
+        dispatch(disconnect());
+
+        dispatch(configWillLoad(locationURL));
+
+        const { room } = getState()['features/base/conference'];
+        const url = buildConfigURL(locationURL, room);
+
+        loadConfig(url).then(config => {
+            dispatch(setConfig(config));
+
+            dispatch(connect());
+        }).catch(() => {
+            // in case of an error we continue connecting reusing window.config
+            dispatch(connect());
+        });
     }
 
     return result;
