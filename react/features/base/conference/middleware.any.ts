@@ -497,6 +497,8 @@ function _connectionFailed({ dispatch, getState }: IStore, next: Function, actio
 
     _removeUnloadHandler(getState);
 
+    let conferenceFound = false;
+
     forEachConference(getState, conference => {
         // TODO: revisit this
         // It feels that it would make things easier if JitsiConference
@@ -506,6 +508,8 @@ function _connectionFailed({ dispatch, getState }: IStore, next: Function, actio
         // and the retry logic is implemented in the app maybe it can be
         // left this way for now.
         if (conference.getConnection() === connection) {
+            conferenceFound = true;
+
             // XXX Note that on mobile the error type passed to
             // connectionFailed is always an object with .name property.
             // This fact needs to be checked prior to enabling this logic on
@@ -524,6 +528,18 @@ function _connectionFailed({ dispatch, getState }: IStore, next: Function, actio
 
         return true;
     });
+
+    // When CONFERENCE_FAILED with CONNECTION_ERROR cleans up the conference
+    // before SHARD_CHANGED_ERROR is detected, forEachConference finds no
+    // conference and conferenceFailed(SHARD_CHANGED_ERROR) is never dispatched,
+    // so the reload in _conferenceFailed never fires. Handle it directly here.
+    if (!conferenceFound && error.name === JitsiConnectionErrors.SHARD_CHANGED_ERROR) {
+        const { enableForcedReload } = getState()['features/base/config'];
+
+        if (enableForcedReload) {
+            dispatch(reloadNow());
+        }
+    }
 
     return result;
 }
