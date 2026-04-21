@@ -108,9 +108,14 @@ import {
 } from '../../react/features/participants-pane/actions';
 import { getParticipantsPaneOpen } from '../../react/features/participants-pane/functions';
 import { hidePiP, showPiP } from '../../react/features/pip/actions';
-import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording/actions.any';
+import {
+    setStartRecordingIntent,
+    setStopRecordingIntent,
+    startLocalVideoRecording,
+    stopLocalVideoRecording
+} from '../../react/features/recording/actions.any';
 import { grantRecordingConsent, grantRecordingConsentAndUnmute } from '../../react/features/recording/actions.web';
-import { RECORDING_TYPES } from '../../react/features/recording/constants';
+import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
 import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
 import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
@@ -798,13 +803,37 @@ function initCommands() {
                 APP.store.dispatch(toggleScreenshotCaptureSummary(true));
             }
 
+            const wantsRecording = mode === JitsiRecordingConstants.mode.FILE;
+            const wantsTranscription = Boolean(transcription);
+
+            // Seed startRecordingIntent so maybeNotifyRecordingStart can coordinate
+            // the start sound/notification once recording (and transcription, if
+            // requested) resolve. Without this, notifyRecordingLinkAvailable is
+            // never emitted for iFrame-initiated recordings.
+            if (wantsRecording || wantsTranscription) {
+                APP.store.dispatch(setStartRecordingIntent({
+                    recording: wantsRecording,
+                    transcription: wantsTranscription
+                }));
+            }
+
             // Start audio / video recording, if requested.
             if (typeof recordingConfig !== 'undefined') {
                 conference.startRecording(recordingConfig);
             }
 
-            if (transcription) {
-                APP.store.dispatch(setRequestingSubtitles(true, false, null, true));
+            // Update room metadata so remote participants see the combined
+            // recording/transcription intent. When transcription is requested,
+            // setRequestingSubtitles routes through the subtitles middleware
+            // which writes both metadata fields atomically; otherwise we write
+            // the recording-only metadata directly, mirroring the start dialog.
+            if (wantsTranscription) {
+                APP.store.dispatch(setRequestingSubtitles(true, false, null, true, wantsRecording));
+            } else if (wantsRecording) {
+                conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                    isRecordingRequested: true,
+                    isTranscribingEnabled: false
+                });
             }
         },
 
@@ -825,11 +854,10 @@ function initCommands() {
                 return;
             }
 
-            if (transcription) {
-                APP.store.dispatch(setRequestingSubtitles(false, false, null, true));
-            }
-
             if (mode === 'local') {
+                if (transcription) {
+                    APP.store.dispatch(setRequestingSubtitles(false, false, null, true));
+                }
                 APP.store.dispatch(stopLocalVideoRecording());
 
                 return;
@@ -842,6 +870,31 @@ function initCommands() {
             }
 
             const activeSession = getActiveSession(state, mode);
+            const wantsStopRecording = mode === JitsiRecordingConstants.mode.FILE && Boolean(activeSession);
+            const wantsStopTranscription = Boolean(transcription);
+
+            // Seed stopRecordingIntent so maybeNotifyRecordingStop can coordinate
+            // the off sound/notification across recording and transcription stops.
+            if (wantsStopRecording || wantsStopTranscription) {
+                APP.store.dispatch(setStopRecordingIntent({
+                    recording: wantsStopRecording,
+                    transcription: wantsStopTranscription
+                }));
+            }
+
+            if (wantsStopTranscription) {
+                APP.store.dispatch(setRequestingSubtitles(false, false, null, true));
+            }
+
+            // Mirror AbstractStopRecordingDialog — clear both fields atomically so
+            // remote clients see the end of the recording/transcription intent.
+            // Covers recording-only, transcription-only, and combined stops.
+            if (wantsStopRecording || wantsStopTranscription) {
+                conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                    isRecordingRequested: false,
+                    isTranscribingEnabled: false
+                });
+            }
 
             APP.store.dispatch(toggleScreenshotCaptureSummary(false));
             conference.stopRecording(activeSession?.id);
