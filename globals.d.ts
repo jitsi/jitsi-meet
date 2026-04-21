@@ -13,6 +13,16 @@ declare global {
     };
     const interfaceConfig: any;
 
+    interface Navigator {
+        gpu?: {
+            requestAdapter(): Promise<GPUAdapter | null>;
+        };
+    }
+
+    interface GPUAdapter {
+        requestAdapterInfo?(): Promise<{ device: string }>;
+    }
+
     interface Window {
         config: IConfig;
         JITSI_MEET_LITE_SDK?: boolean;

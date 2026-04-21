@@ -130,8 +130,7 @@ import { muteAllParticipants, muteRemote } from '../../react/features/video-menu
 import { setVideoQuality } from '../../react/features/video-quality/actions';
 import {
     toggleBackgroundEffect,
-    toggleBlurredBackgroundEffect,
-    toggleStudioLightEffect
+    toggleBlurredBackgroundEffect
 } from '../../react/features/virtual-background/actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../react/features/virtual-background/constants';
 import { toggleWhiteboard } from '../../react/features/whiteboard/actions.web';
@@ -927,12 +926,6 @@ function initCommands() {
                 backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
                 virtualSource: backgroundImage
             }, jitsiTrack));
-        },
-        'set-studio-light': (enabled, preset) => {
-            const tracks = APP.store.getState()['features/base/tracks'];
-            const jitsiTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
-
-            APP.store.dispatch(toggleStudioLightEffect(jitsiTrack, enabled, preset));
         },
         'show-pip': () => {
             APP.store.dispatch(showPiP());

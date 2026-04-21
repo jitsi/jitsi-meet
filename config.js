@@ -1489,19 +1489,28 @@ var config = {
     //     hideJoinRoomButton: false,
     // },
 
-    // When true, virtual background feature will be disabled.
-    // disableVirtualBackground: false,
-
-    // When true the user cannot add more images to be used as virtual background.
-    // Only the default ones from will be available.
-    // disableAddingBackgroundImages: false,
-
     // Sets the background transparency level. '0' is fully transparent, '1' is opaque.
     // backgroundAlpha: 1,
 
-    // Virtual background V2 options (MediaPipe body-segmentation + WebGL compositor).
+    // @deprecated Use `virtualBackground.disabled` instead. When true, the virtual background
+    // feature is disabled. Kept here for backwards compatibility; will be removed in a future release.
+    // disableVirtualBackground: false,
+
+    // @deprecated Use `virtualBackground.disableAddingImages` instead. When true the user cannot
+    // add more images to be used as virtual background; only the default ones will be available.
+    // Kept here for backwards compatibility; will be removed in a future release.
+    // disableAddingBackgroundImages: false,
+
+    // Virtual background options.
     // All fields are optional; omitting a field uses the default/auto-detected value.
     virtualBackground: {
+
+        // When true, virtual background feature will be disabled.
+        // disabled: false,
+
+        // When true the user cannot add more images to be used as virtual background.
+        // Only the default ones will be available.
+        // disableAddingImages: false,
 
         // Enable the V2 processing engine. When false (default), the legacy
         // TFLite WASM engine (V1) is used. Set to true to opt in to V2.
@@ -1513,8 +1522,8 @@ var config = {
         // tierOverride: null,
 
         // Override the segmentation canvas dimensions (pixels). Applies to MEDIUM and HIGH
-        // tiers only (TF.js input canvas). LOW tier (TFLite) always runs at 256×256,
-        // fixed by the selfie_segmenter model and not affected by this setting.
+        // tiers only (TF.js input canvas). LOW tier (TFLite) always runs at 256x144,
+        // fixed by the selfie_segmentation_landscape model and not affected by this setting.
         // segmentationWidth: null,   // auto: 512 (high) / 384 (medium)
         // segmentationHeight: null,  // auto: 288 (high) / 216 (medium)
 
@@ -1528,9 +1537,9 @@ var config = {
         // Smoothstep edge thresholds for the WebGL compositor (0-1).
         // Pixels with segmentation confidence below edgeLow are fully transparent;
         // above edgeHigh they are fully opaque; between the two they feather.
-        // Defaults are tier-specific:
-        //   LOW  tier (TFLite):      edgeLow = 0.48, edgeHigh = 0.65
-        //   MEDIUM/HIGH (TF.js):     edgeLow = 0.28, edgeHigh = 0.65
+        // Defaults are tier-specific (tuned per model's confidence distribution):
+        //   LOW tier    (TFLite selfie_segmentation_landscape): edgeLow = 0.10, edgeHigh = 0.50
+        //   MEDIUM/HIGH (TF.js MediaPipe body-segmentation):    edgeLow = 0.28, edgeHigh = 0.65
         // Lower edgeLow = more hair retained at the cost of slight background bleed.
         // Higher edgeHigh = harder edge transition.
         // edgeLow: 0.28,

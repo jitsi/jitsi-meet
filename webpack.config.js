@@ -386,13 +386,13 @@ module.exports = (_env, argv) => {
         { ...config,
             entry: {
                 'vb-inference-worker':
-                    './react/features/stream-effects/virtual-background/VBInferenceWorker.ts'
+                    './react/features/stream-effects/virtual-background/workers/VBInferenceWorker.ts'
             },
             plugins: [
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'vb-inference-worker')
             ],
-            performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 10) },
+            performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2) },
         { ...config, /**
              * The NoiseSuppressorWorklet is loaded in an audio worklet which doesn't have the same
              * context as a normal window, (e.g. self/window is not defined).

@@ -168,6 +168,22 @@ export interface IWatchRTCConfiguration {
     wsUrl?: string;
 }
 
+export interface IVirtualBackgroundConfig {
+    disableAddingImages?: boolean;
+    disabled?: boolean;
+    edgeHigh?: number;
+    edgeLow?: number;
+    enableV2?: boolean;
+    inferenceStride?: number;
+    segmentationHeight?: number;
+    segmentationWidth?: number;
+    targetFps?: number;
+    temporalBlendRatio?: number;
+    testMode?: boolean;
+    tierOverride?: 'high' | 'low' | 'medium';
+    useInsertableStreams?: boolean;
+}
+
 export interface IConfig {
     _desktopSharingSourceDevice?: string;
     _immediateReloadThreshold?: string;
@@ -721,19 +737,7 @@ export interface IConfig {
         mobileCodecPreferenceOrder?: Array<string>;
         persist?: boolean;
     };
-    virtualBackground?: {
-        edgeHigh?: number;
-        edgeLow?: number;
-        enableV2?: boolean;
-        inferenceStride?: number;
-        segmentationHeight?: number;
-        segmentationWidth?: number;
-        targetFps?: number;
-        temporalBlendRatio?: number;
-        testMode?: boolean;
-        tierOverride?: 'high' | 'low' | 'medium';
-        useInsertableStreams?: boolean;
-    };
+    virtualBackground?: IVirtualBackgroundConfig;
     visitors?: {
         enableMediaOnPromote?: {
             audio?: boolean;

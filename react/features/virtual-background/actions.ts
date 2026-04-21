@@ -4,9 +4,51 @@ import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { createVirtualBackgroundEffect } from '../stream-effects/virtual-background';
 
 import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes';
-import { STUDIO_LIGHT_PRESETS, VIRTUAL_BACKGROUND_TYPE } from './constants';
+import { VIRTUAL_BACKGROUND_TYPE } from './constants';
 import logger from './logger';
 import { IVirtualBackground } from './reducer';
+
+/** Minimal shape of a JitsiLocalTrack needed for effect management. */
+interface IJitsiTrack {
+    setEffect: (effect?: Object) => Promise<void>;
+}
+
+/** Track parameter type — accepts the JitsiLocalTrack, Object (from legacy callers), or null. */
+type TrackParam = IJitsiTrack | Object | null | undefined;
+
+/**
+ * Reverts the virtual background Redux state, clears the effect on the track, and shows an
+ * error notification. Shared by the init-failure and runtime-failure paths.
+ *
+ * @param {Function} dispatch - Redux dispatch.
+ * @param {IVirtualBackground} prevBackground - State snapshot taken before the failed toggle.
+ * @param {IJitsiTrack} jitsiTrack - The video track to clear the effect from.
+ * @param {string} reason - Human-readable reason for the failure (logged, not shown in UI).
+ * @returns {Promise<void>}
+ */
+async function handleEffectFailure(
+        dispatch: IStore['dispatch'],
+        prevBackground: IVirtualBackground,
+        jitsiTrack: TrackParam,
+        reason: string): Promise<void> {
+    logger.error(`[VirtualBackground] Effect failure: ${reason}`);
+
+    dispatch(backgroundEnabled(prevBackground.backgroundEffectEnabled));
+    dispatch(setVirtualBackground(prevBackground));
+
+    if (jitsiTrack) {
+        try {
+            await (jitsiTrack as IJitsiTrack).setEffect(undefined);
+        } catch (cleanupErr) {
+            logger.warn('[VirtualBackground] Failed to clear effect after failure:', cleanupErr);
+        }
+    }
+
+    dispatch(showWarningNotification(
+        { titleKey: 'virtualBackground.backgroundEffectError' },
+        NOTIFICATION_TIMEOUT_TYPE.LONG
+    ));
+}
 
 /**
  * Signals the local participant activate the virtual background video or not.
@@ -15,9 +57,8 @@ import { IVirtualBackground } from './reducer';
  * @param {Object} jitsiTrack - Represents the jitsi track that will have backgraund effect applied.
  * @returns {Promise}
  */
-export function toggleBackgroundEffect(options: IVirtualBackground, jitsiTrack: any) {
+export function toggleBackgroundEffect(options: IVirtualBackground, jitsiTrack: TrackParam) {
     return async function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
-        // Snapshot state before mutations so we can restore it if the effect fails to init.
         const prevBackground = getState()['features/virtual-background'];
 
         dispatch(backgroundEnabled(options.backgroundEffectEnabled));
@@ -26,41 +67,30 @@ export function toggleBackgroundEffect(options: IVirtualBackground, jitsiTrack: 
         const virtualBackground = state['features/virtual-background'];
 
         if (jitsiTrack) {
+            const track = jitsiTrack as IJitsiTrack;
+
             try {
                 if (options.backgroundEffectEnabled) {
-                    const effect = await createVirtualBackgroundEffect(virtualBackground, dispatch);
+                    const effect = await createVirtualBackgroundEffect(virtualBackground);
 
-                    await jitsiTrack.setEffect(effect);
+                    if (effect) {
+                        effect.onInferenceFailure = () => {
+                            handleEffectFailure(dispatch, prevBackground, jitsiTrack,
+                                'persistent inference failure');
+                        };
+                    }
 
-                    // V2 effects initialise asynchronously (worker spawn + model load). Await the
-                    // init promise so failures propagate here instead of being silently swallowed.
-                    if (effect && (effect as any).initPromise instanceof Promise) {
-                        await (effect as any).initPromise;
+                    await track.setEffect(effect);
+                    if (effect) {
+                        await effect.initPromise;
                     }
                 } else {
-                    await jitsiTrack.setEffect(undefined);
+                    await track.setEffect(undefined);
                     dispatch(backgroundEnabled(false));
                 }
             } catch (error) {
-                logger.error('Error on apply background effect:', error);
-
-                // Revert Redux state to the values that were active before the failed toggle.
-                dispatch(backgroundEnabled(prevBackground.backgroundEffectEnabled));
-                dispatch(setVirtualBackground(prevBackground));
-
-                // Remove any partially-applied effect so the video track is restored.
-                if (options.backgroundEffectEnabled) {
-                    try {
-                        await jitsiTrack.setEffect(undefined);
-                    } catch (cleanupErr) {
-                        logger.warn('[VirtualBackground] Failed to clear effect after init failure:', cleanupErr);
-                    }
-                }
-
-                dispatch(showWarningNotification(
-                    { titleKey: 'virtualBackground.backgroundEffectError' },
-                    NOTIFICATION_TIMEOUT_TYPE.LONG
-                ));
+                await handleEffectFailure(dispatch, prevBackground, jitsiTrack,
+                    String(error));
             }
         }
     };
@@ -83,8 +113,7 @@ export function setVirtualBackground(options?: IVirtualBackground) {
         virtualSource: options?.virtualSource,
         blurValue: options?.blurValue,
         backgroundType: options?.backgroundType,
-        selectedThumbnail: options?.selectedThumbnail,
-        studioLightOptions: options?.studioLightOptions
+        selectedThumbnail: options?.selectedThumbnail
     };
 }
 
@@ -112,7 +141,7 @@ export function backgroundEnabled(backgroundEffectEnabled?: boolean) {
  * @param {boolean} muted - Muted state of the video track.
  * @returns {Promise}
  */
-export function toggleBlurredBackgroundEffect(videoTrack: any, blurType: 'slight-blur' | 'blur' | 'none',
+export function toggleBlurredBackgroundEffect(videoTrack: TrackParam, blurType: 'slight-blur' | 'blur' | 'none',
         muted: boolean) {
     return async function(dispatch: IStore['dispatch'], _getState: IStore['getState']) {
         if (muted || !videoTrack || !blurType) {
@@ -135,35 +164,3 @@ export function toggleBlurredBackgroundEffect(videoTrack: any, blurType: 'slight
     };
 }
 
-/**
- * Toggles studio light effect on the given video track. Used by the external API.
- *
- * @param {Object} videoTrack - The targeted video track.
- * @param {boolean} enabled - Whether to enable or disable studio light.
- * @param {string} [preset] - Preset name ('natural', 'spotlight', 'soft-focus'). Defaults to 'natural'.
- * @returns {Function}
- */
-export function toggleStudioLightEffect(videoTrack: any, enabled: boolean, preset?: string) {
-    return async function(dispatch: IStore['dispatch']) {
-        if (!videoTrack) {
-            return;
-        }
-
-        if (!enabled) {
-            dispatch(toggleBackgroundEffect({
-                backgroundEffectEnabled: false,
-                selectedThumbnail: 'none'
-            }, videoTrack));
-        } else {
-            const presetKey = preset ?? 'natural';
-            const presetOptions = STUDIO_LIGHT_PRESETS[presetKey] ?? STUDIO_LIGHT_PRESETS.natural;
-
-            dispatch(toggleBackgroundEffect({
-                backgroundEffectEnabled: true,
-                backgroundType: VIRTUAL_BACKGROUND_TYPE.STUDIO_LIGHT,
-                selectedThumbnail: `studio-light-${presetKey}`,
-                studioLightOptions: presetOptions
-            }, videoTrack));
-        }
-    };
-}

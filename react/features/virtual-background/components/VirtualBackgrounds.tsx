@@ -20,8 +20,6 @@ import {
     BACKGROUNDS_LIMIT,
     IMAGES,
     type Image,
-    STUDIO_LIGHT_PRESETS,
-    StudioLightPreset,
     VIRTUAL_BACKGROUND_TYPE
 } from '../constants';
 import { toDataURL } from '../functions';
@@ -33,11 +31,6 @@ import VirtualBackgroundPreview from './VirtualBackgroundPreview';
 /* eslint-enable lines-around-comment */
 
 interface IProps extends WithTranslation {
-
-    /**
-     * Whether studio light presets should be shown (V2 enabled).
-     */
-    _enableStudioLight: boolean;
 
     /**
      * The list of Images to choose from.
@@ -185,35 +178,6 @@ const useStyles = makeStyles()(theme => {
             }
         },
 
-        studioLightSection: {
-            marginTop: theme.spacing(2),
-            width: '100%'
-        },
-
-        studioLightLabel: {
-            ...theme.typography.labelBold,
-            color: theme.palette.text01,
-            marginBottom: theme.spacing(1)
-        },
-
-        studioLightGrid: {
-            width: '100%',
-            display: 'inline-grid',
-            gridTemplateColumns: '1fr 1fr 1fr',
-            gap: theme.spacing(1)
-        },
-
-        studioLightNatural: {
-            background: 'linear-gradient(135deg, #f5f5f5, #e0e0e0)'
-        },
-
-        studioLightSpotlight: {
-            background: 'radial-gradient(circle at 50% 40%, #e0e0e0 0%, #2a2a2a 70%)'
-        },
-
-        studioLightSoftFocus: {
-            background: 'linear-gradient(135deg, #fce4ec, #f8bbd0, #ffffff)'
-        }
     };
 });
 
@@ -223,7 +187,6 @@ const useStyles = makeStyles()(theme => {
  * @returns {ReactElement}
  */
 function VirtualBackgrounds({
-    _enableStudioLight,
     _images,
     _showUploadButton,
     onOptionsChange,
@@ -378,59 +341,11 @@ function VirtualBackgrounds({
         await setPreviewIsLoaded(loaded);
     }, []);
 
-    const _applyStudioLightPreset = useCallback((preset: string) => {
-        const presetOptions = STUDIO_LIGHT_PRESETS[preset] ?? STUDIO_LIGHT_PRESETS.natural;
-
-        onOptionsChange({
-            backgroundEffectEnabled: true,
-            backgroundType: VIRTUAL_BACKGROUND_TYPE.STUDIO_LIGHT,
-            selectedThumbnail: `studio-light-${preset}`,
-            studioLightOptions: presetOptions
-        });
-        logger.info(`Studio light preset "${preset}" set for virtual background preview!`);
-    }, []);
-
-    const selectStudioNatural = useCallback(() => {
-        _applyStudioLightPreset(StudioLightPreset.NATURAL);
-    }, [ _applyStudioLightPreset ]);
-
-    const selectStudioNaturalKeyPress = useCallback(e => {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            selectStudioNatural();
-        }
-    }, [ selectStudioNatural ]);
-
-    const selectStudioSpotlight = useCallback(() => {
-        _applyStudioLightPreset(StudioLightPreset.SPOTLIGHT);
-    }, [ _applyStudioLightPreset ]);
-
-    const selectStudioSpotlightKeyPress = useCallback(e => {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            selectStudioSpotlight();
-        }
-    }, [ selectStudioSpotlight ]);
-
-    const selectStudioSoftFocus = useCallback(() => {
-        _applyStudioLightPreset(StudioLightPreset.SOFT_FOCUS);
-    }, [ _applyStudioLightPreset ]);
-
-    const selectStudioSoftFocusKeyPress = useCallback(e => {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            selectStudioSoftFocus();
-        }
-    }, [ selectStudioSoftFocus ]);
-
     // create a full list of {backgroundId: backgroundLabel} to easily retrieve label of selected background
     const labelsMap: Record<string, string> = {
         none: t('virtualBackground.none'),
         'slight-blur': t('virtualBackground.slightBlur'),
         blur: t('virtualBackground.blur'),
-        'studio-light-natural': t('virtualBackground.studioLightNatural'),
-        'studio-light-spotlight': t('virtualBackground.studioLightSpotlight'),
-        'studio-light-soft-focus': t('virtualBackground.studioLightSoftFocus'),
         ..._images.reduce<Record<string, string>>((acc, image) => {
             acc[image.id] = image.tooltip ? t(`virtualBackground.${image.tooltip}`) : '';
 
@@ -574,66 +489,6 @@ function VirtualBackgrounds({
                             </div>
                         ))}
                     </div>
-                    {_enableStudioLight && (
-                        <div className = { classes.studioLightSection }>
-                            <div className = { classes.studioLightLabel }>
-                                {t('virtualBackground.studioLightTitle')}
-                            </div>
-                            <div
-                                aria-label = { t('virtualBackground.studioLightTitle') }
-                                className = { classes.studioLightGrid }
-                                role = 'radiogroup'>
-                                <Tooltip
-                                    content = { t('virtualBackground.studioLightNatural') }
-                                    position = { 'top' }>
-                                    <div
-                                        aria-checked = { isThumbnailSelected('studio-light-natural') }
-                                        aria-label = { t('virtualBackground.studioLightNatural') }
-                                        className = { cx(classes.thumbnail,
-                                            classes.studioLightNatural,
-                                            getSelectedThumbnailClass('studio-light-natural')) }
-                                        onClick = { selectStudioNatural }
-                                        onKeyPress = { selectStudioNaturalKeyPress }
-                                        role = 'radio'
-                                        tabIndex = { 0 }>
-                                        {t('virtualBackground.studioLightNatural')}
-                                    </div>
-                                </Tooltip>
-                                <Tooltip
-                                    content = { t('virtualBackground.studioLightSpotlight') }
-                                    position = { 'top' }>
-                                    <div
-                                        aria-checked = { isThumbnailSelected('studio-light-spotlight') }
-                                        aria-label = { t('virtualBackground.studioLightSpotlight') }
-                                        className = { cx(classes.thumbnail,
-                                            classes.studioLightSpotlight,
-                                            getSelectedThumbnailClass('studio-light-spotlight')) }
-                                        onClick = { selectStudioSpotlight }
-                                        onKeyPress = { selectStudioSpotlightKeyPress }
-                                        role = 'radio'
-                                        tabIndex = { 0 }>
-                                        {t('virtualBackground.studioLightSpotlight')}
-                                    </div>
-                                </Tooltip>
-                                <Tooltip
-                                    content = { t('virtualBackground.studioLightSoftFocus') }
-                                    position = { 'top' }>
-                                    <div
-                                        aria-checked = { isThumbnailSelected('studio-light-soft-focus') }
-                                        aria-label = { t('virtualBackground.studioLightSoftFocus') }
-                                        className = { cx(classes.thumbnail,
-                                            classes.studioLightSoftFocus,
-                                            getSelectedThumbnailClass('studio-light-soft-focus')) }
-                                        onClick = { selectStudioSoftFocus }
-                                        onKeyPress = { selectStudioSoftFocusKeyPress }
-                                        role = 'radio'
-                                        tabIndex = { 0 }>
-                                        {t('virtualBackground.studioLightSoftFocus')}
-                                    </div>
-                                </Tooltip>
-                            </div>
-                        </div>
-                    )}
                 </div>
             )}
         </>
@@ -649,13 +504,17 @@ function VirtualBackgrounds({
  * @returns {{Props}}
  */
 function _mapStateToProps(state: IReduxState) {
+    const config = state['features/base/config'];
     const dynamicBrandingImages = state['features/dynamic-branding'].virtualBackgrounds;
     const hasBrandingImages = Boolean(dynamicBrandingImages.length);
 
+    // New location takes precedence; fall back to legacy top-level key.
+    const disableUploads = config.virtualBackground?.disableAddingImages
+        ?? config.disableAddingBackgroundImages;
+
     return {
-        _enableStudioLight: Boolean(state['features/base/config'].virtualBackground?.enableV2),
         _images: (hasBrandingImages && dynamicBrandingImages) || IMAGES,
-        _showUploadButton: !state['features/base/config'].disableAddingBackgroundImages
+        _showUploadButton: !disableUploads
     };
 }
 
