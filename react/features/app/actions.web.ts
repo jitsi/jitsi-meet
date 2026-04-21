@@ -69,7 +69,7 @@ export function appNavigate(uri?: string) {
         // the conference, but we're still on the conference screen.
         dispatch(clearNotifications());
 
-        dispatch(configWillLoad(locationURL, room));
+        dispatch(configWillLoad(locationURL));
 
         const config = await loadConfig();
 

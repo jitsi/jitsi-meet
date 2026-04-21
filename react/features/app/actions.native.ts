@@ -98,7 +98,7 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
 
         dispatch(disconnect());
 
-        dispatch(configWillLoad(locationURL, room));
+        dispatch(configWillLoad(locationURL));
 
         let protocol = location.protocol.toLowerCase();
 
