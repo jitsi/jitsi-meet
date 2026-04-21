@@ -1,3 +1,6 @@
+import { expect } from '@wdio/globals';
+
+import '../../helpers/matchers';
 import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { config as testsConfig } from '../../helpers/TestsConfig';
@@ -26,8 +29,8 @@ describe('Connectivity', () => {
         const port1 = await getRemotePort(p1);
         const port2 = await getRemotePort(p2);
 
-        expect(Number.isInteger(port1)).toBe(true);
-        expect(Number.isInteger(port2)).toBe(true);
+        expect(port1).toBeInteger('p1 remote port');
+        expect(port2).toBeInteger('p2 remote port');
         expect(port1).toBe(port2);
     });
 });

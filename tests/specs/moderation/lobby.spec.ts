@@ -1,3 +1,6 @@
+import { expect } from '@wdio/globals';
+
+import '../../helpers/matchers';
 import { P1, P3, Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { expectations } from '../../helpers/expectations';
@@ -39,8 +42,8 @@ describe('Lobby', () => {
 
         const notificationText = await p2.getNotifications().getLobbyParticipantAccessGranted();
 
-        expect(notificationText.includes(P1)).toBe(true);
-        expect(notificationText.includes(P3)).toBe(true);
+        expect(notificationText).toContain(P1);
+        expect(notificationText).toContain(P3);
 
         await p2.getNotifications().closeLobbyParticipantAccessGranted();
 
@@ -72,8 +75,8 @@ describe('Lobby', () => {
         // deny notification on 2nd participant
         const notificationText = await p2.getNotifications().getLobbyParticipantAccessDenied();
 
-        expect(notificationText.includes(P1)).toBe(true);
-        expect(notificationText.includes(P3)).toBe(true);
+        expect(notificationText).toContain(P1);
+        expect(notificationText).toContain(P3);
 
         await p2.getNotifications().closeLobbyParticipantAccessDenied();
 
@@ -392,7 +395,7 @@ async function enableLobby() {
     await p1SecurityDialog.toggleLobby();
     await p1SecurityDialog.waitForLobbyEnabled();
 
-    expect((await p2.getNotifications().getLobbyEnabledText()).includes(p1.name)).toBe(true);
+    expect(await p2.getNotifications().getLobbyEnabledText()).toContain(p1.name);
 
     await p2.getNotifications().closeLobbyEnabled();
 
@@ -470,7 +473,7 @@ async function enterLobby(participant: Participant, enterDisplayName = false, us
 
         if (!usePreJoin) {
             // check join button is disabled
-            expect(classes.includes('disabled')).toBe(true);
+            expect(classes).toContain('disabled');
         }
 
         // TODO check that password is hidden as the room does not have password
@@ -481,7 +484,7 @@ async function enterLobby(participant: Participant, enterDisplayName = false, us
 
         // check join button is enabled
         classes = await joinButton.getAttribute('class') || '';
-        expect(classes.includes('disabled')).toBe(false);
+        expect(classes).not.toContain('disabled');
     }
 
     // click join button

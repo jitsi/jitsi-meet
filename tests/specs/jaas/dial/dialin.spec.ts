@@ -1,3 +1,6 @@
+import { expect } from '@wdio/globals';
+
+import '../../../helpers/matchers';
 import type { Participant } from '../../../helpers/Participant';
 import { setTestProperties } from '../../../helpers/TestProperties';
 import { config as testsConfig } from '../../../helpers/TestsConfig';
@@ -57,7 +60,7 @@ describe('Dial-in', () => {
     it('dial-in', async () => {
         const dialInPin = await p1.getDialInPin();
 
-        expect(dialInPin.length >= 8).toBe(true);
+        expect(dialInPin.length).toBeGreaterThanOrEqual(8);
 
         await dialIn(dialInPin);
         await waitForMedia(p1);

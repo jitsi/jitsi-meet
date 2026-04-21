@@ -1,5 +1,6 @@
 import { expect } from '@wdio/globals';
 
+import '../../helpers/matchers';
 import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import type WebhookProxy from '../../helpers/WebhookProxy';
@@ -197,7 +198,7 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
     const p1Transcript = p1Event.data.stable || p1Event.data.final;
     const p2Transcript = p2Event.data.stable || p2Event.data.final;
 
-    expect(p2Transcript.includes(p1Transcript) || p1Transcript.includes(p2Transcript)).toBe(true);
+    expect(p2Transcript).toPartiallyMatch(p1Transcript, 'p2 transcript', 'p1 transcript');
     expect(p2Event.data.language).toBe(p1Event.data.language);
     expect(p2Event.data.messageID).toBe(p1Event.data.messageID);
     expect(p1Event.data.participant.id).toBe(p1Id);
@@ -227,7 +228,7 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
 
         const webhookTranscript = event.data.final;
 
-        expect(webhookTranscript.includes(p1Transcript) || p1Transcript.includes(webhookTranscript)).toBe(true);
+        expect(webhookTranscript).toPartiallyMatch(p1Transcript, 'webhook transcript', 'p1 transcript');
         if (p1Event.data.language) {
             expect(event.data.language).toBe(p1Event.data.language);
         }

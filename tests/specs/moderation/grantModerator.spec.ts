@@ -1,3 +1,5 @@
+import { expect } from '@wdio/globals';
+
 import { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { expectations } from '../../helpers/expectations';
@@ -23,10 +25,11 @@ describe('Grant moderator', () => {
         p1 = ctx.p1;
         expect(await p1.isModerator()).toBe(true);
 
-        const functionAvailable = await p1.execute(() => typeof APP.conference._room.grantOwner === 'function');
+        const grantOwnerType = await p1.execute(() => typeof APP.conference._room.grantOwner);
+        const functionAvailable = grantOwnerType === 'function';
 
         if (expectations.moderation.grantModerator) {
-            expect(functionAvailable).toBe(true);
+            expect(grantOwnerType).toBe('function');
         } else {
             if (!functionAvailable) {
                 ctx.skipSuiteTests = 'grantModerator is not available and not expected';
