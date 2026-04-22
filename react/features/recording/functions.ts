@@ -198,6 +198,18 @@ export function isRecordingRunning(state: IReduxState) {
 }
 
 /**
+ * Returns true if the participant has either the recording or transcription JWT feature enabled.
+ * Used to determine if the user can interact with recording/transcription controls.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function hasRecordingOrTranscriptionFeature(state: IReduxState) {
+    return isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false)
+        || isJwtFeatureEnabled(state, MEET_FEATURES.TRANSCRIPTION, false);
+}
+
+/**
  * Returns true if the participant can stop recording.
  *
  * @param {Object} state - The redux state to search in.
@@ -209,8 +221,7 @@ export function canStopRecording(state: IReduxState) {
     }
 
     if (isCloudRecordingRunning(state) || isRecorderTranscriptionsRunning(state)) {
-        return isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false)
-            || isJwtFeatureEnabled(state, MEET_FEATURES.TRANSCRIPTION, false);
+        return hasRecordingOrTranscriptionFeature(state);
     }
 
     return false;
