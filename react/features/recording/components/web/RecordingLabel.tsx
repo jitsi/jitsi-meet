@@ -3,20 +3,26 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from 'tss-react/mui';
 
-import { IStore } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { openDialog } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
 import { IconRecord, IconSites } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
 import AbstractRecordingLabel, {
     IProps as AbstractProps,
-    _mapStateToProps
+    _mapStateToProps as _abstractMapStateToProps
 } from '../AbstractRecordingLabel';
 import StopRecordingDialog from '../Recording/web/StopRecordingDialog';
 
 interface IProps extends AbstractProps {
+
+    /**
+     * Whether the local participant is a moderator.
+     */
+    _isModerator: boolean;
 
     /**
      * An object containing the CSS classes.
@@ -69,7 +75,9 @@ class RecordingLabel extends AbstractRecordingLabel<IProps> {
      * @returns {void}
      */
     _onClick() {
-        this.props.dispatch(openDialog('StopRecordingDialog', StopRecordingDialog));
+        if (this.props._isModerator) {
+            this.props.dispatch(openDialog('StopRecordingDialog', StopRecordingDialog));
+        }
     }
 
     /**
@@ -103,6 +111,21 @@ class RecordingLabel extends AbstractRecordingLabel<IProps> {
             </Tooltip>
         );
     }
+}
+
+/**
+ * Maps (parts of) the Redux state to the associated props.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The component's own props.
+ * @private
+ * @returns {Object}
+ */
+function _mapStateToProps(state: IReduxState, ownProps: any) {
+    return {
+        ..._abstractMapStateToProps(state, ownProps),
+        _isModerator: isLocalParticipantModerator(state)
+    };
 }
 
 export default withStyles(translate(connect(_mapStateToProps)(RecordingLabel)), styles);
