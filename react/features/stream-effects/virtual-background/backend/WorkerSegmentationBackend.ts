@@ -2,24 +2,21 @@ import { getBaseUrl } from '../../../base/util/helpers';
 import logger from '../../../virtual-background/logger';
 import { BackendType, IDeviceCapabilities } from '../DeviceTierDetector';
 
-import { ISegmentationBackend } from './ISegmentationBackend';
-
 /**
  * Worker-based segmentation backend.
  *
- * Wraps the {@link VBInferenceWorker} message protocol to provide the
- * {@link ISegmentationBackend} interface. The worker runs TF.js body-segmentation
- * (MEDIUM/HIGH tiers via WebGL/WebGPU) or TFLite WASM (LOW tier via
- * selfie_segmentation_landscape) in a dedicated Web Worker thread.
+ * Wraps the {@link VBInferenceWorker} message protocol. The worker runs TF.js body-segmentation
+ * (MEDIUM/HIGH tiers via WebGL/WebGPU) or TFLite WASM (LOW tier via selfie_segmentation_landscape)
+ * in a dedicated Web Worker thread.
  *
- * The worker may fall back from a GPU backend to TFLite if the GPU context is unavailable
- * inside the Worker. When this happens, the capabilities are updated to reflect the
- * actual backend and segmentation dimensions.
+ * The worker may fall back from a GPU backend to TFLite if the GPU context is unavailable inside
+ * the Worker. When this happens, the capabilities are updated to reflect the actual backend and
+ * segmentation dimensions.
  *
- * EMA temporal smoothing is NOT applied here — that is the processor's responsibility.
- * The backend returns raw mask ImageData from each inference call.
+ * EMA temporal smoothing is NOT applied here — that is the processor's responsibility. The backend
+ * returns raw mask ImageData from each inference call.
  */
-export default class WorkerSegmentationBackend implements ISegmentationBackend {
+export default class WorkerSegmentationBackend {
     _capabilities: IDeviceCapabilities;
     _pendingInferHandler: ((e: MessageEvent) => void) | null = null;
     _pendingInferResolve: ((value: ImageData | null) => void) | null = null;
@@ -48,12 +45,11 @@ export default class WorkerSegmentationBackend implements ISegmentationBackend {
      * Creates the inference worker and sends the init message.
      *
      * The worker is loaded via an importScripts blob URL pattern (same approach as
-     * FaceLandmarksDetector) to load the pre-built worker bundle from /libs/ without
-     * a separate module-worker instantiation.
+     * FaceLandmarksDetector) to load the pre-built worker bundle from /libs/ without a separate
+     * module-worker instantiation.
      *
-     * Resolves when the worker signals init_done. If the worker falls back to a
-     * different backend, capabilities are updated to reflect the actual backend
-     * and segmentation dimensions.
+     * Resolves when the worker signals init_done. If the worker falls back to a different backend,
+     * capabilities are updated to reflect the actual backend and segmentation dimensions.
      *
      * @returns {Promise<void>} Resolves when the worker is ready for inference.
      * @throws {Error} When the worker signals init_error.
@@ -62,8 +58,11 @@ export default class WorkerSegmentationBackend implements ISegmentationBackend {
         const base = getBaseUrl().replace(/\/?$/, '/');
         const workerUrl = `${base}libs/vb-inference-worker.min.js`;
 
+        // JSON.stringify escapes quotes, backslashes, and control chars in workerUrl.
+        const scriptSource = `importScripts(${JSON.stringify(workerUrl)});`;
+
         // @ts-ignore — @types/node's BlobOptions / URL shadow DOM BlobPropertyBag / URL here.
-        const blob = new Blob([ `importScripts("${workerUrl}");` ], { type: 'application/javascript' });
+        const blob = new Blob([ scriptSource ], { type: 'application/javascript' });
 
         // @ts-ignore
         const blobUrl = window.URL.createObjectURL(blob);
@@ -138,12 +137,12 @@ export default class WorkerSegmentationBackend implements ISegmentationBackend {
     /**
      * Sends a pre-scaled ImageBitmap to the inference worker and awaits the mask.
      *
-     * The bitmap is transferred (zero-copy). The worker runs segmentation and returns
-     * the raw mask Uint8ClampedArray (also transferred). The mask is wrapped in an
-     * ImageData and returned directly — no EMA smoothing is applied here.
+     * The bitmap is transferred (zero-copy). The worker runs segmentation and returns the raw
+     * mask Uint8ClampedArray (also transferred). The mask is wrapped in an ImageData and returned
+     * directly — no EMA smoothing is applied here.
      *
-     * Only one inference call can be in flight at a time. The caller (processor) is
-     * responsible for enforcing sequential call discipline.
+     * Only one inference call can be in flight at a time. The caller (processor) is responsible
+     * for enforcing sequential call discipline.
      *
      * @param {ImageBitmap} bitmap - Pre-scaled camera frame at seg resolution.
      * @returns {Promise<ImageData | null>} Raw mask, or null if inference failed.
@@ -200,8 +199,8 @@ export default class WorkerSegmentationBackend implements ISegmentationBackend {
     /**
      * Stops the inference worker and releases all resources.
      *
-     * Aborts any pending inference call (removes the message handler and resolves
-     * with null), sends a stop message to the worker, and terminates it.
+     * Aborts any pending inference call (removes the message handler and resolves with null),
+     * sends a stop message to the worker, and terminates it.
      *
      * @returns {Promise<void>}
      */

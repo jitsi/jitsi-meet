@@ -1,20 +1,19 @@
 import logger from '../../../virtual-background/logger';
-
-import { IBackgroundPipeline, IFrameProcessor } from './IBackgroundPipeline';
+import BackgroundFrameProcessor from '../BackgroundFrameProcessor';
 
 /**
  * Frame delivery pipeline using the Insertable Streams API.
  *
- * Reads {@code VideoFrame} objects from a {@code MediaStreamTrackProcessor}, passes them
- * through the processor, and writes the results to a {@code MediaStreamTrackGenerator}.
- * No {@code requestVideoFrameCallback} or keepalive Worker is needed — the readable stream
- * delivers frames directly from the camera regardless of tab visibility.
+ * Reads {@code VideoFrame} objects from a {@code MediaStreamTrackProcessor}, passes them through
+ * the processor, and writes the results to a {@code MediaStreamTrackGenerator}. No
+ * {@code requestVideoFrameCallback} or keepalive Worker is needed — the readable stream delivers
+ * frames directly from the camera regardless of tab visibility.
  */
-export default class InsertableStreamsPipeline implements IBackgroundPipeline {
+export default class InsertableStreamsPipeline {
     _isLoopStarted = false;
     _isRunning = false;
     _outputCanvasElement: HTMLCanvasElement;
-    _processor: IFrameProcessor | null = null;
+    _processor: BackgroundFrameProcessor | null = null;
     _trackGenerator: (MediaStreamTrack & { writable: WritableStream<VideoFrame>; }) | null = null;
     _trackProcessor: { readable: ReadableStream<VideoFrame>; } | null = null;
     _trackReader: ReadableStreamDefaultReader<VideoFrame> | null = null;
@@ -43,10 +42,10 @@ export default class InsertableStreamsPipeline implements IBackgroundPipeline {
      * Starts the insertable streams pipeline on the given input stream.
      *
      * @param {MediaStream} inputStream - Camera media stream.
-     * @param {IFrameProcessor} processor - Per-frame processing callback.
+     * @param {BackgroundFrameProcessor} processor - Per-frame processing callback.
      * @returns {MediaStream} Processed output stream via MediaStreamTrackGenerator.
      */
-    start(inputStream: MediaStream, processor: IFrameProcessor): MediaStream {
+    start(inputStream: MediaStream, processor: BackgroundFrameProcessor): MediaStream {
         this._isRunning = true;
         this._processor = processor;
 

@@ -331,6 +331,24 @@ async function handleInitTflite(data: {
         tfliteSegHeight = segHeight;
         tflitePixelCount = segWidth * segHeight;
 
+        // Bounds-check the HEAPF32 input/output regions against the requested seg dimensions.
+        // Catches a mismatch between the configured seg size and the model's actual tensor
+        // shape before the inference loop starts silently clobbering WASM heap memory.
+        const heapLen = tfliteModule.HEAPF32.length;
+        const inputEnd = tfliteInputOffset + tflitePixelCount * 3; // NHWC float32, 3 channels.
+        const outputEnd = tfliteOutputOffset + tflitePixelCount; // Single float per pixel.
+
+        if (inputEnd > heapLen || outputEnd > heapLen) {
+            workerPost({
+                error: `TFLite heap bounds mismatch: segWidth=${segWidth} segHeight=${segHeight}`
+                    + ` requires inputEnd=${inputEnd}/outputEnd=${outputEnd} but HEAPF32 is ${heapLen}.`
+                    + ' Model input shape likely differs from the configured seg resolution.',
+                type: 'init_error'
+            });
+
+            return;
+        }
+
         tfliteReadCanvas = new OffscreenCanvas(segWidth, segHeight);
         tfliteReadCtx = tfliteReadCanvas.getContext('2d', { willReadFrequently: true });
 

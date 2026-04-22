@@ -4,9 +4,8 @@ import logger from '../../virtual-background/logger';
 import { IVirtualBackground } from '../../virtual-background/reducer';
 
 import { BackendType } from './DeviceTierDetector';
-import { ISegmentationBackend } from './backend/ISegmentationBackend';
+import WorkerSegmentationBackend from './backend/WorkerSegmentationBackend';
 import { ICompositor } from './compositor/ICompositor';
-import { IFrameProcessor } from './pipeline/IBackgroundPipeline';
 
 /** Benchmark log interval in frames. */
 const BENCHMARK_LOG_INTERVAL = 60;
@@ -58,7 +57,7 @@ const TARGET_BLUR_CAMERA_PX_TFLITE = 32;
  * Options for constructing a BackgroundFrameProcessor.
  */
 interface IProcessorOptions {
-    backend: ISegmentationBackend;
+    backend: WorkerSegmentationBackend;
     compositor: ICompositor;
     vbConfig?: IVirtualBackgroundConfig;
     virtualBackground: IVirtualBackground;
@@ -67,8 +66,8 @@ interface IProcessorOptions {
 /**
  * Orchestrates per-frame segmentation and compositing.
  *
- * Implements {@link IFrameProcessor} and is called by a pipeline (CaptureStream or InsertableStreams)
- * for every incoming camera frame. Internally it:
+ * Called by the InsertableStreams pipeline (or the captureStream fallback loop in
+ * JitsiStreamBackgroundEffect) for every incoming camera frame. Internally it:
  * 1. Pre-scales the frame to the backend's segmentation resolution.
  * 2. Runs inference (with configurable stride/skip for CPU backends).
  * 3. Applies exponential moving average (EMA) temporal smoothing to the mask.
@@ -80,8 +79,8 @@ interface IProcessorOptions {
 /** Number of consecutive inference failures before firing the failure callback. */
 const FAILURE_THRESHOLD = 30;
 
-export default class BackgroundFrameProcessor implements IFrameProcessor {
-    _backend: ISegmentationBackend;
+export default class BackgroundFrameProcessor {
+    _backend: WorkerSegmentationBackend;
     _backgroundCanvas: HTMLCanvasElement;
     _backgroundCtx: CanvasRenderingContext2D | null = null;
     _benchmarkAccumTotal = 0;
@@ -255,10 +254,8 @@ export default class BackgroundFrameProcessor implements IFrameProcessor {
             cssBlurFilter,
             edgeHigh: this._edgeHigh,
             edgeLow: this._edgeLow,
-            firstFrame: this._firstMaskFrame,
             maskBlurRadius
         });
-        this._firstMaskFrame = false;
 
         return this._compositor.outputCanvas;
     }
@@ -322,6 +319,7 @@ export default class BackgroundFrameProcessor implements IFrameProcessor {
             for (let i = 0, j = 0; i < n; i++, j += 4) {
                 this._maskAccumF32[i] = raw[j]; // R = confidence * 255
             }
+            this._firstMaskFrame = false;
 
             return maskData;
         }

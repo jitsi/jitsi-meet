@@ -12,9 +12,6 @@ export interface ICompositeOptions {
     /** Smoothstep lower threshold. Pixels below this are fully transparent. */
     edgeLow: number;
 
-    /** When true, seeds temporal buffers from the current mask (no history to blend). */
-    firstFrame: boolean;
-
     /** Gaussian blur radius in mask-texture pixels (0 disables blur). */
     maskBlurRadius: number;
 }
@@ -35,7 +32,7 @@ export interface ICompositor {
      * @param {CanvasImageSource} camera - Live camera frame.
      * @param {CanvasImageSource} background - Pre-rendered background (blur or image).
      * @param {ImageData} maskData - Raw segmentation mask bytes.
-     * @param {ICompositeOptions} options - Edge thresholds, blur radius, and first-frame flag.
+     * @param {ICompositeOptions} options - Edge thresholds and blur radius.
      * @returns {void}
      */
     composite: (

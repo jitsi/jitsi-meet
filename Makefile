@@ -99,7 +99,7 @@ deploy-excalidraw-dev:
 
 deploy-meet-models:
 	cp \
-		$(MEET_MODELS_DIR)/selfie_segmentation_landscape.tflite \
+		$(MEET_MODELS_DIR)/*.tflite \
 		$(DEPLOY_DIR)
 
 deploy-mediapipe-segmentation:

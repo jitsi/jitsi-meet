@@ -13,14 +13,14 @@ const VERTEX_SHADER_SOURCE = `
 `;
 
 // GLSL ES 1.0 — compatible with both WebGL 1 and WebGL 2.
+// Temporal smoothing (EMA) is handled CPU-side by BackgroundFrameProcessor before upload,
+// so the shader only reads the current mask — no ping-pong / prev-mask sampling needed.
 const VB_FRAGMENT_SHADER_SOURCE = `
     precision mediump float;
 
     uniform sampler2D u_camera;
     uniform sampler2D u_background;
     uniform sampler2D u_mask;
-    uniform sampler2D u_prevMask;
-    uniform float     u_temporalRatio;
     uniform float     u_edgeLow;
     uniform float     u_edgeHigh;
     uniform vec2      u_maskTexelSize;
@@ -30,18 +30,18 @@ const VB_FRAGMENT_SHADER_SOURCE = `
 
     // 3x3 Gaussian blur (sigma≈1) sampled in mask-texture space.
     // When u_maskTexelSize is (0,0) all taps collapse to tc — weights sum to 1.0, no blur.
-    float sampleMaskBlurred(sampler2D tex, vec2 tc) {
+    float sampleMaskBlurred(vec2 tc) {
         vec2 t = u_maskTexelSize;
         return
-            texture2D(tex, tc + vec2(-t.x, -t.y)).r * 0.0625 +
-            texture2D(tex, tc + vec2( 0.0, -t.y)).r * 0.125  +
-            texture2D(tex, tc + vec2( t.x, -t.y)).r * 0.0625 +
-            texture2D(tex, tc + vec2(-t.x,  0.0)).r * 0.125  +
-            texture2D(tex, tc                    ).r * 0.25   +
-            texture2D(tex, tc + vec2( t.x,  0.0)).r * 0.125  +
-            texture2D(tex, tc + vec2(-t.x,  t.y)).r * 0.0625 +
-            texture2D(tex, tc + vec2( 0.0,  t.y)).r * 0.125  +
-            texture2D(tex, tc + vec2( t.x,  t.y)).r * 0.0625;
+            texture2D(u_mask, tc + vec2(-t.x, -t.y)).r * 0.0625 +
+            texture2D(u_mask, tc + vec2( 0.0, -t.y)).r * 0.125  +
+            texture2D(u_mask, tc + vec2( t.x, -t.y)).r * 0.0625 +
+            texture2D(u_mask, tc + vec2(-t.x,  0.0)).r * 0.125  +
+            texture2D(u_mask, tc                    ).r * 0.25   +
+            texture2D(u_mask, tc + vec2( t.x,  0.0)).r * 0.125  +
+            texture2D(u_mask, tc + vec2(-t.x,  t.y)).r * 0.0625 +
+            texture2D(u_mask, tc + vec2( 0.0,  t.y)).r * 0.125  +
+            texture2D(u_mask, tc + vec2( t.x,  t.y)).r * 0.0625;
     }
 
     // Luminance gradient magnitude at this pixel using a simple cross-pattern sample.
@@ -60,23 +60,15 @@ const VB_FRAGMENT_SHADER_SOURCE = `
         vec4 fg = texture2D(u_camera,     v_texCoord);
         vec4 bg = texture2D(u_background, v_texCoord);
 
-        // Blurred mask — wide feathering for smooth regions (hair, soft edges).
-        float curBlurred  = sampleMaskBlurred(u_mask,     v_texCoord);
-        float prevBlurred = sampleMaskBlurred(u_prevMask, v_texCoord);
-
-        // Raw (unblurred) mask — used to snap the edge at sharp camera boundaries.
-        float curRaw  = texture2D(u_mask,     v_texCoord).r;
-        float prevRaw = texture2D(u_prevMask, v_texCoord).r;
+        float blurred = sampleMaskBlurred(v_texCoord);
+        float raw     = texture2D(u_mask, v_texCoord).r;
 
         // At strong camera color edges (e.g. dark chair vs bright shirt) snap toward the raw mask
         // so the person boundary aligns with the actual image edge. At smooth regions (hair, skin)
         // keep the blurred mask for natural feathering.
-        float snapT   = smoothstep(0.05, 0.20, cameraEdgeStrength(v_texCoord));
-        float curAlpha  = mix(curBlurred,  curRaw,  snapT);
-        float prevAlpha = mix(prevBlurred, prevRaw, snapT);
-
-        float blended = mix(curAlpha, prevAlpha, u_temporalRatio);
-        float alpha   = smoothstep(u_edgeLow, u_edgeHigh, blended);
+        float snapT = smoothstep(0.05, 0.20, cameraEdgeStrength(v_texCoord));
+        float curAlpha = mix(blurred, raw, snapT);
+        float alpha = smoothstep(u_edgeLow, u_edgeHigh, curAlpha);
 
         gl_FragColor = mix(bg, fg, alpha);
     }
@@ -166,7 +158,6 @@ export default class WebGLCompositor implements ICompositor {
     _texBackground: WebGLTexture | null = null;
     _texCamera: WebGLTexture | null = null;
     _texMask: WebGLTexture | null = null;
-    _texMaskB: WebGLTexture | null = null;
 
     // Attribute locations — resolved once after program link, reused every frame.
     // When sharing a GL context with TF.js the vertex attribute state (buffer
@@ -184,8 +175,6 @@ export default class WebGLCompositor implements ICompositor {
     _uEdgeLow: WebGLUniformLocation | null = null;
     _uMask: WebGLUniformLocation | null = null;
     _uMaskTexelSize: WebGLUniformLocation | null = null;
-    _uPrevMask: WebGLUniformLocation | null = null;
-    _uTemporalRatio: WebGLUniformLocation | null = null;
 
     /**
      * Creates a WebGLCompositor targeting the given canvas.
@@ -251,10 +240,8 @@ export default class WebGLCompositor implements ICompositor {
             camera as TexImageSource,
             background as HTMLCanvasElement,
             maskData,
-            0, // temporalRatio — EMA already applied by processor
             options.edgeLow,
             options.edgeHigh,
-            options.firstFrame,
             options.maskBlurRadius
         );
     }
@@ -262,27 +249,22 @@ export default class WebGLCompositor implements ICompositor {
     /**
      * Composites using raw {@code ImageData} for the segmentation mask.
      *
-     * Identical to {@link compositeWithSource} in every way except the mask is
-     * uploaded via the {@code Uint8Array} form of {@code texImage2D} rather than
-     * via the {@code CanvasImageSource} form. This is critical when the mask data
-     * comes from {@code Mask.toImageData()} because the {@code CanvasImageSource}
-     * upload path reads from the browser's internal canvas storage which uses
-     * <em>premultiplied alpha</em>: for this model the R and A channels are both
-     * equal to the segmentation confidence, so the canvas stores
-     * {@code R = confidence²} instead of {@code confidence}. The raw upload path
+     * The mask is uploaded via the {@code Uint8Array} form of {@code texImage2D} rather than
+     * via the {@code CanvasImageSource} form. This is critical when the mask data comes from
+     * {@code Mask.toImageData()} because the {@code CanvasImageSource} upload path reads from
+     * the browser's internal canvas storage which uses <em>premultiplied alpha</em>: for this
+     * model the R and A channels are both equal to the segmentation confidence, so the canvas
+     * stores {@code R = confidence²} instead of {@code confidence}. The raw upload path
      * bypasses this distortion entirely.
      *
-     * Temporal ping-pong is still managed GPU-side via {@code _texMask} /
-     * {@code _texMaskB} — no CPU-side mask copy is needed.
+     * Temporal smoothing (EMA) is applied CPU-side by {@link BackgroundFrameProcessor} before
+     * upload, so the shader only reads the current mask — no ping-pong required.
      *
      * @param {TexImageSource} cameraSource - Live camera frame (HTMLVideoElement, ImageBitmap, VideoFrame, etc.).
      * @param {HTMLCanvasElement} backgroundSource - Pre-rendered background canvas.
      * @param {ImageData} maskData - Current-frame segmentation mask (raw bytes).
-     * @param {number} temporalRatio - Blend weight toward previous mask.
      * @param {number} edgeLow - Smoothstep lower threshold.
      * @param {number} edgeHigh - Smoothstep upper threshold.
-     * @param {boolean} isFirstFrame - When true, seeds the previous-mask texture
-     * from the current mask so the first frame blends against itself.
      * @param {number} maskBlurRadius - Gaussian blur radius in mask-texture pixels (0 = no blur).
      * Scaled from a target camera-pixel feathering width by the processor so the physical
      * blur width is consistent across tiers (TFLite uses a wider target to hide upscale artefacts).
@@ -292,10 +274,8 @@ export default class WebGLCompositor implements ICompositor {
             cameraSource: TexImageSource,
             backgroundSource: HTMLCanvasElement,
             maskData: ImageData,
-            temporalRatio: number,
             edgeLow: number,
             edgeHigh: number,
-            isFirstFrame: boolean,
             maskBlurRadius = 0
     ): void {
         const gl = this._gl;
@@ -328,18 +308,6 @@ export default class WebGLCompositor implements ICompositor {
             0, gl.RGBA, gl.UNSIGNED_BYTE, maskData.data);
         gl.uniform1i(this._uMask, 2);
 
-        // Previous mask — GPU ping-pong via _texMaskB.
-        // On the first frame, seed from the current mask so the blend starts
-        // with a consistent state.
-        gl.activeTexture(gl.TEXTURE3);
-        gl.bindTexture(gl.TEXTURE_2D, this._texMaskB);
-        if (isFirstFrame) {
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, maskData.width, maskData.height,
-                0, gl.RGBA, gl.UNSIGNED_BYTE, maskData.data);
-        }
-        gl.uniform1i(this._uPrevMask, 3);
-
-        gl.uniform1f(this._uTemporalRatio, temporalRatio);
         gl.uniform1f(this._uEdgeLow, edgeLow);
         gl.uniform1f(this._uEdgeHigh, edgeHigh);
         gl.uniform2f(this._uMaskTexelSize, maskBlurRadius / maskData.width, maskBlurRadius / maskData.height);
@@ -347,12 +315,6 @@ export default class WebGLCompositor implements ICompositor {
 
         this._bindQuadState(gl);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-        // GPU ping-pong: swap _texMask ↔ _texMaskB.
-        const tmp = this._texMask;
-
-        this._texMask = this._texMaskB;
-        this._texMaskB = tmp;
     }
 
     /**
@@ -380,14 +342,12 @@ export default class WebGLCompositor implements ICompositor {
         gl.deleteTexture(this._texCamera);
         gl.deleteTexture(this._texBackground);
         gl.deleteTexture(this._texMask);
-        gl.deleteTexture(this._texMaskB);
         gl.deleteBuffer(this._quadBuffer);
         gl.deleteProgram(this._program);
 
         this._texCamera = null;
         this._texBackground = null;
         this._texMask = null;
-        this._texMaskB = null;
         this._quadBuffer = null;
         this._program = null;
 
@@ -442,8 +402,6 @@ export default class WebGLCompositor implements ICompositor {
         this._uCameraTexelSize = gl.getUniformLocation(this._program, 'u_cameraTexelSize');
         this._uMask = gl.getUniformLocation(this._program, 'u_mask');
         this._uMaskTexelSize = gl.getUniformLocation(this._program, 'u_maskTexelSize');
-        this._uPrevMask = gl.getUniformLocation(this._program, 'u_prevMask');
-        this._uTemporalRatio = gl.getUniformLocation(this._program, 'u_temporalRatio');
         this._uEdgeLow = gl.getUniformLocation(this._program, 'u_edgeLow');
         this._uEdgeHigh = gl.getUniformLocation(this._program, 'u_edgeHigh');
 
@@ -451,7 +409,6 @@ export default class WebGLCompositor implements ICompositor {
         this._texCamera = createTexture(gl);
         this._texBackground = createTexture(gl);
         this._texMask = createTexture(gl);
-        this._texMaskB = createTexture(gl);
 
         logger.info('[VirtualBackground] WebGLCompositor: initialised');
     }
@@ -474,7 +431,6 @@ export default class WebGLCompositor implements ICompositor {
         this._texCamera = null;
         this._texBackground = null;
         this._texMask = null;
-        this._texMaskB = null;
     }
 
     /**

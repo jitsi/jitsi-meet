@@ -9,7 +9,6 @@ import WorkerSegmentationBackend from './backend/WorkerSegmentationBackend';
 import Canvas2DCompositor from './compositor/Canvas2DCompositor';
 import { ICompositor } from './compositor/ICompositor';
 import WebGLCompositor from './compositor/WebGLCompositor';
-import { IBackgroundPipeline } from './pipeline/IBackgroundPipeline';
 import InsertableStreamsPipeline from './pipeline/InsertableStreamsPipeline';
 import {
     CLEAR_TIMEOUT,
@@ -54,7 +53,7 @@ export default class JitsiStreamBackgroundEffect {
     _options: { height: number; virtualBackground: IVirtualBackground; width: number; };
     _outputCanvasCtx: CanvasRenderingContext2D | null = null;
     _outputCanvasElement: HTMLCanvasElement;
-    _pipeline: IBackgroundPipeline | null = null;
+    _pipeline: InsertableStreamsPipeline | null = null;
     _processor: BackgroundFrameProcessor | null = null;
     _segmentationMask: ImageData;
     _segmentationMaskCanvas: HTMLCanvasElement;
