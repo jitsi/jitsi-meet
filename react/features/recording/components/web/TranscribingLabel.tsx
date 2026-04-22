@@ -8,9 +8,9 @@ import { openDialog } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
 import { IconTranscription } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
-import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
 import { isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
+import { hasRecordingOrTranscriptionFeature } from '../../functions';
 import AbstractRecordingLabel, {
     IProps as AbstractProps
 } from '../AbstractRecordingLabel';
@@ -19,9 +19,9 @@ import StopRecordingDialog from '../Recording/web/StopRecordingDialog';
 interface IProps extends AbstractProps {
 
     /**
-     * Whether the local participant is a moderator.
+     * Whether the local participant can control recording/transcription (has either feature enabled).
      */
-    _isModerator: boolean;
+    _canControlRecording: boolean;
 
     /**
      * An object containing the CSS classes.
@@ -74,7 +74,7 @@ class TranscribingLabel extends AbstractRecordingLabel<IProps> {
      * @returns {void}
      */
     _onClick() {
-        if (this.props._isModerator) {
+        if (this.props._canControlRecording) {
             this.props.dispatch(openDialog('StopRecordingDialog', StopRecordingDialog));
         }
     }
@@ -120,7 +120,7 @@ function _mapStateToProps(state: IReduxState) {
     return {
         _isVisible: _isTranscribing,
         _iAmRecorder: Boolean(state['features/base/config'].iAmRecorder),
-        _isModerator: isLocalParticipantModerator(state),
+        _canControlRecording: hasRecordingOrTranscriptionFeature(state),
         _isTranscribing,
         mode: 'transcribing' // Custom mode for transcription
     };

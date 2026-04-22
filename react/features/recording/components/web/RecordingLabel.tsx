@@ -9,8 +9,8 @@ import { translate } from '../../../base/i18n/functions';
 import { IconRecord, IconSites } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
-import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
+import { hasRecordingOrTranscriptionFeature } from '../../functions';
 import AbstractRecordingLabel, {
     IProps as AbstractProps,
     _mapStateToProps as _abstractMapStateToProps
@@ -20,9 +20,9 @@ import StopRecordingDialog from '../Recording/web/StopRecordingDialog';
 interface IProps extends AbstractProps {
 
     /**
-     * Whether the local participant is a moderator.
+     * Whether the local participant can control recording/transcription (has either feature enabled).
      */
-    _isModerator: boolean;
+    _canControlRecording: boolean;
 
     /**
      * An object containing the CSS classes.
@@ -75,7 +75,7 @@ class RecordingLabel extends AbstractRecordingLabel<IProps> {
      * @returns {void}
      */
     _onClick() {
-        if (this.props._isModerator) {
+        if (this.props._canControlRecording) {
             this.props.dispatch(openDialog('StopRecordingDialog', StopRecordingDialog));
         }
     }
@@ -124,7 +124,7 @@ class RecordingLabel extends AbstractRecordingLabel<IProps> {
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     return {
         ..._abstractMapStateToProps(state, ownProps),
-        _isModerator: isLocalParticipantModerator(state)
+        _canControlRecording: hasRecordingOrTranscriptionFeature(state)
     };
 }
 
