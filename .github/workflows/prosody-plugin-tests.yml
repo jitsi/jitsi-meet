@@ -1,0 +1,45 @@
+name: Prosody Plugin Tests
+
+on:
+  push:
+    paths:
+      - 'resources/prosody-plugins/**'
+  pull_request:
+    paths:
+      - 'resources/prosody-plugins/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: resources/prosody-plugins/spec/package-lock.json
+
+      - name: Install Lua and busted
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y --no-install-recommends lua5.4 luarocks
+          sudo luarocks install busted
+          sudo luarocks install basexx
+
+      - name: Install test dependencies
+        run: npm install
+        working-directory: resources/prosody-plugins/spec
+
+      - name: Run tests
+        run: npm test
+        working-directory: resources/prosody-plugins/spec
+
+      - name: Upload Allure report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: allure-report
+          path: resources/prosody-plugins/spec/allure-report
+          retention-days: 30

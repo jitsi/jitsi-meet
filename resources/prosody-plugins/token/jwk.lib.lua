@@ -131,4 +131,7 @@ function M.jwk_to_pem(jwk)
     return ASN1.der_to_pem(spki, "PUBLIC KEY")
 end
 
+-- Expose internals for unit testing (harmless in production).
+M.ASN1 = ASN1
+
 return M
