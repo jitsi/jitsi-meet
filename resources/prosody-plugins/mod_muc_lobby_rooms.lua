@@ -419,7 +419,9 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
             if room and room._data.lobby_disabled then
                 -- we cannot remove the child from the stanza so let's just change the type
                 local lobby_identity = reply:get_child_with_attr('identity', nil, 'type', LOBBY_IDENTITY_TYPE);
-                lobby_identity.attr.type = 'DISABLED_'..LOBBY_IDENTITY_TYPE;
+                if lobby_identity then
+                    lobby_identity.attr.type = 'DISABLED_'..LOBBY_IDENTITY_TYPE;
+                end
             end
 
             if check_display_name_required and room and room._data.lobbyroom then
