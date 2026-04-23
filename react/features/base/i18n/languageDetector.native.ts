@@ -23,9 +23,9 @@ export default {
         let locale;
 
         if (parts.length >= 3) {
-            locale = `${lang}${region}`;
+            locale = `${lang}-${region}`;
         } else if (parts.length === 2) {
-            locale = `${lang}${regionOrScript}`;
+            locale = `${lang}-${regionOrScript}`;
         } else {
             locale = lang;
         }
