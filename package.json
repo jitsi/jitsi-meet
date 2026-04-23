@@ -123,7 +123,7 @@
     "ts-ebml": "^3.0.1",
     "tss-react": "4.9.4",
     "util": "0.12.1",
-    "uuid": "8.3.2",
+    "uuid": "14.0.0",
     "wasm-check": "2.0.1",
     "windows-iana": "3.1.0",
     "zxcvbn": "4.4.2"
