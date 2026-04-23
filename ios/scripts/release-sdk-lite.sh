@@ -54,7 +54,9 @@ pushd ${RELEASE_REPO}
 
 # Put the new files in the repo
 cp -a ${PROJECT_REPO}/ios/sdk/out/JitsiMeetSDK.xcframework lite/Frameworks/
-cp -a ${PROJECT_REPO}/ios/Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework lite/Frameworks/
+cp -a ${PROJECT_REPO}/ios/Pods/hermes-engine/destroot/Library/Frameworks/universal/hermesvm.xcframework lite/Frameworks/
+cp -a ${PROJECT_REPO}/ios/Pods/React-Core-prebuilt/React.xcframework lite/Frameworks/
+cp -a ${PROJECT_REPO}/ios/Pods/ReactNativeDependencies/framework/packages/react-native/ReactNativeDependencies.xcframework lite/Frameworks/
 
 # Add all files to git
 git add -A .
