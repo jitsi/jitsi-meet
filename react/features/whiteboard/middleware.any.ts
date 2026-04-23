@@ -1,3 +1,5 @@
+import { isEqual } from 'lodash-es';
+
 import { createOpenWhiteboardEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
@@ -5,6 +7,7 @@ import { UPDATE_CONFERENCE_METADATA } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { _RESET_BREAKOUT_ROOMS } from '../breakout-rooms/actionTypes';
 
 import { SET_WHITEBOARD_OPEN } from './actionTypes';
 import {
@@ -17,10 +20,13 @@ import {
 import { WHITEBOARD_ID } from './constants';
 import {
     generateCollabServerUrl,
+    getCollabDetails,
     isWhiteboardOpen,
     shouldEnforceUserLimit,
     shouldNotifyUserLimit
 } from './functions';
+
+let ignoreNextWhiteboardMetadataAutoOpen = false;
 
 MiddlewareRegistry.register((store: IStore) => next => action => {
     const state = store.getState();
@@ -43,15 +49,31 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
         const { metadata } = action;
 
         if (metadata?.[WHITEBOARD_ID]) {
+            const existingCollabDetails = getCollabDetails(state);
+            const { collabDetails } = metadata[WHITEBOARD_ID];
+            const hasNewCollabDetails = !isEqual(existingCollabDetails, collabDetails);
+
             store.dispatch(setupWhiteboard({
-                collabDetails: metadata[WHITEBOARD_ID].collabDetails,
+                collabDetails,
                 collabServerUrl: generateCollabServerUrl(store.getState())
             }));
-            store.dispatch(setWhiteboardOpen(true));
+
+            if (hasNewCollabDetails && !ignoreNextWhiteboardMetadataAutoOpen) {
+                store.dispatch(setWhiteboardOpen(true));
+            }
+
+            if (ignoreNextWhiteboardMetadataAutoOpen) {
+                ignoreNextWhiteboardMetadataAutoOpen = false;
+            }
         }
 
         break;
     }
+
+    case _RESET_BREAKOUT_ROOMS:
+        ignoreNextWhiteboardMetadataAutoOpen = true;
+        store.dispatch(resetWhiteboard());
+        break;
     }
 
     return next(action);
