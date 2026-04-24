@@ -1,4 +1,4 @@
-import { reduce, size } from 'lodash-es';
+import { reduce } from 'lodash-es';
 
 import { IStateful } from '../base/app/types';
 import { getParticipantById, isLocalParticipantModerator } from '../base/participants/functions';
@@ -43,9 +43,8 @@ export const isPresetBreakoutRoomButtonVisible = (stateful: IStateful) => {
     const isBreakoutRoomsSupported = conference?.getBreakoutRooms()?.isSupported();
     const { enablePresetBreakoutRoom } = state['features/breakout-room-presetup'] ?? {};
     const { hideUsePresetRoomButton } = getPresetBreakoutRoomsConfig(state);
-    const allParticipantsSize = size(getAllParticipants(stateful));
 
-    return isLocalModerator && isBreakoutRoomsSupported && enablePresetBreakoutRoom && !hideUsePresetRoomButton && allParticipantsSize > 3;
+    return isLocalModerator && isBreakoutRoomsSupported && enablePresetBreakoutRoom && !hideUsePresetRoomButton;
 };
 
 export const getPresetupBreakoutRoomsConfig = (stateful: IStateful) => {

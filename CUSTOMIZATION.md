@@ -282,3 +282,12 @@ Is the structural difference so large that none of the above work?
   them when intentionally changing fishmeet behavior.
 - **Do not** hardcode hex color values in fishmeet stylesheets. Reference
   `BaseTheme.palette.fishMeet*` tokens defined in `fishmeet/Tokens.ts`.
+
+## Best Dev Workflow
+
+Workflow after running ./dev.sh, overall phases: code → build → check → save
+
+- **code phase**: Write code in the `react/` or `css/` directory at the project root
+- **build phase**: Wait for the devServer watch build to finish. Special note: For changes related to /css, manually run `npm run start` to restart the build
+- **check phase**: Perform a smoke test to confirm that customizations take effect
+- **save phase**: Run `./sync_diff_to_fishmeet.sh` to sync customized changes to the `fishmeet/` directory at the project root 

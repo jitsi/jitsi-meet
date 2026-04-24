@@ -44,8 +44,9 @@
     },
     "autoBreakoutRooms": {
         "actions": {
-            "button": "Automatic breakoutroom",
-            "closeAllButton": "Close All BreakoutRooms"
+            "button": "Automatic breakout rooms",
+            "closeAllButton": "Close All BreakoutRooms",
+            "labelKey": "it will create n rooms and assign participants to them rooms randomly"
         },
         "confirm": {
             "closeAll": "Close all discussion rooms. All participants will be moved to the main room. Please confirm the operation?"

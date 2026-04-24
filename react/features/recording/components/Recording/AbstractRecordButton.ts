@@ -48,7 +48,11 @@ export default class AbstractRecordButton<P extends IProps> extends AbstractButt
      * @returns {string}
      */
     override _getTooltip() {
-        return this.props._tooltip ?? '';
+        if (this.props.showLabel) {
+            return this.props._tooltip ?? '';
+        }
+
+        return this.props._tooltip || (this._isToggled() ? 'dialog.stopRecording' : 'dialog.startRecording');
     }
 
     /**

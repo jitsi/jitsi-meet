@@ -45,10 +45,11 @@
     "autoBreakoutRooms": {
         "actions": {
             "button": "自动分组讨论",
-            "closeAllButton": "关闭所有讨论组"
+            "closeAllButton": "关闭所有分会议室",
+            "labelKey": "自动分组讨论，会创建 n 个分组讨论室，将参会者随机分配到不同的分组讨论室中"
         },
         "confirm": {
-            "closeAll": "关闭所有讨论组，全部人员将被移至主会议室，请确认操作？"
+            "closeAll": "关闭所有分会议室，全部人员将被移至主会议室，请确认操作？"
         }
     },
     "bandwidthSettings": {

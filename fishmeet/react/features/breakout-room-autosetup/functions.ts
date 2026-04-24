@@ -3,7 +3,6 @@ import { size } from 'lodash-es';
 import { IStateful } from '../base/app/types';
 import { isLocalParticipantModerator } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
-import { getAllParticipants } from '../breakout-room-presetup/functions';
 import { getBreakoutRooms, getBreakoutRoomsConfig } from '../breakout-rooms/functions';
 
 export const isAutoBreakoutRoomButtonVisible = (stateful: IStateful) => {
@@ -12,9 +11,8 @@ export const isAutoBreakoutRoomButtonVisible = (stateful: IStateful) => {
     const { conference } = state['features/base/conference'];
     const isBreakoutRoomsSupported = conference?.getBreakoutRooms()?.isSupported();
     const { hideAutoAssignButton } = getBreakoutRoomsConfig(state);
-    const allParticipantsSize = size(getAllParticipants(stateful));
 
-    return isLocalModerator && isBreakoutRoomsSupported && !hideAutoAssignButton && allParticipantsSize > 3;
+    return isLocalModerator && isBreakoutRoomsSupported && !hideAutoAssignButton;
 };
 
 export const isCloseAllBreakoutRoomVisible = (stateful: IStateful) => {
@@ -24,5 +22,5 @@ export const isCloseAllBreakoutRoomVisible = (stateful: IStateful) => {
     const isBreakoutRoomsSupported = conference?.getBreakoutRooms()?.isSupported();
     const rooms = getBreakoutRooms(state);
 
-    return isLocalModerator && isBreakoutRoomsSupported && size(rooms) > 2;
+    return isLocalModerator && isBreakoutRoomsSupported && size(rooms) > 1;
 };

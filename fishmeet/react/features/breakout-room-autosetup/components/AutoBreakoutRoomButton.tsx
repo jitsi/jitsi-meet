@@ -29,7 +29,7 @@ export const AutoBreakoutRoomButton = () => {
 
     return (
         <Button
-            accessibilityLabel = { t('autoBreakoutRooms.actions.button') }
+            accessibilityLabel = { t('autoBreakoutRooms.actions.labelKey') }
             className = { classes.button }
             fullWidth = { true }
             labelKey = 'autoBreakoutRooms.actions.button'
