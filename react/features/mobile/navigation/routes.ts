@@ -2,7 +2,7 @@ export const screen = {
     conference: {
         breakoutRooms: 'Breakout Rooms',
         carmode: 'Car Mode',
-        chat: 'Chat Panel',
+        chat: 'Chat',
         chatTabs: {
             main: 'Chat Main',
             tab: {
