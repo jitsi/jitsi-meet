@@ -19,6 +19,7 @@ import PollsPane from '../../../../../polls/components/native/PollsPane';
 import { isCCTabEnabled } from '../../../../../subtitles/functions.any';
 import { screen } from '../../../routes';
 import { chatTabBarOptions } from '../../../screenOptions';
+
 import ChatTabBar from './ChatTabBar';
 
 const ChatTab = createMaterialTopTabNavigator();

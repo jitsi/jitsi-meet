@@ -230,7 +230,7 @@ class NavigateSectionList extends Component<IProps> {
      * @private
      * @returns {React$Node}
      */
-    _renderListEmptyComponent(): React.ReactElement<any> {
+    _renderListEmptyComponent(): React.ReactElement<any> | null {
         const { onRefresh } = this.props;
 
         if (typeof onRefresh === 'function') {
