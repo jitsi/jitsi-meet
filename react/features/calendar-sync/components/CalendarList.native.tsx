@@ -103,7 +103,7 @@ class CalendarList extends AbstractPage<IProps> {
         // the default empty component of the NavigateSectionList will be
         // rendered, which (atm) is a simple "Pull to refresh" message.
         if (_authorization !== 'denied') {
-            return <></>;
+            return null;
         }
 
         return (
