@@ -1566,26 +1566,41 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
-     * Sets the key and keyIndex for e2ee.
+     * Sets the encryption key and key index for E2EE.
      *
-     * @param {Object} keyInfo - Json containing key information.
-     * @param {CryptoKey} [keyInfo.encryptionKey] - The encryption key.
-     * @param {number} [keyInfo.index] - The index of the encryption key.
-     * @returns {void}
+     * The key is exported to raw bytes before crossing the iframe boundary because
+     * {@code CryptoKey} objects are not transferable via {@code postMessage}.  Inside the
+     * Jitsi iframe the raw bytes are fed into the HKDF-SHA-256 derivation pipeline to produce
+     * the final AES-GCM-128 frame encryption key.
+     *
+     * @param {Object} keyInfo - Key descriptor.
+     * @param {CryptoKey} [keyInfo.key] - The raw-exportable {@code CryptoKey} to use for
+     *   encryption.  Pass {@code undefined} or omit to disable encryption for the participant.
+     * @param {number} [keyInfo.index] - Key ring slot index (0–15).  Incrementing the index
+     *   during rotation allows receivers to continue decrypting in-flight frames that were
+     *   encrypted under the previous key.
+     * @param {string} [keyInfo.participantId] - ID of the participant whose E2EE context is
+     *   being updated.  When omitted the key is applied to the local participant's outgoing
+     *   (encode) context.  Supply the remote participant's ID to set the key used for decrypting
+     *   their incoming frames (required when {@code e2ee.externallyManagedSharedKey} is
+     *   {@code false} in the Jitsi server config).
+     * @returns {Promise<void>}
      */
     async setMediaEncryptionKey(keyInfo) {
-        const { key, index } = keyInfo;
+        const { key, index, participantId } = keyInfo;
 
         if (key) {
             const exportedKey = await crypto.subtle.exportKey('raw', key);
 
             this.executeCommand('setMediaEncryptionKey', JSON.stringify({
                 exportedKey: Array.from(new Uint8Array(exportedKey)),
-                index }));
+                index,
+                participantId }));
         } else {
             this.executeCommand('setMediaEncryptionKey', JSON.stringify({
                 exportedKey: false,
-                index }));
+                index,
+                participantId }));
         }
     }
 

@@ -95,29 +95,17 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     case SET_MEDIA_ENCRYPTION_KEY: {
         if (conference?.isE2EESupported()) {
-            const { exportedKey, index } = action.keyInfo;
+            const { exportedKey, index, participantId } = action.keyInfo;
 
-            if (exportedKey) {
-                window.crypto.subtle.importKey(
-                    'raw',
-                    new Uint8Array(exportedKey),
-                    'AES-GCM',
-                    false,
-                    [ 'encrypt', 'decrypt' ])
-                .then(
-                    encryptionKey => {
-                        conference.setMediaEncryptionKey({
-                            encryptionKey,
-                            index
-                        });
-                    })
-                .catch(error => logger.error('SET_MEDIA_ENCRYPTION_KEY error', error));
-            } else {
-                conference.setMediaEncryptionKey({
-                    encryptionKey: false,
-                    index
-                });
-            }
+            // Pass raw key bytes directly to the conference so that the E2EE worker can
+            // import them as HKDF material and derive the final AES-GCM key via deriveKeys().
+            // Importing here as AES-GCM would bypass the HKDF derivation step and produce
+            // the wrong key type for the worker's Context.setKey() pipeline.
+            conference.setMediaEncryptionKey({
+                encryptionKey: exportedKey ? new Uint8Array(exportedKey) : false,
+                index,
+                participantId
+            });
         }
 
         break;
