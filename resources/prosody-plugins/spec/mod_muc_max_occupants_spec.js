@@ -1,5 +1,6 @@
 import assert from 'assert';
 import { createXmppClient } from './helpers/xmpp_client.js';
+import { setRoomMaxOccupants } from './helpers/test_observer.js';
 
 const CONFERENCE = 'conference.localhost';
 
@@ -69,5 +70,116 @@ describe('mod_muc_max_occupants', () => {
 
         const presence = await c3.joinRoom(healthRoom);
         assert.notEqual(presence.attrs.type, 'error', 'health check room should not enforce limit');
+    });
+
+    describe('whitelist', () => {
+        // Prosody config sets muc_access_whitelist = { "whitelist.localhost" }.
+        // Clients created with domain:'whitelist.localhost' get JIDs on that domain
+        // and are treated as whitelisted by mod_muc_max_occupants.
+
+        async function connectWhitelisted() {
+            const c = await createXmppClient({ domain: 'whitelist.localhost' });
+            clients.push(c);
+            return c;
+        }
+
+        it('whitelisted user can join a room that is at the limit', async () => {
+            const r = room();
+            const c1 = await connect();
+            const c2 = await connect();
+            const wl = await connectWhitelisted();
+
+            await c1.joinRoom(r);
+            await c2.joinRoom(r);  // room now at limit (2 non-whitelisted)
+
+            const presence = await wl.joinRoom(r);
+            assert.notEqual(presence.attrs.type, 'error',
+                'whitelisted user must bypass the occupant limit');
+        });
+
+        it('whitelisted occupants do not count against the limit for non-whitelisted users', async () => {
+            const r = room();
+            const wl1 = await connectWhitelisted();
+            const wl2 = await connectWhitelisted();
+            const c1 = await connect();
+            const c2 = await connect();
+            const c3 = await connect();
+
+            // Two whitelisted users join — they bypass the check and are not
+            // counted when a non-whitelisted user evaluates available slots.
+            await wl1.joinRoom(r);
+            await wl2.joinRoom(r);
+
+            // Non-whitelisted users: only they count against the limit of 2.
+            const p1 = await c1.joinRoom(r);
+            assert.notEqual(p1.attrs.type, 'error',
+                '1st non-whitelisted user must be allowed (0 counted occupants so far)');
+
+            const p2 = await c2.joinRoom(r);
+            assert.notEqual(p2.attrs.type, 'error',
+                '2nd non-whitelisted user must be allowed (1 counted occupant)');
+
+            const p3 = await c3.joinRoom(r);
+            assert.equal(p3.attrs.type, 'error',
+                '3rd non-whitelisted user must be blocked (2 counted occupants = limit reached)');
+            assert.ok(
+                p3.getChild('error')?.getChild('service-unavailable'),
+                'expected <service-unavailable/> in error stanza'
+            );
+        });
+    });
+
+    describe('per-room limit', () => {
+        // room._data.max_occupants overrides the global muc_max_occupants (2)
+        // for an individual room. The HTTP helper sets it after room creation.
+
+        it('per-room limit higher than global allows more occupants', async () => {
+            const r = room();
+            const c1 = await connect();
+            await c1.joinRoom(r);
+
+            // Override the global limit of 2 with a per-room limit of 4.
+            await setRoomMaxOccupants(r, 4);
+
+            const c2 = await connect();
+            const c3 = await connect();
+            const c4 = await connect();
+            const c5 = await connect();
+
+            const p2 = await c2.joinRoom(r);
+            assert.notEqual(p2.attrs.type, 'error', 'user 2 should join (limit 4)');
+
+            const p3 = await c3.joinRoom(r);
+            assert.notEqual(p3.attrs.type, 'error',
+                'user 3 should join (global limit 2 would block, per-room limit 4 allows)');
+
+            const p4 = await c4.joinRoom(r);
+            assert.notEqual(p4.attrs.type, 'error', 'user 4 should join (limit 4)');
+
+            const p5 = await c5.joinRoom(r);
+            assert.equal(p5.attrs.type, 'error', 'user 5 must be blocked (at per-room limit 4)');
+            assert.ok(
+                p5.getChild('error')?.getChild('service-unavailable'),
+                'expected <service-unavailable/> in error stanza'
+            );
+        });
+
+        it('per-room limit lower than global restricts the room further', async () => {
+            const r = room();
+            const c1 = await connect();
+            await c1.joinRoom(r);
+
+            // Override the global limit of 2 with a stricter per-room limit of 1.
+            await setRoomMaxOccupants(r, 1);
+
+            const c2 = await connect();
+            const presence = await c2.joinRoom(r);
+            assert.equal(presence.attrs.type, 'error',
+                'user 2 must be blocked by the per-room limit of 1');
+            assert.ok(
+                presence.getChild('error')?.getChild('service-unavailable'),
+                'expected <service-unavailable/> in error stanza'
+            );
+        });
     });
 });

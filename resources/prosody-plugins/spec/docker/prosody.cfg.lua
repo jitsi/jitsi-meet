@@ -44,6 +44,12 @@ VirtualHost "localhost"
     muc_mapper_domain_base = "localhost"
     muc_mapper_domain_prefix = "conference"
 
+-- Second VirtualHost whose domain is listed in muc_access_whitelist on the
+-- MUC component below. Clients connecting here get JIDs like
+-- <random>@whitelist.localhost and are treated as whitelisted.
+VirtualHost "whitelist.localhost"
+    authentication = "anonymous"
+
 Component "conference.localhost" "muc"
     modules_enabled = {
         "muc_hide_all";
@@ -53,6 +59,10 @@ Component "conference.localhost" "muc"
 
     -- Used by mod_muc_max_occupants tests (2 occupants max).
     muc_max_occupants = 2
+
+    -- Clients connecting as whitelist.localhost are whitelisted: they bypass the
+    -- occupant limit and are not counted against it for non-whitelisted users.
+    muc_access_whitelist = { "whitelist.localhost" }
 
     -- Required by util.lib.lua domain-mapping helpers.
     muc_mapper_domain_base = "localhost"

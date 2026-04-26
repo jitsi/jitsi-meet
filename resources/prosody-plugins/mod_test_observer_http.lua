@@ -49,6 +49,29 @@ module:provides("http", {
             return { status_code = 204 };
         end;
 
+        -- POST /test-observer/rooms/max-occupants
+        -- Body: { "jid": "room@conference.localhost", "max_occupants": 4 }
+        -- Sets room._data.max_occupants so per-room limit tests can override the
+        -- global muc_max_occupants without restarting Prosody.
+        ["POST /rooms/max-occupants"] = function(event)
+            local data = json.decode(event.request.body or "{}") or {};
+            local room_jid = data.jid;
+            local max = tonumber(data.max_occupants);
+            if not room_jid or not max then
+                return { status_code = 400; body = '{"error":"missing jid or max_occupants"}' };
+            end
+            local room = (shared.rooms or {})[room_jid];
+            if not room then
+                return { status_code = 404; body = '{"error":"room not found"}' };
+            end
+            room._data.max_occupants = max;
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = '{"ok":true}';
+            };
+        end;
+
         -- GET /test-observer/rooms?jid=room@conference.localhost
         -- Returns: { jid, hidden, occupant_count }
         ["GET /rooms"] = function(event)

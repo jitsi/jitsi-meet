@@ -7,14 +7,18 @@ let _counter = 0;
  * Prosody must be configured with `authentication = "anonymous"` and no TLS.
  *
  * @param {object} opts
- * @param {string} [opts.host='localhost']
- * @param {number} [opts.port=5222]
+ * @param {string} [opts.host='localhost']   TCP host to connect to.
+ * @param {number} [opts.port=5222]          TCP port.
+ * @param {string} [opts.domain]             XMPP domain (stream header). Defaults to host.
+ *                                           Set to a different VirtualHost name (e.g.
+ *                                           'whitelist.localhost') to get a JID on that
+ *                                           domain without changing the TCP target.
  * @returns {Promise<XmppTestClient>}
  */
-export async function createXmppClient({ host = 'localhost', port = 5222 } = {}) {
+export async function createXmppClient({ host = 'localhost', port = 5222, domain } = {}) {
     const xmpp = client({
         service: `xmpp://${host}:${port}`,
-        domain: host,
+        domain: domain ?? host,
     });
 
     // id -> { resolve, reject, timer }

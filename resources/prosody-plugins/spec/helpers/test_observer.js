@@ -19,6 +19,23 @@ export async function clearEvents() {
 }
 
 /**
+ * Sets the per-room max_occupants limit for an existing room.
+ * The room must already exist (at least one occupant).
+ * This overrides the global muc_max_occupants for this room only.
+ *
+ * @param {string} roomJid  e.g. 'room@conference.localhost'
+ * @param {number} max      new occupant limit
+ */
+export async function setRoomMaxOccupants(roomJid, max) {
+    const res = await fetch(`${BASE}/rooms/max-occupants`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jid: roomJid, max_occupants: max }),
+    });
+    if (!res.ok) throw new Error(`setRoomMaxOccupants failed: ${res.status} ${await res.text()}`);
+}
+
+/**
  * Returns room state from Prosody's internal MUC state.
  * @param {string} roomJid  e.g. 'room@conference.localhost'
  * @returns {Promise<{jid: string, hidden: boolean, occupant_count: number}>}
