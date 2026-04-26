@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:lua": "mkdir -p allure-results && if command -v busted > /dev/null 2>&1; then BUSTED=${HOME}/.luarocks/bin/busted; command -v \"$BUSTED\" > /dev/null 2>&1 || BUSTED=busted; cd .. && \"$BUSTED\" --output junit spec/lua/ | sed \"s/name='Run [0-9]* of [0-9]*'/name='Lua unit tests'/\" > spec/allure-results/TEST-lua-unit.xml; fi",
+    "test:lua": "rm -f allure-results/*-result.json allure-results/TEST-lua-unit.xml 2>/dev/null; mkdir -p allure-results && if command -v busted > /dev/null 2>&1; then BUSTED=${HOME}/.luarocks/bin/busted; command -v \"$BUSTED\" > /dev/null 2>&1 || BUSTED=busted; cd .. && \"$BUSTED\" --output spec.busted_allure spec/lua/; fi",
     "test:integration": "DEBUG=testcontainers,testcontainers:containers,testcontainers:build mocha",
     "test:report": "npx allure generate allure-results --clean -o allure-report && node fix-allure-report.cjs",
     "test": "npm run test:lua && npm run test:integration && npm run test:report"
