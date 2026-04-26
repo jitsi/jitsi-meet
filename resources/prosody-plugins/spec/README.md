@@ -131,8 +131,6 @@ npx allure open allure-report
 
 On macOS with Colima the Docker socket is not at the default path. Export it before running:
 
-On macOS with Colima the Docker socket is not at the default path. Export it before running:
-
 ```bash
 export DOCKER_HOST=unix:///Users/$(whoami)/.colima/default/docker.sock
 export TESTCONTAINERS_RYUK_DISABLED=true   # Ryuk reaper fails under Colima

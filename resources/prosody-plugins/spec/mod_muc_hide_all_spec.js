@@ -47,7 +47,7 @@ describe('mod_muc_hide_all', () => {
 
         beforeEach(() => clearEvents());
 
-        it('new room is set to hidden (Option II — room state via test_observer)', async () => {
+        it('new room is set to hidden', async () => {
             const r = room();
             const owner = await createXmppClient();
 
@@ -63,16 +63,16 @@ describe('mod_muc_hide_all', () => {
             }
         });
 
-        it('muc-room-pre-create event is fired when room is created (Option II — event log)', async () => {
+        it('muc-room-pre-create event is fired when room is created', async () => {
             const r = room();
             const owner = await createXmppClient();
 
             try {
                 await owner.joinRoom(r);
                 const events = await getEvents();
-                const names = events.map(e => e.event);
-                assert.ok(names.includes('muc-room-pre-create'),
-                    'expected muc-room-pre-create in recorded events');
+                const preCreate = events.find(e => e.event === 'muc-room-pre-create' && e.room === r);
+                assert.ok(preCreate,
+                    `expected muc-room-pre-create event for room ${r}`);
             } finally {
                 await owner.disconnect();
             }
