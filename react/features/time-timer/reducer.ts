@@ -1,8 +1,9 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 import { DEFAULT_DURATION_SECONDS } from './constants';
-import { START_TIME_TIMER, STOP_TIME_TIMER, TICK_TIME_TIMER } from './actionTypes';
+import { SET_CALENDAR_DURATION, START_TIME_TIMER, STOP_TIME_TIMER, TICK_TIME_TIMER } from './actionTypes';
 
 export interface ITimeTimerState {
+    calendarDurationSeconds?: number;
     durationSeconds: number;
     remainingSeconds: number;
     running: boolean;
@@ -16,6 +17,11 @@ const DEFAULT_STATE: ITimeTimerState = {
 
 ReducerRegistry.register<ITimeTimerState>('features/time-timer', (state = DEFAULT_STATE, action) => {
     switch (action.type) {
+    case SET_CALENDAR_DURATION:
+        return {
+            ...state,
+            calendarDurationSeconds: action.durationSeconds
+        };
     case START_TIME_TIMER:
         return {
             ...state,

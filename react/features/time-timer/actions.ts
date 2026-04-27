@@ -1,5 +1,5 @@
 import { DEFAULT_DURATION_SECONDS } from './constants';
-import { START_TIME_TIMER, STOP_TIME_TIMER } from './actionTypes';
+import { SET_CALENDAR_DURATION, START_TIME_TIMER, STOP_TIME_TIMER } from './actionTypes';
 
 export function startTimeTimer(durationSeconds: number = DEFAULT_DURATION_SECONDS) {
     return {
@@ -11,5 +11,12 @@ export function startTimeTimer(durationSeconds: number = DEFAULT_DURATION_SECOND
 export function stopTimeTimer() {
     return {
         type: STOP_TIME_TIMER
+    };
+}
+
+export function setCalendarTimerDuration(durationSeconds: number | undefined) {
+    return {
+        type: SET_CALENDAR_DURATION,
+        durationSeconds
     };
 }

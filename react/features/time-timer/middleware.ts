@@ -6,7 +6,7 @@ import { FakeParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { START_TIME_TIMER, STOP_TIME_TIMER, TICK_TIME_TIMER } from './actionTypes';
-import { startTimeTimer } from './actions';
+import { setCalendarTimerDuration, startTimeTimer } from './actions';
 import { DEFAULT_DURATION_SECONDS, TIME_TIMER_PARTICIPANT_ID } from './constants';
 
 import './reducer';
@@ -38,7 +38,10 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
                 id: TIME_TIMER_PARTICIPANT_ID,
                 name: 'Time Timer'
             }));
-            dispatch(startTimeTimer(timerConfig.defaultDuration ?? DEFAULT_DURATION_SECONDS));
+            const calendarDuration = getState()['features/time-timer'].calendarDurationSeconds;
+            const duration = calendarDuration ?? timerConfig.defaultDuration ?? DEFAULT_DURATION_SECONDS;
+
+            dispatch(startTimeTimer(duration));
         }
         break;
     }
@@ -49,6 +52,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         dispatch(participantLeft(TIME_TIMER_PARTICIPANT_ID, conference, {
             fakeParticipant: FakeParticipant.TimeTimer
         }));
+        dispatch(setCalendarTimerDuration(undefined));
         break;
     }
     case START_TIME_TIMER: {
