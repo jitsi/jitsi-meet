@@ -1,3 +1,27 @@
+@font-face {
+    font-family: 'Aquire';
+    src: url('../fonts/aquire-font/AquireLight-YzE0o.otf') format('opentype');
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Aquire';
+    src: url('../fonts/aquire-font/Aquire-BW0ox.otf') format('opentype');
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Aquire';
+    src: url('../fonts/aquire-font/AquireBold-8Ma60.otf') format('opentype');
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+}
+
 // Digital gradient animation for text/backgrounds
 @keyframes welcome-gradient-shift {
     0%, 100% {
@@ -61,13 +85,10 @@ body.welcome-page {
         }
 
         .header-text-title {
-            background: $welcomePageGradientText;
-            background-size: 200% 100%;
-            background-position: 56.6667% 50%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: welcome-gradient-shift 6s ease infinite;
+            background: none;
+            -webkit-text-fill-color: #fff;
+            color: #fff;
+            animation: none;
             font-family: Aquire, sans-serif;
             font-size: 66px;
             font-weight: 700;
@@ -485,5 +506,18 @@ body.welcome-page {
     .welcome-footer-row-1-text {
         max-width: 200px;
         text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .welcome {
+        .header {
+            padding-left: 20px;
+            padding-right: 20px;
+
+            .header-text-title {
+                font-size: 48px;
+            }
+        }
     }
 }
