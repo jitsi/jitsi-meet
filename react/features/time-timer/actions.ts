@@ -1,10 +1,13 @@
 import { DEFAULT_DURATION_SECONDS } from './constants';
 import { SET_CALENDAR_DURATION, START_TIME_TIMER, STOP_TIME_TIMER } from './actionTypes';
 
-export function startTimeTimer(durationSeconds: number = DEFAULT_DURATION_SECONDS) {
+export function startTimeTimer(
+        durationSeconds: number = DEFAULT_DURATION_SECONDS,
+        remainingSeconds: number = durationSeconds) {
     return {
         type: START_TIME_TIMER,
-        durationSeconds
+        durationSeconds,
+        remainingSeconds
     };
 }
 

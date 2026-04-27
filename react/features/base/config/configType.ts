@@ -742,6 +742,7 @@ export interface IConfig {
     };
     timeTimer?: {
         defaultDuration?: number;
+        defaultRemaining?: number;
         enabled?: boolean;
     };
     whiteboard?: IWhiteboardConfig;

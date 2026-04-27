@@ -40,8 +40,9 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
             }));
             const calendarDuration = getState()['features/time-timer'].calendarDurationSeconds;
             const duration = calendarDuration ?? timerConfig.defaultDuration ?? DEFAULT_DURATION_SECONDS;
+            const remaining = timerConfig.defaultRemaining ?? duration;
 
-            dispatch(startTimeTimer(duration));
+            dispatch(startTimeTimer(duration, remaining));
         }
         break;
     }

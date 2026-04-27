@@ -26,7 +26,7 @@ ReducerRegistry.register<ITimeTimerState>('features/time-timer', (state = DEFAUL
         return {
             ...state,
             durationSeconds: action.durationSeconds,
-            remainingSeconds: action.durationSeconds,
+            remainingSeconds: Math.max(0, Math.min(action.durationSeconds, action.remainingSeconds)),
             running: true
         };
     case STOP_TIME_TIMER:
