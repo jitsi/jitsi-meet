@@ -75,8 +75,16 @@ else
 end
 
 local tostring = tostring;
-local neturl = require "net.url";
-local parse = neturl.parseQuery;
+
+-- Simple query-string parser: "room=foo&domain=bar" → { room="foo", domain="bar" }.
+-- Avoids a dependency on the optional third-party net.url LuaRocks module.
+local function parse(q)
+    local t = {};
+    for k, v in (q or ""):gmatch("([^=&]+)=([^&]*)") do
+        t[k] = v;
+    end
+    return t;
+end
 
 -- option to enable/disable room API token verifications
 local enableTokenVerification
