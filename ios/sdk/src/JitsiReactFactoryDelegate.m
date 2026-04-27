@@ -55,21 +55,6 @@ static NSString *RCTReadMetroHostFromBundle(NSBundle *bundle) {
     return [sdkBundle URLForResource:@"main" withExtension:@"jsbundle"];
 }
 
-- (BOOL)fabricEnabled {
-    NSLog(@"fabricEnabled called, returning YES");
-    return YES;
-}       
-
-- (BOOL)newArchEnabled {
-    NSLog(@"newArchEnabled called, returning YES");
-    return YES;
-}
-
-- (BOOL)turboModuleEnabled {
-    NSLog(@"turboModuleEnabled called, returning YES");
-    return YES;
-}
-
 // We can't use bridgeless mode yet because we still depend on the legacy RCTBridge.
 - (BOOL)bridgelessEnabled {
     NSLog(@"bridgelessEnabled called, returning NO");
