@@ -1,0 +1,3 @@
+export const START_TIME_TIMER = 'START_TIME_TIMER';
+export const STOP_TIME_TIMER = 'STOP_TIME_TIMER';
+export const TICK_TIME_TIMER = 'TICK_TIME_TIMER';

@@ -82,6 +82,7 @@ import { IVideoSipGW } from '../videosipgw/reducer';
 import { IVirtualBackground } from '../virtual-background/reducer';
 import { IVisitorsState } from '../visitors/reducer';
 import { IWebHid } from '../web-hid/reducer';
+import { ITimeTimerState } from '../time-timer/reducer';
 import { IWhiteboardState } from '../whiteboard/reducer';
 
 export interface IStore {
@@ -166,6 +167,7 @@ export interface IReduxState {
     'features/subtitles': ISubtitlesState;
     'features/talk-while-muted': ITalkWhileMutedState;
     'features/testing': ITestingState;
+    'features/time-timer': ITimeTimerState;
     'features/toolbox': IToolboxState;
     'features/transcribing': ITranscribingState;
     'features/video-layout': IVideoLayoutState;

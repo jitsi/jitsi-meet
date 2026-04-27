@@ -1,5 +1,6 @@
 import { IReduxState, IStore } from '../app/types';
 import { getParticipantById, getVirtualScreenshareParticipantOwnerId } from '../base/participants/functions';
+import { TIME_TIMER_PARTICIPANT_ID } from '../time-timer/constants';
 
 import { setRemoteParticipants } from './actions';
 import { isFilmstripScrollVisible } from './functions';
@@ -43,7 +44,10 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
     const remoteParticipants = new Map(sortedRemoteParticipants);
     const screenShareParticipants = sortedRemoteVirtualScreenshareParticipants
         ? [ ...sortedRemoteVirtualScreenshareParticipants.keys() ] : [];
-    const sharedVideos = fakeParticipants ? Array.from(fakeParticipants.keys()) : [];
+    const timerEnabled = config?.timeTimer?.enabled;
+    const sharedVideos = fakeParticipants
+        ? Array.from(fakeParticipants.keys()).filter(id => id !== TIME_TIMER_PARTICIPANT_ID)
+        : [];
     const speakers = new Array<string>();
     const { fullyVisibleRemoteParticipantsCount } = state['features/filmstrip'];
 
@@ -90,7 +94,11 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
     }
 
     // Always update the order of the thumbnails.
+    const timerTile = timerEnabled && fakeParticipants?.has(TIME_TIMER_PARTICIPANT_ID)
+        ? [ TIME_TIMER_PARTICIPANT_ID ] : [];
+
     reorderedParticipants = [
+        ...timerTile,
         ...participantsWithScreenShare,
         ...sharedVideos,
         ...speakers,

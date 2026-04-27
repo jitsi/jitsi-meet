@@ -740,5 +740,9 @@ export interface IConfig {
         customUrl?: string;
         disabled?: boolean;
     };
+    timeTimer?: {
+        defaultDuration?: number;
+        enabled?: boolean;
+    };
     whiteboard?: IWhiteboardConfig;
 }

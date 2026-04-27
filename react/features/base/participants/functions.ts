@@ -285,6 +285,10 @@ export function isSharedVideoParticipant(participant?: IParticipant): boolean {
  * @param {IParticipant|undefined} participant - The participant entity.
  * @returns {boolean} - True if it's a whiteboard participant.
  */
+export function isTimeTimerParticipant(participant?: IParticipant): boolean {
+    return participant?.fakeParticipant === FakeParticipant.TimeTimer;
+}
+
 export function isWhiteboardParticipant(participant?: IParticipant): boolean {
     return participant?.fakeParticipant === FakeParticipant.Whiteboard;
 }

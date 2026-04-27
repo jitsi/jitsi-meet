@@ -22,6 +22,7 @@ import {
     hasRaisedHand,
     isLocalScreenshareParticipant,
     isScreenShareParticipant,
+    isTimeTimerParticipant,
     isWhiteboardParticipant
 } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
@@ -61,6 +62,7 @@ import {
 import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';
+import TimeTimerTile from '../../../time-timer/components/web/TimeTimerTile';
 import VirtualScreenshareParticipant from './VirtualScreenshareParticipant';
 
 /**
@@ -1117,6 +1119,17 @@ class Thumbnail extends Component<IProps, IState> {
 
         if (local) {
             return this._renderParticipant(true);
+        }
+
+        if (isTimeTimerParticipant(_participant)) {
+            const { _thumbnailType } = this.props;
+
+            return (
+                <TimeTimerTile
+                    containerClassName = { this._getContainerClassName() }
+                    styles = { this._getStyles() }
+                    thumbnailType = { _thumbnailType } />
+            );
         }
 
         if (fakeParticipant

@@ -4,6 +4,7 @@ export enum FakeParticipant {
     LocalScreenShare = 'LocalScreenShare',
     RemoteScreenShare = 'RemoteScreenShare',
     SharedVideo = 'SharedVideo',
+    TimeTimer = 'TimeTimer',
     Whiteboard = 'Whiteboard'
 }
 

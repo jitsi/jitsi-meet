@@ -1851,6 +1851,14 @@ var config = {
     // Application logo url
     // defaultLogoUrl: 'images/watermark.svg',
 
+    // Time-timer tile shown as the first tile in the filmstrip.
+    // timeTimer: {
+    //     // Whether the tile is enabled.
+    //     enabled: true,
+    //     // Countdown duration in seconds (default: 1500 = 25 min).
+    //     defaultDuration: 1500,
+    // },
+
     // Settings for the Excalidraw whiteboard integration.
     // whiteboard: {
     //     // Whether the feature is enabled or not.
