@@ -2269,7 +2269,7 @@ PODS:
     - Yoga
   - RNDefaultPreference (1.4.4):
     - React-Core
-  - RNDeviceInfo (12.1.0):
+  - RNDeviceInfo (14.1.1):
     - React-Core
   - RNGestureHandler (2.28.0):
     - hermes-engine
@@ -2878,7 +2878,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: d0aafe51ea74a65afce26acb739a4ea975a7a884
   RNCClipboard: a0b44b9ab206d8ca29c7ab87f7dbfd1a9ef97128
   RNDefaultPreference: ee13d69e6693d193cd223d10e15e5b3c012d31ba
-  RNDeviceInfo: 723e97dd98af9b7913477e7a40252c15517c258c
+  RNDeviceInfo: bcce8752b5043a623fe3c26789679b473f705d3c
   RNGestureHandler: 29bcf14a2d2562a1d698c6b33d94a74096c6e1ad
   RNGoogleSignin: 30e1aee80140dc0706cd78a4951c411376c88329
   RNScreens: 0bbf16c074ae6bb1058a7bf2d1ae017f4306797c
