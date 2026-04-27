@@ -38,6 +38,7 @@ VirtualHost "localhost"
     -- virtual-host routing, which does not match Host: localhost on port 5280.
     modules_enabled = {
         "test_observer_http";
+        "muc_size";
     }
 
     -- Required by mod_test_observer_http to locate the shared MUC data.

@@ -357,6 +357,29 @@ function is_healthcheck_room(room_jid)
     return starts_with(room_jid, "__jicofo-health-check");
 end
 
+--- Returns true when the given occupant nick is the Jitsi focus participant.
+-- The focus occupant always has a nick ending in "/focus".
+-- @param nick the full occupant nick (resource part of the MUC JID)
+-- @return boolean
+function is_focus(nick)
+    return string.sub(nick, -string.len("/focus")) == "/focus";
+end
+
+--- Builds the full MUC room address JID from its components.
+-- Uses muc_domain_prefix from module configuration (default: "conference").
+-- @param room_name   the local part of the room JID (e.g. "myroom")
+-- @param domain_name the base domain (e.g. "example.com")
+-- @param subdomain   optional tenant subdomain; nil or "" means no prefix
+-- @return the full room address string, e.g. "myroom@conference.example.com"
+--         or "[tenant]myroom@conference.example.com"
+function build_room_address(room_name, domain_name, subdomain)
+    local room_address = jid.join(room_name, muc_domain_prefix.."."..domain_name);
+    if subdomain and subdomain ~= "" then
+        room_address = "["..subdomain.."]"..room_address;
+    end
+    return room_address;
+end
+
 --- Utility function to make an http get request and
 --- retry @param retry number of times
 -- @param url endpoint to be called
@@ -751,6 +774,8 @@ return {
     get_occupant_by_real_jid = get_occupant_by_real_jid;
     get_sip_jibri_email_prefix = get_sip_jibri_email_prefix;
     async_handler_wrapper = async_handler_wrapper;
+    build_room_address = build_room_address;
+    is_focus = is_focus;
     presence_check_status = presence_check_status;
     process_host_module = process_host_module;
     respond_iq_result = respond_iq_result;

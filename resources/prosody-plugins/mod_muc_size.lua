@@ -1,6 +1,27 @@
 -- Prosody IM
 -- Copyright (C) 2021-present 8x8, Inc.
 --
+-- mod_muc_size exposes HTTP endpoints that let external services query the
+-- occupancy and participant details of MUC rooms managed by the associated
+-- conference component. It provides three routes:
+--
+--   GET /room-size?room=<name>&domain=<base>[&subdomain=<sub>][&token=<jwt>]
+--       Returns {"participants": N} where N is the non-focus occupant count.
+--       Returns 404 when the room does not exist.
+--
+--   GET /room?room=<name>&domain=<base>[&subdomain=<sub>][&token=<jwt>]
+--       Returns a JSON array of occupant objects {jid, email, display_name},
+--       excluding the hidden Jitsi focus participant.
+--       Returns 404 when the room does not exist.
+--
+--   GET /sessions
+--       Returns the total number of active Prosody client sessions as a plain
+--       integer string.
+--
+-- The room address is built as <room>@<muc_domain_prefix>.<domain>, optionally
+-- prefixed with [<subdomain>] for multi-tenant deployments.
+-- Token-based JWT verification is optional and controlled by the
+-- enable_roomsize_token_verification module option (default: false).
 
 local jid = require "util.jid";
 local it = require "util.iterators";
@@ -14,7 +35,11 @@ if not have_async then
     return;
 end
 
-local async_handler_wrapper = module:require "util".async_handler_wrapper;
+local util = module:require "util";
+local async_handler_wrapper = util.async_handler_wrapper;
+local get_room_from_jid = util.get_room_from_jid;
+local build_room_address = util.build_room_address;
+local is_focus = util.is_focus;
 
 local tostring = tostring;
 local neturl = require "net.url";
@@ -24,19 +49,14 @@ local parse = neturl.parseQuery;
 local enableTokenVerification
     = module:get_option_boolean("enable_roomsize_token_verification", false);
 
-local token_util = module:require "token/util".new(module);
-local get_room_from_jid = module:require "util".get_room_from_jid;
+local ok, token_util_mod = pcall(function() return module:require "token/util" end);
+local token_util = ok and token_util_mod and token_util_mod.new(module) or nil;
 
 -- no token configuration but required
 if token_util == nil and enableTokenVerification then
     log("error", "no token configuration but it is required");
     return;
 end
-
--- required parameter for custom muc component prefix,
--- defaults to "conference"
-local muc_domain_prefix
-    = module:get_option_string("muc_mapper_domain_prefix", "conference");
 
 --- Verifies room name, domain name with the values in the token
 -- @param token the token we received
@@ -82,44 +102,39 @@ function handle_get_room_size(event)
         return { status_code = 400; };
     end
 
-	local params = parse(event.request.url.query);
-	local room_name = params["room"];
-	local domain_name = params["domain"];
+    local params = parse(event.request.url.query);
+    local room_name = params["room"];
+    local domain_name = params["domain"];
     local subdomain = params["subdomain"];
 
-    local room_address
-        = jid.join(room_name, muc_domain_prefix.."."..domain_name);
-
-    if subdomain and subdomain ~= "" then
-        room_address = "["..subdomain.."]"..room_address;
-    end
+    local room_address = build_room_address(room_name, domain_name, subdomain);
 
     if not verify_token(params["token"], room_address) then
         return { status_code = 403; };
     end
 
-	local room = get_room_from_jid(room_address);
-	local participant_count = 0;
+    local room = get_room_from_jid(room_address);
+    local participant_count = 0;
 
-	log("debug", "Querying room %s", tostring(room_address));
+    log("debug", "Querying room %s", tostring(room_address));
 
-	if room then
-		local occupants = room._occupants;
-		if occupants then
-			participant_count = iterators.count(room:each_occupant());
-		end
-		log("debug",
+    if room then
+        local occupants = room._occupants;
+        if occupants then
+            participant_count = iterators.count(room:each_occupant());
+        end
+        log("debug",
             "there are %s occupants in room", tostring(participant_count));
-	else
-		log("debug", "no such room exists");
-		return { status_code = 404; };
-	end
+    else
+        log("debug", "no such room exists");
+        return { status_code = 404; };
+    end
 
-	if participant_count > 1 then
-		participant_count = participant_count - 1;
-	end
+    if participant_count > 1 then
+        participant_count = participant_count - 1;
+    end
 
-	return { status_code = 200; body = [[{"participants":]]..participant_count..[[}]] };
+    return { status_code = 200; body = [[{"participants":]]..participant_count..[[}]] };
 end
 
 --- Handles request for retrieving the room participants details
@@ -130,68 +145,63 @@ function handle_get_room (event)
         return { status_code = 400; };
     end
 
-	local params = parse(event.request.url.query);
-	local room_name = params["room"];
-	local domain_name = params["domain"];
+    local params = parse(event.request.url.query);
+    local room_name = params["room"];
+    local domain_name = params["domain"];
     local subdomain = params["subdomain"];
-    local room_address
-        = jid.join(room_name, muc_domain_prefix.."."..domain_name);
 
-    if subdomain and subdomain ~= "" then
-        room_address = "["..subdomain.."]"..room_address;
-    end
+    local room_address = build_room_address(room_name, domain_name, subdomain);
 
     if not verify_token(params["token"], room_address) then
         return { status_code = 403; };
     end
 
-	local room = get_room_from_jid(room_address);
-	local participant_count = 0;
-	local occupants_json = array();
+    local room = get_room_from_jid(room_address);
+    local participant_count = 0;
+    local occupants_json = array();
 
-	log("debug", "Querying room %s", tostring(room_address));
+    log("debug", "Querying room %s", tostring(room_address));
 
-	if room then
-		local occupants = room._occupants;
-		if occupants then
-			participant_count = iterators.count(room:each_occupant());
-			for _, occupant in room:each_occupant() do
-			    -- filter focus as we keep it as hidden participant
-			    if string.sub(occupant.nick,-string.len("/focus"))~="/focus" then
-				    for _, pr in occupant:each_session() do
-					local nick = pr:get_child_text("nick", "http://jabber.org/protocol/nick") or "";
-					local email = pr:get_child_text("email") or "";
-					occupants_json:push({
-					    jid = tostring(occupant.nick),
-					    email = tostring(email),
-					    display_name = tostring(nick)});
-				    end
-			    end
-			end
-		end
-		log("debug",
+    if room then
+        local occupants = room._occupants;
+        if occupants then
+            participant_count = iterators.count(room:each_occupant());
+            for _, occupant in room:each_occupant() do
+                -- filter focus as we keep it as hidden participant
+                if not is_focus(occupant.nick) then
+                    for _, pr in occupant:each_session() do
+                        local nick = pr:get_child_text("nick", "http://jabber.org/protocol/nick") or "";
+                        local email = pr:get_child_text("email") or "";
+                        occupants_json:push({
+                            jid = tostring(occupant.nick),
+                            email = tostring(email),
+                            display_name = tostring(nick)});
+                    end
+                end
+            end
+        end
+        log("debug",
             "there are %s occupants in room", tostring(participant_count));
-	else
-		log("debug", "no such room exists");
-		return { status_code = 404; };
-	end
+    else
+        log("debug", "no such room exists");
+        return { status_code = 404; };
+    end
 
-	if participant_count > 1 then
-		participant_count = participant_count - 1;
-	end
+    if participant_count > 1 then
+        participant_count = participant_count - 1;
+    end
 
-	return { status_code = 200; body = json.encode(occupants_json); };
+    return { status_code = 200; body = json.encode(occupants_json); };
 end;
 
 function module.load()
     module:depends("http");
-	module:provides("http", {
-		default_path = "/";
-		route = {
-			["GET room-size"] = function (event) return async_handler_wrapper(event,handle_get_room_size) end;
-			["GET sessions"] = function () return tostring(it.count(it.keys(prosody.full_sessions))); end;
-			["GET room"] = function (event) return async_handler_wrapper(event,handle_get_room) end;
-		};
-	});
+    module:provides("http", {
+        default_path = "/";
+        route = {
+            ["GET /room-size"] = function (event) return async_handler_wrapper(event,handle_get_room_size) end;
+            ["GET /sessions"] = function () return tostring(it.count(it.keys(prosody.full_sessions))); end;
+            ["GET /room"] = function (event) return async_handler_wrapper(event,handle_get_room) end;
+        };
+    });
 end
-

@@ -775,4 +775,62 @@ describe("util.lib", function()
         end)
     end)
 
+    describe("is_focus", function()
+
+        it("nick ending in /focus returns true", function()
+            assert.is_true(M.is_focus("room@conference.example.com/focus"))
+        end)
+
+        it("plain /focus string returns true", function()
+            assert.is_true(M.is_focus("/focus"))
+        end)
+
+        it("regular nick returns false", function()
+            assert.is_false(M.is_focus("room@conference.example.com/user1"))
+        end)
+
+        it("nick containing focus but not ending in /focus returns false", function()
+            assert.is_false(M.is_focus("room@conference.example.com/focususer"))
+        end)
+
+        it("bare word focus without slash returns false", function()
+            assert.is_false(M.is_focus("focus"))
+        end)
+
+        it("empty string returns false", function()
+            assert.is_false(M.is_focus(""))
+        end)
+
+    end)
+
+    describe("build_room_address", function()
+        -- muc_domain_prefix = "conference" (set in module stub above)
+
+        it("builds room JID with no subdomain", function()
+            assert.equal("myroom@conference.example.com",
+                M.build_room_address("myroom", "example.com", nil))
+        end)
+
+        it("prepends [subdomain] when subdomain is given", function()
+            assert.equal("[tenant]myroom@conference.example.com",
+                M.build_room_address("myroom", "example.com", "tenant"))
+        end)
+
+        it("treats empty-string subdomain as no subdomain", function()
+            assert.equal("myroom@conference.example.com",
+                M.build_room_address("myroom", "example.com", ""))
+        end)
+
+        it("uses the configured muc_domain_prefix (conference)", function()
+            assert.equal("room@conference.meet.jit.si",
+                M.build_room_address("room", "meet.jit.si", nil))
+        end)
+
+        it("combines subdomain with multi-part base domain", function()
+            assert.equal("[vpaas-magic-cookie-abc]r@conference.meet.jit.si",
+                M.build_room_address("r", "meet.jit.si", "vpaas-magic-cookie-abc"))
+        end)
+
+    end)
+
 end) -- util.lib
