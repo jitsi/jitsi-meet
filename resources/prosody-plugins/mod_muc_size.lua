@@ -35,11 +35,44 @@ if not have_async then
     return;
 end
 
-local util = module:require "util";
-local async_handler_wrapper = util.async_handler_wrapper;
-local get_room_from_jid = util.get_room_from_jid;
-local build_room_address = util.build_room_address;
-local is_focus = util.is_focus;
+-- muc_domain_prefix is needed by the build_room_address fallback below.
+local muc_domain_prefix
+    = module:get_option_string("muc_mapper_domain_prefix", "conference");
+
+-- Load shared utility library. If it fails (e.g. a transitive dependency is
+-- missing in the current environment) log the error and fall back to inline
+-- implementations so the HTTP routes are always registered.
+local async_handler_wrapper, get_room_from_jid, build_room_address, is_focus;
+local ok_util, util_or_err = pcall(function() return module:require "util" end);
+if ok_util then
+    local util = util_or_err;
+    async_handler_wrapper = util.async_handler_wrapper;
+    get_room_from_jid    = util.get_room_from_jid;
+    build_room_address   = util.build_room_address;
+    is_focus             = util.is_focus;
+else
+    module:log("warn", "mod_muc_size: util.lib.lua unavailable (%s); using inline fallbacks",
+        tostring(util_or_err));
+    async_handler_wrapper = function(_, handler) return handler(_) end;
+    get_room_from_jid = function(room_jid)
+        local _, host = jid.split(room_jid);
+        local component = hosts[host];
+        if component then
+            local muc = component.modules.muc;
+            if muc then return muc.get_room_from_jid(room_jid) end
+        end
+    end;
+    build_room_address = function(room_name, domain_name, subdomain)
+        local addr = jid.join(room_name, muc_domain_prefix.."."..domain_name);
+        if subdomain and subdomain ~= "" then
+            addr = "["..subdomain.."]"..addr;
+        end
+        return addr;
+    end;
+    is_focus = function(nick)
+        return string.sub(nick, -string.len("/focus")) == "/focus";
+    end;
+end
 
 local tostring = tostring;
 local neturl = require "net.url";
