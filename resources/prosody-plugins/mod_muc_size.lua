@@ -194,14 +194,11 @@ function handle_get_room (event)
     return { status_code = 200; body = json.encode(occupants_json); };
 end;
 
-function module.load()
-    module:depends("http");
-    module:provides("http", {
-        default_path = "/";
-        route = {
-            ["GET /room-size"] = function (event) return async_handler_wrapper(event,handle_get_room_size) end;
-            ["GET /sessions"] = function () return tostring(it.count(it.keys(prosody.full_sessions))); end;
-            ["GET /room"] = function (event) return async_handler_wrapper(event,handle_get_room) end;
-        };
-    });
-end
+module:provides("http", {
+    default_path = "/";
+    route = {
+        ["GET /room-size"] = function (event) return async_handler_wrapper(event,handle_get_room_size) end;
+        ["GET /sessions"] = function () return tostring(it.count(it.keys(prosody.full_sessions))); end;
+        ["GET /room"] = function (event) return async_handler_wrapper(event,handle_get_room) end;
+    };
+});

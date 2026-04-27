@@ -1,5 +1,6 @@
 import assert from 'assert';
 import { createXmppClient } from './helpers/xmpp_client.js';
+import { prosodyShell } from './helpers/prosody_shell.js';
 
 const CONFERENCE = 'conference.localhost';
 const BASE = 'http://localhost:5280';
@@ -32,6 +33,12 @@ async function getSessions() {
 }
 
 describe('mod_muc_size', () => {
+
+    before(async () => {
+        // Confirm the module is loaded; surface Prosody errors early.
+        const out = await prosodyShell('module:reload("muc_size", "localhost")');
+        console.log('[prosody] module:reload muc_size:', out);
+    });
 
     let clients;
 
