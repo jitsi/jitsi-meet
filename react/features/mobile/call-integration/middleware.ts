@@ -213,7 +213,9 @@ function _conferenceJoined({ getState }: IStore, next: Function, action: AnyActi
 
 /**
  * Notifies the feature callkit that the action {@link CONFERENCE_LEFT} is being
- * dispatched within a specific redux {@code store}.
+ * dispatched within a specific redux {@code store}. No-ops when call integration
+ * is disabled or when the action carries no {@code conference} (as dispatched by
+ * the generic {@code hangup()}, in which case there is no callUUID to report).
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
@@ -227,7 +229,7 @@ function _conferenceJoined({ getState }: IStore, next: Function, action: AnyActi
 function _conferenceLeft({ getState }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
-    if (!isCallIntegrationEnabled(getState)) {
+    if (!isCallIntegrationEnabled(getState) || !action.conference) {
         return result;
     }
 
