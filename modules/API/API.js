@@ -605,6 +605,9 @@ function initCommands() {
         'set-media-encryption-key': keyInfo => {
             APP.store.dispatch(setMediaEncryptionKey(JSON.parse(keyInfo)));
         },
+        'send-olm-message': (participantId, type, payload) => {
+            APP.conference._room?.sendOlmMessage(participantId, type, JSON.parse(payload));
+        },
         'set-video-quality': frameHeight => {
             sendAnalytics(createApiEvent('set.video.quality'));
             APP.store.dispatch(setVideoQuality(frameHeight));
@@ -1640,6 +1643,23 @@ class API {
         this._sendEvent({
             name: 'endpoint-text-message-received',
             data
+        });
+    }
+
+    /**
+     * Notify external application that a custom OLM message was received.
+     *
+     * @param {string} from - The sender participant ID.
+     * @param {string} type - Application-defined message type.
+     * @param {object} payload - Arbitrary JSON payload.
+     * @returns {void}
+     */
+    notifyOlmMessageReceived(from, type, payload) {
+        this._sendEvent({
+            name: 'olm-message-received',
+            data: { from,
+                payload,
+                type }
         });
     }
 

@@ -148,6 +148,7 @@ const events = {
     'mouse-move': 'mouseMove',
     'non-participant-message-received': 'nonParticipantMessageReceived',
     'notification-triggered': 'notificationTriggered',
+    'olm-message-received': 'olmMessageReceived',
     'outgoing-message': 'outgoingMessage',
     'p2p-status-changed': 'p2pStatusChanged',
     'participant-joined': 'participantJoined',

@@ -139,6 +139,11 @@ StateListenerRegistry.register(
         }
 
         if (conference) {
+            conference.on(JitsiConferenceEvents.OLM_MESSAGE_RECEIVED,
+                (from: string, type: string, payload: object) => {
+                    APP.API.notifyOlmMessageReceived(from, type, payload);
+                });
+
             conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_AVAILABLE, (pId: string) => {
                 dispatch(participantUpdated({
                     e2eeVerificationAvailable: true,
