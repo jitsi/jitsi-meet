@@ -267,7 +267,7 @@ export default class BaseApp<P> extends Component<P, IState> {
 
         if (route.href) {
             // This navigation requires loading a new URL in the browser.
-            window.location.href = route.href;
+            (window.location as Mutable<typeof window.location>).href = route.href;
 
             return Promise.resolve();
         }

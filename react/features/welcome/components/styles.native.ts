@@ -25,7 +25,7 @@ export default {
      * View that is rendered when there is no welcome page.
      */
     blankPageWrapper: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         alignItems: 'center',
         backgroundColor: BaseTheme.palette.uiBackground,
         flex: 1,

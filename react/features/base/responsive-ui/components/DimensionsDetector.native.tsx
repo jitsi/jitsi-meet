@@ -57,6 +57,7 @@ export default function DimensionsDetector(props: IProps) {
     return (
         <View
             onLayout = { onLayout }
+            // eslint-disable-next-line react-native/no-inline-styles
             style = {{ flex: 1 }} >
             { children }
         </View>

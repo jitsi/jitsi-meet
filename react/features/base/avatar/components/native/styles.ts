@@ -57,7 +57,7 @@ export default {
     },
 
     badgeContainer: {
-        ...StyleSheet.absoluteFillObject
+        ...StyleSheet.absoluteFill
     },
 
     initialsContainer: {

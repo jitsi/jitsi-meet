@@ -33,7 +33,7 @@ export function formatURLText(text = '') {
         const { host } = url;
 
         if (host) {
-            url.host = punycode.toASCII(host);
+            (url as Mutable<URL>).host = punycode.toASCII(host);
             result = url.toString();
         }
     } catch (e) {

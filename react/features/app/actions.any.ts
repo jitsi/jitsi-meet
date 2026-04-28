@@ -26,7 +26,7 @@ export function redirectWithStoredParams(pathname: string) {
         const { locationURL } = getState()['features/base/connection'];
         const newLocationURL = new URL(locationURL?.href ?? '');
 
-        newLocationURL.pathname = pathname;
+        (newLocationURL as Mutable<URL>).pathname = pathname;
         window.location.assign(newLocationURL.toString());
     };
 }
@@ -58,10 +58,10 @@ export function redirectToStaticPage(pathname: string, hashParam?: string) {
         }
 
         if (hashParam) {
-            windowLocation.hash = hashParam;
+            (windowLocation as Mutable<typeof windowLocation>).hash = hashParam;
         }
 
-        windowLocation.pathname = newPathname;
+        (windowLocation as Mutable<typeof windowLocation>).pathname = newPathname;
     };
 }
 
