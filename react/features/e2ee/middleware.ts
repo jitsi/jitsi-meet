@@ -45,10 +45,16 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         unregisterE2eeAudioFiles(dispatch);
         break;
 
-    case CONFERENCE_JOINED:
-        _updateMaxMode(dispatch, getState);
+    case CONFERENCE_JOINED: {
+        const { e2ee = {} } = getState()['features/base/config'];
 
+        if (e2ee.externallyManagedKey) {
+            dispatch(toggleE2EE(true));
+        } else {
+            _updateMaxMode(dispatch, getState);
+        }
         break;
+    }
 
     case PARTICIPANT_JOINED: {
         const result = next(action);
