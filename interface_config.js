@@ -64,7 +64,7 @@ var interfaceConfig = {
 
     FILM_STRIP_MAX_HEIGHT: 120,
 
-    GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
+    GENERATE_ROOMNAMES_ON_WELCOME_PAGE: false,
 
     /**
      * Hide the invite prompt in the header when alone in the meeting.

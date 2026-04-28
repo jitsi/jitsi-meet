@@ -1,6 +1,3 @@
-// @ts-expect-error
-import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
-
 import { getTokenAuthUrl } from '../authentication/functions.web';
 import { IStateful } from '../base/app/types';
 import { isRoomValid } from '../base/conference/functions';
@@ -8,6 +5,7 @@ import { isSupportedBrowser } from '../base/environment/environment';
 import { browser } from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux/functions';
 import { parseURIString } from '../base/util/uri';
+import { generateMeetingId } from '../base/util/generateMeetingId';
 import Conference from '../conference/components/web/Conference';
 import { getDeepLinkingPage } from '../deep-linking/functions';
 import UnsupportedDesktopBrowser from '../unsupported-browser/components/UnsupportedDesktopBrowser';
@@ -128,7 +126,7 @@ function _getWebWelcomePageRoute(state: IReduxState) {
         // Web: if the welcome page is disabled, go directly to a random room.
         const url = new URL(window.location.href);
 
-        url.pathname += generateRoomWithoutSeparator();
+        url.pathname += generateMeetingId();
         route.href = url.href;
     }
 

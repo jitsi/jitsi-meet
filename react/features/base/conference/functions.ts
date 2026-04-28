@@ -1,5 +1,4 @@
 import { sha512_256 as sha512 } from 'js-sha512';
-import { upperFirst, words } from 'lodash-es';
 
 import { getName } from '../../app/functions';
 import { IReduxState, IStore } from '../../app/types';
@@ -190,7 +189,7 @@ export function getConferenceName(stateful: IStateful): string {
         || subject
         || callDisplayName
         || callee?.name
-        || (room && safeStartCase(safeDecodeURIComponent(room)))) ?? '';
+        || safeDecodeURIComponent(room ?? '')) ?? '';
 }
 
 /**
@@ -201,7 +200,7 @@ export function getConferenceName(stateful: IStateful): string {
  * @returns {string} - The name of the conference formatted for the title.
  */
 export function getConferenceNameForTitle(stateful: IStateful) {
-    return safeStartCase(safeDecodeURIComponent(getConferenceState(toState(stateful)).room ?? ''));
+    return safeDecodeURIComponent(getConferenceState(toState(stateful)).room ?? '');
 }
 
 /**
@@ -564,22 +563,6 @@ export function sendLocalParticipant(
     }
 
     conference?.setDisplayName(name);
-}
-
-/**
- * A safe implementation of lodash#startCase that doesn't deburr the string.
- *
- * NOTE: According to lodash roadmap, lodash v5 will have this function.
- *
- * Code based on https://github.com/lodash/lodash/blob/master/startCase.js.
- *
- * @param {string} s - The string to do start case on.
- * @returns {string}
- */
-function safeStartCase(s = '') {
-    return words(`${s}`.replace(/['\u2019]/g, '')).reduce(
-        (result, word, index) => result + (index ? ' ' : '') + upperFirst(word)
-        , '');
 }
 
 /**

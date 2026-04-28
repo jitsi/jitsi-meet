@@ -1,5 +1,3 @@
-// @ts-expect-error
-import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
 import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
@@ -8,6 +6,7 @@ import { sendAnalytics } from '../../analytics/functions';
 import { appNavigate } from '../../app/actions';
 import { IReduxState, IStore } from '../../app/types';
 import { IDeeplinkingConfig } from '../../base/config/configType';
+import { generateMeetingId } from '../../base/util/generateMeetingId';
 import isInsecureRoomName from '../../base/util/isInsecureRoomName';
 import { isCalendarEnabled } from '../../calendar-sync/functions';
 import { isUnsafeRoomWarningEnabled } from '../../prejoin/functions';
@@ -263,7 +262,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      * @returns {void}
      */
     _updateRoomName() {
-        const generatedRoomName = generateRoomWithoutSeparator();
+        const generatedRoomName = generateMeetingId();
         const roomPlaceholder = '';
         const updateTimeoutId = window.setTimeout(this._updateRoomName, 10000);
 

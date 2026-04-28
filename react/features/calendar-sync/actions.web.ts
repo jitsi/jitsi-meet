@@ -1,9 +1,7 @@
-// @ts-expect-error
-import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
-
 import { createCalendarConnectedEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
+import { generateMeetingId } from '../base/util/generateMeetingId';
 import { loadGoogleAPI } from '../google-api/actions';
 
 import {
@@ -239,7 +237,7 @@ export function updateCalendarEvent(id: string, calendarId: string) {
         }
 
         const { locationURL } = getState()['features/base/connection'];
-        const newRoomName = generateRoomWithoutSeparator();
+        const newRoomName = generateMeetingId();
         let href = locationURL?.href ?? '';
 
         href.endsWith('/') || (href += '/');

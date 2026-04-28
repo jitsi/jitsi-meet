@@ -177,7 +177,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @inheritdoc
      */
     override componentDidMount() {
-        document.title = `${this.props._roomName} | ${interfaceConfig.APP_NAME}`;
+        document.title = interfaceConfig.APP_NAME;
         this._start();
     }
 
