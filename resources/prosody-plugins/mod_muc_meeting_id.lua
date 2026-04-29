@@ -1,5 +1,6 @@
 local jid = require 'util.jid';
 local json = require 'cjson.safe';
+local st = require "util.stanza";
 local queue = require "util.queue";
 local uuid_gen = require "util.uuid".generate;
 local main_util = module:require "util";
@@ -110,8 +111,18 @@ module:hook('muc-occupant-pre-join', function (event)
         process_region(event.origin, stanza);
     end
 
+    if is_health_room then
+        -- Only jicofo (focus) may join health-check rooms.
+        if not ends_with(occupant.nick, '/focus') then
+            module:log('info', 'Blocking non-focus participant from health-check room: %s', room.jid);
+            event.origin.send(st.error_reply(stanza, 'cancel', 'service-unavailable'));
+            return true;
+        end
+        return;
+    end
+
     -- we skip processing only if jicofo_lock is set to false
-    if room._data.jicofo_lock == false or is_health_room then
+    if room._data.jicofo_lock == false then
         return;
     end
 

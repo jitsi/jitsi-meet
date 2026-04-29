@@ -15,6 +15,26 @@ let _counter = 0;
  *                                           domain without changing the TCP target.
  * @returns {Promise<XmppTestClient>}
  */
+/**
+ * Connects as a focus (jicofo) participant, joins roomJid with nick 'focus',
+ * and returns the client. This unlocks the mod_muc_meeting_id jicofo lock so
+ * that regular clients can subsequently join the same room.
+ *
+ * The focus client uses domain 'focus.localhost', which is whitelisted in
+ * mod_muc_max_occupants so it never counts against the occupant limit.
+ *
+ * The caller is responsible for disconnecting the returned client (typically
+ * by pushing it into the test's `clients` array for afterEach cleanup).
+ *
+ * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
+ * @returns {Promise<XmppTestClient>}
+ */
+export async function joinWithFocus(roomJid) {
+    const c = await createXmppClient({ domain: 'focus.localhost' });
+    await c.joinRoom(roomJid, 'focus');
+    return c;
+}
+
 export async function createXmppClient({ host = 'localhost', port = 5222, domain } = {}) {
     const xmpp = client({
         service: `xmpp://${host}:${port}`,

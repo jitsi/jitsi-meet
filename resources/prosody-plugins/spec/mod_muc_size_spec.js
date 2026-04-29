@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { createXmppClient } from './helpers/xmpp_client.js';
+import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 import { prosodyShell } from './helpers/prosody_shell.js';
 import { setRoomMaxOccupants } from './helpers/test_observer.js';
 
@@ -55,6 +55,15 @@ describe('mod_muc_size', () => {
         return c;
     }
 
+    // Joins the room as focus (jicofo) to unlock the mod_muc_meeting_id jicofo
+    // lock. The focus client is whitelisted and does not count against the
+    // occupant limit.
+    async function focusJoin(roomJid) {
+        const c = await joinWithFocus(roomJid);
+        clients.push(c);
+        return c;
+    }
+
     // -------------------------------------------------------------------------
     // GET /room-size
     // -------------------------------------------------------------------------
@@ -72,6 +81,7 @@ describe('mod_muc_size', () => {
 
         it('returns 200 with participant count for an existing room', async () => {
             const r = room();
+            await focusJoin(r);
             const c1 = await connect();
             const c2 = await connect();
             await c1.joinRoom(r);
@@ -85,14 +95,15 @@ describe('mod_muc_size', () => {
             const body = await res.json();
             assert.ok(typeof body.participants === 'number',
                 'response must have numeric participants field');
-            // Two clients joined; the module subtracts 1 (assumed focus), so we
-            // expect at least 1.
+            // Two regular clients joined (focus is whitelisted/not counted by
+            // mod_muc_size which subtracts 1 for focus). Expect at least 1.
             assert.ok(body.participants >= 1,
                 `expected participants >= 1, got ${body.participants}`);
         });
 
         it('participant count decreases after a client leaves', async () => {
             const r = room();
+            await focusJoin(r);
             const c1 = await connect();
             await c1.joinRoom(r);
 
@@ -107,7 +118,7 @@ describe('mod_muc_size', () => {
 
             const roomName = r.split('@')[0];
 
-            // 3 in room → 3 - 1 = 2 reported
+            // 3 regular clients in room (focus not counted by mod_muc_size)
             const res1 = await getRoomSize({ room: roomName, domain: 'localhost' });
             assert.equal(res1.status, 200);
             const { participants: count1 } = await res1.json();
@@ -145,6 +156,7 @@ describe('mod_muc_size', () => {
 
         it('returns 200 with occupant array for an existing room', async () => {
             const r = room();
+            await focusJoin(r);
             const c1 = await connect();
             await c1.joinRoom(r);
 
@@ -158,6 +170,7 @@ describe('mod_muc_size', () => {
 
         it('occupant objects have jid, email, display_name fields', async () => {
             const r = room();
+            await focusJoin(r);
             const c1 = await connect();
             await c1.joinRoom(r);
 

@@ -51,20 +51,30 @@ VirtualHost "localhost"
 VirtualHost "whitelist.localhost"
     authentication = "anonymous"
 
+-- VirtualHost used by the focus (jicofo) test helper. Clients connecting here
+-- get JIDs like <random>@focus.localhost. The domain is added to
+-- muc_access_whitelist so focus clients do not count against the occupant
+-- limit and are not counted when evaluating available slots for other users.
+VirtualHost "focus.localhost"
+    authentication = "anonymous"
+
 Component "conference.localhost" "muc"
     modules_enabled = {
         "muc_hide_all";
         "muc_max_occupants";
+        "muc_meeting_id";
         "test_observer";
     }
 
     -- Used by mod_muc_max_occupants tests (2 occupants max).
     muc_max_occupants = 2
 
-    -- Clients connecting as whitelist.localhost are whitelisted: they bypass the
-    -- occupant limit and are not counted against it for non-whitelisted users.
-    muc_access_whitelist = { "whitelist.localhost" }
+    -- Clients on whitelist.localhost bypass the occupant limit.
+    -- Clients on focus.localhost represent jicofo; they also bypass the limit
+    -- and are not counted against it, so existing tests are unaffected when a
+    -- focus client unlocks the jicofo lock in mod_muc_meeting_id.
+    muc_access_whitelist = { "whitelist.localhost", "focus.localhost" }
 
-    -- Required by util.lib.lua domain-mapping helpers.
+    -- Required by util.lib.lua domain-mapping helpers and mod_jitsi_permissions.
     muc_mapper_domain_base = "localhost"
     muc_mapper_domain_prefix = "conference"
