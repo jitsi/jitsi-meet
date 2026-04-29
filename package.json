@@ -101,7 +101,7 @@
     "react-native-orientation-locker": "https://github.com/jitsi/react-native-orientation-locker.git#d67716620199137b7b53df835b735625039f92e6",
     "react-native-pager-view": "6.8.1",
     "react-native-paper": "5.14.5",
-    "react-native-performance": "5.1.2",
+    "react-native-performance": "6.0.0",
     "react-native-safe-area-context": "5.6.1",
     "react-native-screens": "4.16.0",
     "react-native-sound": "https://github.com/jitsi/react-native-sound.git#bc92152667a628120374c1324fc9e44f697c3192",

@@ -1585,7 +1585,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-performance (5.1.2):
+  - react-native-performance (6.0.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1676,7 +1676,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-slider (4.5.6):
+  - react-native-slider (5.1.2):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1688,7 +1688,7 @@ PODS:
     - React-graphics
     - React-ImageManager
     - React-jsi
-    - react-native-slider/common (= 4.5.6)
+    - react-native-slider/common (= 5.1.2)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -1699,7 +1699,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-slider/common (4.5.6):
+  - react-native-slider/common (5.1.2):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2833,9 +2833,9 @@ SPEC CHECKSUMS:
   react-native-netinfo: 4319d381f35bc11b53dafebd5cd99c04c66a9fb4
   react-native-orientation-locker: cc6f357b289a2e0dd2210fea0c52cb8e0727fdaa
   react-native-pager-view: d22231ccd48989e2c591e50fefa8373176e874ce
-  react-native-performance: 5d997cbaec6fddc6da2724d1e056a9eed90dca23
+  react-native-performance: 3290079971f56838ae50f7f1d65d6e075d88b932
   react-native-safe-area-context: 58eeaba7cb5b8e03bfe91a655d995042f89a74df
-  react-native-slider: 2f0aeb90ccd4b0f9763a5b0959835717c9d97572
+  react-native-slider: f9910f69950b9953c46e091377c1265b71eb01f0
   react-native-video: b95d2e9183e8c0a0430ef6b0bfc89664c4f87844
   react-native-webrtc: e8f0ce746353adc2744a2b933645e1aeb41eaa74
   react-native-webview: 424c970029b2b4fa39efc909fda681df41daa24b
