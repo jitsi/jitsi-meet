@@ -55,11 +55,5 @@ static NSString *RCTReadMetroHostFromBundle(NSBundle *bundle) {
     return [sdkBundle URLForResource:@"main" withExtension:@"jsbundle"];
 }
 
-// We can't use bridgeless mode yet because we still depend on the legacy RCTBridge.
-- (BOOL)bridgelessEnabled {
-    NSLog(@"bridgelessEnabled called, returning NO");
-    return NO;
-}
-
 @end
 
