@@ -54,6 +54,11 @@ interface IProps extends AbstractProps {
     _focusedTab?: ChatTabs;
 
     /**
+     * True if E2EE is enabled — used to show unencrypted-chat warning.
+     */
+    _isE2EEEnabled: boolean;
+
+    /**
      * True if the CC tab is enabled and false otherwise.
      */
     _isCCTabEnabled: boolean;
@@ -260,6 +265,7 @@ const Chat = ({
     _isCCTabEnabled,
     _isChatDisabled,
     _isFileSharingTabEnabled,
+    _isE2EEEnabled,
     _focusedTab,
     _isResizing,
     _messages,
@@ -482,6 +488,18 @@ const Chat = ({
                     id = { `${ChatTabs.CHAT}-panel` }
                     role = 'tabpanel'
                     tabIndex = { 0 }>
+                    {_isE2EEEnabled && (
+                        <div style = {{
+                            background: '#3d2e00',
+                            borderBottom: '1px solid #7a5c00',
+                            color: '#ffc107',
+                            fontSize: '11px',
+                            padding: '6px 12px',
+                            textAlign: 'center'
+                        }}>
+                            ⚠️ Chat messages are not end-to-end encrypted
+                        </div>
+                    )}
                     <MessageContainer
                         isVisible = { _focusedTab === ChatTabs.CHAT }
                         messages = { _messages } />
@@ -676,10 +694,12 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { unreadPollsCount } = state['features/polls'];
     const _localParticipant = getLocalParticipant(state);
     const { reducedUI } = state['features/base/responsive-ui'];
+    const _isE2EEEnabled = state['features/e2ee']?.enabled ?? false;
 
     return {
         _isModal: window.innerWidth <= SMALL_WIDTH_THRESHOLD,
         _isOpen: isOpen,
+        _isE2EEEnabled,
         _isPollsEnabled: !arePollsDisabled(state),
         _isCCTabEnabled: isCCTabEnabled(state),
         _isChatDisabled: isChatDisabled(state),
