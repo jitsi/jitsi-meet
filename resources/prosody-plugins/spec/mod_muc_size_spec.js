@@ -1,6 +1,7 @@
 import assert from 'assert';
 import { createXmppClient } from './helpers/xmpp_client.js';
 import { prosodyShell } from './helpers/prosody_shell.js';
+import { setRoomMaxOccupants } from './helpers/test_observer.js';
 
 const CONFERENCE = 'conference.localhost';
 const BASE = 'http://localhost:5280';
@@ -93,9 +94,14 @@ describe('mod_muc_size', () => {
         it('participant count decreases after a client leaves', async () => {
             const r = room();
             const c1 = await connect();
+            await c1.joinRoom(r);
+
+            // The global muc_max_occupants = 2 would block a 3rd join, so raise
+            // the per-room limit before the other clients connect.
+            await setRoomMaxOccupants(r, 5);
+
             const c2 = await connect();
             const c3 = await connect();
-            await c1.joinRoom(r);
             await c2.joinRoom(r);
             await c3.joinRoom(r);
 
