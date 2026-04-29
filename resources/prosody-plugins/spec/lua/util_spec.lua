@@ -346,15 +346,11 @@ describe("util.lib", function()
         end)
 
         it("extracts subdomain from vpaas magic cookie node", function()
-            -- Note: customer_id is always nil due to a Lua parsing quirk in the
-            -- source:  local _, customer_id = match() or nil, nil
-            -- The ', nil' is a second list item, so customer_id is the literal nil,
-            -- not the second capture group returned by match().
             local subdomain, room, customer_id =
                 M.extract_subdomain("[vpaas-magic-cookie-abc123]myroom")
             assert.equal("vpaas-magic-cookie-abc123", subdomain)
             assert.equal("myroom", room)
-            assert.is_nil(customer_id)
+            assert.equal("abc123", customer_id)
         end)
 
         it("returns no customer_id for non-vpaas subdomain", function()
