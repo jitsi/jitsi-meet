@@ -1657,9 +1657,9 @@ class API {
     notifyOlmMessageReceived(from, type, payload) {
         this._sendEvent({
             name: 'olm-message-received',
-            data: { from,
-                payload,
-                type }
+            from,
+            payload,
+            type
         });
     }
 

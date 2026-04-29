@@ -59,6 +59,7 @@ const commands = {
     sendCameraFacingMode: 'send-camera-facing-mode-message',
     sendChatMessage: 'send-chat-message',
     sendEndpointTextMessage: 'send-endpoint-text-message',
+    sendOlmMessage: 'send-olm-message',
     sendParticipantToRoom: 'send-participant-to-room',
     sendTones: 'send-tones',
     setAudioOnly: 'set-audio-only',
