@@ -187,10 +187,6 @@ class Conference extends AbstractConference<IProps, any> {
      * returns {void}
      */
     override componentDidUpdate(prevProps: IProps) {
-        if (this.props._roomName !== prevProps._roomName) {
-            document.title = `${this.props._roomName} | ${interfaceConfig.APP_NAME}`;
-        }
-
         if (this.props._shouldDisplayTileView
             === prevProps._shouldDisplayTileView) {
             return;
