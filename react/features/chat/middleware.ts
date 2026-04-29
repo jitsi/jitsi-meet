@@ -300,6 +300,30 @@ MiddlewareRegistry.register(store => next => action => {
             } else if (privateMessageRecipient) {
                 conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient));
                 _persistSentPrivateMessage(store, privateMessageRecipient, action.message);
+            } else if (state['features/e2ee']?.enabled) {
+                // E2EE is active — send via OLM (encrypted) instead of plain XMPP MUC.
+                const localParticipant2 = getLocalParticipant(state);
+                const displayName2 = getParticipantDisplayName(state, localParticipant?.id ?? '');
+
+                console.log('[encedo] encedo:chat OLM send');
+                conference.sendOlmMessage('', 'encedo:chat', {
+                    text: action.message,
+                    displayName: displayName2,
+                    ts: Date.now()
+                });
+
+                // OLM messages don't echo back — add own message to store directly.
+                dispatch(addMessage({
+                    displayName: displayName2,
+                    hasRead: true,
+                    participantId: localParticipant2?.id ?? '',
+                    messageType: MESSAGE_TYPE_LOCAL,
+                    message: action.message,
+                    privateMessage: false,
+                    lobbyChat: false,
+                    recipient: '',
+                    timestamp: Date.now()
+                }));
             } else {
                 conference.sendTextMessage(action.message);
             }
@@ -461,6 +485,25 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
         JitsiConferenceEvents.CONFERENCE_ERROR, (errorType: string, error: Error) => {
             errorType === JitsiConferenceErrors.CHAT_ERROR && _handleChatError(store, error);
         });
+
+    // E2EE chat: receive encedo:chat OLM messages and inject into native chat UI.
+    conference.on(
+        JitsiConferenceEvents.OLM_MESSAGE_RECEIVED,
+        (from: string, type: string, payload: { text?: string; displayName?: string; ts?: number }) => {
+            if (type !== 'encedo:chat' || !payload?.text) {
+                return;
+            }
+            console.log('[encedo] encedo:chat OLM received from', from);
+            _handleReceivedMessage(store, {
+                participantId: from,
+                displayName: payload.displayName,
+                message: payload.text,
+                privateMessage: false,
+                lobbyChat: false,
+                timestamp: payload.ts ?? Date.now()
+            });
+        }
+    );
 }
 
 /**
