@@ -45,11 +45,7 @@ public class JitsiInitializer implements Initializer<Boolean> {
             throw new RuntimeException(e);
         }
 
-        DefaultNewArchitectureEntryPoint.load(
-            /* fabricEnabled */       true,
-            /* turboModulesEnabled */ true,
-            /* bridgelessEnabled */   false
-        );
+        DefaultNewArchitectureEntryPoint.load();
 
         JitsiMeetUncaughtExceptionHandler.register();
 
