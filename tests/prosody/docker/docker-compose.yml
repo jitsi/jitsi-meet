@@ -1,8 +1,8 @@
 services:
   prosody:
     build:
-      context: ../..
-      dockerfile: spec/docker/Dockerfile
+      context: ../../..
+      dockerfile: tests/prosody/docker/Dockerfile
     ports:
       - "5222:5222"
       - "5280:5280"

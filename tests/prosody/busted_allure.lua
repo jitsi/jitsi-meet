@@ -2,8 +2,8 @@
 -- Produces {uuid}-result.json files in spec/allure-results/ with proper
 -- parentSuite/suite/subSuite labels derived from the describe() nesting.
 --
--- Usage (run from resources/prosody-plugins/):
---   busted --output spec.busted_allure spec/lua/
+-- Usage (run from tests/prosody/):
+--   busted --output busted_allure lua/
 
 local io = io
 local os = os
@@ -15,8 +15,10 @@ return function(options)
     local busted = require 'busted'
     local handler = require 'busted.outputHandlers.base'()
 
-    -- Output directory relative to busted's CWD (resources/prosody-plugins/).
-    local results_dir = 'spec/allure-results'
+    -- Output directory. When run via npm (from tests/prosody/) the ALLURE_RESULTS_DIR
+    -- env var is set to an absolute path so results land in tests/prosody/allure-results/
+    -- regardless of busted's CWD (resources/prosody-plugins/).
+    local results_dir = os.getenv('ALLURE_RESULTS_DIR') or 'allure-results'
     local test_start_ms = 0
     local current_status = 'passed'
     local current_message = nil

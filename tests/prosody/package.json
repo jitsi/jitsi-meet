@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:lua": "rm -f allure-results/*-result.json allure-results/TEST-lua-unit.xml 2>/dev/null; mkdir -p allure-results && if command -v busted > /dev/null 2>&1; then BUSTED=${HOME}/.luarocks/bin/busted; command -v \"$BUSTED\" > /dev/null 2>&1 || BUSTED=busted; cd .. && \"$BUSTED\" --output spec.busted_allure spec/lua/; fi",
+    "test:lua": "rm -f allure-results/*-result.json allure-results/TEST-lua-unit.xml 2>/dev/null; mkdir -p allure-results && if command -v busted > /dev/null 2>&1; then BUSTED=${HOME}/.luarocks/bin/busted; command -v \"$BUSTED\" > /dev/null 2>&1 || BUSTED=busted; SPEC_DIR=\"$(pwd)\"; (cd ../../resources/prosody-plugins && LUA_PATH=\"$SPEC_DIR/?.lua;;\" ALLURE_RESULTS_DIR=\"$SPEC_DIR/allure-results\" \"$BUSTED\" --output busted_allure \"$SPEC_DIR/lua/\"); fi",
     "test:integration": "DEBUG=testcontainers,testcontainers:containers,testcontainers:build mocha",
     "test:report": "npx allure generate allure-results --clean -o allure-report && node fix-allure-report.cjs",
     "test": "npm run test:lua && npm run test:integration && npm run test:report"

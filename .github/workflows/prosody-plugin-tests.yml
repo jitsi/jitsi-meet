@@ -4,9 +4,11 @@ on:
   push:
     paths:
       - 'resources/prosody-plugins/**'
+      - 'tests/prosody/**'
   pull_request:
     paths:
       - 'resources/prosody-plugins/**'
+      - 'tests/prosody/**'
 
 jobs:
   test:
@@ -19,7 +21,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: resources/prosody-plugins/spec/package-lock.json
+          cache-dependency-path: tests/prosody/package-lock.json
 
       - name: Install Lua and busted
         run: |
@@ -32,16 +34,16 @@ jobs:
 
       - name: Install test dependencies
         run: npm install
-        working-directory: resources/prosody-plugins/spec
+        working-directory: tests/prosody
 
       - name: Run tests
         run: npm test
-        working-directory: resources/prosody-plugins/spec
+        working-directory: tests/prosody
 
       - name: Upload Allure report
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: allure-report
-          path: resources/prosody-plugins/spec/allure-report
+          path: tests/prosody/allure-report
           retention-days: 30

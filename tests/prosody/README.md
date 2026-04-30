@@ -81,7 +81,7 @@ assert.equal(state.hidden, true);
 ## Directory Structure
 
 ```
-spec/
+tests/prosody/
 ├── README.md                       this file
 ├── setup.js                        Mocha root hooks: start/stop Docker container
 ├── .mocharc.cjs                    Mocha configuration (spec glob, timeout, reporters)
@@ -114,7 +114,7 @@ should never be loaded in production.
 ## Running
 
 ```bash
-cd resources/prosody-plugins/spec
+cd tests/prosody
 npm install          # first time only
 npm test             # runs Lua unit tests, integration tests, and generates Allure report
 ```

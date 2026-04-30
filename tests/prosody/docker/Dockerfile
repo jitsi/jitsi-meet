@@ -9,7 +9,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy all plugins into a dedicated path (added to plugin_paths in the config).
-# The spec/ directory is also copied but Prosody only loads explicitly named modules.
-COPY --chown=prosody:prosody . /opt/prosody-jitsi-plugins/
+# The tests/ directory is also copied but Prosody only loads explicitly named modules.
+COPY --chown=prosody:prosody resources/prosody-plugins/ /opt/prosody-jitsi-plugins/
 
-COPY --chown=prosody:prosody spec/docker/prosody.cfg.lua /etc/prosody/prosody.cfg.lua
+COPY --chown=prosody:prosody tests/prosody/docker/prosody.cfg.lua /etc/prosody/prosody.cfg.lua
