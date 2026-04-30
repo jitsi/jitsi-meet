@@ -1,5 +1,9 @@
--- Measure the number of messages used in a meeting. Sends amplitude event.
--- Needs to be activated under the muc component where the limit needs to be applied (main muc and breakout muc)
+-- Counts messages and polls per conference and reports the totals to Amplitude
+-- when the main room is destroyed. Loaded on both the main MUC and breakout MUC
+-- components; in both cases messages are accumulated on the main room object
+-- (session.jitsi_web_query_room always refers to the main conference), so
+-- breakout messages are included in the main room's totals. The Amplitude event
+-- is only sent when the main room is destroyed (skipped for breakout rooms).
 -- Copyright (C) 2023-present 8x8, Inc.
 
 local jid = require 'util.jid';
