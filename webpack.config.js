@@ -306,7 +306,7 @@ function getDevServerConfig() {
         static: {
             directory: process.cwd(),
             watch: {
-                ignored: file => file.endsWith('.log')
+                ignored: file => file.endsWith('.log') || file.includes('/.git/') || file.endsWith('/.git')
             }
         }
     };
