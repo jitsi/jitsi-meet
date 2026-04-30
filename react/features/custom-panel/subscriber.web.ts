@@ -7,6 +7,21 @@ import { setCustomPanelWidth } from './actions.web';
 import { DEFAULT_CUSTOM_PANEL_WIDTH } from './constants';
 import { getCustomPanelMaxSize } from './functions';
 
+/**
+ * Listens for changes in the custom panel open state to recompute available
+ * video space width. Without this, opening or closing the panel does not
+ * refresh `videoSpaceWidth`, so tile dimensions stay sized for the previous
+ * layout until something else triggers a recalculation. Mirrors the pattern
+ * used by chat and the participants pane.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/custom-panel'].isOpen,
+    /* listener */ (_isOpen, store) => {
+        const { innerWidth, innerHeight } = window;
+
+        store.dispatch(clientResized(innerWidth, innerHeight));
+    });
+
 interface IListenerState {
     clientWidth: number;
     isOpen: boolean;
