@@ -1,4 +1,5 @@
 import assert from 'assert';
+
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
@@ -11,22 +12,39 @@ describe('mod_muc_meeting_id', () => {
 
     let clients;
 
-    beforeEach(() => { clients = []; });
+    beforeEach(() => {
+        clients = [];
+    });
 
     afterEach(async () => {
         await Promise.all(clients.map(c => c.disconnect()));
     });
 
+    /**
+     * Creates a regular XMPP client and registers it for afterEach cleanup.
+     *
+     * @returns {Promise<XmppTestClient>}
+     */
     async function connect() {
         const c = await createXmppClient();
+
         clients.push(c);
+
         return c;
     }
 
-    // Joins the room as focus (jicofo), unlocking the jicofo lock.
+    /**
+     * Joins the room as focus (jicofo), unlocking the jicofo lock.
+     * Registers the client for afterEach cleanup.
+     *
+     * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
+     * @returns {Promise<XmppTestClient>}
+     */
     async function focusJoin(roomJid) {
         const c = await joinWithFocus(roomJid);
+
         clients.push(c);
+
         return c;
     }
 
@@ -42,9 +60,11 @@ describe('mod_muc_meeting_id', () => {
 
         it('regular user can join after focus has joined', async () => {
             const r = room();
+
             await focusJoin(r);
             const c = await connect();
             const presence = await c.joinRoom(r);
+
             assert.notEqual(presence.attrs.type, 'error',
                 'regular user should be allowed in after focus unlocks');
         });
@@ -76,6 +96,7 @@ describe('mod_muc_meeting_id', () => {
             const r = healthRoom();
             const c = await connect();
             const presence = await c.joinRoom(r, 'regular-user');
+
             assert.equal(presence.attrs.type, 'error',
                 'non-focus should not be allowed into health-check rooms');
             assert.ok(
@@ -86,10 +107,12 @@ describe('mod_muc_meeting_id', () => {
 
         it('non-focus is blocked even when focus is already in the room', async () => {
             const r = healthRoom();
+
             await focusJoin(r);
 
             const intruder = await connect();
             const presence = await intruder.joinRoom(r, 'intruder');
+
             assert.equal(presence.attrs.type, 'error',
                 'non-focus must still be blocked after focus has joined');
             assert.ok(

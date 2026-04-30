@@ -3,19 +3,6 @@ import { client, xml } from '@xmpp/client';
 let _counter = 0;
 
 /**
- * Creates a connected anonymous XMPP client.
- * Prosody must be configured with `authentication = "anonymous"` and no TLS.
- *
- * @param {object} opts
- * @param {string} [opts.host='localhost']   TCP host to connect to.
- * @param {number} [opts.port=5222]          TCP port.
- * @param {string} [opts.domain]             XMPP domain (stream header). Defaults to host.
- *                                           Set to a different VirtualHost name (e.g.
- *                                           'whitelist.localhost') to get a JID on that
- *                                           domain without changing the TCP target.
- * @returns {Promise<XmppTestClient>}
- */
-/**
  * Connects as a focus (jicofo) participant, joins roomJid with nick 'focus',
  * and returns the client. This unlocks the mod_muc_meeting_id jicofo lock so
  * that regular clients can subsequently join the same room.
@@ -31,14 +18,29 @@ let _counter = 0;
  */
 export async function joinWithFocus(roomJid) {
     const c = await createXmppClient({ domain: 'focus.localhost' });
+
     await c.joinRoom(roomJid, 'focus');
+
     return c;
 }
 
+/**
+ * Creates a connected anonymous XMPP client.
+ * Prosody must be configured with `authentication = "anonymous"` and no TLS.
+ *
+ * @param {object} opts
+ * @param {string} [opts.host='localhost']   TCP host to connect to.
+ * @param {number} [opts.port=5222]          TCP port.
+ * @param {string} [opts.domain]             XMPP domain (stream header). Defaults to host.
+ *                                           Set to a different VirtualHost name (e.g.
+ *                                           'whitelist.localhost') to get a JID on that
+ *                                           domain without changing the TCP target.
+ * @returns {Promise<XmppTestClient>}
+ */
 export async function createXmppClient({ host = 'localhost', port = 5222, domain } = {}) {
     const xmpp = client({
         service: `xmpp://${host}:${port}`,
-        domain: domain ?? host,
+        domain: domain ?? host
     });
 
     // id -> { resolve, reject, timer }
@@ -47,11 +49,14 @@ export async function createXmppClient({ host = 'localhost', port = 5222, domain
 
     xmpp.on('stanza', stanza => {
         const id = stanza.attrs.id;
+
         if (stanza.name === 'iq' && id && pendingIqs.has(id)) {
             const { resolve, timer } = pendingIqs.get(id);
+
             clearTimeout(timer);
             pendingIqs.delete(id);
             resolve(stanza);
+
             return;
         }
         stanzaQueue.push(stanza);
@@ -83,11 +88,14 @@ export async function createXmppClient({ host = 'localhost', port = 5222, domain
             // just created — submit an empty form to accept defaults and unlock.
             const x = presence.getChild('x', 'http://jabber.org/protocol/muc#user');
             const isNewRoom = x?.getChildren('status').some(st => st.attrs.code === '201');
+
             if (isNewRoom) {
                 await sendIq(xmpp, pendingIqs,
-                    xml('iq', { type: 'set', to: roomJid },
+                    xml('iq', { type: 'set',
+                        to: roomJid },
                         xml('query', { xmlns: 'http://jabber.org/protocol/muc#owner' },
-                            xml('x', { xmlns: 'jabber:x:data', type: 'submit' })
+                            xml('x', { xmlns: 'jabber:x:data',
+                                type: 'submit' })
                         )
                     )
                 );
@@ -100,17 +108,21 @@ export async function createXmppClient({ host = 'localhost', port = 5222, domain
          * Sends a disco#info IQ and resolves with the response stanza.
          * @param {string} targetJid
          */
-        async sendDiscoInfo(targetJid) {
+        sendDiscoInfo(targetJid) {
             return sendIq(xmpp, pendingIqs,
-                xml('iq', { type: 'get', to: targetJid, id: `disco-${++_counter}` },
+                xml('iq', { type: 'get',
+                    to: targetJid,
+                    id: `disco-${++_counter}` },
                     xml('query', { xmlns: 'http://jabber.org/protocol/disco#info' })
                 )
             );
         },
 
         async disconnect() {
-            try { await xmpp.stop(); } catch { /* ignore on teardown */ }
-        },
+            try {
+                await xmpp.stop();
+            } catch { /* ignore on teardown */ }
+        }
     };
 }
 
@@ -119,7 +131,9 @@ export async function createXmppClient({ host = 'localhost', port = 5222, domain
  * Attaches a generated id to the stanza if one is not already present.
  */
 async function sendIq(xmpp, pendingIqs, stanza, timeout = 5000) {
-    if (!stanza.attrs.id) stanza.attrs.id = `iq-${++_counter}`;
+    if (!stanza.attrs.id) {
+        stanza.attrs.id = `iq-${++_counter}`;
+    }
     const id = stanza.attrs.id;
 
     await xmpp.send(stanza);
@@ -129,7 +143,10 @@ async function sendIq(xmpp, pendingIqs, stanza, timeout = 5000) {
             pendingIqs.delete(id);
             reject(new Error(`Timeout waiting for IQ response (id=${id})`));
         }, timeout);
-        pendingIqs.set(id, { resolve, reject, timer });
+
+        pendingIqs.set(id, { resolve,
+            reject,
+            timer });
     });
 }
 
@@ -145,28 +162,38 @@ function waitForPresence(queue, roomJid, timeout = 5000) {
         const check = () => {
             for (let i = 0; i < queue.length; i++) {
                 const s = queue[i];
-                if (s.name !== 'presence') continue;
+
+                if (s.name !== 'presence') {
+                    continue;
+                }
                 const from = s.attrs.from ?? '';
-                if (!from.startsWith(`${roomJid}/`)) continue;
+
+                if (!from.startsWith(`${roomJid}/`)) {
+                    continue;
+                }
 
                 // Rejected join — error presence sent directly back to client.
                 if (s.attrs.type === 'error') {
                     queue.splice(i, 1);
                     resolve(s);
+
                     return;
                 }
 
                 // Self-presence: Prosody adds status code 110 to confirm this is our own join.
                 const x = s.getChild('x', 'http://jabber.org/protocol/muc#user');
+
                 if (x?.getChildren('status').some(st => st.attrs.code === '110')) {
                     queue.splice(i, 1);
                     resolve(s);
+
                     return;
                 }
             }
 
             if (Date.now() >= deadline) {
                 reject(new Error(`Timeout waiting for presence from ${roomJid}`));
+
                 return;
             }
 

@@ -6,7 +6,11 @@ const BASE = 'http://localhost:5280/test-observer';
  */
 export async function getEvents() {
     const res = await fetch(`${BASE}/events`);
-    if (!res.ok) throw new Error(`GET /events failed: ${res.status}`);
+
+    if (!res.ok) {
+        throw new Error(`GET /events failed: ${res.status}`);
+    }
+
     return res.json();
 }
 
@@ -15,7 +19,10 @@ export async function getEvents() {
  */
 export async function clearEvents() {
     const res = await fetch(`${BASE}/events`, { method: 'DELETE' });
-    if (res.status !== 204) throw new Error(`DELETE /events failed: ${res.status}`);
+
+    if (res.status !== 204) {
+        throw new Error(`DELETE /events failed: ${res.status}`);
+    }
 }
 
 /**
@@ -30,9 +37,16 @@ export async function setRoomMaxOccupants(roomJid, max) {
     const res = await fetch(`${BASE}/rooms/max-occupants`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ jid: roomJid, max_occupants: max }),
+        body: JSON.stringify({
+            jid: roomJid,
+            // eslint-disable-next-line camelcase
+            max_occupants: max
+        })
     });
-    if (!res.ok) throw new Error(`setRoomMaxOccupants failed: ${res.status} ${await res.text()}`);
+
+    if (!res.ok) {
+        throw new Error(`setRoomMaxOccupants failed: ${res.status} ${await res.text()}`);
+    }
 }
 
 /**
@@ -42,7 +56,13 @@ export async function setRoomMaxOccupants(roomJid, max) {
  */
 export async function getRoomState(roomJid) {
     const res = await fetch(`${BASE}/rooms?jid=${encodeURIComponent(roomJid)}`);
-    if (res.status === 404) return null;
-    if (!res.ok) throw new Error(`GET /rooms failed: ${res.status}`);
+
+    if (res.status === 404) {
+        return null;
+    }
+    if (!res.ok) {
+        throw new Error(`GET /rooms failed: ${res.status}`);
+    }
+
     return res.json();
 }

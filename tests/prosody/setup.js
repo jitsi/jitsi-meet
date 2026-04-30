@@ -1,6 +1,7 @@
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { DockerComposeEnvironment, Wait } from 'testcontainers';
+import { fileURLToPath } from 'url';
+
 import { setContainer } from './helpers/container.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -23,5 +24,5 @@ export const mochaHooks = {
         if (environment) {
             await environment.down({ removeVolumes: true });
         }
-    },
+    }
 };

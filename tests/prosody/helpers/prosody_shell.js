@@ -15,11 +15,11 @@ export async function prosodyShell(command) {
     const container = getContainer();
 
     // Escape single quotes in the command before embedding in the shell string.
-    const escaped = command.replace(/'/g, "'\\''");
+    const escaped = command.replace(/'/g, '\'\\\'\'');
 
     const { output, exitCode } = await container.exec([
         'su', '-s', '/bin/sh', 'prosody', '-c',
-        `echo '${escaped}' | prosodyctl shell`,
+        `echo '${escaped}' | prosodyctl shell`
     ]);
 
     if (exitCode !== 0) {
