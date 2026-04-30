@@ -1,6 +1,7 @@
 import assert from 'assert';
 
 import { createTestContext } from './helpers/test_context.js';
+import { isAvailablePresence } from './helpers/xmpp_utils.js';
 
 // Uses the isolated "internal" MUC component which has muc_filter_access loaded
 // with muc_filter_whitelist = { "whitelist.localhost" }.
@@ -26,7 +27,7 @@ describe('mod_muc_filter_access', () => {
         const wl = await ctx.connectWhitelisted();
         const presence = await wl.joinRoom(r);
 
-        assert.equal(presence.attrs.type, undefined,
+        assert.ok(isAvailablePresence(presence),
             'whitelisted client must be allowed to join');
     });
 

@@ -1,6 +1,7 @@
 import assert from 'assert';
 
 import { createTestContext } from './helpers/test_context.js';
+import { isAvailablePresence } from './helpers/xmpp_utils.js';
 
 const CONFERENCE = 'conference.localhost';
 
@@ -35,7 +36,7 @@ describe('mod_muc_meeting_id', () => {
             const c = await ctx.connect();
             const presence = await c.joinRoom(r);
 
-            assert.equal(presence.attrs.type, undefined,
+            assert.ok(isAvailablePresence(presence),
                 'regular user should be allowed in after focus unlocks');
         });
 

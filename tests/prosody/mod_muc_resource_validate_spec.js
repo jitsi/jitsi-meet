@@ -2,6 +2,7 @@ import assert from 'assert';
 
 import { createTestContext } from './helpers/test_context.js';
 import { prosodyShell } from './helpers/prosody_shell.js';
+import { isAvailablePresence } from './helpers/xmpp_utils.js';
 
 const MUC = 'conference.localhost';
 
@@ -52,7 +53,7 @@ describe('mod_muc_resource_validate', () => {
         const c = await ctx.connect();
         const presence = await c.joinRoom(r, 'ValidNick123');
 
-        assert.equal(presence.attrs.type, undefined,
+        assert.ok(isAvailablePresence(presence),
             'valid alphanumeric resource must be allowed');
     });
 
@@ -63,7 +64,7 @@ describe('mod_muc_resource_validate', () => {
         const c = await ctx.connect();
         const presence = await c.joinRoom(r, 'abc_123');
 
-        assert.equal(presence.attrs.type, undefined,
+        assert.ok(isAvailablePresence(presence),
             'resource with internal underscore must be allowed');
     });
 
@@ -111,7 +112,7 @@ describe('mod_muc_resource_validate', () => {
             const nick = uuidPrefix(c.jid);
             const presence = await c.joinRoom(r, nick);
 
-            assert.equal(presence.attrs.type, undefined,
+            assert.ok(isAvailablePresence(presence),
                 'resource matching UUID prefix must be allowed in strict mode');
         } finally {
             await setStrictMode(false);
@@ -153,7 +154,7 @@ describe('mod_muc_resource_validate', () => {
             const nick = uuidPrefix(wl.jid);
             const presence = await wl.joinRoom(r, nick);
 
-            assert.equal(presence.attrs.type, undefined,
+            assert.ok(isAvailablePresence(presence),
                 'whitelisted client with correct UUID prefix must be allowed in strict mode');
         } finally {
             await setStrictMode(false);
