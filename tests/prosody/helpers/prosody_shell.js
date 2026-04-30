@@ -26,5 +26,11 @@ export async function prosodyShell(command) {
         throw new Error(`prosodyctl shell failed (exit ${exitCode}):\n${output}`);
     }
 
+    // prosodyctl shell exits 0 even when the Lua command throws; detect errors
+    // from the output text.  Prosody prefixes error lines with '! '.
+    if (/^!/m.test(output)) {
+        throw new Error(`prosodyctl shell command error:\n${output}`);
+    }
+
     return output;
 }

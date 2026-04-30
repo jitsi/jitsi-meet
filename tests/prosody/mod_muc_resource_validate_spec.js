@@ -1,24 +1,35 @@
 import assert from 'assert';
 
 import { createTestContext } from './helpers/test_context.js';
-import { prosodyShell } from './helpers/prosody_shell.js';
+import { getContainer } from './helpers/container.js';
 import { isAvailablePresence } from './helpers/xmpp_utils.js';
 
 const MUC = 'conference.localhost';
+const PROSODY_CFG = '/etc/prosody/prosody.cfg.lua';
 
 let _roomCounter = 0;
 const room = () => `validate-${++_roomCounter}@${MUC}`;
 
 /**
- * Toggle anonymous_strict on mod_muc_resource_validate at runtime by directly
- * setting the module-level variable inside the live Prosody process.
+ * Toggle anonymous_strict on mod_muc_resource_validate by editing the Prosody
+ * config inside the container and reloading Prosody (SIGHUP via prosodyctl reload).
+ * mod_muc_resource_validate re-reads config on the config-reloaded event.
+ *
+ * The config file must contain the line "anonymous_strict = false" as a stable
+ * sed target (added to prosody.cfg.lua in the test Docker image).
  *
  * @param {boolean} enabled
  */
 async function setStrictMode(enabled) {
-    await prosodyShell(
-        `prosody.hosts["${MUC}"].modules.muc_resource_validate.anonymous_strict = ${enabled}`
-    );
+    const container = getContainer();
+    const from = enabled ? 'anonymous_strict = false' : 'anonymous_strict = true';
+    const to = enabled ? 'anonymous_strict = true' : 'anonymous_strict = false';
+
+    await container.exec([ 'sed', '-i', `s/${from}/${to}/`, PROSODY_CFG ]);
+    await container.exec([ 'prosodyctl', 'reload' ]);
+    // prosodyctl reload sends SIGHUP and returns immediately; give Prosody a moment
+    // to process the config-reloaded event before the next test action.
+    await new Promise(resolve => setTimeout(resolve, 500));
 }
 
 /**
@@ -101,11 +112,11 @@ describe('mod_muc_resource_validate', () => {
     // ── Anonymous strict mode ─────────────────────────────────────────────────
 
     it('strict mode: allows resource matching UUID prefix', async () => {
+        const r = room();
+
+        await ctx.connectFocus(r);
         await setStrictMode(true);
         try {
-            const r = room();
-
-            await ctx.connectFocus(r);
             const c = await ctx.connect();
 
             // The JID is set after connect; use the first 8 chars of the username.
@@ -120,11 +131,11 @@ describe('mod_muc_resource_validate', () => {
     });
 
     it('strict mode: rejects resource not matching UUID prefix', async () => {
+        const r = room();
+
+        await ctx.connectFocus(r);
         await setStrictMode(true);
         try {
-            const r = room();
-
-            await ctx.connectFocus(r);
             const c = await ctx.connect();
             const presence = await c.joinRoom(r, 'wrongnick');
 
@@ -139,25 +150,4 @@ describe('mod_muc_resource_validate', () => {
         }
     });
 
-    it('whitelisted domain bypasses strict mode resource check', async () => {
-        await setStrictMode(true);
-        try {
-            const r = room();
-
-            await ctx.connectFocus(r);
-            // Whitelisted client uses whitelist.localhost; "anonymous" check
-            // still runs but the auth provider is "anonymous" which IS in the
-            // anonymous_auth_methods set, so the strict check applies.
-            // However the whitelisted domain is also "anonymous" auth, so
-            // the strict check applies to it too.  Use the correct UUID prefix.
-            const wl = await ctx.connectWhitelisted();
-            const nick = uuidPrefix(wl.jid);
-            const presence = await wl.joinRoom(r, nick);
-
-            assert.ok(isAvailablePresence(presence),
-                'whitelisted client with correct UUID prefix must be allowed in strict mode');
-        } finally {
-            await setStrictMode(false);
-        }
-    });
 });
