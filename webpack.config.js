@@ -281,6 +281,15 @@ function getDevServerConfig() {
         hot: true,
         proxy: [
             {
+                context: [ '/xmpp-websocket', '/colibri-ws' ],
+                secure: false,
+                target: devServerProxyTarget.replace('https://', 'wss://'),
+                ws: true,
+                headers: {
+                    'Host': new URL(devServerProxyTarget).host
+                }
+            },
+            {
                 context: [ '/' ],
                 bypass: devServerProxyBypass,
                 secure: false,
