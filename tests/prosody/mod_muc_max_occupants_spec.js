@@ -27,7 +27,7 @@ describe('mod_muc_max_occupants', () => {
         const c = await ctx.connect();
         const presence = await c.joinRoom(r);
 
-        assert.equal(presence.attrs.type, 'available');
+        assert.equal(presence.attrs.type, undefined);
     });
 
     it('allows join when room has one occupant (under limit)', async () => {
@@ -40,7 +40,7 @@ describe('mod_muc_max_occupants', () => {
         await c1.joinRoom(r);
         const presence = await c2.joinRoom(r);
 
-        assert.equal(presence.attrs.type, 'available');
+        assert.equal(presence.attrs.type, undefined);
     });
 
     it('blocks join when room is at the limit', async () => {
@@ -94,7 +94,7 @@ describe('mod_muc_max_occupants', () => {
 
             const presence = await wl.joinRoom(r);
 
-            assert.equal(presence.attrs.type, 'available',
+            assert.equal(presence.attrs.type, undefined,
                 'whitelisted user must bypass the occupant limit');
         });
 
@@ -116,12 +116,12 @@ describe('mod_muc_max_occupants', () => {
             // Non-whitelisted users: only they count against the limit of 2.
             const p1 = await c1.joinRoom(r);
 
-            assert.equal(p1.attrs.type, 'available',
+            assert.equal(p1.attrs.type, undefined,
                 '1st non-whitelisted user must be allowed (0 counted occupants so far)');
 
             const p2 = await c2.joinRoom(r);
 
-            assert.equal(p2.attrs.type, 'available',
+            assert.equal(p2.attrs.type, undefined,
                 '2nd non-whitelisted user must be allowed (1 counted occupant)');
 
             const p3 = await c3.joinRoom(r);
@@ -157,16 +157,16 @@ describe('mod_muc_max_occupants', () => {
 
             const p2 = await c2.joinRoom(r);
 
-            assert.equal(p2.attrs.type, 'available', 'user 2 should join (limit 4)');
+            assert.equal(p2.attrs.type, undefined, 'user 2 should join (limit 4)');
 
             const p3 = await c3.joinRoom(r);
 
-            assert.equal(p3.attrs.type, 'available',
+            assert.equal(p3.attrs.type, undefined,
                 'user 3 should join (global limit 2 would block, per-room limit 4 allows)');
 
             const p4 = await c4.joinRoom(r);
 
-            assert.equal(p4.attrs.type, 'available', 'user 4 should join (limit 4)');
+            assert.equal(p4.attrs.type, undefined, 'user 4 should join (limit 4)');
 
             const p5 = await c5.joinRoom(r);
 
