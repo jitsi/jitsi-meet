@@ -35,7 +35,7 @@ describe('mod_muc_meeting_id', () => {
             const c = await ctx.connect();
             const presence = await c.joinRoom(r);
 
-            assert.notEqual(presence.attrs.type, 'error',
+            assert.equal(presence.attrs.type, 'available',
                 'regular user should be allowed in after focus unlocks');
         });
 

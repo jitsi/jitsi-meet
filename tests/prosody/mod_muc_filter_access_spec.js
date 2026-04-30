@@ -26,7 +26,7 @@ describe('mod_muc_filter_access', () => {
         const wl = await ctx.connectWhitelisted();
         const presence = await wl.joinRoom(r);
 
-        assert.notEqual(presence.attrs.type, 'error',
+        assert.equal(presence.attrs.type, 'available',
             'whitelisted client must be allowed to join');
     });
 

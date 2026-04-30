@@ -52,7 +52,7 @@ describe('mod_muc_resource_validate', () => {
         const c = await ctx.connect();
         const presence = await c.joinRoom(r, 'ValidNick123');
 
-        assert.notEqual(presence.attrs.type, 'error',
+        assert.equal(presence.attrs.type, 'available',
             'valid alphanumeric resource must be allowed');
     });
 
@@ -63,7 +63,7 @@ describe('mod_muc_resource_validate', () => {
         const c = await ctx.connect();
         const presence = await c.joinRoom(r, 'abc_123');
 
-        assert.notEqual(presence.attrs.type, 'error',
+        assert.equal(presence.attrs.type, 'available',
             'resource with internal underscore must be allowed');
     });
 
@@ -111,7 +111,7 @@ describe('mod_muc_resource_validate', () => {
             const nick = uuidPrefix(c.jid);
             const presence = await c.joinRoom(r, nick);
 
-            assert.notEqual(presence.attrs.type, 'error',
+            assert.equal(presence.attrs.type, 'available',
                 'resource matching UUID prefix must be allowed in strict mode');
         } finally {
             await setStrictMode(false);
@@ -153,7 +153,7 @@ describe('mod_muc_resource_validate', () => {
             const nick = uuidPrefix(wl.jid);
             const presence = await wl.joinRoom(r, nick);
 
-            assert.notEqual(presence.attrs.type, 'error',
+            assert.equal(presence.attrs.type, 'available',
                 'whitelisted client with correct UUID prefix must be allowed in strict mode');
         } finally {
             await setStrictMode(false);
