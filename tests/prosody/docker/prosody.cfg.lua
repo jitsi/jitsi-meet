@@ -82,3 +82,11 @@ Component "conference.localhost" "muc"
     -- Required by util.lib.lua domain-mapping helpers and mod_jitsi_permissions.
     muc_mapper_domain_base = "localhost"
     muc_mapper_domain_prefix = "conference"
+
+-- Minimal MUC component used to test mod_muc_filter_access in isolation.
+-- Only clients from whitelist.localhost are permitted to join rooms here.
+Component "conference-internal.localhost" "muc"
+    modules_enabled = {
+        "muc_filter_access";
+    }
+    muc_filter_whitelist = { "whitelist.localhost" }

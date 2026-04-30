@@ -103,6 +103,7 @@ tests/prosody/
 │   └── jwk_spec.lua                busted unit tests for token/jwk.lib.lua (no Prosody needed)
 │
 ├── mod_conference_duration_spec.js  Tests for mod_conference_duration
+├── mod_muc_filter_access_spec.js    Tests for mod_muc_filter_access
 ├── mod_muc_hide_all_spec.js         Tests for mod_muc_hide_all
 ├── mod_muc_max_occupants_spec.js    Tests for mod_muc_max_occupants
 ├── mod_muc_meeting_id_spec.js       Tests for mod_muc_meeting_id

@@ -69,10 +69,13 @@ export async function createXmppClient({ host = 'localhost', port = 5222, domain
 
         /**
          * Joins a MUC room. Resolves with the self-presence stanza (may have type='error').
-         * @param {string} roomJid  e.g. 'room@conference.localhost'
-         * @param {string} [nick]   defaults to a unique generated nick
+         * Rejects with a timeout error if no presence is received within the timeout.
+         * @param {string} roomJid       e.g. 'room@conference.localhost'
+         * @param {string} [nick]        defaults to a unique generated nick
+         * @param {object} [opts]
+         * @param {number} [opts.timeout=5000]  ms to wait for presence before rejecting
          */
-        async joinRoom(roomJid, nick) {
+        async joinRoom(roomJid, nick, { timeout = 5000 } = {}) {
             const n = nick ?? `user${++_counter}`;
 
             await xmpp.send(
@@ -81,7 +84,7 @@ export async function createXmppClient({ host = 'localhost', port = 5222, domain
                 )
             );
 
-            const presence = await waitForPresence(stanzaQueue, roomJid);
+            const presence = await waitForPresence(stanzaQueue, roomJid, timeout);
 
             // Prosody 13 locks newly created rooms (XEP-0045 §10.1.3) until the
             // owner submits a configuration form. Status 201 means the room was
