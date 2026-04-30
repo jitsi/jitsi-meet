@@ -67,6 +67,7 @@ Component "conference.localhost" "muc"
         "muc_hide_all";
         "muc_max_occupants";
         "muc_meeting_id";
+        "muc_resource_validate";
         "test_observer";
     }
 
