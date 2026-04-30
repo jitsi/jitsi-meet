@@ -39,11 +39,15 @@ VirtualHost "localhost"
     modules_enabled = {
         "test_observer_http";
         "muc_size";
+        "conference_duration";
     }
 
     -- Required by mod_test_observer_http to locate the shared MUC data.
     muc_mapper_domain_base = "localhost"
     muc_mapper_domain_prefix = "conference"
+
+    -- Required by mod_conference_duration to find the MUC component.
+    main_muc = "conference.localhost"
 
 -- Second VirtualHost whose domain is listed in muc_access_whitelist on the
 -- MUC component below. Clients connecting here get JIDs like

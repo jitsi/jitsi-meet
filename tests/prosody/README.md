@@ -102,8 +102,11 @@ tests/prosody/
 ├── lua/
 │   └── jwk_spec.lua                busted unit tests for token/jwk.lib.lua (no Prosody needed)
 │
-├── mod_muc_hide_all_spec.js        Tests for mod_muc_hide_all
-└── mod_muc_max_occupants_spec.js   Tests for mod_muc_max_occupants
+├── mod_conference_duration_spec.js  Tests for mod_conference_duration
+├── mod_muc_hide_all_spec.js         Tests for mod_muc_hide_all
+├── mod_muc_max_occupants_spec.js    Tests for mod_muc_max_occupants
+├── mod_muc_meeting_id_spec.js       Tests for mod_muc_meeting_id
+└── mod_muc_size_spec.js             Tests for mod_muc_size
 ```
 
 The plugin sources under test (`mod_muc_hide_all.lua`, `mod_muc_max_occupants.lua`, etc.) live
