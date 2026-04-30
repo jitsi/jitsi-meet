@@ -1,8 +1,8 @@
 import assert from 'assert';
 
 import { prosodyShell } from './helpers/prosody_shell.js';
+import { createTestContext } from './helpers/test_context.js';
 import { setRoomMaxOccupants } from './helpers/test_observer.js';
-import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
 const BASE = 'http://localhost:5280';
@@ -52,44 +52,13 @@ describe('mod_muc_size', () => {
         console.log('[prosody] module:reload muc_size:', out);
     });
 
-    let clients;
+    let ctx;
 
     beforeEach(() => {
-        clients = [];
+        ctx = createTestContext();
     });
 
-    afterEach(async () => {
-        await Promise.all(clients.map(c => c.disconnect()));
-    });
-
-    /**
-     * Creates a regular XMPP client and registers it for afterEach cleanup.
-     *
-     * @returns {Promise<XmppTestClient>}
-     */
-    async function connect() {
-        const c = await createXmppClient();
-
-        clients.push(c);
-
-        return c;
-    }
-
-    /**
-     * Joins the room as focus (jicofo) to unlock the mod_muc_meeting_id jicofo
-     * lock. The focus client is whitelisted and does not count against the
-     * occupant limit. Registers the client for afterEach cleanup.
-     *
-     * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
-     * @returns {Promise<XmppTestClient>}
-     */
-    async function focusJoin(roomJid) {
-        const c = await joinWithFocus(roomJid);
-
-        clients.push(c);
-
-        return c;
-    }
+    afterEach(() => ctx.cleanup());
 
     // -------------------------------------------------------------------------
     // GET /room-size
@@ -112,9 +81,9 @@ describe('mod_muc_size', () => {
         it('returns 200 with participant count for an existing room', async () => {
             const r = room();
 
-            await focusJoin(r);
-            const c1 = await connect();
-            const c2 = await connect();
+            await ctx.connectFocus(r);
+            const c1 = await ctx.connect();
+            const c2 = await ctx.connect();
 
             await c1.joinRoom(r);
             await c2.joinRoom(r);
@@ -140,8 +109,8 @@ describe('mod_muc_size', () => {
         it('participant count decreases after a client leaves', async () => {
             const r = room();
 
-            await focusJoin(r);
-            const c1 = await connect();
+            await ctx.connectFocus(r);
+            const c1 = await ctx.connect();
 
             await c1.joinRoom(r);
 
@@ -149,8 +118,8 @@ describe('mod_muc_size', () => {
             // the per-room limit before the other clients connect.
             await setRoomMaxOccupants(r, 5);
 
-            const c2 = await connect();
-            const c3 = await connect();
+            const c2 = await ctx.connect();
+            const c3 = await ctx.connect();
 
             await c2.joinRoom(r);
             await c3.joinRoom(r);
@@ -166,7 +135,6 @@ describe('mod_muc_size', () => {
 
             // Disconnect one client and re-query.
             await c3.disconnect();
-            clients.pop();
 
             // Give Prosody a moment to process the departure.
             await new Promise(resolve => setTimeout(resolve, 200));
@@ -203,8 +171,8 @@ describe('mod_muc_size', () => {
         it('returns 200 with occupant array for an existing room', async () => {
             const r = room();
 
-            await focusJoin(r);
-            const c1 = await connect();
+            await ctx.connectFocus(r);
+            const c1 = await ctx.connect();
 
             await c1.joinRoom(r);
 
@@ -222,8 +190,8 @@ describe('mod_muc_size', () => {
         it('occupant objects have jid, email, display_name fields', async () => {
             const r = room();
 
-            await focusJoin(r);
-            const c1 = await connect();
+            await ctx.connectFocus(r);
+            const c1 = await ctx.connect();
 
             await c1.joinRoom(r);
 
@@ -262,7 +230,7 @@ describe('mod_muc_size', () => {
             const res1 = await getSessions();
             const before = parseInt(await res1.text(), 10);
 
-            await connect(); // adds one session
+            await ctx.connect(); // adds one session
 
             const res2 = await getSessions();
             const after = parseInt(await res2.text(), 10);

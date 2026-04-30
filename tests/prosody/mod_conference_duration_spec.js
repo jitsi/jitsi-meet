@@ -1,72 +1,27 @@
 import assert from 'assert';
 
+import { createTestContext } from './helpers/test_context.js';
 import { setRoomMaxOccupants } from './helpers/test_observer.js';
-import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
+import { discoField } from './helpers/xmpp_utils.js';
 
 const CONFERENCE = 'conference.localhost';
 
 let _roomCounter = 0;
 const room = () => `conf-duration-${++_roomCounter}@${CONFERENCE}`;
 
-/**
- * Extracts the value of a named field from a disco#info IQ result stanza.
- * Returns the string value, or null if the field is absent or has no value.
- *
- * @param {object} iq     - IQ stanza returned by sendDiscoInfo().
- * @param {string} varName - The field var attribute to look for.
- * @returns {string|null}
- */
-function discoField(iq, varName) {
-    const query = iq.getChild('query', 'http://jabber.org/protocol/disco#info');
-    const form = query?.getChild('x', 'jabber:x:data');
-    const field = form?.getChildren('field').find(f => f.attrs.var === varName);
-
-    return field?.getChild('value')?.text() ?? null;
-}
-
 describe('mod_conference_duration', () => {
 
-    let clients;
+    let ctx;
 
     beforeEach(() => {
-        clients = [];
+        ctx = createTestContext();
     });
 
-    afterEach(async () => {
-        await Promise.all(clients.map(c => c.disconnect()));
-    });
-
-    /**
-     * Creates a regular XMPP client and registers it for afterEach cleanup.
-     *
-     * @returns {Promise<XmppTestClient>}
-     */
-    async function connect() {
-        const c = await createXmppClient();
-
-        clients.push(c);
-
-        return c;
-    }
-
-    /**
-     * Joins the room as focus (jicofo), unlocking the jicofo lock.
-     * Registers the client for afterEach cleanup.
-     *
-     * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
-     * @returns {Promise<XmppTestClient>}
-     */
-    async function focusJoin(roomJid) {
-        const c = await joinWithFocus(roomJid);
-
-        clients.push(c);
-
-        return c;
-    }
+    afterEach(() => ctx.cleanup());
 
     it('created_timestamp is absent before a second occupant joins', async () => {
         const r = room();
-        const focus = await focusJoin(r);
+        const focus = await ctx.connectFocus(r);
 
         // Only focus is in the room — timestamp should not be set yet.
         const iq = await focus.sendDiscoInfo(r);
@@ -80,8 +35,8 @@ describe('mod_conference_duration', () => {
 
     it('created_timestamp is set once a second occupant joins', async () => {
         const r = room();
-        const focus = await focusJoin(r);
-        const c = await connect();
+        const focus = await ctx.connectFocus(r);
+        const c = await ctx.connect();
 
         await c.joinRoom(r);
 
@@ -104,8 +59,8 @@ describe('mod_conference_duration', () => {
 
     it('created_timestamp does not change when further occupants join', async () => {
         const r = room();
-        const focus = await focusJoin(r);
-        const c1 = await connect();
+        const focus = await ctx.connectFocus(r);
+        const c1 = await ctx.connect();
 
         await c1.joinRoom(r);
 
@@ -118,7 +73,7 @@ describe('mod_conference_duration', () => {
         await setRoomMaxOccupants(r, 5);
 
         // Third occupant joins — timestamp must remain unchanged.
-        const c2 = await connect();
+        const c2 = await ctx.connect();
 
         await c2.joinRoom(r);
 

@@ -1,8 +1,8 @@
 import assert from 'assert';
 
 import { prosodyShell } from './helpers/prosody_shell.js';
+import { createTestContext } from './helpers/test_context.js';
 import { clearEvents, getEvents, getRoomState } from './helpers/test_observer.js';
-import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
 
@@ -11,43 +11,13 @@ const room = () => `hide-all-${++_roomCounter}@${CONFERENCE}`;
 
 describe('mod_muc_hide_all', () => {
 
-    let clients;
+    let ctx;
 
     beforeEach(() => {
-        clients = [];
+        ctx = createTestContext();
     });
 
-    afterEach(async () => {
-        await Promise.all(clients.map(c => c.disconnect()));
-    });
-
-    /**
-     * Creates a regular XMPP client and registers it for afterEach cleanup.
-     *
-     * @returns {Promise<XmppTestClient>}
-     */
-    async function connect() {
-        const c = await createXmppClient();
-
-        clients.push(c);
-
-        return c;
-    }
-
-    /**
-     * Joins the room as focus (jicofo) to unlock the mod_muc_meeting_id jicofo
-     * lock, then returns the client. Added to `clients` for afterEach cleanup.
-     *
-     * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
-     * @returns {Promise<XmppTestClient>}
-     */
-    async function focusJoin(roomJid) {
-        const c = await joinWithFocus(roomJid);
-
-        clients.push(c);
-
-        return c;
-    }
+    afterEach(() => ctx.cleanup());
 
     // -------------------------------------------------------------------------
     // Module DISABLED — Prosody default behaviour applies
@@ -65,9 +35,9 @@ describe('mod_muc_hide_all', () => {
         it('non-occupant disco#info to an existing room succeeds', async () => {
             const r = room();
 
-            await focusJoin(r);
-            const owner = await connect();
-            const stranger = await connect();
+            await ctx.connectFocus(r);
+            const owner = await ctx.connect();
+            const stranger = await ctx.connect();
 
             await owner.joinRoom(r);
             const iq = await stranger.sendDiscoInfo(r);
@@ -87,8 +57,8 @@ describe('mod_muc_hide_all', () => {
         it('new room is set to hidden', async () => {
             const r = room();
 
-            await focusJoin(r);
-            const owner = await connect();
+            await ctx.connectFocus(r);
+            const owner = await ctx.connect();
 
             await owner.joinRoom(r);
 
@@ -102,7 +72,7 @@ describe('mod_muc_hide_all', () => {
         it('muc-room-pre-create event is fired when room is created', async () => {
             const r = room();
 
-            await focusJoin(r);
+            await ctx.connectFocus(r);
 
             const events = await getEvents();
             const preCreate = events.find(e => e.event === 'muc-room-pre-create' && e.room === r);
@@ -114,9 +84,9 @@ describe('mod_muc_hide_all', () => {
         it('non-occupant disco#info returns <forbidden>', async () => {
             const r = room();
 
-            await focusJoin(r);
-            const owner = await connect();
-            const stranger = await connect();
+            await ctx.connectFocus(r);
+            const owner = await ctx.connect();
+            const stranger = await ctx.connect();
 
             await owner.joinRoom(r);
             const iq = await stranger.sendDiscoInfo(r);
@@ -131,8 +101,8 @@ describe('mod_muc_hide_all', () => {
         it('occupant disco#info succeeds', async () => {
             const r = room();
 
-            await focusJoin(r);
-            const occupant = await connect();
+            await ctx.connectFocus(r);
+            const occupant = await ctx.connect();
 
             await occupant.joinRoom(r);
             const iq = await occupant.sendDiscoInfo(r);

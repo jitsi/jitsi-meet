@@ -1,7 +1,7 @@
 import assert from 'assert';
 
+import { createTestContext } from './helpers/test_context.js';
 import { setRoomMaxOccupants } from './helpers/test_observer.js';
-import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
 
@@ -12,66 +12,19 @@ const room = () => `max-occupants-${++_roomCounter}@${CONFERENCE}`;
 describe('mod_muc_max_occupants', () => {
     // Prosody config sets muc_max_occupants = 2.
 
-    let clients;
+    let ctx;
 
     beforeEach(() => {
-        clients = [];
+        ctx = createTestContext();
     });
 
-    afterEach(async () => {
-        // Disconnect all clients. Rooms auto-destroy when the last occupant leaves.
-        await Promise.all(clients.map(c => c.disconnect()));
-    });
-
-    /**
-     * Creates a regular XMPP client and registers it for afterEach cleanup.
-     *
-     * @returns {Promise<XmppTestClient>}
-     */
-    async function connect() {
-        const c = await createXmppClient();
-
-        clients.push(c);
-
-        return c;
-    }
-
-    /**
-     * Creates a whitelisted XMPP client (domain: whitelist.localhost) and
-     * registers it for afterEach cleanup.
-     *
-     * @returns {Promise<XmppTestClient>}
-     */
-    async function connectWhitelisted() {
-        const c = await createXmppClient({ domain: 'whitelist.localhost' });
-
-        clients.push(c);
-
-        return c;
-    }
-
-    /**
-     * Joins the room as focus (jicofo), unlocking the mod_muc_meeting_id jicofo
-     * lock so that subsequent regular clients can join. The focus client is added
-     * to `clients` for afterEach cleanup and does not count against the occupant
-     * limit (focus.localhost is whitelisted).
-     *
-     * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
-     * @returns {Promise<XmppTestClient>}
-     */
-    async function focusJoin(roomJid) {
-        const c = await joinWithFocus(roomJid);
-
-        clients.push(c);
-
-        return c;
-    }
+    afterEach(() => ctx.cleanup());
 
     it('allows join when room is empty', async () => {
         const r = room();
 
-        await focusJoin(r);
-        const c = await connect();
+        await ctx.connectFocus(r);
+        const c = await ctx.connect();
         const presence = await c.joinRoom(r);
 
         assert.notEqual(presence.attrs.type, 'error');
@@ -80,9 +33,9 @@ describe('mod_muc_max_occupants', () => {
     it('allows join when room has one occupant (under limit)', async () => {
         const r = room();
 
-        await focusJoin(r);
-        const c1 = await connect();
-        const c2 = await connect();
+        await ctx.connectFocus(r);
+        const c1 = await ctx.connect();
+        const c2 = await ctx.connect();
 
         await c1.joinRoom(r);
         const presence = await c2.joinRoom(r);
@@ -93,10 +46,10 @@ describe('mod_muc_max_occupants', () => {
     it('blocks join when room is at the limit', async () => {
         const r = room();
 
-        await focusJoin(r);
-        const c1 = await connect();
-        const c2 = await connect();
-        const c3 = await connect();
+        await ctx.connectFocus(r);
+        const c1 = await ctx.connect();
+        const c2 = await ctx.connect();
+        const c3 = await ctx.connect();
 
         await c1.joinRoom(r);
         await c2.joinRoom(r);
@@ -115,9 +68,8 @@ describe('mod_muc_max_occupants', () => {
         // so we test the occupant-limit bypass with focus clients.
         // is_healthcheck_room() matches rooms starting with '__jicofo-health-check'.
         const healthRoom = `__jicofo-health-check-test@${CONFERENCE}`;
-        const focus = await joinWithFocus(healthRoom);
 
-        clients.push(focus);
+        await ctx.connectFocus(healthRoom);
 
         // A second focus join would conflict on nick; the meaningful assertion is
         // that the first focus client joined without hitting a limit error.
@@ -132,10 +84,10 @@ describe('mod_muc_max_occupants', () => {
         it('whitelisted user can join a room that is at the limit', async () => {
             const r = room();
 
-            await focusJoin(r);
-            const c1 = await connect();
-            const c2 = await connect();
-            const wl = await connectWhitelisted();
+            await ctx.connectFocus(r);
+            const c1 = await ctx.connect();
+            const c2 = await ctx.connect();
+            const wl = await ctx.connectWhitelisted();
 
             await c1.joinRoom(r);
             await c2.joinRoom(r); // room now at limit (2 non-whitelisted)
@@ -149,12 +101,12 @@ describe('mod_muc_max_occupants', () => {
         it('whitelisted occupants do not count against the limit for non-whitelisted users', async () => {
             const r = room();
 
-            await focusJoin(r);
-            const wl1 = await connectWhitelisted();
-            const wl2 = await connectWhitelisted();
-            const c1 = await connect();
-            const c2 = await connect();
-            const c3 = await connect();
+            await ctx.connectFocus(r);
+            const wl1 = await ctx.connectWhitelisted();
+            const wl2 = await ctx.connectWhitelisted();
+            const c1 = await ctx.connect();
+            const c2 = await ctx.connect();
+            const c3 = await ctx.connect();
 
             // Two whitelisted users join — they bypass the check and are not
             // counted when a non-whitelisted user evaluates available slots.
@@ -190,18 +142,18 @@ describe('mod_muc_max_occupants', () => {
         it('per-room limit higher than global allows more occupants', async () => {
             const r = room();
 
-            await focusJoin(r);
-            const c1 = await connect();
+            await ctx.connectFocus(r);
+            const c1 = await ctx.connect();
 
             await c1.joinRoom(r);
 
             // Override the global limit of 2 with a per-room limit of 4.
             await setRoomMaxOccupants(r, 4);
 
-            const c2 = await connect();
-            const c3 = await connect();
-            const c4 = await connect();
-            const c5 = await connect();
+            const c2 = await ctx.connect();
+            const c3 = await ctx.connect();
+            const c4 = await ctx.connect();
+            const c5 = await ctx.connect();
 
             const p2 = await c2.joinRoom(r);
 
@@ -228,15 +180,15 @@ describe('mod_muc_max_occupants', () => {
         it('per-room limit lower than global restricts the room further', async () => {
             const r = room();
 
-            await focusJoin(r);
-            const c1 = await connect();
+            await ctx.connectFocus(r);
+            const c1 = await ctx.connect();
 
             await c1.joinRoom(r);
 
             // Override the global limit of 2 with a stricter per-room limit of 1.
             await setRoomMaxOccupants(r, 1);
 
-            const c2 = await connect();
+            const c2 = await ctx.connect();
             const presence = await c2.joinRoom(r);
 
             assert.equal(presence.attrs.type, 'error',

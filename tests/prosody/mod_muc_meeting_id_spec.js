@@ -1,6 +1,6 @@
 import assert from 'assert';
 
-import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
+import { createTestContext } from './helpers/test_context.js';
 
 const CONFERENCE = 'conference.localhost';
 
@@ -10,43 +10,13 @@ const healthRoom = () => `__jicofo-health-check-mid-${++_roomCounter}@${CONFEREN
 
 describe('mod_muc_meeting_id', () => {
 
-    let clients;
+    let ctx;
 
     beforeEach(() => {
-        clients = [];
+        ctx = createTestContext();
     });
 
-    afterEach(async () => {
-        await Promise.all(clients.map(c => c.disconnect()));
-    });
-
-    /**
-     * Creates a regular XMPP client and registers it for afterEach cleanup.
-     *
-     * @returns {Promise<XmppTestClient>}
-     */
-    async function connect() {
-        const c = await createXmppClient();
-
-        clients.push(c);
-
-        return c;
-    }
-
-    /**
-     * Joins the room as focus (jicofo), unlocking the jicofo lock.
-     * Registers the client for afterEach cleanup.
-     *
-     * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
-     * @returns {Promise<XmppTestClient>}
-     */
-    async function focusJoin(roomJid) {
-        const c = await joinWithFocus(roomJid);
-
-        clients.push(c);
-
-        return c;
-    }
+    afterEach(() => ctx.cleanup());
 
     // -------------------------------------------------------------------------
     // jicofo lock
@@ -54,15 +24,15 @@ describe('mod_muc_meeting_id', () => {
     describe('jicofo lock', () => {
 
         it('focus can join a room', async () => {
-            // joinWithFocus throws (timeout) if the join is blocked.
-            await focusJoin(room());
+            // connectFocus throws (timeout) if the join is blocked.
+            await ctx.connectFocus(room());
         });
 
         it('regular user can join after focus has joined', async () => {
             const r = room();
 
-            await focusJoin(r);
-            const c = await connect();
+            await ctx.connectFocus(r);
+            const c = await ctx.connect();
             const presence = await c.joinRoom(r);
 
             assert.notEqual(presence.attrs.type, 'error',
@@ -88,13 +58,13 @@ describe('mod_muc_meeting_id', () => {
     describe('health check rooms', () => {
 
         it('focus can join a health check room', async () => {
-            // joinWithFocus throws on timeout if the join is blocked.
-            await focusJoin(healthRoom());
+            // connectFocus throws on timeout if the join is blocked.
+            await ctx.connectFocus(healthRoom());
         });
 
         it('non-focus participant is blocked from a health check room', async () => {
             const r = healthRoom();
-            const c = await connect();
+            const c = await ctx.connect();
             const presence = await c.joinRoom(r, 'regular-user');
 
             assert.equal(presence.attrs.type, 'error',
@@ -108,9 +78,9 @@ describe('mod_muc_meeting_id', () => {
         it('non-focus is blocked even when focus is already in the room', async () => {
             const r = healthRoom();
 
-            await focusJoin(r);
+            await ctx.connectFocus(r);
 
-            const intruder = await connect();
+            const intruder = await ctx.connect();
             const presence = await intruder.joinRoom(r, 'intruder');
 
             assert.equal(presence.attrs.type, 'error',
