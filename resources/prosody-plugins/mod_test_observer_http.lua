@@ -47,6 +47,8 @@ local function capture_session_info(event)
             user_agent_header = session.user_agent_header,
             -- Fields set by mod_auth_token after JWT verification:
             jitsi_meet_room = session.jitsi_meet_room,
+            jitsi_meet_context_user = session.jitsi_meet_context_user,
+            jitsi_meet_context_group = session.jitsi_meet_context_group,
             jitsi_meet_context_features = session.jitsi_meet_context_features,
         };
     end

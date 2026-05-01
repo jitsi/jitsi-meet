@@ -74,6 +74,15 @@ describe('mod_auth_token (HS256 shared secret)', () => {
         );
     });
 
+    it('rejects connection with not-yet-valid token (nbf in the future)', async () => {
+        const token = mintToken({}, { notYetValid: true });
+
+        await assert.rejects(
+            () => hs256Client({ token }),
+            /not-allowed/
+        );
+    });
+
     it('rejects connection with wrong issuer', async () => {
         const token = mintToken({ iss: 'other-app' });
 

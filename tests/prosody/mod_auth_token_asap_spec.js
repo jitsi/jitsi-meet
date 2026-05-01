@@ -82,6 +82,15 @@ describe('mod_auth_token (ASAP / RS256)', () => {
         );
     });
 
+    it('rejects connection with not-yet-valid token (nbf in the future)', async () => {
+        const token = mintAsapToken({}, { notYetValid: true });
+
+        await assert.rejects(
+            () => asapClient({ token }),
+            /not-allowed/
+        );
+    });
+
     it('rejects connection with wrong issuer', async () => {
         const token = mintAsapToken({ iss: 'other-app' });
 
@@ -117,6 +126,44 @@ describe('mod_auth_token (ASAP / RS256)', () => {
         const info = await getSessionInfo(c.jid);
 
         assert.strictEqual(info.jitsi_meet_room, 'testroom');
+    });
+
+    it('sets session.jitsi_meet_context_user from token context', async () => {
+        const token = mintAsapToken({
+            context: {
+                user: { id: 'user-123', name: 'Alice', email: 'alice@example.com' },
+            },
+        });
+        const c = await asapClient({ token });
+
+        clients.push(c);
+        const info = await getSessionInfo(c.jid);
+
+        assert.strictEqual(info.jitsi_meet_context_user.id, 'user-123');
+        assert.strictEqual(info.jitsi_meet_context_user.name, 'Alice');
+        assert.strictEqual(info.jitsi_meet_context_user.email, 'alice@example.com');
+    });
+
+    it('sets session.jitsi_meet_context_group from token context', async () => {
+        const token = mintAsapToken({
+            context: { group: 'test-group' },
+        });
+        const c = await asapClient({ token });
+
+        clients.push(c);
+        const info = await getSessionInfo(c.jid);
+
+        assert.strictEqual(info.jitsi_meet_context_group, 'test-group');
+    });
+
+    it('sets session.jitsi_meet_context_user.id from top-level user_id when context is absent', async () => {
+        const token = mintAsapToken({ user_id: 'legacy-user-456' });
+        const c = await asapClient({ token });
+
+        clients.push(c);
+        const info = await getSessionInfo(c.jid);
+
+        assert.strictEqual(info.jitsi_meet_context_user.id, 'legacy-user-456');
     });
 
     it('allows connection without token when allow_empty_token is true', async () => {

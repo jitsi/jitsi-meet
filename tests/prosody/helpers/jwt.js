@@ -23,9 +23,11 @@ export const ASAP_PRIVATE_KEY = fs.readFileSync(
  * Builds a standard JWT payload with sane defaults.
  *
  * @param {object} [overrides]  Fields to merge / override.
- * @param {boolean} [expired]   If true, set exp to one hour in the past.
+ * @param {object} [opts]
+ * @param {boolean} [opts.expired]    If true, set exp to one hour in the past.
+ * @param {boolean} [opts.notYetValid] If true, set nbf to one hour in the future.
  */
-function buildPayload(overrides = {}, expired = false) {
+function buildPayload(overrides = {}, { expired = false, notYetValid = false } = {}) {
     const now = Math.floor(Date.now() / 1000);
 
     return {
@@ -33,6 +35,7 @@ function buildPayload(overrides = {}, expired = false) {
         aud: DEFAULT_APP_ID,
         iat: now,
         exp: expired ? now - 3600 : now + 3600,
+        ...(notYetValid ? { nbf: now + 3600 } : {}),
         ...overrides,
     };
 }
@@ -56,8 +59,8 @@ function buildPayload(overrides = {}, expired = false) {
  * @param {boolean} [opts.expired] If true, set exp to one hour in the past.
  * @returns {string} Signed JWT string.
  */
-export function mintToken(overrides = {}, { secret = DEFAULT_SECRET, expired = false } = {}) {
-    return jwt.sign(buildPayload(overrides, expired), secret, { algorithm: 'HS256' });
+export function mintToken(overrides = {}, { secret = DEFAULT_SECRET, expired = false, notYetValid = false } = {}) {
+    return jwt.sign(buildPayload(overrides, { expired, notYetValid }), secret, { algorithm: 'HS256' });
 }
 
 /**
@@ -77,9 +80,10 @@ export function mintAsapToken(overrides = {}, {
     privateKey = ASAP_PRIVATE_KEY,
     kid = ASAP_KID,
     expired = false,
+    notYetValid = false,
 } = {}) {
     return jwt.sign(
-        buildPayload(overrides, expired),
+        buildPayload(overrides, { expired, notYetValid }),
         privateKey,
         { algorithm: 'RS256', keyid: kid }
     );
