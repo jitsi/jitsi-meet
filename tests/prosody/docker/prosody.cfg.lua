@@ -62,6 +62,15 @@ VirtualHost "localhost"
 VirtualHost "jitsi-anonymous.localhost"
     authentication = "jitsi-anonymous"
 
+-- VirtualHost used by mod_auth_jitsi-shared-secret tests.
+VirtualHost "shared-secret.localhost"
+    authentication = "jitsi-shared-secret"
+    shared_secret = "topsecret"
+    shared_secret_prev = "oldsecret"
+    -- Disable SCRAM so Prosody only offers PLAIN. SCRAM requires per-user key
+    -- derivation which is incompatible with a shared-secret auth provider.
+    disable_sasl_mechanisms = { "SCRAM-SHA-1", "SCRAM-SHA-1-PLUS" }
+
 VirtualHost "whitelist.localhost"
     authentication = "anonymous"
 

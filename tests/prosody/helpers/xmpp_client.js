@@ -36,9 +36,12 @@ export async function joinWithFocus(roomJid) {
  *                                            domain without changing the TCP target.
  * @param {object} [opts.params]              Optional query parameters appended to the
  *                                            WebSocket URL (e.g. { previd: 'token' }).
+ * @param {string} [opts.username]            SASL username for PLAIN auth. When omitted,
+ *                                            ANONYMOUS auth is used.
+ * @param {string} [opts.password]            SASL password for PLAIN auth.
  * @returns {Promise<XmppTestClient>}
  */
-export async function createXmppClient({ host = 'localhost', domain, params } = {}) {
+export async function createXmppClient({ host = 'localhost', domain, params, username, password } = {}) {
     const url = new URL(`ws://${host}:5280/xmpp-websocket`);
 
     if (params) {
@@ -49,8 +52,13 @@ export async function createXmppClient({ host = 'localhost', domain, params } = 
 
     const xmpp = client({
         service: url.toString(),
-        domain: domain ?? host
+        domain: domain ?? host,
+        ...(username !== undefined ? { username, password } : {})
     });
+
+    // Suppress unhandled 'error' events (e.g. WebSocket close after auth failure).
+    // Errors surface through the xmpp.start() promise rejection instead.
+    xmpp.on('error', () => {});
 
     // id -> { resolve, reject, timer }
     const pendingIqs = new Map();
