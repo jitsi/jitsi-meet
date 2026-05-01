@@ -24,6 +24,9 @@ module:hook("resource-bind", function(event)
             auth_token = session.auth_token,
             user_region = session.user_region,
             user_agent_header = session.user_agent_header,
+            -- Fields set by mod_auth_token after JWT verification:
+            jitsi_meet_room = session.jitsi_meet_room,
+            jitsi_meet_context_features = session.jitsi_meet_context_features,
         };
     end
 end, 10);

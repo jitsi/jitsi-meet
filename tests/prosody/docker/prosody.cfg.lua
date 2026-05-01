@@ -40,6 +40,9 @@ VirtualHost "localhost"
     app_id = "jitsi"
     app_secret = "testsecret"
     allow_empty_token = true
+    signature_algorithm = "HS256"
+    -- Match production: room claim not required (tests use allow_empty_token or supply room claim explicitly).
+    asap_require_room_claim = false
 
     -- Serve test_observer HTTP endpoints here so plain HTTP on port 5280 is
     -- reachable. Component HTTP routes end up on HTTPS 5281 due to Prosody's

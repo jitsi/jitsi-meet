@@ -13,6 +13,7 @@
   "dependencies": {
     "@xmpp/client": "^0.13.1",
     "@xmpp/xml": "^0.13.1",
+    "jsonwebtoken": "^9.0.0",
     "testcontainers": "^10.13.2"
   },
   "devDependencies": {
