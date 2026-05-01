@@ -55,12 +55,23 @@ local function capture_session_info(event)
 end
 
 -- resource-bind fires on each VirtualHost's own event bus, not globally.
--- Register on every loaded host so sessions from any VirtualHost are captured.
-for _, host in pairs(prosody.hosts) do
-    if host.events then
-        host.events.add_handler("resource-bind", capture_session_info, 10);
+-- Register on every host already active at module load time, and on any host
+-- that activates later (e.g. hs256.localhost loads after localhost since
+-- VirtualHosts are initialized in config order).
+local function register_on_host(host_obj)
+    if host_obj and host_obj.events then
+        host_obj.events.add_handler("resource-bind", capture_session_info, 10);
     end
 end
+
+for _, host_obj in pairs(prosody.hosts) do
+    register_on_host(host_obj);
+end
+
+-- host-activated passes the hostname string directly (not a table).
+module:hook_global("host-activated", function(host)
+    register_on_host(prosody.hosts[host]);
+end);
 
 -- /conference.localhost/mod_test_observer is the absolute path for the shared
 -- table created by mod_test_observer running on conference.localhost.
@@ -114,6 +125,25 @@ module:provides("http", {
             -- Replace with a fresh table; mod_test_observer always reads shared.events
             -- via the shared reference so it will see the new table immediately.
             shared.events = {};
+            return { status_code = 204 };
+        end;
+
+        -- GET /test-observer/jibri-iqs
+        -- Returns the list of Jibri IQs that reached the MUC (i.e. passed mod_filter_iq_jibri).
+        ["GET /jibri-iqs"] = function()
+            local iqs = shared.jibri_iqs or {};
+            local body = #iqs == 0 and "[]" or json.encode(iqs);
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = body;
+            };
+        end;
+
+        -- DELETE /test-observer/jibri-iqs
+        -- Clears the recorded Jibri IQ list. Call before each test.
+        ["DELETE /jibri-iqs"] = function()
+            shared.jibri_iqs = {};
             return { status_code = 204 };
         end;
 

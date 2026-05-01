@@ -7,8 +7,9 @@
 -- can access the same table via module:shared("/<this_host>/mod_test_observer").
 -- module:shared() uses the path string as-is — no automatic host prefix.
 local shared = module:shared("/" .. module.host .. "/mod_test_observer");
-if not shared.events then shared.events = {}; end
-if not shared.rooms  then shared.rooms  = {}; end
+if not shared.events    then shared.events    = {}; end
+if not shared.rooms     then shared.rooms     = {}; end
+if not shared.jibri_iqs then shared.jibri_iqs = {}; end
 
 local tracked = {
     "muc-room-pre-create";
@@ -38,5 +39,32 @@ end, -999);
 module:hook("muc-room-destroyed", function(event)
     shared.rooms[event.room.jid] = nil;
 end, -999);
+
+-- Record Jibri IQs that reach the MUC component (i.e. passed mod_filter_iq_jibri).
+-- If the filter blocks an IQ it never arrives here, so absence = blocked.
+-- High priority (500) so this runs before mod_muc's iq/full handler, which
+-- returns non-nil and would prevent lower-priority hooks from firing.
+-- Guard: only record IQs addressed to this component (to = room@<this_host>/nick).
+-- The MUC re-routes the IQ to the occupant's real JID on another host, which
+-- would fire iq/full a second time — skip those forwarded copies.
+local jid_util = require "util.jid";
+module:hook("iq/full", function(event)
+    local stanza = event.stanza;
+    -- Only capture initial requests; ignore error/result responses routed back
+    -- through the MUC (e.g. @xmpp/client auto-replying to unhandled IQs).
+    local iq_type = stanza.attr.type;
+    if iq_type ~= "set" and iq_type ~= "get" then return; end
+    local _, to_host = jid_util.split(stanza.attr.to);
+    if to_host ~= module.host then return; end
+    local jibri = stanza:get_child('jibri', 'http://jitsi.org/protocol/jibri');
+    if jibri then
+        table.insert(shared.jibri_iqs, {
+            from           = stanza.attr.from;
+            to             = stanza.attr.to;
+            action         = jibri.attr.action;
+            recording_mode = jibri.attr.recording_mode;
+        });
+    end
+end, 500);
 
 module:log("info", "test_observer loaded");

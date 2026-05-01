@@ -52,6 +52,7 @@ VirtualHost "localhost"
         "muc_size";
         "muc_census";
         "conference_duration";
+        "filter_iq_jibri";
     }
 
     -- Required by mod_test_observer_http to locate the shared MUC data.

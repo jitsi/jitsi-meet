@@ -167,6 +167,33 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a Jibri IQ (http://jitsi.org/protocol/jibri) to the focus
+         * occupant of the given room. Fire-and-forget — does NOT wait for a
+         * response, because mod_filter_iq_jibri may block it before it reaches
+         * any handler that would reply, and the test asserts via the
+         * /jibri-iqs HTTP endpoint instead.
+         *
+         * @param {string} roomJid         e.g. 'room@conference.localhost'
+         * @param {string} action          'start' | 'stop' | 'status' etc.
+         * @param {string} recordingMode   'file' (recording) | 'stream' (livestreaming)
+         */
+        sendJibriIq(roomJid, action, recordingMode) {
+            // Directed to focus's occupant full JID so `pre-iq/full` fires on the
+            // main VirtualHost where mod_filter_iq_jibri is loaded.
+            return xmpp.send(
+                xml('iq', { type: 'set',
+                    to: `${roomJid}/focus`,
+                    id: `jibri-${++_counter}` },
+                    xml('jibri', {
+                        xmlns: 'http://jitsi.org/protocol/jibri',
+                        action,
+                        recording_mode: recordingMode,
+                    })
+                )
+            );
+        },
+
+        /**
          * Sends a disco#info IQ and resolves with the response stanza.
          * @param {string} targetJid
          */
