@@ -77,6 +77,18 @@ export async function createXmppClient({ host = 'localhost', domain, params } = 
         jid: xmpp.jid?.toString(),
 
         /**
+         * Returns the XEP-0198 stream management resumption token assigned by
+         * the server. Only available after the session is online and stream
+         * management has been negotiated. Must be read before disconnecting
+         * (the token is cleared on offline).
+         *
+         * @returns {string}
+         */
+        get smId() {
+            return xmpp.streamManagement.id;
+        },
+
+        /**
          * Joins a MUC room. Resolves with the self-presence stanza (may have type='error').
          * Rejects with a timeout error if no presence is received within the timeout.
          * @param {string} roomJid       e.g. 'room@conference.localhost'
@@ -134,6 +146,18 @@ export async function createXmppClient({ host = 'localhost', domain, params } = 
             try {
                 await xmpp.stop();
             } catch { /* ignore on teardown */ }
+        },
+
+        /**
+         * Abruptly closes the underlying WebSocket without sending a stream
+         * close. Prosody will put the session into smacks hibernation, keeping
+         * it in full_sessions so mod_auth_jitsi-anonymous can find it by
+         * resumption_token on the next connect.
+         */
+        dropConnection() {
+            try {
+                xmpp.websocket?.socket?.end();
+            } catch { /* ignore */ }
         }
     };
 }

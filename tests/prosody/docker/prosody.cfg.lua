@@ -19,6 +19,7 @@ modules_enabled = {
     "admin_shell";
     "http";
     "websocket";
+    "smacks";
 }
 
 -- Allow WebSocket connections without TLS (tests run over loopback).
@@ -57,6 +58,10 @@ VirtualHost "localhost"
 -- Second VirtualHost whose domain is listed in muc_access_whitelist on the
 -- MUC component below. Clients connecting here get JIDs like
 -- <random>@whitelist.localhost and are treated as whitelisted.
+-- VirtualHost used by mod_auth_jitsi-anonymous tests.
+VirtualHost "jitsi-anonymous.localhost"
+    authentication = "jitsi-anonymous"
+
 VirtualHost "whitelist.localhost"
     authentication = "anonymous"
 
