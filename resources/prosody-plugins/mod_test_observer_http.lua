@@ -8,6 +8,26 @@
 
 local json = require "cjson.safe";
 
+-- session-info: capture mod_jitsi_session fields after resource-bind so tests
+-- can assert the URL query params were correctly stored on the session object.
+local session_info = {}; -- full_jid -> field snapshot
+
+module:hook("resource-bind", function(event)
+    local session = event.session;
+    local jid = session.full_jid;
+    if jid then
+        session_info[jid] = {
+            previd = session.previd,
+            customusername = session.customusername,
+            jitsi_web_query_room = session.jitsi_web_query_room,
+            jitsi_web_query_prefix = session.jitsi_web_query_prefix,
+            auth_token = session.auth_token,
+            user_region = session.user_region,
+            user_agent_header = session.user_agent_header,
+        };
+    end
+end, 10);
+
 -- /conference.localhost/mod_test_observer is the absolute path for the shared
 -- table created by mod_test_observer running on conference.localhost.
 local MUC_HOST = module:get_option_string("muc_mapper_domain_base", "localhost");
@@ -69,6 +89,25 @@ module:provides("http", {
                 status_code = 200;
                 headers = { ["Content-Type"] = "application/json" };
                 body = '{"ok":true}';
+            };
+        end;
+
+        -- GET /test-observer/session-info?jid=user@localhost/resource
+        -- Returns the mod_jitsi_session fields captured at resource-bind time.
+        ["GET /session-info"] = function(event)
+            local params = parse_query(event.request.url.query);
+            local jid = params["jid"];
+            if not jid then
+                return { status_code = 400; body = '{"error":"missing jid param"}' };
+            end
+            local info = session_info[jid];
+            if not info then
+                return { status_code = 404; body = '{"error":"session not found"}' };
+            end
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = json.encode(info);
             };
         end;
 
