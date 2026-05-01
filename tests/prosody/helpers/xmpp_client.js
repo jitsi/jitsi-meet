@@ -29,17 +29,26 @@ export async function joinWithFocus(roomJid) {
  * Prosody must be configured with `authentication = "anonymous"` and no TLS.
  *
  * @param {object} opts
- * @param {string} [opts.host='localhost']   TCP host to connect to.
- * @param {number} [opts.port=5222]          TCP port.
- * @param {string} [opts.domain]             XMPP domain (stream header). Defaults to host.
- *                                           Set to a different VirtualHost name (e.g.
- *                                           'whitelist.localhost') to get a JID on that
- *                                           domain without changing the TCP target.
+ * @param {string} [opts.host='localhost']    TCP host to connect to.
+ * @param {string} [opts.domain]              XMPP domain (stream header). Defaults to host.
+ *                                            Set to a different VirtualHost name (e.g.
+ *                                            'whitelist.localhost') to get a JID on that
+ *                                            domain without changing the TCP target.
+ * @param {object} [opts.params]              Optional query parameters appended to the
+ *                                            WebSocket URL (e.g. { previd: 'token' }).
  * @returns {Promise<XmppTestClient>}
  */
-export async function createXmppClient({ host = 'localhost', port = 5222, domain } = {}) {
+export async function createXmppClient({ host = 'localhost', domain, params } = {}) {
+    const url = new URL(`ws://${host}:5280/xmpp-websocket`);
+
+    if (params) {
+        for (const [ k, v ] of Object.entries(params)) {
+            url.searchParams.set(k, v);
+        }
+    }
+
     const xmpp = client({
-        service: `xmpp://${host}:${port}`,
+        service: url.toString(),
         domain: domain ?? host
     });
 

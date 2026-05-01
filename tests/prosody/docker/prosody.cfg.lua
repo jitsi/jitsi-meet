@@ -18,7 +18,11 @@ modules_enabled = {
     "ping";
     "admin_shell";
     "http";
+    "websocket";
 }
+
+-- Allow WebSocket connections without TLS (tests run over loopback).
+consider_websocket_secure = true
 
 c2s_require_encryption = false
 s2s_require_encryption = false
