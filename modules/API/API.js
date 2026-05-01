@@ -606,6 +606,7 @@ function initCommands() {
             APP.store.dispatch(setMediaEncryptionKey(JSON.parse(keyInfo)));
         },
         'send-olm-message': (participantId, type, payload) => {
+            console.log(`[encedo:olm] API send-olm-message handler to=${participantId} type=${type} hasRoom=${!!APP.conference._room} hasMethod=${!!APP.conference._room?.sendOlmMessage}`);
             APP.conference._room?.sendOlmMessage(participantId, type, JSON.parse(payload));
         },
         'set-video-quality': frameHeight => {
