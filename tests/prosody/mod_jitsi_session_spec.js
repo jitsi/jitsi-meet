@@ -81,13 +81,15 @@ describe('mod_jitsi_session', () => {
         assert.equal(info.jitsi_web_query_prefix, '');
     });
 
-    it('sets session.auth_token from ?token query param', async () => {
-        const c = await createXmppClient({ params: { token: 'mytoken' } });
-
-        clients.push(c);
-        const info = await getSessionInfo(c.jid);
-
-        assert.equal(info.auth_token, 'mytoken');
+    it('rejects connection when ?token is present but invalid', async () => {
+        // mod_jitsi_session sets session.auth_token from ?token, but with
+        // authentication="token" the auth module immediately verifies it as a
+        // JWT. An invalid token causes SASL not-allowed before resource-bind,
+        // so the session fields are never accessible via getSessionInfo.
+        await assert.rejects(
+            () => createXmppClient({ params: { token: 'notavalidjwt' } }),
+            /not-allowed/
+        );
     });
 
     it('sets session.customusername from ?customusername query param', async () => {
