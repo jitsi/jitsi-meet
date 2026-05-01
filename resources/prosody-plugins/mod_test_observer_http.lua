@@ -7,12 +7,33 @@
 -- module:shared. Load order does not matter; shared tables are created lazily.
 
 local json = require "cjson.safe";
+local io = require "io";
 
--- session-info: capture mod_jitsi_session fields after resource-bind so tests
--- can assert the URL query params were correctly stored on the session object.
+-- ASAP public key server: serves the test RSA public key so that Prosody can
+-- fetch it when verifying RS256 tokens signed by the matching private key.
+-- util.lib.lua constructs the URL as: <asap_key_server>/<sha256hex(kid)>.pem
+-- For kid="test-asap-key" the SHA256 hex is hardcoded below.
+local ASAP_KEY_PATH = "/opt/prosody-jitsi-plugins/test-asap-public.pem";
+local ASAP_KID_SHA256 = "dc6983da8e703a3f51d4c1cb92b52c982f7853ce3d5ba20c782fcd13616f6dfc";
+
+local asap_public_key;
+do
+    local f = io.open(ASAP_KEY_PATH, "r");
+    if f then
+        asap_public_key = f:read("*all");
+        f:close();
+        module:log("info", "Loaded test ASAP public key from %s", ASAP_KEY_PATH);
+    else
+        module:log("warn", "Test ASAP public key not found at %s; ASAP key-server routes will 404", ASAP_KEY_PATH);
+    end
+end
+
+-- session-info: capture mod_jitsi_session / mod_auth_token fields after
+-- resource-bind so tests can assert URL query params and JWT claims were
+-- stored correctly on the session object.
 local session_info = {}; -- full_jid -> field snapshot
 
-module:hook("resource-bind", function(event)
+local function capture_session_info(event)
     local session = event.session;
     local jid = session.full_jid;
     if jid then
@@ -29,7 +50,15 @@ module:hook("resource-bind", function(event)
             jitsi_meet_context_features = session.jitsi_meet_context_features,
         };
     end
-end, 10);
+end
+
+-- resource-bind fires on each VirtualHost's own event bus, not globally.
+-- Register on every loaded host so sessions from any VirtualHost are captured.
+for _, host in pairs(prosody.hosts) do
+    if host.events then
+        host.events.add_handler("resource-bind", capture_session_info, 10);
+    end
+end
 
 -- /conference.localhost/mod_test_observer is the absolute path for the shared
 -- table created by mod_test_observer running on conference.localhost.
@@ -54,6 +83,20 @@ end
 module:provides("http", {
     default_path = "/test-observer";
     route = {
+        -- GET /test-observer/asap-keys/<sha256hex(kid)>.pem
+        -- Returns the test RSA public key PEM so mod_auth_token can verify RS256 tokens.
+        -- kid must be "test-asap-key" (its SHA256 hex is the filename).
+        ["GET /asap-keys/"..ASAP_KID_SHA256..".pem"] = function()
+            if not asap_public_key then
+                return { status_code = 404; body = "key not found" };
+            end
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/x-pem-file" };
+                body = asap_public_key;
+            };
+        end;
+
         ["GET /events"] = function()
             local events = shared.events or {};
             -- cjson encodes an empty Lua table as {} (object); force array literal.

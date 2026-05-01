@@ -2,7 +2,7 @@ import assert from 'assert';
 import http from 'http';
 
 import { createXmppClient } from './helpers/xmpp_client.js';
-import { mintToken } from './helpers/jwt.js';
+import { mintAsapToken } from './helpers/jwt.js';
 
 /**
  * Fetches session-info for the given full JID.
@@ -34,12 +34,16 @@ function getSessionInfo(jid) {
     });
 }
 
-/** Connects to the HS256 VirtualHost. */
-function hs256Client(params) {
-    return createXmppClient({ domain: 'hs256.localhost', params });
+/**
+ * Connects to the main VirtualHost (RS256 / ASAP key-server auth).
+ * Tokens must be signed with the test RSA private key; Prosody fetches the
+ * matching public key from mod_test_observer_http's /asap-keys/ route.
+ */
+function asapClient(params) {
+    return createXmppClient({ params });
 }
 
-describe('mod_auth_token (HS256 shared secret)', () => {
+describe('mod_auth_token (ASAP / RS256)', () => {
 
     const clients = [];
 
@@ -48,43 +52,47 @@ describe('mod_auth_token (HS256 shared secret)', () => {
         clients.length = 0;
     });
 
-    it('connects successfully with a valid token', async () => {
-        const token = mintToken();
-        const c = await hs256Client({ token });
+    it('connects successfully with a valid RS256 token', async () => {
+        const token = mintAsapToken();
+        const c = await asapClient({ token });
 
         clients.push(c);
         assert.ok(c.jid, 'client should have a JID after connecting');
     });
 
-    it('rejects connection with wrong secret', async () => {
-        const token = mintToken({}, { secret: 'wrongsecret' });
+    it('rejects connection with wrong private key', async () => {
+        // Sign with a freshly generated key that the server does not know.
+        const { generateKeyPairSync } = await import('crypto');
+        const { privateKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
+        const wrongPem = privateKey.export({ type: 'pkcs8', format: 'pem' });
+        const token = mintAsapToken({}, { privateKey: wrongPem });
 
         await assert.rejects(
-            () => hs256Client({ token }),
+            () => asapClient({ token }),
             /not-allowed/
         );
     });
 
     it('rejects connection with expired token', async () => {
-        const token = mintToken({}, { expired: true });
+        const token = mintAsapToken({}, { expired: true });
 
         await assert.rejects(
-            () => hs256Client({ token }),
+            () => asapClient({ token }),
             /not-allowed/
         );
     });
 
     it('rejects connection with wrong issuer', async () => {
-        const token = mintToken({ iss: 'other-app' });
+        const token = mintAsapToken({ iss: 'other-app' });
 
         await assert.rejects(
-            () => hs256Client({ token }),
+            () => asapClient({ token }),
             /not-allowed/
         );
     });
 
     it('sets session.jitsi_meet_context_features from token context', async () => {
-        const token = mintToken({
+        const token = mintAsapToken({
             context: {
                 features: {
                     'screen-sharing': true,
@@ -92,7 +100,7 @@ describe('mod_auth_token (HS256 shared secret)', () => {
                 },
             },
         });
-        const c = await hs256Client({ token });
+        const c = await asapClient({ token });
 
         clients.push(c);
         const info = await getSessionInfo(c.jid);
@@ -102,12 +110,19 @@ describe('mod_auth_token (HS256 shared secret)', () => {
     });
 
     it('sets session.jitsi_meet_room from room claim', async () => {
-        const token = mintToken({ room: 'testroom' });
-        const c = await hs256Client({ token });
+        const token = mintAsapToken({ room: 'testroom' });
+        const c = await asapClient({ token });
 
         clients.push(c);
         const info = await getSessionInfo(c.jid);
 
         assert.strictEqual(info.jitsi_meet_room, 'testroom');
+    });
+
+    it('allows connection without token when allow_empty_token is true', async () => {
+        const c = await asapClient({});
+
+        clients.push(c);
+        assert.ok(c.jid, 'client should have a JID');
     });
 });

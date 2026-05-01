@@ -38,10 +38,10 @@ https_ports = {}
 VirtualHost "localhost"
     authentication = "token"
     app_id = "jitsi"
-    app_secret = "testsecret"
+    asap_key_server = "http://localhost:5280/test-observer/asap-keys"
+    signature_algorithm = "RS256"
     allow_empty_token = true
-    signature_algorithm = "HS256"
-    -- Match production: room claim not required (tests use allow_empty_token or supply room claim explicitly).
+    -- Match production: room claim not required.
     asap_require_room_claim = false
 
     -- Serve test_observer HTTP endpoints here so plain HTTP on port 5280 is
@@ -60,6 +60,15 @@ VirtualHost "localhost"
 
     -- Required by mod_conference_duration to find the MUC component.
     main_muc = "conference.localhost"
+
+-- VirtualHost for HS256 (shared-secret) token auth tests.
+VirtualHost "hs256.localhost"
+    authentication = "token"
+    app_id = "jitsi"
+    app_secret = "testsecret"
+    signature_algorithm = "HS256"
+    asap_require_room_claim = false
+    allow_empty_token = false
 
 -- Second VirtualHost whose domain is listed in muc_access_whitelist on the
 -- MUC component below. Clients connecting here get JIDs like

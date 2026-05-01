@@ -34,3 +34,6 @@ COPY --from=builder /usr/local/share/lua/5.4 /usr/local/share/lua/5.4
 COPY --chown=prosody:prosody resources/prosody-plugins/ /opt/prosody-jitsi-plugins/
 
 COPY --chown=prosody:prosody tests/prosody/docker/prosody.cfg.lua /etc/prosody/prosody.cfg.lua
+
+# Test ASAP public key — served by mod_test_observer_http for RS256 token verification tests.
+COPY --chown=prosody:prosody tests/prosody/fixtures/test-asap-public.pem /opt/prosody-jitsi-plugins/test-asap-public.pem

@@ -83,9 +83,10 @@ describe('mod_jitsi_session', () => {
 
     it('rejects connection when ?token is present but invalid', async () => {
         // mod_jitsi_session sets session.auth_token from ?token, but with
-        // authentication="token" the auth module immediately verifies it as a
-        // JWT. An invalid token causes SASL not-allowed before resource-bind,
-        // so the session fields are never accessible via getSessionInfo.
+        // authentication="token" (RS256/ASAP on localhost) the auth module
+        // immediately tries to verify it. An invalid token string fails JWT
+        // parsing before resource-bind, so the session fields are never
+        // accessible via getSessionInfo.
         await assert.rejects(
             () => createXmppClient({ params: { token: 'notavalidjwt' } }),
             /not-allowed/
