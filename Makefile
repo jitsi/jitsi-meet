@@ -68,6 +68,8 @@ deploy-lib-jitsi-meet:
 
 deploy-olm:
 	cp \
+		$(OLM_DIR)/olm.js \
+		$(OLM_DIR)/olm_legacy.js \
 		$(OLM_DIR)/olm.wasm \
 		$(DEPLOY_DIR)
 
