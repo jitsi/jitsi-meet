@@ -39,6 +39,7 @@ VirtualHost "localhost"
     modules_enabled = {
         "test_observer_http";
         "muc_size";
+        "muc_census";
         "conference_duration";
     }
 

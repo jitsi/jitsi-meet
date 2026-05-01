@@ -14,6 +14,7 @@ export const mochaHooks = {
             path.join(__dirname, 'docker'),
             'docker-compose.yml'
         )
+            .withBuild()
             .withWaitStrategy('prosody-1', Wait.forListeningPorts())
             .up();
 
