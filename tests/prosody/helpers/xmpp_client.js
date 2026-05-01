@@ -103,14 +103,18 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * @param {string} [nick]        defaults to a unique generated nick
          * @param {object} [opts]
          * @param {number} [opts.timeout=5000]  ms to wait for presence before rejecting
+         * @param {string} [opts.password]       room password to include in the join stanza
          */
-        async joinRoom(roomJid, nick, { timeout = 5000 } = {}) {
+        async joinRoom(roomJid, nick, { timeout = 5000, password } = {}) {
             const n = nick ?? `user${++_counter}`;
+            const mucX = xml('x', { xmlns: 'http://jabber.org/protocol/muc' });
+
+            if (password !== undefined) {
+                mucX.c('password').t(password);
+            }
 
             await xmpp.send(
-                xml('presence', { to: `${roomJid}/${n}` },
-                    xml('x', { xmlns: 'http://jabber.org/protocol/muc' })
-                )
+                xml('presence', { to: `${roomJid}/${n}` }, mucX)
             );
 
             const presence = await waitForPresence(stanzaQueue, roomJid, timeout);
@@ -134,6 +138,32 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
             }
 
             return presence;
+        },
+
+        /**
+         * Sets (or clears) the password on a MUC room. The client must be the room owner.
+         * Resolves when the server acknowledges the configuration change.
+         * @param {string} roomJid  e.g. 'room@conference.localhost'
+         * @param {string} password  pass empty string to remove the password
+         */
+        setRoomPassword(roomJid, password) {
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'set',
+                    to: roomJid,
+                    id: `cfg-${++_counter}` },
+                    xml('query', { xmlns: 'http://jabber.org/protocol/muc#owner' },
+                        xml('x', { xmlns: 'jabber:x:data',
+                            type: 'submit' },
+                            xml('field', { var: 'FORM_TYPE' },
+                                xml('value', {}, 'http://jabber.org/protocol/muc#roomconfig')
+                            ),
+                            xml('field', { var: 'muc#roomconfig_roomsecret' },
+                                xml('value', {}, password)
+                            )
+                        )
+                    )
+                )
+            );
         },
 
         /**

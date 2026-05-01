@@ -87,6 +87,7 @@ Component "conference.localhost" "muc"
         "muc_max_occupants";
         "muc_meeting_id";
         "muc_resource_validate";
+        "muc_password_whitelist";
         "test_observer";
     }
 
@@ -100,6 +101,10 @@ Component "conference.localhost" "muc"
     -- and are not counted against it, so existing tests are unaffected when a
     -- focus client unlocks the jicofo lock in mod_muc_meeting_id.
     muc_access_whitelist = { "whitelist.localhost", "focus.localhost" }
+
+    -- Used by mod_muc_password_whitelist tests: clients from whitelist.localhost
+    -- are injected with the room password and bypass the password check.
+    muc_password_whitelist = { "whitelist.localhost" }
 
     -- Required by util.lib.lua domain-mapping helpers and mod_jitsi_permissions.
     muc_mapper_domain_base = "localhost"
