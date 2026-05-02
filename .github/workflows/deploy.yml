@@ -26,13 +26,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push
+        id: docker_build
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./dockerfile
           platforms: linux/amd64 # EC2 architecture
           push: true
-          tags: ghcr.io/${{ github.repository }}/jitsi-web-custom:latest
+          tags: ghcr.io/gotham-enterprise/video-meet/jitsi-web-custom:latest
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
