@@ -63,7 +63,7 @@ var config = {
 
     // Option to send conference requests to jicofo over http (requires nginx rule for it)
     conferenceRequestUrl:
-      'https://localhost:8443/' + subdir + 'conference-request/v1',
+        'https://localhost:8443/' + subdir + 'conference-request/v1',
 
     // Options related to the bridge (colibri) data channel
     bridgeChannel: {
@@ -706,23 +706,30 @@ var config = {
     // enableWelcomePage: true,
 
     // Configs for welcome page.
-    // welcomePage: {
-    //     // Whether to disable welcome page. In case it's disabled a random room
-    //     // will be joined when no room is specified.
-    //     disabled: false,
-    //     // If set, landing page will redirect to this URL.
-    //     customUrl: ''
-    // },
+    welcomePage: {
+        // Skip welcome page - room is joined directly
+        disabled: true,
+        // If set, landing page will redirect to this URL.
+        customUrl: ''
+    },
+    enableWelcomePage: false,
 
     // Configs for the lobby screen.
-    // lobby: {
-    //     // If Lobby is enabled, it starts knocking automatically. Replaces `autoKnockLobby`.
-    //     autoKnock: false,
-    //     // Enables the lobby chat. Replaces `enableLobbyChat`.
-    //     enableChat: true,
-    //     // Shows the hangup button in the lobby screen.
-    //     showHangUp: true,
-    // },
+    lobby: {
+        // If Lobby is enabled, it starts knocking automatically. Replaces `autoKnockLobby`.
+        autoKnock: false,
+        // Enables the lobby chat. Replaces `enableLobbyChat`.
+        enableChat: true,
+        // Shows the hangup button in the lobby screen.
+        showHangUp: true,
+        // Enable lobby by default for all rooms
+        enabled: true
+    },
+
+    // Disable prejoin screen (camera/mic preview before joining)
+    prejoinConfig: {
+        enabled: false
+    },
 
     // Configs for the security related UI elements.
     // securityUi: {
@@ -742,6 +749,12 @@ var config = {
     // Enabling the close page will ignore the welcome page redirection when
     // a call is hangup.
     // enableClosePage: false,
+
+    // Enable lobby mode by default (requires authentication to join)
+    lobby: {
+        enabled: true,
+        autoKnock: true
+    },
 
     // Disable hiding of remote thumbnails when in a 1-on-1 conference call.
     // Setting this to null, will also disable showing the remote videos
