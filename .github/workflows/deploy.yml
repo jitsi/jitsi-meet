@@ -1,0 +1,38 @@
+name: Build and Push Jitsi Web Image
+
+on:
+  push:
+    branches: [ video-meet ]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout jitsi-meet
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./dockerfile
+          platforms: linux/amd64 # EC2 architecture
+          push: true
+          tags: ghcr.io/${{ github.repository }}/jitsi-web-custom:latest
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
