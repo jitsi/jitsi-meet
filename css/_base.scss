@@ -40,7 +40,7 @@ body {
  * but it will still show up on keyboard focus, thus preserving accessibility.
  */
 .js-focus-visible :focus:not(.focus-visible) {
-  outline: none;
+    outline: none;
 }
 
 .jitsi-icon {
@@ -62,18 +62,29 @@ p {
     margin: 0;
 }
 
-body, input, textarea, keygen, select, button {
+body,
+input,
+textarea,
+keygen,
+select,
+button {
     font-family: $baseFontFamily !important;
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
     margin: 0;
     vertical-align: baseline;
     font-size: 1em;
 }
 
-button, select, input[type="button"],
-input[type="reset"], input[type="submit"] {
+button,
+select,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
     cursor: pointer;
 }
 
@@ -83,9 +94,13 @@ textarea {
     line-height: 1.5em;
 }
 
-input[type='text'], input[type='password'], textarea {
-    outline: none; /* removes the default outline */
-    resize: none; /* prevents the user-resizing, adjust to taste */
+input[type='text'],
+input[type='password'],
+textarea {
+    outline: none;
+    /* removes the default outline */
+    resize: none;
+    /* prevents the user-resizing, adjust to taste */
 }
 
 button {
@@ -115,8 +130,8 @@ form {
 }
 
 .leftwatermark {
-    max-width: 140px;
-    max-height:70px;
+    max-width: 240px;
+    max-height: 140px;
     left: 32px;
     top: 32px;
     background-position: center left;
@@ -124,8 +139,8 @@ form {
     background-size: contain;
 
     &.no-margin {
-        left:0;
-        top:0;
+        left: 0;
+        top: 0;
     }
 }
 
@@ -140,7 +155,7 @@ form {
     left: 25;
     bottom: 7;
     font-size: 0.875rem;
-    color: rgba(255,255,255,.50);
+    color: rgba(255, 255, 255, .50);
     text-decoration: none;
     z-index: $watermarkZ;
 }
