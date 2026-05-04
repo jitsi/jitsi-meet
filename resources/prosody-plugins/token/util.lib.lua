@@ -327,13 +327,16 @@ function Util:process_and_verify_token(session)
         if self.requireRoomClaim then
             local roomClaim = claims["room"];
             if roomClaim == nil then
-                return false, "'room' claim is missing";
+                return false, "not-authorized", "room claim is missing";
             end
         end
 
         -- Binds room name to the session which is later checked on MUC join
         session.jitsi_meet_room = claims["room"];
         -- Binds domain name to the session
+        if claims["sub"] == nil then
+            return false, "not-authorized", "sub claim is missing";
+        end
         session.jitsi_meet_domain = claims["sub"];
         session.jitsi_meet_auth_issuer = claims["iss"];
 

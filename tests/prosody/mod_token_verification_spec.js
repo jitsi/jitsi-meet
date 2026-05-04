@@ -59,6 +59,18 @@ describe('mod_token_verification', () => {
                 'tokenless user must be allowed when allow_empty_token = true');
         });
 
+        it('rejects connection when token is missing the sub claim', async () => {
+            // sub: undefined overrides the mintAsapToken default of sub: '*', producing
+            // a token with no sub field.  process_and_verify_token rejects such tokens,
+            // causing a SASL failure before the client finishes connecting.
+            const token = mintAsapToken({ sub: undefined });
+
+            await assert.rejects(
+                createXmppClient({ params: { token } }),
+                'connection must be rejected when the sub claim is absent'
+            );
+        });
+
         it('allows join with token that has no room claim', async () => {
             const room = await setupRoom();
 
