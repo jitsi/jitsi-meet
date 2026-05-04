@@ -1,5 +1,6 @@
 const BASE = 'http://localhost:5280/test-observer';
 const END_MEETING_URL = 'http://localhost:5280/end-meeting';
+const KICK_PARTICIPANT_URL = 'http://localhost:5280/kick-participant';
 
 /**
  * Returns all MUC events recorded by mod_test_observer since the last clear.
@@ -66,6 +67,39 @@ export async function getRoomState(roomJid) {
     }
 
     return res.json();
+}
+
+/**
+ * Calls the mod_muc_kick_participant HTTP endpoint to kick a participant.
+ *
+ * Returns raw { status, body } so tests can assert on error responses.
+ *
+ * @param {string} roomJid          e.g. 'room@conference.localhost'
+ * @param {string} participantId    Occupant nick / resource to kick.
+ * @param {string} token            Bearer token.
+ * @param {object} [opts]
+ * @param {boolean} [opts.omitAuth]  If true, omits the Authorization header.
+ * @returns {Promise<{status: number, body: string}>}
+ */
+export async function kickParticipant(roomJid, participantId, token, { omitAuth = false } = {}) {
+    const roomName = roomJid.split('@')[0];
+    const url = new URL(KICK_PARTICIPANT_URL);
+
+    url.searchParams.set('room', roomName);
+
+    const headers = { 'Content-Type': 'application/json' };
+
+    if (!omitAuth) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const res = await fetch(url.toString(), {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({ participantId })
+    });
+
+    return { status: res.status, body: await res.text() };
 }
 
 /**

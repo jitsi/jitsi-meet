@@ -71,6 +71,7 @@ VirtualHost "localhost"
         "conference_duration";
         "filter_iq_jibri";
         "filter_iq_rayo";
+        "muc_kick_participant";
     }
 
     -- Required by mod_test_observer_http to locate the shared MUC data.
