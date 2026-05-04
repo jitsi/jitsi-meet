@@ -43,6 +43,8 @@ VirtualHost "localhost"
     allow_empty_token = true
     -- Match production: room claim not required.
     asap_require_room_claim = false
+    -- Test JWTs carry no 'sub' claim so skip domain verification (tests only check room name).
+    enable_domain_verification = false
 
     -- Serve test_observer HTTP endpoints here so plain HTTP on port 5280 is
     -- reachable. Component HTTP routes end up on HTTPS 5281 due to Prosody's
@@ -105,6 +107,7 @@ Component "conference.localhost" "muc"
         "muc_meeting_id";
         "muc_resource_validate";
         "muc_password_whitelist";
+        "token_verification";
         "test_observer";
     }
 
@@ -127,6 +130,12 @@ Component "conference.localhost" "muc"
     muc_mapper_domain_base = "localhost"
     muc_mapper_domain_prefix = "conference"
 
+    -- In production, jicofo is a Prosody admin and is exempt from token_verification.
+    -- In tests, focus clients (focus.localhost) are not admins, so we allowlist them
+    -- explicitly so they can create rooms (verify_room requires the room to exist, but
+    -- muc-room-pre-create fires before the room is in the rooms table).
+    token_verification_allowlist = { "focus.localhost" }
+
 -- Minimal MUC component used to test mod_muc_filter_access in isolation.
 -- Only clients from whitelist.localhost are permitted to join rooms here.
 Component "conference-internal.localhost" "muc"
@@ -134,3 +143,38 @@ Component "conference-internal.localhost" "muc"
         "muc_filter_access";
     }
     muc_filter_whitelist = { "whitelist.localhost" }
+
+-- VirtualHost whose MUC component is conference.test.localhost.
+-- Used by mod_token_verification tests that need token_verification_require_token_for_moderation.
+-- Naming convention: conference.<parent>.localhost so token/util.lib.lua resolves parentHostName
+-- as "test.localhost" and builds muc_domain = "conference.test.localhost" for room lookups.
+VirtualHost "test.localhost"
+    authentication = "token"
+    app_id = "jitsi"
+    asap_key_server = "http://localhost:5280/test-observer/asap-keys"
+    signature_algorithm = "RS256"
+    allow_empty_token = true
+    asap_require_room_claim = false
+    -- Test JWTs carry no 'sub' claim so skip domain verification (tests only check room name).
+    enable_domain_verification = false
+
+    -- token/util.lib.lua constructs muc_domain = prefix.base = "conference.test.localhost"
+    muc_mapper_domain_base = "test.localhost"
+    muc_mapper_domain_prefix = "conference"
+
+-- MUC component for token_verification_require_token_for_moderation tests.
+-- token_verification_require_token_for_moderation = true blocks unauthenticated
+-- users from sending room-owner config IQs (which is how moderator status is
+-- granted to other participants).
+-- focus.localhost is allowlisted so the focus client can create rooms without a
+-- token (same rationale as conference.localhost above).
+Component "conference.test.localhost" "muc"
+    modules_enabled = {
+        "muc_meeting_id";
+        "token_verification";
+    }
+    token_verification_require_token_for_moderation = true
+    token_verification_allowlist = { "focus.localhost" }
+
+    muc_mapper_domain_base = "test.localhost"
+    muc_mapper_domain_prefix = "conference"
