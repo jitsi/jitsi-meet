@@ -7,7 +7,7 @@ local is_admin = util.is_admin;
 local get_room_from_jid = util.get_room_from_jid;
 local is_healthcheck_room = util.is_healthcheck_room;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
-local ends_with = util.ends_with;
+local is_focus = util.is_focus;
 local presence_check_status = util.presence_check_status;
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
@@ -105,7 +105,7 @@ end
 -- using token that has features pre-defined (authentication is 'token').
 function filter_stanza(stanza, session)
     if not stanza.attr or not stanza.attr.to or stanza.name ~= 'presence'
-        or stanza.attr.type == 'unavailable' or ends_with(stanza.attr.from, '/focus') then
+        or stanza.attr.type == 'unavailable' or is_focus(stanza.attr.from) then
         return stanza;
     end
 

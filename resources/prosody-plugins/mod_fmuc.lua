@@ -26,6 +26,7 @@ local is_vpaas = util.is_vpaas;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
+local is_focus_jid = util.is_focus_jid;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local presence_check_status = util.presence_check_status;
 local respond_iq_result = util.respond_iq_result;
@@ -817,7 +818,7 @@ function filter_stanza(stanza, session)
         local f_st = st.clone(stanza);
         f_st.skipMapping = true;
         return f_st;
-    elseif stanza.name == 'presence' and session.type == 'c2s' and jid.node(stanza.attr.to) == 'focus' then
+    elseif stanza.name == 'presence' and session.type == 'c2s' and is_focus_jid(stanza.attr.to) then
         local x = stanza:get_child('x', 'http://jabber.org/protocol/muc#user');
         if presence_check_status(x, '110') then
             return stanza; -- no filter

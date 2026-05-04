@@ -30,13 +30,13 @@
 --
 -- Copyright (C) 2023-present 8x8, Inc.
 
-local jid = require "util.jid";
 local hashes = require "util.hashes";
 local random = require "util.random";
 local st = require("util.stanza");
 local json = require 'cjson.safe';
 local util = module:require "util";
 local async_handler_wrapper = util.async_handler_wrapper;
+local is_focus = util.is_focus;
 local process_host_module = util.process_host_module;
 
 local muc_domain_base = module:get_option_string("muc_mapper_domain_base");
@@ -72,8 +72,7 @@ local function invite_jigasi(conference, phone_no)
     local least_stressed_value = math.huge;
     local least_stressed_jigasi_occupant;
     for occupant_jid, occupant in jigasi_brewery_room:each_occupant() do
-        local _, _, resource = jid.split(occupant_jid);
-        if resource ~= 'focus' then
+        if not is_focus(occupant_jid) then
             local occ = occupant:get_presence();
             local stats_child = occ:get_child("stats", "http://jitsi.org/protocol/colibri")
 

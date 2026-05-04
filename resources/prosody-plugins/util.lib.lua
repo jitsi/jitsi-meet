@@ -365,6 +365,24 @@ function is_focus(nick)
     return string.sub(nick, -string.len("/focus")) == "/focus";
 end
 
+--- Returns true when the given bare resource/nick string is the focus nick.
+-- Use this when you have only the resource part in isolation (not a full JID),
+-- e.g. values read from a stats table keyed by resource.
+-- @param resource  the bare resource string, e.g. "focus" or "user1"
+-- @return boolean
+local function is_focus_nick(resource)
+    return resource == 'focus';
+end
+
+--- Returns true when the given real (non-MUC) JID belongs to the focus account.
+-- Focus always authenticates with username 'focus' (e.g. focus@auth.example.com).
+-- Use this when you have the actor's real JID rather than a MUC occupant JID.
+-- @param real_jid  a real JID string, e.g. "focus@auth.example.com/res"
+-- @return boolean
+local function is_focus_jid(real_jid)
+    return jid.node(real_jid) == 'focus';
+end
+
 --- Builds the full MUC room address JID from its components.
 -- Uses muc_domain_prefix from module configuration (default: "conference").
 -- @param room_name   the local part of the room JID (e.g. "myroom")
@@ -776,6 +794,8 @@ return {
     async_handler_wrapper = async_handler_wrapper;
     build_room_address = build_room_address;
     is_focus = is_focus;
+    is_focus_nick = is_focus_nick;
+    is_focus_jid = is_focus_jid;
     presence_check_status = presence_check_status;
     process_host_module = process_host_module;
     respond_iq_result = respond_iq_result;

@@ -5,6 +5,7 @@ local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local is_jibri = util.is_jibri;
 local is_healthcheck_room = util.is_healthcheck_room;
 local process_host_module = util.process_host_module;
+local is_focus_nick = util.is_focus_nick;
 local is_transcriber = util.is_transcriber;
 local jid_resource = require "util.jid".resource;
 local st = require "util.stanza";
@@ -241,7 +242,7 @@ function occupant_joined(event)
             for jid, values in pairs(room.speakerStats) do
                 -- skip reporting those without a nick('dominantSpeakerId')
                 -- and skip focus if sneaked into the table
-                if values and type(values) == 'table' and values.nick ~= nil and values.nick ~= 'focus' then
+                if values and type(values) == 'table' and values.nick ~= nil and not is_focus_nick(values.nick) then
                     local totalDominantSpeakerTime = values.totalDominantSpeakerTime;
                     local faceLandmarks = values.faceLandmarks;
                     if totalDominantSpeakerTime > 0 or room:get_occupant_jid(jid) == nil or values:isDominantSpeaker()

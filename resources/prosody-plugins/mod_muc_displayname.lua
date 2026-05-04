@@ -10,7 +10,7 @@ local util = module:require 'util';
 local filter_identity_from_presence = util.filter_identity_from_presence;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local is_admin = util.is_admin;
-local ends_with = util.ends_with;
+local is_focus = util.is_focus;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local NICK_NS = 'http://jabber.org/protocol/nick';
 local DISPLAY_NAME_NS = 'http://jitsi.org/protocol/display-name';
@@ -26,7 +26,7 @@ local joining_moderator_participants = module:shared('moderators/joining_moderat
 --- Filter presence sent to non-moderator members of a room when the hideDisplayNameForGuests option is set.
 function filter_stanza_out(stanza, session)
     if stanza.name ~= 'presence' or stanza.attr.type == 'error'
-        or stanza.attr.type == 'unavailable' or ends_with(stanza.attr.from, '/focus') then
+        or stanza.attr.type == 'unavailable' or is_focus(stanza.attr.from) then
         return stanza;
     end
 
@@ -60,7 +60,7 @@ function filter_stanza_in(stanza, session)
     end
 
     if stanza.name ~= 'presence' or stanza.attr.type == 'error'
-        or stanza.attr.type == 'unavailable' or ends_with(stanza.attr.from, '/focus') then
+        or stanza.attr.type == 'unavailable' or is_focus(stanza.attr.from) then
         return stanza;
     end
 

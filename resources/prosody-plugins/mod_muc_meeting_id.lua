@@ -11,7 +11,7 @@ local queue = require "util.queue";
 local uuid_gen = require "util.uuid".generate;
 local main_util = module:require "util";
 local is_admin = main_util.is_admin;
-local ends_with = main_util.ends_with;
+local is_focus = main_util.is_focus;
 local get_room_from_jid = main_util.get_room_from_jid;
 local is_healthcheck_room = main_util.is_healthcheck_room;
 local internal_room_jid_match_rewrite = main_util.internal_room_jid_match_rewrite;
@@ -42,7 +42,7 @@ module:depends("jitsi_session");
 module:hook('muc-room-pre-create', function (event)
     local stanza = event.stanza;
     if is_healthcheck_room(jid.bare(stanza.attr.to)) then
-        if not ends_with(stanza.attr.to, '/focus') then
+        if not is_focus(stanza.attr.to) then
             module:log('info', 'Blocking non-focus from creating health-check room');
             event.origin.send(st.error_reply(stanza, 'cancel', 'service-unavailable'));
             return true;
@@ -134,7 +134,7 @@ module:hook('muc-occupant-pre-join', function (event)
 
     if is_health_room then
         -- Only jicofo (focus) may join health-check rooms.
-        if not ends_with(occupant.nick, '/focus') then
+        if not is_focus(occupant.nick) then
             module:log('info', 'Blocking non-focus participant from health-check room: %s', room.jid);
             event.origin.send(st.error_reply(stanza, 'cancel', 'service-unavailable'));
             return true;
@@ -147,7 +147,7 @@ module:hook('muc-occupant-pre-join', function (event)
         return;
     end
 
-    if ends_with(occupant.nick, '/focus') then
+    if is_focus(occupant.nick) then
         module:fire_event('jicofo-unlock-room', { room = room; });
     else
         room._data.jicofo_lock = true;

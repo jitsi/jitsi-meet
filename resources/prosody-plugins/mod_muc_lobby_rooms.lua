@@ -46,7 +46,8 @@ local NOTIFY_LOBBY_ACCESS_GRANTED = 'LOBBY-ACCESS-GRANTED';
 local NOTIFY_LOBBY_ACCESS_DENIED = 'LOBBY-ACCESS-DENIED';
 
 local util = module:require "util";
-local ends_with = util.ends_with;
+local is_focus = util.is_focus;
+local is_focus_jid = util.is_focus_jid;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
@@ -490,8 +491,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
     -- hooks when lobby is enabled to create its room, only done here or by admin
     host_module:hook('muc-config-submitted', function(event)
         local actor, room = event.actor, event.room;
-        local actor_node = jid_split(actor);
-        if actor_node == 'focus' then
+        if is_focus_jid(actor) then
             return;
         end
         local members_only = event.fields['muc#roomconfig_membersonly'] and true or nil;
@@ -541,7 +541,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
     host_module:hook('muc-occupant-pre-join', function (event)
         local occupant, room, stanza = event.occupant, event.room, event.stanza;
 
-        if is_healthcheck_room(room.jid) or not room:get_members_only() or ends_with(occupant.nick, '/focus') then
+        if is_healthcheck_room(room.jid) or not room:get_members_only() or is_focus(occupant.nick) then
             return;
         end
 

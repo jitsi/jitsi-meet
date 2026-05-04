@@ -799,6 +799,58 @@ describe("util.lib", function()
 
     end)
 
+    describe("is_focus_nick", function()
+
+        it("returns true for the bare string 'focus'", function()
+            assert.is_true(M.is_focus_nick("focus"))
+        end)
+
+        it("returns false for a regular nick", function()
+            assert.is_false(M.is_focus_nick("user1"))
+        end)
+
+        it("returns false for a nick that contains focus but is not exactly focus", function()
+            assert.is_false(M.is_focus_nick("focususer"))
+        end)
+
+        it("returns false for a full MUC JID (slash-qualified)", function()
+            assert.is_false(M.is_focus_nick("room@conference.example.com/focus"))
+        end)
+
+        it("returns false for empty string", function()
+            assert.is_false(M.is_focus_nick(""))
+        end)
+
+    end)
+
+    describe("is_focus_jid", function()
+
+        it("returns true for focus@auth.example.com", function()
+            assert.is_true(M.is_focus_jid("focus@auth.example.com"))
+        end)
+
+        it("returns true for focus@auth.example.com/resource", function()
+            assert.is_true(M.is_focus_jid("focus@auth.example.com/res123"))
+        end)
+
+        it("returns false for a regular user JID", function()
+            assert.is_false(M.is_focus_jid("user@auth.example.com"))
+        end)
+
+        it("returns false for JID whose node contains but is not exactly focus", function()
+            assert.is_false(M.is_focus_jid("focususer@auth.example.com"))
+        end)
+
+        it("returns false for a host-only JID (no node)", function()
+            assert.is_false(M.is_focus_jid("auth.example.com"))
+        end)
+
+        it("returns false for nil", function()
+            assert.is_false(M.is_focus_jid(nil))
+        end)
+
+    end)
+
     describe("build_room_address", function()
         -- muc_domain_prefix = "conference" (set in module stub above)
 
