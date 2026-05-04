@@ -47,8 +47,6 @@ VirtualHost "localhost"
     allow_empty_token = true
     -- Match production: room claim not required.
     asap_require_room_claim = false
-    -- Test JWTs carry no 'sub' claim so skip domain verification (tests only check room name).
-    enable_domain_verification = false
 
     -- Serve test_observer HTTP endpoints here so plain HTTP on port 5280 is
     -- reachable. Component HTTP routes end up on HTTPS 5281 due to Prosody's
