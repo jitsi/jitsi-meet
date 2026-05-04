@@ -35,6 +35,21 @@ module:depends("jitsi_session");
 -- d) Removes any nick that maybe set to messages being sent to the room.
 -- e) Fires event for received endpoint messages (optimization to decode them once).
 
+-- Block non-focus participants from creating health-check rooms. This hook
+-- runs at priority 100, before mod_token_verification (priority 99), so that
+-- the error is service-unavailable (not the token verification not-allowed that
+-- would fire because the room does not yet exist at pre-create time).
+module:hook('muc-room-pre-create', function (event)
+    local stanza = event.stanza;
+    if is_healthcheck_room(jid.bare(stanza.attr.to)) then
+        if not ends_with(stanza.attr.to, '/focus') then
+            module:log('info', 'Blocking non-focus from creating health-check room');
+            event.origin.send(st.error_reply(stanza, 'cancel', 'service-unavailable'));
+            return true;
+        end
+    end
+end, 100);
+
 -- Hook to assign meetingId for new rooms
 module:hook("muc-room-created", function(event)
     local room = event.room;
