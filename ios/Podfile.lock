@@ -2245,7 +2245,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNCClipboard (1.14.3):
+  - RNCClipboard (1.16.3):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2876,7 +2876,7 @@ SPEC CHECKSUMS:
   ReactNativeDependencies: cb8f6acb13fbbd84471a80b1225285f93ffeee40
   RNCalendarEvents: 62e1ac89d3afbfa77cf2dafa8727af93fa70825f
   RNCAsyncStorage: d0aafe51ea74a65afce26acb739a4ea975a7a884
-  RNCClipboard: a0b44b9ab206d8ca29c7ab87f7dbfd1a9ef97128
+  RNCClipboard: 715fa7c6c8366f17d00f05a439ee7488f390fa5f
   RNDefaultPreference: ee13d69e6693d193cd223d10e15e5b3c012d31ba
   RNDeviceInfo: bcce8752b5043a623fe3c26789679b473f705d3c
   RNGestureHandler: 29bcf14a2d2562a1d698c6b33d94a74096c6e1ad
