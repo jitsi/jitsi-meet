@@ -73,6 +73,7 @@ VirtualHost "localhost"
         "filter_iq_rayo";
         "muc_kick_participant";
         "system_chat_message";
+        "muc_jigasi_invite";
     }
 
     -- Required by mod_test_observer_http to locate the shared MUC data.
@@ -160,6 +161,12 @@ Component "conference.localhost" "muc"
     -- (muc#owner queries), which is how moderator status is granted to other
     -- participants and how room configuration is changed.
     token_verification_require_token_for_moderation = true
+
+-- Internal MUC used by mod_muc_jigasi_invite: the module resolves the Jigasi
+-- brewery room from this component via process_host_module. Without this
+-- component main_muc_service would remain nil and requests that reach the
+-- invite_jigasi() path would crash instead of returning 404.
+Component "internal.auth.localhost" "muc"
 
 -- Minimal MUC component used to test mod_muc_filter_access in isolation.
 -- Only clients from whitelist.localhost are permitted to join rooms here.

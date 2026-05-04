@@ -2,6 +2,7 @@ const BASE = 'http://localhost:5280/test-observer';
 const END_MEETING_URL = 'http://localhost:5280/end-meeting';
 const KICK_PARTICIPANT_URL = 'http://localhost:5280/kick-participant';
 const SYSTEM_CHAT_URL = 'http://localhost:5280/send-system-chat-message';
+const JIGASI_INVITE_URL = 'http://localhost:5280/invite-jigasi';
 
 /**
  * Returns all MUC events recorded by mod_test_observer since the last clear.
@@ -98,6 +99,34 @@ export async function kickParticipant(roomJid, participantId, token, { omitAuth 
         method: 'PUT',
         headers,
         body: JSON.stringify({ participantId })
+    });
+
+    return { status: res.status, body: await res.text() };
+}
+
+/**
+ * Calls the mod_muc_jigasi_invite HTTP endpoint to invite Jigasi to dial out.
+ *
+ * Returns raw { status, body } so tests can assert on error responses.
+ *
+ * @param {string} roomJid    Conference room JID, e.g. 'room@conference.localhost'
+ * @param {string} phoneNo    Dial target, e.g. '+15551234567'
+ * @param {string} token      Bearer token.
+ * @param {object} [opts]
+ * @param {boolean} [opts.omitAuth]  If true, omits the Authorization header.
+ * @returns {Promise<{status: number, body: string}>}
+ */
+export async function inviteJigasi(roomJid, phoneNo, token, { omitAuth = false } = {}) {
+    const headers = { 'Content-Type': 'application/json' };
+
+    if (!omitAuth) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const res = await fetch(JIGASI_INVITE_URL, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ conference: roomJid, phoneNo })
     });
 
     return { status: res.status, body: await res.text() };

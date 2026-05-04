@@ -3,6 +3,34 @@ import { client, xml } from '@xmpp/client';
 let _counter = 0;
 
 /**
+ * Creates an anonymous XMPP client and joins a Jigasi brewery MUC with a
+ * colibri stats presence extension, simulating a Jigasi SIP gateway instance.
+ * The presence advertises supports_sip and stress_level so that
+ * mod_muc_jigasi_invite can select this instance for dial-out.
+ *
+ * @param {string} breweryJid  Full brewery room JID, e.g.
+ *                             'jigasibrewery@internal.auth.localhost'
+ * @param {string} [nick]      MUC nick (must not be 'focus'). Defaults to a
+ *                             unique generated nick.
+ * @param {object} [opts]
+ * @param {boolean} [opts.supportsSip=true]   Advertise SIP support.
+ * @param {number}  [opts.stressLevel=0.1]    Stress level (lower = preferred).
+ * @returns {Promise<XmppTestClient>}
+ */
+export async function joinWithJigasi(breweryJid, nick, { supportsSip = true, stressLevel = 0.1 } = {}) {
+    const statsEl = xml('stats', { xmlns: 'http://jitsi.org/protocol/colibri' },
+        xml('stat', { name: 'supports_sip', value: supportsSip ? 'true' : 'false' }),
+        xml('stat', { name: 'stress_level', value: String(stressLevel) })
+    );
+
+    const c = await createXmppClient();
+
+    await c.joinRoom(breweryJid, nick, { extensions: [ statsEl ] });
+
+    return c;
+}
+
+/**
  * Connects as the focus (jicofo) admin participant, joins roomJid with nick
  * 'focus', and returns the client. This unlocks the mod_muc_meeting_id jicofo
  * lock so that regular clients can subsequently join the same room.
@@ -110,7 +138,7 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * @param {number} [opts.timeout=5000]  ms to wait for presence before rejecting
          * @param {string} [opts.password]       room password to include in the join stanza
          */
-        async joinRoom(roomJid, nick, { timeout = 5000, password } = {}) {
+        async joinRoom(roomJid, nick, { timeout = 5000, password, extensions = [] } = {}) {
             const n = nick ?? `user${++_counter}`;
             const mucX = xml('x', { xmlns: 'http://jabber.org/protocol/muc' });
 
@@ -119,7 +147,7 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
             }
 
             await xmpp.send(
-                xml('presence', { to: `${roomJid}/${n}` }, mucX)
+                xml('presence', { to: `${roomJid}/${n}` }, mucX, ...extensions)
             );
 
             const presence = await waitForPresence(stanzaQueue, roomJid, timeout);
@@ -249,6 +277,41 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
                     xml('query', { xmlns: 'http://jabber.org/protocol/disco#info' })
                 )
             );
+        },
+
+        /**
+         * Waits for an incoming <iq> stanza that satisfies an optional filter
+         * predicate and resolves with it. Only unsolicited IQs land here;
+         * responses to IQs sent with sendIq are handled via pendingIqs.
+         * @param {Function} [filter]    Predicate; defaults to accepting any IQ.
+         * @param {number}   [timeout=5000]
+         */
+        waitForIq(filter = null, timeout = 5000) {
+            const pred = filter ?? (() => true);
+
+            return new Promise((resolve, reject) => {
+                const deadline = Date.now() + timeout;
+
+                const check = () => {
+                    for (let i = 0; i < stanzaQueue.length; i++) {
+                        const s = stanzaQueue[i];
+
+                        if (s.name === 'iq' && pred(s)) {
+                            resolve(stanzaQueue.splice(i, 1)[0]);
+
+                            return;
+                        }
+                    }
+                    if (Date.now() >= deadline) {
+                        reject(new Error('Timeout waiting for IQ stanza'));
+
+                        return;
+                    }
+                    setTimeout(check, 50);
+                };
+
+                check();
+            });
         },
 
         /**
