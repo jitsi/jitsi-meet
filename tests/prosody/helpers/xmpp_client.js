@@ -194,6 +194,45 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a Rayo dial IQ (urn:xmpp:rayo:1) to the focus occupant of the
+         * given room. Fire-and-forget — does NOT wait for a response, because
+         * mod_filter_iq_rayo may block it, and the test asserts via the
+         * /dial-iqs HTTP endpoint instead.
+         *
+         * @param {string} roomJid          e.g. 'room@conference.localhost'
+         * @param {string} [dialTo='sip:test@example.com']  value for dial's `to` attribute.
+         *                                  Pass 'jitsi_meet_transcribe' to trigger
+         *                                  the transcription feature gate.
+         * @param {string|null} [roomNameHeader]  value for the JvbRoomName header.
+         *                                  Defaults to `roomJid` (correct value).
+         *                                  Pass null to omit the header entirely.
+         *                                  Pass any other string for a mismatch test.
+         */
+        sendRayoIq(roomJid, dialTo = 'sip:test@example.com', roomNameHeader = roomJid) {
+            const headers = [];
+
+            if (roomNameHeader !== null) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name: 'JvbRoomName',
+                    value: roomNameHeader
+                }));
+            }
+
+            return xmpp.send(
+                xml('iq', { type: 'set',
+                    to: `${roomJid}/focus`,
+                    id: `rayo-${++_counter}` },
+                    xml('dial', {
+                        xmlns: 'urn:xmpp:rayo:1',
+                        to: dialTo,
+                        from: 'fromdomain'
+                    }, ...headers)
+                )
+            );
+        },
+
+        /**
          * Sends a disco#info IQ and resolves with the response stanza.
          * @param {string} targetJid
          */

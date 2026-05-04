@@ -147,6 +147,25 @@ module:provides("http", {
             return { status_code = 204 };
         end;
 
+        -- GET /test-observer/dial-iqs
+        -- Returns the list of Rayo dial IQs that reached the MUC (i.e. passed mod_filter_iq_rayo).
+        ["GET /dial-iqs"] = function()
+            local iqs = shared.dial_iqs or {};
+            local body = #iqs == 0 and "[]" or json.encode(iqs);
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = body;
+            };
+        end;
+
+        -- DELETE /test-observer/dial-iqs
+        -- Clears the recorded Rayo dial IQ list. Call before each test.
+        ["DELETE /dial-iqs"] = function()
+            shared.dial_iqs = {};
+            return { status_code = 204 };
+        end;
+
         -- POST /test-observer/rooms/max-occupants
         -- Body: { "jid": "room@conference.localhost", "max_occupants": 4 }
         -- Sets room._data.max_occupants so per-room limit tests can override the

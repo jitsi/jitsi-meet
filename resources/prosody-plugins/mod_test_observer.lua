@@ -10,6 +10,7 @@ local shared = module:shared("/" .. module.host .. "/mod_test_observer");
 if not shared.events    then shared.events    = {}; end
 if not shared.rooms     then shared.rooms     = {}; end
 if not shared.jibri_iqs then shared.jibri_iqs = {}; end
+if not shared.dial_iqs  then shared.dial_iqs  = {}; end
 
 local tracked = {
     "muc-room-pre-create";
@@ -63,6 +64,22 @@ module:hook("iq/full", function(event)
             to             = stanza.attr.to;
             action         = jibri.attr.action;
             recording_mode = jibri.attr.recording_mode;
+        });
+    end
+    local dial = stanza:get_child('dial', 'urn:xmpp:rayo:1');
+    if dial then
+        -- Extract JvbRoomName header value for assertion.
+        local room_name_header;
+        for _, child in ipairs(dial.tags) do
+            if child.name == "header" and child.attr.name == "JvbRoomName" then
+                room_name_header = child.attr.value;
+            end
+        end
+        table.insert(shared.dial_iqs, {
+            from             = stanza.attr.from;
+            to               = stanza.attr.to;
+            dial_to          = dial.attr.to;
+            room_name_header = room_name_header;
         });
     end
 end, 500);
