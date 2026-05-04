@@ -103,4 +103,16 @@ post_install do |installer|
   # Patch SocketRocket to support TLS 1.3
   %x(patch Pods/SocketRocket/SocketRocket/SRSecurityPolicy.m -N < patches/ws-tls13.diff)
 
+  # GiphyUISDK.xcframework already embeds libwebp; Giphy's podspec also
+  # declares libwebp as a dependency, which makes CocoaPods statically link
+  # libwebp into JitsiMeetSDK as well. The two copies trigger a duplicate
+  # `PodsDummy_libwebp` warning at runtime. Drop the redundant link.
+  ['Pods-JitsiMeetSDK', 'Pods-JitsiMeet'].each do |aggregate_name|
+    Dir.glob("Pods/Target Support Files/#{aggregate_name}/*.xcconfig").each do |path|
+      contents = File.read(path)
+      patched = contents.gsub(/ -l"?libwebp"?/, '')
+      File.write(path, patched) if patched != contents
+    end
+  end
+
 end
