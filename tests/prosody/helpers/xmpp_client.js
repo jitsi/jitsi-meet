@@ -298,6 +298,92 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends an <end_conference/> message to the given component JID.
+         * mod_end_conference uses the sender's jitsi_web_query_room session field
+         * (populated by mod_jitsi_session from the ?room= WebSocket URL param) to
+         * locate and destroy the target room. Fire-and-forget — the module returns
+         * no reply stanza; verify the side-effect via getRoomState.
+         *
+         * @param {string} componentJid  e.g. 'endconference.localhost'
+         */
+        sendEndConference(componentJid) {
+            return xmpp.send(
+                xml('message', { to: componentJid, id: `ec-${++_counter}` },
+                    xml('end_conference')
+                )
+            );
+        },
+
+        /**
+         * Sends a plain <message> stanza to the given JID with no special children.
+         * Useful for testing that the end_conference component ignores messages
+         * that lack the <end_conference/> child element.
+         *
+         * @param {string} to  Destination JID.
+         */
+        sendPlainMessage(to) {
+            return xmpp.send(
+                xml('message', { to, id: `msg-${++_counter}` })
+            );
+        },
+
+        /**
+         * Grants moderator role to the occupant identified by nick.
+         * The caller must be the room owner (e.g. the focus client).
+         * Resolves with the server's IQ response.
+         *
+         * @param {string} roomJid  e.g. 'room@conference.localhost'
+         * @param {string} nick     MUC nick of the occupant to promote.
+         */
+        grantModerator(roomJid, nick) {
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'set',
+                    to: roomJid,
+                    id: `mod-${++_counter}` },
+                    xml('query', { xmlns: 'http://jabber.org/protocol/muc#admin' },
+                        xml('item', { nick, role: 'moderator' })
+                    )
+                )
+            );
+        },
+
+        /**
+         * Waits for an incoming <presence> stanza that satisfies an optional
+         * filter predicate and resolves with it. Non-matching presences are left
+         * in the queue. Rejects with a timeout error if no matching presence
+         * arrives within the timeout.
+         * @param {Function} [filter]    Predicate; defaults to accepting any presence.
+         * @param {number}   [timeout=5000]
+         */
+        waitForPresence(filter = null, timeout = 5000) {
+            const pred = filter ?? (() => true);
+
+            return new Promise((resolve, reject) => {
+                const deadline = Date.now() + timeout;
+
+                const check = () => {
+                    for (let i = 0; i < stanzaQueue.length; i++) {
+                        const s = stanzaQueue[i];
+
+                        if (s.name === 'presence' && pred(s)) {
+                            resolve(stanzaQueue.splice(i, 1)[0]);
+
+                            return;
+                        }
+                    }
+                    if (Date.now() >= deadline) {
+                        reject(new Error('Timeout waiting for presence stanza'));
+
+                        return;
+                    }
+                    setTimeout(check, 50);
+                };
+
+                check();
+            });
+        },
+
+        /**
          * Waits for an incoming <iq> stanza that satisfies an optional filter
          * predicate and resolves with it. Only unsolicited IQs land here;
          * responses to IQs sent with sendIq are handled via pendingIqs.

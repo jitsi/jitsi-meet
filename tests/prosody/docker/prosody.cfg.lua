@@ -21,6 +21,9 @@ modules_enabled = {
     "smacks";
     -- Global HTTP API modules.
     "muc_end_meeting";
+    -- Sets jitsi_web_query_room on sessions from the ?room= WebSocket URL param;
+    -- required by mod_end_conference to locate the target MUC room.
+    "jitsi_session";
 }
 
 -- Required by mod_muc_end_meeting (global module) to locate the MUC component
@@ -175,3 +178,13 @@ Component "conference-internal.localhost" "muc"
         "muc_filter_access";
     }
     muc_filter_whitelist = { "whitelist.localhost" }
+
+-- Component for mod_end_conference tests. Clients send a message stanza with
+-- an <end_conference/> child to this component; the module looks up the room
+-- from the sender's jitsi_web_query_room session field (set by mod_jitsi_session
+-- from the ?room= WebSocket URL param) and destroys it if the sender is a
+-- moderator occupant.
+Component "endconference.localhost" "end_conference"
+    muc_component = "conference.localhost"
+    muc_mapper_domain_base = "localhost"
+    muc_mapper_domain_prefix = "conference"
