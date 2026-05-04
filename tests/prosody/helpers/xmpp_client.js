@@ -454,6 +454,31 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
             });
         },
 
+        /**
+         * Resolves when the underlying XMPP connection goes offline (e.g.
+         * because Prosody closed the session). Useful for verifying that
+         * mod_muc_auth_ban's async ban — which calls session:close() from
+         * the HTTP callback — actually terminates the connection.
+         *
+         * Rejects with a timeout error if the connection does not drop within
+         * the given timeout.
+         *
+         * @param {number} [timeout=5000]
+         */
+        waitForDisconnect(timeout = 5000) {
+            return new Promise((resolve, reject) => {
+                const timer = setTimeout(
+                    () => reject(new Error('Timeout waiting for disconnect')),
+                    timeout
+                );
+
+                xmpp.once('offline', () => {
+                    clearTimeout(timer);
+                    resolve();
+                });
+            });
+        },
+
         async disconnect() {
             try {
                 await xmpp.stop();

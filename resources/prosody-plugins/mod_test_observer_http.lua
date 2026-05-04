@@ -5,9 +5,21 @@
 --
 -- Data is supplied by mod_test_observer (loaded on the MUC component) via
 -- module:shared. Load order does not matter; shared tables are created lazily.
+--
+-- Also serves a mock access manager endpoint for mod_muc_auth_ban tests:
+--   GET  /test-observer/access-manager  — called by Prosody; returns configured response
+--   POST /test-observer/access-manager  — called by tests to configure the response
 
 local json = require "cjson.safe";
 local io = require "io";
+
+-- Mock access-manager state for mod_muc_auth_ban tests.
+--   access: true  → return {"access": true}  (user allowed)
+--   access: false → return {"access": false} (user banned)
+--   status: any non-200 value → return that HTTP status code with no JSON body
+--     (simulates HTTP errors; mod_muc_auth_ban fails open on non-200)
+-- Reset to the default (allow, 200) between tests via POST /test-observer/access-manager.
+local access_manager_state = { access = true, status = 200 };
 
 -- ASAP public key servers: serve test RSA public keys so that Prosody can
 -- fetch them when verifying RS256 tokens signed by the matching private keys.
@@ -222,6 +234,39 @@ module:provides("http", {
                 headers = { ["Content-Type"] = "application/json" };
                 body = '{"ok":true}';
             };
+        end;
+
+        -- GET /test-observer/access-manager
+        -- Mock access-manager endpoint called by mod_muc_auth_ban.
+        -- Returns {"access": true} or {"access": false} based on the current
+        -- access_manager_state, or a non-200 status to simulate HTTP errors.
+        -- The real access manager receives `Authorization: Bearer <token>` but
+        -- this mock ignores it and returns the globally configured response.
+        ["GET /access-manager"] = function()
+            if access_manager_state.status ~= 200 then
+                return { status_code = access_manager_state.status; body = "error" };
+            end
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = json.encode({ access = access_manager_state.access });
+            };
+        end;
+
+        -- POST /test-observer/access-manager
+        -- Body: { "access": true|false, "status": <http-status-code> }
+        -- Configures what the mock access manager returns.
+        -- Call this from tests before connecting the client under test.
+        -- Call with { "access": true, "status": 200 } to reset to the default.
+        ["POST /access-manager"] = function(event)
+            local data = json.decode(event.request.body or "{}") or {};
+            if data.access ~= nil then
+                access_manager_state.access = data.access;
+            end
+            if data.status ~= nil then
+                access_manager_state.status = tonumber(data.status) or 200;
+            end
+            return { status_code = 204 };
         end;
 
         -- GET /test-observer/session-info?jid=user@localhost/resource

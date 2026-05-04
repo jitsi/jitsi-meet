@@ -77,7 +77,16 @@ VirtualHost "localhost"
         "muc_kick_participant";
         "system_chat_message";
         "muc_jigasi_invite";
+        -- Loaded here so that the global jitsi-access-ban-check event handler
+        -- is registered and mod_auth_token can fire it for token-authenticated
+        -- sessions. muc_prosody_jitsi_access_manager_url points at the mock
+        -- access manager served by mod_test_observer_http on the same host.
+        "muc_auth_ban";
     }
+
+    -- Required by mod_muc_auth_ban: URL of the access manager to call.
+    -- Points at the mock endpoint served by mod_test_observer_http.
+    muc_prosody_jitsi_access_manager_url = "http://localhost:5280/test-observer/access-manager"
 
     -- Required by mod_test_observer_http to locate the shared MUC data.
     muc_mapper_domain_base = "localhost"

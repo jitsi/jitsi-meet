@@ -1,8 +1,35 @@
 const BASE = 'http://localhost:5280/test-observer';
+const ACCESS_MANAGER_URL = `${BASE}/access-manager`;
 const END_MEETING_URL = 'http://localhost:5280/end-meeting';
 const KICK_PARTICIPANT_URL = 'http://localhost:5280/kick-participant';
 const SYSTEM_CHAT_URL = 'http://localhost:5280/send-system-chat-message';
 const JIGASI_INVITE_URL = 'http://localhost:5280/invite-jigasi';
+
+/**
+ * Configures the mock access manager endpoint (served by mod_test_observer_http).
+ * mod_muc_auth_ban calls this endpoint for VPaaS sessions
+ * (jitsi_web_query_prefix starting with "vpaas-magic-cookie-").
+ *
+ * Call this before connecting the client under test.
+ * Call with { access: true, status: 200 } (the defaults) to reset between tests.
+ *
+ * @param {object} [opts]
+ * @param {boolean} [opts.access=true]   true → allow, false → ban
+ * @param {number}  [opts.status=200]    HTTP status code to return.
+ *                                       Non-200 values simulate HTTP errors;
+ *                                       mod_muc_auth_ban fails open on errors.
+ */
+export async function setAccessManagerResponse({ access = true, status = 200 } = {}) {
+    const res = await fetch(ACCESS_MANAGER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ access, status })
+    });
+
+    if (res.status !== 204) {
+        throw new Error(`setAccessManagerResponse failed: ${res.status} ${await res.text()}`);
+    }
+}
 
 /**
  * Returns all MUC events recorded by mod_test_observer since the last clear.
