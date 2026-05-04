@@ -43,6 +43,7 @@ function buildPayload(overrides = {}, { expired = false, notYetValid = false } =
     return {
         iss: DEFAULT_APP_ID,
         aud: DEFAULT_APP_ID,
+        sub: '*',
         iat: now,
         exp: expired ? now - 3600 : now + 3600,
         ...(notYetValid ? { nbf: now + 3600 } : {}),
