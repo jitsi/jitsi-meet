@@ -3,12 +3,13 @@ import { client, xml } from '@xmpp/client';
 let _counter = 0;
 
 /**
- * Connects as a focus (jicofo) participant, joins roomJid with nick 'focus',
- * and returns the client. This unlocks the mod_muc_meeting_id jicofo lock so
- * that regular clients can subsequently join the same room.
+ * Connects as the focus (jicofo) admin participant, joins roomJid with nick
+ * 'focus', and returns the client. This unlocks the mod_muc_meeting_id jicofo
+ * lock so that regular clients can subsequently join the same room.
  *
- * The focus client uses domain 'focus.localhost', which is whitelisted in
- * mod_muc_max_occupants so it never counts against the occupant limit.
+ * The focus client authenticates as focus@auth.localhost (a Prosody admin), so
+ * it is exempt from token_verification checks, is never counted against occupant
+ * limits (auth.localhost is in muc_access_whitelist), and can act as room owner.
  *
  * The caller is responsible for disconnecting the returned client (typically
  * by pushing it into the test's `clients` array for afterEach cleanup).
@@ -17,7 +18,11 @@ let _counter = 0;
  * @returns {Promise<XmppTestClient>}
  */
 export async function joinWithFocus(roomJid) {
-    const c = await createXmppClient({ domain: 'focus.localhost' });
+    const c = await createXmppClient({
+        domain: 'auth.localhost',
+        username: 'focus',
+        password: 'focussecret'
+    });
 
     await c.joinRoom(roomJid, 'focus');
 

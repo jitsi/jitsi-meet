@@ -82,8 +82,11 @@ export function mintAsapToken(overrides = {}, {
     expired = false,
     notYetValid = false,
 } = {}) {
+    // sub: '*' satisfies domain verification in token/util.lib.lua (verify_room):
+    // a wildcard sub allows any MUC domain, so tests don't need to hard-code the
+    // deployment domain and the server never hits string.lower(nil).
     return jwt.sign(
-        buildPayload(overrides, { expired, notYetValid }),
+        buildPayload({ sub: '*', ...overrides }, { expired, notYetValid }),
         privateKey,
         { algorithm: 'RS256', keyid: kid }
     );

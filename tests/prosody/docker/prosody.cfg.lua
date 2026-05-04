@@ -1,6 +1,5 @@
 -- Minimal Prosody config for integration testing.
 -- No TLS: tests connect plaintext over loopback.
--- Anonymous auth: no user provisioning needed.
 
 data_path = "/var/lib/prosody"
 pid_file = "/var/run/prosody/prosody.pid"
@@ -35,6 +34,11 @@ http_ports = { 5280 }
 http_interfaces = { "*" }
 https_ports = {}
 
+-- The focus (jicofo) test helper authenticates as focus@auth.localhost.
+-- Prosody admins are exempt from token_verification checks and are used as
+-- room owners, mirroring production where jicofo is a Prosody admin.
+admins = { "focus@auth.localhost" }
+
 VirtualHost "localhost"
     authentication = "token"
     app_id = "jitsi"
@@ -65,6 +69,19 @@ VirtualHost "localhost"
     -- Required by mod_conference_duration to find the MUC component.
     main_muc = "conference.localhost"
 
+-- VirtualHost for the focus (jicofo) test helper.
+-- Clients authenticate with username "focus" and password "focussecret".
+-- The account is pre-created in the Docker image (see Dockerfile).
+-- focus@auth.localhost is listed in the global admins table, so it is exempt
+-- from token_verification and can act as room owner on all MUC components.
+VirtualHost "auth.localhost"
+    authentication = "internal_hashed"
+    -- @xmpp/sasl (v0.13) does not await async SASL responses; the SCRAM-SHA-1
+    -- mechanism in sasl-scram-sha-1 1.4+ is async, so the client sends an
+    -- empty client-final message which Prosody rejects as malformed-request.
+    -- Disable SCRAM and force PLAIN (safe on loopback in the test environment).
+    disable_sasl_mechanisms = { "SCRAM-SHA-1", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-256-PLUS" }
+
 -- VirtualHost for HS256 (shared-secret) token auth tests.
 VirtualHost "hs256.localhost"
     authentication = "token"
@@ -93,13 +110,6 @@ VirtualHost "shared-secret.localhost"
 VirtualHost "whitelist.localhost"
     authentication = "anonymous"
 
--- VirtualHost used by the focus (jicofo) test helper. Clients connecting here
--- get JIDs like <random>@focus.localhost. The domain is added to
--- muc_access_whitelist so focus clients do not count against the occupant
--- limit and are not counted when evaluating available slots for other users.
-VirtualHost "focus.localhost"
-    authentication = "anonymous"
-
 Component "conference.localhost" "muc"
     modules_enabled = {
         "muc_hide_all";
@@ -117,10 +127,9 @@ Component "conference.localhost" "muc"
     muc_max_occupants = 2
 
     -- Clients on whitelist.localhost bypass the occupant limit.
-    -- Clients on focus.localhost represent jicofo; they also bypass the limit
-    -- and are not counted against it, so existing tests are unaffected when a
-    -- focus client unlocks the jicofo lock in mod_muc_meeting_id.
-    muc_access_whitelist = { "whitelist.localhost", "focus.localhost" }
+    -- Clients on auth.localhost are the focus (jicofo) admin; they also bypass
+    -- the limit and are not counted against it.
+    muc_access_whitelist = { "whitelist.localhost", "auth.localhost" }
 
     -- Used by mod_muc_password_whitelist tests: clients from whitelist.localhost
     -- are injected with the room password and bypass the password check.
@@ -130,11 +139,9 @@ Component "conference.localhost" "muc"
     muc_mapper_domain_base = "localhost"
     muc_mapper_domain_prefix = "conference"
 
-    -- In production, jicofo is a Prosody admin and is exempt from token_verification.
-    -- In tests, focus clients (focus.localhost) are not admins, so we allowlist them
-    -- explicitly so they can create rooms (verify_room requires the room to exist, but
-    -- muc-room-pre-create fires before the room is in the rooms table).
-    token_verification_allowlist = { "focus.localhost" }
+    -- focus@auth.localhost is a Prosody admin and is therefore exempt from
+    -- token_verification on both muc-room-pre-create and muc-occupant-pre-join,
+    -- mirroring production where jicofo is a Prosody admin.
 
 -- Minimal MUC component used to test mod_muc_filter_access in isolation.
 -- Only clients from whitelist.localhost are permitted to join rooms here.
@@ -166,15 +173,14 @@ VirtualHost "test.localhost"
 -- token_verification_require_token_for_moderation = true blocks unauthenticated
 -- users from sending room-owner config IQs (which is how moderator status is
 -- granted to other participants).
--- focus.localhost is allowlisted so the focus client can create rooms without a
--- token (same rationale as conference.localhost above).
+-- focus@auth.localhost is a Prosody admin and is therefore exempt from both
+-- the join check and the require_token_for_moderation IQ check.
 Component "conference.test.localhost" "muc"
     modules_enabled = {
         "muc_meeting_id";
         "token_verification";
     }
     token_verification_require_token_for_moderation = true
-    token_verification_allowlist = { "focus.localhost" }
 
     muc_mapper_domain_base = "test.localhost"
     muc_mapper_domain_prefix = "conference"

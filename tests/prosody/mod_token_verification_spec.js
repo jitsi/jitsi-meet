@@ -6,35 +6,15 @@ import { isAvailablePresence } from './helpers/xmpp_utils.js';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-// Main conference component — has token_verification loaded alongside the rest of
-// the test modules (muc_meeting_id, muc_max_occupants, …).
+// All token_verification tests run on the main MUC component.
+// token_verification_require_token_for_moderation = true is set on
+// conference.localhost in the test config; focus@auth.localhost is a Prosody
+// admin and is therefore always exempt from both the join check and the
+// moderation IQ check, mirroring production.
 const CONFERENCE = 'conference.localhost';
 
-// Dedicated component for require_token_for_moderation tests.
-// Parent VirtualHost is "test.localhost"; token/util resolves muc_domain to
-// "conference.test.localhost" for room lookups.
-const CONFERENCE_TOKEN = 'conference.test.localhost';
-const TOKEN_DOMAIN = 'test.localhost';
-
 let _roomCounter = 0;
-const nextRoom = (component = CONFERENCE) => `token-verify-${++_roomCounter}@${component}`;
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-/**
- * Creates an XMPP client connected to TOKEN_DOMAIN (test.localhost) with an
- * optional JWT token.  With no token the client authenticates anonymously
- * (allow_empty_token = true on that VirtualHost).
- *
- * @param {string|null} [token]
- * @returns {Promise<XmppTestClient>}
- */
-function createTokenDomainClient(token = null) {
-    return createXmppClient({
-        domain: TOKEN_DOMAIN,
-        params: token ? { token } : {}
-    });
-}
+const nextRoom = () => `token-verify-${++_roomCounter}@${CONFERENCE}`;
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
@@ -47,17 +27,14 @@ describe('mod_token_verification', () => {
         clients.length = 0;
     });
 
-    // ── Join access control (conference.localhost) ────────────────────────────
+    // ── Join access control ──────────────────────────────────────────────────
     //
     // token_verification is loaded on conference.localhost.  The parent
     // VirtualHost (localhost) has allow_empty_token = true, so anonymous users
     // are always let through (verify_room returns true when auth_token is nil).
     //
-    // In production, jicofo is a Prosody admin and is therefore exempt from the
-    // token check.  In tests, focus clients (focus.localhost) are not admins,
-    // so they are listed in token_verification_allowlist instead.  This lets
-    // focus create rooms (verify_room requires the room to exist, but
-    // muc-room-pre-create fires before the room enters the rooms table).
+    // focus@auth.localhost is a Prosody admin and is therefore exempt from
+    // the token check on both muc-room-pre-create and muc-occupant-pre-join.
 
     describe('join access control', () => {
 
@@ -143,21 +120,21 @@ describe('mod_token_verification', () => {
         });
     });
 
-    // ── token_verification_require_token_for_moderation (conference.test.localhost) ──
+    // ── token_verification_require_token_for_moderation ──────────────────────
     //
-    // The conference.test.localhost component has require_token_for_moderation = true.
+    // conference.localhost has require_token_for_moderation = true.
     // Unauthenticated users (no token) are blocked from sending muc#owner IQs,
-    // which is how moderator status is granted to other participants and how room
-    // configuration (e.g. passwords) is changed.  Authenticated users whose
-    // token room claim matches are allowed through.
+    // which is how moderator status is granted to other participants and how
+    // room configuration (e.g. passwords) is changed.  Authenticated users
+    // whose token room claim matches are allowed through.
     //
-    // focus.localhost is allowlisted so the focus client can create rooms first
-    // (unlocking the muc_meeting_id jicofo lock for subsequent participants).
+    // focus@auth.localhost is a Prosody admin and is always exempt from the
+    // check, so it can create rooms and set their initial configuration.
 
     describe('token_verification_require_token_for_moderation', () => {
 
-        async function setupRoomOnTokenComponent() {
-            const room = nextRoom(CONFERENCE_TOKEN);
+        async function setupRoom() {
+            const room = nextRoom();
             const focus = await joinWithFocus(room);
 
             clients.push(focus);
@@ -166,10 +143,10 @@ describe('mod_token_verification', () => {
         }
 
         it('blocks unauthenticated user from sending owner config IQ', async () => {
-            const room = await setupRoomOnTokenComponent();
+            const room = await setupRoom();
 
-            // Anonymous guest joins (allow_empty_token = true on test.localhost).
-            const guest = await createTokenDomainClient();
+            // Anonymous guest joins (allow_empty_token = true on localhost).
+            const guest = await createXmppClient();
 
             clients.push(guest);
             await guest.joinRoom(room);
@@ -185,10 +162,10 @@ describe('mod_token_verification', () => {
         });
 
         it('does not block authenticated user from sending owner config IQ', async () => {
-            const room = await setupRoomOnTokenComponent();
+            const room = await setupRoom();
             const roomName = room.split('@')[0];
             const token = mintAsapToken({ room: roomName });
-            const authUser = await createTokenDomainClient(token);
+            const authUser = await createXmppClient({ params: { token } });
 
             clients.push(authUser);
             await authUser.joinRoom(room);

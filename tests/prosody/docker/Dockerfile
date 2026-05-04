@@ -37,3 +37,10 @@ COPY --chown=prosody:prosody tests/prosody/docker/prosody.cfg.lua /etc/prosody/p
 
 # Test ASAP public key — served by mod_test_observer_http for RS256 token verification tests.
 COPY --chown=prosody:prosody tests/prosody/fixtures/test-asap-public.pem /opt/prosody-jitsi-plugins/test-asap-public.pem
+
+# Pre-create the focus admin account (focus@auth.localhost, password "focussecret").
+# prosodyctl register writes properly hashed credentials (SCRAM-SHA-*) directly
+# to the data directory without requiring a running Prosody instance — it just
+# reads the config for data_path and the VirtualHost definition.
+RUN prosodyctl register focus auth.localhost focussecret \
+    && chown -R prosody:prosody /var/lib/prosody

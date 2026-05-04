@@ -78,7 +78,7 @@ describe('mod_muc_max_occupants', () => {
     });
 
     describe('whitelist', () => {
-        // Prosody config sets muc_access_whitelist = { "whitelist.localhost", "focus.localhost" }.
+        // Prosody config sets muc_access_whitelist = { "whitelist.localhost", "auth.localhost" }.
         // Clients created with domain:'whitelist.localhost' get JIDs on that domain
         // and are treated as whitelisted by mod_muc_max_occupants.
 
