@@ -1,5 +1,33 @@
--- A http endpoint to invite jigasi to a meeting via http endpoint
--- jwt is used to validate access
+-- HTTP module that exposes a POST /invite-jigasi endpoint for inviting a Jigasi
+-- SIP gateway instance to dial out to a phone number and connect it to a
+-- conference. Intended for internal system use (e.g. by a backend service),
+-- not for end-user clients.
+--
+-- Authentication uses a SEPARATE ASAP key pair from the one used for login
+-- tokens (mod_auth_token). The key server URL is read from
+-- prosody_password_public_key_repo_url (not asap_key_server), so login tokens
+-- are not accepted.
+--
+-- Request format:
+--   POST /invite-jigasi
+--   Content-Type: application/json
+--   Authorization: Bearer <system-token>
+--   Body: { "conference": "<room-jid>", "phoneNo": "<dial-target>" }
+--
+-- The module selects a Jigasi instance from the brewery room
+-- (muc_jigasi_brewery_jid, default: jigasibrewery@internal.auth.<base>):
+--   1. Iterates brewery occupants, skips focus.
+--   2. Filters for occupants with supports_sip=true in their colibri stats.
+--   3. Among those, picks the one with the lowest stress_level.
+--   4. Sends a Rayo <dial> IQ to that occupant (impersonating focus) with
+--      phoneNo as the dial target and conference as JvbRoomName.
+--
+-- Responses:
+--   200  Jigasi invited successfully.
+--   400  Missing or invalid parameters / wrong Content-Type.
+--   401  Missing, malformed, or unverifiable token.
+--   404  Brewery room not found, or no SIP-capable Jigasi available.
+--
 -- Copyright (C) 2023-present 8x8, Inc.
 
 local jid = require "util.jid";
