@@ -251,6 +251,42 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
             );
         },
 
+        /**
+         * Waits for an incoming <message> stanza that satisfies an optional
+         * filter predicate and resolves with it. Non-matching messages are left
+         * in the queue. Rejects with a timeout error if no matching message
+         * arrives within the timeout.
+         * @param {Function} [filter]    Predicate; defaults to accepting any message.
+         * @param {number}   [timeout=5000]
+         */
+        waitForMessage(filter = null, timeout = 5000) {
+            const pred = filter ?? (() => true);
+
+            return new Promise((resolve, reject) => {
+                const deadline = Date.now() + timeout;
+
+                const check = () => {
+                    for (let i = 0; i < stanzaQueue.length; i++) {
+                        const s = stanzaQueue[i];
+
+                        if (s.name === 'message' && pred(s)) {
+                            resolve(stanzaQueue.splice(i, 1)[0]);
+
+                            return;
+                        }
+                    }
+                    if (Date.now() >= deadline) {
+                        reject(new Error('Timeout waiting for message stanza'));
+
+                        return;
+                    }
+                    setTimeout(check, 50);
+                };
+
+                check();
+            });
+        },
+
         async disconnect() {
             try {
                 await xmpp.stop();

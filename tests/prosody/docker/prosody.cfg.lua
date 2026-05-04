@@ -72,6 +72,7 @@ VirtualHost "localhost"
         "filter_iq_jibri";
         "filter_iq_rayo";
         "muc_kick_participant";
+        "system_chat_message";
     }
 
     -- Required by mod_test_observer_http to locate the shared MUC data.

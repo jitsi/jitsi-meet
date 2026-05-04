@@ -1,6 +1,7 @@
 const BASE = 'http://localhost:5280/test-observer';
 const END_MEETING_URL = 'http://localhost:5280/end-meeting';
 const KICK_PARTICIPANT_URL = 'http://localhost:5280/kick-participant';
+const SYSTEM_CHAT_URL = 'http://localhost:5280/send-system-chat-message';
 
 /**
  * Returns all MUC events recorded by mod_test_observer since the last clear.
@@ -97,6 +98,46 @@ export async function kickParticipant(roomJid, participantId, token, { omitAuth 
         method: 'PUT',
         headers,
         body: JSON.stringify({ participantId })
+    });
+
+    return { status: res.status, body: await res.text() };
+}
+
+/**
+ * Calls the mod_system_chat_message HTTP endpoint to send a system chat message
+ * to one or more participants.
+ *
+ * Returns raw { status, body } so tests can assert on error responses.
+ *
+ * @param {string} roomJid          e.g. 'room@conference.localhost'
+ * @param {string[]} connectionJIDs Full JIDs of recipients, e.g. ['user@localhost/res']
+ * @param {string} message          Message text.
+ * @param {string} token            Bearer token.
+ * @param {object} [opts]
+ * @param {boolean} [opts.omitAuth]    If true, omits the Authorization header.
+ * @param {string}  [opts.displayName] Optional display name to include.
+ * @returns {Promise<{status: number, body: string}>}
+ */
+export async function sendSystemChatMessage(roomJid, connectionJIDs, message, token, {
+    omitAuth = false,
+    displayName,
+} = {}) {
+    const headers = { 'Content-Type': 'application/json' };
+
+    if (!omitAuth) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const body = { room: roomJid, connectionJIDs, message };
+
+    if (displayName !== undefined) {
+        body.displayName = displayName;
+    }
+
+    const res = await fetch(SYSTEM_CHAT_URL, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body)
     });
 
     return { status: res.status, body: await res.text() };
