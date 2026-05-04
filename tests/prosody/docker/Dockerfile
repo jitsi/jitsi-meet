@@ -35,8 +35,11 @@ COPY --chown=prosody:prosody resources/prosody-plugins/ /opt/prosody-jitsi-plugi
 
 COPY --chown=prosody:prosody tests/prosody/docker/prosody.cfg.lua /etc/prosody/prosody.cfg.lua
 
-# Test ASAP public key — served by mod_test_observer_http for RS256 token verification tests.
+# Test ASAP public keys — served by mod_test_observer_http for RS256 token verification tests.
+# Two separate key pairs are used: one for login tokens (mod_auth_token) and one for system
+# tokens (mod_muc_end_meeting and similar HTTP API modules).
 COPY --chown=prosody:prosody tests/prosody/fixtures/test-asap-public.pem /opt/prosody-jitsi-plugins/test-asap-public.pem
+COPY --chown=prosody:prosody tests/prosody/fixtures/test-system-asap-public.pem /opt/prosody-jitsi-plugins/test-system-asap-public.pem
 
 # Pre-create the focus admin account (focus@auth.localhost, password "focussecret").
 # prosodyctl register writes properly hashed credentials (SCRAM-SHA-*) directly

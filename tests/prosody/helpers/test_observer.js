@@ -1,4 +1,5 @@
 const BASE = 'http://localhost:5280/test-observer';
+const END_MEETING_URL = 'http://localhost:5280/end-meeting';
 
 /**
  * Returns all MUC events recorded by mod_test_observer since the last clear.
@@ -52,7 +53,7 @@ export async function setRoomMaxOccupants(roomJid, max) {
 /**
  * Returns room state from Prosody's internal MUC state.
  * @param {string} roomJid  e.g. 'room@conference.localhost'
- * @returns {Promise<{jid: string, hidden: boolean, occupant_count: number}>}
+ * @returns {Promise<{jid: string, hidden: boolean, occupant_count: number}|null>}
  */
 export async function getRoomState(roomJid) {
     const res = await fetch(`${BASE}/rooms?jid=${encodeURIComponent(roomJid)}`);
@@ -65,4 +66,36 @@ export async function getRoomState(roomJid) {
     }
 
     return res.json();
+}
+
+/**
+ * Calls the mod_muc_end_meeting HTTP endpoint to terminate a conference.
+ *
+ * Returns the raw { status, body } rather than throwing on non-2xx so that
+ * tests can assert on error responses (401, 404, etc.) directly.
+ *
+ * @param {string} roomJid          e.g. 'room@conference.localhost'
+ * @param {string} token            Bearer token (system token for success; login token to test rejection).
+ * @param {object} [opts]
+ * @param {boolean} [opts.silentReconnect]  If true, adds silent-reconnect=true to the query.
+ * @param {boolean} [opts.omitAuth]         If true, omits the Authorization header entirely.
+ * @returns {Promise<{status: number, body: string}>}
+ */
+export async function endMeeting(roomJid, token, { silentReconnect = false, omitAuth = false } = {}) {
+    const url = new URL(END_MEETING_URL);
+
+    url.searchParams.set('conference', roomJid);
+    if (silentReconnect) {
+        url.searchParams.set('silent-reconnect', 'true');
+    }
+
+    const headers = { 'Content-Type': 'application/json' };
+
+    if (!omitAuth) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const res = await fetch(url.toString(), { method: 'POST', headers });
+
+    return { status: res.status, body: await res.text() };
 }

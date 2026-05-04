@@ -9,23 +9,43 @@
 local json = require "cjson.safe";
 local io = require "io";
 
--- ASAP public key server: serves the test RSA public key so that Prosody can
--- fetch it when verifying RS256 tokens signed by the matching private key.
+-- ASAP public key servers: serve test RSA public keys so that Prosody can
+-- fetch them when verifying RS256 tokens signed by the matching private keys.
 -- util.lib.lua constructs the URL as: <asap_key_server>/<sha256hex(kid)>.pem
--- For kid="test-asap-key" the SHA256 hex is hardcoded below.
+--
+-- Two separate key pairs are used:
+--   Login tokens  (kid "test-asap-key"):        signed by the login key pair,
+--                                                served at /test-observer/asap-keys/
+--                                                used by mod_auth_token (VirtualHost "localhost")
+--   System tokens (kid "test-system-asap-key"): signed by the system key pair,
+--                                                served at /test-observer/system-asap-keys/
+--                                                used by mod_muc_end_meeting and similar HTTP API modules
 local ASAP_KEY_PATH = "/opt/prosody-jitsi-plugins/test-asap-public.pem";
 local ASAP_KID_SHA256 = "dc6983da8e703a3f51d4c1cb92b52c982f7853ce3d5ba20c782fcd13616f6dfc";
 
-local asap_public_key;
-do
-    local f = io.open(ASAP_KEY_PATH, "r");
-    if f then
-        asap_public_key = f:read("*all");
-        f:close();
-        module:log("info", "Loaded test ASAP public key from %s", ASAP_KEY_PATH);
-    else
-        module:log("warn", "Test ASAP public key not found at %s; ASAP key-server routes will 404", ASAP_KEY_PATH);
-    end
+local SYSTEM_ASAP_KEY_PATH = "/opt/prosody-jitsi-plugins/test-system-asap-public.pem";
+local SYSTEM_ASAP_KID_SHA256 = "e76ed986a75a90756e5add6e8b56efc3d3f027764436d2744d29a33f0ec24fea";
+
+local function load_pem(path)
+    local f = io.open(path, "r");
+    if not f then return nil; end
+    local data = f:read("*all");
+    f:close();
+    return data;
+end
+
+local asap_public_key = load_pem(ASAP_KEY_PATH);
+if asap_public_key then
+    module:log("info", "Loaded test ASAP public key from %s", ASAP_KEY_PATH);
+else
+    module:log("warn", "Test ASAP public key not found at %s; login ASAP key-server routes will 404", ASAP_KEY_PATH);
+end
+
+local system_asap_public_key = load_pem(SYSTEM_ASAP_KEY_PATH);
+if system_asap_public_key then
+    module:log("info", "Loaded test system ASAP public key from %s", SYSTEM_ASAP_KEY_PATH);
+else
+    module:log("warn", "Test system ASAP public key not found at %s; system ASAP key-server routes will 404", SYSTEM_ASAP_KEY_PATH);
 end
 
 -- session-info: capture mod_jitsi_session / mod_auth_token fields after
@@ -97,7 +117,7 @@ module:provides("http", {
     default_path = "/test-observer";
     route = {
         -- GET /test-observer/asap-keys/<sha256hex(kid)>.pem
-        -- Returns the test RSA public key PEM so mod_auth_token can verify RS256 tokens.
+        -- Returns the login RSA public key PEM so mod_auth_token can verify RS256 login tokens.
         -- kid must be "test-asap-key" (its SHA256 hex is the filename).
         ["GET /asap-keys/"..ASAP_KID_SHA256..".pem"] = function()
             if not asap_public_key then
@@ -107,6 +127,21 @@ module:provides("http", {
                 status_code = 200;
                 headers = { ["Content-Type"] = "application/x-pem-file" };
                 body = asap_public_key;
+            };
+        end;
+
+        -- GET /test-observer/system-asap-keys/<sha256hex(kid)>.pem
+        -- Returns the system RSA public key PEM for mod_muc_end_meeting and similar
+        -- system HTTP API modules that use prosody_password_public_key_repo_url.
+        -- kid must be "test-system-asap-key" (its SHA256 hex is the filename).
+        ["GET /system-asap-keys/"..SYSTEM_ASAP_KID_SHA256..".pem"] = function()
+            if not system_asap_public_key then
+                return { status_code = 404; body = "key not found" };
+            end
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/x-pem-file" };
+                body = system_asap_public_key;
             };
         end;
 

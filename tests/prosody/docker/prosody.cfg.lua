@@ -19,7 +19,20 @@ modules_enabled = {
     "http";
     "websocket";
     "smacks";
+    -- Global HTTP API modules.
+    "muc_end_meeting";
 }
+
+-- Required by mod_muc_end_meeting (global module) to locate the MUC component
+-- and to attach its HTTP handler to the correct VirtualHost.
+muc_mapper_domain_base = "localhost"
+muc_mapper_domain_prefix = "conference"
+
+-- System token key server for mod_muc_end_meeting and similar HTTP API modules.
+-- These tokens are signed with a separate key pair from login tokens, providing
+-- key-level separation between user-facing and system-facing authentication.
+-- The endpoint is served by mod_test_observer_http at /test-observer/system-asap-keys/.
+prosody_password_public_key_repo_url = "http://localhost:5280/test-observer/system-asap-keys"
 
 -- Allow WebSocket connections without TLS (tests run over loopback).
 consider_websocket_secure = true
