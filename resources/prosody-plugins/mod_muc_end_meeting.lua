@@ -31,8 +31,7 @@ local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 local starts_with = util.starts_with;
 
-local neturl = require "net.url";
-local parse = neturl.parseQuery;
+local parse = require "util.http".formdecode;
 
 -- will be initialized once the main virtual host module is initialized
 local token_util;
