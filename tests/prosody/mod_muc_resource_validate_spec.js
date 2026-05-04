@@ -15,8 +15,9 @@ const room = () => `validate-${++_roomCounter}@${MUC}`;
  * config inside the container and reloading Prosody (SIGHUP via prosodyctl reload).
  * mod_muc_resource_validate re-reads config on the config-reloaded event.
  *
- * The config file must contain the line "anonymous_strict = false" as a stable
- * sed target (added to prosody.cfg.lua in the test Docker image).
+ * The default in the test config is anonymous_strict = true. Call
+ * setStrictMode(false) to temporarily disable strict checking, then restore
+ * with setStrictMode(true) in a finally block.
  *
  * @param {boolean} enabled
  */
@@ -32,19 +33,6 @@ async function setStrictMode(enabled) {
     await new Promise(resolve => setTimeout(resolve, 500));
 }
 
-/**
- * Extract the first 8 characters of the JID username (the UUID prefix that
- * anonymous auth assigns). The JID looks like "<uuid>@localhost/resource".
- *
- * @param {string} jid  full JID string
- * @returns {string}
- */
-function uuidPrefix(jid) {
-    const username = jid.split('@')[0];
-
-    return username.substring(0, 8);
-}
-
 describe('mod_muc_resource_validate', () => {
 
     let ctx;
@@ -56,28 +44,45 @@ describe('mod_muc_resource_validate', () => {
     afterEach(() => ctx.cleanup());
 
     // ── Basic pattern validation ──────────────────────────────────────────────
+    //
+    // These tests verify the resource format rules independently of the
+    // anonymous_strict UUID-prefix constraint, so they temporarily disable
+    // strict mode to allow arbitrary (but format-valid) nicks.
 
     it('allows a valid alphanumeric resource', async () => {
         const r = room();
 
         await ctx.connectFocus(r);
-        const c = await ctx.connect();
-        const presence = await c.joinRoom(r, 'ValidNick123');
+        await setStrictMode(false);
+        try {
+            const c = await ctx.connect();
+            const presence = await c.joinRoom(r, 'ValidNick123');
 
-        assert.ok(isAvailablePresence(presence),
-            'valid alphanumeric resource must be allowed');
+            assert.ok(isAvailablePresence(presence),
+                'valid alphanumeric resource must be allowed');
+        } finally {
+            await setStrictMode(true);
+        }
     });
 
     it('allows a resource with underscore after the first character', async () => {
         const r = room();
 
         await ctx.connectFocus(r);
-        const c = await ctx.connect();
-        const presence = await c.joinRoom(r, 'abc_123');
+        await setStrictMode(false);
+        try {
+            const c = await ctx.connect();
+            const presence = await c.joinRoom(r, 'abc_123');
 
-        assert.ok(isAvailablePresence(presence),
-            'resource with internal underscore must be allowed');
+            assert.ok(isAvailablePresence(presence),
+                'resource with internal underscore must be allowed');
+        } finally {
+            await setStrictMode(true);
+        }
     });
+
+    // Format-invalid resources are rejected by the format check before the
+    // UUID-prefix check runs, so these tests work regardless of strict mode.
 
     it('rejects a resource starting with an underscore', async () => {
         const r = room();
@@ -110,44 +115,36 @@ describe('mod_muc_resource_validate', () => {
     });
 
     // ── Anonymous strict mode ─────────────────────────────────────────────────
+    //
+    // anonymous_strict = true is the default in the test config, so no toggle
+    // is needed here.
 
-    it('strict mode: allows resource matching UUID prefix', async () => {
+    it('allows resource matching UUID prefix', async () => {
         const r = room();
 
         await ctx.connectFocus(r);
-        await setStrictMode(true);
-        try {
-            const c = await ctx.connect();
+        const c = await ctx.connect();
 
-            // The JID is set after connect; use the first 8 chars of the username.
-            const nick = uuidPrefix(c.jid);
-            const presence = await c.joinRoom(r, nick);
+        // joinRoom defaults to the UUID prefix when no nick is supplied.
+        const presence = await c.joinRoom(r);
 
-            assert.ok(isAvailablePresence(presence),
-                'resource matching UUID prefix must be allowed in strict mode');
-        } finally {
-            await setStrictMode(false);
-        }
+        assert.ok(isAvailablePresence(presence),
+            'resource matching UUID prefix must be allowed');
     });
 
-    it('strict mode: rejects resource not matching UUID prefix', async () => {
+    it('rejects resource not matching UUID prefix', async () => {
         const r = room();
 
         await ctx.connectFocus(r);
-        await setStrictMode(true);
-        try {
-            const c = await ctx.connect();
-            const presence = await c.joinRoom(r, 'wrongnick');
+        const c = await ctx.connect();
+        const presence = await c.joinRoom(r, 'wrongnick');
 
-            assert.equal(presence.attrs.type, 'error',
-                'resource not matching UUID prefix must be rejected in strict mode');
-            assert.ok(
-                presence.getChild('error')?.getChild('not-allowed'),
-                'error stanza must contain <not-allowed/>'
-            );
-        } finally {
-            await setStrictMode(false);
-        }
+        assert.equal(presence.attrs.type, 'error',
+            'resource not matching UUID prefix must be rejected');
+        assert.ok(
+            presence.getChild('error')?.getChild('not-allowed'),
+            'error stanza must contain <not-allowed/>'
+        );
     });
 
 });

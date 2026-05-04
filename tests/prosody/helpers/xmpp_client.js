@@ -118,6 +118,19 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         jid: xmpp.jid?.toString(),
 
         /**
+         * The default MUC nick for this client: first 8 characters of the
+         * server-assigned JID local part. Matches the UUID prefix required by
+         * Prosody's anonymous_strict mode. Null when the JID is not yet set.
+         *
+         * @returns {string|null}
+         */
+        get nick() {
+            const local = xmpp.jid?.toString().split('@')[0] ?? '';
+
+            return local ? local.slice(0, 8) : null;
+        },
+
+        /**
          * Returns the XEP-0198 stream management resumption token assigned by
          * the server. Only available after the session is online and stream
          * management has been negotiated. Must be read before disconnecting
@@ -139,7 +152,12 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * @param {string} [opts.password]       room password to include in the join stanza
          */
         async joinRoom(roomJid, nick, { timeout = 5000, password, extensions = [] } = {}) {
-            const n = nick ?? `user${++_counter}`;
+            // Default to the first 8 characters of the local part of the
+            // server-assigned JID. Prosody's anonymous_strict mode requires MUC
+            // resources to match this prefix, so callers that do not pass an
+            // explicit nick automatically satisfy the constraint.
+            const selfLocal = xmpp.jid?.toString().split('@')[0] ?? '';
+            const n = nick ?? (selfLocal ? selfLocal.slice(0, 8) : `user${++_counter}`);
             const mucX = xml('x', { xmlns: 'http://jabber.org/protocol/muc' });
 
             if (password !== undefined) {

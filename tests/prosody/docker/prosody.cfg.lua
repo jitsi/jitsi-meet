@@ -135,7 +135,7 @@ Component "conference.localhost" "muc"
         "test_observer";
     }
 
-    anonymous_strict = false
+    anonymous_strict = true
 
     -- Used by mod_muc_max_occupants tests (2 occupants max).
     muc_max_occupants = 2

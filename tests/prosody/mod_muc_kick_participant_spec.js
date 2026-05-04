@@ -177,11 +177,10 @@ describe('mod_muc_kick_participant', () => {
 
         it('returns 200 and removes the participant', async () => {
             const { roomJid, focus } = await createRoom();
-            // Nick must satisfy mod_muc_resource_validate: ^[a-zA-Z0-9][a-zA-Z0-9_]*$
-            const nick = 'kickme';
             const user = await createXmppClient();
 
-            await user.joinRoom(roomJid, nick);
+            await user.joinRoom(roomJid);
+            const nick = user.nick;
 
             try {
                 const token = mintSystemToken();

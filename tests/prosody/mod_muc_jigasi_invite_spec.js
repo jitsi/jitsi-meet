@@ -183,7 +183,7 @@ describe('mod_muc_jigasi_invite', () => {
 
         it('sends a Rayo dial IQ to the Jigasi and returns 200', async () => {
             const { roomJid, focus } = await createRoom();
-            const jigasi = await joinWithJigasi(BREWERY, 'jigasi1');
+            const jigasi = await joinWithJigasi(BREWERY);
 
             try {
                 const token = mintSystemToken();

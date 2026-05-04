@@ -66,7 +66,7 @@ describe('mod_muc_meeting_id', () => {
         it('non-focus participant is blocked from a health check room', async () => {
             const r = healthRoom();
             const c = await ctx.connect();
-            const presence = await c.joinRoom(r, 'regular-user');
+            const presence = await c.joinRoom(r);
 
             assert.equal(presence.attrs.type, 'error',
                 'non-focus should not be allowed into health-check rooms');
@@ -82,7 +82,7 @@ describe('mod_muc_meeting_id', () => {
             await ctx.connectFocus(r);
 
             const intruder = await ctx.connect();
-            const presence = await intruder.joinRoom(r, 'intruder');
+            const presence = await intruder.joinRoom(r);
 
             assert.equal(presence.attrs.type, 'error',
                 'non-focus must still be blocked after focus has joined');

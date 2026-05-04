@@ -26,7 +26,7 @@ describe('mod_muc_password_whitelist', () => {
         const whitelisted = await createXmppClient({ domain: 'whitelist.localhost' });
 
         clients.push(whitelisted);
-        const presence = await whitelisted.joinRoom(ROOM, 'whitelisted');
+        const presence = await whitelisted.joinRoom(ROOM);
 
         assert.notEqual(presence.attrs.type, 'error', 'whitelisted client must join without password');
     });
@@ -42,7 +42,7 @@ describe('mod_muc_password_whitelist', () => {
         const guest = await createXmppClient({ domain: 'localhost' });
 
         clients.push(guest);
-        const presence = await guest.joinRoom(ROOM, 'guest');
+        const presence = await guest.joinRoom(ROOM);
 
         assert.equal(presence.attrs.type, 'error', 'non-whitelisted client must be rejected without password');
     });
@@ -58,7 +58,7 @@ describe('mod_muc_password_whitelist', () => {
         const guest = await createXmppClient({ domain: 'localhost' });
 
         clients.push(guest);
-        const presence = await guest.joinRoom(ROOM, 'guest', { password: PASSWORD });
+        const presence = await guest.joinRoom(ROOM, undefined, { password: PASSWORD });
 
         assert.notEqual(presence.attrs.type, 'error', 'non-whitelisted client must join with correct password');
     });
