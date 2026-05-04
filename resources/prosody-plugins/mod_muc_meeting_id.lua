@@ -1,3 +1,9 @@
+-- Assigns a unique UUID meeting ID to each MUC room at creation time and
+-- advertises it in the room's config IQ response so that all participants share
+-- a common conference identifier. Also enforces a jicofo lock: non-focus clients
+-- that try to join before jicofo (identified by nick suffix '/focus') are queued
+-- and admitted only after jicofo joins and fires the jicofo-unlock-room event.
+-- This module is enabled under the MUC component.
 local jid = require 'util.jid';
 local json = require 'cjson.safe';
 local st = require "util.stanza";

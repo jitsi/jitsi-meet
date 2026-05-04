@@ -1,4 +1,10 @@
--- This module is enabled under the main virtual host
+-- Filters outbound-call and transcription IQ stanzas (Rayo dial, urn:xmpp:rayo:1)
+-- on the main VirtualHost. Allows a stanza through only when the sender's JWT token
+-- grants the required feature ('outbound-call' or 'transcription'), or, absent token
+-- features, when the sender holds owner affiliation in the room. Blocked stanzas
+-- receive an auth/forbidden error reply. Optionally rate-limits outgoing calls per
+-- session when max_number_outgoing_calls is configured.
+-- This module is enabled under the main virtual host.
 local new_throttle = require "util.throttle".create;
 local st = require "util.stanza";
 local jid = require "util.jid";

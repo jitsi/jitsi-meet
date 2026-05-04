@@ -1,4 +1,10 @@
--- This module is enabled under the main virtual host
+-- Filters Jibri recording/livestreaming IQ stanzas (http://jitsi.org/protocol/jibri)
+-- on the main VirtualHost. start/stop actions are allowed only when the sender's JWT
+-- token grants the required feature ('recording' for file mode, 'livestreaming' for
+-- stream mode), or, absent token features, when the sender holds moderator role in the
+-- room. status IQs are always passed through. Blocked stanzas receive an
+-- auth/forbidden error reply. Rate-limited per IP and per room.
+-- This module is enabled under the main virtual host.
 local cache = require 'util.cache';
 local new_throttle = require 'util.throttle'.create;
 local st = require "util.stanza";
