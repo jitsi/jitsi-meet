@@ -141,6 +141,11 @@ Component "conference.localhost" "muc"
     -- token_verification on both muc-room-pre-create and muc-occupant-pre-join,
     -- mirroring production where jicofo is a Prosody admin.
 
+    -- Blocks unauthenticated users from sending room-owner config IQs
+    -- (muc#owner queries), which is how moderator status is granted to other
+    -- participants and how room configuration is changed.
+    token_verification_require_token_for_moderation = true
+
 -- Minimal MUC component used to test mod_muc_filter_access in isolation.
 -- Only clients from whitelist.localhost are permitted to join rooms here.
 Component "conference-internal.localhost" "muc"
@@ -148,37 +153,3 @@ Component "conference-internal.localhost" "muc"
         "muc_filter_access";
     }
     muc_filter_whitelist = { "whitelist.localhost" }
-
--- VirtualHost whose MUC component is conference.test.localhost.
--- Used by mod_token_verification tests that need token_verification_require_token_for_moderation.
--- Naming convention: conference.<parent>.localhost so token/util.lib.lua resolves parentHostName
--- as "test.localhost" and builds muc_domain = "conference.test.localhost" for room lookups.
-VirtualHost "test.localhost"
-    authentication = "token"
-    app_id = "jitsi"
-    asap_key_server = "http://localhost:5280/test-observer/asap-keys"
-    signature_algorithm = "RS256"
-    allow_empty_token = true
-    asap_require_room_claim = false
-    -- Test JWTs carry no 'sub' claim so skip domain verification (tests only check room name).
-    enable_domain_verification = false
-
-    -- token/util.lib.lua constructs muc_domain = prefix.base = "conference.test.localhost"
-    muc_mapper_domain_base = "test.localhost"
-    muc_mapper_domain_prefix = "conference"
-
--- MUC component for token_verification_require_token_for_moderation tests.
--- token_verification_require_token_for_moderation = true blocks unauthenticated
--- users from sending room-owner config IQs (which is how moderator status is
--- granted to other participants).
--- focus@auth.localhost is a Prosody admin and is therefore exempt from both
--- the join check and the require_token_for_moderation IQ check.
-Component "conference.test.localhost" "muc"
-    modules_enabled = {
-        "muc_meeting_id";
-        "token_verification";
-    }
-    token_verification_require_token_for_moderation = true
-
-    muc_mapper_domain_base = "test.localhost"
-    muc_mapper_domain_prefix = "conference"
