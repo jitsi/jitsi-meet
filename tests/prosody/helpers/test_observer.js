@@ -125,6 +125,73 @@ export async function getRoomParticipants(roomJid) {
 }
 
 /**
+ * Enables or disables the lobby for the given room.
+ *
+ * @param {string} roomJid  e.g. 'room@conference.localhost'
+ * @param {boolean} enabled
+ * @returns {Promise<{ok: boolean, lobbyroom: string|null}>}
+ */
+async function setLobby(roomJid, enabled) {
+    const res = await fetch(`${BASE}/rooms/lobby`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jid: roomJid, enabled })
+    });
+
+    if (!res.ok) {
+        throw new Error(`setLobby(${enabled}) failed: ${res.status} ${await res.text()}`);
+    }
+
+    return res.json();
+}
+
+/**
+ * Enables the lobby for the given room.
+ * Returns the lobby room JID.
+ *
+ * @param {string} roomJid  e.g. 'room@conference.localhost'
+ * @returns {Promise<string>}  lobby room JID
+ */
+export async function enableLobby(roomJid) {
+    const data = await setLobby(roomJid, true);
+
+    return data.lobbyroom;
+}
+
+/**
+ * Disables the lobby for the given room and unsets members-only.
+ *
+ * @param {string} roomJid  e.g. 'room@conference.localhost'
+ */
+export async function disableLobby(roomJid) {
+    await setLobby(roomJid, false);
+}
+
+/**
+ * Sets the affiliation of a JID in a room.
+ *
+ * @param {string} roomJid      e.g. 'room@conference.localhost'
+ * @param {string} occupantJid  bare JID of the user, e.g. 'user@localhost'
+ * @param {string} affiliation  e.g. 'member', 'owner', 'none'
+ */
+export async function setAffiliation(roomJid, occupantJid, affiliation) {
+    const res = await fetch(`${BASE}/rooms/affiliation`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            jid: roomJid,
+            // eslint-disable-next-line camelcase
+            occupant_jid: occupantJid,
+            affiliation
+        })
+    });
+
+    if (!res.ok) {
+        throw new Error(`setAffiliation failed: ${res.status} ${await res.text()}`);
+    }
+}
+
+/**
  * Returns room state from Prosody's internal MUC state.
  * @param {string} roomJid  e.g. 'room@conference.localhost'
  * @returns {Promise<{jid: string, hidden: boolean, occupant_count: number}|null>}

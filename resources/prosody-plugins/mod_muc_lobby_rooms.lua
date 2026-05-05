@@ -1,3 +1,42 @@
+-- mod_muc_lobby_rooms
+--
+-- Implements the Jitsi "lobby" feature: a waiting room that holds participants
+-- until a moderator admits or rejects them.
+--
+-- How it works:
+--   When a moderator sets a room to members-only (muc#roomconfig_membersonly),
+--   a paired persistent lobby MUC room is created on the lobby component.
+--   Subsequent join attempts by non-members are rejected with a 407 error that
+--   includes the lobby room JID, redirecting the client to wait there.
+--   Moderators (owners in the main room) are also owners in the lobby room and
+--   can admit participants by inviting them or deny them by kicking.
+--
+-- Join-gate logic (muc-occupant-pre-join, priority -4):
+--   1. Healthcheck rooms, focus nick (/focus suffix) -> pass through.
+--   2. Whitelisted JID/domain (muc_lobby_whitelist) or correct password -> grant
+--      member affiliation and pass through.
+--   3. Missing display name -> 406 not-acceptable with <displayname-required>.
+--   4. No affiliation -> 407 registration-required with <lobbyroom> JID.
+--   5. Existing member/owner affiliation -> pass through to the MUC layer.
+--
+-- Presence/message filtering:
+--   Stanzas from the lobby component are filtered so lobby participants can only
+--   see and message moderators, not each other.
+--
+-- Notifications:
+--   Broadcasts JSON groupchat messages (type "lobby-notify") to the main room
+--   when lobby is enabled/disabled (LOBBY-ENABLED) or when a participant is
+--   admitted (LOBBY-ACCESS-GRANTED) or denied (LOBBY-ACCESS-DENIED).
+--
+-- Backend API:
+--   Handles global events "create-lobby-room" and "destroy-lobby-room" so that
+--   other Prosody modules (e.g. jicofo bridge) can manage the lobby
+--   programmatically without a moderator submitting a config form.
+--
+-- Required configuration (on the main VirtualHost):
+--   lobby_muc = "lobby.jitmeet.example.com"
+--   main_muc  = "conference.jitmeet.example.com"
+--
 -- This module added under the main virtual host domain
 -- It needs a lobby muc component
 --

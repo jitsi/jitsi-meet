@@ -88,6 +88,7 @@ VirtualHost "localhost"
         -- (room@conference.sub.localhost) and internal bracket form
         -- ([sub]room@conference.localhost) for all sessions on all hosts.
         "muc_domain_mapper";
+        "muc_lobby_rooms";
     }
 
     shard_name = "test-shard"
@@ -109,7 +110,12 @@ VirtualHost "localhost"
     muc_mapper_domain_prefix = "conference"
 
     -- Required by mod_conference_duration to find the MUC component.
+    -- Required by mod_muc_lobby_rooms.
     main_muc = "conference.localhost"
+    lobby_muc = "lobby.conference.localhost"
+
+    -- Clients on whitelist.localhost bypass the lobby.
+    muc_lobby_whitelist = { "whitelist.localhost" }
 
 -- VirtualHost for the focus (jicofo) test helper.
 -- Clients authenticate with username "focus" and password "focussecret".
@@ -164,6 +170,13 @@ VirtualHost "turncredentials.localhost"
         { type = "stun", host = "127.0.0.1", port = 3478 };
         { type = "turn", host = "127.0.0.1", port = 3478 };
     }
+
+Component "lobby.conference.localhost" "muc"
+    storage = "memory"
+    muc_room_cache_size = 1000
+    restrict_room_creation = true
+    muc_room_locking = false
+    muc_room_default_public_jids = true
 
 Component "conference.localhost" "muc"
     modules_enabled = {

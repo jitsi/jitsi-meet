@@ -162,8 +162,9 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * @param {object} [opts]
          * @param {number} [opts.timeout=5000]  ms to wait for presence before rejecting
          * @param {string} [opts.password]       room password to include in the join stanza
+         * @param {string} [opts.displayName]    if set, includes a <nick> element in the presence
          */
-        async joinRoom(roomJid, nick, { timeout = 5000, password: roomPassword, extensions = [] } = {}) {
+        async joinRoom(roomJid, nick, { timeout = 5000, password: roomPassword, extensions = [], displayName } = {}) {
             // Default to the first 8 characters of the local part of the
             // server-assigned JID. Prosody's anonymous_strict mode requires MUC
             // resources to match this prefix, so callers that do not pass an
@@ -176,8 +177,13 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
                 mucX.c('password').t(roomPassword);
             }
 
+            const nickEl = displayName
+                ? xml('nick', { xmlns: 'http://jabber.org/protocol/nick' }, displayName)
+                : undefined;
+
             await xmpp.send(
-                xml('presence', { to: `${roomJid}/${n}` }, mucX, ...extensions)
+                xml('presence', { to: `${roomJid}/${n}` }, mucX, ...extensions,
+                    ...(nickEl ? [ nickEl ] : []))
             );
 
             const presence = await waitForPresence(stanzaQueue, roomJid, timeout);

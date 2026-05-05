@@ -353,6 +353,59 @@ module:provides("http", {
             };
         end;
 
+        -- POST /test-observer/rooms/lobby
+        -- Body: { "jid": "room@conference.localhost", "enabled": true|false }
+        -- Enables or disables the lobby for the given room by firing the
+        -- create-lobby-room / destroy-lobby-room global Prosody events.
+        -- Enabling also sets members-only; disabling unsets it.
+        -- Response: { ok, lobbyroom } (lobbyroom is nil when disabling).
+        ["POST /rooms/lobby"] = function(event)
+            local data = json.decode(event.request.body or "{}") or {};
+            local room_jid = data.jid;
+            local enabled = data.enabled;
+            if not room_jid then
+                return { status_code = 400; body = '{"error":"missing jid"}' };
+            end
+            local room = (shared.rooms or {})[room_jid];
+            if not room then
+                return { status_code = 404; body = '{"error":"room not found"}' };
+            end
+            if enabled then
+                prosody.events.fire_event('create-lobby-room', { room = room });
+            else
+                room:set_members_only(false);
+                prosody.events.fire_event('destroy-lobby-room', { room = room });
+            end
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = json.encode({ ok = true; lobbyroom = room._data.lobbyroom });
+            };
+        end;
+
+        -- POST /test-observer/rooms/affiliation
+        -- Body: { "jid": "room@conference.localhost", "occupant_jid": "user@localhost", "affiliation": "member" }
+        -- Sets the affiliation of occupant_jid in the given room.
+        ["POST /rooms/affiliation"] = function(event)
+            local data = json.decode(event.request.body or "{}") or {};
+            local room_jid = data.jid;
+            local occupant_jid = data.occupant_jid;
+            local affiliation = data.affiliation;
+            if not room_jid or not occupant_jid or not affiliation then
+                return { status_code = 400; body = '{"error":"missing required fields"}' };
+            end
+            local room = (shared.rooms or {})[room_jid];
+            if not room then
+                return { status_code = 404; body = '{"error":"room not found"}' };
+            end
+            room:set_affiliation(true, occupant_jid, affiliation);
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = '{"ok":true}';
+            };
+        end;
+
         -- GET /test-observer/rooms?jid=room@conference.localhost
         -- Returns: { jid, hidden, occupant_count }
         ["GET /rooms"] = function(event)
