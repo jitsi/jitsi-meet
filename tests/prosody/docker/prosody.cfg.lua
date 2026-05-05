@@ -84,7 +84,12 @@ VirtualHost "localhost"
         "muc_auth_ban";
         "turncredentials";
         "turncredentials_http";
+        "jiconop";
     }
+
+    shard_name = "test-shard"
+    region_name = "test-region"
+    release_number = "test-release"
 
     -- mod_turncredentials (XMPP XEP-0215): port 3478.
     turncredentials_secret = "xmpp-turn-secret"
