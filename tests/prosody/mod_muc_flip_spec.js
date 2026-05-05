@@ -1,9 +1,9 @@
+import { xml } from '@xmpp/client';
 import assert from 'assert';
 
-import { xml } from '@xmpp/client';
 
-import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 import { getRoomParticipants, setRoomMaxOccupants, setSessionContext } from './helpers/test_observer.js';
+import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
 
@@ -42,6 +42,11 @@ describe('mod_muc_flip', () => {
         await Promise.all(clients.map(c => c.disconnect()));
     });
 
+    /**
+     * Creates and connects an XMPP client, tracking it for cleanup.
+     *
+     * @returns {Promise<object>}
+     */
     async function connect() {
         const c = await createXmppClient();
 
@@ -50,6 +55,12 @@ describe('mod_muc_flip', () => {
         return c;
     }
 
+    /**
+     * Joins a room as focus and tracks the client for cleanup.
+     *
+     * @param {string} roomJid - Room JID to join.
+     * @returns {Promise<object>}
+     */
     async function focusJoin(roomJid) {
         const c = await joinWithFocus(roomJid);
 
@@ -74,6 +85,7 @@ describe('mod_muc_flip', () => {
 
             // Connect guest before joining so we can predict their nick.
             const guest = await connect();
+
             // No setSessionContext — guest has no JWT context.
 
             // waitForPresenceFrom is exact-JID so it won't match stale presences

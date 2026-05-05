@@ -11,8 +11,15 @@ describe('mod_auth_jitsi-anonymous', () => {
         clients.length = 0;
     });
 
+    /**
+     * Creates and connects an XMPP client.
+     *
+     * @param {object} opts - Options passed to createXmppClient.
+     * @returns {Promise<object>}
+     */
     async function connect(opts = {}) {
-        const c = await createXmppClient({ domain: 'jitsi-anonymous.localhost', ...opts });
+        const c = await createXmppClient({ domain: 'jitsi-anonymous.localhost',
+            ...opts });
 
         clients.push(c);
 

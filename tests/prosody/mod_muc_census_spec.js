@@ -56,7 +56,8 @@ describe('mod_muc_census', () => {
 
         // Bring up both rooms.
         const focus1 = await ctx.connectFocus(r1);
-        const focus2 = await ctx.connectFocus(r2);
+
+        await ctx.connectFocus(r2);
         const c1 = await ctx.connect();
         const c2 = await ctx.connect();
 

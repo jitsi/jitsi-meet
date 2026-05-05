@@ -1,7 +1,7 @@
 import assert from 'assert';
 
-import { createTestContext } from './helpers/test_context.js';
 import { getContainer } from './helpers/container.js';
+import { createTestContext } from './helpers/test_context.js';
 import { isAvailablePresence } from './helpers/xmpp_utils.js';
 
 const MUC = 'conference.localhost';
@@ -28,6 +28,7 @@ async function setStrictMode(enabled) {
 
     await container.exec([ 'sed', '-i', `s/${from}/${to}/`, PROSODY_CFG ]);
     await container.exec([ 'prosodyctl', 'reload' ]);
+
     // prosodyctl reload sends SIGHUP and returns immediately; give Prosody a moment
     // to process the config-reloaded event before the next test action.
     await new Promise(resolve => setTimeout(resolve, 500));

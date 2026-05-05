@@ -23,7 +23,8 @@ export async function setAccessManagerResponse({ access = true, status = 200 } =
     const res = await fetch(ACCESS_MANAGER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ access, status })
+        body: JSON.stringify({ access,
+            status })
     });
 
     if (res.status !== 204) {
@@ -93,7 +94,10 @@ export async function setSessionContext(fullJid, userId, features = {}) {
     const res = await fetch(`${BASE}/sessions/context`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ jid: fullJid, user_id: userId, features })
+        body: JSON.stringify({ jid: fullJid,
+            // eslint-disable-next-line camelcase
+            user_id: userId,
+            features })
     });
 
     if (!res.ok) {
@@ -159,7 +163,7 @@ export async function kickParticipant(roomJid, participantId, token, { omitAuth 
     const headers = { 'Content-Type': 'application/json' };
 
     if (!omitAuth) {
-        headers['Authorization'] = `Bearer ${token}`;
+        headers.Authorization = `Bearer ${token}`;
     }
 
     const res = await fetch(url.toString(), {
@@ -168,7 +172,8 @@ export async function kickParticipant(roomJid, participantId, token, { omitAuth 
         body: JSON.stringify({ participantId })
     });
 
-    return { status: res.status, body: await res.text() };
+    return { status: res.status,
+        body: await res.text() };
 }
 
 /**
@@ -187,16 +192,18 @@ export async function inviteJigasi(roomJid, phoneNo, token, { omitAuth = false }
     const headers = { 'Content-Type': 'application/json' };
 
     if (!omitAuth) {
-        headers['Authorization'] = `Bearer ${token}`;
+        headers.Authorization = `Bearer ${token}`;
     }
 
     const res = await fetch(JIGASI_INVITE_URL, {
         method: 'POST',
         headers,
-        body: JSON.stringify({ conference: roomJid, phoneNo })
+        body: JSON.stringify({ conference: roomJid,
+            phoneNo })
     });
 
-    return { status: res.status, body: await res.text() };
+    return { status: res.status,
+        body: await res.text() };
 }
 
 /**
@@ -214,17 +221,19 @@ export async function inviteJigasi(roomJid, phoneNo, token, { omitAuth = false }
  * @param {string}  [opts.displayName] Optional display name to include.
  * @returns {Promise<{status: number, body: string}>}
  */
-export async function sendSystemChatMessage(roomJid, connectionJIDs, message, token, {
+export async function sendSystemChatMessage(roomJid, connectionJIDs, message, token, { // eslint-disable-line max-params
     omitAuth = false,
-    displayName,
+    displayName
 } = {}) {
     const headers = { 'Content-Type': 'application/json' };
 
     if (!omitAuth) {
-        headers['Authorization'] = `Bearer ${token}`;
+        headers.Authorization = `Bearer ${token}`;
     }
 
-    const body = { room: roomJid, connectionJIDs, message };
+    const body = { room: roomJid,
+        connectionJIDs,
+        message };
 
     if (displayName !== undefined) {
         body.displayName = displayName;
@@ -236,7 +245,8 @@ export async function sendSystemChatMessage(roomJid, connectionJIDs, message, to
         body: JSON.stringify(body)
     });
 
-    return { status: res.status, body: await res.text() };
+    return { status: res.status,
+        body: await res.text() };
 }
 
 /**
@@ -263,10 +273,12 @@ export async function endMeeting(roomJid, token, { silentReconnect = false, omit
     const headers = { 'Content-Type': 'application/json' };
 
     if (!omitAuth) {
-        headers['Authorization'] = `Bearer ${token}`;
+        headers.Authorization = `Bearer ${token}`;
     }
 
-    const res = await fetch(url.toString(), { method: 'POST', headers });
+    const res = await fetch(url.toString(), { method: 'POST',
+        headers });
 
-    return { status: res.status, body: await res.text() };
+    return { status: res.status,
+        body: await res.text() };
 }

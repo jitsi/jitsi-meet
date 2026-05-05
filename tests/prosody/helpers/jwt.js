@@ -1,8 +1,8 @@
 import fs from 'fs';
+import jwt from 'jsonwebtoken';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import jwt from 'jsonwebtoken';
 
 const DEFAULT_SECRET = 'testsecret';
 const DEFAULT_APP_ID = 'jitsi';
@@ -46,8 +46,8 @@ function buildPayload(overrides = {}, { expired = false, notYetValid = false } =
         sub: '*',
         iat: now,
         exp: expired ? now - 3600 : now + 3600,
-        ...(notYetValid ? { nbf: now + 3600 } : {}),
-        ...overrides,
+        ...notYetValid ? { nbf: now + 3600 } : {},
+        ...overrides
     };
 }
 
@@ -71,7 +71,8 @@ function buildPayload(overrides = {}, { expired = false, notYetValid = false } =
  * @returns {string} Signed JWT string.
  */
 export function mintToken(overrides = {}, { secret = DEFAULT_SECRET, expired = false, notYetValid = false } = {}) {
-    return jwt.sign(buildPayload(overrides, { expired, notYetValid }), secret, { algorithm: 'HS256' });
+    return jwt.sign(buildPayload(overrides, { expired,
+        notYetValid }), secret, { algorithm: 'HS256' });
 }
 
 /**
@@ -95,14 +96,17 @@ export function mintAsapToken(overrides = {}, {
     privateKey = ASAP_PRIVATE_KEY,
     kid = ASAP_KID,
     expired = false,
-    notYetValid = false,
+    notYetValid = false
 } = {}) {
     // sub: '*' satisfies the mandatory sub claim check in process_and_verify_token
     // and the domain verification in verify_room (wildcard allows any MUC domain).
     return jwt.sign(
-        buildPayload({ sub: '*', ...overrides }, { expired, notYetValid }),
+        buildPayload({ sub: '*',
+            ...overrides }, { expired,
+            notYetValid }),
         privateKey,
-        { algorithm: 'RS256', keyid: kid }
+        { algorithm: 'RS256',
+            keyid: kid }
     );
 }
 
@@ -127,11 +131,14 @@ export function mintSystemToken(overrides = {}, {
     privateKey = SYSTEM_ASAP_PRIVATE_KEY,
     kid = SYSTEM_ASAP_KID,
     expired = false,
-    notYetValid = false,
+    notYetValid = false
 } = {}) {
     return jwt.sign(
-        buildPayload({ sub: 'system.localhost', ...overrides }, { expired, notYetValid }),
+        buildPayload({ sub: 'system.localhost',
+            ...overrides }, { expired,
+            notYetValid }),
         privateKey,
-        { algorithm: 'RS256', keyid: kid }
+        { algorithm: 'RS256',
+            keyid: kid }
     );
 }

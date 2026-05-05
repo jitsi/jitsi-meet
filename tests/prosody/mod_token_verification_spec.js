@@ -38,6 +38,11 @@ describe('mod_token_verification', () => {
 
     describe('join access control', () => {
 
+        /**
+         * Creates a room with a focus participant for testing.
+         *
+         * @returns {Promise<string>} Room JID.
+         */
         async function setupRoom() {
             const room = nextRoom();
             const focus = await joinWithFocus(room);
@@ -145,6 +150,11 @@ describe('mod_token_verification', () => {
 
     describe('token_verification_require_token_for_moderation', () => {
 
+        /**
+         * Creates a room with a focus participant for testing.
+         *
+         * @returns {Promise<string>} Room JID.
+         */
         async function setupRoom() {
             const room = nextRoom();
             const focus = await joinWithFocus(room);

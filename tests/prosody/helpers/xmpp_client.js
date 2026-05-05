@@ -19,8 +19,10 @@ let _counter = 0;
  */
 export async function joinWithJigasi(breweryJid, nick, { supportsSip = true, stressLevel = 0.1 } = {}) {
     const statsEl = xml('stats', { xmlns: 'http://jitsi.org/protocol/colibri' },
-        xml('stat', { name: 'supports_sip', value: supportsSip ? 'true' : 'false' }),
-        xml('stat', { name: 'stress_level', value: String(stressLevel) })
+        xml('stat', { name: 'supports_sip',
+            value: supportsSip ? 'true' : 'false' }),
+        xml('stat', { name: 'stress_level',
+            value: String(stressLevel) })
     );
 
     const c = await createXmppClient();
@@ -86,11 +88,13 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
     const xmpp = client({
         service: url.toString(),
         domain: domain ?? host,
-        ...(username !== undefined ? { username, password } : {})
+        ...username === undefined ? {} : { username,
+            password }
     });
 
     // Suppress unhandled 'error' events (e.g. WebSocket close after auth failure).
     // Errors surface through the xmpp.start() promise rejection instead.
+    // eslint-disable-next-line no-empty-function
     xmpp.on('error', () => {});
 
     // id -> { resolve, reject, timer }
@@ -151,7 +155,7 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * @param {number} [opts.timeout=5000]  ms to wait for presence before rejecting
          * @param {string} [opts.password]       room password to include in the join stanza
          */
-        async joinRoom(roomJid, nick, { timeout = 5000, password, extensions = [] } = {}) {
+        async joinRoom(roomJid, nick, { timeout = 5000, password: roomPassword, extensions = [] } = {}) {
             // Default to the first 8 characters of the local part of the
             // server-assigned JID. Prosody's anonymous_strict mode requires MUC
             // resources to match this prefix, so callers that do not pass an
@@ -160,8 +164,8 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
             const n = nick ?? (selfLocal ? selfLocal.slice(0, 8) : `user${++_counter}`);
             const mucX = xml('x', { xmlns: 'http://jabber.org/protocol/muc' });
 
-            if (password !== undefined) {
-                mucX.c('password').t(password);
+            if (roomPassword !== undefined) {
+                mucX.c('password').t(roomPassword);
             }
 
             await xmpp.send(
@@ -197,7 +201,7 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * @param {string} roomJid  e.g. 'room@conference.localhost'
          * @param {string} password  pass empty string to remove the password
          */
-        setRoomPassword(roomJid, password) {
+        setRoomPassword(roomJid, roomPassword) {
             return sendIq(xmpp, pendingIqs,
                 xml('iq', { type: 'set',
                     to: roomJid,
@@ -209,7 +213,7 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
                                 xml('value', {}, 'http://jabber.org/protocol/muc#roomconfig')
                             ),
                             xml('field', { var: 'muc#roomconfig_roomsecret' },
-                                xml('value', {}, password)
+                                xml('value', {}, roomPassword)
                             )
                         )
                     )
@@ -238,7 +242,8 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
                     xml('jibri', {
                         xmlns: 'http://jitsi.org/protocol/jibri',
                         action,
-                        recording_mode: recordingMode,
+                        // eslint-disable-next-line camelcase
+                        recording_mode: recordingMode
                     })
                 )
             );
@@ -308,7 +313,8 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          */
         sendEndConference(componentJid) {
             return xmpp.send(
-                xml('message', { to: componentJid, id: `ec-${++_counter}` },
+                xml('message', { to: componentJid,
+                    id: `ec-${++_counter}` },
                     xml('end_conference')
                 )
             );
@@ -323,7 +329,8 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          */
         sendPlainMessage(to) {
             return xmpp.send(
-                xml('message', { to, id: `msg-${++_counter}` })
+                xml('message', { to,
+                    id: `msg-${++_counter}` })
             );
         },
 
@@ -341,7 +348,8 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
                     to: roomJid,
                     id: `mod-${++_counter}` },
                     xml('query', { xmlns: 'http://jabber.org/protocol/muc#admin' },
-                        xml('item', { nick, role: 'moderator' })
+                        xml('item', { nick,
+                            role: 'moderator' })
                     )
                 )
             );

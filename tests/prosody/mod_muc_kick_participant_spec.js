@@ -11,13 +11,25 @@ const room = () => `kick-test-${++_roomCounter}@${CONFERENCE}`;
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+/**
+ * Creates a room with a focus participant.
+ *
+ * @returns {Promise<{roomJid: string, focus: object}>}
+ */
 async function createRoom() {
     const roomJid = room();
     const focus = await joinWithFocus(roomJid);
 
-    return { roomJid, focus };
+    return { roomJid,
+        focus };
 }
 
+/**
+ * Disconnects all provided clients.
+ *
+ * @param {...object} clients - Clients to disconnect.
+ * @returns {Promise<void>}
+ */
 async function disconnectAll(...clients) {
     await Promise.all(clients.map(c => c.disconnect()));
 }
@@ -82,7 +94,7 @@ describe('mod_muc_kick_participant', () => {
         it('returns 400 when Content-Type is not application/json', async () => {
             const token = mintSystemToken();
             const res = await fetch(
-                `http://localhost:5280/kick-participant?room=kick-test-0`,
+                'http://localhost:5280/kick-participant?room=kick-test-0',
                 {
                     method: 'PUT',
                     headers: {
@@ -99,7 +111,7 @@ describe('mod_muc_kick_participant', () => {
         it('returns 400 when body is empty', async () => {
             const token = mintSystemToken();
             const res = await fetch(
-                `http://localhost:5280/kick-participant?room=kick-test-0`,
+                'http://localhost:5280/kick-participant?room=kick-test-0',
                 {
                     method: 'PUT',
                     headers: {
@@ -116,7 +128,7 @@ describe('mod_muc_kick_participant', () => {
         it('returns 400 when neither participantId nor number is provided', async () => {
             const token = mintSystemToken();
             const res = await fetch(
-                `http://localhost:5280/kick-participant?room=kick-test-0`,
+                'http://localhost:5280/kick-participant?room=kick-test-0',
                 {
                     method: 'PUT',
                     headers: {
@@ -133,14 +145,15 @@ describe('mod_muc_kick_participant', () => {
         it('returns 400 when both participantId and number are provided', async () => {
             const token = mintSystemToken();
             const res = await fetch(
-                `http://localhost:5280/kick-participant?room=kick-test-0`,
+                'http://localhost:5280/kick-participant?room=kick-test-0',
                 {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`
                     },
-                    body: JSON.stringify({ participantId: 'focus', number: '+1234' })
+                    body: JSON.stringify({ participantId: 'focus',
+                        number: '+1234' })
                 }
             );
 

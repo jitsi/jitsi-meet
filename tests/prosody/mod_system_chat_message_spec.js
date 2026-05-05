@@ -11,13 +11,25 @@ const room = () => `system-chat-${++_roomCounter}@${CONFERENCE}`;
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+/**
+ * Creates a room with a focus participant.
+ *
+ * @returns {Promise<{roomJid: string, focus: object}>}
+ */
 async function createRoom() {
     const roomJid = room();
     const focus = await joinWithFocus(roomJid);
 
-    return { roomJid, focus };
+    return { roomJid,
+        focus };
 }
 
+/**
+ * Disconnects all provided clients.
+ *
+ * @param {...object} clients - Clients to disconnect.
+ * @returns {Promise<void>}
+ */
 async function disconnectAll(...clients) {
     await Promise.all(clients.map(c => c.disconnect()));
 }
@@ -129,7 +141,8 @@ describe('mod_system_chat_message', () => {
                             'Content-Type': 'application/json',
                             Authorization: `Bearer ${token}`
                         },
-                        body: JSON.stringify({ room: roomJid, connectionJIDs: [ focus.jid ] })
+                        body: JSON.stringify({ room: roomJid,
+                            connectionJIDs: [ focus.jid ] })
                     }
                 );
 
@@ -152,7 +165,8 @@ describe('mod_system_chat_message', () => {
                             'Content-Type': 'application/json',
                             Authorization: `Bearer ${token}`
                         },
-                        body: JSON.stringify({ room: roomJid, message: 'hi' })
+                        body: JSON.stringify({ room: roomJid,
+                            message: 'hi' })
                     }
                 );
 
@@ -172,7 +186,8 @@ describe('mod_system_chat_message', () => {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`
                     },
-                    body: JSON.stringify({ connectionJIDs: [], message: 'hi' })
+                    body: JSON.stringify({ connectionJIDs: [],
+                        message: 'hi' })
                 }
             );
 

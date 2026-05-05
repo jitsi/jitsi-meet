@@ -1,8 +1,8 @@
 import assert from 'assert';
 import http from 'http';
 
-import { createXmppClient } from './helpers/xmpp_client.js';
 import { mintAsapToken } from './helpers/jwt.js';
+import { createXmppClient } from './helpers/xmpp_client.js';
 
 /**
  * Fetches session-info for the given full JID.
@@ -17,7 +17,9 @@ function getSessionInfo(jid) {
         http.get(url, res => {
             let body = '';
 
-            res.on('data', chunk => { body += chunk; });
+            res.on('data', chunk => {
+                body += chunk;
+            });
             res.on('end', () => {
                 if (res.statusCode !== 200) {
                     reject(new Error(`session-info returned ${res.statusCode}: ${body}`));
@@ -64,7 +66,8 @@ describe('mod_auth_token (ASAP / RS256)', () => {
         // Sign with a freshly generated key that the server does not know.
         const { generateKeyPairSync } = await import('crypto');
         const { privateKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
-        const wrongPem = privateKey.export({ type: 'pkcs8', format: 'pem' });
+        const wrongPem = privateKey.export({ type: 'pkcs8',
+            format: 'pem' });
         const token = mintAsapToken({}, { privateKey: wrongPem });
 
         await assert.rejects(
@@ -105,9 +108,9 @@ describe('mod_auth_token (ASAP / RS256)', () => {
             context: {
                 features: {
                     'screen-sharing': true,
-                    'recording': false,
-                },
-            },
+                    'recording': false
+                }
+            }
         });
         const c = await asapClient({ token });
 
@@ -115,7 +118,7 @@ describe('mod_auth_token (ASAP / RS256)', () => {
         const info = await getSessionInfo(c.jid);
 
         assert.strictEqual(info.jitsi_meet_context_features['screen-sharing'], true);
-        assert.strictEqual(info.jitsi_meet_context_features['recording'], false);
+        assert.strictEqual(info.jitsi_meet_context_features.recording, false);
     });
 
     it('sets session.jitsi_meet_room from room claim', async () => {
@@ -131,8 +134,10 @@ describe('mod_auth_token (ASAP / RS256)', () => {
     it('sets session.jitsi_meet_context_user from token context', async () => {
         const token = mintAsapToken({
             context: {
-                user: { id: 'user-123', name: 'Alice', email: 'alice@example.com' },
-            },
+                user: { id: 'user-123',
+                    name: 'Alice',
+                    email: 'alice@example.com' }
+            }
         });
         const c = await asapClient({ token });
 
@@ -146,7 +151,7 @@ describe('mod_auth_token (ASAP / RS256)', () => {
 
     it('sets session.jitsi_meet_context_group from token context', async () => {
         const token = mintAsapToken({
-            context: { group: 'test-group' },
+            context: { group: 'test-group' }
         });
         const c = await asapClient({ token });
 
@@ -157,6 +162,7 @@ describe('mod_auth_token (ASAP / RS256)', () => {
     });
 
     it('sets session.jitsi_meet_context_user.id from top-level user_id when context is absent', async () => {
+        // eslint-disable-next-line camelcase
         const token = mintAsapToken({ user_id: 'legacy-user-456' });
         const c = await asapClient({ token });
 

@@ -11,13 +11,25 @@ const room = () => `jigasi-invite-${++_roomCounter}@${CONFERENCE}`;
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+/**
+ * Creates a room with a focus participant.
+ *
+ * @returns {Promise<{roomJid: string, focus: object}>}
+ */
 async function createRoom() {
     const roomJid = room();
     const focus = await joinWithFocus(roomJid);
 
-    return { roomJid, focus };
+    return { roomJid,
+        focus };
 }
 
+/**
+ * Disconnects all provided clients.
+ *
+ * @param {...object} clients - Clients to disconnect.
+ * @returns {Promise<void>}
+ */
 async function disconnectAll(...clients) {
     await Promise.all(clients.map(c => c.disconnect()));
 }
@@ -158,6 +170,7 @@ describe('mod_muc_jigasi_invite', () => {
 
             try {
                 const token = mintSystemToken();
+
                 // The brewery room (jigasibrewery@internal.auth.localhost) is
                 // never created in the test environment, so the module returns 404.
                 const { status } = await inviteJigasi(roomJid, '+15551234567', token);

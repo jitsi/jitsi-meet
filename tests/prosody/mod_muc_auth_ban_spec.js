@@ -28,7 +28,8 @@ const freshToken = () => mintAsapToken({ jti: `ban-test-${++_tokenCounter}` });
  */
 function createVpaasClient(token) {
     return createXmppClient({
-        params: { prefix: VPAAS_PREFIX, token }
+        params: { prefix: VPAAS_PREFIX,
+            token }
     });
 }
 
@@ -39,7 +40,8 @@ describe('mod_muc_auth_ban', () => {
     afterEach(async () => {
         // Reset the mock access manager to the default (allow, HTTP 200)
         // so that each test starts from a clean state.
-        await setAccessManagerResponse({ access: true, status: 200 });
+        await setAccessManagerResponse({ access: true,
+            status: 200 });
     });
 
     // ── No token ─────────────────────────────────────────────────────────────
@@ -66,6 +68,7 @@ describe('mod_muc_auth_ban', () => {
         await setAccessManagerResponse({ status: 500 });
 
         const token = freshToken();
+
         // No ?prefix= param → jitsi_web_query_prefix is "" → bypasses VPaaS check.
         const c = await createXmppClient({ params: { token } });
 

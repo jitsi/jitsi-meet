@@ -17,7 +17,7 @@ const PREV_SECRET = 'oldsecret';
  *
  * @param {boolean} enabled
  */
-async function setSharedSecretPrev(enabled) {
+async function setSharedSecretPrev(enabled) { // eslint-disable-line no-unused-vars
     const container = getContainer();
     const from = enabled
         ? `-- shared_secret_prev = "${PREV_SECRET}"`
@@ -41,7 +41,9 @@ async function setSharedSecretPrev(enabled) {
  * @returns {Promise<object>}
  */
 function connect(username, password) {
-    return createXmppClient({ domain: DOMAIN, username, password });
+    return createXmppClient({ domain: DOMAIN,
+        username,
+        password });
 }
 
 describe('mod_auth_jitsi-shared-secret', () => {

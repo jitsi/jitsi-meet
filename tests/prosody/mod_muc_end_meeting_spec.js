@@ -22,9 +22,16 @@ async function createRoom() {
 
     await user.joinRoom(roomJid);
 
-    return { roomJid, clients: [ focus, user ] };
+    return { roomJid,
+        clients: [ focus, user ] };
 }
 
+/**
+ * Disconnects all provided clients.
+ *
+ * @param {Array} clients - Clients to disconnect.
+ * @returns {Promise<void>}
+ */
 async function disconnectAll(clients) {
     await Promise.all(clients.map(c => c.disconnect()));
 }

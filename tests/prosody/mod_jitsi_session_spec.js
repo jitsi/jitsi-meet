@@ -17,7 +17,9 @@ function getSessionInfo(jid) {
         http.get(url, res => {
             let body = '';
 
-            res.on('data', chunk => { body += chunk; });
+            res.on('data', chunk => {
+                body += chunk;
+            });
             res.on('end', () => {
                 if (res.statusCode !== 200) {
                     reject(new Error(`session-info returned ${res.statusCode}: ${body}`));

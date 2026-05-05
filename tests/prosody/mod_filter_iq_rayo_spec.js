@@ -1,25 +1,37 @@
 import assert from 'assert';
 import http from 'http';
 
-import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 import { mintAsapToken } from './helpers/jwt.js';
+import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 let _roomCounter = 0;
 const nextRoom = () => `rayo-test-${++_roomCounter}@conference.localhost`;
 
 // ─── HTTP helpers ────────────────────────────────────────────────────────────
 
+/**
+ * Fetches pending dial IQ messages from the test observer.
+ *
+ * @returns {Promise<Array>}
+ */
 function getDialIqs() {
     return new Promise((resolve, reject) => {
         http.get('http://localhost:5280/test-observer/dial-iqs', res => {
             let body = '';
 
-            res.on('data', c => { body += c; });
+            res.on('data', c => {
+                body += c;
+            });
             res.on('end', () => resolve(JSON.parse(body)));
         }).on('error', reject);
     });
 }
 
+/**
+ * Clears all dial IQ messages from the test observer.
+ *
+ * @returns {Promise<void>}
+ */
 function clearDialIqs() {
     return new Promise((resolve, reject) => {
         const req = http.request(
@@ -79,7 +91,8 @@ describe('mod_filter_iq_rayo (feature-based authorization)', () => {
         clients.push(c);
         await c.joinRoom(room);
 
-        return { client: c, room };
+        return { client: c,
+            room };
     }
 
     // ─── outbound-call (dial to a SIP/telephony address) ────────────────────
@@ -167,6 +180,7 @@ describe('mod_filter_iq_rayo (feature-based authorization)', () => {
         it('blocks IQ when JvbRoomName header is missing', async () => {
             const token = mintAsapToken({ context: { features: { 'outbound-call': true } } });
             const { client: c, room } = await setup(token);
+
             // null → header omitted entirely
             const iqs = await sendAndCollect(c, room, 'sip:test@example.com', null);
 

@@ -36,16 +36,27 @@ async function createRoom() {
     // Connect with ?room= so mod_jitsi_session populates jitsi_web_query_room.
     // Include a token for authenticated context.
     const token = mintAsapToken({ room: roomName });
-    const moderator = await createXmppClient({ params: { room: roomName, token } });
+    const moderator = await createXmppClient({ params: { room: roomName,
+        token } });
 
     await moderator.joinRoom(roomJid);
+
     // Explicitly grant moderator role since the test environment does not load
     // the module that would promote a user based on token claims. See TODO above.
     await focus.grantModerator(roomJid, moderator.nick);
 
-    return { roomJid, roomName, focus, moderator };
+    return { roomJid,
+        roomName,
+        focus,
+        moderator };
 }
 
+/**
+ * Disconnects all provided clients.
+ *
+ * @param {...object} clients - Clients to disconnect.
+ * @returns {Promise<void>}
+ */
 async function disconnectAll(...clients) {
     await Promise.all(clients.map(c => c.disconnect()));
 }

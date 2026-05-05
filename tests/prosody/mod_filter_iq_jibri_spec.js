@@ -1,25 +1,37 @@
 import assert from 'assert';
 import http from 'http';
 
-import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 import { mintAsapToken } from './helpers/jwt.js';
+import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 let _roomCounter = 0;
 const nextRoom = () => `jibri-test-${++_roomCounter}@conference.localhost`;
 
 // ─── HTTP helpers ────────────────────────────────────────────────────────────
 
+/**
+ * Fetches pending Jibri IQ messages from the test observer.
+ *
+ * @returns {Promise<Array>}
+ */
 function getJibriIqs() {
     return new Promise((resolve, reject) => {
         http.get('http://localhost:5280/test-observer/jibri-iqs', res => {
             let body = '';
 
-            res.on('data', c => { body += c; });
+            res.on('data', c => {
+                body += c;
+            });
             res.on('end', () => resolve(JSON.parse(body)));
         }).on('error', reject);
     });
 }
 
+/**
+ * Clears all Jibri IQ messages from the test observer.
+ *
+ * @returns {Promise<void>}
+ */
 function clearJibriIqs() {
     return new Promise((resolve, reject) => {
         const req = http.request(
@@ -74,7 +86,8 @@ describe('mod_filter_iq_jibri (feature-based authorization)', () => {
         clients.push(c);
         await c.joinRoom(room);
 
-        return { client: c, room };
+        return { client: c,
+            room };
     }
 
     // ─── recording (recording_mode="file") ───────────────────────────────────

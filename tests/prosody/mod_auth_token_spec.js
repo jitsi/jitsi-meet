@@ -1,8 +1,8 @@
 import assert from 'assert';
 import http from 'http';
 
-import { createXmppClient } from './helpers/xmpp_client.js';
 import { mintToken } from './helpers/jwt.js';
+import { createXmppClient } from './helpers/xmpp_client.js';
 
 /**
  * Fetches session-info for the given full JID.
@@ -17,7 +17,9 @@ function getSessionInfo(jid) {
         http.get(url, res => {
             let body = '';
 
-            res.on('data', chunk => { body += chunk; });
+            res.on('data', chunk => {
+                body += chunk;
+            });
             res.on('end', () => {
                 if (res.statusCode !== 200) {
                     reject(new Error(`session-info returned ${res.statusCode}: ${body}`));
@@ -36,7 +38,8 @@ function getSessionInfo(jid) {
 
 /** Connects to the HS256 VirtualHost. */
 function hs256Client(params) {
-    return createXmppClient({ domain: 'hs256.localhost', params });
+    return createXmppClient({ domain: 'hs256.localhost',
+        params });
 }
 
 describe('mod_auth_token (HS256 shared secret)', () => {
@@ -97,9 +100,9 @@ describe('mod_auth_token (HS256 shared secret)', () => {
             context: {
                 features: {
                     'screen-sharing': true,
-                    'recording': false,
-                },
-            },
+                    'recording': false
+                }
+            }
         });
         const c = await hs256Client({ token });
 
@@ -107,7 +110,7 @@ describe('mod_auth_token (HS256 shared secret)', () => {
         const info = await getSessionInfo(c.jid);
 
         assert.strictEqual(info.jitsi_meet_context_features['screen-sharing'], true);
-        assert.strictEqual(info.jitsi_meet_context_features['recording'], false);
+        assert.strictEqual(info.jitsi_meet_context_features.recording, false);
     });
 
     it('sets session.jitsi_meet_room from room claim', async () => {
