@@ -1,6 +1,11 @@
 -- XEP-0215 implementation for time-limited turn credentials
 -- Copyright (C) 2012-2014 Philipp Hancke
 -- This file is MIT/X11 licensed.
+--
+-- Note: Prosody's built-in external_services module and mod_turncredentials_http
+-- (which depends on external_services) both hook the same urn:xmpp:extdisco:1
+-- IQ event. If any of these are loaded on the same VirtualHost they will override
+-- this module. Only one of the three should be configured on a given VirtualHost.
 
 --turncredentials_secret = "keepthissecret";
 --turncredentials = {

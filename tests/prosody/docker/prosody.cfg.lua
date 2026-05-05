@@ -82,7 +82,6 @@ VirtualHost "localhost"
         -- sessions. muc_prosody_jitsi_access_manager_url points at the mock
         -- access manager served by mod_test_observer_http on the same host.
         "muc_auth_ban";
-        "turncredentials";
         "turncredentials_http";
         "jiconop";
     }
@@ -90,13 +89,6 @@ VirtualHost "localhost"
     shard_name = "test-shard"
     region_name = "test-region"
     release_number = "test-release"
-
-    -- mod_turncredentials (XMPP XEP-0215): port 3478.
-    turncredentials_secret = "xmpp-turn-secret"
-    turncredentials = {
-        { type = "stun", host = "127.0.0.1", port = 3478 };
-        { type = "turn", host = "127.0.0.1", port = 3478 };
-    }
 
     -- mod_turncredentials_http (HTTP via external_services): port 3479.
     external_services = {
@@ -155,6 +147,18 @@ VirtualHost "shared-secret.localhost"
 
 VirtualHost "whitelist.localhost"
     authentication = "anonymous"
+
+-- VirtualHost for mod_turncredentials tests. Kept separate from the main
+-- VirtualHost because external_services (loaded by mod_turncredentials_http)
+-- hooks the same extdisco IQ event and would otherwise take precedence.
+VirtualHost "turncredentials.localhost"
+    authentication = "anonymous"
+    modules_enabled = { "turncredentials" }
+    turncredentials_secret = "xmpp-turn-secret"
+    turncredentials = {
+        { type = "stun", host = "127.0.0.1", port = 3478 };
+        { type = "turn", host = "127.0.0.1", port = 3478 };
+    }
 
 Component "conference.localhost" "muc"
     modules_enabled = {
