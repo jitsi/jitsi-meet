@@ -16,6 +16,7 @@
 -- plugin, invoked at provisioning time via:
 --   prosodyctl mod_roster_command subscribe <jid1> <jid2>
 -- Used by Ansible to subscribe focus.<domain> to focus@auth.<domain>.
+-- Only needed for prosody versions prior 13
 -----------------------------------------------------------
 
 if module.host ~= "*" then
