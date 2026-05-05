@@ -84,6 +84,10 @@ VirtualHost "localhost"
         "muc_auth_ban";
         "turncredentials_http";
         "jiconop";
+        -- Rewrites MUC JIDs between external subdomain form
+        -- (room@conference.sub.localhost) and internal bracket form
+        -- ([sub]room@conference.localhost) for all sessions on all hosts.
+        "muc_domain_mapper";
     }
 
     shard_name = "test-shard"
@@ -222,3 +226,11 @@ Component "endconference.localhost" "end_conference"
     muc_component = "conference.localhost"
     muc_mapper_domain_base = "localhost"
     muc_mapper_domain_prefix = "conference"
+
+-- MUC component for mod_muc_rate_limit integration tests.
+-- Intentionally low join/leave rates (1/s) so that 5 simultaneous clients
+-- exercise the queuing and timer logic without long waits.
+Component "rate-limited.localhost" "muc"
+    modules_enabled = { "muc_rate_limit" }
+    muc_rate_joins = 1
+    muc_rate_leaves = 1

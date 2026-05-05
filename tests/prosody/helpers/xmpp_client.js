@@ -370,6 +370,24 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Destroys a MUC room. The client must be the room owner.
+         * Resolves when the server acknowledges the destroy IQ.
+         *
+         * @param {string} roomJid  e.g. 'room@conference.localhost'
+         */
+        destroyRoom(roomJid) {
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'set',
+                    to: roomJid,
+                    id: `destroy-${++_counter}` },
+                    xml('query', { xmlns: 'http://jabber.org/protocol/muc#owner' },
+                        xml('destroy')
+                    )
+                )
+            );
+        },
+
+        /**
          * Waits for an incoming <presence> stanza that satisfies an optional
          * filter predicate and resolves with it. Non-matching presences are left
          * in the queue. Rejects with a timeout error if no matching presence
