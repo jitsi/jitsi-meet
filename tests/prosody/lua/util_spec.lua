@@ -402,6 +402,28 @@ describe("util.lib", function()
             assert.equal("conference.foo.test.example.com", host)
             assert.equal("foo", subdomain)
         end)
+
+        -- Regression: target_subdomain_pattern used an unescaped '.' between the
+        -- prefix and the subdomain capture group.  In Lua patterns '.' matches any
+        -- character, so "conference-foo.test.example.com" (hyphen) was incorrectly
+        -- treated as a subdomain JID with subdomain "foo".  The correct pattern
+        -- requires a literal dot: "conference%.foo.test.example.com".
+        it("returns nil subdomain for a hyphenated-prefix host (regression: unescaped dot)", function()
+            -- 'conference-foo' shares the same base domain but is NOT a subdomain
+            -- MUC component; the separator is a hyphen, not a dot.
+            local _, _, _, subdomain =
+                M.room_jid_split_subdomain("room@conference-foo.test.example.com")
+            assert.is_nil(subdomain)
+        end)
+
+        it("returns nil subdomain when only the suffix differs by a non-dot character", function()
+            -- e.g. conference.foo-test.example.com — the subdomain capture is
+            -- [^%.]+, so a hyphen inside 'foo-test' is fine, but this test
+            -- confirms the prefix boundary is strict.
+            local _, _, _, subdomain =
+                M.room_jid_split_subdomain("room@conferenceXfoo.test.example.com")
+            assert.is_nil(subdomain)
+        end)
     end)
 
     -- -----------------------------------------------------------------------
@@ -426,6 +448,19 @@ describe("util.lib", function()
             local result = M.room_jid_match_rewrite("conference.foo.test.example.com", stanza)
             -- No node → only host is rewritten
             assert.equal(MUC_DOMAIN, result)
+        end)
+
+        -- Regression: unescaped '.' in target_subdomain_pattern caused
+        -- "conference-internal.test.example.com" to be treated as a subdomain
+        -- MUC host and rewritten to "[internal]room@conference.test.example.com".
+        it("does not rewrite a JID whose host uses a hyphen after the prefix (regression)", function()
+            local jid = "room@conference-internal.test.example.com"
+            assert.equal(jid, M.room_jid_match_rewrite(jid))
+        end)
+
+        it("does not rewrite a JID whose host uses an arbitrary non-dot separator after the prefix", function()
+            local jid = "room@conferenceXinternal.test.example.com"
+            assert.equal(jid, M.room_jid_match_rewrite(jid))
         end)
     end)
 
