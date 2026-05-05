@@ -1,3 +1,10 @@
+-- Tracks speaking time statistics for conference participants and broadcasts
+-- them to clients via XMPP messages. Receives incoming <message> stanzas
+-- carrying <speakerstats> (dominant speaker events) or <faceLandmarks> children
+-- from clients, and sends outgoing <message> stanzas with a <json-message>
+-- payload (type "speakerstats") to each occupant on request or on join.
+-- Aggregates per-room stats across Jicofo and MUC events, supporting Jibri
+-- recording sessions and face landmarks data.
 local util = module:require "util";
 local is_admin = util.is_admin;
 local get_room_from_jid = util.get_room_from_jid;
