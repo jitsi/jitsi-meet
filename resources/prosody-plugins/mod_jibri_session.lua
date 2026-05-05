@@ -1,3 +1,18 @@
+-- mod_jibri_session
+--
+-- Enriches jibri `start` IQ stanzas with recording metadata before they reach
+-- jibri.  It handles two passes:
+--
+--   1. Client → jicofo (no `room` attr): reads the initiating user's identity
+--      from the XMPP session and writes it to
+--      app_data.file_recording_metadata.initiator {id, group}.
+--
+--   2. Jicofo → jibri (`room` attr present): looks up the MUC room, reads its
+--      meetingId, and writes it to
+--      app_data.file_recording_metadata.conference_details.session_id.
+--
+-- Must be loaded on both the main virtual host and the jicofo virtual host.
+
 local json = require 'cjson';
 
 local util = module:require 'util';
