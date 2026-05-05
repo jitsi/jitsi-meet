@@ -1,3 +1,6 @@
+-- Taken from prosody-modules (https://hg.prosody.im/prosody-modules/) at
+-- revision 4317:456b9f608fcf, with mod_roster_command.patch applied.
+
 if module:get_host_type() ~= "component" then
 	error("proxy_component should be loaded as component", 0);
 end
