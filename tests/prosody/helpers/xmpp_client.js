@@ -116,7 +116,15 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         stanzaQueue.push(stanza);
     });
 
-    await xmpp.start();
+    // If start() fails (e.g. SASL error) stop the client before re-throwing so
+    // that @xmpp/client's auto-reconnect does not keep retrying in the background.
+    // Leaked reconnect loops can flood Prosody and cause unrelated tests to fail.
+    try {
+        await xmpp.start();
+    } catch (err) {
+        xmpp.stop().catch(() => {});
+        throw err;
+    }
 
     return {
         jid: xmpp.jid?.toString(),
