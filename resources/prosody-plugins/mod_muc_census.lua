@@ -18,9 +18,8 @@
 -- when enabled, make sure to secure the endpoint at the web server or via
 -- network filters
 
-local array = require 'util.array';
 local jid = require "util.jid";
-local json = require 'util.json';
+local json = require 'cjson.safe';
 local iterators = require "util.iterators";
 local util = module:require "util";
 local is_healthcheck_room = util.is_healthcheck_room;
@@ -48,7 +47,7 @@ function handle_get_room_census(event)
         return { status_code = 400; }
     end
 
-    room_data = array()
+    room_data = {}
     leaked_rooms = 0;
     for room in host_session.modules.muc.each_room() do
         if not is_healthcheck_room(room.jid) then
@@ -84,7 +83,9 @@ function handle_get_room_census(event)
         end
     end
 
-    census_resp = json.encode({ room_census = room_data });
+    -- cjson encodes an empty Lua table as {} (object); force array literal.
+    local rc_json = #room_data == 0 and "[]" or json.encode(room_data);
+    census_resp = '{"room_census":' .. rc_json .. '}';
     return { status_code = 200; body = census_resp }
 end
 
