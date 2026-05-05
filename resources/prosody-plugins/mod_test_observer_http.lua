@@ -10,8 +10,9 @@
 --   GET  /test-observer/access-manager  — called by Prosody; returns configured response
 --   POST /test-observer/access-manager  — called by tests to configure the response
 
-local json = require "cjson.safe";
-local io = require "io";
+local json    = require "cjson.safe";
+local io      = require "io";
+local jid_lib = require "util.jid";
 
 -- Mock access-manager state for mod_muc_auth_ban tests.
 --   access: true  → return {"access": true}  (user allowed)
@@ -211,6 +212,70 @@ module:provides("http", {
         ["DELETE /dial-iqs"] = function()
             shared.dial_iqs = {};
             return { status_code = 204 };
+        end;
+
+        -- POST /test-observer/sessions/context
+        -- Body: { "jid": "node@localhost/resource", "user_id": "...", "features": { "flip": true } }
+        -- Sets jitsi_meet_context_user / jitsi_meet_context_features on the c2s session so that
+        -- mod_muc_flip (and other JWT-aware modules) see the same context as they would with a
+        -- real token — without needing a JWT auth module in the test setup.
+        ["POST /sessions/context"] = function(event)
+            local data     = json.decode(event.request.body or "{}") or {};
+            local full_jid = data.jid;
+            local user_id  = data.user_id;
+            local features = data.features or {};
+            if not full_jid then
+                return { status_code = 400; body = '{"error":"missing jid"}' };
+            end
+            local node, host, resource = jid_lib.split(full_jid);
+            local host_obj = host and prosody.hosts[host];
+            if not host_obj then
+                return { status_code = 404; body = '{"error":"host not found"}' };
+            end
+            local user_obj = host_obj.sessions and host_obj.sessions[node];
+            if not user_obj then
+                return { status_code = 404; body = '{"error":"user not found"}' };
+            end
+            local session = user_obj.sessions and user_obj.sessions[resource];
+            if not session then
+                return { status_code = 404; body = '{"error":"session not found"}' };
+            end
+            if user_id then
+                session.jitsi_meet_context_user = { id = user_id };
+            end
+            session.jitsi_meet_context_features = features;
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = '{"ok":true}';
+            };
+        end;
+
+        -- GET /test-observer/rooms/participants?jid=room@conference.localhost
+        -- Returns: { participants_details: { userId: fullNick }, kicked_participant_nick?, flip_participant_nick? }
+        -- Exposes mod_muc_flip's per-room tracking tables for test assertions.
+        ["GET /rooms/participants"] = function(event)
+            local params   = parse_query(event.request.url.query);
+            local room_jid = params["jid"];
+            if not room_jid then
+                return { status_code = 400; body = '{"error":"missing jid param"}' };
+            end
+            local room = (shared.rooms or {})[room_jid];
+            if not room then
+                return { status_code = 404; body = '{"error":"room not found"}' };
+            end
+            local result = { participants_details = room._data.participants_details or {} };
+            if room._data.kicked_participant_nick ~= nil then
+                result.kicked_participant_nick = room._data.kicked_participant_nick;
+            end
+            if room._data.flip_participant_nick ~= nil then
+                result.flip_participant_nick = room._data.flip_participant_nick;
+            end
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = json.encode(result);
+            };
         end;
 
         -- POST /test-observer/rooms/max-occupants

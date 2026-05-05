@@ -144,6 +144,7 @@ Component "conference.localhost" "muc"
         "muc_resource_validate";
         "muc_password_whitelist";
         "token_verification";
+        "muc_flip";
         "test_observer";
     }
 

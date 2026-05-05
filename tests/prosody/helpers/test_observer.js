@@ -81,6 +81,46 @@ export async function setRoomMaxOccupants(roomJid, max) {
 }
 
 /**
+ * Sets jitsi_meet_context_user and jitsi_meet_context_features on an active c2s
+ * session identified by full JID. Allows tests to simulate JWT token context
+ * without running a real token-auth module.
+ *
+ * @param {string} fullJid  e.g. 'abc123@localhost/res1'
+ * @param {string} userId   value for jitsi_meet_context_user.id
+ * @param {object} features key/value feature flags, e.g. { flip: true }
+ */
+export async function setSessionContext(fullJid, userId, features = {}) {
+    const res = await fetch(`${BASE}/sessions/context`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jid: fullJid, user_id: userId, features })
+    });
+
+    if (!res.ok) {
+        throw new Error(`setSessionContext failed: ${res.status} ${await res.text()}`);
+    }
+}
+
+/**
+ * Returns mod_muc_flip's per-room participant tracking state.
+ *
+ * @param {string} roomJid  e.g. 'room@conference.localhost'
+ * @returns {Promise<{participants_details: object, kicked_participant_nick?: string, flip_participant_nick?: string}>}
+ */
+export async function getRoomParticipants(roomJid) {
+    const res = await fetch(`${BASE}/rooms/participants?jid=${encodeURIComponent(roomJid)}`);
+
+    if (res.status === 404) {
+        return null;
+    }
+    if (!res.ok) {
+        throw new Error(`getRoomParticipants failed: ${res.status}`);
+    }
+
+    return res.json();
+}
+
+/**
  * Returns room state from Prosody's internal MUC state.
  * @param {string} roomJid  e.g. 'room@conference.localhost'
  * @returns {Promise<{jid: string, hidden: boolean, occupant_count: number}|null>}

@@ -384,6 +384,22 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Convenience wrapper around waitForPresence that matches by full from-JID
+         * and optional presence type.
+         *
+         * @param {string} from     full JID, e.g. 'room@conference.localhost/nick'
+         * @param {object} [opts]
+         * @param {string} [opts.type]     presence type to match (e.g. 'unavailable')
+         * @param {number} [opts.timeout=5000]
+         */
+        waitForPresenceFrom(from, { type, timeout = 5000 } = {}) {
+            return this.waitForPresence(
+                s => s.attrs.from === from && (type === undefined || s.attrs.type === type),
+                timeout
+            );
+        },
+
+        /**
          * Waits for an incoming <iq> stanza that satisfies an optional filter
          * predicate and resolves with it. Only unsolicited IQs land here;
          * responses to IQs sent with sendIq are handled via pendingIqs.
