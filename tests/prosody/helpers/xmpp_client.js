@@ -303,6 +303,20 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a XEP-0215 extdisco services IQ and resolves with the response stanza.
+         * @param {string} targetJid  e.g. 'localhost'
+         */
+        sendExtdiscoIq(targetJid) {
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'get',
+                    to: targetJid,
+                    id: `extdisco-${++_counter}` },
+                    xml('services', { xmlns: 'urn:xmpp:extdisco:1' })
+                )
+            );
+        },
+
+        /**
          * Sends an <end_conference/> message to the given component JID.
          * mod_end_conference uses the sender's jitsi_web_query_room session field
          * (populated by mod_jitsi_session from the ?room= WebSocket URL param) to

@@ -82,6 +82,21 @@ VirtualHost "localhost"
         -- sessions. muc_prosody_jitsi_access_manager_url points at the mock
         -- access manager served by mod_test_observer_http on the same host.
         "muc_auth_ban";
+        "turncredentials";
+        "turncredentials_http";
+    }
+
+    -- mod_turncredentials (XMPP XEP-0215): port 3478.
+    turncredentials_secret = "xmpp-turn-secret"
+    turncredentials = {
+        { type = "stun", host = "127.0.0.1", port = 3478 };
+        { type = "turn", host = "127.0.0.1", port = 3478 };
+    }
+
+    -- mod_turncredentials_http (HTTP via external_services): port 3479.
+    external_services = {
+        { type = "stun", host = "127.0.0.1", port = 3479 };
+        { type = "turn", host = "127.0.0.1", port = 3479, secret = "http-turn-secret" };
     }
 
     -- Required by mod_muc_auth_ban: URL of the access manager to call.
