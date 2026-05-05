@@ -124,7 +124,7 @@ VirtualHost "auth.localhost"
     -- Disable SCRAM and force PLAIN (safe on loopback in the test environment).
     disable_sasl_mechanisms = { "SCRAM-SHA-1", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-256-PLUS" }
 
--- VirtualHost for HS256 (shared-secret) token auth tests.
+-- VirtualHost for HS256 (shared-secret) token auth tests and mod_presence_identity tests.
 VirtualHost "hs256.localhost"
     authentication = "token"
     app_id = "jitsi"
@@ -132,6 +132,7 @@ VirtualHost "hs256.localhost"
     signature_algorithm = "HS256"
     asap_require_room_claim = false
     allow_empty_token = false
+    modules_enabled = { "presence_identity" }
 
 -- Second VirtualHost whose domain is listed in muc_access_whitelist on the
 -- MUC component below. Clients connecting here get JIDs like
@@ -234,3 +235,7 @@ Component "rate-limited.localhost" "muc"
     modules_enabled = { "muc_rate_limit" }
     muc_rate_joins = 1
     muc_rate_leaves = 1
+
+-- Plain MUC for mod_presence_identity tests. No token verification and no
+-- muc_meeting_id lock so any client can join freely without focus.
+Component "conference-identity.localhost" "muc"

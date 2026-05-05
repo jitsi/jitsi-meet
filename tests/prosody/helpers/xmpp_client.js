@@ -550,6 +550,18 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a bare presence stanza to the given JID (no <x muc> element).
+         * Useful for presence updates after the initial MUC join, which
+         * triggers mod_presence_identity hooks on the sender's VirtualHost.
+         *
+         * @param {string} to          Destination full JID, e.g. 'room@conference.localhost/nick'
+         * @param {Array}  [extensions] Additional XML children to include.
+         */
+        sendPresence(to, extensions = []) {
+            return xmpp.send(xml('presence', { to }, ...extensions));
+        },
+
+        /**
          * Abruptly closes the underlying WebSocket without sending a stream
          * close. Prosody will put the session into smacks hibernation, keeping
          * it in full_sessions so mod_auth_jitsi-anonymous can find it by
