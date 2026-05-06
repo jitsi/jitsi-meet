@@ -1,5 +1,3 @@
-import { expect } from '@wdio/globals';
-
 import '../../helpers/matchers';
 import { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';

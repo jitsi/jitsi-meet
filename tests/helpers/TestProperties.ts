@@ -70,9 +70,18 @@ export function loadTestFiles(files: string[]): void {
 
     testGlobals.forEach(fn => {
         originalTestFunctions[fn] = (global as any)[fn];
-        (global as any)[fn] = () => {
+        const stub: any = () => {
             // do nothing
         };
+
+        // helpers/matchers.ts calls expect.extend({...}) at module load to
+        // register a custom matcher; without a stub for .extend the require()
+        // below would throw and we'd skip the spec's setTestProperties calls.
+        if (fn === 'expect') {
+            stub.extend = () => { /* no-op */ };
+        }
+
+        (global as any)[fn] = stub;
     });
 
     try {

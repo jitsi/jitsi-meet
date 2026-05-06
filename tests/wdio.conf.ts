@@ -1,5 +1,4 @@
 import AllureReporter from '@wdio/allure-reporter';
-import { multiremotebrowser } from '@wdio/globals';
 import { Buffer } from 'buffer';
 import fs from 'fs';
 import { glob } from 'glob';
@@ -295,7 +294,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
             .replace(/\//g, '-');
         const testProperties = await getTestProperties(testFilePath);
 
-        console.log(`Running test: ${testName} via worker: ${cid} browser instances:${multiremotebrowser.instances.length}`);
+        console.log(`Running test: ${testName} via worker: ${cid} browser instances:${multiRemoteBrowser.instances.length}`);
 
         const globalAny: any = global;
 
@@ -310,8 +309,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
             return;
         }
 
-        await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
-            const bInstance = multiremotebrowser.getInstance(instance);
+        await Promise.all(multiRemoteBrowser.instances.map(async (instance: string) => {
+            const bInstance = multiRemoteBrowser.getInstance(instance);
 
             // @ts-ignore
             initLogger(bInstance, `${instance}-${cid}-${testName}`, TEST_RESULTS_DIR);
@@ -404,8 +403,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @param {Object} suite - Suite details.
      */
     beforeSuite(suite) {
-        multiremotebrowser.instances.forEach((instance: string) => {
-            logInfo(multiremotebrowser.getInstance(instance),
+        multiRemoteBrowser.instances.forEach((instance: string) => {
+            logInfo(multiRemoteBrowser.getInstance(instance),
                 `---=== Begin ${suite.file.substring(suite.file.lastIndexOf('/') + 1)} ===---`);
         });
     },
@@ -449,8 +448,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
             return;
         }
 
-        multiremotebrowser.instances.forEach((instance: string) => {
-            logInfo(multiremotebrowser.getInstance(instance), `---=== Start test ${test.title} ===---`);
+        multiRemoteBrowser.instances.forEach((instance: string) => {
+            logInfo(multiRemoteBrowser.getInstance(instance), `---=== Start test ${test.title} ===---`);
         });
     },
 
@@ -463,8 +462,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @returns {Promise<void>}
      */
     async afterTest(test, context, { error }) {
-        multiremotebrowser.instances.forEach((instance: string) =>
-            logInfo(multiremotebrowser.getInstance(instance), `---=== End test ${test.title} ===---`));
+        multiRemoteBrowser.instances.forEach((instance: string) =>
+            logInfo(multiRemoteBrowser.getInstance(instance), `---=== End test ${test.title} ===---`));
 
         if (error) {
 
@@ -472,7 +471,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
             ctx.skipSuiteTests = `Test "${test.title}" has failed.`;
 
             // make sure all browsers are at the main app in iframe (if used), so we collect debug info
-            await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
+            await Promise.all(multiRemoteBrowser.instances.map(async (instance: string) => {
                 // @ts-ignore
                 await ctx[instance]?.switchToIFrame();
             }));
@@ -480,8 +479,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
             const allProcessing: Promise<any>[] = [];
             const attachments: { content: string | Buffer; filename: string; type: string; }[] = [];
 
-            multiremotebrowser.instances.forEach((instance: string) => {
-                const bInstance = multiremotebrowser.getInstance(instance);
+            multiRemoteBrowser.instances.forEach((instance: string) => {
+                const bInstance = multiRemoteBrowser.getInstance(instance);
 
                 allProcessing.push(bInstance.takeScreenshot().then(shot => {
                     attachments.push({
@@ -538,8 +537,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @returns {Promise<void>}
      */
     afterSuite(suite) {
-        multiremotebrowser.instances.forEach((instance: string) => {
-            logInfo(multiremotebrowser.getInstance(instance),
+        multiRemoteBrowser.instances.forEach((instance: string) => {
+            logInfo(multiRemoteBrowser.getInstance(instance),
                 `---=== End ${suite.file.substring(suite.file.lastIndexOf('/') + 1)} ===---`);
         });
     },

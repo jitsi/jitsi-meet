@@ -1,5 +1,3 @@
-import { expect } from '@wdio/globals';
-
 expect.extend({
     toPartiallyMatch(received: string, other: string, receivedLabel = 'received', otherLabel = 'other') {
         const pass = received.includes(other) || other.includes(received);

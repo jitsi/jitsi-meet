@@ -1,6 +1,5 @@
 /* global APP $ */
 
-import { multiremotebrowser } from '@wdio/globals';
 import assert from 'assert';
 import { Key } from 'webdriverio';
 
@@ -176,7 +175,7 @@ export class Participant {
      * The driver it uses.
      */
     get driver() {
-        return multiremotebrowser.getInstance(this._name);
+        return multiRemoteBrowser.getInstance(this._name);
     }
 
     /**
