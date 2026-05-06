@@ -2,7 +2,7 @@ import { xml } from '@xmpp/client';
 import assert from 'assert';
 
 
-import { getRoomParticipants, setRoomMaxOccupants, setSessionContext } from './helpers/test_observer.js';
+import { enableLobby, getRoomParticipants, setRoomMaxOccupants, setSessionContext } from './helpers/test_observer.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
@@ -300,5 +300,47 @@ describe('mod_muc_flip', () => {
         });
 
     }); // flip
+
+    // -------------------------------------------------------------------------
+    // Lobby interactions
+    // -------------------------------------------------------------------------
+    describe('lobby interactions', () => {
+
+        it('flip device bypasses lobby when first device is in main room', async () => {
+            const r = room();
+
+            await focusJoin(r);
+
+            // device1 joins before lobby is enabled.
+            const device1 = await connect();
+
+            await setSessionContext(device1.jid, USER_A_ID, { flip: true });
+            await device1.joinRoom(r);
+
+            await enableLobby(r);
+
+            // Start listening for device1's kick before device2 joins.
+            const d1KickedPromise = device1.waitForPresence(p => p.attrs.type === 'unavailable');
+
+            const device2 = await connect();
+
+            await setSessionContext(device2.jid, USER_A_ID, { flip: true });
+
+            // device2 joins with flip_device — mod_muc_flip grants it member affiliation
+            // in muc-occupant-pre-join, which causes the lobby module to let it through.
+            // A displayName is required because the lobby checks for it before the affiliation.
+            const joinPresence = await device2.joinRoom(
+                r, null, { displayName: 'Device Two', extensions: [ xml('flip_device') ] });
+
+            assert.notEqual(
+                joinPresence.attrs.type, 'error',
+                'flip device must bypass lobby when first device is in main room'
+            );
+
+            // The flip also kicks device1 from the main room.
+            await d1KickedPromise;
+        });
+
+    }); // lobby interactions
 
 });
