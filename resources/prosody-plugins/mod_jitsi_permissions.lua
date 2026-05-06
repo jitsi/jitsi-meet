@@ -1,4 +1,23 @@
--- this is auto loaded by meeting_id
+-- Injects a <permissions> element into a participant's self-presence to
+-- communicate which features they are allowed to use.
+--
+-- The <permissions> element is only injected when the server is the authoritative
+-- source of that information.  When a participant authenticated with a JWT that
+-- already contains context.features, the client reads those features directly
+-- from the token; no <permissions> element is sent.  This means:
+--
+--   * Token user WITH context.features  → no injection (client uses token features)
+--   * Token user WITHOUT context.features, becomes moderator → inject default_permissions
+--   * Anonymous/non-token user, becomes moderator → inject default_permissions
+--   * Non-moderator of any kind → no injection
+--
+-- There is no mechanism for a client to explicitly request its permissions;
+-- <permissions> is only ever pushed by the server, either on the initial
+-- self-presence when a moderator joins (if the conditions above are met), or
+-- when an affiliation change triggers force_permissions_update (e.g. another
+-- moderator grants owner to this participant).
+--
+-- auto loaded by meeting_id
 local filters = require 'util.filters';
 local jid = require 'util.jid';
 

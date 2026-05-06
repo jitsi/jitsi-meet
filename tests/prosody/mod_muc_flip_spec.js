@@ -330,7 +330,10 @@ describe('mod_muc_flip', () => {
             // in muc-occupant-pre-join, which causes the lobby module to let it through.
             // A displayName is required because the lobby checks for it before the affiliation.
             const joinPresence = await device2.joinRoom(
-                r, null, { displayName: 'Device Two', extensions: [ xml('flip_device') ] });
+                r, null, {
+                    displayName: 'Device Two',
+                    extensions: [ xml('flip_device') ]
+                });
 
             assert.notEqual(
                 joinPresence.attrs.type, 'error',

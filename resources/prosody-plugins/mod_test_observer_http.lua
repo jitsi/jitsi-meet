@@ -251,6 +251,39 @@ module:provides("http", {
             };
         end;
 
+        -- GET /test-observer/sessions/features?jid=user@localhost/resource
+        -- Returns the live jitsi_meet_context_features for the session.
+        -- Reading live (not a snapshot) captures side-effects from modules such as
+        -- mod_jitsi_permissions, which may set or update features after resource-bind.
+        -- Returns 200 {"features": <object|null>} or 404.
+        ["GET /sessions/features"] = function(event)
+            local params = parse_query(event.request.url.query);
+            local full_jid = params["jid"];
+            if not full_jid then
+                return { status_code = 400; body = '{"error":"missing jid param"}' };
+            end
+            local node, host, resource = jid_lib.split(full_jid);
+            local host_obj = host and prosody.hosts[host];
+            if not host_obj then
+                return { status_code = 404; body = '{"error":"host not found"}' };
+            end
+            local user_obj = host_obj.sessions and host_obj.sessions[node];
+            if not user_obj then
+                return { status_code = 404; body = '{"error":"user not found"}' };
+            end
+            local session = user_obj.sessions and user_obj.sessions[resource];
+            if not session then
+                return { status_code = 404; body = '{"error":"session not found"}' };
+            end
+            local features = session.jitsi_meet_context_features;
+            local body = features and json.encode({ features = features }) or '{"features":null}';
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = body;
+            };
+        end;
+
         -- GET /test-observer/rooms/participants?jid=room@conference.localhost
         -- Returns: { participants_details: { userId: fullNick }, kicked_participant_nick?, flip_participant_nick? }
         -- Exposes mod_muc_flip's per-room tracking tables for test assertions.

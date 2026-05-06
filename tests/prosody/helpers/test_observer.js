@@ -82,6 +82,24 @@ export async function setRoomMaxOccupants(roomJid, max) {
 }
 
 /**
+ * Returns the live jitsi_meet_context_features for a session.
+ * Unlike session-info (which snapshots at resource-bind), this reads the current
+ * value so it reflects any updates made after join (e.g. by mod_jitsi_permissions).
+ *
+ * @param {string} fullJid  e.g. 'abc123@localhost/res1'
+ * @returns {Promise<object|null>}  feature map, or null when none are set
+ */
+export async function getSessionFeatures(fullJid) {
+    const res = await fetch(`${BASE}/sessions/features?jid=${encodeURIComponent(fullJid)}`);
+
+    if (!res.ok) {
+        throw new Error(`getSessionFeatures failed: ${res.status} ${await res.text()}`);
+    }
+
+    return (await res.json()).features;
+}
+
+/**
  * Sets jitsi_meet_context_user and jitsi_meet_context_features on an active c2s
  * session identified by full JID. Allows tests to simulate JWT token context
  * without running a real token-auth module.
