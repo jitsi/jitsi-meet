@@ -15,15 +15,10 @@ const room = () => `end-conf-${++_roomCounter}@${CONFERENCE}`;
 /**
  * Creates a room with:
  *   - focus (joins first to satisfy the mod_muc_meeting_id jicofo lock)
- *   - moderator: a token-authenticated client whose ?room= URL param sets
- *     jitsi_web_query_room so that mod_end_conference can locate the room.
- *     Focus promotes this user to moderator via an admin IQ.
- *
- * TODO: Moderator role should ideally be granted from the token's context
- *   claims (e.g. context.user.moderator = true) rather than via an explicit
- *   admin IQ from focus. Once the test infrastructure includes the module
- *   responsible for claim-based role assignment, replace grantModerator()
- *   with a token that carries the moderator claim.
+ *   - moderator: a client whose token carries context.user.moderator=true,
+ *     which mod_token_affiliation promotes to owner/moderator on join.
+ *     The ?room= URL param sets jitsi_web_query_room so that
+ *     mod_end_conference can locate the room.
  *
  * @returns {{ roomJid, roomName, focus, moderator }}
  */
@@ -33,17 +28,11 @@ async function createRoom() {
 
     const focus = await joinWithFocus(roomJid);
 
-    // Connect with ?room= so mod_jitsi_session populates jitsi_web_query_room.
-    // Include a token for authenticated context.
-    const token = mintAsapToken({ room: roomName });
+    const token = mintAsapToken({ context: { user: { moderator: true } } });
     const moderator = await createXmppClient({ params: { room: roomName,
         token } });
 
     await moderator.joinRoom(roomJid);
-
-    // Explicitly grant moderator role since the test environment does not load
-    // the module that would promote a user based on token claims. See TODO above.
-    await focus.grantModerator(roomJid, moderator.nick);
 
     return { roomJid,
         roomName,
