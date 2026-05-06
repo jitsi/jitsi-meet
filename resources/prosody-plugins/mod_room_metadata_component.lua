@@ -1,4 +1,55 @@
--- This module implements a generic metadata storage system for rooms.
+-- mod_room_metadata_component.lua
+--
+-- Prosody component that provides a generic key-value metadata store for MUC
+-- rooms. Metadata is held in room.jitsiMetadata (a Lua table) and broadcast
+-- to all occupants as a JSON <json-message> stanza whenever it changes.
+--
+-- ── Metadata updates (client → component) ────────────────────────────────────
+-- Clients send a <message> to this component containing a <room_metadata
+-- xmlns='http://jitsi.org/jitmeet'> child whose text is JSON:
+--
+--   { "key": "<field-name>", "data": <any JSON value> }
+--
+-- Authorization is a three-step process (on_message):
+--  1. The sender must be an occupant of the room identified by the session's
+--     jitsi_web_query_room field (set from the WebSocket ?room= URL param).
+--  2. The 'jitsi-metadata-allow-moderation' event is fired on the main virtual
+--     host so that other modules can override the default access rules:
+--       · returns false   → deny the update unconditionally
+--       · returns non-nil → allow the update and use the returned value as data
+--       · returns nil     → fall through to the default moderator-only check
+--  3. Default: the occupant must have role='moderator'.
+--
+-- If authorized and the value changed, room.jitsiMetadata[key] is updated and
+-- the full metadata table is broadcast to every occupant. A
+-- 'jitsi-metadata-updated' event is also fired on the main MUC module so that
+-- other modules can react to specific key changes.
+--
+-- ── Metadata delivery (component → client) ────────────────────────────────────
+-- Initial delivery: a stanza filter intercepts the self-presence (status 110)
+-- about to be sent to a newly-joining occupant and, before it goes out, pushes
+-- the current metadata to that client. TURN credentials (from external_services)
+-- are included in this initial push. room.sent_initial_metadata[bare_jid] is
+-- set to prevent double-delivery on admin reconnects.
+--
+-- Broadcast: broadcastMetadata() / send_metadata() send a <json-message> to
+-- every occupant. Admins (jicofo) additionally receive the room's participant
+-- and moderator lists from room._data. Transcription HTTP headers in the
+-- metadata are redacted from log output but sent in full to clients.
+--
+-- ── Internal metadata changes ─────────────────────────────────────────────────
+-- Other modules update room.jitsiMetadata directly and then fire
+-- 'room-metadata-changed' on the MUC host to trigger a broadcast.
+--
+-- ── Legacy startMuted shim ────────────────────────────────────────────────────
+-- When a moderator sends a presence containing <startmuted> (old client API),
+-- the values are copied into room.jitsiMetadata.startMuted and a
+-- 'room-metadata-changed' broadcast is triggered. This preserves backward
+-- compatibility until all clients switch to the metadata API.
+--
+-- ── TURN / extdisco gating (optional) ────────────────────────────────────────
+-- When extdisco_occpuant_check=true, extdisco IQ-get requests are intercepted
+-- at priority 100 so that only room occupants can obtain TURN credentials.
 --
 -- Component "metadata.jitmeet.example.com" "room_metadata_component"
 --      muc_component = "conference.jitmeet.example.com"
@@ -47,6 +98,24 @@ end
 local breakout_rooms_component_host = module:get_option_string('breakout_rooms_component');
 -- TODO: flip default once mobile clients update to latest ljm that supports transition of turn data in metadata
 local extdisco_occpuant_check = module:get_option_boolean('extdisco_occpuant_check', false);
+
+-- Keys that clients (including moderators) are not allowed to set via the
+-- metadata message API. These are either server-controlled fields or keys whose
+-- values are assembled and injected by the server at broadcast time.
+local blocked_metadata_keys = module:get_option_set('room_metadata_blocked_keys', {
+    'allownersEnabled',
+    'asyncTranscription',
+    'conferencePresetsServiceEnabled',
+    'dialinEnabled',
+    'moderators',
+    'participants',
+    'participantsSoftLimit',
+    'services',
+    'transcriberType',
+    'transcription',
+    'visitors',
+    'visitorsEnabled',
+});
 
 module:log("info", "Starting room metadata for %s", muc_component_host);
 
@@ -159,13 +228,20 @@ function on_message(event)
     end
 
     local message = event.stanza:get_child(COMPONENT_IDENTITY_TYPE, 'http://jitsi.org/jitmeet');
-    local messageText = message:get_text();
+    if not message then
+        return true;
+    end
 
-    if not message or not messageText then
-        return false;
+    local messageText = message:get_text();
+    if not messageText or messageText == '' then
+        return true;
     end
 
     local roomJid = message.attr.room;
+    if not roomJid then
+        return true;
+    end
+
     local room = get_room_from_jid(room_jid_match_rewrite(roomJid));
 
     if not room then
@@ -189,12 +265,22 @@ function on_message(event)
         return false;
     end
 
-    if jsonData.key == nil or jsonData.data == nil then
+    if type(jsonData.key) ~= 'string' then
+        module:log('error', 'Invalid JSON payload, key is not a string: %s', messageText);
+        return true;
+    end
+
+    if jsonData.key == nil or jsonData.data == nil or jsonData.data == json.null then
         module:log("error", "Invalid JSON payload, key or data are missing: %s", messageText);
         return false;
     end
 
-    -- will return a non nil filtered data to use, if it is nil, it is not allowed
+    -- Fire 'jitsi-metadata-allow-moderation' so other modules can override the
+    -- default moderator-only access control on a per-key basis.
+    --   false    → deny the update unconditionally (e.g. key restricted to server)
+    --   non-nil  → allow the update; the returned value replaces jsonData.data
+    --              (lets a hook sanitise or filter the payload before it is stored)
+    --   nil      → no opinion; fall through to the default moderator-only check
     local res = module:context(main_virtual_host):fire_event('jitsi-metadata-allow-moderation',
             { room = room; actor = occupant; key = jsonData.key ; data = jsonData.data; session = session; });
 
@@ -209,6 +295,12 @@ function on_message(event)
                 from, jsonData.key, room.jid);
             return false;
         end
+    end
+
+    if blocked_metadata_keys:contains(jsonData.key) then
+        module:log('warn', 'Occupant %s attempted to set blocked metadata key "%s" in room:%s',
+            from, jsonData.key, room.jid);
+        return false;
     end
 
     local old_value = room.jitsiMetadata[jsonData.key];

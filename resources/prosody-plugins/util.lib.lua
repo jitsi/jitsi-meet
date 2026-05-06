@@ -694,6 +694,9 @@ local function table_equals(t1, t2)
     if t2 == nil then
         return t1 == nil;
     end
+    if type(t1) ~= 'table' or type(t2) ~= 'table' then
+        return t1 == t2;
+    end
 
     local removed, added, modified = table_compare(t1, t2);
 

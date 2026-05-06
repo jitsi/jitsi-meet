@@ -214,6 +214,21 @@ describe('mod_system_chat_message', () => {
 
     describe('message delivery', () => {
 
+        // Filter that matches only system_chat_message payloads, skipping
+        // metadata broadcasts that arrive on the same json-message namespace.
+        const isSystemChat = m => {
+            const el = m.getChild('json-message', 'http://jitsi.org/jitmeet');
+
+            if (!el) {
+                return false;
+            }
+            try {
+                return JSON.parse(el.text()).type === 'system_chat_message';
+            } catch {
+                return false;
+            }
+        };
+
         it('returns 200 and delivers the message to the recipient', async () => {
             const { roomJid, focus } = await createRoom();
             const user = await createXmppClient();
@@ -228,8 +243,7 @@ describe('mod_system_chat_message', () => {
 
                 assert.strictEqual(status, 200);
 
-                const msg = await user.waitForMessage(
-                    m => m.getChild('json-message', 'http://jitsi.org/jitmeet'));
+                const msg = await user.waitForMessage(isSystemChat);
                 const jsonMessage = msg.getChild('json-message', 'http://jitsi.org/jitmeet');
 
                 assert.ok(jsonMessage, 'message must contain a json-message element');
@@ -256,8 +270,7 @@ describe('mod_system_chat_message', () => {
 
                 assert.strictEqual(status, 200);
 
-                const msg = await user.waitForMessage(
-                    m => m.getChild('json-message', 'http://jitsi.org/jitmeet'));
+                const msg = await user.waitForMessage(isSystemChat);
                 const payload = JSON.parse(
                     msg.getChild('json-message', 'http://jitsi.org/jitmeet').text());
 
@@ -282,10 +295,9 @@ describe('mod_system_chat_message', () => {
 
                 assert.strictEqual(status, 200);
 
-                const filter = m => m.getChild('json-message', 'http://jitsi.org/jitmeet');
                 const [ msgA, msgB ] = await Promise.all([
-                    alice.waitForMessage(filter),
-                    bob.waitForMessage(filter)
+                    alice.waitForMessage(isSystemChat),
+                    bob.waitForMessage(isSystemChat)
                 ]);
 
                 for (const msg of [ msgA, msgB ]) {

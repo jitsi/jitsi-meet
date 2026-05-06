@@ -135,7 +135,10 @@ async function setLobby(roomJid, enabled) {
     const res = await fetch(`${BASE}/rooms/lobby`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ jid: roomJid, enabled })
+        body: JSON.stringify({
+            jid: roomJid,
+            enabled
+        })
     });
 
     if (!res.ok) {
@@ -189,6 +192,29 @@ export async function setAffiliation(roomJid, occupantJid, affiliation) {
     if (!res.ok) {
         throw new Error(`setAffiliation failed: ${res.status} ${await res.text()}`);
     }
+}
+
+/**
+ * Returns the jitsiMetadata table for a room as seen by Prosody.
+ * Useful for asserting server-side state after metadata updates.
+ *
+ * Returns null if the room does not exist.
+ * Throws if the server cannot encode the metadata (indicates corrupt state).
+ *
+ * @param {string} roomJid  e.g. 'room@conference.localhost'
+ * @returns {Promise<{jid: string, metadata: object}|null>}
+ */
+export async function getRoomMetadata(roomJid) {
+    const res = await fetch(`${BASE}/rooms/metadata?jid=${encodeURIComponent(roomJid)}`);
+
+    if (res.status === 404) {
+        return null;
+    }
+    if (!res.ok) {
+        throw new Error(`GET /rooms/metadata failed: ${res.status} ${await res.text()}`);
+    }
+
+    return res.json();
 }
 
 /**

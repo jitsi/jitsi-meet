@@ -122,7 +122,7 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
     try {
         await xmpp.start();
     } catch (err) {
-        xmpp.stop().catch(() => {});
+        xmpp.stop().catch(Function.prototype);
         throw err;
     }
 
@@ -183,7 +183,7 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
 
             await xmpp.send(
                 xml('presence', { to: `${roomJid}/${n}` }, mucX, ...extensions,
-                    ...(nickEl ? [ nickEl ] : []))
+                    ...nickEl ? [ nickEl ] : [])
             );
 
             const presence = await waitForPresence(stanzaQueue, roomJid, timeout);
@@ -346,6 +346,46 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
                     xml('end_conference')
                 )
             );
+        },
+
+        /**
+         * Sends a raw room_metadata message to a metadata component.
+         * Use this to test malformed payloads; prefer sendMetadataUpdate for
+         * well-formed updates.
+         *
+         * The session must have jitsi_web_query_room set (connect with
+         * params: { room: '<roomname>' }) for the component to process it.
+         *
+         * @param {string} componentJid  e.g. 'metadata.localhost'
+         * @param {string} roomJid       full room JID, e.g. 'room@conference.localhost'
+         * @param {string} rawPayload    raw text for the <room_metadata> body
+         */
+        sendMetadataMessage(componentJid, roomJid, rawPayload) {
+            const attrs = { xmlns: 'http://jitsi.org/jitmeet' };
+
+            if (roomJid !== null && roomJid !== undefined) {
+                attrs.room = roomJid;
+            }
+
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `meta-${++_counter}` },
+                    xml('room_metadata', attrs, rawPayload)
+                )
+            );
+        },
+
+        /**
+         * Sends a well-formed metadata update to a metadata component.
+         *
+         * @param {string} componentJid  e.g. 'metadata.localhost'
+         * @param {string} roomJid       full room JID, e.g. 'room@conference.localhost'
+         * @param {string} key           metadata key
+         * @param {*}      data          metadata value (JSON-serialisable)
+         */
+        sendMetadataUpdate(componentJid, roomJid, key, data) {
+            return this.sendMetadataMessage(componentJid, roomJid, JSON.stringify({ key,
+                data }));
         },
 
         /**

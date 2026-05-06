@@ -250,6 +250,12 @@ Component "rate-limited.localhost" "muc"
     muc_rate_joins = 1
     muc_rate_leaves = 1
 
+-- Metadata component for mod_room_metadata_component tests.
+Component "metadata.localhost" "room_metadata_component"
+    muc_component = "conference.localhost"
+    muc_mapper_domain_base = "localhost"
+    muc_mapper_domain_prefix = "conference"
+
 -- Plain MUC for mod_presence_identity tests. No token verification and no
 -- muc_meeting_id lock so any client can join freely without focus.
 Component "conference-identity.localhost" "muc"

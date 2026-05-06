@@ -22,6 +22,11 @@ describe('mod_muc_lobby_rooms', () => {
         await Promise.all(clients.map(c => c.disconnect()));
     });
 
+    /**
+     * Creates an XMPP client and pushes it to the cleanup list.
+     * @param {object} opts Options forwarded to createXmppClient.
+     * @returns {Promise<object>}
+     */
     async function connect(opts) {
         const c = await createXmppClient(opts);
 
@@ -30,6 +35,11 @@ describe('mod_muc_lobby_rooms', () => {
         return c;
     }
 
+    /**
+     * Joins a room as focus and pushes the client to the cleanup list.
+     * @param {string} roomJid Full room JID.
+     * @returns {Promise<object>}
+     */
     async function focusJoin(roomJid) {
         const c = await joinWithFocus(roomJid);
 
@@ -130,7 +140,8 @@ describe('mod_muc_lobby_rooms', () => {
 
         it('pre-approved member with display name can join', async () => {
             const r = room();
-            const focus = await focusJoin(r);
+
+            await focusJoin(r);
 
             await enableLobby(r);
 
@@ -144,9 +155,6 @@ describe('mod_muc_lobby_rooms', () => {
             const presence = await c.joinRoom(r, undefined, { displayName: 'Bob' });
 
             assert.notEqual(presence.attrs.type, 'error', 'pre-approved member must be allowed in');
-
-            // Silence the unused-variable warning from focus.
-            void focus;
         });
 
         it('whitelisted domain bypasses lobby without affiliation', async () => {

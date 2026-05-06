@@ -31,7 +31,7 @@ function getRoleAndAffiliation(presence) {
  * @param {object} contextUser  JWT context.user payload.
  * @returns {Promise<XmppTestClient>}
  */
-async function connectWithToken(contextUser) {
+function connectWithToken(contextUser) {
     const token = mintAsapToken({ context: { user: contextUser } });
 
     return createXmppClient({ params: { token } });
@@ -52,6 +52,10 @@ describe('mod_token_affiliation', () => {
 
     describe('moderator claim variants that grant owner/moderator', () => {
 
+        /**
+         * Asserts that a client with the given JWT context user receives owner/moderator.
+         * @param {object} contextUser JWT context.user payload.
+         */
         async function assertModerator(contextUser) {
             const r = nextRoom();
 
@@ -69,10 +73,10 @@ describe('mod_token_affiliation', () => {
         }
 
         it('moderator=true (boolean)', () => assertModerator({ moderator: true }));
-        it("moderator='true' (string)", () => assertModerator({ moderator: 'true' }));
-        it("affiliation='owner'", () => assertModerator({ affiliation: 'owner' }));
-        it("affiliation='moderator'", () => assertModerator({ affiliation: 'moderator' }));
-        it("affiliation='teacher'", () => assertModerator({ affiliation: 'teacher' }));
+        it('moderator=\'true\' (string)', () => assertModerator({ moderator: 'true' }));
+        it('affiliation=\'owner\'', () => assertModerator({ affiliation: 'owner' }));
+        it('affiliation=\'moderator\'', () => assertModerator({ affiliation: 'moderator' }));
+        it('affiliation=\'teacher\'', () => assertModerator({ affiliation: 'teacher' }));
 
     });
 
@@ -140,12 +144,12 @@ describe('mod_token_affiliation', () => {
 
         clients.push(await joinWithFocus(r));
 
-        const mod    = await connectWithToken({ moderator: true });
+        const mod = await connectWithToken({ moderator: true });
         const member = await connectWithToken({ id: 'plain' });
 
         clients.push(mod, member);
 
-        const modPresence    = await mod.joinRoom(r);
+        const modPresence = await mod.joinRoom(r);
         const memberPresence = await member.joinRoom(r);
 
         assert.equal(getRoleAndAffiliation(modPresence).role, 'moderator');
