@@ -58,6 +58,26 @@ export async function clearEvents() {
 }
 
 /**
+ * Sets room._data.hideDisplayNameForGuests for mod_muc_displayname tests.
+ * The room must already exist (at least one occupant).
+ *
+ * @param {string} roomJid  e.g. 'room@conference.localhost'
+ * @param {boolean} hidden  true to enable filtering; false to disable
+ */
+export async function setHideDisplayNameForGuests(roomJid, hidden) {
+    const res = await fetch(`${BASE}/rooms/hide-display-name`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jid: roomJid,
+            hidden })
+    });
+
+    if (!res.ok) {
+        throw new Error(`setHideDisplayNameForGuests failed: ${res.status} ${await res.text()}`);
+    }
+}
+
+/**
  * Sets the per-room max_occupants limit for an existing room.
  * The room must already exist (at least one occupant).
  * This overrides the global muc_max_occupants for this room only.

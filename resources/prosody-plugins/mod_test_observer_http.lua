@@ -311,6 +311,28 @@ module:provides("http", {
             };
         end;
 
+        -- POST /test-observer/rooms/hide-display-name
+        -- Body: { "jid": "room@conference.localhost", "hidden": true|false }
+        -- Sets room._data.hideDisplayNameForGuests for mod_muc_displayname tests.
+        ["POST /rooms/hide-display-name"] = function(event)
+            local data = json.decode(event.request.body or "{}") or {};
+            local room_jid = data.jid;
+            local hidden = data.hidden;
+            if room_jid == nil or hidden == nil then
+                return { status_code = 400; body = '{"error":"missing jid or hidden"}' };
+            end
+            local room = (shared.rooms or {})[room_jid];
+            if not room then
+                return { status_code = 404; body = '{"error":"room not found"}' };
+            end
+            room._data.hideDisplayNameForGuests = hidden;
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = '{"ok":true}';
+            };
+        end;
+
         -- POST /test-observer/rooms/max-occupants
         -- Body: { "jid": "room@conference.localhost", "max_occupants": 4 }
         -- Sets room._data.max_occupants so per-room limit tests can override the

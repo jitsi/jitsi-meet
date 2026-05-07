@@ -185,6 +185,7 @@ Component "conference.localhost" "muc"
         "token_verification";
         "token_affiliation";
         "muc_flip";
+        "muc_displayname";
         "test_observer";
         "filter_messages";
     }
