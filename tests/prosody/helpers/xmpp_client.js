@@ -403,6 +403,28 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a MUC groupchat message to the room. Resolves with the first
+         * <message> stanza received bearing the same id — either the MUC
+         * reflection (type=groupchat) or an error reply (type=error).
+         *
+         * @param {string}  roomJid    e.g. 'room@conference.localhost'
+         * @param {string}  [body]     message body text; omit to send body-less
+         */
+        async sendGroupchat(roomJid, body) {
+            const id = `gc-${++_counter}`;
+            const children = body === undefined ? [] : [ xml('body', {}, body) ];
+
+            await xmpp.send(
+                xml('message', { to: roomJid,
+                    type: 'groupchat',
+                    id },
+                ...children)
+            );
+
+            return this.waitForMessage(s => s.attrs.id === id);
+        },
+
+        /**
          * Grants moderator role to the occupant identified by nick.
          * The caller must be the room owner (e.g. the focus client).
          * Resolves with the server's IQ response.

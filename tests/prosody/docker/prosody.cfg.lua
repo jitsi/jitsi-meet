@@ -186,6 +186,7 @@ Component "conference.localhost" "muc"
         "token_affiliation";
         "muc_flip";
         "test_observer";
+        "filter_messages";
     }
 
     anonymous_strict = true
