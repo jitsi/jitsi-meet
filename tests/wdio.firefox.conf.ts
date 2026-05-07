@@ -41,7 +41,11 @@ const mergedConfig = mergeWith(defaultConfig, {
         p1: {
             capabilities: {
                 browserName: 'firefox',
-                browserVersion: process.env.BROWSER_FF_BETA ? 'beta' : undefined,
+                // Only pin the custom jitsi-stable/jitsi-beta aliases when routing through
+                // Selenium Grid. Local geckodriver doesn't know these aliases.
+                ...(process.env.GRID_HOST_URL ? {
+                    browserVersion: process.env.BROWSER_FF_BETA ? 'jitsi-beta' : 'jitsi-stable'
+                } : {}),
                 'moz:firefoxOptions': {
                     args: ffArgs,
                     prefs: ffPreferences

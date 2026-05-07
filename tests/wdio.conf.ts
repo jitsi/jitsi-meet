@@ -180,7 +180,12 @@ function generateCapabilitiesFromSpecs(): { capabilities: Record<string, any>; e
                 {
                     capabilities: {
                         browserName: 'chrome',
-                        ...(browser === 'p1' && process.env.BROWSER_CHROME_BETA ? { browserVersion: 'beta' } : {}),
+                        // Only pin the custom jitsi-stable/jitsi-beta aliases when routing through
+                        // Selenium Grid. Local chromedriver/geckodriver doesn't know these aliases.
+                        ...(process.env.GRID_HOST_URL ? {
+                            browserVersion: browser === 'p1' && process.env.BROWSER_CHROME_BETA
+                                ? 'jitsi-beta' : 'jitsi-stable'
+                        } : {}),
                         'goog:chromeOptions': {
                             args: chromeArgs,
                             prefs: chromePreferences
