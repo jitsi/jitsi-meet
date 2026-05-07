@@ -87,7 +87,11 @@ VirtualHost "localhost"
         -- ([sub]room@conference.localhost) for all sessions on all hosts.
         "muc_domain_mapper";
         "muc_lobby_rooms";
+        "muc_password_check";
     }
+
+    -- mod_muc_password_check: verify Bearer tokens with the login ASAP key server.
+    enable_password_token_verification = true
 
     shard_name = "test-shard"
     region_name = "test-region"
