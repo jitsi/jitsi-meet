@@ -1,6 +1,7 @@
 import assert from 'assert';
 
-import { disableLobby, enableLobby, setAffiliation } from './helpers/test_observer.js';
+import { mintAsapToken } from './helpers/jwt.js';
+import { disableLobby, enableLobby } from './helpers/test_observer.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
@@ -140,17 +141,17 @@ describe('mod_muc_lobby_rooms', () => {
 
         it('pre-approved member with display name can join', async () => {
             const r = room();
+            const roomName = r.split('@')[0];
 
             await focusJoin(r);
 
             await enableLobby(r);
 
-            const c = await connect();
-
-            // Grant member affiliation before the client attempts to join.
-            const bareJid = c.jid.split('/')[0];
-
-            await setAffiliation(r, bareJid, 'member');
+            // A token with context.user grants member affiliation via mod_token_affiliation
+            // at muc-occupant-pre-join priority 0, before the lobby check at priority -4.
+            const token = mintAsapToken({ room: roomName,
+                context: { user: { id: 'lobby-bypass-user' } } });
+            const c = await connect({ params: { token } });
 
             const presence = await c.joinRoom(r, undefined, { displayName: 'Bob' });
 
