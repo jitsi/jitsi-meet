@@ -61,8 +61,6 @@ VirtualHost "localhost"
     asap_key_server = "http://localhost:5280/test-observer/asap-keys"
     signature_algorithm = "RS256"
     allow_empty_token = true
-    -- Match production: room claim not required.
-    asap_require_room_claim = false
 
     -- Serve test_observer HTTP endpoints here so plain HTTP on port 5280 is
     -- reachable. Component HTTP routes end up on HTTPS 5281 due to Prosody's
@@ -136,7 +134,6 @@ VirtualHost "hs256.localhost"
     app_id = "jitsi"
     app_secret = "testsecret"
     signature_algorithm = "HS256"
-    asap_require_room_claim = false
     allow_empty_token = false
     modules_enabled = { "presence_identity" }
 

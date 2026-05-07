@@ -55,7 +55,7 @@ describe('mod_auth_token (ASAP / RS256)', () => {
     });
 
     it('connects successfully with a valid RS256 token', async () => {
-        const token = mintAsapToken();
+        const token = mintAsapToken({ room: '*' });
         const c = await asapClient({ token });
 
         clients.push(c);
@@ -105,6 +105,7 @@ describe('mod_auth_token (ASAP / RS256)', () => {
 
     it('sets session.jitsi_meet_context_features from token context', async () => {
         const token = mintAsapToken({
+            room: '*',
             context: {
                 features: {
                     'screen-sharing': true,
@@ -133,6 +134,7 @@ describe('mod_auth_token (ASAP / RS256)', () => {
 
     it('sets session.jitsi_meet_context_user from token context', async () => {
         const token = mintAsapToken({
+            room: '*',
             context: {
                 user: { id: 'user-123',
                     name: 'Alice',
@@ -151,6 +153,7 @@ describe('mod_auth_token (ASAP / RS256)', () => {
 
     it('sets session.jitsi_meet_context_group from token context', async () => {
         const token = mintAsapToken({
+            room: '*',
             context: { group: 'test-group' }
         });
         const c = await asapClient({ token });
@@ -162,8 +165,9 @@ describe('mod_auth_token (ASAP / RS256)', () => {
     });
 
     it('sets session.jitsi_meet_context_user.id from top-level user_id when context is absent', async () => {
-        // eslint-disable-next-line camelcase
-        const token = mintAsapToken({ user_id: 'legacy-user-456' });
+        const token = mintAsapToken({ room: '*',
+            // eslint-disable-next-line camelcase
+            user_id: 'legacy-user-456' });
         const c = await asapClient({ token });
 
         clients.push(c);

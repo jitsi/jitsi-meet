@@ -28,7 +28,8 @@ function connect(roomJid, contextUser) {
     const params = { room: roomName };
 
     if (contextUser !== undefined) {
-        params.token = mintAsapToken({ context: { user: contextUser } });
+        params.token = mintAsapToken({ room: roomName,
+            context: { user: contextUser } });
     }
 
     return createXmppClient({ params });

@@ -62,7 +62,7 @@ describe('mod_muc_jigasi_invite', () => {
             const { roomJid, focus } = await createRoom();
 
             try {
-                const loginToken = mintAsapToken();
+                const loginToken = mintAsapToken({ room: '*' });
                 const { status } = await inviteJigasi(roomJid, '+15551234567', loginToken);
 
                 assert.strictEqual(status, 401,

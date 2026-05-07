@@ -63,7 +63,7 @@ describe('mod_system_chat_message', () => {
             const { roomJid, focus } = await createRoom();
 
             try {
-                const loginToken = mintAsapToken();
+                const loginToken = mintAsapToken({ room: '*' });
                 const { status } = await sendSystemChatMessage(
                     roomJid, [ focus.jid ], 'hello', loginToken);
 
