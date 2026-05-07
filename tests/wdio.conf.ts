@@ -204,6 +204,11 @@ const TEST_RESULTS_DIR = 'test-results';
 
 const keepAlive: Array<any> = [];
 
+// Tracks browser-session lifecycle events written by each worker's
+// beforeSession/afterSession hooks. The launcher's onComplete reads it to
+// compute the peak number of concurrent browser sessions during the run.
+const CONCURRENCY_LOG_PATH = path.join(TEST_RESULTS_DIR, 'concurrency.jsonl');
+
 export const config: WebdriverIO.MultiremoteConfig = {
 
     runner: 'local',
@@ -276,6 +281,20 @@ export const config: WebdriverIO.MultiremoteConfig = {
     // =====
     // Hooks
     // =====
+    /**
+     * Gets executed once before all workers are spawned (launcher process only).
+     * Reset the concurrency log so onComplete only sees events from this run.
+     */
+    onPrepare() {
+        try {
+            if (fs.existsSync(CONCURRENCY_LOG_PATH)) {
+                fs.unlinkSync(CONCURRENCY_LOG_PATH);
+            }
+        } catch {
+            // best effort — if we can't reset, onComplete will still parse what it sees
+        }
+    },
+
     /**
      * Gets executed before test execution begins. At this point you can access to all global
      * variables like `browser`. It is the perfect place to define custom commands.
@@ -366,6 +385,19 @@ export const config: WebdriverIO.MultiremoteConfig = {
     },
 
     async beforeSession(c, capabilities_, spec, cid) {
+        // Record this worker's browser sessions opening, so the launcher's
+        // onComplete can compute peak concurrent sessions across the run.
+        try {
+            fs.appendFileSync(CONCURRENCY_LOG_PATH, `${JSON.stringify({
+                type: 'start',
+                t: Date.now(),
+                cid,
+                n: Object.keys(capabilities_ as Record<string, unknown>).length
+            })}\n`);
+        } catch {
+            // non-fatal — concurrency stats are best-effort
+        }
+
         const originalBefore = c.before;
 
         if (spec && spec.length == 1) {
@@ -394,6 +426,18 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 // @ts-ignore
                 return await originalBefore[0].call(c, cid, ...args);
             } ];
+        }
+    },
+
+    afterSession(_c, capabilities_, _specs) {
+        try {
+            fs.appendFileSync(CONCURRENCY_LOG_PATH, `${JSON.stringify({
+                type: 'end',
+                t: Date.now(),
+                n: Object.keys(capabilities_ as Record<string, unknown>).length
+            })}\n`);
+        } catch {
+            // non-fatal — concurrency stats are best-effort
         }
     },
 
@@ -618,6 +662,38 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @returns {Promise<void>}
      */
     onComplete() {
+        // Replay session start/end events written by each worker to print
+        // the peak concurrent browser-session count for this run.
+        try {
+            if (fs.existsSync(CONCURRENCY_LOG_PATH)) {
+                const events = fs.readFileSync(CONCURRENCY_LOG_PATH, 'utf8')
+                    .split('\n')
+                    .filter(Boolean)
+                    .map(line => JSON.parse(line) as { n: number; t: number; type: 'start' | 'end'; });
+
+                events.sort((a, b) => a.t - b.t);
+                let active = 0;
+                let peak = 0;
+                let totalStarts = 0;
+
+                for (const ev of events) {
+                    if (ev.type === 'start') {
+                        active += ev.n;
+                        totalStarts += ev.n;
+                        if (active > peak) {
+                            peak = active;
+                        }
+                    } else {
+                        active -= ev.n;
+                    }
+                }
+                console.log(`[concurrency] Peak concurrent browser sessions: ${peak}`);
+                console.log(`[concurrency] Total browser sessions started:    ${totalStarts}`);
+            }
+        } catch (err) {
+            console.warn(`[concurrency] Could not compute peak concurrency: ${err}`);
+        }
+
         // Clean up duplicate parentSuite labels from Allure results
         const resultsDir = `${TEST_RESULTS_DIR}/allure-results`;
         const resultFiles = fs.readdirSync(resultsDir).filter(f => f.endsWith('-result.json'));
