@@ -4,6 +4,7 @@ import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
+import { getConferenceState } from '../../../base/conference/functions';
 import DialInSummary from '../../../invite/components/dial-in-summary/native/DialInSummary';
 import Prejoin from '../../../prejoin/components/native/Prejoin';
 import UnsafeRoomWarning from '../../../prejoin/components/native/UnsafeRoomWarning';
@@ -50,12 +51,20 @@ interface IProps {
     * Is welcome page available?
     */
     isWelcomePageAvailable: boolean;
+
+    /**
+     * True if a room is already set at launch time (background SDK launch).
+     */
+    hasRoomOnLaunch: boolean;
 }
 
 
-const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWelcomePageAvailable }: IProps) => {
+const RootNavigationContainer = ({ dispatch, hasRoomOnLaunch, isUnsafeRoomWarningAvailable, isWelcomePageAvailable }: IProps) => {
     const initialRouteName = isWelcomePageAvailable
-        ? screen.welcome.main : screen.connecting;
+        ? screen.welcome.main
+        : hasRoomOnLaunch
+            ? screen.conference.root  // background SDK launch: go directly to conference
+            : screen.connecting;      // normal launch: show connecting spinner
     const onReady = useCallback(() => {
         dispatch({
             type: _ROOT_NAVIGATION_READY,
@@ -121,7 +130,10 @@ const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWel
  * @returns {IProps}
  */
 function mapStateToProps(state: IReduxState) {
+    const { room } = getConferenceState(state);
+
     return {
+        hasRoomOnLaunch: Boolean(room),
         isUnsafeRoomWarningAvailable: isUnsafeRoomWarningEnabled(state),
         isWelcomePageAvailable: isWelcomePageEnabled(state)
     };
