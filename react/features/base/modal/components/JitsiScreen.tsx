@@ -34,7 +34,7 @@ interface IProps {
     /**
      * Optional function that renders a footer component, if needed.
      */
-    footerComponent?: Function;
+    footerComponent?: React.ComponentType<any> | (() => React.ReactNode);
 
     /**
      * Extra bottom padding applied to the footer when keyboard is visible.
@@ -75,6 +75,7 @@ const JitsiScreen = ({
     style
 }: IProps) => {
     const keyboardVisible = useKeyboardVisible();
+    const FooterComponent = footerComponent as React.ComponentType<any> | undefined;
 
     const renderContent = () => (
         <JitsiKeyboardAvoidingView
@@ -88,9 +89,9 @@ const JitsiScreen = ({
                 edges = { safeAreaInsets }
                 style = { styles.safeArea }>
                 { children }
-                { footerComponent && (
+                { FooterComponent && (
                     <View style = { keyboardVisible && { paddingBottom: footerKeyboardSpacing } }>
-                        { footerComponent() }
+                        <FooterComponent />
                     </View>
                 ) }
             </SafeAreaView>
