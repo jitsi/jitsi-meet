@@ -210,6 +210,43 @@ const keepAlive: Array<any> = [];
 // compute the peak number of concurrent browser sessions during the run.
 const CONCURRENCY_LOG_PATH = path.join(TEST_RESULTS_DIR, 'concurrency.jsonl');
 
+/**
+ * Detects the "tests completed but session DELETE timed out" signature in a worker's wdio log.
+ * Selenium Grid (especially with Firefox) sometimes takes longer than `connectionRetryTimeout`
+ * to acknowledge session deletion; the runner exits non-zero even though the test ran fine.
+ * Returns true when afterSuite finished AND a DELETE-method timeout follows in the same log.
+ */
+function isPostTestSessionDeleteTimeout(specName: string, cid: string): boolean {
+    const candidates = [
+        path.join(TEST_RESULTS_DIR, `${specName}-${cid}.log`),
+        path.join(TEST_RESULTS_DIR, `wdio-${cid}.log`)
+    ];
+    const logPath = candidates.find(p => fs.existsSync(p));
+
+    if (!logPath) {
+        return false;
+    }
+
+    try {
+        // Worker logs can be tens of MB; only scan the tail where the teardown sequence lives.
+        const stats = fs.statSync(logPath);
+        const tailSize = Math.min(stats.size, 64 * 1024);
+        const fd = fs.openSync(logPath, 'r');
+        const buf = Buffer.alloc(tailSize);
+
+        fs.readSync(fd, buf, 0, tailSize, Math.max(0, stats.size - tailSize));
+        fs.closeSync(fd);
+
+        const tail = buf.toString('utf8');
+        const afterSuiteFinished = tail.includes('Finished to run "afterSuite" hook');
+        const deleteTimeout = /WebDriverError:[^\n]*timeout[^\n]*method "DELETE"/i.test(tail);
+
+        return afterSuiteFinished && deleteTimeout;
+    } catch {
+        return false;
+    }
+}
+
 export const config: WebdriverIO.MultiremoteConfig = {
 
     runner: 'local',
@@ -595,11 +632,16 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
     /**
      * Gets executed after a worker process has exited.
-     * Handles two crash scenarios:
-     * 1. Session DELETE timeout: JUnit reporter never flushes, leaving a zero-byte XML.
-     * 2. Session INIT timeout: JUnit reporter writes a non-empty XML but with empty name/classname,
-     *    and the allure reporter never fires (no beforeTest hook ran).
-     * In both cases, synthesise a failure entry for JUnit and allure so the crash shows up in reports.
+     * Handles three crash scenarios:
+     * 1. Session DELETE timeout AFTER tests completed (common with Firefox on Selenium Grid):
+     *    afterSuite ran, then the grid was slow to acknowledge the DELETE, the runner timed out
+     *    and exited non-zero. Tests actually passed. We skip the misleading "crashed" synthesis;
+     *    allure already has accurate per-test results, and we summarise the teardown anomaly in
+     *    a passing JUnit entry.
+     * 2. Session DELETE timeout BEFORE tests completed: JUnit reporter never flushes,
+     *    leaving a zero-byte XML. Synthesise a failure entry.
+     * 3. Session INIT timeout: JUnit reporter writes a non-empty XML but with empty name/classname,
+     *    and the allure reporter never fires (no beforeTest hook ran). Synthesise a failure entry.
      */
     onWorkerEnd(cid, exitCode, workerSpecs) {
         if (exitCode === 0) {
@@ -629,6 +671,26 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         if (xmlHasNamedTests) {
             // Real test results were written; allure reporter handled this worker normally.
+            return;
+        }
+
+        // Detect the "tests passed but session DELETE timed out" pattern from the worker's wdio
+        // log. @wdio/local-runner names this `${specBaseName}-${cid}.log` under outputDir, with
+        // a fallback to `wdio-${cid}.log` when no spec is associated.
+        if (isPostTestSessionDeleteTimeout(specName, cid)) {
+            const teardownMessage
+                = `Session DELETE timed out after tests completed (worker exit ${exitCode}). `
+                + 'Allure has the per-test results; this entry just records the teardown anomaly.';
+            const b = junitReportBuilder.newBuilder();
+
+            b.testSuite().name(specName).testCase()
+                .name('Session DELETE timed out during teardown')
+                .className(specName)
+                .standardOutput(teardownMessage);
+            b.writeTo(xmlPath);
+            console.log(`[onWorkerEnd] Worker ${cid} (${specName}): session DELETE timed out after `
+                + 'afterSuite — synthesising passing JUnit summary, leaving allure per-test results untouched.');
+
             return;
         }
 
