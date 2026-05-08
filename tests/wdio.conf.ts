@@ -12,6 +12,7 @@ import { getTestProperties, loadTestFiles } from './helpers/TestProperties';
 import { config as testsConfig } from './helpers/TestsConfig';
 import WebhookProxy from './helpers/WebhookProxy';
 import { getLogs, initLogger, logInfo, saveLogs } from './helpers/browserLogger';
+import { registerCustomMatchers } from './helpers/matchers';
 import { IContext } from './helpers/types';
 import { generateRoomName } from './helpers/utils';
 
@@ -303,6 +304,11 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @returns {Promise<void>}
      */
     async before(cid, _, files) {
+        // Register custom matchers here (not at matchers.ts module load): @wdio/runner replaces
+        // globalThis.expect via _setGlobal AFTER mocha has already loaded the spec files, so any
+        // expect.extend at module load runs against an expect that's about to be discarded.
+        registerCustomMatchers();
+
         if (files.length !== 1) {
             console.warn('We expect to run a single suite, but got more than one');
         }

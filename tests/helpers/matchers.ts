@@ -1,37 +1,42 @@
-expect.extend({
-    toPartiallyMatch(received: string, other: string, receivedLabel = 'received', otherLabel = 'other') {
-        const pass = received.includes(other) || other.includes(received);
+// Register custom matchers on the global expect set up by @wdio/runner during _initSession.
+// Must be called from a wdio config hook that runs after _initSession (e.g. `before`); calling
+// at module load extends a stale `globalThis.expect` that gets replaced before tests run.
+export function registerCustomMatchers(): void {
+    expect.extend({
+        toPartiallyMatch(received: string, other: string, receivedLabel = 'received', otherLabel = 'other') {
+            const pass = received.includes(other) || other.includes(received);
 
-        return {
-            pass,
-            message: () => pass
-                ? `Expected ${receivedLabel} NOT to partially match ${otherLabel}.\n  ${receivedLabel}: "${received}"\n  ${otherLabel}: "${other}"`
-                : `Expected ${receivedLabel} to partially match ${otherLabel} (one should contain the other).\n  ${receivedLabel}: "${received}"\n  ${otherLabel}: "${other}"`
-        };
-    },
+            return {
+                pass,
+                message: () => pass
+                    ? `Expected ${receivedLabel} NOT to partially match ${otherLabel}.\n  ${receivedLabel}: "${received}"\n  ${otherLabel}: "${other}"`
+                    : `Expected ${receivedLabel} to partially match ${otherLabel} (one should contain the other).\n  ${receivedLabel}: "${received}"\n  ${otherLabel}: "${other}"`
+            };
+        },
 
-    toStartWith(received: string, prefix: string, label = 'value') {
-        const pass = received.startsWith(prefix);
+        toStartWith(received: string, prefix: string, label = 'value') {
+            const pass = received.startsWith(prefix);
 
-        return {
-            pass,
-            message: () => pass
-                ? `Expected ${label} NOT to start with "${prefix}".\n  ${label}: "${received}"`
-                : `Expected ${label} to start with "${prefix}".\n  ${label}: "${received}"`
-        };
-    },
+            return {
+                pass,
+                message: () => pass
+                    ? `Expected ${label} NOT to start with "${prefix}".\n  ${label}: "${received}"`
+                    : `Expected ${label} to start with "${prefix}".\n  ${label}: "${received}"`
+            };
+        },
 
-    toBeInteger(received: unknown, label = 'value') {
-        const pass = Number.isInteger(received);
+        toBeInteger(received: unknown, label = 'value') {
+            const pass = Number.isInteger(received);
 
-        return {
-            pass,
-            message: () => pass
-                ? `Expected ${label} NOT to be an integer.\n  ${label}: ${JSON.stringify(received)}`
-                : `Expected ${label} to be an integer.\n  ${label}: ${JSON.stringify(received)}`
-        };
-    }
-});
+            return {
+                pass,
+                message: () => pass
+                    ? `Expected ${label} NOT to be an integer.\n  ${label}: ${JSON.stringify(received)}`
+                    : `Expected ${label} to be an integer.\n  ${label}: ${JSON.stringify(received)}`
+            };
+        }
+    });
+}
 
 declare module 'expect' {
     // eslint-disable-next-line @typescript-eslint/naming-convention

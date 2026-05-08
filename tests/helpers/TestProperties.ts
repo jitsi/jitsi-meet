@@ -74,9 +74,7 @@ export function loadTestFiles(files: string[]): void {
             // do nothing
         };
 
-        // helpers/matchers.ts calls expect.extend({...}) at module load to
-        // register a custom matcher; without a stub for .extend the require()
-        // below would throw and we'd skip the spec's setTestProperties calls.
+        // Tolerate any expect.extend({...}) calls a spec or helper might do at module load.
         if (fn === 'expect') {
             stub.extend = () => { /* no-op */ };
         }

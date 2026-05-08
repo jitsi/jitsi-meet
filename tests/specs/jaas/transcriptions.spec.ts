@@ -1,4 +1,3 @@
-import '../../helpers/matchers';
 import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import type WebhookProxy from '../../helpers/WebhookProxy';

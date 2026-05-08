@@ -1,4 +1,3 @@
-import '../../helpers/matchers';
 import { P1, P3, Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { expectations } from '../../helpers/expectations';
