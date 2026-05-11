@@ -48,3 +48,13 @@ jobs:
           GITHUB_ACTOR: ${{ github.actor }}
           OVERRIDE_SDK_VERSION: ${{ steps.get_version.outputs.VERSION }}
           LIBRE_BUILD: false
+
+      - name: Upload Build Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jitsi-android-sdk-${{ steps.get_version.outputs.VERSION }}
+          path: |
+            android/sdk/build/outputs/aar/*.aar
+            android/sdk/build/publications/release/*.xml
+            android/sdk/build/libs/*.jar

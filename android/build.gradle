@@ -127,7 +127,9 @@ allprojects {
 
             task jitsiAndroidSourcesJar(type: Jar) {
                 archiveClassifier = 'sources'
-                from android.sourceSets.main.java.source
+                if (project.hasProperty('android')) {
+                    from project.android.sourceSets.main.java.source
+                }
             }
 
             publishing.publications {
@@ -202,6 +204,23 @@ subprojects { subproject ->
                 // react-native-calendar-events
                 lint {
                     abortOnError = false
+                }
+
+                packaging {
+                    resources {
+                        excludes += [
+                            'META-INF/*.kotlin_module',
+                            'META-INF/DEPENDENCIES',
+                            'META-INF/LICENSE',
+                            'META-INF/LICENSE.txt',
+                            'META-INF/license.txt',
+                            'META-INF/NOTICE',
+                            'META-INF/NOTICE.txt',
+                            'META-INF/notice.txt',
+                            'META-INF/ASL2.0',
+                            'META-INF/MANIFEST.MF'
+                        ]
+                    }
                 }
             }
         }

@@ -51,10 +51,10 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
-            url = uri("https://maven.pkg.github.com/USERNAME/REPOSITORY")
+            url = uri("https://maven.pkg.github.com/ali-saranj/custom-jitsi-meet")
             credentials {
-                username = System.getenv("GITHUB_ACTOR") ?: "YOUR_GITHUB_USERNAME"
-                password = System.getenv("GITHUB_TOKEN") ?: "YOUR_GITHUB_PAT"
+                username = "ali-saranj"
+                password = "YOUR_GITHUB_PAT" // Generate at https://github.com/settings/tokens
             }
         }
         maven { url 'https://www.jitpack.io' }
@@ -68,7 +68,7 @@ In your **app** `build.gradle`:
 
 ```gradle
 dependencies {
-    implementation("com.mycompany.jitsi:custom-jitsi-sdk:1.0.0")
+    implementation("io.github.ali-saranj:custom-jitsi-sdk:1.0.0")
 }
 ```
 

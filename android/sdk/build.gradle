@@ -228,10 +228,30 @@ publishing {
             }
             artifact sourcesJar
 
+            pom {
+                name = project.PUBLISH_ARTIFACT_ID
+                description = 'Jitsi Meet SDK for Android'
+                url = "https://github.com/${project.GITHUB_REPOSITORY}"
+                licenses {
+                    license {
+                        name = 'The Apache Software License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'ali-saranj'
+                        name = 'Ali Saranj'
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/${project.GITHUB_REPOSITORY}.git"
+                    developerConnection = "scm:git:git@github.com:${project.GITHUB_REPOSITORY}.git"
+                    url = "https://github.com/${project.GITHUB_REPOSITORY}"
+                }
+            }
             pom.withXml {
                 def pomXml = asNode()
-                pomXml.appendNode('name', project.PUBLISH_ARTIFACT_ID)
-                pomXml.appendNode('description', 'Jitsi Meet SDK for Android')
                 def dependencies = pomXml.appendNode('dependencies')
                 configurations.getByName('releaseCompileClasspath').getResolvedConfiguration().getFirstLevelModuleDependencies().each {
                     // The (third-party) React Native modules that we depend on
