@@ -24,7 +24,7 @@ android {
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.12.0'
-    // To test JitPack, we consume the dependency.
-    // If testing locally, it uses mavenLocal()
-    implementation 'com.github.ali-saranj.custom-jitsi-meet:jitsi-meet-sdk:0.0.0'
+    
+    // Consume the published custom Jitsi Meet SDK from GitHub Packages
+    implementation 'io.github.ali-saranj:custom-jitsi-sdk:1.0.0'
 }
