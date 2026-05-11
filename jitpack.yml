@@ -2,4 +2,4 @@ jdk:
   - openjdk17
 
 install:
-  - ./gradlew :sdk:assembleRelease -x test -x lint
+  - cd android && ./gradlew :sdk:assembleRelease -x test -x lint
