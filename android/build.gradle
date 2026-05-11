@@ -140,6 +140,7 @@ allprojects {
 
                     artifact("${project.buildDir}/outputs/aar/${project.name}-release.aar") {
                         extension "aar"
+                        builtBy tasks.matching { it.name == 'bundleReleaseAar' }
                     }
                     artifact(jitsiAndroidSourcesJar)
                     pom.withXml {
