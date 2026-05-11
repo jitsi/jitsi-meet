@@ -63,6 +63,13 @@ describe('Dial-in', () => {
         expect(dialInPin.length).toBeGreaterThanOrEqual(8);
 
         await dialIn(dialInPin);
+
+        // Mute p1 so the dial-in remains the dominant speaker; otherwise the JVB audio-source
+        // forwarding can evict the dial-in source and waitForReceiveMedia times out.
+        await p1.waitForParticipants(1);
+        await p1.driver.pause(1000);
+        await p1.getToolbar().clickAudioMuteButton();
+
         await waitForMedia(p1);
 
         let startedPayload: any;
@@ -74,6 +81,7 @@ describe('Dial-in', () => {
 
         const endpointId = await p1.execute(() => APP?.conference?.listMembers()[0].getId());
 
+        await p1.getToolbar().clickAudioUnmuteButton();
         await p1.getFilmstrip().kickParticipant(endpointId);
 
         if (webhooksProxy) {
