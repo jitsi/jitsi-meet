@@ -12,111 +12,18 @@ android.libraryVariants.all { def variant ->
     def targetName = variant.name.capitalize()
     def targetPath = variant.dirName
 
-    // React js bundle directories
-    def jsBundleDir = file("$buildDir/generated/assets/react/${targetPath}")
-    def resourcesDir = file("$buildDir/generated/res/react/${targetPath}")
-
-    def jsBundleFile = file("$jsBundleDir/index.android.bundle")
-
-    def currentBundleTask = tasks.create(
-            name: "bundle${targetName}JsAndAssets",
-            type: Exec) {
-        group = "react"
-        description = "bundle JS and assets for ${targetName}."
-
-        // Create dirs if they are not there (e.g. the "clean" task just ran)
-        doFirst {
-            jsBundleDir.deleteDir()
-            jsBundleDir.mkdirs()
-            resourcesDir.deleteDir()
-            resourcesDir.mkdirs()
-        }
-
-        // Set up inputs and outputs so gradle can cache the result
-        def reactRoot = file("${projectDir}/../../")
-        inputs.files fileTree(dir: reactRoot, excludes: ["**/android/**", "**/ios/**", "**/build/**"])
-        outputs.dir jsBundleDir
-        outputs.dir resourcesDir
-
-        // Set up the call to the react-native cli
-        workingDir reactRoot
-
-        // Set up dev mode
-        def devEnabled = !targetName.toLowerCase().contains("release")
-
-        commandLine(
-                "node",
-                "node_modules/react-native/scripts/bundle.js",
-                "--platform", "android",
-                "--dev", "${devEnabled}",
-                "--reset-cache",
-                "--entry-file", "index.android.js",
-                "--bundle-output", jsBundleFile,
-                "--assets-dest", resourcesDir)
-
-        // Force disable JS bundling in CI
-        enabled = false
-    }
-
-    // Ensure proper task ordering for Gradle 8.14+ strict dependency validation
-    currentBundleTask.configure {
-        mustRunAfter {
-            def config = project.configurations.findByName("${targetPath}CompileClasspath")
-            
-            // Fallback to an empty list
-            (config?.allDependencies ?: [])
-                .findAll { it.hasProperty('dependencyProject') }
-                .collectMany { dependency ->
-                    def p = rootProject.findProject(dependency.dependencyProject.path)
-                    if (p) {
-                        return p.tasks.matching { it.name.contains(targetName) }
-                    } else {
-                        return []
-                    }
-                }
-        }
-    }
-    
-    currentBundleTask.ext.generatedResFolders = files(resourcesDir).builtBy(currentBundleTask)
-    currentBundleTask.ext.generatedAssetsFolders = files(jsBundleDir).builtBy(currentBundleTask)
-    variant.registerGeneratedResFolders(currentBundleTask.generatedResFolders)
-
     def mergeAssetsTask = variant.mergeAssetsProvider.get()
     def mergeResourcesTask = variant.mergeResourcesProvider.get()
-
-    mergeAssetsTask.dependsOn(currentBundleTask)
-    mergeResourcesTask.dependsOn(currentBundleTask)
 
     mergeAssetsTask.doLast {
         def assetsDir = mergeAssetsTask.outputDir.get()
 
         // Bundle sounds
-        //
         copy {
             from("${projectDir}/../../sounds")
             include("*.wav")
             include("*.mp3")
             into("${assetsDir}/sounds")
-        }
-
-        // Copy React assets
-        //
-        if (currentBundleTask.enabled) {
-            copy {
-                from(jsBundleFile)
-                into(assetsDir)
-            }
-        }
-    }
-
-    mergeResourcesTask.doLast {
-        // Copy React resources
-        //
-        if (currentBundleTask.enabled) {
-            copy {
-                from(resourcesDir)
-                into(mergeResourcesTask.outputDir.get())
-            }
         }
     }
 }

@@ -47,7 +47,6 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$rootProject.ext.kotlinVersion"
         classpath "com.android.tools.build:gradle:$rootProject.ext.gradlePluginVersion"
-        classpath "com.facebook.react:react-native-gradle-plugin:$rootProject.ext.rnVersion"
         classpath 'com.google.gms:google-services:4.4.0'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
     }
