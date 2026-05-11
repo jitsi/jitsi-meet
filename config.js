@@ -531,6 +531,10 @@ var config = {
     //     // subtitles on stage and the "Show subtitles on stage" checkbox in the settings.
     //     // Note: Starting transcriptions from the recording dialog will still work.
     //     disableClosedCaptions: false,
+    //
+    //     // When the backend provides diarization by setting a "speaker" field, append [Speaker N] for transcription
+    //     // events from non-0 speakers.
+    //     renderSpeakerId: false
 
     // },
 

@@ -156,6 +156,9 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
     };
     const { timestamp } = json;
     const participantId = participant.id;
+    const speaker = json.speaker;
+    const renderSpeakerId = state['features/base/config'].transcription?.renderSpeakerId;
+    const speakerPrefix = renderSpeakerId && speaker && speaker !== 0 ? `[Speaker ${speaker}] ` : '';
 
     // Handle transcript messages
     const language = state['features/base/conference'].conference
@@ -170,7 +173,8 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
             return next(action);
         }
 
-        const translation = json.text?.trim();
+        const translationText = json.text?.trim();
+        const translation = translationText ? `${speakerPrefix}${translationText}` : translationText;
 
         if (isCCTabEnabled(state)) {
             dispatch(storeSubtitle({
@@ -191,7 +195,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
             // enabled.
             newTranscriptMessage = {
                 clearTimeOut: undefined,
-                final: json.text?.trim(),
+                final: translation,
                 participant
             };
         }
@@ -202,6 +206,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
         // translations are disabled.
 
         const { text } = json.transcript[0];
+        const displayText = `${speakerPrefix}${text}`;
 
         // First, notify the external API.
         if (!(isInterim && skipInterimTranscriptions)) {
@@ -253,7 +258,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
             id: transcriptMessageID,
             participantId,
             language: json.language,
-            text,
+            text: displayText,
             interim: isInterim,
             timestamp,
             isTranscription: true
@@ -290,17 +295,17 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
         // If this is final result, update the state as a final result
         // and start a count down to remove the subtitle from the state
         if (!json.is_interim) {
-            newTranscriptMessage.final = text;
+            newTranscriptMessage.final = displayText;
         } else if (json.stability > STABLE_TRANSCRIPTION_FACTOR) {
             // If the message has a high stability, we can update the
             // stable field of the state and remove the previously
             // unstable results
-            newTranscriptMessage.stable = text;
+            newTranscriptMessage.stable = displayText;
         } else {
             // Otherwise, this result has an unstable result, which we
             // add to the state. The unstable result will be appended
             // after the stable part.
-            newTranscriptMessage.unstable = text;
+            newTranscriptMessage.unstable = displayText;
         }
     }
 
