@@ -1,7 +1,4 @@
 jdk:
   - openjdk17
-node: 24.0.0
-before_install:
-  - npm install --legacy-peer-deps
 install:
-  - cd android && ./gradlew publishToMavenLocal
+  - cd android && ./scripts/jitpack-prepare.sh
