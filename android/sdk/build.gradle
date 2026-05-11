@@ -216,7 +216,7 @@ publishing {
         aarArchive(MavenPublication) {
             groupId 'com.github.ali-saranj.custom-jitsi-meet'
             artifactId 'jitsi-meet-sdk'
-            version System.env.OVERRIDE_SDK_VERSION ?: project.sdkVersion
+            version System.env.VERSION ?: (System.env.OVERRIDE_SDK_VERSION ?: project.sdkVersion)
 
             artifact("${project.buildDir}/outputs/aar/${project.name}-release.aar") {
                 extension "aar"
