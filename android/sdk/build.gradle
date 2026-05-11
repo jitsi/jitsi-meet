@@ -126,7 +126,7 @@ android.libraryVariants.all { def variant ->
 
         // Set up inputs and outputs so gradle can cache the result
         def reactRoot = file("${projectDir}/../../")
-        inputs.files fileTree(dir: reactRoot, excludes: ["android/**", "ios/**"])
+        inputs.files fileTree(dir: reactRoot, excludes: ["**/android/**", "**/ios/**", "**/build/**"])
         outputs.dir jsBundleDir
         outputs.dir resourcesDir
 
@@ -214,7 +214,7 @@ android.libraryVariants.all { def variant ->
 publishing {
     publications {
         aarArchive(MavenPublication) {
-            groupId 'org.jitsi.react'
+            groupId 'com.github.ali-saranj.custom-jitsi-meet'
             artifactId 'jitsi-meet-sdk'
             version System.env.OVERRIDE_SDK_VERSION ?: project.sdkVersion
 
@@ -259,4 +259,8 @@ publishing {
             }
         }
     }
+}
+
+tasks.matching { it.name.startsWith("publish") }.configureEach { publishTask ->
+    publishTask.dependsOn tasks.matching { it.name == "bundleReleaseAar" }
 }

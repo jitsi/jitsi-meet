@@ -1,0 +1,6 @@
+jdk:
+  - openjdk17
+before_install:
+  - npm install --legacy-peer-deps
+install:
+  - cd android && ./gradlew publishToMavenLocal

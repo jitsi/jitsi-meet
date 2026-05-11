@@ -19,7 +19,7 @@ buildscript {
         // Jitsi Meet SDK for Android depends on and which are not available in
         // third-party Maven repositories so we have to deploy to a Maven repository
         // of ours.
-        moduleGroupId = 'com.facebook.react'
+        moduleGroupId = 'com.github.ali-saranj.custom-jitsi-meet'
 
         // Maven repo where artifacts will be published
         mavenRepo = System.env.MVN_REPO ?: ""
@@ -172,6 +172,10 @@ allprojects {
                         }
                     }
                 }
+            }
+
+            tasks.matching { it.name.startsWith("publish") }.configureEach { publishTask ->
+                publishTask.dependsOn tasks.matching { it.name == "bundleReleaseAar" }
             }
         }
     }
