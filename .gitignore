@@ -118,3 +118,6 @@ react-native-sdk/sounds
 tests/.env
 test-results
 
+
+.gemini/
+gha-creds-*.json

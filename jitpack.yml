@@ -1,4 +1,5 @@
 jdk:
   - openjdk17
+
 install:
-  - cd android && ./scripts/jitpack-prepare.sh
+  - ./gradlew :sdk:assembleRelease -x test -x lint
