@@ -19,12 +19,12 @@ buildscript {
         // Jitsi Meet SDK for Android depends on and which are not available in
         // third-party Maven repositories so we have to deploy to a Maven repository
         // of ours.
-        moduleGroupId = project.hasProperty('moduleGroupId') ? project.moduleGroupId : 'com.facebook.react'
+        moduleGroupId = project.hasProperty('PUBLISH_GROUP_ID') ? project.PUBLISH_GROUP_ID : (project.hasProperty('moduleGroupId') ? project.moduleGroupId : 'com.facebook.react')
 
         // Maven repo where artifacts will be published
-        mavenRepo = System.env.MVN_REPO ?: ""
-        mavenUser = System.env.MVN_USER ?: ""
-        mavenPassword = System.env.MVN_PASSWORD ?: ""
+        mavenRepo = System.env.MVN_REPO ?: (project.hasProperty('GITHUB_REPOSITORY') ? "https://maven.pkg.github.com/${project.GITHUB_REPOSITORY}" : "")
+        mavenUser = System.env.GITHUB_ACTOR ?: (System.env.MVN_USER ?: (project.findProperty('gpr.user') ?: ""))
+        mavenPassword = System.env.GITHUB_TOKEN ?: (System.env.MVN_PASSWORD ?: (project.findProperty('gpr.key') ?: ""))
 
         // Libre build
         libreBuild = (System.env.LIBRE_BUILD ?: "false").toBoolean()

@@ -211,19 +211,26 @@ android.libraryVariants.all { def variant ->
 }
 
 
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
 publishing {
     publications {
-        aarArchive(MavenPublication) {
-            groupId 'org.jitsi.react'
-            artifactId 'jitsi-meet-sdk'
-            version System.env.OVERRIDE_SDK_VERSION ?: project.sdkVersion
+        release(MavenPublication) {
+            groupId project.PUBLISH_GROUP_ID
+            artifactId project.PUBLISH_ARTIFACT_ID
+            version System.env.OVERRIDE_SDK_VERSION ?: project.PUBLISH_VERSION
 
             artifact("${project.buildDir}/outputs/aar/${project.name}-release.aar") {
                 extension "aar"
             }
+            artifact sourcesJar
+
             pom.withXml {
                 def pomXml = asNode()
-                pomXml.appendNode('name', 'jitsi-meet-sdk')
+                pomXml.appendNode('name', project.PUBLISH_ARTIFACT_ID)
                 pomXml.appendNode('description', 'Jitsi Meet SDK for Android')
                 def dependencies = pomXml.appendNode('dependencies')
                 configurations.getByName('releaseCompileClasspath').getResolvedConfiguration().getFirstLevelModuleDependencies().each {
@@ -235,8 +242,8 @@ publishing {
                     def groupId = it.moduleGroup
                     def artifactId = it.moduleName
 
-                    if (artifactId.contains('react-native')) {
-                        groupId = rootProject.ext.moduleGroupId
+                    if (artifactId.contains('react-native') || artifactId.contains('sayem314')) {
+                        groupId = project.PUBLISH_GROUP_ID
                     }
 
                     def dependency = dependencies.appendNode('dependency')
@@ -246,16 +253,14 @@ publishing {
                 }
             }
         }
-
     }
     repositories {
         maven {
-            url rootProject.ext.mavenRepo
-            if (!rootProject.ext.mavenRepo.startsWith("file")) {
-                credentials {
-                    username rootProject.ext.mavenUser
-                    password rootProject.ext.mavenPassword
-                }
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/${project.GITHUB_REPOSITORY}")
+            credentials {
+                username = System.env.GITHUB_ACTOR ?: (project.findProperty('gpr.user') ?: "")
+                password = System.env.GITHUB_TOKEN ?: (project.findProperty('gpr.key') ?: "")
             }
         }
     }
