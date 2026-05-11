@@ -92,7 +92,7 @@ MiddlewareRegistry.register(store => next => action => {
                             }, conference);
 
                             return true; // on mobile this is used to close the dialog
-                        }));
+                        }, value));
                     }
 
                     return;
