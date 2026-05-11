@@ -6,8 +6,8 @@ lsb_release -a || cat /etc/os-release
 ldd --version
 
 # Node.js version to install
-# Let's try Node 20 which is more widely supported
-NODE_VERSION="v20.11.1"
+# Node 16.20.2 is the last version that supports GLIBC 2.23 (Ubuntu 16.04)
+NODE_VERSION="v16.20.2"
 PLATFORM="linux-x64"
 
 echo "Downloading Node.js $NODE_VERSION..."
