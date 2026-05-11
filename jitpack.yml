@@ -8,4 +8,4 @@ before_install:
   - npm install --legacy-peer-deps
 
 install:
-  - cd android && ./gradlew :sdk:publishToMavenLocal -Dmaven.repo.local=$HOME/.m2/repository -PmoduleGroupId=com.github.ali-saranj.custom-jitsi-meet
+  - cd android && ./gradlew :sdk:assembleRelease :sdk:publishToMavenLocal -Dmaven.repo.local=$HOME/.m2/repository -PmoduleGroupId=com.github.ali-saranj.custom-jitsi-meet
