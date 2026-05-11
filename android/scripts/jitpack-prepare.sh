@@ -1,17 +1,27 @@
 #!/bin/bash
 set -e
 
-echo "Installing NVM..."
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+# Node.js version to install
+NODE_VERSION="v24.0.0"
+PLATFORM="linux-x64"
 
-echo "Installing Node 24..."
-nvm install 24
-nvm use 24
+echo "Downloading Node.js $NODE_VERSION..."
+# Use /tmp to avoid permission issues and keep the build directory clean
+mkdir -p /home/jitpack/node
+curl -fsSL https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-$PLATFORM.tar.xz | tar -xJ -C /home/jitpack/node --strip-components=1
+
+# Add Node to PATH for this script session
+export PATH="/home/jitpack/node/bin:$PATH"
+
+echo "Verifying Node.js version..."
+node -v
+npm -v
 
 echo "Installing npm dependencies..."
-npm install --legacy-peer-deps
+# Use --no-audit and --no-fund to speed up and reduce output
+cd ..
+npm install --legacy-peer-deps --no-audit --no-fund
 
 echo "Building and publishing SDK..."
+cd android
 ./gradlew publishToMavenLocal
