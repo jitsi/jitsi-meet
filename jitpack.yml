@@ -6,6 +6,7 @@ before_install:
   - export PATH=$HOME/bin:$PATH
   - node -v
   - npm install --legacy-peer-deps
+  - sed -i 's/os.availableParallelism()/os.cpus().length/g' node_modules/metro/src/lib/getMaxWorkers.js
 
 install:
   - cd android && ./gradlew :sdk:assembleRelease :sdk:publishToMavenLocal -Dmaven.repo.local=$HOME/.m2/repository -PmoduleGroupId=com.github.ali-saranj.custom-jitsi-meet
