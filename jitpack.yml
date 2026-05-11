@@ -1,5 +1,11 @@
 jdk:
   - openjdk17
 
+before_install:
+  - curl -fsSL https://nodejs.org/dist/v16.20.2/node-v16.20.2-linux-x64.tar.xz | tar -xJ --strip-components=1 -C $HOME
+  - export PATH=$HOME/bin:$PATH
+  - node -v
+  - npm install --legacy-peer-deps
+
 install:
-  - cd android && ./gradlew :sdk:assembleRelease -x test -x lint
+  - cd android && ./gradlew :sdk:publishToMavenLocal -Dmaven.repo.local=$HOME/.m2/repository -PmoduleGroupId=com.github.ali-saranj.custom-jitsi-meet

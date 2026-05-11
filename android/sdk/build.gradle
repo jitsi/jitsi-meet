@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.facebook.react'
 apply plugin: 'maven-publish'
 
 android {
@@ -34,8 +35,6 @@ android {
     namespace 'org.jitsi.meet.sdk'
 }
 
-apply from: 'build_library_variants.gradle'
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.4.1'
@@ -54,54 +53,170 @@ dependencies {
 
     // Only add these packages if we are NOT doing a LIBRE_BUILD
     if (!rootProject.ext.libreBuild) {
-        implementation safeProject(':amplitude-analytics-react-native', 'org.jitsi.react:amplitude-analytics-react-native:2.16.1')
-        implementation safeProject(':giphy-react-native-sdk', 'org.jitsi.react:giphy-react-native-sdk:2.3.0')
-        implementation(safeProject(':react-native-google-signin-google-signin', 'org.jitsi.react:react-native-google-signin-google-signin:11.0.1')) {
+        implementation project(':amplitude-analytics-react-native')
+        implementation project(':giphy-react-native-sdk')
+        implementation(project(':react-native-google-signin-google-signin')) {
             exclude group: 'com.google.android.gms'
             exclude group: 'androidx'
         }
     }
 
-    implementation safeProject(':react-native-async-storage-async-storage', 'org.jitsi.react:react-native-async-storage-async-storage:1.21.0')
-    implementation safeProject(':react-native-background-timer', 'org.jitsi.react:react-native-background-timer:2.4.1')
-    implementation safeProject(':react-native-calendar-events', 'org.jitsi.react:react-native-calendar-events:2.2.0')
-    implementation safeProject(':react-native-clipboard-clipboard', 'org.jitsi.react:react-native-clipboard-clipboard:1.13.2')
-    implementation safeProject(':react-native-community-netinfo', 'org.jitsi.react:react-native-community-netinfo:11.2.1')
-    implementation safeProject(':react-native-default-preference', 'org.jitsi.react:react-native-default-preference:1.4.4')
-    implementation(safeProject(':react-native-device-info', 'org.jitsi.react:react-native-device-info:10.12.0')) {
+    implementation project(':react-native-async-storage-async-storage')
+    implementation project(':react-native-background-timer')
+    implementation project(':react-native-calendar-events')
+    implementation project(':react-native-clipboard-clipboard')
+    implementation project(':react-native-community-netinfo')
+    implementation project(':react-native-default-preference')
+    implementation(project(':react-native-device-info')) {
         exclude group: 'com.google.firebase'
         exclude group: 'com.google.android.gms'
         exclude group: 'com.android.installreferrer'
     }
-    implementation safeProject(':react-native-gesture-handler', 'org.jitsi.react:react-native-gesture-handler:2.14.0')
-    implementation safeProject(':react-native-get-random-values', 'org.jitsi.react:react-native-get-random-values:1.10.0')
-    implementation safeProject(':sayem314-react-native-keep-awake', 'org.jitsi.react:sayem314-react-native-keep-awake:1.2.0')
-    implementation safeProject(':react-native-orientation-locker', 'org.jitsi.react:react-native-orientation-locker:1.5.0')
-    implementation safeProject(':react-native-pager-view', 'org.jitsi.react:react-native-pager-view:6.2.3')
-    implementation safeProject(':react-native-performance', 'org.jitsi.react:react-native-performance:5.0.0')
-    implementation safeProject(':react-native-safe-area-context', 'org.jitsi.react:react-native-safe-area-context:4.8.2')
-    implementation safeProject(':react-native-screens', 'org.jitsi.react:react-native-screens:3.29.0')
-    implementation safeProject(':react-native-community-slider', 'org.jitsi.react:react-native-community-slider:4.4.3')
-    implementation safeProject(':react-native-sound', 'org.jitsi.react:react-native-sound:0.11.2')
-    implementation safeProject(':react-native-splash-view', 'org.jitsi.react:react-native-splash-view:0.0.1')
-    implementation safeProject(':react-native-svg', 'org.jitsi.react:react-native-svg:14.1.0')
-    implementation safeProject(':react-native-video', 'org.jitsi.react:react-native-video:5.2.1')
-    implementation safeProject(':react-native-webview', 'org.jitsi.react:react-native-webview:13.6.3')
-    implementation safeProject(':react-native-worklets-core', 'org.jitsi.react:react-native-worklets-core:0.5.0')
+    implementation project(':react-native-gesture-handler')
+    implementation project(':react-native-get-random-values')
+    implementation project(':sayem314-react-native-keep-awake')
+    implementation project(':react-native-orientation-locker')
+    implementation project(':react-native-pager-view')
+    implementation project(':react-native-performance')
+    implementation project(':react-native-safe-area-context')
+    implementation project(':react-native-screens')
+    implementation project(':react-native-community-slider')
+    implementation project(':react-native-sound')
+    implementation project(':react-native-splash-view')
+    implementation project(':react-native-svg')
+    implementation project(':react-native-video')
+    implementation project(':react-native-webview')
+    implementation project(':react-native-worklets-core')
 
     // Use `api` here so consumers can use WebRTCModuleOptions.
-    api safeProject(':react-native-webrtc', 'org.jitsi.react:react-native-webrtc:118.0.1')
+    api project(':react-native-webrtc')
 
     testImplementation 'junit:junit:4.12'
+}
+
+
+// Here we bundle all assets, resources and React files. We cannot use the
+// react.gradle file provided by react-native because it's designed to be used
+// in an application (it taps into applicationVariants, but the SDK is a library
+// so we need libraryVariants instead).
+android.libraryVariants.all { def variant ->
+    // Create variant and target names
+    def targetName = variant.name.capitalize()
+    def targetPath = variant.dirName
+
+    // React js bundle directories
+    def jsBundleDir = file("$buildDir/generated/assets/react/${targetPath}")
+    def resourcesDir = file("$buildDir/generated/res/react/${targetPath}")
+
+    def jsBundleFile = file("$jsBundleDir/index.android.bundle")
+
+    def currentBundleTask = tasks.create(
+            name: "bundle${targetName}JsAndAssets",
+            type: Exec) {
+        group = "react"
+        description = "bundle JS and assets for ${targetName}."
+
+        // Create dirs if they are not there (e.g. the "clean" task just ran)
+        doFirst {
+            jsBundleDir.deleteDir()
+            jsBundleDir.mkdirs()
+            resourcesDir.deleteDir()
+            resourcesDir.mkdirs()
+        }
+
+        // Set up inputs and outputs so gradle can cache the result
+        def reactRoot = file("${projectDir}/../../")
+        inputs.files fileTree(dir: reactRoot, excludes: ["android/**", "ios/**"])
+        outputs.dir jsBundleDir
+        outputs.dir resourcesDir
+
+        // Set up the call to the react-native cli
+        workingDir reactRoot
+
+        // Set up dev mode
+        def devEnabled = !targetName.toLowerCase().contains("release")
+
+        commandLine(
+                "node",
+                "node_modules/react-native/scripts/bundle.js",
+                "--platform", "android",
+                "--dev", "${devEnabled}",
+                "--reset-cache",
+                "--entry-file", "index.android.js",
+                "--bundle-output", jsBundleFile,
+                "--assets-dest", resourcesDir)
+
+        // Disable bundling on dev builds
+        enabled !devEnabled
+    }
+
+    // Ensure proper task ordering for Gradle 8.14+ strict dependency validation
+    currentBundleTask.configure {
+        mustRunAfter {
+            def config = project.configurations.findByName("${targetPath}CompileClasspath")
+            
+            // Fallback to an empty list(mustRunAfter expects a list, not "null" which is the og fallback), 
+            // means no config, means no constraints
+            (config?.allDependencies ?: [])
+                .findAll { it.hasProperty('dependencyProject') }
+                .collectMany { dependency ->
+                    project.project(dependency.dependencyProject.path)
+                        .tasks.matching { it.name.contains(targetName) }
+                }
+        }
+    }
+    
+    currentBundleTask.ext.generatedResFolders = files(resourcesDir).builtBy(currentBundleTask)
+    currentBundleTask.ext.generatedAssetsFolders = files(jsBundleDir).builtBy(currentBundleTask)
+    variant.registerGeneratedResFolders(currentBundleTask.generatedResFolders)
+
+    def mergeAssetsTask = variant.mergeAssetsProvider.get()
+    def mergeResourcesTask = variant.mergeResourcesProvider.get()
+
+    mergeAssetsTask.dependsOn(currentBundleTask)
+    mergeResourcesTask.dependsOn(currentBundleTask)
+
+    mergeAssetsTask.doLast {
+        def assetsDir = mergeAssetsTask.outputDir.get()
+
+        // Bundle sounds
+        //
+        copy {
+            from("${projectDir}/../../sounds")
+            include("*.wav")
+            include("*.mp3")
+            into("${assetsDir}/sounds")
+        }
+
+        // Copy React assets
+        //
+        if (currentBundleTask.enabled) {
+            copy {
+                from(jsBundleFile)
+                into(assetsDir)
+            }
+        }
+    }
+
+    mergeResourcesTask.doLast {
+        // Copy React resources
+        //
+        if (currentBundleTask.enabled) {
+            copy {
+                from(resourcesDir)
+                into(mergeResourcesTask.outputDir.get())
+            }
+        }
+    }
 }
 
 
 publishing {
     publications {
         aarArchive(MavenPublication) {
-            groupId 'com.github.ali-saranj.custom-jitsi-meet'
+            groupId 'org.jitsi.react'
             artifactId 'jitsi-meet-sdk'
-            version System.env.VERSION ?: (System.env.OVERRIDE_SDK_VERSION ?: project.sdkVersion)
+            version System.env.OVERRIDE_SDK_VERSION ?: project.sdkVersion
 
             artifact("${project.buildDir}/outputs/aar/${project.name}-release.aar") {
                 extension "aar"
@@ -112,6 +227,11 @@ publishing {
                 pomXml.appendNode('description', 'Jitsi Meet SDK for Android')
                 def dependencies = pomXml.appendNode('dependencies')
                 configurations.getByName('releaseCompileClasspath').getResolvedConfiguration().getFirstLevelModuleDependencies().each {
+                    // The (third-party) React Native modules that we depend on
+                    // are in source code form and do not have groupId. That is
+                    // why we have a dedicated groupId for them. But the other
+                    // dependencies come through Maven and, consequently, have
+                    // groupId.
                     def groupId = it.moduleGroup
                     def artifactId = it.moduleName
 
@@ -139,8 +259,4 @@ publishing {
             }
         }
     }
-}
-
-tasks.matching { it.name.startsWith("publish") }.configureEach { publishTask ->
-    publishTask.dependsOn tasks.matching { it.name == "bundleReleaseAar" }
 }

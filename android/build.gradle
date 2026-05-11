@@ -19,7 +19,7 @@ buildscript {
         // Jitsi Meet SDK for Android depends on and which are not available in
         // third-party Maven repositories so we have to deploy to a Maven repository
         // of ours.
-        moduleGroupId = 'com.github.ali-saranj.custom-jitsi-meet'
+        moduleGroupId = 'com.facebook.react'
 
         // Maven repo where artifacts will be published
         mavenRepo = System.env.MVN_REPO ?: ""
@@ -42,11 +42,11 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://github.com/jitsi/jitsi-maven-repository/raw/master/releases" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$rootProject.ext.kotlinVersion"
         classpath "com.android.tools.build:gradle:$rootProject.ext.gradlePluginVersion"
+        classpath "com.facebook.react:react-native-gradle-plugin:$rootProject.ext.rnVersion"
         classpath 'com.google.gms:google-services:4.4.0'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
     }
@@ -54,11 +54,9 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenLocal()
         mavenCentral()
         google()
         maven { url 'https://www.jitpack.io' }
-        maven { url "https://github.com/jitsi/jitsi-maven-repository/raw/master/releases" }
     }
 
     // Make sure we use the react-native version in node_modules and not the one
@@ -174,10 +172,6 @@ allprojects {
                         }
                     }
                 }
-            }
-
-            tasks.matching { it.name.startsWith("publish") }.configureEach { publishTask ->
-                publishTask.dependsOn tasks.matching { it.name == "bundleReleaseAar" }
             }
         }
     }
