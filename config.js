@@ -534,7 +534,7 @@ var config = {
     //
     //     // When the backend provides diarization by setting a "speaker" field, append [Speaker N] for transcription
     //     // events from non-0 speakers.
-    //     renderSpeakerId: false
+    //     renderTranscriptDetails: false
 
     // },
 

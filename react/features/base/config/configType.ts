@@ -700,7 +700,7 @@ export interface IConfig {
         disableClosedCaptions?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
-        renderSpeakerId?: boolean;
+        renderTranscriptDetails?: boolean;
         translationLanguages?: Array<string>;
         translationLanguagesHead?: Array<string>;
         useAppLanguage?: boolean;

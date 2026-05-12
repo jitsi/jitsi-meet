@@ -157,8 +157,22 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
     const { timestamp } = json;
     const participantId = participant.id;
     const speaker = json.speaker;
-    const renderSpeakerId = state['features/base/config'].transcription?.renderSpeakerId;
-    const speakerPrefix = renderSpeakerId && speaker && speaker !== 0 ? `[Speaker ${speaker}] ` : '';
+    const renderTranscriptDetails = state['features/base/config'].transcription?.renderTranscriptDetails;
+    let detailsPrefix = '';
+
+    if (renderTranscriptDetails) {
+        const parts = [];
+
+        if (speaker != null) {
+            parts.push(`Speaker ${speaker}`);
+        }
+        if (json.language) {
+            parts.push(json.language);
+        }
+        if (parts.length > 0) {
+            detailsPrefix = `[${parts.join(', ')}] `;
+        }
+    }
 
     // Handle transcript messages
     const language = state['features/base/conference'].conference
@@ -174,7 +188,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
         }
 
         const translationText = json.text?.trim();
-        const translation = translationText ? `${speakerPrefix}${translationText}` : translationText;
+        const translation = translationText ? `${detailsPrefix}${translationText}` : translationText;
 
         if (isCCTabEnabled(state)) {
             dispatch(storeSubtitle({
@@ -206,7 +220,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
         // translations are disabled.
 
         const { text } = json.transcript[0];
-        const displayText = `${speakerPrefix}${text}`;
+        const displayText = `${detailsPrefix}${text}`;
 
         // First, notify the external API.
         if (!(isInterim && skipInterimTranscriptions)) {
