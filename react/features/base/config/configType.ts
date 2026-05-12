@@ -309,6 +309,10 @@ export interface IConfig {
     disableAEC?: boolean;
     disableAGC?: boolean;
     disableAP?: boolean;
+
+    /**
+     * @deprecated Use `virtualBackground.disableAddingImages` instead.
+     */
     disableAddingBackgroundImages?: boolean;
     disableAudioLevels?: boolean;
     disableBeforeUnloadHandlers?: boolean;
@@ -365,6 +369,10 @@ export interface IConfig {
     disableThirdPartyRequests?: boolean;
     disableTileEnlargement?: boolean;
     disableTileView?: boolean;
+
+    /**
+     * @deprecated Use `virtualBackground.disabled` instead.
+     */
     disableVirtualBackground?: boolean;
     disabledNotifications?: Array<string>;
     disabledSounds?: Array<Sounds>;

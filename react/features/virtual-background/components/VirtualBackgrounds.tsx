@@ -508,13 +508,9 @@ function _mapStateToProps(state: IReduxState) {
     const dynamicBrandingImages = state['features/dynamic-branding'].virtualBackgrounds;
     const hasBrandingImages = Boolean(dynamicBrandingImages.length);
 
-    // New location takes precedence; fall back to legacy top-level key.
-    const disableUploads = config.virtualBackground?.disableAddingImages
-        ?? config.disableAddingBackgroundImages;
-
     return {
         _images: (hasBrandingImages && dynamicBrandingImages) || IMAGES,
-        _showUploadButton: !disableUploads
+        _showUploadButton: !config.virtualBackground?.disableAddingImages
     };
 }
 

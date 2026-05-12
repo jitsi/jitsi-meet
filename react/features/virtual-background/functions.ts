@@ -29,7 +29,7 @@ export function checkBlurSupport() {
 export function checkVirtualBackgroundEnabled(state: IReduxState) {
     const config = state['features/base/config'];
 
-    return (config.virtualBackground?.disabled ?? config.disableVirtualBackground) !== true;
+    return config.virtualBackground?.disabled !== true;
 }
 
 /**
