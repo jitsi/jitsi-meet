@@ -1,4 +1,4 @@
-import { IVirtualBackgroundConfig } from '../../base/config/configType';
+import { IVirtualBackgroundAdvancedConfig } from '../../base/config/configType';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../virtual-background/constants';
 import logger from '../../virtual-background/logger';
 import { IVirtualBackground } from '../../virtual-background/reducer';
@@ -30,7 +30,8 @@ const V1_SEG_HEIGHT = 144;
  */
 export interface IV2EffectInit {
     capabilities: IDeviceCapabilities;
-    vbConfig?: IVirtualBackgroundConfig;
+    enableV2: boolean;
+    vbConfig?: IVirtualBackgroundAdvancedConfig;
 }
 
 
@@ -97,7 +98,7 @@ export default class JitsiStreamBackgroundEffect {
         this._outputCanvasElement.getContext('2d');
         this._inputVideoElement = document.createElement('video');
 
-        this._enableV2 = Boolean(v2Init?.vbConfig?.enableV2);
+        this._enableV2 = Boolean(v2Init?.enableV2);
 
         if (this._enableV2 && v2Init) {
             const { capabilities, vbConfig } = v2Init;

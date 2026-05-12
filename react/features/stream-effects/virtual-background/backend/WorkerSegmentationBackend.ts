@@ -77,14 +77,27 @@ export default class WorkerSegmentationBackend {
         const handler = (e: MessageEvent) => {
             if (e.data.type === 'init_done') {
                 this._worker?.removeEventListener('message', handler);
-                this._workerReady = true;
 
-                // Worker may have fallen back to TFLite if the GPU backend was unavailable.
+                // Worker must report which backend it actually loaded. A missing or unknown
+                // value means the init_done payload is malformed and capabilities cannot be
+                // trusted (the rest of the pipeline keys off _capabilities.backend) — reject
+                // so the failure surfaces instead of silently running on the wrong backend.
                 const reportedBackend = e.data.backend as string;
                 const validBackends: string[] = Object.values(BackendType);
 
-                if (reportedBackend && validBackends.includes(reportedBackend)
-                        && reportedBackend !== this._capabilities.backend) {
+                if (!reportedBackend || !validBackends.includes(reportedBackend)) {
+                    reject(new Error(
+                        '[WorkerBackend] init_done missing or invalid backend:'
+                        + ` ${reportedBackend ?? '<missing>'}`
+                    ));
+
+                    return;
+                }
+
+                this._workerReady = true;
+
+                // Worker may have fallen back to TFLite if the GPU backend was unavailable.
+                if (reportedBackend !== this._capabilities.backend) {
                     logger.debug(
                         `[WorkerBackend] Worker fell back from ${this._capabilities.backend}`
                         + ` to ${reportedBackend}`
@@ -213,7 +226,6 @@ export default class WorkerSegmentationBackend {
         this._pendingInferResolve = null;
 
         if (this._worker) {
-            this._worker.postMessage({ type: 'stop' });
             this._worker.terminate();
             this._worker = null;
         }

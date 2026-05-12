@@ -1,4 +1,4 @@
-import { IVirtualBackgroundConfig } from '../../base/config/configType';
+import { IVirtualBackgroundAdvancedConfig } from '../../base/config/configType';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../virtual-background/constants';
 import logger from '../../virtual-background/logger';
 import { IVirtualBackground } from '../../virtual-background/reducer';
@@ -59,7 +59,7 @@ const TARGET_BLUR_CAMERA_PX_TFLITE = 32;
 interface IProcessorOptions {
     backend: WorkerSegmentationBackend;
     compositor: ICompositor;
-    vbConfig?: IVirtualBackgroundConfig;
+    vbConfig?: IVirtualBackgroundAdvancedConfig;
     virtualBackground: IVirtualBackground;
 }
 
@@ -97,7 +97,7 @@ export default class BackgroundFrameProcessor {
     _maskAccumF32: Float32Array | null = null;
     _options: IVirtualBackground;
     _temporalBlendRatio: number;
-    _vbConfig?: IVirtualBackgroundConfig;
+    _vbConfig?: IVirtualBackgroundAdvancedConfig;
     _virtualImage: HTMLImageElement | null = null;
 
     /**

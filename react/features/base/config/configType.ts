@@ -168,12 +168,9 @@ export interface IWatchRTCConfiguration {
     wsUrl?: string;
 }
 
-export interface IVirtualBackgroundConfig {
-    disableAddingImages?: boolean;
-    disabled?: boolean;
+export interface IVirtualBackgroundAdvancedConfig {
     edgeHigh?: number;
     edgeLow?: number;
-    enableV2?: boolean;
     inferenceStride?: number;
     segmentationHeight?: number;
     segmentationWidth?: number;
@@ -182,6 +179,13 @@ export interface IVirtualBackgroundConfig {
     testMode?: boolean;
     tierOverride?: 'high' | 'low' | 'medium';
     useInsertableStreams?: boolean;
+}
+
+export interface IVirtualBackgroundConfig {
+    advanced?: IVirtualBackgroundAdvancedConfig;
+    disableAddingImages?: boolean;
+    disabled?: boolean;
+    enableV2?: boolean;
 }
 
 export interface IConfig {

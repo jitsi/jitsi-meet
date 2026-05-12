@@ -36,9 +36,10 @@ export async function createVirtualBackgroundEffect(virtualBackground: IVirtualB
     if (!MediaStreamTrack.prototype.getSettings && !MediaStreamTrack.prototype.getConstraints) {
         throw new Error('JitsiStreamBackgroundEffect not supported!');
     }
-    const vbConfig = APP.store.getState()['features/base/config'].virtualBackground;
+    const fullVbConfig = APP.store.getState()['features/base/config'].virtualBackground;
 
-    if (vbConfig?.enableV2) {
+    if (fullVbConfig?.enableV2) {
+        const vbConfig = fullVbConfig.advanced;
         const capabilities = await detectDeviceTier(vbConfig);
 
         logger.info(
@@ -48,6 +49,7 @@ export async function createVirtualBackgroundEffect(virtualBackground: IVirtualB
 
         const effect = new JitsiStreamBackgroundEffect(undefined, virtualBackground, {
             capabilities,
+            enableV2: true,
             vbConfig
         });
 

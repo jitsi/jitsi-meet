@@ -166,15 +166,19 @@ export default class InsertableStreamsPipeline {
                 }
 
                 if (resultCanvas) {
-                    try {
-                        const outFrame = new VideoFrame(
-                            resultCanvas, { timestamp: frame.timestamp }
-                        );
+                    // Construct the frame outside the try so the catch path doesn't have a
+                    // partially-initialised reference, and close it in finally so the frame is
+                    // always released even when writer.write rejects.
+                    const outFrame = new VideoFrame(
+                        resultCanvas, { timestamp: frame.timestamp }
+                    );
 
+                    try {
                         await writer.write(outFrame);
-                        outFrame.close();
                     } catch (err) {
                         logger.error('[InsertableStreamsPipeline] Write error', err);
+                    } finally {
+                        outFrame.close();
                     }
                 } else {
                     // Passthrough — write the raw frame to the generator.

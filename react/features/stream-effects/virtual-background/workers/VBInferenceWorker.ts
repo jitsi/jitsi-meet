@@ -14,7 +14,6 @@
  *     { type: 'init', backend: string, segWidth: number, segHeight: number,
  *       tfliteModelPath: string, tfliteWasmBase: string }
  *     { type: 'infer', bitmap: ImageBitmap }   (bitmap is transferred -- zero-copy)
- *     { type: 'stop' }
  *
  *   Worker -> Main:
  *     { type: 'init_done', backend: string, segHeight: number, segWidth: number }
@@ -35,8 +34,6 @@ import * as bs from '@tensorflow-models/body-segmentation';
 
 import { BackendType } from '../DeviceTierDetector';
 /* eslint-disable lines-around-comment */
-// @ts-ignore
-import createTFLiteModule from '../vendor/tflite/tflite';
 // @ts-ignore
 import createTFLiteSIMDModule from '../vendor/tflite/tflite-simd';
 /* eslint-enable lines-around-comment */
@@ -139,8 +136,6 @@ function workerPost(msg: any, transfer?: Transferable[]): void {
         await handleInit(e.data);
     } else if (type === 'infer') {
         await handleInfer(e.data.bitmap as ImageBitmap);
-    } else if (type === 'stop') {
-        handleStop();
     }
 };
 
@@ -251,32 +246,13 @@ async function handleInitTfjs(data: {
 }
 
 /**
- * Returns true when the runtime supports WebAssembly SIMD instructions.
- *
- * Uses WebAssembly.validate with a minimal module containing a v128.const SIMD instruction.
- * Returns false on any error (older browsers, WASM disabled, etc.).
- *
- * @returns {boolean}
- */
-function detectSimd(): boolean {
-    try {
-        return WebAssembly.validate(new Uint8Array([
-            0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 96, 0, 1, 123,
-            3, 2, 1, 0, 10, 10, 1, 8, 0, 65, 0, 253, 15, 253, 98, 11
-        ]));
-    } catch {
-        return false;
-    }
-}
-
-/**
  * Initialises the TFLite WASM backend for LOW tier using the selfie_segmentation_landscape model.
  *
- * Loads the appropriate WASM runtime (SIMD or standard) using the createTFLiteModule /
- * createTFLiteSIMDModule factory with a locateFile override so the .wasm binary is resolved
- * from the deployment libs/ directory rather than from the (unusable) blob: worker origin.
- * Fetches the .tflite model, writes it to the TFLite HEAPU8 buffer, and calls _loadModel().
- * Pre-computes HEAPF32 input/output offsets and creates an OffscreenCanvas for pixel readback.
+ * Loads the SIMD WASM runtime via createTFLiteSIMDModule with a locateFile override so the
+ * .wasm binary is resolved from the deployment libs/ directory rather than from the (unusable)
+ * blob: worker origin. Fetches the .tflite model, writes it to the TFLite HEAPU8 buffer, and
+ * calls _loadModel(). Pre-computes HEAPF32 input/output offsets and creates an OffscreenCanvas
+ * for pixel readback.
  *
  * @param {Object} data - Init message payload for the TFLITE tier.
  * @param {string} data.modelPath - Absolute URL of the TFLite segmentation model.
@@ -300,13 +276,9 @@ async function handleInitTflite(data: {
             return;
         }
 
-        // Select SIMD-optimised runtime when available — roughly 2x faster than standard WASM.
-        const simdSupported = detectSimd();
-        const tfliteFactory = simdSupported ? createTFLiteSIMDModule : createTFLiteModule;
-
         // locateFile overrides WASM path resolution — required because the worker runs from a
         // blob: URL whose origin is "null", making relative path resolution fail.
-        tfliteModule = await tfliteFactory({
+        tfliteModule = await createTFLiteSIMDModule({
             locateFile: (path: string) => `${tfliteWasmBase}${path}`
         });
 
@@ -480,19 +452,3 @@ async function handleInferTflite(bitmap: ImageBitmap): Promise<void> {
     }
 }
 
-/**
- * Disposes all backend resources and resets state.
- *
- * @returns {void}
- */
-function handleStop(): void {
-    segmenter?.dispose();
-    segmenter = null;
-
-    // TFLite: module has no explicit dispose API; null refs allow GC.
-    tfliteModule = null;
-    tfliteReadCanvas = null;
-    tfliteReadCtx = null;
-
-    currentBackend = '';
-}

@@ -1,4 +1,4 @@
-import { IVirtualBackgroundConfig } from '../../base/config/configType';
+import { IVirtualBackgroundAdvancedConfig } from '../../base/config/configType';
 import logger from '../../virtual-background/logger';
 
 export enum BackendType {
@@ -103,10 +103,11 @@ async function probeHardwareTier(): Promise<DeviceTier> {
  * {@code segmentationWidth}, {@code segmentationHeight}, and {@code targetFps} override
  * individual fields.
  *
- * @param {IVirtualBackgroundConfig} vbConfig - Virtual background configuration.
+ * @param {IVirtualBackgroundAdvancedConfig} vbConfig - Virtual background advanced configuration.
  * @returns {Promise<IDeviceCapabilities>}
  */
-export async function detectDeviceTier(vbConfig?: IVirtualBackgroundConfig): Promise<IDeviceCapabilities> {
+export async function detectDeviceTier(
+        vbConfig?: IVirtualBackgroundAdvancedConfig): Promise<IDeviceCapabilities> {
     const hardwareTier = await probeHardwareTier();
 
     logger.info(`[VirtualBackground] Hardware tier: ${hardwareTier}`);

@@ -17,11 +17,13 @@ export default class Canvas2DCompositor implements ICompositor {
     _maskCanvasCtx: CanvasRenderingContext2D | null = null;
 
     /**
-     * Creates a Canvas2DCompositor with an internal output canvas.
+     * Creates a Canvas2DCompositor with an internal output canvas and mask helper canvas.
      */
     constructor() {
         this._canvas = document.createElement('canvas');
         this._ctx = this._canvas.getContext('2d');
+        this._maskCanvas = document.createElement('canvas');
+        this._maskCanvasCtx = this._maskCanvas.getContext('2d');
     }
 
     /**
@@ -65,31 +67,26 @@ export default class Canvas2DCompositor implements ICompositor {
             maskData: ImageData,
             options: ICompositeOptions): void {
         const ctx = this._ctx;
+        const maskCanvas = this._maskCanvas;
 
-        if (!ctx) {
+        if (!ctx || !maskCanvas) {
             return;
         }
         const { width, height } = this._canvas;
 
         ctx.globalCompositeOperation = 'copy';
 
-        // Lazily create the mask canvas once and reuse every frame.
-        if (!this._maskCanvas) {
-            this._maskCanvas = document.createElement('canvas');
-            this._maskCanvasCtx = this._maskCanvas.getContext('2d');
-        }
-
-        if (this._maskCanvas.width !== maskData.width
-                || this._maskCanvas.height !== maskData.height) {
-            this._maskCanvas.width = maskData.width;
-            this._maskCanvas.height = maskData.height;
+        if (maskCanvas.width !== maskData.width
+                || maskCanvas.height !== maskData.height) {
+            maskCanvas.width = maskData.width;
+            maskCanvas.height = maskData.height;
         }
 
         // putImageData writes raw bytes — no premultiplied-alpha distortion.
         this._maskCanvasCtx?.putImageData(maskData, 0, 0);
 
         ctx.filter = options.cssBlurFilter;
-        ctx.drawImage(this._maskCanvas, 0, 0, width, height);
+        ctx.drawImage(maskCanvas, 0, 0, width, height);
 
         // Clip foreground to mask.
         ctx.globalCompositeOperation = 'source-in';
