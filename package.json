@@ -25,7 +25,7 @@
     "@giphy/react-components": "6.9.4",
     "@giphy/react-native-sdk": "5.0.1",
     "@jitsi/excalidraw": "https://github.com/jitsi/excalidraw/releases/download/0.18.5/jitsi-excalidraw-v0.18.5.tgz",
-    "@jitsi/js-utils": "2.6.7",
+    "@jitsi/js-utils": "6.3.2",
     "@jitsi/logger": "2.1.1",
     "@jitsi/rnnoise-wasm": "0.2.1",
     "@matrix-org/olm": "3.2.15",

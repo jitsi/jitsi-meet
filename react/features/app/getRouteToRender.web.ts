@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
 
 import { IStateful } from '../base/app/types';

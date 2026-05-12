@@ -1,4 +1,3 @@
-// @ts-ignore
 import { safeJsonParse } from '@jitsi/js-utils/json';
 
 import { reportError } from './helpers';

@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
 import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';

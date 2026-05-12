@@ -8,7 +8,7 @@
         "lib": [ "ES2020", "ES2024.Promise" ],
         "types": [ "react-native" ],
         "skipLibCheck": true,
-        "moduleResolution": "Node",
+        "moduleResolution": "Bundler",
         "strict": true,
         "noImplicitAny": true,
         "strictPropertyInitialization": false,

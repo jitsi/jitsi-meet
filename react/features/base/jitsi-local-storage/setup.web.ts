@@ -1,7 +1,4 @@
-// @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { safeJsonParse } from '@jitsi/js-utils/json';
 import { pick } from 'lodash-es';
 
