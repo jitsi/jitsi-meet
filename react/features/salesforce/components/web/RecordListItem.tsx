@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import Button from '../../../base/ui/components/web/Button';
 import Spinner from '../../../base/ui/components/web/Spinner';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 
-interface IProps {
+interface IProps<T> {
 
     /**
      * Translation key for the action button.
@@ -45,7 +45,12 @@ interface IProps {
     /**
      * Click handler for the action button.
      */
-    onAction: () => void;
+    onAction: (record: T) => void;
+
+    /**
+     * The record data to pass back when action is triggered.
+     */
+    record: T;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -108,7 +113,7 @@ const useStyles = makeStyles()(theme => {
  * @param {IProps} props - Component props.
  * @returns {React.ReactElement}
  */
-export const RecordListItem = ({
+export const RecordListItem = <T, >({
     actionLabelKey,
     actionType = BUTTON_TYPES.PRIMARY,
     disabled = false,
@@ -116,9 +121,14 @@ export const RecordListItem = ({
     isLoading = false,
     metadata,
     name,
-    onAction
-}: IProps) => {
+    onAction,
+    record
+}: IProps<T>) => {
     const { classes } = useStyles();
+
+    const handleAction = useCallback(() => {
+        onAction(record);
+    }, [ onAction, record ]);
 
     return (
         <div className = { classes.item }>
@@ -138,7 +148,7 @@ export const RecordListItem = ({
                     <Button
                         disabled = { disabled }
                         labelKey = { actionLabelKey }
-                        onClick = { onAction }
+                        onClick = { handleAction }
                         size = 'small'
                         type = { actionType } />
                 )}

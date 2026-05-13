@@ -9,6 +9,7 @@ import {
     IconRecordOpportunity
 } from '../../../base/icons/svg';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
+import { formatAmount } from '../../functions';
 import { ISalesforceData, SalesforceObjectType } from '../../types';
 
 import { RecordListItem } from './RecordListItem';
@@ -30,8 +31,8 @@ export const CurrentLinksSection = ({ salesforceData, unlinkingId, onUnlink }: I
     const { t } = useTranslation();
 
     const hasAccount = Boolean(salesforceData?.account);
-    const hasLeads = (salesforceData?.leads?.length ?? 0) > 0;
-    const hasContacts = (salesforceData?.contacts?.length ?? 0) > 0;
+    const hasLeads = salesforceData?.leads?.length;
+    const hasContacts = salesforceData?.contacts?.length;
     const hasDeal = Boolean(salesforceData?.deal);
     const hasAnyLinks = hasAccount || hasLeads || hasContacts || hasDeal;
 
@@ -97,7 +98,7 @@ export const CurrentLinksSection = ({ salesforceData, unlinkingId, onUnlink }: I
                     isLoading = { unlinkingId === salesforceData.deal.opportunityId }
                     metadata = { `${salesforceData.deal.opportunityStage}${
                         salesforceData.deal.amount !== undefined
-                            ? ` \u2022 $${salesforceData.deal.amount.toLocaleString()}`
+                            ? ` \u2022 $${formatAmount(salesforceData.deal.amount)}`
                             : ''
                     }` }
                     name = { salesforceData.deal.opportunityName }

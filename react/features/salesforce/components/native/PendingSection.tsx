@@ -5,6 +5,7 @@ import { Text, View, ViewStyle } from 'react-native';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
+import { formatAmount } from '../../functions';
 import { IPendingAccount, IPendingDeal } from '../../types';
 
 import styles from './styles';
@@ -109,7 +110,7 @@ export const PendingSection = (props: IProps) => {
                             </Text>
                             <Text style = { styles.listItemMeta }>
                                 {deal.opportunityStage}
-                                {deal.amount !== undefined && ` \u2022 $${deal.amount.toLocaleString()}`}
+                                {deal.amount !== undefined && ` \u2022 $${formatAmount(deal.amount)}`}
                             </Text>
                         </View>
                         <View style = { styles.listItemButtonContainer as ViewStyle }>

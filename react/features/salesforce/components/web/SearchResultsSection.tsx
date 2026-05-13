@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
@@ -61,10 +61,26 @@ export const SearchResultsSection = ({ results, linkingId, onLink }: IProps) => 
     const { t } = useTranslation();
     const { classes } = useStyles();
 
-    const hasResults = results.accounts.length > 0
-        || results.leads.length > 0
-        || results.contacts.length > 0
-        || results.opportunities.length > 0;
+    const hasResults = results.accounts.length
+        || results.leads.length
+        || results.contacts.length
+        || results.opportunities.length;
+
+    const handleLinkAccount = useCallback((account: IAccountMatch) => {
+        onLink('Account', account);
+    }, [ onLink ]);
+
+    const handleLinkLead = useCallback((lead: ILeadMatch) => {
+        onLink('Lead', lead);
+    }, [ onLink ]);
+
+    const handleLinkContact = useCallback((contact: IContactMatch) => {
+        onLink('Contact', contact);
+    }, [ onLink ]);
+
+    const handleLinkOpportunity = useCallback((opportunity: IOpportunityMatch) => {
+        onLink('Opportunity', opportunity);
+    }, [ onLink ]);
 
     if (!hasResults) {
         return (
@@ -76,7 +92,7 @@ export const SearchResultsSection = ({ results, linkingId, onLink }: IProps) => 
 
     return (
         <div className = { classes.section }>
-            {results.accounts.length > 0 && (
+            {!!results.accounts.length && (
                 <>
                     <h4 className = { classes.groupTitle }>{t('record.type.account')}</h4>
                     <ul className = { classes.list }>
@@ -89,14 +105,14 @@ export const SearchResultsSection = ({ results, linkingId, onLink }: IProps) => 
                                 isLoading = { linkingId === account.accountId }
                                 key = { account.accountId }
                                 name = { account.accountName }
-                                /* eslint-disable-next-line react/jsx-no-bind */
-                                onAction = { () => onLink('Account', account) } />
+                                onAction = { handleLinkAccount }
+                                record = { account } />
                         ))}
                     </ul>
                 </>
             )}
 
-            {results.leads.length > 0 && (
+            {!!results.leads.length && (
                 <>
                     <h4 className = { classes.groupTitle }>{t('record.type.lead')}</h4>
                     <ul className = { classes.list }>
@@ -110,14 +126,14 @@ export const SearchResultsSection = ({ results, linkingId, onLink }: IProps) => 
                                 key = { lead.leadId }
                                 metadata = { lead.leadCompany }
                                 name = { lead.leadName }
-                                /* eslint-disable-next-line react/jsx-no-bind */
-                                onAction = { () => onLink('Lead', lead) } />
+                                onAction = { handleLinkLead }
+                                record = { lead } />
                         ))}
                     </ul>
                 </>
             )}
 
-            {results.contacts.length > 0 && (
+            {!!results.contacts.length && (
                 <>
                     <h4 className = { classes.groupTitle }>{t('record.type.contact')}</h4>
                     <ul className = { classes.list }>
@@ -131,14 +147,14 @@ export const SearchResultsSection = ({ results, linkingId, onLink }: IProps) => 
                                 key = { contact.contactId }
                                 metadata = { contact.contactEmail }
                                 name = { contact.contactName }
-                                /* eslint-disable-next-line react/jsx-no-bind */
-                                onAction = { () => onLink('Contact', contact) } />
+                                onAction = { handleLinkContact }
+                                record = { contact } />
                         ))}
                     </ul>
                 </>
             )}
 
-            {results.opportunities.length > 0 && (
+            {!!results.opportunities.length && (
                 <>
                     <h4 className = { classes.groupTitle }>{t('record.type.opportunity')}</h4>
                     <ul className = { classes.list }>
@@ -154,8 +170,8 @@ export const SearchResultsSection = ({ results, linkingId, onLink }: IProps) => 
                                     opp.amount !== undefined ? ` \u2022 $${opp.amount.toLocaleString()}` : ''
                                 }` }
                                 name = { opp.opportunityName }
-                                /* eslint-disable-next-line react/jsx-no-bind */
-                                onAction = { () => onLink('Opportunity', opp) } />
+                                onAction = { handleLinkOpportunity }
+                                record = { opp } />
                         ))}
                     </ul>
                 </>

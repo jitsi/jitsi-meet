@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
@@ -50,10 +50,26 @@ export const CurrentLinksSection = ({ salesforceData, unlinkingId, onUnlink }: I
     const { classes } = useStyles();
 
     const hasAccount = Boolean(salesforceData?.account);
-    const hasLeads = (salesforceData?.leads?.length ?? 0) > 0;
-    const hasContacts = (salesforceData?.contacts?.length ?? 0) > 0;
+    const hasLeads = salesforceData?.leads?.length;
+    const hasContacts = salesforceData?.contacts?.length;
     const hasDeal = Boolean(salesforceData?.deal);
     const hasAnyLinks = hasAccount || hasLeads || hasContacts || hasDeal;
+
+    const handleUnlinkAccount = useCallback((id: string) => {
+        onUnlink('Account', id);
+    }, [ onUnlink ]);
+
+    const handleUnlinkLead = useCallback((id: string) => {
+        onUnlink('Lead', id);
+    }, [ onUnlink ]);
+
+    const handleUnlinkContact = useCallback((id: string) => {
+        onUnlink('Contact', id);
+    }, [ onUnlink ]);
+
+    const handleUnlinkOpportunity = useCallback((id: string) => {
+        onUnlink('Opportunity', id);
+    }, [ onUnlink ]);
 
     if (!hasAnyLinks) {
         return null;
@@ -73,8 +89,8 @@ export const CurrentLinksSection = ({ salesforceData, unlinkingId, onUnlink }: I
                         key = { salesforceData.account.accountId }
                         metadata = { t('record.type.account') }
                         name = { salesforceData.account.accountName }
-                        /* eslint-disable-next-line react/jsx-no-bind */
-                        onAction = { () => onUnlink('Account', salesforceData.account!.accountId) } />
+                        onAction = { handleUnlinkAccount }
+                        record = { salesforceData.account.accountId } />
                 )}
 
                 {salesforceData?.leads?.map(lead => (
@@ -87,8 +103,8 @@ export const CurrentLinksSection = ({ salesforceData, unlinkingId, onUnlink }: I
                         key = { lead.leadId }
                         metadata = { `${t('record.type.lead')}${lead.leadCompany ? ` \u2022 ${lead.leadCompany}` : ''}` }
                         name = { lead.leadName }
-                        /* eslint-disable-next-line react/jsx-no-bind */
-                        onAction = { () => onUnlink('Lead', lead.leadId) } />
+                        onAction = { handleUnlinkLead }
+                        record = { lead.leadId } />
                 ))}
 
                 {salesforceData?.contacts?.map(contact => (
@@ -101,8 +117,8 @@ export const CurrentLinksSection = ({ salesforceData, unlinkingId, onUnlink }: I
                         key = { contact.contactId }
                         metadata = { t('record.type.contact') }
                         name = { contact.contactName }
-                        /* eslint-disable-next-line react/jsx-no-bind */
-                        onAction = { () => onUnlink('Contact', contact.contactId) } />
+                        onAction = { handleUnlinkContact }
+                        record = { contact.contactId } />
                 ))}
 
                 {salesforceData?.deal && (
@@ -119,8 +135,8 @@ export const CurrentLinksSection = ({ salesforceData, unlinkingId, onUnlink }: I
                                 : ''
                         }` }
                         name = { salesforceData.deal.opportunityName }
-                        /* eslint-disable-next-line react/jsx-no-bind */
-                        onAction = { () => onUnlink('Opportunity', salesforceData.deal!.opportunityId) } />
+                        onAction = { handleUnlinkOpportunity }
+                        record = { salesforceData.deal.opportunityId } />
                 )}
             </ul>
         </div>

@@ -15,6 +15,18 @@ import {
 } from './types';
 
 /**
+ * Formats a number with thousand separators.
+ * Uses a regex approach that works reliably in React Native
+ * (toLocaleString has known issues on Android and iOS with Hermes).
+ *
+ * @param {number} amount - The number to format.
+ * @returns {string} The formatted number string.
+ */
+export function formatAmount(amount: number): string {
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+/**
  * Determines whether Salesforce is enabled for the current conference.
  *
  * @param {IReduxState} state - The redux store, the redux

@@ -9,6 +9,7 @@ import {
     IconRecordOpportunity
 } from '../../../base/icons/svg';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
+import { formatAmount } from '../../functions';
 import {
     IAccountMatch,
     IContactMatch,
@@ -36,10 +37,10 @@ interface IProps {
 export const SearchResultsSection = ({ results, linkingId, onLink }: IProps) => {
     const { t } = useTranslation();
 
-    const hasResults = results.accounts.length > 0
-        || results.leads.length > 0
-        || results.contacts.length > 0
-        || results.opportunities.length > 0;
+    const hasResults = results.accounts.length
+        || results.leads.length
+        || results.contacts.length
+        || results.opportunities.length;
 
     if (!hasResults) {
         return (
@@ -53,7 +54,7 @@ export const SearchResultsSection = ({ results, linkingId, onLink }: IProps) => 
 
     return (
         <View>
-            {results.accounts.length > 0 && (
+            {!!results.accounts.length && (
                 <>
                     <Text style = { styles.groupTitle }>{t('record.type.account')}</Text>
                     {results.accounts.map(account => (
@@ -71,7 +72,7 @@ export const SearchResultsSection = ({ results, linkingId, onLink }: IProps) => 
                 </>
             )}
 
-            {results.leads.length > 0 && (
+            {!!results.leads.length && (
                 <>
                     <Text style = { styles.groupTitle }>{t('record.type.lead')}</Text>
                     {results.leads.map(lead => (
@@ -90,7 +91,7 @@ export const SearchResultsSection = ({ results, linkingId, onLink }: IProps) => 
                 </>
             )}
 
-            {results.contacts.length > 0 && (
+            {!!results.contacts.length && (
                 <>
                     <Text style = { styles.groupTitle }>{t('record.type.contact')}</Text>
                     {results.contacts.map(contact => (
@@ -109,7 +110,7 @@ export const SearchResultsSection = ({ results, linkingId, onLink }: IProps) => 
                 </>
             )}
 
-            {results.opportunities.length > 0 && (
+            {!!results.opportunities.length && (
                 <>
                     <Text style = { styles.groupTitle }>{t('record.type.opportunity')}</Text>
                     {results.opportunities.map(opp => (
@@ -121,7 +122,7 @@ export const SearchResultsSection = ({ results, linkingId, onLink }: IProps) => 
                             isLoading = { linkingId === opp.opportunityId }
                             key = { opp.opportunityId }
                             metadata = { `${opp.opportunityStage}${
-                                opp.amount !== undefined ? ` \u2022 $${opp.amount.toLocaleString()}` : ''
+                                opp.amount !== undefined ? ` \u2022 $${formatAmount(opp.amount)}` : ''
                             }` }
                             name = { opp.opportunityName }
                             /* eslint-disable-next-line react/jsx-no-bind */

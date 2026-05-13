@@ -1,3 +1,4 @@
+import { debounce } from 'lodash-es';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -30,22 +31,6 @@ import {
     ISearchResults,
     SalesforceObjectType
 } from './types';
-
-/**
- * Debounce helper.
- *
- * @param {Function} fn - Function to debounce.
- * @param {number} delay - Delay in milliseconds.
- * @returns {Function}
- */
-function debounce<T extends (...args: any[]) => any>(fn: T, delay: number): T {
-    let timeoutId: ReturnType<typeof setTimeout>;
-
-    return ((...args: Parameters<T>) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => fn(...args), delay);
-    }) as T;
-}
 
 export const useSalesforceLinkDialog = () => {
     const { t } = useTranslation();
