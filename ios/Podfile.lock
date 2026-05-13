@@ -145,9 +145,9 @@ PODS:
     - AppAuth/Core (~> 1.7)
     - GTMSessionFetcher/Core (< 4.0, >= 3.3)
   - GTMSessionFetcher/Core (3.5.0)
-  - hermes-engine (250829098.0.10):
-    - hermes-engine/Pre-built (= 250829098.0.10)
-  - hermes-engine/Pre-built (250829098.0.10)
+  - hermes-engine (0.16.0):
+    - hermes-engine/Pre-built (= 0.16.0)
+  - hermes-engine/Pre-built (0.16.0)
   - JitsiWebRTC (124.0.2)
   - libwebp (1.5.0):
     - libwebp/demux (= 1.5.0)
@@ -2573,7 +2573,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@giphy/react-native-sdk"
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
-    :tag: hermes-v250829098.0.10
+    :tag: hermes-v0.16.0
   RCTDeprecation:
     :path: "../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation"
   RCTRequired:
@@ -2784,7 +2784,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
   GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
-  hermes-engine: 81ebfe6cb379731a2a79a64527787c49f244c99d
+  hermes-engine: 9544a785ad8e727adf554f2c0949f1d767b0cef5
   JitsiWebRTC: b47805ab5668be38e7ee60e2258f49badfe8e1d0
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
@@ -2881,13 +2881,12 @@ SPEC CHECKSUMS:
   RNDeviceInfo: bcce8752b5043a623fe3c26789679b473f705d3c
   RNGestureHandler: 29bcf14a2d2562a1d698c6b33d94a74096c6e1ad
   RNGoogleSignin: 30e1aee80140dc0706cd78a4951c411376c88329
-  RNScreens: 0bbf16c074ae6bb1058a7bf2d1ae017f4306797c
-  RNSound: 314cc5226453ef4a3314a196c65e8a65e5106a7b
-  RNSVG: 6f39605a4c4d200b11435c35bd077553c6b5963a
-  SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
-  SplashView: 06e084339d80e51113ad4ecf465f7820598ddc95
-  Yoga: 728df40394d49f3f471688747cf558158b3a3bd1
+  RNScreens: ad21baa7df017caf6266f3813f7cfe5f0ad13fae
+  RNSound: 44d60adbf0a0212f043aecdc852ecc3e8229b8be
+  RNSVG: 04044c3abcf177fd674a1a3d13097efa1adebcbe
+  SplashView: d128e35e07ee3545f9ae3a5d3c6989bc3c0f7016
+  Yoga: 04bb4bfeb02c0000b940c1e6e89e856cd8de5a71
 
-PODFILE CHECKSUM: 39a3efad826b8b7cb8a25a6d6ddbf6a3547eeedf
+PODFILE CHECKSUM: 6010351f0cb19ffa8e6adcc747065751b1933dcc
 
 COCOAPODS: 1.16.2
