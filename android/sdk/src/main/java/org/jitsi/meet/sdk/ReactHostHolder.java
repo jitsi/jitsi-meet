@@ -190,9 +190,8 @@ class ReactHostHolder {
     }
 
     /**
-     * Initializes WebRTC options, obtains the {@link ReactHost}, and starts
-     * the React Native runtime. If the app extends {@link JitsiApplication},
-     * the ReactHost is obtained from it; otherwise a new one is created.
+     * Initializes WebRTC options, builds the {@link ReactHost}, and starts
+     * the React Native runtime.
      *
      * @param app {@code Application} instance
      */
@@ -216,25 +215,19 @@ class ReactHostHolder {
 
         JitsiMeetLogger.d(TAG, "initializing RN");
 
-        if (app instanceof JitsiApplication) {
-            reactHost = ((JitsiApplication) app).getReactHost();
-        } else {
-            reactHost = DefaultReactHost.getDefaultReactHost(
-                app,
-                getReactNativePackages(),
-                "index.android",       /* jsMainModulePath */
-                "index.android.bundle", /* jsBundleAssetPath */
-                null,                   /* jsBundleFilePath */
-                null,                   /* jsRuntimeFactory (defaults to Hermes) */
-                BuildConfig.DEBUG, /* useDevSupport */
-                Collections.emptyList(), /* cxxReactPackageProviders */
-                e -> { throw new RuntimeException(e); }, /* exceptionHandler */
-                null                    /* bindingsInstaller */
-            );
-        }
+        reactHost = DefaultReactHost.getDefaultReactHost(
+            app,
+            getReactNativePackages(),
+            "index.android",       /* jsMainModulePath */
+            "index.android.bundle", /* jsBundleAssetPath */
+            null,                   /* jsBundleFilePath */
+            null,                   /* jsRuntimeFactory (defaults to Hermes) */
+            BuildConfig.DEBUG, /* useDevSupport */
+            Collections.emptyList(), /* cxxReactPackageProviders */
+            e -> { throw new RuntimeException(e); }, /* exceptionHandler */
+            null                    /* bindingsInstaller */
+        );
 
-        if (reactHost != null) {
-            reactHost.start();
-        }
+        reactHost.start();
     }
 }
