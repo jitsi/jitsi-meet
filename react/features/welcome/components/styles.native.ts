@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 import { BoxModel } from '../../base/styles/components/styles/BoxModel';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
@@ -206,7 +206,7 @@ export default {
     customInput: {
         fontSize: 18,
         letterSpacing: 0,
-        textAlign: 'center'
+        ...Platform.select({ ios: { textAlign: 'center' } })
     },
 
     recentList: {
