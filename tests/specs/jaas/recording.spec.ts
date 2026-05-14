@@ -180,7 +180,14 @@ describe('Recording and live-streaming', () => {
         expect('LIVE_STREAM_STARTED').toBe(jaasEvent.eventType);
         expect(jaasEvent.customerId).toBe(customerId);
 
-        const iFrameEvent = (await p.getIframeAPI().getEventResult('recordingStatusChanged'));
+        const iFrameEvent = await p.driver.waitUntil(async () => {
+            const e = await p.getIframeAPI().getEventResult('recordingStatusChanged');
+
+            return e && e.mode === 'stream' && e.on === true ? e : false;
+        }, {
+            timeout: 5000,
+            timeoutMsg: 'recordingStatusChanged event with mode=stream, on=true not received'
+        });
 
         expect(iFrameEvent.mode).toBe('stream');
         expect(iFrameEvent.on).toBe(true);
@@ -201,7 +208,14 @@ describe('Recording and live-streaming', () => {
         expect(jaasEndedEvent.eventType).toBe('LIVE_STREAM_ENDED');
         expect(jaasEndedEvent.customerId).toBe(customerId);
 
-        const iFrameEndedEvent = (await p.getIframeAPI().getEventResult('recordingStatusChanged'));
+        const iFrameEndedEvent = await p.driver.waitUntil(async () => {
+            const e = await p.getIframeAPI().getEventResult('recordingStatusChanged');
+
+            return e && e.mode === 'stream' && e.on === false ? e : false;
+        }, {
+            timeout: 5000,
+            timeoutMsg: 'recordingStatusChanged event with mode=stream, on=false not received'
+        });
 
         expect(iFrameEndedEvent.mode).toBe('stream');
         expect(iFrameEndedEvent.on).toBe(false);
