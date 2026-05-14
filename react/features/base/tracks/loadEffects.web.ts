@@ -15,11 +15,11 @@ export default function loadEffects(store: IStore): Promise<any> {
     const state = store.getState();
     const virtualBackground = state['features/virtual-background'];
     const noiseSuppression = state['features/noise-suppression'];
-    const { noiseSuppression: nsOptions } = state['features/base/config'];
+    const { noiseSuppression: nsOptions, ...config } = state['features/base/config'];
 
 
     const backgroundPromise = virtualBackground.backgroundEffectEnabled
-        ? createVirtualBackgroundEffect(virtualBackground)
+        ? createVirtualBackgroundEffect(virtualBackground, store.dispatch, config)
             .catch((error: Error) => {
                 logger.error('Failed to obtain the background effect instance with error: ', error);
 

@@ -34,10 +34,11 @@ const segmentationDimensions = {
  * @param {Object} virtualBackground - The virtual object that contains the background image source and
  * the isVirtualBackground flag that indicates if virtual image is activated.
  * @param {Function} dispatch - The Redux dispatch function.
+ * @param {Object} config - The app config object.
  * @returns {Promise<JitsiStreamBackgroundEffect>}
  */
 export async function createVirtualBackgroundEffect(virtualBackground: IBackgroundEffectOptions['virtualBackground'],
-        dispatch?: IStore['dispatch']) {
+        dispatch?: IStore['dispatch'], config?: any) {
     if (!MediaStreamTrack.prototype.getSettings && !MediaStreamTrack.prototype.getConstraints) {
         throw new Error('JitsiStreamBackgroundEffect not supported!');
     }
@@ -94,12 +95,20 @@ export async function createVirtualBackgroundEffect(virtualBackground: IBackgrou
 
         tflite.HEAPU8.set(new Uint8Array(modelBuffer), tflite._getModelBufferMemoryOffset());
 
-        tflite._loadModel(modelBuffer.byteLength);
+        if (tflite) {
+            tflite._loadModel(modelBuffer.byteLength);
+        }
     }
+
+    const measurePerformance = Boolean(
+        config?.virtualBackground?.testMode
+        || config?.testing?.testMode
+    );
 
     const options = {
         ...segmentationDimensions.modelLandscape,
-        virtualBackground
+        virtualBackground,
+        measurePerformance
     };
 
     return new JitsiStreamBackgroundEffect(tflite, options);
