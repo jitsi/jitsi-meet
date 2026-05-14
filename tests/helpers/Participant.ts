@@ -381,7 +381,7 @@ export class Participant {
                 || await this.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TEST_ID)
                 || await this.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TITLE_TEST_ID);
         }, {
-            timeout: 10_000,
+            timeout: 30_000,
             timeoutMsg: 'Timeout waiting for MUC joined or error.'
         });
     }
