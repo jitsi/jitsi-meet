@@ -274,6 +274,21 @@ export class Participant {
         if (!options.skipPrejoinButtonClick
             // @ts-ignore
             && !Boolean(await this.execute(() => config.prejoinConfig?.enabled === false))) {
+            // For iFrame API tests, the wrapper page's iframeAPI.onload fires before the embedded Jitsi
+            // app inside the iframe has finished its own init, so the prejoin Join button can be in the
+            // DOM with no React click handler attached yet. APP.store is created during conference.init,
+            // which is also when prejoin's handlers mount; gating the click on it avoids the race.
+            if (this._iFrameApi) {
+                await this.driver.waitUntil(
+                    // @ts-ignore
+                    () => this.execute(() => typeof APP !== 'undefined' && Boolean(APP.store)),
+                    {
+                        timeout: 30_000,
+                        timeoutMsg: `Timeout waiting for embedded Jitsi app to initialize for ${this._name}.`
+                    }
+                );
+            }
+
             // if prejoin is enabled we want to click the join button
             const p1PreJoinScreen = this.getPreJoinScreen();
 
