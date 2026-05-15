@@ -199,24 +199,48 @@ export default class Toolbar extends BasePageObject {
      * Clicks on the desktop sharing button that starts desktop sharing. Waits until the toggle takes effect
      * (button flips to STOP_DESKTOP) so a subsequent call doesn't race a still-in-flight stop.
      */
-    async clickDesktopSharingButton() {
-        await this.getButton(DESKTOP).click();
-        await this.getButton(STOP_DESKTOP).waitForExist({
-            timeout: 5_000,
-            timeoutMsg: `Desktop sharing did not start for ${this.participant.name}`
-        });
+    clickDesktopSharingButton() {
+        return this._toggleDesktopSharing(DESKTOP, STOP_DESKTOP, 'start');
     }
 
     /**
      * Clicks on the desktop sharing button to stop it. Waits until the toggle takes effect (button flips to
-     * DESKTOP) — clicks can be dropped during track-replace / P2P transitions, so without this the next caller
-     * sees a stale "still sharing" state.
+     * DESKTOP). On a busy main thread the click can land on a DOM node React has already detached during a
+     * track-replace / participantLeft cascade and the React onClick never fires — re-locate and re-click once
+     * before failing.
      */
-    async clickStopDesktopSharingButton() {
-        await this.getButton(STOP_DESKTOP).click();
-        await this.getButton(DESKTOP).waitForExist({
-            timeout: 5_000,
-            timeoutMsg: `Desktop sharing did not stop for ${this.participant.name}`
+    clickStopDesktopSharingButton() {
+        return this._toggleDesktopSharing(STOP_DESKTOP, DESKTOP, 'stop');
+    }
+
+    /**
+     * Clicks the desktop-sharing toggle and waits for the button to flip to the opposite aria-label. If the
+     * flip doesn't happen within a short window, re-locates the source button (it may have been re-rendered
+     * out from under the original element handle) and clicks once more before failing.
+     *
+     * @private
+     */
+    private async _toggleDesktopSharing(fromLabel: string, toLabel: string, action: 'start' | 'stop') {
+        await this.getButton(fromLabel).click();
+
+        try {
+            await this.getButton(toLabel).waitForExist({ timeout: 2_000 });
+
+            return;
+        } catch {
+            // Fall through to retry.
+        }
+
+        // If the source button is still present, the first click was dropped — re-locate and click again. If
+        // it isn't present, the toggle is in flight; just keep waiting.
+        if (await this.getButton(fromLabel).isExisting()) {
+            await this.participant.log(`Retrying desktop-sharing ${action} click for ${this.participant.name}`);
+            await this.getButton(fromLabel).click();
+        }
+
+        await this.getButton(toLabel).waitForExist({
+            timeout: 3_000,
+            timeoutMsg: `Desktop sharing did not ${action} for ${this.participant.name}`
         });
     }
 
