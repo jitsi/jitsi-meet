@@ -196,17 +196,28 @@ export default class Toolbar extends BasePageObject {
     }
 
     /**
-     * Clicks on the desktop sharing button that starts desktop sharing.
+     * Clicks on the desktop sharing button that starts desktop sharing. Waits until the toggle takes effect
+     * (button flips to STOP_DESKTOP) so a subsequent call doesn't race a still-in-flight stop.
      */
-    clickDesktopSharingButton() {
-        return this.getButton(DESKTOP).click();
+    async clickDesktopSharingButton() {
+        await this.getButton(DESKTOP).click();
+        await this.getButton(STOP_DESKTOP).waitForExist({
+            timeout: 5_000,
+            timeoutMsg: `Desktop sharing did not start for ${this.participant.name}`
+        });
     }
 
     /**
-     * Clicks on the desktop sharing button to stop it.
+     * Clicks on the desktop sharing button to stop it. Waits until the toggle takes effect (button flips to
+     * DESKTOP) — clicks can be dropped during track-replace / P2P transitions, so without this the next caller
+     * sees a stale "still sharing" state.
      */
-    clickStopDesktopSharingButton() {
-        return this.getButton(STOP_DESKTOP).click();
+    async clickStopDesktopSharingButton() {
+        await this.getButton(STOP_DESKTOP).click();
+        await this.getButton(DESKTOP).waitForExist({
+            timeout: 5_000,
+            timeoutMsg: `Desktop sharing did not stop for ${this.participant.name}`
+        });
     }
 
     /**
