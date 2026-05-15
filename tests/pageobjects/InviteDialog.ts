@@ -62,7 +62,9 @@ export default class InviteDialog extends BaseDialog {
     async getMeetingURL() {
         const elem = this.participant.driver.$(`.${CONFERENCE_URL}`);
 
-        await elem.waitForExist();
+        await elem.waitForExist({
+            timeout: 5000
+        });
 
         return (await elem.getText())?.trim();
     }
