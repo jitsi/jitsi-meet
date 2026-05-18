@@ -33,7 +33,6 @@ import { isFilmstripVisible } from '../../../filmstrip/functions.native';
 import CalleeInfoContainer from '../../../invite/components/callee-info/CalleeInfoContainer';
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
-import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { isPipEnabled, setPictureInPictureEnabled } from '../../../mobile/picture-in-picture/functions';
 import Captions from '../../../subtitles/components/native/Captions';
@@ -233,14 +232,14 @@ class Conference extends AbstractConference<IProps, State> {
         } = this.props;
 
         if (!prevProps._showLobby && _showLobby) {
-            navigate(screen.lobby.root);
+            navigation.navigate(screen.lobby.root);
         }
 
         if (prevProps._showLobby && !_showLobby) {
             if (_audioOnlyEnabled && _startCarMode) {
                 navigation.navigate(screen.conference.carmode);
             } else {
-                navigate(screen.conference.main);
+                navigation.navigate(screen.conference.main);
             }
         }
     }

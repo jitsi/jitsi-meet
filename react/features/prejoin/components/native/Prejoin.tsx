@@ -34,7 +34,7 @@ import { openDisplayNamePrompt } from '../../../display-name/actions';
 import BrandingImageBackground from '../../../dynamic-branding/components/native/BrandingImageBackground';
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
 import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
-import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
+import { replaceRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
@@ -82,7 +82,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
 
     const onJoin = useCallback(() => {
         dispatch(connect());
-        navigateRoot(screen.conference.root);
+        replaceRoot(screen.conference.root);
     }, [ dispatch ]);
 
     const maybeJoin = useCallback(() => {
