@@ -45,10 +45,16 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         unregisterE2eeAudioFiles(dispatch);
         break;
 
-    case CONFERENCE_JOINED:
-        _updateMaxMode(dispatch, getState);
+    case CONFERENCE_JOINED: {
+        const { e2ee = {} } = getState()['features/base/config'];
 
+        if (e2ee.externallyManagedKey) {
+            dispatch(toggleE2EE(true));
+        } else {
+            _updateMaxMode(dispatch, getState);
+        }
         break;
+    }
 
     case PARTICIPANT_JOINED: {
         const result = next(action);
@@ -95,29 +101,17 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     case SET_MEDIA_ENCRYPTION_KEY: {
         if (conference?.isE2EESupported()) {
-            const { exportedKey, index } = action.keyInfo;
+            const { exportedKey, index, participantId } = action.keyInfo;
 
-            if (exportedKey) {
-                window.crypto.subtle.importKey(
-                    'raw',
-                    new Uint8Array(exportedKey),
-                    'AES-GCM',
-                    false,
-                    [ 'encrypt', 'decrypt' ])
-                .then(
-                    encryptionKey => {
-                        conference.setMediaEncryptionKey({
-                            encryptionKey,
-                            index
-                        });
-                    })
-                .catch(error => logger.error('SET_MEDIA_ENCRYPTION_KEY error', error));
-            } else {
-                conference.setMediaEncryptionKey({
-                    encryptionKey: false,
-                    index
-                });
-            }
+            // Pass raw key bytes directly to the conference so that the E2EE worker can
+            // import them as HKDF material and derive the final AES-GCM key via deriveKeys().
+            // Importing here as AES-GCM would bypass the HKDF derivation step and produce
+            // the wrong key type for the worker's Context.setKey() pipeline.
+            conference.setMediaEncryptionKey({
+                encryptionKey: exportedKey ? new Uint8Array(exportedKey) : false,
+                index,
+                participantId
+            });
         }
 
         break;
@@ -151,6 +145,11 @@ StateListenerRegistry.register(
         }
 
         if (conference) {
+            conference.on(JitsiConferenceEvents.OLM_MESSAGE_RECEIVED,
+                (from: string, type: string, payload: object) => {
+                    APP.API.notifyOlmMessageReceived(from, type, payload);
+                });
+
             conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_AVAILABLE, (pId: string) => {
                 dispatch(participantUpdated({
                     e2eeVerificationAvailable: true,

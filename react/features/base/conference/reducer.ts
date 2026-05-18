@@ -146,6 +146,7 @@ export interface IJitsiConference {
     sendFeedback: Function;
     sendLobbyMessage: Function;
     sendMessage: Function;
+    sendOlmMessage: (participantId: string, type: string, payload: object) => void;
     sendPrivateTextMessage: Function;
     sendReaction: Function;
     sendTextMessage: Function;

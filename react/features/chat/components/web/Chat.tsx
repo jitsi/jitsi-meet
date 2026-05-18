@@ -676,7 +676,6 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { unreadPollsCount } = state['features/polls'];
     const _localParticipant = getLocalParticipant(state);
     const { reducedUI } = state['features/base/responsive-ui'];
-
     return {
         _isModal: window.innerWidth <= SMALL_WIDTH_THRESHOLD,
         _isOpen: isOpen,

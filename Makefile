@@ -1,7 +1,7 @@
 BUILD_DIR = build
 CLEANCSS = ./node_modules/.bin/cleancss
 DEPLOY_DIR = libs
-LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet
+LIBJITSIMEET_DIR = ../lib-jitsi-meet
 OLM_DIR = node_modules/@matrix-org/olm
 TF_WASM_DIR = node_modules/@tensorflow/tfjs-backend-wasm/dist/
 RNNOISE_WASM_DIR = node_modules/@jitsi/rnnoise-wasm/dist
@@ -68,6 +68,8 @@ deploy-lib-jitsi-meet:
 
 deploy-olm:
 	cp \
+		$(OLM_DIR)/olm.js \
+		$(OLM_DIR)/olm_legacy.js \
 		$(OLM_DIR)/olm.wasm \
 		$(DEPLOY_DIR)
 

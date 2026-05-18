@@ -231,7 +231,8 @@ function getConfig(options = {}) {
                 'react-dom': resolve(__dirname, 'node_modules/react-dom'),
                 'roughjs/bin/rough': 'roughjs/bin/rough.js',
                 'roughjs/bin/generator': 'roughjs/bin/generator.js',
-                'roughjs/bin/math': 'roughjs/bin/math.js'
+                'roughjs/bin/math': 'roughjs/bin/math.js',
+                'lib-jitsi-meet': resolve(__dirname, '../lib-jitsi-meet')
             },
             aliasFields: [
                 'browser'
@@ -297,7 +298,12 @@ function getDevServerConfig() {
         static: {
             directory: process.cwd(),
             watch: {
-                ignored: file => file.endsWith('.log')
+                ignored: file => file.endsWith('.log') || file.includes('/node_modules/')
+            }
+        },
+        watchFiles: {
+            options: {
+                ignored: /node_modules/
             }
         }
     };
