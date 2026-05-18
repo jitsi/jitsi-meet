@@ -33,12 +33,8 @@ import type { BodySegmenter, MediaPipeSelfieSegmentationTfjsModelConfig }
 import * as bs from '@tensorflow-models/body-segmentation';
 
 import { BackendType } from '../DeviceTierDetector';
-/* eslint-disable lines-around-comment */
 // @ts-ignore
 import createTFLiteSIMDModule from '../vendor/tflite/tflite-simd';
-/* eslint-enable lines-around-comment */
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 /** Maximum segmentation dimension in pixels. Guards against OOM via crafted init messages. */
 const MAX_SEG_DIMENSION = 2048;

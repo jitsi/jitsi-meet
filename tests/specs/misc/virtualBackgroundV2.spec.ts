@@ -89,6 +89,7 @@ describe('Virtual backgrounds V2 engine', () => {
     });
 
     it('select blur with V2 engine — effect enables and redux state correct', async () => {
+        await openVBDialog();
         const vbDialog = ctx.p1.getVirtualBackgroundDialog();
 
         await vbDialog.clickBlur();
@@ -149,7 +150,9 @@ describe('Virtual backgrounds V2 with tier override', () => {
                 ...V2_CONFIG,
                 virtualBackground: {
                     ...V2_CONFIG.virtualBackground,
-                    tierOverride: 'low'
+                    advanced: {
+                        tierOverride: 'low'
+                    }
                 }
             }
         });
@@ -157,7 +160,7 @@ describe('Virtual backgrounds V2 with tier override', () => {
         const vbConfig = await getVBConfig();
 
         expect(vbConfig?.enableV2).toBe(true);
-        expect(vbConfig?.tierOverride).toBe('low');
+        expect(vbConfig?.advanced?.tierOverride).toBe('low');
     });
 
     it('blur works on low tier', async () => {
@@ -200,7 +203,9 @@ describe('Virtual backgrounds V2 with insertable streams disabled', () => {
                 ...V2_CONFIG,
                 virtualBackground: {
                     ...V2_CONFIG.virtualBackground,
-                    useInsertableStreams: false
+                    advanced: {
+                        useInsertableStreams: false
+                    }
                 }
             }
         });
@@ -208,7 +213,7 @@ describe('Virtual backgrounds V2 with insertable streams disabled', () => {
         const vbConfig = await getVBConfig();
 
         expect(vbConfig?.enableV2).toBe(true);
-        expect(vbConfig?.useInsertableStreams).toBe(false);
+        expect(vbConfig?.advanced?.useInsertableStreams).toBe(false);
     });
 
     it('blur works on captureStream path', async () => {
