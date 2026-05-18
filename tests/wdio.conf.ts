@@ -614,6 +614,13 @@ export const config: WebdriverIO.MultiremoteConfig = {
                     AllureReporter.addAttachment(a.filename, a.content, a.type);
                 }
             );
+
+            console.log('Hanging up after test failure');
+            // let's hangup all the calls and give time for it to push any stats and logs
+            await Promise.all(multiRemoteBrowser.instances.map(async (instance: string) => {
+                // @ts-ignore
+                await ctx[instance]?.hangup();
+            }));
         }
     },
 
