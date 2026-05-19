@@ -23,5 +23,14 @@ diff --git a/node_modules/react-native-worklets-core/android/CMakeLists.txt b/no
 
    if(${HERMES_ENABLE_DEBUGGER})
      if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
-</content>
-</invoke>
+diff --git a/node_modules/react-native-worklets-core/android/build.gradle b/node_modules/react-native-worklets-core/android/build.gradle
+--- a/node_modules/react-native-worklets-core/android/build.gradle
++++ b/node_modules/react-native-worklets-core/android/build.gradle
+@@ -149,6 +149,7 @@ android {
+       "**/libfolly_runtime.so",
+       "**/libglog.so",
+       "**/libhermes.so",
++      "**/libhermesvm.so",
+       "**/libhermes-executor-debug.so",
+       "**/libhermes_executor.so",
+       "**/libhermestooling.so",
