@@ -91,6 +91,8 @@ public class JitsiMeetView extends FrameLayout {
                 // Convert String[] to ArrayList<String> for React Native bridge compatibility
                 String[] stringArray = (String[]) bValue;
                 result.putStringArrayList(key, new ArrayList<>(Arrays.asList(stringArray)));
+            } else if (valueType.contentEquals("ArrayList")) {
+                result.putParcelableArrayList(key, (ArrayList<Bundle>) bValue);
             } else {
                 throw new RuntimeException("Unsupported type: " + valueType);
             }
