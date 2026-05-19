@@ -764,10 +764,69 @@ export class Participant {
         );
         console.log(`Hung up (${this.name})`);
 
-        await this.driver.url('/base.html')
+        if (this.driver.isFirefox) {
+            await this.navigateAndSettleBidi('/base.html');
+        } else {
+            await this.driver.url('/base.html')
 
-            // This was fixed in wdio v9.9.1, we can drop once we update to that version
-            .catch(_ => {}); // eslint-disable-line @typescript-eslint/no-empty-function
+                // This was fixed in wdio v9.9.1, we can drop once we update to that version
+                .catch(_ => {}); // eslint-disable-line @typescript-eslint/no-empty-function
+        }
+    }
+
+    /**
+     * Firefox/geckodriver BiDi keeps emitting browsingContext.load and network.beforeRequestSent
+     * events for a short window after url() resolves; acting on the session before they settle
+     * races the unload of the previous page and leaves the next command targeting a stale
+     * browsing context. Subscribe to those BiDi events around the navigation and only return
+     * once we've seen the load and the request stream has been idle for a short window.
+     *
+     * @private
+     */
+    private async navigateAndSettleBidi(url: string) {
+        const SETTLE_TIMEOUT_MS = 5000;
+        const NETWORK_IDLE_MS = 250;
+
+        let loaded = false;
+        let lastRequestAt = Date.now();
+        const onLoad = () => {
+            loaded = true;
+        };
+        const onRequest = () => {
+            lastRequestAt = Date.now();
+        };
+
+        try {
+            // @ts-ignore - sessionSubscribe is a BiDi-only API not in the multiremote types
+            await this.driver.sessionSubscribe({
+                events: [ 'browsingContext.load', 'network.beforeRequestSent' ]
+            });
+        } catch {
+            // Subscription unavailable (non-BiDi session?) — fall back to plain navigation.
+            await this.driver.url(url).catch(_ => {}); // eslint-disable-line @typescript-eslint/no-empty-function
+
+            return;
+        }
+
+        this.driver.on('browsingContext.load', onLoad);
+        this.driver.on('network.beforeRequestSent', onRequest);
+
+        try {
+            await this.driver.url(url).catch(_ => {}); // eslint-disable-line @typescript-eslint/no-empty-function
+
+            const deadline = Date.now() + SETTLE_TIMEOUT_MS;
+
+            while (Date.now() < deadline) {
+                if (loaded && Date.now() - lastRequestAt >= NETWORK_IDLE_MS) {
+                    return;
+                }
+                await new Promise(resolve => setTimeout(resolve, 50));
+            }
+            console.warn(`${this.name} BiDi did not settle within ${SETTLE_TIMEOUT_MS}ms after navigating to ${url}`);
+        } finally {
+            this.driver.off('browsingContext.load', onLoad);
+            this.driver.off('network.beforeRequestSent', onRequest);
+        }
     }
 
     /**
