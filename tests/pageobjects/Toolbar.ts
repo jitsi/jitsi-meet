@@ -332,8 +332,16 @@ export default class Toolbar extends BasePageObject {
         }
 
         // Wake the auto-hidden toolbar by hovering the local video tile; otherwise the overflow
-        // button click can fire on an invisible element and the menu never appears.
-        await this.participant.driver.$('span[id="localVideoContainer"]').moveTo();
+        // button click can fire on an invisible element and the menu never appears. When the
+        // self-view is hidden (e.g. via settings), localVideoContainer is not in the DOM, so fall
+        // back to the large video container which is always present while in conference.
+        const localVideoContainer = this.participant.driver.$('span[id="localVideoContainer"]');
+
+        if (await localVideoContainer.isExisting()) {
+            await localVideoContainer.moveTo();
+        } else {
+            await this.participant.driver.$('#largeVideoContainer').moveTo();
+        }
 
         await this.clickOverflowButton();
 
