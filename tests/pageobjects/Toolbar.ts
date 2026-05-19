@@ -331,6 +331,10 @@ export default class Toolbar extends BasePageObject {
             return;
         }
 
+        // Wake the auto-hidden toolbar by hovering the local video tile; otherwise the overflow
+        // button click can fire on an invisible element and the menu never appears.
+        await this.participant.driver.$('span[id="localVideoContainer"]').moveTo();
+
         await this.clickOverflowButton();
 
         await this.waitForOverFlowMenu(true);
