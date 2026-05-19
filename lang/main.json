@@ -648,6 +648,7 @@
         "noPassword": "None",
         "noRoom": "No room was specified to dial-in into.",
         "noWhiteboard": "Could not load the whiteboard.",
+        "noWhiteboardSharing": "Failed to share the whiteboard with other participants.",
         "numbers": "Dial-in Numbers",
         "password": "$t(lockRoomPasswordUppercase): ",
         "reachedLimit": "You have reached the limit of your plan.",
