@@ -154,6 +154,7 @@ allprojects {
 
                         def dependencies = pomXml.appendNode('dependencies')
                         configurations.getByName('releaseCompileClasspath').getResolvedConfiguration().getFirstLevelModuleDependencies().each {
+                            def groupId = it.moduleGroup
                             def artifactId = it.moduleName
                             def version = it.moduleVersion
                             // React Native signals breaking changes by
@@ -165,9 +166,13 @@ allprojects {
                                 def versionNumber = VersionNumber.parse(version)
                                 version = "${versionNumber.major}.${versionNumber.minor}"
                             }
+                            // Pin react-native-* deps to the groupId we publish them under.
+                            if (artifactId.contains('react-native')) {
+                                groupId = rootProject.ext.moduleGroupId
+                            }
 
                             def dependency = dependencies.appendNode('dependency')
-                            dependency.appendNode('groupId', it.moduleGroup)
+                            dependency.appendNode('groupId', groupId)
                             dependency.appendNode('artifactId', artifactId)
                             dependency.appendNode('version', version)
                         }
