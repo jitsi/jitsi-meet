@@ -2296,7 +2296,7 @@ PODS:
   - RNGoogleSignin (10.1.0):
     - GoogleSignIn (~> 7.0)
     - React-Core
-  - RNScreens (4.16.0):
+  - RNScreens (4.17.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2318,9 +2318,9 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-    - RNScreens/common (= 4.16.0)
+    - RNScreens/common (= 4.17.0)
     - Yoga
-  - RNScreens/common (4.16.0):
+  - RNScreens/common (4.17.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2881,7 +2881,7 @@ SPEC CHECKSUMS:
   RNDeviceInfo: bcce8752b5043a623fe3c26789679b473f705d3c
   RNGestureHandler: 29bcf14a2d2562a1d698c6b33d94a74096c6e1ad
   RNGoogleSignin: 30e1aee80140dc0706cd78a4951c411376c88329
-  RNScreens: ad21baa7df017caf6266f3813f7cfe5f0ad13fae
+  RNScreens: 263d54bdd923dc6519d6ae44eb22ea42b08278c0
   RNSound: 44d60adbf0a0212f043aecdc852ecc3e8229b8be
   RNSVG: 04044c3abcf177fd674a1a3d13097efa1adebcbe
   SplashView: d128e35e07ee3545f9ae3a5d3c6989bc3c0f7016
