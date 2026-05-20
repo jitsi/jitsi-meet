@@ -28,6 +28,7 @@ import {
     getCollabDetails,
     getCollabServerUrl,
     isWhiteboardOpen,
+    isWhiteboardOpenedLocally,
     isWhiteboardPresent,
     shouldEnforceUserLimit,
     shouldNotifyUserLimit
@@ -36,13 +37,6 @@ import logger from './logger';
 import { WhiteboardStatus } from './types';
 
 import './middleware.any';
-
-/**
- * Flag to track whether the whiteboard was opened by the local participant.
- * Used to show the collaboration unavailable notification only to the
- * participant that initiated the whiteboard, not to others that join later.
- */
-let _whiteboardOpenedLocally = false;
 
 const focusWhiteboard = (store: IStore) => {
     const { dispatch, getState } = store;
@@ -96,9 +90,11 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         if (!existingCollabDetails) {
             if (action.isOpen) {
                 setNewWhiteboardOpen(store);
+
+                return;
             }
 
-            return;
+            return next(action);
         }
 
         if (action.isOpen) {
@@ -113,6 +109,12 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
                 ].filter(Boolean).join(', ');
 
                 logger.error(`Whiteboard open failed, missing collaboration data: ${missing}`);
+
+                if (action.userInitiated) {
+                    dispatch(showErrorNotification({
+                        titleKey: 'info.noWhiteboard'
+                    }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+                }
 
                 return;
             }
@@ -136,14 +138,12 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
             return next(action);
         }
 
-        _whiteboardOpenedLocally = false;
         dispatch(participantLeft(WHITEBOARD_ID, conference, { fakeParticipant: FakeParticipant.Whiteboard }));
         raiseWhiteboardNotification(WhiteboardStatus.HIDDEN);
 
         break;
     }
     case RESET_WHITEBOARD: {
-        _whiteboardOpenedLocally = false;
         dispatch(participantLeft(WHITEBOARD_ID, conference, { fakeParticipant: FakeParticipant.Whiteboard }));
         raiseWhiteboardNotification(WhiteboardStatus.RESET);
 
@@ -173,8 +173,6 @@ function raiseWhiteboardNotification(status: WhiteboardStatus) {
  * @returns {Promise}
  */
 async function setNewWhiteboardOpen(store: IStore) {
-    _whiteboardOpenedLocally = true;
-
     const { dispatch, getState } = store;
     const { generateCollaborationLinkData } = await import(/* webpackChunkName: "excalidraw" */ '@jitsi/excalidraw');
     const collabLinkData = await generateCollaborationLinkData();
@@ -190,7 +188,10 @@ async function setNewWhiteboardOpen(store: IStore) {
         collabServerUrl
     };
 
-    dispatch(setupWhiteboard(collabData));
+    dispatch(setupWhiteboard({
+        ...collabData,
+        openedLocally: true
+    }));
     conference?.getMetadataHandler().setMetadata(WHITEBOARD_ID, collabData);
     raiseWhiteboardNotification(WhiteboardStatus.INSTANTIATED);
 }
@@ -204,7 +205,7 @@ StateListenerRegistry.register(
     (participantCount, { dispatch, getState }, prevParticipantCount): void => {
         if (participantCount >= 2
             && (prevParticipantCount ?? 0) < 2
-            && _whiteboardOpenedLocally
+            && isWhiteboardOpenedLocally(getState())
             && isWhiteboardOpen(getState())) {
             const state = getState();
             const collabDetails = getCollabDetails(state);

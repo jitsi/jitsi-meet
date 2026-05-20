@@ -1,12 +1,9 @@
 import { createRestrictWhiteboardEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
-import { getParticipantCount } from '../base/participants/functions';
-import { showErrorNotification } from '../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { resetWhiteboard, setWhiteboardOpen } from './actions.any';
-import { getCollabDetails, isWhiteboardAllowed, isWhiteboardOpen, isWhiteboardVisible } from './functions';
+import { isWhiteboardAllowed, isWhiteboardOpen, isWhiteboardVisible } from './functions';
 import { WhiteboardStatus } from './types';
 
 export * from './actions.any';
@@ -25,33 +22,16 @@ export function toggleWhiteboard(open?: boolean) {
         const isOpen = isWhiteboardOpen(state);
 
         if (isAllowed) {
-            let shouldOpen = false;
-
             if (typeof open === 'boolean') {
                 if (open !== isOpen) {
-                    shouldOpen = open;
-                    dispatch(setWhiteboardOpen(open));
+                    dispatch(setWhiteboardOpen(open, true));
                 }
             } else if (isOpen && !isWhiteboardVisible(state)) {
-                shouldOpen = true;
-                dispatch(setWhiteboardOpen(true));
+                dispatch(setWhiteboardOpen(true, true));
             } else if (isOpen && isWhiteboardVisible(state)) {
-                dispatch(setWhiteboardOpen(false));
+                dispatch(setWhiteboardOpen(false, true));
             } else if (!isOpen) {
-                shouldOpen = true;
-                dispatch(setWhiteboardOpen(true));
-            }
-
-            // If we tried to open but the middleware blocked it, show an error.
-            // Skip when alone or when there are no collab details yet — the
-            // first open is async and the middleware blocks the action until
-            // the collab setup completes.
-            if (shouldOpen && !isWhiteboardOpen(getState())
-                && getParticipantCount(getState()) >= 2
-                && getCollabDetails(getState())) {
-                dispatch(showErrorNotification({
-                    titleKey: 'info.noWhiteboard'
-                }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+                dispatch(setWhiteboardOpen(true, true));
             }
         } else if (typeof APP !== 'undefined') {
             APP.API.notifyWhiteboardStatusChanged(WhiteboardStatus.FORBIDDEN);
