@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		13B07FBD1A68108700A75B9A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.storyboard */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		2481968363B04A9A82BD8E06 /* ReactNativeDependencies.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 65B114402F434842A94013E1 /* ReactNativeDependencies.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2681BB562C7A0B42CFBA6719 /* libPods-JitsiMeet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D6152FF9E9F7B0E86F70A21D /* libPods-JitsiMeet.a */; };
 		361974E2A13624D7735D619D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5C1BE20ECD5DEEB48FED90B5 /* PrivacyInfo.xcprivacy */; };
 		4341A9062CF0D63200940D93 /* hermes.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4341A9052CF0D63200940D93 /* hermes.xcframework */; };
@@ -21,9 +20,6 @@
 		4EB0603C260E09D000F524C5 /* SocketConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB06039260E09D000F524C5 /* SocketConnection.swift */; };
 		4EB0603D260E09D000F524C5 /* DarwinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB0603A260E09D000F524C5 /* DarwinNotificationCenter.swift */; };
 		4EB0603E260E09D000F524C5 /* SampleUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB0603B260E09D000F524C5 /* SampleUploader.swift */; };
-		9059144823E34B399B578FC7 /* React.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A4A11299AE44B6AC3A3F43 /* React.xcframework */; };
-		B770303D72D74DBD9E65D8EA /* ReactNativeDependencies.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65B114402F434842A94013E1 /* ReactNativeDependencies.xcframework */; };
-		B847A3C9B52F45B1A6F31A4D /* React.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0A4A11299AE44B6AC3A3F43 /* React.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DEA0B7122D7EF16E0062A9F6 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA0B7112D7EF16E0062A9F6 /* ViewController.swift */; };
 		DEA0B7142D7EF7590062A9F6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA0B7132D7EF7590062A9F6 /* AppDelegate.swift */; };
 		DEA9F289258A6EA800D4CD74 /* JitsiMeetSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DEA9F288258A6EA800D4CD74 /* JitsiMeetSDK.framework */; };
@@ -55,8 +51,6 @@
 				4341A9072CF0D63200940D93 /* hermes.xcframework in Embed Frameworks */,
 				FD572B9927EDF32300A800FB /* GiphyUISDK.xcframework in Embed Frameworks */,
 				DED016F228ECBC9D009D5E8D /* WebRTC.xcframework in Embed Frameworks */,
-				B847A3C9B52F45B1A6F31A4D /* React.xcframework in Embed Frameworks */,
-				2481968363B04A9A82BD8E06 /* ReactNativeDependencies.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -103,10 +97,8 @@
 		4EB0603B260E09D000F524C5 /* SampleUploader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleUploader.swift; sourceTree = "<group>"; };
 		4EC49B8625BED71300E76218 /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
 		5C1BE20ECD5DEEB48FED90B5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		65B114402F434842A94013E1 /* ReactNativeDependencies.xcframework */ = {isa = PBXFileReference; expectedSignature = "SelfSigned:BEEAE960B121B398BB228BD547298BD461DFFFD862BD3AD794A38F6D426F6741"; lastKnownFileType = wrapper.xcframework; name = ReactNativeDependencies.xcframework; path = "../Pods/ReactNativeDependencies/framework/packages/react-native/ReactNativeDependencies.xcframework"; sourceTree = "<group>"; };
 		756FCE06C08D9B947653C98A /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
 		B3B083EB1D4955FF0069CEE7 /* app.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = app.entitlements; sourceTree = "<group>"; };
-		C0A4A11299AE44B6AC3A3F43 /* React.xcframework */ = {isa = PBXFileReference; expectedSignature = "SelfSigned:BEEAE960B121B398BB228BD547298BD461DFFFD862BD3AD794A38F6D426F6741"; lastKnownFileType = wrapper.xcframework; name = React.xcframework; path = "../Pods/React-Core-prebuilt/React.xcframework"; sourceTree = "<group>"; };
 		D6152FF9E9F7B0E86F70A21D /* libPods-JitsiMeet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JitsiMeet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE050388256E904600DEE3A5 /* WebRTC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WebRTC.xcframework; path = "../../node_modules/react-native-webrtc/apple/WebRTC.xcframework"; sourceTree = "<group>"; };
 		DEA0B7112D7EF16E0062A9F6 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -127,8 +119,6 @@
 				FD572B9827EDF32300A800FB /* GiphyUISDK.xcframework in Frameworks */,
 				2681BB562C7A0B42CFBA6719 /* libPods-JitsiMeet.a in Frameworks */,
 				4341A9062CF0D63200940D93 /* hermes.xcframework in Frameworks */,
-				9059144823E34B399B578FC7 /* React.xcframework in Frameworks */,
-				B770303D72D74DBD9E65D8EA /* ReactNativeDependencies.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,8 +140,6 @@
 				DED016F028ECBC9D009D5E8D /* WebRTC.xcframework */,
 				FD572B9727EDF32300A800FB /* GiphyUISDK.xcframework */,
 				DEA9F288258A6EA800D4CD74 /* JitsiMeetSDK.framework */,
-				C0A4A11299AE44B6AC3A3F43 /* React.xcframework */,
-				65B114402F434842A94013E1 /* ReactNativeDependencies.xcframework */,
 				DE050388256E904600DEE3A5 /* WebRTC.xcframework */,
 				0B26BE6D1EC5BC3C00EEFB41 /* JitsiMeet.framework */,
 				DEFDBBDB25656E3B00344B23 /* WebRTC.xcframework */,

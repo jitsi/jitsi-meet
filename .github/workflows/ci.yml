@@ -107,7 +107,7 @@ jobs:
           ${{ runner.os }}-cocoapods-
     - name: Install Pods
       working-directory: ./ios
-      run: bundle exec pod install
+      run: bundle exec pod install --deployment
     - run: npx react-native bundle --entry-file react/index.native.js --platform ios --bundle-output /tmp/ios.bundle --reset-cache
   android-sdk-build:
     name: Build mobile SDK (Android)
@@ -192,7 +192,7 @@ jobs:
     - run: npx react-native info
     - name: Install Pods
       working-directory: ./ios
-      run: bundle exec pod install
+      run: bundle exec pod install --deployment
     - run: |
         xcodebuild -downloadPlatform iOS -buildVersion 18.2
         xcodebuild archive \

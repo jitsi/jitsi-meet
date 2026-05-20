@@ -10,6 +10,9 @@ workspace 'jitsi-meet'
 
 ENV['RCT_NEW_ARCH_ENABLED'] = '1'
 ENV['RCT_HERMES_V1_ENABLED'] = '0'
+# Build RN deps and Core from source so source-level patches apply (e.g. SocketRocket TLS 1.3).
+ENV['RCT_USE_RN_DEP'] = '0'
+ENV['RCT_USE_PREBUILT_RNCORE'] = '0'
 
 install! 'cocoapods', :deterministic_uuids => false
 
