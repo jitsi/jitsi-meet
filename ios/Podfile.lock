@@ -3055,7 +3055,7 @@ PODS:
   - RNGoogleSignin (10.1.0):
     - GoogleSignIn (~> 7.0)
     - React-Core
-  - RNScreens (4.17.0):
+  - RNScreens (4.17.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -3082,10 +3082,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNScreens/common (= 4.17.0)
+    - RNScreens/common (= 4.17.1)
     - SocketRocket
     - Yoga
-  - RNScreens/common (4.17.0):
+  - RNScreens/common (4.17.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -3695,7 +3695,7 @@ SPEC CHECKSUMS:
   RNDeviceInfo: bcce8752b5043a623fe3c26789679b473f705d3c
   RNGestureHandler: 634b358743823bc9e47ba20dc1e6ccb5439512fc
   RNGoogleSignin: 30e1aee80140dc0706cd78a4951c411376c88329
-  RNScreens: a2624126036d5820803773ff27bf47f3fadabeb8
+  RNScreens: 833237c48c756d40764540246a501b47dadb2cac
   RNSound: b6bd5e049ad15c0b03f9dda1f817d0bb1d5e87cb
   RNSVG: c9d7c940ad9655eba72c5b9ca7b017c95bb58083
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748

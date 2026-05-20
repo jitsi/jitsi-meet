@@ -103,7 +103,7 @@
     "react-native-paper": "5.14.5",
     "react-native-performance": "6.0.0",
     "react-native-safe-area-context": "5.6.1",
-    "react-native-screens": "4.17.0",
+    "react-native-screens": "4.17.1",
     "react-native-sound": "https://github.com/jitsi/react-native-sound.git#bc92152667a628120374c1324fc9e44f697c3192",
     "react-native-splash-view": "0.0.18",
     "react-native-svg": "15.15.4",
