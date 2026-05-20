@@ -14,6 +14,24 @@ ENV['RCT_HERMES_V1_ENABLED'] = '0'
 ENV['RCT_USE_RN_DEP'] = '0'
 ENV['RCT_USE_PREBUILT_RNCORE'] = '0'
 
+# hermes-engine bakes an absolute path into HERMES_CLI_PATH, which makes the
+# Podfile.lock SPEC CHECKSUM differ on every machine. Rewrite it to a relative
+# path so the lockfile is portable (e.g. `pod install --deployment` in CI).
+module HermesCliPathRelativizer
+  def store_attribute(name, value, platform_name = nil)
+    if name == :user_target_xcconfig &&
+       value.is_a?(Hash) &&
+       value['HERMES_CLI_PATH'] &&
+       self.name.to_s.start_with?('hermes-engine')
+      value = value.merge(
+        'HERMES_CLI_PATH' => '${REACT_NATIVE_PATH}/../hermes-compiler/hermesc/osx-bin/hermesc'
+      )
+    end
+    super
+  end
+end
+Pod::Specification.prepend(HermesCliPathRelativizer)
+
 install! 'cocoapods', :deterministic_uuids => false
 
 def cocoa_utilities
