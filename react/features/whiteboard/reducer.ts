@@ -21,17 +21,12 @@ export interface IWhiteboardState {
      */
     isOpen: boolean;
 
-    /**
-     * Whether the whiteboard was opened by the local participant.
-     */
-    openedLocally: boolean;
 }
 
 const DEFAULT_STATE: IWhiteboardState = {
     isOpen: false,
     collabDetails: undefined,
-    collabServerUrl: undefined,
-    openedLocally: false
+    collabServerUrl: undefined
 };
 
 export interface IWhiteboardAction extends Partial<IWhiteboardState> {
@@ -45,11 +40,6 @@ export interface IWhiteboardAction extends Partial<IWhiteboardState> {
      * The whiteboard collaboration url.
      */
     collabServerUrl?: string;
-
-    /**
-     * Whether the whiteboard was opened by the local participant.
-     */
-    openedLocally?: boolean;
 
     /**
      * The action type.
@@ -70,8 +60,7 @@ ReducerRegistry.register(
             return {
                 ...state,
                 collabDetails: action.collabDetails,
-                collabServerUrl: action.collabServerUrl,
-                openedLocally: action.openedLocally ?? state.openedLocally
+                collabServerUrl: action.collabServerUrl
             };
         }
         case SET_WHITEBOARD_OPEN: {

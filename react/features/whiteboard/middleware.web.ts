@@ -5,10 +5,8 @@ import { getCurrentConference } from '../base/conference/functions';
 import { hideDialog, openDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
 import { participantJoined, participantLeft, pinParticipant } from '../base/participants/actions';
-import { getParticipantCount } from '../base/participants/functions';
 import { FakeParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { getCurrentRoomId } from '../breakout-rooms/functions';
 import { addStageParticipant } from '../filmstrip/actions.web';
 import { isStageFilmstripAvailable } from '../filmstrip/functions.web';
@@ -27,8 +25,6 @@ import {
     generateCollabServerUrl,
     getCollabDetails,
     getCollabServerUrl,
-    isWhiteboardOpen,
-    isWhiteboardOpenedLocally,
     isWhiteboardPresent,
     shouldEnforceUserLimit,
     shouldNotifyUserLimit
@@ -89,6 +85,17 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
 
         if (!existingCollabDetails) {
             if (action.isOpen) {
+                if (!generateCollabServerUrl(state)) {
+                    logger.error('Whiteboard open failed, collabServerBaseUrl not configured');
+
+                    if (action.userInitiated) {
+                        dispatch(showErrorNotification({
+                            titleKey: 'info.noWhiteboard'
+                        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+                    }
+
+                    return;
+                }
                 setNewWhiteboardOpen(store);
 
                 return;
@@ -98,10 +105,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         }
 
         if (action.isOpen) {
-            const participantCount = getParticipantCount(state);
-
-            if (participantCount >= 2
-                && (!existingCollabDetails.roomId || !existingCollabDetails.roomKey || !collabServerUrl)) {
+            if (!existingCollabDetails.roomId || !existingCollabDetails.roomKey || !collabServerUrl) {
                 const missing = [
                     !existingCollabDetails.roomId && 'roomId',
                     !existingCollabDetails.roomKey && 'roomKey',
@@ -188,41 +192,8 @@ async function setNewWhiteboardOpen(store: IStore) {
         collabServerUrl
     };
 
-    dispatch(setupWhiteboard({
-        ...collabData,
-        openedLocally: true
-    }));
+    dispatch(setupWhiteboard(collabData));
     conference?.getMetadataHandler().setMetadata(WHITEBOARD_ID, collabData);
     raiseWhiteboardNotification(WhiteboardStatus.INSTANTIATED);
 }
 
-/**
- * Notify when a participant joins while the whiteboard is open
- * and collaboration data is missing.
- */
-StateListenerRegistry.register(
-    state => getParticipantCount(state),
-    (participantCount, { dispatch, getState }, prevParticipantCount): void => {
-        if (participantCount >= 2
-            && (prevParticipantCount ?? 0) < 2
-            && isWhiteboardOpenedLocally(getState())
-            && isWhiteboardOpen(getState())) {
-            const state = getState();
-            const collabDetails = getCollabDetails(state);
-            const collabServerUrl = getCollabServerUrl(state);
-
-            if (!collabDetails?.roomId || !collabDetails?.roomKey || !collabServerUrl) {
-                const missing = [
-                    !collabDetails?.roomId && 'roomId',
-                    !collabDetails?.roomKey && 'roomKey',
-                    !collabServerUrl && 'collabServerUrl'
-                ].filter(Boolean).join(', ');
-
-                logger.error(`Whiteboard collaboration unavailable, missing data: ${missing}`);
-                dispatch(showErrorNotification({
-                    titleKey: 'info.noWhiteboardSharing'
-                }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-            }
-        }
-    }
-);

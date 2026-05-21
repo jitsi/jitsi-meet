@@ -66,14 +66,6 @@ export const isWhiteboardEnabled = (state: IReduxState): boolean =>
 export const isWhiteboardOpen = (state: IReduxState): boolean => getWhiteboardState(state).isOpen;
 
 /**
- * Indicates whether the whiteboard was opened by the local participant.
- *
- * @param {IReduxState} state - The state from the Redux store.
- * @returns {boolean}
- */
-export const isWhiteboardOpenedLocally = (state: IReduxState): boolean => getWhiteboardState(state).openedLocally;
-
-/**
  * Indicates whether the whiteboard button is visible.
  *
  * @param {IReduxState} state - The state from the Redux store.

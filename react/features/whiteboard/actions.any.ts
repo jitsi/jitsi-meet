@@ -19,16 +19,14 @@ import { IWhiteboardAction } from './reducer';
  *     collabServerUrl: string
  * }}
  */
-export const setupWhiteboard = ({ collabDetails, collabServerUrl, openedLocally }: {
+export const setupWhiteboard = ({ collabDetails, collabServerUrl }: {
     collabDetails: { roomId: string; roomKey: string; };
     collabServerUrl?: string;
-    openedLocally?: boolean;
 }): IWhiteboardAction => {
     return {
         type: SETUP_WHITEBOARD,
         collabDetails,
-        collabServerUrl,
-        openedLocally
+        collabServerUrl
     };
 };
 
