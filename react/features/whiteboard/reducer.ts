@@ -20,6 +20,7 @@ export interface IWhiteboardState {
      * @type {boolean}
      */
     isOpen: boolean;
+
 }
 
 const DEFAULT_STATE: IWhiteboardState = {
@@ -44,6 +45,11 @@ export interface IWhiteboardAction extends Partial<IWhiteboardState> {
      * The action type.
      */
     type: string;
+
+    /**
+     * Whether the action was triggered by a user interaction.
+     */
+    userInitiated?: boolean;
 }
 
 ReducerRegistry.register(

@@ -964,8 +964,8 @@ function initCommands() {
                 logger.error(' End Conference not supported');
             }
         },
-        'toggle-whiteboard': () => {
-            APP.store.dispatch(toggleWhiteboard());
+        'toggle-whiteboard': open => {
+            APP.store.dispatch(toggleWhiteboard(open));
         },
         'set-virtual-background': (enabled, backgroundImage) => {
             const tracks = APP.store.getState()['features/base/tracks'];
