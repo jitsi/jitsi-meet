@@ -63,7 +63,15 @@ export const isWhiteboardEnabled = (state: IReduxState): boolean =>
  * @param {IReduxState} state - The state from the Redux store.
  * @returns {boolean}
  */
-export const isWhiteboardOpen = (state: IReduxState): boolean => getWhiteboardState(state).isOpen;
+export const isWhiteboardOpen = (state: IReduxState): boolean => {
+    const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
+
+    if (iAmRecorder || iAmSipGateway) {
+        return false;
+    }
+
+    return getWhiteboardState(state).isOpen;
+};
 
 /**
  * Indicates whether the whiteboard button is visible.
@@ -169,6 +177,12 @@ export const shouldEnforceUserLimit = (state: IReduxState): boolean => {
  * @returns {boolean}
  */
 export const shouldNotifyUserLimit = (state: IReduxState): boolean => {
+    const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
+
+    if (iAmRecorder || iAmSipGateway) {
+        return false;
+    }
+
     const userLimit = getWhiteboardUserLimit(state);
 
     if (userLimit === Infinity) {
