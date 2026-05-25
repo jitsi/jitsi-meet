@@ -10,6 +10,15 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         buildConfigField "String", "SDK_VERSION", "\"$sdkVersion\""
+        // Library modules don't get RN's app-mode CMake defaults; set them here.
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_STL=c++_shared",
+                          "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
+                          "-DREACT_ANDROID_DIR=${rootProject.projectDir}/../node_modules/react-native/ReactAndroid",
+                          "-DPROJECT_BUILD_DIR=${project.layout.buildDirectory.get().asFile}"
+            }
+        }
     }
 
     buildTypes {
@@ -32,7 +41,54 @@ android {
             }
         }
     }
+
+    // JNI shim that registers TurboModules so consumers don't need libappmodules.so.
+    externalNativeBuild {
+        cmake { path 'src/main/jni/CMakeLists.txt' }
+    }
+    buildFeatures {
+        prefab true
+    }
+    // Exclude RN core .so files; consumers get them from react-android transitively.
+    packagingOptions {
+        excludes += [
+            "**/libc++_shared.so",
+            "**/libfbjni.so",
+            "**/libjsi.so",
+            "**/libreactnative.so",
+            "**/libreactnativejni.so",
+            "**/libturbomodulejsijni.so",
+        ]
+    }
+
     namespace 'org.jitsi.meet.sdk'
+}
+
+// Generate autolinking.cpp + Android-autolinking.cmake for our CMake to include.
+def jitsiAutolinkOutDir = layout.buildDirectory.dir('generated/autolinking/src/main/jni')
+def jitsiGenerateAutolinking = tasks.register('jitsiGenerateAutolinkingNewArchitectureFiles',
+        com.facebook.react.tasks.GenerateAutolinkingNewArchitecturesFileTask) {
+    autolinkInputFile.set(rootProject.file('build/generated/autolinking/autolinking.json'))
+    generatedOutputDirectory.set(jitsiAutolinkOutDir)
+}
+
+// Run autolinking + per-lib codegen before any CMake task — our CMake reads them.
+gradle.projectsEvaluated {
+    def rootAutolinkConfig = rootProject.tasks.findByName('generateAutolinkingConfigJson')
+    if (rootAutolinkConfig != null) {
+        jitsiGenerateAutolinking.configure { it.dependsOn(rootAutolinkConfig) }
+    }
+    def allCodegenTasks = rootProject.subprojects.collectMany { sub ->
+        sub.tasks.matching { it.name == 'generateCodegenArtifactsFromSchema' }
+    }
+    tasks.matching {
+        it.name.startsWith('configureCMake') ||
+        it.name.startsWith('buildCMake') ||
+        it.name.startsWith('externalNativeBuildClean')
+    }.configureEach {
+        it.dependsOn(allCodegenTasks)
+        it.dependsOn(jitsiGenerateAutolinking)
+    }
 }
 
 dependencies {

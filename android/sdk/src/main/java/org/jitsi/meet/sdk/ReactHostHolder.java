@@ -28,6 +28,7 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.defaults.DefaultReactHost;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ViewManager;
+import com.facebook.soloader.SoLoader;
 import com.oney.WebRTCModule.EglUtils;
 import com.oney.WebRTCModule.WebRTCModuleOptions;
 
@@ -199,6 +200,9 @@ class ReactHostHolder {
         if (reactHost != null) {
             return;
         }
+
+        // Set DefaultTurboModuleManagerDelegate::javaModuleProvider before RN starts.
+        SoLoader.loadLibrary("jitsisdkmodules");
 
         // Initialize the WebRTC module options.
         WebRTCModuleOptions options = WebRTCModuleOptions.getInstance();
