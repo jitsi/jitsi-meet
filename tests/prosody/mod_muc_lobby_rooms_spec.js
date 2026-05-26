@@ -1,7 +1,7 @@
 import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
-import { disableLobby, enableLobby } from './helpers/test_observer.js';
+import { disableLobby, enableLobby, setAffiliation } from './helpers/test_observer.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
@@ -141,17 +141,16 @@ describe('mod_muc_lobby_rooms', () => {
 
         it('pre-approved member with display name can join', async () => {
             const r = room();
-            const roomName = r.split('@')[0];
 
             await focusJoin(r);
-
             await enableLobby(r);
 
-            // A token with context.user grants member affiliation via mod_token_affiliation
-            // at muc-occupant-pre-join priority 0, before the lobby check at priority -4.
-            const token = mintAsapToken({ room: roomName,
-                context: { user: { id: 'lobby-bypass-user' } } });
-            const c = await connect({ params: { token } });
+            // Connect first to learn the server-assigned JID, then pre-approve the
+            // user by setting member affiliation before they attempt to join.
+            const c = await connect();
+            const bareJid = c.jid.split('/')[0];
+
+            await setAffiliation(r, bareJid, 'member');
 
             const presence = await c.joinRoom(r, undefined, { displayName: 'Bob' });
 
@@ -234,6 +233,58 @@ describe('mod_muc_lobby_rooms', () => {
 
             assert.notEqual(presence.attrs.type, 'error',
                 'non-member must be allowed after lobby is disabled');
+        });
+    });
+
+    // -------------------------------------------------------------------------
+    // token_affiliation interaction
+    // -------------------------------------------------------------------------
+    describe('token_affiliation interaction', () => {
+
+        it('moderator token holder is blocked by lobby, not bypassed by affiliation grant', async () => {
+            const r = room();
+            const roomName = r.split('@')[0];
+
+            await focusJoin(r);
+            await enableLobby(r);
+
+            const token = mintAsapToken({ room: roomName, context: { user: { moderator: true } } });
+            const c = await connect({ params: { token } });
+            const presence = await c.joinRoom(r, undefined, { displayName: 'TokenMod' });
+
+            assert.equal(presence.attrs.type, 'error',
+                'moderator token user must be blocked by lobby');
+
+            const error = presence.getChild('error');
+
+            assert.ok(error, 'error element must be present');
+            assert.ok(
+                error.getChild('registration-required'),
+                'error condition must be registration-required'
+            );
+        });
+
+        it('non-moderator token holder is blocked by lobby', async () => {
+            const r = room();
+            const roomName = r.split('@')[0];
+
+            await focusJoin(r);
+            await enableLobby(r);
+
+            const token = mintAsapToken({ room: roomName, context: { user: { id: 'user1' } } });
+            const c = await connect({ params: { token } });
+            const presence = await c.joinRoom(r, undefined, { displayName: 'TokenUser' });
+
+            assert.equal(presence.attrs.type, 'error',
+                'non-moderator token user must be blocked by lobby');
+
+            const error = presence.getChild('error');
+
+            assert.ok(error, 'error element must be present');
+            assert.ok(
+                error.getChild('registration-required'),
+                'error condition must be registration-required'
+            );
         });
     });
 });

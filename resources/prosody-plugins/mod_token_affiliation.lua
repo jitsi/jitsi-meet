@@ -52,6 +52,19 @@ module:hook("muc-occupant-pre-join", function(event)
         return
     end
 
+    -- When lobby is active (members-only) and the user has no pre-existing
+    -- affiliation, let the lobby gate handle this join attempt.  Once a
+    -- moderator approves them (their affiliation is set to ≥member by the
+    -- lobby module), the next join attempt will have an existing affiliation
+    -- and this hook will upgrade it normally.
+    if room:get_members_only() then
+        local existing = room:get_affiliation(occupant.bare_jid)
+        if not existing or existing == 'none' then
+            module:log(LOGLEVEL, "skip, lobby active for %s", occupant.bare_jid)
+            return
+        end
+    end
+
     local affiliation = affiliation_from_token(session)
     if not affiliation then
         return
