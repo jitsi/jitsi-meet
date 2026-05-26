@@ -46,7 +46,7 @@ export default function ShareVideoConfirmDialog({ actorName, onSubmit, videoUrl 
 
     // Build description with video source info if available
     const description = displayUrl
-        ? `${t('dialog.shareVideoConfirmPlay')} (Source: ${displayUrl})`
+        ? `${t('dialog.shareVideoConfirmPlay')}\n\n${t('shareVideoSourceParenthesis', { host: displayUrl })}`
         : t('dialog.shareVideoConfirmPlay');
 
     return (

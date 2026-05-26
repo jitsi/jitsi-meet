@@ -499,6 +499,8 @@
         "shareScreenWarningTitle": "You need to stop audio sharing before sharing your screen",
         "shareVideoConfirmPlay": "You're about to open an external website. Do you want to continue?",
         "shareVideoConfirmPlayTitle": "{{name}} has shared a video with you.",
+        "shareVideoSourceLabel": "Video source:",
+        "shareVideoSourceParenthesis": "(Source: {{host}})",
         "shareVideoLinkError": "Oops, this video cannot be played.",
         "shareVideoLinkStopped": "The video from {{name}} was stopped.",
         "shareVideoTitle": "Share video",

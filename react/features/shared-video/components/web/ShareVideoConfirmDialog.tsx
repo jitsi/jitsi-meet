@@ -51,11 +51,11 @@ export default function ShareVideoConfirmDialog({ actorName, onSubmit, videoUrl 
                 name: actorName
             }) }>
             <div>
-                { t('dialog.shareVideoConfirmPlay') }
+                <p>{ t('dialog.shareVideoConfirmPlay') }</p>
                 { displayUrl && (
-                    <div className = 'shared-video-source'>
-                        Video source: <strong>{ displayUrl }</strong>
-                    </div>
+                    <p className = 'shared-video-source'>
+                        { t('shareVideoSourceLabel') } <strong>{ displayUrl }</strong>
+                    </p>
                 ) }
             </div>
         </Dialog>
