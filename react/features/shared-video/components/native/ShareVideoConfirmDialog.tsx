@@ -32,9 +32,11 @@ export default function ShareVideoConfirmDialog({ actorName, onSubmit, videoUrl 
 
     // Extract hostname from URL for user awareness
     let displayUrl = '';
+
     if (videoUrl) {
         try {
             const urlObj = new URL(videoUrl);
+
             displayUrl = urlObj.hostname;
         } catch (_e) {
             // If not a valid URL, use the videoUrl as-is for display
