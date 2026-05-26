@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { isEqual } from 'lodash-es';
 import React, { Component, ComponentType, Fragment } from 'react';
@@ -133,7 +132,18 @@ export default class BaseApp<P> extends Component<P, IState> {
      * @returns {Promise}
      */
     _initStorage(): Promise<any> {
-        const _initializing = jitsiLocalStorage.getItem('_initializing');
+        // On react-native, global.localStorage is replaced at startup with the
+        // Storage polyfill in react/features/mobile/polyfills/Storage.js, which
+        // stores its AsyncStorage-loading Promise as an instance property named
+        // `_initializing`. Its getItem() returns own-property values, so
+        // getItem('_initializing') surfaces that Promise and lets us wait for
+        // AsyncStorage to finish loading persisted state. On web this is always
+        // null (no such key in window.localStorage) and the cast is a no-op.
+        // The new @jitsi/js-utils types declare getItem as `string | null`,
+        // which is accurate for the standard Web Storage shape but doesn't
+        // capture this RN-only side channel — hence the cast.
+        const _initializing = jitsiLocalStorage.getItem('_initializing') as
+            Promise<unknown> | null;
 
         return _initializing || Promise.resolve();
     }

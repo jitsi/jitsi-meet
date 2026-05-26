@@ -54,10 +54,6 @@ function Toolbox(props: IProps) {
         dispatch
     } = props;
 
-    if (!_visible) {
-        return null;
-    }
-
     const { clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
     const { customToolbarButtons } = useSelector((state: IReduxState) => state['features/base/config']);
     const toolbarBackgroundColor = useSelector((state: IReduxState) => state['features/base/config'].toolbarConfig?.backgroundColor);
@@ -67,6 +63,10 @@ function Toolbox(props: IProps) {
     } = useSelector((state: IReduxState) => state['features/toolbox']);
 
     const allButtons = useNativeToolboxButtons(customToolbarButtons);
+
+    if (!_visible) {
+        return null;
+    }
 
     const { mainMenuButtons } = getVisibleNativeButtons({
         allButtons,

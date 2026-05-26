@@ -136,6 +136,7 @@ for (const asyncTranscriptions of asyncTranscriptionValues) {
             await p1.getIframeAPI().clearEventResults('transcriptionChunkReceived');
             await p2.getIframeAPI().clearEventResults('transcriptionChunkReceived');
             await clearTranscriptionStatusChange();
+            webhooksProxy.clearCache();
 
             await p1.getIframeAPI().executeCommand('startRecording', { transcription: true });
 
@@ -207,6 +208,9 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
     }
 
     if (!asyncTranscription || expectations.jaas.transcription.asyncTranscriptionWebhook) {
+        // In async mode the backend re-IDs and re-segments chunks after post-processing, so live (iframe) and
+        // async (webhook) ID spaces don't overlap and transcript text won't correlate. Match by participant only
+        // and skip the content comparison.
         const event: {
             data: {
                 final: string;
@@ -219,13 +223,20 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
                 stable: string;
             };
             eventType: string;
-        } = await webhooksProxy.waitForEvent('TRANSCRIPTION_CHUNK_RECEIVED');
+        } = await webhooksProxy.waitForEvent(
+            'TRANSCRIPTION_CHUNK_RECEIVED',
+            asyncTranscription
+                ? e => e.data.participant.id === p1Id
+                : e => e.data.messageID === p1Event.data.messageID
+        );
 
         expect(event.eventType).toBe('TRANSCRIPTION_CHUNK_RECEIVED');
 
-        const webhookTranscript = event.data.final;
+        if (!asyncTranscription) {
+            const webhookTranscript = event.data.final;
 
-        expect(webhookTranscript).toPartiallyMatch(p1Transcript, 'webhook transcript', 'p1 transcript');
+            expect(webhookTranscript).toPartiallyMatch(p1Transcript, 'webhook transcript', 'p1 transcript');
+        }
         if (p1Event.data.language) {
             expect(event.data.language).toBe(p1Event.data.language);
         }

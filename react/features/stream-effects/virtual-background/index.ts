@@ -1,45 +1,61 @@
 /* eslint-disable lines-around-comment */
-import { IStore } from '../../app/types';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { timeout } from '../../virtual-background/functions';
 import logger from '../../virtual-background/logger';
+import { IVirtualBackground } from '../../virtual-background/reducer';
 
-import JitsiStreamBackgroundEffect, { IBackgroundEffectOptions } from './JitsiStreamBackgroundEffect';
+import { detectDeviceTier } from './DeviceTierDetector';
+import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect';
 // @ts-ignore
 import createTFLiteModule from './vendor/tflite/tflite';
 // @ts-ignore
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd';
+/* eslint-enable lines-around-comment */
+
 const models = {
     modelLandscape: 'libs/selfie_segmentation_landscape.tflite'
 };
-/* eslint-enable lines-around-comment */
 
 let modelBuffer: ArrayBuffer;
 let tflite: any;
-let wasmCheck;
+let wasmCheck: any;
 let isWasmDisabled = false;
 
-const segmentationDimensions = {
-    modelLandscape: {
-        height: 144,
-        width: 256
-    }
-};
-
 /**
- * Creates a new instance of JitsiStreamBackgroundEffect. This loads the Meet background model that is used to
- * extract person segmentation.
+ * Creates a new instance of the virtual background stream effect.
  *
  * @param {Object} virtualBackground - The virtual object that contains the background image source and
  * the isVirtualBackground flag that indicates if virtual image is activated.
  * @param {Function} dispatch - The Redux dispatch function.
- * @returns {Promise<JitsiStreamBackgroundEffect>}
+ * @returns {Promise<JitsiStreamBackgroundEffect | undefined>}
  */
-export async function createVirtualBackgroundEffect(virtualBackground: IBackgroundEffectOptions['virtualBackground'],
-        dispatch?: IStore['dispatch']) {
+export async function createVirtualBackgroundEffect(virtualBackground: IVirtualBackground,
+        dispatch?: Function
+): Promise<JitsiStreamBackgroundEffect | undefined> {
     if (!MediaStreamTrack.prototype.getSettings && !MediaStreamTrack.prototype.getConstraints) {
         throw new Error('JitsiStreamBackgroundEffect not supported!');
+    }
+    const fullVbConfig = APP.store.getState()['features/base/config'].virtualBackground;
+
+    if (fullVbConfig?.enableV2) {
+        const vbConfig = fullVbConfig.advanced;
+        const capabilities = await detectDeviceTier(vbConfig);
+
+        logger.info(
+            '[VirtualBackground] Using V2 engine —'
+            + ` tier: ${capabilities.tier}, backend: ${capabilities.backend}`
+        );
+
+        const effect = new JitsiStreamBackgroundEffect(undefined, virtualBackground, {
+            capabilities,
+            enableV2: true,
+            vbConfig
+        });
+
+        await effect.init();
+
+        return effect;
     }
 
     if (isWasmDisabled) {
@@ -97,10 +113,5 @@ export async function createVirtualBackgroundEffect(virtualBackground: IBackgrou
         tflite._loadModel(modelBuffer.byteLength);
     }
 
-    const options = {
-        ...segmentationDimensions.modelLandscape,
-        virtualBackground
-    };
-
-    return new JitsiStreamBackgroundEffect(tflite, options);
+    return new JitsiStreamBackgroundEffect(tflite, virtualBackground);
 }

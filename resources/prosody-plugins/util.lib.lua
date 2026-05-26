@@ -362,6 +362,9 @@ end
 -- @param nick the full occupant nick (resource part of the MUC JID)
 -- @return boolean
 function is_focus(nick)
+    if nick == nil then
+        return false;
+    end
     return string.sub(nick, -string.len("/focus")) == "/focus";
 end
 

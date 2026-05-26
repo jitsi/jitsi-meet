@@ -168,6 +168,26 @@ export interface IWatchRTCConfiguration {
     wsUrl?: string;
 }
 
+export interface IVirtualBackgroundAdvancedConfig {
+    edgeHigh?: number;
+    edgeLow?: number;
+    inferenceStride?: number;
+    segmentationHeight?: number;
+    segmentationWidth?: number;
+    targetFps?: number;
+    temporalBlendRatio?: number;
+    testMode?: boolean;
+    tierOverride?: 'high' | 'low' | 'medium';
+    useInsertableStreams?: boolean;
+}
+
+export interface IVirtualBackgroundConfig {
+    advanced?: IVirtualBackgroundAdvancedConfig;
+    disableAddingImages?: boolean;
+    disabled?: boolean;
+    enableV2?: boolean;
+}
+
 export interface IConfig {
     _desktopSharingSourceDevice?: string;
     _immediateReloadThreshold?: string;
@@ -289,6 +309,10 @@ export interface IConfig {
     disableAEC?: boolean;
     disableAGC?: boolean;
     disableAP?: boolean;
+
+    /**
+     * @deprecated Use `virtualBackground.disableAddingImages` instead.
+     */
     disableAddingBackgroundImages?: boolean;
     disableAudioLevels?: boolean;
     disableBeforeUnloadHandlers?: boolean;
@@ -345,6 +369,10 @@ export interface IConfig {
     disableThirdPartyRequests?: boolean;
     disableTileEnlargement?: boolean;
     disableTileView?: boolean;
+
+    /**
+     * @deprecated Use `virtualBackground.disabled` instead.
+     */
     disableVirtualBackground?: boolean;
     disabledNotifications?: Array<string>;
     disabledSounds?: Array<Sounds>;
@@ -700,6 +728,7 @@ export interface IConfig {
         disableClosedCaptions?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
+        renderTranscriptDetails?: boolean;
         translationLanguages?: Array<string>;
         translationLanguagesHead?: Array<string>;
         useAppLanguage?: boolean;
@@ -721,6 +750,7 @@ export interface IConfig {
         mobileCodecPreferenceOrder?: Array<string>;
         persist?: boolean;
     };
+    virtualBackground?: IVirtualBackgroundConfig;
     visitors?: {
         enableMediaOnPromote?: {
             audio?: boolean;

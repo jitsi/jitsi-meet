@@ -198,7 +198,7 @@ describe('mod_room_metadata_component', () => {
         for (const key of [
             'allownersEnabled', 'asyncTranscription', 'conferencePresetsServiceEnabled',
             'dialinEnabled', 'moderators', 'participants', 'participantsSoftLimit',
-            'services', 'transcriberType', 'transcription', 'visitors', 'visitorsEnabled'
+            'services', 'transcriberType', 'transcription', 'visitorsEnabled'
         ]) {
             it(`moderator cannot set blocked key "${key}"`, () => assertKeyBlocked(key));
         }

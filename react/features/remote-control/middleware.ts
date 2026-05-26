@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { PostMessageTransportBackend, Transport } from '@jitsi/js-utils/transport';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
