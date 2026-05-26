@@ -75,10 +75,17 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         const notifyUserLimit = shouldNotifyUserLimit(state);
         const iAmRecorder = Boolean(state['features/base/config'].iAmRecorder);
 
+        const iAmSipGateway = Boolean(state['features/base/config'].iAmSipGateway);
+
+        if ((iAmRecorder || iAmSipGateway) && action.isOpen) {
+            logger.info('Whiteboard open skipped, not supported in recorder mode');
+
+            return next(action);
+        }
+
         if (enforceUserLimit) {
             dispatch(restrictWhiteboard(false));
             dispatch(openDialog('WhiteboardLimitDialog', WhiteboardLimitDialog));
-            iAmRecorder && setTimeout(() => dispatch(hideDialog('WhiteboardLimitDialog', WhiteboardLimitDialog)), 3000);
 
             return next(action);
         }

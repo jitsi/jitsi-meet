@@ -3,7 +3,7 @@ import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
 
 import { resetWhiteboard, setWhiteboardOpen } from './actions.any';
-import { isWhiteboardAllowed, isWhiteboardOpen, isWhiteboardVisible } from './functions';
+import { getCollabDetails, isWhiteboardAllowed, isWhiteboardOpen, isWhiteboardVisible } from './functions';
 import { WhiteboardStatus } from './types';
 
 export * from './actions.any';
@@ -32,6 +32,12 @@ export function toggleWhiteboard(open?: boolean) {
                 dispatch(setWhiteboardOpen(false, true));
             } else if (!isOpen) {
                 dispatch(setWhiteboardOpen(true, true));
+            }
+        } else if (isOpen || getCollabDetails(state)) {
+            const shouldShow = open ?? !isOpen;
+
+            if (shouldShow !== isOpen) {
+                dispatch(setWhiteboardOpen(shouldShow));
             }
         } else if (typeof APP !== 'undefined') {
             APP.API.notifyWhiteboardStatusChanged(WhiteboardStatus.FORBIDDEN);
