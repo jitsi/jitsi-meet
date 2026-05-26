@@ -27,7 +27,7 @@ local stanza = event.stanza;
     if stanza.name == "iq" then
         local jibri = stanza:get_child('jibri', 'http://jitsi.org/protocol/jibri');
         if jibri then
-            if jibri.attr.action == 'start' then
+            if jibri.attr.action and jibri.attr.action:lower() == 'start' then
 
                 local update_app_data = false;
                 local app_data = jibri.attr.app_data;

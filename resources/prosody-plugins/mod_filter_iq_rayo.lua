@@ -101,7 +101,7 @@ module:hook("pre-iq/full", function(event)
             local room_jid = jid.bare(stanza.attr.to);
             local room_real_jid = room_jid_match_rewrite(room_jid);
             local room = main_muc_service.get_room_from_jid(room_real_jid);
-            local feature = dial.attr.to == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call';
+            local feature = (dial.attr.to and dial.attr.to:lower()) == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call';
             local error_message = nil;
 
             if not room or room:get_occupant_jid(stanza.attr.from) == nil then

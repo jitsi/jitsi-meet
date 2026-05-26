@@ -40,13 +40,15 @@ module:hook("pre-iq/full", function(event)
             local token = session.auth_token;
             local room = get_room_from_jid(room_jid_match_rewrite(jid_bare(stanza.attr.to)));
             local occupant = room:get_occupant_by_real_jid(stanza.attr.from);
-            local feature = jibri.attr.recording_mode == 'file' and 'recording' or 'livestreaming';
+            local recording_mode_lower = jibri.attr.recording_mode and jibri.attr.recording_mode:lower();
+            local feature = recording_mode_lower == 'file' and 'recording' or 'livestreaming';
             local is_allowed = is_feature_allowed(
                 feature,
                 session.jitsi_meet_context_features,
                 occupant.role == 'moderator');
 
-            if jibri.attr.action == 'start' or jibri.attr.action == 'stop' then
+            local action_lower = jibri.attr.action and jibri.attr.action:lower();
+            if action_lower == 'start' or action_lower == 'stop' then
                 if not is_allowed then
                     module:log('info', 'Filtering jibri start recording, stanza:%s', tostring(stanza));
                     session.send(st.error_reply(stanza, 'auth', 'forbidden'));

@@ -187,4 +187,41 @@ describe('mod_filter_iq_jibri (feature-based authorization)', () => {
             assert.strictEqual(iqs.length, 1);
         });
     });
+
+    // ─── attribute case normalisation ────────────────────────────────────────
+
+    describe('attribute case normalisation', () => {
+
+        for (const action of [ 'START', 'STOP', 'Start', 'Stop' ]) {
+
+            it(`blocks ${action} (recording_mode=file) when features.recording = false`, async () => {
+                const { client: c, room } = await setup({ context: { features: { recording: false } } });
+                const iqs = await sendAndCollect(c, room, action, 'file');
+
+                assert.strictEqual(iqs.length, 0);
+            });
+        }
+
+        it('passes START (recording_mode=file) when features.recording = true', async () => {
+            const { client: c, room } = await setup({ context: { features: { recording: true } } });
+            const iqs = await sendAndCollect(c, room, 'START', 'file');
+
+            assert.strictEqual(iqs.length, 1);
+        });
+
+        it('blocks START (recording_mode=FILE) when features.recording = false', async () => {
+            const { client: c, room } = await setup({ context: { features: { recording: false } } });
+            const iqs = await sendAndCollect(c, room, 'START', 'FILE');
+
+            assert.strictEqual(iqs.length, 0);
+        });
+
+        it('blocks START (recording_mode=FILE) when only features.livestreaming = true (cross-feature)', async () => {
+            // recording_mode='FILE' must still route to the recording gate, not livestreaming
+            const { client: c, room } = await setup({ context: { features: { livestreaming: true, recording: false } } });
+            const iqs = await sendAndCollect(c, room, 'START', 'FILE');
+
+            assert.strictEqual(iqs.length, 0);
+        });
+    });
 });
