@@ -294,6 +294,47 @@ describe('mod_muc_limit_messages', () => {
             'anonymous sender must still hit the cap with check_token=true');
     });
 
+    // ── priority-race regression detector ─────────────────────────────────────
+    //
+    // mod_filter_messages and mod_muc_limit_messages both hook message/bare at
+    // the default priority (0). Lua's table.sort is not stable for equal keys,
+    // so the firing order is non-deterministic across Prosody restarts (but
+    // fixed for the lifetime of a single Prosody process).
+    //
+    // When muc_limit_messages fires first it increments the room counter before
+    // filter_messages swallows the message, so the LIMIT blocked messages
+    // silently exhaust the cap. The very next real message then trips it.
+
+    it('[race] muc_limit_messages must not count messages already blocked by filter_messages', async () => {
+        const r = nextRoom();
+        const focus = await joinWithFocus(r);
+        const mod   = await connectModerator(r);
+        const anon  = await connectAnon(r);
+
+        clients.push(focus, mod, anon);
+        await mod.joinRoom(r);
+        await anon.joinRoom(r);
+
+        // Restrict chat; filter_messages should swallow every anon message.
+        await restrictChat(mod, r);
+
+        // Send exactly LIMIT messages. If muc_limit_messages runs first on all
+        // of them the counter hits the cap without any real message delivered.
+        for (let i = 0; i < LIMIT; i++) {
+            await anon.sendGroupchat(r, `blocked ${i + 1}`);
+        }
+
+        await unrestrictChat(mod, r);
+
+        // With correct ordering the counter is still 0 and this passes.
+        // With the race the counter is already LIMIT, this triggers the cap
+        // and is rejected with <not-allowed/>.
+        const reply = await anon.sendGroupchat(r, 'should pass');
+
+        assert.notEqual(reply.attrs.type, 'error',
+            'race: muc_limit_messages counted filter_messages-blocked messages');
+    });
+
     // ── filter_messages × muc_limit_messages hook-ordering interaction ────────
     //
     // filter_messages is listed before muc_limit_messages in modules_enabled so

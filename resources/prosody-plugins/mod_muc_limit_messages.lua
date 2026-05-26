@@ -100,7 +100,10 @@ end
 
 -- handle messages sent in the component
 -- 'message/host' is used for breakout rooms
-module:hook('message/full', on_message); -- private messages
-module:hook('message/bare', on_message); -- room messages
+-- Priority -1 ensures modules at the default priority (0) — notably
+-- filter_messages — run first. Messages they block (return true) never reach
+-- this handler and do not consume cap slots.
+module:hook('message/full', on_message, -1); -- private messages
+module:hook('message/bare', on_message, -1); -- room messages
 
 module:hook_global('config-reloaded', load_config);
