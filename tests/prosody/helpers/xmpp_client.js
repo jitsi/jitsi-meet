@@ -407,10 +407,11 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * <message> stanza received bearing the same id — either the MUC
          * reflection (type=groupchat) or an error reply (type=error).
          *
-         * @param {string}  roomJid    e.g. 'room@conference.localhost'
-         * @param {string}  [body]     message body text; omit to send body-less
+         * @param {string}  roomJid      e.g. 'room@conference.localhost'
+         * @param {string}  [body]       message body text; omit to send body-less
+         * @param {Array}   [extensions] extra XML children appended to the stanza
          */
-        async sendGroupchat(roomJid, body) {
+        async sendGroupchat(roomJid, body, extensions = []) {
             const id = `gc-${++_counter}`;
             const children = body === undefined ? [] : [ xml('body', {}, body) ];
 
@@ -418,7 +419,7 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
                 xml('message', { to: roomJid,
                     type: 'groupchat',
                     id },
-                ...children)
+                ...children, ...extensions)
             );
 
             return this.waitForMessage(s => s.attrs.id === id);

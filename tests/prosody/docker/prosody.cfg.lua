@@ -192,6 +192,10 @@ Component "conference.localhost" "muc"
         "muc_displayname";
         "test_observer";
         "filter_messages";
+        -- Listed after filter_messages so that messages already blocked by
+        -- filter_messages (return true) never reach this hook; they do not
+        -- count toward the per-room cap.
+        "muc_limit_messages";
     }
 
     anonymous_strict = true
@@ -215,6 +219,10 @@ Component "conference.localhost" "muc"
     -- focus@auth.localhost is a Prosody admin and is therefore exempt from
     -- token_verification on both muc-room-pre-create and muc-occupant-pre-join,
     -- mirroring production where jicofo is a Prosody admin.
+
+    -- mod_muc_limit_messages: cap per room and honour auth tokens.
+    muc_limit_messages_count = 3
+    muc_limit_messages_check_token = true
 
     -- Blocks unauthenticated users from sending room-owner config IQs
     -- (muc#owner queries), which is how moderator status is granted to other
