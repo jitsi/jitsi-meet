@@ -177,7 +177,7 @@ export function setAllowedUrlDomians(allowedUrlDomains: Array<string>) {
  *
  * @returns {Function}
  */
-export function showConfirmPlayingDialog(actor: String, onSubmit: Function, videoUrl?: string) {
+export function showConfirmPlayingDialog(actor: string, onSubmit: Function, videoUrl?: string) {
     return (dispatch: IStore['dispatch']) => {
         // shows only one dialog at a time
         dispatch(setConfirmShowVideo(false));
