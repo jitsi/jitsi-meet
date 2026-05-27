@@ -38,6 +38,7 @@ import {
     getProfileTabProps,
     getShortcutsTabProps
 } from './functions.web';
+import { EMAIL_REGEX } from './constants';
 import logger from './logger';
 
 /**
@@ -216,7 +217,7 @@ export function submitModeratorTab(newState: any) {
  * Submits the settings from the "Profile" tab of the settings dialog.
  *
  * @param {Object} newState - The new settings.
- * @returns {Function}
+ * @returns {Function | boolean}
  */
 export function submitProfileTab(newState: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
@@ -227,6 +228,9 @@ export function submitProfileTab(newState: any) {
         }
 
         if (newState.email !== currentState.email) {
+            if (newState.email && !EMAIL_REGEX.test(newState.email)) {
+                return false;
+            };
             APP.conference.changeLocalEmail(newState.email);
         }
     };
