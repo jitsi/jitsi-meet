@@ -266,6 +266,7 @@ class Popover extends Component<IProps, IState> {
                 className = { className }
                 id = { id }
                 onClick = { this._onClick }
+                onKeyDown = { this._onEscKey }
                 onKeyPress = { this._onKeyPress }
                 onTouchStart = { this._onTouchStart }
                 { ...(trigger === 'hover' ? {
@@ -454,12 +455,10 @@ class Popover extends Component<IProps, IState> {
      * @returns {void}
      */
     _onEscKey(e: React.KeyboardEvent) {
-        if (e.key === 'Escape') {
+        if (e.key === 'Escape' && this.props.visible) {
             e.preventDefault();
             e.stopPropagation();
-            if (this.props.visible) {
-                this._onHideDialog();
-            }
+            this._onHideDialog();
         }
     }
 
