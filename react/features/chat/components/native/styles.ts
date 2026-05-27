@@ -267,6 +267,17 @@ export default {
         ...BaseTheme.typography.bodyShortRegular,
         color: BaseTheme.palette.text01,
         flex: 1
+    },
+
+    messageMenuHeader: {
+        alignItems: 'center',
+        padding: BaseTheme.spacing[3]
+    },
+
+    messageMenuHeaderText: {
+        ...BaseTheme.typography.bodyShortRegular,
+        color: BaseTheme.palette.text01,
+        textAlign: 'center'
     }
 };
 

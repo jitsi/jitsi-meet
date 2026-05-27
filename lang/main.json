@@ -109,6 +109,7 @@
         }
     },
     "chat": {
+        "copyMessage": "Copy message",
         "disabled": "Sending chat messages is disabled.",
         "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
