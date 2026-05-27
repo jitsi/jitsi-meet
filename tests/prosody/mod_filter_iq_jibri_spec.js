@@ -218,7 +218,8 @@ describe('mod_filter_iq_jibri (feature-based authorization)', () => {
 
         it('blocks START (recording_mode=FILE) when only features.livestreaming = true (cross-feature)', async () => {
             // recording_mode='FILE' must still route to the recording gate, not livestreaming
-            const { client: c, room } = await setup({ context: { features: { livestreaming: true, recording: false } } });
+            const { client: c, room } = await setup({ context: { features: { livestreaming: true,
+                recording: false } } });
             const iqs = await sendAndCollect(c, room, 'START', 'FILE');
 
             assert.strictEqual(iqs.length, 0);

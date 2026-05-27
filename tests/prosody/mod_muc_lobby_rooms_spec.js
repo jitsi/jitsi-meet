@@ -248,7 +248,8 @@ describe('mod_muc_lobby_rooms', () => {
             await focusJoin(r);
             await enableLobby(r);
 
-            const token = mintAsapToken({ room: roomName, context: { user: { moderator: true } } });
+            const token = mintAsapToken({ room: roomName,
+                context: { user: { moderator: true } } });
             const c = await connect({ params: { token } });
             const presence = await c.joinRoom(r, undefined, { displayName: 'TokenMod' });
 
@@ -271,7 +272,8 @@ describe('mod_muc_lobby_rooms', () => {
             await focusJoin(r);
             await enableLobby(r);
 
-            const token = mintAsapToken({ room: roomName, context: { user: { id: 'user1' } } });
+            const token = mintAsapToken({ room: roomName,
+                context: { user: { id: 'user1' } } });
             const c = await connect({ params: { token } });
             const presence = await c.joinRoom(r, undefined, { displayName: 'TokenUser' });
 

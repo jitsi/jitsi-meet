@@ -1,14 +1,14 @@
-import assert from 'assert';
 import { xml } from '@xmpp/client';
+import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
-const CONFERENCE        = 'conference.localhost';
+const CONFERENCE = 'conference.localhost';
 const METADATA_COMPONENT = 'metadata.localhost';
-const JITMEET_NS        = 'http://jitsi.org/jitmeet';
-const LIMIT             = 3;
-const ERROR_TEXT        = 'The message limit for the room has been reached. Messaging is now disabled.';
+const JITMEET_NS = 'http://jitsi.org/jitmeet';
+const LIMIT = 3;
+const ERROR_TEXT = 'The message limit for the room has been reached. Messaging is now disabled.';
 
 let _counter = 0;
 const nextRoom = () => `limit-${++_counter}@${CONFERENCE}`;
@@ -149,8 +149,9 @@ describe('mod_muc_limit_messages', () => {
 
     it('room broadcast is sent when cap is first hit', async () => {
         const r = nextRoom();
-        const focus    = await joinWithFocus(r);
-        const sender   = await connectAnon(r);
+        const focus = await joinWithFocus(r);
+        const sender = await connectAnon(r);
+
         // observer must join before the limit fires so it is an occupant
         // when the broadcast is sent; muc_max_occupants=2 so focus (exempt) +
         // sender + observer = 2 non-whitelisted users, within the limit.
@@ -170,7 +171,7 @@ describe('mod_muc_limit_messages', () => {
                 s => s.attrs.type === 'groupchat'
                     && s.getChildText('body') === ERROR_TEXT,
                 5000
-            ),
+            )
         ]);
 
         assert.strictEqual(senderReply.attrs.type, 'error');
@@ -256,7 +257,7 @@ describe('mod_muc_limit_messages', () => {
     it('authenticated sender lifts the cap permanently', async () => {
         const r = nextRoom();
         const focus = await joinWithFocus(r);
-        const anon   = await connectAnon(r);
+        const anon = await connectAnon(r);
         const authed = await connectWithToken(r);
 
         clients.push(focus, anon, authed);
@@ -283,7 +284,7 @@ describe('mod_muc_limit_messages', () => {
     it('unauthenticated sender is still capped when check_token is enabled', async () => {
         const r = nextRoom();
         const focus = await joinWithFocus(r);
-        const anon  = await connectAnon(r);
+        const anon = await connectAnon(r);
 
         clients.push(focus, anon);
         await anon.joinRoom(r);
@@ -308,8 +309,8 @@ describe('mod_muc_limit_messages', () => {
     it('[race] muc_limit_messages must not count messages already blocked by filter_messages', async () => {
         const r = nextRoom();
         const focus = await joinWithFocus(r);
-        const mod   = await connectModerator(r);
-        const anon  = await connectAnon(r);
+        const mod = await connectModerator(r);
+        const anon = await connectAnon(r);
 
         clients.push(focus, mod, anon);
         await mod.joinRoom(r);
@@ -345,8 +346,8 @@ describe('mod_muc_limit_messages', () => {
     it('messages blocked by filter_messages do not count toward the cap', async () => {
         const r = nextRoom();
         const focus = await joinWithFocus(r);
-        const mod   = await connectModerator(r);
-        const anon  = await connectAnon(r);
+        const mod = await connectModerator(r);
+        const anon = await connectAnon(r);
 
         clients.push(focus, mod, anon);
         await mod.joinRoom(r);
