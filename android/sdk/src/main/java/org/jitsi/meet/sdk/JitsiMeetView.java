@@ -44,7 +44,7 @@ public class JitsiMeetView extends FrameLayout {
     public static final int BACKGROUND_COLOR = 0xFF040404;
 
     /**
-     * React Native surface (new arch replacement for ReactRootView).
+     * React Native surface.
      */
     private ReactSurface reactSurface;
 
