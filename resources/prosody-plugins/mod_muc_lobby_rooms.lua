@@ -617,7 +617,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
         elseif room:get_password() then
             local affiliation = room:get_affiliation(invitee);
             -- if pre-approved and password is set for the room, add the password to allow joining
-            if affiliation == 'member' and not password then
+            if valid_affiliations[affiliation or 'none'] >= valid_affiliations.member and not password then
                 join:tag('password', { xmlns = MUC_NS }):text(room:get_password());
             end
         end

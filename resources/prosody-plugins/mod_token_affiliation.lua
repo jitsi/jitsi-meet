@@ -57,11 +57,18 @@ module:hook("muc-occupant-pre-join", function(event)
     -- moderator approves them (their affiliation is set to ≥member by the
     -- lobby module), the next join attempt will have an existing affiliation
     -- and this hook will upgrade it normally.
+    -- Exception: if the user is bypassing the lobby with the room password,
+    -- apply affiliation immediately so they keep their moderator role.
     if room:get_members_only() then
         local existing = room:get_affiliation(occupant.bare_jid)
         if not existing or existing == 'none' then
-            module:log(LOGLEVEL, "skip, lobby active for %s", occupant.bare_jid)
-            return
+            local join_el = event.stanza:get_child('x', 'http://jabber.org/protocol/muc')
+            local join_pwd = join_el and join_el:get_child_text('password', 'http://jabber.org/protocol/muc')
+            local bypassing_via_password = join_pwd and room:get_password() and join_pwd == room:get_password()
+            if not bypassing_via_password then
+                module:log(LOGLEVEL, "skip, lobby active for %s", occupant.bare_jid)
+                return
+            end
         end
     end
 

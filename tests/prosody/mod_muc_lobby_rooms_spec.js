@@ -7,6 +7,21 @@ import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 const CONFERENCE = 'conference.localhost';
 const LOBBY = 'lobby.conference.localhost';
 const LOBBY_NS = 'http://jitsi.org/jitmeet';
+const MUC_NS = 'http://jabber.org/protocol/muc#user';
+
+/**
+ * Extracts role and affiliation from a self-presence stanza.
+ * @param {object} presence
+ * @returns {{ role: string|null, affiliation: string|null }}
+ */
+function getRoleAndAffiliation(presence) {
+    const item = presence.getChild('x', MUC_NS)?.getChild('item');
+
+    return {
+        role: item?.attrs.role ?? null,
+        affiliation: item?.attrs.affiliation ?? null
+    };
+}
 
 let _roomCounter = 0;
 const room = () => `lobby-${++_roomCounter}@${CONFERENCE}`;
@@ -287,6 +302,79 @@ describe('mod_muc_lobby_rooms', () => {
                 error.getChild('registration-required'),
                 'error condition must be registration-required'
             );
+        });
+
+        // ---------------------------------------------------------------------
+        // lobby + room password
+        // ---------------------------------------------------------------------
+
+        it('moderator token user admitted from lobby joins directly without password prompt', async () => {
+            const r = room();
+            const roomName = r.split('@')[0];
+            const focus = await focusJoin(r);
+
+            await focus.setRoomPassword(r, 'testpass');
+            await enableLobby(r);
+
+            const token = mintAsapToken({ room: roomName,
+                context: { user: { moderator: true } } });
+            const c = await connect({ params: { token } });
+
+            // First attempt — blocked by lobby
+            const blocked = await c.joinRoom(r, undefined, { displayName: 'TokenMod' });
+
+            assert.equal(blocked.attrs.type, 'error', 'first join must be blocked by lobby');
+            assert.ok(
+                blocked.getChild('error')?.getChild('registration-required'),
+                'must be blocked with registration-required'
+            );
+
+            // Simulate moderator approval
+            const userBareJid = c.jid.split('/')[0];
+
+            await setAffiliation(r, userBareJid, 'member');
+
+            // Second attempt — admitted user must join directly as moderator, no password required
+            const presence = await c.joinRoom(r, undefined, { displayName: 'TokenMod' });
+
+            assert.notEqual(presence.attrs.type, 'error',
+                'admitted user must not be asked for password');
+
+            const { role, affiliation } = getRoleAndAffiliation(presence);
+
+            assert.equal(affiliation, 'owner',
+                'admitted moderator token user must get owner affiliation');
+            assert.equal(role, 'moderator',
+                'admitted moderator token user must get moderator role');
+        });
+
+        it('moderator token user who bypasses lobby with room password gets moderator role', async () => {
+            const r = room();
+            const roomName = r.split('@')[0];
+            const focus = await focusJoin(r);
+
+            await focus.setRoomPassword(r, 'testpass');
+            await enableLobby(r);
+
+            const token = mintAsapToken({ room: roomName,
+                context: { user: { moderator: true } } });
+            const c = await connect({ params: { token } });
+
+            // Join with password — must bypass lobby and get moderator role
+            const presence = await c.joinRoom(r, undefined, {
+                password: 'testpass',
+                displayName: 'TokenMod'
+            });
+
+            assert.notEqual(presence.attrs.type, 'error',
+                'password-bypass join must succeed');
+
+            const { role, affiliation } = getRoleAndAffiliation(presence);
+
+            assert.equal(affiliation, 'owner',
+                'moderator token user who bypassed lobby via password must get owner affiliation');
+            assert.equal(role, 'moderator',
+                'moderator token user who bypassed lobby via password must get moderator role');
         });
     });
 });
