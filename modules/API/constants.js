@@ -19,6 +19,20 @@ try {
 export const API_ID = _apiID;
 
 /**
+ * Whether the app is running in embedded mode (without iframe).
+ * This flag is set by JitsiMeetEmbeddedAPI before the app bundle loads.
+ *
+ * @type {boolean}
+ */
+let _embeddedMode = false;
+
+try {
+    _embeddedMode = Boolean(window.JitsiMeetJS?.app?._embeddedMode);
+} catch (_) { /* Ignore. */ }
+
+export const EMBEDDED_MODE = _embeddedMode;
+
+/**
  * The payload name for the datachannel/endpoint text message event.
  */
 export const ENDPOINT_TEXT_MESSAGE_NAME = 'endpoint-text-message';
