@@ -18,7 +18,7 @@ describe('Subject', () => {
         });
         await ensureTwoParticipants();
     });
-    it('subject set locally', async () => await checkSubject(ctx.p1, MY_TEST_SUBJECT));
+    it('subject set locally', async () => await checkSubject(ctx.p1, `${MY_TEST_SUBJECT}thisshouldfail`));
     it('subject set remotely', async () => await checkSubject(ctx.p2, MY_TEST_SUBJECT));
 });
 
