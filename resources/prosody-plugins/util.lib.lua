@@ -255,8 +255,12 @@ function update_presence_identity(stanza, user, group, creator_user, creator_gro
 
     stanza:tag("identity"):tag("user");
     for k, v in pairs(user) do
-        v = tostring(v)
-        stanza:tag(k):text(v):up();
+        -- Skip keys that are not valid XML element names (e.g. contain '<', '>').
+        -- Using such keys as tag names crashes LuaXML.
+        if k:match("^[%a_][%w%-%.%:_]*$") then
+            v = tostring(v)
+            stanza:tag(k):text(v):up();
+        end
     end
     stanza:up();
 
@@ -269,7 +273,9 @@ function update_presence_identity(stanza, user, group, creator_user, creator_gro
     if creator_user then
         stanza:tag("creator_user");
         for k, v in pairs(creator_user) do
-            stanza:tag(k):text(v):up();
+            if k:match("^[%a_][%w%-%.%:_]*$") then
+                stanza:tag(k):text(v):up();
+            end
         end
         stanza:up();
 
