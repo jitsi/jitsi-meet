@@ -1,6 +1,7 @@
 import assert from 'assert';
 
 import { createTestContext } from './helpers/test_context.js';
+import { joinWithTranscriber } from './helpers/xmpp_client.js';
 import { isAvailablePresence } from './helpers/xmpp_utils.js';
 
 const CONFERENCE = 'conference.localhost';
@@ -51,6 +52,77 @@ describe('mod_muc_meeting_id', () => {
         // layer itself. In production this edge case does not arise: jicofo
         // always joins first, creates and configures the room, then regular
         // users arrive after the room is unlocked.
+    });
+
+    // -------------------------------------------------------------------------
+    // transcription filter robustness
+    // -------------------------------------------------------------------------
+    //
+    // filterTranscriptionResult() in mod_muc_meeting_id processes groupchat
+    // messages from transcribers. Two nil-deref bugs exist:
+    //   1. transcript[1].text crashes when transcript is an empty array.
+    //   2. participant.id crashes when the participant field is absent.
+    // Both are reached only from transcriber JIDs (is_transcriber() guard).
+    // Tests verify the session survives both malformed payloads.
+
+    describe('transcription filter robustness', () => {
+
+        it('session survives a transcription-result with an empty transcript array', async () => {
+            const r = room();
+
+            await ctx.connectFocus(r);
+            const transcriber = await joinWithTranscriber(r);
+
+            try {
+                // transcript: [] → transcript[1] is nil → .text crashes
+                await transcriber.sendJsonGroupchat(r, {
+                    type: 'transcription-result',
+                    transcript: [],
+                    participant: { id: 'p1',
+                        name: 'Alice' },
+                    // eslint-disable-next-line camelcase
+                    is_interim: false
+                });
+
+                await new Promise(resolve => setTimeout(resolve, 400));
+
+                const disconnected = await transcriber.waitForDisconnect(300)
+                    .then(() => true, () => false);
+
+                assert.strictEqual(disconnected, false,
+                    'transcriber session must survive empty transcript array');
+            } finally {
+                await transcriber.disconnect();
+            }
+        });
+
+        it('session survives a transcription-result with a missing participant field', async () => {
+            const r = room();
+
+            await ctx.connectFocus(r);
+            const transcriber = await joinWithTranscriber(r);
+
+            try {
+                // participant absent → participant.id crashes
+                await transcriber.sendJsonGroupchat(r, {
+                    type: 'transcription-result',
+                    transcript: [ { text: 'hello world' } ],
+                    // eslint-disable-next-line camelcase
+                    is_interim: false
+                });
+
+                await new Promise(resolve => setTimeout(resolve, 400));
+
+                const disconnected = await transcriber.waitForDisconnect(300)
+                    .then(() => true, () => false);
+
+                assert.strictEqual(disconnected, false,
+                    'transcriber session must survive missing participant field');
+            } finally {
+                await transcriber.disconnect();
+            }
+        });
+
     });
 
     // -------------------------------------------------------------------------

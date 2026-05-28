@@ -166,4 +166,29 @@ describe('mod_muc_auth_ban', () => {
         await c.disconnect();
     });
 
+    // ── Non-JSON 200 — should fail open without crashing ─────────────────────
+    //
+    // When the access manager returns HTTP 200 but with a non-JSON body,
+    // json.decode() returns nil. mod_muc_auth_ban then calls r['access'] on
+    // nil, which crashes the callback. The crash must not affect the session
+    // (fail open: user stays connected).
+
+    it('non-JSON 200 from access manager does not crash or ban the user (fail open)', async () => {
+        await setAccessManagerResponse({ nonJson: true });
+
+        const token = freshToken();
+        const c = await createVpaasClient(token);
+
+        // Wait long enough for the async HTTP callback to have fired and crashed.
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Session must still be alive despite the callback crash.
+        const disconnected = await c.waitForDisconnect(300).then(() => true, () => false);
+
+        assert.strictEqual(disconnected, false,
+            'session must remain alive when access manager returns non-JSON 200');
+
+        await c.disconnect();
+    });
+
 });

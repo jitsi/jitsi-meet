@@ -182,4 +182,34 @@ describe('mod_auth_token (ASAP / RS256)', () => {
         clients.push(c);
         assert.ok(c.jid, 'client should have a JID');
     });
+
+    // ── Room regex claim: invalid Lua pattern ─────────────────────────────────
+    //
+    // When context.room.regex == true and enableDomainVerification is enabled,
+    // util.lib.lua uses the JWT room claim as a Lua pattern via string:match().
+    // An invalid Lua pattern (e.g. unbalanced parenthesis) raises a Lua error
+    // in verify_room() at MUC join time.
+    //
+    // The regex check is skipped when enableDomainVerification is false (the
+    // default in this test config), so the connection and join succeed here.
+    // The test documents: (a) auth-time processing does not crash on the invalid
+    // pattern, and (b) the bug is latent — it would trigger at room join if
+    // enableDomainVerification were true.
+
+    it('accepts token with invalid Lua regex room claim when enableDomainVerification is false', async () => {
+        // '%(invalid' is an invalid Lua pattern (unbalanced class).
+        // process_and_verify_token only stores the claim on the session;
+        // it does not evaluate the pattern. verify_room() (called at MUC join)
+        // is guarded by enableDomainVerification, which is false in this config.
+        const token = mintAsapToken({
+            room: '%(invalid-pattern',
+            context: { room: { regex: true } }
+        });
+
+        const c = await asapClient({ token });
+
+        clients.push(c);
+        assert.ok(c.jid,
+            'connection must succeed: pattern is stored on session but not evaluated at auth time');
+    });
 });

@@ -188,6 +188,43 @@ describe('mod_filter_iq_jibri (feature-based authorization)', () => {
         });
     });
 
+    // ─── robustness: nil room ─────────────────────────────────────────────────
+    //
+    // mod_filter_iq_jibri calls get_room_from_jid() on the IQ target and then
+    // immediately dereferences the result with room:get_occupant_by_real_jid().
+    // If the room does not exist, get_room_from_jid returns nil and the next
+    // line crashes. This test verifies the session survives such an IQ.
+
+    describe('robustness', () => {
+
+        it('session survives a Jibri start IQ targeting a non-existent room', async () => {
+            // We need a connected client but the IQ target room must never have
+            // been created. Use a wildcard token so the connection is accepted.
+            const token = mintAsapToken({ room: '*' });
+            const c = await createXmppClient({ params: { token } });
+
+            clients.push(c);
+
+            // Target a room that has never been created — get_room_from_jid
+            // returns nil, which would crash room:get_occupant_by_real_jid.
+            const ghost = 'ghost-room-nil-test@conference.localhost';
+
+            await clearJibriIqs();
+            await c.sendJibriIq(ghost, 'start', 'file');
+
+            // Give Prosody time to process the stanza.
+            await new Promise(r => setTimeout(r, 400));
+
+            // If the hook crashed and killed the session this resolves immediately;
+            // we expect it to time out (session still alive).
+            const disconnected = await c.waitForDisconnect(400).then(() => true, () => false);
+
+            assert.strictEqual(disconnected, false,
+                'client session must remain alive after IQ to non-existent room');
+        });
+
+    });
+
     // ─── attribute case normalisation ────────────────────────────────────────
 
     describe('attribute case normalisation', () => {

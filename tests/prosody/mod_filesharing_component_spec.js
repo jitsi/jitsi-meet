@@ -371,6 +371,7 @@ describe('mod_filesharing_component', () => {
 
             clients.push(foc, member);
             await member.joinRoom(r);
+
             // No setSessionContext — no features, member affiliation.
 
             member.sendFileSharingAdd(FILESHARING_COMPONENT, { fileId: 'file1' });

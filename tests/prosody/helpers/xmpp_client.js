@@ -472,6 +472,26 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a groupchat message with a <json-message> child to the room.
+         * Fire-and-forget — does NOT wait for the MUC reflection stanza.
+         * Use when testing hooks that may crash or block the message before it
+         * is reflected (waiting for reflection would time out).
+         *
+         * @param {string} roomJid   e.g. 'room@conference.localhost'
+         * @param {object} payload   JSON-serialisable value for the json-message body.
+         */
+        sendJsonGroupchat(roomJid, payload) {
+            return xmpp.send(
+                xml('message', { to: roomJid,
+                    type: 'groupchat',
+                    id: `jm-${++_counter}` },
+                    xml('json-message', { xmlns: 'http://jitsi.org/jitmeet' },
+                        JSON.stringify(payload))
+                )
+            );
+        },
+
+        /**
          * Grants moderator role to the occupant identified by nick.
          * The caller must be the room owner (e.g. the focus client).
          * Resolves with the server's IQ response.
@@ -705,9 +725,11 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * @param {string} [body]        text body for <file-sharing>
          */
         sendFileSharingRaw(componentJid, messageAttrs, fsAttrs, body) {
-            const fsEl = body !== undefined
-                ? xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet', ...fsAttrs }, body)
-                : xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet', ...fsAttrs });
+            const fsEl = body === undefined
+                ? xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet',
+                    ...fsAttrs })
+                : xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet',
+                    ...fsAttrs }, body);
 
             return xmpp.send(
                 xml('message', { to: componentJid,
