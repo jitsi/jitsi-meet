@@ -28,7 +28,6 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.defaults.DefaultReactHost;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ViewManager;
-import com.facebook.soloader.SoLoader;
 import com.oney.WebRTCModule.EglUtils;
 import com.oney.WebRTCModule.WebRTCModuleOptions;
 
@@ -45,8 +44,14 @@ class ReactHostHolder {
     private static final String TAG = ReactHostHolder.class.getSimpleName();
 
     /**
-     * {@link ReactHost} is the new architecture replacement for ReactInstanceManager.
-     * It manages the React Native runtime in bridgeless (Fabric + TurboModules) mode.
+     * FIXME (from linter): Do not place Android context classes in static
+     * fields (static reference to ReactHost which holds a reference to the
+     * application Context); this is a memory leak (and also breaks Instant
+     * Run).
+     *
+     * {@link ReactHost} is the new architecture replacement for
+     * ReactInstanceManager. It manages the React Native runtime in
+     * bridgeless (Fabric + TurboModules) mode.
      */
     private static ReactHost reactHost;
 
@@ -201,9 +206,6 @@ class ReactHostHolder {
             return;
         }
 
-        // Set DefaultTurboModuleManagerDelegate::javaModuleProvider before RN starts.
-        SoLoader.loadLibrary("jitsisdkmodules");
-
         // Initialize the WebRTC module options.
         WebRTCModuleOptions options = WebRTCModuleOptions.getInstance();
         options.enableMediaProjectionService = true;
@@ -228,7 +230,10 @@ class ReactHostHolder {
             null,                   /* jsRuntimeFactory (defaults to Hermes) */
             BuildConfig.DEBUG, /* useDevSupport */
             Collections.emptyList(), /* cxxReactPackageProviders */
-            e -> { throw new RuntimeException(e); }, /* exceptionHandler */
+            e -> {
+                JitsiMeetLogger.e(e, "ReactHost internal exception");
+                throw new RuntimeException(e);
+            }, /* exceptionHandler */
             null                    /* bindingsInstaller */
         );
 

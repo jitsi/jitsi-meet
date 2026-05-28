@@ -45,6 +45,11 @@ public class JitsiInitializer implements Initializer<Boolean> {
             throw new RuntimeException(e);
         }
 
+        // JNI shim that wires DefaultTurboModuleManagerDelegate::javaModuleProvider
+        // to this SDK's TurboModules (see JitsiTurboModuleProvider.cpp). Must run
+        // before RN starts.
+        SoLoader.loadLibrary("jitsisdkmodules");
+
         DefaultNewArchitectureEntryPoint.load();
 
         JitsiMeetUncaughtExceptionHandler.register();

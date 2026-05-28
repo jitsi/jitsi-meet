@@ -27,7 +27,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.facebook.react.ReactHost;
-import com.facebook.react.interfaces.fabric.ReactSurface;
 import com.facebook.react.runtime.ReactSurfaceImpl;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
@@ -46,7 +45,7 @@ public class JitsiMeetView extends FrameLayout {
     /**
      * React Native surface.
      */
-    private ReactSurface reactSurface;
+    private ReactSurfaceImpl reactSurface;
 
     /**
      * Helper method to recursively merge 2 {@link Bundle} objects representing React Native props.
@@ -198,7 +197,7 @@ public class JitsiMeetView extends FrameLayout {
         }
 
         if (reactSurface == null) {
-            reactSurface = reactHost.createSurface(getContext(), appName, props);
+            reactSurface = (ReactSurfaceImpl) reactHost.createSurface(getContext(), appName, props);
 
             ViewGroup surfaceView = reactSurface.getView();
             if (surfaceView != null) {
@@ -208,10 +207,7 @@ public class JitsiMeetView extends FrameLayout {
 
             reactSurface.start();
         } else {
-            // Update props on the existing surface
-            if (reactSurface instanceof ReactSurfaceImpl) {
-                ((ReactSurfaceImpl) reactSurface).updateInitProps(props);
-            }
+            reactSurface.updateInitProps(props);
         }
     }
 
