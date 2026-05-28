@@ -295,18 +295,19 @@ describe('mod_muc_limit_messages', () => {
             'anonymous sender must still hit the cap with check_token=true');
     });
 
-    // ── priority-race regression detector ─────────────────────────────────────
+    // ── filter_messages fires before muc_limit_messages (priority guard) ────────
     //
-    // mod_filter_messages and mod_muc_limit_messages both hook message/bare at
-    // the default priority (0). Lua's table.sort is not stable for equal keys,
-    // so the firing order is non-deterministic across Prosody restarts (but
-    // fixed for the lifetime of a single Prosody process).
+    // mod_filter_messages hooks message/bare at the default priority (0).
+    // mod_muc_limit_messages hooks message/bare at priority -1 (explicit).
+    // Higher priority fires first in Prosody, so filter_messages always runs
+    // before muc_limit_messages — the order is deterministic and does not depend
+    // on module load order or Prosody's internal sort stability.
     //
-    // When muc_limit_messages fires first it increments the room counter before
-    // filter_messages swallows the message, so the LIMIT blocked messages
-    // silently exhaust the cap. The very next real message then trips it.
+    // Regression guard: if muc_limit_messages ever reverts to the default
+    // priority (0) the ordering becomes non-deterministic and blocked messages
+    // could silently exhaust the cap.
 
-    it('[race] muc_limit_messages must not count messages already blocked by filter_messages', async () => {
+    it('muc_limit_messages must not count messages already blocked by filter_messages', async () => {
         const r = nextRoom();
         const focus = await joinWithFocus(r);
         const mod = await connectModerator(r);
@@ -316,32 +317,31 @@ describe('mod_muc_limit_messages', () => {
         await mod.joinRoom(r);
         await anon.joinRoom(r);
 
-        // Restrict chat; filter_messages should swallow every anon message.
+        // Restrict chat; filter_messages (priority 0) swallows every anon message
+        // before muc_limit_messages (priority -1) can increment the counter.
         await restrictChat(mod, r);
 
-        // Send exactly LIMIT messages. If muc_limit_messages runs first on all
-        // of them the counter hits the cap without any real message delivered.
+        // Send exactly LIMIT messages — all blocked by filter_messages; the room
+        // counter must stay at zero.
         for (let i = 0; i < LIMIT; i++) {
             await anon.sendGroupchat(r, `blocked ${i + 1}`);
         }
 
         await unrestrictChat(mod, r);
 
-        // With correct ordering the counter is still 0 and this passes.
-        // With the race the counter is already LIMIT, this triggers the cap
-        // and is rejected with <not-allowed/>.
+        // Counter is still 0, so this message must pass through.
         const reply = await anon.sendGroupchat(r, 'should pass');
 
         assert.notEqual(reply.attrs.type, 'error',
-            'race: muc_limit_messages counted filter_messages-blocked messages');
+            'muc_limit_messages must not count messages blocked by filter_messages');
     });
 
     // ── filter_messages × muc_limit_messages hook-ordering interaction ────────
     //
-    // filter_messages is listed before muc_limit_messages in modules_enabled so
-    // its message/bare hook fires first. When filter_messages blocks a message it
-    // returns true, ending the hook chain — muc_limit_messages never runs and the
-    // room counter is not incremented. Verifies correct ordering.
+    // mod_muc_limit_messages registers its message/bare hook at priority -1 so
+    // that modules at the default priority (0) — including filter_messages — run
+    // first. When filter_messages blocks a message (returns true) the hook chain
+    // ends; muc_limit_messages never runs and the room counter is not incremented.
 
     it('messages blocked by filter_messages do not count toward the cap', async () => {
         const r = nextRoom();

@@ -205,9 +205,10 @@ Component "conference.localhost" "muc"
         "muc_displayname";
         "test_observer";
         "filter_messages";
-        -- Listed after filter_messages so that messages already blocked by
-        -- filter_messages (return true) never reach this hook; they do not
-        -- count toward the per-room cap.
+        -- mod_muc_limit_messages registers its message/bare hook at priority -1
+        -- (below the default 0 used by filter_messages), so filter_messages
+        -- always fires first. Messages it blocks (return true) never reach
+        -- muc_limit_messages and do not count toward the per-room cap.
         "muc_limit_messages";
         -- Destroys a room after a short timeout when only Jibri/transcriber remain.
         "muc_cleanup_backend_services";
