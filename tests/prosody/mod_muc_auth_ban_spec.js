@@ -13,7 +13,8 @@ const VPAAS_PREFIX = 'vpaas-magic-cookie-test';
 // token string. Use a per-test jti so each test gets a unique token and cannot
 // accidentally match a token that was cached as banned by an earlier test.
 let _tokenCounter = 0;
-const freshToken = () => mintAsapToken({ jti: `ban-test-${++_tokenCounter}` });
+const freshToken = () => mintAsapToken({ room: '*',
+    jti: `ban-test-${++_tokenCounter}` });
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 

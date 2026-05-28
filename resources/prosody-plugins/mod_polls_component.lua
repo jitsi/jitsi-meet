@@ -8,7 +8,6 @@ local array = require 'util.array';
 local st = require("util.stanza");
 local jid = require "util.jid";
 local util = module:require("util");
-local muc = module:depends("muc");
 
 local NS_NICK = 'http://jabber.org/protocol/nick';
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;

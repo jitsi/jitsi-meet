@@ -13,11 +13,14 @@ const room = () => `presence-identity-${++_roomCounter}@${CONFERENCE}`;
  * Connects to the hs256.localhost VirtualHost with a signed token.
  * mod_presence_identity is loaded on this VirtualHost.
  *
- * @param {object} [tokenPayload]  JWT payload overrides (e.g. { context: { user: ... } }).
+ * @param {string} roomJid        full room JID, e.g. 'room@conference-identity.localhost'
+ * @param {object} [tokenPayload] JWT payload overrides (e.g. { context: { user: ... } }).
  * @returns {Promise<XmppTestClient>}
  */
-function hs256Client(tokenPayload = {}) {
-    const token = mintToken(tokenPayload);
+function hs256Client(roomJid, tokenPayload = {}) {
+    const roomName = roomJid.split('@')[0];
+    const token = mintToken({ room: roomName,
+        ...tokenPayload });
 
     return createXmppClient({ domain: 'hs256.localhost',
         params: { token } });
@@ -55,7 +58,7 @@ describe('mod_presence_identity', () => {
         it('injects <identity><user> from JWT context.user into MUC presence', async () => {
             const r = room();
 
-            const identity = await hs256Client({
+            const identity = await hs256Client(r, {
                 context: { user: { id: 'u1',
                     name: 'Alice' } }
             });
@@ -83,7 +86,7 @@ describe('mod_presence_identity', () => {
         it('adds <group> inside <identity> when context.group is set', async () => {
             const r = room();
 
-            const identity = await hs256Client({
+            const identity = await hs256Client(r, {
                 context: {
                     user: { id: 'u2' },
                     group: 'mygroup'
@@ -110,7 +113,7 @@ describe('mod_presence_identity', () => {
             const r = room();
 
             // Valid token but no context field → no jitsi_meet_context_user on session.
-            const noContext = await hs256Client();
+            const noContext = await hs256Client(r);
 
             clients.push(noContext);
             await noContext.joinRoom(r);
@@ -134,7 +137,7 @@ describe('mod_presence_identity', () => {
             clients.push(observer);
             await observer.joinRoom(r);
 
-            const identity = await hs256Client({
+            const identity = await hs256Client(r, {
                 context: { user: { id: 'u3',
                     name: 'Bob' } }
             });
@@ -173,7 +176,7 @@ describe('mod_presence_identity', () => {
 
             // Token with no context → no jitsi_meet_context_user on session.
             // The client manually crafts an <identity> element in the join presence.
-            const intruder = await hs256Client();
+            const intruder = await hs256Client(r);
 
             clients.push(intruder);
 
@@ -204,7 +207,7 @@ describe('mod_presence_identity', () => {
 
             // Token with real context.user but also a crafted <identity> in the stanza.
             // The module must strip the crafted one and inject the real one from the session.
-            const identity = await hs256Client({
+            const identity = await hs256Client(r, {
                 context: { user: { id: 'real-id',
                     name: 'Real User' } }
             });

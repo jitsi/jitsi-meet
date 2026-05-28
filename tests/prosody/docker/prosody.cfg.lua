@@ -61,8 +61,6 @@ VirtualHost "localhost"
     asap_key_server = "http://localhost:5280/test-observer/asap-keys"
     signature_algorithm = "RS256"
     allow_empty_token = true
-    -- Match production: room claim not required.
-    asap_require_room_claim = false
 
     -- Serve test_observer HTTP endpoints here so plain HTTP on port 5280 is
     -- reachable. Component HTTP routes end up on HTTPS 5281 due to Prosody's
@@ -89,7 +87,11 @@ VirtualHost "localhost"
         -- ([sub]room@conference.localhost) for all sessions on all hosts.
         "muc_domain_mapper";
         "muc_lobby_rooms";
+        "muc_password_check";
     }
+
+    -- mod_muc_password_check: verify Bearer tokens with the login ASAP key server.
+    enable_password_token_verification = true
 
     shard_name = "test-shard"
     region_name = "test-region"
@@ -136,7 +138,6 @@ VirtualHost "hs256.localhost"
     app_id = "jitsi"
     app_secret = "testsecret"
     signature_algorithm = "HS256"
-    asap_require_room_claim = false
     allow_empty_token = false
     modules_enabled = { "presence_identity" }
 
@@ -188,7 +189,13 @@ Component "conference.localhost" "muc"
         "token_verification";
         "token_affiliation";
         "muc_flip";
+        "muc_displayname";
         "test_observer";
+        "filter_messages";
+        -- Listed after filter_messages so that messages already blocked by
+        -- filter_messages (return true) never reach this hook; they do not
+        -- count toward the per-room cap.
+        "muc_limit_messages";
     }
 
     anonymous_strict = true
@@ -212,6 +219,10 @@ Component "conference.localhost" "muc"
     -- focus@auth.localhost is a Prosody admin and is therefore exempt from
     -- token_verification on both muc-room-pre-create and muc-occupant-pre-join,
     -- mirroring production where jicofo is a Prosody admin.
+
+    -- mod_muc_limit_messages: cap per room and honour auth tokens.
+    muc_limit_messages_count = 3
+    muc_limit_messages_check_token = true
 
     -- Blocks unauthenticated users from sending room-owner config IQs
     -- (muc#owner queries), which is how moderator status is granted to other

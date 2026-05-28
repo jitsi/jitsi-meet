@@ -28,7 +28,8 @@ async function createRoom() {
 
     const focus = await joinWithFocus(roomJid);
 
-    const token = mintAsapToken({ context: { user: { moderator: true } } });
+    const token = mintAsapToken({ room: roomName,
+        context: { user: { moderator: true } } });
     const moderator = await createXmppClient({ params: { room: roomName,
         token } });
 

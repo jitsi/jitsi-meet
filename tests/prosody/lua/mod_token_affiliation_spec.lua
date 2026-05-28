@@ -66,13 +66,22 @@ local function fresh_jid()
     return string.format("user%d@example.com", jid_counter)
 end
 
-local function make_room()
+local function make_room(opts)
+    opts = opts or {}
     local room = {
         jid             = 'testroom@conference.example.com',
         affiliation_log = {},
+        _members_only   = opts.members_only or false,
+        _affiliations   = opts.affiliations or {},
     }
     function room:set_affiliation(actor, bare_jid, affiliation)
         table.insert(self.affiliation_log, { actor = actor, jid = bare_jid, affiliation = affiliation })
+    end
+    function room:get_members_only()
+        return self._members_only
+    end
+    function room:get_affiliation(bare_jid)
+        return self._affiliations[bare_jid]
     end
     return room
 end
