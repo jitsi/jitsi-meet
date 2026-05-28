@@ -612,6 +612,66 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
             });
         },
 
+        /**
+         * Sends a file-sharing add message to a component JID.
+         * The session must have jitsi_web_query_room set (connect with
+         * params: { room: '<roomname>' }) for the component to locate the room.
+         *
+         * @param {string} componentJid  e.g. 'filesharing.localhost'
+         * @param {object} fileObj       file descriptor; must include fileId
+         */
+        sendFileSharingAdd(componentJid, fileObj) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `fs-${++_counter}` },
+                    xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet',
+                        type: 'add' },
+                        JSON.stringify(fileObj)
+                    )
+                )
+            );
+        },
+
+        /**
+         * Sends a file-sharing remove message to a component JID.
+         *
+         * @param {string} componentJid  e.g. 'filesharing.localhost'
+         * @param {string} fileId        ID of the file to remove
+         */
+        sendFileSharingRemove(componentJid, fileId) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `fs-${++_counter}` },
+                    xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet',
+                        type: 'remove',
+                        fileId })
+                )
+            );
+        },
+
+        /**
+         * Sends a raw file-sharing message. Use this to test malformed payloads
+         * or non-standard message types (e.g. type='error').
+         *
+         * @param {string} componentJid  e.g. 'filesharing.localhost'
+         * @param {object} messageAttrs  extra attributes on the outer <message>
+         * @param {object} fsAttrs       attributes on <file-sharing>
+         * @param {string} [body]        text body for <file-sharing>
+         */
+        sendFileSharingRaw(componentJid, messageAttrs, fsAttrs, body) {
+            const fsEl = body !== undefined
+                ? xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet', ...fsAttrs }, body)
+                : xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet', ...fsAttrs });
+
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `fs-${++_counter}`,
+                    ...messageAttrs },
+                    fsEl
+                )
+            );
+        },
+
         async disconnect() {
             try {
                 await xmpp.stop();
