@@ -333,6 +333,29 @@ module:provides("http", {
             };
         end;
 
+        -- POST /test-observer/rooms/breakout-rooms-active
+        -- Body: { "jid": "room@conference.localhost", "active": true|false }
+        -- Sets room._data.breakout_rooms_active, which mod_muc_cleanup_backend_services
+        -- checks to skip the destroy-timer logic when breakout rooms are running.
+        ["POST /rooms/breakout-rooms-active"] = function(event)
+            local data = json.decode(event.request.body or "{}") or {};
+            local room_jid = data.jid;
+            local active = data.active;
+            if room_jid == nil or active == nil then
+                return { status_code = 400; body = '{"error":"missing jid or active"}' };
+            end
+            local room = (shared.rooms or {})[room_jid];
+            if not room then
+                return { status_code = 404; body = '{"error":"room not found"}' };
+            end
+            room._data.breakout_rooms_active = active;
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = '{"ok":true}';
+            };
+        end;
+
         -- POST /test-observer/rooms/max-occupants
         -- Body: { "jid": "room@conference.localhost", "max_occupants": 4 }
         -- Sets room._data.max_occupants so per-room limit tests can override the

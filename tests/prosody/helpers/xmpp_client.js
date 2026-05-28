@@ -3,6 +3,52 @@ import { client, xml } from '@xmpp/client';
 let _counter = 0;
 
 /**
+ * Connects as the Jibri recorder, joins roomJid with nick 'recorder', and
+ * returns the client. Authenticates as recorder@recorder.localhost (internal_hashed).
+ * The bare JID starts with 'recorder@recorder.' so is_jibri() returns true,
+ * matching the default recorder_prefixes in util.lib.lua.
+ *
+ * The caller is responsible for disconnecting the returned client.
+ *
+ * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
+ * @returns {Promise<XmppTestClient>}
+ */
+export async function joinWithJibri(roomJid) {
+    const c = await createXmppClient({
+        domain: 'recorder.localhost',
+        username: 'recorder',
+        password: 'recordersecret'
+    });
+
+    await c.joinRoom(roomJid, 'recorder');
+
+    return c;
+}
+
+/**
+ * Connects as the transcriber, joins roomJid with nick 'transcriber', and
+ * returns the client. Authenticates as transcriber@recorder.localhost.
+ * The bare JID starts with 'transcriber@recorder.' so is_transcriber() returns
+ * true, matching the default transcriber_prefixes in util.lib.lua.
+ *
+ * The caller is responsible for disconnecting the returned client.
+ *
+ * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
+ * @returns {Promise<XmppTestClient>}
+ */
+export async function joinWithTranscriber(roomJid) {
+    const c = await createXmppClient({
+        domain: 'recorder.localhost',
+        username: 'transcriber',
+        password: 'transcribersecret'
+    });
+
+    await c.joinRoom(roomJid, 'transcriber');
+
+    return c;
+}
+
+/**
  * Creates an anonymous XMPP client and joins a Jigasi brewery MUC with a
  * colibri stats presence extension, simulating a Jigasi SIP gateway instance.
  * The presence advertises supports_sip and stress_level so that

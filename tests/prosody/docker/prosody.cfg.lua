@@ -135,6 +135,16 @@ VirtualHost "auth.localhost"
     -- Disable SCRAM and force PLAIN (safe on loopback in the test environment).
     disable_sasl_mechanisms = { "SCRAM-SHA-1", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-256-PLUS" }
 
+-- VirtualHost for Jibri (recorder) and transcriber accounts used by
+-- mod_muc_cleanup_backend_services tests. Accounts on this domain get JIDs whose
+-- bare form starts with 'recorder@recorder.' or 'transcriber@recorder.', satisfying
+-- is_jibri() and is_transcriber() respectively.
+-- recorder.localhost is added to muc_access_whitelist on the MUC component so
+-- these clients bypass token_verification without needing JWT tokens.
+VirtualHost "recorder.localhost"
+    authentication = "internal_hashed"
+    disable_sasl_mechanisms = { "SCRAM-SHA-1", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-256-PLUS" }
+
 -- VirtualHost for HS256 (shared-secret) token auth tests and mod_presence_identity tests.
 VirtualHost "hs256.localhost"
     authentication = "token"
@@ -199,6 +209,8 @@ Component "conference.localhost" "muc"
         -- filter_messages (return true) never reach this hook; they do not
         -- count toward the per-room cap.
         "muc_limit_messages";
+        -- Destroys a room after a short timeout when only Jibri/transcriber remain.
+        "muc_cleanup_backend_services";
     }
 
     anonymous_strict = true
@@ -209,7 +221,9 @@ Component "conference.localhost" "muc"
     -- Clients on whitelist.localhost bypass the occupant limit.
     -- Clients on auth.localhost are the focus (jicofo) admin; they also bypass
     -- the limit and are not counted against it.
-    muc_access_whitelist = { "whitelist.localhost", "auth.localhost" }
+    -- Clients on recorder.localhost are Jibri/transcriber accounts; they bypass
+    -- token_verification (is_jibri / is_transcriber JID prefix checks still apply).
+    muc_access_whitelist = { "whitelist.localhost", "auth.localhost", "recorder.localhost" }
 
     -- Used by mod_muc_password_whitelist tests: clients from whitelist.localhost
     -- are injected with the room password and bypass the password check.
@@ -222,6 +236,9 @@ Component "conference.localhost" "muc"
     -- focus@auth.localhost is a Prosody admin and is therefore exempt from
     -- token_verification on both muc-room-pre-create and muc-occupant-pre-join,
     -- mirroring production where jicofo is a Prosody admin.
+
+    -- mod_muc_cleanup_backend_services: short timeout so tests don't wait 20 s.
+    services_empty_meeting_timeout = 1
 
     -- mod_muc_limit_messages: cap per room and honour auth tokens.
     muc_limit_messages_count = 3

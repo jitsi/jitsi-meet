@@ -78,6 +78,27 @@ export async function setHideDisplayNameForGuests(roomJid, hidden) {
 }
 
 /**
+ * Sets room._data.breakout_rooms_active for mod_muc_cleanup_backend_services tests.
+ * When active is true, the module skips the destroy-timer logic even if only
+ * backend services remain. The room must already exist (at least one occupant).
+ *
+ * @param {string} roomJid  e.g. 'room@conference.localhost'
+ * @param {boolean} active  true to simulate active breakout rooms; false to clear
+ */
+export async function setBreakoutRoomsActive(roomJid, active) {
+    const res = await fetch(`${BASE}/rooms/breakout-rooms-active`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jid: roomJid,
+            active })
+    });
+
+    if (!res.ok) {
+        throw new Error(`setBreakoutRoomsActive failed: ${res.status} ${await res.text()}`);
+    }
+}
+
+/**
  * Sets the per-room max_occupants limit for an existing room.
  * The room must already exist (at least one occupant).
  * This overrides the global muc_max_occupants for this room only.
