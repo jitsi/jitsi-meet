@@ -2,6 +2,10 @@ import React, { useCallback, useEffect } from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+const styles = {
+    container: { flex: 1 }
+};
+
 interface IProps {
 
     /**
@@ -57,8 +61,7 @@ export default function DimensionsDetector(props: IProps) {
     return (
         <View
             onLayout = { onLayout }
-            // eslint-disable-next-line react-native/no-inline-styles
-            style = {{ flex: 1 }} >
+            style = { styles.container } >
             { children }
         </View>
     );
