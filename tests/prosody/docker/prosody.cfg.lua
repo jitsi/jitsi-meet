@@ -88,6 +88,9 @@ VirtualHost "localhost"
         "muc_domain_mapper";
         "muc_lobby_rooms";
         "muc_password_check";
+        -- Required by mod_muc_wait_for_host: handles the create-persistent-lobby-room
+        -- global event and keeps the main room alive while guests wait in the lobby.
+        "persistent_lobby";
     }
 
     -- mod_muc_password_check: verify Bearer tokens with the login ASAP key server.
@@ -270,3 +273,19 @@ Component "metadata.localhost" "room_metadata_component"
 -- Plain MUC for mod_presence_identity tests. No token verification and no
 -- muc_meeting_id lock so any client can join freely without focus.
 Component "conference-identity.localhost" "muc"
+
+-- Isolated MUC component for mod_muc_wait_for_host tests.
+-- No muc_meeting_id, so no jicofo lock — a JWT-authenticated client can join
+-- directly as host without focus unlocking the room first.
+-- muc_mapper_domain_base is set to "conference.localhost" so that:
+--   lobby_muc_component_config = "lobby." .. "conference.localhost"
+--                              = "lobby.conference.localhost"   (already configured above)
+-- This means the existing lobby component is reused for the lobby rooms created
+-- by this component, and no additional lobby MUC component is needed.
+Component "conference-waitforhost.localhost" "muc"
+    storage = "memory"
+    modules_enabled = {
+        "muc_wait_for_host";
+    }
+    muc_mapper_domain_base = "conference.localhost"
+    muc_mapper_domain_prefix = "conference"
