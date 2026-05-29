@@ -996,6 +996,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
             _filmstripWidth,
             _hasScroll,
             _isVerticalFilmstrip,
+            _remoteParticipants,
             _remoteParticipantsLength,
             _resizableFilmstrip,
             _rows,
@@ -1020,7 +1021,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
                     height = { _filmstripHeight }
                     initialScrollLeft = { 0 }
                     initialScrollTop = { 0 }
-                    itemData = {{ filmstripType }}
+                    itemData = {{ filmstripType, remoteParticipants: _remoteParticipants }}
                     itemKey = { this._gridItemKey }
                     onItemsRendered = { this._onGridItemsRendered }
                     overscanRowCount = { 1 }
@@ -1039,6 +1040,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
             itemCount: _remoteParticipantsLength,
             className: `filmstrip__videos remote-videos ${_resizableFilmstrip ? '' : 'height-transition'}`,
             height: _filmstripHeight,
+            itemData: { remoteParticipants: _remoteParticipants },
             itemKey: this._listItemKey,
             itemSize: 0,
             onItemsRendered: this._onListItemsRendered,
