@@ -757,7 +757,6 @@
         "durationNA": "N. D.",
         "encoding": "Encodage",
         "label": "LOR",
-        "labelToolTip": "L'enregistrement local est en cours",
         "localRecording": "Enregistrement local",
         "me": "Moi",
         "messages": {
@@ -1298,7 +1297,6 @@
             "closeMoreActions": "Fermer le menu plus d'actions",
             "closeParticipantsPane": "Fermer le panneau des participants",
             "closedCaptions": "Sous-titres",
-            "collapse": "Plier",
             "document": "Basculement du document partagé",
             "documentClose": "Fermer le document partagé",
             "documentOpen": "Ouvrir le document partagé",

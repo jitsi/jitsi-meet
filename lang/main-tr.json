@@ -699,7 +699,6 @@
         "durationNA": "Kullanılamaz",
         "encoding": "Kodlama",
         "label": "KK",
-        "labelToolTip": "Kayıt meşgul",
         "localRecording": "Kayıt",
         "me": "Ben",
         "messages": {
@@ -1212,7 +1211,6 @@
             "closeChat": "Sohbeti kapat",
             "closeMoreActions": "Diğer işlemler menüsünü kapat",
             "closeParticipantsPane": "Katılımcılar bölmesini kapat",
-            "collapse": "Daralt",
             "document": "Paylaşılan dokümanı aç/kapat",
             "documentClose": "Paylaşılan belgeyi kapat",
             "documentOpen": "Paylaşılan belgeyi aç",
@@ -1389,7 +1387,6 @@
         "ccButtonTooltip": "Altyazılıar başlat / durdur",
         "expandedLabel": "Deşifre etme açık",
         "failedToStart": "Deşifre etme başlatılamadı",
-        "labelToolTip": "Toplantı deşifre ediliyor",
         "sourceLanguageDesc": "Şu anda toplantı dili <b>{{sourceLanguage}</b> olarak ayarlıdır. <br/> Bunu şuradan değiştirebilirsiniz",
         "sourceLanguageHere": "burada",
         "start": "Altyazıları göstermeye başla",

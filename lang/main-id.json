@@ -696,7 +696,6 @@
         "durationNA": "N/A",
         "encoding": "Pengodean",
         "label": "Perekaman Lokal",
-        "labelToolTip": "Perekaman lokal sedang diaktifkan",
         "localRecording": "Perekaman Lokal",
         "me": "Saya",
         "messages": {
@@ -1196,7 +1195,6 @@
             "closeChat": "Tutup obrolan",
             "closeMoreActions": "Tutup menu tindakan lebih lanjut",
             "closeParticipantsPane": "Tutup panel peserta",
-            "collapse": "Lipat",
             "document": "Alihkan dokumen bersama",
             "documentClose": "Tutup dokumen bersama",
             "documentOpen": "Buka dokumen bersama",
@@ -1372,7 +1370,6 @@
         "ccButtonTooltip": "Mulai / Berhenti menampilkan subtitle",
         "expandedLabel": "Transkripsi sedang aktif",
         "failedToStart": "Transkripsi gagal dimulai",
-        "labelToolTip": "Pertemuan sedang ditranskripsi",
         "sourceLanguageDesc": "Saat ini bahasa pertemuan diatur ke <b>{{sourceLanguage}}</b>. <br/> Anda dapat mengubahnya dari ",
         "sourceLanguageHere": "di sini",
         "start": "Mulai menampilkan subtitle",

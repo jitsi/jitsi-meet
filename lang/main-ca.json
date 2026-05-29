@@ -607,7 +607,6 @@
         "durationNA": "N/D",
         "encoding": "Codificació",
         "label": "ENREG LOC",
-        "labelToolTip": "L'enregistrament local està funcionant",
         "localRecording": "Enregistrament local",
         "me": "Jo",
         "messages": {
@@ -1067,7 +1066,6 @@
             "cc": "Activa o desactiva els subtítols",
             "chat": "Obre o tanca el xat",
             "clap": "Picament de mans",
-            "collapse": "Col·lapsa",
             "document": "Activa o desactiva el document compartit",
             "download": "Baixeu les nostres aplicacions",
             "embedMeeting": "Insereix la reunió",
@@ -1220,7 +1218,6 @@
         "error": "La transcripció ha fallat. Torneu-ho a intentar més tard.",
         "expandedLabel": "La transcripció està activada",
         "failedToStart": "No s'ha pogut iniciar la transcripció",
-        "labelToolTip": "La reunió s'està transcrivint",
         "off": "La transcripció s'ha aturat",
         "pending": "S'està preparant per a enregistrar la reunió…",
         "sourceLanguageDesc": "La llengua actual de la reunió és <b>{{sourceLanguage}}</b>. <br/> Podeu canviar-la",

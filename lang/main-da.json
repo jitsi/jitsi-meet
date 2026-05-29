@@ -771,7 +771,6 @@
         "durationNA": "N/a",
         "encoding": "Indkodning",
         "label": "Lor",
-        "labelToolTip": "Lokal optagelse er engageret",
         "localRecording": "Lokal optagelse",
         "me": "Mig",
         "messages": {
@@ -1312,7 +1311,6 @@
             "closeMoreActions": "Luk 'flere handlinger' menu",
             "closeParticipantsPane": "Luk deltagerpanel",
             "closedCaptions": "Undertekster",
-            "collapse": "Bryder sammen",
             "document": "Til/fra for delt dokument",
             "documentClose": "Luk delt dokument",
             "documentOpen": "Åben delt dokument",

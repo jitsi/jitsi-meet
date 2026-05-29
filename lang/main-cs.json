@@ -701,7 +701,6 @@
         "durationNA": "N/A",
         "encoding": "Kódování",
         "label": "LOR",
-        "labelToolTip": "Místní nahrávání je spuštěno",
         "localRecording": "Místní nahrávání",
         "me": "Já",
         "messages": {
@@ -1219,7 +1218,6 @@
             "closeChat": "Zavřít chat",
             "closeMoreActions": "Zavřít nabídku dalších akcí",
             "closeParticipantsPane": "Zavřít panel účastníků",
-            "collapse": "Zabalit",
             "document": "Přepnout sdílený dokument",
             "documentClose": "Zavřít sdílený dokument",
             "documentOpen": "Otevřít sdílený dokument",
@@ -1399,7 +1397,6 @@
         "ccButtonTooltip": "Spustit / zastavit titulky",
         "expandedLabel": "Přepis je momentálně zapnutý",
         "failed": "Přepis se nezdařil",
-        "labelToolTip": "Schůzka se přepisuje",
         "sourceLanguageDesc": "Momentálně je jazyk schůzky nastaven na <b>{{sourceLanguage}}</b>. <br/> Můžete jej změnit z ",
         "sourceLanguageHere": "zde",
         "start": "Začít zobrazovat titulky",

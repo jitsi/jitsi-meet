@@ -775,7 +775,6 @@
         "durationNA": "­–",
         "encoding": "Koodaus",
         "label": "LOR",
-        "labelToolTip": "Paikallinen nauhoitus käytössä",
         "localRecording": "Paikallinen nauhoitus",
         "me": "Minä",
         "messages": {
@@ -1317,7 +1316,6 @@
             "closeMoreActions": "Sulje lisätoiminnot-valikko",
             "closeParticipantsPane": "Sulje osallistujapaneeli",
             "closedCaptions": "Tekstitys",
-            "collapse": "Tiivistä",
             "document": "Säädä jaettua asiakirjaa",
             "documentClose": "Sulje jaettu dokumentti",
             "documentOpen": "Avaa jaettu dokumentti",
@@ -1516,7 +1514,6 @@
         "ccButtonTooltip": "Tekstitys päälle/pois",
         "expandedLabel": "Puhtaaksikirjoitus on käytössä",
         "failed": "Litterointi epäonnistui",
-        "labelToolTip": "Kokousta kirjoitetaan puhtaaksi",
         "labelTooltipExtra": "Lisäksi litterointi on saatavilla myöhemmin.",
         "openClosedCaptions": "Avaa tekstitykset",
         "original": "Alkuperäinen",

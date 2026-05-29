@@ -764,7 +764,6 @@
         "durationNA": "不适用",
         "encoding": "编码中",
         "label": "LOR",
-        "labelToolTip": "本地录制已开启",
         "localRecording": "本地录制中",
         "me": "我",
         "messages": {
@@ -1307,7 +1306,6 @@
             "closeMoreActions": "关闭更多操作菜单",
             "closeParticipantsPane": "关闭参会者面板",
             "closedCaptions": "隐藏字幕",
-            "collapse": "收起",
             "document": "切换共享文档",
             "documentClose": "关闭共享文档",
             "documentOpen": "打开共享文档",

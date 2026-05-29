@@ -540,7 +540,6 @@
         "durationNA": "N/A",
         "encoding": "Asettengel",
         "label": "LOR",
-        "labelToolTip": "Asekles adigan iteddu",
         "localRecording": "Asekles adigan",
         "me": "Nekk",
         "messages": {
@@ -898,7 +897,6 @@
             "cc": "Ffer/Sken iduzwilen",
             "chat": "Ffer/Sken asfaylu n udiwenni",
             "clap": "Aṣeffaq",
-            "collapse": "Ḍfes",
             "document": "Ldi / Mdel isemli yettwabḍan",
             "download": "Sali-d isnasen-nneɣ",
             "embedMeeting": "Sleɣ timlilit",
@@ -1034,7 +1032,6 @@
         "error": "Ur yeddi ara useskel. Ɛreḍ tikkelt-nniḍen.",
         "expandedLabel": "Aseskel iteddu akka tura",
         "failedToStart": "Aseskel yegguma ad yebdu",
-        "labelToolTip": "Timlilit ha-tt-an la tettwaseskal",
         "off": "Aseskel yettwaḥbes",
         "pending": "Aheyyi i useskel n temlilit…",
         "start": "Bdu askan n yizwal isnawanen",

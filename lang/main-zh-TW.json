@@ -764,7 +764,6 @@
         "durationNA": "不適用",
         "encoding": "編碼中",
         "label": "本機錄製",
-        "labelToolTip": "本機錄製已啟用",
         "localRecording": "本機錄製中",
         "me": "我",
         "messages": {
@@ -1307,7 +1306,6 @@
             "closeMoreActions": "關閉更多操作選單",
             "closeParticipantsPane": "關閉與會者窗格",
             "closedCaptions": "停用即時字幕",
-            "collapse": "收回",
             "document": "切換檔案分享",
             "documentClose": "關閉檔案分享",
             "documentOpen": "打開檔案分享",

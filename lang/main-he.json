@@ -415,7 +415,6 @@
         "durationNA": "ל/ז",
         "encoding": "קידוד",
         "label": "הקלטה מקומית",
-        "labelToolTip": "הקלטה מקומית פועלת",
         "localRecording": "הקלטה מקומית",
         "me": "אני",
         "messages": {
@@ -705,7 +704,6 @@
         "error": "התמלול נכשל. אנא נסה שוב.",
         "expandedLabel": "התמלול פועל כעת",
         "failedToStart": "הפעלת תמלול כשלה",
-        "labelToolTip": "הפגישה מתומללת",
         "off": "התמלול פסק",
         "pending": "מתכונן לתמלול הפגישה…",
         "start": "התחל הצגת כתוביות",

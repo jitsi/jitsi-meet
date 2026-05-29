@@ -757,7 +757,6 @@
         "durationNA": "Няма",
         "encoding": "Кодек",
         "label": "Етикет",
-        "labelToolTip": "Локалният запис е включен",
         "localRecording": "Локален запис",
         "me": "Аз",
         "messages": {
@@ -1296,7 +1295,6 @@
             "closeMoreActions": "Затвори менюто с още действия",
             "closeParticipantsPane": "Затвори панела с участници",
             "closedCaptions": "Субтитри",
-            "collapse": "Свий",
             "document": "Показване на споделен документ",
             "documentClose": "Затвори споделения документ",
             "documentOpen": "Отвори споделен документ",

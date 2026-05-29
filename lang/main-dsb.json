@@ -608,7 +608,6 @@
         "durationNA": "N/A",
         "encoding": "koděrowanje",
         "label": "LOR",
-        "labelToolTip": "lokalne nagrawanje jo aktiwěrowane",
         "localRecording": "lokalne nagrawanje",
         "me": "ja",
         "messages": {
@@ -1068,7 +1067,6 @@
             "cc": "pódtitele zašaltowaś / wušaltowaś",
             "chat": "woknyško za chat pokazaś / schowaś",
             "clap": "pśiklasnuś",
-            "collapse": "miniměrowaś",
             "document": "sobuźělony dokument zacyniś",
             "download": "našu aplikaciju ześěgnuś",
             "embedMeeting": "konferencu integrowaś",
@@ -1221,7 +1219,6 @@
         "error": "Nagrawanje njejo se raźiło. Wopytajśo hyšći raz.",
         "expandedLabel": "Transkriběrowanje jo tuchylu aktiwěrowane",
         "failedToStart": "Transkriběrowanje njejo mógło se zachopiś",
-        "labelToolTip": "Konferenca se transkriběrujo",
         "off": "Transkriběrowanje jo pśetergnjone",
         "pending": "Transkriběrowanje konferency se pśigótujo…",
         "sourceLanguageDesc": "",

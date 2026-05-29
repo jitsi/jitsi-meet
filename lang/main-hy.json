@@ -373,7 +373,6 @@
         "durationNA": "",
         "encoding": "",
         "label": "",
-        "labelToolTip": "",
         "localRecording": "",
         "me": "Ես",
         "messages": {
@@ -628,7 +627,6 @@
         "error": "Ձայնագրությյունը չստացվեց: Փորձեք կրկին",
         "expandedLabel": "",
         "failedToStart": "",
-        "labelToolTip": "",
         "off": "",
         "pending": "",
         "start": "",

@@ -643,7 +643,6 @@
         "durationNA": "N/A",
         "encoding": "Codificación",
         "label": "GRA",
-        "labelToolTip": "Grabación local activada",
         "localRecording": "Grabación local",
         "me": "Yo",
         "messages": {
@@ -1124,7 +1123,6 @@
             "closeChat": "Cerrar chat",
             "closeMoreActions": "Cerrar el menú de más acciones",
             "closeParticipantsPane": "Cerrar panel de participantes",
-            "collapse": "Colapsar",
             "document": "Alternar documento compartido",
             "documentClose": "Cerrar documento compartido",
             "documentOpen": "Abrir documento compartido",
@@ -1301,7 +1299,6 @@
         "error": "La transcripción falló. Por favor, inténtelo nuevamente.",
         "expandedLabel": "Transcripción encendida",
         "failedToStart": "No es posible iniciar la transcripción",
-        "labelToolTip": "La reunión se está transcribiendo",
         "off": "Transcripción detenida",
         "pending": "Preparando para transcribir la reunión…",
         "sourceLanguageDesc": "El lenguaje actual de la reunión es <b>{{sourceLanguage}}</b>. <br/> Puedes cambiarlo desde ",

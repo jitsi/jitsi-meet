@@ -507,7 +507,6 @@
         "durationNA": "N/A",
         "encoding": "Kódolás",
         "label": "HeF",
-        "labelToolTip": "Helyi felvétel aktiválva",
         "localRecording": "Helyi felvétel",
         "me": "Én",
         "messages": {
@@ -981,7 +980,6 @@
         "error": "Átírat meghiúsult. Próbálja meg ismét.",
         "expandedLabel": "Az átirat jelenleg be van kapcsolva",
         "failedToStart": "Meghiúsult az átirat kezdése",
-        "labelToolTip": "Az értekezlet átirata elkezdődött",
         "off": "Az átirat készítése le lett állítva",
         "pending": "Előkészület az értekezlet átiratának készítésére…",
         "start": "Felirat megjelenítésének kezdése",

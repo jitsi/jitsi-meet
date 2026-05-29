@@ -541,7 +541,6 @@
         "durationNA": "N/A",
         "encoding": "Kodiranje",
         "label": "LOR",
-        "labelToolTip": "Lokalno snemanje je vključeno",
         "localRecording": "Lokalno snemanje",
         "me": "Jaz",
         "messages": {
@@ -899,7 +898,6 @@
             "cc": "Preklopi podnapise",
             "chat": "Preklopi okno za klepet",
             "clap": "plosk",
-            "collapse": "Skrči",
             "document": "Preklopi deljeni dokument",
             "download": "Prenesi naše aplikacije",
             "embedMeeting": "Vdelaj sestanek",
@@ -1035,7 +1033,6 @@
         "error": "Prepisovanje ni uspelo. Prosim poskusite ponovno.",
         "expandedLabel": "Prepisovanje je vključeno",
         "failedToStart": "Prepisovanja ni bilo mogoče začeti",
-        "labelToolTip": "Sestanek se prepisuje",
         "off": "Prepisovanje zaustavljeno",
         "pending": "Priprava na prepis sestanka…",
         "start": "Začni prikazovati podnapise",

@@ -409,7 +409,6 @@
         "durationNA": "N/A",
         "encoding": "Kodeerimine",
         "label": "LOR",
-        "labelToolTip": "Kohalik salvestamine on alustatud",
         "localRecording": "Kohalik salvestamine",
         "me": "Mina",
         "messages": {
@@ -692,7 +691,6 @@
         "error": "Transkribeerimine ebaõnnestus. Proovi uuesti.",
         "expandedLabel": "Transkribeerimine on sisse lülitatud",
         "failedToStart": "Transkribeerimise alustamine ebaõnnestus",
-        "labelToolTip": "Kõne transkribeeritakse",
         "off": "Transkribeerimine peatatud",
         "pending": "Transkribeerimise ettevalmistus…",
         "start": "Alusta subtiitrite kuvamist",
