@@ -220,6 +220,10 @@ const ChatMessage = ({
     const [ isHovered, setIsHovered ] = useState(false);
     const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
 
+    if (!message?.messageId) {
+        return null;
+    }
+
     const handleMouseEnter = useCallback(() => {
         setIsHovered(true);
     }, []);
@@ -334,8 +338,8 @@ const ChatMessage = ({
                 trigger = 'hover'
                 visible = { isReactionsOpen }>
                 <div className = { classes.reactionBox }>
-                    {reactionsArray.slice(0, numReactionsDisplayed).map(({ reaction }, index) =>
-                        <p key = { index }>{reaction}</p>
+                    {reactionsArray.slice(0, numReactionsDisplayed).map(({ reaction }) =>
+                        <p key = { reaction }>{reaction}</p>
                     )}
                     {reactionsArray.length > numReactionsDisplayed && (
                         <p className = { classes.reactionCount }>
