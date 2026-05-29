@@ -978,7 +978,8 @@
         "setDisplayNameLabel": "Nama",
         "setEmailInput": "Masukkan email",
         "setEmailLabel": "Email Gravatar",
-        "title": "Profil"
+        "title": "Profil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Ingin berbicara",
     "raisedHandsLabel": "Jumlah tangan yang diangkat",

@@ -1071,7 +1071,8 @@
         "setDisplayNameLabel": "Définir votre nom d'affichage",
         "setEmailInput": "Entrer votre adresse courriel",
         "setEmailLabel": "Définir votre courriel Gravatar",
-        "title": "Profil"
+        "title": "Profil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Aimerait prendre la parole",
     "raisedHandsLabel": "Nombre de mains levées",

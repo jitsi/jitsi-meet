@@ -958,7 +958,8 @@
         "setDisplayNameLabel": "Agordi vian videblan nomon",
         "setEmailInput": "Enigu retpoŝtadreson",
         "setEmailLabel": "Retpoŝtadreso ligita al Gravatar",
-        "title": "Profilo"
+        "title": "Profilo",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Ŝatus paroli",
     "raisedHandsLabel": "Nombro da levitaj manoj",

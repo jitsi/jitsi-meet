@@ -1100,7 +1100,8 @@
         "setDisplayNameLabel": "नाम",
         "setEmailInput": "ई-मेल दर्ज करें",
         "setEmailLabel": "Gravatar ईमेल",
-        "title": "प्रोफ़ाइल"
+        "title": "प्रोफ़ाइल",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "बोलना चाहेंगे",
     "raisedHandsLabel": "उठे हुए हाथों की संख्या",

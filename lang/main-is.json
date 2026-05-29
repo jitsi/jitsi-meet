@@ -959,7 +959,8 @@
         "setDisplayNameLabel": "Nafn",
         "setEmailInput": "Settu inn tölvupóstfang",
         "setEmailLabel": "Gravatar-tölvupóstfang",
-        "title": "Persónusnið"
+        "title": "Persónusnið",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Myndi vilja taka til máls",
     "raisedHandsLabel": "Fjöldi uppréttra handa",

@@ -706,7 +706,8 @@
         "setDisplayNameLabel": "Állítsa be a megjelenő nevet",
         "setEmailInput": "Adjon meg egy email címet",
         "setEmailLabel": "Adja meg a gravatar email címet",
-        "title": "Profil"
+        "title": "Profil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Beszélni szeretnék",
     "recording": {

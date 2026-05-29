@@ -655,7 +655,8 @@
         "setDisplayNameLabel": "చూపించాల్సిన పేరు అమర్చుకోండి",
         "setEmailInput": "ఈమెయిలు ఇవ్వండి",
         "setEmailLabel": "గ్రావతార్ ఈమెయిలు అమర్చుకోండి",
-        "title": "ప్రొఫైలు"
+        "title": "ప్రొఫైలు",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "మాట్లాడాలనుకుంటున్నారు",
     "recording": {

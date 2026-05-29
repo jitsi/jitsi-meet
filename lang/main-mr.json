@@ -533,7 +533,8 @@
         "setDisplayNameLabel": " आपले प्रदर्शन नाव सेट करा",
         "setEmailInput": "ई-मेल प्रविष्ट करा",
         "setEmailLabel": "आपला गुरुतर ईमेल सेट करा",
-        "title": "प्रोफाइल"
+        "title": "प्रोफाइल",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "बोलायला आवडेल",
     "recording": {
