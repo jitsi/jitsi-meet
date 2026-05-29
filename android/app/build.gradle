@@ -38,17 +38,6 @@ android {
         }
     }
 
-    packagingOptions {
-        pickFirst '**/libfbjni.so'
-        pickFirst '**/libreactnative.so'
-        pickFirst '**/libjsi.so'
-        pickFirst '**/libc++_shared.so'
-        pickFirst '**/libhermesvm.so'
-        pickFirst '**/libhermestooling.so'
-        exclude '**/libjsc.so'
-        exclude '**/libjsctooling.so'
-    }
-
     signingConfigs {
         debug {
             storeFile file('debug.keystore')

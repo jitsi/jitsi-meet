@@ -115,6 +115,19 @@ allprojects {
             }
         }
 
+        if (project.plugins.hasPlugin('com.android.application')) {
+            project.android.packagingOptions {
+                pickFirst '**/libfbjni.so'
+                pickFirst '**/libreactnative.so'
+                pickFirst '**/libjsi.so'
+                pickFirst '**/libc++_shared.so'
+                pickFirst '**/libhermesvm.so'
+                pickFirst '**/libhermestooling.so'
+                exclude '**/libjsc.so'
+                exclude '**/libjsctooling.so'
+            }
+        }
+
         if (project.name.contains('react-native')) {
             def npmManifest = project.file('../package.json')
             def json = new JsonSlurper().parseText(npmManifest.text)
