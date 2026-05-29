@@ -79,7 +79,7 @@ export function getVisibleNativeButtons(
         filteredButtons = VISITORS_MODE_BUTTONS.filter(button => filteredButtons.indexOf(button) > -1);
     }
 
-    const { order } = mainToolbarButtonsThresholds.find(({ width }) => clientWidth > width)
+    const { order } = mainToolbarButtonsThresholds.find(({ width }) => clientWidth >= width)
     || mainToolbarButtonsThresholds[mainToolbarButtonsThresholds.length - 1];
 
     const mainToolbarButtonKeysOrder = [
@@ -99,11 +99,11 @@ export function getVisibleNativeButtons(
 
     // if we have 1 button in the overflow menu it is better to directly display it in the main toolbar by replacing
     // the "More" menu button with it.
-    if (overflowMenuButtons.length === 1) {
-        const button = overflowMenuButtons.shift()?.key;
+    //if (overflowMenuButtons.length === 1) {
+    //    const button = overflowMenuButtons.shift()?.key;
 
-        button && mainButtonsKeys.push(button);
-    }
+    //    button && mainButtonsKeys.push(button);
+    //}
 
     const mainMenuButtons
         = mainButtonsKeys.map(key => allButtons[key]).sort((a, b) => {
