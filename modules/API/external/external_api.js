@@ -341,6 +341,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._onStageParticipant = undefined;
         this._iAmvisitor = undefined;
         this._pipConfig = configOverwrite?.pip;
+        this._dataChannelOpened = false;
         this._setupListeners();
         id++;
     }
@@ -641,6 +642,12 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             const eventName = events[name];
 
             if (eventName) {
+                // Cache dataChannelOpened so late-registering listeners still fire.
+                // Must be set before emit so addListener replay works synchronously.
+                if (eventName === 'dataChannelOpened') {
+                    this._dataChannelOpened = true;
+                }
+
                 this.emit(eventName, data);
 
                 return true;
@@ -662,6 +669,25 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         });
 
         this._setupIntersectionObserver();
+    }
+
+    /**
+     * Overrides EventEmitter.addListener to fix a race condition where
+     * dataChannelOpened fires before the parent page can register a listener.
+     * If the event already fired, the callback is invoked on the next tick.
+     *
+     * @param {string} event - The event name.
+     * @param {Function} listener - The callback function.
+     * @returns {JitsiMeetExternalAPI} This.
+     */
+    addListener(event, listener) {
+        super.addListener(event, listener);
+
+        if (event === 'dataChannelOpened' && this._dataChannelOpened) {
+            setTimeout(() => listener({}), 0);
+        }
+
+        return this;
     }
 
     /**
@@ -1593,11 +1619,12 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Enable or disable the virtual background with a custom base64 image.
      *
      * @param {boolean} enabled - The boolean value to enable or disable.
-     * @param {string} backgroundImage - The base64 image.
+     * @param {string} backgroundType - 'image' | 'blur' | 'desktop-blur' | 'none'.
+     * @param {string} virtualSource - URL or base64 image for image backgrounds.
      * @returns {void}
     */
-    setVirtualBackground(enabled, backgroundImage) {
-        this.executeCommand('setVirtualBackground', enabled, backgroundImage);
+    setVirtualBackground(enabled, backgroundType, virtualSource) {
+        this.executeCommand('setVirtualBackground', enabled, backgroundType, virtualSource);
     }
 
     /**
