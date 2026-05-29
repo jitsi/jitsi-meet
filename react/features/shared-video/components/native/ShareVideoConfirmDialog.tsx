@@ -15,6 +15,11 @@ interface IProps extends DialogProps {
      * The function to execute when confirmed.
      */
     onSubmit: () => void;
+
+    /**
+     * The URL of the video being shared (for transparency).
+     */
+    videoUrl?: string;
 }
 
 /**
@@ -22,14 +27,33 @@ interface IProps extends DialogProps {
  *
  * @returns {JSX.Element}
  */
-export default function ShareVideoConfirmDialog({ actorName, onSubmit }: IProps): JSX.Element {
+export default function ShareVideoConfirmDialog({ actorName, onSubmit, videoUrl }: IProps): JSX.Element {
     const { t } = useTranslation();
+
+    // Extract hostname from URL for user awareness
+    let displayUrl = '';
+
+    if (videoUrl) {
+        try {
+            const urlObj = new URL(videoUrl);
+
+            displayUrl = urlObj.hostname;
+        } catch (_e) {
+            // If not a valid URL, use the videoUrl as-is for display
+            displayUrl = videoUrl;
+        }
+    }
+
+    // Build description with video source info if available
+    const description = displayUrl
+        ? `${t('dialog.shareVideoConfirmPlay')}\n\n${t('shareVideoSourceParenthesis', { host: displayUrl })}`
+        : t('dialog.shareVideoConfirmPlay');
 
     return (
         <ConfirmDialog
             cancelLabel = 'dialog.Cancel'
             confirmLabel = 'dialog.Ok'
-            descriptionKey = 'dialog.shareVideoConfirmPlay'
+            description = { description }
             onSubmit = { onSubmit }
             title = { t('dialog.shareVideoConfirmPlayTitle', {
                 name: actorName

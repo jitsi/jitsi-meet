@@ -173,16 +173,18 @@ export function setAllowedUrlDomians(allowedUrlDomains: Array<string>) {
  *
  * @param {string} actor - The actor's name.
  * @param {Function} onSubmit - The function to execute when confirmed.
+ * @param {string} videoUrl - The URL of the video being shared.
  *
  * @returns {Function}
  */
-export function showConfirmPlayingDialog(actor: String, onSubmit: Function) {
+export function showConfirmPlayingDialog(actor: string, onSubmit: Function, videoUrl?: string) {
     return (dispatch: IStore['dispatch']) => {
         // shows only one dialog at a time
         dispatch(setConfirmShowVideo(false));
 
         dispatch(openDialog('ShareVideoConfirmDialog', ShareVideoConfirmDialog, {
             actorName: actor,
+            videoUrl,
             onSubmit: () => {
                 dispatch(setConfirmShowVideo(true));
                 onSubmit();
