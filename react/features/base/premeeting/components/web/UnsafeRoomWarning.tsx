@@ -31,7 +31,8 @@ const UnsafeRoomWarning = () => {
     const { t } = useTranslation();
     const { classes } = useStyles();
     const dispatch = useDispatch();
-    const { unsafeRoomConsent } = useSelector((state: IReduxState) => state['features/base/premeeting']);
+    const state = useSelector((reduxState: IReduxState) => reduxState);
+    const { unsafeRoomConsent } = state['features/base/premeeting'];
     const toggleConsent = useCallback(
         () => dispatch(setUnsafeRoomConsent(!unsafeRoomConsent))
         , [ unsafeRoomConsent, dispatch ]);
@@ -39,7 +40,7 @@ const UnsafeRoomWarning = () => {
     return (
         <>
             <div className = { classes.warning }>
-                {getUnsafeRoomText(t, 'prejoin')}
+                {getUnsafeRoomText(state, t, 'prejoin')}
             </div>
             <Checkbox
                 checked = { unsafeRoomConsent }

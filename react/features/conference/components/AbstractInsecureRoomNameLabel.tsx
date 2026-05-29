@@ -5,7 +5,7 @@ import { IReduxState } from '../../app/types';
 import isInsecureRoomName from '../../base/util/isInsecureRoomName';
 import { isUnsafeRoomWarningEnabled } from '../../prejoin/functions';
 
-interface IProps extends WithTranslation {
+export interface IProps extends WithTranslation {
 
     /**
      * True of the label should be visible.
@@ -16,7 +16,7 @@ interface IProps extends WithTranslation {
 /**
  * Abstract class for the {@Code InsecureRoomNameLabel} component.
  */
-export default class AbstractInsecureRoomNameLabel extends PureComponent<IProps> {
+export default class AbstractInsecureRoomNameLabel<P extends IProps = IProps> extends PureComponent<P> {
     /**
      * Implements {@code Component#render}.
      *
