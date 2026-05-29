@@ -451,7 +451,9 @@ function _registerForNativeEvents(store: IStore) {
     eventEmitter.addListener(ExternalAPI.OPEN_CHAT, ({ to }: any) => {
         const participant = getParticipantById(store, to);
 
-        dispatch(openChat(participant));
+        const { disablePolls } = getState()['features/base/config'];
+
+        dispatch(openChat(participant, disablePolls ?? false));
     });
 
     eventEmitter.addListener(ExternalAPI.CLOSE_CHAT, () => {
