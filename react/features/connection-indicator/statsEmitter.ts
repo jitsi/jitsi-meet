@@ -18,10 +18,16 @@ import { getLocalTracks } from '../base/tracks/functions.any';
  */
 const subscribers: any = {};
 
-interface IStats {
-    codec?: Object;
-    framerate?: Object;
-    resolution?: Object;
+interface IRawStats {
+    codec?: Record<string, any>;
+    framerate?: Record<string, number>;
+    resolution?: Record<string, any>;
+}
+
+interface IFormattedStats {
+    codec?: any;
+    framerate?: number;
+    resolution?: any;
 }
 
 /**
@@ -38,10 +44,10 @@ const statsEmitter = {
      */
     startListeningForStats(conference: IJitsiConference) {
         conference.on(JitsiConnectionQualityEvents.LOCAL_STATS_UPDATED,
-            (stats: IStats) => this._onStatsUpdated(conference.myUserId(), stats));
+            (stats: IRawStats) => this._onStatsUpdated(conference.myUserId(), stats));
 
         conference.on(JitsiConnectionQualityEvents.REMOTE_STATS_UPDATED,
-            (id: string, stats: IStats) => this._emitStatsUpdate(id, stats));
+            (id: string, stats: IFormattedStats) => this._emitStatsUpdate(id, stats));
     },
 
     /**
@@ -98,7 +104,7 @@ const statsEmitter = {
      * @param {Object} stats - New connection stats for the user.
      * @returns {void}
      */
-    _emitStatsUpdate(id: string, stats: IStats = {}) {
+    _emitStatsUpdate(id: string, stats: IFormattedStats = {}) {
         const callbacks = subscribers[id] || [];
 
         callbacks.forEach((callback: Function) => {
@@ -116,19 +122,17 @@ const statsEmitter = {
      * by the library.
      * @returns {void}
      */
-    _onStatsUpdated(localUserId: string, stats: IStats) {
+    _onStatsUpdated(localUserId: string, stats: IRawStats) {
         const allUserFramerates = stats.framerate || {};
         const allUserResolutions = stats.resolution || {};
         const allUserCodecs = stats.codec || {};
 
-        // FIXME resolution and framerate are maps keyed off of user ids with
-        // stat values. Receivers of stats expect resolution and framerate to
-        // be primitives, not maps, so here we override the 'lib-jitsi-meet'
-        // stats objects.
-        const modifiedLocalStats = Object.assign({}, stats, {
-            framerate: allUserFramerates[localUserId as keyof typeof allUserFramerates],
-            resolution: allUserResolutions[localUserId as keyof typeof allUserResolutions],
-            codec: allUserCodecs[localUserId as keyof typeof allUserCodecs]
+        // stats from lib-jitsi-meet are maps keyed by user ids, but frontend
+        // receivers expect primitives. We adapt the structure here.
+        const modifiedLocalStats: IFormattedStats = Object.assign({}, stats, {
+            framerate: allUserFramerates[localUserId],
+            resolution: allUserResolutions[localUserId],
+            codec: allUserCodecs[localUserId]
         });
 
         modifiedLocalStats.codec
@@ -146,21 +150,21 @@ const statsEmitter = {
         union(framerateUserIds, resolutionUserIds, codecUserIds)
             .filter(id => id !== localUserId)
             .forEach(id => {
-                const remoteUserStats: IStats = {};
+                const remoteUserStats: IFormattedStats = {};
 
-                const framerate = allUserFramerates[id as keyof typeof allUserFramerates];
+                const framerate = allUserFramerates[id];
 
                 if (framerate) {
                     remoteUserStats.framerate = framerate;
                 }
 
-                const resolution = allUserResolutions[id as keyof typeof allUserResolutions];
+                const resolution = allUserResolutions[id];
 
                 if (resolution) {
                     remoteUserStats.resolution = resolution;
                 }
 
-                const codec = allUserCodecs[id as keyof typeof allUserCodecs];
+                const codec = allUserCodecs[id];
 
                 if (codec) {
                     remoteUserStats.codec = codec;
