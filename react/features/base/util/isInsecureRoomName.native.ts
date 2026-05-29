@@ -5,6 +5,7 @@ import zxcvbn from 'zxcvbn';
 // The null UUID.
 const NIL_UUID = parseUUID(NIL);
 
+const _ZXCVBN_CACHE_MAX = 200;
 const _zxcvbnCache = new Map<string, ReturnType<typeof zxcvbn>>();
 
 /**
@@ -38,6 +39,13 @@ function _checkRoomName(roomName = '') {
 
     const result = zxcvbn(roomName);
 
+    if (_zxcvbnCache.size >= _ZXCVBN_CACHE_MAX) {
+        const oldestKey = _zxcvbnCache.keys().next().value;
+
+        if (oldestKey !== undefined) {
+            _zxcvbnCache.delete(oldestKey);
+        }
+    }
     _zxcvbnCache.set(roomName, result);
 
     return result;
