@@ -1,8 +1,6 @@
 import { NativeModules } from 'react-native';
 
-import LANGUAGES_RESOURCES from '../../../../lang/languages.json';
-
-const LANGUAGES = Object.keys(LANGUAGES_RESOURCES);
+import { LANGUAGES } from './supportedLanguages';
 
 /**
  * The singleton language detector for React Native which uses the system-wide

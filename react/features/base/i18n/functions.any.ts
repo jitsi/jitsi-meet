@@ -1,7 +1,9 @@
 import React from 'react';
 import { WithTranslation, withTranslation } from 'react-i18next';
 
-import i18next from './i18next';
+import { IReduxState } from '../../app/types';
+
+import i18next, { LANGUAGES } from './i18next';
 
 /**
  * Changes the main translation bundle.
@@ -16,6 +18,24 @@ export async function changeLanguageBundle(language: string, url: string, ns = '
     const bundle = await res.json();
 
     i18next.addResourceBundle(language, ns, bundle, true, true);
+}
+
+/**
+ * Returns the list of languages to show in the UI language selector.
+ * Respects config.supportedLanguages order and filtering if configured.
+ * Works on both web (config loaded before bundle) and native (config from Redux).
+ *
+ * @param {IReduxState} state - The Redux state.
+ * @returns {Array<string>}
+ */
+export function getSupportedLanguages(state: IReduxState): Array<string> {
+    const supported = state['features/base/config']?.supportedLanguages;
+
+    if (Array.isArray(supported) && supported.length > 0) {
+        return supported.filter(lang => LANGUAGES.includes(lang));
+    }
+
+    return LANGUAGES;
 }
 
 /**
