@@ -15,6 +15,7 @@ interface IProps extends IInputProps {
     autoFocus?: boolean;
     bottomLabel?: string;
     className?: string;
+    describedBy?: string;
     hiddenDescription?: string; // Text that will be announced by screen readers but not displayed visually.
     iconClick?: () => void;
 
@@ -24,6 +25,7 @@ interface IProps extends IInputProps {
      * info (label, error) so that screen reader users don't get lost.
      */
     id: string;
+    invalidReason?: 'grammar' | 'spelling' | boolean;
     maxLength?: number;
     maxRows?: number;
     maxValue?: number;
@@ -164,11 +166,13 @@ const Input = React.forwardRef<any, IProps>(({
     className,
     clearable = false,
     disabled,
+    describedBy,
     error,
     hiddenDescription,
     icon,
     iconClick,
     id,
+    invalidReason,
     label,
     maxValue,
     maxLength,
@@ -201,12 +205,24 @@ const Input = React.forwardRef<any, IProps>(({
     const hiddenDescriptionId = `${id}-hidden-description`;
     let ariaDescribedById: string | undefined;
 
-    if (bottomLabel) {
+    if (describedBy) {
+        ariaDescribedById = describedBy;
+    } else if (bottomLabel) {
         ariaDescribedById = `${id}-description`;
     } else if (hiddenDescription) {
         ariaDescribedById = hiddenDescriptionId;
     } else {
         ariaDescribedById = undefined;
+    }
+
+    let ariaInvalid: 'grammar' | 'spelling' | boolean | undefined;
+
+    if (invalidReason) {
+        ariaInvalid = invalidReason;
+    } else if (error) {
+        ariaInvalid = error;
+    } else {
+        ariaInvalid = undefined;
     }
 
     return (
@@ -226,6 +242,7 @@ const Input = React.forwardRef<any, IProps>(({
                 {textarea ? (
                     <TextareaAutosize
                         aria-describedby = { ariaDescribedById }
+                        aria-invalid = { ariaInvalid }
                         aria-label = { accessibilityLabel }
                         autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
@@ -247,6 +264,7 @@ const Input = React.forwardRef<any, IProps>(({
                 ) : (
                     <input
                         aria-describedby = { ariaDescribedById }
+                        aria-invalid = { ariaInvalid }
                         aria-label = { accessibilityLabel }
                         autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
@@ -280,11 +298,12 @@ const Input = React.forwardRef<any, IProps>(({
                 </button>}
             </div>
             {bottomLabel && (
-                <span
+                <p
+                    aria-live = 'polite'
                     className = { cx(styles.bottomLabel, isMobile && 'is-mobile', error && 'error') }
-                    id = { `${id}-description` }>
-                    {bottomLabel}
-                </span>
+                    id = { `${id}-description` } >
+                    { bottomLabel }
+                </p>
             )}
             {!bottomLabel && hiddenDescription && <HiddenDescription id = { hiddenDescriptionId }>{ hiddenDescription }</HiddenDescription>}
         </div>
