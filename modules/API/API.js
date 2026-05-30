@@ -1,4 +1,4 @@
-/* global APP */
+﻿/* global APP */
 import Logger from '@jitsi/logger';
 
 import { createApiEvent } from '../../react/features/analytics/AnalyticsEvents';
@@ -887,7 +887,7 @@ function initCommands() {
                 APP.store.dispatch(setRequestingSubtitles(false, false, null, true));
             }
 
-            // Mirror AbstractStopRecordingDialog â€” clear both fields atomically so
+            // Mirror AbstractStopRecordingDialog — clear both fields atomically so
             // remote clients see the end of the recording/transcription intent.
             // Covers recording-only, transcription-only, and combined stops.
             if (wantsStopRecording || wantsStopTranscription) {
