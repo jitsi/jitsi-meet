@@ -23,9 +23,6 @@ StateListenerRegistry.register(
 
 
 const checkToolboxOverlap = (clientHeight: number, store: IStore) => {
-    if(typeof document === 'undefined') {
-        return;
-    }
     let toolboxRect = document.querySelector('.toolbox-content-items')?.getBoundingClientRect();
 
     if (!toolboxRect) {
