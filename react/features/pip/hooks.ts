@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 
 import IconUserSVG from '../base/icons/svg/user.svg?raw';
 import { IParticipant } from '../base/participants/types';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
-import { renderAvatarOnCanvas } from './functions';
+import { copyStylesheets, renderAvatarOnCanvas, updateMediaSessionState } from './functions';
+import { isDocumentPiPSupported } from './utils';
 import logger from './logger';
 
 /**
@@ -180,4 +181,117 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
     return {
         canvasStreamRef: streamRef
     };
+}
+
+/**
+ * Manages Document Picture-in-Picture via the MediaSession API.
+ * Opens a PiP window when a tab switch occurs using the
+ * enterpictureinpicture MediaSession action handler.
+ * Closes the PiP window when the tab becomes visible again.
+ *
+ * @see https://googlechrome.github.io/samples/media-session/video-conferencing.html
+ *
+ * @param {React.RefObject<HTMLDivElement>} playerRef - Ref to the player div to move into PiP.
+ * @param {React.RefObject<HTMLDivElement>} containerRef - Ref to the container div (player's parent).
+ * @param {boolean} microphoneActive - Whether the microphone is currently active.
+ * @param {boolean} cameraActive - Whether the camera is currently active.
+ * @returns {void}
+ */
+export function useDocumentPiPMediaSession(
+        playerRef: React.RefObject<HTMLDivElement>,
+        containerRef: React.RefObject<HTMLDivElement>,
+        microphoneActive: boolean,
+        cameraActive: boolean) {
+    const pipWindowRef = useRef<Window | null>(null);
+
+    useEffect(() => {
+        updateMediaSessionState({ microphoneActive, cameraActive });
+    }, [microphoneActive, cameraActive]);
+
+    const openDocumentPip = useCallback(async () => {
+        const player = playerRef.current;
+        const container = containerRef.current;
+
+        if (!player || !container) {
+            return;
+        }
+        if (!isDocumentPiPSupported()) {
+            return;
+        }
+        if (pipWindowRef.current && !pipWindowRef.current.closed) {
+            return;
+        }
+
+        try {
+            const pipWindow = await (window as any).documentPictureInPicture.requestWindow({
+                width: 600,
+                height: 450,
+                disallowReturnToOpener: false,
+                preferInitialWindowPlacement: false,
+            });
+
+            pipWindowRef.current = pipWindow;
+
+            copyStylesheets(pipWindow);
+
+            pipWindow.document.body.style.cssText = 'margin:0;background:#000;';
+            pipWindow.document.body.appendChild(player);
+
+            pipWindow.addEventListener('pagehide', () => {
+                container.appendChild(player);
+                pipWindowRef.current = null;
+            });
+        } catch (error) {
+            logger.warn('Failed to open Document PiP:', error);
+        }
+    }, [playerRef, containerRef]);
+
+    useEffect(() => {
+        if (!isDocumentPiPSupported()) {
+            return;
+        }
+
+        try {
+            // @ts-ignore - enterpictureinpicture is a newer MediaSession action.
+            navigator.mediaSession.setActionHandler('enterpictureinpicture', async (details: any) => {
+                const reason = details?.enterPictureInPictureReason;
+
+                if (reason === 'useraction') {
+                    logger.log('User clicked Enter Picture-in-Picture icon.');
+                } else if (reason === 'contentoccluded') {
+                    logger.log('Automatically enter picture-in-picture.');
+                }
+
+                await openDocumentPip();
+            });
+        } catch (error) {
+            logger.warn('enterpictureinpicture MediaSession action not supported:', error);
+        }
+
+        return () => {
+            navigator.mediaSession.setActionHandler('enterpictureinpicture' as any, null);
+        };
+    }, [openDocumentPip]);
+
+    useEffect(() => {
+        if (!isDocumentPiPSupported()) {
+            return;
+        }
+
+        const onVisibilityChange = () => {
+            if (!document.hidden && pipWindowRef.current && !pipWindowRef.current.closed) {
+                if (playerRef.current && containerRef.current) {
+                    containerRef.current.appendChild(playerRef.current);
+                }
+                pipWindowRef.current.close();
+                pipWindowRef.current = null;
+            }
+        };
+
+        document.addEventListener('visibilitychange', onVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', onVisibilityChange);
+        };
+    }, [playerRef, containerRef]);
 }

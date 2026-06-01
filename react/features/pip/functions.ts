@@ -18,7 +18,7 @@ import { IMediaSessionState } from './types';
  *
  * This prevents duplicate PiP entry requests that can occur on macOS when minimizing
  * a window. On minimize, both the 'blur' event and 'visibilitychange' event fire in
- * rapid succession (within ~10ms), each triggering enterPiP(). Without this guard,
+ * rapid succession (within ~10ms), each triggering enterVideoPiP(). Without this guard,
  * Electron receives two PiP requests before the first one completes, causing the
  * first PiP to immediately exit and triggering a pip leave event that will cause the window to be restored.
  */
@@ -353,7 +353,7 @@ export function requestPictureInPicture() {
  * @param {HTMLVideoElement} videoElement - The video element to call requestPictureInPicuture on.
  * @returns {void}
  */
-export function enterPiP(videoElement: HTMLVideoElement | undefined | null) {
+export function enterVideoPiP(videoElement: HTMLVideoElement | undefined | null) {
     if (!videoElement) {
         logger.error('PiP video element not found');
 
@@ -400,10 +400,19 @@ export function enterPiP(videoElement: HTMLVideoElement | undefined | null) {
             return;
         }
 
-        // TODO: Enable PiP for browsers:
-        // In browsers, we should directly call requestPictureInPicture.
+        pipRequestPending = true;
+
         // @ts-ignore - requestPictureInPicture is not yet in all TypeScript definitions.
-        // requestPictureInPicture();
+        videoElement.requestPictureInPicture()
+            .then(() => {
+                logger.debug('video.requestPictureInPicture() succeeded');
+            })
+            .catch((err: Error) => {
+                logger.error(`Error while requesting PiP: ${err.message}`);
+            })
+            .finally(() => {
+                pipRequestPending = false;
+            });
     } catch (error) {
         logger.error('Error entering Picture-in-Picture:', error);
     }
@@ -499,6 +508,104 @@ export function cleanupMediaSessionHandlers() {
             logger.error('Error cleaning up MediaSession handlers:', error);
         }
     }
+}
+
+/**
+ * Reference to the currently opened window.
+ * It is required cause while using the pagehide event, we want to close the window that is open
+ */
+let _pipWindow: Window | null = null;
+
+/**
+ * Returns the stored window reference
+ *
+ * @returns {Window | null}
+ */
+export function getStoredPiPWindow(): Window | null {
+    return _pipWindow;
+}
+
+/**
+ * Closes the stored window if open and clears the stored reference
+ *
+ * @returns {void}
+ */
+export function closeDocumentPiPWindow() {
+    const pipWindow = getStoredPiPWindow();
+
+    if (pipWindow && !pipWindow.closed) {
+        pipWindow.close();
+    }
+    _pipWindow = null;
+}
+
+/**
+ * Applies initial stylings of the main window to PiP window.
+ * Creates the container for the PiP window
+ *
+ * @param {Window} pipWindow - Current window
+ * @returns {void}
+ */
+export function initPiPWindow(pipWindow: Window) {
+    _pipWindow = pipWindow;
+    copyStylesheets(pipWindow);
+    createPiPContainer(pipWindow);
+}
+
+/**
+ * Clears the PiP window reference
+ *
+ * @returns {void}
+ */
+export function clearPiPWindow() {
+    _pipWindow = null;
+}
+
+/**
+ * Applies CSS style sheets from the originating window.
+ *
+ * @see https://developer.chrome.com/docs/web-platform/document-picture-in-picture#copy_style_sheets_to_pip
+ * @param {Window} pipWindow - current window
+ * @returns {void}
+ */
+
+export function copyStylesheets(pipWindow: Window) {
+    const { document: pipDoc } = pipWindow;
+
+    document.head.querySelectorAll('link[rel="stylesheet"], style').forEach(node => {
+        try {
+            if (node instanceof HTMLStyleElement) {
+                const style = pipDoc.createElement('style');
+
+                style.textContent = node.textContent || '';
+                pipDoc.head.appendChild(style);
+            } else if (node instanceof HTMLLinkElement && node.href) {
+                const link = pipDoc.createElement('link');
+
+                link.rel = 'stylesheet';
+                link.type = node.type;
+                link.href = node.href;
+                pipDoc.head.appendChild(link);
+            }
+        } catch (error) {
+            logger.warn('Failed to copy stylesheet:', error);
+        }
+    });
+}
+
+/**
+ * Creates container for pip. Helpful for react portals
+ *
+ * @see https://react.dev/reference/react-dom/createPortal
+ * @param {Window} pipWindow - current window
+ * @returns {void}
+ */
+function createPiPContainer(pipWindow: Window) {
+    const container = pipWindow.document.createElement('div');
+
+    container.id = 'pip-root';
+    container.style.cssText = 'margin: 0; padding: 0; overflow: hidden; height: 100vh; width: 100vw; background: #141517;';
+    pipWindow.document.body.appendChild(container);
 }
 
 // Re-export from shared file for external use.

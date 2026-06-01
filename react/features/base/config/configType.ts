@@ -599,6 +599,15 @@ export interface IConfig {
     pip?: {
         disabled?: boolean;
         showOnPrejoin?: boolean;
+        documentPiP: {
+            // @see: https://developer.chrome.com/docs/web-platform/document-picture-in-picture#methods
+            windowOptions: {
+                width: number;
+                height: number;
+                disallowReturnToOpener?: boolean;
+                preferInitialWindowPlacement?: boolean;
+            }
+        }
     };
     preferBosh?: boolean;
     preferVisitor?: boolean;
