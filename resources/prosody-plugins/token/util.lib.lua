@@ -453,12 +453,12 @@ function Util:verify_room(session, room_address)
     else
         -- no wildcard, so check room against authorized room from the token
         if session.jitsi_meet_context_room and (session.jitsi_meet_context_room["regex"] == true or session.jitsi_meet_context_room["regex"] == "true") then
-            if target_room ~= nil then
-                -- room with subdomain
-                room_to_check = target_room:match(auth_room);
-            else
-                room_to_check = room_node:match(auth_room);
+            local match_target = target_room ~= nil and target_room or room_node;
+            local ok, result = pcall(string.match, match_target, auth_room);
+            if not ok then
+                return false, 'invalid-regex', 'Room claim is not a valid Lua pattern';
             end
+            room_to_check = result;
         else
             -- not a regex
             room_to_check = auth_room;

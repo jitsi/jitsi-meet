@@ -2,7 +2,7 @@ import assert from 'assert';
 import http from 'http';
 
 import { mintAsapToken } from './helpers/jwt.js';
-import { createXmppClient } from './helpers/xmpp_client.js';
+import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 /**
  * Fetches session-info for the given full JID.
@@ -185,31 +185,46 @@ describe('mod_auth_token (ASAP / RS256)', () => {
 
     // ── Room regex claim: invalid Lua pattern ─────────────────────────────────
     //
-    // When context.room.regex == true and enableDomainVerification is enabled,
-    // util.lib.lua uses the JWT room claim as a Lua pattern via string:match().
-    // An invalid Lua pattern (e.g. unbalanced parenthesis) raises a Lua error
-    // in verify_room() at MUC join time.
-    //
-    // The regex check is skipped when enableDomainVerification is false (the
-    // default in this test config), so the connection and join succeed here.
-    // The test documents: (a) auth-time processing does not crash on the invalid
-    // pattern, and (b) the bug is latent — it would trigger at room join if
-    // enableDomainVerification were true.
+    // When context.room.regex == true, util.lib.lua uses the JWT room claim as
+    // a Lua pattern via string:match() inside verify_room() at MUC join time.
+    // An invalid Lua pattern (e.g. unbalanced parenthesis) must be rejected
+    // cleanly rather than crashing Prosody with a Lua error.
 
-    it('accepts token with invalid Lua regex room claim when enableDomainVerification is false', async () => {
-        // '%(invalid' is an invalid Lua pattern (unbalanced class).
-        // process_and_verify_token only stores the claim on the session;
-        // it does not evaluate the pattern. verify_room() (called at MUC join)
-        // is guarded by enableDomainVerification, which is false in this config.
+    it('does not crash on connect with invalid Lua regex room claim', async () => {
+        // process_and_verify_token only stores the claim; it does not evaluate
+        // the pattern. The crash path is verify_room(), called at MUC join.
         const token = mintAsapToken({
-            room: '%(invalid-pattern',
+            room: '(invalid',
             context: { room: { regex: true } }
         });
-
         const c = await asapClient({ token });
 
         clients.push(c);
-        assert.ok(c.jid,
-            'connection must succeed: pattern is stored on session but not evaluated at auth time');
+        assert.ok(c.jid, 'connection must succeed: pattern not evaluated at auth time');
+    });
+
+    it('rejects MUC join with invalid Lua regex room claim', async () => {
+        const CONFERENCE = 'conference.localhost';
+        const roomJid = `regex-invalid-${Date.now()}@${CONFERENCE}`;
+
+        // '(invalid' is an unbalanced Lua pattern capture — string:match() would
+        // raise "unfinished capture" without the pcall guard in verify_room().
+        const token = mintAsapToken({
+            room: '(invalid',
+            context: { room: { regex: true } }
+        });
+
+        const focus = await joinWithFocus(roomJid);
+        const c = await asapClient({ token });
+
+        clients.push(focus, c);
+
+        const presence = await c.joinRoom(roomJid);
+
+        assert.equal(presence.attrs.type, 'error', 'join must be rejected');
+        assert.ok(
+            presence.getChild('error')?.getChild('invalid-regex'),
+            'error must contain <invalid-regex/>'
+        );
     });
 });
