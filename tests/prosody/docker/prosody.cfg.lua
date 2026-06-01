@@ -66,31 +66,34 @@ VirtualHost "localhost"
     -- reachable. Component HTTP routes end up on HTTPS 5281 due to Prosody's
     -- virtual-host routing, which does not match Host: localhost on port 5280.
     modules_enabled = {
+        -- test-only: HTTP endpoints and census helpers
         "test_observer_http";
         "muc_size";
         "muc_census";
+        -- Module order below follows prod (conference.8x8.vc VirtualHost) so that
+        -- same-priority hook execution order matches production.
         "conference_duration";
+        "filter_iq_rayo";    -- priority 1 on pre-iq/full; listed before filter_iq_jibri (matches prod)
         "filter_iq_jibri";
-        "filter_iq_rayo";
+        "muc_lobby_rooms";
+        "jiconop";
         "muc_kick_participant";
-        "system_chat_message";
         "muc_jigasi_invite";
         -- Loaded here so that the global jitsi-access-ban-check event handler
         -- is registered and mod_auth_token can fire it for token-authenticated
         -- sessions. muc_prosody_jitsi_access_manager_url points at the mock
         -- access manager served by mod_test_observer_http on the same host.
         "muc_auth_ban";
+        -- test-only
         "turncredentials_http";
-        "jiconop";
         -- Rewrites MUC JIDs between external subdomain form
         -- (room@conference.sub.localhost) and internal bracket form
         -- ([sub]room@conference.localhost) for all sessions on all hosts.
         "muc_domain_mapper";
-        "muc_lobby_rooms";
-        "muc_password_check";
-        -- Required by mod_muc_wait_for_host: handles the create-persistent-lobby-room
-        -- global event and keeps the main room alive while guests wait in the lobby.
         "persistent_lobby";
+        "system_chat_message";
+        -- test-only
+        "muc_password_check";
     }
 
     -- mod_muc_password_check: verify Bearer tokens with the login ASAP key server.
@@ -193,18 +196,21 @@ Component "lobby.conference.localhost" "muc"
     muc_room_default_public_jids = true
 
 Component "conference.localhost" "muc"
+    -- Module order follows prod (conference.8x8.vc) so that same-priority hook
+    -- execution order matches production. Test-only modules are inserted at
+    -- sensible positions relative to the shared modules they interact with.
     modules_enabled = {
         "muc_hide_all";
+        "token_verification";      -- prod pos 2: gate check runs before meeting-id / password logic
         "muc_max_occupants";
-        "muc_meeting_id";
-        "muc_resource_validate";
+        "muc_resource_validate";   -- test-only: occupant gate, alongside muc_max_occupants
         "muc_password_whitelist";
-        "token_verification";
-        "token_affiliation";
+        "token_affiliation";       -- test-only: reads auth_token set by token_verification above
+        "muc_meeting_id";          -- prod pos 9: after gate checks
         "muc_flip";
-        "muc_displayname";
-        "test_observer";
+        "test_observer";           -- test-only
         "filter_messages";
+        "muc_displayname";         -- prod pos 21: after filter_messages
         -- mod_muc_limit_messages registers its message/bare hook at priority -1
         -- (below the default 0 used by filter_messages), so filter_messages
         -- always fires first. Messages it blocks (return true) never reach
