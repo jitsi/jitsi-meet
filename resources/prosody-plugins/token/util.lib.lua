@@ -148,7 +148,7 @@ function Util.new(module)
             if content ~= nil then
                 local keys_to_delete = table_shallow_copy(self.cachedKeys);
                 -- Let's convert any certificate to public key
-                for k, v in pairs(cjson_safe.decode(content)) do
+                for k, v in pairs(cjson_safe.decode(content) or {}) do
                     -- JWKS format
                     if k == "keys" and type(v) == "table" then
                         for _, key in ipairs(v) do
