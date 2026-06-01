@@ -55,25 +55,5 @@ static NSString *RCTReadMetroHostFromBundle(NSBundle *bundle) {
     return [sdkBundle URLForResource:@"main" withExtension:@"jsbundle"];
 }
 
-- (BOOL)fabricEnabled {
-    NSLog(@"fabricEnabled called, returning NO");
-    return NO;
-}       
-
-- (BOOL)newArchEnabled {
-    NSLog(@"newArchEnabled called, returning NO");
-    return NO;
-}
-
-- (BOOL)turboModuleEnabled {
-    NSLog(@"turboModuleEnabled called, returning NO");
-    return NO;
-}
-
-- (BOOL)bridgelessEnabled {
-    NSLog(@"bridgelessEnabled called, returning NO");
-    return NO;
-}
-
 @end
 

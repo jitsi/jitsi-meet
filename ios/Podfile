@@ -8,10 +8,63 @@ require Pod::Executable.execute_command('node', ['-p',
 platform :ios, '15.1'
 workspace 'jitsi-meet'
 
+ENV['RCT_NEW_ARCH_ENABLED'] = '1'
+ENV['RCT_HERMES_V1_ENABLED'] = '0'
+
+# Build RN deps and Core from source so we don't depend on the prebuilt RN xcframeworks.
+ENV['RCT_USE_RN_DEP'] = '0'
+ENV['RCT_USE_PREBUILT_RNCORE'] = '0'
+
+# hermes-engine bakes an absolute path into HERMES_CLI_PATH, which makes the
+# Podfile.lock SPEC CHECKSUM differ on every machine. Rewrite it to a relative
+# path so the lockfile is portable (e.g. `pod install --deployment` in CI).
+module HermesCliPathRelativizer
+  def store_attribute(name, value, platform_name = nil)
+    if name == :user_target_xcconfig &&
+       value.is_a?(Hash) &&
+       value['HERMES_CLI_PATH'] &&
+       self.name.to_s.start_with?('hermes-engine')
+      value = value.merge(
+        'HERMES_CLI_PATH' => '${REACT_NATIVE_PATH}/../hermes-compiler/hermesc/osx-bin/hermesc'
+      )
+    end
+    super
+  end
+end
+Pod::Specification.prepend(HermesCliPathRelativizer)
+
 install! 'cocoapods', :deterministic_uuids => false
 
 def cocoa_utilities
     pod 'CocoaLumberjack', '3.7.4'
+end
+
+# Giphy is excluded from iOS autolinking to keep it out of the lite SDK, 
+# but the full SDK needs its TurboModule spec 
+# and we re-add it to autolinking.json so react native codegen generates it.
+def include_giphy_in_codegen!
+  require 'json'
+  autolinking_json = File.join(
+    Pod::Config.instance.installation_root.to_s,
+    'build/generated/autolinking/autolinking.json'
+  )
+  return unless File.exist?(autolinking_json)
+
+  json = JSON.parse(File.read(autolinking_json))
+  giphy_root = File.expand_path('../node_modules/@giphy/react-native-sdk', __dir__)
+  json['dependencies'] ||= {}
+  json['dependencies']['@giphy/react-native-sdk'] = {
+    'name' => '@giphy/react-native-sdk',
+    'root' => giphy_root,
+    'platforms' => {
+      'ios' => {
+        'podspecPath' => File.join(giphy_root, 'giphy-react-native-sdk.podspec'),
+        'scriptPhases' => [],
+        'configurations' => []
+      }
+    }
+  }
+  File.write(autolinking_json, JSON.pretty_generate(json))
 end
 
 target 'JitsiMeet' do
@@ -28,12 +81,9 @@ target 'JitsiMeetSDK' do
   #
 
   config = use_native_modules!
-  flags = get_default_flags()
+  include_giphy_in_codegen!
   use_react_native!(
     :path => config[:reactNativePath],
-    :hermes_enabled => true,
-    :fabric_enabled => false,
-    :new_arch_enabled => false,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
@@ -64,9 +114,6 @@ target 'JitsiMeetSDKLite' do
     config = use_native_modules!
     use_react_native!(
       :path => config[:reactNativePath],
-      :hermes_enabled => true,
-      :fabric_enabled => false,
-      :new_arch_enabled => false,
       # An absolute path to your application root.
       :app_path => "#{Pod::Config.instance.installation_root}/.."
     )

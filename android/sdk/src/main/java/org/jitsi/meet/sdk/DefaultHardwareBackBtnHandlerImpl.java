@@ -21,6 +21,8 @@ import android.app.Activity;
 
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Defines the default behavior of {@code JitsiMeetFragment} and
  * {@code JitsiMeetView} upon invoking the back button if no
@@ -32,21 +34,19 @@ import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 class DefaultHardwareBackBtnHandlerImpl implements DefaultHardwareBackBtnHandler {
 
     /**
-     * The {@code Activity} to which the default handling of the back button
-     * is being provided by this instance.
+     * Weak reference to the {@code Activity} to which the default handling of
+     * the back button is being provided by this instance. Weak so the
+     * instance can outlive the Activity (it is cached for reuse across
+     * {@code onHostResume} calls).
      */
-    private final Activity activity;
+    private final WeakReference<Activity> activityRef;
 
-    /**
-     * Initializes a new {@code DefaultHardwareBackBtnHandlerImpl} instance to
-     * provide the default handling of the back button to a specific
-     * {@code Activity}.
-     *
-     * @param activity the {@code Activity} to which the new instance is to
-     * provide the default behavior of the back button
-     */
     public DefaultHardwareBackBtnHandlerImpl(Activity activity) {
-        this.activity = activity;
+        this.activityRef = new WeakReference<>(activity);
+    }
+
+    Activity getActivity() {
+        return activityRef.get();
     }
 
     /**
@@ -60,6 +60,9 @@ class DefaultHardwareBackBtnHandlerImpl implements DefaultHardwareBackBtnHandler
         // Practically, it's not possible. Fortunately, the documentation of
         // Activity#onBackPressed() specifies that "[t]he default implementation
         // simply finishes the current activity,"
-        activity.finish();
+        Activity activity = activityRef.get();
+        if (activity != null) {
+            activity.finish();
+        }
     }
 }

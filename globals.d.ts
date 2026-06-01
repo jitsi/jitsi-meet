@@ -4,6 +4,9 @@ import { IConfig } from "./react/features/base/config/configType";
 export {};
 
 declare global {
+
+    type Mutable<T> = { -readonly [P in keyof T]: T[P] };
+
     const APP: {
         store: IStore;
         UI: any;
