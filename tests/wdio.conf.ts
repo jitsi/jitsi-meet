@@ -215,12 +215,23 @@ const CONCURRENCY_LOG_PATH = path.join(TEST_RESULTS_DIR, 'concurrency.jsonl');
  * Selenium Grid (especially with Firefox) sometimes takes longer than `connectionRetryTimeout`
  * to acknowledge session deletion; the runner exits non-zero even though the test ran fine.
  * Returns true when afterSuite finished AND a DELETE-method timeout follows in the same log.
+ *
+ * @param specFile - The worker's first spec file (path or URL); used to locate its wdio log.
+ * @param cid - The worker (capability) id.
  */
-function isPostTestSessionDeleteTimeout(specName: string, cid: string): boolean {
-    const candidates = [
-        path.join(TEST_RESULTS_DIR, `${specName}-${cid}.log`),
-        path.join(TEST_RESULTS_DIR, `wdio-${cid}.log`)
-    ];
+function isPostTestSessionDeleteTimeout(specFile: string | undefined, cid: string): boolean {
+    // @wdio/local-runner writes the worker log to `${specBaseName}-${cid}.log`, where specBaseName
+    // strips only the final extension (so `displayName.spec.ts` -> `displayName.spec`), falling back
+    // to `wdio-${cid}.log` when no spec is associated. Mirror that exactly so the log is found.
+    const candidates = [];
+
+    if (specFile) {
+        const specBaseName = path.basename(specFile, path.extname(specFile));
+
+        candidates.push(path.join(TEST_RESULTS_DIR, `${specBaseName}-${cid}.log`));
+    }
+    candidates.push(path.join(TEST_RESULTS_DIR, `wdio-${cid}.log`));
+
     const logPath = candidates.find(p => fs.existsSync(p));
 
     if (!logPath) {
@@ -682,9 +693,9 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }
 
         // Detect the "tests passed but session DELETE timed out" pattern from the worker's wdio
-        // log. @wdio/local-runner names this `${specBaseName}-${cid}.log` under outputDir, with
-        // a fallback to `wdio-${cid}.log` when no spec is associated.
-        if (isPostTestSessionDeleteTimeout(specName, cid)) {
+        // log. Pass the raw spec path so the log file name is derived the same way
+        // @wdio/local-runner derives it (only the final extension is stripped).
+        if (isPostTestSessionDeleteTimeout(workerSpecs?.[0], cid)) {
             const teardownMessage
                 = `Session DELETE timed out after tests completed (worker exit ${exitCode}). `
                 + 'Allure has the per-test results; this entry just records the teardown anomaly.';
