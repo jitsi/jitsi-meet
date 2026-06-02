@@ -108,6 +108,7 @@ export const RoomParticipantContextMenu = ({
 
     return isLocalModerator ? (
         <ContextMenu
+            activateFocusTrap = { true }
             entity = { entity }
             isDrawerOpen = { Boolean(entity) }
             offsetTarget = { offsetTarget }

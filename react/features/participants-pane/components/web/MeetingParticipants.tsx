@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -95,6 +95,32 @@ function MeetingParticipants({
     const _isCurrentRoomRenamable = useSelector(isCurrentRoomRenamable);
 
     const { classes: styles } = useStyles();
+
+    useEffect(() => {
+        if (!raiseContext?.entity) {
+            return;
+        }
+
+        const onDocumentMouseDown = (event: MouseEvent) => {
+            const target = event.target as HTMLElement | null;
+
+            if (!target) {
+                return;
+            }
+
+            if (target.closest('[class*="contextMenu"]') || target.closest('[data-testid^="participant-more-options-"]')) {
+                return;
+            }
+
+            lowerMenu(true);
+        };
+
+        document.addEventListener('mousedown', onDocumentMouseDown);
+
+        return () => {
+            document.removeEventListener('mousedown', onDocumentMouseDown);
+        };
+    }, [ lowerMenu, raiseContext?.entity ]);
 
     return (
         <>
