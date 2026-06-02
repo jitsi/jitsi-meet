@@ -223,6 +223,30 @@ describe('mod_filter_iq_jibri (feature-based authorization)', () => {
                 'client session must remain alive after IQ to non-existent room');
         });
 
+        it('returns item-not-found error reply for Jibri IQ targeting a non-existent room', async () => {
+            // When the room does not exist, get_room_from_jid should return <item-not-found/> (as opposed to nil which
+            // may be returned if an internal error is triggered).
+            const token = mintAsapToken({ room: '*' });
+            const c = await createXmppClient({ params: { token } });
+
+            clients.push(c);
+
+            const ghost = 'ghost-room-error-reply-test@conference.localhost';
+
+            await c.sendJibriIq(ghost, 'start', 'file');
+
+            const reply = await c.waitForIq(s => s.attrs.type === 'error', 2000);
+
+            assert.strictEqual(reply.attrs.type, 'error');
+            const error = reply.getChild('error');
+
+            assert.ok(error, 'expected <error/> child in IQ reply');
+            assert.ok(
+                error.getChild('item-not-found'),
+                'expected <item-not-found/> error condition — room does not exist'
+            );
+        });
+
     });
 
     // ─── attribute case normalisation ────────────────────────────────────────
