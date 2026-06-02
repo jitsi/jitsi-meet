@@ -255,12 +255,20 @@ local function filterTranscriptionResult(event)
             end
 
             -- TODO what if we have multiple alternative transcriptions not just 1
+            if not transcription.transcript[1] then
+                module:log('warn', 'Empty transcript array in transcription-result from %s', stanza.attr.from);
+                return true;
+            end
             local text_message = transcription.transcript[1].text;
             --do not send empty messages
             if text_message == '' then
                 return;
             end
 
+            if not transcription.participant then
+                module:log('warn', 'Missing participant field in transcription-result from %s', stanza.attr.from);
+                return true;
+            end
             local user_id = transcription.participant.id;
             local who = room:get_occupant_by_nick(jid.bare(room.jid)..'/'..user_id);
 
