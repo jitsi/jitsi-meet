@@ -2,7 +2,7 @@ import assert from 'assert';
 
 import { mintAsapToken, mintSystemToken } from './helpers/jwt.js';
 import { inviteJigasi } from './helpers/test_observer.js';
-import { joinWithFocus, joinWithJigasi } from './helpers/xmpp_client.js';
+import { createXmppClient, joinWithFocus, joinWithJigasi } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
 
@@ -193,6 +193,43 @@ describe('mod_muc_jigasi_invite', () => {
     describe('jigasi invite', () => {
 
         const BREWERY = 'jigasibrewery@internal.auth.localhost';
+
+        it('returns 404 when brewery occupant has no stats element', async () => {
+            // Bug: stats_child:children() crashed when stats element absent.
+            // Fixed: occupants without stats are now skipped with a warn log.
+            const { roomJid, focus } = await createRoom();
+
+            // Join brewery without any colibri stats extensions.
+            const noStats = await createXmppClient();
+
+            await noStats.joinRoom(BREWERY);
+
+            try {
+                const { status } = await inviteJigasi(roomJid, '+15550000001', mintSystemToken());
+
+                assert.strictEqual(status, 404,
+                    'must return 404 (no eligible Jigasi) not crash');
+            } finally {
+                await disconnectAll(focus, noStats);
+            }
+        });
+
+        it('returns 404 when no SIP-capable Jigasi is in the brewery', async () => {
+            // Bug: log line accessed least_stressed_jigasi_occupant.jid before
+            // the nil check, crashing when all occupants have supports_sip=false.
+            // Fixed: nil check moved before the log.
+            const { roomJid, focus } = await createRoom();
+            const nonSip = await joinWithJigasi(BREWERY, undefined, { supportsSip: false });
+
+            try {
+                const { status } = await inviteJigasi(roomJid, '+15550000002', mintSystemToken());
+
+                assert.strictEqual(status, 404,
+                    'must return 404 (no SIP Jigasi) not crash');
+            } finally {
+                await disconnectAll(focus, nonSip);
+            }
+        });
 
         it('sends a Rayo dial IQ to the Jigasi and returns 200', async () => {
             const { roomJid, focus } = await createRoom();
