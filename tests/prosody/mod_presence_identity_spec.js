@@ -172,9 +172,9 @@ describe('mod_presence_identity', () => {
     //
     // update_presence_identity() iterates over JWT context.user keys and uses
     // each key as an XML element name: presence:tag(key):text(tostring(value)).
-    // Keys with XML-special characters (e.g. '<', '>') are not sanitised before
-    // being used as tag names. This test verifies Prosody handles such keys
-    // without crashing or dropping the join presence entirely.
+    // Fixed in 2e8980d2b: keys that do not match the XML name pattern
+    // ^[%a_][%w%-%.%:_]*$ are now silently skipped before reaching tag().
+    // This test verifies that bad keys are dropped and valid keys are preserved.
 
     describe('malformed JWT context.user keys', () => {
 
