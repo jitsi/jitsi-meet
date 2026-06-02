@@ -1,5 +1,6 @@
 import assert from 'assert';
 
+import { getContainer } from './helpers/container.js';
 import { mintAsapToken } from './helpers/jwt.js';
 import { setAccessManagerResponse } from './helpers/test_observer.js';
 import { createXmppClient } from './helpers/xmpp_client.js';
@@ -189,6 +190,49 @@ describe('mod_muc_auth_ban', () => {
             'session must remain alive when access manager returns non-JSON 200');
 
         await c.disconnect();
+    });
+
+    // ── Non-JSON 200 — Lua error in callback ─────────────────────────────────
+    //
+    // cjson.safe returns nil (not an error) for invalid JSON, so json.decode()
+    // returns nil when the access manager body is not JSON. Without a nil guard,
+    // r['access'] on the nil value crashes the callback with "attempt to index
+    // a nil value". This test catches that crash by asserting that no such error
+    // appears in the Prosody log during the test window.
+
+    it('non-JSON 200 does not produce a Lua error in the HTTP callback', async () => {
+        const since = Math.floor(Date.now() / 1000);
+
+        await setAccessManagerResponse({ nonJson: true });
+        const token = freshToken();
+        const c = await createVpaasClient(token);
+
+        // Give the async HTTP callback time to fire (and crash if the bug is present).
+        await new Promise(resolve => setTimeout(resolve, 600));
+        await c.disconnect();
+
+        // Collect Prosody log output from this test's window.
+        const until = Math.floor(Date.now() / 1000) + 1;
+        const container = getContainer();
+        const stream = await container.logs({ since,
+            until });
+        const logs = await new Promise((resolve, reject) => {
+            const chunks = [];
+            const timer = setTimeout(() => resolve(chunks.join('')), 2000);
+
+            stream.on('data', chunk => chunks.push(chunk.toString()));
+            stream.on('end', () => {
+                clearTimeout(timer);
+                resolve(chunks.join(''));
+            });
+            stream.on('error', reject);
+        });
+
+        assert.ok(
+            !logs.includes('attempt to index a nil value'),
+            'mod_muc_auth_ban HTTP callback must not crash on non-JSON 200 response '
+            + '(missing nil guard on json.decode result)'
+        );
     });
 
 });
