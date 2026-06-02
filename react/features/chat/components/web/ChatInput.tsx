@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { withStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../app/types';
-import { IMessage } from '../../types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconFaceSmile, IconSend } from '../../../base/icons/svg';
@@ -13,6 +12,7 @@ import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 import { CHAT_SIZE } from '../../constants';
 import { areSmileysDisabled, isSendGroupChatDisabled } from '../../functions';
+import { IMessage } from '../../types';
 
 import SmileysPanel from './SmileysPanel';
 
@@ -49,7 +49,7 @@ const styles = (_theme: Theme, { _chatWidth }: IProps) => {
             color: _theme.palette.chatMessageText,
             display: 'flex',
             justifyContent: 'space-between',
-            padding: _theme.spacing(2,4,0)
+            padding: _theme.spacing(2, 4, 0)
         },
         cancelEdit: {
             cursor: 'pointer',
@@ -92,11 +92,6 @@ interface IProps extends WithTranslation {
     dispatch: IStore['dispatch'];
 
     /**
-     * Callback to invoke on message send.
-     */
-    onSend: Function;
-
-    /**
      * The message currently being edited, if any.
      */
     editingMessage?: IMessage;
@@ -105,6 +100,11 @@ interface IProps extends WithTranslation {
      * Callback invoked to cancel message editing.
      */
     onCancelEdit?: () => void;
+
+    /**
+     * Callback to invoke on message send.
+     */
+    onSend: Function;
 }
 
 /**

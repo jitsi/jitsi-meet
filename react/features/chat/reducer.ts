@@ -155,7 +155,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         const newMessage = action.message;
         const messages = state.messages.map(m => {
             if (m.messageId === newMessage.messageId) {
-                if (newMessage.participantId && m.participantId !== newMessage.participantId){
+                if (newMessage.participantId && m.participantId !== newMessage.participantId) {
                     return m;
                 }
                 found = true;
@@ -163,7 +163,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
                 return {
                     ...m,
                     message: newMessage.message,
-                    isEdited: true, 
+                    isEdited: true,
                     editedAt: newMessage.editedAt
                 };
             }

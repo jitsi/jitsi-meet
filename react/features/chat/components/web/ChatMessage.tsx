@@ -428,7 +428,7 @@ const ChatMessage = ({
                                         )}
                                     </div>
                                     {message.isEdited && (
-                                        <div className = { classes.editedLabel }> 
+                                        <div className = { classes.editedLabel }>
                                             {t('chat.edited', '(edited)')}
                                         </div>
                                     )}

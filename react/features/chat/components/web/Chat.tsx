@@ -421,7 +421,6 @@ const Chat = ({
             dispatch(sendMessageEdit(editingMessage.messageId, text));
             setEditingMessage(undefined);
 
-
             return;
         }
         dispatch(sendMessage(text));
@@ -497,7 +496,7 @@ const Chat = ({
                     tabIndex = { 0 }>
                     <MessageContainer
                         isVisible = { _focusedTab === ChatTabs.CHAT }
-                        messages = { _messages } 
+                        messages = { _messages }
                         onEditMessage = { setEditingMessage } />
                     <MessageRecipient />
                     {isPrivateChatAllowed && (

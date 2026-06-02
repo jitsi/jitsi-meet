@@ -9,7 +9,6 @@ import { IMessage } from '../../types';
 
 import ChatMessageGroup from './ChatMessageGroup';
 import NewMessagesButton from './NewMessagesButton';
-import { message } from 'js-md5';
 
 interface IProps {
 
@@ -124,7 +123,7 @@ export default class MessageContainer extends Component<IProps, IState> {
                 <ChatMessageGroup
                     className = { messageType || MESSAGE_TYPE_REMOTE }
                     key = { index }
-                    messages = { messages } 
+                    messages = { messages }
                     onEditMessage = { this.props.onEditMessage } />
             );
         });

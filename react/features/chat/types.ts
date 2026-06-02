@@ -16,7 +16,7 @@ export type ChatMessageType =
 
 export interface IMessage {
     displayName: string;
-    editedAt?: number; 
+    editedAt?: number;
     error?: unknown;
     fileMetadata?: IFileMetadata;
     isEdited?: Boolean;

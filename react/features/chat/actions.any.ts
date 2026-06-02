@@ -158,8 +158,8 @@ export function sendReaction(reaction: string, messageId: string, receiverId?: s
 
 /**
  * Sends an edit for an existing chat message to everyone in the conference.
- * 
- * @param {string} messageId - The ID of the message being edited
+ *
+ * @param {string} messageId - The ID of the message being edited.
  * @param {string} message - The updated chat message.
  * @returns {{
  *     type: SEND_MESSAGE_EDIT,
@@ -167,7 +167,7 @@ export function sendReaction(reaction: string, messageId: string, receiverId?: s
  *     message: string
  * }}
  */
-export function sendMessageEdit(messageId: string, message: string){
+export function sendMessageEdit(messageId: string, message: string) {
     return {
         type: SEND_MESSAGE_EDIT,
         messageId,

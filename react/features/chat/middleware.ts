@@ -62,6 +62,7 @@ import {
 import { ChatPrivacyDialog } from './components';
 import {
     ChatTabs,
+    EDIT_CHAT_MESSAGE,
     INCOMING_MSG_SOUND_ID,
     LOBBY_CHAT_MESSAGE,
     MESSAGE_TYPE_ERROR,
@@ -146,7 +147,7 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const { participant, data } = action;
 
-        if (data?.type === 'editChat' && data.messageId && data.message){
+        if (data?.type === EDIT_CHAT_MESSAGE && data.messageId && data.message) {
             store.dispatch(editMessage({
                 messageId: data.messageId,
                 message: data.message,
@@ -327,21 +328,21 @@ MiddlewareRegistry.register(store => next => action => {
             message => message.messageId === action.messageId
         );
 
-        if (conference && localParticipant?.id && messageToEdit){
+        if (conference && localParticipant?.id && messageToEdit) {
             const payload = {
-                type: 'editChat',
+                type: EDIT_CHAT_MESSAGE,
                 messageId: action.messageId,
                 message: action.message,
                 editedAt
             };
 
-            if (messageToEdit.privateMessage && messageToEdit.recipientId){
+            if (messageToEdit.privateMessage && messageToEdit.recipientId) {
                 conference.sendPrivateTextMessage(
                     messageToEdit.recipientId,
                     JSON.stringify(payload),
                     'json-message'
                 );
-            }else {
+            } else {
                 conference.sendTextMessage(JSON.stringify(payload), 'json-message');
             }
 
