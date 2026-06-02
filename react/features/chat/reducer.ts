@@ -70,11 +70,13 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
     case ADD_MESSAGE: {
         const newMessage: IMessage = {
             displayName: action.displayName,
+            editedAt: action.editedAt,
             error: action.error,
             fileMetadata: action.fileMetadata,
             isFromGuest: Boolean(action.isFromGuest),
             isFromVisitor: Boolean(action.isFromVisitor),
             participantId: action.participantId,
+            isEdited: Boolean(action.isEdited),
             isReaction: action.isReaction,
             messageId: action.messageId,
             messageType: action.messageType,
@@ -83,6 +85,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             privateMessage: action.privateMessage,
             lobbyChat: action.lobbyChat,
             recipient: action.recipient,
+            recipientId: action.recipientId,
             replyToMessageId: action.replyToMessageId,
             sentToVisitor: Boolean(action.sentToVisitor),
             timestamp: action.timestamp
@@ -152,9 +155,17 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         const newMessage = action.message;
         const messages = state.messages.map(m => {
             if (m.messageId === newMessage.messageId) {
+                if (newMessage.participantId && m.participantId !== newMessage.participantId){
+                    return m;
+                }
                 found = true;
 
-                return newMessage;
+                return {
+                    ...m,
+                    message: newMessage.message,
+                    isEdited: true, 
+                    editedAt: newMessage.editedAt
+                };
             }
 
             return m;

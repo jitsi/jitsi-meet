@@ -9,6 +9,7 @@ import { IMessage } from '../../types';
 
 import ChatMessageGroup from './ChatMessageGroup';
 import NewMessagesButton from './NewMessagesButton';
+import { message } from 'js-md5';
 
 interface IProps {
 
@@ -18,6 +19,11 @@ interface IProps {
      */
     isVisible?: boolean;
     messages: IMessage[];
+
+    /**
+     * Callback invoked when the user wants to edit a message.
+     */
+    onEditMessage?: (message: IMessage) => void;
 }
 
 interface IState {
@@ -118,7 +124,8 @@ export default class MessageContainer extends Component<IProps, IState> {
                 <ChatMessageGroup
                     className = { messageType || MESSAGE_TYPE_REMOTE }
                     key = { index }
-                    messages = { messages } />
+                    messages = { messages } 
+                    onEditMessage = { this.props.onEditMessage } />
             );
         });
 

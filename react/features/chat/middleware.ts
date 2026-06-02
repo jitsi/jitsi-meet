@@ -45,6 +45,7 @@ import {
     CLOSE_CHAT,
     OPEN_CHAT,
     SEND_MESSAGE,
+    SEND_MESSAGE_EDIT,
     SEND_REACTION,
     SET_FOCUSED_TAB
 } from './actionTypes';
@@ -53,6 +54,7 @@ import {
     addMessageReaction,
     clearChatState,
     closeChat,
+    editMessage,
     notifyPrivateRecipientsChanged,
     openChat,
     setPrivateMessageRecipient
@@ -142,12 +144,22 @@ MiddlewareRegistry.register(store => next => action => {
 
     case ENDPOINT_MESSAGE_RECEIVED: {
         const state = store.getState();
+        const { participant, data } = action;
+
+        if (data?.type === 'editChat' && data.messageId && data.message){
+            store.dispatch(editMessage({
+                messageId: data.messageId,
+                message: data.message,
+                editedAt: data.editedAt,
+                participantId: participant.getId()
+            }));
+
+            break;
+        }
 
         if (!isReactionsEnabled(state)) {
             return next(action);
         }
-
-        const { participant, data } = action;
 
         if (data?.name === ENDPOINT_REACTION_NAME) {
             // Skip duplicates, keep just 3.
@@ -303,6 +315,42 @@ MiddlewareRegistry.register(store => next => action => {
             } else {
                 conference.sendTextMessage(action.message);
             }
+        }
+        break;
+    }
+
+    case SEND_MESSAGE_EDIT: {
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+        const editedAt = Date.now();
+        const messageToEdit = state['features/chat'].messages.find(
+            message => message.messageId === action.messageId
+        );
+
+        if (conference && localParticipant?.id && messageToEdit){
+            const payload = {
+                type: 'editChat',
+                messageId: action.messageId,
+                message: action.message,
+                editedAt
+            };
+
+            if (messageToEdit.privateMessage && messageToEdit.recipientId){
+                conference.sendPrivateTextMessage(
+                    messageToEdit.recipientId,
+                    JSON.stringify(payload),
+                    'json-message'
+                );
+            }else {
+                conference.sendTextMessage(JSON.stringify(payload), 'json-message');
+            }
+
+            store.dispatch(editMessage({
+                messageId: action.messageId,
+                message: action.message,
+                editedAt,
+                participantId: localParticipant.id
+            }));
         }
         break;
     }
@@ -749,6 +797,7 @@ function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipient: I
         privateMessage: !isLobbyPrivateMessage,
         lobbyChat: isLobbyPrivateMessage,
         recipient: recipientName,
+        recipientId: recipient.id,
         sentToVisitor: recipient.isVisitor,
         timestamp: Date.now()
     }));

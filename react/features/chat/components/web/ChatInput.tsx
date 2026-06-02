@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { withStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../app/types';
+import { IMessage } from '../../types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconFaceSmile, IconSend } from '../../../base/icons/svg';
@@ -41,6 +42,18 @@ const styles = (_theme: Theme, { _chatWidth }: IProps) => {
             boxSizing: 'border-box' as const,
             padding: _theme.spacing(4),
             textAlign: 'center' as const,
+        },
+        editingNotice: {
+            alignItems: 'center',
+            borderTop: `1px solid ${_theme.palette.chatInputBackground}`,
+            color: _theme.palette.chatMessageText,
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: _theme.spacing(2,4,0)
+        },
+        cancelEdit: {
+            cursor: 'pointer',
+            color: _theme.palette.link01
         }
     };
 };
@@ -82,6 +95,16 @@ interface IProps extends WithTranslation {
      * Callback to invoke on message send.
      */
     onSend: Function;
+
+    /**
+     * The message currently being edited, if any.
+     */
+    editingMessage?: IMessage;
+
+    /**
+     * Callback invoked to cancel message editing.
+     */
+    onCancelEdit?: () => void;
 }
 
 /**
@@ -155,6 +178,12 @@ class ChatInput extends Component<IProps, IState> {
         if (prevProps._privateMessageRecipientId !== this.props._privateMessageRecipientId) {
             this._textArea?.current?.focus();
         }
+        if (prevProps.editingMessage?.messageId !== this.props.editingMessage?.messageId) {
+            this.setState({
+                message: this.props.editingMessage?.message ?? ''
+            });
+            this._focus();
+        }
     }
 
     /**
@@ -177,6 +206,18 @@ class ChatInput extends Component<IProps, IState> {
 
         return (
             <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
+                {this.props.editingMessage && (
+                    <div className = { classes.editingNotice }>
+                        <span>
+                            Editing message
+                        </span>
+                        <span
+                            className = { classes.cancelEdit }
+                            onClick = { this.props.onCancelEdit }>
+                            Cancel
+                        </span>
+                    </div>
+                )}
                 <div id = 'chat-input' >
                     {!this.props._areSmileysDisabled && this.state.showSmileysPanel && (
                         <div
@@ -271,6 +312,16 @@ class ChatInput extends Component<IProps, IState> {
             // but input method is still processing that.
             // This is a standard behavior for some input methods
             // like entering japanese or сhinese hieroglyphs.
+            return;
+        }
+
+        if (event.key === 'Escape' && this.props.editingMessage) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            this.props.onCancelEdit?.();
+            this.setState({ message: '' });
+
             return;
         }
 
