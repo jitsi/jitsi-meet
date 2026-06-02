@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import TextareaAutosize from 'react-textarea-autosize';
 import { makeStyles } from 'tss-react/mui';
 
@@ -194,6 +195,7 @@ const Input = React.forwardRef<any, IProps>(({
     value
 }: IProps, ref) => {
     const { classes: styles, cx } = useStyles();
+    const { t } = useTranslation();
     const isMobile = isMobileBrowser();
     const showClearIcon = clearable && value !== '' && !disabled;
     const inputAutoCompleteOff = autoComplete === 'off' ? { 'data-1p-ignore': '' } : {};
@@ -224,6 +226,13 @@ const Input = React.forwardRef<any, IProps>(({
     } else {
         ariaInvalid = undefined;
     }
+
+    const onKeyDownClearInput = useCallback((e: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            clearInput();
+        }
+    }, [ clearInput ]);
 
     return (
         <div className = { cx(styles.inputContainer, className) }>
@@ -290,9 +299,12 @@ const Input = React.forwardRef<any, IProps>(({
                         type = { type }
                         value = { value } />
                 )}
-                {showClearIcon && <button className = { styles.clearButton }>
+                {showClearIcon && <button
+                    aria-label = { t('inputAction.deleteInput') }
+                    className = { styles.clearButton }
+                    onClick = { clearInput }
+                    onKeyDown = { onKeyDownClearInput }>
                     <Icon
-                        onClick = { clearInput }
                         size = { 20 }
                         src = { IconCloseCircle } />
                 </button>}

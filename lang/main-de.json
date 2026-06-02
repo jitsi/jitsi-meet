@@ -673,6 +673,9 @@
         "support": "Support",
         "supportMsg": "Wenn der Fehler erneut auftritt, bitte kontaktieren Sie"
     },
+    "inputAction": {
+        "deleteInput": "Eingabe läschen"
+    },
     "inviteDialog": {
         "alertText": "Die Einladung einiger Personen ist fehlgeschlagen.",
         "header": "Einladen",
