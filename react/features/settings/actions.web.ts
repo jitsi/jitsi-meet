@@ -1,11 +1,9 @@
 import { batch } from 'react-redux';
 
 import { IStore } from '../app/types';
-import { setTokenAuthUrlSuccess } from '../authentication/actions.web';
-import { isTokenAuthEnabled } from '../authentication/functions';
+import { silentLogout } from '../authentication/actions.web';
+import { isTokenAuthInline } from '../authentication/functions';
 import {
-    setFollowMe,
-    setFollowMeRecorder,
     setStartMutedPolicy,
     setStartReactionsMuted
 } from '../base/conference/actions';
@@ -13,17 +11,22 @@ import { getConferenceState } from '../base/conference/functions';
 import { hangup } from '../base/connection/actions.web';
 import { openDialog } from '../base/dialog/actions';
 import i18next from '../base/i18n/i18next';
+import { setJWT } from '../base/jwt/actions';
 import { browser } from '../base/lib-jitsi-meet';
 import { getNormalizedDisplayName } from '../base/participants/functions';
 import { updateSettings } from '../base/settings/actions';
+import { IAudioSettings } from '../base/settings/reducer';
 import { getLocalVideoTrack } from '../base/tracks/functions.web';
 import { appendURLHashParam } from '../base/util/uri';
+import { setFollowMe, setFollowMeRecorder } from '../follow-me/actions';
 import { disableKeyboardShortcuts, enableKeyboardShortcuts } from '../keyboard-shortcuts/actions';
 import { toggleBackgroundEffect } from '../virtual-background/actions';
 import virtualBackgroundLogger from '../virtual-background/logger';
 
 import {
+    SET_AUDIO_SETTINGS,
     SET_AUDIO_SETTINGS_VISIBILITY,
+    SET_PREVIEW_AUDIO_TRACK,
     SET_VIDEO_SETTINGS_VISIBILITY
 } from './actionTypes';
 import LogoutDialog from './components/web/LogoutDialog';
@@ -35,7 +38,7 @@ import {
     getProfileTabProps,
     getShortcutsTabProps
 } from './functions.web';
-
+import logger from './logger';
 
 /**
  * Opens {@code LogoutDialog}.
@@ -50,16 +53,26 @@ export function openLogoutDialog() {
         const logoutUrl = config.tokenLogoutUrl;
 
         const { conference } = state['features/base/conference'];
-        const { jwt } = state['features/base/jwt'];
+        const { idToken } = state['features/base/jwt'];
 
-        dispatch(openDialog(LogoutDialog, {
+        if (!browser.isElectron() && logoutUrl && isTokenAuthInline(config)) {
+            let url = logoutUrl;
+
+            if (idToken) {
+                url += `${logoutUrl.indexOf('?') === -1 ? '?' : '&'}id_token_hint=${idToken}`;
+            }
+
+            silentLogout(url)
+                .then(() => {
+                    dispatch(setJWT());
+                })
+                .catch(() => logger.error('logout failed'));
+
+            return;
+        }
+
+        dispatch(openDialog('LogoutDialog', LogoutDialog, {
             onLogout() {
-                if (isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect && jwt) {
-
-                    // user is logging out remove auto redirect indication
-                    dispatch(setTokenAuthUrlSuccess(false));
-                }
-
                 if (logoutUrl && browser.isElectron()) {
                     const url = appendURLHashParam(logoutUrl, 'electron', 'true');
 
@@ -89,7 +102,7 @@ export function openLogoutDialog() {
  * @returns {Function}
  */
 export function openSettingsDialog(defaultTab?: string, isDisplayedOnWelcomePage?: boolean) {
-    return openDialog(SettingsDialog, {
+    return openDialog('SettingsDialog', SettingsDialog, {
         defaultTab,
         isDisplayedOnWelcomePage
     });
@@ -132,14 +145,6 @@ export function submitMoreTab(newState: any) {
         const state = getState();
         const currentState = getMoreTabProps(state);
 
-        const showPrejoinPage = newState.showPrejoinPage;
-
-        if (showPrejoinPage !== currentState.showPrejoinPage) {
-            dispatch(updateSettings({
-                userSelectedSkipPrejoin: !showPrejoinPage
-            }));
-        }
-
         if (newState.maxStageParticipants !== currentState.maxStageParticipants) {
             dispatch(updateSettings({ maxStageParticipants: Number(newState.maxStageParticipants) }));
         }
@@ -154,6 +159,10 @@ export function submitMoreTab(newState: any) {
             const { conference } = getConferenceState(state);
 
             conference?.setTranscriptionLanguage(newState.currentLanguage);
+        }
+
+        if (newState.showSubtitlesOnStage !== currentState.showSubtitlesOnStage) {
+            dispatch(updateSettings({ showSubtitlesOnStage: newState.showSubtitlesOnStage }));
         }
     };
 }
@@ -188,6 +197,17 @@ export function submitModeratorTab(newState: any) {
             || newState.startVideoMuted !== currentState.startVideoMuted) {
             dispatch(setStartMutedPolicy(
                 newState.startAudioMuted, newState.startVideoMuted));
+        }
+
+        if (newState.chatWithPermissionsEnabled !== currentState.chatWithPermissionsEnabled) {
+            const { conference } = getState()['features/base/conference'];
+
+            const currentPermissions = conference?.getMetadataHandler().getMetadata().permissions || {};
+
+            conference?.getMetadataHandler().setMetadata('permissions', {
+                ...currentPermissions,
+                groupChatRestricted: newState.chatWithPermissionsEnabled
+            });
         }
     };
 }
@@ -331,5 +351,37 @@ export function submitVirtualBackgroundTab(newState: any, isCancel = false) {
                         ? 'none' : newState.options.backgroundType}' applied!`);
             }
         }
+    };
+}
+
+/**
+ * Sets the audio preview track.
+ *
+ * @param {any} track - The track to set.
+ * @returns {{
+ *     type: SET_PREVIEW_AUDIO_TRACK,
+ *     track: any
+ * }}
+ */
+export function setPreviewAudioTrack(track: any) {
+    return {
+        type: SET_PREVIEW_AUDIO_TRACK,
+        track
+    };
+}
+
+/**
+ * Sets the audio settings.
+ *
+ * @param {IAudioSettings} settings - The settings to set.
+ * @returns {{
+ *     type: SET_AUDIO_SETTINGS,
+ *     settings: IAudioSettings
+ * }}
+ */
+export function setAudioSettings(settings: IAudioSettings) {
+    return {
+        type: SET_AUDIO_SETTINGS,
+        settings
     };
 }

@@ -2,6 +2,7 @@
 import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from '../../../../modules/UI/UIErrors';
 import { IReduxState, IStore } from '../../app/types';
 import { showModeratedNotification } from '../../av-moderation/actions';
+import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../av-moderation/constants';
 import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { setNoiseSuppressionEnabled } from '../../noise-suppression/actions';
 import { showErrorNotification, showNotification } from '../../notifications/actions';
@@ -11,6 +12,7 @@ import { setScreenAudioShareState, setScreenshareAudioTrack } from '../../screen
 import { isAudioOnlySharing, isScreenVideoShared } from '../../screen-share/functions';
 import { toggleScreenshotCaptureSummary } from '../../screenshot-capture/actions';
 import { isScreenshotCaptureEnabled } from '../../screenshot-capture/functions';
+import { setAudioSettings } from '../../settings/actions.web';
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { getCurrentConference } from '../conference/functions';
 import { notifyCameraError, notifyMicError } from '../devices/actions.web';
@@ -26,6 +28,7 @@ import {
 } from '../media/constants';
 import { IGUMPendingState } from '../media/types';
 import { updateSettings } from '../settings/actions';
+import { IAudioSettings } from '../settings/reducer';
 
 import { addLocalTrack, replaceLocalTrack } from './actions.any';
 import AllowToggleCameraDialog from './components/web/AllowToggleCameraDialog';
@@ -36,6 +39,7 @@ import {
     getLocalVideoTrack,
     isToggleCameraEnabled
 } from './functions';
+import { applyAudioConstraints, getLocalJitsiAudioTrackSettings } from './functions.web';
 import logger from './logger';
 import { ICreateInitialTracksOptions, IInitialTracksErrors, IShareOptions, IToggleScreenSharingOptions } from './types';
 
@@ -55,10 +59,10 @@ export function toggleScreensharing(
         shareOptions: IShareOptions = {}) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         // check for A/V Moderation when trying to start screen sharing
-        if ((enabled || enabled === undefined) && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, getState())) {
-            dispatch(showModeratedNotification(MEDIA_TYPE.SCREENSHARE));
+        if ((enabled || enabled === undefined) && shouldShowModeratedNotification(AVM_MEDIA_TYPE.DESKTOP, getState())) {
+            dispatch(showModeratedNotification(AVM_MEDIA_TYPE.DESKTOP));
 
-            return Promise.reject();
+            return Promise.resolve();
         }
 
         return _toggleScreenSharing({
@@ -290,7 +294,7 @@ export function setCameraFacingMode(facingMode: string | undefined) {
  * @returns {Object} - The open dialog action.
  */
 export function openAllowToggleCameraDialog(onAllow: Function, initiatorId: string) {
-    return openDialog(AllowToggleCameraDialog, {
+    return openDialog('AllowToggleCameraDialog', AllowToggleCameraDialog, {
         onAllow,
         initiatorId
     });
@@ -328,7 +332,6 @@ export function setGUMPendingStateOnFailedTracks(tracks: Array<any>, dispatch: I
 export function createAndAddInitialAVTracks(devices: Array<MediaType>) {
     return async (dispatch: IStore['dispatch']) => {
         dispatch(gumPending(devices, IGUMPendingState.PENDING_UNMUTE));
-
         const { tracks, errors } = await dispatch(createInitialAVTracks({ devices }));
 
         setGUMPendingStateOnFailedTracks(tracks, dispatch);
@@ -538,5 +541,23 @@ export function toggleCamera() {
         const newVideoTrack = await createLocalTrack('video', null, null, { facingMode: targetFacingMode });
 
         await dispatch(replaceLocalTrack(null, newVideoTrack));
+    };
+}
+
+/**
+ * Toggles the audio settings.
+ *
+ * @param {IAudioSettings} settings - The settings to apply.
+ * @returns {Function}
+ */
+export function toggleUpdateAudioSettings(settings: IAudioSettings) {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+
+        await applyAudioConstraints(state, settings);
+
+        const updatedSettings = getLocalJitsiAudioTrackSettings(state) as IAudioSettings;
+
+        dispatch(setAudioSettings(updatedSettings));
     };
 }

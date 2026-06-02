@@ -68,7 +68,7 @@ export const RoomContextMenu = ({
     }, [ dispatch, room ]);
 
     const onRenameBreakoutRoom = useCallback(() => {
-        dispatch(openDialog(BreakoutRoomNamePrompt, {
+        dispatch(openDialog('BreakoutRoomNamePrompt', BreakoutRoomNamePrompt, {
             breakoutRoomJid: room?.jid,
             initialRoomName: room?.name
         }));

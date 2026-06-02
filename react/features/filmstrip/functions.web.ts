@@ -1,6 +1,8 @@
+import { Theme } from '@mui/material/styles';
+
 import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
-import { isMobileBrowser } from '../base/environment/utils';
+import { isTouchDevice, shouldEnableResize } from '../base/environment/utils';
 import { MEDIA_TYPE } from '../base/media/constants';
 import {
     getLocalParticipant,
@@ -28,6 +30,7 @@ import {
     DEFAULT_LOCAL_TILE_ASPECT_RATIO,
     DISPLAY_AVATAR,
     DISPLAY_VIDEO,
+    DRAG_HANDLE_WIDTH,
     FILMSTRIP_GRID_BREAKPOINT,
     FILMSTRIP_TYPE,
     INDICATORS_TOOLTIP_POSITION,
@@ -43,6 +46,7 @@ import {
     TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES,
     TILE_VIEW_GRID_HORIZONTAL_MARGIN,
     TILE_VIEW_GRID_VERTICAL_MARGIN,
+    TOUCH_DRAG_HANDLE_PADDING,
     VERTICAL_VIEW_HORIZONTAL_MARGIN
 } from './constants';
 
@@ -81,13 +85,13 @@ export function shouldRemoteVideosBeVisible(state: IReduxState) {
     // in the filmstrip.
     const participantCount = getParticipantCountWithFake(state);
     let pinnedParticipant;
-    const { disable1On1Mode } = state['features/base/config'];
+    const { disable1On1Mode, filmstrip: { alwaysShowResizeBar } = {} } = state['features/base/config'];
     const { contextMenuOpened } = state['features/base/responsive-ui'];
 
     return Boolean(
         contextMenuOpened
             || participantCount > 2
-
+            || alwaysShowResizeBar
             // Always show the filmstrip when there is another participant to
             // show and the  local video is pinned, or the toolbar is displayed.
             || (participantCount > 1
@@ -158,7 +162,7 @@ export function calculateThumbnailSizeForHorizontalView(clientHeight = 0) {
 /**
  * Calculates the size for thumbnails when in vertical view layout.
  *
- * @param {number} clientWidth - The height of the app window.
+ * @param {number} clientWidth - The available video space width.
  * @param {number} filmstripWidth - The width of the filmstrip.
  * @param {boolean} isResizable - Whether the filmstrip is resizable or not.
  * @returns {{local: {height, width}, remote: {height, width}}}
@@ -186,7 +190,7 @@ export function calculateThumbnailSizeForVerticalView(clientWidth = 0, filmstrip
 /**
  * Returns the minimum height of a thumbnail.
  *
- * @param {number} clientWidth - The width of the window.
+ * @param {number} clientWidth - The available width for rendering thumbnails.
  * @returns {number} The minimum height of a thumbnail.
  */
 export function getThumbnailMinHeight(clientWidth: number) {
@@ -198,7 +202,7 @@ export function getThumbnailMinHeight(clientWidth: number) {
  *
  * @param {boolean} disableResponsiveTiles - Indicates whether the responsive tiles functionality is disabled.
  * @param {boolean} disableTileEnlargement - Indicates whether the tiles enlargement functionality is disabled.
- * @param {number} clientWidth - The width of the window.
+ * @param {number} clientWidth - The available video space width.
  * @returns {number} The default aspect ratio for a tile.
  */
 export function getTileDefaultAspectRatio(disableResponsiveTiles: boolean,
@@ -236,13 +240,13 @@ export function getNumberOfPartipantsForTileView(state: IReduxState) {
  * @returns {Object} - The dimensions.
  */
 export function calculateNonResponsiveTileViewDimensions(state: IReduxState) {
-    const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+    const { clientHeight, videoSpaceWidth } = state['features/base/responsive-ui'];
     const { disableTileEnlargement } = state['features/base/config'];
     const { columns: c, minVisibleRows, rows: r } = getNotResponsiveTileViewGridDimensions(state);
     const size = calculateThumbnailSizeForTileView({
         columns: c,
         minVisibleRows,
-        clientWidth,
+        clientWidth: videoSpaceWidth,
         clientHeight,
         disableTileEnlargement,
         disableResponsiveTiles: true
@@ -250,10 +254,10 @@ export function calculateNonResponsiveTileViewDimensions(state: IReduxState) {
 
     if (typeof size === 'undefined') { // The columns don't fit into the screen. We will have horizontal scroll.
         const aspectRatio = disableTileEnlargement
-            ? getTileDefaultAspectRatio(true, disableTileEnlargement, clientWidth)
+            ? getTileDefaultAspectRatio(true, disableTileEnlargement, videoSpaceWidth)
             : TILE_PORTRAIT_ASPECT_RATIO;
 
-        const height = getThumbnailMinHeight(clientWidth);
+        const height = getThumbnailMinHeight(videoSpaceWidth);
 
         return {
             height,
@@ -619,6 +623,7 @@ export function getIndicatorsTooltipPosition(thumbnailType?: string) {
 
 /**
  * Returns whether or not the filmstrip is resizable.
+ * On touch devices, resize is only enabled for larger screens (tablets, not phones).
  *
  * @param {Object} state - Redux state.
  * @returns {boolean}
@@ -627,7 +632,7 @@ export function isFilmstripResizable(state: IReduxState) {
     const { filmstrip } = state['features/base/config'];
     const _currentLayout = getCurrentLayout(state);
 
-    return !filmstrip?.disableResizable && !isMobileBrowser()
+    return !filmstrip?.disableResizable && shouldEnableResize()
         && (_currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW || _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW);
 }
 
@@ -660,8 +665,13 @@ export function getVerticalViewMaxWidth(state: IReduxState) {
 
     // Adding 4px for the border-right and margin-right.
     // On non-resizable filmstrip add 4px for the left margin and border.
-    // Also adding 7px for the scrollbar. Also adding 9px for the drag handle.
-    maxWidth += (_verticalViewGrid ? 0 : 11) + (_resizableFilmstrip ? 9 : 4);
+    // Also adding 7px for the scrollbar.
+    // Drag handle: DRAG_HANDLE_WIDTH + padding (TOUCH_DRAG_HANDLE_PADDING on each side for touch)
+    const dragHandleWidth = isTouchDevice()
+        ? DRAG_HANDLE_WIDTH + (TOUCH_DRAG_HANDLE_PADDING * 2)
+        : DRAG_HANDLE_WIDTH;
+
+    maxWidth += (_verticalViewGrid ? 0 : 11) + (_resizableFilmstrip ? dragHandleWidth : 4);
 
     return maxWidth;
 }
@@ -829,4 +839,14 @@ export function isTopPanelEnabled(state: IReduxState) {
 
     return !filmstrip?.disableTopPanel && participantsCount >= (filmstrip?.minParticipantCountForTopPanel ?? 50);
 
+}
+
+/**
+ * Returns the thumbnail background color from the theme.
+ *
+ * @param {Theme} theme - The MUI theme.
+ * @returns {string} The background color.
+ */
+export function getThumbnailBackgroundColor(theme: Theme): string {
+    return theme.palette.thumbnailVideoBackground;
 }

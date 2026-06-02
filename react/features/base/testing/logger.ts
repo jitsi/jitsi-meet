@@ -1,3 +1,3 @@
 import { getLogger } from '../logging/functions';
 
-export default getLogger('features/base/testing');
+export default getLogger('app:testing');

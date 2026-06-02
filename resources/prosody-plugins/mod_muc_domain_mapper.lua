@@ -19,7 +19,7 @@ local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 
 -- We must filter stanzas in order to hook in to all incoming and outgoing messaging which skips the stanza routers
 function filter_stanza(stanza, session)
-    if stanza.skipMapping then
+    if stanza.skipMapping or session.type == 's2sout' then
         return stanza;
     end
 

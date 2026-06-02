@@ -51,6 +51,11 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
             return false;
         }
 
+        // Allow transcription-only start even without a recording service selected.
+        if (!selectedRecordingService && shouldRecordTranscription) {
+            return false;
+        }
+
         return true;
     }
 

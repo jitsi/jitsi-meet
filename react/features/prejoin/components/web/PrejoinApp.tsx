@@ -52,7 +52,8 @@ export default class PrejoinApp extends BaseApp<Props> {
 
         dispatch?.(setConfig({
             prejoinConfig: {
-                enabled: true
+                enabled: true,
+                showHangUp: false
             },
             startWithAudioMuted,
             startWithVideoMuted

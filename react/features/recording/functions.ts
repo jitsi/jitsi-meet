@@ -1,36 +1,43 @@
 import i18next from 'i18next';
 
 import { IReduxState, IStore } from '../app/types';
-import { isMobileBrowser } from '../base/environment/utils';
+import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
-import { JitsiRecordingConstants, browser } from '../base/lib-jitsi-meet';
+import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getSoundFileSrc } from '../base/media/functions';
-import {
-    getLocalParticipant,
-    getRemoteParticipants,
-    isLocalParticipantModerator
-} from '../base/participants/functions';
+import { getLocalParticipant, getRemoteParticipants } from '../base/participants/functions';
 import { registerSound, unregisterSound } from '../base/sounds/actions';
+import { isEmbedded, isEmbeddedFromSameDomain } from '../base/util/embedUtils';
+import { isSpotTV } from '../base/util/spot';
 import { isInBreakoutRoom as isInBreakoutRoomF } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../transcribing/functions';
+import { iAmVisitor } from '../visitors/functions';
 
 import LocalRecordingManager from './components/Recording/LocalRecordingManager';
 import {
     LIVE_STREAMING_OFF_SOUND_ID,
     LIVE_STREAMING_ON_SOUND_ID,
+    RECORDING_AND_TRANSCRIPTION_OFF_SOUND_ID,
+    RECORDING_AND_TRANSCRIPTION_ON_SOUND_ID,
     RECORDING_OFF_SOUND_ID,
     RECORDING_ON_SOUND_ID,
     RECORDING_STATUS_PRIORITIES,
-    RECORDING_TYPES
+    RECORDING_TYPES,
+    TRANSCRIPTION_OFF_SOUND_ID,
+    TRANSCRIPTION_ON_SOUND_ID
 } from './constants';
 import logger from './logger';
 import {
     LIVE_STREAMING_OFF_SOUND_FILE,
     LIVE_STREAMING_ON_SOUND_FILE,
+    RECORDING_AND_TRANSCRIPTION_OFF_SOUND_FILE,
+    RECORDING_AND_TRANSCRIPTION_ON_SOUND_FILE,
     RECORDING_OFF_SOUND_FILE,
-    RECORDING_ON_SOUND_FILE
+    RECORDING_ON_SOUND_FILE,
+    TRANSCRIPTION_OFF_SOUND_FILE,
+    TRANSCRIPTION_ON_SOUND_FILE
 } from './sounds';
 
 /**
@@ -154,8 +161,7 @@ export function getSessionStatusToShow(state: IReduxState, mode: string): string
  * @returns {boolean} - Whether local recording is supported or not.
  */
 export function supportsLocalRecording() {
-    return browser.isChromiumBased() && !browser.isElectron() && !isMobileBrowser()
-        && navigator.product !== 'ReactNative';
+    return LocalRecordingManager.isSupported() && (!isEmbedded() || isEmbeddedFromSameDomain());
 }
 
 /**
@@ -192,6 +198,18 @@ export function isRecordingRunning(state: IReduxState) {
 }
 
 /**
+ * Returns true if the participant has either the recording or transcription JWT feature enabled.
+ * Used to determine if the user can interact with recording/transcription controls.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function hasRecordingOrTranscriptionFeature(state: IReduxState) {
+    return isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false)
+        || isJwtFeatureEnabled(state, MEET_FEATURES.TRANSCRIPTION, false);
+}
+
+/**
  * Returns true if the participant can stop recording.
  *
  * @param {Object} state - The redux state to search in.
@@ -203,9 +221,7 @@ export function canStopRecording(state: IReduxState) {
     }
 
     if (isCloudRecordingRunning(state) || isRecorderTranscriptionsRunning(state)) {
-        const isModerator = isLocalParticipantModerator(state);
-
-        return isJwtFeatureEnabled(state, 'recording', isModerator, false);
+        return hasRecordingOrTranscriptionFeature(state);
     }
 
     return false;
@@ -252,25 +268,28 @@ export function getRecordButtonProps(state: IReduxState) {
     // a button can be disabled/enabled if enableFeaturesBasedOnToken
     // is on or if the livestreaming is running.
     let disabled = false;
-    let tooltip = '';
+    let tooltip = isRecordingRunning(state) ? 'dialog.stopRecording' : 'dialog.startRecording';
 
     // If the containing component provides the visible prop, that is one
     // above all, but if not, the button should be autonomus and decide on
     // its own to be visible or not.
-    const isModerator = isLocalParticipantModerator(state);
     const {
         recordingService,
-        localRecording
+        localRecording,
+        transcription
     } = state['features/base/config'];
     const localRecordingEnabled = !localRecording?.disable && supportsLocalRecording();
 
     const dropboxEnabled = isDropboxEnabled(state);
     const recordingEnabled = recordingService?.enabled || dropboxEnabled;
+    const transcriptionEnabled = transcription?.enabled;
 
     if (localRecordingEnabled) {
         visible = true;
-    } else if (isJwtFeatureEnabled(state, 'recording', isModerator, false)) {
+    } else if (isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false)) {
         visible = recordingEnabled;
+    } else if (isJwtFeatureEnabled(state, MEET_FEATURES.TRANSCRIPTION, false)) {
+        visible = transcriptionEnabled;
     }
 
     // disable the button if the livestreaming is running.
@@ -384,6 +403,10 @@ export function unregisterRecordingAudioFiles(dispatch: IStore['dispatch']) {
     dispatch(unregisterSound(LIVE_STREAMING_ON_SOUND_FILE));
     dispatch(unregisterSound(RECORDING_OFF_SOUND_FILE));
     dispatch(unregisterSound(RECORDING_ON_SOUND_FILE));
+    dispatch(unregisterSound(TRANSCRIPTION_OFF_SOUND_FILE));
+    dispatch(unregisterSound(TRANSCRIPTION_ON_SOUND_FILE));
+    dispatch(unregisterSound(RECORDING_AND_TRANSCRIPTION_OFF_SOUND_FILE));
+    dispatch(unregisterSound(RECORDING_AND_TRANSCRIPTION_ON_SOUND_FILE));
 }
 
 /**
@@ -415,6 +438,22 @@ export function registerRecordingAudioFiles(dispatch: IStore['dispatch'], should
     dispatch(registerSound(
         RECORDING_ON_SOUND_ID,
         getSoundFileSrc(RECORDING_ON_SOUND_FILE, language)));
+
+    dispatch(registerSound(
+        TRANSCRIPTION_OFF_SOUND_ID,
+        getSoundFileSrc(TRANSCRIPTION_OFF_SOUND_FILE, language)));
+
+    dispatch(registerSound(
+        TRANSCRIPTION_ON_SOUND_ID,
+        getSoundFileSrc(TRANSCRIPTION_ON_SOUND_FILE, language)));
+
+    dispatch(registerSound(
+        RECORDING_AND_TRANSCRIPTION_OFF_SOUND_ID,
+        getSoundFileSrc(RECORDING_AND_TRANSCRIPTION_OFF_SOUND_FILE, language)));
+
+    dispatch(registerSound(
+        RECORDING_AND_TRANSCRIPTION_ON_SOUND_ID,
+        getSoundFileSrc(RECORDING_AND_TRANSCRIPTION_ON_SOUND_FILE, language)));
 }
 
 /**
@@ -446,17 +485,47 @@ export function isLiveStreamingButtonVisible({
  * @returns {boolean}
  */
 export function shouldRequireRecordingConsent(recorderSession: any, state: IReduxState) {
-    const { requireRecordingConsent } = state['features/dynamic-branding'] || {};
-    const { requireConsent } = state['features/base/config'].recordings || {};
+    const { requireRecordingConsent, skipRecordingConsentInMeeting }
+        = state['features/dynamic-branding'] || {};
+    const { conference } = state['features/base/conference'] || {};
+    const { requireConsent, skipConsentInMeeting } = state['features/base/config'].recordings || {};
+    const _iAmVisitor = iAmVisitor(state);
+    const { iAmRecorder, testing: { showSpotConsentDialog = false } = {} } = state['features/base/config'];
+    const { consentRequested } = state['features/recording'];
+
+    if (iAmRecorder || _iAmVisitor) {
+        return false;
+    }
+
+    // For Spot TV instances, check the showSpotConsentDialog config parameter
+    // If showSpotConsentDialog is false (or undefined, defaulting to false), don't show consent dialog
+    if (isSpotTV(state) && !showSpotConsentDialog) {
+        return false;
+    }
 
     if (!requireConsent && !requireRecordingConsent) {
         return false;
     }
 
-    if (!recorderSession.getInitiator()
-        || recorderSession.getStatus() === JitsiRecordingConstants.status.OFF) {
+    if (consentRequested.has(recorderSession.getID())) {
         return false;
     }
 
-    return recorderSession.getInitiator() !== getLocalParticipant(state)?.id;
+    // If we join a meeting that has an ongoing recording `conference` will be undefined since
+    // we get the recording state through the initial presence which happens in between the
+    // WILL_JOIN and JOINED events.
+    if (conference && (skipConsentInMeeting || skipRecordingConsentInMeeting)) {
+        return false;
+    }
+
+    // lib-jitsi-meet may set a JitsiParticipant as the initiator of the recording session or the
+    // JID resource in case it cannot find it. We need to handle both cases.
+    const initiator = recorderSession.getInitiator();
+    const initiatorId = initiator?.getId?.() ?? initiator;
+
+    if (!initiatorId || recorderSession.getStatus() === JitsiRecordingConstants.status.OFF) {
+        return false;
+    }
+
+    return initiatorId !== getLocalParticipant(state)?.id;
 }

@@ -1,3 +1,3 @@
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/keyboard-shortcuts');
+export default getLogger('app:keyboard-shortcuts');

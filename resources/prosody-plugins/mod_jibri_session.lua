@@ -1,3 +1,18 @@
+-- mod_jibri_session
+--
+-- Enriches jibri `start` IQ stanzas with recording metadata before they reach
+-- jibri.  It handles two passes:
+--
+--   1. Client → jicofo (no `room` attr): reads the initiating user's identity
+--      from the XMPP session and writes it to
+--      app_data.file_recording_metadata.initiator {id, group}.
+--
+--   2. Jicofo → jibri (`room` attr present): looks up the MUC room, reads its
+--      meetingId, and writes it to
+--      app_data.file_recording_metadata.conference_details.session_id.
+--
+-- Must be loaded on both the main virtual host and the jicofo virtual host.
+
 local json = require 'cjson';
 
 local util = module:require 'util';
@@ -12,7 +27,7 @@ local stanza = event.stanza;
     if stanza.name == "iq" then
         local jibri = stanza:get_child('jibri', 'http://jitsi.org/protocol/jibri');
         if jibri then
-            if jibri.attr.action == 'start' then
+            if jibri.attr.action and jibri.attr.action:lower() == 'start' then
 
                 local update_app_data = false;
                 local app_data = jibri.attr.app_data;
@@ -44,10 +59,12 @@ local stanza = event.stanza;
 
                         if session.jitsi_meet_context_user ~= nil then
                             initiator.id = session.jitsi_meet_context_user.id;
+                        else
+                            initiator.id = session.granted_jitsi_meet_context_user_id;
                         end
-                        if session.jitsi_meet_context_group ~= nil then
-                            initiator.group = session.jitsi_meet_context_group;
-                        end
+
+                        initiator.group
+                            = session.jitsi_meet_context_group or session.granted_jitsi_meet_context_group_id;
 
                         app_data.file_recording_metadata.initiator = initiator
                         update_app_data = true;

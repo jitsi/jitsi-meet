@@ -34,7 +34,7 @@ const useStyles = makeStyles()(() => {
             margin: '16px'
         },
         emoji: {
-            fontSize: '40px',
+            fontSize: '2.5rem',
             margin: '12px'
         }
     };

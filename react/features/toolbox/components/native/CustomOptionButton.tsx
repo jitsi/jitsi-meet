@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, View, ViewStyle } from 'react-native';
-import { SvgCssUri } from 'react-native-svg';
+import { SvgCssUri } from 'react-native-svg/css';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
@@ -44,6 +44,7 @@ class CustomOptionButton extends AbstractButton<ICustomOptionButton> {
         if (this.iconSrc?.includes('svg')) {
             iconComponent = (
                 <SvgCssUri
+                    // @ts-ignore
                     height = { BaseTheme.spacing[4] }
                     uri = { this.iconSrc }
                     width = { BaseTheme.spacing[4] } />
@@ -62,7 +63,7 @@ class CustomOptionButton extends AbstractButton<ICustomOptionButton> {
             <View
                 style = { this.props.isToolboxButton && [
                     styles.toolboxButtonIconContainer,
-                    { backgroundColor: this.backgroundColor } ] as ViewStyle }>
+                    { backgroundColor: this.backgroundColor } ] as ViewStyle[] }>
                 { iconComponent }
             </View>
         );

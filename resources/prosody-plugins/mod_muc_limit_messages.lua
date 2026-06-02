@@ -1,4 +1,10 @@
--- A module to limit the number of messages in a meeting
+-- Enforces a per-room message count cap (muc_limit_messages_count). Once the cap
+-- is reached the triggering message is rejected with <not-allowed/>, a broadcast
+-- is sent to the room, and all further messages are rejected. Messages from
+-- sessions without room context (no jitsi_web_query_room) are passed through.
+-- Body-less non-groupchat messages and answer-poll json-messages are exempt from
+-- counting. With muc_limit_messages_check_token = true an authenticated sender
+-- permanently lifts the cap for that room.
 -- Needs to be activated under the muc component where the limit needs to be applied
 -- Copyright (C) 2023-present 8x8, Inc.
 
@@ -44,20 +50,17 @@ function on_message(event)
 
     local session = event.origin;
     if not session or not session.jitsi_web_query_room then
-        -- if this is a message from visitor, pass it through. Limits are applied in the visitor node.
-        if event.origin.type == 's2sin' then
-            return;
-        end
-
-        return false;
+        -- No room context: cannot apply limits, pass through.
+        -- (Visitor messages from s2sin are also passed through — limits enforced at visitor node.)
+        return;
     end
 
     -- get room name with tenant and find room
     local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
     if not room then
-        module:log('warn', 'No room found found for %s/%s',
+        module:log('warn', 'No room found for %s/%s',
             session.jitsi_web_query_prefix, session.jitsi_web_query_room);
-        return false;
+        return;
     end
 
     if check_token and session.auth_token then
@@ -97,7 +100,10 @@ end
 
 -- handle messages sent in the component
 -- 'message/host' is used for breakout rooms
-module:hook('message/full', on_message); -- private messages
-module:hook('message/bare', on_message); -- room messages
+-- Priority -1 ensures modules at the default priority (0) — notably
+-- filter_messages — run first. Messages they block (return true) never reach
+-- this handler and do not consume cap slots.
+module:hook('message/full', on_message, -1); -- private messages
+module:hook('message/bare', on_message, -1); -- room messages
 
 module:hook_global('config-reloaded', load_config);

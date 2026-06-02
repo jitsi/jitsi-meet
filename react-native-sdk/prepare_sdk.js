@@ -101,10 +101,6 @@ fs.copyFileSync(
     `${iosDestPath}/InfoPlistUtil.h`
 );
 fs.copyFileSync(
-    `${iosSrcPath}/JavaScriptSandbox.m`,
-    `${iosDestPath}/JavaScriptSandbox.m`
-);
-fs.copyFileSync(
     `${iosSrcPath}/JitsiAudioSession.m`,
     `${iosDestPath}/JitsiAudioSession.m`
 );
@@ -119,10 +115,6 @@ fs.copyFileSync(
 fs.copyFileSync(
     `${iosSrcPath}/LocaleDetector.m`,
     `${iosDestPath}/LocaleDetector.m`
-);
-fs.copyFileSync(
-    `${iosSrcPath}/POSIX.m`,
-    `${iosDestPath}/POSIX.m`
 );
 fs.copyFileSync(
     `${iosSrcPath}/Proximity.m`,
@@ -156,10 +148,6 @@ copyFolderRecursiveSync(
     `${androidMainSourcePath}/drawable-xxxhdpi`,
      `${androidMainTargetPath}`
 );
-copyFolderRecursiveSync(
-    `${androidSourcePath}/net`,
-    `${androidTargetPath}/log`
-);
 fs.copyFileSync(
     `${androidSourcePath}/AndroidSettingsModule.java`,
     `${androidTargetPath}/AndroidSettingsModule.java`
@@ -183,10 +171,6 @@ fs.copyFileSync(
 fs.copyFileSync(
     `${androidSourcePath}/ConnectionService.java`,
     `${androidTargetPath}/ConnectionService.java`
-);
-fs.copyFileSync(
-    `${androidSourcePath}/JavaScriptSandboxModule.java`,
-    `${androidTargetPath}/JavaScriptSandboxModule.java`
 );
 fs.copyFileSync(
     `${androidSourcePath}/LocaleDetector.java`,

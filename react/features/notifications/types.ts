@@ -13,7 +13,6 @@ export interface INotificationProps {
     hideErrorSupportLink?: boolean;
     icon?: string;
     maxLines?: number;
-    sticky?: boolean;
     title?: string;
     titleArguments?: {
         [key: string]: string | number;

@@ -176,7 +176,6 @@ class AudioRoutePickerDialog extends Component<IProps, IState> {
 
             // Skip devices with unknown type.
             if (!infoMap) {
-                // eslint-disable-next-line no-continue
                 continue;
             }
 

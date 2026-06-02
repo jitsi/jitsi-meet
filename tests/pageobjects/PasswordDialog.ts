@@ -20,6 +20,18 @@ export default class PasswordDialog extends BaseDialog {
         await input.waitForStable();
     }
 
+    async isOpen() {
+        const input = this.participant.driver.$(INPUT_KEY_XPATH);
+
+        try {
+            await input.isExisting();
+
+            return await input.isDisplayed();
+        } catch (e) {
+            return false;
+        }
+    }
+
     /**
      * Sets a password and submits the dialog.
      * @param password
@@ -28,6 +40,7 @@ export default class PasswordDialog extends BaseDialog {
         const passwordInput = this.participant.driver.$(INPUT_KEY_XPATH);
 
         await passwordInput.waitForExist();
+        await passwordInput.waitForStable();
         await passwordInput.click();
         await passwordInput.clearValue();
 

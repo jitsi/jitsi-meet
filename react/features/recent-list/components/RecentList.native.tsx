@@ -9,7 +9,7 @@ import { openSheet } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
 import NavigateSectionList from '../../base/react/components/native/NavigateSectionList';
 import { Item, Section } from '../../base/react/types';
-import styles from '../../welcome/components/styles';
+import styles from '../../welcome/components/styles.native';
 import { isRecentListEnabled, toDisplayableList } from '../functions.native';
 
 import AbstractRecentList from './AbstractRecentList';

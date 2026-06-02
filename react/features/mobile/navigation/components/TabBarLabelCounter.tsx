@@ -4,13 +4,13 @@ import { StyleProp, Text, TextStyle, View } from 'react-native';
 import { navigationStyles } from './styles';
 
 interface ITabBarLabelCounterProps {
-    activeUnreadNr: boolean;
+    activeUnreadNr?: boolean;
     isFocused: boolean;
     label: string;
-    nbUnread?: number;
+    unreadCount?: number;
 }
 
-export const TabBarLabelCounter = ({ activeUnreadNr, isFocused, label, nbUnread }: ITabBarLabelCounterProps) => {
+export const TabBarLabelCounter = ({ activeUnreadNr, isFocused, label, unreadCount }: ITabBarLabelCounterProps) => {
     const labelStyles = isFocused
         ? navigationStyles.unreadCounterDescriptionFocused
         : navigationStyles.unreadCounterDescription;
@@ -29,7 +29,7 @@ export const TabBarLabelCounter = ({ activeUnreadNr, isFocused, label, nbUnread 
                         style = { navigationStyles.unreadCounterCircle as StyleProp<TextStyle> }>
                         <Text
                             style = { navigationStyles.unreadCounter as StyleProp<TextStyle> }>
-                            { nbUnread }
+                            { unreadCount }
                         </Text>
                     </View>
                 )

@@ -6,6 +6,7 @@ import { translate } from '../../../i18n/functions';
 import Icon from '../../../icons/components/Icon';
 import Tooltip from '../../../tooltip/components/Tooltip';
 import { TOOLTIP_POSITION } from '../../../ui/constants.any';
+import { pixelsToRem } from '../../../ui/functions.any';
 
 /**
  * The type of the React {@code Component} props of {@link BaseIndicator}.
@@ -40,7 +41,7 @@ interface IProps extends WithTranslation {
     /**
      * The font size for the icon.
      */
-    iconSize: string | number;
+    iconSize: number;
 
     /**
      * The ID attribute to set on the root element of the component.
@@ -88,10 +89,10 @@ const BaseIndicator = ({
     tooltipPosition = 'top'
 }: IProps) => {
     const { classes: styles } = useStyles();
-    const style: { fontSize?: string | number; } = {};
+    const style: { fontSize?: string; } = {};
 
     if (iconSize) {
-        style.fontSize = iconSize;
+        style.fontSize = pixelsToRem(iconSize);
     }
 
     return (

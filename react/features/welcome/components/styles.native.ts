@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 import { BoxModel } from '../../base/styles/components/styles/BoxModel';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
@@ -25,7 +25,7 @@ export default {
      * View that is rendered when there is no welcome page.
      */
     blankPageWrapper: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         alignItems: 'center',
         backgroundColor: BaseTheme.palette.uiBackground,
         flex: 1,
@@ -101,13 +101,6 @@ export default {
         paddingTop: 10
     },
 
-    /**
-     * A view that contains the field and hint box.
-     */
-    joinControls: {
-        padding: BoxModel.padding
-    },
-
     messageContainer: {
         backgroundColor: BaseTheme.palette.ui03,
         borderRadius: BaseTheme.shape.borderRadius,
@@ -149,7 +142,7 @@ export default {
     roomContainer: {
         alignSelf: 'stretch',
         flexDirection: 'column',
-        marginHorizontal: BaseTheme.spacing[2]
+        padding: BaseTheme.spacing[3]
     },
 
     /**
@@ -213,7 +206,7 @@ export default {
     customInput: {
         fontSize: 18,
         letterSpacing: 0,
-        textAlign: 'center'
+        ...Platform.select({ ios: { textAlign: 'center' } })
     },
 
     recentList: {

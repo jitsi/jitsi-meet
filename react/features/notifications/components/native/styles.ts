@@ -45,15 +45,28 @@ export default {
 
     contentText: {
         color: BaseTheme.palette.text04,
-        paddingLeft: BaseTheme.spacing[5],
+        paddingLeft: BaseTheme.spacing[4],
         paddingTop: BaseTheme.spacing[1]
+    },
+
+    contentTextDescription: {
+        color: BaseTheme.palette.text04,
+        paddingLeft: BaseTheme.spacing[4],
+        paddingTop: BaseTheme.spacing[2]
+    },
+
+    contentTextTitleDescription: {
+        color: BaseTheme.palette.text04,
+        fontWeight: 'bold',
+        paddingLeft: BaseTheme.spacing[4],
+        paddingTop: BaseTheme.spacing[2]
     },
 
     contentTextTitle: {
         color: BaseTheme.palette.text04,
         fontWeight: 'bold',
-        paddingLeft: BaseTheme.spacing[5],
-        paddingTop: BaseTheme.spacing[2]
+        paddingLeft: BaseTheme.spacing[4],
+        paddingTop: BaseTheme.spacing[3]
     },
 
     /**
@@ -99,7 +112,7 @@ export default {
     btnContainer: {
         display: 'flex',
         flexDirection: 'row',
-        paddingLeft: BaseTheme.spacing[4],
+        paddingLeft: BaseTheme.spacing[3],
         paddingTop: BaseTheme.spacing[1]
     },
 

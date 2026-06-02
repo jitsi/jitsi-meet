@@ -17,7 +17,8 @@ import {
     getParticipantById,
     getParticipantDisplayName,
     hasRaisedHand,
-    isLocalParticipantModerator
+    isLocalParticipantModerator,
+    isPrivateChatEnabled
 } from '../../../base/participants/functions';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { IRoom } from '../../../breakout-rooms/types';
@@ -61,14 +62,14 @@ interface IProps {
     _disableKick: boolean;
 
     /**
-     * Whether or not to display the send private message button.
-     */
-    _disablePrivateChat: boolean;
-
-    /**
      * Whether or not to display the remote mute buttons.
      */
     _disableRemoteMute: boolean;
+
+    /**
+     * Whether or not to display the send private message button.
+     */
+    _enablePrivateChat: boolean;
 
     /**
      * Whether or not the current room is a breakout room.
@@ -150,9 +151,9 @@ class RemoteVideoMenu extends PureComponent<IProps> {
     override render() {
         const {
             _disableKick,
-            _disablePrivateChat,
             _disableRemoteMute,
             _disableGrantModerator,
+            _enablePrivateChat,
             _isBreakoutRoom,
             _isParticipantAvailable,
             _isParticipantSilent,
@@ -191,7 +192,7 @@ class RemoteVideoMenu extends PureComponent<IProps> {
                 { !_disableGrantModerator && !_isBreakoutRoom && <GrantModeratorButton { ...buttonProps } /> }
                 <PinButton { ...buttonProps } />
                 { _showDemote && <DemoteToVisitorButton { ...buttonProps } /> }
-                { !_disablePrivateChat && <PrivateMessageButton { ...buttonProps } /> }
+                { _enablePrivateChat && <PrivateMessageButton { ...buttonProps } /> }
                 <ConnectionStatusButton { ...connectionStatusButtonProps } />
                 {_moderator && _rooms.length > 1 && <>
                     {/* @ts-ignore */}
@@ -258,7 +259,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantId } = ownProps;
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
     const participant = getParticipantById(state, participantId);
-    const { disableKick, disablePrivateChat } = remoteVideoMenu;
+    const { disableKick } = remoteVideoMenu;
     const _rooms = Object.values(getBreakoutRooms(state));
     const _currentRoomId = getCurrentRoomId(state);
     const shouldDisableKick = disableKick || !kickOutEnabled;
@@ -271,7 +272,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _currentRoomId,
         _disableKick: Boolean(shouldDisableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
-        _disablePrivateChat: Boolean(disablePrivateChat) || _iAmVisitor,
+        _enablePrivateChat: isPrivateChatEnabled(participant, state),
         _isBreakoutRoom,
         _isParticipantAvailable: Boolean(participant),
         _isParticipantSilent: Boolean(participant?.isSilent),

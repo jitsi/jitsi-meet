@@ -19,7 +19,7 @@ const useStyles = makeStyles()(theme => {
             height: '190px',
             width: '343px',
             overflowY: 'auto',
-            backgroundColor: theme.palette.ui01
+            backgroundColor: theme.palette.prejoinCountryPickerBackground
         }
     };
 });

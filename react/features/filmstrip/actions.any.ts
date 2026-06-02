@@ -60,16 +60,19 @@ export function setRemoteParticipants(participants: Array<string>) {
  *
  * @param {number} startIndex - The start index from the remote participants array.
  * @param {number} endIndex - The end index from the remote participants array.
+ * @param {number} fullyVisibleCount - The number of fully visible participants (excluding partially visible).
  * @returns {{
  *      type: SET_VISIBLE_REMOTE_PARTICIPANTS,
  *      startIndex: number,
- *      endIndex: number
+ *      endIndex: number,
+ *      fullyVisibleCount: number
  * }}
  */
-export function setVisibleRemoteParticipants(startIndex: number, endIndex: number) {
+export function setVisibleRemoteParticipants(startIndex: number, endIndex: number, fullyVisibleCount?: number) {
     return {
         type: SET_VISIBLE_REMOTE_PARTICIPANTS,
         startIndex,
-        endIndex
+        endIndex,
+        fullyVisibleCount
     };
 }

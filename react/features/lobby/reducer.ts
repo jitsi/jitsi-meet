@@ -73,7 +73,8 @@ ReducerRegistry.register<ILobbyState>('features/lobby', (state = DEFAULT_STATE, 
             ...state,
             isDisplayNameRequiredError: false,
             knocking: false,
-            passwordJoinFailed: false
+            lobbyVisible: false,
+            passwordJoinFailed: false,
         };
     case KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED:
         return _knockingParticipantArrivedOrUpdated(action.participant, state);

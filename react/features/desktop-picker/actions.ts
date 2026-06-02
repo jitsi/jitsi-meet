@@ -18,7 +18,7 @@ type Options = {
 export function showDesktopPicker(options: Options = {}, onSourceChoose: Function) {
     const { desktopSharingSources } = options;
 
-    return openDialog(DesktopPicker, {
+    return openDialog('DesktopPicker', DesktopPicker, {
         desktopSharingSources,
         onSourceChoose
     });

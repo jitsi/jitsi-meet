@@ -17,8 +17,8 @@ import {
 import DialogWithTabs, { IDialogTab } from '../../../base/ui/components/web/DialogWithTabs';
 import { isCalendarEnabled } from '../../../calendar-sync/functions.web';
 import { submitAudioDeviceSelectionTab, submitVideoDeviceSelectionTab } from '../../../device-selection/actions.web';
-import AudioDevicesSelection from '../../../device-selection/components/AudioDevicesSelection';
-import VideoDeviceSelection from '../../../device-selection/components/VideoDeviceSelection';
+import AudioDevicesSelection from '../../../device-selection/components/AudioDevicesSelection.web';
+import VideoDeviceSelection from '../../../device-selection/components/VideoDeviceSelection.web';
 import {
     getAudioDeviceSelectionDialogProps,
     getVideoDeviceSelectionDialogProps
@@ -137,6 +137,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         = configuredTabs.includes('profile') && !state['features/base/config'].disableProfile;
     const showCalendarSettings
         = configuredTabs.includes('calendar') && isCalendarEnabled(state);
+    const showShortcutsSettings = configuredTabs.includes('shortcuts');
     const showSoundsSettings = configuredTabs.includes('sounds');
     const enabledNotifications = getNotificationsMap(state);
     const showNotificationsSettings = Object.keys(enabledNotifications).length > 0;
@@ -160,6 +161,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
                 return {
                     ...newProps,
+                    audioSettings: tabState.audioSettings,
                     noiseSuppressionEnabled: tabState.noiseSuppressionEnabled,
                     selectedAudioInputId: tabState.selectedAudioInputId,
                     selectedAudioOutputId: tabState.selectedAudioOutputId
@@ -252,6 +254,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
                 return {
                     ...newProps,
+                    chatWithPermissionsEnabled: tabState?.chatWithPermissionsEnabled,
                     followMeEnabled: tabState?.followMeEnabled,
                     followMeRecorderEnabled: tabState?.followMeRecorderEnabled,
                     startAudioMuted: tabState?.startAudioMuted,
@@ -270,6 +273,13 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             component: ProfileTab,
             labelKey: 'profile.title',
             props: getProfileTabProps(state),
+            propsUpdateFunction: (tabState: any, newProps: ReturnType<typeof getProfileTabProps>) => {
+                return {
+                    ...newProps,
+                    displayName: tabState?.displayName,
+                    email: tabState?.email
+                };
+            },
             submit: submitProfileTab,
             icon: IconUser
         });
@@ -284,22 +294,24 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         });
     }
 
-    !_iAmVisitor && tabs.push({
-        name: SETTINGS_TABS.SHORTCUTS,
-        component: ShortcutsTab,
-        labelKey: 'settings.shortcuts',
-        props: getShortcutsTabProps(state, isDisplayedOnWelcomePage),
-        propsUpdateFunction: (tabState: any, newProps: ReturnType<typeof getShortcutsTabProps>) => {
-            // Updates tab props, keeping users selection
+    if (showShortcutsSettings && !_iAmVisitor) {
+        tabs.push({
+            name: SETTINGS_TABS.SHORTCUTS,
+            component: ShortcutsTab,
+            labelKey: 'settings.shortcuts',
+            props: getShortcutsTabProps(state, isDisplayedOnWelcomePage),
+            propsUpdateFunction: (tabState: any, newProps: ReturnType<typeof getShortcutsTabProps>) => {
+                // Updates tab props, keeping users selection
 
-            return {
-                ...newProps,
-                keyboardShortcutsEnabled: tabState?.keyboardShortcutsEnabled
-            };
-        },
-        submit: submitShortcutsTab,
-        icon: IconShortcuts
-    });
+                return {
+                    ...newProps,
+                    keyboardShortcutsEnabled: tabState?.keyboardShortcutsEnabled
+                };
+            },
+            submit: submitShortcutsTab,
+            icon: IconShortcuts
+        });
+    }
 
     if (showMoreTab && !_iAmVisitor) {
         tabs.push({
@@ -314,7 +326,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     ...newProps,
                     currentLanguage: tabState?.currentLanguage,
                     hideSelfView: tabState?.hideSelfView,
-                    showPrejoinPage: tabState?.showPrejoinPage,
+                    showSubtitlesOnStage: tabState?.showSubtitlesOnStage,
                     maxStageParticipants: tabState?.maxStageParticipants
                 };
             },

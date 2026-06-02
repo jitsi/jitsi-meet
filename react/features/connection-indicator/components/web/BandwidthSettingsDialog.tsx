@@ -8,20 +8,19 @@ import { MIN_ASSUMED_BANDWIDTH_BPS } from '../../../../../modules/API/constants'
 import { IReduxState } from '../../../app/types';
 import { setAssumedBandwidthBps as saveAssumedBandwidthBps } from '../../../base/conference/actions';
 import { IconInfoCircle } from '../../../base/icons/svg';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import Input from '../../../base/ui/components/web/Input';
 
 const useStyles = makeStyles()(theme => {
     return {
         content: {
-            color: theme.palette.text01
+            color: theme.palette.dialogText
         },
 
         info: {
-            background: theme.palette.ui01,
-            ...withPixelLineHeight(theme.typography.labelRegular),
-            color: theme.palette.text02,
+            background: theme.palette.dialogBackground,
+            ...theme.typography.labelRegular,
+            color: theme.palette.dialogSecondaryText,
             marginTop: theme.spacing(2)
         },
 

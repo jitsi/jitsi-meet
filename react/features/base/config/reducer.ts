@@ -18,8 +18,7 @@ import {
     IConfig,
     IDeeplinkingConfig,
     IDeeplinkingDesktopConfig,
-    IDeeplinkingMobileConfig,
-    IMobileDynamicLink
+    IDeeplinkingMobileConfig
 } from './configType';
 import { _cleanupConfig, _setDeeplinkingDefaults } from './functions';
 
@@ -186,6 +185,15 @@ function _setConfig(state: IConfig, { config }: { config: IConfig; }) {
         });
     }
 
+    const { alwaysShowResizeBar, disableResizable } = config.filmstrip || {};
+
+    if (alwaysShowResizeBar && disableResizable) {
+        config.filmstrip = {
+            ...config.filmstrip,
+            alwaysShowResizeBar: false
+        };
+    }
+
     const newState = merge(
         {},
         config,
@@ -321,15 +329,6 @@ function _translateInterfaceConfig(oldValue: IConfig) {
         };
 
         if (typeof interfaceConfig === 'object') {
-            const mobileDynamicLink = interfaceConfig.MOBILE_DYNAMIC_LINK;
-            const dynamicLink: IMobileDynamicLink | undefined = mobileDynamicLink ? {
-                apn: mobileDynamicLink.APN,
-                appCode: mobileDynamicLink.APP_CODE,
-                ibi: mobileDynamicLink.IBI,
-                isi: mobileDynamicLink.ISI,
-                customDomain: mobileDynamicLink.CUSTOM_DOMAIN
-            } : undefined;
-
             if (deeplinking.desktop) {
                 deeplinking.desktop.appName = interfaceConfig.NATIVE_APP_NAME;
             }
@@ -340,14 +339,12 @@ function _translateInterfaceConfig(oldValue: IConfig) {
                 appScheme: interfaceConfig.APP_SCHEME,
                 downloadLink: interfaceConfig.MOBILE_DOWNLOAD_LINK_ANDROID,
                 appPackage: interfaceConfig.ANDROID_APP_PACKAGE,
-                fDroidUrl: interfaceConfig.MOBILE_DOWNLOAD_LINK_F_DROID,
-                dynamicLink
+                fDroidUrl: interfaceConfig.MOBILE_DOWNLOAD_LINK_F_DROID
             };
             deeplinking.ios = {
                 appName: interfaceConfig.NATIVE_APP_NAME,
                 appScheme: interfaceConfig.APP_SCHEME,
-                downloadLink: interfaceConfig.MOBILE_DOWNLOAD_LINK_IOS,
-                dynamicLink
+                downloadLink: interfaceConfig.MOBILE_DOWNLOAD_LINK_IOS
             };
         }
         newValue.deeplinking = deeplinking;
@@ -408,13 +405,6 @@ function _translateLegacyConfig(oldValue: IConfig) {
         newValue.welcomePage.disabled = !oldValue.enableWelcomePage;
     }
 
-    newValue.prejoinConfig = oldValue.prejoinConfig || {};
-    if (oldValue.hasOwnProperty('prejoinPageEnabled')
-        && !newValue.prejoinConfig.hasOwnProperty('enabled')
-    ) {
-        newValue.prejoinConfig.enabled = oldValue.prejoinPageEnabled;
-    }
-
     newValue.disabledSounds = newValue.disabledSounds || [];
 
     if (oldValue.disableJoinLeaveSounds) {
@@ -438,6 +428,20 @@ function _translateLegacyConfig(oldValue: IConfig) {
 
     if (oldValue.disableRemoveRaisedHandOnFocus) {
         newValue.raisedHands.disableRemoveRaisedHandOnFocus = oldValue.disableRemoveRaisedHandOnFocus;
+    }
+
+    newValue.virtualBackground = newValue.virtualBackground || {};
+
+    if (oldValue.hasOwnProperty('disableVirtualBackground')
+        && !newValue.virtualBackground.hasOwnProperty('disabled')
+    ) {
+        newValue.virtualBackground.disabled = oldValue.disableVirtualBackground;
+    }
+
+    if (oldValue.hasOwnProperty('disableAddingBackgroundImages')
+        && !newValue.virtualBackground.hasOwnProperty('disableAddingImages')
+    ) {
+        newValue.virtualBackground.disableAddingImages = oldValue.disableAddingBackgroundImages;
     }
 
     if (oldValue.stereo || oldValue.opusMaxAverageBitrate) {

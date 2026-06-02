@@ -1,15 +1,30 @@
+import { IReduxState } from '../app/types';
 import { IConfig } from '../base/config/configType';
 import { parseURLParams } from '../base/util/parseURLParams';
 import { getBackendSafeRoomName } from '../base/util/uri';
+import { isVpaasMeeting } from '../jaas/functions';
 
 /**
- * Checks if the token for authentication is available.
+ * Checks if the token for authentication URL is available and the meeting is not jaas.
+ *
+ * @param {IReduxState} state - The state of the app.
+ * @returns {boolean}
+ */
+export const isTokenAuthEnabled = (state: IReduxState): boolean => {
+    const config = state['features/base/config'];
+
+    return typeof config.tokenAuthUrl === 'string' && config.tokenAuthUrl.length > 0
+        && !isVpaasMeeting(state);
+};
+
+/**
+ * Checks if the token authentication should be done inline.
  *
  * @param {Object} config - Configuration state object from store.
  * @returns {boolean}
  */
-export const isTokenAuthEnabled = (config: IConfig): boolean =>
-    typeof config.tokenAuthUrl === 'string' && config.tokenAuthUrl.length > 0;
+export const isTokenAuthInline = (config: IConfig): boolean =>
+    config.tokenAuthInline === true;
 
 /**
  * Returns the state that we can add as a parameter to the tokenAuthUrl.
@@ -23,6 +38,7 @@ export const isTokenAuthEnabled = (config: IConfig): boolean =>
  * }.
  * @param {string?} roomName - The room name.
  * @param {string?} tenant - The tenant name if any.
+ * @param {string?} refreshToken - The refresh token if available.
  *
  * @returns {Object} The state object.
  */
@@ -35,8 +51,10 @@ export const _getTokenAuthState = (
             videoMuted: boolean | undefined;
         },
         roomName: string | undefined,
-        tenant: string | undefined): object => {
+        tenant: string | undefined,
+        refreshToken?: string): object => {
     const state = {
+        refreshToken,
         room: roomName,
         roomSafe: getBackendSafeRoomName(roomName),
         tenant

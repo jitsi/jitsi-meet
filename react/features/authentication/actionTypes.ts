@@ -27,16 +27,6 @@ export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
 
 /**
- * The type of (redux) action which signals that we have authenticated successful when
- * tokenAuthUrl is set.
- *
- * {
- *     type: SET_TOKEN_AUTH_URL_SUCCESS
- * }
- */
-export const SET_TOKEN_AUTH_URL_SUCCESS = 'SET_TOKEN_AUTH_URL_SUCCESS';
-
-/**
  * The type of (redux) action which signals that the cyclic operation of waiting
  * for conference owner has been aborted.
  *
@@ -45,6 +35,15 @@ export const SET_TOKEN_AUTH_URL_SUCCESS = 'SET_TOKEN_AUTH_URL_SUCCESS';
  * }
  */
 export const STOP_WAIT_FOR_OWNER = 'STOP_WAIT_FOR_OWNER';
+
+/**
+ * The type of (redux) action which disables moderator login.
+ *
+ * {
+ *     type: DISABLE_MODERATOR_LOGIN
+ * }
+ */
+export const DISABLE_MODERATOR_LOGIN = 'DISABLE_MODERATOR_LOGIN';
 
 /**
  * The type of (redux) action which informs that the authentication and role
@@ -73,6 +72,15 @@ export const UPGRADE_ROLE_FINISHED = 'UPGRADE_ROLE_FINISHED';
  * }
  */
 export const UPGRADE_ROLE_STARTED = 'UPGRADE_ROLE_STARTED';
+
+/**
+ * The type of (redux) action which enables moderator login.
+ *
+ * {
+ *     type: ENABLE_MODERATOR_LOGIN
+ * }
+ */
+export const ENABLE_MODERATOR_LOGIN = 'ENABLE_MODERATOR_LOGIN';
 
 /**
  * The type of (redux) action that sets delayed handler which will check if

@@ -1,11 +1,14 @@
 import { IStore } from '../app/types';
+import { getCurrentConference } from '../base/conference/functions';
 import { JitsiConferenceErrors, JitsiConnectionErrors } from '../base/lib-jitsi-meet';
 import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
 } from '../base/lib-jitsi-meet/functions.any';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
+import { PAGE_RELOAD_APPLICATION_LOG } from './actionTypes';
 import { openPageReloadDialog } from './actions';
 import logger from './logger';
 
@@ -35,6 +38,7 @@ type ErrorType = {
  */
 const RN_NO_RELOAD_DIALOG_ERRORS = [
     JitsiConnectionErrors.NOT_LIVE_ERROR,
+    JitsiConnectionErrors.SHARD_CHANGED_ERROR,
     JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED,
     JitsiConferenceErrors.CONFERENCE_DESTROYED,
     JitsiConferenceErrors.CONNECTION_ERROR,
@@ -127,3 +131,25 @@ StateListenerRegistry.register(
         }
     }
 );
+
+/**
+ * Middleware for overlay specific actions.
+ *
+ * @param {Store} store - The redux store.
+ * @returns {Function}
+ */
+MiddlewareRegistry.register(({ getState }) => next => action => {
+    const result = next(action);
+
+    if (action.type === PAGE_RELOAD_APPLICATION_LOG) {
+        const state = getState();
+        const conference = getCurrentConference(state) ?? state['features/base/conference']?.leaving;
+
+        conference?.sendApplicationLog(JSON.stringify({
+            name: 'page.reload',
+            label: action.reason
+        }));
+    }
+
+    return result;
+});

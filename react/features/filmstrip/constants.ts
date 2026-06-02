@@ -270,6 +270,19 @@ export const MIN_STAGE_VIEW_HEIGHT = 700;
 export const MIN_STAGE_VIEW_WIDTH = 800;
 
 /**
+ * Drag handle dimensions for resizable filmstrip.
+ */
+export const DRAG_HANDLE_WIDTH = 9;
+export const DRAG_HANDLE_HEIGHT = 100;
+export const DRAG_HANDLE_TOP_PANEL_HEIGHT = 3;
+export const DRAG_HANDLE_TOP_PANEL_WIDTH = 100;
+
+/**
+ * Touch padding added to each side of drag handle for easier tapping on touch devices.
+ */
+export const TOUCH_DRAG_HANDLE_PADDING = 6;
+
+/**
  * Horizontal margin used for the vertical filmstrip.
  */
 export const VERTICAL_VIEW_HORIZONTAL_MARGIN = VERTICAL_FILMSTRIP_MIN_HORIZONTAL_MARGIN
@@ -298,3 +311,9 @@ export const MAX_ACTIVE_PARTICIPANTS = 6;
  * Top filmstrip default height.
  */
 export const TOP_FILMSTRIP_HEIGHT = 180;
+
+/**
+ * Minimum screen width needed for functional filmstrip resizing.
+ * Calculated as stage minimum + filmstrip minimum (800px + 120px = 920px).
+ */
+export const MIN_FILMSTRIP_RESIZE_WIDTH = MIN_STAGE_VIEW_WIDTH + DEFAULT_FILMSTRIP_WIDTH;

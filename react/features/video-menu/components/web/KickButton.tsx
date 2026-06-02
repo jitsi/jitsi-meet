@@ -29,7 +29,7 @@ const KickButton = ({
         if (notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
             return;
         }
-        dispatch(openDialog(KickRemoteParticipantDialog, { participantID }));
+        dispatch(openDialog('KickRemoteParticipantDialog', KickRemoteParticipantDialog, { participantID }));
     }, [ dispatch, notifyClick, notifyMode, participantID ]);
 
     return (

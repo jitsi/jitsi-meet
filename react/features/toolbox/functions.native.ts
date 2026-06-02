@@ -3,11 +3,13 @@ import { IStateful } from '../base/app/types';
 import { hasAvailableDevices } from '../base/devices/functions.native';
 import { TOOLBOX_ALWAYS_VISIBLE, TOOLBOX_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
+import { MEET_FEATURES } from '../base/jwt/constants';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { getParticipantCountWithFake } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { isLocalVideoTrackDesktop } from '../base/tracks/functions.native';
 
-import { MAIN_TOOLBAR_BUTTONS_PRIORITY } from './constants';
+import { MAIN_TOOLBAR_BUTTONS_PRIORITY, VISITORS_MODE_BUTTONS } from './constants';
 import { isButtonEnabled } from './functions.any';
 import { IGetVisibleNativeButtonsParams, IToolboxNativeButton } from './types';
 
@@ -22,8 +24,9 @@ export * from './functions.any';
 export function isDesktopShareButtonDisabled(state: IReduxState) {
     const { muted, unmuteBlocked } = state['features/base/media'].video;
     const videoOrShareInProgress = !muted || isLocalVideoTrackDesktop(state);
+    const enabledInJwt = isJwtFeatureEnabled(state, MEET_FEATURES.SCREEN_SHARING, true);
 
-    return unmuteBlocked && !videoOrShareInProgress;
+    return !enabledInJwt || (unmuteBlocked && !videoOrShareInProgress);
 }
 
 /**
@@ -66,11 +69,15 @@ export function isVideoMuteButtonDisabled(state: IReduxState) {
  * @param {IGetVisibleButtonsParams} params - The parameters needed to extract the visible buttons.
  * @returns {Object} - The visible buttons arrays .
  */
-export function getVisibleNativeButtons({ allButtons, clientWidth, mainToolbarButtonsThresholds, toolbarButtons
-}: IGetVisibleNativeButtonsParams) {
-    const filteredButtons = Object.keys(allButtons).filter(key =>
+export function getVisibleNativeButtons(
+        { allButtons, clientWidth, iAmVisitor, mainToolbarButtonsThresholds, toolbarButtons }: IGetVisibleNativeButtonsParams) {
+    let filteredButtons = Object.keys(allButtons).filter(key =>
         typeof key !== 'undefined' // filter invalid buttons that may be coming from config.mainToolbarButtons override
         && isButtonEnabled(key, toolbarButtons));
+
+    if (iAmVisitor) {
+        filteredButtons = VISITORS_MODE_BUTTONS.filter(button => filteredButtons.indexOf(button) > -1);
+    }
 
     const { order } = mainToolbarButtonsThresholds.find(({ width }) => clientWidth > width)
     || mainToolbarButtonsThresholds[mainToolbarButtonsThresholds.length - 1];

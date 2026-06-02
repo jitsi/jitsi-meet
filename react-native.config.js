@@ -20,11 +20,6 @@ module.exports = {
             platforms: {
                 ios: null
             }
-        },
-        'react-native-watch-connectivity': {
-            platforms: {
-                ios: null
-            }
         }
     }
 };

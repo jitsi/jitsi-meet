@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui';
 import { ACTION_TRIGGER } from '../../../../participants-pane/constants';
 import participantsPaneTheme from '../../../components/themes/participantsPaneTheme.json';
 import { isMobileBrowser } from '../../../environment/utils';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 
 interface IProps {
 
@@ -84,9 +83,9 @@ const useStyles = makeStyles()(theme => {
     return {
         container: {
             alignItems: 'center',
-            color: theme.palette.text01,
+            color: theme.palette.listItemText,
             display: 'flex',
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            ...theme.typography.bodyShortBold,
             margin: `0 -${participantsPaneTheme.panePadding}px`,
             padding: `${theme.spacing(2)} ${participantsPaneTheme.panePadding}px`,
             position: 'relative',
@@ -94,7 +93,7 @@ const useStyles = makeStyles()(theme => {
             minHeight: '40px',
 
             '&:hover, &:focus-within': {
-                backgroundColor: theme.palette.ui02,
+                backgroundColor: theme.palette.listItemHover,
 
                 '& .indicators': {
                     display: 'none'
@@ -104,26 +103,26 @@ const useStyles = makeStyles()(theme => {
                     display: 'flex',
                     position: 'relative',
                     top: 'auto',
-                    boxShadow: `-15px 0px 10px -5px ${theme.palette.ui02}`,
-                    backgroundColor: theme.palette.ui02
+                    boxShadow: `-15px 0px 10px -5px ${theme.palette.listItemBoxShadow}`,
+                    backgroundColor: theme.palette.listItemHover
                 }
             },
 
             [`@media(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`]: {
-                ...withPixelLineHeight(theme.typography.bodyShortBoldLarge),
+                ...theme.typography.bodyShortBoldLarge,
                 padding: `${theme.spacing(3)} ${participantsPaneTheme.panePadding}px`
             }
         },
 
         highlighted: {
-            backgroundColor: theme.palette.ui02,
+            backgroundColor: theme.palette.listItemHighlighted,
 
             '& .actions': {
                 display: 'flex',
                 position: 'relative',
                 top: 'auto',
-                boxShadow: `-15px 0px 10px -5px ${theme.palette.ui02}`,
-                backgroundColor: theme.palette.ui02
+                boxShadow: `-15px 0px 10px -5px ${theme.palette.listItemBoxShadow}`,
+                backgroundColor: theme.palette.listItemHighlighted
             }
         },
 
@@ -171,20 +170,20 @@ const useStyles = makeStyles()(theme => {
         actionsContainer: {
             position: 'absolute',
             top: '-1000px',
-            boxShadow: `-15px 0px 10px -5px ${theme.palette.ui02}`,
-            backgroundColor: theme.palette.ui02
+            boxShadow: `-15px 0px 10px -5px ${theme.palette.listItemBoxShadow}`,
+            backgroundColor: theme.palette.listItemHover
         },
 
         actionsPermanent: {
             display: 'flex',
-            boxShadow: `-15px 0px 10px -5px ${theme.palette.ui01}`,
-            backgroundColor: theme.palette.ui01
+            boxShadow: `-15px 0px 10px -5px ${theme.palette.listItemBackground}`,
+            backgroundColor: theme.palette.listItemBackground
         },
 
         actionsVisible: {
             display: 'flex',
-            boxShadow: `-15px 0px 10px -5px ${theme.palette.ui02}`,
-            backgroundColor: theme.palette.ui02
+            boxShadow: `-15px 0px 10px -5px ${theme.palette.listItemBoxShadow}`,
+            backgroundColor: theme.palette.listItemHighlighted
         }
     };
 });

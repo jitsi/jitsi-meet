@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { ColorPalette } from '../../../../base/styles/components/styles/ColorPalette';
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import {
     getDeviceStatusText,
     getDeviceStatusType
@@ -16,7 +15,7 @@ const useStyles = makeStyles<{ deviceStatusType?: string; }>()((theme, { deviceS
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: '#fff',
             marginTop: theme.spacing(4),
 
@@ -26,9 +25,9 @@ const useStyles = makeStyles<{ deviceStatusType?: string; }>()((theme, { deviceS
 
             '&.device-status-error': {
                 alignItems: 'flex-start',
-                backgroundColor: theme.palette.warning01,
+                backgroundColor: theme.palette.prejoinDeviceStatusWarning,
                 borderRadius: '6px',
-                color: theme.palette.uiBackground,
+                color: theme.palette.prejoinDeviceStatusText,
                 padding: '12px 16px',
                 textAlign: 'left',
                 marginTop: theme.spacing(2)
@@ -42,7 +41,8 @@ const useStyles = makeStyles<{ deviceStatusType?: string; }>()((theme, { deviceS
             width: '16px',
             height: '16px',
             borderRadius: '100%',
-            backgroundColor: deviceStatusType === 'ok' ? theme.palette.success01 : ColorPalette.darkGrey
+            backgroundColor: deviceStatusType === 'ok' ? theme.palette.prejoinDeviceStatusOk : ColorPalette.darkGrey,
+            flexShrink: 0
         }
     };
 });
@@ -67,7 +67,9 @@ function DeviceStatus() {
             role = 'alert'
             tabIndex = { -1 }>
             {!hasError && <div className = { classes.indicator } />}
-            <span role = 'heading'>
+            <span
+                aria-level = { 3 }
+                role = 'heading'>
                 {hasError ? t('prejoin.errorNoPermissions') : t(deviceStatusText ?? '')}
             </span>
         </div>

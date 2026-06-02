@@ -1,3 +1,9 @@
+-- Allows clients from whitelisted domains (muc_password_whitelist) to join
+-- password-protected MUC rooms without supplying the room password. The module
+-- injects the room's current password into the join stanza on behalf of
+-- whitelisted clients, so the standard password check in Prosody's MUC module
+-- succeeds transparently.
+-- This module is enabled under the MUC component.
 --- AUTHOR: https://gist.github.com/legastero Lance Stout
 local jid_split = require "util.jid".split;
 local whitelist = module:get_option_set("muc_password_whitelist");

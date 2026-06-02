@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-import { withPixelLineHeight } from '../../base/styles/functions.web';
 import Select from '../../base/ui/components/web/Select';
 
 /**
@@ -57,11 +56,11 @@ const useStyles = makeStyles()(theme => {
             width: '100%',
             boxSizing: 'border-box',
             borderRadius: theme.shape.borderRadius,
-            backgroundColor: theme.palette.uiBackground,
+            backgroundColor: theme.palette.deviceSelectorTextBackground,
             padding: '10px 16px',
             textAlign: 'center',
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
-            border: `1px solid ${theme.palette.ui03}`
+            ...theme.typography.bodyShortRegular,
+            border: `1px solid ${theme.palette.deviceSelectorBorder}`
         }
     };
 });

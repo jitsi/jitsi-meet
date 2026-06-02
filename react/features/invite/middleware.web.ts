@@ -41,7 +41,7 @@ MiddlewareRegistry.register(store => next => action => {
 function _beginAddPeople({ dispatch }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
-    dispatch(openDialog(AddPeopleDialog));
+    dispatch(openDialog('AddPeopleDialog', AddPeopleDialog));
 
     return result;
 }
@@ -60,7 +60,7 @@ function _beginAddPeople({ dispatch }: IStore, next: Function, action: AnyAction
  * @returns {*} The value returned by {@code next(action)}.
  */
 function _hideAddPeopleDialog({ dispatch }: IStore, next: Function, action: AnyAction) {
-    dispatch(hideDialog(AddPeopleDialog));
+    dispatch(hideDialog('AddPeopleDialog', AddPeopleDialog));
 
     return next(action);
 }

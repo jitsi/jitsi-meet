@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { admitMultiple, goLive } from '../../../visitors/actions';
 import {
     getPromotionRequests,
     getVisitorsCount,
     getVisitorsInQueueCount,
-    isVisitorsLive
+    isVisitorsLive,
+    shouldDisplayCurrentVisitorsList
 } from '../../../visitors/functions';
 
 import { VisitorsItem } from './VisitorsItem';
@@ -20,7 +20,7 @@ const useStyles = makeStyles()(theme => {
             margin: `${theme.spacing(3)} 0`
         },
         headingW: {
-            color: theme.palette.warning02
+            color: theme.palette.participantWarningText
         },
         drawerActions: {
             listStyleType: 'none',
@@ -29,10 +29,10 @@ const useStyles = makeStyles()(theme => {
         },
         drawerItem: {
             alignItems: 'center',
-            color: theme.palette.text01,
+            color: theme.palette.visitorsQueueText,
             display: 'flex',
             padding: '12px 16px',
-            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+            ...theme.typography.bodyShortRegularLarge,
 
             '&:first-child': {
                 marginTop: '15px'
@@ -40,7 +40,7 @@ const useStyles = makeStyles()(theme => {
 
             '&:hover': {
                 cursor: 'pointer',
-                background: theme.palette.action02
+                background: theme.palette.participantActionButton
             }
         },
         icon: {
@@ -52,12 +52,12 @@ const useStyles = makeStyles()(theme => {
             justifyContent: 'space-between'
         },
         heading: {
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
-            color: theme.palette.text02
+            ...theme.typography.bodyShortBold,
+            color: theme.palette.participantSectionText
         },
         link: {
-            ...withPixelLineHeight(theme.typography.labelBold),
-            color: theme.palette.link01,
+            ...theme.typography.labelBold,
+            color: theme.palette.participantLinkText,
             cursor: 'pointer'
         }
     };
@@ -74,6 +74,7 @@ export default function VisitorsList() {
     const visitorsInQueueCount = useSelector(getVisitorsInQueueCount);
     const isLive = useSelector(isVisitorsLive);
     const showVisitorsInQueue = visitorsInQueueCount > 0 && isLive === false;
+    const showCurrentVisitorsList = useSelector(shouldDisplayCurrentVisitorsList);
 
     const { t } = useTranslation();
     const { classes, cx } = useStyles();
@@ -91,13 +92,19 @@ export default function VisitorsList() {
         return null;
     }
 
+    if (showCurrentVisitorsList && requests.length <= 0 && !showVisitorsInQueue) {
+        return null;
+    }
+
     return (
         <>
             <div className = { classes.headingContainer }>
-                <div className = { cx(classes.heading, classes.headingW) }>
-                    { t('participantsPane.headings.visitors', { count: visitorsCount })}
+                <div
+                    className = { cx(classes.heading, classes.headingW) }
+                    id = 'visitor-list-header' >
+                    { !showCurrentVisitorsList && t('participantsPane.headings.visitors', { count: visitorsCount })}
                     { requests.length > 0
-                        && t('participantsPane.headings.visitorRequests', { count: requests.length }) }
+                        && t(`participantsPane.headings.${showCurrentVisitorsList ? 'viewerRequests' : 'visitorRequests'}`, { count: requests.length }) }
                     { showVisitorsInQueue
                         && t('participantsPane.headings.visitorInQueue', { count: visitorsInQueueCount }) }
                 </div>
@@ -114,17 +121,19 @@ export default function VisitorsList() {
                         onClick = { goLiveCb }>{ t('participantsPane.actions.goLive') }</div>
                 }
             </div>
-            <div
-                className = { classes.container }
-                id = 'visitor-list'>
-                {
-                    requests.map(r => (
-                        <VisitorsItem
-                            key = { r.from }
-                            request = { r } />)
-                    )
-                }
-            </div>
+            { requests.length > 0
+                && <div
+                    className = { classes.container }
+                    id = 'visitor-list'>
+                    {
+                        requests.map(r => (
+                            <VisitorsItem
+                                key = { r.from }
+                                request = { r } />)
+                        )
+                    }
+                </div>
+            }
         </>
     );
 }

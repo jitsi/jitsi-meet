@@ -3,21 +3,17 @@ import React, { useCallback } from 'react';
 import {
     BackHandler,
     NativeModules,
-    Platform,
-    SafeAreaView,
     StatusBar,
     View,
     ViewStyle
 } from 'react-native';
-import { EdgeInsets, withSafeAreaInsets } from 'react-native-safe-area-context';
+import { Edge, EdgeInsets, SafeAreaView, withSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect, useDispatch } from 'react-redux';
 
 import { appNavigate } from '../../../app/actions.native';
 import { IReduxState, IStore } from '../../../app/types';
 import { CONFERENCE_BLURRED, CONFERENCE_FOCUSED } from '../../../base/conference/actionTypes';
 import { isDisplayNameVisible } from '../../../base/config/functions.native';
-import { FULLSCREEN_ENABLED } from '../../../base/flags/constants';
-import { getFeatureFlag } from '../../../base/flags/functions';
 import Container from '../../../base/react/components/native/Container';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 import TintedView from '../../../base/react/components/native/TintedView';
@@ -37,7 +33,6 @@ import { isFilmstripVisible } from '../../../filmstrip/functions.native';
 import CalleeInfoContainer from '../../../invite/components/callee-info/CalleeInfoContainer';
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
-import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { isPipEnabled, setPictureInPictureEnabled } from '../../../mobile/picture-in-picture/functions';
 import Captions from '../../../subtitles/components/native/Captions';
@@ -46,9 +41,9 @@ import Toolbox from '../../../toolbox/components/native/Toolbox';
 import { isToolboxVisible } from '../../../toolbox/functions.native';
 import {
     AbstractConference,
+    type AbstractProps,
     abstractMapStateToProps
 } from '../AbstractConference';
-import type { AbstractProps } from '../AbstractConference';
 import { isConnecting } from '../functions.native';
 
 import AlwaysOnLabels from './AlwaysOnLabels';
@@ -95,11 +90,6 @@ interface IProps extends AbstractProps {
      * Set to {@code true} when the filmstrip is currently visible.
      */
     _filmstripVisible: boolean;
-
-    /**
-     * The indicator which determines whether fullscreen (immersive) mode is enabled.
-     */
-    _fullscreenEnabled: boolean;
 
     /**
      * The indicator which determines if the display name is visible.
@@ -181,6 +171,11 @@ class Conference extends AbstractConference<IProps, State> {
     _expandedLabelTimeout: any;
 
     /**
+     * Initializes hardwareBackPress subscription.
+     */
+    _hardwareBackPressSubscription: any;
+
+    /**
      * Initializes a new Conference instance.
      *
      * @param {Object} props - The read-only properties with which the new
@@ -216,7 +211,7 @@ class Conference extends AbstractConference<IProps, State> {
             navigation
         } = this.props;
 
-        BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
+        this._hardwareBackPressSubscription = BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
 
         if (_audioOnlyEnabled && _startCarMode) {
             navigation.navigate(screen.conference.carmode);
@@ -232,19 +227,20 @@ class Conference extends AbstractConference<IProps, State> {
         const {
             _audioOnlyEnabled,
             _showLobby,
-            _startCarMode
+            _startCarMode,
+            navigation
         } = this.props;
 
         if (!prevProps._showLobby && _showLobby) {
-            navigate(screen.lobby.root);
+            navigation.navigate(screen.lobby.root);
         }
 
         if (prevProps._showLobby && !_showLobby) {
             if (_audioOnlyEnabled && _startCarMode) {
-                return;
+                navigation.navigate(screen.conference.carmode);
+            } else {
+                navigation.navigate(screen.conference.main);
             }
-
-            navigate(screen.conference.main);
         }
     }
 
@@ -258,7 +254,7 @@ class Conference extends AbstractConference<IProps, State> {
      */
     override componentWillUnmount() {
         // Tear handling any hardware button presses for back navigation down.
-        BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
+        this._hardwareBackPressSubscription?.remove();
 
         clearTimeout(this._expandedLabelTimeout.current ?? 0);
     }
@@ -271,9 +267,11 @@ class Conference extends AbstractConference<IProps, State> {
      */
     override render() {
         const {
+            _aspectRatio,
             _brandingStyles,
-            _fullscreenEnabled
         } = this.props;
+
+        const isLandscape = _aspectRatio === ASPECT_RATIO_WIDE;
 
         return (
             <Container
@@ -281,14 +279,10 @@ class Conference extends AbstractConference<IProps, State> {
                     styles.conference,
                     _brandingStyles
                 ] }>
+                <StatusBar
+                    animated = { true }
+                    hidden = { isLandscape } />
                 <BrandingImageBackground />
-                {
-                    Platform.OS === 'android'
-                    && <StatusBar
-                        barStyle = 'light-content'
-                        hidden = { _fullscreenEnabled }
-                        translucent = { _fullscreenEnabled } />
-                }
                 { this._renderContent() }
             </Container>
         );
@@ -448,6 +442,7 @@ class Conference extends AbstractConference<IProps, State> {
                 </View>
 
                 <SafeAreaView
+                    edges = { [ 'left', 'right', 'top' ] }
                     pointerEvents = 'box-none'
                     style = {
                         (_toolboxVisible
@@ -456,6 +451,7 @@ class Conference extends AbstractConference<IProps, State> {
                     <TitleBar _createOnPress = { this._createOnPress } />
                 </SafeAreaView>
                 <SafeAreaView
+                    edges = { [ 'bottom', 'left', 'right', !_toolboxVisible && 'top' ].filter(Boolean) as Edge[] }
                     pointerEvents = 'box-none'
                     style = {
                         (_toolboxVisible
@@ -574,7 +570,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { startCarMode } = state['features/base/settings'];
     const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
     const brandingStyles = backgroundColor ? {
-        backgroundColor
+        background: backgroundColor
     } : undefined;
 
     return {
@@ -585,7 +581,6 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _calendarEnabled: isCalendarEnabled(state),
         _connecting: isConnecting(state),
         _filmstripVisible: isFilmstripVisible(state),
-        _fullscreenEnabled: getFeatureFlag(state, FULLSCREEN_ENABLED, true),
         _isDisplayNameVisible: isDisplayNameVisible(state),
         _isParticipantsPaneOpen: isOpen,
         _largeVideoParticipantId: state['features/large-video'].participantId,

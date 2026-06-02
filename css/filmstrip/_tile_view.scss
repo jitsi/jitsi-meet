@@ -91,15 +91,3 @@
         }
     }
 }
-
-.shift-right .remote-videos > div {
-    /**
-     * Max-width corresponding to the ASPECT_RATIO_BREAKPOINT from features/filmstrip/constants,
-     * from which we subtract the chat size.
-     */
-    @media only screen and (max-width: calc(500px + #{$sidebarWidth})) {
-        video {
-            object-fit: cover;
-        }
-    }
-}

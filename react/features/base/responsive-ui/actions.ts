@@ -2,8 +2,8 @@ import { batch } from 'react-redux';
 
 import { IStore } from '../../app/types';
 import { CHAT_SIZE } from '../../chat/constants';
-import { getParticipantsPaneOpen } from '../../participants-pane/functions';
-import theme from '../components/themes/participantsPaneTheme.json';
+import { getCustomPanelWidth } from '../../custom-panel/functions';
+import { getParticipantsPaneWidth } from '../../participants-pane/functions';
 
 import {
     CLIENT_RESIZED,
@@ -25,6 +25,7 @@ import { ASPECT_RATIO_NARROW, ASPECT_RATIO_WIDE } from './constants';
  * determine whether and how to render it.
  */
 const REDUCED_UI_THRESHOLD = 300;
+const WEB_REDUCED_UI_THRESHOLD = 320;
 
 /**
  * Indicates a resize of the window.
@@ -43,25 +44,27 @@ export function clientResized(clientWidth: number, clientHeight: number) {
 
         if (navigator.product !== 'ReactNative') {
             const state = getState();
-            const { isOpen: isChatOpen } = state['features/chat'];
-            const isParticipantsPaneOpen = getParticipantsPaneOpen(state);
+            const { reducedUIEnabled = true } = state['features/base/config'];
+            const { isOpen: isChatOpen, width } = state['features/chat'];
 
             if (isChatOpen) {
-                availableWidth -= CHAT_SIZE;
+                availableWidth -= width?.current ?? CHAT_SIZE;
             }
 
-            if (isParticipantsPaneOpen) {
-                availableWidth -= theme.participantsPaneWidth;
-            }
+            availableWidth -= getParticipantsPaneWidth(state);
+            availableWidth -= getCustomPanelWidth(state);
+
+            reducedUIEnabled && dispatch(setReducedUI(availableWidth, clientHeight));
         }
 
         batch(() => {
             dispatch({
                 type: CLIENT_RESIZED,
                 clientHeight,
-                clientWidth: availableWidth
+                clientWidth,
+                videoSpaceWidth: availableWidth
             });
-            dispatch(setAspectRatio(clientWidth, clientHeight));
+            dispatch(setAspectRatio(availableWidth, clientHeight));
         });
     };
 }
@@ -109,7 +112,10 @@ export function setAspectRatio(width: number, height: number) {
  */
 export function setReducedUI(width: number, height: number) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const reducedUI = Math.min(width, height) < REDUCED_UI_THRESHOLD;
+        const threshold = navigator.product === 'ReactNative'
+            ? REDUCED_UI_THRESHOLD
+            : WEB_REDUCED_UI_THRESHOLD;
+        const reducedUI = Math.max(width, height) < threshold;
 
         if (reducedUI !== getState()['features/base/responsive-ui'].reducedUI) {
             return dispatch({

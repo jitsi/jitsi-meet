@@ -67,8 +67,8 @@ class PrivateMessageButton extends AbstractButton<IProps, any> {
             ? navigate(screen.conference.chat, {
                 privateMessageRecipient: this.props._participant
             })
-            : navigate(screen.conference.chatandpolls.main, {
-                screen: screen.conference.chatandpolls.tab.chat,
+            : navigate(screen.conference.chatTabs.main, {
+                screen: screen.conference.chatTabs.tab.chat,
                 params: {
                     privateMessageRecipient: this.props._participant
                 }

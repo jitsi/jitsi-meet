@@ -3,13 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import {
-    setFollowMe,
-    setFollowMeRecorder,
     setStartMutedPolicy,
     setStartReactionsMuted
 } from '../../../base/conference/actions';
 import { updateSettings } from '../../../base/settings/actions';
 import Switch from '../../../base/ui/components/native/Switch';
+import { setFollowMe, setFollowMeRecorder } from '../../../follow-me/actions';
 import { getModeratorTabProps } from '../../functions.native';
 
 import FormRow from './FormRow';
@@ -18,13 +17,16 @@ import FormSection from './FormSection';
 const ModeratorSection = () => {
     const dispatch = useDispatch();
     const {
+        audioModerationEnabled,
+        chatWithPermissionsEnabled,
         followMeActive,
         followMeEnabled,
         followMeRecorderActive,
         followMeRecorderEnabled,
         startAudioMuted,
         startVideoMuted,
-        startReactionsMuted
+        startReactionsMuted,
+        videoModerationEnabled
     } = useSelector((state: IReduxState) => getModeratorTabProps(state));
 
     const { disableReactionsModeration } = useSelector((state: IReduxState) => state['features/base/config']);
@@ -52,18 +54,28 @@ const ModeratorSection = () => {
         dispatch(updateSettings({ soundsReactions: enabled }));
     }, [ dispatch, updateSettings, setStartReactionsMuted ]);
 
+    const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
+    const onChatWithPermissionsToggled = useCallback((enabled?: boolean) => {
+        const currentPermissions = conference?.getMetadataHandler().getMetadata().permissions || {};
+
+        conference?.getMetadataHandler().setMetadata('permissions', {
+            ...currentPermissions,
+            groupChatRestricted: enabled
+        });
+    }, [ dispatch, conference ]);
+
     const followMeRecorderChecked = followMeRecorderEnabled && !followMeRecorderActive;
 
     const moderationSettings = useMemo(() => {
         const moderation = [
             {
-                disabled: false,
+                disabled: audioModerationEnabled,
                 label: 'settings.startAudioMuted',
                 state: startAudioMuted,
                 onChange: onStartAudioMutedToggled
             },
             {
-                disabled: false,
+                disabled: videoModerationEnabled,
                 label: 'settings.startVideoMuted',
                 state: startVideoMuted,
                 onChange: onStartVideoMutedToggled
@@ -85,7 +97,12 @@ const ModeratorSection = () => {
                 label: 'settings.startReactionsMuted',
                 state: startReactionsMuted,
                 onChange: onStartReactionsMutedToggled
-            }
+            },
+            {
+                label: 'settings.chatWithPermissions',
+                state: chatWithPermissionsEnabled,
+                onChange: onChatWithPermissionsToggled
+            },
         ];
 
         if (disableReactionsModeration) {

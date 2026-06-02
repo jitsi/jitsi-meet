@@ -881,7 +881,7 @@ export default class WebHidManager extends EventTarget {
         case COMMANDS.ON_HOLD:
             this.deviceInfo.hold = true;
             break;
-        case 'offHold':
+        case COMMANDS.OFF_HOLD:
             this.deviceInfo.hold = false;
             break;
         default:

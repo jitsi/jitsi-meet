@@ -6,7 +6,7 @@ import { CONFERENCE_WILL_LEAVE, SET_ROOM } from '../base/conference/actionTypes'
 import { JITSI_CONFERENCE_URL_KEY } from '../base/conference/constants';
 import { addKnownDomains } from '../base/known-domains/actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { inIframe } from '../base/util/iframeUtils';
+import { isEmbedded } from '../base/util/embedUtils';
 import { parseURIString } from '../base/util/uri';
 
 import { _storeCurrentConference, _updateConferenceDuration } from './actions';
@@ -86,7 +86,7 @@ function _conferenceWillLeave({ dispatch, getState }: IStore, next: Function, ac
     const state = getState();
     const { doNotStoreRoom } = state['features/base/config'];
 
-    if (!doNotStoreRoom && !inIframe()) {
+    if (!doNotStoreRoom && !isEmbedded()) {
         let locationURL;
 
         /**
@@ -130,7 +130,7 @@ function _conferenceWillLeave({ dispatch, getState }: IStore, next: Function, ac
 function _setRoom({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const { doNotStoreRoom } = getState()['features/base/config'];
 
-    if (!doNotStoreRoom && !inIframe() && action.room) {
+    if (!doNotStoreRoom && !isEmbedded() && action.room) {
         const { locationURL } = getState()['features/base/connection'];
 
         if (locationURL) {

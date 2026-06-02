@@ -4,7 +4,6 @@ import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
 import { translate } from '../../../../base/i18n/functions';
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import { _formatConferenceIDPin } from '../../../_utils';
 
 
@@ -27,7 +26,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             marginTop: 32,
             maxWidth: 310,
             padding: '16px 12px',
-            background: theme.palette.ui02,
+            background: theme.palette.dialInBackground,
             textAlign: 'center',
             display: 'flex',
             flexDirection: 'column',
@@ -38,24 +37,24 @@ const useStyles = makeStyles()((theme: Theme) => {
             }
         },
         confNameLabel: {
-            ...withPixelLineHeight(theme.typography.heading6),
+            ...theme.typography.heading6,
             marginBottom: 18,
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis'
         },
         descriptionLabel: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+            ...theme.typography.bodyShortRegularLarge,
             marginBottom: 18
         },
         separator: {
             width: '100%',
             height: 1,
-            background: theme.palette.ui04,
+            background: theme.palette.labelBackground,
             marginBottom: 18
         },
         pinLabel: {
-            ...withPixelLineHeight(theme.typography.heading6)
+            ...theme.typography.heading6
         }
     };
 });

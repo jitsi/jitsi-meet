@@ -1,22 +1,44 @@
--- A global module which can be used as http endpoint to end meetings. The provided token
---- in the request is verified whether it has the right to do so.
+-- Global HTTP module that exposes a POST /end-meeting endpoint for terminating
+-- MUC rooms via an authenticated API call.  Intended for internal system use
+-- (e.g. by a backend service), not for end-user clients.
+--
+-- Authentication uses a SEPARATE ASAP key pair from the one used for login
+-- tokens (mod_auth_token).  The key server URL is read from
+-- prosody_password_public_key_repo_url (not asap_key_server), so login tokens
+-- are not accepted.
+--
+-- Request format:
+--   POST /end-meeting?conference=<room-jid>[&silent-reconnect=true]
+--   Authorization: Bearer <system-token>
+--
+-- Responses:
+--   200  Room destroyed.
+--   400  Missing or invalid query parameters.
+--   401  Missing, malformed, or unverifiable token.
+--   404  Room not found.
+--
+-- When silent-reconnect=true the room is destroyed with an alternate-venue JID
+-- so clients silently reconnect rather than showing a "meeting ended" screen.
+--
 -- Copyright (C) 2023-present 8x8, Inc.
 
 module:set_global();
 
 local util = module:require "util";
 local async_handler_wrapper = util.async_handler_wrapper;
+local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 local starts_with = util.starts_with;
 
-local neturl = require "net.url";
-local parse = neturl.parseQuery;
+local parse = require "util.http".formdecode;
 
 -- will be initialized once the main virtual host module is initialized
 local token_util;
 
 local muc_domain_base = module:get_option_string("muc_mapper_domain_base");
+local muc_domain_prefix = module:get_option_string('muc_mapper_domain_prefix', 'conference');
+local muc_domain = muc_domain_prefix..'.'..muc_domain_base;
 
 local asapKeyServer = module:get_option_string("prosody_password_public_key_repo_url", "");
 
@@ -47,6 +69,7 @@ function handle_terminate_meeting (event)
     end
     local params = parse(event.request.url.query);
     local conference = params["conference"];
+    local silent_reconnect = params['silent-reconnect'];
     local room_jid;
 
     if conference then
@@ -78,8 +101,13 @@ function handle_terminate_meeting (event)
         module:log("warn", "Room not found")
         return { status_code = 404 };
     else
-        module:log("info", "Destroy room jid %s", room.jid)
-        room:destroy(nil, "The meeting has been terminated")
+        if silent_reconnect == 'true' then
+            module:log('info', 'Setting silent_reconnect on room %s', room.jid);
+            room:destroy(internal_room_jid_match_rewrite(room.jid), 'The meeting has been terminated silently')
+        else
+            module:log("info", "Destroy room jid %s", room.jid)
+            room:destroy(nil, "The meeting has been terminated")
+        end
     end
     event_count_success()
     return { status_code = 200 };
@@ -94,7 +122,7 @@ function module.add_host(host_module)
 
         token_util = module:require "token/util".new(host_module);
 
-        if asapKeyServer then
+        if asapKeyServer ~= "" then
             -- init token util with our asap keyserver
             token_util:set_asap_key_server(asapKeyServer)
         end

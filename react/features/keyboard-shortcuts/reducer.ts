@@ -38,7 +38,16 @@ ReducerRegistry.register<IKeyboardShortcutsState>(STORE_NAME,
             enabled: false
         };
     case REGISTER_KEYBOARD_SHORTCUT: {
-        const shortcutKey = action.shortcut.alt ? `:${action.shortcut.character}` : action.shortcut.character;
+        const { alt, character, ctrl } = action.shortcut;
+        let shortcutKey = character;
+
+        if (ctrl && alt) {
+            shortcutKey = `-:${character}`;
+        } else if (alt) {
+            shortcutKey = `:${character}`;
+        } else if (ctrl) {
+            shortcutKey = `-${character}`;
+        }
 
         return {
             ...state,
@@ -51,7 +60,15 @@ ReducerRegistry.register<IKeyboardShortcutsState>(STORE_NAME,
         };
     }
     case UNREGISTER_KEYBOARD_SHORTCUT: {
-        const shortcutKey = action.alt ? `:${action.character}` : action.character;
+        let shortcutKey = action.character;
+
+        if (action.ctrl && action.alt) {
+            shortcutKey = `-:${action.character}`;
+        } else if (action.alt) {
+            shortcutKey = `:${action.character}`;
+        } else if (action.ctrl) {
+            shortcutKey = `-${action.character}`;
+        }
         const shortcuts = new Map(state.shortcuts);
 
         shortcuts.delete(shortcutKey);

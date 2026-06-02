@@ -99,6 +99,13 @@ void registerReactFatalErrorHandler() {
 RCTLogFunction _RCTLog
     = ^(RCTLogLevel level, __unused RCTLogSource source, NSString *fileName, NSNumber *lineNumber, NSString *message)
 {
+    #if !DEBUG
+    // Suppress logging of sensitive data in production
+    if ([message containsString:@"Running application"] && [message containsString:@"initialProps"]) {
+        return;
+    }
+    #endif
+    
     // Convert RN log levels into Lumberjack's log flags.
     //
     DDLogFlag logFlag;

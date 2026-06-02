@@ -89,6 +89,11 @@ interface IProps {
     position: string;
 
     /**
+     * The ARIA role.
+     */
+    role?: string;
+
+    /**
      * Whether the trigger for open/ close should be click or hover.
      */
     trigger?: 'hover' | 'click';
@@ -176,6 +181,7 @@ class Popover extends Component<IProps, IState> {
         this._setContextMenuStyle = this._setContextMenuStyle.bind(this);
         this._getCustomDialogStyle = this._getCustomDialogStyle.bind(this);
         this._onOutsideClick = this._onOutsideClick.bind(this);
+        this._onOutsideTouchStart = this._onOutsideTouchStart.bind(this);
     }
 
     /**
@@ -185,10 +191,29 @@ class Popover extends Component<IProps, IState> {
      * @returns {void}
      */
     override componentDidMount() {
-        window.addEventListener('touchstart', this._onTouchStart);
+        window.addEventListener('touchstart', this._onOutsideTouchStart);
+        if (this.props.visible) {
+            window.addEventListener('keydown', this._onEscKey);
+        }
         if (this.props.trigger === 'click') {
             // @ts-ignore
             window.addEventListener('click', this._onOutsideClick);
+        }
+    }
+
+    /**
+     * Attaches/removes the global Escape key listener as visibility changes.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    override componentDidUpdate(prevProps: IProps) {
+        if (prevProps.visible !== this.props.visible) {
+            if (this.props.visible) {
+                window.addEventListener('keydown', this._onEscKey);
+            } else {
+                window.removeEventListener('keydown', this._onEscKey);
+            }
         }
     }
 
@@ -199,7 +224,8 @@ class Popover extends Component<IProps, IState> {
      * @returns {void}
      */
     override componentWillUnmount() {
-        window.removeEventListener('touchstart', this._onTouchStart);
+        window.removeEventListener('touchstart', this._onOutsideTouchStart);
+        window.removeEventListener('keydown', this._onEscKey);
         if (this.props.trigger === 'click') {
             // @ts-ignore
             window.removeEventListener('click', this._onOutsideClick);
@@ -261,6 +287,7 @@ class Popover extends Component<IProps, IState> {
                 id = { id }
                 onClick = { this._onClick }
                 onKeyPress = { this._onKeyPress }
+                onTouchStart = { this._onTouchStart }
                 { ...(trigger === 'hover' ? {
                     onMouseEnter: this._onShowDialog,
                     onMouseLeave: this._onHideDialog
@@ -337,7 +364,7 @@ class Popover extends Component<IProps, IState> {
      * @private
      * @returns {void}
      */
-    _onTouchStart(event: TouchEvent) {
+    _onOutsideTouchStart(event: TouchEvent) {
         if (this.props.visible
             && !this.props.overflowDrawer
             && !this._contextMenuRef?.contains?.(event.target as Node)
@@ -402,6 +429,24 @@ class Popover extends Component<IProps, IState> {
     }
 
     /**
+     * Stops propagation of touchstart events originating from the Popover's trigger container.
+     * This prevents the window's 'touchstart' listener (_onOutsideTouchStart) from
+     * immediately closing the Popover if the touch begins on the trigger area itself.
+     * Without this, the subsequent synthesized 'click' event will not execute
+     * because the Popover would already be closing or removed, breaking interactions
+     * within the Popover on touch devices.
+     *
+     * e.g. On a mobile device overflow buttons don't execute their click actions.
+     *
+     * @param {React.TouchEvent} event - The touch start event.
+     * @private
+     * @returns {void}
+     */
+    _onTouchStart(event: React.TouchEvent) {
+        event.stopPropagation();
+    }
+
+    /**
      * KeyPress handler for accessibility.
      *
      * @param {Object} e - The key event to handle.
@@ -428,7 +473,7 @@ class Popover extends Component<IProps, IState> {
      *
      * @returns {void}
      */
-    _onEscKey(e: React.KeyboardEvent) {
+    _onEscKey(e: KeyboardEvent | React.KeyboardEvent) {
         if (e.key === 'Escape') {
             e.preventDefault();
             e.stopPropagation();
@@ -463,20 +508,24 @@ class Popover extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     _renderContent() {
-        const { content, position, trigger, headingId, headingLabel } = this.props;
+        const { content, position, trigger, headingId, headingLabel, role = 'dialog' } = this.props;
+        const isFocusLockEnabled = this.state.enableFocusLock;
+        const isDialogRole = role === 'dialog';
 
         return (
             <div className = { `popover ${trigger}` }>
                 <div
                     className = { `popover-content ${position.split('-')[0]}` }
-                    data-autofocus = { this.state.enableFocusLock }
+                    data-autofocus = { isFocusLockEnabled }
                     onKeyDown = { this._onEscKey }
-                    { ...(this.state.enableFocusLock && {
+                    { ...(isFocusLockEnabled && {
+                        role,
+                        tabIndex: -1
+                    }) }
+                    { ...(isFocusLockEnabled && isDialogRole && {
                         'aria-modal': true,
                         'aria-label': !headingId && headingLabel ? headingLabel : undefined,
-                        'aria-labelledby': headingId,
-                        role: 'dialog',
-                        tabIndex: -1
+                        'aria-labelledby': headingId ? headingId : undefined
                     }) }>
                     { content }
                 </div>

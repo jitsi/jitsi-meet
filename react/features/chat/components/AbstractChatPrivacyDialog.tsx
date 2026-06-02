@@ -4,6 +4,7 @@ import { WithTranslation } from 'react-i18next';
 import { IReduxState, IStore } from '../../app/types';
 import { getParticipantById } from '../../base/participants/functions';
 import { IParticipant } from '../../base/participants/types';
+import { IVisitorChatParticipant } from '../../visitors/types';
 import { sendMessage, setPrivateMessageRecipient } from '../actions';
 
 interface IProps extends WithTranslation {
@@ -22,6 +23,16 @@ interface IProps extends WithTranslation {
      * The participant retrieved from Redux by the participantID prop.
      */
     _participant?: IParticipant;
+
+    /**
+     * The display name of the visitor (if applicable).
+     */
+    displayName?: string;
+
+    /**
+     * Whether the message is from a visitor.
+     */
+    isFromVisitor?: boolean;
 
     /**
      * The message that is about to be sent.
@@ -67,9 +78,21 @@ export class AbstractChatPrivacyDialog extends PureComponent<IProps> {
      * @returns {void}
      */
     _onSendPrivateMessage() {
-        const { message, _onSendMessage, _onSetMessageRecipient, _participant } = this.props;
+        const { message, _onSendMessage, _onSetMessageRecipient, _participant, isFromVisitor, displayName, participantID } = this.props;
 
-        _onSetMessageRecipient(_participant);
+        if (isFromVisitor) {
+            // For visitors, create a participant object since they don't exist in the main participant list
+            const visitorParticipant = {
+                id: participantID,
+                name: displayName,
+                isVisitor: true
+            };
+
+            _onSetMessageRecipient(visitorParticipant);
+        } else {
+            _onSetMessageRecipient(_participant);
+        }
+
         _onSendMessage(message);
 
         return true;
@@ -88,7 +111,7 @@ export function _mapDispatchToProps(dispatch: IStore['dispatch']) {
             dispatch(sendMessage(message, true));
         },
 
-        _onSetMessageRecipient: (participant: IParticipant) => {
+        _onSetMessageRecipient: (participant: IParticipant | IVisitorChatParticipant) => {
             dispatch(setPrivateMessageRecipient(participant));
         }
     };
@@ -103,6 +126,6 @@ export function _mapDispatchToProps(dispatch: IStore['dispatch']) {
  */
 export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     return {
-        _participant: getParticipantById(state, ownProps.participantID)
+        _participant: ownProps.isFromVisitor ? undefined : getParticipantById(state, ownProps.participantID)
     };
 }

@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import Icon from '../../../icons/components/Icon';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 import { TEXT_OVERFLOW_TYPES } from '../../constants.any';
 
 import TextWithOverflow from './TextWithOverflow';
@@ -14,7 +13,7 @@ export interface IProps {
     /**
      * Label used for accessibility.
      */
-    accessibilityLabel: string;
+    accessibilityLabel?: string;
 
     /**
      * The context menu item background color.
@@ -123,11 +122,11 @@ const useStyles = makeStyles()(theme => {
             },
 
             '&:hover': {
-                backgroundColor: theme.palette.ui02
+                backgroundColor: theme.palette.overflowMenuItemHover
             },
 
             '&:active': {
-                backgroundColor: theme.palette.ui03
+                backgroundColor: theme.palette.overflowMenuItemHover
             },
 
             '&.focus-visible': {
@@ -138,7 +137,7 @@ const useStyles = makeStyles()(theme => {
         selected: {
             borderLeft: `3px solid ${theme.palette.action01Hover}`,
             paddingLeft: '13px',
-            backgroundColor: theme.palette.ui02
+            backgroundColor: theme.palette.overflowMenuItemHover
         },
 
         contextMenuItemDisabled: {
@@ -147,19 +146,19 @@ const useStyles = makeStyles()(theme => {
 
         contextMenuItemIconDisabled: {
             '& svg': {
-                fill: `${theme.palette.text03} !important`
+                fill: `${theme.palette.overflowMenuItemDisabled} !important`
             }
         },
 
         contextMenuItemLabelDisabled: {
-            color: theme.palette.text03,
+            color: theme.palette.overflowMenuItemDisabled,
 
             '&:hover': {
                 background: 'none'
             },
 
             '& svg': {
-                fill: theme.palette.text03
+                fill: theme.palette.overflowMenuItemDisabled
             }
         },
 
@@ -169,17 +168,17 @@ const useStyles = makeStyles()(theme => {
 
         contextMenuItemIcon: {
             '& svg': {
-                fill: theme.palette.icon01
+                fill: theme.palette.overflowMenuItemIcon
             }
         },
 
         text: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
-            color: theme.palette.text01
+            ...theme.typography.bodyShortRegular,
+            color: theme.palette.overflowMenuItemText
         },
 
         drawerText: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
+            ...theme.typography.bodyShortRegularLarge
         }
     };
 });
@@ -224,7 +223,7 @@ const ContextMenuItem = ({
         tabIndex = selected ? 0 : -1;
     }
 
-    if (role === 'button' && !disabled) {
+    if ((role === 'button' || role === 'menuitem') && !disabled) {
         tabIndex = 0;
     }
 
@@ -232,7 +231,7 @@ const ContextMenuItem = ({
         <div
             aria-controls = { controls }
             aria-disabled = { disabled }
-            aria-label = { accessibilityLabel }
+            aria-label = { accessibilityLabel || undefined }
             aria-selected = { role === 'tab' ? selected : undefined }
             className = { cx(styles.contextMenuItem,
                     _overflowDrawer && styles.contextMenuItemDrawer,

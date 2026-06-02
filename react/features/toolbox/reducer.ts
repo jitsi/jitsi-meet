@@ -22,6 +22,15 @@ import { NATIVE_THRESHOLDS, THRESHOLDS } from './constants';
 import { IMainToolbarButtonThresholds, NOTIFY_CLICK_MODE } from './types';
 
 /**
+ * Array of thresholds for the main toolbar buttons that will inlude only the usable entries from  THRESHOLDS array.
+ *
+ * Note: THRESHOLDS array includes some dummy values that enables users of the iframe API to override and use.
+ * Note2: Casting is needed because it seems isArray guard is not working well in TS. See:
+ * https://github.com/microsoft/TypeScript/issues/17002.
+ */
+const FILTERED_THRESHOLDS = THRESHOLDS.filter(({ order }) => Array.isArray(order)) as IMainToolbarButtonThresholds;
+
+/**
  * Initial state of toolbox's part of Redux store.
  */
 const INITIAL_STATE = {
@@ -52,7 +61,7 @@ const INITIAL_STATE = {
     /**
      * The thresholds for screen size and visible main toolbar buttons.
      */
-    mainToolbarButtonsThresholds: navigator.product === 'ReactNative' ? NATIVE_THRESHOLDS : THRESHOLDS,
+    mainToolbarButtonsThresholds: navigator.product === 'ReactNative' ? NATIVE_THRESHOLDS : FILTERED_THRESHOLDS,
 
     participantMenuButtonsWithNotifyClick: new Map(),
 

@@ -55,25 +55,35 @@ Setting up configuration for the main prosody is a manual process:
 s2sout_override = {
     ["conference.v1.meet.jitsi"] = "tcp://127.0.0.1:52691";
     ["v1.meet.jitsi"] = "tcp://127.0.0.1:52691"; -- needed for v1.meet.jitsi->visitors.jitmeet.example.com
+    ["polls.v1.meet.jitsi"] = "tcp://127.0.0.1:52691";
     ["conference.v2.meet.jitsi"] = "tcp://127.0.0.1:52692";
     ["v2.meet.jitsi"] = "tcp://127.0.0.1:52692";
+    ["polls.v2.meet.jitsi"] = "tcp://127.0.0.1:52692";
     ["conference.v3.meet.jitsi"] = "tcp://127.0.0.1:52693";
     ["v3.meet.jitsi"] = "tcp://127.0.0.1:52693";
+    ["polls.v3.meet.jitsi"] = "tcp://127.0.0.1:52693";
     ["conference.v4.meet.jitsi"] = "tcp://127.0.0.1:52694";
     ["v4.meet.jitsi"] = "tcp://127.0.0.1:52694";
+    ["polls.v4.meet.jitsi"] = "tcp://127.0.0.1:52694";
     ["conference.v5.meet.jitsi"] = "tcp://127.0.0.1:52695";
     ["v5.meet.jitsi"] = "tcp://127.0.0.1:52695";
+    ["polls.v5.meet.jitsi"] = "tcp://127.0.0.1:52695";
     ["conference.v6.meet.jitsi"] = "tcp://127.0.0.1:52696";
     ["v6.meet.jitsi"] = "tcp://127.0.0.1:52696";
+    ["polls.v6.meet.jitsi"] = "tcp://127.0.0.1:52696";
     ["conference.v7.meet.jitsi"] = "tcp://127.0.0.1:52697";
     ["v7.meet.jitsi"] = "tcp://127.0.0.1:52697";
+    ["polls.v7.meet.jitsi"] = "tcp://127.0.0.1:52697";
     ["conference.v8.meet.jitsi"] = "tcp://127.0.0.1:52698";
     ["v8.meet.jitsi"] = "tcp://127.0.0.1:52698";
+    ["polls.v8.meet.jitsi"] = "tcp://127.0.0.1:52698";
 }
 -- allowed list of server-2-server connections
 s2s_whitelist = {
     "conference.v1.meet.jitsi", "conference.v2.meet.jitsi", "conference.v3.meet.jitsi", "conference.v4.meet.jitsi",
-    "conference.v5.meet.jitsi", "conference.v6.meet.jitsi", "conference.v7.meet.jitsi", "conference.v8.meet.jitsi"
+    "conference.v5.meet.jitsi", "conference.v6.meet.jitsi", "conference.v7.meet.jitsi", "conference.v8.meet.jitsi",
+    'polls.v1.meet.jitsi', 'polls.v2.meet.jitsi', 'polls.v3.meet.jitsi', 'polls.v4.meet.jitsi',
+    'polls.v5.meet.jitsi', 'polls.v6.meet.jitsi', 'polls.v7.meet.jitsi', 'polls.v8.meet.jitsi'
 };
 ```
 

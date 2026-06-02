@@ -1,0 +1,380 @@
+import assert from 'assert';
+
+import { mintAsapToken } from './helpers/jwt.js';
+import { disableLobby, enableLobby, setAffiliation } from './helpers/test_observer.js';
+import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
+
+const CONFERENCE = 'conference.localhost';
+const LOBBY = 'lobby.conference.localhost';
+const LOBBY_NS = 'http://jitsi.org/jitmeet';
+const MUC_NS = 'http://jabber.org/protocol/muc#user';
+
+/**
+ * Extracts role and affiliation from a self-presence stanza.
+ * @param {object} presence
+ * @returns {{ role: string|null, affiliation: string|null }}
+ */
+function getRoleAndAffiliation(presence) {
+    const item = presence.getChild('x', MUC_NS)?.getChild('item');
+
+    return {
+        role: item?.attrs.role ?? null,
+        affiliation: item?.attrs.affiliation ?? null
+    };
+}
+
+let _roomCounter = 0;
+const room = () => `lobby-${++_roomCounter}@${CONFERENCE}`;
+
+describe('mod_muc_lobby_rooms', () => {
+
+    let clients;
+
+    beforeEach(() => {
+        clients = [];
+    });
+
+    afterEach(async () => {
+        await Promise.all(clients.map(c => c.disconnect()));
+    });
+
+    /**
+     * Creates an XMPP client and pushes it to the cleanup list.
+     * @param {object} opts Options forwarded to createXmppClient.
+     * @returns {Promise<object>}
+     */
+    async function connect(opts) {
+        const c = await createXmppClient(opts);
+
+        clients.push(c);
+
+        return c;
+    }
+
+    /**
+     * Joins a room as focus and pushes the client to the cleanup list.
+     * @param {string} roomJid Full room JID.
+     * @returns {Promise<object>}
+     */
+    async function focusJoin(roomJid) {
+        const c = await joinWithFocus(roomJid);
+
+        clients.push(c);
+
+        return c;
+    }
+
+    // -------------------------------------------------------------------------
+    // join gate — non-member
+    // -------------------------------------------------------------------------
+    describe('non-member join gate', () => {
+
+        it('blocks a non-member with 407 registration-required', async () => {
+            const r = room();
+
+            await focusJoin(r);
+            await enableLobby(r);
+
+            const c = await connect();
+            const presence = await c.joinRoom(r, undefined, { displayName: 'Alice' });
+
+            assert.equal(presence.attrs.type, 'error', 'join must be rejected');
+
+            const error = presence.getChild('error');
+
+            assert.ok(error, 'error element must be present');
+            assert.equal(error.attrs.type, 'auth');
+            assert.ok(
+                error.getChild('registration-required'),
+                'error condition must be registration-required'
+            );
+        });
+
+        it('includes the lobby room JID in the 407 error', async () => {
+            const r = room();
+
+            await focusJoin(r);
+            const lobbyJid = await enableLobby(r);
+
+            const c = await connect();
+            const presence = await c.joinRoom(r, undefined, { displayName: 'Alice' });
+
+            assert.equal(presence.attrs.type, 'error');
+
+            // Prosody builds the error reply with cursor at <error>, so
+            // Jitsi-specific child tags land inside <error>, not as siblings.
+            const error = presence.getChild('error');
+
+            assert.ok(error, 'error element must be present');
+
+            const lobbyroom = error.getChild('lobbyroom', LOBBY_NS);
+
+            assert.ok(lobbyroom, 'expected <lobbyroom xmlns="http://jitsi.org/jitmeet"> in error');
+            assert.equal(
+                lobbyroom.getText(),
+                lobbyJid,
+                'lobbyroom JID in error must match the created lobby room'
+            );
+            assert.ok(
+                lobbyJid.endsWith(`@${LOBBY}`),
+                'lobby room JID must be on the lobby component'
+            );
+        });
+
+        it('blocks with 406 not-acceptable when display name is missing', async () => {
+            const r = room();
+
+            await focusJoin(r);
+            await enableLobby(r);
+
+            const c = await connect();
+            const presence = await c.joinRoom(r); // no displayName
+
+            assert.equal(presence.attrs.type, 'error', 'join must be rejected');
+
+            const error = presence.getChild('error');
+
+            assert.ok(error, 'error element must be present');
+            assert.equal(error.attrs.type, 'modify');
+            assert.ok(error.getChild('not-acceptable'), 'error condition must be not-acceptable');
+
+            // Same as lobbyroom: cursor is at <error> when tag is appended.
+            const dnRequired = error.getChild('displayname-required', LOBBY_NS);
+
+            assert.ok(
+                dnRequired,
+                'expected <displayname-required xmlns="http://jitsi.org/jitmeet"> in error'
+            );
+            assert.equal(dnRequired.attrs.lobby, 'true');
+        });
+    });
+
+    // -------------------------------------------------------------------------
+    // bypass paths
+    // -------------------------------------------------------------------------
+    describe('bypass paths', () => {
+
+        it('pre-approved member with display name can join', async () => {
+            const r = room();
+
+            await focusJoin(r);
+            await enableLobby(r);
+
+            // Connect first to learn the server-assigned JID, then pre-approve the
+            // user by setting member affiliation before they attempt to join.
+            const c = await connect();
+            const bareJid = c.jid.split('/')[0];
+
+            await setAffiliation(r, bareJid, 'member');
+
+            const presence = await c.joinRoom(r, undefined, { displayName: 'Bob' });
+
+            assert.notEqual(presence.attrs.type, 'error', 'pre-approved member must be allowed in');
+        });
+
+        it('whitelisted domain bypasses lobby without affiliation', async () => {
+            const r = room();
+
+            await focusJoin(r);
+            await enableLobby(r);
+
+            // whitelist.localhost is in muc_lobby_whitelist in prosody.cfg.lua
+            const c = await connect({ domain: 'whitelist.localhost' });
+            const presence = await c.joinRoom(r); // no displayName needed for whitelisted
+
+            assert.notEqual(presence.attrs.type, 'error', 'whitelisted domain must bypass lobby');
+        });
+    });
+
+    // -------------------------------------------------------------------------
+    // lobby room lifecycle
+    // -------------------------------------------------------------------------
+    describe('lifecycle', () => {
+
+        it('lobby room JID is advertised in room disco info after enable', async () => {
+            const r = room();
+            const focus = await focusJoin(r);
+            const lobbyJid = await enableLobby(r);
+
+            // Query disco info on the main room from the focus client (already joined).
+            const discoResponse = await focus.sendDiscoInfo(r);
+            const query = discoResponse.getChild('query', 'http://jabber.org/protocol/disco#info');
+
+            assert.ok(query, 'disco#info query element must be present in response');
+
+            const dataForm = query.getChild('x', 'jabber:x:data');
+
+            assert.ok(dataForm, 'data form must be present in disco#info');
+
+            const lobbyField = dataForm
+                .getChildren('field')
+                .find(f => f.attrs.var === 'muc#roominfo_lobbyroom');
+
+            assert.ok(lobbyField, 'muc#roominfo_lobbyroom field must be present');
+            assert.equal(
+                lobbyField.getChildText('value'),
+                lobbyJid,
+                'muc#roominfo_lobbyroom value must equal the lobby room JID'
+            );
+        });
+
+        it('lobby room JID is absent from disco info after disable', async () => {
+            const r = room();
+            const focus = await focusJoin(r);
+
+            await enableLobby(r);
+            await disableLobby(r);
+
+            const discoResponse = await focus.sendDiscoInfo(r);
+            const query = discoResponse.getChild('query', 'http://jabber.org/protocol/disco#info');
+            const dataForm = query?.getChild('x', 'jabber:x:data');
+
+            const lobbyField = dataForm
+                ?.getChildren('field')
+                .find(f => f.attrs.var === 'muc#roominfo_lobbyroom');
+
+            assert.ok(!lobbyField, 'muc#roominfo_lobbyroom must not appear after lobby is disabled');
+        });
+
+        it('non-member can join freely after lobby is disabled', async () => {
+            const r = room();
+
+            await focusJoin(r);
+            await enableLobby(r);
+            await disableLobby(r);
+
+            const c = await connect();
+            const presence = await c.joinRoom(r);
+
+            assert.notEqual(presence.attrs.type, 'error',
+                'non-member must be allowed after lobby is disabled');
+        });
+    });
+
+    // -------------------------------------------------------------------------
+    // token_affiliation interaction
+    // -------------------------------------------------------------------------
+    describe('token_affiliation interaction', () => {
+
+        it('moderator token holder is blocked by lobby, not bypassed by affiliation grant', async () => {
+            const r = room();
+            const roomName = r.split('@')[0];
+
+            await focusJoin(r);
+            await enableLobby(r);
+
+            const token = mintAsapToken({ room: roomName,
+                context: { user: { moderator: true } } });
+            const c = await connect({ params: { token } });
+            const presence = await c.joinRoom(r, undefined, { displayName: 'TokenMod' });
+
+            assert.equal(presence.attrs.type, 'error',
+                'moderator token user must be blocked by lobby');
+
+            const error = presence.getChild('error');
+
+            assert.ok(error, 'error element must be present');
+            assert.ok(
+                error.getChild('registration-required'),
+                'error condition must be registration-required'
+            );
+        });
+
+        it('non-moderator token holder is blocked by lobby', async () => {
+            const r = room();
+            const roomName = r.split('@')[0];
+
+            await focusJoin(r);
+            await enableLobby(r);
+
+            const token = mintAsapToken({ room: roomName,
+                context: { user: { id: 'user1' } } });
+            const c = await connect({ params: { token } });
+            const presence = await c.joinRoom(r, undefined, { displayName: 'TokenUser' });
+
+            assert.equal(presence.attrs.type, 'error',
+                'non-moderator token user must be blocked by lobby');
+
+            const error = presence.getChild('error');
+
+            assert.ok(error, 'error element must be present');
+            assert.ok(
+                error.getChild('registration-required'),
+                'error condition must be registration-required'
+            );
+        });
+
+        // ---------------------------------------------------------------------
+        // lobby + room password
+        // ---------------------------------------------------------------------
+
+        it('moderator token user admitted from lobby joins directly without password prompt', async () => {
+            const r = room();
+            const roomName = r.split('@')[0];
+            const focus = await focusJoin(r);
+
+            await focus.setRoomPassword(r, 'testpass');
+            await enableLobby(r);
+
+            const token = mintAsapToken({ room: roomName,
+                context: { user: { moderator: true } } });
+            const c = await connect({ params: { token } });
+
+            // First attempt — blocked by lobby
+            const blocked = await c.joinRoom(r, undefined, { displayName: 'TokenMod' });
+
+            assert.equal(blocked.attrs.type, 'error', 'first join must be blocked by lobby');
+            assert.ok(
+                blocked.getChild('error')?.getChild('registration-required'),
+                'must be blocked with registration-required'
+            );
+
+            // Simulate moderator approval
+            const userBareJid = c.jid.split('/')[0];
+
+            await setAffiliation(r, userBareJid, 'member');
+
+            // Second attempt — admitted user must join directly as moderator, no password required
+            const presence = await c.joinRoom(r, undefined, { displayName: 'TokenMod' });
+
+            assert.notEqual(presence.attrs.type, 'error',
+                'admitted user must not be asked for password');
+
+            const { role, affiliation } = getRoleAndAffiliation(presence);
+
+            assert.equal(affiliation, 'owner',
+                'admitted moderator token user must get owner affiliation');
+            assert.equal(role, 'moderator',
+                'admitted moderator token user must get moderator role');
+        });
+
+        it('moderator token user who bypasses lobby with room password gets moderator role', async () => {
+            const r = room();
+            const roomName = r.split('@')[0];
+            const focus = await focusJoin(r);
+
+            await focus.setRoomPassword(r, 'testpass');
+            await enableLobby(r);
+
+            const token = mintAsapToken({ room: roomName,
+                context: { user: { moderator: true } } });
+            const c = await connect({ params: { token } });
+
+            // Join with password — must bypass lobby and get moderator role
+            const presence = await c.joinRoom(r, undefined, {
+                password: 'testpass',
+                displayName: 'TokenMod'
+            });
+
+            assert.notEqual(presence.attrs.type, 'error',
+                'password-bypass join must succeed');
+
+            const { role, affiliation } = getRoleAndAffiliation(presence);
+
+            assert.equal(affiliation, 'owner',
+                'moderator token user who bypassed lobby via password must get owner affiliation');
+            assert.equal(role, 'moderator',
+                'moderator token user who bypassed lobby via password must get moderator role');
+        });
+    });
+});

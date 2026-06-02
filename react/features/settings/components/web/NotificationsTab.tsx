@@ -6,7 +6,6 @@ import { withStyles } from 'tss-react/mui';
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps } from '../../../base/dialog/components/web/AbstractDialogTab';
 import { translate } from '../../../base/i18n/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 
 /**
@@ -107,8 +106,8 @@ const styles = (theme: Theme) => {
         },
 
         title: {
-            ...withPixelLineHeight(theme.typography.heading6),
-            color: `${theme.palette.text01} !important`,
+            ...theme.typography.heading6,
+            color: `${theme.palette.settingsTabText} !important`,
             marginBottom: theme.spacing(3)
         },
 

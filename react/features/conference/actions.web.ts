@@ -17,7 +17,7 @@ import logger from './logger';
  */
 export function openLeaveReasonDialog(title?: string) {
     return (dispatch: IStore['dispatch']): Promise<void> => new Promise(resolve => {
-        dispatch(openDialog(LeaveReasonDialog, {
+        dispatch(openDialog('LeaveReasonDialog', LeaveReasonDialog, {
             onClose: resolve,
             title
         }));

@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
 
 import { getDefaultURL } from '../app/functions';
@@ -22,7 +21,7 @@ export * from './actions.any';
  * }}
  */
 export function openUpdateCalendarEventDialog(eventId: string) {
-    return openDialog(UpdateCalendarEventDialog, { eventId });
+    return openDialog('UpdateCalendarEventDialog', UpdateCalendarEventDialog, { eventId });
 }
 
 /**

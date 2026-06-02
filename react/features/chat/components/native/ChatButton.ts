@@ -10,7 +10,7 @@ import { arePollsDisabled } from '../../../conference/functions.any';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { getUnreadPollCount } from '../../../polls/functions';
-import { getUnreadCount } from '../../functions';
+import { getUnreadCount, getUnreadFilesCount, isChatDisabled } from '../../functions';
 
 interface IProps extends AbstractButtonProps {
 
@@ -43,7 +43,7 @@ class ChatButton extends AbstractButton<IProps> {
     override _handleClick() {
         this.props._isPollsDisabled
             ? navigate(screen.conference.chat)
-            : navigate(screen.conference.chatandpolls.main);
+            : navigate(screen.conference.chatTabs.main);
     }
 
     /**
@@ -65,14 +65,12 @@ class ChatButton extends AbstractButton<IProps> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
-    const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
+    const enabled = getFeatureFlag(state, CHAT_ENABLED, true) && !isChatDisabled(state);
     const { visible = enabled } = ownProps;
 
     return {
         _isPollsDisabled: arePollsDisabled(state),
-
-        // The toggled icon should also be available for new polls
-        _unreadMessageCount: getUnreadCount(state) || getUnreadPollCount(state),
+        _unreadMessageCount: getUnreadCount(state) || getUnreadPollCount(state) || getUnreadFilesCount(state),
         visible
     };
 }

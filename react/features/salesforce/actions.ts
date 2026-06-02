@@ -28,7 +28,7 @@ export function showSalesforceNotification() {
             customActionNameKey: [ 'notify.linkToSalesforceKey' ],
             customActionHandler: [ () => {
                 dispatch(hideNotification(SALESFORCE_LINK_NOTIFICATION_ID));
-                dispatch(openDialog(SalesforceLinkDialog));
+                dispatch(openDialog('SalesforceLinkDialog', SalesforceLinkDialog));
             } ],
             appearance: NOTIFICATION_TYPE.NORMAL
         }, NOTIFICATION_TIMEOUT_TYPE.LONG));

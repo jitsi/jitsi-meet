@@ -8,14 +8,15 @@ import { getJitsiMeetGlobalNS } from '../util/helpers';
 
 import { setConnectionState } from './actions';
 import {
+    audioMute,
+    audioUnmute,
+    getLocalCameraEncoding,
     getRemoteVideoType,
     isLargeVideoReceived,
-    isLocalCameraEncodingAv1,
-    isLocalCameraEncodingH264,
-    isLocalCameraEncodingVp8,
-    isLocalCameraEncodingVp9,
     isRemoteVideoReceived,
-    isTestModeEnabled
+    isTestModeEnabled,
+    videoMute,
+    videoUnmute
 } from './functions';
 import logger from './logger';
 
@@ -88,13 +89,14 @@ function _bindTortureHelpers(store: IStore) {
 
     // All torture helper methods go in here
     getJitsiMeetGlobalNS().testing = {
+        audioMute: audioMute.bind(null, store),
+        audioUnmute: audioUnmute.bind(null, store),
         getRemoteVideoType: getRemoteVideoType.bind(null, store),
         isLargeVideoReceived: isLargeVideoReceived.bind(null, store),
-        isLocalCameraEncodingAv1: isLocalCameraEncodingAv1.bind(null, store),
-        isLocalCameraEncodingH264: isLocalCameraEncodingH264.bind(null, store),
-        isLocalCameraEncodingVp8: isLocalCameraEncodingVp8.bind(null, store),
-        isLocalCameraEncodingVp9: isLocalCameraEncodingVp9.bind(null, store),
-        isRemoteVideoReceived: isRemoteVideoReceived.bind(null, store)
+        getLocalCameraEncoding: getLocalCameraEncoding.bind(null, store),
+        isRemoteVideoReceived: isRemoteVideoReceived.bind(null, store),
+        videoMute: videoMute.bind(null, store),
+        videoUnmute: videoUnmute.bind(null, store),
     };
 }
 

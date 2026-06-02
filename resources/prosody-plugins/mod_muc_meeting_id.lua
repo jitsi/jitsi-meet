@@ -1,16 +1,29 @@
+-- Assigns a unique UUID meeting ID to each MUC room at creation time and
+-- advertises it in the room's config IQ response so that all participants share
+-- a common conference identifier. Also enforces a jicofo lock: non-focus clients
+-- that try to join before jicofo (identified by nick suffix '/focus') are queued
+-- and admitted only after jicofo joins and fires the jicofo-unlock-room event.
+-- This module is enabled under the MUC component.
 local jid = require 'util.jid';
 local json = require 'cjson.safe';
+local st = require "util.stanza";
 local queue = require "util.queue";
 local uuid_gen = require "util.uuid".generate;
 local main_util = module:require "util";
 local is_admin = main_util.is_admin;
-local ends_with = main_util.ends_with;
+local is_focus = main_util.is_focus;
 local get_room_from_jid = main_util.get_room_from_jid;
 local is_healthcheck_room = main_util.is_healthcheck_room;
 local internal_room_jid_match_rewrite = main_util.internal_room_jid_match_rewrite;
 local presence_check_status = main_util.presence_check_status;
+local extract_subdomain = main_util.extract_subdomain;
+local util = module:require 'util';
+local is_transcriber = util.is_transcriber;
 
 local QUEUE_MAX_SIZE = 500;
+
+module:depends("jitsi_permissions");
+module:depends("jitsi_session");
 
 -- Common module for all logic that can be loaded under the conference muc component.
 --
@@ -21,6 +34,21 @@ local QUEUE_MAX_SIZE = 500;
 -- c) Avoids any participant joining the room in the interval between creating the room and jicofo entering the room.
 -- d) Removes any nick that maybe set to messages being sent to the room.
 -- e) Fires event for received endpoint messages (optimization to decode them once).
+
+-- Block non-focus participants from creating health-check rooms. This hook
+-- runs at priority 100, before mod_token_verification (priority 99), so that
+-- the error is service-unavailable (not the token verification not-allowed that
+-- would fire because the room does not yet exist at pre-create time).
+module:hook('muc-room-pre-create', function (event)
+    local stanza = event.stanza;
+    if is_healthcheck_room(jid.bare(stanza.attr.to)) then
+        if not is_focus(stanza.attr.to) then
+            module:log('info', 'Blocking non-focus from creating health-check room');
+            event.origin.send(st.error_reply(stanza, 'cancel', 'service-unavailable'));
+            return true;
+        end
+    end
+end, 100);
 
 -- Hook to assign meetingId for new rooms
 module:hook("muc-room-created", function(event)
@@ -104,12 +132,22 @@ module:hook('muc-occupant-pre-join', function (event)
         process_region(event.origin, stanza);
     end
 
-    -- we skip processing only if jicofo_lock is set to false
-    if room._data.jicofo_lock == false or is_health_room then
+    if is_health_room then
+        -- Only jicofo (focus) may join health-check rooms.
+        if not is_focus(occupant.nick) then
+            module:log('info', 'Blocking non-focus participant from health-check room: %s', room.jid);
+            event.origin.send(st.error_reply(stanza, 'cancel', 'service-unavailable'));
+            return true;
+        end
         return;
     end
 
-    if ends_with(occupant.nick, '/focus') then
+    -- we skip processing only if jicofo_lock is set to false
+    if room._data.jicofo_lock == false then
+        return;
+    end
+
+    if is_focus(occupant.nick) then
         module:fire_event('jicofo-unlock-room', { room = room; });
     else
         room._data.jicofo_lock = true;
@@ -155,7 +193,7 @@ module:hook("muc-occupant-groupchat", function(event)
     event.stanza:remove_children('nick', 'http://jabber.org/protocol/nick');
 end, 45); -- prosody check is prio 50, we want to run after it
 
-module:hook('message/bare', function(event)
+local function filterTranscriptionResult(event)
     local stanza = event.stanza;
 
     if stanza.attr.type ~= 'groupchat' then
@@ -170,25 +208,23 @@ module:hook('message/bare', function(event)
 
     local room = get_room_from_jid(stanza.attr.to);
     if not room then
-        module:log('warn', 'No room found found for %s', stanza.attr.to);
+        module:log('warn', 'No room found for %s', stanza.attr.to);
         return;
     end
 
     local occupant_jid = stanza.attr.from;
     local occupant = room:get_occupant_by_real_jid(occupant_jid);
     if not occupant then
-        module:log("error", "Occupant sending msg %s was not found in room %s", occupant_jid, room.jid)
+        -- skip logs for messages coming from s2s
+        if event.origin.type == 'c2s' then
+            module:log("error", "Occupant sending msg %s was not found in room %s", occupant_jid, room.jid);
+        end
         return;
     end
 
-    local json_message = stanza:get_child_text('json-message', 'http://jitsi.org/jitmeet');
+    local json_message = stanza:get_child_text('json-message', 'http://jitsi.org/jitmeet')
+        or stanza:get_child_text('json-message');
     if not json_message then
-        return;
-    end
-
-    -- TODO: add optimization by moving type and certain fields like is_interim as attribute on 'json-message'
-    -- using string find is roughly 70x faster than json decode for checking the value
-    if string.find(json_message, '"is_interim":true', 1, true) then
         return;
     end
 
@@ -199,37 +235,56 @@ module:hook('message/bare', function(event)
         return true;
     end
 
-    if msg_obj.transcript ~= nil then
-        local transcription = msg_obj;
-
-        -- in case of the string matching optimization above failed
-        if transcription.is_interim then
-            return;
+    if msg_obj.type == 'transcription-result' then
+        if not is_transcriber(stanza.attr.from) then
+            module:log('warn', 'Filtering transcription-result message from non-transcriber: %s', stanza.attr.from);
+            -- Do not fire the event, and do not forward the message
+            return true
+        end
+        if msg_obj.is_interim then
+            -- Do not fire the event, but forward the message
+            return
         end
 
-        -- TODO what if we have multiple alternative transcriptions not just 1
-        local text_message = transcription.transcript[1].text;
-        --do not send empty messages
-        if text_message == '' then
-            return;
+        if msg_obj.transcript ~= nil then
+            local transcription = msg_obj;
+
+            -- in case of the string matching optimization above failed
+            if transcription.is_interim then
+                return;
+            end
+
+            -- TODO what if we have multiple alternative transcriptions not just 1
+            local text_message = transcription.transcript[1].text;
+            --do not send empty messages
+            if text_message == '' then
+                return;
+            end
+
+            local user_id = transcription.participant.id;
+            local who = room:get_occupant_by_nick(jid.bare(room.jid)..'/'..user_id);
+
+            transcription.jid = who and who.jid;
+            transcription.session_id = room._data.meetingId;
+
+            local tenant, conference_name, id = extract_subdomain(jid.node(room.jid));
+            if tenant then
+                transcription.fqn = tenant..'/'..conference_name;
+            else
+                transcription.fqn = conference_name;
+            end
+            transcription.customer_id = id;
+
+            return module:fire_event('jitsi-transcript-received', {
+                room = room, occupant = occupant, transcription = transcription, stanza = stanza });
         end
-
-        local user_id = transcription.participant.id;
-        local who = room:get_occupant_by_nick(jid.bare(room.jid)..'/'..user_id);
-
-        transcription.jid = who and who.jid;
-        transcription.session_id = room._data.meetingId;
-
-        local tenant, conference_name, id = extract_subdomain(jid.node(room.jid));
-        transcription.fqn = tenant..'/'..conference_name;
-        transcription.customer_id = id;
-
-        return module:fire_event('jitsi-transcript-received', {
-            room = room, occupant = occupant, transcription = transcription, stanza = stanza });
     end
 
     return module:fire_event('jitsi-endpoint-message-received', {
         room = room, occupant = occupant, message = msg_obj,
         origin = event.origin,
         stanza = stanza, raw_message = json_message });
-end);
+end
+
+module:hook('message/bare', filterTranscriptionResult);
+module:hook('jitsi-visitor-groupchat-pre-route', filterTranscriptionResult);

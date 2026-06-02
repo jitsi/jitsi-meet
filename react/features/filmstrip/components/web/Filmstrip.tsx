@@ -1,3 +1,4 @@
+import { Theme } from '@mui/material';
 import clsx from 'clsx';
 import { throttle } from 'lodash-es';
 import React, { PureComponent } from 'react';
@@ -9,10 +10,11 @@ import { withStyles } from 'tss-react/mui';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
-import { isMobileBrowser } from '../../../base/environment/utils';
+import { isMobileBrowser, isTouchDevice, shouldEnableResize } from '../../../base/environment/utils.web';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../base/icons/svg';
+import { isNarrowScreenWithChatOpen } from '../../../base/responsive-ui/functions';
 import { getHideSelfView } from '../../../base/settings/functions.any';
 import { registerShortcut, unregisterShortcut } from '../../../keyboard-shortcuts/actions';
 import { showToolbox } from '../../../toolbox/actions.web';
@@ -30,13 +32,19 @@ import {
 import {
     ASPECT_RATIO_BREAKPOINT,
     DEFAULT_FILMSTRIP_WIDTH,
+    DRAG_HANDLE_HEIGHT,
+    DRAG_HANDLE_TOP_PANEL_HEIGHT,
+    DRAG_HANDLE_TOP_PANEL_WIDTH,
+    DRAG_HANDLE_WIDTH,
     FILMSTRIP_TYPE,
     MIN_STAGE_VIEW_HEIGHT,
     MIN_STAGE_VIEW_WIDTH,
     TILE_HORIZONTAL_MARGIN,
     TILE_VERTICAL_MARGIN,
-    TOP_FILMSTRIP_HEIGHT
+    TOP_FILMSTRIP_HEIGHT,
+    TOUCH_DRAG_HANDLE_PADDING
 } from '../../constants';
+import { calculateFullyVisibleParticipantsCount } from '../../functions.any';
 import {
     getVerticalViewMaxWidth,
     isFilmstripDisabled,
@@ -44,15 +52,247 @@ import {
     shouldRemoteVideosBeVisible
 } from '../../functions.web';
 
-import AudioTracksContainer from './AudioTracksContainer';
 import Thumbnail from './Thumbnail';
 import ThumbnailWrapper from './ThumbnailWrapper';
-import { styles } from './styles';
+
+
+const BACKGROUND_COLOR = 'rgba(51, 51, 51, .5)';
+const TOUCH_DEVICE_PADDING = {
+    paddingLeft: `${TOUCH_DRAG_HANDLE_PADDING}px`,
+    paddingRight: `${TOUCH_DRAG_HANDLE_PADDING}px`,
+    paddingTop: 0,
+    paddingBottom: 0
+};
+const TOUCH_DEVICE_TOP_PANEL_PADDING = {
+    paddingLeft: 0,
+    paddingRight: 0,
+    paddingTop: `${TOUCH_DRAG_HANDLE_PADDING}px`,
+    paddingBottom: `${TOUCH_DRAG_HANDLE_PADDING}px`
+};
+const NON_TOUCH_DEVICE_PANEL = {
+    pading: 0
+};
+
+/**
+ * Creates the styles for the component.
+ *
+ * @param {Object} theme - The current theme.
+ * @param {IProps} props - The component props.
+ * @returns {Object}
+ */
+function styles(theme: Theme, props: IProps) {
+    const { _topPanelFilmstrip: isTopPanel } = props;
+
+    const _isTouchDevice = isTouchDevice();
+    const resizeEnabled = shouldEnableResize();
+    const handlePaddding = _isTouchDevice
+        ? (isTopPanel ? TOUCH_DEVICE_TOP_PANEL_PADDING : TOUCH_DEVICE_PADDING)
+        : NON_TOUCH_DEVICE_PANEL;
+
+    const result = {
+        toggleFilmstripContainer: {
+            display: 'flex',
+            flexWrap: 'nowrap' as const,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: BACKGROUND_COLOR,
+            width: '32px',
+            height: '24px',
+            position: 'absolute' as const,
+            borderRadius: '4px',
+            top: 'calc(-24px - 2px)',
+            left: 'calc(50% - 16px)',
+            opacity: 0,
+            transition: 'opacity .3s',
+            zIndex: 1,
+
+            '&:hover, &:focus-within': {
+                backgroundColor: theme.palette.filmstripBackground
+            }
+        },
+
+        toggleFilmstripButton: {
+            fontSize: '0.875rem',
+            lineHeight: 1.2,
+            textAlign: 'center' as const,
+            background: 'transparent',
+            height: 'auto',
+            width: '100%',
+            padding: 0,
+            margin: 0,
+            border: 'none',
+
+            '-webkit-appearance': 'none',
+
+            '& svg': {
+                fill: theme.palette.icon01
+            }
+        },
+
+        toggleVerticalFilmstripContainer: {
+            transform: 'rotate(-90deg)',
+            left: 'calc(-24px - 2px - 4px)',
+            top: 'calc(50% - 12px)'
+        },
+
+        toggleTopPanelContainer: {
+            transform: 'rotate(180deg)',
+            bottom: 'calc(-24px - 6px)',
+            top: 'auto'
+        },
+
+        toggleTopPanelContainerHidden: {
+            visibility: 'hidden' as const
+        },
+
+        filmstrip: {
+            transition: 'background .2s ease-in-out, right 1s, bottom 1s, top 1s, height .3s ease-in',
+            right: 0,
+            bottom: 0,
+
+            // On touch devices, handle is always visible via base styles, so no hover needed.
+            // On desktop, show handle on hover/focus.
+            ...(!_isTouchDevice && {
+                '&:hover, &:focus-within': {
+                    '& .resizable-filmstrip': {
+                        backgroundColor: BACKGROUND_COLOR
+                    },
+
+                    '& .filmstrip-hover': {
+                        backgroundColor: BACKGROUND_COLOR
+                    },
+
+                    '& .toggleFilmstripContainer': {
+                        opacity: 1
+                    },
+
+                    '& .dragHandleContainer': {
+                        visibility: 'visible' as const
+                    }
+                }
+            }),
+
+            '.horizontal-filmstrip &.hidden': {
+                bottom: '-50px',
+
+                '&:hover': {
+                    backgroundColor: 'transparent'
+                }
+            },
+
+            '&.hidden': {
+                '& .toggleFilmstripContainer': {
+                    opacity: 1
+                }
+            }
+        },
+
+        filmstripBackground: {
+            backgroundColor: theme.palette.filmstripBackgroundHover,
+
+            '&:hover, &:focus-within': {
+                backgroundColor: theme.palette.filmstripBackgroundHover
+            }
+        },
+
+        resizableFilmstripContainer: {
+            display: 'flex',
+            position: 'relative' as const,
+            flexDirection: 'row' as const,
+            alignItems: 'center',
+            height: '100%',
+            width: '100%',
+            transition: 'background .2s ease-in-out' as const,
+
+            '& .avatar-container': {
+                maxWidth: 'initial',
+                maxHeight: 'initial'
+            },
+
+            '&.top-panel-filmstrip': {
+                flexDirection: 'column' as const
+            },
+            '&.always-show-resize-bar': {
+                backgroundColor: BACKGROUND_COLOR
+            }
+        },
+
+        dragHandleContainer: {
+            height: '100%',
+            width: `${DRAG_HANDLE_WIDTH}px`,
+            backgroundColor: 'transparent',
+            position: 'relative' as const,
+            cursor: 'col-resize',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            // On touch devices, always visible if resize enabled. On desktop, hidden by default
+            visibility: (_isTouchDevice && resizeEnabled) ? 'visible' as const : 'hidden' as const,
+            marginLeft: 0,
+            marginTop: 0,
+            // Touch devices get padding for easier tapping
+            // Vertical filmstrip: left/right padding. Top panel: top/bottom padding.
+            ...handlePaddding,
+            // Prevent touch scrolling while dragging
+            touchAction: 'none',
+
+            '&:hover': {
+                '& .dragHandle': {
+                    backgroundColor: theme.palette.filmstripDragHandleHover
+                }
+            },
+
+            '&.visible': {
+                visibility: 'visible' as const,
+
+                '& .dragHandle': {
+                    backgroundColor: theme.palette.filmstripDragHandleHover
+                }
+            },
+
+            '&.top-panel': {
+                order: 2,
+                width: '100%',
+                height: `${DRAG_HANDLE_WIDTH}px`,
+                cursor: 'row-resize',
+
+                '& .dragHandle': {
+                    height: `${DRAG_HANDLE_TOP_PANEL_HEIGHT}px`,
+                    width: `${DRAG_HANDLE_TOP_PANEL_WIDTH}px`
+                }
+            }
+        },
+
+        dragHandle: {
+            // Keep the same visual appearance on all devices
+            backgroundColor: theme.palette.filmstripDragHandle,
+            height: `${DRAG_HANDLE_HEIGHT}px`,
+            width: `${DRAG_HANDLE_WIDTH / 3}px`,
+            borderRadius: '1px'
+        }
+    };
+
+    if (props._isNarrowScreenWithChatOpen) {
+        result.filmstrip = {
+            ...result.filmstrip,
+            '& .vertical-filmstrip': {
+                display: 'none' as const
+            }
+        } as typeof result.filmstrip;
+    }
+
+    return result;
+}
+
 
 /**
  * The type of the React {@code Component} props of {@link Filmstrip}.
  */
-interface IProps extends WithTranslation {
+export interface IProps extends WithTranslation {
+    /**
+     * Whether to always show the resize bar on filmstrip. This will make the filmstrip always visible.
+     */
+    _alwaysShowResizeBar?: boolean;
 
     /**
      * Additional CSS class names top add to the root.
@@ -105,9 +345,19 @@ interface IProps extends WithTranslation {
     _isFilmstripButtonEnabled: boolean;
 
     /**
+     * Whether the available space is when the chat is open. The filmstrip will be hidden if true.
+     */
+    _isNarrowScreenWithChatOpen: boolean;
+
+    /**
     * Whether or not the toolbox is displayed.
     */
     _isToolboxVisible: Boolean;
+
+    /**
+     * Whether the device has touch capability.
+     */
+    _isTouchDevice?: boolean;
 
     /**
      * Whether or not the current layout is vertical filmstrip.
@@ -148,6 +398,11 @@ interface IProps extends WithTranslation {
      * Whether or not the filmstrip should be user-resizable.
      */
     _resizableFilmstrip: boolean;
+
+    /**
+     * Whether resize functionality should be enabled based on device and screen size.
+     */
+    _resizeEnabled?: boolean;
 
     /**
      * The number of rows in tile view.
@@ -282,8 +537,10 @@ class Filmstrip extends PureComponent <IProps, IState> {
         this._onGridItemsRendered = this._onGridItemsRendered.bind(this);
         this._onListItemsRendered = this._onListItemsRendered.bind(this);
         this._onToggleButtonTouch = this._onToggleButtonTouch.bind(this);
-        this._onDragHandleMouseDown = this._onDragHandleMouseDown.bind(this);
-        this._onDragMouseUp = this._onDragMouseUp.bind(this);
+        this._onDragHandlePointerDown = this._onDragHandlePointerDown.bind(this);
+        this._onDragHandleClick = this._onDragHandleClick.bind(this);
+        this._onDragHandleTouchStart = this._onDragHandleTouchStart.bind(this);
+        this._onDragPointerUp = this._onDragPointerUp.bind(this);
         this._onFilmstripResize = this._onFilmstripResize.bind(this);
 
         this._throttledResize = throttle(
@@ -307,10 +564,10 @@ class Filmstrip extends PureComponent <IProps, IState> {
             handler: this._onShortcutToggleFilmstrip
         }));
 
-        document.addEventListener('mouseup', this._onDragMouseUp);
+        document.addEventListener('pointerup', this._onDragPointerUp);
 
         // @ts-ignore
-        document.addEventListener('mousemove', this._throttledResize);
+        document.addEventListener('pointermove', this._throttledResize);
     }
 
     /**
@@ -321,10 +578,10 @@ class Filmstrip extends PureComponent <IProps, IState> {
     override componentWillUnmount() {
         this.props.dispatch(unregisterShortcut('F'));
 
-        document.removeEventListener('mouseup', this._onDragMouseUp);
+        document.removeEventListener('pointerup', this._onDragPointerUp);
 
         // @ts-ignore
-        document.removeEventListener('mousemove', this._throttledResize);
+        document.removeEventListener('pointermove', this._throttledResize);
     }
 
     /**
@@ -336,6 +593,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
     override render() {
         const filmstripStyle: any = { };
         const {
+            _alwaysShowResizeBar,
             _currentLayout,
             _disableSelfView,
             _filmstripDisabled,
@@ -384,7 +642,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
             }
         }
 
-        let toolbar = null;
+        let toolbar: React.ReactNode = null;
 
         if (!this.props._iAmRecorder && this.props._isFilmstripButtonEnabled
             && _currentLayout !== LAYOUTS.TILE_VIEW
@@ -452,33 +710,44 @@ class Filmstrip extends PureComponent <IProps, IState> {
                 {_resizableFilmstrip
                     ? <div
                         className = { clsx('resizable-filmstrip', classes.resizableFilmstripContainer,
-                            _topPanelFilmstrip && 'top-panel-filmstrip') }>
+                            _topPanelFilmstrip && 'top-panel-filmstrip',
+                            _alwaysShowResizeBar && 'always-show-resize-bar') }>
                         <div
                             className = { clsx('dragHandleContainer',
                                 classes.dragHandleContainer,
-                                isMouseDown && 'visible',
+                                (isMouseDown || _alwaysShowResizeBar) && 'visible',
                                 _topPanelFilmstrip && 'top-panel')
                             }
-                            onMouseDown = { this._onDragHandleMouseDown }>
+                            onClick = { this._onDragHandleClick }
+                            onPointerDown = { this._onDragHandlePointerDown }
+                            onTouchStart = { this._onDragHandleTouchStart }>
                             <div className = { clsx(classes.dragHandle, 'dragHandle') } />
                         </div>
                         {filmstrip}
                     </div>
                     : filmstrip
                 }
-                <AudioTracksContainer />
             </div>
         );
     }
 
     /**
-     * Handles mouse down on the drag handle.
+     * Handles pointer down on the drag handle.
+     * Supports both mouse and touch events via Pointer Events API.
      *
-     * @param {MouseEvent} e - The mouse down event.
+     * @param {React.PointerEvent} e - The pointer down event.
      * @returns {void}
      */
-    _onDragHandleMouseDown(e: React.MouseEvent) {
+    _onDragHandlePointerDown(e: React.PointerEvent) {
         const { _topPanelFilmstrip, _topPanelHeight, _verticalFilmstripWidth } = this.props;
+
+        // Prevent toolbar from appearing and stop event propagation
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Capture the pointer to ensure we receive all pointer events
+        // even if the pointer moves outside the element
+        (e.target as HTMLElement).setPointerCapture(e.pointerId);
 
         this.setState({
             isMouseDown: true,
@@ -490,11 +759,33 @@ class Filmstrip extends PureComponent <IProps, IState> {
     }
 
     /**
-     * Drag handle mouse up handler.
+     * Prevents click events on drag handle from triggering toolbar.
+     *
+     * @param {React.MouseEvent} e - The click event.
+     * @returns {void}
+     */
+    _onDragHandleClick(e: React.MouseEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    /**
+     * Prevents touch start events on drag handle from triggering toolbar.
+     *
+     * @param {React.TouchEvent} e - The touch start event.
+     * @returns {void}
+     */
+    _onDragHandleTouchStart(e: React.TouchEvent) {
+        e.stopPropagation();
+    }
+
+    /**
+     * Drag handle pointer up handler.
+     * Supports both mouse and touch events via Pointer Events API.
      *
      * @returns {void}
      */
-    _onDragMouseUp() {
+    _onDragPointerUp() {
         if (this.state.isMouseDown) {
             this.setState({
                 isMouseDown: false
@@ -504,12 +795,13 @@ class Filmstrip extends PureComponent <IProps, IState> {
     }
 
     /**
-     * Handles drag handle mouse move.
+     * Handles drag handle pointer move.
+     * Supports both mouse and touch events via Pointer Events API.
      *
-     * @param {MouseEvent} e - The mousemove event.
+     * @param {PointerEvent} e - The pointermove event.
      * @returns {void}
      */
-    _onFilmstripResize(e: React.MouseEvent) {
+    _onFilmstripResize(e: PointerEvent) {
         if (this.state.isMouseDown) {
             const {
                 dispatch,
@@ -638,10 +930,32 @@ class Filmstrip extends PureComponent <IProps, IState> {
      */
     _onListItemsRendered({ visibleStartIndex, visibleStopIndex }: {
         visibleStartIndex: number; visibleStopIndex: number; }) {
-        const { dispatch } = this.props;
+        const {
+            dispatch,
+            _currentLayout,
+            _filmstripWidth,
+            _filmstripHeight,
+            _thumbnailWidth,
+            _thumbnailHeight,
+        } = this.props;
+
+        // Calculate fully visible count (excluding partially visible tiles)
+        const isHorizontal = _currentLayout === LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW;
+        const itemSize = isHorizontal
+            ? _thumbnailWidth + TILE_HORIZONTAL_MARGIN
+            : _thumbnailHeight + TILE_VERTICAL_MARGIN;
+        const containerSize = isHorizontal ? _filmstripWidth : _filmstripHeight;
+
+        const fullyVisibleCount = calculateFullyVisibleParticipantsCount(
+            visibleStartIndex,
+            visibleStopIndex,
+            containerSize,
+            itemSize
+        );
+
         const { startIndex, stopIndex } = this._calculateIndices(visibleStartIndex, visibleStopIndex);
 
-        dispatch(setVisibleRemoteParticipants(startIndex, stopIndex));
+        dispatch(setVisibleRemoteParticipants(startIndex, stopIndex, fullyVisibleCount));
     }
 
     /**
@@ -884,19 +1198,18 @@ class Filmstrip extends PureComponent <IProps, IState> {
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { _hasScroll = false, filmstripType, _topPanelFilmstrip, _remoteParticipants } = ownProps;
     const { toolbarButtons } = state['features/toolbox'];
-    const { iAmRecorder } = state['features/base/config'];
+    const { iAmRecorder, filmstrip: { alwaysShowResizeBar } = {} } = state['features/base/config'];
     const { topPanelHeight, topPanelVisible, visible, width: verticalFilmstripWidth } = state['features/filmstrip'];
     const { localScreenShare } = state['features/base/participants'];
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons?.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
-    const { isOpen: shiftRight } = state['features/chat'];
     const disableSelfView = getHideSelfView(state);
-    const { clientWidth, clientHeight } = state['features/base/responsive-ui'];
+    const { videoSpaceWidth, clientHeight } = state['features/base/responsive-ui'];
     const filmstripDisabled = isFilmstripDisabled(state);
 
     const collapseTileView = reduceHeight
         && isMobileBrowser()
-        && clientWidth <= ASPECT_RATIO_BREAKPOINT;
+        && videoSpaceWidth <= ASPECT_RATIO_BREAKPOINT;
 
     const shouldReduceHeight = reduceHeight && isMobileBrowser();
     const _topPanelVisible = isStageFilmstripTopPanel(state) && topPanelVisible;
@@ -910,7 +1223,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const videosClassName = `filmstrip__videos${isVisible ? '' : ' hidden'}${_hasScroll ? ' has-scroll' : ''}`;
     const className = `${remoteVideosVisible || ownProps._verticalViewGrid ? '' : 'hide-videos'} ${
         shouldReduceHeight ? 'reduce-height' : ''
-    } ${shiftRight ? 'shift-right' : ''} ${collapseTileView ? 'collapse' : ''} ${isVisible ? '' : 'hidden'}`.trim();
+    } ${collapseTileView ? 'collapse' : ''} ${isVisible ? '' : 'hidden'}`.trim();
 
     const _currentLayout = getCurrentLayout(state);
     const _isVerticalFilmstrip = _currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW
@@ -925,11 +1238,12 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _hasScroll,
         _iAmRecorder: Boolean(iAmRecorder),
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
+        _isNarrowScreenWithChatOpen: isNarrowScreenWithChatOpen(state),
         _isToolboxVisible: isToolboxVisible(state),
         _isVerticalFilmstrip,
         _localScreenShareId: localScreenShare?.id,
         _mainFilmstripVisible: notDisabled,
-        _maxFilmstripWidth: clientWidth - MIN_STAGE_VIEW_WIDTH,
+        _maxFilmstripWidth: videoSpaceWidth - MIN_STAGE_VIEW_WIDTH,
         _maxTopPanelHeight: clientHeight - MIN_STAGE_VIEW_HEIGHT,
         _remoteParticipantsLength: _remoteParticipants?.length ?? 0,
         _topPanelHeight: topPanelHeight.current,
@@ -937,8 +1251,9 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _topPanelVisible,
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
-        _videosClassName: videosClassName
+        _videosClassName: videosClassName,
+        _alwaysShowResizeBar: alwaysShowResizeBar
     };
 }
 
-export default withStyles(translate(connect(_mapStateToProps)(Filmstrip)), styles);
+export default translate(connect(_mapStateToProps)(withStyles(Filmstrip, styles)));

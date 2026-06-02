@@ -2,11 +2,15 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 import { set } from '../base/redux/functions';
 
 import {
+    SET_FOLLOW_ME,
     SET_FOLLOW_ME_MODERATOR,
+    SET_FOLLOW_ME_RECORDER,
     SET_FOLLOW_ME_STATE
 } from './actionTypes';
 
 export interface IFollowMeState {
+    followMeEnabled?: boolean;
+    followMeRecorderEnabled?: boolean;
     moderator?: string;
     recorder?: boolean;
     state?: {
@@ -21,7 +25,8 @@ ReducerRegistry.register<IFollowMeState>(
     'features/follow-me',
     (state = {}, action): IFollowMeState => {
         switch (action.type) {
-
+        case SET_FOLLOW_ME:
+            return set(state, 'followMeEnabled', action.enabled);
         case SET_FOLLOW_ME_MODERATOR: {
             let newState = set(state, 'moderator', action.id);
 
@@ -35,6 +40,11 @@ ReducerRegistry.register<IFollowMeState>(
 
             return newState;
         }
+        case SET_FOLLOW_ME_RECORDER:
+            return { ...state,
+                followMeRecorderEnabled: action.enabled,
+                followMeEnabled: action.enabled
+            };
         case SET_FOLLOW_ME_STATE: {
             return set(state, 'state', action.state);
         }

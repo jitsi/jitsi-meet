@@ -19,9 +19,7 @@ package org.jitsi.meet.sdk;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.facebook.react.ReactInstanceManager;
-import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.ReactHost;
 import com.facebook.react.modules.core.PermissionListener;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
@@ -37,7 +35,13 @@ public class JitsiMeetActivityDelegate {
      * React Native module.
      */
     private static PermissionListener permissionListener;
-    private static Callback permissionsCallback;
+
+    /**
+     * Cached back-button handler reused across {@code onHostResume} calls so we
+     * don't allocate a new one every time the Activity is resumed. The handler
+     * holds the Activity weakly, so caching it here does not leak it.
+     */
+    private static DefaultHardwareBackBtnHandlerImpl backBtnHandler;
 
     /**
      * Tells whether or not the permissions request is currently in progress.
@@ -63,11 +67,10 @@ public class JitsiMeetActivityDelegate {
             int requestCode,
             int resultCode,
             Intent data) {
-        ReactInstanceManager reactInstanceManager
-                = ReactInstanceManagerHolder.getReactInstanceManager();
+        ReactHost reactHost = ReactHostHolder.getReactHost();
 
-        if (reactInstanceManager != null) {
-            reactInstanceManager.onActivityResult(activity, requestCode, resultCode, data);
+        if (reactHost != null) {
+            reactHost.onActivityResult(activity, requestCode, resultCode, data);
         }
     }
 
@@ -81,11 +84,10 @@ public class JitsiMeetActivityDelegate {
      * {@code super}'s implementation.
      */
     public static void onBackPressed() {
-        ReactInstanceManager reactInstanceManager
-            = ReactInstanceManagerHolder.getReactInstanceManager();
+        ReactHost reactHost = ReactHostHolder.getReactHost();
 
-        if (reactInstanceManager != null) {
-            reactInstanceManager.onBackPressed();
+        if (reactHost != null) {
+            reactHost.onBackPressed();
         }
     }
 
@@ -97,11 +99,10 @@ public class JitsiMeetActivityDelegate {
      * @param activity {@code Activity} being destroyed.
      */
     public static void onHostDestroy(Activity activity) {
-        ReactInstanceManager reactInstanceManager
-            = ReactInstanceManagerHolder.getReactInstanceManager();
+        ReactHost reactHost = ReactHostHolder.getReactHost();
 
-        if (reactInstanceManager != null) {
-            reactInstanceManager.onHostDestroy(activity);
+        if (reactHost != null) {
+            reactHost.onHostDestroy(activity);
         }
     }
 
@@ -112,12 +113,11 @@ public class JitsiMeetActivityDelegate {
      * @param activity {@code Activity} being paused.
      */
     public static void onHostPause(Activity activity) {
-        ReactInstanceManager reactInstanceManager
-            = ReactInstanceManagerHolder.getReactInstanceManager();
+        ReactHost reactHost = ReactHostHolder.getReactHost();
 
-        if (reactInstanceManager != null) {
+        if (reactHost != null) {
             try {
-                reactInstanceManager.onHostPause(activity);
+                reactHost.onHostPause(activity);
             } catch (AssertionError e) {
                 // There seems to be a problem in RN when resuming an Activity when
                 // rotation is involved and the planets align. There doesn't seem to
@@ -136,16 +136,13 @@ public class JitsiMeetActivityDelegate {
      * @param activity {@code Activity} being resumed.
      */
     public static void onHostResume(Activity activity) {
-        ReactInstanceManager reactInstanceManager
-            = ReactInstanceManagerHolder.getReactInstanceManager();
+        ReactHost reactHost = ReactHostHolder.getReactHost();
 
-        if (reactInstanceManager != null) {
-            reactInstanceManager.onHostResume(activity, new DefaultHardwareBackBtnHandlerImpl(activity));
-        }
-
-        if (permissionsCallback != null) {
-            permissionsCallback.invoke();
-            permissionsCallback = null;
+        if (reactHost != null) {
+            if (backBtnHandler == null || backBtnHandler.getActivity() != activity) {
+                backBtnHandler = new DefaultHardwareBackBtnHandlerImpl(activity);
+            }
+            reactHost.onHostResume(activity, backBtnHandler);
         }
     }
 
@@ -159,25 +156,19 @@ public class JitsiMeetActivityDelegate {
      * @param intent {@code Intent} instance which was received.
      */
     public static void onNewIntent(Intent intent) {
-        ReactInstanceManager reactInstanceManager
-            = ReactInstanceManagerHolder.getReactInstanceManager();
+        ReactHost reactHost = ReactHostHolder.getReactHost();
 
-        if (reactInstanceManager != null) {
-            reactInstanceManager.onNewIntent(intent);
+        if (reactHost != null) {
+            reactHost.onNewIntent(intent);
         }
     }
 
     public static void onRequestPermissionsResult(
             final int requestCode, final String[] permissions, final int[] grantResults) {
-        permissionsCallback = new Callback() {
-            @Override
-            public void invoke(Object... args) {
-                if (permissionListener != null
-                        && permissionListener.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
-                    permissionListener = null;
-                }
-            }
-        };
+        // Invoke the callback immediately
+        if (permissionListener != null && permissionListener.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
+            permissionListener = null;
+        }
     }
 
     public static void requestPermissions(Activity activity, String[] permissions, int requestCode, PermissionListener listener) {

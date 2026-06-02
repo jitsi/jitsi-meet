@@ -3,6 +3,7 @@ import { WithTranslation } from 'react-i18next';
 
 import { IReduxState, IStore } from '../../app/types';
 import { rejectParticipantVideo } from '../../av-moderation/actions';
+import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../av-moderation/constants';
 import { isEnabledFromState } from '../../av-moderation/functions';
 import { MEDIA_TYPE } from '../../base/media/constants';
 import { muteRemote } from '../actions';
@@ -75,6 +76,6 @@ export default class AbstractMuteRemoteParticipantsVideoDialog<P extends IProps 
  */
 export function abstractMapStateToProps(state: IReduxState) {
     return {
-        isVideoModerationOn: isEnabledFromState(MEDIA_TYPE.VIDEO, state)
+        isVideoModerationOn: isEnabledFromState(AVM_MEDIA_TYPE.VIDEO, state)
     };
 }

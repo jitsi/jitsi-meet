@@ -49,7 +49,9 @@ var config = {
     bosh: 'https://jitsi-meet.example.com/' + subdir + 'http-bind',
 
     // Websocket URL (XMPP)
-    // websocket: 'wss://jitsi-meet.example.com/' + subdir + 'xmpp-websocket',
+    websocket: 'wss://jitsi-meet.example.com/' + subdir + 'xmpp-websocket',
+
+    // websocketKeepAliveUrl: 'https://jitsi-meet.example.com/' + subdir + '_unlock',
 
     // Whether BOSH should be preferred over WebSocket if both are configured.
     // preferBosh: false,
@@ -87,6 +89,9 @@ var config = {
         // Enables use of getDisplayMedia in electron
         // electronUseGetDisplayMedia: false,
 
+        // Enables AV1 codec for FF. Note: By default it is disabled.
+        // enableAV1ForFF: false,
+
         // Enables the use of the codec selection API supported by the browsers .
         // enableCodecSelectionAPI: false,
 
@@ -112,6 +117,11 @@ var config = {
 
         // Will replace ice candidates IPs with invalid ones in order to fail ice.
         // failICE: true,
+
+        // When running on Spot TV, this controls whether to show the recording consent dialog.
+        // If false (default), Spot instances will not show the recording consent dialog.
+        // If true, Spot instances will show the recording consent dialog like regular clients.
+        // showSpotConsentDialog: false,
     },
 
     // Disables moderator indicators.
@@ -123,8 +133,14 @@ var config = {
     // Disables the reactions moderation feature.
     // disableReactionsModeration: false,
 
+    // Disables the reactions in chat feature.
+    // disableReactionsInChat: false,
+
     // Disables polls feature.
     // disablePolls: false,
+
+    // Disables chat feature entirely including notifications, sounds, and private messages.
+    // disableChat: false,
 
     // Disables demote button from self-view
     // disableSelfDemote: false,
@@ -134,6 +150,9 @@ var config = {
 
     // Disables self-view settings in UI
     // disableSelfViewSettings: false,
+
+    // Shows/hides the moderator setting for chat permissions.
+    // showChatPermissionsModeratorSetting: false,
 
     // screenshotCapture : {
     //      Enables the screensharing capture feature.
@@ -350,6 +369,7 @@ var config = {
     // Desktop sharing
 
     // Optional desktop sharing frame rate options. Default value: min:5, max:5.
+    // Setting higher min/max values will affect the resolution, it makes it worse.
     // desktopSharingFrameRate: {
     //     min: 5,
     //     max: 5,
@@ -396,6 +416,10 @@ var config = {
     //    // If true, mutes audio and video when a recording begins and displays a dialog
     //    // explaining the effect of unmuting.
     //    // requireConsent: true,
+    //    // If true consent will be skipped for users who are already in the meeting.
+    //    // skipConsentInMeeting: true,
+    //    // Link for the recording consent dialog's "Learn more" link.
+    //    // consentLearnMoreLink: 'https://jitsi.org/meet/consent',
     // },
 
     // recordingService: {
@@ -487,12 +511,31 @@ var config = {
     //     // ./src/react/features/transcribing/transcriber-langs.json.
     //     preferredLanguage: 'en-US',
 
+    // Allows extending the list of supported transcription languages.
+    // Useful for custom transcription backends (e.g. Vosk).
+    //
+    // Example:
+    // customLanguages: {
+    //     'hsb-DE': 'Upper Sorbian (Germany)',
+    //     'dsb-DE': 'Lower Sorbian (Germany)'
+    // },
+
     //     // Enables automatic turning on transcribing when recording is started
     //     autoTranscribeOnRecord: false,
 
     //     // Enables automatic request of subtitles when transcriber is present in the meeting, uses the default
     //     // language that is set
     //     autoCaptionOnTranscribe: false,
+    //
+    //     // Disables everything related to closed captions - the tab in the chat area, the button in the menu,
+    //     // subtitles on stage and the "Show subtitles on stage" checkbox in the settings.
+    //     // Note: Starting transcriptions from the recording dialog will still work.
+    //     disableClosedCaptions: false,
+    //
+    //     // When the backend provides diarization by setting a "speaker" field, append [Speaker N] for transcription
+    //     // events from non-0 speakers.
+    //     renderTranscriptDetails: false
+
     // },
 
     // Misc
@@ -518,7 +561,7 @@ var config = {
     // videoQuality: {
     //
     //    // Provides a way to set the codec preference on desktop based endpoints.
-    //    codecPreferenceOrder: [ 'VP9', 'VP8', 'H264', 'AV1' ],
+    //    codecPreferenceOrder: [ 'AV1', 'VP9', 'VP8', 'H264' ],
     //
     //    // Provides a way to set the codec for screenshare.
     //    screenshareCodec: 'AV1',
@@ -595,7 +638,7 @@ var config = {
     //    },
     //
     //    // Provides a way to set the codec preference on mobile devices, both on RN and mobile browser based endpoint
-    //    mobileCodecPreferenceOrder: [ 'VP8', 'VP9', 'H264' ],
+    //    mobileCodecPreferenceOrder: [ 'VP8', 'VP9', 'H264', 'AV1' ],
     // },
 
     // Notification timeouts
@@ -604,21 +647,7 @@ var config = {
     //     medium: 5000,
     //     long: 10000,
     //     extraLong: 60000,
-    // },
-
-    // // Options for the recording limit notification.
-    // recordingLimit: {
-    //
-    //    // The recording limit in minutes. Note: This number appears in the notification text
-    //    // but doesn't enforce the actual recording time limit. This should be configured in
-    //    // jibri!
-    //    limit: 60,
-    //
-    //    // The name of the app with unlimited recordings.
-    //    appName: 'Unlimited recordings APP',
-    //
-    //    // The URL of the app with unlimited recordings.
-    //    appURL: 'https://unlimited.recordings.app.com/',
+    //     sticky: 0,
     // },
 
     // Disables or enables RTX (RFC 4588) (defaults to false).
@@ -695,6 +724,8 @@ var config = {
     //     autoKnock: false,
     //     // Enables the lobby chat. Replaces `enableLobbyChat`.
     //     enableChat: true,
+    //     // Shows the hangup button in the lobby screen.
+    //     showHangUp: true,
     // },
 
     // Configs for the security related UI elements.
@@ -734,7 +765,7 @@ var config = {
     // hideDominantSpeakerBadge: false,
 
     // Default language for the user interface. Cannot be overwritten.
-    // DEPRECATED! Use the `lang` iframe option directly instead.
+    // For iframe integrations, use the `lang` option directly instead.
     // defaultLanguage: 'en',
 
     // Disables profile and the edit of all fields from the profile settings (display name and email)
@@ -764,7 +795,6 @@ var config = {
     // Configs for prejoin page.
     // prejoinConfig: {
     //     // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
-    //     // This replaces `prejoinPageEnabled`. Defaults to true.
     //     enabled: true,
     //     // Hides the participant name editing field in the prejoin screen.
     //     // If requireDisplayName is also set as true, a name should still be provided through
@@ -776,7 +806,9 @@ var config = {
     //     // By setting preCallTestEnabled, you enable the pre-call test in the prejoin page.
     //     // ICE server credentials need to be provided over the preCallTestICEUrl
     //     preCallTestEnabled: false,
-    //     preCallTestICEUrl: ''
+    //     preCallTestICEUrl: '',
+    //     // Shows the hangup button in the lobby screen.
+    //     showHangUp: true,
     // },
 
     // When 'true', the user cannot edit the display name.
@@ -821,8 +853,7 @@ var config = {
     // some other values in config.js to be enabled. Also, the "profile" button will
     // not display for users with a JWT.
     // Notes:
-    // - it's impossible to choose which buttons go in the "More actions" menu
-    // - it's impossible to control the placement of buttons
+    // - it's possible to reorder the buttons in the maintoolbar by changing the order of the mainToolbarButtons
     // - 'desktop' controls the "Share your screen" button
     // - if `toolbarButtons` is undefined, we fallback to enabling all buttons on the UI
     // toolbarButtons: [
@@ -874,6 +905,8 @@ var config = {
     //     alwaysVisible: false,
     //     // Indicates whether the toolbar should still autohide when chat is open
     //     autoHideWhileChatIsOpen: false,
+    //     // Default background color for the main toolbar. Accepts any valid CSS color.
+    //     // backgroundColor: '#ffffff',
     // },
 
     // Overrides the buttons displayed in the main toolbar. Depending on the screen size the number of displayed
@@ -891,6 +924,14 @@ var config = {
     //     [ 'microphone', 'camera', 'chat' ],
     //     [ 'microphone', 'camera' ]
     // ],
+
+    // Enable reduced UI on web.
+    // reducedUIEnabled: true,
+
+    // Overrides the buttons displayed in the main toolbar for reduced UI.
+    // When there isn't an override for a certain configuration the default jitsi-meet configuration will be used.
+    // The order of the buttons in the array is preserved.
+    // reducedUImainToolbarButtons: [ 'microphone', 'camera' ],
 
     // Toolbar buttons which have their click/tap event exposed through the API on
     // `toolbarButtonClicked`. Passing a string for the button key will
@@ -1073,10 +1114,10 @@ var config = {
 
         // Provides a way to set the codec preference on mobile devices, both on RN and mobile browser based
         // endpoints.
-        // mobileCodecPreferenceOrder: [ 'H264', 'VP8', 'VP9' ],
+        // mobileCodecPreferenceOrder: [ 'H264', 'VP8', 'VP9', 'AV1' ],
         //
         // Provides a way to set the codec preference on desktop based endpoints.
-        // codecPreferenceOrder: [ 'VP9', 'VP8', 'H264 ],
+        // codecPreferenceOrder: [ 'AV1', 'VP9', 'VP8', 'H264 ],
 
         // Provides a way to set the codec for screenshare.
         // screenshareCodec: 'AV1',
@@ -1104,10 +1145,6 @@ var config = {
 
         // The Amplitude APP Key:
         // amplitudeAPPKey: '<APP_KEY>',
-
-        // Enables Amplitude UTM tracking:
-        // Default value is false.
-        // amplitudeIncludeUTM: false,
 
         // Obfuscates room name sent to analytics (amplitude, rtcstats)
         // Default value is false.
@@ -1252,9 +1289,6 @@ var config = {
     // disableDeepLinking: false,
 
     // The deeplinking config.
-    // For information about the properties of
-    // deeplinking.[ios/android].dynamicLink check:
-    // https://firebase.google.com/docs/dynamic-links/create-manually
     // deeplinking: {
     //
     //     // The desktop deeplinking config, disabled by default.
@@ -1283,13 +1317,6 @@ var config = {
     //         appScheme: 'org.jitsi.meet',
     //         // Custom URL for downloading ios mobile app.
     //         downloadLink: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
-    //         dynamicLink: {
-    //             apn: 'org.jitsi.meet',
-    //             appCode: 'w2atb',
-    //             customDomain: undefined,
-    //             ibi: 'com.atlassian.JitsiMeet.ios',
-    //             isi: '1165103905'
-    //         }
     //     },
 
     //     // The android deeplinking config.
@@ -1302,13 +1329,6 @@ var config = {
     //         // Android app package name.
     //         appPackage: 'org.jitsi.meet',
     //         fDroidUrl: 'https://f-droid.org/en/packages/org.jitsi.meet/',
-    //         dynamicLink: {
-    //             apn: 'org.jitsi.meet',
-    //             appCode: 'w2atb',
-    //             customDomain: undefined,
-    //             ibi: 'com.atlassian.JitsiMeet.ios',
-    //             isi: '1165103905'
-    //         }
     //     }
     // },
 
@@ -1356,18 +1376,13 @@ var config = {
     //     disableKick: true,
     //     // If set to true the 'Grant moderator' button will be disabled.
     //     disableGrantModerator: true,
-    //     // If set to true the 'Send private message' button will be disabled.
-    //     disablePrivateChat: true,
+    //     // If set to 'all' the 'Private chat' button will be disabled for all participants.
+    //     // If set to 'allow-moderator-chat' the 'Private chat' button will be available for chats with moderators.
+    //     // If set to 'disable-visitor-chat' the 'Private chat' button will be disabled for visitor-main participant
+    //     // conversations.
+    //     disablePrivateChat: 'all' | 'allow-moderator-chat' | 'disable-visitor-chat',
     // },
 
-    // Endpoint that enables support for salesforce integration with in-meeting resource linking
-    // This is required for:
-    // listing the most recent records - salesforceUrl/records/recents
-    // searching records - salesforceUrl/records?text=${text}
-    // retrieving record details - salesforceUrl/records/${id}?type=${type}
-    // and linking the meeting - salesforceUrl/sessions/${sessionId}/records/${id}
-    //
-    // salesforceUrl: 'https://api.example.com/',
 
     // If set to true all muting operations of remote participants will be disabled.
     // disableRemoteMute: true,
@@ -1378,8 +1393,12 @@ var config = {
      The config file should be in JSON.
      None of the fields are mandatory and the response must have the shape:
     {
+        // Whether participant can only send group chat message if `send-groupchat` feature is enabled in jwt.
+        groupChatRequiresPermission: false,
+        // Whether participant can only create polls if `create-polls` feature is enabled in jwt.
+        pollCreationRequiresPermission: false,
         // The domain url to apply (will replace the domain in the sharing conference link/embed section)
-        inviteDomain: 'example-company.org,
+        inviteDomain: 'example-company.org',
         // The hex value for the colour used as background
         backgroundColor: '#fff',
         // The url for the image used as background
@@ -1388,6 +1407,13 @@ var config = {
         logoClickUrl: 'https://example-company.org',
         // The url used for the image used as logo
         logoImageUrl: 'https://example.com/logo-img.png',
+        // Endpoint that enables support for salesforce integration with in-meeting resource linking
+        // This is required for:
+        // listing the most recent records - salesforceUrl/records/recents
+        // searching records - salesforceUrl/records?text=${text}
+        // retrieving record details - salesforceUrl/records/${id}?type=${type}
+        // and linking the meeting - salesforceUrl/sessions/${sessionId}/records/${id}
+        // salesforceUrl: 'https://api.example.com/',
         // Overwrite for pool of background images for avatars
         avatarBackgrounds: ['url(https://example.com/avatar-background-1.png)', '#FFF'],
         // The lobby/prejoin screen background
@@ -1467,15 +1493,80 @@ var config = {
     //     hideJoinRoomButton: false,
     // },
 
-    // When true, virtual background feature will be disabled.
-    // disableVirtualBackground: false,
-
-    // When true the user cannot add more images to be used as virtual background.
-    // Only the default ones from will be available.
-    // disableAddingBackgroundImages: false,
-
     // Sets the background transparency level. '0' is fully transparent, '1' is opaque.
     // backgroundAlpha: 1,
+
+    // @deprecated Use `virtualBackground.disabled` instead. When true, the virtual background
+    // feature is disabled. Kept here for backwards compatibility; will be removed in a future release.
+    // disableVirtualBackground: false,
+
+    // @deprecated Use `virtualBackground.disableAddingImages` instead. When true the user cannot
+    // add more images to be used as virtual background; only the default ones will be available.
+    // Kept here for backwards compatibility; will be removed in a future release.
+    // disableAddingBackgroundImages: false,
+
+    // Virtual background options.
+    // All fields are optional; omitting a field uses the default/auto-detected value.
+    virtualBackground: {
+
+        // When true, virtual background feature will be disabled.
+        // disabled: false,
+
+        // When true the user cannot add more images to be used as virtual background.
+        // Only the default ones will be available.
+        // disableAddingImages: false,
+
+        // Enable the V2 processing engine. When false (default), the legacy
+        // TFLite WASM engine (V1) is used. Set to true to opt in to V2.
+        // enableV2: false,
+
+        // V2-only tuning knobs. These have no effect when enableV2 is false. Defaults are
+        // tuned for typical hardware; most deployments should not need to override them.
+        // advanced: {
+
+        //     // Force a specific device tier regardless of what the browser supports.
+        //     // Useful for testing lower-tier behaviour on high-end hardware.
+        //     // Values: 'high' | 'medium' | 'low' — null means auto-detect (default).
+        //     // tierOverride: null,
+
+        //     // Override the segmentation canvas dimensions (pixels). Applies to MEDIUM
+        //     // and HIGH tiers only (TF.js input canvas). LOW tier (TFLite) always runs
+        //     // at 256x144, fixed by the selfie_segmentation_landscape model and not
+        //     // affected by this setting.
+        //     // segmentationWidth: null,   // auto: 512 (high) / 384 (medium)
+        //     // segmentationHeight: null,  // auto: 288 (high) / 216 (medium)
+
+        //     // Override the target frame rate for the effect.
+        //     // targetFps: null,           // auto: 30 (all tiers)
+
+        //     // Temporal mask blend ratio (0-1). Higher = smoother motion, slower to respond
+        //     // to fast movement. 0 = raw mask each frame (no temporal smoothing).
+        //     // temporalBlendRatio: 0.75,
+
+        //     // Smoothstep edge thresholds for the WebGL compositor (0-1).
+        //     // Pixels with segmentation confidence below edgeLow are fully transparent;
+        //     // above edgeHigh they are fully opaque; between the two they feather.
+        //     // Defaults are tier-specific (tuned per model's confidence distribution):
+        //     //   LOW tier    (TFLite selfie_segmentation_landscape): edgeLow = 0.10, edgeHigh = 0.50
+        //     //   MEDIUM/HIGH (TF.js MediaPipe body-segmentation):    edgeLow = 0.28, edgeHigh = 0.65
+        //     // Lower edgeLow = more hair retained at the cost of slight background bleed.
+        //     // Higher edgeHigh = harder edge transition.
+        //     // edgeLow: 0.28,
+        //     // edgeHigh: 0.65,
+
+        //     // Insertable Streams (MediaStreamTrackProcessor/Generator) is used by default
+        //     // when available. It reduces latency by ~1-2 frames and eliminates the keepalive
+        //     // Web Worker. Set to false to force the legacy captureStream path instead.
+        //     // useInsertableStreams: false,
+
+        //     // LOW tier (TFLite) inference stride. Inference is skipped on alternate frames;
+        //     // skipped frames reuse the previous mask. Higher values = lower CPU usage at the
+        //     // cost of reduced mask update frequency. Set to 1 to run inference every frame.
+        //     //   1 = every frame    (24 fps mask updates, ~37 ms slack per frame)  ← default
+        //     //   2 = every 2 frames (12 fps mask updates, ~74 ms slack per frame)
+        //     // inferenceStride: 1,
+        // },
+    },
 
     // The URL of the moderated rooms microservice, if available. If it
     // is present, a link to the service will be rendered on the welcome page,
@@ -1564,11 +1655,13 @@ var config = {
     //          - electron=true (when web is loaded in electron app)
     // If there is a logout service you can specify its URL with:
     // tokenLogoutUrl: 'https://myservice.com/logout'
-    // You can enable tokenAuthUrlAutoRedirect which will detect that you have logged in successfully before
-    // and will automatically redirect to the token service to get the token for the meeting.
-    // tokenAuthUrlAutoRedirect: false
     // An option to respect the context.tenant jwt field compared to the current tenant from the url
     // tokenRespectTenant: false,
+    // An option to get for user info (name, picture, email) in the token outside the user context.
+    // Can be used with Firebase tokens.
+    // tokenGetUserInfoOutOfContext: false,
+    // An option to pass the token in the iframe API directly instead of using the redirect flow.
+    // tokenAuthInline: false,
 
     // You can put an array of values to target different entity types in the invite dialog.
     // Valid values are "phone", "room", "sip", "user", "videosipgw" and "email"
@@ -1589,6 +1682,10 @@ var config = {
     //         audio: true,
     //         video: true
     //     },
+    //     // Hides the visitor count for visitors.
+    //     // hideVisitorCountForVisitors: false,
+    //     // Whether to show the join meeting dialog when joining as a visitor.
+    //     // showJoinMeetingDialog: true,
     // },
     // The default type of desktop sharing sources that will be used in the electron app.
     // desktopSharingSources: ['screen', 'window'],
@@ -1768,6 +1865,13 @@ var config = {
     //     // The minimum number of participants that must be in the call for
     //     // the top panel layout to be used.
     //     minParticipantCountForTopPanel: 50,
+
+    //     // The width of the filmstrip on joining meeting. Can be resized afterwards.
+    //     initialWidth: 400,
+
+    //     // Whether the draggable resize bar of the filmstrip is always visible. Setting this to true will make
+    //     // the filmstrip always visible in case `disableResizable` is false.
+    //     alwaysShowResizeBar: true,
     // },
 
     // Tile view related config options.
@@ -1828,6 +1932,10 @@ var config = {
     //     userLimit: 25,
     //     // The url for more info about the whiteboard and its usage limitations.
     //     limitUrl: 'https://example.com/blog/whiteboard-limits',
+
+    //     //Backend URL for storing whiteboard scenes and images
+    //     //This backend service handles scene persistence and file uploads
+    //     storageBackendUrl: 'https://excalidraw-s3-storage-backend.example.com',
     // },
 
     // The watchRTC initialize config params as described :
@@ -1869,6 +1977,16 @@ var config = {
 
     // If true remove the tint foreground on focused user camera in filmstrip
     // disableCameraTintForeground: false,
+
+    // File sharign service.
+    // fileSharing: {
+    //     // The URL of the file sharing service API. See resources/file-sharing.yaml for more details.
+    //     apiUrl: 'https://example.com',
+    //     // Whether the file sharing service is enabled or not.
+    //     enabled: true,
+    //     // Maximum file size limit (-1 value disables any file size limit check)
+    //     maxFileSize: 50,
+    // },
 };
 
 // Set the default values for JaaS customers

@@ -52,7 +52,7 @@ const useStyles = makeStyles()(() => {
         },
 
         description: {
-            fontSize: '13px',
+            fontSize: '0.875rem',
             margin: '15px 0'
         },
 
@@ -62,7 +62,7 @@ const useStyles = makeStyles()(() => {
             marginTop: '15px',
 
             '& label': {
-                fontSize: '14px',
+                fontSize: '0.875rem',
                 fontWeight: 'bold'
             }
         }

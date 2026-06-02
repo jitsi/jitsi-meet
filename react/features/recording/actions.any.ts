@@ -1,12 +1,9 @@
 import { IStore } from '../app/types';
 import { getMeetingRegion, getRecordingSharingUrl } from '../base/config/functions';
+import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
-import {
-    getLocalParticipant,
-    getParticipantDisplayName,
-    isLocalParticipantModerator
-} from '../base/participants/functions';
+import { getLocalParticipant, getParticipantDisplayName } from '../base/participants/functions';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
 import { copyText } from '../base/util/copyText';
 import { getVpaasTenant, isVpaasMeeting } from '../jaas/functions';
@@ -23,19 +20,19 @@ import { isRecorderTranscriptionsRunning } from '../transcribing/functions';
 
 import {
     CLEAR_RECORDING_SESSIONS,
+    MARK_CONSENT_REQUESTED,
     RECORDING_SESSION_UPDATED,
     SET_MEETING_HIGHLIGHT_BUTTON_STATE,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
     SET_SELECTED_RECORDING_SERVICE,
+    SET_START_RECORDING_INTENT,
     SET_START_RECORDING_NOTIFICATION_SHOWN,
+    SET_STOP_RECORDING_INTENT,
     SET_STREAM_KEY,
     START_LOCAL_RECORDING,
     STOP_LOCAL_RECORDING
 } from './actionTypes';
-import {
-    RECORDING_METADATA_ID,
-    START_RECORDING_NOTIFICATION_ID
-} from './constants';
+import { RECORDING_METADATA_ID, START_RECORDING_NOTIFICATION_ID } from './constants';
 import {
     getRecordButtonProps,
     getRecordingLink,
@@ -47,6 +44,7 @@ import {
     shouldAutoTranscribeOnRecord
 } from './functions';
 import logger from './logger';
+import { IStartRecordingIntent, IStopRecordingIntent } from './reducer';
 
 
 /**
@@ -209,21 +207,36 @@ export function showRecordingWarning(props: Object) {
  * @param {string} streamType - The type of the stream ({@code file} or
  * {@code stream}).
  * @param {string?} participantName - The participant name stopping the recording.
+ * @param {boolean} wasWithTranscription - Whether transcription was active alongside
+ * recording when it was started.
  * @returns {showNotification}
  */
-export function showStoppedRecordingNotification(streamType: string, participantName?: string) {
+export function showStoppedRecordingNotification(
+        streamType: string, participantName?: string, wasWithTranscription?: boolean) {
     const isLiveStreaming
         = streamType === JitsiMeetJS.constants.recording.mode.STREAM;
     const descriptionArguments = { name: participantName };
-    const dialogProps = isLiveStreaming ? {
-        descriptionKey: participantName ? 'liveStreaming.offBy' : 'liveStreaming.off',
-        descriptionArguments,
-        titleKey: 'dialog.liveStreaming'
-    } : {
-        descriptionKey: participantName ? 'recording.offBy' : 'recording.off',
-        descriptionArguments,
-        titleKey: 'dialog.recording'
-    };
+    let dialogProps;
+
+    if (isLiveStreaming) {
+        dialogProps = {
+            descriptionKey: participantName ? 'liveStreaming.offBy' : 'liveStreaming.off',
+            descriptionArguments,
+            titleKey: 'dialog.liveStreaming'
+        };
+    } else if (wasWithTranscription) {
+        dialogProps = {
+            descriptionKey: participantName ? 'recording.offByWithTranscription' : 'recording.offWithTranscription',
+            descriptionArguments,
+            titleKey: 'dialog.recording'
+        };
+    } else {
+        dialogProps = {
+            descriptionKey: participantName ? 'recording.offBy' : 'recording.off',
+            descriptionArguments,
+            titleKey: 'dialog.recording'
+        };
+    }
 
     return showNotification(dialogProps, NOTIFICATION_TIMEOUT_TYPE.SHORT);
 }
@@ -235,12 +248,16 @@ export function showStoppedRecordingNotification(streamType: string, participant
  * @param {string} mode - The type of the recording: Stream of File.
  * @param {string | Object } initiator - The participant who started recording.
  * @param {string} sessionId - The recording session id.
+ * @param {boolean} willTranscribe - Whether transcription is/will be active alongside recording,
+ * as determined by the middleware when the sound was played. Ensures the notification text matches
+ * the audio cue.
  * @returns {Function}
  */
 export function showStartedRecordingNotification(
         mode: string,
         initiator: { getId: Function; } | string,
-        sessionId: string) {
+        sessionId: string,
+        willTranscribe?: boolean) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const initiatorId = getResourceId(initiator);
@@ -262,13 +279,40 @@ export function showStartedRecordingNotification(
             const iAmRecordingInitiator = getLocalParticipant(state)?.id === initiatorId;
             const { showRecordingLink } = state['features/base/config'].recordings || {};
 
-            notifyProps.dialogProps = {
-                customActionHandler: undefined,
-                customActionNameKey: undefined,
-                descriptionKey: participantName ? 'recording.onBy' : 'recording.on',
-                descriptionArguments: { name: participantName },
-                titleKey: 'dialog.recording'
-            };
+            // Use the willTranscribe value passed from the middleware for consistency
+            // with the sound that was already played. Fall back to live state check
+            // if not provided.
+            const isTranscribing = willTranscribe ?? isRecorderTranscriptionsRunning(state);
+            const isRecording = isRecordingRunning(state);
+
+            // Case 1: Transcription only (no recording)
+            if (isTranscribing && !isRecording) {
+                notifyProps.dialogProps = {
+                    customActionHandler: undefined,
+                    customActionNameKey: undefined,
+                    descriptionKey: participantName ? 'transcribing.onBy' : 'transcribing.on',
+                    descriptionArguments: { name: participantName },
+                    titleKey: 'dialog.recording'
+                };
+            } else if (isTranscribing && isRecording) {
+                // Case 2: Recording + transcription
+                notifyProps.dialogProps = {
+                    customActionHandler: undefined,
+                    customActionNameKey: undefined,
+                    descriptionKey: participantName ? 'recording.onByWithTranscription' : 'recording.onWithTranscription',
+                    descriptionArguments: { name: participantName },
+                    titleKey: 'dialog.recording'
+                };
+            } else {
+                // Case 3: Recording only (no transcription)
+                notifyProps.dialogProps = {
+                    customActionHandler: undefined,
+                    customActionNameKey: undefined,
+                    descriptionKey: participantName ? 'recording.onBy' : 'recording.on',
+                    descriptionArguments: { name: participantName },
+                    titleKey: 'dialog.recording'
+                };
+            }
 
             // fetch the recording link from the server for recording initiators in jaas meetings
             if (recordingSharingUrl
@@ -288,10 +332,19 @@ export function showStartedRecordingNotification(
 
                     // add the option to copy recording link
                     if (showRecordingLink) {
+                        const actions = [
+                            ...notifyProps.dialogProps.customActionNameKey ?? [],
+                            'recording.copyLink'
+                        ];
+                        const handlers = [
+                            ...notifyProps.dialogProps.customActionHandler ?? [],
+                            () => copyText(link)
+                        ];
+
                         notifyProps.dialogProps = {
                             ...notifyProps.dialogProps,
-                            customActionNameKey: [ 'recording.copyLink' ],
-                            customActionHandler: [ () => copyText(link) ],
+                            customActionNameKey: actions,
+                            customActionHandler: handlers,
                             titleKey: 'recording.on',
                             descriptionKey: 'recording.linkGenerated'
                         };
@@ -435,10 +488,9 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
             customActionNameKey: [ 'notify.suggestRecordingAction' ],
             customActionHandler: [ () => {
                 state = getState();
-                const isModerator = isLocalParticipantModerator(state);
                 const { recordingService } = state['features/base/config'];
                 const canBypassDialog = recordingService?.enabled
-                    && isJwtFeatureEnabled(state, 'recording', isModerator, false);
+                    && isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false);
 
                 if (canBypassDialog) {
                     const options = {
@@ -450,16 +502,23 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
                     const { conference } = state['features/base/conference'];
                     const autoTranscribeOnRecord = shouldAutoTranscribeOnRecord(state);
 
+                    dispatch(setStartRecordingIntent({
+                        recording: true,
+                        transcription: autoTranscribeOnRecord
+                    }));
+
                     conference?.startRecording({
                         mode: JitsiRecordingConstants.mode.FILE,
                         appData: JSON.stringify(options)
                     });
 
                     if (autoTranscribeOnRecord) {
+                        dispatch(setRequestingSubtitles(true, false, null, false, true));
+                    } else {
                         conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                            isTranscribingEnabled: true
+                            isRecordingRequested: true,
+                            isTranscribingEnabled: false
                         });
-                        dispatch(setRequestingSubtitles(true, false, null));
                     }
                 } else {
                     openRecordingDialog();
@@ -469,5 +528,48 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
             } ],
             appearance: NOTIFICATION_TYPE.NORMAL
         }, NOTIFICATION_TIMEOUT_TYPE.EXTRA_LONG));
+    };
+}
+
+/**
+ * Marks the given session as consent requested. No further consent requests will be
+ * made for this session.
+ *
+ * @param {string} sessionId - The session id.
+ * @returns {Object}
+ */
+export function markConsentRequested(sessionId: string) {
+    return {
+        type: MARK_CONSENT_REQUESTED,
+        sessionId
+    };
+}
+
+/**
+ * Sets the user's recording + transcription intent from the dialog.
+ * Used to coordinate sound/notification timing when both services are requested.
+ *
+ * @param {Object|null} intent - The intent, or null to clear.
+ * @returns {Object}
+ */
+export function setStartRecordingIntent(intent: IStartRecordingIntent | null) {
+    return {
+        type: SET_START_RECORDING_INTENT,
+        intent
+    };
+}
+
+/**
+ * Sets what the user is stopping (recording and/or transcription). Mirrors
+ * {@link setStartRecordingIntent}. Consumed by {@code maybeNotifyRecordingStop}
+ * to coordinate the off-sound/notification across stop events.
+ *
+ * @param {Object|null} intent - The intent, or null to clear.
+ * @returns {Object}
+ */
+export function setStopRecordingIntent(intent: IStopRecordingIntent | null) {
+    return {
+        type: SET_STOP_RECORDING_INTENT,
+        intent
     };
 }

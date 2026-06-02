@@ -1,7 +1,7 @@
-import { inIframe } from '../util/iframeUtils';
+import { isEmbedded } from '../util/embedUtils';
 
 import extraConfigWhitelist from './extraConfigWhitelist';
-import inIframeConfigWhitelist from './inIframeConfigWhitelist';
+import isEmbeddedConfigWhitelist from './isEmbeddedConfigWhitelist';
 
 /**
  * The config keys to whitelist, the keys that can be overridden.
@@ -94,11 +94,13 @@ export default [
     'disableAudioLevels',
     'disableBeforeUnloadHandlers',
     'disableCameraTintForeground',
+    'disableChat',
     'disableChatSmileys',
     'disableDeepLinking',
     'disabledNotifications',
     'disabledSounds',
     'disableFilmstripAutohiding',
+    'disableFocus',
     'disableInitialGUM',
     'disableInviteFunctions',
     'disableIncomingMessageSound',
@@ -109,6 +111,7 @@ export default [
     'disablePolls',
     'disableProfile',
     'disableReactions',
+    'disableReactionsInChat',
     'disableReactionsModeration',
     'disableRecordAudioNotification',
     'disableRemoteControl',
@@ -150,6 +153,7 @@ export default [
     'enableTcc',
     'faceLandmarks',
     'feedbackPercentage',
+    'fileSharing.enabled',
     'filmstrip',
     'flags',
     'forceTurnRelay',
@@ -169,6 +173,7 @@ export default [
     'hideLobbyButton',
     'iAmRecorder',
     'iAmSipGateway',
+    'iAmSpot',
     'ignoreStartMuted',
     'inviteAppName',
     'liveStreaming.enabled',
@@ -194,12 +199,12 @@ export default [
     'participantMenuButtonsWithNotifyClick',
     'participantsPane',
     'pcStatsInterval',
+    'pip',
     'preferBosh',
     'preferVisitor',
     'prejoinConfig.enabled',
     'prejoinConfig.hideDisplayName',
     'prejoinConfig.hideExtraJoinButtons',
-    'prejoinPageEnabled',
     'raisedHands',
     'recordingService',
     'requireDisplayName',
@@ -210,10 +215,13 @@ export default [
     'recordings.showPrejoinWarning',
     'recordings.showRecordingLink',
     'recordings.suggestRecording',
+    'reducedUIEnabled',
+    'reducedUImainToolbarButtons',
     'replaceParticipant',
     'resolution',
     'screenshotCapture',
     'securityUi',
+    'showChatPermissionsModeratorSetting',
     'speakerStats',
     'startAudioMuted',
     'startAudioOnly',
@@ -234,7 +242,10 @@ export default [
     'useHostPageLocalStorage',
     'useTurnUdp',
     'videoQuality',
+    'virtualBackground',
     'visitors.enableMediaOnPromote',
+    'visitors.hideVisitorCountForVisitors',
+    'visitors.showJoinMeetingDialog',
     'watchRTCConfigParams.allowBrowserLogCollection',
     'watchRTCConfigParams.collectionInterval',
     'watchRTCConfigParams.console',
@@ -249,4 +260,4 @@ export default [
     'webrtcIceTcpDisable',
     'webrtcIceUdpDisable',
     'whiteboard.enabled'
-].concat(extraConfigWhitelist).concat(inIframe() ? inIframeConfigWhitelist : []);
+].concat(extraConfigWhitelist).concat(isEmbedded() ? isEmbeddedConfigWhitelist : []);

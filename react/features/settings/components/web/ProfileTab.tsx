@@ -12,7 +12,6 @@ import Avatar from '../../../base/avatar/components/Avatar';
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps } from '../../../base/dialog/components/web/AbstractDialogTab';
 import { translate } from '../../../base/i18n/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 
@@ -88,8 +87,8 @@ const styles = (theme: Theme) => {
         },
 
         label: {
-            color: `${theme.palette.text01} !important`,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            color: `${theme.palette.settingsTabText} !important`,
+            ...theme.typography.bodyShortRegular,
             marginBottom: theme.spacing(2)
         },
 

@@ -24,29 +24,27 @@ import { getName } from '../../app/functions.native';
  * All events get a `data` object with a `callUUID` property, unless stated
  * otherwise.
  */
-let CallKit = NativeModules.RNCallKit;
+const RNCallKit = NativeModules.RNCallKit;
 
-// XXX Rather than wrapping RNCallKit in a new class and forwarding the many
-// methods of the latter to the former, add the one additional method that we
-// need to RNCallKit.
-if (CallKit) {
-    const eventEmitter = new NativeEventEmitter(CallKit);
+// Use a proxy because spreading a new arch native module silently loses its methods.
+let CallKit: any;
 
-    CallKit = {
-        ...CallKit,
+if (RNCallKit) {
+    const eventEmitter = new NativeEventEmitter(RNCallKit);
+    const augmented: Record<string, any> = {
         addListener: eventEmitter.addListener.bind(eventEmitter),
         registerSubscriptions(context: any, delegate: any) {
-            CallKit.setProviderConfiguration({
+            RNCallKit.setProviderConfiguration({
                 iconTemplateImageName: 'CallKitIcon',
                 localizedName: getName()
             });
 
             return [
-                CallKit.addListener(
+                eventEmitter.addListener(
                     'performEndCallAction',
                     delegate._onPerformEndCallAction,
                     context),
-                CallKit.addListener(
+                eventEmitter.addListener(
                     'performSetMutedCallAction',
                     delegate._onPerformSetMutedCallAction,
                     context),
@@ -54,13 +52,23 @@ if (CallKit) {
                 // According to CallKit's documentation, when the system resets
                 // we should terminate all calls. Hence, providerDidReset is
                 // the same to us as performEndCallAction.
-                CallKit.addListener(
+                eventEmitter.addListener(
                     'providerDidReset',
                     delegate._onPerformEndCallAction,
                     context)
             ];
         }
     };
+
+    CallKit = new Proxy(RNCallKit, {
+        get(target, prop, receiver) {
+            if (prop in augmented) {
+                return augmented[prop as string];
+            }
+
+            return Reflect.get(target, prop, receiver);
+        }
+    });
 }
 
 export default CallKit;

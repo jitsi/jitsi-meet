@@ -1,11 +1,12 @@
 import { createTrackMutedEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IStore } from '../../app/types';
-import { showErrorNotification, showNotification } from '../../notifications/actions';
+import { showErrorNotification, showNotification, showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT, NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { getCurrentConference } from '../conference/functions';
 import { IJitsiConference } from '../conference/reducer';
-import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
+import { isMacOS } from '../environment/environment';
+import { JitsiTrackErrors, JitsiTrackEvents, JitsiTrackStreamingStatus } from '../lib-jitsi-meet';
 import { setAudioMuted, setScreenshareMuted, setVideoMuted } from '../media/actions';
 import {
     CAMERA_FACING_MODE,
@@ -29,6 +30,7 @@ import {
     TRACK_UPDATED,
     TRACK_WILL_CREATE
 } from './actionTypes';
+import { toggleScreensharing } from './actions';
 import {
     createLocalTracksF,
     getCameraFacingMode,
@@ -164,6 +166,7 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
                 = createLocalTracksF(
                     {
                         cameraDeviceId: options.cameraDeviceId,
+                        constraints: options?.constraints,
                         devices: [ device ],
                         facingMode:
                             options.facingMode || getCameraFacingMode(state),
@@ -381,16 +384,31 @@ export function trackAdded(track: any) {
             JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED,
             (type: VideoType) => dispatch(trackVideoTypeChanged(track, type)));
         const local = track.isLocal();
+        const state = getState();
         const mediaType = track.getVideoType() === VIDEO_TYPE.DESKTOP
             ? MEDIA_TYPE.SCREENSHARE
             : track.getType();
+
         let isReceivingData, noDataFromSourceNotificationInfo, participantId;
+
+        // Make screen share toggle off listen to MediaStreamTrack "ended" event
+        // when it's terminated via Android status bar chip.
+        if (navigator.product === 'ReactNative') {
+            const mediaStreamTrack = track?.getTrack?.();
+
+            if (mediaType === MEDIA_TYPE.SCREENSHARE) {
+                const onEnded = () => dispatch(toggleScreensharing(false));
+
+                mediaStreamTrack.addEventListener('ended', onEnded);
+                track._onEnded = onEnded;
+            }
+        }
 
         if (local) {
             // Reset the no data from src notification state when we change the track, as it's context is set
             // on a per device basis.
             dispatch(setNoSrcDataNotificationUid());
-            const participant = getLocalParticipant(getState);
+            const participant = getLocalParticipant(state);
 
             if (participant) {
                 participantId = participant.id;
@@ -421,12 +439,20 @@ export function trackAdded(track: any) {
             }
 
             track.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED,
-                () => dispatch({
-                    type: TRACK_STOPPED,
-                    track: {
-                        jitsiTrack: track
+                () => {
+                    logger.debug(`Local track stopped: ${track}, removing it from the conference`);
+                    if (mediaType === MEDIA_TYPE.SCREENSHARE && isMacOS()) {
+                        dispatch(showWarningNotification({
+                            descriptionKey: 'dialog.screenshareStoppedDiskSpace',
+                            titleKey: 'dialog.screenshareStoppedTitle'
+                        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
                     }
-                }));
+                    dispatch({
+                        type: TRACK_STOPPED,
+                        track: {
+                            jitsiTrack: track
+                        } });
+                });
         } else {
             participantId = track.getParticipantId();
             isReceivingData = true;
@@ -443,6 +469,7 @@ export function trackAdded(track: any) {
                 muted: track.isMuted(),
                 noDataFromSourceNotificationInfo,
                 participantId,
+                streamingStatus: local ? undefined : (track.isP2P ? JitsiTrackStreamingStatus.ACTIVE : track.getTrackStreamingStatus()),
                 videoStarted: false,
                 videoType: track.videoType
             }
@@ -564,6 +591,16 @@ export function trackRemoved(track: any): {
     track.removeAllListeners(JitsiTrackEvents.TRACK_MUTE_CHANGED);
     track.removeAllListeners(JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED);
     track.removeAllListeners(JitsiTrackEvents.NO_DATA_FROM_SOURCE);
+
+    // Remove MediaStreamTrack "ended" event.
+    if (navigator.product === 'ReactNative') {
+        const mediaStreamTrack = track?.getTrack?.();
+
+        if (track._onEnded) {
+            mediaStreamTrack.removeEventListener('ended', track._onEnded);
+            delete track._onEnded;
+        }
+    }
 
     return {
         type: TRACK_REMOVED,

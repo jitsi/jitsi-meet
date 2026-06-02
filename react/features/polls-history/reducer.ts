@@ -1,6 +1,6 @@
 import PersistenceRegistry from '../base/redux/PersistenceRegistry';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
-import { IPoll } from '../polls/types';
+import { IPollData } from '../polls/types';
 
 import { REMOVE_POLL_FROM_HISTORY, SAVE_POLL_IN_HISTORY } from './actionTypes';
 
@@ -11,7 +11,7 @@ const INITIAL_STATE = {
 export interface IPollsHistoryState {
     polls: {
         [meetingId: string]: {
-            [pollId: string]: IPoll;
+            [pollId: string]: IPollData;
         };
     };
 }

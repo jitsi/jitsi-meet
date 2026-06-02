@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 import { COLORS } from '../../constants';
 
 interface IProps {
@@ -55,11 +54,11 @@ interface IProps {
 const useStyles = makeStyles()(theme => {
     return {
         label: {
-            ...withPixelLineHeight(theme.typography.labelRegular),
+            ...theme.typography.labelRegular,
             alignItems: 'center',
-            background: theme.palette.ui04,
+            background: theme.palette.labelBackground,
             borderRadius: '4px',
-            color: theme.palette.text01,
+            color: theme.palette.labelText,
             display: 'flex',
             margin: '0 2px',
             padding: '6px',
@@ -73,11 +72,11 @@ const useStyles = makeStyles()(theme => {
             cursor: 'pointer'
         },
         [COLORS.white]: {
-            background: theme.palette.ui09,
-            color: theme.palette.text04,
+            background: theme.palette.labelWhiteBackground,
+            color: theme.palette.labelWhiteText,
 
             '& svg': {
-                fill: theme.palette.icon04
+                fill: theme.palette.labelWhiteIcon
             }
         },
         [COLORS.green]: {

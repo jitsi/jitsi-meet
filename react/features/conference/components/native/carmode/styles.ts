@@ -21,10 +21,9 @@ const titleBarSafeView = {
 export default {
 
     bottomContainer: {
-        display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
-        bottom: BaseTheme.spacing[8]
+        display: 'flex',
+        flexDirection: 'column'
     },
 
     /**
@@ -101,7 +100,7 @@ export default {
     },
 
     soundDeviceButton: {
-        marginBottom: BaseTheme.spacing[3],
+        marginVertical: BaseTheme.spacing[3],
         width: 240
     },
 
@@ -162,7 +161,6 @@ export default {
     videoStoppedLabel: {
         ...BaseTheme.typography.bodyShortRegularLarge,
         color: BaseTheme.palette.text01,
-        marginBottom: BaseTheme.spacing[3],
         textAlign: 'center',
         width: '100%'
     },

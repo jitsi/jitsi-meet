@@ -39,8 +39,6 @@ class LobbyChatScreen extends
             </JitsiScreen>
         );
     }
-
-    _onSendMessage: () => void;
 }
 
 export default translate(connect(abstractMapStateToProps)(LobbyChatScreen));

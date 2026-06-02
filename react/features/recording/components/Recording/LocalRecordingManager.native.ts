@@ -3,6 +3,7 @@ import { IStore } from '../../../app/types';
 interface ILocalRecordingManager {
     addAudioTrackToLocalRecording: (track: any) => void;
     isRecordingLocally: () => boolean;
+    isSupported: () => boolean;
     selfRecording: {
         on: boolean;
         withVideo: boolean;
@@ -39,6 +40,15 @@ const LocalRecordingManager: ILocalRecordingManager = {
      * @returns {void}
      */
     async startLocalRecording() { }, // eslint-disable-line @typescript-eslint/no-empty-function
+
+    /**
+     * Whether or not local recording is supported.
+     *
+     * @returns {boolean}
+     */
+    isSupported() {
+        return false;
+    },
 
     /**
      * Whether or not we're currently recording locally.

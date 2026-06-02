@@ -13,14 +13,12 @@ import {
     requestEnableAudioModeration,
     requestEnableVideoModeration
 } from '../../react/features/av-moderation/actions';
-import { isEnabledFromState } from '../../react/features/av-moderation/functions';
+import { isEnabledFromState, isForceMuted } from '../../react/features/av-moderation/functions';
 import { setAudioOnly } from '../../react/features/base/audio-only/actions';
 import {
     endConference,
     sendTones,
     setAssumedBandwidthBps,
-    setFollowMe,
-    setFollowMeRecorder,
     setLocalSubject,
     setPassword,
     setSubject
@@ -30,6 +28,7 @@ import { overwriteConfig } from '../../react/features/base/config/actions';
 import { getWhitelistedJSON } from '../../react/features/base/config/functions.any';
 import { toggleDialog } from '../../react/features/base/dialog/actions';
 import { isSupportedBrowser } from '../../react/features/base/environment/environment';
+import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../react/features/base/media/constants';
@@ -90,6 +89,7 @@ import {
     togglePinStageParticipant
 } from '../../react/features/filmstrip/actions.web';
 import { getPinnedActiveParticipants, isStageFilmstripAvailable } from '../../react/features/filmstrip/functions.web';
+import { setFollowMe, setFollowMeRecorder } from '../../react/features/follow-me/actions';
 import { invite } from '../../react/features/invite/actions.any';
 import {
     selectParticipantInLargeVideo
@@ -106,13 +106,23 @@ import {
     close as closeParticipantsPane,
     open as openParticipantsPane
 } from '../../react/features/participants-pane/actions';
-import { getParticipantsPaneOpen, isForceMuted } from '../../react/features/participants-pane/functions';
-import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording/actions.any';
+import { getParticipantsPaneOpen } from '../../react/features/participants-pane/functions';
+import { hidePiP, showPiP } from '../../react/features/pip/actions';
+import {
+    setStartRecordingIntent,
+    setStopRecordingIntent,
+    startLocalVideoRecording,
+    stopLocalVideoRecording
+} from '../../react/features/recording/actions.any';
+import { grantRecordingConsent, grantRecordingConsentAndUnmute } from '../../react/features/recording/actions.web';
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
 import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
 import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
-import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture/actions';
+import {
+    openCameraCaptureDialog,
+    toggleScreenshotCaptureSummary
+} from '../../react/features/screenshot-capture/actions';
 import { isScreenshotCaptureEnabled } from '../../react/features/screenshot-capture/functions';
 import SettingsDialog from '../../react/features/settings/components/web/SettingsDialog';
 import { SETTINGS_TABS } from '../../react/features/settings/constants';
@@ -121,7 +131,7 @@ import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functio
 import { setRequestingSubtitles, toggleRequestingSubtitles } from '../../react/features/subtitles/actions';
 import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';
 import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
-import { muteAllParticipants } from '../../react/features/video-menu/actions';
+import { muteAllParticipants, muteRemote } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality/actions';
 import { toggleBackgroundEffect, toggleBlurredBackgroundEffect } from '../../react/features/virtual-background/actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../react/features/virtual-background/constants';
@@ -133,7 +143,7 @@ import {
     ENDPOINT_TEXT_MESSAGE_NAME
 } from './constants';
 
-const logger = Logger.getLogger(__filename);
+const logger = Logger.getLogger('api:core');
 
 /**
  * List of the available commands.
@@ -209,6 +219,10 @@ function initCommands() {
             }
             APP.store.dispatch(grantModerator(participantId));
         },
+        'grant-recording-consent': unmute => {
+            unmute ? APP.store.dispatch(grantRecordingConsentAndUnmute())
+                : APP.store.dispatch(grantRecordingConsent());
+        },
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
             APP.store.dispatch(updateSettings({ displayName: getNormalizedDisplayName(displayName) }));
@@ -229,6 +243,31 @@ function initCommands() {
             }
 
             APP.store.dispatch(muteAllParticipants(exclude, muteMediaType));
+        },
+        'mute-remote-participant': (participantId, mediaType) => {
+            const state = APP.store.getState();
+            const muteMediaType = mediaType ? mediaType : MEDIA_TYPE.AUDIO;
+            const localParticipant = getLocalParticipant(state);
+
+            // Check if targeting the local participant
+            if (participantId === localParticipant?.id) {
+
+                if (muteMediaType === MEDIA_TYPE.AUDIO) {
+                    APP.conference.toggleAudioMuted(false);
+                } else if (muteMediaType === MEDIA_TYPE.VIDEO) {
+                    APP.conference.toggleVideoMuted(false, true);
+                }
+
+                return;
+            }
+
+            if (!isLocalParticipantModerator(state)) {
+                logger.error('Missing moderator rights to mute remote participant');
+
+                return;
+            }
+
+            APP.store.dispatch(muteRemote(participantId, muteMediaType));
         },
         'toggle-lobby': isLobbyEnabled => {
             APP.store.dispatch(toggleLobbyMode(isLobbyEnabled));
@@ -332,6 +371,7 @@ function initCommands() {
 
             APP.store.dispatch(setAssumedBandwidthBps(value));
         },
+
         'set-blurred-background': blurType => {
             const tracks = APP.store.getState()['features/base/tracks'];
             const videoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
@@ -763,15 +803,36 @@ function initCommands() {
                 APP.store.dispatch(toggleScreenshotCaptureSummary(true));
             }
 
+            const wantsRecording = mode === JitsiRecordingConstants.mode.FILE;
+            const wantsTranscription = Boolean(transcription);
+
+            // Seed startRecordingIntent so maybeNotifyRecordingStart can coordinate
+            // the start sound/notification once recording (and transcription, if
+            // requested) resolve. Without this, notifyRecordingLinkAvailable is
+            // never emitted for iFrame-initiated recordings.
+            if (wantsRecording || wantsTranscription) {
+                APP.store.dispatch(setStartRecordingIntent({
+                    recording: wantsRecording,
+                    transcription: wantsTranscription
+                }));
+            }
+
             // Start audio / video recording, if requested.
             if (typeof recordingConfig !== 'undefined') {
                 conference.startRecording(recordingConfig);
             }
 
-            if (transcription) {
-                APP.store.dispatch(setRequestingSubtitles(true, false, null));
+            // Update room metadata so remote participants see the combined
+            // recording/transcription intent. When transcription is requested,
+            // setRequestingSubtitles routes through the subtitles middleware
+            // which writes both metadata fields atomically; otherwise we write
+            // the recording-only metadata directly, mirroring the start dialog.
+            if (wantsTranscription) {
+                APP.store.dispatch(setRequestingSubtitles(true, false, null, true, wantsRecording));
+            } else if (wantsRecording) {
                 conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                    isTranscribingEnabled: true
+                    isRecordingRequested: true,
+                    isTranscribingEnabled: false
                 });
             }
         },
@@ -793,14 +854,10 @@ function initCommands() {
                 return;
             }
 
-            if (transcription) {
-                APP.store.dispatch(setRequestingSubtitles(false, false, null));
-                conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                    isTranscribingEnabled: false
-                });
-            }
-
             if (mode === 'local') {
+                if (transcription) {
+                    APP.store.dispatch(setRequestingSubtitles(false, false, null, true));
+                }
                 APP.store.dispatch(stopLocalVideoRecording());
 
                 return;
@@ -813,13 +870,34 @@ function initCommands() {
             }
 
             const activeSession = getActiveSession(state, mode);
+            const wantsStopRecording = mode === JitsiRecordingConstants.mode.FILE && Boolean(activeSession);
+            const wantsStopTranscription = Boolean(transcription);
 
-            if (activeSession && activeSession.id) {
-                APP.store.dispatch(toggleScreenshotCaptureSummary(false));
-                conference.stopRecording(activeSession.id);
-            } else {
-                logger.error('No recording or streaming session found');
+            // Seed stopRecordingIntent so maybeNotifyRecordingStop can coordinate
+            // the off sound/notification across recording and transcription stops.
+            if (wantsStopRecording || wantsStopTranscription) {
+                APP.store.dispatch(setStopRecordingIntent({
+                    recording: wantsStopRecording,
+                    transcription: wantsStopTranscription
+                }));
             }
+
+            if (wantsStopTranscription) {
+                APP.store.dispatch(setRequestingSubtitles(false, false, null, true));
+            }
+
+            // Mirror AbstractStopRecordingDialog — clear both fields atomically so
+            // remote clients see the end of the recording/transcription intent.
+            // Covers recording-only, transcription-only, and combined stops.
+            if (wantsStopRecording || wantsStopTranscription) {
+                conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                    isRecordingRequested: false,
+                    isTranscribingEnabled: false
+                });
+            }
+
+            APP.store.dispatch(toggleScreenshotCaptureSummary(false));
+            conference.stopRecording(activeSession?.id);
         },
         'initiate-private-chat': participantId => {
             const state = APP.store.getState();
@@ -886,8 +964,8 @@ function initCommands() {
                 logger.error(' End Conference not supported');
             }
         },
-        'toggle-whiteboard': () => {
-            APP.store.dispatch(toggleWhiteboard());
+        'toggle-whiteboard': open => {
+            APP.store.dispatch(toggleWhiteboard(open));
         },
         'set-virtual-background': (enabled, backgroundImage) => {
             const tracks = APP.store.getState()['features/base/tracks'];
@@ -898,6 +976,12 @@ function initCommands() {
                 backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
                 virtualSource: backgroundImage
             }, jitsiTrack));
+        },
+        'show-pip': () => {
+            APP.store.dispatch(showPiP());
+        },
+        'hide-pip': () => {
+            APP.store.dispatch(hidePiP());
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -935,6 +1019,20 @@ function initCommands() {
                     });
                 });
             break;
+        case 'capture-camera-picture' : {
+            const { cameraFacingMode, descriptionText, titleText } = request;
+
+            if (!isMobileBrowser()) {
+                logger.error('This feature is only supported on mobile');
+
+                return;
+            }
+
+            APP.store.dispatch(openCameraCaptureDialog(callback, { cameraFacingMode,
+                descriptionText,
+                titleText }));
+            break;
+        }
         case 'deployment-info':
             callback(APP.store.getState()['features/base/config'].deploymentInfo);
             break;
@@ -1220,6 +1318,20 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the in-page toolbox
+     * visibility changed.
+     *
+     * @param {boolean} visible - True if the toolbox is visible, false otherwise.
+     * @returns {void}
+     */
+    notifyToolbarVisibilityChanged(visible) {
+        this._sendEvent({
+            name: 'toolbar-visibility-changed',
+            visible
+        });
+    }
+
+    /**
      * Notifies the external application (spot) that the local jitsi-participant
      * has a status update.
      *
@@ -1364,6 +1476,23 @@ class API {
     }
 
     /**
+     * Notify the external application that a participant's mute status changed.
+     *
+     * @param {string} participantId - The ID of the participant.
+     * @param {boolean} isMuted - True if muted, false if unmuted.
+     * @param {string} mediaType - Media type that was muted ('audio' or 'video').
+     * @returns {void}
+     */
+    notifyParticipantMuted(participantId, isMuted, mediaType) {
+        this._sendEvent({
+            name: 'participant-muted',
+            id: participantId,
+            isMuted,
+            mediaType
+        });
+    }
+
+    /**
      * Notify the external app that a notification has been triggered.
      *
      * @param {string} title - The notification title.
@@ -1413,19 +1542,29 @@ class API {
      * @returns {void}
      */
     notifyReceivedChatMessage(
-            { body, from, nick, privateMessage, ts } = {}) {
+            { body, from, nick, privateMessage, ts, messageId, replyToMessageId } = {}) {
         if (APP.conference.isLocalId(from)) {
             return;
         }
 
-        this._sendEvent({
+        const event = {
             name: 'incoming-message',
             from,
             message: body,
             nick,
             privateMessage,
             stamp: ts
-        });
+        };
+
+        if (typeof messageId === 'string' && messageId !== '') {
+            event.messageId = messageId;
+        }
+
+        if (typeof replyToMessageId === 'string' && replyToMessageId !== '') {
+            event.replyToMessageId = replyToMessageId;
+        }
+
+        this._sendEvent(event);
     }
 
     /**
@@ -1919,6 +2058,19 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the recording consent dialog open state has changed.
+     *
+     * @param {boolean} open - True if the dialog is open, false otherwise.
+     * @returns {void}
+     */
+    notifyRecordingConsentDialogOpen(open) {
+        this._sendEvent({
+            name: 'recording-consent-dialog-open',
+            open
+        });
+    }
+
+    /**
      * Notify external application of the current meeting requiring a password
      * to join.
      *
@@ -2161,6 +2313,32 @@ class API {
     }
 
     /**
+     * Notify the external application that a file has been uploaded.
+     *
+     * @param {Object} fileMetadata - The file metadata.
+     * @returns {void}
+     */
+    notifyFileUploaded(fileMetadata) {
+        this._sendEvent({
+            name: 'file-uploaded',
+            file: fileMetadata
+        });
+    }
+
+    /**
+     * Notify the external application that a file has been deleted.
+     *
+     * @param {string} fileId - The ID of the deleted file.
+     * @returns {void}
+     */
+    notifyFileDeleted(fileId) {
+        this._sendEvent({
+            name: 'file-deleted',
+            fileId
+        });
+    }
+
+    /**
      * Notify the external application that the audio or video is being shared by a participant.
      *
      * @param {string} mediaType - Whether the content which is being shared is audio or video.
@@ -2196,6 +2374,43 @@ class API {
             name: 'peer-connection-failure',
             isP2P,
             wasConnected
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that Picture-in-Picture was requested.
+     * Used by Electron to handle PiP requests with proper user gesture context.
+     *
+     * @returns {void}
+     */
+    notifyPictureInPictureRequested() {
+        logger.debug('Sending _pip-requested event to External API');
+        this._sendEvent({
+            name: '_pip-requested'
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that Picture-in-Picture mode was entered.
+     *
+     * @returns {void}
+     */
+    notifyPictureInPictureEntered() {
+        logger.debug('Sending pip-entered event to External API');
+        this._sendEvent({
+            name: 'pip-entered'
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that Picture-in-Picture mode was exited.
+     *
+     * @returns {void}
+     */
+    notifyPictureInPictureLeft() {
+        logger.debug('Sending pip-left event to External API');
+        this._sendEvent({
+            name: 'pip-left'
         });
     }
 

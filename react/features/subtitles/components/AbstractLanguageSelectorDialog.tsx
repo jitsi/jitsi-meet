@@ -3,12 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState, IStore } from '../../app/types';
-import {
-    TRANSLATION_LANGUAGES,
-    TRANSLATION_LANGUAGES_HEAD
-} from '../../base/i18n/i18next';
+import { openDialog } from '../../base/dialog/actions';
+import { StartRecordingDialog } from '../../recording/components/Recording/index';
 import { setRequestingSubtitles } from '../actions.any';
-
+import { getAvailableSubtitlesLanguages } from '../functions.any';
 
 export interface IAbstractLanguageSelectorDialogProps {
     dispatch: IStore['dispatch'];
@@ -30,41 +28,38 @@ export interface IAbstractLanguageSelectorDialogProps {
 const AbstractLanguageSelectorDialog = (Component: ComponentType<IAbstractLanguageSelectorDialogProps>) => () => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const noLanguageLabel = 'transcribing.subtitlesOff';
-
     const language = useSelector((state: IReduxState) => state['features/subtitles']._language);
-    const subtitles = language ?? noLanguageLabel;
 
-    const transcription = useSelector((state: IReduxState) => state['features/base/config'].transcription);
-    const translationLanguagesHead = transcription?.translationLanguagesHead ?? TRANSLATION_LANGUAGES_HEAD;
-    const languagesHead = translationLanguagesHead?.map((lang: string) => `translation-languages:${lang}`);
+    // The value for the selected language contains "translation-languages:" prefix.
+    const selectedLanguage = language?.replace('translation-languages:', '');
+    const languageCodes = useSelector((state: IReduxState) => getAvailableSubtitlesLanguages(state, selectedLanguage));
 
-    // The off and the head languages are always on the top of the list. But once you are selecting
-    // a language from the translationLanguages, that language is moved under the fixedItems list,
-    // until a new languages is selected. FixedItems keep their positions.
-    const fixedItems = [ noLanguageLabel, ...languagesHead ];
-    const translationLanguages = transcription?.translationLanguages ?? TRANSLATION_LANGUAGES;
-    const languages = translationLanguages
-        .map((lang: string) => `translation-languages:${lang}`)
-        .filter((lang: string) => !(lang === subtitles || languagesHead?.includes(lang)));
-    const listItems = (fixedItems?.includes(subtitles)
-        ? [ ...fixedItems, ...languages ]
-        : [ ...fixedItems, subtitles, ...languages ])
+    const noLanguageLabel = 'transcribing.subtitlesOff';
+    const selected = language ?? noLanguageLabel;
+    const items = [ noLanguageLabel, ...languageCodes.map((lang: string) => `translation-languages:${lang}`) ];
+    const listItems = items
         .map((lang, index) => {
             return {
                 id: lang + index,
                 lang,
-                selected: lang === subtitles
+                selected: lang === selected
             };
         });
+    const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
 
     const onLanguageSelected = useCallback((value: string) => {
-        const selectedLanguage = value === noLanguageLabel ? null : value;
-        const enabled = Boolean(selectedLanguage);
+        const _selectedLanguage = value === noLanguageLabel ? null : value;
+        const enabled = Boolean(_selectedLanguage);
         const displaySubtitles = enabled;
 
-        dispatch(setRequestingSubtitles(enabled, displaySubtitles, selectedLanguage));
-    }, [ language ]);
+        if (conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription) {
+            dispatch(openDialog('StartRecordingDialog', StartRecordingDialog, {
+                recordAudioAndVideo: false
+            }));
+        } else {
+            dispatch(setRequestingSubtitles(enabled, displaySubtitles, _selectedLanguage));
+        }
+    }, [ conference, language ]);
 
     return (
         <Component
@@ -72,7 +67,7 @@ const AbstractLanguageSelectorDialog = (Component: ComponentType<IAbstractLangua
             language = { language }
             listItems = { listItems }
             onLanguageSelected = { onLanguageSelected }
-            subtitles = { subtitles }
+            subtitles = { selected }
             t = { t } />
     );
 };

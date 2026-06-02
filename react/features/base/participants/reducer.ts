@@ -27,6 +27,7 @@ import {
     isRemoteScreenshareParticipant,
     isScreenShareParticipant
 } from './functions';
+import logger from './logger';
 import { FakeParticipant, ILocalParticipant, IParticipant, ISourceInfo } from './types';
 
 /**
@@ -67,6 +68,7 @@ const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE = [
 ];
 
 const DEFAULT_STATE = {
+    activeSpeakers: new Set<string>(),
     dominantSpeaker: undefined,
     fakeParticipants: new Map(),
     local: undefined,
@@ -81,10 +83,10 @@ const DEFAULT_STATE = {
     remoteVideoSources: new Set<string>(),
     sortedRemoteVirtualScreenshareParticipants: new Map(),
     sortedRemoteParticipants: new Map(),
-    speakersList: new Map()
 };
 
 export interface IParticipantsState {
+    activeSpeakers: Set<string>;
     dominantSpeaker?: string;
     fakeParticipants: Map<string, IParticipant>;
     local?: ILocalParticipant;
@@ -99,7 +101,6 @@ export interface IParticipantsState {
     remoteVideoSources: Set<string>;
     sortedRemoteParticipants: Map<string, string>;
     sortedRemoteVirtualScreenshareParticipants: Map<string, string>;
-    speakersList: Map<string, string>;
 }
 
 /**
@@ -156,22 +157,8 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         const { participant } = action;
         const { id, previousSpeakers = [] } = participant;
         const { dominantSpeaker, local } = state;
-        const newSpeakers = [ id, ...previousSpeakers ];
-        const sortedSpeakersList: Array<Array<string>> = [];
-
-        for (const speaker of newSpeakers) {
-            if (speaker !== local?.id) {
-                const remoteParticipant = state.remote.get(speaker);
-
-                remoteParticipant
-                && sortedSpeakersList.push(
-                    [ speaker, _getDisplayName(state, remoteParticipant?.name) ]
-                );
-            }
-        }
-
-        // Keep the remote speaker list sorted alphabetically.
-        sortedSpeakersList.sort((a, b) => a[1].localeCompare(b[1]));
+        const activeSpeakers = new Set(previousSpeakers
+            .filter((speakerId: string) => state.remote.has(speakerId) && (speakerId !== local?.id)));
 
         // Only one dominant speaker is allowed.
         if (dominantSpeaker) {
@@ -182,7 +169,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             return {
                 ...state,
                 dominantSpeaker: id, // @ts-ignore
-                speakersList: new Map(sortedSpeakersList)
+                activeSpeakers
             };
         }
 
@@ -364,6 +351,8 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             sortedRemoteVirtualScreenshareParticipants.sort((a, b) => a[1].localeCompare(b[1]));
 
             state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);
+
+            logger.debug('Remote screenshare participant joined', id);
         }
 
         // Exclude the screenshare participant from the fake participant count to avoid duplicates.
@@ -435,7 +424,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         }
 
         // Remove the participant from the list of speakers.
-        state.speakersList.has(id) && state.speakersList.delete(id);
+        state.activeSpeakers.delete(id);
 
         if (pinnedParticipant === id) {
             state.pinnedParticipant = undefined;
@@ -448,6 +437,8 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         if (sortedRemoteVirtualScreenshareParticipants.has(id)) {
             sortedRemoteVirtualScreenshareParticipants.delete(id);
             state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);
+
+            logger.debug('Remote screenshare participant left', id);
         }
 
         if (oldParticipant && !oldParticipant.fakeParticipant && !isLocalScreenShare) {
@@ -622,7 +613,8 @@ function _participantJoined({ participant }: { participant: IParticipant; }) {
         pinned,
         presence,
         role,
-        sources
+        sources,
+        userContext
     } = participant;
     let { conference, id } = participant;
 
@@ -654,7 +646,8 @@ function _participantJoined({ participant }: { participant: IParticipant; }) {
         pinned: pinned || false,
         presence,
         role: role || PARTICIPANT_ROLE.NONE,
-        sources
+        sources,
+        userContext
     };
 }
 

@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import { IconCloseLarge } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 import { MultiSelectItem } from '../types';
 
 import ClickableIcon from './ClickableIcon';
@@ -39,10 +38,10 @@ const useStyles = makeStyles()(theme => {
             },
             marginTop: theme.spacing(2),
             width: '100%',
-            backgroundColor: theme.palette.ui01,
-            border: `1px solid ${theme.palette.ui04}`,
+            backgroundColor: theme.palette.multiSelectBackground,
+            border: `1px solid ${theme.palette.multiSelectBorder}`,
             borderRadius: `${Number(theme.shape.borderRadius)}px`,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             zIndex: 2,
             maxHeight: `${MULTI_SELECT_HEIGHT}px`,
             overflowY: 'auto',
@@ -58,7 +57,7 @@ const useStyles = makeStyles()(theme => {
                 inlineSize: 'calc(100% - 38px)',
                 overflowWrap: 'break-word',
                 marginLeft: theme.spacing(2),
-                color: theme.palette.text01,
+                color: theme.palette.multiSelectItemText,
                 '&.with-remove': {
                     // 60px because of the icon before the content and the remove button
                     inlineSize: 'calc(100% - 60px)',
@@ -77,15 +76,15 @@ const useStyles = makeStyles()(theme => {
                 cursor: 'pointer',
                 padding: `10px ${theme.spacing(3)}`,
                 '&:hover': {
-                    backgroundColor: theme.palette.ui02
+                    backgroundColor: theme.palette.multiSelectItemHover
                 }
             },
             '&.disabled': {
                 cursor: 'not-allowed',
                 '&:hover': {
-                    backgroundColor: theme.palette.ui01
+                    backgroundColor: theme.palette.multiSelectBackground
                 },
-                color: theme.palette.text03
+                color: theme.palette.multiSelectItemDisabled
             }
         },
         errorMessage: {

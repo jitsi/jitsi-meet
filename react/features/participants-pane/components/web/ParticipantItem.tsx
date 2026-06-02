@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import Avatar from '../../../base/avatar/components/Avatar';
 import { translate } from '../../../base/i18n/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import ListItem from '../../../base/ui/components/web/ListItem';
 import {
     ACTION_TRIGGER,
@@ -110,8 +109,8 @@ const useStyles = makeStyles()(theme => {
         },
 
         moderatorLabel: {
-            ...withPixelLineHeight(theme.typography.labelBold),
-            color: theme.palette.text03
+            ...theme.typography.labelBold,
+            color: theme.palette.participantModeratorLabel
         },
 
         avatar: {

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import {
     SectionList as ReactNativeSectionList,
-    SafeAreaView,
     SectionListRenderItemInfo,
     ViewStyle
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Item, Section } from '../../types';
 
@@ -19,7 +19,7 @@ interface IProps {
      * Rendered when the list is empty. Can be a React Component Class, a render
      * function, or a rendered element.
      */
-    ListEmptyComponent: React.ReactElement<any>;
+    ListEmptyComponent: React.ReactElement<any> | null;
 
     /**
     *
@@ -44,7 +44,7 @@ interface IProps {
     *
     * Default renderer for every item in every section.
     */
-    renderItem: (info: SectionListRenderItemInfo<Item, Section>) => React.ReactElement<any>;
+    renderItem: (info: SectionListRenderItemInfo<Item, Section>) => React.ReactElement<any> | null;
 
     /**
     *
@@ -76,9 +76,11 @@ export default class SectionList extends Component<IProps> {
     override render() {
         return (
             <SafeAreaView
+                edges = { [ 'left', 'right' ] }
                 style = { styles.container as ViewStyle } >
                 <ReactNativeSectionList
                     ListEmptyComponent = { this.props.ListEmptyComponent }
+                    contentContainerStyle = { styles.listContentContainer as ViewStyle }
                     keyExtractor = { this.props.keyExtractor }
                     onRefresh = { this.props.onRefresh }
                     refreshing = { this.props.refreshing }

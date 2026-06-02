@@ -1,5 +1,6 @@
 import '../base/devices/reducer';
 import '../base/premeeting/reducer';
+import '../custom-panel/reducer';
 import '../base/tooltip/reducer';
 import '../e2ee/reducer';
 import '../face-landmarks/reducer';
@@ -8,6 +9,7 @@ import '../keyboard-shortcuts/reducer';
 import '../no-audio-signal/reducer';
 import '../noise-detection/reducer';
 import '../participants-pane/reducer';
+import '../pip/reducer';
 import '../power-monitor/reducer';
 import '../prejoin/reducer';
 import '../remote-control/reducer';
@@ -17,5 +19,6 @@ import '../screenshot-capture/reducer';
 import '../talk-while-muted/reducer';
 import '../virtual-background/reducer';
 import '../web-hid/reducer';
+import '../file-sharing/reducer';
 
 import './reducers.any';

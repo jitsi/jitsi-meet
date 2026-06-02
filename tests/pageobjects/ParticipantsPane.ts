@@ -6,9 +6,9 @@ import AVModerationMenu from './AVModerationMenu';
 import BasePageObject from './BasePageObject';
 
 /**
- * Classname of the closed/hidden participants pane
+ * ID of the closed/hidden participants pane
  */
-const PARTICIPANTS_PANE = 'participants_pane';
+const PARTICIPANTS_PANE = 'participants-pane';
 
 const INVITE = 'Invite someone';
 
@@ -27,7 +27,7 @@ export default class ParticipantsPane extends BasePageObject {
      * Checks if the pane is open.
      */
     isOpen() {
-        return this.participant.driver.$(`.${PARTICIPANTS_PANE}`).isExisting();
+        return this.participant.driver.$(`#${PARTICIPANTS_PANE}`).isExisting();
     }
 
     /**
@@ -36,7 +36,7 @@ export default class ParticipantsPane extends BasePageObject {
     async open() {
         await this.participant.getToolbar().clickParticipantsPaneButton();
 
-        const pane = this.participant.driver.$(`.${PARTICIPANTS_PANE}`);
+        const pane = this.participant.driver.$(`#${PARTICIPANTS_PANE}`);
 
         await pane.waitForExist();
         await pane.waitForStable();
@@ -49,7 +49,7 @@ export default class ParticipantsPane extends BasePageObject {
     async close() {
         await this.participant.getToolbar().clickCloseParticipantsPaneButton();
 
-        await this.participant.driver.$(`.${PARTICIPANTS_PANE}`).waitForDisplayed({ reverse: true });
+        await this.participant.driver.$(`#${PARTICIPANTS_PANE}`).waitForDisplayed({ reverse: true });
     }
 
     /**
@@ -75,13 +75,47 @@ export default class ParticipantsPane extends BasePageObject {
         await this.participant.driver.$(mutedIconXPath).waitForDisplayed({
             reverse,
             timeout: 2000,
-            timeoutMsg: `Video mute icon is${reverse ? '' : ' not'} displayed for ${testee.name}`
+            timeoutMsg: `Video mute icon is${reverse ? '' : ' not'} displayed for ${testee.name} at ${
+                this.participant.name} side.`
         });
 
         if (!isOpen) {
             await this.close();
         }
     }
+
+    /**
+     * Asserts that {@code participant} shows or doesn't show the video mute icon for the conference participant
+     * identified by {@code testee}.
+     *
+     * @param {Participant} testee - The {@code Participant} for whom we're checking the status of audio muted icon.
+     * @param {boolean} reverse - If {@code true}, the method will assert the absence of the "mute" icon;
+     * otherwise, it will assert its presence.
+     * @returns {Promise<void>}
+     */
+    async assertAudioMuteIconIsDisplayed(testee: Participant, reverse = false): Promise<void> {
+        const isOpen = await this.isOpen();
+
+        if (!isOpen) {
+            await this.open();
+        }
+
+        const id = `participant-item-${await testee.getEndpointId()}`;
+        const mutedIconXPath
+            = `//div[@id='${id}']//div[contains(@class, 'indicators')]//*[local-name()='svg' and @id='audioMuted']`;
+
+        await this.participant.driver.$(mutedIconXPath).waitForDisplayed({
+            reverse,
+            timeout: 2000,
+            timeoutMsg: `Audio mute icon is${reverse ? '' : ' not'} displayed for ${testee.name} at ${
+                this.participant.name} side.`
+        });
+
+        if (!isOpen) {
+            await this.close();
+        }
+    }
+
 
     /**
      * Clicks the context menu button in the participants pane.
@@ -180,7 +214,7 @@ export default class ParticipantsPane extends BasePageObject {
             await this.open();
         }
 
-        const inviteButton = this.participant.driver.$(`aria/${INVITE}`);
+        const inviteButton = this.participant.driver.$(`button=${INVITE}`);
 
         await inviteButton.waitForDisplayed();
         await inviteButton.click();
@@ -228,7 +262,7 @@ export default class ParticipantsPane extends BasePageObject {
             .substring('participant-item-'.length);
 
         const moreOptionsButton
-            = this.participant.driver.$(`aria/More moderation options ${participantNameToReject}`);
+            = this.participant.driver.$(`button[title="More moderation options ${participantNameToReject}"]`);
 
         await moreOptionsButton.click();
 

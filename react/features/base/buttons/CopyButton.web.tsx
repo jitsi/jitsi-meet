@@ -4,13 +4,12 @@ import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../icons/components/Icon';
 import { IconCheck, IconCopy } from '../icons/svg';
-import { withPixelLineHeight } from '../styles/functions.web';
 import { copyText } from '../util/copyText.web';
 
 const useStyles = makeStyles()(theme => {
     return {
         copyButton: {
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            ...theme.typography.bodyShortBold,
             borderRadius: theme.shape.borderRadius,
             display: 'flex',
             justifyContent: 'flex-start',

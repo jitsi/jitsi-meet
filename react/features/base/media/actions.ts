@@ -1,5 +1,6 @@
 import { IStore } from '../../app/types';
 import { showModeratedNotification } from '../../av-moderation/actions';
+import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../av-moderation/constants';
 import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { isModerationNotificationDisplayed } from '../../notifications/functions';
 
@@ -18,7 +19,6 @@ import {
     TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
 import {
-    MEDIA_TYPE,
     MediaType,
     SCREENSHARE_MUTISM_AUTHORITY,
     VIDEO_MUTISM_AUTHORITY
@@ -56,10 +56,23 @@ export function setAudioAvailable(available: boolean) {
  * }}
  */
 export function setAudioMuted(muted: boolean, ensureTrack = false) {
-    return {
-        type: SET_AUDIO_MUTED,
-        ensureTrack,
-        muted
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+
+        // check for A/V Moderation when trying to unmute
+        if (!muted && shouldShowModeratedNotification(AVM_MEDIA_TYPE.AUDIO, state)) {
+            if (!isModerationNotificationDisplayed(AVM_MEDIA_TYPE.AUDIO, state)) {
+                ensureTrack && dispatch(showModeratedNotification(AVM_MEDIA_TYPE.AUDIO));
+            }
+
+            return;
+        }
+
+        dispatch({
+            type: SET_AUDIO_MUTED,
+            ensureTrack,
+            muted
+        });
     };
 }
 
@@ -126,9 +139,9 @@ export function setScreenshareMuted(
         const state = getState();
 
         // check for A/V Moderation when trying to unmute
-        if (!muted && shouldShowModeratedNotification(MEDIA_TYPE.SCREENSHARE, state)) {
-            if (!isModerationNotificationDisplayed(MEDIA_TYPE.SCREENSHARE, state)) {
-                ensureTrack && dispatch(showModeratedNotification(MEDIA_TYPE.SCREENSHARE));
+        if (!muted && shouldShowModeratedNotification(AVM_MEDIA_TYPE.DESKTOP, state)) {
+            if (!isModerationNotificationDisplayed(AVM_MEDIA_TYPE.DESKTOP, state)) {
+                ensureTrack && dispatch(showModeratedNotification(AVM_MEDIA_TYPE.DESKTOP));
             }
 
             return;
@@ -184,9 +197,9 @@ export function setVideoMuted(
         const state = getState();
 
         // check for A/V Moderation when trying to unmute
-        if (!muted && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, state)) {
-            if (!isModerationNotificationDisplayed(MEDIA_TYPE.VIDEO, state)) {
-                ensureTrack && dispatch(showModeratedNotification(MEDIA_TYPE.VIDEO));
+        if (!muted && shouldShowModeratedNotification(AVM_MEDIA_TYPE.VIDEO, state)) {
+            if (!isModerationNotificationDisplayed(AVM_MEDIA_TYPE.VIDEO, state)) {
+                ensureTrack && dispatch(showModeratedNotification(AVM_MEDIA_TYPE.VIDEO));
             }
 
             return;

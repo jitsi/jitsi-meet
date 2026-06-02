@@ -1,3 +1,36 @@
+-- mod_muc_rate_limit - Per-room join and leave rate limiting for MUC components.
+--
+-- Prevents presence storms in large meetings by throttling the rate at which
+-- occupants can join or leave a room.  When the configured rate is exceeded,
+-- excess presence events are held in a per-room FIFO queue and replayed at the
+-- allowed rate by a 1-second recurring timer.
+--
+-- Join limiting (muc-occupant-pre-join, priority 9):
+--   Each room maintains a token-bucket throttle (muc_rate_joins tokens/s,
+--   default 3).  When the bucket is empty the join event is stopped and the
+--   origin/stanza pair is pushed onto a bounded queue (max 1000 entries).
+--   A timer is started (if not already running) that pops up to
+--   muc_rate_joins entries per second and replays them through
+--   room:handle_normal_presence.  A delayed_join_skip flag on the replayed
+--   stanza prevents it from being re-queued on the second pass.  Any join
+--   that arrives while the timer is active is also queued (even if the
+--   throttle would allow it) to preserve FIFO ordering.
+--
+-- Leave limiting (muc-occupant-pre-leave):
+--   Same token-bucket logic with muc_rate_leaves tokens/s (default 5).
+--   Queued leavers have their role set to nil and are saved immediately
+--   (removing them from the room roster) so that in-progress joins are not
+--   blocked; however publicise_occupant_status (the unavailable presence
+--   broadcast to peers) is deferred until the timer processes the event.
+--
+-- Room destruction (muc-room-destroyed, priority 1):
+--   Both queues are marked empty so the in-flight timer skips further
+--   processing cleanly without touching a destroyed room.
+--
+-- Configuration (set on the MUC component):
+--   muc_rate_joins  (number, default 3)  — max join events per second per room
+--   muc_rate_leaves (number, default 5)  — max leave events per second per room
+--
 -- enable under the main muc component
 
 local queue = require "util.queue";
@@ -108,13 +141,22 @@ module:hook("muc-occupant-pre-join", function (event)
 
         if not room.join_rate_queue_timer then
             timer.add_task(1, function ()
-                local status, result = pcall(timer_process_queue_elements,
+                if room.destroying then
+                    -- if room was destroyed in the mean time, ignore
+                    return;
+                end
+
+                local status, result = pcall(
+                    timer_process_queue_elements,
                     join_rate_per_conference,
                     room.join_rate_presence_queue,
                     function(ev)
-                        -- we mark what we pass here so we can skip it on the next muc-occupant-pre-join event
-                        ev.stanza.delayed_join_skip = true;
-                        room:handle_normal_presence(ev.origin, ev.stanza);
+                        -- if the connection was closed while waiting in the queue, ignore
+                        if ev.origin.conn then
+                            -- we mark what we pass here so we can skip it on the next muc-occupant-pre-join event
+                            ev.stanza.delayed_join_skip = true;
+                            room:handle_normal_presence(ev.origin, ev.stanza);
+                        end
                     end,
                     function() -- empty callback
                         room.join_rate_queue_timer = false;
@@ -158,7 +200,7 @@ module:hook('muc-room-destroyed',function(event)
     if event.room.leave_rate_presence_queue then
         event.room.leave_rate_presence_queue.empty = true;
     end
-end);
+end, 1);  -- prosody handles it at 0
 
 module:hook('muc-occupant-pre-leave', function (event)
     local occupant, room, stanza = event.occupant, event.room, event.stanza;

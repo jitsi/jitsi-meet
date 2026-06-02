@@ -25,7 +25,8 @@ export interface IVirtualBackground {
  * specified action.
  */
 ReducerRegistry.register<IVirtualBackground>(STORE_NAME, (state = {}, action): IVirtualBackground => {
-    const { virtualSource, backgroundEffectEnabled, blurValue, backgroundType, selectedThumbnail } = action;
+    const { virtualSource, backgroundEffectEnabled, blurValue, backgroundType,
+        selectedThumbnail } = action;
 
     /**
      * Sets up the persistence of the feature {@code virtual-background}.

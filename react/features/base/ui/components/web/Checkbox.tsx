@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui';
 import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
 import { IconCheck } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 
 interface ICheckboxProps {
 
@@ -22,6 +21,11 @@ interface ICheckboxProps {
      * Whether the input is disabled or not.
      */
     disabled?: boolean;
+
+    /**
+     * The id of the input.
+     */
+    id?: string;
 
     /**
      * The label of the input.
@@ -42,13 +46,13 @@ interface ICheckboxProps {
 const useStyles = makeStyles()(theme => {
     return {
         formControl: {
-            ...withPixelLineHeight(theme.typography.bodyLongRegular),
-            color: theme.palette.text01,
+            ...theme.typography.bodyLongRegular,
+            color: theme.palette.checkboxLabel,
             display: 'inline-flex',
             alignItems: 'center',
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyLongRegularLarge)
+                ...theme.typography.bodyLongRegularLarge
 
             }
         },
@@ -72,10 +76,10 @@ const useStyles = makeStyles()(theme => {
                 backgroundColor: 'transparent',
                 margin: '3px',
                 font: 'inherit',
-                color: theme.palette.icon03,
+                color: theme.palette.checkboxBorder,
                 width: '18px',
                 height: '18px',
-                border: `2px solid ${theme.palette.icon03}`,
+                border: `2px solid ${theme.palette.checkboxBorder}`,
                 borderRadius: '3px',
 
                 display: 'grid',
@@ -86,7 +90,7 @@ const useStyles = makeStyles()(theme => {
                     width: '18px',
                     height: '18px',
                     opacity: 0,
-                    backgroundColor: theme.palette.action01,
+                    backgroundColor: theme.palette.checkboxChecked,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -100,11 +104,11 @@ const useStyles = makeStyles()(theme => {
                 },
 
                 '&:disabled': {
-                    backgroundColor: theme.palette.ui03,
-                    borderColor: theme.palette.ui04,
+                    backgroundColor: theme.palette.checkboxDisabledBackground,
+                    borderColor: theme.palette.checkboxDisabledBorder,
 
                     '&::before': {
-                        backgroundColor: theme.palette.ui04
+                        backgroundColor: theme.palette.checkboxDisabledChecked
                     }
                 },
 
@@ -148,6 +152,7 @@ const Checkbox = ({
     checked,
     className,
     disabled,
+    id,
     label,
     name,
     onChange
@@ -161,13 +166,14 @@ const Checkbox = ({
                 <input
                     checked = { checked }
                     disabled = { disabled }
+                    id = { id }
                     name = { name }
                     onChange = { onChange }
                     type = 'checkbox' />
                 <Icon
                     aria-hidden = { true }
                     className = 'checkmark'
-                    color = { disabled ? theme.palette.icon03 : theme.palette.icon01 }
+                    color = { disabled ? theme.palette.checkboxIconDisabled : theme.palette.checkboxIcon }
                     size = { 18 }
                     src = { IconCheck } />
             </div>

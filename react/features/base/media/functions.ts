@@ -89,6 +89,16 @@ export function getStartWithVideoMuted(stateful: IStateful) {
 }
 
 /**
+ * Determines whether screen-share is currently muted.
+ *
+ * @param {Function|Object} stateful - The redux store, state, or {@code getState} function.
+ * @returns {boolean}
+ */
+export function isScreenshareMuted(stateful: IStateful) {
+    return Boolean(toState(stateful)['features/base/media'].screenshare.muted);
+}
+
+/**
  * Determines whether video is currently muted.
  *
  * @param {Function|Object} stateful - The redux store, state, or {@code getState} function.
@@ -136,11 +146,18 @@ export function shouldRenderVideoTrack(
  * @returns {string}
  */
 export const getSoundFileSrc = (file: string, language: string): string => {
-    if (!AudioSupportedLanguage[language as keyof typeof AudioSupportedLanguage]
-        || language === AudioSupportedLanguage.en) {
+    if (!language) {
+        return file;
+    }
+
+    // Normalize language code: 'fr-CA' -> 'frCA' to match AudioSupportedLanguage enum and file naming
+    const normalizedLanguage = language.replace('-', '');
+
+    if (!AudioSupportedLanguage[normalizedLanguage as keyof typeof AudioSupportedLanguage]
+        || normalizedLanguage === AudioSupportedLanguage.en) {
         return file;
     }
     const fileTokens = file.split('.');
 
-    return `${fileTokens[0]}_${language}.${fileTokens[1]}`;
+    return `${fileTokens[0]}_${normalizedLanguage}.${fileTokens[1]}`;
 };

@@ -43,7 +43,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
 
         if (enforceUserLimit) {
             dispatch(restrictWhiteboard(false));
-            dispatch(openDialog(WhiteboardLimitDialog));
+            dispatch(openDialog('WhiteboardLimitDialog', WhiteboardLimitDialog));
 
             return next(action);
         }
@@ -60,7 +60,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
             }
 
             if (isDialogOpen(state, WhiteboardLimitDialog)) {
-                dispatch(hideDialog(WhiteboardLimitDialog));
+                dispatch(hideDialog('WhiteboardLimitDialog', WhiteboardLimitDialog));
             }
 
             const collabDetails = getCollabDetails(state);

@@ -36,7 +36,7 @@ const GrantModeratorButton = ({
         if (notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
             return;
         }
-        dispatch(openDialog(GrantModeratorDialog, { participantID }));
+        dispatch(openDialog('GrantModeratorDialog', GrantModeratorDialog, { participantID }));
     }, [ dispatch, notifyClick, notifyMode, participantID ]);
 
     if (!visible) {

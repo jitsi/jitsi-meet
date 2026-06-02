@@ -12,8 +12,8 @@ import JitsiMeetJS, {
     browser
 } from '../base/lib-jitsi-meet';
 import { isAnalyticsEnabled } from '../base/lib-jitsi-meet/functions.any';
+import { isEmbedded } from '../base/util/embedUtils';
 import { getJitsiMeetGlobalNS } from '../base/util/helpers';
-import { inIframe } from '../base/util/iframeUtils';
 import { loadScript } from '../base/util/loadScript';
 import { parseURLParams } from '../base/util/parseURLParams';
 import { parseURIString } from '../base/util/uri';
@@ -84,7 +84,6 @@ export async function createHandlers({ getState }: IStore) {
     } = config;
     const {
         amplitudeAPPKey,
-        amplitudeIncludeUTM,
         blackListedEvents,
         scriptURLs,
         matomoEndpoint,
@@ -94,7 +93,6 @@ export async function createHandlers({ getState }: IStore) {
     const { group, user } = state['features/base/jwt'];
     const handlerConstructorOptions = {
         amplitudeAPPKey,
-        amplitudeIncludeUTM,
         blackListedEvents,
         envType: deploymentInfo?.envType || 'dev',
         matomoEndpoint,
@@ -187,7 +185,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
         overwritesDefaultLogoUrl?: boolean;
         overwritesDeploymentUrls?: boolean;
         overwritesLiveStreamingUrls?: boolean;
-        overwritesSalesforceUrl?: boolean;
         overwritesSupportUrl?: boolean;
         server?: string;
         tenant?: string;
@@ -213,7 +210,7 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
     permanentProperties.externalApi = typeof API_ID === 'number';
 
     // Report if we are loaded in iframe
-    permanentProperties.inIframe = inIframe();
+    permanentProperties.inIframe = isEmbedded();
 
     // Report the tenant from the URL.
     permanentProperties.tenant = tenant || '/';
@@ -229,7 +226,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
 
     // TODO: Temporary metric. To be removed once we don't need it.
     permanentProperties.overwritesSupportUrl = 'interfaceConfig.SUPPORT_URL' in params;
-    permanentProperties.overwritesSalesforceUrl = 'config.salesforceUrl' in params;
     permanentProperties.overwritesDefaultLogoUrl = 'config.defaultLogoUrl' in params;
 
     const deploymentUrlsConfig = params['config.deploymentUrls'] ?? {};

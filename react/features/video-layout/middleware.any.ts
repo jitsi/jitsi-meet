@@ -12,7 +12,7 @@ import { isFollowMeActive } from '../follow-me/functions';
 import { SET_TILE_VIEW } from './actionTypes';
 import { setTileView } from './actions';
 import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions';
-
+import logger from './logger';
 import './subscriber';
 
 let previousTileViewEnabled: boolean | undefined;
@@ -27,13 +27,21 @@ MiddlewareRegistry.register(store => next => action => {
 
     // we want to extract the leaving participant and check its type before actually the participant being removed.
     let shouldUpdateAutoPin = false;
+    let oldScreenShares: Array<string> = [];
 
     switch (action.type) {
     case PARTICIPANT_LEFT: {
         if (!getAutoPinSetting() || isFollowMeActive(store)) {
+            logger.debug('Auto pinning is disabled or Follow Me is active, skipping auto pinning.');
+
             break;
         }
         shouldUpdateAutoPin = Boolean(getParticipantById(store.getState(), action.participant.id)?.fakeParticipant);
+
+        if (shouldUpdateAutoPin) {
+            // Capture the old screenshare list before the reducer runs
+            oldScreenShares = store.getState()['features/video-layout'].remoteScreenShares || [];
+        }
         break;
     }
     }
@@ -75,9 +83,9 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     if (shouldUpdateAutoPin) {
-        const screenShares = store.getState()['features/video-layout'].remoteScreenShares || [];
+        const newScreenShares = store.getState()['features/video-layout'].remoteScreenShares || [];
 
-        updateAutoPinnedParticipant(screenShares, store);
+        updateAutoPinnedParticipant(oldScreenShares, newScreenShares, store);
     }
 
     return result;

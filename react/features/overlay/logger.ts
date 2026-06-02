@@ -1,3 +1,3 @@
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/overlay');
+export default getLogger('app:overlay');

@@ -2,6 +2,7 @@ import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import EventEmitter from 'events';
 
 import { urlObjectToString } from '../../../react/features/base/util/uri';
+import { isPiPEnabled } from '../../../react/features/pip/external-api.shared';
 import {
     PostMessageTransportBackend,
     Transport
@@ -11,7 +12,6 @@ import {
     getAvailableDevices,
     getCurrentDevices,
     isDeviceChangeAvailable,
-    isDeviceListAvailable,
     isMultipleAudioInputSupported,
     setAudioInputDevice,
     setAudioOutputDevice,
@@ -39,6 +39,7 @@ const commands = {
     endConference: 'end-conference',
     email: 'email',
     grantModerator: 'grant-moderator',
+    grantRecordingConsent: 'grant-recording-consent',
     hangup: 'video-hangup',
     hideNotification: 'hide-notification',
     initiatePrivateChat: 'initiate-private-chat',
@@ -46,6 +47,7 @@ const commands = {
     localSubject: 'local-subject',
     kickParticipant: 'kick-participant',
     muteEveryone: 'mute-everyone',
+    muteRemoteParticipant: 'mute-remote-participant',
     overwriteConfig: 'overwrite-config',
     overwriteNames: 'overwrite-names',
     password: 'password',
@@ -94,7 +96,9 @@ const commands = {
     toggleTileView: 'toggle-tile-view',
     toggleVirtualBackgroundDialog: 'toggle-virtual-background',
     toggleVideo: 'toggle-video',
-    toggleWhiteboard: 'toggle-whiteboard'
+    toggleWhiteboard: 'toggle-whiteboard',
+    showPiP: 'show-pip',
+    hidePiP: 'hide-pip'
 };
 
 /**
@@ -102,6 +106,9 @@ const commands = {
  * events expected by jitsi-meet.
  */
 const events = {
+    '_pip-requested': '_pipRequested',
+    'pip-entered': 'pipEntered',
+    'pip-left': 'pipLeft',
     'avatar-changed': 'avatarChanged',
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
@@ -126,6 +133,8 @@ const events = {
     'face-landmark-detected': 'faceLandmarkDetected',
     'feedback-submitted': 'feedbackSubmitted',
     'feedback-prompt-displayed': 'feedbackPromptDisplayed',
+    'file-deleted': 'fileDeleted',
+    'file-uploaded': 'fileUploaded',
     'filmstrip-display-changed': 'filmstripDisplayChanged',
     'incoming-message': 'incomingMessage',
     'knocking-participant': 'knockingParticipant',
@@ -144,6 +153,7 @@ const events = {
     'participant-joined': 'participantJoined',
     'participant-kicked-out': 'participantKickedOut',
     'participant-left': 'participantLeft',
+    'participant-muted': 'participantMuted',
     'participant-role-changed': 'participantRoleChanged',
     'participants-pane-toggled': 'participantsPaneToggled',
     'password-required': 'passwordRequired',
@@ -152,6 +162,7 @@ const events = {
     'proxy-connection-event': 'proxyConnectionEvent',
     'raise-hand-updated': 'raiseHandUpdated',
     'ready': 'ready',
+    'recording-consent-dialog-open': 'recordingConsentDialogOpen',
     'recording-link-available': 'recordingLinkAvailable',
     'recording-status-changed': 'recordingStatusChanged',
     'participant-menu-button-clicked': 'participantMenuButtonClick',
@@ -166,6 +177,7 @@ const events = {
     'suspend-detected': 'suspendDetected',
     'tile-view-changed': 'tileViewChanged',
     'toolbar-button-clicked': 'toolbarButtonClicked',
+    'toolbar-visibility-changed': 'toolbarVisibilityChanged',
     'transcribing-status-changed': 'transcribingStatusChanged',
     'transcription-chunk-received': 'transcriptionChunkReceived',
     'whiteboard-status-changed': 'whiteboardStatusChanged'
@@ -328,6 +340,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._myUserID = undefined;
         this._onStageParticipant = undefined;
         this._iAmvisitor = undefined;
+        this._pipConfig = configOverwrite?.pip;
         this._setupListeners();
         id++;
     }
@@ -647,6 +660,56 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 this.emit(requestName, data, callback);
             }
         });
+
+        this._setupIntersectionObserver();
+    }
+
+    /**
+     * Sets up IntersectionObserver to monitor iframe visibility.
+     * Calls showPiP/hidePiP based on visibility.
+     *
+     * @private
+     * @returns {void}
+     */
+    _setupIntersectionObserver() {
+        if (!isPiPEnabled(this._pipConfig)) {
+            return;
+        }
+
+        // Don't create duplicate observers.
+        if (this._intersectionObserver) {
+            return;
+        }
+
+        this._isIntersecting = true;
+
+        this._intersectionObserver = new IntersectionObserver(entries => {
+            const entry = entries[entries.length - 1];
+            const wasIntersecting = this._isIntersecting;
+
+            this._isIntersecting = entry.isIntersecting;
+
+            if (!entry.isIntersecting && wasIntersecting) {
+                this.showPiP();
+            } else if (entry.isIntersecting && !wasIntersecting) {
+                this.hidePiP();
+            }
+        });
+
+        this._intersectionObserver.observe(this._frame);
+    }
+
+    /**
+     * Tears down IntersectionObserver.
+     *
+     * @private
+     * @returns {void}
+     */
+    _teardownIntersectionObserver() {
+        if (this._intersectionObserver) {
+            this._intersectionObserver.disconnect();
+            this._intersectionObserver = null;
+        }
     }
 
     /**
@@ -676,7 +739,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      *
      * @returns {Object} Rooms info.
      */
-    async getRoomsInfo() {
+    getRoomsInfo() {
         return this._transport.sendRequest({
             name: 'rooms-info'
         });
@@ -687,7 +750,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      *
      * @returns {Object} Rooms info.
      */
-    async getSharedDocumentUrl() {
+    getSharedDocumentUrl() {
         return this._transport.sendRequest({
             name: 'get-shared-document-url'
         });
@@ -712,7 +775,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      *
      * @deprecated
-     * NOTE: This method is not removed for backward comatability purposes.
+     * NOTE: This method is not removed for backward compatibility purposes.
      */
     addEventListener(event, listener) {
         this.on(event, listener);
@@ -743,7 +806,11 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * {{
      *  'from': from,//JID of the user that sent the message
      *  'nick': nick,//the nickname of the user that sent the message
-     *  'message': txt//the text of the message
+     *  'message': txt,//the text of the message
+     *  'privateMessage': privateMessage,//whether the message is private
+     *  'stamp': stamp,//optional timestamp when available
+     *  'messageId': messageId,//optional XMPP message id when available
+     *  'replyToMessageId': replyToMessageId//optional XEP-0461 reply target message id when available
      * }}
      * {@code outgoingMessage} - receives event notifications about outgoing
      * messages. The listener will receive object with the following structure:
@@ -799,7 +866,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      *
      * @deprecated
-     * NOTE: This method is not removed for backward comatability purposes.
+     * NOTE: This method is not removed for backward compatibility purposes.
      */
     addEventListeners(listeners) {
         for (const event in listeners) { // eslint-disable-line guard-for-in
@@ -820,6 +887,27 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Captures a picture through OS camera.
+     *
+     * @param {string} cameraFacingMode - The OS camera facing mode (environment/user).
+     * @param {string} descriptionText - The OS camera facing mode (environment/user).
+     * @param {string} titleText - The OS camera facing mode (environment/user).
+     * @returns {Promise<string>} - Resolves with a base64 encoded image data of the screenshot.
+     */
+    captureCameraPicture(
+            cameraFacingMode,
+            descriptionText,
+            titleText
+    ) {
+        return this._transport.sendRequest({
+            name: 'capture-camera-picture',
+            cameraFacingMode,
+            descriptionText,
+            titleText
+        });
+    }
+
+    /**
      * Removes the listeners and removes the Jitsi Meet frame.
      *
      * @returns {void}
@@ -828,6 +916,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this.emit('_willDispose');
         this._transport.dispose();
         this.removeAllListeners();
+        this._teardownIntersectionObserver();
+
         if (this._frame && this._frame.parentNode) {
             this._frame.parentNode.removeChild(this._frame);
         }
@@ -856,10 +946,47 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
             return;
         }
+
+        // Handle pip config changes locally.
+        // We update local state, send command to iframe, then handle PiP show/hide
+        // so the iframe config is updated before we try to show PiP.
+        let pipTransition = null;
+
+        if (name === 'overwriteConfig' && args[0]?.pip !== undefined) {
+            const wasEnabled = isPiPEnabled(this._pipConfig);
+
+            this._pipConfig = {
+                ...this._pipConfig,
+                ...args[0].pip
+            };
+
+            const isEnabled = isPiPEnabled(this._pipConfig);
+
+            if (!wasEnabled && isEnabled) {
+                this._setupIntersectionObserver();
+                pipTransition = 'enabled';
+            } else if (wasEnabled && !isEnabled) {
+                this._teardownIntersectionObserver();
+                pipTransition = 'disabled';
+            }
+        }
+
+        // Send command to iframe first.
         this._transport.sendEvent({
             data: args,
             name: commands[name]
         });
+
+        // Handle PiP state after command is sent so iframe config is updated.
+        if (pipTransition === 'enabled') {
+            // Show PiP if iframe is currently not visible.
+            if (!this._isIntersecting) {
+                this.showPiP();
+            }
+        } else if (pipTransition === 'disabled') {
+            // Hide any open PiP window.
+            this.hidePiP();
+        }
     }
 
     /**
@@ -989,10 +1116,15 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Returns Promise that resolves with true if the device list is available
      * and with false if not.
      *
+     * @deprecated
+     *
      * @returns {Promise}
      */
     isDeviceListAvailable() {
-        return isDeviceListAvailable(this._transport);
+        console.warn('isDeviceListAvailable is deprecated and will be removed in the future. '
+                     + 'It always returns true');
+
+        return Promise.resolve(true);
     }
 
     /**
@@ -1285,7 +1417,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      *
      * @deprecated
-     * NOTE: This method is not removed for backward comatability purposes.
+     * NOTE: This method is not removed for backward compatibility purposes.
      */
     removeEventListener(event) {
         this.removeAllListeners(event);
@@ -1298,7 +1430,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      *
      * @deprecated
-     * NOTE: This method is not removed for backward comatability purposes.
+     * NOTE: This method is not removed for backward compatibility purposes.
      */
     removeEventListeners(eventList) {
         eventList.forEach(event => this.removeEventListener(event));
@@ -1466,6 +1598,24 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     */
     setVirtualBackground(enabled, backgroundImage) {
         this.executeCommand('setVirtualBackground', enabled, backgroundImage);
+    }
+
+    /**
+     * Shows Picture-in-Picture window.
+     *
+     * @returns {void}
+     */
+    showPiP() {
+        this.executeCommand('showPiP');
+    }
+
+    /**
+     * Hides Picture-in-Picture window.
+     *
+     * @returns {void}
+     */
+    hidePiP() {
+        this.executeCommand('hidePiP');
     }
 
     /**

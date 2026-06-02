@@ -53,9 +53,9 @@ body.welcome-page {
 
         .header-text-subtitle {
             color: #fff;
-            font-size: 20px;
+            font-size: 1.25rem;
             font-weight: 600;
-            line-height: 26px;
+            line-height: 1.625rem;
             margin: 16px 0 32px 0;
             text-align: $welcomePageHeaderTextAlign;
 
@@ -64,7 +64,7 @@ body.welcome-page {
         .not-allow-title-character-div {
             color: #f03e3e;
             background-color: #fff;
-            font-size: 12px;
+            font-size: 0.75rem;
             font-weight: 600;
             margin: 10px 0px 5px 0px;
             text-align: $welcomePageHeaderTextAlign;
@@ -147,7 +147,7 @@ body.welcome-page {
                     display: inline-block;
                     height: 50px;
                     width: 100%;
-                    font-size: 14px;
+                    font-size: 0.875rem;
                     padding-left: 10px;
 
                     &.focus-visible {
@@ -172,7 +172,7 @@ body.welcome-page {
     }
 
     .tab-container {
-        font-size: 16px;
+        font-size: 1rem;
         position: relative;
         text-align: left;
         display: $welcomePageTabContainerDisplay;
@@ -191,8 +191,8 @@ body.welcome-page {
             background-color: #c7ddff;
             border-radius: 6px;
             color: #0163FF;
-            font-size: 14px;
-            line-height: 18px;
+            font-size: 0.875rem;
+            line-height: 1.125rem;
             margin: 4px;
             display: $welcomePageTabButtonsDisplay;
 
@@ -218,7 +218,7 @@ body.welcome-page {
 
     .welcome-page-button {
         border: 0;
-        font-size: 14px;
+        font-size: 0.875rem;
         background: $welcomePageButtonBg;
         border-radius: 3px;
         color: #FFFFFF;
@@ -246,7 +246,7 @@ body.welcome-page {
 
         * {
             cursor: pointer;
-            font-size: 32px;
+            font-size: 2rem;
         }
 
         .toolbox-icon {

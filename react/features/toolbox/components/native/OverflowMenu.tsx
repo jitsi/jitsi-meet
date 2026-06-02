@@ -23,6 +23,7 @@ import SpeakerStatsButton from '../../../speaker-stats/components/native/Speaker
 import { isSpeakerStatsDisabled } from '../../../speaker-stats/functions';
 import ClosedCaptionButton from '../../../subtitles/components/native/ClosedCaptionButton';
 import styles from '../../../video-menu/components/native/styles';
+import { iAmVisitor } from '../../../visitors/functions';
 import WhiteboardButton from '../../../whiteboard/components/native/WhiteboardButton';
 import { customButtonPressed } from '../../actions.native';
 import { getVisibleNativeButtons } from '../../functions.native';
@@ -292,6 +293,7 @@ export default connect(_mapStateToProps)(props => {
         mainToolbarButtonsThresholds,
         toolbarButtons
     } = useSelector((state: IReduxState) => state['features/toolbox']);
+    const _iAmVisitor = useSelector(iAmVisitor);
 
     const allButtons = useNativeToolboxButtons(customToolbarButtons);
 
@@ -299,7 +301,8 @@ export default connect(_mapStateToProps)(props => {
         allButtons,
         clientWidth,
         mainToolbarButtonsThresholds,
-        toolbarButtons
+        toolbarButtons,
+        iAmVisitor: _iAmVisitor
     });
 
     return (

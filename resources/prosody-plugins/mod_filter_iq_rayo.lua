@@ -1,16 +1,20 @@
--- This module is enabled under the main virtual host
+-- Filters outbound-call and transcription IQ stanzas (Rayo dial, urn:xmpp:rayo:1)
+-- on the main VirtualHost. Allows a stanza through only when the sender's JWT token
+-- grants the required feature ('outbound-call' or 'transcription'), or, absent token
+-- features, when the sender holds owner affiliation in the room. Blocked stanzas
+-- receive an auth/forbidden error reply. Optionally rate-limits outgoing calls per
+-- session when max_number_outgoing_calls is configured.
+-- This module is enabled under the main virtual host.
 local new_throttle = require "util.throttle".create;
 local st = require "util.stanza";
 local jid = require "util.jid";
 
-local token_util = module:require "token/util".new(module);
 local util = module:require 'util';
 local is_admin = util.is_admin;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local is_feature_allowed = util.is_feature_allowed;
 local is_sip_jigasi = util.is_sip_jigasi;
 local get_room_from_jid = util.get_room_from_jid;
-local is_healthcheck_room = util.is_healthcheck_room;
 local process_host_module = util.process_host_module;
 local jid_bare = require "util.jid".bare;
 
@@ -25,11 +29,6 @@ if main_muc_component_host == nil then
 end
 local main_muc_service;
 
--- no token configuration but required
-if token_util == nil then
-    module:log("error", "no token configuration but it is required");
-    return;
-end
 
 -- this is the main virtual host of the main prosody that this vnode serves
 local main_domain = module:get_option_string('main_domain');
@@ -38,6 +37,21 @@ local is_visitor_prosody = main_domain ~= nil;
 
 -- this is the main virtual host of this vnode
 local local_domain = module:get_option_string('muc_mapper_domain_base');
+
+local parentCtx = module:context(local_domain);
+if parentCtx == nil then
+    log("error",
+        "Failed to start - unable to get parent context for host: %s",
+        tostring(local_domain));
+    return;
+end
+local token_util = module:require "token/util".new(parentCtx);
+
+-- no token configuration but required
+if token_util == nil then
+    module:log("error", "no token configuration but it is required");
+    return;
+end
 
 -- The maximum number of simultaneous calls,
 -- and also the maximum number of new calls per minute that a session is allowed to create.
@@ -87,27 +101,27 @@ module:hook("pre-iq/full", function(event)
             local room_jid = jid.bare(stanza.attr.to);
             local room_real_jid = room_jid_match_rewrite(room_jid);
             local room = main_muc_service.get_room_from_jid(room_real_jid);
-            local is_sender_in_room = room:get_occupant_jid(stanza.attr.from) ~= nil;
+            local feature = (dial.attr.to and dial.attr.to:lower()) == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call';
+            local error_message = nil;
 
-            if not room or not is_sender_in_room then
-                module:log("warn", "Filtering stanza dial, stanza:%s", tostring(stanza));
-                session.send(st.error_reply(stanza, "auth", "forbidden"));
-                return true;
-            end
-
-            local feature = dial.attr.to == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call';
-            local is_session_allowed = is_feature_allowed(
+            if not room or room:get_occupant_jid(stanza.attr.from) == nil then
+                error_message = "not in room";
+            elseif roomName == nil then
+                error_message = OUT_ROOM_NAME_ATTR_NAME.." header missing";
+            elseif roomName ~= room_jid then
+                error_message = OUT_ROOM_NAME_ATTR_NAME.." header mismatch";
+            elseif (token ~= nil and not token_util:verify_room(session, room_real_jid)) then
+                error_message = "no token or token room mismatch";
+            elseif not is_feature_allowed(
                 feature,
                 session.jitsi_meet_context_features,
-                session.granted_jitsi_meet_context_features,
-                room:get_affiliation(stanza.attr.from) == 'owner');
+                room:get_affiliation(stanza.attr.from) == 'owner') then
 
-            if roomName == nil
-                or roomName ~= room_jid
-                or (token ~= nil and not token_util:verify_room(session, room_real_jid))
-                or not is_session_allowed
-            then
-                module:log("warn", "Filtering stanza dial, stanza:%s", tostring(stanza));
+                error_message = "feature not allowed";
+            end
+
+            if error_message then
+                module:log("warn", "Filtering stanza dial, %s, stanza:%s", error_message, tostring(stanza));
                 session.send(st.error_reply(stanza, "auth", "forbidden"));
                 return true;
             end
@@ -146,7 +160,7 @@ module:hook("pre-iq/full", function(event)
                 dial:tag("header", {
                     xmlns = "urn:xmpp:rayo:1",
                     name = OUT_INITIATOR_USER_ATTR_NAME,
-                    value = user_id });
+                    value = tostring(user_id)});
                 dial:up();
 
                 -- Add the initiator group information if it is present
@@ -154,7 +168,7 @@ module:hook("pre-iq/full", function(event)
                     dial:tag("header", {
                         xmlns = "urn:xmpp:rayo:1",
                         name = OUT_INITIATOR_GROUP_ATTR_NAME,
-                        value = session.jitsi_meet_context_group });
+                        value = tostring(session.jitsi_meet_context_group) });
                     dial:up();
                 end
             end
@@ -218,49 +232,10 @@ end
 
 module:hook_global('config-reloaded', load_config);
 
-function process_set_affiliation(event)
-    local actor, affiliation, jid, previous_affiliation, room
-        = event.actor, event.affiliation, event.jid, event.previous_affiliation, event.room;
-    local actor_session = sessions[actor];
-
-    if is_admin(jid) or is_healthcheck_room(room.jid) or not actor or not previous_affiliation
-        or not actor_session or not actor_session.jitsi_meet_context_features then
-        return;
-    end
-
-    local occupant;
-    for _, o in room:each_occupant() do
-        if o.bare_jid == jid then
-            occupant = o;
-        end
-    end
-
-    if not occupant then
-        return;
-    end
-
-    local occupant_session = sessions[occupant.jid];
-    if not occupant_session then
-        return;
-    end
-
-    if previous_affiliation == 'none' and affiliation == 'owner' then
-        occupant_session.granted_jitsi_meet_context_features = actor_session.jitsi_meet_context_features;
-        occupant_session.granted_jitsi_meet_context_user_id = actor_session.jitsi_meet_context_user["id"];
-        occupant_session.granted_jitsi_meet_context_group_id = actor_session.jitsi_meet_context_group;
-    elseif previous_affiliation == 'owner' and ( affiliation == 'member' or affiliation == 'none' ) then
-        occupant_session.granted_jitsi_meet_context_features = nil;
-        occupant_session.granted_jitsi_meet_context_user_id = nil;
-        occupant_session.granted_jitsi_meet_context_group_id = nil;
-    end
-end
-
 function process_main_muc_loaded(main_muc, host_module)
     module:log('debug', 'Main muc loaded');
 
     main_muc_service = main_muc;
-    module:log("info", "Hook to muc events on %s", main_muc_component_host);
-    host_module:hook("muc-pre-set-affiliation", process_set_affiliation);
 end
 
 process_host_module(main_muc_component_host, function(host_module, host)
@@ -284,25 +259,20 @@ end);
 module:hook('jitsi-metadata-allow-moderation', function (event)
     local data, key, occupant, session = event.data, event.key, event.actor, event.session;
 
-    if key == 'recording' and data and data.isTranscribingEnabled ~= nil then
+    if key == 'recording' and data and (data.isTranscribingEnabled ~= nil or data.isRecordingRequested ~= nil) then
         -- if it is recording we want to allow setting in metadata if not moderator but features
         -- are present
         if session.jitsi_meet_context_features
-            and occupant.role ~= 'moderator'
-            and is_feature_allowed('transcription', session.jitsi_meet_context_features)
-            and is_feature_allowed('recording', session.jitsi_meet_context_features) then
+            and is_feature_allowed('transcription', session.jitsi_meet_context_features) then
                 local res = {};
                 res.isTranscribingEnabled = data.isTranscribingEnabled;
+                res.isRecordingRequested = data.isRecordingRequested;
                 return res;
         elseif not session.jitsi_meet_context_features and occupant.role == 'moderator' then
             return data;
         else
-            return nil;
+            return false;
         end
-    end
-
-    if occupant.role == 'moderator' then
-        return data;
     end
 
     return nil;

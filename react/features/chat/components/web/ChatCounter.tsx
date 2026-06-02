@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { getUnreadPollCount } from '../../../polls/functions';
-import { getUnreadCount } from '../../functions';
+import { getUnreadCount, getUnreadFilesCount } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of {@link ChatCounter}.
@@ -65,7 +65,7 @@ function _mapStateToProps(state: IReduxState) {
 
     return {
 
-        _count: getUnreadCount(state) + getUnreadPollCount(state),
+        _count: getUnreadCount(state) + getUnreadPollCount(state) + getUnreadFilesCount(state),
         _isOpen: isOpen
 
     };

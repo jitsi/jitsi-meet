@@ -7,7 +7,6 @@ import { IReduxState } from '../../../../../app/types';
 import Icon from '../../../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
-import { withPixelLineHeight } from '../../../../../base/styles/functions.web';
 import ListItem from '../../../../../base/ui/components/web/ListItem';
 import { IRoom } from '../../../../../breakout-rooms/types';
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
@@ -32,6 +31,11 @@ interface IProps {
      * Is this item highlighted/raised.
      */
     isHighlighted?: boolean;
+
+    /**
+     * Closes the room participant context menu.
+     */
+    lowerParticipantMenu: Function;
 
     /**
      * Callback for when the mouse leaves this component.
@@ -92,11 +96,11 @@ const useStyles = makeStyles()(theme => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
-            ...withPixelLineHeight(theme.typography.bodyLongBold)
+            ...theme.typography.bodyLongBold
         },
 
         arrowContainer: {
-            backgroundColor: theme.palette.ui03,
+            backgroundColor: theme.palette.breakoutRoomArrowBackground,
             width: '24px',
             height: '24px',
             borderRadius: '6px',
@@ -119,6 +123,7 @@ export const CollapsibleRoom = ({
     raiseParticipantContextMenu,
     room,
     searchString,
+    lowerParticipantMenu,
     toggleParticipantMenu
 }: IProps) => {
     const { t } = useTranslation();
@@ -156,6 +161,21 @@ export const CollapsibleRoom = ({
         participantName: displayName
     }), [ room, moderator ]);
 
+    const getEllipsisClickHandler = useCallback(
+        (jid: string, displayName: string) => {
+            if (participantContextEntity?.jid === jid) {
+                return lowerParticipantMenu;
+            }
+
+            return toggleParticipantMenu({
+                room,
+                jid,
+                participantName: displayName
+            });
+        },
+        [ participantContextEntity, lowerParticipantMenu, toggleParticipantMenu, room ]
+    );
+
     return (<>
         <ListItem
             actions = { children }
@@ -184,10 +204,8 @@ export const CollapsibleRoom = ({
                         participantID = { p.jid }>
                         {!overflowDrawer && moderator && (
                             <ParticipantActionEllipsis
-                                accessibilityLabel = { t('breakoutRoom.more') }
-                                onClick = { toggleParticipantMenu({ room,
-                                    jid: p.jid,
-                                    participantName: p.displayName }) } />
+                                accessibilityLabel = { t('breakoutRooms.actions.more') }
+                                onClick = { getEllipsisClickHandler(p.jid, p.displayName) } />
                         )}
                     </ParticipantItem>
                 ))

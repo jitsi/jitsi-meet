@@ -244,11 +244,11 @@ const AudioSettingsContent = ({
      * @returns {void}
      */
     const _setTracks = async () => {
-        if (browser.isWebKitBased()) {
-
+        if (!measureAudioLevels || browser.isWebKitBased()) {
             // It appears that at the time of this writing, creating audio tracks blocks the browser's main thread for
             // long time on safari. Wasn't able to confirm which part of track creation does the blocking exactly, but
             // not creating the tracks seems to help and makes the UI much more responsive.
+            // Also skip when audio levels are disabled to avoid activating all microphones unnecessarily.
             return;
         }
 
@@ -286,37 +286,36 @@ const AudioSettingsContent = ({
             className = { classes.contextMenu }
             hidden = { false }
             id = 'audio-settings-dialog'
+            role = 'menu'
             tabIndex = { -1 }>
-            <ContextMenuItemGroup>
+            <ContextMenuItemGroup
+                aria-labelledby = { microphoneHeaderId }
+                role = 'group'>
                 <ContextMenuItem
-                    accessibilityLabel = { t('settings.microphones') }
                     className = { classes.header }
                     icon = { IconMic }
                     id = { microphoneHeaderId }
                     text = { t('settings.microphones') } />
                 <ul
-                    aria-labelledby = { microphoneHeaderId }
                     className = { classes.list }
-                    role = 'radiogroup'
-                    tabIndex = { -1 }>
+                    role = 'presentation'>
                     {audioTracks.map((data, i) =>
                         _renderMicrophoneEntry(data, i, audioTracks.length)
                     )}
                 </ul>
             </ContextMenuItemGroup>
             {outputDevices.length > 0 && (
-                <ContextMenuItemGroup>
+                <ContextMenuItemGroup
+                    aria-labelledby = { speakerHeaderId }
+                    role = 'group'>
                     <ContextMenuItem
-                        accessibilityLabel = { t('settings.speakers') }
                         className = { classes.header }
                         icon = { IconVolumeUp }
                         id = { speakerHeaderId }
                         text = { t('settings.speakers') } />
                     <ul
-                        aria-labelledby = { speakerHeaderId }
                         className = { classes.list }
-                        role = 'radiogroup'
-                        tabIndex = { -1 }>
+                        role = 'presentation'>
                         {outputDevices.map((data: any, i: number) =>
                             _renderSpeakerEntry(data, i, outputDevices.length)
                         )}

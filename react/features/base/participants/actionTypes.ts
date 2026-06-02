@@ -113,6 +113,17 @@ export const PARTICIPANT_KICKED = 'PARTICIPANT_KICKED';
 export const PARTICIPANT_LEFT = 'PARTICIPANT_LEFT';
 
 /**
+ * Action to handle case when the remote participant mutes the local participant.
+ *
+ * {
+ *     type: PARTICIPANT_MUTED_US,
+ *     participant: Participant,
+ *     track: JitsiLocalTrack
+ * }
+ */
+export const PARTICIPANT_MUTED_US = 'PARTICIPANT_MUTED_US';
+
+/**
  * Action to handle case when the sources attached to a participant are updated.
  *
  * {

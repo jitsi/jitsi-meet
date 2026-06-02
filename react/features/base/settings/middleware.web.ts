@@ -1,7 +1,5 @@
 import { IStore } from '../../app/types';
 import { PREJOIN_INITIALIZED } from '../../prejoin/actionTypes';
-import { setPrejoinPageVisibility } from '../../prejoin/actions';
-import { APP_WILL_MOUNT } from '../app/actionTypes';
 import { getJwtName } from '../jwt/functions';
 import { MEDIA_TYPE } from '../media/constants';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
@@ -26,9 +24,6 @@ MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
-    case APP_WILL_MOUNT:
-        _initializeShowPrejoin(store);
-        break;
     case PREJOIN_INITIALIZED:
         _maybeUpdateDisplayName(store);
         break;
@@ -39,21 +34,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     return result;
 });
-
-/**
- * Overwrites the showPrejoin flag based on cached used selection for showing prejoin screen.
- *
- * @param {Store} store - The redux store.
- * @private
- * @returns {void}
- */
-function _initializeShowPrejoin({ dispatch, getState }: IStore) {
-    const { userSelectedSkipPrejoin } = getState()['features/base/settings'];
-
-    if (userSelectedSkipPrejoin) {
-        dispatch(setPrejoinPageVisibility(false));
-    }
-}
 
 /**
  * Updates the display name to the one in JWT if there is one.

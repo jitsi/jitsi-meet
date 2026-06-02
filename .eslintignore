@@ -1,6 +1,10 @@
 # The build artifacts of the jitsi-meet project.
 build/*
 
+# Generated Allure test reports.
+tests/prosody/allure-report/*
+tests/prosody/allure-results/*
+
 doc/*
 
 # Third-party source code which we (1) do not want to modify or (2) try to
@@ -17,3 +21,8 @@ react/features/face-landmarks/resources/*
 
 # Not worth it.
 actionTypes.ts
+
+# It's not complete until all files are copied at build time.
+react-native-sdk/
+
+*.d.ts

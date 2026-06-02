@@ -3,11 +3,8 @@ import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
-import { getSecurityUiConfig } from '../../../base/config/functions.any';
 import { translate } from '../../../base/i18n/functions';
-import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import Switch from '../../../base/ui/components/web/Switch';
-import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { toggleLobbyMode } from '../../actions';
 
 interface IProps extends WithTranslation {
@@ -16,11 +13,6 @@ interface IProps extends WithTranslation {
      * True if lobby is currently enabled in the conference.
      */
     _lobbyEnabled: boolean;
-
-    /**
-     * True if the section should be visible.
-     */
-    _visible: boolean;
 
     /**
      * The Redux Dispatch function.
@@ -77,11 +69,7 @@ class LobbySection extends PureComponent<IProps, IState> {
      * @inheritdoc
      */
     override render() {
-        const { _visible, t } = this.props;
-
-        if (!_visible) {
-            return null;
-        }
+        const { t } = this.props;
 
         return (
             <div id = 'lobby-section'>
@@ -126,13 +114,8 @@ class LobbySection extends PureComponent<IProps, IState> {
  * @returns {IProps}
  */
 function mapStateToProps(state: IReduxState) {
-    const { conference } = state['features/base/conference'];
-    const { hideLobbyButton } = getSecurityUiConfig(state);
-
     return {
-        _lobbyEnabled: state['features/lobby'].lobbyEnabled,
-        _visible: conference?.isLobbySupported() && isLocalParticipantModerator(state)
-            && !hideLobbyButton && !isInBreakoutRoom(state)
+        _lobbyEnabled: state['features/lobby'].lobbyEnabled
     };
 }
 

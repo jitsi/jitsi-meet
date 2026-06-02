@@ -15,6 +15,7 @@
  */
 
 #import <React/RCTBridge.h>
+#import <RCTReactNativeFactory.h>
 
 #import "ExternalAPI.h"
 #import "JitsiMeet.h"
@@ -22,7 +23,7 @@
 @interface JitsiMeet ()
 
 - (NSDictionary *)getDefaultProps;
-- (RCTBridge *)getReactBridge;
+- (RCTReactNativeFactory *)getReactNativeFactory;
 - (ExternalAPI *)getExternalAPI;
 
 @end

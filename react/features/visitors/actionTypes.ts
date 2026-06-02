@@ -68,3 +68,14 @@ export const SET_VISITOR_DEMOTE_ACTOR = 'SET_VISITOR_DEMOTE_ACTOR';
  * }
  */
 export const SET_VISITORS_SUPPORTED = 'SET_VISITORS_SUPPORTED';
+
+/**
+ * The type of (redux) action which updates the current visitors list.
+ */
+export const UPDATE_VISITORS_LIST = 'UPDATE_VISITORS_LIST';
+
+/**
+ * Action dispatched when the visitors list is expanded for the first time
+ * and the client should subscribe for updates.
+ */
+export const SUBSCRIBE_VISITORS_LIST = 'SUBSCRIBE_VISITORS_LIST';

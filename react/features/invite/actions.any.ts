@@ -16,7 +16,8 @@ import {
 import { INVITE_TYPES } from './constants';
 import {
     invitePeopleAndChatRooms,
-    inviteSipEndpoints
+    inviteSipEndpoints,
+    isDialInEnabled
 } from './functions';
 import logger from './logger';
 import { IInvitee } from './types';
@@ -210,7 +211,7 @@ export function updateDialInNumbers() {
         const { numbersFetched } = state['features/invite'];
         const mucURL = hosts?.muc;
 
-        if (numbersFetched || !dialInConfCodeUrl || !dialInNumbersUrl || !mucURL) {
+        if (numbersFetched || !isDialInEnabled(state)) {
             // URLs for fetching dial in numbers not defined
             return;
         }

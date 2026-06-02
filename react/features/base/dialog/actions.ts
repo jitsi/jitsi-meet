@@ -14,6 +14,7 @@ import logger from './logger';
 /**
  * Signals Dialog to close its dialog.
  *
+ * @param {string|undefined} name - The name of the component for logging purposes.
  * @param {Object} [component] - The {@code Dialog} component to close/hide. If
  * {@code undefined}, closes/hides {@code Dialog} regardless of which
  * component it's rendering; otherwise, closes/hides {@code Dialog} only if
@@ -23,8 +24,8 @@ import logger from './logger';
  *     component: (React.Component | undefined)
  * }}
  */
-export function hideDialog(component?: ComponentType<any>) {
-    logger.info(`Hide dialog: ${getComponentDisplayName(component)}`);
+export function hideDialog(name?: string, component?: ComponentType<any>) {
+    logger.info(`Hide dialog: ${name}`);
 
     return {
         type: HIDE_DIALOG,
@@ -48,6 +49,7 @@ export function hideSheet() {
 /**
  * Signals Dialog to open dialog.
  *
+ * @param {string} name - The name of the component for logging purposes.
  * @param {Object} component - The component to display as dialog.
  * @param {Object} [componentProps] - The React {@code Component} props of the
  * specified {@code component}.
@@ -57,8 +59,8 @@ export function hideSheet() {
  *     componentProps: (Object | undefined)
  * }}
  */
-export function openDialog(component: ComponentType<any>, componentProps?: Object) {
-    logger.info(`Open dialog: ${getComponentDisplayName(component)}`);
+export function openDialog(name: string, component: ComponentType<any>, componentProps?: Object) {
+    logger.info(`Open dialog: ${name}`);
 
     return {
         type: OPEN_DIALOG,
@@ -92,35 +94,18 @@ export function openSheet(component: ComponentType<any>, componentProps?: Object
  * is not already open. If it is open, then Dialog is signaled to close its
  * dialog.
  *
+ * @param {string} name - The name of the component for logging purposes.
  * @param {Object} component - The component to display as dialog.
  * @param {Object} [componentProps] - The React {@code Component} props of the
  * specified {@code component}.
  * @returns {Function}
  */
-export function toggleDialog(component: ComponentType<any>, componentProps?: Object) {
+export function toggleDialog(name: string, component: ComponentType<any>, componentProps?: Object) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         if (isDialogOpen(getState, component)) {
-            dispatch(hideDialog(component));
+            dispatch(hideDialog(name, component));
         } else {
-            dispatch(openDialog(component, componentProps));
+            dispatch(openDialog(name, component, componentProps));
         }
     };
-}
-
-/**
- * Extracts a printable name for a dialog component.
- *
- * @param {Object} component - The component to extract the name for.
- *
- * @returns {string} The display name.
- */
-function getComponentDisplayName(component?: ComponentType<any>) {
-    if (!component) {
-        return '';
-    }
-
-    const name = component.displayName ?? component.name ?? 'Component';
-
-    return name.replace('withI18nextTranslation(Connect(', '') // dialogs with translations
-        .replace('))', ''); // dialogs with translations suffix
 }

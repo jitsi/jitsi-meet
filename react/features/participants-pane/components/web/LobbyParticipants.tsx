@@ -6,7 +6,6 @@ import { makeStyles } from 'tss-react/mui';
 import Avatar from '../../../base/avatar/components/Avatar';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCheck, IconCloseLarge } from '../../../base/icons/svg';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { admitMultiple } from '../../../lobby/actions.web';
 import { getKnockingParticipants, getLobbyEnabled } from '../../../lobby/functions';
 import Drawer from '../../../toolbox/components/web/Drawer';
@@ -25,10 +24,10 @@ const useStyles = makeStyles()(theme => {
         },
         drawerItem: {
             alignItems: 'center',
-            color: theme.palette.text01,
+            color: theme.palette.participantCounterText,
             display: 'flex',
             padding: '12px 16px',
-            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+            ...theme.typography.bodyShortRegularLarge,
 
             '&:first-child': {
                 marginTop: '15px'
@@ -36,7 +35,7 @@ const useStyles = makeStyles()(theme => {
 
             '&:hover': {
                 cursor: 'pointer',
-                background: theme.palette.action02
+                background: theme.palette.participantActionButton
             }
         },
         icon: {
@@ -48,12 +47,12 @@ const useStyles = makeStyles()(theme => {
             justifyContent: 'space-between'
         },
         heading: {
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
-            color: theme.palette.text02
+            ...theme.typography.bodyShortBold,
+            color: theme.palette.participantSectionText
         },
         link: {
-            ...withPixelLineHeight(theme.typography.labelBold),
-            color: theme.palette.link01,
+            ...theme.typography.labelBold,
+            color: theme.palette.participantLinkText,
             cursor: 'pointer'
         }
     };

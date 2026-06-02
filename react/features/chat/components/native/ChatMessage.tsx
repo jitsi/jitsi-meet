@@ -10,6 +10,7 @@ import { isGifEnabled, isGifMessage } from '../../../gifs/functions.native';
 import { CHAR_LIMIT, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../../constants';
 import {
     getCanReplyToMessage,
+    getDisplayNameSuffix,
     getFormattedTimestamp,
     getMessageText,
     getPrivateNoticeMessage,
@@ -128,9 +129,11 @@ class ChatMessage extends Component<IChatMessageProps> {
             return null;
         }
 
+        const { displayName } = message;
+
         return (
             <Text style = { styles.senderDisplayName }>
-                { message.displayName }
+                { `${displayName}${getDisplayNameSuffix(message)}` }
             </Text>
         );
     }

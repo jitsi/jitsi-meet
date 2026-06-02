@@ -1,14 +1,12 @@
 import { NavigationContainer, Theme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
-import { StatusBar } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
 import DialInSummary from '../../../invite/components/dial-in-summary/native/DialInSummary';
 import Prejoin from '../../../prejoin/components/native/Prejoin';
 import UnsafeRoomWarning from '../../../prejoin/components/native/UnsafeRoomWarning';
-import { isUnsafeRoomWarningEnabled } from '../../../prejoin/functions';
 import VisitorsQueue from '../../../visitors/components/native/VisitorsQueue';
 // eslint-disable-next-line
 // @ts-ignore
@@ -43,18 +41,13 @@ interface IProps {
     dispatch: IStore['dispatch'];
 
     /**
-    * Is unsafe room warning available?
-    */
-    isUnsafeRoomWarningAvailable: boolean;
-
-    /**
     * Is welcome page available?
     */
     isWelcomePageAvailable: boolean;
 }
 
 
-const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWelcomePageAvailable }: IProps) => {
+const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: IProps) => {
     const initialRouteName = isWelcomePageAvailable
         ? screen.welcome.main : screen.connecting;
     const onReady = useCallback(() => {
@@ -70,28 +63,16 @@ const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWel
             onReady = { onReady }
             ref = { rootNavigationRef }
             theme = { navigationContainerTheme as Theme }>
-            <StatusBar
-                animated = { true }
-                backgroundColor = 'transparent'
-                barStyle = { 'light-content' }
-                translucent = { true } />
             <RootStack.Navigator
                 initialRouteName = { initialRouteName }>
-                {
-                    isWelcomePageAvailable
-                        && <>
-                            <RootStack.Screen // @ts-ignore
-                                component = { WelcomePage }
-                                name = { screen.welcome.main }
-                                options = { welcomeScreenOptions } />
-                            <RootStack.Screen
-
-                                // @ts-ignore
-                                component = { DialInSummary }
-                                name = { screen.dialInSummary }
-                                options = { dialInSummaryScreenOptions } />
-                        </>
-                }
+                <RootStack.Screen // @ts-ignore
+                    component = { WelcomePage }
+                    name = { screen.welcome.main }
+                    options = { welcomeScreenOptions } />
+                <RootStack.Screen // @ts-ignore
+                    component = { DialInSummary }
+                    name = { screen.dialInSummary }
+                    options = { dialInSummaryScreenOptions } />
                 <RootStack.Screen
                     component = { ConnectingPage }
                     name = { screen.connecting }
@@ -100,13 +81,10 @@ const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWel
                     component = { Prejoin }
                     name = { screen.preJoin }
                     options = { preJoinScreenOptions } />
-                {
-                    isUnsafeRoomWarningAvailable
-                    && <RootStack.Screen
-                        component = { UnsafeRoomWarning }
-                        name = { screen.unsafeRoomWarning }
-                        options = { unsafeMeetingScreenOptions } />
-                }
+                <RootStack.Screen
+                    component = { UnsafeRoomWarning }
+                    name = { screen.unsafeRoomWarning }
+                    options = { unsafeMeetingScreenOptions } />
                 <RootStack.Screen
                     component = { VisitorsQueue }
                     name = { screen.visitorsQueue }
@@ -128,7 +106,6 @@ const RootNavigationContainer = ({ dispatch, isUnsafeRoomWarningAvailable, isWel
  */
 function mapStateToProps(state: IReduxState) {
     return {
-        isUnsafeRoomWarningAvailable: isUnsafeRoomWarningEnabled(state),
         isWelcomePageAvailable: isWelcomePageEnabled(state)
     };
 }

@@ -5,12 +5,14 @@ import { createRecordingDialogEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
+import { MEET_FEATURES } from '../../../base/jwt/constants';
+import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { updateDropboxToken } from '../../../dropbox/actions';
 import { getDropboxData, getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropbox/functions.any';
 import { showErrorNotification } from '../../../notifications/actions';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
-import { setSelectedRecordingService, startLocalVideoRecording } from '../../actions';
+import { setSelectedRecordingService, setStartRecordingIntent, startLocalVideoRecording } from '../../actions';
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../constants';
 import { isRecordingSharingEnabled, shouldAutoTranscribeOnRecord, supportsLocalRecording } from '../../functions';
 
@@ -64,11 +66,6 @@ export interface IProps extends WithTranslation {
     _rToken: string;
 
     /**
-     * Whether the record audio / video option is enabled by default.
-     */
-    _recordAudioAndVideo: boolean;
-
-    /**
      * Whether or not the local participant is screensharing.
      */
     _screensharing: boolean;
@@ -99,6 +96,11 @@ export interface IProps extends WithTranslation {
     dispatch: IStore['dispatch'];
 
     navigation: any;
+
+    /**
+     * Whether the record audio / video option is enabled by default.
+     */
+    recordAudioAndVideo: boolean;
 }
 
 interface IState {
@@ -173,10 +175,8 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
 
         let selectedRecordingService = '';
 
-        // TODO: Potentially check if we need to handle changes of
-        // _fileRecordingsServiceEnabled and _areIntegrationsEnabled()
-        if (this.props._fileRecordingsServiceEnabled
-                || !this._areIntegrationsEnabled()) {
+        // Select the default recording service based on what's actually available.
+        if (this.props._fileRecordingsServiceEnabled) {
             selectedRecordingService = RECORDING_TYPES.JITSI_REC_SERVICE;
         } else if (this._areIntegrationsEnabled()) {
             if (props._localRecordingEnabled && supportsLocalRecording()) {
@@ -184,14 +184,19 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             } else {
                 selectedRecordingService = RECORDING_TYPES.DROPBOX;
             }
+        } else if (props._localRecordingEnabled && supportsLocalRecording()) {
+            selectedRecordingService = RECORDING_TYPES.LOCAL;
         }
+        // If no service is available, selectedRecordingService stays '' and
+        // the Start Recording button will be disabled.
+
 
         this.state = {
             isTokenValid: false,
             isValidating: false,
             userName: undefined,
             sharingEnabled: true,
-            shouldRecordAudioAndVideo: this.props._recordAudioAndVideo,
+            shouldRecordAudioAndVideo: this.props.recordAudioAndVideo,
             shouldRecordTranscription: this.props._autoTranscribeOnRecord,
             spaceLeft: undefined,
             selectedRecordingService,
@@ -362,6 +367,13 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             type?: string;
         } = {};
 
+        // Dispatch intent synchronously before any async operations.
+        // This coordinates sound/notification timing between recording and transcription.
+        dispatch(setStartRecordingIntent({
+            recording: this.state.shouldRecordAudioAndVideo,
+            transcription: this.state.shouldRecordTranscription
+        }));
+
         if (this.state.shouldRecordAudioAndVideo) {
             switch (this.state.selectedRecordingService) {
             case RECORDING_TYPES.DROPBOX: {
@@ -397,6 +409,9 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             }
             case RECORDING_TYPES.LOCAL: {
                 dispatch(startLocalVideoRecording(this.state.localRecordingOnlySelf));
+                _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                    isTranscribingEnabled: this.state.shouldRecordTranscription
+                });
 
                 return true;
             }
@@ -415,12 +430,15 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
 
         if (this.state.selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE
                 && this.state.shouldRecordTranscription) {
-            dispatch(setRequestingSubtitles(true, _displaySubtitles, _subtitlesLanguage));
+            dispatch(setRequestingSubtitles(
+                true, _displaySubtitles, _subtitlesLanguage, true,
+                this.state.shouldRecordAudioAndVideo));
+        } else {
+            _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                isRecordingRequested: this.state.shouldRecordAudioAndVideo,
+                isTranscribingEnabled: this.state.shouldRecordTranscription
+            });
         }
-
-        _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-            isTranscribingEnabled: this.state.shouldRecordTranscription
-        });
 
         return true;
     }
@@ -474,7 +492,9 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
         _isDropboxEnabled: isDropboxEnabled(state),
         _localRecordingEnabled: !localRecording?.disable,
         _rToken: state['features/dropbox'].rToken ?? '',
-        _recordAudioAndVideo: recordings?.recordAudioAndVideo ?? true,
+        recordAudioAndVideo:
+            isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false)
+                ? _ownProps.recordAudioAndVideo ?? recordings?.recordAudioAndVideo ?? true : false,
         _subtitlesLanguage,
         _tokenExpireDate: state['features/dropbox'].expireDate,
         _token: state['features/dropbox'].token ?? ''

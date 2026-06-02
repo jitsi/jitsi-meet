@@ -5,6 +5,7 @@ local basexx = require "basexx";
 local have_async, async = pcall(require, "util.async");
 local hex = require "util.hex";
 local jwt = module:require "luajwtjitsi";
+local jwk_to_pem = module:require "token/jwk".jwk_to_pem;
 local jid = require "util.jid";
 local json_safe = require "cjson.safe";
 local path = require "util.paths";
@@ -15,6 +16,7 @@ local http_get_with_retry = main_util.http_get_with_retry;
 local extract_subdomain = main_util.extract_subdomain;
 local starts_with = main_util.starts_with;
 local table_shallow_copy = main_util.table_shallow_copy;
+local get_room_from_jid = main_util.get_room_from_jid;
 local cjson_safe  = require 'cjson.safe'
 local timer = require "util.timer";
 local async = require "util.async";
@@ -110,14 +112,14 @@ function Util.new(module)
         return nil;
     end
 
-    if self.appSecret == nil and self.asapKeyServer == nil then
-        module:log("error", "'app_secret' or 'asap_key_server' must be specified");
+    if self.appSecret == nil and self.asapKeyServer == nil and self.cacheKeysUrl == nil then
+        module:log("error", "'app_secret', 'asap_key_server or 'cacheKeysUrl' must be specified");
         return nil;
     end
 
     -- Set defaults for signature algorithm
     if self.signatureAlgorithm == nil then
-        if self.asapKeyServer ~= nil then
+        if self.asapKeyServer ~= nil or self.cacheKeysUrl then
             self.signatureAlgorithm = "RS256"
         elseif self.appSecret ~= nil then
             self.signatureAlgorithm = "HS256"
@@ -132,7 +134,7 @@ function Util.new(module)
 
     self.requireRoomClaim = module:get_option_boolean('asap_require_room_claim', true);
 
-    if self.asapKeyServer and not have_async then
+    if (self.asapKeyServer or self.cacheKeysUrl) and not have_async then
         module:log("error", "requires a version of Prosody with util.async");
         return nil;
     end
@@ -147,7 +149,18 @@ function Util.new(module)
                 local keys_to_delete = table_shallow_copy(self.cachedKeys);
                 -- Let's convert any certificate to public key
                 for k, v in pairs(cjson_safe.decode(content)) do
-                    if starts_with(v, '-----BEGIN CERTIFICATE-----') then
+                    -- JWKS format
+                    if k == "keys" and type(v) == "table" then
+                        for _, key in ipairs(v) do
+                            if key.kid then
+                                self.cachedKeys[key.kid] = jwk_to_pem(key);
+
+                                -- do not clean this key if it already exists
+                                keys_to_delete[key.kid] = nil;
+                            end
+                        end
+                    -- direct PEM mapping (Firebase)
+                    elseif starts_with(v, '-----BEGIN CERTIFICATE-----') then
                         self.cachedKeys[k] = ssl.loadcertificate(v):pubkey();
                         -- do not clean this key if it already exists
                         keys_to_delete[k] = nil;
@@ -262,11 +275,13 @@ function Util:process_and_verify_token(session)
         -- We're using an public key stored in the session
         -- module:log("debug","Public key was found on the session");
         key = session.public_key;
-    elseif self.asapKeyServer and session.auth_token ~= nil then
+    elseif (self.asapKeyServer or self.cacheKeysUrl) and session.auth_token ~= nil then
         -- We're fetching an public key from an ASAP server
         local dotFirst = session.auth_token:find("%.");
         if not dotFirst then return false, "not-allowed", "Invalid token" end
-        local header, err = json_safe.decode(basexx.from_url64(session.auth_token:sub(1,dotFirst-1)));
+        local headerPartEncoded = basexx.from_url64(session.auth_token:sub(1,dotFirst-1));
+        if not headerPartEncoded then return false, "not-allowed", "Invalid token" end
+        local header, err = json_safe.decode(headerPartEncoded);
         if err then
             return false, "not-allowed", "bad token format";
         end
@@ -312,14 +327,18 @@ function Util:process_and_verify_token(session)
         if self.requireRoomClaim then
             local roomClaim = claims["room"];
             if roomClaim == nil then
-                return false, "'room' claim is missing";
+                return false, "not-authorized", "room claim is missing";
             end
         end
 
         -- Binds room name to the session which is later checked on MUC join
         session.jitsi_meet_room = claims["room"];
         -- Binds domain name to the session
+        if claims["sub"] == nil then
+            return false, "not-authorized", "sub claim is missing";
+        end
         session.jitsi_meet_domain = claims["sub"];
+        session.jitsi_meet_auth_issuer = claims["iss"];
 
         -- Binds the user details to the session if available
         if claims["context"] ~= nil then
@@ -373,16 +392,22 @@ end
 --         it and returns false in case verification was processed
 --         and was not successful
 function Util:verify_room(session, room_address)
-    if self.allowEmptyToken and session.auth_token == nil then
-        --module:log("debug", "Skipped room token verification - empty tokens are allowed");
-        return true;
-    end
-
     -- extract room name using all chars, except the not allowed ones
     local room,_,_ = jid.split(room_address);
     if room == nil then
-        log("error",
-            "Unable to get name of the MUC room ? to: %s", room_address);
+        module:log('error', 'Unable to get name of the MUC room ? to: %s', room_address);
+        return false, 'invalid-room-address', 'Room address is invalid';
+    end
+    local room_instance = get_room_from_jid(jid.join(room, self.muc_domain));
+    if not room_instance then
+        module:log('info', 'Room does not exists:%s', room);
+        return false, 'room-does-not-exist', 'Room does not exist';
+    end
+
+    if self.allowEmptyToken and session.auth_token == nil then
+        if room_instance._data.allowUnauthenticatedAccess == false then
+            return false, 'authentication-required', 'Authentication required';
+        end
         return true;
     end
 
@@ -394,11 +419,11 @@ function Util:verify_room(session, room_address)
             module:log('warn', 'session.jitsi_meet_room not string: %s', inspect(auth_room));
         end
     end
+
     if not self.enableDomainVerification then
-        -- if auth_room is missing, this means user is anonymous (no token for
-        -- its domain) we let it through, jicofo is verifying creation domain
+        -- if auth_room is missing, this means user is anonymous (no token for its domain) we let it through
         if auth_room and (room ~= auth_room and not ends_with(room, ']'..auth_room)) and auth_room ~= '*' then
-            return false;
+            return false, 'room-mismatch', 'Room does not match the room from token';
         end
 
         return true;
@@ -438,7 +463,7 @@ function Util:verify_room(session, room_address)
             -- not a regex
             room_to_check = auth_room;
         end
-        -- module:log("debug", "room to check: %s", room_to_check)
+
         if not room_to_check then
             if not self.requireRoomClaim then
                 -- if we do not require to have the room claim, and it is missing
@@ -446,17 +471,22 @@ function Util:verify_room(session, room_address)
                 return true;
             end
 
-            return false;
+            return false, 'room-name-does-not-match', 'Room name cannot be matched to the one from token.';
         end
     end
 
     if session.jitsi_meet_str_tenant
         and string.lower(session.jitsi_meet_str_tenant) ~= session.jitsi_web_query_prefix then
+        session.jitsi_meet_tenant_mismatch = true;
+
+        if room_instance._data.allowUnauthenticatedAccess == false then
+            return false;
+        end
+
         module:log('warn', 'Tenant differs for user:%s group:%s url_tenant:%s token_tenant:%s',
             session.jitsi_meet_context_user and session.jitsi_meet_context_user.id or '',
             session.jitsi_meet_context_group,
             session.jitsi_web_query_prefix, session.jitsi_meet_str_tenant);
-        session.jitsi_meet_tenant_mismatch = true;
     end
 
     local auth_domain = string.lower(session.jitsi_meet_domain);
@@ -473,7 +503,7 @@ function Util:verify_room(session, room_address)
         -- deny access if option is missing
         if not self.muc_domain_base then
             module:log("warn", "No 'muc_domain_base' option set, denying access!");
-            return false;
+            return false, 'server-missing-config', 'Misconfiguration of server';
         end
 
         return room_address_to_verify == jid.join(

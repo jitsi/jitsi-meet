@@ -3,7 +3,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../../base/icons/components/Icon';
 import { IconArrowDown } from '../../../../base/icons/svg';
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 
 interface IProps {
 
@@ -25,10 +24,10 @@ const useStyles = makeStyles()(theme => {
             display: 'flex',
             alignItems: 'center',
             cursor: 'pointer',
-            backgroundColor: theme.palette.ui01,
-            borderRight: `1px solid ${theme.palette.ui03}`,
-            color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            backgroundColor: theme.palette.prejoinCountryPickerBackground,
+            borderRight: `1px solid ${theme.palette.prejoinCountryPickerBorder}`,
+            color: theme.palette.prejoinCountryPickerText,
+            ...theme.typography.bodyShortRegular,
             position: 'relative',
             width: '88px',
             borderTopLeftRadius: theme.shape.borderRadius,

@@ -9,10 +9,11 @@ import {
     getParticipantDisplayName
 } from '../../../base/participants/functions';
 import { updateSettings } from '../../../base/settings/actions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
 import { getIndicatorsTooltipPosition } from '../../../filmstrip/functions.web';
 import { appendSuffix } from '../../functions';
+
+import { getDisplayNameColor } from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link DisplayName}.
@@ -49,8 +50,8 @@ interface IProps {
 const useStyles = makeStyles()(theme => {
     return {
         displayName: {
-            ...withPixelLineHeight(theme.typography.labelBold),
-            color: theme.palette.text01,
+            ...theme.typography.labelBold,
+            color: getDisplayNameColor(theme),
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
@@ -62,8 +63,8 @@ const useStyles = makeStyles()(theme => {
             background: 'none',
             boxShadow: 'none',
             padding: 0,
-            ...withPixelLineHeight(theme.typography.labelBold),
-            color: theme.palette.text01
+            ...theme.typography.labelBold,
+            color: getDisplayNameColor(theme)
         }
     };
 });

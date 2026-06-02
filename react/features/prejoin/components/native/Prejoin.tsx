@@ -25,7 +25,7 @@ import { IconCloseLarge } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getFieldValue } from '../../../base/react/functions';
-import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
+import { ASPECT_RATIO_WIDE } from '../../../base/responsive-ui/constants';
 import { updateSettings } from '../../../base/settings/actions';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
@@ -34,11 +34,11 @@ import { openDisplayNamePrompt } from '../../../display-name/actions';
 import BrandingImageBackground from '../../../dynamic-branding/components/native/BrandingImageBackground';
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
 import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
-import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
+import { replaceRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
-import { isDisplayNameRequired, isRoomNameEnabled } from '../../functions';
+import { isDisplayNameRequired, isRoomNameEnabled } from '../../functions.native';
 import { IPrejoinProps } from '../../types';
 import { hasDisplayName } from '../../utils';
 
@@ -49,9 +49,10 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const dispatch = useDispatch();
     const isFocused = useIsFocused();
     const { t } = useTranslation();
-    const aspectRatio = useSelector(
-        (state: IReduxState) => state['features/base/responsive-ui']?.aspectRatio
+    const { aspectRatio, clientHeight, clientWidth } = useSelector(
+        (state: IReduxState) => state['features/base/responsive-ui']
     );
+    const isTablet = Math.min(clientWidth, clientHeight) >= 768;
     const localParticipant = useSelector((state: IReduxState) => getLocalParticipant(state));
     const isDisplayNameMandatory = useSelector((state: IReduxState) => isDisplayNameRequired(state));
     const isDisplayNameVisible
@@ -81,7 +82,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
 
     const onJoin = useCallback(() => {
         dispatch(connect());
-        navigateRoot(screen.conference.root);
+        replaceRoot(screen.conference.root);
     }, [ dispatch ]);
 
     const maybeJoin = useCallback(() => {
@@ -109,14 +110,13 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const { PRIMARY, TERTIARY } = BUTTON_TYPES;
 
     useEffect(() => {
-        BackHandler.addEventListener('hardwareBackPress', goBack);
+        const hardwareBackPressSubscription = BackHandler.addEventListener('hardwareBackPress', goBack);
 
         dispatch(setPermanentProperty({
             wasPrejoinDisplayed: true
         }));
 
-        return () => BackHandler.removeEventListener('hardwareBackPress', goBack);
-
+        return () => hardwareBackPressSubscription.remove();
     }, []); // dispatch is not in the dependency list because we want the action to be dispatched only once when
     // the component is mounted.
 
@@ -143,16 +143,11 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         });
     }, [ navigation ]);
 
-    let contentWrapperStyles;
-    let contentContainerStyles;
-    let largeVideoContainerStyles;
+    let contentContainerStyles = styles.contentContainer;
+    let largeVideoContainerStyles = styles.largeVideoContainer;
 
-    if (aspectRatio === ASPECT_RATIO_NARROW) {
-        contentWrapperStyles = styles.contentWrapper;
-        contentContainerStyles = styles.contentContainer;
-        largeVideoContainerStyles = styles.largeVideoContainer;
-    } else {
-        contentWrapperStyles = styles.contentWrapperWide;
+    if (isTablet && aspectRatio === ASPECT_RATIO_WIDE) {
+        // @ts-ignore
         contentContainerStyles = styles.contentContainerWide;
         largeVideoContainerStyles = styles.largeVideoContainerWide;
     }
@@ -161,7 +156,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         <JitsiScreen
             addBottomPadding = { false }
             safeAreaInsets = { [ 'right' ] }
-            style = { contentWrapperStyles }>
+            style = { styles.contentWrapper }>
             <BrandingImageBackground />
             {
                 isFocused
@@ -198,7 +193,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                 }
                 {
                     showDisplayNameError && (
-                        <View style = { styles.errorContainer as StyleProp<TextStyle> }>
+                        <View style = { styles.errorContainer as StyleProp<ViewStyle> }>
                             <Text style = { styles.error as StyleProp<TextStyle> }>
                                 { t('prejoin.errorMissingName') }
                             </Text>

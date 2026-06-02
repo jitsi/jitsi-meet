@@ -11,6 +11,29 @@ export * from './constants.any';
  */
 export const commonStyles = (theme: Theme) => {
     return {
+        ':root': {
+            // Inject semantic tokens as CSS custom properties for use in SCSS
+            '--drawer-background-color': theme.palette.drawerBackground,
+            '--icon-svg-fill': theme.palette.iconSvgFill,
+            '--overflow-menu-background-color': theme.palette.overflowMenuBackground,
+            '--overflow-menu-item-disabled-color': theme.palette.overflowMenuItemDisabled,
+            '--overflow-menu-item-hover-color': theme.palette.overflowMenuItemHover,
+            '--overflow-menu-item-icon-color': theme.palette.overflowMenuItemIcon,
+            '--overflow-menu-item-text-color': theme.palette.overflowMenuItemText,
+            '--prejoin-preview-background': theme.palette.prejoinPreviewBackground,
+            '--reactions-menu-background': theme.palette.reactionsMenuBackground,
+            '--reactions-menu-box-shadow-1': theme.palette.reactionsMenuBoxShadow1,
+            '--reactions-menu-box-shadow-2': theme.palette.reactionsMenuBoxShadow2,
+            '--reactions-menu-button-toggled': theme.palette.reactionsMenuButtonToggled,
+            '--toolbar-button-active-color': theme.palette.toolbarButtonActive,
+            '--toolbar-button-color': theme.palette.toolbarButton,
+            '--toolbar-button-hover-color': theme.palette.toolbarButtonHover,
+            '--toolbar-icon-active-color': theme.palette.toolbarIconActive,
+            '--toolbar-icon-color': theme.palette.toolbarIcon,
+            '--toolbar-icon-hover-color': theme.palette.toolbarIconHover,
+            '--toolbox-background-color': theme.palette.toolboxBackground
+        },
+
         '.empty-list': {
             listStyleType: 'none',
             margin: 0,
@@ -32,20 +55,20 @@ export const commonStyles = (theme: Theme) => {
                 marginTop: theme.spacing(3),
 
                 '& label': {
-                    fontSize: '14px'
+                    fontSize: '0.875rem'
                 }
             }
         },
 
         '.overflow-menu-item': {
             alignItems: 'center',
-            color: theme.palette.text01,
+            color: theme.palette.overflowMenuItemText,
             cursor: 'pointer',
             display: 'flex',
-            fontSize: 14,
+            fontSize: '0.875rem',
             fontWeight: 400,
             height: 40,
-            lineHeight: '24px',
+            lineHeight: '1.5rem',
             padding: '8px 16px',
             boxSizing: 'border-box' as const,
             '& > div': {
@@ -59,20 +82,20 @@ export const commonStyles = (theme: Theme) => {
 
             '&.disabled': {
                 cursor: 'initial',
-                color: theme.palette.text03,
+                color: theme.palette.overflowMenuItemDisabled,
 
                 '&:hover': {
                     background: 'none'
                 },
 
                 '& svg': {
-                    fill: theme.palette.text03
+                    fill: theme.palette.overflowMenuItemDisabled
                 }
             },
 
             '@media (hover: hover) and (pointer: fine)': {
                 '&:hover': {
-                    background: theme.palette.action02Hover
+                    background: theme.palette.overflowMenuItemHover
                 },
                 '&.unclickable:hover': {
                     background: 'inherit'
@@ -85,7 +108,7 @@ export const commonStyles = (theme: Theme) => {
 
             '& i': {
                 display: 'inline',
-                fontSize: 24
+                fontSize: '1.5rem'
             },
 
             '@media (hover: hover) and (pointer: fine)': {
@@ -100,14 +123,14 @@ export const commonStyles = (theme: Theme) => {
             },
 
             '& svg': {
-                fill: theme.palette.text01,
+                fill: theme.palette.overflowMenuItemIcon,
                 height: 20,
                 width: 20
             }
         },
 
         '.prejoin-dialog': {
-            backgroundColor: theme.palette.uiBackground,
+            backgroundColor: theme.palette.prejoinDialogBackground,
             boxShadow: '0px 2px 20px rgba(0, 0, 0, 0.5)',
             borderRadius: theme.shape.borderRadius,
             color: '#fff',
@@ -120,8 +143,8 @@ export const commonStyles = (theme: Theme) => {
             },
 
             '.prejoin-dialog-label': {
-                fontSize: '15px',
-                lineHeight: '24px'
+                fontSize: '1rem',
+                lineHeight: '1.5rem'
             },
 
             '.prejoin-dialog-label-num': {
@@ -156,8 +179,8 @@ export const commonStyles = (theme: Theme) => {
 
             '.prejoin-dialog-title': {
                 display: 'inline-block',
-                fontSize: '24px',
-                lineHeight: '32px'
+                fontSize: '1.5rem',
+                lineHeight: '2rem'
             },
 
             '.prejoin-dialog-icon': {
@@ -173,7 +196,7 @@ export const commonStyles = (theme: Theme) => {
             },
 
             '.prejoin-dialog-delimiter': {
-                background: theme.palette.ui03,
+                background: theme.palette.prejoinDialogDelimiter,
                 border: '0',
                 height: '1px',
                 margin: '0',
@@ -194,9 +217,9 @@ export const commonStyles = (theme: Theme) => {
             },
 
             '.prejoin-dialog-delimiter-txt': {
-                background: theme.palette.uiBackground,
-                color: theme.palette.text01,
-                fontSize: '11px',
+                background: theme.palette.prejoinDialogBackground,
+                color: theme.palette.prejoinDialogDelimiterText,
+                fontSize: '0.75rem',
                 textTransform: 'uppercase' as const,
                 padding: `0 ${theme.spacing(2)}`
             }
@@ -212,18 +235,18 @@ export const commonStyles = (theme: Theme) => {
             display: 'flex',
             borderRadius: 3,
             flexDirection: 'column' as const,
-            fontSize: 24,
+            fontSize: '1.5rem',
             height: 48,
             justifyContent: 'center',
             width: 48,
 
             '@media (hover: hover) and (pointer: fine)': {
                 '&:hover': {
-                    backgroundColor: theme.palette.ui04
+                    backgroundColor: theme.palette.toolboxIconHover
                 },
 
                 '&:active': {
-                    backgroundColor: theme.palette.ui03
+                    backgroundColor: theme.palette.toolboxIconActive
                 }
             },
             [theme.breakpoints.down(320)]: {
@@ -232,7 +255,7 @@ export const commonStyles = (theme: Theme) => {
             },
 
             '&.toggled': {
-                backgroundColor: theme.palette.ui03
+                backgroundColor: theme.palette.toolboxIconToggled
             },
 
             '&.disabled': {
@@ -240,21 +263,21 @@ export const commonStyles = (theme: Theme) => {
                 backgroundColor: `${theme.palette.disabled01} !important`,
 
                 '& svg': {
-                    fill: `${theme.palette.text03} !important`
+                    fill: `${theme.palette.icon03} !important`
                 }
             }
         },
 
         '.toolbox-button': {
-            color: theme.palette.text01,
+            color: theme.palette.toolbarIcon,
             cursor: 'pointer',
             display: 'inline-block',
-            lineHeight: '48px',
+            lineHeight: '3rem',
             textAlign: 'center' as const
         },
 
         '.toolbox-content-items': {
-            background: theme.palette.ui01,
+            background: theme.palette.toolboxBackground,
             borderRadius: 6,
             margin: '0 auto',
             padding: 6,

@@ -12,6 +12,6 @@ export * from './actions.any';
  */
 export function toggleLanguageSelectorDialog() {
     return function(dispatch: IStore['dispatch']) {
-        dispatch(toggleDialog(LanguageSelectorDialog));
+        dispatch(toggleDialog('LanguageSelectorDialog', LanguageSelectorDialog));
     };
 }

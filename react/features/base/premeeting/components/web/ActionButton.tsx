@@ -3,7 +3,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
 import { IconArrowDown } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 
 interface IProps {
 
@@ -82,10 +81,10 @@ interface IProps {
 const useStyles = makeStyles()(theme => {
     return {
         actionButton: {
-            ...withPixelLineHeight(theme.typography.bodyLongBold),
+            ...theme.typography.bodyLongBold,
             borderRadius: theme.shape.borderRadius,
             boxSizing: 'border-box',
-            color: theme.palette.text01,
+            color: theme.palette.actionButtonText,
             cursor: 'pointer',
             display: 'inline-block',
             marginBottom: '16px',
@@ -96,32 +95,32 @@ const useStyles = makeStyles()(theme => {
             border: 0,
 
             '&.primary': {
-                background: theme.palette.action01,
-                color: theme.palette.text01,
+                background: theme.palette.prejoinActionButtonPrimary,
+                color: theme.palette.prejoinActionButtonPrimaryText,
 
                 '&:hover': {
-                    backgroundColor: theme.palette.action01Hover
+                    backgroundColor: theme.palette.prejoinActionButtonPrimaryHover
                 }
             },
 
             '&.secondary': {
-                background: theme.palette.action02,
-                color: theme.palette.text04,
+                background: theme.palette.prejoinActionButtonSecondary,
+                color: theme.palette.prejoinActionButtonSecondaryText,
 
                 '&:hover': {
-                    backgroundColor: theme.palette.action02Hover
+                    backgroundColor: theme.palette.prejoinActionButtonSecondaryHover
                 }
             },
 
             '&.text': {
                 width: 'auto',
-                fontSize: '13px',
+                fontSize: '0.875rem',
                 margin: '0',
                 padding: '0'
             },
 
             '&.disabled': {
-                background: theme.palette.disabled01,
+                background: theme.palette.prejoinActionButtonDisabled,
                 border: '1px solid #5E6D7A',
                 color: '#AFB6BC',
                 cursor: 'initial',
@@ -135,7 +134,7 @@ const useStyles = makeStyles()(theme => {
 
 
             [theme.breakpoints.down(400)]: {
-                fontSize: 16,
+                fontSize: '1rem',
                 marginBottom: 8,
                 padding: '11px 16px'
             }

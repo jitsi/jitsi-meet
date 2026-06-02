@@ -64,7 +64,7 @@ let permissionsReplyListener: Function | undefined,
  * @public
  */
 export function openRemoteControlAuthorizationDialog(participantId: string) {
-    return openDialog(RemoteControlAuthorizationDialog, { participantId });
+    return openDialog('RemoteControlAuthorizationDialog', RemoteControlAuthorizationDialog, { participantId });
 }
 
 /**

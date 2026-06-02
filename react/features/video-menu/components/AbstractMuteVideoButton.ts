@@ -48,7 +48,7 @@ export default class AbstractMuteVideoButton extends AbstractButton<IProps> {
                 'participant_id': participantID
             }));
 
-        dispatch(openDialog(MuteRemoteParticipantsVideoDialog, { participantID }));
+        dispatch(openDialog('MuteRemoteParticipantsVideoDialog', MuteRemoteParticipantsVideoDialog, { participantID }));
     }
 
     /**

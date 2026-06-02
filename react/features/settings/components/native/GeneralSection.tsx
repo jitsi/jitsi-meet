@@ -11,7 +11,6 @@ import { updateSettings } from '../../../base/settings/actions';
 import Switch from '../../../base/ui/components/native/Switch';
 import { navigate } from '../../../mobile/navigation/components/settings/SettingsNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
-import { isPrejoinEnabledInConfig } from '../../../prejoin/functions.native';
 
 import FormRow from './FormRow';
 import FormSection from './FormSection';
@@ -23,22 +22,12 @@ const GeneralSection = () => {
     const dispatch = useDispatch();
     const {
         disableSelfView,
-        userSelectedSkipPrejoin
     } = useSelector((state: IReduxState) => state['features/base/settings']);
-
-    const showPrejoinPage = !userSelectedSkipPrejoin;
-
-    const showPrejoinSettings = useSelector(isPrejoinEnabledInConfig);
 
     const { language = DEFAULT_LANGUAGE } = i18next;
 
     const onSelfViewToggled = useCallback((enabled?: boolean) =>
         dispatch(updateSettings({ disableSelfView: enabled }))
-    , [ dispatch, updateSettings ]);
-
-    const onShowPejoinToggled = useCallback((enabled?: boolean) => {
-        dispatch(updateSettings({ userSelectedSkipPrejoin: !enabled }));
-    }
     , [ dispatch, updateSettings ]);
 
     const navigateToLanguageSelect = useCallback(() => {
@@ -52,11 +41,6 @@ const GeneralSection = () => {
                     checked = { Boolean(disableSelfView) }
                     onChange = { onSelfViewToggled } />
             </FormRow>
-            {showPrejoinSettings && <FormRow label = 'prejoin.showScreen'>
-                <Switch
-                    checked = { showPrejoinPage }
-                    onChange = { onShowPejoinToggled } />
-            </FormRow>}
             <FormRow label = 'settings.language'>
                 <View style = { styles.languageButtonContainer as ViewStyle }>
                     <TouchableHighlight onPress = { navigateToLanguageSelect }>

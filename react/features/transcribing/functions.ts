@@ -2,8 +2,8 @@ import i18next from 'i18next';
 
 import { IReduxState } from '../app/types';
 import { IConfig } from '../base/config/configType';
+import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
-import { isLocalParticipantModerator } from '../base/participants/functions';
 
 import JITSI_TO_BCP47_MAP from './jitsi-bcp47-map.json';
 import logger from './logger';
@@ -25,6 +25,11 @@ export function determineTranscriptionLanguage(config: IConfig) {
         return undefined;
     }
 
+    const transcriberLangs = {
+        ...TRANSCRIBER_LANGS,
+        ...(transcription.customLanguages ?? {})
+    };
+
     // Depending on the config either use the language that the app automatically detected or the hardcoded
     // config BCP47 value.
     // Jitsi language detections uses custom language tags, but the transcriber expects BCP-47 compliant tags,
@@ -34,7 +39,7 @@ export function determineTranscriptionLanguage(config: IConfig) {
         : transcription?.preferredLanguage;
 
     // Check if the obtained language is supported by the transcriber
-    let safeBCP47Locale = TRANSCRIBER_LANGS[bcp47Locale as keyof typeof TRANSCRIBER_LANGS] && bcp47Locale;
+    let safeBCP47Locale = transcriberLangs[bcp47Locale as keyof typeof transcriberLangs] && bcp47Locale;
 
     if (!safeBCP47Locale) {
         safeBCP47Locale = DEFAULT_TRANSCRIBER_LANG;
@@ -77,8 +82,7 @@ export function isRecorderTranscriptionsRunning(state: IReduxState) {
  */
 export function canAddTranscriber(state: IReduxState) {
     const { transcription } = state['features/base/config'];
-    const isModerator = isLocalParticipantModerator(state);
-    const isTranscribingAllowed = isJwtFeatureEnabled(state, 'transcription', isModerator, false);
+    const isTranscribingAllowed = isJwtFeatureEnabled(state, MEET_FEATURES.TRANSCRIPTION, false);
 
     return Boolean(transcription?.enabled) && isTranscribingAllowed;
 }

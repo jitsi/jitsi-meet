@@ -41,8 +41,8 @@ const _LANGUAGES = {
     },
 
     // Spanish (Latin America)
-    'esUS': {
-        main: require('../../../../lang/main-esUS')
+    'es-US': {
+        main: require('../../../../lang/main-es-US')
     },
 
     // Estonian
@@ -66,8 +66,8 @@ const _LANGUAGES = {
     },
 
     // French (Canadian)
-    'frCA': {
-        main: require('../../../../lang/main-frCA')
+    'fr-CA': {
+        main: require('../../../../lang/main-fr-CA')
     },
 
     // Croatian
@@ -116,8 +116,8 @@ const _LANGUAGES = {
     },
 
     // Portuguese (Brazil)
-    'ptBR': {
-        main: require('../../../../lang/main-ptBR')
+    'pt-BR': {
+        main: require('../../../../lang/main-pt-BR')
     },
 
     // Romanian
@@ -166,13 +166,13 @@ const _LANGUAGES = {
     },
 
     // Chinese (Simplified)
-    'zhCN': {
-        main: require('../../../../lang/main-zhCN')
+    'zh-CN': {
+        main: require('../../../../lang/main-zh-CN')
     },
 
     // Chinese (Traditional)
-    'zhTW': {
-        main: require('../../../../lang/main-zhTW')
+    'zh-TW': {
+        main: require('../../../../lang/main-zh-TW')
     }
 };
 

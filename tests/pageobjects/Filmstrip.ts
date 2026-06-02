@@ -5,7 +5,7 @@ import BasePageObject from './BasePageObject';
 
 const LOCAL_VIDEO_XPATH = '//span[@id="localVideoContainer"]';
 const LOCAL_VIDEO_MENU_TRIGGER = '#local-video-menu-trigger';
-const LOCAL_USER_CONTROLS = 'aria/Local user controls';
+const LOCAL_USER_CONTROLS = 'button[title="Local user controls"]';
 const HIDE_SELF_VIEW_BUTTON_XPATH = '//div[contains(@class, "popover")]//div[@id="hideselfviewButton"]';
 
 /**
@@ -58,9 +58,7 @@ export default class Filmstrip extends BasePageObject {
      * @param endpointId
      */
     async getRemoteVideoId(endpointId: string) {
-        const remoteDisplayName = this.participant.driver.$(`span[id="participant_${endpointId}"]`);
-
-        await remoteDisplayName.moveTo();
+        await this.participant.driver.$(`span[id="participant_${endpointId}"]`).waitForExist();
 
         return await this.participant.execute(eId =>
             document.evaluate(`//span[@id="participant_${eId}"]//video`,
@@ -80,29 +78,17 @@ export default class Filmstrip extends BasePageObject {
      * @param participant The participant.
      */
     async pinParticipant(participant: Participant) {
-        let videoIdToSwitchTo;
-
         if (participant === this.participant) {
-            videoIdToSwitchTo = await this.getLocalVideoId();
-
             // when looking up the element and clicking it, it doesn't work if we do it twice in a row (oneOnOne.spec)
             await this.participant.execute(() => document?.getElementById('localVideoContainer')?.click());
         } else {
             const epId = await participant.getEndpointId();
 
-            videoIdToSwitchTo = await this.getRemoteVideoId(epId);
-
             await this.participant.driver.$(`//span[@id="participant_${epId}"]`).click();
         }
+        const endpointID = await participant.getEndpointId();
 
-        await this.participant.driver.waitUntil(
-            async () => await this.participant.getLargeVideo().getId() === videoIdToSwitchTo,
-            {
-                timeout: 3_000,
-                timeoutMsg: `${this.participant.displayName} did not switch the large video to ${
-                    participant.displayName}`
-            }
-        );
+        await this.participant.waitForParticipantOnLargeVideo(endpointID);
     }
 
     /**
@@ -120,7 +106,7 @@ export default class Filmstrip extends BasePageObject {
 
         await this.participant.driver.$(`//div[ @id="pin-indicator-${epId}" ]`).waitForDisplayed({
             timeout: 2_000,
-            timeoutMsg: `${this.participant.displayName} did not unpin ${participant.displayName}`,
+            timeoutMsg: `${this.participant.name} did not unpin ${participant.name}`,
             reverse: true
         });
     }
@@ -272,5 +258,112 @@ export default class Filmstrip extends BasePageObject {
             timeout: 5_000,
             reverse: !isDisplayed,
         });
+    }
+
+    /**
+     * Checks for visible gaps in the filmstrip thumbnails.
+     * This detects if there are any missing thumbnails or excessive spacing between consecutive visible thumbnails.
+     *
+     * @returns Returns true if gaps are detected, false otherwise.
+     */
+    async hasGapsInFilmstrip(): Promise<boolean> {
+        return await this.participant.execute(() => {
+            // Get all visible thumbnail containers in the filmstrip
+            const thumbnails = Array.from(
+                document.querySelectorAll('#remoteVideos span.videocontainer')
+            ).filter((thumb: any) => {
+                const style = window.getComputedStyle(thumb);
+                const rect = thumb.getBoundingClientRect();
+
+                // Check if element is visible and has dimensions
+                return style.display !== 'none'
+                    && style.visibility !== 'hidden'
+                    && rect.width > 0
+                    && rect.height > 0;
+            });
+
+            if (thumbnails.length < 2) {
+                // Can't have gaps with less than 2 thumbnails
+                return false;
+            }
+
+            // Get positions and calculated margins of all visible thumbnails
+            const positions = thumbnails.map((thumb: any) => {
+                const rect = thumb.getBoundingClientRect();
+                const style = window.getComputedStyle(thumb);
+
+                return {
+                    left: rect.left,
+                    right: rect.right,
+                    top: rect.top,
+                    bottom: rect.bottom,
+                    width: rect.width,
+                    height: rect.height,
+                    marginTop: parseFloat(style.marginTop) || 0,
+                    marginBottom: parseFloat(style.marginBottom) || 0,
+                    marginLeft: parseFloat(style.marginLeft) || 0,
+                    marginRight: parseFloat(style.marginRight) || 0
+                };
+            });
+
+            // Calculate expected spacing between thumbnails based on first two
+            const firstGap = positions.length >= 2
+                ? Math.abs(positions[1].top - positions[0].top) !== 0
+                    ? positions[1].top - positions[0].bottom // vertical
+                    : positions[1].left - positions[0].right // horizontal
+                : 0;
+
+            // Check if filmstrip is vertical or horizontal
+            const isVertical = Math.abs(positions[1].top - positions[0].top) > Math.abs(positions[1].left - positions[0].left);
+
+            if (isVertical) {
+                // For vertical filmstrip, check vertical spacing consistency
+                for (let i = 0; i < positions.length - 1; i++) {
+                    const current = positions[i];
+                    const next = positions[i + 1];
+                    const gap = next.top - current.bottom;
+
+                    // Compare against the first gap with some tolerance
+                    // Flag if gap is more than 2x the expected spacing
+                    if (gap > Math.max(firstGap * 2, current.height * 0.3)) {
+                        return true;
+                    }
+                }
+            } else {
+                // For horizontal filmstrip, check horizontal spacing consistency
+                for (let i = 0; i < positions.length - 1; i++) {
+                    const current = positions[i];
+                    const next = positions[i + 1];
+                    const gap = next.left - current.right;
+
+                    // Compare against the first gap with some tolerance
+                    // Flag if gap is more than 2x the expected spacing
+                    if (gap > Math.max(firstGap * 2, current.width * 0.3)) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        });
+    }
+
+    /**
+     * Asserts that there are no gaps in the filmstrip.
+     * This is useful for detecting layout issues where thumbnails might be missing or mispositioned.
+     *
+     * @param reverse - If true, asserts that gaps should exist. Default false.
+     */
+    async assertNoGapsInFilmstrip(reverse = false): Promise<void> {
+        const hasGaps = await this.hasGapsInFilmstrip();
+        const expectedResult = reverse ? true : false;
+
+        if (hasGaps !== expectedResult) {
+            throw new Error(
+                `Expected filmstrip to ${reverse ? 'have' : 'not have'} gaps, but ${
+                    hasGaps ? 'gaps were detected' : 'no gaps were found'
+                }`
+            );
+        }
     }
 }

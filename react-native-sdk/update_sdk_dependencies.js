@@ -6,7 +6,7 @@ const packageJSON = require('../package.json');
 const SDKPackageJSON = require('./package.json');
 
 // Skip checking these.
-const skipDeps = [ 'react', 'react-native' ];
+const skipDeps = [ 'react-native' ];
 
 /**
  * Merges the dependency versions from the root package.json with the dependencies of the SDK package.json.
@@ -24,6 +24,13 @@ function mergeDependencyVersions() {
     for (const key in packageJSON.dependencies) {
         if (SDKPackageJSON.peerDependencies.hasOwnProperty(key) && !skipDeps.includes(key)) {
             SDKPackageJSON.peerDependencies[key] = packageJSON.dependencies[key];
+        }
+    }
+    
+    // Updates SDK dev dependencies(used by react-native-worklets-core lib. babel plugin)
+    for (const key in packageJSON.devDependencies) {
+        if (SDKPackageJSON.devDependencies.hasOwnProperty(key)) {
+            SDKPackageJSON.devDependencies[key] = packageJSON.devDependencies[key];
         }
     }
 

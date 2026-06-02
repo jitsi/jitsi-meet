@@ -1,7 +1,6 @@
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 
 interface IProps {
 
@@ -22,10 +21,10 @@ const useStyles = makeStyles()(theme => {
             display: 'flex',
             padding: '10px',
             alignItems: 'center',
-            backgroundColor: theme.palette.action03,
+            backgroundColor: theme.palette.prejoinCountryRowBackground,
 
             '&:hover': {
-                backgroundColor: theme.palette.action03Hover
+                backgroundColor: theme.palette.prejoinCountryRowHover
             }
         },
 
@@ -34,8 +33,8 @@ const useStyles = makeStyles()(theme => {
         },
 
         text: {
-            color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            color: theme.palette.prejoinCountryPickerText,
+            ...theme.typography.bodyShortRegular,
             flexGrow: 1,
             overflow: 'hidden',
             textOverflow: 'ellipsis',

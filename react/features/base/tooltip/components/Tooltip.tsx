@@ -6,7 +6,6 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../environment/utils';
 import Popover from '../../popover/components/Popover.web';
-import { withPixelLineHeight } from '../../styles/functions.web';
 import { TOOLTIP_POSITION } from '../../ui/constants.any';
 import { hideTooltip, showTooltip } from '../actions';
 
@@ -23,11 +22,11 @@ interface IProps {
 const useStyles = makeStyles()(theme => {
     return {
         container: {
-            backgroundColor: theme.palette.uiBackground,
+            backgroundColor: theme.palette.tooltipBackground,
             borderRadius: '3px',
             padding: theme.spacing(2),
-            ...withPixelLineHeight(theme.typography.labelRegular),
-            color: theme.palette.text01,
+            ...theme.typography.labelRegular,
+            color: theme.palette.tooltipText,
             position: 'relative',
 
             '&.mounting-animation': {

@@ -25,7 +25,8 @@ const DEFAULT_STATE = {
     clientWidth: innerWidth,
     isNarrowLayout: false,
     reducedUI: false,
-    contextMenuOpened: false
+    contextMenuOpened: false,
+    videoSpaceWidth: innerWidth
 };
 
 export interface IResponsiveUIState {
@@ -41,6 +42,7 @@ export interface IResponsiveUIState {
         right: number;
         top: number;
     };
+    videoSpaceWidth: number;
 }
 
 ReducerRegistry.register<IResponsiveUIState>('features/base/responsive-ui',
@@ -50,7 +52,8 @@ ReducerRegistry.register<IResponsiveUIState>('features/base/responsive-ui',
         return {
             ...state,
             clientWidth: action.clientWidth,
-            clientHeight: action.clientHeight
+            clientHeight: action.clientHeight,
+            videoSpaceWidth: action.videoSpaceWidth
         };
     }
 

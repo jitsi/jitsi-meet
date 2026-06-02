@@ -1,3 +1,3 @@
 import { getLogger } from '../logging/functions';
 
-export default getLogger('features/base/tracks');
+export default getLogger('app:tracks');

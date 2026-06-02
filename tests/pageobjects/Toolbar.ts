@@ -18,6 +18,7 @@ const STOP_DESKTOP = 'Stop sharing your screen';
 const ENTER_TILE_VIEW_BUTTON = 'Enter tile view';
 const EXIT_TILE_VIEW_BUTTON = 'Exit tile view';
 const VIDEO_QUALITY = 'Manage video quality';
+const VIRTUAL_BACKGROUND = 'Select Background';
 const VIDEO_MUTE = 'Stop camera';
 const VIDEO_UNMUTE = 'Start camera';
 
@@ -33,7 +34,7 @@ export default class Toolbar extends BasePageObject {
      * @private
      */
     private getButton(accessibilityCSSSelector: string) {
-        return this.participant.driver.$(`aria/${accessibilityCSSSelector}`);
+        return this.participant.driver.$(`[aria-label="${accessibilityCSSSelector}"]`);
     }
 
     /**
@@ -55,10 +56,15 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    clickAudioMuteButton(): Promise<void> {
-        this.participant.log('Clicking on: Audio Mute Button');
+    async clickAudioMuteButton(): Promise<void> {
+        await this.participant.log('Clicking on: Audio Mute Button');
 
-        return this.audioMuteBtn.click();
+        await this.audioMuteBtn.waitForExist({
+            timeout: 2000, timeoutMsg: 'Audio mute button not found'
+        });
+
+        // not directly clicking the button to avoid issues of UI notifications preventing it
+        return this.participant.execute(() => JitsiMeetJS.app.testing.audioMute());
     }
 
     /**
@@ -66,10 +72,15 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    clickAudioUnmuteButton(): Promise<void> {
-        this.participant.log('Clicking on: Audio Unmute Button');
+    async clickAudioUnmuteButton(): Promise<void> {
+        await this.participant.log('Clicking on: Audio Unmute Button');
 
-        return this.audioUnMuteBtn.click();
+        await this.audioUnMuteBtn.waitForExist({
+            timeout: 2000, timeoutMsg: 'Audio unmute button not found'
+        });
+
+        // not directly clicking the button to avoid issues of UI notifications preventing it
+        return this.participant.execute(() => JitsiMeetJS.app.testing.audioUnmute());
     }
 
     /**
@@ -91,10 +102,15 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    clickVideoMuteButton(): Promise<void> {
-        this.participant.log('Clicking on: Video Mute Button');
+    async clickVideoMuteButton(): Promise<void> {
+        await this.participant.log('Clicking on: Video Mute Button');
 
-        return this.videoMuteBtn.click();
+        await this.videoMuteBtn.waitForExist({
+            timeout: 2000, timeoutMsg: 'Video mute button not found'
+        });
+
+        // not directly clicking the button to avoid issues of UI notifications preventing it
+        return this.participant.execute(() => JitsiMeetJS.app.testing.videoMute());
     }
 
     /**
@@ -102,10 +118,15 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    clickVideoUnmuteButton(): Promise<void> {
-        this.participant.log('Clicking on: Video Unmute Button');
+    async clickVideoUnmuteButton(): Promise<void> {
+        await this.participant.log('Clicking on: Video Unmute Button');
 
-        return this.videoUnMuteBtn.click();
+        await this.videoUnMuteBtn.waitForExist({
+            timeout: 2000, timeoutMsg: 'Video unmute button not found'
+        });
+
+        // not directly clicking the button to avoid issues of UI notifications preventing it
+        return this.participant.execute(() => JitsiMeetJS.app.testing.videoUnmute());
     }
 
     /**
@@ -113,8 +134,8 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    clickCloseParticipantsPaneButton(): Promise<void> {
-        this.participant.log('Clicking on: Close Participants pane Button');
+    async clickCloseParticipantsPaneButton(): Promise<void> {
+        await this.participant.log('Clicking on: Close Participants pane Button');
 
         return this.getButton(CLOSE_PARTICIPANTS_PANE).click();
     }
@@ -124,8 +145,8 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    clickParticipantsPaneButton(): Promise<void> {
-        this.participant.log('Clicking on: Participants pane Button');
+    async clickParticipantsPaneButton(): Promise<void> {
+        await this.participant.log('Clicking on: Participants pane Button');
 
         // Special case for participants pane button, as it contains the number of participants and its label
         // is changing
@@ -150,8 +171,8 @@ export default class Toolbar extends BasePageObject {
     /**
      * Clicks on the raise hand button that enables participants will to speak.
      */
-    clickRaiseHandButton(): Promise<void> {
-        this.participant.log('Clicking on: Raise hand Button');
+    async clickRaiseHandButton(): Promise<void> {
+        await this.participant.log('Clicking on: Raise hand Button');
 
         return this.getButton(RAISE_HAND).click();
     }
@@ -159,8 +180,8 @@ export default class Toolbar extends BasePageObject {
     /**
      * Clicks on the chat button that opens chat panel.
      */
-    clickChatButton(): Promise<void> {
-        this.participant.log('Clicking on: Chat Button');
+    async clickChatButton(): Promise<void> {
+        await this.participant.log('Clicking on: Chat Button');
 
         return this.getButton(CHAT).click();
     }
@@ -168,24 +189,59 @@ export default class Toolbar extends BasePageObject {
     /**
      * Clicks on the chat button that closes chat panel.
      */
-    clickCloseChatButton(): Promise<void> {
-        this.participant.log('Clicking on: Close Chat Button');
+    async clickCloseChatButton(): Promise<void> {
+        await this.participant.log('Clicking on: Close Chat Button');
 
         return this.getButton(CLOSE_CHAT).click();
     }
 
     /**
-     * Clicks on the desktop sharing button that starts desktop sharing.
+     * Clicks on the desktop sharing button that starts desktop sharing. Waits until the toggle takes effect
+     * (button flips to STOP_DESKTOP) so a subsequent call doesn't race a still-in-flight stop.
      */
     clickDesktopSharingButton() {
-        return this.getButton(DESKTOP).click();
+        return this._toggleDesktopSharing(DESKTOP, STOP_DESKTOP, 'start');
     }
 
     /**
-     * Clicks on the desktop sharing button to stop it.
+     * Clicks on the desktop sharing button to stop it. Waits until the toggle takes effect (button flips to
+     * DESKTOP). On a busy main thread the click can land on a DOM node React has already detached during a
+     * track-replace / participantLeft cascade and the React onClick never fires — re-locate and re-click once
+     * before failing.
      */
     clickStopDesktopSharingButton() {
-        return this.getButton(STOP_DESKTOP).click();
+        return this._toggleDesktopSharing(STOP_DESKTOP, DESKTOP, 'stop');
+    }
+
+    /**
+     * Clicks the desktop-sharing toggle and waits for the button to flip to the opposite aria-label. If the
+     * flip doesn't happen within a short window, re-locates the source button (it may have been re-rendered
+     * out from under the original element handle) and clicks once more before failing.
+     *
+     * @private
+     */
+    private async _toggleDesktopSharing(fromLabel: string, toLabel: string, action: 'start' | 'stop') {
+        await this.getButton(fromLabel).click();
+
+        try {
+            await this.getButton(toLabel).waitForExist({ timeout: 2_000 });
+
+            return;
+        } catch {
+            // Fall through to retry.
+        }
+
+        // If the source button is still present, the first click was dropped — re-locate and click again. If
+        // it isn't present, the toggle is in flight; just keep waiting.
+        if (await this.getButton(fromLabel).isExisting()) {
+            await this.participant.log(`Retrying desktop-sharing ${action} click for ${this.participant.name}`);
+            await this.getButton(fromLabel).click();
+        }
+
+        await this.getButton(toLabel).waitForExist({
+            timeout: 3_000,
+            timeoutMsg: `Desktop sharing did not ${action} for ${this.participant.name}`
+        });
     }
 
     /**
@@ -205,8 +261,8 @@ export default class Toolbar extends BasePageObject {
     /**
      * Clicks on the hangup button that ends the conference.
      */
-    clickHangupButton(): Promise<void> {
-        this.participant.log('Clicking on: Hangup Button');
+    async clickHangupButton(): Promise<void> {
+        await this.participant.log('Clicking on: Hangup Button');
 
         return this.getButton(HANGUP).click();
     }
@@ -226,6 +282,13 @@ export default class Toolbar extends BasePageObject {
     }
 
     /**
+     * Clicks on the virtual background toolbar button which opens the virtual background settings.
+     */
+    clickVirtualBackgroundButton() {
+        return this.clickButtonInOverflowMenu(VIRTUAL_BACKGROUND);
+    }
+
+    /**
      * Ensure the overflow menu is open and clicks on a specified button.
      * @param accessibilityLabel The accessibility label of the button to be clicked.
      * @private
@@ -237,7 +300,7 @@ export default class Toolbar extends BasePageObject {
         // so let's move focus away before clicking the button
         await this.participant.driver.$('#overflow-context-menu').moveTo();
 
-        this.participant.log(`Clicking on: ${accessibilityLabel}`);
+        await this.participant.log(`Clicking on: ${accessibilityLabel}`);
         await this.getButton(accessibilityLabel).click();
 
         await this.closeOverflowMenu();
@@ -248,7 +311,7 @@ export default class Toolbar extends BasePageObject {
      * @private
      */
     private async isOverflowMenuOpen() {
-        return await this.participant.driver.$$(`aria/${OVERFLOW_MENU}`).length > 0;
+        return await this.participant.driver.$$(`[aria-label="${OVERFLOW_MENU}"]`).length > 0;
     }
 
     /**
@@ -266,6 +329,18 @@ export default class Toolbar extends BasePageObject {
     private async openOverflowMenu() {
         if (await this.isOverflowMenuOpen()) {
             return;
+        }
+
+        // Wake the auto-hidden toolbar by hovering the local video tile; otherwise the overflow
+        // button click can fire on an invisible element and the menu never appears. When the
+        // self-view is hidden (e.g. via settings), localVideoContainer is not in the DOM, so fall
+        // back to the large video container which is always present while in conference.
+        const localVideoContainer = this.participant.driver.$('span[id="localVideoContainer"]');
+
+        if (await localVideoContainer.isExisting()) {
+            await localVideoContainer.moveTo();
+        } else {
+            await this.participant.driver.$('#largeVideoContainer').moveTo();
         }
 
         await this.clickOverflowButton();

@@ -58,7 +58,7 @@ import { isEnabled as isDropboxEnabled } from '../../dropbox/functions.native';
 import { hideNotification, showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../notifications/constants';
 import { RECORDING_SESSION_UPDATED } from '../../recording/actionTypes';
-import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../recording/constants';
+import { RECORDING_TYPES } from '../../recording/constants';
 import { getActiveSession } from '../../recording/functions';
 import { setRequestingSubtitles } from '../../subtitles/actions.any';
 import { CUSTOM_BUTTON_PRESSED } from '../../toolbox/actionTypes';
@@ -298,17 +298,20 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
             timestamp
         } = action.sessionData;
 
+        const getId = (obj: any) => typeof obj === 'object' ? obj.getId() : obj;
+        const getError = (err: any) => typeof err === 'object' ? String(err) : err;
+
         sendEvent(
             store,
             RECORDING_STATUS_CHANGED,
             /* data */ {
-                error,
+                error: getError(error),
                 id,
-                initiator,
+                initiator: getId(initiator),
                 liveStreamViewURL,
                 mode,
                 status,
-                terminator,
+                terminator: getId(terminator),
                 timestamp
             });
         break;
@@ -585,10 +588,7 @@ function _registerForNativeEvents(store: IStore) {
         }
 
         if (transcription) {
-            store.dispatch(setRequestingSubtitles(true, false, null));
-            conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                isTranscribingEnabled: true
-            });
+            store.dispatch(setRequestingSubtitles(true, false, null, true));
         }
     });
 
@@ -603,10 +603,7 @@ function _registerForNativeEvents(store: IStore) {
         }
 
         if (transcription) {
-            store.dispatch(setRequestingSubtitles(false, false, null));
-            conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                isTranscribingEnabled: false
-            });
+            store.dispatch(setRequestingSubtitles(false, false, null, true));
         }
 
         if (![ JitsiRecordingConstants.mode.FILE, JitsiRecordingConstants.mode.STREAM ].includes(mode)) {
@@ -617,13 +614,7 @@ function _registerForNativeEvents(store: IStore) {
 
         const activeSession = getActiveSession(state, mode);
 
-        if (!activeSession?.id) {
-            logger.error('No recording or streaming session found');
-
-            return;
-        }
-
-        conference.stopRecording(activeSession.id);
+        conference.stopRecording(activeSession?.id);
     });
 
     eventEmitter.addListener(ExternalAPI.OVERWRITE_CONFIG, ({ config }: any) => {

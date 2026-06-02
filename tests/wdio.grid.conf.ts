@@ -17,14 +17,10 @@ const mergedConfig = {
     path: gridUrl.pathname
 };
 
-mergedConfig.capabilities.participant1.capabilities['goog:chromeOptions'].args
-    = updateRemoteResource(mergedConfig.capabilities.participant1.capabilities['goog:chromeOptions'].args);
-mergedConfig.capabilities.participant2.capabilities['goog:chromeOptions'].args
-    = updateRemoteResource(mergedConfig.capabilities.participant2.capabilities['goog:chromeOptions'].args);
-mergedConfig.capabilities.participant3.capabilities['goog:chromeOptions'].args
-    = updateRemoteResource(mergedConfig.capabilities.participant3.capabilities['goog:chromeOptions'].args);
-mergedConfig.capabilities.participant4.capabilities['goog:chromeOptions'].args
-    = updateRemoteResource(mergedConfig.capabilities.participant4.capabilities['goog:chromeOptions'].args);
+Object.keys(mergedConfig.capabilities).forEach(browser => {
+    mergedConfig.capabilities[browser].capabilities['goog:chromeOptions'].args
+        = updateRemoteResource(mergedConfig.capabilities[browser].capabilities['goog:chromeOptions'].args);
+});
 
 export const config = mergedConfig;
 

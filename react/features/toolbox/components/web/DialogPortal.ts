@@ -52,7 +52,7 @@ interface IProps {
  * @returns {ReactElement}
  */
 function DialogPortal({ children, className, style, getRef, setSize, targetSelector, onVisible }: IProps) {
-    const clientWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].clientWidth);
+    const videoSpaceWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].videoSpaceWidth);
     const [ portalTarget ] = useState(() => {
         const portalDiv = document.createElement('div');
 
@@ -115,7 +115,7 @@ function DialogPortal({ children, className, style, getRef, setSize, targetSelec
                 document.body.removeChild(portalTarget);
             }
         };
-    }, [ clientWidth ]);
+    }, [ videoSpaceWidth ]);
 
     return ReactDOM.createPortal(
         children,

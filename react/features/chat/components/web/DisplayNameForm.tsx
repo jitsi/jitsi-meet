@@ -21,6 +21,21 @@ interface IProps extends WithTranslation {
     dispatch: IStore['dispatch'];
 
     /**
+     * Whether CC tab is enabled or not.
+     */
+    isCCTabEnabled: boolean;
+
+    /**
+     * Whether chat is disabled.
+     */
+    isChatDisabled: boolean;
+
+    /**
+     * Whether file sharing is enabled.
+     */
+    isFileSharingEnabled: boolean;
+
+    /**
      * Whether the polls feature is enabled or not.
      */
     isPollsEnabled: boolean;
@@ -69,16 +84,39 @@ class DisplayNameForm extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     override render() {
-        const { isPollsEnabled, t } = this.props;
+        const { isCCTabEnabled, isChatDisabled, isFileSharingEnabled, isPollsEnabled, t } = this.props;
+
+        // Build array of enabled feature names (translated).
+        const features = [
+            !isChatDisabled ? t('chat.nickname.featureChat') : '',
+            isPollsEnabled ? t('chat.nickname.featurePolls') : '',
+            isFileSharingEnabled ? t('chat.nickname.featureFileSharing') : '',
+            isCCTabEnabled ? t('chat.nickname.featureClosedCaptions') : ''
+        ].filter(Boolean);
+
+        // Return null if no features available - component won't render.
+        if (features.length === 0) {
+            return null;
+        }
+
+        // Build translation arguments dynamically: { feature1: "chat", feature2: "polls", ... }
+        const translationArgs = features.reduce((acc, feature, index) => {
+            acc[`feature${index + 1}`] = feature;
+
+            return acc;
+        }, {} as Record<string, string>);
+
+        // Use dynamic translation key: "titleWith1Features", "titleWith2Features", etc.
+        const title = t(`chat.nickname.titleWith${features.length}Features`, translationArgs);
 
         return (
             <div id = 'nickname'>
                 <form onSubmit = { this._onSubmit }>
                     <Input
-                        accessibilityLabel = { t('chat.nickname.title') }
+                        accessibilityLabel = { t(title) }
                         autoFocus = { true }
                         id = 'nickinput'
-                        label = { t(isPollsEnabled ? 'chat.nickname.titleWithPolls' : 'chat.nickname.title') }
+                        label = { t(title) }
                         name = 'name'
                         onChange = { this._onDisplayNameChange }
                         placeholder = { t('chat.nickname.popover') }

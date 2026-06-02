@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui';
 import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
 import { IconArrowDown } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 
 interface ISelectProps {
 
@@ -17,6 +16,11 @@ interface ISelectProps {
      * Class name for additional styles.
      */
     className?: string;
+
+    /**
+     * Class name for additional styles for container.
+     */
+    containerClassName?: string;
 
     /**
      * Whether or not the select is disabled.
@@ -66,12 +70,12 @@ const useStyles = makeStyles()(theme => {
         },
 
         label: {
-            color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            color: theme.palette.selectLabel,
+            ...theme.typography.bodyShortRegular,
             marginBottom: theme.spacing(2),
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
+                ...theme.typography.bodyShortRegularLarge
             }
         },
 
@@ -80,11 +84,11 @@ const useStyles = makeStyles()(theme => {
         },
 
         select: {
-            backgroundColor: theme.palette.ui03,
+            backgroundColor: theme.palette.selectBackground,
             borderRadius: `${theme.shape.borderRadius}px`,
             width: '100%',
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
-            color: theme.palette.text01,
+            ...theme.typography.bodyShortRegular,
+            color: theme.palette.selectText,
             padding: '10px 16px',
             paddingRight: '42px',
             border: 0,
@@ -95,21 +99,21 @@ const useStyles = makeStyles()(theme => {
 
             '&:focus': {
                 outline: 0,
-                boxShadow: `0px 0px 0px 2px ${theme.palette.focus01}`
+                boxShadow: `0px 0px 0px 2px ${theme.palette.selectFocus}`
             },
 
             '&:disabled': {
-                color: theme.palette.text03
+                color: theme.palette.selectDisabled
             },
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+                ...theme.typography.bodyShortRegularLarge,
                 padding: '12px 16px',
                 paddingRight: '46px'
             },
 
             '&.error': {
-                boxShadow: `0px 0px 0px 2px ${theme.palette.textError}`
+                boxShadow: `0px 0px 0px 2px ${theme.palette.selectError}`
             }
         },
 
@@ -127,15 +131,15 @@ const useStyles = makeStyles()(theme => {
 
         bottomLabel: {
             marginTop: theme.spacing(2),
-            ...withPixelLineHeight(theme.typography.labelRegular),
-            color: theme.palette.text02,
+            ...theme.typography.labelRegular,
+            color: theme.palette.selectBottomLabel,
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyShortRegular)
+                ...theme.typography.bodyShortRegular
             },
 
             '&.error': {
-                color: theme.palette.textError
+                color: theme.palette.selectBottomLabelError
             }
         }
     };
@@ -143,6 +147,7 @@ const useStyles = makeStyles()(theme => {
 
 const Select = ({
     bottomLabel,
+    containerClassName,
     className,
     disabled,
     error,
@@ -155,7 +160,7 @@ const Select = ({
     const isMobile = isMobileBrowser();
 
     return (
-        <div className = { classes.container }>
+        <div className = { cx(classes.container, containerClassName) }>
             {label && <label
                 className = { cx(classes.label, isMobile && 'is-mobile') }
                 htmlFor = { id } >
@@ -175,7 +180,7 @@ const Select = ({
                 </select>
                 <Icon
                     className = { cx(classes.icon, isMobile && 'is-mobile') }
-                    color = { disabled ? theme.palette.icon03 : theme.palette.icon01 }
+                    color = { disabled ? theme.palette.selectIconDisabled : theme.palette.selectIcon }
                     size = { 22 }
                     src = { IconArrowDown } />
             </div>

@@ -31,7 +31,7 @@ class EmbedMeetingButton extends AbstractButton<AbstractButtonProps> {
         const { dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('embed.meeting'));
-        dispatch(openDialog(EmbedMeetingDialog));
+        dispatch(openDialog('EmbedMeetingDialog', EmbedMeetingDialog));
     }
 }
 

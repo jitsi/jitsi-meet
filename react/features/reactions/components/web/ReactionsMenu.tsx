@@ -98,8 +98,8 @@ const useStyles = makeStyles<IProps>()((theme, props: IProps) => {
                         'span.emoji': {
                             width: '24px',
                             height: '24px',
-                            lineHeight: '24px',
-                            fontSize: '16px'
+                            lineHeight: '1.5rem',
+                            fontSize: '1rem'
                         }
                     }
                 },
@@ -113,7 +113,7 @@ const useStyles = makeStyles<IProps>()((theme, props: IProps) => {
         overflow: {
             width: 'auto',
             paddingBottom: 'max(env(safe-area-inset-bottom, 0), 16px)',
-            backgroundColor: theme.palette.ui01,
+            backgroundColor: theme.palette.reactionsMenuBackground,
             boxShadow: 'none',
             borderRadius: 0,
             position: 'relative',

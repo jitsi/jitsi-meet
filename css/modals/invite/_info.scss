@@ -1,7 +1,7 @@
 .info-dialog {
     cursor: default;
     display: flex;
-    font-size: 14px;
+    font-size: 0.875rem;
 
     .info-dialog-column {
         margin-right: 10px;
@@ -53,8 +53,8 @@
     max-width: 334px;
     width: 100%;
     margin-top: 20px;
-    font-size: 12px;
-    line-height: 24px;
+    font-size: 0.75rem;
+    line-height: 1.5rem;
     border-collapse: collapse;
 
     * {
@@ -107,7 +107,7 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    font-size: 12px;
+    font-size: 0.75rem;
     max-height: 100%;
     overflow: auto;
     padding: 15pt;

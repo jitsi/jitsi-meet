@@ -14,7 +14,7 @@ export const WHITEBOARD_ID = 'whiteboard';
 export const WHITEBOARD_UI_OPTIONS = {
     canvasActions: {
         allowedShapes: [
-            'arrow', 'diamond', 'ellipse', 'freedraw', 'line', 'rectangle', 'selection', 'text'
+            'arrow', 'diamond', 'ellipse', 'freedraw', 'line', 'rectangle', 'selection', 'text', 'eraser'
         ],
         allowedShortcuts: [
             'cut', 'deleteSelectedElements', 'redo', 'selectAll', 'undo'
@@ -33,15 +33,18 @@ export const WHITEBOARD_UI_OPTIONS = {
         hideFontFamily: true,
         hideHelpDialog: true,
         hideIOActions: true,
+        hideLaserOnCollaboration: true,
         hideLayers: true,
         hideLibraries: true,
         hideLockButton: true,
         hideOpacityInput: true,
+        hideEmbedableTools: true,
         hideSharpness: true,
         hideStrokeStyle: true,
         hideTextAlign: true,
         hideThemeControls: true,
         hideUserList: true,
+        hideWelcomeScreen: true,
         saveAsImageOptions: {
             defaultBackgroundValue: true,
             disableScale: true,

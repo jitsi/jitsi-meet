@@ -5,20 +5,22 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { getParticipantDisplayName } from '../../../base/participants/functions';
+import { getParticipantById, getParticipantDisplayName, isPrivateChatEnabled } from '../../../base/participants/functions';
 import Popover from '../../../base/popover/components/Popover.web';
 import Message from '../../../base/react/components/web/Message';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
-import { getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
+import { MESSAGE_TYPE_LOCAL } from '../../constants';
+import { getDisplayNameSuffix, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage, isFileMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
 
+import FileMessage from './FileMessage';
 import MessageMenu from './MessageMenu';
 import ReactButton from './ReactButton';
 
 interface IProps extends IChatMessageProps {
-    shouldDisplayChatMessageMenu: boolean;
+    className?: string;
+    enablePrivateChat?: boolean;
+    shouldDisplayMenuOnRight?: boolean;
     state?: IReduxState;
-    type: string;
 }
 
 const useStyles = makeStyles()((theme: Theme) => {
@@ -41,28 +43,44 @@ const useStyles = makeStyles()((theme: Theme) => {
         chatMessage: {
             display: 'inline-flex',
             padding: '12px',
-            backgroundColor: theme.palette.ui02,
+            backgroundColor: theme.palette.chatMessageRemote,
             borderRadius: '4px 12px 12px 12px',
             maxWidth: '100%',
             marginTop: '4px',
             boxSizing: 'border-box' as const,
 
+            '&.file': {
+                display: 'flex',
+                maxWidth: '100%',
+                minWidth: 0,
+
+                '& $replyWrapper': {
+                    width: '100%',
+                    minWidth: 0
+                },
+
+                '& $messageContent': {
+                    width: '100%',
+                    minWidth: 0
+                }
+            },
+
             '&.privatemessage': {
-                backgroundColor: theme.palette.support05
+                backgroundColor: theme.palette.chatMessagePrivate
             },
             '&.local': {
-                backgroundColor: theme.palette.ui04,
+                backgroundColor: theme.palette.chatMessageLocal,
                 borderRadius: '12px 4px 12px 12px',
 
                 '&.privatemessage': {
-                    backgroundColor: theme.palette.support05
+                    backgroundColor: theme.palette.chatMessagePrivate
                 },
                 '&.local': {
-                    backgroundColor: theme.palette.ui04,
+                    backgroundColor: theme.palette.chatMessageLocal,
                     borderRadius: '12px 4px 12px 12px',
 
                     '&.privatemessage': {
-                        backgroundColor: theme.palette.support05
+                        backgroundColor: theme.palette.chatMessagePrivate
                     }
                 },
 
@@ -73,7 +91,7 @@ const useStyles = makeStyles()((theme: Theme) => {
                 },
 
                 '&.lobbymessage': {
-                    backgroundColor: theme.palette.support05
+                    backgroundColor: theme.palette.chatMessagePrivate
                 }
             },
             '&.error': {
@@ -82,7 +100,7 @@ const useStyles = makeStyles()((theme: Theme) => {
                 fontWeight: 100
             },
             '&.lobbymessage': {
-                backgroundColor: theme.palette.support05
+                backgroundColor: theme.palette.chatMessagePrivate
             }
         },
         sideBySideContainer: {
@@ -116,8 +134,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         messageContent: {
             maxWidth: '100%',
-            overflow: 'hidden',
-            flex: 1
+            overflow: 'hidden'
         },
         optionsButtonContainer: {
             display: 'flex',
@@ -128,8 +145,8 @@ const useStyles = makeStyles()((theme: Theme) => {
             minHeight: '32px'
         },
         displayName: {
-            ...withPixelLineHeight(theme.typography.labelBold),
-            color: theme.palette.text02,
+            ...theme.typography.labelBold,
+            color: theme.palette.chatSenderName,
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
             overflow: 'hidden',
@@ -137,19 +154,19 @@ const useStyles = makeStyles()((theme: Theme) => {
             maxWidth: '130px'
         },
         userMessage: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
-            color: theme.palette.text01,
+            ...theme.typography.bodyShortRegular,
+            color: theme.palette.chatMessageText,
             whiteSpace: 'pre-wrap',
             wordBreak: 'break-word'
         },
         privateMessageNotice: {
-            ...withPixelLineHeight(theme.typography.labelRegular),
-            color: theme.palette.text02,
+            ...theme.typography.labelRegular,
+            color: theme.palette.chatPrivateNotice,
             marginTop: theme.spacing(1)
         },
         timestamp: {
-            ...withPixelLineHeight(theme.typography.labelRegular),
-            color: theme.palette.text03,
+            ...theme.typography.labelRegular,
+            color: theme.palette.chatTimestamp,
             marginTop: theme.spacing(1),
             marginLeft: theme.spacing(1),
             whiteSpace: 'nowrap',
@@ -157,12 +174,12 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         reactionsPopover: {
             padding: theme.spacing(2),
-            backgroundColor: theme.palette.ui03,
+            backgroundColor: theme.palette.chatInputBackground,
             borderRadius: theme.shape.borderRadius,
             maxWidth: '150px',
             maxHeight: '400px',
             overflowY: 'auto',
-            color: theme.palette.text01
+            color: theme.palette.chatMessageText
         },
         reactionItem: {
             display: 'flex',
@@ -190,11 +207,12 @@ const useStyles = makeStyles()((theme: Theme) => {
 });
 
 const ChatMessage = ({
+    className = '',
     message,
     state,
     showDisplayName,
-    type,
-    shouldDisplayChatMessageMenu,
+    shouldDisplayMenuOnRight,
+    enablePrivateChat,
     knocking,
     t
 }: IProps) => {
@@ -224,11 +242,13 @@ const ChatMessage = ({
      * @returns {React$Element<*>}
      */
     function _renderDisplayName() {
+        const { displayName } = message;
+
         return (
             <div
                 aria-hidden = { true }
                 className = { cx('display-name', classes.displayName) }>
-                {message.displayName}
+                {`${displayName}${getDisplayNameSuffix(message)}`}
             </div>
         );
     }
@@ -329,40 +349,55 @@ const ChatMessage = ({
 
     return (
         <div
-            className = { cx(classes.chatMessageWrapper, type) }
+            className = { cx(classes.chatMessageWrapper, className) }
             id = { message.messageId }
             onMouseEnter = { handleMouseEnter }
             onMouseLeave = { handleMouseLeave }
             tabIndex = { -1 }>
             <div className = { classes.sideBySideContainer }>
-                {!shouldDisplayChatMessageMenu && (
+                {!shouldDisplayMenuOnRight && (
                     <div className = { classes.optionsButtonContainer }>
                         {isHovered && <MessageMenu
+                            displayName = { message.displayName }
+                            enablePrivateChat = { Boolean(enablePrivateChat) }
+                            isFileMessage = { isFileMessage(message) }
+                            isFromVisitor = { message.isFromVisitor }
                             isLobbyMessage = { message.lobbyChat }
                             message = { message.message }
-                            participantId = { message.participantId }
-                            shouldDisplayChatMessageMenu = { shouldDisplayChatMessageMenu } />}
+                            participantId = { message.participantId } />}
                     </div>
                 )}
                 <div
                     className = { cx(
                         'chatmessage',
                         classes.chatMessage,
-                        type,
+                        className,
                         message.privateMessage && 'privatemessage',
-                        message.lobbyChat && !knocking && 'lobbymessage'
+                        message.lobbyChat && !knocking && 'lobbymessage',
+                        isFileMessage(message) && 'file'
                     ) }>
                     <div className = { classes.replyWrapper }>
                         <div className = { cx('messagecontent', classes.messageContent) }>
                             {showDisplayName && _renderDisplayName()}
                             <div className = { cx('usermessage', classes.userMessage) }>
-                                <Message
-                                    screenReaderHelpText = { message.displayName === message.recipient
-                                        ? t<string>('chat.messageAccessibleTitleMe')
-                                        : t<string>('chat.messageAccessibleTitle', {
-                                            user: message.displayName
-                                        }) }
-                                    text = { getMessageText(message) } />
+                                {isFileMessage(message) ? (
+                                    <FileMessage
+                                        message = { message }
+                                        screenReaderHelpText = { message.messageType === MESSAGE_TYPE_LOCAL
+                                            ? t<string>('chat.fileAccessibleTitleMe')
+                                            : t<string>('chat.fileAccessibleTitle', {
+                                                user: message.displayName
+                                            })
+                                        } />
+                                ) : (
+                                    <Message
+                                        screenReaderHelpText = { message.messageType === MESSAGE_TYPE_LOCAL
+                                            ? t<string>('chat.messageAccessibleTitleMe')
+                                            : t<string>('chat.messageAccessibleTitle', {
+                                                user: message.displayName
+                                            }) }
+                                        text = { getMessageText(message) } />
+                                )}
                                 {(message.privateMessage || (message.lobbyChat && !knocking))
                                     && _renderPrivateNotice()}
                                 <div className = { classes.chatMessageFooter }>
@@ -379,9 +414,10 @@ const ChatMessage = ({
                         </div>
                     </div>
                 </div>
-                {shouldDisplayChatMessageMenu && (
+                {shouldDisplayMenuOnRight && (
                     <div className = { classes.sideBySideContainer }>
-                        {!message.privateMessage && !message.lobbyChat && <div>
+                        {!message.privateMessage && !message.lobbyChat
+                        && !message.isReaction && <div>
                             <div className = { classes.optionsButtonContainer }>
                                 {isHovered && <ReactButton
                                     messageId = { message.messageId }
@@ -391,10 +427,13 @@ const ChatMessage = ({
                         <div>
                             <div className = { classes.optionsButtonContainer }>
                                 {isHovered && <MessageMenu
+                                    displayName = { message.displayName }
+                                    enablePrivateChat = { Boolean(enablePrivateChat) }
+                                    isFileMessage = { isFileMessage(message) }
+                                    isFromVisitor = { message.isFromVisitor }
                                     isLobbyMessage = { message.lobbyChat }
                                     message = { message.message }
-                                    participantId = { message.participantId }
-                                    shouldDisplayChatMessageMenu = { shouldDisplayChatMessageMenu } />}
+                                    participantId = { message.participantId } />}
                             </div>
                         </div>
                     </div>
@@ -412,10 +451,25 @@ const ChatMessage = ({
  */
 function _mapStateToProps(state: IReduxState, { message }: IProps) {
     const { knocking } = state['features/lobby'];
-    const localParticipantId = state['features/base/participants'].local?.id;
+
+    const participant = getParticipantById(state, message.participantId);
+
+    // For visitor private messages, participant will be undefined but we should still allow private chat
+    // Create a visitor participant object for visitor messages to pass to isPrivateChatEnabled
+    const participantForCheck = message.isFromVisitor
+        ? { id: message.participantId, name: message.displayName, isVisitor: true as const }
+        : participant;
+
+    const enablePrivateChat = (!message.isFromVisitor || message.privateMessage)
+        && isPrivateChatEnabled(participantForCheck, state);
+
+    // Only the local messages appear on the right side of the chat therefore only for them the menu has to be on the
+    // left side.
+    const shouldDisplayMenuOnRight = message.messageType !== MESSAGE_TYPE_LOCAL;
 
     return {
-        shouldDisplayChatMessageMenu: message.participantId !== localParticipantId,
+        shouldDisplayMenuOnRight,
+        enablePrivateChat,
         knocking,
         state
     };

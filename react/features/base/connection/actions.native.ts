@@ -1,10 +1,15 @@
 import { appNavigate } from '../../app/actions.native';
 import { IStore } from '../../app/types';
-import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
+import { getCustomerDetails } from '../../jaas/actions.any';
+import { getJaasJWT, isVpaasMeeting } from '../../jaas/functions';
+import { replaceRoot } from '../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../mobile/navigation/routes';
+import { conferenceLeft } from '../conference/actions.native';
+import { setJWT } from '../jwt/actions';
 import { JitsiConnectionErrors } from '../lib-jitsi-meet';
 
-import { _connectInternal } from './actions.any';
+import { _connectInternal } from './actions.native';
+import logger from './logger';
 
 export * from './actions.any';
 
@@ -16,12 +21,34 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function connect(id?: string, password?: string) {
-    return (dispatch: IStore['dispatch']) => dispatch(_connectInternal(id, password))
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const { jwt } = state['features/base/jwt'];
+
+        if (isVpaasMeeting(state)) {
+            return dispatch(getCustomerDetails())
+                .then(() => {
+                    if (!jwt) {
+                        return getJaasJWT(state);
+                    }
+                })
+                .then(j => {
+                    j && dispatch(setJWT(j));
+
+                    return dispatch(_connectInternal(id, password));
+                }).catch(e => {
+                    logger.error('Connection error', e);
+                });
+        }
+
+        dispatch(_connectInternal(id, password))
+
         .catch(error => {
             if (error === JitsiConnectionErrors.NOT_LIVE_ERROR) {
-                navigateRoot(screen.visitorsQueue);
+                replaceRoot(screen.visitorsQueue);
             }
         });
+    };
 }
 
 /**
@@ -32,5 +59,8 @@ export function connect(id?: string, password?: string) {
  * @returns {Function}
  */
 export function hangup(_requestFeedback = false) {
-    return (dispatch: IStore['dispatch']) => dispatch(appNavigate(undefined));
+    return (dispatch: IStore['dispatch']) => {
+        dispatch(appNavigate(undefined));
+        dispatch(conferenceLeft());
+    };
 }

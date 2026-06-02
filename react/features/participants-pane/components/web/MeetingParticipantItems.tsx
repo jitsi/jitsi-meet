@@ -20,11 +20,6 @@ interface IProps {
     lowerMenu: Function;
 
     /**
-     * Callback used to open a confirmation dialog for audio muting.
-     */
-    muteAudio: Function;
-
-    /**
      * The translated text for the mute participant button.
      */
     muteParticipantButtonText?: string;
@@ -60,11 +55,6 @@ interface IProps {
     searchString?: string;
 
     /**
-     * Callback used to stop a participant's video.
-     */
-    stopVideo: Function;
-
-    /**
      * Callback for the activation of this item's context menu.
      */
     toggleMenu: Function;
@@ -84,14 +74,12 @@ function MeetingParticipantItems({
     isInBreakoutRoom,
     lowerMenu,
     toggleMenu,
-    muteAudio,
     participantIds,
     openDrawerForParticipant,
     overflowDrawer,
     raiseContextId,
     participantActionEllipsisLabel,
     searchString,
-    stopVideo,
     youText
 }: IProps) {
     const renderParticipant = (id: string) => (
@@ -99,7 +87,6 @@ function MeetingParticipantItems({
             isHighlighted = { raiseContextId === id }
             isInBreakoutRoom = { isInBreakoutRoom }
             key = { id }
-            muteAudio = { muteAudio }
             onContextMenu = { toggleMenu(id) }
             onLeave = { lowerMenu }
             openDrawerForParticipant = { openDrawerForParticipant }
@@ -107,7 +94,6 @@ function MeetingParticipantItems({
             participantActionEllipsisLabel = { participantActionEllipsisLabel }
             participantID = { id }
             searchString = { searchString }
-            stopVideo = { stopVideo }
             youText = { youText } />
     );
 

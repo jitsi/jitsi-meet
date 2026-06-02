@@ -1,12 +1,13 @@
 import { IStore } from '../../app/types';
+import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import RTCStats from '../../rtcstats/RTCStats';
 import { isRTCStatsEnabled } from '../../rtcstats/functions';
 
 /**
- * Implements log storage interface from the @jitsi/logger lib.
+ * Implements log storage interface from the @jitsi/logger lib, as it stands
+ * now it only sends logs to the rtcstats server in case it is enabled.
  */
 export default class JitsiMeetLogStorage {
-    counter: number;
     getState: IStore['getState'];
 
     /**
@@ -15,12 +16,6 @@ export default class JitsiMeetLogStorage {
      * @param {Function} getState - The Redux store's {@code getState} method.
      */
     constructor(getState: IStore['getState']) {
-        /**
-         * Counts each log entry, increases on every batch log entry stored.
-         *
-         * @type {number}
-         */
-        this.counter = 1;
 
         /**
          * The Redux store's {@code getState} method.
@@ -31,18 +26,14 @@ export default class JitsiMeetLogStorage {
     }
 
     /**
-     * The JitsiMeetLogStorage is ready when the conference has been joined.
-     * A conference is considered joined when the 'conference' field is defined
-     * in the base/conference state.
+     * The JitsiMeetLogStorage is ready we can use the rtcstats trace to send logs
+     * to the rtcstats server.
      *
      * @returns {boolean} <tt>true</tt> when this storage is ready or
      * <tt>false</tt> otherwise.
      */
     isReady() {
-        const { conference, error: conferenceError } = this.getState()['features/base/conference'];
-        const { error: connectionError } = this.getState()['features/base/connection'];
-
-        return Boolean(conference || conferenceError || connectionError);
+        return JitsiMeetJS.rtcstats.isTraceAvailable();
     }
 
     /**
@@ -55,9 +46,9 @@ export default class JitsiMeetLogStorage {
 
         const config = this.getState()['features/base/config'];
 
-        // Saving the logs in RTCStats is a new feature and so there is no prior behavior that needs to be maintained.
-        // That said, this is still experimental and needs to be rolled out gradually so we want this to be off by
-        // default.
+        // RTCStats can run without sending app logs to the server.
+        // Be mindful that there exists another LogStorage instance withing lib-jitsi-meet,
+        // that is used to send logs generated there.
         return config?.analytics?.rtcstatsStoreLogs && isRTCStatsEnabled(this.getState());
     }
 

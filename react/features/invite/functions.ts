@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import { IReduxState } from '../app/types';
@@ -7,15 +6,17 @@ import { getRoomName } from '../base/conference/functions';
 import { getInviteURL } from '../base/connection/functions';
 import { isIosMobileBrowser } from '../base/environment/utils';
 import i18next from '../base/i18n/i18next';
+import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
-import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants/functions';
+import { getLocalParticipant } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { doGetJSON } from '../base/util/httpUtils';
 import { parseURLParams } from '../base/util/parseURLParams';
 import {
     StatusCode,
     appendURLParam,
+    getNormalizedRoomName,
     parseURIString
 } from '../base/util/uri';
 import { isVpaasMeeting } from '../jaas/functions';
@@ -491,10 +492,27 @@ export function isAddPeopleEnabled(state: IReduxState): boolean {
  */
 export function isDialOutEnabled(state: IReduxState): boolean {
     const { conference } = state['features/base/conference'];
-    const isModerator = isLocalParticipantModerator(state);
 
-    return isJwtFeatureEnabled(state, 'outbound-call', isModerator, false)
-        && conference?.isSIPCallingSupported();
+    return isJwtFeatureEnabled(state, MEET_FEATURES.OUTBOUND_CALL, false) && conference?.isSIPCallingSupported();
+}
+
+/**
+ * Determines if dial out is currently enabled or not.
+ *
+ * @param {IReduxState} state - Current state.
+ * @returns {boolean} Indication of whether dial out is currently enabled.
+ */
+export function isDialInEnabled(state: IReduxState): boolean {
+    const { metadata } = state['features/base/conference'];
+
+    if (metadata?.dialinEnabled === false) {
+        return false;
+    }
+
+    const { dialInConfCodeUrl, dialInNumbersUrl, hosts } = state['features/base/config'];
+    const mucURL = hosts?.muc;
+
+    return Boolean(dialInConfCodeUrl && dialInNumbersUrl && mucURL);
 }
 
 /**
@@ -505,10 +523,8 @@ export function isDialOutEnabled(state: IReduxState): boolean {
  */
 export function isSipInviteEnabled(state: IReduxState): boolean {
     const { sipInviteUrl } = state['features/base/config'];
-    const isModerator = isLocalParticipantModerator(state);
 
-    return isJwtFeatureEnabled(state, 'sip-outbound-call', isModerator, false)
-        && Boolean(sipInviteUrl);
+    return isJwtFeatureEnabled(state, MEET_FEATURES.SIP_OUTBOUND_CALL, false) && Boolean(sipInviteUrl);
 }
 
 /**
@@ -637,7 +653,7 @@ export function getShareInfoText(
     const { locationURL = {} } = state['features/base/connection'];
     const mucURL = hosts?.muc;
 
-    if (skipDialIn || !dialInConfCodeUrl || !dialInNumbersUrl || !mucURL) {
+    if (skipDialIn || !isDialInEnabled(state)) {
         // URLs for fetching dial in numbers not defined.
         return Promise.resolve(infoText);
     }
@@ -712,7 +728,7 @@ export function getDialInfoPageURL(state: IReduxState, roomName?: string) {
     const conferenceName = roomName ?? getRoomName(state);
     const { locationURL } = state['features/base/connection'];
     const { href = '' } = locationURL ?? {};
-    const room = _decodeRoomURI(conferenceName ?? '');
+    const room = getNormalizedRoomName(conferenceName) ?? '';
 
     const url = didPageUrl || `${href.substring(0, href.lastIndexOf('/'))}/${DIAL_IN_INFO_PAGE_PATH_NAME}`;
 

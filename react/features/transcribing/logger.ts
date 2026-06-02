@@ -1,3 +1,3 @@
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/transcribing');
+export default getLogger('app:transcribing');

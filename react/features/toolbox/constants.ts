@@ -1,9 +1,35 @@
 import { NativeToolbarButton, ToolbarButton } from './types';
 
 /**
+ * Dummy toolbar threschold value for 9 buttons. It is used as a placeholder in THRESHOLDS that would work only when
+ * this value is overiden.
+ */
+export const DUMMY_9_BUTTONS_THRESHOLD_VALUE = Symbol('9_BUTTONS_THRESHOLD_VALUE');
+
+/**
+ * Dummy toolbar threschold value for 10 buttons. It is used as a placeholder in THRESHOLDS that would work only when
+ * this value is overiden.
+ */
+export const DUMMY_10_BUTTONS_THRESHOLD_VALUE = Symbol('10_BUTTONS_THRESHOLD_VALUE');
+
+export const DEFAULT_REDUCED_UI_MAIN_TOOLBAR_BUTTONS = [ 'microphone', 'camera' ];
+
+/**
  * Thresholds for displaying toolbox buttons.
  */
 export const THRESHOLDS = [
+
+    // This entry won't be used unless the order is overridden trough the mainToolbarButtons config prop.
+    {
+        width: 675,
+        order: DUMMY_10_BUTTONS_THRESHOLD_VALUE
+    },
+
+    // This entry won't be used unless the order is overridden trough the mainToolbarButtons config prop.
+    {
+        width: 625,
+        order: DUMMY_9_BUTTONS_THRESHOLD_VALUE
+    },
     {
         width: 565,
         order: [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'reactions', 'participants-pane', 'tileview' ]
@@ -40,7 +66,7 @@ export const THRESHOLDS = [
 export const NATIVE_THRESHOLDS = [
     {
         width: 560,
-        order: [ 'microphone', 'camera', 'chat', 'screensharing', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
+        order: [ 'microphone', 'camera', 'chat', 'desktop', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
     },
     {
         width: 500,
@@ -97,7 +123,8 @@ export const MAIN_TOOLBAR_BUTTONS_PRIORITY = [
     'embedmeeting',
     'feedback',
     'download',
-    'help'
+    'help',
+    'custom-panel'
 ];
 
 export const TOOLBAR_TIMEOUT = 4000;
@@ -122,11 +149,13 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'camera',
     'chat',
     'closedcaptions',
+    'custom-panel',
     'desktop',
     'download',
     'embedmeeting',
     'etherpad',
     'feedback',
+    'filesharing',
     'filmstrip',
     'fullscreen',
     'hangup',
@@ -139,6 +168,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'mute-everyone',
     'mute-video-everyone',
     'participants-pane',
+    'polls',
     'profile',
     'raisehand',
     'recording',
@@ -169,7 +199,7 @@ export const NATIVE_TOOLBAR_BUTTONS: NativeToolbarButton[] = [
     'microphone',
     'overflowmenu',
     'raisehand',
-    'screensharing',
+    'desktop',
     'tileview'
 ];
 
@@ -181,6 +211,7 @@ export const VISITORS_MODE_BUTTONS: ToolbarButton[] = [
     'closedcaptions',
     'fullscreen',
     'hangup',
+    'participants-pane',
     'raisehand',
     'settings',
     'stats',

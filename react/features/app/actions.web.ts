@@ -5,9 +5,10 @@ import {
     configWillLoad,
     setConfig
 } from '../base/config/actions';
+import { buildConfigURL } from '../base/config/functions.any';
 import { setLocationURL } from '../base/connection/actions.web';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.web';
-import { inIframe } from '../base/util/iframeUtils';
+import { isEmbedded } from '../base/util/embedUtils';
 import { parseURIString } from '../base/util/uri';
 import { isVpaasMeeting } from '../jaas/functions';
 import { clearNotifications, showNotification } from '../notifications/actions';
@@ -69,11 +70,25 @@ export function appNavigate(uri?: string) {
         // the conference, but we're still on the conference screen.
         dispatch(clearNotifications());
 
-        dispatch(configWillLoad(locationURL, room));
-
-        const config = await loadConfig();
-
+        dispatch(configWillLoad(locationURL));
         dispatch(setLocationURL(locationURL));
+
+        let config = window.config;
+
+        if (!config) {
+            const url = buildConfigURL(locationURL, room);
+
+            try {
+                config = await loadConfig(url);
+
+                // Mirror to window.config so legacy bare `config` global
+                // references (UI.js, etc.) resolve when SSI did not inject it.
+                window.config = config;
+            } catch (err) {
+                logger.error(`Failed to load config from ${url}`, err);
+            }
+        }
+
         dispatch(setConfig(config));
         dispatch(setRoom(room));
     };
@@ -102,7 +117,7 @@ export function maybeRedirectToWelcomePage(options: { feedbackSubmitted?: boolea
         // if close page is enabled redirect to it, without further action
         if (enableClosePage) {
             if (isVpaasMeeting(getState())) {
-                const isOpenedInIframe = inIframe();
+                const isOpenedInIframe = isEmbedded();
 
                 if (isOpenedInIframe) {
                     // @ts-ignore

@@ -71,7 +71,7 @@ const PinnedIndicator = ({
             id = { `pin-indicator-${participantId}` }>
             <BaseIndicator
                 icon = { IconPin }
-                iconSize = { `${iconSize}px` }
+                iconSize = { iconSize }
                 tooltipKey = 'pinnedParticipant'
                 tooltipPosition = { tooltipPosition } />
         </div>

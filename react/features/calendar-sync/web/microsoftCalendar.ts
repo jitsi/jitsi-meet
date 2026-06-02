@@ -170,7 +170,7 @@ export const microsoftCalendarApi = {
 
             popupAuthWindow = window.open(
                 authUrl,
-                'Auth M$',
+                `Auth M$-${Date.now()}`,
                 `width=${w}, height=${h}, top=${
                     (screen.height / 2) - (h / 2)}, left=${
                     (screen.width / 2) - (w / 2)}`);

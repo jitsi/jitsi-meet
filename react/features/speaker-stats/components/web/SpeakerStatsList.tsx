@@ -1,7 +1,6 @@
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { MOBILE_BREAKPOINT } from '../../constants';
 import abstractSpeakerStatsList from '../AbstractSpeakerStatsList';
 
@@ -17,7 +16,7 @@ const useStyles = makeStyles()(theme => {
                     height: theme.spacing(8)
                 },
                 '& .has-left': {
-                    color: theme.palette.text03
+                    color: theme.palette.speakerStatsLabelText
                 },
                 '& .avatar': {
                     marginRight: theme.spacing(3)
@@ -25,20 +24,20 @@ const useStyles = makeStyles()(theme => {
                 '& .time': {
                     padding: '2px 4px',
                     borderRadius: '4px',
-                    ...withPixelLineHeight(theme.typography.labelBold),
+                    ...theme.typography.labelBold,
                     [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
-                        ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
+                        ...theme.typography.bodyShortRegularLarge
                     },
-                    backgroundColor: theme.palette.ui02
+                    backgroundColor: theme.palette.speakerStatsRowBackground
                 },
                 '& .display-name': {
-                    ...withPixelLineHeight(theme.typography.bodyShortRegular),
+                    ...theme.typography.bodyShortRegular,
                     [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
-                        ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
+                        ...theme.typography.bodyShortRegularLarge
                     }
                 },
                 '& .dominant': {
-                    backgroundColor: theme.palette.success02
+                    backgroundColor: theme.palette.speakerStatsSuccessBar
                 }
             }
 

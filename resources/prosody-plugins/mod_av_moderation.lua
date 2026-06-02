@@ -1,6 +1,6 @@
-local avmoderation_component = module:get_option_string('av_moderation_component', 'avmoderation.'..module.host);
+-- TODO: Remove this file after several stable releases when people update their configs
+module:log('warn', 'mod_av_moderation is deprecated and will be removed in a future release. '
+    .. 'Please update your config by removing this module from the list of loaded modules.');
 
--- Advertise AV Moderation so client can pick up the address and use it
-module:add_identity('component', 'av_moderation', avmoderation_component);
-
-module:depends("jitsi_session");
+module:depends('jitsi_session');
+module:depends('features_identity');

@@ -17,16 +17,16 @@ import LanguageList from './LanguageList';
 const useStyles = makeStyles()(theme => {
     return {
         paragraphWrapper: {
-            fontSize: 14,
+            fontSize: '0.875rem',
             margin: '10px 0px',
-            color: theme.palette.text01
+            color: theme.palette.dialogText
         },
         spanWrapper: {
             fontWeight: 700,
             cursor: 'pointer',
             color: theme.palette.link01,
             '&:hover': {
-                backgroundColor: theme.palette.ui04,
+                backgroundColor: theme.palette.languageSelectorHover,
                 color: theme.palette.link01Hover
             }
         }

@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { login } from '../../../authentication/actions.any';
+import { leaveConference } from '../../../base/conference/actions';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../../base/icons/svg';
@@ -8,6 +10,7 @@ import PreMeetingScreen from '../../../base/premeeting/components/web/PreMeeting
 import LoadingIndicator from '../../../base/react/components/web/LoadingIndicator';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
+import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import ChatInput from '../../../chat/components/web/ChatInput';
 import MessageContainer from '../../../chat/components/web/MessageContainer';
 import AbstractLobbyScreen, {
@@ -35,6 +38,10 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
         super(props);
 
         this._messageContainerRef = React.createRef<MessageContainer>();
+
+        // Bind authentication methods
+        this._onLogin = this._onLogin.bind(this);
+        this._onHangup = this._onHangup.bind(this);
     }
 
     /**
@@ -84,7 +91,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      * @inheritdoc
      */
     override _renderJoining() {
-        const { _isLobbyChatActive } = this.props;
+        const { _login, _isLobbyChatActive } = this.props;
 
         return (
             <div className = 'lobby-screen-content'>
@@ -96,7 +103,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
                                 <LoadingIndicator size = 'large' />
                             </div>
                             <span className = 'joining-message'>
-                                { this.props.t('lobby.joiningMessage') }
+                                { this.props.t(_login ? 'lobby.waitForModerator' : 'lobby.joiningMessage') }
                             </span>
                         </>
                     )}
@@ -215,14 +222,14 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
                     labelKey = 'prejoin.joinMeeting'
                     onClick = { this._onJoinWithPassword }
                     testId = 'lobby.passwordJoinButton'
-                    type = 'primary' />
+                    type = { BUTTON_TYPES.PRIMARY } />
                 <Button
                     className = 'lobby-button-margin'
                     fullWidth = { true }
                     labelKey = 'lobby.backToKnockModeButton'
                     onClick = { this._onSwitchToKnockMode }
                     testId = 'lobby.backToKnockModeButton'
-                    type = 'secondary' />
+                    type = { BUTTON_TYPES.SECONDARY } />
             </>
         );
     }
@@ -233,7 +240,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      * @inheritdoc
      */
     override _renderStandardButtons() {
-        const { _knocking, _isLobbyChatActive, _renderPassword } = this.props;
+        const { _knocking, _login, _isLobbyChatActive, _renderPassword } = this.props;
 
         return (
             <>
@@ -260,7 +267,15 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
                     labelKey = 'lobby.enterPasswordButton'
                     onClick = { this._onSwitchToPasswordMode }
                     testId = 'lobby.enterPasswordButton'
-                    type = 'secondary' />
+                    type = { BUTTON_TYPES.SECONDARY } />
+                }
+                {_login && <Button
+                    className = 'lobby-button-margin'
+                    fullWidth = { true }
+                    labelKey = 'dialog.IamHost'
+                    onClick = { this._onLogin }
+                    testId = 'lobby.loginButton'
+                    type = { BUTTON_TYPES.PRIMARY } />
                 }
             </>
         );
@@ -278,6 +293,26 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
         if (this._messageContainerRef.current) {
             this._messageContainerRef.current.scrollToElement(withAnimation, null);
         }
+    }
+
+    /**
+     * Handles login button click.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onLogin() {
+        this.props.dispatch(login());
+    }
+
+    /**
+     * Handles hangup button click.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onHangup() {
+        this.props.dispatch(leaveConference());
     }
 }
 

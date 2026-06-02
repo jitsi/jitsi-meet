@@ -29,7 +29,7 @@ local escaped_muc_domain_base = muc_domain_base:gsub("%p", "%%%1");
 local escaped_muc_domain_prefix = muc_domain_prefix:gsub("%p", "%%%1");
 -- The pattern used to extract the target subdomain
 -- (e.g. extract 'foo' from 'conference.foo.example.com')
-local target_subdomain_pattern = "^"..escaped_muc_domain_prefix..".([^%.]+)%."..escaped_muc_domain_base;
+local target_subdomain_pattern = "^"..escaped_muc_domain_prefix.."%.([^%.]+)%."..escaped_muc_domain_base;
 
 -- table to store all incoming iqs without roomname in it, like discoinfo to the muc component
 local roomless_iqs = {};
@@ -132,11 +132,7 @@ function get_room_from_jid(room_jid)
     local component = hosts[host];
     if component then
         local muc = component.modules.muc
-        if muc and rawget(muc,"rooms") then
-            -- We're running 0.9.x or 0.10 (old MUC API)
-            return muc.rooms[room_jid];
-        elseif muc and rawget(muc,"get_room_from_jid") then
-            -- We're running >0.10 (new MUC API)
+        if muc then
             return muc.get_room_from_jid(room_jid);
         else
             return
@@ -159,6 +155,32 @@ function get_room_by_name_and_subdomain(room_name, subdomain)
     end
 
     return get_room_from_jid(room_address);
+end
+
+-- Returns the occupant and the room (main or one of its active breakout rooms)
+-- where the given real full JID is found. Returns nil, nil if not found anywhere.
+-- @param room the main room object
+-- @param real_jid the full real JID to look up
+-- @return occupant, found_room
+function get_occupant_by_real_jid(room, real_jid)
+    local occupant = room:get_occupant_by_real_jid(real_jid);
+    if occupant then
+        return occupant, room;
+    end
+
+    if room._data.breakout_rooms_active then
+        for breakout_room_jid in pairs(room._data.breakout_rooms or {}) do
+            local breakout_room = get_room_from_jid(breakout_room_jid);
+            if breakout_room then
+                occupant = breakout_room:get_occupant_by_real_jid(real_jid);
+                if occupant then
+                    return occupant, breakout_room;
+                end
+            end
+        end
+    end
+
+    return nil, nil;
 end
 
 function async_handler_wrapper(event, handler)
@@ -263,13 +285,10 @@ end
 -- Utility function to check whether feature is present and enabled. Allow
 -- a feature if there are features present in the session(coming from
 -- the token) and the value of the feature is true.
--- If features are missing but we have granted_features check that
 -- if features are missing from the token we check whether it is moderator
-function is_feature_allowed(ft, features, granted_features, is_moderator)
+function is_feature_allowed(ft, features, is_moderator)
     if features then
         return features[ft] == "true" or features[ft] == true;
-    elseif granted_features then
-        return granted_features[ft] == "true" or granted_features[ft] == true;
     else
         return is_moderator;
     end
@@ -284,7 +303,12 @@ function extract_subdomain(room_node)
     end
 
     local subdomain, room_name = room_node:match("^%[([^%]]+)%](.+)$");
-    local _, customer_id = subdomain and subdomain:match("^(vpaas%-magic%-cookie%-)(.*)$") or nil, nil;
+
+    if not subdomain then
+        room_name = room_node;
+    end
+
+    local customer_id = subdomain and subdomain:match("^vpaas%-magic%-cookie%-(.*)$") or nil;
     local cache_value = { subdomain=subdomain, room=room_name, customer_id=customer_id };
     extract_subdomain_cache:set(room_node, cache_value);
     return subdomain, room_name, customer_id;
@@ -320,14 +344,61 @@ function starts_with_one_of(str, prefixes)
     return false
 end
 
-
 function ends_with(str, ending)
+    if not str then
+        return false;
+    end
+
     return ending == "" or str:sub(-#ending) == ending
 end
 
 -- healthcheck rooms in jicofo starts with a string '__jicofo-health-check'
 function is_healthcheck_room(room_jid)
     return starts_with(room_jid, "__jicofo-health-check");
+end
+
+--- Returns true when the given occupant nick is the Jitsi focus participant.
+-- The focus occupant always has a nick ending in "/focus".
+-- @param nick the full occupant nick (resource part of the MUC JID)
+-- @return boolean
+function is_focus(nick)
+    if nick == nil then
+        return false;
+    end
+    return string.sub(nick, -string.len("/focus")) == "/focus";
+end
+
+--- Returns true when the given bare resource/nick string is the focus nick.
+-- Use this when you have only the resource part in isolation (not a full JID),
+-- e.g. values read from a stats table keyed by resource.
+-- @param resource  the bare resource string, e.g. "focus" or "user1"
+-- @return boolean
+local function is_focus_nick(resource)
+    return resource == 'focus';
+end
+
+--- Returns true when the given real (non-MUC) JID belongs to the focus account.
+-- Focus always authenticates with username 'focus' (e.g. focus@auth.example.com).
+-- Use this when you have the actor's real JID rather than a MUC occupant JID.
+-- @param real_jid  a real JID string, e.g. "focus@auth.example.com/res"
+-- @return boolean
+local function is_focus_jid(real_jid)
+    return jid.node(real_jid) == 'focus';
+end
+
+--- Builds the full MUC room address JID from its components.
+-- Uses muc_domain_prefix from module configuration (default: "conference").
+-- @param room_name   the local part of the room JID (e.g. "myroom")
+-- @param domain_name the base domain (e.g. "example.com")
+-- @param subdomain   optional tenant subdomain; nil or "" means no prefix
+-- @return the full room address string, e.g. "myroom@conference.example.com"
+--         or "[tenant]myroom@conference.example.com"
+function build_room_address(room_name, domain_name, subdomain)
+    local room_address = jid.join(room_name, muc_domain_prefix.."."..domain_name);
+    if subdomain and subdomain ~= "" then
+        room_address = "["..subdomain.."]"..room_address;
+    end
+    return room_address;
 end
 
 --- Utility function to make an http get request and
@@ -502,27 +573,6 @@ function is_sip_jigasi(stanza)
     return stanza:get_child('initiator', 'http://jitsi.org/protocol/jigasi');
 end
 
--- This requires presence stanza being passed
-function is_transcriber_jigasi(stanza)
-    if not stanza then
-        return false;
-    end
-
-    local features = stanza:get_child('features');
-    if not features then
-        return false;
-    end
-
-    for i = 1, #features do
-        local feature = features[i];
-        if feature.attr and feature.attr.var and feature.attr.var == 'http://jitsi.org/protocol/transcriber' then
-            return true;
-        end
-    end
-
-    return false;
-end
-
 function is_transcriber(jid)
     return starts_with_one_of(jid, TRANSCRIBER_PREFIXES);
 end
@@ -581,7 +631,7 @@ function process_host_module(name, callback)
         module:log('info', 'No host/component found, will wait for it: %s', name)
 
         -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
+        prosody.events.add_handler('host-activated', process_host, -100); -- make sure everything is loaded
     else
         process_host(name);
     end
@@ -593,6 +643,67 @@ function table_shallow_copy(t)
         t2[k] = v
     end
     return t2
+end
+
+local function table_find(tab, val)
+    if not tab or val == nil then
+        return nil
+    end
+
+    for i, v in ipairs(tab) do
+        if v == val then
+            return i
+        end
+    end
+    return nil
+end
+
+-- Adds second table values to the first table
+local function table_add(t1, t2)
+    for _,v in ipairs(t2) do
+       table.insert(t1, v);
+    end
+end
+
+-- Returns as a first result the removed items and as a second the added items
+local function table_compare(old_table, new_table)
+    local removed = {}
+    local added = {}
+    local modified = {}
+
+    -- Find removed items (in old but not in new)
+    for id, value in pairs(old_table) do
+        if new_table[id] == nil then
+            table.insert(removed, id)
+        elseif new_table[id] ~= value then
+            table.insert(modified, id)
+        end
+    end
+
+    -- Find added items (in new but not in old)
+    for id, _ in pairs(new_table) do
+        if old_table[id] == nil then
+            table.insert(added, id)
+        end
+    end
+
+    return removed, added, modified
+end
+
+local function table_equals(t1, t2)
+    if t1 == nil then
+        return t2 == nil;
+    end
+    if t2 == nil then
+        return t1 == nil;
+    end
+    if type(t1) ~= 'table' or type(t2) ~= 'table' then
+        return t1 == t2;
+    end
+
+    local removed, added, modified = table_compare(t1, t2);
+
+    return next(removed) == nil and next(added) == nil and next(modified) == nil
 end
 
 -- Splits a string using delimiter
@@ -642,11 +753,35 @@ local function is_admin(_jid)
     return false;
 end
 
+-- Filter out identity information (nick name, email, etc) from a presence stanza.
+local function filter_identity_from_presence(orig_stanza)
+    local stanza = st.clone(orig_stanza);
+
+    stanza:remove_children('nick', 'http://jabber.org/protocol/nick');
+    stanza:remove_children('email');
+    stanza:remove_children('stats-id');
+    local identity = stanza:get_child('identity');
+    if identity then
+        local user = identity:get_child('user');
+        local name = identity:get_child('name');
+        if user then
+            user:remove_children('email');
+            user:remove_children('name');
+        end
+        if name then
+            name:remove_children('name');  -- Remove name with no namespace
+        end
+    end
+
+    return stanza;
+end
+
 return {
     OUTBOUND_SIP_JIBRI_PREFIXES = OUTBOUND_SIP_JIBRI_PREFIXES;
     INBOUND_SIP_JIBRI_PREFIXES = INBOUND_SIP_JIBRI_PREFIXES;
     RECORDER_PREFIXES = RECORDER_PREFIXES;
     extract_subdomain = extract_subdomain;
+    filter_identity_from_presence = filter_identity_from_presence;
     is_admin = is_admin;
     is_feature_allowed = is_feature_allowed;
     is_jibri = is_jibri;
@@ -655,14 +790,18 @@ return {
     is_sip_jibri_join = is_sip_jibri_join;
     is_sip_jigasi = is_sip_jigasi;
     is_transcriber = is_transcriber;
-    is_transcriber_jigasi = is_transcriber_jigasi;
     is_vpaas = is_vpaas;
     get_focus_occupant = get_focus_occupant;
     get_ip = get_ip;
     get_room_from_jid = get_room_from_jid;
     get_room_by_name_and_subdomain = get_room_by_name_and_subdomain;
+    get_occupant_by_real_jid = get_occupant_by_real_jid;
     get_sip_jibri_email_prefix = get_sip_jibri_email_prefix;
     async_handler_wrapper = async_handler_wrapper;
+    build_room_address = build_room_address;
+    is_focus = is_focus;
+    is_focus_nick = is_focus_nick;
+    is_focus_jid = is_focus_jid;
     presence_check_status = presence_check_status;
     process_host_module = process_host_module;
     respond_iq_result = respond_iq_result;
@@ -675,5 +814,9 @@ return {
     split_string = split_string;
     starts_with = starts_with;
     starts_with_one_of = starts_with_one_of;
+    table_add = table_add;
+    table_compare = table_compare;
     table_shallow_copy = table_shallow_copy;
+    table_find = table_find;
+    table_equals = table_equals;
 };

@@ -22,7 +22,7 @@ export function notifyKickedOut(participant: any, submit?: Function) {
             return;
         }
 
-        dispatch(openDialog(AlertDialog, {
+        dispatch(openDialog('AlertDialog', AlertDialog, {
             contentKey: {
                 key: participant ? 'dialog.kickTitle' : 'dialog.kickSystemTitle',
                 params: {
@@ -52,7 +52,7 @@ export function notifyConferenceFailed(reasonKey: string, submit?: Function) {
         // we have to push the opening of the dialog to the queue
         // so that we make sure it will be visible after the events
         // of conference destroyed are done
-        setTimeout(() => dispatch(openDialog(AlertDialog, {
+        setTimeout(() => dispatch(openDialog('AlertDialog', AlertDialog, {
             contentKey: {
                 key: reasonKey
             },
@@ -60,7 +60,7 @@ export function notifyConferenceFailed(reasonKey: string, submit?: Function) {
             },
             onSubmit: () => {
                 submit?.();
-                dispatch(hideDialog(AlertDialog));
+                dispatch(hideDialog('AlertDialog', AlertDialog));
             }
         })));
     };

@@ -29,7 +29,7 @@ class LinkToSalesforce extends AbstractButton<AbstractButtonProps> {
         const { dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('link.to.salesforce'));
-        dispatch(openDialog(SalesforceLinkDialog));
+        dispatch(openDialog('SalesforceLinkDialog', SalesforceLinkDialog));
     }
 }
 

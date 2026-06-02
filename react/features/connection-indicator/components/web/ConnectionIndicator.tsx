@@ -19,6 +19,7 @@ import {
     getVirtualScreenshareParticipantTrack
 } from '../../../base/tracks/functions';
 import { ITrack } from '../../../base/tracks/types';
+import { pixelsToRem } from '../../../base/ui/functions.any';
 import {
     isTrackStreamingStatusInactive,
     isTrackStreamingStatusInterrupted
@@ -178,7 +179,7 @@ const styles = (theme: Theme) => {
             },
 
             '&.status-lost': {
-                backgroundColor: theme.palette.ui05
+                backgroundColor: theme.palette.connectionIndicatorLost
             },
 
             '&.status-other': {
@@ -355,7 +356,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
 
         return (
             <div
-                style = {{ fontSize: iconSize }}>
+                style = {{ fontSize: pixelsToRem(iconSize) }}>
                 <span className = 'sr-only'>{ t('videothumbnail.connectionInfo') }</span>
                 <ConnectionIndicatorIcon
                     classes = { classes }

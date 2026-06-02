@@ -46,7 +46,7 @@ const MuteVideoButton = ({
                 'participant_id': participantID
             }));
 
-        dispatch(openDialog(MuteRemoteParticipantsVideoDialog, { participantID }));
+        dispatch(openDialog('MuteRemoteParticipantsVideoDialog', MuteRemoteParticipantsVideoDialog, { participantID }));
     }, [ dispatch, notifyClick, notifyClick, participantID, sendAnalytics ]);
 
     if (videoTrackMuted) {

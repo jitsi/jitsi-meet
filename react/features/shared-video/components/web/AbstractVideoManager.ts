@@ -1,5 +1,3 @@
-// @ts-expect-error
-import Logger from '@jitsi/logger';
 import { throttle } from 'lodash-es';
 import { PureComponent } from 'react';
 
@@ -17,8 +15,7 @@ import { dockToolbox } from '../../../toolbox/actions';
 import { muteLocal } from '../../../video-menu/actions.any';
 import { setSharedVideoStatus, stopSharedVideo } from '../../actions';
 import { PLAYBACK_STATUSES } from '../../constants';
-
-const logger = Logger.getLogger(__filename);
+import logger from '../../logger';
 
 /**
  * Return true if the difference between the two times is larger than 5.

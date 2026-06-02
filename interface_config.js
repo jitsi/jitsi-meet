@@ -110,7 +110,7 @@ var interfaceConfig = {
     RECENT_LIST_ENABLED: true,
     REMOTE_THUMBNAIL_RATIO: 1, // 1:1
 
-    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar', 'sounds', 'more' ],
+    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar', 'shortcuts', 'sounds', 'more' ],
 
     /**
      * Specify which sharing features should be displayed. If the value is not set
@@ -191,17 +191,6 @@ var interfaceConfig = {
     // APP_SCHEME: 'org.jitsi.meet',
 
     // NATIVE_APP_NAME: 'Jitsi Meet',
-
-    /**
-     * Specify Firebase dynamic link properties for the mobile apps.
-     */
-    // MOBILE_DYNAMIC_LINK: {
-    //    APN: 'org.jitsi.meet',
-    //    APP_CODE: 'w2atb',
-    //    CUSTOM_DOMAIN: undefined,
-    //    IBI: 'com.atlassian.JitsiMeet.ios',
-    //    ISI: '1165103905'
-    // },
 
     /**
      * Hide the logo on the deep linking pages.

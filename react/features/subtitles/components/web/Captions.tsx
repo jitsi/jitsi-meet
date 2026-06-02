@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
-import { getVideospaceFloatingElementsBottomSpacing } from '../../../base/ui/functions.web';
+import { getVideospaceFloatingElementsBottomSpacing, pixelsToRem, remToPixels } from '../../../base/ui/functions.web';
 import { getStageParticipantNameLabelHeight } from '../../../display-name/components/web/styles';
 import { shouldDisplayStageParticipantBadge } from '../../../display-name/functions';
 import {
@@ -63,7 +63,7 @@ const styles = (theme: Theme, props: IProps) => {
     if (_isLifted) {
         // 10px is the space between the onstage participant display name label and subtitles. We also need
         // to add the padding of the subtitles because it will decrease the gap between the label and subtitles.
-        bottom += getStageParticipantNameLabelHeight(theme, _clientHeight) + 10 + padding;
+        bottom += remToPixels(getStageParticipantNameLabelHeight(theme, _clientHeight)) + 10 + padding;
     }
 
     if (_shiftUp) {
@@ -75,7 +75,7 @@ const styles = (theme: Theme, props: IProps) => {
         transcriptionSubtitles: {
             bottom: `${bottom}px`,
             marginBottom: `${marginBottom}px`,
-            fontSize: `${fontSize}px`,
+            fontSize: pixelsToRem(fontSize),
             left: '50%',
             maxWidth: '50vw',
             overflowWrap: 'break-word' as const,

@@ -7,6 +7,7 @@ import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import E2EELabel from '../../../e2ee/components/E2EELabel';
 import HighlightButton from '../../../recording/components/Recording/web/HighlightButton';
 import RecordingLabel from '../../../recording/components/web/RecordingLabel';
+import TranscribingLabel from '../../../recording/components/web/TranscribingLabel';
 import { showToolbox } from '../../../toolbox/actions.web';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
 import VideoQualityLabel from '../../../video-quality/components/VideoQualityLabel.web';
@@ -33,6 +34,11 @@ interface IProps {
         alwaysVisible?: string[];
         autoHide?: string[];
     };
+
+    /**
+     * The indicator which determines whether the UI is reduced.
+     */
+    _reducedUI: boolean;
 
     /**
      * Indicates whether the component should be visible or not.
@@ -74,6 +80,7 @@ const COMPONENTS: Array<{
             <>
                 <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />
                 <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
+                <TranscribingLabel />
             </>
         ),
         id: 'recording'
@@ -194,6 +201,12 @@ class ConferenceInfo extends Component<IProps> {
      * @returns {ReactElement}
      */
     override render() {
+        const { _reducedUI } = this.props;
+
+        if (_reducedUI) {
+            return null;
+        }
+
         return (
             <div
                 className = 'details-container'
@@ -217,9 +230,12 @@ class ConferenceInfo extends Component<IProps> {
  * }}
  */
 function _mapStateToProps(state: IReduxState) {
+    const { reducedUI } = state['features/base/responsive-ui'];
+
     return {
+        _conferenceInfo: getConferenceInfo(state),
+        _reducedUI: reducedUI,
         _visible: isToolboxVisible(state),
-        _conferenceInfo: getConferenceInfo(state)
     };
 }
 

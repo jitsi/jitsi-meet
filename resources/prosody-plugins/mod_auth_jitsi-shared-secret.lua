@@ -6,6 +6,10 @@ local saslprep = require "util.encodings".stringprep.saslprep;
 local secure_equals = require "util.hashes".equals;
 
 local shared_secret = module:get_option_string('shared_secret');
+-- TODO: shared_secret_prev is probably broken. get_sasl_handler() returns shared_secret
+-- from its plain callback, so Prosody rejects any password other than the current secret.
+-- provider.test_password() handles shared_secret_prev correctly but is not called in the
+-- PLAIN SASL flow. To fix, get_sasl_handler() should use a plain_test profile instead.
 local shared_secret_prev = module:get_option_string('shared_secret_prev');
 if shared_secret == nil then
     module:log('error', 'No shared_secret specified. No secret to operate on!');

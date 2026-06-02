@@ -9,7 +9,7 @@ import { IReduxState, IStore } from '../../../app/types';
 import { getCurrentConference } from '../../../base/conference/functions';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { openDialog } from '../../../base/dialog/actions';
-import { translate } from '../../../base/i18n/functions';
+import { translate } from '../../../base/i18n/functions.native';
 import { IconCloseLarge } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
@@ -128,7 +128,7 @@ class Whiteboard extends PureComponent<IProps> {
                 safeAreaInsets = { [ 'bottom', 'left', 'right' ] }
                 style = { styles.backDrop }>
                 <WebView
-                    domStorageEnabled = { false }
+                    domStorageEnabled = { true }
                     incognito = { true }
                     javaScriptEnabled = { true }
                     nestedScrollEnabled = { true }
@@ -152,7 +152,7 @@ class Whiteboard extends PureComponent<IProps> {
      * @returns {void}
      */
     _onError() {
-        this.props.dispatch(openDialog(WhiteboardErrorDialog));
+        this.props.dispatch(openDialog('WhiteboardErrorDialog', WhiteboardErrorDialog));
     }
 
     /**
@@ -228,7 +228,7 @@ class Whiteboard extends PureComponent<IProps> {
 
 /**
  * Maps (parts of) the redux state to the associated
- * {@code WaitForOwnerDialog}'s props.
+ * {@code Whiteboard}'s props.
  *
  * @param {Object} state - The redux state.
  * @private

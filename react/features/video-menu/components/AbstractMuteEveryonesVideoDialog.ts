@@ -1,5 +1,6 @@
 import { IReduxState } from '../../app/types';
 import { requestDisableVideoModeration, requestEnableVideoModeration } from '../../av-moderation/actions';
+import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../av-moderation/constants';
 import { isEnabledFromState, isSupported } from '../../av-moderation/functions';
 import { MEDIA_TYPE } from '../../base/media/constants';
 import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants/functions';
@@ -109,7 +110,7 @@ export default class AbstractMuteEveryonesVideoDialog<P extends IProps>
  */
 export function abstractMapStateToProps(state: IReduxState, ownProps: IProps) {
     const { exclude = [], t } = ownProps;
-    const isVideoModerationEnabled = isEnabledFromState(MEDIA_TYPE.VIDEO, state);
+    const isVideoModerationEnabled = isEnabledFromState(AVM_MEDIA_TYPE.VIDEO, state);
 
     const whom = exclude
         // eslint-disable-next-line no-confusing-arrow

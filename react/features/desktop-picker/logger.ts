@@ -1,3 +1,3 @@
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/desktop-picker');
+export default getLogger('app:desktop-picker');

@@ -12,7 +12,6 @@ import { getLegalUrls } from '../../base/config/functions.any';
 import { isSupportedBrowser } from '../../base/environment/environment';
 import { translate, translateToHTML } from '../../base/i18n/functions';
 import Platform from '../../base/react/Platform.web';
-import { withPixelLineHeight } from '../../base/styles/functions.web';
 import Button from '../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants.any';
 import {
@@ -34,27 +33,27 @@ const useStyles = makeStyles()((theme: Theme) => {
         contentPane: {
             display: 'flex',
             flexDirection: 'column',
-            background: theme.palette.ui01,
-            border: `1px solid ${theme.palette.ui03}`,
+            background: theme.palette.deepLinkingBackground,
+            border: `1px solid ${theme.palette.deepLinkingBorder}`,
             padding: 40,
             borderRadius: 16,
             maxWidth: 410,
-            color: theme.palette.text01
+            color: theme.palette.deepLinkingText
         },
         logo: {
             marginBottom: 32
         },
         launchingMeetingLabel: {
             marginBottom: 16,
-            ...withPixelLineHeight(theme.typography.heading4)
+            ...theme.typography.heading4
         },
         roomName: {
             marginBottom: 32,
-            ...withPixelLineHeight(theme.typography.heading5)
+            ...theme.typography.heading5
         },
         descriptionLabel: {
             marginBottom: 32,
-            ...withPixelLineHeight(theme.typography.bodyLongRegular)
+            ...theme.typography.bodyLongRegular
         },
         buttonsContainer: {
             display: 'flex',
@@ -67,14 +66,14 @@ const useStyles = makeStyles()((theme: Theme) => {
             marginTop: 40,
             height: 1,
             maxWidth: 390,
-            background: theme.palette.ui03
+            background: theme.palette.deepLinkingSeparator
         },
         label: {
             marginTop: 40,
-            ...withPixelLineHeight(theme.typography.labelRegular),
-            color: theme.palette.text02,
+            ...theme.typography.labelRegular,
+            color: theme.palette.deepLinkingLabelText,
             '& a': {
-                color: theme.palette.link01
+                color: theme.palette.deepLinkingLink
             }
         }
     };

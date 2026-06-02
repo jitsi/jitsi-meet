@@ -44,6 +44,16 @@ export const getMainRoom = (stateful: IStateful) => {
 * @returns {IRoomsInfo} The rooms info.
  */
 export const getRoomsInfo = (stateful: IStateful) => {
+    const state = toState(stateful);
+    const localParticipant = getLocalParticipant(stateful);
+    const jwtUser = state['features/base/jwt']?.user;
+    const localUserContext = jwtUser ? {
+        id: jwtUser.id,
+        name: jwtUser.name
+    } : {
+        id: localParticipant?.jwtId,
+        name: localParticipant?.name
+    };
     const breakoutRooms = getBreakoutRooms(stateful);
     const conference = getCurrentConference(stateful);
 
@@ -57,7 +67,6 @@ export const getRoomsInfo = (stateful: IStateful) => {
         const conferenceParticipants = conference?.getParticipants()
             .filter((participant: IJitsiParticipant) => !participant.isHidden());
 
-        const localParticipant = getLocalParticipant(stateful);
         let localParticipantInfo;
 
         if (localParticipant) {
@@ -65,7 +74,8 @@ export const getRoomsInfo = (stateful: IStateful) => {
                 role: localParticipant.role,
                 displayName: localParticipant.name,
                 avatarUrl: localParticipant.loadableAvatarUrl,
-                id: localParticipant.id
+                id: localParticipant.id,
+                userContext: localUserContext
             };
         }
 
@@ -86,7 +96,8 @@ export const getRoomsInfo = (stateful: IStateful) => {
                                 role: participantItem.getRole(),
                                 displayName: participantItem.getDisplayName(),
                                 avatarUrl: storeParticipant?.loadableAvatarUrl,
-                                id: participantItem.getId()
+                                id: participantItem.getId(),
+                                userContext: storeParticipant?.userContext
                             } as IRoomInfoParticipant;
                         }) ]
                     : [ localParticipantInfo ]
@@ -110,13 +121,18 @@ export const getRoomsInfo = (stateful: IStateful) => {
                         const storeParticipant = getParticipantById(stateful,
                             ids.length > 1 ? ids[1] : participantItem.jid);
 
+                        // Check if this is the local participant
+                        const isLocal = storeParticipant?.id === localParticipant?.id;
+                        const userContext = isLocal ? localUserContext : (storeParticipant?.userContext || participantItem.userContext);
+
                         return {
                             jid: participantItem?.jid,
                             role: participantItem?.role,
                             displayName: participantItem?.displayName,
                             avatarUrl: storeParticipant?.loadableAvatarUrl,
                             id: storeParticipant ? storeParticipant.id
-                                : participantLongId
+                                : participantLongId,
+                            userContext
                         } as IRoomInfoParticipant;
                     }) : []
             } as IRoomInfo;

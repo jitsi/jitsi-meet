@@ -1,0 +1,31 @@
+import React from 'react';
+import { WithTranslation, withTranslation } from 'react-i18next';
+
+import i18next from './i18next';
+
+/**
+ * Changes the main translation bundle.
+ *
+ * @param {string} language - The language e.g. 'en', 'fr'.
+ * @param {string} url - The url of the translation bundle.
+ * @param {string} ns - The namespace of the translation bundle.
+ * @returns {void}
+ */
+export async function changeLanguageBundle(language: string, url: string, ns = 'main') {
+    const res = await fetch(url);
+    const bundle = await res.json();
+
+    i18next.addResourceBundle(language, ns, bundle, true, true);
+}
+
+/**
+ * Wraps a specific React Component in order to enable translations in it.
+ *
+ * @param {Component} component - The React Component to wrap.
+ * @returns {Component} The React Component which wraps {@link component} and
+ * enables translations in it.
+ */
+export function translate<P extends WithTranslation>(component: React.ComponentType<P>) {
+    // Use the default list of namespaces.
+    return withTranslation([ 'main', 'languages', 'countries' ])(component);
+}

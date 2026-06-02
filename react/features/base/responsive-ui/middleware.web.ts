@@ -29,9 +29,9 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case CONFERENCE_JOINED: {
-        const { clientHeight = 0, clientWidth = 0 } = store.getState()['features/base/responsive-ui'];
+        const { clientHeight = 0, clientWidth = 0, videoSpaceWidth = 0 } = store.getState()['features/base/responsive-ui'];
 
-        if (!clientHeight && !clientWidth) {
+        if (!clientHeight && !clientWidth && !videoSpaceWidth) {
             const {
                 innerHeight,
                 innerWidth

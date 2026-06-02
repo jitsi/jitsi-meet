@@ -2,6 +2,7 @@ import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { toState } from '../base/redux/functions';
 
+import { cleanSvg } from './functions';
 import logger from './logger';
 
 /**
@@ -38,10 +39,7 @@ export function extractFqnFromPath(state?: IReduxState) {
 export async function getDynamicBrandingUrl(stateful: IStateful) {
     const state = toState(stateful);
 
-    // NB: On web this is dispatched really early, before the config has been stored in the
-    // state. Thus, fetch it from the window global.
-    const config
-        = navigator.product === 'ReactNative' ? state['features/base/config'] : window.config;
+    const config = state['features/base/config'];
     const { dynamicBrandingUrl } = config;
 
     if (dynamicBrandingUrl) {
@@ -82,7 +80,7 @@ export const fetchCustomIcons = async (customIcons: Record<string, string>) => {
             if (response.ok) {
                 const svgXml = await response.text();
 
-                localCustomIcons[key] = svgXml;
+                localCustomIcons[key] = cleanSvg(svgXml);
             } else {
                 logger.error(`Failed to fetch ${url}. Status: ${response.status}`);
             }

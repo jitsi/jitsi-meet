@@ -12,7 +12,6 @@ import { setAudioOnly } from '../../base/audio-only/actions';
 import { translate } from '../../base/i18n/functions';
 import { setLastN } from '../../base/lastn/actions';
 import { getLastNForQualityLevel } from '../../base/lastn/functions';
-import { withPixelLineHeight } from '../../base/styles/functions.web';
 import { setPreferredVideoQuality } from '../actions';
 import { DEFAULT_LAST_N, VIDEO_QUALITY_LEVELS } from '../constants';
 import logger from '../logger';
@@ -89,18 +88,18 @@ interface IProps extends WithTranslation {
 const styles = (theme: Theme) => {
     return {
         dialog: {
-            color: theme.palette.text01
+            color: theme.palette.videoQualityText
         },
         dialogDetails: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+            ...theme.typography.bodyShortRegularLarge,
             marginBottom: 16
         },
         dialogContents: {
-            background: theme.palette.ui01,
+            background: theme.palette.videoQualityBackground,
             padding: '16px 16px 48px 16px'
         },
         sliderDescription: {
-            ...withPixelLineHeight(theme.typography.heading6),
+            ...theme.typography.heading6,
 
             display: 'flex',
             justifyContent: 'space-between',
@@ -184,7 +183,8 @@ class VideoQualitySlider extends Component<IProps> {
     override render() {
         const { t } = this.props;
         const classes = withStyles.getClasses(this.props);
-        const activeSliderOption = this._mapCurrentQualityToSliderValue();
+        const activeSliderOptionIndex = this._mapCurrentQualityToSliderValue();
+        const activeSliderOption = this._sliderOptions[activeSliderOptionIndex];
 
         return (
             <div className = { clsx('video-quality-dialog', classes.dialog) }>
@@ -202,11 +202,12 @@ class VideoQualitySlider extends Component<IProps> {
                     </div>
                     <Slider
                         ariaLabel = { t('videoStatus.callQuality') }
+                        ariaValuetext = { t(activeSliderOption.textKey) }
                         max = { this._sliderOptions.length - 1 }
                         min = { 0 }
                         onChange = { this._onSliderChange }
                         step = { 1 }
-                        value = { activeSliderOption } />
+                        value = { activeSliderOptionIndex } />
                 </div>
             </div>
         );

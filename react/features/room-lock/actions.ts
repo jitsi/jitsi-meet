@@ -71,7 +71,7 @@ export function endRoomLockRequest(
             = password
                 ? dispatch(setPassword(conference, conference.lock, password))
                 : Promise.resolve();
-        const endRoomLockRequest_ = () => dispatch(hideDialog(SecurityDialog));
+        const endRoomLockRequest_ = () => dispatch(hideDialog('SecurityDialog', SecurityDialog));
 
         setPassword_.then(endRoomLockRequest_, endRoomLockRequest_);
     };
@@ -90,7 +90,7 @@ export function endRoomLockRequest(
  * }}
  */
 export function _openPasswordRequiredPrompt(conference: IJitsiConference) {
-    return openDialog(PasswordRequiredPrompt, { conference });
+    return openDialog('PasswordRequiredPrompt', PasswordRequiredPrompt, { conference });
 }
 
 /**

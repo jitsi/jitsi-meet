@@ -78,7 +78,7 @@ const SpeakerStatsItem = (props: IProps) => {
                         props.hasLeft ? (
                             <StatelessAvatar
                                 className = 'userAvatar'
-                                color = { BaseTheme.palette.ui04 }
+                                color = { BaseTheme.palette.speakerStatsAvatarLeft }
                                 iconUser = { IconUser }
                                 initials = { getInitials(props.displayName) }
                                 size = { 32 } />

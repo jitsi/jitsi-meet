@@ -4,8 +4,10 @@ import Icon from '../../icons/components/Icon';
 import Tooltip from '../../tooltip/components/Tooltip';
 import ContextMenuItem from '../../ui/components/web/ContextMenuItem';
 
-import AbstractToolboxItem from './AbstractToolboxItem';
-import type { IProps as AbstractToolboxItemProps } from './AbstractToolboxItem';
+import {
+    default as AbstractToolboxItem,
+    type IProps as AbstractToolboxItemProps
+} from './AbstractToolboxItem';
 
 interface IProps extends AbstractToolboxItemProps {
 

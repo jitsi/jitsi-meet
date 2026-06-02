@@ -1,0 +1,63 @@
+name: Release React Native SDK
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g. 1.2.3). Leave empty to use the version already in package.json.'
+        required: false
+        type: string
+      dist-tag:
+        description: 'npm dist-tag'
+        required: true
+        default: 'latest'
+        type: choice
+        options:
+          - latest
+          - next
+          - beta
+      dry-run:
+        description: 'Dry run (do not actually publish)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
+        with:
+          node-version-file: '.nvmrc'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+      - name: Ensure npm supports trusted publishing
+        run: npm install -g npm@latest
+      - name: Print versions
+        run: |
+          node -v
+          npm -v
+          echo "Ref:    ${{ github.ref }}"
+          echo "SHA:    ${{ github.sha }}"
+      - name: Install root dependencies
+        run: npm ci
+      - name: Set version
+        if: ${{ inputs.version != '' }}
+        working-directory: react-native-sdk
+        run: npm version --no-git-tag-version --allow-same-version "${{ inputs.version }}"
+      - name: Prepare SDK package
+        working-directory: react-native-sdk
+        run: npm run prepare
+      - name: Publish (dry run)
+        if: ${{ inputs.dry-run }}
+        working-directory: react-native-sdk
+        run: npm publish --tag "${{ inputs.dist-tag }}" --access public --dry-run
+      - name: Publish
+        if: ${{ !inputs.dry-run }}
+        working-directory: react-native-sdk
+        run: npm publish --tag "${{ inputs.dist-tag }}" --access public

@@ -1,10 +1,12 @@
-// @ts-expect-error
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
 import { IReduxState, IStore } from '../../app/types';
+import { isVisitorChatParticipant } from '../../chat/functions';
 import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { isAddPeopleEnabled, isDialOutEnabled } from '../../invite/functions';
 import { toggleShareDialog } from '../../share-room/actions';
+import { iAmVisitor } from '../../visitors/functions';
+import { IVisitorChatParticipant } from '../../visitors/types';
 import { IStateful } from '../app/types';
 import { GRAVATAR_BASE_URL } from '../avatar/constants';
 import { isCORSAvatarURL } from '../avatar/functions';
@@ -57,66 +59,6 @@ const AVATAR_CHECKER_FUNCTIONS = [
         return null;
     }
 ];
-/* eslint-enable arrow-body-style */
-
-/**
- * Returns the list of active speakers that should be moved to the top of the sorted list of participants so that the
- * dominant speaker is visible always on the vertical filmstrip in stage layout.
- *
- * @param {Function | Object} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
- * retrieve the state.
- * @returns {Array<string>}
- */
-export function getActiveSpeakersToBeDisplayed(stateful: IStateful) {
-    const state = toState(stateful);
-    const {
-        dominantSpeaker,
-        fakeParticipants,
-        sortedRemoteVirtualScreenshareParticipants,
-        speakersList
-    } = state['features/base/participants'];
-    const { visibleRemoteParticipants } = state['features/filmstrip'];
-    let activeSpeakers = new Map(speakersList);
-
-    // Do not re-sort the active speakers if dominant speaker is currently visible.
-    if (dominantSpeaker && visibleRemoteParticipants.has(dominantSpeaker)) {
-        return activeSpeakers;
-    }
-    let availableSlotsForActiveSpeakers = visibleRemoteParticipants.size;
-
-    if (activeSpeakers.has(dominantSpeaker ?? '')) {
-        activeSpeakers.delete(dominantSpeaker ?? '');
-    }
-
-    // Add dominant speaker to the beginning of the list (not including self) since the active speaker list is always
-    // alphabetically sorted.
-    if (dominantSpeaker && dominantSpeaker !== getLocalParticipant(state)?.id) {
-        const updatedSpeakers = Array.from(activeSpeakers);
-
-        updatedSpeakers.splice(0, 0, [ dominantSpeaker, getParticipantById(state, dominantSpeaker)?.name ?? '' ]);
-        activeSpeakers = new Map(updatedSpeakers);
-    }
-
-    // Remove screenshares from the count.
-    if (sortedRemoteVirtualScreenshareParticipants) {
-        availableSlotsForActiveSpeakers -= sortedRemoteVirtualScreenshareParticipants.size * 2;
-        for (const screenshare of Array.from(sortedRemoteVirtualScreenshareParticipants.keys())) {
-            const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare as string);
-
-            activeSpeakers.delete(ownerId);
-        }
-    }
-
-    // Remove fake participants from the count.
-    if (fakeParticipants) {
-        availableSlotsForActiveSpeakers -= fakeParticipants.size;
-    }
-    const truncatedSpeakersList = Array.from(activeSpeakers).slice(0, availableSlotsForActiveSpeakers);
-
-    truncatedSpeakersList.sort((a: any, b: any) => a[1].localeCompare(b[1]));
-
-    return new Map(truncatedSpeakersList);
-}
 
 /**
  * Resolves the first loadable avatar URL for a participant.
@@ -391,7 +333,7 @@ export function getMutedStateByParticipantAndMediaType(
     if (mediaType === MEDIA_TYPE.AUDIO) {
         return Array.from(sources.values())[0].muted;
     }
-    const videoType = mediaType === MEDIA_TYPE.VIDEO ? VIDEO_TYPE.CAMERA : VIDEO_TYPE.SCREENSHARE;
+    const videoType = mediaType === MEDIA_TYPE.VIDEO ? VIDEO_TYPE.CAMERA : VIDEO_TYPE.DESKTOP;
     const source = Array.from(sources.values()).find(src => src.videoType === videoType);
 
     return source?.muted ?? true;
@@ -411,6 +353,22 @@ export function getParticipantCountWithFake(stateful: IStateful) {
     const { local, localScreenShare, remote } = state['features/base/participants'];
 
     return remote.size + (local ? 1 : 0) + (localScreenShare ? 1 : 0);
+}
+
+/**
+ * Returns a count of the known participants in the passed in redux state,
+ * including fake participants. Subtract 1 when the local participant is a visitor as we do not show a local thumbnail.
+ * The number used to display the participant count in the UI.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {number}
+ */
+export function getParticipantCountForDisplay(stateful: IStateful) {
+    const _iAmVisitor = iAmVisitor(stateful);
+
+    return getParticipantCount(stateful) - (_iAmVisitor ? 1 : 0);
 }
 
 /**
@@ -799,10 +757,67 @@ export const addPeopleFeatureControl = (stateful: IStateful) => {
  * @param {Function} dispatch - The Redux dispatch function.
  * @returns {Function}
  */
-export const setShareDialogVisiblity = (addPeopleFeatureEnabled: boolean, dispatch: IStore['dispatch']) => {
+export const setShareDialogVisiblity = (addPeopleFeatureEnabled: boolean | undefined, dispatch: IStore['dispatch']) => {
     if (addPeopleFeatureEnabled) {
         dispatch(toggleShareDialog(false));
     } else {
         dispatch(toggleShareDialog(true));
     }
 };
+
+/**
+ * Checks if private chat is enabled for the given participant or local participant.
+ *
+ * @param {IParticipant|IVisitorChatParticipant|undefined} participant - The participant to check.
+ * @param {IReduxState} state - The Redux state.
+ * @param {boolean} [checkSelf=false] - Whether to check for local participant's ability to send messages.
+ * @returns {boolean} - True if private chat is enabled, false otherwise.
+ */
+export function isPrivateChatEnabled(
+        participant: IParticipant | IVisitorChatParticipant | undefined,
+        state: IReduxState,
+        checkSelf: boolean = false
+): boolean {
+    const { remoteVideoMenu = {} } = state['features/base/config'];
+    const { disablePrivateChat } = remoteVideoMenu;
+
+    // If checking self capability (if the local participant can send messages) ignore the local participant blocking rule
+    const isLocal = !isVisitorChatParticipant(participant) && participant?.local;
+
+    if (isLocal && !checkSelf) {
+        return false;
+    }
+
+    // Check if private chat is disabled globally
+    if (disablePrivateChat === 'all') {
+        return false;
+    }
+
+    if (disablePrivateChat === 'disable-visitor-chat') {
+        // Block if the participant we're trying to message is a visitor
+        // OR if the local user is a visitor
+        if (isVisitorChatParticipant(participant) || iAmVisitor(state)) {
+            return false;
+        }
+
+        return true; // should allow private chat for other participants
+    }
+
+    if (disablePrivateChat === 'allow-moderator-chat') {
+        return isLocalParticipantModerator(state) || isParticipantModerator(participant);
+    }
+
+    return !disablePrivateChat;
+}
+
+/**
+ * Checks if private chat is enabled for the local participant (can they send private messages).
+ *
+ * @param {IReduxState} state - The Redux state.
+ * @returns {boolean} - True if the local participant can send private messages, false otherwise.
+ */
+export function isPrivateChatEnabledSelf(state: IReduxState): boolean {
+    const localParticipant = getLocalParticipant(state);
+
+    return isPrivateChatEnabled(localParticipant, state, true);
+}

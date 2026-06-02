@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../app/types';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 import Checkbox from '../../../ui/components/web/Checkbox';
 import getUnsafeRoomText from '../../../util/getUnsafeRoomText.web';
 import { setUnsafeRoomConsent } from '../../actions.web';
@@ -12,9 +11,9 @@ import { setUnsafeRoomConsent } from '../../actions.web';
 const useStyles = makeStyles()(theme => {
     return {
         warning: {
-            backgroundColor: theme.palette.warning01,
-            color: theme.palette.text04,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            backgroundColor: theme.palette.prejoinWarningBackground,
+            color: theme.palette.prejoinWarningText,
+            ...theme.typography.bodyShortRegular,
             padding: theme.spacing(3),
             borderRadius: theme.shape.borderRadius,
             marginBottom: theme.spacing(3)

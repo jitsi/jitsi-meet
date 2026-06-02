@@ -36,22 +36,27 @@ export const MEDIA_STATE: { [key: string]: MediaState; } = {
     NONE: 'None'
 };
 
-export type QuickActionButtonType = 'Mute' | 'AskToUnmute' | 'AllowVideo' | 'StopVideo' | 'None';
+export type QuickActionButtonType
+    = 'Mute' | 'AskToUnmute' | 'AllowVideo' | 'StopVideo' | 'AllowDesktop' | 'StopDesktop' | 'None';
 
 /**
  * Enum of possible participant mute button states.
  */
 export const QUICK_ACTION_BUTTON: {
+    ALLOW_DESKTOP: QuickActionButtonType;
     ALLOW_VIDEO: QuickActionButtonType;
     ASK_TO_UNMUTE: QuickActionButtonType;
     MUTE: QuickActionButtonType;
     NONE: QuickActionButtonType;
+    STOP_DESKTOP: QuickActionButtonType;
     STOP_VIDEO: QuickActionButtonType;
 } = {
+    ALLOW_DESKTOP: 'AllowDesktop',
     ALLOW_VIDEO: 'AllowVideo',
     MUTE: 'Mute',
     ASK_TO_UNMUTE: 'AskToUnmute',
     NONE: 'None',
+    STOP_DESKTOP: 'StopDesktop',
     STOP_VIDEO: 'StopVideo'
 };
 
@@ -68,11 +73,13 @@ export const AudioStateIcons = {
     [MEDIA_STATE.FORCE_MUTED]: (
         <Icon
             color = '#E04757'
+            id = 'audioMuted'
             size = { 16 }
             src = { IconMicSlash } />
     ),
     [MEDIA_STATE.MUTED]: (
         <Icon
+            id = 'audioMuted'
             size = { 16 }
             src = { IconMicSlash } />
     ),

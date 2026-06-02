@@ -4,7 +4,6 @@ import { WithTranslation } from 'react-i18next';
 import {
     ActivityIndicator,
     FlatList,
-    SafeAreaView,
     TouchableOpacity,
     View,
     ViewStyle
@@ -249,6 +248,8 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
         const { item } = flatListItem;
 
         switch (item.type) {
+
+        // isCORSAvatarURL in this case is false
         case INVITE_TYPES.PHONE:
             return {
                 avatar: IconPhoneRinging,
@@ -511,7 +512,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      */
     _renderShareMeetingButton() {
         return (
-            <SafeAreaView
+            <View
                 style = { [
                     styles.bottomBar as ViewStyle,
                     this.state.bottomPadding ? styles.extraBarPadding : null
@@ -522,7 +523,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
                         src = { IconShare }
                         style = { styles.shareIcon } />
                 </TouchableOpacity>
-            </SafeAreaView>
+            </View>
         );
     }
 
@@ -557,7 +558,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      * @returns {void}
      */
     _showFailedInviteAlert() {
-        this.props.dispatch(openDialog(AlertDialog, {
+        this.props.dispatch(openDialog('AlertDialog', AlertDialog, {
             contentKey: {
                 key: 'inviteDialog.alertText'
             }

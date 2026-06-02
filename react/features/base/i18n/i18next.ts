@@ -59,6 +59,14 @@ export const DEFAULT_LANGUAGE = 'en';
 export const TRANSLATION_LANGUAGES_HEAD: Array<string> = [ DEFAULT_LANGUAGE ];
 
 /**
+ * The available/supported i18n namespaces.
+ *
+ * @public
+ * @type {Array<string>}
+ */
+export const SUPPORTED_NS = [ 'main', 'languages', 'countries', 'translation-languages' ];
+
+/**
  * The options to initialize i18next with.
  *
  * @type {i18next.InitOptions}
@@ -80,8 +88,8 @@ const options: i18next.InitOptions = {
     interpolation: {
         escapeValue: false // not needed for react as it escapes by default
     },
-    load: 'languageOnly',
-    ns: [ 'main', 'languages', 'countries', 'translation-languages' ],
+    load: 'all',
+    ns: SUPPORTED_NS,
     react: {
         // re-render when a new resource bundle is added
         // @ts-expect-error. Fixed in i18next 19.6.1.

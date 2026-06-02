@@ -1,24 +1,26 @@
-import { IReduxState } from '../../app/types';
+import { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
+
+import { IReduxState, IStore } from '../../app/types';
 import { requestDisableAudioModeration, requestEnableAudioModeration } from '../../av-moderation/actions';
+import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../av-moderation/constants';
 import { isEnabledFromState, isSupported } from '../../av-moderation/functions';
 import { MEDIA_TYPE } from '../../base/media/constants';
 import { getLocalParticipant, getParticipantDisplayName, isEveryoneModerator } from '../../base/participants/functions';
 import { muteAllParticipants } from '../actions';
 
-import AbstractMuteRemoteParticipantDialog, {
-    type IProps as AbstractProps
-} from './AbstractMuteRemoteParticipantDialog';
-
 /**
  * The type of the React {@code Component} props of
  * {@link AbstractMuteEveryoneDialog}.
  */
-export interface IProps extends AbstractProps {
+export interface IProps extends WithTranslation {
     content?: string;
+    dispatch: IStore['dispatch'];
     exclude: Array<string>;
     isAudioModerationEnabled?: boolean;
     isEveryoneModerator: boolean;
     isModerationSupported?: boolean;
+    participantID: string;
     showAdvancedModerationToggle: boolean;
     title: string;
 }
@@ -33,17 +35,15 @@ interface IState {
  * An abstract Component with the contents for a dialog that asks for confirmation
  * from the user before muting all remote participants.
  *
- * @augments AbstractMuteRemoteParticipantDialog
  */
-export default class AbstractMuteEveryoneDialog<P extends IProps> extends
-    AbstractMuteRemoteParticipantDialog<P, IState> {
+export default class AbstractMuteEveryoneDialog<P extends IProps> extends Component<P, IState> {
     static defaultProps = {
         exclude: [],
         muteLocal: false
     };
 
     /**
-     * Initializes a new {@code AbstractMuteRemoteParticipantDialog} instance.
+     * Initializes a new {@code AbstractMuteEveryoneDialog} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
@@ -84,7 +84,7 @@ export default class AbstractMuteEveryoneDialog<P extends IProps> extends
      *
      * @returns {boolean}
      */
-    override _onSubmit() {
+    _onSubmit() {
         const {
             dispatch,
             exclude
@@ -124,7 +124,7 @@ export function abstractMapStateToProps(state: IReduxState, ownProps: IProps) {
         isEveryoneModerator: isEveryoneModerator(state)
     } : {
         title: t('dialog.muteEveryoneTitle'),
-        isAudioModerationEnabled: isEnabledFromState(MEDIA_TYPE.AUDIO, state),
+        isAudioModerationEnabled: isEnabledFromState(AVM_MEDIA_TYPE.AUDIO, state),
         isModerationSupported: isSupported()(state),
         isEveryoneModerator: isEveryoneModerator(state)
     };

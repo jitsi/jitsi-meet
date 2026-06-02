@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
 
-import { withPixelLineHeight } from '../../../styles/functions.web';
 import { isElementInTheViewport } from '../../functions.web';
 
 import { DialogTransitionContext } from './DialogTransition';
@@ -15,8 +14,8 @@ const useStyles = makeStyles()(theme => {
             width: '100%',
             height: '100%',
             position: 'fixed',
-            color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyLongRegular),
+            color: theme.palette.dialogText,
+            ...theme.typography.bodyLongRegular,
             top: 0,
             left: 0,
             display: 'flex',
@@ -50,13 +49,13 @@ const useStyles = makeStyles()(theme => {
             height: '100%',
             top: 0,
             left: 0,
-            backgroundColor: theme.palette.ui02,
+            backgroundColor: theme.palette.dialogOverlay,
             opacity: 0.75
         },
 
         modal: {
-            backgroundColor: theme.palette.ui01,
-            border: `1px solid ${theme.palette.ui03}`,
+            backgroundColor: theme.palette.dialogBackground,
+            border: `1px solid ${theme.palette.dialogBorder}`,
             boxShadow: '0px 4px 25px 4px rgba(20, 20, 20, 0.6)',
             borderRadius: `${theme.shape.borderRadius}px`,
             display: 'flex',

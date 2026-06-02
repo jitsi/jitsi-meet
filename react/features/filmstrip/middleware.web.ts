@@ -85,13 +85,13 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (isFilmstripResizable(state)) {
             const { width: filmstripWidth, topPanelHeight } = state['features/filmstrip'];
-            const { clientWidth, clientHeight } = action;
+            const { clientHeight, videoSpaceWidth } = action;
             let height, width;
 
-            if ((filmstripWidth.current ?? 0) > clientWidth - MIN_STAGE_VIEW_WIDTH) {
-                width = Math.max(clientWidth - MIN_STAGE_VIEW_WIDTH, DEFAULT_FILMSTRIP_WIDTH);
+            if ((filmstripWidth.current ?? 0) > videoSpaceWidth - MIN_STAGE_VIEW_WIDTH) {
+                width = Math.max(videoSpaceWidth - MIN_STAGE_VIEW_WIDTH, DEFAULT_FILMSTRIP_WIDTH);
             } else {
-                width = Math.min(clientWidth - MIN_STAGE_VIEW_WIDTH, filmstripWidth.userSet ?? 0);
+                width = Math.min(videoSpaceWidth - MIN_STAGE_VIEW_WIDTH, filmstripWidth.userSet ?? 0);
             }
             if (width !== filmstripWidth.current) {
                 store.dispatch(setFilmstripWidth(width));

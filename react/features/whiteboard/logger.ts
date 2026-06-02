@@ -1,3 +1,3 @@
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/whiteboard');
+export default getLogger('app:whiteboard');

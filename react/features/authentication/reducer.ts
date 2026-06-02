@@ -1,10 +1,10 @@
-import PersistenceRegistry from '../base/redux/PersistenceRegistry';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 import { assign } from '../base/redux/functions';
 
 import {
     CANCEL_LOGIN,
-    SET_TOKEN_AUTH_URL_SUCCESS,
+    DISABLE_MODERATOR_LOGIN,
+    ENABLE_MODERATOR_LOGIN,
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED,
@@ -14,19 +14,12 @@ import {
 export interface IAuthenticationState {
     error?: Object | undefined;
     progress?: number | undefined;
+    showModeratorLogin?: boolean;
     thenableWithCancel?: {
         cancel: Function;
     };
-    tokenAuthUrlSuccessful?: boolean;
     waitForOwnerTimeoutID?: number;
 }
-
-/**
- * Sets up the persistence of the feature {@code authentication}.
- */
-PersistenceRegistry.register('features/authentication', {
-    tokenAuthUrlSuccessful: true
-});
 
 /**
  * Listens for actions which change the state of the authentication feature.
@@ -45,15 +38,21 @@ ReducerRegistry.register<IAuthenticationState>('features/authentication',
             progress: undefined,
             thenableWithCancel: undefined
         });
-    case SET_TOKEN_AUTH_URL_SUCCESS:
+    case ENABLE_MODERATOR_LOGIN:
         return assign(state, {
-            tokenAuthUrlSuccessful: action.value
+            showModeratorLogin: true
         });
 
     case STOP_WAIT_FOR_OWNER:
         return assign(state, {
             error: undefined,
             waitForOwnerTimeoutID: undefined
+        });
+
+    case DISABLE_MODERATOR_LOGIN:
+        return assign(state, {
+            error: undefined,
+            showModeratorLogin: false
         });
 
     case UPGRADE_ROLE_FINISHED: {

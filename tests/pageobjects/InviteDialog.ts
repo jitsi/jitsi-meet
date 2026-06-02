@@ -51,7 +51,7 @@ export default class InviteDialog extends BaseDialog {
 
         const fullText = await elem.getText();
 
-        this.participant.log(`Extracted text in invite dialog: ${fullText}`);
+        await this.participant.log(`Extracted text in invite dialog: ${fullText}`);
 
         return fullText.split(':')[1].trim();
     }
@@ -62,7 +62,9 @@ export default class InviteDialog extends BaseDialog {
     async getMeetingURL() {
         const elem = this.participant.driver.$(`.${CONFERENCE_URL}`);
 
-        await elem.waitForExist();
+        await elem.waitForExist({
+            timeout: 5000
+        });
 
         return (await elem.getText())?.trim();
     }

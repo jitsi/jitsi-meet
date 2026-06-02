@@ -6,7 +6,6 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../../app/types';
 import { hideDialog } from '../../../dialog/actions';
 import { IconArrowBack, IconCloseLarge } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 
 import BaseDialog, { IProps as IBaseProps } from './BaseDialog';
 import Button from './Button';
@@ -43,7 +42,7 @@ const useStyles = makeStyles()(theme => {
             flexDirection: 'column',
             minWidth: '211px',
             maxWidth: '100%',
-            borderRight: `1px solid ${theme.palette.ui03}`,
+            borderRight: `1px solid ${theme.palette.dialogBorder}`,
 
             [`@media (max-width: ${MOBILE_BREAKPOINT}px)`]: {
                 width: '100%',
@@ -70,8 +69,8 @@ const useStyles = makeStyles()(theme => {
         },
 
         title: {
-            ...withPixelLineHeight(theme.typography.heading5),
-            color: `${theme.palette.text01} !important`,
+            ...theme.typography.heading5,
+            color: `${theme.palette.dialogText} !important`,
             margin: 0,
             padding: 0
         },
@@ -173,16 +172,16 @@ const DialogWithTabs = ({
     const [ selectedTab, setSelectedTab ] = useState<string | undefined>(defaultTab ?? tabs[0].name);
     const [ userSelected, setUserSelected ] = useState(false);
     const [ tabStates, setTabStates ] = useState(tabs.map(tab => tab.props));
-    const clientWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].clientWidth);
+    const videoSpaceWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].videoSpaceWidth);
     const [ isMobile, setIsMobile ] = useState(false);
 
     useEffect(() => {
-        if (clientWidth <= MOBILE_BREAKPOINT) {
+        if (videoSpaceWidth <= MOBILE_BREAKPOINT) {
             !isMobile && setIsMobile(true);
         } else {
             isMobile && setIsMobile(false);
         }
-    }, [ clientWidth, isMobile ]);
+    }, [ videoSpaceWidth, isMobile ]);
 
     useEffect(() => {
         if (isMobile) {
@@ -302,7 +301,7 @@ const DialogWithTabs = ({
         }
 
         return null;
-    }, [ selectedTabIndex, tabStates ]);
+    }, [ selectedTabIndex, tabStates, tabs ]);
 
     const closeIcon = useMemo(() => (
         <ClickableIcon
@@ -320,9 +319,11 @@ const DialogWithTabs = ({
             titleKey = { titleKey }>
             {(!isMobile || !selectedTab) && (
                 <div
+                    aria-label = { titleKey ? t(titleKey) : undefined }
                     aria-orientation = 'vertical'
                     className = { classes.sidebar }
-                    role = { isMobile ? undefined : 'tablist' }>
+                    role = { isMobile ? undefined : 'tablist' }
+                    tabIndex = { 0 }>
                     <div className = { classes.titleContainer }>
                         <h1
                             className = { classes.title }
@@ -384,8 +385,7 @@ const DialogWithTabs = ({
                             className = { cx(classes.content, tab.name !== selectedTab && 'hide') }
                             id = { `dialogtab-content-${tab.name}` }
                             key = { tab.name }
-                            role = { isMobile ? undefined : 'tabpanel' }
-                            tabIndex = { isMobile ? -1 : 0 }>
+                            role = { isMobile ? undefined : 'tabpanel' }>
                             { tab.name === selectedTab && selectedTabComponent }
                         </div>
                     ))}

@@ -57,9 +57,7 @@ export default class AbstractStopLiveStreamDialog extends Component<IProps> {
 
         const { _session } = this.props;
 
-        if (_session) {
-            this.props._conference?.stopRecording(_session.id);
-        }
+        this.props._conference?.stopRecording(_session?.id);
 
         return true;
     }

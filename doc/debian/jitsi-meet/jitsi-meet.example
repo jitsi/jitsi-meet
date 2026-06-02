@@ -10,11 +10,12 @@ upstream prosody {
     server 127.0.0.1:5280;
     keepalive 2;
 }
-upstream jvb1 {
-    zone upstreams 64K;
-    server 127.0.0.1:9090;
-    keepalive 2;
-}
+# Uncomment to enable colibri (JVB) WebSocket proxy (also requires websockets enabled in JVB config):
+# upstream jvb1 {
+#     zone upstreams 64K;
+#     server 127.0.0.1:9090;
+#     keepalive 2;
+# }
 map $arg_vnode $prosody_node {
     default prosody;
     v1 v1;
@@ -26,6 +27,22 @@ map $arg_vnode $prosody_node {
     v7 v7;
     v8 v8;
 }
+# Matches any URI or Referer with some matches and redacts the whole
+# query string. log_format and map must be at the http context level.
+map $request_uri $loggable_uri {
+    ~^(?P<path>[^?]*)\?.*(?:jwt|token)=  "${path}?[params_redacted]";
+    default $request_uri;
+}
+
+map $http_referer $loggable_referer {
+    ~^(?P<url>[^?]*)\?.*(?:jwt|token)=  "${url}?[params_redacted]";
+    default $http_referer;
+}
+
+log_format jitsi_log '$remote_addr - $remote_user [$time_local] '
+    '"$request_method $loggable_uri $server_protocol" '
+    '$status $body_bytes_sent "$loggable_referer" "$http_user_agent"';
+
 server {
     listen 80;
     listen [::]:80;
@@ -65,6 +82,8 @@ server {
     ssl_certificate_key /etc/jitsi/meet/jitsi-meet.example.com.key;
 
     root /usr/share/jitsi-meet;
+
+    access_log /var/log/nginx/access.log jitsi_log;
 
     # ssi on with javascript for multidomain variables in config.js
     ssi on;
@@ -132,14 +151,14 @@ server {
         tcp_nodelay on;
     }
 
-    # colibri (JVB) websockets for jvb1
-    location ~ ^/colibri-ws/default-id/(.*) {
-        proxy_pass http://jvb1/colibri-ws/default-id/$1$is_args$args;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        tcp_nodelay on;
-    }
+    # Uncomment to enable colibri (JVB) WebSocket proxy (also requires websockets enabled in JVB config):
+    # location ~ ^/colibri-ws/default-id/(.*) {
+    #     proxy_pass http://jvb1/colibri-ws/default-id/$1$is_args$args;
+    #     proxy_http_version 1.1;
+    #     proxy_set_header Upgrade $http_upgrade;
+    #     proxy_set_header Connection "upgrade";
+    #     tcp_nodelay on;
+    # }
 
     # load test minimal client, uncomment when used
     #location ~ ^/_load-test/([^/?&:'"]+)$ {
@@ -149,6 +168,12 @@ server {
     #    add_header 'Access-Control-Allow-Origin' '*';
     #    alias /usr/share/jitsi-meet/load-test/libs/$1;
     #}
+
+    location = /_unlock {
+        add_header 'Access-Control-Allow-Origin' '*';
+        add_header Strict-Transport-Security 'max-age=63072000; includeSubDomains';
+        add_header "Cache-Control" "no-cache, no-store";
+    }
 
     location ~ ^/conference-request/v1(\/.*)?$ {
         proxy_pass http://127.0.0.1:8888/conference-request/v1$1;

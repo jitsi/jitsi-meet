@@ -44,19 +44,59 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     switch (type) {
     case UPDATE_BREAKOUT_ROOMS: {
-        // edit name if it was overwritten
+        // Enrich participants with userContext from Redux store
         if (!action.updatedNames) {
-            const { overwrittenNameList } = getState()['features/base/participants'];
+            const state = getState();
+            const { overwrittenNameList, local: localParticipant } = state['features/base/participants'];
+            const jwtUser = state['features/base/jwt']?.user;
+            const localUserContext = jwtUser ? {
+                id: jwtUser.id,
+                name: jwtUser.name
+            } : {
+                id: localParticipant?.jwtId,
+                name: localParticipant?.name
+            };
 
-            if (Object.keys(overwrittenNameList).length > 0) {
-                const newRooms: IRooms = {};
+            // Get existing userContext cache
+            const existingCache = state['features/breakout-rooms'].userContextCache || {};
+            const newCache = { ...existingCache };
 
-                Object.entries(action.rooms as IRooms).forEach(([ key, r ]) => {
-                    let participants = r?.participants || {};
-                    let jid;
+            const newRooms: IRooms = {};
 
+            Object.entries(action.rooms as IRooms).forEach(([ key, r ]) => {
+                let participants = r?.participants || {};
+
+                // Add userContext to each participant
+                const enhancedParticipants: typeof participants = {};
+
+                for (const [ participantJid, participantData ] of Object.entries(participants)) {
+                    const ids = participantJid.split('/');
+                    const participantId = ids.length > 1 ? ids[1] : participantData.jid;
+                    const storeParticipant = getParticipantById(state, participantId);
+                    const isLocal = storeParticipant?.id === localParticipant?.id;
+
+                    // Try to get userContext from: local, store, cache, or incoming data
+                    const userContext = isLocal
+                        ? localUserContext
+                        : (storeParticipant?.userContext || newCache[participantId] || participantData.userContext);
+
+                    // Update cache if we have userContext
+                    if (userContext && participantId) {
+                        newCache[participantId] = userContext;
+                    }
+
+                    enhancedParticipants[participantJid] = {
+                        ...participantData,
+                        userContext
+                    };
+                }
+
+                participants = enhancedParticipants;
+
+                // Apply overwritten display names
+                if (Object.keys(overwrittenNameList).length > 0) {
                     for (const id of Object.keys(overwrittenNameList)) {
-                        jid = Object.keys(participants).find(p => p.slice(p.indexOf('/') + 1) === id);
+                        const jid = Object.keys(participants).find(p => p.slice(p.indexOf('/') + 1) === id);
 
                         if (jid) {
                             participants = {
@@ -68,15 +108,16 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                             };
                         }
                     }
+                }
 
-                    newRooms[key] = {
-                        ...r,
-                        participants
-                    };
-                });
+                newRooms[key] = {
+                    ...r,
+                    participants
+                };
+            });
 
-                action.rooms = newRooms;
-            }
+            action.rooms = newRooms;
+            action.userContextCache = newCache;
         }
 
         // edit the chat history to match names for participants in breakout rooms
