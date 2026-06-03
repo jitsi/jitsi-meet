@@ -18,13 +18,21 @@ const JIGASI_INVITE_URL = 'http://localhost:5280/invite-jigasi';
  * @param {number}  [opts.status=200]    HTTP status code to return.
  *                                       Non-200 values simulate HTTP errors;
  *                                       mod_muc_auth_ban fails open on errors.
+ * @param {boolean} [opts.nonJson=false] When true, return a 200 with a non-JSON
+ *                                       body. Tests the nil-check bug:
+ *                                       json.decode returns nil and the module
+ *                                       must not crash on r['access'].
  */
-export async function setAccessManagerResponse({ access = true, status = 200 } = {}) {
+export async function setAccessManagerResponse({ access = true, status = 200, nonJson = false } = {}) {
     const res = await fetch(ACCESS_MANAGER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ access,
-            status })
+        body: JSON.stringify({
+            access,
+            status,
+            // eslint-disable-next-line camelcase
+            non_json: nonJson
+        })
     });
 
     if (res.status !== 204) {
@@ -74,6 +82,27 @@ export async function setHideDisplayNameForGuests(roomJid, hidden) {
 
     if (!res.ok) {
         throw new Error(`setHideDisplayNameForGuests failed: ${res.status} ${await res.text()}`);
+    }
+}
+
+/**
+ * Sets room._data.breakout_rooms_active for mod_muc_cleanup_backend_services tests.
+ * When active is true, the module skips the destroy-timer logic even if only
+ * backend services remain. The room must already exist (at least one occupant).
+ *
+ * @param {string} roomJid  e.g. 'room@conference.localhost'
+ * @param {boolean} active  true to simulate active breakout rooms; false to clear
+ */
+export async function setBreakoutRoomsActive(roomJid, active) {
+    const res = await fetch(`${BASE}/rooms/breakout-rooms-active`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jid: roomJid,
+            active })
+    });
+
+    if (!res.ok) {
+        throw new Error(`setBreakoutRoomsActive failed: ${res.status} ${await res.text()}`);
     }
 }
 

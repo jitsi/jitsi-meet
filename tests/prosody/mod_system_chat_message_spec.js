@@ -280,6 +280,26 @@ describe('mod_system_chat_message', () => {
             }
         });
 
+        it('returns 200 when connectionJIDs contains a JID not in the room (no occupancy validation)', async () => {
+            // mod_system_chat_message routes stanzas to every JID in
+            // connectionJIDs without verifying they are room occupants.
+            // This test documents the current behaviour: the call succeeds
+            // (200) even for non-occupant JIDs.
+            const { roomJid, focus } = await createRoom();
+
+            try {
+                const token = mintSystemToken();
+                const nonOccupant = 'nobody@localhost/ghost-resource';
+                const { status } = await sendSystemChatMessage(
+                    roomJid, [ nonOccupant ], 'hello', token);
+
+                assert.strictEqual(status, 200,
+                    'module must not crash when connectionJIDs contains a non-occupant JID');
+            } finally {
+                await disconnectAll(focus);
+            }
+        });
+
         it('delivers to multiple recipients', async () => {
             const { roomJid, focus } = await createRoom();
             const alice = await createXmppClient();

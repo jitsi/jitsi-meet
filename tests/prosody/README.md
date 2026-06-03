@@ -78,6 +78,24 @@ const state = await getRoomState('room@conference.localhost');
 assert.equal(state.hidden, true);
 ```
 
+## Test Placement Guidelines
+
+**Pure Lua code (no Prosody API needed)** — test in `lua/` using
+[busted](https://lunarmodules.github.io/busted/). These run without Docker and
+are fast. A good fit for library files (e.g. `token/jwk.lib.lua`) and any
+module logic that can be extracted into plain functions.
+
+**Code that requires Prosody stubs or live server behaviour** — test via the
+Docker/JS path (Mocha + `*_spec.js`). This covers anything that calls
+`module:hook`, `module:shared`, `prosody.hosts`, MUC APIs, etc.
+
+**Prefer integration over isolation.** When adding a new module under test,
+load it on the main VirtualHost or MUC component in
+`docker/prosody.cfg.lua` rather than testing it in isolation with stubs.
+This exercises real module interactions (hooks fire in the correct order,
+shared state is visible across modules) and catches interoperability bugs that
+unit tests miss.
+
 ## Directory Structure
 
 ```

@@ -2,7 +2,7 @@ import assert from 'assert';
 import http from 'http';
 
 import { mintAsapToken } from './helpers/jwt.js';
-import { createXmppClient } from './helpers/xmpp_client.js';
+import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 /**
  * Fetches session-info for the given full JID.
@@ -181,5 +181,50 @@ describe('mod_auth_token (ASAP / RS256)', () => {
 
         clients.push(c);
         assert.ok(c.jid, 'client should have a JID');
+    });
+
+    // ── Room regex claim: invalid Lua pattern ─────────────────────────────────
+    //
+    // When context.room.regex == true, util.lib.lua uses the JWT room claim as
+    // a Lua pattern via string:match() inside verify_room() at MUC join time.
+    // An invalid Lua pattern (e.g. unbalanced parenthesis) must be rejected
+    // cleanly rather than crashing Prosody with a Lua error.
+
+    it('does not crash on connect with invalid Lua regex room claim', async () => {
+        // process_and_verify_token only stores the claim; it does not evaluate
+        // the pattern. The crash path is verify_room(), called at MUC join.
+        const token = mintAsapToken({
+            room: '(invalid',
+            context: { room: { regex: true } }
+        });
+        const c = await asapClient({ token });
+
+        clients.push(c);
+        assert.ok(c.jid, 'connection must succeed: pattern not evaluated at auth time');
+    });
+
+    it('rejects MUC join with invalid Lua regex room claim', async () => {
+        const CONFERENCE = 'conference.localhost';
+        const roomJid = `regex-invalid-${Date.now()}@${CONFERENCE}`;
+
+        // '(invalid' is an unbalanced Lua pattern capture — string:match() would
+        // raise "unfinished capture" without the pcall guard in verify_room().
+        const token = mintAsapToken({
+            room: '(invalid',
+            context: { room: { regex: true } }
+        });
+
+        const focus = await joinWithFocus(roomJid);
+        const c = await asapClient({ token });
+
+        clients.push(focus, c);
+
+        const presence = await c.joinRoom(roomJid);
+
+        assert.equal(presence.attrs.type, 'error', 'join must be rejected');
+        assert.ok(
+            presence.getChild('error')?.getChild('invalid-regex'),
+            'error must contain <invalid-regex/>'
+        );
     });
 });

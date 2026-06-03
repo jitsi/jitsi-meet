@@ -66,27 +66,33 @@ VirtualHost "localhost"
     -- reachable. Component HTTP routes end up on HTTPS 5281 due to Prosody's
     -- virtual-host routing, which does not match Host: localhost on port 5280.
     modules_enabled = {
+        -- test-only: HTTP endpoints and census helpers
         "test_observer_http";
         "muc_size";
         "muc_census";
+        -- Module order below follows prod (conference.8x8.vc VirtualHost) so that
+        -- same-priority hook execution order matches production.
         "conference_duration";
+        "filter_iq_rayo";    -- priority 1 on pre-iq/full; listed before filter_iq_jibri (matches prod)
         "filter_iq_jibri";
-        "filter_iq_rayo";
+        "muc_lobby_rooms";
+        "jiconop";
         "muc_kick_participant";
-        "system_chat_message";
         "muc_jigasi_invite";
         -- Loaded here so that the global jitsi-access-ban-check event handler
         -- is registered and mod_auth_token can fire it for token-authenticated
         -- sessions. muc_prosody_jitsi_access_manager_url points at the mock
         -- access manager served by mod_test_observer_http on the same host.
         "muc_auth_ban";
+        -- test-only
         "turncredentials_http";
-        "jiconop";
         -- Rewrites MUC JIDs between external subdomain form
         -- (room@conference.sub.localhost) and internal bracket form
         -- ([sub]room@conference.localhost) for all sessions on all hosts.
         "muc_domain_mapper";
-        "muc_lobby_rooms";
+        "persistent_lobby";
+        "system_chat_message";
+        -- test-only
         "muc_password_check";
     }
 
@@ -132,6 +138,16 @@ VirtualHost "auth.localhost"
     -- Disable SCRAM and force PLAIN (safe on loopback in the test environment).
     disable_sasl_mechanisms = { "SCRAM-SHA-1", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-256-PLUS" }
 
+-- VirtualHost for Jibri (recorder) and transcriber accounts used by
+-- mod_muc_cleanup_backend_services tests. Accounts on this domain get JIDs whose
+-- bare form starts with 'recorder@recorder.' or 'transcriber@recorder.', satisfying
+-- is_jibri() and is_transcriber() respectively.
+-- recorder.localhost is added to muc_access_whitelist on the MUC component so
+-- these clients bypass token_verification without needing JWT tokens.
+VirtualHost "recorder.localhost"
+    authentication = "internal_hashed"
+    disable_sasl_mechanisms = { "SCRAM-SHA-1", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-256-PLUS" }
+
 -- VirtualHost for HS256 (shared-secret) token auth tests and mod_presence_identity tests.
 VirtualHost "hs256.localhost"
     authentication = "token"
@@ -168,22 +184,28 @@ Component "lobby.conference.localhost" "muc"
     muc_room_default_public_jids = true
 
 Component "conference.localhost" "muc"
+    -- Module order follows prod (conference.8x8.vc) so that same-priority hook
+    -- execution order matches production. Test-only modules are inserted at
+    -- sensible positions relative to the shared modules they interact with.
     modules_enabled = {
         "muc_hide_all";
+        "token_verification";      -- prod pos 2: gate check runs before meeting-id / password logic
         "muc_max_occupants";
-        "muc_meeting_id";
-        "muc_resource_validate";
+        "muc_resource_validate";   -- test-only: occupant gate, alongside muc_max_occupants
         "muc_password_whitelist";
-        "token_verification";
-        "token_affiliation";
+        "token_affiliation";       -- test-only: reads auth_token set by token_verification above
+        "muc_meeting_id";          -- prod pos 9: after gate checks
         "muc_flip";
-        "muc_displayname";
-        "test_observer";
+        "test_observer";           -- test-only
         "filter_messages";
-        -- Listed after filter_messages so that messages already blocked by
-        -- filter_messages (return true) never reach this hook; they do not
-        -- count toward the per-room cap.
+        "muc_displayname";         -- prod pos 21: after filter_messages
+        -- mod_muc_limit_messages registers its message/bare hook at priority -1
+        -- (below the default 0 used by filter_messages), so filter_messages
+        -- always fires first. Messages it blocks (return true) never reach
+        -- muc_limit_messages and do not count toward the per-room cap.
         "muc_limit_messages";
+        -- Destroys a room after a short timeout when only Jibri/transcriber remain.
+        "muc_cleanup_backend_services";
     }
 
     anonymous_strict = true
@@ -194,7 +216,9 @@ Component "conference.localhost" "muc"
     -- Clients on whitelist.localhost bypass the occupant limit.
     -- Clients on auth.localhost are the focus (jicofo) admin; they also bypass
     -- the limit and are not counted against it.
-    muc_access_whitelist = { "whitelist.localhost", "auth.localhost" }
+    -- Clients on recorder.localhost are Jibri/transcriber accounts; they bypass
+    -- token_verification (is_jibri / is_transcriber JID prefix checks still apply).
+    muc_access_whitelist = { "whitelist.localhost", "auth.localhost", "recorder.localhost" }
 
     -- Used by mod_muc_password_whitelist tests: clients from whitelist.localhost
     -- are injected with the room password and bypass the password check.
@@ -207,6 +231,9 @@ Component "conference.localhost" "muc"
     -- focus@auth.localhost is a Prosody admin and is therefore exempt from
     -- token_verification on both muc-room-pre-create and muc-occupant-pre-join,
     -- mirroring production where jicofo is a Prosody admin.
+
+    -- mod_muc_cleanup_backend_services: short timeout so tests don't wait 20 s.
+    services_empty_meeting_timeout = 1
 
     -- mod_muc_limit_messages: cap per room and honour auth tokens.
     muc_limit_messages_count = 3
@@ -255,6 +282,30 @@ Component "metadata.localhost" "room_metadata_component"
     muc_mapper_domain_base = "localhost"
     muc_mapper_domain_prefix = "conference"
 
+-- Component for mod_filesharing_component tests. Clients send file-sharing
+-- messages here; the component looks up the room from jitsi_web_query_room
+-- (set by mod_jitsi_session) and broadcasts add/remove notifications.
+Component "filesharing.localhost" "filesharing_component"
+    muc_component = "conference.localhost"
+    muc_mapper_domain_base = "localhost"
+    muc_mapper_domain_prefix = "conference"
+
 -- Plain MUC for mod_presence_identity tests. No token verification and no
 -- muc_meeting_id lock so any client can join freely without focus.
 Component "conference-identity.localhost" "muc"
+
+-- Isolated MUC component for mod_muc_wait_for_host tests.
+-- No muc_meeting_id, so no jicofo lock — a JWT-authenticated client can join
+-- directly as host without focus unlocking the room first.
+-- muc_mapper_domain_base is set to "conference.localhost" so that:
+--   lobby_muc_component_config = "lobby." .. "conference.localhost"
+--                              = "lobby.conference.localhost"   (already configured above)
+-- This means the existing lobby component is reused for the lobby rooms created
+-- by this component, and no additional lobby MUC component is needed.
+Component "conference-waitforhost.localhost" "muc"
+    storage = "memory"
+    modules_enabled = {
+        "muc_wait_for_host";
+    }
+    muc_mapper_domain_base = "conference.localhost"
+    muc_mapper_domain_prefix = "conference"

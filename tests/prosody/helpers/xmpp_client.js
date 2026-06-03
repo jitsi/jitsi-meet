@@ -3,6 +3,52 @@ import { client, xml } from '@xmpp/client';
 let _counter = 0;
 
 /**
+ * Connects as the Jibri recorder, joins roomJid with nick 'recorder', and
+ * returns the client. Authenticates as recorder@recorder.localhost (internal_hashed).
+ * The bare JID starts with 'recorder@recorder.' so is_jibri() returns true,
+ * matching the default recorder_prefixes in util.lib.lua.
+ *
+ * The caller is responsible for disconnecting the returned client.
+ *
+ * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
+ * @returns {Promise<XmppTestClient>}
+ */
+export async function joinWithJibri(roomJid) {
+    const c = await createXmppClient({
+        domain: 'recorder.localhost',
+        username: 'recorder',
+        password: 'recordersecret'
+    });
+
+    await c.joinRoom(roomJid, 'recorder');
+
+    return c;
+}
+
+/**
+ * Connects as the transcriber, joins roomJid with nick 'transcriber', and
+ * returns the client. Authenticates as transcriber@recorder.localhost.
+ * The bare JID starts with 'transcriber@recorder.' so is_transcriber() returns
+ * true, matching the default transcriber_prefixes in util.lib.lua.
+ *
+ * The caller is responsible for disconnecting the returned client.
+ *
+ * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
+ * @returns {Promise<XmppTestClient>}
+ */
+export async function joinWithTranscriber(roomJid) {
+    const c = await createXmppClient({
+        domain: 'recorder.localhost',
+        username: 'transcriber',
+        password: 'transcribersecret'
+    });
+
+    await c.joinRoom(roomJid, 'transcriber');
+
+    return c;
+}
+
+/**
  * Creates an anonymous XMPP client and joins a Jigasi brewery MUC with a
  * colibri stats presence extension, simulating a Jigasi SIP gateway instance.
  * The presence advertises supports_sip and stress_level so that
@@ -426,6 +472,26 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a groupchat message with a <json-message> child to the room.
+         * Fire-and-forget — does NOT wait for the MUC reflection stanza.
+         * Use when testing hooks that may crash or block the message before it
+         * is reflected (waiting for reflection would time out).
+         *
+         * @param {string} roomJid   e.g. 'room@conference.localhost'
+         * @param {object} payload   JSON-serialisable value for the json-message body.
+         */
+        sendJsonGroupchat(roomJid, payload) {
+            return xmpp.send(
+                xml('message', { to: roomJid,
+                    type: 'groupchat',
+                    id: `jm-${++_counter}` },
+                    xml('json-message', { xmlns: 'http://jitsi.org/jitmeet' },
+                        JSON.stringify(payload))
+                )
+            );
+        },
+
+        /**
          * Grants moderator role to the occupant identified by nick.
          * The caller must be the room owner (e.g. the focus client).
          * Resolves with the server's IQ response.
@@ -610,6 +676,68 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
                     resolve();
                 });
             });
+        },
+
+        /**
+         * Sends a file-sharing add message to a component JID.
+         * The session must have jitsi_web_query_room set (connect with
+         * params: { room: '<roomname>' }) for the component to locate the room.
+         *
+         * @param {string} componentJid  e.g. 'filesharing.localhost'
+         * @param {object} fileObj       file descriptor; must include fileId
+         */
+        sendFileSharingAdd(componentJid, fileObj) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `fs-${++_counter}` },
+                    xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet',
+                        type: 'add' },
+                        JSON.stringify(fileObj)
+                    )
+                )
+            );
+        },
+
+        /**
+         * Sends a file-sharing remove message to a component JID.
+         *
+         * @param {string} componentJid  e.g. 'filesharing.localhost'
+         * @param {string} fileId        ID of the file to remove
+         */
+        sendFileSharingRemove(componentJid, fileId) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `fs-${++_counter}` },
+                    xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet',
+                        type: 'remove',
+                        fileId })
+                )
+            );
+        },
+
+        /**
+         * Sends a raw file-sharing message. Use this to test malformed payloads
+         * or non-standard message types (e.g. type='error').
+         *
+         * @param {string} componentJid  e.g. 'filesharing.localhost'
+         * @param {object} messageAttrs  extra attributes on the outer <message>
+         * @param {object} fsAttrs       attributes on <file-sharing>
+         * @param {string} [body]        text body for <file-sharing>
+         */
+        sendFileSharingRaw(componentJid, messageAttrs, fsAttrs, body) {
+            const fsEl = body === undefined
+                ? xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet',
+                    ...fsAttrs })
+                : xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet',
+                    ...fsAttrs }, body);
+
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `fs-${++_counter}`,
+                    ...messageAttrs },
+                    fsEl
+                )
+            );
         },
 
         async disconnect() {

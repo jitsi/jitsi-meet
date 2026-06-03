@@ -19,8 +19,10 @@ local jid_lib = require "util.jid";
 --   access: false → return {"access": false} (user banned)
 --   status: any non-200 value → return that HTTP status code with no JSON body
 --     (simulates HTTP errors; mod_muc_auth_ban fails open on non-200)
+--   non_json: true → return a 200 with a plain-text body (not valid JSON)
+--     (tests the nil-check bug: json.decode returns nil, r['access'] would crash)
 -- Reset to the default (allow, 200) between tests via POST /test-observer/access-manager.
-local access_manager_state = { access = true, status = 200 };
+local access_manager_state = { access = true, status = 200, non_json = false };
 
 -- ASAP public key servers: serve test RSA public keys so that Prosody can
 -- fetch them when verifying RS256 tokens signed by the matching private keys.
@@ -333,6 +335,29 @@ module:provides("http", {
             };
         end;
 
+        -- POST /test-observer/rooms/breakout-rooms-active
+        -- Body: { "jid": "room@conference.localhost", "active": true|false }
+        -- Sets room._data.breakout_rooms_active, which mod_muc_cleanup_backend_services
+        -- checks to skip the destroy-timer logic when breakout rooms are running.
+        ["POST /rooms/breakout-rooms-active"] = function(event)
+            local data = json.decode(event.request.body or "{}") or {};
+            local room_jid = data.jid;
+            local active = data.active;
+            if room_jid == nil or active == nil then
+                return { status_code = 400; body = '{"error":"missing jid or active"}' };
+            end
+            local room = (shared.rooms or {})[room_jid];
+            if not room then
+                return { status_code = 404; body = '{"error":"room not found"}' };
+            end
+            room._data.breakout_rooms_active = active;
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = '{"ok":true}';
+            };
+        end;
+
         -- POST /test-observer/rooms/max-occupants
         -- Body: { "jid": "room@conference.localhost", "max_occupants": 4 }
         -- Sets room._data.max_occupants so per-room limit tests can override the
@@ -366,6 +391,16 @@ module:provides("http", {
             if access_manager_state.status ~= 200 then
                 return { status_code = access_manager_state.status; body = "error" };
             end
+            if access_manager_state.non_json then
+                -- Return a 200 with a non-JSON body to exercise the nil-check
+                -- bug in mod_muc_auth_ban: json.decode returns nil, and
+                -- r['access'] would crash if the module doesn't guard for nil.
+                return {
+                    status_code = 200;
+                    headers = { ["Content-Type"] = "text/plain" };
+                    body = "not-valid-json";
+                };
+            end
             return {
                 status_code = 200;
                 headers = { ["Content-Type"] = "application/json" };
@@ -374,7 +409,7 @@ module:provides("http", {
         end;
 
         -- POST /test-observer/access-manager
-        -- Body: { "access": true|false, "status": <http-status-code> }
+        -- Body: { "access": true|false, "status": <http-status-code>, "non_json": true|false }
         -- Configures what the mock access manager returns.
         -- Call this from tests before connecting the client under test.
         -- Call with { "access": true, "status": 200 } to reset to the default.
@@ -385,6 +420,9 @@ module:provides("http", {
             end
             if data.status ~= nil then
                 access_manager_state.status = tonumber(data.status) or 200;
+            end
+            if data.non_json ~= nil then
+                access_manager_state.non_json = data.non_json;
             end
             return { status_code = 204 };
         end;
