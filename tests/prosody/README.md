@@ -163,3 +163,5 @@ export DOCKER_HOST=unix:///Users/$(whoami)/.colima/default/docker.sock
 export TESTCONTAINERS_RYUK_DISABLED=true   # Ryuk reaper fails under Colima
 npm test
 ```
+
+
