@@ -3,7 +3,6 @@
 #import "JitsiMeet.h"
 
 #import <React/RCTBundleURLProvider.h>
-#import <React/RCTBridge.h>
 
 static NSString *RCTReadMetroHostFromBundle(NSBundle *bundle) {
     NSString *ipPath = [bundle pathForResource:@"ip" ofType:@"txt"];
@@ -22,10 +21,6 @@ static NSString *RCTReadMetroHostFromBundle(NSBundle *bundle) {
 }
 
 @implementation JitsiReactFactoryDelegate
-
-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
-    return [self bundleURL];
-}
 
 - (NSURL *_Nullable)bundleURL {
 #if DEBUG
