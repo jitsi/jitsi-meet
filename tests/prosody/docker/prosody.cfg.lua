@@ -160,18 +160,6 @@ VirtualHost "shared-secret.localhost"
 VirtualHost "whitelist.localhost"
     authentication = "anonymous"
 
--- VirtualHost for mod_turncredentials tests. Kept separate from the main
--- VirtualHost because external_services (loaded by mod_turncredentials_http)
--- hooks the same extdisco IQ event and would otherwise take precedence.
-VirtualHost "turncredentials.localhost"
-    authentication = "anonymous"
-    modules_enabled = { "turncredentials" }
-    turncredentials_secret = "xmpp-turn-secret"
-    turncredentials = {
-        { type = "stun", host = "127.0.0.1", port = 3478 };
-        { type = "turn", host = "127.0.0.1", port = 3478 };
-    }
-
 Component "lobby.conference.localhost" "muc"
     storage = "memory"
     muc_room_cache_size = 1000
