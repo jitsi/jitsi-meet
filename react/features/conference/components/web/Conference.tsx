@@ -483,6 +483,7 @@ export default reactReduxConnect(_mapStateToProps)(translate(props => {
 
     const { isOpen: isChatOpen } = useSelector((state: IReduxState) => state['features/chat']);
     const isFileUploadEnabled = useSelector(isFileUploadingEnabled);
+    const isOnPrejoin = useSelector(isPrejoinPageVisible);
 
     const handleDragEnter = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -500,7 +501,7 @@ export default reactReduxConnect(_mapStateToProps)(translate(props => {
         e.preventDefault();
         e.stopPropagation();
 
-        if (!isFileUploadEnabled) {
+        if (!isFileUploadEnabled || isOnPrejoin) {
             return;
         }
 
@@ -510,7 +511,7 @@ export default reactReduxConnect(_mapStateToProps)(translate(props => {
             }
             dispatch(setFocusedTab(ChatTabs.FILE_SHARING));
         }
-    }, [ isChatOpen, isDragging, isFileUploadEnabled ]);
+    }, [ isChatOpen, isDragging, isFileUploadEnabled, isOnPrejoin ]);
 
     const handleDrop = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -528,6 +529,7 @@ export default reactReduxConnect(_mapStateToProps)(translate(props => {
 
     return (
         <div
+            data-testid = 'conference-drag-zone'
             onDragEnter = { handleDragEnter }
             onDragLeave = { handleDragLeave }
             onDragOver = { handleDragOver }

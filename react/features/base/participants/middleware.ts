@@ -619,17 +619,12 @@ function _localParticipantJoined({ getState, dispatch }: IStore, next: Function,
     const settings = state['features/base/settings'];
     const jwtUser = state['features/base/jwt']?.user;
 
-    const userContext = jwtUser ? {
-        id: jwtUser.id,
-        name: jwtUser.name
-    } : undefined;
-
     dispatch(localParticipantJoined({
         avatarURL: settings.avatarURL,
         email: settings.email,
         name: settings.displayName,
         id: '',
-        userContext
+        userContext: jwtUser
     }));
 
     return result;
@@ -794,8 +789,9 @@ function _localRecordingUpdated({ dispatch, getState }: IStore, conference: IJit
         participantId: string, newValue: boolean) {
     const state = getState();
     const participant = getParticipantById(state, participantId);
+    const currentValue = participant?.localRecording ?? false;
 
-    if (participant?.localRecording === newValue) {
+    if (currentValue === newValue) {
         return;
     }
 

@@ -370,6 +370,7 @@
         "sendPrivateMessageTitle": "أترسل ردًا خاصًا؟",
         "serviceUnavailable": "الخدمة غير متاحة",
         "sessTerminated": "أُنهيَت المكالمة",
+        "sessTerminatedReason": "تم إنهاء الإجتماع",
         "sessionRestarted": "إعادة الاتصال من الجسر",
         "shareAudio": "استمر",
         "shareAudioTitle": "كيفية مشاركة الصوت",

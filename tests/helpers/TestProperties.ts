@@ -70,9 +70,16 @@ export function loadTestFiles(files: string[]): void {
 
     testGlobals.forEach(fn => {
         originalTestFunctions[fn] = (global as any)[fn];
-        (global as any)[fn] = () => {
+        const stub: any = () => {
             // do nothing
         };
+
+        // Tolerate any expect.extend({...}) calls a spec or helper might do at module load.
+        if (fn === 'expect') {
+            stub.extend = () => { /* no-op */ };
+        }
+
+        (global as any)[fn] = stub;
     });
 
     try {

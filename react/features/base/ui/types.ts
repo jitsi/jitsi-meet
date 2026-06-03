@@ -326,6 +326,7 @@ export interface IPalette {
     recordingNotificationAction: string;
     recordingNotificationText: string;
     recordingText: string;
+    transcriptionIndicator: string;
     securityDialogBackground: string;
     securityDialogBorder: string;
     securityDialogSecondaryText: string;

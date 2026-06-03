@@ -29,7 +29,7 @@ local escaped_muc_domain_base = muc_domain_base:gsub("%p", "%%%1");
 local escaped_muc_domain_prefix = muc_domain_prefix:gsub("%p", "%%%1");
 -- The pattern used to extract the target subdomain
 -- (e.g. extract 'foo' from 'conference.foo.example.com')
-local target_subdomain_pattern = "^"..escaped_muc_domain_prefix..".([^%.]+)%."..escaped_muc_domain_base;
+local target_subdomain_pattern = "^"..escaped_muc_domain_prefix.."%.([^%.]+)%."..escaped_muc_domain_base;
 
 -- table to store all incoming iqs without roomname in it, like discoinfo to the muc component
 local roomless_iqs = {};
@@ -157,6 +157,32 @@ function get_room_by_name_and_subdomain(room_name, subdomain)
     return get_room_from_jid(room_address);
 end
 
+-- Returns the occupant and the room (main or one of its active breakout rooms)
+-- where the given real full JID is found. Returns nil, nil if not found anywhere.
+-- @param room the main room object
+-- @param real_jid the full real JID to look up
+-- @return occupant, found_room
+function get_occupant_by_real_jid(room, real_jid)
+    local occupant = room:get_occupant_by_real_jid(real_jid);
+    if occupant then
+        return occupant, room;
+    end
+
+    if room._data.breakout_rooms_active then
+        for breakout_room_jid in pairs(room._data.breakout_rooms or {}) do
+            local breakout_room = get_room_from_jid(breakout_room_jid);
+            if breakout_room then
+                occupant = breakout_room:get_occupant_by_real_jid(real_jid);
+                if occupant then
+                    return occupant, breakout_room;
+                end
+            end
+        end
+    end
+
+    return nil, nil;
+end
+
 function async_handler_wrapper(event, handler)
     if not have_async then
         module:log("error", "requires a version of Prosody with util.async");
@@ -229,8 +255,12 @@ function update_presence_identity(stanza, user, group, creator_user, creator_gro
 
     stanza:tag("identity"):tag("user");
     for k, v in pairs(user) do
-        v = tostring(v)
-        stanza:tag(k):text(v):up();
+        -- Skip keys that are not valid XML element names (e.g. contain '<', '>').
+        -- Using such keys as tag names crashes LuaXML.
+        if k:match("^[%a_][%w%-%.%:_]*$") then
+            v = tostring(v)
+            stanza:tag(k):text(v):up();
+        end
     end
     stanza:up();
 
@@ -243,7 +273,9 @@ function update_presence_identity(stanza, user, group, creator_user, creator_gro
     if creator_user then
         stanza:tag("creator_user");
         for k, v in pairs(creator_user) do
-            stanza:tag(k):text(v):up();
+            if k:match("^[%a_][%w%-%.%:_]*$") then
+                stanza:tag(k):text(v):up();
+            end
         end
         stanza:up();
 
@@ -282,7 +314,7 @@ function extract_subdomain(room_node)
         room_name = room_node;
     end
 
-    local _, customer_id = subdomain and subdomain:match("^(vpaas%-magic%-cookie%-)(.*)$") or nil, nil;
+    local customer_id = subdomain and subdomain:match("^vpaas%-magic%-cookie%-(.*)$") or nil;
     local cache_value = { subdomain=subdomain, room=room_name, customer_id=customer_id };
     extract_subdomain_cache:set(room_node, cache_value);
     return subdomain, room_name, customer_id;
@@ -329,6 +361,50 @@ end
 -- healthcheck rooms in jicofo starts with a string '__jicofo-health-check'
 function is_healthcheck_room(room_jid)
     return starts_with(room_jid, "__jicofo-health-check");
+end
+
+--- Returns true when the given occupant nick is the Jitsi focus participant.
+-- The focus occupant always has a nick ending in "/focus".
+-- @param nick the full occupant nick (resource part of the MUC JID)
+-- @return boolean
+function is_focus(nick)
+    if nick == nil then
+        return false;
+    end
+    return string.sub(nick, -string.len("/focus")) == "/focus";
+end
+
+--- Returns true when the given bare resource/nick string is the focus nick.
+-- Use this when you have only the resource part in isolation (not a full JID),
+-- e.g. values read from a stats table keyed by resource.
+-- @param resource  the bare resource string, e.g. "focus" or "user1"
+-- @return boolean
+local function is_focus_nick(resource)
+    return resource == 'focus';
+end
+
+--- Returns true when the given real (non-MUC) JID belongs to the focus account.
+-- Focus always authenticates with username 'focus' (e.g. focus@auth.example.com).
+-- Use this when you have the actor's real JID rather than a MUC occupant JID.
+-- @param real_jid  a real JID string, e.g. "focus@auth.example.com/res"
+-- @return boolean
+local function is_focus_jid(real_jid)
+    return jid.node(real_jid) == 'focus';
+end
+
+--- Builds the full MUC room address JID from its components.
+-- Uses muc_domain_prefix from module configuration (default: "conference").
+-- @param room_name   the local part of the room JID (e.g. "myroom")
+-- @param domain_name the base domain (e.g. "example.com")
+-- @param subdomain   optional tenant subdomain; nil or "" means no prefix
+-- @return the full room address string, e.g. "myroom@conference.example.com"
+--         or "[tenant]myroom@conference.example.com"
+function build_room_address(room_name, domain_name, subdomain)
+    local room_address = jid.join(room_name, muc_domain_prefix.."."..domain_name);
+    if subdomain and subdomain ~= "" then
+        room_address = "["..subdomain.."]"..room_address;
+    end
+    return room_address;
 end
 
 --- Utility function to make an http get request and
@@ -503,27 +579,6 @@ function is_sip_jigasi(stanza)
     return stanza:get_child('initiator', 'http://jitsi.org/protocol/jigasi');
 end
 
--- This requires presence stanza being passed
-function is_transcriber_jigasi(stanza)
-    if not stanza then
-        return false;
-    end
-
-    local features = stanza:get_child('features');
-    if not features then
-        return false;
-    end
-
-    for i = 1, #features do
-        local feature = features[i];
-        if feature.attr and feature.attr.var and feature.attr.var == 'http://jitsi.org/protocol/transcriber' then
-            return true;
-        end
-    end
-
-    return false;
-end
-
 function is_transcriber(jid)
     return starts_with_one_of(jid, TRANSCRIBER_PREFIXES);
 end
@@ -648,6 +703,9 @@ local function table_equals(t1, t2)
     if t2 == nil then
         return t1 == nil;
     end
+    if type(t1) ~= 'table' or type(t2) ~= 'table' then
+        return t1 == t2;
+    end
 
     local removed, added, modified = table_compare(t1, t2);
 
@@ -738,14 +796,18 @@ return {
     is_sip_jibri_join = is_sip_jibri_join;
     is_sip_jigasi = is_sip_jigasi;
     is_transcriber = is_transcriber;
-    is_transcriber_jigasi = is_transcriber_jigasi;
     is_vpaas = is_vpaas;
     get_focus_occupant = get_focus_occupant;
     get_ip = get_ip;
     get_room_from_jid = get_room_from_jid;
     get_room_by_name_and_subdomain = get_room_by_name_and_subdomain;
+    get_occupant_by_real_jid = get_occupant_by_real_jid;
     get_sip_jibri_email_prefix = get_sip_jibri_email_prefix;
     async_handler_wrapper = async_handler_wrapper;
+    build_room_address = build_room_address;
+    is_focus = is_focus;
+    is_focus_nick = is_focus_nick;
+    is_focus_jid = is_focus_jid;
     presence_check_status = presence_check_status;
     process_host_module = process_host_module;
     respond_iq_result = respond_iq_result;

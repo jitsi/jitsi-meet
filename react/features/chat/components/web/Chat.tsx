@@ -151,7 +151,7 @@ const useStyles = makeStyles<{
 
             '*': {
                 userSelect: 'text',
-                '-webkit-user-select': 'text'
+                WebkitUserSelect: 'text'
             }
         },
 

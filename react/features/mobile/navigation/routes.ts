@@ -4,7 +4,7 @@ export const screen = {
         carmode: 'Car Mode',
         chat: 'Chat',
         chatTabs: {
-            main: 'Chat',
+            main: 'Chat Main',
             tab: {
                 chat: 'Chat',
                 polls: 'Polls',

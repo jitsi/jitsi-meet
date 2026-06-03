@@ -8,11 +8,11 @@ local array = require 'util.array';
 local st = require("util.stanza");
 local jid = require "util.jid";
 local util = module:require("util");
-local muc = module:depends("muc");
 
 local NS_NICK = 'http://jabber.org/protocol/nick';
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local get_room_from_jid = util.get_room_from_jid;
+local get_occupant_by_real_jid = util.get_occupant_by_real_jid;
 local is_healthcheck_room = util.is_healthcheck_room;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
@@ -141,22 +141,14 @@ end
             local main_room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
             local occupant_jid = stanza.attr.from;
 
-            occupant = main_room:get_occupant_by_real_jid(occupant_jid);
-
-            if main_room._data.breakout_rooms_active and not occupant then
-                -- let's find is this participant in the main room or in some breakout room
-                -- not in main room, let's check breakout rooms
-                for breakout_room_jid, subject in pairs(main_room._data.breakout_rooms or {}) do
-                    local breakout_room = get_room_from_jid(breakout_room_jid);
-                    occupant = breakout_room:get_occupant_by_real_jid(occupant_jid);
-                    if occupant then
-                        room = breakout_room;
-                        break;
-                    end
-                end
-            else
-                room = main_room;
+            if not main_room then
+                module:log('warn', 'No main room found for %s %s', session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+                return;
             end
+
+            local found_room;
+            occupant, found_room = get_occupant_by_real_jid(main_room, occupant_jid);
+            room = found_room or main_room;
 
             if not occupant then
                 module:log('error', 'Occupant sending poll msg %s was not found in room %s', occupant_jid, room.jid)

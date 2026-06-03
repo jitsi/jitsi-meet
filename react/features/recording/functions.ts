@@ -19,17 +19,25 @@ import LocalRecordingManager from './components/Recording/LocalRecordingManager'
 import {
     LIVE_STREAMING_OFF_SOUND_ID,
     LIVE_STREAMING_ON_SOUND_ID,
+    RECORDING_AND_TRANSCRIPTION_OFF_SOUND_ID,
+    RECORDING_AND_TRANSCRIPTION_ON_SOUND_ID,
     RECORDING_OFF_SOUND_ID,
     RECORDING_ON_SOUND_ID,
     RECORDING_STATUS_PRIORITIES,
-    RECORDING_TYPES
+    RECORDING_TYPES,
+    TRANSCRIPTION_OFF_SOUND_ID,
+    TRANSCRIPTION_ON_SOUND_ID
 } from './constants';
 import logger from './logger';
 import {
     LIVE_STREAMING_OFF_SOUND_FILE,
     LIVE_STREAMING_ON_SOUND_FILE,
+    RECORDING_AND_TRANSCRIPTION_OFF_SOUND_FILE,
+    RECORDING_AND_TRANSCRIPTION_ON_SOUND_FILE,
     RECORDING_OFF_SOUND_FILE,
-    RECORDING_ON_SOUND_FILE
+    RECORDING_ON_SOUND_FILE,
+    TRANSCRIPTION_OFF_SOUND_FILE,
+    TRANSCRIPTION_ON_SOUND_FILE
 } from './sounds';
 
 /**
@@ -190,6 +198,18 @@ export function isRecordingRunning(state: IReduxState) {
 }
 
 /**
+ * Returns true if the participant has either the recording or transcription JWT feature enabled.
+ * Used to determine if the user can interact with recording/transcription controls.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function hasRecordingOrTranscriptionFeature(state: IReduxState) {
+    return isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false)
+        || isJwtFeatureEnabled(state, MEET_FEATURES.TRANSCRIPTION, false);
+}
+
+/**
  * Returns true if the participant can stop recording.
  *
  * @param {Object} state - The redux state to search in.
@@ -201,8 +221,7 @@ export function canStopRecording(state: IReduxState) {
     }
 
     if (isCloudRecordingRunning(state) || isRecorderTranscriptionsRunning(state)) {
-        return isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false)
-            || isJwtFeatureEnabled(state, MEET_FEATURES.TRANSCRIPTION, false);
+        return hasRecordingOrTranscriptionFeature(state);
     }
 
     return false;
@@ -384,6 +403,10 @@ export function unregisterRecordingAudioFiles(dispatch: IStore['dispatch']) {
     dispatch(unregisterSound(LIVE_STREAMING_ON_SOUND_FILE));
     dispatch(unregisterSound(RECORDING_OFF_SOUND_FILE));
     dispatch(unregisterSound(RECORDING_ON_SOUND_FILE));
+    dispatch(unregisterSound(TRANSCRIPTION_OFF_SOUND_FILE));
+    dispatch(unregisterSound(TRANSCRIPTION_ON_SOUND_FILE));
+    dispatch(unregisterSound(RECORDING_AND_TRANSCRIPTION_OFF_SOUND_FILE));
+    dispatch(unregisterSound(RECORDING_AND_TRANSCRIPTION_ON_SOUND_FILE));
 }
 
 /**
@@ -415,6 +438,22 @@ export function registerRecordingAudioFiles(dispatch: IStore['dispatch'], should
     dispatch(registerSound(
         RECORDING_ON_SOUND_ID,
         getSoundFileSrc(RECORDING_ON_SOUND_FILE, language)));
+
+    dispatch(registerSound(
+        TRANSCRIPTION_OFF_SOUND_ID,
+        getSoundFileSrc(TRANSCRIPTION_OFF_SOUND_FILE, language)));
+
+    dispatch(registerSound(
+        TRANSCRIPTION_ON_SOUND_ID,
+        getSoundFileSrc(TRANSCRIPTION_ON_SOUND_FILE, language)));
+
+    dispatch(registerSound(
+        RECORDING_AND_TRANSCRIPTION_OFF_SOUND_ID,
+        getSoundFileSrc(RECORDING_AND_TRANSCRIPTION_OFF_SOUND_FILE, language)));
+
+    dispatch(registerSound(
+        RECORDING_AND_TRANSCRIPTION_ON_SOUND_ID,
+        getSoundFileSrc(RECORDING_AND_TRANSCRIPTION_ON_SOUND_FILE, language)));
 }
 
 /**

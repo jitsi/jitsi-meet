@@ -1,3 +1,10 @@
+-- Enforces JWT token room-claim verification at MUC join/create time. Loaded
+-- on the MUC component. For each join or room-create, calls
+-- token_util:verify_room() to check that the token's room claim matches the
+-- target room JID. Admins and domains listed in token_verification_allowlist
+-- are exempt. Anonymous users (no token) are allowed through. When
+-- token_verification_require_token_for_moderation is set, also blocks room
+-- config IQs (e.g. granting moderator status) from unauthenticated users.
 -- Token authentication
 -- Copyright (C) 2021-present 8x8, Inc.
 

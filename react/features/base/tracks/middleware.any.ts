@@ -27,12 +27,12 @@ import {
     destroyLocalTracks,
     trackMuteUnmuteFailed,
     trackRemoved
-} from './actions';
+} from './actions.any';
 import {
     getLocalTrack,
     isUserInteractionRequiredForUnmute,
     setTrackMuted
-} from './functions';
+} from './functions.any';
 
 /**
  * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,

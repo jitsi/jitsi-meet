@@ -6,6 +6,7 @@ import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { openHighlightDialog } from '../../../recording/actions.native';
 import HighlightButton from '../../../recording/components/Recording/native/HighlightButton';
 import RecordingLabel from '../../../recording/components/native/RecordingLabel';
+import TranscribingLabel from '../../../recording/components/native/TranscribingLabel';
 import { isLiveStreamingRunning } from '../../../recording/functions';
 import VisitorsCountLabel from '../../../visitors/components/native/VisitorsCountLabel';
 
@@ -14,6 +15,7 @@ import {
     LABEL_ID_RAISED_HANDS_COUNT,
     LABEL_ID_RECORDING,
     LABEL_ID_STREAMING,
+    LABEL_ID_TRANSCRIBING,
     LABEL_ID_VISITORS_COUNT,
     LabelHitSlop
 } from './constants';
@@ -47,6 +49,11 @@ const AlwaysOnLabels = ({ createOnPress }: IProps) => {
                 <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
             </TouchableOpacity>
         }
+        <TouchableOpacity
+            hitSlop = { LabelHitSlop }
+            onPress = { createOnPress(LABEL_ID_TRANSCRIBING) } >
+            <TranscribingLabel />
+        </TouchableOpacity>
         <TouchableOpacity
             hitSlop = { LabelHitSlop }
             onPress = { openHighlightDialogCallback }>

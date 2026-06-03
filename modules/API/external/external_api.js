@@ -806,7 +806,11 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * {{
      *  'from': from,//JID of the user that sent the message
      *  'nick': nick,//the nickname of the user that sent the message
-     *  'message': txt//the text of the message
+     *  'message': txt,//the text of the message
+     *  'privateMessage': privateMessage,//whether the message is private
+     *  'stamp': stamp,//optional timestamp when available
+     *  'messageId': messageId,//optional XMPP message id when available
+     *  'replyToMessageId': replyToMessageId//optional XEP-0461 reply target message id when available
      * }}
      * {@code outgoingMessage} - receives event notifications about outgoing
      * messages. The listener will receive object with the following structure:

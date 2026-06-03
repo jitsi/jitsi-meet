@@ -42,7 +42,7 @@ end);
 local function shouldAllow(session)
     local token = session.auth_token;
 
-    if token ~= nil and session.jitsi_web_query_room and session.jitsi_web_query_prefix then
+    if token ~= nil then
         -- cached tokens are banned
         if cache:get(token) then
             return false;
@@ -58,7 +58,7 @@ local function shouldAllow(session)
             if code == 200 then
 
                 local r = json.decode(content)
-                if r['access'] ~= nil and r['access'] == false then
+                if r ~= nil and r['access'] == false then
                     module:log("info", "User is banned room:%s tenant:%s user_id:%s group:%s",
                         session.jitsi_web_query_room, session.jitsi_web_query_prefix,
                         inspect(session.jitsi_meet_context_user), session.jitsi_meet_context_group);

@@ -11,7 +11,7 @@ export default createStyleSheet({
      * The style of {@code CalleeInfo}.
      */
     ringing: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         alignItems: 'center',
         backgroundColor: ColorPalette.black,
         flex: 0,

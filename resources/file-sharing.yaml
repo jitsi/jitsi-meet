@@ -87,30 +87,6 @@ paths:
                 $ref: '#/components/schemas/AddDocumentResponse'
               example:
                 fileId: e393a7e5-e790-4f43-836e-d27238201904
-    delete:
-      tags:
-        - Document sharing history
-      summary: Deletes documents for a given session, user and customer
-      operationId: deleteDocumentsForSessionCustomerAndUser
-      parameters:
-        - name: sessionId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: user-id
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: customer-id
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: No Content
   /v1/documents/sessions/{sessionId}/files/{fileId}:
     get:
       tags:
@@ -141,7 +117,7 @@ paths:
       tags:
         - Document sharing history
       summary: Delete a file by sessionId and fileId
-      description: Delete a file by sessionId and fileId allowed by all moderators
+      description: Delete a file by sessionId and fileId allowed by the "file-upload" feature
       operationId: deleteFile
       parameters:
         - name: sessionId

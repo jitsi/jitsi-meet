@@ -54,9 +54,16 @@ class AudioTrack extends Component<IProps> {
     _ref: React.RefObject<HTMLAudioElement>;
 
     /**
-     * The current timeout ID for play() retries.
+     * The current timeout ID for attach or play retries. Shared so that
+     * {@link _detachTrack} can cancel whichever retry is pending.
      */
-    _playTimeout: number | undefined;
+    _retryTimeout: number | undefined;
+
+    /**
+     * Tracks how many full re-attach cycles (attach retries + play retries exhausted) have occurred
+     * to prevent infinite recovery loops.
+     */
+    _reattachCount = 0;
 
     /**
      * Default values for {@code AudioTrack} component's properties.
@@ -190,10 +197,11 @@ class AudioTrack extends Component<IProps> {
      * Calls into the passed in track to associate the track with the component's audio element.
      *
      * @param {Object} track - The redux representation of the {@code JitsiLocalTrack}.
+     * @param {number} retryCount - The number of previously failed attach retries.
      * @private
      * @returns {void}
      */
-    _attachTrack(track?: ITrack) {
+    _attachTrack(track?: ITrack, retryCount = 0) {
         const { id } = this.props;
 
         if (!track?.jitsiTrack) {
@@ -209,13 +217,24 @@ class AudioTrack extends Component<IProps> {
         }
 
         track.jitsiTrack.attach(this._ref.current)
+            .then(() => {
+                if (retryCount !== 0) {
+                    logger.info(`Successfully attached audio track on element ${id} after ${retryCount} retries`);
+                }
+                this._play();
+            })
             .catch((error: Error) => {
                 logger.error(
-                    `Attaching the remote track ${track.jitsiTrack} to video with id ${id} has failed with `,
+                    `Attaching the remote track ${track.jitsiTrack} to audio with id ${id} has failed with `,
                     error);
-            })
-            .finally(() => {
-                this._play();
+
+                if (retryCount < 3) {
+                    this._retryTimeout = window.setTimeout(() => {
+                        this._attachTrack(track, retryCount + 1);
+                    }, 1000);
+                } else {
+                    logger.error(`Failed to attach audio track on element ${id} after ${retryCount} retries`);
+                }
             });
     }
 
@@ -229,8 +248,8 @@ class AudioTrack extends Component<IProps> {
      */
     _detachTrack(track?: ITrack) {
         if (this._ref?.current && track?.jitsiTrack) {
-            clearTimeout(this._playTimeout);
-            this._playTimeout = undefined;
+            clearTimeout(this._retryTimeout);
+            this._retryTimeout = undefined;
             track.jitsiTrack.detach(this._ref.current);
         }
     }
@@ -272,22 +291,33 @@ class AudioTrack extends Component<IProps> {
             .then(() => {
                 if (retries !== 0) {
                     // success after some failures
-                    this._playTimeout = undefined;
+                    this._retryTimeout = undefined;
                     sendAnalytics(createAudioPlaySuccessEvent(id));
                     logger.info(`Successfully played audio track! retries: ${retries}`);
                 }
+                this._reattachCount = 0;
             }, e => {
                 logger.error(`Failed to play audio track on audio element ${id}! retry: ${retries} ; Error:`, e);
 
                 if (retries < 3) {
-                    this._playTimeout = window.setTimeout(() => this._play(retries + 1), 1000);
+                    this._retryTimeout = window.setTimeout(() => this._play(retries + 1), 1000);
 
                     if (retries === 0) {
                         // send only 1 error event.
                         sendAnalytics(createAudioPlayErrorEvent(id));
                     }
                 } else {
-                    this._playTimeout = undefined;
+                    this._retryTimeout = undefined;
+
+                    // Play retries exhausted — re-attach the track and try again (once).
+                    if (this._reattachCount < 1) {
+                        this._reattachCount++;
+                        logger.warn(`Play retries exhausted for audio element ${id}, re-attaching track`);
+                        this._detachTrack(this.props.audioTrack);
+                        this._attachTrack(this.props.audioTrack);
+                    } else {
+                        logger.error(`Audio recovery failed for element ${id} after re-attach`);
+                    }
                 }
             });
         }

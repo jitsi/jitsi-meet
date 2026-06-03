@@ -1,0 +1,24 @@
+{
+  "name": "prosody-plugin-tests",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:lua": "rm -f allure-results/*-result.json allure-results/TEST-lua-unit.xml 2>/dev/null; mkdir -p allure-results && if command -v busted > /dev/null 2>&1; then BUSTED=${HOME}/.luarocks/bin/busted; command -v \"$BUSTED\" > /dev/null 2>&1 || BUSTED=busted; SPEC_DIR=\"$(pwd)\"; (cd ../../resources/prosody-plugins && LUA_PATH=\"$SPEC_DIR/?.lua;;\" ALLURE_RESULTS_DIR=\"$SPEC_DIR/allure-results\" \"$BUSTED\" --output busted_allure \"$SPEC_DIR/lua/\"); fi",
+    "test:integration": "DEBUG=testcontainers,testcontainers:containers,testcontainers:build mocha",
+    "test:report": "npx allure generate allure-results --clean -o allure-report && node fix-allure-report.cjs",
+    "test": "npm run test:lua; LRC=$?; npm run test:integration; IRC=$?; npm run test:report; exit $(( LRC != 0 || IRC != 0 ))",
+    "test:one": "mocha --no-config --require ./setup.js --timeout 120000"
+  },
+  "dependencies": {
+    "@xmpp/client": "^0.13.1",
+    "@xmpp/xml": "^0.13.1",
+    "jsonwebtoken": "^9.0.0",
+    "testcontainers": "^10.13.2"
+  },
+  "devDependencies": {
+    "allure-commandline": "2.32.0",
+    "allure-mocha": "^3.7.1",
+    "mocha": "^10.7.3"
+  }
+}

@@ -152,6 +152,19 @@ function getConfig(options = {}) {
                 test: /\.(j|t)sx?$/,
                 exclude: /node_modules/
             }, {
+                // Emit woff2 fonts to excalidraw/fonts/ preserving the subdirectory
+                // structure so they land at the same path that deploy-excalidraw copies
+                // them to (libs/excalidraw/fonts/...) and CSS @font-face URLs resolve.
+                test: /\.woff2$/,
+                type: 'asset/resource',
+                generator: {
+                    filename: pathData => {
+                        const match = pathData.filename?.match(/\/fonts\/(.*)/);
+
+                        return match ? `excalidraw/fonts/${match[1]}` : 'excalidraw/fonts/[name][ext]';
+                    }
+                }
+            }, {
                 // Allow CSS to be imported into JavaScript.
 
                 test: /\.css$/,
@@ -197,8 +210,9 @@ function getConfig(options = {}) {
         },
         output: {
             filename: `[name]${isProduction ? '.min' : ''}.js`,
+            chunkFilename: `chunks/[id]${isProduction ? '.min' : ''}.js`,
             path: `${__dirname}/build`,
-            publicPath: '/libs/',
+            publicPath: isProduction ? 'auto' : '/libs/',
             sourceMapFilename: '[file].map'
         },
         plugins: [
@@ -212,7 +226,12 @@ function getConfig(options = {}) {
         resolve: {
             alias: {
                 'focus-visible': 'focus-visible/dist/focus-visible.min.js',
-                '@giphy/js-analytics': resolve(__dirname, 'giphy-analytics-stub.js')
+                '@giphy/js-analytics': resolve(__dirname, 'giphy-analytics-stub.js'),
+                'react': resolve(__dirname, 'node_modules/react'),
+                'react-dom': resolve(__dirname, 'node_modules/react-dom'),
+                'roughjs/bin/rough': 'roughjs/bin/rough.js',
+                'roughjs/bin/generator': 'roughjs/bin/generator.js',
+                'roughjs/bin/math': 'roughjs/bin/math.js'
             },
             aliasFields: [
                 'browser'
@@ -257,6 +276,7 @@ function getDevServerConfig() {
                 warnings: false
             }
         },
+        allowedHosts: 'all',
         host: 'localhost',
         hot: true,
         proxy: [
@@ -271,10 +291,13 @@ function getDevServerConfig() {
             }
         ],
         server: process.env.CODESPACES ? 'http' : 'https',
+        setupMiddlewares: (middlewares, _devServer) => middlewares.filter(
+            m => m.name !== 'cross-origin-header-check'
+        ),
         static: {
             directory: process.cwd(),
             watch: {
-                ignored: file => file.endsWith('.log')
+                ignored: file => file.endsWith('.log') || file.includes('node_modules')
             }
         }
     };
@@ -319,7 +342,7 @@ module.exports = (_env, argv) => {
                 })
             ],
 
-            performance: getPerformanceHints(perfHintOptions, 5 * 1024 * 1024) },
+            performance: getPerformanceHints(perfHintOptions, 3.5 * 1024 * 1024) },
         { ...config,
             entry: {
                 'alwaysontop': './react/features/always-on-top/index.tsx'
@@ -350,7 +373,7 @@ module.exports = (_env, argv) => {
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'external_api')
             ],
-            performance: getPerformanceHints(perfHintOptions, 95 * 1024) },
+            performance: getPerformanceHints(perfHintOptions, 100 * 1024) },
         { ...config,
             entry: {
                 'face-landmarks-worker': './react/features/face-landmarks/faceLandmarksWorker.ts'
@@ -358,6 +381,16 @@ module.exports = (_env, argv) => {
             plugins: [
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'face-landmarks-worker')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2) },
+        { ...config,
+            entry: {
+                'vb-inference-worker':
+                    './react/features/stream-effects/virtual-background/workers/VBInferenceWorker.ts'
+            },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'vb-inference-worker')
             ],
             performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2) },
         { ...config, /**

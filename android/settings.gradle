@@ -1,54 +1,18 @@
 include ':app', ':sdk'
 
-include ':react-native-amplitude'
-project(':react-native-amplitude').projectDir = new File(rootProject.projectDir, '../node_modules/@amplitude/analytics-react-native/android')
-include ':react-native-async-storage'
-project(':react-native-async-storage').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-async-storage/async-storage/android')
-include ':react-native-background-timer'
-project(':react-native-background-timer').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-background-timer/android')
-include ':react-native-calendar-events'
-project(':react-native-calendar-events').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-calendar-events/android')
-include ':react-native-community_clipboard'
-project(':react-native-community_clipboard').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-clipboard/clipboard/android')
-include ':react-native-community_netinfo'
-project(':react-native-community_netinfo').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/netinfo/android')
-include ':react-native-default-preference'
-project(':react-native-default-preference').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-default-preference/android')
-include ':react-native-device-info'
-project(':react-native-device-info').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-device-info/android')
-include ':react-native-gesture-handler'
-project(':react-native-gesture-handler').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-gesture-handler/android')
-include ':react-native-get-random-values'
-project(':react-native-get-random-values').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-get-random-values/android')
-include ':react-native-giphy'
-project(':react-native-giphy').projectDir = new File(rootProject.projectDir, '../node_modules/@giphy/react-native-sdk/android')
-include ':react-native-google-signin'
-project(':react-native-google-signin').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-google-signin/google-signin/android')
-include ':react-native-keep-awake'
-project(':react-native-keep-awake').projectDir = new File(rootProject.projectDir, '../node_modules/@sayem314/react-native-keep-awake/android')
-include ':react-native-orientation-locker'
-project(':react-native-orientation-locker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-orientation-locker/android')
-include ':react-native-pager-view'
-project(':react-native-pager-view').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-pager-view/android')
-include ':react-native-performance'
-project(':react-native-performance').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-performance/android')
-include ':react-native-safe-area-context'
-project(':react-native-safe-area-context').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-safe-area-context/android')
-include ':react-native-screens'
-project(':react-native-screens').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-screens/android')
-include ':react-native-slider'
-project(':react-native-slider').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/slider/android')
-include ':react-native-sound'
-project(':react-native-sound').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-sound/android')
-include ':react-native-splash-view'
-project(':react-native-splash-view').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-splash-view/android')
-include ':react-native-svg'
-project(':react-native-svg').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-svg/android')
-include ':react-native-video'
-project(':react-native-video').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-video/android')
-include ':react-native-webrtc'
-project(':react-native-webrtc').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-webrtc/android')
-include ':react-native-webview'
-project(':react-native-webview').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-webview/android')
-include ':react-native-worklets-core'
-project(':react-native-worklets-core').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-worklets-core/android')
+includeBuild('../node_modules/@react-native/gradle-plugin')
+
+def autolinkingJson = file('build/generated/autolinking/autolinking.json')
+if (autolinkingJson.exists()) {
+    def json = new groovy.json.JsonSlurper().parseText(autolinkingJson.text)
+    json.dependencies.each { name, config ->
+        if (config.platforms?.android?.sourceDir) {
+
+            def projectName = name.replace('@', '').replace('/', '-')
+            def sourceDir = config.platforms.android.sourceDir
+            
+            include ":$projectName"
+            project(":$projectName").projectDir = new File(sourceDir)
+        }
+    }
+}

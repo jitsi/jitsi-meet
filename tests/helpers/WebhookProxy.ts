@@ -9,9 +9,13 @@ export default class WebhookProxy {
     private readonly secret;
     private logFile;
     private ws: WebSocket | undefined;
-    private cache = new Map();
+    private cache = new Map<string, any[]>();
     private listeners = new Map();
-    private consumers = new Map();
+    private consumers = new Map<string, Array<{
+        callback: (event: any) => void;
+        predicate?: (event: any) => boolean;
+    }>>();
+
     private _defaultMeetingSettings: object | undefined;
 
     /**
@@ -52,12 +56,26 @@ export default class WebhookProxy {
                 let processed = false;
 
                 if (this.consumers.has(msg.eventType)) {
-                    this.consumers.get(msg.eventType)(msg);
-                    this.consumers.delete(msg.eventType);
+                    const list = this.consumers.get(msg.eventType)!;
+                    const idx = list.findIndex(c => !c.predicate || c.predicate(msg));
 
-                    processed = true;
-                } else {
-                    this.cache.set(msg.eventType, msg);
+                    if (idx !== -1) {
+                        const consumer = list[idx];
+
+                        list.splice(idx, 1);
+                        if (list.length === 0) {
+                            this.consumers.delete(msg.eventType);
+                        }
+                        consumer.callback(msg);
+                        processed = true;
+                    }
+                }
+
+                if (!processed) {
+                    if (!this.cache.has(msg.eventType)) {
+                        this.cache.set(msg.eventType, []);
+                    }
+                    this.cache.get(msg.eventType)!.push(msg);
                 }
 
                 if (this.listeners.has(msg.eventType)) {
@@ -83,16 +101,30 @@ export default class WebhookProxy {
      * Adds event consumer. Consumers receive the event single time and we remove them from the list of consumers.
      * @param eventType
      * @param callback
+     * @param predicate Optional filter; only events for which predicate returns true are consumed.
      */
-    addConsumer(eventType: string, callback: (deventata: any) => void) {
+    addConsumer(eventType: string, callback: (event: any) => void, predicate?: (event: any) => boolean) {
         if (this.cache.has(eventType)) {
-            callback(this.cache.get(eventType));
-            this.cache.delete(eventType);
+            const list = this.cache.get(eventType)!;
+            const idx = list.findIndex(e => !predicate || predicate(e));
 
-            return;
+            if (idx !== -1) {
+                const event = list[idx];
+
+                list.splice(idx, 1);
+                if (list.length === 0) {
+                    this.cache.delete(eventType);
+                }
+                callback(event);
+
+                return;
+            }
         }
 
-        this.consumers.set(eventType, callback);
+        if (!this.consumers.has(eventType)) {
+            this.consumers.set(eventType, []);
+        }
+        this.consumers.get(eventType)!.push({ callback, predicate });
     }
 
     /**
@@ -106,9 +138,22 @@ export default class WebhookProxy {
     /**
      * Waits for the event to be received.
      * @param eventType
+     * @param predicateOrTimeout Optional predicate to filter events, or a timeout in ms.
      * @param timeout
      */
-    async waitForEvent(eventType: string, timeout = 120000): Promise<any> {
+    async waitForEvent(
+            eventType: string,
+            predicateOrTimeout?: ((event: any) => boolean) | number,
+            timeout = 120000): Promise<any> {
+        let predicate: ((event: any) => boolean) | undefined;
+        let actualTimeout = timeout;
+
+        if (typeof predicateOrTimeout === 'function') {
+            predicate = predicateOrTimeout;
+        } else if (typeof predicateOrTimeout === 'number') {
+            actualTimeout = predicateOrTimeout;
+        }
+
         // we create the error here so we have a meaningful stack trace
         const error = new Error(`Timeout waiting for event:${eventType}`);
 
@@ -117,13 +162,13 @@ export default class WebhookProxy {
                 this.logInfo(error.message);
 
                 return reject(error);
-            }, timeout);
+            }, actualTimeout);
 
             this.addConsumer(eventType, event => {
                 clearTimeout(waiter);
 
                 resolve(event);
-            });
+            }, predicate);
 
         });
     }

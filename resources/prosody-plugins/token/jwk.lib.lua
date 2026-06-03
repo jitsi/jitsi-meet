@@ -91,6 +91,9 @@ end
 
 -- Helper function to convert JWK to PEM format
 function M.jwk_to_pem(jwk)
+    if not jwk.n or not jwk.e then
+        return nil;
+    end
     -- Decode the modulus (n) and exponent (e) from base64url
     local n_bytes = base64url_decode(jwk.n)
     local e_bytes = base64url_decode(jwk.e)
@@ -130,5 +133,8 @@ function M.jwk_to_pem(jwk)
     -- Convert to PEM format
     return ASN1.der_to_pem(spki, "PUBLIC KEY")
 end
+
+-- Expose internals for unit testing (harmless in production).
+M.ASN1 = ASN1
 
 return M

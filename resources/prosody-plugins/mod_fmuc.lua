@@ -26,6 +26,7 @@ local is_vpaas = util.is_vpaas;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
+local is_focus_jid = util.is_focus_jid;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local presence_check_status = util.presence_check_status;
 local respond_iq_result = util.respond_iq_result;
@@ -703,6 +704,10 @@ local function iq_from_main_handler(event)
     local room = get_room_from_jid(room_jid_match_rewrite(room_jid));
 
     if not room then
+        if visitors_iq:get_child('disconnect') then
+            -- maybe room was already destroyed, mark as processed so we can response with ok for the iq
+            return true;
+        end
         module:log('warn', 'No room found %s in iq_from_main_handler for:%s', room_jid, visitors_iq);
         return;
     end
@@ -813,11 +818,17 @@ module:hook('iq/host', iq_from_main_handler, 10);
 -- Filters presences (if detected) that are with destination the main prosody
 function filter_stanza(stanza, session)
     if (stanza.name == 'presence' or stanza.name == 'message') and session.type ~= 'c2s' then
+
+        -- do not send anything to the main prosody if the destination is the main domain
+        if jid.host(stanza.attr.to) == main_domain then
+            return nil; -- returning nil filters the stanza
+        end
+
         -- we clone it so we do not affect broadcast using same stanza, sending it to clients
         local f_st = st.clone(stanza);
         f_st.skipMapping = true;
         return f_st;
-    elseif stanza.name == 'presence' and session.type == 'c2s' and jid.node(stanza.attr.to) == 'focus' then
+    elseif stanza.name == 'presence' and session.type == 'c2s' and is_focus_jid(stanza.attr.to) then
         local x = stanza:get_child('x', 'http://jabber.org/protocol/muc#user');
         if presence_check_status(x, '110') then
             return stanza; -- no filter

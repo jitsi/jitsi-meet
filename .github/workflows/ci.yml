@@ -18,7 +18,7 @@ jobs:
         npm -v
     - name: Get changed files
       id: changed-files
-      uses: jitsi/changed-files@main
+      uses: jitsi/changed-files@531f5f7d163941f0c1c04e0ff4d8bb243ac4366f  # main
     - name: Get changed lang files
       id: lang-files
       run: echo "all=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -oE 'lang\/\S+' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
@@ -91,13 +91,13 @@ jobs:
         sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
         xcodebuild -version
     - name: setup-cocoapods
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f  # v1
       with:
         ruby-version: '3.4'
         bundler-cache: true
     - run: npx react-native info
     - name: Cache CocoaPods
-      uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
       with:
         path: |
           ios/Pods
@@ -113,7 +113,7 @@ jobs:
     name: Build mobile SDK (Android)
     runs-on: ubuntu-latest
     container: 
-      image: reactnativecommunity/react-native-android:v15.0
+      image: reactnativecommunity/react-native-android:v18.0
       volumes:
         - /usr:/host/usr
     steps:
@@ -135,6 +135,13 @@ jobs:
         node -v
         npm -v
     - run: npm install
+    - name: Cache Gradle dependencies
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+      with:
+        path: /root/.gradle
+        key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*', 'android/gradle.properties', 'android/gradle/wrapper/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
     - run: |
         cd android
         ./gradlew :sdk:clean
@@ -169,12 +176,12 @@ jobs:
           -workspace ios/jitsi-meet.xcworkspace \
           -scheme JitsiMeetSDK
     - name: setup-cocoapods
-      uses: ruby/setup-ruby@4fc31e1c823882afd7ef55985266a526c589de90 #v1.282.0
+      uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f #v1.310.0
       with:
         ruby-version: '3.4'
         bundler-cache: true
     - name: Cache CocoaPods
-      uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 #v4.2.0
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae #v5.0.5
       with:
         path: |
           ios/Pods
@@ -201,6 +208,24 @@ jobs:
           -framework ios/sdk/out/ios-device.xcarchive/Products/Library/Frameworks/JitsiMeetSDK.framework \
           -output ios/sdk/out/JitsiMeetSDK.xcframework
     - run: ls -lR ios/sdk/out
+  react-native-sdk-build:
+    name: Build mobile SDK (React Native)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+    - name: Check Node / npm versions
+      run: |
+        node -v
+        npm -v
+    - run: npm install
+    - run: |
+        cd react-native-sdk
+        node update_sdk_dependencies.js
+        npm install
   debian-build:
     name: Test Debian packages build
     runs-on: ubuntu-latest

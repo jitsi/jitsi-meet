@@ -9,7 +9,7 @@ import { IReduxState, IStore } from '../../../app/types';
 import { getCurrentConference } from '../../../base/conference/functions';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { openDialog } from '../../../base/dialog/actions';
-import { translate } from '../../../base/i18n/functions';
+import { translate } from '../../../base/i18n/functions.native';
 import { IconCloseLarge } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
@@ -128,7 +128,7 @@ class Whiteboard extends PureComponent<IProps> {
                 safeAreaInsets = { [ 'bottom', 'left', 'right' ] }
                 style = { styles.backDrop }>
                 <WebView
-                    domStorageEnabled = { false }
+                    domStorageEnabled = { true }
                     incognito = { true }
                     javaScriptEnabled = { true }
                     nestedScrollEnabled = { true }

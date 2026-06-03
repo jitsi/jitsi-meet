@@ -1,6 +1,6 @@
 import { IStore } from '../app/types';
 import { connect } from '../base/connection/actions.native';
-import { navigateRoot } from '../mobile/navigation/rootNavigationContainerRef';
+import { replaceRoot } from '../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../mobile/navigation/routes';
 import { showVisitorsQueue } from '../visitors/functions';
 
@@ -17,7 +17,7 @@ export function joinConference(options?: Object, _ignoreJoiningInProgress = fals
 
         if (_showVisitorsQueue) {
             dispatch(connect());
-            navigateRoot(screen.conference.root);
+            replaceRoot(screen.conference.root);
         }
     };
 }

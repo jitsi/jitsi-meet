@@ -9,6 +9,11 @@ interface IProps {
     ariaLabel: string;
 
     /**
+     * The 'aria-valuetext' text.
+     */
+    ariaValuetext?: string;
+
+    /**
      * The maximum value for slider value.
      */
     max: number;
@@ -135,9 +140,9 @@ const useStyles = makeStyles()(theme => {
 /**
  *  Custom slider.
  *
- *  @returns {ReactElement}
+ *  @returns {JSX.Element}
  */
-function Slider({ ariaLabel, max, min, onChange, step, value }: IProps) {
+function Slider({ ariaLabel, ariaValuetext, max, min, onChange, step, value }: IProps) {
     const { classes, cx } = useStyles();
     const knobs = [ ...Array(Math.floor((max - min) / step) + 1) ];
 
@@ -154,6 +159,10 @@ function Slider({ ariaLabel, max, min, onChange, step, value }: IProps) {
             <div className = { classes.track } />
             <input
                 aria-label = { ariaLabel }
+                aria-valuemax = { max }
+                aria-valuemin = { min }
+                aria-valuenow = { value }
+                aria-valuetext = { ariaValuetext }
                 className = { cx(classes.slider, 'custom-slider') }
                 max = { max }
                 min = { min }

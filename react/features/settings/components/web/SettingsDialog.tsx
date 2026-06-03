@@ -137,6 +137,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         = configuredTabs.includes('profile') && !state['features/base/config'].disableProfile;
     const showCalendarSettings
         = configuredTabs.includes('calendar') && isCalendarEnabled(state);
+    const showShortcutsSettings = configuredTabs.includes('shortcuts');
     const showSoundsSettings = configuredTabs.includes('sounds');
     const enabledNotifications = getNotificationsMap(state);
     const showNotificationsSettings = Object.keys(enabledNotifications).length > 0;
@@ -293,22 +294,24 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         });
     }
 
-    !_iAmVisitor && tabs.push({
-        name: SETTINGS_TABS.SHORTCUTS,
-        component: ShortcutsTab,
-        labelKey: 'settings.shortcuts',
-        props: getShortcutsTabProps(state, isDisplayedOnWelcomePage),
-        propsUpdateFunction: (tabState: any, newProps: ReturnType<typeof getShortcutsTabProps>) => {
-            // Updates tab props, keeping users selection
+    if (showShortcutsSettings && !_iAmVisitor) {
+        tabs.push({
+            name: SETTINGS_TABS.SHORTCUTS,
+            component: ShortcutsTab,
+            labelKey: 'settings.shortcuts',
+            props: getShortcutsTabProps(state, isDisplayedOnWelcomePage),
+            propsUpdateFunction: (tabState: any, newProps: ReturnType<typeof getShortcutsTabProps>) => {
+                // Updates tab props, keeping users selection
 
-            return {
-                ...newProps,
-                keyboardShortcutsEnabled: tabState?.keyboardShortcutsEnabled
-            };
-        },
-        submit: submitShortcutsTab,
-        icon: IconShortcuts
-    });
+                return {
+                    ...newProps,
+                    keyboardShortcutsEnabled: tabState?.keyboardShortcutsEnabled
+                };
+            },
+            submit: submitShortcutsTab,
+            icon: IconShortcuts
+        });
+    }
 
     if (showMoreTab && !_iAmVisitor) {
         tabs.push({

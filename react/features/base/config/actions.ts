@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import { IStore } from '../../app/types';
@@ -36,18 +35,15 @@ export function updateConfig(config: IConfig) {
  *
  * @param {URL} locationURL - The URL of the location which necessitated the
  * loading of a configuration.
- * @param {string} room - The name of the room (conference) for which we're loading the config for.
  * @returns {{
  *     type: CONFIG_WILL_LOAD,
- *     locationURL: URL,
- *     room: string
+ *     locationURL: URL
  * }}
  */
-export function configWillLoad(locationURL: URL, room: string) {
+export function configWillLoad(locationURL: URL) {
     return {
         type: CONFIG_WILL_LOAD,
-        locationURL,
-        room
+        locationURL
     };
 }
 

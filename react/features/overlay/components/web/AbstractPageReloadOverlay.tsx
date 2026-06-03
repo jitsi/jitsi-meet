@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { randomInt } from '@jitsi/js-utils/random';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
@@ -11,6 +10,7 @@ import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
 } from '../../../base/lib-jitsi-meet/functions.web';
+import { sendPageReloadApplicationLog } from '../../actions.any';
 import logger from '../../logger';
 
 import ReloadButton from './ReloadButton';
@@ -152,13 +152,7 @@ export default class AbstractPageReloadOverlay<P extends IProps>
      * @returns {void}
      */
     override componentDidMount() {
-        // FIXME: We should dispatch action for this.
-        if (typeof APP !== 'undefined' && APP.conference?._room) {
-            APP.conference._room.sendApplicationLog(JSON.stringify({
-                name: 'page.reload',
-                label: this.props.reason
-            }));
-        }
+        this.props.dispatch(sendPageReloadApplicationLog(this.props.reason));
 
         sendAnalytics(createPageReloadScheduledEvent(
             this.props.reason ?? '',

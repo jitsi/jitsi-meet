@@ -45,6 +45,7 @@ export interface IParticipant {
 }
 
 export interface IUserContext {
+    [key: string]: any;
     id?: string;
     name?: string;
 }

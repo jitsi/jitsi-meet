@@ -83,9 +83,9 @@ function handle_get_room_census(event)
         end
     end
 
-    census_resp = json.encode({
-        room_census = room_data;
-    });
+    -- cjson encodes an empty Lua table as {} (object); force array literal.
+    local rc_json = #room_data == 0 and "[]" or json.encode(room_data);
+    census_resp = '{"room_census":' .. rc_json .. '}';
     return { status_code = 200; body = census_resp }
 end
 

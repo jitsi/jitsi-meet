@@ -1,4 +1,19 @@
-local json = require 'cjson';
+-- mod_jibri_session
+--
+-- Enriches jibri `start` IQ stanzas with recording metadata before they reach
+-- jibri.  It handles two passes:
+--
+--   1. Client → jicofo (no `room` attr): reads the initiating user's identity
+--      from the XMPP session and writes it to
+--      app_data.file_recording_metadata.initiator {id, group}.
+--
+--   2. Jicofo → jibri (`room` attr present): looks up the MUC room, reads its
+--      meetingId, and writes it to
+--      app_data.file_recording_metadata.conference_details.session_id.
+--
+-- Must be loaded on both the main virtual host and the jicofo virtual host.
+
+local json = require 'cjson.safe';
 
 local util = module:require 'util';
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
@@ -12,12 +27,17 @@ local stanza = event.stanza;
     if stanza.name == "iq" then
         local jibri = stanza:get_child('jibri', 'http://jitsi.org/protocol/jibri');
         if jibri then
-            if jibri.attr.action == 'start' then
+            if jibri.attr.action and jibri.attr.action:lower() == 'start' then
 
                 local update_app_data = false;
                 local app_data = jibri.attr.app_data;
                 if app_data then
-                    app_data = json.decode(app_data);
+                    local err;
+                    app_data, err = json.decode(app_data);
+                    if err then
+                        module:log('warn', 'Failed to decode jibri app_data from %s: %s', stanza.attr.from, err);
+                        return;
+                    end
                 else
                     app_data = {};
                 end

@@ -37,6 +37,34 @@ export const RECORDING_OFF_SOUND_ID = 'RECORDING_OFF_SOUND';
 export const RECORDING_ON_SOUND_ID = 'RECORDING_ON_SOUND';
 
 /**
+ * The identifier of the sound to be played when transcription is stopped.
+ *
+ * @type {string}
+ */
+export const TRANSCRIPTION_OFF_SOUND_ID = 'TRANSCRIPTION_OFF_SOUND';
+
+/**
+ * The identifier of the sound to be played when transcription is started.
+ *
+ * @type {string}
+ */
+export const TRANSCRIPTION_ON_SOUND_ID = 'TRANSCRIPTION_ON_SOUND';
+
+/**
+ * The identifier of the sound to be played when recording and transcription are stopped.
+ *
+ * @type {string}
+ */
+export const RECORDING_AND_TRANSCRIPTION_OFF_SOUND_ID = 'RECORDING_AND_TRANSCRIPTION_OFF_SOUND';
+
+/**
+ * The identifier of the sound to be played when recording and transcription are started.
+ *
+ * @type {string}
+ */
+export const RECORDING_AND_TRANSCRIPTION_ON_SOUND_ID = 'RECORDING_AND_TRANSCRIPTION_ON_SOUND';
+
+/**
  * Expected supported recording types.
  *
  * @enum {string}

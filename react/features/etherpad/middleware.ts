@@ -1,5 +1,3 @@
-import { sanitizeUrl as _sanitizePath } from '@braintree/sanitize-url';
-
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
@@ -35,23 +33,22 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 const { etherpad_base: etherpadBase } = getState()['features/base/config'];
                 const etherpadBaseUrl = sanitizeUrl(etherpadBase);
 
-                try {
-                    const newValue = _sanitizePath(value);
+                if (etherpadBaseUrl) {
+                    let urlObj;
 
-                    // The sanitizeUrl function will return 'about:blank' for invalid URLs
-                    if (newValue !== 'about:blank' && !newValue.startsWith('//')) {
-                        new URL(newValue);
+                    try {
+                        urlObj = new URL(value, etherpadBaseUrl.toString());
+                    } catch (e) {
+                        logger.warn(`Etherpad command: failed to construct URL from value: ${value}`);
+
+                        return;
                     }
 
-                    logger.warn(`Received suspicious value for etherpad command: ${value}`);
+                    if (urlObj.origin !== etherpadBaseUrl.origin) {
+                        logger.warn(`Etherpad command value resolved to unexpected origin: ${urlObj.origin}`);
 
-                    return;
-                } catch (e) {
-                    // we should receive a relative path for the URL and should not be able to construct a url from it
-                }
-
-                if (etherpadBaseUrl) {
-                    const urlObj = new URL(value, etherpadBaseUrl.toString());
+                        return;
+                    }
 
                     // Merge query string parameters on top of internal ones
                     if (etherpadBaseUrl.search) {

@@ -57,6 +57,8 @@ export const config = {
         privateKeyPath: process.env.JWT_PRIVATE_KEY_PATH?.trim()
     },
     roomName: {
+        /** Optional fixed room name that overrides the generated one entirely. */
+        name: process.env.ROOM_NAME?.trim(),
         /** Optional prefix for room names used for tests. */
         prefix: process.env.ROOM_NAME_PREFIX?.trim(),
         /** Optional suffix for room names used for tests. */

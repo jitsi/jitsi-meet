@@ -5,6 +5,7 @@ import {
     configWillLoad,
     setConfig
 } from '../base/config/actions';
+import { buildConfigURL } from '../base/config/functions.any';
 import { setLocationURL } from '../base/connection/actions.web';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.web';
 import { isEmbedded } from '../base/util/embedUtils';
@@ -69,11 +70,25 @@ export function appNavigate(uri?: string) {
         // the conference, but we're still on the conference screen.
         dispatch(clearNotifications());
 
-        dispatch(configWillLoad(locationURL, room));
-
-        const config = await loadConfig();
-
+        dispatch(configWillLoad(locationURL));
         dispatch(setLocationURL(locationURL));
+
+        let config = window.config;
+
+        if (!config) {
+            const url = buildConfigURL(locationURL, room);
+
+            try {
+                config = await loadConfig(url);
+
+                // Mirror to window.config so legacy bare `config` global
+                // references (UI.js, etc.) resolve when SSI did not inject it.
+                window.config = config;
+            } catch (err) {
+                logger.error(`Failed to load config from ${url}`, err);
+            }
+        }
+
         dispatch(setConfig(config));
         dispatch(setRoom(room));
     };

@@ -4,7 +4,7 @@ import React, { Component, useEffect } from 'react';
 import { connect, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { translate } from '../../../base/i18n/functions';
+import { translate } from '../../../base/i18n/functions.native';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { StyleType } from '../../../base/styles/functions.native';
 import { TabBarLabelCounter } from '../../../mobile/navigation/components/TabBarLabelCounter';

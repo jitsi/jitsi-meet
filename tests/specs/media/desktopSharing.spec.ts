@@ -395,5 +395,113 @@ describe('Desktop sharing', () => {
         await p4.waitForNinjaIcon(p2EndpointId);
         await p4.waitForRemoteVideo(p1EndpointId);
     });
+
+    /**
+     * Verifies that when a participant has camera on and starts screenshare, remote participants
+     * see both the camera tile and the screenshare tile simultaneously.
+     * Covers: "Turn video & screenshare on — remotes see both" and
+     *         "Camera on before SS starts — receivers still see SS".
+     */
+    it('camera on when screenshare starts — remotes see both tiles', async () => {
+        await hangupAllParticipants();
+
+        await ensureTwoParticipants();
+        const { p1, p2 } = ctx;
+        const p2EndpointId = await p2.getEndpointId();
+
+        // p2 starts screenshare while camera is already on
+        await p2.getToolbar().clickDesktopSharingButton();
+
+        // p1 should see the screenshare tile for p2
+        await checkForScreensharingTile(p2, p1);
+
+        // p1 should still see the camera video for p2
+        await p1.waitForRemoteVideo(p2EndpointId);
+
+        // p2 should see their own screenshare tile
+        await checkForScreensharingTile(p2, p2);
+
+        await p2.getToolbar().clickStopDesktopSharingButton();
+
+        // screenshare tile should be gone, camera should still be visible
+        await checkForScreensharingTile(p2, p1, true);
+        await p1.waitForRemoteVideo(p2EndpointId);
+    });
+
+    /**
+     * Verifies that when a participant joins with video muted, starts screenshare, and then
+     * enables their camera, remote participants see both tiles simultaneously.
+     */
+    it('join video muted, start screenshare, enable camera — both tiles visible', async () => {
+        await hangupAllParticipants();
+
+        await ensureTwoParticipants();
+        const { p1, p2 } = ctx;
+        const p2EndpointId = await p2.getEndpointId();
+
+        // Mute p2's camera via toolbar (ensures v0 track exists but is muted)
+        await p2.getToolbar().clickVideoMuteButton();
+        await p1.waitForRemoteVideo(p2EndpointId, true);
+
+        // p2 starts screenshare while camera is muted
+        await p2.getToolbar().clickDesktopSharingButton();
+
+        // p1 should see the screenshare tile for p2
+        await checkForScreensharingTile(p2, p1);
+
+        // p2 turns on camera
+        await p2.getToolbar().clickVideoUnmuteButton();
+
+        // p1 should now see both the screenshare tile and the camera video
+        await checkForScreensharingTile(p2, p1);
+        await p1.waitForRemoteVideo(p2EndpointId);
+    });
+
+    /**
+     * Verifies that alternating between starting and stopping the camera and screenshare
+     * in various orders does not break either stream for remote participants.
+     */
+    it('alternating camera and screenshare toggling', async () => {
+        await hangupAllParticipants();
+
+        await ensureTwoParticipants();
+        const { p1, p2 } = ctx;
+        const p2EndpointId = await p2.getEndpointId();
+
+        // Start SS with camera on — both should be visible
+        await p2.getToolbar().clickDesktopSharingButton();
+        await checkForScreensharingTile(p2, p1);
+        await p1.waitForRemoteVideo(p2EndpointId);
+
+        // Stop camera while SS is active — SS should remain visible
+        await p2.getToolbar().clickVideoMuteButton();
+        await checkForScreensharingTile(p2, p1);
+        await p1.waitForRemoteVideo(p2EndpointId, true);
+
+        // Re-enable camera while SS is active — both should be visible again
+        await p2.getToolbar().clickVideoUnmuteButton();
+        await checkForScreensharingTile(p2, p1);
+        await p1.waitForRemoteVideo(p2EndpointId);
+
+        // Stop SS while camera is on — camera should remain, SS tile gone
+        await p2.getToolbar().clickStopDesktopSharingButton();
+        await checkForScreensharingTile(p2, p1, true);
+        await p1.waitForRemoteVideo(p2EndpointId);
+
+        // Start SS again — both should be visible
+        await p2.getToolbar().clickDesktopSharingButton();
+        await checkForScreensharingTile(p2, p1);
+        await p1.waitForRemoteVideo(p2EndpointId);
+
+        // Stop camera then SS — both should be gone
+        await p2.getToolbar().clickVideoMuteButton();
+        await p2.getToolbar().clickStopDesktopSharingButton();
+        await checkForScreensharingTile(p2, p1, true);
+        await p1.waitForRemoteVideo(p2EndpointId, true);
+
+        // Re-enable camera to verify it still works after all the toggling
+        await p2.getToolbar().clickVideoUnmuteButton();
+        await p1.waitForRemoteVideo(p2EndpointId);
+    });
 });
 

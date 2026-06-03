@@ -24,7 +24,7 @@
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetView+Private.h"
 #import "ReactUtils.h"
-#import "RNRootView.h"
+#import <React/RCTRootView.h>
 
 
 #pragma mark UIColor helpers
@@ -69,7 +69,7 @@ static NSString *recordingModeToString(RecordingMode mode);
     /**
      * React Native view where the entire content will be rendered.
      */
-    RNRootView *rootView;
+    RCTRootView *rootView;
 }
 
 #pragma mark Initializers
@@ -281,11 +281,13 @@ static NSString *recordingModeToString(RecordingMode mode);
         // Update props with the new URL.
         rootView.appProperties = props;
     } else {
-        RCTBridge *bridge = [[JitsiMeet sharedInstance] getReactBridge];
-        rootView
-            = [[RNRootView alloc] initWithBridge:bridge
-                                      moduleName:@"App"
-                               initialProperties:props];
+        // Get the factory and use its rootViewFactory to create the view.
+        RCTReactNativeFactory *factory = [[JitsiMeet sharedInstance] getReactNativeFactory];        
+        rootView = (RCTRootView *)[factory.rootViewFactory viewWithModuleName:@"App"
+                                                            initialProperties:props];
+        
+        factory.bridge = rootView.bridge;
+        
         rootView.backgroundColor = self.backgroundColor;
 
         // Add rootView as a subview which completely covers this one.

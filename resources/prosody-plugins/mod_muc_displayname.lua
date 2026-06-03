@@ -1,8 +1,32 @@
---- This module removes identity information from presence stanzas when the
---- hideDisplayNameForGuests options are enabled
---- for a room.
-
---- To be enabled under the main muc component
+-- Manages display names and identity visibility in MUC rooms.
+--
+-- Three behaviours:
+--
+-- 1. hideDisplayNameForGuests (outbound filter on stanzas/out, priority -100):
+--    When room._data.hideDisplayNameForGuests is true, strips identity elements
+--    (<nick>, <email>, <stats-id>, and name/email inside <identity>) from
+--    presence stanzas before they are delivered to non-moderator occupants.
+--    Moderator recipients and self-presence are always passed through unchanged.
+--    Uses session.jitsi_web_query_room / jitsi_web_query_prefix to locate the room.
+--
+-- 2. name-readonly (inbound filter on stanzas/in, priority -100):
+--    When session.jitsi_meet_context_features['name-readonly'] is true, enforces
+--    the display name from the JWT token on every outgoing presence from that session:
+--      * Token has context.user.name  → replaces the <nick> element with the token name
+--      * Token has no name            → removes the <nick> element entirely
+--    This prevents clients from changing their display name when the token marks
+--    it as read-only.
+--
+-- 3. Message display-name handling (MUC hooks):
+--    muc-broadcast-message (priority -1): strips <nick> and <display-name> from
+--    every message before it is broadcast to occupants, so message payloads
+--    never carry identity information to live receivers.
+--    muc-add-history: injects <display-name source="token|guest"> into the
+--    history copy of each message (cloned from the broadcast stanza), sourced
+--    from session.jitsi_meet_context_user.name (token users) or the <nick>
+--    element (guests).  Late-joining clients receive this annotated history.
+--
+-- Load on the MUC component.
 local filters = require 'util.filters';
 local st = require 'util.stanza';
 
@@ -10,7 +34,7 @@ local util = module:require 'util';
 local filter_identity_from_presence = util.filter_identity_from_presence;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local is_admin = util.is_admin;
-local ends_with = util.ends_with;
+local is_focus = util.is_focus;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local NICK_NS = 'http://jabber.org/protocol/nick';
 local DISPLAY_NAME_NS = 'http://jitsi.org/protocol/display-name';
@@ -26,7 +50,7 @@ local joining_moderator_participants = module:shared('moderators/joining_moderat
 --- Filter presence sent to non-moderator members of a room when the hideDisplayNameForGuests option is set.
 function filter_stanza_out(stanza, session)
     if stanza.name ~= 'presence' or stanza.attr.type == 'error'
-        or stanza.attr.type == 'unavailable' or ends_with(stanza.attr.from, '/focus') then
+        or stanza.attr.type == 'unavailable' or is_focus(stanza.attr.from) then
         return stanza;
     end
 
@@ -60,7 +84,7 @@ function filter_stanza_in(stanza, session)
     end
 
     if stanza.name ~= 'presence' or stanza.attr.type == 'error'
-        or stanza.attr.type == 'unavailable' or ends_with(stanza.attr.from, '/focus') then
+        or stanza.attr.type == 'unavailable' or is_focus(stanza.attr.from or '') then
         return stanza;
     end
 

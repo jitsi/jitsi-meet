@@ -531,6 +531,10 @@ var config = {
     //     // subtitles on stage and the "Show subtitles on stage" checkbox in the settings.
     //     // Note: Starting transcriptions from the recording dialog will still work.
     //     disableClosedCaptions: false,
+    //
+    //     // When the backend provides diarization by setting a "speaker" field, append [Speaker N] for transcription
+    //     // events from non-0 speakers.
+    //     renderTranscriptDetails: false
 
     // },
 
@@ -1489,15 +1493,80 @@ var config = {
     //     hideJoinRoomButton: false,
     // },
 
-    // When true, virtual background feature will be disabled.
-    // disableVirtualBackground: false,
-
-    // When true the user cannot add more images to be used as virtual background.
-    // Only the default ones from will be available.
-    // disableAddingBackgroundImages: false,
-
     // Sets the background transparency level. '0' is fully transparent, '1' is opaque.
     // backgroundAlpha: 1,
+
+    // @deprecated Use `virtualBackground.disabled` instead. When true, the virtual background
+    // feature is disabled. Kept here for backwards compatibility; will be removed in a future release.
+    // disableVirtualBackground: false,
+
+    // @deprecated Use `virtualBackground.disableAddingImages` instead. When true the user cannot
+    // add more images to be used as virtual background; only the default ones will be available.
+    // Kept here for backwards compatibility; will be removed in a future release.
+    // disableAddingBackgroundImages: false,
+
+    // Virtual background options.
+    // All fields are optional; omitting a field uses the default/auto-detected value.
+    virtualBackground: {
+
+        // When true, virtual background feature will be disabled.
+        // disabled: false,
+
+        // When true the user cannot add more images to be used as virtual background.
+        // Only the default ones will be available.
+        // disableAddingImages: false,
+
+        // Enable the V2 processing engine. When false (default), the legacy
+        // TFLite WASM engine (V1) is used. Set to true to opt in to V2.
+        // enableV2: false,
+
+        // V2-only tuning knobs. These have no effect when enableV2 is false. Defaults are
+        // tuned for typical hardware; most deployments should not need to override them.
+        // advanced: {
+
+        //     // Force a specific device tier regardless of what the browser supports.
+        //     // Useful for testing lower-tier behaviour on high-end hardware.
+        //     // Values: 'high' | 'medium' | 'low' — null means auto-detect (default).
+        //     // tierOverride: null,
+
+        //     // Override the segmentation canvas dimensions (pixels). Applies to MEDIUM
+        //     // and HIGH tiers only (TF.js input canvas). LOW tier (TFLite) always runs
+        //     // at 256x144, fixed by the selfie_segmentation_landscape model and not
+        //     // affected by this setting.
+        //     // segmentationWidth: null,   // auto: 512 (high) / 384 (medium)
+        //     // segmentationHeight: null,  // auto: 288 (high) / 216 (medium)
+
+        //     // Override the target frame rate for the effect.
+        //     // targetFps: null,           // auto: 30 (all tiers)
+
+        //     // Temporal mask blend ratio (0-1). Higher = smoother motion, slower to respond
+        //     // to fast movement. 0 = raw mask each frame (no temporal smoothing).
+        //     // temporalBlendRatio: 0.75,
+
+        //     // Smoothstep edge thresholds for the WebGL compositor (0-1).
+        //     // Pixels with segmentation confidence below edgeLow are fully transparent;
+        //     // above edgeHigh they are fully opaque; between the two they feather.
+        //     // Defaults are tier-specific (tuned per model's confidence distribution):
+        //     //   LOW tier    (TFLite selfie_segmentation_landscape): edgeLow = 0.10, edgeHigh = 0.50
+        //     //   MEDIUM/HIGH (TF.js MediaPipe body-segmentation):    edgeLow = 0.28, edgeHigh = 0.65
+        //     // Lower edgeLow = more hair retained at the cost of slight background bleed.
+        //     // Higher edgeHigh = harder edge transition.
+        //     // edgeLow: 0.28,
+        //     // edgeHigh: 0.65,
+
+        //     // Insertable Streams (MediaStreamTrackProcessor/Generator) is used by default
+        //     // when available. It reduces latency by ~1-2 frames and eliminates the keepalive
+        //     // Web Worker. Set to false to force the legacy captureStream path instead.
+        //     // useInsertableStreams: false,
+
+        //     // LOW tier (TFLite) inference stride. Inference is skipped on alternate frames;
+        //     // skipped frames reuse the previous mask. Higher values = lower CPU usage at the
+        //     // cost of reduced mask update frequency. Set to 1 to run inference every frame.
+        //     //   1 = every frame    (24 fps mask updates, ~37 ms slack per frame)  ← default
+        //     //   2 = every 2 frames (12 fps mask updates, ~74 ms slack per frame)
+        //     // inferenceStride: 1,
+        // },
+    },
 
     // The URL of the moderated rooms microservice, if available. If it
     // is present, a link to the service will be rendered on the welcome page,
@@ -1863,6 +1932,10 @@ var config = {
     //     userLimit: 25,
     //     // The url for more info about the whiteboard and its usage limitations.
     //     limitUrl: 'https://example.com/blog/whiteboard-limits',
+
+    //     //Backend URL for storing whiteboard scenes and images
+    //     //This backend service handles scene persistence and file uploads
+    //     storageBackendUrl: 'https://excalidraw-s3-storage-backend.example.com',
     // },
 
     // The watchRTC initialize config params as described :

@@ -22,6 +22,7 @@ const defaultExpectations = {
         enabled: true
     },
     jaas: {
+        fileSharingEnabled: true,
         liveStreamingEnabled: true,
         recordingEnabled: true,
         transcriptionEnabled: true,
@@ -29,7 +30,7 @@ const defaultExpectations = {
             // Expect "async" transcription to be enabled.
             asyncTranscription: true,
             // Expect the JaaS transcription webhooks to fire in "async" mode.
-            asyncTranscriptionWebhook: false
+            asyncTranscriptionWebhook: true
         },
         /**
          * Whether the jaas account is configured with the account-level setting to allow unauthenticated users to join.

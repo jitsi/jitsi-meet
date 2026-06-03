@@ -16,7 +16,7 @@ local filter_identity_from_presence = util.filter_identity_from_presence;
 local is_admin = util.is_admin;
 local presence_check_status = util.presence_check_status;
 local process_host_module = util.process_host_module;
-local is_transcriber_jigasi = util.is_transcriber_jigasi;
+local is_jibri = util.is_jibri;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local json = require 'cjson.safe';
 
@@ -33,10 +33,6 @@ if main_muc_component_config == nil then
     module:log('error', 'visitors rooms not enabled missing main_muc config');
     return ;
 end
-
--- A list of domains which to be ignored for visitors. For occupants using those domain we do not propagate them
--- to visitor nodes and we do not update them with presence changes
-local ignore_list = module:get_option_set('visitors_ignore_list', {});
 
 -- Advertise the component for discovery via disco#items
 module:add_identity('component', 'visitors', 'visitors.'..module.host);
@@ -270,9 +266,8 @@ process_host_module(main_muc_component_config, function(host_module, host)
         local room, stanzaEv, occupant = event.room, event.stanza, event.dest_occupant;
         local stanza = filter_stanza_nick_if_needed(stanzaEv, room);
 
-        -- filter focus and configured domains (used for jibri and transcribers)
-        if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil
-            or (ignore_list:contains(jid.host(occupant.bare_jid)) and not is_transcriber_jigasi(stanza)) then
+        -- filter focus and jibri
+        if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil or is_jibri(occupant.jid) then
             return;
         end
 
@@ -292,9 +287,9 @@ process_host_module(main_muc_component_config, function(host_module, host)
         local room, stanzaEv, occupant = event.room, event.stanza, event.occupant;
         local stanza = filter_stanza_nick_if_needed(stanzaEv, room);
 
-        -- ignore configured domains (jibri and transcribers)
+        -- ignore jicofo and jibri
         if is_admin(occupant.bare_jid) or visitors_nodes[room.jid] == nil or visitors_nodes[room.jid].nodes == nil
-            or (ignore_list:contains(jid.host(occupant.bare_jid)) and not is_transcriber_jigasi(stanza)) then
+            or is_jibri(occupant.jid) then
             return;
         end
 
@@ -336,9 +331,8 @@ process_host_module(main_muc_component_config, function(host_module, host)
         local room, stanzaEv, occupant = event.room, event.stanza, event.occupant;
         local stanza = filter_stanza_nick_if_needed(stanzaEv, room);
 
-        -- filter focus, ignore configured domains (jibri and transcribers)
-        if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil
-            or (ignore_list:contains(jid.host(occupant.bare_jid)) and not is_transcriber_jigasi(stanza)) then
+        -- filter focus, ignore jibri
+        if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil or is_jibri(occupant.jid) then
             return;
         end
 

@@ -1,4 +1,10 @@
--- This module is enabled under the main virtual host
+-- Filters outbound-call and transcription IQ stanzas (Rayo dial, urn:xmpp:rayo:1)
+-- on the main VirtualHost. Allows a stanza through only when the sender's JWT token
+-- grants the required feature ('outbound-call' or 'transcription'), or, absent token
+-- features, when the sender holds owner affiliation in the room. Blocked stanzas
+-- receive an auth/forbidden error reply. Optionally rate-limits outgoing calls per
+-- session when max_number_outgoing_calls is configured.
+-- This module is enabled under the main virtual host.
 local new_throttle = require "util.throttle".create;
 local st = require "util.stanza";
 local jid = require "util.jid";
@@ -95,7 +101,7 @@ module:hook("pre-iq/full", function(event)
             local room_jid = jid.bare(stanza.attr.to);
             local room_real_jid = room_jid_match_rewrite(room_jid);
             local room = main_muc_service.get_room_from_jid(room_real_jid);
-            local feature = dial.attr.to == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call';
+            local feature = (dial.attr.to and dial.attr.to:lower()) == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call';
             local error_message = nil;
 
             if not room or room:get_occupant_jid(stanza.attr.from) == nil then
@@ -253,13 +259,14 @@ end);
 module:hook('jitsi-metadata-allow-moderation', function (event)
     local data, key, occupant, session = event.data, event.key, event.actor, event.session;
 
-    if key == 'recording' and data and data.isTranscribingEnabled ~= nil then
+    if key == 'recording' and data and (data.isTranscribingEnabled ~= nil or data.isRecordingRequested ~= nil) then
         -- if it is recording we want to allow setting in metadata if not moderator but features
         -- are present
         if session.jitsi_meet_context_features
             and is_feature_allowed('transcription', session.jitsi_meet_context_features) then
                 local res = {};
                 res.isTranscribingEnabled = data.isTranscribingEnabled;
+                res.isRecordingRequested = data.isRecordingRequested;
                 return res;
         elseif not session.jitsi_meet_context_features and occupant.role == 'moderator' then
             return data;

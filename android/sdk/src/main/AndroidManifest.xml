@@ -27,6 +27,11 @@
         android:name="android.hardware.camera.autofocus"
         android:required="false" />
 
+    <attribution android:tag="camera" android:label="@string/attribution_camera" />
+    <attribution android:tag="microphone" android:label="@string/attribution_microphone" />
+    <attribution android:tag="screenShare" android:label="@string/attribution_screen_share" />
+    <attribution android:tag="bluetooth" android:label="@string/attribution_bluetooth" />
+
     <application
         android:allowBackup="true"
         android:label="@string/app_name"

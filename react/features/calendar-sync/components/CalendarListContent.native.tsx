@@ -36,7 +36,7 @@ interface IProps extends WithTranslation {
     /**
      *
      */
-    listEmptyComponent: React.ReactElement<any>;
+    listEmptyComponent: React.ReactElement<any> | null;
 }
 
 /**

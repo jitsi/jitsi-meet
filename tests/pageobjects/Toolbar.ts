@@ -18,6 +18,7 @@ const STOP_DESKTOP = 'Stop sharing your screen';
 const ENTER_TILE_VIEW_BUTTON = 'Enter tile view';
 const EXIT_TILE_VIEW_BUTTON = 'Exit tile view';
 const VIDEO_QUALITY = 'Manage video quality';
+const VIRTUAL_BACKGROUND = 'Select Background';
 const VIDEO_MUTE = 'Stop camera';
 const VIDEO_UNMUTE = 'Start camera';
 
@@ -195,17 +196,52 @@ export default class Toolbar extends BasePageObject {
     }
 
     /**
-     * Clicks on the desktop sharing button that starts desktop sharing.
+     * Clicks on the desktop sharing button that starts desktop sharing. Waits until the toggle takes effect
+     * (button flips to STOP_DESKTOP) so a subsequent call doesn't race a still-in-flight stop.
      */
     clickDesktopSharingButton() {
-        return this.getButton(DESKTOP).click();
+        return this._toggleDesktopSharing(DESKTOP, STOP_DESKTOP, 'start');
     }
 
     /**
-     * Clicks on the desktop sharing button to stop it.
+     * Clicks on the desktop sharing button to stop it. Waits until the toggle takes effect (button flips to
+     * DESKTOP). On a busy main thread the click can land on a DOM node React has already detached during a
+     * track-replace / participantLeft cascade and the React onClick never fires — re-locate and re-click once
+     * before failing.
      */
     clickStopDesktopSharingButton() {
-        return this.getButton(STOP_DESKTOP).click();
+        return this._toggleDesktopSharing(STOP_DESKTOP, DESKTOP, 'stop');
+    }
+
+    /**
+     * Clicks the desktop-sharing toggle and waits for the button to flip to the opposite aria-label. If the
+     * flip doesn't happen within a short window, re-locates the source button (it may have been re-rendered
+     * out from under the original element handle) and clicks once more before failing.
+     *
+     * @private
+     */
+    private async _toggleDesktopSharing(fromLabel: string, toLabel: string, action: 'start' | 'stop') {
+        await this.getButton(fromLabel).click();
+
+        try {
+            await this.getButton(toLabel).waitForExist({ timeout: 2_000 });
+
+            return;
+        } catch {
+            // Fall through to retry.
+        }
+
+        // If the source button is still present, the first click was dropped — re-locate and click again. If
+        // it isn't present, the toggle is in flight; just keep waiting.
+        if (await this.getButton(fromLabel).isExisting()) {
+            await this.participant.log(`Retrying desktop-sharing ${action} click for ${this.participant.name}`);
+            await this.getButton(fromLabel).click();
+        }
+
+        await this.getButton(toLabel).waitForExist({
+            timeout: 3_000,
+            timeoutMsg: `Desktop sharing did not ${action} for ${this.participant.name}`
+        });
     }
 
     /**
@@ -243,6 +279,13 @@ export default class Toolbar extends BasePageObject {
      */
     clickSettingsButton() {
         return this.clickButtonInOverflowMenu(SETTINGS);
+    }
+
+    /**
+     * Clicks on the virtual background toolbar button which opens the virtual background settings.
+     */
+    clickVirtualBackgroundButton() {
+        return this.clickButtonInOverflowMenu(VIRTUAL_BACKGROUND);
     }
 
     /**
@@ -286,6 +329,18 @@ export default class Toolbar extends BasePageObject {
     private async openOverflowMenu() {
         if (await this.isOverflowMenuOpen()) {
             return;
+        }
+
+        // Wake the auto-hidden toolbar by hovering the local video tile; otherwise the overflow
+        // button click can fire on an invisible element and the menu never appears. When the
+        // self-view is hidden (e.g. via settings), localVideoContainer is not in the DOM, so fall
+        // back to the large video container which is always present while in conference.
+        const localVideoContainer = this.participant.driver.$('span[id="localVideoContainer"]');
+
+        if (await localVideoContainer.isExisting()) {
+            await localVideoContainer.moveTo();
+        } else {
+            await this.participant.driver.$('#largeVideoContainer').moveTo();
         }
 
         await this.clickOverflowButton();

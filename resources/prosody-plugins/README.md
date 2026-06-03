@@ -38,7 +38,7 @@
 - av_moderation_startMuted_restore - Keeps the startMuted metadata state of the room before AV moderation was applied. Used by mod_av_moderation_component.lua.
 - broadcast_timer - A timer used to broadcast the list of breakout rooms in the main room. It is set by mod_muc_breakout_rooms.lua to periodically update the list of breakout rooms.
 - close_timer - A timer used to close the main room when all occupants have left. It is set by mod_muc_breakout_rooms.lua to clean up the main room after all participants left from breakout room.
-- created_timestamp - A timestamp in milliseconds when the room was created. It is set by mod_conference_duration_component.lua and used by mod_conference_duration.lua to calculate the conference duration. It is also used by mod_measure_message_count.lua to calculate the room duration for analytics.
+- created_timestamp - A timestamp in milliseconds when the room was created. It is set by mod_conference_duration.lua and used to calculate the conference duration. It is also used by mod_measure_message_count.lua to calculate the room duration for analytics.
 - has_host - Whether the host (an authenticated user) has arrived in the room.
 - is_vpaas - A boolean value indicating whether the room is a VPAAS room, optimization for the is_vpaas function in util.internal.lib.lua.
 - jibri_throttle - A throttle object used to limit the number of Jibri requests per room. It is created in mod_filter_iq_jibri.lua to prevent abuse of Jibri resources.
