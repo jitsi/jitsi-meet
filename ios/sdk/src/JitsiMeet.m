@@ -151,27 +151,13 @@
     NSLog(@"Creating RCTReactNativeFactory with delegate");
     _reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:_reactFactoryDelegate];
     NSLog(@"RCTReactNativeFactory created: %@", _reactNativeFactory);
-}
 
-- (void)instantiateReactNativeBridge {
-    if (_reactNativeFactory == nil) {
-        [self createReactNativeFactory];
-    }
-    
     // Initialize WebRTC options.
     WebRTCModuleOptions *options = [WebRTCModuleOptions sharedInstance];
     options.audioDevice = _rtcAudioDevice;
     options.loggingSeverity = (RTCLoggingSeverity)_webRtcLoggingSeverity;
-
-    // Accessing bridge forces lazy initialization.
-    [_reactNativeFactory bridge];
 }
-
-- (void)destroyReactNativeBridge {
-    [_reactNativeFactory.bridge invalidate];
-    _reactNativeFactory.bridge = nil;
-}
-
+    
 - (JitsiMeetConferenceOptions *)getInitialConferenceOptions {
     if (_launchOptions[UIApplicationLaunchOptionsURLKey]) {
         NSURL *url = _launchOptions[UIApplicationLaunchOptionsURLKey];
@@ -279,14 +265,6 @@
     return _defaultConferenceOptions == nil ? @{} : [_defaultConferenceOptions asProps];
 }
 
-- (RCTBridge *)getReactBridge {
-    // Initialize bridge lazily.
-    [self instantiateReactNativeBridge];
-
-    // Get bridge directly from factory
-    return _reactNativeFactory.bridge;
-}
-
 - (RCTReactNativeFactory *)getReactNativeFactory {
     if (_reactNativeFactory == nil) {
         [self createReactNativeFactory];
@@ -296,8 +274,8 @@
 }
 
 - (ExternalAPI *)getExternalAPI {
-    RCTBridge *bridge = [self getReactBridge];
-    return [bridge moduleForClass:ExternalAPI.class];
+    ExternalAPI *api = [ExternalAPI sharedInstance];
+    return api;
 }
 
 @end
