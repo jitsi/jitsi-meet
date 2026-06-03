@@ -216,7 +216,9 @@ export default class JitsiStreamBackgroundEffect {
     }
 
     /**
-     * Stops the effect and releases all resources.
+     * Stops the frame pipeline. Keeps the V2 processor + backend alive so the next
+     * startEffect (e.g. on unmute) can process frames immediately without a re-init
+     * window in which raw camera frames would be passed through.
      *
      * @returns {void}
      */
@@ -227,11 +229,6 @@ export default class JitsiStreamBackgroundEffect {
             this._stopTimerLoop();
             this._inputVideoElement.onloadeddata = null;
             this._inputVideoElement.srcObject = null;
-        }
-
-        if (this._enableV2) {
-            this._processor?.dispose();
-            this._backend?.stop().catch(() => undefined);
         }
     }
 
@@ -267,6 +264,9 @@ export default class JitsiStreamBackgroundEffect {
         this._inputVideoElement.height = parseInt(String(height), 10);
         this._inputVideoElement.autoplay = true;
         this._inputVideoElement.srcObject = stream;
+
+        // autoplay is unreliable for out-of-DOM elements on srcObject reassignment.
+        this._inputVideoElement.play().catch(() => undefined);
 
         return this._outputCanvasElement.captureStream(parseInt(String(frameRate), 10));
     }
