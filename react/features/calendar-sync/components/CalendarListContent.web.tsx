@@ -6,6 +6,7 @@ import { sendAnalytics } from '../../analytics/functions';
 import { appNavigate } from '../../app/actions.web';
 import { IReduxState, IStore } from '../../app/types';
 import MeetingsList from '../../base/react/components/web/MeetingsList';
+import { setCalendarTimerDuration } from '../../time-timer/actions';
 
 import AddMeetingUrlButton from './AddMeetingUrlButton.web';
 import JoinButton from './JoinButton.web';
@@ -48,6 +49,10 @@ class CalendarListContent extends Component<IProps> {
         _eventList: []
     };
 
+    _urlDurationMap: Map<string, number> | undefined;
+
+    _urlStartMap: Map<string, number> | undefined;
+
     /**
      * Initializes a new {@code CalendarListContent} instance.
      *
@@ -82,6 +87,21 @@ class CalendarListContent extends Component<IProps> {
         const { disabled, listEmptyComponent } = this.props;
         const { _eventList = [] } = this.props;
         const meetings = _eventList.map(this._toDisplayableItem);
+
+        this._urlDurationMap = new Map(
+            (_eventList as any[])
+                .filter(e => e.url && e.endDate && e.startDate)
+                .map(e => [ e.url, Math.round((e.endDate - e.startDate) / 1000) ])
+        );
+
+        // Parallel map of event URL → scheduled start (ms). Lets the
+        // time-timer compute elapsed-since-start when the user joins from a
+        // native calendar event, so late joiners land in the correct state.
+        this._urlStartMap = new Map(
+            (_eventList as any[])
+                .filter(e => e.url && e.endDate && e.startDate)
+                .map(e => [ e.url, e.startDate ])
+        );
 
         return (
             <MeetingsList
@@ -118,6 +138,10 @@ class CalendarListContent extends Component<IProps> {
     _onPress(url: string, analyticsEventName = 'meeting.tile') {
         sendAnalytics(createCalendarClickedEvent(analyticsEventName));
 
+        const durationSeconds = this._urlDurationMap?.get(url);
+        const startTimeUnix = this._urlStartMap?.get(url);
+
+        this.props.dispatch(setCalendarTimerDuration(durationSeconds, startTimeUnix));
         this.props.dispatch(appNavigate(url));
     }
 

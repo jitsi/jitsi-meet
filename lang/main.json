@@ -1309,6 +1309,10 @@
     "termsView": {
         "title": "Terms"
     },
+    "timeTimer": {
+        "endedOver": "You are {{time}} over schedule.",
+        "endedTitle": "Timer ended"
+    },
     "toggleTopPanelLabel": "Toggle top panel",
     "toolbar": {
         "Settings": "Settings",

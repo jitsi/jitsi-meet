@@ -8,6 +8,7 @@ import E2EELabel from '../../../e2ee/components/E2EELabel';
 import HighlightButton from '../../../recording/components/Recording/web/HighlightButton';
 import RecordingLabel from '../../../recording/components/web/RecordingLabel';
 import TranscribingLabel from '../../../recording/components/web/TranscribingLabel';
+import TimeTimerPill from '../../../time-timer/components/web/TimeTimerPill';
 import { showToolbox } from '../../../toolbox/actions.web';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
 import VideoQualityLabel from '../../../video-quality/components/VideoQualityLabel.web';
@@ -41,6 +42,14 @@ interface IProps {
     _reducedUI: boolean;
 
     /**
+     * Whether the calendar time-timer is enabled. When true, the unified
+     * {@code TimeTimerPill} replaces the separate subject + elapsed-time
+     * pills — the pill itself collapses in place into a chip-sized state
+     * when the bar auto-hides, so no separate chip component is needed.
+     */
+    _timerEnabled: boolean;
+
+    /**
      * Indicates whether the component should be visible or not.
      */
     _visible: boolean;
@@ -50,6 +59,13 @@ interface IProps {
      */
     dispatch: IStore['dispatch'];
 }
+
+/**
+ * IDs of {@code COMPONENTS} that the time-timer pill supersedes. When the
+ * time-timer is enabled these are hidden from the info bar because their
+ * content is already shown inside {@code TimeTimerPill}.
+ */
+const TIMER_REPLACED_IDS = new Set([ 'subject', 'conference-timer' ]);
 
 const COMPONENTS: Array<{
     Component: React.ComponentType<any>;
@@ -66,6 +82,10 @@ const COMPONENTS: Array<{
     {
         Component: ConferenceTimer,
         id: 'conference-timer'
+    },
+    {
+        Component: TimeTimerPill,
+        id: 'time-timer'
     },
     {
         Component: SpeakerStatsLabel,
@@ -147,6 +167,7 @@ class ConferenceInfo extends Component<IProps> {
      */
     _renderAutoHide() {
         const { autoHide } = this.props._conferenceInfo;
+        const { _timerEnabled } = this.props;
 
         if (!autoHide?.length) {
             return null;
@@ -159,6 +180,7 @@ class ConferenceInfo extends Component<IProps> {
                 {
                     COMPONENTS
                         .filter(comp => autoHide.includes(comp.id))
+                        .filter(comp => !_timerEnabled || !TIMER_REPLACED_IDS.has(comp.id))
                         .map(c =>
                             <c.Component key = { c.id } />
                         )
@@ -174,6 +196,7 @@ class ConferenceInfo extends Component<IProps> {
      */
     _renderAlwaysVisible() {
         const { alwaysVisible } = this.props._conferenceInfo;
+        const { _timerEnabled } = this.props;
 
         if (!alwaysVisible?.length) {
             return null;
@@ -186,6 +209,7 @@ class ConferenceInfo extends Component<IProps> {
                 {
                     COMPONENTS
                         .filter(comp => alwaysVisible.includes(comp.id))
+                        .filter(comp => !_timerEnabled || !TIMER_REPLACED_IDS.has(comp.id))
                         .map(c =>
                             <c.Component key = { c.id } />
                         )
@@ -235,7 +259,8 @@ function _mapStateToProps(state: IReduxState) {
     return {
         _conferenceInfo: getConferenceInfo(state),
         _reducedUI: reducedUI,
-        _visible: isToolboxVisible(state),
+        _timerEnabled: Boolean(state['features/base/config']?.timeTimer?.enabled),
+        _visible: isToolboxVisible(state)
     };
 }
 
