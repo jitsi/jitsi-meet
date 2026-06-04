@@ -108,6 +108,7 @@ export interface IJitsiConference {
     getParticipantCount: Function;
     getParticipants: Function;
     getPolls: Function;
+    getReceiverTranslationLanguage: () => string | null;
     getRole: Function;
     getShortTermCredentials: Function;
     getSpeakerStats: () => ISpeakerStats;
@@ -158,6 +159,7 @@ export interface IJitsiConference {
     setLocalParticipantProperty: Function;
     setMediaEncryptionKey: Function;
     setReceiverConstraints: Function;
+    setReceiverTranslationLanguage: (language: string | null) => void;
     setSenderVideoConstraint: Function;
     setStartMutedPolicy: Function;
     setSubject: Function;
