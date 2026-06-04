@@ -1779,9 +1779,6 @@ var config = {
     // List of notifications to be disabled. Works in tandem with the above setting.
     // disabledNotifications: [],
 
-    // Prevent the filmstrip from autohiding when screen width is under a certain threshold
-    // disableFilmstripAutohiding: false,
-
     // filmstrip: {
     //     // Disable the vertical/horizontal filmstrip.
     //     disabled: false,
