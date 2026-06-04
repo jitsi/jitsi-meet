@@ -2,7 +2,7 @@ import { Theme } from '@mui/material/styles';
 
 import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
-import { isTouchDevice, shouldEnableResize } from '../base/environment/utils';
+import { isMobileBrowser, isTouchDevice, shouldEnableResize } from '../base/environment/utils';
 import { MEDIA_TYPE } from '../base/media/constants';
 import {
     getLocalParticipant,
@@ -96,7 +96,7 @@ export function shouldRemoteVideosBeVisible(state: IReduxState) {
             // show and the  local video is pinned, or the toolbar is displayed.
             || (participantCount > 1
                 && disable1On1Mode !== null
-                && (state['features/toolbox'].visible
+                && ((!isMobileBrowser() && state['features/toolbox'].visible)
                     || ((pinnedParticipant = getPinnedParticipant(state))
                         && pinnedParticipant.local)))
 
