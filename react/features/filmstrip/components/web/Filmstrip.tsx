@@ -18,7 +18,7 @@ import { isNarrowScreenWithChatOpen } from '../../../base/responsive-ui/function
 import { getHideSelfView } from '../../../base/settings/functions.any';
 import { registerShortcut, unregisterShortcut } from '../../../keyboard-shortcuts/actions';
 import { showToolbox } from '../../../toolbox/actions.web';
-import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
+import { isToolboxVisible } from '../../../toolbox/functions.web';
 import { LAYOUTS } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.web';
 import {
@@ -341,11 +341,6 @@ export interface IProps extends WithTranslation {
     _iAmRecorder: boolean;
 
     /**
-     * Whether the filmstrip button is enabled.
-     */
-    _isFilmstripButtonEnabled: boolean;
-
-    /**
      * Whether the available space is when the chat is open. The filmstrip will be hidden if true.
      */
     _isNarrowScreenWithChatOpen: boolean;
@@ -658,7 +653,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
 
         let toolbar: React.ReactNode = null;
 
-        if (!this.props._iAmRecorder && this.props._isFilmstripButtonEnabled
+        if (!this.props._iAmRecorder
             && _currentLayout !== LAYOUTS.TILE_VIEW
             && ((filmstripType === FILMSTRIP_TYPE.MAIN && !_filmstripDisabled)
                 || (filmstripType === FILMSTRIP_TYPE.STAGE && _topPanelFilmstrip))) {
@@ -1254,7 +1249,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _filmstripDisabled: filmstripDisabled,
         _hasScroll,
         _iAmRecorder: Boolean(iAmRecorder),
-        _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
         _isNarrowScreenWithChatOpen: isNarrowScreenWithChatOpen(state),
         _isToolboxVisible: isToolboxVisible(state),
         _isVerticalFilmstrip,
