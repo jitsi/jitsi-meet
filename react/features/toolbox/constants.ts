@@ -154,7 +154,6 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'etherpad',
     'feedback',
     'filesharing',
-    'filmstrip',
     'fullscreen',
     'hangup',
     'help',

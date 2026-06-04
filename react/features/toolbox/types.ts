@@ -25,7 +25,6 @@ export type ToolbarButton = 'camera' |
     'etherpad' |
     'feedback' |
     'filesharing' |
-    'filmstrip' |
     'fullscreen' |
     'hangup' |
     'help' |

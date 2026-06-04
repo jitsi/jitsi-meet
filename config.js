@@ -867,7 +867,6 @@ var config = {
     //    'embedmeeting',
     //    'etherpad',
     //    'feedback',
-    //    'filmstrip',
     //    'fullscreen',
     //    'hangup',
     //    'help',
