@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState, IStore } from '../../app/types';
 import { openDialog } from '../../base/dialog/actions';
-import { StartRecordingDialog } from '../../recording/components/Recording/index';
+import { RecordingTranscriptionDialog } from '../../recording/components/Recording/index';
 import { setRequestingSubtitles } from '../actions.any';
 import { getAvailableSubtitlesLanguages } from '../functions.any';
 
@@ -53,7 +53,7 @@ const AbstractLanguageSelectorDialog = (Component: ComponentType<IAbstractLangua
         const displaySubtitles = enabled;
 
         if (conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription) {
-            dispatch(openDialog('StartRecordingDialog', StartRecordingDialog, {
+            dispatch(openDialog('RecordingTranscriptionDialog', RecordingTranscriptionDialog, {
                 recordAudioAndVideo: false
             }));
         } else {

@@ -21,7 +21,11 @@ import { MEDIA_TYPE } from '../base/media/constants';
 import { PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
 import { updateLocalRecordingStatus } from '../base/participants/actions';
 import { PARTICIPANT_ROLE } from '../base/participants/constants';
-import { getLocalParticipant, getParticipantDisplayName } from '../base/participants/functions';
+import {
+    getLocalParticipant,
+    getParticipantDisplayName,
+    isLocalParticipantModerator
+} from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import {
@@ -35,6 +39,7 @@ import { isRecorderTranscriptionsRunning, isTranscribing } from '../transcribing
 
 import { RECORDING_SESSION_UPDATED, START_LOCAL_RECORDING, STOP_LOCAL_RECORDING } from './actionTypes';
 import {
+    INudge,
     clearRecordingSessions,
     hidePendingRecordingNotification,
     markConsentRequested,
@@ -70,6 +75,24 @@ import {
 } from './functions';
 import logger from './logger';
 import { ISessionData } from './reducer';
+
+type NudgeProvider = (
+    scenario: 'recording' | 'transcription',
+    dispatch: IStore['dispatch']
+) => INudge | null;
+
+let _nudgeProvider: NudgeProvider | null = null;
+
+/**
+ * Registers a platform-specific provider for nudge notification actions.
+ * Called by web-only code (recordingNudge.web.ts) at startup.
+ *
+ * @param {NudgeProvider} fn - Provider function.
+ * @returns {void}
+ */
+export function registerNudgeProvider(fn: NudgeProvider): void {
+    _nudgeProvider = fn;
+}
 
 /**
  * Evaluates whether all intended services (recording and/or transcription) have
@@ -161,18 +184,33 @@ export function maybeNotifyRecordingStart(dispatch: IStore['dispatch'], getState
         dispatch(playSound(soundID));
     }
 
+    // Nudge when only one service was just started AND the other is not already running.
+    // Only moderators can start the complementary service, so skip the nudge for non-mods.
+    const nudgeNeeded = Boolean(_nudgeProvider) && isLocalParticipantModerator(state)
+        && (wantsRecording !== wantsTranscription)
+        && (wantsRecording ? !transcriptionOn : !recordingOn);
+    const nudge = nudgeNeeded && _nudgeProvider
+        ? _nudgeProvider(wantsRecording ? 'recording' : 'transcription', dispatch)
+        : null;
+
     if (recordingOn && fileSession?.initiator && fileSession.id) {
         dispatch(showStartedRecordingNotification(
             modeConstants.FILE,
             fileSession.initiator,
             fileSession.id,
-            recordingOn && transcriptionOn));
+            recordingOn && transcriptionOn,
+            nudge ?? undefined));
     } else if (transcriptionOn && !recordingOn) {
         // Transcription-only case (recording failed or wasn't requested).
         dispatch(showNotification({
             descriptionKey: 'transcribing.on',
-            titleKey: 'dialog.recording'
-        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+            titleKey: 'dialog.recording',
+            ...(nudge ? {
+                description: nudge.descriptionText,
+                customActionNameKey: [ nudge.actionNameKey ],
+                customActionHandler: [ nudge.handler ]
+            } : {})
+        }, nudge ? NOTIFICATION_TIMEOUT_TYPE.LONG : NOTIFICATION_TIMEOUT_TYPE.SHORT));
     }
 }
 
@@ -243,7 +281,9 @@ export function maybeNotifyRecordingStop(dispatch: IStore['dispatch'], getState:
     dispatch(setStopRecordingIntent(null));
 
     if (offSoundID) {
-        if (onSoundID) {
+        // Always stop the combined sound in case both services were started together.
+        dispatch(stopSound(RECORDING_AND_TRANSCRIPTION_ON_SOUND_ID));
+        if (onSoundID && onSoundID !== RECORDING_AND_TRANSCRIPTION_ON_SOUND_ID) {
             dispatch(stopSound(onSoundID));
         }
         dispatch(playSound(offSoundID));

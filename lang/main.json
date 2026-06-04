@@ -314,6 +314,7 @@
         "alreadySharedVideoMsg": "Another participant is already sharing a video. This conference allows only one shared video at a time.",
         "alreadySharedVideoTitle": "Only one shared video is allowed at a time",
         "applicationWindow": "Application window",
+        "applyChanges": "Apply changes",
         "authenticationRequired": "Authentication required",
         "cameraCaptureDialog": {
             "description": "Take and send a picture using your mobile camera",
@@ -449,6 +450,7 @@
         "permissionMicRequiredError": "Microphone permission is required to participate in conferences with audio. Please grant it in Settings",
         "readMore": "more",
         "recentlyUsedObjects": "Your recently used objects",
+        "recordAndTranscribe": "Record & Transcribe",
         "recording": "Recording",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Not possible while a live stream is active",
         "recordingInProgressDescription": "This meeting is being recorded and analyzed by AI. Your audio and video have been muted. If you choose to unmute, you consent to being recorded.",
@@ -517,10 +519,13 @@
         "startLiveStreaming": "Start live stream",
         "startRecording": "Start recording",
         "startRemoteControlErrorMessage": "An error occurred while trying to start the remote control session!",
+        "startTranscription": "Start transcription",
         "stopLiveStreaming": "Stop live stream",
         "stopRecording": "Stop recording",
         "stopRecordingWarning": "Are you sure you would like to stop the recording?",
         "stopStreamingWarning": "Are you sure you would like to stop the live streaming?",
+        "stopTranscription": "Stop transcription",
+        "stopTranscriptionWarning": "Are you sure you would like to stop the transcription?",
         "streamKey": "Live stream key",
         "suggestedAccounts": "Suggested Accounts",
         "suggestedDeals": "Suggested Deals",
@@ -1132,6 +1137,7 @@
         }
     },
     "recording": {
+        "alsoTranscribe": "Also transcribe this meeting?",
         "authDropboxText": "Upload to Dropbox",
         "availableSpace": "Available space: {{spaceLeft}} MB (approximately {{duration}} minutes of recording)",
         "beta": "BETA",
@@ -1516,6 +1522,7 @@
         "reactionSilence": "Send silence reaction",
         "reactionSurprised": "Send surprised reaction",
         "reactions": "Reactions",
+        "recordAndTranscribe": "Record & Transcribe",
         "security": "Security options",
         "selectBackground": "Select background",
         "shareRoom": "Invite someone",
@@ -1542,6 +1549,7 @@
         "videounmute": "Start camera"
     },
     "transcribing": {
+        "alsoRecord": "Also record this meeting?",
         "ccButtonTooltip": "Start / Stop subtitles",
         "expandedLabel": "Transcribing is currently on",
         "failed": "Transcribing failed",
