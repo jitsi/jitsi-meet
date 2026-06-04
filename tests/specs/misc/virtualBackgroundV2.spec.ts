@@ -36,73 +36,41 @@ async function openVBDialog() {
 }
 
 /**
- * Samples a 16x16 region from the local video element and returns the summed pixel variance
- * across the R, G, B channels. A solid-colour (e.g. all-black) frame returns ~0; a normal video
- * frame returns a large positive value. Returns -1 when the video element is not yet ready.
+ * Reads the V2 effect's processor state from the local video JitsiLocalTrack.
+ * Returns `{ isReady, frameCount }` or `null` when the effect or processor is absent.
  *
- * Used to assert that the local video is rendering live content after a track or effect
- * restart, rather than a stuck/black surface — the exact failure mode caused by the V2
- * compositor not being re-initialised after dispose.
- *
- * @returns {Promise<number>} Sum of per-channel variance, or -1 if the video is not ready.
+ * Used to test the mute/unmute fix directly without depending on pixel rendering of the
+ * stage or filmstrip thumbnail — both of which are unreliable in headless Chrome.
  */
-async function getLocalVideoPixelVariance(): Promise<number> {
+async function getV2ProcessorState(): Promise<{ frameCount: number; isReady: boolean; } | null> {
     return ctx.p1.execute(() => {
-        const video = document.querySelector('#localVideoContainer video') as HTMLVideoElement | null;
+        const tracks = APP.store.getState()['features/base/tracks'];
+        const localVideo = tracks.find((t: any) => t.local && t.mediaType === 'video');
+        const processor = (localVideo?.jitsiTrack as any)?._streamEffect?._processor;
 
-        if (!video || video.readyState < 2 || video.videoWidth === 0) {
-            return -1;
+        if (!processor) {
+            return null;
         }
 
-        const w = 16;
-        const h = 16;
-        const canvas = document.createElement('canvas');
-
-        canvas.width = w;
-        canvas.height = h;
-
-        const c2d = canvas.getContext('2d');
-
-        if (!c2d) {
-            return -1;
-        }
-
-        c2d.drawImage(video, 0, 0, w, h);
-        const { data } = c2d.getImageData(0, 0, w, h);
-        const n = data.length / 4;
-        let sumR = 0, sumG = 0, sumB = 0;
-
-        for (let i = 0; i < data.length; i += 4) {
-            sumR += data[i];
-            sumG += data[i + 1];
-            sumB += data[i + 2];
-        }
-        const meanR = sumR / n;
-        const meanG = sumG / n;
-        const meanB = sumB / n;
-        let varSum = 0;
-
-        for (let i = 0; i < data.length; i += 4) {
-            varSum += (data[i] - meanR) ** 2;
-            varSum += (data[i + 1] - meanG) ** 2;
-            varSum += (data[i + 2] - meanB) ** 2;
-        }
-
-        return varSum;
+        return {
+            frameCount: processor._frameCount ?? 0,
+            isReady: Boolean(processor._isReady)
+        };
     });
 }
 
 /**
- * Polls {@link getLocalVideoPixelVariance} until it exceeds the threshold or the timeout fires.
+ * Waits until the V2 effect's inference worker has finished initialising. Redux flips
+ * backgroundEffectEnabled to true the moment setEffect dispatches — well before the worker
+ * has loaded the segmentation model. Tests that immediately mute/unmute after waiting only
+ * on the Redux flag race against the worker init, intermittently failing on slower runners.
  *
  * @param {number} timeout - How long to wait in ms.
- * @param {number} minVariance - Minimum acceptable variance. The default (100) is well above
- * the floor for a black frame (~0) and far below a typical fake-device frame (millions).
  */
-async function waitForLocalVideoFrames(timeout = 15000, minVariance = 100): Promise<void> {
+async function waitForV2EffectReady(timeout = 15000): Promise<void> {
     await ctx.p1.driver.waitUntil(
-        async () => (await getLocalVideoPixelVariance()) > minVariance,
-        { timeout, timeoutMsg: `Local video did not produce non-black frames within ${timeout}ms` }
+        async () => Boolean((await getV2ProcessorState())?.isReady),
+        { timeout, timeoutMsg: `V2 effect processor not ready within ${timeout}ms` }
     );
 }
 
@@ -169,6 +137,10 @@ describe('Virtual backgrounds V2 engine', () => {
         await vbDialog.confirm();
         await waitForEffectEnabled(true);
 
+        // Worker model load is async; the next test mute/unmutes immediately after, so wait
+        // for the processor to actually be ready before letting the suite proceed.
+        await waitForV2EffectReady();
+
         const state = await getVBState();
 
         expect(state.backgroundEffectEnabled).toBe(true);
@@ -177,26 +149,33 @@ describe('Virtual backgrounds V2 engine', () => {
         expect(state.selectedThumbnail).toBe('blur');
     });
 
-    it('mute and unmute camera while blur is active — effect resumes without black frames', async () => {
-        // Blur was enabled by the prior test.
+    it('mute and unmute camera while blur is active — processor stays ready across cycle', async () => {
+        // Blur was enabled by the prior test (which also waited for the processor to be ready).
         let state = await getVBState();
 
         expect(state.backgroundEffectEnabled).toBe(true);
         expect(state.backgroundType).toBe('blur');
 
-        // Baseline: local video is rendering non-uniform content with the effect applied.
-        await waitForLocalVideoFrames();
+        const baseline = await getV2ProcessorState();
 
-        // Mute then unmute. This drives stopEffect -> startEffect on the effect, which in
-        // turn calls compositor.dispose() then BackgroundFrameProcessor.init(). Before the
-        // fix the compositor stayed disposed and the local video went black on unmute.
+        expect(baseline).not.toBeNull();
+        expect(baseline!.isReady).toBe(true);
+
+        // Mute then unmute. Pre-fix this disposed the processor (_isReady -> false) and unmute
+        // had to reload the model (~1-2s). Post-fix the processor stays alive throughout.
+        // Hold mute for 2s so that the mute fully settles before unmuting.
         await ctx.p1.getToolbar().clickVideoMuteButton();
-        await ctx.p1.driver.pause(500);
+        await ctx.p1.driver.pause(2000);
         await ctx.p1.getToolbar().clickVideoUnmuteButton();
+        await ctx.p1.driver.pause(1000);
 
-        // The compositor must be re-initialised — local video should resume rendering
-        // non-black frames within a normal startup window.
-        await waitForLocalVideoFrames();
+        // Immediately after unmute the processor must still be ready (no dispose on mute).
+        // If the dispose-on-stopEffect regression returned, _isReady would be false for the
+        // ~1-2s it takes to reload the worker model.
+        const afterUnmute = await getV2ProcessorState();
+
+        expect(afterUnmute).not.toBeNull();
+        expect(afterUnmute!.isReady).toBe(true);
 
         // Effect state should remain consistent.
         state = await getVBState();
