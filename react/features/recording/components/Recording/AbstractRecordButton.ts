@@ -4,6 +4,7 @@ import { IReduxState } from '../../../app/types';
 import { IconRecord, IconStop } from '../../../base/icons/svg';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
 import { canStopRecording, getRecordButtonProps } from '../../functions';
@@ -37,8 +38,8 @@ export default class AbstractRecordButton<P extends IProps> extends AbstractButt
     override accessibilityLabel = 'dialog.startRecording';
     override toggledAccessibilityLabel = 'dialog.stopRecording';
     override icon = IconRecord;
-    override label = 'dialog.startRecording';
-    override toggledLabel = 'dialog.stopRecording';
+    override label = 'toolbar.recordAndTranscribe';
+    override toggledLabel = 'toolbar.recordAndTranscribe';
     override toggledIcon = IconStop;
 
     /**
@@ -133,6 +134,6 @@ export function _mapStateToProps(state: IReduxState) {
         _disabled,
         _isRecordingRunning: canStopRecording(state),
         _tooltip,
-        visible
+        visible: visible && isLocalParticipantModerator(state)
     };
 }

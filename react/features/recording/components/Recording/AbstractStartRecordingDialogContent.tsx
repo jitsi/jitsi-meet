@@ -134,9 +134,22 @@ export interface IProps extends WithTranslation {
     onTranscriptionChange: Function;
 
     /**
+     * When true, audio/video recording is specifically in progress.
+     * The service selector is hidden since the destination cannot change mid-session.
+     */
+    recordingRunning?: boolean;
+
+    /**
      * The currently selected recording service of type: RECORDING_TYPES.
      */
     selectedRecordingService: string | null;
+
+    /**
+     * When true, at least one service (recording or transcription) is active.
+     * Used to bypass the _canStartTranscribing guard so the transcription toggle
+     * remains visible for stopping.
+     */
+    sessionActive?: boolean;
 
     /**
      * Boolean to set file recording sharing on or off.

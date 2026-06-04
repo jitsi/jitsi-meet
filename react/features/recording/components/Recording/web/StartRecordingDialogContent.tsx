@@ -36,13 +36,63 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @protected
      * @returns {React$Component}
      */
+    /**
+     * Renders the two service toggles (recording + transcription) directly,
+     * without the collapsible wrapper — used in manage mode when a session
+     * is already active.
+     *
+     * @returns {React$Component}
+     */
+    _renderSessionToggles() {
+        const { shouldRecordAudioAndVideo, shouldRecordTranscription, t } = this.props;
+
+        return (
+            <>
+                <div className = 'recording-header space-top'>
+                    <label
+                        className = 'recording-title'
+                        htmlFor = 'recording-switch-audio-video'>
+                        { t('recording.recordAudioAndVideo') }
+                    </label>
+                    <Switch
+                        checked = { shouldRecordAudioAndVideo }
+                        className = 'recording-switch'
+                        id = 'recording-switch-audio-video'
+                        onChange = { this._onRecordAudioAndVideoSwitchChange } />
+                </div>
+                <div className = 'recording-header space-top'>
+                    <label
+                        className = 'recording-title'
+                        htmlFor = 'recording-switch-transcription'>
+                        { t('recording.recordTranscription') }
+                    </label>
+                    <Switch
+                        checked = { shouldRecordTranscription }
+                        className = 'recording-switch'
+                        id = 'recording-switch-transcription'
+                        onChange = { this._onTranscriptionSwitchChange } />
+                </div>
+            </>
+        );
+    }
+
     override render() {
         const {
             _canStartTranscribing,
             _localRecordingAvailable,
             _renderRecording,
-            integrationsEnabled
+            integrationsEnabled,
+            recordingRunning
         } = this.props;
+
+        if (recordingRunning) {
+            return (
+                <Container className = 'recording-dialog'>
+                    { this._renderSessionToggles() }
+                </Container>
+            );
+        }
+
         const hasRecordingService = _renderRecording || _localRecordingAvailable || integrationsEnabled;
         const transcriptionOnly = !hasRecordingService && _canStartTranscribing;
 
@@ -94,7 +144,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     _renderAdvancedOptions() {
-        if (!this._canStartTranscribing()) {
+        if (!this._canStartTranscribing() && !this.props.sessionActive) {
             return null;
         }
         const { selectedRecordingService } = this.props;

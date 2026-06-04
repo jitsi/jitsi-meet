@@ -26,6 +26,7 @@ import '../toolbox/middleware';
 import '../face-landmarks/middleware';
 import '../gifs/middleware';
 import '../time-timer/middleware.web';
+import '../recording/nudge.web';
 import '../whiteboard/middleware.web';
 import '../file-sharing/middleware.web';
 import '../custom-panel/middleware.web';
