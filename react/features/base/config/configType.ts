@@ -299,7 +299,6 @@ export interface IConfig {
      * @deprecated Use `deeplinking.disabled` instead.
      */
     disableDeepLinking?: boolean;
-    disableFilmstripAutohiding?: boolean;
     disableFocus?: boolean;
     disableIframeAPI?: boolean;
     /**
