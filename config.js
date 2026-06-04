@@ -493,6 +493,9 @@ var config = {
     //     // Translation languages.
     //     // Available languages can be found in
     //     // ./lang/translation-languages.json.
+    //     // Whether to enable translation (language selection) UI. Defaults to true.
+    //     translationEnabled: true,
+
     //     translationLanguages: ['en', 'es', 'fr', 'ro'],
 
     //     // Important languages to show on the top of the language list.

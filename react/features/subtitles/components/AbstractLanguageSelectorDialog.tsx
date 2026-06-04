@@ -6,7 +6,7 @@ import { IReduxState, IStore } from '../../app/types';
 import { openDialog } from '../../base/dialog/actions';
 import { StartRecordingDialog } from '../../recording/components/Recording/index';
 import { setRequestingSubtitles } from '../actions.any';
-import { getAvailableSubtitlesLanguages } from '../functions.any';
+import { getAvailableSubtitlesLanguages, isTranslationEnabled } from '../functions.any';
 
 export interface IAbstractLanguageSelectorDialogProps {
     dispatch: IStore['dispatch'];
@@ -46,6 +46,7 @@ const AbstractLanguageSelectorDialog = (Component: ComponentType<IAbstractLangua
             };
         });
     const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
+    const translationEnabled = useSelector(isTranslationEnabled);
 
     const onLanguageSelected = useCallback((value: string) => {
         const _selectedLanguage = value === noLanguageLabel ? null : value;
@@ -60,6 +61,10 @@ const AbstractLanguageSelectorDialog = (Component: ComponentType<IAbstractLangua
             dispatch(setRequestingSubtitles(enabled, displaySubtitles, _selectedLanguage));
         }
     }, [ conference, language ]);
+
+    if (!translationEnabled) {
+        return null;
+    }
 
     return (
         <Component

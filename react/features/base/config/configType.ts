@@ -728,6 +728,7 @@ export interface IConfig {
         enabled?: boolean;
         preferredLanguage?: string;
         renderTranscriptDetails?: boolean;
+        translationEnabled?: boolean;
         translationLanguages?: Array<string>;
         translationLanguagesHead?: Array<string>;
         useAppLanguage?: boolean;
