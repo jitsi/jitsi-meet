@@ -94,7 +94,7 @@ export function shouldRemoteVideosBeVisible(state: IReduxState) {
             // show and the  local video is pinned, or the toolbar is displayed.
             || (participantCount > 1
                 && disable1On1Mode !== null
-                && (state['features/toolbox'].visible
+                && ((!isMobileBrowser() && state['features/toolbox'].visible)
                     || ((pinnedParticipant = getPinnedParticipant(state))
                         && pinnedParticipant.local)))
 
