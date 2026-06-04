@@ -288,7 +288,6 @@ export interface IConfig {
     disableChat?: boolean;
     disableChatSmileys?: boolean;
     disableDeepLinking?: boolean;
-    disableFilmstripAutohiding?: boolean;
     disableFocus?: boolean;
     disableIframeAPI?: boolean;
     disableIncomingMessageSound?: boolean;
