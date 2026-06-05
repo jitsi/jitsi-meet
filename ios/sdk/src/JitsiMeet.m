@@ -274,8 +274,10 @@
 }
 
 - (ExternalAPI *)getExternalAPI {
-    ExternalAPI *api = [ExternalAPI sharedInstance];
-    return api;
+    // The live RCTBridgeProxy is injected into every
+    // RCTEventEmitter module by the interop layer, so source it from a there.
+    RCTBridge *bridge = [ExternalAPI sharedInstance].bridge;
+    return (ExternalAPI *)[bridge moduleForClass:ExternalAPI.class];
 }
 
 @end
