@@ -1,3 +1,5 @@
+import { IStore } from '../app/types';
+
 import {
     SET_CALENDAR_DURATION,
     SET_TIME_TIMER_ACKNOWLEDGED,
@@ -30,6 +32,32 @@ export function startTimeTimer(
 export function stopTimeTimer() {
     return {
         type: STOP_TIME_TIMER
+    };
+}
+
+/**
+ * Sets (or clears) the meeting timer at runtime from the iframe API
+ * `setMeetingTimer` command. This is the channel embedded/JaaS deployments
+ * use — the host app (which owns the meeting schedule) pushes the values in,
+ * with no calendar or config involved.
+ *
+ * A positive `durationSeconds` starts/updates the timer; a missing or
+ * non-positive duration clears it (so the embedder can turn the timer off
+ * for a meeting it has no schedule for).
+ *
+ * @param {Object} options - Timer parameters from the embedder.
+ * @param {number} options.duration - Scheduled duration in seconds.
+ * @param {number} [options.elapsed] - Seconds since the scheduled start
+ * (may exceed duration for a late joiner). Defaults to 0.
+ * @returns {Function}
+ */
+export function setMeetingTimer({ duration, elapsed = 0 }: { duration?: number; elapsed?: number; } = {}) {
+    return (dispatch: IStore['dispatch']) => {
+        if (typeof duration === 'number' && duration > 0) {
+            dispatch(startTimeTimer(duration, Math.max(0, elapsed)));
+        } else {
+            dispatch(stopTimeTimer());
+        }
     };
 }
 

@@ -18,7 +18,6 @@ import {
     startTimeTimer
 } from './actions';
 import {
-    DEFAULT_DURATION_SECONDS,
     TIME_TIMER_NOTIFICATION_ID,
     WARNING_THRESHOLD_SECONDS
 } from './constants';
@@ -60,20 +59,29 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         if (timerConfig?.enabled) {
             const { calendarDurationSeconds, calendarStartTimeUnix }
                 = getState()['features/time-timer'];
-            const duration
-                = calendarDurationSeconds ?? timerConfig.defaultDuration ?? DEFAULT_DURATION_SECONDS;
 
-            // Elapsed-since-scheduled-start is the single source of truth and
-            // may exceed `duration` (joined after the scheduled end). Prefer a
-            // native calendar start time if one was supplied (compute it live
-            // at join), otherwise fall back to the embedder-provided
-            // `defaultElapsed`, otherwise 0 (just starting). Both channels feed
-            // the same source-agnostic timer core.
-            const elapsed = typeof calendarStartTimeUnix === 'number'
-                ? Math.max(0, Math.round((Date.now() - calendarStartTimeUnix) / 1000))
-                : timerConfig.defaultElapsed ?? 0;
+            // A real meeting duration must come from one of the sources —
+            // a native calendar event or the embedder-provided
+            // `defaultDuration`. If none is available we DON'T start the
+            // timer: `enabled` alone is not enough, because inventing an
+            // arbitrary default (e.g. 25 min) would show a meaningless
+            // countdown for a meeting we have no schedule for. Embedders that
+            // learn the duration later can push it at runtime via the
+            // `setMeetingTimer` iframe-API command.
+            const duration = calendarDurationSeconds ?? timerConfig.defaultDuration;
 
-            dispatch(startTimeTimer(duration, elapsed));
+            if (typeof duration === 'number' && duration > 0) {
+                // Elapsed-since-scheduled-start is the single source of truth
+                // and may exceed `duration` (joined after the scheduled end).
+                // Prefer a native calendar start time if supplied (compute it
+                // live at join), otherwise the embedder-provided
+                // `defaultElapsed`, otherwise 0 (just starting).
+                const elapsed = typeof calendarStartTimeUnix === 'number'
+                    ? Math.max(0, Math.round((Date.now() - calendarStartTimeUnix) / 1000))
+                    : timerConfig.defaultElapsed ?? 0;
+
+                dispatch(startTimeTimer(duration, elapsed));
+            }
         }
         break;
     }

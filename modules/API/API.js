@@ -129,6 +129,7 @@ import { SETTINGS_TABS } from '../../react/features/settings/constants';
 import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions';
 import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functions';
 import { setRequestingSubtitles, toggleRequestingSubtitles } from '../../react/features/subtitles/actions';
+import { setMeetingTimer } from '../../react/features/time-timer/actions';
 import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';
 import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
 import { muteAllParticipants, muteRemote } from '../../react/features/video-menu/actions';
@@ -524,6 +525,10 @@ function initCommands() {
         'toggle-share-screen': (options = {}) => {
             sendAnalytics(createApiEvent('screen.sharing.toggled'));
             toggleScreenSharing(options.enable);
+        },
+        'set-meeting-timer': (options = {}) => {
+            sendAnalytics(createApiEvent('meeting.timer.set'));
+            APP.store.dispatch(setMeetingTimer(options));
         },
         'set-noise-suppression-enabled': (options = {}) => {
             APP.store.dispatch(setNoiseSuppressionEnabled(options.enabled));
