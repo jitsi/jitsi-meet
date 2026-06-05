@@ -206,3 +206,200 @@ function parseSizeParam(value) {
 
     return parsedValue;
 }
+
+
+/**
+ * The Embedded API interface class.
+ *
+ * Unlike JitsiMeetExternalAPI, this class renders Jitsi Meet directly
+ * into a <div> on the host page — no iframe, no postMessage. Communication
+ * between the host app and the Jitsi Meet app happens through
+ * EmbeddedTransportBackend, which passes JS objects directly in memory.
+ */
+export default class JitsiMeetEmbeddedAPI extends EventEmitter {
+    /**
+     * Constructs new Embedded API instance. Renders Jitsi Meet directly
+     * into a container div on the host page.
+     *
+     * @param {string} domain - The domain name of the server that hosts the
+     * conference.
+     * @param {Object} [options] - Optional arguments.
+     * @param {string} [options.roomName] - The name of the room to join.
+     * @param {number|string} [options.width] - Width of the container.
+     * @param {number|string} [options.height] - Height of the container.
+     * @param {DOMElement} [options.parentNode] - The node that will contain the
+     * embedded meeting.
+     * @param {Object} [options.configOverwrite] - Config overrides for config.js.
+     * @param {Object} [options.interfaceConfigOverwrite] - Config overrides for
+     * interface_config.js.
+     * @param {string} [options.jwt] - JWT token for authentication.
+     * @param {string} [options.lang] - The meeting's default language.
+     * @param {Function} [options.onload] - Callback when the app is ready.
+     * @param {Array<Object>} [options.invitees] - Invitees to add on join.
+     * @param {Array<Object>} [options.devices] - Initial devices.
+     * @param {Object} [options.userInfo] - Info about the local participant.
+     * @param {string} [options.e2eeKey] - E2EE key (experimental).
+     * @param {string} [options.release] - Release key if enabled on backend.
+     */
+    constructor(domain, options = {}) {
+        super();
+
+        const {
+            roomName = '',
+            width = '100%',
+            height = '100%',
+            parentNode = document.body,
+            configOverwrite = {},
+            interfaceConfigOverwrite = {},
+            jwt,
+            lang,
+            onload,
+            invitees,
+            devices,
+            userInfo,
+            e2eeKey,
+            release
+        } = options;
+
+        this._parentNode = parentNode;
+        this._domain = domain;
+        this._roomName = roomName;
+
+        // --- Create the container div ---
+        this._container = document.createElement('div');
+        this._container.id = 'jitsiEmbeddedContainer';
+        this._setSize(height, width);
+        this._container.style.overflow = 'hidden';
+        this._container.style.position = 'relative';
+
+        // Inner div that the React app renders into (same id as index.html).
+        this._reactRoot = document.createElement('div');
+        this._reactRoot.id = 'react';
+        this._reactRoot.style.width = '100%';
+        this._reactRoot.style.height = '100%';
+        this._container.appendChild(this._reactRoot);
+        this._parentNode.appendChild(this._container);
+
+        // --- Create the linked transport pair ---
+        const [ hostBackend, appBackend ] = EmbeddedTransportBackend.createPair();
+
+        this._appBackend = appBackend;
+
+        this._transport = new Transport({
+            backend: hostBackend
+        });
+
+        // --- Store options for later ---
+        this._onload = onload;
+        this._tmpE2EEKey = e2eeKey;
+        this._isLargeVideoVisible = false;
+        this._isPrejoinVideoVisible = false;
+        this._numberOfParticipants = 0;
+        this._participants = {};
+        this._myUserID = undefined;
+        this._onStageParticipant = undefined;
+        this._iAmvisitor = undefined;
+
+        this._setupListeners();
+
+        if (Array.isArray(invitees) && invitees.length > 0) {
+            this.invite(invitees);
+        }
+
+        // --- Build the room URL for the app's location context ---
+        let roomUrl = `https://${domain}/${roomName}`;
+        const hashParams = [];
+
+        if (jwt) {
+            hashParams.push(`jwt=${jwt}`);
+        }
+        if (lang) {
+            hashParams.push(`lang=${lang}`);
+        }
+        if (release) {
+            hashParams.push(`release=${release}`);
+        }
+
+        if (hashParams.length) {
+            roomUrl += `#${hashParams.join('&')}`;
+        }
+
+        // --- Apply config/interfaceConfig to globals before app loads ---
+        this._applyConfig({
+            roomUrl,
+            configOverwrite,
+            interfaceConfigOverwrite,
+            devices,
+            userInfo,
+            roomName
+        });
+
+        // --- Load the Jitsi Meet app bundle and render ---
+        this._loadApp(domain);
+    }
+
+    /**
+     * Applies configuration overrides to window globals so the Jitsi app
+     * picks them up when it initializes.
+     *
+     * @param {Object} options - Configuration options.
+     * @param {string} options.roomUrl - The full room URL.
+     * @param {Object} options.configOverwrite - Config overrides.
+     * @param {Object} options.interfaceConfigOverwrite - Interface config overrides.
+     * @param {Array} options.devices - Initial devices.
+     * @param {Object} options.userInfo - User info.
+     * @param {string} options.roomName - Room name.
+     * @returns {void}
+     * @private
+     */
+    _applyConfig({ roomUrl: _roomUrl, configOverwrite, interfaceConfigOverwrite,
+        devices, userInfo, roomName }) {
+        // Set the embedded mode flag BEFORE the app bundle evaluates.
+        // This is read by modules/API/constants.js to enable the API
+        // without a numeric API_ID in the URL.
+        if (!window.JitsiMeetJS) {
+            window.JitsiMeetJS = {};
+        }
+        if (!window.JitsiMeetJS.app) {
+            window.JitsiMeetJS.app = {};
+        }
+        window.JitsiMeetJS.app._embeddedMode = true;
+
+        // Config overrides — the app reads these from window.config /
+        // window.interfaceConfig when it starts.
+        if (configOverwrite && Object.keys(configOverwrite).length) {
+            window.config = {
+                ...window.config || {},
+                ...configOverwrite
+            };
+        }
+
+        if (interfaceConfigOverwrite && Object.keys(interfaceConfigOverwrite).length) {
+            window.interfaceConfig = {
+                ...window.interfaceConfig || {},
+                ...interfaceConfigOverwrite
+            };
+        }
+
+        // Store info the app needs to find the room.
+        window.location.hash = '';
+
+        // Provide room name and user info via config.
+        if (roomName) {
+            window.config = window.config || {};
+
+            // The app uses location to derive the room name, but in embedded
+            // mode the location belongs to the host page. We pass it via config.
+            window.config.defaultRemoteDisplayName = window.config.defaultRemoteDisplayName || 'Fellow Jitster';
+        }
+
+        if (devices) {
+            window.config = window.config || {};
+            window.config.devices = devices;
+        }
+
+        if (userInfo) {
+            window.config = window.config || {};
+            window.config.userInfo = userInfo;
+        }
+    }
