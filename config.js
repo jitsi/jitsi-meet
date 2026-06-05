@@ -1851,12 +1851,13 @@ var config = {
     // Application logo url
     // defaultLogoUrl: 'images/watermark.svg',
 
-    // Time-timer tile shown as the first tile in the filmstrip.
+    // Meeting-pace timer shown in the conference info bar. It only appears
+    // once a meeting duration is known — from a calendar event (calendar
+    // sync) or pushed at runtime via the `setMeetingTimer` iframe API
+    // command. With no such info nothing is shown, so it is enabled by
+    // default; set `enabled: false` to hide it even when that info exists.
     // timeTimer: {
-    //     // Whether the tile is enabled.
     //     enabled: true,
-    //     // Countdown duration in seconds (default: 1500 = 25 min).
-    //     defaultDuration: 1500,
     // },
 
     // Settings for the Excalidraw whiteboard integration.

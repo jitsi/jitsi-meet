@@ -8,19 +8,20 @@ import {
     START_TIME_TIMER,
     STOP_TIME_TIMER
 } from './actionTypes';
-import { DEFAULT_DURATION_SECONDS } from './constants';
 
 /**
  * Starts the time-timer.
  *
- * @param {number} durationSeconds - The meeting's scheduled duration.
+ * @param {number} durationSeconds - The meeting's scheduled duration. Always
+ * supplied by a real source (a calendar event or the iframe API) — the timer
+ * is never started without one.
  * @param {number} elapsedSeconds - Seconds elapsed since the scheduled
  * start. MAY exceed durationSeconds (late joiner past the scheduled end) —
  * the reducer derives remaining / overrun / expired from this value.
  * @returns {Object}
  */
 export function startTimeTimer(
-        durationSeconds: number = DEFAULT_DURATION_SECONDS,
+        durationSeconds: number,
         elapsedSeconds = 0) {
     return {
         type: START_TIME_TIMER,

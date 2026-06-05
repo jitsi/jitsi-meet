@@ -669,16 +669,6 @@ export interface IConfig {
         numberOfVisibleTiles?: number;
     };
     timeTimer?: {
-        defaultDuration?: number;
-
-        /**
-         * Seconds elapsed since the meeting's scheduled start. May exceed
-         * `defaultDuration` when a participant joins after the scheduled end
-         * — the timer derives remaining / overrun / expired / lap state from
-         * this single value, so late joiners land directly in the correct
-         * overrun state rather than the timer disabling itself.
-         */
-        defaultElapsed?: number;
         enabled?: boolean;
     };
     tokenAuthInline?: boolean;

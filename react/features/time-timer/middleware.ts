@@ -56,31 +56,31 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         const state = getState();
         const timerConfig = state['features/base/config']?.timeTimer;
 
-        if (timerConfig?.enabled) {
+        // Enabled by default — the timer is harmless when on because it
+        // renders nothing until a duration is known. A deployment can opt out
+        // with `timeTimer: { enabled: false }` to hide it even when a
+        // duration is available (e.g. calendar users who don't want it).
+        if (timerConfig?.enabled !== false) {
             const { calendarDurationSeconds, calendarStartTimeUnix }
                 = getState()['features/time-timer'];
 
-            // A real meeting duration must come from one of the sources —
-            // a native calendar event or the embedder-provided
-            // `defaultDuration`. If none is available we DON'T start the
-            // timer: `enabled` alone is not enough, because inventing an
-            // arbitrary default (e.g. 25 min) would show a meaningless
-            // countdown for a meeting we have no schedule for. Embedders that
-            // learn the duration later can push it at runtime via the
-            // `setMeetingTimer` iframe-API command.
-            const duration = calendarDurationSeconds ?? timerConfig.defaultDuration;
-
-            if (typeof duration === 'number' && duration > 0) {
+            // A real meeting duration must come from a source: a native
+            // calendar event, or the `setMeetingTimer` iframe API command at
+            // runtime. With nothing here we DON'T start the timer — there is
+            // no meaningful countdown to show for a meeting we have no
+            // schedule for. The iframe-API path drives the timer later, on
+            // its own, independent of this join-time check.
+            if (typeof calendarDurationSeconds === 'number' && calendarDurationSeconds > 0) {
                 // Elapsed-since-scheduled-start is the single source of truth
-                // and may exceed `duration` (joined after the scheduled end).
-                // Prefer a native calendar start time if supplied (compute it
-                // live at join), otherwise the embedder-provided
-                // `defaultElapsed`, otherwise 0 (just starting).
+                // and may exceed the duration (joined after the scheduled
+                // end). Compute it live from the calendar start time so late
+                // joiners land directly in the correct (possibly overrun)
+                // state; otherwise start from 0.
                 const elapsed = typeof calendarStartTimeUnix === 'number'
                     ? Math.max(0, Math.round((Date.now() - calendarStartTimeUnix) / 1000))
-                    : timerConfig.defaultElapsed ?? 0;
+                    : 0;
 
-                dispatch(startTimeTimer(duration, elapsed));
+                dispatch(startTimeTimer(calendarDurationSeconds, elapsed));
             }
         }
         break;
