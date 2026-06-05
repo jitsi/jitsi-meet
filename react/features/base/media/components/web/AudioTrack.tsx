@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
 import { IReduxState } from '../../../../app/types';
+import { DUCKED_ORIGINAL_VOLUME } from '../../../../audio-translation/constants';
 import { ITrack } from '../../../tracks/types';
 import logger from '../../logger';
 
@@ -334,10 +335,25 @@ class AudioTrack extends Component<IProps> {
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantsVolume } = state['features/filmstrip'];
+    const { language } = state['features/audio-translation'];
+
+    let _volume: number | boolean | undefined = participantsVolume[ownProps.participantId];
+
+    // While audio translation is active, duck a speaker's original audio so the
+    // translated speech is intelligible over it. The translated source itself
+    // (named "{source}-t-{language}") plays at its normal volume.
+    if (language) {
+        const sourceName: string | undefined = ownProps.audioTrack?.jitsiTrack?.getSourceName?.();
+        const isTranslatedSource = typeof sourceName === 'string' && sourceName.endsWith(`-t-${language}`);
+
+        if (!isTranslatedSource) {
+            _volume = DUCKED_ORIGINAL_VOLUME;
+        }
+    }
 
     return {
         _muted: state['features/base/config'].startSilent,
-        _volume: participantsVolume[ownProps.participantId]
+        _volume
     };
 }
 
