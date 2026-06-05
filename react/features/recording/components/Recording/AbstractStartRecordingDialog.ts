@@ -487,11 +487,19 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
 
         // === Stop transcription ===
         if (stopTranscription) {
-            dispatch(setRequestingSubtitles(false, _displaySubtitles, _subtitlesLanguage, true));
-            _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                isTranscribingEnabled: false,
-                ...(_recordingRunning && !stopRecording && { isRecordingRequested: true })
-            });
+            const recordingStillRunning = _recordingRunning && !stopRecording;
+
+            // When recording is still running, skip the subtitles-internal metadata write and do
+            // a single write ourselves. This prevents two consecutive metadata transitions
+            // (false→false on isRecordingRequested, then false→true) from firing spurious
+            // "recording stopped" and "recording started" sounds and notifications.
+            dispatch(setRequestingSubtitles(false, _displaySubtitles, _subtitlesLanguage, true, false, recordingStillRunning));
+            if (recordingStillRunning) {
+                _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                    isTranscribingEnabled: false,
+                    isRecordingRequested: true
+                });
+            }
         }
 
         // === Start recording ===

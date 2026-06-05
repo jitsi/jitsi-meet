@@ -151,7 +151,7 @@ const ConferenceNavigationContainer = () => {
                     name = { screen.conference.recording }
                     options = {{
                         ...recordingScreenOptions,
-                        title: t('recording.title')
+                        title: t('dialog.recordAndTranscribe')
                     }} />
                 <ConferenceStack.Screen
                     component = { StartLiveStreamDialog }
