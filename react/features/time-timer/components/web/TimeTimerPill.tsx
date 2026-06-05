@@ -13,7 +13,8 @@ import {
     WARNING_COLOR,
     WARNING_NAME_SEGMENT_BG,
     WARNING_TIMER_SEGMENT_BG,
-    getTimerVisualState
+    getTimerVisualState,
+    isTimeTimerEnabled
 } from '../../functions';
 
 import Disk from './disk';
@@ -226,9 +227,7 @@ const useStyles = makeStyles()(theme => {
 const TimeTimerPill = () => {
     const { classes } = useStyles();
     const timerState = useSelector((state: IReduxState) => state['features/time-timer']);
-    const timerEnabled = useSelector(
-        (state: IReduxState) => state['features/base/config']?.timeTimer?.enabled
-    );
+    const timerEnabled = useSelector(isTimeTimerEnabled);
     const meetingName = useSelector(getConferenceName);
     const toolboxVisible = useSelector(isToolboxVisible);
 

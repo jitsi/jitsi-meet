@@ -9,6 +9,7 @@ import HighlightButton from '../../../recording/components/Recording/web/Highlig
 import RecordingLabel from '../../../recording/components/web/RecordingLabel';
 import TranscribingLabel from '../../../recording/components/web/TranscribingLabel';
 import TimeTimerPill from '../../../time-timer/components/web/TimeTimerPill';
+import { isTimeTimerEnabled } from '../../../time-timer/functions';
 import { showToolbox } from '../../../toolbox/actions.web';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
 import VideoQualityLabel from '../../../video-quality/components/VideoQualityLabel.web';
@@ -259,7 +260,7 @@ function _mapStateToProps(state: IReduxState) {
     return {
         _conferenceInfo: getConferenceInfo(state),
         _reducedUI: reducedUI,
-        _timerEnabled: Boolean(state['features/base/config']?.timeTimer?.enabled),
+        _timerEnabled: isTimeTimerEnabled(state),
         _visible: isToolboxVisible(state)
     };
 }

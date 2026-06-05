@@ -21,7 +21,7 @@ import {
     TIME_TIMER_NOTIFICATION_ID,
     WARNING_THRESHOLD_SECONDS
 } from './constants';
-import { EXPIRED_NOTIFICATION_TEXT_COLOR } from './functions';
+import { EXPIRED_NOTIFICATION_TEXT_COLOR, isTimeTimerEnabled } from './functions';
 
 import './reducer';
 
@@ -53,14 +53,10 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
 
     switch (action.type) {
     case CONFERENCE_JOINED: {
-        const state = getState();
-        const timerConfig = state['features/base/config']?.timeTimer;
-
-        // Enabled by default — the timer is harmless when on because it
-        // renders nothing until a duration is known. A deployment can opt out
+        // Enabled by default (see isTimeTimerEnabled). A deployment opts out
         // with `timeTimer: { enabled: false }` to hide it even when a
         // duration is available (e.g. calendar users who don't want it).
-        if (timerConfig?.enabled !== false) {
+        if (isTimeTimerEnabled(getState())) {
             const { calendarDurationSeconds, calendarStartTimeUnix }
                 = getState()['features/time-timer'];
 

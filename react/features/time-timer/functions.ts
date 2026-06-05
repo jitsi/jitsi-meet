@@ -1,3 +1,5 @@
+import { IReduxState } from '../app/types';
+
 import { WARNING_THRESHOLD_SECONDS } from './constants';
 import { ITimeTimerState } from './reducer';
 
@@ -173,4 +175,33 @@ export function getTimerVisualState(state: ITimeTimerState): ITimerVisualState {
     }
 
     return { elapsedSeconds, fillColor, fraction, overrunArcEndDeg, warning };
+}
+
+/**
+ * Whether the time-timer is enabled. It is enabled by default — only an
+ * explicit {@code timeTimer.enabled === false} turns it off. The timer
+ * renders nothing until a duration is known, so being on by default is
+ * harmless and lets calendar / iframe-API deployments see it with no extra
+ * config. This is the single source of truth for the enabled rule; use it
+ * everywhere (middleware, components) rather than reading the config inline.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function isTimeTimerEnabled(state: IReduxState): boolean {
+    return state['features/base/config']?.timeTimer?.enabled !== false;
+}
+
+/**
+ * Whether the meeting has run past its scheduled end and the user has not yet
+ * dismissed the timer-ended notification. Drives the red border around the
+ * conference grid.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function isTimeTimerExpiredUnacknowledged(state: IReduxState): boolean {
+    const { acknowledged, expired } = state['features/time-timer'];
+
+    return expired && !acknowledged;
 }

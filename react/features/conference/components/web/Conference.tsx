@@ -29,6 +29,7 @@ import ParticipantsPane from '../../../participants-pane/components/web/Particip
 import Prejoin from '../../../prejoin/components/web/Prejoin';
 import { isPrejoinPageVisible } from '../../../prejoin/functions.web';
 import ReactionAnimations from '../../../reactions/components/web/ReactionsAnimations';
+import { isTimeTimerExpiredUnacknowledged } from '../../../time-timer/functions';
 import { toggleToolboxVisible } from '../../../toolbox/actions.any';
 import { fullScreenChanged, showToolbox } from '../../../toolbox/actions.web';
 import JitsiPortal from '../../../toolbox/components/web/JitsiPortal';
@@ -482,8 +483,7 @@ function _mapStateToProps(state: IReduxState) {
         _showLobby: getIsLobbyVisible(state),
         _showPrejoin: isPrejoinPageVisible(state),
         _showVisitorsQueue: showVisitorsQueue(state),
-        _timerExpired: state['features/time-timer'].expired
-            && !state['features/time-timer'].acknowledged
+        _timerExpired: isTimeTimerExpiredUnacknowledged(state)
     };
 }
 
