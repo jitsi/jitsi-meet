@@ -15,7 +15,7 @@ registerNudgeProvider((scenario: 'recording' | 'transcription', dispatch: IStore
     if (scenario === 'recording') {
         return {
             descriptionText: `· ${i18next.t('recording.alsoTranscribe')}`,
-            actionNameKey: 'dialog.startTranscription',
+            actionNameKey: 'dialog.startTranscribing',
             handler: () => dispatch(openDialog('RecordingTranscriptionDialog', RecordingTranscriptionDialog, {
                 recordAudioAndVideo: false,
                 initialTranscription: true
