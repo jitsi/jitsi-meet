@@ -50,22 +50,6 @@ class Etherpad extends LargeContainer {
 
         closeBtn.id = 'etherpad-close-btn';
         closeBtn.setAttribute('aria-label', 'Close shared document');
-        closeBtn.style.cssText = [
-            'position:fixed',
-            'top:4px',
-            'left:600px',
-            'z-index:10000',
-            'background:rgba(0,0,0,0.55)',
-            'border:none',
-            'border-radius:4px',
-            'color:#fff',
-            'cursor:pointer',
-            'font-size:12px',
-            'font-weight: bold',
-            'line-height:1',
-            'padding:4px 9px',
-            'display:none'
-        ].join(';');
         closeBtn.textContent = '✕';
         closeBtn.addEventListener('click', () => APP.store.dispatch(toggleDocument()));
         document.body.appendChild(closeBtn);
@@ -141,7 +125,7 @@ class Etherpad extends LargeContainer {
             $iframe.fadeOut(300, () => {
                 $iframe.css({ visibility: 'hidden' });
                 $container.css({ zIndex: 0 });
-                this.closeBtn.style.display = 'none';
+                this.closeBtn.style.display = '';
 
                 APP.store.dispatch(setDocumentEditingState(false));
 
