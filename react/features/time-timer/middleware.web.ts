@@ -1,10 +1,8 @@
-import i18n from 'i18next';
 import React from 'react';
 
 import { IStore } from '../app/types';
 import { CONFERENCE_JOINED, CONFERENCE_LEFT } from '../base/conference/actionTypes';
 import { getRoomName } from '../base/conference/functions';
-import { getLocalizedDurationFormatter } from '../base/i18n/dateUtil';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { parseURIString } from '../base/util/uri';
 import { HIDE_NOTIFICATION } from '../notifications/actionTypes';
@@ -21,14 +19,21 @@ import {
     stopTimeTimer,
     tickTimeTimer
 } from './actions';
+import TimeTimerEndedDescription from './components/web/TimeTimerEndedDescription';
 import {
     TIME_TIMER_NOTIFICATION_ID,
     WARNING_THRESHOLD_SECONDS
 } from './constants';
-import { EXPIRED_NOTIFICATION_TEXT_COLOR, isTimeTimerEnabled } from './functions';
+import { isTimeTimerEnabled } from './functions';
 import logger from './logger';
 
 let _tickInterval: ReturnType<typeof setInterval> | undefined;
+
+// True once the sticky "ended" notification has been posted for the current
+// timer, so it is posted exactly once whether the meeting crosses the end
+// live or starts already past it (e.g. a late joiner / an embedder pushing an
+// already-overrun timer). Reset whenever a timer starts or stops.
+let _notifiedExpiry = false;
 
 /**
  * Clears the per-second tick interval if one is running.
@@ -40,6 +45,30 @@ function _clearTick() {
         clearInterval(_tickInterval);
         _tickInterval = undefined;
     }
+}
+
+/**
+ * Posts the sticky "Timer ended" notification once per timer. Its description
+ * is a connected component that subscribes to `overSeconds`, so the live
+ * counter ticks via that component's own re-renders — the notification itself
+ * is never re-dispatched.
+ *
+ * @param {Function} dispatch - The redux dispatch.
+ * @returns {void}
+ */
+function _notifyExpiredOnce(dispatch: IStore['dispatch']) {
+    if (_notifiedExpiry) {
+        return;
+    }
+    _notifiedExpiry = true;
+
+    dispatch(showNotification({
+        appearance: NOTIFICATION_TYPE.NORMAL,
+        description: React.createElement(TimeTimerEndedDescription),
+        icon: NOTIFICATION_ICON.ERROR,
+        titleKey: 'timeTimer.endedTitle',
+        uid: TIME_TIMER_NOTIFICATION_ID
+    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 }
 
 MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any) => {
@@ -98,13 +127,24 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
     case START_TIME_TIMER: {
         logger.info(`Timer started: duration=${action.durationSeconds}s elapsed=${action.elapsedSeconds}s`);
         _clearTick();
+        _notifiedExpiry = false;
         _tickInterval = setInterval(() => {
             dispatch(tickTimeTimer());
         }, 1000);
+
+        // The reducer derives `expired` synchronously from the start values, so
+        // a timer that begins already past its end (late joiner / an embedder
+        // pushing an overrun timer) is expired from tick zero and would never
+        // hit the live "crossing" branch below. Post the notification here in
+        // that case; _notifyExpiredOnce keeps it to a single notification.
+        if (getState()['features/time-timer'].expired) {
+            _notifyExpiredOnce(dispatch);
+        }
         break;
     }
     case STOP_TIME_TIMER: {
         _clearTick();
+        _notifiedExpiry = false;
 
         // The timer (and thus its sticky "ended" notification) is gone — clear
         // the notification so it does not outlive the timer that produced it.
@@ -115,7 +155,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         break;
     }
     case TICK_TIME_TIMER: {
-        const { acknowledged, expired, overSeconds, remainingSeconds, running, warningTriggered }
+        const { expired, remainingSeconds, running, warningTriggered }
             = getState()['features/time-timer'];
 
         if (!running) {
@@ -133,60 +173,28 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
             dispatch(showToolbox());
         }
 
-        // First moment we reach the scheduled end: flag expired and give the
-        // bar the same one-time expand we use at the warning threshold — it
-        // pops open to reveal the red state, then auto-hides again on the
-        // normal toolbox timeout. The `!expired` guard makes this run only on
-        // the first tick of overrun, not every tick after.
+        // First moment we cross the scheduled end live: flag expired and give
+        // the bar the same one-time attention-grab expand we use at the
+        // warning threshold. The `!expired` guard runs this only on the
+        // transition tick.
         if (remainingSeconds <= 0 && !expired) {
             dispatch(setTimeTimerExpired());
             dispatch(showToolbox());
         }
 
-        // While expired AND not yet acknowledged, keep the sticky notification
-        // alive with a live overrun counter by re-firing showNotification with
-        // the same uid each second — the notifications reducer dedupes by uid
-        // and replaces in place. Once the user closes the notification
-        // (handled below), `acknowledged` is set and we stop re-firing.
-        //
-        // The description is assembled as a React element (rather than a
-        // descriptionKey) so the overrun time can be coloured red — split the
-        // localized string on the {{time}} placeholder so localisation still
-        // works without adding new translation keys. The overrun time uses the
-        // same formatter as the pill so the two never disagree (e.g. 1:15:03,
-        // not 75:03).
-        if (remainingSeconds <= 0 && !acknowledged) {
-            const TIME_PLACEHOLDER = '__TIME__';
-            const raw = i18n.t('timeTimer.endedOver', { time: TIME_PLACEHOLDER });
-            const [ pre, post ] = raw.split(TIME_PLACEHOLDER);
-            const formattedTime = getLocalizedDurationFormatter(overSeconds * 1000);
-            const description = React.createElement(
-                'span',
-                null,
-                pre,
-                React.createElement(
-                    'span',
-                    { style: { color: EXPIRED_NOTIFICATION_TEXT_COLOR } },
-                    formattedTime
-                ),
-                post
-            );
-
-            dispatch(showNotification({
-                appearance: NOTIFICATION_TYPE.NORMAL,
-                description,
-                icon: NOTIFICATION_ICON.ERROR,
-                titleKey: 'timeTimer.endedTitle',
-                uid: TIME_TIMER_NOTIFICATION_ID
-            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+        // Post the sticky "ended" notification while expired. _notifyExpiredOnce
+        // makes it fire exactly once per timer — covering both the live
+        // crossing above and the already-expired-at-start case handled in
+        // START_TIME_TIMER.
+        if (remainingSeconds <= 0) {
+            _notifyExpiredOnce(dispatch);
         }
         break;
     }
     case HIDE_NOTIFICATION: {
         // The user (or anything else) closed our timer-ended notification —
-        // treat that as acknowledgment, which both stops the per-tick re-fire
-        // above and clears the red border around the conference grid
-        // (Conference.tsx reads expired && !acknowledged).
+        // treat that as acknowledgment, which clears the red border around
+        // the conference grid (Conference.tsx reads expired && !acknowledged).
         if (action.uid === TIME_TIMER_NOTIFICATION_ID) {
             dispatch(setTimeTimerAcknowledged());
         }

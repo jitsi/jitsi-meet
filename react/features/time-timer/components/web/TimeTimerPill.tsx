@@ -268,7 +268,9 @@ const TimeTimerPill = () => {
     const elapsedClass = `${classes.elapsed}${elapsedStateClass}${hiddenClass}`;
 
     return (
-        <div className = { containerClass }>
+        <div
+            className = { containerClass }
+            data-testid = 'time-timer-pill'>
             <div className = { nameSegmentClass }>
                 <span className = { `${classes.name}${hiddenClass}` }>{ meetingName }</span>
                 <span className = { `${classes.scheduled}${hiddenClass}` }>({ scheduled })</span>
