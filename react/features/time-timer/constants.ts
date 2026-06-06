@@ -1,5 +1,4 @@
 export const TIME_TIMER_NOTIFICATION_ID = 'time-timer-ended';
-export const DEFAULT_DURATION_SECONDS = 1500; // 25 minutes
 
 /**
  * Threshold (seconds remaining) at which the timer enters its "warning"

@@ -12,6 +12,19 @@ import AddMeetingUrlButton from './AddMeetingUrlButton.web';
 import JoinButton from './JoinButton.web';
 
 /**
+ * A calendar event, limited to the fields this component reads. Mirrors the
+ * shape stored in {@code features/calendar-sync}: the dates are ISO strings.
+ */
+interface ICalendarEvent {
+    calendarId?: string;
+    endDate?: string;
+    id?: string;
+    startDate?: string;
+    title?: string;
+    url?: string;
+}
+
+/**
  * The type of the React {@code Component} props of
  * {@link CalendarListContent}.
  */
@@ -20,7 +33,7 @@ interface IProps {
     /**
      * The calendar event list.
      */
-    _eventList: Array<Object>;
+    _eventList: Array<any>;
 
     /**
      * Indicates if the list is disabled or not.
@@ -48,10 +61,6 @@ class CalendarListContent extends Component<IProps> {
     static defaultProps = {
         _eventList: []
     };
-
-    _urlDurationMap: Map<string, number> | undefined;
-
-    _urlStartMap: Map<string, number> | undefined;
 
     /**
      * Initializes a new {@code CalendarListContent} instance.
@@ -88,21 +97,6 @@ class CalendarListContent extends Component<IProps> {
         const { _eventList = [] } = this.props;
         const meetings = _eventList.map(this._toDisplayableItem);
 
-        this._urlDurationMap = new Map(
-            (_eventList as any[])
-                .filter(e => e.url && e.endDate && e.startDate)
-                .map(e => [ e.url, Math.round((e.endDate - e.startDate) / 1000) ])
-        );
-
-        // Parallel map of event URL → scheduled start (ms). Lets the
-        // time-timer compute elapsed-since-start when the user joins from a
-        // native calendar event, so late joiners land in the correct state.
-        this._urlStartMap = new Map(
-            (_eventList as any[])
-                .filter(e => e.url && e.endDate && e.startDate)
-                .map(e => [ e.url, e.startDate ])
-        );
-
         return (
             <MeetingsList
                 disabled = { disabled }
@@ -138,10 +132,26 @@ class CalendarListContent extends Component<IProps> {
     _onPress(url: string, analyticsEventName = 'meeting.tile') {
         sendAnalytics(createCalendarClickedEvent(analyticsEventName));
 
-        const durationSeconds = this._urlDurationMap?.get(url);
-        const startTimeUnix = this._urlStartMap?.get(url);
+        // Find the event being joined and, if it has a parseable start + end,
+        // record its duration for the time-timer keyed to this URL. The
+        // middleware only applies it when the joined conference matches that
+        // URL, so opening a meeting and bailing at prejoin cannot leak its
+        // duration into a different meeting joined afterwards.
+        const event: ICalendarEvent | undefined = this.props._eventList?.find(e => e.url === url);
+        const startUnix = event?.startDate ? Date.parse(event.startDate) : NaN;
+        const endUnix = event?.endDate ? Date.parse(event.endDate) : NaN;
 
-        this.props.dispatch(setCalendarTimerDuration(durationSeconds, startTimeUnix));
+        if (!isNaN(startUnix) && !isNaN(endUnix) && endUnix > startUnix) {
+            this.props.dispatch(setCalendarTimerDuration(
+                Math.round((endUnix - startUnix) / 1000),
+                {
+                    startTimeUnix: startUnix,
+                    url
+                }));
+        } else {
+            this.props.dispatch(setCalendarTimerDuration(undefined));
+        }
+
         this.props.dispatch(appNavigate(url));
     }
 

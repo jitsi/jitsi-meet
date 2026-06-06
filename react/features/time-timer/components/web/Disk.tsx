@@ -85,42 +85,47 @@ interface IProps {
     size: number;
 }
 
-const useStyles = makeStyles<{ overrunArcEndDeg?: number; size: number; }>()(
-    (_theme, { overrunArcEndDeg, size }) => {
-        // Lap-2+ overrun sweep — a conic gradient running clockwise from the
-        // 12 o'clock origin: base red → darker red at the current leading
-        // edge, then back to base red for the remainder (already filled
-        // from lap 1).
-        const deg = overrunArcEndDeg ?? 0;
-        const overrunBackground = typeof overrunArcEndDeg === 'number'
-            ? `conic-gradient(from 0deg, ${EXPIRED_DISK_COLOR} 0deg, `
-                + `${EXPIRED_OVERRUN_EDGE_COLOR} ${deg}deg, `
-                + `${EXPIRED_DISK_COLOR} ${deg}deg, ${EXPIRED_DISK_COLOR} 360deg)`
-            : 'none';
+const useStyles = makeStyles<{ size: number; }>()((_theme, { size }) => {
+    return {
+        root: {
+            flex: '0 0 auto',
+            height: size,
+            position: 'relative',
+            width: size
+        },
 
-        return {
-            root: {
-                flex: '0 0 auto',
-                height: size,
-                position: 'relative',
-                width: size
-            },
+        svg: {
+            display: 'block',
+            height: size,
+            width: size
+        },
 
-            svg: {
-                display: 'block',
-                height: size,
-                width: size
-            },
+        // Circular element overlaid exactly on top of the solid SVG disk. Its
+        // conic-gradient background is applied inline (see below) rather than
+        // here: the leading-edge angle changes every second during overrun, so
+        // baking it into a tss-react style would generate a fresh CSS class on
+        // every tick. The static positioning stays here.
+        overrunOverlay: {
+            borderRadius: '50%',
+            inset: 0,
+            position: 'absolute'
+        }
+    };
+});
 
-            // Circular element overlaid exactly on top of the solid SVG disk.
-            overrunOverlay: {
-                background: overrunBackground,
-                borderRadius: '50%',
-                inset: 0,
-                position: 'absolute'
-            }
-        };
-    });
+/**
+ * Builds the lap-2+ overrun sweep — a conic gradient running clockwise from
+ * the 12 o'clock origin: base red → darker red at the current leading edge,
+ * then back to base red for the remainder (already filled from lap 1).
+ *
+ * @param {number} deg - Angular position of the leading edge, in degrees.
+ * @returns {string}
+ */
+function overrunGradient(deg: number): string {
+    return `conic-gradient(from 0deg, ${EXPIRED_DISK_COLOR} 0deg, `
+        + `${EXPIRED_OVERRUN_EDGE_COLOR} ${deg}deg, `
+        + `${EXPIRED_DISK_COLOR} ${deg}deg, ${EXPIRED_DISK_COLOR} 360deg)`;
+}
 
 /**
  * Renders the time-timer disk as a ring with an optional filled wedge, plus
@@ -130,7 +135,7 @@ const useStyles = makeStyles<{ overrunArcEndDeg?: number; size: number; }>()(
  * @returns {ReactElement}
  */
 const Disk = ({ color, fraction, overrunArcEndDeg, size }: IProps) => {
-    const { classes } = useStyles({ overrunArcEndDeg, size });
+    const { classes } = useStyles({ size });
     const showOverrun = typeof overrunArcEndDeg === 'number';
 
     return (
@@ -163,7 +168,11 @@ const Disk = ({ color, fraction, overrunArcEndDeg, size }: IProps) => {
                         fill = { color } />
                 )}
             </svg>
-            {showOverrun && <div className = { classes.overrunOverlay } />}
+            {showOverrun && (
+                <div
+                    className = { classes.overrunOverlay }
+                    style = {{ background: overrunGradient(overrunArcEndDeg ?? 0) }} />
+            )}
         </div>
     );
 };

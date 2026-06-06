@@ -43,12 +43,15 @@ interface IProps {
     _reducedUI: boolean;
 
     /**
-     * Whether the calendar time-timer is enabled. When true, the unified
-     * {@code TimeTimerPill} replaces the separate subject + elapsed-time
-     * pills — the pill itself collapses in place into a chip-sized state
-     * when the bar auto-hides, so no separate chip component is needed.
+     * Whether the time-timer is actually showing — i.e. enabled AND a timer
+     * is running for the current meeting. Only then does the unified
+     * {@code TimeTimerPill} replace the separate subject + conference-timer
+     * labels. It must NOT be gated on "enabled" alone: the feature is on by
+     * default but renders nothing until a duration is known, so gating on
+     * enabled would hide the subject + clock on every default deployment with
+     * nothing to replace them.
      */
-    _timerEnabled: boolean;
+    _timerActive: boolean;
 
     /**
      * Indicates whether the component should be visible or not.
@@ -168,7 +171,7 @@ class ConferenceInfo extends Component<IProps> {
      */
     _renderAutoHide() {
         const { autoHide } = this.props._conferenceInfo;
-        const { _timerEnabled } = this.props;
+        const { _timerActive } = this.props;
 
         if (!autoHide?.length) {
             return null;
@@ -181,7 +184,7 @@ class ConferenceInfo extends Component<IProps> {
                 {
                     COMPONENTS
                         .filter(comp => autoHide.includes(comp.id))
-                        .filter(comp => !_timerEnabled || !TIMER_REPLACED_IDS.has(comp.id))
+                        .filter(comp => !_timerActive || !TIMER_REPLACED_IDS.has(comp.id))
                         .map(c =>
                             <c.Component key = { c.id } />
                         )
@@ -197,7 +200,7 @@ class ConferenceInfo extends Component<IProps> {
      */
     _renderAlwaysVisible() {
         const { alwaysVisible } = this.props._conferenceInfo;
-        const { _timerEnabled } = this.props;
+        const { _timerActive } = this.props;
 
         if (!alwaysVisible?.length) {
             return null;
@@ -210,7 +213,7 @@ class ConferenceInfo extends Component<IProps> {
                 {
                     COMPONENTS
                         .filter(comp => alwaysVisible.includes(comp.id))
-                        .filter(comp => !_timerEnabled || !TIMER_REPLACED_IDS.has(comp.id))
+                        .filter(comp => !_timerActive || !TIMER_REPLACED_IDS.has(comp.id))
                         .map(c =>
                             <c.Component key = { c.id } />
                         )
@@ -260,7 +263,7 @@ function _mapStateToProps(state: IReduxState) {
     return {
         _conferenceInfo: getConferenceInfo(state),
         _reducedUI: reducedUI,
-        _timerEnabled: isTimeTimerEnabled(state),
+        _timerActive: isTimeTimerEnabled(state) && state['features/time-timer'].running,
         _visible: isToolboxVisible(state)
     };
 }

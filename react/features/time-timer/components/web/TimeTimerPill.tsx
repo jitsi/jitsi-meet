@@ -17,7 +17,7 @@ import {
     isTimeTimerEnabled
 } from '../../functions';
 
-import Disk from './disk';
+import Disk from './Disk';
 
 // Geometry — matches the Figma spec: 28px tall pill, 20px disk, 6px corner
 // radius, two side-by-side segments with their own paddings and backgrounds.
