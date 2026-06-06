@@ -55,8 +55,7 @@ const Tabs = ({ accessibilityLabel, tabs }: IProps) => {
     useEffect(() => {
         // this test is needed to make sure the effect is triggered because of user actually changing tab
         if (document.activeElement?.getAttribute('role') === 'tab') {
-            // @ts-ignore
-            document.querySelector(`#${`${tabs[current].id}-tab`}`)?.focus();
+            document.querySelector<HTMLElement>(`#${`${tabs[current].id}-tab`}`)?.focus();
         }
 
     }, [ current, tabs ]);
