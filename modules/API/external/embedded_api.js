@@ -403,3 +403,136 @@ export default class JitsiMeetEmbeddedAPI extends EventEmitter {
             window.config.userInfo = userInfo;
         }
     }
+
+    /**
+     * Loads the Jitsi Meet app.bundle.js and renders the app into our
+     * container div. If the bundle is already loaded (window.APP exists),
+     * it renders immediately.
+     *
+     * @param {string} domain - The domain to load scripts from.
+     * @returns {void}
+     * @private
+     */
+    _loadApp(domain) {
+        const renderApp = () => {
+            const globalNS = window.JitsiMeetJS?.app;
+
+            if (!globalNS) {
+                console.error('[EmbeddedAPI] JitsiMeetJS.app namespace not found.');
+
+                return;
+            }
+
+            // Swap the app-side transport backend to our direct backend.
+            if (typeof globalNS.setExternalTransportBackend === 'function') {
+                globalNS.setExternalTransportBackend(this._appBackend);
+            } else {
+                console.error('[EmbeddedAPI] setExternalTransportBackend not available.');
+            }
+
+            // Render the React app into our container's inner div.
+            if (typeof globalNS.renderEntryPoint === 'function'
+                && globalNS.entryPoints?.APP) {
+                globalNS.renderEntryPoint({
+                    Component: globalNS.entryPoints.APP,
+                    elementId: this._reactRoot.id
+                });
+            } else {
+                console.error('[EmbeddedAPI] renderEntryPoint or APP entry point not available.');
+            }
+
+            this._loaded = true;
+        };
+
+        // Check if the app bundle is already loaded.
+        if (window.APP && window.JitsiMeetJS?.app?.renderEntryPoint) {
+            renderApp();
+
+            return;
+        }
+
+        // Load the app bundle dynamically.
+        const basePath = `https://${domain}`;
+        const isDev = basePath.includes('localhost') || basePath.includes('127.0.0.1');
+
+        // Preload CSS early so it's ready when the JS finishes.
+        const cssLink = document.createElement('link');
+
+        cssLink.rel = 'stylesheet';
+        cssLink.href = `${basePath}/css/all.css`;
+        document.head.appendChild(cssLink);
+
+        // Helper to load a script and return a Promise.
+        const loadScript = src => new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+
+            s.src = src;
+            s.async = false;
+            s.onload = resolve;
+            s.onerror = () => reject(new Error(`[EmbeddedAPI] Failed to load ${src}`));
+            document.head.appendChild(s);
+        });
+
+        // Load lib-jitsi-meet first (app.bundle.js depends on it),
+        // then load the app bundle.
+        loadScript(`${basePath}/libs/lib-jitsi-meet.min.js`)
+            .then(() => loadScript(`${basePath}/libs/${isDev ? 'app.bundle.js' : 'app.bundle.min.js'}`))
+            .then(() => this._waitForGlobalNS(renderApp))
+            .catch(err => console.error(err.message));
+    }
+
+    /**
+     * Waits for the JitsiMeetJS.app global namespace to become available,
+     * then calls the callback. Checks every 50ms, gives up after 50 tries
+     * (~2.5 seconds).
+     *
+     * @param {Function} callback - Called once the namespace is ready.
+     * @returns {void}
+     * @private
+     */
+    _waitForGlobalNS(callback) {
+        let attempts = 0;
+
+        const poll = () => {
+            if (window.JitsiMeetJS?.app?.renderEntryPoint) {
+                callback();
+
+                return;
+            }
+
+            attempts++;
+
+            if (attempts >= 50) {
+                console.error('[EmbeddedAPI] Timed out waiting for app namespace.');
+
+                return;
+            }
+
+            setTimeout(poll, 50);
+        };
+
+        poll();
+    }
+
+    /**
+     * Sets the size of the container element.
+     *
+     * @param {number|string} height - The height.
+     * @param {number|string} width - The width.
+     * @returns {void}
+     * @private
+     */
+    _setSize(height, width) {
+        const parsedHeight = parseSizeParam(height);
+        const parsedWidth = parseSizeParam(width);
+
+        if (parsedHeight !== undefined) {
+            this._height = height;
+            this._container.style.height = parsedHeight;
+        }
+
+        if (parsedWidth !== undefined) {
+            this._width = width;
+            this._container.style.width = parsedWidth;
+        }
+    }
