@@ -52,7 +52,7 @@ class Etherpad extends LargeContainer {
         closeBtn.setAttribute('aria-label', 'Close shared document');
         closeBtn.style.cssText = [
             'position:fixed',
-            'top:12px',
+            'top:4px',
             'left:600px',
             'z-index:10000',
             'background:rgba(0,0,0,0.55)',
@@ -60,9 +60,10 @@ class Etherpad extends LargeContainer {
             'border-radius:4px',
             'color:#fff',
             'cursor:pointer',
-            'font-size:18px',
+            'font-size:12px',
+            'font-weight: bold',
             'line-height:1',
-            'padding:5px 9px',
+            'padding:4px 9px',
             'display:none'
         ].join(';');
         closeBtn.textContent = '✕';
