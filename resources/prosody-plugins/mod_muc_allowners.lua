@@ -1,61 +1,39 @@
+--- activate under the main muc component
 local filters = require 'util.filters';
 local jid = require "util.jid";
 local jid_bare = require "util.jid".bare;
 local jid_host = require "util.jid".host;
 local st = require "util.stanza";
-local um_is_admin = require "core.usermanager".is_admin;
 local util = module:require "util";
+local is_admin = util.is_admin;
 local is_healthcheck_room = util.is_healthcheck_room;
-local extract_subdomain = util.extract_subdomain;
+local is_moderated = util.is_moderated;
 local get_room_from_jid = util.get_room_from_jid;
+local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local presence_check_status = util.presence_check_status;
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
-local moderated_subdomains;
-local moderated_rooms;
 local disable_revoke_owners;
+local allowner_issuers = module:get_option_set('allowner_issuers');
 
 local function load_config()
-    moderated_subdomains = module:get_option_set("allowners_moderated_subdomains", {})
-    moderated_rooms = module:get_option_set("allowners_moderated_rooms", {})
     disable_revoke_owners = module:get_option_boolean("allowners_disable_revoke_owners", false);
 end
 load_config();
 
-local function is_admin(_jid)
-    return um_is_admin(_jid, module.host);
-end
-
 -- List of the bare_jids of all occupants that are currently joining (went through pre-join) and will be promoted
 -- as moderators. As pre-join (where added) and joined event (where removed) happen one after another this list should
 -- have length of 1
-local joining_moderator_participants = {};
+local joining_moderator_participants = module:shared('moderators/joining_moderator_participants');
 
--- Checks whether the jid is moderated, the room name is in moderated_rooms
--- or if the subdomain is in the moderated_subdomains
--- @return returns on of the:
---      -> false
---      -> true, room_name, subdomain
---      -> true, room_name, nil (if no subdomain is used for the room)
-local function is_moderated(room_jid)
-    if moderated_subdomains:empty() and moderated_rooms:empty() then
-        return false;
+module:hook("muc-room-created", function(event)
+    local room = event.room;
+
+    if room.jitsiMetadata then
+        -- indicates whether all participants in the room will be moderators
+        room.jitsiMetadata.allownersEnabled = not is_moderated(room.jid);
     end
-
-    local room_node = jid.node(room_jid);
-    -- parses bare room address, for multidomain expected format is:
-    -- [subdomain]roomName@conference.domain
-    local target_subdomain, target_room_name = extract_subdomain(room_node);
-    if target_subdomain then
-        if moderated_subdomains:contains(target_subdomain) then
-            return true, target_room_name, target_subdomain;
-        end
-    elseif moderated_rooms:contains(room_node) then
-        return true, room_node, nil;
-    end
-
-    return false;
-end
+end, -2); -- room_metadata should run before this module on -1
 
 module:hook("muc-occupant-pre-join", function (event)
     local room, occupant = event.room, event.occupant;
@@ -80,9 +58,9 @@ module:hook("muc-occupant-pre-join", function (event)
             return;
         end
 
-        if not (subdomain == session.jitsi_meet_context_group) then
+        if session.jitsi_meet_domain ~= '*' and subdomain ~= session.jitsi_meet_domain then
             module:log('debug', 'skip allowners for auth user and non matching room subdomain: %s, jwt subdomain: %s',
-                subdomain, session.jitsi_meet_context_group);
+                subdomain, session.jitsi_meet_domain);
             return;
         end
     end
@@ -103,6 +81,21 @@ module:hook("muc-occupant-joined", function (event)
     end
 end, 2);
 
+module:hook('room_has_host', function(event)
+    local room, session = event.room, event.session;
+    local moderated, _, tenant = is_moderated(room.jid);
+
+    if not moderated then
+        return nil;
+    end
+
+    if not tenant and allowner_issuers and not allowner_issuers:contains(session.jitsi_meet_auth_issuer) then
+        -- this will stop listeners execution and will return false, if we require a specific issuer for
+        -- a moderated room without a tenant and the issuer is not correct
+        return false;
+    end
+end, 1); -- we want it executed before the one in wait_for_host module
+
 module:hook_global('config-reloaded', load_config);
 
 -- Filters self-presences to a jid that exist in joining_participants array
@@ -117,7 +110,7 @@ function filter_stanza(stanza)
     end
 
     -- we want to filter presences only on this host for allowners and skip anything like lobby etc.
-    local host_from = jid_host(stanza.attr.from);
+    local host_from = jid_host(room_jid_match_rewrite(stanza.attr.from));
     if host_from ~= module.host then
         return stanza;
     end
@@ -166,7 +159,7 @@ function filter_admin_set_query(event)
     local _aff = item.attr.affiliation;
 
     -- if it is a moderated room we skip it
-    if is_moderated(room.jid) then
+    if room and is_moderated(room.jid) then
         return nil;
     end
 

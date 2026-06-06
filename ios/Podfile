@@ -1,14 +1,77 @@
-platform :ios, '12.0'
+# Resolve react_native_pods.rb with node to allow for hoisting.
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
+
+platform :ios, '15.1'
 workspace 'jitsi-meet'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+ENV['RCT_NEW_ARCH_ENABLED'] = '1'
+ENV['RCT_HERMES_V1_ENABLED'] = '0'
+
+# Build RN deps and Core from source so we don't depend on the prebuilt RN xcframeworks.
+ENV['RCT_USE_RN_DEP'] = '0'
+ENV['RCT_USE_PREBUILT_RNCORE'] = '0'
+
+# hermes-engine bakes an absolute path into HERMES_CLI_PATH, which makes the
+# Podfile.lock SPEC CHECKSUM differ on every machine. Rewrite it to a relative
+# path so the lockfile is portable (e.g. `pod install --deployment` in CI).
+module HermesCliPathRelativizer
+  def store_attribute(name, value, platform_name = nil)
+    if name == :user_target_xcconfig &&
+       value.is_a?(Hash) &&
+       value['HERMES_CLI_PATH'] &&
+       self.name.to_s.start_with?('hermes-engine')
+      value = value.merge(
+        'HERMES_CLI_PATH' => '${REACT_NATIVE_PATH}/../hermes-compiler/hermesc/osx-bin/hermesc'
+      )
+    end
+    super
+  end
+end
+Pod::Specification.prepend(HermesCliPathRelativizer)
+
 install! 'cocoapods', :deterministic_uuids => false
+
+def cocoa_utilities
+    pod 'CocoaLumberjack', '3.7.4'
+end
+
+# Giphy is excluded from iOS autolinking to keep it out of the lite SDK, 
+# but the full SDK needs its TurboModule spec 
+# and we re-add it to autolinking.json so react native codegen generates it.
+def include_giphy_in_codegen!
+  require 'json'
+  autolinking_json = File.join(
+    Pod::Config.instance.installation_root.to_s,
+    'build/generated/autolinking/autolinking.json'
+  )
+  return unless File.exist?(autolinking_json)
+
+  json = JSON.parse(File.read(autolinking_json))
+  giphy_root = File.expand_path('../node_modules/@giphy/react-native-sdk', __dir__)
+  json['dependencies'] ||= {}
+  json['dependencies']['@giphy/react-native-sdk'] = {
+    'name' => '@giphy/react-native-sdk',
+    'root' => giphy_root,
+    'platforms' => {
+      'ios' => {
+        'podspecPath' => File.join(giphy_root, 'giphy-react-native-sdk.podspec'),
+        'scriptPhases' => [],
+        'configurations' => []
+      }
+    }
+  }
+  File.write(autolinking_json, JSON.pretty_generate(json))
+end
 
 target 'JitsiMeet' do
   project 'app/app.xcodeproj'
 
-  pod 'Firebase/Analytics', '~> 6.33.0'
-  pod 'Firebase/Crashlytics', '~> 6.33.0'
-  pod 'Firebase/DynamicLinks', '~> 6.33.0'
+  pod 'Firebase/Analytics', '~> 8.0'
+  pod 'Firebase/Crashlytics', '~> 8.0'
 end
 
 target 'JitsiMeetSDK' do
@@ -17,84 +80,86 @@ target 'JitsiMeetSDK' do
   # React Native and its dependencies
   #
 
-  pod 'FBLazyVector', :path => '../node_modules/react-native/Libraries/FBLazyVector/'
-  pod 'FBReactNativeSpec', :path => '../node_modules/react-native/Libraries/FBReactNativeSpec/'
-  pod 'RCTRequired', :path => '../node_modules/react-native/Libraries/RCTRequired/'
-  pod 'RCTTypeSafety', :path => '../node_modules/react-native/Libraries/TypeSafety/'
-  pod 'React', :path => '../node_modules/react-native/'
-  pod 'ReactCommon', :path => '../node_modules/react-native/ReactCommon', :subspecs => [
-    'turbomodule'
-  ]
-  pod 'React-Core', :path => '../node_modules/react-native/', :subspecs => [
-    'CoreModulesHeaders',
-    'DevSupport',
-    'RCTWebSocket'
-  ], :modular_headers => true
-  pod 'React-CoreModules', :path => '../node_modules/react-native/React/CoreModules'
-  pod 'React-RCTActionSheet', :path => '../node_modules/react-native/Libraries/ActionSheetIOS'
-  pod 'React-RCTAnimation', :path => '../node_modules/react-native/Libraries/NativeAnimation'
-  pod 'React-RCTBlob', :path => '../node_modules/react-native/Libraries/Blob'
-  pod 'React-RCTImage', :path => '../node_modules/react-native/Libraries/Image'
-  pod 'React-RCTLinking', :path => '../node_modules/react-native/Libraries/LinkingIOS'
-  pod 'React-RCTNetwork', :path => '../node_modules/react-native/Libraries/Network'
-  pod 'React-RCTSettings', :path => '../node_modules/react-native/Libraries/Settings'
-  pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text'
-  pod 'React-RCTVibration', :path => '../node_modules/react-native/Libraries/Vibration'
+  config = use_native_modules!
+  include_giphy_in_codegen!
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
 
-  pod 'React-cxxreact', :path => '../node_modules/react-native/ReactCommon/cxxreact'
-  pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
-  pod 'React-jsiexecutor', :path => '../node_modules/react-native/ReactCommon/jsiexecutor'
-  pod 'React-jsinspector', :path => '../node_modules/react-native/ReactCommon/jsinspector'
-  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+  # We use auto linking, but some dependencies are excluded from the lite build
+  # (see react-native.config.js) so we add them here.
 
-  pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
-  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
-  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
-
-  # React Native plugins
-  #
-
-  pod 'amplitude-react-native', :path => '../node_modules/@amplitude/react-native'
-  pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
-  pod 'react-native-calendar-events', :path => '../node_modules/react-native-calendar-events'
-  pod 'react-native-get-random-values', :path => '../node_modules/react-native-get-random-values'
-  pod 'react-native-keep-awake', :path => '../node_modules/react-native-keep-awake'
-  pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
-  pod 'react-native-performance', :path => '../node_modules/react-native-performance/ios'
-  pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
-  pod 'react-native-slider', :path => '../node_modules/@react-native-community/slider'
-  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
-  pod 'react-native-video', :path => '../node_modules/react-native-video/react-native-video.podspec'
-  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
-  pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
-  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage'
-  pod 'RNCClipboard', :path => '../node_modules/@react-native-community/clipboard'
-  pod 'RNCMaskedView', :path => '../node_modules/@react-native-masked-view/masked-view'
-  pod 'RNDefaultPreference', :path => '../node_modules/react-native-default-preference'
-  pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
-  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
-  pod 'RNGoogleSignin', :path => '../node_modules/@react-native-community/google-signin'
-  pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
-  pod 'RNScreens', :path => '../node_modules/react-native-screens'
-  pod 'RNSound', :path => '../node_modules/react-native-sound'
-  pod 'RNSVG', :path => '../node_modules/react-native-svg'
-  pod 'RNWatch', :path => '../node_modules/react-native-watch-connectivity'
+  pod 'giphy-react-native-sdk', :path => '../node_modules/@giphy/react-native-sdk'
+  pod 'RNCalendarEvents', :path => '../node_modules/react-native-calendar-events'
+  pod 'RNGoogleSignin', :path => '../node_modules/@react-native-google-signin/google-signin'
 
   # Native pod dependencies
   #
 
-  pod 'CocoaLumberjack', '~>3.5.3'
-  pod 'ObjectiveDropboxOfficial', '~>6.1.0'
+  cocoa_utilities
+  pod 'ObjectiveDropboxOfficial', '6.2.3'
+end
 
-  use_native_modules!
+target 'JitsiMeetSDKLite' do
+    project 'sdk/sdk.xcodeproj'
+
+    # This is a more lightweight target, which removes some functionality.
+    # Check the react-native.config.js for the list of excluded packages.
+
+    # React Native and its dependencies
+    #
+
+    config = use_native_modules!
+    use_react_native!(
+      :path => config[:reactNativePath],
+      # An absolute path to your application root.
+      :app_path => "#{Pod::Config.instance.installation_root}/.."
+    )
+
+    # Native pod dependencies
+    #
+
+    cocoa_utilities
 end
 
 post_install do |installer|
+
+  react_native_post_install(
+    installer,
+    use_native_modules![:reactNativePath],
+    :mac_catalyst_enabled => false,
+    # :ccache_enabled => true
+  )
   installer.pods_project.targets.each do |target|
+    # https://github.com/CocoaPods/CocoaPods/issues/11402
+    if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
+      target.build_configurations.each do |config|
+        config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+      end
+    end
+
     target.build_configurations.each do |config|
-      config.build_settings['ENABLE_BITCODE'] = 'YES'
       config.build_settings['SUPPORTS_MACCATALYST'] = 'NO'
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
+      config.build_settings['OTHER_SWIFT_FLAGS'] = '$(inherited) -no-verify-emitted-module-interface'
     end
   end
+
+  # Patch SocketRocket to support TLS 1.3
+  %x(patch Pods/SocketRocket/SocketRocket/SRSecurityPolicy.m -N < patches/ws-tls13.diff)
+
+  # GiphyUISDK.xcframework already embeds libwebp; Giphy's podspec also
+  # declares libwebp as a dependency, which makes CocoaPods statically link
+  # libwebp into JitsiMeetSDK as well. The two copies trigger a duplicate
+  # `PodsDummy_libwebp` warning at runtime. Drop the redundant link.
+  ['Pods-JitsiMeetSDK', 'Pods-JitsiMeet'].each do |aggregate_name|
+    Dir.glob("Pods/Target Support Files/#{aggregate_name}/*.xcconfig").each do |path|
+      contents = File.read(path)
+      patched = contents.gsub(/ -l"?libwebp"?/, '')
+      File.write(path, patched) if patched != contents
+    end
+  end
+
 end

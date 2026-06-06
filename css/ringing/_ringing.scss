@@ -5,11 +5,11 @@
     width: 100%;
     height: 100%;
     position: fixed;
-    z-index: $ringingZ;
+    z-index: 300;
     @include transparentBg(#283447, 0.95);
 
     &.solidBG {
-        background: $defaultBackground;
+        background: #040404;
     }
 
     &__content {
@@ -34,12 +34,12 @@
 
     &__status{
         margin-top: 15px;
-        font-size: 14px;
-        line-height: 20px;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
     }
 
     &__name {
-        font-size: 24px;
-        line-height: 32px;
+        font-size: 1.5rem;
+        line-height: 2rem;
     }
 }

@@ -15,14 +15,21 @@
  */
 package org.jitsi.meet.sdk;
 
+import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.startup.Initializer;
 
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
+import com.facebook.react.soloader.OpenSourceMergedSoMapping;
 import com.facebook.soloader.SoLoader;
 
-import java.util.ArrayList;
+import org.wonday.orientation.OrientationActivityLifecycle;
+
+import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 public class JitsiInitializer implements Initializer<Boolean> {
@@ -30,13 +37,34 @@ public class JitsiInitializer implements Initializer<Boolean> {
     @NonNull
     @Override
     public Boolean create(@NonNull Context context) {
-        SoLoader.init(context, /* native exopackage */ false);
+        Log.d(this.getClass().getCanonicalName(), "create");
+
+        try {
+            SoLoader.init(context, OpenSourceMergedSoMapping.INSTANCE);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // JNI shim that wires DefaultTurboModuleManagerDelegate::javaModuleProvider
+        // to this SDK's TurboModules (see JitsiTurboModuleProvider.cpp). Must run
+        // before RN starts.
+        SoLoader.loadLibrary("jitsisdkmodules");
+
+        DefaultNewArchitectureEntryPoint.load();
+
+        JitsiMeetUncaughtExceptionHandler.register();
+
+        ((Application) context).registerActivityLifecycleCallbacks(
+            OrientationActivityLifecycle.getInstance());
+
+        ReactHostHolder.initReactHost((Application) context);
+
         return true;
     }
 
     @NonNull
     @Override
     public List<Class<? extends Initializer<?>>> dependencies() {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 }

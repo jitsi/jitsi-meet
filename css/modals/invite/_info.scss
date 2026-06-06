@@ -1,7 +1,7 @@
 .info-dialog {
     cursor: default;
     display: flex;
-    font-size: 14px;
+    font-size: 0.875rem;
 
     .info-dialog-column {
         margin-right: 10px;
@@ -38,19 +38,6 @@
         color: #fff;
     }
 
-    .info-password-input {
-        width: 100%;
-        background-color: #0E1624;
-        border-radius: 3px;
-        border: 2px solid #202B3D;
-        color: inherit;
-        padding-left: 0;
-    }
-    .info-password-input:focus ,
-    .info-password-input:active {
-       border: 2px solid #B8C7E0;
-    }
-
     .info-password-local {
         user-select: text;
     }
@@ -63,17 +50,19 @@
 }
 
 .dial-in-numbers-list {
+    max-width: 334px;
+    width: 100%;
     margin-top: 20px;
-    font-size: 12px;
-    line-height: 24px;
+    font-size: 0.75rem;
+    line-height: 1.5rem;
     border-collapse: collapse;
+
+    * {
+        user-select: text;
+    }
 
     thead {
         text-align: left;
-    }
-
-    tr {
-        border-bottom: 1px solid #d1dbe8;
     }
 
     .flag-cell {
@@ -104,6 +93,7 @@
         font-weight: bold;
         list-style: none;
         vertical-align: top;
+        text-align: right;
     }
 
     li.toll-free:empty:before {
@@ -117,7 +107,7 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    font-size: 12px;
+    font-size: 0.75rem;
     max-height: 100%;
     overflow: auto;
     padding: 15pt;
@@ -130,11 +120,6 @@
         text-align: center;
         min-width: 200px;
         margin-top: 40px;
-    }
-
-    .dial-in-conference-name,
-    .dial-in-conference-pin {
-        font-size: 18px;
     }
 
     .dial-in-conference-description {

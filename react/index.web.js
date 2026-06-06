@@ -1,31 +1,36 @@
-/* global APP */
-
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
-import { App } from './features/app/components';
+import { App } from './features/app/components/App.web';
 import { getLogger } from './features/base/logging/functions';
-import { Platform } from './features/base/react';
-import { getJitsiMeetGlobalNS } from './features/base/util';
-import PrejoinApp from './features/prejoin/components/PrejoinApp';
+import Platform from './features/base/react/Platform.web';
+import { getJitsiMeetGlobalNS, getJitsiMeetGlobalNSConnectionTimes } from './features/base/util/helpers';
+import DialInSummaryApp from './features/invite/components/dial-in-summary/web/DialInSummaryApp';
+import PrejoinApp from './features/prejoin/components/web/PrejoinApp';
+import WhiteboardApp from './features/whiteboard/components/web/WhiteboardApp';
 
-const logger = getLogger('index.web');
-const OS = Platform.OS;
+const logger = getLogger('app:index.web');
 
-/**
- * Renders the app when the DOM tree has been loaded.
- */
-document.addEventListener('DOMContentLoaded', () => {
-    const now = window.performance.now();
+// Add global loggers.
+window.addEventListener('error', ev => {
+    logger.error(
+        `UnhandledError: ${ev.message}`,
+        `Script: ${ev.filename}`,
+        `Line: ${ev.lineno}`,
+        `Column: ${ev.colno}`,
+        'StackTrace: ', ev.error?.stack);
+});
 
-    APP.connectionTimes['document.ready'] = now;
-    logger.log('(TIME) document ready:\t', now);
+window.addEventListener('unhandledrejection', ev => {
+    logger.error(
+        `UnhandledPromiseRejection: ${ev.reason}`,
+        'StackTrace: ', ev.reason?.stack);
 });
 
 // Workaround for the issue when returning to a page with the back button and
 // the page is loaded from the 'back-forward' cache on iOS which causes nothing
 // to be rendered.
-if (OS === 'ios') {
+if (Platform.OS === 'ios') {
     window.addEventListener('pageshow', event => {
         // Detect pages loaded from the 'back-forward' cache
         // (https://webkit.org/blog/516/webkit-page-cache-ii-the-unload-event/)
@@ -40,19 +45,49 @@ if (OS === 'ios') {
 }
 
 const globalNS = getJitsiMeetGlobalNS();
+const connectionTimes = getJitsiMeetGlobalNSConnectionTimes();
+
+// Used to check if the load event has been fired.
+globalNS.hasLoaded = false;
+
+// Used for automated performance tests.
+connectionTimes['index.loaded'] = window.indexLoadedTime;
+
+window.addEventListener('load', () => {
+    connectionTimes['window.loaded'] = window.loadedEventTime;
+    globalNS.hasLoaded = true;
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const now = window.performance.now();
+
+    connectionTimes['document.ready'] = now;
+    logger.log('(TIME) document ready:\t', now);
+});
 
 globalNS.entryPoints = {
     APP: App,
-    PREJOIN: PrejoinApp
+    PREJOIN: PrejoinApp,
+    DIALIN: DialInSummaryApp,
+    WHITEBOARD: WhiteboardApp
 };
+
+/**
+ * React 18 concurrent mode allows only one root per DOM node. Cache roots by
+ * element ID so {@code renderEntryPoint} never calls {@code createRoot} twice
+ * on the same element.
+ */
+const _roots = new Map();
 
 globalNS.renderEntryPoint = ({
     Component,
     props = {},
     elementId = 'react'
 }) => {
-    ReactDOM.render(
-        <Component { ...props } />,
-        document.getElementById(elementId)
-    );
+    const element = document.getElementById(elementId);
+
+    if (!_roots.has(elementId)) {
+        _roots.set(elementId, createRoot(element));
+    }
+    _roots.get(elementId).render(<Component { ...props } />);
 };

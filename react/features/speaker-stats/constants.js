@@ -1,1 +1,0 @@
-export const SPEAKER_STATS_RELOAD_INTERVAL = 1000;

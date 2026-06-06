@@ -3,20 +3,244 @@ name: Simple CI
 on: [pull_request]
 
 jobs:
-  run-ci:
-    name: Build Frontend
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
       with:
-        node-version: '16.x'
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+    - name: Check Node / npm versions
+      run: |
+        node -v
+        npm -v
+    - name: Get changed files
+      id: changed-files
+      uses: jitsi/changed-files@531f5f7d163941f0c1c04e0ff4d8bb243ac4366f  # main
+    - name: Get changed lang files
+      id: lang-files
+      run: echo "all=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -oE 'lang\/\S+' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
     - run: npm install
     - name: Check git status
       run: git status
-    - name: Check git diff
-      run: git diff
+    - name: Normalize lang files to ensure sorted
+      if: steps.lang-files.outputs.all
+      run: npm run lang-sort
+    - name: Check lang files are formatted correctly
+      if: steps.lang-files.outputs.all
+      run: npm run lint:lang
     - name: Check if the git repository is clean
-      run: exit $( git status --porcelain --untracked-files=no | head -255 | wc -l )
-    - run: npm run lint
+      run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
+    - run: npm run lint:ci && npm run tsc:ci
+  frontend:
+    name: Build Frontend
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+    - name: Check Node / npm versions
+      run: |
+        node -v
+        npm -v
+    - run: npm install
     - run: make
+    - name: Check config.js syntax
+      run: node config.js
+  android-rn-bundle-build:
+    name: Build mobile bundle (Android)
+    runs-on: macos-15
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+    - name: Check Node / npm versions
+      run: |
+        node -v
+        npm -v
+    - run: npm install
+    - run: npx react-native bundle --entry-file react/index.native.js --platform android --bundle-output /tmp/android.bundle --reset-cache
+  ios-rn-bundle-build:
+    name: Build mobile bundle (iOS)
+    runs-on: macos-15
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+    - name: Check Node / npm versions
+      run: |
+        node -v
+        npm -v
+    - run: npm install
+    - name: setup Xcode
+      run: |
+        uname -a
+        xcode-select -p
+        sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
+        xcodebuild -version
+    - name: setup-cocoapods
+      uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f  # v1
+      with:
+        ruby-version: '3.4'
+        bundler-cache: true
+    - run: npx react-native info
+    - name: Cache CocoaPods
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+      with:
+        path: |
+          ios/Pods
+          ~/Library/Caches/CocoaPods
+        key: ${{ runner.os }}-cocoapods-${{ hashFiles('ios/Podfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cocoapods-
+    - name: Install Pods
+      working-directory: ./ios
+      run: bundle exec pod install --deployment
+    - run: npx react-native bundle --entry-file react/index.native.js --platform ios --bundle-output /tmp/ios.bundle --reset-cache
+  android-sdk-build:
+    name: Build mobile SDK (Android)
+    runs-on: ubuntu-latest
+    container: 
+      image: reactnativecommunity/react-native-android:v18.0
+      volumes:
+        - /usr:/host/usr
+    steps:
+    - name: Make space in image by removing preinstalled, but unused SDKs
+      run: |
+        df -h /
+        rm -rf /host/usr/local/lib/android
+        rm -rf /host/usr/local/.ghcup
+        rm -rf /host/usr/share/dotnet
+        rm -rf /host/usr/share/swift
+        df -h /
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+    - name: Check Node / npm versions
+      run: |
+        node -v
+        npm -v
+    - run: npm install
+    - name: Cache Gradle dependencies
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+      with:
+        path: /root/.gradle
+        key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*', 'android/gradle.properties', 'android/gradle/wrapper/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+    - run: |
+        cd android
+        ./gradlew :sdk:clean
+        ./gradlew :sdk:assembleRelease
+    - run: |
+        git config --global --add safe.directory /__w/jitsi-meet/jitsi-meet
+        git clean -dfx
+  ios-sdk-build:
+    name: Build mobile SDK (iOS)
+    runs-on: macos-15
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+    - name: Check Node / npm versions
+      run: |
+        node -v
+        npm -v
+    - run: npm install
+    - name: setup Xcode
+      run: |
+        uname -a
+        xcode-select -p
+        sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
+        xcodebuild -version
+    - name: clean Xcode
+      run: |
+        rm -rf ios/sdk/out
+        xcodebuild clean \
+          -workspace ios/jitsi-meet.xcworkspace \
+          -scheme JitsiMeetSDK
+    - name: setup-cocoapods
+      uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f #v1.310.0
+      with:
+        ruby-version: '3.4'
+        bundler-cache: true
+    - name: Cache CocoaPods
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae #v5.0.5
+      with:
+        path: |
+          ios/Pods
+          ~/Library/Caches/CocoaPods
+        key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock', 'Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pods-
+    - run: npx react-native info
+    - name: Install Pods
+      working-directory: ./ios
+      run: bundle exec pod install --deployment
+    - run: |
+        xcodebuild -downloadPlatform iOS -buildVersion 18.2
+        xcodebuild archive \
+          -workspace ios/jitsi-meet.xcworkspace \
+          -scheme JitsiMeetSDK  \
+          -configuration Release \
+          -sdk iphoneos \
+          -destination 'generic/platform=iOS' \
+          -archivePath ios/sdk/out/ios-device \
+          SKIP_INSTALL=NO \
+          BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+        xcodebuild -create-xcframework \
+          -framework ios/sdk/out/ios-device.xcarchive/Products/Library/Frameworks/JitsiMeetSDK.framework \
+          -output ios/sdk/out/JitsiMeetSDK.xcframework
+    - run: ls -lR ios/sdk/out
+  react-native-sdk-build:
+    name: Build mobile SDK (React Native)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+    - name: Check Node / npm versions
+      run: |
+        node -v
+        npm -v
+    - run: npm install
+    - run: |
+        cd react-native-sdk
+        node update_sdk_dependencies.js
+        npm install
+  debian-build:
+    name: Test Debian packages build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+    - name: Check Node / npm versions
+      run: |
+        node -v
+        npm -v
+    - run: npm install
+    - run: make
+    - run: sudo apt-get install -y debhelper
+    - run: dpkg-buildpackage -A -rfakeroot -us -uc -d
+    - run: make source-package

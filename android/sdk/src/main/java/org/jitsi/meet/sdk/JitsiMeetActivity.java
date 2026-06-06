@@ -16,15 +16,25 @@
 
 package org.jitsi.meet.sdk;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.facebook.react.modules.core.PermissionListener;
@@ -32,11 +42,16 @@ import com.facebook.react.modules.core.PermissionListener;
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.HashMap;
-import android.app.Activity;
 
 /**
- * A base activity for SDK users to embed. It uses {@link JitsiMeetFragment} to do the heavy
- * lifting and wires the remaining Activity lifecycle methods so it works out of the box.
+ * A base activity for SDK users to embed.  It contains all the required wiring
+ * between the {@code JitsiMeetView} and the Activity lifecycle methods.
+ *
+ * In this activity we use a single {@code JitsiMeetView} instance. This
+ * instance gives us access to a view which displays the welcome page and the
+ * conference itself. All lifecycle methods associated with this Activity are
+ * hooked to the React Native subsystem via proxy calls through the
+ * {@code JitsiMeetActivityDelegate} static methods.
  */
 public class JitsiMeetActivity extends AppCompatActivity
     implements JitsiMeetActivityInterface {
@@ -46,12 +61,20 @@ public class JitsiMeetActivity extends AppCompatActivity
     private static final String ACTION_JITSI_MEET_CONFERENCE = "org.jitsi.meet.CONFERENCE";
     private static final String JITSI_MEET_CONFERENCE_OPTIONS = "JitsiMeetConferenceOptions";
 
+    private boolean isReadyToClose;
+
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             onBroadcastReceived(intent);
         }
     };
+
+    /**
+     * Instance of the {@link JitsiMeetView} which this activity will display.
+     */
+    private JitsiMeetView jitsiView;
+
     // Helpers for starting the activity
     //
 
@@ -71,14 +94,85 @@ public class JitsiMeetActivity extends AppCompatActivity
         launch(context, options);
     }
 
+    public static void addTopBottomInsets(@NonNull Window w, @NonNull View v) {
+
+        // Enable edge-to-edge mode
+        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(w, false);
+
+        // Make system bars transparent so content is visible underneath
+        w.setStatusBarColor(android.graphics.Color.TRANSPARENT);
+        w.setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+
+        View decorView = w.getDecorView();
+
+        // Get display metrics for calculating density-independent caps
+        final android.util.DisplayMetrics metrics = v.getContext().getResources().getDisplayMetrics();
+        final int screenHeight = metrics.heightPixels;
+        final float density = metrics.density;
+
+        // Listen for window inset changes 
+        // when system bars visibility is toggled or when the device rotates
+        ViewCompat.setOnApplyWindowInsetsListener(decorView, (view, windowInsets) -> {
+
+            // Get the actual inset values reported by the system
+            int statusBarInset = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+            int navBarInset = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
+
+            // Calculate maximum allowed inset values to prevent device-specific bugs
+            final int maxTopInset = Math.min((int)(60 * density), (int)(screenHeight * 0.10));
+            final int maxBottomInset = Math.min((int)(120 * density), (int)(screenHeight * 0.10));
+
+            int topInset = Math.min(statusBarInset, maxTopInset);
+            int bottomInset = Math.min(navBarInset, maxBottomInset);
+
+            // Apply calculated insets
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+
+            // Update margins only if they've changed
+            if (params.topMargin != topInset || params.bottomMargin != bottomInset) {
+                params.topMargin = topInset;
+                params.bottomMargin = bottomInset;
+                v.setLayoutParams(params);
+            }
+
+            view.setBackgroundColor(JitsiMeetView.BACKGROUND_COLOR);
+
+            // Return CONSUMED to prevent double-application of margins
+            return WindowInsetsCompat.CONSUMED;
+        });
+
+        // Manually trigger the inset listener to apply margins immediately
+        ViewCompat.requestApplyInsets(decorView);
+    }
+
     // Overrides
     //
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Intent intent = new Intent("onConfigurationChanged");
+        intent.putExtra("newConfig", newConfig);
+        this.sendBroadcast(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // ReactInstanceManager is now initialized by JitsiInitializer during application startup
+        // Just call onHostResume since the manager is already ready
+        JitsiMeetActivityDelegate.onHostResume(this);
+
         setContentView(R.layout.activity_jitsi_meet);
+
+       
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM 
+        && getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            addTopBottomInsets(getWindow(), findViewById(android.R.id.content)); 
+            }
+
+        this.jitsiView = findViewById(R.id.jitsiView);
 
         registerForBroadcastMessages();
 
@@ -88,7 +182,21 @@ public class JitsiMeetActivity extends AppCompatActivity
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        JitsiMeetActivityDelegate.onHostResume(this);
+    }
+
+    @Override
+    public void onStop() {
+        JitsiMeetActivityDelegate.onHostPause(this);
+        super.onStop();
+    }
+
+    @Override
     public void onDestroy() {
+        JitsiMeetLogger.i("onDestroy()");
+
         // Here we are trying to handle the following corner case: an application using the SDK
         // is using this Activity for displaying meetings, but there is another "main" Activity
         // with other content. If this Activity is "swiped out" from the recent list we will get
@@ -96,7 +204,13 @@ public class JitsiMeetActivity extends AppCompatActivity
         // current meeting, but when our view is detached from React the JS <-> Native bridge won't
         // be operational so the external API won't be able to notify the native side that the
         // conference terminated. Thus, try our best to clean up.
-        leave();
+        if (!isReadyToClose) {
+            JitsiMeetLogger.i("onDestroy(): leaving...");
+            leave();
+        }
+
+        this.jitsiView = null;
+
         if (AudioModeModule.useConnectionService()) {
             ConnectionService.abortConnections();
         }
@@ -104,13 +218,19 @@ public class JitsiMeetActivity extends AppCompatActivity
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
 
+        JitsiMeetActivityDelegate.onHostDestroy(this);
+
         super.onDestroy();
     }
 
     @Override
     public void finish() {
-        leave();
+        if (!isReadyToClose) {
+            JitsiMeetLogger.i("finish(): leaving...");
+            leave();
+        }
 
+        JitsiMeetLogger.i("finish(): finishing...");
         super.finish();
     }
 
@@ -118,9 +238,7 @@ public class JitsiMeetActivity extends AppCompatActivity
     //
 
     protected JitsiMeetView getJitsiView() {
-        JitsiMeetFragment fragment
-            = (JitsiMeetFragment) getSupportFragmentManager().findFragmentById(R.id.jitsiFragment);
-        return fragment != null ? fragment.getJitsiView() : null;
+        return jitsiView;
     }
 
     public void join(@Nullable String url) {
@@ -132,20 +250,16 @@ public class JitsiMeetActivity extends AppCompatActivity
     }
 
     public void join(JitsiMeetConferenceOptions options) {
-        JitsiMeetView view = getJitsiView();
-
-        if (view != null) {
-            view.join(options);
+        if (this.jitsiView != null) {
+            this.jitsiView.join(options);
         } else {
             JitsiMeetLogger.w("Cannot join, view is null");
         }
     }
 
-    public void leave() {
-        JitsiMeetView view = getJitsiView();
-
-        if (view != null) {
-            view.leave();
+    protected void leave() {
+        if (this.jitsiView != null) {
+            this.jitsiView.abort();
         } else {
             JitsiMeetLogger.w("Cannot leave, view is null");
         }
@@ -189,7 +303,7 @@ public class JitsiMeetActivity extends AppCompatActivity
     protected void onConferenceJoined(HashMap<String, Object> extraData) {
         JitsiMeetLogger.i("Conference joined: " + extraData);
         // Launch the service for the ongoing notification.
-        JitsiMeetOngoingConferenceService.launch(this);
+        JitsiMeetOngoingConferenceService.launch(this, extraData);
     }
 
     protected void onConferenceTerminated(HashMap<String, Object> extraData) {
@@ -218,8 +332,25 @@ public class JitsiMeetActivity extends AppCompatActivity
 
     protected void onReadyToClose() {
         JitsiMeetLogger.i("SDK is ready to close");
+        isReadyToClose = true;
         finish();
     }
+
+//    protected void onTranscriptionChunkReceived(HashMap<String, Object> extraData) {
+//        JitsiMeetLogger.i("Transcription chunk received: " + extraData);
+//    }
+
+//    protected void onCustomButtonPressed(HashMap<String, Object> extraData) {
+//         JitsiMeetLogger.i("Custom button pressed: " + extraData);
+//     }
+
+//     protected void onConferenceUniqueIdSet(HashMap<String, Object> extraData) {
+//         JitsiMeetLogger.i("Conference unique id set: " + extraData);
+//     }
+
+//     protected void onRecordingStatusChanged(HashMap<String, Object> extraData) {
+//       JitsiMeetLogger.i("Recording status changed: " + extraData);
+//     }
 
     // Activity lifecycle methods
     //
@@ -252,10 +383,8 @@ public class JitsiMeetActivity extends AppCompatActivity
 
     @Override
     protected void onUserLeaveHint() {
-        JitsiMeetView view = getJitsiView();
-
-        if (view != null) {
-            view.enterPictureInPicture();
+        if (this.jitsiView != null) {
+            this.jitsiView.enterPictureInPicture();
         }
     }
 
@@ -267,6 +396,7 @@ public class JitsiMeetActivity extends AppCompatActivity
         JitsiMeetActivityDelegate.requestPermissions(this, permissions, requestCode, listener);
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         JitsiMeetActivityDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -305,6 +435,18 @@ public class JitsiMeetActivity extends AppCompatActivity
                 case READY_TO_CLOSE:
                     onReadyToClose();
                     break;
+                // case TRANSCRIPTION_CHUNK_RECEIVED:
+                //    onTranscriptionChunkReceived(event.getData());
+                //    break;
+                // case CUSTOM_BUTTON_PRESSED:
+                //    onCustomButtonPressed(event.getData());
+                //    break;
+                // case CONFERENCE_UNIQUE_ID_SET:
+                //     onConferenceUniqueIdSet(event.getData());
+                //     break;
+                // case RECORDING_STATUS_CHANGED:
+                //     onRecordingStatusChanged(event.getData());
+                //     break;
             }
         }
     }

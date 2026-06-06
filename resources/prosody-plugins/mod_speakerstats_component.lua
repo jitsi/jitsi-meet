@@ -1,12 +1,26 @@
-local get_room_from_jid = module:require "util".get_room_from_jid;
-local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
-local is_healthcheck_room = module:require "util".is_healthcheck_room;
+-- Tracks speaking time statistics for conference participants and broadcasts
+-- them to clients via XMPP messages. Receives incoming <message> stanzas
+-- carrying <speakerstats> (dominant speaker events) or <faceLandmarks> children
+-- from clients, and sends outgoing <message> stanzas with a <json-message>
+-- payload (type "speakerstats") to each occupant on request or on join.
+-- Aggregates per-room stats across Jicofo and MUC events, supporting Jibri
+-- recording sessions and face landmarks data.
+local util = module:require "util";
+local is_admin = util.is_admin;
+local get_room_from_jid = util.get_room_from_jid;
+local room_jid_match_rewrite = util.room_jid_match_rewrite;
+local is_jibri = util.is_jibri;
+local is_healthcheck_room = util.is_healthcheck_room;
+local process_host_module = util.process_host_module;
+local is_focus_nick = util.is_focus_nick;
+local is_transcriber = util.is_transcriber;
 local jid_resource = require "util.jid".resource;
-local ext_events = module:require "ext_events"
 local st = require "util.stanza";
 local socket = require "socket";
-local json = require "util.json";
-local um_is_admin = require "core.usermanager".is_admin;
+local json = require 'cjson.safe';
+local jid_split = require 'util.jid'.split;
+local queue = require "prosody.util.queue";
+local array = require "prosody.util.array";
 
 -- we use async to detect Prosody 0.10 and earlier
 local have_async = pcall(require, "util.async");
@@ -16,15 +30,34 @@ if not have_async then
 end
 
 local muc_component_host = module:get_option_string("muc_component");
-if muc_component_host == nil then
-    log("error", "No muc_component specified. No muc to operate on!");
+local main_virtual_host = module:get_option_string("muc_mapper_domain_base");
+
+if muc_component_host == nil or main_virtual_host == nil then
+    module:log("error", "No muc_component specified. No muc to operate on!");
     return;
 end
+local breakout_room_component_host = "breakout." .. main_virtual_host;
+local face_landmarks_history_size = module:get_option_number('faceLandmarks_history_size', 20);
 
-log("info", "Starting speakerstats for %s", muc_component_host);
+module:log("info", "Starting speakerstats for %s", muc_component_host);
 
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
+local main_muc_service;
+
+-- Searches all rooms in the main muc component that holds a breakout room
+-- caches it if found so we don't search it again
+-- we should not cache objects in _data as this is being serialized when calling room:save()
+local function get_main_room(breakout_room)
+    if breakout_room.main_room then
+        return breakout_room.main_room;
+    end
+
+    -- let's search all rooms to find the main room
+    for room in main_muc_service.each_room() do
+        if room._data and room._data.breakout_rooms_active and room._data.breakout_rooms[breakout_room.jid] then
+            breakout_room.main_room = room;
+            return room;
+        end
+    end
 end
 
 -- receives messages from client currently connected to the room
@@ -39,15 +72,16 @@ function on_message(event)
         = event.stanza:get_child('speakerstats', 'http://jitsi.org/jitmeet');
     if speakerStats then
         local roomAddress = speakerStats.attr.room;
+        local silence = speakerStats.attr.silence == 'true';
         local room = get_room_from_jid(room_jid_match_rewrite(roomAddress));
 
         if not room then
-            log("warn", "No room found %s", roomAddress);
+            module:log("warn", "No room found %s", roomAddress);
             return false;
         end
-        
+
         if not room.speakerStats then
-            log("warn", "No speakerStats found for %s", roomAddress);
+            module:log("warn", "No speakerStats found for %s", roomAddress);
             return false;
         end
 
@@ -56,51 +90,55 @@ function on_message(event)
 
         local occupant = room:get_occupant_by_real_jid(from);
         if not occupant then
-            log("warn", "No occupant %s found for %s", from, roomAddress);
+            module:log("warn", "No occupant %s found for %s", from, roomAddress);
             return false;
         end
 
         local newDominantSpeaker = roomSpeakerStats[occupant.jid];
         local oldDominantSpeakerId = roomSpeakerStats['dominantSpeakerId'];
 
-        if oldDominantSpeakerId then
+        if oldDominantSpeakerId and occupant.jid ~= oldDominantSpeakerId then
             local oldDominantSpeaker = roomSpeakerStats[oldDominantSpeakerId];
             if oldDominantSpeaker then
-                oldDominantSpeaker:setDominantSpeaker(false);
+                oldDominantSpeaker:setDominantSpeaker(false, false);
             end
         end
 
         if newDominantSpeaker then
-            newDominantSpeaker:setDominantSpeaker(true);
+            newDominantSpeaker:setDominantSpeaker(true, silence);
         end
 
         room.speakerStats['dominantSpeakerId'] = occupant.jid;
     end
 
-    local facialExpression = event.stanza:get_child('facialExpression', 'http://jitsi.org/jitmeet');
+    local newFaceLandmarks = event.stanza:get_child('faceLandmarks', 'http://jitsi.org/jitmeet');
 
-    if facialExpression then
-        local roomAddress = facialExpression.attr.room;
+    if newFaceLandmarks then
+        local roomAddress = newFaceLandmarks.attr.room;
         local room = get_room_from_jid(room_jid_match_rewrite(roomAddress));
 
         if not room then
-            log("warn", "No room found %s", roomAddress);
+            module:log("warn", "No room found %s", roomAddress);
             return false;
         end
          if not room.speakerStats then
-            log("warn", "No speakerStats found for %s", roomAddress);
+            module:log("warn", "No speakerStats found for %s", roomAddress);
             return false;
         end
         local from = event.stanza.attr.from;
 
         local occupant = room:get_occupant_by_real_jid(from);
-        if not occupant then
-            log("warn", "No occupant %s found for %s", from, roomAddress);
+        if not occupant or not room.speakerStats[occupant.jid] then
+            module:log("warn", "No occupant %s found for %s", from, roomAddress);
             return false;
         end
-        local facialExpressions = room.speakerStats[occupant.jid].facialExpressions;
-        facialExpressions[facialExpression.attr.expression] = 
-            facialExpressions[facialExpression.attr.expression] + tonumber(facialExpression.attr.duration);
+        local faceLandmarks = room.speakerStats[occupant.jid].faceLandmarks;
+        faceLandmarks:push(
+            {
+                faceExpression = newFaceLandmarks.attr.faceExpression,
+                timestamp = tonumber(newFaceLandmarks.attr.timestamp),
+                duration = tonumber(newFaceLandmarks.attr.duration),
+            })
     end
 
     return true
@@ -114,42 +152,55 @@ function new_SpeakerStats(nick, context_user)
     return setmetatable({
         totalDominantSpeakerTime = 0;
         _dominantSpeakerStart = 0;
+        _isSilent = false;
+        _isDominantSpeaker = false;
         nick = nick;
         context_user = context_user;
         displayName = nil;
-        facialExpressions = {
-            happy = 0,
-            neutral = 0,
-            surprised = 0,
-            angry = 0,
-            fearful = 0,
-            disgusted = 0,
-            sad = 0
-        };
+        faceLandmarks = queue.new(face_landmarks_history_size);
     }, SpeakerStats);
 end
 
 -- Changes the dominantSpeaker data for current occupant
 -- saves start time if it is new dominat speaker
 -- or calculates and accumulates time of speaking
-function SpeakerStats:setDominantSpeaker(isNowDominantSpeaker)
-    -- log("debug", "set isDominant %s for %s", tostring(isNowDominantSpeaker), self.nick);
+function SpeakerStats:setDominantSpeaker(isNowDominantSpeaker, silence)
+    -- module:log("debug", "set isDominant %s for %s", tostring(isNowDominantSpeaker), self.nick);
 
-    if not self:isDominantSpeaker() and isNowDominantSpeaker then
-        self._dominantSpeakerStart = socket.gettime()*1000;
-    elseif self:isDominantSpeaker() and not isNowDominantSpeaker then
-        local now = socket.gettime()*1000;
-        local timeElapsed = math.floor(now - self._dominantSpeakerStart);
+    local now = socket.gettime()*1000;
 
-        self.totalDominantSpeakerTime
-            = self.totalDominantSpeakerTime + timeElapsed;
-        self._dominantSpeakerStart = 0;
+    if not self:isDominantSpeaker() and isNowDominantSpeaker and not silence then
+        self._dominantSpeakerStart = now;
+    elseif self:isDominantSpeaker() then
+        if not isNowDominantSpeaker then
+            if not self._isSilent then
+                local timeElapsed = math.floor(now - self._dominantSpeakerStart);
+
+                self.totalDominantSpeakerTime = self.totalDominantSpeakerTime + timeElapsed;
+                self._dominantSpeakerStart = 0;
+            end
+        elseif self._isSilent and not silence then
+            self._dominantSpeakerStart = now;
+        elseif not self._isSilent and silence then
+            local timeElapsed = math.floor(now - self._dominantSpeakerStart);
+
+            self.totalDominantSpeakerTime = self.totalDominantSpeakerTime + timeElapsed;
+            self._dominantSpeakerStart = 0;
+        end
     end
+
+    self._isDominantSpeaker = isNowDominantSpeaker;
+    self._isSilent = silence;
 end
 
 -- Returns true if the tracked user is currently a dominant speaker.
 function SpeakerStats:isDominantSpeaker()
-    return self._dominantSpeakerStart > 0;
+    return self._isDominantSpeaker;
+end
+
+ -- Returns true if the tracked user is currently silent.
+function SpeakerStats:isSilent()
+    return self._isSilent;
 end
 --- End SpeakerStats
 
@@ -158,21 +209,35 @@ function room_created(event)
     local room = event.room;
 
     if is_healthcheck_room(room.jid) then
-        return;
+        return ;
     end
-
     room.speakerStats = {};
+    room.speakerStats.sessionId = room._data.meetingId;
+end
+
+-- create speakerStats for the breakout
+function breakout_room_created(event)
+    local room = event.room;
+    if is_healthcheck_room(room.jid) then
+        return ;
+    end
+    local main_room = get_main_room(room);
+    room.speakerStats = {};
+    room.speakerStats.isBreakout = true
+    room.speakerStats.breakoutRoomId = jid_split(room.jid)
+    room.speakerStats.sessionId = main_room._data.meetingId;
 end
 
 -- Create SpeakerStats object for the joined user
 function occupant_joined(event)
-    local occupant, room = event.occupant, event.room;
+    local occupant, room, stanza = event.occupant, event.room, event.stanza;
 
-    if is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) then
+    if is_healthcheck_room(room.jid)
+        or is_admin(occupant.bare_jid)
+        or is_transcriber(occupant.jid)
+        or is_jibri(occupant) then
         return;
     end
-
-    local occupant = event.occupant;
 
     local nick = jid_resource(occupant.nick);
 
@@ -184,13 +249,13 @@ function occupant_joined(event)
             for jid, values in pairs(room.speakerStats) do
                 -- skip reporting those without a nick('dominantSpeakerId')
                 -- and skip focus if sneaked into the table
-                if values.nick ~= nil and values.nick ~= 'focus' then
+                if values and type(values) == 'table' and values.nick ~= nil and not is_focus_nick(values.nick) then
                     local totalDominantSpeakerTime = values.totalDominantSpeakerTime;
-                    local facialExpressions = values.facialExpressions;
+                    local faceLandmarks = values.faceLandmarks;
                     if totalDominantSpeakerTime > 0 or room:get_occupant_jid(jid) == nil or values:isDominantSpeaker()
-                        or get_participant_expressions_count(facialExpressions) > 0 then
+                        or next(faceLandmarks) ~= nil then
                         -- before sending we need to calculate current dominant speaker state
-                        if values:isDominantSpeaker() then
+                        if values:isDominantSpeaker() and not values:isSilent() then
                             local timeElapsed = math.floor(socket.gettime()*1000 - values._dominantSpeakerStart);
                             totalDominantSpeakerTime = totalDominantSpeakerTime + timeElapsed;
                         end
@@ -198,7 +263,7 @@ function occupant_joined(event)
                         users_json[values.nick] =  {
                             displayName = values.displayName,
                             totalDominantSpeakerTime = totalDominantSpeakerTime,
-                            facialExpressions = facialExpressions
+                            faceLandmarks = array(faceLandmarks:items())
                         };
                     end
                 end
@@ -209,13 +274,19 @@ function occupant_joined(event)
                 body_json.type = 'speakerstats';
                 body_json.users = users_json;
 
-                local stanza = st.message({
-                    from = module.host;
-                    to = occupant.jid; })
-                :tag("json-message", {xmlns='http://jitsi.org/jitmeet'})
-                :text(json.encode(body_json)):up();
+                local json_msg_str, error = json.encode(body_json);
 
-                room:route_stanza(stanza);
+                if json_msg_str then
+                    local stanza = st.message({
+                        from = module.host;
+                        to = occupant.jid; })
+                    :tag("json-message", {xmlns='http://jitsi.org/jitmeet'})
+                    :text(json_msg_str):up();
+
+                    room:route_stanza(stanza);
+                else
+                    module:log('error', 'Error encoding room:%s error:%s', room.jid, error);
+                end
             end
         end
 
@@ -241,7 +312,7 @@ function occupant_leaving(event)
 
     local speakerStatsForOccupant = room.speakerStats[occupant.jid];
     if speakerStatsForOccupant then
-        speakerStatsForOccupant:setDominantSpeaker(false);
+        speakerStatsForOccupant:setDominantSpeaker(false, false);
 
         -- set display name
         local displayName = occupant:get_presence():get_child_text(
@@ -258,38 +329,67 @@ function room_destroyed(event)
         return;
     end
 
-    ext_events.speaker_stats(room, room.speakerStats);
+    module:fire_event("send-speaker-stats", { room = room; roomSpeakerStats = room.speakerStats; });
 end
 
 module:hook("message/host", on_message);
 
--- executed on every host added internally in prosody, including components
-function process_host(host)
-    if host == muc_component_host then -- the conference muc component
-        module:log("info","Hook to muc events on %s", host);
+function process_main_muc_loaded(main_muc, host_module)
+    -- the conference muc component
+    module:log("info", "Hook to muc events on %s", host_module.host);
+    main_muc_service = main_muc;
+    module:log("info", "Main muc service %s", main_muc_service)
+    host_module:hook("muc-room-created", room_created, -1);
+    host_module:hook("muc-occupant-joined", occupant_joined, -1);
+    host_module:hook("muc-occupant-pre-leave", occupant_leaving, -1);
+    host_module:hook("muc-room-destroyed", room_destroyed, 1); -- prosody handles it at 0
+end
 
-        local muc_module = module:context(host);
-        muc_module:hook("muc-room-created", room_created, -1);
-        muc_module:hook("muc-occupant-joined", occupant_joined, -1);
-        muc_module:hook("muc-occupant-pre-leave", occupant_leaving, -1);
-        muc_module:hook("muc-room-destroyed", room_destroyed, -1);
+function process_breakout_muc_loaded(breakout_muc, host_module)
+    -- the Breakout muc component
+    module:log("info", "Hook to muc events on %s", host_module.host);
+    host_module:hook("muc-room-created", breakout_room_created, -1);
+    host_module:hook("muc-occupant-joined", occupant_joined, -1);
+    host_module:hook("muc-occupant-pre-leave", occupant_leaving, -1);
+    host_module:hook("muc-room-destroyed", room_destroyed, 1); -- prosody handles it at 0
+end
+
+-- process or waits to process the conference muc component
+process_host_module(muc_component_host, function(host_module, host)
+    module:log('info', 'Conference component loaded %s', host);
+
+    local muc_module = prosody.hosts[host].modules.muc;
+    if muc_module then
+        process_main_muc_loaded(muc_module, host_module);
+    else
+        module:log('debug', 'Will wait for muc to be available');
+        prosody.hosts[host].events.add_handler('module-loaded', function(event)
+            if (event.module == 'muc') then
+                process_main_muc_loaded(prosody.hosts[host].modules.muc, host_module);
+            end
+        end);
     end
-end
+end);
 
-if prosody.hosts[muc_component_host] == nil then
-    module:log("info","No muc component found, will listen for it: %s", muc_component_host)
+-- process or waits to process the breakout rooms muc component
+process_host_module(breakout_room_component_host, function(host_module, host)
+    module:log('info', 'Breakout component loaded %s', host);
 
-    -- when a host or component is added
-    prosody.events.add_handler("host-activated", process_host);
-else
-    process_host(muc_component_host);
-end
-
-function get_participant_expressions_count(facialExpressions)
-    local count = 0;
-    for expression, value in pairs(facialExpressions) do
-        count = count + value;
+    local muc_module = prosody.hosts[host].modules.muc;
+    if muc_module then
+        process_breakout_muc_loaded(muc_module, host_module);
+    else
+        module:log('debug', 'Will wait for muc to be available');
+        prosody.hosts[host].events.add_handler('module-loaded', function(event)
+            if (event.module == 'muc') then
+                process_breakout_muc_loaded(prosody.hosts[host].modules.muc, host_module);
+            end
+        end);
     end
+end);
 
-    return count;
-end
+process_host_module(main_virtual_host, function(host_module)
+    module:context(host_module.host):fire_event('jitsi-add-identity', {
+        name = 'speakerstats'; host = module.host;
+    });
+end);

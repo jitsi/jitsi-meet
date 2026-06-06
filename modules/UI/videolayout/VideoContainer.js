@@ -1,13 +1,17 @@
-/* global $, APP, interfaceConfig */
+/* global APP, interfaceConfig */
 
 /* eslint-disable no-unused-vars */
+import Logger from '@jitsi/logger';
+import $ from 'jquery';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import { browser } from '../../../react/features/base/lib-jitsi-meet';
-import { isTestModeEnabled } from '../../../react/features/base/testing';
-import { ORIENTATION, LargeVideoBackground, updateLastLargeVideoMediaEvent } from '../../../react/features/large-video';
-import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
+import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip/constants';
+import { setLargeVideoDimensions } from '../../../react/features/large-video/actions.any';
+import { LargeVideoBackground, ORIENTATION } from '../../../react/features/large-video/components/LargeVideoBackground';
+import { LAYOUTS } from '../../../react/features/video-layout/constants';
+import { getCurrentLayout } from '../../../react/features/video-layout/functions.any';
 /* eslint-enable no-unused-vars */
 import UIUtil from '../util/UIUtil';
 
@@ -17,16 +21,17 @@ import LargeContainer from './LargeContainer';
 // FIXME should be 'video'
 export const VIDEO_CONTAINER_TYPE = 'camera';
 
+// Corresponds to animation duration from the animatedFadeIn and animatedFadeOut CSS classes.
 const FADE_DURATION_MS = 300;
 
+const logger = Logger.getLogger('ui:VideoContainer');
+
 /**
- * List of container events that we are going to process, will be added as listener to the
- * container for every event in the list. The latest event will be stored in redux.
+ * List of container events that we are going to process for the large video.
+ *
+ * NOTE: Currently used only for logging for debug purposes.
  */
-const containerEvents = [
-    'abort', 'canplay', 'canplaythrough', 'emptied', 'ended', 'error', 'loadeddata', 'loadedmetadata', 'loadstart',
-    'pause', 'play', 'playing', 'ratechange', 'stalled', 'suspend', 'waiting'
-];
+const containerEvents = [ 'abort', 'canplaythrough', 'ended', 'error', 'stalled', 'suspend', 'waiting' ];
 
 /**
  * Returns an array of the video dimensions, so that it keeps it's aspect
@@ -37,13 +42,15 @@ const containerEvents = [
  * @param videoHeight the height of the video to position
  * @param videoSpaceWidth the width of the available space
  * @param videoSpaceHeight the height of the available space
+ * @param subtractFilmstrip whether to subtract the filmstrip or not
  * @return an array with 2 elements, the video width and the video height
  */
 function computeDesktopVideoSize( // eslint-disable-line max-params
         videoWidth,
         videoHeight,
         videoSpaceWidth,
-        videoSpaceHeight) {
+        videoSpaceHeight,
+        subtractFilmstrip) {
     if (videoWidth === 0 || videoHeight === 0 || videoSpaceWidth === 0 || videoSpaceHeight === 0) {
         // Avoid NaN values caused by division by 0.
         return [ 0, 0 ];
@@ -54,8 +61,10 @@ function computeDesktopVideoSize( // eslint-disable-line max-params
     let availableHeight = Math.max(videoHeight, videoSpaceHeight);
 
     if (interfaceConfig.VERTICAL_FILMSTRIP) {
-        // eslint-disable-next-line no-param-reassign
-        videoSpaceWidth -= Filmstrip.getVerticalFilmstripWidth();
+        if (subtractFilmstrip) {
+            // eslint-disable-next-line no-param-reassign
+            videoSpaceWidth -= Filmstrip.getVerticalFilmstripWidth();
+        }
     } else {
         // eslint-disable-next-line no-param-reassign
         videoSpaceHeight -= Filmstrip.getFilmstripHeight();
@@ -178,8 +187,8 @@ export class VideoContainer extends LargeContainer {
     /**
      *
      */
-    get $video() {
-        return $('#largeVideo');
+    get video() {
+        return document.getElementById('largeVideo');
     }
 
     /**
@@ -212,6 +221,13 @@ export class VideoContainer extends LargeContainer {
         this._backgroundOrientation = null;
 
         /**
+         * The React root for the large video background component.
+         * @private
+         * @type {import('react-dom/client').Root|null}
+         */
+        this._backgroundRoot = null;
+
+        /**
          * Flag indicates whether or not the background should be rendered.
          * If the background will not be visible then it is hidden to save
          * on performance.
@@ -226,30 +242,31 @@ export class VideoContainer extends LargeContainer {
          * @type {boolean}
          */
         this.avatarDisplayed = false;
-        this.$avatar = $('#dominantSpeaker');
+        this.avatar = document.getElementById('dominantSpeaker');
 
         /**
-         * A jQuery selector of the remote connection message.
-         * @type {jQuery|HTMLElement}
+         * The HTMLElements of the remote connection message.
+         * @type {HTMLElement}
          */
-        this.$remoteConnectionMessage = $('#remoteConnectionMessage');
-
-        this.$remotePresenceMessage = $('#remotePresenceMessage');
+        this.remoteConnectionMessage = document.getElementById('remoteConnectionMessage');
+        this.remotePresenceMessage = document.getElementById('remotePresenceMessage');
 
         this.$wrapper = $('#largeVideoWrapper');
 
-        /**
-         * FIXME: currently using parent() because I can't come up with name
-         * for id. We'll need to probably refactor the HTML related to the large
-         * video anyway.
-         */
-        this.$wrapperParent = this.$wrapper.parent();
-        this.avatarHeight = $('#dominantSpeakerAvatarContainer').height();
-        this.$video[0].onplaying = function(event) {
+        this.wrapperParent = document.getElementById('largeVideoElementsContainer');
+        this.avatarHeight = document.getElementById('dominantSpeakerAvatarContainer').getBoundingClientRect().height;
+        this.video.onplaying = function(event) {
+            logger.debug('Large video is playing!');
             if (typeof resizeContainer === 'function') {
                 resizeContainer(event);
             }
         };
+
+        containerEvents.forEach(event => {
+            this.video.addEventListener(event, () => {
+                logger.debug(`${event} handler was called for the large video.`);
+            });
+        });
 
         /**
          * A Set of functions to invoke when the video element resizes.
@@ -258,15 +275,8 @@ export class VideoContainer extends LargeContainer {
          */
         this._resizeListeners = new Set();
 
-        this.$video[0].onresize = this._onResize.bind(this);
-
-        if (isTestModeEnabled(APP.store.getState())) {
-            const cb = name => APP.store.dispatch(updateLastLargeVideoMediaEvent(name));
-
-            containerEvents.forEach(event => {
-                this.$video[0].addEventListener(event, cb.bind(this, event));
-            });
-        }
+        this.video.onresize = this._onResize.bind(this);
+        this._play = this._play.bind(this);
     }
 
     /**
@@ -294,7 +304,7 @@ export class VideoContainer extends LargeContainer {
      * @returns {{width, height}}
      */
     getStreamSize() {
-        const video = this.$video[0];
+        const video = this.video;
 
 
         return {
@@ -307,16 +317,18 @@ export class VideoContainer extends LargeContainer {
      * Calculate optimal video size for specified container size.
      * @param {number} containerWidth container width
      * @param {number} containerHeight container height
+     * @param {number} verticalFilmstripWidth current width of the vertical filmstrip
      * @returns {{availableWidth, availableHeight}}
      */
-    _getVideoSize(containerWidth, containerHeight) {
+    _getVideoSize(containerWidth, containerHeight, verticalFilmstripWidth) {
         const { width, height } = this.getStreamSize();
 
         if (this.stream && this.isScreenSharing()) {
             return computeDesktopVideoSize(width,
                 height,
                 containerWidth,
-                containerHeight);
+                containerHeight,
+                verticalFilmstripWidth < FILMSTRIP_BREAKPOINT);
         }
 
         return computeCameraVideoSize(width,
@@ -334,14 +346,15 @@ export class VideoContainer extends LargeContainer {
      * @param {number} height video height
      * @param {number} containerWidth container width
      * @param {number} containerHeight container height
+     * @param {number} verticalFilmstripWidth current width of the vertical filmstrip
      * @returns {{horizontalIndent, verticalIndent}}
      */
-    getVideoPosition(width, height, containerWidth, containerHeight) {
+    getVideoPosition(width, height, containerWidth, containerHeight, verticalFilmstripWidth) {
         let containerWidthToUse = containerWidth;
 
         /* eslint-enable max-params */
         if (this.stream && this.isScreenSharing()) {
-            if (interfaceConfig.VERTICAL_FILMSTRIP) {
+            if (interfaceConfig.VERTICAL_FILMSTRIP && verticalFilmstripWidth < FILMSTRIP_BREAKPOINT) {
                 containerWidthToUse -= Filmstrip.getVerticalFilmstripWidth();
             }
 
@@ -366,8 +379,8 @@ export class VideoContainer extends LargeContainer {
      * @returns {void}
      */
     positionRemoteStatusMessages() {
-        this._positionParticipantStatus(this.$remoteConnectionMessage);
-        this._positionParticipantStatus(this.$remotePresenceMessage);
+        this._positionParticipantStatus(this.remoteConnectionMessage);
+        this._positionParticipantStatus(this.remotePresenceMessage);
     }
 
     /**
@@ -377,18 +390,16 @@ export class VideoContainer extends LargeContainer {
      * @private
      * @returns {void}
      */
-    _positionParticipantStatus($element) {
+    _positionParticipantStatus(element) {
         if (this.avatarDisplayed) {
-            const $avatarImage = $('#dominantSpeakerAvatarContainer');
+            const avatarImage = document.getElementById('dominantSpeakerAvatarContainer').getBoundingClientRect();
 
-            $element.css(
-                'top',
-                $avatarImage.offset().top + $avatarImage.height() + 10);
+            element.style.top = avatarImage.top + avatarImage.height + 10;
         } else {
-            const height = $element.height();
-            const parentHeight = $element.parent().height();
+            const height = element.getBoundingClientRect().height;
+            const parentHeight = element.parentElement.getBoundingClientRect().height;
 
-            $element.css('top', (parentHeight / 2) - (height / 2));
+            element.style.top = (parentHeight / 2) - (height / 2);
         }
     }
 
@@ -398,12 +409,15 @@ export class VideoContainer extends LargeContainer {
     resize(containerWidth, containerHeight, animate = false) {
         // XXX Prevent TypeError: undefined is not an object when the Web
         // browser does not support WebRTC (yet).
-        if (this.$video.length === 0) {
+        if (!this.video) {
             return;
         }
-        const currentLayout = getCurrentLayout(APP.store.getState());
+        const state = APP.store.getState();
+        const currentLayout = getCurrentLayout(state);
 
-        if (currentLayout === LAYOUTS.TILE_VIEW) {
+        const verticalFilmstripWidth = state['features/filmstrip'].width?.current;
+
+        if (currentLayout === LAYOUTS.TILE_VIEW || currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW) {
             // We don't need to resize the large video since it won't be displayed and we'll resize when returning back
             // to stage view.
             return;
@@ -411,7 +425,7 @@ export class VideoContainer extends LargeContainer {
 
         this.positionRemoteStatusMessages();
 
-        const [ width, height ] = this._getVideoSize(containerWidth, containerHeight);
+        const [ width, height ] = this._getVideoSize(containerWidth, containerHeight, verticalFilmstripWidth);
 
         if (width === 0 || height === 0) {
             // We don't need to set 0 for width or height since the visibility is controlled by the visibility css prop
@@ -432,7 +446,9 @@ export class VideoContainer extends LargeContainer {
         this._updateBackground();
 
         const { horizontalIndent, verticalIndent }
-            = this.getVideoPosition(width, height, containerWidth, containerHeight);
+            = this.getVideoPosition(width, height, containerWidth, containerHeight, verticalFilmstripWidth);
+
+        APP.store.dispatch(setLargeVideoDimensions(height, width));
 
         this.$wrapper.animate({
             width,
@@ -462,14 +478,39 @@ export class VideoContainer extends LargeContainer {
     }
 
     /**
+     * Plays the large video element.
+     *
+     * @param {number} retries - Number of retries to play the large video if play fails.
+     * @returns {void}
+     */
+    _play(retries = 0) {
+        this.video.play()
+            .then(() => {
+                logger.debug(`Successfully played large video after ${retries + 1} retries!`);
+            })
+            .catch(e => {
+                if (retries < 3) {
+                    logger.debug(`Error while trying to playing the large video. Will retry after 1s. Retries: ${
+                        retries}. Error: ${e}`);
+                    window.setTimeout(() => {
+                        this._play(retries + 1);
+                    }, 1000);
+                } else {
+                    logger.error(`Error while trying to playing the large video after 3 retries: ${e}`);
+                }
+            });
+    }
+
+    /**
      * Update video stream.
      * @param {string} userID
      * @param {JitsiTrack?} stream new stream
      * @param {string} videoType video type
      */
     setStream(userID, stream, videoType) {
-        this.userId = userID;
-        if (this.stream === stream) {
+        if (this.userId === userID && this.stream === stream && !stream?.forceStreamToReattach) {
+            logger.debug(`SetStream on the large video for user ${userID} ignored: the stream is not changed!`);
+
             // Handles the use case for the remote participants when the
             // videoType is received with delay after turning on/off the
             // desktop sharing.
@@ -481,31 +522,43 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
+        this.userId = userID;
+
+        if (stream?.forceStreamToReattach) {
+            delete stream.forceStreamToReattach;
+        }
+
         // detach old stream
-        if (this.stream) {
-            this.stream.detach(this.$video[0]);
+        if (this.stream && this.video) {
+            this.stream.detach(this.video);
         }
 
         this.stream = stream;
         this.videoType = videoType;
 
         if (!stream) {
+            logger.debug('SetStream on the large video is called without a stream argument!');
+
             return;
         }
 
-        stream.attach(this.$video[0]);
+        if (this.video) {
+            logger.debug(`Attaching a remote track to the large video for user ${userID}`);
+            stream.attach(this.video).catch(error => {
+                logger.error(`Attaching the remote track ${stream} to large video has failed with `, error);
+            });
 
-        // Ensure large video gets play() called on it when a new stream is attached to it. This is necessary in the
-        // case of Safari as autoplay doesn't kick-in automatically on Safari 15 and newer versions.
-        browser.isWebKitBased() && this.$video[0].play();
+            // Ensure large video gets play() called on it when a new stream is attached to it.
+            this._play();
 
-        const flipX = stream.isLocal() && this.localFlipX && !this.isScreenSharing();
+            const flipX = stream.isLocal() && this.localFlipX && !this.isScreenSharing();
 
-        this.$video.css({
-            transform: flipX ? 'scaleX(-1)' : 'none'
-        });
-
-        this._updateBackground();
+            this.video.style.transform = flipX ? 'scaleX(-1)' : 'none';
+            this._updateBackground();
+        } else {
+            logger.debug(`SetStream on the large video won't attach a track for ${
+                userID} because no large video element was found!`);
+        }
     }
 
     /**
@@ -514,12 +567,10 @@ export class VideoContainer extends LargeContainer {
      */
     setLocalFlipX(val) {
         this.localFlipX = val;
-        if (!this.$video || !this.stream || !this.stream.isLocal()) {
+        if (!this.video || !this.stream || !this.stream.isLocal() || this.isScreenSharing()) {
             return;
         }
-        this.$video.css({
-            transform: this.localFlipX ? 'scaleX(-1)' : 'none'
-        });
+        this.video.style.transform = this.localFlipX ? 'scaleX(-1)' : 'none';
 
         this._updateBackground();
     }
@@ -538,37 +589,30 @@ export class VideoContainer extends LargeContainer {
      * @param {boolean} show
      */
     showAvatar(show) {
-        this.$avatar.css('visibility', show ? 'visible' : 'hidden');
+        this.avatar.style.visibility = show ? 'visible' : 'hidden';
         this.avatarDisplayed = show;
 
         APP.API.notifyLargeVideoVisibilityChanged(show);
     }
 
     /**
-     * We are doing fadeOut/fadeIn animations on parent div which wraps
-     * largeVideo, because when Temasys plugin is in use it replaces
-     * <video> elements with plugin <object> tag. In Safari jQuery is
-     * unable to store values on this plugin object which breaks all
-     * animation effects performed on it directly.
-     *
-     * TODO: refactor this since Temasys is no longer supported.
+     * Show video container.
      */
     show() {
         return new Promise(resolve => {
-            this.$wrapperParent.css('visibility', 'visible').fadeTo(
-                FADE_DURATION_MS,
-                1,
-                () => {
-                    this._isHidden = false;
-                    this._updateBackground();
-                    resolve();
-                }
-            );
+            this.wrapperParent.style.visibility = 'visible';
+            this.wrapperParent.classList.remove('animatedFadeOut');
+            this.wrapperParent.classList.add('animatedFadeIn');
+            setTimeout(() => {
+                this._isHidden = false;
+                this._updateBackground();
+                resolve();
+            }, FADE_DURATION_MS);
         });
     }
 
     /**
-     *
+     * Hide video container.
      */
     hide() {
         // as the container is hidden/replaced by another container
@@ -576,12 +620,14 @@ export class VideoContainer extends LargeContainer {
         this.showAvatar(false);
 
         return new Promise(resolve => {
-            this.$wrapperParent.fadeTo(FADE_DURATION_MS, 0, () => {
-                this.$wrapperParent.css('visibility', 'hidden');
+            this.wrapperParent.classList.remove('animatedFadeIn');
+            this.wrapperParent.classList.add('animatedFadeOut');
+            setTimeout(() => {
+                this.wrapperParent.style.visibility = 'hidden';
                 this._isHidden = true;
                 this._updateBackground();
                 resolve();
-            });
+            }, FADE_DURATION_MS);
         });
     }
 
@@ -620,7 +666,10 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        ReactDOM.render(
+        if (!this._backgroundRoot) {
+            this._backgroundRoot = createRoot(document.getElementById('largeVideoBackgroundContainer'));
+        }
+        this._backgroundRoot.render(
             <LargeVideoBackground
                 hidden = { this._hideBackground || this._isHidden }
                 mirror = {
@@ -629,9 +678,8 @@ export class VideoContainer extends LargeContainer {
                     && this.localFlipX
                 }
                 orientationFit = { this._backgroundOrientation }
-                videoElement = { this.$video && this.$video[0] }
-                videoTrack = { this.stream } />,
-            document.getElementById('largeVideoBackgroundContainer')
+                videoElement = { this.video }
+                videoTrack = { this.stream } />
         );
     }
 }

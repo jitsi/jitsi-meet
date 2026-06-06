@@ -20,7 +20,6 @@ import android.media.AudioAttributes;
 import android.media.AudioDeviceInfo;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
-import android.os.Build;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -44,6 +43,12 @@ class AudioDeviceHandlerGeneric implements
      * Reference to the main {@code AudioModeModule}.
      */
     private AudioModeModule module;
+
+    /**
+     * Constant defining a Hearing Aid. Only available on API level >= 28.
+     * The value of: AudioDeviceInfo.TYPE_HEARING_AID
+     */
+    private static final int TYPE_HEARING_AID = 23;
 
     /**
      * Constant defining a USB headset. Only available on API level >= 26.
@@ -81,10 +86,12 @@ class AudioDeviceHandlerGeneric implements
                         devices.add(AudioModeModule.DEVICE_EARPIECE);
                         break;
                     case AudioDeviceInfo.TYPE_BUILTIN_SPEAKER:
+                    case AudioDeviceInfo.TYPE_HDMI:
                         devices.add(AudioModeModule.DEVICE_SPEAKER);
                         break;
                     case AudioDeviceInfo.TYPE_WIRED_HEADPHONES:
                     case AudioDeviceInfo.TYPE_WIRED_HEADSET:
+                    case TYPE_HEARING_AID:
                     case TYPE_USB_HEADSET:
                         devices.add(AudioModeModule.DEVICE_HEADPHONES);
                         break;
@@ -219,22 +226,17 @@ class AudioDeviceHandlerGeneric implements
         audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
         audioManager.setMicrophoneMute(false);
 
-        int gotFocus;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            gotFocus = audioManager.requestAudioFocus(new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                .setAudioAttributes(
-                    new AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
-                        .build()
-                )
-                .setAcceptsDelayedFocusGain(true)
-                .setOnAudioFocusChangeListener(this)
-                .build()
-            );
-        } else {
-            gotFocus = audioManager.requestAudioFocus(this, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN);
-        }
+        int gotFocus = audioManager.requestAudioFocus(new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+            .setAudioAttributes(
+                new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                    .build()
+            )
+            .setAcceptsDelayedFocusGain(true)
+            .setOnAudioFocusChangeListener(this)
+            .build()
+        );
 
         if (gotFocus == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
             JitsiMeetLogger.w(TAG + " Audio focus request failed");

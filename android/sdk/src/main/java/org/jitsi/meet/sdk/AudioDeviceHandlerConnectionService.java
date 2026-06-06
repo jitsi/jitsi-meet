@@ -18,9 +18,10 @@ package org.jitsi.meet.sdk;
 
 import android.content.Context;
 import android.media.AudioManager;
-import android.os.Build;
 import android.telecom.CallAudioState;
 import androidx.annotation.RequiresApi;
+
+import com.facebook.react.bridge.ReactContext;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,7 +33,6 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
  * {@link AudioModeModule.AudioDeviceHandlerInterface} module implementing device handling for
  * Android versions >= O when ConnectionService is enabled.
  */
-@RequiresApi(Build.VERSION_CODES.O)
 class AudioDeviceHandlerConnectionService implements
         AudioModeModule.AudioDeviceHandlerInterface,
         RNConnectionService.CallAudioStateListener {
@@ -48,6 +48,8 @@ class AudioDeviceHandlerConnectionService implements
      * Reference to the main {@code AudioModeModule}.
      */
     private AudioModeModule module;
+
+    private RNConnectionService rcs;
 
     /**
      * Converts any of the "DEVICE_" constants into the corresponding
@@ -141,8 +143,8 @@ class AudioDeviceHandlerConnectionService implements
         JitsiMeetLogger.i("Using " + TAG + " as the audio device handler");
 
         module = audioModeModule;
+        rcs = module.getContext().getNativeModule(RNConnectionService.class);
 
-        RNConnectionService rcs = ReactInstanceManagerHolder.getNativeModule(RNConnectionService.class);
         if (rcs != null) {
             rcs.setCallAudioStateListener(this);
         } else {
@@ -152,9 +154,9 @@ class AudioDeviceHandlerConnectionService implements
 
     @Override
     public void stop() {
-        RNConnectionService rcs = ReactInstanceManagerHolder.getNativeModule(RNConnectionService.class);
         if (rcs != null) {
             rcs.setCallAudioStateListener(null);
+            rcs = null;
         } else {
             JitsiMeetLogger.w(TAG + " Couldn't set call audio state listener, module is null");
         }

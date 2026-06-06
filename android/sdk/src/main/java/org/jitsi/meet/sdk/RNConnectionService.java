@@ -3,21 +3,25 @@ package org.jitsi.meet.sdk;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.telecom.DisconnectCause;
 import android.telecom.PhoneAccount;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.telecom.VideoProfile;
+
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.module.annotations.ReactModule;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
@@ -27,7 +31,6 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
  *
  * @author Pawel Domas
  */
-@RequiresApi(api = Build.VERSION_CODES.O)
 @ReactModule(name = RNConnectionService.NAME)
 class RNConnectionService extends ReactContextBaseJavaModule {
 
@@ -35,6 +38,7 @@ class RNConnectionService extends ReactContextBaseJavaModule {
 
     private static final String TAG = ConnectionService.TAG;
 
+    private static RNConnectionService sRNConnectionServiceInstance;
     /**
      * Handler for dealing with call state changes. We are acting as a proxy between ConnectionService
      * and other modules such as {@link AudioModeModule}.
@@ -47,7 +51,6 @@ class RNConnectionService extends ReactContextBaseJavaModule {
      * @param audioRoute the new audio route to be set. See
      * {@link android.telecom.CallAudioState} constants prefixed with "ROUTE_".
      */
-    @RequiresApi(api = Build.VERSION_CODES.O)
     static void setAudioRoute(int audioRoute) {
         for (ConnectionService.ConnectionImpl c
                 : ConnectionService.getConnections()) {
@@ -57,6 +60,21 @@ class RNConnectionService extends ReactContextBaseJavaModule {
 
     RNConnectionService(ReactApplicationContext reactContext) {
         super(reactContext);
+        sRNConnectionServiceInstance = this;
+    }
+
+    static RNConnectionService getInstance() {
+        return sRNConnectionServiceInstance;
+    }
+
+    @ReactMethod
+    public void addListener(String eventName) {
+        // Keep: Required for RN built in Event Emitter Calls.
+    }
+
+    @ReactMethod
+    public void removeListeners(Integer count) {
+        // Keep: Required for RN built in Event Emitter Calls.
     }
 
     /**
@@ -183,7 +201,7 @@ class RNConnectionService extends ReactContextBaseJavaModule {
      * Called by the JS side to update the call's state.
      *
      * @param callUUID - the call's UUID.
-     * @param callState - the map which carries infor about the current call's
+     * @param callState - the map which carries info about the current call's
      * state. See static fields in {@link ConnectionService.ConnectionImpl}
      * prefixed with "KEY_" for the values supported by the Android
      * implementation.
@@ -215,5 +233,23 @@ class RNConnectionService extends ReactContextBaseJavaModule {
 
     interface CallAudioStateListener {
         void onCallAudioStateChange(android.telecom.CallAudioState callAudioState);
+    }
+
+    /**
+     * Helper function to send an event to JavaScript.
+     *
+     * @param eventName {@code String} containing the event name.
+     * @param data {@code Object} optional ancillary data for the event.
+     */
+    void emitEvent(
+        String eventName,
+        @Nullable Object data) {
+        ReactContext reactContext = getReactApplicationContext();
+
+        if (reactContext != null) {
+            reactContext
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit(eventName, data);
+        }
     }
 }

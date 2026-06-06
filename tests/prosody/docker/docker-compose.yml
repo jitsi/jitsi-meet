@@ -1,0 +1,14 @@
+services:
+  prosody:
+    build:
+      context: ../../..
+      dockerfile: tests/prosody/docker/Dockerfile
+    ports:
+      - "5222:5222"
+      - "5280:5280"
+    healthcheck:
+      test: ["CMD-SHELL", "prosodyctl status | grep -q running"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+      start_period: 5s

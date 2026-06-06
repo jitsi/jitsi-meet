@@ -20,7 +20,7 @@
             width: 28px;
 
             i {
-                line-height: 28px;
+                line-height: 1.75rem;
                 margin: auto;
             }
         }
@@ -35,16 +35,9 @@
             padding-left: 10px;
 
             i {
-                line-height: 20px;
+                line-height: 1.25rem;
                 margin: auto;
             }
         }
     }
-}
-
-/**
- * Styles errors in the MultiSelectAutocomplete.
- */
-.autocomplete-error {
-    min-width: 260px;
 }

@@ -1,3 +1,6 @@
+-- We need this for prosody 13.0
+component_admins_as_room_owners = true
+
 plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }
 
 -- domain mapper options, must at least have domain base set to use the mapper
@@ -12,7 +15,18 @@ external_services = {
 
 cross_domain_bosh = false;
 consider_bosh_secure = true;
+consider_websocket_secure = true;
 -- https_ports = { }; -- Remove this line to prevent listening on port 5284
+
+-- by default prosody 0.12 sends cors headers, if you want to disable it uncomment the following (the config is available on 0.12.1)
+--http_cors_override = {
+--    bosh = {
+--        enabled = false;
+--    };
+--    websocket = {
+--        enabled = false;
+--    };
+--}
 
 -- https://ssl-config.mozilla.org/#server=haproxy&version=2.1&config=intermediate&openssl=1.1.0g&guideline=5.4
 ssl = {
@@ -25,9 +39,13 @@ unlimited_jids = {
     "jvb@auth.jitmeet.example.com"
 }
 
+-- https://prosody.im/doc/modules/mod_smacks
+smacks_max_unacked_stanzas = 5;
+smacks_hibernation_time = 60;
+smacks_max_old_sessions = 1;
+
 VirtualHost "jitmeet.example.com"
-    -- enabled = false -- Remove this line to enable this host
-    authentication = "anonymous"
+    authentication = "jitsi-anonymous" -- do not delete me
     -- Properties below are modified by jitsi-meet-tokens package config
     -- and authentication above is switched to "token"
     --app_id="example_app_id"
@@ -40,20 +58,17 @@ VirtualHost "jitmeet.example.com"
         key = "/etc/prosody/certs/jitmeet.example.com.key";
         certificate = "/etc/prosody/certs/jitmeet.example.com.crt";
     }
-    av_moderation_component = "avmoderation.jitmeet.example.com"
-    speakerstats_component = "speakerstats.jitmeet.example.com"
-    conference_duration_component = "conferenceduration.jitmeet.example.com"
     -- we need bosh
     modules_enabled = {
         "bosh";
-        "pubsub";
+        "websocket";
+        "smacks";
         "ping"; -- Enable mod_ping
-        "speakerstats";
         "external_services";
+        "features_identity";
         "conference_duration";
         "muc_lobby_rooms";
         "muc_breakout_rooms";
-        "av_moderation";
     }
     c2s_require_encryption = false
     lobby_muc = "lobby.jitmeet.example.com"
@@ -65,13 +80,17 @@ Component "conference.jitmeet.example.com" "muc"
     restrict_room_creation = true
     storage = "memory"
     modules_enabled = {
+        "muc_hide_all";
         "muc_meeting_id";
         "muc_domain_mapper";
-        "polls";
         --"token_verification";
         "muc_rate_limit";
+        "muc_password_whitelist";
     }
     admins = { "focusUser@auth.jitmeet.example.com" }
+    muc_password_whitelist = {
+        "focusUser@auth.jitmeet.example.com"
+    }
     muc_room_locking = false
     muc_room_default_public_jids = true
 
@@ -79,10 +98,11 @@ Component "breakout.jitmeet.example.com" "muc"
     restrict_room_creation = true
     storage = "memory"
     modules_enabled = {
+        "muc_hide_all";
         "muc_meeting_id";
         "muc_domain_mapper";
-        --"token_verification";
         "muc_rate_limit";
+        "polls";
     }
     admins = { "focusUser@auth.jitmeet.example.com" }
     muc_room_locking = false
@@ -92,6 +112,7 @@ Component "breakout.jitmeet.example.com" "muc"
 Component "internal.auth.jitmeet.example.com" "muc"
     storage = "memory"
     modules_enabled = {
+        "muc_hide_all";
         "ping";
     }
     admins = { "focusUser@auth.jitmeet.example.com", "jvb@auth.jitmeet.example.com" }
@@ -101,8 +122,17 @@ Component "internal.auth.jitmeet.example.com" "muc"
 VirtualHost "auth.jitmeet.example.com"
     modules_enabled = {
         "limits_exception";
+        "smacks";
     }
     authentication = "internal_hashed"
+    smacks_hibernation_time = 15;
+
+VirtualHost "recorder.jitmeet.example.com"
+    modules_enabled = {
+      "smacks";
+    }
+    authentication = "internal_hashed"
+    smacks_max_old_sessions = 2000;
 
 -- Proxy to jicofo's user JID, so that it doesn't have to register as a component.
 Component "focus.jitmeet.example.com" "client_proxy"
@@ -111,10 +141,13 @@ Component "focus.jitmeet.example.com" "client_proxy"
 Component "speakerstats.jitmeet.example.com" "speakerstats_component"
     muc_component = "conference.jitmeet.example.com"
 
-Component "conferenceduration.jitmeet.example.com" "conference_duration_component"
+Component "endconference.jitmeet.example.com" "end_conference"
     muc_component = "conference.jitmeet.example.com"
 
 Component "avmoderation.jitmeet.example.com" "av_moderation_component"
+    muc_component = "conference.jitmeet.example.com"
+
+Component "filesharing.jitmeet.example.com" "filesharing_component"
     muc_component = "conference.jitmeet.example.com"
 
 Component "lobby.jitmeet.example.com" "muc"
@@ -123,6 +156,12 @@ Component "lobby.jitmeet.example.com" "muc"
     muc_room_locking = false
     muc_room_default_public_jids = true
     modules_enabled = {
+        "muc_hide_all";
         "muc_rate_limit";
-        "polls";
     }
+
+Component "metadata.jitmeet.example.com" "room_metadata_component"
+    muc_component = "conference.jitmeet.example.com"
+    breakout_rooms_component = "breakout.jitmeet.example.com"
+
+Component "polls.jitmeet.example.com" "polls_component"

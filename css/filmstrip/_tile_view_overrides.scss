@@ -2,7 +2,9 @@
  * Various overrides outside of the filmstrip to style the app to support a
  * tiled thumbnail experience.
  */
-.tile-view {
+.tile-view,
+.whiteboard-container,
+.stage-filmstrip {
     /**
      * Let the avatar grow with the tile.
      */
@@ -15,10 +17,8 @@
      * Hide various features that should not be displayed while in tile view.
      */
     #dominantSpeaker,
-    #filmstripLocalVideoThumbnail,
     #largeVideoElementsContainer,
-    #sharedVideo,
-    .filmstrip__toolbar {
+    #sharedVideo {
         display: none;
     }
 

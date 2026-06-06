@@ -1,12 +1,24 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.facebook.react'
 apply plugin: 'maven-publish'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
+    ndkVersion rootProject.ext.ndkVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        buildConfigField "String", "SDK_VERSION", "\"$sdkVersion\""
+        // Library modules don't get RN's app-mode CMake defaults; set them here.
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_STL=c++_shared",
+                          "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
+                          "-DREACT_ANDROID_DIR=${rootProject.projectDir}/../node_modules/react-native/ReactAndroid",
+                          "-DPROJECT_BUILD_DIR=${project.layout.buildDirectory.get().asFile}"
+            }
+        }
     }
 
     buildTypes {
@@ -29,64 +41,111 @@ android {
             }
         }
     }
+
+    // JNI shim that registers TurboModules so consumers don't need libappmodules.so.
+    externalNativeBuild {
+        cmake { path 'src/main/jni/CMakeLists.txt' }
+    }
+    buildFeatures {
+        prefab true
+    }
+    // Exclude RN core .so files; consumers get them from react-android transitively.
+    packagingOptions {
+        excludes += [
+            "**/libc++_shared.so",
+            "**/libfbjni.so",
+            "**/libjsi.so",
+            "**/libreactnative.so",
+            "**/libreactnativejni.so",
+            "**/libturbomodulejsijni.so",
+        ]
+    }
+
+    namespace 'org.jitsi.meet.sdk'
+}
+
+// Generate autolinking.cpp + Android-autolinking.cmake for our CMake to include.
+def jitsiAutolinkOutDir = layout.buildDirectory.dir('generated/autolinking/src/main/jni')
+def jitsiGenerateAutolinking = tasks.register('jitsiGenerateAutolinkingNewArchitectureFiles',
+        com.facebook.react.tasks.GenerateAutolinkingNewArchitecturesFileTask) {
+    autolinkInputFile.set(rootProject.file('build/generated/autolinking/autolinking.json'))
+    generatedOutputDirectory.set(jitsiAutolinkOutDir)
+}
+
+// Run autolinking + per-lib codegen before any CMake task — our CMake reads them.
+gradle.projectsEvaluated {
+    def rootAutolinkConfig = rootProject.tasks.findByName('generateAutolinkingConfigJson')
+    if (rootAutolinkConfig != null) {
+        jitsiGenerateAutolinking.configure { it.dependsOn(rootAutolinkConfig) }
+    }
+    def allCodegenTasks = rootProject.subprojects.collectMany { sub ->
+        sub.tasks.matching { it.name == 'generateCodegenArtifactsFromSchema' }
+    }
+    tasks.matching {
+        it.name.startsWith('configureCMake') ||
+        it.name.startsWith('buildCMake') ||
+        it.name.startsWith('externalNativeBuildClean')
+    }.configureEach {
+        it.dependsOn(allCodegenTasks)
+        it.dependsOn(jitsiGenerateAutolinking)
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.fragment:fragment:1.2.5'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.fragment:fragment:1.4.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-    //noinspection GradleDynamicVersion
-    api 'com.facebook.react:react-native:+'
-    //noinspection GradleDynamicVersion
-    implementation 'org.webkit:android-jsc:+'
+    api "com.facebook.react:react-android:$rootProject.ext.rnVersion"
+    api "com.facebook.hermes:hermes-android:$rootProject.ext.hermesVersion"
 
     implementation 'com.dropbox.core:dropbox-core-sdk:4.0.1'
-    implementation 'com.jakewharton.timber:timber:4.7.1'
-    implementation 'com.squareup.duktape:duktape-android:1.3.0'
+    implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation "androidx.startup:startup-runtime:1.1.0"
+    implementation 'androidx.startup:startup-runtime:1.1.0'
+    implementation 'com.google.j2objc:j2objc-annotations:3.0.0'
 
-    if (rootProject.ext.libreBuild) {
-        implementation(project(':react-native-device-info')) {
-            exclude group: 'com.google.firebase'
-            exclude group: 'com.google.android.gms'
-            exclude group: 'com.android.installreferrer'
-        }
-    } else {
-        implementation project(':react-native-amplitude')
-        implementation project(':react-native-device-info')
-        implementation(project(":react-native-google-signin")) {
+    // Only add these packages if we are NOT doing a LIBRE_BUILD
+    if (!rootProject.ext.libreBuild) {
+        implementation project(':amplitude-analytics-react-native')
+        implementation project(':giphy-react-native-sdk')
+        implementation(project(':react-native-google-signin-google-signin')) {
             exclude group: 'com.google.android.gms'
             exclude group: 'androidx'
         }
     }
 
-    implementation project(':react-native-async-storage')
+    implementation project(':react-native-async-storage-async-storage')
     implementation project(':react-native-background-timer')
     implementation project(':react-native-calendar-events')
-    implementation project(':react-native-community_clipboard')
-    implementation project(':react-native-community_netinfo')
+    implementation project(':react-native-clipboard-clipboard')
+    implementation project(':react-native-community-netinfo')
     implementation project(':react-native-default-preference')
+    implementation(project(':react-native-device-info')) {
+        exclude group: 'com.google.firebase'
+        exclude group: 'com.google.android.gms'
+        exclude group: 'com.android.installreferrer'
+    }
     implementation project(':react-native-gesture-handler')
     implementation project(':react-native-get-random-values')
-    implementation project(':react-native-immersive')
-    implementation project(':react-native-keep-awake')
-    implementation project(':react-native-masked-view_masked-view')
+    implementation project(':sayem314-react-native-keep-awake')
+    implementation project(':react-native-orientation-locker')
+    implementation project(':react-native-pager-view')
     implementation project(':react-native-performance')
-    implementation project(':react-native-reanimated')
     implementation project(':react-native-safe-area-context')
     implementation project(':react-native-screens')
-    implementation project(':react-native-slider')
+    implementation project(':react-native-community-slider')
     implementation project(':react-native-sound')
-    implementation project(':react-native-splash-screen')
+    implementation project(':react-native-splash-view')
     implementation project(':react-native-svg')
     implementation project(':react-native-video')
-    implementation project(':react-native-webrtc')
     implementation project(':react-native-webview')
+    implementation project(':react-native-worklets-core')
+
+    // Use `api` here so consumers can use WebRTCModuleOptions.
+    api project(':react-native-webrtc')
 
     testImplementation 'junit:junit:4.12'
 }
@@ -133,11 +192,9 @@ android.libraryVariants.all { def variant ->
         // Set up dev mode
         def devEnabled = !targetName.toLowerCase().contains("release")
 
-        // Run the bundler
         commandLine(
                 "node",
-                "node_modules/react-native/local-cli/cli.js",
-                "bundle",
+                "node_modules/react-native/scripts/bundle.js",
                 "--platform", "android",
                 "--dev", "${devEnabled}",
                 "--reset-cache",
@@ -149,6 +206,22 @@ android.libraryVariants.all { def variant ->
         enabled !devEnabled
     }
 
+    // Ensure proper task ordering for Gradle 8.14+ strict dependency validation
+    currentBundleTask.configure {
+        mustRunAfter {
+            def config = project.configurations.findByName("${targetPath}CompileClasspath")
+            
+            // Fallback to an empty list(mustRunAfter expects a list, not "null" which is the og fallback), 
+            // means no config, means no constraints
+            (config?.allDependencies ?: [])
+                .findAll { it.hasProperty('dependencyProject') }
+                .collectMany { dependency ->
+                    project.project(dependency.dependencyProject.path)
+                        .tasks.matching { it.name.contains(targetName) }
+                }
+        }
+    }
+    
     currentBundleTask.ext.generatedResFolders = files(resourcesDir).builtBy(currentBundleTask)
     currentBundleTask.ext.generatedAssetsFolders = files(jsBundleDir).builtBy(currentBundleTask)
     variant.registerGeneratedResFolders(currentBundleTask.generatedResFolders)
@@ -218,7 +291,7 @@ publishing {
                     def groupId = it.moduleGroup
                     def artifactId = it.moduleName
 
-                    if (artifactId.startsWith('react-native-')) {
+                    if (artifactId.contains('react-native')) {
                         groupId = rootProject.ext.moduleGroupId
                     }
 

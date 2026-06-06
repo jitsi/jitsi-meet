@@ -40,7 +40,7 @@ def twaManifest = [
     // The duration of fade out animation in milliseconds to be played when removing splash screen.
     splashScreenFadeOutDuration: 300,
     generatorApp: 'bubblewrap-cli', // Application that generated the Android Project
-    // The fallback strategy for when Trusted Web Activity is not avilable. Possible values are
+    // The fallback strategy for when Trusted Web Activity is not available. Possible values are
     // 'customtabs' and 'webview'.
     fallbackType: 'customtabs',
     enableSiteSettingsShortcut: 'true',
@@ -114,7 +114,7 @@ android {
         // Trusted Web Activity.
         resValue "color", "backgroundColor", twaManifest.backgroundColor
 
-        // Defines a provider authority fot the Splash Screen
+        // Defines a provider authority for the Splash Screen
         resValue "string", "providerAuthority", twaManifest.applicationId + '.fileprovider'
 
         // The enableNotification resource is used to enable or disable the

@@ -10,7 +10,7 @@ body.welcome-page {
     flex-direction: column;
     font-family: $welcomePageFontFamily;
     justify-content: space-between;
-    min-height: 100vh;
+    min-height: 100dvh;
     position: relative;
 
     .header {
@@ -18,9 +18,8 @@ body.welcome-page {
         background-position: $welcomePageHeaderBackgroundPosition;
         background-repeat: $welcomePageHeaderBackgroundRepeat;
         background-size: $welcomePageHeaderBackgroundSize;
-        padding-bottom: $welcomePageHeaderPaddingBottom;
+        padding: $welcomePageHeaderPadding;
         background-color: #131519;
-        height: 400px;
         overflow: hidden;
         position: relative;
 
@@ -29,6 +28,16 @@ body.welcome-page {
             flex-direction: column;
             margin: $welcomePageHeaderContainerMargin;
             z-index: $zindex2;
+            align-items: center;
+            position: relative;
+            max-width: 688px;
+        }
+
+        .header-watermark-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            margin-top: calc(20px - #{$welcomePageHeaderContainerMarginTop});
         }
 
         .header-text-title {
@@ -44,12 +53,68 @@ body.welcome-page {
 
         .header-text-subtitle {
             color: #fff;
-            font-size: 20px;
+            font-size: 1.25rem;
             font-weight: 600;
-            line-height: 26px;
+            line-height: 1.625rem;
             margin: 16px 0 32px 0;
             text-align: $welcomePageHeaderTextAlign;
 
+        }
+
+        .not-allow-title-character-div {
+            color: #f03e3e;
+            background-color: #fff;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin: 10px 0px 5px 0px;
+            text-align: $welcomePageHeaderTextAlign;
+            border-radius: 5px;
+            padding: 5px;
+            .not-allow-title-character-text {
+                float: right;
+                line-height: 1.9;
+            };
+            .jitsi-icon {
+                margin-right: 9px;
+                float: left;
+
+
+                svg {
+                    fill:#f03e3e;
+
+                    & > *:first-child {
+                        fill: none !important;
+                    }
+                }
+            }
+
+        }
+
+        .insecure-room-name-warning {
+            align-items: center;
+            color: rgb(215, 121, 118);
+            font-weight: 600;
+            display: flex;
+            flex-direction: row;
+            margin-top: 15px;
+            max-width: 480px;
+            width: $welcomePageEnterRoomWidth;
+
+            .jitsi-icon {
+                margin-right: 15px;
+
+                svg {
+                    fill: rgb(215, 121, 118);
+
+                    & > *:first-child {
+                        fill: none !important;
+                    }
+                }
+            }
+        }
+
+        ::placeholder {
+            color: #253858;
         }
 
         #enter_room {
@@ -58,87 +123,56 @@ body.welcome-page {
             max-width: 480px;
             width: $welcomePageEnterRoomWidth;
             z-index: $zindex2;
-            background-color: #fff;
-            padding: $welcomePageEnterRoomPadding;
-            border-radius: 4px;
-            margin: $welcomePageEnterRoomMargin;
+            height: fit-content;
 
-            .enter-room-input-container {
+            .join-meeting-container {
+                margin: $welcomePageEnterRoomMargin;
+                padding: $welcomePageEnterRoomPadding;
+                border-radius: 4px;
+                background-color: #fff;
+                display: flex;
+                width: 100%;
                 text-align: left;
                 color: #253858;
+            }
+
+            .enter-room-input-container {
                 flex-grow: 1;
-                height: fit-content;
                 padding-right: 4px;
-                position: relative;
 
                 .enter-room-input {
+                    border-radius: 4px;
                     border: 0;
                     background: #fff;
                     display: inline-block;
                     height: 50px;
                     width: 100%;
-                    font-size: 14px;
+                    font-size: 0.875rem;
                     padding-left: 10px;
 
-                    &:focus {
+                    &.focus-visible {
                         outline: auto 2px #005fcc;
                     }
                 }
-
-                .insecure-room-name-warning {
-                    align-items: center;
-                    color: $defaultWarningColor;
-                    display: flex;
-                    flex-direction: row;
-                    margin-top: 15px;
-
-                    .jitsi-icon {
-                        margin-right: 15px;
-
-                        svg {
-                            fill: $defaultWarningColor
-                        }
-                    }
-                }
-
-                ::placeholder {
-                    color: #253858;
-                }
-            }
-
-            .warning-without-link {
-                position: absolute;
-                top: 44px;
-                left: -10px;
-            }
-
-            .warning-with-link {
-                position: absolute;
-                top: 84px;
             }
 
         }
 
         #moderated-meetings {
             max-width: calc(100% - 40px);
-            padding: 16px 0 39px 0;
+            padding: 16px 0 0;
             width: $welcomePageEnterRoomWidth;
+            text-align: center;
 
-            p {
-                color: $welcomePageDescriptionColor;
-                float: left;
-                text-align: $welcomePageHeaderTextAlign;
-
-                a {
-                    color: inherit;
-                    font-weight: 600;
-                }
+            a {
+                color: inherit;
+                font-weight: 600;
             }
         }
     }
 
     .tab-container {
-        font-size: 16px;
+        font-size: 1rem;
         position: relative;
         text-align: left;
         display: $welcomePageTabContainerDisplay;
@@ -157,12 +191,12 @@ body.welcome-page {
             background-color: #c7ddff;
             border-radius: 6px;
             color: #0163FF;
-            font-size: 14px;
-            line-height: 18px;
+            font-size: 0.875rem;
+            line-height: 1.125rem;
             margin: 4px;
             display: $welcomePageTabButtonsDisplay;
 
-            .tab {
+            [role="tab"] {
                 background-color: #c7ddff;
                 border-radius: 7px;
                 cursor: pointer;
@@ -171,8 +205,10 @@ body.welcome-page {
                 margin: 2px;
                 padding: 7px 0;
                 text-align: center;
+                color: inherit;
+                border: 0;
 
-                &.selected {
+                &[aria-selected="true"] {
                     background-color: #FFF;
                 }
             }
@@ -182,15 +218,19 @@ body.welcome-page {
 
     .welcome-page-button {
         border: 0;
-        font-size: 14px;
-        background: #0074E0;
+        font-size: 0.875rem;
+        background: $welcomePageButtonBg;
         border-radius: 3px;
         color: #FFFFFF;
         cursor: pointer;
         padding: 16px 20px;
-
+        transition: all 0.2s;
         &:focus-within {
-            outline: auto 2px #022e61;
+            outline: auto 2px $welcomePageButtonFocusOutline;
+        }
+
+        &:hover {
+            background-color: $welcomePageButtonHoverBg;
         }
     }
 
@@ -200,13 +240,13 @@ body.welcome-page {
         color: $welcomePageDescriptionColor;
         padding: 4px;
         position: absolute;
-        top: 32px;
-        right: 32px;
+        top: calc(35px - #{$welcomePageHeaderContainerMarginTop});
+        right: 0;
         z-index: $zindex2;
 
         * {
             cursor: pointer;
-            font-size: 32px;
+            font-size: 2rem;
         }
 
         .toolbox-icon {
@@ -226,8 +266,7 @@ body.welcome-page {
 
     &.without-content {
         .welcome-card {
-            min-width: 500px;
-            max-width: 580px;
+            max-width: 100dvw;
         }
     }
 
@@ -240,10 +279,17 @@ body.welcome-page {
         padding-top: 40px;
     }
 
-    .welcome-card-row {
+    .welcome-card-column {
         display: flex;
         justify-content: center;
-        padding: 0 32px;
+        flex-direction: column;
+        align-items: center;
+        max-width: 688px;
+        margin: auto;
+
+        > div {
+            margin-bottom: 16px;
+        }
     }
 
     .welcome-card-text {
@@ -251,7 +297,7 @@ body.welcome-page {
     }
 
     .welcome-card {
-        width: 49%;
+        width: 100%;
         border-radius: 8px;
 
         &--dark {
@@ -265,10 +311,6 @@ body.welcome-page {
 
         &--grey {
             background: #F2F3F4;
-        }
-
-        &--shadow {
-            box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.15);
         }
     }
 
@@ -305,6 +347,6 @@ body.welcome-page {
 
     .welcome-footer-row-1-text {
         max-width: 200px;
-        margin-right: 16px;
+        text-align: center;
     }
 }

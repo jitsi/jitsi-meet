@@ -1,0 +1,469 @@
+import { AnyAction } from 'redux';
+
+import { IStore } from '../app/types';
+import { ENDPOINT_MESSAGE_RECEIVED, NON_PARTICIPANT_MESSAGE_RECEIVED } from '../base/conference/actionTypes';
+import { MEET_FEATURES } from '../base/jwt/constants';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
+import JitsiMeetJS from '../base/lib-jitsi-meet';
+import { TRANSCRIBER_ID } from '../base/participants/constants';
+import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { showErrorNotification } from '../notifications/actions';
+import { RECORDING_METADATA_ID } from '../recording/constants';
+import { maybeNotifyRecordingStart } from '../recording/middleware';
+import { TRANSCRIBER_JOINED } from '../transcribing/actionTypes';
+
+import {
+    SET_REQUESTING_SUBTITLES,
+    TOGGLE_REQUESTING_SUBTITLES
+} from './actionTypes';
+import {
+    removeCachedTranscriptMessage,
+    removeTranscriptMessage,
+    setRequestingSubtitles,
+    setSubtitlesError,
+    storeSubtitle,
+    updateTranscriptMessage
+} from './actions.any';
+import { notifyTranscriptionChunkReceived } from './functions';
+import { areClosedCaptionsEnabled, isCCTabEnabled } from './functions.any';
+import logger from './logger';
+import { ISubtitle, ITranscriptMessage } from './types';
+
+/**
+ * The type of json-message which indicates that json carries a
+ * transcription result.
+ */
+const JSON_TYPE_TRANSCRIPTION_RESULT = 'transcription-result';
+
+/**
+ * The type of json-message which indicates that json carries a
+ * translation result.
+ */
+const JSON_TYPE_TRANSLATION_RESULT = 'translation-result';
+
+/**
+ * The local participant property which is used to set whether the local
+ * participant wants to have a transcriber in the room.
+ */
+const P_NAME_REQUESTING_TRANSCRIPTION = 'requestingTranscription';
+
+/**
+ * The local participant property which is used to store the language
+ * preference for translation for a participant.
+ */
+const P_NAME_TRANSLATION_LANGUAGE = 'translation_language';
+
+/**
+ * The dial command to use for starting a transcriber.
+ */
+const TRANSCRIBER_DIAL_NUMBER = 'jitsi_meet_transcribe';
+
+/**
+* Time after which the rendered subtitles will be removed.
+*/
+const REMOVE_AFTER_MS = 3000;
+
+/**
+ * Stability factor for a transcription. We'll treat a transcript as stable
+ * beyond this value.
+ */
+const STABLE_TRANSCRIPTION_FACTOR = 0.85;
+
+/**
+ * Middleware that catches actions related to transcript messages to be rendered
+ * in {@link Captions}.
+ *
+ * @param {Store} store - The redux store.
+ * @returns {Function}
+ */
+MiddlewareRegistry.register(store => next => action => {
+    switch (action.type) {
+    case ENDPOINT_MESSAGE_RECEIVED:
+    case NON_PARTICIPANT_MESSAGE_RECEIVED:
+        return _endpointMessageReceived(store, next, action);
+
+    case TOGGLE_REQUESTING_SUBTITLES: {
+        const state = store.getState()['features/subtitles'];
+        const toggledValue = !state._requestingSubtitles;
+
+        _requestingSubtitlesChange(store, toggledValue, state._language);
+        break;
+    }
+    case TRANSCRIBER_JOINED: {
+        const { transcription } = store.getState()['features/base/config'];
+
+        if (transcription?.autoCaptionOnTranscribe) {
+            // The transcriber was started by someone else — skip metadata update
+            // to avoid overwriting the initiator's isRecordingRequested flag.
+            store.dispatch(setRequestingSubtitles(
+                true, undefined, undefined, undefined, undefined, true));
+        }
+
+        break;
+    }
+    case SET_REQUESTING_SUBTITLES:
+        _requestingSubtitlesChange(
+            store, action.enabled, action.language,
+            action.forceBackendRecordingOn, action.isRecordingRequested,
+            action.skipMetadataUpdate);
+        break;
+    }
+
+    return next(action);
+});
+
+/**
+ * Notifies the feature transcription that the action
+ * {@code ENDPOINT_MESSAGE_RECEIVED} is being dispatched within a specific redux
+ * store.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to
+ * dispatch the specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code ENDPOINT_MESSAGE_RECEIVED}
+ * which is being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _endpointMessageReceived(store: IStore, next: Function, action: AnyAction) {
+    let json: any = {};
+
+    if (action.type === ENDPOINT_MESSAGE_RECEIVED) {
+        if (!action.participant.isHidden()) {
+            return next(action);
+        }
+        json = action.data;
+    } else if (action.type === NON_PARTICIPANT_MESSAGE_RECEIVED && action.id === TRANSCRIBER_ID) {
+        json = action.json;
+    } else {
+        return next(action);
+    }
+
+    if (![ JSON_TYPE_TRANSCRIPTION_RESULT, JSON_TYPE_TRANSLATION_RESULT ].includes(json?.type)) {
+        return next(action);
+    }
+
+    const { dispatch, getState } = store;
+    const state = getState();
+    const _areClosedCaptionsEnabled = areClosedCaptionsEnabled(store.getState());
+    const transcriptMessageID = json.message_id;
+    const { name, id, avatar_url: avatarUrl } = json.participant;
+    const participant = {
+        avatarUrl,
+        id,
+        name
+    };
+    const { timestamp } = json;
+    const participantId = participant.id;
+    const speaker = json.speaker;
+    const renderTranscriptDetails = state['features/base/config'].transcription?.renderTranscriptDetails;
+    let detailsPrefix = '';
+
+    if (renderTranscriptDetails) {
+        const parts = [];
+
+        if (speaker != null) {
+            parts.push(`Speaker ${speaker}`);
+        }
+        if (json.language) {
+            parts.push(json.language);
+        }
+        if (parts.length > 0) {
+            detailsPrefix = `[${parts.join(', ')}] `;
+        }
+    }
+
+    // Handle transcript messages
+    const language = state['features/base/conference'].conference
+        ?.getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
+    const { dumpTranscript, skipInterimTranscriptions } = state['features/base/config'].testing ?? {};
+
+    let newTranscriptMessage: ITranscriptMessage | undefined;
+
+    if (json.type === JSON_TYPE_TRANSLATION_RESULT) {
+        if (!_areClosedCaptionsEnabled) {
+            // If closed captions are not enabled, bail out.
+            return next(action);
+        }
+
+        const translationText = json.text?.trim();
+        const translation = translationText ? `${detailsPrefix}${translationText}` : translationText;
+
+        if (isCCTabEnabled(state)) {
+            dispatch(storeSubtitle({
+                participantId,
+                text: translation,
+                language: json.language,
+                interim: false,
+                isTranscription: false,
+                timestamp,
+                id: transcriptMessageID
+            }));
+
+            return next(action);
+        }
+
+        if (json.language === language) {
+            // Displays final results in the target language if translation is
+            // enabled.
+            newTranscriptMessage = {
+                clearTimeOut: undefined,
+                final: translation,
+                participant
+            };
+        }
+    } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT) {
+        const isInterim = json.is_interim;
+
+        // Displays interim and final results without any translation if
+        // translations are disabled.
+
+        const { text } = json.transcript[0];
+        const displayText = `${detailsPrefix}${text}`;
+
+        // First, notify the external API.
+        if (!(isInterim && skipInterimTranscriptions)) {
+            const txt: any = {};
+
+            if (!json.is_interim) {
+                txt.final = text;
+            } else if (json.stability > STABLE_TRANSCRIPTION_FACTOR) {
+                txt.stable = text;
+            } else {
+                txt.unstable = text;
+            }
+
+            notifyTranscriptionChunkReceived(
+                transcriptMessageID,
+                json.language,
+                participant,
+                txt,
+                store
+            );
+
+            if (navigator.product !== 'ReactNative') {
+
+                // Dump transcript in a <transcript> element for debugging purposes.
+                if (!json.is_interim && dumpTranscript) {
+                    try {
+                        let elem = document.body.getElementsByTagName('transcript')[0];
+
+                        // eslint-disable-next-line max-depth
+                        if (!elem) {
+                            elem = document.createElement('transcript');
+                            document.body.appendChild(elem);
+                        }
+
+                        elem.append(`${new Date(json.timestamp).toISOString()} ${participant.name}: ${text}`);
+                    } catch (_) {
+                        // Ignored.
+                    }
+                }
+            }
+        }
+
+        if (!_areClosedCaptionsEnabled) {
+            // If closed captions are not enabled, bail out.
+            return next(action);
+        }
+
+        const subtitle: ISubtitle = {
+            id: transcriptMessageID,
+            participantId,
+            language: json.language,
+            text: displayText,
+            interim: isInterim,
+            timestamp,
+            isTranscription: true
+        };
+
+        if (isCCTabEnabled(state)) {
+            dispatch(storeSubtitle(subtitle));
+
+            return next(action);
+        }
+
+        // If the user is not requesting transcriptions just bail.
+        // Regex to filter out all possible country codes after language code:
+        // this should catch all notations like 'en-GB' 'en_GB' and 'enGB'
+        // and be independent of the country code length
+        if (!language || (_getPrimaryLanguageCode(json.language) !== _getPrimaryLanguageCode(language))) {
+            return next(action);
+        }
+
+        if (json.is_interim && skipInterimTranscriptions) {
+            return next(action);
+        }
+
+        // We update the previous transcript message with the same
+        // message ID or adds a new transcript message if it does not
+        // exist in the map.
+        const existingMessage = state['features/subtitles']._transcriptMessages.get(transcriptMessageID);
+
+        newTranscriptMessage = {
+            clearTimeOut: existingMessage?.clearTimeOut,
+            participant
+        };
+
+        // If this is final result, update the state as a final result
+        // and start a count down to remove the subtitle from the state
+        if (!json.is_interim) {
+            newTranscriptMessage.final = displayText;
+        } else if (json.stability > STABLE_TRANSCRIPTION_FACTOR) {
+            // If the message has a high stability, we can update the
+            // stable field of the state and remove the previously
+            // unstable results
+            newTranscriptMessage.stable = displayText;
+        } else {
+            // Otherwise, this result has an unstable result, which we
+            // add to the state. The unstable result will be appended
+            // after the stable part.
+            newTranscriptMessage.unstable = displayText;
+        }
+    }
+
+    if (newTranscriptMessage) {
+        if (newTranscriptMessage.final) {
+            const cachedTranscriptMessage
+                = state['features/subtitles']._cachedTranscriptMessages?.get(transcriptMessageID);
+
+            if (cachedTranscriptMessage) {
+                const cachedText = (cachedTranscriptMessage.stable || cachedTranscriptMessage.unstable)?.trim();
+                const newText = newTranscriptMessage.final;
+
+                if (cachedText && cachedText.length > 0 && newText && newText.length > 0
+                    && newText.toLowerCase().startsWith(cachedText.toLowerCase())) {
+                    newTranscriptMessage.final = newText.slice(cachedText.length)?.trim();
+                }
+                dispatch(removeCachedTranscriptMessage(transcriptMessageID));
+
+                if (!newTranscriptMessage.final || newTranscriptMessage.final.length === 0) {
+                    return next(action);
+                }
+            }
+        }
+
+
+        _setClearerOnTranscriptMessage(dispatch, transcriptMessageID, newTranscriptMessage);
+        dispatch(updateTranscriptMessage(transcriptMessageID, newTranscriptMessage));
+    }
+
+    return next(action);
+}
+
+/**
+ * Utility function to extract the primary language code like 'en-GB' 'en_GB'
+ * 'enGB' 'zh-CN' and 'zh-TW'.
+ *
+ * @param {string} language - The language to use for translation or user requested.
+ * @returns {string}
+ */
+function _getPrimaryLanguageCode(language: string) {
+    return language.replace(/[-_A-Z].*/, '');
+}
+
+/**
+ * Toggle the local property 'requestingTranscription'. This will cause Jicofo
+ * and Jigasi to decide whether the transcriber needs to be in the room.
+ *
+ * @param {Store} store - The redux store.
+ * @param {boolean} enabled - Whether subtitles should be enabled or not.
+ * @param {string} language - The language to use for translation.
+ * @param {boolean} forceBackendRecordingOn - Whether to force backend recording is on or not. This is used only when
+ * we start recording, stopping is based on whether isTranscribingEnabled is already set.
+ * @param {boolean} isRecordingRequested - Whether recording was also requested alongside transcription.
+ * Passed through to metadata so remote clients receive both intent fields in a single atomic update.
+ * @param {boolean} skipMetadataUpdate - When true, skips setting room metadata. Used when reacting
+ * to a transcriber started by someone else (e.g. autoCaptionOnTranscribe) to avoid overwriting
+ * the initiator's metadata.
+ * @private
+ * @returns {void}
+ */
+function _requestingSubtitlesChange(
+        { dispatch, getState }: IStore,
+        enabled: boolean,
+        language?: string | null,
+        forceBackendRecordingOn: boolean = false,
+        isRecordingRequested: boolean = false,
+        skipMetadataUpdate: boolean = false) {
+    const state = getState();
+    const { conference } = state['features/base/conference'];
+    const backendRecordingOn = conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription;
+
+    conference?.setLocalParticipantProperty(
+        P_NAME_REQUESTING_TRANSCRIPTION,
+        enabled);
+
+    if (enabled && conference?.getTranscriptionStatus() === JitsiMeetJS.constants.transcriptionStatus.OFF
+        && isJwtFeatureEnabled(getState(), MEET_FEATURES.TRANSCRIPTION, false)) {
+
+        if (!backendRecordingOn) {
+            conference?.dial(TRANSCRIBER_DIAL_NUMBER)
+                .catch((e: any) => {
+                    logger.error('Error dialing', e);
+
+                    // let's back to the correct state
+                    dispatch(setRequestingSubtitles(false, false, null));
+
+                    dispatch(showErrorNotification({
+                        titleKey: 'transcribing.failed'
+                    }));
+                    dispatch(setSubtitlesError(true));
+
+                    // Transcription failed — re-evaluate. _hasError is now true,
+                    // so maybeNotifyRecordingStart will see transcription as resolved-failed
+                    // and play recording-only sound if recording succeeded.
+                    const intent = getState()['features/recording'].startRecordingIntent;
+
+                    if (intent) {
+                        maybeNotifyRecordingStart(dispatch, getState);
+                    }
+                });
+        }
+
+        if (!skipMetadataUpdate && (backendRecordingOn || forceBackendRecordingOn)) {
+            conference?.getMetadataHandler()?.setMetadata(RECORDING_METADATA_ID, {
+                isTranscribingEnabled: true,
+                ...(isRecordingRequested && { isRecordingRequested: true })
+            });
+        }
+    }
+
+    if (enabled && language) {
+        conference?.setLocalParticipantProperty(
+            P_NAME_TRANSLATION_LANGUAGE,
+            language.replace('translation-languages:', ''));
+    }
+
+    if (!enabled && (backendRecordingOn || forceBackendRecordingOn)
+        && conference?.getMetadataHandler()?.getMetadata()[RECORDING_METADATA_ID]?.isTranscribingEnabled) {
+        conference?.getMetadataHandler()?.setMetadata(RECORDING_METADATA_ID, {
+            isRecordingRequested: false,
+            isTranscribingEnabled: false
+        });
+    }
+}
+
+/**
+ * Set a timeout on a TranscriptMessage object so it clears itself when it's not
+ * updated.
+ *
+ * @param {Function} dispatch - Dispatch remove action to store.
+ * @param {string} transcriptMessageID - The id of the message to remove.
+ * @param {Object} transcriptMessage - The message to remove.
+ * @returns {void}
+ */
+function _setClearerOnTranscriptMessage(
+        dispatch: IStore['dispatch'],
+        transcriptMessageID: string,
+        transcriptMessage: { clearTimeOut?: number; }) {
+    if (transcriptMessage.clearTimeOut) {
+        clearTimeout(transcriptMessage.clearTimeOut);
+    }
+
+    transcriptMessage.clearTimeOut
+        = window.setTimeout(
+            () => dispatch(removeTranscriptMessage(transcriptMessageID)),
+            REMOVE_AFTER_MS);
+}

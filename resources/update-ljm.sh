@@ -14,37 +14,33 @@ if [[ "$BRANCH" != "master" ]]; then
 fi
 
 THIS_DIR=$(cd -P "$(dirname "$(readlink "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)
-PID=$$
-LJM_TMP="${TMPDIR:-/tmp}/ljm-${PID}"
 
 pushd ${THIS_DIR}/..
-CURRENT_LJM_COMMIT=$(jq -r '.dependencies."lib-jitsi-meet"' package.json | cut -d "#" -f2)
+CURRENT_LJM_DEP=$(jq -r '.dependencies."lib-jitsi-meet"' package.json)
 popd
 
-git clone --branch master --single-branch --bare https://github.com/jitsi/lib-jitsi-meet ${LJM_TMP}
+NEW_LJM_RELEASE=$(gh release list --limit 1 --repo jitsi/lib-jitsi-meet | awk {'print $1'})
+GH_LINK="https://github.com/jitsi/lib-jitsi-meet/releases/tag/${NEW_LJM_RELEASE}"
+LATEST_LJM_DEP="https://github.com/jitsi/lib-jitsi-meet/releases/download/${NEW_LJM_RELEASE}/lib-jitsi-meet.tgz"
 
-pushd ${LJM_TMP}
-LATEST_LJM_COMMIT=$(git rev-parse HEAD)
-LJM_COMMITS=$(git log --oneline --no-decorate --no-merges ${CURRENT_LJM_COMMIT}..HEAD --pretty=format:"%x2a%x20%s")
-popd
-
-if [[ "${CURRENT_LJM_COMMIT}" == "${LATEST_LJM_COMMIT}" ]]; then
+if [[ "${CURRENT_LJM_DEP}" == "${LATEST_LJM_DEP}" ]]; then
     echo "No need to update, already on the latest commit!"
-    rm -rf ${LJM_TMP}
     exit 1
 fi
 
-GH_LINK="https://github.com/jitsi/lib-jitsi-meet/compare/${CURRENT_LJM_COMMIT}...${LATEST_LJM_COMMIT}"
+if [[ ${CURRENT_LJM_DEP} =~ ^.*download/(.*)/lib-jitsi-meet\.tgz$ ]]; then
+  COMMIT_MSG="https://github.com/jitsi/lib-jitsi-meet/compare/${BASH_REMATCH[1]}...${NEW_LJM_RELEASE}"
+else
+  COMMIT_MSG=${GH_LINK}
+fi
 
 pushd ${THIS_DIR}/..
 EPOCH=$(date +%s)
 NEW_BRANCH="update-ljm-${EPOCH}"
 git checkout -b ${NEW_BRANCH}
-npm install github:jitsi/lib-jitsi-meet#${LATEST_LJM_COMMIT}
+npm install ${LATEST_LJM_DEP}
 git add package.json package-lock.json
-git commit -m "chore(deps) lib-jitsi-meet@latest" -m "${LJM_COMMITS}" -m "${GH_LINK}"
+git commit -m "chore(deps) lib-jitsi-meet@latest" -m "${COMMIT_MSG}"
 git push origin ${NEW_BRANCH}
 gh pr create --repo jitsi/jitsi-meet --fill
 popd
-
-rm -rf ${LJM_TMP}

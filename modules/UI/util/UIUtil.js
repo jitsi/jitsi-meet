@@ -1,4 +1,4 @@
-/* global $ */
+import $ from 'jquery';
 
 /**
  * Created by hristo on 12/22/14.
@@ -29,18 +29,6 @@ const UIUtil = {
         }
 
         return result;
-    },
-
-    /**
-     * Redirects to a given URL.
-     *
-     * @param {string} url - The redirect URL.
-     * NOTE: Currently used to redirect to 3rd party location for
-     * authentication. In most cases redirectWithStoredParams action must be
-     * used instead of this method in order to preserve current URL params.
-     */
-    redirect(url) {
-        window.location.href = url;
     },
 
     /**

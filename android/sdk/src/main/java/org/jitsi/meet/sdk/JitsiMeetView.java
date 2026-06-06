@@ -16,35 +16,36 @@
 
 package org.jitsi.meet.sdk;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.AttributeSet;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.ReactHost;
+import com.facebook.react.runtime.ReactSurfaceImpl;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
-import java.lang.reflect.Method;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
-public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener>
-        implements OngoingConferenceTracker.OngoingConferenceListener {
-
-    /**
-     * The {@code Method}s of {@code JitsiMeetViewListener} by event name i.e.
-     * redux action types.
-     */
-    private static final Map<String, Method> LISTENER_METHODS
-        = ListenerUtils.mapListenerMethods(JitsiMeetViewListener.class);
+public class JitsiMeetView extends FrameLayout {
 
     /**
-     * The URL of the current conference.
+     * Background color. Should match the background color set in JS.
      */
-    // XXX Currently, one thread writes and one thread reads, so it should be
-    // fine to have this field volatile without additional synchronization.
-    private volatile String url;
+    public static final int BACKGROUND_COLOR = 0xFF040404;
+
+    /**
+     * React Native surface.
+     */
+    private ReactSurfaceImpl reactSurface;
 
     /**
      * Helper method to recursively merge 2 {@link Bundle} objects representing React Native props.
@@ -83,8 +84,16 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener>
                 result.putBoolean(key, (Boolean)bValue);
             } else if (valueType.contentEquals("String")) {
                 result.putString(key, (String)bValue);
+            } else if (valueType.contentEquals("Integer")) {
+                result.putInt(key, (int)bValue);
             } else if (valueType.contentEquals("Bundle")) {
                 result.putBundle(key, mergeProps((Bundle)aValue, (Bundle)bValue));
+            } else if (valueType.contentEquals("String[]")) {
+                // Convert String[] to ArrayList<String> for React Native bridge compatibility
+                String[] stringArray = (String[]) bValue;
+                result.putStringArrayList(key, new ArrayList<>(Arrays.asList(stringArray)));
+            } else if (valueType.contentEquals("ArrayList")) {
+                result.putParcelableArrayList(key, (ArrayList<Bundle>) bValue);
             } else {
                 throw new RuntimeException("Unsupported type: " + valueType);
             }
@@ -95,20 +104,36 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener>
 
     public JitsiMeetView(@NonNull Context context) {
         super(context);
-
-        // Check if the parent Activity implements JitsiMeetActivityInterface,
-        // otherwise things may go wrong.
-        if (!(context instanceof JitsiMeetActivityInterface)) {
-            throw new RuntimeException("Enclosing Activity must implement JitsiMeetActivityInterface");
-        }
-
-        OngoingConferenceTracker.getInstance().addListener(this);
+        initialize(context);
     }
 
-    @Override
+    public JitsiMeetView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initialize(context);
+    }
+
+    public JitsiMeetView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        initialize(context);
+    }
+
+    /**
+     * Releases the React resources (specifically the {@link ReactSurface})
+     * associated with this view.
+     *
+     * MUST be called when the {@link Activity} holding this view is destroyed,
+     * typically in the {@code onDestroy} method.
+     */
     public void dispose() {
-        OngoingConferenceTracker.getInstance().removeListener(this);
-        super.dispose();
+        if (reactSurface != null) {
+            ViewGroup surfaceView = reactSurface.getView();
+            if (surfaceView != null) {
+                removeView(surfaceView);
+            }
+            reactSurface.stop();
+            reactSurface.detach();
+            reactSurface = null;
+        }
     }
 
     /**
@@ -122,12 +147,11 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener>
      */
     public void enterPictureInPicture() {
         PictureInPictureModule pipModule
-            = ReactInstanceManagerHolder.getNativeModule(
+            = ReactHostHolder.getNativeModule(
                 PictureInPictureModule.class);
         if (pipModule != null
                 && pipModule.isPictureInPictureSupported()
-                && !JitsiMeetActivityDelegate.arePermissionsBeingRequested()
-                && this.url != null) {
+                && !JitsiMeetActivityDelegate.arePermissionsBeingRequested()) {
             try {
                 pipModule.enterPictureInPicture();
             } catch (RuntimeException re) {
@@ -147,10 +171,54 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener>
     }
 
     /**
-     * Leaves the currently active conference.
+     * Internal method which aborts running RN by passing empty props.
+     * This is only meant to be used from the enclosing Activity's onDestroy.
      */
-    public void leave() {
+    public void abort() {
         setProps(new Bundle());
+    }
+
+    /**
+     * Creates the {@link ReactSurface} for the given app name with the given
+     * props. Once created its view is set as the child of this {@code FrameLayout}.
+     *
+     * @param appName - The name of the "app" (in React Native terms) to load.
+     * @param props - The React Component props to pass to the app.
+     */
+    private void createReactRootView(String appName, @Nullable Bundle props) {
+        if (props == null) {
+            props = new Bundle();
+        }
+
+        ReactHost reactHost = ReactHostHolder.getReactHost();
+        if (reactHost == null) {
+            JitsiMeetLogger.w("Cannot create surface, ReactHost is not initialized");
+            return;
+        }
+
+        if (reactSurface == null) {
+            reactSurface = (ReactSurfaceImpl) reactHost.createSurface(getContext(), appName, props);
+
+            ViewGroup surfaceView = reactSurface.getView();
+            if (surfaceView != null) {
+                surfaceView.setBackgroundColor(BACKGROUND_COLOR);
+                addView(surfaceView);
+            }
+
+            reactSurface.start();
+        } else {
+            reactSurface.updateInitProps(props);
+        }
+    }
+
+    private void initialize(@NonNull Context context) {
+        // Check if the parent Activity implements JitsiMeetActivityInterface,
+        // otherwise things may go wrong.
+        if (!(context instanceof JitsiMeetActivityInterface)) {
+            throw new RuntimeException("Enclosing Activity must implement JitsiMeetActivityInterface");
+        }
+
+        setBackgroundColor(BACKGROUND_COLOR);
     }
 
     /**
@@ -167,39 +235,12 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener>
         // by leaving the conference. However, React and, respectively,
         // appProperties/initialProperties are declarative expressions i.e. one
         // and the same URL will not trigger an automatic re-render in the
-        // JavaScript source code. The workaround implemented bellow introduces
+        // JavaScript source code. The workaround implemented below introduces
         // "imperativeness" in React Component props by defining a unique value
         // per setProps() invocation.
         props.putLong("timestamp", System.currentTimeMillis());
 
         createReactRootView("App", props);
-    }
-
-    /**
-     * Handler for {@link OngoingConferenceTracker} events.
-     * @param conferenceUrl
-     */
-    @Override
-    public void onCurrentConferenceChanged(String conferenceUrl) {
-        // This property was introduced in order to address
-        // an exception in the Picture-in-Picture functionality which arose
-        // because of delays related to bridging between JavaScript and Java. To
-        // reduce these delays do not wait for the call to be transferred to the
-        // UI thread.
-        this.url = conferenceUrl;
-    }
-
-    /**
-     * Handler for {@link ExternalAPIModule} events.
-     *
-     * @param name The name of the event.
-     * @param data The details/specifics of the event to send determined
-     * by/associated with the specified {@code name}.
-     */
-    @Override
-    @Deprecated
-    protected void onExternalAPIEvent(String name, ReadableMap data) {
-        onExternalAPIEvent(LISTENER_METHODS, name, data);
     }
 
     @Override

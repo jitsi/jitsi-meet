@@ -1,5 +1,5 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2017-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.module.annotations.ReactModule;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +33,11 @@ import java.util.Map;
 class AppInfoModule
     extends ReactContextBaseJavaModule {
 
+    private static final String BUILD_CONFIG = "org.jitsi.meet.sdk.BuildConfig";
     public static final String NAME = "AppInfo";
+    public static final boolean GOOGLE_SERVICES_ENABLED = getGoogleServicesEnabled();
+    public static final boolean LIBRE_BUILD = getLibreBuild();
+    public static final String SDK_VERSION = getSdkVersion();
 
     public AppInfoModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -75,8 +80,9 @@ class AppInfoModule
         constants.put(
             "version",
             packageInfo == null ? "" : packageInfo.versionName);
-        constants.put("LIBRE_BUILD", BuildConfig.LIBRE_BUILD);
-        constants.put("GOOGLE_SERVICES_ENABLED", BuildConfig.GOOGLE_SERVICES_ENABLED);
+        constants.put("sdkVersion", SDK_VERSION);
+        constants.put("LIBRE_BUILD", LIBRE_BUILD);
+        constants.put("GOOGLE_SERVICES_ENABLED", GOOGLE_SERVICES_ENABLED);
 
         return constants;
     }
@@ -84,5 +90,61 @@ class AppInfoModule
     @Override
     public String getName() {
         return NAME;
+    }
+
+    /**
+     * Checks if libre google services object is null based on build configuration.
+     */
+    private static boolean getGoogleServicesEnabled() {
+        Object googleServicesEnabled = getBuildConfigValue("GOOGLE_SERVICES_ENABLED");
+
+        if (googleServicesEnabled !=null) {
+            return (Boolean) googleServicesEnabled;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if libre build field is null based on build configuration.
+     */
+    private static boolean getLibreBuild() {
+        Object libreBuild = getBuildConfigValue("LIBRE_BUILD");
+
+        if (libreBuild !=null) {
+            return (Boolean) libreBuild;
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets the SDK version.
+     */
+    private static String getSdkVersion() {
+        Object sdkVersion = getBuildConfigValue("SDK_VERSION");
+
+        if (sdkVersion !=null) {
+            return (String) sdkVersion;
+        }
+
+        return "";
+    }
+
+    /**
+     * Gets build config value of a certain field.
+     *
+     * @param fieldName Field from build config.
+     */
+    private static Object getBuildConfigValue(String fieldName) {
+        try {
+            Class<?> c = Class.forName(BUILD_CONFIG);
+            Field f  = c.getDeclaredField(fieldName);
+            f.setAccessible(true);
+            return f.get(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

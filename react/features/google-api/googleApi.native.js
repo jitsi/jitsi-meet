@@ -1,11 +1,9 @@
-// @flow
-
 import { NativeModules } from 'react-native';
 
 let GoogleSignin;
 
 if (NativeModules.RNGoogleSignin) {
-    GoogleSignin = require('@react-native-community/google-signin').GoogleSignin;
+    GoogleSignin = require('@react-native-google-signin/google-signin').GoogleSignin;
 }
 
 import {
@@ -19,7 +17,7 @@ import {
  * the export object is similar so no need for different export logic.
  *
  * For more detailed documentation of the {@code GoogleSignin} API, please visit
- * https://github.com/react-native-community/react-native-google-signin.
+ * https://github.com/@react-native-google-signin/google-signin.
  */
 class GoogleApi {
     /**
@@ -29,7 +27,7 @@ class GoogleApi {
      * {@code GoogleSignin.configure}.
      * @returns {void}
      */
-    configure(config: Object) {
+    configure(config) {
         if (GoogleSignin) {
             GoogleSignin.configure(config);
         }
@@ -40,7 +38,7 @@ class GoogleApi {
      *
      * @returns {Promise}
      */
-    getTokens(): Promise<*> {
+    getTokens() {
         return GoogleSignin.getTokens();
     }
 
@@ -51,7 +49,7 @@ class GoogleApi {
      * @param {string} accessToken - The Google auth token.
      * @returns {Promise}
      */
-    getYouTubeLiveStreams(accessToken: string): Promise<*> {
+    getYouTubeLiveStreams(accessToken) {
         return new Promise((resolve, reject) => {
 
             // Fetching the list of available broadcasts first.
@@ -116,7 +114,7 @@ class GoogleApi {
      * params if needed.
      * @returns {Promise}
      */
-    _fetchGoogleEndpoint(accessToken, endpoint): Promise<*> {
+    _fetchGoogleEndpoint(accessToken, endpoint) {
         return new Promise((resolve, reject) => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
@@ -145,7 +143,7 @@ class GoogleApi {
      * to retrieve streams for.
      * @returns {Promise}
      */
-    _getLiveStreamsForBroadcasts(accessToken, broadcasts): Promise<*> {
+    _getLiveStreamsForBroadcasts(accessToken, broadcasts) {
         return new Promise((resolve, reject) => {
             const ids = [];
 

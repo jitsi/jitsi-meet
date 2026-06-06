@@ -1,6 +1,5 @@
-.filmstrip-toolbox,
 .always-on-top-toolbox {
-    background-color: $newToolbarBackgroundColor;
+    background-color: var(--toolbox-background-color, $newToolbarBackgroundColor);
     border-radius: 3px;
     display: flex;
     z-index: $toolbarZ;
@@ -28,8 +27,4 @@
     bottom: 10px;
     transform: translateX(-50%);
     padding: 3px !important;
-}
-
-.filmstrip-toolbox {
-    flex-direction: column;
 }

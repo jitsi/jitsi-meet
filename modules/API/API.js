@@ -1,11 +1,8 @@
-// @flow
-
+/* global APP */
 import Logger from '@jitsi/logger';
 
-import {
-    createApiEvent,
-    sendAnalytics
-} from '../../react/features/analytics';
+import { createApiEvent } from '../../react/features/analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../react/features/analytics/functions';
 import {
     approveParticipantAudio,
     approveParticipantVideo,
@@ -16,46 +13,84 @@ import {
     requestEnableAudioModeration,
     requestEnableVideoModeration
 } from '../../react/features/av-moderation/actions';
-import { isEnabledFromState } from '../../react/features/av-moderation/functions';
+import { isEnabledFromState, isForceMuted } from '../../react/features/av-moderation/functions';
+import { setAudioOnly } from '../../react/features/base/audio-only/actions';
 import {
-    getCurrentConference,
+    endConference,
     sendTones,
-    setFollowMe,
+    setAssumedBandwidthBps,
     setLocalSubject,
     setPassword,
     setSubject
-} from '../../react/features/base/conference';
-import { overwriteConfig, getWhitelistedJSON } from '../../react/features/base/config';
+} from '../../react/features/base/conference/actions';
+import { getCurrentConference, isP2pActive } from '../../react/features/base/conference/functions';
+import { overwriteConfig } from '../../react/features/base/config/actions';
+import { getWhitelistedJSON } from '../../react/features/base/config/functions.any';
 import { toggleDialog } from '../../react/features/base/dialog/actions';
-import { isSupportedBrowser } from '../../react/features/base/environment';
-import { parseJWTFromURLParams } from '../../react/features/base/jwt';
+import { isSupportedBrowser } from '../../react/features/base/environment/environment';
+import { isMobileBrowser } from '../../react/features/base/environment/utils';
+import { parseJWTFromURLParams } from '../../react/features/base/jwt/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
-import { MEDIA_TYPE } from '../../react/features/base/media';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../../react/features/base/media/constants';
+import { isVideoMutedByUser } from '../../react/features/base/media/functions';
+import {
+    grantModerator,
+    kickParticipant,
+    overwriteParticipantsNames,
+    pinParticipant,
+    raiseHand
+} from '../../react/features/base/participants/actions';
+import { LOCAL_PARTICIPANT_DEFAULT_ID } from '../../react/features/base/participants/constants';
 import {
     getLocalParticipant,
+    getNormalizedDisplayName,
     getParticipantById,
-    pinParticipant,
-    kickParticipant,
-    raiseHand,
-    isParticipantModerator,
+    getScreenshareParticipantIds,
+    getVirtualScreenshareParticipantByOwnerId,
+    hasRaisedHand,
     isLocalParticipantModerator,
-    hasRaisedHand
-} from '../../react/features/base/participants';
-import { updateSettings } from '../../react/features/base/settings';
-import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
+    isParticipantModerator
+} from '../../react/features/base/participants/functions';
+import { updateSettings } from '../../react/features/base/settings/actions';
+import { getDisplayName } from '../../react/features/base/settings/functions.web';
+import { setCameraFacingMode } from '../../react/features/base/tracks/actions.web';
+import { CAMERA_FACING_MODE_MESSAGE } from '../../react/features/base/tracks/constants';
+import {
+    getLocalVideoTrack,
+    isLocalTrackMuted
+} from '../../react/features/base/tracks/functions';
+import {
+    autoAssignToBreakoutRooms,
+    closeBreakoutRoom,
+    createBreakoutRoom,
+    moveToRoom,
+    removeBreakoutRoom,
+    sendParticipantToRoom
+} from '../../react/features/breakout-rooms/actions';
+import { getBreakoutRooms, getRoomsInfo } from '../../react/features/breakout-rooms/functions';
 import {
     sendMessage,
     setPrivateMessageRecipient,
     toggleChat
 } from '../../react/features/chat/actions';
 import { openChat } from '../../react/features/chat/actions.web';
+import { showDesktopPicker } from '../../react/features/desktop-picker/actions';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
-import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
+import { appendSuffix } from '../../react/features/display-name/functions';
+import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox/functions';
 import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/actions';
-import { setVolume } from '../../react/features/filmstrip';
-import { invite } from '../../react/features/invite';
+import {
+    addStageParticipant,
+    resizeFilmStrip,
+    setFilmstripVisible,
+    setVolume,
+    togglePinStageParticipant
+} from '../../react/features/filmstrip/actions.web';
+import { getPinnedActiveParticipants, isStageFilmstripAvailable } from '../../react/features/filmstrip/functions.web';
+import { setFollowMe, setFollowMeRecorder } from '../../react/features/follow-me/actions';
+import { invite } from '../../react/features/invite/actions.any';
 import {
     selectParticipantInLargeVideo
 } from '../../react/features/large-video/actions.any';
@@ -63,25 +98,52 @@ import {
     captureLargeVideoScreenshot,
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
-import { toggleLobbyMode, setKnockingParticipantApproval } from '../../react/features/lobby/actions';
-import { isForceMuted } from '../../react/features/participants-pane/functions';
-import { RECORDING_TYPES } from '../../react/features/recording/constants';
-import { getActiveSession } from '../../react/features/recording/functions';
-import { isScreenAudioSupported, isScreenVideoShared } from '../../react/features/screen-share';
-import { startScreenShareFlow, startAudioScreenShareFlow } from '../../react/features/screen-share/actions';
-import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture';
-import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions.any';
-import { toggleTileView, setTileView } from '../../react/features/video-layout';
-import { muteAllParticipants } from '../../react/features/video-menu/actions';
-import { setVideoQuality } from '../../react/features/video-quality';
-import VirtualBackgroundDialog from '../../react/features/virtual-background/components/VirtualBackgroundDialog';
+import { answerKnockingParticipant, toggleLobbyMode } from '../../react/features/lobby/actions';
+import { setNoiseSuppressionEnabled } from '../../react/features/noise-suppression/actions';
+import { hideNotification, showNotification } from '../../react/features/notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../react/features/notifications/constants';
+import {
+    close as closeParticipantsPane,
+    open as openParticipantsPane
+} from '../../react/features/participants-pane/actions';
+import { getParticipantsPaneOpen } from '../../react/features/participants-pane/functions';
+import { hidePiP, showPiP } from '../../react/features/pip/actions';
+import {
+    setStartRecordingIntent,
+    setStopRecordingIntent,
+    startLocalVideoRecording,
+    stopLocalVideoRecording
+} from '../../react/features/recording/actions.any';
+import { grantRecordingConsent, grantRecordingConsentAndUnmute } from '../../react/features/recording/actions.web';
+import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../react/features/recording/constants';
+import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
+import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
+import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
+import {
+    openCameraCaptureDialog,
+    toggleScreenshotCaptureSummary
+} from '../../react/features/screenshot-capture/actions';
+import { isScreenshotCaptureEnabled } from '../../react/features/screenshot-capture/functions';
+import SettingsDialog from '../../react/features/settings/components/web/SettingsDialog';
+import { SETTINGS_TABS } from '../../react/features/settings/constants';
+import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions';
+import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functions';
+import { setRequestingSubtitles, toggleRequestingSubtitles } from '../../react/features/subtitles/actions';
+import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';
+import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
+import { muteAllParticipants, muteRemote } from '../../react/features/video-menu/actions';
+import { setVideoQuality } from '../../react/features/video-quality/actions';
+import { toggleBackgroundEffect, toggleBlurredBackgroundEffect } from '../../react/features/virtual-background/actions';
+import { VIRTUAL_BACKGROUND_TYPE } from '../../react/features/virtual-background/constants';
+import { toggleWhiteboard } from '../../react/features/whiteboard/actions.web';
 import { getJitsiMeetTransport } from '../transport';
 
-import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';
+import {
+    API_ID,
+    ENDPOINT_TEXT_MESSAGE_NAME
+} from './constants';
 
-const logger = Logger.getLogger(__filename);
-
-declare var APP: Object;
+const logger = Logger.getLogger('api:core');
 
 /**
  * List of the available commands.
@@ -116,8 +178,16 @@ let videoAvailable = true;
  */
 function initCommands() {
     commands = {
+        'add-breakout-room': name => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to add breakout rooms');
+
+                return;
+            }
+            APP.store.dispatch(createBreakoutRoom(name));
+        },
         'answer-knocking-participant': (id, approved) => {
-            APP.store.dispatch(setKnockingParticipantApproval(id, approved));
+            APP.store.dispatch(answerKnockingParticipant(id, approved));
         },
         'approve-video': participantId => {
             if (!isLocalParticipantModerator(APP.store.getState())) {
@@ -133,9 +203,29 @@ function initCommands() {
 
             APP.store.dispatch(approveParticipantAudio(participantId));
         },
+        'auto-assign-to-breakout-rooms': () => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to auto-assign participants to breakout rooms');
+
+                return;
+            }
+            APP.store.dispatch(autoAssignToBreakoutRooms());
+        },
+        'grant-moderator': participantId => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to grant moderator right to another participant');
+
+                return;
+            }
+            APP.store.dispatch(grantModerator(participantId));
+        },
+        'grant-recording-consent': unmute => {
+            unmute ? APP.store.dispatch(grantRecordingConsentAndUnmute())
+                : APP.store.dispatch(grantRecordingConsent());
+        },
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
-            APP.conference.changeLocalDisplayName(displayName);
+            APP.store.dispatch(updateSettings({ displayName: getNormalizedDisplayName(displayName) }));
         },
         'local-subject': localSubject => {
             sendAnalytics(createApiEvent('local.subject.changed'));
@@ -153,6 +243,31 @@ function initCommands() {
             }
 
             APP.store.dispatch(muteAllParticipants(exclude, muteMediaType));
+        },
+        'mute-remote-participant': (participantId, mediaType) => {
+            const state = APP.store.getState();
+            const muteMediaType = mediaType ? mediaType : MEDIA_TYPE.AUDIO;
+            const localParticipant = getLocalParticipant(state);
+
+            // Check if targeting the local participant
+            if (participantId === localParticipant?.id) {
+
+                if (muteMediaType === MEDIA_TYPE.AUDIO) {
+                    APP.conference.toggleAudioMuted(false);
+                } else if (muteMediaType === MEDIA_TYPE.VIDEO) {
+                    APP.conference.toggleVideoMuted(false, true);
+                }
+
+                return;
+            }
+
+            if (!isLocalParticipantModerator(state)) {
+                logger.error('Missing moderator rights to mute remote participant');
+
+                return;
+            }
+
+            APP.store.dispatch(muteRemote(participantId, muteMediaType));
         },
         'toggle-lobby': isLobbyEnabled => {
             APP.store.dispatch(toggleLobbyMode(isLobbyEnabled));
@@ -179,10 +294,42 @@ function initCommands() {
                 ));
             }
         },
-        'pin-participant': id => {
-            logger.debug('Pin participant command received');
+        'pin-participant': (id, videoType) => {
+            const state = APP.store.getState();
+
+            // if id not provided, unpin everybody.
+            if (!id) {
+                if (isStageFilmstripAvailable(state)) {
+                    const pinnedParticipants = getPinnedActiveParticipants(state);
+
+                    pinnedParticipants?.forEach(p => {
+                        APP.store.dispatch(togglePinStageParticipant(p.participantId));
+                    });
+                } else {
+                    APP.store.dispatch(pinParticipant());
+                }
+
+                return;
+            }
+
+            const participant = videoType === VIDEO_TYPE.DESKTOP
+                ? getVirtualScreenshareParticipantByOwnerId(state, id) : getParticipantById(state, id);
+
+            if (!participant) {
+                logger.warn('Trying to pin a non-existing participant with pin-participant command.');
+
+                return;
+            }
+
             sendAnalytics(createApiEvent('participant.pinned'));
-            APP.store.dispatch(pinParticipant(id));
+
+            const participantId = participant.id;
+
+            if (isStageFilmstripAvailable(state)) {
+                APP.store.dispatch(addStageParticipant(participantId, true));
+            } else {
+                APP.store.dispatch(pinParticipant(participantId));
+            }
         },
         'proxy-connection-event': event => {
             APP.conference.onProxyConnectionEvent(event);
@@ -196,8 +343,15 @@ function initCommands() {
 
             APP.store.dispatch(reject(participantId));
         },
+        'remove-breakout-room': breakoutRoomJid => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to remove breakout rooms');
+
+                return;
+            }
+            APP.store.dispatch(removeBreakoutRoom(breakoutRoomJid));
+        },
         'resize-large-video': (width, height) => {
-            logger.debug('Resize large video command received');
             sendAnalytics(createApiEvent('largevideo.resized'));
             APP.store.dispatch(resizeLargeVideo(width, height));
         },
@@ -206,21 +360,63 @@ function initCommands() {
 
             APP.store.dispatch(sendTones(tones, duration, pause));
         },
-        'set-follow-me': value => {
-            logger.debug('Set follow me command received');
+        'set-assumed-bandwidth-bps': value => {
+            logger.debug('Set assumed bandwidth bps command received', value);
 
-            if (value) {
-                sendAnalytics(createApiEvent('follow.me.set'));
-            } else {
-                sendAnalytics(createApiEvent('follow.me.unset'));
+            if (typeof value !== 'number' || isNaN(value)) {
+                logger.error('Assumed bandwidth bps must be a number.');
+
+                return;
             }
 
-            APP.store.dispatch(setFollowMe(value));
+            APP.store.dispatch(setAssumedBandwidthBps(value));
         },
-        'set-large-video-participant': participantId => {
-            logger.debug('Set large video participant command received');
+
+        'set-blurred-background': blurType => {
+            const tracks = APP.store.getState()['features/base/tracks'];
+            const videoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
+            const muted = tracks ? isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO) : isVideoMutedByUser(APP.store);
+
+            APP.store.dispatch(toggleBlurredBackgroundEffect(videoTrack, blurType, muted));
+        },
+        'set-follow-me': (value, recorderOnly) => {
+
+            if (value) {
+                sendAnalytics(createApiEvent('follow.me.set', {
+                    recorderOnly
+                }));
+            } else {
+                sendAnalytics(createApiEvent('follow.me.unset', {
+                    recorderOnly
+                }));
+            }
+
+            APP.store.dispatch(recorderOnly ? setFollowMeRecorder(value) : setFollowMe(value));
+        },
+        'set-large-video-participant': (participantId, videoType) => {
+            const { getState, dispatch } = APP.store;
+
+            if (!participantId) {
+                sendAnalytics(createApiEvent('largevideo.participant.set'));
+                dispatch(selectParticipantInLargeVideo());
+
+                return;
+            }
+
+            const state = getState();
+            const participant = videoType === VIDEO_TYPE.DESKTOP
+                ? getVirtualScreenshareParticipantByOwnerId(state, participantId)
+                : getParticipantById(state, participantId);
+
+            if (!participant) {
+                logger.warn('Trying to select a non-existing participant with set-large-video-participant command.');
+
+                return;
+            }
+
+            dispatch(setTileView(false));
             sendAnalytics(createApiEvent('largevideo.participant.set'));
-            APP.store.dispatch(selectParticipantInLargeVideo(participantId));
+            dispatch(selectParticipantInLargeVideo(participant.id));
         },
         'set-participant-volume': (participantId, volume) => {
             APP.store.dispatch(setVolume(participantId, volume));
@@ -235,24 +431,30 @@ function initCommands() {
         },
         'toggle-audio': () => {
             sendAnalytics(createApiEvent('toggle-audio'));
-            logger.log('Audio toggle: API command received');
             APP.conference.toggleAudioMuted(false /* no UI */);
         },
         'toggle-video': () => {
             sendAnalytics(createApiEvent('toggle-video'));
-            logger.log('Video toggle: API command received');
-            APP.conference.toggleVideoMuted(false /* no UI */);
+            APP.conference.toggleVideoMuted(false /* no UI */, true /* ensure track */);
         },
         'toggle-film-strip': () => {
             sendAnalytics(createApiEvent('film.strip.toggled'));
-            APP.UI.toggleFilmstrip();
-        },
-        'toggle-camera': () => {
-            if (!isToggleCameraEnabled(APP.store.getState())) {
-                return;
-            }
+            const { visible } = APP.store.getState()['features/filmstrip'];
 
-            APP.store.dispatch(toggleCamera());
+            APP.store.dispatch(setFilmstripVisible(!visible));
+        },
+
+        /*
+         * @param {Object} options - Additional details of how to perform
+         * the action.
+         * @param {number} options.width - width value for film strip.
+         */
+        'resize-film-strip': (options = {}) => {
+            sendAnalytics(createApiEvent('film.strip.resize'));
+            APP.store.dispatch(resizeFilmStrip(options.width));
+        },
+        'toggle-camera': facingMode => {
+            APP.store.dispatch(setCameraFacingMode(facingMode));
         },
         'toggle-camera-mirror': () => {
             const state = APP.store.getState();
@@ -281,6 +483,12 @@ function initCommands() {
             } else {
                 APP.store.dispatch(disable());
             }
+        },
+        'toggle-participants-pane': enabled => {
+            const toggleParticipantsPane = enabled
+                ? openParticipantsPane : closeParticipantsPane;
+
+            APP.store.dispatch(toggleParticipantsPane());
         },
         'toggle-raise-hand': () => {
             const localParticipant = getLocalParticipant(APP.store.getState());
@@ -317,6 +525,16 @@ function initCommands() {
             sendAnalytics(createApiEvent('screen.sharing.toggled'));
             toggleScreenSharing(options.enable);
         },
+        'set-noise-suppression-enabled': (options = {}) => {
+            APP.store.dispatch(setNoiseSuppressionEnabled(options.enabled));
+        },
+        'toggle-subtitles': () => {
+            APP.store.dispatch(toggleRequestingSubtitles());
+        },
+        'set-subtitles': (enabled, displaySubtitles, language) => {
+            APP.store.dispatch(setRequestingSubtitles(
+                enabled, displaySubtitles, language ? `translation-languages:${language}` : null));
+        },
         'toggle-tile-view': () => {
             sendAnalytics(createApiEvent('tile-view.toggled'));
 
@@ -333,12 +551,13 @@ function initCommands() {
             sendAnalytics(createApiEvent('email.changed'));
             APP.conference.changeLocalEmail(email);
         },
-        'avatar-url': avatarUrl => {
+        'avatar-url': avatarUrl => { // @deprecated
+            console.warn('Using command avatarUrl is deprecated. Use context.user.avatar in the jwt.');
+
             sendAnalytics(createApiEvent('avatar.url.changed'));
             APP.conference.changeLocalAvatarUrl(avatarUrl);
         },
         'send-chat-message': (message, to, ignorePrivacy = false) => {
-            logger.debug('Send chat message command received');
             if (to) {
                 const participant = getParticipantById(APP.store.getState(), to);
 
@@ -356,7 +575,6 @@ function initCommands() {
             APP.store.dispatch(sendMessage(message, ignorePrivacy));
         },
         'send-endpoint-text-message': (to, text) => {
-            logger.debug('Send endpoint message command received');
             try {
                 APP.conference.sendEndpointMessage(to, {
                     name: ENDPOINT_TEXT_MESSAGE_NAME,
@@ -366,29 +584,110 @@ function initCommands() {
                 logger.error('Failed sending endpoint text message', err);
             }
         },
+        'send-camera-facing-mode-message': (to, facingMode) => {
+            if (!to) {
+                logger.warn('Participant id not set');
+
+                return;
+            }
+
+            APP.conference.sendEndpointMessage(to, {
+                name: CAMERA_FACING_MODE_MESSAGE,
+                facingMode
+            });
+        },
+        'overwrite-names': participantList => {
+            APP.store.dispatch(overwriteParticipantsNames(participantList));
+        },
         'toggle-e2ee': enabled => {
-            logger.debug('Toggle E2EE key command received');
             APP.store.dispatch(toggleE2EE(enabled));
         },
         'set-media-encryption-key': keyInfo => {
             APP.store.dispatch(setMediaEncryptionKey(JSON.parse(keyInfo)));
         },
         'set-video-quality': frameHeight => {
-            logger.debug('Set video quality command received');
             sendAnalytics(createApiEvent('set.video.quality'));
             APP.store.dispatch(setVideoQuality(frameHeight));
         },
-
-        'start-share-video': url => {
-            logger.debug('Share video command received');
-            sendAnalytics(createApiEvent('share.video.start'));
-            APP.store.dispatch(playSharedVideo(url));
+        'set-audio-only': enable => {
+            sendAnalytics(createApiEvent('set.audio.only'));
+            APP.store.dispatch(setAudioOnly(enable));
         },
+        'start-share-video': url => {
+            sendAnalytics(createApiEvent('share.video.start'));
+            const id = extractYoutubeIdOrURL(url);
 
+            if (id) {
+                APP.store.dispatch(playSharedVideo(id));
+            }
+        },
         'stop-share-video': () => {
-            logger.debug('Share video command received');
             sendAnalytics(createApiEvent('share.video.stop'));
             APP.store.dispatch(stopSharedVideo());
+        },
+
+        /**
+         * Shows a custom in-meeting notification.
+         *
+         * @param { string } arg.title - Notification title.
+         * @param { string } arg.description - Notification description.
+         * @param { string } arg.uid - Optional unique identifier for the notification.
+         * @param { string } arg.type - Notification type, either `error`, `normal`, `success` or `warning`.
+         * Defaults to "normal" if not provided.
+         * @param { string } arg.timeout - Timeout type, either `short`, `medium`, `long` or `sticky`.
+         * Defaults to "short" if not provided.
+         * @param { Array<Object> } arg.customActions - An array of custom actions to be displayed in the notification.
+         * Each object should have a `label` and a `uuid` property. It should be used along a listener
+         * for the `customNotificationActionTriggered` event to handle the custom action.
+         * @returns {void}
+         */
+        'show-notification': ({
+            customActions = [],
+            title,
+            description,
+            uid,
+            type = NOTIFICATION_TYPE.NORMAL,
+            timeout = NOTIFICATION_TIMEOUT_TYPE.SHORT
+        }) => {
+            const validTypes = Object.values(NOTIFICATION_TYPE);
+            const validTimeouts = Object.values(NOTIFICATION_TIMEOUT_TYPE);
+
+            if (!validTypes.includes(type)) {
+                logger.error(`Invalid notification type "${type}". Expecting one of ${validTypes}`);
+
+                return;
+            }
+
+            if (!validTimeouts.includes(timeout)) {
+                logger.error(`Invalid notification timeout "${timeout}". Expecting one of ${validTimeouts}`);
+
+                return;
+            }
+
+            const handlers = customActions.map(({ uuid }) => () => {
+                APP.API.notifyCustomNotificationActionTriggered(uuid);
+            });
+
+            const keys = customActions.map(({ label }) => label);
+
+            APP.store.dispatch(showNotification({
+                customActionHandler: handlers,
+                customActionNameKey: keys,
+                uid,
+                title,
+                description,
+                appearance: type
+            }, timeout));
+        },
+
+        /**
+         * Removes a notification given a unique identifier.
+         *
+         * @param { string } uid - Unique identifier for the notification to be removed.
+         * @returns {void}
+         */
+        'hide-notification': uid => {
+            APP.store.dispatch(hideNotification(uid));
         },
 
         /**
@@ -397,26 +696,33 @@ function initCommands() {
          * For youtube streams, `youtubeStreamKey` must be passed on. `youtubeBroadcastID` is optional.
          * For dropbox recording, recording `mode` should be `file` and a dropbox oauth2 token must be provided.
          * For file recording, recording `mode` should be `file` and optionally `shouldShare` could be passed on.
+         * For local recording, recording `mode` should be `local` and optionally `onlySelf` could be passed on.
          * No other params should be passed.
          *
-         * @param { string } arg.mode - Recording mode, either `file` or `stream`.
+         * @param { string } arg.mode - Recording mode, either `local`, `file` or `stream`.
          * @param { string } arg.dropboxToken - Dropbox oauth2 token.
+         * @param { boolean } arg.onlySelf - Whether to only record the local streams.
          * @param { string } arg.rtmpStreamKey - The RTMP stream key.
-         * @param { string } arg.rtmpBroadcastID - The RTMP braodcast ID.
+         * @param { string } arg.rtmpBroadcastID - The RTMP broadcast ID.
          * @param { boolean } arg.shouldShare - Whether the recording should be shared with the participants or not.
          * Only applies to certain jitsi meet deploys.
          * @param { string } arg.youtubeStreamKey - The youtube stream key.
-         * @param { string } arg.youtubeBroadcastID - The youtube broacast ID.
+         * @param { string } arg.youtubeBroadcastID - The youtube broadcast ID.
+         * @param { Object } arg.extraMetadata - Any extra metadata params for file recording.
+         * @param { boolean } arg.transcription - Whether a transcription should be started or not.
          * @returns {void}
          */
         'start-recording': ({
             mode,
             dropboxToken,
+            onlySelf,
             shouldShare,
             rtmpStreamKey,
             rtmpBroadcastID,
             youtubeStreamKey,
-            youtubeBroadcastID
+            youtubeBroadcastID,
+            extraMetadata = {},
+            transcription
         }) => {
             const state = APP.store.getState();
             const conference = getCurrentConference(state);
@@ -439,14 +745,34 @@ function initCommands() {
                 return;
             }
 
+            if (mode === 'local') {
+                const { localRecording } = state['features/base/config'];
+
+                if (!localRecording?.disable && supportsLocalRecording()) {
+                    APP.store.dispatch(startLocalVideoRecording(onlySelf));
+                } else {
+                    logger.error('Failed starting recording: local recording is either disabled or not supported');
+                }
+
+                return;
+            }
+
             let recordingConfig;
 
             if (mode === JitsiRecordingConstants.mode.FILE) {
+                const { recordingService } = state['features/base/config'];
+
+                if (!recordingService.enabled && !dropboxToken) {
+                    logger.error('Failed starting recording: the recording service is not enabled');
+
+                    return;
+                }
                 if (dropboxToken) {
                     recordingConfig = {
                         mode: JitsiRecordingConstants.mode.FILE,
                         appData: JSON.stringify({
                             'file_recording_metadata': {
+                                ...extraMetadata,
                                 'upload_credentials': {
                                     'service_name': RECORDING_TYPES.DROPBOX,
                                     'token': dropboxToken
@@ -459,6 +785,7 @@ function initCommands() {
                         mode: JitsiRecordingConstants.mode.FILE,
                         appData: JSON.stringify({
                             'file_recording_metadata': {
+                                ...extraMetadata,
                                 'share': shouldShare
                             }
                         })
@@ -470,30 +797,68 @@ function initCommands() {
                     mode: JitsiRecordingConstants.mode.STREAM,
                     streamId: youtubeStreamKey || rtmpStreamKey
                 };
-            } else {
-                logger.error('Invalid recording mode provided');
-
-                return;
             }
 
-            if (isScreenVideoShared(APP.store.getState())) {
+            if (isScreenshotCaptureEnabled(state, true, false)) {
                 APP.store.dispatch(toggleScreenshotCaptureSummary(true));
             }
-            conference.startRecording(recordingConfig);
+
+            const wantsRecording = mode === JitsiRecordingConstants.mode.FILE;
+            const wantsTranscription = Boolean(transcription);
+
+            // Seed startRecordingIntent so maybeNotifyRecordingStart can coordinate
+            // the start sound/notification once recording (and transcription, if
+            // requested) resolve. Without this, notifyRecordingLinkAvailable is
+            // never emitted for iFrame-initiated recordings.
+            if (wantsRecording || wantsTranscription) {
+                APP.store.dispatch(setStartRecordingIntent({
+                    recording: wantsRecording,
+                    transcription: wantsTranscription
+                }));
+            }
+
+            // Start audio / video recording, if requested.
+            if (typeof recordingConfig !== 'undefined') {
+                conference.startRecording(recordingConfig);
+            }
+
+            // Update room metadata so remote participants see the combined
+            // recording/transcription intent. When transcription is requested,
+            // setRequestingSubtitles routes through the subtitles middleware
+            // which writes both metadata fields atomically; otherwise we write
+            // the recording-only metadata directly, mirroring the start dialog.
+            if (wantsTranscription) {
+                APP.store.dispatch(setRequestingSubtitles(true, false, null, true, wantsRecording));
+            } else if (wantsRecording) {
+                conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                    isRecordingRequested: true,
+                    isTranscribingEnabled: false
+                });
+            }
         },
 
         /**
          * Stops a recording or streaming in progress.
          *
-         * @param {string} mode - `file` or `stream`.
+         * @param {string} mode - `local`, `file` or `stream`.
+         * @param {boolean} transcription - Whether the transcription needs to be stopped.
          * @returns {void}
          */
-        'stop-recording': mode => {
+        'stop-recording': (mode, transcription) => {
             const state = APP.store.getState();
             const conference = getCurrentConference(state);
 
             if (!conference) {
                 logger.error('Conference is not defined');
+
+                return;
+            }
+
+            if (mode === 'local') {
+                if (transcription) {
+                    APP.store.dispatch(setRequestingSubtitles(false, false, null, true));
+                }
+                APP.store.dispatch(stopLocalVideoRecording());
 
                 return;
             }
@@ -505,13 +870,34 @@ function initCommands() {
             }
 
             const activeSession = getActiveSession(state, mode);
+            const wantsStopRecording = mode === JitsiRecordingConstants.mode.FILE && Boolean(activeSession);
+            const wantsStopTranscription = Boolean(transcription);
 
-            if (activeSession && activeSession.id) {
-                APP.store.dispatch(toggleScreenshotCaptureSummary(false));
-                conference.stopRecording(activeSession.id);
-            } else {
-                logger.error('No recording or streaming session found');
+            // Seed stopRecordingIntent so maybeNotifyRecordingStop can coordinate
+            // the off sound/notification across recording and transcription stops.
+            if (wantsStopRecording || wantsStopTranscription) {
+                APP.store.dispatch(setStopRecordingIntent({
+                    recording: wantsStopRecording,
+                    transcription: wantsStopTranscription
+                }));
             }
+
+            if (wantsStopTranscription) {
+                APP.store.dispatch(setRequestingSubtitles(false, false, null, true));
+            }
+
+            // Mirror AbstractStopRecordingDialog — clear both fields atomically so
+            // remote clients see the end of the recording/transcription intent.
+            // Covers recording-only, transcription-only, and combined stops.
+            if (wantsStopRecording || wantsStopTranscription) {
+                conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                    isRecordingRequested: false,
+                    isTranscribingEnabled: false
+                });
+            }
+
+            APP.store.dispatch(toggleScreenshotCaptureSummary(false));
+            conference.stopRecording(activeSession?.id);
         },
         'initiate-private-chat': participantId => {
             const state = APP.store.getState();
@@ -531,20 +917,76 @@ function initCommands() {
         'cancel-private-chat': () => {
             APP.store.dispatch(setPrivateMessageRecipient());
         },
+        'close-breakout-room': roomId => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to close breakout rooms');
+
+                return;
+            }
+            APP.store.dispatch(closeBreakoutRoom(roomId));
+        },
+        'join-breakout-room': roomId => {
+            APP.store.dispatch(moveToRoom(roomId));
+        },
+        'send-participant-to-room': (participantId, roomId) => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to send participants to rooms');
+
+                return;
+            }
+
+            APP.store.dispatch(sendParticipantToRoom(participantId, roomId));
+        },
         'kick-participant': participantId => {
             APP.store.dispatch(kickParticipant(participantId));
         },
         'overwrite-config': config => {
             const whitelistedConfig = getWhitelistedJSON('config', config);
 
+            logger.info(`Overwriting config with: ${JSON.stringify(whitelistedConfig)}`);
+
             APP.store.dispatch(overwriteConfig(whitelistedConfig));
         },
         'toggle-virtual-background': () => {
-            APP.store.dispatch(toggleDialog(VirtualBackgroundDialog));
+            APP.store.dispatch(toggleDialog(SettingsDialog, {
+                defaultTab: SETTINGS_TABS.VIRTUAL_BACKGROUND }));
+        },
+        'end-conference': () => {
+            APP.store.dispatch(endConference());
+            const state = APP.store.getState();
+            const conference = getCurrentConference(state);
+
+            if (!conference) {
+                logger.error('Conference not yet available');
+            } else if (conference.isEndConferenceSupported()) {
+                APP.store.dispatch(endConference());
+            } else {
+                logger.error(' End Conference not supported');
+            }
+        },
+        'toggle-whiteboard': open => {
+            APP.store.dispatch(toggleWhiteboard(open));
+        },
+        'set-virtual-background': (enabled, backgroundImage) => {
+            const tracks = APP.store.getState()['features/base/tracks'];
+            const jitsiTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
+
+            APP.store.dispatch(toggleBackgroundEffect({
+                backgroundEffectEnabled: enabled,
+                backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
+                virtualSource: backgroundImage
+            }, jitsiTrack));
+        },
+        'show-pip': () => {
+            APP.store.dispatch(showPiP());
+        },
+        'hide-pip': () => {
+            APP.store.dispatch(hidePiP());
         }
     };
     transport.on('event', ({ data, name }) => {
         if (name && commands[name]) {
+            logger.info(`API command received: ${name}`);
             commands[name](...data);
 
             return true;
@@ -577,6 +1019,20 @@ function initCommands() {
                     });
                 });
             break;
+        case 'capture-camera-picture' : {
+            const { cameraFacingMode, descriptionText, titleText } = request;
+
+            if (!isMobileBrowser()) {
+                logger.error('This feature is only supported on mobile');
+
+                return;
+            }
+
+            APP.store.dispatch(openCameraCaptureDialog(callback, { cameraFacingMode,
+                descriptionText,
+                titleText }));
+            break;
+        }
         case 'deployment-info':
             callback(APP.store.getState()['features/base/config'].deploymentInfo);
             break;
@@ -615,6 +1071,9 @@ function initCommands() {
         case 'is-audio-muted':
             callback(APP.conference.isLocalAudioMuted());
             break;
+        case 'is-audio-disabled':
+            callback(isAudioMuteButtonDisabled(APP.store.getState()));
+            break;
         case 'is-moderation-on': {
             const { mediaType } = request;
             const type = mediaType || MEDIA_TYPE.AUDIO;
@@ -631,6 +1090,10 @@ function initCommands() {
             callback(isForceMuted(participant, type, state));
             break;
         }
+        case 'is-participants-pane-open': {
+            callback(getParticipantsPaneOpen(APP.store.getState()));
+            break;
+        }
         case 'is-video-muted':
             callback(APP.conference.isLocalVideoMuted());
             break;
@@ -643,9 +1106,11 @@ function initCommands() {
         case 'is-sharing-screen':
             callback(Boolean(APP.conference.isSharingScreen));
             break;
+        case 'is-start-silent':
+            callback(Boolean(APP.store.getState()['features/base/config'].startSilent));
+            break;
         case 'get-content-sharing-participants': {
-            const tracks = getState()['features/base/tracks'];
-            const sharingParticipantIds = tracks.filter(tr => tr.videoType === 'desktop').map(t => t.participantId);
+            const sharingParticipantIds = getScreenshareParticipantIds(APP.store.getState());
 
             callback({
                 sharingParticipantIds
@@ -675,7 +1140,54 @@ function initCommands() {
             });
             break;
         }
+        case 'list-breakout-rooms': {
+            callback(getBreakoutRooms(APP.store.getState()));
+            break;
+        }
+        case 'rooms-info': {
+            callback(getRoomsInfo(APP.store.getState()));
+            break;
+        }
+        case 'get-shared-document-url': {
+            const { etherpad } = APP.store.getState()['features/etherpad'];
+
+            callback(etherpad?.documentUrl || '');
+            break;
+        }
+        case 'get-p2p-status': {
+            callback(isP2pActive(APP.store.getState()));
+            break;
+        }
+        case 'session-id': {
+            const { conference } = APP.store.getState()['features/base/conference'];
+
+            callback(conference?.getMeetingUniqueId() || '');
+            break;
+        }
+        case '_new_electron_screensharing_supported': {
+            callback(true);
+
+            break;
+        }
+        case 'open-desktop-picker': {
+            const { desktopSharingSources } = APP.store.getState()['features/base/config'];
+            const options = {
+                desktopSharingSources: desktopSharingSources ?? [ 'screen', 'window' ]
+            };
+            const onSourceChoose = (_streamId, _type, screenShareAudio, source) => {
+                callback({
+                    screenShareAudio,
+                    source
+                });
+            };
+
+            dispatch(showDesktopPicker(options, onSourceChoose));
+
+            break;
+        }
         default:
+            callback({ error: new Error('UnknownRequestError') });
+
             return false;
         }
 
@@ -721,7 +1233,7 @@ function toggleScreenSharing(enable) {
  * @param {MouseEvent} event - The mouse event to sanitize.
  * @returns {Object}
  */
-function sanitizeMouseEvent(event: MouseEvent) {
+function sanitizeMouseEvent(event) {
     const {
         clientX,
         clientY,
@@ -759,7 +1271,7 @@ function sanitizeMouseEvent(event: MouseEvent) {
  * Jitsi Meet.
  */
 class API {
-    _enabled: boolean;
+    _enabled;
 
     /**
      * Initializes the API. Setups message event listeners that will receive
@@ -783,7 +1295,11 @@ class API {
         this._enabled = true;
 
         initCommands();
+
         this.notifyBrowserSupport(isSupportedBrowser());
+
+        // Let the embedder know we are ready.
+        this._sendEvent({ name: 'ready' });
     }
 
     /**
@@ -794,10 +1310,24 @@ class API {
      * otherwise.
      * @returns {void}
      */
-    notifyLargeVideoVisibilityChanged(isHidden: boolean) {
+    notifyLargeVideoVisibilityChanged(isHidden) {
         this._sendEvent({
             name: 'large-video-visibility-changed',
             isVisible: !isHidden
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the in-page toolbox
+     * visibility changed.
+     *
+     * @param {boolean} visible - True if the toolbox is visible, false otherwise.
+     * @returns {void}
+     */
+    notifyToolbarVisibilityChanged(visible) {
+        this._sendEvent({
+            name: 'toolbar-visibility-changed',
+            visible
         });
     }
 
@@ -808,7 +1338,7 @@ class API {
      * @param {Object} event - The message to pass onto spot.
      * @returns {void}
      */
-    sendProxyConnectionEvent(event: Object) {
+    sendProxyConnectionEvent(event) {
         this._sendEvent({
             name: 'proxy-connection-event',
             ...event
@@ -821,9 +1351,13 @@ class API {
      * @param {Object} event - The event to be sent.
      * @returns {void}
      */
-    _sendEvent(event: Object = {}) {
+    _sendEvent(event = {}) {
         if (this._enabled) {
-            transport.sendEvent(event);
+            try {
+                transport.sendEvent(event);
+            } catch (error) {
+                logger.error('Failed to send and IFrame API event', error);
+            }
         }
     }
 
@@ -834,7 +1368,7 @@ class API {
      * @param {boolean} isOpen - True if the chat panel is open.
      * @returns {void}
      */
-    notifyChatUpdated(unreadCount: number, isOpen: boolean) {
+    notifyChatUpdated(unreadCount, isOpen) {
         this._sendEvent({
             name: 'chat-updated',
             unreadCount,
@@ -849,7 +1383,7 @@ class API {
      * @param {boolean} privateMessage - True if the message was a private message.
      * @returns {void}
      */
-    notifySendingChatMessage(message: string, privateMessage: boolean) {
+    notifySendingChatMessage(message, privateMessage) {
         this._sendEvent({
             name: 'outgoing-message',
             message,
@@ -863,7 +1397,7 @@ class API {
      * @param {MouseEvent} event - The mousemove event.
      * @returns {void}
      */
-    notifyMouseEnter(event: MouseEvent) {
+    notifyMouseEnter(event) {
         this._sendEvent({
             name: 'mouse-enter',
             event: sanitizeMouseEvent(event)
@@ -876,7 +1410,7 @@ class API {
      * @param {MouseEvent} event - The mousemove event.
      * @returns {void}
      */
-    notifyMouseLeave(event: MouseEvent) {
+    notifyMouseLeave(event) {
         this._sendEvent({
             name: 'mouse-leave',
             event: sanitizeMouseEvent(event)
@@ -889,7 +1423,7 @@ class API {
      * @param {MouseEvent} event - The mousemove event.
      * @returns {void}
      */
-    notifyMouseMove(event: MouseEvent) {
+    notifyMouseMove(event) {
         this._sendEvent({
             name: 'mouse-move',
             event: sanitizeMouseEvent(event)
@@ -903,7 +1437,7 @@ class API {
      * @param {boolean} enabled - Whether or not the new moderation status is enabled.
      * @returns {void}
      */
-    notifyModerationChanged(mediaType: string, enabled: boolean) {
+    notifyModerationChanged(mediaType, enabled) {
         this._sendEvent({
             name: 'moderation-status-changed',
             mediaType,
@@ -918,7 +1452,7 @@ class API {
      * @param {string} mediaType - Media type for which the participant was approved.
      * @returns {void}
      */
-    notifyParticipantApproved(participantId: string, mediaType: string) {
+    notifyParticipantApproved(participantId, mediaType) {
         this._sendEvent({
             name: 'moderation-participant-approved',
             id: participantId,
@@ -933,11 +1467,57 @@ class API {
      * @param {string} mediaType - Media type for which the participant was rejected.
      * @returns {void}
      */
-    notifyParticipantRejected(participantId: string, mediaType: string) {
+    notifyParticipantRejected(participantId, mediaType) {
         this._sendEvent({
             name: 'moderation-participant-rejected',
             id: participantId,
             mediaType
+        });
+    }
+
+    /**
+     * Notify the external application that a participant's mute status changed.
+     *
+     * @param {string} participantId - The ID of the participant.
+     * @param {boolean} isMuted - True if muted, false if unmuted.
+     * @param {string} mediaType - Media type that was muted ('audio' or 'video').
+     * @returns {void}
+     */
+    notifyParticipantMuted(participantId, isMuted, mediaType) {
+        this._sendEvent({
+            name: 'participant-muted',
+            id: participantId,
+            isMuted,
+            mediaType
+        });
+    }
+
+    /**
+     * Notify the external app that a notification has been triggered.
+     *
+     * @param {string} title - The notification title.
+     * @param {string} description - The notification description.
+     *
+     * @returns {void}
+     */
+    notifyNotificationTriggered(title, description) {
+        this._sendEvent({
+            description,
+            name: 'notification-triggered',
+            title
+        });
+    }
+
+    /**
+     * Notify request desktop sources.
+     *
+     * @param {Object} options - Object with the options for desktop sources.
+     * @returns {void}
+     */
+    requestDesktopSources(options) {
+        return transport.sendRequest({
+            name: '_request-desktop-sources',
+            options
         });
     }
 
@@ -947,7 +1527,7 @@ class API {
      * @param {number} videoQuality - The video quality. The number represents the maximum height of the video streams.
      * @returns {void}
      */
-    notifyVideoQualityChanged(videoQuality: number) {
+    notifyVideoQualityChanged(videoQuality) {
         this._sendEvent({
             name: 'video-quality-changed',
             videoQuality
@@ -962,21 +1542,29 @@ class API {
      * @returns {void}
      */
     notifyReceivedChatMessage(
-            { body, id, nick, privateMessage, ts }: {
-                body: *, id: string, nick: string, privateMessage: boolean, ts: *
-            } = {}) {
-        if (APP.conference.isLocalId(id)) {
+            { body, from, nick, privateMessage, ts, messageId, replyToMessageId } = {}) {
+        if (APP.conference.isLocalId(from)) {
             return;
         }
 
-        this._sendEvent({
+        const event = {
             name: 'incoming-message',
-            from: id,
+            from,
             message: body,
             nick,
             privateMessage,
             stamp: ts
-        });
+        };
+
+        if (typeof messageId === 'string' && messageId !== '') {
+            event.messageId = messageId;
+        }
+
+        if (typeof replyToMessageId === 'string' && replyToMessageId !== '') {
+            event.replyToMessageId = replyToMessageId;
+        }
+
+        this._sendEvent(event);
     }
 
     /**
@@ -987,7 +1575,7 @@ class API {
      * @param {Object} props - The display name of the user.
      * @returns {void}
      */
-    notifyUserJoined(id: string, props: Object) {
+    notifyUserJoined(id, props) {
         this._sendEvent({
             name: 'participant-joined',
             id,
@@ -1002,7 +1590,7 @@ class API {
      * @param {string} id - User id.
      * @returns {void}
      */
-    notifyUserLeft(id: string) {
+    notifyUserLeft(id) {
         this._sendEvent({
             name: 'participant-left',
             id
@@ -1017,7 +1605,7 @@ class API {
      * @param {string} role - The new user role.
      * @returns {void}
      */
-    notifyUserRoleChanged(id: string, role: string) {
+    notifyUserRoleChanged(id, role) {
         this._sendEvent({
             name: 'participant-role-changed',
             id,
@@ -1033,7 +1621,7 @@ class API {
      * @param {string} avatarURL - The new avatar URL of the participant.
      * @returns {void}
      */
-    notifyAvatarChanged(id: string, avatarURL: string) {
+    notifyAvatarChanged(id, avatarURL) {
         this._sendEvent({
             name: 'avatar-changed',
             avatarURL,
@@ -1048,10 +1636,40 @@ class API {
      * @param {Object} data - The event data.
      * @returns {void}
      */
-    notifyEndpointTextMessageReceived(data: Object) {
+    notifyEndpointTextMessageReceived(data) {
         this._sendEvent({
             name: 'endpoint-text-message-received',
             data
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that some face landmark data is available.
+     *
+     * @param {Object | undefined} faceBox - Detected face(s) bounding box (left, right, width).
+     * @param {string} faceExpression - Detected face expression.
+     * @returns {void}
+     */
+    notifyFaceLandmarkDetected(faceBox, faceExpression) {
+        this._sendEvent({
+            name: 'face-landmark-detected',
+            faceBox,
+            faceExpression
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a custom notification action has been triggered.
+     *
+     * @param {string} actionUuid - The UUID of the action that has been triggered.
+     * @returns {void}
+    */
+    notifyCustomNotificationActionTriggered(actionUuid) {
+        this._sendEvent({
+            name: 'custom-notification-action-triggered',
+            data: {
+                id: actionUuid
+            }
         });
     }
 
@@ -1061,7 +1679,7 @@ class API {
      * @param {Object} data - The event data.
      * @returns {void}
      */
-    notifySharingParticipantsChanged(data: Object) {
+    notifySharingParticipantsChanged(data) {
         this._sendEvent({
             name: 'content-sharing-participants-changed',
             data
@@ -1075,7 +1693,7 @@ class API {
      * @param {Object} devices - The new device list.
      * @returns {void}
      */
-    notifyDeviceListChanged(devices: Object) {
+    notifyDeviceListChanged(devices) {
         this._sendEvent({
             name: 'device-list-changed',
             devices
@@ -1093,8 +1711,8 @@ class API {
      * @returns {void}
      */
     notifyDisplayNameChanged(
-            id: string,
-            { displayName, formattedDisplayName }: Object) {
+            id,
+            { displayName, formattedDisplayName }) {
         this._sendEvent({
             name: 'display-name-change',
             displayname: displayName,
@@ -1112,8 +1730,8 @@ class API {
      * @returns {void}
      */
     notifyEmailChanged(
-            id: string,
-            { email }: Object) {
+            id,
+            { email }) {
         this._sendEvent({
             name: 'email-change',
             email,
@@ -1125,14 +1743,46 @@ class API {
      * Notify external application (if API is enabled) that the an error has been logged.
      *
      * @param {string} logLevel - The message log level.
-     * @param {Array} args - Array of strings composing the log message.
+     * @param {Array<string>} args - Array of strings composing the log message.
      * @returns {void}
      */
-    notifyLog(logLevel: string, args: Array<string>) {
+    notifyLog(logLevel, args = []) {
+        if (!Array.isArray(args)) {
+            logger.error('notifyLog received wrong argument types!');
+
+            return;
+        }
+
+        // Trying to convert arguments to strings. Otherwise in order to send the event the arguments will be formatted
+        // with JSON.stringify which can throw an error because of circular objects and we will lose the whole log.
+        const formattedArguments = [];
+
+        args.forEach(arg => {
+            let formattedArgument = '';
+
+            if (arg instanceof Error) {
+                formattedArgument += `${arg.toString()}: ${arg.stack}`;
+            } else if (typeof arg === 'object') {
+                // NOTE: The non-enumerable properties of the objects wouldn't be included in the string after
+                // JSON.stringify. For example Map instance will be translated to '{}'. So I think we have to eventually
+                // do something better for parsing the arguments. But since this option for stringify is part of the
+                // public interface and I think it could be useful in some cases I will it for now.
+                try {
+                    formattedArgument += JSON.stringify(arg);
+                } catch (error) {
+                    formattedArgument += arg;
+                }
+            } else {
+                formattedArgument += arg;
+            }
+
+            formattedArguments.push(formattedArgument);
+        });
+
         this._sendEvent({
             name: 'log',
             logLevel,
-            args
+            args: formattedArguments
         });
     }
 
@@ -1142,11 +1792,11 @@ class API {
      *
      * @param {string} roomName - The room name.
      * @param {string} id - The id of the local user.
-     * @param {Object} props - The display name and avatar URL of the local
-     * user.
+     * @param {Object} props - The display name, the avatar URL of the local
+     * user and the type of the room.
      * @returns {void}
      */
-    notifyConferenceJoined(roomName: string, id: string, props: Object) {
+    notifyConferenceJoined(roomName, id, props) {
         this._sendEvent({
             name: 'video-conference-joined',
             roomName,
@@ -1161,10 +1811,26 @@ class API {
      * @param {string} roomName - User id.
      * @returns {void}
      */
-    notifyConferenceLeft(roomName: string) {
+    notifyConferenceLeft(roomName) {
         this._sendEvent({
             name: 'video-conference-left',
             roomName
+        });
+    }
+
+    /**
+     * Notify external application that the data channel has been closed.
+     *
+     * @param {number} code - The close code.
+     * @param {string} reason - The close reason.
+     *
+     * @returns {void}
+     */
+    notifyDataChannelClosed(code, reason) {
+        this._sendEvent({
+            name: 'data-channel-closed',
+            code,
+            reason
         });
     }
 
@@ -1203,7 +1869,7 @@ class API {
      * @param {boolean} muted - The new muted status.
      * @returns {void}
      */
-    notifyAudioMutedStatusChanged(muted: boolean) {
+    notifyAudioMutedStatusChanged(muted) {
         this._sendEvent({
             name: 'audio-mute-status-changed',
             muted
@@ -1217,7 +1883,7 @@ class API {
      * @param {boolean} muted - The new muted status.
      * @returns {void}
      */
-    notifyVideoMutedStatusChanged(muted: boolean) {
+    notifyVideoMutedStatusChanged(muted) {
         this._sendEvent({
             name: 'video-mute-status-changed',
             muted
@@ -1231,7 +1897,7 @@ class API {
      * @param {boolean} available - True if available and false otherwise.
      * @returns {void}
      */
-    notifyAudioAvailabilityChanged(available: boolean) {
+    notifyAudioAvailabilityChanged(available) {
         audioAvailable = available;
         this._sendEvent({
             name: 'audio-availability-changed',
@@ -1246,7 +1912,7 @@ class API {
      * @param {boolean} available - True if available and false otherwise.
      * @returns {void}
      */
-    notifyVideoAvailabilityChanged(available: boolean) {
+    notifyVideoAvailabilityChanged(available) {
         videoAvailable = available;
         this._sendEvent({
             name: 'video-availability-changed',
@@ -1261,10 +1927,43 @@ class API {
      * @param {string} id - User id of the new on stage participant.
      * @returns {void}
      */
-    notifyOnStageParticipantChanged(id: string) {
+    notifyOnStageParticipantChanged(id) {
         this._sendEvent({
             name: 'on-stage-participant-changed',
             id
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the prejoin video
+     * visibility had changed.
+     *
+     * @param {boolean} isVisible - Whether the prejoin video is visible.
+     * @returns {void}
+     */
+    notifyPrejoinVideoVisibilityChanged(isVisible) {
+        this._sendEvent({
+            name: 'on-prejoin-video-changed',
+            isVisible
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the prejoin
+     * screen was loaded.
+     *
+     * @returns {void}
+     */
+    notifyPrejoinLoaded() {
+        const state = APP.store.getState();
+        const { defaultLocalDisplayName } = state['features/base/config'];
+        const displayName = getDisplayName(state);
+
+        this._sendEvent({
+            name: 'prejoin-screen-loaded',
+            id: LOCAL_PARTICIPANT_DEFAULT_ID,
+            displayName,
+            formattedDisplayName: appendSuffix(displayName, defaultLocalDisplayName)
         });
     }
 
@@ -1276,7 +1975,7 @@ class API {
      * @param {string} message - Additional information about the error.
      * @returns {void}
      */
-    notifyOnCameraError(type: string, message: string) {
+    notifyOnCameraError(type, message) {
         this._sendEvent({
             name: 'camera-error',
             type,
@@ -1292,7 +1991,7 @@ class API {
      * @param {string} message - Additional information about the error.
      * @returns {void}
      */
-    notifyOnMicError(type: string, message: string) {
+    notifyOnMicError(type, message) {
         this._sendEvent({
             name: 'mic-error',
             type,
@@ -1308,7 +2007,7 @@ class API {
      * @param {string} error - A failure message, if any.
      * @returns {void}
      */
-    notifyFeedbackSubmitted(error: string) {
+    notifyFeedbackSubmitted(error) {
         this._sendEvent({
             name: 'feedback-submitted',
             error
@@ -1333,7 +2032,7 @@ class API {
      * be displayed or hidden.
      * @returns {void}
      */
-    notifyFilmstripDisplayChanged(visible: boolean) {
+    notifyFilmstripDisplayChanged(visible) {
         this._sendEvent({
             name: 'filmstrip-display-changed',
             visible
@@ -1344,17 +2043,30 @@ class API {
      * Notify external application of a participant, remote or local, being
      * removed from the conference by another participant.
      *
-     * @param {string} kicked - The ID of the participant removed from the
+     * @param {Object} kicked - The participant removed from the
      * conference.
-     * @param {string} kicker - The ID of the participant that removed the
+     * @param {Object} kicker - The participant that removed the
      * other participant.
      * @returns {void}
      */
-    notifyKickedOut(kicked: Object, kicker: Object) {
+    notifyKickedOut(kicked, kicker) {
         this._sendEvent({
             name: 'participant-kicked-out',
             kicked,
             kicker
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the recording consent dialog open state has changed.
+     *
+     * @param {boolean} open - True if the dialog is open, false otherwise.
+     * @returns {void}
+     */
+    notifyRecordingConsentDialogOpen(open) {
+        this._sendEvent({
+            name: 'recording-consent-dialog-open',
+            open
         });
     }
 
@@ -1379,7 +2091,7 @@ class API {
      * share is capturing.
      * @returns {void}
      */
-    notifyScreenSharingStatusChanged(on: boolean, details: Object) {
+    notifyScreenSharingStatusChanged(on, details) {
         this._sendEvent({
             name: 'screen-sharing-status-changed',
             on,
@@ -1394,7 +2106,7 @@ class API {
      * @param {string} id - Id of the dominant participant.
      * @returns {void}
      */
-    notifyDominantSpeakerChanged(id: string) {
+    notifyDominantSpeakerChanged(id) {
         this._sendEvent({
             name: 'dominant-speaker-changed',
             id
@@ -1408,7 +2120,7 @@ class API {
      * @param {string} subject - Conference subject.
      * @returns {void}
      */
-    notifySubjectChanged(subject: string) {
+    notifySubjectChanged(subject) {
         this._sendEvent({
             name: 'subject-change',
             subject
@@ -1423,7 +2135,7 @@ class API {
      * otherwise.
      * @returns {void}
      */
-    notifyTileViewChanged(enabled: boolean) {
+    notifyTileViewChanged(enabled) {
         this._sendEvent({
             name: 'tile-view-changed',
             enabled
@@ -1436,7 +2148,7 @@ class API {
      * @param {string} localStorageContent - The new localStorageContent.
      * @returns {void}
      */
-    notifyLocalStorageChanged(localStorageContent: string) {
+    notifyLocalStorageChanged(localStorageContent) {
         this._sendEvent({
             name: 'local-storage-changed',
             localStorageContent
@@ -1450,7 +2162,7 @@ class API {
      * @param {boolean} handRaised - Whether user has raised hand.
      * @returns {void}
      */
-    notifyRaiseHandUpdated(id: string, handRaised: boolean) {
+    notifyRaiseHandUpdated(id, handRaised) {
         this._sendEvent({
             name: 'raise-hand-updated',
             handRaised,
@@ -1462,16 +2174,18 @@ class API {
      * Notify external application (if API is enabled) that recording has started or stopped.
      *
      * @param {boolean} on - True if recording is on, false otherwise.
-     * @param {string} mode - Stream or file.
+     * @param {string} mode - Stream or file or local.
      * @param {string} error - Error type or null if success.
+     * @param {boolean} transcription - True if a transcription is being recorded, false otherwise.
      * @returns {void}
      */
-    notifyRecordingStatusChanged(on: boolean, mode: string, error?: string) {
+    notifyRecordingStatusChanged(on, mode, error, transcription) {
         this._sendEvent({
             name: 'recording-status-changed',
             on,
             mode,
-            error
+            error,
+            transcription
         });
     }
 
@@ -1483,7 +2197,7 @@ class API {
      * @param {number} ttl - The recording download link time to live.
      * @returns {void}
      */
-    notifyRecordingLinkAvailable(link: string, ttl: number) {
+    notifyRecordingLinkAvailable(link, ttl) {
         this._sendEvent({
             name: 'recording-link-available',
             link,
@@ -1497,7 +2211,7 @@ class API {
      * @param {Object} participant - Participant data such as id and name.
      * @returns {void}
      */
-    notifyKnockingParticipant(participant: Object) {
+    notifyKnockingParticipant(participant) {
         this._sendEvent({
             name: 'knocking-participant',
             participant
@@ -1505,12 +2219,12 @@ class API {
     }
 
     /**
-     * Notify external application (if API is enabled) that an error occured.
+     * Notify external application (if API is enabled) that an error occurred.
      *
      * @param {Object} error - The error.
      * @returns {void}
      */
-    notifyError(error: Object) {
+    notifyError(error) {
         this._sendEvent({
             name: 'error-occurred',
             error
@@ -1521,25 +2235,284 @@ class API {
      * Notify external application ( if API is enabled) that a toolbar button was clicked.
      *
      * @param {string} key - The key of the toolbar button.
+     * @param {boolean} preventExecution - Whether execution of the button click was prevented or not.
      * @returns {void}
      */
-    notifyToolbarButtonClicked(key: string) {
+    notifyToolbarButtonClicked(key, preventExecution) {
         this._sendEvent({
             name: 'toolbar-button-clicked',
-            key
+            key,
+            preventExecution
         });
     }
 
     /**
-     * Notify external application (if API is enabled) wether the used browser is supported or not.
+     * Notify external application (if API is enabled) that transcribing has started or stopped.
+     *
+     * @param {boolean} on - True if transcribing is on, false otherwise.
+     * @returns {void}
+     */
+    notifyTranscribingStatusChanged(on) {
+        this._sendEvent({
+            name: 'transcribing-status-changed',
+            on
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the user received
+     * a transcription chunk.
+     *
+     * @param {Object} data - The event data.
+     * @returns {void}
+     */
+    notifyTranscriptionChunkReceived(data) {
+        this._sendEvent({
+            name: 'transcription-chunk-received',
+            data
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) whether the used browser is supported or not.
      *
      * @param {boolean} supported - If browser is supported or not.
      * @returns {void}
      */
-    notifyBrowserSupport(supported: boolean) {
+    notifyBrowserSupport(supported) {
         this._sendEvent({
             name: 'browser-support',
             supported
+        });
+    }
+
+    /**
+     * Notify external application that the breakout rooms changed.
+     *
+     * @param {Array} rooms - Array containing the breakout rooms and main room.
+     * @returns {void}
+     */
+    notifyBreakoutRoomsUpdated(rooms) {
+        this._sendEvent({
+            name: 'breakout-rooms-updated',
+            rooms
+        });
+    }
+
+    /**
+     * Notify the external application that the state of the participants pane changed.
+     *
+     * @param {boolean} open - Whether the panel is open or not.
+     * @returns {void}
+     */
+    notifyParticipantsPaneToggled(open) {
+        this._sendEvent({
+            name: 'participants-pane-toggled',
+            open
+        });
+    }
+
+    /**
+     * Notify the external application that a file has been uploaded.
+     *
+     * @param {Object} fileMetadata - The file metadata.
+     * @returns {void}
+     */
+    notifyFileUploaded(fileMetadata) {
+        this._sendEvent({
+            name: 'file-uploaded',
+            file: fileMetadata
+        });
+    }
+
+    /**
+     * Notify the external application that a file has been deleted.
+     *
+     * @param {string} fileId - The ID of the deleted file.
+     * @returns {void}
+     */
+    notifyFileDeleted(fileId) {
+        this._sendEvent({
+            name: 'file-deleted',
+            fileId
+        });
+    }
+
+    /**
+     * Notify the external application that the audio or video is being shared by a participant.
+     *
+     * @param {string} mediaType - Whether the content which is being shared is audio or video.
+     * @param {string} value - Whether the sharing is playing, pause or stop (on audio there is only playing and stop).
+     * @param {string} participantId - Participant id of the participant which started or ended
+     *  the video or audio sharing.
+     * @returns {void}
+     */
+    notifyAudioOrVideoSharingToggled(mediaType, value, participantId) {
+        this._sendEvent({
+            name: 'audio-or-video-sharing-toggled',
+            mediaType,
+            value,
+            participantId
+        });
+    }
+
+    /**
+     * Notify the external application that a PeerConnection lost connectivity. This event is fired only if
+     * a PC `failed` but connectivity to the rtcstats server is still maintained signaling that there is a
+     * problem establishing a link between the app and the JVB server or the remote peer in case of P2P.
+     * Will only fire if rtcstats is enabled.
+     *
+     * @param {boolean} isP2P - Type of PC.
+     * @param {boolean} wasConnected - Was this connection previously connected. If it was it could mean
+     * that connectivity was disrupted, if not it most likely means that the app could not reach
+     * the JVB server, or the other peer in case of P2P.
+     *
+     * @returns {void}
+     */
+    notifyPeerConnectionFailure(isP2P, wasConnected) {
+        this._sendEvent({
+            name: 'peer-connection-failure',
+            isP2P,
+            wasConnected
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that Picture-in-Picture was requested.
+     * Used by Electron to handle PiP requests with proper user gesture context.
+     *
+     * @returns {void}
+     */
+    notifyPictureInPictureRequested() {
+        logger.debug('Sending _pip-requested event to External API');
+        this._sendEvent({
+            name: '_pip-requested'
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that Picture-in-Picture mode was entered.
+     *
+     * @returns {void}
+     */
+    notifyPictureInPictureEntered() {
+        logger.debug('Sending pip-entered event to External API');
+        this._sendEvent({
+            name: 'pip-entered'
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that Picture-in-Picture mode was exited.
+     *
+     * @returns {void}
+     */
+    notifyPictureInPictureLeft() {
+        logger.debug('Sending pip-left event to External API');
+        this._sendEvent({
+            name: 'pip-left'
+        });
+    }
+
+    /**
+     * Notify external application ( if API is enabled) that a participant menu button was clicked.
+     *
+     * @param {string} key - The key of the participant menu button.
+     * @param {string} participantId - The ID of the participant for whom the participant menu button was clicked.
+     * @param {boolean} preventExecution - Whether execution of the button click was prevented or not.
+     * @returns {void}
+     */
+    notifyParticipantMenuButtonClicked(key, participantId, preventExecution) {
+        this._sendEvent({
+            name: 'participant-menu-button-clicked',
+            key,
+            participantId,
+            preventExecution
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) if whiteboard state is
+     * changed.
+     *
+     * @param {WhiteboardStatus} status - The new whiteboard status.
+     * @returns {void}
+     */
+    notifyWhiteboardStatusChanged(status) {
+        this._sendEvent({
+            name: 'whiteboard-status-changed',
+            status
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) if non participant message
+     * is received.
+     *
+     * @param {string} id - The resource id of the sender.
+     * @param {Object} json - The json carried by the message.
+     * @returns {void}
+     */
+    notifyNonParticipantMessageReceived(id, json) {
+        this._sendEvent({
+            name: 'non-participant-message-received',
+            id,
+            message: json
+        });
+    }
+
+
+    /**
+     * Notify external application (if API is enabled) the conference
+     * start time.
+     *
+     * @param {number} timestamp - Timestamp conference was created.
+     * @returns {void}
+     */
+    notifyConferenceCreatedTimestamp(timestamp) {
+        this._sendEvent({
+            name: 'conference-created-timestamp',
+            timestamp
+        });
+    }
+
+
+    /**
+     * Notify the external application (if API is enabled) if the connection type changed.
+     *
+     * @param {boolean} isP2p - Whether the new connection is P2P.
+     * @returns {void}
+     */
+    notifyP2pStatusChanged(isP2p) {
+        this._sendEvent({
+            name: 'p2p-status-changed',
+            isP2p
+        });
+    }
+
+    /**
+     * Notify the external application (if API is enabled) when the compute pressure changed.
+     *
+     * @param {Array} records - The new pressure records.
+     * @returns {void}
+     */
+    notifyComputePressureChanged(records) {
+        this._sendEvent({
+            name: 'compute-pressure-changed',
+            records
+        });
+    }
+
+    /**
+     * Notify the external application (if API is enabled) when the audio only enabled status changed.
+     *
+     * @param {boolean} enabled - Whether the audio only is enabled or not.
+     * @returns {void}
+     */
+    notifyAudioOnlyChanged(enabled) {
+        this._sendEvent({
+            name: 'audio-only-changed',
+            enabled
         });
     }
 

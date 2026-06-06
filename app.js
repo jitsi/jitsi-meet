@@ -1,10 +1,40 @@
-/* application specific logic */
+/* Jitsi Meet app main entrypoint. */
 
-import 'jquery';
+// Re-export jQuery
+// FIXME: Remove this requirement from torture tests.
+import $ from 'jquery';
+
+window.$ = window.jQuery = $;
 
 import '@matrix-org/olm';
 
 import 'focus-visible';
+
+/*
+* Safari polyfill for createImageBitmap
+* https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
+*
+* Support source image types: Canvas.
+*/
+if (!('createImageBitmap' in window)) {
+    window.createImageBitmap = function(data) {
+        return new Promise((resolve, reject) => {
+            let dataURL;
+
+            if (data instanceof HTMLCanvasElement) {
+                dataURL = data.toDataURL();
+            } else {
+                reject(new Error('createImageBitmap does not handle the provided image source type'));
+            }
+            const img = document.createElement('img');
+
+            img.addEventListener('load', () => {
+                resolve(img);
+            });
+            img.src = dataURL;
+        });
+    };
+}
 
 // We need to setup the jitsi-local-storage as early as possible so that we can start using it.
 // NOTE: If jitsi-local-storage is used before the initial setup is performed this will break the use case when we use
@@ -14,7 +44,6 @@ import './react/features/base/jitsi-local-storage/setup';
 import conference from './conference';
 import API from './modules/API';
 import UI from './modules/UI/UI';
-import keyboardshortcut from './modules/keyboardshortcut/keyboardshortcut';
 import translation from './modules/translation/translation';
 
 // Initialize Olm as early as possible.
@@ -28,24 +57,6 @@ if (window.Olm) {
 window.APP = {
     API,
     conference,
-
-    // Used by do_external_connect.js if we receive the attach data after
-    // connect was already executed. status property can be 'initialized',
-    // 'ready', or 'connecting'. We are interested in 'ready' status only which
-    // means that connect was executed but we have to wait for the attach data.
-    // In status 'ready' handler property will be set to a function that will
-    // finish the connect process when the attach data or error is received.
-    connect: {
-        handler: null,
-        status: 'initialized'
-    },
-
-    // Used for automated performance tests.
-    connectionTimes: {
-        'index.loaded': window.indexLoadedTime
-    },
-
-    keyboardshortcut,
     translation,
     UI
 };

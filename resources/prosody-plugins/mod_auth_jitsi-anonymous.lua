@@ -2,10 +2,12 @@
 -- * session resumption
 -- Copyright (C) 2021-present 8x8, Inc.
 
-local generate_random_id = require "util.id".medium;
+local generate_uuid = require "util.uuid".generate;
 local new_sasl = require "util.sasl".new;
 local sasl = require "util.sasl";
 local sessions = prosody.full_sessions;
+
+module:depends("jitsi_session");
 
 -- define auth provider
 local provider = {};
@@ -35,18 +37,25 @@ function provider.delete_user(username)
 end
 
 function provider.get_sasl_handler(session)
-    -- Custom session matching so we can resume sesssion even with randomly
-    -- generrated user IDs.
+    -- Custom session matching so we can resume session even with randomly
+    -- generated user IDs.
     local function get_username(self, message)
+
+        local resuming = false;
         if (session.previd ~= nil) then
             for _, session1 in pairs(sessions) do
                 if (session1.resumption_token == session.previd) then
                     self.username = session1.username;
+                    resuming = true;
                     break;
                 end
             end
         else
             self.username = message;
+        end
+
+        if not resuming then
+            session.auth_token = nil;
         end
 
         return true;
@@ -59,7 +68,7 @@ module:provides("auth", provider);
 
 local function anonymous(self, message)
     -- Same as the vanilla anonymous auth plugin
-    local username = generate_random_id():lower();
+    local username = generate_uuid();
 
     -- This calls the handler created in 'provider.get_sasl_handler(session)'
     local result, err, msg = self.profile.anonymous(self, username, self.realm);
@@ -76,3 +85,13 @@ local function anonymous(self, message)
 end
 
 sasl.registerMechanism("ANONYMOUS", {"anonymous"}, anonymous);
+
+module:hook("pre-resource-unbind", function (e)
+    local error, session = e.error, e.session;
+
+    prosody.events.fire_event('jitsi-pre-session-unbind', {
+        jid = session.full_jid,
+        session = session,
+        error = error
+    });
+end, 11);

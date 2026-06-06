@@ -1,22 +1,50 @@
 -- Token authentication
--- Copyright (C) 2015 Atlassian
+-- Copyright (C) 2021-present 8x8, Inc.
 
 local basexx = require "basexx";
 local have_async, async = pcall(require, "util.async");
 local hex = require "util.hex";
-local jwt = require "luajwtjitsi";
+local jwt = module:require "luajwtjitsi";
+local jwk_to_pem = module:require "token/jwk".jwk_to_pem;
 local jid = require "util.jid";
 local json_safe = require "cjson.safe";
 local path = require "util.paths";
 local sha256 = require "util.hashes".sha256;
 local main_util = module:require "util";
+local ends_with = main_util.ends_with;
 local http_get_with_retry = main_util.http_get_with_retry;
 local extract_subdomain = main_util.extract_subdomain;
+local starts_with = main_util.starts_with;
+local table_shallow_copy = main_util.table_shallow_copy;
+local get_room_from_jid = main_util.get_room_from_jid;
+local cjson_safe  = require 'cjson.safe'
+local timer = require "util.timer";
+local async = require "util.async";
+local inspect = require 'inspect';
 
 local nr_retries = 3;
+local ssl = require "ssl";
 
 -- TODO: Figure out a less arbitrary default cache size.
 local cacheSize = module:get_option_number("jwt_pubkey_cache_size", 128);
+
+-- the cache for generated asap jwt tokens
+local jwtKeyCache = require 'util.cache'.new(cacheSize);
+
+local ASAPTTL_THRESHOLD = module:get_option_number('asap_ttl_threshold', 600);
+local ASAPTTL = module:get_option_number('asap_ttl', 3600);
+local ASAPIssuer = module:get_option_string('asap_issuer', 'jitsi');
+local ASAPAudience = module:get_option_string('asap_audience', 'jitsi');
+local ASAPKeyId = module:get_option_string('asap_key_id', 'jitsi');
+local ASAPKeyPath = module:get_option_string('asap_key_path', '/etc/prosody/certs/asap.key');
+
+local ASAPKey;
+local f = io.open(ASAPKeyPath, 'r');
+
+if f then
+    ASAPKey = f:read('*all');
+    f:close();
+end
 
 local Util = {}
 Util.__index = Util
@@ -24,7 +52,7 @@ Util.__index = Util
 --- Constructs util class for token verifications.
 -- Constructor that uses the passed module to extract all the
 -- needed configurations.
--- If confuguration is missing returns nil
+-- If configuration is missing returns nil
 -- @param module the module in which options to check for configs.
 -- @return the new instance or nil
 function Util.new(module)
@@ -33,6 +61,10 @@ function Util.new(module)
     self.appId = module:get_option_string("app_id");
     self.appSecret = module:get_option_string("app_secret");
     self.asapKeyServer = module:get_option_string("asap_key_server");
+    -- A URL that will return json file with a mapping between kids and public keys
+    -- If the response Cache-Control header we will respect it and refresh it
+    self.cacheKeysUrl = module:get_option_string("cache_keys_url");
+    self.signatureAlgorithm = module:get_option_string("signature_algorithm");
     self.allowEmptyToken = module:get_option_boolean("allow_empty_token");
 
     self.cache = require"util.cache".new(cacheSize);
@@ -48,9 +80,9 @@ function Util.new(module)
         conference.domain and the actual presentation of the room in that muc
         component is [subdomain]roomName@conference.domain.
         These setups relay on configuration 'muc_domain_base' which holds
-        the main domain and we use it to substract subdomains from the
+        the main domain and we use it to subtract subdomains from the
         virtual addresses.
-        The following confgurations are for multidomain setups and domain name
+        The following configurations are for multidomain setups and domain name
         verification:
      --]]
 
@@ -67,9 +99,9 @@ function Util.new(module)
             "muc_mapper_domain",
             self.muc_domain_prefix.."."..self.muc_domain_base);
     end
-    -- whether domain name verification is enabled, by default it is disabled
-    self.enableDomainVerification = module:get_option_boolean(
-        "enable_domain_verification", false);
+    -- whether domain name verification is enabled, by default it is enabled
+    -- when disabled checking domain name and tenant if available will be skipped, we will check only room name.
+    self.enableDomainVerification = module:get_option_boolean('enable_domain_verification', true);
 
     if self.allowEmptyToken == true then
         module:log("warn", "WARNING - empty tokens allowed");
@@ -80,9 +112,18 @@ function Util.new(module)
         return nil;
     end
 
-    if self.appSecret == nil and self.asapKeyServer == nil then
-        module:log("error", "'app_secret' or 'asap_key_server' must be specified");
+    if self.appSecret == nil and self.asapKeyServer == nil and self.cacheKeysUrl == nil then
+        module:log("error", "'app_secret', 'asap_key_server or 'cacheKeysUrl' must be specified");
         return nil;
+    end
+
+    -- Set defaults for signature algorithm
+    if self.signatureAlgorithm == nil then
+        if self.asapKeyServer ~= nil or self.cacheKeysUrl then
+            self.signatureAlgorithm = "RS256"
+        elseif self.appSecret ~= nil then
+            self.signatureAlgorithm = "HS256"
+        end
     end
 
     --array of accepted issuers: by default only includes our appId
@@ -93,9 +134,69 @@ function Util.new(module)
 
     self.requireRoomClaim = module:get_option_boolean('asap_require_room_claim', true);
 
-    if self.asapKeyServer and not have_async then
+    if (self.asapKeyServer or self.cacheKeysUrl) and not have_async then
         module:log("error", "requires a version of Prosody with util.async");
         return nil;
+    end
+
+    if self.cacheKeysUrl then
+        self.cachedKeys = {};
+        local update_keys_cache;
+        update_keys_cache = async.runner(function (name)
+            local content, code, cache_for;
+            content, code, cache_for = http_get_with_retry(self.cacheKeysUrl, nr_retries);
+            if content ~= nil then
+                local keys_to_delete = table_shallow_copy(self.cachedKeys);
+                -- Let's convert any certificate to public key
+                for k, v in pairs(cjson_safe.decode(content) or {}) do
+                    -- JWKS format
+                    if k == "keys" and type(v) == "table" then
+                        for _, key in ipairs(v) do
+                            if key.kid then
+                                self.cachedKeys[key.kid] = jwk_to_pem(key);
+
+                                -- do not clean this key if it already exists
+                                keys_to_delete[key.kid] = nil;
+                            end
+                        end
+                    -- direct PEM mapping (Firebase)
+                    elseif starts_with(v, '-----BEGIN CERTIFICATE-----') then
+                        self.cachedKeys[k] = ssl.loadcertificate(v):pubkey();
+                        -- do not clean this key if it already exists
+                        keys_to_delete[k] = nil;
+                    end
+                end
+                -- let's schedule the clean in an hour and a half, current tokens will be valid for an hour
+                timer.add_task(90*60, function ()
+                    for k, _ in pairs(keys_to_delete) do
+                        self.cachedKeys[k] = nil;
+                    end
+                end);
+
+                if cache_for then
+                    cache_for = tonumber(cache_for);
+                    -- let's schedule new update 60 seconds before the cache expiring
+                    if cache_for > 60 then
+                        cache_for = cache_for - 60;
+                    end
+                    timer.add_task(cache_for, function ()
+                        update_keys_cache:run("update_keys_cache");
+                    end);
+                else
+                    -- no cache header let's consider updating in 6hours
+                    timer.add_task(6*60*60, function ()
+                        update_keys_cache:run("update_keys_cache");
+                    end);
+                end
+            else
+                module:log('warn', 'Failed to retrieve cached public keys code:%s', code);
+                -- failed let's retry in 30 seconds
+                timer.add_task(30, function ()
+                    update_keys_cache:run("update_keys_cache");
+                end);
+            end
+        end);
+        update_keys_cache:run("update_keys_cache");
     end
 
     return self
@@ -126,109 +227,27 @@ end
 -- @return the public key (the content of requested resource) or nil
 function Util:get_public_key(keyId)
     local content = self.cache:get(keyId);
+    local code;
     if content == nil then
         -- If the key is not found in the cache.
-        module:log("debug", "Cache miss for key: %s", keyId);
+        -- module:log("debug", "Cache miss for key: %s", keyId);
         local keyurl = path.join(self.asapKeyServer, hex.to(sha256(keyId))..'.pem');
-        module:log("debug", "Fetching public key from: %s", keyurl);
-        content = http_get_with_retry(keyurl, nr_retries);
+        -- module:log("debug", "Fetching public key from: %s", keyurl);
+        content, code = http_get_with_retry(keyurl, nr_retries);
         if content ~= nil then
             self.cache:set(keyId, content);
+        else
+            if code == nil then
+                -- this is timeout after nr_retries retries
+                module:log('warn', 'Timeout retrieving %s from %s', keyId, keyurl);
+            end
         end
         return content;
     else
         -- If the key is in the cache, use it.
-        module:log("debug", "Cache hit for key: %s", keyId);
+        -- module:log("debug", "Cache hit for key: %s", keyId);
         return content;
     end
-end
-
---- Verifies issuer part of token
--- @param 'issClaim' claim from the token to verify
--- @param 'acceptedIssuers' list of issuers to check
--- @return nil and error string or true for accepted claim
-function Util:verify_issuer(issClaim, acceptedIssuers)
-    if not acceptedIssuers then
-        acceptedIssuers = self.acceptedIssuers
-    end
-    module:log("debug", "verify_issuer claim: %s against accepted: %s", issClaim, acceptedIssuers);
-    for i, iss in ipairs(acceptedIssuers) do
-        if iss == '*' then
-            -- "*" indicates to accept any issuer in the claims so return success
-            return true;
-        end
-        if issClaim == iss then
-            -- claim matches an accepted issuer so return success
-            return true;
-        end
-    end
-    -- if issClaim not found in acceptedIssuers, fail claim
-    return nil, "Invalid issuer ('iss' claim)";
-end
-
---- Verifies audience part of token
--- @param 'audClaim' claim from the token to verify
--- @return nil and error string or true for accepted claim
-function Util:verify_audience(audClaim)
-    module:log("debug", "verify_audience claim: %s against accepted: %s", audClaim, self.acceptedAudiences);
-    for i, aud in ipairs(self.acceptedAudiences) do
-        if aud == '*' then
-            -- "*" indicates to accept any audience in the claims so return success
-            return true;
-        end
-        if audClaim == aud then
-            -- claim matches an accepted audience so return success
-            return true;
-        end
-    end
-    -- if audClaim not found in acceptedAudiences, fail claim
-    return nil, "Invalid audience ('aud' claim)";
-end
-
---- Verifies token
--- @param token the token to verify
--- @param secret the secret to use to verify token
--- @param acceptedIssuers the list of accepted issuers to check
--- @return nil and error or the extracted claims from the token
-function Util:verify_token(token, secret, acceptedIssuers)
-    local claims, err = jwt.decode(token, secret, true);
-    if claims == nil then
-        return nil, err;
-    end
-
-    local alg = claims["alg"];
-    if alg ~= nil and (alg == "none" or alg == "") then
-        return nil, "'alg' claim must not be empty";
-    end
-
-    local issClaim = claims["iss"];
-    if issClaim == nil then
-        return nil, "'iss' claim is missing";
-    end
-    --check the issuer against the accepted list
-    local issCheck, issCheckErr = self:verify_issuer(issClaim, acceptedIssuers);
-    if issCheck == nil then
-        return nil, issCheckErr;
-    end
-
-    if self.requireRoomClaim then
-        local roomClaim = claims["room"];
-        if roomClaim == nil then
-            return nil, "'room' claim is missing";
-        end
-    end
-
-    local audClaim = claims["aud"];
-    if audClaim == nil then
-        return nil, "'aud' claim is missing";
-    end
-    --check the audience against the accepted list
-    local audCheck, audCheckErr = self:verify_audience(audClaim);
-    if audCheck == nil then
-        return nil, audCheckErr;
-    end
-
-    return claims;
 end
 
 --- Verifies token and process needed values to be stored in the session.
@@ -237,16 +256,12 @@ end
 -- session.jitsi_meet_room - the room name value from the token
 -- session.jitsi_meet_domain - the domain name value from the token
 -- session.jitsi_meet_context_user - the user details from the token
+-- session.jitsi_meet_context_room - the room details from the token
 -- session.jitsi_meet_context_group - the group value from the token
 -- session.jitsi_meet_context_features - the features value from the token
 -- @param session the current session
--- @param acceptedIssuers optional list of accepted issuers to check
 -- @return false and error
-function Util:process_and_verify_token(session, acceptedIssuers)
-    if not acceptedIssuers then
-        acceptedIssuers = self.acceptedIssuers;
-    end
-
+function Util:process_and_verify_token(session)
     if session.auth_token == nil then
         if self.allowEmptyToken then
             return true;
@@ -255,14 +270,18 @@ function Util:process_and_verify_token(session, acceptedIssuers)
         end
     end
 
-    local pubKey;
+    local key;
     if session.public_key then
-        module:log("debug","Public key was found on the session");
-        pubKey = session.public_key;
-    elseif self.asapKeyServer and session.auth_token ~= nil then
+        -- We're using an public key stored in the session
+        -- module:log("debug","Public key was found on the session");
+        key = session.public_key;
+    elseif (self.asapKeyServer or self.cacheKeysUrl) and session.auth_token ~= nil then
+        -- We're fetching an public key from an ASAP server
         local dotFirst = session.auth_token:find("%.");
-        if not dotFirst then return nil, "Invalid token" end
-        local header, err = json_safe.decode(basexx.from_url64(session.auth_token:sub(1,dotFirst-1)));
+        if not dotFirst then return false, "not-allowed", "Invalid token" end
+        local headerPartEncoded = basexx.from_url64(session.auth_token:sub(1,dotFirst-1));
+        if not headerPartEncoded then return false, "not-allowed", "Invalid token" end
+        local header, err = json_safe.decode(headerPartEncoded);
         if err then
             return false, "not-allowed", "bad token format";
         end
@@ -274,30 +293,57 @@ function Util:process_and_verify_token(session, acceptedIssuers)
         if alg == nil then
             return false, "not-allowed", "'alg' claim is missing";
         end
-        if alg.sub(alg,1,2) ~= "RS" then -- do not remove - needed to protect jwt.decode in verify_token
+        if alg.sub(alg,1,2) ~= "RS" then
             return false, "not-allowed", "'kid' claim only support with RS family";
         end
-        pubKey = self:get_public_key(kid);
-        if pubKey == nil then
+
+        if self.cachedKeys and self.cachedKeys[kid] then
+            key = self.cachedKeys[kid];
+        else
+            key = self:get_public_key(kid);
+        end
+
+        if key == nil then
             return false, "not-allowed", "could not obtain public key";
         end
+    elseif self.appSecret ~= nil then
+        -- We're using a symmetric secret
+        key = self.appSecret
+    end
+
+    if key == nil then
+        return false, "not-allowed", "signature verification key is missing";
     end
 
     -- now verify the whole token
-    local claims, msg;
-    if self.asapKeyServer then
-        claims, msg = self:verify_token(session.auth_token, pubKey, acceptedIssuers);
-    else
-        claims, msg = self:verify_token(session.auth_token, self.appSecret, acceptedIssuers);
-    end
+    local claims, msg = jwt.verify(
+        session.auth_token,
+        self.signatureAlgorithm,
+        key,
+        self.acceptedIssuers,
+        self.acceptedAudiences
+    )
     if claims ~= nil then
+        if self.requireRoomClaim then
+            local roomClaim = claims["room"];
+            if roomClaim == nil then
+                return false, "not-authorized", "room claim is missing";
+            end
+        end
+
         -- Binds room name to the session which is later checked on MUC join
         session.jitsi_meet_room = claims["room"];
         -- Binds domain name to the session
+        if claims["sub"] == nil then
+            return false, "not-authorized", "sub claim is missing";
+        end
         session.jitsi_meet_domain = claims["sub"];
+        session.jitsi_meet_auth_issuer = claims["iss"];
 
         -- Binds the user details to the session if available
         if claims["context"] ~= nil then
+          session.jitsi_meet_str_tenant = claims["context"]["tenant"];
+
           if claims["context"]["user"] ~= nil then
             session.jitsi_meet_context_user = claims["context"]["user"];
           end
@@ -314,14 +360,28 @@ function Util:process_and_verify_token(session, acceptedIssuers)
           if claims["context"]["room"] ~= nil then
             session.jitsi_meet_context_room = claims["context"]["room"]
           end
+        elseif claims["user_id"] then
+          session.jitsi_meet_context_user = {};
+          session.jitsi_meet_context_user.id = claims["user_id"];
         end
+
+        -- fire event that token has been verified and pass the session and the decoded token
+        prosody.events.fire_event('jitsi-authentication-token-verified', {
+            session = session;
+            claims = claims;
+        });
+
+        if session.contextRequired and claims["context"] == nil then
+            return false, "not-allowed", 'jwt missing required context claim';
+        end
+
         return true;
     else
         return false, "not-allowed", msg;
     end
 end
 
---- Verifies room name and domain if necesarry.
+--- Verifies room name and domain if necessary.
 -- Checks configs and if necessary checks the room name extracted from
 -- room_address against the one saved in the session when token was verified.
 -- Also verifies domain name from token against the domain in the room_address,
@@ -332,30 +392,38 @@ end
 --         it and returns false in case verification was processed
 --         and was not successful
 function Util:verify_room(session, room_address)
-    if self.allowEmptyToken and session.auth_token == nil then
-        module:log(
-            "debug",
-            "Skipped room token verification - empty tokens are allowed");
-        return true;
-    end
-
     -- extract room name using all chars, except the not allowed ones
     local room,_,_ = jid.split(room_address);
     if room == nil then
-        log("error",
-            "Unable to get name of the MUC room ? to: %s", room_address);
+        module:log('error', 'Unable to get name of the MUC room ? to: %s', room_address);
+        return false, 'invalid-room-address', 'Room address is invalid';
+    end
+    local room_instance = get_room_from_jid(jid.join(room, self.muc_domain));
+    if not room_instance then
+        module:log('info', 'Room does not exists:%s', room);
+        return false, 'room-does-not-exist', 'Room does not exist';
+    end
+
+    if self.allowEmptyToken and session.auth_token == nil then
+        if room_instance._data.allowUnauthenticatedAccess == false then
+            return false, 'authentication-required', 'Authentication required';
+        end
         return true;
     end
 
     local auth_room = session.jitsi_meet_room;
     if auth_room then
-        auth_room = string.lower(auth_room);
+        if type(auth_room) == 'string' then
+            auth_room = string.lower(auth_room);
+        else
+            module:log('warn', 'session.jitsi_meet_room not string: %s', inspect(auth_room));
+        end
     end
+
     if not self.enableDomainVerification then
-        -- if auth_room is missing, this means user is anonymous (no token for
-        -- its domain) we let it through, jicofo is verifying creation domain
-        if auth_room and room ~= auth_room and auth_room ~= '*' then
-            return false;
+        -- if auth_room is missing, this means user is anonymous (no token for its domain) we let it through
+        if auth_room and (room ~= auth_room and not ends_with(room, ']'..auth_room)) and auth_room ~= '*' then
+            return false, 'room-mismatch', 'Room does not match the room from token';
         end
 
         return true;
@@ -385,20 +453,40 @@ function Util:verify_room(session, room_address)
     else
         -- no wildcard, so check room against authorized room from the token
         if session.jitsi_meet_context_room and (session.jitsi_meet_context_room["regex"] == true or session.jitsi_meet_context_room["regex"] == "true") then
-            if target_room ~= nil then
-                -- room with subdomain
-                room_to_check = target_room:match(auth_room);
-            else
-                room_to_check = room_node:match(auth_room);
+            local match_target = target_room ~= nil and target_room or room_node;
+            local ok, result = pcall(string.match, match_target, auth_room);
+            if not ok then
+                return false, 'invalid-regex', 'Room claim is not a valid Lua pattern';
             end
+            room_to_check = result;
         else
             -- not a regex
             room_to_check = auth_room;
         end
-        module:log("debug", "room to check: %s", room_to_check)
+
         if not room_to_check then
-            return false
+            if not self.requireRoomClaim then
+                -- if we do not require to have the room claim, and it is missing
+                -- there is no point of continue and verifying the roomName and the tenant
+                return true;
+            end
+
+            return false, 'room-name-does-not-match', 'Room name cannot be matched to the one from token.';
         end
+    end
+
+    if session.jitsi_meet_str_tenant
+        and string.lower(session.jitsi_meet_str_tenant) ~= session.jitsi_web_query_prefix then
+        session.jitsi_meet_tenant_mismatch = true;
+
+        if room_instance._data.allowUnauthenticatedAccess == false then
+            return false;
+        end
+
+        module:log('warn', 'Tenant differs for user:%s group:%s url_tenant:%s token_tenant:%s',
+            session.jitsi_meet_context_user and session.jitsi_meet_context_user.id or '',
+            session.jitsi_meet_context_group,
+            session.jitsi_web_query_prefix, session.jitsi_meet_str_tenant);
     end
 
     local auth_domain = string.lower(session.jitsi_meet_domain);
@@ -415,7 +503,7 @@ function Util:verify_room(session, room_address)
         -- deny access if option is missing
         if not self.muc_domain_base then
             module:log("warn", "No 'muc_domain_base' option set, denying access!");
-            return false;
+            return false, 'server-missing-config', 'Misconfiguration of server';
         end
 
         return room_address_to_verify == jid.join(
@@ -431,6 +519,50 @@ function Util:verify_room(session, room_address)
         -- we do not have a domain part (multidomain is not enabled)
         -- verify with info from the token
         return room_address_to_verify == jid.join(room_to_check, subdomain_to_check);
+    end
+end
+
+function Util:generateAsapToken(audience)
+    if not ASAPKey then
+        module:log('warn', 'No ASAP Key read, asap key generation is disabled');
+        return ''
+    end
+
+    audience = audience or ASAPAudience
+    local t = os.time()
+    local err
+    local exp_key = 'asap_exp.'..audience
+    local token_key = 'asap_token.'..audience
+    local exp = jwtKeyCache:get(exp_key)
+    local token = jwtKeyCache:get(token_key)
+
+    --if we find a token and it isn't too far from expiry, then use it
+    if token ~= nil and exp ~= nil then
+        exp = tonumber(exp)
+        if (exp - t) > ASAPTTL_THRESHOLD then
+            return token
+        end
+    end
+
+    --expiry is the current time plus TTL
+    exp = t + ASAPTTL
+    local payload = {
+        iss = ASAPIssuer,
+        aud = audience,
+        nbf = t,
+        exp = exp,
+    }
+
+    -- encode
+    local alg = 'RS256'
+    token, err = jwt.encode(payload, ASAPKey, alg, { kid = ASAPKeyId })
+    if not err then
+        token = 'Bearer '..token
+        jwtKeyCache:set(exp_key, exp)
+        jwtKeyCache:set(token_key, token)
+        return token
+    else
+        return ''
     end
 end
 

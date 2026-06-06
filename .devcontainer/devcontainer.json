@@ -1,0 +1,15 @@
+{
+  "name": "Jitsi Meet Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    }
+  },
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb",
+    "storage": "32gb" 
+  },
+  "postCreateCommand": "bash -i -c 'nvm use && npm install && cp tsconfig.web.json tsconfig.json'"
+}

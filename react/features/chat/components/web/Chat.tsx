@@ -1,0 +1,699 @@
+import { throttle } from 'lodash-es';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { connect, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
+
+import { IReduxState } from '../../../app/types';
+import { isTouchDevice, shouldEnableResize } from '../../../base/environment/utils';
+import { translate } from '../../../base/i18n/functions';
+import { IconInfo, IconMessage, IconShareDoc, IconSubtitles } from '../../../base/icons/svg';
+import { getLocalParticipant, getRemoteParticipants, isPrivateChatEnabledSelf } from '../../../base/participants/functions';
+import Select from '../../../base/ui/components/web/Select';
+import Tabs from '../../../base/ui/components/web/Tabs';
+import { arePollsDisabled } from '../../../conference/functions.any';
+import FileSharing from '../../../file-sharing/components/web/FileSharing';
+import { isFileSharingEnabled } from '../../../file-sharing/functions.any';
+import PollsPane from '../../../polls/components/web/PollsPane';
+import { isCCTabEnabled } from '../../../subtitles/functions.any';
+import {
+    sendMessage,
+    setChatIsResizing,
+    setFocusedTab,
+    setPrivateMessageRecipient,
+    setPrivateMessageRecipientById,
+    setUserChatWidth,
+    toggleChat
+} from '../../actions.web';
+import {
+    CHAT_DRAG_HANDLE_HEIGHT,
+    CHAT_DRAG_HANDLE_OFFSET,
+    CHAT_DRAG_HANDLE_WIDTH,
+    CHAT_SIZE,
+    CHAT_TOUCH_HANDLE_SIZE,
+    ChatTabs,
+    OPTION_GROUPCHAT,
+    SMALL_WIDTH_THRESHOLD
+} from '../../constants';
+import { getChatMaxSize, getFocusedTab, isChatDisabled } from '../../functions';
+import { IChatProps as AbstractProps } from '../../types';
+
+import ChatHeader from './ChatHeader';
+import ChatInput from './ChatInput';
+import ClosedCaptionsTab from './ClosedCaptionsTab';
+import DisplayNameForm from './DisplayNameForm';
+import KeyboardAvoider from './KeyboardAvoider';
+import MessageContainer from './MessageContainer';
+import MessageRecipient from './MessageRecipient';
+
+
+interface IProps extends AbstractProps {
+
+    /**
+     * The currently focused tab.
+     */
+    _focusedTab?: ChatTabs;
+
+    /**
+     * True if the CC tab is enabled and false otherwise.
+     */
+    _isCCTabEnabled: boolean;
+
+    /**
+     * True if chat is disabled.
+     */
+    _isChatDisabled: boolean;
+
+    /**
+     * True if file sharing tab is enabled.
+     */
+    _isFileSharingTabEnabled: boolean;
+
+    /**
+     * Whether the chat is opened in a modal or not (computed based on window width).
+     */
+    _isModal: boolean;
+
+    /**
+     * True if the chat window should be rendered.
+     */
+    _isOpen: boolean;
+
+    /**
+     * True if the polls feature is enabled.
+     */
+    _isPollsEnabled: boolean;
+
+    /**
+     * Whether the user is currently resizing the chat panel.
+     */
+    _isResizing: boolean;
+
+    /**
+     * The indicator which determines whether the UI is reduced.
+     */
+    _reducedUI: boolean;
+
+    /**
+     * Whether or not to block chat access with a nickname input form.
+     */
+    _showNamePrompt: boolean;
+
+    /**
+     * Number of unread file sharing messages.
+     */
+    _unreadFilesCount: number;
+
+    /**
+     * Number of unread poll messages.
+     */
+    _unreadPollsCount: number;
+
+    /**
+     * The current width of the chat panel.
+     */
+    _width: number;
+}
+
+const useStyles = makeStyles<{
+    _isResizing: boolean;
+    isTouch: boolean;
+    resizeEnabled: boolean;
+    width: number;
+}>()((theme, { _isResizing, isTouch, resizeEnabled, width }) => {
+    return {
+        container: {
+            backgroundColor: theme.palette.chatBackground,
+            flexShrink: 0,
+            overflow: 'hidden',
+            position: 'relative',
+            transition: _isResizing ? undefined : 'width .16s ease-in-out',
+            width: `${width}px`,
+            zIndex: 300,
+
+            // On non-touch devices (desktop), show handle on hover
+            // On touch devices, handle is always visible if resize is enabled
+            ...(!isTouch && {
+                '&:hover, &:focus-within': {
+                    '& .dragHandleContainer': {
+                        visibility: 'visible'
+                    }
+                }
+            }),
+
+            '@media (max-width: 580px)': {
+                height: '100dvh',
+                position: 'fixed',
+                left: 0,
+                right: 0,
+                top: 0,
+                width: 'auto'
+            },
+
+            '*': {
+                userSelect: 'text',
+                WebkitUserSelect: 'text'
+            }
+        },
+
+        chatHeader: {
+            height: '60px',
+            position: 'relative',
+            width: '100%',
+            zIndex: 1,
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: `${theme.spacing(3)} ${theme.spacing(4)}`,
+            alignItems: 'center',
+            boxSizing: 'border-box',
+            color: theme.palette.chatMessageText,
+            ...theme.typography.heading6,
+            lineHeight: 'unset',
+            fontWeight: theme.typography.heading6.fontWeight as any,
+
+            '.jitsi-icon': {
+                cursor: 'pointer'
+            }
+        },
+
+        chatPanel: {
+            display: 'flex',
+            flexDirection: 'column',
+
+            // extract header + tabs height
+            height: 'calc(100% - 110px)'
+        },
+
+        chatPanelNoTabs: {
+            // extract header height
+            height: 'calc(100% - 60px)'
+        },
+
+        pollsPanel: {
+            // extract header + tabs height
+            height: 'calc(100% - 110px)'
+        },
+
+        resizableChat: {
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%'
+        },
+
+        dragHandleContainer: {
+            height: '100%',
+            // Touch devices need larger hit target but positioned to not take extra space
+            width: isTouch ? `${CHAT_TOUCH_HANDLE_SIZE}px` : `${CHAT_DRAG_HANDLE_WIDTH}px`,
+            backgroundColor: 'transparent',
+            position: 'absolute',
+            cursor: 'col-resize',
+            display: resizeEnabled ? 'flex' : 'none', // Hide if resize not enabled
+            alignItems: 'center',
+            justifyContent: 'center',
+            // On touch devices, always visible if resize enabled. On desktop, hidden by default
+            visibility: (isTouch && resizeEnabled) ? 'visible' : 'hidden',
+            // Position touch handle centered on offset from edge, maintaining same gap as non-touch
+            right: isTouch
+                ? `${CHAT_DRAG_HANDLE_OFFSET - Math.floor((CHAT_TOUCH_HANDLE_SIZE - CHAT_DRAG_HANDLE_WIDTH) / 2)}px`
+                : `${CHAT_DRAG_HANDLE_OFFSET}px`,
+            top: 0,
+            // Prevent touch scrolling while dragging
+            touchAction: 'none',
+
+            '&:hover': {
+                '& .dragHandle': {
+                    backgroundColor: theme.palette.icon01
+                }
+            },
+
+            '&.visible': {
+                visibility: 'visible',
+
+                '& .dragHandle': {
+                    backgroundColor: theme.palette.icon01
+                }
+            }
+        },
+
+        dragHandle: {
+            // Keep the same visual appearance on all devices
+            backgroundColor: theme.palette.icon02,
+            height: `${CHAT_DRAG_HANDLE_HEIGHT}px`,
+            width: `${CHAT_DRAG_HANDLE_WIDTH / 3}px`,
+            borderRadius: '1px',
+            // Make more visible when actively shown
+            ...(isTouch && resizeEnabled && {
+                backgroundColor: theme.palette.icon01
+            })
+        },
+
+        privateMessageRecipientsList: {
+            padding: '0 16px 5px'
+        }
+    };
+});
+
+const Chat = ({
+    _isModal,
+    _isOpen,
+    _isPollsEnabled,
+    _isCCTabEnabled,
+    _isChatDisabled,
+    _isFileSharingTabEnabled,
+    _focusedTab,
+    _isResizing,
+    _messages,
+    _reducedUI,
+    _unreadMessagesCount,
+    _unreadPollsCount,
+    _unreadFilesCount,
+    _showNamePrompt,
+    _width,
+    dispatch,
+    t
+}: IProps) => {
+    // If no tabs are available, don't render the chat panel at all.
+    if (_isChatDisabled && !_isPollsEnabled && !_isCCTabEnabled && !_isFileSharingTabEnabled) {
+        return null;
+    }
+
+    // Detect touch capability and screen size for resize functionality
+    const isTouch = isTouchDevice();
+    const resizeEnabled = shouldEnableResize();
+    const { classes, cx } = useStyles({ _isResizing, width: _width, isTouch, resizeEnabled });
+    const [ isMouseDown, setIsMouseDown ] = useState(false);
+    const [ mousePosition, setMousePosition ] = useState<number | null>(null);
+    const [ dragChatWidth, setDragChatWidth ] = useState<number | null>(null);
+    const maxChatWidth = useSelector(getChatMaxSize);
+    const notifyTimestamp = useSelector((state: IReduxState) =>
+        state['features/chat'].notifyPrivateRecipientsChangedTimestamp
+    );
+    const {
+        defaultRemoteDisplayName = 'Fellow Jitster'
+    } = useSelector((state: IReduxState) => state['features/base/config']);
+    const privateMessageRecipient = useSelector((state: IReduxState) => state['features/chat'].privateMessageRecipient);
+    const participants = useSelector(getRemoteParticipants);
+    const isPrivateChatAllowed = useSelector((state: IReduxState) => isPrivateChatEnabledSelf(state));
+
+    const options = useMemo(() => {
+        const o = Array.from(participants?.values() || [])
+                .filter(p => !p.fakeParticipant)
+                .map(p => {
+                    return {
+                        value: p.id,
+                        label: p.name ?? defaultRemoteDisplayName
+                    };
+                });
+
+        o.sort((a, b) => a.label.localeCompare(b.label));
+
+        o.unshift({
+            label: t('chat.everyone'),
+            value: OPTION_GROUPCHAT
+        });
+
+        return o;
+    }, [ participants, defaultRemoteDisplayName, t, notifyTimestamp ]);
+
+    /**
+     * Handles pointer down on the drag handle.
+     * Supports both mouse and touch events via Pointer Events API.
+     *
+     * @param {React.PointerEvent} e - The pointer down event.
+     * @returns {void}
+     */
+    const onDragHandlePointerDown = useCallback((e: React.PointerEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Capture the pointer to ensure we receive all pointer events
+        // even if the pointer moves outside the element
+        (e.target as HTMLElement).setPointerCapture(e.pointerId);
+
+        // Store the initial pointer position and chat width
+        setIsMouseDown(true);
+        setMousePosition(e.clientX);
+        setDragChatWidth(_width);
+
+        // Indicate that resizing is in progress
+        dispatch(setChatIsResizing(true));
+
+        // Add visual feedback that we're dragging (cursor for mouse, not visible on touch)
+        document.body.style.cursor = 'col-resize';
+
+        // Disable text selection during resize
+        document.body.style.userSelect = 'none';
+    }, [ _width, dispatch ]);
+
+    /**
+     * Drag handle pointer up handler.
+     * Supports both mouse and touch events via Pointer Events API.
+     *
+     * @returns {void}
+     */
+    const onDragPointerUp = useCallback(() => {
+        if (isMouseDown) {
+            setIsMouseDown(false);
+            dispatch(setChatIsResizing(false));
+
+            // Restore cursor and text selection
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+        }
+    }, [ isMouseDown, dispatch ]);
+
+    /**
+     * Handles drag handle pointer move.
+     * Supports both mouse and touch events via Pointer Events API.
+     *
+     * @param {PointerEvent} e - The pointermove event.
+     * @returns {void}
+     */
+    const onChatResize = useCallback(throttle((e: PointerEvent) => {
+        if (isMouseDown && mousePosition !== null && dragChatWidth !== null) {
+            // For chat panel resizing on the left edge:
+            // - Dragging left (decreasing X coordinate) should make the panel wider
+            // - Dragging right (increasing X coordinate) should make the panel narrower
+            const diff = e.clientX - mousePosition;
+
+            const newWidth = Math.max(
+                Math.min(dragChatWidth + diff, maxChatWidth),
+                CHAT_SIZE
+            );
+
+            // Update the width only if it has changed
+            if (newWidth !== _width) {
+                dispatch(setUserChatWidth(newWidth));
+            }
+        }
+    }, 50, {
+        leading: true,
+        trailing: false
+    }), [ isMouseDown, mousePosition, dragChatWidth, _width, maxChatWidth, dispatch ]);
+
+    // Set up event listeners when component mounts
+    useEffect(() => {
+        document.addEventListener('pointerup', onDragPointerUp);
+        document.addEventListener('pointermove', onChatResize);
+
+        return () => {
+            document.removeEventListener('pointerup', onDragPointerUp);
+            document.removeEventListener('pointermove', onChatResize);
+        };
+    }, [ onDragPointerUp, onChatResize ]);
+
+    /**
+    * Sends a text message.
+    *
+    * @private
+    * @param {string} text - The text message to be sent.
+    * @returns {void}
+    * @type {Function}
+    */
+    const onSendMessage = useCallback((text: string) => {
+        dispatch(sendMessage(text));
+    }, []);
+
+    /**
+    * Toggles the chat window.
+    *
+    * @returns {Function}
+    */
+    const onToggleChat = useCallback(() => {
+        dispatch(toggleChat());
+    }, []);
+
+    /**
+     * Click handler for the chat sidenav.
+     *
+     * @param {KeyboardEvent} event - Esc key click to close the popup.
+     * @returns {void}
+     */
+    const onEscClick = useCallback((event: React.KeyboardEvent) => {
+        if (event.key === 'Escape' && _isOpen) {
+            event.preventDefault();
+            event.stopPropagation();
+            onToggleChat();
+        }
+    }, [ _isOpen ]);
+
+    /**
+     * Change selected tab.
+     *
+     * @param {string} id - Id of the clicked tab.
+     * @returns {void}
+     */
+    const onChangeTab = useCallback((id: string) => {
+        dispatch(setFocusedTab(id as ChatTabs));
+    }, [ dispatch ]);
+
+
+    const onSelectedRecipientChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selected = e.target.value;
+
+        if (selected === OPTION_GROUPCHAT) {
+            dispatch(setPrivateMessageRecipient());
+        } else {
+            dispatch(setPrivateMessageRecipientById(selected));
+        }
+    }, []);
+
+    /**
+     * Returns a React Element for showing chat messages and a form to send new
+     * chat messages.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    function renderChat() {
+        return (
+            <>
+                {renderTabs()}
+                {!_isChatDisabled && (<div
+                    aria-labelledby = { ChatTabs.CHAT }
+                    className = { cx(
+                        classes.chatPanel,
+                        !_isPollsEnabled
+                        && !_isCCTabEnabled
+                        && !_isFileSharingTabEnabled
+                        && classes.chatPanelNoTabs,
+                        _focusedTab !== ChatTabs.CHAT && 'hide'
+                    ) }
+                    id = { `${ChatTabs.CHAT}-panel` }
+                    role = 'tabpanel'
+                    tabIndex = { 0 }>
+                    <MessageContainer
+                        isVisible = { _focusedTab === ChatTabs.CHAT }
+                        messages = { _messages } />
+                    <MessageRecipient />
+                    {isPrivateChatAllowed && (
+                        <Select
+                            containerClassName = { cx(classes.privateMessageRecipientsList) }
+                            id = 'select-chat-recipient'
+                            onChange = { onSelectedRecipientChange }
+                            options = { options }
+                            value = { privateMessageRecipient?.id || OPTION_GROUPCHAT } />
+                    )}
+                    <ChatInput
+                        onSend = { onSendMessage } />
+                </div>) }
+                { _isPollsEnabled && (
+                    <>
+                        <div
+                            aria-labelledby = { ChatTabs.POLLS }
+                            className = { cx(classes.pollsPanel, _focusedTab !== ChatTabs.POLLS && 'hide') }
+                            id = { `${ChatTabs.POLLS}-panel` }
+                            role = 'tabpanel'
+                            tabIndex = { 1 }>
+                            <PollsPane />
+                        </div>
+                        <KeyboardAvoider />
+                    </>
+                )}
+                { _isCCTabEnabled && <div
+                    aria-labelledby = { ChatTabs.CLOSED_CAPTIONS }
+                    className = { cx(classes.chatPanel, _focusedTab !== ChatTabs.CLOSED_CAPTIONS && 'hide') }
+                    id = { `${ChatTabs.CLOSED_CAPTIONS}-panel` }
+                    role = 'tabpanel'
+                    tabIndex = { 2 }>
+                    <ClosedCaptionsTab />
+                </div> }
+                { _isFileSharingTabEnabled && <div
+                    aria-labelledby = { ChatTabs.FILE_SHARING }
+                    className = { cx(classes.chatPanel, _focusedTab !== ChatTabs.FILE_SHARING && 'hide') }
+                    id = { `${ChatTabs.FILE_SHARING}-panel` }
+                    role = 'tabpanel'
+                    tabIndex = { 3 }>
+                    <FileSharing />
+                </div> }
+            </>
+        );
+    }
+
+
+    /**
+     * Returns a React Element showing the Chat, Polls and Subtitles tabs.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    function renderTabs() {
+        // The only way focused tab will be undefined is when no tab is enabled. Therefore this function won't be
+        // executed because Chat component won't render anything. This should never happen but adding the check
+        // here to make TS happy (when passing the _focusedTab in the selected prop for Tabs).
+        if (!_focusedTab) {
+            return null;
+        }
+
+        let tabs = [];
+
+        // Only add chat tab if chat is not disabled.
+        if (!_isChatDisabled) {
+            tabs.push({
+                accessibilityLabel: t('chat.tabs.chat'),
+                countBadge:
+                    _focusedTab !== ChatTabs.CHAT && _unreadMessagesCount > 0 ? _unreadMessagesCount : undefined,
+                id: ChatTabs.CHAT,
+                controlsId: `${ChatTabs.CHAT}-panel`,
+                icon: IconMessage,
+                title: t('chat.tabs.chat')
+            });
+        }
+
+        if (_isPollsEnabled) {
+            tabs.push({
+                accessibilityLabel: t('chat.tabs.polls'),
+                countBadge: _focusedTab !== ChatTabs.POLLS && _unreadPollsCount > 0 ? _unreadPollsCount : undefined,
+                id: ChatTabs.POLLS,
+                controlsId: `${ChatTabs.POLLS}-panel`,
+                icon: IconInfo,
+                title: t('chat.tabs.polls')
+            });
+        }
+
+        if (_isCCTabEnabled) {
+            tabs.push({
+                accessibilityLabel: t('chat.tabs.closedCaptions'),
+                countBadge: undefined,
+                id: ChatTabs.CLOSED_CAPTIONS,
+                controlsId: `${ChatTabs.CLOSED_CAPTIONS}-panel`,
+                icon: IconSubtitles,
+                title: t('chat.tabs.closedCaptions')
+            });
+        }
+
+        if (_isFileSharingTabEnabled) {
+            tabs.push({
+                accessibilityLabel: t('chat.tabs.fileSharing'),
+                countBadge: _focusedTab !== ChatTabs.FILE_SHARING && _unreadFilesCount > 0 ? _unreadFilesCount : undefined,
+                id: ChatTabs.FILE_SHARING,
+                controlsId: `${ChatTabs.FILE_SHARING}-panel`,
+                icon: IconShareDoc,
+                title: t('chat.tabs.fileSharing')
+            });
+        }
+
+        if (tabs.length === 1) {
+            tabs = [];
+        }
+
+        return (
+            <Tabs
+                accessibilityLabel = { _isPollsEnabled || _isCCTabEnabled || _isFileSharingTabEnabled
+                    ? t('chat.titleWithFeatures', {
+                        features: [
+                            _isPollsEnabled ? t('chat.titleWithPolls') : '',
+                            _isCCTabEnabled ? t('chat.titleWithCC') : '',
+                            _isFileSharingTabEnabled ? t('chat.titleWithFileSharing') : ''
+                        ].filter(Boolean).join(', ')
+                    })
+                    : t('chat.title')
+                }
+                onChange = { onChangeTab }
+                selected = { _focusedTab }
+                tabs = { tabs } />
+        );
+    }
+
+    if (_reducedUI) {
+        return null;
+    }
+
+    return (
+        _isOpen ? <div
+            className = { classes.container }
+            id = 'sideToolbarContainer'
+            onKeyDown = { onEscClick } >
+            <ChatHeader
+                className = { cx('chat-header', classes.chatHeader) }
+                isCCTabEnabled = { _isCCTabEnabled }
+                isPollsEnabled = { _isPollsEnabled }
+                onCancel = { onToggleChat } />
+            {_showNamePrompt
+                ? <DisplayNameForm
+                    isCCTabEnabled = { _isCCTabEnabled }
+                    isChatDisabled = { _isChatDisabled }
+                    isFileSharingEnabled = { _isFileSharingTabEnabled }
+                    isPollsEnabled = { _isPollsEnabled } />
+                : renderChat()}
+            <div
+                className = { cx(
+                    classes.dragHandleContainer,
+                    (isMouseDown || _isResizing) && 'visible',
+                    'dragHandleContainer'
+                ) }
+                onPointerDown = { onDragHandlePointerDown }>
+                <div className = { cx(classes.dragHandle, 'dragHandle') } />
+            </div>
+        </div> : null
+    );
+};
+
+/**
+ * Maps (parts of) the redux state to {@link Chat} React {@code Component}
+ * props.
+ *
+ * @param {Object} state - The redux store/state.
+ * @param {any} _ownProps - Components' own props.
+ * @private
+ * @returns {{
+ *     _isModal: boolean,
+ *     _isOpen: boolean,
+ *     _isPollsEnabled: boolean,
+ *     _isCCTabEnabled: boolean,
+ *     _focusedTab: string,
+ *     _messages: Array<Object>,
+ *     _unreadMessagesCount: number,
+ *     _unreadPollsCount: number,
+ *     _unreadFilesCount: number,
+ *     _showNamePrompt: boolean,
+ *     _width: number,
+ *     _isResizing: boolean
+ * }}
+ */
+function _mapStateToProps(state: IReduxState, _ownProps: any) {
+    const { isOpen, messages, unreadMessagesCount, unreadFilesCount, width, isResizing } = state['features/chat'];
+    const { unreadPollsCount } = state['features/polls'];
+    const _localParticipant = getLocalParticipant(state);
+    const { reducedUI } = state['features/base/responsive-ui'];
+
+    return {
+        _isModal: window.innerWidth <= SMALL_WIDTH_THRESHOLD,
+        _isOpen: isOpen,
+        _isPollsEnabled: !arePollsDisabled(state),
+        _isCCTabEnabled: isCCTabEnabled(state),
+        _isChatDisabled: isChatDisabled(state),
+        _isFileSharingTabEnabled: isFileSharingEnabled(state),
+        _focusedTab: getFocusedTab(state),
+        _messages: messages,
+        _reducedUI: reducedUI,
+        _unreadMessagesCount: unreadMessagesCount,
+        _unreadPollsCount: unreadPollsCount,
+        _unreadFilesCount: unreadFilesCount,
+        _showNamePrompt: !_localParticipant?.name,
+        _width: width?.current || CHAT_SIZE,
+        _isResizing: isResizing
+    };
+}
+
+export default translate(connect(_mapStateToProps)(Chat));

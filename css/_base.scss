@@ -6,6 +6,10 @@
 * {
     -webkit-user-select: none;
     user-select: none;
+
+    // Firefox only
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, .5) transparent;
 }
 
 input,
@@ -18,17 +22,25 @@ html {
     height: 100%;
     width: 100%;
     overflow: hidden;
+    overflow: clip;
 }
 
 body {
     margin: 0px;
     width: 100%;
     height: 100%;
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: 400;
+    // `clip` (vs. `hidden`) makes the element a non-scroll container so the
+    // engine cannot programmatically scroll it. Prevents Chrome's smooth
+    // cross-frame `scrollIntoView` from sliding `body` up by the off-screen
+    // toolbar's height when content inside an iframe (e.g. the custom panel)
+    // requests an auto-scroll. The `hidden` line is the fallback for browsers
+    // that do not understand `clip` (Chrome <90, Safari <16).
     overflow: hidden;
-    color: $defaultColor;
-    background: $defaultBackground;
+    overflow: clip;
+    color: #F1F1F1;
+    background: #040404; // should match DEFAULT_BACKGROUND from interface_config
 }
 
 /**
@@ -39,21 +51,9 @@ body {
   outline: none;
 }
 
-/**
- * AtlasKit sets a default margin on the rendered modals, so
- * when the shift-right class is set when the chat opens, we
- * pad the modal container in order for the modals to be centered
- * while also taking the chat size into consideration.
-*/
-@media (min-width: 581px) {
-    .shift-right .atlaskit-portal > div:not(.Tooltip) {
-        padding-left: $sidebarWidth;
-    }
-}
-
 .jitsi-icon {
     &-default svg {
-        fill: white;
+        fill: var(--icon-svg-fill, white);
     }
 }
 
@@ -72,10 +72,6 @@ p {
 
 body, input, textarea, keygen, select, button {
     font-family: $baseFontFamily !important;
-}
-
-#nowebrtc {
-    display:none;
 }
 
 button, input, select, textarea {
@@ -102,7 +98,7 @@ input[type='text'], input[type='password'], textarea {
 
 button {
     color: #FFF;
-    background-color: $buttonBackground;
+    background-color: #44A5FF;
     border-radius: $borderRadius;
 
     &.no-icon {
@@ -123,15 +119,22 @@ form {
     height: $watermarkHeight;
     background-size: contain;
     background-repeat: no-repeat;
-    z-index: $zindex2;
+    z-index: $watermarkZ;
 }
 
 .leftwatermark {
+    max-width: 140px;
+    max-height:70px;
     left: 32px;
     top: 32px;
     background-position: center left;
     background-repeat: no-repeat;
     background-size: contain;
+
+    &.no-margin {
+        left:0;
+        top:0;
+    }
 }
 
 .rightwatermark {
@@ -144,35 +147,10 @@ form {
     position: absolute;
     left: 25;
     bottom: 7;
-    font-size: 11pt;
+    font-size: 0.875rem;
     color: rgba(255,255,255,.50);
     text-decoration: none;
-    z-index: $poweredByZ;
-}
-
-.connected {
-    color: #21B9FC;
-    font-size: 12px;
-}
-
-.lastN, .disconnected {
-    color: #a3a3a3;
-    font-size: 12px;
-}
-
-/**
-* Dialogs fade
-*/
-.aui-blanket {
-    background: #000;
-    transition: opacity 0.2s, visibility 0.2s;
-    transition-delay: 0.1s;
-    visibility: visible;
-}
-
-#inviteLinkRef {
-    -webkit-user-select: text;
-    user-select: text;
+    z-index: $watermarkZ;
 }
 
 /**
@@ -197,6 +175,24 @@ form {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, .5);
+    background: #3D3D3D;
     border-radius: 4px;
+}
+
+/* Necessary for the new icons to work properly. */
+.jitsi-icon svg path {
+    fill: inherit !important;
+}
+
+.sr-only {
+    border: 0 !important;
+    clip: rect(1px, 1px, 1px, 1px) !important;
+    clip-path: inset(50%) !important;
+    height: 1px !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: absolute !important;
+    width: 1px !important;
+    white-space: nowrap !important;
 }

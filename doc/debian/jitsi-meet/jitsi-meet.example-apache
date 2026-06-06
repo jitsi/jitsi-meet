@@ -43,8 +43,9 @@
     ProxyPassReverse /http-bind http://localhost:5280/http-bind
     ProxyPass /xmpp-websocket ws://localhost:5280/xmpp-websocket
     ProxyPassReverse /xmpp-websocket ws://localhost:5280/xmpp-websocket
-    ProxyPass /colibri-ws/default-id ws://localhost:9090/colibri-ws/default-id
-    ProxyPassReverse /colibri-ws/default-id ws://localhost:9090/colibri-ws/default-id
+    # Uncomment to enable colibri (JVB) WebSocket proxy (also requires websockets enabled in JVB config):
+    # ProxyPass /colibri-ws/default-id ws://localhost:9090/colibri-ws/default-id
+    # ProxyPassReverse /colibri-ws/default-id ws://localhost:9090/colibri-ws/default-id
 
     RewriteEngine on
     RewriteRule ^/([a-zA-Z0-9]+)$ /index.html

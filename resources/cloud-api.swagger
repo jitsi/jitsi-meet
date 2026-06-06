@@ -85,7 +85,32 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/PhoneNumberList"
+            type: array
+            items:
+              $ref: "#/definitions/PhoneNumberListAnswer"
+  /waiting-queue/golive:
+    post:
+      tags:
+      - waitingQueueGoLive
+      summary: Post a go live request
+      description: Mark the conference as live, notify all visitors waiting.
+      operationId: goLive
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Go Live Request"
+        required: true
+        schema:
+          "$ref": "#/definitions/GoLiveRequest"
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          description: Missing conference
+        '500':
+          description: Failed operation
 securityDefinitions:
   token:
     type: "apiKey"
@@ -127,25 +152,26 @@ definitions:
         format: "JID"
         description: "Full JID for the conference OR boolean false if no conference was found (search by ID)"
 
-  PhoneNumberList:
-    description: "List of dial in numbers for the conference."
-    type: "array"
-    items:
-        type: "object"
-        properties:
-          countryCode:
-            type: "string"
-            description: "ISO 3166-1 country code. Alpha-2 supported."
-          default:
-            type: "boolean"
-            description: "Whether this number is the default one to show. Optional."
-          formattedNumber:
-            type: "string"
-            description: "The formatted telephone number to show."
-          tollFree:
-            type: "boolean"
-            description: "Whether the number is toll free number."
+  PhoneNumberListAnswer:
+    description: "Answer with Phone number list and additional information"
+    type: "object"
+    properties:
+      countryCode:
+        type: string
+      formattedNumber:
+        type: string
+      tollFree:
+        type: boolean
+    example:
+      - {"countryCode":"US","tollFree":false,"formattedNumber":"+1 123-456-7890"}
+      - {"countryCode":"UK","tollFree":true,"formattedNumber":"+44 123 456 7890"}
 
+  GoLiveRequest:
+      type: object
+      properties:
+        conference:
+          type: string
 externalDocs:
   description: "Find out more about the Jitsi Cloud API"
   url: "https://jitsi.org/CloudAPI"
+  

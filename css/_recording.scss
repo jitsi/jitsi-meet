@@ -1,32 +1,53 @@
-.recordingSpinner {
-    vertical-align: top;
-}
-
 .recording-dialog {
     flex: 0;
     flex-direction: column;
 
     .recording-header {
+        align-items: center;
         display: flex;
         flex: 0;
         flex-direction: row;
         justify-content: space-between;
-        padding-top: 32px;
 
         .recording-title {
             display: inline-flex;
             align-items: center;
-            font-size: 16px;
+            font-size: 0.875rem;
             margin-left: 16px;
+            max-width: 70%;
+
+            &-no-space {
+                margin-left: 0;
+            }
+        }
+
+        &.space-top {
+            margin-top: 10px;
         }
     }
 
     .recording-header-line {
         border-top: 1px solid #5e6d7a;
+        padding-top: 16px;
+        margin-top: 16px;
     }
 
-    .recording-switch-disabled {
-        opacity: 0.5;
+    .local-recording-warning {
+        margin-top: 8px;
+        display: block;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        padding: 8px 16px;
+
+        &.text {
+            color: #fff;
+            background-color: #3D3D3D;
+        }
+
+        &.notification {
+            color: #040404;
+            background-color: #F8AE1A;
+        }
     }
 
     .recording-icon-container {
@@ -34,10 +55,79 @@
         align-items: center;
     }
 
+    .file-sharing-icon-container {
+        background-color: #525252;
+        border-radius: 4px;
+        height: 40px;
+        justify-content: center;
+        width: 42px;
+    }
+
+    .cloud-content-recording-icon-container {
+        background-color: #FFFFFF;
+        border-radius: 4px;
+        height: 40px;
+        justify-content: center;
+        width: 40px;
+    }
+
+    .jitsi-recording-header {
+        margin-bottom: 16px;
+    }
+
+    .jitsi-content-recording-icon-container-with-switch {
+        background-color: #FFFFFF;
+        border-radius: 4px;
+        height: 40px;
+        width: 40px;
+    }
+
+    .jitsi-content-recording-icon-container-without-switch {
+        background-color: #FFFFFF;
+        border-radius: 4px;
+        height: 40px;
+        width: 46px;
+    }
+
     .recording-icon {
-        width: 32px;
-        height: 32px;
+        height: 40px;
         object-fit: contain;
+        width: 40px;
+    }
+
+    .content-recording-icon {
+        height: 18px;
+        margin: 10px 0 0 10px;
+        object-fit: contain;
+        width: 18px;
+    }
+
+    .recording-file-sharing-icon {
+        height: 18px;
+        object-fit: contain;
+        width: 18px;
+    }
+
+    .recording-info{
+        background-color: #FFD740;
+        color: black;
+        display: inline-flex;
+        margin: 32px 0;
+        width: 100%;
+    }
+
+    .recording-info-icon {
+        align-self: center;
+        height: 14px;
+        margin: 0 24px 0 16px;
+        object-fit: contain;
+        width: 14px;
+    }
+
+    .recording-info-title {
+        display: inline-flex;
+        font-size: 0.875rem;
+        width: 290px
     }
 
     .recording-switch {
@@ -60,10 +150,9 @@
     /**
      * Set font-size to be consistent with Atlaskit FieldText.
      */
-    font-size: 14px;
+    font-size: 0.875rem;
 
-    .broadcast-dropdown,
-    .broadcast-dropdown-trigger {
+    .broadcast-dropdown {
         text-align: left;
     }
 
@@ -92,7 +181,7 @@
     }
 
     .google-error {
-        color: $errorColor;
+        color: #c61600;
     }
 
     .google-panel {
@@ -103,16 +192,18 @@
         padding-bottom: 10px;
     }
 
-    .helper-link {
-        cursor: pointer;
-        font-weight: bold;
-        display: inline-block;
-        flex-shrink: 0;
-        margin-left: auto;
-    }
-
     .warning-text {
         color:#FFD740;
-        font-size: 12px;
+        font-size: 0.75rem;
+    }
+
+    .youtube-go-live-warning {
+        margin-bottom: 16px;
+        padding: 8px 12px;
+        background-color: rgba(248, 174, 26, 0.1);
+        border-left: 3px solid #FFD740;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        color: #FFD740;
     }
 }
