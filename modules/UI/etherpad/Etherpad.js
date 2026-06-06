@@ -2,7 +2,7 @@
 
 import $ from 'jquery';
 
-import { setDocumentEditingState } from '../../../react/features/etherpad/actions';
+import { setDocumentEditingState, toggleDocument } from '../../../react/features/etherpad/actions';
 import { getSharedDocumentUrl } from '../../../react/features/etherpad/functions';
 import { getToolboxHeight } from '../../../react/features/toolbox/functions.web';
 import Filmstrip from '../videolayout/Filmstrip';
@@ -45,6 +45,30 @@ class Etherpad extends LargeContainer {
         this.container.appendChild(iframe);
 
         this.iframe = iframe;
+
+        const closeBtn = document.createElement('button');
+
+        closeBtn.id = 'etherpad-close-btn';
+        closeBtn.setAttribute('aria-label', 'Close shared document');
+        closeBtn.style.cssText = [
+            'position:absolute',
+            'top:12px',
+            'right:12px',
+            'z-index:10',
+            'background:rgba(0,0,0,0.55)',
+            'border:none',
+            'border-radius:4px',
+            'color:#fff',
+            'cursor:pointer',
+            'font-size:18px',
+            'line-height:1',
+            'padding:5px 9px',
+            'display:none'
+        ].join(';');
+        closeBtn.textContent = '✕';
+        closeBtn.addEventListener('click', () => APP.store.dispatch(toggleDocument()));
+        this.container.appendChild(closeBtn);
+        this.closeBtn = closeBtn;
     }
 
     /**
@@ -94,6 +118,7 @@ class Etherpad extends LargeContainer {
                 document.body.style.background = '#eeeeee';
                 $iframe.css({ visibility: 'visible' });
                 $container.css({ zIndex: 2 });
+                self.closeBtn.style.display = 'block';
 
                 APP.store.dispatch(setDocumentEditingState(true));
 
@@ -115,6 +140,7 @@ class Etherpad extends LargeContainer {
             $iframe.fadeOut(300, () => {
                 $iframe.css({ visibility: 'hidden' });
                 $container.css({ zIndex: 0 });
+                this.closeBtn.style.display = 'none';
 
                 APP.store.dispatch(setDocumentEditingState(false));
 
