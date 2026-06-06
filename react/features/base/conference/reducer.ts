@@ -135,6 +135,7 @@ export interface IJitsiConference {
     off: Function;
     on: Function;
     options: any;
+    removeCommand: Function;
     removeTrack: Function;
     replaceTrack: Function;
     room: IJitsiConferenceRoom;
