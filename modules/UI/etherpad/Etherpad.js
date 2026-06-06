@@ -46,15 +46,15 @@ class Etherpad extends LargeContainer {
 
         this.iframe = iframe;
 
-        const closeBtn = document.createElement('button');
+        const closeBtn = document.getElementById('etherpad-close-btn') || document.createElement('button');
 
         closeBtn.id = 'etherpad-close-btn';
         closeBtn.setAttribute('aria-label', 'Close shared document');
         closeBtn.style.cssText = [
-            'position:absolute',
+            'position:fixed',
             'top:12px',
-            'right:12px',
-            'z-index:10',
+            'left:600px',
+            'z-index:10000',
             'background:rgba(0,0,0,0.55)',
             'border:none',
             'border-radius:4px',
@@ -67,7 +67,7 @@ class Etherpad extends LargeContainer {
         ].join(';');
         closeBtn.textContent = '✕';
         closeBtn.addEventListener('click', () => APP.store.dispatch(toggleDocument()));
-        this.container.appendChild(closeBtn);
+        document.body.appendChild(closeBtn);
         this.closeBtn = closeBtn;
     }
 
