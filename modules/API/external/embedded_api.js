@@ -698,4 +698,670 @@ export default class JitsiMeetEmbeddedAPI extends EventEmitter {
 
         this._numberOfParticipants = allParticipants;
     }
+
+    /**
+     * Returns the rooms info in the conference.
+     *
+     * @returns {Promise} Rooms info.
+     */
+    getRoomsInfo() {
+        return this._transport.sendRequest({
+            name: 'rooms-info'
+        });
+    }
+
+    /**
+     * Returns the Shared Document Url of the conference.
+     *
+     * @returns {Promise} Shared document URL.
+     */
+    getSharedDocumentUrl() {
+        return this._transport.sendRequest({
+            name: 'get-shared-document-url'
+        });
+    }
+
+    /**
+     * Returns whether the conference is P2P.
+     *
+     * @returns {Promise}
+     */
+    isP2pActive() {
+        return this._transport.sendRequest({
+            name: 'get-p2p-status'
+        });
+    }
+
+    /**
+     * Adds event listener to Meet Jitsi.
+     *
+     * @param {string} event - The name of the event.
+     * @param {Function} listener - The listener.
+     * @returns {void}
+     *
+     * @deprecated
+     * NOTE: This method is not removed for backward compatibility purposes.
+     */
+    addEventListener(event, listener) {
+        this.on(event, listener);
+    }
+
+    /**
+     * Adds event listeners to Meet Jitsi.
+     *
+     * @param {Object} listeners - The object key should be the name of
+     * the event and value - the listener.
+     * @returns {void}
+     *
+     * @deprecated
+     * NOTE: This method is not removed for backward compatibility purposes.
+     */
+    addEventListeners(listeners) {
+        for (const event in listeners) { // eslint-disable-line guard-for-in
+            this.addEventListener(event, listeners[event]);
+        }
+    }
+
+    /**
+     * Captures the screenshot of the large video.
+     *
+     * @returns {Promise<string>} - Resolves with a base64 encoded image data.
+     */
+    captureLargeVideoScreenshot() {
+        return this._transport.sendRequest({
+            name: 'capture-largevideo-screenshot'
+        });
+    }
+
+    /**
+     * Removes the listeners and removes the container from the DOM.
+     *
+     * @returns {void}
+     */
+    dispose() {
+        this.emit('_willDispose');
+        this._transport.dispose();
+        this.removeAllListeners();
+
+        if (this._container && this._container.parentNode) {
+            this._container.parentNode.removeChild(this._container);
+        }
+    }
+
+    /**
+     * Executes command. The available commands are the same as for
+     * JitsiMeetExternalAPI.
+     *
+     * @param {string} name - The name of the command.
+     * @param {...*} args - The arguments for the command.
+     * @returns {void}
+     */
+    executeCommand(name, ...args) {
+        if (!(name in commands)) {
+            console.error('Not supported command name.');
+
+            return;
+        }
+
+        this._transport.sendEvent({
+            data: args,
+            name: commands[name]
+        });
+    }
+
+    /**
+     * Executes commands.
+     *
+     * @param {Object} commandList - The object with commands to be executed.
+     * @returns {void}
+     */
+    executeCommands(commandList) {
+        for (const key in commandList) { // eslint-disable-line guard-for-in
+            this.executeCommand(key, commandList[key]);
+        }
+    }
+
+    /**
+     * Returns Promise that resolves with a list of available devices.
+     *
+     * @returns {Promise}
+     */
+    getAvailableDevices() {
+        return getAvailableDevices(this._transport);
+    }
+
+    /**
+     * Gets a list of the currently sharing participant id's.
+     *
+     * @returns {Promise}
+     */
+    getContentSharingParticipants() {
+        return this._transport.sendRequest({
+            name: 'get-content-sharing-participants'
+        });
+    }
+
+    /**
+     * Returns Promise that resolves with current selected devices.
+     *
+     * @returns {Promise}
+     */
+    getCurrentDevices() {
+        return getCurrentDevices(this._transport);
+    }
+
+    /**
+     * Returns any custom avatars backgrounds.
+     *
+     * @returns {Promise}
+     */
+    getCustomAvatarBackgrounds() {
+        return this._transport.sendRequest({
+            name: 'get-custom-avatar-backgrounds'
+        });
+    }
+
+    /**
+     * Returns the current livestream url.
+     *
+     * @returns {Promise}
+     */
+    getLivestreamUrl() {
+        return this._transport.sendRequest({
+            name: 'get-livestream-url'
+        });
+    }
+
+    /**
+     * Returns the conference participants information.
+     *
+     * @returns {Array<Object>}
+     */
+    getParticipantsInfo() {
+        const participantIds = Object.keys(this._participants);
+        const participantsInfo = Object.values(this._participants);
+
+        participantsInfo.forEach((participant, idx) => {
+            participant.participantId = participantIds[idx];
+        });
+
+        return participantsInfo;
+    }
+
+    /**
+     * Returns the current video quality setting.
+     *
+     * @returns {number}
+     */
+    getVideoQuality() {
+        return this._videoQuality;
+    }
+
+    /**
+     * Check if the audio is available.
+     *
+     * @returns {Promise}
+     */
+    isAudioAvailable() {
+        return this._transport.sendRequest({
+            name: 'is-audio-available'
+        });
+    }
+
+    /**
+     * Returns Promise that resolves with true if the device change is available.
+     *
+     * @param {string} [deviceType] - Values - 'output', 'input' or undefined.
+     * @returns {Promise}
+     */
+    isDeviceChangeAvailable(deviceType) {
+        return isDeviceChangeAvailable(this._transport, deviceType);
+    }
+
+    /**
+     * Returns Promise that resolves with true if multiple audio input is supported.
+     *
+     * @returns {Promise}
+     */
+    isMultipleAudioInputSupported() {
+        return isMultipleAudioInputSupported(this._transport);
+    }
+
+    /**
+     * Invite people to the call.
+     *
+     * @param {Array<Object>} invitees - The invitees.
+     * @returns {Promise}
+     */
+    invite(invitees) {
+        if (!Array.isArray(invitees) || invitees.length === 0) {
+            return Promise.reject(new TypeError('Invalid Argument'));
+        }
+
+        return this._transport.sendRequest({
+            name: 'invite',
+            invitees
+        });
+    }
+
+    /**
+     * Returns the audio mute status.
+     *
+     * @returns {Promise}
+     */
+    isAudioMuted() {
+        return this._transport.sendRequest({
+            name: 'is-audio-muted'
+        });
+    }
+
+    /**
+     * Returns the audio disabled status.
+     *
+     * @returns {Promise}
+     */
+    isAudioDisabled() {
+        return this._transport.sendRequest({
+            name: 'is-audio-disabled'
+        });
+    }
+
+    /**
+     * Returns the moderation on status on the given mediaType.
+     *
+     * @param {string} mediaType - The media type for which to check moderation.
+     * @returns {Promise}
+     */
+    isModerationOn(mediaType) {
+        return this._transport.sendRequest({
+            name: 'is-moderation-on',
+            mediaType
+        });
+    }
+
+    /**
+     * Returns force muted status of the given participant id for the given media type.
+     *
+     * @param {string} participantId - The id of the participant to check.
+     * @param {string} mediaType - The media type for which to check.
+     * @returns {Promise}
+     */
+    isParticipantForceMuted(participantId, mediaType) {
+        return this._transport.sendRequest({
+            name: 'is-participant-force-muted',
+            participantId,
+            mediaType
+        });
+    }
+
+    /**
+     * Returns whether the participants pane is open.
+     *
+     * @returns {Promise}
+     */
+    isParticipantsPaneOpen() {
+        return this._transport.sendRequest({
+            name: 'is-participants-pane-open'
+        });
+    }
+
+    /**
+     * Returns screen sharing status.
+     *
+     * @returns {Promise}
+     */
+    isSharingScreen() {
+        return this._transport.sendRequest({
+            name: 'is-sharing-screen'
+        });
+    }
+
+    /**
+     * Returns whether meeting is started silent.
+     *
+     * @returns {Promise}
+     */
+    isStartSilent() {
+        return this._transport.sendRequest({
+            name: 'is-start-silent'
+        });
+    }
+
+    /**
+     * Returns whether we have joined as visitor.
+     *
+     * @returns {boolean}
+     */
+    isVisitor() {
+        return this._iAmvisitor;
+    }
+
+    /**
+     * Returns the avatar URL of a participant.
+     *
+     * @param {string} participantId - The id of the participant.
+     * @returns {string} The avatar URL.
+     */
+    getAvatarURL(participantId) {
+        const { avatarURL } = this._participants[participantId] || {};
+
+        return avatarURL;
+    }
+
+    /**
+     * Gets the deployment info.
+     *
+     * @returns {Promise}
+     */
+    getDeploymentInfo() {
+        return this._transport.sendRequest({
+            name: 'deployment-info'
+        });
+    }
+
+    /**
+     * Returns the display name of a participant.
+     *
+     * @param {string} participantId - The id of the participant.
+     * @returns {string} The display name.
+     */
+    getDisplayName(participantId) {
+        const { displayName } = this._participants[participantId] || {};
+
+        return displayName;
+    }
+
+    /**
+     * Returns the email of a participant.
+     *
+     * @param {string} participantId - The id of the participant.
+     * @returns {string} The email.
+     */
+    getEmail(participantId) {
+        const { email } = this._participants[participantId] || {};
+
+        return email;
+    }
+
+    /**
+     * Returns the container element that holds the embedded meeting.
+     *
+     * @returns {HTMLElement} The container element.
+     */
+    getContainer() {
+        return this._container;
+    }
+
+    /**
+     * Returns the number of participants in the conference. The local
+     * participant is included.
+     *
+     * @returns {int}
+     */
+    getNumberOfParticipants() {
+        return this._numberOfParticipants;
+    }
+
+    /**
+     * Return the conference's sessionId.
+     *
+     * @returns {Promise}
+     */
+    getSessionId() {
+        return this._transport.sendRequest({
+            name: 'session-id'
+        });
+    }
+
+    /**
+     * Returns array of commands supported by executeCommand().
+     *
+     * @returns {Array<string>}
+     */
+    getSupportedCommands() {
+        return Object.keys(commands);
+    }
+
+    /**
+     * Returns array of events supported by addEventListener().
+     *
+     * @returns {Array<string>}
+     */
+    getSupportedEvents() {
+        return Object.values(events);
+    }
+
+    /**
+     * Check if the video is available.
+     *
+     * @returns {Promise}
+     */
+    isVideoAvailable() {
+        return this._transport.sendRequest({
+            name: 'is-video-available'
+        });
+    }
+
+    /**
+     * Returns the video mute status.
+     *
+     * @returns {Promise}
+     */
+    isVideoMuted() {
+        return this._transport.sendRequest({
+            name: 'is-video-muted'
+        });
+    }
+
+    /**
+     * Returns the list of breakout rooms.
+     *
+     * @returns {Promise}
+     */
+    listBreakoutRooms() {
+        return this._transport.sendRequest({
+            name: 'list-breakout-rooms'
+        });
+    }
+
+    /**
+     * Pins a participant's video on to the stage view.
+     *
+     * @param {string} participantId - Participant id to pin.
+     * @param {string} [videoType] - "camera" or "desktop".
+     * @returns {void}
+     */
+    pinParticipant(participantId, videoType) {
+        this.executeCommand('pinParticipant', participantId, videoType);
+    }
+
+    /**
+     * Removes event listener.
+     *
+     * @param {string} event - The name of the event.
+     * @returns {void}
+     *
+     * @deprecated
+     */
+    removeEventListener(event) {
+        this.removeAllListeners(event);
+    }
+
+    /**
+     * Removes event listeners.
+     *
+     * @param {Array<string>} eventList - Array with the names of the events.
+     * @returns {void}
+     *
+     * @deprecated
+     */
+    removeEventListeners(eventList) {
+        eventList.forEach(event => this.removeEventListener(event));
+    }
+
+    /**
+     * Resizes the large video container.
+     *
+     * @param {number} width - Width to apply.
+     * @param {number} height - Height to apply.
+     * @returns {void}
+     */
+    resizeLargeVideo(width, height) {
+        if (width <= this._width && height <= this._height) {
+            this.executeCommand('resizeLargeVideo', width, height);
+        }
+    }
+
+    /**
+     * Sets the audio input device.
+     *
+     * @param {string} label - The label of the new device.
+     * @param {string} deviceId - The id of the new device.
+     * @returns {Promise}
+     */
+    setAudioInputDevice(label, deviceId) {
+        return setAudioInputDevice(this._transport, label, deviceId);
+    }
+
+    /**
+     * Sets the audio output device.
+     *
+     * @param {string} label - The label of the new device.
+     * @param {string} deviceId - The id of the new device.
+     * @returns {Promise}
+     */
+    setAudioOutputDevice(label, deviceId) {
+        return setAudioOutputDevice(this._transport, label, deviceId);
+    }
+
+    /**
+     * Displays the given participant on the large video.
+     *
+     * @param {string} participantId - Jid of the participant.
+     * @param {string} [videoType] - "camera" or "desktop".
+     * @returns {void}
+     */
+    setLargeVideoParticipant(participantId, videoType) {
+        this.executeCommand('setLargeVideoParticipant', participantId, videoType);
+    }
+
+    /**
+     * Sets the video input device.
+     *
+     * @param {string} label - The label of the new device.
+     * @param {string} deviceId - The id of the new device.
+     * @returns {Promise}
+     */
+    setVideoInputDevice(label, deviceId) {
+        return setVideoInputDevice(this._transport, label, deviceId);
+    }
+
+    /**
+     * Starts a file recording or streaming session.
+     *
+     * @param {Object} options - Recording options.
+     * @returns {void}
+     */
+    startRecording(options) {
+        this.executeCommand('startRecording', options);
+    }
+
+    /**
+     * Stops a recording or streaming session.
+     *
+     * @param {string} mode - `file` or `stream`.
+     * @param {boolean} transcription - Whether to stop transcription.
+     * @returns {void}
+     */
+    stopRecording(mode, transcription) {
+        this.executeCommand('stopRecording', mode, transcription);
+    }
+
+    /**
+     * Sets e2ee enabled/disabled.
+     *
+     * @param {boolean} enabled - The new value for e2ee enabled.
+     * @returns {void}
+     */
+    toggleE2EE(enabled) {
+        this.executeCommand('toggleE2EE', enabled);
+    }
+
+    /**
+     * Sets the key and keyIndex for e2ee.
+     *
+     * @param {Object} keyInfo - Json containing key information.
+     * @returns {void}
+     */
+    async setMediaEncryptionKey(keyInfo) {
+        const { key, index } = keyInfo;
+
+        if (key) {
+            const exportedKey = await crypto.subtle.exportKey('raw', key);
+
+            this.executeCommand('setMediaEncryptionKey', JSON.stringify({
+                exportedKey: Array.from(new Uint8Array(exportedKey)),
+                index
+            }));
+        } else {
+            this.executeCommand('setMediaEncryptionKey', JSON.stringify({
+                exportedKey: false,
+                index
+            }));
+        }
+    }
+
+    /**
+     * Enable or disable the virtual background with a custom base64 image.
+     *
+     * @param {boolean} enabled - Whether to enable or disable.
+     * @param {string} backgroundImage - The base64 image.
+     * @returns {void}
+     */
+    setVirtualBackground(enabled, backgroundImage) {
+        this.executeCommand('setVirtualBackground', enabled, backgroundImage);
+    }
+
+    /**
+     * Getter for the large video element. Since there's no iframe in
+     * embedded mode, we can directly access the DOM element.
+     *
+     * @returns {HTMLElement|undefined}
+     */
+    getLargeVideo() {
+        if (!this._isLargeVideoVisible) {
+            return;
+        }
+
+        return document.getElementById('largeVideo');
+    }
+
+    /**
+     * Getter for the prejoin video element.
+     *
+     * @returns {HTMLElement|undefined}
+     */
+    getPrejoinVideo() {
+        if (!this._isPrejoinVideoVisible) {
+            return;
+        }
+
+        return document.getElementById('prejoinVideo');
+    }
+
+    /**
+     * Getter for participant specific video element.
+     *
+     * @param {string|undefined} participantId - Id of participant.
+     * @returns {HTMLElement|undefined}
+     */
+    getParticipantVideo(participantId) {
+        if (typeof participantId === 'undefined' || participantId === this._myUserID) {
+            return document.getElementById('localVideo_container');
+        }
+
+        return document.querySelector(`#participant_${participantId} video`);
+    }
 }
+
+
