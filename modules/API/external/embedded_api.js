@@ -432,7 +432,7 @@ export default class JitsiMeetEmbeddedAPI extends EventEmitter {
 
             // Render the React app into our container's inner div.
             if (typeof globalNS.renderEntryPoint === 'function'
-                && globalNS.entryPoints?.APP) {
+                    && globalNS.entryPoints?.APP) {
                 globalNS.renderEntryPoint({
                     Component: globalNS.entryPoints.APP,
                     elementId: this._reactRoot.id
@@ -536,3 +536,166 @@ export default class JitsiMeetEmbeddedAPI extends EventEmitter {
             this._container.style.width = parsedWidth;
         }
     }
+
+    /**
+     * Sets up listeners on the transport for events from the Jitsi app.
+     * This is the same logic as in external_api.js.
+     *
+     * @returns {void}
+     * @private
+     */
+    _setupListeners() {
+        this._transport.on('event', ({ name, ...data }) => {
+            const userID = data.id;
+
+            switch (name) {
+            case 'ready': {
+                this._onload?.();
+                break;
+            }
+            case 'video-conference-joined': {
+                if (typeof this._tmpE2EEKey !== 'undefined') {
+                    const hexToBytes = hex => {
+                        const bytes = [];
+
+                        for (let c = 0; c < hex.length; c += 2) {
+                            bytes.push(parseInt(hex.substring(c, c + 2), 16));
+                        }
+
+                        return bytes;
+                    };
+
+                    this.executeCommand('setMediaEncryptionKey', JSON.stringify({
+                        exportedKey: hexToBytes(this._tmpE2EEKey),
+                        index: 0
+                    }));
+
+                    this._tmpE2EEKey = undefined;
+                }
+
+                this._myUserID = userID;
+                this._participants[userID] = {
+                    email: data.email,
+                    avatarURL: data.avatarURL
+                };
+                this._iAmvisitor = data.visitor;
+            }
+
+            // eslint-disable-next-line no-fallthrough
+            case 'participant-joined': {
+                this._participants[userID] = this._participants[userID] || {};
+                this._participants[userID].displayName = data.displayName;
+                this._participants[userID].formattedDisplayName
+                    = data.formattedDisplayName;
+                changeParticipantNumber(this, 1);
+                break;
+            }
+            case 'participant-left':
+                changeParticipantNumber(this, -1);
+                delete this._participants[userID];
+                break;
+            case 'display-name-change': {
+                const user = this._participants[userID];
+
+                if (user) {
+                    user.displayName = data.displayname;
+                    user.formattedDisplayName = data.formattedDisplayName;
+                }
+                break;
+            }
+            case 'email-change': {
+                const user = this._participants[userID];
+
+                if (user) {
+                    user.email = data.email;
+                }
+                break;
+            }
+            case 'avatar-changed': {
+                const user = this._participants[userID];
+
+                if (user) {
+                    user.avatarURL = data.avatarURL;
+                }
+                break;
+            }
+            case 'on-stage-participant-changed':
+                this._onStageParticipant = userID;
+                this.emit('largeVideoChanged');
+                break;
+            case 'large-video-visibility-changed':
+                this._isLargeVideoVisible = data.isVisible;
+                this.emit('largeVideoChanged');
+                break;
+            case 'prejoin-screen-loaded':
+                this._participants[userID] = {
+                    displayName: data.displayName,
+                    formattedDisplayName: data.formattedDisplayName
+                };
+                break;
+            case 'on-prejoin-video-changed':
+                this._isPrejoinVideoVisible = data.isVisible;
+                this.emit('prejoinVideoChanged');
+                break;
+            case 'video-conference-left':
+                changeParticipantNumber(this, -1);
+                delete this._participants[this._myUserID];
+                break;
+            case 'video-quality-changed':
+                this._videoQuality = data.videoQuality;
+                break;
+            case 'breakout-rooms-updated':
+                this.updateNumberOfParticipants(data.rooms);
+                break;
+            case 'local-storage-changed':
+                jitsiLocalStorage.setItem('jitsiLocalStorage', data.localStorageContent);
+
+                return true;
+            }
+
+            const eventName = events[name];
+
+            if (eventName) {
+                this.emit(eventName, data);
+
+                return true;
+            }
+
+            return false;
+        });
+
+        this._transport.on('request', (request, callback) => {
+            const requestName = requests[request.name];
+            const data = {
+                ...request,
+                name: requestName
+            };
+
+            if (requestName) {
+                this.emit(requestName, data, callback);
+            }
+        });
+    }
+
+    /**
+     * Update number of participants based on all rooms.
+     *
+     * @param {Object} rooms - Rooms available rooms in the conference.
+     * @returns {void}
+     */
+    updateNumberOfParticipants(rooms) {
+        if (!rooms || !Object.keys(rooms).length) {
+            return;
+        }
+
+        const allParticipants = Object.keys(rooms).reduce((prev, roomItemKey) => {
+            if (rooms[roomItemKey]?.participants) {
+                return Object.keys(rooms[roomItemKey].participants).length + prev;
+            }
+
+            return prev;
+        }, 0);
+
+        this._numberOfParticipants = allParticipants;
+    }
+}
