@@ -37,7 +37,7 @@ body.welcome-page {
             position: absolute;
             width: 100%;
             height: 100%;
-            margin-top: calc(20px - #{$welcomePageHeaderContainerMarginTop});
+            margin-top: $welcomePageHeaderTopOffset;
         }
 
         .header-text-title {
@@ -240,7 +240,7 @@ body.welcome-page {
         color: $welcomePageDescriptionColor;
         padding: 4px;
         position: absolute;
-        top: calc(35px - #{$welcomePageHeaderContainerMarginTop});
+        top: $welcomePageHeaderTopOffset;
         right: 0;
         z-index: $zindex2;
 

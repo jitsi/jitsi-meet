@@ -86,6 +86,7 @@ $welcomePageButtonFocusOutline: #00225A;
 $welcomePageHeaderContainerMarginTop: 104px;
 $welcomePageHeaderContainerDisplay: flex;
 $welcomePageHeaderContainerMargin: $welcomePageHeaderContainerMarginTop auto 0;
+$welcomePageHeaderTopOffset: calc(20px - #{$welcomePageHeaderContainerMarginTop});
 
 $welcomePageHeaderTextTitleMarginBottom: 0;
 $welcomePageHeaderTextTitleFontSize: 2.625rem;
