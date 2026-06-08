@@ -67,6 +67,7 @@ const commands = {
     setFollowMe: 'set-follow-me',
     setLargeVideoParticipant: 'set-large-video-participant',
     setMediaEncryptionKey: 'set-media-encryption-key',
+    setMeetingTimer: 'set-meeting-timer',
     setNoiseSuppressionEnabled: 'set-noise-suppression-enabled',
     setParticipantVolume: 'set-participant-volume',
     setSubtitles: 'set-subtitles',

@@ -233,6 +233,7 @@ export default [
     'stereo',
     'subject',
     'testing',
+    'timeTimer',
     'toolbarButtons',
     'toolbarConfig',
     'tileView',

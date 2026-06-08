@@ -695,6 +695,9 @@ export interface IConfig {
         disabled?: boolean;
         numberOfVisibleTiles?: number;
     };
+    timeTimer?: {
+        enabled?: boolean;
+    };
     tokenAuthInline?: boolean;
     tokenAuthUrl?: string;
     tokenGetUserInfoOutOfContext?: boolean;

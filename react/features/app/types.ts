@@ -74,6 +74,7 @@ import { ISharedVideoState } from '../shared-video/reducer';
 import { ISpeakerStatsState } from '../speaker-stats/reducer';
 import { ISubtitlesState } from '../subtitles/reducer';
 import { ITalkWhileMutedState } from '../talk-while-muted/reducer';
+import { ITimeTimerState } from '../time-timer/reducer';
 import { IToolboxState } from '../toolbox/reducer';
 import { ITranscribingState } from '../transcribing/reducer';
 import { IVideoLayoutState } from '../video-layout/reducer';
@@ -166,6 +167,7 @@ export interface IReduxState {
     'features/subtitles': ISubtitlesState;
     'features/talk-while-muted': ITalkWhileMutedState;
     'features/testing': ITestingState;
+    'features/time-timer': ITimeTimerState;
     'features/toolbox': IToolboxState;
     'features/transcribing': ITranscribingState;
     'features/video-layout': IVideoLayoutState;
