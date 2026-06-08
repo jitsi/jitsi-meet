@@ -822,6 +822,16 @@
         "youAreAlone": "You are the only one in the meeting"
     },
     "me": "me",
+    "multiScreen": {
+        "close": "Close",
+        "galleryView": "Gallery",
+        "layoutLabel": "Secondary window layout",
+        "noParticipants": "No participants",
+        "permissionDenied": "Grant the window-management permission to automatically place this window on another screen.",
+        "permissionDeniedTitle": "Couldn't move window to another screen",
+        "speakerView": "Speaker",
+        "windowTitle": "Jitsi Meet — Multi-Screen"
+    },
     "notify": {
         "OldElectronAPPTitle": "Security vulnerability!",
         "allowAll": "Allow All",
@@ -1346,6 +1356,7 @@
             "closeChat": "Close chat",
             "closeCustomPanel": "Close",
             "closeMoreActions": "Close more actions menu",
+            "closeMultiScreen": "Close multi-screen window",
             "closeParticipantsPane": "Close participants pane",
             "closedCaptions": "Closed captions",
             "collapse": "Collapse",
@@ -1382,6 +1393,7 @@
             "moreActions": "More actions",
             "moreActionsMenu": "More actions menu",
             "moreOptions": "Show more options",
+            "multiScreen": "Open multi-screen window",
             "mute": "Mute microphone",
             "muteEveryone": "Mute everyone",
             "muteEveryoneElse": "Mute everyone else",
@@ -1451,6 +1463,7 @@
         "clap": "Clap",
         "closeChat": "Close chat",
         "closeCustomPanel": "Close",
+        "closeMultiScreen": "Close multi-screen window",
         "closeParticipantsPane": "Close participants pane",
         "closeReactionsMenu": "Close reactions menu",
         "closedCaptions": "Closed captions",
@@ -1489,6 +1502,7 @@
         "lowerYourHand": "Lower your hand",
         "moreActions": "More actions",
         "moreOptions": "More options",
+        "multiScreen": "Multi-screen view",
         "mute": "Mute microphone",
         "muteEveryone": "Mute everyone",
         "muteEveryonesVideo": "Disable everyone's camera",

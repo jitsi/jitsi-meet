@@ -26,6 +26,7 @@
         "react/features/embed-meeting",
         "react/features/face-landmarks",
         "react/features/keyboard-shortcuts",
+        "react/features/multi-screen",
         "react/features/no-audio-signal",
         "react/features/pip",
         "react/features/noise-suppression",

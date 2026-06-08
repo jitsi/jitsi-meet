@@ -17,6 +17,7 @@ const SETTINGS = 'Open settings';
 const STOP_DESKTOP = 'Stop sharing your screen';
 const ENTER_TILE_VIEW_BUTTON = 'Enter tile view';
 const EXIT_TILE_VIEW_BUTTON = 'Exit tile view';
+const MULTI_SCREEN_BUTTON = 'Open multi-screen window';
 const VIDEO_QUALITY = 'Manage video quality';
 const VIRTUAL_BACKGROUND = 'Select Background';
 const VIDEO_MUTE = 'Stop camera';
@@ -256,6 +257,13 @@ export default class Toolbar extends BasePageObject {
      */
     clickExitTileViewButton() {
         return this.getButton(EXIT_TILE_VIEW_BUTTON).click();
+    }
+
+    /**
+     * Clicks on the multi-screen button which opens the secondary window.
+     */
+    clickMultiScreenButton() {
+        return this.getButton(MULTI_SCREEN_BUTTON).click();
     }
 
     /**

@@ -1,0 +1,249 @@
+/**
+ * Styles for the multi-screen secondary window.
+ *
+ * These styles are copied into the secondary window's document via the
+ * two-tier stylesheet copy system in actions.web.ts. Colors are kept in
+ * sync with Jitsi's design tokens (jitsiTokens.json):
+ *   surface01 #040404 — app background
+ *   surface02 #141414 — toolbar / overlays
+ *   surface03 #292929 — tile / large-video background
+ */
+
+/* Safety net for Jitsi's <Avatar> rendered inside the popped-out document.
+ * The per-participant background color and size are applied via inline styles
+ * (so they always work), but the circle shape and initials centering come from
+ * emotion-generated classes. The literal `avatar` class is always present on
+ * the StatelessAvatar root, so we re-assert the essentials here in case those
+ * generated rules are not copied across to the secondary window. */
+.multi-screen-container .avatar {
+    border-radius: 50%;
+    overflow: hidden;
+    text-align: center;
+    color: #fff;
+}
+
+.multi-screen-container .avatar > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* Container — fills the entire secondary window viewport */
+.multi-screen-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #040404;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+ * Active Speaker layout
+ * ------------------------------------------------------------------------- */
+.multi-screen-active-speaker {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 0;
+    background-color: #292929;
+}
+
+.multi-screen-video-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 0;
+}
+
+.multi-screen-video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: #040404;
+}
+
+.multi-screen-video.hidden {
+    display: none;
+}
+
+/* Avatar fallback when video is off — centered over the stage */
+.multi-screen-avatar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Name pill — matches Jitsi's DisplayNameBadge */
+.multi-screen-name-overlay {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 16px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 3px;
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 600;
+    max-width: 50%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+ * Gallery layout
+ * ------------------------------------------------------------------------- */
+.multi-screen-gallery {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    gap: 8px;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.multi-screen-gallery-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.multi-screen-gallery-placeholder {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.multi-screen-gallery-message {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Individual gallery tile — matches Jitsi's thumbnail look.
+ * A transparent 3px border is always reserved so the speaking ring doesn't
+ * shift the layout when it appears. */
+.multi-screen-tile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #292929;
+    border-radius: 4px;
+    overflow: hidden;
+    box-sizing: border-box;
+    border: 3px solid transparent;
+    transition: border-color 0.2s ease;
+}
+
+/* Dominant-speaker ring — mirrors the main window's blue thumbnail indicator.
+ * Color is Jitsi's action01Hover / hover01 token (#4687ED). */
+.multi-screen-tile.speaking {
+    border-color: #4687ED;
+}
+
+.multi-screen-tile-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.multi-screen-tile-video.hidden {
+    display: none;
+}
+
+.multi-screen-tile-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tile name pill — bottom-left, matches main window thumbnails */
+.multi-screen-tile-name {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    padding: 3px 8px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 3px;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+    max-width: calc(100% - 16px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ---------------------------------------------------------------------------
+ * Secondary window toolbar
+ * ------------------------------------------------------------------------- */
+.multi-screen-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background-color: #141414;
+    flex-shrink: 0;
+}
+
+.multi-screen-toolbar-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.multi-screen-toolbar-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.multi-screen-toolbar-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Selected layout — Jitsi's action01 / hover01 token (#4687ED), matching the
+ * dominant-speaker ring. */
+.multi-screen-toolbar-btn.active {
+    background-color: #4687ED;
+}
+
+.multi-screen-toolbar-btn.active:hover {
+    background-color: #2f6fd6;
+}
+
+.multi-screen-close-btn {
+    background-color: #cb2233;
+}
+
+.multi-screen-close-btn:hover {
+    background-color: #a91b29;
+}
