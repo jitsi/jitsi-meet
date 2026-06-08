@@ -65,6 +65,7 @@ load_config();
 local OUT_INITIATOR_USER_ATTR_NAME = "X-outbound-call-initiator-user";
 local OUT_INITIATOR_GROUP_ATTR_NAME = "X-outbound-call-initiator-group";
 local OUT_ROOM_NAME_ATTR_NAME = "JvbRoomName";
+local OUT_ROOM_PASS_ATTR_NAME = 'JvbRoomPassword';
 
 local OUTGOING_CALLS_THROTTLE_INTERVAL = 60; -- if max_number_outgoing_calls is enabled it will be
                                              -- the max number of outgoing calls a user can try for a minute
@@ -80,22 +81,20 @@ module:hook("pre-iq/full", function(event)
             local session = event.origin;
             local token = session.auth_token;
 
-            -- find header with attr name 'JvbRoomName' and extract its value
+            -- find header with attr name 'JvbRoomName' or 'JvbRoomPassword' and extract the values
             local roomName;
+            local roomPassword;
             -- Remove any 'header' element if it already exists, so it cannot be spoofed by a client
             dial:maptags(function(tag)
-                if tag.name == "header"
-                        and (tag.attr.name == OUT_INITIATOR_USER_ATTR_NAME
-                                or tag.attr.name == OUT_INITIATOR_GROUP_ATTR_NAME) then
-                    return nil
-                elseif tag.name == "header" and tag.attr.name == OUT_ROOM_NAME_ATTR_NAME then
-                    roomName = tag.attr.value;
-                    -- we will remove it as we will add it later, modified
-                    if is_visitor_prosody then
-                        return nil;
+                if tag.name == 'header' then
+                    if tag.attr.name == OUT_ROOM_NAME_ATTR_NAME then
+                        roomName = tag.attr.value;
+                    elseif tag.attr.name == OUT_ROOM_PASS_ATTR_NAME then
+                        roomPassword = tag.attr.value;
                     end
+                    return nil;
                 end
-                return tag
+                return tag;
             end);
 
             local room_jid = jid.bare(stanza.attr.to);
@@ -175,10 +174,20 @@ module:hook("pre-iq/full", function(event)
 
             -- we want to instruct jigasi to enter the main room, so send the correct main room jid
             if is_visitor_prosody then
+                roomName = string.gsub(roomName, local_domain, main_domain);
+            end
+            dial:tag("header", {
+                xmlns = "urn:xmpp:rayo:1",
+                name = OUT_ROOM_NAME_ATTR_NAME,
+                value = roomName
+            });
+            dial:up();
+            if roomPassword then
                 dial:tag("header", {
                     xmlns = "urn:xmpp:rayo:1",
-                    name = OUT_ROOM_NAME_ATTR_NAME,
-                    value = string.gsub(roomName, local_domain, main_domain) });
+                    name = OUT_ROOM_PASS_ATTR_NAME,
+                    value = roomPassword
+                });
                 dial:up();
             end
         end
