@@ -95,9 +95,12 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
             // the room actually being joined — otherwise a duration left over
             // from a meeting the user opened but bailed on at prejoin would
             // leak into a different meeting. Compare by room name (robust to
-            // differing URL forms) rather than raw URL equality.
-            const calendarRoom = calendarUrl ? parseURIString(calendarUrl)?.room : undefined;
-            const calendarMatchesRoom = !calendarRoom || calendarRoom === getRoomName(getState());
+            // differing URL forms) rather than raw URL equality, and
+            // case-insensitively since room names are normalised to lowercase
+            // while a calendar URL may preserve the original casing.
+            const calendarRoom = calendarUrl ? parseURIString(calendarUrl)?.room?.toLowerCase() : undefined;
+            const joinedRoom = getRoomName(getState())?.toLowerCase();
+            const calendarMatchesRoom = !calendarRoom || calendarRoom === joinedRoom;
 
             if (calendarMatchesRoom
                     && typeof calendarDurationSeconds === 'number' && calendarDurationSeconds > 0) {
