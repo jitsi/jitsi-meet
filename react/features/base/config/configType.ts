@@ -141,6 +141,10 @@ export interface INoiseSuppressionConfig {
     };
 }
 
+export interface IMultiScreenConfig {
+    enabled?: boolean;
+}
+
 export interface IWhiteboardConfig {
     collabServerBaseUrl?: string;
     enabled?: boolean;
@@ -560,6 +564,7 @@ export interface IConfig {
     microsoftApiApplicationClientID?: string;
     moderatedRoomServiceUrl?: string;
     mouseMoveCallbackInterval?: number;
+    multiScreen?: IMultiScreenConfig;
     noiseSuppression?: INoiseSuppressionConfig;
     noticeMessage?: string;
     notificationTimeouts?: {

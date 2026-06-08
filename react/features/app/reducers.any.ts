@@ -37,6 +37,7 @@ import '../invite/reducer';
 import '../jaas/reducer';
 import '../large-video/reducer';
 import '../lobby/reducer';
+import '../multi-screen/reducer';
 import '../notifications/reducer';
 import '../participants-pane/reducer';
 import '../polls/reducer';
