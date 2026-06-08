@@ -20,39 +20,34 @@ import StartRecordingDialogContent from './StartRecordingDialogContent';
  *
  * @augments Component
  */
-class StartRecordingDialog extends AbstractStartRecordingDialog {
+class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
 
     /**
-     * Disables start recording button.
+     * Returns true when the primary button should be disabled.
+     *
+     * Disabled when nothing has changed (no-op), or when starting recording
+     * but the recording service selection is invalid.
      *
      * @returns {boolean}
      */
     isStartRecordingDisabled() {
-        const {
-            isTokenValid,
-            selectedRecordingService,
-            shouldRecordAudioAndVideo,
-            shouldRecordTranscription
-        } = this.state;
-
-        if (!shouldRecordAudioAndVideo && !shouldRecordTranscription) {
+        if (!this._isChanged()) {
             return true;
         }
 
-        // Start button is disabled if recording service is only shown;
-        // When validating dropbox token, if that is not enabled, we either always
-        // show the start button or, if just dropbox is enabled, start button
-        // is available when there is token.
+        const { _recordingRunning } = this.props;
+        const { isTokenValid, selectedRecordingService, shouldRecordAudioAndVideo } = this.state;
+        const startingRecording = !_recordingRunning && shouldRecordAudioAndVideo;
+
+        if (!startingRecording) {
+            return false;
+        }
+
         if (selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) {
             return false;
         } else if (selectedRecordingService === RECORDING_TYPES.DROPBOX) {
             return !isTokenValid;
         } else if (selectedRecordingService === RECORDING_TYPES.LOCAL) {
-            return false;
-        }
-
-        // Allow transcription-only start even without a recording service selected.
-        if (!selectedRecordingService && shouldRecordTranscription) {
             return false;
         }
 
@@ -78,17 +73,19 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
         } = this.state;
         const {
             _fileRecordingsServiceEnabled,
-            _fileRecordingsServiceSharingEnabled
+            _fileRecordingsServiceSharingEnabled,
+            _recordingRunning,
+            _transcriptionRunning
         } = this.props;
 
         return (
             <Dialog
                 ok = {{
-                    translationKey: 'dialog.startRecording',
+                    translationKey: 'dialog.applyChanges',
                     disabled: this.isStartRecordingDisabled()
                 }}
                 onSubmit = { this._onSubmit }
-                titleKey = 'dialog.startRecording'>
+                titleKey = 'dialog.recordAndTranscribe'>
                 <StartRecordingDialogContent
                     fileRecordingsServiceEnabled = { _fileRecordingsServiceEnabled }
                     fileRecordingsServiceSharingEnabled = { _fileRecordingsServiceSharingEnabled }
@@ -101,7 +98,9 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
                     onRecordAudioAndVideoChange = { this._onRecordAudioAndVideoChange }
                     onSharingSettingChanged = { this._onSharingSettingChanged }
                     onTranscriptionChange = { this._onTranscriptionChange }
+                    recordingRunning = { Boolean(_recordingRunning) }
                     selectedRecordingService = { selectedRecordingService }
+                    sessionActive = { Boolean(_recordingRunning || _transcriptionRunning) }
                     sharingSetting = { sharingEnabled }
                     shouldRecordAudioAndVideo = { shouldRecordAudioAndVideo }
                     shouldRecordTranscription = { shouldRecordTranscription }
@@ -139,4 +138,4 @@ function mapStateToProps(state: IReduxState, ownProps: any) {
     };
 }
 
-export default translate(connect(mapStateToProps)(StartRecordingDialog));
+export default translate(connect(mapStateToProps)(RecordingTranscriptionDialog));
