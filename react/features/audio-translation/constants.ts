@@ -1,10 +1,5 @@
 /**
- * The target languages supported for AI audio translation. These are the output
- * languages supported by the bridge's translation model (gpt-realtime-translate);
- * the source language of each speaker is auto-detected.
- *
- * Each entry is the 2-letter ISO code sent to the bridge and a human-readable
- * label for the language picker.
+ * Supported AI audio-translation target languages: ISO code + picker label.
  */
 export const SUPPORTED_TRANSLATION_LANGUAGES: Array<{ code: string; label: string; }> = [
     { code: 'en', label: 'English' },
@@ -23,7 +18,6 @@ export const SUPPORTED_TRANSLATION_LANGUAGES: Array<{ code: string; label: strin
 ];
 
 /**
- * The volume (0..1) the original audio of a speaker is ducked to while its
- * translation is being played, so the translated speech is intelligible over it.
+ * Volume (0..1) a speaker's original audio is ducked to while its translation plays.
  */
 export const DUCKED_ORIGINAL_VOLUME = 0.15;

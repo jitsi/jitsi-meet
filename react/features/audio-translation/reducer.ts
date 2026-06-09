@@ -8,8 +8,7 @@ import { SET_AUDIO_TRANSLATION_LANGUAGE } from './actionTypes';
 export interface IAudioTranslationState {
 
     /**
-     * The target language remote audio is being translated into, or null when
-     * translation is off.
+     * The target language remote audio is translated into, or null when off.
      */
     language: string | null;
 }
