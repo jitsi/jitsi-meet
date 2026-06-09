@@ -315,16 +315,20 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * mod_filter_iq_rayo may block it, and the test asserts via the
          * /dial-iqs HTTP endpoint instead.
          *
-         * @param {string} roomJid          e.g. 'room@conference.localhost'
-         * @param {string} [dialTo='sip:test@example.com']  value for dial's `to` attribute.
-         *                                  Pass 'jitsi_meet_transcribe' to trigger
-         *                                  the transcription feature gate.
-         * @param {string|null} [roomNameHeader]  value for the JvbRoomName header.
-         *                                  Defaults to `roomJid` (correct value).
-         *                                  Pass null to omit the header entirely.
-         *                                  Pass any other string for a mismatch test.
+         * @param {string} roomJid   e.g. 'room@conference.localhost'
+         * @param {object} [opts]
+         * @param {string} [opts.dialTo='sip:test@example.com']  dial `to` attribute.
+         * @param {string|null} [opts.roomNameHeader]  JvbRoomName value; defaults to roomJid.
+         *   Pass null to omit, any other string for a mismatch test.
+         * @param {string|null} [opts.roomPassHeader]  JvbRoomPassword value; omitted by default.
+         * @param {object} [opts.extraHeaders]  extra name→value header pairs (spoof/strip tests).
          */
-        sendRayoIq(roomJid, dialTo = 'sip:test@example.com', roomNameHeader = roomJid) {
+        sendRayoIq(roomJid, {
+            dialTo = 'sip:test@example.com',
+            roomNameHeader = roomJid,
+            roomPassHeader = null,
+            extraHeaders = {}
+        } = {}) {
             const headers = [];
 
             if (roomNameHeader !== null) {
@@ -332,6 +336,22 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
                     xmlns: 'urn:xmpp:rayo:1',
                     name: 'JvbRoomName',
                     value: roomNameHeader
+                }));
+            }
+
+            if (roomPassHeader !== null) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name: 'JvbRoomPassword',
+                    value: roomPassHeader
+                }));
+            }
+
+            for (const [ name, value ] of Object.entries(extraHeaders)) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name,
+                    value
                 }));
             }
 

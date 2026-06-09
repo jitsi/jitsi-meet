@@ -68,18 +68,19 @@ module:hook("iq/full", function(event)
     end
     local dial = stanza:get_child('dial', 'urn:xmpp:rayo:1');
     if dial then
-        -- Extract JvbRoomName header value for assertion.
-        local room_name_header;
+        local headers = {};
         for _, child in ipairs(dial.tags) do
-            if child.name == "header" and child.attr.name == "JvbRoomName" then
-                room_name_header = child.attr.value;
+            if child.name == "header" and child.attr.name then
+                headers[child.attr.name] = child.attr.value;
             end
         end
         table.insert(shared.dial_iqs, {
             from             = stanza.attr.from;
             to               = stanza.attr.to;
             dial_to          = dial.attr.to;
-            room_name_header = room_name_header;
+            room_name_header = headers["JvbRoomName"];
+            room_pass_header = headers["JvbRoomPassword"];
+            headers          = headers;
         });
     end
 end, 500);
