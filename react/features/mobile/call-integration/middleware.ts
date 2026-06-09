@@ -229,7 +229,7 @@ function _conferenceJoined({ getState }: IStore, next: Function, action: AnyActi
 function _conferenceLeft({ getState }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
-    if (!isCallIntegrationEnabled(getState) || !action.conference) {
+    if (!isCallIntegrationEnabled(getState)) {
         return result;
     }
 
