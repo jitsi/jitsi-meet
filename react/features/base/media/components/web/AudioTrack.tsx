@@ -339,14 +339,15 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
     let _volume: number | boolean | undefined = participantsVolume[ownProps.participantId];
 
-    // While audio translation is active, duck a speaker's original audio so the
-    // translated speech is intelligible over it. The translated source itself
-    // (named "{source}-t-{language}") plays at its normal volume.
-    if (language) {
-        const sourceName: string | undefined = ownProps.audioTrack?.jitsiTrack?.getSourceName?.();
-        const isTranslatedSource = typeof sourceName === 'string' && sourceName.endsWith(`-t-${language}`);
+    // Duck a speaker's original only while its translated counterpart ({source}.{language}) is present.
+    const sourceName: string | undefined = ownProps.audioTrack?.jitsiTrack?.getSourceName?.();
 
-        if (!isTranslatedSource) {
+    if (language && typeof sourceName === 'string' && !sourceName.endsWith(`.${language}`)) {
+        const translatedSourceName = `${sourceName}.${language}`;
+        const hasTranslation = state['features/base/tracks'].some(
+            track => track.jitsiTrack?.getSourceName?.() === translatedSourceName);
+
+        if (hasTranslation) {
             _volume = DUCKED_ORIGINAL_VOLUME;
         }
     }

@@ -29,9 +29,7 @@ const useStyles = makeStyles()(() => {
 });
 
 /**
- * A dialog for selecting the AI audio-translation target language (or turning it
- * off). Selecting an option updates the audio-translation redux state, which
- * drives the conference translation request, and closes the dialog.
+ * A dialog for selecting the AI audio-translation target language (or off).
  *
  * @param {IProps} props - The component's props.
  * @returns {ReactElement}
