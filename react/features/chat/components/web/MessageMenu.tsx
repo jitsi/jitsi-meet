@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -71,6 +71,7 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
     const [ popupPosition, setPopupPosition ] = useState({ top: 0,
         left: 0 });
     const buttonRef = useRef<HTMLDivElement>(null);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const participant = useSelector((state: IReduxState) => getParticipantById(state, participantId));
 
@@ -122,7 +123,14 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
                         });
                     }
                     setShowCopiedMessage(true);
-                    setTimeout(() => {
+                    
+                    // Clear any existing timeout
+                    if (timeoutRef.current) {
+                        clearTimeout(timeoutRef.current);
+                    }
+                    
+                    // Set new timeout and store reference
+                    timeoutRef.current = setTimeout(() => {
                         setShowCopiedMessage(false);
                     }, 2000);
                 } else {
@@ -133,7 +141,16 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
                 logger.error('Error copying text', error);
             });
         handleClose();
-    }, [ message ]);
+    }, [ message, handleClose ]);
+
+    // Cleanup timeout on component unmount
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, []);
 
     const popoverContent = (
         <div className = { classes.menuPanel }>
