@@ -1,10 +1,18 @@
 import React, { useCallback, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 
 import IconUserSVG from '../base/icons/svg/user.svg?raw';
 import { IParticipant } from '../base/participants/types';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
-import { copyStylesheets, renderAvatarOnCanvas, updateMediaSessionState } from './functions';
+import { setPiPActive } from './actions';
+import {
+    clearPiPWindow,
+    getStoredPiPWindow,
+    initPiPWindow,
+    renderAvatarOnCanvas,
+    updateMediaSessionState
+} from './functions';
 import { isDocumentPiPSupported } from './utils';
 import logger from './logger';
 
@@ -188,20 +196,18 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
  * Opens a PiP window when a tab switch occurs using the
  * enterpictureinpicture MediaSession action handler.
  * Closes the PiP window when the tab becomes visible again.
+ * Content is rendered into the PiP window via the DocumentPiPPortal.
  *
  * @see https://googlechrome.github.io/samples/media-session/video-conferencing.html
  *
- * @param {React.RefObject<HTMLDivElement>} playerRef - Ref to the player div to move into PiP.
- * @param {React.RefObject<HTMLDivElement>} containerRef - Ref to the container div (player's parent).
  * @param {boolean} microphoneActive - Whether the microphone is currently active.
  * @param {boolean} cameraActive - Whether the camera is currently active.
  * @returns {void}
  */
 export function useDocumentPiPMediaSession(
-        playerRef: React.RefObject<HTMLDivElement>,
-        containerRef: React.RefObject<HTMLDivElement>,
         microphoneActive: boolean,
         cameraActive: boolean) {
+    const dispatch = useDispatch();
     const pipWindowRef = useRef<Window | null>(null);
 
     useEffect(() => {
@@ -209,16 +215,14 @@ export function useDocumentPiPMediaSession(
     }, [microphoneActive, cameraActive]);
 
     const openDocumentPip = useCallback(async () => {
-        const player = playerRef.current;
-        const container = containerRef.current;
-
-        if (!player || !container) {
-            return;
-        }
         if (!isDocumentPiPSupported()) {
             return;
         }
         if (pipWindowRef.current && !pipWindowRef.current.closed) {
+            return;
+        }
+
+        if (getStoredPiPWindow()) {
             return;
         }
 
@@ -231,20 +235,18 @@ export function useDocumentPiPMediaSession(
             });
 
             pipWindowRef.current = pipWindow;
-
-            copyStylesheets(pipWindow);
-
-            pipWindow.document.body.style.cssText = 'margin:0;background:#000;';
-            pipWindow.document.body.appendChild(player);
+            initPiPWindow(pipWindow);
+            dispatch(setPiPActive(true));
 
             pipWindow.addEventListener('pagehide', () => {
-                container.appendChild(player);
                 pipWindowRef.current = null;
+                clearPiPWindow();
+                dispatch(setPiPActive(false));
             });
         } catch (error) {
             logger.warn('Failed to open Document PiP:', error);
         }
-    }, [playerRef, containerRef]);
+    }, [ dispatch ]);
 
     useEffect(() => {
         if (!isDocumentPiPSupported()) {
@@ -280,11 +282,10 @@ export function useDocumentPiPMediaSession(
 
         const onVisibilityChange = () => {
             if (!document.hidden && pipWindowRef.current && !pipWindowRef.current.closed) {
-                if (playerRef.current && containerRef.current) {
-                    containerRef.current.appendChild(playerRef.current);
-                }
                 pipWindowRef.current.close();
                 pipWindowRef.current = null;
+                clearPiPWindow();
+                dispatch(setPiPActive(false));
             }
         };
 
@@ -293,5 +294,5 @@ export function useDocumentPiPMediaSession(
         return () => {
             document.removeEventListener('visibilitychange', onVisibilityChange);
         };
-    }, [playerRef, containerRef]);
+    }, [ dispatch ]);
 }

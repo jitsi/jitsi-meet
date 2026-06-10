@@ -4,7 +4,9 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../app/types';
 import { getAvatarFont, getAvatarInitialsColor } from '../../base/avatar/components/web/styles';
+import { MEDIA_TYPE } from '../../base/media/constants';
 import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants/functions';
+import { isLocalTrackMuted } from '../../base/tracks/functions.any';
 import { isTrackStreamingStatusActive } from '../../connection-indicator/functions';
 import { getDisplayNameColor } from '../../display-name/components/web/styles';
 import { getThumbnailBackgroundColor } from '../../filmstrip/functions.web';
@@ -12,7 +14,7 @@ import { getLargeVideoParticipant } from '../../large-video/functions';
 import { isPrejoinPageVisible } from '../../prejoin/functions.any';
 import { handlePiPLeaveEvent, handlePipEnterEvent, handleWindowBlur, handleWindowFocus } from '../actions';
 import { getPiPVideoTrack } from '../functions';
-import { useCanvasAvatar } from '../hooks';
+import { useCanvasAvatar, useDocumentPiPMediaSession } from '../hooks';
 import logger from '../logger';
 
 const useStyles = makeStyles()(() => {
@@ -77,6 +79,17 @@ const PiPVideoElement: React.FC = () => {
         displayNameColor
     });
 
+    // Mic/camera state for MediaSession PiP controls.
+    const audioMuted = useSelector((state: IReduxState) =>
+        isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO)
+    );
+    const videoMuted = useSelector((state: IReduxState) =>
+        isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO)
+    );
+
+    // Wire MediaSession enterpictureinpicture handler for tab-switch PiP.
+    useDocumentPiPMediaSession(!audioMuted, !videoMuted);
+
     // Determine if we should show avatar instead of video.
     const shouldShowAvatar = !videoTrack
         || videoTrack.muted
@@ -137,8 +150,15 @@ const PiPVideoElement: React.FC = () => {
     /**
      * Effect: Window blur/focus and visibility change listeners.
      * Enters PiP on blur, exits on focus (matches old AOT behavior).
+     * When Document PiP is supported, these are skipped — MediaSession handles tab switches.
      */
     useEffect(() => {
+        // Document PiP uses MediaSession API for tab-switch detection.
+        // Skip blur/focus handlers to avoid competing with the Document PiP portal.
+        if ('documentPictureInPicture' in window) {
+            return;
+        }
+
         const videoElement = videoRef.current;
 
         if (!videoElement) {

@@ -3,6 +3,11 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 import { SET_PIP_ACTIVE } from './actionTypes';
 
 /**
+ * Document PiP layout types.
+ */
+export type DocPiPLayout = 'compact';
+
+/**
  * The default state for the pip feature.
  */
 const DEFAULT_STATE = {

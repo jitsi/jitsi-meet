@@ -1,0 +1,135 @@
+/* Document Picture-in-Picture Styles */
+
+.doc-pip-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    background: #141517;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    overflow: hidden;
+    user-select: none;
+}
+
+.doc-pip-container *,
+.doc-pip-container *::before,
+.doc-pip-container *::after {
+    box-sizing: border-box;
+}
+
+.doc-pip-video-area {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+}
+
+.doc-pip-videos-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.doc-pip-compact-layout {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: #000;
+}
+
+.doc-pip-video-element {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+}
+
+.doc-pip-participant-name {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #fff;
+}
+
+.doc-pip-avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: #1a1a1a;
+}
+
+/* Controls Bar */
+.doc-pip-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px;
+    background: #1c1e20;
+    border-top: 1px solid #333;
+    flex-shrink: 0;
+}
+
+.doc-pip-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: #3a3b3c;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, transform 0.1s ease;
+    padding: 0;
+}
+
+.doc-pip-btn svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+.doc-pip-btn:hover {
+    background: #4a4b4c;
+}
+
+.doc-pip-btn:active {
+    transform: scale(0.95);
+}
+
+.doc-pip-btn.muted {
+    background: #c53030;
+}
+
+.doc-pip-btn.muted:hover {
+    background: #dc2626;
+}
+
+.doc-pip-btn.muted svg {
+    fill: #fff;
+}
+
+.doc-pip-btn.hangup {
+    background: #CB2233;
+}
+
+.doc-pip-btn.hangup:hover {
+    background: #E04757;
+}
+
+.doc-pip-btn.hangup:active {
+    background: #A21B29;
+}
