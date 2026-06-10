@@ -5,6 +5,10 @@ import { IconHangup } from '../../../base/icons/svg';
 import { leaveConference } from '../../../base/conference/actions';
 import { exitPiP } from '../../actions';
 
+/**
+ * Hangup button for Document PiP controls.
+ * Dispatches directly to Redux for state changes.
+ */
 const HangUpButton: React.FC = () => {
     const dispatch = useDispatch();
 

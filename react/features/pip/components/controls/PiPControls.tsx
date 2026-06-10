@@ -6,7 +6,7 @@ import VideoToggleButton from './VideoToggleButton';
 
 /**
  * Container for Document PiP control buttons.
- * Includes audio toggle, video toggle, layout selector, and hangup button.
+ * Includes audio toggle, video toggle, and hangup button.
  *
  * @returns {React.ReactElement}
  */
