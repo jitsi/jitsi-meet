@@ -203,6 +203,9 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
  * through the presentation-mode API.
  * Closes the PiP window when the tab becomes visible again.
  *
+ * MediaSession playback state is kept in sync by the subscriber in
+ * subscriber.ts, so this hook only handles the window lifecycle.
+ *
  * @see https://googlechrome.github.io/samples/media-session/video-conferencing.html
  *
  * @returns {void}
