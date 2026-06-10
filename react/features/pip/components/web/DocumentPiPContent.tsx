@@ -8,7 +8,8 @@ import { IReduxState } from '../../../app/types';
 import GlobalStyles from '../../../base/ui/components/GlobalStyles.web';
 import { getStoredPiPWindow } from '../../functions';
 import { useDocumentPiPMediaSession } from '../../hooks';
-
+import CompactLayout from '../layouts/CompactLayout';
+import PiPControls from '../controls/PiPControls';
 /**
  * Inner component for the Document PiP.
  *
@@ -43,11 +44,14 @@ export function DocumentPiPContent() {
     return createPortal(
         <CacheProvider value = { pipCache }>
             <GlobalStyles />
-            <div id = 'document-pip-container'>
-                <div id = 'document-pip-player'>
-                    {/* TODO: document pip contents */}
+            <div className = 'doc-pip-container'>
+            <div className = 'doc-pip-video-area'>
+                <div className = 'doc-pip-videos-container'>
+                    <CompactLayout />
                 </div>
+                <PiPControls />
             </div>
+        </div>
         </CacheProvider>,
         pipRoot
     );
