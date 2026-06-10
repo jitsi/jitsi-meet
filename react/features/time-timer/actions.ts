@@ -69,8 +69,10 @@ export function tickTimeTimer() {
  *
  * @param {Object} options - Timer parameters from the embedder.
  * @param {number} options.duration - Scheduled duration in seconds.
- * @param {number} [options.elapsed] - Seconds since the scheduled start
- * (may exceed duration for a late joiner). Defaults to 0.
+ * @param {number} [options.elapsed] - Seconds since the scheduled start.
+ * May be negative (the meeting hasn't started yet — the timer sits at the
+ * full duration until the start arrives) or exceed the duration (a late
+ * joiner, landing directly in the overrun state). Defaults to 0.
  * @returns {Function}
  */
 export function setMeetingTimer({ duration, elapsed = 0 }: { duration?: number; elapsed?: number; } = {}) {
@@ -80,7 +82,7 @@ export function setMeetingTimer({ duration, elapsed = 0 }: { duration?: number; 
         }
 
         if (typeof duration === 'number' && duration > 0) {
-            dispatch(startTimeTimer(duration, Math.max(0, elapsed)));
+            dispatch(startTimeTimer(duration, elapsed));
         } else {
             dispatch(stopTimeTimer());
         }

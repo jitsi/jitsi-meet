@@ -104,13 +104,19 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
 
             if (calendarMatchesRoom
                     && typeof calendarDurationSeconds === 'number' && calendarDurationSeconds > 0) {
-                // Elapsed-since-scheduled-start is the single source of truth
-                // and may exceed the duration (joined after the scheduled
-                // end). Compute it live from the calendar start time so late
-                // joiners land directly in the correct (possibly overrun)
-                // state; otherwise start from 0.
+                // Elapsed-since-SCHEDULED-START is the single source of truth,
+                // anchored to the calendar event's absolute start time — never
+                // to when this particular participant joined. That keeps the
+                // displayed time identical for everyone at a given wall-clock
+                // moment, regardless of who joins early (including the
+                // organizer). It MAY be negative (joined before the scheduled
+                // start) or exceed the duration (joined after the scheduled
+                // end); the reducer pins the scheduled end from it and derives
+                // the rest. A negative value naturally shows 00:00 / full
+                // duration until the start arrives, then counts up. With no
+                // start time we fall back to 0 (start counting from now).
                 const elapsed = typeof calendarStartTimeUnix === 'number'
-                    ? Math.max(0, Math.round((Date.now() - calendarStartTimeUnix) / 1000))
+                    ? Math.round((Date.now() - calendarStartTimeUnix) / 1000)
                     : 0;
 
                 dispatch(startTimeTimer(calendarDurationSeconds, elapsed));

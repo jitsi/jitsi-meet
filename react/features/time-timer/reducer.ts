@@ -88,13 +88,17 @@ ReducerRegistry.register<ITimeTimerState>('features/time-timer', (state = DEFAUL
     case START_TIME_TIMER: {
         const { durationSeconds, nowUnix } = action;
 
-        // `elapsedSeconds` is seconds since the scheduled start and may exceed
-        // the duration (joining after the scheduled end). From it and the
-        // current wall-clock time we pin the scheduled end as an absolute
-        // timestamp; everything else is derived from that timestamp, both here
-        // and on every subsequent tick. This is what lets a late joiner land
-        // directly in the correct overrun / lap state.
-        const elapsedSeconds = Math.max(0, action.elapsedSeconds);
+        // `elapsedSeconds` is seconds since the SCHEDULED start. It may be
+        // negative (joined before the scheduled start) or exceed the duration
+        // (joined after the scheduled end). We deliberately do NOT clamp it:
+        // from it and the current wall-clock time we pin the scheduled end as
+        // an absolute timestamp, and everything else is derived from that
+        // timestamp here and on every tick. A negative value pushes the end
+        // out to the true scheduled end, so an early joiner sees 00:00 / full
+        // duration until the start arrives, then the counter climbs — landing
+        // on the limit exactly at the scheduled end. A value past the duration
+        // lands a late joiner directly in the correct overrun / lap state.
+        const { elapsedSeconds } = action;
         const scheduledEndUnix = nowUnix + ((durationSeconds - elapsedSeconds) * 1000);
         const counters = _deriveCounters(durationSeconds, scheduledEndUnix, nowUnix);
 
