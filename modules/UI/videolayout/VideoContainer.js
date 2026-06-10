@@ -675,8 +675,17 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
+        // If the LargeVideo subtree remounted, the cached root is bound to a now-detached
+        // node — subsequent renders would be invisible and leak. Drop the stale root so
+        // we re-create one against the live container.
+        if (this._backgroundRoot && this._backgroundContainer !== container) {
+            this._backgroundRoot.unmount();
+            this._backgroundRoot = null;
+        }
+
         if (!this._backgroundRoot) {
             this._backgroundRoot = createRoot(container);
+            this._backgroundContainer = container;
         }
         this._backgroundRoot.render(
             <LargeVideoBackground
