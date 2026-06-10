@@ -17,7 +17,7 @@ const CompactLayout: React.FC = () => {
     // Determine active participant: pinned > dominant > local
     const activeParticipant = pinnedParticipant || dominantSpeaker || localParticipant;
 
-    // Get video track for the active participant
+    // video track for the active participant
     const videoTrack = useSelector((state: IReduxState) => {
         if (!activeParticipant) return null;
         return getVideoTrackByParticipant(state, activeParticipant);
@@ -28,17 +28,14 @@ const CompactLayout: React.FC = () => {
         return isParticipantVideoMuted(activeParticipant, state);
     });
 
-    // Attach/detach video track when mute state changes
     useEffect(() => {
         const video = videoRef.current;
         if (!video || !videoTrack?.jitsiTrack) return;
 
         if (isVideoMuted) {
-            // Video is muted - no attachment needed
             return;
         }
 
-        // Attach the video track
         videoTrack.jitsiTrack.attach(video).catch((error: Error) => {
             console.error('Failed to attach video track in CompactLayout:', error);
         });
