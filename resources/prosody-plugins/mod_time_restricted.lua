@@ -71,7 +71,9 @@ module:hook("muc-room-created", function (event)
             return
         end
         restricted_rooms[room.jid] = true;
-        room:destroy(nil, string.format('This meeting reached its %d-minute time limit and has ended.', MIN));
+        -- %g (not %d) so a fractional conference_max_minutes does not crash the
+        -- timer; for the usual whole-minute configs it renders identically.
+        room:destroy(nil, string.format('This meeting reached its %g-minute time limit and has ended.', MIN));
 
         module:log('info', "the conference terminated %s", room.jid);
     end)
