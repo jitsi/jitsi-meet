@@ -666,8 +666,17 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
+        const container = document.getElementById('largeVideoBackgroundContainer');
+
+        // LargeVideo's React subtree may not be mounted (e.g. between fade-out and
+        // fade-in, or during reduced-UI transitions). createRoot(null) would throw
+        // React error #200; bail out instead.
+        if (!container) {
+            return;
+        }
+
         if (!this._backgroundRoot) {
-            this._backgroundRoot = createRoot(document.getElementById('largeVideoBackgroundContainer'));
+            this._backgroundRoot = createRoot(container);
         }
         this._backgroundRoot.render(
             <LargeVideoBackground
