@@ -50,6 +50,12 @@ export const BreakoutRoom = ({ room }: IProps) => {
         dispatch(openSheet(BreakoutRoomContextMenu, { room }));
     }, [ dispatch, room ]);
 
+    const renderItem = useCallback(({ item: participant }: { item: any; }) => (
+        <BreakoutRoomParticipantItem
+            item = { participant }
+            room = { room } />
+    ), [ room ]);
+
     return (
         <View>
             <TouchableOpacity
@@ -69,12 +75,7 @@ export const BreakoutRoom = ({ room }: IProps) => {
                 <FlatList
                     data = { Object.values(room.participants || {}) }
                     keyExtractor = { _keyExtractor }
-                    // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
-                    renderItem = { ({ item: participant }) => (
-                        <BreakoutRoomParticipantItem
-                            item = { participant }
-                            room = { room } />
-                    ) }
+                    renderItem = { renderItem }
                     scrollEnabled = { false }
                     showsHorizontalScrollIndicator = { false }
                     windowSize = { 2 } />
