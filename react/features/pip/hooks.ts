@@ -10,8 +10,7 @@ import {
     clearPiPWindow,
     getStoredPiPWindow,
     initPiPWindow,
-    renderAvatarOnCanvas,
-    updateMediaSessionState
+    renderAvatarOnCanvas
 } from './functions';
 import { isDocumentPiPSupported } from './utils';
 import logger from './logger';
@@ -198,21 +197,16 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
  * Closes the PiP window when the tab becomes visible again.
  * Content is rendered into the PiP window via the DocumentPiPPortal.
  *
+ * MediaSession playback state is kept in sync by the subscriber in
+ * subscriber.ts, so this hook only handles the window lifecycle.
+ *
  * @see https://googlechrome.github.io/samples/media-session/video-conferencing.html
  *
- * @param {boolean} microphoneActive - Whether the microphone is currently active.
- * @param {boolean} cameraActive - Whether the camera is currently active.
  * @returns {void}
  */
-export function useDocumentPiPMediaSession(
-        microphoneActive: boolean,
-        cameraActive: boolean) {
+export function useDocumentPiPMediaSession() {
     const dispatch = useDispatch();
     const pipWindowRef = useRef<Window | null>(null);
-
-    useEffect(() => {
-        updateMediaSessionState({ microphoneActive, cameraActive });
-    }, [microphoneActive, cameraActive]);
 
     const openDocumentPip = useCallback(async () => {
         if (!isDocumentPiPSupported()) {

@@ -4,9 +4,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../app/types';
 import { getAvatarFont, getAvatarInitialsColor } from '../../base/avatar/components/web/styles';
-import { MEDIA_TYPE } from '../../base/media/constants';
 import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants/functions';
-import { isLocalTrackMuted } from '../../base/tracks/functions.any';
 import { isTrackStreamingStatusActive } from '../../connection-indicator/functions';
 import { getDisplayNameColor } from '../../display-name/components/web/styles';
 import { getThumbnailBackgroundColor } from '../../filmstrip/functions.web';
@@ -79,16 +77,7 @@ const PiPVideoElement: React.FC = () => {
         displayNameColor
     });
 
-    // Mic/camera state for MediaSession PiP controls.
-    const audioMuted = useSelector((state: IReduxState) =>
-        isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO)
-    );
-    const videoMuted = useSelector((state: IReduxState) =>
-        isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO)
-    );
-
-    // Wire MediaSession enterpictureinpicture handler for tab-switch PiP.
-    useDocumentPiPMediaSession(!audioMuted, !videoMuted);
+    useDocumentPiPMediaSession();
 
     // Determine if we should show avatar instead of video.
     const shouldShowAvatar = !videoTrack
