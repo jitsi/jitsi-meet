@@ -539,8 +539,17 @@ export default class LargeVideoManager {
             return;
         }
 
+        // If the LargeVideo subtree remounted, the cached root is bound to a now-detached
+        // node — subsequent renders would be invisible and leak. Drop the stale root so
+        // we re-create one against the live container.
+        if (this._avatarRoot && this._avatarContainer !== container) {
+            this._avatarRoot.unmount();
+            this._avatarRoot = null;
+        }
+
         if (!this._avatarRoot) {
             this._avatarRoot = createRoot(container);
+            this._avatarContainer = container;
         }
         this._avatarRoot.render(
             <Provider store = { APP.store }>
