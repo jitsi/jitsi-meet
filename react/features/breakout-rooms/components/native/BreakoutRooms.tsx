@@ -15,8 +15,8 @@ import {
 } from '../../functions';
 
 import AutoAssignButton from './AutoAssignButton';
-import BreakoutRoomsFooter from './BreakoutRoomsFooter';
 import { BreakoutRoom } from './BreakoutRoom';
+import BreakoutRoomsFooter from './BreakoutRoomsFooter';
 import styles from './styles';
 
 
