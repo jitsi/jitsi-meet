@@ -152,9 +152,6 @@ export default class LargeVideoManager {
             = this._onVideoResolutionUpdate.bind(this);
 
         this.videoContainer.addResizeListener(this._onVideoResolutionUpdate);
-
-        this._dominantSpeakerAvatarContainer
-            = document.getElementById('dominantSpeakerAvatarContainer');
     }
 
     /**
@@ -533,8 +530,17 @@ export default class LargeVideoManager {
      * Updates the src of the dominant speaker avatar
      */
     updateAvatar() {
+        // Re-fetch the container each call rather than caching it in the constructor:
+        // LargeVideo's React subtree can unmount/remount and a cached reference becomes
+        // a detached node. Bail out if the container is not currently in the DOM.
+        const container = document.getElementById('dominantSpeakerAvatarContainer');
+
+        if (!container) {
+            return;
+        }
+
         if (!this._avatarRoot) {
-            this._avatarRoot = createRoot(this._dominantSpeakerAvatarContainer);
+            this._avatarRoot = createRoot(container);
         }
         this._avatarRoot.render(
             <Provider store = { APP.store }>
