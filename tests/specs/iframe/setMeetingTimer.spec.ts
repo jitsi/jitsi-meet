@@ -43,6 +43,28 @@ describe('setMeetingTimer iframe API command', () => {
         await expect(await p1.driver.$(PILL_SELECTOR)).toBeDisplayed();
     });
 
+    it('shows a running (not expired) timer when joining before the scheduled start', async () => {
+        const { p1 } = ctx;
+
+        // Negative elapsed === the meeting starts in 10 minutes. The timer must
+        // show as running (anchored to the scheduled start), NOT expired — an
+        // early joiner should never see the red over-schedule state.
+        await p1.switchToMainFrame();
+        await p1.getIframeAPI().executeCommand('setMeetingTimer', {
+            duration: 1800, // 30 min
+            elapsed: -600 // joined 10 min before the scheduled start
+        });
+
+        await p1.switchToIFrame();
+
+        await expect(await p1.driver.$(PILL_SELECTOR)).toBeDisplayed();
+
+        // No expired border and no ended notification while still before / within
+        // the scheduled window.
+        await expect(await p1.driver.$(EXPIRED_BORDER_SELECTOR)).not.toExist();
+        await expect(await p1.driver.$(ENDED_NOTIFICATION_SELECTOR)).not.toExist();
+    });
+
     it('flips to the expired state when an over-schedule timer is pushed', async () => {
         const { p1 } = ctx;
 
