@@ -170,6 +170,27 @@
         "emptyState": "The closed captions content will be available once a moderator starts it",
         "startClosedCaptionsButton": "Start closed captions"
     },
+    "commandPalette": {
+        "closeChat": "Close Chat",
+        "closeParticipantsPane": "Close Participants Pane",
+        "disableNoiseSuppression": "Disable Noise Suppression",
+        "enableNoiseSuppression": "Enable Noise Suppression",
+        "invitePeople": "Invite People",
+        "lowerHand": "Lower Hand",
+        "mute": "Mute Microphone",
+        "noResults": "No matching commands",
+        "openChat": "Open Chat",
+        "openPalette": "Open command palette",
+        "openParticipantsPane": "Open Participants Pane",
+        "placeholder": "Type a command...",
+        "raiseHand": "Raise Hand",
+        "startCamera": "Start Camera",
+        "startScreenShare": "Start Screen Sharing",
+        "stopCamera": "Stop Camera",
+        "stopScreenShare": "Stop Screen Sharing",
+        "title": "Actions",
+        "unmute": "Unmute Microphone"
+    },
     "connectingOverlay": {
         "joiningRoom": "Connecting you to your meeting…"
     },
