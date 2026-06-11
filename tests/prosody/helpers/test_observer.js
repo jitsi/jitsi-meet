@@ -285,6 +285,32 @@ export async function getRoomMetadata(roomJid) {
 }
 
 /**
+ * Returns the aggregated live-translation request map stored on room._data by
+ * mod_audio_translation_component. Reads server state directly, so it is robust
+ * against broadcast de-duplication (no broadcast fires when the aggregate is
+ * unchanged).
+ *
+ * Returns null if the room does not exist; the map is undefined when there are
+ * no subscriptions.
+ *
+ * @param {string} roomJid  e.g. 'room@conference.localhost'
+ * @returns {Promise<{jid: string, audioTranslationRequests?: object}|null>}
+ */
+export async function getAudioTranslationRequests(roomJid) {
+    const res = await fetch(
+        `${BASE}/rooms/audio-translation-requests?jid=${encodeURIComponent(roomJid)}`);
+
+    if (res.status === 404) {
+        return null;
+    }
+    if (!res.ok) {
+        throw new Error(`GET /rooms/audio-translation-requests failed: ${res.status} ${await res.text()}`);
+    }
+
+    return res.json();
+}
+
+/**
  * Returns room state from Prosody's internal MUC state.
  * @param {string} roomJid  e.g. 'room@conference.localhost'
  * @returns {Promise<{jid: string, hidden: boolean, occupant_count: number}|null>}

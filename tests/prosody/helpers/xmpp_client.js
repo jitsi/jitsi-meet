@@ -455,6 +455,37 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a raw <audio_translation> message to an audio-translation component.
+         * Use this to test malformed payloads; prefer sendAudioTranslation for
+         * well-formed deltas.
+         *
+         * The session must have jitsi_web_query_room set (connect with
+         * params: { room: '<roomname>' }) — the component resolves the room from
+         * the session, not from a stanza attribute.
+         *
+         * @param {string} componentJid  e.g. 'audio_translation.localhost'
+         * @param {string} rawPayload    raw text for the <audio_translation> body
+         */
+        sendAudioTranslationRaw(componentJid, rawPayload) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `at-${++_counter}` },
+                    xml('audio_translation', { xmlns: 'http://jitsi.org/jitmeet' }, rawPayload)
+                )
+            );
+        },
+
+        /**
+         * Sends a well-formed audio-translation subscription delta.
+         *
+         * @param {string} componentJid  e.g. 'audio_translation.localhost'
+         * @param {object} delta          { senderId: language, ... }; "" removes
+         */
+        sendAudioTranslation(componentJid, delta) {
+            return this.sendAudioTranslationRaw(componentJid, JSON.stringify(delta));
+        },
+
+        /**
          * Sends a plain <message> stanza to the given JID with no special children.
          * Useful for testing that the end_conference component ignores messages
          * that lack the <end_conference/> child element.

@@ -290,6 +290,19 @@ Component "filesharing.localhost" "filesharing_component"
     muc_mapper_domain_base = "localhost"
     muc_mapper_domain_prefix = "conference"
 
+-- Component for mod_audio_translation_component tests. Receivers send
+-- <audio_translation> messages here; the component aggregates per-receiver
+-- subscriptions and exposes the map to jicofo via room._data.audioTranslationRequests
+-- (forwarded by mod_room_metadata_component on the metadata.localhost component).
+Component "audiotranslation.localhost" "audio_translation_component"
+    muc_component = "conference.localhost"
+    muc_mapper_domain_base = "localhost"
+    muc_mapper_domain_prefix = "conference"
+    -- Short debounce so tests don't wait long for the aggregate broadcast.
+    audio_translation_debounce_interval = 0.1
+    -- Low limit so the per-receiver cap is exercised without many subscriptions.
+    audio_translation_max_subscriptions = 3
+
 -- Plain MUC for mod_presence_identity tests. No token verification and no
 -- muc_meeting_id lock so any client can join freely without focus.
 Component "conference-identity.localhost" "muc"

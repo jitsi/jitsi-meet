@@ -105,6 +105,7 @@ local extdisco_occpuant_check = module:get_option_boolean('extdisco_occpuant_che
 local blocked_metadata_keys = module:get_option_set('room_metadata_blocked_keys', {
     'allownersEnabled',
     'asyncTranscription',
+    'audioTranslationRequests',
     'conferencePresetsServiceEnabled',
     'dialinEnabled',
     'moderators',
@@ -168,6 +169,11 @@ function send_metadata(occupant, room, json_msg, include_services)
 
             metadata_to_send.participants = participants;
             metadata_to_send.moderators = moderators;
+
+            -- The aggregated live-translation request map is for jicofo only.
+            -- It is kept on room._data (never in jitsiMetadata) so it is never
+            -- broadcast to regular clients.
+            metadata_to_send.audioTranslationRequests = room._data.audioTranslationRequests;
 
             module:log('info', 'Sending metadata to jicofo room=%s,meeting_id=%s', room.jid, room._data.meetingId);
         elseif include_services then
