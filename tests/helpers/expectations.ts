@@ -30,7 +30,9 @@ const defaultExpectations = {
             // Expect "async" transcription to be enabled.
             asyncTranscription: true,
             // Expect the JaaS transcription webhooks to fire in "async" mode.
-            asyncTranscriptionWebhook: true
+            asyncTranscriptionWebhook: true,
+            // Expect (deprecated) jigasi-based transcription to be enabled.
+            jigasiTranscription: true
         },
         /**
          * Whether the jaas account is configured with the account-level setting to allow unauthenticated users to join.
