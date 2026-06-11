@@ -583,7 +583,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 const user = this._participants[userID];
 
                 if (user) {
-                    user.displayName = data.displayname;
+                    user.displayName = data.displayName ?? data.displayname;
                     user.formattedDisplayName = data.formattedDisplayName;
                 }
                 break;
@@ -1070,14 +1070,12 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * information like participant id, display name, avatar URL and email.
      */
     getParticipantsInfo() {
-        const participantIds = Object.keys(this._participants);
-        const participantsInfo = Object.values(this._participants);
-
-        participantsInfo.forEach((participant, idx) => {
-            participant.participantId = participantIds[idx];
+        return Object.entries(this._participants).map(([ participantId, participant ]) => {
+            return {
+                participantId,
+                ...participant
+            };
         });
-
-        return participantsInfo;
     }
 
     /**
