@@ -526,6 +526,35 @@ module:provides("http", {
             };
         end;
 
+        -- GET /test-observer/rooms/audio-translation-requests?jid=room@conference.localhost
+        -- Returns: { jid, audioTranslationRequests } where the value is the
+        -- aggregated map stored on room._data by mod_audio_translation_component
+        -- (omitted when there are no subscriptions).
+        ["GET /rooms/audio-translation-requests"] = function(event)
+            local params = parse_query(event.request.url.query);
+            local room_jid = params["jid"];
+            if not room_jid then
+                return { status_code = 400; body = '{"error":"missing jid param"}' };
+            end
+            local rooms = shared.rooms or {};
+            local room = rooms[room_jid];
+            if not room then
+                return { status_code = 404; body = '{"error":"room not found"}' };
+            end
+            local encoded, err = json.encode({
+                jid = room.jid;
+                audioTranslationRequests = room._data.audioTranslationRequests;
+            });
+            if not encoded then
+                return { status_code = 500; body = json.encode({ error = 'encode failed: ' .. tostring(err) }) };
+            end
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = encoded;
+            };
+        end;
+
         -- GET /test-observer/rooms?jid=room@conference.localhost
         -- Returns: { jid, hidden, occupant_count }
         ["GET /rooms"] = function(event)
