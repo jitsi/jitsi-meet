@@ -168,7 +168,9 @@
 }
 
 - (void)destroyReactNativeBridge {
-    [_reactNativeFactory.bridge invalidate];
+    // The actual bridge is cached by the rootViewFactory, clear it there too.
+    [_reactNativeFactory.rootViewFactory.bridge invalidate];
+    _reactNativeFactory.rootViewFactory.bridge = nil;
     _reactNativeFactory.bridge = nil;
 }
 
