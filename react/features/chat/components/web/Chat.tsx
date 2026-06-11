@@ -284,6 +284,10 @@ const Chat = ({
     const [ isMouseDown, setIsMouseDown ] = useState(false);
     const [ mousePosition, setMousePosition ] = useState<number | null>(null);
     const [ dragChatWidth, setDragChatWidth ] = useState<number | null>(null);
+
+    // Search state
+    const [ isSearchOpen, setIsSearchOpen ] = useState(false);
+    const [ searchTerm, setSearchTerm ] = useState('');
     const maxChatWidth = useSelector(getChatMaxSize);
     const notifyTimestamp = useSelector((state: IReduxState) =>
         state['features/chat'].notifyPrivateRecipientsChangedTimestamp
@@ -314,6 +318,30 @@ const Chat = ({
 
         return o;
     }, [ participants, defaultRemoteDisplayName, t, notifyTimestamp ]);
+
+    const filteredMessages = useMemo(() => {
+        const trimmed = searchTerm.trim().toLowerCase();
+
+        if (!trimmed) {
+            return _messages;
+        }
+
+        return _messages.filter(m => m.message?.toLowerCase().includes(trimmed));
+    }, [ _messages, searchTerm ]);
+
+    const onSearchToggle = useCallback(() => {
+        setIsSearchOpen(open => {
+            if (open) {
+                setSearchTerm('');
+            }
+
+            return !open;
+        });
+    }, []);
+
+    const onSearch = useCallback((value: string) => {
+        setSearchTerm(value);
+    }, []);
 
     /**
      * Handles pointer down on the drag handle.
@@ -484,7 +512,8 @@ const Chat = ({
                     tabIndex = { 0 }>
                     <MessageContainer
                         isVisible = { _focusedTab === ChatTabs.CHAT }
-                        messages = { _messages } />
+                        messages = { filteredMessages }
+                        searchTerm = { searchTerm.trim() } />
                     <MessageRecipient />
                     {isPrivateChatAllowed && (
                         <Select
@@ -628,7 +657,11 @@ const Chat = ({
                 className = { cx('chat-header', classes.chatHeader) }
                 isCCTabEnabled = { _isCCTabEnabled }
                 isPollsEnabled = { _isPollsEnabled }
-                onCancel = { onToggleChat } />
+                isSearchOpen = { isSearchOpen }
+                onCancel = { onToggleChat }
+                onSearch = { onSearch }
+                onSearchToggle = { onSearchToggle }
+                searchTerm = { searchTerm } />
             {_showNamePrompt
                 ? <DisplayNameForm
                     isCCTabEnabled = { _isCCTabEnabled }

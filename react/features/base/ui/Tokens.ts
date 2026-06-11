@@ -92,6 +92,7 @@ export const colorMap = {
     chatRecipientContainer: 'support05',      // Recipient container background
     chatRecipientText: 'textColor01',         // Recipient text color
     chatReplyIcon: 'icon01',                  // Reply icon color
+    chatSearchHighlightText: 'surface01',     // Search match highlight text
     chatSenderName: 'textColor02',            // Sender display name color
     chatTimestamp: 'ui03',                    // Chat timestamp text
 
