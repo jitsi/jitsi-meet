@@ -32,7 +32,8 @@ const PollCreate = (props: AbstractProps) => {
 
     const answerListRef = useRef<FlatList>(null);
     const dispatch = useDispatch();
-    const keyboardVisible = Platform.OS === 'android' && useKeyboardVisible();
+    const isKeyboardVisible = useKeyboardVisible();
+    const keyboardVisible = Platform.OS === 'android' && isKeyboardVisible;
 
     /*
      * This ref stores the Array of answer input fields, allowing us to focus on them.
