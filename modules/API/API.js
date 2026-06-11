@@ -1,4 +1,4 @@
-/* global APP */
+﻿/* global APP */
 import Logger from '@jitsi/logger';
 
 import { createApiEvent } from '../../react/features/analytics/AnalyticsEvents';
@@ -141,6 +141,7 @@ import { getJitsiMeetTransport } from '../transport';
 
 import {
     API_ID,
+    EMBEDDED_MODE,
     ENDPOINT_TEXT_MESSAGE_NAME
 } from './constants';
 
@@ -1208,6 +1209,11 @@ function initCommands() {
 function shouldBeEnabled() {
     return (
         typeof API_ID === 'number'
+
+            // Enable the API when running in embedded mode (without iframe).
+            // In this mode, JitsiMeetEmbeddedAPI sets the _embeddedMode flag
+            // on the global namespace before the app bundle loads.
+            || EMBEDDED_MODE
 
             // XXX Enable the API when a JSON Web Token (JWT) is specified in
             // the location/URL because then it is very likely that the Jitsi
