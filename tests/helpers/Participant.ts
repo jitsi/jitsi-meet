@@ -116,6 +116,9 @@ export class Participant {
             useStunTurn: false
         },
         pcStatsInterval: 1500,
+        timeTimer: {
+            enabled: false
+        },
         toolbarConfig: {
             alwaysVisible: true
         }

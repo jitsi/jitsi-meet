@@ -15,7 +15,12 @@ const EXPIRED_BORDER_SELECTOR = '#videospace.timer-expired';
 
 describe('setMeetingTimer iframe API command', () => {
     it('does not show the timer until a duration is pushed', async () => {
-        await ensureOneParticipant({}, { name: 'p1', iFrameApi: true });
+        // The default test config disables the timer, so enable it explicitly.
+        await ensureOneParticipant({
+            configOverwrite: {
+                timeTimer: { enabled: true }
+            }
+        }, { name: 'p1', iFrameApi: true });
 
         const { p1 } = ctx;
 
@@ -23,9 +28,9 @@ describe('setMeetingTimer iframe API command', () => {
             return;
         }
 
-        // Inside the iframe — the timer is enabled by default but has no
-        // duration yet, so the pill must not render. The default meeting
-        // subject / conference-timer chrome remains in its place.
+        // Inside the iframe — the timer is enabled but has no duration yet,
+        // so the pill must not render. The default meeting subject /
+        // conference-timer chrome remains in its place.
         await p1.switchToIFrame();
         await expect(await p1.driver.$(PILL_SELECTOR)).not.toBeDisplayed();
     });
@@ -111,14 +116,11 @@ describe('setMeetingTimer iframe API command', () => {
     });
 
     it('ignores the command when the feature is disabled', async () => {
-        // Hangup and rejoin the same conference with `timeTimer.enabled = false`
-        // so we can prove the command is a no-op on opt-out deployments.
+        // Hangup and rejoin the same conference with the default test config,
+        // which disables the timer, so we can prove the command is a no-op on
+        // opt-out deployments.
         await ctx.p1.hangup();
-        await ensureOneParticipant({
-            configOverwrite: {
-                timeTimer: { enabled: false }
-            }
-        }, { name: 'p1', iFrameApi: true });
+        await ensureOneParticipant({}, { name: 'p1', iFrameApi: true });
 
         const { p1 } = ctx;
 
