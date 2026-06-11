@@ -539,14 +539,15 @@ export class Participant {
      *
      * @param {number} number - The number of participant to wait for.
      * @param {string} msg - A custom message to use.
+     * @param {number} timeout - Max time to wait in ms.
      * @returns {Promise<boolean>}
      */
-    waitForParticipants(number: number, msg?: string): Promise<boolean> {
+    waitForParticipants(number: number, msg?: string, timeout = 15_000): Promise<boolean> {
         return this.driver.waitUntil(
             () => this.execute(count => (window.APP?.conference?.listMembers()?.length ?? -1) === count, number),
             {
-                timeout: 15_000,
-                timeoutMsg: msg || `not the expected participants ${number} in 15s for ${this.name}`
+                timeout,
+                timeoutMsg: msg || `not the expected participants ${number} in ${timeout / 1000}s for ${this.name}`
             });
     }
 

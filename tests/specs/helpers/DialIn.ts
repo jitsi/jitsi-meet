@@ -78,8 +78,16 @@ export async function dialIn(pin: string) {
         });
     });
 
-    console.log(`dial-in.test.call_session_history_id:${JSON.parse(responseData).call_session_history_id}`);
+    const callSessionHistoryId = JSON.parse(responseData).call_session_history_id;
+
+    console.log(`dial-in.test.call_session_history_id:${callSessionHistoryId}`);
     console.log(`API response:${responseData}`);
+
+    // Fail here with the actual response instead of timing out later waiting for a participant that will never
+    // join because the call was never placed.
+    if (!callSessionHistoryId) {
+        throw new Error(`Dial-in REST request did not return a call session. Response: ${responseData}`);
+    }
 }
 
 export async function assertUrlDisplayed(p: Participant) {

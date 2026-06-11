@@ -25,6 +25,8 @@ export default class LobbyScreen extends PreMeetingScreen {
      * Waits for lobby screen to load.
      */
     waitForLoading(): Promise<void> {
-        return this.participant.driver.$('.lobby-screen').waitForDisplayed({ timeout: 6000 });
+        // The lobby screen only renders once the XMPP connection is up and the join attempt is rejected with
+        // members-only, so allow for a slow connection.
+        return this.participant.driver.$('.lobby-screen').waitForDisplayed({ timeout: 15000 });
     }
 }

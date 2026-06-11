@@ -74,7 +74,9 @@ export async function verifyEndedWebhook(
  * both received and sent.
  */
 export async function waitForMedia(p: Participant) {
-    await p.waitForParticipants(1);
+    // Placing the call, answering and entering the PIN can take a while, so give the dialed participant more
+    // time to join than the default 15s.
+    await p.waitForParticipants(1, `the dialed participant did not join in 60s for ${p.name}`, 60_000);
     await p.waitForIceConnected();
     await p.waitForRemoteStreams(1);
     await p.waitForSendReceiveData(20_000);
