@@ -42,8 +42,10 @@ const chromeArgs = [
     '--use-file-for-fake-audio-capture=tests/resources/fakeAudioStream.wav',
 
     // TEMPORARY: verbose webrtc logging to catch SRTP unprotect failures on received RTP
-    // (see rejoinReceiveMedia.spec.ts). Logs go to the browser process stderr on the node.
-    '--enable-logging=stderr',
+    // (see rejoinReceiveMedia.spec.ts). The grid node swallows browser stderr, so the log is
+    // written to the file from the CHROME_LOG_FILE env var set on the grid-node nomad task
+    // (e.g. /alloc/logs/chrome_debug.log, retrievable via the allocation Files tab / alloc fs).
+    '--enable-logging',
     '--vmodule=*srtp*=2,*rtp*=1'
 ];
 
