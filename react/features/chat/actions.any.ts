@@ -385,3 +385,17 @@ export function handleLobbyChatInitialized(participantId: string) {
         return conference?.sendLobbyMessage(payload);
     };
 }
+
+export function deleteMessage(messageId: string) {
+    return {
+        type: 'DELETE_MESSAGE',
+        messageId
+    };
+}
+
+export function reportMessage(messageId: string) {
+    return {
+        type: 'REPORT_MESSAGE',
+        messageId
+    };
+}

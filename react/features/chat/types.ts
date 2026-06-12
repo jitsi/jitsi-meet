@@ -35,6 +35,10 @@ export interface IMessage {
     replyToMessageId?: string;
     sentToVisitor?: boolean;
     timestamp: number;
+    edited?: boolean;
+    editHistory?: string[];
+    isDeleted?: boolean;
+    reported?: boolean;
 }
 
 /**

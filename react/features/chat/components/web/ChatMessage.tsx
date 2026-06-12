@@ -16,6 +16,9 @@ import FileMessage from './FileMessage';
 import MessageMenu from './MessageMenu';
 import ReactButton from './ReactButton';
 
+import { useDispatch } from 'react-redux';
+import { deleteMessage, reportMessage, editMessage } from '../../actions.any';
+
 interface IProps extends IChatMessageProps {
     className?: string;
     enablePrivateChat?: boolean;
@@ -216,6 +219,7 @@ const ChatMessage = ({
     knocking,
     t
 }: IProps) => {
+    const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const [ isHovered, setIsHovered ] = useState(false);
     const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
@@ -357,14 +361,29 @@ const ChatMessage = ({
             <div className = { classes.sideBySideContainer }>
                 {!shouldDisplayMenuOnRight && (
                     <div className = { classes.optionsButtonContainer }>
-                        {isHovered && <MessageMenu
-                            displayName = { message.displayName }
-                            enablePrivateChat = { Boolean(enablePrivateChat) }
-                            isFileMessage = { isFileMessage(message) }
-                            isFromVisitor = { message.isFromVisitor }
-                            isLobbyMessage = { message.lobbyChat }
-                            message = { message.message }
-                            participantId = { message.participantId } />}
+                        {isHovered && (
+                            <div>
+                                <button onClick={() => {
+                                    const newText = prompt('Edit message', message.message);
+                                    if (newText) {
+                                        dispatch(editMessage({
+                                            ...message,
+                                            message: newText
+                                        }));
+                                    }
+                                }}>
+                                    Edit
+                                </button>
+
+                                <button onClick={() => dispatch(deleteMessage(message.messageId))}>
+                                    Delete
+                                </button>
+
+                                <button onClick={() => dispatch(reportMessage(message.messageId))}>
+                                    Report
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
                 <div
@@ -397,6 +416,11 @@ const ChatMessage = ({
                                                 user: message.displayName
                                             }) }
                                         text = { getMessageText(message) } />
+                                )}
+                                {message.edited && (
+                                    <span style={{ fontSize: '10px', color: 'gray', marginLeft: '6px' }}>
+                                        (edited)
+                                    </span>
                                 )}
                                 {(message.privateMessage || (message.lobbyChat && !knocking))
                                     && _renderPrivateNotice()}
