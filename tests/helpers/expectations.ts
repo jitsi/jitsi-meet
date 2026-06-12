@@ -53,6 +53,16 @@ const defaultExpectations = {
         // to set a room password unless they also happen to have a token (any valid token?))
         setPasswordAvailable: true
     },
+    connectivity: {
+        jvb: {
+            direct: true,
+            turn: true
+        },
+        p2p: {
+            direct: true,
+            turn: true
+        }
+    },
     // We can create conferences under any tenant.
     useTenant: true
 };
