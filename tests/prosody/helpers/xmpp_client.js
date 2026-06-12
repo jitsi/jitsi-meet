@@ -455,7 +455,7 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
-         * Sends a raw <audio_translation> message to an audio-translation component.
+         * Sends a raw <audio-translation> message to an audio-translation component.
          * Use this to test malformed payloads; prefer sendAudioTranslation for
          * well-formed deltas.
          *
@@ -463,14 +463,14 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * params: { room: '<roomname>' }) — the component resolves the room from
          * the session, not from a stanza attribute.
          *
-         * @param {string} componentJid  e.g. 'audio_translation.localhost'
-         * @param {string} rawPayload    raw text for the <audio_translation> body
+         * @param {string} componentJid  e.g. 'audiotranslation.localhost'
+         * @param {string} rawPayload    raw text for the <audio-translation> body
          */
         sendAudioTranslationRaw(componentJid, rawPayload) {
             return xmpp.send(
                 xml('message', { to: componentJid,
                     id: `at-${++_counter}` },
-                    xml('audio_translation', { xmlns: 'http://jitsi.org/jitmeet' }, rawPayload)
+                    xml('audio-translation', { xmlns: 'http://jitsi.org/jitmeet' }, rawPayload)
                 )
             );
         },
@@ -478,7 +478,7 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         /**
          * Sends a well-formed audio-translation subscription delta.
          *
-         * @param {string} componentJid  e.g. 'audio_translation.localhost'
+         * @param {string} componentJid  e.g. 'audiotranslation.localhost'
          * @param {object} delta          { senderId: language, ... }; "" removes
          */
         sendAudioTranslation(componentJid, delta) {

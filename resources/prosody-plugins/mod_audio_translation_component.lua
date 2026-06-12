@@ -5,7 +5,7 @@
 -- jicofo) through RoomMetadata.
 --
 -- ── Subscription updates (client → component) ────────────────────────────────
--- A receiver sends a <message> to this component containing an <audio_translation
+-- A receiver sends a <message> to this component containing an <audio-translation
 -- xmlns='http://jitsi.org/jitmeet'> child whose text is a JSON object that maps a
 -- sender's endpoint id to a target language:
 --
@@ -47,7 +47,7 @@
 -- 'live-translation' permission (moderators by default) and to sanitise the
 -- stored value to { enabled = <bool> }.
 --
--- Component "audio_translation.jitmeet.example.com" "audio_translation_component"
+-- Component "audiotranslation.jitmeet.example.com" "audio_translation_component"
 --      muc_component = "conference.jitmeet.example.com"
 local json = require 'util.json';
 local st = require 'util.stanza';
@@ -62,7 +62,7 @@ local get_occupant_by_real_jid = util.get_occupant_by_real_jid;
 local process_host_module = util.process_host_module;
 
 local AUDIO_TRANSLATION_NS = 'http://jitsi.org/jitmeet';
-local ELEMENT_NAME = 'audio_translation';
+local ELEMENT_NAME = 'audio-translation';
 
 -- RoomMetadata key carrying the room-level enable flag ({ enabled = bool }).
 -- Client/preset writable through mod_room_metadata_component; read-only here.
@@ -408,9 +408,15 @@ process_host_module(muc_component_host, function(host_module, host)
     end
 end);
 
--- Gate writes to the audioTranslation enable flag behind the 'live-translation'
--- permission (moderators by default) and sanitise the stored value.
+-- Advertise the component as a disco identity on the main virtual host so
+-- clients can discover it (handled by mod_features_identity), and gate writes to
+-- the audioTranslation enable flag behind the 'live-translation' permission
+-- (moderators by default) while sanitising the stored value.
 process_host_module(main_virtual_host, function(host_module)
+    module:context(host_module.host):fire_event('jitsi-add-identity', {
+        name = ELEMENT_NAME; host = module.host;
+    });
+
     host_module:hook('jitsi-metadata-allow-moderation', function(event)
         if event.key ~= ENABLED_METADATA_KEY then
             return; -- No opinion on other keys.

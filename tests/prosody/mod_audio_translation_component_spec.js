@@ -152,10 +152,29 @@ describe('mod_audio_translation_component', () => {
         clients.length = 0;
     });
 
+    // ── Disco identity ────────────────────────────────────────────────────────
+    describe('disco identity', () => {
+
+        it('advertises an audio-translation component identity on the main host', async () => {
+            const c = await connect(nextRoom());
+
+            clients.push(c);
+
+            const res = await c.sendDiscoInfo('localhost');
+            const identities = res.getChild('query', 'http://jabber.org/protocol/disco#info')
+                ?.getChildren('identity') ?? [];
+            const at = identities.find(i =>
+                i.attrs.category === 'component' && i.attrs.type === 'audio-translation');
+
+            assert.ok(at, 'main host disco#info must advertise an audio-translation component identity');
+            assert.strictEqual(at.attrs.name, AT_COMPONENT);
+        });
+    });
+
     // ── Routing / parsing ───────────────────────────────────────────────────
     describe('routing and parsing', () => {
 
-        it('ignores a message with no <audio_translation> child', async () => {
+        it('ignores a message with no <audio-translation> child', async () => {
             const r = nextRoom();
             const foc = await startRoom(r);
             const rx = await joinOccupant(r);
@@ -168,7 +187,7 @@ describe('mod_audio_translation_component', () => {
             await assertNoMetadata(foc);
         });
 
-        it('ignores an empty <audio_translation> body', async () => {
+        it('ignores an empty <audio-translation> body', async () => {
             const r = nextRoom();
             const foc = await startRoom(r);
             const rx = await joinOccupant(r);
