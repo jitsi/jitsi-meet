@@ -39,7 +39,12 @@ const chromeArgs = [
     // Avoids - "You are checking for animations on an inactive tab, animations do not run for inactive tabs"
     // when executing waitForStable()
     '--disable-renderer-backgrounding',
-    '--use-file-for-fake-audio-capture=tests/resources/fakeAudioStream.wav'
+    '--use-file-for-fake-audio-capture=tests/resources/fakeAudioStream.wav',
+
+    // TEMPORARY: verbose webrtc logging to catch SRTP unprotect failures on received RTP
+    // (see rejoinReceiveMedia.spec.ts). Logs go to the browser process stderr on the node.
+    '--enable-logging=stderr',
+    '--vmodule=*srtp*=2,*rtp*=1'
 ];
 
 if (process.env.RESOLVER_RULES) {
@@ -423,6 +428,31 @@ export const config: WebdriverIO.MultiremoteConfig = {
             // @ts-ignore
             bInstance.iframePageBase = `file://${path.dirname(rpath)}`;
         }));
+
+        // Log which grid node hosts each browser session, so browser stderr (webrtc logs) can be
+        // fetched from the right nomad allocation when a test fails.
+        if (process.env.GRID_HOST_URL) {
+            try {
+                const graphqlUrl = `${new URL(process.env.GRID_HOST_URL).origin}/graphql`;
+
+                await Promise.all(multiRemoteBrowser.instances.map(async (instance: string) => {
+                    const bInstance = multiRemoteBrowser.getInstance(instance);
+                    const response = await fetch(graphqlUrl, {
+                        body: JSON.stringify({
+                            query: `{ session(id: "${bInstance.sessionId}") { nodeUri } }`
+                        }),
+                        headers: { 'Content-Type': 'application/json' },
+                        method: 'POST'
+                    });
+                    const body: any = await response.json();
+
+                    console.log(`[grid-node] ${instance} session=${bInstance.sessionId} node=${
+                        body?.data?.session?.nodeUri ?? `unknown (${JSON.stringify(body?.errors ?? body)})`}`);
+                }));
+            } catch (e) {
+                console.warn('Failed to resolve grid nodes for browser sessions:', e);
+            }
+        }
 
         globalAny.ctx.roomName = generateRoomName(testName);
         console.log(`Using room name: ${globalAny.ctx.roomName}`);
