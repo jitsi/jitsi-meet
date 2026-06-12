@@ -16,8 +16,10 @@ export type ChatMessageType =
 
 export interface IMessage {
     displayName: string;
+    editedAt?: number;
     error?: unknown;
     fileMetadata?: IFileMetadata;
+    isEdited?: Boolean;
     isFromGuest?: boolean;
     isFromVisitor?: boolean;
     isReaction: boolean;
@@ -29,6 +31,7 @@ export interface IMessage {
     privateMessage: boolean;
     reactions: Map<string, Set<string>>;
     recipient: string;
+    recipientId?: string;
     /**
      * When set, XMPP message id of the message this one replies to (XEP-0461), from lib-jitsi-meet.
      */
