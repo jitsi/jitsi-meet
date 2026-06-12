@@ -8,7 +8,6 @@ import { isTouchDevice, shouldEnableResize } from '../../../base/environment/uti
 import { translate } from '../../../base/i18n/functions';
 import { IconInfo, IconMessage, IconShareDoc, IconSubtitles } from '../../../base/icons/svg';
 import { getLocalParticipant, getRemoteParticipants, isPrivateChatEnabledSelf } from '../../../base/participants/functions';
-import Select from '../../../base/ui/components/web/Select';
 import Tabs from '../../../base/ui/components/web/Tabs';
 import { arePollsDisabled } from '../../../conference/functions.any';
 import FileSharing from '../../../file-sharing/components/web/FileSharing';
@@ -245,10 +244,6 @@ const useStyles = makeStyles<{
             ...(isTouch && resizeEnabled && {
                 backgroundColor: theme.palette.icon01
             })
-        },
-
-        privateMessageRecipientsList: {
-            padding: '0 16px 5px'
         }
     };
 });
@@ -295,7 +290,11 @@ const Chat = ({
     const participants = useSelector(getRemoteParticipants);
     const isPrivateChatAllowed = useSelector((state: IReduxState) => isPrivateChatEnabledSelf(state));
 
-    const options = useMemo(() => {
+    const recipientOptions = useMemo(() => {
+        if (!isPrivateChatAllowed) {
+            return [];
+        }
+
         const o = Array.from(participants?.values() || [])
                 .filter(p => !p.fakeParticipant)
                 .map(p => {
@@ -313,7 +312,7 @@ const Chat = ({
         });
 
         return o;
-    }, [ participants, defaultRemoteDisplayName, t, notifyTimestamp ]);
+    }, [ participants, defaultRemoteDisplayName, t, notifyTimestamp, isPrivateChatAllowed ]);
 
     /**
      * Handles pointer down on the drag handle.
@@ -486,16 +485,11 @@ const Chat = ({
                         isVisible = { _focusedTab === ChatTabs.CHAT }
                         messages = { _messages } />
                     <MessageRecipient />
-                    {isPrivateChatAllowed && (
-                        <Select
-                            containerClassName = { cx(classes.privateMessageRecipientsList) }
-                            id = 'select-chat-recipient'
-                            onChange = { onSelectedRecipientChange }
-                            options = { options }
-                            value = { privateMessageRecipient?.id || OPTION_GROUPCHAT } />
-                    )}
                     <ChatInput
-                        onSend = { onSendMessage } />
+                        onRecipientChange = { onSelectedRecipientChange }
+                        onSend = { onSendMessage }
+                        recipientOptions = { recipientOptions }
+                        selectedRecipient = { privateMessageRecipient?.id || OPTION_GROUPCHAT } />
                 </div>) }
                 { _isPollsEnabled && (
                     <>
