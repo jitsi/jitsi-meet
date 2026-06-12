@@ -21,6 +21,10 @@ if (process.env.HEADLESS === 'true') {
 
 const mergedConfig = mergeWith(defaultConfig, {
     exclude: [
+        // TEMPORARY: all firefox tests are disabled on this branch (the runner will exit with
+        // "No specs found to run" as there is nothing left to execute).
+        'specs/**/*.spec.ts',
+
         'specs/iframe/*.spec.ts', // FF does not support uploading files (uploadFile)
 
         // FF does not support setting a file as mic input, no dominant speaker events

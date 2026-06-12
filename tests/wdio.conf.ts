@@ -61,7 +61,9 @@ const chromePreferences = {
 };
 
 const specs = [
-    'specs/**/*.spec.ts'
+    // TEMPORARY: only run the rejoin receive-media repro spec (see rejoinReceiveMedia.spec.ts),
+    // all other tests are disabled on this branch.
+    'specs/misc/rejoinReceiveMedia.spec.ts'
 ];
 
 /**
