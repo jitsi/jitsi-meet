@@ -80,6 +80,7 @@ import {
 } from './functions';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
 import './subscriber';
+import { IMessage } from './types';
 
 /**
  * Timeout for when to show the privacy notice after a private message was received.
@@ -250,7 +251,53 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case PARTICIPANT_JOINED:
+    case PARTICIPANT_JOINED: {
+        const result = next(action);
+
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+        const local = getLocalParticipant(state);
+
+        if (conference && action.participant?.id && local?.id) {
+            const editedMessages = state['features/chat'].messages.filter(
+                (m: IMessage) =>
+                    m.isEdited
+                    && !m.privateMessage
+                    && m.messageType === MESSAGE_TYPE_LOCAL
+            );
+
+            if (editedMessages.length > 0) {
+                const sendWithRetry = (retries: number) => {
+                    try {
+                        editedMessages.forEach(message => {
+                            conference.sendEndpointMessage(
+                                action.participant.id,
+                                {
+                                    type: EDIT_CHAT_MESSAGE,
+                                    messageId: message.messageId,
+                                    message: message.message,
+                                    editedAt: message.editedAt
+                                }
+                            );
+                        });
+                    } catch (e) {
+                        if (retries > 0) {
+                            setTimeout(() => sendWithRetry(retries - 1), 1000);
+                        }
+                    }
+                };
+
+                setTimeout(() => sendWithRetry(3), 3000);
+            }
+        }
+
+        if (_shouldNotifyPrivateRecipientsChanged(store, action)) {
+            dispatch(notifyPrivateRecipientsChanged());
+        }
+
+        return result;
+    }
+
     case PARTICIPANT_LEFT:
     case PARTICIPANT_UPDATED: {
         if (action.type === PARTICIPANT_LEFT) {
@@ -311,8 +358,10 @@ MiddlewareRegistry.register(store => next => action => {
                 }, lobbyMessageRecipient.id);
                 _persistSentPrivateMessage(store, lobbyMessageRecipient, action.message, true);
             } else if (privateMessageRecipient) {
-                conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient));
-                _persistSentPrivateMessage(store, privateMessageRecipient, action.message);
+                const messageId = crypto.randomUUID();
+
+                conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient), undefined, messageId);
+                _persistSentPrivateMessage(store, privateMessageRecipient, action.message, false, messageId);
             } else {
                 conference.sendTextMessage(action.message);
             }
@@ -493,6 +542,23 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
         JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
         (participantId: string, message: string, timestamp: number, messageId: string, displayName?: string,
                 isFromVisitor?: boolean, replyToId?: string) => {
+            try {
+                const data = JSON.parse(message);
+
+                if (data?.type === EDIT_CHAT_MESSAGE && data.messageId && data.message) {
+                    store.dispatch(editMessage({
+                        messageId: data.messageId,
+                        message: data.message,
+                        editedAt: data.editedAt,
+                        participantId
+                    }));
+
+                    // Don't treat edit payload as a new chat message.
+                    return;
+                }
+            } catch (e) {
+                // Normal private message.
+            }
             _onConferenceMessageReceived(store, {
                 participantId,
                 message,
@@ -769,10 +835,11 @@ interface IRecipient {
  * @param {IRecipient} recipient - The recipient the private message was sent to.
  * @param {string} message - The sent message.
  * @param {boolean} isLobbyPrivateMessage - Is a lobby message.
+ * @param {string} messageId - The unique identifier of the private message used for message editing and tracking.
  * @returns {void}
  */
 function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipient: IRecipient,
-        message: string, isLobbyPrivateMessage = false) {
+        message: string, isLobbyPrivateMessage = false, messageId?: string) {
     const state = getState();
     const localParticipant = getLocalParticipant(state);
 
@@ -795,6 +862,7 @@ function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipient: I
         participantId: localParticipant.id,
         messageType: MESSAGE_TYPE_LOCAL,
         message,
+        messageId,
         privateMessage: !isLobbyPrivateMessage,
         lobbyChat: isLobbyPrivateMessage,
         recipient: recipientName,

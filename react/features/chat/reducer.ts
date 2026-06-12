@@ -29,6 +29,7 @@ const DEFAULT_STATE = {
     isOpen: false,
     messages: [],
     notifyPrivateRecipientsChangedTimestamp: undefined,
+    pendingEdits: {},
     reactions: {},
     unreadMessagesCount: 0,
     unreadFilesCount: 0,
@@ -56,6 +57,13 @@ export interface IChatState {
     } | ILocalParticipant;
     messages: IMessage[];
     notifyPrivateRecipientsChangedTimestamp?: number;
+    pendingEdits: {
+        [messageId: string]: {
+            editedAt: number;
+            message: string;
+            participantId?: string;
+        };
+    };
     privateMessageRecipient?: IParticipant | IVisitorChatParticipant;
     unreadFilesCount: number;
     unreadMessagesCount: number;
@@ -91,23 +99,41 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             timestamp: action.timestamp
         };
 
+        const pendingEdit = action.messageId ? state.pendingEdits[action.messageId] : undefined;
+
+        const finalMessage = pendingEdit
+            ? {
+                ...newMessage,
+                message: pendingEdit.message,
+                isEdited: true,
+                editedAt: pendingEdit.editedAt
+            }
+            : newMessage;
+
         // React native, unlike web, needs a reverse sorted message list.
         const messages = navigator.product === 'ReactNative'
             ? [
-                newMessage,
+                finalMessage,
                 ...state.messages
             ]
             : [
                 ...state.messages,
-                newMessage
+                finalMessage
             ];
+
+        const pendingEdits = { ...state.pendingEdits };
+
+        if (pendingEdit && action.messageId) {
+            delete pendingEdits[action.messageId];
+        }
 
         return {
             ...state,
             lastReadMessage:
-                action.hasRead ? newMessage : state.lastReadMessage,
+                action.hasRead ? finalMessage : state.lastReadMessage,
             unreadMessagesCount: state.focusedTab !== ChatTabs.CHAT ? state.unreadMessagesCount + 1 : state.unreadMessagesCount,
-            messages
+            messages,
+            pendingEdits
         };
     }
 
@@ -173,7 +199,17 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
         // no change
         if (!found) {
-            return state;
+            return {
+                ...state,
+                pendingEdits: {
+                    ...state.pendingEdits,
+                    [newMessage.messageId]: {
+                        message: newMessage.message,
+                        editedAt: newMessage.editedAt,
+                        participantId: newMessage.participantId
+                    }
+                }
+            };
         }
 
         return {
