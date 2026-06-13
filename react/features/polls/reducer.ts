@@ -81,45 +81,45 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
     // Reducer triggered when an answer is received
     // The answer is added  to an existing poll
     case RECEIVE_ANSWER: {
-
         const { answer }: { answer: IIncomingAnswerData; } = action;
         const pollId = answer.pollId;
-        const poll = state.polls[pollId];
 
-        // if the poll doesn't exist
         if (!(pollId in state.polls)) {
+            // @ts-ignore
             logger.warn('Requested poll does not exist', { pollId });
 
             return state;
         }
 
-        // if the poll exists, we update it with the incoming answer
-        for (let i = 0; i < poll.answers.length; i++) {
-            // if the answer was chosen, we add the senderId to the array of voters of this answer
-            let voters = poll.answers[i].voters || [];
+        const poll = state.polls[pollId];
+
+        const updatedAnswers = poll.answers.map((pollAnswer, i) => {
+            let voters = pollAnswer.voters ? [ ...pollAnswer.voters ] : [];
 
             if (voters.find(user => user.id === answer.senderId)) {
                 if (!answer.answers[i]) {
                     voters = voters.filter(user => user.id !== answer.senderId);
                 }
             } else if (answer.answers[i]) {
-                voters.push({
+                voters = [ ...voters, {
                     id: answer.senderId,
                     name: answer.voterName
-                });
+                } ];
             }
 
-            poll.answers[i].voters = voters?.length ? voters : undefined;
-        }
+            return {
+                ...pollAnswer,
+                voters: voters.length ? voters : undefined
+            };
+        });
 
-        // finally we update the state by returning the updated poll
         return {
             ...state,
             polls: {
                 ...state.polls,
                 [pollId]: {
                     ...poll,
-                    answers: [ ...poll.answers ]
+                    answers: updatedAnswers
                 }
             }
         };
