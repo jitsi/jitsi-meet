@@ -26,6 +26,7 @@ import { isGifEnabled } from '../gifs/function.any';
 import InviteButton from '../invite/components/add-people-dialog/web/InviteButton';
 import { registerShortcut, unregisterShortcut } from '../keyboard-shortcuts/actions';
 import { useKeyboardShortcutsButton } from '../keyboard-shortcuts/hooks';
+import { useMultiScreenButton } from '../multi-screen/hooks.web';
 import NoiseSuppressionButton from '../noise-suppression/components/NoiseSuppressionButton';
 import {
     close as closeParticipantsPane,
@@ -289,6 +290,7 @@ export function useToolboxButtons(
     const reactions = useReactionsButton();
     const participants = useParticipantPaneButton();
     const tileview = useTileViewButton();
+    const multiScreen = useMultiScreenButton();
     const chat = useChatButton();
     const cc = useClosedCaptionButton();
     const polls = usePollsButton();
@@ -321,6 +323,7 @@ export function useToolboxButtons(
         'participants-pane': participants,
         invite: _invite,
         tileview,
+        'multi-screen': multiScreen,
         'toggle-camera': toggleCameraButton,
         videoquality: videoQuality,
         fullscreen: _fullscreen,

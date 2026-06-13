@@ -141,6 +141,13 @@ export interface INoiseSuppressionConfig {
     };
 }
 
+export interface IMultiScreenConfig {
+    // Keep this union in sync with SecondaryLayout in features/multi-screen/constants
+    // (inlined rather than imported to avoid coupling base/config to a feature).
+    defaultLayout?: 'active-speaker' | 'gallery';
+    enabled?: boolean;
+}
+
 export interface IWhiteboardConfig {
     collabServerBaseUrl?: string;
     enabled?: boolean;
@@ -559,6 +566,7 @@ export interface IConfig {
     microsoftApiApplicationClientID?: string;
     moderatedRoomServiceUrl?: string;
     mouseMoveCallbackInterval?: number;
+    multiScreen?: IMultiScreenConfig;
     noiseSuppression?: INoiseSuppressionConfig;
     noticeMessage?: string;
     notificationTimeouts?: {

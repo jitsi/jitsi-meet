@@ -184,6 +184,7 @@ export default [
     'mainToolbarButtons',
     'maxFullResolutionParticipants',
     'mouseMoveCallbackInterval',
+    'multiScreen.enabled',
     'notifications',
     'notificationTimeouts',
     'notifyOnConferenceDestruction',

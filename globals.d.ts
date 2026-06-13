@@ -26,6 +26,23 @@ declare global {
         requestAdapterInfo?(): Promise<{ device: string }>;
     }
 
+    // Window Management API (https://www.w3.org/TR/window-management/) — not yet
+    // part of lib.dom.d.ts. Declared minimally here for multi-screen placement.
+    interface ScreenDetailed extends Screen {
+        availLeft: number;
+        availTop: number;
+        isInternal: boolean;
+        isPrimary: boolean;
+        label: string;
+        left: number;
+        top: number;
+    }
+
+    interface ScreenDetails {
+        currentScreen: ScreenDetailed;
+        screens: ScreenDetailed[];
+    }
+
     interface Window {
         config: IConfig;
         JITSI_MEET_LITE_SDK?: boolean;
@@ -47,6 +64,7 @@ declare global {
         // selenium tests handler
         _sharedVideoPlayer: any;
         alwaysOnTop: { api: any };
+        getScreenDetails(): Promise<ScreenDetails>;
     }
 
     interface Document {

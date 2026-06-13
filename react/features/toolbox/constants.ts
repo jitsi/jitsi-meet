@@ -164,6 +164,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'linktosalesforce',
     'livestreaming',
     'microphone',
+    'multi-screen',
     'mute-everyone',
     'mute-video-everyone',
     'participants-pane',

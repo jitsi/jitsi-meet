@@ -1946,6 +1946,21 @@ var config = {
     //     storageBackendUrl: 'https://excalidraw-s3-storage-backend.example.com',
     // },
 
+    // Settings for the multi-screen feature, which opens a secondary browser
+    // window rendering the conference in an independent layout (e.g. gallery on
+    // one monitor, active speaker on another). On browsers that expose the
+    // Window Management API (Chrome/Edge) the window is placed on another screen
+    // automatically; elsewhere it opens at an offset the user can drag over.
+    // multiScreen: {
+    //     // Whether the feature is enabled. It is experimental and disabled by
+    //     // default; set to true to show the toolbar button and allow opening
+    //     // the secondary window (on browsers that support it).
+    //     enabled: true,
+    //     // The layout the secondary window opens with: 'gallery' (default) or
+    //     // 'active-speaker'.
+    //     defaultLayout: 'gallery',
+    // },
+
     // The watchRTC initialize config params as described :
     // https://testrtc.com/docs/installing-the-watchrtc-javascript-sdk/#h-set-up-the-sdk
     // https://www.npmjs.com/package/@testrtc/watchrtc-sdk
