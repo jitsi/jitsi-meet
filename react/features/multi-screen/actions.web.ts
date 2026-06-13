@@ -1,12 +1,13 @@
 import { IStore } from '../app/types';
 import i18next from '../base/i18n/i18next';
+import { updateSettings } from '../base/settings/actions';
 import BaseTheme from '../base/ui/components/BaseTheme.web';
-import { showWarningNotification } from '../notifications/actions';
+import { showNotification, showWarningNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { SET_MULTI_SCREEN_ACTIVE, SET_SECONDARY_LAYOUT } from './actionTypes';
 import { SECONDARY_WINDOW_NAME, SECONDARY_WINDOW_ROOT_ID, SecondaryLayout } from './constants';
-import { getSecondaryWindowPlacement, isMultiScreenSupported } from './functions';
+import { getEffectiveSecondaryLayout, getSecondaryWindowPlacement, isMultiScreenSupported } from './functions';
 import logger from './logger';
 
 /**
@@ -35,6 +36,12 @@ let isClosingProgrammatically = false;
  * the window opened (CSS-in-JS, lazily-loaded feature CSS) into the popup.
  */
 let styleObserver: MutationObserver | null = null;
+
+/**
+ * Set once we've shown the "drag the window to your other screen" hint on the
+ * no-Window-Management-API fallback path, so it isn't repeated on every open.
+ */
+let hasShownPlacementHint = false;
 
 /**
  * Returns the current secondary window reference, or null if not open.
@@ -222,14 +229,8 @@ export function openSecondaryWindow() {
         try {
             // Resolve where to place the secondary window (smart multi-monitor
             // placement when available, otherwise a sensible fallback).
-            const { placement, permissionDenied } = await getSecondaryWindowPlacement();
-
-            if (permissionDenied) {
-                dispatch(showWarningNotification({
-                    titleKey: 'multiScreen.permissionDeniedTitle',
-                    descriptionKey: 'multiScreen.permissionDenied'
-                }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
-            }
+            const { placement, permissionDenied, windowManagementUnavailable }
+                = await getSecondaryWindowPlacement();
 
             const { left, top, width, height } = placement;
             const features = `left=${left},top=${top},width=${width},height=${height}`;
@@ -237,6 +238,10 @@ export function openSecondaryWindow() {
 
             if (!newWindow) {
                 logger.error('Popup was blocked by the browser');
+                dispatch(showWarningNotification({
+                    titleKey: 'multiScreen.popupBlockedTitle',
+                    descriptionKey: 'multiScreen.popupBlocked'
+                }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
                 return;
             }
@@ -249,6 +254,25 @@ export function openSecondaryWindow() {
                 logger.warn('Secondary window was closed before it could be initialised');
 
                 return;
+            }
+
+            // The window is genuinely open now, so surface any placement caveats:
+            // a denied window-management permission, or a browser that couldn't
+            // place the popup on another screen (hinted once per session). Doing
+            // this only after a successful open avoids contradicting the
+            // "pop-up blocked" warning and avoids burning the one-time hint when
+            // no window actually opened.
+            if (permissionDenied) {
+                dispatch(showWarningNotification({
+                    titleKey: 'multiScreen.permissionDeniedTitle',
+                    descriptionKey: 'multiScreen.permissionDenied'
+                }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+            } else if (windowManagementUnavailable && !hasShownPlacementHint) {
+                hasShownPlacementHint = true;
+                dispatch(showNotification({
+                    titleKey: 'multiScreen.dragHintTitle',
+                    descriptionKey: 'multiScreen.dragHint'
+                }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
             }
 
             setupSecondaryDocument(newWindow);
@@ -269,6 +293,11 @@ export function openSecondaryWindow() {
 
                 dispatch(closeSecondaryWindow());
             });
+
+            // Open in the user's last-used layout when they have one, otherwise
+            // the deployment-configured default, otherwise the gallery fallback
+            // (resolved and validated in the selector).
+            dispatch(setSecondaryLayout(getEffectiveSecondaryLayout(state)));
 
             // Update Redux state.
             dispatch({
@@ -343,5 +372,20 @@ export function setSecondaryLayout(layout: SecondaryLayout) {
     return {
         type: SET_SECONDARY_LAYOUT,
         layout
+    };
+}
+
+/**
+ * Switches the secondary-window layout in response to a user action and
+ * remembers it as the user's preference (persisted via {@code base/settings}),
+ * so the window reopens in the same layout next time.
+ *
+ * @param {SecondaryLayout} layout - The layout to switch to.
+ * @returns {Function}
+ */
+export function selectSecondaryLayout(layout: SecondaryLayout) {
+    return (dispatch: IStore['dispatch']) => {
+        dispatch(setSecondaryLayout(layout));
+        dispatch(updateSettings({ multiScreenLayout: layout }));
     };
 }

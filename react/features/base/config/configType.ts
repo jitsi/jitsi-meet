@@ -142,6 +142,9 @@ export interface INoiseSuppressionConfig {
 }
 
 export interface IMultiScreenConfig {
+    // Keep this union in sync with SecondaryLayout in features/multi-screen/constants
+    // (inlined rather than imported to avoid coupling base/config to a feature).
+    defaultLayout?: 'active-speaker' | 'gallery';
     enabled?: boolean;
 }
 

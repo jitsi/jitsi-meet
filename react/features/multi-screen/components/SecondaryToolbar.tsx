@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../app/types';
-import { closeSecondaryWindow, setSecondaryLayout } from '../actions';
+import { closeSecondaryWindow, selectSecondaryLayout } from '../actions';
 import { SECONDARY_LAYOUTS } from '../constants';
 import { getSecondaryLayout } from '../functions';
 
@@ -35,7 +35,7 @@ const SecondaryToolbar: React.FC = () => {
      * @returns {void}
      */
     const onActiveSpeaker = useCallback(() => {
-        dispatch(setSecondaryLayout(SECONDARY_LAYOUTS.ACTIVE_SPEAKER));
+        dispatch(selectSecondaryLayout(SECONDARY_LAYOUTS.ACTIVE_SPEAKER));
     }, [ dispatch ]);
 
     /**
@@ -44,7 +44,7 @@ const SecondaryToolbar: React.FC = () => {
      * @returns {void}
      */
     const onGallery = useCallback(() => {
-        dispatch(setSecondaryLayout(SECONDARY_LAYOUTS.GALLERY));
+        dispatch(selectSecondaryLayout(SECONDARY_LAYOUTS.GALLERY));
     }, [ dispatch ]);
 
     /**

@@ -824,11 +824,15 @@
     "me": "me",
     "multiScreen": {
         "close": "Close",
+        "dragHint": "Your browser can't place this window on another screen automatically. Drag it to your second monitor if needed.",
+        "dragHintTitle": "Multi-screen window opened",
         "galleryView": "Gallery",
         "layoutLabel": "Secondary window layout",
         "noParticipants": "No participants",
         "permissionDenied": "Grant the window-management permission to automatically place this window on another screen.",
         "permissionDeniedTitle": "Couldn't move window to another screen",
+        "popupBlocked": "Your browser blocked the pop-up. Allow pop-ups for this site, then try again.",
+        "popupBlockedTitle": "Couldn't open multi-screen window",
         "speakerView": "Speaker",
         "windowTitle": "Jitsi Meet — Multi-Screen"
     },
