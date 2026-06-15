@@ -181,8 +181,10 @@ RCT_EXPORT_METHOD(reportConnectedOutgoingCall:(NSString *)callUUID
         return;
     }
 
-    [JMCallKitProxy reportOutgoingCallWith:callUUID_
-                               connectedAt:nil];
+    // Connected is reported when CallKit activates the audio session
+    // (providerDidActivateAudioSession), not here — so the connecting->connected
+    // transition is spread over real time and the call UI presents. Kept resolving so
+    // the JS-side iOS-13 "set mute after call started" .then handler still runs.
     resolve(nil);
 }
 
@@ -277,6 +279,7 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
 - (void)providerDidReset {
     RCTLogInfo(@"[RNCallKit][CXProviderDelegate][providerDidReset:]");
 
+    [JMCallKitProxy clearOutgoingCall];
     [self sendEventWithName:RNCallKitProviderDidReset body:nil];
 }
 
@@ -291,6 +294,8 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
 // Call ended, user request
 - (void) performEndCallWithUUID:(NSUUID *)UUID {
     RCTLogInfo(@"[RNCallKit][CXProviderDelegate][provider:performEndCallAction:]");
+
+    [JMCallKitProxy clearOutgoingCallWithUUID:UUID];
 
     [self sendEventWithName:RNCallKitPerformEndCallAction
                        body:@{ @"callUUID": UUID.UUIDString }];
@@ -313,6 +318,11 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
                           isVideo:(BOOL)isVideo {
     RCTLogInfo(@"[RNCallKit][CXProviderDelegate][provider:performStartCallAction:]");
 
+    [JMCallKitProxy trackOutgoingCall:UUID];
+
+    // Report "connecting" immediately so the lock-screen call UI appears right away.
+    // "connected" is reported later, on audio-session activation (real media), giving
+    // CallKit the connecting->connected transition it needs to present the screen.
     [JMCallKitProxy reportOutgoingCallWith:UUID
                        startedConnectingAt:nil];
 }
@@ -321,6 +331,9 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
     RCTLogInfo(@"[RNCallKit][CXProviderDelegate][provider:didActivateAudioSession:]");
 
     [JitsiAudioSession activateWithAudioSession:session];
+
+    // The audio session activating means the call is really up — report connected now.
+    [JMCallKitProxy reportOutgoingConnected];
 }
 
 - (void) providerDidDeactivateAudioSessionWithSession:(AVAudioSession *)session {
