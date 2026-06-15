@@ -37,5 +37,6 @@ export const PARTICIPANT_MENU_BUTTONS = {
     PRIVATE_MESSAGE: 'privateMessage',
     REMOTE_CONTROL: 'remote-control',
     SEND_PARTICIPANT_TO_ROOM: 'send-participant-to-room',
+    TRANSLATE_AUDIO: 'translate-audio',
     VERIFY: 'verify'
 };

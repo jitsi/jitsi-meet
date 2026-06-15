@@ -158,6 +158,7 @@ export interface IJitsiConference {
     setIsSilent: Function;
     setLocalParticipantProperty: Function;
     setMediaEncryptionKey: Function;
+    setParticipantTranslationLanguage: (participantId: string, language: string | null) => void;
     setReceiverConstraints: Function;
     setReceiverTranslationLanguage: (language: string | null) => void;
     setSenderVideoConstraint: Function;

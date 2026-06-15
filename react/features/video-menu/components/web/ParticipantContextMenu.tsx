@@ -44,6 +44,7 @@ import PrivateMessageMenuButton from './PrivateMessageMenuButton';
 import RemoteControlButton, { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
 import SendToRoomButton from './SendToRoomButton';
 import TogglePinToStageButton from './TogglePinToStageButton';
+import TranslateParticipantButton from './TranslateParticipantButton';
 import VerifyParticipantButton from './VerifyParticipantButton';
 import VolumeSlider from './VolumeSlider';
 
@@ -142,7 +143,7 @@ const ParticipantContextMenu = ({
         isForceMuted(participant, AVM_MEDIA_TYPE.DESKTOP, state));
     const _isAudioMuted = useSelector((state: IReduxState) => isParticipantAudioMuted(participant, state));
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
-    const { remoteVideoMenu = {}, disableRemoteMute, startSilent, customParticipantMenuButtons }
+    const { remoteVideoMenu = {}, disableRemoteMute, startSilent, customParticipantMenuButtons, audioTranslation }
         = useSelector((state: IReduxState) => state['features/base/config']);
     const visitorsSupported = useSelector((state: IReduxState) => state['features/visitors'].supported);
     const { disableDemote, disableKick, disableGrantModerator } = remoteVideoMenu;
@@ -319,6 +320,10 @@ const ParticipantContextMenu = ({
                 );
             }
         );
+    }
+
+    if (audioTranslation?.enabled && !participant?.local) {
+        buttons2.push(<TranslateParticipantButton { ...getButtonProps(BUTTONS.TRANSLATE_AUDIO) } />);
     }
 
     const breakoutRoomsButtons: any = [];
