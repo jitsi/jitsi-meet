@@ -1530,6 +1530,7 @@
         "reactionSilence": "Send silence reaction",
         "reactionSurprised": "Send surprised reaction",
         "reactions": "Reactions",
+        "record": "Record",
         "recordAndTranscribe": "Record & Transcribe",
         "security": "Security options",
         "selectBackground": "Select background",

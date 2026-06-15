@@ -8,6 +8,7 @@ import { IJitsiConference } from '../../../base/conference/reducer';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { updateDropboxToken } from '../../../dropbox/actions';
 import { getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropbox/functions';
 import { getDropboxData } from '../../../dropbox/functions.any';
@@ -76,6 +77,11 @@ export interface IProps extends WithTranslation {
      * If true the dropbox integration is enabled, otherwise - disabled.
      */
     _isDropboxEnabled: boolean;
+
+    /**
+     * Whether the local participant is a moderator.
+     */
+    _isModerator: boolean;
 
     /**
      * Whether a local recording is currently active.
@@ -295,7 +301,9 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
      * are enabled and false otherwise.
      */
     _areIntegrationsEnabled() {
-        return this.props._isDropboxEnabled;
+        return this.props._isDropboxEnabled
+            && !this.props._recordingRunning
+            && !this.props._transcriptionRunning;
     }
 
     /**
@@ -477,8 +485,8 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             } else if (_fileRecordingSession) {
                 _conference?.stopRecording(_fileRecordingSession.id);
                 this._toggleScreenshotCapture();
-                // Explicitly include both fields: some server implementations replace (not
-                // merge) the metadata object under this key, so omitting a field clears it.
+                // Keep isTranscribingEnabled in the metadata if transcription is still running,
+                // so the metadata listener does not see a false transition on that field.
                 _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
                     isRecordingRequested: false,
                     ...(_transcriptionRunning && !stopTranscription && { isTranscribingEnabled: true })
@@ -494,11 +502,16 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             // a single write ourselves. This prevents two consecutive metadata transitions
             // (false→false on isRecordingRequested, then false→true) from firing spurious
             // "recording stopped" and "recording started" sounds and notifications.
+            // Spread existing recording metadata so we only change isTranscribingEnabled —
+            // hardcoding isRecordingRequested: true would cause a spurious recordingStarting
+            // transition if that field was not previously set in the server metadata.
             dispatch(setRequestingSubtitles(false, _displaySubtitles, _subtitlesLanguage, true, false, recordingStillRunning));
             if (recordingStillRunning) {
+                const existingRecMeta = _conference?.getMetadataHandler()?.getMetadata()[RECORDING_METADATA_ID] ?? {};
+
                 _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                    isTranscribingEnabled: false,
-                    isRecordingRequested: true
+                    ...existingRecMeta,
+                    isTranscribingEnabled: false
                 });
             }
         }
@@ -626,6 +639,7 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
         _fileRecordingSession: getActiveSession(state, JitsiRecordingConstants.mode.FILE),
         _fileRecordingsServiceEnabled: recordingService?.enabled ?? false,
         _fileRecordingsServiceSharingEnabled: isRecordingSharingEnabled(state),
+        _isModerator: isLocalParticipantModerator(state),
         _isDropboxEnabled: isDropboxEnabled(state),
         _localRecording: LocalRecordingManager.isRecordingLocally(),
         _localRecordingEnabled: !localRecording?.disable,

@@ -74,6 +74,7 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
         const {
             _fileRecordingsServiceEnabled,
             _fileRecordingsServiceSharingEnabled,
+            _isModerator,
             _recordingRunning,
             _transcriptionRunning
         } = this.props;
@@ -85,7 +86,7 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
                     disabled: this.isStartRecordingDisabled()
                 }}
                 onSubmit = { this._onSubmit }
-                titleKey = 'dialog.recordAndTranscribe'>
+                titleKey = { _isModerator ? 'dialog.recordAndTranscribe' : 'toolbar.record' }>
                 <StartRecordingDialogContent
                     fileRecordingsServiceEnabled = { _fileRecordingsServiceEnabled }
                     fileRecordingsServiceSharingEnabled = { _fileRecordingsServiceSharingEnabled }
@@ -100,7 +101,7 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
                     onTranscriptionChange = { this._onTranscriptionChange }
                     recordingRunning = { Boolean(_recordingRunning) }
                     selectedRecordingService = { selectedRecordingService }
-                    sessionActive = { Boolean(_recordingRunning || _transcriptionRunning) }
+                    servicesRunning = { Boolean(_recordingRunning || _transcriptionRunning) }
                     sharingSetting = { sharingEnabled }
                     shouldRecordAudioAndVideo = { shouldRecordAudioAndVideo }
                     shouldRecordTranscription = { shouldRecordTranscription }

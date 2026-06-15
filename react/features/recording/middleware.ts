@@ -85,7 +85,7 @@ let _nudgeProvider: NudgeProvider | null = null;
 
 /**
  * Registers a platform-specific provider for nudge notification actions.
- * Called by web-only code (recordingNudge.web.ts) at startup.
+ * Called by platform-specific code (nudge.web.ts / nudge.native.ts) at startup.
  *
  * @param {NudgeProvider} fn - Provider function.
  * @returns {void}

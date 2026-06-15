@@ -68,14 +68,14 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
      */
     _updateNavigationOptions() {
         const { _localRecording, _recordingRunning, _transcriptionRunning, navigation, t } = this.props;
-        const sessionActive = Boolean(_recordingRunning || _transcriptionRunning || _localRecording);
+        const servicesRunning = Boolean(_recordingRunning || _transcriptionRunning || _localRecording);
 
         navigation.setOptions({
             // eslint-disable-next-line react/no-multi-comp
             headerRight: () => (
                 <HeaderNavigationButton
-                    disabled = { sessionActive ? !this._isChanged() : this.isStartRecordingDisabled() }
-                    label = { sessionActive ? t('dialog.applyChanges') : t('dialog.start') }
+                    disabled = { servicesRunning ? !this._isChanged() : this.isStartRecordingDisabled() }
+                    label = { servicesRunning ? t('dialog.applyChanges') : t('dialog.start') }
                     onPress = { this._onStartPress }
                     twoActions = { true } />
             )
@@ -129,7 +129,7 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
             _recordingRunning,
             _transcriptionRunning
         } = this.props;
-        const sessionActive = Boolean(_recordingRunning || _transcriptionRunning);
+        const servicesRunning = Boolean(_recordingRunning || _transcriptionRunning);
         const {
             isTokenValid,
             isValidating,
@@ -158,7 +158,7 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
                     onTranscriptionChange = { this._onTranscriptionChange }
                     recordingRunning = { Boolean(_recordingRunning) }
                     selectedRecordingService = { selectedRecordingService }
-                    sessionActive = { sessionActive }
+                    servicesRunning = { servicesRunning }
                     sharingSetting = { sharingEnabled }
                     shouldRecordAudioAndVideo = { shouldRecordAudioAndVideo }
                     shouldRecordTranscription = { shouldRecordTranscription }

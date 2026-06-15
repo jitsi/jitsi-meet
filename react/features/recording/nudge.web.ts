@@ -5,12 +5,6 @@ import i18next from '../base/i18n/i18next';
 import RecordingTranscriptionDialog from './components/Recording/web/RecordingTranscriptionDialog';
 import { registerNudgeProvider } from './middleware';
 
-/**
- * Registers the web-specific nudge provider.
- *
- * When only recording or only transcription starts, the "started" notification
- * will include a description and action button offering to start the other service.
- */
 registerNudgeProvider((scenario: 'recording' | 'transcription', dispatch: IStore['dispatch']) => {
     if (scenario === 'recording') {
         return {

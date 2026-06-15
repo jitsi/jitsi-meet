@@ -84,9 +84,9 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     override render() {
-        const { _styles: styles, sessionActive } = this.props;
+        const { _styles: styles, servicesRunning } = this.props;
 
-        if (sessionActive) {
+        if (servicesRunning) {
             return (
                 <View style = { styles.container }>
                     { this._renderSessionToggles() }

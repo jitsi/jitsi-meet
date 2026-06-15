@@ -12,6 +12,7 @@ import '../mobile/wake-lock/middleware';
 import '../mobile/react-native-sdk/middleware';
 import '../share-room/middleware';
 import '../shared-video/middleware';
+import '../recording/nudge.native';
 import '../toolbox/middleware.native';
 import '../whiteboard/middleware.native';
 

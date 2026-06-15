@@ -8,9 +8,10 @@ import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry'
 import { _abstractMapStateToProps } from '../../../base/dialog/functions';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox/actions';
 import { isVpaasMeeting } from '../../../jaas/functions';
-import { canAddTranscriber } from '../../../transcribing/functions';
+import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
 import { RECORDING_TYPES } from '../../constants';
 import { supportsLocalRecording } from '../../functions';
 
@@ -34,6 +35,11 @@ export interface IProps extends WithTranslation {
      * Whether to hide the storage warning or not.
      */
     _hideStorageWarning: boolean;
+
+    /**
+     * Whether the local participant is a moderator.
+     */
+    _isModerator: boolean;
 
     /**
      * Whether local recording is available or not.
@@ -64,6 +70,11 @@ export interface IProps extends WithTranslation {
      * The color-schemed stylesheet of this component.
      */
     _styles: any;
+
+    /**
+     * Whether transcription is currently running.
+     */
+    _transcriptionRunning: boolean;
 
     /**
      * The redux dispatch function.
@@ -149,7 +160,7 @@ export interface IProps extends WithTranslation {
      * Used to bypass the _canStartTranscribing guard so the transcription toggle
      * remains visible for stopping.
      */
-    sessionActive?: boolean;
+    servicesRunning?: boolean;
 
     /**
      * Boolean to set file recording sharing on or off.
@@ -337,15 +348,32 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
     _onRecordingServiceSwitchChange() {
         const {
             onChange,
-            selectedRecordingService
+            onRecordAudioAndVideoChange,
+            onTranscriptionChange,
+            selectedRecordingService,
+            shouldRecordAudioAndVideo,
+            shouldRecordTranscription
         } = this.props;
 
-        // act like group, cannot toggle off
         if (selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) {
+            // Cloud is selected but both options are off (switch visually OFF) —
+            // clicking re-enables both advanced options.
+            if (!shouldRecordAudioAndVideo && !shouldRecordTranscription) {
+                onRecordAudioAndVideoChange(true);
+                onTranscriptionChange(true);
+            }
+
             return;
         }
 
         onChange(RECORDING_TYPES.JITSI_REC_SERVICE);
+
+        // If both options are off, re-enable them in the same click so the switch turns ON
+        // immediately — without this, checked stays false until a second click.
+        if (!shouldRecordAudioAndVideo && !shouldRecordTranscription) {
+            onRecordAudioAndVideoChange(true);
+            onTranscriptionChange(true);
+        }
     }
 
     /**
@@ -433,7 +461,9 @@ export function mapStateToProps(state: IReduxState) {
         isVpaas: isVpaasMeeting(state),
         _canStartTranscribing: canAddTranscriber(state),
         _hideStorageWarning: Boolean(recordingService?.hideStorageWarning),
+        _isModerator: isLocalParticipantModerator(state),
         _renderRecording: isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false),
+        _transcriptionRunning: isRecorderTranscriptionsRunning(state),
         _localRecordingAvailable,
         _localRecordingEnabled: !localRecording?.disable,
         _localRecordingSelfEnabled: !localRecording?.disableSelfRecording,

@@ -21,6 +21,7 @@ import Notifications, {
 import ParticipantsPane from '../pageobjects/ParticipantsPane';
 import PasswordDialog from '../pageobjects/PasswordDialog';
 import PreJoinScreen from '../pageobjects/PreJoinScreen';
+import RecordingTranscriptionDialog from '../pageobjects/RecordingTranscriptionDialog';
 import SecurityDialog from '../pageobjects/SecurityDialog';
 import SettingsDialog from '../pageobjects/SettingsDialog';
 import Toolbar from '../pageobjects/Toolbar';
@@ -664,6 +665,13 @@ export class Participant {
      */
     getVirtualBackgroundDialog(): VirtualBackgroundDialog {
         return new VirtualBackgroundDialog(this);
+    }
+
+    /**
+     * Returns the unified recording & transcription dialog.
+     */
+    getRecordingTranscriptionDialog(): RecordingTranscriptionDialog {
+        return new RecordingTranscriptionDialog(this);
     }
 
     /**
