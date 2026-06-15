@@ -335,15 +335,23 @@ class AudioTrack extends Component<IProps> {
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantsVolume } = state['features/filmstrip'];
-    const { language } = state['features/audio-translation'];
+    const { language: defaultLanguage, participantLanguages } = state['features/audio-translation'];
 
     let _volume: number | boolean | undefined = participantsVolume[ownProps.participantId];
+
+    // Effective translation language for this speaker: the per-participant override if one is set (which
+    // may be null to disable), otherwise the conference-wide default. Turning translation off — globally
+    // or for this participant — clears this, so the original un-ducks (this selector re-runs on change).
+    const participantId: string | undefined = ownProps.participantId;
+    const effectiveLanguage = participantId && participantId in participantLanguages
+        ? participantLanguages[participantId]
+        : defaultLanguage;
 
     // Duck a speaker's original only while its translated counterpart ({source}.{language}) is present.
     const sourceName: string | undefined = ownProps.audioTrack?.jitsiTrack?.getSourceName?.();
 
-    if (language && typeof sourceName === 'string' && !sourceName.endsWith(`.${language}`)) {
-        const translatedSourceName = `${sourceName}.${language}`;
+    if (effectiveLanguage && typeof sourceName === 'string' && !sourceName.endsWith(`.${effectiveLanguage}`)) {
+        const translatedSourceName = `${sourceName}.${effectiveLanguage}`;
         const hasTranslation = state['features/base/tracks'].some(
             track => track.jitsiTrack?.getSourceName?.() === translatedSourceName);
 
