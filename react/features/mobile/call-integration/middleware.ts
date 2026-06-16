@@ -76,7 +76,7 @@ CallIntegration && MiddlewareRegistry.register(store => next => action => {
         return _conferenceLeft(store, next, action);
 
     case CONFERENCE_JOIN_IN_PROGRESS:
-    case CONFERENCE_JOINED:   
+    case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
 
     case SET_AUDIO_ONLY:
