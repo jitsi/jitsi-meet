@@ -148,7 +148,7 @@ export function getSessionStatusToShow(state: IReduxState, mode: string): string
             }
         }
     }
-    if (!status && mode === JitsiRecordingConstants.mode.FILE
+    if (mode === JitsiRecordingConstants.mode.FILE
             && (state['features/recording'].localRecordingRunning || isRemoteParticipantRecordingLocally(state))) {
         status = JitsiRecordingConstants.status.ON;
     }
