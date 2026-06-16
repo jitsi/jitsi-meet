@@ -59,7 +59,7 @@ const defaultExpectations = {
             turn: true
         },
         p2p: {
-            direct: true,
+            direct: false,
             turn: true
         }
     },
