@@ -38,6 +38,7 @@ import { getBackendSafeRoomName } from '../util/uri';
 
 import {
     AUTH_STATUS_CHANGED,
+    CONFERENCE_CONNECTION_ESTABLISHED,
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_JOIN_IN_PROGRESS,
@@ -126,6 +127,15 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
     conference.on(
         JitsiConferenceEvents.CONFERENCE_JOIN_IN_PROGRESS,
         (..._args: any[]) => dispatch(conferenceJoinInProgress(conference)));
+    conference.on(
+        JitsiConferenceEvents.CONNECTION_ESTABLISHED,
+        (..._args: any[]) => dispatch(conferenceConnectionEstablished(conference, true)));
+    conference.on(
+        JitsiConferenceEvents.CONNECTION_RESTORED,
+        (..._args: any[]) => dispatch(conferenceConnectionEstablished(conference, true)));
+    conference.on(
+        JitsiConferenceEvents.CONNECTION_INTERRUPTED,
+        (..._args: any[]) => dispatch(conferenceConnectionEstablished(conference, false)));
     conference.on(
         JitsiConferenceEvents.CONFERENCE_LEFT,
         (..._args: any[]) => {
@@ -424,6 +434,22 @@ export function conferenceJoinInProgress(conference: IJitsiConference) {
     return {
         type: CONFERENCE_JOIN_IN_PROGRESS,
         conference
+    };
+}
+
+/**
+ * Signals that the conference's ICE connection state changed — established/restored
+ * (media flowing) or interrupted.
+ *
+ * @param {JitsiConference} conference - The conference whose ICE connection changed.
+ * @param {boolean} iceConnected - Whether the ICE connection is up.
+ * @returns {{ type: CONFERENCE_CONNECTION_ESTABLISHED, conference: JitsiConference, iceConnected: boolean }}
+ */
+export function conferenceConnectionEstablished(conference: IJitsiConference, iceConnected: boolean) {
+    return {
+        type: CONFERENCE_CONNECTION_ESTABLISHED,
+        conference,
+        iceConnected
     };
 }
 

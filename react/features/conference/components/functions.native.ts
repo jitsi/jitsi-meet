@@ -12,6 +12,7 @@ export const isConnecting = (state: IReduxState) => {
     const { connecting, connection } = state['features/base/connection'];
     const {
         conference,
+        iceConnected,
         joining,
         membersOnly,
         leaving
@@ -25,8 +26,12 @@ export const isConnecting = (state: IReduxState) => {
     // - the XMPP connection is connecting, or
     // - the XMPP connection is connected and the conference is joining, or
     // - the XMPP connection is connected and we have no conference yet, nor we
-    //   are leaving one.
+    //   are leaving one, or
+    // - the conference is joined but its ICE connection (media) is not up yet,
+    //   so the loader also covers the media-connection gap.
     return Boolean(
-        connecting || (connection && (!membersOnly && (joining || (!conference && !leaving))))
+        connecting
+            || (connection && (!membersOnly && (joining || (!conference && !leaving))))
+            || (conference && !iceConnected && !leaving)
     );
 };
