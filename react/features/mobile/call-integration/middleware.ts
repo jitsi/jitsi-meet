@@ -21,6 +21,7 @@ import {
 } from '../../base/conference/functions';
 import { IJitsiConference } from '../../base/conference/reducer';
 import { getInviteURL } from '../../base/connection/functions';
+import { JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { setAudioMuted } from '../../base/media/actions';
 import { MEDIA_TYPE } from '../../base/media/constants';
 import { isVideoMutedByAudioOnly } from '../../base/media/functions';
@@ -64,9 +65,6 @@ CallIntegration && MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_FAILED:
         return _conferenceFailed(store, next, action);
 
-    case CONFERENCE_JOINED:
-        return _conferenceJoined(store, next, action);
-
     // If a conference is being left in a graceful manner then
     // the CONFERENCE_WILL_LEAVE fires as soon as the conference starts
     // disconnecting. We need to destroy the call on the native side as soon
@@ -78,7 +76,8 @@ CallIntegration && MiddlewareRegistry.register(store => next => action => {
         return _conferenceLeft(store, next, action);
 
     case CONFERENCE_JOIN_IN_PROGRESS:
-        return _conferenceWillJoin(store, next, action);
+    case CONFERENCE_JOINED:   
+        return _conferenceJoined(store, next, action);
 
     case SET_AUDIO_ONLY:
         return _setAudioOnly(store, next, action);
@@ -167,34 +166,28 @@ function _conferenceFailed({ getState }: IStore, next: Function, action: AnyActi
 }
 
 /**
- * Notifies the feature callkit that the action {@link CONFERENCE_JOINED} is
- * being dispatched within a specific redux {@code store}.
+ * Reports the outgoing call connected once its ICE connection is established.
  *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
- * specified {@code action} in the specified {@code store}.
- * @param {Action} action - The redux action {@code CONFERENCE_JOINED} which is
- * being dispatched in the specified {@code store}.
+ * @param {Function} getState - The redux store's {@code getState} function.
+ * @param {Object} conference - The conference whose outgoing call to report connected.
  * @private
- * @returns {*} The value returned by {@code next(action)}.
+ * @returns {void}
  */
-function _conferenceJoined({ getState }: IStore, next: Function, action: AnyAction) {
-    const result = next(action);
+function _reportConnectedOutgoingCall(getState: IStore['getState'], conference: IJitsiConference) {
+    const { callUUID } = conference;
 
-    if (!isCallIntegrationEnabled(getState)) {
-        return result;
+    if (!callUUID) {
+        return;
     }
 
-    const { callUUID } = action.conference;
-
-    if (callUUID) {
+    const onConnectionEstablished = () => {
+        conference.off(JitsiConferenceEvents.CONNECTION_ESTABLISHED, onConnectionEstablished);
         CallIntegration.reportConnectedOutgoingCall(callUUID)
             .then(() => {
                 // iOS 13 doesn't like the mute state to be false before the call is started
                 // so we update it here in case the user selected startWithAudioMuted.
                 if (Platform.OS === 'ios') {
-                    _updateCallIntegrationMuted(action.conference, getState());
+                    _updateCallIntegrationMuted(conference, getState());
                 }
             })
             .catch(() => {
@@ -206,9 +199,9 @@ function _conferenceJoined({ getState }: IStore, next: Function, action: AnyActi
                 // not using ConnectionService.
                 _handleConnectionServiceFailure(getState());
             });
-    }
+    };
 
-    return result;
+    conference.on(JitsiConferenceEvents.CONNECTION_ESTABLISHED, onConnectionEstablished);
 }
 
 /**
@@ -245,7 +238,7 @@ function _conferenceLeft({ getState }: IStore, next: Function, action: AnyAction
 }
 
 /**
- * Notifies the feature callkit that the action {@link CONFERENCE_WILL_JOIN} is
+ * Notifies the feature callkit that the action {@link CONFERENCE_JOINED} is
  * being dispatched within a specific redux {@code store}.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
@@ -257,7 +250,7 @@ function _conferenceLeft({ getState }: IStore, next: Function, action: AnyAction
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _conferenceWillJoin({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
+function _conferenceJoined({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
     if (!isCallIntegrationEnabled(getState)) {
@@ -279,6 +272,8 @@ function _conferenceWillJoin({ dispatch, getState }: IStore, next: Function, act
     // When assigning the callUUID, do so in upper case, since iOS will return
     // it upper-cased.
     conference.callUUID = (callUUID || uuidv4()).toUpperCase();
+
+    _reportConnectedOutgoingCall(getState, conference);
 
     CallIntegration.startCall(conference.callUUID, handle, hasVideo)
         .then(() => {
