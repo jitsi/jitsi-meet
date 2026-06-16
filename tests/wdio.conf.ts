@@ -553,12 +553,18 @@ export const config: WebdriverIO.MultiremoteConfig = {
             AllureReporter.addSuite(test.parent);
         }
 
-        if (ctx.skipSuiteTests) {
-            if ((typeof ctx.skipSuiteTests) === 'string') {
+        // A failure in an earlier test skips the rest of that describe block, but not other describe blocks in the
+        // same file (ctx.failedSuite is scoped to the suite that failed, while ctx.skipSuiteTests is file-wide).
+        const failedSameSuite = Boolean(ctx.failedSuite) && ctx.failedSuite === test.parent;
+        const skipReason = ctx.skipSuiteTests
+            || (failedSameSuite ? `A previous test in suite "${test.parent}" has failed.` : false);
+
+        if (skipReason) {
+            if ((typeof skipReason) === 'string') {
                 AllureReporter.addDescription((ctx.testProperties.description || '')
-                    + '\n\nSkipped because: ' + ctx.skipSuiteTests, 'text');
+                    + '\n\nSkipped because: ' + skipReason, 'text');
             }
-            console.log(`Skipping because: ${ctx.skipSuiteTests}`);
+            console.log(`Skipping because: ${skipReason}`);
 
             context.skip();
 
@@ -584,8 +590,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         if (error) {
 
-            // skip all remaining tests in the suite
-            ctx.skipSuiteTests = `Test "${test.title}" has failed.`;
+            // Skip the remaining tests in the same describe block (but not other describe blocks in the file).
+            ctx.failedSuite = test.parent;
 
             // make sure all browsers are at the main app in iframe (if used), so we collect debug info
             await Promise.all(multiRemoteBrowser.instances.map(async (instance: string) => {
