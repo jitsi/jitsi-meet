@@ -66,8 +66,6 @@ static id<CXCallControllerProtocol> _callKitCallController = nil;
 static BOOL _enabled = false;
 static CXProvider *_defaultProvider = nil;
 static CXProviderConfiguration *_providerConfiguration = nil;
-static NSUUID *_outgoingCallUUID = nil;
-static BOOL _outgoingConnectedReported = NO;
 
 #pragma mark CallJit proxy
 
@@ -245,34 +243,6 @@ static BOOL _outgoingConnectedReported = NO;
 
 + (void)reportOutgoingCallWith:(nonnull NSUUID *)uuid connectedAt:(nullable NSDate *)dateConnected {
     [self.provider reportOutgoingCallWithUUID:uuid connectedAtDate:dateConnected];
-}
-
-#pragma mark Outgoing-call connected tracking
-
-+ (void)trackOutgoingCall:(nonnull NSUUID *)uuid {
-    _outgoingCallUUID = uuid;
-    _outgoingConnectedReported = NO;
-}
-
-// Report the tracked outgoing call connected exactly once.
-+ (void)reportOutgoingConnected {
-    if (_outgoingCallUUID && !_outgoingConnectedReported) {
-        _outgoingConnectedReported = YES;
-        [self reportOutgoingCallWith:_outgoingCallUUID connectedAt:nil];
-    }
-}
-
-+ (void)clearOutgoingCall {
-    _outgoingCallUUID = nil;
-    _outgoingConnectedReported = NO;
-}
-
-// Clear only if it's the tracked call — so a late end for an old call (fast rejoin)
-// doesn't wipe the tracking of the new one.
-+ (void)clearOutgoingCallWithUUID:(nonnull NSUUID *)uuid {
-    if ([_outgoingCallUUID isEqual:uuid]) {
-        [self clearOutgoingCall];
-    }
 }
 
 + (void)request:(nonnull CXTransaction *)transaction completion:(nonnull void (^)(NSError *_Nullable))completion {

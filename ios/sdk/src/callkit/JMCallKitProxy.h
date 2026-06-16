@@ -80,14 +80,6 @@ NS_SWIFT_NAME(reportNewIncomingCall(UUID:handle:displayName:hasVideo:completion:
                 reason:(CXCallEndedReason)endedReason;
 + (void)reportOutgoingCallWith:(nonnull NSUUID *)uuid startedConnectingAt:(nullable NSDate *)dateStartedConnecting;
 + (void)reportOutgoingCallWith:(nonnull NSUUID *)uuid connectedAt:(nullable NSDate *)dateConnected;
-
-// Outgoing-call connected tracking. "connected" is reported once, when the audio
-// session activates (real media), so CallKit gets a connecting->connected transition.
-+ (void)trackOutgoingCall:(nonnull NSUUID *)uuid NS_SWIFT_NAME(trackOutgoingCall(_:));
-+ (void)reportOutgoingConnected;
-+ (void)clearOutgoingCall;
-+ (void)clearOutgoingCallWithUUID:(nonnull NSUUID *)uuid NS_SWIFT_NAME(clearOutgoingCall(_:));
-
 + (void)request:(nonnull CXTransaction *)transaction completion:(nonnull void (^)(NSError *_Nullable))completion;
 
 @end
