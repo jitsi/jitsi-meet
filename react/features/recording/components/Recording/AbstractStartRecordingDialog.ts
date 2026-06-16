@@ -25,6 +25,7 @@ import {
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../constants';
 import {
     getActiveSession,
+    hasRecordingOrTranscriptionFeature,
     isRecordingRunning,
     isRecordingSharingEnabled,
     shouldAutoTranscribeOnRecord,
@@ -32,7 +33,6 @@ import {
 } from '../../functions';
 import { ISessionData } from '../../reducer';
 
-import LocalRecordingManager from './LocalRecordingManager';
 
 export interface IProps extends WithTranslation {
 
@@ -631,6 +631,12 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
         _language: _subtitlesLanguage
     } = state['features/subtitles'];
 
+    // Only treat cloud recordings as "running" for users who can actually control them.
+    // Non-mods without the recording/transcription JWT feature cannot stop cloud sessions,
+    // so from their perspective only their own local recording counts as "running".
+    const canControlCloud = isLocalParticipantModerator(state)
+        || hasRecordingOrTranscriptionFeature(state);
+
     return {
         _appKey: dropbox.appKey ?? '',
         _autoTranscribeOnRecord: shouldAutoTranscribeOnRecord(state),
@@ -641,11 +647,15 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
         _fileRecordingsServiceSharingEnabled: isRecordingSharingEnabled(state),
         _isModerator: isLocalParticipantModerator(state),
         _isDropboxEnabled: isDropboxEnabled(state),
-        _localRecording: LocalRecordingManager.isRecordingLocally(),
+        _localRecording: Boolean(state['features/recording'].localRecordingRunning),
         _localRecordingEnabled: !localRecording?.disable,
-        _recordingRunning: isRecordingRunning(state),
+        _recordingRunning: canControlCloud
+            ? isRecordingRunning(state)
+            : Boolean(state['features/recording'].localRecordingRunning),
         _rToken: state['features/dropbox'].rToken ?? '',
-        _transcriptionRunning: isRecorderTranscriptionsRunning(state),
+        _transcriptionRunning: canControlCloud
+            ? isRecorderTranscriptionsRunning(state)
+            : false,
         recordAudioAndVideo:
             isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false)
                 ? _ownProps.recordAudioAndVideo ?? recordings?.recordAudioAndVideo ?? true : false,

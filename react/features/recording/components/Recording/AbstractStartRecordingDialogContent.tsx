@@ -13,7 +13,7 @@ import { authorizeDropbox, updateDropboxToken } from '../../../dropbox/actions';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
 import { RECORDING_TYPES } from '../../constants';
-import { supportsLocalRecording } from '../../functions';
+import { hasRecordingOrTranscriptionFeature, supportsLocalRecording } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of
@@ -409,7 +409,9 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
         const {
             _localRecordingAvailable,
             onChange,
-            selectedRecordingService
+            onRecordAudioAndVideoChange,
+            selectedRecordingService,
+            shouldRecordAudioAndVideo
         } = this.props;
 
         if (!_localRecordingAvailable) {
@@ -417,12 +419,17 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
         }
 
         // act like group, cannot toggle off
-        if (selectedRecordingService
-            === RECORDING_TYPES.LOCAL) {
+        if (selectedRecordingService === RECORDING_TYPES.LOCAL) {
             return;
         }
 
         onChange(RECORDING_TYPES.LOCAL);
+
+        // Selecting local recording implies audio+video — ensure the flag is on
+        // so _isChanged() reflects the selection and the Apply button enables.
+        if (!shouldRecordAudioAndVideo) {
+            onRecordAudioAndVideoChange(true);
+        }
     }
 
     /**
@@ -455,6 +462,7 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
 export function mapStateToProps(state: IReduxState) {
     const { localRecording, recordingService } = state['features/base/config'];
     const _localRecordingAvailable = !localRecording?.disable && supportsLocalRecording();
+    const canControlCloud = isLocalParticipantModerator(state) || hasRecordingOrTranscriptionFeature(state);
 
     return {
         ..._abstractMapStateToProps(state),
@@ -463,7 +471,7 @@ export function mapStateToProps(state: IReduxState) {
         _hideStorageWarning: Boolean(recordingService?.hideStorageWarning),
         _isModerator: isLocalParticipantModerator(state),
         _renderRecording: isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false),
-        _transcriptionRunning: isRecorderTranscriptionsRunning(state),
+        _transcriptionRunning: canControlCloud ? isRecorderTranscriptionsRunning(state) : false,
         _localRecordingAvailable,
         _localRecordingEnabled: !localRecording?.disable,
         _localRecordingSelfEnabled: !localRecording?.disableSelfRecording,

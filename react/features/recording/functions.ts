@@ -148,7 +148,7 @@ export function getSessionStatusToShow(state: IReduxState, mode: string): string
         }
     }
     if (!status && mode === JitsiRecordingConstants.mode.FILE
-            && (LocalRecordingManager.isRecordingLocally() || isRemoteParticipantRecordingLocally(state))) {
+            && (state['features/recording'].localRecordingRunning || isRemoteParticipantRecordingLocally(state))) {
         status = JitsiRecordingConstants.status.ON;
     }
 
@@ -193,7 +193,7 @@ export function isLiveStreamingRunning(state: IReduxState) {
 export function isRecordingRunning(state: IReduxState) {
     return (
         isCloudRecordingRunning(state)
-        || LocalRecordingManager.isRecordingLocally()
+        || Boolean(state['features/recording'].localRecordingRunning)
     );
 }
 
@@ -216,7 +216,7 @@ export function hasRecordingOrTranscriptionFeature(state: IReduxState) {
  * @returns {boolean}
  */
 export function canStopRecording(state: IReduxState) {
-    if (LocalRecordingManager.isRecordingLocally()) {
+    if (state['features/recording'].localRecordingRunning) {
         return true;
     }
 

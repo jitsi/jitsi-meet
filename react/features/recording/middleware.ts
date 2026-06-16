@@ -43,6 +43,7 @@ import {
     clearRecordingSessions,
     hidePendingRecordingNotification,
     markConsentRequested,
+    setLocalRecordingRunning,
     setStartRecordingIntent,
     setStopRecordingIntent,
     showPendingRecordingNotification,
@@ -444,6 +445,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 titleKey: 'recording.localRecordingStartWarningTitle',
                 descriptionKey: 'recording.localRecordingStartWarning'
             }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+            dispatch(setLocalRecordingRunning(true));
             dispatch(updateLocalRecordingStatus(true, onlySelf));
             sendAnalytics(createRecordingEvent('started', `local${onlySelf ? '.self' : ''}`));
             if (typeof APP !== 'undefined') {
@@ -484,6 +486,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         if (LocalRecordingManager.isRecordingLocally()) {
             LocalRecordingManager.stopLocalRecording();
+            dispatch(setLocalRecordingRunning(false));
             dispatch(updateLocalRecordingStatus(false));
             if (localRecording?.notifyAllParticipants && !LocalRecordingManager.selfRecording) {
                 dispatch(playSound(RECORDING_OFF_SOUND_ID));
