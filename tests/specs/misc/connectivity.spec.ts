@@ -90,8 +90,10 @@ describe('Connectivity - JVB + TURN', () => {
     });
 
     it('uses TURN', async () => {
-        expect(t1?.localCandidateUrl).toContain('turn:');
-        expect(t2?.localCandidateUrl).toContain('turn:');
+        // Check the candidate type rather than the URL: Firefox does not populate the `url` field on candidate
+        // stats, while `candidateType: 'relay'` (only ever produced by a TURN allocation) is set by both browsers.
+        expect(t1?.localCandidateType).toBe('relay');
+        expect(t2?.localCandidateType).toBe('relay');
     });
 
     it('both clients connect to the same JVB port', async () => {
@@ -224,11 +226,16 @@ async function getProtocol(participant: Participant, p2p: boolean): Promise<stri
     return (await getActiveCandidatePair(participant, p2p))?.type?.toLowerCase();
 }
 
-/** Returns true if the active candidate pair uses a TURN relay (url starts with "turn:"). */
+/**
+ * Returns true if the active candidate pair uses a TURN relay. We check the local candidate type rather than its
+ * URL because Firefox does not populate the `url` field on candidate stats, while `candidateType: 'relay'` is set by
+ * both Chrome and Firefox. A `relay` candidate is only ever allocated through a TURN server, so this is equivalent to
+ * checking for a `turn:` URL but works across browsers.
+ */
 async function isUsingTurn(participant: Participant, p2p: boolean): Promise<boolean> {
     const pair = await getActiveCandidatePair(participant, p2p);
 
-    return pair?.localCandidateUrl?.startsWith('turn:') === true;
+    return pair?.localCandidateType === 'relay';
 }
 
 async function isP2PActive(participant: Participant): Promise<boolean> {
