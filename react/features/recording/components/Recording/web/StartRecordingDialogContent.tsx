@@ -39,6 +39,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
     override render() {
         const {
             _canStartTranscribing,
+            _hideAdvancedOptions,
             _localRecordingAvailable,
             _renderRecording,
             integrationsEnabled
@@ -58,7 +59,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                 )}
                 { this._renderLocalRecordingContent() }
                 { transcriptionOnly && this._renderTranscriptionOnly() }
-                { hasRecordingService && <> { this._renderAdvancedOptions() } </> }
+                { hasRecordingService && !_hideAdvancedOptions && <> { this._renderAdvancedOptions() } </> }
             </Container>
         );
     }
@@ -70,6 +71,10 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     _renderTranscriptionOnly() {
+        if (this.props._hideAdvancedOptions) {
+            return null;
+        }
+
         const { shouldRecordTranscription, t } = this.props;
 
         return (

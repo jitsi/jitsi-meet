@@ -12,6 +12,7 @@ import { updateDropboxToken } from '../../../dropbox/actions';
 import { getDropboxData, getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropbox/functions.any';
 import { showErrorNotification } from '../../../notifications/actions';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
+import { canAddTranscriber } from '../../../transcribing/functions';
 import { setSelectedRecordingService, setStartRecordingIntent, startLocalVideoRecording } from '../../actions';
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../constants';
 import { isRecordingSharingEnabled, shouldAutoTranscribeOnRecord, supportsLocalRecording } from '../../functions';
@@ -27,6 +28,16 @@ export interface IProps extends WithTranslation {
      * Requests transcribing when recording is turned on.
      */
     _autoTranscribeOnRecord: boolean;
+
+    /**
+     * Whether the local participant can start transcribing.
+     */
+    _canStartTranscribing: boolean;
+
+    /**
+     * Whether to hide the transcription and audio/video toggles in the dialog.
+     */
+    _hideAdvancedOptions: boolean;
 
     /**
      * The {@code JitsiConference} for the current conference.
@@ -197,7 +208,9 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             userName: undefined,
             sharingEnabled: true,
             shouldRecordAudioAndVideo: this.props.recordAudioAndVideo,
-            shouldRecordTranscription: this.props._autoTranscribeOnRecord,
+            shouldRecordTranscription: props._hideAdvancedOptions && props._canStartTranscribing
+                ? true
+                : props._autoTranscribeOnRecord,
             spaceLeft: undefined,
             selectedRecordingService,
             localRecordingOnlySelf: false
@@ -485,10 +498,12 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
     return {
         _appKey: dropbox.appKey ?? '',
         _autoTranscribeOnRecord: shouldAutoTranscribeOnRecord(state),
+        _canStartTranscribing: canAddTranscriber(state),
         _conference: state['features/base/conference'].conference,
         _displaySubtitles,
         _fileRecordingsServiceEnabled: recordingService?.enabled ?? false,
         _fileRecordingsServiceSharingEnabled: isRecordingSharingEnabled(state),
+        _hideAdvancedOptions: Boolean(recordings.hideAdvancedOptions),
         _isDropboxEnabled: isDropboxEnabled(state),
         _localRecordingEnabled: !localRecording?.disable,
         _rToken: state['features/dropbox'].rToken ?? '',

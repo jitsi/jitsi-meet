@@ -26,6 +26,16 @@ export interface IProps extends WithTranslation {
     _canStartTranscribing: boolean;
 
     /**
+     * Whether to collapse the advanced options section by default.
+     */
+    _collapseAdvancedOptionsByDefault: boolean;
+
+    /**
+     * Whether to hide the transcription and audio/video toggles in the dialog.
+     */
+    _hideAdvancedOptions: boolean;
+
+    /**
      * Style of the dialogs feature.
      */
     _dialogStyles: any;
@@ -197,7 +207,7 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
         this._onToggleShowOptions = this._onToggleShowOptions.bind(this);
 
         this.state = {
-            showAdvancedOptions: true
+            showAdvancedOptions: !props._collapseAdvancedOptionsByDefault
         };
     }
 
@@ -207,6 +217,10 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
      * @inheritdoc
      */
     override componentDidMount() {
+        if (this.props._hideAdvancedOptions && this._canStartTranscribing()) {
+            this._onTranscriptionSwitchChange(true);
+        }
+
         if (!this._shouldRenderNoIntegrationsContent()
             && !this._shouldRenderIntegrationsContent()
             && !this._shouldRenderFileSharingContent()) {
@@ -412,13 +426,15 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
  * @returns {IProps}
  */
 export function mapStateToProps(state: IReduxState) {
-    const { localRecording, recordingService } = state['features/base/config'];
+    const { localRecording, recordingService, recordings = {} } = state['features/base/config'];
     const _localRecordingAvailable = !localRecording?.disable && supportsLocalRecording();
 
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
         _canStartTranscribing: canAddTranscriber(state),
+        _collapseAdvancedOptionsByDefault: Boolean(recordings.collapseAdvancedOptionsByDefault),
+        _hideAdvancedOptions: Boolean(recordings.hideAdvancedOptions),
         _hideStorageWarning: Boolean(recordingService?.hideStorageWarning),
         _renderRecording: isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false),
         _localRecordingAvailable,
