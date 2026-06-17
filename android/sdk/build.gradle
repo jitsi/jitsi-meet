@@ -107,45 +107,29 @@ dependencies {
     implementation 'androidx.startup:startup-runtime:1.1.0'
     implementation 'com.google.j2objc:j2objc-annotations:3.0.0'
 
+    // Autolinked RN modules come from settings.gradle; only the special cases below differ.
+    // webrtc uses `api` so consumers can access WebRTCModuleOptions.
+    def rnApiModules = [':react-native-webrtc']
+    def rnModuleExcludes = [
+        (':react-native-device-info')                 : ['com.google.firebase', 'com.google.android.gms', 'com.android.installreferrer'],
+        (':react-native-google-signin-google-signin') : ['com.google.android.gms', 'androidx']
+    ]
     // Only add these packages if we are NOT doing a LIBRE_BUILD
-    if (!rootProject.ext.libreBuild) {
-        implementation project(':amplitude-analytics-react-native')
-        implementation project(':giphy-react-native-sdk')
-        implementation(project(':react-native-google-signin-google-signin')) {
-            exclude group: 'com.google.android.gms'
-            exclude group: 'androidx'
+    def rnLibreExcluded = [
+        ':amplitude-analytics-react-native',
+        ':giphy-react-native-sdk',
+        ':react-native-google-signin-google-signin'
+    ]
+
+    (gradle.ext.autolinkedProjects ?: []).each { path ->
+        if (rootProject.ext.libreBuild && rnLibreExcluded.contains(path)) {
+            return
+        }
+        def conf = rnApiModules.contains(path) ? 'api' : 'implementation'
+        dependencies.add(conf, project(path)) {
+            rnModuleExcludes.getOrDefault(path, []).each { grp -> exclude group: grp }
         }
     }
-
-    implementation project(':react-native-async-storage-async-storage')
-    implementation project(':react-native-background-timer')
-    implementation project(':react-native-calendar-events')
-    implementation project(':react-native-clipboard-clipboard')
-    implementation project(':react-native-community-netinfo')
-    implementation project(':react-native-default-preference')
-    implementation(project(':react-native-device-info')) {
-        exclude group: 'com.google.firebase'
-        exclude group: 'com.google.android.gms'
-        exclude group: 'com.android.installreferrer'
-    }
-    implementation project(':react-native-gesture-handler')
-    implementation project(':react-native-get-random-values')
-    implementation project(':sayem314-react-native-keep-awake')
-    implementation project(':react-native-orientation-locker')
-    implementation project(':react-native-pager-view')
-    implementation project(':react-native-performance')
-    implementation project(':react-native-safe-area-context')
-    implementation project(':react-native-screens')
-    implementation project(':react-native-community-slider')
-    implementation project(':react-native-sound')
-    implementation project(':react-native-splash-view')
-    implementation project(':react-native-svg')
-    implementation project(':react-native-video')
-    implementation project(':react-native-webview')
-    implementation project(':react-native-worklets-core')
-
-    // Use `api` here so consumers can use WebRTCModuleOptions.
-    api project(':react-native-webrtc')
 
     testImplementation 'junit:junit:4.12'
 }
