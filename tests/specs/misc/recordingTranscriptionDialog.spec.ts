@@ -4,7 +4,8 @@ import { ensureOneParticipant } from '../../helpers/participants';
 
 setTestProperties(__filename, {
     description: 'Unified Recording & Transcription dialog structure',
-    usesBrowsers: [ 'p1' ]
+    usesBrowsers: [ 'p1' ],
+    useJaas: true
 });
 
 describe('Recording & Transcription dialog', () => {
