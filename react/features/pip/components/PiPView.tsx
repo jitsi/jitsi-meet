@@ -1,13 +1,15 @@
 import React from 'react';
 
-import PiPControls from './controls/PiPControls';
+import HangupButton from '../../toolbox/components/HangupButton';
+import AudioMuteButton from '../../toolbox/components/web/AudioMuteButton';
+import VideoMuteButton from '../../toolbox/components/web/VideoMuteButton';
 import CompactLayout from './layouts/CompactLayout';
 
 /**
  * Root component for Document PiP content.
  * Renders the appropriate layout based on Redux state.
  *
- * @returns The Document PiP view element.
+ * @returns {React.ReactElement} The Document PiP view element.
  */
 const DocumentPiPView: React.FC = () => {
 
@@ -22,8 +24,12 @@ const DocumentPiPView: React.FC = () => {
                 <div className = 'doc-pip-videos-container'>
                     {renderLayout()}
                 </div>
+                <div className = 'doc-pip-controls'>
+                    <AudioMuteButton />
+                    <VideoMuteButton />
+                    <HangupButton customClass = 'hangup-button' />
+                </div>
             </div>
-            <PiPControls />
         </div>
     );
 };

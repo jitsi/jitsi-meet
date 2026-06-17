@@ -599,6 +599,7 @@ export interface IConfig {
     pip?: {
         disabled?: boolean;
         showOnPrejoin?: boolean;
+        showToolbarButton?: boolean;
         documentPiP: {
             // @see: https://developer.chrome.com/docs/web-platform/document-picture-in-picture#methods
             windowOptions: {
