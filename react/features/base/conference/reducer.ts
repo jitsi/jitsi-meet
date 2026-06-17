@@ -235,7 +235,7 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
             return _conferenceJoined(state, action);
 
         case CONFERENCE_CONNECTION_ESTABLISHED:
-            return set(state, 'iceConnected', action.iceConnected);
+            return set(state, 'iceConnected', true);
 
         case CONFERENCE_SUBJECT_CHANGED:
             return set(state, 'subject', action.subject);

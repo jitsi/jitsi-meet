@@ -129,13 +129,7 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
         (..._args: any[]) => dispatch(conferenceJoinInProgress(conference)));
     conference.on(
         JitsiConferenceEvents.CONNECTION_ESTABLISHED,
-        (..._args: any[]) => dispatch(conferenceConnectionEstablished(conference, true)));
-    conference.on(
-        JitsiConferenceEvents.CONNECTION_RESTORED,
-        (..._args: any[]) => dispatch(conferenceConnectionEstablished(conference, true)));
-    conference.on(
-        JitsiConferenceEvents.CONNECTION_INTERRUPTED,
-        (..._args: any[]) => dispatch(conferenceConnectionEstablished(conference, false)));
+        (..._args: any[]) => dispatch(conferenceConnectionEstablished(conference)));
     conference.on(
         JitsiConferenceEvents.CONFERENCE_LEFT,
         (..._args: any[]) => {
@@ -438,18 +432,15 @@ export function conferenceJoinInProgress(conference: IJitsiConference) {
 }
 
 /**
- * Signals that the conference's ICE connection state changed — established/restored
- * (media flowing) or interrupted.
+ * Signals that the conference's ICE connection was established (media flowing).
  *
- * @param {JitsiConference} conference - The conference whose ICE connection changed.
- * @param {boolean} iceConnected - Whether the ICE connection is up.
- * @returns {{ type: CONFERENCE_CONNECTION_ESTABLISHED, conference: JitsiConference, iceConnected: boolean }}
+ * @param {JitsiConference} conference - The conference whose ICE connection was established.
+ * @returns {{ type: CONFERENCE_CONNECTION_ESTABLISHED, conference: JitsiConference }}
  */
-export function conferenceConnectionEstablished(conference: IJitsiConference, iceConnected: boolean) {
+export function conferenceConnectionEstablished(conference: IJitsiConference) {
     return {
         type: CONFERENCE_CONNECTION_ESTABLISHED,
-        conference,
-        iceConnected
+        conference
     };
 }
 
