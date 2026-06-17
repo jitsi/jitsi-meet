@@ -9,10 +9,11 @@ import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { updateDropboxToken } from '../../../dropbox/actions';
-import { getDropboxData, getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropbox/functions.any';
+import { getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropbox/functions';
+import { getDropboxData } from '../../../dropbox/functions.any';
 import { showErrorNotification } from '../../../notifications/actions';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
-import { setSelectedRecordingService, setStartRecordingIntent, startLocalVideoRecording } from '../../actions';
+import { setSelectedRecordingService, setStartRecordingIntent, startLocalVideoRecording } from '../../actions.any';
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../constants';
 import { isRecordingSharingEnabled, shouldAutoTranscribeOnRecord, supportsLocalRecording } from '../../functions';
 
