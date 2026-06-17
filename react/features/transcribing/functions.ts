@@ -12,12 +12,13 @@ import TRANSCRIBER_LANGS from './transcriber-langs.json';
 const DEFAULT_TRANSCRIBER_LANG = 'en-US';
 
 /**
- * Determine which language to use for transcribing.
+ * Resolves the BCP-47 locale the transcriber will use, without any logging side effect. Safe to
+ * call from selectors / mapStateToProps.
  *
- * @param {*} config - Application config.
- * @returns {string}
+ * @param {IConfig} config - Application config.
+ * @returns {string|undefined} - The resolved BCP-47 locale, or undefined if transcriptions are not enabled.
  */
-export function determineTranscriptionLanguage(config: IConfig) {
+export function getTranscriptionLanguage(config: IConfig) {
     const { transcription } = config;
 
     // if transcriptions are not enabled nothing to determine
@@ -39,11 +40,28 @@ export function determineTranscriptionLanguage(config: IConfig) {
         : transcription?.preferredLanguage;
 
     // Check if the obtained language is supported by the transcriber
-    let safeBCP47Locale = transcriberLangs[bcp47Locale as keyof typeof transcriberLangs] && bcp47Locale;
+    if (transcriberLangs[bcp47Locale as keyof typeof transcriberLangs] && bcp47Locale) {
+        return bcp47Locale;
+    }
 
-    if (!safeBCP47Locale) {
-        safeBCP47Locale = DEFAULT_TRANSCRIBER_LANG;
-        logger.warn(`Transcriber language ${bcp47Locale} is not supported, using default ${DEFAULT_TRANSCRIBER_LANG}`);
+    return DEFAULT_TRANSCRIBER_LANG;
+}
+
+/**
+ * Determine which language to use for transcribing.
+ *
+ * @param {*} config - Application config.
+ * @returns {string}
+ */
+export function determineTranscriptionLanguage(config: IConfig) {
+    const safeBCP47Locale = getTranscriptionLanguage(config);
+
+    if (typeof safeBCP47Locale === 'undefined') {
+        return undefined;
+    }
+
+    if (safeBCP47Locale === DEFAULT_TRANSCRIBER_LANG) {
+        logger.warn(`Transcriber language unsupported or unset, using default ${DEFAULT_TRANSCRIBER_LANG}`);
     }
 
     logger.info(`Transcriber language set to ${safeBCP47Locale}`);
