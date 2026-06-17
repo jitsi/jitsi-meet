@@ -15,6 +15,12 @@ import { canStartSubtitles, isCCTabEnabled } from '../functions.any';
 export interface IAbstractProps extends AbstractButtonProps {
 
     /**
+     * The default language used for transcriptions, shown on the button when subtitles are enabled
+     * without a translation language selected (i.e. the source language).
+     */
+    _defaultLanguage?: string;
+
+    /**
      * Whether the subtitles tab is enabled in the UI.
      */
     _isCCTabEnabled: boolean;
