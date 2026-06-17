@@ -4,8 +4,9 @@ import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconSubtitles } from '../../../base/icons/svg';
 import { openCCPanel } from '../../../chat/actions.any';
+import { setRequestingSubtitles } from '../../actions.any';
 import { toggleLanguageSelectorDialog } from '../../actions.web';
-import { canStartSubtitles, isCCTabEnabled } from '../../functions.any';
+import { canStartSubtitles, isCCTabEnabled, isTranslationEnabled } from '../../functions.any';
 import {
     AbstractClosedCaptionButton,
     IAbstractProps,
@@ -63,12 +64,16 @@ class ClosedCaptionButton
      * @returns {void}
      */
     override _handleClickOpenLanguageSelector() {
-        const { dispatch, _isCCTabEnabled } = this.props;
+        const { dispatch, _isCCTabEnabled, _isTranslationEnabled, _requestingSubtitles } = this.props;
 
         if (_isCCTabEnabled) {
             dispatch(openCCPanel());
-        } else {
+        } else if (_isTranslationEnabled) {
             dispatch(toggleLanguageSelectorDialog());
+        } else {
+            // Translation is disabled, so the language selector dialog has nothing to display (it renders nothing).
+            // Toggle the subtitles in the source language directly instead of opening an empty dialog.
+            dispatch(setRequestingSubtitles(!_requestingSubtitles, !_requestingSubtitles, null));
         }
     }
 }
@@ -83,10 +88,13 @@ class ClosedCaptionButton
 function mapStateToProps(state: IReduxState, ownProps: IAbstractProps) {
     const { visible = canStartSubtitles(state) || isCCTabEnabled(state) } = ownProps;
 
-    return _abstractMapStateToProps(state, {
-        ...ownProps,
-        visible
-    });
+    return {
+        ..._abstractMapStateToProps(state, {
+            ...ownProps,
+            visible
+        }),
+        _isTranslationEnabled: isTranslationEnabled(state)
+    };
 }
 
 export default translate(connect(mapStateToProps)(ClosedCaptionButton));
