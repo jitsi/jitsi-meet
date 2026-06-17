@@ -32,7 +32,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     override render() {
-        const { _styles: styles } = this.props;
+        const { _hideAdvancedOptions, _styles: styles } = this.props;
 
         return (
             <View style = { styles.container }>
@@ -40,7 +40,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                 { this._renderFileSharingContent() }
                 { this._renderUploadToTheCloudInfo() }
                 { this._renderIntegrationsContent() }
-                { this._renderAdvancedOptions() }
+                { !_hideAdvancedOptions && this._renderAdvancedOptions() }
             </View>
         );
     }

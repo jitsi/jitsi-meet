@@ -627,7 +627,9 @@ export interface IConfig {
     };
     recordingSharingUrl?: string;
     recordings?: {
+        collapseAdvancedOptionsByDefault?: boolean;
         consentLearnMoreLink?: string;
+        hideAdvancedOptions?: boolean;
         recordAudioAndVideo?: boolean;
         requireConsent?: boolean;
         showPrejoinWarning?: boolean;

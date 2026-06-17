@@ -405,6 +405,11 @@ var config = {
     // recordings: {
     //    // IF true (default) recording audio and video is selected by default in the recording dialog.
     //    // recordAudioAndVideo: true,
+    //    // If true, the transcription and audio/video toggles in the recording dialog are hidden.
+    //    // Use with transcription.autoTranscribeOnRecord to keep transcription enabled.
+    //    // hideAdvancedOptions: false,
+    //    // If true, the transcription and audio/video toggles are collapsed by default.
+    //    // collapseAdvancedOptionsByDefault: false,
     //    // If true, shows a notification at the start of the meeting with a call to action button
     //    // to start recording (for users who can do so).
     //    // suggestRecording: true,
