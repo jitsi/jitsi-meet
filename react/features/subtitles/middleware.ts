@@ -286,11 +286,17 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
 
         // Only display transcription results when the local user is showing subtitles and either
         // wants the source language (no translation language selected) or the transcription's
-        // language matches the selected one.
+        // language matches the selected one. We rely on the redux _language (which is cleared when
+        // switching back to the original language) rather than the translation_language participant
+        // property, which is never cleared and can become stale.
         // The primary language code comparison catches all country-code notations like 'en-GB',
         // 'en_GB' and 'enGB' independent of the country code length.
-        if (!state['features/subtitles']._requestingSubtitles
-                || (language && _getPrimaryLanguageCode(json.language) !== _getPrimaryLanguageCode(language))) {
+        const { _language, _requestingSubtitles } = state['features/subtitles'];
+        const selectedLanguage = _language?.replace('translation-languages:', '');
+
+        if (!_requestingSubtitles
+                || (selectedLanguage
+                    && _getPrimaryLanguageCode(json.language) !== _getPrimaryLanguageCode(selectedLanguage))) {
             return next(action);
         }
 
