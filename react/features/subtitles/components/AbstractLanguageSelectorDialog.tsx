@@ -3,12 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState, IStore } from '../../app/types';
-import { openDialog } from '../../base/dialog/actions';
-import { StartRecordingDialog } from '../../recording/components/Recording/index';
 import { setRequestingSubtitles } from '../actions.any';
 import { getAvailableSubtitlesLanguages, isTranslationEnabled } from '../functions.any';
 
 export interface IAbstractLanguageSelectorDialogProps {
+    asyncTranscription: boolean;
     dispatch: IStore['dispatch'];
     language: string | null;
     listItems: Array<any>;
@@ -47,20 +46,15 @@ const AbstractLanguageSelectorDialog = (Component: ComponentType<IAbstractLangua
         });
     const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
     const translationEnabled = useSelector(isTranslationEnabled);
+    const asyncTranscription = Boolean(conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription);
 
     const onLanguageSelected = useCallback((value: string) => {
         const _selectedLanguage = value === noLanguageLabel ? null : value;
         const enabled = Boolean(_selectedLanguage);
         const displaySubtitles = enabled;
 
-        if (conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription) {
-            dispatch(openDialog('StartRecordingDialog', StartRecordingDialog, {
-                recordAudioAndVideo: false
-            }));
-        } else {
-            dispatch(setRequestingSubtitles(enabled, displaySubtitles, _selectedLanguage));
-        }
-    }, [ conference, language ]);
+        dispatch(setRequestingSubtitles(enabled, displaySubtitles, _selectedLanguage));
+    }, [ language ]);
 
     if (!translationEnabled) {
         return null;
@@ -68,6 +62,7 @@ const AbstractLanguageSelectorDialog = (Component: ComponentType<IAbstractLangua
 
     return (
         <Component
+            asyncTranscription = { asyncTranscription }
             dispatch = { dispatch }
             language = { language }
             listItems = { listItems }
