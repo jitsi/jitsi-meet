@@ -19,6 +19,11 @@ export interface IAbstractProps extends AbstractButtonProps {
      */
     _isCCTabEnabled: boolean;
 
+    /**
+     * Whether subtitle translation (language selection) is enabled.
+     */
+    _isTranslationEnabled?: boolean;
+
     _language: string | null;
 
     /**
