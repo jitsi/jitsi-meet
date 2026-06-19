@@ -29,7 +29,7 @@ all: compile deploy
 
 compile: clean
 	NODE_OPTIONS=--max-old-space-size=8192 \
-	$(WEBPACK)
+	$(WEBPACK) --parallelism 1
 
 clean:
 	rm -fr $(BUILD_DIR)
