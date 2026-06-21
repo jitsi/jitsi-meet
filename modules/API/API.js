@@ -99,6 +99,7 @@ import {
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
 import { answerKnockingParticipant, toggleLobbyMode } from '../../react/features/lobby/actions';
+import { setSecondScreen } from '../../react/features/multi-screen/actions.web';
 import { setNoiseSuppressionEnabled } from '../../react/features/noise-suppression/actions';
 import { hideNotification, showNotification } from '../../react/features/notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../react/features/notifications/constants';
@@ -544,6 +545,9 @@ function initCommands() {
             sendAnalytics(createApiEvent('tile-view.toggled'));
 
             APP.store.dispatch(toggleTileView());
+        },
+        'set-second-screen': (options = {}) => {
+            APP.store.dispatch(setSecondScreen(options.id ?? 'default', options.source, options.screen));
         },
         'set-tile-view': enabled => {
             APP.store.dispatch(setTileView(enabled));
@@ -2416,6 +2420,47 @@ class API {
         logger.debug('Sending pip-left event to External API');
         this._sendEvent({
             name: 'pip-left'
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a second-screen window now renders a
+     * given source/participant.
+     *
+     * @param {Object} data - The event payload ({ id, source, participantId }).
+     * @returns {void}
+     */
+    notifySecondScreenSourceChanged(data) {
+        this._sendEvent({
+            name: 'second-screen-source-changed',
+            ...data
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a second-screen window was closed.
+     *
+     * @param {Object} data - The event payload ({ id }).
+     * @returns {void}
+     */
+    notifySecondScreenClosed(data) {
+        this._sendEvent({
+            name: 'second-screen-closed',
+            ...data
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a second-screen window could not be
+     * opened/updated (e.g. popup blocked or the feature disabled).
+     *
+     * @param {Object} data - The event payload ({ id, error }).
+     * @returns {void}
+     */
+    notifySecondScreenError(data) {
+        this._sendEvent({
+            name: 'second-screen-error',
+            ...data
         });
     }
 

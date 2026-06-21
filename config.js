@@ -1578,6 +1578,15 @@ var config = {
     // If true, tile view will not be enabled automatically when the participants count threshold is reached.
     // disableTileView: true,
 
+    // Multi-screen support: lets an embedder (via the iframe External API `setSecondScreen` command)
+    // render a meeting surface (the active-speaker stage, the screenshare, or a pinned participant) on
+    // a second display, in its own fullscreen window. Disabled by default; it is Chromium-only and
+    // intended for managed/kiosk room appliances, which must also delegate `allow="window-management;
+    // fullscreen"` to the iframe and grant the window-management + automatic-fullscreen permissions.
+    // secondScreen: {
+    //     enabled: false
+    // },
+
     // If true, the tiles will be displayed contained within the available space rather than enlarged to cover it,
     // with a 16:9 aspect ratio (old behaviour).
     // disableTileEnlargement: true,

@@ -653,6 +653,17 @@ export interface IConfig {
         enabled?: boolean;
         mode?: 'always' | 'recording';
     };
+
+    /**
+     * Multi-screen support. When enabled, an embedder can use the iframe External
+     * API `setSecondScreen` command to render a meeting surface (the stage, the
+     * screenshare, or a pinned participant) on a second display in its own
+     * fullscreen window. Chromium-only; intended for managed/kiosk room
+     * appliances. Disabled by default.
+     */
+    secondScreen?: {
+        enabled?: boolean;
+    };
     securityUi?: {
         disableLobbyPassword?: boolean;
         hideLobbyButton?: boolean;

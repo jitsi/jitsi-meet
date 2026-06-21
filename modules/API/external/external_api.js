@@ -70,6 +70,7 @@ const commands = {
     setMeetingTimer: 'set-meeting-timer',
     setNoiseSuppressionEnabled: 'set-noise-suppression-enabled',
     setParticipantVolume: 'set-participant-volume',
+    setSecondScreen: 'set-second-screen',
     setSubtitles: 'set-subtitles',
     setTileView: 'set-tile-view',
     setVideoQuality: 'set-video-quality',
@@ -110,6 +111,9 @@ const events = {
     '_pip-requested': '_pipRequested',
     'pip-entered': 'pipEntered',
     'pip-left': 'pipLeft',
+    'second-screen-source-changed': 'secondScreenSourceChanged',
+    'second-screen-closed': 'secondScreenClosed',
+    'second-screen-error': 'secondScreenError',
     'avatar-changed': 'avatarChanged',
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
@@ -368,10 +372,16 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             'clipboard-write',
             'compute-pressure',
             'display-capture',
+            'fullscreen',
             'hid',
             'microphone',
             'screen-wake-lock',
-            'speaker-selection'
+            'speaker-selection',
+
+            // Needed by the multi-screen feature (`setSecondScreen`) to enumerate displays and place
+            // a window on a second screen. Only delegates the capability; the actual permission is
+            // still user/policy-gated (granted on managed/kiosk devices).
+            'window-management'
         ].join('; ');
         this._frame.name = frameName;
         this._frame.id = frameName;
