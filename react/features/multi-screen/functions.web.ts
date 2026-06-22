@@ -1,36 +1,17 @@
 import { IReduxState, IStore } from '../app/types';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../base/media/constants';
+import { getParticipantById, getParticipantDisplayName } from '../base/participants/functions';
+import { IParticipant } from '../base/participants/types';
 import { getTrackByMediaTypeAndParticipant, getVideoTrackByParticipant } from '../base/tracks/functions.any';
 import { getLargeVideoParticipant } from '../large-video/functions';
+import { renderAvatarOnCanvas } from '../pip/functions';
 
 import { removeSecondScreen } from './actions.web';
-import { DEFAULT_WINDOW_HEIGHT, DEFAULT_WINDOW_WIDTH } from './constants';
 import logger from './logger';
 import { ISecondScreenSource } from './types';
 
-/**
- * Minimal typings for the Window Management API, not yet in the TS DOM lib.
- * Declared in this web-only module so the native build never sees it.
- */
-interface IScreenDetailed {
-    availHeight: number;
-    availLeft: number;
-    availTop: number;
-    availWidth: number;
-    left: number;
-    top: number;
-}
-interface IScreenDetails {
-    currentScreen: IScreenDetailed;
-    screens: IScreenDetailed[];
-}
-declare global {
-
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    interface Window {
-        getScreenDetails?: () => Promise<IScreenDetails>;
-    }
-}
+// The Window Management API typings (Window.getScreenDetails, ScreenDetails, ScreenDetailed) come
+// from the `@types/webscreens-window-placement` devDependency.
 
 /**
  * A second-screen window, constructed via {@code window.open} in the same
@@ -39,33 +20,91 @@ declare global {
  */
 type ISecondScreenWindow = Window & { MediaStream: typeof MediaStream; };
 
+/**
+ * A canvas {@code captureStream} track exposes a non-standard {@code requestFrame}
+ * used to push a single frame on demand.
+ */
+type IFrameRequestingTrack = MediaStreamTrack & { requestFrame?: () => void; };
+
+/**
+ * The live handles backing a single second-screen window. Only the
+ * non-serializable DOM/media objects live here; the window's source/screen
+ * configuration is held in redux ({@code features/multi-screen}), which is the
+ * single source of truth.
+ */
 interface IWindowEntry {
+
+    /**
+     * The off-screen canvas used to render a participant's avatar when their
+     * video is unavailable (created lazily, reused across redraws).
+     */
+    avatarCanvas?: HTMLCanvasElement;
+
+    /**
+     * The second window's {@code MediaStream} wrapping the avatar canvas track
+     * (what {@code video.srcObject} points at while the avatar is shown).
+     */
+    avatarSrc?: MediaStream;
+
+    /**
+     * The avatar canvas {@code captureStream} track (kept to push frames and to
+     * stop it on teardown).
+     */
+    avatarTrack?: IFrameRequestingTrack;
+
+    /**
+     * The clone of the currently rendered meeting track (the meeting keeps its
+     * own copy; the clone is stopped when swapped out or on teardown).
+     */
     clone?: MediaStreamTrack;
-    screenId?: number;
-    source: ISecondScreenSource;
+
+    /**
+     * The {@code <video>} in the second window.
+     */
     video: HTMLVideoElement;
+
+    /**
+     * The second-screen window itself.
+     */
     win: Window;
 }
 
 /**
  * The live second-screen windows, keyed by id. Module scope because the windows
- * outlive any single React render and the middleware reconciles them.
+ * (and their {@code Window}/{@code <video>}/cloned-track objects) are not
+ * serializable and outlive any single React render; redux holds the serializable
+ * configuration and the middleware reconciles the two.
  */
 const windows = new Map<string, IWindowEntry>();
 
 /**
- * Whether second-screen windows can be opened in this environment.
+ * The avatar canvas is rendered at a modest 4:3 size and scaled up by the
+ * full-bleed {@code <video>} (object-fit: contain) on the second screen.
+ */
+const AVATAR_CANVAS_WIDTH = 640;
+const AVATAR_CANVAS_HEIGHT = 480;
+
+/**
+ * Avatar colours, matched to the black second-screen window background.
+ */
+const AVATAR_BACKGROUND = '#000';
+const AVATAR_TEXT_COLOR = '#fff';
+const AVATAR_FONT_FAMILY = 'Inter, sans-serif';
+
+/**
+ * Whether second-screen windows can be opened in this environment. The feature
+ * requires the Window Management API (Chromium) so it can enumerate displays and
+ * place the window on a second screen; without it we have no control over the
+ * second screen, so we do not support the feature.
  *
  * @returns {boolean}
  */
 export function isSecondScreenSupported(): boolean {
-    return typeof window !== 'undefined' && typeof window.open === 'function';
+    return typeof window !== 'undefined' && 'getScreenDetails' in window;
 }
 
 /**
- * Whether the multi-screen feature is enabled (config flag + support). The
- * Window Management API and AutomaticFullscreen permission (Chromium, managed
- * kiosk) are used opportunistically and degrade gracefully when absent.
+ * Whether the multi-screen feature is enabled (config flag + support).
  *
  * @param {IReduxState} state - The redux state.
  * @returns {boolean}
@@ -75,43 +114,49 @@ export function isSecondScreenEnabled(state: IReduxState): boolean {
 }
 
 /**
- * Resolves a source descriptor to a native {@code MediaStreamTrack} and the
- * participant currently backing it.
+ * Resolves a source descriptor to a native {@code MediaStreamTrack} (when the
+ * backing participant has live, unmuted video) and the participant backing it.
+ * When there is no usable video track, {@code track} is {@code null} and the
+ * caller falls back to rendering the participant's avatar.
  *
  * @param {IReduxState} state - The redux state.
  * @param {ISecondScreenSource} source - The source descriptor.
- * @returns {Object} The resolved native track and backing participant id.
+ * @returns {Object} The resolved native track (or {@code null}) and backing participant.
  */
 function resolveSource(state: IReduxState, source: ISecondScreenSource) {
     const tracks = state['features/base/tracks'];
     let iTrack;
-    let participantId: string | undefined;
+    let participant: IParticipant | undefined;
 
     if (source.role === 'stage') {
-        const participant = getLargeVideoParticipant(state);
-
-        participantId = participant?.id;
+        participant = getLargeVideoParticipant(state);
         iTrack = getVideoTrackByParticipant(state, participant);
     } else if (source.role === 'screenshare') {
         iTrack = tracks.find(t => t.videoType === VIDEO_TYPE.DESKTOP && !t.muted && Boolean(t.jitsiTrack));
-        participantId = iTrack?.participantId;
+        participant = iTrack ? getParticipantById(state, iTrack.participantId) : undefined;
     } else if (source.participant) {
-        participantId = source.participant;
+        participant = getParticipantById(state, source.participant);
         const mediaType = source.media === 'desktop' ? MEDIA_TYPE.SCREENSHARE : MEDIA_TYPE.VIDEO;
 
         iTrack = getTrackByMediaTypeAndParticipant(tracks, mediaType, source.participant);
     }
 
+    const track = iTrack && !iTrack.muted
+        ? (iTrack.jitsiTrack?.getTrack?.() as MediaStreamTrack) ?? null
+        : null;
+
     return {
-        track: (iTrack?.jitsiTrack?.getTrack?.() as MediaStreamTrack) ?? null,
-        participantId: participantId ?? null
+        participant,
+        track
     };
 }
 
 /**
- * A stable signature of what every second-screen window should currently render
- * (its resolved track id). When it changes — e.g. the active speaker switches —
- * the subscriber re-applies the sources, swapping {@code srcObject} in place.
+ * A stable signature of what every second-screen window should currently render.
+ * When it changes — the active speaker switches, a source mutes/unmutes, or an
+ * avatar finishes loading — the subscriber re-applies the sources, swapping the
+ * window content in place. Includes the avatar identity (id/url/name) so the
+ * fallback avatar redraws even while no track is present.
  *
  * @param {IReduxState} state - The redux state.
  * @returns {string}
@@ -121,41 +166,32 @@ export function getSecondScreenSignature(state: IReduxState): string {
 
     return Object.keys(screens).sort()
         .map(id => {
-            const { track } = resolveSource(state, screens[id].source);
+            const { track, participant } = resolveSource(state, screens[id].source);
+            const key = track
+                ? track.id
+                : `avatar:${participant?.id ?? ''}:${participant?.loadableAvatarUrl ?? ''}:${participant?.name ?? ''}`;
 
-            return `${id}:${track ? track.id : 'none'}`;
+            return `${id}:${key}`;
         })
         .join('|');
 }
 
 /**
  * Computes the {@code window.open} features string, placing the window on a
- * physical screen via the Window Management API when available.
+ * physical screen via the Window Management API. Rejects if the API is
+ * unavailable/denied (the feature requires it).
  *
  * @param {number} screenId - Optional target screen index.
  * @returns {Promise<string>}
  */
 async function computeFeatures(screenId?: number): Promise<string> {
-    const fallback = `popup,width=${DEFAULT_WINDOW_WIDTH},height=${DEFAULT_WINDOW_HEIGHT}`;
+    const details = await window.getScreenDetails();
+    const target = (typeof screenId === 'number' && details.screens[screenId])
+        || details.screens.find(s => s.left !== details.currentScreen.left || s.top !== details.currentScreen.top)
+        || details.currentScreen;
 
-    if (typeof window.getScreenDetails !== 'function') {
-        return fallback;
-    }
-
-    try {
-        const details = await window.getScreenDetails();
-        const screen = typeof screenId === 'number' && details.screens[screenId]
-            ? details.screens[screenId]
-            : details.screens.find(s => s.left !== details.currentScreen.left || s.top !== details.currentScreen.top);
-
-        if (screen) {
-            return `popup,left=${screen.availLeft},top=${screen.availTop},width=${screen.availWidth},height=${screen.availHeight}`;
-        }
-    } catch (e) {
-        logger.warn('getScreenDetails failed; opening an unplaced window', e);
-    }
-
-    return fallback;
+    // No avail* offsets: the window is auto-fullscreened, so the full screen bounds are what matter.
+    return `popup,left=${target.left},top=${target.top},width=${target.width},height=${target.height}`;
 }
 
 /**
@@ -186,29 +222,78 @@ function buildWindow(win: Window): HTMLVideoElement {
 }
 
 /**
- * Renders a track into a window's video by reference (cloning so the meeting
- * keeps its own copy), stopping any previously rendered clone.
+ * Renders a meeting track into a window's video by reference (cloning so the
+ * meeting keeps its own copy), stopping any previously rendered clone.
  *
  * @param {IWindowEntry} entry - The window entry.
- * @param {MediaStreamTrack | null} track - The track to render.
+ * @param {MediaStreamTrack} track - The track to render.
  * @returns {void}
  */
-function renderTrack(entry: IWindowEntry, track: MediaStreamTrack | null) {
+function renderTrack(entry: IWindowEntry, track: MediaStreamTrack) {
     if (entry.clone) {
-        try {
-            entry.clone.stop();
-        } catch (e) { /* ignore */ }
+        entry.clone.stop();
         entry.clone = undefined;
-    }
-    if (!track) {
-        entry.video.srcObject = null;
-
-        return;
     }
     const clone = track.clone();
 
     entry.clone = clone;
     entry.video.srcObject = new (entry.win as ISecondScreenWindow).MediaStream([ clone ]);
+}
+
+/**
+ * Renders a participant's avatar (image, initials, or default) into a window's
+ * video as a fallback when there is no usable video track (e.g. the source muted
+ * their camera). Reuses the PiP feature's canvas-avatar rendering and feeds it to
+ * the window by reference, mirroring {@link renderTrack}.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {IWindowEntry} entry - The window entry.
+ * @param {IParticipant | undefined} participant - The participant whose avatar to render.
+ * @returns {void}
+ */
+function renderAvatar(state: IReduxState, entry: IWindowEntry, participant: IParticipant | undefined) {
+    if (entry.clone) {
+        entry.clone.stop();
+        entry.clone = undefined;
+    }
+
+    let canvas = entry.avatarCanvas;
+
+    if (!canvas) {
+        canvas = document.createElement('canvas');
+        canvas.width = AVATAR_CANVAS_WIDTH;
+        canvas.height = AVATAR_CANVAS_HEIGHT;
+
+        // captureStream(0): on-demand; we push a frame via requestFrame() after each draw.
+        const track = canvas.captureStream(0).getVideoTracks()[0] as IFrameRequestingTrack;
+
+        entry.avatarCanvas = canvas;
+        entry.avatarTrack = track;
+
+        // The track is created in this (meeting) document; wrap it in the second window's
+        // MediaStream so its <video> renders it by reference (same trick as renderTrack()).
+        entry.avatarSrc = new (entry.win as ISecondScreenWindow).MediaStream([ track ]);
+    }
+
+    if (entry.video.srcObject !== entry.avatarSrc) {
+        entry.video.srcObject = entry.avatarSrc ?? null;
+    }
+
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) {
+        return;
+    }
+
+    const displayName = participant?.id ? getParticipantDisplayName(state, participant.id) : '';
+    const customAvatarBackgrounds = state['features/dynamic-branding']?.avatarBackgrounds ?? [];
+
+    // Reuses the PiP feature's canvas-avatar rendering (image → initials → default icon).
+    renderAvatarOnCanvas(
+        canvas, ctx, participant, displayName, customAvatarBackgrounds,
+        null, AVATAR_BACKGROUND, AVATAR_FONT_FAMILY, AVATAR_TEXT_COLOR, AVATAR_TEXT_COLOR)
+        .then(() => entry.avatarTrack?.requestFrame?.())
+        .catch(e => logger.warn('Failed to render second-screen avatar', e));
 }
 
 /**
@@ -224,7 +309,9 @@ function notifySourceChanged(id: string, source: ISecondScreenSource, participan
 }
 
 /**
- * Resolves and renders the current track for a window, and notifies the embedder.
+ * Resolves and renders the current source for a window, and notifies the
+ * embedder. Reads the window's configured source from redux (the single source
+ * of truth). Falls back to the participant's avatar when there is no live video.
  *
  * @param {IStore} store - The redux store.
  * @param {string} id - The window id.
@@ -236,15 +323,26 @@ function applySource(store: IStore, id: string) {
     if (!entry || entry.win.closed) {
         return;
     }
-    const { track, participantId } = resolveSource(store.getState(), entry.source);
+    const state = store.getState();
+    const config = state['features/multi-screen'].screens[id];
 
-    renderTrack(entry, track);
-    notifySourceChanged(id, entry.source, participantId);
+    if (!config) {
+        return;
+    }
+    const { track, participant } = resolveSource(state, config.source);
+
+    if (track) {
+        renderTrack(entry, track);
+    } else {
+        renderAvatar(state, entry, participant);
+    }
+    notifySourceChanged(id, config.source, participant?.id ?? null);
 }
 
 /**
  * Cleans up an entry's resources without dispatching (used by both explicit
- * close and the window being closed externally).
+ * close and the window being closed externally). The map entry is dropped before
+ * the window is closed, so no reference to a closed window is retained.
  *
  * @param {string} id - The window id.
  * @param {boolean} closeWindow - Whether to also close the OS window.
@@ -256,16 +354,14 @@ function teardown(id: string, closeWindow: boolean) {
     if (!entry) {
         return;
     }
-    if (entry.clone) {
-        try {
-            entry.clone.stop();
-        } catch (e) { /* ignore */ }
-    }
+
+    // MediaStreamTrack.stop() is infallible per spec, so no try/catch.
+    entry.clone?.stop();
+    entry.avatarTrack?.stop();
     windows.delete(id);
-    if (closeWindow) {
-        try {
-            !entry.win.closed && entry.win.close();
-        } catch (e) { /* ignore */ }
+
+    if (closeWindow && !entry.win.closed) {
+        entry.win.close();
     }
 }
 
@@ -287,18 +383,17 @@ function handleWindowClosed(store: IStore, id: string) {
 }
 
 /**
- * Opens a new second-screen window (or updates an existing one) and renders the
- * given source. Best-effort placement + fullscreen; both require the Window
- * Management / AutomaticFullscreen permissions on a managed/kiosk device.
+ * Opens a new second-screen window (or updates an existing one) to render its
+ * configured source. The window is placed on a physical screen via the Window
+ * Management API and auto-fullscreened; both require the window-management and
+ * AutomaticFullscreen permissions on a managed/kiosk device.
  *
  * @param {IStore} store - The redux store.
  * @param {string} id - The window id.
- * @param {ISecondScreenSource} source - What to render.
  * @param {number} screenId - Optional target screen index.
  * @returns {Promise<void>}
  */
-export async function openOrUpdateSecondScreen(
-        store: IStore, id: string, source: ISecondScreenSource, screenId?: number): Promise<void> {
+export async function openOrUpdateSecondScreen(store: IStore, id: string, screenId?: number): Promise<void> {
     if (!isSecondScreenEnabled(store.getState())) {
         APP.API?.notifySecondScreenError?.({ id, error: 'second-screen-disabled' });
 
@@ -307,15 +402,30 @@ export async function openOrUpdateSecondScreen(
 
     const existing = windows.get(id);
 
-    if (existing && !existing.win.closed) {
-        existing.source = source;
-        existing.screenId = screenId;
-        applySource(store, id);
+    if (existing) {
+        if (!existing.win.closed) {
+            applySource(store, id);
+
+            return;
+        }
+
+        // The window was closed without us being notified; purge the stale entry (stopping its
+        // tracks) before reopening, so no handle to a closed window is retained.
+        teardown(id, false);
+    }
+
+    let features;
+
+    try {
+        features = await computeFeatures(screenId);
+    } catch (e) {
+        logger.warn(`Window Management API unavailable; cannot place second-screen window "${id}"`, e);
+        APP.API?.notifySecondScreenError?.({ id, error: 'window-management-unavailable' });
+        store.dispatch(removeSecondScreen(id));
 
         return;
     }
 
-    const features = await computeFeatures(screenId);
     const win = window.open('', `jitsiSecondScreen_${id}`, features);
 
     if (!win) {
@@ -326,7 +436,7 @@ export async function openOrUpdateSecondScreen(
         return;
     }
 
-    const entry: IWindowEntry = { win, source, screenId, video: buildWindow(win) };
+    const entry: IWindowEntry = { win, video: buildWindow(win) };
 
     windows.set(id, entry);
     win.addEventListener('pagehide', () => handleWindowClosed(store, id), { once: true });

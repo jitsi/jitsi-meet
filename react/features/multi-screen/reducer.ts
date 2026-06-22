@@ -6,8 +6,13 @@ import { ISecondScreenConfig } from './types';
 export interface IMultiScreenState {
 
     /**
-     * The configured second-screen windows, keyed by window id. Reflects what
-     * the embedder requested; the middleware reconciles the real windows to it.
+     * The configured second-screen windows, keyed by window id. This is the
+     * single source of truth for which windows exist and what each renders
+     * (source + target screen); the middleware reconciles the live windows to
+     * it. The non-serializable live handles (the {@code Window}, its
+     * {@code <video>} and cloned tracks) are held in a module-scoped map in
+     * {@code functions.web.ts}, keyed by the same id — it duplicates none of the
+     * configuration kept here.
      */
     screens: { [id: string]: ISecondScreenConfig; };
 }

@@ -1,3 +1,4 @@
+import { BrowserDetection } from '@jitsi/js-utils/browser-detection';
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import EventEmitter from 'events';
 
@@ -366,7 +367,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         const frameName = `jitsiConferenceFrame${id}`;
 
         this._frame = document.createElement('iframe');
-        this._frame.allow = [
+
+        const allow = [
             'autoplay',
             'camera',
             'clipboard-write',
@@ -376,13 +378,19 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             'hid',
             'microphone',
             'screen-wake-lock',
-            'speaker-selection',
+            'speaker-selection'
+        ];
 
-            // Needed by the multi-screen feature (`setSecondScreen`) to enumerate displays and place
-            // a window on a second screen. Only delegates the capability; the actual permission is
-            // still user/policy-gated (granted on managed/kiosk devices).
-            'window-management'
-        ].join('; ');
+        // Needed by the multi-screen feature (`setSecondScreen`) to enumerate displays and place
+        // a window on a second screen. Only delegates the capability; the actual permission is
+        // still user/policy-gated (granted on managed/kiosk devices). Gated to Chromium engines
+        // because `window-management` is Chromium-only and the directive logs a console warning on
+        // browsers that do not recognize it.
+        if (new BrowserDetection().isChromiumBased()) {
+            allow.push('window-management');
+        }
+
+        this._frame.allow = allow.join('; ');
         this._frame.name = frameName;
         this._frame.id = frameName;
         this._setSize(height, width);

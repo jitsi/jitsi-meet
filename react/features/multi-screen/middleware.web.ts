@@ -21,7 +21,7 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
     case SET_SECOND_SCREEN: {
         const result = next(action);
 
-        openOrUpdateSecondScreen(store, action.id, action.source, action.screenId)
+        openOrUpdateSecondScreen(store, action.id, action.screenId)
             .catch(e => logger.error('Failed to open second screen', e));
 
         return result;
@@ -42,7 +42,9 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
     }
     case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
-        closeAllSecondScreens();
+
+        // Resetting closes every second-screen window (via the RESET_SECOND_SCREENS
+        // case above), so there is no need to close them explicitly here.
         store.dispatch(resetSecondScreens());
         break;
     }
