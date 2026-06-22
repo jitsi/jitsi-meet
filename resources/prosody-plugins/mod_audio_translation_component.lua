@@ -30,7 +30,7 @@
 --  4. Each entry is validated: senderId is 8 hex digits and a current occupant,
 --     language is alphabetical and at most 20 characters (or "" to remove).
 --  5. A receiver may hold at most audio_translation_max_subscriptions distinct
---     subscriptions (default 20).
+--     subscriptions (unlimited by default; set the option to enforce a cap).
 --
 -- ── Aggregate map (component → jicofo) ───────────────────────────────────────
 -- Whenever the set of subscriptions changes, a debounced task recomputes the
@@ -88,12 +88,13 @@ if not main_virtual_host then
     return;
 end
 
-local max_subscriptions = module:get_option_number('audio_translation_max_subscriptions', 20);
+-- Maximum distinct subscriptions a single receiver may hold. Unlimited unless the option is set.
+local max_subscriptions = module:get_option_number('audio_translation_max_subscriptions');
 -- Coalesce bursts of subscription changes into a single metadata update.
 local debounce_interval = module:get_option_number('audio_translation_debounce_interval', 0.5);
 
-module:log('info', 'Starting audio_translation for %s (max_subscriptions=%d, debounce=%ss)',
-    muc_component_host, max_subscriptions, tostring(debounce_interval));
+module:log('info', 'Starting audio_translation for %s (max_subscriptions=%s, debounce=%ss)',
+    muc_component_host, max_subscriptions and tostring(max_subscriptions) or 'unlimited', tostring(debounce_interval));
 
 local main_muc_module;
 
@@ -192,7 +193,7 @@ local function apply_delta(room, receiver_id, delta)
         count = count + 1;
     end
 
-    if count > max_subscriptions then
+    if max_subscriptions and count > max_subscriptions then
         return false, 'cancel', 'policy-violation';
     end
 
