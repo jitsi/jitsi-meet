@@ -112,6 +112,7 @@ describe('Connectivity - JVB + TURN', () => {
 
 describe('Connectivity - P2P + TURN', () => {
     let p1: Participant, p2: Participant;
+    let t1: Record<string, any> | null, t2: Record<string, any> | null;
 
     before(async function() {
         if (!expectations.connectivity.p2p.turn) {
@@ -128,11 +129,19 @@ describe('Connectivity - P2P + TURN', () => {
         });
         await waitForP2P([ p1, p2 ]);
         await waitForMedia([ p1, p2 ]);
+        [ t1, t2 ] = await getPairs([ p1, p2 ], true);
+        console.log('p1 active P2P pair:', JSON.stringify(t1));
+        console.log('p2 active P2P pair:', JSON.stringify(t2));
     });
 
     it('is P2P active', async () => assertP2PActive([ p1, p2 ], true));
 
-    it('uses TURN', async () => assertTurn([ p1, p2 ], true, true));
+    it('uses TURN', async () => {
+        // Check the candidate type rather than the URL: Firefox does not populate the `url` field on candidate
+        // stats, while `candidateType: 'relay'` (only ever produced by a TURN allocation) is set by both browsers.
+        expect(t1?.localCandidateType).toBe('relay');
+        expect(t2?.localCandidateType).toBe('relay');
+    });
 });
 
 async function joinParticipants(configOverwrite: object): Promise<[ Participant, Participant ]> {
@@ -165,8 +174,10 @@ async function assertP2PActive(participants: Participant[], expected: boolean): 
 }
 
 /**
- * Returns the active (currently nominated) candidate pair stats from the RTCPeerConnection for the given session.
- * The cached transport array in getStats() accumulates all pairs ever used, so we query the PC directly instead.
+ * Returns the active candidate pair stats from the RTCPeerConnection for the given session. The active pair is
+ * resolved from the transport's `selectedCandidatePairId` (falling back to the highest-traffic nominated/succeeded
+ * pair), since the cached transport array in getStats() accumulates all pairs ever used. Right after ICE connects the
+ * selected pair can briefly report `state: 'in-progress'`, so we poll getStats() until an active pair is available.
  */
 async function getActiveCandidatePair(participant: Participant, p2p: boolean): Promise<Record<string, any> | null> {
     return participant.execute(async (isP2P: boolean) => {
@@ -178,41 +189,54 @@ async function getActiveCandidatePair(participant: Participant, p2p: boolean): P
             return null;
         }
 
-        const stats = await pc.getStats();
-        let activePair: RTCIceCandidatePairStats | null = null;
-        const candidates: Map<string, any> = new Map();
+        const deadline = performance.now() + 5000;
 
-        stats.forEach((report: any) => {
-            if (report.type === 'local-candidate' || report.type === 'remote-candidate') {
-                candidates.set(report.id, report);
-            }
-        });
-        stats.forEach((report: any) => {
-            if (report.type === 'candidate-pair' && report.nominated && report.state === 'succeeded') {
-                if (!activePair || report.bytesSent > (activePair as any).bytesSent) {
-                    activePair = report;
+        do {
+            // eslint-disable-next-line no-await-in-loop
+            const stats = await pc.getStats();
+            const candidates: Map<string, any> = new Map();
+            const succeededPairs: any[] = [];
+            let transport: any = null;
+
+            stats.forEach((report: any) => {
+                if (report.type === 'local-candidate' || report.type === 'remote-candidate') {
+                    candidates.set(report.id, report);
+                } else if (report.type === 'transport') {
+                    transport = report;
+                } else if (report.type === 'candidate-pair' && report.nominated && report.state === 'succeeded') {
+                    succeededPairs.push(report);
                 }
+            });
+
+            // Prefer the transport's selected pair; fall back to the highest-traffic nominated/succeeded pair.
+            const selectedId = transport?.selectedCandidatePairId;
+            const activePair = (selectedId && stats.get(selectedId))
+                || succeededPairs.sort((a, b) => b.bytesSent - a.bytesSent)[0];
+
+            if (activePair) {
+                const local = candidates.get(activePair.localCandidateId);
+                const remote = candidates.get(activePair.remoteCandidateId);
+                const localIp = local?.ip ?? local?.address;
+                const remoteIp = remote?.ip ?? remote?.address;
+
+                return {
+                    localip: `${localIp}:${local?.port}`,
+                    ip: `${remoteIp}:${remote?.port}`,
+                    localCandidateType: local?.candidateType,
+                    localCandidateUrl: local?.url,
+                    remoteCandidateType: remote?.candidateType,
+                    type: remote?.protocol,
+                    rtt: activePair.currentRoundTripTime * 1000
+                };
             }
-        });
 
-        if (!activePair) {
-            return null;
-        }
+            // eslint-disable-next-line no-await-in-loop
+            await new Promise(resolve => {
+                setTimeout(resolve, 200);
+            });
+        } while (performance.now() < deadline);
 
-        const local = candidates.get((activePair as any).localCandidateId);
-        const remote = candidates.get((activePair as any).remoteCandidateId);
-        const localIp = local?.ip ?? local?.address;
-        const remoteIp = remote?.ip ?? remote?.address;
-
-        return {
-            localip: `${localIp}:${local?.port}`,
-            ip: `${remoteIp}:${remote?.port}`,
-            localCandidateType: local?.candidateType,
-            localCandidateUrl: local?.url,
-            remoteCandidateType: remote?.candidateType,
-            type: remote?.protocol,
-            rtt: (activePair as any).currentRoundTripTime * 1000
-        };
+        return null;
     }, p2p);
 }
 
