@@ -533,6 +533,33 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a muc#admin set IQ carrying a single <item> with the given
+         * attributes and resolves with the server's IQ response. Use to attempt
+         * a kick (role='none'), ban (affiliation='outcast'), or any other
+         * role/affiliation change on an occupant.
+         *
+         * Normally the caller must be a room moderator/owner, but hooks that run
+         * before Prosody's permission check (e.g. the set admin filtering in
+         * mod_muc_meeting_id) may reject the request regardless of privilege.
+         *
+         * @param {string} roomJid    e.g. 'room@conference.localhost'
+         * @param {object} itemAttrs  attributes for the <item>, e.g.
+         *                            { nick: 'focus', role: 'none' } or
+         *                            { jid: 'focus@auth.localhost', affiliation: 'outcast' }
+         */
+        sendMucAdmin(roomJid, itemAttrs) {
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'set',
+                    to: roomJid,
+                    id: `admin-${++_counter}` },
+                    xml('query', { xmlns: 'http://jabber.org/protocol/muc#admin' },
+                        xml('item', itemAttrs)
+                    )
+                )
+            );
+        },
+
+        /**
          * Destroys a MUC room. The client must be the room owner.
          * Resolves when the server acknowledges the destroy IQ.
          *
