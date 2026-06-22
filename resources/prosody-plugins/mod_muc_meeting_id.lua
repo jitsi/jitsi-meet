@@ -187,6 +187,53 @@ end
 
 module:hook('jicofo-unlock-room', handle_jicofo_unlock);
 
+-- Prevents some participant from being modified in any way through a
+-- muc#admin set IQ (kick, ban, role/affiliation change, ...). This runs at a high
+-- priority (10) so it precedes prosody's own admin-query handler (default priority
+-- -2) and any other module hooks (e.g. allowners at 5). There is no legitimate
+-- reason for a client/moderator to target certain participants, so any such item is rejected.
+local function filter_admin_set(event)
+    local origin, stanza = event.origin, event.stanza;
+    local room = get_room_from_jid(jid.bare(stanza.attr.to));
+
+    if not room then
+        return;
+    end
+
+    local query = stanza.tags[1];
+    if not query then
+        return;
+    end
+
+    for item in query:childtags('item') do
+        local target_nick;
+
+        if item.attr.nick then
+            -- role changes target the occupant nick
+            target_nick = room.jid .. '/' .. item.attr.nick;
+        elseif item.attr.jid then
+            -- affiliation changes target the real jid, resolve the occupant
+            local target_bare_jid = jid.bare(item.attr.jid);
+            for _, occupant in room:each_occupant() do
+                if occupant.bare_jid == target_bare_jid then
+                    target_nick = occupant.nick;
+                    break;
+                end
+            end
+        end
+
+        -- block any admin operation on that target
+        if target_nick and is_focus(target_nick) then
+            module:log('warn', 'Blocking attempt to modify %s in room %s', target_nick,room.jid);
+            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed'));
+            return true;
+        end
+    end
+end
+
+module:hook('iq-set/bare/http://jabber.org/protocol/muc#admin:query', filter_admin_set, 10);
+module:hook('iq-set/host/http://jabber.org/protocol/muc#admin:query', filter_admin_set, 10);
+
 -- make sure we remove nick if someone is sending it with a message to protect
 -- forgery of display name
 module:hook("muc-occupant-groupchat", function(event)
