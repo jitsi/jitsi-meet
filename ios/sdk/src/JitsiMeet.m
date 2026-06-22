@@ -172,6 +172,11 @@
     [_reactNativeFactory.rootViewFactory.bridge invalidate];
     _reactNativeFactory.rootViewFactory.bridge = nil;
     _reactNativeFactory.bridge = nil;
+
+    // Release the factory; otherwise it keeps this runtime's RuntimeScheduler alive
+    // past teardown, to be freed on the next join after the runtime is gone.
+    _reactNativeFactory = nil;
+    _reactFactoryDelegate = nil;
 }
 
 - (JitsiMeetConferenceOptions *)getInitialConferenceOptions {
