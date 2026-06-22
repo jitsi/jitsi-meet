@@ -1329,6 +1329,10 @@
     "termsView": {
         "title": "Nutzungsbedingungen"
     },
+    "timeTimer": {
+        "endedOver": "Sie sind {{time}} über der Zeit.",
+        "endedTitle": "Zeit abgelaufen"
+    },
     "toggleTopPanelLabel": "Obere Leiste ein-/ausschalten",
     "toolbar": {
         "Settings": "Einstellungen",
