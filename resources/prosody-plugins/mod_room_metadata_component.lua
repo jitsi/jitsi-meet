@@ -74,7 +74,7 @@ local table_equals = util.table_equals;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local get_occupant_by_real_jid = util.get_occupant_by_real_jid;
 
-local dt = require "prosody.util.datetime";
+local dt = require "util.datetime";
 local ext_services = module:depends("external_services");
 local get_services = ext_services.get_services;
 
