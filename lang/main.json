@@ -42,6 +42,12 @@
     "audioOnly": {
         "audioOnly": "Low bandwidth"
     },
+    "audioTranslation": {
+        "errorForbidden": "You don't have permission to use audio translation.",
+        "errorGeneric": "Couldn't enable audio translation. Please try again.",
+        "errorLimitReached": "Couldn't translate everyone at once. Turn on translation for individual participants instead.",
+        "errorSpeakerUnavailable": "Can't translate this participant — they're no longer in the meeting."
+    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "e.g. 10000000 for 10 Mbps",
         "assumedBandwidthBpsWarning": "Higher values might cause network issues.",

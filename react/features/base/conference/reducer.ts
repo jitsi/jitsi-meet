@@ -89,6 +89,7 @@ export interface IJitsiConference {
     avModerationApprove: Function;
     avModerationReject: Function;
     callUUID?: string;
+    clearTranslation: () => void;
     createVideoSIPGWSession: Function;
     dial: Function;
     disableAVModeration: Function;

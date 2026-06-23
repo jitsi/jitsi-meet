@@ -1,4 +1,10 @@
 /**
+ * The type of (redux) action which clears all AI audio translation state (the default
+ * language and every per-participant override), e.g. after the bridge rejects a request.
+ */
+export const CLEAR_AUDIO_TRANSLATION = 'CLEAR_AUDIO_TRANSLATION';
+
+/**
  * The type of (redux) action which sets the default AI audio translation target
  * language for every speaker, or null when translation is turned off.
  */

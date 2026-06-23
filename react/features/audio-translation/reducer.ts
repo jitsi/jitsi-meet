@@ -1,6 +1,10 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
-import { SET_AUDIO_TRANSLATION_LANGUAGE, SET_PARTICIPANT_AUDIO_TRANSLATION_LANGUAGE } from './actionTypes';
+import {
+    CLEAR_AUDIO_TRANSLATION,
+    SET_AUDIO_TRANSLATION_LANGUAGE,
+    SET_PARTICIPANT_AUDIO_TRANSLATION_LANGUAGE
+} from './actionTypes';
 
 /**
  * The redux state of the audio-translation feature.
@@ -28,6 +32,8 @@ ReducerRegistry.register<IAudioTranslationState>(
     'features/audio-translation',
     (state = DEFAULT_STATE, action): IAudioTranslationState => {
         switch (action.type) {
+        case CLEAR_AUDIO_TRANSLATION:
+            return DEFAULT_STATE;
         case SET_AUDIO_TRANSLATION_LANGUAGE:
             return {
                 ...state,

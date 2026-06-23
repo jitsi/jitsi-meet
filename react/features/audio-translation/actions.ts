@@ -1,4 +1,22 @@
-import { SET_AUDIO_TRANSLATION_LANGUAGE, SET_PARTICIPANT_AUDIO_TRANSLATION_LANGUAGE } from './actionTypes';
+import {
+    CLEAR_AUDIO_TRANSLATION,
+    SET_AUDIO_TRANSLATION_LANGUAGE,
+    SET_PARTICIPANT_AUDIO_TRANSLATION_LANGUAGE
+} from './actionTypes';
+
+/**
+ * Clears all AI audio translation state — the default language and every per-participant
+ * override. Used to reset the feature, e.g. when the bridge rejects a translation request.
+ *
+ * @returns {{
+ *     type: string
+ * }}
+ */
+export function clearAudioTranslation() {
+    return {
+        type: CLEAR_AUDIO_TRANSLATION
+    };
+}
 
 /**
  * Sets the default target language for AI audio translation. The bridge is asked
