@@ -153,9 +153,8 @@ export interface IProps extends WithTranslation {
     navigation: any;
 
     /**
-     * Whether the record audio / video option is enabled by default.
-     * Optional — when omitted the dialog derives its initial state from the
-     * currently running services (_recordingRunning / _transcriptionRunning).
+     * Pre-selects the audio/video recording toggle when no session is active.
+     * Used by the nudge flow to open the dialog with recording already checked.
      */
     recordAudioAndVideo?: boolean;
 }

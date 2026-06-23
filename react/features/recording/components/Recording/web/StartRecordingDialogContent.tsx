@@ -90,10 +90,9 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
             );
         }
 
-        // Transcription is running but recording has not started yet.
-        const transcriptionRunning = Boolean(_transcriptionRunning) && !recordingRunning;
+        const isTranscriptionOnlySession = Boolean(_transcriptionRunning) && !recordingRunning;
 
-        if (transcriptionRunning) {
+        if (isTranscriptionOnlySession) {
             // Transcription-only session: show the share-link toggle and
             // interactive service toggles so the user can start recording
             // and/or stop transcription independently.
@@ -176,7 +175,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         return (
             <>
                 <div
-                    className = 'recording-header'
+                    className = 'recording-header space-top'
                     onClick = { this._onToggleShowOptions }>
                     <label className = 'recording-title-no-space'>
                         {t('recording.showAdvancedOptions')}

@@ -39,7 +39,6 @@ import { isRecorderTranscriptionsRunning, isTranscribing } from '../transcribing
 
 import { RECORDING_SESSION_UPDATED, START_LOCAL_RECORDING, STOP_LOCAL_RECORDING } from './actionTypes';
 import {
-    INudge,
     clearRecordingSessions,
     hidePendingRecordingNotification,
     markConsentRequested,
@@ -75,25 +74,8 @@ import {
     unregisterRecordingAudioFiles
 } from './functions';
 import logger from './logger';
+import { getNudge } from './nudge';
 import { ISessionData } from './reducer';
-
-type NudgeProvider = (
-    scenario: 'recording' | 'transcription',
-    dispatch: IStore['dispatch']
-) => INudge | null;
-
-let _nudgeProvider: NudgeProvider | null = null;
-
-/**
- * Registers a platform-specific provider for nudge notification actions.
- * Called by platform-specific code (nudge.web.ts / nudge.native.ts) at startup.
- *
- * @param {NudgeProvider} fn - Provider function.
- * @returns {void}
- */
-export function registerNudgeProvider(fn: NudgeProvider): void {
-    _nudgeProvider = fn;
-}
 
 /**
  * Evaluates whether all intended services (recording and/or transcription) have
@@ -187,11 +169,11 @@ export function maybeNotifyRecordingStart(dispatch: IStore['dispatch'], getState
 
     // Nudge when only one service was just started AND the other is not already running.
     // Only moderators can start the complementary service, so skip the nudge for non-mods.
-    const nudgeNeeded = Boolean(_nudgeProvider) && isLocalParticipantModerator(state)
+    const nudgeNeeded = isLocalParticipantModerator(state)
         && (wantsRecording !== wantsTranscription)
         && (wantsRecording ? !transcriptionOn : !recordingOn);
-    const nudge = nudgeNeeded && _nudgeProvider
-        ? _nudgeProvider(wantsRecording ? 'recording' : 'transcription', dispatch)
+    const nudge = nudgeNeeded
+        ? getNudge(wantsRecording ? 'recording' : 'transcription', dispatch)
         : null;
 
     if (recordingOn && fileSession?.initiator && fileSession.id) {

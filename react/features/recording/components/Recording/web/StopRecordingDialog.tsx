@@ -23,7 +23,7 @@ class StopRecordingDialog extends AbstractStopRecordingDialog<IProps> {
      * @returns {ReactElement}
      */
     override render() {
-        const { localRecordingVideoStop, stopMode = 'recording', t } = this.props;
+        const { localRecordingVideoStop, stopMode, t } = this.props;
 
         const titleKey = stopMode === 'transcription' ? 'dialog.stopTranscription' : 'dialog.recording';
         const bodyKey = stopMode === 'transcription'

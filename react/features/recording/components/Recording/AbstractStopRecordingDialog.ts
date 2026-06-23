@@ -63,12 +63,11 @@ export interface IProps extends WithTranslation {
     localRecordingVideoStop?: boolean;
 
     /**
-     * Controls which service is stopped. Defaults to 'recording' for
-     * backwards compatibility. Use 'transcription' when opening from the
-     * transcription button to stop only transcription and leave recording
+     * Controls which service is stopped: 'recording' stops the file recording
+     * session, 'transcription' stops only transcription and leaves recording
      * running.
      */
-    stopMode?: 'recording' | 'transcription';
+    stopMode: 'recording' | 'transcription';
 }
 
 /**
@@ -110,7 +109,7 @@ export default class AbstractStopRecordingDialog<P extends IProps>
             _transcriptionRunning,
             dispatch,
             localRecordingVideoStop,
-            stopMode = 'recording'
+            stopMode
         } = this.props;
 
         const stoppingRecording = stopMode === 'recording';
