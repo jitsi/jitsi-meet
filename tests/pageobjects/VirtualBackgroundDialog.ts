@@ -40,9 +40,13 @@ export default class VirtualBackgroundDialog extends BaseDialog {
 
         await el.waitForClickable({ timeout: 3000, timeoutMsg: `${label} thumbnail not clickable` });
         await el.click();
+
+        // The preview applies the selected effect on every change, which loads the segmentation
+        // model/wasm and saturates the main thread. During rapid switching this can delay the
+        // aria-checked re-render by several seconds, so allow a generous timeout here.
         await this.participant.driver.waitUntil(
             async () => (await el.getAttribute('aria-checked')) === 'true',
-            { timeout: 2000, timeoutMsg: `${label} thumbnail did not become checked after click` }
+            { timeout: 5000, timeoutMsg: `${label} thumbnail did not become checked after click` }
         );
     }
 
