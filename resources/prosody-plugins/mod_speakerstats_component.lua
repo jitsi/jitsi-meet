@@ -19,8 +19,8 @@ local st = require "util.stanza";
 local socket = require "socket";
 local json = require 'cjson.safe';
 local jid_split = require 'util.jid'.split;
-local queue = require "prosody.util.queue";
-local array = require "prosody.util.array";
+local queue = require "util.queue";
+local array = require "util.array";
 
 -- we use async to detect Prosody 0.10 and earlier
 local have_async = pcall(require, "util.async");
