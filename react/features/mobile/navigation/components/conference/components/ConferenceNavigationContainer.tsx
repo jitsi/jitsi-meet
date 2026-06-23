@@ -28,9 +28,9 @@ import AddPeopleDialog
 import ParticipantsPane from '../../../../../participants-pane/components/native/ParticipantsPane';
 // @ts-ignore
 import StartLiveStreamDialog from '../../../../../recording/components/LiveStream/native/StartLiveStreamDialog';
-import StartRecordingDialog
+import RecordingTranscriptionDialog
 // @ts-ignore
-    from '../../../../../recording/components/Recording/native/StartRecordingDialog';
+    from '../../../../../recording/components/Recording/native/RecordingTranscriptionDialog';
 import SalesforceLinkDialog
 // @ts-ignore
     from '../../../../../salesforce/components/native/SalesforceLinkDialog';
@@ -147,11 +147,11 @@ const ConferenceNavigationContainer = () => {
                         title: t('security.title')
                     }} />
                 <ConferenceStack.Screen
-                    component = { StartRecordingDialog }
+                    component = { RecordingTranscriptionDialog }
                     name = { screen.conference.recording }
                     options = {{
                         ...recordingScreenOptions,
-                        title: t('recording.title')
+                        title: t('dialog.recordAndTranscribe')
                     }} />
                 <ConferenceStack.Screen
                     component = { StartLiveStreamDialog }

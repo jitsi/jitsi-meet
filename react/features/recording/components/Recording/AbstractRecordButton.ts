@@ -3,10 +3,12 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
 import { IconRecord, IconStop } from '../../../base/icons/svg';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
+import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
-import { canStopRecording, getRecordButtonProps } from '../../functions';
+import { canStopRecording, getRecordButtonProps, supportsLocalRecording } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of
@@ -18,6 +20,11 @@ export interface IProps extends AbstractButtonProps {
      * True if the button needs to be disabled.
      */
     _disabled: boolean;
+
+    /**
+     * True if the local participant is a moderator.
+     */
+    _isModerator: boolean;
 
     /**
      * True if there is a running active recording, false otherwise.
@@ -34,12 +41,20 @@ export interface IProps extends AbstractButtonProps {
  * An abstract implementation of a button for starting and stopping recording.
  */
 export default class AbstractRecordButton<P extends IProps> extends AbstractButton<P> {
-    override accessibilityLabel = 'dialog.startRecording';
-    override toggledAccessibilityLabel = 'dialog.stopRecording';
+    override accessibilityLabel = 'toolbar.recordAndTranscribe';
+    override toggledAccessibilityLabel = 'toolbar.recordAndTranscribe';
     override icon = IconRecord;
-    override label = 'dialog.startRecording';
-    override toggledLabel = 'dialog.stopRecording';
+    override label = 'toolbar.recordAndTranscribe';
+    override toggledLabel = 'toolbar.recordAndTranscribe';
     override toggledIcon = IconStop;
+
+    override _getLabel() {
+        return this.props._isModerator ? super._getLabel() : 'toolbar.record';
+    }
+
+    override _getAccessibilityLabel() {
+        return this.props._isModerator ? super._getAccessibilityLabel() : 'toolbar.record';
+    }
 
     /**
      * Returns the tooltip that should be displayed when the button is disabled.
@@ -128,11 +143,16 @@ export function _mapStateToProps(state: IReduxState) {
         tooltip: _tooltip,
         visible
     } = getRecordButtonProps(state);
+    const { localRecording } = state['features/base/config'];
+    const localRecordingEnabled = !localRecording?.disable && supportsLocalRecording();
+    const isModerator = isLocalParticipantModerator(state);
+    const hasRecordingJwt = isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false);
 
     return {
         _disabled,
+        _isModerator: isModerator,
         _isRecordingRunning: canStopRecording(state),
         _tooltip,
-        visible
+        visible: visible && (isModerator || localRecordingEnabled || hasRecordingJwt)
     };
 }

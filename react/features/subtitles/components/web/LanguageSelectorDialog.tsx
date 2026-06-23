@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui';
 import { openDialog } from '../../../base/dialog/actions';
 import { translate, translateToHTML } from '../../../base/i18n/functions';
 import Dialog from '../../../base/ui/components/web/Dialog';
-import { StartRecordingDialog } from '../../../recording/components/Recording';
+import { RecordingTranscriptionDialog } from '../../../recording/components/Recording';
 import { openSettingsDialog } from '../../../settings/actions.web';
 import { SETTINGS_TABS } from '../../../settings/constants';
 import { toggleLanguageSelectorDialog } from '../../actions.web';
@@ -43,7 +43,7 @@ const LanguageSelectorDialog = (props: IAbstractLanguageSelectorDialogProps) => 
 
     const onSelected = useCallback((e: string) => {
         if (asyncTranscription) {
-            dispatch(openDialog('StartRecordingDialog', StartRecordingDialog, {
+            dispatch(openDialog('RecordingTranscriptionDialog', RecordingTranscriptionDialog, {
                 recordAudioAndVideo: false
             }));
         } else {
