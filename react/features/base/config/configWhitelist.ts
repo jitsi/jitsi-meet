@@ -219,6 +219,7 @@ export default [
     'replaceParticipant',
     'resolution',
     'screenshotCapture',
+    'secondScreen',
     'securityUi',
     'showChatPermissionsModeratorSetting',
     'speakerStats',

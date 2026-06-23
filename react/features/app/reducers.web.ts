@@ -6,6 +6,7 @@ import '../e2ee/reducer';
 import '../face-landmarks/reducer';
 import '../feedback/reducer';
 import '../keyboard-shortcuts/reducer';
+import '../multi-screen/reducer';
 import '../no-audio-signal/reducer';
 import '../noise-detection/reducer';
 import '../participants-pane/reducer';
