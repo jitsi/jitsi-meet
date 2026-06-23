@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import AudioTranslationDialog from '../../../audio-translation/components/web/AudioTranslationDialog';
 import { openDialog } from '../../../base/dialog/actions';
-import { IconSubtitles } from '../../../base/icons/svg';
+import { IconTranslate } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { IButtonProps } from '../../types';
@@ -31,7 +31,7 @@ const TranslateParticipantButton = ({ notifyClick, notifyMode, participantID }: 
     return (
         <ContextMenuItem
             accessibilityLabel = { t('toolbar.audioTranslation') }
-            icon = { IconSubtitles }
+            icon = { IconTranslate }
             onClick = { _onClick }
             text = { t('toolbar.audioTranslation') } />
     );

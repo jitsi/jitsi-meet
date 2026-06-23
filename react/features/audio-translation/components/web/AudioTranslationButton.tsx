@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { openDialog } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
-import { IconSubtitles } from '../../../base/icons/svg';
+import { IconTranslate } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
 import AudioTranslationDialog from './AudioTranslationDialog';
@@ -21,7 +21,7 @@ interface IProps extends AbstractButtonProps {
  */
 class AudioTranslationButton extends AbstractButton<IProps> {
     override accessibilityLabel = 'toolbar.accessibilityLabel.audioTranslation';
-    override icon = IconSubtitles;
+    override icon = IconTranslate;
     override label = 'toolbar.audioTranslation';
     override tooltip = 'toolbar.audioTranslation';
 
