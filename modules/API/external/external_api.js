@@ -1,4 +1,3 @@
-import { BrowserDetection } from '@jitsi/js-utils/browser-detection';
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import EventEmitter from 'events';
 
@@ -383,10 +382,11 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
         // Needed by the multi-screen feature (`setSecondScreen`) to enumerate displays and place
         // a window on a second screen. Only delegates the capability; the actual permission is
-        // still user/policy-gated (granted on managed/kiosk devices). Gated to Chromium engines
-        // because `window-management` is Chromium-only and the directive logs a console warning on
-        // browsers that do not recognize it.
-        if (new BrowserDetection().isChromiumBased()) {
+        // still user/policy-gated (granted on managed/kiosk devices). Gated to engines that expose
+        // the Window Management API (Chromium): elsewhere the directive is unrecognized and logs a
+        // console warning. Checking for the API directly avoids pulling a browser-detection library
+        // into this (size-limited) embedder bundle.
+        if ('getScreenDetails' in window) {
             allow.push('window-management');
         }
 

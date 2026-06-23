@@ -1,20 +1,25 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
-import { REMOVE_SECOND_SCREEN, RESET_SECOND_SCREENS, SET_SECOND_SCREEN } from './actionTypes';
-import { ISecondScreenConfig } from './types';
+import {
+    REMOVE_SECOND_SCREEN,
+    RESET_SECOND_SCREENS,
+    SET_SECOND_SCREEN,
+    SET_SECOND_SCREEN_WINDOW
+} from './actionTypes';
+import { ISecondScreenEntry } from './types';
 
 export interface IMultiScreenState {
 
     /**
-     * The configured second-screen windows, keyed by window id. This is the
-     * single source of truth for which windows exist and what each renders
-     * (source + target screen); the middleware reconciles the live windows to
-     * it. The non-serializable live handles (the {@code Window}, its
-     * {@code <video>} and cloned tracks) are held in a module-scoped map in
-     * {@code functions.web.ts}, keyed by the same id — it duplicates none of the
-     * configuration kept here.
+     * The second-screen windows, keyed by window id. This is the single source
+     * of truth for the feature: each entry holds both the configuration (source
+     * + target screen) and the live window handle. Redux state is never
+     * serialized for storage here, so the non-serializable handle (the
+     * {@code Window}, its {@code <video>} and tracks) lives on the entry too,
+     * rather than in a separate module-scoped map; the middleware reconciles the
+     * live windows to this state.
      */
-    screens: { [id: string]: ISecondScreenConfig; };
+    screens: { [id: string]: ISecondScreenEntry; };
 }
 
 const DEFAULT_STATE: IMultiScreenState = {
@@ -25,13 +30,34 @@ ReducerRegistry.register<IMultiScreenState>('features/multi-screen',
 (state = DEFAULT_STATE, action): IMultiScreenState => {
     switch (action.type) {
     case SET_SECOND_SCREEN:
+
+        // Merge so a re-configuration of an existing window keeps its live handle.
         return {
             ...state,
             screens: {
                 ...state.screens,
-                [action.id]: { source: action.source, screenId: action.screenId }
+                [action.id]: {
+                    ...state.screens[action.id],
+                    source: action.source,
+                    screenId: action.screenId
+                }
             }
         };
+    case SET_SECOND_SCREEN_WINDOW: {
+        const entry = state.screens[action.id];
+
+        if (!entry) {
+            return state;
+        }
+
+        return {
+            ...state,
+            screens: {
+                ...state.screens,
+                [action.id]: { ...entry, handle: action.handle }
+            }
+        };
+    }
     case REMOVE_SECOND_SCREEN: {
         const screens = { ...state.screens };
 

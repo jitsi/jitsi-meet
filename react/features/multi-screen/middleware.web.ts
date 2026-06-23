@@ -26,20 +26,18 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
 
         return result;
     }
-    case REMOVE_SECOND_SCREEN: {
-        const result = next(action);
+    case REMOVE_SECOND_SCREEN:
 
-        closeSecondScreen(action.id);
+        // Tear down before next(action) removes the entry, since the live handle is read from state.
+        closeSecondScreen(store, action.id);
 
-        return result;
-    }
-    case RESET_SECOND_SCREENS: {
-        const result = next(action);
+        return next(action);
+    case RESET_SECOND_SCREENS:
 
-        closeAllSecondScreens();
+        // Same ordering: close the windows while their entries are still in state.
+        closeAllSecondScreens(store);
 
-        return result;
-    }
+        return next(action);
     case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
 

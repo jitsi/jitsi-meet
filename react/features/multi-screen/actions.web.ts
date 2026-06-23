@@ -1,4 +1,9 @@
-import { REMOVE_SECOND_SCREEN, RESET_SECOND_SCREENS, SET_SECOND_SCREEN } from './actionTypes';
+import {
+    REMOVE_SECOND_SCREEN,
+    RESET_SECOND_SCREENS,
+    SET_SECOND_SCREEN,
+    SET_SECOND_SCREEN_WINDOW
+} from './actionTypes';
 import { ISecondScreenSource } from './types';
 
 /**
@@ -20,6 +25,24 @@ export function setSecondScreen(id: string, source?: ISecondScreenSource, screen
         id,
         source,
         screenId
+    };
+}
+
+/**
+ * Attaches the live window handle to a second-screen entry once the middleware
+ * has opened the window. The handle is typed opaquely ({@code unknown}) because
+ * it holds DOM/media objects the shared/native build cannot type; see
+ * {@code functions.web.ts}.
+ *
+ * @param {string} id - The window identifier.
+ * @param {unknown} handle - The live window handle.
+ * @returns {{ type: SET_SECOND_SCREEN_WINDOW, id: string, handle: unknown }}
+ */
+export function setSecondScreenWindow(id: string, handle: unknown) {
+    return {
+        type: SET_SECOND_SCREEN_WINDOW,
+        id,
+        handle
     };
 }
 

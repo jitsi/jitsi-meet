@@ -24,9 +24,20 @@ export interface ISecondScreenSource {
 }
 
 /**
- * The configuration of a single second-screen window.
+ * A single second-screen entry: its configuration plus its live window handle.
+ * This is the single source of truth for the feature; the middleware reconciles
+ * the real windows to it.
  */
-export interface ISecondScreenConfig {
+export interface ISecondScreenEntry {
+
+    /**
+     * The live, non-serializable window handle (the {@code Window}, its
+     * {@code <video>} and the cloned/avatar tracks), populated by the middleware
+     * once the window is open. Typed opaquely here because the shared (and
+     * React Native) build has no DOM lib; its real shape is {@code ISecondScreenHandle}
+     * in {@code functions.web.ts}, where it is read back with a cast.
+     */
+    handle?: unknown;
 
     /**
      * The (optional) index of the physical screen to place the window on, as

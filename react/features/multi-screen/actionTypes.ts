@@ -12,6 +12,19 @@
 export const SET_SECOND_SCREEN = 'SET_SECOND_SCREEN';
 
 /**
+ * The type of (redux) action which attaches the live window handle (the
+ * {@code Window}, its {@code <video>} and tracks) to a second-screen entry,
+ * once the middleware has opened the window.
+ *
+ * {
+ *     type: SET_SECOND_SCREEN_WINDOW,
+ *     id: string,
+ *     handle: unknown
+ * }
+ */
+export const SET_SECOND_SCREEN_WINDOW = 'SET_SECOND_SCREEN_WINDOW';
+
+/**
  * The type of (redux) action which closes a single second-screen window.
  *
  * {
