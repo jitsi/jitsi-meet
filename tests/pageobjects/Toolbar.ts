@@ -1,6 +1,7 @@
 import BasePageObject from './BasePageObject';
 
 const AUDIO_MUTE = 'Mute microphone';
+const RECORDING = 'Record & Transcribe';
 const AUDIO_UNMUTE = 'Unmute microphone';
 const CHAT = 'Open chat';
 const CLOSE_CHAT = 'Close chat';
@@ -49,6 +50,26 @@ export default class Toolbar extends BasePageObject {
      */
     get audioUnMuteBtn() {
         return this.getButton(AUDIO_UNMUTE);
+    }
+
+    /**
+     * Returns whether the recording button exists in the DOM for this participant.
+     *
+     * @returns {Promise<boolean>}
+     */
+    async hasRecordingButton(): Promise<boolean> {
+        return this.getButton(RECORDING).isExisting();
+    }
+
+    /**
+     * Clicks the recording button to open the recording/transcription dialog.
+     *
+     * @returns {Promise<void>}
+     */
+    async clickRecordingButton(): Promise<void> {
+        await this.participant.log('Clicking on: Recording Button');
+
+        return this.getButton(RECORDING).click();
     }
 
     /**

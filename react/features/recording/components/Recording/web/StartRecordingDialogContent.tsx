@@ -31,18 +31,79 @@ const EMPTY_FUNCTION = () => {
  */
 class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
     /**
-     * Renders the component.
+     * Renders the two service toggles (recording + transcription) directly,
+     * without the collapsible wrapper — used in manage mode when a session
+     * is already active.
      *
-     * @protected
      * @returns {React$Component}
      */
+    _renderSessionToggles() {
+        const { _isModerator, shouldRecordAudioAndVideo, shouldRecordTranscription, t } = this.props;
+
+        return (
+            <>
+                <div className = 'recording-header space-top'>
+                    <label
+                        className = 'recording-title'
+                        htmlFor = 'recording-switch-audio-video'>
+                        { t('recording.recordAudioAndVideo') }
+                    </label>
+                    <Switch
+                        checked = { shouldRecordAudioAndVideo }
+                        className = 'recording-switch'
+                        id = 'recording-switch-audio-video'
+                        onChange = { this._onRecordAudioAndVideoSwitchChange } />
+                </div>
+                { _isModerator && (
+                    <div className = 'recording-header space-top'>
+                        <label
+                            className = 'recording-title'
+                            htmlFor = 'recording-switch-transcription'>
+                            { t('recording.recordTranscription') }
+                        </label>
+                        <Switch
+                            checked = { shouldRecordTranscription }
+                            className = 'recording-switch'
+                            id = 'recording-switch-transcription'
+                            onChange = { this._onTranscriptionSwitchChange } />
+                    </div>
+                ) }
+            </>
+        );
+    }
+
     override render() {
         const {
             _canStartTranscribing,
             _localRecordingAvailable,
             _renderRecording,
-            integrationsEnabled
+            _transcriptionRunning,
+            integrationsEnabled,
+            recordingRunning
         } = this.props;
+
+        if (recordingRunning) {
+            return (
+                <Container className = 'recording-dialog'>
+                    { this._renderSessionToggles() }
+                </Container>
+            );
+        }
+
+        const isTranscriptionOnlySession = Boolean(_transcriptionRunning) && !recordingRunning;
+
+        if (isTranscriptionOnlySession) {
+            // Transcription-only session: show the share-link toggle and
+            // interactive service toggles so the user can start recording
+            // and/or stop transcription independently.
+            return (
+                <Container className = 'recording-dialog'>
+                    { this._renderFileSharingContent() }
+                    { this._renderSessionToggles() }
+                </Container>
+            );
+        }
+
         const hasRecordingService = _renderRecording || _localRecordingAvailable || integrationsEnabled;
         const transcriptionOnly = !hasRecordingService && _canStartTranscribing;
 
@@ -52,13 +113,13 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                     <>
                         { this._renderNoIntegrationsContent() }
                         { this._renderFileSharingContent() }
+                        { this._renderAdvancedOptions() }
                         { this._renderUploadToTheCloudInfo() }
                         { this._renderIntegrationsContent() }
                     </>
                 )}
                 { this._renderLocalRecordingContent() }
                 { transcriptionOnly && this._renderTranscriptionOnly() }
-                { hasRecordingService && <> { this._renderAdvancedOptions() } </> }
             </Container>
         );
     }
@@ -94,12 +155,14 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     _renderAdvancedOptions() {
-        if (!this._canStartTranscribing()) {
+        if (!this.props._isModerator) {
+            return null;
+        }
+        if (!this._canStartTranscribing() && !this.props.servicesRunning) {
             return null;
         }
         const { selectedRecordingService } = this.props;
         const validService = selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE
-            || selectedRecordingService === RECORDING_TYPES.LOCAL
             || !selectedRecordingService;
 
         if (!validService) {
@@ -111,9 +174,8 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
 
         return (
             <>
-                <div className = 'recording-header-line' />
                 <div
-                    className = 'recording-header'
+                    className = 'recording-header space-top'
                     onClick = { this._onToggleShowOptions }>
                     <label className = 'recording-title-no-space'>
                         {t('recording.showAdvancedOptions')}
@@ -175,6 +237,8 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
             isValidating,
             isVpaas,
             selectedRecordingService,
+            shouldRecordAudioAndVideo,
+            shouldRecordTranscription,
             t
         } = this.props;
 
@@ -182,9 +246,10 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
             = integrationsEnabled || _localRecordingAvailable
                 ? (
                     <Switch
-                        checked = { selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE }
+                        checked = { selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE
+                            && (shouldRecordAudioAndVideo || shouldRecordTranscription) }
                         className = 'recording-switch'
-                        disabled = { isValidating || !this.props.shouldRecordAudioAndVideo }
+                        disabled = { isValidating }
                         id = 'recording-switch-jitsi'
                         onChange = { this._onRecordingServiceSwitchChange } />
                 ) : null;
@@ -400,7 +465,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                     checked = { selectedRecordingService
                         === RECORDING_TYPES.DROPBOX }
                     className = 'recording-switch'
-                    disabled = { isValidating || !this.props.shouldRecordAudioAndVideo }
+                    disabled = { isValidating }
                     id = 'recording-switch-integration'
                     onChange = { this._onDropboxSwitchChange } />
             );
@@ -478,7 +543,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                             checked = { selectedRecordingService
                                 === RECORDING_TYPES.LOCAL }
                             className = 'recording-switch'
-                            disabled = { isValidating || !this.props.shouldRecordAudioAndVideo }
+                            disabled = { isValidating }
                             id = 'recording-switch-local'
                             onChange = { this._onLocalRecordingSwitchChange } />
                     </Container>
@@ -502,7 +567,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                                     <Switch
                                         checked = { Boolean(localRecordingOnlySelf) }
                                         className = 'recording-switch'
-                                        disabled = { isValidating || !this.props.shouldRecordAudioAndVideo }
+                                        disabled = { isValidating }
                                         id = 'recording-switch-myself'
                                         onChange = { onLocalRecordingSelfChange ?? EMPTY_FUNCTION } />
                                 </Container>

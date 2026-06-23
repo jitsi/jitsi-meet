@@ -26,13 +26,73 @@ import {
  */
 class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
     /**
+     * Renders the two service toggles (recording + transcription) directly,
+     * without the collapsible wrapper — used in manage mode when a session
+     * is already active.
+     *
+     * @returns {React$Component}
+     */
+    _renderSessionToggles() {
+        const {
+            _dialogStyles,
+            _styles: styles,
+            shouldRecordAudioAndVideo,
+            shouldRecordTranscription,
+            t
+        } = this.props;
+
+        return (
+            <>
+                <View
+                    key = 'audioVideoSetting'
+                    style = { styles.header }>
+                    <Text
+                        style = {{
+                            ..._dialogStyles.text,
+                            ...styles.title
+                        }}>
+                        { t('recording.recordAudioAndVideo') }
+                    </Text>
+                    <Switch
+                        checked = { shouldRecordAudioAndVideo }
+                        onChange = { this._onRecordAudioAndVideoSwitchChange }
+                        style = { styles.switch } />
+                </View>
+                <View
+                    key = 'transcriptionSetting'
+                    style = { styles.header }>
+                    <Text
+                        style = {{
+                            ..._dialogStyles.text,
+                            ...styles.title
+                        }}>
+                        { t('recording.recordTranscription') }
+                    </Text>
+                    <Switch
+                        checked = { shouldRecordTranscription }
+                        onChange = { this._onTranscriptionSwitchChange }
+                        style = { styles.switch } />
+                </View>
+            </>
+        );
+    }
+
+    /**
      * Renders the component.
      *
      * @protected
      * @returns {React$Component}
      */
     override render() {
-        const { _styles: styles } = this.props;
+        const { _styles: styles, servicesRunning } = this.props;
+
+        if (servicesRunning) {
+            return (
+                <View style = { styles.container }>
+                    { this._renderSessionToggles() }
+                </View>
+            );
+        }
 
         return (
             <View style = { styles.container }>
