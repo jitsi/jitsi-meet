@@ -18,6 +18,11 @@ export const SUPPORTED_TRANSLATION_LANGUAGES: Array<{ code: string; label: strin
 ];
 
 /**
+ * Full volume (0..1) a speaker's original audio is restored to once it is no longer ducked.
+ */
+export const DEFAULT_ORIGINAL_VOLUME = 1;
+
+/**
  * Volume (0..1) a speaker's original audio is ducked to while its translation plays.
  */
 export const DUCKED_ORIGINAL_VOLUME = 0.15;

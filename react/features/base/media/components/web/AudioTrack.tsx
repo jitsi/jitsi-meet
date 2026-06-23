@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
 import { IReduxState } from '../../../../app/types';
-import { DUCKED_ORIGINAL_VOLUME } from '../../../../audio-translation/constants';
+import { DEFAULT_ORIGINAL_VOLUME, DUCKED_ORIGINAL_VOLUME } from '../../../../audio-translation/constants';
 import { ITrack } from '../../../tracks/types';
 import logger from '../../logger';
 
@@ -336,6 +336,7 @@ class AudioTrack extends Component<IProps> {
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantsVolume } = state['features/filmstrip'];
     const { language: defaultLanguage, participantLanguages } = state['features/audio-translation'];
+    const audioTranslationEnabled = state['features/base/config'].audioTranslation?.enabled;
 
     let _volume: number | boolean | undefined = participantsVolume[ownProps.participantId];
 
@@ -350,6 +351,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     // Duck a speaker's original only while its translated counterpart ({source}.{language}) is present.
     const sourceName: string | undefined = ownProps.audioTrack?.jitsiTrack?.getSourceName?.();
 
+    let ducked = false;
+
     if (effectiveLanguage && typeof sourceName === 'string' && !sourceName.endsWith(`.${effectiveLanguage}`)) {
         const translatedSourceName = `${sourceName}.${effectiveLanguage}`;
         const hasTranslation = state['features/base/tracks'].some(
@@ -357,7 +360,15 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
         if (hasTranslation) {
             _volume = DUCKED_ORIGINAL_VOLUME;
+            ducked = true;
         }
+    }
+
+    // When the feature is enabled, a track may have been ducked to a non-default volume. Once it is no longer
+    // ducked and has no explicit per-participant volume, restore full volume — otherwise the audio element keeps
+    // the previously-applied ducked level, since AudioTrack only writes numeric volumes (undefined is ignored).
+    if (!ducked && audioTranslationEnabled && _volume === undefined) {
+        _volume = DEFAULT_ORIGINAL_VOLUME;
     }
 
     return {
