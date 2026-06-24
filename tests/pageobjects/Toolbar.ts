@@ -58,7 +58,16 @@ export default class Toolbar extends BasePageObject {
      * @returns {Promise<boolean>}
      */
     async hasRecordingButton(): Promise<boolean> {
-        return this.getButton(RECORDING).isExisting();
+        // The recording button lives in the overflow ("More actions") menu, so it is only in the
+        // DOM while that menu is open. isExisting() searches the whole DOM, so opening the menu
+        // first also covers the case where the button is promoted to the main toolbar.
+        await this.openOverflowMenu();
+
+        const exists = await this.getButton(RECORDING).isExisting();
+
+        await this.closeOverflowMenu();
+
+        return exists;
     }
 
     /**
@@ -67,9 +76,9 @@ export default class Toolbar extends BasePageObject {
      * @returns {Promise<void>}
      */
     async clickRecordingButton(): Promise<void> {
-        await this.participant.log('Clicking on: Recording Button');
-
-        return this.getButton(RECORDING).click();
+        // The recording button lives in the overflow ("More actions") menu; open it, click, close
+        // (matches clickSettings/clickSecurity — closeOverflowMenu is a no-op once the dialog opens).
+        return this.clickButtonInOverflowMenu(RECORDING);
     }
 
     /**

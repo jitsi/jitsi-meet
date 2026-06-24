@@ -11,7 +11,14 @@ setTestProperties(__filename, {
  * Joins a JaaS meeting as a moderator using the iFrame API wrapper.
  */
 async function joinAsModerator(): Promise<Participant> {
-    return joinJaasMuc({ iFrameApi: true, token: t({ moderator: true }) });
+    const p = await joinJaasMuc({ iFrameApi: true, token: t({ moderator: true }) });
+
+    // joinJaasMuc leaves the driver focused inside the Jitsi iframe, but the iFrame API
+    // (window.jitsiAPI) lives on the wrapper page. Switch to the main frame so executeCommand()
+    // works, matching the setup in recording.spec.ts / transcriptions.spec.ts.
+    await p.switchToMainFrame();
+
+    return p;
 }
 
 /**
@@ -384,6 +391,7 @@ describe('Recording button visibility', () => {
 
         expect(await p.getToolbar().hasRecordingButton()).toBe(true);
 
-        await p.getIframeAPI().executeCommand('hangup');
+        // This participant joined without the iFrame API, so hang up via the app, not window.jitsiAPI.
+        await p.hangup();
     });
 });
