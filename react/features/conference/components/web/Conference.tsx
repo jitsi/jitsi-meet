@@ -24,6 +24,7 @@ import CalleeInfoContainer from '../../../invite/components/callee-info/CalleeIn
 import LargeVideo from '../../../large-video/components/LargeVideo.web';
 import LobbyScreen from '../../../lobby/components/web/LobbyScreen';
 import { getIsLobbyVisible } from '../../../lobby/functions';
+import SecondScreenPortals from '../../../multi-screen/components/SecondScreenPortals';
 import { getOverlayToRender } from '../../../overlay/functions.web';
 import ParticipantsPane from '../../../participants-pane/components/web/ParticipantsPane';
 import Prejoin from '../../../prejoin/components/web/Prejoin';
@@ -311,6 +312,7 @@ class Conference extends AbstractConference<IProps, any> {
                         }
                     </div>
                     <AudioTracksContainer />
+                    <SecondScreenPortals />
                     { _showPrejoin || _showLobby || (
                         <>
                             <span

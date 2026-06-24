@@ -1,0 +1,12 @@
+/**
+ * Styles for the second-screen window content. Loaded into the main document and
+ * mirrored into each second-screen window by the stylesheet sync in
+ * functions.web.ts.
+ */
+
+/* The video leaf fills its container; object-fit defaults to contain so shared
+ * screens and slides are never cropped. */
+.second-screen-video {
+    display: block;
+    object-fit: contain;
+}

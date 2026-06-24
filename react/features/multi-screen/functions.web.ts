@@ -1,10 +1,9 @@
 import { IReduxState, IStore } from '../app/types';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../base/media/constants';
-import { getParticipantById, getParticipantDisplayName } from '../base/participants/functions';
+import { getParticipantById } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
 import { getTrackByMediaTypeAndParticipant, getVideoTrackByParticipant } from '../base/tracks/functions.any';
 import { getLargeVideoParticipant } from '../large-video/functions';
-import { renderAvatarOnCanvas } from '../pip/functions';
 
 import { removeSecondScreen, setSecondScreenWindow } from './actions.web';
 import logger from './logger';
@@ -14,75 +13,32 @@ import { ISecondScreenSource } from './types';
 // from the `@types/webscreens-window-placement` devDependency.
 
 /**
- * A second-screen window, constructed via {@code window.open} in the same
- * origin/process as the meeting so its {@code <video>} can render the meeting's
- * tracks by reference.
+ * The live, non-serializable handle backing a single second-screen window. It is
+ * stored on the redux entry (typed opaquely there as {@code unknown} because the
+ * shared/native build has no DOM lib) and read back with a cast. React renders the
+ * window's content into {@code root} via a portal, so the handle only needs to
+ * carry the window and its portal root; the rendered tracks/avatars are owned by
+ * the React tree and stopped on unmount.
  */
-type ISecondScreenWindow = Window & { MediaStream: typeof MediaStream; };
-
-/**
- * A canvas {@code captureStream} track exposes a non-standard {@code requestFrame}
- * used to push a single frame on demand.
- */
-type IFrameRequestingTrack = MediaStreamTrack & { requestFrame?: () => void; };
-
-/**
- * The live, non-serializable handles backing a single second-screen window. This
- * object is stored on the redux entry (typed opaquely there as {@code unknown}
- * because the shared/native build has no DOM lib) and mutated in place as the
- * rendered source changes — the same way the rest of the app keeps mutable
- * lib-jitsi-meet objects in redux.
- */
-interface ISecondScreenHandle {
+export interface ISecondScreenHandle {
 
     /**
-     * The off-screen canvas used to render a participant's avatar when their
-     * video is unavailable (created lazily, reused across redraws).
+     * Stops mirroring the main document's stylesheets into this window. Call on
+     * teardown so the observer does not outlive the window.
      */
-    avatarCanvas?: HTMLCanvasElement;
+    disconnectStyles?: () => void;
 
     /**
-     * The second window's {@code MediaStream} wrapping the avatar canvas track
-     * (what {@code video.srcObject} points at while the avatar is shown).
+     * The full-bleed root element in the second window that React portals the
+     * window's content into.
      */
-    avatarSrc?: MediaStream;
-
-    /**
-     * The avatar canvas {@code captureStream} track (kept to push frames and to
-     * stop it on teardown).
-     */
-    avatarTrack?: IFrameRequestingTrack;
-
-    /**
-     * The clone of the currently rendered meeting track (the meeting keeps its
-     * own copy; the clone is stopped when swapped out or on teardown).
-     */
-    clone?: MediaStreamTrack;
-
-    /**
-     * The {@code <video>} in the second window.
-     */
-    video: HTMLVideoElement;
+    root: HTMLElement;
 
     /**
      * The second-screen window itself.
      */
     win: Window;
 }
-
-/**
- * The avatar canvas is rendered at a modest 4:3 size and scaled up by the
- * full-bleed {@code <video>} (object-fit: contain) on the second screen.
- */
-const AVATAR_CANVAS_WIDTH = 640;
-const AVATAR_CANVAS_HEIGHT = 480;
-
-/**
- * Avatar colours, matched to the black second-screen window background.
- */
-const AVATAR_BACKGROUND = '#000';
-const AVATAR_TEXT_COLOR = '#fff';
-const AVATAR_FONT_FAMILY = 'Inter, sans-serif';
 
 /**
  * Returns the live window handle for a second screen, or {@code undefined} if
@@ -128,7 +84,7 @@ export function isSecondScreenEnabled(state: IReduxState): boolean {
  * @param {ISecondScreenSource} source - The source descriptor.
  * @returns {Object} The resolved native track (or {@code null}) and backing participant.
  */
-function resolveSource(state: IReduxState, source: ISecondScreenSource) {
+export function resolveSource(state: IReduxState, source: ISecondScreenSource) {
     const tracks = state['features/base/tracks'];
     let iTrack;
     let participant: IParticipant | undefined;
@@ -200,105 +156,84 @@ async function computeFeatures(screenId?: number): Promise<string> {
 }
 
 /**
- * Builds the (empty) second-screen document: a full-bleed video on black. Uses
- * element styles (not a stylesheet/inline script) to stay CSP-safe.
+ * Builds the (empty) second-screen document: a full-bleed root on black that
+ * React portals the window's content into. Uses element styles (not a
+ * stylesheet/inline script) to stay CSP-safe.
  *
  * @param {Window} win - The opened window.
- * @returns {HTMLVideoElement}
+ * @returns {HTMLElement}
  */
-function buildWindow(win: Window): HTMLVideoElement {
+function buildWindow(win: Window): HTMLElement {
     const doc = win.document;
 
     doc.title = 'Jitsi Meet';
     Object.assign(doc.documentElement.style, { height: '100%' });
     Object.assign(doc.body.style, { margin: '0', height: '100%', background: '#000', overflow: 'hidden' });
 
-    const video = doc.createElement('video');
+    const root = doc.createElement('div');
 
-    video.autoplay = true;
-    video.muted = true;
-    video.setAttribute('playsinline', '');
-    Object.assign(video.style, {
-        position: 'fixed', inset: '0', width: '100%', height: '100%', objectFit: 'contain', background: '#000'
+    Object.assign(root.style, { position: 'fixed', inset: '0', width: '100%', height: '100%' });
+    doc.body.appendChild(root);
+
+    return root;
+}
+
+/**
+ * Mirrors the main document's stylesheets into a second-screen window so the
+ * React components portaled into it are styled. Jitsi injects its CSS (the app
+ * bundle plus MUI/tss component styles) into the main document's {@code <head>};
+ * the popup is a separate document that does not inherit them. Links are copied
+ * once (re-cloning them would refetch the CSS); {@code <style>} tags are kept in
+ * sync via a {@code MutationObserver}, because MUI injects per-component styles
+ * into the main document on demand, even for components rendered in the popup.
+ *
+ * @param {Window} win - The second-screen window.
+ * @returns {Function} A function that stops the syncing; call it on teardown.
+ */
+function syncStyles(win: Window): () => void {
+    const head = win.document.head;
+
+    document.head.querySelectorAll('link[rel="stylesheet"]').forEach(node => {
+        const clone = node.cloneNode(true) as HTMLLinkElement;
+
+        // Resolve to an absolute URL so a root-relative href still loads in about:blank.
+        clone.href = (node as HTMLLinkElement).href;
+        head.appendChild(clone);
     });
-    doc.body.appendChild(video);
 
-    return video;
-}
+    const STYLE_MARK = 'data-second-screen-style';
+    const syncStyleTags = () => {
+        if (win.closed) {
+            return;
+        }
+        head.querySelectorAll(`style[${STYLE_MARK}]`).forEach(node => node.remove());
+        document.head.querySelectorAll('style').forEach(node => {
+            const clone = node.cloneNode(true) as HTMLStyleElement;
 
-/**
- * Renders a meeting track into a window's video by reference (cloning so the
- * meeting keeps its own copy), stopping any previously rendered clone.
- *
- * @param {ISecondScreenHandle} handle - The window handle.
- * @param {MediaStreamTrack} track - The track to render.
- * @returns {void}
- */
-function renderTrack(handle: ISecondScreenHandle, track: MediaStreamTrack) {
-    if (handle.clone) {
-        handle.clone.stop();
-        handle.clone = undefined;
-    }
-    const clone = track.clone();
+            clone.setAttribute(STYLE_MARK, '');
+            head.appendChild(clone);
+        });
+    };
 
-    handle.clone = clone;
-    handle.video.srcObject = new (handle.win as ISecondScreenWindow).MediaStream([ clone ]);
-}
+    syncStyleTags();
 
-/**
- * Renders a participant's avatar (image, initials, or default) into a window's
- * video as a fallback when there is no usable video track (e.g. the source muted
- * their camera). Reuses the PiP feature's canvas-avatar rendering and feeds it to
- * the window by reference, mirroring {@link renderTrack}.
- *
- * @param {IReduxState} state - The redux state.
- * @param {ISecondScreenHandle} handle - The window handle.
- * @param {IParticipant | undefined} participant - The participant whose avatar to render.
- * @returns {void}
- */
-function renderAvatar(state: IReduxState, handle: ISecondScreenHandle, participant: IParticipant | undefined) {
-    if (handle.clone) {
-        handle.clone.stop();
-        handle.clone = undefined;
-    }
+    let scheduled = false;
+    const observer = new MutationObserver(() => {
+        if (scheduled) {
+            return;
+        }
+        scheduled = true;
 
-    let canvas = handle.avatarCanvas;
+        // Coalesce bursts of style insertions into a single re-sync per frame.
+        requestAnimationFrame(() => {
+            scheduled = false;
+            syncStyleTags();
+        });
+    });
 
-    if (!canvas) {
-        canvas = document.createElement('canvas');
-        canvas.width = AVATAR_CANVAS_WIDTH;
-        canvas.height = AVATAR_CANVAS_HEIGHT;
+    observer.observe(document.head, { characterData: true, childList: true, subtree: true });
 
-        // captureStream(0): on-demand; we push a frame via requestFrame() after each draw.
-        const track = canvas.captureStream(0).getVideoTracks()[0] as IFrameRequestingTrack;
-
-        handle.avatarCanvas = canvas;
-        handle.avatarTrack = track;
-
-        // The track is created in this (meeting) document; wrap it in the second window's
-        // MediaStream so its <video> renders it by reference (same trick as renderTrack()).
-        handle.avatarSrc = new (handle.win as ISecondScreenWindow).MediaStream([ track ]);
-    }
-
-    if (handle.video.srcObject !== handle.avatarSrc) {
-        handle.video.srcObject = handle.avatarSrc ?? null;
-    }
-
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) {
-        return;
-    }
-
-    const displayName = participant?.id ? getParticipantDisplayName(state, participant.id) : '';
-    const customAvatarBackgrounds = state['features/dynamic-branding']?.avatarBackgrounds ?? [];
-
-    // Reuses the PiP feature's canvas-avatar rendering (image → initials → default icon).
-    renderAvatarOnCanvas(
-        canvas, ctx, participant, displayName, customAvatarBackgrounds,
-        null, AVATAR_BACKGROUND, AVATAR_FONT_FAMILY, AVATAR_TEXT_COLOR, AVATAR_TEXT_COLOR)
-        .then(() => handle.avatarTrack?.requestFrame?.())
-        .catch(e => logger.warn('Failed to render second-screen avatar', e));
+    return () => observer.disconnect();
 }
 
 /**
@@ -314,10 +249,10 @@ function notifySourceChanged(id: string, source: ISecondScreenSource, participan
 }
 
 /**
- * Resolves and renders the current source for a window, and notifies the
- * embedder. Reads the window's configuration and live handle from redux (the
- * single source of truth). Falls back to the participant's avatar when there is
- * no live video.
+ * Re-resolves a window's source and notifies the embedder of the participant now
+ * backing it. The actual rendering is performed by the React portal observing the
+ * same redux state ({@code SecondScreenView}); this only keeps the external-API
+ * {@code secondScreenSourceChanged} event in sync (e.g. on active-speaker change).
  *
  * @param {IStore} store - The redux store.
  * @param {string} id - The window id.
@@ -326,33 +261,26 @@ function notifySourceChanged(id: string, source: ISecondScreenSource, participan
 function applySource(store: IStore, id: string) {
     const state = store.getState();
     const entry = state['features/multi-screen'].screens[id];
-    const handle = getHandle(state, id);
 
-    if (!entry || !handle || handle.win.closed) {
+    if (!entry) {
         return;
     }
-    const { track, participant } = resolveSource(state, entry.source);
+    const { participant } = resolveSource(state, entry.source);
 
-    if (track) {
-        renderTrack(handle, track);
-    } else {
-        renderAvatar(state, handle, participant);
-    }
     notifySourceChanged(id, entry.source, participant?.id ?? null);
 }
 
 /**
- * Stops a handle's tracks and (optionally) closes its window. Pure cleanup of
- * the live objects; the redux entry is removed by the caller's action.
+ * Stops the handle's style syncing and closes its window if requested. The
+ * rendered tracks/avatars are owned by the React portal and stopped when it
+ * unmounts; the redux entry is removed by the caller's action.
  *
  * @param {ISecondScreenHandle} handle - The window handle.
- * @param {boolean} closeWindow - Whether to also close the OS window.
+ * @param {boolean} closeWindow - Whether to close the OS window.
  * @returns {void}
  */
 function teardownHandle(handle: ISecondScreenHandle, closeWindow: boolean) {
-    // MediaStreamTrack.stop() is infallible per spec, so no try/catch.
-    handle.clone?.stop();
-    handle.avatarTrack?.stop();
+    handle.disconnectStyles?.();
 
     if (closeWindow && !handle.win.closed) {
         handle.win.close();
@@ -394,15 +322,16 @@ export async function openOrUpdateSecondScreen(store: IStore, id: string, screen
 
     const existing = getHandle(store.getState(), id);
 
+    if (existing && !existing.win.closed) {
+        applySource(store, id);
+
+        return;
+    }
+
     if (existing) {
-        if (!existing.win.closed) {
-            applySource(store, id);
-
-            return;
-        }
-
-        // The window was closed without us being notified; stop its tracks before reopening
-        // (its handle is overwritten by the dispatch below), so nothing leaks.
+        // A previous window was closed without notifying us; stop syncing styles
+        // into it before its handle is overwritten below (React unmounts its
+        // portal content and stops the cloned track on its own).
         teardownHandle(existing, false);
     }
 
@@ -428,8 +357,9 @@ export async function openOrUpdateSecondScreen(store: IStore, id: string, screen
         return;
     }
 
-    const handle: ISecondScreenHandle = { win, video: buildWindow(win) };
+    const handle: ISecondScreenHandle = { win, root: buildWindow(win) };
 
+    handle.disconnectStyles = syncStyles(win);
     store.dispatch(setSecondScreenWindow(id, handle));
     win.addEventListener('pagehide', () => handleWindowClosed(store, id), { once: true });
 
