@@ -10,6 +10,7 @@ const DESKTOP = 'Start sharing your screen';
 const HANGUP = 'Leave the meeting';
 const OVERFLOW_MENU = 'More actions menu';
 const OVERFLOW = 'More actions';
+const CLOSE_OVERFLOW = 'Close more actions menu';
 const PARTICIPANTS = 'Open participants pane';
 const PROFILE = 'Edit your profile';
 const RAISE_HAND = 'Raise your hand';
@@ -386,7 +387,9 @@ export default class Toolbar extends BasePageObject {
             return;
         }
 
-        await this.clickOverflowButton();
+        // When the overflow menu is open the toggle button's aria-label changes from
+        // "More actions" to "Close more actions menu", so we cannot reuse clickOverflowButton here.
+        await this.getButton(CLOSE_OVERFLOW).click();
 
         await this.waitForOverFlowMenu(false);
     }

@@ -22,7 +22,16 @@ describe('Recording & Transcription dialog', () => {
             return;
         }
 
-        await ensureOneParticipant();
+        // Disable autoTranscribeOnRecord so the dialog opens with both toggles off. Otherwise the
+        // transcription toggle is pre-checked, which flips the OK ("Apply changes") button state the
+        // OK-button assertions below depend on.
+        await ensureOneParticipant({
+            configOverwrite: {
+                transcription: {
+                    autoTranscribeOnRecord: false
+                }
+            }
+        });
         expect(await ctx.p1.isModerator()).toBe(true);
     });
 
