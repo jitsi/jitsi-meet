@@ -115,7 +115,6 @@ describe('Recording & transcription nudge notifications', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
-            await p.getIframeAPI().executeCommand('hangup');
         }
     });
 
@@ -138,7 +137,6 @@ describe('Recording & transcription nudge notifications', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file', true);
-            await p.getIframeAPI().executeCommand('hangup');
         }
     });
 
@@ -175,7 +173,6 @@ describe('Recording & transcription nudge notifications', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
-            await p.getIframeAPI().executeCommand('hangup');
         }
     });
 });
@@ -209,7 +206,6 @@ describe('Recording & transcription dialog — manage mode', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
-            await p.getIframeAPI().executeCommand('hangup');
         }
     });
 
@@ -239,7 +235,6 @@ describe('Recording & transcription dialog — manage mode', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file', true);
-            await p.getIframeAPI().executeCommand('hangup');
         }
     });
 
@@ -276,7 +271,6 @@ describe('Recording & transcription dialog — manage mode', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
-            await p.getIframeAPI().executeCommand('hangup');
         }
     });
 
@@ -326,7 +320,6 @@ describe('Recording & transcription dialog — manage mode', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
-            await p.getIframeAPI().executeCommand('hangup');
         }
     });
 
@@ -374,7 +367,6 @@ describe('Recording & transcription dialog — manage mode', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file', true);
-            await p.getIframeAPI().executeCommand('hangup');
         }
     });
 });
