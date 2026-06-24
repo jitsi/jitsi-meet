@@ -111,7 +111,16 @@ describe('Recording & transcription nudge notifications', () => {
 
             const nudgeButton = p.driver.$('[data-testid="dialog.startTranscribing"]');
 
-            expect(await nudgeButton.isExisting()).toBe(true);
+            // When autoTranscribeOnRecord is enabled (the default, and JaaS enforces the transcription
+            // config server-side, so it can't be overridden here) starting recording also starts
+            // transcription. With both running there is nothing to nudge, so the "Start transcribing"
+            // action appears only when transcription did not start alongside recording. This mirrors
+            // the middleware's nudge condition (transcriptionOn === isTranscribing, since
+            // isRecorderTranscriptionsRunning implies isTranscribing).
+            const transcriptionRunning = await p.execute(
+                () => Boolean(APP.store.getState()['features/transcribing'].isTranscribing));
+
+            expect(await nudgeButton.isExisting()).toBe(!transcriptionRunning);
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
