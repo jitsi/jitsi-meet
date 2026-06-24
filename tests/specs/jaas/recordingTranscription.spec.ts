@@ -72,25 +72,57 @@ async function waitForTranscriptionRunning(p: Participant): Promise<void> {
 
 /**
  * Waits until the transcription feature state reports that transcription is no longer active.
+ *
+ * @param {Participant} p - The participant.
+ * @param {number} timeout - How long to wait, in ms.
  */
-async function waitForTranscriptionStopped(p: Participant): Promise<void> {
+async function waitForTranscriptionStopped(p: Participant, timeout = 20_000): Promise<void> {
     await p.driver.waitUntil(
         () => p.execute(() => !APP.store.getState()['features/transcribing'].isTranscribing),
-        { timeout: 20_000, timeoutMsg: 'Transcription did not stop' }
+        { timeout, timeoutMsg: 'Transcription did not stop' }
     );
 }
 
 /**
  * Waits until the recording feature state reports that no FILE session is active.
+ *
+ * @param {Participant} p - The participant.
+ * @param {number} timeout - How long to wait, in ms.
  */
-async function waitForRecordingStopped(p: Participant): Promise<void> {
+async function waitForRecordingStopped(p: Participant, timeout = 20_000): Promise<void> {
     await p.driver.waitUntil(
         () => p.execute(() => Boolean(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             APP.store.getState()['features/recording'].sessionDatas.every(
                 (s: any) => s.mode !== 'file' || s.status === 'off'))),
-        { timeout: 20_000, timeoutMsg: 'Recording session did not stop' }
+        { timeout, timeoutMsg: 'Recording session did not stop' }
     );
+}
+
+/**
+ * Best-effort wait, used in cleanup, for a stopRecording command to actually take effect before the
+ * participant leaves. Never fails the test — a timeout here just means the stop was slow to reflect,
+ * which must not turn a passing test red during teardown.
+ *
+ * @param {Participant} p - The participant.
+ * @param {boolean} transcription - Whether transcription was also stopped (stopRecording(..., true)).
+ */
+async function waitForRecordingStopExecuted(p: Participant, transcription = false): Promise<void> {
+    // Short, bounded wait — this is best-effort teardown, not an assertion, so don't burn the full
+    // 20s assertion timeout here.
+    const cleanupTimeout = 5_000;
+
+    await p.switchToIFrame();
+
+    try {
+        await waitForRecordingStopped(p, cleanupTimeout);
+
+        if (transcription) {
+            await waitForTranscriptionStopped(p, cleanupTimeout);
+        }
+    } catch (e) {
+        // Best-effort cleanup — ignore timeouts so teardown never fails the test.
+    }
 }
 
 // ─── Nudge notification tests ────────────────────────────────────────────────
@@ -123,6 +155,7 @@ describe('Recording & transcription nudge notifications', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
+            await waitForRecordingStopExecuted(p);
         }
     });
 
@@ -145,6 +178,7 @@ describe('Recording & transcription nudge notifications', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file', true);
+            await waitForRecordingStopExecuted(p, true);
         }
     });
 
@@ -181,6 +215,7 @@ describe('Recording & transcription nudge notifications', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
+            await waitForRecordingStopExecuted(p);
         }
     });
 });
@@ -214,6 +249,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
+            await waitForRecordingStopExecuted(p);
         }
     });
 
@@ -243,6 +279,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file', true);
+            await waitForRecordingStopExecuted(p, true);
         }
     });
 
@@ -279,6 +316,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
+            await waitForRecordingStopExecuted(p);
         }
     });
 
@@ -328,6 +366,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
+            await waitForRecordingStopExecuted(p);
         }
     });
 
@@ -375,6 +414,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file', true);
+            await waitForRecordingStopExecuted(p, true);
         }
     });
 });
