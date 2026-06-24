@@ -34,22 +34,43 @@ describe('Recording button visibility', () => {
         p2 = ctx.p2;
         expect(await p2.isModerator()).toBe(false);
 
-        // Mirror the app's supportsLocalRecording() gate (LocalRecordingManager.isSupported):
-        // MediaRecorder alone is not enough — Chrome also needs the File System Access and capture
-        // handle APIs, which are frequently absent in the automated browser, in which case the app
-        // hides the button from non-moderators.
+        // Mirror the app's supportsLocalRecording() exactly — LocalRecordingManager.isSupported()
+        // plus the (!isEmbedded() || isEmbeddedFromSameDomain()) guard — so the test's expectation
+        // matches what the app actually renders. These browser/capability gates are frequently unmet
+        // in the automated test browser even though local recording works in a normal browser, in
+        // which case the app correctly hides the button from non-moderators.
         localRecordingAvailable = await p2.execute(() => {
             const state = APP.store.getState();
             const { localRecording } = state['features/base/config'];
-            const localRecordingSupported = Boolean(window.MediaRecorder)
+
+            const browser = JitsiMeetJS.util.browser;
+            const PREFERRED_MEDIA_TYPE = 'video/webm;codecs=vp8,opus';
+
+            // LocalRecordingManager.isSupported()
+            const isSupported = browser.isChromiumBased()
+                && !browser.isElectron()
+                && !browser.isReactNative()
+                && !browser.isMobileDevice()
+
+                // @ts-ignore
+                && Boolean(navigator.mediaDevices.setCaptureHandleConfig)
 
                 // @ts-ignore
                 && typeof window.showSaveFilePicker !== 'undefined'
+                && MediaRecorder.isTypeSupported(PREFERRED_MEDIA_TYPE);
 
-                // @ts-ignore
-                && Boolean(navigator.mediaDevices?.setCaptureHandleConfig);
+            // (!isEmbedded() || isEmbeddedFromSameDomain())
+            let embeddedOk = true;
 
-            return localRecording?.disable !== true && localRecordingSupported;
+            try {
+                if (window.self !== window.top) {
+                    embeddedOk = window.self.location.host === window.parent.location.host;
+                }
+            } catch (e) {
+                embeddedOk = false;
+            }
+
+            return localRecording?.disable !== true && isSupported && embeddedOk;
         });
     });
 
