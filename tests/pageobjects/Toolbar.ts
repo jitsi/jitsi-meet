@@ -2,6 +2,10 @@ import BasePageObject from './BasePageObject';
 
 const AUDIO_MUTE = 'Mute microphone';
 const RECORDING = 'Record & Transcribe';
+
+// Non-moderators (who can only do local recording) get a "Record" button instead of the
+// moderator's "Record & Transcribe" — see AbstractRecordButton._getAccessibilityLabel().
+const RECORDING_NON_MODERATOR = 'Record';
 const AUDIO_UNMUTE = 'Unmute microphone';
 const CHAT = 'Open chat';
 const CLOSE_CHAT = 'Close chat';
@@ -64,7 +68,10 @@ export default class Toolbar extends BasePageObject {
         // first also covers the case where the button is promoted to the main toolbar.
         await this.openOverflowMenu();
 
-        const exists = await this.getButton(RECORDING).isExisting();
+        // Match either label since moderators get "Record & Transcribe" while non-moderators
+        // (local recording only) get "Record".
+        const exists = await this.getButton(RECORDING).isExisting()
+            || await this.getButton(RECORDING_NON_MODERATOR).isExisting();
 
         await this.closeOverflowMenu();
 
