@@ -13,7 +13,7 @@ import { getLocalParticipant } from '../../../base/participants/functions';
 import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
 import { getToolboxHeight } from '../../../toolbox/functions.web';
 import { shouldDisplayTileView } from '../../../video-layout/functions.any';
-import { WHITEBOARD_UI_OPTIONS } from '../../constants';
+import { WHITEBOARD_UI_OPTIONS, WHITEBOARD_UI_OPTIONS_WITH_IMAGES } from '../../constants';
 import {
     getCollabDetails,
     getCollabServerUrl,
@@ -46,6 +46,7 @@ interface IDimensions {
 }
 
 interface IMeetingDetails {
+    getStorageToken: () => Promise<string | undefined>;
     jwt: string;
     roomJid: string;
     sessionId: string;
@@ -82,10 +83,24 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
     const sessionId = conference?.getMeetingUniqueId();
     const roomJid = conference?.room?.roomjid;
 
+    // Provides a fresh short-term credential for each whiteboard storage
+    // request, so that image binaries are uploaded/fetched with a token that is
+    // refreshed transparently as the previous one expires.
+    const getStorageToken = useCallback(async () => {
+        const conf = getCurrentConference(store.getState());
+
+        if (!conf) {
+            return undefined;
+        }
+
+        return conf.getShortTermCredentials(conf.getFileSharing()?.getIdentityType());
+    }, [ store ]);
+
     const meetingDetails: IMeetingDetails = {
         sessionId: sessionId ?? '',
         roomJid: roomJid ?? '',
-        jwt: jwt
+        jwt: jwt,
+        getStorageToken
     };
 
     useEffect(() => {
@@ -178,7 +193,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                                     isCollaborating: true,
                                     langCode: i18next.language,
                                     theme: 'light',
-                                    UIOptions: WHITEBOARD_UI_OPTIONS
+                                    UIOptions: storageBackendUrl ? WHITEBOARD_UI_OPTIONS_WITH_IMAGES : WHITEBOARD_UI_OPTIONS
                                 }}
                                 getCollabAPI = { getCollabAPI }
                                 getExcalidrawAPI = { getExcalidrawAPI }
