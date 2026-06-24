@@ -111,7 +111,15 @@ describe('Recording & transcription nudge notifications', () => {
 
             const nudgeButton = p.driver.$('[data-testid="dialog.startTranscribing"]');
 
-            expect(await nudgeButton.isExisting()).toBe(true);
+            // A "recording pending" notification appears (same data-testid) before the "recording
+            // started" notification that actually carries the nudge, so wait for the nudge to show up
+            // rather than checking immediately. The iFrame startRecording path sets
+            // isTranscribingEnabled:false, so transcription never auto-starts here and the
+            // "Start transcribing" nudge always applies once recording is running.
+            await nudgeButton.waitForExist({
+                timeout: 30_000,
+                timeoutMsg: '"Start transcribing" nudge did not appear'
+            });
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
