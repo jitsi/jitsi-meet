@@ -90,10 +90,11 @@ describe('Connectivity - JVB + TURN', () => {
     });
 
     it('uses TURN', async () => {
-        // Check the candidate type rather than the URL: Firefox does not populate the `url` field on candidate
-        // stats, while `candidateType: 'relay'` (only ever produced by a TURN allocation) is set by both browsers.
-        expect(t1?.localCandidateType).toBe('relay');
-        expect(t2?.localCandidateType).toBe('relay');
+        // Under iceTransportPolicy:'relay' the only gathered local base is the TURN allocation, so a peer-reflexive
+        // candidate (prflx) derived from it is still a relayed path - accept both. We check the candidate type rather
+        // than the URL because Firefox does not populate the `url` field on candidate stats.
+        expect([ 'relay', 'prflx' ]).toContain(t1?.localCandidateType);
+        expect([ 'relay', 'prflx' ]).toContain(t2?.localCandidateType);
     });
 
     it('both clients connect to the same JVB port', async () => {
@@ -137,10 +138,11 @@ describe('Connectivity - P2P + TURN', () => {
     it('is P2P active', async () => assertP2PActive([ p1, p2 ], true));
 
     it('uses TURN', async () => {
-        // Check the candidate type rather than the URL: Firefox does not populate the `url` field on candidate
-        // stats, while `candidateType: 'relay'` (only ever produced by a TURN allocation) is set by both browsers.
-        expect(t1?.localCandidateType).toBe('relay');
-        expect(t2?.localCandidateType).toBe('relay');
+        // Under iceTransportPolicy:'relay' the only gathered local base is the TURN allocation, so a peer-reflexive
+        // candidate (prflx) derived from it is still a relayed path - accept both. We check the candidate type rather
+        // than the URL because Firefox does not populate the `url` field on candidate stats.
+        expect([ 'relay', 'prflx' ]).toContain(t1?.localCandidateType);
+        expect([ 'relay', 'prflx' ]).toContain(t2?.localCandidateType);
     });
 });
 
@@ -254,7 +256,9 @@ async function getProtocol(participant: Participant, p2p: boolean): Promise<stri
  * Returns true if the active candidate pair uses a TURN relay. We check the local candidate type rather than its
  * URL because Firefox does not populate the `url` field on candidate stats, while `candidateType: 'relay'` is set by
  * both Chrome and Firefox. A `relay` candidate is only ever allocated through a TURN server, so this is equivalent to
- * checking for a `turn:` URL but works across browsers.
+ * checking for a `turn:` URL but works across browsers. Note: unlike the forced-relay `uses TURN` checks, `prflx` is
+ * not treated as TURN here - this helper also backs the `not using TURN` assertions, where a peer-reflexive candidate
+ * is derived from a host/srflx base rather than a relay.
  */
 async function isUsingTurn(participant: Participant, p2p: boolean): Promise<boolean> {
     const pair = await getActiveCandidatePair(participant, p2p);
