@@ -181,9 +181,11 @@ function _conferenceFailed({ getState }: IStore, next: Function, action: AnyActi
  * @returns {*} The value returned by {@code next(action)}.
  */
 function _conferenceConnectionEstablished({ getState }: IStore, next: Function, action: AnyAction) {
+    // Report connected once; this action also fires on CONNECTION_RESTORED mid-call.
+    const wasConnected = getState()['features/base/conference'].iceConnected;
     const result = next(action);
 
-    if (!isCallIntegrationEnabled(getState)) {
+    if (!isCallIntegrationEnabled(getState) || wasConnected) {
         return result;
     }
 

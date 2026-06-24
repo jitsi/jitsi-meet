@@ -127,8 +127,12 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
     conference.on(
         JitsiConferenceEvents.CONFERENCE_JOIN_IN_PROGRESS,
         (..._args: any[]) => dispatch(conferenceJoinInProgress(conference)));
+    // CONNECTION_ESTABLISHED is skipped when P2P wins the ICE race; CONNECTION_RESTORED covers it.
     conference.on(
         JitsiConferenceEvents.CONNECTION_ESTABLISHED,
+        (..._args: any[]) => dispatch(conferenceConnectionEstablished(conference)));
+    conference.on(
+        JitsiConferenceEvents.CONNECTION_RESTORED,
         (..._args: any[]) => dispatch(conferenceConnectionEstablished(conference)));
     conference.on(
         JitsiConferenceEvents.CONFERENCE_LEFT,
