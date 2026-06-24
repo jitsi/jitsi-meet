@@ -34,11 +34,22 @@ describe('Recording button visibility', () => {
         p2 = ctx.p2;
         expect(await p2.isModerator()).toBe(false);
 
+        // Mirror the app's supportsLocalRecording() gate (LocalRecordingManager.isSupported):
+        // MediaRecorder alone is not enough — Chrome also needs the File System Access and capture
+        // handle APIs, which are frequently absent in the automated browser, in which case the app
+        // hides the button from non-moderators.
         localRecordingAvailable = await p2.execute(() => {
             const state = APP.store.getState();
             const { localRecording } = state['features/base/config'];
+            const localRecordingSupported = Boolean(window.MediaRecorder)
 
-            return localRecording?.disable !== true && Boolean(window.MediaRecorder);
+                // @ts-ignore
+                && typeof window.showSaveFilePicker !== 'undefined'
+
+                // @ts-ignore
+                && Boolean(navigator.mediaDevices?.setCaptureHandleConfig);
+
+            return localRecording?.disable !== true && localRecordingSupported;
         });
     });
 

@@ -391,6 +391,8 @@ describe('Recording button visibility', () => {
 
         expect(await p.getToolbar().hasRecordingButton()).toBe(true);
 
-        await p.getIframeAPI().executeCommand('hangup');
+        // This participant joined without the iFrame API, so close it directly rather than via
+        // getIframeAPI().executeCommand (window.jitsiAPI only exists in the iFrame-API wrapper page).
+        await p.hangup();
     });
 });
