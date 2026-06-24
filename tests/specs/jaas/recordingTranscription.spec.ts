@@ -11,7 +11,14 @@ setTestProperties(__filename, {
  * Joins a JaaS meeting as a moderator using the iFrame API wrapper.
  */
 async function joinAsModerator(): Promise<Participant> {
-    return joinJaasMuc({ iFrameApi: true, token: t({ moderator: true }) });
+    const p = await joinJaasMuc({ iFrameApi: true, token: t({ moderator: true }) });
+
+    // joinMuc leaves an iFrame-API participant inside the iframe, but the iFrame API
+    // (window.jitsiAPI) only exists in the main frame. Switch out so the first
+    // getIframeAPI().executeCommand(...) in each test runs in the right context.
+    await p.switchToMainFrame();
+
+    return p;
 }
 
 /**
