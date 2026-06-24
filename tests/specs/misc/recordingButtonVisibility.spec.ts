@@ -89,42 +89,6 @@ describe('Recording button visibility', () => {
         if (!localRecordingAvailable) {
             return;
         }
-
-        // TEMP DIAGNOSTIC: hand-replicating supportsLocalRecording() keeps returning true while the
-        // app hides the button. Dump the deployed config + each isSupported() sub-check so the run
-        // log reveals exactly which value diverges from the app. Remove once the gate is identified.
-        const diag = await p2.execute(() => {
-            const browser = JitsiMeetJS.util.browser;
-            const state = APP.store.getState();
-            const config = state['features/base/config'];
-
-            return {
-                localRecording: config.localRecording,
-                recordingService: config.recordingService,
-                transcription: config.transcription,
-
-                // The web RecordButton gates on state['features/toolbox'].toolbarButtons (the
-                // computed list), NOT the raw config. This is the value that actually matters.
-                configToolbarButtons: config.toolbarButtons,
-                toolboxToolbarButtons: state['features/toolbox'].toolbarButtons,
-                toolboxHasRecording: Boolean(state['features/toolbox'].toolbarButtons?.includes('recording')),
-                isChromiumBased: browser.isChromiumBased(),
-                isElectron: browser.isElectron(),
-                isReactNative: browser.isReactNative(),
-                isMobileDevice: browser.isMobileDevice(),
-
-                // @ts-ignore
-                setCaptureHandleConfig: Boolean(navigator.mediaDevices.setCaptureHandleConfig),
-
-                // @ts-ignore
-                showSaveFilePicker: typeof window.showSaveFilePicker !== 'undefined',
-                typeSupported: MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus'),
-                embedded: window.self !== window.top
-            };
-        });
-
-        await p2.log(`recordingButtonVisibility diagnostic: ${JSON.stringify(diag)}`);
-
         expect(await p2.getToolbar().hasRecordingButton()).toBe(true);
     });
 });
