@@ -52,6 +52,9 @@ const DEFAULT_STATE = {
 };
 
 export interface IConferenceMetadata {
+    audioTranslation?: {
+        enabled?: boolean;
+    };
     dialinEnabled?: boolean;
     files: {
         [fileId: string]: {

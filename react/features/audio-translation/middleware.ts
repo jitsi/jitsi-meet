@@ -1,7 +1,7 @@
 import { JitsiAudioTranslationErrors, JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-import { showErrorNotification } from '../notifications/actions';
+import { showErrorNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import {
@@ -10,6 +10,7 @@ import {
     SET_PARTICIPANT_AUDIO_TRANSLATION_LANGUAGE
 } from './actionTypes';
 import { clearAudioTranslation, setParticipantAudioTranslationLanguage } from './actions';
+import { isAudioTranslationRoomEnabled } from './functions';
 import logger from './logger';
 
 /**
@@ -29,6 +30,19 @@ const DEFAULT_ERROR_KEY = 'audioTranslation.errorGeneric';
  * the default or a per-participant audio-translation target language.
  */
 MiddlewareRegistry.register(store => next => action => {
+    // Block enabling a translation language while a moderator has disabled the feature for the room. Managers
+    // keep the translation UI even when the room flag is off, and the bridge silently drops such requests, so
+    // surface a notification here instead. Disabling (language === null) is always allowed through.
+    if ((action.type === SET_AUDIO_TRANSLATION_LANGUAGE || action.type === SET_PARTICIPANT_AUDIO_TRANSLATION_LANGUAGE)
+            && action.language
+            && !isAudioTranslationRoomEnabled(store.getState())) {
+        store.dispatch(showErrorNotification({
+            titleKey: 'audioTranslation.errorRoomDisabled'
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+
+        return;
+    }
+
     const result = next(action);
 
     switch (action.type) {
@@ -95,4 +109,27 @@ StateListenerRegistry.register(
                 endpointIds.forEach(endpointId =>
                     dispatch(setParticipantAudioTranslationLanguage(endpointId, null)));
             });
+    });
+
+/**
+ * When a moderator disables audio translation for the room, clear the local user's active translation and notify
+ * them. The room flag only blocks new requests on the bridge; it does not tear down active subscriptions. Clearing
+ * locally drops the synthetic-source Include subscription (so the bridge stops forwarding the translated audio) and
+ * un-ducks the original.
+ */
+StateListenerRegistry.register(
+    state => isAudioTranslationRoomEnabled(state),
+    (roomEnabled, { dispatch, getState }) => {
+        if (roomEnabled) {
+            return;
+        }
+
+        const { language, participantLanguages } = getState()['features/audio-translation'];
+
+        if (language || Object.keys(participantLanguages).length > 0) {
+            dispatch(clearAudioTranslation());
+            dispatch(showNotification({
+                titleKey: 'audioTranslation.disabledForRoom'
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        }
     });

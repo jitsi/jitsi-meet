@@ -1,8 +1,7 @@
 import { useSelector } from 'react-redux';
 
-import { IReduxState } from '../app/types';
-
 import AudioTranslationButton from './components/web/AudioTranslationButton';
+import { isAudioTranslationAvailable } from './functions';
 
 const audioTranslation = {
     key: 'audiotranslation',
@@ -11,18 +10,17 @@ const audioTranslation = {
 };
 
 /**
- * A hook that returns the audio-translation toolbar button when the feature is
- * enabled for the deployment, and undefined otherwise. Audio translation
- * requires the bridge translation backend, so it is opt-in via
- * config.audioTranslation.enabled.
+ * A hook that returns the audio-translation toolbar button when the feature is available to the local user,
+ * and undefined otherwise. Audio translation requires the bridge translation backend (opt-in via
+ * config.audioTranslation.enabled), is hidden when a moderator has disabled it for the room, and is always
+ * shown to those who can manage it.
  *
  * @returns {Object | undefined}
  */
 export function useAudioTranslationButton() {
-    const enabled = useSelector(
-        (state: IReduxState) => state['features/base/config'].audioTranslation?.enabled);
+    const available = useSelector(isAudioTranslationAvailable);
 
-    if (!enabled) {
+    if (!available) {
         return undefined;
     }
 

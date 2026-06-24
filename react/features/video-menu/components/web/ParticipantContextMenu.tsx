@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../app/types';
+import { isAudioTranslationAvailable } from '../../../audio-translation/functions';
 import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../../av-moderation/constants';
 import { isSupported as isAvModerationSupported, isForceMuted } from '../../../av-moderation/functions';
 import Avatar from '../../../base/avatar/components/Avatar';
@@ -143,8 +144,9 @@ const ParticipantContextMenu = ({
         isForceMuted(participant, AVM_MEDIA_TYPE.DESKTOP, state));
     const _isAudioMuted = useSelector((state: IReduxState) => isParticipantAudioMuted(participant, state));
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
-    const { remoteVideoMenu = {}, disableRemoteMute, startSilent, customParticipantMenuButtons, audioTranslation }
+    const { remoteVideoMenu = {}, disableRemoteMute, startSilent, customParticipantMenuButtons }
         = useSelector((state: IReduxState) => state['features/base/config']);
+    const _audioTranslationAvailable = useSelector(isAudioTranslationAvailable);
     const visitorsSupported = useSelector((state: IReduxState) => state['features/visitors'].supported);
     const { disableDemote, disableKick, disableGrantModerator } = remoteVideoMenu;
     const { participantsVolume } = useSelector((state: IReduxState) => state['features/filmstrip']);
@@ -322,7 +324,7 @@ const ParticipantContextMenu = ({
         );
     }
 
-    if (audioTranslation?.enabled && !participant?.local) {
+    if (_audioTranslationAvailable && !participant?.local) {
         buttons2.push(<TranslateParticipantButton { ...getButtonProps(BUTTONS.TRANSLATE_AUDIO) } />);
     }
 
