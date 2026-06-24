@@ -95,13 +95,19 @@ describe('Recording button visibility', () => {
         // log reveals exactly which value diverges from the app. Remove once the gate is identified.
         const diag = await p2.execute(() => {
             const browser = JitsiMeetJS.util.browser;
-            const config = APP.store.getState()['features/base/config'];
+            const state = APP.store.getState();
+            const config = state['features/base/config'];
 
             return {
                 localRecording: config.localRecording,
                 recordingService: config.recordingService,
                 transcription: config.transcription,
-                toolbarHasRecording: Boolean(config.toolbarButtons?.includes('recording')),
+
+                // The web RecordButton gates on state['features/toolbox'].toolbarButtons (the
+                // computed list), NOT the raw config. This is the value that actually matters.
+                configToolbarButtons: config.toolbarButtons,
+                toolboxToolbarButtons: state['features/toolbox'].toolbarButtons,
+                toolboxHasRecording: Boolean(state['features/toolbox'].toolbarButtons?.includes('recording')),
                 isChromiumBased: browser.isChromiumBased(),
                 isElectron: browser.isElectron(),
                 isReactNative: browser.isReactNative(),
