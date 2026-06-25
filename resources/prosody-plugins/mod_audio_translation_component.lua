@@ -243,12 +243,15 @@ end
 -- Recomputes the aggregate and, when it changed, publishes it to jicofo via
 -- RoomMetadata. Stored on room._data so mod_room_metadata_component only forwards
 -- it to admin (jicofo) occupants.
+-- While the feature is disabled for the room the published map is cleared (nil) so
+-- jicofo stops translation; the receivers' subscriptions are kept in memory and
+-- republished if the room is re-enabled.
 local function publish(room)
     if not room._audio_translation or not main_muc_module then
         return;
     end
 
-    local aggregate = compute_aggregate(room);
+    local aggregate = is_enabled(room) and compute_aggregate(room) or nil;
     local encoded = aggregate and json.encode(aggregate) or nil;
 
     if encoded == room._audio_translation.last_published then
@@ -389,6 +392,17 @@ function process_main_muc_loaded(main_muc, host_module)
         end
 
         if changed then
+            schedule_publish(room);
+        end
+    end);
+
+    -- React when the room-level enable flag is toggled: republish so the aggregate
+    -- map is cleared when disabled (translation stops) or restored when re-enabled.
+    host_module:hook('jitsi-metadata-updated', function(event)
+        local room = event.room;
+
+        if event.key == ENABLED_METADATA_KEY and room._audio_translation
+                and not is_healthcheck_room(room.jid) then
             schedule_publish(room);
         end
     end);

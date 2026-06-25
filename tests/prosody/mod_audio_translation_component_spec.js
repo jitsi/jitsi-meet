@@ -141,6 +141,23 @@ async function pushAndGetRequests(rx, focus, delta) {
     return parseBroadcast(broadcast).metadata.audioTranslationRequests;
 }
 
+/**
+ * Waits for a metadata broadcast whose audioTranslationRequests satisfies `predicate`, returning that value. Toggling
+ * the enable flag produces an immediate flag-change broadcast and a later debounced aggregate update, so callers use the
+ * predicate to skip to the broadcast they care about.
+ */
+async function waitForRequests(focus, predicate) {
+    for (let i = 0; i < 5; i++) {
+        const broadcast = await waitForMetadata(focus); // eslint-disable-line no-await-in-loop
+        const requests = parseBroadcast(broadcast).metadata.audioTranslationRequests;
+
+        if (predicate(requests)) {
+            return requests;
+        }
+    }
+    throw new Error('audioTranslationRequests did not reach the expected state');
+}
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('mod_audio_translation_component', () => {
@@ -300,6 +317,33 @@ describe('mod_audio_translation_component', () => {
             const requests = await pushAndGetRequests(rx, foc, { [sender.nick]: 'en' });
 
             assert.deepEqual(requests[sender.nick], [ 'en' ]);
+        });
+
+        it('clears the map (stops translation) when disabled, and restores it when re-enabled', async () => {
+            const r = nextRoom();
+            const foc = await startRoom(r);
+            const mod = await joinOccupant(r, { user: { moderator: true } });
+            const sender = await joinOccupant(r);
+
+            clients.push(foc, mod, sender);
+            await drainInitialMetadata(mod);
+
+            // Subscribe — the aggregate map reaches jicofo.
+            const requests = await pushAndGetRequests(mod, foc, { [sender.nick]: 'en' });
+
+            assert.deepEqual(requests[sender.nick], [ 'en' ]);
+
+            // Disable — the map is cleared so jicofo stops translation.
+            mod.sendMetadataUpdate(METADATA_COMPONENT, r, 'audioTranslation', { enabled: false });
+            const cleared = await waitForRequests(foc, v => v === undefined);
+
+            assert.equal(cleared, undefined);
+
+            // Re-enable — the retained subscription is republished.
+            mod.sendMetadataUpdate(METADATA_COMPONENT, r, 'audioTranslation', { enabled: true });
+            const restored = await waitForRequests(foc, v => v !== undefined);
+
+            assert.deepEqual(restored[sender.nick], [ 'en' ]);
         });
     });
 
