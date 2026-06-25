@@ -7,11 +7,25 @@ setTestProperties(__filename, {
     useJaas: true
 });
 
+// Counter used to give each test its own room — see joinAsModerator().
+let roomCounter = 0;
+
 /**
  * Joins a JaaS meeting as a moderator using the iFrame API wrapper.
+ *
+ * Each call joins a unique room. All tests in this spec otherwise share ctx.roomName, and joinMuc
+ * rejoins it each test, so prosody's per-room jibri start/stop throttle (mod_filter_iq_jibri,
+ * max_number_room_attempts_per_minute, default 3 — both start and stop count) accumulates across
+ * the suite and trips the "started a recording too quickly" policy error. A fresh room per test
+ * resets that throttle, keeping each test's ≤2 start/stop attempts well under the limit. The
+ * moderator token is room-agnostic (room defaults to '*'), so it is valid for any room.
  */
 async function joinAsModerator(): Promise<Participant> {
-    const p = await joinJaasMuc({ iFrameApi: true, token: t({ moderator: true }) });
+    roomCounter += 1;
+
+    const p = await joinJaasMuc(
+        { iFrameApi: true, token: t({ moderator: true }) },
+        { roomName: `${ctx.roomName}-${roomCounter}` });
 
     // joinJaasMuc leaves the driver focused inside the Jitsi iframe, but the iFrame API
     // (window.jitsiAPI) lives on the wrapper page. Switch to the main frame so executeCommand()
