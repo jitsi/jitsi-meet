@@ -2,6 +2,10 @@ import BasePageObject from './BasePageObject';
 
 const AUDIO_MUTE = 'Mute microphone';
 const RECORDING = 'Record & Transcribe';
+
+// Non-moderators (who can only do local recording) get a "Record" button instead of the
+// moderator's "Record & Transcribe" — see AbstractRecordButton._getAccessibilityLabel().
+const RECORDING_NON_MODERATOR = 'Record';
 const AUDIO_UNMUTE = 'Unmute microphone';
 const CHAT = 'Open chat';
 const CLOSE_CHAT = 'Close chat';
@@ -10,6 +14,7 @@ const DESKTOP = 'Start sharing your screen';
 const HANGUP = 'Leave the meeting';
 const OVERFLOW_MENU = 'More actions menu';
 const OVERFLOW = 'More actions';
+const CLOSE_OVERFLOW = 'Close more actions menu';
 const PARTICIPANTS = 'Open participants pane';
 const PROFILE = 'Edit your profile';
 const RAISE_HAND = 'Raise your hand';
@@ -58,7 +63,19 @@ export default class Toolbar extends BasePageObject {
      * @returns {Promise<boolean>}
      */
     async hasRecordingButton(): Promise<boolean> {
-        return this.getButton(RECORDING).isExisting();
+        // The recording button lives in the overflow ("More actions") menu, so it is only in the
+        // DOM while that menu is open. isExisting() searches the whole DOM, so opening the menu
+        // first also covers the case where the button is promoted to the main toolbar.
+        await this.openOverflowMenu();
+
+        // Match either label since moderators get "Record & Transcribe" while non-moderators
+        // (local recording only) get "Record".
+        const exists = await this.getButton(RECORDING).isExisting()
+            || await this.getButton(RECORDING_NON_MODERATOR).isExisting();
+
+        await this.closeOverflowMenu();
+
+        return exists;
     }
 
     /**
@@ -67,9 +84,9 @@ export default class Toolbar extends BasePageObject {
      * @returns {Promise<void>}
      */
     async clickRecordingButton(): Promise<void> {
-        await this.participant.log('Clicking on: Recording Button');
-
-        return this.getButton(RECORDING).click();
+        // The recording button lives in the overflow ("More actions") menu; open it, click, close
+        // (matches clickSettings/clickSecurity — closeOverflowMenu is a no-op once the dialog opens).
+        return this.clickButtonInOverflowMenu(RECORDING);
     }
 
     /**
@@ -378,7 +395,9 @@ export default class Toolbar extends BasePageObject {
             return;
         }
 
-        await this.clickOverflowButton();
+        // When the overflow menu is open the toggle button's aria-label changes from
+        // "More actions" to "Close more actions menu", so we cannot reuse clickOverflowButton here.
+        await this.getButton(CLOSE_OVERFLOW).click();
 
         await this.waitForOverFlowMenu(false);
     }
