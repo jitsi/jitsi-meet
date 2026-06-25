@@ -40,11 +40,16 @@ export default class VirtualBackgroundDialog extends BaseDialog {
 
         await el.waitForClickable({ timeout: 3000, timeoutMsg: `${label} thumbnail not clickable` });
 
-        // The preview applies the selected effect on every change, which loads the segmentation
-        // model/wasm and saturates the main thread. During rapid switching a click issued while
-        // React is mid-reconciliation can be dropped (the onClick handler never fires), so the
-        // thumbnail never becomes checked. Re-issue the click on every poll until aria-checked
-        // confirms it landed, and allow a generous timeout for the re-render under load.
+        // Selecting an effect makes the preview (re)load the segmentation model/wasm, which
+        // saturates the main thread. Two flaky failure modes follow from that:
+        //   1. A click issued while React is mid-reconciliation (e.g. during rapid switching) is
+        //      dropped — the onClick handler never fires and the thumbnail never becomes checked.
+        //   2. The first selection of a blur effect triggers a cold model/worker init that blocks
+        //      the main thread for several seconds, delaying the aria-checked re-render (and the
+        //      attribute reads themselves) well past a short timeout.
+        // Re-issue the click on every poll until aria-checked confirms it landed (covers 1), and
+        // allow a generous timeout for the cold-start re-render under load (covers 2). The poll
+        // interval is kept large so a still-pending selection is not needlessly re-triggered.
         await this.participant.driver.waitUntil(
             async () => {
                 if (await el.getAttribute('aria-checked') === 'true') {
@@ -55,7 +60,11 @@ export default class VirtualBackgroundDialog extends BaseDialog {
 
                 return false;
             },
-            { timeout: 5000, timeoutMsg: `${label} thumbnail did not become checked after click` }
+            {
+                timeout: 15000,
+                interval: 1500,
+                timeoutMsg: `${label} thumbnail did not become checked after click`
+            }
         );
     }
 
