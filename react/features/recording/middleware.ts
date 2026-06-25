@@ -7,6 +7,8 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import { openDialog } from '../base/dialog/actions';
+import { MEET_FEATURES } from '../base/jwt/constants';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import JitsiMeetJS, {
     JitsiConferenceEvents,
     JitsiRecordingConstants
@@ -35,7 +37,7 @@ import {
 import { TRACK_ADDED } from '../base/tracks/actionTypes';
 import { hideNotification, showErrorNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
-import { isRecorderTranscriptionsRunning, isTranscribing } from '../transcribing/functions';
+import { canAddTranscriber, isRecorderTranscriptionsRunning, isTranscribing } from '../transcribing/functions';
 
 import { RECORDING_SESSION_UPDATED, START_LOCAL_RECORDING, STOP_LOCAL_RECORDING } from './actionTypes';
 import {
@@ -167,11 +169,15 @@ export function maybeNotifyRecordingStart(dispatch: IStore['dispatch'], getState
         dispatch(playSound(soundID));
     }
 
-    // Nudge when only one service was just started AND the other is not already running.
-    // Only moderators can start the complementary service, so skip the nudge for non-mods.
-    const nudgeNeeded = isLocalParticipantModerator(state)
-        && (wantsRecording !== wantsTranscription)
-        && (wantsRecording ? !transcriptionOn : !recordingOn);
+    // Nudge to start the complementary service when only one was just started and the other is not
+    // already running — shown to any participant that has the right to start that other service:
+    // transcription needs the transcription feature; cloud recording needs moderator + the recording
+    // feature. (A recording-only participant is never nudged to transcribe, nor vice versa.)
+    const canStartTranscription = canAddTranscriber(state);
+    const canStartRecording = isLocalParticipantModerator(state)
+        && isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false);
+    const nudgeNeeded = (wantsRecording !== wantsTranscription)
+        && (wantsRecording ? (!transcriptionOn && canStartTranscription) : (!recordingOn && canStartRecording));
     const nudge = nudgeNeeded
         ? getNudge(wantsRecording ? 'recording' : 'transcription', dispatch)
         : null;
