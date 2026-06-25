@@ -39,13 +39,22 @@ export default class VirtualBackgroundDialog extends BaseDialog {
         const el = this.participant.driver.$(selector);
 
         await el.waitForClickable({ timeout: 3000, timeoutMsg: `${label} thumbnail not clickable` });
-        await el.click();
 
         // The preview applies the selected effect on every change, which loads the segmentation
-        // model/wasm and saturates the main thread. During rapid switching this can delay the
-        // aria-checked re-render by several seconds, so allow a generous timeout here.
+        // model/wasm and saturates the main thread. During rapid switching a click issued while
+        // React is mid-reconciliation can be dropped (the onClick handler never fires), so the
+        // thumbnail never becomes checked. Re-issue the click on every poll until aria-checked
+        // confirms it landed, and allow a generous timeout for the re-render under load.
         await this.participant.driver.waitUntil(
-            async () => (await el.getAttribute('aria-checked')) === 'true',
+            async () => {
+                if (await el.getAttribute('aria-checked') === 'true') {
+                    return true;
+                }
+
+                await el.click();
+
+                return false;
+            },
             { timeout: 5000, timeoutMsg: `${label} thumbnail did not become checked after click` }
         );
     }
