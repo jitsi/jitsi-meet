@@ -6,6 +6,7 @@ import Logger from '@jitsi/logger';
 import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 import Recorder from './modules/recorder/Recorder';
+import ExternalShareReceiver from './modules/screenshare-cast/ExternalShareReceiver';
 import { createTaskQueue } from './modules/util/helpers';
 import {
     createDeviceChangedEvent,
@@ -2311,6 +2312,68 @@ export default {
         }
 
         this._proxyConnection.processMessage(event);
+    },
+
+    /**
+     * Handle a direct-cast screenshare signalling message from a remote sharer.
+     *
+     * Direct-cast is the successor to the {@code ProxyConnectionService} path above: a
+     * remote sharer (e.g. a laptop) opens a PLAIN RTCPeerConnection straight to this
+     * Jitsi Meet instance and adds its screen — and optionally system audio — tracks.
+     * {@link ExternalShareReceiver} terminates that peer connection here and Jitsi moves
+     * the received track(s) into the conference as the local screenshare. No
+     * ProxyConnectionService, no Jingle, no XMPP/Strophe JIDs, and audio comes along for
+     * free.
+     *
+     * Design credit: Saúl "saghul" Ibarra Corretgé — "set up the peer connection directly
+     * between the sharer and the TV's instance of Jitsi Meet, and Jitsi Meet takes the
+     * tracks from one PC and puts them into the other."
+     *
+     * @param {Object} signal - The signalling message ({ kind, sdp | candidate }).
+     * @returns {void}
+     */
+    onExternalShareSignal(signal) {
+        if (!this._externalShare) {
+            this._externalShare = new ExternalShareReceiver({
+                JitsiMeetJS,
+
+                // Reuse the meeting's own TURN credentials — the same source the old
+                // proxy borrowed — minus the XMPP signalling.
+                pcConfig: APP.connection?.xmpp?.connection?.jingle?.p2pIceConfig,
+
+                onSignal: out => APP.API.sendExternalShareSignal(out),
+
+                onTracks: ({ desktopVideoTrack, desktopAudioTrack }) => {
+                    APP.store.dispatch(toggleScreensharingA(true, false, {
+                        desktopStream: desktopVideoTrack,
+                        desktopAudioTrack
+                    }));
+                },
+
+                onClosed: () => {
+                    if (this._untoggleScreenSharing) {
+                        this._untoggleScreenSharing();
+                    }
+                    this._externalShare = null;
+                }
+            });
+        }
+
+        this._externalShare.handleSignal(signal);
+    },
+
+    /**
+     * Terminates any direct-cast screenshare connection that is active.
+     *
+     * @private
+     * @returns {void}
+     */
+    _stopExternalShare() {
+        if (this._externalShare) {
+            this._externalShare.stop();
+        }
+
+        this._externalShare = null;
     },
 
     /**
