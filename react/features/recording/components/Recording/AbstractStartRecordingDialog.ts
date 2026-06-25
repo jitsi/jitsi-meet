@@ -586,6 +586,17 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
                 isRecordingRequested: true,
                 isTranscribingEnabled: true
             });
+        } else if (startRecording) {
+            // Recording started without a transcription change: announce it in room metadata so the
+            // other participants get the recording start notification/sound (this is what the
+            // metadata listener turns into the remote notification). Preserve any existing
+            // isTranscribingEnabled so a running transcription is not signalled as stopped.
+            const existingRecMeta = _conference?.getMetadataHandler()?.getMetadata()[RECORDING_METADATA_ID] ?? {};
+
+            _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                ...existingRecMeta,
+                isRecordingRequested: true
+            });
         }
 
         return true;

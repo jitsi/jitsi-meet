@@ -35,6 +35,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
     _renderSessionToggles() {
         const {
             _dialogStyles,
+            _renderRecording,
             _styles: styles,
             shouldRecordAudioAndVideo,
             shouldRecordTranscription,
@@ -43,36 +44,40 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
 
         return (
             <>
-                <View
-                    key = 'audioVideoSetting'
-                    style = { styles.header }>
-                    <Text
-                        style = {{
-                            ..._dialogStyles.text,
-                            ...styles.title
-                        }}>
-                        { t('recording.recordAudioAndVideo') }
-                    </Text>
-                    <Switch
-                        checked = { shouldRecordAudioAndVideo }
-                        onChange = { this._onRecordAudioAndVideoSwitchChange }
-                        style = { styles.switch } />
-                </View>
-                <View
-                    key = 'transcriptionSetting'
-                    style = { styles.header }>
-                    <Text
-                        style = {{
-                            ..._dialogStyles.text,
-                            ...styles.title
-                        }}>
-                        { t('recording.recordTranscription') }
-                    </Text>
-                    <Switch
-                        checked = { shouldRecordTranscription }
-                        onChange = { this._onTranscriptionSwitchChange }
-                        style = { styles.switch } />
-                </View>
+                { _renderRecording && (
+                    <View
+                        key = 'audioVideoSetting'
+                        style = { styles.header }>
+                        <Text
+                            style = {{
+                                ..._dialogStyles.text,
+                                ...styles.title
+                            }}>
+                            { t('recording.recordAudioAndVideo') }
+                        </Text>
+                        <Switch
+                            checked = { shouldRecordAudioAndVideo }
+                            onChange = { this._onRecordAudioAndVideoSwitchChange }
+                            style = { styles.switch } />
+                    </View>
+                ) }
+                { this._canStartTranscribing() && (
+                    <View
+                        key = 'transcriptionSetting'
+                        style = { styles.header }>
+                        <Text
+                            style = {{
+                                ..._dialogStyles.text,
+                                ...styles.title
+                            }}>
+                            { t('recording.recordTranscription') }
+                        </Text>
+                        <Switch
+                            checked = { shouldRecordTranscription }
+                            onChange = { this._onTranscriptionSwitchChange }
+                            style = { styles.switch } />
+                    </View>
+                ) }
             </>
         );
     }

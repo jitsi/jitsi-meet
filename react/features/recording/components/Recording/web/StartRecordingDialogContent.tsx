@@ -38,23 +38,25 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     _renderSessionToggles() {
-        const { _isModerator, shouldRecordAudioAndVideo, shouldRecordTranscription, t } = this.props;
+        const { _renderRecording, shouldRecordAudioAndVideo, shouldRecordTranscription, t } = this.props;
 
         return (
             <>
-                <div className = 'recording-header space-top'>
-                    <label
-                        className = 'recording-title'
-                        htmlFor = 'recording-switch-audio-video'>
-                        { t('recording.recordAudioAndVideo') }
-                    </label>
-                    <Switch
-                        checked = { shouldRecordAudioAndVideo }
-                        className = 'recording-switch'
-                        id = 'recording-switch-audio-video'
-                        onChange = { this._onRecordAudioAndVideoSwitchChange } />
-                </div>
-                { _isModerator && (
+                { _renderRecording && (
+                    <div className = 'recording-header space-top'>
+                        <label
+                            className = 'recording-title'
+                            htmlFor = 'recording-switch-audio-video'>
+                            { t('recording.recordAudioAndVideo') }
+                        </label>
+                        <Switch
+                            checked = { shouldRecordAudioAndVideo }
+                            className = 'recording-switch'
+                            id = 'recording-switch-audio-video'
+                            onChange = { this._onRecordAudioAndVideoSwitchChange } />
+                    </div>
+                ) }
+                { this._canStartTranscribing() && (
                     <div className = 'recording-header space-top'>
                         <label
                             className = 'recording-title'
@@ -68,6 +70,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                             onChange = { this._onTranscriptionSwitchChange } />
                     </div>
                 ) }
+                { !_renderRecording && this._renderLocalRecordingContent() }
             </>
         );
     }
@@ -75,10 +78,8 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
     override render() {
         const {
             _canStartTranscribing,
-            _localRecordingAvailable,
             _renderRecording,
             _transcriptionRunning,
-            integrationsEnabled,
             recordingRunning
         } = this.props;
 
@@ -93,9 +94,9 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         const isTranscriptionOnlySession = Boolean(_transcriptionRunning) && !recordingRunning;
 
         if (isTranscriptionOnlySession) {
-            // Transcription-only session: show the share-link toggle and
-            // interactive service toggles so the user can start recording
-            // and/or stop transcription independently.
+            // Transcription-only session: show the share-link toggle plus the per-capability service
+            // toggles (recording, transcription, local recording) so the participant can act on
+            // whatever they are allowed to control.
             return (
                 <Container className = 'recording-dialog'>
                     { this._renderFileSharingContent() }
@@ -104,8 +105,9 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
             );
         }
 
-        const hasRecordingService = _renderRecording || _localRecordingAvailable || integrationsEnabled;
-        const transcriptionOnly = !hasRecordingService && _canStartTranscribing;
+        // Offer the standalone transcription toggle to transcription-capable participants whenever
+        // cloud recording is not available (when it is, transcription lives in the advanced options).
+        const showTranscription = !_renderRecording && _canStartTranscribing;
 
         return (
             <Container className = 'recording-dialog'>
@@ -118,8 +120,8 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                         { this._renderIntegrationsContent() }
                     </>
                 )}
+                { showTranscription && this._renderTranscriptionOnly() }
                 { this._renderLocalRecordingContent() }
-                { transcriptionOnly && this._renderTranscriptionOnly() }
             </Container>
         );
     }
@@ -134,9 +136,9 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         const { shouldRecordTranscription, t } = this.props;
 
         return (
-            <div className = 'recording-header'>
+            <div className = 'recording-header space-top'>
                 <label
-                    className = 'recording-title-no-space'
+                    className = 'recording-title'
                     htmlFor = 'recording-switch-transcription'>
                     { t('recording.recordTranscription') }
                 </label>
