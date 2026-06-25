@@ -1,10 +1,10 @@
+import { CacheProvider } from '@emotion/react';
 import React, { useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../app/types';
 import { ISecondScreenHandle } from '../functions.web';
-import '../multi-screen.css';
 
 import SecondScreenView from './SecondScreenView';
 
@@ -23,6 +23,9 @@ interface IOpenScreen {
  * close. Because the windows are same-origin, React reconciles their DOM the same
  * way it does the main document, so the second screens can host any component
  * (avatars now, with layouts and a whiteboard later), not just a {@code <video>}.
+ * Each window's subtree is wrapped in its own Emotion {@code CacheProvider} (the
+ * cache's container is that window's head), so MUI/tss-react styles inject into
+ * the window directly, in dev and prod.
  *
  * @returns {ReactElement}
  */
@@ -42,9 +45,11 @@ const SecondScreenPortals = () => {
     return (
         <>
             { open.map(({ handle, id }) => ReactDOM.createPortal(
-                <SecondScreenView
-                    id = { id }
-                    win = { handle.win } />,
+                <CacheProvider value = { handle.cache }>
+                    <SecondScreenView
+                        id = { id }
+                        win = { handle.win } />
+                </CacheProvider>,
                 handle.root,
                 id
             )) }

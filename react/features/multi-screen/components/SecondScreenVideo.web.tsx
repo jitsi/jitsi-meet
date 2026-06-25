@@ -6,13 +6,6 @@ import React, { useEffect, useRef } from 'react';
 interface IProps {
 
     /**
-     * Extra CSS class(es) controlling sizing/object-fit (e.g. {@code cover} for
-     * camera tiles, {@code screen} for shared screens). The element always fills
-     * its container; the default object-fit is {@code contain}.
-     */
-    className?: string;
-
-    /**
      * The native meeting track to render in the second window.
      */
     track: MediaStreamTrack;
@@ -26,12 +19,13 @@ interface IProps {
 }
 
 /**
- * Fills the container; object-fit comes from the {@code second-screen-video} CSS
- * class so callers can override it (e.g. cover for camera tiles).
+ * Full-bleed style for the second-screen video; {@code contain} so shared screens
+ * and slides are never cropped.
  */
 const VIDEO_STYLE: React.CSSProperties = {
     background: '#000',
     height: '100%',
+    objectFit: 'contain',
     width: '100%'
 };
 
@@ -47,7 +41,7 @@ const VIDEO_STYLE: React.CSSProperties = {
  * @param {IProps} props - The component props.
  * @returns {ReactElement}
  */
-const SecondScreenVideo = ({ className = '', track, win }: IProps) => {
+const SecondScreenVideo = ({ track, win }: IProps) => {
     const videoRef = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
@@ -70,7 +64,6 @@ const SecondScreenVideo = ({ className = '', track, win }: IProps) => {
     return (
         <video
             autoPlay = { true }
-            className = { `second-screen-video ${className}`.trim() }
             muted = { true }
             playsInline = { true }
             ref = { videoRef }

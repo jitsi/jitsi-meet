@@ -1,3 +1,5 @@
+import createCache, { EmotionCache } from '@emotion/cache';
+
 import { IReduxState, IStore } from '../app/types';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../base/media/constants';
 import { getParticipantById } from '../base/participants/functions';
@@ -13,20 +15,28 @@ import { ISecondScreenSource } from './types';
 // from the `@types/webscreens-window-placement` devDependency.
 
 /**
+ * Emotion cache key for second-screen windows. Each window gets its own cache
+ * whose container is that window's {@code head}.
+ */
+const SECOND_SCREEN_CACHE_KEY = 'secondscreen';
+
+/**
  * The live, non-serializable handle backing a single second-screen window. It is
  * stored on the redux entry (typed opaquely there as {@code unknown} because the
  * shared/native build has no DOM lib) and read back with a cast. React renders the
- * window's content into {@code root} via a portal, so the handle only needs to
- * carry the window and its portal root; the rendered tracks/avatars are owned by
- * the React tree and stopped on unmount.
+ * window's content into {@code root} via a portal, so the handle carries the
+ * window, its portal root, and a per-window Emotion cache; the rendered
+ * tracks/avatars are owned by the React tree and stopped on unmount.
  */
 export interface ISecondScreenHandle {
 
     /**
-     * Stops mirroring the main document's stylesheets into this window. Call on
-     * teardown so the observer does not outlive the window.
+     * The per-window Emotion cache (its {@code container} is this window's
+     * {@code head}), so the MUI/tss-react styles of the portaled components inject
+     * straight into the window in dev and prod, instead of being copied across
+     * documents (which breaks under Emotion's production "speedy" insertRule mode).
      */
-    disconnectStyles?: () => void;
+    cache: EmotionCache;
 
     /**
      * The full-bleed root element in the second window that React portals the
@@ -48,7 +58,7 @@ export interface ISecondScreenHandle {
  * @param {string} id - The window id.
  * @returns {ISecondScreenHandle | undefined}
  */
-function getHandle(state: IReduxState, id: string): ISecondScreenHandle | undefined {
+export function getHandle(state: IReduxState, id: string): ISecondScreenHandle | undefined {
     return state['features/multi-screen'].screens[id]?.handle as ISecondScreenHandle | undefined;
 }
 
@@ -179,64 +189,6 @@ function buildWindow(win: Window): HTMLElement {
 }
 
 /**
- * Mirrors the main document's stylesheets into a second-screen window so the
- * React components portaled into it are styled. Jitsi injects its CSS (the app
- * bundle plus MUI/tss component styles) into the main document's {@code <head>};
- * the popup is a separate document that does not inherit them. Links are copied
- * once (re-cloning them would refetch the CSS); {@code <style>} tags are kept in
- * sync via a {@code MutationObserver}, because MUI injects per-component styles
- * into the main document on demand, even for components rendered in the popup.
- *
- * @param {Window} win - The second-screen window.
- * @returns {Function} A function that stops the syncing; call it on teardown.
- */
-function syncStyles(win: Window): () => void {
-    const head = win.document.head;
-
-    document.head.querySelectorAll('link[rel="stylesheet"]').forEach(node => {
-        const clone = node.cloneNode(true) as HTMLLinkElement;
-
-        // Resolve to an absolute URL so a root-relative href still loads in about:blank.
-        clone.href = (node as HTMLLinkElement).href;
-        head.appendChild(clone);
-    });
-
-    const STYLE_MARK = 'data-second-screen-style';
-    const syncStyleTags = () => {
-        if (win.closed) {
-            return;
-        }
-        head.querySelectorAll(`style[${STYLE_MARK}]`).forEach(node => node.remove());
-        document.head.querySelectorAll('style').forEach(node => {
-            const clone = node.cloneNode(true) as HTMLStyleElement;
-
-            clone.setAttribute(STYLE_MARK, '');
-            head.appendChild(clone);
-        });
-    };
-
-    syncStyleTags();
-
-    let scheduled = false;
-    const observer = new MutationObserver(() => {
-        if (scheduled) {
-            return;
-        }
-        scheduled = true;
-
-        // Coalesce bursts of style insertions into a single re-sync per frame.
-        requestAnimationFrame(() => {
-            scheduled = false;
-            syncStyleTags();
-        });
-    });
-
-    observer.observe(document.head, { characterData: true, childList: true, subtree: true });
-
-    return () => observer.disconnect();
-}
-
-/**
  * Notifies the iframe embedder that a window's resolved source changed.
  *
  * @param {string} id - The window id.
@@ -271,8 +223,8 @@ function applySource(store: IStore, id: string) {
 }
 
 /**
- * Stops the handle's style syncing and closes its window if requested. The
- * rendered tracks/avatars are owned by the React portal and stopped when it
+ * Closes the handle's window if requested. The rendered tracks/avatars and the
+ * window's Emotion cache are owned by the React portal and torn down when it
  * unmounts; the redux entry is removed by the caller's action.
  *
  * @param {ISecondScreenHandle} handle - The window handle.
@@ -280,8 +232,6 @@ function applySource(store: IStore, id: string) {
  * @returns {void}
  */
 function teardownHandle(handle: ISecondScreenHandle, closeWindow: boolean) {
-    handle.disconnectStyles?.();
-
     if (closeWindow && !handle.win.closed) {
         handle.win.close();
     }
@@ -328,12 +278,9 @@ export async function openOrUpdateSecondScreen(store: IStore, id: string, screen
         return;
     }
 
-    if (existing) {
-        // A previous window was closed without notifying us; stop syncing styles
-        // into it before its handle is overwritten below (React unmounts its
-        // portal content and stops the cloned track on its own).
-        teardownHandle(existing, false);
-    }
+    // If a previous window was closed without notifying us, its handle is
+    // overwritten below and React unmounts its portal content (stopping the cloned
+    // track and its Emotion cache) on its own, so there is nothing to tear down.
 
     let features;
 
@@ -357,9 +304,12 @@ export async function openOrUpdateSecondScreen(store: IStore, id: string, screen
         return;
     }
 
-    const handle: ISecondScreenHandle = { win, root: buildWindow(win) };
+    const handle: ISecondScreenHandle = {
+        cache: createCache({ container: win.document.head, key: SECOND_SCREEN_CACHE_KEY }),
+        root: buildWindow(win),
+        win
+    };
 
-    handle.disconnectStyles = syncStyles(win);
     store.dispatch(setSecondScreenWindow(id, handle));
     win.addEventListener('pagehide', () => handleWindowClosed(store, id), { once: true });
 
@@ -373,22 +323,34 @@ export async function openOrUpdateSecondScreen(store: IStore, id: string, screen
 }
 
 /**
- * Closes a single second-screen window: tears down its live handle and notifies
- * the embedder. Called by the middleware as the window's entry is removed from
- * state, so it does not dispatch itself.
+ * Closes a window from an already-captured handle and notifies the embedder. The
+ * caller captures the handle and removes the redux entry first (unmounting the
+ * portal, which stops the cloned track, while the window is still open), then
+ * calls this to close the window.
+ *
+ * @param {ISecondScreenHandle | undefined} handle - The captured window handle.
+ * @param {string} id - The window id.
+ * @returns {void}
+ */
+export function closeSecondScreenHandle(handle: ISecondScreenHandle | undefined, id: string) {
+    if (!handle) {
+        return;
+    }
+    teardownHandle(handle, true);
+    APP.API?.notifySecondScreenClosed?.({ id });
+}
+
+/**
+ * Closes a single second-screen window by reading its handle from state. Used for
+ * bulk teardown (conference end); single removals use the captured-handle path
+ * ({@link closeSecondScreenHandle}) in the middleware.
  *
  * @param {IStore} store - The redux store.
  * @param {string} id - The window id.
  * @returns {void}
  */
 export function closeSecondScreen(store: IStore, id: string) {
-    const handle = getHandle(store.getState(), id);
-
-    if (!handle) {
-        return;
-    }
-    teardownHandle(handle, true);
-    APP.API?.notifySecondScreenClosed?.({ id });
+    closeSecondScreenHandle(getHandle(store.getState(), id), id);
 }
 
 /**
