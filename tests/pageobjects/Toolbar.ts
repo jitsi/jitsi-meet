@@ -410,7 +410,11 @@ export default class Toolbar extends BasePageObject {
     private waitForOverFlowMenu(visible: boolean) {
         return this.getButton(OVERFLOW_MENU).waitForDisplayed({
             reverse: !visible,
-            timeout: 3000,
+
+            // The menu opens with an enter animation and its render can be delayed by several
+            // seconds when the main thread is busy (e.g. right after a rejoin or while a virtual
+            // background effect is loading), so allow a generous timeout before giving up.
+            timeout: 10000,
             timeoutMsg: `Overflow menu is not ${visible ? 'visible' : 'hidden'}`
         });
     }
