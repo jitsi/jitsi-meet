@@ -1221,6 +1221,7 @@ export default {
         APP.store.dispatch(stopReceiver());
 
         this._stopProxyConnection();
+        this._stopExternalShare();
 
         APP.store.dispatch(toggleScreenshotCaptureSummary(false));
         const tracks = APP.store.getState()['features/base/tracks'];
@@ -2119,6 +2120,7 @@ export default {
         APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();
+        this._stopExternalShare();
 
         APP.store.dispatch(destroyLocalTracks());
         this._localTracksInitialized = false;
@@ -2333,6 +2335,14 @@ export default {
      * @returns {void}
      */
     onExternalShareSignal(signal) {
+        // A fresh offer begins a new cast session. If a receiver is already around (a
+        // second/reconnecting sharer, or a stale one whose PC died), tear it down first
+        // rather than feeding the new offer into the old — possibly already-published —
+        // peer connection, where _publish's once-only guard would swallow it.
+        if (signal?.kind === 'offer') {
+            this._stopExternalShare();
+        }
+
         if (!this._externalShare) {
             this._externalShare = new ExternalShareReceiver({
                 JitsiMeetJS,
@@ -2350,10 +2360,16 @@ export default {
                     }));
                 },
 
-                onClosed: () => {
-                    if (this._untoggleScreenSharing) {
-                        this._untoggleScreenSharing();
+                onClosed: ({ spontaneous, published } = {}) => {
+                    // If the sharer's connection dropped on its own (ICE failure, laptop
+                    // closed, sharer navigated away) while a share was live, the published
+                    // screenshare is now frozen in the meeting — take it down. Explicit
+                    // teardowns (hangup / _stopExternalShare) are driven from the conference
+                    // and remove the share through their own path, so we skip it there.
+                    if (spontaneous && published) {
+                        APP.store.dispatch(toggleScreensharingA(false, false));
                     }
+
                     this._externalShare = null;
                 }
             });

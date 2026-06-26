@@ -44,7 +44,10 @@ export default class ExternalShareReceiver {
      * sharer: {@code (signal) => void}.
      * @param {Function} options.onTracks - Publish the received screenshare:
      * {@code ({ desktopVideoTrack, desktopAudioTrack }) => void}.
-     * @param {Function} [options.onClosed] - Invoked once when the connection closes.
+     * @param {Function} [options.onClosed] - Invoked once when the connection closes:
+     * {@code ({ published, spontaneous }) => void}. {@code published} is whether a share
+     * had been handed to the conference; {@code spontaneous} is whether the peer
+     * connection dropped on its own (vs. an explicit {@link stop}).
      */
     constructor({ JitsiMeetJS, pcConfig, onSignal, onTracks, onClosed }) {
         this._JitsiMeetJS = JitsiMeetJS;
@@ -56,6 +59,15 @@ export default class ExternalShareReceiver {
         this._desktopAudioTrack = null;
         this._published = false;
         this._closed = false;
+        this._spontaneous = false;
+
+        if (!pcConfig) {
+            // Don't fail outright — a same-LAN sharer can still connect with host
+            // candidates — but make the missing TURN/STUN loud: a remote sharer behind
+            // NAT will silently never reach 'connected' without it.
+            logger.warn('external share: no ICE config supplied; the peer connection has '
+                + 'no STUN/TURN servers, so only same-LAN sharers will connect');
+        }
 
         const pc = new RTCPeerConnection(pcConfig || {});
 
@@ -79,7 +91,13 @@ export default class ExternalShareReceiver {
                 // By the time the PC is connected, ontrack has fired for every track in
                 // the offer, so we know whether audio is present. Publish exactly once.
                 this._publish();
-            } else if (state === 'failed' || state === 'closed' || state === 'disconnected') {
+            } else if (state === 'failed' || state === 'closed') {
+                // Terminal only. 'disconnected' is deliberately NOT treated as terminal —
+                // it is frequently a transient blip that recovers back to 'connected', so
+                // tearing the cast down on it would drop the share on a momentary glitch.
+                // The peer connection dropped on its own — flag it so the conference can
+                // tear down a now-frozen published share (see onClosed).
+                this._spontaneous = true;
                 this.stop();
             }
         });
@@ -90,10 +108,30 @@ export default class ExternalShareReceiver {
     /**
      * Handle one inbound signalling message from the sharer.
      *
+     * Messages are processed strictly in arrival order: callers don't await us, so we
+     * chain on an internal queue. Without it a trickled {@code candidate} could run its
+     * {@code addIceCandidate} before the preceding {@code offer}'s asynchronous
+     * {@code setRemoteDescription} has resolved — which throws ("remote description was
+     * null") and silently drops the candidate.
+     *
      * @param {Object} signal - The signalling message (see class doc for shapes).
      * @returns {Promise<void>}
      */
-    async handleSignal(signal) {
+    handleSignal(signal) {
+        this._signalQueue = (this._signalQueue || Promise.resolve())
+            .then(() => this._processSignal(signal));
+
+        return this._signalQueue;
+    }
+
+    /**
+     * Process a single inbound signalling message. Serialized by {@link handleSignal}.
+     *
+     * @param {Object} signal - The signalling message (see class doc for shapes).
+     * @private
+     * @returns {Promise<void>}
+     */
+    async _processSignal(signal) {
         if (!signal || this._closed) {
             return;
         }
@@ -132,28 +170,35 @@ export default class ExternalShareReceiver {
      * @returns {void}
      */
     _collectTrack(track) {
-        // Each received track gets its OWN single-track MediaStream:
-        // createLocalTracksFromMediaStreams throws if a stream holds 0 or >1 tracks of
-        // the requested kind.
-        const stream = new MediaStream([ track ]);
         const isVideo = track.kind === 'video';
 
-        const [ jitsiTrack ] = this._JitsiMeetJS.createLocalTracksFromMediaStreams([ {
-            stream,
-            track,
-            mediaType: track.kind,
-            sourceType: 'proxy',
-            deviceId: 'proxy:screenshare-cast',
-            videoType: isVideo ? 'desktop' : undefined
-        } ]);
+        try {
+            // Each received track gets its OWN single-track MediaStream:
+            // createLocalTracksFromMediaStreams throws if a stream holds 0 or >1 tracks
+            // of the requested kind. Guard the call (it runs inside the 'track' event)
+            // so an unexpected/extra track can't leave the handler with an uncaught
+            // throw and a half-collected state.
+            const stream = new MediaStream([ track ]);
 
-        if (isVideo) {
-            this._desktopVideoTrack = jitsiTrack;
-        } else {
-            this._desktopAudioTrack = jitsiTrack;
+            const [ jitsiTrack ] = this._JitsiMeetJS.createLocalTracksFromMediaStreams([ {
+                stream,
+                track,
+                mediaType: track.kind,
+                sourceType: 'proxy',
+                deviceId: 'proxy:screenshare-cast',
+                videoType: isVideo ? 'desktop' : undefined
+            } ]);
+
+            if (isVideo) {
+                this._desktopVideoTrack = jitsiTrack;
+            } else {
+                this._desktopAudioTrack = jitsiTrack;
+            }
+
+            logger.info(`external share collected ${track.kind} track`);
+        } catch (error) {
+            logger.error(`external share failed to wrap ${track.kind} track`, error);
         }
-
-        logger.info(`external share collected ${track.kind} track`);
     }
 
     /**
@@ -193,6 +238,18 @@ export default class ExternalShareReceiver {
             // already torn down
         }
 
-        this._onClosed?.();
+        // If we wrapped track(s) but never handed them to the conference (e.g. the
+        // connection failed before reaching 'connected'), nobody else owns them — dispose
+        // them here so they don't leak. Once published, the conference owns their
+        // lifecycle and disposes them on screenshare-off.
+        if (!this._published) {
+            this._desktopVideoTrack?.dispose();
+            this._desktopAudioTrack?.dispose();
+        }
+
+        this._onClosed?.({
+            published: this._published,
+            spontaneous: this._spontaneous
+        });
     }
 }
