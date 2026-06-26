@@ -39,5 +39,5 @@ export function useTrackStreamingStatus(track: ITrack | undefined) {
         // listener on the old (removed) track and nobody subscribed to the new one, so once its streaming status
         // tracker is disposed the status is stuck as null in redux and the tile falls back to the avatar while
         // video is in fact flowing.
-    }, [ jitsiTrack ]);
+    }, [ jitsiTrack, sourceName ]);
 }
