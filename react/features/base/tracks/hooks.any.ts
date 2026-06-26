@@ -15,6 +15,7 @@ import { ITrack } from './types';
 export function useTrackStreamingStatus(track: ITrack | undefined) {
     const dispatch = useDispatch();
     const jitsiTrack = track?.jitsiTrack;
+    const sourceName = jitsiTrack?.getSourceName();
 
     const handleStreamingStatusChanged = (changedTrack: any, streamingStatus: string) => {
         dispatch(trackStreamingStatusChanged(changedTrack, streamingStatus));
