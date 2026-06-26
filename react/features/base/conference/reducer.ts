@@ -146,6 +146,7 @@ export interface IJitsiConference {
     sendFeedback: Function;
     sendLobbyMessage: Function;
     sendMessage: Function;
+    sendMessageRetraction: Function;
     sendPrivateTextMessage: Function;
     sendReaction: Function;
     sendTextMessage: Function;
