@@ -1,5 +1,7 @@
 import Logger from '@jitsi/logger';
 
+import JitsiMeetJS from '../../react/features/base/lib-jitsi-meet';
+
 const logger = Logger.getLogger('modules/screenshare-cast/ExternalShareReceiver');
 
 /**
@@ -16,17 +18,12 @@ const logger = Logger.getLogger('modules/screenshare-cast/ExternalShareReceiver'
  * This replaces the brittle ProxyConnectionService path. The shape — terminate the
  * peer connection at the TV's Jitsi Meet and let Jitsi move the tracks from this
  * "proxy" PC into the conference PC — is exactly what Spot's screenshare always did,
- * minus the Jingle/XMPP plumbing that made it Chromium-only and audio-less.
+ * minus the Jingle/XMPP plumbing that made it Chromium-only and audio-less. Built on a
+ * vanilla RTCPeerConnection so screenshare audio rides along for free and Firefox/Safari
+ * are no longer locked out the way ProxyConnectionService locked them.
  *
- * Design credit: Saúl "saghul" Ibarra Corretgé. His call:
- *   "set up the peer connection directly between the sharer and the TV's instance of
- *    Jitsi Meet, and Jitsi Meet takes the tracks from one PC and puts them into the
- *    other." — "Exactly!"
- * Built on a vanilla RTCPeerConnection so screenshare audio rides along for free and
- * Firefox/Safari are no longer locked out the way ProxyConnectionService locked them.
- *
- * Signalling is plain JSON, carried over the iframe external API (and, in Spaces, the
- * room Durable Object) — never XMPP:
+ * Signalling is plain JSON, carried over any transport the embedder wires up (e.g. the
+ * iframe external API) — never XMPP:
  *   { kind: 'offer',     sdp }        sharer → here   (answered with { kind:'answer', sdp })
  *   { kind: 'answer',    sdp }        here   → sharer
  *   { kind: 'candidate', candidate }  both ways
@@ -35,8 +32,6 @@ const logger = Logger.getLogger('modules/screenshare-cast/ExternalShareReceiver'
 export default class ExternalShareReceiver {
     /**
      * @param {Object} options
-     * @param {Object} options.JitsiMeetJS - The lib-jitsi-meet entry point (provides
-     * {@code createLocalTracksFromMediaStreams}).
      * @param {RTCConfiguration} [options.pcConfig] - ICE config for the peer
      * connection. The meeting's own TURN creds work here (same source the old proxy
      * borrowed) — just without the Jingle.
@@ -49,8 +44,7 @@ export default class ExternalShareReceiver {
      * had been handed to the conference; {@code spontaneous} is whether the peer
      * connection dropped on its own (vs. an explicit {@link stop}).
      */
-    constructor({ JitsiMeetJS, pcConfig, onSignal, onTracks, onClosed }) {
-        this._JitsiMeetJS = JitsiMeetJS;
+    constructor({ pcConfig, onSignal, onTracks, onClosed }) {
         this._onSignal = onSignal;
         this._onTracks = onTracks;
         this._onClosed = onClosed;
@@ -144,7 +138,7 @@ export default class ExternalShareReceiver {
                 await this._pc.setLocalDescription(answer);
 
                 // Emit a plain { type, sdp } so it survives structured-clone over
-                // postMessage / the room DO (an RTCSessionDescription may not).
+                // whatever transport carries it (an RTCSessionDescription may not).
                 this._onSignal({
                     kind: 'answer',
                     sdp: {
@@ -158,7 +152,12 @@ export default class ExternalShareReceiver {
                 this.stop();
             }
         } catch (error) {
+            // Signalling failed (bad SDP, unexpected state, etc.) — the connection can't
+            // be salvaged, so tear it down rather than hang half-negotiated. Flag it as
+            // spontaneous so a share that did get published is taken back down.
             logger.error('external share signal handling failed', error);
+            this._spontaneous = true;
+            this.stop();
         }
     }
 
@@ -180,7 +179,7 @@ export default class ExternalShareReceiver {
             // throw and a half-collected state.
             const stream = new MediaStream([ track ]);
 
-            const [ jitsiTrack ] = this._JitsiMeetJS.createLocalTracksFromMediaStreams([ {
+            const [ jitsiTrack ] = JitsiMeetJS.createLocalTracksFromMediaStreams([ {
                 stream,
                 track,
                 mediaType: track.kind,
@@ -238,14 +237,13 @@ export default class ExternalShareReceiver {
             // already torn down
         }
 
-        // If we wrapped track(s) but never handed them to the conference (e.g. the
-        // connection failed before reaching 'connected'), nobody else owns them — dispose
-        // them here so they don't leak. Once published, the conference owns their
-        // lifecycle and disposes them on screenshare-off.
-        if (!this._published) {
-            this._desktopVideoTrack?.dispose();
-            this._desktopAudioTrack?.dispose();
-        }
+        // Dispose the wrapped track(s) regardless of whether they were published — a
+        // double dispose is harmless, and on a pre-'connected' failure nobody else owns
+        // them, so this is the only thing that stops them leaking.
+        this._desktopVideoTrack?.dispose();
+        this._desktopAudioTrack?.dispose();
+        this._desktopVideoTrack = null;
+        this._desktopAudioTrack = null;
 
         this._onClosed?.({
             published: this._published,

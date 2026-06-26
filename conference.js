@@ -2327,10 +2327,6 @@ export default {
      * ProxyConnectionService, no Jingle, no XMPP/Strophe JIDs, and audio comes along for
      * free.
      *
-     * Design credit: Saúl "saghul" Ibarra Corretgé — "set up the peer connection directly
-     * between the sharer and the TV's instance of Jitsi Meet, and Jitsi Meet takes the
-     * tracks from one PC and puts them into the other."
-     *
      * @param {Object} signal - The signalling message ({ kind, sdp | candidate }).
      * @returns {void}
      */
@@ -2339,13 +2335,13 @@ export default {
         // second/reconnecting sharer, or a stale one whose PC died), tear it down first
         // rather than feeding the new offer into the old — possibly already-published —
         // peer connection, where _publish's once-only guard would swallow it.
+        // Optional chaining: signal is embedder-supplied, so it may be malformed/absent.
         if (signal?.kind === 'offer') {
             this._stopExternalShare();
         }
 
         if (!this._externalShare) {
             this._externalShare = new ExternalShareReceiver({
-                JitsiMeetJS,
 
                 // Reuse the meeting's own TURN credentials — the same source the old
                 // proxy borrowed — minus the XMPP signalling.

@@ -337,9 +337,9 @@ function initCommands() {
             APP.conference.onProxyConnectionEvent(event);
         },
         'external-share-signal': signal => {
-            // Direct-cast screenshare (credit: saghul) — a plain RTCPeerConnection
-            // signalling message from a remote sharer, the successor to
-            // 'proxy-connection-event'. See conference.onExternalShareSignal.
+            // Direct-cast screenshare — a plain RTCPeerConnection signalling message
+            // from a remote sharer, the successor to 'proxy-connection-event'. See
+            // conference.onExternalShareSignal.
             APP.conference.onExternalShareSignal(signal);
         },
         'reject-participant': (participantId, mediaType) => {
@@ -1363,7 +1363,7 @@ class API {
     /**
      * Notifies the external application (the sharer, via the embedder) of a direct-cast
      * screenshare signalling message (answer / ICE candidate). The successor to
-     * {@link sendProxyConnectionEvent}; plain SDP/ICE, no Jingle. Credit: saghul.
+     * {@link sendProxyConnectionEvent}; plain SDP/ICE, no Jingle.
      *
      * @param {Object} signal - The signalling message to pass back to the sharer.
      * @returns {void}

@@ -1494,8 +1494,6 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * {@link sendProxyConnectionEvent} — plain SDP/ICE over a vanilla RTCPeerConnection,
      * no Jingle, no XMPP. The meeting answers via the {@code externalShareSignal} event.
      *
-     * Design credit: Saúl "saghul" Ibarra Corretgé.
-     *
      * @param {Object} signal - The signalling message ({ kind, sdp | candidate }).
      * @returns {void}
      */

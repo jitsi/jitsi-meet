@@ -146,7 +146,7 @@ async function _toggleScreenSharing(
     if (enable) {
         let tracks;
 
-        // Spot proxy stream / direct-cast screenshare (credit: saghul).
+        // Spot proxy stream / direct-cast screenshare.
         if (shareOptions.desktopStream) {
             tracks = [ shareOptions.desktopStream ];
 
