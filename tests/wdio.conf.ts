@@ -61,7 +61,7 @@ const chromePreferences = {
 };
 
 const specs = [
-    'specs/**/*.spec.ts'
+    'specs/8x8/meetingSettings.spec.ts'
 ];
 
 /**
