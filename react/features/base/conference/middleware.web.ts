@@ -1,5 +1,6 @@
 import i18next from 'i18next';
 
+import { SET_KNOCKING_STATE } from '../../lobby/actionTypes';
 import {
     setPrejoinPageVisibility,
     setSkipPrejoinOnReload
@@ -58,6 +59,11 @@ async function releaseScreenLock() {
  * @returns {void}
  */
 function requestWakeLock() {
+    // A wake lock is already held (e.g. requested while knocking in the lobby), no need to request another one.
+    if (screenLock && !screenLock.released) {
+        return;
+    }
+
     if (navigator.wakeLock?.request) {
         navigator.wakeLock.request('screen')
             .then(lock => {
@@ -111,6 +117,17 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         requestWakeLock();
+
+        break;
+    }
+    case SET_KNOCKING_STATE: {
+        // Keep the screen awake while waiting in the lobby. The lock is kept on join (see CONFERENCE_JOINED, which
+        // no-ops if it is already held) and released by the CONFERENCE_FAILED/CONFERENCE_LEFT/KICKED_OUT handlers if
+        // knocking is rejected or the user leaves. We intentionally do not release here on knocking === false to avoid
+        // dropping the lock mid-meeting once a participant has been admitted.
+        if (action.knocking) {
+            requestWakeLock();
+        }
 
         break;
     }
