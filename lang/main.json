@@ -828,6 +828,11 @@
         "youAreAlone": "You are the only one in the meeting"
     },
     "me": "me",
+    "multiScreen": {
+        "noParticipants": "No participants",
+        "showOnStage": "Show {{name}} on the second screen",
+        "unpinFromStage": "Stop featuring {{name}} on the second screen"
+    },
     "notify": {
         "OldElectronAPPTitle": "Security vulnerability!",
         "allowAll": "Allow All",

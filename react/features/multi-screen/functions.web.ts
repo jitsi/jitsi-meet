@@ -2,9 +2,13 @@ import createCache, { EmotionCache } from '@emotion/cache';
 
 import { IReduxState, IStore } from '../app/types';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../base/media/constants';
-import { getParticipantById } from '../base/participants/functions';
+import { getParticipantById, isScreenShareParticipant } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
-import { getTrackByMediaTypeAndParticipant, getVideoTrackByParticipant } from '../base/tracks/functions.any';
+import {
+    getTrackByMediaTypeAndParticipant,
+    getVideoTrackByParticipant,
+    getVirtualScreenshareParticipantTrack
+} from '../base/tracks/functions.any';
 import { getLargeVideoParticipant } from '../large-video/functions';
 
 import { removeSecondScreen, setSecondScreenWindow } from './actions.web';
@@ -19,6 +23,16 @@ import { ISecondScreenSource } from './types';
  * whose container is that window's {@code head}.
  */
 const SECOND_SCREEN_CACHE_KEY = 'secondscreen';
+
+/**
+ * The app's base font stack, mirroring the baseFontFamily SCSS variable. The
+ * second window does not load the app's global stylesheet, so without setting this
+ * on its body the text falls back to the browser default serif font. The
+ * open_sanslight webfont is also not loaded in the popup, so it falls through to
+ * the system sans-serif, which is the intended look.
+ */
+const SECOND_SCREEN_FONT_FAMILY
+    = '-apple-system, BlinkMacSystemFont, open_sanslight, \'Helvetica Neue\', Helvetica, Arial, sans-serif';
 
 /**
  * The live, non-serializable handle backing a single second-screen window. It is
@@ -107,9 +121,18 @@ export function resolveSource(state: IReduxState, source: ISecondScreenSource) {
         participant = iTrack ? getParticipantById(state, iTrack.participantId) : undefined;
     } else if (source.participant) {
         participant = getParticipantById(state, source.participant);
-        const mediaType = source.media === 'desktop' ? MEDIA_TYPE.SCREENSHARE : MEDIA_TYPE.VIDEO;
 
-        iTrack = getTrackByMediaTypeAndParticipant(tracks, mediaType, source.participant);
+        // A virtual screenshare participant (<owner>-v<n>) owns no track under its
+        // own id: its screenshare track is owned by the endpoint id, so resolve it
+        // through the owner, else a pinned screenshare falls back to the avatar. For
+        // a real participant, media selects camera vs. screen, keeping the surface
+        // identical to the external API on master.
+        iTrack = isScreenShareParticipant(participant)
+            ? getVirtualScreenshareParticipantTrack(tracks, source.participant)
+            : getTrackByMediaTypeAndParticipant(
+                tracks,
+                source.media === 'desktop' ? MEDIA_TYPE.SCREENSHARE : MEDIA_TYPE.VIDEO,
+                source.participant);
     }
 
     const track = iTrack && !iTrack.muted
@@ -148,6 +171,27 @@ export function getSecondScreenSignature(state: IReduxState): string {
 }
 
 /**
+ * Computes the tile-grid dimensions (columns and rows) for a number of
+ * participants, using a Jitsi-style heuristic:
+ * {@code columns = min(ceil(sqrt(n)), maxColumns, n)}. Pure, so it is easy to
+ * unit-test in isolation.
+ *
+ * @param {number} count - The number of participants to lay out.
+ * @param {number} maxColumns - The maximum number of columns allowed.
+ * @returns {Object} The grid dimensions as { columns, rows }.
+ */
+export function getGalleryGridDimensions(count: number, maxColumns: number): { columns: number; rows: number; } {
+    if (count <= 0) {
+        return { columns: 1, rows: 1 };
+    }
+
+    const columns = Math.min(Math.ceil(Math.sqrt(count)), maxColumns, count);
+    const rows = Math.ceil(count / columns);
+
+    return { columns, rows };
+}
+
+/**
  * Computes the {@code window.open} features string, placing the window on a
  * physical screen via the Window Management API. Rejects if the API is
  * unavailable/denied (the feature requires it).
@@ -178,7 +222,18 @@ function buildWindow(win: Window): HTMLElement {
 
     doc.title = 'Jitsi Meet';
     Object.assign(doc.documentElement.style, { height: '100%' });
-    Object.assign(doc.body.style, { margin: '0', height: '100%', background: '#000', overflow: 'hidden' });
+
+    // The popup does not load the app's global stylesheet, so set the base
+    // typography (font + text colour) here, otherwise text falls back to the
+    // browser default serif font in black.
+    Object.assign(doc.body.style, {
+        margin: '0',
+        height: '100%',
+        background: '#000',
+        color: '#fff',
+        fontFamily: SECOND_SCREEN_FONT_FAMILY,
+        overflow: 'hidden'
+    });
 
     const root = doc.createElement('div');
 
