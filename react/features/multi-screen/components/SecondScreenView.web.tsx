@@ -6,6 +6,8 @@ import Avatar from '../../base/avatar/components/Avatar';
 import { IParticipant } from '../../base/participants/types';
 import { resolveSource } from '../functions.web';
 
+import SecondScreenGallery from './SecondScreenGallery';
+import SecondScreenStage from './SecondScreenStage';
 import SecondScreenVideo from './SecondScreenVideo';
 
 /**
@@ -64,21 +66,37 @@ const _resolvedEquals = (a: IResolved, b: IResolved) => a.track === b.track && a
 
 /**
  * Renders a single second-screen window's content from its redux source
- * descriptor: the resolved meeting track full-bleed (via {@link
- * SecondScreenVideo}), falling back to the backing participant's avatar. Portaled
- * into the second window by {@link SecondScreenPortals}.
+ * descriptor. A {@code tile} source renders the {@link SecondScreenGallery} grid;
+ * a stage or participant source renders the {@link SecondScreenStage} layout
+ * (featured participant plus filmstrip); a screenshare or bare source renders the
+ * resolved meeting track full-bleed (via {@link SecondScreenVideo}), falling back
+ * to the backing participant's avatar. Portaled into the second window by
+ * {@link SecondScreenPortals}.
  *
  * @param {IProps} props - The component props.
  * @returns {ReactElement}
  */
 const SecondScreenView = ({ id, win }: IProps) => {
+    const source = useSelector((state: IReduxState) => state['features/multi-screen'].screens[id]?.source);
     const { participant, track } = useSelector(
-        (state: IReduxState): IResolved => {
-            const source = state['features/multi-screen'].screens[id]?.source;
-
-            return source ? resolveSource(state, source) : { participant: undefined, track: null };
-        },
+        (state: IReduxState): IResolved =>
+            (source ? resolveSource(state, source) : { participant: undefined, track: null }),
         _resolvedEquals);
+
+    if (source?.role === 'tile') {
+        return (
+            <SecondScreenGallery
+                win = { win } />
+        );
+    }
+
+    if (source && (source.role === 'stage' || Boolean(source.participant))) {
+        return (
+            <SecondScreenStage
+                id = { id }
+                win = { win } />
+        );
+    }
 
     if (track) {
         return (

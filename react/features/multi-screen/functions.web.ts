@@ -21,6 +21,16 @@ import { ISecondScreenSource } from './types';
 const SECOND_SCREEN_CACHE_KEY = 'secondscreen';
 
 /**
+ * The app's base font stack, mirroring the baseFontFamily SCSS variable. The
+ * second window does not load the app's global stylesheet, so without setting this
+ * on its body the text falls back to the browser default serif font. The
+ * open_sanslight webfont is also not loaded in the popup, so it falls through to
+ * the system sans-serif, which is the intended look.
+ */
+const SECOND_SCREEN_FONT_FAMILY
+    = '-apple-system, BlinkMacSystemFont, open_sanslight, \'Helvetica Neue\', Helvetica, Arial, sans-serif';
+
+/**
  * The live, non-serializable handle backing a single second-screen window. It is
  * stored on the redux entry (typed opaquely there as {@code unknown} because the
  * shared/native build has no DOM lib) and read back with a cast. React renders the
@@ -148,6 +158,27 @@ export function getSecondScreenSignature(state: IReduxState): string {
 }
 
 /**
+ * Computes the tile-grid dimensions (columns and rows) for a number of
+ * participants, using a Jitsi-style heuristic:
+ * {@code columns = min(ceil(sqrt(n)), maxColumns, n)}. Pure, so it is easy to
+ * unit-test in isolation.
+ *
+ * @param {number} count - The number of participants to lay out.
+ * @param {number} maxColumns - The maximum number of columns allowed.
+ * @returns {Object} The grid dimensions as { columns, rows }.
+ */
+export function getGalleryGridDimensions(count: number, maxColumns: number): { columns: number; rows: number; } {
+    if (count <= 0) {
+        return { columns: 1, rows: 1 };
+    }
+
+    const columns = Math.min(Math.ceil(Math.sqrt(count)), maxColumns, count);
+    const rows = Math.ceil(count / columns);
+
+    return { columns, rows };
+}
+
+/**
  * Computes the {@code window.open} features string, placing the window on a
  * physical screen via the Window Management API. Rejects if the API is
  * unavailable/denied (the feature requires it).
@@ -178,7 +209,18 @@ function buildWindow(win: Window): HTMLElement {
 
     doc.title = 'Jitsi Meet';
     Object.assign(doc.documentElement.style, { height: '100%' });
-    Object.assign(doc.body.style, { margin: '0', height: '100%', background: '#000', overflow: 'hidden' });
+
+    // The popup does not load the app's global stylesheet, so set the base
+    // typography (font + text colour) here, otherwise text falls back to the
+    // browser default serif font in black.
+    Object.assign(doc.body.style, {
+        margin: '0',
+        height: '100%',
+        background: '#000',
+        color: '#fff',
+        fontFamily: SECOND_SCREEN_FONT_FAMILY,
+        overflow: 'hidden'
+    });
 
     const root = doc.createElement('div');
 
