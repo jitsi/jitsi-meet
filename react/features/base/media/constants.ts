@@ -44,7 +44,8 @@ export const SCREENSHARE_MUTISM_AUTHORITY = {
 export enum AudioSupportedLanguage {
     en = 'en',
     fr = 'fr',
-    frCA = 'frCA'
+    frCA = 'frCA',
+    ru = 'ru'
 }
 
 /**
