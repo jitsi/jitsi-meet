@@ -491,7 +491,8 @@
         "setDisplayNameLabel": "Sisesta nimi",
         "setEmailInput": "Sisesta email",
         "setEmailLabel": "Sisesta Gravatar e-kirja aadress",
-        "title": "Profiil"
+        "title": "Profiil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Soovin rääkida",
     "recording": {

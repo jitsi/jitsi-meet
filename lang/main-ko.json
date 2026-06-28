@@ -998,7 +998,8 @@
         "setDisplayNameLabel": "표시 이름 설정",
         "setEmailInput": "이메일 입력",
         "setEmailLabel": "이메일 설정",
-        "title": "프로필"
+        "title": "프로필",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "말하고 싶어합니다",
     "raisedHandsLabel": "손 든 사람 수",

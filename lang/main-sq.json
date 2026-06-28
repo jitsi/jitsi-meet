@@ -1093,7 +1093,8 @@
         "setDisplayNameLabel": "Emër",
         "setEmailInput": "Jepni email",
         "setEmailLabel": "Jepni email të gravatarit tuaj",
-        "title": "Profil"
+        "title": "Profil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Do të donte të fliste",
     "raisedHandsLabel": "Numër duarsh të ngritura",

@@ -884,7 +884,8 @@
         "setDisplayNameLabel": "Όνομα",
         "setEmailInput": "Εισάγετε το email",
         "setEmailLabel": "Email στο Gravatar",
-        "title": "Προφίλ"
+        "title": "Προφίλ",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Θα ήθελα να μιλήσω",
     "raisedHandsLabel": "Πλήθος χεριών",

@@ -491,7 +491,8 @@
         "setDisplayNameLabel": "Įveskite savo vardą",
         "setEmailInput": "Įveskite savo el. paštą",
         "setEmailLabel": "Parinkite savo „gravataro“ el. paštą",
-        "title": "Profilis"
+        "title": "Profilis",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Norėtų kalbėti",
     "recording": {

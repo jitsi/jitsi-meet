@@ -623,7 +623,8 @@
         "setDisplayNameLabel": "നിങ്ങളുടെ ഡിസ്പ്ലേ നാമം സജ്ജമാക്കുക",
         "setEmailInput": "ഇ-മെയിൽ നൽകുക",
         "setEmailLabel": "നിങ്ങളുടെ ഗ്രാവതാർ ഇമെയിൽ സജ്ജമാക്കുക",
-        "title": "പ്രൊഫൈൽ"
+        "title": "പ്രൊഫൈൽ",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "സംസാരിക്കാൻ ആഗ്രഹിക്കുന്നു",
     "recording": {

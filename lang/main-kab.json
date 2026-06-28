@@ -758,7 +758,8 @@
         "setDisplayNameLabel": "Sbadu isem n uskan",
         "setEmailInput": "Sekcem-d imayl",
         "setEmailLabel": "Sbadu imayl-inek·inem n Gravatar",
-        "title": "Amaɣnu"
+        "title": "Amaɣnu",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Bɣiɣ ad d-mmeslayeɣ",
     "recording": {

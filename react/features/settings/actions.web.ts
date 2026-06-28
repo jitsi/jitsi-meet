@@ -218,6 +218,12 @@ export function submitModeratorTab(newState: any) {
  * @param {Object} newState - The new settings.
  * @returns {Function}
  */
+/**
+ * A regular expression for basic email format validation.
+ * Checks for the pattern: non-empty local part @ non-empty domain with at least one dot.
+ */
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export function submitProfileTab(newState: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const currentState = getProfileTabProps(getState());
@@ -227,7 +233,10 @@ export function submitProfileTab(newState: any) {
         }
 
         if (newState.email !== currentState.email) {
-            APP.conference.changeLocalEmail(newState.email);
+            // Only save the email if it is empty (clearing it) or has a valid format.
+            if (!newState.email || EMAIL_REGEX.test(newState.email)) {
+                APP.conference.changeLocalEmail(newState.email);
+            }
         }
     };
 }

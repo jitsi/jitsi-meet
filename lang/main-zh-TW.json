@@ -1082,7 +1082,8 @@
         "setDisplayNameLabel": "設定顯示名稱",
         "setEmailInput": "輸入您的電子信箱",
         "setEmailLabel": "設定您的 Gravatar 電子信箱",
-        "title": "簡介"
+        "title": "簡介",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "想要發言",
     "raisedHandsLabel": "舉手人數",

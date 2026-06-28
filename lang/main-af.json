@@ -456,7 +456,8 @@
         "setDisplayNameLabel": "Stel u vertoonnaam",
         "setEmailInput": "Gee e-posadres",
         "setEmailLabel": "Stel u Gravatar-e-posadres",
-        "title": "Profiel"
+        "title": "Profiel",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "recording": {
         "authDropboxText": "Laai op na Dropbox",

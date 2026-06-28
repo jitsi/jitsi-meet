@@ -501,7 +501,8 @@
         "setDisplayNameLabel": "הגדר שם תצוגה",
         "setEmailInput": "הזן דואר אלקטרוני",
         "setEmailLabel": "הזן את כתובת הדואר האלקטרוני של gravatar",
-        "title": "פרופיל"
+        "title": "פרופיל",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "רוצה לדבר",
     "recording": {

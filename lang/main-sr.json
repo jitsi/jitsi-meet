@@ -506,7 +506,8 @@
         "setDisplayNameLabel": "Унесите име за приказ на екрану",
         "setEmailInput": "Унисите адресу е-поште",
         "setEmailLabel": "Е-пошта за Gravatar",
-        "title": "Профил"
+        "title": "Профил",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "recording": {
         "authDropboxText": "",

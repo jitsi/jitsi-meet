@@ -898,7 +898,8 @@
         "setDisplayNameLabel": "Podaj swoją wyświetlaną nazwę",
         "setEmailInput": "Wprowadź adres email",
         "setEmailLabel": "Ustaw adres poczty elektronicznej swojego Gravatara",
-        "title": "Profil"
+        "title": "Profil",
+        "invalidEmailFormat": "Please enter a valid email address"
     },
     "raisedHand": "Chcę coś powiedzieć",
     "raisedHandsLabel": "Liczba podniesionych rąk",
