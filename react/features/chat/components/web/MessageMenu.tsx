@@ -15,6 +15,7 @@ import { handleLobbyChatInitialized, openChat } from '../../actions.web';
 import logger from '../../logger';
 
 export interface IProps {
+    canEdit?: boolean;
     className?: string;
     displayName?: string;
     enablePrivateChat: boolean;
@@ -22,6 +23,7 @@ export interface IProps {
     isFromVisitor?: boolean;
     isLobbyMessage: boolean;
     message: string;
+    onEditMessage?: () => void;
     participantId: string;
 }
 
@@ -62,7 +64,7 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, enablePrivateChat, displayName, isFileMessage }: IProps) => {
+const MessageMenu = ({ canEdit, message, participantId, isFromVisitor, isLobbyMessage, enablePrivateChat, displayName, isFileMessage, onEditMessage }: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -75,7 +77,7 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
     const participant = useSelector((state: IReduxState) => getParticipantById(state, participantId));
 
     // If no menu items will be shown, don't render the menu button.
-    if (!enablePrivateChat && isFileMessage) {
+    if (!enablePrivateChat && isFileMessage && !canEdit) {
         return null;
     }
 
@@ -135,8 +137,20 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
         handleClose();
     }, [ message ]);
 
+    const handleEditClick = useCallback(() => {
+        onEditMessage?.();
+        handleClose();
+    }, [ onEditMessage, handleClose ]);
+
     const popoverContent = (
         <div className = { classes.menuPanel }>
+            {canEdit && (
+                <div
+                    className = { classes.menuItem }
+                    onClick = { handleEditClick }>
+                    {t('Edit')}
+                </div>
+            )}
             {enablePrivateChat && (
                 <div
                     className = { classes.menuItem }

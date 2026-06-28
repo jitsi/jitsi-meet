@@ -18,6 +18,11 @@ interface IProps {
      * The messages to display as a group.
      */
     messages: Array<IMessage>;
+
+    /**
+     * Callback invoked when the user wants to edit a message.
+     */
+    onEditMessage?: (message: IMessage) => void;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -54,7 +59,7 @@ const useStyles = makeStyles()(theme => {
 });
 
 
-const ChatMessageGroup = ({ className = '', messages }: IProps) => {
+const ChatMessageGroup = ({ className = '', messages, onEditMessage }: IProps) => {
     const { classes } = useStyles();
     const messagesLength = messages.length;
 
@@ -74,6 +79,7 @@ const ChatMessageGroup = ({ className = '', messages }: IProps) => {
                         className = { className }
                         key = { i }
                         message = { message }
+                        onEditMessage = { onEditMessage }
                         showDisplayName = { i === 0 }
                         showTimestamp = { i === messages.length - 1 } />
                 ))}

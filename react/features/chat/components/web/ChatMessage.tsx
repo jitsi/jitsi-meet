@@ -19,6 +19,7 @@ import ReactButton from './ReactButton';
 interface IProps extends IChatMessageProps {
     className?: string;
     enablePrivateChat?: boolean;
+    onEditMessage?: (message: IChatMessageProps['message']) => void;
     shouldDisplayMenuOnRight?: boolean;
     state?: IReduxState;
 }
@@ -172,6 +173,12 @@ const useStyles = makeStyles()((theme: Theme) => {
             whiteSpace: 'nowrap',
             flexShrink: 0
         },
+        editedLabel: {
+            ...theme.typography.labelRegular,
+            color: theme.palette.chatTimestamp,
+            marginLeft: theme.spacing(1),
+            whiteSpace: 'nowrap'
+        },
         reactionsPopover: {
             padding: theme.spacing(2),
             backgroundColor: theme.palette.chatInputBackground,
@@ -214,11 +221,16 @@ const ChatMessage = ({
     shouldDisplayMenuOnRight,
     enablePrivateChat,
     knocking,
+    onEditMessage,
     t
 }: IProps) => {
     const { classes, cx } = useStyles();
     const [ isHovered, setIsHovered ] = useState(false);
     const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
+
+    const handleEditMessage = useCallback(() => {
+        onEditMessage?.(message);
+    }, [ message, onEditMessage ]);
 
     const handleMouseEnter = useCallback(() => {
         setIsHovered(true);
@@ -347,6 +359,11 @@ const ChatMessage = ({
         );
     }, [ message?.reactions, isHovered, isReactionsOpen ]);
 
+    const canEdit = message.messageType === MESSAGE_TYPE_LOCAL
+        && !message.lobbyChat
+        && !message.isReaction
+        && !isFileMessage(message);
+
     return (
         <div
             className = { cx(classes.chatMessageWrapper, className) }
@@ -358,12 +375,14 @@ const ChatMessage = ({
                 {!shouldDisplayMenuOnRight && (
                     <div className = { classes.optionsButtonContainer }>
                         {isHovered && <MessageMenu
+                            canEdit = { canEdit }
                             displayName = { message.displayName }
                             enablePrivateChat = { Boolean(enablePrivateChat) }
                             isFileMessage = { isFileMessage(message) }
                             isFromVisitor = { message.isFromVisitor }
                             isLobbyMessage = { message.lobbyChat }
                             message = { message.message }
+                            onEditMessage = { handleEditMessage }
                             participantId = { message.participantId } />}
                     </div>
                 )}
@@ -408,6 +427,11 @@ const ChatMessage = ({
                                             </>
                                         )}
                                     </div>
+                                    {message.isEdited && (
+                                        <div className = { classes.editedLabel }>
+                                            {t('chat.edited', '(edited)')}
+                                        </div>
+                                    )}
                                     {_renderTimestamp()}
                                 </div>
                             </div>
@@ -427,12 +451,14 @@ const ChatMessage = ({
                         <div>
                             <div className = { classes.optionsButtonContainer }>
                                 {isHovered && <MessageMenu
+                                    canEdit = { canEdit }
                                     displayName = { message.displayName }
                                     enablePrivateChat = { Boolean(enablePrivateChat) }
                                     isFileMessage = { isFileMessage(message) }
                                     isFromVisitor = { message.isFromVisitor }
                                     isLobbyMessage = { message.lobbyChat }
                                     message = { message.message }
+                                    onEditMessage = { handleEditMessage }
                                     participantId = { message.participantId } />}
                             </div>
                         </div>

@@ -74,3 +74,5 @@ export const TIMESTAMP_FORMAT = 'H:mm';
 export const MESSAGE_TYPE_SYSTEM = 'system_chat_message';
 
 export const OPTION_GROUPCHAT = 'groupchat';
+
+export const EDIT_CHAT_MESSAGE = 'editChat';
