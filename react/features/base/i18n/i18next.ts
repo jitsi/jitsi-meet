@@ -7,6 +7,10 @@ import LANGUAGES_RESOURCES from '../../../../lang/languages.json';
 import MAIN_RESOURCES from '../../../../lang/main.json';
 import TRANSLATION_LANGUAGES_RESOURCES from '../../../../lang/translation-languages.json';
 
+export { LANGUAGES, SUPPORTED_LANGUAGES } from './supportedLanguages';
+
+import { LANGUAGES, SUPPORTED_LANGUAGES } from './supportedLanguages';
+
 import { I18NEXT_INITIALIZED, LANGUAGE_CHANGED } from './actionTypes';
 import languageDetector from './languageDetector';
 
@@ -23,14 +27,6 @@ const COUNTRIES_RESOURCES_OVERRIDES = {
  * Merged country names.
  */
 const COUNTRIES = merge({}, COUNTRIES_RESOURCES, COUNTRIES_RESOURCES_OVERRIDES);
-
-/**
- * The available/supported languages.
- *
- * @public
- * @type {Array<string>}
- */
-export const LANGUAGES: Array<string> = Object.keys(LANGUAGES_RESOURCES);
 
 /**
  * The available/supported translation languages.
@@ -99,9 +95,10 @@ const options: i18next.InitOptions = {
     returnEmptyString: false,
     returnNull: false,
 
-    // XXX i18next modifies the array lngWhitelist so make sure to clone
-    // LANGUAGES.
-    whitelist: LANGUAGES.slice()
+    // XXX i18next modifies the array lngWhitelist so make sure to clone.
+    // DEFAULT_LANGUAGE is always included so fallbackLng has a valid target
+    // even if it is absent from config.supportedLanguages.
+    whitelist: Array.from(new Set([ DEFAULT_LANGUAGE, ...SUPPORTED_LANGUAGES ]))
 };
 
 i18next
