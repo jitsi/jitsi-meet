@@ -18,6 +18,7 @@ import {
     CONFERENCE_UNIQUE_ID_SET,
     CONFERENCE_WILL_JOIN,
     ENDPOINT_MESSAGE_RECEIVED,
+    KICKED_OUT,
     SET_ROOM
 } from '../../base/conference/actionTypes';
 import { JITSI_CONFERENCE_URL_KEY } from '../../base/conference/constants';
@@ -239,6 +240,28 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
                 });
         }
 
+        break;
+    }
+
+    case KICKED_OUT: {
+        const { participant: kicker } = action;
+        const state = store.getState();
+        const localParticipant = getLocalParticipant(state);
+
+        sendEvent(
+            store,
+            'PARTICIPANT_KICKED_OUT',
+            /* data */ {
+                kicked: localParticipant
+                    ? participantToParticipantInfo(localParticipant)
+                    : undefined,
+                kicker: kicker
+                    ? {
+                        participantId: kicker.getId(),
+                        name: kicker.getDisplayName()
+                    }
+                    : undefined
+            });
         break;
     }
 

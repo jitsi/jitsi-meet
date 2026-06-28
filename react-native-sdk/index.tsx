@@ -33,6 +33,7 @@ interface IEventListeners {
     onEnterPictureInPicture?: Function;
     onEndpointMessageReceived?: Function;
     onParticipantJoined?: Function;
+    onParticipantKickedOut?: Function;
     onParticipantLeft?: ({ id }: { id: string }) => void;
     onReadyToClose?: Function;
 }
@@ -143,6 +144,7 @@ export const JitsiMeeting = forwardRef<JitsiRefProps, IAppProps>((props, ref) =>
                     onEnterPictureInPicture: eventListeners?.onEnterPictureInPicture,
                     onEndpointMessageReceived: eventListeners?.onEndpointMessageReceived,
                     onParticipantJoined: eventListeners?.onParticipantJoined,
+                    onParticipantKickedOut: eventListeners?.onParticipantKickedOut,
                     onParticipantLeft: eventListeners?.onParticipantLeft,
                     onReadyToClose: eventListeners?.onReadyToClose
                 },
