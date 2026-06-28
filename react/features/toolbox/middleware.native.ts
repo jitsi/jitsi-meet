@@ -1,11 +1,15 @@
+import { Platform } from 'react-native';
+
 import { OVERWRITE_CONFIG, SET_CONFIG, UPDATE_CONFIG } from '../base/config/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { I_AM_VISITOR_MODE } from '../visitors/actionTypes';
 
 import { SET_TOOLBAR_BUTTONS } from './actionTypes';
 import { setMainToolbarThresholds } from './actions.native';
-import { NATIVE_THRESHOLDS, NATIVE_TOOLBAR_BUTTONS } from './constants';
+import { ANDROID_THRESHOLDS, IOS_THRESHOLDS, NATIVE_TOOLBAR_BUTTONS } from './constants';
 import { getToolbarButtons } from './functions.native';
+
+const PLATFORM_THRESHOLDS = Platform.OS === 'ios' ? IOS_THRESHOLDS : ANDROID_THRESHOLDS;
 
 
 /**
@@ -30,7 +34,7 @@ MiddlewareRegistry.register(store => next => action => {
         const toolbarButtons = getToolbarButtons(state, NATIVE_TOOLBAR_BUTTONS);
 
         if (action.type !== I_AM_VISITOR_MODE) {
-            dispatch(setMainToolbarThresholds(NATIVE_THRESHOLDS));
+            dispatch(setMainToolbarThresholds(PLATFORM_THRESHOLDS));
         }
 
         dispatch({
