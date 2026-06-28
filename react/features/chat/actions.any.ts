@@ -106,6 +106,19 @@ export function clearChatState() {
 }
 
 /**
+ * Action to signal the opening of the chat dialog.
+ *
+ * @returns {{
+*     type: OPEN_CHAT
+* }}
+*/
+export function openChat() {
+    return {
+        type: OPEN_CHAT
+    };
+}
+
+/**
  * Action to signal the closing of the chat dialog.
  *
  * @returns {{
