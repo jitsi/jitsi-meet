@@ -2,6 +2,7 @@ import { IReduxState } from '../app/types';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { isLocalParticipantModerator } from '../base/participants/functions';
+import { ITrack } from '../base/tracks/types';
 
 /**
  * Whether audio translation is enabled for the room. Driven by the {@code audioTranslation} RoomMetadata flag,
@@ -38,4 +39,42 @@ export function isAudioTranslationAvailable(state: IReduxState): boolean {
     }
 
     return canManageAudioTranslation(state) || isAudioTranslationRoomEnabled(state);
+}
+
+/**
+ * Memoization for {@link getTranslatedSourceNames}: the tracks array is replaced on every tracks update, so
+ * the set is rebuilt only when that reference changes and is shared by all callers in between.
+ */
+let _lastTracks: ITrack[] | undefined;
+let _lastTranslatedSourceNames = new Set<string>();
+
+/**
+ * Returns the set of translated audio source names currently present in the conference. Translated sources
+ * follow the {@code <sourceName>.<language>} convention, so any source name containing a dot is one. Memoized
+ * on the tracks array reference, letting callers do an O(1) lookup instead of scanning every track.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {Set<string>} The translated source names present in the conference.
+ */
+export function getTranslatedSourceNames(state: IReduxState): Set<string> {
+    const tracks = state['features/base/tracks'];
+
+    if (tracks === _lastTracks) {
+        return _lastTranslatedSourceNames;
+    }
+
+    const translated = new Set<string>();
+
+    for (const track of tracks) {
+        const sourceName = track.jitsiTrack?.getSourceName?.();
+
+        if (typeof sourceName === 'string' && sourceName.includes('.')) {
+            translated.add(sourceName);
+        }
+    }
+
+    _lastTracks = tracks;
+    _lastTranslatedSourceNames = translated;
+
+    return translated;
 }

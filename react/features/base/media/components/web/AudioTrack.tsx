@@ -5,6 +5,7 @@ import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent } from '../../..
 import { sendAnalytics } from '../../../../analytics/functions';
 import { IReduxState } from '../../../../app/types';
 import { DEFAULT_ORIGINAL_VOLUME, DUCKED_ORIGINAL_VOLUME } from '../../../../audio-translation/constants';
+import { getTranslatedSourceNames } from '../../../../audio-translation/functions';
 import { ITrack } from '../../../tracks/types';
 import logger from '../../logger';
 
@@ -355,10 +356,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
     if (effectiveLanguage && typeof sourceName === 'string' && !sourceName.endsWith(`.${effectiveLanguage}`)) {
         const translatedSourceName = `${sourceName}.${effectiveLanguage}`;
-        const hasTranslation = state['features/base/tracks'].some(
-            track => track.jitsiTrack?.getSourceName?.() === translatedSourceName);
 
-        if (hasTranslation) {
+        if (getTranslatedSourceNames(state).has(translatedSourceName)) {
             _volume = DUCKED_ORIGINAL_VOLUME;
             ducked = true;
         }
