@@ -5,8 +5,8 @@ import RecordingTranscriptionDialog from '../../pageobjects/RecordingTranscripti
 
 /**
  * Turns both toggles off so the selection matches the idle (nothing-running) state. This makes the
- * OK ("Apply changes") button assertions deterministic regardless of whether the deployment
- * pre-checks transcription via autoTranscribeOnRecord (which JaaS forces server-side).
+ * OK button assertions deterministic regardless of whether the deployment pre-checks transcription
+ * via autoTranscribeOnRecord (which JaaS forces server-side).
  */
 async function clearToggles(dialog: RecordingTranscriptionDialog): Promise<void> {
     if (await dialog.isRecordingToggleChecked()) {
@@ -53,14 +53,15 @@ describe('Recording & Transcription dialog', () => {
         await dialog.cancel();
     });
 
-    it('OK button reads "Apply changes"', async () => {
+    it('OK button reads "Start recording" when nothing is running', async () => {
         const p1 = ctx.p1;
         const dialog = p1.getRecordingTranscriptionDialog();
 
         await p1.getToolbar().clickRecordingButton();
         await dialog.waitForDisplay();
 
-        expect(await dialog.getOkButtonText()).toBe('Apply changes');
+        // Nothing is running yet, so the primary action starts a service rather than applying changes.
+        expect(await dialog.getOkButtonText()).toBe('Start recording');
 
         await dialog.cancel();
     });
