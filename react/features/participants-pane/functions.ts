@@ -189,6 +189,18 @@ export const shouldRenderInviteButton = (state: IReduxState) => {
  * @returns {Array<string>}
  */
 export function getSortedParticipantIds(stateful: IStateful) {
+    const state = toState(stateful);
+
+    if (state['features/base/config']?.disableAutoResortParticipants) {
+        const filmstripOrder = getRemoteParticipantsSorted(stateful);
+        const raisedHandParticipants = getRaiseHandsQueue(stateful).map(({ id: particId }) => particId);
+
+        return [
+            ...raisedHandParticipants,
+            ...filmstripOrder.filter(id => !raisedHandParticipants.includes(id))
+        ];
+    }
+
     const id = getLocalParticipant(stateful)?.id;
     const remoteParticipants = getRemoteParticipantsSorted(stateful);
     const reorderedParticipants = new Set(remoteParticipants);
