@@ -13,6 +13,7 @@ import {
     NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
     OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
+    RETRACT_MESSAGE,
     SET_CHAT_IS_RESIZING,
     SET_CHAT_WIDTH,
     SET_FOCUSED_TAB,
@@ -83,6 +84,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             privateMessage: action.privateMessage,
             lobbyChat: action.lobbyChat,
             recipient: action.recipient,
+            recipientId: action.recipientId,
             replyToMessageId: action.replyToMessageId,
             sentToVisitor: Boolean(action.sentToVisitor),
             timestamp: action.timestamp
@@ -171,6 +173,25 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         };
     }
 
+    case RETRACT_MESSAGE: {
+        const messages = state.messages.map(message => {
+            if (message.messageId === action.messageId) {
+                return {
+                    ...message,
+                    isDeleted: true,
+                    retractedBy: action.retractedBy
+                };
+            }
+
+            return message;
+        });
+
+        return {
+            ...state,
+            messages
+        };
+    }
+
     case SET_PRIVATE_MESSAGE_RECIPIENT:
         return {
             ...state,
@@ -209,6 +230,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             isOpen: action.payload || state.isOpen,
             privateMessageRecipient: undefined
         };
+
     case REMOVE_LOBBY_CHAT_PARTICIPANT:
         return {
             ...state,
