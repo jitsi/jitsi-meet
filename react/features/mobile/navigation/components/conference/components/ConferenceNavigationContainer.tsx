@@ -44,6 +44,7 @@ import LanguageSelectorDialog
 // @ts-ignore
     from '../../../../../subtitles/components/native/LanguageSelectorDialog';
 import { isCCTabEnabled } from '../../../../../subtitles/functions.any';
+import CustomPanel from '../../../../../custom-panel/components/native/CustomPanel';
 import Whiteboard from '../../../../../whiteboard/components/native/Whiteboard';
 // @ts-ignore
 import { screen } from '../../../routes';
@@ -51,6 +52,7 @@ import {
     breakoutRoomsScreenOptions,
     carmodeScreenOptions,
     chatScreenOptions,
+    customPanelScreenOptions,
     conferenceScreenOptions,
     gifsMenuOptions,
     inviteScreenOptions,
@@ -236,6 +238,13 @@ const ConferenceNavigationContainer = () => {
                     options = {{
                         ...whiteboardScreenOptions,
                         title: t('whiteboard.screenTitle')
+                    }} />
+                <ConferenceStack.Screen
+                    component = { CustomPanel }
+                    name = { screen.conference.customPanel }
+                    options = {{
+                        ...customPanelScreenOptions,
+                        title: t('toolbar.copilot')
                     }} />
             </ConferenceStack.Navigator>
         </NavigationContainer>
