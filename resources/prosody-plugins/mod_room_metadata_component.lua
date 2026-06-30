@@ -175,6 +175,20 @@ function send_metadata(occupant, room, json_msg, include_services)
             -- broadcast to regular clients.
             metadata_to_send.audioTranslationRequests = room._data.audioTranslationRequests;
 
+            -- Neutral, default-open extension point: an external module may contribute
+            -- additional jicofo-only metadata fields by returning a table from this
+            -- event -- for instance per-room translator connect headers. Fired inside
+            -- the admin branch, so injected fields reach only jicofo and are never
+            -- broadcast to client occupants. No handler means nothing is added; this
+            -- module holds no token/entitlement logic of its own.
+            local admin_extra = main_muc_module and main_muc_module:fire_event(
+                'jitsi-room-metadata-admin-extra', { room = room; });
+            if type(admin_extra) == 'table' then
+                for k, v in pairs(admin_extra) do
+                    metadata_to_send[k] = v;
+                end
+            end
+
             module:log('info', 'Sending metadata to jicofo room=%s,meeting_id=%s', room.jid, room._data.meetingId);
         elseif include_services then
             metadata_to_send.services = {};
