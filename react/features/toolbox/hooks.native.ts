@@ -6,6 +6,8 @@ import RaiseHandContainerButtons from '../reactions/components/native/RaiseHandC
 import TileViewButton from '../video-layout/components/TileViewButton';
 import { iAmVisitor } from '../visitors/functions';
 
+import { useCustomPanelButton } from '../custom-panel/hooks.native';
+
 import AudioMuteButton from './components/native/AudioMuteButton';
 import CustomOptionButton from './components/native/CustomOptionButton';
 import HangupContainerButtons from './components/native/HangupContainerButtons';
@@ -74,6 +76,7 @@ export function useNativeToolboxButtons(
         _customToolbarButtons?: ICustomToolbarButton[]): { [key: string]: IToolboxNativeButton; } {
     const _iAmVisitor = useSelector(iAmVisitor);
     const _isScreenShareButtonDisabled = useSelector(isDesktopShareButtonDisabled);
+    const customPanel = useCustomPanelButton();
 
     return useMemo(() => {
         const buttons: { [key in NativeToolbarButton]?: IToolboxNativeButton; } = {
@@ -109,7 +112,8 @@ export function useNativeToolboxButtons(
 
         return {
             ...buttons,
-            ...customButtons
+            ...customButtons,
+            ...(customPanel ? { 'custom-panel': customPanel } : {})
         };
-    }, [ _iAmVisitor, _isScreenShareButtonDisabled, _customToolbarButtons ]);
+    }, [ _iAmVisitor, _isScreenShareButtonDisabled, _customToolbarButtons, customPanel ]);
 }
