@@ -417,6 +417,10 @@ export interface IConfig {
     };
     enableCalendarIntegration?: boolean;
     enableClosePage?: boolean;
+    enableCustomPanel?: {
+        enabled?: boolean;
+        url?: string;
+    };
     enableDisplayNameInStats?: boolean;
     enableEmailInStats?: boolean;
     enableEncodedTransformSupport?: boolean;
