@@ -10,6 +10,7 @@ import { bottomSheetStyles } from '../../../base/dialog/components/native/styles
 import SettingsButton from '../../../base/settings/components/native/SettingsButton';
 import BreakoutRoomsButton
     from '../../../breakout-rooms/components/native/BreakoutRoomsButton';
+import CustomPanelButton from '../../../custom-panel/components/native/CustomPanelButton';
 import SharedDocumentButton from '../../../etherpad/components/SharedDocumentButton.native';
 import ReactionMenu from '../../../reactions/components/native/ReactionMenu';
 import { shouldDisplayReactionsButtons } from '../../../reactions/functions.any';
@@ -164,6 +165,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 <LiveStreamButton { ...buttonProps } />
                 <LinkToSalesforceButton { ...buttonProps } />
                 <WhiteboardButton { ...buttonProps } />
+                <CustomPanelButton { ...buttonProps } />
                 {/* @ts-ignore */}
                 <Divider style = { styles.divider as ViewStyle } />
                 {_isSharedVideoEnabled && <SharedVideoButton { ...buttonProps } />}
