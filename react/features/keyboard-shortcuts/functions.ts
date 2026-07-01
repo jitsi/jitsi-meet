@@ -29,3 +29,19 @@ export function getKeyboardShortcuts(state: IReduxState) {
 export function getKeyboardShortcutsHelpDescriptions(state: IReduxState) {
     return state['features/keyboard-shortcuts'].shortcutsHelp;
 }
+
+/**
+ * Returns the primary shortcut key for alternative key.
+ *
+ * @param {Object} state - The redux state.
+ * @param {string} key - Alternative shortcut key.
+ * @returns {string?} - Primary shortcut key if exists.
+ */
+export function getPrimaryShortcutKey(state: IReduxState, key: string): string | null {
+
+    const { alternativeShortcutKeys } = state['features/base/config'];
+
+    const dict = Object.fromEntries((alternativeShortcutKeys || []).map(x => [ x.alt, x.key ]));
+
+    return dict[key];
+}
