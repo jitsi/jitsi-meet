@@ -1,12 +1,12 @@
 // FIXME: change to '../API' when we update to webpack2. If we do this now all
 // files from API modules will be included in external_api.js.
-import { PostMessageTransportBackend, Transport } from '@jitsi/js-utils/transport';
+import { EmbeddedTransportBackend, PostMessageTransportBackend, Transport } from '@jitsi/js-utils/transport';
 
 import { getJitsiMeetGlobalNS } from '../../react/features/base/util/helpers';
 import { API_ID } from '../API/constants';
 
-
 export {
+    EmbeddedTransportBackend,
     PostMessageTransportBackend,
     Transport
 };
@@ -43,10 +43,19 @@ export function getJitsiMeetTransport() {
 }
 
 /**
- * Sets the transport to passed transport.
+ * Sets the transport to passed transport. Ensures the transport instance
+ * is initialized before attempting to swap the backend.
  *
- * @param {Object} externalTransportBackend - The new transport.
+ * @param {Object} externalTransportBackend - The new transport backend.
  * @returns {void}
  */
-getJitsiMeetGlobalNS().setExternalTransportBackend = externalTransportBackend =>
+getJitsiMeetGlobalNS().setExternalTransportBackend = externalTransportBackend => {
+    // Ensure transport is initialized before swapping the backend.
+    // This is important for embedded mode where setExternalTransportBackend
+    // may be called before getJitsiMeetTransport().
+    if (!transport) {
+        getJitsiMeetTransport();
+    }
+
     transport.setBackend(externalTransportBackend);
+};
