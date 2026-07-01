@@ -18,9 +18,10 @@ export interface ISecondScreenSource {
     participant?: string;
 
     /**
-     * A role to follow: the active-speaker stage, or the current screenshare.
+     * What the window shows: the active-speaker stage, the current screenshare,
+     * or a tile grid of every participant.
      */
-    role?: 'stage' | 'screenshare';
+    role?: 'stage' | 'screenshare' | 'tile';
 }
 
 /**

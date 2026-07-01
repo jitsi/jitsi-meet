@@ -6,6 +6,12 @@ import React, { useEffect, useRef } from 'react';
 interface IProps {
 
     /**
+     * How the video fills its box: {@code contain} (default; never crops, used for
+     * the stage and shared screens) or {@code cover} (camera tiles).
+     */
+    fit?: 'contain' | 'cover';
+
+    /**
      * The native meeting track to render in the second window.
      */
     track: MediaStreamTrack;
@@ -19,13 +25,12 @@ interface IProps {
 }
 
 /**
- * Full-bleed style for the second-screen video; {@code contain} so shared screens
- * and slides are never cropped.
+ * Base full-bleed style for the second-screen video; object-fit is applied per
+ * instance from the {@code fit} prop.
  */
 const VIDEO_STYLE: React.CSSProperties = {
     background: '#000',
     height: '100%',
-    objectFit: 'contain',
     width: '100%'
 };
 
@@ -41,7 +46,7 @@ const VIDEO_STYLE: React.CSSProperties = {
  * @param {IProps} props - The component props.
  * @returns {ReactElement}
  */
-const SecondScreenVideo = ({ track, win }: IProps) => {
+const SecondScreenVideo = ({ fit = 'contain', track, win }: IProps) => {
     const videoRef = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
@@ -67,7 +72,7 @@ const SecondScreenVideo = ({ track, win }: IProps) => {
             muted = { true }
             playsInline = { true }
             ref = { videoRef }
-            style = { VIDEO_STYLE } />
+            style = {{ ...VIDEO_STYLE, objectFit: fit }} />
     );
 };
 
