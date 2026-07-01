@@ -54,6 +54,9 @@ const DEFAULT_STATE = {
 };
 
 export interface IConferenceMetadata {
+    audioTranslation?: {
+        enabled?: boolean;
+    };
     dialinEnabled?: boolean;
     files: {
         [fileId: string]: {
@@ -91,6 +94,7 @@ export interface IJitsiConference {
     avModerationApprove: Function;
     avModerationReject: Function;
     callUUID?: string;
+    clearTranslation: () => void;
     createVideoSIPGWSession: Function;
     dial: Function;
     disableAVModeration: Function;
@@ -110,6 +114,7 @@ export interface IJitsiConference {
     getParticipantCount: Function;
     getParticipants: Function;
     getPolls: Function;
+    getReceiverTranslationLanguage: () => string | null;
     getRole: Function;
     getShortTermCredentials: Function;
     getSpeakerStats: () => ISpeakerStats;
@@ -159,7 +164,9 @@ export interface IJitsiConference {
     setIsSilent: Function;
     setLocalParticipantProperty: Function;
     setMediaEncryptionKey: Function;
+    setParticipantTranslationLanguage: (participantId: string, language: string | null) => void;
     setReceiverConstraints: Function;
+    setReceiverTranslationLanguage: (language: string | null) => void;
     setSenderVideoConstraint: Function;
     setStartMutedPolicy: Function;
     setSubject: Function;

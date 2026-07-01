@@ -217,6 +217,14 @@ export interface IConfig {
         opusMaxAverageBitrate?: number | null;
         stereo?: boolean;
     };
+
+    /**
+     * Configuration for AI audio translation. Requires a deployment with the
+     * bridge translation backend; the toolbar control is only shown when enabled.
+     */
+    audioTranslation?: {
+        enabled?: boolean;
+    };
     /**
      * @deprecated Use `transcription.autoTranscribeOnRecord` instead.
      */
