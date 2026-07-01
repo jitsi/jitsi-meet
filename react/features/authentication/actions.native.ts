@@ -98,3 +98,12 @@ export function openTokenAuthUrl(tokenAuthServiceUrl: string) {
 export function loginWithPopup(tokenAuthServiceUrl: string): Promise<any> {
     return Promise.resolve(tokenAuthServiceUrl);
 }
+
+/**
+ * Not used. There is no inline login popup on native.
+ *
+ * @returns {void}
+ */
+export function closeLoginPopup() {
+    // No-op on native.
+}
