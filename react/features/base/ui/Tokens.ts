@@ -171,6 +171,7 @@ export const colorMap = {
     prejoinActionButtonSecondaryText: 'text04', // Secondary button text
     prejoinActionButtonDanger: 'actionDanger', // Danger button (leave)
     prejoinActionButtonDisabled: 'disabled01', // Disabled button
+    prejoinActionButtonDisabledText: 'textColor01', // Disabled button text
     prejoinCountryPickerBackground: 'ui01', // Country picker background
     prejoinCountryPickerBorder: 'ui03', // Country picker border
     prejoinCountryPickerText: 'text01', // Country picker text
