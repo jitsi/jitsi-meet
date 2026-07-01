@@ -31,6 +31,27 @@ class PopupBlockedError extends Error {
 }
 
 /**
+ * Custom error thrown when a pending inline login popup is closed
+ * programmatically (e.g. the participant is admitted to the conference while
+ * the popup is still open), as opposed to failing to authenticate.
+ */
+class LoginCancelledError extends Error {
+    constructor(message: string = 'Login cancelled') {
+        super(message);
+        this.name = 'LoginCancelledError';
+        Error.captureStackTrace(this, LoginCancelledError);
+    }
+}
+
+/**
+ * Holds a function that closes the currently open inline login popup (if any)
+ * and settles its pending promise. It is set while a popup is open and cleared
+ * once the popup is closed, so it can be used to dismiss the popup when it is no
+ * longer needed (e.g. when the participant is admitted to the conference).
+ */
+let closeActiveLoginPopup: (() => void) | undefined;
+
+/**
  * Cancels {@ink LoginDialog}.
  *
  * @returns {{
@@ -142,6 +163,7 @@ export function loginWithPopup(tokenAuthServiceUrl: string, popup?: Window | nul
             window.removeEventListener('message', handler);
             clearInterval(closedPollInterval);
             popup?.close();
+            closeActiveLoginPopup = undefined;
 
             try {
                 sessionStorage.removeItem('oauth_nonce');
@@ -178,6 +200,14 @@ export function loginWithPopup(tokenAuthServiceUrl: string, popup?: Window | nul
 
         // Listen for messages from the popup
         window.addEventListener('message', handler);
+
+        // Expose a way to close this popup externally, so it can be dismissed
+        // when it is no longer needed (e.g. the participant was admitted to the
+        // conference while the popup was still open).
+        closeActiveLoginPopup = () => {
+            cleanup(handler);
+            reject(new LoginCancelledError());
+        };
 
         // Detect manual popup close before authentication completes
         closedPollInterval = setInterval(() => {
@@ -218,6 +248,17 @@ export function silentLogout(tokenAuthLogoutServiceUrl: string): any {
 
         window.addEventListener('message', handler);
     });
+}
+
+/**
+ * Closes the currently open inline login popup (if any) and settles its pending
+ * promise. Used to dismiss the popup when it is no longer needed, e.g. when the
+ * participant is admitted to the conference while the popup is still open.
+ *
+ * @returns {void}
+ */
+export function closeLoginPopup() {
+    closeActiveLoginPopup?.();
 }
 
 /**
@@ -285,14 +326,19 @@ export function openTokenAuthUrl(tokenAuthServiceUrl: string): any {
                         } ],
                         appearance: NOTIFICATION_TYPE.ERROR
                     }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-
+                    logger.error(err);
+                } else if (err instanceof LoginCancelledError) {
+                    // The popup was closed programmatically (e.g. we were
+                    // admitted to the conference while it was still open); this
+                    // is not an authentication failure, so nothing to report.
+                    logger.info('Inline login popup closed:', err.message);
                 } else {
                     // let's add expand that will show the error message in the notification
                     dispatch(showErrorNotification({
                         titleKey: 'dialog.loginFailed'
                     }));
+                    logger.error(err);
                 }
-                logger.error(err);
             });
 
             return;
