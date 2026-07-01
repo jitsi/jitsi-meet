@@ -72,6 +72,8 @@ class AudioDeviceHandlerConnectionService implements
                 return CallAudioState.ROUTE_WIRED_HEADSET;
             case AudioModeModule.DEVICE_SPEAKER:
                 return CallAudioState.ROUTE_SPEAKER;
+            case AudioModeModule.DEVICE_REMOTE_SUBMIX:
+                return CallAudioState.ROUTE_SPEAKER;
             default:
                 JitsiMeetLogger.e(TAG + " Unsupported device name: " + audioDevice);
                 return CallAudioState.ROUTE_SPEAKER;

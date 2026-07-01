@@ -110,10 +110,11 @@ class AudioModeModule extends ReactContextBaseJavaModule {
     /**
      * Audio device types.
      */
-    static final String DEVICE_BLUETOOTH  = "BLUETOOTH";
-    static final String DEVICE_EARPIECE   = "EARPIECE";
-    static final String DEVICE_HEADPHONES = "HEADPHONES";
-    static final String DEVICE_SPEAKER    = "SPEAKER";
+    static final String DEVICE_BLUETOOTH     = "BLUETOOTH";
+    static final String DEVICE_EARPIECE      = "EARPIECE";
+    static final String DEVICE_HEADPHONES    = "HEADPHONES";
+    static final String DEVICE_SPEAKER       = "SPEAKER";
+    static final String DEVICE_REMOTE_SUBMIX = "REMOTE_SUBMIX";
 
     /**
      * Device change event.
