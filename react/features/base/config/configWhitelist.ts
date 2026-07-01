@@ -21,6 +21,7 @@ export default [
     'analytics.watchRTCEnabled',
     'audioLevelsInterval',
     'audioQuality',
+    'audioTranslation',
     'autoKnockLobby',
     'apiLogLevels',
     'avgRtpStatsN',
