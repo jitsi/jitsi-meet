@@ -376,6 +376,18 @@ module.exports = (_env, argv) => {
             performance: getPerformanceHints(perfHintOptions, 100 * 1024) },
         { ...config,
             entry: {
+                'embedded_api': './modules/API/external/embedded_index.js'
+            },
+            output: { ...config.output,
+                library: 'JitsiMeetEmbeddedAPI',
+                libraryTarget: 'umd' },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'embedded_api')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 95 * 1024) },
+        { ...config,
+            entry: {
                 'face-landmarks-worker': './react/features/face-landmarks/faceLandmarksWorker.ts'
             },
             plugins: [
