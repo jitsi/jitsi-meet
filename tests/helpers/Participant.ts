@@ -742,6 +742,10 @@ export class Participant {
 
         const iframe = this.driver.$('iframe');
 
+        // The External API inserts the iframe asynchronously after the wrapper page loads, so wait for it to exist
+        // before switching rather than failing immediately with "iframe doesn't exist" on slower backends.
+        await iframe.waitForExist({ timeout: 10_000 });
+
         await this.driver.switchFrame(iframe);
         this._inMainFrame = false;
     }

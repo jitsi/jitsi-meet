@@ -306,6 +306,15 @@ Component "audiotranslation.localhost" "audio_translation_component"
     -- Low limit so the per-receiver cap is exercised without many subscriptions.
     audio_translation_max_subscriptions = 3
 
+-- Component for mod_polls_component tests. The module hooks message/host for
+-- new-poll / answer-poll json-messages, keeps per-room poll state (installed on
+-- conference.localhost via process_host_module) and re-broadcasts poll updates
+-- to all occupants. The sender must be an occupant of the room, located from
+-- jitsi_web_query_room (set by mod_jitsi_session from the ?room= param).
+Component "polls.localhost" "polls_component"
+    muc_mapper_domain_base = "localhost"
+    muc_mapper_domain_prefix = "conference"
+
 -- Plain MUC for mod_presence_identity tests. No token verification and no
 -- muc_meeting_id lock so any client can join freely without focus.
 Component "conference-identity.localhost" "muc"
@@ -325,3 +334,19 @@ Component "conference-waitforhost.localhost" "muc"
     }
     muc_mapper_domain_base = "conference.localhost"
     muc_mapper_domain_prefix = "conference"
+
+-- Isolated MUC component for mod_muc_allowners tests.
+-- No muc_meeting_id (no jicofo lock) and no token_verification, so anonymous
+-- clients can join freely. In non-moderated rooms every occupant is promoted
+-- to owner on join and muc#admin set stanzas revoking affiliations are
+-- rejected. Room names listed in allowners_moderated_rooms are moderated:
+-- only JWT-authenticated users with a matching room claim are promoted and
+-- the revoke filtering is skipped.
+Component "conference-allowners.localhost" "muc"
+    storage = "memory"
+    modules_enabled = {
+        "muc_allowners";
+    }
+    muc_mapper_domain_base = "localhost"
+    muc_mapper_domain_prefix = "conference"
+    allowners_moderated_rooms = { "moderated-room-1"; "moderated-room-2" }

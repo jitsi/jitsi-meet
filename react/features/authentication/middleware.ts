@@ -26,6 +26,7 @@ import {
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
+    closeLoginPopup,
     disableModeratorLogin,
     enableModeratorLogin,
     hideLoginDialog,
@@ -132,6 +133,12 @@ MiddlewareRegistry.register(store => next => action => {
             dispatch(stopWaitForOwner());
         }
         dispatch(hideLoginDialog());
+
+        // We may have been admitted to the conference while an inline token
+        // auth popup was still open (e.g. an authenticated participant joined
+        // and the backend let us in automatically). Dismiss the popup so it
+        // doesn't linger on top of the conference.
+        closeLoginPopup();
         break;
     }
 

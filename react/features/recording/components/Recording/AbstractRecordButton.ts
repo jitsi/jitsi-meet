@@ -8,6 +8,7 @@ import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
+import { canAddTranscriber } from '../../../transcribing/functions';
 import { canStopRecording, getRecordButtonProps, supportsLocalRecording } from '../../functions';
 
 /**
@@ -17,14 +18,14 @@ import { canStopRecording, getRecordButtonProps, supportsLocalRecording } from '
 export interface IProps extends AbstractButtonProps {
 
     /**
+     * True if the local participant can start/stop transcription.
+     */
+    _canTranscribe: boolean;
+
+    /**
      * True if the button needs to be disabled.
      */
     _disabled: boolean;
-
-    /**
-     * True if the local participant is a moderator.
-     */
-    _isModerator: boolean;
 
     /**
      * True if there is a running active recording, false otherwise.
@@ -49,11 +50,11 @@ export default class AbstractRecordButton<P extends IProps> extends AbstractButt
     override toggledIcon = IconStop;
 
     override _getLabel() {
-        return this.props._isModerator ? super._getLabel() : 'toolbar.record';
+        return this.props._canTranscribe ? super._getLabel() : 'toolbar.record';
     }
 
     override _getAccessibilityLabel() {
-        return this.props._isModerator ? super._getAccessibilityLabel() : 'toolbar.record';
+        return this.props._canTranscribe ? super._getAccessibilityLabel() : 'toolbar.record';
     }
 
     /**
@@ -149,8 +150,8 @@ export function _mapStateToProps(state: IReduxState) {
     const hasRecordingJwt = isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false);
 
     return {
+        _canTranscribe: canAddTranscriber(state),
         _disabled,
-        _isModerator: isModerator,
         _isRecordingRunning: canStopRecording(state),
         _tooltip,
         visible: visible && (isModerator || localRecordingEnabled || hasRecordingJwt)

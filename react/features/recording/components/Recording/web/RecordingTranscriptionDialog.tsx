@@ -79,10 +79,14 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
             _transcriptionRunning
         } = this.props;
 
+        const sessionRunning = Boolean(_recordingRunning || _transcriptionRunning);
+
         return (
             <Dialog
                 ok = {{
-                    translationKey: 'dialog.applyChanges',
+                    // On first open (nothing running) the primary action starts a service; once a
+                    // service is active the dialog manages it, so the button applies the changes.
+                    translationKey: sessionRunning ? 'dialog.applyChanges' : 'dialog.startRecording',
                     disabled: this.isStartRecordingDisabled()
                 }}
                 onSubmit = { this._onSubmit }

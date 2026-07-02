@@ -59,6 +59,10 @@ function ReactionEmoji({ reaction, uid, index }: IProps) {
     }, [ animationVal ]);
 
 
+    if (!(reaction in REACTIONS)) {
+        return null;
+    }
+
     return (
         <Animated.Text
             style = {{

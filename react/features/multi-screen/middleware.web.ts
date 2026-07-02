@@ -4,7 +4,7 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { REMOVE_SECOND_SCREEN, RESET_SECOND_SCREENS, SET_SECOND_SCREEN } from './actionTypes';
 import { resetSecondScreens } from './actions.web';
-import { closeAllSecondScreens, closeSecondScreen, openOrUpdateSecondScreen } from './functions.web';
+import { closeAllSecondScreens, closeSecondScreenHandle, getHandle, openOrUpdateSecondScreen } from './functions.web';
 import logger from './logger';
 
 import './subscriber.web';
@@ -26,12 +26,18 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
 
         return result;
     }
-    case REMOVE_SECOND_SCREEN:
+    case REMOVE_SECOND_SCREEN: {
 
-        // Tear down before next(action) removes the entry, since the live handle is read from state.
-        closeSecondScreen(store, action.id);
+        // Capture the handle, then remove the entry first so the portal unmounts
+        // (stopping its cloned track) while the window is still open; only then
+        // close the window.
+        const handle = getHandle(store.getState(), action.id);
+        const result = next(action);
 
-        return next(action);
+        closeSecondScreenHandle(handle, action.id);
+
+        return result;
+    }
     case RESET_SECOND_SCREENS:
 
         // Same ordering: close the windows while their entries are still in state.

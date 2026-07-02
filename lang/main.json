@@ -42,6 +42,14 @@
     "audioOnly": {
         "audioOnly": "Low bandwidth"
     },
+    "audioTranslation": {
+        "disabledForRoom": "Audio translation has been turned off for this meeting.",
+        "errorForbidden": "You don't have permission to use audio translation.",
+        "errorGeneric": "Couldn't enable audio translation. Please try again.",
+        "errorLimitReached": "Couldn't translate everyone at once. Turn on translation for individual participants instead.",
+        "errorRoomDisabled": "Audio translation is turned off for this meeting. Enable it in Moderator settings.",
+        "errorSpeakerUnavailable": "Can't translate this participant — they're no longer in the meeting."
+    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "e.g. 10000000 for 10 Mbps",
         "assumedBandwidthBpsWarning": "Higher values might cause network issues.",
@@ -1218,6 +1226,7 @@
     },
     "settings": {
         "audio": "Audio",
+        "audioTranslation": "Enable audio translation",
         "buttonLabel": "Settings",
         "calendar": {
             "about": "The {{appName}} calendar integration is used to securely access your calendar so it can read upcoming events.",
@@ -1347,6 +1356,7 @@
             "Settings": "Open settings",
             "audioOnly": "Toggle audio only",
             "audioRoute": "Select the sound device",
+            "audioTranslation": "Translate audio",
             "boo": "Boo",
             "breakoutRooms": "Breakout rooms",
             "callQuality": "Manage video quality",
@@ -1455,6 +1465,8 @@
         "audioOnlyOn": "Enable low bandwidth mode",
         "audioRoute": "Select the sound device",
         "audioSettings": "Audio settings",
+        "audioTranslation": "Translate audio",
+        "audioTranslationOff": "Off",
         "authenticate": "Authenticate",
         "boo": "Boo",
         "callQuality": "Manage video quality",

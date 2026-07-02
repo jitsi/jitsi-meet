@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
 import { IReduxState } from '../../../../app/types';
+import { DEFAULT_ORIGINAL_VOLUME, DUCKED_ORIGINAL_VOLUME } from '../../../../audio-translation/constants';
+import { getTranslatedSourceNames } from '../../../../audio-translation/functions';
 import { ITrack } from '../../../tracks/types';
 import logger from '../../logger';
 
@@ -334,10 +336,43 @@ class AudioTrack extends Component<IProps> {
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantsVolume } = state['features/filmstrip'];
+    const { language: defaultLanguage, participantLanguages } = state['features/audio-translation'];
+    const audioTranslationEnabled = state['features/base/config'].audioTranslation?.enabled;
+
+    let _volume: number | boolean | undefined = participantsVolume[ownProps.participantId];
+
+    // Effective translation language for this speaker: the per-participant override if one is set (which
+    // may be null to disable), otherwise the conference-wide default. Turning translation off — globally
+    // or for this participant — clears this, so the original un-ducks (this selector re-runs on change).
+    const participantId: string | undefined = ownProps.participantId;
+    const effectiveLanguage = participantId && participantId in participantLanguages
+        ? participantLanguages[participantId]
+        : defaultLanguage;
+
+    // Duck a speaker's original only while its translated counterpart ({source}.{language}) is present.
+    const sourceName: string | undefined = ownProps.audioTrack?.jitsiTrack?.getSourceName?.();
+
+    let ducked = false;
+
+    if (effectiveLanguage && typeof sourceName === 'string' && !sourceName.endsWith(`.${effectiveLanguage}`)) {
+        const translatedSourceName = `${sourceName}.${effectiveLanguage}`;
+
+        if (getTranslatedSourceNames(state).has(translatedSourceName)) {
+            _volume = DUCKED_ORIGINAL_VOLUME;
+            ducked = true;
+        }
+    }
+
+    // When the feature is enabled, a track may have been ducked to a non-default volume. Once it is no longer
+    // ducked and has no explicit per-participant volume, restore full volume — otherwise the audio element keeps
+    // the previously-applied ducked level, since AudioTrack only writes numeric volumes (undefined is ignored).
+    if (!ducked && audioTranslationEnabled && _volume === undefined) {
+        _volume = DEFAULT_ORIGINAL_VOLUME;
+    }
 
     return {
         _muted: state['features/base/config'].startSilent,
-        _volume: participantsVolume[ownProps.participantId]
+        _volume
     };
 }
 

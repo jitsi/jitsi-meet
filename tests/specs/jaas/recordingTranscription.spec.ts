@@ -7,11 +7,32 @@ setTestProperties(__filename, {
     useJaas: true
 });
 
+// Counter used to give each test its own room — see joinAsModerator().
+let roomCounter = 0;
+
 /**
  * Joins a JaaS meeting as a moderator using the iFrame API wrapper.
+ *
+ * Each call joins a unique room. All tests in this spec otherwise share ctx.roomName, and joinMuc
+ * rejoins it each test, so prosody's per-room jibri start/stop throttle (mod_filter_iq_jibri,
+ * max_number_room_attempts_per_minute, default 3 — both start and stop count) accumulates across
+ * the suite and trips the "started a recording too quickly" policy error. A fresh room per test
+ * resets that throttle, keeping each test's ≤2 start/stop attempts well under the limit. The
+ * moderator token is room-agnostic (room defaults to '*'), so it is valid for any room.
  */
 async function joinAsModerator(): Promise<Participant> {
-    return joinJaasMuc({ iFrameApi: true, token: t({ moderator: true }) });
+    roomCounter += 1;
+
+    const p = await joinJaasMuc(
+        { iFrameApi: true, token: t({ moderator: true }) },
+        { roomName: `${ctx.roomName}-${roomCounter}` });
+
+    // joinJaasMuc leaves the driver focused inside the Jitsi iframe, but the iFrame API
+    // (window.jitsiAPI) lives on the wrapper page. Switch to the main frame so executeCommand()
+    // works, matching the setup in recording.spec.ts / transcriptions.spec.ts.
+    await p.switchToMainFrame();
+
+    return p;
 }
 
 /**
@@ -65,25 +86,57 @@ async function waitForTranscriptionRunning(p: Participant): Promise<void> {
 
 /**
  * Waits until the transcription feature state reports that transcription is no longer active.
+ *
+ * @param {Participant} p - The participant.
+ * @param {number} timeout - How long to wait, in ms.
  */
-async function waitForTranscriptionStopped(p: Participant): Promise<void> {
+async function waitForTranscriptionStopped(p: Participant, timeout = 20_000): Promise<void> {
     await p.driver.waitUntil(
         () => p.execute(() => !APP.store.getState()['features/transcribing'].isTranscribing),
-        { timeout: 20_000, timeoutMsg: 'Transcription did not stop' }
+        { timeout, timeoutMsg: 'Transcription did not stop' }
     );
 }
 
 /**
  * Waits until the recording feature state reports that no FILE session is active.
+ *
+ * @param {Participant} p - The participant.
+ * @param {number} timeout - How long to wait, in ms.
  */
-async function waitForRecordingStopped(p: Participant): Promise<void> {
+async function waitForRecordingStopped(p: Participant, timeout = 20_000): Promise<void> {
     await p.driver.waitUntil(
         () => p.execute(() => Boolean(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             APP.store.getState()['features/recording'].sessionDatas.every(
                 (s: any) => s.mode !== 'file' || s.status === 'off'))),
-        { timeout: 20_000, timeoutMsg: 'Recording session did not stop' }
+        { timeout, timeoutMsg: 'Recording session did not stop' }
     );
+}
+
+/**
+ * Best-effort wait, used in cleanup, for a stopRecording command to actually take effect before the
+ * participant leaves. Never fails the test — a timeout here just means the stop was slow to reflect,
+ * which must not turn a passing test red during teardown.
+ *
+ * @param {Participant} p - The participant.
+ * @param {boolean} transcription - Whether transcription was also stopped (stopRecording(..., true)).
+ */
+async function waitForRecordingStopExecuted(p: Participant, transcription = false): Promise<void> {
+    // Short, bounded wait — this is best-effort teardown, not an assertion, so don't burn the full
+    // 20s assertion timeout here.
+    const cleanupTimeout = 5_000;
+
+    await p.switchToIFrame();
+
+    try {
+        await waitForRecordingStopped(p, cleanupTimeout);
+
+        if (transcription) {
+            await waitForTranscriptionStopped(p, cleanupTimeout);
+        }
+    } catch (e) {
+        // Best-effort cleanup — ignore timeouts so teardown never fails the test.
+    }
 }
 
 // ─── Nudge notification tests ────────────────────────────────────────────────
@@ -104,11 +157,19 @@ describe('Recording & transcription nudge notifications', () => {
 
             const nudgeButton = p.driver.$('[data-testid="dialog.startTranscribing"]');
 
-            expect(await nudgeButton.isExisting()).toBe(true);
+            // A "recording pending" notification appears (same data-testid) before the "recording
+            // started" notification that actually carries the nudge, so wait for the nudge to show up
+            // rather than checking immediately. The iFrame startRecording path sets
+            // isTranscribingEnabled:false, so transcription never auto-starts here and the
+            // "Start transcribing" nudge always applies once recording is running.
+            await nudgeButton.waitForExist({
+                timeout: 30_000,
+                timeoutMsg: '"Start transcribing" nudge did not appear'
+            });
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
-            await p.getIframeAPI().executeCommand('hangup');
+            await waitForRecordingStopExecuted(p);
         }
     });
 
@@ -131,7 +192,7 @@ describe('Recording & transcription nudge notifications', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file', true);
-            await p.getIframeAPI().executeCommand('hangup');
+            await waitForRecordingStopExecuted(p, true);
         }
     });
 
@@ -168,7 +229,7 @@ describe('Recording & transcription nudge notifications', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
-            await p.getIframeAPI().executeCommand('hangup');
+            await waitForRecordingStopExecuted(p);
         }
     });
 });
@@ -202,7 +263,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
-            await p.getIframeAPI().executeCommand('hangup');
+            await waitForRecordingStopExecuted(p);
         }
     });
 
@@ -232,7 +293,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file', true);
-            await p.getIframeAPI().executeCommand('hangup');
+            await waitForRecordingStopExecuted(p, true);
         }
     });
 
@@ -269,7 +330,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
-            await p.getIframeAPI().executeCommand('hangup');
+            await waitForRecordingStopExecuted(p);
         }
     });
 
@@ -319,7 +380,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
-            await p.getIframeAPI().executeCommand('hangup');
+            await waitForRecordingStopExecuted(p);
         }
     });
 
@@ -367,7 +428,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file', true);
-            await p.getIframeAPI().executeCommand('hangup');
+            await waitForRecordingStopExecuted(p, true);
         }
     });
 });
@@ -384,6 +445,7 @@ describe('Recording button visibility', () => {
 
         expect(await p.getToolbar().hasRecordingButton()).toBe(true);
 
-        await p.getIframeAPI().executeCommand('hangup');
+        // This participant joined without the iFrame API, so hang up via the app, not window.jitsiAPI.
+        await p.hangup();
     });
 });

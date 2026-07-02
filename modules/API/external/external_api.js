@@ -135,6 +135,7 @@ const events = {
     'email-change': 'emailChange',
     'error-occurred': 'errorOccurred',
     'endpoint-text-message-received': 'endpointTextMessageReceived',
+    'external-share-signal': 'externalShareSignal',
     'face-landmark-detected': 'faceLandmarkDetected',
     'feedback-submitted': 'feedbackSubmitted',
     'feedback-prompt-displayed': 'feedbackPromptDisplayed',
@@ -1484,6 +1485,22 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._transport.sendEvent({
             data: [ event ],
             name: 'proxy-connection-event'
+        });
+    }
+
+    /**
+     * Sends a direct-cast screenshare signalling message (offer / ICE candidate / stop)
+     * from the sharer INTO this meeting's Jitsi Meet. The successor to
+     * {@link sendProxyConnectionEvent} — plain SDP/ICE over a vanilla RTCPeerConnection,
+     * no Jingle, no XMPP. The meeting answers via the {@code externalShareSignal} event.
+     *
+     * @param {Object} signal - The signalling message ({ kind, sdp | candidate }).
+     * @returns {void}
+     */
+    sendExternalShareSignal(signal) {
+        this._transport.sendEvent({
+            data: [ signal ],
+            name: 'external-share-signal'
         });
     }
 

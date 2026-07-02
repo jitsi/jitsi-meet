@@ -1,6 +1,21 @@
 import { setTestProperties } from '../../helpers/TestProperties';
 import { expectations } from '../../helpers/expectations';
 import { ensureOneParticipant } from '../../helpers/participants';
+import RecordingTranscriptionDialog from '../../pageobjects/RecordingTranscriptionDialog';
+
+/**
+ * Turns both toggles off so the selection matches the idle (nothing-running) state. This makes the
+ * OK button assertions deterministic regardless of whether the deployment pre-checks transcription
+ * via autoTranscribeOnRecord (which JaaS forces server-side).
+ */
+async function clearToggles(dialog: RecordingTranscriptionDialog): Promise<void> {
+    if (await dialog.isRecordingToggleChecked()) {
+        await dialog.clickRecordingToggle();
+    }
+    if (await dialog.isTranscriptionToggleChecked()) {
+        await dialog.clickTranscriptionToggle();
+    }
+}
 
 setTestProperties(__filename, {
     description: 'Unified Recording & Transcription dialog structure',
@@ -38,14 +53,15 @@ describe('Recording & Transcription dialog', () => {
         await dialog.cancel();
     });
 
-    it('OK button reads "Apply changes"', async () => {
+    it('OK button reads "Start recording" when nothing is running', async () => {
         const p1 = ctx.p1;
         const dialog = p1.getRecordingTranscriptionDialog();
 
         await p1.getToolbar().clickRecordingButton();
         await dialog.waitForDisplay();
 
-        expect(await dialog.getOkButtonText()).toBe('Apply changes');
+        // Nothing is running yet, so the primary action starts a service rather than applying changes.
+        expect(await dialog.getOkButtonText()).toBe('Start recording');
 
         await dialog.cancel();
     });
@@ -63,14 +79,16 @@ describe('Recording & Transcription dialog', () => {
         await dialog.cancel();
     });
 
-    it('OK button is disabled when nothing has changed from initial state', async () => {
+    it('OK button is disabled when no service is selected', async () => {
         const p1 = ctx.p1;
         const dialog = p1.getRecordingTranscriptionDialog();
 
         await p1.getToolbar().clickRecordingButton();
         await dialog.waitForDisplay();
 
-        // No session is running and no toggles have been changed — nothing to apply.
+        // With nothing running and both toggles off, the selection matches the running state —
+        // there is nothing to apply.
+        await clearToggles(dialog);
         expect(await dialog.isOkButtonEnabled()).toBe(false);
 
         await dialog.cancel();
@@ -83,17 +101,13 @@ describe('Recording & Transcription dialog', () => {
         await p1.getToolbar().clickRecordingButton();
         await dialog.waitForDisplay();
 
-        const wasEnabled = await dialog.isOkButtonEnabled();
+        await clearToggles(dialog);
+        expect(await dialog.isOkButtonEnabled()).toBe(false);
 
         await dialog.clickRecordingToggle();
 
-        // If the toggle moved us away from the initial state the button must be enabled.
-        // If it was already enabled (e.g. autoTranscribeOnRecord pre-checked transcription)
-        // it should stay enabled.
+        expect(await dialog.isRecordingToggleChecked()).toBe(true);
         expect(await dialog.isOkButtonEnabled()).toBe(true);
-
-        // Verify the button was NOT enabled before the toggle (catches regressions).
-        expect(wasEnabled).toBe(false);
 
         await dialog.cancel();
     });
@@ -105,13 +119,13 @@ describe('Recording & Transcription dialog', () => {
         await p1.getToolbar().clickRecordingButton();
         await dialog.waitForDisplay();
 
-        // Snapshot state before any interaction.
-        const initiallyEnabled = await dialog.isOkButtonEnabled();
+        await clearToggles(dialog);
+        expect(await dialog.isOkButtonEnabled()).toBe(false);
 
         await dialog.clickTranscriptionToggle();
 
+        expect(await dialog.isTranscriptionToggleChecked()).toBe(true);
         expect(await dialog.isOkButtonEnabled()).toBe(true);
-        expect(initiallyEnabled).toBe(false);
 
         await dialog.cancel();
     });
@@ -122,6 +136,8 @@ describe('Recording & Transcription dialog', () => {
 
         await p1.getToolbar().clickRecordingButton();
         await dialog.waitForDisplay();
+
+        await clearToggles(dialog);
 
         await dialog.clickRecordingToggle();
         expect(await dialog.isOkButtonEnabled()).toBe(true);
