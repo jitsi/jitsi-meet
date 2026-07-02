@@ -57,6 +57,13 @@ export interface IConferenceMetadata {
     audioTranslation?: {
         enabled?: boolean;
     };
+
+    /**
+     * Server-controlled flag letting a deployment hide the audio-translation feature for a room (e.g. when
+     * the translation backend is not provisioned for it). Absent, or any value other than an explicit false,
+     * means available.
+     */
+    audioTranslationAvailable?: boolean;
     dialinEnabled?: boolean;
     files: {
         [fileId: string]: {
