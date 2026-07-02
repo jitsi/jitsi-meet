@@ -784,6 +784,65 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a raw polls json-message to a polls component. The body is sent
+         * verbatim, so use this to exercise malformed payloads (invalid JSON,
+         * unexpected answer shapes, oversized bodies). Prefer createPoll /
+         * answerPoll for well-formed messages.
+         *
+         * The session must have jitsi_web_query_room set (connect with
+         * params: { room: '<roomname>' }) and the sender must be an occupant of
+         * the room for the component to process the message.
+         *
+         * @param {string} componentJid  e.g. 'polls.localhost'
+         * @param {string} rawPayload    raw text for the <json-message> body
+         */
+        sendPollsMessage(componentJid, rawPayload) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `poll-${++_counter}` },
+                    xml('json-message', { xmlns: 'http://jitsi.org/jitmeet' }, rawPayload)
+                )
+            );
+        },
+
+        /**
+         * Creates a poll by sending a well-formed new-poll json-message to the
+         * polls component. Fire-and-forget — assert via the broadcast the
+         * component sends back to occupants (waitForMessage on a poll broadcast).
+         *
+         * @param {string} componentJid  e.g. 'polls.localhost'
+         * @param {string} pollId         unique poll id
+         * @param {string} question       poll question
+         * @param {Array}  answers        answer objects, e.g. [ { name: 'A' } ]
+         */
+        createPoll(componentJid, pollId, question, answers) {
+            return this.sendPollsMessage(componentJid, JSON.stringify({
+                answers,
+                command: 'new-poll',
+                pollId,
+                question,
+                type: 'polls'
+            }));
+        },
+
+        /**
+         * Answers a poll by sending a well-formed answer-poll json-message to the
+         * polls component. Fire-and-forget.
+         *
+         * @param {string} componentJid  e.g. 'polls.localhost'
+         * @param {string} pollId         id of the poll being answered
+         * @param {Array<boolean>} answers  one boolean per poll option
+         */
+        answerPoll(componentJid, pollId, answers) {
+            return this.sendPollsMessage(componentJid, JSON.stringify({
+                answers,
+                command: 'answer-poll',
+                pollId,
+                type: 'polls'
+            }));
+        },
+
+        /**
          * Sends a raw file-sharing message. Use this to test malformed payloads
          * or non-standard message types (e.g. type='error').
          *
