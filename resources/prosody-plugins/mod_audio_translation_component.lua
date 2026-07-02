@@ -251,7 +251,14 @@ local function publish(room)
         return;
     end
 
-    local aggregate = is_enabled(room) and compute_aggregate(room) or nil;
+    -- Neutral, default-open extension point: an external module may veto publishing
+    -- the translation request map by returning false from this event. No handler, or
+    -- any non-false return, means allowed. This keeps any gating/entitlement logic out
+    -- of this module (open by default). Follows the same false=deny / nil=no-opinion
+    -- convention as 'jitsi-metadata-allow-moderation'.
+    local allow_publish = main_muc_module:fire_event('jitsi-audio-translation-allow-publish', { room = room; });
+
+    local aggregate = (allow_publish ~= false and is_enabled(room)) and compute_aggregate(room) or nil;
     local encoded = aggregate and json.encode(aggregate) or nil;
 
     if encoded == room._audio_translation.last_published then
