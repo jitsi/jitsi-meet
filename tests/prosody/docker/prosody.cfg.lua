@@ -309,3 +309,19 @@ Component "conference-waitforhost.localhost" "muc"
     }
     muc_mapper_domain_base = "conference.localhost"
     muc_mapper_domain_prefix = "conference"
+
+-- Isolated MUC component for mod_muc_allowners tests.
+-- No muc_meeting_id (no jicofo lock) and no token_verification, so anonymous
+-- clients can join freely. In non-moderated rooms every occupant is promoted
+-- to owner on join and muc#admin set stanzas revoking affiliations are
+-- rejected. Room names listed in allowners_moderated_rooms are moderated:
+-- only JWT-authenticated users with a matching room claim are promoted and
+-- the revoke filtering is skipped.
+Component "conference-allowners.localhost" "muc"
+    storage = "memory"
+    modules_enabled = {
+        "muc_allowners";
+    }
+    muc_mapper_domain_base = "localhost"
+    muc_mapper_domain_prefix = "conference"
+    allowners_moderated_rooms = { "moderated-room-1"; "moderated-room-2" }

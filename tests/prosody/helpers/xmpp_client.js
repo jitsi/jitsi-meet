@@ -560,6 +560,27 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a muc#admin set IQ carrying multiple <item> children and
+         * resolves with the server's IQ response. XEP-0045 allows batching
+         * several affiliation/role changes in one stanza; use this to verify
+         * that filtering hooks inspect every item and not just the first one.
+         *
+         * @param {string} roomJid            e.g. 'room@conference.localhost'
+         * @param {Array<object>} itemsAttrs  attribute objects, one per <item>
+         */
+        sendMucAdminItems(roomJid, itemsAttrs) {
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'set',
+                    to: roomJid,
+                    id: `admin-${++_counter}` },
+                    xml('query', { xmlns: 'http://jabber.org/protocol/muc#admin' },
+                        ...itemsAttrs.map(attrs => xml('item', attrs))
+                    )
+                )
+            );
+        },
+
+        /**
          * Destroys a MUC room. The client must be the room owner.
          * Resolves when the server acknowledges the destroy IQ.
          *
