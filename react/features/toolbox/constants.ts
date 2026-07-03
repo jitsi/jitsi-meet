@@ -151,6 +151,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'closedcaptions',
     'custom-panel',
     'desktop',
+    'toggle-pip',
     'download',
     'embedmeeting',
     'etherpad',

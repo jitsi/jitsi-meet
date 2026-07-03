@@ -16,11 +16,13 @@ export interface IToolboxNativeButton {
     text?: string;
 }
 
-export type ToolbarButton = 'camera' |
+export type ToolbarButton = 'audio-mute' |
+    'camera' |
     'chat' |
     'closedcaptions' |
     'custom-panel' |
     'desktop' |
+    'toggle-pip' |
     'download' |
     'embedmeeting' |
     'etherpad' |
@@ -54,6 +56,7 @@ export type ToolbarButton = 'camera' |
     'stats' |
     'tileview' |
     'toggle-camera' |
+    'video-mute' |
     'videoquality' |
     'whiteboard' |
     '__end';

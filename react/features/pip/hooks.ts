@@ -1,10 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 
 import IconUserSVG from '../base/icons/svg/user.svg?raw';
 import { IParticipant } from '../base/participants/types';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
-import { renderAvatarOnCanvas } from './functions';
+import { setPiPActive } from './actions';
+import {
+    clearPiPWindow,
+    getStoredPiPWindow,
+    initPiPWindow,
+    renderAvatarOnCanvas
+} from './functions';
+import { isDocumentPiPSupported } from './utils';
 import logger from './logger';
 
 /**
@@ -180,4 +188,105 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
     return {
         canvasStreamRef: streamRef
     };
+}
+
+/**
+ * Manages Document Picture-in-Picture via the MediaSession API.
+ * Opens a PiP window when a tab switch occurs using the
+ * enterpictureinpicture MediaSession action handler.
+ * Closes the PiP window when the tab becomes visible again.
+ * Content is rendered into the PiP window via the DocumentPiPPortal.
+ *
+ * MediaSession playback state is kept in sync by the subscriber in
+ * subscriber.ts, so this hook only handles the window lifecycle.
+ *
+ * @see https://googlechrome.github.io/samples/media-session/video-conferencing.html
+ *
+ * @returns {void}
+ */
+export function useDocumentPiPMediaSession() {
+    const dispatch = useDispatch();
+    const pipWindowRef = useRef<Window | null>(null);
+
+    const openDocumentPip = useCallback(async () => {
+        if (!isDocumentPiPSupported()) {
+            return;
+        }
+        if (pipWindowRef.current && !pipWindowRef.current.closed) {
+            return;
+        }
+
+        if (getStoredPiPWindow()) {
+            return;
+        }
+
+        try {
+            const pipWindow = await (window as any).documentPictureInPicture.requestWindow({
+                width: 600,
+                height: 450,
+                disallowReturnToOpener: false,
+                preferInitialWindowPlacement: false,
+            });
+
+            pipWindowRef.current = pipWindow;
+            initPiPWindow(pipWindow);
+            dispatch(setPiPActive(true));
+
+            pipWindow.addEventListener('pagehide', () => {
+                pipWindowRef.current = null;
+                clearPiPWindow();
+                dispatch(setPiPActive(false));
+            });
+        } catch (error) {
+            logger.warn('Failed to open Document PiP:', error);
+        }
+    }, [ dispatch ]);
+
+    useEffect(() => {
+        if (!isDocumentPiPSupported()) {
+            return;
+        }
+
+        try {
+            // @ts-ignore - enterpictureinpicture is a newer MediaSession action.
+            navigator.mediaSession.setActionHandler('enterpictureinpicture', async (details: any) => {
+                const reason = details?.enterPictureInPictureReason;
+
+                if (reason === 'useraction') {
+                    logger.log('User clicked Enter Picture-in-Picture icon.');
+                } else if (reason === 'contentoccluded') {
+                    logger.log('Automatically enter picture-in-picture.');
+                }
+
+                await openDocumentPip();
+            });
+        } catch (error) {
+            logger.warn('enterpictureinpicture MediaSession action not supported:', error);
+        }
+
+        return () => {
+            navigator.mediaSession.setActionHandler('enterpictureinpicture' as any, null);
+        };
+    }, [openDocumentPip]);
+
+    useEffect(() => {
+        if (!isDocumentPiPSupported()) {
+            return;
+        }
+
+        const onVisibilityChange = () => {
+            if (!document.hidden && pipWindowRef.current && !pipWindowRef.current.closed) {
+                pipWindowRef.current.close();
+                pipWindowRef.current = null;
+                clearPiPWindow();
+                dispatch(setPiPActive(false));
+            }
+        };
+
+        document.addEventListener('visibilitychange', onVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', onVisibilityChange);
+        };
+    }, [ dispatch ]);
 }
