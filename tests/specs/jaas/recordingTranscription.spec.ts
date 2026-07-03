@@ -36,6 +36,41 @@ async function joinAsModerator(): Promise<Participant> {
 }
 
 /**
+ * Sends the startRecording command and waits until jicofo actually accepts it (a live FILE
+ * session shows up in the recording state), retrying on silent rejection.
+ *
+ * A start IQ that reaches jicofo right after joining can be rejected with policy-violation
+ * (type=wait) while the conference is still being set up, and the client surfaces nothing —
+ * the recording just never starts. The error type says "retry later", so do that. Waiting for
+ * the JVB session before starting instead is NOT an option: jicofo does not allocate a session
+ * for a lone participant at all, it does so only when a second endpoint (e.g. jibri) joins.
+ *
+ * Expects the driver on the main frame; leaves it there.
+ */
+async function startFileRecording(p: Participant, options: { mode: string; transcription?: boolean; }) {
+    for (let attempt = 1; attempt <= 3; attempt++) {
+        await p.getIframeAPI().executeCommand('startRecording', options);
+        await p.switchToIFrame();
+
+        const accepted = await p.driver.waitUntil(
+            () => p.execute(() => Boolean(
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                APP.store.getState()['features/recording'].sessionDatas.some(
+                    (s: any) => s.mode === 'file' && (s.status === 'pending' || s.status === 'on')))),
+            { timeout: 5_000, timeoutMsg: '' }
+        ).catch(() => false);
+
+        await p.switchToMainFrame();
+
+        if (accepted) {
+            return;
+        }
+    }
+
+    throw new Error('startRecording was not accepted by jicofo after 3 attempts');
+}
+
+/**
  * Waits for the "dialog.recording" notification to appear inside the current iframe context.
  * The notification fires whenever recording or transcription starts (or both).
  */
@@ -152,7 +187,7 @@ describe('Recording & transcription nudge notifications', () => {
         const p = await joinAsModerator();
 
         try {
-            await p.getIframeAPI().executeCommand('startRecording', { mode: 'file' });
+            await startFileRecording(p, { mode: 'file' });
             await p.switchToIFrame();
 
             await waitForRecordingNotification(p, 'Recording-started notification did not appear');
@@ -206,7 +241,7 @@ describe('Recording & transcription nudge notifications', () => {
         const p = await joinAsModerator();
 
         try {
-            await p.getIframeAPI().executeCommand('startRecording', {
+            await startFileRecording(p, {
                 mode: 'file',
                 transcription: true
             });
@@ -247,7 +282,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         const p = await joinAsModerator();
 
         try {
-            await p.getIframeAPI().executeCommand('startRecording', { mode: 'file' });
+            await startFileRecording(p, { mode: 'file' });
             await p.switchToIFrame();
 
             await waitForRecordingRunning(p);
@@ -307,7 +342,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         const p = await joinAsModerator();
 
         try {
-            await p.getIframeAPI().executeCommand('startRecording', {
+            await startFileRecording(p, {
                 mode: 'file',
                 transcription: true
             });
@@ -344,7 +379,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         const p = await joinAsModerator();
 
         try {
-            await p.getIframeAPI().executeCommand('startRecording', {
+            await startFileRecording(p, {
                 mode: 'file',
                 transcription: true
             });
@@ -394,7 +429,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         const p = await joinAsModerator();
 
         try {
-            await p.getIframeAPI().executeCommand('startRecording', {
+            await startFileRecording(p, {
                 mode: 'file',
                 transcription: true
             });
