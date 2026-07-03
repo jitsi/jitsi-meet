@@ -62,14 +62,16 @@ async function dismissRecordingNotification(p: Participant): Promise<void> {
 }
 
 /**
- * Waits until the recording feature state reports that a FILE-mode session is active.
+ * Waits until the recording feature state reports that a FILE-mode session is fully ON.
+ * A PENDING session is not enough: jicofo rejects a stop request for a session whose jibri
+ * is still starting (policy-violation/wait), so acting on a PENDING session races the backend.
  */
 async function waitForRecordingRunning(p: Participant): Promise<void> {
     await p.driver.waitUntil(
         () => p.execute(() => Boolean(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             APP.store.getState()['features/recording'].sessionDatas.some(
-                (s: any) => s.mode === 'file' && s.status !== 'off'))),
+                (s: any) => s.mode === 'file' && s.status === 'on'))),
         { timeout: 30_000, timeoutMsg: 'Recording session did not become active' }
     );
 }
