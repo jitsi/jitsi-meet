@@ -418,18 +418,21 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
             return;
         }
 
+        // Selecting local recording implies audio+video — ensure the flag is on
+        // so _isChanged() reflects the selection and the Start button enables.
+        // This must happen before the early return below: when LOCAL is
+        // pre-selected by the dialog (no other service available) the flag
+        // would otherwise never be set and the button would stay disabled.
+        if (!shouldRecordAudioAndVideo) {
+            onRecordAudioAndVideoChange(true);
+        }
+
         // act like group, cannot toggle off
         if (selectedRecordingService === RECORDING_TYPES.LOCAL) {
             return;
         }
 
         onChange(RECORDING_TYPES.LOCAL);
-
-        // Selecting local recording implies audio+video — ensure the flag is on
-        // so _isChanged() reflects the selection and the Apply button enables.
-        if (!shouldRecordAudioAndVideo) {
-            onRecordAudioAndVideoChange(true);
-        }
     }
 
     /**
