@@ -14,7 +14,7 @@ import { getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropb
 import { getDropboxData } from '../../../dropbox/functions.any';
 import { showErrorNotification } from '../../../notifications/actions';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
-import { isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
+import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
 import {
     setSelectedRecordingService,
     setStartRecordingIntent,
@@ -45,6 +45,11 @@ export interface IProps extends WithTranslation {
      * Requests transcribing when recording is turned on.
      */
     _autoTranscribeOnRecord: boolean;
+
+    /**
+     * Whether the local participant can start/stop transcription.
+     */
+    _canTranscribe: boolean;
 
     /**
      * The {@code JitsiConference} for the current conference.
@@ -650,6 +655,7 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
     return {
         _appKey: dropbox.appKey ?? '',
         _autoTranscribeOnRecord: shouldAutoTranscribeOnRecord(state),
+        _canTranscribe: canAddTranscriber(state),
         _conference: state['features/base/conference'].conference,
         _displaySubtitles,
         _fileRecordingSession: getActiveSession(state, JitsiRecordingConstants.mode.FILE),

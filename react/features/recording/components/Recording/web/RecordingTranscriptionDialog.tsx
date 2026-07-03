@@ -72,9 +72,9 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
             userName
         } = this.state;
         const {
+            _canTranscribe,
             _fileRecordingsServiceEnabled,
             _fileRecordingsServiceSharingEnabled,
-            _isModerator,
             _recordingRunning,
             _transcriptionRunning
         } = this.props;
@@ -90,7 +90,7 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
                     disabled: this.isStartRecordingDisabled()
                 }}
                 onSubmit = { this._onSubmit }
-                titleKey = { _isModerator ? 'dialog.recordAndTranscribe' : 'toolbar.record' }>
+                titleKey = { _canTranscribe ? 'dialog.recordAndTranscribe' : 'toolbar.record' }>
                 <StartRecordingDialogContent
                     fileRecordingsServiceEnabled = { _fileRecordingsServiceEnabled }
                     fileRecordingsServiceSharingEnabled = { _fileRecordingsServiceSharingEnabled }
