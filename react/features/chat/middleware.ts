@@ -327,8 +327,8 @@ MiddlewareRegistry.register(store => next => action => {
             // ✅ ADD THIS: immediately retract locally for the sender
             // For group chat this comes back via the MUC echo, but private
             // messages don't echo back to the sender via the normal path.
-            if (action.message.privateMessage) {
-                dispatch(retractMessage(action.message.messageId, localParticipant?.id));
+            if ((action.message.privateMessage || action.message.lobbyChat) && localParticipant) {
+                dispatch(retractMessage(action.message.messageId, localParticipant.id));
             }
         }
         break;
