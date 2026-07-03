@@ -38,11 +38,21 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     _renderSessionToggles() {
-        const { _renderRecording, shouldRecordAudioAndVideo, shouldRecordTranscription, t } = this.props;
+        const {
+            _localRecordingRunning,
+            _renderRecording,
+            shouldRecordAudioAndVideo,
+            shouldRecordTranscription,
+            t
+        } = this.props;
+
+        // A participant who started a local recording must always be able to stop it,
+        // even without the JWT recording feature that _renderRecording reflects.
+        const renderRecordingToggle = _renderRecording || _localRecordingRunning;
 
         return (
             <>
-                { _renderRecording && (
+                { renderRecordingToggle && (
                     <div className = 'recording-header space-top'>
                         <label
                             className = 'recording-title'

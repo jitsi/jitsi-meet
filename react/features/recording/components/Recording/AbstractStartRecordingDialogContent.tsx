@@ -57,6 +57,11 @@ export interface IProps extends WithTranslation {
     _localRecordingNoNotification: boolean;
 
     /**
+     * Whether a local recording is currently in progress.
+     */
+    _localRecordingRunning: boolean;
+
+    /**
      * Whether self local recording is enabled or not.
      */
     _localRecordingSelfEnabled: boolean;
@@ -477,6 +482,7 @@ export function mapStateToProps(state: IReduxState) {
         _transcriptionRunning: canControlCloud ? isRecorderTranscriptionsRunning(state) : false,
         _localRecordingAvailable,
         _localRecordingEnabled: !localRecording?.disable,
+        _localRecordingRunning: Boolean(state['features/recording'].localRecordingRunning),
         _localRecordingSelfEnabled: !localRecording?.disableSelfRecording,
         _localRecordingNoNotification: !localRecording?.notifyAllParticipants,
         _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')
