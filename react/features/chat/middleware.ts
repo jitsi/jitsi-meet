@@ -1,4 +1,5 @@
 import { AnyAction } from 'redux';
+import { v4 as uuidv4 } from 'uuid';
 
 import { IReduxState, IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
@@ -300,7 +301,7 @@ MiddlewareRegistry.register(store => next => action => {
                 }, lobbyMessageRecipient.id);
                 _persistSentPrivateMessage(store, lobbyMessageRecipient, action.message, true);
             } else if (privateMessageRecipient) {
-                const messageId = crypto.randomUUID();
+                const messageId = uuidv4();
 
                 conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient), undefined, messageId);
                 _persistSentPrivateMessage(store, privateMessageRecipient, action.message, false, messageId);
