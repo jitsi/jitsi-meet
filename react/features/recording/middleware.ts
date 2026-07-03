@@ -473,10 +473,13 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const { localRecording } = getState()['features/base/config'];
 
         if (LocalRecordingManager.isRecordingLocally()) {
+            // Capture before stopping — the recorder's stop handler resets the flag.
+            const wasSelfRecording = LocalRecordingManager.selfRecording.on;
+
             LocalRecordingManager.stopLocalRecording();
             dispatch(setLocalRecordingRunning(false));
             dispatch(updateLocalRecordingStatus(false));
-            if (localRecording?.notifyAllParticipants && !LocalRecordingManager.selfRecording) {
+            if (localRecording?.notifyAllParticipants && !wasSelfRecording) {
                 dispatch(playSound(RECORDING_OFF_SOUND_ID));
             }
             if (typeof APP !== 'undefined') {
