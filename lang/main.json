@@ -831,7 +831,9 @@
     "multiScreen": {
         "noParticipants": "No participants",
         "showOnStage": "Show {{name}} on the second screen",
-        "unpinFromStage": "Stop featuring {{name}} on the second screen"
+        "unpinFromStage": "Stop featuring {{name}} on the second screen",
+        "whiteboardInactive": "Open the whiteboard in the meeting to show it on the second screen",
+        "whiteboardTitle": "Whiteboard"
     },
     "notify": {
         "OldElectronAPPTitle": "Security vulnerability!",

@@ -6,6 +6,7 @@ import { IReduxState } from '../../app/types';
 import SecondScreenGallery from './SecondScreenGallery';
 import SecondScreenSingle from './SecondScreenSingle';
 import SecondScreenStage from './SecondScreenStage';
+import SecondScreenWhiteboard from './SecondScreenWhiteboard';
 
 /**
  * The type of the React {@code Component} props of {@link SecondScreenView}.
@@ -25,7 +26,8 @@ interface IProps {
 
 /**
  * Routes a single second-screen window to a layout from its redux source
- * descriptor. A {@code tile} source renders the {@link SecondScreenGallery} grid; a
+ * descriptor. A {@code whiteboard} source renders the {@link SecondScreenWhiteboard}
+ * iframe; a {@code tile} source renders the {@link SecondScreenGallery} grid; a
  * stage or participant source renders the {@link SecondScreenStage} layout
  * (featured participant plus filmstrip); any other source renders the single
  * track/avatar via {@link SecondScreenSingle}. Each layout resolves its own state,
@@ -37,6 +39,10 @@ interface IProps {
  */
 const SecondScreenView = ({ id, win }: IProps) => {
     const source = useSelector((state: IReduxState) => state['features/multi-screen'].screens[id]?.source);
+
+    if (source?.role === 'whiteboard') {
+        return <SecondScreenWhiteboard />;
+    }
 
     if (source?.role === 'tile') {
         return (

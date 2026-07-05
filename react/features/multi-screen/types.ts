@@ -19,9 +19,9 @@ export interface ISecondScreenSource {
 
     /**
      * What the window shows: the active-speaker stage, the current screenshare,
-     * or a tile grid of every participant.
+     * a tile grid of every participant, or the shared whiteboard.
      */
-    role?: 'stage' | 'screenshare' | 'tile';
+    role?: 'stage' | 'screenshare' | 'tile' | 'whiteboard';
 }
 
 /**
