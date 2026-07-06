@@ -256,15 +256,27 @@ local function publish(room)
     -- any non-false return, means allowed. This keeps any gating/entitlement logic out
     -- of this module (open by default). Follows the same false=deny / nil=no-opinion
     -- convention as 'jitsi-metadata-allow-moderation'.
-    local allow_publish = main_muc_module:fire_event('jitsi-audio-translation-allow-publish', { room = room; });
+    local allow_publish = main_muc_module:fire_event('jitsi-audio-translation-allow-publish', { room = room; }) ~= false;
 
-    local aggregate = (allow_publish ~= false and is_enabled(room)) and compute_aggregate(room) or nil;
+    -- The request set the receivers have asked for, independent of gating. Computed
+    -- unconditionally so we can tell "nothing requested" apart from "requests suppressed".
+    local requested = compute_aggregate(room);
+    local aggregate = (allow_publish and is_enabled(room)) and requested or nil;
     local encoded = aggregate and json.encode(aggregate) or nil;
 
     if encoded == room._audio_translation.last_published then
         return;
     end
     room._audio_translation.last_published = encoded;
+
+    -- Log when we transition to suppressing a non-empty request set (feature disabled for
+    -- the room, or an external handler vetoed publishing). Deduped by last_published above,
+    -- so this fires on the transition, not on every update. Normally the client hides the
+    -- control, so a suppressed request set is worth being able to discover.
+    if aggregate == nil and requested ~= nil then
+        module:log('warn', 'Not publishing audio-translation requests in room %s: %s', room.jid,
+            allow_publish and 'disabled for the room' or 'publishing vetoed by a handler');
+    end
 
     room._data.audioTranslationRequests = aggregate;
 
@@ -333,8 +345,11 @@ function on_message(event)
         return true;
     end
 
-    -- Disabled for the room → silent no-op.
+    -- Disabled for the room → no-op. Log it: the client normally hides the control when
+    -- translation is disabled, so a subscription arriving here is unexpected and worth
+    -- being able to discover.
     if not is_enabled(room) then
+        module:log('warn', 'Ignoring audio-translation subscription from %s: disabled for room %s', from, room.jid);
         return true;
     end
 
