@@ -38,6 +38,13 @@ export function isAudioTranslationAvailable(state: IReduxState): boolean {
         return false;
     }
 
+    // A deployment can hide the feature for a room via the audioTranslationAvailable RoomMetadata flag
+    // (e.g. when the translation backend is not provisioned for it). Absent, or any value other than an
+    // explicit false, means available. Applies even to those who could otherwise manage it.
+    if (state['features/base/conference'].metadata?.audioTranslationAvailable === false) {
+        return false;
+    }
+
     return canManageAudioTranslation(state) || isAudioTranslationRoomEnabled(state);
 }
 
