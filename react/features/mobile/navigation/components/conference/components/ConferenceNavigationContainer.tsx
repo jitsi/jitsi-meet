@@ -17,6 +17,7 @@ import Conference from '../../../../../conference/components/native/Conference';
 import CarMode from '../../../../../conference/components/native/carmode/CarMode';
 // @ts-ignore
 import { arePollsDisabled } from '../../../../../conference/functions';
+import CustomPanel from '../../../../../custom-panel/components/native/CustomPanel';
 // @ts-ignore
 import SharedDocument from '../../../../../etherpad/components/native/SharedDocument';
 // @ts-ignore
@@ -44,7 +45,6 @@ import LanguageSelectorDialog
 // @ts-ignore
     from '../../../../../subtitles/components/native/LanguageSelectorDialog';
 import { isCCTabEnabled } from '../../../../../subtitles/functions.any';
-import CustomPanel from '../../../../../custom-panel/components/native/CustomPanel';
 import Whiteboard from '../../../../../whiteboard/components/native/Whiteboard';
 // @ts-ignore
 import { screen } from '../../../routes';
