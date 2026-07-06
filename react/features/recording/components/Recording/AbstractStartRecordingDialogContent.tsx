@@ -57,6 +57,11 @@ export interface IProps extends WithTranslation {
     _localRecordingNoNotification: boolean;
 
     /**
+     * Whether a local recording is currently in progress.
+     */
+    _localRecordingRunning: boolean;
+
+    /**
      * Whether self local recording is enabled or not.
      */
     _localRecordingSelfEnabled: boolean;
@@ -418,18 +423,21 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
             return;
         }
 
+        // Selecting local recording implies audio+video — ensure the flag is on
+        // so _isChanged() reflects the selection and the Start button enables.
+        // This must happen before the early return below: when LOCAL is
+        // pre-selected by the dialog (no other service available) the flag
+        // would otherwise never be set and the button would stay disabled.
+        if (!shouldRecordAudioAndVideo) {
+            onRecordAudioAndVideoChange(true);
+        }
+
         // act like group, cannot toggle off
         if (selectedRecordingService === RECORDING_TYPES.LOCAL) {
             return;
         }
 
         onChange(RECORDING_TYPES.LOCAL);
-
-        // Selecting local recording implies audio+video — ensure the flag is on
-        // so _isChanged() reflects the selection and the Apply button enables.
-        if (!shouldRecordAudioAndVideo) {
-            onRecordAudioAndVideoChange(true);
-        }
     }
 
     /**
@@ -474,6 +482,7 @@ export function mapStateToProps(state: IReduxState) {
         _transcriptionRunning: canControlCloud ? isRecorderTranscriptionsRunning(state) : false,
         _localRecordingAvailable,
         _localRecordingEnabled: !localRecording?.disable,
+        _localRecordingRunning: Boolean(state['features/recording'].localRecordingRunning),
         _localRecordingSelfEnabled: !localRecording?.disableSelfRecording,
         _localRecordingNoNotification: !localRecording?.notifyAllParticipants,
         _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')

@@ -106,6 +106,7 @@ local extdisco_occpuant_check = module:get_option_boolean('extdisco_occpuant_che
 local blocked_metadata_keys = module:get_option_set('room_metadata_blocked_keys', {
     'allownersEnabled',
     'asyncTranscription',
+    'audioTranslationAvailable',
     'audioTranslationRequests',
     'conferencePresetsServiceEnabled',
     'dialinEnabled',
