@@ -67,17 +67,20 @@ async function joinOccupant(roomJid, opts) {
     return c;
 }
 
+/** True if the stanza is a metadata broadcast (a json-message message). */
 function isMetadataBroadcast(msg) {
     return msg.name === 'message'
         && msg.getChild('json-message', JITMEET_NS) !== undefined;
 }
 
+/** Parses a metadata broadcast stanza into its JSON payload (or null). */
 function parseBroadcast(msg) {
     const text = msg.getChild('json-message', JITMEET_NS)?.getText();
 
     return text ? JSON.parse(text) : null;
 }
 
+/** Waits for the next metadata broadcast delivered to a client. */
 function waitForMetadata(client, timeout = 3000) {
     return client.waitForMessage(isMetadataBroadcast, timeout);
 }
@@ -99,6 +102,7 @@ async function drainInitialMetadata(client) {
     } catch { /* no initial metadata is fine */ }
 }
 
+/** Asserts that no metadata broadcast arrives within the timeout. */
 async function assertNoMetadata(client, timeout = 350) {
     try {
         await client.waitForMessage(isMetadataBroadcast, timeout);
@@ -111,6 +115,7 @@ async function assertNoMetadata(client, timeout = 350) {
     }
 }
 
+/** Asserts that no error stanza arrives within the timeout. */
 async function assertNoErrorStanza(client, timeout = 300) {
     try {
         await client.waitForMessage(s => s.attrs.type === 'error', timeout);
@@ -142,9 +147,9 @@ async function pushAndGetRequests(rx, focus, delta) {
 }
 
 /**
- * Waits for a metadata broadcast whose audioTranslationRequests satisfies `predicate`, returning that value. Toggling
- * the enable flag produces an immediate flag-change broadcast and a later debounced aggregate update, so callers use the
- * predicate to skip to the broadcast they care about.
+ * Waits for a metadata broadcast whose audioTranslationRequests satisfies `predicate`, returning that value.
+ * Toggling the enable flag produces an immediate flag-change broadcast and a later debounced aggregate update,
+ * so callers use the predicate to skip to the broadcast they care about.
  */
 async function waitForRequests(focus, predicate) {
     for (let i = 0; i < 5; i++) {
