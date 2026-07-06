@@ -11,6 +11,18 @@ export function isCustomPanelEnabled(state: IReduxState): boolean {
 }
 
 /**
+ * Returns the width consumed by the custom panel in layout calculations.
+ * Always 0 on native: the custom panel is a full-screen navigation route, not an
+ * inline side panel, so it never takes up space alongside chat/participants-pane.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {number}
+ */
+export function getCustomPanelWidth(state: IReduxState): number {
+    return 0;
+}
+
+/**
  * Returns the configured advisor URL, or undefined.
  *
  * @param {IReduxState} state - The redux state.

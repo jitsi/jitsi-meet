@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
-import { isTouchDevice, shouldEnableResize } from '../../../base/environment/utils';
+import { isTouchDevice, shouldEnableResize } from '../../../base/environment/utils.web';
 import { setCustomPanelIsResizing, setUserCustomPanelWidth } from '../../actions.web';
 import {
     CUSTOM_PANEL_DRAG_HANDLE_HEIGHT,
