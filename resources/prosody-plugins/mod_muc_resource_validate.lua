@@ -13,6 +13,11 @@
 -- The check is dynamic: the auth provider is read from prosody.hosts at
 -- join time, so no static domain list is needed.
 --
+-- The module also hooks muc-occupant-pre-change and rejects MUC nick (resource)
+-- changes: an occupant's resource is its stable identity for the session and
+-- must never change. Legitimate display-name changes travel in the presence
+-- <nick/> child, not the MUC resource, so they are unaffected.
+--
 -- Example configuration (place under the MUC component):
 --
 --   Component "conference.meet.jitsi" "muc"
@@ -86,8 +91,37 @@ local function check_resource(event)
     end
 end
 
+-- Returns true (halts event processing) when a MUC nick (resource) change should
+-- be rejected. In Jitsi the occupant resource is the stable per-session identity
+-- and must never change.
+local function reject_nick_change(event)
+    local room, origin, stanza = event.room, event.origin, event.stanza;
+
+    if is_healthcheck_room(room.jid) then
+        return;
+    end
+
+    local orig_occupant = event.orig_occupant;
+
+    -- No original occupant means there is no rename to police here.
+    if not orig_occupant then
+        return;
+    end
+
+    local _, _, current_resource = jid_split(orig_occupant.nick);
+    local _, _, new_resource = jid_split(stanza.attr.to);
+
+    if new_resource ~= current_resource then
+        module:log("warn", "Rejecting MUC nick change from %s (%s -> %s)",
+            stanza.attr.from, tostring(current_resource), tostring(new_resource));
+        origin.send(st.error_reply(stanza, "cancel", "not-allowed", "Nick changes are not allowed"));
+        return true;
+    end
+end
+
 module:log("info", "module loaded (anonymous_strict=%s)", tostring(anonymous_strict));
 
 module:hook("muc-occupant-pre-join", check_resource, 11);
+module:hook("muc-occupant-pre-change", reject_nick_change, 11);
 
 module:hook_global("config-reloaded", load_config);
