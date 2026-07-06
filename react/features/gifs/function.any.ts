@@ -97,6 +97,30 @@ export function extractGifURL(message = '') {
 }
 
 /**
+ * Extracts the Giphy media id from a gif URL.
+ *
+ * Giphy media URLs have the shape `https://i.giphy.com/media/<id>/giphy.gif`
+ * (optionally with a rating segment before the id), so the id is the path
+ * segment immediately before the filename.
+ *
+ * @param {string} url - The gif URL.
+ * @returns {string} - The Giphy media id, or an empty string if it can't be parsed.
+ */
+export function extractGifMediaId(url = '') {
+    try {
+        const segments = new URL(url).pathname.split('/').filter(Boolean);
+
+        if (segments.length >= 2) {
+            return segments[segments.length - 2];
+        }
+    } catch (_error) {
+        // Not a parseable URL - fall through to the empty string.
+    }
+
+    return '';
+}
+
+/**
  * Returns the url of the gif selected in the gifs menu.
  *
  * @param {Object} gif - The gif data.
