@@ -23,9 +23,14 @@ MiddlewareRegistry.register((store: IStore) => {
     // reloaded, or navigated away). The CONFERENCE_LEFT/FAILED path below only
     // covers leaving the meeting from within the app; closing the main window
     // directly dispatches neither, so without this the popups are orphaned on the
-    // second display. pagehide fires on both unload and bfcache eviction and is
-    // more reliably delivered than unload.
-    window.addEventListener('pagehide', () => closeAllSecondScreens(store));
+    // second display. Closing from an unloading opener is best-effort. Skip
+    // event.persisted (bfcache eviction): the page may be restored via pageshow
+    // with the second screens still expected, so only tear down on a real unload.
+    window.addEventListener('pagehide', (event: PageTransitionEvent) => {
+        if (!event.persisted) {
+            closeAllSecondScreens(store);
+        }
+    });
 
     return next => action => {
         switch (action.type) {
