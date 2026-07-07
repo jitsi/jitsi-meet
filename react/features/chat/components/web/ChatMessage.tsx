@@ -1,11 +1,11 @@
 import { Theme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { getLocalParticipant, getParticipantById, getParticipantDisplayName, isPrivateChatEnabled } from '../../../base/participants/functions';
+import { getParticipantById, getParticipantDisplayName, isPrivateChatEnabled } from '../../../base/participants/functions';
 import Popover from '../../../base/popover/components/Popover.web';
 import Message from '../../../base/react/components/web/Message';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
@@ -236,8 +236,6 @@ const ChatMessage = ({
         setIsReactionsOpen(false);
     }, []);
 
-    const localParticipant = useSelector(getLocalParticipant);
-
     /**
      * Renders the display name of the sender.
      *
@@ -400,9 +398,9 @@ const ChatMessage = ({
                                         text = {
                                             message.isDeleted
                                                 ? (
-                                                    localParticipant?.id === message.retractedBy
-                                                        ? 'You deleted this message'
-                                                        : 'This message was deleted'
+                                                    message.messageType === MESSAGE_TYPE_LOCAL
+                                                        ? t<string>('chat.deletedMessageByMe')
+                                                        : t<string>('chat.deletedMessage')
                                                 )
                                                 : getMessageText(message)
                                         } />

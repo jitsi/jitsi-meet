@@ -109,6 +109,8 @@
         }
     },
     "chat": {
+        "deletedMessage": "This message was deleted",
+        "deletedMessageByMe": "You deleted this message",    
         "disabled": "Sending chat messages is disabled.",
         "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
@@ -346,6 +348,7 @@
         "copy": "Copy",
         "demoteParticipantDialog": "Are you sure you want to move this participant to viewer?",
         "demoteParticipantTitle": "Move to viewer",
+        "delete": "Delete",
         "dismiss": "Dismiss",
         "displayNameRequired": "Hi! What's your name?",
         "done": "Done",

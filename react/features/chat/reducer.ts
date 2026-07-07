@@ -178,6 +178,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             if (message.messageId === action.messageId) {
                 return {
                     ...message,
+                    message: '',
                     isDeleted: true,
                     retractedBy: action.retractedBy
                 };

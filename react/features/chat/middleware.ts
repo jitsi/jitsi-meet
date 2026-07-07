@@ -325,7 +325,6 @@ MiddlewareRegistry.register(store => next => action => {
                 action.message.sentToVisitor
             );
 
-            // ✅ ADD THIS: immediately retract locally for the sender
             // For group chat this comes back via the MUC echo, but private
             // messages don't echo back to the sender via the normal path.
             if ((action.message.privateMessage || action.message.lobbyChat) && localParticipant) {
@@ -488,10 +487,7 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
     conference.on(
         JitsiConferenceEvents.MESSAGE_RETRACTED,
         (participantId: string, messageId: string) => {
-            store.dispatch(retractMessage(
-                messageId,
-                participantId
-            ));
+            _onMessageRetracted(store, participantId, messageId);
         }
     );
 
@@ -555,6 +551,30 @@ function _onReactionReceived(store: IStore, { participantId, reactionList, messa
     };
 
     store.dispatch(addMessageReaction(reactionPayload));
+}
+
+/**
+ * Handles a retracted message.
+ *
+ * @param {Object} store - Redux store.
+ * @param {string} participantId - Id of the participant that sent the message.
+ * @param {string} messageId - The id of the message that is retracted.
+ * @returns {void}
+ */
+function _onMessageRetracted(store: IStore, participantId: string, messageId: string) {
+    const { messages } = store.getState()['features/chat'];
+
+    const originalMessage = messages.find(message => message.messageId === messageId);
+
+    if (!originalMessage) {
+        return;
+    }
+
+    if (originalMessage.participantId !== participantId) {
+        return;
+    }
+
+    store.dispatch(retractMessage(messageId, participantId));
 }
 
 /**
