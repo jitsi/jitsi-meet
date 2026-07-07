@@ -72,6 +72,9 @@ VirtualHost "localhost"
         "muc_census";
         -- Module order below follows prod (conference.8x8.vc VirtualHost) so that
         -- same-priority hook execution order matches production.
+        -- Handles 'jitsi-add-identity' so components (room_metadata,
+        -- audio_translation, ...) can advertise a disco identity on this host.
+        "features_identity";
         "conference_duration";
         "filter_iq_rayo";    -- priority 1 on pre-iq/full; listed before filter_iq_jibri (matches prod)
         "filter_iq_jibri";
@@ -289,6 +292,19 @@ Component "filesharing.localhost" "filesharing_component"
     muc_component = "conference.localhost"
     muc_mapper_domain_base = "localhost"
     muc_mapper_domain_prefix = "conference"
+
+-- Component for mod_audio_translation_component tests. Receivers send
+-- <audio-translation> messages here; the component aggregates per-receiver
+-- subscriptions and exposes the map to jicofo via room._data.audioTranslationRequests
+-- (forwarded by mod_room_metadata_component on the metadata.localhost component).
+Component "audiotranslation.localhost" "audio_translation_component"
+    muc_component = "conference.localhost"
+    muc_mapper_domain_base = "localhost"
+    muc_mapper_domain_prefix = "conference"
+    -- Short debounce so tests don't wait long for the aggregate broadcast.
+    audio_translation_debounce_interval = 0.1
+    -- Low limit so the per-receiver cap is exercised without many subscriptions.
+    audio_translation_max_subscriptions = 3
 
 -- Component for mod_polls_component tests. The module hooks message/host for
 -- new-poll / answer-poll json-messages, keeps per-room poll state (installed on
