@@ -175,7 +175,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
     case RETRACT_MESSAGE: {
         const messages = state.messages.map(message => {
-            if (message.messageId === action.messageId) {
+            if (message.messageId === action.messageId && message.participantId === action.retractedBy) {
                 return {
                     ...message,
                     message: '',
