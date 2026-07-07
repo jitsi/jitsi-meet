@@ -25,6 +25,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.RetryableMountingLayerException;
 import com.facebook.react.defaults.DefaultReactHost;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ViewManager;
@@ -230,12 +231,31 @@ class ReactHostHolder {
             BuildConfig.DEBUG, /* useDevSupport */
             Collections.emptyList(), /* cxxReactPackageProviders */
             e -> {
-                JitsiMeetLogger.e(e, "ReactHost internal exception");
-                throw new RuntimeException(e);
+                // Backport of react-native #57181: ignore the benign missing-viewState
+                // mount race. Remove once RN ships the fix.
+                if (isMissingViewStateException(e)) {
+                    JitsiMeetLogger.w("ReactHost ignoring missing-viewState mount race: " + e.getMessage());
+                } else {
+                    JitsiMeetLogger.e(e, "ReactHost internal exception");
+                    throw new RuntimeException(e);
+                }
+                return kotlin.Unit.INSTANCE;
             }, /* exceptionHandler */
             null                    /* bindingsInstaller */
         );
 
         reactHost.start();
+    }
+
+    // Matches the missing-viewState mount race fixed upstream in react-native #57181.
+    private static boolean isMissingViewStateException(Throwable e) {
+        for (Throwable t = e; t != null; t = t.getCause()) {
+            if (t instanceof RetryableMountingLayerException
+                    && t.getMessage() != null
+                    && t.getMessage().contains("Unable to find viewState")) {
+                return true;
+            }
+        }
+        return false;
     }
 }
