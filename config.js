@@ -232,6 +232,11 @@ var config = {
     //     enableOpusDtx: false,
     // },
 
+    // Audio translation feature (requires bridge backend support).
+    // audioTranslation: {
+    //     enabled: false,
+    // },
+
     // Noise suppression configuration. By default rnnoise is used. Optionally Krisp
     // can be used by enabling it below, but the Krisp JS SDK files must be supplied in your
     // installation. Specifically, these files are needed:
