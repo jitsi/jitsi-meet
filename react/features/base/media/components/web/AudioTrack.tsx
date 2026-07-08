@@ -362,8 +362,14 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { audioTranslation: audioTranslationConfig } = state['features/base/config'];
     const audioTranslationEnabled = audioTranslationConfig?.enabled;
 
-    // The volume a speaker's original is ducked to while its translation plays; overridable via config.
-    const duckedVolume = audioTranslationConfig?.duckedVolume ?? DUCKED_ORIGINAL_VOLUME;
+    // The volume a speaker's original is ducked to while its translation plays; overridable via config, so
+    // validate it — a value outside 0..1 (or a non-number from configOverwrite/URL) would throw a
+    // DOMException when assigned to HTMLMediaElement.volume. Fall back to the default when invalid.
+    const configuredDuckedVolume = audioTranslationConfig?.duckedVolume;
+    const duckedVolume = typeof configuredDuckedVolume === 'number'
+        && configuredDuckedVolume >= 0 && configuredDuckedVolume <= 1
+        ? configuredDuckedVolume
+        : DUCKED_ORIGINAL_VOLUME;
 
     let _volume: number | boolean | undefined = participantsVolume[ownProps.participantId];
 
