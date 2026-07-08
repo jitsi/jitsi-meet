@@ -223,6 +223,7 @@ export interface IConfig {
      * bridge translation backend; the toolbar control is only shown when enabled.
      */
     audioTranslation?: {
+        duckedVolume?: number;
         enabled?: boolean;
     };
     /**
