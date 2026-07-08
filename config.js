@@ -235,6 +235,11 @@ var config = {
     // Audio translation feature (requires bridge backend support).
     // audioTranslation: {
     //     enabled: false,
+    //
+    //     // Volume (0..1) a speaker's original audio is ducked to while its translation plays.
+    //     // Defaults to 0.15. Ignored on iOS, where the original is muted instead because the
+    //     // element volume cannot be lowered there.
+    //     duckedVolume: 0.15,
     // },
 
     // Noise suppression configuration. By default rnnoise is used. Optionally Krisp
