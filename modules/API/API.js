@@ -1048,6 +1048,10 @@ function initCommands() {
                 titleText }));
             break;
         }
+        case 'connection-stats': {
+            callback(APP.conference.getStats());
+            break;
+        }
         case 'deployment-info':
             callback(APP.store.getState()['features/base/config'].deploymentInfo);
             break;

@@ -777,6 +777,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns the connection stats of the conference.
+     *
+     * @returns {Object} Connection stats (bitrate, packet loss, etc).
+     */
+    getConnectionStats() {
+        return this._transport.sendRequest({
+            name: 'connection-stats'
+        });
+    }
+
+    /**
      * Returns whether the conference is P2P.
      *
      * @returns {Promise}
