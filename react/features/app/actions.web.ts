@@ -189,6 +189,15 @@ export function reloadNow() {
         const reloadAction = () => {
             logger.info(`Reloading the conference using URL: ${locationURL}`);
 
+            // Fire videoConferenceLeft before navigation so it is delivered
+            // while the postis channel is still active. postMessage sent from
+            // beforeunload is unreliable in Chrome when the iframe navigates.
+            // @ts-ignore
+            APP.API.notifyConferenceLeft(APP.conference.roomName);
+
+            // @ts-ignore
+            APP.API.dispose(); // prevent double-fire from the beforeunload handler
+
             dispatch(reloadWithStoredParams());
         };
 
