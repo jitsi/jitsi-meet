@@ -57,17 +57,35 @@ describe('mod_muc_meeting_id', () => {
                 'regular user should be allowed in after focus unlocks');
         });
 
-        // NOTE: the queue-drain scenario (regular joins before jicofo, gets
-        // queued, then jicofo joins and the queue is flushed) is not tested
-        // here. When a non-focus user is the first to send a presence to a
-        // room, Prosody creates the room in "locked" state (XEP-0045 §10.1.3)
-        // and expects the creator to submit a config form. Because our hook
-        // stops the join (returning true), the creator never receives the
-        // status-201 self-presence and never submits the form, so the room
-        // stays locked. Subsequent joins by focus are then rejected by the MUC
-        // layer itself. In production this edge case does not arise: jicofo
-        // always joins first, creates and configures the room, then regular
-        // users arrive after the room is unlocked.
+        it('a regular user cannot create a room by joining first', async () => {
+            const r = room();
+
+            // restrict_room_creation = true (core Prosody mod_muc) limits
+            // :create-room to admins. A non-focus client's presence to a
+            // nonexistent room is rejected at muc-room-pre-create, before the
+            // room object exists and before mod_muc_meeting_id's jicofo lock
+            // ever comes into play.
+            const c = await ctx.connect();
+            const presence = await c.joinRoom(r);
+
+            assert.strictEqual(presence.attrs.type, 'error', 'join must be rejected');
+            const error = presence.getChild('error');
+
+            assert.ok(error, 'response must carry an <error>');
+            assert.strictEqual(error.attrs.type, 'cancel');
+            assert.ok(error.getChild('not-allowed'), 'error condition must be not-allowed');
+        });
+
+        it('focus can still create the room after a rejected creation attempt', async () => {
+            const r = room();
+
+            const c = await ctx.connect();
+
+            await c.joinRoom(r);
+
+            // connectFocus throws (timeout) if the join is blocked.
+            await ctx.connectFocus(r);
+        });
     });
 
     // -------------------------------------------------------------------------

@@ -213,6 +213,11 @@ Component "conference.localhost" "muc"
 
     anonymous_strict = true
 
+    -- Same as prod: only Prosody admins (jicofo, i.e. focus@auth.localhost) may
+    -- create a room. Regular clients (anonymous or JWT) can only join a room
+    -- that focus has already created.
+    restrict_room_creation = true
+
     -- Used by mod_muc_max_occupants tests (2 occupants max).
     muc_max_occupants = 2
 
