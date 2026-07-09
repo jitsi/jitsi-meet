@@ -267,29 +267,18 @@ MiddlewareRegistry.register(store => next => action => {
                     && m.messageType === MESSAGE_TYPE_LOCAL
             );
 
-            if (editedMessages.length > 0) {
-                const sendWithRetry = (retries: number) => {
-                    try {
-                        editedMessages.forEach(message => {
-                            conference.sendEndpointMessage(
-                                action.participant.id,
-                                {
-                                    type: EDIT_CHAT_MESSAGE,
-                                    messageId: message.messageId,
-                                    message: message.message,
-                                    editedAt: message.editedAt
-                                }
-                            );
-                        });
-                    } catch (e) {
-                        if (retries > 0) {
-                            setTimeout(() => sendWithRetry(retries - 1), 1000);
-                        }
-                    }
-                };
-
-                setTimeout(() => sendWithRetry(3), 3000);
-            }
+            editedMessages.forEach(message => {
+                conference.sendPrivateTextMessage(
+                    action.participant.id,
+                    JSON.stringify({
+                        type: EDIT_CHAT_MESSAGE,
+                        messageId: message.messageId,
+                        message: message.message,
+                        editedAt: message.editedAt
+                    }),
+                    'json-message'
+                );
+            });
         }
 
         if (_shouldNotifyPrivateRecipientsChanged(store, action)) {

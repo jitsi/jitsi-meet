@@ -19,6 +19,8 @@ import ReactButton from './ReactButton';
 interface IProps extends IChatMessageProps {
     className?: string;
     enablePrivateChat?: boolean;
+    isEditing?: boolean;
+    onCancelEdit?: () => void;
     onEditMessage?: (message: IChatMessageProps['message']) => void;
     shouldDisplayMenuOnRight?: boolean;
     state?: IReduxState;
@@ -209,18 +211,35 @@ const useStyles = makeStyles()((theme: Theme) => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
-        }
+        },
+        editingNotice: {
+            alignItems: 'center',
+            borderTop: `1px solid ${theme.palette.chatInputBorder}`,
+            color: theme.palette.chatMessageText,
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginTop: theme.spacing(1),
+            paddingTop: theme.spacing(1),
+            width: '100%',
+            ...theme.typography.labelRegular
+        },
+        cancelEdit: {
+            cursor: 'pointer',
+            color: theme.palette.link01
+        },
     };
 });
 
 const ChatMessage = ({
     className = '',
+    isEditing,
     message,
     state,
     showDisplayName,
     shouldDisplayMenuOnRight,
     enablePrivateChat,
     knocking,
+    onCancelEdit,
     onEditMessage,
     t
 }: IProps) => {
@@ -289,6 +308,24 @@ const ChatMessage = ({
                 <p>
                     {getFormattedTimestamp(message)}
                 </p>
+            </div>
+        );
+    }
+
+    /**
+     * Renders the editing notice for which message is edited.
+     *
+     * @returns {React$Element<*>}
+     */
+    function _renderEditingNotice() {
+        return (
+            <div className = { classes.editingNotice }>
+                <span>{t('chat.editingMessage', 'Editing')}</span>
+                <span
+                    className = { classes.cancelEdit }
+                    onClick = { onCancelEdit }>
+                    {t('chat.cancel', 'Cancel')}
+                </span>
             </div>
         );
     }
@@ -465,6 +502,7 @@ const ChatMessage = ({
                     </div>
                 )}
             </div>
+            {isEditing && _renderEditingNotice()}
         </div>
     );
 };

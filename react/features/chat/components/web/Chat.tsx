@@ -495,8 +495,10 @@ const Chat = ({
                     role = 'tabpanel'
                     tabIndex = { 0 }>
                     <MessageContainer
+                        editingMessage = { editingMessage }
                         isVisible = { _focusedTab === ChatTabs.CHAT }
                         messages = { _messages }
+                        onCancelEdit = { onCancelEdit }
                         onEditMessage = { setEditingMessage } />
                     <MessageRecipient />
                     {isPrivateChatAllowed && (

@@ -42,18 +42,6 @@ const styles = (_theme: Theme, { _chatWidth }: IProps) => {
             boxSizing: 'border-box' as const,
             padding: _theme.spacing(4),
             textAlign: 'center' as const,
-        },
-        editingNotice: {
-            alignItems: 'center',
-            borderTop: `1px solid ${_theme.palette.chatInputBackground}`,
-            color: _theme.palette.chatMessageText,
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: _theme.spacing(2, 4, 0)
-        },
-        cancelEdit: {
-            cursor: 'pointer',
-            color: _theme.palette.link01
         }
     };
 };
@@ -206,18 +194,6 @@ class ChatInput extends Component<IProps, IState> {
 
         return (
             <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
-                {this.props.editingMessage && (
-                    <div className = { classes.editingNotice }>
-                        <span>
-                            Editing message
-                        </span>
-                        <span
-                            className = { classes.cancelEdit }
-                            onClick = { this.props.onCancelEdit }>
-                            Cancel
-                        </span>
-                    </div>
-                )}
                 <div id = 'chat-input' >
                     {!this.props._areSmileysDisabled && this.state.showSmileysPanel && (
                         <div
