@@ -369,6 +369,66 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Like sendRayoIq but waits for Prosody's IQ response and returns it.
+         * Use this when the test needs to inspect the reply stanza (e.g. to
+         * assert that Prosody sent back an error rather than routing the IQ).
+         *
+         * Accepts the same options as sendRayoIq.
+         *
+         * @param {string} roomJid
+         * @param {object} [opts]
+         * @param {string} [opts.dialTo]
+         * @param {string|null} [opts.roomNameHeader]
+         * @param {string|null} [opts.roomPassHeader]
+         * @param {object} [opts.extraHeaders]
+         * @returns {Promise<object>}  the response IQ stanza
+         */
+        sendRayoIqAndWait(roomJid, {
+            dialTo = 'sip:test@example.com',
+            roomNameHeader = roomJid,
+            roomPassHeader = null,
+            extraHeaders = {}
+        } = {}) {
+            const headers = [];
+
+            if (roomNameHeader !== null) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name: 'JvbRoomName',
+                    value: roomNameHeader
+                }));
+            }
+
+            if (roomPassHeader !== null) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name: 'JvbRoomPassword',
+                    value: roomPassHeader
+                }));
+            }
+
+            for (const [ name, value ] of Object.entries(extraHeaders)) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name,
+                    value
+                }));
+            }
+
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'set',
+                    to: `${roomJid}/focus`,
+                    id: `rayo-${++_counter}` },
+                    xml('dial', {
+                        xmlns: 'urn:xmpp:rayo:1',
+                        to: dialTo,
+                        from: 'fromdomain'
+                    }, ...headers)
+                )
+            );
+        },
+
+        /**
          * Sends a disco#info IQ and resolves with the response stanza.
          * @param {string} targetJid
          */
