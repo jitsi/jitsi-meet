@@ -10,7 +10,8 @@ import {
     getCollabDetails,
     getCollabServerUrl,
     getWhiteboardInfoForURIString,
-    isWhiteboardEnabled
+    isWhiteboardEnabled,
+    isWhiteboardOpen
 } from '../../whiteboard/functions';
 
 /**
@@ -46,8 +47,8 @@ const useStyles = makeStyles()(() => {
  * whiteboard (Excalidraw) in its own browsing context, so there are no
  * cross-window-realm issues, and it stays live via the shared collab server.
  * This is the kind of non-video content the portal makes possible and a
- * {@code <video>} second screen cannot. Requires the whiteboard to be open in the
- * meeting (so the collaboration details exist); otherwise a hint is shown.
+ * {@code <video>} second screen cannot. Requires the whiteboard to be enabled and
+ * currently open in the meeting; otherwise a hint is shown.
  *
  * @returns {ReactElement}
  */
@@ -55,6 +56,7 @@ const SecondScreenWhiteboard = () => {
     const { classes } = useStyles();
     const { t } = useTranslation();
     const whiteboardEnabled = useSelector(isWhiteboardEnabled);
+    const whiteboardOpen = useSelector(isWhiteboardOpen);
     const collabDetails = useSelector(getCollabDetails);
     const collabServerUrl = useSelector(getCollabServerUrl);
     const locationURL = useSelector((state: IReduxState) => state['features/base/connection'].locationURL);
@@ -64,11 +66,16 @@ const SecondScreenWhiteboard = () => {
         = useSelector((state: IReduxState) => getLocalParticipant(state)?.name)
             || defaultRemoteDisplayName || 'Fellow Jitster';
 
+    // Gate on isWhiteboardOpen, not just on the collaboration details: closing the
+    // whiteboard only flips `isOpen`, the details live on until RESET_WHITEBOARD
+    // (conference leave), so keying off them alone would keep a closed whiteboard
+    // on the second screen.
+    //
     // Build the standalone whiteboard URL from the canonical meeting location
     // (base/connection), not window.location: the latter can carry a
     // `#config.x=...` fragment whose own `/` characters break the path
     // derivation in getWhiteboardInfoForURIString. Strip hash/query first.
-    const url = whiteboardEnabled && collabDetails && collabServerUrl && locationURL
+    const url = whiteboardEnabled && whiteboardOpen && collabDetails && collabServerUrl && locationURL
         ? getWhiteboardInfoForURIString(
             getURLWithoutParams(locationURL).href,
             collabServerUrl,
