@@ -61,6 +61,15 @@ local function load_config()
 end
 load_config();
 
+-- Normalise CR and LF in values sourced outside of XML (e.g. JWT claims) to
+-- spaces before inserting them into stanza attributes. Prosody's util.stanza
+-- serializer does not escape raw control characters, so this keeps the
+-- forwarded attribute values consistent with how expat already normalises
+-- whitespace in XML-attribute-sourced values.
+local function sanitize_header_value(v)
+    return (tostring(v):gsub("[\r\n]", " "));
+end
+
 -- Header names to use to push extra data extracted from token, if any
 local OUT_INITIATOR_USER_ATTR_NAME = "X-outbound-call-initiator-user";
 local OUT_INITIATOR_GROUP_ATTR_NAME = "X-outbound-call-initiator-group";
@@ -159,7 +168,7 @@ module:hook("pre-iq/full", function(event)
                 dial:tag("header", {
                     xmlns = "urn:xmpp:rayo:1",
                     name = OUT_INITIATOR_USER_ATTR_NAME,
-                    value = tostring(user_id)});
+                    value = sanitize_header_value(user_id)});
                 dial:up();
 
                 -- Add the initiator group information if it is present
@@ -167,7 +176,7 @@ module:hook("pre-iq/full", function(event)
                     dial:tag("header", {
                         xmlns = "urn:xmpp:rayo:1",
                         name = OUT_INITIATOR_GROUP_ATTR_NAME,
-                        value = tostring(session.jitsi_meet_context_group) });
+                        value = sanitize_header_value(session.jitsi_meet_context_group) });
                     dial:up();
                 end
             end
@@ -179,14 +188,14 @@ module:hook("pre-iq/full", function(event)
             dial:tag("header", {
                 xmlns = "urn:xmpp:rayo:1",
                 name = OUT_ROOM_NAME_ATTR_NAME,
-                value = roomName
+                value = sanitize_header_value(roomName)
             });
             dial:up();
             if roomPassword then
                 dial:tag("header", {
                     xmlns = "urn:xmpp:rayo:1",
                     name = OUT_ROOM_PASS_ATTR_NAME,
-                    value = roomPassword
+                    value = sanitize_header_value(roomPassword)
                 });
                 dial:up();
             end
