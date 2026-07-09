@@ -90,6 +90,8 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
             _canStartTranscribing,
             _renderRecording,
             _transcriptionRunning,
+            fileRecordingsServiceEnabled,
+            integrationsEnabled,
             recordingRunning
         } = this.props;
 
@@ -115,13 +117,15 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
             );
         }
 
-        // Offer the standalone transcription toggle to transcription-capable participants whenever
-        // cloud recording is not available (when it is, transcription lives in the advanced options).
-        const showTranscription = !_renderRecording && _canStartTranscribing;
+        // Cloud recording is only usable when a service (file recording or integration) is available;
+        // the JWT recording feature alone doesn't imply one. Transcription nests under the cloud
+        // options when it's supported, otherwise it shows standalone.
+        const supportsCloudRecording = _renderRecording && (fileRecordingsServiceEnabled || integrationsEnabled);
+        const showTranscription = _canStartTranscribing && !supportsCloudRecording;
 
         return (
             <Container className = 'recording-dialog'>
-                { _renderRecording && (
+                { supportsCloudRecording && (
                     <>
                         { this._renderNoIntegrationsContent() }
                         { this._renderFileSharingContent() }
@@ -167,7 +171,8 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     _renderAdvancedOptions() {
-        if (!this.props._isModerator) {
+        // Recording/transcription permissions needed.
+        if (!this.props._canManageRecordingOrTranscription) {
             return null;
         }
         if (!this._canStartTranscribing() && !this.props.servicesRunning) {
