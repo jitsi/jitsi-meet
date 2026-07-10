@@ -245,7 +245,23 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
         if (!this._shouldRenderNoIntegrationsContent()
             && !this._shouldRenderIntegrationsContent()
             && !this._shouldRenderFileSharingContent()) {
-            this._onLocalRecordingSwitchChange();
+            const { _localRecordingAvailable, onChange, onRecordAudioAndVideoChange,
+                selectedRecordingService, shouldRecordAudioAndVideo } = this.props;
+
+            if (!_localRecordingAvailable) {
+                return;
+            }
+
+            // Pre-select local recording on open and ensure the audio/video flag is on
+            // so _isChanged() reflects the selection and the Start button is enabled.
+            // Done inline (not via _onLocalRecordingSwitchChange) to avoid the toggle-off
+            // path that the same handler uses when the user deliberately deselects.
+            if (!shouldRecordAudioAndVideo) {
+                onRecordAudioAndVideoChange(true);
+            }
+            if (selectedRecordingService !== RECORDING_TYPES.LOCAL) {
+                onChange(RECORDING_TYPES.LOCAL);
+            }
         }
     }
 
@@ -421,28 +437,21 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
             _localRecordingAvailable,
             onChange,
             onRecordAudioAndVideoChange,
-            selectedRecordingService,
-            shouldRecordAudioAndVideo
+            selectedRecordingService
         } = this.props;
 
         if (!_localRecordingAvailable) {
             return;
         }
 
-        // Selecting local recording implies audio+video — ensure the flag is on
-        // so _isChanged() reflects the selection and the Start button enables.
-        // This must happen before the early return below: when LOCAL is
-        // pre-selected by the dialog (no other service available) the flag
-        // would otherwise never be set and the button would stay disabled.
-        if (!shouldRecordAudioAndVideo) {
-            onRecordAudioAndVideoChange(true);
-        }
-
-        // act like group, cannot toggle off
         if (selectedRecordingService === RECORDING_TYPES.LOCAL) {
+            // Deselect — lets the participant start transcription without local recording.
+            onRecordAudioAndVideoChange(false);
+            onChange('');
             return;
         }
 
+        onRecordAudioAndVideoChange(true);
         onChange(RECORDING_TYPES.LOCAL);
     }
 
