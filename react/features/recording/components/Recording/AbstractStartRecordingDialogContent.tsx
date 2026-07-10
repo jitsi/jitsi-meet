@@ -22,6 +22,12 @@ import { hasRecordingOrTranscriptionFeature, supportsLocalRecording } from '../.
 export interface IProps extends WithTranslation {
 
     /**
+     * Whether the local participant can manage recording/transcription (moderator or holds the
+     * recording/transcription feature claim).
+     */
+    _canManageRecordingOrTranscription: boolean;
+
+    /**
      * Whether the local participant can start transcribing.
      */
     _canStartTranscribing: boolean;
@@ -239,7 +245,29 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
         if (!this._shouldRenderNoIntegrationsContent()
             && !this._shouldRenderIntegrationsContent()
             && !this._shouldRenderFileSharingContent()) {
-            this._onLocalRecordingSwitchChange();
+            const { _localRecordingAvailable, onChange, onRecordAudioAndVideoChange,
+                selectedRecordingService, servicesRunning, shouldRecordAudioAndVideo } = this.props;
+
+            // When a session is already active the initial toggle state is derived from what
+            // is currently running — don't override it with the "fresh open" defaults.
+            if (servicesRunning) {
+                return;
+            }
+
+            if (!_localRecordingAvailable) {
+                return;
+            }
+
+            // Pre-select local recording on open and ensure the audio/video flag is on
+            // so _isChanged() reflects the selection and the Start button is enabled.
+            // Done inline (not via _onLocalRecordingSwitchChange) to avoid the toggle-off
+            // path that the same handler uses when the user deliberately deselects.
+            if (!shouldRecordAudioAndVideo) {
+                onRecordAudioAndVideoChange(true);
+            }
+            if (selectedRecordingService !== RECORDING_TYPES.LOCAL) {
+                onChange(RECORDING_TYPES.LOCAL);
+            }
         }
     }
 
@@ -415,28 +443,22 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
             _localRecordingAvailable,
             onChange,
             onRecordAudioAndVideoChange,
-            selectedRecordingService,
-            shouldRecordAudioAndVideo
+            selectedRecordingService
         } = this.props;
 
         if (!_localRecordingAvailable) {
             return;
         }
 
-        // Selecting local recording implies audio+video — ensure the flag is on
-        // so _isChanged() reflects the selection and the Start button enables.
-        // This must happen before the early return below: when LOCAL is
-        // pre-selected by the dialog (no other service available) the flag
-        // would otherwise never be set and the button would stay disabled.
-        if (!shouldRecordAudioAndVideo) {
-            onRecordAudioAndVideoChange(true);
-        }
-
-        // act like group, cannot toggle off
         if (selectedRecordingService === RECORDING_TYPES.LOCAL) {
+            // Deselect — lets the participant start transcription without local recording.
+            onRecordAudioAndVideoChange(false);
+            onChange('');
+
             return;
         }
 
+        onRecordAudioAndVideoChange(true);
         onChange(RECORDING_TYPES.LOCAL);
     }
 
@@ -470,16 +492,18 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
 export function mapStateToProps(state: IReduxState) {
     const { localRecording, recordingService } = state['features/base/config'];
     const _localRecordingAvailable = !localRecording?.disable && supportsLocalRecording();
-    const canControlCloud = isLocalParticipantModerator(state) || hasRecordingOrTranscriptionFeature(state);
+    const canManageRecordingOrTranscription
+        = isLocalParticipantModerator(state) || hasRecordingOrTranscriptionFeature(state);
 
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
+        _canManageRecordingOrTranscription: canManageRecordingOrTranscription,
         _canStartTranscribing: canAddTranscriber(state),
         _hideStorageWarning: Boolean(recordingService?.hideStorageWarning),
         _isModerator: isLocalParticipantModerator(state),
         _renderRecording: isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false),
-        _transcriptionRunning: canControlCloud ? isRecorderTranscriptionsRunning(state) : false,
+        _transcriptionRunning: canManageRecordingOrTranscription ? isRecorderTranscriptionsRunning(state) : false,
         _localRecordingAvailable,
         _localRecordingEnabled: !localRecording?.disable,
         _localRecordingRunning: Boolean(state['features/recording'].localRecordingRunning),

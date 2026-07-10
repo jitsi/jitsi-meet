@@ -649,7 +649,7 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
     // Only treat cloud recordings as "running" for users who can actually control them.
     // Non-mods without the recording/transcription JWT feature cannot stop cloud sessions,
     // so from their perspective only their own local recording counts as "running".
-    const canControlCloud = isLocalParticipantModerator(state)
+    const canManageRecordingOrTranscription = isLocalParticipantModerator(state)
         || hasRecordingOrTranscriptionFeature(state);
 
     return {
@@ -665,11 +665,11 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
         _isDropboxEnabled: isDropboxEnabled(state),
         _localRecording: Boolean(state['features/recording'].localRecordingRunning),
         _localRecordingEnabled: !localRecording?.disable,
-        _recordingRunning: canControlCloud
+        _recordingRunning: canManageRecordingOrTranscription
             ? isRecordingRunning(state)
             : Boolean(state['features/recording'].localRecordingRunning),
         _rToken: state['features/dropbox'].rToken ?? '',
-        _transcriptionRunning: canControlCloud
+        _transcriptionRunning: canManageRecordingOrTranscription
             ? isRecorderTranscriptionsRunning(state)
             : false,
         recordAudioAndVideo:
