@@ -148,7 +148,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
     const state = getState();
     const _areClosedCaptionsEnabled = areClosedCaptionsEnabled(store.getState());
     const transcriptMessageID = json.message_id;
-    const { name, id, avatar_url: avatarUrl } = json.participant;
+    const { name, id, avatar_url: avatarUrl } = json.participant ?? {};
     const participant = {
         avatarUrl,
         id,
@@ -219,6 +219,9 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
         // Displays interim and final results without any translation if
         // translations are disabled.
 
+        if (!Array.isArray(json.transcript) || !json.transcript[0]) {
+            return next(action);
+        }
         const { text } = json.transcript[0];
         const displayText = `${detailsPrefix}${text}`;
 
