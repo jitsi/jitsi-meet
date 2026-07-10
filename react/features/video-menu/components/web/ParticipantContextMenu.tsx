@@ -193,6 +193,10 @@ const ParticipantContextMenu = ({
         onSelect(true);
     }, [ onSelect ]);
 
+    const onClickOutside = useCallback(() => {
+        onSelect(true);
+    }, [ onSelect ]);
+
     const isClickedFromParticipantPane = useMemo(
         () => !_overflowDrawer && !thumbnailMenu,
     [ _overflowDrawer, thumbnailMenu ]);
@@ -354,7 +358,7 @@ const ParticipantContextMenu = ({
             isDrawerOpen = { Boolean(drawerParticipant) }
             offsetTarget = { offsetTarget }
             onClick = { onSelect }
-            onClickOutside = { thumbnailMenu ? undefined : () => onSelect(true) }
+            onClickOutside = { thumbnailMenu ? undefined : onClickOutside }
             onDrawerClose = { thumbnailMenu ? onSelect : closeDrawer }
             onMouseEnter = { onEnter }
             onMouseLeave = { onLeave }>
