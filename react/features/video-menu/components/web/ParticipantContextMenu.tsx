@@ -346,6 +346,7 @@ const ParticipantContextMenu = ({
 
     return (
         <ContextMenu
+            activateFocusTrap = { !thumbnailMenu }
             className = { className }
             entity = { participant }
             hidden = { thumbnailMenu ? false : undefined }
@@ -353,6 +354,7 @@ const ParticipantContextMenu = ({
             isDrawerOpen = { Boolean(drawerParticipant) }
             offsetTarget = { offsetTarget }
             onClick = { onSelect }
+            onClickOutside = { thumbnailMenu ? undefined : () => onSelect(true) }
             onDrawerClose = { thumbnailMenu ? onSelect : closeDrawer }
             onMouseEnter = { onEnter }
             onMouseLeave = { onLeave }>
