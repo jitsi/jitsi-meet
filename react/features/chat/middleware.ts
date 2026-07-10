@@ -151,7 +151,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (data?.name === ENDPOINT_REACTION_NAME) {
             // Only accept known reaction keys, skip duplicates and keep just 3.
-            const reactions = Array.from(new Set(data.reactions))
+            const reactions = Array.from(new Set(Array.isArray(data.reactions) ? data.reactions : []))
                 .filter((reaction): reaction is string => typeof reaction === 'string' && reaction in REACTIONS)
                 .slice(0, 3);
 

@@ -143,7 +143,7 @@ function _handleReceivedPollsAnswer(data: any, dispatch: IStore['dispatch'], get
     const { pollId, answers, senderId, senderName } = data;
 
     const receivedAnswer: IIncomingAnswerData = {
-        answers: answers.slice(0, MAX_ANSWERS).map(Boolean),
+        answers: Array.isArray(answers) ? answers.slice(0, MAX_ANSWERS).map(Boolean) : [],
         pollId,
         senderId,
         voterName: getParticipantById(getState(), senderId)
