@@ -7,7 +7,6 @@ local oss_util = module:require "util";
 local is_admin = oss_util.is_admin;
 local is_healthcheck_room = oss_util.is_healthcheck_room;
 local process_host_module = oss_util.process_host_module;
-local inspect = require('inspect');
 local jid_bare = require "util.jid".bare;
 local jid = require "util.jid";
 local MUC_NS = "http://jabber.org/protocol/muc";
@@ -19,6 +18,18 @@ local lobby_muc_component_config = 'lobby.' .. module:get_option_string("muc_map
 if lobby_muc_component_config == nil then
     module:log('error', 'lobby not enabled missing lobby_muc config');
     return ;
+end
+
+local function find_occupant_nick_by_user_id(room, user_id)
+    for _, occ in room:each_occupant() do
+        for full_jid in pairs(occ.sessions) do
+            local session = prosody.full_sessions[full_jid];
+            if session and session.jitsi_meet_context_user
+                    and session.jitsi_meet_context_user.id == user_id then
+                return occ.nick;
+            end
+        end
+    end
 end
 
 local function remove_flip_tag(stanza)
@@ -45,9 +56,8 @@ module:hook("muc-occupant-pre-join", function(event)
     end
     local flip_device_tag = stanza:get_child("flip_device");
     if session.jitsi_meet_context_user and session.jitsi_meet_context_user.id then
-        local participants = room._data.participants_details or {};
         local id = session.jitsi_meet_context_user.id;
-        local first_device_occ_nick = participants[id];
+        local first_device_occ_nick = find_occupant_nick_by_user_id(room, id);
         if flip_device_tag then
             if first_device_occ_nick and session.jitsi_meet_context_features.flip and (session.jitsi_meet_context_features.flip == true or session.jitsi_meet_context_features.flip == "true") then
                 room._data.kicked_participant_nick = first_device_occ_nick;
@@ -92,10 +102,6 @@ module:hook("muc-occupant-pre-join", function(event)
                 remove_flip_tag(stanza)
             end
         end
-        -- update authenticated participant list
-        participants[id] = occupant.nick;
-        room._data.participants_details = participants
-        -- module:log("debug", "current details list %s", inspect(participants))
     else
         if flip_device_tag then
             module:log("warn", "Flip device tag present for a guest user")
@@ -153,24 +159,6 @@ module:hook("muc-occupant-joined", function(event)
         event.room._data.kicked_participant_nick = nil;
     end
 end,-2)
-
--- Update the local table after a participant leaves
-module:hook("muc-occupant-left", function(event)
-    local occupant = event.occupant;
-    local session = event.origin;
-    if is_healthcheck_room(event.room.jid) or is_admin(occupant.bare_jid) then
-        return ;
-    end
-    if session and session.jitsi_meet_context_user and session.jitsi_meet_context_user.id then
-        local id = session.jitsi_meet_context_user.id
-        local participants = event.room._data.participants_details or {};
-        local occupant_left_nick = participants[id]
-        if occupant_left_nick == occupant.nick then
-            participants[id] = nil
-            event.room._data.participants_details = participants
-        end
-    end
-end)
 
 -- Add a flip_device tag on the unavailable presence from the kicked participant in order to silent the notifications
 module:hook('muc-broadcast-presence', function(event)
