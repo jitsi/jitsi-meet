@@ -2,7 +2,9 @@ import { xml } from '@xmpp/client';
 import assert from 'assert';
 
 
-import { enableLobby, getRoomParticipants, setAffiliation, setRoomMaxOccupants, setSessionContext } from './helpers/test_observer.js';
+import {
+    enableLobby, getRoomParticipants, setAffiliation, setRoomMaxOccupants, setSessionContext
+} from './helpers/test_observer.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
@@ -291,7 +293,10 @@ describe('mod_muc_flip', () => {
             const observerKickPromise = observer.waitForPresenceFrom(
                 `${r}/${observerNick}`, { type: 'unavailable' }
             );
-            const kickResponse = await device2.sendMucAdmin(r, { nick: observerNick, role: 'none' });
+            const kickResponse = await device2.sendMucAdmin(r, {
+                nick: observerNick,
+                role: 'none'
+            });
 
             assert.notEqual(kickResponse.attrs.type, 'error', 'device2 must have moderator role');
             await observerKickPromise;
