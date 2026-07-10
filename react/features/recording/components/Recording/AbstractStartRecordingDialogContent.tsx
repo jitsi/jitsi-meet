@@ -246,7 +246,13 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
             && !this._shouldRenderIntegrationsContent()
             && !this._shouldRenderFileSharingContent()) {
             const { _localRecordingAvailable, onChange, onRecordAudioAndVideoChange,
-                selectedRecordingService, shouldRecordAudioAndVideo } = this.props;
+                selectedRecordingService, servicesRunning, shouldRecordAudioAndVideo } = this.props;
+
+            // When a session is already active the initial toggle state is derived from what
+            // is currently running — don't override it with the "fresh open" defaults.
+            if (servicesRunning) {
+                return;
+            }
 
             if (!_localRecordingAvailable) {
                 return;
@@ -448,6 +454,7 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
             // Deselect — lets the participant start transcription without local recording.
             onRecordAudioAndVideoChange(false);
             onChange('');
+
             return;
         }
 
