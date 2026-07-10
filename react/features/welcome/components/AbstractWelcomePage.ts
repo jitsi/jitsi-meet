@@ -238,7 +238,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
             insecureRoomName: Boolean(this.props._enableInsecureRoomNameWarning && value && isInsecureRoomName(value))
         });
 
-        if(!value) this._updateRoomName();
+        if (!value) this._updateRoomName();
     }
 
     /**
@@ -275,8 +275,8 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
                 updateTimeoutId
             },
             () => {
-                if(this.state.room) this._clearTimeouts();
-                else this._animateRoomNameChanging(generatedRoomName)
+                if (this.state.room) this._clearTimeouts();
+                else this._animateRoomNameChanging(generatedRoomName);
             });
     }
 }
