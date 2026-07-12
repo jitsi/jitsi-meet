@@ -1049,7 +1049,10 @@ function initCommands() {
             break;
         }
         case 'connection-stats': {
-            callback(APP.conference.getStats());
+            callback({
+                ...APP.conference.getStats(),
+                iceConnected: APP.conference.getConnectionState() === 'connected'
+            });
             break;
         }
         case 'deployment-info':
