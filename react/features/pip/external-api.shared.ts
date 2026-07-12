@@ -27,5 +27,5 @@ export function isPiPEnabled(pipConfig?: { disabled?: boolean; }): boolean {
         return false;
     }
 
-    return isElectron();
+    return isElectron() || 'documentPictureInPicture' in window;
 }

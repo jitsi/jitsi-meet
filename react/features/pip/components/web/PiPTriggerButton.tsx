@@ -6,10 +6,10 @@ import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions.web';
 import { IconPip } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
-import { enterPiP } from '../../actions';
+import { togglePip } from '../../actions';
 
 interface IProps extends AbstractButtonProps {
-    _isDocPiPActive?: boolean;
+    _isPiPActive: boolean;
 }
 
 /**
@@ -19,27 +19,27 @@ interface IProps extends AbstractButtonProps {
  */
 class PipTriggerButton extends AbstractButton<IProps> {
     override accessibilityLabel = 'toolbar.accessibilityLabel.pip';
-    override label = 'toolbar.pipOpen';
+    override label = 'toolbar.pip';
     override toggledLabel = 'toolbar.pipClose';
-    override tooltip = 'toolbar.pipOpen';
+    override tooltip = 'toolbar.pip';
     override toggledTooltip = 'toolbar.pipClose';
     override icon = IconPip;
 
     override _isToggled(): boolean {
-        return Boolean(this.props._isDocPiPActive);
+        return Boolean(this.props._isPiPActive);
     }
 
     override _handleClick() {
         const { dispatch } = this.props;
-        sendAnalytics(createToolbarEvent('picture-in-picture'));
-        dispatch(enterPiP());
+        sendAnalytics(createToolbarEvent('picture-in-picture', { enable: !this._isToggled() }));
+        dispatch(togglePip());
     }
 }
 
-function mapStateToProps(state: IReduxState): Partial<IProps> {
+function mapStateToProps(state: IReduxState) {
     return {
-        _isDocPiPActive: Boolean(state['features/pip']?.isPiPActive)
+        _isPiPActive: Boolean(state['features/pip']?.isPiPActive)
     };
 }
 
-export default connect(mapStateToProps)(translate(PipTriggerButton));
+export default translate(connect(mapStateToProps)(PipTriggerButton));

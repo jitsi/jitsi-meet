@@ -467,17 +467,18 @@ export function setupMediaSessionHandlers(dispatch: IStore['dispatch']) {
  */
 export function updateMediaSessionState(state: IMediaSessionState) {
     if ('mediaSession' in navigator) {
+        const mediaSession = navigator.mediaSession as MediaSession & {
+            setCameraActive?: (active: boolean) => void;
+            setMicrophoneActive?: (active: boolean) => void;
+        };
+
         try {
-            // @ts-ignore - setMicrophoneActive is a newer MediaSession method.
-            if (navigator.mediaSession.setMicrophoneActive) {
-                // @ts-ignore
-                navigator.mediaSession.setMicrophoneActive(state.microphoneActive);
+            if (mediaSession.setMicrophoneActive) {
+                mediaSession.setMicrophoneActive(state.microphoneActive);
             }
 
-            // @ts-ignore - setCameraActive is a newer MediaSession method.
-            if (navigator.mediaSession.setCameraActive) {
-                // @ts-ignore
-                navigator.mediaSession.setCameraActive(state.cameraActive);
+            if (mediaSession.setCameraActive) {
+                mediaSession.setCameraActive(state.cameraActive);
             }
 
             logger.log('MediaSession state updated:', state);
@@ -606,6 +607,26 @@ function createPiPContainer(pipWindow: Window) {
     container.id = 'pip-root';
     container.style.cssText = 'margin: 0; padding: 0; overflow: hidden; height: 100vh; width: 100vw; background: #141517;';
     pipWindow.document.body.appendChild(container);
+}
+
+/**
+ * Checks if the Document Picture-in-Picture API is supported.
+ *
+ * @returns {boolean} True if Document PiP is supported.
+ */
+export function isDocumentPiPSupported(): boolean {
+    return 'documentPictureInPicture' in window;
+}
+
+/**
+ * Gets the current Document PiP window if one is active.
+ *
+ * @returns {Window | null} The PiP window or null.
+ */
+export function getDocumentPiPWindow(): Window | null {
+    const pip = window?.documentPictureInPicture
+
+    return pip?.window ?? null;
 }
 
 // Re-export from shared file for external use.

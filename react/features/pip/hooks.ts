@@ -4,9 +4,11 @@ import IconUserSVG from '../base/icons/svg/user.svg?raw';
 import { IParticipant } from '../base/participants/types';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
-import { copyStylesheets, renderAvatarOnCanvas, updateMediaSessionState } from './functions';
-import { isDocumentPiPSupported } from './utils';
+import { renderAvatarOnCanvas, updateMediaSessionState, isDocumentPiPSupported } from './functions';
 import logger from './logger';
+import { openDocumentPiP } from './actions';
+import { IStore } from '../app/types';
+import { useDispatch } from 'react-redux';
 
 /**
  * Canvas dimensions for PiP avatar rendering.
@@ -203,48 +205,16 @@ export function useDocumentPiPMediaSession(
         microphoneActive: boolean,
         cameraActive: boolean) {
     const pipWindowRef = useRef<Window | null>(null);
+    const dispatch: IStore['dispatch'] = useDispatch();
 
     useEffect(() => {
         updateMediaSessionState({ microphoneActive, cameraActive });
     }, [microphoneActive, cameraActive]);
 
-    const openDocumentPip = useCallback(async () => {
-        const player = playerRef.current;
-        const container = containerRef.current;
-
-        if (!player || !container) {
-            return;
-        }
-        if (!isDocumentPiPSupported()) {
-            return;
-        }
-        if (pipWindowRef.current && !pipWindowRef.current.closed) {
-            return;
-        }
-
-        try {
-            const pipWindow = await (window as any).documentPictureInPicture.requestWindow({
-                width: 600,
-                height: 450,
-                disallowReturnToOpener: false,
-                preferInitialWindowPlacement: false,
-            });
-
-            pipWindowRef.current = pipWindow;
-
-            copyStylesheets(pipWindow);
-
-            pipWindow.document.body.style.cssText = 'margin:0;background:#000;';
-            pipWindow.document.body.appendChild(player);
-
-            pipWindow.addEventListener('pagehide', () => {
-                container.appendChild(player);
-                pipWindowRef.current = null;
-            });
-        } catch (error) {
-            logger.warn('Failed to open Document PiP:', error);
-        }
-    }, [playerRef, containerRef]);
+    const openDocumentPip = useCallback(
+        () => dispatch(openDocumentPiP()),
+        [dispatch]
+    );
 
     useEffect(() => {
         if (!isDocumentPiPSupported()) {
@@ -252,8 +222,7 @@ export function useDocumentPiPMediaSession(
         }
 
         try {
-            // @ts-ignore - enterpictureinpicture is a newer MediaSession action.
-            navigator.mediaSession.setActionHandler('enterpictureinpicture', async (details: any) => {
+            navigator.mediaSession.setActionHandler('enterpictureinpicture', async details => {
                 const reason = details?.enterPictureInPictureReason;
 
                 if (reason === 'useraction') {
@@ -269,7 +238,7 @@ export function useDocumentPiPMediaSession(
         }
 
         return () => {
-            navigator.mediaSession.setActionHandler('enterpictureinpicture' as any, null);
+            navigator.mediaSession.setActionHandler('enterpictureinpicture', null);
         };
     }, [openDocumentPip]);
 

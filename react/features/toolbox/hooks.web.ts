@@ -35,7 +35,7 @@ import {
     getParticipantsPaneOpen,
     isParticipantsPaneEnabled
 } from '../participants-pane/functions';
-import PiPTriggerButton from '../pip/components/web/PiPTriggerButton';
+import PipTriggerButton from '../pip/components/web/PipTriggerButton';
 import { useParticipantPaneButton } from '../participants-pane/hooks.web';
 import { usePollsButton } from '../polls/hooks.web';
 import { addReactionToBuffer } from '../reactions/actions.any';
@@ -174,7 +174,7 @@ const help = {
 
 const togglePiP = {
     key: 'toggle-pip',
-    Content: PiPTriggerButton,
+    Content: PipTriggerButton,
     group: 2
 };
 

@@ -2,9 +2,10 @@ import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../app/types';
+import { browser } from '../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../base/media/constants';
 import { isLocalTrackMuted } from '../../base/tracks/functions.any';
-import { shouldShowPiP } from '../functions';
+import { isDocumentPiPSupported, shouldShowPiP } from '../functions';
 import { useDocumentPiPMediaSession } from '../hooks';
 
 import PiPVideoElement from './PiPVideoElement';
@@ -25,8 +26,8 @@ function DocumentPiPContent() {
     useDocumentPiPMediaSession(playerRef, containerRef, !audioMuted, !videoMuted);
 
     return (
-        <div id = 'document-pip-container' ref = {containerRef}>
-            <div id = 'document-pip-player' ref = {playerRef}>
+        <div id = 'document-pip-container'>
+            <div id = 'document-pip-player'>
                 {/* TODO: document pip contents */}
             </div>
         </div>
@@ -42,15 +43,17 @@ function DocumentPiPContent() {
 function PiP() {
     const showPiP = useSelector(shouldShowPiP);
 
-    // Document PiP must mount regardless of shouldShowPiP
-    // because useDocumentPiPMediaSession registers the enterpictureinpicture
-    // MediaSession handler needed for tab-switch auto-open.
-    if ('documentPictureInPicture' in window) {
-        return <DocumentPiPContent />;
-    }
-
     if (!showPiP) {
         return null;
+    }
+
+    // Electron's Chromium also exposes documentPictureInPicture, this will help PiPVideoElement to be the always PiP choice for Electron. 
+    if (browser.isElectron()) {
+        return <PiPVideoElement />;
+    }
+
+    if (isDocumentPiPSupported()) {
+        return <DocumentPiPContent />;
     }
 
     return <PiPVideoElement />;

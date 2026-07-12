@@ -599,9 +599,9 @@ export interface IConfig {
     pip?: {
         disabled?: boolean;
         showOnPrejoin?: boolean;
-        documentPiP: {
+        documentPiP?: {
             // @see: https://developer.chrome.com/docs/web-platform/document-picture-in-picture#methods
-            windowOptions: {
+            windowOptions?: {
                 width: number;
                 height: number;
                 disallowReturnToOpener?: boolean;

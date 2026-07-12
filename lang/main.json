@@ -1540,7 +1540,6 @@
         "videomute": "Stop camera",
         "videomuteGUMPending": "Connecting your camera",
         "videounmute": "Start camera",
-        "pipOpen": "Open picture-in-picture",
         "pipClose": "Close picture-in-picture"
     },
     "transcribing": {

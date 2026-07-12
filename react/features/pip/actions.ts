@@ -11,11 +11,12 @@ import {
     enterVideoPiP,
     getStoredPiPWindow,
     initPiPWindow,
+    isDocumentPiPSupported,
     setupMediaSessionHandlers,
     shouldShowPiP,
+    getDocumentPiPWindow,
 } from './functions';
 import logger from './logger';
-import { getDocumentPiPWindow, isDocumentPiPOpen, isDocumentPiPSupported } from "./utils";
 
 /**
  * Flag to track if a Document PiP request is currently pending.
@@ -229,18 +230,34 @@ export function hidePiP() {
     };
 }
 
-export function enterPiP() {
-    return (dispatch: IStore["dispatch"]) => {
-        if (isDocumentPiPSupported()) {
-            const pipWindow = getDocumentPiPWindow();
+/**
+ * Toggles PiP based on the current state and browser support.
+ * 
+ * @returns {Function}
+ */
 
-            if (pipWindow) {
-                dispatch(exitPiP());
-            } else {
+export function togglePip() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const isPiPActive = state['features/pip']?.isPiPActive;
+        const _shouldShowPip = shouldShowPiP(state);
+
+        logger.debug(`togglePip called, shouldShow=${_shouldShowPip}, isPiPActive=${isPiPActive}`);
+
+        if (!_shouldShowPip) {
+            return;
+        }
+
+        if (isPiPActive) {
+            dispatch(exitPiP());
+
+            return;
+        }
+
+        if (isDocumentPiPSupported()) {
                 dispatch(openDocumentPiP());
-            }
         } else {
-            const videoElement = document.getElementById("pipVideo") as HTMLVideoElement;
+            const videoElement = document.getElementById('pipVideo') as HTMLVideoElement;
 
             if (videoElement) {
                 enterVideoPiP(videoElement);
@@ -249,32 +266,42 @@ export function enterPiP() {
     };
 }
 
+/**
+ * Opens Document PiP from the toolbar or an automatic MediaSession request.
+ * 
+ * @returns {Function}
+ */
 export function openDocumentPiP() {
-    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
-        if (!isDocumentPiPSupported()) {
-            logger.warn("Document Picture-in-Picture not supported, use Video PiP button");
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const _shouldShowPip = shouldShowPiP(state);
+
+        if (!_shouldShowPip) {
+            return;
+        }
+
+        const docPiP = window?.documentPictureInPicture;
+
+        if (!isDocumentPiPSupported() || !docPiP) {
+            logger.warn("Document Picture-in-Picture not supported");
 
             return;
         }
 
-        const state = getState();
-        const pipConfig = state["features/base/config"]?.pip;
-        const docPiPConfig = pipConfig?.documentPiP.windowOptions;
+        const pipConfig = state['features/base/config']?.pip;
+        const docPiPConfig = pipConfig?.documentPiP?.windowOptions;
+        const docPiPWindow = getDocumentPiPWindow();
+        const storedWindow = getStoredPiPWindow();
+        const isPiPWindowAlreadyOpen = Boolean(storedWindow || docPiPWindow);
 
-        if (isDocumentPiPOpen() || getStoredPiPWindow()) {
+        if (isPiPWindowAlreadyOpen) {
+            logger.debug('Document PiP is already open')
+
             return;
         }
 
         if (docPiPPending) {
             logger.debug('Document PiP request already pending, skipping duplicate request');
-
-            return;
-        }
-
-        const docPiP = (window as any).documentPictureInPicture;
-
-        if (!docPiP) {
-            logger.warn("Document Picture-in-Picture not available");
 
             return;
         }
@@ -303,8 +330,6 @@ export function openDocumentPiP() {
                 .catch((error: Error) => {
                     logger.error("Failed to open Document PiP:", error);
                     dispatch(setPiPActive(false));
-
-                    throw error;
                 })
                 .finally(() => {
                     docPiPPending = false;
