@@ -1048,6 +1048,13 @@ function initCommands() {
                 titleText }));
             break;
         }
+        case 'connection-stats': {
+            callback({
+                ...APP.conference.getStats(),
+                iceConnected: APP.conference.getConnectionState() === 'connected'
+            });
+            break;
+        }
         case 'deployment-info':
             callback(APP.store.getState()['features/base/config'].deploymentInfo);
             break;
