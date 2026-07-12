@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 
+import { IStore } from '../app/types';
 import IconUserSVG from '../base/icons/svg/user.svg?raw';
 import { IParticipant } from '../base/participants/types';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
-import { renderAvatarOnCanvas, updateMediaSessionState, isDocumentPiPSupported } from './functions';
-import logger from './logger';
 import { openDocumentPiP } from './actions';
-import { IStore } from '../app/types';
-import { useDispatch } from 'react-redux';
+import { isDocumentPiPSupported, renderAvatarOnCanvas, updateMediaSessionState } from './functions';
+import logger from './logger';
 
 /**
  * Canvas dimensions for PiP avatar rendering.
@@ -209,11 +209,11 @@ export function useDocumentPiPMediaSession(
 
     useEffect(() => {
         updateMediaSessionState({ microphoneActive, cameraActive });
-    }, [microphoneActive, cameraActive]);
+    }, [ microphoneActive, cameraActive ]);
 
     const openDocumentPip = useCallback(
         () => dispatch(openDocumentPiP()),
-        [dispatch]
+        [ dispatch ]
     );
 
     useEffect(() => {
@@ -240,7 +240,7 @@ export function useDocumentPiPMediaSession(
         return () => {
             navigator.mediaSession.setActionHandler('enterpictureinpicture', null);
         };
-    }, [openDocumentPip]);
+    }, [ openDocumentPip ]);
 
     useEffect(() => {
         if (!isDocumentPiPSupported()) {
@@ -262,5 +262,5 @@ export function useDocumentPiPMediaSession(
         return () => {
             document.removeEventListener('visibilitychange', onVisibilityChange);
         };
-    }, [playerRef, containerRef]);
+    }, [ playerRef, containerRef ]);
 }

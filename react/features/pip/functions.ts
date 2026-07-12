@@ -513,12 +513,12 @@ export function cleanupMediaSessionHandlers() {
 
 /**
  * Reference to the currently opened window.
- * It is required cause while using the pagehide event, we want to close the window that is open
+ * It is required cause while using the pagehide event, we want to close the window that is open.
  */
 let _pipWindow: Window | null = null;
 
 /**
- * Returns the stored window reference
+ * Returns the stored window reference.
  *
  * @returns {Window | null}
  */
@@ -527,7 +527,7 @@ export function getStoredPiPWindow(): Window | null {
 }
 
 /**
- * Closes the stored window if open and clears the stored reference
+ * Closes the stored window if open and clears the stored reference.
  *
  * @returns {void}
  */
@@ -542,9 +542,9 @@ export function closeDocumentPiPWindow() {
 
 /**
  * Applies initial stylings of the main window to PiP window.
- * Creates the container for the PiP window
+ * Creates the container for the PiP window.
  *
- * @param {Window} pipWindow - Current window
+ * @param {Window} pipWindow - Current window.
  * @returns {void}
  */
 export function initPiPWindow(pipWindow: Window) {
@@ -554,7 +554,7 @@ export function initPiPWindow(pipWindow: Window) {
 }
 
 /**
- * Clears the PiP window reference
+ * Clears the PiP window reference.
  *
  * @returns {void}
  */
@@ -566,7 +566,7 @@ export function clearPiPWindow() {
  * Applies CSS style sheets from the originating window.
  *
  * @see https://developer.chrome.com/docs/web-platform/document-picture-in-picture#copy_style_sheets_to_pip
- * @param {Window} pipWindow - current window
+ * @param {Window} pipWindow - Current window.
  * @returns {void}
  */
 
@@ -595,10 +595,10 @@ export function copyStylesheets(pipWindow: Window) {
 }
 
 /**
- * Creates container for pip. Helpful for react portals
+ * Creates container for pip. Helpful for react portals.
  *
  * @see https://react.dev/reference/react-dom/createPortal
- * @param {Window} pipWindow - current window
+ * @param {Window} pipWindow - Current window.
  * @returns {void}
  */
 function createPiPContainer(pipWindow: Window) {
@@ -624,7 +624,7 @@ export function isDocumentPiPSupported(): boolean {
  * @returns {Window | null} The PiP window or null.
  */
 export function getDocumentPiPWindow(): Window | null {
-    const pip = window?.documentPictureInPicture
+    const pip = window?.documentPictureInPicture;
 
     return pip?.window ?? null;
 }

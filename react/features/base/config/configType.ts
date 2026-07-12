@@ -598,16 +598,16 @@ export interface IConfig {
     peopleSearchUrl?: string;
     pip?: {
         disabled?: boolean;
-        showOnPrejoin?: boolean;
         documentPiP?: {
             // @see: https://developer.chrome.com/docs/web-platform/document-picture-in-picture#methods
             windowOptions?: {
-                width: number;
-                height: number;
                 disallowReturnToOpener?: boolean;
+                height: number;
                 preferInitialWindowPlacement?: boolean;
-            }
-        }
+                width: number;
+            };
+        };
+        showOnPrejoin?: boolean;
     };
     preferBosh?: boolean;
     preferVisitor?: boolean;

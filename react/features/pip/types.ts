@@ -47,21 +47,26 @@ declare global {
         readonly window: Window;
     }
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     interface Window {
         documentPictureInPicture?: IDocumentPictureInPicture;
     }
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     interface MediaSession {
+        // eslint-disable-next-line @typescript-eslint/method-signature-style
         setActionHandler(
             action: 'hangup' | 'togglecamera' | 'togglemicrophone',
             handler: MediaSessionActionHandler | null
         ): void;
+        // eslint-disable-next-line @typescript-eslint/method-signature-style
         setActionHandler(
             action: 'enterpictureinpicture',
             handler: DocumentPiPMediaSessionActionHandler | null
         ): void;
     }
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     interface HTMLVideoElement {
         requestPictureInPicture: () => Promise<PictureInPictureWindow>;
     }

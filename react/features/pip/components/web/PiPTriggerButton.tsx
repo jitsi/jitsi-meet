@@ -31,6 +31,7 @@ class PipTriggerButton extends AbstractButton<IProps> {
 
     override _handleClick() {
         const { dispatch } = this.props;
+
         sendAnalytics(createToolbarEvent('picture-in-picture', { enable: !this._isToggled() }));
         dispatch(togglePip());
     }

@@ -9,12 +9,12 @@ import {
     cleanupMediaSessionHandlers,
     clearPiPWindow,
     enterVideoPiP,
+    getDocumentPiPWindow,
     getStoredPiPWindow,
     initPiPWindow,
     isDocumentPiPSupported,
     setupMediaSessionHandlers,
     shouldShowPiP,
-    getDocumentPiPWindow,
 } from './functions';
 import logger from './logger';
 
@@ -92,7 +92,7 @@ export function exitPiP() {
         if (document.pictureInPictureElement) {
             document.exitPictureInPicture()
                 .then(() => {
-                logger.debug('Exited Picture-in-Picture mode');
+                    logger.debug('Exited Picture-in-Picture mode');
                 })
                 .catch((err: Error) => {
                     logger.error(`Error while exiting PiP: ${err.message}`);
@@ -232,7 +232,7 @@ export function hidePiP() {
 
 /**
  * Toggles PiP based on the current state and browser support.
- * 
+ *
  * @returns {Function}
  */
 
@@ -255,7 +255,7 @@ export function togglePip() {
         }
 
         if (isDocumentPiPSupported()) {
-                dispatch(openDocumentPiP());
+            dispatch(openDocumentPiP());
         } else {
             const videoElement = document.getElementById('pipVideo') as HTMLVideoElement;
 
@@ -268,7 +268,7 @@ export function togglePip() {
 
 /**
  * Opens Document PiP from the toolbar or an automatic MediaSession request.
- * 
+ *
  * @returns {Function}
  */
 export function openDocumentPiP() {
@@ -283,7 +283,7 @@ export function openDocumentPiP() {
         const docPiP = window?.documentPictureInPicture;
 
         if (!isDocumentPiPSupported() || !docPiP) {
-            logger.warn("Document Picture-in-Picture not supported");
+            logger.warn('Document Picture-in-Picture not supported');
 
             return;
         }
@@ -295,7 +295,7 @@ export function openDocumentPiP() {
         const isPiPWindowAlreadyOpen = Boolean(storedWindow || docPiPWindow);
 
         if (isPiPWindowAlreadyOpen) {
-            logger.debug('Document PiP is already open')
+            logger.debug('Document PiP is already open');
 
             return;
         }
@@ -322,13 +322,13 @@ export function openDocumentPiP() {
 
                     dispatch(setPiPActive(true));
 
-                    pipWindow.addEventListener("pagehide", () => {
+                    pipWindow.addEventListener('pagehide', () => {
                         clearPiPWindow();
                         dispatch(setPiPActive(false));
                     });
                 })
                 .catch((error: Error) => {
-                    logger.error("Failed to open Document PiP:", error);
+                    logger.error('Failed to open Document PiP:', error);
                     dispatch(setPiPActive(false));
                 })
                 .finally(() => {
@@ -336,7 +336,7 @@ export function openDocumentPiP() {
                 });
         } catch (error) {
             docPiPPending = false;
-            logger.error("Failed to open Document PiP:", error);
+            logger.error('Failed to open Document PiP:', error);
             dispatch(setPiPActive(false));
 
             throw error;

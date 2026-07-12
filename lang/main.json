@@ -1502,6 +1502,7 @@
         "openReactionsMenu": "Open reactions menu",
         "participants": "Participants",
         "pip": "Enter Picture-in-Picture mode",
+        "pipClose": "Close picture-in-picture",
         "polls": "Polls",
         "privateMessage": "Send private message",
         "profile": "Edit your profile",
@@ -1539,8 +1540,7 @@
         "videoSettings": "Video settings",
         "videomute": "Stop camera",
         "videomuteGUMPending": "Connecting your camera",
-        "videounmute": "Start camera",
-        "pipClose": "Close picture-in-picture"
+        "videounmute": "Start camera"
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",
