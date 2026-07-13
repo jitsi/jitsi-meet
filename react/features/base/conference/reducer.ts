@@ -129,6 +129,7 @@ export interface IJitsiConference {
     lobbyDenyAccess: Function;
     lock: Function;
     markParticipantVerified: Function;
+    moderateMessage: Function;
     muteParticipant: Function;
     myLobbyUserId: Function;
     myUserId: Function;

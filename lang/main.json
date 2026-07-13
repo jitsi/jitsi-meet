@@ -109,6 +109,7 @@
         }
     },
     "chat": {
+        "delete": "Delete",
         "disabled": "Sending chat messages is disabled.",
         "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
@@ -124,6 +125,8 @@
         "messageAccessibleTitleMe": "me says:",
         "messageTo": "Private message to {{recipient}}",
         "messagebox": "Type a message",
+        "moderatedMessage": "This message was deleted by a moderator.",
+        "moderationReason": "Reason: {{reason}}",
         "newMessages": "New messages",
         "nickname": {
             "featureChat": "chat",
