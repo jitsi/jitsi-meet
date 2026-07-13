@@ -238,6 +238,12 @@ Component "conference.localhost" "muc"
     -- mod_muc_cleanup_backend_services: short timeout so tests don't wait 20 s.
     services_empty_meeting_timeout = 1
 
+    -- mod_time_restricted (loaded on demand by mod_time_restricted_spec, not in
+    -- modules_enabled, so it does not destroy other tests' rooms): a fractional
+    -- limit keeps the test fast — 0.125 min = 7.5 s total, with the half-way
+    -- countdown broadcast at floor(7.5 / 2) = 3 s.
+    conference_max_minutes = 0.125
+
     -- mod_muc_limit_messages: cap per room and honour auth tokens.
     muc_limit_messages_count = 3
     muc_limit_messages_check_token = true
