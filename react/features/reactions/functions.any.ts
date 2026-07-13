@@ -27,7 +27,10 @@ export function getReactionsQueue(state: IReduxState): Array<IReactionEmojiProps
  * @returns {string}
  */
 export function getReactionMessageFromBuffer(buffer: Array<string>): string {
-    return buffer.map<string>(reaction => REACTIONS[reaction].message).reduce((acc, val) => `${acc}${val}`);
+    return buffer
+        .filter(reaction => reaction in REACTIONS)
+        .map<string>(reaction => REACTIONS[reaction].message)
+        .reduce((acc, val) => `${acc}${val}`, '');
 }
 
 /**
@@ -37,12 +40,14 @@ export function getReactionMessageFromBuffer(buffer: Array<string>): string {
  * @returns {Array}
  */
 export function getReactionsWithId(buffer: Array<string>): Array<IReactionEmojiProps> {
-    return buffer.map<IReactionEmojiProps>(reaction => {
-        return {
-            reaction,
-            uid: uuidv4()
-        };
-    });
+    return buffer
+        .filter(reaction => reaction in REACTIONS)
+        .map<IReactionEmojiProps>(reaction => {
+            return {
+                reaction,
+                uid: uuidv4()
+            };
+        });
 }
 
 /**

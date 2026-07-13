@@ -20,13 +20,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.facebook.react.ReactRootView;
-import com.facebook.react.internal.featureflags.ReactNativeFeatureFlags;
+import com.facebook.react.ReactHost;
+import com.facebook.react.runtime.ReactSurfaceImpl;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
@@ -42,9 +43,9 @@ public class JitsiMeetView extends FrameLayout {
     public static final int BACKGROUND_COLOR = 0xFF040404;
 
     /**
-     * React Native root view.
+     * React Native surface.
      */
-    private ReactRootView reactRootView;
+    private ReactSurfaceImpl reactSurface;
 
     /**
      * Helper method to recursively merge 2 {@link Bundle} objects representing React Native props.
@@ -91,6 +92,8 @@ public class JitsiMeetView extends FrameLayout {
                 // Convert String[] to ArrayList<String> for React Native bridge compatibility
                 String[] stringArray = (String[]) bValue;
                 result.putStringArrayList(key, new ArrayList<>(Arrays.asList(stringArray)));
+            } else if (valueType.contentEquals("ArrayList")) {
+                result.putParcelableArrayList(key, (ArrayList<Bundle>) bValue);
             } else {
                 throw new RuntimeException("Unsupported type: " + valueType);
             }
@@ -115,17 +118,21 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Releases the React resources (specifically the {@link ReactRootView})
+     * Releases the React resources (specifically the {@link ReactSurface})
      * associated with this view.
      *
      * MUST be called when the {@link Activity} holding this view is destroyed,
      * typically in the {@code onDestroy} method.
      */
     public void dispose() {
-        if (reactRootView != null) {
-            removeView(reactRootView);
-            reactRootView.unmountReactApplication();
-            reactRootView = null;
+        if (reactSurface != null) {
+            ViewGroup surfaceView = reactSurface.getView();
+            if (surfaceView != null) {
+                removeView(surfaceView);
+            }
+            reactSurface.stop();
+            reactSurface.detach();
+            reactSurface = null;
         }
     }
 
@@ -140,7 +147,7 @@ public class JitsiMeetView extends FrameLayout {
      */
     public void enterPictureInPicture() {
         PictureInPictureModule pipModule
-            = ReactInstanceManagerHolder.getNativeModule(
+            = ReactHostHolder.getNativeModule(
                 PictureInPictureModule.class);
         if (pipModule != null
                 && pipModule.isPictureInPictureSupported()
@@ -172,8 +179,8 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Creates the {@code ReactRootView} for the given app name with the given
-     * props. Once created it's set as the view of this {@code FrameLayout}.
+     * Creates the {@link ReactSurface} for the given app name with the given
+     * props. Once created its view is set as the child of this {@code FrameLayout}.
      *
      * @param appName - The name of the "app" (in React Native terms) to load.
      * @param props - The React Component props to pass to the app.
@@ -183,20 +190,24 @@ public class JitsiMeetView extends FrameLayout {
             props = new Bundle();
         }
 
-        if (reactRootView == null) {
-            reactRootView = new ReactRootView(getContext());
+        ReactHost reactHost = ReactHostHolder.getReactHost();
+        if (reactHost == null) {
+            JitsiMeetLogger.w("Cannot create surface, ReactHost is not initialized");
+            return;
+        }
 
-            boolean isFabricEnabled = ReactNativeFeatureFlags.enableFabricRenderer();
-            reactRootView.setIsFabric(isFabricEnabled);
-            
-            reactRootView.startReactApplication(
-                ReactInstanceManagerHolder.getReactInstanceManager(),
-                appName,
-                props);
-            reactRootView.setBackgroundColor(BACKGROUND_COLOR);
-            addView(reactRootView);
+        if (reactSurface == null) {
+            reactSurface = (ReactSurfaceImpl) reactHost.createSurface(getContext(), appName, props);
+
+            ViewGroup surfaceView = reactSurface.getView();
+            if (surfaceView != null) {
+                surfaceView.setBackgroundColor(BACKGROUND_COLOR);
+                addView(surfaceView);
+            }
+
+            reactSurface.start();
         } else {
-            reactRootView.setAppProperties(props);
+            reactSurface.updateInitProps(props);
         }
     }
 

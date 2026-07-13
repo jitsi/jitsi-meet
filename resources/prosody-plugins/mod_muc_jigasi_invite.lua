@@ -76,32 +76,36 @@ local function invite_jigasi(conference, phone_no)
             local occ = occupant:get_presence();
             local stats_child = occ:get_child("stats", "http://jitsi.org/protocol/colibri")
 
-            local is_sip_jigasi = true;
-            for stats_tag in stats_child:children() do
-                if stats_tag.attr.name == 'supports_sip' and stats_tag.attr.value == 'false' then
-                    is_sip_jigasi = false;
-                end
-            end
-
-            if is_sip_jigasi then
+            if not stats_child then
+                module:log("warn", "Jigasi occupant %s has no stats element, skipping", occupant_jid);
+            else
+                local is_sip_jigasi = true;
                 for stats_tag in stats_child:children() do
-                    if stats_tag.attr.name == 'stress_level' then
-                        local stress_level = tonumber(stats_tag.attr.value);
-                        module:log("debug", "Stressed level %s %s ", stress_level, occupant_jid)
-                        if stress_level < least_stressed_value then
-                            least_stressed_jigasi_occupant = occupant;
-                            least_stressed_value = stress_level
+                    if stats_tag.attr.name == 'supports_sip' and stats_tag.attr.value == 'false' then
+                        is_sip_jigasi = false;
+                    end
+                end
+
+                if is_sip_jigasi then
+                    for stats_tag in stats_child:children() do
+                        if stats_tag.attr.name == 'stress_level' then
+                            local stress_level = tonumber(stats_tag.attr.value);
+                            module:log("debug", "Stressed level %s %s ", stress_level, occupant_jid)
+                            if stress_level < least_stressed_value then
+                                least_stressed_jigasi_occupant = occupant;
+                                least_stressed_value = stress_level
+                            end
                         end
                     end
                 end
             end
         end
     end
-    module:log("debug", "Least stressed jigasi selected jid %s value %s", least_stressed_jigasi_occupant.jid, least_stressed_value)
     if not least_stressed_jigasi_occupant then
         module:log("error", "Cannot invite jigasi from room %s", jigasi_brewery_room.jid)
         return 404, 'Jigasi not found'
     end
+    module:log("debug", "Least stressed jigasi selected jid %s value %s", least_stressed_jigasi_occupant.jid, least_stressed_value)
 
     -- invite Jigasi to join the conference
     local stanza_id = hashes.sha256(random.bytes(8), true);

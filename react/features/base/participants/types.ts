@@ -69,6 +69,7 @@ export interface IParticipantFeatures {
     'flip'?: boolean | string;
     'inbound-call'?: boolean | string;
     'list-visitors'?: boolean | string;
+    'live-translation'?: boolean | string;
     'livestreaming'?: boolean | string;
     'lobby'?: boolean | string;
     'moderation'?: boolean | string;

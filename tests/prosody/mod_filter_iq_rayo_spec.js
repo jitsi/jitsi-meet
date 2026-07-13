@@ -51,12 +51,11 @@ function clearDialIqs() {
  *
  * @param {object} client         XmppTestClient with sendRayoIq
  * @param {string} roomJid        full room JID
- * @param {string} [dialTo]       dial `to` attribute (default: 'sip:test@example.com')
- * @param {string|null} [roomNameHeader]  JvbRoomName header value (default: roomJid)
+ * @param {object} [opts]         options forwarded to sendRayoIq
  */
-async function sendAndCollect(client, roomJid, dialTo, roomNameHeader) {
+async function sendAndCollect(client, roomJid, opts) {
     await clearDialIqs();
-    await client.sendRayoIq(roomJid, dialTo, roomNameHeader);
+    await client.sendRayoIq(roomJid, opts);
 
     // Give Prosody time to route (or block) the IQ before we poll.
     await new Promise(r => setTimeout(r, 300));
@@ -76,12 +75,17 @@ describe('mod_filter_iq_rayo (feature-based authorization)', () => {
     });
 
     /**
-     * Creates a test client with the given token, joins a fresh room (focus
-     * joins first so the jicofo lock is lifted and focus gets owner affiliation),
-     * and returns { client, room }.
+     * Creates a test client with a token scoped to a fresh room, joins that room
+     * (focus joins first so the jicofo lock is lifted), and returns { client, room }.
+     *
+     * @param {object} [overrides] JWT payload overrides merged into the token.
+     * @returns {Promise<{client: object, room: string}>}
      */
-    async function setup(token) {
+    async function setup(overrides = {}) {
         const room = nextRoom();
+        const roomName = room.split('@')[0];
+        const token = mintAsapToken({ room: roomName,
+            ...overrides });
         const focus = await joinWithFocus(room);
 
         clients.push(focus);
@@ -100,8 +104,7 @@ describe('mod_filter_iq_rayo (feature-based authorization)', () => {
     describe('outbound-call (dial to non-transcribe address)', () => {
 
         it('passes IQ when features.outbound-call = true', async () => {
-            const token = mintAsapToken({ context: { features: { 'outbound-call': true } } });
-            const { client: c, room } = await setup(token);
+            const { client: c, room } = await setup({ context: { features: { 'outbound-call': true } } });
             const iqs = await sendAndCollect(c, room);
 
             assert.strictEqual(iqs.length, 1, 'IQ should reach the MUC');
@@ -109,16 +112,14 @@ describe('mod_filter_iq_rayo (feature-based authorization)', () => {
         });
 
         it('blocks IQ when features.outbound-call = false', async () => {
-            const token = mintAsapToken({ context: { features: { 'outbound-call': false } } });
-            const { client: c, room } = await setup(token);
+            const { client: c, room } = await setup({ context: { features: { 'outbound-call': false } } });
             const iqs = await sendAndCollect(c, room);
 
             assert.strictEqual(iqs.length, 0);
         });
 
         it('blocks IQ when context.features present but outbound-call key absent', async () => {
-            const token = mintAsapToken({ context: { features: { recording: true } } });
-            const { client: c, room } = await setup(token);
+            const { client: c, room } = await setup({ context: { features: { recording: true } } });
             const iqs = await sendAndCollect(c, room);
 
             assert.strictEqual(iqs.length, 0);
@@ -127,8 +128,7 @@ describe('mod_filter_iq_rayo (feature-based authorization)', () => {
         it('blocks IQ when token has no context.features (non-owner fallback)', async () => {
             // No features → fallback to is_moderator = affiliation == 'owner'.
             // Regular client joined after focus so has 'member' affiliation → blocked.
-            const token = mintAsapToken();
-            const { client: c, room } = await setup(token);
+            const { client: c, room } = await setup();
             const iqs = await sendAndCollect(c, room);
 
             assert.strictEqual(iqs.length, 0);
@@ -140,34 +140,30 @@ describe('mod_filter_iq_rayo (feature-based authorization)', () => {
     describe('transcription (dial to jitsi_meet_transcribe)', () => {
 
         it('passes IQ when features.transcription = true', async () => {
-            const token = mintAsapToken({ context: { features: { transcription: true } } });
-            const { client: c, room } = await setup(token);
-            const iqs = await sendAndCollect(c, room, 'jitsi_meet_transcribe');
+            const { client: c, room } = await setup({ context: { features: { transcription: true } } });
+            const iqs = await sendAndCollect(c, room, { dialTo: 'jitsi_meet_transcribe' });
 
             assert.strictEqual(iqs.length, 1, 'IQ should reach the MUC');
             assert.strictEqual(iqs[0].dial_to, 'jitsi_meet_transcribe');
         });
 
         it('blocks IQ when features.transcription = false', async () => {
-            const token = mintAsapToken({ context: { features: { transcription: false } } });
-            const { client: c, room } = await setup(token);
-            const iqs = await sendAndCollect(c, room, 'jitsi_meet_transcribe');
+            const { client: c, room } = await setup({ context: { features: { transcription: false } } });
+            const iqs = await sendAndCollect(c, room, { dialTo: 'jitsi_meet_transcribe' });
 
             assert.strictEqual(iqs.length, 0);
         });
 
         it('blocks IQ when context.features present but transcription key absent', async () => {
-            const token = mintAsapToken({ context: { features: { 'outbound-call': true } } });
-            const { client: c, room } = await setup(token);
-            const iqs = await sendAndCollect(c, room, 'jitsi_meet_transcribe');
+            const { client: c, room } = await setup({ context: { features: { 'outbound-call': true } } });
+            const iqs = await sendAndCollect(c, room, { dialTo: 'jitsi_meet_transcribe' });
 
             assert.strictEqual(iqs.length, 0);
         });
 
         it('blocks IQ when token has no context.features (non-owner fallback)', async () => {
-            const token = mintAsapToken();
-            const { client: c, room } = await setup(token);
-            const iqs = await sendAndCollect(c, room, 'jitsi_meet_transcribe');
+            const { client: c, room } = await setup();
+            const iqs = await sendAndCollect(c, room, { dialTo: 'jitsi_meet_transcribe' });
 
             assert.strictEqual(iqs.length, 0);
         });
@@ -178,21 +174,54 @@ describe('mod_filter_iq_rayo (feature-based authorization)', () => {
     describe('JvbRoomName header validation', () => {
 
         it('blocks IQ when JvbRoomName header is missing', async () => {
-            const token = mintAsapToken({ context: { features: { 'outbound-call': true } } });
-            const { client: c, room } = await setup(token);
+            const { client: c, room } = await setup({ context: { features: { 'outbound-call': true } } });
 
             // null → header omitted entirely
-            const iqs = await sendAndCollect(c, room, 'sip:test@example.com', null);
+            const iqs = await sendAndCollect(c, room, { roomNameHeader: null });
 
             assert.strictEqual(iqs.length, 0);
         });
 
         it('blocks IQ when JvbRoomName header does not match room JID', async () => {
-            const token = mintAsapToken({ context: { features: { 'outbound-call': true } } });
-            const { client: c, room } = await setup(token);
-            const iqs = await sendAndCollect(c, room, 'sip:test@example.com', 'wrong-room@conference.localhost');
+            const { client: c, room } = await setup({ context: { features: { 'outbound-call': true } } });
+            const iqs = await sendAndCollect(c, room, { roomNameHeader: 'wrong-room@conference.localhost' });
 
             assert.strictEqual(iqs.length, 0);
         });
+    });
+
+    // ─── Header stripping ───────────────────────────────────────────────────
+
+    describe('header stripping', () => {
+
+        it('strips arbitrary client-supplied headers', async () => {
+            const { client: c, room } = await setup({ context: { features: { 'outbound-call': true } } });
+            const iqs = await sendAndCollect(c, room, { extraHeaders: { SomeHeader: 'spoofed-value' } });
+
+            assert.strictEqual(iqs.length, 1, 'IQ should reach the MUC');
+            assert.strictEqual(iqs[0].headers?.SomeHeader, undefined, 'custom header must be stripped');
+        });
+    });
+
+    // ─── JvbRoomPassword header ──────────────────────────────────────────────
+
+    describe('JvbRoomPassword header', () => {
+
+        it('passes JvbRoomPassword through when provided', async () => {
+            const { client: c, room } = await setup({ context: { features: { 'outbound-call': true } } });
+            const iqs = await sendAndCollect(c, room, { roomPassHeader: 'secret123' });
+
+            assert.strictEqual(iqs.length, 1);
+            assert.strictEqual(iqs[0].room_pass_header, 'secret123');
+        });
+
+        it('omits JvbRoomPassword in forwarded IQ when not provided by client', async () => {
+            const { client: c, room } = await setup({ context: { features: { 'outbound-call': true } } });
+            const iqs = await sendAndCollect(c, room);
+
+            assert.strictEqual(iqs.length, 1);
+            assert.strictEqual(iqs[0].room_pass_header, undefined);
+        });
+
     });
 });

@@ -16,7 +16,8 @@ export interface IToolboxNativeButton {
     text?: string;
 }
 
-export type ToolbarButton = 'camera' |
+export type ToolbarButton = 'audiotranslation' |
+    'camera' |
     'chat' |
     'closedcaptions' |
     'custom-panel' |
@@ -26,7 +27,6 @@ export type ToolbarButton = 'camera' |
     'etherpad' |
     'feedback' |
     'filesharing' |
-    'filmstrip' |
     'fullscreen' |
     'hangup' |
     'help' |

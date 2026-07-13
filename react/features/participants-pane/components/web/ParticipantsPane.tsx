@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { openDialog } from '../../../base/dialog/actions';
-import { isMobileBrowser } from '../../../base/environment/utils';
+import { isMobileBrowser } from '../../../base/environment/utils.web';
 import { IconCloseLarge, IconDotsHorizontal } from '../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/web/Button';
@@ -158,6 +158,9 @@ const ParticipantsPane = () => {
     const [ contextOpen, setContextOpen ] = useState(false);
     const [ searchString, setSearchString ] = useState('');
 
+    const paneRef = useRef<HTMLDivElement>(null);
+    const triggerRef = useRef<HTMLElement | null>(null);
+
     const onWindowClickListener = useCallback((e: any) => {
         if (contextOpen && !findAncestorByClass(e.target, classes.footerMoreContainer)) {
             setContextOpen(false);
@@ -170,7 +173,20 @@ const ParticipantsPane = () => {
         return () => {
             window.removeEventListener('click', onWindowClickListener);
         };
-    }, []);
+    }, [ onWindowClickListener ]);
+    useLayoutEffect(() => {
+        if (paneOpen) {
+            const activeElement = document.activeElement;
+
+            if (activeElement instanceof HTMLElement) {
+                triggerRef.current = activeElement;
+            }
+
+            paneRef.current?.focus();
+        } else {
+            triggerRef.current?.focus();
+        }
+    }, [ paneOpen ]);
 
     const onClosePane = useCallback(() => {
         dispatch(close());
@@ -195,7 +211,10 @@ const ParticipantsPane = () => {
     return (
         <div
             className = { classes.participantsPane }
-            id = 'participants-pane'>
+            id = 'participants-pane'
+            ref = { paneRef }
+            tabIndex = { -1 }>
+
             <div className = { classes.header }>
                 <ClickableIcon
                     accessibilityLabel = { t('participantsPane.close', 'Close') }

@@ -297,7 +297,7 @@ function getDevServerConfig() {
         static: {
             directory: process.cwd(),
             watch: {
-                ignored: file => file.endsWith('.log')
+                ignored: file => file.endsWith('.log') || file.includes('node_modules')
             }
         }
     };
@@ -381,6 +381,16 @@ module.exports = (_env, argv) => {
             plugins: [
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'face-landmarks-worker')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2) },
+        { ...config,
+            entry: {
+                'vb-inference-worker':
+                    './react/features/stream-effects/virtual-background/workers/VBInferenceWorker.ts'
+            },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'vb-inference-worker')
             ],
             performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2) },
         { ...config, /**

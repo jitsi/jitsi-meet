@@ -1,6 +1,11 @@
 import BasePageObject from './BasePageObject';
 
 const AUDIO_MUTE = 'Mute microphone';
+const RECORDING = 'Record & Transcribe';
+
+// Non-moderators (who can only do local recording) get a "Record" button instead of the
+// moderator's "Record & Transcribe" — see AbstractRecordButton._getAccessibilityLabel().
+const RECORDING_NON_MODERATOR = 'Record';
 const AUDIO_UNMUTE = 'Unmute microphone';
 const CHAT = 'Open chat';
 const CLOSE_CHAT = 'Close chat';
@@ -9,6 +14,7 @@ const DESKTOP = 'Start sharing your screen';
 const HANGUP = 'Leave the meeting';
 const OVERFLOW_MENU = 'More actions menu';
 const OVERFLOW = 'More actions';
+const CLOSE_OVERFLOW = 'Close more actions menu';
 const PARTICIPANTS = 'Open participants pane';
 const PROFILE = 'Edit your profile';
 const RAISE_HAND = 'Raise your hand';
@@ -49,6 +55,38 @@ export default class Toolbar extends BasePageObject {
      */
     get audioUnMuteBtn() {
         return this.getButton(AUDIO_UNMUTE);
+    }
+
+    /**
+     * Returns whether the recording button exists in the DOM for this participant.
+     *
+     * @returns {Promise<boolean>}
+     */
+    async hasRecordingButton(): Promise<boolean> {
+        // The recording button lives in the overflow ("More actions") menu, so it is only in the
+        // DOM while that menu is open. isExisting() searches the whole DOM, so opening the menu
+        // first also covers the case where the button is promoted to the main toolbar.
+        await this.openOverflowMenu();
+
+        // Match either label since moderators get "Record & Transcribe" while non-moderators
+        // (local recording only) get "Record".
+        const exists = await this.getButton(RECORDING).isExisting()
+            || await this.getButton(RECORDING_NON_MODERATOR).isExisting();
+
+        await this.closeOverflowMenu();
+
+        return exists;
+    }
+
+    /**
+     * Clicks the recording button to open the recording/transcription dialog.
+     *
+     * @returns {Promise<void>}
+     */
+    async clickRecordingButton(): Promise<void> {
+        // The recording button lives in the overflow ("More actions") menu; open it, click, close
+        // (matches clickSettings/clickSecurity — closeOverflowMenu is a no-op once the dialog opens).
+        return this.clickButtonInOverflowMenu(RECORDING);
     }
 
     /**
@@ -196,17 +234,52 @@ export default class Toolbar extends BasePageObject {
     }
 
     /**
-     * Clicks on the desktop sharing button that starts desktop sharing.
+     * Clicks on the desktop sharing button that starts desktop sharing. Waits until the toggle takes effect
+     * (button flips to STOP_DESKTOP) so a subsequent call doesn't race a still-in-flight stop.
      */
     clickDesktopSharingButton() {
-        return this.getButton(DESKTOP).click();
+        return this._toggleDesktopSharing(DESKTOP, STOP_DESKTOP, 'start');
     }
 
     /**
-     * Clicks on the desktop sharing button to stop it.
+     * Clicks on the desktop sharing button to stop it. Waits until the toggle takes effect (button flips to
+     * DESKTOP). On a busy main thread the click can land on a DOM node React has already detached during a
+     * track-replace / participantLeft cascade and the React onClick never fires — re-locate and re-click once
+     * before failing.
      */
     clickStopDesktopSharingButton() {
-        return this.getButton(STOP_DESKTOP).click();
+        return this._toggleDesktopSharing(STOP_DESKTOP, DESKTOP, 'stop');
+    }
+
+    /**
+     * Clicks the desktop-sharing toggle and waits for the button to flip to the opposite aria-label. If the
+     * flip doesn't happen within a short window, re-locates the source button (it may have been re-rendered
+     * out from under the original element handle) and clicks once more before failing.
+     *
+     * @private
+     */
+    private async _toggleDesktopSharing(fromLabel: string, toLabel: string, action: 'start' | 'stop') {
+        await this.getButton(fromLabel).click();
+
+        try {
+            await this.getButton(toLabel).waitForExist({ timeout: 2_000 });
+
+            return;
+        } catch {
+            // Fall through to retry.
+        }
+
+        // If the source button is still present, the first click was dropped — re-locate and click again. If
+        // it isn't present, the toggle is in flight; just keep waiting.
+        if (await this.getButton(fromLabel).isExisting()) {
+            await this.participant.log(`Retrying desktop-sharing ${action} click for ${this.participant.name}`);
+            await this.getButton(fromLabel).click();
+        }
+
+        await this.getButton(toLabel).waitForExist({
+            timeout: 3_000,
+            timeoutMsg: `Desktop sharing did not ${action} for ${this.participant.name}`
+        });
     }
 
     /**
@@ -296,6 +369,18 @@ export default class Toolbar extends BasePageObject {
             return;
         }
 
+        // Wake the auto-hidden toolbar by hovering the local video tile; otherwise the overflow
+        // button click can fire on an invisible element and the menu never appears. When the
+        // self-view is hidden (e.g. via settings), localVideoContainer is not in the DOM, so fall
+        // back to the large video container which is always present while in conference.
+        const localVideoContainer = this.participant.driver.$('span[id="localVideoContainer"]');
+
+        if (await localVideoContainer.isExisting()) {
+            await localVideoContainer.moveTo();
+        } else {
+            await this.participant.driver.$('#largeVideoContainer').moveTo();
+        }
+
         await this.clickOverflowButton();
 
         await this.waitForOverFlowMenu(true);
@@ -310,7 +395,9 @@ export default class Toolbar extends BasePageObject {
             return;
         }
 
-        await this.clickOverflowButton();
+        // When the overflow menu is open the toggle button's aria-label changes from
+        // "More actions" to "Close more actions menu", so we cannot reuse clickOverflowButton here.
+        await this.getButton(CLOSE_OVERFLOW).click();
 
         await this.waitForOverFlowMenu(false);
     }
@@ -323,7 +410,11 @@ export default class Toolbar extends BasePageObject {
     private waitForOverFlowMenu(visible: boolean) {
         return this.getButton(OVERFLOW_MENU).waitForDisplayed({
             reverse: !visible,
-            timeout: 3000,
+
+            // The menu opens with an enter animation and its render can be delayed by several
+            // seconds when the main thread is busy (e.g. right after a rejoin or while a virtual
+            // background effect is loading), so allow a generous timeout before giving up.
+            timeout: 10000,
             timeoutMsg: `Overflow menu is not ${visible ? 'visible' : 'hidden'}`
         });
     }

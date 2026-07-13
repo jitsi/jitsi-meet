@@ -4,13 +4,27 @@ import { connect } from 'react-redux';
 import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
 import { IReduxState } from '../../../../app/types';
+import { DEFAULT_ORIGINAL_VOLUME, DUCKED_ORIGINAL_VOLUME } from '../../../../audio-translation/constants';
+import { getTranslatedSourceNames } from '../../../../audio-translation/functions';
+import { browser } from '../../../lib-jitsi-meet';
 import { ITrack } from '../../../tracks/types';
 import logger from '../../logger';
+
+// iOS (WebKit) ignores programmatic HTMLMediaElement.volume — it is under the user's hardware control, so
+// assigning it is a no-op. Ducking therefore can't lower the volume there; we fall back to muting the
+// original entirely while its translation plays. `element.muted` IS honoured on iOS.
+const IS_IOS_BROWSER = browser.isIosBrowser();
 
 /**
  * The type of the React {@code Component} props of {@link AudioTrack}.
  */
 interface IProps {
+
+    /**
+     * Whether this track's original audio is currently ducked because its translated counterpart is playing.
+     * On iOS, where element volume cannot be lowered, this causes the element to be muted instead.
+     */
+    _ducked?: boolean;
 
     /**
      * Represents muted property of the underlying audio element.
@@ -103,15 +117,13 @@ class AudioTrack extends Component<IProps> {
 
         if (this._ref?.current) {
             const audio = this._ref?.current;
-            const { _muted, _volume } = this.props;
+            const { _volume } = this.props;
 
             if (typeof _volume === 'number') {
                 audio.volume = _volume;
             }
 
-            if (typeof _muted === 'boolean') {
-                audio.muted = _muted;
-            }
+            audio.muted = this._isMuted(this.props);
 
             // @ts-ignore
             audio.addEventListener('error', this._errorHandler);
@@ -164,16 +176,28 @@ class AudioTrack extends Component<IProps> {
             }
 
             const currentMuted = audio.muted;
-            const nextMuted = nextProps._muted;
+            const nextMuted = this._isMuted(nextProps);
 
-            if (typeof nextMuted === 'boolean' && currentMuted !== nextMuted) {
-                logger.debug(`Setting audio element ${nextProps?.id} muted to true`);
+            if (currentMuted !== nextMuted) {
+                logger.debug(`Setting audio element ${nextProps?.id} muted to ${nextMuted}`);
 
                 audio.muted = nextMuted;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Computes the effective muted state of the audio element: muted when the conference is joined silently
+     * ({@code _muted}), or — on iOS, where the volume cannot be lowered — while the track is ducked because
+     * its translation is playing.
+     *
+     * @param {IProps} props - The props to evaluate.
+     * @returns {boolean}
+     */
+    _isMuted(props: IProps) {
+        return Boolean(props._muted) || (IS_IOS_BROWSER && Boolean(props._ducked));
     }
 
     /**
@@ -334,10 +358,54 @@ class AudioTrack extends Component<IProps> {
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantsVolume } = state['features/filmstrip'];
+    const { language: defaultLanguage, participantLanguages } = state['features/audio-translation'];
+    const { audioTranslation: audioTranslationConfig } = state['features/base/config'];
+    const audioTranslationEnabled = audioTranslationConfig?.enabled;
+
+    // The volume a speaker's original is ducked to while its translation plays; overridable via config, so
+    // validate it — a value outside 0..1 (or a non-number from configOverwrite/URL) would throw a
+    // DOMException when assigned to HTMLMediaElement.volume. Fall back to the default when invalid.
+    const configuredDuckedVolume = audioTranslationConfig?.duckedVolume;
+    const duckedVolume = typeof configuredDuckedVolume === 'number'
+        && configuredDuckedVolume >= 0 && configuredDuckedVolume <= 1
+        ? configuredDuckedVolume
+        : DUCKED_ORIGINAL_VOLUME;
+
+    let _volume: number | boolean | undefined = participantsVolume[ownProps.participantId];
+
+    // Effective translation language for this speaker: the per-participant override if one is set (which
+    // may be null to disable), otherwise the conference-wide default. Turning translation off — globally
+    // or for this participant — clears this, so the original un-ducks (this selector re-runs on change).
+    const participantId: string | undefined = ownProps.participantId;
+    const effectiveLanguage = participantId && participantId in participantLanguages
+        ? participantLanguages[participantId]
+        : defaultLanguage;
+
+    // Duck a speaker's original only while its translated counterpart ({source}.{language}) is present.
+    const sourceName: string | undefined = ownProps.audioTrack?.jitsiTrack?.getSourceName?.();
+
+    let ducked = false;
+
+    if (effectiveLanguage && typeof sourceName === 'string' && !sourceName.endsWith(`.${effectiveLanguage}`)) {
+        const translatedSourceName = `${sourceName}.${effectiveLanguage}`;
+
+        if (getTranslatedSourceNames(state).has(translatedSourceName)) {
+            _volume = duckedVolume;
+            ducked = true;
+        }
+    }
+
+    // When the feature is enabled, a track may have been ducked to a non-default volume. Once it is no longer
+    // ducked and has no explicit per-participant volume, restore full volume — otherwise the audio element keeps
+    // the previously-applied ducked level, since AudioTrack only writes numeric volumes (undefined is ignored).
+    if (!ducked && audioTranslationEnabled && _volume === undefined) {
+        _volume = DEFAULT_ORIGINAL_VOLUME;
+    }
 
     return {
+        _ducked: ducked,
         _muted: state['features/base/config'].startSilent,
-        _volume: participantsVolume[ownProps.participantId]
+        _volume
     };
 }
 

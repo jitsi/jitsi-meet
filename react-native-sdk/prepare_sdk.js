@@ -117,10 +117,6 @@ fs.copyFileSync(
     `${iosDestPath}/LocaleDetector.m`
 );
 fs.copyFileSync(
-    `${iosSrcPath}/POSIX.m`,
-    `${iosDestPath}/POSIX.m`
-);
-fs.copyFileSync(
     `${iosSrcPath}/Proximity.m`,
     `${iosDestPath}/Proximity.m`
 );
@@ -151,10 +147,6 @@ copyFolderRecursiveSync(
 copyFolderRecursiveSync(
     `${androidMainSourcePath}/drawable-xxxhdpi`,
      `${androidMainTargetPath}`
-);
-copyFolderRecursiveSync(
-    `${androidSourcePath}/net`,
-    `${androidTargetPath}/log`
 );
 fs.copyFileSync(
     `${androidSourcePath}/AndroidSettingsModule.java`,

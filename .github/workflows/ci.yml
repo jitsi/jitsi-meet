@@ -91,7 +91,7 @@ jobs:
         sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
         xcodebuild -version
     - name: setup-cocoapods
-      uses: ruby/setup-ruby@7372622e62b60b3cb750dcd2b9e32c247ffec26a  # v1
+      uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f  # v1
       with:
         ruby-version: '3.4'
         bundler-cache: true
@@ -176,7 +176,7 @@ jobs:
           -workspace ios/jitsi-meet.xcworkspace \
           -scheme JitsiMeetSDK
     - name: setup-cocoapods
-      uses: ruby/setup-ruby@4fc31e1c823882afd7ef55985266a526c589de90 #v1.282.0
+      uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f #v1.310.0
       with:
         ruby-version: '3.4'
         bundler-cache: true

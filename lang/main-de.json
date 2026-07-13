@@ -344,9 +344,11 @@
         "contactSupport": "Support kontaktieren",
         "copied": "Kopiert",
         "copy": "Kopieren",
+        "currentLinks": "Aktuelle Verknüpfungen",
         "demoteParticipantDialog": "Sind Sie sicher, dass Sie diese Person zu den Gästen verschieben möchten?",
         "demoteParticipantTitle": "Zu Gästen verschieben",
         "dismiss": "OK",
+        "dismissAll": "Alle verwerfen",
         "displayNameRequired": "Hallo! Wie ist Ihr Name?",
         "done": "Fertig",
         "e2eeDescription": "Ende-zu-Ende-Verschlüsselung ist derzeit noch EXPERIMENTELL. Bitte beachten Sie, dass das Aktivieren der Ende-zu-Ende-Verschlüsselung diverse serverseitige Funktionen deaktiviert: Aufnahmen, Livestreaming und Telefoneinwahl. Bitte beachten Sie außerdem, dass der Konferenz dann nur noch mit Browsern beigetreten werden kann, die Insertable Streams unterstützen.",
@@ -374,6 +376,7 @@
         "kickSystemTitle": "Autsch! Sie wurden aus der Konferenz geworfen",
         "kickTitle": "Autsch! {{participantDisplayName}} hat Sie aus der Konferenz geworfen",
         "learnMore": "Mehr erfahren",
+        "link": "Verknüpfen",
         "linkMeeting": "Konferenz verlinken",
         "linkMeetingTitle": "Konferenz mit Salesforce verlinken",
         "liveStreaming": "Livestreaming",
@@ -439,6 +442,8 @@
         "passwordNotSupported": "Das Festlegen eines $t(lockRoomPassword) wird nicht unterstützt.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) nicht unterstützt",
         "passwordRequired": "$t(lockRoomPasswordUppercase) erforderlich",
+        "pendingDealsDescription": "Diese Gelegenheiten können zu dieser Konferenz passen",
+        "pendingDescription": "Es wurden mögliche Treffer basierend auf Emailadressen der Personen ermittelt",
         "permissionCameraRequiredError": "Der Zugriff auf die Kamera wird benötigt, um in Videokonferenzen teilzunehmen. Bitte in den Einstellungen zulassen",
         "permissionErrorTitle": "Berechtigung benötigt",
         "permissionMicRequiredError": "Der Zugriff auf das Mikrofon wird benötigt, um an Konferenzen mit Ton teilzunehmen. Bitte in den Einstellungen zulassen",
@@ -465,6 +470,7 @@
         "reservationError": "Fehler im Reservierungssystem",
         "reservationErrorMsg": "Fehler, Nummer: {{code}}, Nachricht: {{msg}}",
         "retry": "Wiederholen",
+        "salesforceDataError": "Salesforce-Daten konnten nicht geladen werden",
         "screenSharingAudio": "Audio teilen",
         "screenSharingFailed": "Ups! Beim Teilen des Bildschirms ist etwas schiefgegangen!",
         "screenSharingFailedTitle": "Bildschirmfreigabe fehlgeschlagen!",
@@ -516,6 +522,8 @@
         "stopRecordingWarning": "Sind Sie sicher, dass Sie die Aufnahme stoppen möchten?",
         "stopStreamingWarning": "Sind Sie sicher, dass Sie den Livestream stoppen möchten?",
         "streamKey": "Streamschlüssel",
+        "suggestedAccounts": "Vorgeschlagene Accounts",
+        "suggestedDeals": "Vorgeschlagene Deals",
         "thankYou": "Danke für die Verwendung von {{appName}}!",
         "token": "Token",
         "tokenAuthFailed": "Sie sind nicht berechtigt, dieser Konferenz beizutreten.",
@@ -540,6 +548,7 @@
         "tokenAuthUnsupported": "Token-Authentifizierung wird nicht unterstützt.",
         "transcribing": "Wird transkribiert",
         "unauthenticatedAccessDisabled": "Zur Teilnahme an dieser Konferenz müssen Sie sich anmelden.",
+        "unlink": "Verknüpfung entfernen",
         "unlockRoom": "Konferenz$t(lockRoomPassword) entfernen",
         "user": "Anmeldename",
         "userIdentifier": "Benutzername",
@@ -663,6 +672,9 @@
         "retry": "Erneut versuchen",
         "support": "Support",
         "supportMsg": "Wenn der Fehler erneut auftritt, bitte kontaktieren Sie"
+    },
+    "inputAction": {
+        "deleteInput": "Eingabe löschen"
     },
     "inviteDialog": {
         "alertText": "Die Einladung einiger Personen ist fehlgeschlagen.",
@@ -820,6 +832,10 @@
         "audioUnmuteBlockedDescription": "Díe Stummschaltung kann aus Überlastungsschutzgründen temporär nicht aufgehoben werden.",
         "audioUnmuteBlockedTitle": "Stummschaltung kann nicht aufgehoben werden!",
         "chatMessages": "Chatnachrichten",
+        "confirmAccountError": "Account konnte nicht bestätigt werden",
+        "confirmAccountSuccess": "Account bestätigt",
+        "confirmDealError": "Deal konnte nicht bestätigt werden",
+        "confirmDealSuccess": "Deal bestätigt",
         "connectedOneMember": "{{name}} nimmt an der Konferenz teil",
         "connectedThreePlusMembers": "{{name}} und viele andere Personen nehmen an der Konferenz teil",
         "connectedTwoMembers": "{{first}} und {{second}} nehmen an der Konferenz teil",
@@ -833,6 +849,8 @@
         "disabledIframeSecondaryNative": "Die Einbettung von {{domain}} ist nur für Demo-Zwecke vorgesehen. Diese Konferenz wird in {{timeout}} Minuten beendet.",
         "disabledIframeSecondaryWeb": "Die Einbettung von {{domain}} ist nur für Demo-Zwecke vorgesehen. Diese Konferenz wird in {{timeout}} Minuten beendet. Bitte nutzen Sie <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> für produktive Zwecke!",
         "disconnected": "getrennt",
+        "dismissError": "Vorschläge konnten nicht verworfen werden",
+        "dismissSuccess": "Vorschläge verworfen",
         "displayNotifications": "Benachrichtigungen anzeigen für",
         "dontRemindMe": "Nicht erinnern",
         "focus": "Konferenzleitung",
@@ -909,6 +927,8 @@
         "suggestRecordingAction": "Starten",
         "suggestRecordingDescription": "Möchten Sie eine Aufzeichnung starten?",
         "suggestRecordingTitle": "Konferenz aufzeichnen",
+        "unlinkFromSalesforceError": "Verknüpfung zu Salesforce konnte nicht entfernt werden",
+        "unlinkFromSalesforceSuccess": "Verknüpfung mit Salesforce entfernt",
         "unmute": "Stummschaltung aufheben",
         "unmuteScreen": "Bildschirmfreigabe starten",
         "unmuteVideo": "Kamera einschalten",
@@ -1308,6 +1328,10 @@
     },
     "termsView": {
         "title": "Nutzungsbedingungen"
+    },
+    "timeTimer": {
+        "endedOver": "Sie sind {{time}} über der Zeit.",
+        "endedTitle": "Zeit abgelaufen"
     },
     "toggleTopPanelLabel": "Obere Leiste ein-/ausschalten",
     "toolbar": {

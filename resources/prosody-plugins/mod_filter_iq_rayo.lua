@@ -61,10 +61,20 @@ local function load_config()
 end
 load_config();
 
+-- Normalise CR and LF in values sourced outside of XML (e.g. JWT claims) to
+-- spaces before inserting them into stanza attributes. Prosody's util.stanza
+-- serializer does not escape raw control characters, so this keeps the
+-- forwarded attribute values consistent with how expat already normalises
+-- whitespace in XML-attribute-sourced values.
+local function sanitize_header_value(v)
+    return (tostring(v):gsub("[\r\n]", " "));
+end
+
 -- Header names to use to push extra data extracted from token, if any
 local OUT_INITIATOR_USER_ATTR_NAME = "X-outbound-call-initiator-user";
 local OUT_INITIATOR_GROUP_ATTR_NAME = "X-outbound-call-initiator-group";
 local OUT_ROOM_NAME_ATTR_NAME = "JvbRoomName";
+local OUT_ROOM_PASS_ATTR_NAME = 'JvbRoomPassword';
 
 local OUTGOING_CALLS_THROTTLE_INTERVAL = 60; -- if max_number_outgoing_calls is enabled it will be
                                              -- the max number of outgoing calls a user can try for a minute
@@ -80,28 +90,26 @@ module:hook("pre-iq/full", function(event)
             local session = event.origin;
             local token = session.auth_token;
 
-            -- find header with attr name 'JvbRoomName' and extract its value
+            -- find header with attr name 'JvbRoomName' or 'JvbRoomPassword' and extract the values
             local roomName;
+            local roomPassword;
             -- Remove any 'header' element if it already exists, so it cannot be spoofed by a client
             dial:maptags(function(tag)
-                if tag.name == "header"
-                        and (tag.attr.name == OUT_INITIATOR_USER_ATTR_NAME
-                                or tag.attr.name == OUT_INITIATOR_GROUP_ATTR_NAME) then
-                    return nil
-                elseif tag.name == "header" and tag.attr.name == OUT_ROOM_NAME_ATTR_NAME then
-                    roomName = tag.attr.value;
-                    -- we will remove it as we will add it later, modified
-                    if is_visitor_prosody then
-                        return nil;
+                if tag.name == 'header' then
+                    if tag.attr.name == OUT_ROOM_NAME_ATTR_NAME then
+                        roomName = tag.attr.value;
+                    elseif tag.attr.name == OUT_ROOM_PASS_ATTR_NAME then
+                        roomPassword = tag.attr.value;
                     end
+                    return nil;
                 end
-                return tag
+                return tag;
             end);
 
             local room_jid = jid.bare(stanza.attr.to);
             local room_real_jid = room_jid_match_rewrite(room_jid);
             local room = main_muc_service.get_room_from_jid(room_real_jid);
-            local feature = dial.attr.to == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call';
+            local feature = (dial.attr.to and dial.attr.to:lower()) == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call';
             local error_message = nil;
 
             if not room or room:get_occupant_jid(stanza.attr.from) == nil then
@@ -160,7 +168,7 @@ module:hook("pre-iq/full", function(event)
                 dial:tag("header", {
                     xmlns = "urn:xmpp:rayo:1",
                     name = OUT_INITIATOR_USER_ATTR_NAME,
-                    value = tostring(user_id)});
+                    value = sanitize_header_value(user_id)});
                 dial:up();
 
                 -- Add the initiator group information if it is present
@@ -168,17 +176,27 @@ module:hook("pre-iq/full", function(event)
                     dial:tag("header", {
                         xmlns = "urn:xmpp:rayo:1",
                         name = OUT_INITIATOR_GROUP_ATTR_NAME,
-                        value = tostring(session.jitsi_meet_context_group) });
+                        value = sanitize_header_value(session.jitsi_meet_context_group) });
                     dial:up();
                 end
             end
 
             -- we want to instruct jigasi to enter the main room, so send the correct main room jid
             if is_visitor_prosody then
+                roomName = string.gsub(roomName, local_domain, main_domain);
+            end
+            dial:tag("header", {
+                xmlns = "urn:xmpp:rayo:1",
+                name = OUT_ROOM_NAME_ATTR_NAME,
+                value = sanitize_header_value(roomName)
+            });
+            dial:up();
+            if roomPassword then
                 dial:tag("header", {
                     xmlns = "urn:xmpp:rayo:1",
-                    name = OUT_ROOM_NAME_ATTR_NAME,
-                    value = string.gsub(roomName, local_domain, main_domain) });
+                    name = OUT_ROOM_PASS_ATTR_NAME,
+                    value = sanitize_header_value(roomPassword)
+                });
                 dial:up();
             end
         end

@@ -57,6 +57,23 @@ export const WHITEBOARD_UI_OPTIONS = {
 };
 
 /**
+ * Whiteboard UI Options with image support enabled.
+ *
+ * Used only for the inline web whiteboard, where a storage backend and a token
+ * provider are available to persist and sync image binaries. The standalone
+ * whiteboard page (mobile/native) keeps {@link WHITEBOARD_UI_OPTIONS}, since it
+ * has no conference context to supply storage credentials.
+ */
+export const WHITEBOARD_UI_OPTIONS_WITH_IMAGES = {
+    ...WHITEBOARD_UI_OPTIONS,
+    canvasActions: {
+        ...WHITEBOARD_UI_OPTIONS.canvasActions,
+        allowedShapes: [ ...WHITEBOARD_UI_OPTIONS.canvasActions.allowedShapes, 'image' ],
+        disableFileDrop: false
+    }
+};
+
+/**
  * Whiteboard default lower limit.
  */
 export const MIN_USER_LIMIT = 10;

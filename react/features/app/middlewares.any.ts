@@ -1,4 +1,5 @@
 import '../analytics/middleware';
+import '../audio-translation/middleware';
 import '../authentication/middleware';
 import '../av-moderation/middleware';
 import '../base/conference/middleware';

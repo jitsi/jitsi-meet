@@ -71,12 +71,17 @@ describe('mod_filter_iq_jibri (feature-based authorization)', () => {
     });
 
     /**
-     * Creates a test client connected to localhost with the given token,
-     * joins a fresh room (focus joins first to unlock the jicofo lock), and
-     * returns { client, room }. The client is a non-moderator participant.
+     * Creates a test client with a token scoped to a fresh room, joins that room
+     * (focus joins first to unlock the jicofo lock), and returns { client, room }.
+     *
+     * @param {object} [overrides] JWT payload overrides merged into the token.
+     * @returns {Promise<{client: object, room: string}>}
      */
-    async function setup(token) {
+    async function setup(overrides = {}) {
         const room = nextRoom();
+        const roomName = room.split('@')[0];
+        const token = mintAsapToken({ room: roomName,
+            ...overrides });
         const focus = await joinWithFocus(room);
 
         clients.push(focus);
@@ -97,8 +102,7 @@ describe('mod_filter_iq_jibri (feature-based authorization)', () => {
         for (const action of [ 'start', 'stop' ]) {
 
             it(`passes ${action} IQ when features.recording = true`, async () => {
-                const token = mintAsapToken({ context: { features: { recording: true } } });
-                const { client: c, room } = await setup(token);
+                const { client: c, room } = await setup({ context: { features: { recording: true } } });
                 const iqs = await sendAndCollect(c, room, action, 'file');
 
                 assert.strictEqual(iqs.length, 1, 'IQ should reach the MUC');
@@ -107,8 +111,7 @@ describe('mod_filter_iq_jibri (feature-based authorization)', () => {
             });
 
             it(`blocks ${action} IQ when features.recording = false`, async () => {
-                const token = mintAsapToken({ context: { features: { recording: false } } });
-                const { client: c, room } = await setup(token);
+                const { client: c, room } = await setup({ context: { features: { recording: false } } });
                 const iqs = await sendAndCollect(c, room, action, 'file');
 
                 assert.strictEqual(iqs.length, 0);
@@ -116,8 +119,7 @@ describe('mod_filter_iq_jibri (feature-based authorization)', () => {
 
             it(`blocks ${action} IQ when context.features present but recording key absent`, async () => {
                 // features object present but no 'recording' key → treated as false
-                const token = mintAsapToken({ context: { features: { livestreaming: true } } });
-                const { client: c, room } = await setup(token);
+                const { client: c, room } = await setup({ context: { features: { livestreaming: true } } });
                 const iqs = await sendAndCollect(c, room, action, 'file');
 
                 assert.strictEqual(iqs.length, 0);
@@ -126,8 +128,7 @@ describe('mod_filter_iq_jibri (feature-based authorization)', () => {
             it(`blocks ${action} IQ when token has no context.features (non-moderator fallback)`, async () => {
                 // No features in token → is_feature_allowed falls back to is_moderator.
                 // Client joined after focus so it is a non-moderator participant → blocked.
-                const token = mintAsapToken();
-                const { client: c, room } = await setup(token);
+                const { client: c, room } = await setup();
                 const iqs = await sendAndCollect(c, room, action, 'file');
 
                 assert.strictEqual(iqs.length, 0);
@@ -135,8 +136,7 @@ describe('mod_filter_iq_jibri (feature-based authorization)', () => {
         }
 
         it('passes status IQ regardless of features (only start/stop are gated)', async () => {
-            const token = mintAsapToken({ context: { features: { recording: false } } });
-            const { client: c, room } = await setup(token);
+            const { client: c, room } = await setup({ context: { features: { recording: false } } });
             const iqs = await sendAndCollect(c, room, 'status', 'file');
 
             assert.strictEqual(iqs.length, 1);
@@ -150,8 +150,7 @@ describe('mod_filter_iq_jibri (feature-based authorization)', () => {
         for (const action of [ 'start', 'stop' ]) {
 
             it(`passes ${action} IQ when features.livestreaming = true`, async () => {
-                const token = mintAsapToken({ context: { features: { livestreaming: true } } });
-                const { client: c, room } = await setup(token);
+                const { client: c, room } = await setup({ context: { features: { livestreaming: true } } });
                 const iqs = await sendAndCollect(c, room, action, 'stream');
 
                 assert.strictEqual(iqs.length, 1);
@@ -160,24 +159,21 @@ describe('mod_filter_iq_jibri (feature-based authorization)', () => {
             });
 
             it(`blocks ${action} IQ when features.livestreaming = false`, async () => {
-                const token = mintAsapToken({ context: { features: { livestreaming: false } } });
-                const { client: c, room } = await setup(token);
+                const { client: c, room } = await setup({ context: { features: { livestreaming: false } } });
                 const iqs = await sendAndCollect(c, room, action, 'stream');
 
                 assert.strictEqual(iqs.length, 0);
             });
 
             it(`blocks ${action} IQ when context.features present but livestreaming key absent`, async () => {
-                const token = mintAsapToken({ context: { features: { recording: true } } });
-                const { client: c, room } = await setup(token);
+                const { client: c, room } = await setup({ context: { features: { recording: true } } });
                 const iqs = await sendAndCollect(c, room, action, 'stream');
 
                 assert.strictEqual(iqs.length, 0);
             });
 
             it(`blocks ${action} IQ when token has no context.features (non-moderator fallback)`, async () => {
-                const token = mintAsapToken();
-                const { client: c, room } = await setup(token);
+                const { client: c, room } = await setup();
                 const iqs = await sendAndCollect(c, room, action, 'stream');
 
                 assert.strictEqual(iqs.length, 0);
@@ -185,11 +181,109 @@ describe('mod_filter_iq_jibri (feature-based authorization)', () => {
         }
 
         it('passes status IQ regardless of features (only start/stop are gated)', async () => {
-            const token = mintAsapToken({ context: { features: { livestreaming: false } } });
-            const { client: c, room } = await setup(token);
+            const { client: c, room } = await setup({ context: { features: { livestreaming: false } } });
             const iqs = await sendAndCollect(c, room, 'status', 'stream');
 
             assert.strictEqual(iqs.length, 1);
+        });
+    });
+
+    // ─── robustness: nil room ─────────────────────────────────────────────────
+    //
+    // mod_filter_iq_jibri calls get_room_from_jid() on the IQ target and then
+    // immediately dereferences the result with room:get_occupant_by_real_jid().
+    // If the room does not exist, get_room_from_jid returns nil and the next
+    // line crashes. This test verifies the session survives such an IQ.
+
+    describe('robustness', () => {
+
+        it('session survives a Jibri start IQ targeting a non-existent room', async () => {
+            // We need a connected client but the IQ target room must never have
+            // been created. Use a wildcard token so the connection is accepted.
+            const token = mintAsapToken({ room: '*' });
+            const c = await createXmppClient({ params: { token } });
+
+            clients.push(c);
+
+            // Target a room that has never been created — get_room_from_jid
+            // returns nil, which would crash room:get_occupant_by_real_jid.
+            const ghost = 'ghost-room-nil-test@conference.localhost';
+
+            await clearJibriIqs();
+            await c.sendJibriIq(ghost, 'start', 'file');
+
+            // Give Prosody time to process the stanza.
+            await new Promise(r => setTimeout(r, 400));
+
+            // If the hook crashed and killed the session this resolves immediately;
+            // we expect it to time out (session still alive).
+            const disconnected = await c.waitForDisconnect(400).then(() => true, () => false);
+
+            assert.strictEqual(disconnected, false,
+                'client session must remain alive after IQ to non-existent room');
+        });
+
+        it('returns item-not-found error reply for Jibri IQ targeting a non-existent room', async () => {
+            // When the room does not exist, get_room_from_jid should return <item-not-found/> (as opposed to nil which
+            // may be returned if an internal error is triggered).
+            const token = mintAsapToken({ room: '*' });
+            const c = await createXmppClient({ params: { token } });
+
+            clients.push(c);
+
+            const ghost = 'ghost-room-error-reply-test@conference.localhost';
+
+            await c.sendJibriIq(ghost, 'start', 'file');
+
+            const reply = await c.waitForIq(s => s.attrs.type === 'error', 2000);
+
+            assert.strictEqual(reply.attrs.type, 'error');
+            const error = reply.getChild('error');
+
+            assert.ok(error, 'expected <error/> child in IQ reply');
+            assert.ok(
+                error.getChild('item-not-found'),
+                'expected <item-not-found/> error condition — room does not exist'
+            );
+        });
+
+    });
+
+    // ─── attribute case normalisation ────────────────────────────────────────
+
+    describe('attribute case normalisation', () => {
+
+        for (const action of [ 'START', 'STOP', 'Start', 'Stop' ]) {
+
+            it(`blocks ${action} (recording_mode=file) when features.recording = false`, async () => {
+                const { client: c, room } = await setup({ context: { features: { recording: false } } });
+                const iqs = await sendAndCollect(c, room, action, 'file');
+
+                assert.strictEqual(iqs.length, 0);
+            });
+        }
+
+        it('passes START (recording_mode=file) when features.recording = true', async () => {
+            const { client: c, room } = await setup({ context: { features: { recording: true } } });
+            const iqs = await sendAndCollect(c, room, 'START', 'file');
+
+            assert.strictEqual(iqs.length, 1);
+        });
+
+        it('blocks START (recording_mode=FILE) when features.recording = false', async () => {
+            const { client: c, room } = await setup({ context: { features: { recording: false } } });
+            const iqs = await sendAndCollect(c, room, 'START', 'FILE');
+
+            assert.strictEqual(iqs.length, 0);
+        });
+
+        it('blocks START (recording_mode=FILE) when only features.livestreaming = true (cross-feature)', async () => {
+            // recording_mode='FILE' must still route to the recording gate, not livestreaming
+            const { client: c, room } = await setup({ context: { features: { livestreaming: true,
+                recording: false } } });
+            const iqs = await sendAndCollect(c, room, 'START', 'FILE');
+
+            assert.strictEqual(iqs.length, 0);
         });
     });
 });

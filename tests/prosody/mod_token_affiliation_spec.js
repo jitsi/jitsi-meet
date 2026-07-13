@@ -26,13 +26,16 @@ function getRoleAndAffiliation(presence) {
 
 /**
  * Connects a client on the main VirtualHost with the given context.user claims
- * embedded in a RS256 token.
+ * embedded in a RS256 token scoped to the given room.
  *
+ * @param {string} roomJid      full room JID, e.g. 'room@conference.localhost'
  * @param {object} contextUser  JWT context.user payload.
  * @returns {Promise<XmppTestClient>}
  */
-function connectWithToken(contextUser) {
-    const token = mintAsapToken({ context: { user: contextUser } });
+function connectWithToken(roomJid, contextUser) {
+    const roomName = roomJid.split('@')[0];
+    const token = mintAsapToken({ room: roomName,
+        context: { user: contextUser } });
 
     return createXmppClient({ params: { token } });
 }
@@ -61,7 +64,7 @@ describe('mod_token_affiliation', () => {
 
             clients.push(await joinWithFocus(r));
 
-            const c = await connectWithToken(contextUser);
+            const c = await connectWithToken(r, contextUser);
 
             clients.push(c);
 
@@ -89,7 +92,7 @@ describe('mod_token_affiliation', () => {
 
         clients.push(await joinWithFocus(r));
 
-        const c = await connectWithToken({ id: 'user1' });
+        const c = await connectWithToken(r, { id: 'user1' });
 
         clients.push(c);
 
@@ -105,7 +108,7 @@ describe('mod_token_affiliation', () => {
 
         clients.push(await joinWithFocus(r));
 
-        const c = await connectWithToken({ moderator: false });
+        const c = await connectWithToken(r, { moderator: false });
 
         clients.push(c);
 
@@ -144,8 +147,8 @@ describe('mod_token_affiliation', () => {
 
         clients.push(await joinWithFocus(r));
 
-        const mod = await connectWithToken({ moderator: true });
-        const member = await connectWithToken({ id: 'plain' });
+        const mod = await connectWithToken(r, { moderator: true });
+        const member = await connectWithToken(r, { id: 'plain' });
 
         clients.push(mod, member);
 

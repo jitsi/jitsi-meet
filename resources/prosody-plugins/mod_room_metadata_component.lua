@@ -34,8 +34,9 @@
 --
 -- Broadcast: broadcastMetadata() / send_metadata() send a <json-message> to
 -- every occupant. Admins (jicofo) additionally receive the room's participant
--- and moderator lists from room._data. Transcription HTTP headers in the
--- metadata are redacted from log output but sent in full to clients.
+-- and moderator lists from room._data, plus the transcription HTTP headers.
+-- Those headers may carry secrets (e.g. a custom OpenAI API key), so they are
+-- stripped from the payload sent to regular occupants (and redacted in logs).
 --
 -- ── Internal metadata changes ─────────────────────────────────────────────────
 -- Other modules update room.jitsiMetadata directly and then fire
@@ -74,7 +75,7 @@ local table_equals = util.table_equals;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local get_occupant_by_real_jid = util.get_occupant_by_real_jid;
 
-local dt = require "prosody.util.datetime";
+local dt = require "util.datetime";
 local ext_services = module:depends("external_services");
 local get_services = ext_services.get_services;
 
@@ -105,6 +106,8 @@ local extdisco_occpuant_check = module:get_option_boolean('extdisco_occpuant_che
 local blocked_metadata_keys = module:get_option_set('room_metadata_blocked_keys', {
     'allownersEnabled',
     'asyncTranscription',
+    'audioTranslationAvailable',
+    'audioTranslationRequests',
     'conferencePresetsServiceEnabled',
     'dialinEnabled',
     'moderators',
@@ -113,7 +116,6 @@ local blocked_metadata_keys = module:get_option_set('room_metadata_blocked_keys'
     'services',
     'transcriberType',
     'transcription',
-    'visitors',
     'visitorsEnabled',
 });
 
@@ -139,22 +141,44 @@ function getMetadataJSON(room, metadata)
     return res;
 end
 
-function broadcastMetadata(room, json_msg)
-    if not json_msg then
+-- Returns a shallow copy of the room metadata with jicofo-only fields removed,
+-- suitable for sending to regular (non-admin) occupants. Currently this strips
+-- transcription.httpHeaders, which may carry secrets (e.g. a custom OpenAI API
+-- key) meant only for jicofo and the transcriber.
+function get_client_metadata(room)
+    local metadata = table_shallow_copy(room.jitsiMetadata) or {};
+
+    if metadata.transcription and metadata.transcription.httpHeaders then
+        local transcription_copy = table_shallow_copy(metadata.transcription);
+        transcription_copy.httpHeaders = nil;
+        metadata.transcription = transcription_copy;
+    end
+
+    return metadata;
+end
+
+function broadcastMetadata(room)
+    -- Build the client-safe payload once and reuse it for every non-admin
+    -- occupant; admins get a freshly assembled payload in send_metadata.
+    local client_json = getMetadataJSON(room, get_client_metadata(room));
+    if not client_json then
         return;
     end
 
     for _, occupant in room:each_occupant() do
-        send_metadata(occupant, room, json_msg)
+        send_metadata(occupant, room, client_json)
     end
 end
 
 function send_metadata(occupant, room, json_msg, include_services)
     if not json_msg or is_admin(occupant.bare_jid) then
-        local metadata_to_send = table_shallow_copy(room.jitsiMetadata) or {};
+        local metadata_to_send;
 
-        -- we want to send the main meeting participants only to jicofo
         if is_admin(occupant.bare_jid) then
+            -- jicofo gets the full metadata (including transcription httpHeaders)
+            -- plus the main meeting participant and moderator lists.
+            metadata_to_send = table_shallow_copy(room.jitsiMetadata) or {};
+
             local participants;
             local moderators = array();
 
@@ -170,21 +194,45 @@ function send_metadata(occupant, room, json_msg, include_services)
             metadata_to_send.participants = participants;
             metadata_to_send.moderators = moderators;
 
-            module:log('info', 'Sending metadata to jicofo room=%s,meeting_id=%s', room.jid, room._data.meetingId);
-        elseif include_services then
-            metadata_to_send.services = {};
+            -- The aggregated live-translation request map is for jicofo only.
+            -- It is kept on room._data (never in jitsiMetadata) so it is never
+            -- broadcast to regular clients.
+            metadata_to_send.audioTranslationRequests = room._data.audioTranslationRequests;
 
-            for _, srv in ipairs(get_services()) do
-                table.insert(metadata_to_send.services, {
-                    type = srv.type;
-                    transport = srv.transport;
-                    host = srv.host;
-                    port = srv.port and string.format('%d', srv.port) or nil;
-                    username = srv.username;
-                    password = srv.password;
-                    expires = srv.expires and dt.datetime(srv.expires) or nil;
-                    restricted = srv.restricted and '1' or nil;
-                });
+            -- Neutral, default-open extension point: an external module may contribute
+            -- additional jicofo-only metadata fields by returning a table from this
+            -- event -- for instance per-room translator connect headers. Fired inside
+            -- the admin branch, so injected fields reach only jicofo and are never
+            -- broadcast to client occupants. No handler means nothing is added; this
+            -- module holds no token/entitlement logic of its own.
+            local admin_extra = main_muc_module and main_muc_module:fire_event(
+                'jitsi-room-metadata-admin-extra', { room = room; });
+            if type(admin_extra) == 'table' then
+                for k, v in pairs(admin_extra) do
+                    metadata_to_send[k] = v;
+                end
+            end
+
+            module:log('info', 'Sending metadata to jicofo room=%s,meeting_id=%s', room.jid, room._data.meetingId);
+        else
+            -- regular occupants get a sanitized copy (jicofo-only fields removed)
+            metadata_to_send = get_client_metadata(room);
+
+            if include_services then
+                metadata_to_send.services = {};
+
+                for _, srv in ipairs(get_services()) do
+                    table.insert(metadata_to_send.services, {
+                        type = srv.type;
+                        transport = srv.transport;
+                        host = srv.host;
+                        port = srv.port and string.format('%d', srv.port) or nil;
+                        username = srv.username;
+                        password = srv.password;
+                        expires = srv.expires and dt.datetime(srv.expires) or nil;
+                        restricted = srv.restricted and '1' or nil;
+                    });
+                end
             end
         end
 
@@ -308,7 +356,7 @@ function on_message(event)
         room.jitsiMetadata[jsonData.key] = jsonData.data;
 
         module:log('info', 'Metadata key "%s" updated by %s in room:%s,meeting_id:%s', jsonData.key, from, room.jid, room._data.meetingId);
-        broadcastMetadata(room, getMetadataJSON(room));
+        broadcastMetadata(room);
 
         -- fire and event for the change
         main_muc_module:fire_event('jitsi-metadata-updated', { room = room; actor = occupant; key = jsonData.key; });
@@ -350,7 +398,7 @@ function process_main_muc_loaded(main_muc, host_module)
             log_json = getMetadataJSON(room, metadata_copy) or log_json;
         end
         module:log('info', 'Metadata changed internally in room:%s,meeting_id:%s - broadcasting data:%s', room.jid, room._data.meetingId, log_json);
-        broadcastMetadata(room, json_msg);
+        broadcastMetadata(room);
     end);
 
     -- TODO: Once clients update to read/write metadata for startMuted policy we can drop this

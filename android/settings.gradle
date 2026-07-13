@@ -1,18 +1,28 @@
+import groovy.json.JsonSlurper
+
 include ':app', ':sdk'
 
 includeBuild('../node_modules/@react-native/gradle-plugin')
 
-def autolinkingJson = file('build/generated/autolinking/autolinking.json')
-if (autolinkingJson.exists()) {
-    def json = new groovy.json.JsonSlurper().parseText(autolinkingJson.text)
-    json.dependencies.each { name, config ->
-        if (config.platforms?.android?.sourceDir) {
+// Project paths of every autolinked RN module included below.
+// sdk/build.gradle consumes this instead of hardcoding names that can drift.
+gradle.ext.autolinkedProjects = []
 
-            def projectName = name.replace('@', '').replace('/', '-')
-            def sourceDir = config.platforms.android.sourceDir
-            
-            include ":$projectName"
-            project(":$projectName").projectDir = new File(sourceDir)
-        }
+def autolinkingJson = file('build/generated/autolinking/autolinking.json')
+if (!autolinkingJson.exists()) {
+    throw new IllegalStateException(
+        "Missing ${autolinkingJson}. Run `npm run android-autolinking` before building.")
+}
+
+def json = new JsonSlurper().parseText(autolinkingJson.text)
+json.dependencies.each { name, config ->
+    if (config.platforms?.android?.sourceDir) {
+
+        def projectName = name.replace('@', '').replace('/', '-')
+        def sourceDir = config.platforms.android.sourceDir
+
+        include ":$projectName"
+        project(":$projectName").projectDir = new File(sourceDir)
+        gradle.ext.autolinkedProjects << ":$projectName".toString()
     }
 }

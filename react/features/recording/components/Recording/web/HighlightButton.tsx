@@ -11,7 +11,7 @@ import Label from '../../../../base/label/components/web/Label';
 import Tooltip from '../../../../base/tooltip/components/Tooltip';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.web';
 import { maybeShowPremiumFeatureDialog } from '../../../../jaas/actions';
-import StartRecordingDialog from '../../Recording/web/StartRecordingDialog';
+import RecordingTranscriptionDialog from '../../Recording/web/RecordingTranscriptionDialog';
 import AbstractHighlightButton, {
     IProps as AbstractProps,
     _abstractMapStateToProps
@@ -138,7 +138,7 @@ export class HighlightButton extends AbstractHighlightButton<IProps, IState> {
         const dialogShown = dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
 
         if (!dialogShown) {
-            dispatch(openDialog('StartRecordingDialog', StartRecordingDialog));
+            dispatch(openDialog('RecordingTranscriptionDialog', RecordingTranscriptionDialog));
         }
     }
 

@@ -24,6 +24,7 @@ local isBreakoutRoom = module.host == 'breakout.' .. muc_domain_base;
 local util = module:require 'util';
 local is_healthcheck_room = util.is_healthcheck_room;
 local extract_subdomain = util.extract_subdomain;
+local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 
 module:log('info', 'Loading measure message count');
 

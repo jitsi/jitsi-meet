@@ -184,7 +184,14 @@ class Thumbnail extends PureComponent<IProps> {
      * @returns {void}
      */
     _onThumbnailLongPress() {
-        const { _fakeParticipant, _participantId, _local, _localVideoOwner, dispatch } = this.props;
+        const {
+            _fakeParticipant,
+            _isVirtualScreenshare,
+            _participantId,
+            _local,
+            _localVideoOwner,
+            dispatch
+        } = this.props;
 
         if (_fakeParticipant && _localVideoOwner) {
             dispatch(showSharedVideoMenu(_participantId));
@@ -194,6 +201,8 @@ class Thumbnail extends PureComponent<IProps> {
             } else {
                 dispatch(showContextMenuDetails(_participantId));
             }
+        } else if (_isVirtualScreenshare) {
+            dispatch(pinParticipant(_participantId));
         } // else no-op
     }
 

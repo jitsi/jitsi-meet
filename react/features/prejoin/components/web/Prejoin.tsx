@@ -417,12 +417,14 @@ const Prejoin = ({
                     autoComplete = { 'name' }
                     autoFocus = { true }
                     className = { classes.input }
+                    describedBy = { showErrorOnField ? 'prejoin-error-missing-name' : undefined }
                     error = { showErrorOnField }
                     id = 'premeeting-name-input'
                     onChange = { setName }
                     onKeyPress = { showUnsafeRoomWarning && !unsafeRoomConsent ? undefined : onInputKeyPress }
                     placeholder = { t('dialog.enterDisplayName') }
                     readOnly = { readOnlyName }
+                    required = { true }
                     value = { name } />
                 ) : (
                     <div className = { classes.avatarContainer }>
@@ -438,7 +440,9 @@ const Prejoin = ({
                 {showErrorOnField && <div
                     className = { classes.error }
                     data-testid = 'prejoin.errorMessage'>
-                    <p aria-live = 'polite' >
+                    <p
+                        aria-live = 'polite'
+                        id = 'prejoin-error-missing-name' >
                         {t('prejoin.errorMissingName')}
                     </p>
                 </div>}

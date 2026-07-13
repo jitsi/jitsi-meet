@@ -2,10 +2,13 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
+import { DEFAULT_LANGUAGE } from '../../../base/i18n/i18next';
 import { IconSubtitles } from '../../../base/icons/svg';
 import { openCCPanel } from '../../../chat/actions.any';
+import { getTranscriptionLanguage } from '../../../transcribing/functions';
+import { setRequestingSubtitles } from '../../actions.any';
 import { toggleLanguageSelectorDialog } from '../../actions.web';
-import { canStartSubtitles, isCCTabEnabled } from '../../functions.any';
+import { canStartSubtitles, isCCTabEnabled, isTranslationEnabled } from '../../functions.any';
 import {
     AbstractClosedCaptionButton,
     IAbstractProps,
@@ -18,11 +21,26 @@ import {
 class ClosedCaptionButton
     extends AbstractClosedCaptionButton {
     override icon = IconSubtitles;
-    override labelProps = {
-        language: this.props.t(this.props._language ?? 'transcribing.subtitlesOff'),
-        languages: this.props.t(this.props.languages ?? ''),
-        languagesHead: this.props.t(this.props.languagesHead ?? '')
-    };
+
+    /**
+     * Computes the label interpolation props from the current props on every render so the button
+     * title stays in sync when subtitles are toggled (the button instance is not always remounted).
+     * When subtitles are on without a translation language selected, the default transcription
+     * (source) language is shown.
+     *
+     * @returns {Object}
+     */
+    override _getLabelProps() {
+        const { t, _defaultLanguage, _language, _requestingSubtitles, languages, languagesHead } = this.props;
+
+        return {
+            language: t(_requestingSubtitles
+                ? _language ?? `translation-languages:${_defaultLanguage}`
+                : 'transcribing.subtitlesOff'),
+            languages: t(languages ?? ''),
+            languagesHead: t(languagesHead ?? '')
+        };
+    }
 
     /**
      * Gets the current button label based on the CC tab state.
@@ -63,12 +81,16 @@ class ClosedCaptionButton
      * @returns {void}
      */
     override _handleClickOpenLanguageSelector() {
-        const { dispatch, _isCCTabEnabled } = this.props;
+        const { dispatch, _isCCTabEnabled, _isTranslationEnabled, _requestingSubtitles } = this.props;
 
         if (_isCCTabEnabled) {
             dispatch(openCCPanel());
-        } else {
+        } else if (_isTranslationEnabled) {
             dispatch(toggleLanguageSelectorDialog());
+        } else {
+            // Translation is disabled, so the language selector dialog has nothing to display (it renders nothing).
+            // Toggle the subtitles in the source language directly instead of opening an empty dialog.
+            dispatch(setRequestingSubtitles(!_requestingSubtitles, !_requestingSubtitles, null));
         }
     }
 }
@@ -83,10 +105,18 @@ class ClosedCaptionButton
 function mapStateToProps(state: IReduxState, ownProps: IAbstractProps) {
     const { visible = canStartSubtitles(state) || isCCTabEnabled(state) } = ownProps;
 
-    return _abstractMapStateToProps(state, {
-        ...ownProps,
-        visible
-    });
+    const transcriptionLanguage = getTranscriptionLanguage(state['features/base/config']);
+
+    return {
+        ..._abstractMapStateToProps(state, {
+            ...ownProps,
+            visible
+        }),
+
+        // Strip the region from the BCP-47 locale (e.g. en-US -> en) to match the translation-languages keys.
+        _defaultLanguage: transcriptionLanguage?.replace(/[-_].*/, '') ?? DEFAULT_LANGUAGE,
+        _isTranslationEnabled: isTranslationEnabled(state)
+    };
 }
 
 export default translate(connect(mapStateToProps)(ClosedCaptionButton));
