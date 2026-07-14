@@ -747,6 +747,17 @@ export interface IConfig {
         autoCaptionOnTranscribe?: boolean;
         autoTranscribeOnRecord?: boolean;
         customLanguages?: object;
+
+        /**
+         * When true, advertises (via a MUC presence participant property) that this participant's audio
+         * should be diarized by the transcriber. Intended for endpoints carrying multiple speakers, e.g.
+         * conference-room systems or dial-in.
+         *
+         * Takes effect only at join time: the flag is included in the initial presence and read by jicofo
+         * when it allocates the colibri endpoint. It must be set before joining (e.g. via config or the
+         * `#config.transcription.diarize=true` URL override); toggling it during a call has no effect.
+         */
+        diarize?: boolean;
         disableClosedCaptions?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
