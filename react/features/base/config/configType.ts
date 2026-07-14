@@ -747,6 +747,13 @@ export interface IConfig {
         autoCaptionOnTranscribe?: boolean;
         autoTranscribeOnRecord?: boolean;
         customLanguages?: object;
+
+        /**
+         * When true, advertises (via a MUC presence participant property) that this participant's audio
+         * should be diarized by the transcriber. Intended for endpoints carrying multiple speakers, e.g.
+         * conference-room systems or dial-in.
+         */
+        diarize?: boolean;
         disableClosedCaptions?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
