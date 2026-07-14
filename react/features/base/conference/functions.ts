@@ -573,6 +573,10 @@ export function sendLocalParticipant(
 
     // Advertise to jicofo that this participant's audio should be diarized by the transcriber.
     // Only published when explicitly enabled, to keep presence clean.
+    // NOTE: this must be published here, before conference.join(), so it is part of the initial
+    // presence. jicofo allocates the colibri2 endpoint from the join presence and reads this flag
+    // only at allocation time (the endpoint create path, in both jicofo and the bridge). A value
+    // set after join would be ignored, so do not move this to a lazy/runtime toggle.
     if (toState(stateful)['features/base/config'].transcription?.diarize === true) {
         conference?.setLocalParticipantProperty(P_NAME_DIARIZE, true);
     }
