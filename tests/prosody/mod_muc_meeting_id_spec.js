@@ -1,5 +1,6 @@
 import assert from 'assert';
 
+import { mintAsapToken } from './helpers/jwt.js';
 import { createTestContext } from './helpers/test_context.js';
 import { getRoomState } from './helpers/test_observer.js';
 import { joinWithTranscriber } from './helpers/xmpp_client.js';
@@ -128,6 +129,44 @@ describe('mod_muc_meeting_id', () => {
 
             const resp = await attacker.sendMucAdmin(r, { jid: focusBareJid,
                 affiliation: 'outcast' });
+
+            assertNotAllowed(resp);
+
+            const state = await getRoomState(r);
+
+            assert.strictEqual(state.occupant_count, 2, 'must remain in the room after a blocked ban');
+        });
+
+        it('a ban by jid is rejected even when a mismatched nick is also present', async () => {
+            const r = room();
+
+            const focus = await ctx.connectFocus(r);
+            const focusBareJid = focus.jid.split('/')[0];
+
+            // An owner (moderator token) is the only actor Prosody would let
+            // change another occupant's affiliation, so the item has to be
+            // filtered by this hook rather than by Prosody's permission check.
+            const token = mintAsapToken({ room: r.split('@')[0],
+                context: { user: { moderator: true } } });
+            const attacker = await ctx.connect({ params: { token } });
+
+            await attacker.joinRoom(r);
+
+            // The affiliation change acts on the real jid; a nick that resolves
+            // to no occupant must not cause the jid to be skipped when deciding
+            // whether the item targets focus.
+            const resp = await attacker.sendMucAdmin(r, { jid: focusBareJid,
+                nick: 'decoy',
+                affiliation: 'outcast' });
+
+            // The real proof is on focus's own connection: a successful ban
+            // makes the room send focus an unavailable self-presence. If the
+            // item is filtered, none arrives.
+            const kicked = await focus.waitForPresenceFrom(`${r}/focus`, { type: 'unavailable',
+                timeout: 500 })
+                .then(() => true, () => false);
+
+            assert.strictEqual(kicked, false, 'focus must not be kicked/banned from the room');
 
             assertNotAllowed(resp);
 

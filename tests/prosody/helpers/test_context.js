@@ -14,10 +14,12 @@ export function createTestContext() {
         /**
          * Creates a regular XMPP client and registers it for cleanup.
          *
+         * @param {object} [opts]  Options forwarded to createXmppClient (e.g.
+         *                         { params: { token } } to authenticate with a JWT).
          * @returns {Promise<XmppTestClient>}
          */
-        async connect() {
-            const c = await createXmppClient();
+        async connect(opts) {
+            const c = await createXmppClient(opts);
 
             clients.push(c);
 
