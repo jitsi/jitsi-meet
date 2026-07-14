@@ -1171,7 +1171,7 @@
         "about": "Vous pouvez ajouter un mot de passe à votre réunion. Les participants devront fournir le mot de passe avant de pouvoir rejoindre la réunion.",
         "aboutReadOnly": "Les modérateurs peuvent ajouter un mot de passe à la réunion. Les participants devront fournir le mot de passe avant de pouvoir rejoindre la réunion.",
         "insecureRoomNameWarningNative": "Le nom de la réunion n’est pas sûr. Des participants non voulus pourraient rejoindre cette réunion. {{recommendAction}} En apprendre plus sur la sécurisation des réunions.",
-        "insecureRoomNameWarningWeb": "Le nom de la réunion n’est pas sûr. Des participants non voulus pourraient rejoindre cette réunion. {{recommendAction}} En apprendre plus sur la sécurisation des réunions <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">here</a>.",
+        "insecureRoomNameWarningWeb": "Le nom de la réunion n’est pas sûr. Des participants non voulus pourraient rejoindre cette réunion. {{recommendAction}} En apprendre plus sur la sécurisation des réunions <a href=\"{{securityUrl}}\" target=\"_blank\">here</a>.",
         "title": "Options de sécurité",
         "unsafeRoomActions": {
             "meeting": "Envisagez de sécuriser votre réunion en utilisant le bouton options de sécurité.",

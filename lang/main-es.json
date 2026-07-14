@@ -987,7 +987,7 @@
         "about": "Puedes agregar una contraseña a la reunión. Los participantes necesitarán la contraseña para unirse a la reunión.",
         "aboutReadOnly": "Los participantes moderadores pueden agregar una $t(lockRoomPassword) a la reunión. Los participantes deberán proporcionar la $t(lockRoomPassword) antes de que se les permita unirse a la reunión.",
         "insecureRoomNameWarningNative": "El nombre de esta sala es inseguro. Participantes indeseados podrían ingresar a su reunión. {{recommendAction}} Aprenda más sobre asegurar su reunión ",
-        "insecureRoomNameWarningWeb": "El nombre de esta sala es inseguro. Participantes indeseados podrían ingresar a su reunión. {{recommendAction}} Aprenda más sobre asegurar su reunión <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">aquí</a>.",
+        "insecureRoomNameWarningWeb": "El nombre de esta sala es inseguro. Participantes indeseados podrían ingresar a su reunión. {{recommendAction}} Aprenda más sobre asegurar su reunión <a href=\"{{securityUrl}}\" target=\"_blank\">aquí</a>.",
         "title": "Opciones de seguridad",
         "unsafeRoomActions": {
             "meeting": "Considere hacer más segura su reunión utilizando el botón de seguridad.",

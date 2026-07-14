@@ -1172,7 +1172,7 @@
         "about": "Takimit tuaj mund t’i shtoni një $t(lockRoomPassword). Pjesëmarrësve do t’u duhet të japin $t(lockRoomPassword) përpara se të lejohen të marrin pjesë në takim.",
         "aboutReadOnly": "Pjesëmarrësit moderatorë mund t’i shtojnë takimit një $t(lockRoomPassword). Pjesëmarrësve do t’u duhet të japin $t(lockRoomPassword) përpara se të lejohen të marrin pjesë në takim.",
         "insecureRoomNameWarningNative": "Emri i dhomës s’është pa rrezik. Pjesëmarrës të padëshiruar munden të hyjnë në takimin tuaj. {{recommendAction}} Mësoni më tepër rreth sigurimit të takimit tuaj ",
-        "insecureRoomNameWarningWeb": "Emri i dhomës s’është pa rrezik. Pjesëmarrës të padëshiruar munden të hyjnë në takimin tuaj. {{recommendAction}} Mësoni më tepër rreth sigurimit të takimit tuaj <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">këtu</a>.",
+        "insecureRoomNameWarningWeb": "Emri i dhomës s’është pa rrezik. Pjesëmarrës të padëshiruar munden të hyjnë në takimin tuaj. {{recommendAction}} Mësoni më tepër rreth sigurimit të takimit tuaj <a href=\"{{securityUrl}}\" target=\"_blank\">këtu</a>.",
         "title": "Mundësi Sigurie",
         "unsafeRoomActions": {
             "meeting": "Shihni mundësinë e sigurimit të takimit tuaj, duke përdorur butonin e sigurisë.",

@@ -1150,7 +1150,7 @@
         "about": "Podes agiùnghere una $t(lockRoomPassword) a sa riunione. Is partetzipantes ant a dèpere frunire sa $t(lockRoomPassword) prima de èssere ammìtidos a sa riunione.",
         "aboutReadOnly": "Is partetzipantes moderadores podent agiùnghere una $t(lockRoomPassword) a sa riunione. Is partetzipantes ant a dèpere frunire sa $t(lockRoomPassword) prima de èssere ammìtidos a sa riunione.",
         "insecureRoomNameWarningNative": "Su nòmine de custu aposentu no est seguru. Podet èssere chi aderint a s'addòbiu persones chi non boles. {{recommendAction}} Àteras informatziones in pitzus de sa seguresa de is addòbios ",
-        "insecureRoomNameWarningWeb": "Su nòmine de custu aposentu no est seguru. Podet èssere chi aderint a s'addòbiu persones chi non boles. {{recommendAction}} Àteras informatziones in pitzus de sa seguresa de is addòbios <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">inoghe</a>.",
+        "insecureRoomNameWarningWeb": "Su nòmine de custu aposentu no est seguru. Podet èssere chi aderint a s'addòbiu persones chi non boles. {{recommendAction}} Àteras informatziones in pitzus de sa seguresa de is addòbios <a href=\"{{securityUrl}}\" target=\"_blank\">inoghe</a>.",
         "title": "Optziones de seguresa",
         "unsafeRoomActions": {
             "meeting": "Piga in cunsideru de amparare s'addòbiu tuo impreende su butone de seguresa.",

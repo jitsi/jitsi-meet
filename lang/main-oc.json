@@ -1078,7 +1078,7 @@
         "about": "Podètz ajustar un $t(lockRoomPassword) per rejónher una reünion. Los participants deuràn fornir lo $t(lockRoomPassword) abans d’obténer l’autorizacion de dintrar dins la reünion.",
         "aboutReadOnly": "Los participants que son moderators pòdon ajustar un $t(lockRoomPassword) a la reünion. Los participants deuràn fornir lo $t(lockRoomPassword) abans d’aver l’autorizacion de rejónher la reünion.",
         "insecureRoomNameWarningNative": "Lo nom de la sala de reünion es pas segur. Participants non desirats poirián la rejónher. {{recommendAction}} Ne saber mai per securizar vòstras reünions ",
-        "insecureRoomNameWarningWeb": "Lo nom de la sala de reünion es pas segur. Participants non desirats poirián la rejónher. {{recommendAction}} Ne saber mai per securizar vòstras reünions <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">aquí</a>.",
+        "insecureRoomNameWarningWeb": "Lo nom de la sala de reünion es pas segur. Participants non desirats poirián la rejónher. {{recommendAction}} Ne saber mai per securizar vòstras reünions <a href=\"{{securityUrl}}\" target=\"_blank\">aquí</a>.",
         "title": "Opcions de seguretat",
         "unsafeRoomActions": {
             "meeting": "Consideratz de securizar vòstra reünion en utilizant lo boton opcions de seguretat.",

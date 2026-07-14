@@ -1181,7 +1181,7 @@
         "about": "Puoi aggiungere una $t(lockRoomPassword) alla riunione. I partecipanti dovranno inserire la $t(lockRoomPassword) per accedere alla riunione.",
         "aboutReadOnly": "I moderatori possono aggiungere una $t(lockRoomPassword) alla riunione. I partecipanti dovranno inserire la $t(lockRoomPassword) per accedere alla riunione.",
         "insecureRoomNameWarningNative": "Il nome della riunione è troppo semplice. Partecipanti non desiderati potrebbero entrare nella riunione. {{recommendAction}} Per saperne di più sulla sicurezza della tua riunione ",
-        "insecureRoomNameWarningWeb": "Il nome della riunione è troppo semplice. Partecipanti non desiderati potrebbero entrare nella riunione. {{recommendAction}} Per saperne di più sulla sicurezza della tua riunione <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">clicca qui</a>.",
+        "insecureRoomNameWarningWeb": "Il nome della riunione è troppo semplice. Partecipanti non desiderati potrebbero entrare nella riunione. {{recommendAction}} Per saperne di più sulla sicurezza della tua riunione <a href=\"{{securityUrl}}\" target=\"_blank\">clicca qui</a>.",
         "title": "Impostazioni di sicurezza",
         "unsafeRoomActions": {
             "meeting": "Considera di rendere più sicura la riunione usando il pulsante sicurezza.",

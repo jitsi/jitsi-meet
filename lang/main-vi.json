@@ -1049,7 +1049,7 @@
         "about": "Bạn có thể thiết lập mật khẩu cho cuộc họp. Người tham dự cần phải nhập mật khẩu trước khi được phép vào phòng họp.",
         "aboutReadOnly": "Người điều hành cuộc họp có thể thêm một $t(lockRoomPassword) vào cuộc họp. Người tham gia sẽ cần cung cấp $t(lockRoomPassword) trước khi được phép tham gia cuộc họp.",
         "insecureRoomNameWarningNative": "Tên phòng không an toàn. Người tham gia không mong muốn có thể tham gia cuộc họp của bạn. {{recommendAction}} Tìm hiểu thêm về cách bảo mật cuộc họp của bạn ",
-        "insecureRoomNameWarningWeb": "Tên phòng không an toàn. Người tham gia không mong muốn có thể tham gia cuộc họp của bạn. {{recommendAction}} Tìm hiểu thêm về cách bảo mật cuộc họp của bạn <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">tại đây</a>.",
+        "insecureRoomNameWarningWeb": "Tên phòng không an toàn. Người tham gia không mong muốn có thể tham gia cuộc họp của bạn. {{recommendAction}} Tìm hiểu thêm về cách bảo mật cuộc họp của bạn <a href=\"{{securityUrl}}\" target=\"_blank\">tại đây</a>.",
         "title": "Tùy chọn Bảo mật",
         "unsafeRoomActions": {
             "meeting": "Cân nhắc bảo mật cuộc họp của bạn bằng cách sử dụng nút bảo mật.",

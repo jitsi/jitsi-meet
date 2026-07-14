@@ -1161,7 +1161,7 @@
         "about": "你可以为会议添加一个$t(lockRoomPassword)，参会者需要输入$t(lockRoomPassword)才能加入会议。",
         "aboutReadOnly": "主持人可以为会议添加一个$t(lockRoomPassword))，参会者需要输入$t(lockRoomPassword)才能加入会议。",
         "insecureRoomNameWarningNative": "房间名称不安全，不受欢迎的参与者可能会加入你的会议，{{recommendAction}} 了解更多有关保护你的会议的信息",
-        "insecureRoomNameWarningWeb": "房间名称不安全，不受欢迎的参与者可能会加入你的会议，{{recommendAction}} 了解更多有关保护你的会议的信息<a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">这里</a>。",
+        "insecureRoomNameWarningWeb": "房间名称不安全，不受欢迎的参与者可能会加入你的会议，{{recommendAction}} 了解更多有关保护你的会议的信息<a href=\"{{securityUrl}}\" target=\"_blank\">这里</a>。",
         "title": "安全选项",
         "unsafeRoomActions": {
             "meeting": "考虑使用安全按钮保护你的会议。",
