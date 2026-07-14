@@ -1223,7 +1223,7 @@
         "about": "Iestatiet sapulcei $t(lockRoomPassword). Dalībniekiem būs jānorāda $t(lockRoomPassword), lai viņi varētu pievienoties sapulcei.",
         "aboutReadOnly": "Moderatora dalībnieki sapulcei var iestatīt $t(lockRoomPassword). Dalībniekiem būs jānorāda $t(lockRoomPassword), lai viņi varētu pievienoties sapulcei.",
         "insecureRoomNameWarningNative": "Istabas nosaukums nav drošs. Nevēlami dalībnieki var pievienoties jūsu sapulcei. {{recommendAction}} Uzziniet vairāk par tikšanās nodrošināšanu",
-        "insecureRoomNameWarningWeb": "Istabas nosaukums nav drošs. Nevēlami dalībnieki var pievienoties jūsu sapulcei. {{recommendAction}} Uzziniet vairāk par to, kā nodrošināt atbilstību prasībām <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">šeit</a>.",
+        "insecureRoomNameWarningWeb": "Istabas nosaukums nav drošs. Nevēlami dalībnieki var pievienoties jūsu sapulcei. {{recommendAction}} Uzziniet vairāk par to, kā nodrošināt atbilstību prasībām <a href=\"{{securityUrl}}\" target=\"_blank\">šeit</a>.",
         "title": "Drošības iespējas",
         "unsafeRoomActions": {
             "meeting": "Apsveriet iespēju nodrošināt sapulci, izmantojot drošības pogu.",

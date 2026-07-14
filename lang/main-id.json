@@ -1056,7 +1056,7 @@
         "about": "Anda dapat menambahkan {{lockRoomPassword}} ke pertemuan Anda. Peserta perlu memberikan {{lockRoomPassword}} sebelum mereka diizinkan bergabung dengan pertemuan.",
         "aboutReadOnly": "Peserta moderator dapat menambahkan {{lockRoomPassword}} ke pertemuan. Peserta perlu memberikan {{lockRoomPassword}} sebelum mereka diizinkan bergabung dengan pertemuan.",
         "insecureRoomNameWarningNative": "Nama ruangan tidak aman. Peserta yang tidak diinginkan dapat bergabung dengan pertemuan Anda. {{recommendAction}} Pelajari lebih lanjut tentang mengamankan pertemuan Anda",
-        "insecureRoomNameWarningWeb": "Nama ruangan tidak aman. Peserta yang tidak diinginkan dapat bergabung dengan pertemuan Anda. {{recommendAction}} Pelajari lebih lanjut tentang mengamankan pertemuan Anda <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">di sini</a>.",
+        "insecureRoomNameWarningWeb": "Nama ruangan tidak aman. Peserta yang tidak diinginkan dapat bergabung dengan pertemuan Anda. {{recommendAction}} Pelajari lebih lanjut tentang mengamankan pertemuan Anda <a href=\"{{securityUrl}}\" target=\"_blank\">di sini</a>.",
         "title": "Opsi Keamanan",
         "unsafeRoomActions": {
             "meeting": "Pertimbangkan untuk mengamankan pertemuan Anda menggunakan tombol keamanan.",

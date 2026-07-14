@@ -1037,7 +1037,7 @@
         "about": "Þú getur bætt $t(lockRoomPassword)i á fundinn. Þátttakendur munu þurfa að gefa upp $t(lockRoomPassword)ið áður en þeim er hleypt inn á fundinn.",
         "aboutReadOnly": "Þátttakendur með umsjónarréttindi geta bætt $t(lockRoomPassword)i á fundinn. Þátttakendur munu þurfa að gefa upp $t(lockRoomPassword)ið áður en þeim er hleypt inn á fundinn.",
         "insecureRoomNameWarningNative": "Heiti spjallrásarinnar er ekki öruggt. Óæskilegir þátttakendur gætu reynt að taka þátt í fundinum þínum. {{recommendAction}} Sjáðu meira um hvernig þú getur gert fundinn öruggari ",
-        "insecureRoomNameWarningWeb": "Heiti spjallrásarinnar er ekki öruggt. Óæskilegir þátttakendur gætu reynt að taka þátt í fundinum þínum. {{recommendAction}} Sjáðu meira <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">hér</a>um hvernig þú getur gert fundinn öruggari.",
+        "insecureRoomNameWarningWeb": "Heiti spjallrásarinnar er ekki öruggt. Óæskilegir þátttakendur gætu reynt að taka þátt í fundinum þínum. {{recommendAction}} Sjáðu meira <a href=\"{{securityUrl}}\" target=\"_blank\">hér</a>um hvernig þú getur gert fundinn öruggari.",
         "title": "Öryggisvalkostir",
         "unsafeRoomActions": {
             "meeting": "Íhugaðu að gera fundinn þinn öruggari með því að nota öryggishnappinn.",

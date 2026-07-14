@@ -1078,7 +1078,7 @@
         "about": "Můžete pro setkání nastavit $t(lockRoomPassword). Účastníci budou muset $t(lockRoomPassword) zadat, než se budou moct do setkání připojit.",
         "aboutReadOnly": "Moderující účastníci můžou pro setkání nastavit $t(lockRoomPassword). Účastníci budou muset $t(lockRoomPassword) zadat, než se budou moct do setkání připojit.",
         "insecureRoomNameWarningNative": "Název místnosti není bezpečný. K vaší schůzce se mohou připojit nežádoucí účastníci. {{recommendAction}} Další informace o zabezpečení schůzky ",
-        "insecureRoomNameWarningWeb": "Název místnosti není bezpečný. K vaší schůzce se mohou připojit nežádoucí účastníci. {{recommendAction}} Další informace o zabezpečení schůzky naleznete <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">zde</a>.",
+        "insecureRoomNameWarningWeb": "Název místnosti není bezpečný. K vaší schůzce se mohou připojit nežádoucí účastníci. {{recommendAction}} Další informace o zabezpečení schůzky naleznete <a href=\"{{securityUrl}}\" target=\"_blank\">zde</a>.",
         "title": "Možnosti zabezpečení",
         "unsafeRoomActions": {
             "meeting": "Zvažte zabezpečení schůzky pomocí bezpečnostního tlačítka.",

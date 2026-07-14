@@ -1077,7 +1077,7 @@
         "about": "회의에 $t(lockRoomPassword)를 추가할 수 있습니다. 참가자는 회의에 참여하기 위해 $t(lockRoomPassword)를 입력해야합니다.",
         "aboutReadOnly": "방장은 회의에 $t(lockRoomPassword)를 추가할 수 있습니다. 참가자는 회의에 참여하기 위해 $t(lockRoomPassword)를 입력해야합니다.",
         "insecureRoomNameWarningNative": "방 이름이 안전하지 않습니다. 원하지 않는 참가자가 회의에 참여할 수 있습니다. {{recommendAction}} 회의를 보호하는 방법을 알아보세요",
-        "insecureRoomNameWarningWeb": "방 이름이 안전하지 않습니다. 원하지 않는 참가자가 회의에 참여할 수 있습니다. {{recommendAction}} 회의를 보호하는 방법은 <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">여기</a>에서 알아보세요.",
+        "insecureRoomNameWarningWeb": "방 이름이 안전하지 않습니다. 원하지 않는 참가자가 회의에 참여할 수 있습니다. {{recommendAction}} 회의를 보호하는 방법은 <a href=\"{{securityUrl}}\" target=\"_blank\">여기</a>에서 알아보세요.",
         "title": "보안 옵션",
         "unsafeRoomActions": {
             "meeting": "회의 보안을 위해 보안 버튼을 사용하세요.",

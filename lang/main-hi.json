@@ -1184,7 +1184,7 @@
         "aboutReadOnly": "मॉडरेटर मीटिंग में $t(lockRoomPassword) जोड़ सकते हैं। प्रतिभागियों को मीटिंग में शामिल होने से पहले यह $t(lockRoomPassword) प्रदान करना होगा।",
         "insecureRoomNameWarning": "कमरे का नाम असुरक्षित है। अनचाहे सहभागियों की कॉन्फ्रेंस में शामिल हो सकते हैं। सुरक्षा बटन का उपयोग करके अपनी मीटिंग को सुरक्षित बनाने का विचार करें।        ",
         "insecureRoomNameWarningNative": "कमरे का नाम असुरक्षित है। अनचाहे प्रतिभागी आपकी मीटिंग में शामिल हो सकते हैं। {{recommendAction}} अपनी मीटिंग सुरक्षित करने के बारे में अधिक जानें",
-        "insecureRoomNameWarningWeb": "कमरे का नाम असुरक्षित है। अनचाहे प्रतिभागी आपकी मीटिंग में शामिल हो सकते हैं। {{recommendAction}} अपनी मीटिंग सुरक्षित करने के बारे में <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">यहाँ</a> अधिक जानें।",
+        "insecureRoomNameWarningWeb": "कमरे का नाम असुरक्षित है। अनचाहे प्रतिभागी आपकी मीटिंग में शामिल हो सकते हैं। {{recommendAction}} अपनी मीटिंग सुरक्षित करने के बारे में <a href=\"{{securityUrl}}\" target=\"_blank\">यहाँ</a> अधिक जानें।",
         "securityOptions": "Security options",
         "title": "सुरक्षा विकल्प",
         "unsafeRoomActions": {

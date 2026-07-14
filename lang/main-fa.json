@@ -1174,7 +1174,7 @@
         "about": "می‌توانید به جلسه خود یک $t(lockRoomPassword) بیافزایید.شرکت‌کنندگان باید پیش از این‌که بتوانند به جلسه بلینکند، $t(lockRoomPassword) را ارائه کنند.",
         "aboutReadOnly": "مدیر جلسه می‌تواند به جلسه یک $t(lockRoomPassword) بیافزاید. شرکت‌کنندگان باید پیش از این‌که بتوانند به جلسه بلینکند، $t(lockRoomPassword) را ارائه کنند.",
         "insecureRoomNameWarningNative": "نام اتاق ناامن است. شرکت‌کنندگان ناخواسته ممکن است به جلسه شما بلینکند. {{recommendAction}} دربارهٔ تأمین جلسهٔ خود بیش‌تر بیاموزید ",
-        "insecureRoomNameWarningWeb": "نام اتاق ناامن است. شرکت‌کنندگان ناخواسته ممکن است به جلسه شما بلینکند. {{recommendAction}} از <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">این‌جا</a> دربارهٔ تأمین جلسهٔ خود بیش‌تر بیاموزید.",
+        "insecureRoomNameWarningWeb": "نام اتاق ناامن است. شرکت‌کنندگان ناخواسته ممکن است به جلسه شما بلینکند. {{recommendAction}} از <a href=\"{{securityUrl}}\" target=\"_blank\">این‌جا</a> دربارهٔ تأمین جلسهٔ خود بیش‌تر بیاموزید.",
         "title": "انتخاب‌های امنیت",
         "unsafeRoomActions": {
             "meeting": "با استفاده از دکمهٔ امنیت جلسه خود را ایمن کنید.",

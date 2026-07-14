@@ -1078,7 +1078,7 @@
         "about": "Du kan legge til et $t(lockRoomPassword) for møtet ditt. Deltakere må oppgi $t(lockRoomPassword) før de får bli med i møtet.",
         "aboutReadOnly": "Moderatorer kan legge til et $t(lockRoomPassword) for møtet. Deltakere må oppgi $t(lockRoomPassword) før de får bli med i møtet.",
         "insecureRoomNameWarningNative": "Romnavnet er usikkert. Uønskede deltakere kan bli med i møtet ditt. {{recommendAction}} Lær mer om hvordan du sikrer møtet ditt.",
-        "insecureRoomNameWarningWeb": "Romnavnet er usikkert. Uønskede deltakere kan bli med i møtet ditt. {{recommendAction}} Lær mer om hvordan du sikrer møtet ditt <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">her</a>.",
+        "insecureRoomNameWarningWeb": "Romnavnet er usikkert. Uønskede deltakere kan bli med i møtet ditt. {{recommendAction}} Lær mer om hvordan du sikrer møtet ditt <a href=\"{{securityUrl}}\" target=\"_blank\">her</a>.",
         "title": "Sikkerhetsalternativer",
         "unsafeRoomActions": {
             "meeting": "Vurder å sikre møtet ditt ved å bruke sikkerhetsknappen.",

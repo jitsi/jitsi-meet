@@ -1216,7 +1216,7 @@
         "about": "U kunt een $t(lockRoomPassword) toevoegen aan uw vergadering. Deelnemers moeten het $t(lockRoomPassword) opgeven voordat zij aan de vergadering mogen deelnemen.",
         "aboutReadOnly": "Moderators kunnen een $t(lockRoomPassword) toevoegen aan de vergadering. Deelnemers moeten het $t(lockRoomPassword) opgeven voordat zij aan de vergadering mogen deelnemen.",
         "insecureRoomNameWarningNative": "De kamernaam is onveilig. Ongewenste deelnemers kunnen deelnemen aan uw vergadering. {{recommendAction}} Lees meer over het beveiligen van uw vergadering",
-        "insecureRoomNameWarningWeb": "De kamernaam is onveilig. Ongewenste deelnemers kunnen deelnemen aan uw vergadering. {{recommendAction}} Lees <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">hier</a> meer over het beveiligen van uw vergadering.",
+        "insecureRoomNameWarningWeb": "De kamernaam is onveilig. Ongewenste deelnemers kunnen deelnemen aan uw vergadering. {{recommendAction}} Lees <a href=\"{{securityUrl}}\" target=\"_blank\">hier</a> meer over het beveiligen van uw vergadering.",
         "title": "Beveiligingsopties",
         "unsafeRoomActions": {
             "meeting": "Overweeg om uw vergadering te beveiligen met behulp van de beveiligingsknop.",
