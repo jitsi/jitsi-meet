@@ -40,6 +40,16 @@
 -- module injects audioTranslationRequests into the metadata only for admin
 -- (jicofo) occupants, so regular clients never see it.
 --
+-- ── Directed listeners push (component → each sender) ─────────────────────────
+-- The same debounced task also tells each sender which receivers currently
+-- translate it. The receiver→sender map is inverted into { [senderId] = { R, ... } }
+-- and a directed <translation-listeners xmlns='http://jitsi.org/jitmeet'> message
+-- whose text is that sorted JSON array is sent to each sender. A client shows the
+-- "translation enabled" badge on those receivers (they translate the local user).
+-- It is gated exactly like the aggregate: while the feature is disabled for the
+-- room, or an external handler vetoes publishing, every list is empty. An empty
+-- array is sent to clear a sender whose last listener left.
+--
 -- ── Enable-flag write gating ─────────────────────────────────────────────────
 -- The audioTranslation metadata key (which carries the room-level enable flag)
 -- is written through mod_room_metadata_component. This module hooks
@@ -99,10 +109,11 @@ module:log('info', 'Starting audio_translation for %s (max_subscriptions=%s, deb
 local main_muc_module;
 
 -- Returns (creating if needed) the per-room translation state:
---   { receivers = { [receiverId] = { [senderId] = lang } }, last_published = <json|nil> }
+--   { receivers = { [receiverId] = { [senderId] = lang } },
+--     last_published = <json|nil>, last_sent_listeners = { [senderId] = <json> } }
 local function get_state(room)
     if not room._audio_translation then
-        room._audio_translation = { receivers = {} };
+        room._audio_translation = { receivers = {}, last_sent_listeners = {} };
     end
 
     return room._audio_translation;
@@ -240,12 +251,49 @@ local function compute_aggregate(room)
     return out;
 end
 
--- Recomputes the aggregate and, when it changed, publishes it to jicofo via
--- RoomMetadata. Stored on room._data so mod_room_metadata_component only forwards
--- it to admin (jicofo) occupants.
--- While the feature is disabled for the room the published map is cleared (nil) so
--- jicofo stops translation; the receivers' subscriptions are kept in memory and
--- republished if the room is re-enabled.
+-- Inverts the receiver→sender subscription map into { [senderId] = { receiverId, ... } }:
+-- for each sender, the receivers currently translating it. Each list is sorted so
+-- map-iteration order never produces a spurious change. Returns an empty table when
+-- gated (enabled == false) so every sender's list becomes empty.
+local function compute_listeners_by_sender(room, enabled)
+    local out = {};
+
+    if not enabled then
+        return out;
+    end
+
+    for receiver_id, subs in pairs(get_state(room).receivers) do
+        for sender_id in pairs(subs) do
+            local list = out[sender_id];
+
+            if not list then
+                list = {};
+                out[sender_id] = list;
+            end
+            list[#list + 1] = receiver_id;
+        end
+    end
+
+    for _, list in pairs(out) do
+        table.sort(list);
+    end
+
+    return out;
+end
+
+-- Recomputes and publishes the two outputs:
+--  · room._data.audioTranslationRequests — the jicofo-only aggregate
+--    { [senderId] = { lang, ... } }, forwarded by mod_room_metadata_component to
+--    admin (jicofo) occupants only. Change-detected against last_published; only a
+--    change fires 'room-metadata-changed'.
+--  · a directed <translation-listeners> message per sender — the sorted receiver
+--    ids translating that sender. Change-detected per sender against
+--    last_sent_listeners (see the loop below).
+-- Both are gated the same way: while the feature is disabled for the room, or an
+-- external handler vetoes publishing, the aggregate is cleared (nil) and every
+-- sender's list becomes empty, so jicofo stops translation and clients drop the
+-- badges. The receivers' subscriptions are kept in memory and republished if the
+-- room is re-enabled.
 local function publish(room)
     if not room._audio_translation or not main_muc_module then
         return;
@@ -258,29 +306,71 @@ local function publish(room)
     -- convention as 'jitsi-metadata-allow-moderation'.
     local allow_publish = main_muc_module:fire_event('jitsi-audio-translation-allow-publish', { room = room; }) ~= false;
 
+    -- Both outputs are suppressed unless publishing is allowed and the feature is
+    -- enabled for the room. Computed once and applied to each output below.
+    local enabled = allow_publish and is_enabled(room);
+    local state = room._audio_translation;
+
     -- The request set the receivers have asked for, independent of gating. Computed
     -- unconditionally so we can tell "nothing requested" apart from "requests suppressed".
     local requested = compute_aggregate(room);
-    local aggregate = (allow_publish and is_enabled(room)) and requested or nil;
+    local aggregate = enabled and requested or nil;
     local encoded = aggregate and json.encode(aggregate) or nil;
 
-    if encoded == room._audio_translation.last_published then
-        return;
+    -- jicofo aggregate: change-detected on its own; only a change rewrites room._data and
+    -- fires room-metadata-changed.
+    if encoded ~= state.last_published then
+        state.last_published = encoded;
+
+        -- Log the transition to suppressing a non-empty request set (feature disabled for the
+        -- room, or an external handler vetoed publishing). Normally the client hides the control,
+        -- so a suppressed request set is worth being able to discover.
+        if aggregate == nil and requested ~= nil then
+            module:log('warn', 'Not publishing audio-translation requests in room %s: %s', room.jid,
+                allow_publish and 'disabled for the room' or 'publishing vetoed by a handler');
+        end
+
+        room._data.audioTranslationRequests = aggregate;
+        main_muc_module:fire_event('room-metadata-changed', { room = room; });
     end
-    room._audio_translation.last_published = encoded;
 
-    -- Log when we transition to suppressing a non-empty request set (feature disabled for
-    -- the room, or an external handler vetoed publishing). Deduped by last_published above,
-    -- so this fires on the transition, not on every update. Normally the client hides the
-    -- control, so a suppressed request set is worth being able to discover.
-    if aggregate == nil and requested ~= nil then
-        module:log('warn', 'Not publishing audio-translation requests in room %s: %s', room.jid,
-            allow_publish and 'disabled for the room' or 'publishing vetoed by a handler');
+    -- Per-sender directed push. Iterate the union of senders that have listeners now OR were
+    -- sent a list last time, so a sender whose last listener left is still visited and cleared.
+    -- Send (and update the tracker) only when a sender's encoded list changed. After sending an
+    -- empty array, drop the tracker entry so the now-cleared sender is not revisited or resent.
+    state.last_sent_listeners = state.last_sent_listeners or {};
+
+    local listeners_by_sender = compute_listeners_by_sender(room, enabled);
+    local senders = {};
+
+    for sender_id in pairs(listeners_by_sender) do
+        senders[sender_id] = true;
+    end
+    for sender_id in pairs(state.last_sent_listeners) do
+        senders[sender_id] = true;
     end
 
-    room._data.audioTranslationRequests = aggregate;
+    for sender_id in pairs(senders) do
+        local list = listeners_by_sender[sender_id];
+        -- util.json encodes an empty table as "{}"; force "[]" so clients always parse an array.
+        local encoded_listeners = (list and #list > 0) and json.encode(list) or '[]';
 
-    main_muc_module:fire_event('room-metadata-changed', { room = room; });
+        if encoded_listeners ~= state.last_sent_listeners[sender_id] then
+            local occupant = room:get_occupant_by_nick(room.jid..'/'..sender_id);
+
+            if occupant then
+                module:send(st.message({ from = module.host; to = occupant.jid; })
+                    :tag('translation-listeners', { xmlns = AUDIO_TRANSLATION_NS; })
+                    :text(encoded_listeners):up());
+            end
+
+            if list and #list > 0 then
+                state.last_sent_listeners[sender_id] = encoded_listeners;
+            else
+                state.last_sent_listeners[sender_id] = nil;
+            end
+        end
+    end
 end
 
 -- Schedules a debounced publish so a burst of updates produces a single metadata
