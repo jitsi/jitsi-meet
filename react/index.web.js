@@ -6,6 +6,7 @@ import { getLogger } from './features/base/logging/functions';
 import Platform from './features/base/react/Platform.web';
 import { getJitsiMeetGlobalNS, getJitsiMeetGlobalNSConnectionTimes } from './features/base/util/helpers';
 import DialInSummaryApp from './features/invite/components/dial-in-summary/web/DialInSummaryApp';
+import { withNextRoundAuth } from './features/nextround/AuthGate.web';
 import PrejoinApp from './features/prejoin/components/web/PrejoinApp';
 import WhiteboardApp from './features/whiteboard/components/web/WhiteboardApp';
 
@@ -66,7 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 globalNS.entryPoints = {
-    APP: App,
+    // NextRound: gate the main app behind a Clerk staff session, except when a
+    // room token is present (candidates and in-room staff bypass Clerk).
+    APP: withNextRoundAuth(App),
     PREJOIN: PrejoinApp,
     DIALIN: DialInSummaryApp,
     WHITEBOARD: WhiteboardApp

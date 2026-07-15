@@ -30,5 +30,6 @@ import '../time-timer/middleware.web';
 import '../whiteboard/middleware.web';
 import '../file-sharing/middleware.web';
 import '../custom-panel/middleware.web';
+import '../nextround/middleware.web';
 
 import './middlewares.any';

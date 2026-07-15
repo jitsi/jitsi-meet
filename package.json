@@ -19,6 +19,7 @@
     "@amplitude/analytics-browser": "2.17.12",
     "@amplitude/analytics-react-native": "1.5.16",
     "@braintree/sanitize-url": "7.0.0",
+    "@clerk/clerk-react": "^5.61.8",
     "@emotion/cache": "11.11.0",
     "@emotion/react": "11.10.6",
     "@emotion/styled": "11.10.6",

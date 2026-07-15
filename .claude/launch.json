@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "jitsi-dev",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-lc", "WEBPACK_DEV_SERVER_PROXY_TARGET=https://meet.next-round.online make dev"],
+      "port": 8080
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+node_modules
+android
+ios
+react-native-sdk
+build
+.git
+tests
+debian
+twa
