@@ -9,7 +9,13 @@ import {
     SET_AUDIO_TRANSLATION_LANGUAGE,
     SET_PARTICIPANT_AUDIO_TRANSLATION_LANGUAGE
 } from './actionTypes';
-import { clearAudioTranslation, setParticipantAudioTranslationLanguage } from './actions';
+import {
+    clearAudioTranslation,
+    clearReceivingTranslatedSources,
+    setParticipantAudioTranslationLanguage,
+    setTranslationListeners,
+    updateTranslatedSourceSending
+} from './actions';
 import { isAudioTranslationRoomEnabled } from './functions';
 import logger from './logger';
 
@@ -108,6 +114,34 @@ StateListenerRegistry.register(
                 // Otherwise undo the optimistic selection only for the speakers the failed request touched.
                 endpointIds.forEach(endpointId =>
                     dispatch(setParticipantAudioTranslationLanguage(endpointId, null)));
+            });
+    });
+
+/**
+ * Ingests the two per-participant translation signals from the conference: which translated sources the bridge
+ * is forwarding to us (receiving), and which remote participants are translating us (enabled). Both are cleared
+ * when the conference goes away.
+ */
+StateListenerRegistry.register(
+    state => state['features/base/conference'].conference,
+    (conference, { dispatch }, previousConference) => {
+        if (previousConference) {
+            dispatch(clearReceivingTranslatedSources());
+            dispatch(setTranslationListeners([]));
+        }
+
+        if (!conference) {
+            return;
+        }
+
+        conference.on(JitsiConferenceEvents.TRANSLATED_SOURCE_SENDING_CHANGED,
+            ({ sending, sourceName, timestamp }: { sending: boolean; sourceName: string; timestamp: number; }) => {
+                dispatch(updateTranslatedSourceSending(sourceName, sending, timestamp));
+            });
+
+        conference.on(JitsiConferenceEvents.AUDIO_TRANSLATION_LISTENERS_CHANGED,
+            (ids: string[]) => {
+                dispatch(setTranslationListeners(ids));
             });
     });
 
