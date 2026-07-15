@@ -1,6 +1,7 @@
 import createCache, { EmotionCache } from '@emotion/cache';
 
 import { IReduxState, IStore } from '../app/types';
+import { getURLWithoutParams } from '../base/connection/utils';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../base/media/constants';
 import { getParticipantById, isScreenShareParticipant } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
@@ -33,6 +34,19 @@ const SECOND_SCREEN_CACHE_KEY = 'secondscreen';
  */
 const SECOND_SCREEN_FONT_FAMILY
     = '-apple-system, BlinkMacSystemFont, open_sanslight, \'Helvetica Neue\', Helvetica, Arial, sans-serif';
+
+/**
+ * How long to wait for a second-screen window to load its shell page before
+ * giving up on it and closing it.
+ */
+const SECOND_SCREEN_LOAD_TIMEOUT = 10000;
+
+/**
+ * How often the load wait re-checks whether the window was closed. A window
+ * closed mid-load fires no {@code load} event, so without polling the wait would
+ * only end on the timeout above.
+ */
+const SECOND_SCREEN_LOAD_POLL_INTERVAL = 250;
 
 /**
  * The live, non-serializable handle backing a single second-screen window. It is
@@ -192,6 +206,29 @@ export function getGalleryGridDimensions(count: number, maxColumns: number): { c
 }
 
 /**
+ * Builds the URL of the static shell page a second-screen window loads
+ * ({@code static/secondScreen.html}). Derived from the canonical meeting
+ * location the same way the whiteboard page URL is, so tenant paths keep
+ * working; falls back to {@code window.location} before the connection is up.
+ *
+ * The window loads a real same-origin page instead of {@code about:blank}
+ * because embeds rendered inside it (e.g. the YouTube shared-video player)
+ * require the embedding page to send a valid referrer, which an
+ * {@code about:blank} document cannot (YouTube fails with error 153).
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {string}
+ */
+function getSecondScreenPageUrl(state: IReduxState): string {
+    const locationURL = state['features/base/connection'].locationURL;
+    const href = locationURL
+        ? getURLWithoutParams(locationURL).href
+        : `${window.location.origin}${window.location.pathname}`;
+
+    return `${href.substring(0, href.lastIndexOf('/'))}/static/secondScreen.html`;
+}
+
+/**
  * Computes the {@code window.open} features string, placing the window on a
  * physical screen via the Window Management API. Rejects if the API is
  * unavailable/denied (the feature requires it).
@@ -207,6 +244,75 @@ async function computeFeatures(screenId?: number): Promise<string> {
 
     // No avail* offsets: the window is auto-fullscreened, so the full screen bounds are what matter.
     return `popup,left=${target.left},top=${target.top},width=${target.width},height=${target.height}`;
+}
+
+/**
+ * Whether a second-screen window has already loaded its shell page, in which
+ * case waiting for its {@code load} event would never resolve (the event has
+ * already fired). Happens when a window is opened again for an id whose window
+ * is still open, since {@code window.open} reuses the window with the same name.
+ * A freshly opened window's initial empty document can also report itself as
+ * complete, hence the URL check.
+ *
+ * @param {Window} win - The opened window.
+ * @returns {boolean}
+ */
+function isShellPageLoaded(win: Window): boolean {
+    try {
+        return win.document.readyState === 'complete' && win.location.href !== 'about:blank';
+    } catch (_e) {
+        // Mid-navigation (or an unreadable document); treat it as not loaded and wait.
+        return false;
+    }
+}
+
+/**
+ * Waits for a freshly opened second-screen window to load its shell page (see
+ * {@link getSecondScreenPageUrl}), so the handle (root, Emotion cache,
+ * listeners) is built on the real document and not wiped by the navigation. The
+ * Window object is reused for this first navigation, so the listener attached
+ * here survives it and fires on the page load.
+ *
+ * Resolves with whether the page actually loaded. A window closed mid-load, or a
+ * navigation that stalls or fails (the shell page is not served), fires no
+ * {@code load} at all, so the wait is bounded by a poll for {@code win.closed}
+ * and a timeout. Without them the promise would stay pending forever: the
+ * caller's {@code .catch} cannot fire, the redux entry keeps a source with no
+ * handle that nothing reconciles, and a window that did open is stranded on the
+ * external display with no handle in state for anything to close it by.
+ *
+ * @param {Window} win - The opened window.
+ * @returns {Promise<boolean>}
+ */
+function awaitSecondScreenLoad(win: Window): Promise<boolean> {
+    if (isShellPageLoaded(win)) {
+        return Promise.resolve(true);
+    }
+
+    return new Promise<boolean>(resolve => {
+        let poll = 0;
+        let timeout = 0;
+        let settled = false;
+
+        const finish = (loaded: boolean) => {
+            if (settled) {
+                return;
+            }
+            settled = true;
+            window.clearInterval(poll);
+            window.clearTimeout(timeout);
+            resolve(loaded);
+        };
+
+        win.addEventListener('load', () => finish(true), { once: true });
+
+        poll = window.setInterval(() => {
+            if (win.closed) {
+                finish(false);
+            }
+        }, SECOND_SCREEN_LOAD_POLL_INTERVAL);
+        timeout = window.setTimeout(() => finish(false), SECOND_SCREEN_LOAD_TIMEOUT);
+    });
 }
 
 /**
@@ -349,12 +455,45 @@ export async function openOrUpdateSecondScreen(store: IStore, id: string, screen
         return;
     }
 
-    const win = window.open('', `jitsiSecondScreen_${id}`, features);
+    const win = window.open(getSecondScreenPageUrl(store.getState()), `jitsiSecondScreen_${id}`, features);
 
     if (!win) {
         logger.warn(`Failed to open second-screen window "${id}" (popup blocked?)`);
         APP.API?.notifySecondScreenError?.({ id, error: 'popup-blocked' });
         store.dispatch(removeSecondScreen(id));
+
+        return;
+    }
+
+    // Wait for the shell page to replace the popup's initial empty document
+    // before building the handle on it.
+    const loaded = await awaitSecondScreenLoad(win);
+
+    if (!loaded || win.closed) {
+
+        // Close the window on the way out: a navigation that stalled (or a
+        // shell page that is not served) still leaves a window on the external
+        // display, and it never reaches state, so nothing else would ever be
+        // able to close it.
+        if (!win.closed) {
+            win.close();
+        }
+
+        logger.warn(`Second-screen window "${id}" was closed or failed to load its page`);
+        APP.API?.notifySecondScreenError?.({ id, error: 'window-load-failed' });
+        store.dispatch(removeSecondScreen(id));
+
+        return;
+    }
+
+    // A removal (or a conference end) can land while the window is loading. Its
+    // handle is not in state yet, so closeSecondScreenHandle had nothing to
+    // close: close the window here instead of building a handle for an entry
+    // that is gone, which the reducer would drop anyway. Everything from here to
+    // setSecondScreenWindow is synchronous, so no dispatch can interleave.
+    if (!store.getState()['features/multi-screen'].screens[id]) {
+        win.close();
+        APP.API?.notifySecondScreenClosed?.({ id });
 
         return;
     }

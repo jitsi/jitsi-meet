@@ -103,10 +103,32 @@ export interface IProps {
     _videoUrl?: string;
 
     /**
+     * Whether this player is a passive follower (e.g. on a second-screen
+     * window): it follows the shared playback state but never acts as the
+     * controlling player, even when the local participant owns the shared
+     * video, reports no analytics or status updates, and plays no audio (the
+     * audio stays with the main window's player).
+     */
+    follower?: boolean;
+
+    /**
+     * Called when a follower player fails. A follower must not tear down the
+     * meeting's shared video, so its host is notified instead and surfaces the
+     * failure in place of the (black) player. Ignored for a non-follower.
+     */
+    onFollowerError?: (code?: any) => void;
+
+    /**
       * The video id.
       */
     videoId: string;
 }
+
+/**
+ * The props a manager takes from its host, as opposed to the ones it maps from
+ * the redux state below.
+ */
+type IOwnProps = Pick<IProps, 'follower' | 'onFollowerError' | 'videoId'>;
 
 /**
  * Manager of shared video.
@@ -126,7 +148,9 @@ class AbstractVideoManager extends PureComponent<IProps> {
         this.throttledFireUpdateSharedVideoEvent = throttle(this.fireUpdateSharedVideoEvent.bind(this), 5000);
 
         // selenium tests handler
-        window._sharedVideoPlayer = this;
+        if (!props.follower) {
+            window._sharedVideoPlayer = this;
+        }
     }
 
     /**
@@ -135,8 +159,12 @@ class AbstractVideoManager extends PureComponent<IProps> {
      * @inheritdoc
      */
     override componentDidMount() {
-        this.props._dockToolbox(true);
-        this.processUpdatedProps();
+        if (this.props.follower) {
+            this.syncFollower();
+        } else {
+            this.props._dockToolbox(true);
+            this.processUpdatedProps();
+        }
     }
 
     /**
@@ -145,9 +173,9 @@ class AbstractVideoManager extends PureComponent<IProps> {
      * @inheritdoc
      */
     override componentDidUpdate(prevProps: IProps) {
-        const { _videoUrl } = this.props;
+        const { _videoUrl, follower } = this.props;
 
-        if (prevProps._videoUrl !== _videoUrl) {
+        if (!follower && prevProps._videoUrl !== _videoUrl) {
             sendAnalytics(createEvent('started'));
         }
 
@@ -160,13 +188,14 @@ class AbstractVideoManager extends PureComponent<IProps> {
      * @inheritdoc
      */
     override componentWillUnmount() {
-        sendAnalytics(createEvent('stopped'));
+        if (!this.props.follower) {
+            sendAnalytics(createEvent('stopped'));
+            this.props._dockToolbox(false);
+        }
 
         if (this.dispose) {
             this.dispose();
         }
-
-        this.props._dockToolbox(false);
     }
 
     /**
@@ -175,7 +204,7 @@ class AbstractVideoManager extends PureComponent<IProps> {
      * @returns {void}
      */
     processUpdatedProps() {
-        const { _status, _time, _isOwner, _muted } = this.props;
+        const { _status, _time, _isOwner, _muted, follower } = this.props;
 
         if (_isOwner) {
             return;
@@ -197,7 +226,14 @@ class AbstractVideoManager extends PureComponent<IProps> {
             }
         }
 
-        if (this.isMuted() !== _muted) {
+        if (follower) {
+            // A follower plays no audio (the audio stays with the main
+            // window's player), so it is kept muted instead of following the
+            // shared muted state.
+            if (!this.isMuted()) {
+                this.mute();
+            }
+        } else if (this.isMuted() !== _muted) {
             if (_muted) {
                 this.mute();
             } else {
@@ -207,14 +243,50 @@ class AbstractVideoManager extends PureComponent<IProps> {
     }
 
     /**
+     * Starts a follower player in sync with the meeting's shared state. A
+     * follower must not start playing a video the meeting has paused: doing so
+     * desyncs silently, because a paused video sends no further status updates
+     * and nothing would ever correct it. Everything else (seeking to the shared
+     * position, staying muted) is left to processUpdatedProps.
+     *
+     * Called both on mount and, for players created asynchronously (the YouTube
+     * iframe API), once the player is ready; it is safe to run twice.
+     *
+     * @returns {void}
+     */
+    syncFollower() {
+        // Not PLAYING vs. PAUSED: a video that was just shared is in the
+        // "start" state, which processUpdatedProps does not act on, and a
+        // follower opened at that moment should play.
+        if (this.props._status !== PLAYBACK_STATUSES.PAUSED) {
+            this.play();
+        }
+
+        this.processUpdatedProps();
+    }
+
+    /**
      * Handle video error.
      *
      * @param {Object|undefined} e - The error returned by the API or none.
      * @returns {void}
      */
     onError(e?: any) {
-        logger.error('Error in the video player', e?.data,
+        const { follower, onFollowerError } = this.props;
+
+        logger.error(`Error in the ${follower ? 'follower ' : ''}video player`, e?.data,
             e?.data ? 'Check error code at https://developers.google.com/youtube/iframe_api_reference#onError' : '');
+
+        // An error in a follower player must not tear down the shared video
+        // for the whole meeting (stopSharedVideo resets it when the local
+        // participant is the owner); its host reports it instead, so the
+        // failure does not read as an unexplained black screen.
+        if (follower) {
+            onFollowerError?.(e?.data);
+
+            return;
+        }
+
         this.props._stopSharedVideo();
         this.props._displayWarning();
     }
@@ -225,6 +297,12 @@ class AbstractVideoManager extends PureComponent<IProps> {
      * @returns {void}
      */
     onPlay() {
+        // A follower only observes: no analytics, no status updates, no
+        // mic-mute side effects.
+        if (this.props.follower) {
+            return;
+        }
+
         this.smartAudioMute();
         sendAnalytics(createEvent('play'));
         this.fireUpdateSharedVideoEvent();
@@ -236,6 +314,10 @@ class AbstractVideoManager extends PureComponent<IProps> {
      * @returns {void}
      */
     onPause() {
+        if (this.props.follower) {
+            return;
+        }
+
         sendAnalytics(createEvent('paused'));
         this.fireUpdateSharedVideoEvent();
     }
@@ -246,6 +328,10 @@ class AbstractVideoManager extends PureComponent<IProps> {
      * @returns {void}
      */
     onVolumeChange() {
+        if (this.props.follower) {
+            return;
+        }
+
         const volume = this.getVolume();
         const muted = this.isMuted();
 
@@ -436,9 +522,10 @@ export default AbstractVideoManager;
  * Maps part of the Redux store to the props of this component.
  *
  * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The component's own props.
  * @returns {IProps}
  */
-export function _mapStateToProps(state: IReduxState) {
+export function _mapStateToProps(state: IReduxState, ownProps: IOwnProps) {
     const { ownerId, status, time, videoUrl, muted } = state['features/shared-video'];
     const localParticipant = getLocalParticipant(state);
     const _isLocalAudioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
@@ -446,7 +533,12 @@ export function _mapStateToProps(state: IReduxState) {
     return {
         _conference: getCurrentConference(state),
         _isLocalAudioMuted,
-        _isOwner: ownerId === localParticipant?.id,
+
+        // A follower never acts as the controlling player, even when the
+        // local participant owns the shared video: ownership stays with the
+        // main window's player, and the follower tracks the shared state like
+        // any remote participant.
+        _isOwner: !ownProps.follower && ownerId === localParticipant?.id,
         _muted: muted,
         _ownerId: ownerId,
         _status: status,

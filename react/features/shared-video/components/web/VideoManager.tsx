@@ -143,12 +143,18 @@ class VideoManager extends AbstractVideoManager {
      * @returns {void}
      */
     getPlayerOptions() {
-        const { _isOwner, videoId } = this.props;
+        const { _isOwner, follower, videoId } = this.props;
 
         let options: any = {
-            autoPlay: true,
+            // A follower starts itself from the meeting's shared state
+            // (see syncFollower), so it must not autoplay a paused video.
+            autoPlay: !follower,
             src: videoId,
             controls: _isOwner,
+
+            // A follower plays no audio; starting it muted also keeps the
+            // browser from blocking the autoplay.
+            muted: follower,
             onError: () => this.onError(),
             onPlay: () => this.onPlay(),
             onVolumeChange: () => this.onVolumeChange()

@@ -838,6 +838,8 @@
     "me": "me",
     "multiScreen": {
         "noParticipants": "No participants",
+        "sharedVideoError": "The shared video could not be played on this screen",
+        "sharedVideoInactive": "Share a video in the meeting to show it on the second screen",
         "showOnStage": "Show {{name}} on the second screen",
         "unpinFromStage": "Stop featuring {{name}} on the second screen",
         "whiteboardInactive": "Open the whiteboard in the meeting to show it on the second screen",
