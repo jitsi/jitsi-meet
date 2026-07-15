@@ -48,7 +48,8 @@
         "errorGeneric": "Couldn't enable audio translation. Please try again.",
         "errorLimitReached": "Couldn't translate everyone at once. Turn on translation for individual participants instead.",
         "errorRoomDisabled": "Audio translation is turned off for this meeting. Enable it in Moderator settings.",
-        "errorSpeakerUnavailable": "Can't translate this participant — they're no longer in the meeting."
+        "errorSpeakerUnavailable": "Can't translate this participant — they're no longer in the meeting.",
+        "labelTooltip": "Translation in progress"
     },
     "bandwidthSettings": {
         "assumedBandwidthBps": "e.g. 10000000 for 10 Mbps",
@@ -1652,10 +1653,13 @@
         "mute": "Participant is muted",
         "muted": "Muted",
         "pinToStage": "Pin to stage",
+        "receivingTranslatedAudio": "You're receiving translated audio",
         "remoteControl": "Start / Stop remote control",
         "screenSharing": "Participant is sharing their screen",
         "show": "Show on stage",
         "showSelfView": "Show self view",
+        "translationEnabledForYou": "Translation enabled for you",
+        "translationOnAndReceiving": "Translation on · receiving",
         "unpinFromStage": "Unpin",
         "verify": "Verify participant",
         "videoMuted": "Camera disabled",

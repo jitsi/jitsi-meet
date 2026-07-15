@@ -15,6 +15,7 @@ import { getIndicatorsTooltipPosition } from '../../functions.web';
 import AudioMutedIndicator from './AudioMutedIndicator';
 import ModeratorIndicator from './ModeratorIndicator';
 import ScreenShareIndicator from './ScreenShareIndicator';
+import TranslationIndicator from './TranslationIndicator';
 
 /**
  * The type of the React {@code Component} props of {@link StatusIndicators}.
@@ -39,7 +40,7 @@ interface IProps {
     /**
      * The ID of the participant for which the status bar is rendered.
      */
-    participantID: String;
+    participantID: string;
 
     /**
      * The type of thumbnail.
@@ -64,6 +65,7 @@ class StatusIndicators extends Component<IProps> {
             _showAudioMutedIndicator,
             _showModeratorIndicator,
             _showScreenShareIndicator,
+            participantID,
             thumbnailType
         } = this.props;
         const tooltipPosition = getIndicatorsTooltipPosition(thumbnailType);
@@ -72,6 +74,9 @@ class StatusIndicators extends Component<IProps> {
             <>
                 { _showAudioMutedIndicator && <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> }
                 { _showModeratorIndicator && <ModeratorIndicator tooltipPosition = { tooltipPosition } />}
+                <TranslationIndicator
+                    participantId = { participantID }
+                    tooltipPosition = { tooltipPosition } />
                 { _showScreenShareIndicator && <ScreenShareIndicator tooltipPosition = { tooltipPosition } /> }
             </>
         );
