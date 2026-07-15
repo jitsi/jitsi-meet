@@ -757,7 +757,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Returns the rooms info in the conference.
      *
-     * @returns {Object} Rooms info.
+     * @returns {Promise<Object>} Rooms info.
      */
     getRoomsInfo() {
         return this._transport.sendRequest({
@@ -768,7 +768,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Returns the Shared Document Url of the conference.
      *
-     * @returns {Object} Rooms info.
+     * @returns {Promise<string>} Shared Document URL.
      */
     getSharedDocumentUrl() {
         return this._transport.sendRequest({
@@ -779,7 +779,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Returns the connection stats of the conference.
      *
-     * @returns {Object} Connection stats (bitrate, packet loss, etc).
+     * @returns {Promise<Object>} Connection stats (bitrate, packet loss, etc).
      */
     getConnectionStats() {
         return this._transport.sendRequest({
