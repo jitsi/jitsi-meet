@@ -143,13 +143,22 @@ class VideoManager extends AbstractVideoManager {
      * @returns {void}
      */
     getPlayerOptions() {
-        const { _isOwner, videoId } = this.props;
+        const { _isOwner, follower, videoId } = this.props;
 
         let options: any = {
-            autoPlay: true,
+            // A follower starts itself from the meeting's shared state
+            // (see syncFollower), so it must not autoplay a paused video.
+            autoPlay: !follower,
             src: videoId,
             controls: _isOwner,
-            onError: () => this.onError(),
+
+            // A follower plays no audio; starting it muted also keeps the
+            // browser from blocking the autoplay.
+            muted: follower,
+            // Forwarded rather than dropped: the event's target carries the
+            // MediaError and the resolved source, which is the only diagnostic
+            // behind the message a follower shows on a second screen.
+            onError: (e: any) => this.onError(e),
             onPlay: () => this.onPlay(),
             onVolumeChange: () => this.onVolumeChange()
         };

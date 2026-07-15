@@ -1,6 +1,7 @@
 import createCache, { EmotionCache } from '@emotion/cache';
 
 import { IReduxState, IStore } from '../app/types';
+import { getURLWithoutParams } from '../base/connection/utils';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../base/media/constants';
 import { getParticipantById, isScreenShareParticipant } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
@@ -33,6 +34,29 @@ const SECOND_SCREEN_CACHE_KEY = 'secondscreen';
  */
 const SECOND_SCREEN_FONT_FAMILY
     = '-apple-system, BlinkMacSystemFont, open_sanslight, \'Helvetica Neue\', Helvetica, Arial, sans-serif';
+
+/**
+ * How long to wait for a second-screen window to load its shell page before
+ * giving up on it and closing it.
+ */
+const SECOND_SCREEN_LOAD_TIMEOUT = 10000;
+
+/**
+ * How often the load wait re-checks whether the window was closed. A window
+ * closed mid-load fires no {@code load} event, so without polling the wait would
+ * only end on the timeout above.
+ */
+const SECOND_SCREEN_LOAD_POLL_INTERVAL = 250;
+
+/**
+ * The name of the {@code meta} marker carried by the shell page (see
+ * {@link getSecondScreenPageUrl}). A {@code load} event only says that
+ * *something* was served, so the marker is what tells the shell apart from a 404
+ * body, an SSO/CDN redirect landing, or (in dev) a proxied response from the
+ * dev-server target. Without it the handle would be built on that document and
+ * the portal root would silently paint over it.
+ */
+const SECOND_SCREEN_MARKER = 'jitsi-second-screen';
 
 /**
  * The live, non-serializable handle backing a single second-screen window. It is
@@ -192,6 +216,29 @@ export function getGalleryGridDimensions(count: number, maxColumns: number): { c
 }
 
 /**
+ * Builds the URL of the static shell page a second-screen window loads
+ * ({@code static/secondScreen.html}). Derived from the canonical meeting
+ * location the same way the whiteboard page URL is, so tenant paths keep
+ * working; falls back to {@code window.location} before the connection is up.
+ *
+ * The window loads a real same-origin page instead of {@code about:blank}
+ * because embeds rendered inside it (e.g. the YouTube shared-video player)
+ * require the embedding page to send a valid referrer, which an
+ * {@code about:blank} document cannot (YouTube fails with error 153).
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {string}
+ */
+function getSecondScreenPageUrl(state: IReduxState): string {
+    const locationURL = state['features/base/connection'].locationURL;
+    const href = locationURL
+        ? getURLWithoutParams(locationURL).href
+        : `${window.location.origin}${window.location.pathname}`;
+
+    return `${href.substring(0, href.lastIndexOf('/'))}/static/secondScreen.html`;
+}
+
+/**
  * Computes the {@code window.open} features string, placing the window on a
  * physical screen via the Window Management API. Rejects if the API is
  * unavailable/denied (the feature requires it).
@@ -207,6 +254,122 @@ async function computeFeatures(screenId?: number): Promise<string> {
 
     // No avail* offsets: the window is auto-fullscreened, so the full screen bounds are what matter.
     return `popup,left=${target.left},top=${target.top},width=${target.width},height=${target.height}`;
+}
+
+/**
+ * Whether the document currently in a second-screen window is the shell page,
+ * identified by its {@code meta} marker (see {@link SECOND_SCREEN_MARKER}) rather
+ * than by its URL: the URL is only what was requested, while the marker is proof
+ * of what was actually served. Also covers the initial empty document, which
+ * carries no marker.
+ *
+ * @param {Window} win - The opened window.
+ * @returns {boolean}
+ */
+function hasShellMarker(win: Window): boolean {
+    try {
+        return Boolean(win.document.querySelector(`meta[name="${SECOND_SCREEN_MARKER}"]`));
+    } catch (_e) {
+        // Unreadable document: mid-navigation, or cross-origin after a redirect
+        // of the shell URL, which makes every document access throw.
+        return false;
+    }
+}
+
+/**
+ * The URL a second-screen window actually ended up on, for diagnostics, or
+ * {@code undefined} when it cannot be read (a cross-origin document).
+ *
+ * @param {Window} win - The opened window.
+ * @returns {string | undefined}
+ */
+function readWindowLocation(win: Window): string | undefined {
+    try {
+        return win.location.href;
+    } catch (_e) {
+        return undefined;
+    }
+}
+
+/**
+ * Whether a second-screen window has already loaded its shell page, in which
+ * case waiting for its {@code load} event would never resolve (the event has
+ * already fired). Happens when a window is opened again for an id whose window
+ * is still open, since {@code window.open} reuses the window with the same name.
+ *
+ * @param {Window} win - The opened window.
+ * @returns {boolean}
+ */
+function isShellPageLoaded(win: Window): boolean {
+    try {
+        return win.document.readyState === 'complete' && hasShellMarker(win);
+    } catch (_e) {
+        // Mid-navigation (or an unreadable document); treat it as not loaded and wait.
+        return false;
+    }
+}
+
+/**
+ * How a wait for a second-screen window's shell page ended: the shell loaded,
+ * the window was closed while it was loading, the load timed out, or something
+ * other than the shell page was served. They are reported differently: only the
+ * last two are errors, and a window the user closed mid-load is the same user
+ * action as closing it a moment later, so it must produce the same event.
+ */
+type SecondScreenLoadResult = 'loaded' | 'closed' | 'timeout' | 'wrong-page';
+
+/**
+ * Waits for a freshly opened second-screen window to load its shell page (see
+ * {@link getSecondScreenPageUrl}), so the handle (root, Emotion cache,
+ * listeners) is built on the real document and not wiped by the navigation. The
+ * Window object is reused for this first navigation, so the listener attached
+ * here survives it and fires on the page load.
+ *
+ * Resolves with how the wait ended (see {@link SecondScreenLoadResult}). A
+ * window closed mid-load, or a navigation that stalls, fires no {@code load} at
+ * all, so the wait is bounded by a poll for {@code win.closed} and a timeout.
+ * Without them the promise would stay pending forever: the caller's
+ * {@code .catch} cannot fire, the redux entry keeps a source with no handle that
+ * nothing reconciles, and a window that did open is stranded on the external
+ * display with no handle in state for anything to close it by. A {@code load}
+ * that delivered something other than the shell page is reported separately,
+ * since the event fires for any served response.
+ *
+ * @param {Window} win - The opened window.
+ * @returns {Promise<SecondScreenLoadResult>}
+ */
+function awaitSecondScreenLoad(win: Window): Promise<SecondScreenLoadResult> {
+    if (isShellPageLoaded(win)) {
+        return Promise.resolve('loaded');
+    }
+
+    return new Promise<SecondScreenLoadResult>(resolve => {
+        let poll = 0;
+        let timeout = 0;
+        let settled = false;
+
+        const finish = (result: SecondScreenLoadResult) => {
+            if (settled) {
+                return;
+            }
+            settled = true;
+            window.clearInterval(poll);
+            window.clearTimeout(timeout);
+            resolve(result);
+        };
+
+        // The marker is checked here, on load, rather than by the caller: this is
+        // the document the handle would be built on, and a later navigation
+        // (which nothing else triggers) would not change the verdict.
+        win.addEventListener('load', () => finish(hasShellMarker(win) ? 'loaded' : 'wrong-page'), { once: true });
+
+        poll = window.setInterval(() => {
+            if (win.closed) {
+                finish('closed');
+            }
+        }, SECOND_SCREEN_LOAD_POLL_INTERVAL);
+        timeout = window.setTimeout(() => finish('timeout'), SECOND_SCREEN_LOAD_TIMEOUT);
+    });
 }
 
 /**
@@ -308,6 +471,52 @@ function handleWindowClosed(store: IStore, id: string) {
 }
 
 /**
+ * The ids whose windows are currently being opened, i.e. the calls that are past
+ * the handle check below but have not stored a handle yet.
+ */
+const opening = new Set<string>();
+
+/**
+ * Tears down a second-screen open that failed: closes the window if one is still
+ * open, tells the embedder why, and drops the redux entry. Every failure path
+ * runs all three, so none of them can leave a window on the external display
+ * with no handle in state (nothing else would be able to close it, not even the
+ * end of the conference) or an entry holding a source with no window.
+ *
+ * @param {IStore} store - The redux store.
+ * @param {string} id - The window id.
+ * @param {string} error - The error reported to the embedder.
+ * @param {Window} win - The window to close, if it was opened at all.
+ * @returns {void}
+ */
+function failSecondScreenOpen(store: IStore, id: string, error: string, win?: Window | null) {
+    if (win && !win.closed) {
+        win.close();
+    }
+
+    APP.API?.notifySecondScreenError?.({ id, error });
+    store.dispatch(removeSecondScreen(id));
+}
+
+/**
+ * Handles an unexpected rejection from {@link openOrUpdateSecondScreen}, which is
+ * otherwise all-catching. Reading the popup's document can throw now that it
+ * loads a real page instead of {@code about:blank} (a cross-origin redirect of
+ * the shell URL makes every access raise a {@code SecurityError}), so this runs
+ * the same teardown as the handled failures rather than only logging, which would
+ * land right back on the orphaned-window-plus-inert-entry state.
+ *
+ * @param {IStore} store - The redux store.
+ * @param {string} id - The window id.
+ * @param {any} e - The error.
+ * @returns {void}
+ */
+export function handleSecondScreenOpenError(store: IStore, id: string, e: any) {
+    logger.error(`Failed to open second screen "${id}"`, e);
+    failSecondScreenOpen(store, id, 'window-setup-failed', getHandle(store.getState(), id)?.win);
+}
+
+/**
  * Opens a new second-screen window (or updates an existing one) to render its
  * configured source. The window is placed on a physical screen via the Window
  * Management API and auto-fullscreened; both require the window-management and
@@ -333,6 +542,40 @@ export async function openOrUpdateSecondScreen(store: IStore, id: string, screen
         return;
     }
 
+    // A second request for the same id can arrive while the first one is still
+    // opening its window: the handle above is the only other reentrancy guard and
+    // it stays empty until the page has loaded. Letting a second call through
+    // would reach window.open with the same window name and re-navigate (or, on
+    // the initial empty document, share) the window the first call is building
+    // on, which orphans load listeners, duplicates roots and pagehide listeners,
+    // and can close a window that was just set up. Nothing is lost by returning:
+    // the source lives in redux, so the open already in flight picks up the
+    // newest one when it applies it at the end. A screenId that changed in the
+    // meantime is ignored, exactly as it is for a window that is already open.
+    if (opening.has(id)) {
+        return;
+    }
+
+    opening.add(id);
+
+    try {
+        await openSecondScreenWindow(store, id, screenId);
+    } finally {
+        opening.delete(id);
+    }
+}
+
+/**
+ * Opens and sets up the window for an id, having established that it has no live
+ * window and no other open in flight (see {@link openOrUpdateSecondScreen}).
+ *
+ * @param {IStore} store - The redux store.
+ * @param {string} id - The window id.
+ * @param {number} screenId - Optional target screen index.
+ * @returns {Promise<void>}
+ */
+async function openSecondScreenWindow(store: IStore, id: string, screenId?: number): Promise<void> {
+
     // If a previous window was closed without notifying us, its handle is
     // overwritten below and React unmounts its portal content (stopping the cloned
     // track and its Emotion cache) on its own, so there is nothing to tear down.
@@ -343,27 +586,91 @@ export async function openOrUpdateSecondScreen(store: IStore, id: string, screen
         features = await computeFeatures(screenId);
     } catch (e) {
         logger.warn(`Window Management API unavailable; cannot place second-screen window "${id}"`, e);
-        APP.API?.notifySecondScreenError?.({ id, error: 'window-management-unavailable' });
-        store.dispatch(removeSecondScreen(id));
+        failSecondScreenOpen(store, id, 'window-management-unavailable');
 
         return;
     }
 
-    const win = window.open('', `jitsiSecondScreen_${id}`, features);
+    const url = getSecondScreenPageUrl(store.getState());
+    const win = window.open(url, `jitsiSecondScreen_${id}`, features);
 
     if (!win) {
         logger.warn(`Failed to open second-screen window "${id}" (popup blocked?)`);
-        APP.API?.notifySecondScreenError?.({ id, error: 'popup-blocked' });
-        store.dispatch(removeSecondScreen(id));
+        failSecondScreenOpen(store, id, 'popup-blocked');
 
         return;
     }
 
-    const handle: ISecondScreenHandle = {
-        cache: createCache({ container: win.document.head, key: SECOND_SCREEN_CACHE_KEY }),
-        root: buildWindow(win),
-        win
-    };
+    // Wait for the shell page to replace the popup's initial empty document
+    // before building the handle on it.
+    const result = win.closed ? 'closed' : await awaitSecondScreenLoad(win);
+
+    if (result === 'closed' || win.closed) {
+
+        // The user closed the popup while it was loading. That is the same action
+        // as closing it a moment later, so it reports the same event rather than
+        // an error, and there is no window left to close.
+        logger.debug(`Second-screen window "${id}" was closed while loading`);
+        store.dispatch(removeSecondScreen(id));
+        APP.API?.notifySecondScreenClosed?.({ id });
+
+        return;
+    }
+
+    if (result !== 'loaded') {
+
+        // Close the window on the way out: a navigation that stalled, or one that
+        // served something other than the shell page, still leaves a window on the
+        // external display, and it never reaches state, so nothing else would ever
+        // be able to close it. Log where it actually ended up: the requested URL
+        // says nothing about what a proxy, a redirect or a 404 returned.
+        if (result === 'timeout') {
+            logger.warn(`Second-screen window "${id}" did not load "${url}" within `
+                + `${SECOND_SCREEN_LOAD_TIMEOUT}ms`);
+        } else {
+            logger.warn(`Second-screen window "${id}" loaded "${readWindowLocation(win) ?? '<unreadable>'}" `
+                + `instead of the shell page "${url}"`);
+        }
+
+        failSecondScreenOpen(store, id, 'window-load-failed', win);
+
+        return;
+    }
+
+    // A removal (or a conference end) can land while the window is loading. Its
+    // handle is not in state yet, so closeSecondScreenHandle had nothing to
+    // close: close the window here instead of building a handle for an entry
+    // that is gone, which the reducer would drop anyway. Everything from here to
+    // setSecondScreenWindow is synchronous, so no dispatch can interleave.
+    if (!store.getState()['features/multi-screen'].screens[id]) {
+        win.close();
+        APP.API?.notifySecondScreenClosed?.({ id });
+
+        return;
+    }
+
+    let handle: ISecondScreenHandle;
+
+    try {
+        handle = {
+            cache: createCache({ container: win.document.head, key: SECOND_SCREEN_CACHE_KEY }),
+            root: buildWindow(win),
+            win
+        };
+    } catch (e) {
+
+        // Reading the popup's document can throw now that it loads a real page
+        // instead of about:blank: a cross-origin redirect of the shell URL makes
+        // head/body raise a SecurityError. The marker check above already turns
+        // most of those into 'wrong-page', so this is the last resort for one that
+        // still gets here, and it tears down rather than leaving a live window
+        // behind an entry with no handle.
+        logger.warn(`Could not build the second-screen document for "${id}" at `
+            + `"${readWindowLocation(win) ?? '<unreadable>'}"`, e);
+        failSecondScreenOpen(store, id, 'window-setup-failed', win);
+
+        return;
+    }
 
     store.dispatch(setSecondScreenWindow(id, handle));
     win.addEventListener('pagehide', () => handleWindowClosed(store, id), { once: true });

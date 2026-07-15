@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { IReduxState } from '../../app/types';
 
 import SecondScreenGallery from './SecondScreenGallery';
+import SecondScreenSharedVideo from './SecondScreenSharedVideo';
 import SecondScreenSingle from './SecondScreenSingle';
 import SecondScreenStage from './SecondScreenStage';
 import SecondScreenWhiteboard from './SecondScreenWhiteboard';
@@ -27,12 +28,14 @@ interface IProps {
 /**
  * Routes a single second-screen window to a layout from its redux source
  * descriptor. A {@code whiteboard} source renders the {@link SecondScreenWhiteboard}
- * iframe; a {@code tile} source renders the {@link SecondScreenGallery} grid; a
- * stage or participant source renders the {@link SecondScreenStage} layout
- * (featured participant plus filmstrip); any other source renders the single
- * track/avatar via {@link SecondScreenSingle}. Each layout resolves its own state,
- * so the potentially expensive {@code resolveSource} selector only runs where it is
- * needed. Portaled into the second window by {@link SecondScreenPortals}.
+ * iframe; a {@code sharedvideo} source renders the meeting's shared video via
+ * {@link SecondScreenSharedVideo}; a {@code tile} source renders the
+ * {@link SecondScreenGallery} grid; a stage or participant source renders the
+ * {@link SecondScreenStage} layout (featured participant plus filmstrip); any
+ * other source renders the single track/avatar via {@link SecondScreenSingle}.
+ * Each layout resolves its own state, so the potentially expensive
+ * {@code resolveSource} selector only runs where it is needed. Portaled into
+ * the second window by {@link SecondScreenPortals}.
  *
  * @param {IProps} props - The component props.
  * @returns {ReactElement}
@@ -42,6 +45,13 @@ const SecondScreenView = ({ id, win }: IProps) => {
 
     if (source?.role === 'whiteboard') {
         return <SecondScreenWhiteboard />;
+    }
+
+    if (source?.role === 'sharedvideo') {
+        return (
+            <SecondScreenSharedVideo
+                id = { id } />
+        );
     }
 
     if (source?.role === 'tile') {
