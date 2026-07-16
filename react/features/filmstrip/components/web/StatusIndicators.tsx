@@ -38,6 +38,11 @@ interface IProps {
     _showScreenShareIndicator: Boolean;
 
     /**
+     * Indicates if the translation indicator should be visible or not.
+     */
+    _showTranslationIndicator: Boolean;
+
+    /**
      * The ID of the participant for which the status bar is rendered.
      */
     participantID: string;
@@ -65,6 +70,7 @@ class StatusIndicators extends Component<IProps> {
             _showAudioMutedIndicator,
             _showModeratorIndicator,
             _showScreenShareIndicator,
+            _showTranslationIndicator,
             participantID,
             thumbnailType
         } = this.props;
@@ -74,9 +80,9 @@ class StatusIndicators extends Component<IProps> {
             <>
                 { _showAudioMutedIndicator && <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> }
                 { _showModeratorIndicator && <ModeratorIndicator tooltipPosition = { tooltipPosition } />}
-                <TranslationIndicator
+                { _showTranslationIndicator && <TranslationIndicator
                     participantId = { participantID }
-                    tooltipPosition = { tooltipPosition } />
+                    tooltipPosition = { tooltipPosition } /> }
                 { _showScreenShareIndicator && <ScreenShareIndicator tooltipPosition = { tooltipPosition } /> }
             </>
         );
@@ -92,11 +98,12 @@ class StatusIndicators extends Component<IProps> {
  * @returns {{
  *     _showAudioMutedIndicator: boolean,
  *     _showModeratorIndicator: boolean,
- *     _showScreenShareIndicator: boolean
+ *     _showScreenShareIndicator: boolean,
+ *     _showTranslationIndicator: boolean
  * }}
 */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
-    const { participantID, audio, moderator, screenshare } = ownProps;
+    const { participantID, audio, moderator, screenshare, translation } = ownProps;
 
     // Only the local participant won't have id for the time when the conference is not yet joined.
     const participant = getParticipantByIdOrUndefined(state, participantID);
@@ -121,7 +128,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _showAudioMutedIndicator: isAudioMuted && audio,
         _showModeratorIndicator:
             !disableModeratorIndicator && participant && participant.role === PARTICIPANT_ROLE.MODERATOR && moderator,
-        _showScreenShareIndicator: isScreenSharing && screenshare
+        _showScreenShareIndicator: isScreenSharing && screenshare,
+        _showTranslationIndicator: Boolean(translation)
     };
 }
 
