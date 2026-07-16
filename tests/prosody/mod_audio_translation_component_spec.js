@@ -163,6 +163,55 @@ async function waitForRequests(focus, predicate) {
     throw new Error('audioTranslationRequests did not reach the expected state');
 }
 
+const LISTENERS_ELEMENT = 'translation-listeners';
+
+/** True if the stanza is a directed <translation-listeners> push. */
+function isListeners(msg) {
+    return msg.name === 'message'
+        && msg.getChild(LISTENERS_ELEMENT, JITMEET_NS) !== undefined;
+}
+
+/** Parses a <translation-listeners> push into its JSON array (or null). */
+function parseListeners(msg) {
+    const text = msg.getChild(LISTENERS_ELEMENT, JITMEET_NS)?.getText();
+
+    return text ? JSON.parse(text) : null;
+}
+
+/** Waits for the next directed <translation-listeners> push and returns its parsed array. */
+async function waitForListeners(client, timeout = 3000) {
+    return parseListeners(await client.waitForMessage(isListeners, timeout));
+}
+
+/**
+ * Waits for a <translation-listeners> push whose parsed array satisfies `predicate`,
+ * returning that array. Skips earlier pushes (e.g. an intermediate single-listener
+ * list emitted before a second receiver has subscribed).
+ */
+async function waitForListenersMatching(client, predicate) {
+    for (let i = 0; i < 5; i++) {
+        const list = await waitForListeners(client); // eslint-disable-line no-await-in-loop
+
+        if (predicate(list)) {
+            return list;
+        }
+    }
+    throw new Error('translation-listeners did not reach the expected state');
+}
+
+/** Asserts that no <translation-listeners> push arrives within the timeout. */
+async function assertNoListeners(client, timeout = 350) {
+    try {
+        await client.waitForMessage(isListeners, timeout);
+        throw new Error('received unexpected translation-listeners push');
+    } catch (err) {
+        if (err.message.includes('Timeout')) {
+            return;
+        }
+        throw err;
+    }
+}
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('mod_audio_translation_component', () => {
@@ -983,6 +1032,147 @@ describe('mod_audio_translation_component', () => {
 
             // Only one broadcast for the whole burst.
             await assertNoMetadata(foc);
+        });
+    });
+
+    // ── Directed listeners push (translation-listeners) ────────────────────────
+    describe('directed listeners push (translation-listeners)', () => {
+
+        it('tells a sender which receiver is translating it', async () => {
+            const r = nextRoom();
+            const foc = await startRoom(r);
+            const rx = await joinOccupant(r);
+            const sender = await joinOccupant(r);
+
+            clients.push(foc, rx, sender);
+
+            rx.sendAudioTranslation(AT_COMPONENT, { [sender.nick]: 'en' });
+
+            assert.deepEqual(await waitForListeners(sender), [ rx.nick ]);
+        });
+
+        it('directs the push only to the translated sender', async () => {
+            const r = nextRoom();
+            const foc = await startRoom(r);
+            const rx = await joinOccupant(r);
+            const s1 = await joinOccupant(r);
+            const s2 = await joinOccupant(r);
+
+            clients.push(foc, rx, s1, s2);
+
+            rx.sendAudioTranslation(AT_COMPONENT, { [s1.nick]: 'en' });
+
+            // The translated sender learns about rx ...
+            assert.deepEqual(await waitForListeners(s1), [ rx.nick ]);
+
+            // ... while an untranslated sender and the receiver itself get nothing.
+            await assertNoListeners(s2);
+            await assertNoListeners(rx);
+        });
+
+        it('lists every receiver translating a sender, sorted', async () => {
+            const r = nextRoom();
+            const foc = await startRoom(r);
+            const rx1 = await joinOccupant(r);
+            const rx2 = await joinOccupant(r);
+            const sender = await joinOccupant(r);
+
+            clients.push(foc, rx1, rx2, sender);
+
+            rx1.sendAudioTranslation(AT_COMPONENT, { [sender.nick]: 'en' });
+            rx2.sendAudioTranslation(AT_COMPONENT, { [sender.nick]: 'fr' });
+
+            const list = await waitForListenersMatching(sender, l => l.length === 2);
+
+            assert.deepEqual(list, [ rx1.nick, rx2.nick ].sort());
+        });
+
+        it('sends an empty JSON array when the last listener unsubscribes', async () => {
+            const r = nextRoom();
+            const foc = await startRoom(r);
+            const rx = await joinOccupant(r);
+            const sender = await joinOccupant(r);
+
+            clients.push(foc, rx, sender);
+
+            rx.sendAudioTranslation(AT_COMPONENT, { [sender.nick]: 'en' });
+            assert.deepEqual(await waitForListeners(sender), [ rx.nick ]);
+
+            // Removal clears the sender — the payload must be an empty ARRAY ("[]"), not "{}".
+            rx.sendAudioTranslation(AT_COMPONENT, { [sender.nick]: '' });
+
+            const cleared = await waitForListeners(sender);
+
+            assert.ok(Array.isArray(cleared), 'cleared payload must parse as a JSON array');
+            assert.equal(cleared.length, 0);
+        });
+
+        it('clears a sender when its listener leaves the room', async () => {
+            const r = nextRoom();
+            const foc = await startRoom(r);
+            const rx = await joinOccupant(r);
+            const sender = await joinOccupant(r);
+
+            clients.push(foc, sender);
+
+            rx.sendAudioTranslation(AT_COMPONENT, { [sender.nick]: 'en' });
+            assert.deepEqual(await waitForListeners(sender), [ rx.nick ]);
+
+            await rx.disconnect();
+
+            assert.deepEqual(await waitForListeners(sender), []);
+        });
+
+        it('does not resend when the listener set is unchanged', async () => {
+            const r = nextRoom();
+            const foc = await startRoom(r);
+            const rx = await joinOccupant(r);
+            const sender = await joinOccupant(r);
+
+            clients.push(foc, rx, sender);
+
+            rx.sendAudioTranslation(AT_COMPONENT, { [sender.nick]: 'en' });
+            assert.deepEqual(await waitForListeners(sender), [ rx.nick ]);
+
+            // Identical subscription → listener set unchanged → no new push.
+            rx.sendAudioTranslation(AT_COMPONENT, { [sender.nick]: 'en' });
+            await assertNoListeners(sender);
+        });
+
+        it('does not resend for a language switch that leaves the listener set unchanged', async () => {
+            const r = nextRoom();
+            const foc = await startRoom(r);
+            const rx = await joinOccupant(r);
+            const sender = await joinOccupant(r);
+
+            clients.push(foc, rx, sender);
+
+            rx.sendAudioTranslation(AT_COMPONENT, { [sender.nick]: 'en' });
+            assert.deepEqual(await waitForListeners(sender), [ rx.nick ]);
+
+            // The badge tracks who translates, not the language — a switch is not a listener change.
+            rx.sendAudioTranslation(AT_COMPONENT, { [sender.nick]: 'es' });
+            await assertNoListeners(sender);
+        });
+
+        it('clears listeners when disabled and restores them when re-enabled', async () => {
+            const r = nextRoom();
+            const foc = await startRoom(r);
+            const mod = await joinOccupant(r, { user: { moderator: true } });
+            const sender = await joinOccupant(r);
+
+            clients.push(foc, mod, sender);
+
+            mod.sendAudioTranslation(AT_COMPONENT, { [sender.nick]: 'en' });
+            assert.deepEqual(await waitForListeners(sender), [ mod.nick ]);
+
+            // Disable → the sender's listeners are cleared.
+            mod.sendMetadataUpdate(METADATA_COMPONENT, r, 'audioTranslation', { enabled: false });
+            assert.deepEqual(await waitForListenersMatching(sender, l => l.length === 0), []);
+
+            // Re-enable → the retained subscription is re-pushed.
+            mod.sendMetadataUpdate(METADATA_COMPONENT, r, 'audioTranslation', { enabled: true });
+            assert.deepEqual(await waitForListenersMatching(sender, l => l.length === 1), [ mod.nick ]);
         });
     });
 });
