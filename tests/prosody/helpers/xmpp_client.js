@@ -583,6 +583,24 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sets the room subject by sending a groupchat message carrying only a
+         * <subject> element (XEP-0045 §8.1). Fire-and-forget — does NOT wait for
+         * the room's subject broadcast.
+         *
+         * @param {string} roomJid  e.g. 'room@conference.localhost'
+         * @param {string} subject  the new subject text
+         */
+        sendRoomSubject(roomJid, subject) {
+            return xmpp.send(
+                xml('message', { to: roomJid,
+                    type: 'groupchat',
+                    id: `subj-${++_counter}` },
+                    xml('subject', {}, subject)
+                )
+            );
+        },
+
+        /**
          * Sends a groupchat message with a <json-message> child to the room.
          * Fire-and-forget — does NOT wait for the MUC reflection stanza.
          * Use when testing hooks that may crash or block the message before it
