@@ -37,7 +37,7 @@ export function isParticipantAudioTranslationActive(state: IReduxState, particip
  * @param {string} sourceName - The translated source name.
  * @returns {string}
  */
-function getSourceOwnerEndpointId(sourceName: string): string {
+export function getSourceOwnerEndpointId(sourceName: string): string {
     const dashIndex = sourceName.indexOf('-');
 
     return dashIndex === -1 ? '' : sourceName.substring(0, dashIndex);

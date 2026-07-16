@@ -77,7 +77,7 @@ const ThumbnailBottomIndicators = ({
                 participantID = { participantId }
                 screenshare = { isVirtualScreenshareParticipant }
                 thumbnailType = { thumbnailType }
-                translation = { !isVirtualScreenshareParticipant } />
+                translation = { !local && !isVirtualScreenshareParticipant } />
         }
         {
             _showDisplayName && (
