@@ -363,7 +363,9 @@ local function publish_listeners(room)
                     :text(encoded_listeners):up());
             end
 
-            if list and #list > 0 then
+            -- Only a delivered push is recorded; for a missing occupant the entry is dropped so a
+            -- rejoin with the same endpoint id gets a fresh push instead of being change-suppressed.
+            if occupant and list and #list > 0 then
                 state.last_sent_listeners[sender_id] = encoded_listeners;
             else
                 state.last_sent_listeners[sender_id] = nil;
