@@ -651,6 +651,54 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a Jingle IQ (XEP-0166/XEP-0339) to an occupant's full JID in a
+         * MUC room. Fire-and-forget — does NOT wait for a response.
+         *
+         * The pre-iq/full hook fires on the MUC component before routing, so any
+         * module that hooks that event will see the stanza synchronously.
+         *
+         * For session-accept, a <content name="video"> child is included when
+         * videoType is non-null. For source-add, a content/description/source
+         * chain with a videoType attribute is included.
+         *
+         * @param {string} toFullJid  Occupant full JID, e.g. 'room@conference.localhost/focus'
+         * @param {string} action     'session-accept' | 'source-add'
+         * @param {string|null} videoType  'camera' | 'desktop' | null (audio-only: no video content)
+         */
+        sendJingleIq(toFullJid, action, videoType = null) {
+            let contentEl;
+
+            if (videoType === null) {
+                // Audio-only: a content element with name='audio' and no description.
+                // session-accept: no content with name='video' → no flags set.
+                // source-add: no description/source path → no flags set.
+                contentEl = xml('content', { name: 'audio' });
+            } else {
+                const sourceEl = xml('source', {
+                    xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0',
+                    videoType
+                });
+                const descEl = xml('description', {
+                    xmlns: 'urn:xmpp:jingle:apps:rtp:1',
+                    media: 'video'
+                }, sourceEl);
+
+                contentEl = xml('content', { name: 'video' }, descEl);
+            }
+
+            return xmpp.send(
+                xml('iq', { type: 'set',
+                    to: toFullJid,
+                    id: `jingle-${++_counter}` },
+                    xml('jingle', {
+                        xmlns: 'urn:xmpp:jingle:1',
+                        action
+                    }, contentEl)
+                )
+            );
+        },
+
+        /**
          * Sends a muc#admin set IQ carrying multiple <item> children and
          * resolves with the server's IQ response. XEP-0045 allows batching
          * several affiliation/role changes in one stanza; use this to verify
