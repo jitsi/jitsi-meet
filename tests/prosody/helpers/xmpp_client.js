@@ -210,7 +210,7 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * @param {string} [opts.password]       room password to include in the join stanza
          * @param {string} [opts.displayName]    if set, includes a <nick> element in the presence
          */
-        async joinRoom(roomJid, nick, { timeout = 5000, password: roomPassword, extensions = [], displayName } = {}) {
+        async joinRoom(roomJid, nick, { timeout = 5000, password: roomPassword, extensions = [], mucContent = [], displayName } = {}) {
             // Default to the first 8 characters of the local part of the
             // server-assigned JID. Prosody's anonymous_strict mode requires MUC
             // resources to match this prefix, so callers that do not pass an
@@ -221,6 +221,12 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
 
             if (roomPassword !== undefined) {
                 mucX.c('password').t(roomPassword);
+            }
+
+            // Children placed INSIDE the muc <x> (e.g. a <billingid> element),
+            // as opposed to `extensions`, which are siblings of <x>.
+            for (const child of mucContent) {
+                mucX.cnode(child).up();
             }
 
             const nickEl = displayName
