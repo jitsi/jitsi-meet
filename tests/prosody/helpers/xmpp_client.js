@@ -210,7 +210,11 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * @param {string} [opts.password]       room password to include in the join stanza
          * @param {string} [opts.displayName]    if set, includes a <nick> element in the presence
          */
-        async joinRoom(roomJid, nick, { timeout = 5000, password: roomPassword, extensions = [], displayName } = {}) {
+        async joinRoom(roomJid, nick, { timeout = 5000,
+            password: roomPassword,
+            extensions = [],
+            mucContent = [],
+            displayName } = {}) {
             // Default to the first 8 characters of the local part of the
             // server-assigned JID. Prosody's anonymous_strict mode requires MUC
             // resources to match this prefix, so callers that do not pass an
@@ -221,6 +225,12 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
 
             if (roomPassword !== undefined) {
                 mucX.c('password').t(roomPassword);
+            }
+
+            // Children placed INSIDE the muc <x> (e.g. a <billingid> element),
+            // as opposed to `extensions`, which are siblings of <x>.
+            for (const child of mucContent) {
+                mucX.cnode(child).up();
             }
 
             const nickEl = displayName
@@ -583,6 +593,24 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sets the room subject by sending a groupchat message carrying only a
+         * <subject> element (XEP-0045 §8.1). Fire-and-forget — does NOT wait for
+         * the room's subject broadcast.
+         *
+         * @param {string} roomJid  e.g. 'room@conference.localhost'
+         * @param {string} subject  the new subject text
+         */
+        sendRoomSubject(roomJid, subject) {
+            return xmpp.send(
+                xml('message', { to: roomJid,
+                    type: 'groupchat',
+                    id: `subj-${++_counter}` },
+                    xml('subject', {}, subject)
+                )
+            );
+        },
+
+        /**
          * Sends a groupchat message with a <json-message> child to the room.
          * Fire-and-forget — does NOT wait for the MUC reflection stanza.
          * Use when testing hooks that may crash or block the message before it
@@ -646,6 +674,54 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
                     xml('query', { xmlns: 'http://jabber.org/protocol/muc#admin' },
                         xml('item', itemAttrs)
                     )
+                )
+            );
+        },
+
+        /**
+         * Sends a Jingle IQ (XEP-0166/XEP-0339) to an occupant's full JID in a
+         * MUC room. Fire-and-forget — does NOT wait for a response.
+         *
+         * The pre-iq/full hook fires on the MUC component before routing, so any
+         * module that hooks that event will see the stanza synchronously.
+         *
+         * For session-accept, a <content name="video"> child is included when
+         * videoType is non-null. For source-add, a content/description/source
+         * chain with a videoType attribute is included.
+         *
+         * @param {string} toFullJid  Occupant full JID, e.g. 'room@conference.localhost/focus'
+         * @param {string} action     'session-accept' | 'source-add'
+         * @param {string|null} videoType  'camera' | 'desktop' | null (audio-only: no video content)
+         */
+        sendJingleIq(toFullJid, action, videoType = null) {
+            let contentEl;
+
+            if (videoType === null) {
+                // Audio-only: a content element with name='audio' and no description.
+                // session-accept: no content with name='video' → no flags set.
+                // source-add: no description/source path → no flags set.
+                contentEl = xml('content', { name: 'audio' });
+            } else {
+                const sourceEl = xml('source', {
+                    xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0',
+                    videoType
+                });
+                const descEl = xml('description', {
+                    xmlns: 'urn:xmpp:jingle:apps:rtp:1',
+                    media: 'video'
+                }, sourceEl);
+
+                contentEl = xml('content', { name: 'video' }, descEl);
+            }
+
+            return xmpp.send(
+                xml('iq', { type: 'set',
+                    to: toFullJid,
+                    id: `jingle-${++_counter}` },
+                    xml('jingle', {
+                        xmlns: 'urn:xmpp:jingle:1',
+                        action
+                    }, contentEl)
                 )
             );
         },
