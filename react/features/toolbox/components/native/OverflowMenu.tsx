@@ -31,8 +31,8 @@ import { getVisibleNativeButtons } from '../../functions.native';
 import { useNativeToolboxButtons } from '../../hooks.native';
 import { IToolboxNativeButton } from '../../types';
 
-import AudioOnlyButton from './AudioOnlyButton';
 import LinkToSalesforceButton from './LinkToSalesforceButton';
+import LowBandwidthModeButton from './LowBandwidthModeButton';
 import OpenCarmodeButton from './OpenCarmodeButton';
 import RaiseHandButton from './RaiseHandButton';
 
@@ -157,7 +157,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 renderFooter = { this._renderReactionMenu }>
                 <Divider style = { styles.divider as ViewStyle } />
                 <OpenCarmodeButton { ...topButtonProps } />
-                <AudioOnlyButton { ...buttonProps } />
+                <LowBandwidthModeButton { ...buttonProps } />
                 { this._renderRaiseHandButton(buttonProps) }
                 {/* @ts-ignore */}
                 <SecurityDialogButton { ...buttonProps } />

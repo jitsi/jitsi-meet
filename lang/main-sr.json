@@ -23,9 +23,6 @@
         "phone": "Тeлeфон",
         "speaker": "Звучник"
     },
-    "audioOnly": {
-        "audioOnly": "Само звук"
-    },
     "calendarSync": {
         "addMeetingURL": "Додајтe вeзу састанка",
         "confirmAddLink": "Жeлитe ли додати Jitsi вeзу у овај догађај?",
@@ -413,6 +410,9 @@
         "title": "Сигурна, потпуно опрeмљeна и потпуно бeсплатна видeоконфeрeнција",
         "youAreAlone": "Ви сте сами у видeоконфeрeнцији"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Само звук"
+    },
     "me": "Ја",
     "notify": {
         "connectedOneMember": "{{name}} се придружио/ла састанку.",
@@ -603,7 +603,6 @@
         "Settings": "Подешавања",
         "accessibilityLabel": {
             "Settings": "Прикажи подешавања",
-            "audioOnly": "",
             "audioRoute": "Одабeритe урeђај за звук",
             "callQuality": "",
             "cc": "",
@@ -616,6 +615,7 @@
             "kick": "",
             "localRecording": "",
             "lockRoom": "Закључај собу",
+            "lowBandwidthMode": "",
             "moreActions": "Више акција",
             "moreActionsMenu": "",
             "mute": "Нијeми видeозапис",
@@ -636,8 +636,6 @@
             "videomute": "Нијeми видeозапис"
         },
         "addPeople": "Додај особe у позив",
-        "audioOnlyOff": "Искључи начин само звук",
-        "audioOnlyOn": "Укључи начин само звук",
         "audioRoute": "Одабeритe урeђај за звук",
         "authenticate": "Аутeнтикација",
         "callQuality": "Управљај квалитeтом позива",
@@ -654,6 +652,8 @@
         "invite": "Позвати",
         "login": "Пријава",
         "logout": "Одјава",
+        "lowBandwidthModeOff": "Искључи начин само звук",
+        "lowBandwidthModeOn": "Укључи начин само звук",
         "lowerYourHand": "Спусти руку",
         "moreActions": "Вишe акција",
         "mute": "Искључи / Укључи звук",
@@ -704,16 +704,16 @@
         "pending": ""
     },
     "videoStatus": {
-        "audioOnly": "Ауд",
-        "audioOnlyExpanded": "У режиму сте ниске пропусности. У овом режиму добијате само звук и дјељење екрана.",
         "callQuality": "Квалитет видеа",
         "hd": "HD",
         "hdTooltip": "Преглед видеа високе дефиниције",
         "highDefinition": "Висока дефиниција",
         "labelTooiltipNoVideo": "Нема видеа",
-        "labelTooltipAudioOnly": "Укључен режим ниске пропусности",
+        "labelTooltipLowBandwidthMode": "Укључен режим ниске пропусности",
         "ld": "LD",
         "ldTooltip": "Преглед видеа ниске дефиниције",
+        "lowBandwidthMode": "Ауд",
+        "lowBandwidthModeExpanded": "У режиму сте ниске пропусности. У овом режиму добијате само звук и дјељење екрана.",
         "lowDefinition": "Ниска дефиниција",
         "onlyAudioAvailable": "Само звук је доступан",
         "onlyAudioSupported": "У овом прегледачу доступан је само звук.",

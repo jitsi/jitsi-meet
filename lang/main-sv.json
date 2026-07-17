@@ -39,9 +39,6 @@
         "phone": "Telefon",
         "speaker": "Högtalare"
     },
-    "audioOnly": {
-        "audioOnly": "Enbart ljud"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "t.ex. 10000000 för 10 Mbps",
         "assumedBandwidthBpsWarning": "Högre värden kan skapa nätverksproblem.",
@@ -808,6 +805,9 @@
         "button": "Bjud in andra",
         "youAreAlone": "Du är ensam i mötet"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Enbart ljud"
+    },
     "me": "jag",
     "notify": {
         "OldElectronAPPTitle": "Säkerhetsproblem!",
@@ -1309,7 +1309,6 @@
         "Settings": "Inställningar",
         "accessibilityLabel": {
             "Settings": "Öppna eller stäng inställningar",
-            "audioOnly": "Slå av eller på ljudet",
             "audioRoute": "Välj ljudenhet",
             "boo": "Bua",
             "breakoutRooms": "Grupprum",
@@ -1353,6 +1352,7 @@
             "localRecording": "Växla lokala inspelningskontroller",
             "lockRoom": "Växla möteslösenord",
             "love": "Kärlek",
+            "lowBandwidthMode": "Slå av eller på ljudet",
             "lowerHand": "Sänk din hand",
             "moreActions": "Fler åtgärder",
             "moreActionsMenu": "Menyn Fler åtgärder",
@@ -1415,8 +1415,6 @@
                 "label": "Stereo"
             }
         },
-        "audioOnlyOff": "Avsluta ljudläget",
-        "audioOnlyOn": "Starta ljudläget",
         "audioRoute": "Välj ljudenhet",
         "audioSettings": "Ljud inställningar",
         "authenticate": "Autentisera",
@@ -1461,6 +1459,8 @@
         "login": "Logga in",
         "logout": "Logga ut",
         "love": "Kärlek",
+        "lowBandwidthModeOff": "Avsluta ljudläget",
+        "lowBandwidthModeOn": "Starta ljudläget",
         "lowerYourHand": "Ta ner handen",
         "moreActions": "Fler handlingar",
         "moreOptions": "Visa fler alternativ",
@@ -1552,8 +1552,6 @@
     },
     "videoStatus": {
         "adjustFor": "Justera för:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Du använder ljudläget. Läget sparar bandbredd men du kan inte se andras videor.",
         "bestPerformance": "Bäst prestanda",
         "callQuality": "Videokvalitet",
         "hd": "HD",
@@ -1561,9 +1559,11 @@
         "highDefinition": "Hög upplösning",
         "highestQuality": "Högsta kvalitet",
         "labelTooiltipNoVideo": "Ingen video",
-        "labelTooltipAudioOnly": "Läge med enbart ljud aktiverat",
+        "labelTooltipLowBandwidthMode": "Läge med enbart ljud aktiverat",
         "ld": "LD",
         "ldTooltip": "Titta på lågupplöst video",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Du använder ljudläget. Läget sparar bandbredd men du kan inte se andras videor.",
         "lowDefinition": "Låg upplösning",
         "performanceSettings": "Prestandainställningar",
         "recording": "Inspelning pågår",

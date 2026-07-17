@@ -36,9 +36,6 @@
         "phone": "Teléfono",
         "speaker": "Altavoz"
     },
-    "audioOnly": {
-        "audioOnly": "Solo sonido y pantalla compartida"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "por ejemplo 10000000 para 10 Mbps",
         "assumedBandwidthBpsWarning": "Valores más altos podrían causar problemas de red.",
@@ -668,6 +665,9 @@
         "button": "Invita a otros",
         "youAreAlone": "Estás solo"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Solo sonido y pantalla compartida"
+    },
     "me": "yo",
     "notify": {
         "OldElectronAPPTitle": "¡Aplicación obsoleta e insegura!",
@@ -1112,7 +1112,6 @@
         "Settings": "Configuración",
         "accessibilityLabel": {
             "Settings": "Alternar configuración",
-            "audioOnly": "Alternar cámaras de los demás",
             "audioRoute": "Seleccionar el dispositivo de sonido",
             "boo": "Boo",
             "breakoutRoom": "Unirse/abandonar sala para grupos pequeños",
@@ -1153,6 +1152,7 @@
             "lobbyButton": "Activar / desactivar el modo lobby",
             "localRecording": "Alternar controles de grabación local",
             "lockRoom": "Alternar contraseña de la reunión",
+            "lowBandwidthMode": "Alternar cámaras de los demás",
             "lowerHand": "Bajar mano",
             "moreActions": "Alternar más acciones",
             "moreActionsMenu": "Menú de más acciones",
@@ -1200,8 +1200,6 @@
             "videounmute": "Encender cámara"
         },
         "addPeople": "Agregar personas a la llamada",
-        "audioOnlyOff": "Mostrar cámaras de los demás",
-        "audioOnlyOn": "Ocultar cámaras de los demás (para ahorrar datos)",
         "audioRoute": "Selecciona el dispositivo de sonido",
         "audioSettings": "Ajustes de audio",
         "authenticate": "Autenticar",
@@ -1241,6 +1239,8 @@
         "lobbyButtonEnable": "Activar el modo lobby",
         "login": "Inicio de sesión",
         "logout": "Cerrar sesión",
+        "lowBandwidthModeOff": "Mostrar cámaras de los demás",
+        "lowBandwidthModeOn": "Ocultar cámaras de los demás (para ahorrar datos)",
         "lowerYourHand": "Bajar la mano",
         "moreActions": "Más acciones",
         "moreOptions": "Más opciones",
@@ -1328,8 +1328,6 @@
     },
     "videoStatus": {
         "adjustFor": "Ajustar para:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Estás en modo de ancho de banda bajo. En este modo, sólo recibirás audio y pantalla compartida.",
         "bestPerformance": "Mejor rendimiento",
         "callQuality": "Calidad de vídeo",
         "hd": "HD",
@@ -1337,9 +1335,11 @@
         "highDefinition": "Alta definición",
         "highestQuality": "Calidad máxima",
         "labelTooiltipNoVideo": "Sin vídeo",
-        "labelTooltipAudioOnly": "Modo de ancho de banda bajo habilitado",
+        "labelTooltipLowBandwidthMode": "Modo de ancho de banda bajo habilitado",
         "ld": "LD",
         "ldTooltip": "Viendo vídeo en baja definición",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Estás en modo de ancho de banda bajo. En este modo, sólo recibirás audio y pantalla compartida.",
         "lowDefinition": "Baja definición",
         "performanceSettings": "Ajustes de rendimiento",
         "recording": "Grabación en curso",

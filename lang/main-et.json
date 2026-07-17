@@ -24,9 +24,6 @@
         "phone": "Telefon",
         "speaker": "Kõlar"
     },
-    "audioOnly": {
-        "audioOnly": "Ainult heli"
-    },
     "calendarSync": {
         "addMeetingURL": "Lisa kõne link",
         "confirmAddLink": "Kas soovid käesolevale kõnele lisada lingi?",
@@ -433,6 +430,9 @@
         "button": "Kutsu teisi",
         "youAreAlone": "Asud hetkel ruumis üksi"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Ainult heli"
+    },
     "me": "mina",
     "notify": {
         "connectedOneMember": "{{name}} ühines kõnega",
@@ -595,7 +595,6 @@
         "Settings": "Seaded",
         "accessibilityLabel": {
             "Settings": "Seadistused",
-            "audioOnly": "Kasuta ainult heli",
             "audioRoute": "Vali heli vahend",
             "callQuality": "Halda kõne kvaliteeti",
             "cc": "Kasuta subtiitreid",
@@ -610,6 +609,7 @@
             "kick": "Eemalda kõneleja",
             "localRecording": "Näita salvestamise paneeli",
             "lockRoom": "Kasuta kõne parooli",
+            "lowBandwidthMode": "Kasuta ainult heli",
             "moreActions": "Kasuta toimingute menüüd",
             "moreActionsMenu": "Toimingute menüü",
             "moreOptions": "Näita rohkem valikuid",
@@ -633,8 +633,6 @@
             "videomute": "Video väljalülitamine"
         },
         "addPeople": "Lisa kõnesse inimesi",
-        "audioOnlyOff": "Lülita “ainult heli” valik välja",
-        "audioOnlyOn": "Lülita “ainult heli” valik sisse",
         "audioRoute": "Vali heli vahend",
         "authenticate": "Autendi",
         "callQuality": "Halda kõne kvaliteeti",
@@ -653,6 +651,8 @@
         "invite": "Kutsu",
         "login": "Logi sisse",
         "logout": "Logi välja",
+        "lowBandwidthModeOff": "Lülita “ainult heli” valik välja",
+        "lowBandwidthModeOn": "Lülita “ainult heli” valik sisse",
         "lowerYourHand": "Langeta kätt",
         "moreActions": "Rohkem tegevusi",
         "moreOptions": "Rohkem valikuid",
@@ -713,16 +713,16 @@
         "pending": "{{displayName}} on kutsutud"
     },
     "videoStatus": {
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Kasutad kõnes ainult heli. See hõivab ülekandekiirust vähem, aga video jagamine on välja lülitatud.",
         "callQuality": "Kõne kvaliteet",
         "hd": "HD",
         "hdTooltip": "Video vaatamine kõrgkvaliteediga",
         "highDefinition": "Kõrgresolutsioon",
         "labelTooiltipNoVideo": "Video puudub",
-        "labelTooltipAudioOnly": "Valitud on “ainult heli” seadistus",
+        "labelTooltipLowBandwidthMode": "Valitud on “ainult heli” seadistus",
         "ld": "LD",
         "ldTooltip": "Video vaatamine madala kvaliteediga",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Kasutad kõnes ainult heli. See hõivab ülekandekiirust vähem, aga video jagamine on välja lülitatud.",
         "lowDefinition": "Madal",
         "onlyAudioAvailable": "Saab kasutada ainult heli",
         "onlyAudioSupported": "Selles veebilehitsejas on toetatud ainult heli.",

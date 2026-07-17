@@ -39,9 +39,6 @@
         "phone": "Phone",
         "speaker": "Speaker"
     },
-    "audioOnly": {
-        "audioOnly": "Low bandwidth"
-    },
     "audioTranslation": {
         "disabledForRoom": "Audio translation has been turned off for this meeting.",
         "errorForbidden": "You don't have permission to use audio translation.",
@@ -836,6 +833,9 @@
         "button": "Invite others",
         "youAreAlone": "You are the only one in the meeting"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Low bandwidth"
+    },
     "me": "me",
     "multiScreen": {
         "noParticipants": "No participants",
@@ -1362,7 +1362,6 @@
         "Settings": "Settings",
         "accessibilityLabel": {
             "Settings": "Open settings",
-            "audioOnly": "Toggle audio only",
             "audioRoute": "Select the sound device",
             "audioTranslation": "Translate audio",
             "boo": "Boo",
@@ -1407,6 +1406,7 @@
             "localRecording": "Toggle local recording controls",
             "lockRoom": "Toggle meeting password",
             "love": "Heart",
+            "lowBandwidthMode": "Toggle low bandwidth mode",
             "lowerHand": "Lower your hand",
             "moreActions": "More actions",
             "moreActionsMenu": "More actions menu",
@@ -1469,8 +1469,6 @@
                 "label": "Stereo"
             }
         },
-        "audioOnlyOff": "Disable low bandwidth mode",
-        "audioOnlyOn": "Enable low bandwidth mode",
         "audioRoute": "Select the sound device",
         "audioSettings": "Audio settings",
         "audioTranslation": "Translate audio",
@@ -1517,6 +1515,8 @@
         "login": "Log In",
         "logout": "Log Out",
         "love": "Heart",
+        "lowBandwidthModeOff": "Disable low bandwidth mode",
+        "lowBandwidthModeOn": "Enable low bandwidth mode",
         "lowerYourHand": "Lower your hand",
         "moreActions": "More actions",
         "moreOptions": "More options",
@@ -1615,8 +1615,6 @@
     },
     "videoStatus": {
         "adjustFor": "Adjust for:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "You are in low bandwidth mode. In this mode you will receive only audio and screen sharing.",
         "bestPerformance": "Best performance",
         "callQuality": "Video Quality (0 for best performance, 3 for highest quality)",
         "hd": "HD",
@@ -1624,9 +1622,11 @@
         "highDefinition": "High definition",
         "highestQuality": "Highest quality",
         "labelTooiltipNoVideo": "No video",
-        "labelTooltipAudioOnly": "Low bandwidth mode enabled",
+        "labelTooltipLowBandwidthMode": "Low bandwidth mode enabled",
         "ld": "LD",
         "ldTooltip": "Viewing low definition video",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "You are in low bandwidth mode. In this mode you will receive only audio and screen sharing.",
         "lowDefinition": "Low definition",
         "performanceSettings": "Performance settings",
         "recording": "This meeting is being recorded.",

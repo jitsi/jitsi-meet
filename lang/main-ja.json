@@ -36,9 +36,6 @@
         "phone": "電話",
         "speaker": "スピーカー"
     },
-    "audioOnly": {
-        "audioOnly": "音声のみ"
-    },
     "blankPage": {
         "meetingEnded": "ミーティングは終了しています。"
     },
@@ -591,6 +588,9 @@
         "button": "他の人を招待する",
         "youAreAlone": "このミーティングにいるのは、あなただけです。"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "音声のみ"
+    },
     "me": "自分",
     "notify": {
         "OldElectronAPPTitle": "セキュリティ上の脆弱性があります!",
@@ -973,7 +973,6 @@
         "Settings": "設定",
         "accessibilityLabel": {
             "Settings": "設定の切り替え",
-            "audioOnly": "音声のみの切り替え",
             "audioRoute": "オーディオデバイスの選択",
             "boo": "ブーイング",
             "breakoutRoom": "ブレイクアウトルームに参加 / 退出",
@@ -998,6 +997,7 @@
             "lobbyButton": "ロビーモードの有効 / 無効",
             "localRecording": "ローカル録画コントロールの切り替え",
             "lockRoom": "ミーティングパスワードの切り替え",
+            "lowBandwidthMode": "音声のみの切り替え",
             "moreActions": "詳細な操作",
             "moreActionsMenu": "詳細な操作メニュー",
             "moreOptions": "詳細オプションの表示",
@@ -1033,8 +1033,6 @@
             "videomute": "ビデオの開始 / 停止"
         },
         "addPeople": "あなたの通話に人を追加",
-        "audioOnlyOff": "音声のみモードを無効",
-        "audioOnlyOn": "音声のみモードを有効",
         "audioRoute": "サウンドデバイスの選択",
         "audioSettings": "オーディオ設定",
         "authenticate": "認証",
@@ -1066,6 +1064,8 @@
         "lobbyButtonEnable": "ロビーモードを有効",
         "login": "ログイン",
         "logout": "ログアウト",
+        "lowBandwidthModeOff": "音声のみモードを無効",
+        "lowBandwidthModeOn": "音声のみモードを有効",
         "lowerYourHand": "手を下げる",
         "moreActions": "詳細アクション",
         "moreOptions": "詳細オプション",
@@ -1141,8 +1141,6 @@
     },
     "videoStatus": {
         "adjustFor": "次のように調整:",
-        "audioOnly": "音声のみ",
-        "audioOnlyExpanded": "音声のみモードにいます。このモードではオーディオと画面の共有のみを受信します。",
         "bestPerformance": "最高速度",
         "callQuality": "ビデオの品質",
         "hd": "HD",
@@ -1150,9 +1148,11 @@
         "highDefinition": "高画質",
         "highestQuality": "最高品質",
         "labelTooiltipNoVideo": "ビデオなし",
-        "labelTooltipAudioOnly": "音声のみモードが有効",
+        "labelTooltipLowBandwidthMode": "音声のみモードが有効",
         "ld": "LD",
         "ldTooltip": "低画質ビデオの視聴",
+        "lowBandwidthMode": "音声のみ",
+        "lowBandwidthModeExpanded": "音声のみモードにいます。このモードではオーディオと画面の共有のみを受信します。",
         "lowDefinition": "低画質",
         "performanceSettings": "パフォーマンス設定",
         "sd": "SD",

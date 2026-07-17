@@ -39,9 +39,6 @@
         "phone": "Điện thoại",
         "speaker": "Diễn giả"
     },
-    "audioOnly": {
-        "audioOnly": "Chỉ nghe âm thanh"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "ví dụ. 10000000 cho 10 Mb/giây",
         "assumedBandwidthBpsWarning": "Giá trị cao hơn có thể gây ra sự cố mạng.",
@@ -721,6 +718,9 @@
         "button": "Mời người khác",
         "youAreAlone": "Chỉ có một mình bạn trong cuộc họp"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Chỉ nghe âm thanh"
+    },
     "me": "Tôi",
     "notify": {
         "OldElectronAPPTitle": "Lỗ hổng bảo mật!",
@@ -1177,7 +1177,6 @@
         "Settings": "Cài đặt",
         "accessibilityLabel": {
             "Settings": "Mở/Đóng Cấu hình",
-            "audioOnly": "Chuyển sang chỉ nghe âm thanh",
             "audioRoute": "Chọn thiết bị âm thanh",
             "boo": "Boo",
             "breakoutRooms": "Phòng nhóm",
@@ -1218,6 +1217,7 @@
             "lobbyButton": "Bật/Tắt chế độ sảnh chờ",
             "localRecording": "Bật/Tắt điều khiển ghi hình cục bộ",
             "lockRoom": "Mở/Đóng mật khẩu phòng họp",
+            "lowBandwidthMode": "Chuyển sang chỉ nghe âm thanh",
             "lowerHand": "Hạ tay xuống",
             "moreActions": "Xem thêm",
             "moreActionsMenu": "Menu thêm",
@@ -1265,8 +1265,6 @@
             "videounmute": "Bật camera"
         },
         "addPeople": "Thêm người vào cuộc họp",
-        "audioOnlyOff": "Tắt chế độ chỉ nghe âm thanh",
-        "audioOnlyOn": "Bật chế độ chỉ nghe âm thanh",
         "audioRoute": "Chọn thiết bị âm thanh",
         "audioSettings": "Cài đặt âm thanh",
         "authenticate": "Xác thực",
@@ -1306,6 +1304,8 @@
         "lobbyButtonEnable": "Bật chế độ lối vào",
         "login": "Đăng nhập",
         "logout": "Đăng xuất",
+        "lowBandwidthModeOff": "Tắt chế độ chỉ nghe âm thanh",
+        "lowBandwidthModeOn": "Bật chế độ chỉ nghe âm thanh",
         "lowerYourHand": "Hạ tay",
         "moreActions": "Thêm hành động",
         "moreOptions": "Hiển thị thêm tùy chọn",
@@ -1390,8 +1390,6 @@
     },
     "videoStatus": {
         "adjustFor": "Điều chỉnh cho:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Bạn đang ở chế độ chỉ nghe âm thanh. Chế độ này giảm băng thông nhưng không thấy hình ảnh người khác.",
         "bestPerformance": "Hiệu suất tốt nhất",
         "callQuality": "Chất lượng hình ảnh",
         "hd": "HD",
@@ -1399,9 +1397,11 @@
         "highDefinition": "Độ phân giải cao",
         "highestQuality": "Chất lượng cao nhất",
         "labelTooiltipNoVideo": "Không hình ảnh",
-        "labelTooltipAudioOnly": "Chế độ chỉ nghe âm thanh đã bật",
+        "labelTooltipLowBandwidthMode": "Chế độ chỉ nghe âm thanh đã bật",
         "ld": "LD",
         "ldTooltip": "Xem video chất lượng thấp",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Bạn đang ở chế độ chỉ nghe âm thanh. Chế độ này giảm băng thông nhưng không thấy hình ảnh người khác.",
         "lowDefinition": "Độ phân giải thấp",
         "performanceSettings": "Cài đặt hiệu suất",
         "recording": "Đang ghi",

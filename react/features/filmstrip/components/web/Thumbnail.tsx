@@ -121,11 +121,6 @@ export interface IProps extends WithTranslation {
     _isActiveParticipant: boolean;
 
     /**
-     * Indicates whether audio only mode is enabled.
-     */
-    _isAudioOnly: boolean;
-
-    /**
      * Indicates whether the participant associated with the thumbnail is displayed on the large video.
      */
     _isCurrentlyOnLargeVideo: boolean;
@@ -139,6 +134,11 @@ export interface IProps extends WithTranslation {
      * Indicates whether the thumbnail should be hidden or not.
      */
     _isHidden: boolean;
+
+    /**
+     * Indicates whether audio only mode is enabled.
+     */
+    _isLowBandwidthMode: boolean;
 
     /**
      * Whether we are currently running in a mobile browser.
@@ -485,7 +485,7 @@ class Thumbnail extends Component<IProps, IState> {
      */
     _maybeSendScreenSharingIssueEvents(input: any) {
         const {
-            _isAudioOnly,
+            _isLowBandwidthMode,
             _isScreenSharing,
             _thumbnailType
         } = this.props;
@@ -495,7 +495,7 @@ class Thumbnail extends Component<IProps, IState> {
         if (!(DISPLAY_VIDEO === displayMode)
             && isTileType
             && _isScreenSharing
-            && !_isAudioOnly) {
+            && !_isLowBandwidthMode) {
             sendAnalytics(createScreenSharingIssueEvent({
                 source: 'thumbnail',
                 ...input
@@ -1308,7 +1308,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         _disableTileEnlargement: Boolean(disableTileEnlargement),
         _isActiveParticipant: isActiveParticipant,
         _isHidden: isLocal && iAmRecorder && !iAmSipGateway,
-        _isAudioOnly: Boolean(state['features/base/audio-only'].enabled),
+        _isLowBandwidthMode: Boolean(state['features/base/low-bandwidth-mode'].enabled),
         _isCurrentlyOnLargeVideo: participantCurrentlyOnLargeVideo,
         _isDominantSpeakerDisabled: interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR,
         _isMobile,

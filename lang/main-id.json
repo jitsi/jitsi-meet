@@ -39,9 +39,6 @@
         "phone": "Ponsel",
         "speaker": "Speaker"
     },
-    "audioOnly": {
-        "audioOnly": "Bandwidth rendah"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "misalnya 10000000 untuk 10 Mbps",
         "assumedBandwidthBpsWarning": "Nilai yang lebih tinggi dapat menyebabkan masalah jaringan.",
@@ -723,6 +720,9 @@
         "button": "Undang orang lain",
         "youAreAlone": "Anda satu-satunya di pertemuan ini"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Bandwidth rendah"
+    },
     "me": "saya",
     "notify": {
         "OldElectronAPPTitle": "Kerentanan keamanan!",
@@ -1184,7 +1184,6 @@
         "Settings": "Pengaturan",
         "accessibilityLabel": {
             "Settings": "Buka pengaturan",
-            "audioOnly": "Alihkan ke audio saja",
             "audioRoute": "Pilih perangkat suara",
             "boo": "Ba",
             "breakoutRooms": "Ruang breakout",
@@ -1225,6 +1224,7 @@
             "lobbyButton": "Aktifkan/nonaktifkan mode lobi",
             "localRecording": "Alihkan kontrol rekaman lokal",
             "lockRoom": "Alihkan kata sandi pertemuan",
+            "lowBandwidthMode": "Alihkan ke audio saja",
             "lowerHand": "Turunkan tangan Anda",
             "moreActions": "Tindakan lebih lanjut",
             "moreActionsMenu": "Menu tindakan lebih lanjut",
@@ -1272,8 +1272,6 @@
             "videounmute": "Hidupkan kamera"
         },
         "addPeople": "Tambahkan orang ke panggilan Anda",
-        "audioOnlyOff": "Nonaktifkan mode bandwidth rendah",
-        "audioOnlyOn": "Aktifkan mode bandwidth rendah",
         "audioRoute": "Pilih perangkat suara",
         "audioSettings": "Pengaturan Audio",
         "authenticate": "Autentikasi",
@@ -1312,6 +1310,8 @@
         "lobbyButtonEnable": "Aktifkan mode lobi",
         "login": "Masuk",
         "logout": "Keluar",
+        "lowBandwidthModeOff": "Nonaktifkan mode bandwidth rendah",
+        "lowBandwidthModeOn": "Aktifkan mode bandwidth rendah",
         "lowerYourHand": "Turunkan tangan Anda",
         "moreActions": "Tindakan lebih lanjut",
         "moreOptions": "Tampilkan lebih banyak opsi",
@@ -1397,8 +1397,6 @@
     },
     "videoStatus": {
         "adjustFor": "Sesuaikan untuk:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Anda berada dalam mode bandwidth rendah. Dalam mode ini, Anda hanya akan menerima audio dan berbagi layar.",
         "bestPerformance": "Kinerja terbaik",
         "callQuality": "Kualitas Video (0 untuk kinerja terbaik, 3 untuk kualitas tertinggi)",
         "hd": "HD",
@@ -1406,9 +1404,11 @@
         "highDefinition": "Definisi tinggi",
         "highestQuality": "Kualitas tertinggi",
         "labelTooiltipNoVideo": "Tidak ada video",
-        "labelTooltipAudioOnly": "Mode bandwidth rendah diaktifkan",
+        "labelTooltipLowBandwidthMode": "Mode bandwidth rendah diaktifkan",
         "ld": "LD",
         "ldTooltip": "Menonton video definisi rendah",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Anda berada dalam mode bandwidth rendah. Dalam mode ini, Anda hanya akan menerima audio dan berbagi layar.",
         "lowDefinition": "Definisi rendah",
         "performanceSettings": "Pengaturan kinerja",
         "recording": "Perekaman sedang berlangsung",

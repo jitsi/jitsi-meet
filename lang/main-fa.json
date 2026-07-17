@@ -41,9 +41,6 @@
         "phone": "تلفن",
         "speaker": "بلندگو"
     },
-    "audioOnly": {
-        "audioOnly": "پهنای باند کم"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "برای مثال ۱۰۰۰۰۰۰۰ برای ۱۰ مگابایت",
         "assumedBandwidthBpsWarning": "مقدارهای بالاتر ممکن است باعث مشکلات شبکه شوند.",
@@ -800,6 +797,9 @@
         "button": "دعوت از دیگران",
         "youAreAlone": "شما در جلسه تنها هستید"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "پهنای باند کم"
+    },
     "me": "من",
     "notify": {
         "OldElectronAPPTitle": "آسیب‌پذیری امنیتی!",
@@ -1307,7 +1307,6 @@
         "Settings": "تنظیمات",
         "accessibilityLabel": {
             "Settings": "باز کردن تنظیمات",
-            "audioOnly": "تغییر وضعیت حالتِ فقط صدا",
             "audioRoute": "دستگاه صوتی را انتخاب کنید",
             "boo": "هُوکردن",
             "breakoutRooms": "اتاق‌های جانبی",
@@ -1350,6 +1349,7 @@
             "localRecording": "تغییر وضعیت کنترل‌های ضبط محلی",
             "lockRoom": "تغییر وضعیت گذرواژهٔ جلسه",
             "love": "قلب",
+            "lowBandwidthMode": "تغییر وضعیت حالتِ فقط صدا",
             "lowerHand": "پایین‌آوردن دستتان",
             "moreActions": "اقدامات بیش‌تر",
             "moreActionsMenu": "فهرست اقدامات بیش‌تر",
@@ -1412,8 +1412,6 @@
                 "label": "استریو"
             }
         },
-        "audioOnlyOff": "غیرفعال‌کردن حالت پهنای باند کم",
-        "audioOnlyOn": "فعال‌کردن حالت پهنای باند کم",
         "audioRoute": "انتخاب دستگاه صوتی",
         "audioSettings": "تنظیمات صدا",
         "authenticate": "احراز هویت",
@@ -1456,6 +1454,8 @@
         "login": "ورود",
         "logout": "خروج",
         "love": "قلب",
+        "lowBandwidthModeOff": "غیرفعال‌کردن حالت پهنای باند کم",
+        "lowBandwidthModeOn": "فعال‌کردن حالت پهنای باند کم",
         "lowerYourHand": "پایین‌آوردن دستتان",
         "moreActions": "اقدامات بیش‌تر",
         "moreOptions": "انتخاب‌های بیش‌تر",
@@ -1547,8 +1547,6 @@
     },
     "videoStatus": {
         "adjustFor": "تنظیم‌کردن برای:",
-        "audioOnly": "فقط صدا",
-        "audioOnlyExpanded": "شما در حالت پهنای باند کم هستید. در این حالت فقط صدا و اشتراک‌گذاری صفحهٔ نمایش را دریافت خواهید کرد.",
         "bestPerformance": "بهترین کارایی",
         "callQuality": "کیفیت ویدیو (۰ برای بهترین کارایی، ۳ برای بالاترین کیفیت)",
         "hd": "کیفیت بالا",
@@ -1556,9 +1554,11 @@
         "highDefinition": "کیفیت بالا",
         "highestQuality": "بالاترین کیفیت",
         "labelTooiltipNoVideo": "بدون ویدیو",
-        "labelTooltipAudioOnly": "حالت پهنای باند کم فعال‌شد",
+        "labelTooltipLowBandwidthMode": "حالت پهنای باند کم فعال‌شد",
         "ld": "کیفیت پایین",
         "ldTooltip": "مشاهدهٔ ویدیوی کیفیت پایین",
+        "lowBandwidthMode": "فقط صدا",
+        "lowBandwidthModeExpanded": "شما در حالت پهنای باند کم هستید. در این حالت فقط صدا و اشتراک‌گذاری صفحهٔ نمایش را دریافت خواهید کرد.",
         "lowDefinition": "کیفیت پایین",
         "performanceSettings": "تنظیمات کارایی",
         "recording": "این جلسه در حال ضبط است.",

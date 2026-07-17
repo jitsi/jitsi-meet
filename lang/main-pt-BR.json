@@ -39,9 +39,6 @@
         "phone": "Celular",
         "speaker": "Alto-falantes"
     },
-    "audioOnly": {
-        "audioOnly": "Largura de banda baixa"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "Ex. 10000000 para 10 Mbps",
         "assumedBandwidthBpsWarning": "Valores mais altos podem causar erros de rede.",
@@ -714,6 +711,9 @@
         "button": "Convidar outros",
         "youAreAlone": "Você é o único na reunião"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Largura de banda baixa"
+    },
     "me": "eu",
     "notify": {
         "OldElectronAPPTitle": "Vulnerabilidade de segurança!",
@@ -1163,7 +1163,6 @@
         "Settings": "Configurações",
         "accessibilityLabel": {
             "Settings": "Alternar configurações",
-            "audioOnly": "Alternar para apenas áudio",
             "audioRoute": "Selecionar o dispositivo de som",
             "boo": "Vaia",
             "breakoutRooms": "Entrar/sair da sala de apoio",
@@ -1204,6 +1203,7 @@
             "lobbyButton": "Habilitar/desabilitar sala de espera",
             "localRecording": "Alternar controles de gravação local",
             "lockRoom": "Ativar/desativar senha de reunião",
+            "lowBandwidthMode": "Alternar para apenas áudio",
             "lowerHand": "Abaixar a mão",
             "moreActions": "Alternar mais menu de ações",
             "moreActionsMenu": "Menu de mais ações",
@@ -1251,8 +1251,6 @@
             "videounmute": "Ativar câmera"
         },
         "addPeople": "Adicionar pessoas à sua chamada",
-        "audioOnlyOff": "Desabilitar modo de largura de banda baixa",
-        "audioOnlyOn": "Habilitar modo de largura de banda baixa",
         "audioRoute": "Selecionar o dispositivo de som",
         "audioSettings": "Configurações de áudio",
         "authenticate": "Autenticar",
@@ -1292,6 +1290,8 @@
         "lobbyButtonEnable": "Habilitar sala de espera",
         "login": "Iniciar sessão",
         "logout": "Encerrar sessão",
+        "lowBandwidthModeOff": "Desabilitar modo de largura de banda baixa",
+        "lowBandwidthModeOn": "Habilitar modo de largura de banda baixa",
         "lowerYourHand": "Baixar a mão",
         "moreActions": "Mais ações",
         "moreOptions": "Mais opções",
@@ -1379,8 +1379,6 @@
     },
     "videoStatus": {
         "adjustFor": "Ajustar para:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Você está em modo de banda baixa. Neste modo, se recebe somente áudio e compartilhamento de tela.",
         "bestPerformance": "Melhor performance",
         "callQuality": "Qualidade de vídeo",
         "hd": "HD",
@@ -1388,9 +1386,11 @@
         "highDefinition": "Alta definição (HD)",
         "highestQuality": "Alta qualidade",
         "labelTooiltipNoVideo": "Sem vídeo",
-        "labelTooltipAudioOnly": "Modo de largura de banda baixa habilitada",
+        "labelTooltipLowBandwidthMode": "Modo de largura de banda baixa habilitada",
         "ld": "LD",
         "ldTooltip": "Ver vídeo em baixa definição",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Você está em modo de banda baixa. Neste modo, se recebe somente áudio e compartilhamento de tela.",
         "lowDefinition": "Baixa definição (LD)",
         "performanceSettings": "Configurações de performance",
         "recording": "Gravação em andamento",

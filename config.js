@@ -206,7 +206,7 @@ var config = {
 
     // Start the conference in audio only mode (no video is being received nor
     // sent).
-    // startAudioOnly: false,
+    // startLowBandwidthMode: false,
 
     // Every participant after the Nth will start audio muted.
     // startAudioMuted: 10,
