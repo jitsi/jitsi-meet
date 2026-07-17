@@ -1164,7 +1164,9 @@ function initCommands() {
             break;
         }
         case 'rooms-info': {
-            callback(getRoomsInfo(APP.store.getState()));
+            const { includeHidden } = request;
+
+            callback(getRoomsInfo(APP.store.getState(), includeHidden));
             break;
         }
         case 'get-shared-document-url': {

@@ -757,11 +757,14 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Returns the rooms info in the conference.
      *
+     * @param {boolean} includeHidden - Whether to include hidden participants
+     * (e.g. Jibri, transcriber) in the result. Defaults to false.
      * @returns {Promise<Object>} Rooms info.
      */
-    getRoomsInfo() {
+    getRoomsInfo(includeHidden = false) {
         return this._transport.sendRequest({
-            name: 'rooms-info'
+            name: 'rooms-info',
+            includeHidden
         });
     }
 
