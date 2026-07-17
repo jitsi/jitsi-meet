@@ -27,7 +27,7 @@ export const AUDIO_MUTE_BUTTON_ENABLED = 'audio-mute.enabled';
  * Flag indicating that the Audio only button in the overflow menu is enabled.
  * Default: enabled (true).
  */
-export const AUDIO_ONLY_BUTTON_ENABLED = 'audio-only.enabled';
+export const LOW_BANDWIDTH_MODE_BUTTON_ENABLED = 'low-bandwidth-mode.enabled';
 
 /**
  * Flag indicating that the Breakout Rooms button in the overflow menu is enabled.

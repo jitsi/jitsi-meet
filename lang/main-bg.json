@@ -39,9 +39,6 @@
         "phone": "Телефон",
         "speaker": "Високоговорител"
     },
-    "audioOnly": {
-        "audioOnly": "Само звук"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "напр. 10000000 за 10 Mbps",
         "assumedBandwidthBpsWarning": "Високи стойности могат да причинят проблеми с мрежата.",
@@ -784,6 +781,9 @@
         "button": "Поканете участници",
         "youAreAlone": "Вие сте сами в срещата"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Само звук"
+    },
     "me": "аз",
     "notify": {
         "OldElectronAPPTitle": "Уязвимост в сигурността!",
@@ -1283,7 +1283,6 @@
         "Settings": "Настройки",
         "accessibilityLabel": {
             "Settings": "Промяна на настройки",
-            "audioOnly": "Пускане на режим само със звук",
             "audioRoute": "Изберете устройство за звук",
             "boo": "Бу",
             "breakoutRooms": "Работни стаи",
@@ -1326,6 +1325,7 @@
             "localRecording": "Показване на контроли за локален запис",
             "lockRoom": "Смяна парола на среща",
             "love": "Сърце",
+            "lowBandwidthMode": "Пускане на режим само със звук",
             "lowerHand": "Свали ръката",
             "moreActions": "Показване на меню с повече опции",
             "moreActionsMenu": "Меню с повече опции",
@@ -1388,8 +1388,6 @@
                 "label": "Стерео"
             }
         },
-        "audioOnlyOff": "Спиране режима с нисък трафик",
-        "audioOnlyOn": "Пускане режима с нисък трафик",
         "audioRoute": "Изберете устройство за звук",
         "audioSettings": "Аудио настройки",
         "authenticate": "Идентификация",
@@ -1431,6 +1429,8 @@
         "login": "Влез",
         "logout": "Изход",
         "love": "Сърце",
+        "lowBandwidthModeOff": "Спиране режима с нисък трафик",
+        "lowBandwidthModeOn": "Пускане режима с нисък трафик",
         "lowerYourHand": "Махни искането на думата",
         "moreActions": "Още опции",
         "moreOptions": "Повече опции",
@@ -1521,8 +1521,6 @@
     },
     "videoStatus": {
         "adjustFor": "Настрой за:",
-        "audioOnly": "АУДИО",
-        "audioOnlyExpanded": "Вие сте в режим на нисък трафик. В този режим ще получавате само аудио или споделени екрани.",
         "bestPerformance": "Най-добра производителност",
         "callQuality": "Качество на видеото",
         "hd": "HD",
@@ -1530,9 +1528,11 @@
         "highDefinition": "Високо качество",
         "highestQuality": "Най-високо качество",
         "labelTooiltipNoVideo": "Няма видео",
-        "labelTooltipAudioOnly": "Пуснат режим на нисък трафик",
+        "labelTooltipLowBandwidthMode": "Пуснат режим на нисък трафик",
         "ld": "LD",
         "ldTooltip": "Виждате ниско качество на видеото",
+        "lowBandwidthMode": "АУДИО",
+        "lowBandwidthModeExpanded": "Вие сте в режим на нисък трафик. В този режим ще получавате само аудио или споделени екрани.",
         "lowDefinition": "Ниско качество",
         "performanceSettings": "Настройки за производителност",
         "recording": "Тази среща се записва.",

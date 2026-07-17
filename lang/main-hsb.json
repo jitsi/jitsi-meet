@@ -37,9 +37,6 @@
         "phone": "telefon",
         "speaker": " wótřerěčak"
     },
-    "audioOnly": {
-        "audioOnly": "snadna pasmowa šěrokosć"
-    },
     "breakoutRooms": {
         "actions": {
             "add": "breakout-rumnosć přidać",
@@ -621,6 +618,9 @@
         "button": "druhich přeprosyć",
         "youAreAlone": "Wy sće sam/a na tutej konferency"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "snadna pasmowa šěrokosć"
+    },
     "me": "ja",
     "notify": {
         "OldElectronAPPTitle": "Problem z wěstotu!",
@@ -1021,7 +1021,6 @@
         "Settings": "nastajenja",
         "accessibilityLabel": {
             "Settings": "nastajenja zapnyć/hasnyć ",
-            "audioOnly": "„jenož awdijo“ zapnyć/hasnyć",
             "audioRoute": "awdijowy nastroj wuzwolić",
             "boo": "buh wołać",
             "breakoutRoom": "do breakout-rumnosće zastupić/wopušćić",
@@ -1050,6 +1049,7 @@
             "lobbyButton": "lobby-modus zapnyć/hasnyć",
             "localRecording": "lokalne nastajenske elementy za nahrawanje zapnyć/hasnyć",
             "lockRoom": "konferencne hesło zapnyć/hasnyć",
+            "lowBandwidthMode": "„jenož awdijo“ zapnyć/hasnyć",
             "moreActions": "meni „dalše akcije“ zapnyć/hasnyć ",
             "moreActionsMenu": "meni „dalše akcije“",
             "moreOptions": "meni „dalše opcije“",
@@ -1086,8 +1086,6 @@
             "videomute": "„něme šaltowanje wideja zapnyć/hasnyć "
         },
         "addPeople": "wobdźělnika ke konferency přidać",
-        "audioOnlyOff": "modus „jenož awdijo“ deaktiwěrować",
-        "audioOnlyOn": " modus „jenož awdijo“ aktiwěrować ",
         "audioRoute": "awdijowy nastroj wuzwolić",
         "audioSettings": "nastajenja za awdijo",
         "authenticate": "so přizjewić",
@@ -1122,6 +1120,8 @@
         "lobbyButtonEnable": "lobby-modus aktiwěrować",
         "login": "so přizjewić",
         "logout": "so wotzjewić",
+        "lowBandwidthModeOff": "modus „jenož awdijo“ deaktiwěrować",
+        "lowBandwidthModeOn": " modus „jenož awdijo“ aktiwěrować ",
         "lowerYourHand": "ruku spušćić",
         "moreActions": "dalše nastajenja",
         "moreOptions": "dalše opcije",
@@ -1197,8 +1197,6 @@
     },
     "videoStatus": {
         "adjustFor": "nastajić za:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Sće w modusu „jenož awdijo“. Tutón modus trjeba mjenje pasmoweje šěrokosće, njewidźiće pak wideja druhich.",
         "bestPerformance": "najlěpši wukon",
         "callQuality": "kwalita wideja",
         "hd": "HD",
@@ -1206,9 +1204,11 @@
         "highDefinition": "wysoke rozpušćenje",
         "highestQuality": "najlěpša kwalita",
         "labelTooiltipNoVideo": "žadyn widejo",
-        "labelTooltipAudioOnly": "modus „jenož awdijo“ aktiwny",
+        "labelTooltipLowBandwidthMode": "modus „jenož awdijo“ aktiwny",
         "ld": "LD",
         "ldTooltip": "widejo so ze snadnym rozpušćenjom pokaza",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Sće w modusu „jenož awdijo“. Tutón modus trjeba mjenje pasmoweje šěrokosće, njewidźiće pak wideja druhich.",
         "lowDefinition": "snadne rozpušćenje",
         "performanceSettings": "nastajenja kwality",
         "sd": "SD",

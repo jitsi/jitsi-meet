@@ -7,7 +7,6 @@ import { sendAnalytics } from '../../analytics/functions';
 import { appNavigate } from '../../app/actions.native';
 import { IReduxState, IStore } from '../../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
-import { SET_AUDIO_ONLY } from '../../base/audio-only/actionTypes';
 import {
     CONFERENCE_CONNECTION_ESTABLISHED,
     CONFERENCE_FAILED,
@@ -21,9 +20,10 @@ import {
 } from '../../base/conference/functions';
 import { IJitsiConference } from '../../base/conference/reducer';
 import { getInviteURL } from '../../base/connection/functions';
+import { SET_LOW_BANDWIDTH_MODE } from '../../base/low-bandwidth-mode/actionTypes';
 import { setAudioMuted } from '../../base/media/actions';
 import { MEDIA_TYPE } from '../../base/media/constants';
-import { isVideoMutedByAudioOnly } from '../../base/media/functions';
+import { isVideoMutedByLowBandwidthMode } from '../../base/media/functions';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import {
     TRACK_ADDED,
@@ -80,8 +80,8 @@ CallIntegration && MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_CONNECTION_ESTABLISHED:
         return _conferenceConnectionEstablished(store, next, action);
 
-    case SET_AUDIO_ONLY:
-        return _setAudioOnly(store, next, action);
+    case SET_LOW_BANDWIDTH_MODE:
+        return _setLowBandwidthMode(store, next, action);
 
     case TRACK_ADDED:
     case TRACK_REMOVED:
@@ -274,7 +274,7 @@ function _conferenceWillJoin({ dispatch, getState }: IStore, next: Function, act
     const { callHandle, callUUID } = state['features/base/config'];
     const url = getInviteURL(state);
     const handle = callHandle || url.toString();
-    const hasVideo = !isVideoMutedByAudioOnly(state);
+    const hasVideo = !isVideoMutedByLowBandwidthMode(state);
 
     // If we already have a callUUID set, don't start a new call.
     if (conference.callUUID) {
@@ -352,7 +352,7 @@ function _handleConnectionServiceFailure(state: IReduxState) {
         if (AudioMode.setUseConnectionService) {
             AudioMode.setUseConnectionService(false);
 
-            const hasVideo = !isVideoMutedByAudioOnly(state);
+            const hasVideo = !isVideoMutedByLowBandwidthMode(state);
 
             // Set the desired audio mode, since we just reset the whole thing.
             AudioMode.setMode(hasVideo ? AudioMode.VIDEO_CALL : AudioMode.AUDIO_CALL);
@@ -405,15 +405,15 @@ function _onPerformSetMutedCallAction({ callUUID, muted }: { callUUID: string; m
 }
 
 /**
- * Update CallKit with the audio only state of the conference. When a conference
- * is in audio only mode we will tell CallKit the call has no video. This
- * affects how the call is saved in the recent calls list.
+ * Update CallKit with the low bandwidth mode state of the conference. When a
+ * conference is in low bandwidth mode we will tell CallKit the call has no
+ * video. This affects how the call is saved in the recent calls list.
  *
- * XXX: Note that here we are taking the `audioOnly` value straight from the
- * action, instead of examining the state. This is intentional, as setting the
- * audio only involves multiple actions which will be reflected in the state
- * later, but we are just interested in knowing if the mode is going to be
- * set or not.
+ * XXX: Note that here we are taking the `lowBandwidthMode` value straight from
+ * the action, instead of examining the state. This is intentional, as setting
+ * the low bandwidth mode involves multiple actions which will be reflected in
+ * the state later, but we are just interested in knowing if the mode is going
+ * to be set or not.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
@@ -424,7 +424,7 @@ function _onPerformSetMutedCallAction({ callUUID, muted }: { callUUID: string; m
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _setAudioOnly({ getState }: IStore, next: Function, action: AnyAction) {
+function _setLowBandwidthMode({ getState }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
     const state = getState();
 
@@ -437,7 +437,7 @@ function _setAudioOnly({ getState }: IStore, next: Function, action: AnyAction) 
     if (conference?.callUUID) {
         CallIntegration.updateCall(
             conference.callUUID,
-            { hasVideo: !action.audioOnly });
+            { hasVideo: !action.lowBandwidthMode });
     }
 
     return result;
@@ -502,7 +502,7 @@ function _syncTrackState({ getState }: IStore, next: Function, action: AnyAction
         case 'video': {
             CallIntegration.updateCall(
                 conference.callUUID,
-                { hasVideo: !isVideoMutedByAudioOnly(state) });
+                { hasVideo: !isVideoMutedByLowBandwidthMode(state) });
             break;
         }
 

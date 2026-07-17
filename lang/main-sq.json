@@ -39,9 +39,6 @@
         "phone": "Telefon",
         "speaker": "Altoparlant"
     },
-    "audioOnly": {
-        "audioOnly": "Gjerësi e ulët bande"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "p.sh. 10000000 për 10 Mbps",
         "assumedBandwidthBpsWarning": "Vlera më të mëdha mund të shkaktojnë probleme rrjeti.",
@@ -804,6 +801,9 @@
         "button": "Ftoni të tjerë",
         "youAreAlone": "Jeni i vetmi në takim"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Gjerësi e ulët bande"
+    },
     "me": "unë",
     "notify": {
         "OldElectronAPPTitle": "Cenueshmëri sigurie!",
@@ -1305,7 +1305,6 @@
         "Settings": "Rregullime",
         "accessibilityLabel": {
             "Settings": "Hap rregullimet",
-            "audioOnly": "Hap/Mbyll vetëm audion",
             "audioRoute": "Përzgjidhni pajisje zëri",
             "boo": "Ya",
             "breakoutRoom": "Hyni/Dilni nga dhomë aneks konsultimesh",
@@ -1349,6 +1348,7 @@
             "localRecording": "Shfaq/Fshih kontrolle regjistrimi vendor",
             "lockRoom": "Aktivizo/Çaktivizo fjalëkalim takimi",
             "love": "Zemër",
+            "lowBandwidthMode": "Hap/Mbyll vetëm audion",
             "lowerHand": "Ulni dorën",
             "moreActions": "Më tepër veprime",
             "moreActionsMenu": "Menu “Më tepër veprime”",
@@ -1411,8 +1411,6 @@
                 "label": "Stereo"
             }
         },
-        "audioOnlyOff": "Aktivizo mënyrën gjerësi e ulët bande",
-        "audioOnlyOn": "Çaktivizo mënyrën gjerësi e ulët bande",
         "audioRoute": "Përzgjidhni pajisje zëri",
         "audioSettings": "Rregullime audio",
         "authenticate": "Bëni mirëfilltësimiin",
@@ -1457,6 +1455,8 @@
         "login": "Hyni",
         "logout": "Dilni",
         "love": "Zemër",
+        "lowBandwidthModeOff": "Aktivizo mënyrën gjerësi e ulët bande",
+        "lowBandwidthModeOn": "Çaktivizo mënyrën gjerësi e ulët bande",
         "lowerYourHand": "Ulni dorën",
         "moreActions": "Më tepër veprime",
         "moreOptions": "Më tepër veprime",
@@ -1548,8 +1548,6 @@
     },
     "videoStatus": {
         "adjustFor": "Rregulloje për:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Gjendeni nën mënyrën “gjerësi e ulët bande”. Nën këtë mënyrë, do të merrni vetëm audio dhe tregim ekrani.",
         "bestPerformance": "Punimi më i mirë",
         "callQuality": "Cilësi Videoje (0 për punimin më të mirë, 3 për cilësinë më të lartë)",
         "hd": "CL",
@@ -1557,9 +1555,11 @@
         "highDefinition": "Cilësi e Lartë",
         "highestQuality": "Cilësia më e lartë",
         "labelTooiltipNoVideo": "Pa video",
-        "labelTooltipAudioOnly": "U aktivizua mënyra “gjerësi e ulët bande”",
+        "labelTooltipLowBandwidthMode": "U aktivizua mënyra “gjerësi e ulët bande”",
         "ld": "CU",
         "ldTooltip": "Po shihet video në cilësi të ulët",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Gjendeni nën mënyrën “gjerësi e ulët bande”. Nën këtë mënyrë, do të merrni vetëm audio dhe tregim ekrani.",
         "lowDefinition": "Cilësi e ulët",
         "performanceSettings": "Rregullime funksionimi",
         "recording": "Ky takim po regjistrohet.",

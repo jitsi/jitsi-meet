@@ -282,7 +282,7 @@ function shouldRenderParticipantVideo(stateful: IStateful, id: string) {
     }
 
     /* Then check if audio-only mode is not active. */
-    const audioOnly = state['features/base/audio-only'].enabled;
+    const audioOnly = state['features/base/low-bandwidth-mode'].enabled;
 
     if (!audioOnly) {
         return true;

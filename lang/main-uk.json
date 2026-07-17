@@ -36,9 +36,6 @@
         "phone": "Телефон",
         "speaker": "Динамік"
     },
-    "audioOnly": {
-        "audioOnly": "Економічний режим"
-    },
     "breakoutRooms": {
         "actions": {
             "add": "Додати кімнату підгрупи",
@@ -654,6 +651,9 @@
         "button": "Запросити",
         "youAreAlone": "Ви одні на цій зустрічі"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Економічний режим"
+    },
     "me": "я",
     "notify": {
         "OldElectronAPPTitle": "Вразливість в системі безпеки!",
@@ -1088,7 +1088,6 @@
         "Settings": "Налаштування",
         "accessibilityLabel": {
             "Settings": "Показати/приховати меню налаштувань",
-            "audioOnly": "Лише звук",
             "audioRoute": "Вибрати звуковий пристрій",
             "boo": "невдоволення",
             "breakoutRoom": "Приєднатися/вийти з підгрупи",
@@ -1129,6 +1128,7 @@
             "lobbyButton": "Увімкнути/вимкнути приймальну",
             "localRecording": "Показати/приховати панель керування відеозаписом",
             "lockRoom": "Встановити/прибрати пароль",
+            "lowBandwidthMode": "Лише звук",
             "lowerHand": "Опустити руку",
             "moreActions": "Додаткові команди",
             "moreActionsMenu": "Меню додаткових команд",
@@ -1173,8 +1173,6 @@
             "videounmute": "Увімкнути камеру"
         },
         "addPeople": "Додати учасників до зустрічі",
-        "audioOnlyOff": "Вимкнути режим економії",
-        "audioOnlyOn": "Увімкнути режим економії",
         "audioRoute": "Вибрати звуковий пристрій",
         "audioSettings": "Налаштування звуку",
         "authenticate": "Авторизуватися",
@@ -1214,6 +1212,8 @@
         "lobbyButtonEnable": "Увімкнути приймальну",
         "login": "Увійти",
         "logout": "Вийти",
+        "lowBandwidthModeOff": "Вимкнути режим економії",
+        "lowBandwidthModeOn": "Увімкнути режим економії",
         "lowerYourHand": "Опустити руку",
         "moreActions": "Додаткові команди",
         "moreOptions": "Додаткові параметри",
@@ -1298,8 +1298,6 @@
     },
     "videoStatus": {
         "adjustFor": "Рівень:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Увімкнено режим економії трафіку. У цьому режимі доступні лише аудіо та можливість спільного перегляду екрану інших учасників.",
         "bestPerformance": "Найкраща продуктивність",
         "callQuality": "Якість відео",
         "hd": "HD",
@@ -1307,9 +1305,11 @@
         "highDefinition": "Висока якість (HD)",
         "highestQuality": "Найвища якість",
         "labelTooiltipNoVideo": "Без відео",
-        "labelTooltipAudioOnly": "Увімкнено режим заощадження трафіку",
+        "labelTooltipLowBandwidthMode": "Увімкнено режим заощадження трафіку",
         "ld": "LD",
         "ldTooltip": "Відео низької якості",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Увімкнено режим економії трафіку. У цьому режимі доступні лише аудіо та можливість спільного перегляду екрану інших учасників.",
         "lowDefinition": "Низька якість (LD)",
         "performanceSettings": "Параметри продуктивності",
         "recording": "Триває запис",

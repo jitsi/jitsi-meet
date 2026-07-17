@@ -17,7 +17,7 @@ export * from './functions.any';
  * @param {URL} locationURL - The location URL.
  * @param {Object} options:  - Config options {
  *     audioMuted: boolean | undefined
- *     audioOnlyEnabled: boolean | undefined,
+ *     lowBandwidthModeEnabled: boolean | undefined,
  *     skipPrejoin: boolean | undefined,
  *     videoMuted: boolean | undefined
  * }.
@@ -34,7 +34,7 @@ export const getTokenAuthUrl = (
         locationURL: URL,
         options: {
             audioMuted: boolean | undefined;
-            audioOnlyEnabled: boolean | undefined;
+            lowBandwidthModeEnabled: boolean | undefined;
             skipPrejoin: boolean | undefined;
             videoMuted: boolean | undefined;
         },
@@ -46,7 +46,7 @@ export const getTokenAuthUrl = (
 
     const {
         audioMuted = false,
-        audioOnlyEnabled = false,
+        lowBandwidthModeEnabled = false,
         skipPrejoin = false,
         videoMuted = false
     } = options;
@@ -62,7 +62,7 @@ export const getTokenAuthUrl = (
             locationURL,
             {
                 audioMuted,
-                audioOnlyEnabled,
+                lowBandwidthModeEnabled,
                 skipPrejoin,
                 videoMuted
             },

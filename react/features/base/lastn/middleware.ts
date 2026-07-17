@@ -7,8 +7,8 @@ import {
     SET_CAR_MODE,
     VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
 } from '../../video-layout/actionTypes';
-import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
 import { CONFERENCE_JOINED } from '../conference/actionTypes';
+import { SET_LOW_BANDWIDTH_MODE } from '../low-bandwidth-mode/actionTypes';
 import { getParticipantById } from '../participants/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
@@ -32,7 +32,7 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
         return;
     }
 
-    const { enabled: audioOnly } = state['features/base/audio-only'];
+    const { enabled: audioOnly } = state['features/base/low-bandwidth-mode'];
     const { appState } = state['features/mobile/background'] || {};
     const { enabled: filmStripEnabled } = state['features/filmstrip'];
     const config = state['features/base/config'];
@@ -80,7 +80,7 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_STATE_CHANGED:
     case CONFERENCE_JOINED:
-    case SET_AUDIO_ONLY:
+    case SET_LOW_BANDWIDTH_MODE:
     case SET_CAR_MODE:
     case SET_FILMSTRIP_ENABLED:
     case VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED:

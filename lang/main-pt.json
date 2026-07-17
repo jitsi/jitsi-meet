@@ -39,9 +39,6 @@
         "phone": "Telemóvel",
         "speaker": "Altifalante"
     },
-    "audioOnly": {
-        "audioOnly": "Largura de banda baixa"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "p. ex. 10000000 para 10 Mbps",
         "assumedBandwidthBpsWarning": "Valores mais elevados podem causar problemas na rede.",
@@ -798,6 +795,9 @@
         "button": "Convidar outros",
         "youAreAlone": "É o único na reunião"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Largura de banda baixa"
+    },
     "me": "eu",
     "notify": {
         "OldElectronAPPTitle": "Vulnerabilidade de segurança!",
@@ -1299,7 +1299,6 @@
         "Settings": "Definições",
         "accessibilityLabel": {
             "Settings": "Abrir definições",
-            "audioOnly": "Mudar para apenas áudio",
             "audioRoute": "Selecionar o dispositivo de som",
             "boo": "Vaia",
             "breakoutRooms": "Salas simultâneas",
@@ -1342,6 +1341,7 @@
             "localRecording": "Mudar os controlos locais de gravação",
             "lockRoom": "Mudar palavra-chave de reunião",
             "love": "Coração",
+            "lowBandwidthMode": "Mudar para apenas áudio",
             "lowerHand": "Baixar a mão",
             "moreActions": "Mais ações",
             "moreActionsMenu": "Menu de mais ações",
@@ -1404,8 +1404,6 @@
                 "label": "Estéreo"
             }
         },
-        "audioOnlyOff": "Desativar modo de largura de banda baixa",
-        "audioOnlyOn": "Ativar modo de largura de banda baixa",
         "audioRoute": "Selecionar o dispositivo de som",
         "audioSettings": "Definições de áudio",
         "authenticate": "Autenticar",
@@ -1448,6 +1446,8 @@
         "login": "Iniciar sessão",
         "logout": "Terminar sessão",
         "love": "Coração",
+        "lowBandwidthModeOff": "Desativar modo de largura de banda baixa",
+        "lowBandwidthModeOn": "Ativar modo de largura de banda baixa",
         "lowerYourHand": "Baixar a mão",
         "moreActions": "Mais ações",
         "moreOptions": "Mais opções",
@@ -1539,8 +1539,6 @@
     },
     "videoStatus": {
         "adjustFor": "Ajustar para:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Está em modo de baixa largura de banda. Neste modo, receberá apenas partilha de áudio e ecrã.",
         "bestPerformance": "Melhor desempenho",
         "callQuality": "Qualidade de vídeo (0 para o melhor desempenho, 3 para a melhor qualidade)",
         "hd": "HD",
@@ -1548,9 +1546,11 @@
         "highDefinition": "Alta definição (HD)",
         "highestQuality": "Máxima qualidade",
         "labelTooiltipNoVideo": "Sem vídeo",
-        "labelTooltipAudioOnly": "Modo de largura de banda baixa habilitada",
+        "labelTooltipLowBandwidthMode": "Modo de largura de banda baixa habilitada",
         "ld": "LD",
         "ldTooltip": "Ver vídeo em baixa definição",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Está em modo de baixa largura de banda. Neste modo, receberá apenas partilha de áudio e ecrã.",
         "lowDefinition": "Baixa definição (LD)",
         "performanceSettings": "Definições de desempenho",
         "recording": "Esta reunião está a ser gravada.",

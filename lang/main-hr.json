@@ -36,9 +36,6 @@
         "phone": "Telefon",
         "speaker": "Zvučnik"
     },
-    "audioOnly": {
-        "audioOnly": "Niska stopa prijenosa podataka"
-    },
     "breakoutRooms": {
         "actions": {
             "add": "Dodaj sobu za podgrupu",
@@ -632,6 +629,9 @@
         "button": "Pozovi druge",
         "youAreAlone": "Ti si jedina osoba na sastanku"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Niska stopa prijenosa podataka"
+    },
     "me": "ja",
     "notify": {
         "OldElectronAPPTitle": "Sigurnosni problem!",
@@ -1055,7 +1055,6 @@
         "Settings": "Postavke",
         "accessibilityLabel": {
             "Settings": "Uključi/Isključi postavke",
-            "audioOnly": "Uključi/Isključi opciju samo zvuk",
             "audioRoute": "Odaberi audio uređaj",
             "boo": "Negoduj",
             "breakoutRoom": "Pridruži se/Napusti sobu podgrupe",
@@ -1085,6 +1084,7 @@
             "lobbyButton": "Uključi/Isključi modus predvorja",
             "localRecording": "Uključi/Isključi kontrole lokalnog snimanja",
             "lockRoom": "Uključi/Isključi lozinku sastanka",
+            "lowBandwidthMode": "Uključi/Isključi opciju samo zvuk",
             "moreActions": "Više radnji",
             "moreActionsMenu": "Izbornik za više radnje",
             "moreOptions": "Pokaži više opcija",
@@ -1123,8 +1123,6 @@
             "whiteboard": "Pokaži/Sakrij ploču za prezentacije"
         },
         "addPeople": "Dodaj ljude svom pozivu",
-        "audioOnlyOff": "Isključi modus niske stope prijenosa podataka",
-        "audioOnlyOn": "Uključi modus niske stope prijenosa podataka",
         "audioRoute": "Odaberi audio uređaj",
         "audioSettings": "Postavke zvuka",
         "authenticate": "Autentificiraj se",
@@ -1162,6 +1160,8 @@
         "lobbyButtonEnable": "Uključi modus predvorja",
         "login": "Prijava",
         "logout": "Odjava",
+        "lowBandwidthModeOff": "Isključi modus niske stope prijenosa podataka",
+        "lowBandwidthModeOn": "Uključi modus niske stope prijenosa podataka",
         "lowerYourHand": "Spusti ruku",
         "moreActions": "Više radnji",
         "moreOptions": "Više opcija",
@@ -1243,8 +1243,6 @@
     },
     "videoStatus": {
         "adjustFor": "Prilagodi za:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Koristiš modus niske stope prijenosa podataka. U ovom modusu primat ćeš samo zvuk i dijeljenje ekrana.",
         "bestPerformance": "Najbolja performanca",
         "callQuality": "Kvaliteta videa",
         "hd": "HD",
@@ -1252,9 +1250,11 @@
         "highDefinition": "Visoka rezolucija",
         "highestQuality": "Najviše kvlaiteta",
         "labelTooiltipNoVideo": "Bez videa",
-        "labelTooltipAudioOnly": "Modus niske stope prijenosa podataka je uključen",
+        "labelTooltipLowBandwidthMode": "Modus niske stope prijenosa podataka je uključen",
         "ld": "LD",
         "ldTooltip": "Prikazivanje videa u niskoj rezoluciji",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Koristiš modus niske stope prijenosa podataka. U ovom modusu primat ćeš samo zvuk i dijeljenje ekrana.",
         "lowDefinition": "Niska rezolucija",
         "performanceSettings": "Postavke performance",
         "sd": "SD",

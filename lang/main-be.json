@@ -24,9 +24,6 @@
         "phone": "Тэлефон",
         "speaker": "Калонка"
     },
-    "audioOnly": {
-        "audioOnly": "Не нагружае канал"
-    },
     "calendarSync": {
         "addMeetingURL": "Дадаць спасылку канферэнцыі",
         "confirmAddLink": "Вы хочаце дадаць спасылку Jitsi да гэтай каляндарнай падзеі?",
@@ -444,6 +441,9 @@
         "button": "Запрашайце іншых",
         "youAreAlone": "Вы адзіны ў гэтай канферэнцыі"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Не нагружае канал"
+    },
     "me": "я",
     "notify": {
         "connectedOneMember": "{{name}} далучыўся да канферэнцыі",
@@ -608,7 +608,6 @@
         "Settings": "Налады",
         "accessibilityLabel": {
             "Settings": "",
-            "audioOnly": "Укл/Выкл толькі гук",
             "audioRoute": "Выбраць аўдыёпрылады",
             "callQuality": "Якасць сувязі",
             "cc": "Укл/Выкл субтытры",
@@ -623,6 +622,7 @@
             "kick": "Выкінуць ўдзельніка",
             "localRecording": "Укл/Выкл кнопкі запісу",
             "lockRoom": "Усталяваць пароль",
+            "lowBandwidthMode": "Укл/Выкл толькі гук",
             "moreActions": "Паказаць / схаваць меню доп. Настроек",
             "moreActionsMenu": "Меню дад. Настроек",
             "moreOptions": "Паказаць больш варыянтаў",
@@ -647,8 +647,6 @@
             "videomute": "Укл/Выкл відэа"
         },
         "addPeople": "Дадаць людзей да вашага сеансу сувязі",
-        "audioOnlyOff": "Адключыць рэжым эканоміі пропускной здольнасці",
-        "audioOnlyOn": "Уключыць рэжым эканоміі прапускной здольнасці",
         "audioRoute": "Выбраць аўдыёпрылады",
         "authenticate": "аўтэнтыфікаваных",
         "callQuality": "Якасць сувязі",
@@ -667,6 +665,8 @@
         "invite": "Запрасіць",
         "login": "Увайсці",
         "logout": "Выйсці",
+        "lowBandwidthModeOff": "Адключыць рэжым эканоміі пропускной здольнасці",
+        "lowBandwidthModeOn": "Уключыць рэжым эканоміі прапускной здольнасці",
         "lowerYourHand": "Апусціць руку",
         "moreActions": "Больш",
         "moreOptions": "Больш варыянтаў",
@@ -727,16 +727,16 @@
         "pending": "{{displayName}} быў запрошаны"
     },
     "videoStatus": {
-        "audioOnly": "Толькі гук",
-        "audioOnlyExpanded": "Актыўны рэжым эканоміі прапускной здольнасці. У гэтым рэжыме даступныя толькі гук і трансляцыя з экрана.",
         "callQuality": "Якасць відэа",
         "hd": "HD",
         "hdTooltip": "Відэа высокай якасці",
         "highDefinition": "Высокая якасць",
         "labelTooiltipNoVideo": "Няма відэа",
-        "labelTooltipAudioOnly": "Уключаны рэжым эканоміі прапускной здольнасці",
+        "labelTooltipLowBandwidthMode": "Уключаны рэжым эканоміі прапускной здольнасці",
         "ld": "LD",
         "ldTooltip": "Відэа нізкай якасці",
+        "lowBandwidthMode": "Толькі гук",
+        "lowBandwidthModeExpanded": "Актыўны рэжым эканоміі прапускной здольнасці. У гэтым рэжыме даступныя толькі гук і трансляцыя з экрана.",
         "lowDefinition": "Нізкая якасць",
         "onlyAudioAvailable": "Толькі гук",
         "onlyAudioSupported": "У гэтым браўзэры дазволены толькі гук.",

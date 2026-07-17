@@ -15,13 +15,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setPermanentProperty } from '../../../analytics/actions';
 import { appNavigate } from '../../../app/actions.native';
 import { IReduxState } from '../../../app/types';
-import { setAudioOnly } from '../../../base/audio-only/actions';
 import { getConferenceName } from '../../../base/conference/functions';
 import { isNameReadOnly } from '../../../base/config/functions.any';
 import { connect } from '../../../base/connection/actions.native';
 import { PREJOIN_PAGE_HIDE_DISPLAY_NAME } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import { IconCloseLarge } from '../../../base/icons/svg';
+import { setLowBandwidthMode } from '../../../base/low-bandwidth-mode/actions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getFieldValue } from '../../../base/react/functions';
@@ -97,7 +97,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     }, [ dispatch, hasDisplayName, isDisplayNameMissing, onJoin ]);
 
     const onJoinLowBandwidth = useCallback(() => {
-        dispatch(setAudioOnly(true));
+        dispatch(setLowBandwidthMode(true));
         maybeJoin();
     }, [ dispatch ]);
 

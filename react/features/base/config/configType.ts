@@ -691,8 +691,8 @@ export interface IConfig {
      */
     speakerStatsOrder?: Array<'role' | 'name' | 'hasLeft'>;
     startAudioMuted?: number;
-    startAudioOnly?: boolean;
     startLastN?: number;
+    startLowBandwidthMode?: boolean;
     startScreenSharing?: boolean;
     startSilent?: boolean;
     startVideoMuted?: number;

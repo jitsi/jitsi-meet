@@ -39,9 +39,6 @@
         "phone": "Telefon",
         "speaker": "Konuşmacı"
     },
-    "audioOnly": {
-        "audioOnly": "Düşük bant genişliği"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "Örneğin 10 Mbps için 10000000",
         "assumedBandwidthBpsWarning": "Daha yüksek değerler ağ sorunlarına neden olabilir.",
@@ -726,6 +723,9 @@
         "button": "Birilerini davet et",
         "youAreAlone": "Toplantıdaki tek kişisiniz"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Düşük bant genişliği"
+    },
     "me": "Ben",
     "notify": {
         "OldElectronAPPTitle": "Güvenlik açığı!",
@@ -1200,7 +1200,6 @@
         "Settings": "Ayarlar",
         "accessibilityLabel": {
             "Settings": "Ayarları göster/gizle",
-            "audioOnly": "Yalnızca sesi aç/kapat",
             "audioRoute": "Ses aygıtını seçin",
             "boo": "Boo",
             "breakoutRooms": "Alt odalar",
@@ -1241,6 +1240,7 @@
             "lobbyButton": "Lobi modunu etkinleştir / devre dışı bırak",
             "localRecording": "Kayıt denetimlerini aç/kapat",
             "lockRoom": "Toplantı parolasını aç/kapat",
+            "lowBandwidthMode": "Yalnızca sesi aç/kapat",
             "lowerHand": "Elini indir",
             "moreActions": "Diğer işlemler menüsünü aç/kapat",
             "moreActionsMenu": "Diğer işlemler menüsü",
@@ -1289,8 +1289,6 @@
             "videounmute": "Kamerayı başlat"
         },
         "addPeople": "Aramanıza kişi ekleyin",
-        "audioOnlyOff": "Yalnızca ses modunu devre dışı bırak",
-        "audioOnlyOn": "Yalnızca ses modunu etkinleştir",
         "audioRoute": "Ses aygıtını seçin",
         "audioSettings": "Ses ayarları",
         "authenticate": "Kimlik doğrula",
@@ -1330,6 +1328,8 @@
         "lobbyButtonEnable": "Lobi modunu devre aktifleştir",
         "login": "Oturum aç",
         "logout": "Oturum kapat",
+        "lowBandwidthModeOff": "Yalnızca ses modunu devre dışı bırak",
+        "lowBandwidthModeOn": "Yalnızca ses modunu etkinleştir",
         "lowerYourHand": "Elinizi indirin",
         "moreActions": "Daha fazla işlem",
         "moreOptions": "Daha fazla seçenek",
@@ -1414,8 +1414,6 @@
     },
     "videoStatus": {
         "adjustFor": "Ayarla:",
-        "audioOnly": "SES",
-        "audioOnlyExpanded": "Yalnızca ses modundasınız. Bu mod bant genişliğinden tasarruf sağlar, ancak başkalarının videolarını göremezsiniz.",
         "bestPerformance": "En iyi performans",
         "callQuality": "Arama Kalitesi",
         "hd": "HD",
@@ -1423,9 +1421,11 @@
         "highDefinition": "Yüksek çözünürlük",
         "highestQuality": "En yüksek kalite",
         "labelTooiltipNoVideo": "Görüntü yok",
-        "labelTooltipAudioOnly": "Yalnızca ses modu etkin",
+        "labelTooltipLowBandwidthMode": "Yalnızca ses modu etkin",
         "ld": "LD",
         "ldTooltip": "Düşük çözünürlüklü video görüntüleme",
+        "lowBandwidthMode": "SES",
+        "lowBandwidthModeExpanded": "Yalnızca ses modundasınız. Bu mod bant genişliğinden tasarruf sağlar, ancak başkalarının videolarını göremezsiniz.",
         "lowDefinition": "Düşük çözünürlük",
         "performanceSettings": "Performans ayarları",
         "recording": "Kayıt devam ediyor",

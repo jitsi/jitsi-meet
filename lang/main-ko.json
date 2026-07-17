@@ -39,9 +39,6 @@
         "phone": "폰",
         "speaker": "스피커"
     },
-    "audioOnly": {
-        "audioOnly": "음성 전용"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "예: 10000000 (10 Mbps)",
         "assumedBandwidthBpsWarning": "더 높은 값은 네트워크 문제를 일으킬 수 있습니다.",
@@ -727,6 +724,9 @@
         "button": "초대하기",
         "youAreAlone": "회의에 참여자가 없습니다."
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "음성 전용"
+    },
     "me": "나",
     "notify": {
         "OldElectronAPPTitle": "보안 취약성!",
@@ -1206,7 +1206,6 @@
         "Settings": "설정",
         "accessibilityLabel": {
             "Settings": "설정 전환",
-            "audioOnly": "음성 전용 모드 전환",
             "audioRoute": "음성 장비 선택하기",
             "boo": "야유",
             "breakoutRooms": "소회의실",
@@ -1248,6 +1247,7 @@
             "localRecording": "로컬 녹화 제어 전환",
             "lockRoom": "회의 비밀번호 전환",
             "love": "하트",
+            "lowBandwidthMode": "음성 전용 모드 전환",
             "lowerHand": "손 내리기",
             "moreActions": "추가 작업",
             "moreActionsMenu": "추가 작업 메뉴",
@@ -1296,8 +1296,6 @@
             "videounmute": "카메라 시작"
         },
         "addPeople": "통화에 사용자 추가",
-        "audioOnlyOff": "음성전용 모드 끄기",
-        "audioOnlyOn": "음성전용 모드 켜기",
         "audioRoute": "음성 장비 선택하기",
         "audioSettings": "오디오 설정",
         "authenticate": "인증중",
@@ -1338,6 +1336,8 @@
         "login": "로그인",
         "logout": "로그아웃",
         "love": "하트",
+        "lowBandwidthModeOff": "음성전용 모드 끄기",
+        "lowBandwidthModeOn": "음성전용 모드 켜기",
         "lowerYourHand": "손을 내려주세요",
         "moreActions": "추가 액션",
         "moreOptions": "옵션 더보기",
@@ -1423,8 +1423,6 @@
     },
     "videoStatus": {
         "adjustFor": "조정 대상:",
-        "audioOnly": "오디오 전용",
-        "audioOnlyExpanded": "낮은 대역폭 모드에 있습니다. 이 모드에서는 오디오 및 화면 공유만 수신합니다.",
         "bestPerformance": "최고의 성능",
         "callQuality": "비디오 품질",
         "hd": "HD",
@@ -1432,9 +1430,11 @@
         "highDefinition": "고해상도",
         "highestQuality": "최고 품질",
         "labelTooiltipNoVideo": "비디오 없음",
-        "labelTooltipAudioOnly": "오디오 전용 모드 사용",
+        "labelTooltipLowBandwidthMode": "오디오 전용 모드 사용",
         "ld": "LD",
         "ldTooltip": "저해상도 비디오 보기",
+        "lowBandwidthMode": "오디오 전용",
+        "lowBandwidthModeExpanded": "낮은 대역폭 모드에 있습니다. 이 모드에서는 오디오 및 화면 공유만 수신합니다.",
         "lowDefinition": "저해상도",
         "performanceSettings": "성능 설정",
         "recording": "녹화 진행 중",

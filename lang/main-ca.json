@@ -36,9 +36,6 @@
         "phone": "Telèfon",
         "speaker": "Altaveu"
     },
-    "audioOnly": {
-        "audioOnly": "Poca amplada de banda"
-    },
     "breakoutRooms": {
         "actions": {
             "add": "Afegeix una sala de descans",
@@ -632,6 +629,9 @@
         "button": "Convideu altres persones",
         "youAreAlone": "Sou l'únic participant de la reunió"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Poca amplada de banda"
+    },
     "me": "jo",
     "notify": {
         "OldElectronAPPTitle": "Vulnerabilitat de seguretat!",
@@ -1058,7 +1058,6 @@
         "Settings": "Configuració",
         "accessibilityLabel": {
             "Settings": "Activa o desactiva la configuració",
-            "audioOnly": "Activa o desactiva només l'àudio",
             "audioRoute": "Seleccioneu l'aparell de so",
             "boo": "Esbroncada",
             "breakoutRoom": "Entra o surt de la sala de descans",
@@ -1088,6 +1087,7 @@
             "lobbyButton": "Activa o desactiva la sala d'espera",
             "localRecording": "Activa o desactiva els controls d'enregistrament local",
             "lockRoom": "Activa o desactiva la contrasenya de la reunió",
+            "lowBandwidthMode": "Activa o desactiva només l'àudio",
             "moreActions": "Més accions",
             "moreActionsMenu": "Menú d'accions addicionals",
             "moreOptions": "Mostra més opcions",
@@ -1126,8 +1126,6 @@
             "whiteboard": "Mostra o amaga la pissarra"
         },
         "addPeople": "Afegeix persones a la trucada",
-        "audioOnlyOff": "Desactiva el mode de poca amplada de banda",
-        "audioOnlyOn": "Activa el mode de poc ampleda de banda",
         "audioRoute": "Seleccioneu l'aparell de so",
         "audioSettings": "Paràmetres d'àudio",
         "authenticate": "Autentica",
@@ -1165,6 +1163,8 @@
         "lobbyButtonEnable": "Activa el mode de sala d'espera",
         "login": "Inicia sessió",
         "logout": "Tanca la sessió",
+        "lowBandwidthModeOff": "Desactiva el mode de poca amplada de banda",
+        "lowBandwidthModeOn": "Activa el mode de poc ampleda de banda",
         "lowerYourHand": "Abaixa la mà",
         "moreActions": "Més accions",
         "moreOptions": "Més opcions",
@@ -1246,8 +1246,6 @@
     },
     "videoStatus": {
         "adjustFor": "Ajusta per a:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Ara sou en el mode de poca amplada de banda. En aquest mode només rebreu àudio i compartició de pantalla.",
         "bestPerformance": "Millor rendiment",
         "callQuality": "Qualitat de vídeo",
         "hd": "HD",
@@ -1255,9 +1253,11 @@
         "highDefinition": "Alta definició",
         "highestQuality": "Qualitat més alta",
         "labelTooiltipNoVideo": "Sense vídeo",
-        "labelTooltipAudioOnly": "S'ha activat el mode de poca amplada de banda",
+        "labelTooltipLowBandwidthMode": "S'ha activat el mode de poca amplada de banda",
         "ld": "LD",
         "ldTooltip": "Vídeo en baixa definició",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Ara sou en el mode de poca amplada de banda. En aquest mode només rebreu àudio i compartició de pantalla.",
         "lowDefinition": "Baixa definició",
         "performanceSettings": "Paràmetres de rendiment",
         "sd": "SD",

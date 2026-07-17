@@ -23,9 +23,6 @@
         "phone": "Foon",
         "speaker": "Luidspreker"
     },
-    "audioOnly": {
-        "audioOnly": "Net klank"
-    },
     "calendarSync": {
         "addMeetingURL": "Voeg ’n vergaderingskakel by",
         "confirmAddLink": "Wil u ’n Jitsi-skakel by dié geleentheid voeg?",
@@ -398,6 +395,9 @@
     },
     "lockRoomPassword": "Wagwoord",
     "lockRoomPasswordUppercase": "Wagwoord",
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Net klank"
+    },
     "me": "ek",
     "notify": {
         "connectedOneMember": "",
@@ -553,7 +553,6 @@
         "Settings": "Instellings",
         "accessibilityLabel": {
             "Settings": "Wissel instellings",
-            "audioOnly": "Wissel Net klank",
             "audioRoute": "Kies die klanktoestel",
             "callQuality": "",
             "cc": "Wissel onderskrifte",
@@ -566,6 +565,7 @@
             "kick": "",
             "localRecording": "Wissel kontroles vir plaaslike opname",
             "lockRoom": "",
+            "lowBandwidthMode": "Wissel Net klank",
             "moreActions": "Wissel kieslys vir meer aksies",
             "moreActionsMenu": "Kieslys vir meer aksies",
             "mute": "",
@@ -586,8 +586,6 @@
             "videomute": ""
         },
         "addPeople": "Voeg mense by die oproep",
-        "audioOnlyOff": "Deaktiveer Net klank-modus",
-        "audioOnlyOn": "Deaktiveer Net klank-modus",
         "audioRoute": "Kies die klanktoestel",
         "authenticate": "Verifieer",
         "callQuality": "Bestuur oproepkwaliteit",
@@ -604,6 +602,8 @@
         "invite": "Nooi mense",
         "login": "Meld aan",
         "logout": "Meld af",
+        "lowBandwidthModeOff": "Deaktiveer Net klank-modus",
+        "lowBandwidthModeOn": "Deaktiveer Net klank-modus",
         "lowerYourHand": "",
         "moreActions": "Meer aksies",
         "mute": "Demp / ontdemp",
@@ -654,14 +654,14 @@
         "pending": "{{displayName}} is genooi"
     },
     "videoStatus": {
-        "audioOnly": "",
-        "audioOnlyExpanded": "U is in Net klank-modus. Dié modus spaar bandwydte maar u sal nie video’s van ander sien nie.",
         "callQuality": "",
         "hd": "HD",
         "highDefinition": "Hoëdefinisie",
         "labelTooiltipNoVideo": "Geen video",
-        "labelTooltipAudioOnly": "Net klank-modus geaktiveer",
+        "labelTooltipLowBandwidthMode": "Net klank-modus geaktiveer",
         "ld": "LD",
+        "lowBandwidthMode": "",
+        "lowBandwidthModeExpanded": "U is in Net klank-modus. Dié modus spaar bandwydte maar u sal nie video’s van ander sien nie.",
         "lowDefinition": "Laedefinisie",
         "onlyAudioAvailable": "Net klank is beskikbaar",
         "onlyAudioSupported": "Op dié blaaier ondersteun ons slegs klank.",

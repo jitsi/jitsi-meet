@@ -39,9 +39,6 @@
         "phone": "Telefon",
         "speaker": "Høyttaler"
     },
-    "audioOnly": {
-        "audioOnly": "Lav båndbredde"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "f.eks. 10000000 for 10 Mbps",
         "assumedBandwidthBpsWarning": "Høyere verdier kan forårsake nettverksproblemer.",
@@ -728,6 +725,9 @@
         "button": "Inviter andre",
         "youAreAlone": "Du er den eneste i møtet"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Lav båndbredde"
+    },
     "me": "meg",
     "notify": {
         "OldElectronAPPTitle": "Sikkerhetssårbarhet!",
@@ -1208,7 +1208,6 @@
         "Settings": "Innstillinger",
         "accessibilityLabel": {
             "Settings": "Åpne innstillinger",
-            "audioOnly": "Veksle kun lyd",
             "audioRoute": "Velg lydenhet",
             "boo": "Buu",
             "breakoutRooms": "Grupperom",
@@ -1250,6 +1249,7 @@
             "localRecording": "Veksle kontroller for lokalt opptak",
             "lockRoom": "Veksle møtepassord",
             "love": "Hjerte",
+            "lowBandwidthMode": "Veksle kun lyd",
             "lowerHand": "Senk hånden",
             "moreActions": "Flere handlinger",
             "moreActionsMenu": "Meny for flere handlinger",
@@ -1298,8 +1298,6 @@
             "videounmute": "Start kamera"
         },
         "addPeople": "Legg til personer i samtalen din",
-        "audioOnlyOff": "Deaktiver modus for lav båndbredde",
-        "audioOnlyOn": "Aktiver modus for lav båndbredde",
         "audioRoute": "Velg lydenhet",
         "audioSettings": "Lydinnstillinger",
         "authenticate": "Autentiser",
@@ -1340,6 +1338,8 @@
         "login": "Logg inn",
         "logout": "Logg ut",
         "love": "Hjerte",
+        "lowBandwidthModeOff": "Deaktiver modus for lav båndbredde",
+        "lowBandwidthModeOn": "Aktiver modus for lav båndbredde",
         "lowerYourHand": "Senk hånden",
         "moreActions": "Flere handlinger",
         "moreOptions": "Flere alternativer",
@@ -1425,8 +1425,6 @@
     },
     "videoStatus": {
         "adjustFor": "Juster for:",
-        "audioOnly": "LYD",
-        "audioOnlyExpanded": "Du er i modus for lav båndbredde. I denne modusen vil du kun motta lyd og skjermdeling.",
         "bestPerformance": "Beste ytelse",
         "callQuality": "Videokvalitet (0 for best ytelse, 3 for høyeste kvalitet)",
         "hd": "HD",
@@ -1434,9 +1432,11 @@
         "highDefinition": "Høy oppløsning",
         "highestQuality": "Høyeste kvalitet",
         "labelTooiltipNoVideo": "Ingen video",
-        "labelTooltipAudioOnly": "Modus for lav båndbredde aktivert",
+        "labelTooltipLowBandwidthMode": "Modus for lav båndbredde aktivert",
         "ld": "LD",
         "ldTooltip": "Ser video i lav oppløsning",
+        "lowBandwidthMode": "LYD",
+        "lowBandwidthModeExpanded": "Du er i modus for lav båndbredde. I denne modusen vil du kun motta lyd og skjermdeling.",
         "lowDefinition": "Lav oppløsning",
         "performanceSettings": "Ytelsesinnstillinger",
         "recording": "Opptak pågår",

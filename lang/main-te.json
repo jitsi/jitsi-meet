@@ -40,9 +40,6 @@
         "phone": "ఫోను",
         "speaker": "స్పీకర్"
     },
-    "audioOnly": {
-        "audioOnly": "తక్కువ బ్యాండ్‌విడ్త్"
-    },
     "calendarSync": {
         "addMeetingURL": "సమావేశ లంకెను చేర్చు",
         "confirmAddLink": "ఈ కార్యక్రమానికి జిత్సి లంకెను చేర్చాలనుకుంటున్నారా?",
@@ -519,6 +516,9 @@
         "button": "ఇతరులను ఆహ్వానించండి",
         "youAreAlone": "సమావేశంలో మీరొక్కరే ఉన్నారు"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "తక్కువ బ్యాండ్‌విడ్త్"
+    },
     "me": "నేను",
     "notify": {
         "OldElectronAPPTitle": "భద్రతా బలహీనత!",
@@ -772,7 +772,6 @@
         "Settings": "అమరికలు",
         "accessibilityLabel": {
             "Settings": "Toggle settings",
-            "audioOnly": "Toggle audio only",
             "audioRoute": "Select the sound device",
             "callQuality": "Manage video quality",
             "cc": "Toggle subtitles",
@@ -790,6 +789,7 @@
             "lobbyButton": "Enable/disable lobby mode",
             "localRecording": "Toggle local recording controls",
             "lockRoom": "Toggle meeting password",
+            "lowBandwidthMode": "Toggle audio only",
             "moreActions": "Toggle more actions menu",
             "moreActionsMenu": "మరిన్ని చర్యల మెనూ",
             "moreOptions": "మరిన్ని ఎంపికలు చూపించు",
@@ -821,8 +821,6 @@
             "videomute": "Toggle mute video"
         },
         "addPeople": "Add people to your call",
-        "audioOnlyOff": "Disable low bandwidth mode",
-        "audioOnlyOn": "Enable low bandwidth mode",
         "audioRoute": "Select the sound device",
         "audioSettings": "ఆడియో అమరికలు",
         "authenticate": "Authenticate",
@@ -846,6 +844,8 @@
         "lobbyButtonEnable": "Enable lobby mode",
         "login": "ప్రవేశించు",
         "logout": "నిష్క్రమించు",
+        "lowBandwidthModeOff": "Disable low bandwidth mode",
+        "lowBandwidthModeOn": "Enable low bandwidth mode",
         "lowerYourHand": "మీ చేయి దించండి",
         "moreActions": "మరిన్ని చర్యలు",
         "moreOptions": "మరిన్ని ఎంపికలు",
@@ -910,16 +910,16 @@
         "pending": "{{displayName}} ఆహ్వానించబడినారు"
     },
     "videoStatus": {
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "You are in low bandwidth mode. In this mode you will receive only audio and screen sharing.",
         "callQuality": "వీడియో నాణ్యత",
         "hd": "HD",
         "hdTooltip": "Viewing high definition video",
         "highDefinition": "High definition",
         "labelTooiltipNoVideo": "వీడియో లేదు",
-        "labelTooltipAudioOnly": "Low bandwidth mode enabled",
+        "labelTooltipLowBandwidthMode": "Low bandwidth mode enabled",
         "ld": "LD",
         "ldTooltip": "Viewing low definition video",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "You are in low bandwidth mode. In this mode you will receive only audio and screen sharing.",
         "lowDefinition": "Low definition",
         "sd": "SD",
         "sdTooltip": "Viewing standard definition video",

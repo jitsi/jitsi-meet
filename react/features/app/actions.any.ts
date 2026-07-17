@@ -107,8 +107,8 @@ export function maybeRedirectToTokenAuthUrl(
         dispatch: IStore['dispatch'], getState: IStore['getState'], failureCallback: Function) {
     const state = getState();
     const config = state['features/base/config'];
-    const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
-    const { startAudioOnly } = config;
+    const { enabled: lowBandwidthModeEnabled } = state['features/base/low-bandwidth-mode'];
+    const { startLowBandwidthMode } = config;
     const { locationURL = { href: '' } as URL } = state['features/base/connection'];
     const audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
     const videoMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
@@ -132,7 +132,7 @@ export function maybeRedirectToTokenAuthUrl(
             locationURL,
             {
                 audioMuted,
-                audioOnlyEnabled: audioOnlyEnabled || startAudioOnly,
+                lowBandwidthModeEnabled: lowBandwidthModeEnabled || startLowBandwidthMode,
                 skipPrejoin: true,
                 videoMuted
             },
