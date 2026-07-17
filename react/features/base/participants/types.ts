@@ -92,9 +92,11 @@ export interface IJitsiParticipant {
     getDisplayName: () => string;
     getId: () => string;
     getJid: () => string;
+    getProperty: (name: string) => any;
     getRole: () => string;
     getSources: () => Map<string, Map<string, ISourceInfo>>;
     isHidden: () => boolean;
+    isHiddenFromRecorder: () => boolean;
 }
 
 export type ParticipantFeaturesKey = keyof IParticipantFeatures;
