@@ -39,9 +39,6 @@
         "phone": "Sími",
         "speaker": "Hátalari"
     },
-    "audioOnly": {
-        "audioOnly": "Lítil bandbreidd"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "t.d. 10000000 fyrir 10 Mbps",
         "assumedBandwidthBpsWarning": "Hærri gildi geta leitt til vandamála í netkerfi.",
@@ -714,6 +711,9 @@
         "button": "Bjóddu öðrum",
         "youAreAlone": "Þú ert sá eini á fundinum"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Lítil bandbreidd"
+    },
     "me": "ég",
     "notify": {
         "OldElectronAPPTitle": "Öryggisveikleiki!",
@@ -1165,7 +1165,6 @@
         "Settings": "Stillingar",
         "accessibilityLabel": {
             "Settings": "Opna stillingar",
-            "audioOnly": "Víxla einungis hljóð af/á",
             "audioRoute": "Veldu hljóðtæki",
             "boo": "Vanþóknun",
             "breakoutRooms": "Aukarásir",
@@ -1206,6 +1205,7 @@
             "lobbyButton": "Gera biðsvæðisham virkan/óvirkan",
             "localRecording": "Víxla stýringum fyrir upptöku á tölvunni af/á",
             "lockRoom": "Víxla lykilorði fundar af/á",
+            "lowBandwidthMode": "Víxla einungis hljóð af/á",
             "lowerHand": "Leggja niður höndina",
             "moreActions": "Fleiri aðgerðir",
             "moreActionsMenu": "Valmynd fyrir fleiri aðgerðir",
@@ -1253,8 +1253,6 @@
             "videounmute": "Ræsa myndavélina"
         },
         "addPeople": "Bæta fólki við símtalið þitt",
-        "audioOnlyOff": "Gera ham fyrir litla bandbreidd óvirkan",
-        "audioOnlyOn": "Virkja ham fyrir litla bandbreidd",
         "audioRoute": "Veldu hljóðtæki",
         "audioSettings": "Hljóðstillingar",
         "authenticate": "Auðkenna",
@@ -1294,6 +1292,8 @@
         "lobbyButtonEnable": "Virkja biðsvæðisham",
         "login": "Skrá inn",
         "logout": "Skrá út",
+        "lowBandwidthModeOff": "Gera ham fyrir litla bandbreidd óvirkan",
+        "lowBandwidthModeOn": "Virkja ham fyrir litla bandbreidd",
         "lowerYourHand": "Leggja niður höndina",
         "moreActions": "Fleiri aðgerðir",
         "moreOptions": "Fleiri valkostir",
@@ -1382,8 +1382,6 @@
     },
     "videoStatus": {
         "adjustFor": "Aðlaga fyrir:",
-        "audioOnly": "HLJ",
-        "audioOnlyExpanded": "Þú ert í ham fyrir litla bandbreidd. Í þessum ham geturðu einungis heyrt hljóð og séð deilda skjái.",
         "bestPerformance": "Bestu afköst",
         "callQuality": "Gæði myndmerkis (0 fyrir mestu afköst, 3 fyrir mestu gæði)",
         "hd": "HD",
@@ -1391,9 +1389,11 @@
         "highDefinition": "Hágæði",
         "highestQuality": "Mestu gæði",
         "labelTooiltipNoVideo": "Ekkert myndmerki",
-        "labelTooltipAudioOnly": "Hamur fyrir litla bandbreidd er virkur",
+        "labelTooltipLowBandwidthMode": "Hamur fyrir litla bandbreidd er virkur",
         "ld": "LD",
         "ldTooltip": "Skoða myndmerki í lággæðum",
+        "lowBandwidthMode": "HLJ",
+        "lowBandwidthModeExpanded": "Þú ert í ham fyrir litla bandbreidd. Í þessum ham geturðu einungis heyrt hljóð og séð deilda skjái.",
         "lowDefinition": "Lággæði",
         "performanceSettings": "Stillingar afkasta",
         "recording": "Upptaka í gangi",

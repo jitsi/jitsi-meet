@@ -39,9 +39,6 @@
         "phone": "Telefon",
         "speaker": "Reproduktor"
     },
-    "audioOnly": {
-        "audioOnly": "Nízká přenosová rychlost"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "např. 10000000 pro 10 Mbps",
         "assumedBandwidthBpsWarning": "Vyšší hodnoty mohou způsobit problémy se sítí.",
@@ -728,6 +725,9 @@
         "button": "Pozvat další",
         "youAreAlone": "Jste v tomto setkání jediný/á"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Nízká přenosová rychlost"
+    },
     "me": "já",
     "notify": {
         "OldElectronAPPTitle": "Bezpečnostní zranitelnost!",
@@ -1207,7 +1207,6 @@
         "Settings": "Nastavení",
         "accessibilityLabel": {
             "Settings": "Přepnout nastavení",
-            "audioOnly": "Přepnout režim pouze zvuku",
             "audioRoute": "Vybrat zvukové zařízení",
             "boo": "Bú",
             "breakoutRooms": "Podmístnosti",
@@ -1249,6 +1248,7 @@
             "localRecording": "Přepnout ovládání místního nahrávání",
             "lockRoom": "Přepnout heslo setkání",
             "love": "Srdce",
+            "lowBandwidthMode": "Přepnout režim pouze zvuku",
             "lowerHand": "Spustit ruku dolů",
             "moreActions": "Přepnout nabídku více činností",
             "moreActionsMenu": "Nabídka více činností",
@@ -1297,8 +1297,6 @@
             "videounmute": "Zapnpout kameru"
         },
         "addPeople": "Přidat do hovoru účastníky",
-        "audioOnlyOff": "Vypnout mód slabého připojení",
-        "audioOnlyOn": "Zapnout mód slabého připojení",
         "audioRoute": "Vybrat zvukové zařízení",
         "audioSettings": "Nastavení zvuku",
         "authenticate": "Ověřit",
@@ -1339,6 +1337,8 @@
         "login": "Přihlásit se",
         "logout": "Odhlásit se",
         "love": "Srdce",
+        "lowBandwidthModeOff": "Vypnout mód slabého připojení",
+        "lowBandwidthModeOn": "Zapnout mód slabého připojení",
         "lowerYourHand": "Přestat se hlásit",
         "moreActions": "Více činností",
         "moreOptions": "Více možností",
@@ -1424,8 +1424,6 @@
     },
     "videoStatus": {
         "adjustFor": "Přizpůsobit pro",
-        "audioOnly": "AU",
-        "audioOnlyExpanded": "Jste v režimu slabého připojení. V tomto režimu je k dispozici jen zvuk a sdílení obrazovky.",
         "bestPerformance": "Nejlepší výkon",
         "callQuality": "Kvalita hovoru",
         "hd": "HD",
@@ -1433,9 +1431,11 @@
         "highDefinition": "Vysoká kvalita",
         "highestQuality": "Nejvyšší kvalita",
         "labelTooiltipNoVideo": "Žádné video",
-        "labelTooltipAudioOnly": "Zapnut režim slabého připojení",
+        "labelTooltipLowBandwidthMode": "Zapnut režim slabého připojení",
         "ld": "LD",
         "ldTooltip": "Sledujete obraz v nízké kvalitě",
+        "lowBandwidthMode": "AU",
+        "lowBandwidthModeExpanded": "Jste v režimu slabého připojení. V tomto režimu je k dispozici jen zvuk a sdílení obrazovky.",
         "lowDefinition": "Nízká kvalita",
         "performanceSettings": "Nastavení výkonu",
         "recording": "Probíhá nahrávání",

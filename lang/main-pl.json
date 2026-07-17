@@ -36,9 +36,6 @@
         "phone": "Telefon",
         "speaker": "Głośnik"
     },
-    "audioOnly": {
-        "audioOnly": "Niska przepustowość"
-    },
     "breakoutRooms": {
         "actions": {
             "add": "Dodaj pokój podgrupy",
@@ -656,6 +653,9 @@
         "button": "Zaproś innych uczestników",
         "youAreAlone": "Tylko ty uczestniczysz w tym spotkaniu"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Niska przepustowość"
+    },
     "me": "to ja",
     "notify": {
         "OldElectronAPPTitle": "Luka bezpieczeństwa!",
@@ -1100,7 +1100,6 @@
         "Settings": "Ustawienia",
         "accessibilityLabel": {
             "Settings": "Ustawienia przełączania",
-            "audioOnly": "Przełączanie tylko audio",
             "audioRoute": "Wybierz urządzenie dźwiękowe",
             "boo": "Buczenie",
             "breakoutRoom": "Dołącz/opuść pokój podgrupy",
@@ -1141,6 +1140,7 @@
             "lobbyButton": "Włącz/wyłącz tryb lobby",
             "localRecording": "Przełączanie lokalnych urządzeń sterujących zapisem danych",
             "lockRoom": "Przełączenie hasła spotkania",
+            "lowBandwidthMode": "Przełączanie tylko audio",
             "lowerHand": "Opuść rękę",
             "moreActions": "Przełączanie menu więcej działań",
             "moreActionsMenu": "Więcej działań w menu",
@@ -1188,8 +1188,6 @@
             "videounmute": "Uruchom kamerę"
         },
         "addPeople": "Dodaj ludzi do swojej rozmowy",
-        "audioOnlyOff": "Wyłącz tryb słabego łącza",
-        "audioOnlyOn": "Włącz tryb słabego łącza",
         "audioRoute": "Wybierz urządzenie dźwiękowe",
         "audioSettings": "Ustawienia audio",
         "authenticate": "Uwierzytelnianie",
@@ -1229,6 +1227,8 @@
         "lobbyButtonEnable": "Włącz tryb lobby",
         "login": "Zaloguj",
         "logout": "Wyloguj",
+        "lowBandwidthModeOff": "Wyłącz tryb słabego łącza",
+        "lowBandwidthModeOn": "Włącz tryb słabego łącza",
         "lowerYourHand": "Opuść rękę",
         "moreActions": "Więcej działań",
         "moreOptions": "Więcej opcji",
@@ -1316,8 +1316,6 @@
     },
     "videoStatus": {
         "adjustFor": "Dostosuj do:",
-        "audioOnly": "DŹW",
-        "audioOnlyExpanded": "Jesteś w trybie słabego łącza. W tym trybie będziesz otrzymywać tylko dźwięk i udostępnianie ekranu.",
         "bestPerformance": "Najlepsza wydajność",
         "callQuality": "Jakość obrazu",
         "hd": "HD",
@@ -1325,9 +1323,11 @@
         "highDefinition": "Wysoka rozdzielczość",
         "highestQuality": "Najwyższa jakość",
         "labelTooiltipNoVideo": "Brak obrazu",
-        "labelTooltipAudioOnly": "Włączono tryb słabego łącza",
+        "labelTooltipLowBandwidthMode": "Włączono tryb słabego łącza",
         "ld": "LD",
         "ldTooltip": "Podgląd obrazu w niskiej rozdzielczości",
+        "lowBandwidthMode": "DŹW",
+        "lowBandwidthModeExpanded": "Jesteś w trybie słabego łącza. W tym trybie będziesz otrzymywać tylko dźwięk i udostępnianie ekranu.",
         "lowDefinition": "Niska rozdzielczość",
         "performanceSettings": "Ustawienia wydajności",
         "recording": "Trwa nagrywanie",

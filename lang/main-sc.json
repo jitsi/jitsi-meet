@@ -39,9 +39,6 @@
         "phone": "Telèfonu",
         "speaker": "Altoparlante"
     },
-    "audioOnly": {
-        "audioOnly": "Àmpiu de banda bàsciu"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "pro es. 10.000.000 pro 10 Mbps",
         "assumedBandwidthBpsWarning": "Is valores prus artos podent provocare problemas de rete.",
@@ -784,6 +781,9 @@
         "button": "Invita gente",
         "youAreAlone": "Ses a sa sola in custa riunione"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Àmpiu de banda bàsciu"
+    },
     "me": "deo",
     "notify": {
         "OldElectronAPPTitle": "Vulnerabilidade de seguresa.",
@@ -1283,7 +1283,6 @@
         "Settings": "Cunfiguratzione",
         "accessibilityLabel": {
             "Settings": "Aberi is cunfiguratziones",
-            "audioOnly": "Càmbia àudio isceti",
             "audioRoute": "Sèbera su dispositivu de àudio",
             "boo": "Boo",
             "breakoutRooms": "Aposentos separados",
@@ -1326,6 +1325,7 @@
             "localRecording": "Ativa o disativa is controllos de registratzione in locale",
             "lockRoom": "Ativa o disativa crae de riunione",
             "love": "Coro",
+            "lowBandwidthMode": "Càmbia àudio isceti",
             "lowerHand": "Abbassa sa manu",
             "moreActions": "Àteras atziones",
             "moreActionsMenu": "Menù de atziones additzionales",
@@ -1388,8 +1388,6 @@
                 "label": ""
             }
         },
-        "audioOnlyOff": "Disativa modalidade de àmpiu de banda bàsciu",
-        "audioOnlyOn": "Ativa modalidade de àmpiu de banda bàsciu",
         "audioRoute": "Sèbera su dispositivu de àudio",
         "audioSettings": "Impostatziones àudio",
         "authenticate": "Autentica·ti",
@@ -1431,6 +1429,8 @@
         "login": "Intra",
         "logout": "Essi",
         "love": "Coro",
+        "lowBandwidthModeOff": "Disativa modalidade de àmpiu de banda bàsciu",
+        "lowBandwidthModeOn": "Ativa modalidade de àmpiu de banda bàsciu",
         "lowerYourHand": "Abbassa sa manu",
         "moreActions": "Àteras atziones",
         "moreOptions": "Àteras optziones",
@@ -1521,8 +1521,6 @@
     },
     "videoStatus": {
         "adjustFor": "Acontza pro:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Ses in modalidade de àmpiu de banda bàsciu. In custa modalidade isceti su ritzevimentu de àudio e de cumpartzidura de ischermu sunt a disponimentu.",
         "bestPerformance": "Rendimentu màssimu",
         "callQuality": "Calidade de su vìdeu",
         "hd": "HD",
@@ -1530,9 +1528,11 @@
         "highDefinition": "Arta definitzione (HD)",
         "highestQuality": "Calidade prus arta",
         "labelTooiltipNoVideo": "Sena vìdeu",
-        "labelTooltipAudioOnly": "Modalidade de àmpiu de banda bàsciu ativada",
+        "labelTooltipLowBandwidthMode": "Modalidade de àmpiu de banda bàsciu ativada",
         "ld": "LD",
         "ldTooltip": "Vìdeu in definitzione bàscia (LD)",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Ses in modalidade de àmpiu de banda bàsciu. In custa modalidade isceti su ritzevimentu de àudio e de cumpartzidura de ischermu sunt a disponimentu.",
         "lowDefinition": "Definitzione bàscia (LD)",
         "performanceSettings": "Impostatziones de rendimentu",
         "recording": "Registratzione de s'addòbiu in cursu.",

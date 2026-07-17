@@ -39,9 +39,6 @@
         "phone": "Утас",
         "speaker": "Чанга яригч"
     },
-    "audioOnly": {
-        "audioOnly": "Чанар багасгах"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "жишээ:10 Mbps = 10000000",
         "assumedBandwidthBpsWarning": "Өндөр утга нь сүлжээний асуудал үүсгэж болзошгүй",
@@ -809,6 +806,9 @@
         "button": "Бусдыг урь",
         "youAreAlone": "Та энэ уулзалтад ганцаараа байна"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Чанар багасгах"
+    },
     "me": "Надад",
     "notify": {
         "OldElectronAPPTitle": "Аюулгүй байдал эмзэг байна!",
@@ -1314,7 +1314,6 @@
         "Settings": "Тохиргоо",
         "accessibilityLabel": {
             "Settings": "Тохиргоо",
-            "audioOnly": "Зөвхөн дуу",
             "audioRoute": "Дууны төхөөрөмж сонго",
             "boo": "Boo",
             "breakoutRooms": "Дэд өрөөнүүд",
@@ -1358,6 +1357,7 @@
             "localRecording": "Дотоод бичлэгийн хяналт",
             "lockRoom": "Нууц үг өгөх",
             "love": "Зүрх",
+            "lowBandwidthMode": "Зөвхөн дуу",
             "lowerHand": "Гараа буулгана уу",
             "moreActions": "Бусад цэс",
             "moreActionsMenu": "Бусад цэс",
@@ -1420,8 +1420,6 @@
                 "label": "Стерео"
             }
         },
-        "audioOnlyOff": "Бага дамжуулах горимыг идэвхгүй болгох",
-        "audioOnlyOn": "Бага дамжуулах горимыг идэвхжүүлэх",
         "audioRoute": "Дууны төхөөрөмж сонгох",
         "audioSettings": "Дууны тохиргоо",
         "authenticate": "Баталгаажуулах",
@@ -1466,6 +1464,8 @@
         "login": "Нэвтрэх",
         "logout": "Гарах",
         "love": "Зүрх",
+        "lowBandwidthModeOff": "Бага дамжуулах горимыг идэвхгүй болгох",
+        "lowBandwidthModeOn": "Бага дамжуулах горимыг идэвхжүүлэх",
         "lowerYourHand": "Гараа буулгах",
         "moreActions": "Бусад үйлдэл",
         "moreOptions": "Бусад тохиргоо",
@@ -1561,8 +1561,6 @@
     },
     "videoStatus": {
         "adjustFor": "Тохируулах:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Таны дамжуулах чадвар муу байна. Энэ горимд та зөвхөн дуу болон дэлгэцийн хуваалцахыг хүлээн авах боломжтой.",
         "bestPerformance": "Хамгийн сан үзүүлэлт",
         "callQuality": "Видеоны чанар",
         "hd": "HD",
@@ -1570,9 +1568,11 @@
         "highDefinition": "Өндөр нягтаршил",
         "highestQuality": "Хамгийн өндөр нягтаршил",
         "labelTooiltipNoVideo": "Видео байхгүй",
-        "labelTooltipAudioOnly": "Дамжуулалтын багтаамж бага горим идэвхжсэн",
+        "labelTooltipLowBandwidthMode": "Дамжуулалтын багтаамж бага горим идэвхжсэн",
         "ld": "LD",
         "ldTooltip": "Бага нягтаршилтай видео үзэж байна",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Таны дамжуулах чадвар муу байна. Энэ горимд та зөвхөн дуу болон дэлгэцийн хуваалцахыг хүлээн авах боломжтой.",
         "lowDefinition": "Бага нягтаршил",
         "performanceSettings": "Үзүүлэлтийн тохиргоо",
         "recording": "Уулзалтын бичлэг хийж байна",

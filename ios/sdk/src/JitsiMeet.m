@@ -217,7 +217,7 @@
 
         if (contacts && (url = contacts.firstObject.personHandle.value)) {
             return [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
-                builder.audioOnly = audioOnly;
+                builder.lowBandwidthMode = audioOnly;
                 builder.room = url;
             }];
         }

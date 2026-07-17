@@ -220,7 +220,7 @@ async function _toggleScreenSharing(
 
         // Show notification about more bandwidth usage in audio-only mode if the user starts screensharing. This
         // doesn't apply to audio-only screensharing.
-        const { enabled: bestPerformanceMode } = state['features/base/audio-only'];
+        const { enabled: bestPerformanceMode } = state['features/base/low-bandwidth-mode'];
 
         if (bestPerformanceMode && !audioOnly) {
             dispatch(showNotification({

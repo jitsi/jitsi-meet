@@ -39,9 +39,6 @@
         "phone": "Telefono",
         "speaker": "Altoparlante"
     },
-    "audioOnly": {
-        "audioOnly": "Larghezza di banda limitata"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "es. 10000000 per 10 Mbps",
         "assumedBandwidthBpsWarning": "Valori alti possono causare problemi di rete",
@@ -809,6 +806,9 @@
         "button": "Invita altri",
         "youAreAlone": "Sei l'unico nella riunione"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Larghezza di banda limitata"
+    },
     "me": "io",
     "notify": {
         "OldElectronAPPTitle": "Falla di sicurezza!",
@@ -1314,7 +1314,6 @@
         "Settings": "Impostazioni",
         "accessibilityLabel": {
             "Settings": "Apri impostazioni",
-            "audioOnly": "Attiva solo audio",
             "audioRoute": "Scegli il dispositivo audio",
             "boo": "Buu",
             "breakoutRooms": "Stanze",
@@ -1358,6 +1357,7 @@
             "localRecording": "Mostra controlli della registrazione",
             "lockRoom": "Attiva/disattiva password della riunione",
             "love": "Cuore",
+            "lowBandwidthMode": "Attiva solo audio",
             "lowerHand": "Abbassa la mano",
             "moreActions": "Avanzate",
             "moreActionsMenu": "Menu avanzato",
@@ -1420,8 +1420,6 @@
                 "label": "Stereo"
             }
         },
-        "audioOnlyOff": "Disabilita modalità larghezza di banda limitata",
-        "audioOnlyOn": "Abilita modalità larghezza di banda limitata",
         "audioRoute": "Scegli il dispositivo audio",
         "audioSettings": "Impostazioni audio",
         "authenticate": "Autenticazione",
@@ -1466,6 +1464,8 @@
         "login": "Accedi",
         "logout": "Disconnetti",
         "love": "Cuore",
+        "lowBandwidthModeOff": "Disabilita modalità larghezza di banda limitata",
+        "lowBandwidthModeOn": "Abilita modalità larghezza di banda limitata",
         "lowerYourHand": "Abbassa la mano",
         "moreActions": "Avanzate",
         "moreOptions": "Altre opzioni",
@@ -1561,8 +1561,6 @@
     },
     "videoStatus": {
         "adjustFor": "Ottimizza per:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Hai attivato la modalità larghezza di banda limitata. In questa modalità riceverai solo l'audio e la condivisione dello schermo.",
         "bestPerformance": "Prestazioni max.",
         "callQuality": "Qualità video (0 per prestazioni massime, 3 per qualità massima)",
         "hd": "HD",
@@ -1570,9 +1568,11 @@
         "highDefinition": "Alta definizione",
         "highestQuality": "Qualità max.",
         "labelTooiltipNoVideo": "Nessun video",
-        "labelTooltipAudioOnly": "Modalità larghezza di banda limitata attivata",
+        "labelTooltipLowBandwidthMode": "Modalità larghezza di banda limitata attivata",
         "ld": "LD",
         "ldTooltip": "Il video è a bassa definizione",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Hai attivato la modalità larghezza di banda limitata. In questa modalità riceverai solo l'audio e la condivisione dello schermo.",
         "lowDefinition": "Bassa definizione",
         "performanceSettings": "Impostazioni prestazioni",
         "recording": "Questa riunione sta venendo registrata.",

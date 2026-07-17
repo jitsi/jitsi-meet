@@ -47,8 +47,8 @@
     _featureFlags[flag] = value;
 }
 
-- (void)setAudioOnly:(BOOL)audioOnly {
-    [self setConfigOverride:@"startAudioOnly" withBoolean:audioOnly];
+- (void)setLowBandwidthMode:(BOOL)lowBandwidthMode {
+    [self setConfigOverride:@"startLowBandwidthMode" withBoolean:lowBandwidthMode];
 }
 
 - (void)setAudioMuted:(BOOL)audioMuted {

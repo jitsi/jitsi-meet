@@ -39,9 +39,6 @@
         "phone": "Telefòn",
         "speaker": "Nautparlaire"
     },
-    "audioOnly": {
-        "audioOnly": "Benda passanta febla"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "ex.10000000 per 10 Mbps",
         "assumedBandwidthBpsWarning": "De valors mai nautas pòdon causar de problèmas de ret.",
@@ -728,6 +725,9 @@
         "button": "Convidar d’autres",
         "youAreAlone": "Sètz l’unica persona de la reünion"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Benda passanta febla"
+    },
     "me": "ieu",
     "notify": {
         "OldElectronAPPTitle": "Problèma de seguretat !",
@@ -1207,7 +1207,6 @@
         "Settings": "Paramètres",
         "accessibilityLabel": {
             "Settings": "Passar als paramètres",
-            "audioOnly": "Passar al sol àudio",
             "audioRoute": "Seleccionar lo periferic àudio",
             "boo": "Aücar",
             "breakoutRooms": "Salas petitas",
@@ -1249,6 +1248,7 @@
             "localRecording": "Passar al panèl d’enregistraments locals",
             "lockRoom": "Tirar/Metre lo senhal de la reünion",
             "love": "Còr",
+            "lowBandwidthMode": "Passar al sol àudio",
             "lowerHand": "Baissar la man",
             "moreActions": "Passar al menú mai d’accions",
             "moreActionsMenu": "Mai de menús d’accion",
@@ -1297,8 +1297,6 @@
             "videounmute": "Aviar la camèra"
         },
         "addPeople": "Ajustar de monde a vòstra sonada",
-        "audioOnlyOff": "Desactivar lo mòde connexion febla",
-        "audioOnlyOn": "Activar lo mòde connexion febla",
         "audioRoute": "Seleccionar lo periferic àudio",
         "audioSettings": "Paramètres àudio",
         "authenticate": "Autentificatz-vos",
@@ -1339,6 +1337,8 @@
         "login": "Connexion",
         "logout": "Desconnexion",
         "love": "Còr",
+        "lowBandwidthModeOff": "Desactivar lo mòde connexion febla",
+        "lowBandwidthModeOn": "Activar lo mòde connexion febla",
         "lowerYourHand": "Baissar la man",
         "moreActions": "Mai d’opcions",
         "moreOptions": "Autras opcions",
@@ -1424,8 +1424,6 @@
     },
     "videoStatus": {
         "adjustFor": "Ajustar per :",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Sètz en mòde connexion febla. Amb aqueste mòde recebretz pas que l’àudio e lo partatge d’ecran.",
         "bestPerformance": "Melhora performança",
         "callQuality": "Qualitat vidèo",
         "hd": "HD",
@@ -1433,9 +1431,11 @@
         "highDefinition": "Nauta definicion",
         "highestQuality": "Qualitat mai nauta",
         "labelTooiltipNoVideo": "Pas cap de vidèo",
-        "labelTooltipAudioOnly": "Mòde connexion febla activat",
+        "labelTooltipLowBandwidthMode": "Mòde connexion febla activat",
         "ld": "Bassa definicion",
         "ldTooltip": "Difusion vidèo en bassa definicion",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Sètz en mòde connexion febla. Amb aqueste mòde recebretz pas que l’àudio e lo partatge d’ecran.",
         "lowDefinition": "Bassa definicion",
         "performanceSettings": "Paramètres de performança",
         "recording": "A enregistrar",

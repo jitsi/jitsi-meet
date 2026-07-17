@@ -39,9 +39,6 @@
         "phone": "Telefons",
         "speaker": "Skaļrunis"
     },
-    "audioOnly": {
-        "audioOnly": "Maza tīkla kapacitāte (tikai skaņa)"
-    },
     "audioTranslation": {
         "disabledForRoom": "Audio tulkošana šajā sapulcē ir izslēgta.",
         "errorForbidden": "Jums nav atļaujas izmantot audio tulkošanu.",
@@ -835,6 +832,9 @@
         "button": "Uzaiciniet citus",
         "youAreAlone": "Jūs esat vienīgais sapulcē"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Maza tīkla kapacitāte (tikai skaņa)"
+    },
     "me": "es",
     "multiScreen": {
         "noParticipants": "Nav dalībnieku",
@@ -1361,7 +1361,6 @@
         "Settings": "Iestatījumi",
         "accessibilityLabel": {
             "Settings": "Iestatījumu izvēlne (rādīt/nerādīt)",
-            "audioOnly": "Tikai skaņa (iesl./izsl.)",
             "audioRoute": "Izvēlieties audio ierīci",
             "audioTranslation": "Tulkot audio",
             "boo": "Būū",
@@ -1406,6 +1405,7 @@
             "localRecording": "Lokālā ieraksta vadības rīki (iesl./izsl.)",
             "lockRoom": "Telpas slēgšana ar paroli (iesl./izsl.)",
             "love": "Sirds",
+            "lowBandwidthMode": "Tikai skaņa (iesl./izsl.)",
             "lowerHand": "Nolaist roku",
             "moreActions": "Papildus iestatījumu izvēlne (rādīt/nerādīt)",
             "moreActionsMenu": "Papildus iestatījumu izvēlne",
@@ -1468,8 +1468,6 @@
                 "label": "Stereo"
             }
         },
-        "audioOnlyOff": "Atspējot kanāla/trafika taupības režīmu",
-        "audioOnlyOn": "Iespējot kanāla/trafika taupības režīmu",
         "audioRoute": "Izvēlēties audioierīci",
         "audioSettings": "Audio iestatījumi",
         "audioTranslation": "Tulkot audio",
@@ -1516,6 +1514,8 @@
         "login": "Ierakstīties",
         "logout": "Izrakstīties",
         "love": "Sirds",
+        "lowBandwidthModeOff": "Atspējot kanāla/trafika taupības režīmu",
+        "lowBandwidthModeOn": "Iespējot kanāla/trafika taupības režīmu",
         "lowerYourHand": "Nolaist roku",
         "moreActions": "Vairāk rīcību",
         "moreOptions": "Vairāk opciju",
@@ -1614,8 +1614,6 @@
     },
     "videoStatus": {
         "adjustFor": "Pielāgot:",
-        "audioOnly": "Tikai skaņa",
-        "audioOnlyExpanded": "Kanāla/trafika taupīšanas režīms. Šajā režīmā pieejami tikai audio un ekrāna kopīgošana",
         "bestPerformance": "Labākais sniegums",
         "callQuality": "Video kvalitāte",
         "hd": "HD",
@@ -1623,9 +1621,11 @@
         "highDefinition": "Augsta kvalitāte",
         "highestQuality": "Augstākā kvalitāte",
         "labelTooiltipNoVideo": "Nav video",
-        "labelTooltipAudioOnly": "Ieslēgts kanāla/trafika taupīšanas režīms",
+        "labelTooltipLowBandwidthMode": "Ieslēgts kanāla/trafika taupīšanas režīms",
         "ld": "LD",
         "ldTooltip": "Zemas izšķirtspējas video",
+        "lowBandwidthMode": "Tikai skaņa",
+        "lowBandwidthModeExpanded": "Kanāla/trafika taupīšanas režīms. Šajā režīmā pieejami tikai audio un ekrāna kopīgošana",
         "lowDefinition": "Zema kvalitāte",
         "performanceSettings": "Veiktspējas iestatījumi",
         "recording": "Notiek ierakstīšana",

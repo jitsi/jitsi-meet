@@ -39,9 +39,6 @@
         "phone": "Hörer",
         "speaker": "Lautsprecher"
     },
-    "audioOnly": {
-        "audioOnly": "Geringe Bandbreite"
-    },
     "audioTranslation": {
         "disabledForRoom": "Die Audio-Übersetzung wurde für diese Konferenz deaktiviert.",
         "errorForbidden": "Sie haben nicht die Berechtigung die Audio-Übersetzung zu nutzen.",
@@ -836,6 +833,9 @@
         "button": "Andere einladen",
         "youAreAlone": "Nur Sie sind in dieser Konferenz"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Geringe Bandbreite"
+    },
     "me": "ich",
     "multiScreen": {
         "noParticipants": "Niemand anwesend",
@@ -1362,7 +1362,6 @@
         "Settings": "Einstellungen",
         "accessibilityLabel": {
             "Settings": "Einstellungen einschalten",
-            "audioOnly": "„Nur Audio“ ein-/ausschalten",
             "audioRoute": "Audiogerät auswählen",
             "audioTranslation": "Audio-Übersetzung",
             "boo": "Buhen",
@@ -1407,6 +1406,7 @@
             "localRecording": "Lokale Aufzeichnungssteuerelemente ein-/ausschalten",
             "lockRoom": "Konferenzpasswort ein-/ausschalten",
             "love": "Herz",
+            "lowBandwidthMode": "„Nur Audio“ ein-/ausschalten",
             "lowerHand": "Hand senken",
             "moreActions": "Menü „Weitere Einstellungen“ ein-/ausschalten",
             "moreActionsMenu": "Menü „Weitere Einstellungen“",
@@ -1469,8 +1469,6 @@
                 "label": "Stereo"
             }
         },
-        "audioOnlyOff": "Modus „Nur Audio“ deaktivieren",
-        "audioOnlyOn": "Modus „Nur Audio“ aktivieren",
         "audioRoute": "Audiogerät auswählen",
         "audioSettings": "Ton-Einstellungen",
         "audioTranslation": "Audio-Übersetzung",
@@ -1517,6 +1515,8 @@
         "login": "Anmelden",
         "logout": "Abmelden",
         "love": "Herz",
+        "lowBandwidthModeOff": "Modus „Nur Audio“ deaktivieren",
+        "lowBandwidthModeOn": "Modus „Nur Audio“ aktivieren",
         "lowerYourHand": "Hand senken",
         "moreActions": "Weitere Einstellungen",
         "moreOptions": "Weitere Optionen",
@@ -1615,8 +1615,6 @@
     },
     "videoStatus": {
         "adjustFor": "Einstellen für:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Sie befinden sich im Modus „Nur Audio“. Dieser Modus benötigt weniger Bandbreite, Sie sehen jedoch nicht die Videos der anderen.",
         "bestPerformance": "Beste Leistung",
         "callQuality": "Videoqualität",
         "hd": "HD",
@@ -1624,9 +1622,11 @@
         "highDefinition": "Hohe Auflösung",
         "highestQuality": "Höchste Qualität",
         "labelTooiltipNoVideo": "Kein Video",
-        "labelTooltipAudioOnly": "„Nur Audio“-Modus aktiv",
+        "labelTooltipLowBandwidthMode": "„Nur Audio“-Modus aktiv",
         "ld": "LD",
         "ldTooltip": "Video wird in niedriger Auflösung angezeigt",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Sie befinden sich im Modus „Nur Audio“. Dieser Modus benötigt weniger Bandbreite, Sie sehen jedoch nicht die Videos der anderen.",
         "lowDefinition": "Niedrige Auflösung",
         "performanceSettings": "Qualitätseinstellungen",
         "recording": "Aufnahme läuft.",

@@ -36,9 +36,6 @@
         "phone": "Telefonoa",
         "speaker": "Bozgorailua"
     },
-    "audioOnly": {
-        "audioOnly": "Banda-zabalera txikia"
-    },
     "calendarSync": {
         "addMeetingURL": "Bileraren esteka gehitu",
         "confirmAddLink": "Jitsi esteka gertaera honetara gehitu nahi duzu?",
@@ -528,6 +525,9 @@
         "button": "Gonbidatu beste batzuk",
         "youAreAlone": "Bileran dagoen bakarra zara"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Banda-zabalera txikia"
+    },
     "me": "ni",
     "notify": {
         "OldElectronAPPTitle": "Zaharkitutako aplikazioa",
@@ -786,7 +786,6 @@
         "Settings": "Ezarpenak",
         "accessibilityLabel": {
             "Settings": "Txandakatu ezarpenak",
-            "audioOnly": "Txandakatu audioa soilik",
             "audioRoute": "Hautatu soinu-gailua",
             "callQuality": "Kudeatu bideoaren kalitatea",
             "cc": "Txandakatu azpitituluak",
@@ -806,6 +805,7 @@
             "lobbyButton": "Aktibatu/desaktibatu itxaron-gela",
             "localRecording": "Tokiko grabazio kontrolak kontrolatu",
             "lockRoom": "Aldatu bileraren pasahitza",
+            "lowBandwidthMode": "Txandakatu audioa soilik",
             "moreActions": "Txandakatu ekintza gehiago menua",
             "moreActionsMenu": "Ekintza gehiago menua",
             "moreOptions": "Erakutsi aukera gehiagu",
@@ -838,8 +838,6 @@
             "videomute": "Txandakatu mutututako bideoa"
         },
         "addPeople": "Gehitu jendea zure deira",
-        "audioOnlyOff": "Gaitu audioa soilik modua",
-        "audioOnlyOn": "Gaitu audioa soilik modua",
         "audioRoute": "Aukeratu soinu gailua",
         "audioSettings": "Audio ezarpenak",
         "authenticate": "Autentifikatu",
@@ -863,6 +861,8 @@
         "lobbyButtonEnable": "Aktibatu itxaron-gela modua",
         "login": "Saioa hasi",
         "logout": "Itxi saioa",
+        "lowBandwidthModeOff": "Gaitu audioa soilik modua",
+        "lowBandwidthModeOn": "Gaitu audioa soilik modua",
         "lowerYourHand": "Jaitsi eskua",
         "moreActions": "Ekintza gehiago",
         "moreOptions": "Aukera gehiago",
@@ -927,16 +927,16 @@
         "pending": "{{displayName}} gonbidatu da"
     },
     "videoStatus": {
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Audio-soilik moduan zaude. Modu honek banda zabalera gordetzen du, baina besteen bideoa ez duzu ikusiko.",
         "callQuality": "Bideo kalitatea",
         "hd": "HD",
         "hdTooltip": "Bideoa definizio-altuan ikusten",
         "highDefinition": "Definizio-altuan moduan dago",
         "labelTooiltipNoVideo": "Ez dago bideorik",
-        "labelTooltipAudioOnly": "Audio-soilik moduan dago",
+        "labelTooltipLowBandwidthMode": "Audio-soilik moduan dago",
         "ld": "LD",
         "ldTooltip": "Bideoa behe-definizioan ikusten",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Audio-soilik moduan zaude. Modu honek banda zabalera gordetzen du, baina besteen bideoa ez duzu ikusiko.",
         "lowDefinition": "Behe-definizioa",
         "sd": "SD",
         "sdTooltip": "Definizio estandarrean bideoa ikusten",

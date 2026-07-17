@@ -23,9 +23,6 @@
         "phone": "Հեռախոս",
         "speaker": "Հռետոր"
     },
-    "audioOnly": {
-        "audioOnly": "Միայն ձայնը"
-    },
     "calendarSync": {
         "addMeetingURL": "",
         "confirmAddLink": "",
@@ -393,6 +390,9 @@
     },
     "lockRoomPassword": "Գաղտնաբառ",
     "lockRoomPasswordUppercase": "Գաղտնաբառ",
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Միայն ձայնը"
+    },
     "me": "ես",
     "notify": {
         "connectedOneMember": "",
@@ -548,7 +548,6 @@
         "Settings": "Կարգավորումներ",
         "accessibilityLabel": {
             "Settings": "",
-            "audioOnly": "",
             "audioRoute": "",
             "callQuality": "",
             "cc": "",
@@ -561,6 +560,7 @@
             "kick": "",
             "localRecording": "",
             "lockRoom": "",
+            "lowBandwidthMode": "",
             "moreActions": "",
             "moreActionsMenu": "",
             "mute": "",
@@ -581,8 +581,6 @@
             "videomute": ""
         },
         "addPeople": "Ավելացնել մասնակից",
-        "audioOnlyOff": "",
-        "audioOnlyOn": "",
         "audioRoute": "",
         "authenticate": "Վավերացում",
         "callQuality": "Կարգավորել զանգի որակը",
@@ -599,6 +597,8 @@
         "invite": "",
         "login": "Մուտք",
         "logout": "Ելք",
+        "lowBandwidthModeOff": "",
+        "lowBandwidthModeOn": "",
         "lowerYourHand": "",
         "moreActions": "Ավելի շատ հնարավորություններ",
         "mute": "Միացնել/Անջատել ձայնը ",
@@ -649,14 +649,14 @@
         "pending": ""
     },
     "videoStatus": {
-        "audioOnly": "",
-        "audioOnlyExpanded": "",
         "callQuality": "",
         "hd": "",
         "highDefinition": "",
         "labelTooiltipNoVideo": "",
-        "labelTooltipAudioOnly": "",
+        "labelTooltipLowBandwidthMode": "",
         "ld": "",
+        "lowBandwidthMode": "",
+        "lowBandwidthModeExpanded": "",
         "lowDefinition": "",
         "onlyAudioAvailable": "",
         "onlyAudioSupported": "",

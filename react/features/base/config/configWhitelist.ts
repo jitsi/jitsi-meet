@@ -225,7 +225,7 @@ export default [
     'showChatPermissionsModeratorSetting',
     'speakerStats',
     'startAudioMuted',
-    'startAudioOnly',
+    'startLowBandwidthMode',
     'startLastN',
     'startScreenSharing',
     'startSilent',

@@ -309,7 +309,7 @@ export default class LargeVideoManager {
                     || streamingStatusActive
                 );
 
-            const isAudioOnly = APP.conference.isAudioOnly();
+            const isLowBandwidthMode = APP.conference.isLowBandwidthMode();
 
             // Multi-stream is not supported on plan-b endpoints even if its is enabled via config.js. A virtual
             // screenshare tile is still created when a remote endpoint starts screenshare to keep the behavior
@@ -319,7 +319,8 @@ export default class LargeVideoManager {
 
             const showAvatar
                 = isVideoContainer
-                    && ((isAudioOnly && videoType !== VIDEO_TYPE.DESKTOP) || !isVideoRenderable || legacyScreenshare);
+                    && ((isLowBandwidthMode && videoType !== VIDEO_TYPE.DESKTOP)
+                        || !isVideoRenderable || legacyScreenshare);
 
             logger.debug(`scheduleLargeVideoUpdate: Remote track ${videoTrack?.jitsiTrack}, isVideoMuted=${
                 isVideoMuted}, streamingStatusActive=${streamingStatusActive}, isVideoRenderable=${
@@ -351,7 +352,7 @@ export default class LargeVideoManager {
                         sendAnalytics(createScreenSharingIssueEvent({
                             source: 'large-video',
                             isVideoMuted,
-                            isAudioOnly,
+                            isLowBandwidthMode,
                             isVideoContainer,
                             videoType
                         }));
@@ -374,7 +375,7 @@ export default class LargeVideoManager {
 
             // Do not show connection status message in the audio only mode,
             // because it's based on the video playback status.
-            const overrideAndHide = APP.conference.isAudioOnly();
+            const overrideAndHide = APP.conference.isLowBandwidthMode();
 
             this.updateParticipantConnStatusIndication(
                     id,

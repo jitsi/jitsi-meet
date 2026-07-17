@@ -118,18 +118,18 @@ export function isVideoPlayable(stateful: IStateful, id: string) {
     const participant = id ? getParticipantById(state, id) : getLocalParticipant(state);
     const isLocal = participant?.local ?? true;
     const videoTrack = getVideoTrackByParticipant(state, participant);
-    const isAudioOnly = Boolean(state['features/base/audio-only'].enabled);
+    const isLowBandwidthMode = Boolean(state['features/base/low-bandwidth-mode'].enabled);
     let isPlayable = false;
 
     if (isLocal) {
         const isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
 
-        isPlayable = Boolean(videoTrack) && !isVideoMuted && !isAudioOnly;
+        isPlayable = Boolean(videoTrack) && !isVideoMuted && !isLowBandwidthMode;
     } else if (!participant?.fakeParticipant || isScreenShareParticipant(participant)) {
         // remote participants excluding shared video
         const isVideoMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.VIDEO, id);
 
-        isPlayable = Boolean(videoTrack) && !isVideoMuted && !isAudioOnly && isTrackStreamingStatusActive(videoTrack);
+        isPlayable = Boolean(videoTrack) && !isVideoMuted && !isLowBandwidthMode && isTrackStreamingStatusActive(videoTrack);
     }
 
     return isPlayable;
@@ -532,7 +532,7 @@ export function computeDisplayModeFromInput(input: any) {
     const {
         filmstripType,
         isActiveParticipant,
-        isAudioOnly,
+        isLowBandwidthMode,
         isCurrentlyOnLargeVideo,
         isVirtualScreenshareParticipant,
         isScreenSharing,
@@ -560,8 +560,8 @@ export function computeDisplayModeFromInput(input: any) {
         return DISPLAY_AVATAR;
     } else if (isCurrentlyOnLargeVideo && !tileViewActive) {
         // Display name is always and only displayed when user is on the stage
-        return adjustedIsVideoPlayable && !isAudioOnly ? DISPLAY_VIDEO : DISPLAY_AVATAR;
-    } else if (adjustedIsVideoPlayable && !isAudioOnly) {
+        return adjustedIsVideoPlayable && !isLowBandwidthMode ? DISPLAY_VIDEO : DISPLAY_AVATAR;
+    } else if (adjustedIsVideoPlayable && !isLowBandwidthMode) {
         // check hovering and change state to video with name
         return DISPLAY_VIDEO;
     }
@@ -581,7 +581,7 @@ export function getDisplayModeInput(props: any, state: { canPlayEventReceived: b
     const {
         _currentLayout,
         _isActiveParticipant,
-        _isAudioOnly,
+        _isLowBandwidthMode,
         _isCurrentlyOnLargeVideo,
         _isVirtualScreenshareParticipant,
         _isScreenSharing,
@@ -598,7 +598,7 @@ export function getDisplayModeInput(props: any, state: { canPlayEventReceived: b
         filmstripType,
         isActiveParticipant: _isActiveParticipant,
         isCurrentlyOnLargeVideo: _isCurrentlyOnLargeVideo,
-        isAudioOnly: _isAudioOnly,
+        isLowBandwidthMode: _isLowBandwidthMode,
         tileViewActive,
         isVideoPlayable: _isVideoPlayable,
         canPlayEventReceived,

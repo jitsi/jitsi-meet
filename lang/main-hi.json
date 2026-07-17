@@ -48,9 +48,6 @@
         "phone": "फ़ोन",
         "speaker": "स्पीकर"
     },
-    "audioOnly": {
-        "audioOnly": "लो बैंडविड्थ"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "उदाहरण: 10 Mbps के लिए 10000000",
         "assumedBandwidthBpsWarning": "अधिक मान नेटवर्क समस्याएँ पैदा कर सकते हैं।",
@@ -810,6 +807,9 @@
         "button": "दूसरों को आमंत्रित करें",
         "youAreAlone": "मीटिंग में केवल आप ही हैं"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "लो बैंडविड्थ"
+    },
     "me": "मैं",
     "notify": {
         "OldElectronAPPTitle": "सुरक्षा कमजोरी!",
@@ -1318,7 +1318,6 @@
         "Settings": "सेटिंग",
         "accessibilityLabel": {
             "Settings": "सेटिंग टॉगल करें",
-            "audioOnly": "केवल ऑडियो टॉगल करें",
             "audioRoute": "साउंड डिवाइस का चयन करें",
             "boo": "बू",
             "breakoutRooms": "ब्रेकआउट रूम",
@@ -1361,6 +1360,7 @@
             "localRecording": "स्थानीय रिकॉर्डिंग नियंत्रणों को टॉगल करें",
             "lockRoom": "मीटिंग पासवर्ड टॉगल करें",
             "love": "दिल",
+            "lowBandwidthMode": "केवल ऑडियो टॉगल करें",
             "lowerHand": "हाथ नीचे करें",
             "moreActions": "अधिक क्रिया मेनू को टॉगल करें",
             "moreActionsMenu": "अधिक क्रिया मेनू",
@@ -1425,8 +1425,6 @@
                 "label": "स्टीरियो"
             }
         },
-        "audioOnlyOff": "कम बैंडविड्थ मोड अक्षम करें",
-        "audioOnlyOn": "कम बैंडविड्थ मोड सक्षम करें",
         "audioRoute": "साउंड डिवाइस का चयन करें",
         "audioSettings": "ऑडियो सेटिंग्स",
         "authenticate": "Authenticate",
@@ -1469,6 +1467,8 @@
         "login": "लॉग इन",
         "logout": "लॉगआउट",
         "love": "दिल",
+        "lowBandwidthModeOff": "कम बैंडविड्थ मोड अक्षम करें",
+        "lowBandwidthModeOn": "कम बैंडविड्थ मोड सक्षम करें",
         "lowerYourHand": "अपना हाथ नीचे करें",
         "moreActions": "अधिक कार्रवाइयाँ",
         "moreOptions": "अधिक विकल्प",
@@ -1565,8 +1565,6 @@
     },
     "videoStatus": {
         "adjustFor": "के लिए समायोजित करें:",
-        "audioOnly": "केवल ऑडियो",
-        "audioOnlyExpanded": "आप कम बैंडविड्थ मोड में हैं। इस मोड में आपको केवल ऑडियो और स्क्रीन शेयरिंग प्राप्त होगी।",
         "bestPerformance": "सर्वोत्तम प्रदर्शन",
         "callQuality": "वीडियो गुणवत्ता",
         "hd": "एचडी",
@@ -1574,9 +1572,11 @@
         "highDefinition": "हाई डेफिनिशन",
         "highestQuality": "उच्चतम गुणवत्ता",
         "labelTooiltipNoVideo": "कोई वीडियो नहीं",
-        "labelTooltipAudioOnly": "कम बैंडविड्थ मोड सक्षम",
+        "labelTooltipLowBandwidthMode": "कम बैंडविड्थ मोड सक्षम",
         "ld": "एलडी",
         "ldTooltip": "लो डेफिनिशन वीडियो देख रहे हैं",
+        "lowBandwidthMode": "केवल ऑडियो",
+        "lowBandwidthModeExpanded": "आप कम बैंडविड्थ मोड में हैं। इस मोड में आपको केवल ऑडियो और स्क्रीन शेयरिंग प्राप्त होगी।",
         "lowDefinition": "लो डेफिनिशन",
         "performanceSettings": "प्रदर्शन सेटिंग्स",
         "recording": "इस बैठक की रिकॉर्डिंग हो रही है।",
