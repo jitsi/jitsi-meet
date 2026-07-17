@@ -30,6 +30,7 @@
     "@jitsi/js-utils": "6.3.2",
     "@jitsi/logger": "2.1.1",
     "@jitsi/rnnoise-wasm": "0.2.1",
+    "@material/web": "^2.5.0",
     "@matrix-org/olm": "3.2.15",
     "@mediapipe/selfie_segmentation": "0.1.1675465747",
     "@microsoft/microsoft-graph-client": "3.0.1",

@@ -66,6 +66,67 @@ function roomCodeFromPath(): string {
 }
 
 /**
+ * The staff (moderator) token stashed by `goToRoom` for this exact room, if it
+ * is still valid. Jitsi consumes the `?jwt=` and doesn't persist it, so on a
+ * refresh we re-apply this token to keep the original role instead of falling
+ * back to a guest token.
+ *
+ * @param {string} roomCode - The room in the path.
+ * @returns {string | null} The stashed token, or null.
+ */
+function stashedRoomToken(roomCode: string): string | null {
+    try {
+        const jwt = window.sessionStorage.getItem('nr_room_jwt');
+        const room = window.sessionStorage.getItem('nr_room_name');
+
+        if (!jwt || room !== roomCode) {
+            return null;
+        }
+        const b64 = (jwt.split('.')[1] || '').replace(/-/g, '+').replace(/_/g, '/');
+        const padded = b64 + '='.repeat((4 - (b64.length % 4)) % 4);
+        const payload = JSON.parse(atob(padded));
+
+        if (payload?.exp && (payload.exp * 1000) < Date.now()) {
+            return null;
+        }
+
+        return jwt;
+    } catch (e) {
+        return null;
+    }
+}
+
+/**
+ * Re-enters the room with a stashed staff token after a refresh, preserving the
+ * moderator role.
+ *
+ * @param {Object} props - The room code and the stashed token.
+ * @returns {ReactElement}
+ */
+function StashRestore({ code, token }: { code: string; token: string; }) {
+    React.useEffect(() => {
+        window.location.replace(
+            `/${encodeURIComponent(code)}?jwt=${encodeURIComponent(token)}`);
+    }, [ code, token ]);
+
+    return (
+        <div
+            style = {{
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: '#ffffff',
+                color: '#5f6368',
+                fontFamily: 'system-ui, sans-serif',
+                fontSize: '16px'
+            }}>
+            Возвращаемся в комнату…
+        </div>
+    );
+}
+
+/**
  * A candidate opened a shared room link (`/<code>`, no token). Exchange the code
  * for a short-lived guest token via the public endpoint, then reload into the
  * room with that token — so the candidate never signs in and never sees the API
@@ -214,6 +275,8 @@ function RequireOrg({ children }: ChildrenProps) {
 function clearStrayToken() {
     try {
         window.sessionStorage.removeItem('jwt');
+        window.sessionStorage.removeItem('nr_room_jwt');
+        window.sessionStorage.removeItem('nr_room_name');
         const url = new URL(window.location.href);
 
         if (url.searchParams.has('jwt') || (/[#&]jwt=/).test(url.hash)) {
@@ -332,12 +395,24 @@ export function withNextRoundAuth(WrappedApp: React.ComponentType<any>): React.C
         const roomCode = roomCodeFromPath();
 
         if (roomCode) {
-            // Candidates and in-room staff: never gate — render the Jitsi room
-            // when a token is present, otherwise exchange the code for a guest one.
+            // In-room with a token in the URL: render the Jitsi room.
             if (hasRoomToken()) {
                 return <WrappedApp { ...props } />;
             }
 
+            // Refresh case: Jitsi stripped the token. If we stashed a staff token
+            // for this room, re-apply it so the moderator keeps their role.
+            const stashed = stashedRoomToken(roomCode);
+
+            if (stashed) {
+                return (
+                    <StashRestore
+                        code = { roomCode }
+                        token = { stashed } />
+                );
+            }
+
+            // Otherwise it's a candidate opening a shared link: mint a guest token.
             return <GuestRoomEntry code = { roomCode } />;
         }
 
