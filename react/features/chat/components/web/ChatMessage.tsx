@@ -159,6 +159,10 @@ const useStyles = makeStyles()((theme: Theme) => {
             whiteSpace: 'pre-wrap',
             wordBreak: 'break-word'
         },
+        deletedMessage: {
+            fontStyle: 'italic',
+            opacity: 0.7
+        },
         privateMessageNotice: {
             ...theme.typography.labelRegular,
             color: theme.palette.chatPrivateNotice,
@@ -385,7 +389,7 @@ const ChatMessage = ({
                     <div className = { classes.replyWrapper }>
                         <div className = { cx('messagecontent', classes.messageContent) }>
                             {showDisplayName && _renderDisplayName()}
-                            <div className = { cx('usermessage', classes.userMessage) }>
+                            <div className = { cx('usermessage', classes.userMessage, message.isModerated && classes.deletedMessage) }>
                                 {!message.isModerated && isFileMessage(message) ? (
                                     <FileMessage
                                         message = { message }

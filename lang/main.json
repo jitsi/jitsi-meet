@@ -125,7 +125,7 @@
         "messageAccessibleTitleMe": "me says:",
         "messageTo": "Private message to {{recipient}}",
         "messagebox": "Type a message",
-        "moderatedMessage": "This message was deleted by a moderator.",
+        "moderatedMessage": "Deleted by a moderator.",
         "moderationReason": "Reason: {{reason}}",
         "newMessages": "New messages",
         "nickname": {
