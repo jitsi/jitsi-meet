@@ -13,3 +13,12 @@ export const CLERK_PUBLISHABLE_KEY
  * Clerk Bearer token to create/join meeting rooms.
  */
 export const NEXTROUND_API_BASE = 'http://localhost:4000';
+
+/**
+ * The font stack Google Meet uses. Shared by every NextRound surface so the
+ * sign-in, org picker, guest and welcome screens all match.
+ *
+ * Google Sans is proprietary and isn't served here, so this resolves to Roboto
+ * in practice (Jitsi already loads it) — the same fallback Meet gets off-domain.
+ */
+export const FONT_STACK = '"Google Sans", Roboto, Arial, sans-serif';

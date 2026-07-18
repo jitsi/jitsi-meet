@@ -14,17 +14,43 @@ import '@material/web/textfield/outlined-text-field.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { createApi } from './api';
+import { FONT_STACK } from './constants';
 
 /**
  * MD3 colour tokens, tuned to Google Meet's blue instead of Material's default
  * baseline purple. Applied on the page root so every md-* child inherits them.
  */
 const MD_THEME = {
+    // Material components set their own font-family inside shadow DOM from the
+    // typescale tokens, so an inherited font-family on the page does NOT reach
+    // them — without these two refs every md-* label falls back to plain Roboto.
+    '--md-ref-typeface-brand': FONT_STACK,
+    '--md-ref-typeface-plain': FONT_STACK,
+
     '--md-sys-color-primary': '#1a73e8',
     '--md-sys-color-on-primary': '#ffffff',
     '--md-sys-color-outline': '#dadce0',
     '--md-sys-color-on-surface': '#202124',
     '--md-sys-color-on-surface-variant': '#5f6368',
+
+    // Material's baseline surfaces are purple-tinted; Meet's are white/grey.
+    // Menus and dialogs fall back to these, so without them they render lavender.
+    '--md-sys-color-surface': '#ffffff',
+    '--md-sys-color-surface-container': '#ffffff',
+    '--md-sys-color-surface-container-low': '#ffffff',
+    '--md-sys-color-surface-container-high': '#ffffff',
+    '--md-sys-color-surface-container-highest': '#f1f3f4',
+    '--md-sys-color-surface-variant': '#f1f3f4',
+
+    // Meet's menu: white 8px card, compact 14px single-line items.
+    '--md-menu-container-color': '#ffffff',
+    '--md-menu-container-shape': '8px',
+    '--md-menu-item-label-text-size': '14px',
+    '--md-menu-item-label-text-color': '#202124',
+    '--md-menu-item-leading-icon-color': '#5f6368',
+    '--md-menu-item-one-line-container-height': '48px',
+    '--md-menu-item-hover-state-layer-color': '#202124',
+    '--md-dialog-container-color': '#ffffff',
 
     // Meet's controls are pills (fully rounded), 48px tall, 14px/500 labels.
     '--md-filled-button-container-shape': '24px',
@@ -39,9 +65,6 @@ const MD_THEME = {
     '--md-outlined-text-field-top-space': '14px',
     '--md-outlined-text-field-bottom-space': '14px'
 } as React.CSSProperties;
-
-// Meet uses Google Sans, falling back to Roboto (which Jitsi already loads).
-const FONT_STACK = '"Google Sans", Roboto, Arial, sans-serif';
 
 /**
  * Sends the browser into a Jitsi room with a minted token. The token in the URL
@@ -63,6 +86,30 @@ function goToRoom(roomName: string, jwt: string) {
         // Storage may be unavailable; the initial join still works via the URL.
     }
     window.location.assign(`/${encodeURIComponent(roomName)}?jwt=${encodeURIComponent(jwt)}`);
+}
+
+/**
+ * Tracks a CSS media query. The page is styled with inline styles (so plain CSS
+ * media queries aren't available); this drives the breakpoints from state
+ * instead.
+ *
+ * @param {string} query - A media query string.
+ * @returns {boolean} Whether it currently matches.
+ */
+function useMediaQuery(query: string): boolean {
+    const [ matches, setMatches ] = useState(() => window.matchMedia(query).matches);
+
+    useEffect(() => {
+        const mql = window.matchMedia(query);
+        const onChange = (e: MediaQueryListEvent) => setMatches(e.matches);
+
+        setMatches(mql.matches);
+        mql.addEventListener('change', onChange);
+
+        return () => mql.removeEventListener('change', onChange);
+    }, [ query ]);
+
+    return matches;
 }
 
 /**
@@ -173,6 +220,10 @@ export default function Welcome() {
 
     const menuRef = useRef<HTMLElement>(null);
     const dialogRef = useRef<HTMLElement>(null);
+
+    // Meet drops the nav rail and shrinks the hero on small screens.
+    const isMobile = useMediaQuery('(max-width: 720px)');
+    const isCompact = useMediaQuery('(max-width: 480px)');
 
     const [ now, setNow ] = useState(() => new Date());
 
@@ -359,20 +410,36 @@ export default function Welcome() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '16px 28px'
+                    gap: '12px',
+                    padding: isMobile ? '12px 16px' : '16px 28px'
                 }}>
                 <strong style = {{ fontSize: '20px', letterSpacing: '0.3px', color: '#202124' }}>
                     NextRound
                 </strong>
-                <div style = {{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                    <span style = {{ fontSize: '15px', color: '#5f6368' }}>{ clock }</span>
+                <div
+                    style = {{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: isMobile ? '10px' : '20px'
+                    }}>
+                    { !isMobile && (
+                        <span style = {{ fontSize: '15px', color: '#5f6368', whiteSpace: 'nowrap' }}>
+                            { clock }
+                        </span>
+                    ) }
                     <OrganizationSwitcher hidePersonal = { true } />
                     <UserButton />
                 </div>
             </header>
 
             <div style = {{ display: 'flex', flex: 1, minHeight: 0 }}>
-                <aside style = {{ width: '240px', flexShrink: 0, paddingRight: '12px' }}>
+                <aside
+                    style = {{
+                        display: isMobile ? 'none' : 'block',
+                        width: '240px',
+                        flexShrink: 0,
+                        paddingRight: '12px'
+                    }}>
                     <md-list style = {{ background: 'transparent' }}>
                         <md-list-item
                             onClick = { onNavMeetings }
@@ -404,15 +471,15 @@ export default function Welcome() {
                             alignItems: 'center',
                             justifyContent: 'flex-start',
                             textAlign: 'center',
-                            padding: '10vh 24px 0',
+                            padding: '0 24px',
                             maxWidth: '760px',
                             margin: '0 auto',
                             width: '100%'
                         }}>
                         <h1
                             style = {{
-                                fontSize: '44px',
-                                lineHeight: '52px',
+                                fontSize: isCompact ? '28px' : isMobile ? '34px' : '44px',
+                                lineHeight: isCompact ? '36px' : isMobile ? '42px' : '52px',
                                 fontWeight: 400,
                                 color: '#202124',
                                 margin: '0 0 16px',
@@ -439,14 +506,20 @@ export default function Welcome() {
                                 alignItems: 'center',
                                 gap: '14px',
                                 flexWrap: 'wrap',
-                                justifyContent: 'center'
+                                justifyContent: 'center',
+                                flexDirection: isMobile ? 'column' : 'row',
+                                width: '100%'
                             }}>
-                            <span style = {{ position: 'relative' }}>
+                            <span
+                                style = {{
+                                    position: 'relative',
+                                    width: isMobile ? '100%' : 'auto'
+                                }}>
                                 <md-filled-button
                                     disabled = { busy }
                                     id = 'nr-new-meeting'
                                     onClick = { toggleMenu }
-                                    style = {{ '--md-filled-button-container-height': '48px' } as React.CSSProperties}>
+                                    style = {{ width: isMobile ? '100%' : 'auto' }}>
                                     <span slot = 'icon'>
                                         <CamIcon />
                                     </span>
@@ -454,31 +527,49 @@ export default function Welcome() {
                                 </md-filled-button>
                                 <md-menu
                                     anchor = 'nr-new-meeting'
+                                    // Meet doesn't ring the first item on open.
+                                    defaultFocus = 'none'
                                     open = { menuOpen }
                                     ref = { menuRef }
-                                    style = {{ '--md-menu-container-shape': '12px' } as React.CSSProperties}>
+                                    // The internal surface uses min-width: inherit,
+                                    // so sizing the host keeps items on one line.
+                                    style = {{ minWidth: '320px' }}>
                                     <md-menu-item onClick = { onCreateLink }>
                                         <span slot = 'start'>
                                             <LinkIcon />
                                         </span>
-                                        <div slot = 'headline'>Новое интервью</div>
+                                        <div
+                                            slot = 'headline'
+                                            style = {{ whiteSpace: 'nowrap' }}>
+                                            Новое интервью
+                                        </div>
                                     </md-menu-item>
                                     <md-menu-item onClick = { onStartNow }>
                                         <span slot = 'start'>
                                             <PlusIcon />
                                         </span>
-                                        <div slot = 'headline'>Начать интервью сейчас</div>
+                                        <div
+                                            slot = 'headline'
+                                            style = {{ whiteSpace: 'nowrap' }}>
+                                            Начать интервью сейчас
+                                        </div>
                                     </md-menu-item>
                                 </md-menu>
                             </span>
 
-                            <div style = {{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div
+                                style = {{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    width: isMobile ? '100%' : 'auto'
+                                }}>
                                 <md-outlined-text-field
                                     disabled = { busy }
                                     onInput = { onCodeChange }
                                     onKeyDown = { onCodeKeyDown }
                                     placeholder = 'Введите код встречи или ссылку'
-                                    style = {{ width: '280px' }}
+                                    style = {{ width: isMobile ? '100%' : '280px' }}
                                     value = { code }>
                                     <span slot = 'leading-icon'>
                                         <KeyboardIcon />
@@ -519,7 +610,7 @@ export default function Welcome() {
 
                         <div
                             style = {{
-                                marginTop: '56px',
+                                marginTop: isMobile ? '36px' : '56px',
                                 width: '100%',
                                 maxWidth: '520px',
                                 display: 'flex',
@@ -531,7 +622,8 @@ export default function Welcome() {
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    gap: '24px'
+                                    gap: isMobile ? '12px' : '24px',
+                                    width: '100%'
                                 }}>
                                 <md-icon-button
                                     aria-label = 'Назад'
@@ -541,8 +633,8 @@ export default function Welcome() {
                                 </md-icon-button>
                                 <div
                                     style = {{
-                                        width: '220px',
-                                        height: '220px',
+                                        width: isCompact ? '150px' : isMobile ? '180px' : '220px',
+                                        height: isCompact ? '150px' : isMobile ? '180px' : '220px',
                                         borderRadius: '50%',
                                         background: '#e8f0fe',
                                         display: 'flex',
@@ -601,7 +693,7 @@ export default function Welcome() {
                             alignItems: 'center',
                             justifyContent: 'center',
                             textAlign: 'center',
-                            padding: '10vh 24px 0'
+                            padding: '0 24px'
                         }}>
                         <div>
                             <h2 style = {{ fontSize: '24px', fontWeight: 400, color: '#3c4043', margin: '0 0 8px' }}>

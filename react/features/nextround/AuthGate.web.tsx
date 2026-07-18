@@ -10,7 +10,7 @@ import {
 import React from 'react';
 
 import Welcome from './Welcome.web';
-import { CLERK_PUBLISHABLE_KEY, NEXTROUND_API_BASE } from './constants';
+import { CLERK_PUBLISHABLE_KEY, FONT_STACK, NEXTROUND_API_BASE } from './constants';
 
 // Clerk's control components are typed to return `ReactNode`, which the
 // @types/react version bundled here rejects as a JSX element (TS2786). They
@@ -118,7 +118,7 @@ function StashRestore({ code, token }: { code: string; token: string; }) {
                 justifyContent: 'center',
                 background: '#ffffff',
                 color: '#5f6368',
-                fontFamily: 'system-ui, sans-serif',
+                fontFamily: FONT_STACK,
                 fontSize: '16px'
             }}>
             Возвращаемся в комнату…
@@ -178,7 +178,7 @@ function GuestRoomEntry({ code }: { code: string; }) {
                 justifyContent: 'center',
                 background: '#ffffff',
                 color: error ? '#c5221f' : '#5f6368',
-                fontFamily: 'system-ui, sans-serif',
+                fontFamily: FONT_STACK,
                 fontSize: '16px'
             }}>
             { error || 'Подключение к встрече…' }
@@ -203,7 +203,7 @@ function NextRoundSignIn() {
                 justifyContent: 'center',
                 gap: '24px',
                 background: '#040404',
-                fontFamily: 'system-ui, sans-serif'
+                fontFamily: FONT_STACK
             }}>
             <div
                 style = {{
@@ -245,7 +245,7 @@ function RequireOrg({ children }: ChildrenProps) {
                     justifyContent: 'center',
                     gap: '20px',
                     background: '#040404',
-                    fontFamily: 'system-ui, sans-serif'
+                    fontFamily: FONT_STACK
                 }}>
                 <div
                     style = {{
@@ -335,7 +335,7 @@ function GuestEnded() {
                 gap: '12px',
                 background: '#ffffff',
                 color: '#202124',
-                fontFamily: 'system-ui, "Google Sans", sans-serif',
+                fontFamily: FONT_STACK,
                 textAlign: 'center',
                 padding: '0 24px'
             }}>

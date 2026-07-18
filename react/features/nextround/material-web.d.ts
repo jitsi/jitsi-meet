@@ -39,6 +39,7 @@ declare global {
             };
             'md-menu': MdElement & {
                 anchor?: string;
+                defaultFocus?: string;
                 open?: boolean;
                 positioning?: string;
             };
