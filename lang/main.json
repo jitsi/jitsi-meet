@@ -117,8 +117,8 @@
         }
     },
     "chat": {
-        "deletedMessage": "This message was deleted",
-        "deletedMessageByMe": "You deleted this message",  
+        "deletedMessage": "This message was deleted.",
+        "deletedMessageByMe": "You deleted this message.",  
         "disabled": "Sending chat messages is disabled.",
         "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
