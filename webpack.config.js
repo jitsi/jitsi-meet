@@ -342,7 +342,11 @@ module.exports = (_env, argv) => {
                 })
             ],
 
-            performance: getPerformanceHints(perfHintOptions, 3.5 * 1024 * 1024) },
+            // NextRound: the app bundle carries the Clerk/Welcome sign-in UI
+            // (@clerk/clerk-react), which pushes it just past the stock 3.5 MiB
+            // cap. Raise to 4.5 MiB so the production build doesn't hard-fail on
+            // the size hint, with headroom for the anti-cheat feature.
+            performance: getPerformanceHints(perfHintOptions, 4.5 * 1024 * 1024) },
         { ...config,
             entry: {
                 'alwaysontop': './react/features/always-on-top/index.tsx'
