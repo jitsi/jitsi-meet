@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Додати посилання на зустріч",
-        "confirmAddLink": "Додати посилання на Jitsi до цієї події?",
+        "confirmAddLink": "Додати посилання на next-round до цієї події?",
         "error": {
             "appConfiguration": "Неправильно налаштовано інтеграцію календаря.",
             "generic": "Помилка: перевірте налаштування календаря або спробуйте оновити його.",
@@ -467,7 +467,7 @@
         "answer": "Відповісти",
         "audioCallTitle": "Вхідний дзвінок",
         "decline": "Відхилити",
-        "productLabel": "із Jitsi Meet",
+        "productLabel": "із next-round",
         "videoCallTitle": "Вхідний відеодзвінок"
     },
     "info": {
@@ -715,7 +715,7 @@
         "noiseSuppressionFailedTitle": "Не вдалося ввімкнути придушення шуму",
         "noiseSuppressionNoTrackDescription": "Перевірте, що мікрофон увімкнено.",
         "noiseSuppressionStereoDescription": "Придушення шуму у форматі стерео наразі не підтримується.",
-        "oldElectronClientDescription1": "Ви використовуєте стару версію клієнта Jitsi Meet, яка має відомі вразливості безпеки. Переконайтеся, що ви оновили до нашої ",
+        "oldElectronClientDescription1": "Ви використовуєте стару версію клієнта next-round, яка має відомі вразливості безпеки. Переконайтеся, що ви оновили до нашої ",
         "oldElectronClientDescription2": "останньої версії",
         "oldElectronClientDescription3": " на поточний час!",
         "participantWantsToJoin": "Хоче приєднатися до зустрічі",
@@ -1387,15 +1387,15 @@
         "go": "Гаразд",
         "goSmall": "Гаразд",
         "headerSubtitle": "Захищений та якісний відеозв'язок",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "next-round",
         "info": "Телефонний зв'язок",
-        "jitsiOnMobile": "Jitsi на мобільному пристрої – завантажуйте наші застосунки та починайте зустрічі, де б ви не були",
+        "jitsiOnMobile": "next-round на мобільному пристрої – завантажуйте наші застосунки та починайте зустрічі, де б ви не були",
         "join": "Створити або приєднатися",
         "logo": {
             "calendar": "Логотип Календаря",
             "desktopPreviewThumbnail": "Мініатюра виду екрана учасника",
             "googleLogo": "Логотип Google",
-            "logoDeepLinking": "Логотип Jitsi Meet",
+            "logoDeepLinking": "Логотип next-round",
             "microsoftLogo": "Логотип Microsoft",
             "policyLogo": "Логотип політики"
         },

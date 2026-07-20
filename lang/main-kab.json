@@ -41,7 +41,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Rnu aseɣwen n temlilit",
-        "confirmAddLink": "Tebɣiḍ ad ternuḍ aseɣwen n Jitsi i uneḍru-a?",
+        "confirmAddLink": "Tebɣiḍ ad ternuḍ aseɣwen n next-round i uneḍru-a?",
         "error": {
             "appConfiguration": "Amsidef n uwitay ur yettuswel ara akken iwata.",
             "generic": "Tella-d tuccḍa. Ttxil-k·m senqed iɣewwaren n uwitay-inek·inem neɣ ɛreḍ asnirem n uwitay.",
@@ -391,7 +391,7 @@
         "answer": "Tiririt",
         "audioCallTitle": "Asiwel i ikcem-d",
         "decline": "Agwi",
-        "productLabel": "seg Jitsi Meet",
+        "productLabel": "seg next-round",
         "videoCallTitle": "Asiwel s tvidyut ikcem-d"
     },
     "info": {
@@ -601,7 +601,7 @@
         "newDeviceAction": "Seqdec",
         "newDeviceAudioTitle": "Ibenk amaynut n umeslaw yettwaf-d",
         "newDeviceCameraTitle": "Tettwaf-d tkamiṛat tamaynut",
-        "oldElectronClientDescription1": "Akka i nettwali tesseqdaceḍ lqem aqbur n umsaɣ Jitsi Meet i yesɛan uguren n tɣellist yettwassnen. Ma ulac aɣilif ḍmen ad tleqqmeḍ ",
+        "oldElectronClientDescription1": "Akka i nettwali tesseqdaceḍ lqem aqbur n umsaɣ next-round i yesɛan uguren n tɣellist yettwassnen. Ma ulac aɣilif ḍmen ad tleqqmeḍ ",
         "oldElectronClientDescription2": "lqem akk aneggaru",
         "oldElectronClientDescription3": " tura!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) yettwakkes sɣur yimttekki-nniḍen",
@@ -1130,15 +1130,15 @@
         "go": "DDU",
         "goSmall": "Ddu",
         "headerSubtitle": "Timliliyin n tɣellist d tɣara meqqren",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "next-round",
         "info": "Talɣut",
-        "jitsiOnMobile": "Jitsi ɣef uziraz - sader isnasen-nneɣ syen tebduḍ timlilit seg wanda i tebɣiḍ",
+        "jitsiOnMobile": "next-round ɣef uziraz - sader isnasen-nneɣ syen tebduḍ timlilit seg wanda i tebɣiḍ",
         "join": "SNULFU-D / KCEM",
         "logo": {
             "calendar": "Alugu n umitay",
             "desktopPreviewThumbnail": "Tanfult n teskant n tnarit",
             "googleLogo": "Alugu n Google",
-            "logoDeepLinking": "Alugu Jitsi Meet",
+            "logoDeepLinking": "Alugu next-round",
             "microsoftLogo": "Alugu n Microsoft",
             "policyLogo": "Alugu n tsertit"
         },

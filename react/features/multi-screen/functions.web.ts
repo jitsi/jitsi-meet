@@ -176,7 +176,7 @@ async function computeFeatures(screenId?: number): Promise<string> {
 function buildWindow(win: Window): HTMLElement {
     const doc = win.document;
 
-    doc.title = 'Jitsi Meet';
+    doc.title = 'next-round';
     Object.assign(doc.documentElement.style, { height: '100%' });
     Object.assign(doc.body.style, { margin: '0', height: '100%', background: '#000', overflow: 'hidden' });
 

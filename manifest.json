@@ -1,36 +1,10 @@
 {
-  "android_package_name": "org.jitsi.meet",
-  "prefer_related_applications": true,
-  "related_applications": [
-    {
-      "id": "org.jitsi.meet",
-      "platform": "chromeos_play"
-    }
-  ],
-  "short_name": "Jitsi Meet",
-  "name": "Jitsi Meet",
-  "icons": [
-    {
-      "src": "static/pwa/icons/icon192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "static/pwa/icons/icon512.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    },
-    {
-      "src": "static/pwa/icons/iconMask.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
-  ],
+  "prefer_related_applications": false,
+  "short_name": "next-round",
+  "name": "next-round",
   "start_url": "/",
-  "background_color": "#17A0DB",
+  "background_color": "#0b0b0b",
   "display": "standalone",
   "scope": "/",
-  "theme_color": "#17A0DB"
- }
- 
+  "theme_color": "#0b0b0b"
+}

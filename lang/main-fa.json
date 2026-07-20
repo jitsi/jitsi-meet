@@ -606,7 +606,7 @@
         "answer": "پاسخ‌دادن",
         "audioCallTitle": "تماس ورودی",
         "decline": "ردکردن",
-        "productLabel": "از جلسه Jitsi",
+        "productLabel": "از جلسه next-round",
         "videoCallTitle": "تماس ویدیویی ورودی"
     },
     "info": {
@@ -823,7 +823,7 @@
         "desktopMutedRemotelyTitle": "اشتراک‌گذاری صفحه شما توسط {{participantDisplayName}} متوقف شد",
         "disabledIframe": "جاسازی فقط برای اهداف نمایشی در نظر گرفته شده است؛ بنابراین این تماس در {{timeout}} دقیقهٔ دیگر قطع می‌شود.",
         "disabledIframeSecondaryNative": "جاسازی {{domain}} فقط برای اهداف نمایشی در نظر گرفته شده است؛ بنابراین این تماس در {{timeout}} دقیقهٔ دیگر قطع می‌شود.",
-        "disabledIframeSecondaryWeb": "جاسازی {{domain}} فقط برای اهداف نمایشی در نظر گرفته شده است، بنابراین این تماس در {{timeout}} دقیقه قطع می‌شود. لطفا از <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> برای جاسازی در محصول استفاده کنید!",
+        "disabledIframeSecondaryWeb": "جاسازی {{domain}} فقط برای اهداف نمایشی در نظر گرفته شده است، بنابراین این تماس در {{timeout}} دقیقه قطع می‌شود. لطفا از <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>next-round as a Service</a> برای جاسازی در محصول استفاده کنید!",
         "disconnected": "قطع‌شده",
         "displayNotifications": "نمایش آگهی‌ها برای",
         "dontRemindMe": "به من یادآوری نکن",
@@ -1663,15 +1663,15 @@
         "go": "برویم",
         "goSmall": "برویم",
         "headerSubtitle": "جلسات امن و با کیفیت بالا",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "next-round",
         "info": "اطلاعات شماره‌گیری",
-        "jitsiOnMobile": "Jitsi روی تلفن همراه - برنامه ما را دانلود کنید و جلسه‌ای را از هرکجا آغاز کنید",
+        "jitsiOnMobile": "next-round روی تلفن همراه - برنامه ما را دانلود کنید و جلسه‌ای را از هرکجا آغاز کنید",
         "join": "ایجاد / پیوستن",
         "logo": {
             "calendar": "نشان‌وارهٔ تقویم",
             "desktopPreviewThumbnail": "تصویر بندانگشتی پیش‌نمایش میزکار",
             "googleLogo": "نشان‌وارهٔ گوگل",
-            "logoDeepLinking": "نشان‌وارهٔ Jitsi Meet",
+            "logoDeepLinking": "نشان‌وارهٔ next-round",
             "microsoftLogo": "نشان‌وارهٔ Microsoft",
             "policyLogo": "نشان‌وارهٔ خط مشی"
         },

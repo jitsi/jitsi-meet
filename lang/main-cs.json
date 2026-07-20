@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Přidejte odkaz na setkání",
-        "confirmAddLink": "Chcete k této události přidat odkaz Jitsi?",
+        "confirmAddLink": "Chcete k této události přidat odkaz next-round?",
         "error": {
             "appConfiguration": "Integrace kalendáře není správně nastavena.",
             "generic": "Došlo k chybě. Zkontrolujte nastavení kalendáře nebo zkuste obnovit kalendář.",
@@ -535,7 +535,7 @@
         "answer": "Odpovědět",
         "audioCallTitle": "Příchozí hovor",
         "decline": "OK",
-        "productLabel": "od Jitsi Meet",
+        "productLabel": "od next-round",
         "videoCallTitle": "Příchozí videohovor"
     },
     "info": {
@@ -745,7 +745,7 @@
         "dataChannelClosedDescriptionWithAudio": "Přemosťovací kanál je vypnutý, a proto může dojít k přerušení zvuku a obrazu.",
         "dataChannelClosedWithAudio": "Kvalita zvuku a videa může být snížena",
         "disabledIframe": "Vkládání je určeno pouze pro demo účely, takže tento hovor bude za {{timeout}} minut odpojen.",
-        "disabledIframeSecondary": "Vložení domény {{domain}} je určeno pouze pro demo účely, takže tento hovor bude za {{timeout}} minut odpojen. Pro produkční vkládání použijte prosím <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a service</a>!",
+        "disabledIframeSecondary": "Vložení domény {{domain}} je určeno pouze pro demo účely, takže tento hovor bude za {{timeout}} minut odpojen. Pro produkční vkládání použijte prosím <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>next-round as a service</a>!",
         "disconnected": "odpojeno",
         "displayNotifications": "Zobrazit upozornění pro",
         "dontRemindMe": "Nepřipomínej mi to",
@@ -797,7 +797,7 @@
         "noiseSuppressionDesktopAudioDescription": "Extra potlačení šumu nelze povolit při sdílení zvuku na ploše. Vypněte jej a zkuste to znovu.",
         "noiseSuppressionFailedTitle": "Nepodařilo se spustit dodatečné potlačení hluku",
         "noiseSuppressionStereoDescription": "Extra potlačení šumu není aktuálně podporováno u stereo zvuku.",
-        "oldElectronClientDescription1": "Zdá se, že používáte zastaralou verzi klienta Jitsi Meet, který má známé bezpečnostní zranitelnosti. Aktualizujte prosím na ",
+        "oldElectronClientDescription1": "Zdá se, že používáte zastaralou verzi klienta next-round, který má známé bezpečnostní zranitelnosti. Aktualizujte prosím na ",
         "oldElectronClientDescription2": "nejnovější sestavení",
         "oldElectronClientDescription3": " ihned!",
         "participantWantsToJoin": "Chce se připojit k setkání",
@@ -1536,15 +1536,15 @@
         "go": "ZAČÍT",
         "goSmall": "ZAČÍT",
         "headerSubtitle": "Bezpečné a kvalitní setkávání",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "next-round",
         "info": "Informace o vytáčení",
-        "jitsiOnMobile": "Jitsi na mobilu – stáhněte si naše aplikace a spusťte hovor odkudkoliv",
+        "jitsiOnMobile": "next-round na mobilu – stáhněte si naše aplikace a spusťte hovor odkudkoliv",
         "join": "VYTVOŘIT / PŘIPOJIT",
         "logo": {
             "calendar": "Logo kalendáře",
             "desktopPreviewThumbnail": "Náhled zobrazení plochy",
             "googleLogo": "Google Logo",
-            "logoDeepLinking": "Jitsi meet logo",
+            "logoDeepLinking": "next-round meet logo",
             "microsoftLogo": "Microsoft logo",
             "policyLogo": "Policy logo"
         },

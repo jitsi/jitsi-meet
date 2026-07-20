@@ -61,7 +61,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "link za konferencu přidać",
-        "confirmAddLink": "Chceće Jitsi-link k tutomu terminej přidać?",
+        "confirmAddLink": "Chceće next-round-link k tutomu terminej přidać?",
         "error": {
             "appConfiguration": "Integracija protyki njeje prawje konfigurěrowana.",
             "generic": "Zmylk. Pruwujće nastajenje protyki abo spytajće protyku aktualizować.",
@@ -440,7 +440,7 @@
         "answer": "wotmołwić",
         "audioCallTitle": "telefonat",
         "decline": "ok",
-        "productLabel": "wot Jitsi Meet",
+        "productLabel": "wot next-round",
         "videoCallTitle": "widejo - telefonat"
     },
     "info": {
@@ -674,7 +674,7 @@
         "newDeviceAction": "wužiwać",
         "newDeviceAudioTitle": "nowy awdijowy nastroj spóznaty",
         "newDeviceCameraTitle": "nowa kamera spóznata",
-        "oldElectronClientDescription1": "Wužiwaće staru wersiju Jitsi-Meet-klienta. Tuta ma znate słabosće. Prošu aktualizujće na našu.",
+        "oldElectronClientDescription1": "Wužiwaće staru wersiju next-round-Meet-klienta. Tuta ma znate słabosće. Prošu aktualizujće na našu.",
         "oldElectronClientDescription2": "aktualnu wersiju",
         "oldElectronClientDescription3": "!",
         "participantWantsToJoin": "chce so na konferency wobdźělić",
@@ -1281,15 +1281,15 @@
         "go": "startuj",
         "goSmall": "startuj",
         "headerSubtitle": "Wěste konferency we wysokej kwaliće",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "next-round",
         "info": "informacije za zawolenje",
-        "jitsiOnMobile": "Jitsi po puću - cyle jednorje našu app downloadować a konferency wšudźe po puću startować",
+        "jitsiOnMobile": "next-round po puću - cyle jednorje našu app downloadować a konferency wšudźe po puću startować",
         "join": "KREĚROWAĆ / PŘISTUPIĆ",
         "logo": {
             "calendar": "protyka",
             "desktopPreviewThumbnail": "předpokazka za desktop thumbnail",
             "googleLogo": "Google logo",
-            "logoDeepLinking": "Jitsi Meet logo",
+            "logoDeepLinking": "next-round logo",
             "microsoftLogo": "Microsoft logo",
             "policyLogo": "logo za směrnicy"
         },

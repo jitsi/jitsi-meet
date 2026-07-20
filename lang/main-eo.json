@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Aldoni ligilon al la kunveno",
-        "confirmAddLink": "Ĉu vi volas aldoni Jitsi-ligilon al ĉi-tiu evento?",
+        "confirmAddLink": "Ĉu vi volas aldoni next-round-ligilon al ĉi-tiu evento?",
         "error": {
             "appConfiguration": "Kalendara integrigo ne estas ĝuste agordita.",
             "generic": "Okazis eraro. Bonvolu kontroli viajn kalendarajn agordojn aŭ provu aktualigi la kalendaron.",
@@ -523,7 +523,7 @@
         "answer": "Respondi",
         "audioCallTitle": "Alvenanta voko",
         "decline": "Formeti",
-        "productLabel": "el Jitsi Meet",
+        "productLabel": "el next-round",
         "videoCallTitle": "Alvenanta vida voko"
     },
     "info": {
@@ -775,7 +775,7 @@
         "noiseSuppressionDesktopAudioDescription": "Neeblas aktivi la nuligon de bruo dum dividado de labortabla audio. Bonvolu malŝalti ĝin kaj provi denove. ",
         "noiseSuppressionFailedTitle": "Malsukcesis startigi la nuligon de bruo",
         "noiseSuppressionStereoDescription": "Forigo de bruo por stereosono ankoraŭ ne estas subtenata.",
-        "oldElectronClientDescription1": "Ŝajnas, ke vi uzas malnovan version de la kliento de Jitsi Meet, kiu havas konatajn sekurec-vundeblojn. Bonvolu ĝisdatigi al nia ",
+        "oldElectronClientDescription1": "Ŝajnas, ke vi uzas malnovan version de la kliento de next-round, kiu havas konatajn sekurec-vundeblojn. Bonvolu ĝisdatigi al nia ",
         "oldElectronClientDescription2": "plej nova versio",
         "oldElectronClientDescription3": " nun!",
         "participantWantsToJoin": "Volas aliĝi al la kunveno",
@@ -1482,15 +1482,15 @@
         "go": "EK",
         "goSmall": "EK",
         "headerSubtitle": "Sekuraj kaj altkvalitaj renkontiĝoj",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "next-round",
         "info": "Informoj",
-        "jitsiOnMobile": "Jitsi ĉe poŝtelefono - elŝutu niajn apojn kaj komencu renkontiĝon de ie ajn",
+        "jitsiOnMobile": "next-round ĉe poŝtelefono - elŝutu niajn apojn kaj komencu renkontiĝon de ie ajn",
         "join": "KREI / ALIĜI",
         "logo": {
             "calendar": "Kalendara",
             "desktopPreviewThumbnail": "Miniaturo de kundividado de ekrano",
             "googleLogo": "Logotipo de Google",
-            "logoDeepLinking": "Logotipo de Jitsi Meet",
+            "logoDeepLinking": "Logotipo de next-round",
             "microsoftLogo": "Logotipo de Microsoft",
             "policyLogo": "Logotipo de regularo"
         },

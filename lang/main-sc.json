@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Agiunghe unu ligòngiu a s'addòbiu",
-        "confirmAddLink": "Boles agiùnghere unu ligòngiu de Jitsi a custu addòbiu?",
+        "confirmAddLink": "Boles agiùnghere unu ligòngiu de next-round a custu addòbiu?",
         "error": {
             "appConfiguration": "S'integratzione de su calendàriu no est cunfigurada bene.",
             "generic": "Faddina. Controlla sa cunfiguratzione de calendàriu o proa de atualizare su calendàriu.",
@@ -591,7 +591,7 @@
         "answer": "Risponde",
         "audioCallTitle": "Mutida in intrada",
         "decline": "Iscarta",
-        "productLabel": "dae Jitsi Meet",
+        "productLabel": "dae next-round",
         "videoCallTitle": "Mutida de vìdeu in intrada"
     },
     "info": {
@@ -806,7 +806,7 @@
         "desktopMutedRemotelyTitle": "{{participantDisplayName}} at firmadu sa cumpartzidura de ischermu",
         "disabledIframe": "S'integratzione serbit isceti a propòsitos de dimustratzione. Custa mutida s'at a disconnètere de immoe a {{timeout}} minutos.",
         "disabledIframeSecondaryNative": "S'integratzione de {{domain}} serbit isceti a propòsitos de dimustratzione. Custa mutida s'at a disconnètere de immoe a {{timeout}} minutos.",
-        "disabledIframeSecondaryWeb": "S'integratzione de {{domain}} serbit isceti a propòsitos de dimustratzione. Custa mutida s'at a disconnètere de immoe a {{timeout}} minutos. Imprea <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> pro s'integratzione in produtzione.",
+        "disabledIframeSecondaryWeb": "S'integratzione de {{domain}} serbit isceti a propòsitos de dimustratzione. Custa mutida s'at a disconnètere de immoe a {{timeout}} minutos. Imprea <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>next-round as a Service</a> pro s'integratzione in produtzione.",
         "disconnected": "disconnètidu",
         "displayNotifications": "Ammustra is notìficas pro",
         "dontRemindMe": "Non mi ddu regordes prus",
@@ -858,7 +858,7 @@
         "noiseSuppressionDesktopAudioDescription": "Impossìbile ativare sa limpiadura additzionale de abbolotu in su mentras chi ses cumpartzende s'àudio de iscrivania. Disativa·dda e torra a proare.",
         "noiseSuppressionFailedTitle": "Faddina in s'ativatzione de sa limpiadura additzionale de abbolotu",
         "noiseSuppressionStereoDescription": "Sa limpiadura additzionale de abbolotu no est cumpatìbile cun s'àudio stereo.",
-        "oldElectronClientDescription1": "Paret chi ses impreende una versione betza de su cliente de Jitsi Meet, chi tenet vulnerabilidades de seguresa connotas. Assegura·ti chi atualizas a ",
+        "oldElectronClientDescription1": "Paret chi ses impreende una versione betza de su cliente de next-round, chi tenet vulnerabilidades de seguresa connotas. Assegura·ti chi atualizas a ",
         "oldElectronClientDescription2": "s'ùrtima versione",
         "oldElectronClientDescription3": " immoe.",
         "openChat": "",
@@ -1637,15 +1637,15 @@
         "go": "BAE",
         "goSmall": "BAE",
         "headerSubtitle": "Riunione seguras e de arta calidade",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "next-round",
         "info": "Informatzione pro sa mutida",
-        "jitsiOnMobile": "Jitsi pro mòbiles - iscàrriga is aplicatziones nostras e avia una riunione dae ònnia logu",
+        "jitsiOnMobile": "next-round pro mòbiles - iscàrriga is aplicatziones nostras e avia una riunione dae ònnia logu",
         "join": "CREA / INTRA",
         "logo": {
             "calendar": "Icona de calendàriu",
             "desktopPreviewThumbnail": "Miniadura de previsualizatzione de iscrivania",
             "googleLogo": "Icona de Google",
-            "logoDeepLinking": "Icona de Jitsi meet",
+            "logoDeepLinking": "Icona de next-round meet",
             "microsoftLogo": "Icona de Microsoft",
             "policyLogo": "Polìtica de iconas"
         },

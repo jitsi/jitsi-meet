@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Shtoni një lidhje takimi",
-        "confirmAddLink": "Doni të shtohet një lidhje Jitsi te kjo veprimtari?",
+        "confirmAddLink": "Doni të shtohet një lidhje next-round te kjo veprimtari?",
         "error": {
             "appConfiguration": "Integrimi i kalendarëve s’është formësuar si duhet.",
             "generic": "Ndodhi një gabim. Ju lutemi, kontrolloni rregullimet për kalendarin tuaj, ose provoni të rifreskoni kalendarin.",
@@ -610,7 +610,7 @@
         "answer": "Përgjigjuni",
         "audioCallTitle": "Thirrje ardhëse",
         "decline": "Hidhe tej",
-        "productLabel": "nga Jitsi Meet",
+        "productLabel": "nga next-round",
         "videoCallTitle": "Thirrje ardhëse me video"
     },
     "info": {
@@ -826,7 +826,7 @@
         "desktopMutedRemotelyTitle": "Tregimi i ekranit tuaj është ndalur nga {{participantDisplayName}}",
         "disabledIframe": "Trupëzimi është menduar vetëm për qëllime demonstrimi, ndaj kjo thirrje do të ndërpritet pas {{timeout}} minutash.",
         "disabledIframeSecondaryNative": "Trupëzimi i {{domain}} është menduar vetëm për qëllime demonstrimi, ndaj kjo thirrje do të ndërpritet pas {{timeout}} minutash.",
-        "disabledIframeSecondaryWeb": "Trupëzimi i {{domain}} është menduar vetëm për qëllime demonstrimi, ndaj kjo thirrje do të ndërpritet pas {{timeout}} minutash. Ju lutemi, për trupëzime të njëmendta përdorni <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi si një Shërbim</a>!",
+        "disabledIframeSecondaryWeb": "Trupëzimi i {{domain}} është menduar vetëm për qëllime demonstrimi, ndaj kjo thirrje do të ndërpritet pas {{timeout}} minutash. Ju lutemi, për trupëzime të njëmendta përdorni <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>next-round si një Shërbim</a>!",
         "disconnected": "u shkëput",
         "displayNotifications": "Shfaq njoftime për",
         "dontRemindMe": "Mos ma kujto",
@@ -878,7 +878,7 @@
         "noiseSuppressionDesktopAudioDescription": "Mbytja e zhurmave ekstra s’mund të aktivizohet teksa ndahet me të tjerët audioja e desktopit, ju lutemi, çaktivizojeni dhe riprovoni.",
         "noiseSuppressionFailedTitle": "S’u arrit të nisej mbytja e zhurmave ekstra",
         "noiseSuppressionStereoDescription": "Aktualisht nuk mbulohet mbytje zhurmash ekstra me audio stereo.",
-        "oldElectronClientDescription1": "Duket se përdorni një version të vjetër të klientit Jitsi Meet, i cili ka cenueshmëri të ditura sigurie. Ju lutemi, siguroni përditësimin me ",
+        "oldElectronClientDescription1": "Duket se përdorni një version të vjetër të klientit next-round, i cili ka cenueshmëri të ditura sigurie. Ju lutemi, siguroni përditësimin me ",
         "oldElectronClientDescription2": "montimin tonë më të ri",
         "oldElectronClientDescription3": " që tani!",
         "openChat": "Hapni fjalosjen",
@@ -1664,15 +1664,15 @@
         "go": "SHKO",
         "goSmall": "SHKO",
         "headerSubtitle": "Takime me siguri dhe me cilësi të lartë",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "next-round",
         "info": "Hollësi për t’i rënë numrit",
-        "jitsiOnMobile": "Jitsi në celular – Shkarkoni aplikacionet tona dhe nisni një takim prej ngado",
+        "jitsiOnMobile": "next-round në celular – Shkarkoni aplikacionet tona dhe nisni një takim prej ngado",
         "join": "KRIJONI / MERRNI PJESË",
         "logo": {
             "calendar": "Stemë kalendari",
             "desktopPreviewThumbnail": "Miniaturë paraparjeje desktopi",
             "googleLogo": "Stemë Google-i",
-            "logoDeepLinking": "Stemë “Jitsi meet”",
+            "logoDeepLinking": "Stemë “next-round meet”",
             "microsoftLogo": "Stemë Microsoft-i",
             "policyLogo": "Stemë Rregullash"
         },

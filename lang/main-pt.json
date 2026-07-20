@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Adicionar um link da reunião",
-        "confirmAddLink": "Gostaria de adicionar um link do Jitsi a esse evento?",
+        "confirmAddLink": "Gostaria de adicionar um link do next-round a esse evento?",
         "error": {
             "appConfiguration": "A integração com calendário não está configurada adequadamente.",
             "generic": "Ocorreu um erro. Verifique as configurações de calendário ou tente atualizar o calendário.",
@@ -604,7 +604,7 @@
         "answer": "Responder",
         "audioCallTitle": "Chamada recebida",
         "decline": "Recusar",
-        "productLabel": "do Jitsi Meet",
+        "productLabel": "do next-round",
         "videoCallTitle": "Chamada de vídeo recebida"
     },
     "info": {
@@ -820,7 +820,7 @@
         "desktopMutedRemotelyTitle": "A partilha do seu ecrã foi interrompida por {{participantDisplayName}}",
         "disabledIframe": "A incorporação destina-se apenas a fins de demonstração, pelo que esta chamada será desligada em {{timeout}} minutos.",
         "disabledIframeSecondaryNative": "A incorporação de {{domain}} destina-se apenas a fins de demonstração, pelo que esta chamada será desligada em {{timeout}} minutos.",
-        "disabledIframeSecondaryWeb": "A incorporação de {{domain}} destina-se apenas a fins de demonstração, pelo que esta chamada será desligada em {{timeout}} minutos. Utilize <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> para incorporação em produção!",
+        "disabledIframeSecondaryWeb": "A incorporação de {{domain}} destina-se apenas a fins de demonstração, pelo que esta chamada será desligada em {{timeout}} minutos. Utilize <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>next-round as a Service</a> para incorporação em produção!",
         "disconnected": "desconectado",
         "displayNotifications": "Mostrar notificações para",
         "dontRemindMe": "Não me lembre",
@@ -872,7 +872,7 @@
         "noiseSuppressionDesktopAudioDescription": "A supressão de ruído extra não pode ser ativada enquanto estiver a partilhar o áudio do ambiente de trabalho. Desative-a e tente novamente.",
         "noiseSuppressionFailedTitle": "Falha ao iniciar a supressão de ruído extra",
         "noiseSuppressionStereoDescription": "Atualmente, a supressão extra de ruído não é suportada com áudio estéreo.",
-        "oldElectronClientDescription1": "Parece estar a utilizar uma versão antiga do cliente Jitsi Meet que tem vulnerabilidades de segurança conhecidas. Por favor, certifique-se de que actualiza a nossa ",
+        "oldElectronClientDescription1": "Parece estar a utilizar uma versão antiga do cliente next-round que tem vulnerabilidades de segurança conhecidas. Por favor, certifique-se de que actualiza a nossa ",
         "oldElectronClientDescription2": "compilação mais recente",
         "oldElectronClientDescription3": " agora!",
         "openChat": "Abrir chat",
@@ -1655,15 +1655,15 @@
         "go": "IR",
         "goSmall": "IR",
         "headerSubtitle": "Reuniões com segurança e alta qualidade",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "next-round",
         "info": "Informações",
-        "jitsiOnMobile": "Jitsi em dispositivos móveis – descarregue as nossas aplicações e inicie uma reunião em qualquer lugar",
+        "jitsiOnMobile": "next-round em dispositivos móveis – descarregue as nossas aplicações e inicie uma reunião em qualquer lugar",
         "join": "CRIAR / ENTRAR",
         "logo": {
             "calendar": "Logo do Calendário",
             "desktopPreviewThumbnail": "Miniatura de Visualização do Desktop",
             "googleLogo": "Logo do Google",
-            "logoDeepLinking": "Logo do Jitsi Meet",
+            "logoDeepLinking": "Logo do next-round",
             "microsoftLogo": "Logo da Microsoft",
             "policyLogo": "Logo da Política de Privacidade"
         },

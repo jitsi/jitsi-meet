@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
-        "confirmAddLink": "Do you want to add a Jitsi link to this event?",
+        "confirmAddLink": "Do you want to add a next-round link to this event?",
         "error": {
             "appConfiguration": "Calendar integration is not properly configured.",
             "generic": "An error has occurred. Please check your calendar settings or try refreshing the calendar.",
@@ -628,7 +628,7 @@
         "answer": "Answer",
         "audioCallTitle": "Incoming call",
         "decline": "Dismiss",
-        "productLabel": "from Jitsi Meet",
+        "productLabel": "from next-round",
         "videoCallTitle": "Incoming video call"
     },
     "info": {
@@ -853,7 +853,7 @@
         "desktopMutedRemotelyTitle": "Your screen sharing has been stopped by {{participantDisplayName}}",
         "disabledIframe": "Embedding is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes.",
         "disabledIframeSecondaryNative": "Embedding {{domain}} is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes.",
-        "disabledIframeSecondaryWeb": "Embedding {{domain}} is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes. Please use <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> for production embedding!",
+        "disabledIframeSecondaryWeb": "Embedding {{domain}} is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes. Please use <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>next-round as a Service</a> for production embedding!",
         "disconnected": "disconnected",
         "dismissError": "Failed to dismiss suggestions",
         "dismissSuccess": "Suggestions dismissed",
@@ -907,7 +907,7 @@
         "noiseSuppressionDesktopAudioDescription": "Extra noise suppression can't be enabled while sharing desktop audio, please disable it and try again.",
         "noiseSuppressionFailedTitle": "Failed to start extra noise suppression",
         "noiseSuppressionStereoDescription": "Extra noise suppression is not currently supported with stereo audio.",
-        "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
+        "oldElectronClientDescription1": "You appear to be using an old version of the next-round client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
         "oldElectronClientDescription3": " now!",
         "openChat": "Open chat",
@@ -1713,15 +1713,15 @@
         "go": "GO",
         "goSmall": "GO",
         "headerSubtitle": "Secure and high quality meetings",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "next-round",
         "info": "Dial-in info",
-        "jitsiOnMobile": "Jitsi on mobile – download our apps and start a meeting from anywhere",
+        "jitsiOnMobile": "next-round on mobile – download our apps and start a meeting from anywhere",
         "join": "CREATE / JOIN",
         "logo": {
             "calendar": "Calendar logo",
             "desktopPreviewThumbnail": "Desktop preview thumbnail",
             "googleLogo": "Google Logo",
-            "logoDeepLinking": "Jitsi meet logo",
+            "logoDeepLinking": "next-round meet logo",
             "microsoftLogo": "Microsoft logo",
             "policyLogo": "Policy logo"
         },

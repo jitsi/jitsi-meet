@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Lisää kokouslinkki",
-        "confirmAddLink": "Haluatko lisätä tapahtumaan Jitsi-linkin?",
+        "confirmAddLink": "Haluatko lisätä tapahtumaan next-round-linkin?",
         "error": {
             "appConfiguration": "Kalenterin integrointia ei ole määritetty asianmukaisesti.",
             "generic": "Tapahtui virhe. Tarkista kalenterin määritykset tai päivitä kalenterinäkymä.",
@@ -608,7 +608,7 @@
         "answer": "Vastaus",
         "audioCallTitle": "Saapuva puhelu",
         "decline": "Hylkää",
-        "productLabel": "Jitsi Meetistä",
+        "productLabel": "next-roundistä",
         "videoCallTitle": "Saapuva videopuhelu"
     },
     "info": {
@@ -824,7 +824,7 @@
         "desktopMutedRemotelyTitle": "Näytönjako on pysäytetty käyttäjän {{participantDisplayName}} toimesta",
         "disabledIframe": "Upottaminen on tarkoitettu vain demo-käyttöön, joten tämä puhelu katkeaa {{timeout}} minuutin kuluttua.",
         "disabledIframeSecondaryNative": "Domeenin {{domain}} upottaminen on tarkoitettu vain demo-käyttöön, joten tämä puhelu katkeaa {{timeout}} minuutin kuluttua.",
-        "disabledIframeSecondaryWeb": "Domeenin {{domain}} upottaminen on tarkoitettu vain demo-käyttöön, joten tämä puhelu katkeaa {{timeout}} minuutin kuluttua. Käytä <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> -palvelua tuotantokäyttöön!",
+        "disabledIframeSecondaryWeb": "Domeenin {{domain}} upottaminen on tarkoitettu vain demo-käyttöön, joten tämä puhelu katkeaa {{timeout}} minuutin kuluttua. Käytä <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>next-round as a Service</a> -palvelua tuotantokäyttöön!",
         "disconnected": "ei yhteyttä",
         "displayNotifications": "Näytä ilmoitukset",
         "dontRemindMe": "Älä muistuta minua",
@@ -876,7 +876,7 @@
         "noiseSuppressionDesktopAudioDescription": "Lisäkohinanvaimennusta ei voi ottaa käyttöön, kun jaat työpöydän ääntä. Poista se käytöstä ja yritä uudelleen.",
         "noiseSuppressionFailedTitle": "Lisäkohinanvaimennuksen käynnistäminen epäonnistui",
         "noiseSuppressionStereoDescription": "Lisäkohinanvaimennusta ei tällä hetkellä tueta stereoäänen kanssa.",
-        "oldElectronClientDescription1": "Näyttää siltä, että käytät vanhaa versiota Jitsi Meet -asiakkaasta, jossa on tunnettuja tietoturvaongelmia. Varmista, että päivität ",
+        "oldElectronClientDescription1": "Näyttää siltä, että käytät vanhaa versiota next-round -asiakkaasta, jossa on tunnettuja tietoturvaongelmia. Varmista, että päivität ",
         "oldElectronClientDescription2": "uusimpaan versioon",
         "oldElectronClientDescription3": " nyt!",
         "openChat": "Avaa chatti",
@@ -1661,15 +1661,15 @@
         "go": "ALOITA",
         "goSmall": "ALOITA",
         "headerSubtitle": "Turvalliset ja laadukkaat kokoukset",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "next-round",
         "info": "Tiedot",
-        "jitsiOnMobile": "Jitsi mobiilissa – lataa sovelluksemme ja aloita kokous missä tahansa",
+        "jitsiOnMobile": "next-round mobiilissa – lataa sovelluksemme ja aloita kokous missä tahansa",
         "join": "LIITY",
         "logo": {
             "calendar": "Kalenterin logo",
             "desktopPreviewThumbnail": "Työpöydän esikatselun pikkukuva",
             "googleLogo": "Googlen logo",
-            "logoDeepLinking": "Jitsi meet -logo",
+            "logoDeepLinking": "next-round meet -logo",
             "microsoftLogo": "Microsoftin logo",
             "policyLogo": "Käytännön logo"
         },

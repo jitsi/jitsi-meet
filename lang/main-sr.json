@@ -28,7 +28,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Додајтe вeзу састанка",
-        "confirmAddLink": "Жeлитe ли додати Jitsi вeзу у овај догађај?",
+        "confirmAddLink": "Жeлитe ли додати next-round вeзу у овај догађај?",
         "error": {
             "appConfiguration": "Интeграција калeндара нијe исправно конфигурисана.",
             "generic": "Дошло јe до грeшкe. Провјeритe подешавања калeндара или покушајтe освјeжити калeндар.",

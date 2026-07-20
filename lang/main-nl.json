@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Een link naar een vergadering toevoegen",
-        "confirmAddLink": "Wilt u een Jitsi-link aan deze afspraak toevoegen?",
+        "confirmAddLink": "Wilt u een next-round-link aan deze afspraak toevoegen?",
         "error": {
             "appConfiguration": "De agenda-integratie is niet juist ingesteld.",
             "generic": "Er is een fout opgetreden. Controleer uw agenda-instellingen of vernieuw de agenda.",
@@ -613,7 +613,7 @@
         "answer": "Beantwoorden",
         "audioCallTitle": "Inkomende oproep",
         "decline": "Negeren",
-        "productLabel": "vanuit Jitsi Meet",
+        "productLabel": "vanuit next-round",
         "videoCallTitle": "Inkomende video-oproep"
     },
     "info": {
@@ -831,7 +831,7 @@
         "desktopMutedRemotelyTitle": "Uw schermdeling is gestopt door {{participantDisplayName}}",
         "disabledIframe": "Insluiten is alleen bedoeld voor demo-doeleinden, dus deze oproep wordt binnen {{timeout}} minuten verbroken.",
         "disabledIframeSecondaryNative": "Het insluiten van {{domein}} is alleen bedoeld voor demo-doeleinden, dus deze oproep wordt binnen {{timeout}} minuten verbroken.",
-        "disabledIframeSecondaryWeb": "Het insluiten van {{domein}} is alleen bedoeld voor demo-doeleinden, dus deze oproep wordt binnen {{timeout}} minuten verbroken. Gebruik alstublieft <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> voor productie-insluiting!",
+        "disabledIframeSecondaryWeb": "Het insluiten van {{domein}} is alleen bedoeld voor demo-doeleinden, dus deze oproep wordt binnen {{timeout}} minuten verbroken. Gebruik alstublieft <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>next-round as a Service</a> voor productie-insluiting!",
         "disconnected": "verbinding verbroken",
         "displayNotifications": "Toon meldingen voor",
         "dontRemindMe": "Herinner me er niet aan",
@@ -883,7 +883,7 @@
         "noiseSuppressionDesktopAudioDescription": "Extra ruisonderdrukking kan niet worden ingeschakeld tijdens het delen van desktopaudio. Schakel dit uit en probeer het opnieuw.",
         "noiseSuppressionFailedTitle": "Kan geen extra ruisonderdrukking starten",
         "noiseSuppressionStereoDescription": "Extra ruisonderdrukking wordt momenteel niet ondersteund met stereo-audio.",
-        "oldElectronClientDescription1": "Het lijkt erop dat u een oude versie van Jitsi Meet gebruikt, waarvan beveiligingskwetsbaarheden bekend zijn. Zorg ervoor dat u nu bijwerkt naar de ",
+        "oldElectronClientDescription1": "Het lijkt erop dat u een oude versie van next-round gebruikt, waarvan beveiligingskwetsbaarheden bekend zijn. Zorg ervoor dat u nu bijwerkt naar de ",
         "oldElectronClientDescription2": "nieuwste versie",
         "oldElectronClientDescription3": "!",
         "openChat": "Chat openen",
@@ -1677,15 +1677,15 @@
         "go": "GAAN",
         "goSmall": "GAAN",
         "headerSubtitle": "Veilige vergaderingen van hoge kwaliteit",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "next-round",
         "info": "Informatie",
-        "jitsiOnMobile": "Jitsi op de mobiele telefoon - download onze apps en start overal een vergadering",
+        "jitsiOnMobile": "next-round op de mobiele telefoon - download onze apps en start overal een vergadering",
         "join": "AANMAKEN / DEELNEMEN",
         "logo": {
             "calendar": "Agenda logo",
             "desktopPreviewThumbnail": "Bureaubladvoorbeeld miniatuur",
             "googleLogo": "Google logo",
-            "logoDeepLinking": "Jitsi meet logo",
+            "logoDeepLinking": "next-round meet logo",
             "microsoftLogo": "Microsoft logo",
             "policyLogo": "Policy logo"
         },
