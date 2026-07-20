@@ -1,0 +1,64 @@
+name: build-web
+
+# Builds the NextRound custom Jitsi web image (our fork's anti-cheat feature +
+# Clerk/Welcome UI) on a native amd64 runner and pushes it to ghcr, so the
+# deploy box only pulls — no local cross-arch build, no build on the VPS.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+    paths:
+      - 'react/features/nextround/**'
+      - 'react/**'
+      - 'css/**'
+      - 'lang/**'
+      - 'app.js'
+      - 'index.html'
+      - 'interface_config.js'
+      - 'webpack.config.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/build-web.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout jitsi-meet (frontend source / build context)
+        uses: actions/checkout@v4
+        with:
+          path: jitsi-meet
+
+      - name: Checkout docker-jitsi-meet (carries web/Dockerfile.local)
+        uses: actions/checkout@v4
+        with:
+          repository: boverU/docker-jitsi-meet
+          path: docker-jitsi-meet
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to ghcr
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push web image (amd64)
+        uses: docker/build-push-action@v6
+        with:
+          context: ./jitsi-meet
+          file: ./docker-jitsi-meet/web/Dockerfile.local
+          platforms: linux/amd64
+          push: true
+          # Give webpack room; the native runner has plenty.
+          build-args: |
+            NODE_OPTIONS=--max-old-space-size=6144
+          tags: ghcr.io/boveru/jitsi-meet-web:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

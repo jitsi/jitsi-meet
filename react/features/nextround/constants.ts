@@ -9,10 +9,18 @@ export const CLERK_PUBLISHABLE_KEY
     = 'pk_test_bWFueS1vYXJmaXNoLTg2LmNsZXJrLmFjY291bnRzLmRldiQ';
 
 /**
- * Base URL of the NextRound API. The welcome page calls it cross-origin with a
- * Clerk Bearer token to create/join meeting rooms.
+ * Base URL of the NextRound API.
+ *
+ * In dev the frontend is served from :8080 and the API from :4000, so it calls
+ * cross-origin at localhost:4000. In production the API lives behind the same
+ * origin as the meeting frontend (nginx proxies /api, /join, /health,
+ * /webhooks), so an empty base makes `fetch('/api/...')` resolve same-origin —
+ * a candidate's browser must never be pointed at its own localhost.
  */
-export const NEXTROUND_API_BASE = 'http://localhost:4000';
+export const NEXTROUND_API_BASE
+    = (/^(localhost|127\.0\.0\.1)$/).test(window.location.hostname)
+        ? 'http://localhost:4000'
+        : '';
 
 /**
  * The font stack Google Meet uses. Shared by every NextRound surface so the
