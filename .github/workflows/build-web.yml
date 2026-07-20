@@ -53,7 +53,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./jitsi-meet
-          file: ./docker-jitsi-meet/web/Dockerfile.local
+          file: ${{ github.workspace }}/docker-jitsi-meet/web/Dockerfile.local
           platforms: linux/amd64
           push: true
           # Give webpack room; the native runner has plenty.
