@@ -69,7 +69,3 @@ window.APP = {
 // complexity of the beginning step.
 import './react';
 
-// Let users / forks implement custom JS logic that gets bundled.
-// Uses webpackMode: 'eager' so it is evaluates as part of the next microtask.
-import(/* webpackMode: 'eager' */ './custom.js');
-
