@@ -41,7 +41,11 @@ const CodeEditor = () => {
                 zIndex: 250,
                 display: 'flex',
                 flexDirection: 'column',
-                background: '#1e1e1e'
+                background: '#1e1e1e',
+
+                // The large-video container is centered; reset so editor text
+                // isn't inherited-centered.
+                textAlign: 'left'
             }}>
             <Suspense
                 fallback = { <div style = {{ color: '#ddd', padding: 24 }}>Loading editor…</div> }>

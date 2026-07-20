@@ -262,7 +262,7 @@ const CodeEditorPanel = ({
     }, [ canRun, language, apiBase, interviewId, eventsToken, postEvent, writeOutput ]);
 
     return (
-        <div style = {{ display: 'flex', flexDirection: 'column', height: '100%', color: '#e8eaed' }}>
+        <div style = {{ display: 'flex', flexDirection: 'column', height: '100%', color: '#e8eaed', textAlign: 'left' }}>
             <div
                 style = {{
                     display: 'flex',
