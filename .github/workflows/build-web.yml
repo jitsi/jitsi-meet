@@ -62,3 +62,5 @@ jobs:
           tags: ghcr.io/boveru/jitsi-meet-web:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+# retrigger: pick up docker-jitsi-meet .well-known symlink fix
