@@ -137,6 +137,12 @@ StateListenerRegistry.register(
 
         conference.on(JitsiConferenceEvents.TRANSLATED_SOURCE_SENDING_CHANGED,
             ({ sending, sourceName, timestamp }: { sending: boolean; sourceName: string; timestamp: number; }) => {
+                // The bridge currently emits only sending=true, which would leave the receiving state
+                // stuck on; ignore the events unless explicitly enabled.
+                if (!getState()['features/base/config'].audioTranslation?.enableSendingChangeEvents) {
+                    return;
+                }
+
                 // The bridge broadcasts sending changes to every endpoint, including the translated
                 // participant itself; our own translated source is not audio we receive.
                 if (getSourceOwnerEndpointId(sourceName) === getLocalParticipant(getState())?.id) {

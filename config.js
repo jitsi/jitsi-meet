@@ -240,6 +240,11 @@ var config = {
     //     // Defaults to 0.15. Ignored on iOS, where the original is muted instead because the
     //     // element volume cannot be lowered there.
     //     duckedVolume: 0.15,
+    //
+    //     // Whether to process the bridge's translated-source sending notifications, which drive the
+    //     // per-participant "receiving translated audio" indicator. Off by default until the bridge
+    //     // emits stop notifications as well as start ones.
+    //     enableSendingChangeEvents: false,
     // },
 
     // Noise suppression configuration. By default rnnoise is used. Optionally Krisp
