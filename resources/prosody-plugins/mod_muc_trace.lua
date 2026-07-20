@@ -1,4 +1,4 @@
-local otel = module:requie "otel"
+local otel = module:require "otel"
 local jid = require "util.jid";
 
 local exporter = otel.Exporter.new(module:get_option("otlp_endpoint"))
