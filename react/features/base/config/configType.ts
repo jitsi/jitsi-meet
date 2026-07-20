@@ -224,6 +224,7 @@ export interface IConfig {
      */
     audioTranslation?: {
         duckedVolume?: number;
+        enableSendingChangeEvents?: boolean;
         enabled?: boolean;
     };
     /**

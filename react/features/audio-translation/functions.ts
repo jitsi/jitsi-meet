@@ -4,6 +4,8 @@ import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { isLocalParticipantModerator } from '../base/participants/functions';
 import { ITrack } from '../base/tracks/types';
 
+import { TranslationTreatment } from './constants';
+
 /**
  * Whether audio translation is enabled for the room. Driven by the {@code audioTranslation} RoomMetadata flag,
  * which a moderator can toggle; absent or any value other than an explicit {@code false} means enabled.
@@ -13,6 +15,88 @@ import { ITrack } from '../base/tracks/types';
  */
 export function isAudioTranslationRoomEnabled(state: IReduxState): boolean {
     return state['features/base/conference'].metadata?.audioTranslation?.enabled !== false;
+}
+
+/**
+ * Whether the given participant is currently translating the local participant's audio, per the directed
+ * {@code translationListeners} list pushed by the audio-translation component.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} participantId - The participant (endpoint) id to check.
+ * @returns {boolean}
+ */
+export function isParticipantAudioTranslationActive(state: IReduxState, participantId: string): boolean {
+    return state['features/audio-translation'].translationListeners.includes(participantId);
+}
+
+/**
+ * The owner endpoint id encoded in a translated source name — the substring before the first {@code -}.
+ * Translated sources follow the {@code <endpointId>-a<idx>.<lang>} convention (endpoint ids are dash/dot-free).
+ * Returns an empty string for a source without a dash.
+ *
+ * @param {string} sourceName - The translated source name.
+ * @returns {string}
+ */
+export function getSourceOwnerEndpointId(sourceName: string): string {
+    const dashIndex = sourceName.indexOf('-');
+
+    return dashIndex === -1 ? '' : sourceName.substring(0, dashIndex);
+}
+
+/**
+ * Whether the bridge is currently forwarding any translated audio owned by the given participant to us (i.e. we
+ * are hearing that participant translated), per the {@code receivingSources} set.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} participantId - The participant (endpoint) id to check.
+ * @returns {boolean}
+ */
+export function isReceivingTranslationFrom(state: IReduxState, participantId: string): boolean {
+    return state['features/audio-translation'].receivingSources
+        .some(sourceName => getSourceOwnerEndpointId(sourceName) === participantId);
+}
+
+/**
+ * The audio-translation status treatment for a participant, combining whether translation is enabled for the
+ * local user ({@link isParticipantAudioTranslationActive}) and whether translated audio is being received
+ * ({@link isReceivingTranslationFrom}).
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} participantId - The participant (endpoint) id to check.
+ * @returns {TranslationTreatment}
+ */
+export function getTranslationTreatment(state: IReduxState, participantId: string): TranslationTreatment {
+    const enabled = isParticipantAudioTranslationActive(state, participantId);
+    const receiving = isReceivingTranslationFrom(state, participantId);
+
+    if (enabled && receiving) {
+        return TranslationTreatment.BOTH;
+    }
+    if (enabled) {
+        return TranslationTreatment.ENABLED;
+    }
+    if (receiving) {
+        return TranslationTreatment.RECEIVING;
+    }
+
+    return TranslationTreatment.NONE;
+}
+
+/**
+ * Whether audio translation is currently active anywhere in the meeting: a remote participant is translating
+ * the local user, translated audio is being received, or the local user has translation on.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function isAudioTranslationActiveInMeeting(state: IReduxState): boolean {
+    const { language, participantLanguages, receivingSources, translationListeners }
+        = state['features/audio-translation'];
+
+    return translationListeners.length > 0
+        || receivingSources.length > 0
+        || Boolean(language)
+        || Object.values(participantLanguages).some(lang => lang !== null);
 }
 
 /**

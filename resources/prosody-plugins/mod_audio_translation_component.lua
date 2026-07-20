@@ -40,6 +40,17 @@
 -- module injects audioTranslationRequests into the metadata only for admin
 -- (jicofo) occupants, so regular clients never see it.
 --
+-- ── Directed listeners push (component → each sender) ─────────────────────────────
+-- Alongside the jicofo aggregate, each sender is told which receivers currently translate it.
+-- An inverted map { [senderId] = set<receiverId> } is maintained in lockstep with the forward
+-- subscription map (updated incrementally on every delta and on occupant-leave), and a directed
+-- <translation-listeners xmlns='http://jitsi.org/jitmeet'> message (sorted JSON array) is sent to
+-- each sender whose listener set changed, so a client badges the receivers translating the local
+-- user. Only senders flagged dirty since the last publish are reconsidered, so the cost is
+-- proportional to what changed rather than to room size. Gated exactly like the aggregate; an empty
+-- array clears a sender whose last listener left. Handled in publish_listeners(), kept separate so
+-- the jicofo-facing publish() is unchanged.
+--
 -- ── Enable-flag write gating ─────────────────────────────────────────────────
 -- The audioTranslation metadata key (which carries the room-level enable flag)
 -- is written through mod_room_metadata_component. This module hooks
@@ -99,13 +110,66 @@ module:log('info', 'Starting audio_translation for %s (max_subscriptions=%s, deb
 local main_muc_module;
 
 -- Returns (creating if needed) the per-room translation state:
---   { receivers = { [receiverId] = { [senderId] = lang } }, last_published = <json|nil> }
+--   { receivers = { [receiverId] = { [senderId] = lang } },      -- forward map (source of truth)
+--     last_published = <json|nil>,                               -- jicofo aggregate dedup
+--     listeners_by_sender = { [senderId] = { [receiverId] = true } }, -- inverted map, kept in lockstep
+--     dirty_senders = { [senderId] = true },                     -- senders changed since last publish
+--     last_sent_listeners = { [senderId] = <json> } }            -- directed-push dedup
+-- receivers drives per-receiver atomic updates and the jicofo aggregate; listeners_by_sender is
+-- maintained alongside it so the directed per-sender push costs work proportional to what changed.
 local function get_state(room)
     if not room._audio_translation then
-        room._audio_translation = { receivers = {} };
+        room._audio_translation = {
+            receivers = {};
+            listeners_by_sender = {};
+            dirty_senders = {};
+            last_sent_listeners = {};
+        };
     end
 
     return room._audio_translation;
+end
+
+-- Flags a sender for reconsideration on the next listeners publish.
+local function mark_sender_dirty(state, sender_id)
+    state.dirty_senders[sender_id] = true;
+end
+
+-- Records that receiver_id now translates sender_id in the inverted map, flagging the sender dirty.
+local function add_listener(state, sender_id, receiver_id)
+    local set = state.listeners_by_sender[sender_id];
+
+    if not set then
+        set = {};
+        state.listeners_by_sender[sender_id] = set;
+    end
+    set[receiver_id] = true;
+    mark_sender_dirty(state, sender_id);
+end
+
+-- Records that receiver_id no longer translates sender_id, dropping the set once it empties and
+-- flagging the sender dirty so the change is pushed (an empty set clears the sender).
+local function remove_listener(state, sender_id, receiver_id)
+    local set = state.listeners_by_sender[sender_id];
+
+    if set then
+        set[receiver_id] = nil;
+        if next(set) == nil then
+            state.listeners_by_sender[sender_id] = nil;
+        end
+    end
+    mark_sender_dirty(state, sender_id);
+end
+
+-- Flags every currently-tracked sender dirty. Used when room-wide gating (the enable flag) flips,
+-- which changes every sender's pushed list at once with no per-sender delta to key off.
+local function mark_all_senders_dirty(state)
+    for sender_id in pairs(state.listeners_by_sender) do
+        state.dirty_senders[sender_id] = true;
+    end
+    for sender_id in pairs(state.last_sent_listeners) do
+        state.dirty_senders[sender_id] = true;
+    end
 end
 
 -- The endpoint id of an occupant is the resource part of its in-room nick.
@@ -199,6 +263,20 @@ local function apply_delta(room, receiver_id, delta)
 
     state.receivers[receiver_id] = next_map;
 
+    -- Update the inverted map in lockstep, now that the delta has fully validated (so a rejected
+    -- delta never mutates it). Only membership changes move listeners; a language-only change
+    -- (sender present before and after) is not a listener change and leaves the sender untouched.
+    for sender_id in pairs(current) do
+        if not next_map[sender_id] then
+            remove_listener(state, sender_id, receiver_id);
+        end
+    end
+    for sender_id in pairs(next_map) do
+        if not current[sender_id] then
+            add_listener(state, sender_id, receiver_id);
+        end
+    end
+
     return true;
 end
 
@@ -283,6 +361,64 @@ local function publish(room)
     main_muc_module:fire_event('room-metadata-changed', { room = room; });
 end
 
+-- Pushes each dirty sender the sorted receiver ids currently translating it, as a directed
+-- <translation-listeners> message, then clears the dirty set. Reads the incrementally-maintained
+-- inverted map (listeners_by_sender), so the cost is proportional to what changed, not room size.
+-- Kept separate from publish() so the jicofo-facing aggregate path stays untouched. Gated like the
+-- aggregate: while disabled/vetoed every dirty sender resolves to an empty list. Change-detected per
+-- sender against last_sent_listeners; an empty array is sent (then the tracker entry dropped) to
+-- clear a sender whose last listener left.
+local function publish_listeners(room)
+    if not room._audio_translation or not main_muc_module then
+        return;
+    end
+
+    local state = room._audio_translation;
+    local dirty = state.dirty_senders;
+
+    if not dirty or next(dirty) == nil then
+        return;
+    end
+    state.dirty_senders = {};
+
+    local allow_publish = main_muc_module:fire_event('jitsi-audio-translation-allow-publish', { room = room; }) ~= false;
+    local enabled = allow_publish and is_enabled(room);
+
+    for sender_id in pairs(dirty) do
+        local list = {};
+        local set = enabled and state.listeners_by_sender[sender_id];
+
+        if set then
+            for receiver_id in pairs(set) do
+                list[#list + 1] = receiver_id;
+            end
+            -- Sorted so set-iteration order never produces a spurious change.
+            table.sort(list);
+        end
+
+        -- util.json encodes an empty table as "{}"; force "[]" so clients always parse an array.
+        local encoded_listeners = (#list > 0) and json.encode(list) or '[]';
+
+        if encoded_listeners ~= state.last_sent_listeners[sender_id] then
+            local occupant = room:get_occupant_by_nick(room.jid..'/'..sender_id);
+
+            if occupant then
+                module:send(st.message({ from = module.host; to = occupant.jid; })
+                    :tag('translation-listeners', { xmlns = AUDIO_TRANSLATION_NS; })
+                    :text(encoded_listeners):up());
+            end
+
+            -- Only a delivered push is recorded; for a missing occupant the entry is dropped so a
+            -- rejoin with the same endpoint id gets a fresh push instead of being change-suppressed.
+            if occupant and #list > 0 then
+                state.last_sent_listeners[sender_id] = encoded_listeners;
+            else
+                state.last_sent_listeners[sender_id] = nil;
+            end
+        end
+    end
+end
+
 -- Schedules a debounced publish so a burst of updates produces a single metadata
 -- broadcast.
 local function schedule_publish(room)
@@ -298,6 +434,7 @@ local function schedule_publish(room)
             room._audio_translation.publish_scheduled = nil;
         end
         publish(room);
+        publish_listeners(room);
     end);
 end
 
@@ -398,19 +535,36 @@ function process_main_muc_loaded(main_muc, host_module)
             return;
         end
 
+        local state = room._audio_translation;
         local id = endpoint_id(occupant);
         local changed = false;
 
-        if room._audio_translation.receivers[id] then
-            room._audio_translation.receivers[id] = nil;
+        -- As a receiver: drop its own subscriptions, removing it as a listener from each sender it
+        -- was translating (which flags those senders dirty so their pushed lists shrink).
+        local own = state.receivers[id];
+
+        if own then
+            state.receivers[id] = nil;
+            for sender_id in pairs(own) do
+                remove_listener(state, sender_id, id);
+            end
             changed = true;
         end
 
-        for _, subs in pairs(room._audio_translation.receivers) do
+        -- As a sender: remove it from every receiver's map, then forget its listener set entirely.
+        -- It has left, so there is no one to notify — dropping the tracking prevents a leak and a
+        -- stale re-push, and needs no dirty flag.
+        for _, subs in pairs(state.receivers) do
             if subs[id] then
                 subs[id] = nil;
                 changed = true;
             end
+        end
+        if state.listeners_by_sender[id] or state.last_sent_listeners[id] then
+            state.listeners_by_sender[id] = nil;
+            state.last_sent_listeners[id] = nil;
+            state.dirty_senders[id] = nil;
+            changed = true;
         end
 
         if changed then
@@ -425,6 +579,9 @@ function process_main_muc_loaded(main_muc, host_module)
 
         if event.key == ENABLED_METADATA_KEY and room._audio_translation
                 and not is_healthcheck_room(room.jid) then
+            -- Room-wide gating changes every sender's pushed list at once, with no per-sender delta,
+            -- so flag them all for the listeners pass (publish() recomputes the aggregate itself).
+            mark_all_senders_dirty(room._audio_translation);
             schedule_publish(room);
         end
     end);
