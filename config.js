@@ -1955,6 +1955,14 @@ var config = {
     //     storageBackendUrl: 'https://excalidraw-s3-storage-backend.example.com',
     // },
 
+    // NextRound collaborative code editor. Enabled by default in the fork; in
+    // production the collab relay is same-origin (nginx proxies /code-collab),
+    // so only dev needs to point at the local y-websocket server on :1234.
+    codeEditor: {
+        enabled: true,
+        collabServerBaseUrl: 'ws://localhost:1234'
+    },
+
     // The watchRTC initialize config params as described :
     // https://testrtc.com/docs/installing-the-watchrtc-javascript-sdk/#h-set-up-the-sdk
     // https://www.npmjs.com/package/@testrtc/watchrtc-sdk

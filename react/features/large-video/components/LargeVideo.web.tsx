@@ -12,6 +12,7 @@ import { getHideSelfView } from '../../base/settings/functions.any';
 import { getVideoTrackByParticipant } from '../../base/tracks/functions.web';
 import { setColorAlpha } from '../../base/util/helpers';
 import { isSpotTV } from '../../base/util/spot';
+import CodeEditor from '../../code-editor/components/web/CodeEditor';
 import StageParticipantNameLabel from '../../display-name/components/web/StageParticipantNameLabel';
 import { FILMSTRIP_BREAKPOINT } from '../../filmstrip/constants';
 import { getVerticalViewMaxWidth, isFilmstripResizable } from '../../filmstrip/functions.web';
@@ -219,6 +220,7 @@ class LargeVideo extends Component<IProps> {
                 style = { style }>
                 <SharedVideo />
                 {_whiteboardEnabled && <Whiteboard />}
+                <CodeEditor />
                 <div id = 'etherpad' />
 
                 <Watermarks />

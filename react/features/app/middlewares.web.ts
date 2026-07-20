@@ -31,5 +31,6 @@ import '../whiteboard/middleware.web';
 import '../file-sharing/middleware.web';
 import '../custom-panel/middleware.web';
 import '../nextround/middleware.web';
+import '../code-editor/middleware.web';
 
 import './middlewares.any';

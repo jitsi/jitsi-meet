@@ -149,6 +149,25 @@ export interface IWhiteboardConfig {
     userLimit?: number;
 }
 
+export interface ICodeEditorConfig {
+
+    /**
+     * WebSocket base URL of the code-collab relay. Optional — defaults to the
+     * same origin as the meeting (nginx proxies `/code-collab`).
+     */
+    collabServerBaseUrl?: string;
+
+    /**
+     * Default language selected when the editor opens.
+     */
+    defaultLanguage?: string;
+
+    /**
+     * Whether the collaborative code editor is enabled.
+     */
+    enabled?: boolean;
+}
+
 export interface IWatchRTCConfiguration {
     allowBrowserLogCollection?: boolean;
     collectionInterval?: number;
@@ -254,6 +273,7 @@ export interface IConfig {
         edgeUrl?: string;
         url?: string;
     };
+    codeEditor?: ICodeEditorConfig;
     conferenceInfo?: {
         alwaysVisible?: Array<string>;
         autoHide?: Array<string>;

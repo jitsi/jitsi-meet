@@ -114,6 +114,7 @@ export const MAIN_TOOLBAR_BUTTONS_PRIORITY = [
     'shareaudio',
     'noisesuppression',
     'whiteboard',
+    'codeEditor',
     'etherpad',
     'select-background',
     'stats',
@@ -182,7 +183,8 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'tileview',
     'toggle-camera',
     'videoquality',
-    'whiteboard'
+    'whiteboard',
+    'codeEditor'
 ];
 
 /**

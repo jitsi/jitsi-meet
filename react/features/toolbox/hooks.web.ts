@@ -16,6 +16,7 @@ import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { toggleChat } from '../chat/actions.web';
 import { isChatDisabled } from '../chat/functions';
 import { useChatButton } from '../chat/hooks.web';
+import { useCodeEditorButton } from '../code-editor/hooks';
 import { useCustomPanelButton } from '../custom-panel/hooks.web';
 import { useEmbedButton } from '../embed-meeting/hooks';
 import { useEtherpadButton } from '../etherpad/hooks';
@@ -299,6 +300,7 @@ export function useToolboxButtons(
     const shareaudio = getShareAudioButton();
     const shareVideo = useSharedVideoButton();
     const whiteboard = useWhiteboardButton();
+    const codeEditor = useCodeEditorButton();
     const etherpad = useEtherpadButton();
     const virtualBackground = useVirtualBackgroundButton();
     const speakerStats = useSpeakerStatsButton();
@@ -335,6 +337,7 @@ export function useToolboxButtons(
         shareaudio,
         noisesuppression: noiseSuppression,
         whiteboard,
+        codeEditor,
         etherpad,
         'select-background': virtualBackground,
         stats: speakerStats,
