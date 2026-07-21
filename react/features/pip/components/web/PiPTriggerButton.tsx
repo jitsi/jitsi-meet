@@ -17,7 +17,7 @@ interface IProps extends AbstractButtonProps {
  * Either opens or closes the existing picture in picture window
  * Opens Document PiP or Video PiP based on browser availability and hides when both are not supported (eg: firefox).
  */
-class PipTriggerButton extends AbstractButton<IProps> {
+class PiPTriggerButton extends AbstractButton<IProps> {
     override accessibilityLabel = 'toolbar.accessibilityLabel.pip';
     override label = 'toolbar.pip';
     override toggledLabel = 'toolbar.pipClose';
@@ -43,4 +43,4 @@ function mapStateToProps(state: IReduxState) {
     };
 }
 
-export default translate(connect(mapStateToProps)(PipTriggerButton));
+export default translate(connect(mapStateToProps)(PiPTriggerButton));

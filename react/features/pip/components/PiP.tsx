@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { browser } from '../../base/lib-jitsi-meet';
 import { isDocumentPiPSupported, shouldShowPiP } from '../functions';
 
-import { DocumentPiPContent } from './PiPContent';
+import { DocumentPiPContent } from './DocumentPiPContent';
 import PiPVideoElement from './PiPVideoElement';
 
 /**
