@@ -3,6 +3,8 @@ import { Image, ImageStyle, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
+import { TranslationTreatment } from '../../../audio-translation/constants';
+import { getTranslationTreatment } from '../../../audio-translation/functions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../base/media/constants';
 import { pinParticipant } from '../../../base/participants/actions';
 import ParticipantView from '../../../base/participants/components/ParticipantView.native';
@@ -41,6 +43,7 @@ import ModeratorIndicator from './ModeratorIndicator';
 import PinnedIndicator from './PinnedIndicator';
 import RaisedHandIndicator from './RaisedHandIndicator';
 import ScreenShareIndicator from './ScreenShareIndicator';
+import TranslationIndicator from './TranslationIndicator';
 import styles, { AVATAR_SIZE } from './styles';
 
 
@@ -111,6 +114,11 @@ interface IProps {
      * Whether to show the moderator indicator or not.
      */
     _renderModeratorIndicator: boolean;
+
+    /**
+     * Whether the audio-translation indicator should be rendered.
+     */
+    _renderTranslationIndicator: boolean;
 
     _shouldDisplayTileView: boolean;
 
@@ -220,6 +228,7 @@ class Thumbnail extends PureComponent<IProps> {
             _participantId: participantId,
             _pinned,
             _renderModeratorIndicator: renderModeratorIndicator,
+            _renderTranslationIndicator: renderTranslationIndicator,
             _shouldDisplayTileView,
             renderDisplayName,
             tileView
@@ -230,7 +239,7 @@ class Thumbnail extends PureComponent<IProps> {
 
         if (_shouldDisplayTileView) {
             bottomIndicatorsContainerStyle = styles.bottomIndicatorsContainer;
-        } else if (audioMuted || renderModeratorIndicator) {
+        } else if (audioMuted || renderModeratorIndicator || renderTranslationIndicator) {
             bottomIndicatorsContainerStyle = styles.bottomIndicatorsContainer;
         } else {
             bottomIndicatorsContainerStyle = null;
@@ -254,6 +263,7 @@ class Thumbnail extends PureComponent<IProps> {
                 <Container
                     style = { bottomIndicatorsContainerStyle as StyleType }>
                     { audioMuted && !_isVirtualScreenshare && <AudioMutedIndicator /> }
+                    { renderTranslationIndicator && <TranslationIndicator participantId = { participantId } /> }
                     { !tileView && _pinned && <PinnedIndicator />}
                     { renderModeratorIndicator && !_isVirtualScreenshare && <ModeratorIndicator />}
                     { !tileView && (isScreenShare || _isVirtualScreenshare) && <ScreenShareIndicator /> }
@@ -354,6 +364,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const _isEveryoneModerator = isEveryoneModerator(state);
     const renderModeratorIndicator = tileView && !_isEveryoneModerator
         && participant?.role === PARTICIPANT_ROLE.MODERATOR;
+    const renderTranslationIndicator = !participant?.local && !isScreenShareParticipant(participant)
+        && getTranslationTreatment(state, id ?? '') !== TranslationTreatment.NONE;
     const { gifUrl: gifSrc } = getGifForParticipant(state, id ?? '');
     const mode = getGifDisplayMode(state);
 
@@ -370,6 +382,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _raisedHand: hasRaisedHand(participant),
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
+        _renderTranslationIndicator: renderTranslationIndicator,
         _shouldDisplayTileView: shouldDisplayTileView(state),
         _videoTrack: videoTrack
     };
