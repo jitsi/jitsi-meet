@@ -4,7 +4,7 @@ import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { isLocalParticipantModerator } from '../base/participants/functions';
 import { ITrack } from '../base/tracks/types';
 
-import { TranslationTreatment } from './constants';
+import { DUCKED_ORIGINAL_VOLUME, TranslationTreatment } from './constants';
 
 /**
  * Whether audio translation is enabled for the room. Driven by the {@code audioTranslation} RoomMetadata flag,
@@ -168,4 +168,56 @@ export function getTranslatedSourceNames(state: IReduxState): Set<string> {
     _lastTranslatedSourceNames = translated;
 
     return translated;
+}
+
+/**
+ * The effective translation language for a speaker: the per-participant override when one is set (which may
+ * be null to disable), otherwise the conference-wide default.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} [participantId] - The speaker's participant id.
+ * @returns {string | null} The language the speaker's audio is translated into, or null.
+ */
+export function getEffectiveTranslationLanguage(state: IReduxState, participantId?: string): string | null {
+    const { language, participantLanguages } = state['features/audio-translation'];
+
+    return participantId && participantId in participantLanguages
+        ? participantLanguages[participantId]
+        : language;
+}
+
+/**
+ * Whether a speaker's original audio should be ducked: translation is on for the speaker, the given source
+ * is not itself a translated one, and its translated counterpart ({@code <sourceName>.<language>}) is
+ * currently present in the conference.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} [sourceName] - The source name of the speaker's original audio track.
+ * @param {string} [participantId] - The speaker's participant id.
+ * @returns {boolean}
+ */
+export function shouldDuckOriginalAudio(state: IReduxState, sourceName?: string, participantId?: string): boolean {
+    const language = getEffectiveTranslationLanguage(state, participantId);
+
+    if (!language || typeof sourceName !== 'string' || sourceName.endsWith(`.${language}`)) {
+        return false;
+    }
+
+    return getTranslatedSourceNames(state).has(`${sourceName}.${language}`);
+}
+
+/**
+ * The volume (0..1) a speaker's original audio is ducked to while its translation plays. Overridable via
+ * config.audioTranslation.duckedVolume; values outside 0..1 (or non-numbers from configOverwrite) fall back
+ * to the default, since an invalid value would throw when assigned to HTMLMediaElement.volume.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {number}
+ */
+export function getDuckedVolume(state: IReduxState): number {
+    const configured = state['features/base/config'].audioTranslation?.duckedVolume;
+
+    return typeof configured === 'number' && configured >= 0 && configured <= 1
+        ? configured
+        : DUCKED_ORIGINAL_VOLUME;
 }
