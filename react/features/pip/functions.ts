@@ -400,9 +400,12 @@ export function enterVideoPiP(videoElement: HTMLVideoElement | undefined | null)
             return;
         }
 
+        // TODO: Enable PiP for browsers:
+        // In browsers, we should directly call requestPictureInPicture.
         pipRequestPending = true;
 
         // @ts-ignore - requestPictureInPicture is not yet in all TypeScript definitions.
+        // requestPictureInPicture();
         videoElement.requestPictureInPicture()
             .then(() => {
                 logger.debug('video.requestPictureInPicture() succeeded');
