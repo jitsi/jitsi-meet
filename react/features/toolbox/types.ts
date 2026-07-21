@@ -21,6 +21,7 @@ export type ToolbarButton = 'camera' |
     'closedcaptions' |
     'custom-panel' |
     'desktop' |
+    'toggle-pip' |
     'download' |
     'embedmeeting' |
     'etherpad' |

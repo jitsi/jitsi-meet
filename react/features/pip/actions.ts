@@ -7,11 +7,22 @@ import { muteLocal } from '../video-menu/actions.any';
 import { SET_PIP_ACTIVE } from './actionTypes';
 import {
     cleanupMediaSessionHandlers,
-    enterPiP,
+    clearPiPWindow,
+    enterVideoPiP,
+    getDocumentPiPWindow,
+    getStoredPiPWindow,
+    initPiPWindow,
+    isDocumentPiPSupported,
     setupMediaSessionHandlers,
-    shouldShowPiP
+    shouldShowPiP,
 } from './functions';
 import logger from './logger';
+
+/**
+ * Flag to track if a Document PiP request is currently pending.
+ * Prevents duplicate requestWindow() calls before the first one resolves.
+ */
+let docPiPPending = false;
 
 /**
  * Action to set Picture-in-Picture active state.
@@ -63,6 +74,7 @@ export function toggleVideoFromPiP() {
 
 /**
  * Action to exit Picture-in-Picture mode.
+ * Handles both Document PiP and Video PiP.
  *
  * @returns {Function}
  */
@@ -70,14 +82,21 @@ export function exitPiP() {
     return (dispatch: IStore['dispatch']) => {
         logger.debug('exitPiP called');
 
+        const pipWindow = getStoredPiPWindow();
+
+        if (pipWindow && !pipWindow.closed) {
+            pipWindow.close();
+            clearPiPWindow();
+        }
+
         if (document.pictureInPictureElement) {
             document.exitPictureInPicture()
-            .then(() => {
-                logger.debug('Exited Picture-in-Picture mode');
-            })
-            .catch((err: Error) => {
-                logger.error(`Error while exiting PiP: ${err.message}`);
-            });
+                .then(() => {
+                    logger.debug('Exited Picture-in-Picture mode');
+                })
+                .catch((err: Error) => {
+                    logger.error(`Error while exiting PiP: ${err.message}`);
+                });
         }
 
         dispatch(setPiPActive(false));
@@ -100,7 +119,7 @@ export function handleWindowBlur(videoElement: HTMLVideoElement) {
         logger.debug(`Window blur detected, isPiPActive=${isPiPActive}`);
 
         if (!isPiPActive) {
-            enterPiP(videoElement);
+            enterVideoPiP(videoElement);
         }
     };
 }
@@ -163,7 +182,7 @@ export function handlePipEnterEvent() {
  * @returns {Function}
  */
 export function showPiP() {
-    return (_dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const isPiPActive = state['features/pip']?.isPiPActive;
         const _shouldShowPip = shouldShowPiP(state);
@@ -175,15 +194,19 @@ export function showPiP() {
         }
 
         if (!isPiPActive) {
-            const videoElement = document.getElementById('pipVideo') as HTMLVideoElement;
+            if (isDocumentPiPSupported()) {
+                dispatch(openDocumentPiP());
+            } else {
+                const videoElement = document.getElementById('pipVideo') as HTMLVideoElement;
 
-            if (!videoElement) {
-                logger.warn('showPiP: pipVideo element not found');
+                if (!videoElement) {
+                    logger.warn('showPiP: pipVideo element not found');
 
-                return;
+                    return;
+                }
+
+                enterVideoPiP(videoElement);
             }
-
-            enterPiP(videoElement);
         }
     };
 }
@@ -203,6 +226,120 @@ export function hidePiP() {
 
         if (isPiPActive) {
             dispatch(exitPiP());
+        }
+    };
+}
+
+/**
+ * Toggles PiP based on the current state and browser support.
+ *
+ * @returns {Function}
+ */
+
+export function togglePip() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const isPiPActive = state['features/pip']?.isPiPActive;
+        const _shouldShowPip = shouldShowPiP(state);
+
+        logger.debug(`togglePip called, shouldShow=${_shouldShowPip}, isPiPActive=${isPiPActive}`);
+
+        if (!_shouldShowPip) {
+            return;
+        }
+
+        if (isPiPActive) {
+            dispatch(exitPiP());
+
+            return;
+        }
+
+        if (isDocumentPiPSupported()) {
+            dispatch(openDocumentPiP());
+        } else {
+            const videoElement = document.getElementById('pipVideo') as HTMLVideoElement;
+
+            if (videoElement) {
+                enterVideoPiP(videoElement);
+            }
+        }
+    };
+}
+
+/**
+ * Opens Document PiP from the toolbar or an automatic MediaSession request.
+ *
+ * @returns {Function}
+ */
+export function openDocumentPiP() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const _shouldShowPip = shouldShowPiP(state);
+
+        if (!_shouldShowPip) {
+            return;
+        }
+
+        const docPiP = window?.documentPictureInPicture;
+
+        if (!isDocumentPiPSupported() || !docPiP) {
+            logger.warn('Document Picture-in-Picture not supported');
+
+            return;
+        }
+
+        const pipConfig = state['features/base/config']?.pip;
+        const docPiPConfig = pipConfig?.documentPiP?.windowOptions;
+        const docPiPWindow = getDocumentPiPWindow();
+        const storedWindow = getStoredPiPWindow();
+        const isPiPWindowAlreadyOpen = Boolean(storedWindow || docPiPWindow);
+
+        if (isPiPWindowAlreadyOpen) {
+            logger.debug('Document PiP is already open');
+
+            return;
+        }
+
+        if (docPiPPending) {
+            logger.debug('Document PiP request already pending, skipping duplicate request');
+
+            return;
+        }
+
+        docPiPPending = true;
+
+        try {
+            const promise = docPiP.requestWindow({
+                width: docPiPConfig?.width ?? 600,
+                height: docPiPConfig?.height ?? 450,
+                disallowReturnToOpener: docPiPConfig?.disallowReturnToOpener ?? false,
+                preferInitialWindowPlacement: docPiPConfig?.preferInitialWindowPlacement ?? false,
+            });
+
+            return promise
+                .then((pipWindow: Window) => {
+                    initPiPWindow(pipWindow);
+
+                    dispatch(setPiPActive(true));
+
+                    pipWindow.addEventListener('pagehide', () => {
+                        clearPiPWindow();
+                        dispatch(setPiPActive(false));
+                    });
+                })
+                .catch((error: Error) => {
+                    logger.error('Failed to open Document PiP:', error);
+                    dispatch(setPiPActive(false));
+                })
+                .finally(() => {
+                    docPiPPending = false;
+                });
+        } catch (error) {
+            docPiPPending = false;
+            logger.error('Failed to open Document PiP:', error);
+            dispatch(setPiPActive(false));
+
+            throw error;
         }
     };
 }
