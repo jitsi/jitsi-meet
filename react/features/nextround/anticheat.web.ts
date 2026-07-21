@@ -244,7 +244,7 @@ function ensurePanel() {
     const header = document.createElement('div');
 
     header.style.cssText = [
-        'display:flex', 'align-items:center', 'gap:8px', 'cursor:pointer',
+        'display:flex', 'align-items:center', 'gap:8px', 'cursor:grab',
         'padding:10px 12px', 'background:rgba(234,67,53,0.18)',
         'border-bottom:1px solid rgba(255,255,255,0.08)', 'user-select:none'
     ].join(';');
@@ -265,8 +265,7 @@ function ensurePanel() {
         = '<div id="nr-empty" style="padding:14px 12px;opacity:.6">'
         + 'No activity yet. Tab switches, paste and shortcuts will appear here.</div>';
 
-    // Collapse/expand on header click.
-    header.addEventListener('click', () => {
+    function toggleCollapse() {
         const collapsed = list.style.display === 'none';
 
         list.style.display = collapsed ? 'block' : 'none';
@@ -276,11 +275,84 @@ function ensurePanel() {
         if (caret) {
             caret.innerHTML = collapsed ? '&#9650;' : '&#9660;';
         }
+    }
+
+    // The interviewer can drag the panel by its header to place it anywhere; the
+    // position persists across reloads. A press that doesn't move is treated as
+    // a click and toggles collapse instead.
+    const POS_KEY = 'nr_activity_panel_pos';
+    let drag: { moved: boolean; origLeft: number; origTop: number; startX: number; startY: number; } | null = null;
+
+    function onDragMove(e: MouseEvent) {
+        if (!drag) {
+            return;
+        }
+        const dx = e.clientX - drag.startX;
+        const dy = e.clientY - drag.startY;
+
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+            drag.moved = true;
+        }
+        const left = Math.max(0, Math.min(drag.origLeft + dx, window.innerWidth - panelEl.offsetWidth));
+        const top = Math.max(0, Math.min(drag.origTop + dy, window.innerHeight - panelEl.offsetHeight));
+
+        panelEl.style.left = `${left}px`;
+        panelEl.style.top = `${top}px`;
+    }
+
+    function onDragEnd() {
+        if (!drag) {
+            return;
+        }
+        document.removeEventListener('mousemove', onDragMove, true);
+        document.removeEventListener('mouseup', onDragEnd, true);
+        header.style.cursor = 'grab';
+
+        if (drag.moved) {
+            try {
+                localStorage.setItem(POS_KEY, JSON.stringify({
+                    left: parseInt(panelEl.style.left, 10),
+                    top: parseInt(panelEl.style.top, 10)
+                }));
+            } catch (e) { /* ignore */ }
+        } else {
+            toggleCollapse();
+        }
+        drag = null;
+    }
+
+    header.addEventListener('mousedown', (e: MouseEvent) => {
+        if (e.button !== 0) {
+            return;
+        }
+        const rect = panelEl.getBoundingClientRect();
+
+        // Switch from right-anchored to absolute left/top so dragging is smooth.
+        panelEl.style.left = `${rect.left}px`;
+        panelEl.style.top = `${rect.top}px`;
+        panelEl.style.right = 'auto';
+
+        drag = { startX: e.clientX, startY: e.clientY, origLeft: rect.left, origTop: rect.top, moved: false };
+        header.style.cursor = 'grabbing';
+        document.addEventListener('mousemove', onDragMove, true);
+        document.addEventListener('mouseup', onDragEnd, true);
+        e.preventDefault();
     });
 
     panelEl.appendChild(header);
     panelEl.appendChild(list);
     document.body.appendChild(panelEl);
+
+    // Restore a previously dragged position.
+    try {
+        const saved = JSON.parse(localStorage.getItem(POS_KEY) || 'null');
+
+        if (saved && typeof saved.left === 'number' && typeof saved.top === 'number') {
+            panelEl.style.left = `${saved.left}px`;
+            panelEl.style.top = `${saved.top}px`;
+            panelEl.style.right = 'auto';
+        }
+    } catch (e) { /* ignore */ }
 
     let count = 0;
 
