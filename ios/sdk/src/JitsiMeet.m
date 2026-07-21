@@ -157,7 +157,23 @@
     options.audioDevice = _rtcAudioDevice;
     options.loggingSeverity = (RTCLoggingSeverity)_webRtcLoggingSeverity;
 }
-    
+
+- (void)instantiateReactNative {
+    if (_reactNativeFactory == nil) {
+        [self createReactNativeFactory];
+    }
+
+    // Eagerly initialize the React host, so the JS runtime is ready before the first view is created.
+    [_reactNativeFactory.rootViewFactory initializeReactHostWithLaunchOptions:nil
+                                                          bundleConfiguration:_reactNativeFactory.bundleConfiguration
+                                                         devMenuConfiguration:_reactNativeFactory.devMenuConfiguration];
+}
+
+- (void)destroyReactNative {
+    _reactNativeFactory = nil;
+    _reactFactoryDelegate = nil;
+}
+
 - (JitsiMeetConferenceOptions *)getInitialConferenceOptions {
     if (_launchOptions[UIApplicationLaunchOptionsURLKey]) {
         NSURL *url = _launchOptions[UIApplicationLaunchOptionsURLKey];
