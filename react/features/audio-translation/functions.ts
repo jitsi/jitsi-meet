@@ -209,7 +209,7 @@ export function shouldDuckOriginalAudio(state: IReduxState, sourceName?: string,
 /**
  * The volume (0..1) a speaker's original audio is ducked to while its translation plays. Overridable via
  * config.audioTranslation.duckedVolume; values outside 0..1 (or non-numbers from configOverwrite) fall back
- * to the default, since an invalid value would throw when assigned to HTMLMediaElement.volume.
+ * to the default, since invalid values can be rejected by platform volume setters (e.g. HTMLMediaElement.volume).
  *
  * @param {IReduxState} state - The redux state.
  * @returns {number}
