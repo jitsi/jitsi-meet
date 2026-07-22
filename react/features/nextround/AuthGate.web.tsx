@@ -66,6 +66,39 @@ function roomCodeFromPath(): string {
 }
 
 /**
+ * True when this page load is the Jibri recorder joining to capture the room.
+ *
+ * Jibri appends `#config.iAmRecorder=true` to its call URL. This deployment does
+ * not apply `#config.*` overrides, but we can still READ the hash to recognise
+ * the recorder — and route it to a MODERATOR token (which bypasses the lobby),
+ * then set `iAmRecorder` ourselves so Jitsi skips prejoin and joins hidden.
+ *
+ * @returns {boolean}
+ */
+function isRecorderRequest(): boolean {
+    try {
+        return (/iAmRecorder=true/).test(window.location.hash);
+    } catch (e) {
+        return false;
+    }
+}
+
+/**
+ * True on the post-token reload of a recorder session. The reload URL is just
+ * `?jwt=…` (no hash), so `RecorderRoomEntry` leaves this flag to tell us the
+ * moderator token in the URL belongs to the recorder, not a staff panelist.
+ *
+ * @returns {boolean}
+ */
+function recorderStashed(): boolean {
+    try {
+        return window.sessionStorage.getItem('nr_recorder') === '1';
+    } catch (e) {
+        return false;
+    }
+}
+
+/**
  * The staff (moderator) token stashed by `goToRoom` for this exact room, if it
  * is still valid. Jitsi consumes the `?jwt=` and doesn't persist it, so on a
  * refresh we re-apply this token to keep the original role instead of falling
@@ -378,6 +411,69 @@ function RootLanding() {
 }
 
 /**
+ * The Jibri recorder opened the room (`/<code>` + `#…iAmRecorder=true`) with no
+ * token. Exchange the code for a short-lived MODERATOR token via the IP-locked
+ * recorder endpoint (reachable only from the recording host), then reload into
+ * the room with it. A moderator bypasses the lobby, so the recorder joins
+ * without anyone having to admit it — mirroring GuestRoomEntry for candidates.
+ *
+ * @param {Object} props - Contains the room code from the path.
+ * @returns {ReactElement}
+ */
+function RecorderRoomEntry({ code }: { code: string; }) {
+    const [ error, setError ] = React.useState('');
+
+    React.useEffect(() => {
+        let cancelled = false;
+
+        (async () => {
+            try {
+                const res = await fetch(`${NEXTROUND_API_BASE}/api/rooms/recorder-token`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                });
+                const body = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(body.error || 'Recorder could not join');
+                }
+                if (!cancelled) {
+                    // The reload drops the hash, so remember we are the recorder.
+                    window.sessionStorage.setItem('nr_recorder', '1');
+                    window.location.replace(
+                        `/${encodeURIComponent(body.roomName)}?jwt=${encodeURIComponent(body.jwt)}`);
+                }
+            } catch (e: any) {
+                if (!cancelled) {
+                    setError(e.message);
+                }
+            }
+        })();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [ code ]);
+
+    return (
+        <div
+            style = {{
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: '#040404',
+                color: error ? '#c5221f' : '#5f6368',
+                fontFamily: FONT_STACK,
+                fontSize: '16px'
+            }}>
+            { error || 'Starting recorder…' }
+        </div>
+    );
+}
+
+/**
  * Wraps a Jitsi entry-point component with NextRound's Clerk staff gate.
  *
  * The decision is PATH-FIRST: only `/<code>` is a room. The root is always the
@@ -395,9 +491,26 @@ export function withNextRoundAuth(WrappedApp: React.ComponentType<any>): React.C
         const roomCode = roomCodeFromPath();
 
         if (roomCode) {
+            // Recorder mode: apply iAmRecorder directly (the `#config.*` hash is
+            // ignored by this deployment) so Jitsi skips prejoin and joins hidden.
+            if (isRecorderRequest() || recorderStashed()) {
+                try {
+                    (window as any).config = (window as any).config || {};
+                    (window as any).config.iAmRecorder = true;
+                } catch (e) {
+                    // config not ready yet; the RecorderRoomEntry reload re-runs this.
+                }
+            }
+
             // In-room with a token in the URL: render the Jitsi room.
             if (hasRoomToken()) {
                 return <WrappedApp { ...props } />;
+            }
+
+            // Recorder without a token yet: mint a MODERATOR token (bypasses the
+            // lobby) from the IP-locked recorder endpoint, then reload into the room.
+            if (isRecorderRequest()) {
+                return <RecorderRoomEntry code = { roomCode } />;
             }
 
             // Refresh case: Jitsi stripped the token. If we stashed a staff token
