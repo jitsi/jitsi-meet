@@ -363,16 +363,15 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
     let _volume: number | boolean | undefined = participantsVolume[ownProps.participantId];
 
-    // Duck a speaker's original only while its translated counterpart ({source}.{language}) is present.
+    // Driven by actual translated-audio presence, not isAudioTranslationAvailable: ducking follows the
+    // media, and must not un-duck mid-playback on a permission/flag change.
     const sourceName: string | undefined = ownProps.audioTrack?.jitsiTrack?.getSourceName?.();
     const ducked = shouldDuckOriginalAudio(state, sourceName, ownProps.participantId);
 
     if (ducked) {
         _volume = getDuckedVolumeForParticipant(state, ownProps.participantId);
     } else if (audioTranslationConfigured && _volume === undefined) {
-        // A track may have been ducked to a non-default volume. Once it is no longer ducked and has no
-        // explicit per-participant volume, restore full volume — otherwise the audio element keeps the
-        // previously-applied ducked level, since AudioTrack only writes numeric volumes.
+        // Restore full volume after ducking (config presence, not enabled, so a mid-call disable un-ducks).
         _volume = DEFAULT_ORIGINAL_VOLUME;
     }
 

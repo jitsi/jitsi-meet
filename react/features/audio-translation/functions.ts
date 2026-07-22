@@ -120,8 +120,7 @@ export function canManageAudioTranslation(state: IReduxState): boolean {
  * @returns {boolean}
  */
 export function isAudioTranslationAvailable(state: IReduxState): boolean {
-    // The AUDIO_TRANSLATION_ENABLED feature flag lets an SDK embedder hide the feature entirely; it
-    // defaults to true, so web (which has no flags state) is unaffected.
+    // SDK embedder kill switch; defaults true, so web (no flags state) is unaffected.
     if (!getFeatureFlag(state, AUDIO_TRANSLATION_ENABLED, true)) {
         return false;
     }
@@ -130,9 +129,7 @@ export function isAudioTranslationAvailable(state: IReduxState): boolean {
         return false;
     }
 
-    // A deployment can hide the feature for a room via the audioTranslationAvailable RoomMetadata flag
-    // (e.g. when the translation backend is not provisioned for it). Absent, or any value other than an
-    // explicit false, means available. Applies even to those who could otherwise manage it.
+    // Per-room availability via RoomMetadata; only an explicit false hides it.
     if (state['features/base/conference'].metadata?.audioTranslationAvailable === false) {
         return false;
     }
@@ -179,12 +176,11 @@ export function getTranslatedSourceNames(state: IReduxState): Set<string> {
 }
 
 /**
- * The effective translation language for a speaker: the per-participant override when one is set (which may
- * be null to disable), otherwise the conference-wide default.
+ * The per-participant override language if set, else the conference-wide default.
  *
  * @param {IReduxState} state - The redux state.
  * @param {string} [participantId] - The speaker's participant id.
- * @returns {string | null} The language the speaker's audio is translated into, or null.
+ * @returns {string | null} The target language, or null.
  */
 export function getEffectiveTranslationLanguage(state: IReduxState, participantId?: string): string | null {
     const { language, participantLanguages } = state['features/audio-translation'];
@@ -195,12 +191,10 @@ export function getEffectiveTranslationLanguage(state: IReduxState, participantI
 }
 
 /**
- * Whether a speaker's original audio should be ducked: translation is on for the speaker, the given source
- * is not itself a translated one, and its translated counterpart ({@code <sourceName>.<language>}) is
- * currently present in the conference.
+ * Whether to duck a speaker's original: a language is set and its translated counterpart is present.
  *
  * @param {IReduxState} state - The redux state.
- * @param {string} [sourceName] - The source name of the speaker's original audio track.
+ * @param {string} [sourceName] - The original audio source name.
  * @param {string} [participantId] - The speaker's participant id.
  * @returns {boolean}
  */
@@ -215,9 +209,7 @@ export function shouldDuckOriginalAudio(state: IReduxState, sourceName?: string,
 }
 
 /**
- * The volume (0..1) a speaker's original audio is ducked to while its translation plays. Overridable via
- * config.audioTranslation.duckedVolume; values outside 0..1 (or non-numbers from configOverwrite) fall back
- * to the default, since invalid values can be rejected by platform volume setters (e.g. HTMLMediaElement.volume).
+ * The ducked volume (0..1) from config.audioTranslation.duckedVolume; invalid values fall back to default.
  *
  * @param {IReduxState} state - The redux state.
  * @returns {number}
@@ -231,9 +223,7 @@ export function getDuckedVolume(state: IReduxState): number {
 }
 
 /**
- * The volume a speaker's original audio should play at while ducked: the configured ducked volume, but never
- * louder than the volume the user already chose for that participant. Composing (rather than overriding) keeps
- * a participant the user silenced or quietened from being made audible again by ducking.
+ * The ducked volume, capped at the user's chosen volume so ducking never makes a quieted speaker louder.
  *
  * @param {IReduxState} state - The redux state.
  * @param {string} [participantId] - The speaker's participant id.

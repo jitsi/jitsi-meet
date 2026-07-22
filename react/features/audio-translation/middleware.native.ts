@@ -8,21 +8,15 @@ import logger from './logger';
 
 import './middleware.any';
 
-/**
- * The playout gain last applied per WebRTC track id, so a track is only touched when our target for it
- * changes. Tracks that were never ducked are left entirely to the user's volume slider.
- */
+// Playout gain last applied per track id; untouched tracks are left to the volume slider.
 const appliedVolumes = new Map<string, number>();
 
 /**
- * Ducks original remote audio natively: while a speaker's translated counterpart is present the original
- * plays at the ducked volume and is restored to the user-selected (or full) volume afterwards. Native has
- * no per-track audio elements, so playout gain is set through react-native-webrtc's _setVolume.
+ * Ducks original remote audio via _setVolume (native has no per-track audio elements), restoring the
+ * user/full volume afterwards.
  *
  * @param {IStore} store - The redux store.
- * @param {boolean} reassertDucked - Also re-apply the ducked volume to already-ducked tracks. Used when the
- * user's per-participant volume changes, since the native volume slider writes the track gain directly and
- * would otherwise override the duck until the next state change.
+ * @param {boolean} reassertDucked - Re-apply the duck after a slider move overwrote the gain.
  * @returns {void}
  */
 function _applyDucking({ getState }: IStore, reassertDucked = false): void {
@@ -83,8 +77,7 @@ StateListenerRegistry.register(
     state => state['features/audio-translation'].participantLanguages,
     (_, store) => _applyDucking(store));
 
-// The native volume slider writes the track gain directly (throttled), so a slider move while ducked must
-// be overridden again; its own trailing write may still win momentarily, until the next state change.
+// A slider move writes the gain directly, so re-assert the duck over it.
 StateListenerRegistry.register(
     state => state['features/filmstrip'].participantsVolume,
     (_, store) => _applyDucking(store, true));

@@ -16,8 +16,7 @@ import styles from './styles';
 interface IProps extends WithTranslation {
 
     /**
-     * The navigation route: carries an optional participantId param when the selector targets a single
-     * participant instead of setting the conference-wide default.
+     * Navigation route; params.participantId scopes the selector to one participant.
      */
     route?: { params?: { participantId?: string; }; };
 }

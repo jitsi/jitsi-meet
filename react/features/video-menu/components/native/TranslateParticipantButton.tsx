@@ -17,8 +17,7 @@ interface IProps extends AbstractButtonProps {
 }
 
 /**
- * A remote-participant menu button that opens the AI audio-translation language selector scoped to that
- * participant.
+ * Remote-menu button opening the translation language selector for that participant.
  */
 class TranslateParticipantButton extends AbstractButton<IProps> {
     override accessibilityLabel = 'toolbar.accessibilityLabel.audioTranslation';

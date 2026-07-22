@@ -17,9 +17,7 @@ interface IProps {
 }
 
 /**
- * Thumbnail badge showing a participant's audio-translation status as one of three treatments: outlined
- * (translation enabled for the local user), filled (receiving translated audio) or filled with a dot (both).
- * Presentational: the caller decides whether to mount it (never with NONE).
+ * Thumbnail badge for a participant's translation status: outlined (enabled), filled (receiving), dot (both).
  *
  * @param {IProps} props - The component's props.
  * @returns {ReactElement}
