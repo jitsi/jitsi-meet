@@ -138,19 +138,11 @@
 #pragma mark - Utility methods
 
 - (void)createReactNativeFactory {
-    NSLog(@"Creating JitsiReactFactoryDelegate");
     _reactFactoryDelegate = [[JitsiReactFactoryDelegate alloc] init];
-
-    NSLog(@"Creating RCTAppDependencyProvider");
     id<RCTDependencyProvider> provider = [[RCTAppDependencyProvider alloc] init];
-    NSLog(@"RCTAppDependencyProvider created: %@", provider);
-
-    NSLog(@"Setting dependencyProvider on delegate");
     _reactFactoryDelegate.dependencyProvider = provider;
-
-    NSLog(@"Creating RCTReactNativeFactory with delegate");
     _reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:_reactFactoryDelegate];
-    NSLog(@"RCTReactNativeFactory created: %@", _reactNativeFactory);
+    NSLog(@"ReactNativeFactory created: %@", _reactNativeFactory);
 
     // Initialize WebRTC options.
     WebRTCModuleOptions *options = [WebRTCModuleOptions sharedInstance];
@@ -163,7 +155,6 @@
         [self createReactNativeFactory];
     }
 
-    // Eagerly initialize the React host, so the JS runtime is ready before the first view is created.
     [_reactNativeFactory.rootViewFactory initializeReactHostWithLaunchOptions:nil
                                                           bundleConfiguration:_reactNativeFactory.bundleConfiguration
                                                          devMenuConfiguration:_reactNativeFactory.devMenuConfiguration];
