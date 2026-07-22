@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import { isMobileBrowser } from '../../../environment/utils';
@@ -59,6 +59,10 @@ const useStyles = makeStyles()(theme => {
 
         disabled: {
             cursor: 'not-allowed'
+        },
+
+        clickableLabel: {
+            cursor: 'pointer'
         },
 
         activeArea: {
@@ -159,26 +163,64 @@ const Checkbox = ({
 }: ICheckboxProps) => {
     const { classes: styles, cx, theme } = useStyles();
     const isMobile = isMobileBrowser();
+    const labelRef = useRef<HTMLLabelElement>(null);
+
+    const toggleCheckbox = useCallback(() => {
+        labelRef.current?.click();
+    }, [ labelRef ]);
+
+    let inputId = id;
+
+    // Hack the useId hook.
+    // This is used rarely and the entropy is high enough to not worry about duplication.
+    // TODO: When v17->v18 is completed, remove this! Ref: https://github.com/jitsi/jitsi-meet/issues/15709
+    const useId = () => {
+        const alphabet = 'abcdefghijklmnopqrstuvwxyz1234567890';
+
+        let newId = '';
+
+        for (let i = 0; i < 10; i++) {
+            const index = Math.floor(Math.random() * alphabet.length);
+
+            newId += alphabet[index];
+        }
+
+        return newId;
+    };
+
+    if (!inputId) {
+        if (name) {
+            inputId = name;
+        } else {
+            inputId = `checkbox-${useId()}`;
+        }
+    }
 
     return (
-        <label className = { cx(styles.formControl, isMobile && 'is-mobile', className) }>
+        <div className = { cx(styles.formControl, isMobile && 'is-mobile', className) }>
             <div className = { cx(styles.activeArea, isMobile && 'is-mobile', disabled && styles.disabled) }>
                 <input
                     checked = { checked }
                     disabled = { disabled }
-                    id = { id }
+                    id = { inputId }
                     name = { name }
                     onChange = { onChange }
                     type = 'checkbox' />
                 <Icon
                     aria-hidden = { true }
                     className = 'checkmark'
-                    color = { disabled ? theme.palette.checkboxIconDisabled : theme.palette.checkboxIcon }
+                    color = { disabled ? theme.palette.icon03 : theme.palette.icon01 }
+                    onClick = { toggleCheckbox }
                     size = { 18 }
                     src = { IconCheck } />
             </div>
-            <div>{label}</div>
-        </label>
+            <label
+                className = { cx(styles.clickableLabel) }
+                htmlFor = { inputId }
+                ref = { labelRef }>
+                {label}
+            </label>
+        </div>
     );
 };
 
