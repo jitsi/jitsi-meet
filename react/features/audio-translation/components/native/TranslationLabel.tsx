@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { IconTranslate } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/native/Label';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
-import { isAudioTranslationActiveInMeeting } from '../../functions';
+import { isAudioTranslationActiveInMeeting, isAudioTranslationAvailable } from '../../functions';
 
 const styles = {
     translationLabel: {
@@ -23,9 +23,10 @@ const styles = {
  * @returns {ReactElement|null}
  */
 const TranslationLabel = () => {
+    const available = useSelector(isAudioTranslationAvailable);
     const active = useSelector(isAudioTranslationActiveInMeeting);
 
-    return active ? (
+    return available && active ? (
         <Label
             icon = { IconTranslate }
             iconColor = { BaseTheme.palette.icon01 }

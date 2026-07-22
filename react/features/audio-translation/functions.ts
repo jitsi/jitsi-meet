@@ -1,4 +1,6 @@
 import { IReduxState } from '../app/types';
+import { AUDIO_TRANSLATION_ENABLED } from '../base/flags/constants';
+import { getFeatureFlag } from '../base/flags/functions';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { isLocalParticipantModerator } from '../base/participants/functions';
@@ -118,6 +120,12 @@ export function canManageAudioTranslation(state: IReduxState): boolean {
  * @returns {boolean}
  */
 export function isAudioTranslationAvailable(state: IReduxState): boolean {
+    // The AUDIO_TRANSLATION_ENABLED feature flag lets an SDK embedder hide the feature entirely; it
+    // defaults to true, so web (which has no flags state) is unaffected.
+    if (!getFeatureFlag(state, AUDIO_TRANSLATION_ENABLED, true)) {
+        return false;
+    }
+
     if (!state['features/base/config'].audioTranslation?.enabled) {
         return false;
     }
@@ -220,4 +228,20 @@ export function getDuckedVolume(state: IReduxState): number {
     return typeof configured === 'number' && configured >= 0 && configured <= 1
         ? configured
         : DUCKED_ORIGINAL_VOLUME;
+}
+
+/**
+ * The volume a speaker's original audio should play at while ducked: the configured ducked volume, but never
+ * louder than the volume the user already chose for that participant. Composing (rather than overriding) keeps
+ * a participant the user silenced or quietened from being made audible again by ducking.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} [participantId] - The speaker's participant id.
+ * @returns {number}
+ */
+export function getDuckedVolumeForParticipant(state: IReduxState, participantId?: string): number {
+    const duckedVolume = getDuckedVolume(state);
+    const userVolume = participantId ? state['features/filmstrip'].participantsVolume[participantId] : undefined;
+
+    return typeof userVolume === 'number' ? Math.min(userVolume, duckedVolume) : duckedVolume;
 }

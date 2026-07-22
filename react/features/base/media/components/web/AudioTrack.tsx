@@ -5,7 +5,8 @@ import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent } from '../../..
 import { sendAnalytics } from '../../../../analytics/functions';
 import { IReduxState } from '../../../../app/types';
 import { DEFAULT_ORIGINAL_VOLUME } from '../../../../audio-translation/constants';
-import { getDuckedVolume, shouldDuckOriginalAudio } from '../../../../audio-translation/functions';
+import { getDuckedVolumeForParticipant, shouldDuckOriginalAudio }
+    from '../../../../audio-translation/functions';
 import { browser } from '../../../lib-jitsi-meet';
 import { ITrack } from '../../../tracks/types';
 import logger from '../../logger';
@@ -358,7 +359,7 @@ class AudioTrack extends Component<IProps> {
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantsVolume } = state['features/filmstrip'];
-    const audioTranslationEnabled = state['features/base/config'].audioTranslation?.enabled;
+    const audioTranslationConfigured = Boolean(state['features/base/config'].audioTranslation);
 
     let _volume: number | boolean | undefined = participantsVolume[ownProps.participantId];
 
@@ -367,8 +368,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const ducked = shouldDuckOriginalAudio(state, sourceName, ownProps.participantId);
 
     if (ducked) {
-        _volume = getDuckedVolume(state);
-    } else if (audioTranslationEnabled && _volume === undefined) {
+        _volume = getDuckedVolumeForParticipant(state, ownProps.participantId);
+    } else if (audioTranslationConfigured && _volume === undefined) {
         // A track may have been ducked to a non-default volume. Once it is no longer ducked and has no
         // explicit per-participant volume, restore full volume — otherwise the audio element keeps the
         // previously-applied ducked level, since AudioTrack only writes numeric volumes.

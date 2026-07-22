@@ -3,7 +3,7 @@ import { MEDIA_TYPE } from '../base/media/constants';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
 import { DEFAULT_ORIGINAL_VOLUME } from './constants';
-import { getDuckedVolume, shouldDuckOriginalAudio } from './functions';
+import { getDuckedVolumeForParticipant, shouldDuckOriginalAudio } from './functions';
 import logger from './logger';
 
 import './middleware.any';
@@ -28,7 +28,6 @@ const appliedVolumes = new Map<string, number>();
 function _applyDucking({ getState }: IStore, reassertDucked = false): void {
     const state = getState();
     const { participantsVolume } = state['features/filmstrip'];
-    const duckedVolume = getDuckedVolume(state);
     const currentIds = new Set<string>();
 
     for (const track of state['features/base/tracks']) {
@@ -48,7 +47,7 @@ function _applyDucking({ getState }: IStore, reassertDucked = false): void {
         const ducked = shouldDuckOriginalAudio(state, sourceName, track.participantId);
         const userVolume = track.participantId ? participantsVolume[track.participantId] : undefined;
         const target = ducked
-            ? duckedVolume
+            ? getDuckedVolumeForParticipant(state, track.participantId)
             : typeof userVolume === 'number' ? userVolume : DEFAULT_ORIGINAL_VOLUME;
         const applied = appliedVolumes.get(trackId);
 

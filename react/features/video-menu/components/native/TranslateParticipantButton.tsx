@@ -2,8 +2,6 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { isAudioTranslationAvailable } from '../../../audio-translation/functions';
-import { AUDIO_TRANSLATION_ENABLED } from '../../../base/flags/constants';
-import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n/functions';
 import { IconTranslate } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
@@ -46,7 +44,7 @@ class TranslateParticipantButton extends AbstractButton<IProps> {
  */
 function _mapStateToProps(state: IReduxState) {
     return {
-        visible: isAudioTranslationAvailable(state) && getFeatureFlag(state, AUDIO_TRANSLATION_ENABLED, true)
+        visible: isAudioTranslationAvailable(state)
     };
 }
 
