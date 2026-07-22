@@ -69,6 +69,7 @@ const commands = {
     setMediaEncryptionKey: 'set-media-encryption-key',
     setMeetingTimer: 'set-meeting-timer',
     setNoiseSuppressionEnabled: 'set-noise-suppression-enabled',
+    setParticipantProperties: 'set-participant-properties',
     setParticipantVolume: 'set-participant-volume',
     setSecondScreen: 'set-second-screen',
     setSubtitles: 'set-subtitles',

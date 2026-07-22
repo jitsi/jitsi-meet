@@ -426,6 +426,27 @@ function initCommands() {
             sendAnalytics(createApiEvent('largevideo.participant.set'));
             dispatch(selectParticipantInLargeVideo(participant.id));
         },
+        'set-participant-properties': properties => {
+            const room = APP.conference._room?.room;
+
+            if (!room) {
+                logger.warn('Not setting participant properties, room not initialized');
+
+                return;
+            }
+
+            let changed = false;
+
+            for (const key of Object.keys(properties)) {
+                const wasChanged = room.addOrReplaceInPresence(`jitsi_participant_${key}`, { value: properties[key] });
+
+                changed = changed || wasChanged;
+            }
+
+            if (changed) {
+                room.sendPresence();
+            }
+        },
         'set-participant-volume': (participantId, volume) => {
             APP.store.dispatch(setVolume(participantId, volume));
         },
