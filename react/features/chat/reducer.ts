@@ -10,6 +10,7 @@ import {
     CLEAR_CHAT_STATE,
     CLOSE_CHAT,
     EDIT_MESSAGE,
+    MODERATE_MESSAGE,
     NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
     OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
@@ -164,6 +165,26 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         if (!found) {
             return state;
         }
+
+        return {
+            ...state,
+            messages
+        };
+    }
+
+    case MODERATE_MESSAGE: {
+        const messages = state.messages.map(message => {
+            if (message.messageId === action.messageId) {
+                return {
+                    ...message,
+                    isModerated: true,
+                    moderatedBy: action.moderatorId,
+                    moderationReason: action.reason
+                };
+            }
+
+            return message;
+        });
 
         return {
             ...state,

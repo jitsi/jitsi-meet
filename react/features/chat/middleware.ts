@@ -45,6 +45,7 @@ import {
     CLOSE_CHAT,
     OPEN_CHAT,
     SEND_MESSAGE,
+    SEND_MESSAGE_MODERATION,
     SEND_REACTION,
     SET_FOCUSED_TAB
 } from './actionTypes';
@@ -53,6 +54,7 @@ import {
     addMessageReaction,
     clearChatState,
     closeChat,
+    moderateMessage,
     notifyPrivateRecipientsChanged,
     openChat,
     setPrivateMessageRecipient
@@ -65,7 +67,8 @@ import {
     MESSAGE_TYPE_ERROR,
     MESSAGE_TYPE_LOCAL,
     MESSAGE_TYPE_REMOTE,
-    MESSAGE_TYPE_SYSTEM
+    MESSAGE_TYPE_SYSTEM,
+    MODERATE_CHAT_MESSAGE
 } from './constants';
 import {
     getDisplayNameSuffix,
@@ -77,6 +80,7 @@ import {
 } from './functions';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
 import './subscriber';
+import { IMessage } from './types';
 
 /**
  * Timeout for when to show the privacy notice after a private message was received.
@@ -142,12 +146,18 @@ MiddlewareRegistry.register(store => next => action => {
 
     case ENDPOINT_MESSAGE_RECEIVED: {
         const state = store.getState();
+        const { data } = action;
+
+        if (data?.type === MODERATE_CHAT_MESSAGE) {
+            _onMessageModerated(store, data.messageId, data.moderatedBy, data.reason);
+            break;
+        }
 
         if (!isReactionsEnabled(state)) {
             return next(action);
         }
 
-        const { participant, data } = action;
+        const { participant } = action;
 
         if (data?.name === ENDPOINT_REACTION_NAME) {
             // Only accept known reaction keys, skip duplicates and keep just 3.
@@ -175,6 +185,11 @@ MiddlewareRegistry.register(store => next => action => {
 
     case NON_PARTICIPANT_MESSAGE_RECEIVED: {
         const { participantId, json: data } = action;
+
+        if (data?.type === MODERATE_CHAT_MESSAGE) {
+            _onMessageModerated(store, data.messageId, data.moderatedBy, data.reason);
+            break;
+        }
 
         if (data?.type === MESSAGE_TYPE_SYSTEM && data.message) {
             _handleReceivedMessage(store, {
@@ -243,7 +258,49 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case PARTICIPANT_JOINED:
+    case PARTICIPANT_JOINED: {
+        const result = next(action);
+
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+        const local = getLocalParticipant(state);
+
+        if (conference && action.participant?.id && local?.id) {
+            const moderatedMessages = state['features/chat'].messages.filter(
+                (m: IMessage) =>
+                    m.isModerated
+                    && !m.privateMessage
+                    && m.messageType === MESSAGE_TYPE_LOCAL
+            );
+
+            if (moderatedMessages.length > 0) {
+                const sendWithRetry = (retries: number) => {
+                    try {
+                        moderatedMessages.forEach(message => {
+                            conference.sendPrivateTextMessage(
+                                action.participant.id,
+                                JSON.stringify({
+                                    type: MODERATE_CHAT_MESSAGE,
+                                    messageId: message.messageId,
+                                    moderatedBy: message.moderatedBy,
+                                    reason: message.moderationReason
+                                }),
+                                'json-message'
+                            );
+                        });
+                    } catch (e) {
+                        if (retries > 0) {
+                            setTimeout(() => sendWithRetry(retries - 1), 1000);
+                        }
+                    }
+                };
+
+                setTimeout(() => sendWithRetry(3), 3000);
+            }
+        }
+
+        return result;
+    }
     case PARTICIPANT_LEFT:
     case PARTICIPANT_UPDATED: {
         if (action.type === PARTICIPANT_LEFT) {
@@ -322,6 +379,20 @@ MiddlewareRegistry.register(store => next => action => {
 
             conference.sendReaction(reaction, messageId, receiverId);
         }
+        break;
+    }
+
+    case SEND_MESSAGE_MODERATION: {
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+
+        if (conference) {
+            conference.moderateMessage(
+                action.message.messageId,
+                action.reason
+            );
+        }
+
         break;
     }
 
@@ -464,6 +535,13 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
     );
 
     conference.on(
+        JitsiConferenceEvents.MESSAGE_MODERATED,
+        (messageId: string, moderatorId: string, reason?: string) => {
+            _onMessageModerated(store, messageId, moderatorId, reason);
+        }
+    );
+
+    conference.on(
         JitsiConferenceEvents.CONFERENCE_ERROR, (errorType: string, error: Error) => {
             errorType === JitsiConferenceErrors.CHAT_ERROR && _handleChatError(store, error);
         });
@@ -523,6 +601,29 @@ function _onReactionReceived(store: IStore, { participantId, reactionList, messa
     };
 
     store.dispatch(addMessageReaction(reactionPayload));
+}
+
+/**
+ * Handles a moderator message deletion.
+ *
+ * @param {Object} store - Redux store.
+ * @param {string} messageId - The id of the message which is being deleted.
+ * @param {string} moderatorId - The Id of the moderator.
+ * @param {string} reason - The reason for which message is deleted.
+ * @returns {void}
+ */
+function _onMessageModerated(store: IStore, messageId: string, moderatorId: string, reason?: string) {
+    const { messages } = store.getState()['features/chat'];
+
+    const originalMessage = messages.find(
+        message => message.messageId === messageId
+    );
+
+    if (!originalMessage) {
+        return;
+    }
+
+    store.dispatch(moderateMessage(messageId, moderatorId, reason));
 }
 
 /**
