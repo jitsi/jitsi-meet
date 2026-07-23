@@ -617,6 +617,7 @@ export interface IConfig {
          * @see https://developer.chrome.com/docs/web-platform/document-picture-in-picture#methods
          */
         documentPiP?: {
+            embedMode?: 'auto' | 'disabled';
             windowOptions?: {
                 disallowReturnToOpener?: boolean;
                 height?: number;

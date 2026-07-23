@@ -15,7 +15,7 @@ import { DocumentPiPContent } from './web/DocumentPiPContent';
 function PiP() {
     const showPiP = useSelector(shouldShowPiP);
 
-    if (!showPiP) {
+     if (!showPiP) {
         return null;
     }
 
