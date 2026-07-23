@@ -182,6 +182,11 @@ export interface IProps extends WithTranslation {
     _raisedHand: boolean;
 
     /**
+     * Whether or not the toolbox is shifted up.
+     */
+    _shiftUp?: boolean;
+
+    /**
      * Whether or not to display a tint background over tile.
      */
     _shouldDisplayTintBackground: boolean;
@@ -202,6 +207,11 @@ export interface IProps extends WithTranslation {
      * The type of thumbnail to display.
      */
     _thumbnailType: string;
+
+    /**
+     * Whether or not the toolbox is visible.
+     */
+    _toolboxVisible?: boolean;
 
     /**
      * The video object position for the participant.
@@ -277,7 +287,14 @@ const defaultStyles = (theme: Theme) => {
         },
 
         indicatorsBottomContainer: {
-            bottom: 0
+            bottom: 0,
+            transition: 'bottom .3s ease-in'
+        },
+
+        indicatorsBottomContainerElevated: {
+            '&.tile-view-mode': {
+                bottom: '96px'
+            }
         },
 
         indicatorsBackground: {
@@ -964,6 +981,7 @@ class Thumbnail extends Component<IProps, IState> {
             _shouldDisplayTintBackground,
             _thumbnailType,
             _videoTrack,
+            _shiftUp,
             filmstripType,
             t
         } = this.props;
@@ -1042,6 +1060,7 @@ class Thumbnail extends Component<IProps, IState> {
                 <div
                     className = { clsx(classes.indicatorsContainer,
                         classes.indicatorsBottomContainer,
+                        _shiftUp && _thumbnailType === THUMBNAIL_TYPE.TILE && classes.indicatorsBottomContainerElevated,
                         _thumbnailType === THUMBNAIL_TYPE.TILE && 'tile-view-mode'
                     ) }>
                     <ThumbnailBottomIndicators
@@ -1323,6 +1342,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         _stageParticipantsVisible: _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW,
         _shouldDisplayTintBackground: !disableTintForeground && shouldDisplayTintBackground,
         _thumbnailType: tileType,
+        _toolboxVisible: state['features/toolbox'].visible,
+        _shiftUp: state['features/toolbox'].shiftUp,
         _videoObjectPosition: getVideoObjectPosition(state, participant?.id),
         _videoTrack,
         ...size,
