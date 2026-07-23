@@ -391,7 +391,7 @@ export default {
      * the errors resulting from that process.
      * @param {object} options
      * @param {boolean} option.isBreakoutRoom - true if we are creating the initial local tracks in breakout room.
-     * @param {boolean} options.startAudioOnly=false - if <tt>true</tt> then
+     * @param {boolean} options.startLowBandwidthMode=false - if <tt>true</tt> then
      * only audio track will be created and the audio only mode will be turned
      * on.
      * @param {boolean} options.startScreenSharing=false - if <tt>true</tt>
@@ -416,7 +416,7 @@ export default {
 
         if ((!config.disableInitialGUM || isBreakoutRoom)
                 && !options.startWithVideoMuted
-                && !options.startAudioOnly
+                && !options.startLowBandwidthMode
                 && !options.startScreenSharing) {
             initialDevices.push(MEDIA_TYPE.VIDEO);
             requestedVideo = true;
@@ -536,7 +536,7 @@ export default {
     async init({ roomName, shouldDispatchConnect }) {
         const state = APP.store.getState();
         const initialOptions = {
-            startAudioOnly: config.startAudioOnly,
+            startLowBandwidthMode: config.startLowBandwidthMode,
             startScreenSharing: config.startScreenSharing,
             startWithAudioMuted: getStartWithAudioMuted(state) || isUserInteractionRequiredForUnmute(state),
             startWithVideoMuted: getStartWithVideoMuted(state) || isUserInteractionRequiredForUnmute(state)
@@ -1185,8 +1185,8 @@ export default {
      *
      * @returns {boolean}
      */
-    isAudioOnly() {
-        return Boolean(APP.store.getState()['features/base/audio-only'].enabled);
+    isLowBandwidthMode() {
+        return Boolean(APP.store.getState()['features/base/low-bandwidth-mode'].enabled);
     },
 
     /**
@@ -1806,7 +1806,7 @@ export default {
         .then(([ stream ]) => {
             // if we are in audio only mode or video was muted before
             // changing device, then mute
-            if (this.isAudioOnly() || videoWasMuted) {
+            if (this.isLowBandwidthMode() || videoWasMuted) {
                 return stream.mute()
                     .then(() => stream);
             }
@@ -1828,7 +1828,7 @@ export default {
     /**
      * Handles audio only changes.
      */
-    onToggleAudioOnly() {
+    onToggleLowBandwidthMode() {
         // Immediately update the UI by having remote videos and the large video update themselves.
         const displayedUserId = APP.UI.getLargeVideoID();
 

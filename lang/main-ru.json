@@ -39,9 +39,6 @@
         "phone": "Телефон",
         "speaker": "Колонка"
     },
-    "audioOnly": {
-        "audioOnly": "Только звук"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "например, 10000000 для 10 Мбит/с",
         "assumedBandwidthBpsWarning": "Более высокие значения могут вызвать проблемы сети.",
@@ -720,6 +717,9 @@
         "button": "Пригласить",
         "youAreAlone": "Вы один в видеоконференции"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Только звук"
+    },
     "me": "я",
     "notify": {
         "OldElectronAPPTitle": "Уязвимость в системе безопасности!",
@@ -1179,7 +1179,6 @@
         "Settings": "Настройки",
         "accessibilityLabel": {
             "Settings": "Вкл/Выкл меню настроек",
-            "audioOnly": "Вкл/Выкл только звук",
             "audioRoute": "Выбрать аудиоустройство",
             "boo": "Бу",
             "breakoutRooms": "Сессионные залы",
@@ -1220,6 +1219,7 @@
             "lobbyButton": "Вкл/Выкл режим лобби",
             "localRecording": "Вкл/Выкл кнопки записи",
             "lockRoom": "Установить пароль",
+            "lowBandwidthMode": "Вкл/Выкл только звук",
             "lowerHand": "Опустить руку",
             "moreActions": "Показать/скрыть меню доп. настроек",
             "moreActionsMenu": "Меню доп. настроек",
@@ -1267,8 +1267,6 @@
             "videounmute": "Включить камеру"
         },
         "addPeople": "Добавить людей к вашему сеансу связи",
-        "audioOnlyOff": "Включить видео (стандартный режим)",
-        "audioOnlyOn": "Выключить видео (экономичный режим)",
         "audioRoute": "Выбрать аудиоустройство",
         "audioSettings": "Настройка звука",
         "authenticate": "Аутентифицировать",
@@ -1308,6 +1306,8 @@
         "lobbyButtonEnable": "Включить режим лобби",
         "login": "Войти",
         "logout": "Завершить сеанс",
+        "lowBandwidthModeOff": "Включить видео (стандартный режим)",
+        "lowBandwidthModeOn": "Выключить видео (экономичный режим)",
         "lowerYourHand": "Опустить руку",
         "moreActions": "Больше действий",
         "moreOptions": "Больше настроек",
@@ -1392,8 +1392,6 @@
     },
     "videoStatus": {
         "adjustFor": "Отрегулируйте для:",
-        "audioOnly": "Только звук",
-        "audioOnlyExpanded": "Активен режим экономии пропускной способности. В этом режиме доступны только звук и трансляция с экрана",
         "bestPerformance": "Лучшее представление",
         "callQuality": "Качество видео",
         "hd": "HD",
@@ -1401,9 +1399,11 @@
         "highDefinition": "Высокое качество",
         "highestQuality": "Высшее качество",
         "labelTooiltipNoVideo": "Нет видео",
-        "labelTooltipAudioOnly": "Включен режим экономии пропускной способности",
+        "labelTooltipLowBandwidthMode": "Включен режим экономии пропускной способности",
         "ld": "LD",
         "ldTooltip": "Видео низкого качества",
+        "lowBandwidthMode": "Только звук",
+        "lowBandwidthModeExpanded": "Активен режим экономии пропускной способности. В этом режиме доступны только звук и трансляция с экрана",
         "lowDefinition": "Низкое качество",
         "performanceSettings": "Параметры производительности",
         "recording": "Идет запись",

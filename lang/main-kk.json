@@ -39,9 +39,6 @@
         "phone": "Телефон",
         "speaker": "Динамик"
     },
-    "audioOnly": {
-        "audioOnly": "Төмен өткізу қабілеті"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "мысалы, 10 Мбит/с үшін 10000000",
         "assumedBandwidthBpsWarning": "Жоғары мәндер желілік мәселелерді тудыруы мүмкін.",
@@ -798,6 +795,9 @@
         "button": "Басқаларды шақыру",
         "youAreAlone": "Жиналыста сіз жалғызсыз"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Төмен өткізу қабілеті"
+    },
     "me": "мен",
     "notify": {
         "OldElectronAPPTitle": "Қауіпсіздік осалдығы!",
@@ -1299,7 +1299,6 @@
         "Settings": "Параметрлер",
         "accessibilityLabel": {
             "Settings": "Параметрлерді ашу",
-            "audioOnly": "Тек аудионы ауыстыру",
             "audioRoute": "Дыбыс құрылғысын таңдау",
             "boo": "Бу",
             "breakoutRooms": "Бөлек бөлмелер",
@@ -1342,6 +1341,7 @@
             "localRecording": "Жергілікті жазу басқару элементтерін ауыстыру",
             "lockRoom": "Жиналыс құпия сөзін ауыстыру",
             "love": "Жүрек",
+            "lowBandwidthMode": "Тек аудионы ауыстыру",
             "lowerHand": "Қолыңызды түсіру",
             "moreActions": "Көбірек әрекеттер",
             "moreActionsMenu": "Көбірек әрекеттер мәзірі",
@@ -1404,8 +1404,6 @@
                 "label": "Стерео"
             }
         },
-        "audioOnlyOff": "Төмен өткізу қабілеті режимін өшіру",
-        "audioOnlyOn": "Төмен өткізу қабілеті режимін қосу",
         "audioRoute": "Дыбыс құрылғысын таңдау",
         "audioSettings": "Аудио параметрлері",
         "authenticate": "Аутентификация",
@@ -1448,6 +1446,8 @@
         "login": "Кіру",
         "logout": "Шығу",
         "love": "Жүрек",
+        "lowBandwidthModeOff": "Төмен өткізу қабілеті режимін өшіру",
+        "lowBandwidthModeOn": "Төмен өткізу қабілеті режимін қосу",
         "lowerYourHand": "Қолыңызды түсіру",
         "moreActions": "Көбірек әрекеттер",
         "moreOptions": "Көбірек опциялар",
@@ -1539,8 +1539,6 @@
     },
     "videoStatus": {
         "adjustFor": "Реттеу:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Сіз төмен өткізу қабілеті режиміндесіз. Бұл режимде сіз тек аудио және экран бөлісуді аласыз.",
         "bestPerformance": "Ең жақсы өнімділік",
         "callQuality": "Бейне сапасы (ең жақсы өнімділік үшін 0, ең жоғары сапа үшін 3)",
         "hd": "HD",
@@ -1548,9 +1546,11 @@
         "highDefinition": "Жоғары ажыратымдылық",
         "highestQuality": "Ең жоғары сапа",
         "labelTooiltipNoVideo": "Бейне жоқ",
-        "labelTooltipAudioOnly": "Төмен өткізу қабілеті режимі қосылған",
+        "labelTooltipLowBandwidthMode": "Төмен өткізу қабілеті режимі қосылған",
         "ld": "LD",
         "ldTooltip": "Төмен ажыратымдылықтағы бейнені көру",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Сіз төмен өткізу қабілеті режиміндесіз. Бұл режимде сіз тек аудио және экран бөлісуді аласыз.",
         "lowDefinition": "Төмен ажыратымдылық",
         "performanceSettings": "Өнімділік параметрлері",
         "recording": "Бұл жиналыс жазылуда.",

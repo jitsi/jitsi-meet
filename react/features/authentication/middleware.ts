@@ -259,7 +259,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
     const room = state['features/base/conference'].room;
     const { locationURL = { href: '' } as URL } = state['features/base/connection'];
     const { tenant } = parseURIString(locationURL.href) || {};
-    const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
+    const { enabled: lowBandwidthModeEnabled } = state['features/base/low-bandwidth-mode'];
     const audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
     const videoMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
     const refreshToken = state['features/base/jwt'].refreshToken;
@@ -281,7 +281,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
         locationURL,
         {
             audioMuted,
-            audioOnlyEnabled,
+            lowBandwidthModeEnabled,
             skipPrejoin: true,
             videoMuted
         },

@@ -39,9 +39,6 @@
         "phone": "Puhelin",
         "speaker": "Puhuja"
     },
-    "audioOnly": {
-        "audioOnly": "Vain ääni"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "esim. 10000000 tarkoittaa 10 Mbps",
         "assumedBandwidthBpsWarning": "Korkeammat arvot voivat aiheuttaa verkko-ongelmia.",
@@ -802,6 +799,9 @@
         "button": "Kutsu muita",
         "youAreAlone": "Olet ainoa kokouksessa"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Vain ääni"
+    },
     "me": "minä",
     "notify": {
         "OldElectronAPPTitle": "Tietoturvahaavoittuvuus!",
@@ -1303,7 +1303,6 @@
         "Settings": "Asetukset",
         "accessibilityLabel": {
             "Settings": "Säädä asetuksia",
-            "audioOnly": "Säädä Vain ääni -tilaa",
             "audioRoute": "Valitse äänilaite",
             "boo": "Buu",
             "breakoutRooms": "Pienryhmähuoneet",
@@ -1347,6 +1346,7 @@
             "localRecording": "Säädä paikallisia nauhoitusohjaimia",
             "lockRoom": "Säädä kokouksen salasanaa",
             "love": "Sydän",
+            "lowBandwidthMode": "Säädä Vain ääni -tilaa",
             "lowerHand": "Laske kätesi",
             "moreActions": "Säädä Lisää toimintoja -valikkoa",
             "moreActionsMenu": "Lisää toimintoja -valikko",
@@ -1408,8 +1408,6 @@
                 "label": "Stereo"
             }
         },
-        "audioOnlyOff": "Poista Vain ääni -tila käytöstä",
-        "audioOnlyOn": "Ota Vain ääni -tila käyttöön",
         "audioRoute": "Valitse äänilaite",
         "audioSettings": "Ääniasetukset",
         "authenticate": "Todenna",
@@ -1454,6 +1452,8 @@
         "login": "Kirjaudu sisään",
         "logout": "Kirjaudu ulos",
         "love": "Sydän",
+        "lowBandwidthModeOff": "Poista Vain ääni -tila käytöstä",
+        "lowBandwidthModeOn": "Ota Vain ääni -tila käyttöön",
         "lowerYourHand": "Laske käsi",
         "moreActions": "Lisää toimintoja",
         "moreOptions": "Lisää vaihtoehtoja",
@@ -1545,8 +1545,6 @@
     },
     "videoStatus": {
         "adjustFor": "Muokkaa:",
-        "audioOnly": "ÄÄNI",
-        "audioOnlyExpanded": "Käytössäsi on Vain ääni -tila. Se säästää kaistanleveyttä, mutta et näe muiden videoita.",
         "bestPerformance": "Paras suorituskyky",
         "callQuality": "Videon laatu",
         "hd": "HD",
@@ -1554,9 +1552,11 @@
         "highDefinition": "Teräväpiirto",
         "highestQuality": "Korkein laatu",
         "labelTooiltipNoVideo": "Ei videota",
-        "labelTooltipAudioOnly": "Vain ääni -tila käytössä",
+        "labelTooltipLowBandwidthMode": "Vain ääni -tila käytössä",
         "ld": "LD",
         "ldTooltip": "Katselee matalatarkkuuksista videota",
+        "lowBandwidthMode": "ÄÄNI",
+        "lowBandwidthModeExpanded": "Käytössäsi on Vain ääni -tila. Se säästää kaistanleveyttä, mutta et näe muiden videoita.",
         "lowDefinition": "Alhainen kuvanlaatu",
         "performanceSettings": "Suorituskykyasetukset",
         "recording": "Tätä kokousta nauhoitetaan.",

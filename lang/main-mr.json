@@ -24,9 +24,6 @@
         "phone": "फोन",
         "speaker": "स्पीकर"
     },
-    "audioOnly": {
-        "audioOnly": "कमी बँडविड्थ"
-    },
     "calendarSync": {
         "addMeetingURL": "मीटिंगचा दुवा जोडा",
         "confirmAddLink": "आपण या कार्यक्रमास एक Jitsi  दुवा जोडू इच्छिता?",
@@ -444,6 +441,9 @@
         "button": "इतरांना आमंत्रित करा",
         "youAreAlone": "आपण सभेत एकटाच आहात"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "कमी बँडविड्थ"
+    },
     "me": "मी",
     "notify": {
         "OldElectronAPPTitle": "सुरक्षा असुरक्षा!",
@@ -639,8 +639,6 @@
         "Settings": "सेटिंग्ज",
         "accessibilityLabel": {},
         "addPeople": "आपल्या कॉलमध्ये लोकांना जोडा",
-        "audioOnlyOff": "कमी बँडविड्थ मोड अक्षम करा",
-        "audioOnlyOn": "कमी बँडविड्थ मोड सक्षम करा",
         "audioRoute": "ध्वनी यंत्र निवडा",
         "authenticate": "प्रमाणित करा",
         "callQuality": "व्हिडिओ गुणवत्ता व्यवस्थापित करा",
@@ -660,6 +658,8 @@
         "invite": "लोकांना आमंत्रित करा",
         "login": "लॉगिन",
         "logout": "बाहेर पडणे",
+        "lowBandwidthModeOff": "कमी बँडविड्थ मोड अक्षम करा",
+        "lowBandwidthModeOn": "कमी बँडविड्थ मोड सक्षम करा",
         "lowerYourHand": "बाहेर पडणे",
         "moreActions": "अधिक क्रिया",
         "moreOptions": "अधिक पर्याय",
@@ -720,16 +720,16 @@
         "pending": "{{displayName}} आमंत्रित केले गेले आहे"
     },
     "videoStatus": {
-        "audioOnly": "एडीडी",
-        "audioOnlyExpanded": "आपण कमी बँडविड्थ मोडमध्ये आहात. या मोडमध्ये आपल्याला केवळ ऑडिओ आणि स्क्रीन सामायिकरण प्राप्त होईल.",
         "callQuality": "व्हिडिओ गुणवत्ता",
         "hd": "एचडी",
         "hdTooltip": "उच्च परिभाषा व्हिडिओ पहात आहे",
         "highDefinition": "उंच - व्याख्या",
         "labelTooiltipNoVideo": "व्हिडिओ नाही",
-        "labelTooltipAudioOnly": "कमी बँडविड्थ मोड सक्षम",
+        "labelTooltipLowBandwidthMode": "कमी बँडविड्थ मोड सक्षम",
         "ld": "एलडी",
         "ldTooltip": "निम्न परिभाषा व्हिडिओ पहात आहे",
+        "lowBandwidthMode": "एडीडी",
+        "lowBandwidthModeExpanded": "आपण कमी बँडविड्थ मोडमध्ये आहात. या मोडमध्ये आपल्याला केवळ ऑडिओ आणि स्क्रीन सामायिकरण प्राप्त होईल.",
         "lowDefinition": "कमी व्याख्या",
         "onlyAudioAvailable": "केवळ ऑडिओ उपलब्ध आहे",
         "onlyAudioSupported": "आम्ही या ब्राउझरमध्ये केवळ ऑडिओचे समर्थन करतो.",

@@ -39,9 +39,6 @@
         "phone": "Telefon",
         "speaker": "Højttaler"
     },
-    "audioOnly": {
-        "audioOnly": "Lav båndbredde"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "eks. 10000000 for 10 Mbps",
         "assumedBandwidthBpsWarning": "højere værdier kan forårsage netværksproblemer",
@@ -798,6 +795,9 @@
         "button": "Inviter andre",
         "youAreAlone": "Du er den eneste i mødet"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Lav båndbredde"
+    },
     "me": "mig",
     "notify": {
         "OldElectronAPPTitle": "Sikkerhedssårbarhed!",
@@ -1299,7 +1299,6 @@
         "Settings": "Indstillinger",
         "accessibilityLabel": {
             "Settings": "Til/fra for indstillinger",
-            "audioOnly": "Slå 'kun lyd' til eller fra",
             "audioRoute": "Vælg lydenheden",
             "boo": "Boo",
             "breakoutRooms": "Grupperum",
@@ -1342,6 +1341,7 @@
             "localRecording": "Til/fra for lokal optagelseskontrol",
             "lockRoom": "Til/fra for mødeadgangskode",
             "love": "Hjerte",
+            "lowBandwidthMode": "Slå 'kun lyd' til eller fra",
             "lowerHand": "Stop med at række hånd op",
             "moreActions": "Flere handlinger",
             "moreActionsMenu": "Flere handlinger menu",
@@ -1404,8 +1404,6 @@
                 "label": "Stereo"
             }
         },
-        "audioOnlyOff": "Deaktiver lav båndbredde-tilstand",
-        "audioOnlyOn": "Aktivér lav båndbredde-tilstand",
         "audioRoute": "Vælg lydenheden",
         "audioSettings": "Lydindstillinger",
         "authenticate": "Autentificer",
@@ -1448,6 +1446,8 @@
         "login": "Log på",
         "logout": "Log ud",
         "love": "Hjerte",
+        "lowBandwidthModeOff": "Deaktiver lav båndbredde-tilstand",
+        "lowBandwidthModeOn": "Aktivér lav båndbredde-tilstand",
         "lowerYourHand": "Sænk din hånd",
         "moreActions": "Flere handlinger",
         "moreOptions": "Flere muligheder",
@@ -1539,8 +1539,6 @@
     },
     "videoStatus": {
         "adjustFor": "Juster for:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Du er i lav-båndbredde tilstand. I denne tilstand modtager du kun lyd- og skærmdelinger.",
         "bestPerformance": "Bedste ydeevne",
         "callQuality": "Videokvalitet",
         "hd": "HD",
@@ -1548,9 +1546,11 @@
         "highDefinition": "Høj opløsning",
         "highestQuality": "Højeste kvalitet",
         "labelTooiltipNoVideo": "Ingen video",
-        "labelTooltipAudioOnly": "Lav-båndbredde tilstand aktiveret",
+        "labelTooltipLowBandwidthMode": "Lav-båndbredde tilstand aktiveret",
         "ld": "LD",
         "ldTooltip": "Visning af lav-opløsnings video",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Du er i lav-båndbredde tilstand. I denne tilstand modtager du kun lyd- og skærmdelinger.",
         "lowDefinition": "Lav definition",
         "performanceSettings": "Indstillinger for kvalitet",
         "recording": "Optagelse i gang",

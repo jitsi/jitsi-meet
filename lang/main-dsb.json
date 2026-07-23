@@ -36,9 +36,6 @@
         "phone": "telefon",
         "speaker": "boksa"
     },
-    "audioOnly": {
-        "audioOnly": "małka šyrokosć banta"
-    },
     "breakoutRooms": {
         "actions": {
             "add": "breakout-śpu pśidaś",
@@ -633,6 +630,9 @@
         "button": "druge pśepšosyś",
         "youAreAlone": "Wy sćo ta jadna samska wósoba na tej konferency"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "małka šyrokosć banta"
+    },
     "me": "ja",
     "notify": {
         "OldElectronAPPTitle": "problem z wěstosću!",
@@ -1059,7 +1059,6 @@
         "Settings": "nastajenja",
         "accessibilityLabel": {
             "Settings": "nastajenja zašaltowaś/wušaltowaś",
-            "audioOnly": "opciju „jano audio“ zašaltowaś/wušaltowaś",
             "audioRoute": "rěd za audio wuzwóliś",
             "boo": "wušwicaś",
             "breakoutRoom": "do breakout-śpow stupiś / je spušćiś",
@@ -1089,6 +1088,7 @@
             "lobbyButton": "lobbyjowy modus aktiwěrowaś/deaktiwěrowaś",
             "localRecording": "šturujuce elementy za lokalne nagrawanje aktiwěrowaś/deaktiwěrowaś",
             "lockRoom": "kodowe słowo za konferencu aktiwěrowaś/deaktiwěrowaś",
+            "lowBandwidthMode": "opciju „jano audio“ zašaltowaś/wušaltowaś",
             "moreActions": "meni „dalšne nastajenja“ aktiwěrowaś/deaktiwěrowaś",
             "moreActionsMenu": "meni „dalšne nastajenja“",
             "moreOptions": "meni „dalšne opcije“",
@@ -1127,8 +1127,6 @@
             "whiteboard": ""
         },
         "addPeople": "wobźělniki ku konferency pśidaś",
-        "audioOnlyOff": "modus „jano audio“ deaktiwěrowaś",
-        "audioOnlyOn": "modus „jano audio“ aktiwěrowaś",
         "audioRoute": "rěd za audio wuzwóliś",
         "audioSettings": "zukowe nastajenja",
         "authenticate": "se awtentificěrowaś",
@@ -1166,6 +1164,8 @@
         "lobbyButtonEnable": "lobbyjowy modus aktiwěrowaś",
         "login": "se zalogowaś",
         "logout": "se wulogowaś",
+        "lowBandwidthModeOff": "modus „jano audio“ deaktiwěrowaś",
+        "lowBandwidthModeOn": "modus „jano audio“ aktiwěrowaś",
         "lowerYourHand": "ruku dołoj weześ",
         "moreActions": "dalšne nastajenja",
         "moreOptions": "dalšne opcije",
@@ -1247,8 +1247,6 @@
     },
     "videoStatus": {
         "adjustFor": "nastajiś za:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Wy źěłaśo něnto we modusu „jano audio“. Ten modus njepótrjeba teliko šyrokosći banta.",
         "bestPerformance": "nejlěpše wugbanje",
         "callQuality": "kwalita wideo",
         "hd": "HD",
@@ -1256,9 +1254,11 @@
         "highDefinition": "wusoke rozpušćenje",
         "highestQuality": "nejwuša kwalita",
         "labelTooiltipNoVideo": "žeden wideo",
-        "labelTooltipAudioOnly": "Modus „jano audio“ jo aktiwny",
+        "labelTooltipLowBandwidthMode": "Modus „jano audio“ jo aktiwny",
         "ld": "LD",
         "ldTooltip": "Wideo pokažo se w niskem rozpušćenju",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Wy źěłaśo něnto we modusu „jano audio“. Ten modus njepótrjeba teliko šyrokosći banta.",
         "lowDefinition": "niske rozpušćenje",
         "performanceSettings": "nastajenja kwality",
         "sd": "SD",

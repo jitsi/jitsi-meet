@@ -39,9 +39,6 @@
         "phone": "電話",
         "speaker": "擴音"
     },
-    "audioOnly": {
-        "audioOnly": "低頻寬"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "例如，10 Mbps 的值為 10000000",
         "assumedBandwidthBpsWarning": "較高的數值可能導致網路問題。",
@@ -791,6 +788,9 @@
         "button": "邀請其他人",
         "youAreAlone": "您是會議中的唯一一個人"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "低頻寬"
+    },
     "me": "我",
     "notify": {
         "OldElectronAPPTitle": "安全漏洞！",
@@ -1294,7 +1294,6 @@
         "Settings": "設定",
         "accessibilityLabel": {
             "Settings": "切換設定",
-            "audioOnly": "切換僅音訊",
             "audioRoute": "選擇音訊裝置",
             "boo": "倒喝彩",
             "breakoutRooms": "分組討論室",
@@ -1337,6 +1336,7 @@
             "localRecording": "切換本機錄製控制",
             "lockRoom": "切換會議密碼",
             "love": "愛心",
+            "lowBandwidthMode": "切換僅音訊",
             "lowerHand": "放下手",
             "moreActions": "更多動作",
             "moreActionsMenu": "更多動作選單",
@@ -1399,8 +1399,6 @@
                 "label": "立體聲"
             }
         },
-        "audioOnlyOff": "停用低頻寬模式",
-        "audioOnlyOn": "啟用低頻寬模式",
         "audioRoute": "選擇音訊裝置",
         "audioSettings": "音訊設定",
         "authenticate": "驗證",
@@ -1442,6 +1440,8 @@
         "login": "登入",
         "logout": "登出",
         "love": "愛心",
+        "lowBandwidthModeOff": "停用低頻寬模式",
+        "lowBandwidthModeOn": "啟用低頻寬模式",
         "lowerYourHand": "放下您的手",
         "moreActions": "更多動作",
         "moreOptions": "更多選項",
@@ -1532,8 +1532,6 @@
     },
     "videoStatus": {
         "adjustFor": "調整為：",
-        "audioOnly": "僅音訊",
-        "audioOnlyExpanded": "您目前處於低頻寬模式，在此模式下您僅會收到語音及螢幕分享。",
         "bestPerformance": "最佳效能",
         "callQuality": "視訊品質（0 表示最佳效能，3 表示最高品質）",
         "hd": "高畫質",
@@ -1541,9 +1539,11 @@
         "highDefinition": "高畫質",
         "highestQuality": "最高品質",
         "labelTooiltipNoVideo": "無視訊",
-        "labelTooltipAudioOnly": "啟用低頻寬模式",
+        "labelTooltipLowBandwidthMode": "啟用低頻寬模式",
         "ld": "低畫質",
         "ldTooltip": "查看低畫質視訊",
+        "lowBandwidthMode": "僅音訊",
+        "lowBandwidthModeExpanded": "您目前處於低頻寬模式，在此模式下您僅會收到語音及螢幕分享。",
         "lowDefinition": "低畫質",
         "performanceSettings": "效能設定",
         "recording": "錄製中",

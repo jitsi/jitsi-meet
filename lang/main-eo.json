@@ -39,9 +39,6 @@
         "phone": "Telefono",
         "speaker": "Parolanto"
     },
-    "audioOnly": {
-        "audioOnly": "Malalta rapideco de retkonekto"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "ekz. 10000000 for 10 Mbps",
         "assumedBandwidthBpsWarning": "Pli altaj valoroj povas kaŭzi retajn problemojn.",
@@ -713,6 +710,9 @@
         "button": "Inviti aliajn",
         "youAreAlone": "Vi estas la sola en la kunveno"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Malalta rapideco de retkonekto"
+    },
     "me": "mi",
     "notify": {
         "OldElectronAPPTitle": "Sekurec-vundeblo!",
@@ -1166,7 +1166,6 @@
         "Settings": "Agordoj",
         "accessibilityLabel": {
             "Settings": "Baskuligi agordojn",
-            "audioOnly": "Baskuligi nur-sonan reĝimon",
             "audioRoute": "Elekti la sonaparaton",
             "boo": "Hui",
             "breakoutRooms": "Aneksaj ĉambroj",
@@ -1207,6 +1206,7 @@
             "lobbyButton": "Ŝaltu/Malŝaltu atendejan reĝimon",
             "localRecording": "Baskuligi lokajn registrilojn",
             "lockRoom": "Baskuligi pasvorton por la kunveno",
+            "lowBandwidthMode": "Baskuligi nur-sonan reĝimon",
             "lowerHand": "Mallevi la manon",
             "moreActions": "Baskuligi la menuon kun pli da agoj",
             "moreActionsMenu": "Menuo kun pli da agoj",
@@ -1254,8 +1254,6 @@
             "videounmute": "Ŝalti kameraon"
         },
         "addPeople": "Aldoni homojn al via voko",
-        "audioOnlyOff": "Malŝalti malalt-trafikan reĝimon",
-        "audioOnlyOn": "Ŝalti malalt-trafikan reĝimon",
         "audioRoute": "Elekti la sonaparaton",
         "audioSettings": "Aŭdagordoj",
         "authenticate": "Aŭtentigi",
@@ -1295,6 +1293,8 @@
         "lobbyButtonEnable": "Ŝalti atendejan reĝimon",
         "login": "Ensaluti",
         "logout": "Elsaluti",
+        "lowBandwidthModeOff": "Malŝalti malalt-trafikan reĝimon",
+        "lowBandwidthModeOn": "Ŝalti malalt-trafikan reĝimon",
         "lowerYourHand": "Malaltigi vian manon",
         "moreActions": "Pli da agoj",
         "moreOptions": "Pli da ebloj",
@@ -1382,8 +1382,6 @@
     },
     "videoStatus": {
         "adjustFor": "Ĝustigi por:",
-        "audioOnly": "SON",
-        "audioOnlyExpanded": "Vi estas en malalt-trafika reĝimo. En ĉi-tiu reĝimo vi ricevos nur sonon kaj kundividatajn ekranojn.",
         "bestPerformance": " Plej bona  rendimento",
         "callQuality": "Videa kvalito",
         "hd": "AD",
@@ -1391,9 +1389,11 @@
         "highDefinition": "Altkvalita distingivo",
         "highestQuality": "Plej alta kvalito",
         "labelTooiltipNoVideo": "Neniu video",
-        "labelTooltipAudioOnly": "Malalt-trafika reĝimo ŝaltita",
+        "labelTooltipLowBandwidthMode": "Malalt-trafika reĝimo ŝaltita",
         "ld": "MD",
         "ldTooltip": "La video estas en malaltkvalita distingivo",
+        "lowBandwidthMode": "SON",
+        "lowBandwidthModeExpanded": "Vi estas en malalt-trafika reĝimo. En ĉi-tiu reĝimo vi ricevos nur sonon kaj kundividatajn ekranojn.",
         "lowDefinition": "Malaltkvalita distingivo",
         "performanceSettings": "Agordoj de rendimento",
         "recording": "Registranta",

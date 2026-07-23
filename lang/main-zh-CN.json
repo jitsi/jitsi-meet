@@ -39,9 +39,6 @@
         "phone": "电话",
         "speaker": "扬声器"
     },
-    "audioOnly": {
-        "audioOnly": "省流"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "例如，10000000为10兆",
         "assumedBandwidthBpsWarning": "较高的数值可能会导致网络问题。",
@@ -791,6 +788,9 @@
         "button": "邀请其他人",
         "youAreAlone": "你是会议中唯一一个人"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "省流"
+    },
     "me": "我",
     "notify": {
         "OldElectronAPPTitle": "安全漏洞！",
@@ -1294,7 +1294,6 @@
         "Settings": "打开设置",
         "accessibilityLabel": {
             "Settings": "切换设置",
-            "audioOnly": "切换仅音频模式",
             "audioRoute": "选择音频设备",
             "boo": "嘘声",
             "breakoutRooms": "分组讨论室",
@@ -1337,6 +1336,7 @@
             "localRecording": "切换本地录制",
             "lockRoom": "设置/取消会议密码",
             "love": "爱心",
+            "lowBandwidthMode": "切换仅音频模式",
             "lowerHand": "取消举手",
             "moreActions": "更多操作",
             "moreActionsMenu": "更多操作菜单",
@@ -1399,8 +1399,6 @@
                 "label": "立体声"
             }
         },
-        "audioOnlyOff": "关闭省流模式",
-        "audioOnlyOn": "开启省流模式",
         "audioRoute": "选择音频设备",
         "audioSettings": "音频设置",
         "authenticate": "身份验证",
@@ -1442,6 +1440,8 @@
         "login": "登录",
         "logout": "注销",
         "love": "爱心",
+        "lowBandwidthModeOff": "关闭省流模式",
+        "lowBandwidthModeOn": "开启省流模式",
         "lowerYourHand": "取消举手",
         "moreActions": "更多操作",
         "moreOptions": "显示更多选项",
@@ -1532,8 +1532,6 @@
     },
     "videoStatus": {
         "adjustFor": "调整为：",
-        "audioOnly": "仅语音",
-        "audioOnlyExpanded": "省流模式已开启，仅接收语音和共享屏幕。",
         "bestPerformance": "最佳性能",
         "callQuality": "视频质量（0 表示最佳性能，3 表示最高质量）",
         "hd": "高清",
@@ -1541,9 +1539,11 @@
         "highDefinition": "高清晰度",
         "highestQuality": "最佳品质",
         "labelTooiltipNoVideo": "无视频",
-        "labelTooltipAudioOnly": "省流模式已开启",
+        "labelTooltipLowBandwidthMode": "省流模式已开启",
         "ld": "低清",
         "ldTooltip": "观看低清视频",
+        "lowBandwidthMode": "仅语音",
+        "lowBandwidthModeExpanded": "省流模式已开启，仅接收语音和共享屏幕。",
         "lowDefinition": "低清晰度",
         "performanceSettings": "性能设置",
         "recording": "正在进行录制",

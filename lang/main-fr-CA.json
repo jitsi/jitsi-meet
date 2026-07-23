@@ -39,9 +39,6 @@
         "phone": "Téléphone",
         "speaker": "Haut-parleur"
     },
-    "audioOnly": {
-        "audioOnly": "Bande passante faible"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "p. ex. 10000000 pour 10 Mbps ",
         "assumedBandwidthBpsWarning": "Des valeurs élevées peuvent provoquer des problèmes réseaux.",
@@ -784,6 +781,9 @@
         "button": "Inviter d'autres personnes",
         "youAreAlone": "Vous êtes le seul participant de la réunion"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Bande passante faible"
+    },
     "me": "moi",
     "notify": {
         "OldElectronAPPTitle": "Faille de sécurité !",
@@ -1285,7 +1285,6 @@
         "Settings": "Paramètres",
         "accessibilityLabel": {
             "Settings": "Basculement des paramètres",
-            "audioOnly": "Basculement du mode audio uniquement",
             "audioRoute": "Sélectionner le dispositif audio",
             "boo": "Bou",
             "breakoutRooms": "Rejoindre / quitter une salle annexe",
@@ -1328,6 +1327,7 @@
             "localRecording": "Basculement des commandes d'enregistrement local",
             "lockRoom": "Basculement du mot de passe de la réunion",
             "love": "Cœur",
+            "lowBandwidthMode": "Basculement du mode audio uniquement",
             "lowerHand": "Baisser la main",
             "moreActions": "Basculement du menu d'actions supplémentaires",
             "moreActionsMenu": "Menu d'actions supplémentaires",
@@ -1390,8 +1390,6 @@
                 "label": "Stéréo"
             }
         },
-        "audioOnlyOff": "Désactiver le mode bande passante faible",
-        "audioOnlyOn": "Activer le mode bande passante faible",
         "audioRoute": "Sélectionner le dispositif audio",
         "audioSettings": "Paramètres audio",
         "authenticate": "Authentification",
@@ -1433,6 +1431,8 @@
         "login": "Connexion",
         "logout": "Déconnexion",
         "love": "Cœur",
+        "lowBandwidthModeOff": "Désactiver le mode bande passante faible",
+        "lowBandwidthModeOn": "Activer le mode bande passante faible",
         "lowerYourHand": "Abaisser votre main",
         "moreActions": "Plus d'actions",
         "moreOptions": "Plus d'options",
@@ -1527,8 +1527,6 @@
     },
     "videoStatus": {
         "adjustFor": "Ajuster pour:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Vous êtes en mode bande passante faible. Dans ce mode, vous ne recevrez que le partage audio et le partage d’écran.",
         "bestPerformance": "la meilleure performance",
         "callQuality": "Qualité d'appel",
         "hd": "HD",
@@ -1536,9 +1534,11 @@
         "highDefinition": "Haute définition",
         "highestQuality": "Meilleure qualité",
         "labelTooiltipNoVideo": "Aucune vidéo",
-        "labelTooltipAudioOnly": "Mode bande passante faible activé",
+        "labelTooltipLowBandwidthMode": "Mode bande passante faible activé",
         "ld": "LD",
         "ldTooltip": "Visionnement de vidéo en basse définition",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Vous êtes en mode bande passante faible. Dans ce mode, vous ne recevrez que le partage audio et le partage d’écran.",
         "lowDefinition": "Basse définition",
         "performanceSettings": "Paramètres de performance",
         "recording": "Enregistrement en cours",

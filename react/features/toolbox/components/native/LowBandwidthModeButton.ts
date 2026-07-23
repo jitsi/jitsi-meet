@@ -1,11 +1,11 @@
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { setAudioOnly, toggleAudioOnly } from '../../../base/audio-only/actions';
-import { AUDIO_ONLY_BUTTON_ENABLED } from '../../../base/flags/constants';
+import { setLowBandwidthMode, toggleLowBandwidthMode } from '../../../base/low-bandwidth-mode/actions';
+import { LOW_BANDWIDTH_MODE_BUTTON_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n/functions';
-import { IconAudioOnly, IconAudioOnlyOff } from '../../../base/icons/svg';
+import { IconLowBandwidthMode, IconLowBandwidthModeOff } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import {
     navigate
@@ -13,14 +13,14 @@ import {
 import { screen } from '../../../mobile/navigation/routes';
 
 /**
- * The type of the React {@code Component} props of {@link AudioOnlyButton}.
+ * The type of the React {@code Component} props of {@link LowBandwidthModeButton}.
  */
 interface IProps extends AbstractButtonProps {
 
     /**
      * Whether the current conference is in audio only mode or not.
      */
-    _audioOnly: boolean;
+    _lowBandwidthMode: boolean;
 
     /**
      * Indicates whether the car mode is enabled.
@@ -31,12 +31,12 @@ interface IProps extends AbstractButtonProps {
 /**
  * An implementation of a button for toggling the audio-only mode.
  */
-class AudioOnlyButton extends AbstractButton<IProps> {
-    override accessibilityLabel = 'toolbar.accessibilityLabel.audioOnly';
-    override icon = IconAudioOnly;
-    override label = 'toolbar.audioOnlyOn';
-    override toggledIcon = IconAudioOnlyOff;
-    override toggledLabel = 'toolbar.audioOnlyOff';
+class LowBandwidthModeButton extends AbstractButton<IProps> {
+    override accessibilityLabel = 'toolbar.accessibilityLabel.lowBandwidthMode';
+    override icon = IconLowBandwidthMode;
+    override label = 'toolbar.lowBandwidthModeOn';
+    override toggledIcon = IconLowBandwidthModeOff;
+    override toggledLabel = 'toolbar.lowBandwidthModeOff';
 
     /**
      * Handles clicking / pressing the button.
@@ -46,13 +46,13 @@ class AudioOnlyButton extends AbstractButton<IProps> {
      * @returns {void}
      */
     override _handleClick() {
-        const { _audioOnly, _startCarMode, dispatch } = this.props;
+        const { _lowBandwidthMode, _startCarMode, dispatch } = this.props;
 
-        if (!_audioOnly && _startCarMode) {
-            dispatch(setAudioOnly(true));
+        if (!_lowBandwidthMode && _startCarMode) {
+            dispatch(setLowBandwidthMode(true));
             navigate(screen.conference.carmode);
         } else {
-            dispatch(toggleAudioOnly());
+            dispatch(toggleLowBandwidthMode());
         }
     }
 
@@ -65,32 +65,32 @@ class AudioOnlyButton extends AbstractButton<IProps> {
      * @returns {boolean}
      */
     override _isToggled() {
-        return this.props._audioOnly;
+        return this.props._lowBandwidthMode;
     }
 }
 
 /**
  * Maps (parts of) the redux state to the associated props for the
- * {@code AudioOnlyButton} component.
+ * {@code LowBandwidthModeButton} component.
  *
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The properties explicitly passed to the component instance.
  * @private
  * @returns {{
- *     _audioOnly: boolean
+ *     _lowBandwidthMode: boolean
  * }}
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
-    const { enabled: audioOnly } = state['features/base/audio-only'];
-    const enabledInFeatureFlags = getFeatureFlag(state, AUDIO_ONLY_BUTTON_ENABLED, true);
+    const { enabled: audioOnly } = state['features/base/low-bandwidth-mode'];
+    const enabledInFeatureFlags = getFeatureFlag(state, LOW_BANDWIDTH_MODE_BUTTON_ENABLED, true);
     const { startCarMode } = state['features/base/settings'];
     const { visible = enabledInFeatureFlags } = ownProps;
 
     return {
-        _audioOnly: Boolean(audioOnly),
+        _lowBandwidthMode: Boolean(audioOnly),
         _startCarMode: startCarMode,
         visible
     };
 }
 
-export default translate(connect(_mapStateToProps)(AudioOnlyButton));
+export default translate(connect(_mapStateToProps)(LowBandwidthModeButton));

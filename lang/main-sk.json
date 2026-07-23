@@ -39,9 +39,6 @@
         "phone": "Telefón",
         "speaker": "Reproduktor"
     },
-    "audioOnly": {
-        "audioOnly": "Iba zvuk"
-    },
     "calendarSync": {
         "addMeetingURL": "Pridať odkaz na konferenciu",
         "confirmAddLink": "Chcete pridal Jitsi odkaz do tejto udalosti?",
@@ -502,6 +499,9 @@
         "button": "Pozvať ďalších",
         "youAreAlone": "Ste sám v tejto konferencii"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Iba zvuk"
+    },
     "me": "ja",
     "notify": {
         "OldElectronAPPTitle": "Bezpečnostná hrozba!",
@@ -718,7 +718,6 @@
         "Settings": "Nastavenia",
         "accessibilityLabel": {
             "Settings": "Nastavenia zapnúť/vypnúť",
-            "audioOnly": "Zapnúť/vypnúť iba zvukový prenos",
             "audioRoute": "Vybrať zvukové zariadenie",
             "callQuality": "Spravovať kvalitu videa",
             "cc": "Zapnúť/vypnúť titulky",
@@ -736,6 +735,7 @@
             "lobbyButton": "Zapnúť/vypnúť čakáreň",
             "localRecording": "Zapnúť/vypnúť ovládanie lokálneho nahrávania",
             "lockRoom": "Zapnúť/vypnúť heslo",
+            "lowBandwidthMode": "Zapnúť/vypnúť iba zvukový prenos",
             "moreActions": "Menu „Ďalšie akcie“ zapnúť/vypnúť",
             "moreActionsMenu": "Menu „Ďalšie akcie“",
             "moreOptions": "Zobraz viac možností",
@@ -761,8 +761,6 @@
             "videomute": "„Video odpojiť“ zapnúť/vypnúť"
         },
         "addPeople": "Pridať účastníka do konferencie",
-        "audioOnlyOff": "Mód „Iba zvuk“ deaktivovať",
-        "audioOnlyOn": "Mód „Iba zvuk“ aktivovať",
         "audioRoute": "Vybrať zvukové zariadenie",
         "authenticate": "Autentifikácia",
         "callQuality": "Spravovať kvalitu videa",
@@ -784,6 +782,8 @@
         "lobbyButtonEnable": "Zapnúť čakáreň",
         "login": "Prihlásiť",
         "logout": "Odhlásiť",
+        "lowBandwidthModeOff": "Mód „Iba zvuk“ deaktivovať",
+        "lowBandwidthModeOn": "Mód „Iba zvuk“ aktivovať",
         "lowerYourHand": "Dať dole ruku",
         "moreActions": "Viac akcií",
         "moreOptions": "Viac možností",
@@ -846,16 +846,16 @@
         "pending": "{{displayName}} bol pozvaný"
     },
     "videoStatus": {
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Ste v móde s nízkou prenosovou kapacitou. V tomto móde budete prijímať iba zvuk a zdielanú obrazovku.",
         "callQuality": "Nastavenie kvality hovoru",
         "hd": "HD",
         "hdTooltip": "Sledujete obraz vo vysokej kvalite",
         "highDefinition": "Vysoká kvalita",
         "labelTooiltipNoVideo": "Žiadne video",
-        "labelTooltipAudioOnly": "Mód s nízkou prenosovou kapacitou je zapnutý",
+        "labelTooltipLowBandwidthMode": "Mód s nízkou prenosovou kapacitou je zapnutý",
         "ld": "LD",
         "ldTooltip": "Sledujete obraz v nízkej kvalite",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Ste v móde s nízkou prenosovou kapacitou. V tomto móde budete prijímať iba zvuk a zdielanú obrazovku.",
         "lowDefinition": "Nízka kvalita",
         "onlyAudioAvailable": "Iba zvuk je k dispozícií",
         "onlyAudioSupported": "Na vašom prehliadači podporujeme iba zvuk.",

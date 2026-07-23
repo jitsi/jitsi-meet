@@ -24,9 +24,6 @@
         "phone": "Telefon",
         "speaker": "Hangszóró"
     },
-    "audioOnly": {
-        "audioOnly": "Alacsony sávszélesség"
-    },
     "breakoutRooms": {
         "actions": {
             "add": "Pihenőszoba hozzáadása",
@@ -531,6 +528,9 @@
         "button": "Mások meghívása",
         "youAreAlone": "Egyedül van ezen az értekezleten"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Alacsony sávszélesség"
+    },
     "me": "én",
     "notify": {
         "connectedOneMember": "{{name}} bekapcsolódott az értekezletbe",
@@ -847,7 +847,6 @@
         "Settings": "Beállítások",
         "accessibilityLabel": {
             "Settings": "Beállítások átváltása",
-            "audioOnly": "Csak a hang átváltása",
             "audioRoute": "Hangeszköz kijelölése",
             "boo": "Szomorú",
             "callQuality": "Videóminőség kezelése",
@@ -868,6 +867,7 @@
             "like": "Hüvelykujj fel",
             "localRecording": "Helyi felvétel vezérlőelemeinek átváltása",
             "lockRoom": "Értekezlet jelszavának átváltása",
+            "lowBandwidthMode": "Csak a hang átváltása",
             "moreActions": "További műveletek menü átváltása",
             "moreActionsMenu": "További műveletek menü",
             "moreOptions": "További beállítások megjelenítése",
@@ -899,8 +899,6 @@
             "videomute": "Videó letiltásának átváltása"
         },
         "addPeople": "Személy hozzáadása a híváshoz",
-        "audioOnlyOff": "Alacsony sávszélességű mód letiltása",
-        "audioOnlyOn": "Alacsony sávszélességű mód engedélyezése",
         "audioRoute": "Hangeszköz kijelölése",
         "audioSettings": "Hangbeállítások",
         "authenticate": "Hitelesítés",
@@ -928,6 +926,8 @@
         "like": "Hüvelykujj fel",
         "login": "Bejelentkezés",
         "logout": "Kijelentkezés",
+        "lowBandwidthModeOff": "Alacsony sávszélességű mód letiltása",
+        "lowBandwidthModeOn": "Alacsony sávszélességű mód engedélyezése",
         "lowerYourHand": "Kéz leengedése",
         "moreActions": "További műveletek",
         "moreOptions": "További beállítások",
@@ -1003,8 +1003,6 @@
     },
     "videoStatus": {
         "adjustFor": "Igazítsa a legjobb:",
-        "audioOnly": "CsH",
-        "audioOnlyExpanded": "Jelenleg az alacsony sávszélességű mód az aktív, vagyis csak hangot lehet fogadni és képernyőmegosztást.",
         "bestPerformance": "Teljesítményhez",
         "callQuality": "Videominőség",
         "hd": "MF",
@@ -1012,9 +1010,11 @@
         "highDefinition": "Magas felbontású",
         "highestQuality": "Minőséghez",
         "labelTooiltipNoVideo": "Nincs videó",
-        "labelTooltipAudioOnly": "Alacsony sávszélességű mód aktiválva",
+        "labelTooltipLowBandwidthMode": "Alacsony sávszélességű mód aktiválva",
         "ld": "AF",
         "ldTooltip": "Alacsony felbontású videó",
+        "lowBandwidthMode": "CsH",
+        "lowBandwidthModeExpanded": "Jelenleg az alacsony sávszélességű mód az aktív, vagyis csak hangot lehet fogadni és képernyőmegosztást.",
         "lowDefinition": "Alacsony felbontású",
         "onlyAudioAvailable": "„Csak hang” mód elérhető",
         "onlyAudioSupported": "Csak a hang támogatott ebben a böngészőben.",

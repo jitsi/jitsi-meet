@@ -36,9 +36,6 @@
         "phone": "هاتف",
         "speaker": "مكبر الصوت"
     },
-    "audioOnly": {
-        "audioOnly": "معدل تبادل البيانات منخفض"
-    },
     "breakoutRooms": {
         "actions": {
             "add": "أضف غرفة جانبية",
@@ -628,6 +625,9 @@
         "button": "ادعُ آخرين",
         "youAreAlone": "أنت بمفردك في المُلتقى"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "معدل تبادل البيانات منخفض"
+    },
     "me": "أنا",
     "notify": {
         "OldElectronAPPTitle": "ثغرة أمنية!",
@@ -1054,7 +1054,6 @@
         "Settings": "الإعدادات",
         "accessibilityLabel": {
             "Settings": "اظهِر/اخفِ الإعدادات",
-            "audioOnly": "بدل الصوت فقط",
             "audioRoute": "اختر جهاز الصوت",
             "boo": "Boo",
             "breakoutRoom": "الانضمام / مغادرة غرفة فرعية",
@@ -1084,6 +1083,7 @@
             "lobbyButton": "فعِّل/عطِّل وضع غرفة الانتظار",
             "localRecording": "اظهِر/اخفِ التحكم بالتسجيل المحلي",
             "lockRoom": "اظهِر/اخفِ كلمة مرور المُلتقى",
+            "lowBandwidthMode": "بدل الصوت فقط",
             "moreActions": "اظهِر/اخفِ قائمة المزيد من الإجراءات",
             "moreActionsMenu": "قائمة المزيد من الإجراءات",
             "moreOptions": "اظهر المزيد من الخيارت",
@@ -1121,8 +1121,6 @@
             "videomute": "بدِّل وضع اخفاء الفيديو"
         },
         "addPeople": "اضف أحدًا إلى المكالمة",
-        "audioOnlyOff": "عطِّل وضع معدَّل نقل البيانات المنخفص",
-        "audioOnlyOn": "فعِّل وضع نقل البيانات المنخفض",
         "audioRoute": "اختر جهاز الصوت",
         "audioSettings": "إعدادات الصوت",
         "authenticate": "اَجرِ عملية الاستيثاق",
@@ -1159,6 +1157,8 @@
         "lobbyButtonEnable": "فعِّل وضع غرفة الانتظار",
         "login": "ادخل",
         "logout": "اخرج",
+        "lowBandwidthModeOff": "عطِّل وضع معدَّل نقل البيانات المنخفص",
+        "lowBandwidthModeOn": "فعِّل وضع نقل البيانات المنخفض",
         "lowerYourHand": "اخفض يدك",
         "moreActions": "المزيد من الإجراءات",
         "moreOptions": "المزيد من الخيارات",
@@ -1237,8 +1237,6 @@
     },
     "videoStatus": {
         "adjustFor": "ضبط ل:",
-        "audioOnly": "صوت",
-        "audioOnlyExpanded": "أنت في وضع معدَّل البيانات المتبادلة  المنخفض. الصوت ومشاركة الشاشة هو المتاح فقط في هذا الوضع.",
         "bestPerformance": "أفضل أداء",
         "callQuality": "جودة الفيديو",
         "hd": "دقة عالية",
@@ -1246,9 +1244,11 @@
         "highDefinition": "دقة عالية",
         "highestQuality": "اعلى جودة",
         "labelTooiltipNoVideo": "بلا فيديو",
-        "labelTooltipAudioOnly": "فعِّل وضع معدَّل البيانات المتبادلة المنخفض",
+        "labelTooltipLowBandwidthMode": "فعِّل وضع معدَّل البيانات المتبادلة المنخفض",
         "ld": "دقة منخفضة",
         "ldTooltip": "عرض فيديو بدقة منخفضة",
+        "lowBandwidthMode": "صوت",
+        "lowBandwidthModeExpanded": "أنت في وضع معدَّل البيانات المتبادلة  المنخفض. الصوت ومشاركة الشاشة هو المتاح فقط في هذا الوضع.",
         "lowDefinition": "دقة منخفضة",
         "performanceSettings": "إعدادات الأداء",
         "sd": "دقة قياسية",

@@ -36,9 +36,6 @@
         "phone": "Tiliɣri",
         "speaker": "Asawaḍ"
     },
-    "audioOnly": {
-        "audioOnly": "Imesli kan"
-    },
     "calendarSync": {
         "addMeetingURL": "Rnu aseɣwen n temlilit",
         "confirmAddLink": "Tebɣiḍ ad ternuḍ aseɣwen n Jitsi i uneḍru-a?",
@@ -564,6 +561,9 @@
         "button": "Snubget-d wiyaḍ",
         "youAreAlone": "D kečč·kemm kan i yellan deg temlilit"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Imesli kan"
+    },
     "me": "nek",
     "notify": {
         "OldElectronAPPTitle": "Ur teǧhid ara tɣellist!",
@@ -891,7 +891,6 @@
         "Settings": "Iɣewwaren",
         "accessibilityLabel": {
             "Settings": "Sken/Fneẓ iɣewwaren",
-            "audioOnly": "Rmed/Sens imesli kan",
             "audioRoute": "Fren ibenk n yimesli",
             "boo": "Boo",
             "callQuality": "Sefrek taɣara n tvidyut",
@@ -915,6 +914,7 @@
             "lobbyButton": "Rmed/sens askar Lobby",
             "localRecording": "Ɛeddi ɣer yisenqaden n usekles adigan",
             "lockRoom": "Snefli awal uffir n temlilit",
+            "lowBandwidthMode": "Rmed/Sens imesli kan",
             "moreActions": "Ldi/mdel umuɣ n wugar n tigawin",
             "moreActionsMenu": "Umuɣ n wugar n tigawin",
             "moreOptions": "Sken ugar n textiṛiyin",
@@ -950,8 +950,6 @@
             "videomute": "Rmed/Sens tavidyut"
         },
         "addPeople": "Rnu-d imdanen ɣer usiwel-inek·inem",
-        "audioOnlyOff": "Sens askar n tehri n tesfift adday",
-        "audioOnlyOn": "Rmed askar n tehri n tesfift adday",
         "audioRoute": "Fren ibenk n yimesli",
         "audioSettings": "Iɣewwaren n umeslaw",
         "authenticate": "Sesteb",
@@ -981,6 +979,8 @@
         "lobbyButtonEnable": "Rmed askar Lobby",
         "login": "Qqen",
         "logout": "Tufɣa",
+        "lowBandwidthModeOff": "Sens askar n tehri n tesfift adday",
+        "lowBandwidthModeOn": "Rmed askar n tehri n tesfift adday",
         "lowerYourHand": "Ṣubb afus-ik·im",
         "moreActions": "Ugar n tigawin",
         "moreOptions": "Ugar n textiṛiyin",
@@ -1055,16 +1055,16 @@
         "pending": "{{displayName}} yettwanced-d"
     },
     "videoStatus": {
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Aql-ak·akem deg uskar n tehri n tesfift taddayt. Deg uskar-a ad d-tremseḍ kan ameslaw d beṭṭu n ugdil.",
         "callQuality": "Taɣara n tvidyut",
         "hd": "HD",
         "hdTooltip": "Awali n tvidyut n tbadut tafellayt",
         "highDefinition": "Tabadut tafellayt",
         "labelTooiltipNoVideo": "Ulac tavidyut",
-        "labelTooltipAudioOnly": "Askar n tehri n tesfift adday yermed",
+        "labelTooltipLowBandwidthMode": "Askar n tehri n tesfift adday yermed",
         "ld": "LD",
         "ldTooltip": "Awali n tvidyut n tbadut taddayt",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Aql-ak·akem deg uskar n tehri n tesfift taddayt. Deg uskar-a ad d-tremseḍ kan ameslaw d beṭṭu n ugdil.",
         "lowDefinition": "Tabadut taddayt",
         "sd": "SD",
         "sdTooltip": "Awali n tvidyut s tbadut taslugant",

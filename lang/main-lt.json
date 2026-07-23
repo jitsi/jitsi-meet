@@ -24,9 +24,6 @@
         "phone": "Telefonas",
         "speaker": "Garsiakalbis"
     },
-    "audioOnly": {
-        "audioOnly": "Mažas pralaidumas (tik garsas)"
-    },
     "calendarSync": {
         "addMeetingURL": "Įdėti susitikimo nuorodą",
         "confirmAddLink": "Ar norite pridėti Jitsi nuorodą į šį įvykį?",
@@ -433,6 +430,9 @@
         "button": "Pakvieskite kitus",
         "youAreAlone": "Jūs vienintelis(-ė) šiame susitikime"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Mažas pralaidumas (tik garsas)"
+    },
     "me": "Aš",
     "notify": {
         "connectedOneMember": "{{name}} prisijungė prie susitikimo",
@@ -595,7 +595,6 @@
         "Settings": "Nustatymai",
         "accessibilityLabel": {
             "Settings": "Perjungti nustatymus",
-            "audioOnly": "Tik audio perjungimas",
             "audioRoute": "Pasirinkite garso įrenginį",
             "callQuality": "Reguliuoti vaizdo kokybę",
             "cc": "Subtitru perjungimas",
@@ -610,6 +609,7 @@
             "kick": "Išspirti dalyvį",
             "localRecording": "Perjungti vietinę įrašų kontrolę",
             "lockRoom": "Uždėti slaptažodį šiam susitikimui",
+            "lowBandwidthMode": "Tik audio perjungimas",
             "moreActions": "Įjungti meniu „daugiau nustatymų“",
             "moreActionsMenu": "Daugiau nustatymų",
             "moreOptions": "Rodyti daugiau variantų",
@@ -634,8 +634,6 @@
             "videomute": "Perjungti vaizdo išjungimą"
         },
         "addPeople": "Pridėti žmonių prie pokalbio",
-        "audioOnlyOff": "Atjungti žemo pralaidumo rėžimą",
-        "audioOnlyOn": "Įjungti žemo pralaidumo rėžimą",
         "audioRoute": "Pasirinkti garso įrenginį",
         "authenticate": "Autentifikuoti",
         "callQuality": "Reguliuoti vaizdo kokybę",
@@ -654,6 +652,8 @@
         "invite": "Pakviesti žmones",
         "login": "Prisijungti",
         "logout": "Atsijungti",
+        "lowBandwidthModeOff": "Atjungti žemo pralaidumo rėžimą",
+        "lowBandwidthModeOn": "Įjungti žemo pralaidumo rėžimą",
         "lowerYourHand": "Nuleisti ranką",
         "moreActions": "Daugiau veiksmų",
         "moreOptions": "Daugiau parinkčių",
@@ -714,16 +714,16 @@
         "pending": "{{displayName}} buvo pakviestas(-a)"
     },
     "videoStatus": {
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Jūs mažo pralaidumo būsenoje. Šiame rėžime jūs galėsite tik girdėti ir dalintis ekranu.",
         "callQuality": "Vaizdo raiška",
         "hd": "HD",
         "hdTooltip": "Vaizdas aukštos kokybės",
         "highDefinition": "Aukšta kokybė",
         "labelTooiltipNoVideo": "Jokio vaizdo",
-        "labelTooltipAudioOnly": "Žemo pralaidumo būsena aktyvuota",
+        "labelTooltipLowBandwidthMode": "Žemo pralaidumo būsena aktyvuota",
         "ld": "LD",
         "ldTooltip": "Žemos kokybės video peržiūra",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Jūs mažo pralaidumo būsenoje. Šiame rėžime jūs galėsite tik girdėti ir dalintis ekranu.",
         "lowDefinition": "Žema kokybė",
         "onlyAudioAvailable": "Galimas tik garso perdavimas",
         "onlyAudioSupported": "Mes palaikome tik garso perdavimą šioje naršyklėje.",

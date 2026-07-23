@@ -1,6 +1,6 @@
 import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT } from '../app/actionTypes';
-import { setAudioOnly } from '../audio-only/actions';
+import { setLowBandwidthMode } from '../low-bandwidth-mode/actions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { SETTINGS_UPDATED } from './actionTypes';
@@ -27,7 +27,7 @@ MiddlewareRegistry.register(store => next => action => {
     case SETTINGS_UPDATED:
         _maybeHandleCallIntegrationChange(action);
         _maybeCrashReportingChange(action);
-        _maybeSetAudioOnly(store, action);
+        _maybeSetLowBandwidthMode(store, action);
         break;
     }
 
@@ -80,17 +80,17 @@ function _maybeCrashReportingChange({ settings: { disableCrashReporting } }: {
 }
 
 /**
- * Updates {@code startAudioOnly} flag if it's updated in the settings.
+ * Updates {@code startLowBandwidthMode} flag if it's updated in the settings.
  *
  * @param {Store} store - The redux store.
  * @param {Object} action - The redux action.
  * @private
  * @returns {void}
  */
-function _maybeSetAudioOnly(
+function _maybeSetLowBandwidthMode(
         { dispatch }: IStore,
-        { settings: { startAudioOnly } }: { settings: Partial<ISettingsState>; }) {
-    if (typeof startAudioOnly === 'boolean') {
-        dispatch(setAudioOnly(startAudioOnly));
+        { settings: { startLowBandwidthMode } }: { settings: Partial<ISettingsState>; }) {
+    if (typeof startLowBandwidthMode === 'boolean') {
+        dispatch(setLowBandwidthMode(startLowBandwidthMode));
     }
 }

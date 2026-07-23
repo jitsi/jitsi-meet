@@ -39,9 +39,6 @@
         "phone": "Telefoon",
         "speaker": "Luidspreker"
     },
-    "audioOnly": {
-        "audioOnly": "Beperkte bandbreedte"
-    },
     "audioTranslation": {
         "disabledForRoom": "Audiovertaling is uitgeschakeld voor deze vergadering.",
         "errorForbidden": "U hebt geen toestemming om audiovertaling te gebruiken.",
@@ -835,6 +832,9 @@
         "button": "Anderen uitnodigen",
         "youAreAlone": "U bent de enige in de vergadering"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Beperkte bandbreedte"
+    },
     "me": "ik",
     "notify": {
         "OldElectronAPPTitle": "Beveiligingskwetsbaarheid!",
@@ -1354,7 +1354,6 @@
         "Settings": "Instellingen",
         "accessibilityLabel": {
             "Settings": "Instellingen in- of uitschakelen",
-            "audioOnly": "Alleen audio in- of uitschakelen",
             "audioRoute": "Het afspeelapparaat selecteren",
             "audioTranslation": "Audio vertalen",
             "boo": "Boe",
@@ -1399,6 +1398,7 @@
             "localRecording": "Besturingselementen voor lokale opname in- of uitschakelen",
             "lockRoom": "Wachtwoord voor vergadering in- of uitschakelen",
             "love": "Hart",
+            "lowBandwidthMode": "Alleen audio in- of uitschakelen",
             "lowerHand": "Hand omlaag doen",
             "moreActions": "Meer acties menu in- of uitschakelen",
             "moreActionsMenu": "Meer acties menu",
@@ -1461,8 +1461,6 @@
                 "label": "Stereo"
             }
         },
-        "audioOnlyOff": "Lage bandbreedte-modus uitschakelen",
-        "audioOnlyOn": "Lage bandbreedte-modus inschakelen",
         "audioRoute": "Het afspeelapparaat selecteren",
         "audioSettings": "Audio-instellingen",
         "audioTranslation": "Audiovertaling",
@@ -1509,6 +1507,8 @@
         "login": "Aanmelden",
         "logout": "Afmelden",
         "love": "Hart",
+        "lowBandwidthModeOff": "Lage bandbreedte-modus uitschakelen",
+        "lowBandwidthModeOn": "Lage bandbreedte-modus inschakelen",
         "lowerYourHand": "Uw hand laten zakken",
         "moreActions": "Meer acties",
         "moreOptions": "Meer opties",
@@ -1607,8 +1607,6 @@
     },
     "videoStatus": {
         "adjustFor": "Aanpassen voor:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "U bent in beperkte bandbreedte-modus. In deze modus ontvangt u alleen audio en schermdeling.",
         "bestPerformance": "Beste prestatie",
         "callQuality": "Videokwaliteit",
         "hd": "HD",
@@ -1616,9 +1614,11 @@
         "highDefinition": "Hoge resolutie",
         "highestQuality": "Hoogste kwaliteit",
         "labelTooiltipNoVideo": "Geen video",
-        "labelTooltipAudioOnly": "Beperkte bandbreedte-modus ingeschakeld",
+        "labelTooltipLowBandwidthMode": "Beperkte bandbreedte-modus ingeschakeld",
         "ld": "LD",
         "ldTooltip": "U bekijkt video in lage resolutie",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "U bent in beperkte bandbreedte-modus. In deze modus ontvangt u alleen audio en schermdeling.",
         "lowDefinition": "Lage resolutie",
         "performanceSettings": "Prestatie instellingen",
         "recording": "Deze bijeenkomst wordt opgenomen.",

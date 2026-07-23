@@ -3,7 +3,6 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
-import { SET_AUDIO_ONLY } from '../../base/audio-only/actionTypes';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -13,6 +12,7 @@ import { getCurrentConference } from '../../base/conference/functions';
 import { SET_CONFIG } from '../../base/config/actionTypes';
 import { AUDIO_FOCUS_DISABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
+import { SET_LOW_BANDWIDTH_MODE } from '../../base/low-bandwidth-mode/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import { parseURIString } from '../../base/util/uri';
 
@@ -59,7 +59,7 @@ MiddlewareRegistry.register(store => next => action => {
     * conference after the password prompt appears.
     */
     case CONFERENCE_JOINED:
-    case SET_AUDIO_ONLY:
+    case SET_LOW_BANDWIDTH_MODE:
         return _updateAudioMode(store, next, action);
 
     case SET_CONFIG: {
@@ -159,7 +159,7 @@ function _updateAudioMode({ getState }: IStore, next: Function, action: AnyActio
     const result = next(action);
     const state = getState();
     const conference = getCurrentConference(state);
-    const { enabled: audioOnly } = state['features/base/audio-only'];
+    const { enabled: audioOnly } = state['features/base/low-bandwidth-mode'];
     let mode: string;
 
     if (getFeatureFlag(state, AUDIO_FOCUS_DISABLED, false)) {

@@ -24,9 +24,6 @@
         "phone": "Telefon",
         "speaker": "Difuzor"
     },
-    "audioOnly": {
-        "audioOnly": "Doar audio"
-    },
     "calendarSync": {
         "addMeetingURL": "Inserați un link de apel video",
         "confirmAddLink": "Doriți să adaugați un link Jitsi la acest apel video?",
@@ -436,6 +433,9 @@
     },
     "lockRoomPassword": "parola",
     "lockRoomPasswordUppercase": "Parolă",
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Doar audio"
+    },
     "me": "Eu",
     "notify": {
         "connectedOneMember": "{{name}} s-a alăturat apelului video",
@@ -601,7 +601,6 @@
         "Settings": "Setări",
         "accessibilityLabel": {
             "Settings": "Comutați la setări",
-            "audioOnly": "Comutați doar audio",
             "audioRoute": "Selectați dispozitivul pentru sunet",
             "callQuality": "Gestionați calitatea apelului",
             "cc": "Comutați subtitrările",
@@ -616,6 +615,7 @@
             "kick": "Eliminați participant",
             "localRecording": "Comutați la panoul de control video",
             "lockRoom": "Comutați la parola de întâlnire",
+            "lowBandwidthMode": "Comutați doar audio",
             "moreActions": "Afișați meniul cu acțiuni suplimentare",
             "moreActionsMenu": "Meniu acțiuni suplimentare",
             "moreOptions": "Arată mai multe opțiuni",
@@ -639,8 +639,6 @@
             "videomute": "Activați / dezactivați înregistrarea"
         },
         "addPeople": "Adăugați persoane în apel",
-        "audioOnlyOff": "Dezactivați modul 'doar audio'",
-        "audioOnlyOn": "Activați modul 'doar audio'",
         "audioRoute": "Selectați dispozitivul pentru sunet",
         "authenticate": "Autentificare",
         "callQuality": "Gestionați calitatea apelului",
@@ -657,6 +655,8 @@
         "invite": "Adăugați persoane",
         "login": "Conectare",
         "logout": "Deconectare",
+        "lowBandwidthModeOff": "Dezactivați modul 'doar audio'",
+        "lowBandwidthModeOn": "Activați modul 'doar audio'",
         "lowerYourHand": "Coborâți mâna",
         "moreActions": "Acțiuni suplimentare",
         "mute": "Porniți / Opriți sunetul",
@@ -707,14 +707,14 @@
         "pending": "{{displayName}} a fost invitat"
     },
     "videoStatus": {
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Sunteți în modul 'doar audio'. Acest mod reduce transferul de date și nu veți putea vizualiza imaginile celorlalți.",
         "callQuality": "Calitate apel",
         "hd": "HD",
         "highDefinition": "Calitate superioară",
         "labelTooiltipNoVideo": "Fără video",
-        "labelTooltipAudioOnly": "Modul doar audio activat",
+        "labelTooltipLowBandwidthMode": "Modul doar audio activat",
         "ld": "LD",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Sunteți în modul 'doar audio'. Acest mod reduce transferul de date și nu veți putea vizualiza imaginile celorlalți.",
         "lowDefinition": "Calitate redusă",
         "onlyAudioAvailable": "Doar audio este disponibil",
         "onlyAudioSupported": "În acest navigator este suportat doar 'mod audio'.",
