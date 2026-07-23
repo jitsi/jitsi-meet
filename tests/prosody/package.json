@@ -15,7 +15,7 @@
     "@xmpp/client": "^0.13.1",
     "@xmpp/xml": "^0.13.1",
     "jsonwebtoken": "^9.0.0",
-    "testcontainers": "^10.13.2"
+    "testcontainers": "^11.14.0"
   },
   "devDependencies": {
     "allure-commandline": "2.32.0",
