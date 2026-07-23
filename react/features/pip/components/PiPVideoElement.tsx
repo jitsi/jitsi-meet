@@ -137,8 +137,15 @@ const PiPVideoElement: React.FC = () => {
     /**
      * Effect: Window blur/focus and visibility change listeners.
      * Enters PiP on blur, exits on focus (matches old AOT behavior).
+     * When Document PiP is supported, these are skipped — MediaSession handles tab switches.
      */
     useEffect(() => {
+        // Document PiP uses MediaSession API for tab-switch detection.
+        // Skip blur/focus handlers to avoid competing with the Document PiP portal.
+        if ('documentPictureInPicture' in window) {
+            return;
+        }
+
         const videoElement = videoRef.current;
 
         if (!videoElement) {

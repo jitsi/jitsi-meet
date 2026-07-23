@@ -35,6 +35,7 @@ import {
     getParticipantsPaneOpen,
     isParticipantsPaneEnabled
 } from '../participants-pane/functions';
+import PiPTriggerButton from '../pip/components/web/PiPTriggerButton';
 import { useParticipantPaneButton } from '../participants-pane/hooks.web';
 import { usePollsButton } from '../polls/hooks.web';
 import { addReactionToBuffer } from '../reactions/actions.any';
@@ -66,6 +67,7 @@ import { useWhiteboardButton } from '../whiteboard/hooks';
 import { setFullScreen } from './actions.web';
 import DownloadButton from './components/DownloadButton';
 import HelpButton from './components/HelpButton';
+import AudioMuteButton from './components/web/AudioMuteButton';
 import AudioSettingsButton from './components/web/AudioSettingsButton';
 import CustomOptionButton from './components/web/CustomOptionButton';
 import FullscreenButton from './components/web/FullscreenButton';
@@ -73,6 +75,7 @@ import LinkToSalesforceButton from './components/web/LinkToSalesforceButton';
 import ProfileButton from './components/web/ProfileButton';
 import ShareDesktopButton from './components/web/ShareDesktopButton';
 import ToggleCameraButton from './components/web/ToggleCameraButton';
+import VideoMuteButton from './components/web/VideoMuteButton';
 import VideoSettingsButton from './components/web/VideoSettingsButton';
 import { isButtonEnabled, isDesktopShareButtonDisabled } from './functions.web';
 import { ICustomToolbarButton, IToolboxButton, ToolbarButton } from './types';
@@ -84,9 +87,21 @@ const microphone = {
     group: 0
 };
 
+const audioMute = {
+    key: 'audio-mute',
+    Content: AudioMuteButton,
+    group: 0
+};
+
 const camera = {
     key: 'camera',
     Content: VideoSettingsButton,
+    group: 0
+};
+
+const videoMute = {
+    key: 'video-mute',
+    Content: VideoMuteButton,
     group: 0
 };
 
@@ -169,6 +184,12 @@ const help = {
     key: 'help',
     Content: HelpButton,
     group: 4
+};
+
+const togglePiP = {
+    key: 'toggle-pip',
+    Content: PiPTriggerButton,
+    group: 2
 };
 
 /**
@@ -275,6 +296,24 @@ function useInviteButton() {
 }
 
 /**
+ * Hide PiP toggle button when browser supports netiher Document PiP nor Video PiP (eg: firefox)
+ *
+ * @returns {Object | undefined}
+ */
+function usePipToggleButton() {
+    const { pip } = useSelector((state: IReduxState) => state['features/base/config']);
+
+    if (pip?.showToolbarButton === false) {
+        return;
+    }
+
+    //TODO: add support for Video PiP fallback. Hide only when both are not supported
+    if ('documentPictureInPicture' in window) {
+        return togglePiP;
+    }
+}
+
+/**
 * Returns all buttons that could be rendered.
 *
 * @param {Object} _customToolbarButtons - An array containing custom buttons objects.
@@ -309,8 +348,11 @@ export function useToolboxButtons(
     const _help = useHelpButton();
     const _invite = useInviteButton();
     const customPanel = useCustomPanelButton();
+    const togglePiPButton = usePipToggleButton();
 
     const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
+        'audio-mute': audioMute,
+        'video-mute': videoMute,
         microphone,
         camera,
         profile,
@@ -321,6 +363,7 @@ export function useToolboxButtons(
         'participants-pane': participants,
         invite: _invite,
         tileview,
+        'toggle-pip': togglePiPButton,
         'toggle-camera': toggleCameraButton,
         videoquality: videoQuality,
         fullscreen: _fullscreen,

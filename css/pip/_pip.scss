@@ -1,0 +1,170 @@
+/* Document Picture-in-Picture Styles */
+
+.doc-pip-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    background: #141517;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    overflow: hidden;
+    user-select: none;
+    position: relative;
+}
+
+.doc-pip-container *,
+.doc-pip-container *::before,
+.doc-pip-container *::after {
+    box-sizing: border-box;
+}
+
+.doc-pip-video-area {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    position: relative;
+}
+
+.doc-pip-videos-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.doc-pip-compact-layout {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: #000;
+}
+
+.doc-pip-video-element {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+}
+
+.doc-pip-participant-name {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #fff;
+}
+
+.doc-pip-avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: #1a1a1a;
+}
+
+/* Controls overlay - appears on hover.
+   Matches web toolbox appearance from JSS theme (constants.web.ts). */
+.doc-pip-controls {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: max-content;
+    background: var(--toolbox-background-color, #141414);
+    border-radius: 6px;
+    box-shadow:
+        0 2px 8px 4px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.doc-pip-video-area:hover .doc-pip-controls {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.doc-pip-controls .toolbox-button {
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    line-height: 3rem;
+    text-align: center;
+}
+
+.doc-pip-controls .toolbox-icon {
+    display: flex;
+    border-radius: 3px;
+    flex-direction: column;
+    font-size: 1.5rem;
+    height: 48px;
+    justify-content: center;
+    width: 48px;
+    background: transparent;
+    transition: background 0.15s ease;
+}
+
+.embedded-doc-pip .doc-pip-controls .toolbox-icon {
+    align-items: center;
+}
+
+.embedded-doc-pip .doc-pip-controls .toolbox-icon svg {
+    fill: #FFFFFF;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .doc-pip-controls .toolbox-icon:hover {
+        background: #525252;
+    }
+
+    .doc-pip-controls .toolbox-icon:active {
+        background: #3D3D3D;
+    }
+}
+
+.doc-pip-controls .toolbox-icon.toggled {
+    background: #3D3D3D;
+}
+
+.doc-pip-controls .toolbox-icon.disabled {
+    cursor: initial !important;
+    background: #C2C2C2 !important;
+}
+
+.doc-pip-controls .toolbox-icon.disabled svg {
+    fill: #858585 !important;
+}
+
+.doc-pip-controls .toolbox-icon.hangup-button {
+    background: #CB2233;
+}
+
+.doc-pip-controls .toolbox-icon.hangup-button svg {
+    fill: #FFFFFF;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .doc-pip-controls .toolbox-icon.hangup-button:hover {
+        background: #E04757;
+    }
+
+    .doc-pip-controls .toolbox-icon.hangup-button:active {
+        background: #A21B29;
+    }
+}

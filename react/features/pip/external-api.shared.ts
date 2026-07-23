@@ -22,10 +22,33 @@ function isElectron(): boolean {
  * @param {Object} pipConfig - The pip config object.
  * @returns {boolean} - True if PiP is enabled.
  */
-export function isPiPEnabled(pipConfig?: { disabled?: boolean; }): boolean {
+export function isPiPEnabled(pipConfig?: {
+    disabled?: boolean;
+    documentPiP?: {
+        embedMode?: 'auto' | 'disabled';
+    };
+}): boolean {
     if (pipConfig?.disabled) {
         return false;
     }
 
-    return isElectron();
+    return isElectron() || isEmbeddedDocumentPiPEnabled(pipConfig);
 }
+
+/**
+ * Checks whether host-assisted Document PiP is explicitly enabled.
+ * A missing embedMode is disabled for backwards compatibility.
+ *
+ * @param {Object} pipConfig - The pip config object.
+ * @returns {boolean} - True if embedded Document PiP is enabled.
+ */
+export function isEmbeddedDocumentPiPEnabled(pipConfig?: {
+    disabled?: boolean;
+    documentPiP?: {
+        embedMode?: 'auto' | 'disabled';
+    };
+}): boolean {
+    return pipConfig?.disabled !== true && pipConfig?.documentPiP?.embedMode === 'auto';
+}
+
+export const DOCUMENT_PIP_TRANSPORT_SCOPE = 'jitsi_document_pip_renderer';

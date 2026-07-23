@@ -1,6 +1,7 @@
 /* global __dirname */
 
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const { createHash } = require('crypto');
 const fs = require('fs');
 const { join, resolve } = require('path');
 const process = require('process');
@@ -51,6 +52,61 @@ function getBundleAnalyzerPlugin(analyzeBundle, name) {
         generateStatsFile: true,
         statsFilename: `${name}-stats.json`
     }) ];
+}
+
+/**
+ * Emits the Document PiP renderer HTML with a cache version derived from the
+ * generated renderer bundle.
+ */
+class DocumentPiPHtmlPlugin {
+    /**
+     * Creates a plugin instance.
+     *
+     * @param {boolean} isProduction - Whether the minified bundle is emitted.
+     */
+    constructor(isProduction) {
+        this._isProduction = isProduction;
+    }
+
+    /**
+     * Registers the HTML generation hook.
+     *
+     * @param {Object} compiler - The Webpack compiler.
+     * @returns {void}
+     */
+    apply(compiler) {
+        const pluginName = 'DocumentPiPHtmlPlugin';
+
+        compiler.hooks.thisCompilation.tap(pluginName, compilation => {
+            compilation.hooks.processAssets.tap({
+                name: pluginName,
+                stage: webpack.Compilation.PROCESS_ASSETS_STAGE_SUMMARIZE
+            }, () => {
+                const bundleName = `documentpip${this._isProduction ? '.min' : ''}.js`;
+                const bundle = compilation.getAsset(bundleName);
+
+                if (!bundle) {
+                    throw new Error(`Unable to generate document-pip.html: ${bundleName} was not emitted`);
+                }
+
+                const template = fs.readFileSync(resolve(__dirname, 'static/document-pip.html'), 'utf8');
+                const placeholder = '__DOCUMENT_PIP_BUNDLE__';
+
+                if (!template.includes(placeholder)) {
+                    throw new Error(`Unable to generate document-pip.html: ${placeholder} is missing`);
+                }
+
+                const hash = createHash('sha256')
+                    .update(bundle.source.source())
+                    .digest('hex')
+                    .slice(0, 12);
+                const bundleURL = `/libs/${bundleName}?v=${hash}`;
+                const html = template.replace(placeholder, bundleURL);
+
+                compilation.emitAsset('document-pip.html', new webpack.sources.RawSource(html));
+            });
+        });
+    }
 }
 
 /**
@@ -350,6 +406,16 @@ module.exports = (_env, argv) => {
             plugins: [
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'alwaysontop')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 800 * 1024) },
+        { ...config,
+            entry: {
+                'documentpip': './react/features/pip/document-pip-renderer.tsx'
+            },
+            plugins: [
+                ...config.plugins,
+                new DocumentPiPHtmlPlugin(isProduction),
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'documentpip')
             ],
             performance: getPerformanceHints(perfHintOptions, 800 * 1024) },
         { ...config,

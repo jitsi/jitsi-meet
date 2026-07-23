@@ -12,3 +12,22 @@ export interface IMediaSessionState {
      */
     microphoneActive: boolean;
 }
+
+/**
+ * Lifecycle of a host-owned Document PiP window.
+ */
+export enum EmbeddedDocumentPiPLifecycle {
+    ACTIVE = 'active',
+    IDLE = 'idle',
+    REQUESTING = 'requesting',
+    UNAVAILABLE = 'unavailable'
+}
+
+/**
+ * Capability negotiation state for host-owned embedded Document PiP.
+ */
+export enum EmbeddedDocumentPiPCapability {
+    AVAILABLE = 'available',
+    UNAVAILABLE = 'unavailable',
+    UNKNOWN = 'unknown'
+}

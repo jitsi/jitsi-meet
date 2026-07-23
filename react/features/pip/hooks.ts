@@ -1,11 +1,25 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { IReduxState } from '../app/types';
 import IconUserSVG from '../base/icons/svg/user.svg?raw';
 import { IParticipant } from '../base/participants/types';
+import { isEmbedded } from '../base/util/embedUtils';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
-import { renderAvatarOnCanvas } from './functions';
+import { exitPiP, handleEmbeddedDocumentPiPCapabilityTimeout, openDocumentPiP } from './actions';
+import {
+    isEmbeddedDocumentPiPAvailable,
+    isEmbeddedDocumentPiPCapabilityPending
+} from './embeddedDocumentPiP';
+import {
+    cleanupMediaSessionHandlers,
+    getStoredPiPWindow,
+    renderAvatarOnCanvas,
+    setupMediaSessionHandlers
+} from './functions';
 import logger from './logger';
+import { isDocumentPiPSupported } from './utils';
 
 /**
  * Canvas dimensions for PiP avatar rendering.
@@ -18,6 +32,7 @@ const CANVAS_HEIGHT = Math.floor(CANVAS_WIDTH / TILE_ASPECT_RATIO);
  * We manually request frames after drawing to ensure capture.
  */
 const CANVAS_FRAME_RATE = 0;
+const EMBEDDED_DOCUMENT_PIP_CAPABILITY_TIMEOUT = 3000;
 
 /**
  * Options for the useCanvasAvatar hook.
@@ -180,4 +195,119 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
     return {
         canvasStreamRef: streamRef
     };
+}
+
+/**
+ * Manages Document Picture-in-Picture via the MediaSession API.
+ * Opens a PiP window when a tab switch occurs using the
+ * enterpictureinpicture MediaSession action handler.
+ * Closes the PiP window when the tab becomes visible again.
+ * Content is rendered into the PiP window via the DocumentPiPPortal.
+ *
+ * MediaSession playback state is kept in sync by the subscriber in
+ * subscriber.ts, so this hook only handles the window lifecycle.
+ *
+ * @see https://googlechrome.github.io/samples/media-session/video-conferencing.html
+ *
+ * @returns {void}
+ */
+export function useDocumentPiPMediaSession() {
+    const dispatch = useDispatch();
+    const embedded = isEmbedded();
+    const embeddedDocumentPiPAvailable = useSelector(isEmbeddedDocumentPiPAvailable);
+    const embeddedDocumentPiPCapabilityPending = useSelector(isEmbeddedDocumentPiPCapabilityPending);
+    const isPiPActive = useSelector((state: IReduxState) => state['features/pip']?.isPiPActive ?? false);
+    const documentPiPAvailable = embedded
+        ? embeddedDocumentPiPAvailable
+        : isDocumentPiPSupported();
+
+    const openDocumentPip = useCallback(async (reason?: string) => {
+        if (!documentPiPAvailable) {
+            return;
+        }
+
+        if (!embedded && getStoredPiPWindow()) {
+            return;
+        }
+
+        try {
+            await dispatch(openDocumentPiP(reason));
+        } catch (error) {
+            logger.warn('Failed to open Document PiP:', error);
+        }
+    }, [ dispatch, documentPiPAvailable, embedded ]);
+
+    useEffect(() => {
+        if (!documentPiPAvailable
+                || !('mediaSession' in navigator)
+                || typeof navigator.mediaSession?.setActionHandler !== 'function') {
+            return;
+        }
+
+        try {
+            // @ts-ignore - enterpictureinpicture is a newer MediaSession action.
+            navigator.mediaSession.setActionHandler('enterpictureinpicture', async (details: any) => {
+                const reason = details?.reason ?? details?.enterPictureInPictureReason;
+
+                logger.info('MediaSession requested Document PiP:', {
+                    embedded,
+                    reason: reason || 'unknown'
+                });
+
+                await openDocumentPip(reason);
+            });
+        } catch (error) {
+            logger.warn('enterpictureinpicture MediaSession action not supported:', error);
+        }
+
+        return () => {
+            try {
+                navigator.mediaSession.setActionHandler('enterpictureinpicture' as any, null);
+            } catch (error) {
+                logger.warn('Failed to clear enterpictureinpicture MediaSession handler:', error);
+            }
+        };
+    }, [ documentPiPAvailable, embedded, openDocumentPip ]);
+
+    useEffect(() => {
+        if (!embedded || !embeddedDocumentPiPCapabilityPending) {
+            return;
+        }
+
+        const timeout = window.setTimeout(() => {
+            dispatch(handleEmbeddedDocumentPiPCapabilityTimeout());
+        }, EMBEDDED_DOCUMENT_PIP_CAPABILITY_TIMEOUT);
+
+        return () => window.clearTimeout(timeout);
+    }, [ dispatch, embedded, embeddedDocumentPiPCapabilityPending ]);
+
+    useEffect(() => {
+        if (!documentPiPAvailable) {
+            return;
+        }
+
+        const onVisibilityChange = () => {
+            const shouldClose = embedded ? isPiPActive : Boolean(getStoredPiPWindow());
+
+            if (!document.hidden && shouldClose) {
+                dispatch(exitPiP());
+            }
+        };
+
+        document.addEventListener('visibilitychange', onVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', onVisibilityChange);
+        };
+    }, [ dispatch, documentPiPAvailable, embedded, isPiPActive ]);
+
+    useEffect(() => {
+        if (!documentPiPAvailable || !isPiPActive) {
+            return;
+        }
+
+        setupMediaSessionHandlers(dispatch);
+
+        return cleanupMediaSessionHandlers;
+    }, [ dispatch, documentPiPAvailable, isPiPActive ]);
 }
