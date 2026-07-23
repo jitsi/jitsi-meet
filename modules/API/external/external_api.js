@@ -978,7 +978,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             }
 
             const origin = new URL(this._url).origin;
-            const rendererURL = new URL('/static/document-pip.html', this._url);
+            const rendererURL = new URL('/libs/document-pip.html', this._url);
             const renderer = pipWindow.document.createElement('iframe');
 
             pipWindow.document.body.style.cssText = 'margin:0;overflow:hidden;background:#141517;';

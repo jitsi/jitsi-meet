@@ -51,6 +51,7 @@ deploy-appbundle:
 		$(BUILD_DIR)/alwaysontop.min.js.map \
 		$(BUILD_DIR)/documentpip.min.js \
 		$(BUILD_DIR)/documentpip.min.js.map \
+		$(BUILD_DIR)/document-pip.html \
 		$(BUILD_DIR)/face-landmarks-worker.min.js \
 		$(BUILD_DIR)/face-landmarks-worker.min.js.map \
 		$(BUILD_DIR)/noise-suppressor-worklet.min.js \
