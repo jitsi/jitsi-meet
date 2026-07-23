@@ -13,7 +13,6 @@ import {
 import {
     clearAudioTranslation,
     clearReceivingTranslatedSources,
-    setParticipantAudioTranslationLanguage,
     setTranslationListeners,
     updateTranslatedSourceSending
 } from './actions';
@@ -86,8 +85,8 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 /**
- * Surfaces audio-translation request failures reported by the bridge-side component: shows a notification
- * describing the error condition and reverts the optimistic language selection for the affected speakers.
+ * Surfaces audio-translation request failures reported by the bridge-side component: shows a notification and
+ * resets translation state (redux + lib-jitsi-meet) so the UI reflects the failure and re-enabling works.
  */
 StateListenerRegistry.register(
     state => state['features/base/conference'].conference,
@@ -104,17 +103,10 @@ StateListenerRegistry.register(
                     titleKey: ERROR_NOTIFICATION_KEYS[error] ?? DEFAULT_ERROR_KEY
                 }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
-                if (error === JitsiAudioTranslationErrors.SUBSCRIPTION_LIMIT_REACHED) {
-                    // Too many speakers translated at once — reset everything; the notification guides the
-                    // user to enable translation per participant instead.
-                    dispatch(clearAudioTranslation());
-
-                    return;
-                }
-
-                // Otherwise undo the optimistic selection only for the speakers the failed request touched.
-                endpointIds.forEach(endpointId =>
-                    dispatch(setParticipantAudioTranslationLanguage(endpointId, null)));
+                // The optimistic selection didn't take. Reset everything: clears redux (UI reflects off)
+                // and, via conference.clearTranslation(), resets lib-jitsi-meet's language state so
+                // re-enabling isn't deduped to a no-op.
+                dispatch(clearAudioTranslation());
             });
     });
 
