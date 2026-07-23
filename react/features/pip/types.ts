@@ -149,3 +149,19 @@ export interface IWebKitPictureInPictureVideoElement extends HTMLVideoElement {
      */
     webkitSupportsPresentationMode?: (mode: WebKitPresentationMode) => boolean;
 }
+
+export enum EmbeddedDocumentPiPLifecycle {
+    ACTIVE = 'active',
+    IDLE = 'idle',
+    REQUESTING = 'requesting',
+    UNAVAILABLE = 'unavailable'
+}
+
+/**
+ * Capability negotiation state for host-owned embedded Document PiP.
+ */
+export enum EmbeddedDocumentPiPCapability {
+    AVAILABLE = 'available',
+    UNAVAILABLE = 'unavailable',
+    UNKNOWN = 'unknown'
+}

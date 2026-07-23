@@ -21,7 +21,7 @@ const IS_DOCUMENT_PIP_SUPPORTED = isDocumentPiPSupported();
 function PiP() {
     const showPiP = useSelector(shouldShowPiP);
 
-    if (!showPiP) {
+     if (!showPiP) {
         return null;
     }
 

@@ -5,6 +5,7 @@ import { IReduxState, IStore } from '../app/types';
 import IconUserSVG from '../base/icons/svg/user.svg?raw';
 import { browser } from '../base/lib-jitsi-meet';
 import { IParticipant } from '../base/participants/types';
+import { isEmbedded } from '../base/util/embedUtils';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
 import { hidePiP, openDocumentPiP } from './actions';
@@ -12,8 +13,15 @@ import PiPTriggerButton from './components/web/PiPTriggerButton';
 import {
     isDocumentPiPSupported,
     renderAvatarOnCanvas,
+    setupMediaSessionHandlers,
     shouldShowPiP,
-} from './functions';
+} from "./functions";
+
+import {
+    isEmbeddedDocumentPiPAvailable,
+    isEmbeddedDocumentPiPCapabilityPending
+} from './embeddedDocumentPiP';
+
 import logger from './logger';
 
 /**
@@ -27,6 +35,7 @@ const CANVAS_HEIGHT = Math.floor(CANVAS_WIDTH / TILE_ASPECT_RATIO);
  * We manually request frames after drawing to ensure capture.
  */
 const CANVAS_FRAME_RATE = 0;
+const EMBEDDED_DOCUMENT_PIP_CAPABILITY_TIMEOUT = 3000;
 
 const togglePiP = {
     key: 'toggle-pip',
@@ -257,8 +266,18 @@ export function useDocumentPiPMediaSession() {
         [ dispatch ]
     );
 
+    const embedded = isEmbedded();
+    const embeddedDocumentPiPAvailable = useSelector(isEmbeddedDocumentPiPAvailable);
+    const embeddedDocumentPiPCapabilityPending = useSelector(isEmbeddedDocumentPiPCapabilityPending);
+    const isPiPActive = useSelector((state: IReduxState) => state['features/pip']?.isPiPActive ?? false);
+    const documentPiPAvailable = embedded
+        ? embeddedDocumentPiPAvailable
+        : isDocumentPiPSupported();
+
     useEffect(() => {
-        if (!isDocumentPiPSupported()) {
+        if (!documentPiPAvailable
+                || !('mediaSession' in navigator)
+                || typeof navigator.mediaSession?.setActionHandler !== 'function') {
             return;
         }
 
@@ -289,7 +308,19 @@ export function useDocumentPiPMediaSession() {
     }, [ openDocumentPip ]);
 
     useEffect(() => {
-        if (!isDocumentPiPSupported()) {
+        if (!embedded || !embeddedDocumentPiPCapabilityPending) {
+            return;
+        }
+
+        const timeout = window.setTimeout(() => {
+            dispatch(handleEmbeddedDocumentPiPCapabilityTimeout());
+        }, EMBEDDED_DOCUMENT_PIP_CAPABILITY_TIMEOUT);
+
+        return () => window.clearTimeout(timeout);
+    }, [ dispatch, embedded, embeddedDocumentPiPCapabilityPending ]);
+
+    useEffect(() => {
+        if (!documentPiPAvailable) {
             return;
         }
 
@@ -306,7 +337,17 @@ export function useDocumentPiPMediaSession() {
         return () => {
             document.removeEventListener('visibilitychange', onVisibilityChange);
         };
-    }, [ dispatch ]);
+    }, [ dispatch, documentPiPAvailable, embedded, isPiPActive ]);
+
+    useEffect(() => {
+        if (!documentPiPAvailable || !isPiPActive) {
+            return;
+        }
+
+        setupMediaSessionHandlers(dispatch);
+
+        return cleanupMediaSessionHandlers;
+    }, [ dispatch, documentPiPAvailable, isPiPActive ]);
 }
 
 /**
