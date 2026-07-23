@@ -10,11 +10,11 @@
 
         &.disabled, .disabled & {
             cursor: initial;
-            color: #929292;
-            background-color: #36383c;
+            color: $disabledToolbarIconColor;
+            background-color: $disabledToolbarBackgroundColor;
 
             &:hover {
-                background-color: #36383c;
+                background-color: $disabledToolbarBackgroundColor;
             }
         }
     }
@@ -39,10 +39,10 @@
         }
 
         &.settings-button-small-icon--disabled {
-            background: #36383C;
+            background: $disabledToolbarBackgroundColor;
 
             & svg {
-                fill: #929292;
+                fill: $disabledToolbarIconColor;
             }
         }
     }
@@ -52,11 +52,11 @@
     }
 
     &--disabled {
-        background-color: #36383c;
+        background-color: $disabledToolbarBackgroundColor;
         cursor: default;
 
         & svg {
-            fill: #929292;
+            fill: $disabledToolbarIconColor;
         }
     }
 }
