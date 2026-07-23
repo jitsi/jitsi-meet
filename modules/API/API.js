@@ -107,7 +107,19 @@ import {
     open as openParticipantsPane
 } from '../../react/features/participants-pane/actions';
 import { getParticipantsPaneOpen } from '../../react/features/participants-pane/functions';
-import { hidePiP, showPiP } from '../../react/features/pip/actions';
+import {
+    handleEmbeddedDocumentPiPAnswerReceived,
+    handleEmbeddedDocumentPiPCapability,
+    handleEmbeddedDocumentPiPCommand,
+    handleEmbeddedDocumentPiPConnectionStateChanged,
+    handleEmbeddedDocumentPiPIceReceived,
+    handleEmbeddedDocumentPiPOpenFailed,
+    handleEmbeddedDocumentPiPOpened,
+    handleEmbeddedDocumentPiPReconnect,
+    handleEmbeddedDocumentPiPWindowClosed,
+    hidePiP,
+    showPiP
+} from '../../react/features/pip/actions';
 import {
     setStartRecordingIntent,
     setStopRecordingIntent,
@@ -982,6 +994,33 @@ function initCommands() {
         },
         'hide-pip': () => {
             APP.store.dispatch(hidePiP());
+        },
+        'document-pip-capability': available => {
+            APP.store.dispatch(handleEmbeddedDocumentPiPCapability(Boolean(available)));
+        },
+        'document-pip-opened': () => {
+            APP.store.dispatch(handleEmbeddedDocumentPiPOpened());
+        },
+        'document-pip-open-failed': error => {
+            APP.store.dispatch(handleEmbeddedDocumentPiPOpenFailed(error));
+        },
+        'document-pip-closed': () => {
+            APP.store.dispatch(handleEmbeddedDocumentPiPWindowClosed());
+        },
+        'document-pip-answer': answer => {
+            APP.store.dispatch(handleEmbeddedDocumentPiPAnswerReceived(answer));
+        },
+        'document-pip-ice': candidate => {
+            APP.store.dispatch(handleEmbeddedDocumentPiPIceReceived(candidate));
+        },
+        'document-pip-command': command => {
+            APP.store.dispatch(handleEmbeddedDocumentPiPCommand(command));
+        },
+        'document-pip-connection-state': state => {
+            APP.store.dispatch(handleEmbeddedDocumentPiPConnectionStateChanged(state));
+        },
+        'document-pip-reconnect': state => {
+            APP.store.dispatch(handleEmbeddedDocumentPiPReconnect(state));
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -2374,6 +2413,80 @@ class API {
             name: 'peer-connection-failure',
             isP2P,
             wasConnected
+        });
+    }
+
+    /**
+     * Notifies the embedding page about Document PiP availability.
+     *
+     * @param {Object} data - Availability payload.
+     * @returns {void}
+     */
+    notifyDocumentPiPAvailability(data) {
+        this._sendEvent({
+            data,
+            name: '_document-pip-availability'
+        });
+    }
+
+    /**
+     * Requests that the embedding page close Document PiP.
+     *
+     * @returns {void}
+     */
+    notifyDocumentPiPClose() {
+        this._sendEvent({ name: '_document-pip-close' });
+    }
+
+    /**
+     * Sends a Document PiP ICE candidate to the embedding page.
+     *
+     * @param {Object} data - ICE candidate.
+     * @returns {void}
+     */
+    notifyDocumentPiPIce(data) {
+        this._sendEvent({
+            data,
+            name: '_document-pip-ice'
+        });
+    }
+
+    /**
+     * Sends a Document PiP WebRTC offer to the embedding page.
+     *
+     * @param {Object} data - Offer and RTC configuration.
+     * @returns {void}
+     */
+    notifyDocumentPiPOffer(data) {
+        this._sendEvent({
+            data,
+            name: '_document-pip-offer'
+        });
+    }
+
+    /**
+     * Requests a host-owned Document PiP window.
+     *
+     * @param {Object} data - Window options and request reason.
+     * @returns {void}
+     */
+    notifyDocumentPiPRequested(data) {
+        this._sendEvent({
+            data,
+            name: '_document-pip-requested'
+        });
+    }
+
+    /**
+     * Sends the Redux-derived Document PiP renderer state.
+     *
+     * @param {Object} data - Serializable renderer state.
+     * @returns {void}
+     */
+    notifyDocumentPiPState(data) {
+        this._sendEvent({
+            data,
+            name: '_document-pip-state'
         });
     }
 

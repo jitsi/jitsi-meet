@@ -598,17 +598,19 @@ export interface IConfig {
     peopleSearchUrl?: string;
     pip?: {
         disabled?: boolean;
+        documentPiP?: {
+            /** Embedded Document PiP is disabled unless explicitly set to 'auto'. */
+            embedMode?: 'auto' | 'disabled';
+            // @see: https://developer.chrome.com/docs/web-platform/document-picture-in-picture#methods
+            windowOptions?: {
+                disallowReturnToOpener?: boolean;
+                height?: number;
+                preferInitialWindowPlacement?: boolean;
+                width?: number;
+            };
+        };
         showOnPrejoin?: boolean;
         showToolbarButton?: boolean;
-        documentPiP: {
-            // @see: https://developer.chrome.com/docs/web-platform/document-picture-in-picture#methods
-            windowOptions: {
-                width: number;
-                height: number;
-                disallowReturnToOpener?: boolean;
-                preferInitialWindowPlacement?: boolean;
-            }
-        }
     };
     preferBosh?: boolean;
     preferVisitor?: boolean;

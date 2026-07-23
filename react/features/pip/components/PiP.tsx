@@ -1,7 +1,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import { isEmbedded } from '../../base/util/embedUtils';
+import {
+    isEmbeddedDocumentPiPAvailable,
+    isEmbeddedDocumentPiPCapabilityPending
+} from '../embeddedDocumentPiP';
 import { shouldShowPiP } from '../functions';
+import { useDocumentPiPMediaSession } from '../hooks';
+import { isDocumentPiPSupported } from '../utils';
 
 import DocumentPiPPortal from './PiPPortal';
 import PiPVideoElement from './PiPVideoElement';
@@ -14,15 +21,17 @@ import PiPVideoElement from './PiPVideoElement';
  */
 function PiP() {
     const showPiP = useSelector(shouldShowPiP);
+    const embeddedDocumentPiPAvailable = useSelector(isEmbeddedDocumentPiPAvailable);
+    const embeddedDocumentPiPCapabilityPending = useSelector(isEmbeddedDocumentPiPCapabilityPending);
 
-    // Document PiP must mount regardless of shouldShowPiP
-    // because useDocumentPiPMediaSession registers the enterpictureinpicture
-    // MediaSession handler needed for tab-switch auto-open.
-    if ('documentPictureInPicture' in window) {
-        return (<>
-            <PiPVideoElement />
-            <DocumentPiPPortal />
-        </>);
+    useDocumentPiPMediaSession();
+
+    if (isEmbedded() && (embeddedDocumentPiPAvailable || embeddedDocumentPiPCapabilityPending)) {
+        return null;
+    }
+
+    if (!isEmbedded() && isDocumentPiPSupported()) {
+        return <DocumentPiPPortal />;
     }
 
     if (!showPiP) {

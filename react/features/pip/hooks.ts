@@ -1,19 +1,25 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { IReduxState } from '../app/types';
 import IconUserSVG from '../base/icons/svg/user.svg?raw';
 import { IParticipant } from '../base/participants/types';
+import { isEmbedded } from '../base/util/embedUtils';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
-import { setPiPActive } from './actions';
+import { exitPiP, handleEmbeddedDocumentPiPCapabilityTimeout, openDocumentPiP } from './actions';
 import {
-    clearPiPWindow,
+    isEmbeddedDocumentPiPAvailable,
+    isEmbeddedDocumentPiPCapabilityPending
+} from './embeddedDocumentPiP';
+import {
+    cleanupMediaSessionHandlers,
     getStoredPiPWindow,
-    initPiPWindow,
-    renderAvatarOnCanvas
+    renderAvatarOnCanvas,
+    setupMediaSessionHandlers
 } from './functions';
-import { isDocumentPiPSupported } from './utils';
 import logger from './logger';
+import { isDocumentPiPSupported } from './utils';
 
 /**
  * Canvas dimensions for PiP avatar rendering.
@@ -26,6 +32,7 @@ const CANVAS_HEIGHT = Math.floor(CANVAS_WIDTH / TILE_ASPECT_RATIO);
  * We manually request frames after drawing to ensure capture.
  */
 const CANVAS_FRAME_RATE = 0;
+const EMBEDDED_DOCUMENT_PIP_CAPABILITY_TIMEOUT = 3000;
 
 /**
  * Options for the useCanvasAvatar hook.
@@ -206,80 +213,84 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
  */
 export function useDocumentPiPMediaSession() {
     const dispatch = useDispatch();
-    const pipWindowRef = useRef<Window | null>(null);
+    const embedded = isEmbedded();
+    const embeddedDocumentPiPAvailable = useSelector(isEmbeddedDocumentPiPAvailable);
+    const embeddedDocumentPiPCapabilityPending = useSelector(isEmbeddedDocumentPiPCapabilityPending);
+    const isPiPActive = useSelector((state: IReduxState) => state['features/pip']?.isPiPActive ?? false);
+    const documentPiPAvailable = embedded
+        ? embeddedDocumentPiPAvailable
+        : isDocumentPiPSupported();
 
-    const openDocumentPip = useCallback(async () => {
-        if (!isDocumentPiPSupported()) {
+    const openDocumentPip = useCallback(async (reason?: string) => {
+        if (!documentPiPAvailable) {
             return;
         }
-        if (pipWindowRef.current && !pipWindowRef.current.closed) {
-            return;
-        }
 
-        if (getStoredPiPWindow()) {
+        if (!embedded && getStoredPiPWindow()) {
             return;
         }
 
         try {
-            const pipWindow = await (window as any).documentPictureInPicture.requestWindow({
-                width: 600,
-                height: 450,
-                disallowReturnToOpener: false,
-                preferInitialWindowPlacement: false,
-            });
-
-            pipWindowRef.current = pipWindow;
-            initPiPWindow(pipWindow);
-            dispatch(setPiPActive(true));
-
-            pipWindow.addEventListener('pagehide', () => {
-                pipWindowRef.current = null;
-                clearPiPWindow();
-                dispatch(setPiPActive(false));
-            });
+            await dispatch(openDocumentPiP(reason));
         } catch (error) {
             logger.warn('Failed to open Document PiP:', error);
         }
-    }, [ dispatch ]);
+    }, [ dispatch, documentPiPAvailable, embedded ]);
 
     useEffect(() => {
-        if (!isDocumentPiPSupported()) {
+        if (!documentPiPAvailable
+                || !('mediaSession' in navigator)
+                || typeof navigator.mediaSession?.setActionHandler !== 'function') {
             return;
         }
 
         try {
             // @ts-ignore - enterpictureinpicture is a newer MediaSession action.
             navigator.mediaSession.setActionHandler('enterpictureinpicture', async (details: any) => {
-                const reason = details?.enterPictureInPictureReason;
+                const reason = details?.reason ?? details?.enterPictureInPictureReason;
 
-                if (reason === 'useraction') {
-                    logger.log('User clicked Enter Picture-in-Picture icon.');
-                } else if (reason === 'contentoccluded') {
-                    logger.log('Automatically enter picture-in-picture.');
-                }
+                logger.info('MediaSession requested Document PiP:', {
+                    embedded,
+                    reason: reason || 'unknown'
+                });
 
-                await openDocumentPip();
+                await openDocumentPip(reason);
             });
         } catch (error) {
             logger.warn('enterpictureinpicture MediaSession action not supported:', error);
         }
 
         return () => {
-            navigator.mediaSession.setActionHandler('enterpictureinpicture' as any, null);
+            try {
+                navigator.mediaSession.setActionHandler('enterpictureinpicture' as any, null);
+            } catch (error) {
+                logger.warn('Failed to clear enterpictureinpicture MediaSession handler:', error);
+            }
         };
-    }, [openDocumentPip]);
+    }, [ documentPiPAvailable, embedded, openDocumentPip ]);
 
     useEffect(() => {
-        if (!isDocumentPiPSupported()) {
+        if (!embedded || !embeddedDocumentPiPCapabilityPending) {
+            return;
+        }
+
+        const timeout = window.setTimeout(() => {
+            dispatch(handleEmbeddedDocumentPiPCapabilityTimeout());
+        }, EMBEDDED_DOCUMENT_PIP_CAPABILITY_TIMEOUT);
+
+        return () => window.clearTimeout(timeout);
+    }, [ dispatch, embedded, embeddedDocumentPiPCapabilityPending ]);
+
+    useEffect(() => {
+        if (!documentPiPAvailable) {
             return;
         }
 
         const onVisibilityChange = () => {
-            if (!document.hidden && pipWindowRef.current && !pipWindowRef.current.closed) {
-                pipWindowRef.current.close();
-                pipWindowRef.current = null;
-                clearPiPWindow();
-                dispatch(setPiPActive(false));
+            const shouldClose = embedded ? isPiPActive : Boolean(getStoredPiPWindow());
+
+            if (!document.hidden && shouldClose) {
+                dispatch(exitPiP());
             }
         };
 
@@ -288,5 +299,15 @@ export function useDocumentPiPMediaSession() {
         return () => {
             document.removeEventListener('visibilitychange', onVisibilityChange);
         };
-    }, [ dispatch ]);
+    }, [ dispatch, documentPiPAvailable, embedded, isPiPActive ]);
+
+    useEffect(() => {
+        if (!documentPiPAvailable || !isPiPActive) {
+            return;
+        }
+
+        setupMediaSessionHandlers(dispatch);
+
+        return cleanupMediaSessionHandlers;
+    }, [ dispatch, documentPiPAvailable, isPiPActive ]);
 }

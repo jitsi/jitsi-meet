@@ -12,7 +12,7 @@ import { getLargeVideoParticipant } from '../../large-video/functions';
 import { isPrejoinPageVisible } from '../../prejoin/functions.any';
 import { handlePiPLeaveEvent, handlePipEnterEvent, handleWindowBlur, handleWindowFocus } from '../actions';
 import { getPiPVideoTrack } from '../functions';
-import { useCanvasAvatar, useDocumentPiPMediaSession } from '../hooks';
+import { useCanvasAvatar } from '../hooks';
 import logger from '../logger';
 
 const useStyles = makeStyles()(() => {
@@ -76,8 +76,6 @@ const PiPVideoElement: React.FC = () => {
         initialsColor,
         displayNameColor
     });
-
-    useDocumentPiPMediaSession();
 
     // Determine if we should show avatar instead of video.
     const shouldShowAvatar = !videoTrack

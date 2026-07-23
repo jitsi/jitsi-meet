@@ -120,6 +120,14 @@
     transition: background 0.15s ease;
 }
 
+.embedded-doc-pip .doc-pip-controls .toolbox-icon {
+    align-items: center;
+}
+
+.embedded-doc-pip .doc-pip-controls .toolbox-icon svg {
+    fill: #FFFFFF;
+}
+
 @media (hover: hover) and (pointer: fine) {
     .doc-pip-controls .toolbox-icon:hover {
         background: #525252;

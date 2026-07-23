@@ -354,6 +354,15 @@ module.exports = (_env, argv) => {
             performance: getPerformanceHints(perfHintOptions, 800 * 1024) },
         { ...config,
             entry: {
+                'documentpip': './react/features/pip/document-pip-renderer.tsx'
+            },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'documentpip')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 800 * 1024) },
+        { ...config,
+            entry: {
                 'close3': './static/close3.js'
             },
             plugins: [
