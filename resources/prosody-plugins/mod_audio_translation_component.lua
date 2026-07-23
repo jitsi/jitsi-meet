@@ -60,6 +60,7 @@
 --
 -- Component "audiotranslation.jitmeet.example.com" "audio_translation_component"
 --      muc_component = "conference.jitmeet.example.com"
+--      breakout_rooms_component = "breakout.jitmeet.example.com"
 local json = require 'util.json';
 local st = require 'util.stanza';
 local jid_resource = require 'util.jid'.resource;
@@ -92,6 +93,9 @@ if muc_component_host == nil then
     module:log('error', 'No muc_component specified. No muc to operate on!');
     return;
 end
+
+-- Breakout rooms live on a separate MUC component; hook it too (optional).
+local breakout_rooms_component_host = module:get_option_string('breakout_rooms_component');
 
 local main_virtual_host = module:get_option_string('muc_mapper_domain_base');
 if not main_virtual_host then
@@ -438,6 +442,44 @@ local function schedule_publish(room)
     end);
 end
 
+-- Prunes a leaving occupant from its room's state (as receiver and sender). Shared by both MUC hooks.
+local function prune_occupant(room, occupant)
+    if not room._audio_translation or is_healthcheck_room(room.jid) then
+        return;
+    end
+
+    local state = room._audio_translation;
+    local id = endpoint_id(occupant);
+    local changed = false;
+
+    local own = state.receivers[id];
+
+    if own then
+        state.receivers[id] = nil;
+        for sender_id in pairs(own) do
+            remove_listener(state, sender_id, id);
+        end
+        changed = true;
+    end
+
+    for _, subs in pairs(state.receivers) do
+        if subs[id] then
+            subs[id] = nil;
+            changed = true;
+        end
+    end
+    if state.listeners_by_sender[id] or state.last_sent_listeners[id] then
+        state.listeners_by_sender[id] = nil;
+        state.last_sent_listeners[id] = nil;
+        state.dirty_senders[id] = nil;
+        changed = true;
+    end
+
+    if changed then
+        schedule_publish(room);
+    end
+end
+
 function on_message(event)
     local origin, stanza = event.origin, event.stanza;
 
@@ -461,10 +503,10 @@ function on_message(event)
         return true;
     end
 
-    local room = get_room_by_name_and_subdomain(
+    local main_room = get_room_by_name_and_subdomain(
         origin.jitsi_web_query_room, origin.jitsi_web_query_prefix or '');
 
-    if not room then
+    if not main_room then
         module:log('warn', 'No room found for %s/%s',
             origin.jitsi_web_query_prefix, origin.jitsi_web_query_room);
         origin.send(st.error_reply(stanza, 'cancel', 'item-not-found'));
@@ -473,10 +515,12 @@ function on_message(event)
     end
 
     local from = stanza.attr.from;
-    local occupant = get_occupant_by_real_jid(room, from);
+    -- The receiver may be in a breakout (different MUC); ?room= is always the main room. Resolve the
+    -- room it is actually in (get_occupant_by_real_jid fans out into breakouts) and track it there.
+    local occupant, room = get_occupant_by_real_jid(main_room, from);
 
     if not occupant then
-        module:log('warn', '%s is not an occupant of %s', from, room.jid);
+        module:log('warn', '%s is not an occupant of %s', from, main_room.jid);
         origin.send(st.error_reply(stanza, 'auth', 'forbidden'));
 
         return true;
@@ -526,50 +570,9 @@ function process_main_muc_loaded(main_muc, host_module)
 
     module:log('info', 'Hooked audio_translation to muc events on %s', muc_component_host);
 
-    -- Prune subscriptions when an occupant leaves: drop the leaver's own
-    -- subscriptions (receiver) and remove it as a sender from everyone else.
+    -- Prune a leaving occupant's subscriptions (shared with the breakout MUC hook below).
     host_module:hook('muc-occupant-left', function(event)
-        local room, occupant = event.room, event.occupant;
-
-        if not room._audio_translation or is_healthcheck_room(room.jid) then
-            return;
-        end
-
-        local state = room._audio_translation;
-        local id = endpoint_id(occupant);
-        local changed = false;
-
-        -- As a receiver: drop its own subscriptions, removing it as a listener from each sender it
-        -- was translating (which flags those senders dirty so their pushed lists shrink).
-        local own = state.receivers[id];
-
-        if own then
-            state.receivers[id] = nil;
-            for sender_id in pairs(own) do
-                remove_listener(state, sender_id, id);
-            end
-            changed = true;
-        end
-
-        -- As a sender: remove it from every receiver's map, then forget its listener set entirely.
-        -- It has left, so there is no one to notify — dropping the tracking prevents a leak and a
-        -- stale re-push, and needs no dirty flag.
-        for _, subs in pairs(state.receivers) do
-            if subs[id] then
-                subs[id] = nil;
-                changed = true;
-            end
-        end
-        if state.listeners_by_sender[id] or state.last_sent_listeners[id] then
-            state.listeners_by_sender[id] = nil;
-            state.last_sent_listeners[id] = nil;
-            state.dirty_senders[id] = nil;
-            changed = true;
-        end
-
-        if changed then
-            schedule_publish(room);
-        end
+        prune_occupant(event.room, event.occupant);
     end);
 
     -- React when the room-level enable flag is toggled: republish so the aggregate
@@ -587,6 +590,16 @@ function process_main_muc_loaded(main_muc, host_module)
     end);
 end
 
+-- Hook occupant-left on the breakout MUC so breakout subscriptions are pruned on leave. Publishing
+-- still flows through main_muc_module, whose room-metadata-changed handler broadcasts the given room.
+function process_breakout_muc_loaded(breakout_muc, host_module)
+    module:log('info', 'Hooked audio_translation to breakout muc events on %s', breakout_rooms_component_host);
+
+    host_module:hook('muc-occupant-left', function(event)
+        prune_occupant(event.room, event.occupant);
+    end);
+end
+
 process_host_module(muc_component_host, function(host_module, host)
     local muc_module = prosody.hosts[host].modules.muc;
 
@@ -601,6 +614,23 @@ process_host_module(muc_component_host, function(host_module, host)
         end);
     end
 end);
+
+if breakout_rooms_component_host then
+    process_host_module(breakout_rooms_component_host, function(host_module, host)
+        local muc_module = prosody.hosts[host].modules.muc;
+
+        if muc_module then
+            process_breakout_muc_loaded(muc_module, host_module);
+        else
+            module:log('debug', 'Will wait for breakout muc to be available');
+            prosody.hosts[host].events.add_handler('module-loaded', function(event)
+                if event.module == 'muc' then
+                    process_breakout_muc_loaded(prosody.hosts[host].modules.muc, host_module);
+                end
+            end);
+        end
+    end);
+end
 
 -- Advertise the component as a disco identity on the main virtual host so
 -- clients can discover it (handled by mod_features_identity), and gate writes to
