@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
-import { AudioElement } from '../../media/components/AbstractAudio';
-import { Audio } from '../../media/components/index';
+import { registerSoundUrl, unregisterSoundUrl } from '../SoundManager';
 import { _addAudioElement, _removeAudioElement } from '../actions';
 import { Sound } from '../reducer';
 
@@ -13,34 +12,72 @@ import { Sound } from '../reducer';
 interface IProps {
 
     /**
-     * Dispatches {@link _ADD_AUDIO_ELEMENT} Redux action which will store the
-     * {@link AudioElement} for a sound in the Redux store.
+     * Dispatches {@link _ADD_AUDIO_ELEMENT} Redux action (legacy - kept for reducer compatibility).
      */
     _addAudioElement: Function;
 
     /**
-     * Dispatches {@link _REMOVE_AUDIO_ELEMENT} Redux action which will remove
-     * the sound's {@link AudioElement} from the Redux store.
+     * Dispatches {@link _REMOVE_AUDIO_ELEMENT} Redux action (legacy - kept for reducer compatibility).
      */
     _removeAudioElement: Function;
 
     /**
-     * It's the 'base/sounds' reducer's state mapped to a property. It's used to
-     * render audio elements for every registered sound.
+     * It's the 'base/sounds' reducer's state mapped to a property.
+     * Used to register sounds with the SoundManager.
      */
     _sounds: Map<string, Sound>;
 }
 
 /**
  * Collections of all global sounds used by the app for playing audio
- * notifications in response to various events. It renders <code>Audio</code>
- * element for each sound registered in the base/sounds feature. When the audio
- * resource is loaded it will emit add/remove audio element actions which will
- * attach the element to the corresponding {@link Sound} instance in the Redux
- * state. When that happens the sound can be played using the {@link playSound}
- * action.
+ * notifications in response to various events.
+ *
+ * This component no longer renders <audio> elements directly. Instead, it
+ * registers sounds with the SoundManager which uses WebAudio with an
+ * HTMLAudio fallback pool (3 elements).
  */
 class SoundCollection extends Component<IProps> {
+    /**
+     * Set of sound IDs currently registered.
+     */
+    _registeredSounds = new Set<string>();
+
+    /**
+     * Implements React's {@link Component#componentDidMount()}.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    override componentDidMount() {
+        this._registerAllSounds();
+    }
+
+    /**
+     * Implements React's {@link Component#componentDidUpdate()}.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    override componentDidUpdate(prevProps: IProps) {
+        if (this.props._sounds !== prevProps._sounds) {
+            this._registerAllSounds();
+        }
+    }
+
+    /**
+     * Implements React's {@link Component#componentWillUnmount()}.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    override componentWillUnmount() {
+        // Unregister all sounds from the manager
+        for (const soundId of this._registeredSounds) {
+            unregisterSoundUrl(soundId);
+        }
+        this._registeredSounds.clear();
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -48,42 +85,49 @@ class SoundCollection extends Component<IProps> {
      * @returns {ReactElement}
      */
     override render() {
-        let key = 0;
-        const sounds = [];
-
-        for (const [ soundId, sound ] of this.props._sounds.entries()) {
-            const { options, src } = sound;
-
-            sounds.push(
-                React.createElement(
-                    Audio, {
-                        key,
-                        setRef: this._setRef.bind(this, soundId),
-                        src,
-                        loop: options?.loop
-                    }));
-            key += 1;
-        }
-
-        return sounds;
+        // No longer renders audio elements - SoundManager handles playback
+        return null;
     }
 
     /**
-     * Set the (reference to the) {@link AudioElement} object which implements
-     * the audio playback functionality.
+     * Registers all sounds from the Redux store with the SoundManager.
      *
-     * @param {string} soundId - The sound Id for the audio element for which
-     * the callback is being executed.
-     * @param {AudioElement} element - The {@link AudioElement} instance
-     * which implements the audio playback functionality.
-     * @protected
+     * @private
      * @returns {void}
      */
-    _setRef(soundId: string, element?: AudioElement) {
-        if (element) {
-            this.props._addAudioElement(soundId, element);
-        } else {
-            this.props._removeAudioElement(soundId);
+    _registerAllSounds() {
+        const currentSoundIds = new Set<string>();
+
+        for (const [ soundId, sound ] of this.props._sounds.entries()) {
+            const { src } = sound;
+
+            if (src && typeof src === 'string') {
+                currentSoundIds.add(soundId);
+
+                if (!this._registeredSounds.has(soundId)) {
+                    // Register new sound with SoundManager
+                    registerSoundUrl(soundId, src);
+                    this._registeredSounds.add(soundId);
+
+                    // Dispatch legacy action for reducer compatibility
+                    // This maintains the Redux state structure
+                    this.props._addAudioElement(soundId, {
+                        play: () => { /* Handled by middleware */ },
+                        pause: () => { /* Handled by middleware */ },
+                        stop: () => { /* Handled by middleware */ },
+                        currentTime: 0
+                    });
+                }
+            }
+        }
+
+        // Unregister sounds that are no longer in the state
+        for (const soundId of this._registeredSounds) {
+            if (!currentSoundIds.has(soundId)) {
+                unregisterSoundUrl(soundId);
+                this._registeredSounds.delete(soundId);
+                this.props._removeAudioElement(soundId);
+            }
         }
     }
 }
