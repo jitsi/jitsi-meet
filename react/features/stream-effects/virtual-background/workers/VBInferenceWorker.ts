@@ -27,6 +27,7 @@
 
 import '@tensorflow/tfjs-backend-webgl';
 import '@tensorflow/tfjs-backend-webgpu';
+import { FaceLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
 import * as tf from '@tensorflow/tfjs-core';
 import type { BodySegmenter, MediaPipeSelfieSegmentationTfjsModelConfig }
     from '@tensorflow-models/body-segmentation';
@@ -106,6 +107,14 @@ let tfliteReadCtx: any = null;
 /** Active backend type. TFLITE selects TFLite WASM; WEBGL/WEBGPU selects TF.js. */
 let currentBackend: BackendType | '' = '';
 
+/** Active FaceLandmarker instance (MEDIUM/HIGH tiers only). Null when AR is disabled or unavailable. */
+let faceLandmarker: FaceLandmarker | null = null;
+
+/** Whether AR face tracking initialised successfully for this session. */
+let arEnabled = false;
+
+let arFrameTimestamp = 0;
+
 /**
  * Type-safe postMessage wrapper for DedicatedWorkerGlobalScope.
  * TypeScript types the global 'self' as Window (lib.dom) which has a different postMessage
@@ -131,7 +140,7 @@ function workerPost(msg: any, transfer?: Transferable[]): void {
     if (type === 'init') {
         await handleInit(e.data);
     } else if (type === 'infer') {
-        await handleInfer(e.data.bitmap as ImageBitmap);
+        await handleInfer(e.data.bitmap as ImageBitmap, (e.data.arBitmap ?? null) as ImageBitmap | null);
     }
 };
 
@@ -142,6 +151,8 @@ function workerPost(msg: any, transfer?: Transferable[]): void {
  * MEDIUM/HIGH tiers (backend 'webgl' or 'webgpu'). The TFLite model path and WASM base are
  * always passed so the TF.js handler can fall back to TFLite if GPU init fails in the Worker.
  *
+ * Initializes FaceLandmarker (AR) if arEnabled and currentBackend!==TFLITE.
+ *
  * @param {Object} data - Init message payload.
  * @param {string} data.backend - 'tflite', 'webgl', or 'webgpu'.
  * @param {number} data.segHeight - Segmentation canvas height.
@@ -151,6 +162,9 @@ function workerPost(msg: any, transfer?: Transferable[]): void {
  * @returns {Promise<void>}
  */
 async function handleInit(data: {
+    arEnabled?: boolean;
+    arModelPath?: string;
+    arWasmBase?: string;
     backend: BackendType;
     segHeight: number;
     segWidth: number;
@@ -181,6 +195,18 @@ async function handleInit(data: {
         await handleInitTflite(data);
     } else {
         await handleInitTfjs(data);
+    }
+
+    // AR initialisation - Initializes FaceLandmarker (AR) only if arEnabled and currentBackend!==TFLITE.
+    if (data.arEnabled && currentBackend !== BackendType.TFLITE) {
+        try {
+            await handleInitFaceLandmarker(data.arWasmBase!, data.arModelPath!);
+            arEnabled = true;
+
+        } catch (err) {
+            workerPost({ error: String(err), type: 'ar_init_error' });
+            arEnabled = false;
+        }
     }
 }
 
@@ -327,16 +353,106 @@ async function handleInitTflite(data: {
 }
 
 /**
- * Dispatches an inference call to the TFLite or TF.js handler based on the active backend.
+ * Initialises MediaPipe FaceLandmarker for AR face tracking. Only with currentBackground !==TFLITE.
  *
- * @param {ImageBitmap} bitmap - Pre-scaled camera frame at the tier's segmentation resolution.
+ * MediaPipe checks for GPU, fallback to CPU XNNPACK if GPU is not found or not supported
+ * Set to outputFacialTransformationMatrixes: true, returns the faceTransformationMatrix
+ * * Runs in VIDEO mode so MediaPipe's internal temporal smooths landmarks across frames.
+ *
+ * @param {string} wasmBase - Base URL for @mediapipe/tasks-vision WASM binaries.
+ * @param {string} modelPath - URL of the face_landmarker.task model file.
  * @returns {Promise<void>}
+ * @throws {Error} When the model/WASM paths are not same-origin, or model load fails.
  */
-async function handleInfer(bitmap: ImageBitmap): Promise<void> {
-    if (currentBackend === BackendType.TFLITE) {
-        await handleInferTflite(bitmap);
-    } else {
-        await handleInferTfjs(bitmap);
+async function handleInitFaceLandmarker(wasmBase: string, modelPath: string): Promise<void> {
+    if (!isSameOriginUrl(modelPath) || !isSameOriginUrl(`${wasmBase}vision_wasm_internal.js`)) {
+        throw new Error('FaceLandmarker model or WASM path must be same-origin');
+    }
+
+    const vision = await FilesetResolver.forVisionTasks(wasmBase);
+
+    faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
+        baseOptions: {
+            delegate: 'GPU',
+            modelAssetPath: modelPath
+        },
+        minFaceDetectionConfidence: 0.5,
+        minFacePresenceConfidence: 0.5,
+        minTrackingConfidence: 0.5,
+        numFaces: 1,
+        outputFaceBlendshapes: false,
+        outputFacialTransformationMatrixes: true,
+        runningMode: 'VIDEO'
+    });
+}
+
+/**
+ * Internally dispatches TF.js or TFLite based on currentBackend.
+ *
+ * @param {ImageBitmap} bitmap - Camera frame for face landmark detection.
+ * @returns {Promise} Resolves to object containing raw mask data, width, height, or null.
+ */
+async function runSegmentation(bitmap: ImageBitmap): Promise<{ data: Uint8ClampedArray; height: number; width: number; } | null> {
+    return currentBackend === BackendType.TFLITE ? handleInferTflite(bitmap) : handleInferTfjs(bitmap);
+}
+
+/**
+ * Uses mediapipe/tasks-vision.
+ * Runs FaceLandmarker.detectForVideo() API to scan if there is face.
+ * Returns 468-point 3D face mesh landmarks and a 4x4 facial transformation matrix for AR overlay.
+ * Runs mediapipe faceLandMarker models and
+ * Computes facial transformation matrix using MediaPipe Tasks Vision.
+ *
+ * @param {ImageBitmap} bitmap - Camera frame for face landmark detection.
+ * @returns {Promise} Resolves to object containing faceLandmarks and facialTransformationMatrix, or null when no face.
+ */
+async function runFaceLandmarker(bitmap: ImageBitmap): Promise<{ faceLandmarks: number[][]; facialTransformationMatrix: number[] | null; } | null> {
+    if (!faceLandmarker) {
+        bitmap.close();
+
+        return null;
+    }
+    try {
+        arFrameTimestamp += 1;
+        const result = faceLandmarker.detectForVideo(bitmap, arFrameTimestamp);
+
+        if (!result.faceLandmarks?.length) {
+            return null;
+        }
+
+        const faceLandmarks = result.faceLandmarks[0].map(lm => [ lm.x, lm.y, lm.z ]);
+        const m = result.facialTransformationMatrixes?.[0];
+
+        return { faceLandmarks, facialTransformationMatrix: m ? Array.from(m.data) : null };
+    } catch (err) {
+        workerPost({ error: String(err), type: 'ar_infer_error' });
+
+        return null;
+    } finally {
+        bitmap.close();
+    }
+}
+
+/**
+ * Runs segmentation and (if AR is enabled) face landmark detection in parallel,
+ * merges the results, and posts a single 'mask' message to the main thread.
+ *
+ * Delegates backend selection entirely to runSegmentation,
+ * so this function won't know TF.js or TFLite produced the mask.
+ * When arEnabled is false, arBitmap is ignored and the outgoing message carries null.
+ *
+ * @param {ImageBitmap} segBitmap - Pre-scaled camera frame at the tier's segmentation resolution.
+ * @param {ImageBitmap|null} [arBitmap] - Pre-scaled camera frame for face landmark detection.
+ * Required (non-null) when arEnabled is true; ignored otherwise.
+ * @returns {Promise<void>} Resolves after the merged mask message is posted, or after a no-op if segmentation produced no mask.
+ */
+async function handleInfer(segBitmap: ImageBitmap, arBitmap: ImageBitmap | null = null): Promise<void> {
+    const [ maskMsg, arResult ] = await Promise.all([ runSegmentation(segBitmap), arEnabled && arBitmap ? runFaceLandmarker(arBitmap) : null ]);
+
+    if (maskMsg) {
+        workerPost({ ...maskMsg, facialTransformationMatrix: arResult?.facialTransformationMatrix ?? null, faceLandmarks: arResult?.faceLandmarks ?? null, type: 'mask' },
+            [ maskMsg.data.buffer as ArrayBuffer ]
+        );
     }
 }
 
@@ -349,14 +465,14 @@ async function handleInfer(bitmap: ImageBitmap): Promise<void> {
  * compositing on the main thread.
  *
  * @param {ImageBitmap} bitmap - Pre-scaled camera frame at seg resolution.
- * @returns {Promise<void>}
+ * @returns {Promise} - Resolves to object containing mask data, height, width or null if the inference fails.
  */
-async function handleInferTfjs(bitmap: ImageBitmap): Promise<void> {
+async function handleInferTfjs(bitmap: ImageBitmap): Promise<{ data: Uint8ClampedArray; height: number; width: number; } | null> {
     if (!segmenter) {
         bitmap.close();
         workerPost({ error: 'Segmenter not initialised', type: 'infer_error' });
 
-        return;
+        return null;
     }
 
     tf.engine().startScope();
@@ -368,19 +484,18 @@ async function handleInferTfjs(bitmap: ImageBitmap): Promise<void> {
         if (!segmentations.length) {
             workerPost({ error: 'No segmentation result', type: 'infer_error' });
 
-            return;
+            return null;
         }
 
         const maskData = await segmentations[0].mask.toImageData();
         const data = maskData.data;
 
-        // Transfer the backing ArrayBuffer — zero-copy, data becomes detached in this worker.
-        workerPost(
-            { data, height: maskData.height, type: 'mask', width: maskData.width },
-            [ data.buffer as ArrayBuffer ]
-        );
+        // returns data to runSegmentation
+        return { data, height: maskData.height, width: maskData.width };
     } catch (err) {
         workerPost({ error: String(err), type: 'infer_error' });
+
+        return null;
     } finally {
         // Close unconditionally — called in finally so the bitmap is always released
         // even when segmentPeople() throws before the try-block close is reached.
@@ -399,14 +514,14 @@ async function handleInferTfjs(bitmap: ImageBitmap): Promise<void> {
  * it is compatible with both the WebGL compositor (reads .r) and the Canvas 2D fallback (reads alpha).
  *
  * @param {ImageBitmap} bitmap - Pre-scaled camera frame at seg resolution.
- * @returns {Promise<void>}
+ * @returns {Promise} - Resolves to object containing mask data, height, width or null if the inference fails.
  */
-async function handleInferTflite(bitmap: ImageBitmap): Promise<void> {
+async function handleInferTflite(bitmap: ImageBitmap): Promise<{ data: Uint8ClampedArray; height: number; width: number; } | null > {
     if (!tfliteModule || !tfliteReadCtx) {
         bitmap.close();
         workerPost({ error: 'TFLite not initialised', type: 'infer_error' });
 
-        return;
+        return null;
     }
 
     try {
@@ -437,12 +552,12 @@ async function handleInferTflite(bitmap: ImageBitmap): Promise<void> {
             maskBytes[i * 4 + 3] = v; // A — read by Canvas 2D fallback compositing path
         }
 
-        workerPost(
-            { data: maskBytes, height: tfliteSegHeight, type: 'mask', width: tfliteSegWidth },
-            [ maskBytes.buffer ]
-        );
+
+        return { data: maskBytes, height: tfliteSegHeight, width: tfliteSegWidth };
     } catch (err) {
         workerPost({ error: String(err), type: 'infer_error' });
+
+        return null;
     } finally {
         bitmap.close();
     }
