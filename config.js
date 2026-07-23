@@ -154,6 +154,12 @@ var config = {
     // Shows/hides the moderator setting for chat permissions.
     // showChatPermissionsModeratorSetting: false,
 
+    // When true, the participants list will NOT automatically resort
+    // when someone speaks or becomes dominant speaker.
+    // Participants will appear in the order they joined.
+    // Default: false (current behavior - list reorders dynamically).
+    // disableAutoResortParticipants: false,
+
     // screenshotCapture : {
     //      Enables the screensharing capture feature.
     //      enabled: false,
