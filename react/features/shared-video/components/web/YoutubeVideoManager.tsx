@@ -167,7 +167,7 @@ class YoutubeVideoManager extends AbstractVideoManager {
      * @returns {void}
      */
     onPlayerReady = (event: any) => {
-        const { _isOwner } = this.props;
+        const { _isOwner, follower } = this.props;
 
         this.player = event.target;
 
@@ -177,6 +177,15 @@ class YoutubeVideoManager extends AbstractVideoManager {
 
         if (_isOwner) {
             this.player.addEventListener('onVideoProgress', this.throttledFireUpdateSharedVideoEvent);
+        }
+
+        if (follower) {
+            // The player only exists now, so this is where a follower first
+            // gets to reconcile with the meeting's shared state; it also stays
+            // muted, since a follower plays no audio.
+            this.syncFollower();
+
+            return;
         }
 
         this.play();
@@ -189,7 +198,7 @@ class YoutubeVideoManager extends AbstractVideoManager {
     };
 
     getPlayerOptions = () => {
-        const { _isOwner, videoId } = this.props;
+        const { _isOwner, follower, videoId } = this.props;
         const showControls = _isOwner ? 1 : 0;
 
         const options = {
@@ -202,7 +211,11 @@ class YoutubeVideoManager extends AbstractVideoManager {
                     'fs': '0',
                     'autoplay': 0,
                     'controls': showControls,
-                    'rel': 0
+                    'rel': 0,
+
+                    // A follower plays no audio; starting it muted also keeps
+                    // the browser from blocking its (scripted) playback.
+                    ...follower ? { 'mute': 1 } : {}
                 }
             },
             onError: (e: any) => this.onError(e),

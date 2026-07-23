@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jitsi Meet</title>
+</head>
+
+<body style="margin: 0; height: 100%; background: #000; overflow: hidden;">
+    <!--
+        Intentionally empty: this page is the shell for a second-screen window
+        (react/features/multi-screen). The meeting window portals the window's
+        content into it. It exists so the popup has a real same-origin URL
+        instead of about:blank: embeds rendered inside the window (e.g. the
+        YouTube shared-video player) require the page to send a valid referrer,
+        which an about:blank window cannot (YouTube fails with error 153).
+    -->
+</body>
+
+</html>
