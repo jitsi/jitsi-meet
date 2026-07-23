@@ -1,10 +1,12 @@
 import { IReduxState } from '../app/types';
+import { AUDIO_TRANSLATION_ENABLED } from '../base/flags/constants';
+import { getFeatureFlag } from '../base/flags/functions';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { isLocalParticipantModerator } from '../base/participants/functions';
 import { ITrack } from '../base/tracks/types';
 
-import { TranslationTreatment } from './constants';
+import { DUCKED_ORIGINAL_VOLUME, TranslationTreatment } from './constants';
 
 /**
  * Whether audio translation is enabled for the room. Driven by the {@code audioTranslation} RoomMetadata flag,
@@ -118,13 +120,16 @@ export function canManageAudioTranslation(state: IReduxState): boolean {
  * @returns {boolean}
  */
 export function isAudioTranslationAvailable(state: IReduxState): boolean {
+    // SDK embedder kill switch; defaults true, so web (no flags state) is unaffected.
+    if (!getFeatureFlag(state, AUDIO_TRANSLATION_ENABLED, true)) {
+        return false;
+    }
+
     if (!state['features/base/config'].audioTranslation?.enabled) {
         return false;
     }
 
-    // A deployment can hide the feature for a room via the audioTranslationAvailable RoomMetadata flag
-    // (e.g. when the translation backend is not provisioned for it). Absent, or any value other than an
-    // explicit false, means available. Applies even to those who could otherwise manage it.
+    // Per-room availability via RoomMetadata; only an explicit false hides it.
     if (state['features/base/conference'].metadata?.audioTranslationAvailable === false) {
         return false;
     }
@@ -168,4 +173,65 @@ export function getTranslatedSourceNames(state: IReduxState): Set<string> {
     _lastTranslatedSourceNames = translated;
 
     return translated;
+}
+
+/**
+ * The per-participant override language if set, else the conference-wide default.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} [participantId] - The speaker's participant id.
+ * @returns {string | null} The target language, or null.
+ */
+export function getEffectiveTranslationLanguage(state: IReduxState, participantId?: string): string | null {
+    const { language, participantLanguages } = state['features/audio-translation'];
+
+    return participantId && participantId in participantLanguages
+        ? participantLanguages[participantId]
+        : language;
+}
+
+/**
+ * Whether to duck a speaker's original: a language is set and its translated counterpart is present.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} [sourceName] - The original audio source name.
+ * @param {string} [participantId] - The speaker's participant id.
+ * @returns {boolean}
+ */
+export function shouldDuckOriginalAudio(state: IReduxState, sourceName?: string, participantId?: string): boolean {
+    const language = getEffectiveTranslationLanguage(state, participantId);
+
+    if (!language || typeof sourceName !== 'string' || sourceName.endsWith(`.${language}`)) {
+        return false;
+    }
+
+    return getTranslatedSourceNames(state).has(`${sourceName}.${language}`);
+}
+
+/**
+ * The ducked volume (0..1) from config.audioTranslation.duckedVolume; invalid values fall back to default.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {number}
+ */
+export function getDuckedVolume(state: IReduxState): number {
+    const configured = state['features/base/config'].audioTranslation?.duckedVolume;
+
+    return typeof configured === 'number' && configured >= 0 && configured <= 1
+        ? configured
+        : DUCKED_ORIGINAL_VOLUME;
+}
+
+/**
+ * The ducked volume, capped at the user's chosen volume so ducking never makes a quieted speaker louder.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} [participantId] - The speaker's participant id.
+ * @returns {number}
+ */
+export function getDuckedVolumeForParticipant(state: IReduxState, participantId?: string): number {
+    const duckedVolume = getDuckedVolume(state);
+    const userVolume = participantId ? state['features/filmstrip'].participantsVolume[participantId] : undefined;
+
+    return typeof userVolume === 'number' ? Math.min(userVolume, duckedVolume) : duckedVolume;
 }

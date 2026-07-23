@@ -30,6 +30,12 @@ export const AUDIO_MUTE_BUTTON_ENABLED = 'audio-mute.enabled';
 export const AUDIO_ONLY_BUTTON_ENABLED = 'audio-only.enabled';
 
 /**
+ * Flag indicating if the audio-translation feature should be enabled.
+ * Default: enabled (true).
+ */
+export const AUDIO_TRANSLATION_ENABLED = 'audio-translation.enabled';
+
+/**
  * Flag indicating that the Breakout Rooms button in the overflow menu is enabled.
  * Default: enabled (true).
  */
