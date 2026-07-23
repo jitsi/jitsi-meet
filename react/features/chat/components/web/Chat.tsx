@@ -17,6 +17,7 @@ import PollsPane from '../../../polls/components/web/PollsPane';
 import { isCCTabEnabled } from '../../../subtitles/functions.any';
 import {
     sendMessage,
+    sendMessageEdit,
     setChatIsResizing,
     setFocusedTab,
     setPrivateMessageRecipient,
@@ -35,7 +36,7 @@ import {
     SMALL_WIDTH_THRESHOLD
 } from '../../constants';
 import { getChatMaxSize, getFocusedTab, isChatDisabled } from '../../functions';
-import { IChatProps as AbstractProps } from '../../types';
+import { IChatProps as AbstractProps, IMessage } from '../../types';
 
 import ChatHeader from './ChatHeader';
 import ChatInput from './ChatInput';
@@ -284,6 +285,7 @@ const Chat = ({
     const [ isMouseDown, setIsMouseDown ] = useState(false);
     const [ mousePosition, setMousePosition ] = useState<number | null>(null);
     const [ dragChatWidth, setDragChatWidth ] = useState<number | null>(null);
+    const [ editingMessage, setEditingMessage ] = useState<IMessage | undefined>();
     const maxChatWidth = useSelector(getChatMaxSize);
     const notifyTimestamp = useSelector((state: IReduxState) =>
         state['features/chat'].notifyPrivateRecipientsChangedTimestamp
@@ -362,6 +364,10 @@ const Chat = ({
         }
     }, [ isMouseDown, dispatch ]);
 
+    const onCancelEdit = useCallback(() => {
+        setEditingMessage(undefined);
+    }, []);
+
     /**
      * Handles drag handle pointer move.
      * Supports both mouse and touch events via Pointer Events API.
@@ -411,8 +417,14 @@ const Chat = ({
     * @type {Function}
     */
     const onSendMessage = useCallback((text: string) => {
+        if (editingMessage) {
+            dispatch(sendMessageEdit(editingMessage.messageId, text));
+            setEditingMessage(undefined);
+
+            return;
+        }
         dispatch(sendMessage(text));
-    }, []);
+    }, [ dispatch, editingMessage ]);
 
     /**
     * Toggles the chat window.
@@ -483,8 +495,11 @@ const Chat = ({
                     role = 'tabpanel'
                     tabIndex = { 0 }>
                     <MessageContainer
+                        editingMessage = { editingMessage }
                         isVisible = { _focusedTab === ChatTabs.CHAT }
-                        messages = { _messages } />
+                        messages = { _messages }
+                        onCancelEdit = { onCancelEdit }
+                        onEditMessage = { setEditingMessage } />
                     <MessageRecipient />
                     {isPrivateChatAllowed && (
                         <Select
@@ -495,6 +510,8 @@ const Chat = ({
                             value = { privateMessageRecipient?.id || OPTION_GROUPCHAT } />
                     )}
                     <ChatInput
+                        editingMessage = { editingMessage }
+                        onCancelEdit = { onCancelEdit }
                         onSend = { onSendMessage } />
                 </div>) }
                 { _isPollsEnabled && (

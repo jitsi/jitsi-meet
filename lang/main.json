@@ -119,6 +119,8 @@
     },
     "chat": {
         "disabled": "Sending chat messages is disabled.",
+        "edited": "(edited)",
+        "editingMessage": "Editing",
         "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
         "everyone": "Everyone",
