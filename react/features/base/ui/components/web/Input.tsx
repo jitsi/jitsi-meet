@@ -27,6 +27,14 @@ interface IProps extends IInputProps {
      */
     id: string;
     invalidReason?: 'grammar' | 'spelling' | boolean;
+
+    /**
+     * Optional class name applied to the actual input/textarea element (as opposed to
+     * `className`, which applies to the outer wrapping container). Useful for callers
+     * that render Input inside their own bordered container and need to strip Input's
+     * own background/border so only one visual box shows.
+     */
+    inputClassName?: string;
     maxLength?: number;
     maxRows?: number;
     maxValue?: number;
@@ -174,6 +182,7 @@ const Input = React.forwardRef<any, IProps>(({
     iconClick,
     id,
     invalidReason,
+    inputClassName,
     label,
     maxValue,
     maxLength,
@@ -256,7 +265,7 @@ const Input = React.forwardRef<any, IProps>(({
                         autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
                         className = { cx(styles.input, isMobile && 'is-mobile',
-                            error && 'error', showClearIcon && 'clearable-input', icon && 'icon-input') }
+                            error && 'error', showClearIcon && 'clearable-input', icon && 'icon-input', inputClassName) }
                         disabled = { disabled }
                         id = { id }
                         maxLength = { maxLength }
@@ -278,7 +287,7 @@ const Input = React.forwardRef<any, IProps>(({
                         autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
                         className = { cx(styles.input, isMobile && 'is-mobile',
-                            error && 'error', showClearIcon && 'clearable-input', icon && 'icon-input') }
+                            error && 'error', showClearIcon && 'clearable-input', icon && 'icon-input', inputClassName) }
                         data-testid = { testId }
                         disabled = { disabled }
                         id = { id }

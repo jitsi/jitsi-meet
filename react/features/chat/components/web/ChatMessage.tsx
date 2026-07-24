@@ -1,5 +1,5 @@
 import { Theme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -9,7 +9,8 @@ import { getParticipantById, getParticipantDisplayName, isPrivateChatEnabled } f
 import Popover from '../../../base/popover/components/Popover.web';
 import Message from '../../../base/react/components/web/Message';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
-import { getDisplayNameSuffix, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage, isFileMessage } from '../../functions';
+// AFTER
+import { getActiveChatSearchMatch, getChatSearchQuery, getDisplayNameSuffix, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage, isFileMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
 
 import FileMessage from './FileMessage';
@@ -19,6 +20,8 @@ import ReactButton from './ReactButton';
 interface IProps extends IChatMessageProps {
     className?: string;
     enablePrivateChat?: boolean;
+    isActiveSearchMatch?: boolean;
+    searchQuery?: string;
     shouldDisplayMenuOnRight?: boolean;
     state?: IReduxState;
 }
@@ -103,6 +106,20 @@ const useStyles = makeStyles()((theme: Theme) => {
                 backgroundColor: theme.palette.chatMessagePrivate
             }
         },
+        searchMatchActive: {
+            outline: `2px solid ${theme.palette.action01}`,
+            outlineOffset: '2px',
+            animation: '$searchMatchFlash 1.4s ease-out'
+        },
+
+        '@keyframes searchMatchFlash': {
+            '0%': {
+                backgroundColor: theme.palette.warning01
+            },
+            '100%': {
+                backgroundColor: 'transparent'
+            }
+        },
         sideBySideContainer: {
             display: 'flex',
             flexDirection: 'row',
@@ -157,7 +174,14 @@ const useStyles = makeStyles()((theme: Theme) => {
             ...theme.typography.bodyShortRegular,
             color: theme.palette.chatMessageText,
             whiteSpace: 'pre-wrap',
-            wordBreak: 'break-word'
+            wordBreak: 'break-word',
+
+            '& mark': {
+                backgroundColor: theme.palette.warning01,
+                color: theme.palette.text04,
+                borderRadius: '2px',
+                padding: '0 1px'
+            }
         },
         privateMessageNotice: {
             ...theme.typography.labelRegular,
@@ -212,6 +236,8 @@ const ChatMessage = ({
     state,
     showDisplayName,
     shouldDisplayMenuOnRight,
+    isActiveSearchMatch,
+    searchQuery,
     enablePrivateChat,
     knocking,
     t
@@ -219,6 +245,13 @@ const ChatMessage = ({
     const { classes, cx } = useStyles();
     const [ isHovered, setIsHovered ] = useState(false);
     const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
+    const messageRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (isActiveSearchMatch) {
+            messageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }, [ isActiveSearchMatch ]);
 
     const handleMouseEnter = useCallback(() => {
         setIsHovered(true);
@@ -374,8 +407,10 @@ const ChatMessage = ({
                         className,
                         message.privateMessage && 'privatemessage',
                         message.lobbyChat && !knocking && 'lobbymessage',
-                        isFileMessage(message) && 'file'
-                    ) }>
+                        isFileMessage(message) && 'file',
+                        isActiveSearchMatch && classes.searchMatchActive
+                    ) }
+                    ref = { messageRef }>
                     <div className = { classes.replyWrapper }>
                         <div className = { cx('messagecontent', classes.messageContent) }>
                             {showDisplayName && _renderDisplayName()}
@@ -391,6 +426,7 @@ const ChatMessage = ({
                                         } />
                                 ) : (
                                     <Message
+                                        highlightQuery = { searchQuery }
                                         screenReaderHelpText = { message.messageType === MESSAGE_TYPE_LOCAL
                                             ? t<string>('chat.messageAccessibleTitleMe')
                                             : t<string>('chat.messageAccessibleTitle', {
@@ -452,6 +488,9 @@ const ChatMessage = ({
 function _mapStateToProps(state: IReduxState, { message }: IProps) {
     const { knocking } = state['features/lobby'];
 
+    const activeSearchMatch = getActiveChatSearchMatch(state);
+    const isActiveSearchMatch = Boolean(activeSearchMatch && activeSearchMatch.messageId === message.messageId);
+
     const participant = getParticipantById(state, message.participantId);
 
     // For visitor private messages, participant will be undefined but we should still allow private chat
@@ -470,6 +509,8 @@ function _mapStateToProps(state: IReduxState, { message }: IProps) {
     return {
         shouldDisplayMenuOnRight,
         enablePrivateChat,
+        isActiveSearchMatch,
+        searchQuery: getChatSearchQuery(state),
         knocking,
         state
     };
