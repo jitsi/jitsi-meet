@@ -3,6 +3,7 @@ import aliases from 'react-emoji-render/data/aliases';
 // eslint-disable-next-line lines-around-comment
 // @ts-expect-error
 import emojiAsciiAliases from 'react-emoji-render/data/asciiAliases';
+import { createSelector } from 'reselect';
 
 import { IReduxState } from '../app/types';
 import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
@@ -357,3 +358,68 @@ export function getDisplayNameSuffix(message: IMessage): string {
 export function isFileMessage(message: IMessage): boolean {
     return Boolean(message?.fileMetadata);
 }
+
+/**
+ * Returns the current chat search query.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {string}
+ */
+export function getChatSearchQuery(state: IReduxState): string {
+    return state['features/chat'].searchQuery || '';
+}
+
+/**
+ * Stable empty-array reference returned when there is no active search query, so repeated
+ * "no query" calls return the same reference instead of a new empty array each time.
+ */
+const NO_SEARCH_MATCHES: IMessage[] = [];
+
+const _getMessages = (state: IReduxState) => state['features/chat'].messages;
+
+/**
+ * Returns all messages matching the current search query, in display order.
+ * Reaction and file messages are excluded since they have no searchable text.
+ * Memoized: only recomputes when messages or the search query change.
+ *
+ * @returns {IMessage[]}
+ */
+export const getChatSearchMatches = createSelector(
+    _getMessages,
+    getChatSearchQuery,
+    (messages, searchQuery): IMessage[] => {
+        const query = searchQuery?.trim().toLowerCase();
+
+        if (!query) {
+            return NO_SEARCH_MATCHES;
+        }
+
+        return messages.filter(message =>
+            !message.isReaction
+            && !isFileMessage(message)
+            && getMessageText(message).toLowerCase().includes(query));
+    }
+);
+
+/**
+ * Returns the index of the currently focused search match.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {number}
+ */
+export function getChatSearchMatchIndex(state: IReduxState): number {
+    return state['features/chat'].searchMatchIndex || 0;
+}
+
+/**
+ * Returns the message that is the currently focused search match, if any.
+ * Memoized via getChatSearchMatches — this is called from every ChatMessage's
+ * mapStateToProps, so keeping it cheap matters.
+ *
+ * @returns {IMessage | undefined}
+ */
+export const getActiveChatSearchMatch = createSelector(
+    getChatSearchMatches,
+    getChatSearchMatchIndex,
+    (matches, index): IMessage | undefined => matches[index]
+);
