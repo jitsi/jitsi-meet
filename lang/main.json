@@ -153,11 +153,11 @@
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateNotice": "Private message to {{recipient}}",
         "search": {
+            "close": "Close search",
+            "next": "Next match",
             "open": "Search messages",
             "placeholder": "Search in chat",
             "previous": "Previous match",
-            "next": "Next match",
-            "close": "Close search",
             "resultsCount": "{{current}}/{{total}}"
         },
         "sendButton": "Send",
