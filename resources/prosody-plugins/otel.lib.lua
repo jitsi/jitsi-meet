@@ -1,8 +1,6 @@
 -- This opentelemetry library was inspired by https://github.com/yangxikun/opentelemetry-lua,
 -- but simplified and adapted to the Prosody ecosystem.
 
-
-local http = require "net.http"
 local json = require "util.json"
 local array = require "util.array"
 local time = require "util.time"
@@ -87,7 +85,7 @@ function Span:encode()
     return {
         trace_id = self.trace_id,
         span_id = self.span_id,
-        parent_span_id = self.context and self.context.span_id,
+        parent_span_id = self.parent_context and self.parent_context.span_id,
         name = self.name,
         start_time_unix_nano = to_nanoseconds(self.start_time),
         end_time_unix_nano = to_nanoseconds(self.end_time),
@@ -126,8 +124,9 @@ local Exporter = {}
 Exporter.__index = Exporter
 m.Exporter = Exporter
 
-function Exporter.new(endpoint)
+function Exporter.new(request_fn, endpoint)
     local self = {
+        request_fn = request_fn,
         endpoint = endpoint,
     }
     return setmetatable(self, Exporter)
@@ -158,7 +157,7 @@ function Exporter:export(spans)
         )
     end
 
-    http.request(
+    self.request_fn(
         self.endpoint, {
             method = "POST",
             headers = {

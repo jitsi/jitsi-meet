@@ -1,6 +1,7 @@
 local otel = module:require "otel"
 local jid = require "util.jid";
 local json = require "util.json";
+local http = require "net.http"
 
 local otlp_endpoint = module:get_option("otlp_endpoint")
 
@@ -9,7 +10,7 @@ if not otlp_endpoint then
     return
 end
 
-local exporter = otel.Exporter.new(otlp_endpoint)
+local exporter = otel.Exporter.new(http.request, otlp_endpoint)
 local processor = otel.Processor.new(exporter)
 local tracer = otel.Tracer.new(processor, "prosody", "muc")
 

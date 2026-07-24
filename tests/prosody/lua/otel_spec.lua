@@ -8,16 +8,6 @@
 local os = require "os"
 local cjson = require "cjson"
 
--- We save the request body to compare it later.
-local latest_request = nil
-package.preload['net.http'] = function()
-    return {
-        request = function(endpoint, args)
-            latest_request = args
-        end
-    }
-end
-
 package.preload['util.json'] = function()
     return {
         encode = function(x)
@@ -73,15 +63,21 @@ end
 describe("otel", function()
     describe("span", function()
         it("create and export span", function()
-            local exporter = M.Exporter.new("endpoint")
+            local request
+            local request_fn = function(url, options, callback) request = options end
+
+            local exporter = M.Exporter.new(request_fn, "endpoint")
             local processor = M.Processor.new(exporter)
             local tracer = M.Tracer.new(processor, "service", "scope")
 
-            local span = M.Span.new("name", tracer, {})
+            local span = tracer:start_span("name", {
+                trace_id = "deadbeefdeadbeefdeadbeefdeadbeef",
+                span_id = "deadbeefdeadbeef",
+            })
             span:set_attribute("key", M.Attribute.string("value"))
             span:end_span()
 
-            local body = cjson.decode(latest_request.body)
+            local body = cjson.decode(request.body)
             assert.are.same(
                 {
                     attributes = {
@@ -101,7 +97,14 @@ describe("otel", function()
                 { { key = "key", value = { string_value = "value" } } },
                 span.attributes
             )
-
+            assert.are.same(
+                "deadbeefdeadbeefdeadbeefdeadbeef",
+                span.trace_id
+            )
+            assert.are.same(
+                "deadbeefdeadbeef",
+                span.parent_span_id
+            )
             assert.are.same(1, span.kind)
             assert.are.same("name", span.name)
             assert.are.same({ code = 1 }, span.status)
