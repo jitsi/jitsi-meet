@@ -29,9 +29,25 @@ import {
 } from '../../functions';
 
 interface IProps {
+
+    /**
+     * An optional class name.
+     */
     className: string;
+
+    /**
+     * Whether CC tab is enabled or not.
+     */
     isCCTabEnabled: boolean;
+
+    /**
+     * Whether the polls feature is enabled or not.
+     */
     isPollsEnabled: boolean;
+
+    /**
+     * Function to be called when pressing the close button.
+     */
     onCancel: Function;
 }
 
@@ -223,6 +239,9 @@ function ChatHeader({ className, isCCTabEnabled, isPollsEnabled, onCancel: onCan
     } else if (fileSharingTabEnabled && focusedTab === ChatTabs.FILE_SHARING) {
         title = 'chat.tabs.fileSharing';
     } else {
+        // If the focused tab is not enabled, don't render the header.
+        // This should not happen in normal circumstances since Chat.tsx already checks
+        // if any tabs are available before rendering.
         return null;
     }
 
