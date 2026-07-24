@@ -211,16 +211,38 @@ const keepAlive: Array<any> = [];
 const CONCURRENCY_LOG_PATH = path.join(TEST_RESULTS_DIR, 'concurrency.jsonl');
 
 /**
- * Detects the "tests completed but session DELETE timed out" signature in a worker's wdio log.
+ * Detects the "tests completed but session teardown crashed" signature in a worker's wdio log.
  * Selenium Grid (especially with Firefox) sometimes takes longer than `connectionRetryTimeout`
  * to acknowledge session deletion; the runner exits non-zero even though the test ran fine.
- * Returns true when afterSuite finished AND a DELETE-method timeout follows in the same log.
+ *
+ * Two variants of the same benign pattern are recognised, both gated on the suite having run to
+ * completion (the `afterSuite` hook finished):
+ *  1. An explicit DELETE-method WebDriverError timeout in the log tail.
+ *  2. The worker was killed mid-teardown: the framework `after` hook finished and a session
+ *     `deleteSession()`/`[DELETE] .../session/` was issued, then the log simply truncates with no
+ *     error line ever written. This is what happens when the grid drops the worker during DELETE.
+ *
+ * Both require `afterSuite` to have finished, so every test body and hook executed; the only thing
+ * left was tearing the session(s) down. A genuine test failure that managed to write results is
+ * already handled earlier by the `xmlHasNamedTests` early-return in `onWorkerEnd`, so it never
+ * reaches here.
+ *
+ * @param specFile - The worker's first spec file (path or URL); used to locate its wdio log.
+ * @param cid - The worker (capability) id.
  */
-function isPostTestSessionDeleteTimeout(specName: string, cid: string): boolean {
-    const candidates = [
-        path.join(TEST_RESULTS_DIR, `${specName}-${cid}.log`),
-        path.join(TEST_RESULTS_DIR, `wdio-${cid}.log`)
-    ];
+function isPostTestSessionDeleteTimeout(specFile: string | undefined, cid: string): boolean {
+    // @wdio/local-runner writes the worker log to `${specBaseName}-${cid}.log`, where specBaseName
+    // strips only the final extension (so `displayName.spec.ts` -> `displayName.spec`), falling back
+    // to `wdio-${cid}.log` when no spec is associated. Mirror that exactly so the log is found.
+    const candidates = [];
+
+    if (specFile) {
+        const specBaseName = path.basename(specFile, path.extname(specFile));
+
+        candidates.push(path.join(TEST_RESULTS_DIR, `${specBaseName}-${cid}.log`));
+    }
+    candidates.push(path.join(TEST_RESULTS_DIR, `wdio-${cid}.log`));
+
     const logPath = candidates.find(p => fs.existsSync(p));
 
     if (!logPath) {
@@ -239,9 +261,17 @@ function isPostTestSessionDeleteTimeout(specName: string, cid: string): boolean 
 
         const tail = buf.toString('utf8');
         const afterSuiteFinished = tail.includes('Finished to run "afterSuite" hook');
+
+        // Variant 1: the grid was slow to ack the DELETE and the runner logged an explicit timeout.
         const deleteTimeout = /WebDriverError:[^\n]*timeout[^\n]*method "DELETE"/i.test(tail);
 
-        return afterSuiteFinished && deleteTimeout;
+        // Variant 2: the worker was killed during teardown. The framework `after` hook finished and
+        // a session DELETE was issued, but the log truncates before any error is written.
+        const afterHookFinished = tail.includes('Finished to run "after" hook');
+        const deleteIssued = tail.includes('COMMAND deleteSession()')
+            || /\[DELETE\][^\n]*\/session\//.test(tail);
+
+        return afterSuiteFinished && (deleteTimeout || (afterHookFinished && deleteIssued));
     } catch {
         return false;
     }
@@ -523,12 +553,18 @@ export const config: WebdriverIO.MultiremoteConfig = {
             AllureReporter.addSuite(test.parent);
         }
 
-        if (ctx.skipSuiteTests) {
-            if ((typeof ctx.skipSuiteTests) === 'string') {
+        // A failure in an earlier test skips the rest of that describe block, but not other describe blocks in the
+        // same file (ctx.failedSuite is scoped to the suite that failed, while ctx.skipSuiteTests is file-wide).
+        const failedSameSuite = Boolean(ctx.failedSuite) && ctx.failedSuite === test.parent;
+        const skipReason = ctx.skipSuiteTests
+            || (failedSameSuite ? `A previous test in suite "${test.parent}" has failed.` : false);
+
+        if (skipReason) {
+            if ((typeof skipReason) === 'string') {
                 AllureReporter.addDescription((ctx.testProperties.description || '')
-                    + '\n\nSkipped because: ' + ctx.skipSuiteTests, 'text');
+                    + '\n\nSkipped because: ' + skipReason, 'text');
             }
-            console.log(`Skipping because: ${ctx.skipSuiteTests}`);
+            console.log(`Skipping because: ${skipReason}`);
 
             context.skip();
 
@@ -554,8 +590,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         if (error) {
 
-            // skip all remaining tests in the suite
-            ctx.skipSuiteTests = `Test "${test.title}" has failed.`;
+            // Skip the remaining tests in the same describe block (but not other describe blocks in the file).
+            ctx.failedSuite = test.parent;
 
             // make sure all browsers are at the main app in iframe (if used), so we collect debug info
             await Promise.all(multiRemoteBrowser.instances.map(async (instance: string) => {
@@ -614,6 +650,13 @@ export const config: WebdriverIO.MultiremoteConfig = {
                     AllureReporter.addAttachment(a.filename, a.content, a.type);
                 }
             );
+
+            console.log('Hanging up after test failure');
+            // let's hangup all the calls and give time for it to push any stats and logs
+            await Promise.all(multiRemoteBrowser.instances.map(async (instance: string) => {
+                // @ts-ignore
+                await ctx[instance]?.hangup();
+            }));
         }
     },
 
@@ -633,11 +676,11 @@ export const config: WebdriverIO.MultiremoteConfig = {
     /**
      * Gets executed after a worker process has exited.
      * Handles three crash scenarios:
-     * 1. Session DELETE timeout AFTER tests completed (common with Firefox on Selenium Grid):
-     *    afterSuite ran, then the grid was slow to acknowledge the DELETE, the runner timed out
-     *    and exited non-zero. Tests actually passed. We skip the misleading "crashed" synthesis;
-     *    allure already has accurate per-test results, and we summarise the teardown anomaly in
-     *    a passing JUnit entry.
+     * 1. Session teardown crash AFTER tests completed (common with Firefox on Selenium Grid):
+     *    afterSuite ran, then the session DELETE either timed out or the worker was killed
+     *    mid-teardown, so the runner exited non-zero. Tests actually passed. We skip the misleading
+     *    "crashed" synthesis; allure already has accurate per-test results, and we summarise the
+     *    teardown anomaly in a passing JUnit entry. See isPostTestSessionDeleteTimeout.
      * 2. Session DELETE timeout BEFORE tests completed: JUnit reporter never flushes,
      *    leaving a zero-byte XML. Synthesise a failure entry.
      * 3. Session INIT timeout: JUnit reporter writes a non-empty XML but with empty name/classname,
@@ -674,22 +717,48 @@ export const config: WebdriverIO.MultiremoteConfig = {
             return;
         }
 
-        // Detect the "tests passed but session DELETE timed out" pattern from the worker's wdio
-        // log. @wdio/local-runner names this `${specBaseName}-${cid}.log` under outputDir, with
-        // a fallback to `wdio-${cid}.log` when no spec is associated.
-        if (isPostTestSessionDeleteTimeout(specName, cid)) {
+        // Detect the "tests passed but session teardown crashed" pattern from the worker's wdio
+        // log. Pass the raw spec path so the log file name is derived the same way
+        // @wdio/local-runner derives it (only the final extension is stripped).
+        if (isPostTestSessionDeleteTimeout(workerSpecs?.[0], cid)) {
+            const teardownName = 'Session teardown crashed after tests completed';
             const teardownMessage
-                = `Session DELETE timed out after tests completed (worker exit ${exitCode}). `
-                + 'Allure has the per-test results; this entry just records the teardown anomaly.';
+                = `Session teardown crashed after tests completed (worker exit ${exitCode}). `
+                + 'The suite ran to completion; this entry just records the teardown anomaly.';
             const b = junitReportBuilder.newBuilder();
 
             b.testSuite().name(specName).testCase()
-                .name('Session DELETE timed out during teardown')
+                .name(teardownName)
                 .className(specName)
                 .standardOutput(teardownMessage);
             b.writeTo(xmlPath);
-            console.log(`[onWorkerEnd] Worker ${cid} (${specName}): session DELETE timed out after `
-                + 'afterSuite — synthesising passing JUnit summary, leaving allure per-test results untouched.');
+
+            // When the worker is killed mid-teardown the reporters never flush, so allure has no
+            // per-test results for this spec and it would otherwise vanish from the report. Write a
+            // passing entry so the spec stays visible with the teardown anomaly recorded. If allure
+            // already captured the per-test results (e.g. a slow-DELETE timeout after a clean
+            // flush), this is just an extra informational passing entry alongside them.
+            const allureResult = {
+                uuid: randomUUID(),
+                name: teardownName,
+                status: 'passed',
+                statusDetails: { message: teardownMessage },
+                stage: 'finished',
+                steps: [],
+                attachments: [],
+                parameters: [],
+                labels: [
+                    { name: 'parentSuite', value: dir },
+                    { name: 'suite', value: specName }
+                ],
+                links: []
+            };
+            const allurePath
+                = path.join(TEST_RESULTS_DIR, 'allure-results', `${allureResult.uuid}-result.json`);
+
+            fs.writeFileSync(allurePath, JSON.stringify(allureResult));
+            console.log(`[onWorkerEnd] Worker ${cid} (${specName}): session teardown crashed after `
+                + 'afterSuite — synthesising passing JUnit + allure entry; suite ran to completion.');
 
             return;
         }

@@ -42,6 +42,15 @@
     "audioOnly": {
         "audioOnly": "Low bandwidth"
     },
+    "audioTranslation": {
+        "disabledForRoom": "Audio translation has been turned off for this meeting.",
+        "errorForbidden": "You don't have permission to use audio translation.",
+        "errorGeneric": "Couldn't enable audio translation. Please try again.",
+        "errorLimitReached": "Couldn't translate everyone at once. Turn on translation for individual participants instead.",
+        "errorRoomDisabled": "Audio translation is turned off for this meeting. Enable it in Moderator settings.",
+        "errorSpeakerUnavailable": "Can't translate this participant — they're no longer in the meeting.",
+        "labelTooltip": "Translation in progress"
+    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "e.g. 10000000 for 10 Mbps",
         "assumedBandwidthBpsWarning": "Higher values might cause network issues.",
@@ -322,6 +331,7 @@
         "alreadySharedVideoMsg": "Another participant is already sharing a video. This conference allows only one shared video at a time.",
         "alreadySharedVideoTitle": "Only one shared video is allowed at a time",
         "applicationWindow": "Application window",
+        "applyChanges": "Apply changes",
         "authenticationRequired": "Authentication required",
         "cameraCaptureDialog": {
             "description": "Take and send a picture using your mobile camera",
@@ -352,9 +362,11 @@
         "contactSupport": "Contact support",
         "copied": "Copied",
         "copy": "Copy",
+        "currentLinks": "Current Links",
         "demoteParticipantDialog": "Are you sure you want to move this participant to viewer?",
         "demoteParticipantTitle": "Move to viewer",
         "dismiss": "Dismiss",
+        "dismissAll": "Dismiss All",
         "displayNameRequired": "Hi! What's your name?",
         "done": "Done",
         "e2eeDescription": "End-to-End Encryption is currently EXPERIMENTAL. Please keep in mind that turning on end-to-end encryption will effectively disable server-side provided services such as: phone participation. Also keep in mind that the meeting will only work for people joining from browsers with support for insertable streams.",
@@ -382,6 +394,7 @@
         "kickSystemTitle": "Ouch! You were kicked out of the meeting",
         "kickTitle": "Ouch! {{participantDisplayName}} kicked you out of the meeting",
         "learnMore": "Learn more",
+        "link": "Link",
         "linkMeeting": "Link meeting",
         "linkMeetingTitle": "Link meeting to Salesforce",
         "liveStreaming": "Live Streaming",
@@ -447,11 +460,14 @@
         "passwordNotSupported": "Setting a meeting $t(lockRoomPassword) is not supported.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) not supported",
         "passwordRequired": "$t(lockRoomPasswordUppercase) required",
+        "pendingDealsDescription": "These opportunities may be related to this meeting",
+        "pendingDescription": "We found these potential matches based on participant emails",
         "permissionCameraRequiredError": "Camera permission is required to participate in conferences with video. Please grant it in Settings",
         "permissionErrorTitle": "Permission required",
         "permissionMicRequiredError": "Microphone permission is required to participate in conferences with audio. Please grant it in Settings",
         "readMore": "more",
         "recentlyUsedObjects": "Your recently used objects",
+        "recordAndTranscribe": "Record & Transcribe",
         "recording": "Recording",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Not possible while a live stream is active",
         "recordingInProgressDescription": "This meeting is being recorded and analyzed by AI. Your audio and video have been muted. If you choose to unmute, you consent to being recorded.",
@@ -473,6 +489,7 @@
         "reservationError": "Reservation system error",
         "reservationErrorMsg": "Error code: {{code}}, message: {{msg}}",
         "retry": "Retry",
+        "salesforceDataError": "Failed to load Salesforce data",
         "screenSharingAudio": "Share audio",
         "screenSharingFailed": "Oops! Something went wrong, we weren't able to start screen sharing!",
         "screenSharingFailedTitle": "Screen sharing failed!",
@@ -519,11 +536,17 @@
         "startLiveStreaming": "Start live stream",
         "startRecording": "Start recording",
         "startRemoteControlErrorMessage": "An error occurred while trying to start the remote control session!",
+        "startTranscribing": "Start transcribing",
+        "startTranscription": "Start transcription",
         "stopLiveStreaming": "Stop live stream",
         "stopRecording": "Stop recording",
         "stopRecordingWarning": "Are you sure you would like to stop the recording?",
         "stopStreamingWarning": "Are you sure you would like to stop the live streaming?",
+        "stopTranscription": "Stop transcription",
+        "stopTranscriptionWarning": "Are you sure you would like to stop the transcription?",
         "streamKey": "Live stream key",
+        "suggestedAccounts": "Suggested Accounts",
+        "suggestedDeals": "Suggested Deals",
         "thankYou": "Thank you for using {{appName}}!",
         "token": "token",
         "tokenAuthFailed": "Sorry, you're not allowed to join this call.",
@@ -548,6 +571,7 @@
         "tokenAuthUnsupported": "Token URL is not supported.",
         "transcribing": "Transcribing",
         "unauthenticatedAccessDisabled": "This call requires authentication. Please login in order to proceed.",
+        "unlink": "Unlink",
         "unlockRoom": "Remove meeting $t(lockRoomPassword)",
         "user": "User",
         "userIdentifier": "User identifier",
@@ -671,6 +695,9 @@
         "retry": "Try again",
         "support": "Support",
         "supportMsg": "If this keeps happening, reach out to"
+    },
+    "inputAction": {
+        "deleteInput": "Clear input"
     },
     "inviteDialog": {
         "alertText": "Failed to invite some participants.",
@@ -818,6 +845,13 @@
         "youAreAlone": "You are the only one in the meeting"
     },
     "me": "me",
+    "multiScreen": {
+        "noParticipants": "No participants",
+        "showOnStage": "Show {{name}} on the second screen",
+        "unpinFromStage": "Stop featuring {{name}} on the second screen",
+        "whiteboardInactive": "Open the whiteboard in the meeting to show it on the second screen",
+        "whiteboardTitle": "Whiteboard"
+    },
     "notify": {
         "OldElectronAPPTitle": "Security vulnerability!",
         "allowAll": "Allow All",
@@ -828,6 +862,10 @@
         "audioUnmuteBlockedDescription": "Mic unmute operation has been temporarily blocked because of system limits.",
         "audioUnmuteBlockedTitle": "Mic unmute blocked!",
         "chatMessages": "Chat messages",
+        "confirmAccountError": "Failed to confirm account",
+        "confirmAccountSuccess": "Account confirmed",
+        "confirmDealError": "Failed to confirm deal",
+        "confirmDealSuccess": "Deal confirmed",
         "connectedOneMember": "{{name}} joined the meeting",
         "connectedThreePlusMembers": "{{name}} and many others joined the meeting",
         "connectedTwoMembers": "{{first}} and {{second}} joined the meeting",
@@ -841,6 +879,8 @@
         "disabledIframeSecondaryNative": "Embedding {{domain}} is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes.",
         "disabledIframeSecondaryWeb": "Embedding {{domain}} is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes. Please use <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> for production embedding!",
         "disconnected": "disconnected",
+        "dismissError": "Failed to dismiss suggestions",
+        "dismissSuccess": "Suggestions dismissed",
         "displayNotifications": "Display notifications for",
         "dontRemindMe": "Do not remind me",
         "focus": "Conference focus",
@@ -917,6 +957,8 @@
         "suggestRecordingAction": "Start",
         "suggestRecordingDescription": "Would you like to start a recording?",
         "suggestRecordingTitle": "Record this meeting",
+        "unlinkFromSalesforceError": "Failed to unlink from Salesforce",
+        "unlinkFromSalesforceSuccess": "Unlinked from Salesforce",
         "unmute": "Unmute Audio",
         "unmuteScreen": "Start screen sharing",
         "unmuteVideo": "Unmute Video",
@@ -1123,6 +1165,7 @@
         }
     },
     "recording": {
+        "alsoTranscribe": "Also transcribe this meeting?",
         "authDropboxText": "Upload to Dropbox",
         "availableSpace": "Available space: {{spaceLeft}} MB (approximately {{duration}} minutes of recording)",
         "beta": "BETA",
@@ -1166,7 +1209,7 @@
         "policyError": "You tried to start a recording too quickly. Please try again later!",
         "recordAudioAndVideo": "Record audio and video",
         "recordTranscription": "Record transcription",
-        "saveLocalRecording": "Save recording file locally (Beta)",
+        "saveLocalRecording": "Save recording file locally",
         "serviceDescription": "Your recording will be saved by the recording service",
         "serviceDescriptionCloud": "Cloud recording",
         "serviceDescriptionCloudInfo": "Recorded meetings are automatically cleared 24h after their recording time.",
@@ -1189,7 +1232,7 @@
         "about": "You can add a $t(lockRoomPassword) to your meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "aboutReadOnly": "Moderator participants can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "insecureRoomNameWarningNative": "The room name is unsafe. Unwanted participants may join your meeting. {{recommendAction}} Learn more about securing your meeting ",
-        "insecureRoomNameWarningWeb": "The room name is unsafe. Unwanted participants may join your meeting. {{recommendAction}} Learn more about securing your meeting <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">here</a>.",
+        "insecureRoomNameWarningWeb": "The room name is unsafe. Unwanted participants may join your meeting. {{recommendAction}} Learn more about securing your meeting <a href=\"{{securityUrl}}\" target=\"_blank\">here</a>.",
         "title": "Security Options",
         "unsafeRoomActions": {
             "meeting": "Consider securing your meeting using the security button.",
@@ -1199,6 +1242,7 @@
     },
     "settings": {
         "audio": "Audio",
+        "audioTranslation": "Enable audio translation",
         "buttonLabel": "Settings",
         "calendar": {
             "about": "The {{appName}} calendar integration is used to securely access your calendar so it can read upcoming events.",
@@ -1317,6 +1361,10 @@
     "termsView": {
         "title": "Terms"
     },
+    "timeTimer": {
+        "endedOver": "You are {{time}} over schedule.",
+        "endedTitle": "Timer ended"
+    },
     "toggleTopPanelLabel": "Toggle top panel",
     "toolbar": {
         "Settings": "Settings",
@@ -1324,6 +1372,7 @@
             "Settings": "Open settings",
             "audioOnly": "Toggle audio only",
             "audioRoute": "Select the sound device",
+            "audioTranslation": "Translate audio",
             "boo": "Boo",
             "breakoutRooms": "Breakout rooms",
             "callQuality": "Manage video quality",
@@ -1432,6 +1481,8 @@
         "audioOnlyOn": "Enable low bandwidth mode",
         "audioRoute": "Select the sound device",
         "audioSettings": "Audio settings",
+        "audioTranslation": "Translate audio",
+        "audioTranslationOff": "Off",
         "authenticate": "Authenticate",
         "boo": "Boo",
         "callQuality": "Manage video quality",
@@ -1507,6 +1558,8 @@
         "reactionSilence": "Send silence reaction",
         "reactionSurprised": "Send surprised reaction",
         "reactions": "Reactions",
+        "record": "Record",
+        "recordAndTranscribe": "Record & Transcribe",
         "security": "Security options",
         "selectBackground": "Select background",
         "shareRoom": "Invite someone",
@@ -1533,6 +1586,7 @@
         "videounmute": "Start camera"
     },
     "transcribing": {
+        "alsoRecord": "Also record this meeting?",
         "ccButtonTooltip": "Start / Stop subtitles",
         "expandedLabel": "Transcribing is currently on",
         "failed": "Transcribing failed",
@@ -1607,10 +1661,13 @@
         "mute": "Participant is muted",
         "muted": "Muted",
         "pinToStage": "Pin to stage",
+        "receivingTranslatedAudio": "You're receiving translated audio",
         "remoteControl": "Start / Stop remote control",
         "screenSharing": "Participant is sharing their screen",
         "show": "Show on stage",
         "showSelfView": "Show self view",
+        "translationEnabledForYou": "Translation enabled for you",
+        "translationOnAndReceiving": "Translation on · receiving",
         "unpinFromStage": "Unpin",
         "verify": "Verify participant",
         "videoMuted": "Camera disabled",

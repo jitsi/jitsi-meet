@@ -59,6 +59,8 @@ local function load_config()
         ['create-polls'] = true;
         ['send-groupchat'] = true;
         flip = true;
+        ['live-translation'] = true;
+        ['live-translation-subscribe'] = true;
     });
 end
 load_config();

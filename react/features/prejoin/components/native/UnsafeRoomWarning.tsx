@@ -21,7 +21,7 @@ import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import getUnsafeRoomText from '../../../base/util/getUnsafeRoomText.native';
 import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
-import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
+import { replaceRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { IPrejoinProps } from '../../types';
 
@@ -44,7 +44,7 @@ const UnsafeRoomWarning: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProp
     }, [ dispatch ]);
 
     const onProceed = useCallback(() => {
-        navigateRoot(screen.preJoin);
+        replaceRoot(screen.preJoin);
 
         return true;
     }, [ dispatch ]);

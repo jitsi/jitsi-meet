@@ -1071,7 +1071,7 @@
         "about": "Toplantınıza bir parola ekleyebilirsiniz. Katılımcıların toplantıya katılmasına izin verilmeden önce parolayı girmeleri gerekecektir.",
         "aboutReadOnly": "Moderatörler toplantıya toplantıya bir $t(lockRoomPassword) eklenebilir. Katılımcıların toplantıya katılmalarına izin verilmeden önce $t(lockRoomPassword) bilgilerini sağlamaları gerekir..",
         "insecureRoomNameWarningNative": "Oda adı güvenli değil. İstenmeyen katılımcılar toplantınıza katılabilir. {{recommendAction}} Toplantınızın güvenliğini sağlama hakkında daha fazla bilgi edinin",
-        "insecureRoomNameWarningWeb": "Oda adı güvenli değil. İstenmeyen katılımcılar toplantınıza katılabilir. {{recommendAction}} Toplantınızın güvenliğini sağlama hakkında daha fazla bilgi edinin <a href = \"{{securityUrl}}\" rel = \"security\" target = \"_blank\">buraya</a>.",
+        "insecureRoomNameWarningWeb": "Oda adı güvenli değil. İstenmeyen katılımcılar toplantınıza katılabilir. {{recommendAction}} Toplantınızın güvenliğini sağlama hakkında daha fazla bilgi edinin <a href = \"{{securityUrl}}\" target = \"_blank\">buraya</a>.",
         "title": "Güvenlik Seçenekleri",
         "unsafeRoomActions": {
             "meeting": "Güvenlik düğmesini kullanarak toplantınızın güvenliğini sağlamayı düşünün.",

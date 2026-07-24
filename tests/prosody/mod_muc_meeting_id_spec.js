@@ -1,6 +1,9 @@
 import assert from 'assert';
 
+import { mintAsapToken } from './helpers/jwt.js';
 import { createTestContext } from './helpers/test_context.js';
+import { getRoomState } from './helpers/test_observer.js';
+import { joinWithTranscriber } from './helpers/xmpp_client.js';
 import { isAvailablePresence } from './helpers/xmpp_utils.js';
 
 const CONFERENCE = 'conference.localhost';
@@ -8,6 +11,21 @@ const CONFERENCE = 'conference.localhost';
 let _roomCounter = 0;
 const room = () => `meeting-id-${++_roomCounter}@${CONFERENCE}`;
 const healthRoom = () => `__jicofo-health-check-mid-${++_roomCounter}@${CONFERENCE}`;
+
+/**
+ * Asserts that an IQ response is a 'cancel'/'not-allowed' error.
+ *
+ * @param {object} iq  the IQ stanza returned by sendMucAdmin
+ * @returns {void}
+ */
+function assertNotAllowed(iq) {
+    assert.strictEqual(iq.attrs.type, 'error', 'IQ must be rejected');
+    const error = iq.getChild('error');
+
+    assert.ok(error, 'response must carry an <error>');
+    assert.strictEqual(error.attrs.type, 'cancel');
+    assert.ok(error.getChild('not-allowed'), 'error condition must be not-allowed');
+}
 
 describe('mod_muc_meeting_id', () => {
 
@@ -40,17 +58,231 @@ describe('mod_muc_meeting_id', () => {
                 'regular user should be allowed in after focus unlocks');
         });
 
-        // NOTE: the queue-drain scenario (regular joins before jicofo, gets
-        // queued, then jicofo joins and the queue is flushed) is not tested
-        // here. When a non-focus user is the first to send a presence to a
-        // room, Prosody creates the room in "locked" state (XEP-0045 §10.1.3)
-        // and expects the creator to submit a config form. Because our hook
-        // stops the join (returning true), the creator never receives the
-        // status-201 self-presence and never submits the form, so the room
-        // stays locked. Subsequent joins by focus are then rejected by the MUC
-        // layer itself. In production this edge case does not arise: jicofo
-        // always joins first, creates and configures the room, then regular
-        // users arrive after the room is unlocked.
+        it('a regular user cannot create a room by joining first', async () => {
+            const r = room();
+
+            // restrict_room_creation = true (core Prosody mod_muc) limits
+            // :create-room to admins. A non-focus client's presence to a
+            // nonexistent room is rejected at muc-room-pre-create, before the
+            // room object exists and before mod_muc_meeting_id's jicofo lock
+            // ever comes into play.
+            const c = await ctx.connect();
+            const presence = await c.joinRoom(r);
+
+            assert.strictEqual(presence.attrs.type, 'error', 'join must be rejected');
+            const error = presence.getChild('error');
+
+            assert.ok(error, 'response must carry an <error>');
+            assert.strictEqual(error.attrs.type, 'cancel');
+            assert.ok(error.getChild('not-allowed'), 'error condition must be not-allowed');
+        });
+
+        it('focus can still create the room after a rejected creation attempt', async () => {
+            const r = room();
+
+            const c = await ctx.connect();
+
+            await c.joinRoom(r);
+
+            // connectFocus throws (timeout) if the join is blocked.
+            await ctx.connectFocus(r);
+        });
+    });
+
+    // -------------------------------------------------------------------------
+    // set admin filtering
+    // -------------------------------------------------------------------------
+    //
+    // filter_admin_set in mod_muc_meeting_id intercepts muc#admin set IQs at a
+    // high priority (before Prosody's own handler) and rejects any item that
+    // targets certain occupants — by nick (role changes) or by real JID
+    // (affiliation changes).
+
+    describe('set admin filtering', () => {
+
+        it('a kick (role=none by nick) targeting certain participant is rejected', async () => {
+            const r = room();
+
+            await ctx.connectFocus(r);
+            const attacker = await ctx.connect();
+
+            await attacker.joinRoom(r);
+
+            const resp = await attacker.sendMucAdmin(r, { nick: 'focus',
+                role: 'none' });
+
+            assertNotAllowed(resp);
+
+            const state = await getRoomState(r);
+
+            assert.strictEqual(state.occupant_count, 2, 'must remain in the room after a blocked kick');
+        });
+
+        it('a ban (affiliation=outcast by jid) targeting certain participant is rejected', async () => {
+            const r = room();
+
+            const focus = await ctx.connectFocus(r);
+            const focusBareJid = focus.jid.split('/')[0];
+            const attacker = await ctx.connect();
+
+            await attacker.joinRoom(r);
+
+            const resp = await attacker.sendMucAdmin(r, { jid: focusBareJid,
+                affiliation: 'outcast' });
+
+            assertNotAllowed(resp);
+
+            const state = await getRoomState(r);
+
+            assert.strictEqual(state.occupant_count, 2, 'must remain in the room after a blocked ban');
+        });
+
+        it('a ban by jid is rejected even when a mismatched nick is also present', async () => {
+            const r = room();
+
+            const focus = await ctx.connectFocus(r);
+            const focusBareJid = focus.jid.split('/')[0];
+
+            // An owner (moderator token) is the only actor Prosody would let
+            // change another occupant's affiliation, so the item has to be
+            // filtered by this hook rather than by Prosody's permission check.
+            const token = mintAsapToken({ room: r.split('@')[0],
+                context: { user: { moderator: true } } });
+            const attacker = await ctx.connect({ params: { token } });
+
+            await attacker.joinRoom(r);
+
+            // The affiliation change acts on the real jid; a nick that resolves
+            // to no occupant must not cause the jid to be skipped when deciding
+            // whether the item targets focus.
+            const resp = await attacker.sendMucAdmin(r, { jid: focusBareJid,
+                nick: 'decoy',
+                affiliation: 'outcast' });
+
+            // The real proof is on focus's own connection: a successful ban
+            // makes the room send focus an unavailable self-presence. If the
+            // item is filtered, none arrives.
+            const kicked = await focus.waitForPresenceFrom(`${r}/focus`, { type: 'unavailable',
+                timeout: 500 })
+                .then(() => true, () => false);
+
+            assert.strictEqual(kicked, false, 'focus must not be kicked/banned from the room');
+
+            assertNotAllowed(resp);
+
+            const state = await getRoomState(r);
+
+            assert.strictEqual(state.occupant_count, 2, 'must remain in the room after a blocked ban');
+        });
+
+        it('a role demotion (role=participant) targeting certain participant is rejected', async () => {
+            const r = room();
+
+            await ctx.connectFocus(r);
+            const attacker = await ctx.connect();
+
+            await attacker.joinRoom(r);
+
+            const resp = await attacker.sendMucAdmin(r, { nick: 'focus',
+                role: 'participant' });
+
+            assertNotAllowed(resp);
+        });
+
+        it('admin operations targeting a non-focus occupant are not blocked by this hook', async () => {
+            const r = room();
+
+            // focus is the room owner, so it is allowed to kick a regular user.
+            // This verifies the filtering is scoped and does not
+            // block legitimate moderation of other participants.
+            const focus = await ctx.connectFocus(r);
+            const user = await ctx.connect();
+
+            await user.joinRoom(r);
+            const { nick } = user;
+
+            const resp = await focus.sendMucAdmin(r, { nick,
+                role: 'none' });
+
+            assert.strictEqual(resp.attrs.type, 'result',
+                'must be able to kick a regular participant');
+
+            const state = await getRoomState(r);
+
+            assert.strictEqual(state.occupant_count, 1,
+                'kicked regular user should be gone, only focus remains');
+        });
+    });
+
+    // -------------------------------------------------------------------------
+    // transcription filter robustness
+    // -------------------------------------------------------------------------
+    //
+    // filterTranscriptionResult() in mod_muc_meeting_id processes groupchat
+    // messages from transcribers. Two nil-deref bugs exist:
+    //   1. transcript[1].text crashes when transcript is an empty array.
+    //   2. participant.id crashes when the participant field is absent.
+    // Both are reached only from transcriber JIDs (is_transcriber() guard).
+    // Tests verify the session survives both malformed payloads.
+
+    describe('transcription filter robustness', () => {
+
+        it('session survives a transcription-result with an empty transcript array', async () => {
+            const r = room();
+
+            await ctx.connectFocus(r);
+            const transcriber = await joinWithTranscriber(r);
+
+            try {
+                // transcript: [] → transcript[1] is nil → .text crashes
+                await transcriber.sendJsonGroupchat(r, {
+                    type: 'transcription-result',
+                    transcript: [],
+                    participant: { id: 'p1',
+                        name: 'Alice' },
+                    // eslint-disable-next-line camelcase
+                    is_interim: false
+                });
+
+                await new Promise(resolve => setTimeout(resolve, 400));
+
+                const disconnected = await transcriber.waitForDisconnect(300)
+                    .then(() => true, () => false);
+
+                assert.strictEqual(disconnected, false,
+                    'transcriber session must survive empty transcript array');
+            } finally {
+                await transcriber.disconnect();
+            }
+        });
+
+        it('session survives a transcription-result with a missing participant field', async () => {
+            const r = room();
+
+            await ctx.connectFocus(r);
+            const transcriber = await joinWithTranscriber(r);
+
+            try {
+                // participant absent → participant.id crashes
+                await transcriber.sendJsonGroupchat(r, {
+                    type: 'transcription-result',
+                    transcript: [ { text: 'hello world' } ],
+                    // eslint-disable-next-line camelcase
+                    is_interim: false
+                });
+
+                await new Promise(resolve => setTimeout(resolve, 400));
+
+                const disconnected = await transcriber.waitForDisconnect(300)
+                    .then(() => true, () => false);
+
+                assert.strictEqual(disconnected, false,
+                    'transcriber session must survive missing participant field');
+            } finally {
+                await transcriber.disconnect();
+            }
+        });
+
     });
 
     // -------------------------------------------------------------------------

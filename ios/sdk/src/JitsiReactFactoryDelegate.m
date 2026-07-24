@@ -3,7 +3,6 @@
 #import "JitsiMeet.h"
 
 #import <React/RCTBundleURLProvider.h>
-#import <React/RCTBridge.h>
 
 static NSString *RCTReadMetroHostFromBundle(NSBundle *bundle) {
     NSString *ipPath = [bundle pathForResource:@"ip" ofType:@"txt"];
@@ -22,10 +21,6 @@ static NSString *RCTReadMetroHostFromBundle(NSBundle *bundle) {
 }
 
 @implementation JitsiReactFactoryDelegate
-
-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
-    return [self bundleURL];
-}
 
 - (NSURL *_Nullable)bundleURL {
 #if DEBUG
@@ -53,26 +48,6 @@ static NSString *RCTReadMetroHostFromBundle(NSBundle *bundle) {
 
     NSBundle *sdkBundle = [NSBundle bundleForClass:[self class]];
     return [sdkBundle URLForResource:@"main" withExtension:@"jsbundle"];
-}
-
-- (BOOL)fabricEnabled {
-    NSLog(@"fabricEnabled called, returning NO");
-    return NO;
-}       
-
-- (BOOL)newArchEnabled {
-    NSLog(@"newArchEnabled called, returning NO");
-    return NO;
-}
-
-- (BOOL)turboModuleEnabled {
-    NSLog(@"turboModuleEnabled called, returning NO");
-    return NO;
-}
-
-- (BOOL)bridgelessEnabled {
-    NSLog(@"bridgelessEnabled called, returning NO");
-    return NO;
 }
 
 @end

@@ -1161,7 +1161,7 @@
         "about": "您可以新增 $t(lockRoomPassword) 至您的會議，與會者在加入會議前必須先輸入$t(lockRoomPassword)。",
         "aboutReadOnly": "主持人可以新增 $t(lockRoomPassword) 至會議，與會者在加入會議前必須先輸入$t(lockRoomPassword)。",
         "insecureRoomNameWarningNative": "房間名稱不安全，任何人都可能會加入您的會議。{{recommendAction}} 了解有關保護您的會議的更多資訊。",
-        "insecureRoomNameWarningWeb": "房間名稱不安全，任何人都可能會加入您的會議。{{recommendAction}} 在此處了解有關保護您的會議的更多資訊 <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">這裡</a>。",
+        "insecureRoomNameWarningWeb": "房間名稱不安全，任何人都可能會加入您的會議。{{recommendAction}} 在此處了解有關保護您的會議的更多資訊 <a href=\"{{securityUrl}}\" target=\"_blank\">這裡</a>。",
         "title": "安全性選項",
         "unsafeRoomActions": {
             "meeting": "請考慮使用安全按鈕保護您的會議。",

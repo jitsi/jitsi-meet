@@ -975,7 +975,7 @@
         "about": "Możesz dodać $t(lockRoomPassword) do spotkania. Uczestnicy będą musieli wprowadzić $t(lockRoomPassword) przed dołączeniem do spotkania.",
         "aboutReadOnly": "Uczestnicy posiadający uprawnienia do moderacji mogą ustawić $t(lockRoomPassword) do spotkania. Uczestnicy będą musieli wprowadzić $t(lockRoomPassword) zanim zostaną dołączeni do spotkania.",
         "insecureRoomNameWarningNative": "Nazwa pokoju jest niebezpieczna. Niechciani uczestnicy mogą dołączyć do Twojego spotkania. {{recommendAction}} Dowiedz się więcej o zabezpieczeniu spotkania ",
-        "insecureRoomNameWarningWeb": "Nazwa pokoju jest niebezpieczna. Niechciani uczestnicy mogą dołączyć do Twojego spotkania. {{recommendAction}} Dowiedz się więcej o zabezpieczeniu spotkania <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">tutaj</a>.",
+        "insecureRoomNameWarningWeb": "Nazwa pokoju jest niebezpieczna. Niechciani uczestnicy mogą dołączyć do Twojego spotkania. {{recommendAction}} Dowiedz się więcej o zabezpieczeniu spotkania <a href=\"{{securityUrl}}\" target=\"_blank\">tutaj</a>.",
         "title": "Opcje zabezpieczeń",
         "unsafeRoomActions": {
             "meeting": "Rozważ zabezpieczenie spotkania za pomocą przycisku bezpieczeństwa.",

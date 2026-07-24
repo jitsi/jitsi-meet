@@ -3,6 +3,52 @@ import { client, xml } from '@xmpp/client';
 let _counter = 0;
 
 /**
+ * Connects as the Jibri recorder, joins roomJid with nick 'recorder', and
+ * returns the client. Authenticates as recorder@recorder.localhost (internal_hashed).
+ * The bare JID starts with 'recorder@recorder.' so is_jibri() returns true,
+ * matching the default recorder_prefixes in util.lib.lua.
+ *
+ * The caller is responsible for disconnecting the returned client.
+ *
+ * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
+ * @returns {Promise<XmppTestClient>}
+ */
+export async function joinWithJibri(roomJid) {
+    const c = await createXmppClient({
+        domain: 'recorder.localhost',
+        username: 'recorder',
+        password: 'recordersecret'
+    });
+
+    await c.joinRoom(roomJid, 'recorder');
+
+    return c;
+}
+
+/**
+ * Connects as the transcriber, joins roomJid with nick 'transcriber', and
+ * returns the client. Authenticates as transcriber@recorder.localhost.
+ * The bare JID starts with 'transcriber@recorder.' so is_transcriber() returns
+ * true, matching the default transcriber_prefixes in util.lib.lua.
+ *
+ * The caller is responsible for disconnecting the returned client.
+ *
+ * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
+ * @returns {Promise<XmppTestClient>}
+ */
+export async function joinWithTranscriber(roomJid) {
+    const c = await createXmppClient({
+        domain: 'recorder.localhost',
+        username: 'transcriber',
+        password: 'transcribersecret'
+    });
+
+    await c.joinRoom(roomJid, 'transcriber');
+
+    return c;
+}
+
+/**
  * Creates an anonymous XMPP client and joins a Jigasi brewery MUC with a
  * colibri stats presence extension, simulating a Jigasi SIP gateway instance.
  * The presence advertises supports_sip and stress_level so that
@@ -164,7 +210,11 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * @param {string} [opts.password]       room password to include in the join stanza
          * @param {string} [opts.displayName]    if set, includes a <nick> element in the presence
          */
-        async joinRoom(roomJid, nick, { timeout = 5000, password: roomPassword, extensions = [], displayName } = {}) {
+        async joinRoom(roomJid, nick, { timeout = 5000,
+            password: roomPassword,
+            extensions = [],
+            mucContent = [],
+            displayName } = {}) {
             // Default to the first 8 characters of the local part of the
             // server-assigned JID. Prosody's anonymous_strict mode requires MUC
             // resources to match this prefix, so callers that do not pass an
@@ -175,6 +225,12 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
 
             if (roomPassword !== undefined) {
                 mucX.c('password').t(roomPassword);
+            }
+
+            // Children placed INSIDE the muc <x> (e.g. a <billingid> element),
+            // as opposed to `extensions`, which are siblings of <x>.
+            for (const child of mucContent) {
+                mucX.cnode(child).up();
             }
 
             const nickEl = displayName
@@ -269,16 +325,20 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * mod_filter_iq_rayo may block it, and the test asserts via the
          * /dial-iqs HTTP endpoint instead.
          *
-         * @param {string} roomJid          e.g. 'room@conference.localhost'
-         * @param {string} [dialTo='sip:test@example.com']  value for dial's `to` attribute.
-         *                                  Pass 'jitsi_meet_transcribe' to trigger
-         *                                  the transcription feature gate.
-         * @param {string|null} [roomNameHeader]  value for the JvbRoomName header.
-         *                                  Defaults to `roomJid` (correct value).
-         *                                  Pass null to omit the header entirely.
-         *                                  Pass any other string for a mismatch test.
+         * @param {string} roomJid   e.g. 'room@conference.localhost'
+         * @param {object} [opts]
+         * @param {string} [opts.dialTo='sip:test@example.com']  dial `to` attribute.
+         * @param {string|null} [opts.roomNameHeader]  JvbRoomName value; defaults to roomJid.
+         *   Pass null to omit, any other string for a mismatch test.
+         * @param {string|null} [opts.roomPassHeader]  JvbRoomPassword value; omitted by default.
+         * @param {object} [opts.extraHeaders]  extra name→value header pairs (spoof/strip tests).
          */
-        sendRayoIq(roomJid, dialTo = 'sip:test@example.com', roomNameHeader = roomJid) {
+        sendRayoIq(roomJid, {
+            dialTo = 'sip:test@example.com',
+            roomNameHeader = roomJid,
+            roomPassHeader = null,
+            extraHeaders = {}
+        } = {}) {
             const headers = [];
 
             if (roomNameHeader !== null) {
@@ -289,7 +349,83 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
                 }));
             }
 
+            if (roomPassHeader !== null) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name: 'JvbRoomPassword',
+                    value: roomPassHeader
+                }));
+            }
+
+            for (const [ name, value ] of Object.entries(extraHeaders)) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name,
+                    value
+                }));
+            }
+
             return xmpp.send(
+                xml('iq', { type: 'set',
+                    to: `${roomJid}/focus`,
+                    id: `rayo-${++_counter}` },
+                    xml('dial', {
+                        xmlns: 'urn:xmpp:rayo:1',
+                        to: dialTo,
+                        from: 'fromdomain'
+                    }, ...headers)
+                )
+            );
+        },
+
+        /**
+         * Like sendRayoIq but waits for Prosody's IQ response and returns it.
+         * Use this when the test needs to inspect the reply stanza (e.g. to
+         * assert that Prosody sent back an error rather than routing the IQ).
+         *
+         * Accepts the same options as sendRayoIq.
+         *
+         * @param {string} roomJid
+         * @param {object} [opts]
+         * @param {string} [opts.dialTo]
+         * @param {string|null} [opts.roomNameHeader]
+         * @param {string|null} [opts.roomPassHeader]
+         * @param {object} [opts.extraHeaders]
+         * @returns {Promise<object>}  the response IQ stanza
+         */
+        sendRayoIqAndWait(roomJid, {
+            dialTo = 'sip:test@example.com',
+            roomNameHeader = roomJid,
+            roomPassHeader = null,
+            extraHeaders = {}
+        } = {}) {
+            const headers = [];
+
+            if (roomNameHeader !== null) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name: 'JvbRoomName',
+                    value: roomNameHeader
+                }));
+            }
+
+            if (roomPassHeader !== null) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name: 'JvbRoomPassword',
+                    value: roomPassHeader
+                }));
+            }
+
+            for (const [ name, value ] of Object.entries(extraHeaders)) {
+                headers.push(xml('header', {
+                    xmlns: 'urn:xmpp:rayo:1',
+                    name,
+                    value
+                }));
+            }
+
+            return sendIq(xmpp, pendingIqs,
                 xml('iq', { type: 'set',
                     to: `${roomJid}/focus`,
                     id: `rayo-${++_counter}` },
@@ -389,6 +525,37 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a raw <audio-translation> message to an audio-translation component.
+         * Use this to test malformed payloads; prefer sendAudioTranslation for
+         * well-formed deltas.
+         *
+         * The session must have jitsi_web_query_room set (connect with
+         * params: { room: '<roomname>' }) — the component resolves the room from
+         * the session, not from a stanza attribute.
+         *
+         * @param {string} componentJid  e.g. 'audiotranslation.localhost'
+         * @param {string} rawPayload    raw text for the <audio-translation> body
+         */
+        sendAudioTranslationRaw(componentJid, rawPayload) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `at-${++_counter}` },
+                    xml('audio-translation', { xmlns: 'http://jitsi.org/jitmeet' }, rawPayload)
+                )
+            );
+        },
+
+        /**
+         * Sends a well-formed audio-translation subscription delta.
+         *
+         * @param {string} componentJid  e.g. 'audiotranslation.localhost'
+         * @param {object} delta          { senderId: language, ... }; "" removes
+         */
+        sendAudioTranslation(componentJid, delta) {
+            return this.sendAudioTranslationRaw(componentJid, JSON.stringify(delta));
+        },
+
+        /**
          * Sends a plain <message> stanza to the given JID with no special children.
          * Useful for testing that the end_conference component ignores messages
          * that lack the <end_conference/> child element.
@@ -399,6 +566,67 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
             return xmpp.send(
                 xml('message', { to,
                     id: `msg-${++_counter}` })
+            );
+        },
+
+        /**
+         * Sends a MUC groupchat message to the room. Resolves with the first
+         * <message> stanza received bearing the same id — either the MUC
+         * reflection (type=groupchat) or an error reply (type=error).
+         *
+         * @param {string}  roomJid      e.g. 'room@conference.localhost'
+         * @param {string}  [body]       message body text; omit to send body-less
+         * @param {Array}   [extensions] extra XML children appended to the stanza
+         */
+        async sendGroupchat(roomJid, body, extensions = []) {
+            const id = `gc-${++_counter}`;
+            const children = body === undefined ? [] : [ xml('body', {}, body) ];
+
+            await xmpp.send(
+                xml('message', { to: roomJid,
+                    type: 'groupchat',
+                    id },
+                ...children, ...extensions)
+            );
+
+            return this.waitForMessage(s => s.attrs.id === id);
+        },
+
+        /**
+         * Sets the room subject by sending a groupchat message carrying only a
+         * <subject> element (XEP-0045 §8.1). Fire-and-forget — does NOT wait for
+         * the room's subject broadcast.
+         *
+         * @param {string} roomJid  e.g. 'room@conference.localhost'
+         * @param {string} subject  the new subject text
+         */
+        sendRoomSubject(roomJid, subject) {
+            return xmpp.send(
+                xml('message', { to: roomJid,
+                    type: 'groupchat',
+                    id: `subj-${++_counter}` },
+                    xml('subject', {}, subject)
+                )
+            );
+        },
+
+        /**
+         * Sends a groupchat message with a <json-message> child to the room.
+         * Fire-and-forget — does NOT wait for the MUC reflection stanza.
+         * Use when testing hooks that may crash or block the message before it
+         * is reflected (waiting for reflection would time out).
+         *
+         * @param {string} roomJid   e.g. 'room@conference.localhost'
+         * @param {object} payload   JSON-serialisable value for the json-message body.
+         */
+        sendJsonGroupchat(roomJid, payload) {
+            return xmpp.send(
+                xml('message', { to: roomJid,
+                    type: 'groupchat',
+                    id: `jm-${++_counter}` },
+                    xml('json-message', { xmlns: 'http://jitsi.org/jitmeet' },
+                        JSON.stringify(payload))
+                )
             );
         },
 
@@ -418,6 +646,102 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
                     xml('query', { xmlns: 'http://jabber.org/protocol/muc#admin' },
                         xml('item', { nick,
                             role: 'moderator' })
+                    )
+                )
+            );
+        },
+
+        /**
+         * Sends a muc#admin set IQ carrying a single <item> with the given
+         * attributes and resolves with the server's IQ response. Use to attempt
+         * a kick (role='none'), ban (affiliation='outcast'), or any other
+         * role/affiliation change on an occupant.
+         *
+         * Normally the caller must be a room moderator/owner, but hooks that run
+         * before Prosody's permission check (e.g. the set admin filtering in
+         * mod_muc_meeting_id) may reject the request regardless of privilege.
+         *
+         * @param {string} roomJid    e.g. 'room@conference.localhost'
+         * @param {object} itemAttrs  attributes for the <item>, e.g.
+         *                            { nick: 'focus', role: 'none' } or
+         *                            { jid: 'focus@auth.localhost', affiliation: 'outcast' }
+         */
+        sendMucAdmin(roomJid, itemAttrs) {
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'set',
+                    to: roomJid,
+                    id: `admin-${++_counter}` },
+                    xml('query', { xmlns: 'http://jabber.org/protocol/muc#admin' },
+                        xml('item', itemAttrs)
+                    )
+                )
+            );
+        },
+
+        /**
+         * Sends a Jingle IQ (XEP-0166/XEP-0339) to an occupant's full JID in a
+         * MUC room. Fire-and-forget — does NOT wait for a response.
+         *
+         * The pre-iq/full hook fires on the MUC component before routing, so any
+         * module that hooks that event will see the stanza synchronously.
+         *
+         * For session-accept, a <content name="video"> child is included when
+         * videoType is non-null. For source-add, a content/description/source
+         * chain with a videoType attribute is included.
+         *
+         * @param {string} toFullJid  Occupant full JID, e.g. 'room@conference.localhost/focus'
+         * @param {string} action     'session-accept' | 'source-add'
+         * @param {string|null} videoType  'camera' | 'desktop' | null (audio-only: no video content)
+         */
+        sendJingleIq(toFullJid, action, videoType = null) {
+            let contentEl;
+
+            if (videoType === null) {
+                // Audio-only: a content element with name='audio' and no description.
+                // session-accept: no content with name='video' → no flags set.
+                // source-add: no description/source path → no flags set.
+                contentEl = xml('content', { name: 'audio' });
+            } else {
+                const sourceEl = xml('source', {
+                    xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0',
+                    videoType
+                });
+                const descEl = xml('description', {
+                    xmlns: 'urn:xmpp:jingle:apps:rtp:1',
+                    media: 'video'
+                }, sourceEl);
+
+                contentEl = xml('content', { name: 'video' }, descEl);
+            }
+
+            return xmpp.send(
+                xml('iq', { type: 'set',
+                    to: toFullJid,
+                    id: `jingle-${++_counter}` },
+                    xml('jingle', {
+                        xmlns: 'urn:xmpp:jingle:1',
+                        action
+                    }, contentEl)
+                )
+            );
+        },
+
+        /**
+         * Sends a muc#admin set IQ carrying multiple <item> children and
+         * resolves with the server's IQ response. XEP-0045 allows batching
+         * several affiliation/role changes in one stanza; use this to verify
+         * that filtering hooks inspect every item and not just the first one.
+         *
+         * @param {string} roomJid            e.g. 'room@conference.localhost'
+         * @param {Array<object>} itemsAttrs  attribute objects, one per <item>
+         */
+        sendMucAdminItems(roomJid, itemsAttrs) {
+            return sendIq(xmpp, pendingIqs,
+                xml('iq', { type: 'set',
+                    to: roomJid,
+                    id: `admin-${++_counter}` },
+                    xml('query', { xmlns: 'http://jabber.org/protocol/muc#admin' },
+                        ...itemsAttrs.map(attrs => xml('item', attrs))
                     )
                 )
             );
@@ -587,6 +911,127 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
                     resolve();
                 });
             });
+        },
+
+        /**
+         * Sends a file-sharing add message to a component JID.
+         * The session must have jitsi_web_query_room set (connect with
+         * params: { room: '<roomname>' }) for the component to locate the room.
+         *
+         * @param {string} componentJid  e.g. 'filesharing.localhost'
+         * @param {object} fileObj       file descriptor; must include fileId
+         */
+        sendFileSharingAdd(componentJid, fileObj) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `fs-${++_counter}` },
+                    xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet',
+                        type: 'add' },
+                        JSON.stringify(fileObj)
+                    )
+                )
+            );
+        },
+
+        /**
+         * Sends a file-sharing remove message to a component JID.
+         *
+         * @param {string} componentJid  e.g. 'filesharing.localhost'
+         * @param {string} fileId        ID of the file to remove
+         */
+        sendFileSharingRemove(componentJid, fileId) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `fs-${++_counter}` },
+                    xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet',
+                        type: 'remove',
+                        fileId })
+                )
+            );
+        },
+
+        /**
+         * Sends a raw polls json-message to a polls component. The body is sent
+         * verbatim, so use this to exercise malformed payloads (invalid JSON,
+         * unexpected answer shapes, oversized bodies). Prefer createPoll /
+         * answerPoll for well-formed messages.
+         *
+         * The session must have jitsi_web_query_room set (connect with
+         * params: { room: '<roomname>' }) and the sender must be an occupant of
+         * the room for the component to process the message.
+         *
+         * @param {string} componentJid  e.g. 'polls.localhost'
+         * @param {string} rawPayload    raw text for the <json-message> body
+         */
+        sendPollsMessage(componentJid, rawPayload) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `poll-${++_counter}` },
+                    xml('json-message', { xmlns: 'http://jitsi.org/jitmeet' }, rawPayload)
+                )
+            );
+        },
+
+        /**
+         * Creates a poll by sending a well-formed new-poll json-message to the
+         * polls component. Fire-and-forget — assert via the broadcast the
+         * component sends back to occupants (waitForMessage on a poll broadcast).
+         *
+         * @param {string} componentJid  e.g. 'polls.localhost'
+         * @param {string} pollId         unique poll id
+         * @param {string} question       poll question
+         * @param {Array}  answers        answer objects, e.g. [ { name: 'A' } ]
+         */
+        createPoll(componentJid, pollId, question, answers) {
+            return this.sendPollsMessage(componentJid, JSON.stringify({
+                answers,
+                command: 'new-poll',
+                pollId,
+                question,
+                type: 'polls'
+            }));
+        },
+
+        /**
+         * Answers a poll by sending a well-formed answer-poll json-message to the
+         * polls component. Fire-and-forget.
+         *
+         * @param {string} componentJid  e.g. 'polls.localhost'
+         * @param {string} pollId         id of the poll being answered
+         * @param {Array<boolean>} answers  one boolean per poll option
+         */
+        answerPoll(componentJid, pollId, answers) {
+            return this.sendPollsMessage(componentJid, JSON.stringify({
+                answers,
+                command: 'answer-poll',
+                pollId,
+                type: 'polls'
+            }));
+        },
+
+        /**
+         * Sends a raw file-sharing message. Use this to test malformed payloads
+         * or non-standard message types (e.g. type='error').
+         *
+         * @param {string} componentJid  e.g. 'filesharing.localhost'
+         * @param {object} messageAttrs  extra attributes on the outer <message>
+         * @param {object} fsAttrs       attributes on <file-sharing>
+         * @param {string} [body]        text body for <file-sharing>
+         */
+        sendFileSharingRaw(componentJid, messageAttrs, fsAttrs, body) {
+            const fsEl = body === undefined
+                ? xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet',
+                    ...fsAttrs })
+                : xml('file-sharing', { xmlns: 'http://jitsi.org/jitmeet',
+                    ...fsAttrs }, body);
+
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `fs-${++_counter}`,
+                    ...messageAttrs },
+                    fsEl
+                )
+            );
         },
 
         async disconnect() {

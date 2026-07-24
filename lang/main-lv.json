@@ -42,6 +42,14 @@
     "audioOnly": {
         "audioOnly": "Maza tīkla kapacitāte (tikai skaņa)"
     },
+    "audioTranslation": {
+        "disabledForRoom": "Audio tulkošana šajā sapulcē ir izslēgta.",
+        "errorForbidden": "Jums nav atļaujas izmantot audio tulkošanu.",
+        "errorGeneric": "Neizdevās iespējot audio tulkošanu. Lūdzu, mēģiniet vēlreiz.",
+        "errorLimitReached": "Neizdevās tulkot visus vienlaicīgi. Tā vietā ieslēdziet tulkošanu atsevišķiem dalībniekiem.",
+        "errorRoomDisabled": "Šajā sapulcē audio tulkošana ir izslēgta. Iespējojiet to moderatora iestatījumos.",
+        "errorSpeakerUnavailable": "Nevar tulkot šo dalībnieku — viņš vairs nav sapulcē."
+    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "piem. 10000000 priekš 10 Mbps",
         "assumedBandwidthBpsWarning": "Augstākas vērtības var izraisīt tīkla problēmas.",
@@ -314,6 +322,7 @@
         "alreadySharedVideoMsg": "Cits dalībnieks jau ir kopīgojis videoklipu. Šī sapulce ļauj kopīgot tikai vienu video vienlaikus.",
         "alreadySharedVideoTitle": "Atļauts tikai viens kopīgots videoklips",
         "applicationWindow": "Lietotnes logs",
+        "applyChanges": "Piemērot izmaiņas",
         "authenticationRequired": "Nepieciešama autentifikācija",
         "cameraCaptureDialog": {
             "description": "Uzņemt un nosūtīt attēlu, izmantojot mobilā tālruņa kameru",
@@ -344,9 +353,11 @@
         "contactSupport": "Sazinieties ar atbalsta dienestu",
         "copied": "Nokopēts",
         "copy": "Kopēt",
+        "currentLinks": "Pašreizējās saites",
         "demoteParticipantDialog": "Vai tiešām vēlaties pārveidot šo dalībnieku par apmeklētāju?",
         "demoteParticipantTitle": "Pārveidot par apmeklētāju",
         "dismiss": "Noraidīt",
+        "dismissAll": "Noraidīt visu",
         "displayNameRequired": "Sveiki! Kā jūs sauc?",
         "done": "Darīts",
         "e2eeDescription": "Pilnīga šifrēšana pašlaik ir EKSPERIMENTĀLA. Lūdzu, ņemiet vērā, ka, ieslēdzot pilnīgu šifrēšanu, tiks efektīvi atspējoti servera nodrošinātie pakalpojumi, piemēram, tālruņa līdzdalība. Ņemiet vērā arī to, ka sapulce darbosies tikai tiem cilvēkiem, kuri pievienosies no pārlūkprogrammām, kas atbalsta ievietojamas straumes.",
@@ -374,6 +385,7 @@
         "kickSystemTitle": "Ak! Jūs izraidīja no sapulces",
         "kickTitle": "Ak! {{participantDisplayName}} izraidīja jūs no sapulces",
         "learnMore": "Uzzināt vairāk",
+        "link": "Sasaistīt",
         "linkMeeting": "Sasaistīt sapulci",
         "linkMeetingTitle": "Sasaistīt sapulci ar Salesforce",
         "liveStreaming": "Tiešraides straumēšana",
@@ -439,11 +451,14 @@
         "passwordNotSupported": "Sapulces slēgšana ar $t(lockRoomPassword) netiek atbalstīta.",
         "passwordNotSupportedTitle": "Slēgšana ar $t(lockRoomPasswordUppercase) netiek atbalstīta",
         "passwordRequired": "Nepieciešams ievadīt $t(lockRoomPasswordUppercase)",
+        "pendingDealsDescription": "Šie darījumi var būt saistīti ar šo sapulci",
+        "pendingDescription": "Mēs atradām šīs potenciālās sakritības, pamatojoties uz dalībnieku e-pastiem",
         "permissionCameraRequiredError": "Lai piedalītos konferencēs ar video, ir nepieciešama kameras atļauja. Lūdzu, piešķiriet to Iestatījumos",
         "permissionErrorTitle": "Nepieciešama atļauja",
         "permissionMicRequiredError": "Lai piedalītos konferencēs ar audio, nepieciešama mikrofona atļauja. Lūdzu, piešķiriet to Iestatījumos",
         "readMore": "vairāk",
         "recentlyUsedObjects": "Jūsu nesen izmantotie objekti",
+        "recordAndTranscribe": "Ierakstīt un atšifrēt",
         "recording": "Ieraksts",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Nav iespējams, kamēr ir aktīva tiešraides straume",
         "recordingInProgressDescription": "Šī sapulce tiek ierakstīta. Jūsu audio un video ir izslēgti. Ja izvēlaties ieslēgt skaņu vai video, jūs piekrītat ierakstīšanai.",
@@ -465,6 +480,7 @@
         "reservationError": "Rezervācijas sistēmas kļūda",
         "reservationErrorMsg": "Kļūdas kods: {{code}}, paziņojums: {{msg}}",
         "retry": "Mēģināt vēlreiz",
+        "salesforceDataError": "Neizdevās ielādēt Salesforce datus",
         "screenSharingAudio": "Kopīgot audio",
         "screenSharingFailed": "Hmm! Radās problēma, mēs nevarējām sākt ekrāna kopīgošanu.",
         "screenSharingFailedTitle": "Ekrāna kopīgošana neizdevās!",
@@ -511,11 +527,17 @@
         "startLiveStreaming": "Sākt tiešraidi",
         "startRecording": "Sākt ierakstu",
         "startRemoteControlErrorMessage": "Attālās pārvaldības sesijas uzsākšanas kļūda!",
+        "startTranscribing": "Sākt atšifrēšanu",
+        "startTranscription": "Sākt atšifrējuma izveidi",
         "stopLiveStreaming": "Beigt tiešraidi",
         "stopRecording": "Beigt ierakstu",
         "stopRecordingWarning": "Tiešām vēlaties beigt ierakstu?",
         "stopStreamingWarning": "Tiešām vēlaties beigt tiešraidi?",
+        "stopTranscription": "Apturēt atšifrēšanu",
+        "stopTranscriptionWarning": "Vai tiešām vēlaties apturēt atšifrēšanu?",
         "streamKey": "Tiešraides atslēga",
+        "suggestedAccounts": "Ieteiktie konti",
+        "suggestedDeals": "Ieteiktie darījumi",
         "thankYou": "Paldies, ka izmantojāt {{appName}}!",
         "token": "pilnvara",
         "tokenAuthFailed": "Atvainojiet, jums nav atļauts pievienoties šim zvanam.",
@@ -540,6 +562,7 @@
         "tokenAuthUnsupported": "Pilnvaras URL nav atbalstīts.",
         "transcribing": "Notiek atšifrējuma izveide",
         "unauthenticatedAccessDisabled": "Šim zvanam nepieciešama autentifikācija. Lūdzu, piesakieties, lai turpinātu.",
+        "unlink": "Atsaistīt",
         "unlockRoom": "Noņemt $t(lockRoomPassword)",
         "user": "Lietotājs",
         "userIdentifier": "Lietotājvārds",
@@ -663,6 +686,9 @@
         "retry": "Pamēģināt vēlreiz",
         "support": "Atbalsts",
         "supportMsg": "Ja tas atkārtojas, sazinieties ar"
+    },
+    "inputAction": {
+        "deleteInput": "Notīrīt ievadi"
     },
     "inviteDialog": {
         "alertText": "Neizdevās uzaicināt dažus dalībniekus.",
@@ -810,6 +836,13 @@
         "youAreAlone": "Jūs esat vienīgais sapulcē"
     },
     "me": "es",
+    "multiScreen": {
+        "noParticipants": "Nav dalībnieku",
+        "showOnStage": "Rādīt {{name}} otrajā ekrānā",
+        "unpinFromStage": "Beigt rādīt {{name}} otrajā ekrānā",
+        "whiteboardInactive": "Atveriet tāfeli sapulcē, lai to rādītu otrajā ekrānā",
+        "whiteboardTitle": "Tāfele"
+    },
     "notify": {
         "OldElectronAPPTitle": "Drošības ievainojamība!",
         "allowAll": "Atļaut visu",
@@ -820,6 +853,10 @@
         "audioUnmuteBlockedDescription": "Mikrofona ieslēgšanas darbība ir īslaicīgi bloķēta sistēmas ierobežojumu dēļ.",
         "audioUnmuteBlockedTitle": "Mikrofona ieslēgšana ir bloķēta!",
         "chatMessages": "Tērzēšanas ziņas",
+        "confirmAccountError": "Neizdevās apstiprināt kontu",
+        "confirmAccountSuccess": "Konts apstiprināts",
+        "confirmDealError": "Neizdevās apstiprināt darījumu",
+        "confirmDealSuccess": "Darījums apstiprināts",
         "connectedOneMember": "{{name}} ir pievienojies sapulcei",
         "connectedThreePlusMembers": "{{name}} un {{count}} citi ir pievienojušies sapulcei",
         "connectedTwoMembers": "{{first}} un {{second}} ir pievienojušies sapulcei",
@@ -833,6 +870,8 @@
         "disabledIframeSecondaryNative": "Domēna {{domain}} iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks pārtraukts pēc {{timeout}} minūtēm.",
         "disabledIframeSecondaryWeb": "Domēna {{domain}} iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks pārtraukts pēc {{timeout}} minūtēm. Lūdzu, produkcijas videi izmantojiet <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a>!",
         "disconnected": "savienojums pārtraukts",
+        "dismissError": "Neizdevās noraidīt ieteikumus",
+        "dismissSuccess": "Ieteikumi noraidīti",
         "displayNotifications": "Rādīt paziņojumus",
         "dontRemindMe": "Neatgādināt man",
         "focus": "Sapulces fokuss",
@@ -909,6 +948,8 @@
         "suggestRecordingAction": "Sākt",
         "suggestRecordingDescription": "Vai vēlaties sākt ierakstīšanu?",
         "suggestRecordingTitle": "Ierakstīt sanāksmi",
+        "unlinkFromSalesforceError": "Neizdevās atsaistīt no Salesforce",
+        "unlinkFromSalesforceSuccess": "Atsaistīts no Salesforce",
         "unmute": "Ieslēgt mikrofonu",
         "unmuteScreen": "Sākt ekrāna kopīgošanu",
         "unmuteVideo": "Ieslēgt video",
@@ -1115,6 +1156,7 @@
         }
     },
     "recording": {
+        "alsoTranscribe": "Vai arī atšifrēt šo sapulci?",
         "authDropboxText": "Augšuplādēt uz Dropbox",
         "availableSpace": "Pieejama vieta: {{spaceLeft}} MB (apmēram {{duration}} ieraksta minūtes)",
         "beta": "BETA",
@@ -1181,7 +1223,7 @@
         "about": "Iestatiet sapulcei $t(lockRoomPassword). Dalībniekiem būs jānorāda $t(lockRoomPassword), lai viņi varētu pievienoties sapulcei.",
         "aboutReadOnly": "Moderatora dalībnieki sapulcei var iestatīt $t(lockRoomPassword). Dalībniekiem būs jānorāda $t(lockRoomPassword), lai viņi varētu pievienoties sapulcei.",
         "insecureRoomNameWarningNative": "Istabas nosaukums nav drošs. Nevēlami dalībnieki var pievienoties jūsu sapulcei. {{recommendAction}} Uzziniet vairāk par tikšanās nodrošināšanu",
-        "insecureRoomNameWarningWeb": "Istabas nosaukums nav drošs. Nevēlami dalībnieki var pievienoties jūsu sapulcei. {{recommendAction}} Uzziniet vairāk par to, kā nodrošināt atbilstību prasībām <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">šeit</a>.",
+        "insecureRoomNameWarningWeb": "Istabas nosaukums nav drošs. Nevēlami dalībnieki var pievienoties jūsu sapulcei. {{recommendAction}} Uzziniet vairāk par to, kā nodrošināt atbilstību prasībām <a href=\"{{securityUrl}}\" target=\"_blank\">šeit</a>.",
         "title": "Drošības iespējas",
         "unsafeRoomActions": {
             "meeting": "Apsveriet iespēju nodrošināt sapulci, izmantojot drošības pogu.",
@@ -1191,6 +1233,7 @@
     },
     "settings": {
         "audio": "Audio",
+        "audioTranslation": "Iespējot audio tulkošanu",
         "buttonLabel": "Iestatījumi",
         "calendar": {
             "about": "Integrācija ar kalendāru {{appName}} tiek izmantota, lai droši piekļūtu jūsu kalendāram un sinhronizētu plānotos pasākumus.",
@@ -1309,6 +1352,10 @@
     "termsView": {
         "title": "Noteikumi"
     },
+    "timeTimer": {
+        "endedOver": "Jūs pārsniedzat plānoto laiku par {{time}}.",
+        "endedTitle": "Taimeris beidzies"
+    },
     "toggleTopPanelLabel": "Augšējais panelis (iesl./izsl.)",
     "toolbar": {
         "Settings": "Iestatījumi",
@@ -1316,6 +1363,7 @@
             "Settings": "Iestatījumu izvēlne (rādīt/nerādīt)",
             "audioOnly": "Tikai skaņa (iesl./izsl.)",
             "audioRoute": "Izvēlieties audio ierīci",
+            "audioTranslation": "Tulkot audio",
             "boo": "Būū",
             "breakoutRooms": "Grupu istabas",
             "callQuality": "Video kvalitātes vadība",
@@ -1424,6 +1472,8 @@
         "audioOnlyOn": "Iespējot kanāla/trafika taupības režīmu",
         "audioRoute": "Izvēlēties audioierīci",
         "audioSettings": "Audio iestatījumi",
+        "audioTranslation": "Tulkot audio",
+        "audioTranslationOff": "Izslēgts",
         "authenticate": "Autentificēt",
         "boo": "Būū",
         "callQuality": "Video kvalitātes vadība",
@@ -1499,6 +1549,8 @@
         "reactionSilence": "Sūtīt klusuma reakciju",
         "reactionSurprised": "Sūtīt pārsteiguma reakciju",
         "reactions": "Reakcijas",
+        "record": "Ierakstīt",
+        "recordAndTranscribe": "Ierakstīt un atšifrēt",
         "security": "Drošības iespējas",
         "selectBackground": "Izvēlēties fonu",
         "shareRoom": "Nosūtīt uzaicinājumu",
@@ -1525,6 +1577,7 @@
         "videounmute": "Ieslēgt kameru"
     },
     "transcribing": {
+        "alsoRecord": "Vai arī ierakstīt šo sapulci?",
         "ccButtonTooltip": "Iesl./izsl. subtitrus",
         "expandedLabel": "Atšifrējuma izveide ir ieslēgta",
         "failed": "Atšifrējuma izveide neizdevās",

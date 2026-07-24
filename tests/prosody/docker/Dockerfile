@@ -38,6 +38,7 @@ COPY --chown=prosody:prosody resources/prosody-plugins/ /opt/prosody-jitsi-plugi
 COPY --chown=prosody:prosody tests/prosody/docker/inspect.lua /opt/prosody-jitsi-plugins/inspect.lua
 
 COPY --chown=prosody:prosody tests/prosody/docker/prosody.cfg.lua /etc/prosody/prosody.cfg.lua
+COPY --chown=prosody:prosody tests/prosody/docker/cfg/ /etc/prosody/cfg/
 
 # Test ASAP public keys — served by mod_test_observer_http for RS256 token verification tests.
 # Two separate key pairs are used: one for login tokens (mod_auth_token) and one for system
@@ -50,4 +51,11 @@ COPY --chown=prosody:prosody tests/prosody/fixtures/test-system-asap-public.pem 
 # to the data directory without requiring a running Prosody instance — it just
 # reads the config for data_path and the VirtualHost definition.
 RUN prosodyctl register focus auth.localhost focussecret \
+    && chown -R prosody:prosody /var/lib/prosody
+
+# Pre-create Jibri and transcriber accounts used by mod_muc_cleanup_backend_services tests.
+# recorder@recorder.localhost — is_jibri() matches (starts with 'recorder@recorder.')
+# transcriber@recorder.localhost — is_transcriber() matches (starts with 'transcriber@recorder.')
+RUN prosodyctl register recorder recorder.localhost recordersecret \
+    && prosodyctl register transcriber recorder.localhost transcribersecret \
     && chown -R prosody:prosody /var/lib/prosody

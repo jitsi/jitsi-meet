@@ -1038,7 +1038,7 @@
         "about": "Vi povas aldoni $t(lockRoomPassword) al via renkontiĝo. Partoprenantoj devos doni la $t(lockRoomPassword) antaŭ ol ili rajtas aliĝi al la renkontiĝo.",
         "aboutReadOnly": "Moderaciuloj povas aldoni $t(lockRoomPassword) al la renkontiĝo. Partoprenantoj devos doni la $t(lockRoomPassword) antaŭ ol ili rajtas aliĝi al la renkontiĝo.",
         "insecureRoomNameWarningNative": "Ĉi-tiu ĉambro ne estas sekura. Nevolataj partoprenantoj povas aliĝi vian kunvenvon.",
-        "insecureRoomNameWarningWeb": "Ĉi-tiu ĉambro ne estas sekura. Nevolataj partoprenantoj povas aliĝi vian kunvenvon. {{recommendAction}} Lerni pli pri sekuri vian kunvenon <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">ĉi-tie</a>.",
+        "insecureRoomNameWarningWeb": "Ĉi-tiu ĉambro ne estas sekura. Nevolataj partoprenantoj povas aliĝi vian kunvenvon. {{recommendAction}} Lerni pli pri sekuri vian kunvenon <a href=\"{{securityUrl}}\" target=\"_blank\">ĉi-tie</a>.",
         "title": "Sekurecaj Opcioj",
         "unsafeRoomActions": {
             "meeting": "Konsideru sekurigi vian kunvenon per la sekureca butono.",

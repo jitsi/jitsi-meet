@@ -99,6 +99,7 @@ import {
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
 import { answerKnockingParticipant, toggleLobbyMode } from '../../react/features/lobby/actions';
+import { setSecondScreen } from '../../react/features/multi-screen/actions.web';
 import { setNoiseSuppressionEnabled } from '../../react/features/noise-suppression/actions';
 import { hideNotification, showNotification } from '../../react/features/notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../react/features/notifications/constants';
@@ -129,6 +130,7 @@ import { SETTINGS_TABS } from '../../react/features/settings/constants';
 import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions';
 import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functions';
 import { setRequestingSubtitles, toggleRequestingSubtitles } from '../../react/features/subtitles/actions';
+import { setMeetingTimer } from '../../react/features/time-timer/actions';
 import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';
 import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
 import { muteAllParticipants, muteRemote } from '../../react/features/video-menu/actions';
@@ -334,6 +336,12 @@ function initCommands() {
         'proxy-connection-event': event => {
             APP.conference.onProxyConnectionEvent(event);
         },
+        'external-share-signal': signal => {
+            // Direct-cast screenshare — a plain RTCPeerConnection signalling message
+            // from a remote sharer, the successor to 'proxy-connection-event'. See
+            // conference.onExternalShareSignal.
+            APP.conference.onExternalShareSignal(signal);
+        },
         'reject-participant': (participantId, mediaType) => {
             if (!isLocalParticipantModerator(APP.store.getState())) {
                 return;
@@ -525,6 +533,10 @@ function initCommands() {
             sendAnalytics(createApiEvent('screen.sharing.toggled'));
             toggleScreenSharing(options.enable);
         },
+        'set-meeting-timer': (options = {}) => {
+            sendAnalytics(createApiEvent('meeting.timer.set'));
+            APP.store.dispatch(setMeetingTimer(options));
+        },
         'set-noise-suppression-enabled': (options = {}) => {
             APP.store.dispatch(setNoiseSuppressionEnabled(options.enabled));
         },
@@ -539,6 +551,9 @@ function initCommands() {
             sendAnalytics(createApiEvent('tile-view.toggled'));
 
             APP.store.dispatch(toggleTileView());
+        },
+        'set-second-screen': (options = {}) => {
+            APP.store.dispatch(setSecondScreen(options.id ?? 'default', options.source, options.screen));
         },
         'set-tile-view': enabled => {
             APP.store.dispatch(setTileView(enabled));
@@ -964,8 +979,8 @@ function initCommands() {
                 logger.error(' End Conference not supported');
             }
         },
-        'toggle-whiteboard': () => {
-            APP.store.dispatch(toggleWhiteboard());
+        'toggle-whiteboard': open => {
+            APP.store.dispatch(toggleWhiteboard(open));
         },
         'set-virtual-background': (enabled, backgroundImage) => {
             const tracks = APP.store.getState()['features/base/tracks'];
@@ -1031,6 +1046,13 @@ function initCommands() {
             APP.store.dispatch(openCameraCaptureDialog(callback, { cameraFacingMode,
                 descriptionText,
                 titleText }));
+            break;
+        }
+        case 'connection-stats': {
+            callback({
+                ...APP.conference.getStats(),
+                iceConnected: APP.conference.getConnectionState() === 'connected'
+            });
             break;
         }
         case 'deployment-info':
@@ -1145,7 +1167,9 @@ function initCommands() {
             break;
         }
         case 'rooms-info': {
-            callback(getRoomsInfo(APP.store.getState()));
+            const { includeHidden } = request;
+
+            callback(getRoomsInfo(APP.store.getState(), includeHidden));
             break;
         }
         case 'get-shared-document-url': {
@@ -1342,6 +1366,21 @@ class API {
         this._sendEvent({
             name: 'proxy-connection-event',
             ...event
+        });
+    }
+
+    /**
+     * Notifies the external application (the sharer, via the embedder) of a direct-cast
+     * screenshare signalling message (answer / ICE candidate). The successor to
+     * {@link sendProxyConnectionEvent}; plain SDP/ICE, no Jingle.
+     *
+     * @param {Object} signal - The signalling message to pass back to the sharer.
+     * @returns {void}
+     */
+    sendExternalShareSignal(signal) {
+        this._sendEvent({
+            name: 'external-share-signal',
+            signal
         });
     }
 
@@ -2411,6 +2450,47 @@ class API {
         logger.debug('Sending pip-left event to External API');
         this._sendEvent({
             name: 'pip-left'
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a second-screen window now renders a
+     * given source/participant.
+     *
+     * @param {Object} data - The event payload ({ id, source, participantId }).
+     * @returns {void}
+     */
+    notifySecondScreenSourceChanged(data) {
+        this._sendEvent({
+            name: 'second-screen-source-changed',
+            ...data
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a second-screen window was closed.
+     *
+     * @param {Object} data - The event payload ({ id }).
+     * @returns {void}
+     */
+    notifySecondScreenClosed(data) {
+        this._sendEvent({
+            name: 'second-screen-closed',
+            ...data
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a second-screen window could not be
+     * opened/updated (e.g. popup blocked or the feature disabled).
+     *
+     * @param {Object} data - The event payload ({ id, error }).
+     * @returns {void}
+     */
+    notifySecondScreenError(data) {
+        this._sendEvent({
+            name: 'second-screen-error',
+            ...data
         });
     }
 

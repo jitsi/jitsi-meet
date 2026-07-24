@@ -146,9 +146,16 @@ async function _toggleScreenSharing(
     if (enable) {
         let tracks;
 
-        // Spot proxy stream.
+        // Spot proxy stream / direct-cast screenshare.
         if (shareOptions.desktopStream) {
             tracks = [ shareOptions.desktopStream ];
+
+            // A direct-cast share can carry system audio as a second track. Include it
+            // so it rides the native screenshare-audio path below (AudioMixer effect +
+            // setScreenshareAudioTrack), exactly like a locally-captured share.
+            if (shareOptions.desktopAudioTrack) {
+                tracks.push(shareOptions.desktopAudioTrack);
+            }
         } else {
             const { _desktopSharingSourceDevice } = state['features/base/config'];
 

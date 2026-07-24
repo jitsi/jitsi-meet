@@ -28,7 +28,8 @@ function connect(roomJid, contextUser) {
     const params = { room: roomName };
 
     if (contextUser !== undefined) {
-        params.token = mintAsapToken({ context: { user: contextUser } });
+        params.token = mintAsapToken({ room: roomName,
+            context: { user: contextUser } });
     }
 
     return createXmppClient({ params });
@@ -198,7 +199,7 @@ describe('mod_room_metadata_component', () => {
         for (const key of [
             'allownersEnabled', 'asyncTranscription', 'conferencePresetsServiceEnabled',
             'dialinEnabled', 'moderators', 'participants', 'participantsSoftLimit',
-            'services', 'transcriberType', 'transcription', 'visitors', 'visitorsEnabled'
+            'services', 'transcriberType', 'transcription', 'visitorsEnabled'
         ]) {
             it(`moderator cannot set blocked key "${key}"`, () => assertKeyBlocked(key));
         }
@@ -440,6 +441,259 @@ describe('mod_room_metadata_component', () => {
 
             await assertNoMetadata(member);
         });
+
+    });
+
+    // ── allow-moderation hook (mod_filter_iq_rayo interop) ───────────────────
+    //
+    // mod_filter_iq_rayo hooks 'jitsi-metadata-allow-moderation' on the main
+    // VirtualHost and controls access to the 'recording' metadata key:
+    //
+    //   • has features + transcription=true  → allow; sanitize to only
+    //                                          isTranscribingEnabled / isRecordingRequested
+    //   • no features    + is moderator      → allow; full data passed through
+    //   • has features + transcription=false → deny (return false), even for moderators
+    //   • no features    + not moderator     → deny (hook returns nil → default moderator check)
+    //
+    // For any other key the hook returns nil, falling through to the default
+    // moderator-only access check.
+
+    describe('allow-moderation hook (mod_filter_iq_rayo interop)', () => {
+
+        /**
+         * Non-moderator client whose JWT carries the given context features.
+         * No user.moderator flag — mod_token_affiliation will not grant owner/moderator role.
+         *
+         * @param {string} roomJid
+         * @param {object} features  e.g. { transcription: true }
+         */
+        function connectWithFeatures(roomJid, features) {
+            const roomName = roomJid.split('@')[0];
+
+            return createXmppClient({
+                params: {
+                    room: roomName,
+                    token: mintAsapToken({ room: roomName,
+                        context: { features } })
+                }
+            });
+        }
+
+        /**
+         * Moderator client (user.moderator=true) whose JWT also carries context features.
+         * mod_token_affiliation grants owner/moderator role in the MUC, but the hook
+         * checks features first, so the moderator role cannot override a feature-level deny.
+         *
+         * @param {string} roomJid
+         * @param {object} features  e.g. { transcription: false }
+         */
+        function connectModeratorWithFeatures(roomJid, features) {
+            const roomName = roomJid.split('@')[0];
+
+            return createXmppClient({
+                params: {
+                    room: roomName,
+                    token: mintAsapToken({ room: roomName,
+                        context: { user: { moderator: true },
+                            features } })
+                }
+            });
+        }
+
+        // ── Allow cases ───────────────────────────────────────────────────────
+
+        it('non-moderator with transcription feature can set recording.isTranscribingEnabled',
+            async () => {
+                const r = nextRoom();
+                const foc = await joinWithFocus(r);
+                const c = await connectWithFeatures(r, { transcription: true });
+
+                clients.push(foc, c);
+                await c.joinRoom(r);
+                await drainInitialMetadata(c);
+
+                c.sendMetadataUpdate(METADATA_COMPONENT, r, 'recording', { isTranscribingEnabled: true });
+
+                const broadcast = await waitForMetadata(c);
+
+                assert.deepEqual(parseBroadcast(broadcast).metadata.recording, { isTranscribingEnabled: true });
+            });
+
+        it('non-moderator with transcription feature can set recording.isRecordingRequested',
+            async () => {
+                const r = nextRoom();
+                const foc = await joinWithFocus(r);
+                const c = await connectWithFeatures(r, { transcription: true });
+
+                clients.push(foc, c);
+                await c.joinRoom(r);
+                await drainInitialMetadata(c);
+
+                c.sendMetadataUpdate(METADATA_COMPONENT, r, 'recording', { isRecordingRequested: true });
+
+                const broadcast = await waitForMetadata(c);
+
+                assert.deepEqual(parseBroadcast(broadcast).metadata.recording, { isRecordingRequested: true });
+            });
+
+        it('non-moderator with transcription feature can set both recording fields simultaneously',
+            async () => {
+                const r = nextRoom();
+                const foc = await joinWithFocus(r);
+                const c = await connectWithFeatures(r, { transcription: true });
+
+                clients.push(foc, c);
+                await c.joinRoom(r);
+                await drainInitialMetadata(c);
+
+                c.sendMetadataUpdate(METADATA_COMPONENT, r, 'recording',
+                    { isTranscribingEnabled: true,
+                        isRecordingRequested: true });
+
+                const broadcast = await waitForMetadata(c);
+
+                assert.deepEqual(parseBroadcast(broadcast).metadata.recording,
+                    { isTranscribingEnabled: true,
+                        isRecordingRequested: true });
+            });
+
+        it('moderator without features can set recording.isTranscribingEnabled', async () => {
+            // No context.features in JWT → session.jitsi_meet_context_features is nil.
+            // Hook falls to: not features AND is moderator → allow full data.
+            const r = nextRoom();
+            const foc = await joinWithFocus(r);
+            const mod = await connectModerator(r);
+
+            clients.push(foc, mod);
+            await mod.joinRoom(r);
+            await drainInitialMetadata(mod);
+
+            mod.sendMetadataUpdate(METADATA_COMPONENT, r, 'recording', { isTranscribingEnabled: true });
+
+            const broadcast = await waitForMetadata(mod);
+
+            assert.deepEqual(parseBroadcast(broadcast).metadata.recording, { isTranscribingEnabled: true });
+        });
+
+        // ── Deny cases ────────────────────────────────────────────────────────
+
+        it('non-moderator without features cannot set recording.isTranscribingEnabled', async () => {
+            // No features → hook falls through to default moderator check → non-moderator denied.
+            const r = nextRoom();
+            const foc = await joinWithFocus(r);
+            const member = await connectMember(r);
+
+            clients.push(foc, member);
+            await member.joinRoom(r);
+            await drainInitialMetadata(member);
+
+            member.sendMetadataUpdate(METADATA_COMPONENT, r, 'recording', { isTranscribingEnabled: true });
+
+            await assertNoMetadata(member);
+        });
+
+        it('non-moderator with transcription=false cannot set recording.isTranscribingEnabled',
+            async () => {
+                // Features present but transcription is false → hook returns false → hard deny.
+                const r = nextRoom();
+                const foc = await joinWithFocus(r);
+                const c = await connectWithFeatures(r, { transcription: false });
+
+                clients.push(foc, c);
+                await c.joinRoom(r);
+                await drainInitialMetadata(c);
+
+                c.sendMetadataUpdate(METADATA_COMPONENT, r, 'recording', { isTranscribingEnabled: true });
+
+                await assertNoMetadata(c);
+            });
+
+        it('moderator with transcription=false is denied despite moderator role', async () => {
+            // Features take precedence: having features but transcription=false → hook returns
+            // false, which short-circuits before the moderator role check.
+            const r = nextRoom();
+            const foc = await joinWithFocus(r);
+            const mod = await connectModeratorWithFeatures(r, { transcription: false });
+
+            clients.push(foc, mod);
+            await mod.joinRoom(r);
+            await drainInitialMetadata(mod);
+
+            mod.sendMetadataUpdate(METADATA_COMPONENT, r, 'recording', { isTranscribingEnabled: true });
+
+            await assertNoMetadata(mod);
+        });
+
+        it('non-moderator with transcription feature cannot set unrelated metadata keys', async () => {
+            // Hook returns nil for non-recording keys; default moderator check then applies.
+            const r = nextRoom();
+            const foc = await joinWithFocus(r);
+            const c = await connectWithFeatures(r, { transcription: true });
+
+            clients.push(foc, c);
+            await c.joinRoom(r);
+            await drainInitialMetadata(c);
+
+            c.sendMetadataUpdate(METADATA_COMPONENT, r, 'someOtherKey', 'value');
+
+            await assertNoMetadata(c);
+        });
+
+        // ── Sanitization ──────────────────────────────────────────────────────
+
+        it('extra fields in recording payload are stripped when set via transcription feature',
+            async () => {
+                // The hook builds the stored value as { isTranscribingEnabled, isRecordingRequested }
+                // only; any other fields in the client payload are discarded.
+                const r = nextRoom();
+                const foc = await joinWithFocus(r);
+                const c = await connectWithFeatures(r, { transcription: true });
+
+                clients.push(foc, c);
+                await c.joinRoom(r);
+                await drainInitialMetadata(c);
+
+                c.sendMetadataUpdate(METADATA_COMPONENT, r, 'recording', {
+                    isTranscribingEnabled: true,
+                    isRecordingRequested: false,
+                    evil: 'payload'
+                });
+
+                const broadcast = await waitForMetadata(c);
+                const { recording } = parseBroadcast(broadcast).metadata;
+
+                assert.strictEqual(recording.isTranscribingEnabled, true, 'isTranscribingEnabled must be stored');
+                assert.strictEqual(recording.isRecordingRequested, false, 'isRecordingRequested must be stored');
+                assert.strictEqual(recording.evil, undefined, 'extra fields must be stripped');
+            });
+
+        // ── Edge case: recording with only unrecognized fields ─────────────────
+
+        it('recording with only unrecognized fields falls through to the default moderator check',
+            async () => {
+                // When data has neither isTranscribingEnabled nor isRecordingRequested the
+                // outer `if` in the hook is false → returns nil → default moderator-only check.
+                const r = nextRoom();
+                const foc = await joinWithFocus(r);
+                const mod = await connectModerator(r);
+                const member = await connectMember(r);
+
+                clients.push(foc, mod, member);
+                await mod.joinRoom(r);
+                await member.joinRoom(r);
+                await drainInitialMetadata(mod);
+                await drainInitialMetadata(member);
+
+                // Non-moderator must be denied.
+                member.sendMetadataUpdate(METADATA_COMPONENT, r, 'recording', { someUnrelatedField: 'x' });
+                await assertNoMetadata(member);
+
+                // Moderator must be allowed.
+                mod.sendMetadataUpdate(METADATA_COMPONENT, r, 'recording', { someUnrelatedField: 'y' });
+                const broadcast = await waitForMetadata(mod);
+
+                assert.strictEqual(parseBroadcast(broadcast).metadata.recording.someUnrelatedField, 'y');
+            });
 
     });
 

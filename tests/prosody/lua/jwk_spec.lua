@@ -139,6 +139,16 @@ describe("jwk.lib", function()
             assert.truthy(pem:match("^-----BEGIN PUBLIC KEY-----\n"))
             assert.truthy(pem:match("-----END PUBLIC KEY-----\n$"))
         end)
+
+        it("returns nil when n is missing", function()
+            local pem = M.jwk_to_pem({ e = "Aw" })
+            assert.is_nil(pem)
+        end)
+
+        it("returns nil when e is missing", function()
+            local pem = M.jwk_to_pem({ n = "Dw" })
+            assert.is_nil(pem)
+        end)
     end) -- jwk_to_pem
 
 end) -- jwk.lib

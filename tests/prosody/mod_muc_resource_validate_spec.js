@@ -5,7 +5,7 @@ import { createTestContext } from './helpers/test_context.js';
 import { isAvailablePresence } from './helpers/xmpp_utils.js';
 
 const MUC = 'conference.localhost';
-const PROSODY_CFG = '/etc/prosody/prosody.cfg.lua';
+const PROSODY_CFG = '/etc/prosody/cfg/conference.cfg.lua';
 
 let _roomCounter = 0;
 const room = () => `validate-${++_roomCounter}@${MUC}`;
@@ -146,6 +146,54 @@ describe('mod_muc_resource_validate', () => {
             presence.getChild('error')?.getChild('not-allowed'),
             'error stanza must contain <not-allowed/>'
         );
+    });
+
+    // ── Nick (resource) changes ───────────────────────────────────────────────
+    //
+    // The MUC resource is the stable per-session identity and must not change
+    // after join. Display-name changes travel in the presence <nick/> child and
+    // keep the same resource, so they must still be allowed.
+
+    it('rejects a nick change to a different resource', async () => {
+        const r = room();
+
+        await ctx.connectFocus(r);
+        const c = await ctx.connect();
+
+        const joined = await c.joinRoom(r);
+
+        assert.ok(isAvailablePresence(joined), 'initial join must succeed');
+
+        // Send a presence to a different MUC resource, i.e. a nick change.
+        await c.sendPresence(`${r}/rotatednick`);
+
+        const presence = await c.waitForPresenceFrom(`${r}/rotatednick`, { type: 'error' });
+
+        assert.equal(presence.attrs.type, 'error', 'nick change must be rejected');
+        assert.ok(
+            presence.getChild('error')?.getChild('not-allowed'),
+            'error stanza must contain <not-allowed/>'
+        );
+    });
+
+    it('allows a presence update that keeps the same resource', async () => {
+        const r = room();
+
+        await ctx.connectFocus(r);
+        const c = await ctx.connect();
+
+        const joined = await c.joinRoom(r);
+
+        assert.ok(isAvailablePresence(joined), 'initial join must succeed');
+
+        // A presence update to the same MUC resource (e.g. a display-name change)
+        // is not a nick change and must be allowed through.
+        await c.sendPresence(`${r}/${c.nick}`);
+
+        const presence = await c.waitForPresenceFrom(`${r}/${c.nick}`);
+
+        assert.notEqual(presence.attrs.type, 'error',
+            'presence update keeping the same resource must be allowed');
     });
 
 });

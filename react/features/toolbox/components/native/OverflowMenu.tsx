@@ -4,6 +4,7 @@ import { Divider } from 'react-native-paper';
 import { connect, useSelector } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
+import AudioTranslationButton from '../../../audio-translation/components/native/AudioTranslationButton';
 import { hideSheet } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
@@ -173,6 +174,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 {/* @ts-ignore */}
                 <Divider style = { styles.divider as ViewStyle } />
                 <ClosedCaptionButton { ...buttonProps } />
+                <AudioTranslationButton { ...buttonProps } />
                 <SharedDocumentButton { ...buttonProps } />
                 <SettingsButton { ...buttonProps } />
             </BottomSheet>

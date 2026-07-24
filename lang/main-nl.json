@@ -1,7 +1,7 @@
 {
     "addPeople": {
         "accessibilityLabel": {
-            "meetingLink": "Meeting-link: {{url}}"
+            "meetingLink": "Vergaderingslink: {{url}}"
         },
         "add": "Uitnodigen",
         "addContacts": "Nodig uw contacten uit",
@@ -41,6 +41,14 @@
     },
     "audioOnly": {
         "audioOnly": "Beperkte bandbreedte"
+    },
+    "audioTranslation": {
+        "disabledForRoom": "Audiovertaling is uitgeschakeld voor deze vergadering.",
+        "errorForbidden": "U hebt geen toestemming om audiovertaling te gebruiken.",
+        "errorGeneric": "Kon audiovertaling niet inschakelen. Probeer het opnieuw.",
+        "errorLimitReached": "Kon niet iedereen tegelijk vertalen. Schakel vertaling in voor individuele deelnemers.",
+        "errorRoomDisabled": "Audiovertaling is voor deze vergadering uitgeschakeld. Schakel het in bij Moderator-instellingen.",
+        "errorSpeakerUnavailable": "Kan deze deelnemer niet vertalen — is niet langer in de vergadering."
     },
     "bandwidthSettings": {
         "assumedBandwidthBps": "bijv. 10000000 voor 10 Mbps",
@@ -306,7 +314,7 @@
             "sharingTabs": "Opties voor delen"
         },
         "add": "Toevoegen",
-        "addMeetingNote": "Voeg een opmerking toe over deze bijeenkomst",
+        "addMeetingNote": "Voeg een opmerking toe over deze vergadering",
         "addOptionalNote": "Een opmerking toevoegen (optioneel):",
         "allow": "Toestaan",
         "allowToggleCameraDialog": "Wilt u {{initiatorName}} toestaan om uw camera (voor/achter) te wisselen?",
@@ -314,6 +322,7 @@
         "alreadySharedVideoMsg": "Er wordt al een video gedeeld door een andere deelnemer. Deze conferentie staat slechts één gedeelde video tegelijkertijd toe.",
         "alreadySharedVideoTitle": "Slechts één gedeelde video tegelijkertijd is toegestaan",
         "applicationWindow": "Toepassingsvenster",
+        "applyChanges": "Wijzigingen toepassen",
         "authenticationRequired": "Authenticatie vereist",
         "cameraCaptureDialog": {
             "description": "Foto maken en versturen met uw mobiele camera",
@@ -344,9 +353,11 @@
         "contactSupport": "Contact met ondersteuning",
         "copied": "Gekopieerd",
         "copy": "Kopiëren",
+        "currentLinks": "Huidige links",
         "demoteParticipantDialog": "Weet u zeker dat u deze deelnemer wilt verplaatsen naar toeschouwer?",
         "demoteParticipantTitle": "Verplaatsen naar toeschouwer",
         "dismiss": "Negeren",
+        "dismissAll": "Alles negeren",
         "displayNameRequired": "Hallo! Wat is uw naam?",
         "done": "Gereed",
         "e2eeDescription": "Eind-tot-Eind-Versleuteling is momenteel EXPERIMENTEEL. Houd er rekening mee dat inschakelen van eind-tot-eind-versleuteling de door de server geleverde services zal uitschakelen zoals: opnemen, livestreamen en deelname via telefoon. Houd er ook rekening mee dat de vergadering alleen zal werken voor personen die deelnemen vanaf browsers met ondersteuning voor insertable streams.",
@@ -374,6 +385,7 @@
         "kickSystemTitle": "Oei! U bent uit de vergadering verwijderd",
         "kickTitle": "Oei! {{participantDisplayName}} heeft u uit de vergadering verwijderd",
         "learnMore": "Meer informatie",
+        "link": "Koppelen",
         "linkMeeting": "Vergadering koppelen",
         "linkMeetingTitle": "Vergadering koppelen aan Salesforce",
         "liveStreaming": "Livestreamen",
@@ -439,11 +451,14 @@
         "passwordNotSupported": "Instellen van een $t(lockRoomPassword) voor de vergadering wordt niet ondersteund.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) niet ondersteund",
         "passwordRequired": "$t(lockRoomPasswordUppercase) vereist",
+        "pendingDealsDescription": "Deze kansen zijn mogelijk gerelateerd aan deze vergadering",
+        "pendingDescription": "We hebben deze potentiële overeenkomsten gevonden op basis van de e-mailadressen van de deelnemers",
         "permissionCameraRequiredError": "Voor deelname aan conferenties met video is camera-toestemming vereist. Geef het alstublieft in Instellingen",
         "permissionErrorTitle": "Toestemming vereist",
         "permissionMicRequiredError": "Voor deelname aan conferenties met audio is microfoon-toestemming vereist. Geef het alstublieft in Instellingen",
         "readMore": "meer",
         "recentlyUsedObjects": "Uw recent gebruikte objecten",
+        "recordAndTranscribe": "Opnemen & Transcriberen",
         "recording": "Opname",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Niet mogelijk tijdens een livestream",
         "recordingInProgressDescription": "Deze bijeenkomst wordt opgenomen en geanalyseerd door AI. Uw audio en video zijn gedempt. Als u ervoor kiest om de demping op te heffen, stemt u ermee in dat u wordt opgenomen.",
@@ -465,6 +480,7 @@
         "reservationError": "Fout in reserveringssysteem",
         "reservationErrorMsg": "Foutcode: {{code}}, bericht: {{msg}}",
         "retry": "Opnieuw proberen",
+        "salesforceDataError": "Het laden van Salesforce data is mislukt",
         "screenSharingAudio": "Audio delen",
         "screenSharingFailed": "Oeps! Er is iets misgegaan, de schermdeling kon niet worden gestart!",
         "screenSharingFailedTitle": "Schermdeling mislukt!",
@@ -511,11 +527,17 @@
         "startLiveStreaming": "Livestream starten",
         "startRecording": "Opname starten",
         "startRemoteControlErrorMessage": "Er is een fout opgetreden tijdens het starten van de sessie van extern beheer.",
+        "startTranscribing": "Transcriptie starten",
+        "startTranscription": "Transcriptie starten",
         "stopLiveStreaming": "Livestream stoppen",
         "stopRecording": "Opname stoppen",
         "stopRecordingWarning": "Weet u zeker dat u de opname wilt stoppen?",
         "stopStreamingWarning": "Weet u zeker dat u de livestream wilt stoppen?",
+        "stopTranscription": "Transcriptie stoppen",
+        "stopTranscriptionWarning": "Weet u zeker dat u de transcriptie wilt stoppen?",
         "streamKey": "Sleutel voor livestream",
+        "suggestedAccounts": "Voorgestelde accounts",
+        "suggestedDeals": "Voorgestelde Deals",
         "thankYou": "Bedankt voor het gebruik van {{appName}}.",
         "token": "token",
         "tokenAuthFailed": "Sorry, u mag niet deelnemen aan dit gesprek.",
@@ -540,6 +562,7 @@
         "tokenAuthUnsupported": "Token-URL is niet ondersteund.",
         "transcribing": "Transcriberen",
         "unauthenticatedAccessDisabled": "Deze oproep vereist authenticatie. Log in om verder te gaan.",
+        "unlink": "Ontkoppelen",
         "unlockRoom": "$t(lockRoomPassword) voor vergadering verwijderen",
         "user": "Gebruiker",
         "userIdentifier": "Gebruikersidentificatie",
@@ -663,6 +686,9 @@
         "retry": "Opnieuw proberen",
         "support": "Ondersteuning",
         "supportMsg": "Als dit blijft gebeuren, neemt u contact op met"
+    },
+    "inputAction": {
+        "deleteInput": "Invoer wissen"
     },
     "inviteDialog": {
         "alertText": "Niet alle deelnemers zijn uitgenodigd.",
@@ -820,6 +846,10 @@
         "audioUnmuteBlockedDescription": "Demping opheffen van de microfoon is tijdelijk geblokkerd vanwege systeembeperkingen.",
         "audioUnmuteBlockedTitle": "Demping opheffen is geblokkeerd!",
         "chatMessages": "Chatberichten",
+        "confirmAccountError": "Account bevestigen is mislukt",
+        "confirmAccountSuccess": "Account bevestigd",
+        "confirmDealError": "Deal bevestigen is mislukt",
+        "confirmDealSuccess": "Deal bevestigd",
         "connectedOneMember": "{{name}} neemt nu deel aan de vergadering",
         "connectedThreePlusMembers": "{{name}} en {{count}} anderen nemen nu deel aan de vergadering",
         "connectedTwoMembers": "{{first}} en {{second}} nemen nu deel aan de vergadering",
@@ -833,6 +863,8 @@
         "disabledIframeSecondaryNative": "Het insluiten van {{domein}} is alleen bedoeld voor demo-doeleinden, dus deze oproep wordt binnen {{timeout}} minuten verbroken.",
         "disabledIframeSecondaryWeb": "Het insluiten van {{domein}} is alleen bedoeld voor demo-doeleinden, dus deze oproep wordt binnen {{timeout}} minuten verbroken. Gebruik alstublieft <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> voor productie-insluiting!",
         "disconnected": "verbinding verbroken",
+        "dismissError": "Voorstellen negeren is mislukt",
+        "dismissSuccess": "Voorstellen genegeerd",
         "displayNotifications": "Toon meldingen voor",
         "dontRemindMe": "Herinner me er niet aan",
         "focus": "Focus van vergadering",
@@ -909,6 +941,8 @@
         "suggestRecordingAction": "Starten",
         "suggestRecordingDescription": "Wil je een opname starten?",
         "suggestRecordingTitle": "Deze bijeenkomst opnemen",
+        "unlinkFromSalesforceError": "Ontkoppelen van Salesforce is mislukt",
+        "unlinkFromSalesforceSuccess": "Ontkoppelen van Salesforce",
         "unmute": "Dempen opheffen",
         "unmuteScreen": "Schermdeling starten",
         "unmuteVideo": "Videodemping opheffen",
@@ -1115,6 +1149,7 @@
         }
     },
     "recording": {
+        "alsoTranscribe": "Deze vergadering ook transcriberen?",
         "authDropboxText": "Uploaden naar Dropbox",
         "availableSpace": "Beschikbare ruimte: {{spaceLeft}} MB (circa {{duration}} minuten aan opname)",
         "beta": "BÈTA",
@@ -1147,6 +1182,8 @@
         "noStreams": "Geen audio - of videostream gedetecteerd.",
         "off": "Opname gestopt",
         "offBy": "{{name}} heeft de opname gestopt",
+        "offByWithTranscription": "{{name}} heeft de opname en transcriptie gestopt",
+        "offWithTranscription": "Opname en transcriptie gestopt",
         "on": "Opnemen",
         "onBy": "{{name}} heeft de opname gestart",
         "onByWithTranscription": "{{name}} heeft de opname gestart. Na de bijeenkomst zal er ook een transcriptie beschikbaar zijn.",
@@ -1179,7 +1216,7 @@
         "about": "U kunt een $t(lockRoomPassword) toevoegen aan uw vergadering. Deelnemers moeten het $t(lockRoomPassword) opgeven voordat zij aan de vergadering mogen deelnemen.",
         "aboutReadOnly": "Moderators kunnen een $t(lockRoomPassword) toevoegen aan de vergadering. Deelnemers moeten het $t(lockRoomPassword) opgeven voordat zij aan de vergadering mogen deelnemen.",
         "insecureRoomNameWarningNative": "De kamernaam is onveilig. Ongewenste deelnemers kunnen deelnemen aan uw vergadering. {{recommendAction}} Lees meer over het beveiligen van uw vergadering",
-        "insecureRoomNameWarningWeb": "De kamernaam is onveilig. Ongewenste deelnemers kunnen deelnemen aan uw vergadering. {{recommendAction}} Lees <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">hier</a> meer over het beveiligen van uw vergadering.",
+        "insecureRoomNameWarningWeb": "De kamernaam is onveilig. Ongewenste deelnemers kunnen deelnemen aan uw vergadering. {{recommendAction}} Lees <a href=\"{{securityUrl}}\" target=\"_blank\">hier</a> meer over het beveiligen van uw vergadering.",
         "title": "Beveiligingsopties",
         "unsafeRoomActions": {
             "meeting": "Overweeg om uw vergadering te beveiligen met behulp van de beveiligingsknop.",
@@ -1189,6 +1226,7 @@
     },
     "settings": {
         "audio": "Audio",
+        "audioTranslation": "Audiovertaling inschakelen",
         "buttonLabel": "Instellingen",
         "calendar": {
             "about": "De agenda-integratie van {{appName}} wordt gebruikt voor een veilige toegang tot uw agenda, zodat het aankomende afspraken kan uitlezen.",
@@ -1307,6 +1345,10 @@
     "termsView": {
         "title": "Voorwaarden"
     },
+    "timeTimer": {
+        "endedOver": "U loopt {{time}} uit.",
+        "endedTitle": "Timer verlopen"
+    },
     "toggleTopPanelLabel": "Bovenpaneel schakelen",
     "toolbar": {
         "Settings": "Instellingen",
@@ -1314,6 +1356,7 @@
             "Settings": "Instellingen in- of uitschakelen",
             "audioOnly": "Alleen audio in- of uitschakelen",
             "audioRoute": "Het afspeelapparaat selecteren",
+            "audioTranslation": "Audio vertalen",
             "boo": "Boe",
             "breakoutRooms": "Aparte vergaderruimtes",
             "callQuality": "Videokwaliteit beheren",
@@ -1422,6 +1465,8 @@
         "audioOnlyOn": "Lage bandbreedte-modus inschakelen",
         "audioRoute": "Het afspeelapparaat selecteren",
         "audioSettings": "Audio-instellingen",
+        "audioTranslation": "Audiovertaling",
+        "audioTranslationOff": "Uit",
         "authenticate": "Authenticeren",
         "boo": "Boe",
         "callQuality": "Videokwaliteit beheren",
@@ -1497,6 +1542,8 @@
         "reactionSilence": "Reactie Stilte versturen",
         "reactionSurprised": "Reactie Verrast verstruren",
         "reactions": "Reacties",
+        "record": "Opname",
+        "recordAndTranscribe": "Opname & Transcriptie",
         "security": "Beveiligingsopties",
         "selectBackground": "Achtergrond selecteren",
         "shareRoom": "Iemand uitnodigen",
@@ -1523,6 +1570,7 @@
         "videounmute": "Camera starten"
     },
     "transcribing": {
+        "alsoRecord": "Deze vergadering ook opnemen?",
         "ccButtonTooltip": "Ondertiteling starten / stoppen",
         "expandedLabel": "Transcribering is momenteel aan de gang",
         "failed": "Transcriberen is mislukt",

@@ -138,38 +138,31 @@
 #pragma mark - Utility methods
 
 - (void)createReactNativeFactory {
-    NSLog(@"Creating JitsiReactFactoryDelegate");
     _reactFactoryDelegate = [[JitsiReactFactoryDelegate alloc] init];
-
-    NSLog(@"Creating RCTAppDependencyProvider");
     id<RCTDependencyProvider> provider = [[RCTAppDependencyProvider alloc] init];
-    NSLog(@"RCTAppDependencyProvider created: %@", provider);
-
-    NSLog(@"Setting dependencyProvider on delegate");
     _reactFactoryDelegate.dependencyProvider = provider;
-
-    NSLog(@"Creating RCTReactNativeFactory with delegate");
     _reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:_reactFactoryDelegate];
-    NSLog(@"RCTReactNativeFactory created: %@", _reactNativeFactory);
-}
+    NSLog(@"ReactNativeFactory created: %@", _reactNativeFactory);
 
-- (void)instantiateReactNativeBridge {
-    if (_reactNativeFactory == nil) {
-        [self createReactNativeFactory];
-    }
-    
     // Initialize WebRTC options.
     WebRTCModuleOptions *options = [WebRTCModuleOptions sharedInstance];
     options.audioDevice = _rtcAudioDevice;
     options.loggingSeverity = (RTCLoggingSeverity)_webRtcLoggingSeverity;
-
-    // Accessing bridge forces lazy initialization.
-    [_reactNativeFactory bridge];
 }
 
-- (void)destroyReactNativeBridge {
-    [_reactNativeFactory.bridge invalidate];
-    _reactNativeFactory.bridge = nil;
+- (void)instantiateReactNative {
+    if (_reactNativeFactory == nil) {
+        [self createReactNativeFactory];
+    }
+
+    [_reactNativeFactory.rootViewFactory initializeReactHostWithLaunchOptions:nil
+                                                          bundleConfiguration:_reactNativeFactory.bundleConfiguration
+                                                         devMenuConfiguration:_reactNativeFactory.devMenuConfiguration];
+}
+
+- (void)destroyReactNative {
+    _reactNativeFactory = nil;
+    _reactFactoryDelegate = nil;
 }
 
 - (JitsiMeetConferenceOptions *)getInitialConferenceOptions {
@@ -279,14 +272,6 @@
     return _defaultConferenceOptions == nil ? @{} : [_defaultConferenceOptions asProps];
 }
 
-- (RCTBridge *)getReactBridge {
-    // Initialize bridge lazily.
-    [self instantiateReactNativeBridge];
-
-    // Get bridge directly from factory
-    return _reactNativeFactory.bridge;
-}
-
 - (RCTReactNativeFactory *)getReactNativeFactory {
     if (_reactNativeFactory == nil) {
         [self createReactNativeFactory];
@@ -296,8 +281,8 @@
 }
 
 - (ExternalAPI *)getExternalAPI {
-    RCTBridge *bridge = [self getReactBridge];
-    return [bridge moduleForClass:ExternalAPI.class];
+    ExternalAPI *api = [ExternalAPI sharedInstance];
+    return api;
 }
 
 @end

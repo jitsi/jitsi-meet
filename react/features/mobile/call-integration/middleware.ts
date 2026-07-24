@@ -9,8 +9,8 @@ import { IReduxState, IStore } from '../../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import { SET_AUDIO_ONLY } from '../../base/audio-only/actionTypes';
 import {
+    CONFERENCE_CONNECTION_ESTABLISHED,
     CONFERENCE_FAILED,
-    CONFERENCE_JOINED,
     CONFERENCE_JOIN_IN_PROGRESS,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_LEAVE
@@ -64,9 +64,6 @@ CallIntegration && MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_FAILED:
         return _conferenceFailed(store, next, action);
 
-    case CONFERENCE_JOINED:
-        return _conferenceJoined(store, next, action);
-
     // If a conference is being left in a graceful manner then
     // the CONFERENCE_WILL_LEAVE fires as soon as the conference starts
     // disconnecting. We need to destroy the call on the native side as soon
@@ -79,6 +76,9 @@ CallIntegration && MiddlewareRegistry.register(store => next => action => {
 
     case CONFERENCE_JOIN_IN_PROGRESS:
         return _conferenceWillJoin(store, next, action);
+
+    case CONFERENCE_CONNECTION_ESTABLISHED:
+        return _conferenceConnectionEstablished(store, next, action);
 
     case SET_AUDIO_ONLY:
         return _setAudioOnly(store, next, action);
@@ -167,26 +167,30 @@ function _conferenceFailed({ getState }: IStore, next: Function, action: AnyActi
 }
 
 /**
- * Notifies the feature callkit that the action {@link CONFERENCE_JOINED} is
- * being dispatched within a specific redux {@code store}.
+ * Notifies the feature callkit that the action {@link CONFERENCE_CONNECTION_ESTABLISHED}
+ * is being dispatched. Reports the outgoing call connected when its ICE connection (media)
+ * is up, so CallKit gets a real connecting->connected transition.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
  * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
  * specified {@code action} in the specified {@code store}.
- * @param {Action} action - The redux action {@code CONFERENCE_JOINED} which is
- * being dispatched in the specified {@code store}.
+ * @param {Action} action - The redux action {@code CONFERENCE_CONNECTION_ESTABLISHED}
+ * which is being dispatched in the specified {@code store}.
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _conferenceJoined({ getState }: IStore, next: Function, action: AnyAction) {
+function _conferenceConnectionEstablished({ getState }: IStore, next: Function, action: AnyAction) {
+    // Report connected once; this action also fires on CONNECTION_RESTORED mid-call.
+    const wasConnected = getState()['features/base/conference'].iceConnected;
     const result = next(action);
 
-    if (!isCallIntegrationEnabled(getState)) {
+    if (!isCallIntegrationEnabled(getState) || wasConnected) {
         return result;
     }
 
-    const { callUUID } = action.conference;
+    const { conference } = action;
+    const { callUUID } = conference;
 
     if (callUUID) {
         CallIntegration.reportConnectedOutgoingCall(callUUID)
@@ -194,7 +198,7 @@ function _conferenceJoined({ getState }: IStore, next: Function, action: AnyActi
                 // iOS 13 doesn't like the mute state to be false before the call is started
                 // so we update it here in case the user selected startWithAudioMuted.
                 if (Platform.OS === 'ios') {
-                    _updateCallIntegrationMuted(action.conference, getState());
+                    _updateCallIntegrationMuted(conference, getState());
                 }
             })
             .catch(() => {
@@ -213,7 +217,9 @@ function _conferenceJoined({ getState }: IStore, next: Function, action: AnyActi
 
 /**
  * Notifies the feature callkit that the action {@link CONFERENCE_LEFT} is being
- * dispatched within a specific redux {@code store}.
+ * dispatched within a specific redux {@code store}. No-ops when call integration
+ * is disabled or when the action carries no {@code conference} (as dispatched by
+ * the generic {@code hangup()}, in which case there is no callUUID to report).
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
@@ -243,15 +249,16 @@ function _conferenceLeft({ getState }: IStore, next: Function, action: AnyAction
 }
 
 /**
- * Notifies the feature callkit that the action {@link CONFERENCE_WILL_JOIN} is
- * being dispatched within a specific redux {@code store}.
+ * Notifies the feature callkit that the action {@link CONFERENCE_JOIN_IN_PROGRESS}
+ * is being dispatched. Starts the outgoing call (reports connecting); connected is
+ * reported later on {@link CONFERENCE_CONNECTION_ESTABLISHED}.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
  * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
  * specified {@code action} in the specified {@code store}.
- * @param {Action} action - The redux action {@code CONFERENCE_WILL_JOIN} which
- * is being dispatched in the specified {@code store}.
+ * @param {Action} action - The redux action {@code CONFERENCE_JOIN_IN_PROGRESS}
+ * which is being dispatched in the specified {@code store}.
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */

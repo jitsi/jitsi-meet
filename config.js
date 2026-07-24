@@ -232,6 +232,21 @@ var config = {
     //     enableOpusDtx: false,
     // },
 
+    // Audio translation feature (requires bridge backend support).
+    // audioTranslation: {
+    //     enabled: false,
+    //
+    //     // Volume (0..1) a speaker's original audio is ducked to while its translation plays.
+    //     // Defaults to 0.15. Ignored on iOS, where the original is muted instead because the
+    //     // element volume cannot be lowered there.
+    //     duckedVolume: 0.15,
+    //
+    //     // Whether to process the bridge's translated-source sending notifications, which drive the
+    //     // per-participant "receiving translated audio" indicator. Off by default until the bridge
+    //     // emits stop notifications as well as start ones.
+    //     enableSendingChangeEvents: false,
+    // },
+
     // Noise suppression configuration. By default rnnoise is used. Optionally Krisp
     // can be used by enabling it below, but the Krisp JS SDK files must be supplied in your
     // installation. Specifically, these files are needed:
@@ -493,6 +508,9 @@ var config = {
     //     // Translation languages.
     //     // Available languages can be found in
     //     // ./lang/translation-languages.json.
+    //     // Whether to enable translation (language selection) UI. Defaults to true.
+    //     translationEnabled: true,
+
     //     translationLanguages: ['en', 'es', 'fr', 'ro'],
 
     //     // Important languages to show on the top of the language list.
@@ -534,7 +552,16 @@ var config = {
     //
     //     // When the backend provides diarization by setting a "speaker" field, append [Speaker N] for transcription
     //     // events from non-0 speakers.
-    //     renderTranscriptDetails: false
+    //     renderTranscriptDetails: false,
+    //
+    //     // Requests that the transcriber diarize (split by speaker) this participant's own audio, i.e. label
+    //     // segments as coming from different speakers. Enable it only for endpoints that genuinely carry
+    //     // multiple speakers on a single audio stream (conference-room systems, dial-in/PSTN legs); on a
+    //     // normal single-person stream a diarizer can spuriously split one talker into several speakers.
+    //     // The flag is advertised to jicofo in MUC presence and takes effect only at join time (it must be
+    //     // set before joining, e.g. via this config or the #config.transcription.diarize=true URL override;
+    //     // toggling it mid-call has no effect). Defaults to false.
+    //     diarize: false
 
     // },
 
@@ -865,7 +892,6 @@ var config = {
     //    'embedmeeting',
     //    'etherpad',
     //    'feedback',
-    //    'filmstrip',
     //    'fullscreen',
     //    'hangup',
     //    'help',
@@ -1493,15 +1519,80 @@ var config = {
     //     hideJoinRoomButton: false,
     // },
 
-    // When true, virtual background feature will be disabled.
-    // disableVirtualBackground: false,
-
-    // When true the user cannot add more images to be used as virtual background.
-    // Only the default ones from will be available.
-    // disableAddingBackgroundImages: false,
-
     // Sets the background transparency level. '0' is fully transparent, '1' is opaque.
     // backgroundAlpha: 1,
+
+    // @deprecated Use `virtualBackground.disabled` instead. When true, the virtual background
+    // feature is disabled. Kept here for backwards compatibility; will be removed in a future release.
+    // disableVirtualBackground: false,
+
+    // @deprecated Use `virtualBackground.disableAddingImages` instead. When true the user cannot
+    // add more images to be used as virtual background; only the default ones will be available.
+    // Kept here for backwards compatibility; will be removed in a future release.
+    // disableAddingBackgroundImages: false,
+
+    // Virtual background options.
+    // All fields are optional; omitting a field uses the default/auto-detected value.
+    virtualBackground: {
+
+        // When true, virtual background feature will be disabled.
+        // disabled: false,
+
+        // When true the user cannot add more images to be used as virtual background.
+        // Only the default ones will be available.
+        // disableAddingImages: false,
+
+        // Enable the V2 processing engine. When false (default), the legacy
+        // TFLite WASM engine (V1) is used. Set to true to opt in to V2.
+        // enableV2: false,
+
+        // V2-only tuning knobs. These have no effect when enableV2 is false. Defaults are
+        // tuned for typical hardware; most deployments should not need to override them.
+        // advanced: {
+
+        //     // Force a specific device tier regardless of what the browser supports.
+        //     // Useful for testing lower-tier behaviour on high-end hardware.
+        //     // Values: 'high' | 'medium' | 'low' — null means auto-detect (default).
+        //     // tierOverride: null,
+
+        //     // Override the segmentation canvas dimensions (pixels). Applies to MEDIUM
+        //     // and HIGH tiers only (TF.js input canvas). LOW tier (TFLite) always runs
+        //     // at 256x144, fixed by the selfie_segmentation_landscape model and not
+        //     // affected by this setting.
+        //     // segmentationWidth: null,   // auto: 512 (high) / 384 (medium)
+        //     // segmentationHeight: null,  // auto: 288 (high) / 216 (medium)
+
+        //     // Override the target frame rate for the effect.
+        //     // targetFps: null,           // auto: 30 (all tiers)
+
+        //     // Temporal mask blend ratio (0-1). Higher = smoother motion, slower to respond
+        //     // to fast movement. 0 = raw mask each frame (no temporal smoothing).
+        //     // temporalBlendRatio: 0.75,
+
+        //     // Smoothstep edge thresholds for the WebGL compositor (0-1).
+        //     // Pixels with segmentation confidence below edgeLow are fully transparent;
+        //     // above edgeHigh they are fully opaque; between the two they feather.
+        //     // Defaults are tier-specific (tuned per model's confidence distribution):
+        //     //   LOW tier    (TFLite selfie_segmentation_landscape): edgeLow = 0.10, edgeHigh = 0.50
+        //     //   MEDIUM/HIGH (TF.js MediaPipe body-segmentation):    edgeLow = 0.28, edgeHigh = 0.65
+        //     // Lower edgeLow = more hair retained at the cost of slight background bleed.
+        //     // Higher edgeHigh = harder edge transition.
+        //     // edgeLow: 0.28,
+        //     // edgeHigh: 0.65,
+
+        //     // Insertable Streams (MediaStreamTrackProcessor/Generator) is used by default
+        //     // when available. It reduces latency by ~1-2 frames and eliminates the keepalive
+        //     // Web Worker. Set to false to force the legacy captureStream path instead.
+        //     // useInsertableStreams: false,
+
+        //     // LOW tier (TFLite) inference stride. Inference is skipped on alternate frames;
+        //     // skipped frames reuse the previous mask. Higher values = lower CPU usage at the
+        //     // cost of reduced mask update frequency. Set to 1 to run inference every frame.
+        //     //   1 = every frame    (24 fps mask updates, ~37 ms slack per frame)  ← default
+        //     //   2 = every 2 frames (12 fps mask updates, ~74 ms slack per frame)
+        //     // inferenceStride: 1,
+        // },
+    },
 
     // The URL of the moderated rooms microservice, if available. If it
     // is present, a link to the service will be rendered on the welcome page,
@@ -1511,6 +1602,15 @@ var config = {
     // If true, tile view will not be enabled automatically when the participants count threshold is reached.
     // disableTileView: true,
 
+    // Multi-screen support: lets an embedder (via the iframe External API `setSecondScreen` command)
+    // render a meeting surface (the active-speaker stage, the screenshare, or a pinned participant) on
+    // a second display, in its own fullscreen window. Disabled by default; it is Chromium-only and
+    // intended for managed/kiosk room appliances, which must also delegate `allow="window-management;
+    // fullscreen"` to the iframe and grant the window-management + automatic-fullscreen permissions.
+    // secondScreen: {
+    //     enabled: false
+    // },
+
     // If true, the tiles will be displayed contained within the available space rather than enlarged to cover it,
     // with a 16:9 aspect ratio (old behaviour).
     // disableTileEnlargement: true,
@@ -1519,7 +1619,7 @@ var config = {
     // If a label's id is not in any of the 2 arrays, it will not be visible at all on the header.
     // conferenceInfo: {
     //     // those labels will not be hidden in tandem with the toolbox.
-    //     alwaysVisible: ['recording', 'raised-hands-count'],
+    //     alwaysVisible: ['recording', 'raised-hands-count', 'time-timer'],
     //     // those labels will be auto-hidden in tandem with the toolbox buttons.
     //     autoHide: [
     //         'subject',
@@ -1776,9 +1876,6 @@ var config = {
     // List of notifications to be disabled. Works in tandem with the above setting.
     // disabledNotifications: [],
 
-    // Prevent the filmstrip from autohiding when screen width is under a certain threshold
-    // disableFilmstripAutohiding: false,
-
     // filmstrip: {
     //     // Disable the vertical/horizontal filmstrip.
     //     disabled: false,
@@ -1854,6 +1951,15 @@ var config = {
 
     // Application logo url
     // defaultLogoUrl: 'images/watermark.svg',
+
+    // Meeting-pace timer shown in the conference info bar. It only appears
+    // once a meeting duration is known — from a calendar event (calendar
+    // sync) or pushed at runtime via the `setMeetingTimer` iframe API
+    // command. With no such info nothing is shown, so it is enabled by
+    // default; set `enabled: false` to hide it even when that info exists.
+    // timeTimer: {
+    //     enabled: true,
+    // },
 
     // Settings for the Excalidraw whiteboard integration.
     // whiteboard: {

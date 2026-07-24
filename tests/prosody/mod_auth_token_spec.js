@@ -52,7 +52,7 @@ describe('mod_auth_token (HS256 shared secret)', () => {
     });
 
     it('connects successfully with a valid token', async () => {
-        const token = mintToken();
+        const token = mintToken({ room: '*' });
         const c = await hs256Client({ token });
 
         clients.push(c);
@@ -97,6 +97,7 @@ describe('mod_auth_token (HS256 shared secret)', () => {
 
     it('sets session.jitsi_meet_context_features from token context', async () => {
         const token = mintToken({
+            room: '*',
             context: {
                 features: {
                     'screen-sharing': true,

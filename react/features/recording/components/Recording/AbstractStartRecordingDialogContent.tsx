@@ -8,17 +8,24 @@ import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry'
 import { _abstractMapStateToProps } from '../../../base/dialog/functions';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox/actions';
 import { isVpaasMeeting } from '../../../jaas/functions';
-import { canAddTranscriber } from '../../../transcribing/functions';
+import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
 import { RECORDING_TYPES } from '../../constants';
-import { supportsLocalRecording } from '../../functions';
+import { hasRecordingOrTranscriptionFeature, supportsLocalRecording } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of
  * {@link AbstractStartRecordingDialogContent}.
  */
 export interface IProps extends WithTranslation {
+
+    /**
+     * Whether the local participant can manage recording/transcription (moderator or holds the
+     * recording/transcription feature claim).
+     */
+    _canManageRecordingOrTranscription: boolean;
 
     /**
      * Whether the local participant can start transcribing.
@@ -36,6 +43,11 @@ export interface IProps extends WithTranslation {
     _hideStorageWarning: boolean;
 
     /**
+     * Whether the local participant is a moderator.
+     */
+    _isModerator: boolean;
+
+    /**
      * Whether local recording is available or not.
      */
     _localRecordingAvailable: boolean;
@@ -51,6 +63,11 @@ export interface IProps extends WithTranslation {
     _localRecordingNoNotification: boolean;
 
     /**
+     * Whether a local recording is currently in progress.
+     */
+    _localRecordingRunning: boolean;
+
+    /**
      * Whether self local recording is enabled or not.
      */
     _localRecordingSelfEnabled: boolean;
@@ -64,6 +81,11 @@ export interface IProps extends WithTranslation {
      * The color-schemed stylesheet of this component.
      */
     _styles: any;
+
+    /**
+     * Whether transcription is currently running.
+     */
+    _transcriptionRunning: boolean;
 
     /**
      * The redux dispatch function.
@@ -134,9 +156,22 @@ export interface IProps extends WithTranslation {
     onTranscriptionChange: Function;
 
     /**
+     * When true, audio/video recording is specifically in progress.
+     * The service selector is hidden since the destination cannot change mid-session.
+     */
+    recordingRunning?: boolean;
+
+    /**
      * The currently selected recording service of type: RECORDING_TYPES.
      */
     selectedRecordingService: string | null;
+
+    /**
+     * When true, at least one service (recording or transcription) is active.
+     * Used to bypass the _canStartTranscribing guard so the transcription toggle
+     * remains visible for stopping.
+     */
+    servicesRunning?: boolean;
 
     /**
      * Boolean to set file recording sharing on or off.
@@ -210,7 +245,29 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
         if (!this._shouldRenderNoIntegrationsContent()
             && !this._shouldRenderIntegrationsContent()
             && !this._shouldRenderFileSharingContent()) {
-            this._onLocalRecordingSwitchChange();
+            const { _localRecordingAvailable, onChange, onRecordAudioAndVideoChange,
+                selectedRecordingService, servicesRunning, shouldRecordAudioAndVideo } = this.props;
+
+            // When a session is already active the initial toggle state is derived from what
+            // is currently running — don't override it with the "fresh open" defaults.
+            if (servicesRunning) {
+                return;
+            }
+
+            if (!_localRecordingAvailable) {
+                return;
+            }
+
+            // Pre-select local recording on open and ensure the audio/video flag is on
+            // so _isChanged() reflects the selection and the Start button is enabled.
+            // Done inline (not via _onLocalRecordingSwitchChange) to avoid the toggle-off
+            // path that the same handler uses when the user deliberately deselects.
+            if (!shouldRecordAudioAndVideo) {
+                onRecordAudioAndVideoChange(true);
+            }
+            if (selectedRecordingService !== RECORDING_TYPES.LOCAL) {
+                onChange(RECORDING_TYPES.LOCAL);
+            }
         }
     }
 
@@ -324,15 +381,32 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
     _onRecordingServiceSwitchChange() {
         const {
             onChange,
-            selectedRecordingService
+            onRecordAudioAndVideoChange,
+            onTranscriptionChange,
+            selectedRecordingService,
+            shouldRecordAudioAndVideo,
+            shouldRecordTranscription
         } = this.props;
 
-        // act like group, cannot toggle off
         if (selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) {
+            // Cloud is selected but both options are off (switch visually OFF) —
+            // clicking re-enables both advanced options.
+            if (!shouldRecordAudioAndVideo && !shouldRecordTranscription) {
+                onRecordAudioAndVideoChange(true);
+                onTranscriptionChange(true);
+            }
+
             return;
         }
 
         onChange(RECORDING_TYPES.JITSI_REC_SERVICE);
+
+        // If both options are off, re-enable them in the same click so the switch turns ON
+        // immediately — without this, checked stays false until a second click.
+        if (!shouldRecordAudioAndVideo && !shouldRecordTranscription) {
+            onRecordAudioAndVideoChange(true);
+            onTranscriptionChange(true);
+        }
     }
 
     /**
@@ -368,6 +442,7 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
         const {
             _localRecordingAvailable,
             onChange,
+            onRecordAudioAndVideoChange,
             selectedRecordingService
         } = this.props;
 
@@ -375,12 +450,15 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
             return;
         }
 
-        // act like group, cannot toggle off
-        if (selectedRecordingService
-            === RECORDING_TYPES.LOCAL) {
+        if (selectedRecordingService === RECORDING_TYPES.LOCAL) {
+            // Deselect — lets the participant start transcription without local recording.
+            onRecordAudioAndVideoChange(false);
+            onChange('');
+
             return;
         }
 
+        onRecordAudioAndVideoChange(true);
         onChange(RECORDING_TYPES.LOCAL);
     }
 
@@ -414,15 +492,21 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
 export function mapStateToProps(state: IReduxState) {
     const { localRecording, recordingService } = state['features/base/config'];
     const _localRecordingAvailable = !localRecording?.disable && supportsLocalRecording();
+    const canManageRecordingOrTranscription
+        = isLocalParticipantModerator(state) || hasRecordingOrTranscriptionFeature(state);
 
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
+        _canManageRecordingOrTranscription: canManageRecordingOrTranscription,
         _canStartTranscribing: canAddTranscriber(state),
         _hideStorageWarning: Boolean(recordingService?.hideStorageWarning),
+        _isModerator: isLocalParticipantModerator(state),
         _renderRecording: isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false),
+        _transcriptionRunning: canManageRecordingOrTranscription ? isRecorderTranscriptionsRunning(state) : false,
         _localRecordingAvailable,
         _localRecordingEnabled: !localRecording?.disable,
+        _localRecordingRunning: Boolean(state['features/recording'].localRecordingRunning),
         _localRecordingSelfEnabled: !localRecording?.disableSelfRecording,
         _localRecordingNoNotification: !localRecording?.notifyAllParticipants,
         _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')

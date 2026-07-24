@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import TextareaAutosize from 'react-textarea-autosize';
 import { makeStyles } from 'tss-react/mui';
 
@@ -15,6 +16,7 @@ interface IProps extends IInputProps {
     autoFocus?: boolean;
     bottomLabel?: string;
     className?: string;
+    describedBy?: string;
     hiddenDescription?: string; // Text that will be announced by screen readers but not displayed visually.
     iconClick?: () => void;
 
@@ -32,6 +34,7 @@ interface IProps extends IInputProps {
      * own background/border so only one visual box shows.
      */
     inputClassName?: string;
+    invalidReason?: 'grammar' | 'spelling' | boolean;
     maxLength?: number;
     maxRows?: number;
     maxValue?: number;
@@ -172,12 +175,14 @@ const Input = React.forwardRef<any, IProps>(({
     className,
     clearable = false,
     disabled,
+    describedBy,
     error,
     hiddenDescription,
     icon,
     iconClick,
     id,
     inputClassName,
+    invalidReason,
     label,
     maxValue,
     maxLength,
@@ -199,6 +204,7 @@ const Input = React.forwardRef<any, IProps>(({
     value
 }: IProps, ref) => {
     const { classes: styles, cx } = useStyles();
+    const { t } = useTranslation();
     const isMobile = isMobileBrowser();
     const showClearIcon = clearable && value !== '' && !disabled;
     const inputAutoCompleteOff = autoComplete === 'off' ? { 'data-1p-ignore': '' } : {};
@@ -210,13 +216,32 @@ const Input = React.forwardRef<any, IProps>(({
     const hiddenDescriptionId = `${id}-hidden-description`;
     let ariaDescribedById: string | undefined;
 
-    if (bottomLabel) {
+    if (describedBy) {
+        ariaDescribedById = describedBy;
+    } else if (bottomLabel) {
         ariaDescribedById = `${id}-description`;
     } else if (hiddenDescription) {
         ariaDescribedById = hiddenDescriptionId;
     } else {
         ariaDescribedById = undefined;
     }
+
+    let ariaInvalid: 'grammar' | 'spelling' | boolean | undefined;
+
+    if (invalidReason) {
+        ariaInvalid = invalidReason;
+    } else if (error) {
+        ariaInvalid = error;
+    } else {
+        ariaInvalid = undefined;
+    }
+
+    const onKeyDownClearInput = useCallback((e: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            clearInput();
+        }
+    }, [ clearInput ]);
 
     return (
         <div className = { cx(styles.inputContainer, className) }>
@@ -235,6 +260,7 @@ const Input = React.forwardRef<any, IProps>(({
                 {textarea ? (
                     <TextareaAutosize
                         aria-describedby = { ariaDescribedById }
+                        aria-invalid = { ariaInvalid }
                         aria-label = { accessibilityLabel }
                         autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
@@ -256,6 +282,7 @@ const Input = React.forwardRef<any, IProps>(({
                 ) : (
                     <input
                         aria-describedby = { ariaDescribedById }
+                        aria-invalid = { ariaInvalid }
                         aria-label = { accessibilityLabel }
                         autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
@@ -281,19 +308,23 @@ const Input = React.forwardRef<any, IProps>(({
                         type = { type }
                         value = { value } />
                 )}
-                {showClearIcon && <button className = { styles.clearButton }>
+                {showClearIcon && <button
+                    aria-label = { t('inputAction.deleteInput') }
+                    className = { styles.clearButton }
+                    onClick = { clearInput }
+                    onKeyDown = { onKeyDownClearInput }>
                     <Icon
-                        onClick = { clearInput }
                         size = { 20 }
                         src = { IconCloseCircle } />
                 </button>}
             </div>
             {bottomLabel && (
-                <span
+                <p
+                    aria-live = 'polite'
                     className = { cx(styles.bottomLabel, isMobile && 'is-mobile', error && 'error') }
-                    id = { `${id}-description` }>
-                    {bottomLabel}
-                </span>
+                    id = { `${id}-description` } >
+                    { bottomLabel }
+                </p>
             )}
             {!bottomLabel && hiddenDescription && <HiddenDescription id = { hiddenDescriptionId }>{ hiddenDescription }</HiddenDescription>}
         </div>

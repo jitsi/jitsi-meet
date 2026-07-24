@@ -8,7 +8,6 @@ local array = require 'util.array';
 local st = require("util.stanza");
 local jid = require "util.jid";
 local util = module:require("util");
-local muc = module:depends("muc");
 
 local NS_NICK = 'http://jabber.org/protocol/nick';
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
@@ -256,6 +255,9 @@ end
             }
 
             -- now send message to all participants
+            -- Only relay the sanitized answers (name only) so no unexpected
+            -- fields from the sender's payload are forwarded to participants.
+            data.answers = answers;
             data.senderId = poll_creator.occupant_id;
             data.type = 'polls';
             local json_msg_str, error = json.encode(data);

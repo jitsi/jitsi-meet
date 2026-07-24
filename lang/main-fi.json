@@ -1170,7 +1170,7 @@
         "about": "Voit lisätä $t(lockRoomPassword) kokaukseesi. Osallistujien on annettava $t(lockRoomPassword) ennen kuin he voivat liittyä kokoukseen.",
         "aboutReadOnly": "Moderaattoriosallistujat voivat lisätä $t(lockRoomPassword) kokoukseen. Osallistujien on annettava $t(lockRoomPassword) ennen kuin he voivat liittyä kokoukseen.",
         "insecureRoomNameWarningNative": "Huoneen nimi ei ole turvallinen. Ei-toivotut osallistujat saattavat liittyä kokaukseesi. {{recommendAction}} Lue lisää kokouksesi turvaamisesta ",
-        "insecureRoomNameWarningWeb": "Huoneen nimi ei ole turvallinen. Ei-toivotut osallistujat saattavat liittyä kokaukseesi. {{recommendAction}} Lue lisää kokouksesi turvaamisesta <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">täältä</a>.",
+        "insecureRoomNameWarningWeb": "Huoneen nimi ei ole turvallinen. Ei-toivotut osallistujat saattavat liittyä kokaukseesi. {{recommendAction}} Lue lisää kokouksesi turvaamisesta <a href=\"{{securityUrl}}\" target=\"_blank\">täältä</a>.",
         "title": "Turvallisuusasetukset",
         "unsafeRoomActions": {
             "meeting": "Harkitse kokouksesi turvaamista käyttämällä turvallisuuspainiketta.",

@@ -1,5 +1,6 @@
 import assert from 'assert';
 
+import { getContainer } from './helpers/container.js';
 import { mintAsapToken } from './helpers/jwt.js';
 import { setAccessManagerResponse } from './helpers/test_observer.js';
 import { createXmppClient } from './helpers/xmpp_client.js';
@@ -13,7 +14,8 @@ const VPAAS_PREFIX = 'vpaas-magic-cookie-test';
 // token string. Use a per-test jti so each test gets a unique token and cannot
 // accidentally match a token that was cached as banned by an earlier test.
 let _tokenCounter = 0;
-const freshToken = () => mintAsapToken({ jti: `ban-test-${++_tokenCounter}` });
+const freshToken = () => mintAsapToken({ room: '*',
+    jti: `ban-test-${++_tokenCounter}` });
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -163,6 +165,74 @@ describe('mod_muc_auth_ban', () => {
         // after the timeout — instead, assert the connection is alive by
         // verifying disconnect() completes cleanly.
         await c.disconnect();
+    });
+
+    // ── Non-JSON 200 — should fail open without crashing ─────────────────────
+    //
+    // When the access manager returns HTTP 200 but with a non-JSON body,
+    // json.decode() returns nil. mod_muc_auth_ban then calls r['access'] on
+    // nil, which crashes the callback. The crash must not affect the session
+    // (fail open: user stays connected).
+
+    it('non-JSON 200 from access manager does not crash or ban the user (fail open)', async () => {
+        await setAccessManagerResponse({ nonJson: true });
+
+        const token = freshToken();
+        const c = await createVpaasClient(token);
+
+        // Wait long enough for the async HTTP callback to have fired and crashed.
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Session must still be alive despite the callback crash.
+        const disconnected = await c.waitForDisconnect(300).then(() => true, () => false);
+
+        assert.strictEqual(disconnected, false,
+            'session must remain alive when access manager returns non-JSON 200');
+
+        await c.disconnect();
+    });
+
+    // ── Non-JSON 200 — Lua error in callback ─────────────────────────────────
+    //
+    // cjson.safe returns nil (not an error) for invalid JSON, so json.decode()
+    // returns nil when the access manager body is not JSON. Without a nil guard,
+    // r['access'] on the nil value crashes the callback with "attempt to index
+    // a nil value". This test catches that crash by asserting that no such error
+    // appears in the Prosody log during the test window.
+
+    it('non-JSON 200 does not produce a Lua error in the HTTP callback', async () => {
+        const since = Math.floor(Date.now() / 1000);
+
+        await setAccessManagerResponse({ nonJson: true });
+        const token = freshToken();
+        const c = await createVpaasClient(token);
+
+        // Give the async HTTP callback time to fire (and crash if the bug is present).
+        await new Promise(resolve => setTimeout(resolve, 600));
+        await c.disconnect();
+
+        // Collect Prosody log output from this test's window.
+        const until = Math.floor(Date.now() / 1000) + 1;
+        const container = getContainer();
+        const stream = await container.logs({ since,
+            until });
+        const logs = await new Promise((resolve, reject) => {
+            const chunks = [];
+            const timer = setTimeout(() => resolve(chunks.join('')), 2000);
+
+            stream.on('data', chunk => chunks.push(chunk.toString()));
+            stream.on('end', () => {
+                clearTimeout(timer);
+                resolve(chunks.join(''));
+            });
+            stream.on('error', reject);
+        });
+
+        assert.ok(
+            !logs.includes('attempt to index a nil value'),
+            'mod_muc_auth_ban HTTP callback must not crash on non-JSON 200 response '
+            + '(missing nil guard on json.decode result)'
+        );
     });
 
 });
