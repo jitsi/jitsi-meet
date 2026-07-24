@@ -1,4 +1,5 @@
 import { AnyAction } from 'redux';
+import { v4 as uuidv4 } from 'uuid';
 
 import { IReduxState, IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
@@ -45,6 +46,7 @@ import {
     CLOSE_CHAT,
     OPEN_CHAT,
     SEND_MESSAGE,
+    SEND_MESSAGE_RETRACTION,
     SEND_REACTION,
     SET_FOCUSED_TAB
 } from './actionTypes';
@@ -55,6 +57,7 @@ import {
     closeChat,
     notifyPrivateRecipientsChanged,
     openChat,
+    retractMessage,
     setPrivateMessageRecipient
 } from './actions';
 import { ChatPrivacyDialog } from './components';
@@ -304,10 +307,34 @@ MiddlewareRegistry.register(store => next => action => {
                 }, lobbyMessageRecipient.id);
                 _persistSentPrivateMessage(store, lobbyMessageRecipient, action.message, true);
             } else if (privateMessageRecipient) {
-                conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient));
-                _persistSentPrivateMessage(store, privateMessageRecipient, action.message);
+                const messageId = uuidv4();
+
+                conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient), undefined, messageId);
+                _persistSentPrivateMessage(store, privateMessageRecipient, action.message, false, messageId);
             } else {
                 conference.sendTextMessage(action.message);
+            }
+        }
+        break;
+    }
+
+    case SEND_MESSAGE_RETRACTION: {
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+
+        if (conference) {
+            conference.sendMessageRetraction(
+                action.message.messageId,
+                action.message.privateMessage
+                    ? action.message.recipientId
+                    : undefined,
+                action.message.sentToVisitor
+            );
+
+            // For group chat this comes back via the MUC echo, but private
+            // messages don't echo back to the sender via the normal path.
+            if ((action.message.privateMessage || action.message.lobbyChat) && localParticipant) {
+                dispatch(retractMessage(action.message.messageId, localParticipant.id));
             }
         }
         break;
@@ -464,6 +491,13 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
     );
 
     conference.on(
+        JitsiConferenceEvents.MESSAGE_RETRACTED,
+        (participantId: string, messageId: string) => {
+            _onMessageRetracted(store, participantId, messageId);
+        }
+    );
+
+    conference.on(
         JitsiConferenceEvents.CONFERENCE_ERROR, (errorType: string, error: Error) => {
             errorType === JitsiConferenceErrors.CHAT_ERROR && _handleChatError(store, error);
         });
@@ -523,6 +557,30 @@ function _onReactionReceived(store: IStore, { participantId, reactionList, messa
     };
 
     store.dispatch(addMessageReaction(reactionPayload));
+}
+
+/**
+ * Handles a retracted message.
+ *
+ * @param {Object} store - Redux store.
+ * @param {string} participantId - Id of the participant that sent the message.
+ * @param {string} messageId - The id of the message that is retracted.
+ * @returns {void}
+ */
+function _onMessageRetracted(store: IStore, participantId: string, messageId: string) {
+    const { messages } = store.getState()['features/chat'];
+
+    const originalMessage = messages.find(message => message.messageId === messageId);
+
+    if (!originalMessage) {
+        return;
+    }
+
+    if (originalMessage.participantId !== participantId) {
+        return;
+    }
+
+    store.dispatch(retractMessage(messageId, participantId));
 }
 
 /**
@@ -726,10 +784,11 @@ interface IRecipient {
  * @param {IRecipient} recipient - The recipient the private message was sent to.
  * @param {string} message - The sent message.
  * @param {boolean} isLobbyPrivateMessage - Is a lobby message.
+ * @param {string} messageId - The id of sent message.
  * @returns {void}
  */
 function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipient: IRecipient,
-        message: string, isLobbyPrivateMessage = false) {
+        message: string, isLobbyPrivateMessage = false, messageId?: string) {
     const state = getState();
     const localParticipant = getLocalParticipant(state);
 
@@ -752,6 +811,8 @@ function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipient: I
         participantId: localParticipant.id,
         messageType: MESSAGE_TYPE_LOCAL,
         message,
+        messageId,
+        recipientId: recipient.id,
         privateMessage: !isLobbyPrivateMessage,
         lobbyChat: isLobbyPrivateMessage,
         recipient: recipientName,
