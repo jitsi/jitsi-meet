@@ -26,6 +26,15 @@ export const ADD_MESSAGE = 'ADD_MESSAGE';
 export const ADD_MESSAGE_REACTION = 'ADD_MESSAGE_REACTION';
 
 /**
+ * The type of action which clears the chat search state.
+ *
+ * {
+ *     type: CLEAR_CHAT_SEARCH
+ * }
+ */
+export const CLEAR_CHAT_SEARCH = 'CLEAR_CHAT_SEARCH';
+
+/**
  * The type of the action which signals to clear Redux.
  *
  * {
@@ -85,6 +94,26 @@ export const SEND_MESSAGE = 'SEND_MESSAGE';
  * }
  */
 export const SEND_REACTION = 'SEND_REACTION';
+
+/**
+ * The type of action which sets the currently focused search match index.
+ *
+ * {
+ *     type: SET_CHAT_SEARCH_MATCH_INDEX,
+ *     index: number
+ * }
+ */
+export const SET_CHAT_SEARCH_MATCH_INDEX = 'SET_CHAT_SEARCH_MATCH_INDEX';
+
+/**
+ * The type of action which sets the chat search query.
+ *
+ * {
+ *     type: SET_CHAT_SEARCH_QUERY,
+ *     query: string
+ * }
+ */
+export const SET_CHAT_SEARCH_QUERY = 'SET_CHAT_SEARCH_QUERY';
 
 /**
  * The type of action which signals the initiation of sending of as private message to the
