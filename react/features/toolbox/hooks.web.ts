@@ -36,7 +36,7 @@ import {
     isParticipantsPaneEnabled
 } from '../participants-pane/functions';
 import { useParticipantPaneButton } from '../participants-pane/hooks.web';
-import PiPTriggerButton from '../pip/components/web/PiPTriggerButton';
+import { usePipToggleButton } from '../pip/hooks';
 import { usePollsButton } from '../polls/hooks.web';
 import { addReactionToBuffer } from '../reactions/actions.any';
 import { toggleReactionsMenuVisibility } from '../reactions/actions.web';
@@ -172,12 +172,6 @@ const help = {
     group: 4
 };
 
-const togglePiP = {
-    key: 'toggle-pip',
-    Content: PiPTriggerButton,
-    group: 2
-};
-
 /**
  * A hook that returns the toggle camera button if it is enabled and undefined otherwise.
  *
@@ -282,18 +276,6 @@ function useInviteButton() {
 }
 
 /**
- * Hide PiP toggle button when browser supports netiher Document PiP nor Video PiP (eg: firefox).
- *
- * @returns {Object | undefined}
- */
-function usePipToggleButton() {
-    // TODO: add support for Video PiP fallback. Hide only when both are not supported
-    if ('documentPictureInPicture' in window) {
-        return togglePiP;
-    }
-}
-
-/**
 * Returns all buttons that could be rendered.
 *
 * @param {Object} _customToolbarButtons - An array containing custom buttons objects.
@@ -341,8 +323,8 @@ export function useToolboxButtons(
         'participants-pane': participants,
         invite: _invite,
         tileview,
-        'toggle-pip': togglePiPButton,
         'toggle-camera': toggleCameraButton,
+        'toggle-pip': togglePiPButton,
         videoquality: videoQuality,
         fullscreen: _fullscreen,
         security,

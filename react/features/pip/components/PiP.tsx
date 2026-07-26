@@ -1,11 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { browser } from '../../base/lib-jitsi-meet';
 import { isDocumentPiPSupported, shouldShowPiP } from '../functions';
 
-import { DocumentPiPContent } from './DocumentPiPContent';
 import PiPVideoElement from './PiPVideoElement';
+import { DocumentPiPContent } from './web/DocumentPiPContent';
 
 /**
  * Wrapper component that selects the appropriate PiP implementation.
@@ -20,11 +19,7 @@ function PiP() {
         return null;
     }
 
-    // Electron's Chromium also exposes documentPictureInPicture, this will help PiPVideoElement to be the always PiP choice for Electron.
-    if (browser.isElectron()) {
-        return <PiPVideoElement />;
-    }
-
+    // Electron's Chromium also exposes documentPictureInPicture, so guard explicitly to keep Video PiP as the Electron path.
     if (isDocumentPiPSupported()) {
         return <DocumentPiPContent />;
     }

@@ -14,60 +14,103 @@ export interface IMediaSessionState {
 }
 
 /**
- * Document Picture-in-Picture types.
+ * Details supplied when MediaSession requests entering Document PiP.
  */
+export interface IDocumentPiPMediaSessionActionDetails {
+    /**
+     * The MediaSession action being handled.
+     */
+    action: 'enterpictureinpicture';
 
-declare global {
-    interface IDocumentPiPMediaSessionActionDetails {
-        action: 'enterpictureinpicture';
-        enterPictureInPictureReason?: 'contentoccluded' | 'useraction';
-    }
+    /**
+     * The reason Document PiP was requested.
+     */
+    enterPictureInPictureReason?: 'contentoccluded' | 'useraction';
+}
 
-    type DocumentPiPMediaSessionActionHandler = (
-        details: IDocumentPiPMediaSessionActionDetails
+/**
+ * Handles a MediaSession request to enter Document PiP.
+ */
+export type DocumentPiPMediaSessionActionHandler = (
+    details: IDocumentPiPMediaSessionActionDetails
+) => void;
+
+/**
+ * The browser's Document Picture-in-Picture API.
+ */
+export interface IDocumentPictureInPicture {
+    /**
+     * Registers a listener for Document PiP lifecycle events.
+     */
+    addEventListener: (
+        type: 'enter' | 'leave',
+        listener: ((event: IDocumentPictureInPictureEvent) => void) | ((event: Event) => void)
     ) => void;
 
-    interface IDocumentPictureInPicture {
-        addEventListener: (
-            type: 'enter' | 'leave',
-            listener: ((event: IDocumentPictureInPictureEvent) => void) | ((event: Event) => void)
-        ) => void;
-        requestWindow: (options?: IDocumentPictureInPictureOptions) => Promise<Window>;
-        readonly window: Window | null;
-    }
+    /**
+     * Opens a Document PiP window using the supplied window options.
+     */
+    requestWindow: (options?: IDocumentPictureInPictureOptions) => Promise<Window>;
 
-    interface IDocumentPictureInPictureOptions {
-        disallowReturnToOpener?: boolean;
-        height?: number;
-        preferInitialWindowPlacement?: boolean;
-        width?: number;
-    }
-
-    interface IDocumentPictureInPictureEvent extends Event {
-        readonly window: Window;
-    }
-
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    interface Window {
-        documentPictureInPicture?: IDocumentPictureInPicture;
-    }
-
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    interface MediaSession {
-        // eslint-disable-next-line @typescript-eslint/method-signature-style
-        setActionHandler(
-            action: 'hangup' | 'togglecamera' | 'togglemicrophone',
-            handler: MediaSessionActionHandler | null
-        ): void;
-        // eslint-disable-next-line @typescript-eslint/method-signature-style
-        setActionHandler(
-            action: 'enterpictureinpicture',
-            handler: DocumentPiPMediaSessionActionHandler | null
-        ): void;
-    }
-
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    interface HTMLVideoElement {
-        requestPictureInPicture: () => Promise<PictureInPictureWindow>;
-    }
+    /**
+     * The currently open Document PiP window, if any.
+     */
+    readonly window: Window | null;
 }
+
+/**
+ * Options used when requesting a Document PiP window.
+ */
+export interface IDocumentPictureInPictureOptions {
+    /**
+     * Whether the browser should hide its control for returning to the opener tab.
+     */
+    disallowReturnToOpener?: boolean;
+
+    /**
+     * The requested initial window height in CSS pixels.
+     */
+    height?: number;
+
+    /**
+     * Whether the browser should prefer the default placement over reusing the previous window position and size.
+     */
+    preferInitialWindowPlacement?: boolean;
+
+    /**
+     * The requested initial window width in CSS pixels.
+     */
+    width?: number;
+}
+
+/**
+ * A Document PiP lifecycle event containing the associated PiP window.
+ */
+export interface IDocumentPictureInPictureEvent extends Event {
+    /**
+     * The Document PiP window associated with the event.
+     */
+    readonly window: Window;
+}
+
+/**
+ * MediaSession actions supported by the PiP controls in addition to the standard action set.
+ */
+export type ExtendedMediaSessionAction = 'hangup' | 'togglecamera' | 'togglemicrophone';
+
+/**
+ * Details supplied to an extended MediaSession action handler.
+ */
+export interface IExtendedMediaSessionActionDetails {
+    /**
+     * The extended MediaSession action being handled.
+     */
+    action: ExtendedMediaSessionAction;
+}
+
+/**
+ * Handles an extended MediaSession action used by the PiP controls.
+ */
+export type ExtendedMediaSessionActionHandler = (
+    details: IExtendedMediaSessionActionDetails
+) => void;

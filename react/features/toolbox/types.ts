@@ -21,7 +21,6 @@ export type ToolbarButton = 'camera' |
     'closedcaptions' |
     'custom-panel' |
     'desktop' |
-    'toggle-pip' |
     'download' |
     'embedmeeting' |
     'etherpad' |
@@ -55,6 +54,7 @@ export type ToolbarButton = 'camera' |
     'stats' |
     'tileview' |
     'toggle-camera' |
+    'toggle-pip' |
     'videoquality' |
     'whiteboard' |
     '__end';

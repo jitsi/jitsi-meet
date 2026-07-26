@@ -151,7 +151,6 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'closedcaptions',
     'custom-panel',
     'desktop',
-    'toggle-pip',
     'download',
     'embedmeeting',
     'etherpad',
@@ -183,6 +182,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'stats',
     'tileview',
     'toggle-camera',
+    'toggle-pip',
     'videoquality',
     'whiteboard'
 ];

@@ -1,13 +1,19 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { IStore } from '../app/types';
 import IconUserSVG from '../base/icons/svg/user.svg?raw';
 import { IParticipant } from '../base/participants/types';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
-import { openDocumentPiP } from './actions';
-import { isDocumentPiPSupported, renderAvatarOnCanvas, updateMediaSessionState } from './functions';
+import { exitPiP, openDocumentPiP } from './actions';
+import PiPTriggerButton from './components/web/PiPTriggerButton';
+import {
+    getStoredPiPWindow,
+    isDocumentPiPSupported,
+    renderAvatarOnCanvas,
+    shouldShowPiP,
+} from './functions';
 import logger from './logger';
 
 /**
@@ -21,6 +27,12 @@ const CANVAS_HEIGHT = Math.floor(CANVAS_WIDTH / TILE_ASPECT_RATIO);
  * We manually request frames after drawing to ensure capture.
  */
 const CANVAS_FRAME_RATE = 0;
+
+const togglePiP = {
+    key: 'toggle-pip',
+    Content: PiPTriggerButton,
+    group: 2
+};
 
 /**
  * Options for the useCanvasAvatar hook.
@@ -193,23 +205,10 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
  *
  * @see https://googlechrome.github.io/samples/media-session/video-conferencing.html
  *
- * @param {React.RefObject<HTMLDivElement>} playerRef - Ref to the player div to move into PiP.
- * @param {React.RefObject<HTMLDivElement>} containerRef - Ref to the container div (player's parent).
- * @param {boolean} microphoneActive - Whether the microphone is currently active.
- * @param {boolean} cameraActive - Whether the camera is currently active.
  * @returns {void}
  */
-export function useDocumentPiPMediaSession(
-        playerRef: React.RefObject<HTMLDivElement>,
-        containerRef: React.RefObject<HTMLDivElement>,
-        microphoneActive: boolean,
-        cameraActive: boolean) {
-    const pipWindowRef = useRef<Window | null>(null);
+export function useDocumentPiPMediaSession() {
     const dispatch: IStore['dispatch'] = useDispatch();
-
-    useEffect(() => {
-        updateMediaSessionState({ microphoneActive, cameraActive });
-    }, [ microphoneActive, cameraActive ]);
 
     const openDocumentPip = useCallback(
         () => dispatch(openDocumentPiP()),
@@ -248,12 +247,10 @@ export function useDocumentPiPMediaSession(
         }
 
         const onVisibilityChange = () => {
-            if (!document.hidden && pipWindowRef.current && !pipWindowRef.current.closed) {
-                if (playerRef.current && containerRef.current) {
-                    containerRef.current.appendChild(playerRef.current);
-                }
-                pipWindowRef.current.close();
-                pipWindowRef.current = null;
+            const pipWindow = getStoredPiPWindow();
+
+            if (!document.hidden && pipWindow && !pipWindow.closed) {
+                dispatch(exitPiP());
             }
         };
 
@@ -262,5 +259,16 @@ export function useDocumentPiPMediaSession(
         return () => {
             document.removeEventListener('visibilitychange', onVisibilityChange);
         };
-    }, [ playerRef, containerRef ]);
+    }, [ dispatch ]);
+}
+
+/**
+ * Returns the PiP toggle button when PiP is enabled and supported by the browser.
+ *
+ * @returns {Object | undefined} The PiP toggle button or undefined.
+ */
+export function usePipToggleButton() {
+    const visible = useSelector(shouldShowPiP);
+
+    return visible && (isDocumentPiPSupported() || 'pictureInPictureEnabled' in document) ? togglePiP : undefined;
 }

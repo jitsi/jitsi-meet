@@ -1,6 +1,7 @@
 import { IStore } from '../app/types';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { isLocalTrackMuted } from '../base/tracks/functions.any';
+import { showErrorNotification } from '../notifications/actions';
 import { handleToggleVideoMuted } from '../toolbox/actions.any';
 import { muteLocal } from '../video-menu/actions.any';
 
@@ -8,21 +9,22 @@ import { SET_PIP_ACTIVE } from './actionTypes';
 import {
     cleanupMediaSessionHandlers,
     clearPiPWindow,
+    closeDocumentPiPWindow,
     enterVideoPiP,
     getDocumentPiPWindow,
     getStoredPiPWindow,
     initPiPWindow,
+    isDocumentPiPRequestPending,
     isDocumentPiPSupported,
+    setDocumentPiPRequestPending,
     setupMediaSessionHandlers,
     shouldShowPiP,
 } from './functions';
 import logger from './logger';
 
-/**
- * Flag to track if a Document PiP request is currently pending.
- * Prevents duplicate requestWindow() calls before the first one resolves.
- */
-let docPiPPending = false;
+interface IOpenDocumentPiPOptions {
+    notifyOnFailure?: boolean;
+}
 
 /**
  * Action to set Picture-in-Picture active state.
@@ -82,12 +84,7 @@ export function exitPiP() {
     return (dispatch: IStore['dispatch']) => {
         logger.debug('exitPiP called');
 
-        const pipWindow = getStoredPiPWindow();
-
-        if (pipWindow && !pipWindow.closed) {
-            pipWindow.close();
-            clearPiPWindow();
-        }
+        closeDocumentPiPWindow();
 
         if (document.pictureInPictureElement) {
             document.exitPictureInPicture()
@@ -255,7 +252,7 @@ export function togglePip() {
         }
 
         if (isDocumentPiPSupported()) {
-            dispatch(openDocumentPiP());
+            dispatch(openDocumentPiP({ notifyOnFailure: true }));
         } else {
             const videoElement = document.getElementById('pipVideo') as HTMLVideoElement;
 
@@ -269,9 +266,10 @@ export function togglePip() {
 /**
  * Opens Document PiP from the toolbar or an automatic MediaSession request.
  *
+ * @param {IOpenDocumentPiPOptions} options - Options controlling user-facing failure handling.
  * @returns {Function}
  */
-export function openDocumentPiP() {
+export function openDocumentPiP(options: IOpenDocumentPiPOptions = {}) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const _shouldShowPip = shouldShowPiP(state);
@@ -280,7 +278,7 @@ export function openDocumentPiP() {
             return;
         }
 
-        const docPiP = window?.documentPictureInPicture;
+        const docPiP = window.documentPictureInPicture;
 
         if (!isDocumentPiPSupported() || !docPiP) {
             logger.warn('Document Picture-in-Picture not supported');
@@ -292,7 +290,8 @@ export function openDocumentPiP() {
         const docPiPConfig = pipConfig?.documentPiP?.windowOptions;
         const docPiPWindow = getDocumentPiPWindow();
         const storedWindow = getStoredPiPWindow();
-        const isPiPWindowAlreadyOpen = Boolean(storedWindow || docPiPWindow);
+        const isPiPWindowAlreadyOpen = Boolean(
+            (storedWindow && !storedWindow.closed) || (docPiPWindow && !docPiPWindow.closed));
 
         if (isPiPWindowAlreadyOpen) {
             logger.debug('Document PiP is already open');
@@ -300,13 +299,29 @@ export function openDocumentPiP() {
             return;
         }
 
-        if (docPiPPending) {
+        if (storedWindow?.closed) {
+            closeDocumentPiPWindow();
+        }
+
+        if (isDocumentPiPRequestPending()) {
             logger.debug('Document PiP request already pending, skipping duplicate request');
 
             return;
         }
 
-        docPiPPending = true;
+        setDocumentPiPRequestPending(true);
+
+        const handleError = (error: unknown) => {
+            logger.error('Failed to open Document PiP:', error);
+            dispatch(setPiPActive(false));
+
+            if (options.notifyOnFailure) {
+                dispatch(showErrorNotification({
+                    descriptionKey: 'notify.pipOpenFailedDescription',
+                    titleKey: 'notify.pipOpenFailedTitle'
+                }));
+            }
+        };
 
         try {
             const promise = docPiP.requestWindow({
@@ -318,28 +333,28 @@ export function openDocumentPiP() {
 
             return promise
                 .then((pipWindow: Window) => {
-                    initPiPWindow(pipWindow);
+                    if (pipWindow.closed) {
+                        clearPiPWindow();
+                        dispatch(setPiPActive(false));
 
-                    dispatch(setPiPActive(true));
+                        return;
+                    }
 
                     pipWindow.addEventListener('pagehide', () => {
                         clearPiPWindow();
-                        dispatch(setPiPActive(false));
+                        dispatch(handlePiPLeaveEvent());
                     });
+
+                    initPiPWindow(pipWindow);
+                    dispatch(handlePipEnterEvent());
                 })
-                .catch((error: Error) => {
-                    logger.error('Failed to open Document PiP:', error);
-                    dispatch(setPiPActive(false));
-                })
+                .catch(handleError)
                 .finally(() => {
-                    docPiPPending = false;
+                    setDocumentPiPRequestPending(false);
                 });
         } catch (error) {
-            docPiPPending = false;
-            logger.error('Failed to open Document PiP:', error);
-            dispatch(setPiPActive(false));
-
-            throw error;
+            setDocumentPiPRequestPending(false);
+            handleError(error);
         }
     };
 }
