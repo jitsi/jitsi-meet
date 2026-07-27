@@ -51,6 +51,13 @@ const MD_THEME = {
     '--md-menu-item-one-line-container-height': '48px',
     '--md-menu-item-hover-state-layer-color': '#202124',
     '--md-dialog-container-color': '#ffffff',
+    // Meet's dialog headline: Google Sans, 22px, regular — not MD3's 24px default.
+    '--md-dialog-headline-color': '#202124',
+    '--md-dialog-headline-size': '22px',
+    '--md-dialog-headline-weight': '400',
+    '--md-dialog-headline-line-height': '28px',
+    '--md-dialog-supporting-text-color': '#5f6368',
+    '--md-dialog-supporting-text-size': '15px',
 
     // Meet's controls are pills (fully rounded), 48px tall, 14px/500 labels.
     '--md-filled-button-container-shape': '24px',
@@ -709,7 +716,10 @@ export default function Welcome() {
             <md-dialog
                 open = { Boolean(inviteUrl) }
                 ref = { dialogRef }
-                style = {{ '--md-dialog-container-shape': '16px' } as React.CSSProperties}>
+                style = {{
+                    '--md-dialog-container-shape': '28px',
+                    width: 'min(512px, calc(100vw - 48px))'
+                } as React.CSSProperties}>
                 <div slot = 'headline'>Данные для подключения к встрече</div>
                 <div slot = 'content'>
                     <p style = {{ color: '#5f6368', fontSize: '15px', margin: '0 0 20px' }}>
