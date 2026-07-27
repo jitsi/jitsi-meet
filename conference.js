@@ -948,6 +948,22 @@ export default {
     },
 
     /**
+     * Sets multiple properties for the local participant in a single presence update.
+     *
+     * @param {Object} properties - Object of property names to values.
+     * @returns {void}
+     */
+    setLocalParticipantProperties(properties) {
+        if (!room) {
+            logger.warn('Not setting participant properties, conference not initialized');
+
+            return;
+        }
+
+        room.setLocalParticipantProperties(properties);
+    },
+
+    /**
      * Exposes a Command(s) API on this instance. It is necessitated by (1) the
      * desire to keep room private to this instance and (2) the need of other
      * modules to send and receive commands to and from participants.
