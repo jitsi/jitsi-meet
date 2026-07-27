@@ -9,7 +9,7 @@ import { buildConfigURL } from '../base/config/functions.any';
 import { setLocationURL } from '../base/connection/actions.web';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.web';
 import { isEmbedded } from '../base/util/embedUtils';
-import { parseURIString } from '../base/util/uri';
+import { getBackendSafeRoomName, parseURIString } from '../base/util/uri';
 import { isVpaasMeeting } from '../jaas/functions';
 import { clearNotifications, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
@@ -63,7 +63,12 @@ export function appNavigate(uri?: string) {
 
         location.protocol || (location.protocol = 'https:');
 
-        const { room } = location;
+        // In embedded (no-iframe) mode the conference is identified by the
+        // room name passed to the embedded API. The host page's URL describes
+        // the page, not the conference, so it must not be parsed for the room.
+        const room = window._jitsiMeetEmbeddedRoomName
+            ? getBackendSafeRoomName(window._jitsiMeetEmbeddedRoomName)
+            : location.room;
         const locationURL = new URL(location.toString());
 
         // There are notifications now that gets displayed after we technically left

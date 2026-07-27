@@ -1,5 +1,6 @@
 /* global APP */
 import Logger from '@jitsi/logger';
+import EventEmitter from 'events';
 
 import { createApiEvent } from '../../react/features/analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../react/features/analytics/functions';
@@ -142,6 +143,7 @@ import { getJitsiMeetTransport } from '../transport';
 
 import {
     API_ID,
+    EMBEDDED_MODE,
     ENDPOINT_TEXT_MESSAGE_NAME
 } from './constants';
 
@@ -151,6 +153,13 @@ const logger = Logger.getLogger('api:core');
  * List of the available commands.
  */
 let commands = {};
+
+/**
+ * The handler for API requests. Assigned when the API is enabled (see
+ * {@link initCommands}) and invoked either through the transport (iframe mode)
+ * or directly via {@link API#executeRequest} (embedded mode).
+ */
+let processRequest;
 
 /**
  * The transport instance used for communication with external apps.
@@ -1009,7 +1018,7 @@ function initCommands() {
 
         return false;
     });
-    transport.on('request', (request, callback) => {
+    processRequest = (request, callback) => {
         const { dispatch, getState } = APP.store;
 
         if (processExternalDeviceRequest(dispatch, getState, request, callback)) {
@@ -1216,7 +1225,8 @@ function initCommands() {
         }
 
         return true;
-    });
+    };
+    transport.on('request', processRequest);
 }
 
 /**
@@ -1227,6 +1237,11 @@ function initCommands() {
 function shouldBeEnabled() {
     return (
         typeof API_ID === 'number'
+
+            // The app has been mounted directly into the host page (no iframe)
+            // by the embedded API, which talks to it through direct function
+            // calls instead of a transport.
+            || EMBEDDED_MODE
 
             // XXX Enable the API when a JSON Web Token (JWT) is specified in
             // the location/URL because then it is very likely that the Jitsi
@@ -1298,6 +1313,14 @@ class API {
     _enabled;
 
     /**
+     * In-process emitter that mirrors every event sent to the embedding
+     * application. This is the delivery channel for the embedded (no-iframe)
+     * API, where the embedder lives in the same JavaScript context and no
+     * transport is involved.
+     */
+    _eventEmitter = new EventEmitter();
+
+    /**
      * Initializes the API. Setups message event listeners that will receive
      * information from external applications that embed Jitsi Meet. It also
      * sends a message to the external application that API is initialized.
@@ -1324,6 +1347,73 @@ class API {
 
         // Let the embedder know we are ready.
         this._sendEvent({ name: 'ready' });
+    }
+
+    /**
+     * Executes a command handler directly, without going through the
+     * transport. This is the entry point used by the embedded (no-iframe) API
+     * where the embedding application lives in the same JavaScript context,
+     * but any in-page consumer may use it. The very same handlers (including
+     * their permission checks) that serve the iframe API are executed.
+     *
+     * @param {string} name - The command name in the jitsi-meet (kebab-case)
+     * format, as defined by the command handlers map.
+     * @param {...*} args - The arguments for the command.
+     * @returns {boolean} - True if the command was recognized and executed.
+     */
+    executeCommand(name, ...args) {
+        if (!this._enabled || !name || !commands[name]) {
+            logger.error(`API command not found or API not enabled: ${name}`);
+
+            return false;
+        }
+
+        logger.info(`API command received: ${name}`);
+        commands[name](...args);
+
+        return true;
+    }
+
+    /**
+     * Executes a request handler directly, without going through the
+     * transport. Resolves with exactly the payload a transport-based request
+     * would have produced.
+     *
+     * @param {Object} request - The request object. The {@code name} property
+     * identifies the request; any other properties are handler-specific.
+     * @returns {Promise<*>}
+     */
+    executeRequest(request) {
+        if (!this._enabled || typeof processRequest !== 'function') {
+            return Promise.reject(new Error('The API is not enabled'));
+        }
+
+        return new Promise(resolve => {
+            processRequest(request, resolve);
+        });
+    }
+
+    /**
+     * Registers an in-process listener for the events sent to the embedding
+     * application. The listener receives the same payloads that are posted
+     * over the transport in iframe mode.
+     *
+     * @param {Function} listener - Invoked with the event object. The
+     * {@code name} property identifies the event.
+     * @returns {void}
+     */
+    onEvent(listener) {
+        this._eventEmitter.on('event', listener);
+    }
+
+    /**
+     * Removes a listener previously registered with {@link API#onEvent}.
+     *
+     * @param {Function} listener - The listener to remove.
+     * @returns {void}
+     */
+    offEvent(listener) {
+        this._eventEmitter.removeListener('event', listener);
     }
 
     /**
@@ -1391,12 +1481,22 @@ class API {
      * @returns {void}
      */
     _sendEvent(event = {}) {
-        if (this._enabled) {
-            try {
-                transport.sendEvent(event);
-            } catch (error) {
-                logger.error('Failed to send and IFrame API event', error);
-            }
+        if (!this._enabled) {
+            return;
+        }
+
+        this._eventEmitter.emit('event', event);
+
+        // In embedded (no-iframe) mode there is no other window to post
+        // messages to - events are delivered through the local emitter only.
+        if (EMBEDDED_MODE) {
+            return;
+        }
+
+        try {
+            transport.sendEvent(event);
+        } catch (error) {
+            logger.error('Failed to send and IFrame API event', error);
         }
     }
 
@@ -2605,6 +2705,7 @@ class API {
         if (this._enabled) {
             this._enabled = false;
         }
+        this._eventEmitter.removeAllListeners();
     }
 }
 

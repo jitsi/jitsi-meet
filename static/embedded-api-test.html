@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>JitsiMeetEmbeddedAPI test page</title>
+</head>
+<body style="margin: 16px; font-family: sans-serif;">
+
+    <h3 style="margin-top: 0;">JitsiMeetEmbeddedAPI (no iframe) test page</h3>
+    <p style="color: #666; font-size: 13px;">
+        Serve this page from the Jitsi Meet deployment itself, e.g. with
+        <code>make dev</code> open
+        <code>https://localhost:8080/static/embedded-api-test.html</code>.
+        The meeting renders directly into a &lt;div&gt; below - no iframe.
+    </p>
+
+    <div style="margin-bottom: 8px;">
+        <button onclick="api.toggleAudio()">Toggle audio</button>
+        <button onclick="api.toggleVideo()">Toggle video</button>
+        <button onclick="api.toggleTileView()">Toggle tile view</button>
+        <button onclick="checkMuted()">Is audio muted?</button>
+        <span id="status" style="font-size: 13px; margin-left: 8px;">loading…</span>
+    </div>
+
+    <div id="meet" style="height: 640px; border: 1px solid #999;"></div>
+
+    <script src="/libs/embedded_api.min.js"></script>
+    <script>
+        const status = document.getElementById('status');
+        const api = new JitsiMeetEmbeddedAPI({
+            parentNode: document.getElementById('meet'),
+            roomName: 'JitsiEmbeddedApiSample'
+        });
+
+        api.ready().then(() => {
+            status.textContent = 'ready - 0 iframes on this page: '
+                + (document.querySelectorAll('iframe').length === 0);
+        });
+
+        // Same event names as the iframe API.
+        api.on('videoConferenceJoined', e => {
+            status.textContent = `joined ${e.roomName}`;
+        });
+        api.on('audioMuteStatusChanged', e => {
+            console.log('audio muted:', e.muted);
+        });
+
+        async function checkMuted() {
+            // Request/response, resolved by a direct function call.
+            status.textContent = `audio muted: ${await api.isAudioMuted()}`;
+        }
+    </script>
+</body>
+</html>

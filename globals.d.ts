@@ -44,6 +44,10 @@ declare global {
         PressureObserver?: any;
         PressureRecord?: any;
         ReactNativeWebView?: any;
+        // Set by the embedded (no-iframe) API before the app bundle loads.
+        _jitsiMeetEmbeddedMode?: boolean;
+        _jitsiMeetEmbeddedRoomName?: string;
+
         // selenium tests handler
         _sharedVideoPlayer: any;
         alwaysOnTop: { api: any };

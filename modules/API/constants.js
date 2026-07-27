@@ -19,6 +19,13 @@ try {
 export const API_ID = _apiID;
 
 /**
+ * Whether Jitsi Meet has been mounted directly into the host page, without an
+ * iframe, by the embedded API ({@code JitsiMeetEmbeddedAPI}). The flag is set
+ * on the page by the embedded API before the application bundle is evaluated.
+ */
+export const EMBEDDED_MODE = window._jitsiMeetEmbeddedMode === true;
+
+/**
  * The payload name for the datachannel/endpoint text message event.
  */
 export const ENDPOINT_TEXT_MESSAGE_NAME = 'endpoint-text-message';
