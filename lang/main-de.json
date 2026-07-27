@@ -42,6 +42,15 @@
     "audioOnly": {
         "audioOnly": "Geringe Bandbreite"
     },
+    "audioTranslation": {
+        "disabledForRoom": "Die Audio-Übersetzung wurde für diese Konferenz deaktiviert.",
+        "errorForbidden": "Sie haben nicht die Berechtigung die Audio-Übersetzung zu nutzen.",
+        "errorGeneric": "Audio-Übersetzung konnte nicht gestartet werden, bitte erneut versuchen.",
+        "errorLimitReached": "Nicht jeder Anwesende kann übersetzt werden. Bitte Audio-Übersetzung für einzelne Anwesende einschalten.",
+        "errorRoomDisabled": "Audio-Übersetzung ist für diese Konferenz deaktiviert. Bitte in den Moderationseinstellungen aktivieren.",
+        "errorSpeakerUnavailable": "Diese Person kann nicht übersetzt werden, sie ist nicht mehr Teil der Konferenz.",
+        "labelTooltip": "Übersetzung aktiv"
+    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "z.B. 10000000 für 10 Mbps",
         "assumedBandwidthBpsWarning": "Höhere Werte können zu Netzwerk-Problemen führen.",
@@ -314,6 +323,7 @@
         "alreadySharedVideoMsg": "Eine andere Person gibt bereits ein Video weiter. Bei dieser Konferenz ist jeweils nur ein geteiltes Video möglich.",
         "alreadySharedVideoTitle": "Nur ein geteiltes Video gleichzeitig",
         "applicationWindow": "Anwendungsfenster",
+        "applyChanges": "Änderungen anwenden",
         "authenticationRequired": "Authentifizierung benötigt",
         "cameraCaptureDialog": {
             "description": "Ein Bild mit Ihrer Kamera aufnehmen und senden",
@@ -449,6 +459,7 @@
         "permissionMicRequiredError": "Der Zugriff auf das Mikrofon wird benötigt, um an Konferenzen mit Ton teilzunehmen. Bitte in den Einstellungen zulassen",
         "readMore": "mehr",
         "recentlyUsedObjects": "Ihre zuletzt verwendeten Objekte",
+        "recordAndTranscribe": "Aufnehmen & Übersetzen",
         "recording": "Aufnahme",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Während eines Livestreams nicht möglich",
         "recordingInProgressDescription": "Diese Konferenz wird aufgezeichnet und von KI analysiert. Ihr Ton und Video ist deaktiviert, wenn Sie es aktivieren, stimmen Sie der Aufzeichnung zu.",
@@ -517,10 +528,14 @@
         "startLiveStreaming": "Livestream starten",
         "startRecording": "Aufnahme starten",
         "startRemoteControlErrorMessage": "Beim Versuch, die Fernsteuerung zu starten, ist ein Fehler aufgetreten!",
+        "startTranscribing": "Transkription starten",
+        "startTranscription": "Transkription starten",
         "stopLiveStreaming": "Livestream stoppen",
         "stopRecording": "Aufnahme stoppen",
         "stopRecordingWarning": "Sind Sie sicher, dass Sie die Aufnahme stoppen möchten?",
         "stopStreamingWarning": "Sind Sie sicher, dass Sie den Livestream stoppen möchten?",
+        "stopTranscription": "Transkription beenden",
+        "stopTranscriptionWarning": "Sind Sie sicher, dass Sie die Transkription beenden möchten?",
         "streamKey": "Streamschlüssel",
         "suggestedAccounts": "Vorgeschlagene Accounts",
         "suggestedDeals": "Vorgeschlagene Deals",
@@ -822,6 +837,13 @@
         "youAreAlone": "Nur Sie sind in dieser Konferenz"
     },
     "me": "ich",
+    "multiScreen": {
+        "noParticipants": "Niemand anwesend",
+        "showOnStage": "{{name}} auf dem zweiten Bildschirm anzeigen",
+        "unpinFromStage": "{{name}} von zweitem Bildschirm entfernen",
+        "whiteboardInactive": "Das Whiteboard in der Konferenz öffnen und auf dem zweiten Bildschirm anzeigen",
+        "whiteboardTitle": "Whiteboard"
+    },
     "notify": {
         "OldElectronAPPTitle": "Sicherheitslücke!",
         "allowAll": "Alles einschalten",
@@ -1135,6 +1157,7 @@
         }
     },
     "recording": {
+        "alsoTranscribe": "Auch Transkription starten?",
         "authDropboxText": "In Dropbox hochladen",
         "availableSpace": "Verfügbarer Speicherplatz: {{spaceLeft}} MB (ca. {{duration}} Minuten Aufzeichnung)",
         "beta": "BETA",
@@ -1211,6 +1234,7 @@
     },
     "settings": {
         "audio": "Audio",
+        "audioTranslation": "Audio-Übersetzung einschalten",
         "buttonLabel": "Einstellungen",
         "calendar": {
             "about": "Die Kalenderintegration von {{appName}} wird verwendet, um ein sicheres Zugreifen auf Ihren Kalender und Auslesen der bevorstehenden Termine zu ermöglichen.",
@@ -1340,6 +1364,7 @@
             "Settings": "Einstellungen einschalten",
             "audioOnly": "„Nur Audio“ ein-/ausschalten",
             "audioRoute": "Audiogerät auswählen",
+            "audioTranslation": "Audio-Übersetzung",
             "boo": "Buhen",
             "breakoutRooms": "Breakout-Räume",
             "callQuality": "Qualitätseinstellungen",
@@ -1448,6 +1473,8 @@
         "audioOnlyOn": "Modus „Nur Audio“ aktivieren",
         "audioRoute": "Audiogerät auswählen",
         "audioSettings": "Ton-Einstellungen",
+        "audioTranslation": "Audio-Übersetzung",
+        "audioTranslationOff": "Aus",
         "authenticate": "Anmelden",
         "boo": "Buhen",
         "callQuality": "Qualitätseinstellungen",
@@ -1523,6 +1550,8 @@
         "reactionSilence": "Stille senden",
         "reactionSurprised": "Überrascht senden",
         "reactions": "Interaktionen",
+        "record": "Aufnehmen",
+        "recordAndTranscribe": "Aufnehmen & Transkribieren",
         "security": "Sicherheitsoptionen",
         "selectBackground": "Hintergrund auswählen",
         "shareRoom": "Person einladen",
@@ -1549,6 +1578,7 @@
         "videounmute": "Kamera einschalten"
     },
     "transcribing": {
+        "alsoRecord": "Diese Konferenz auch aufnehmen?",
         "ccButtonTooltip": "Untertitel ein-/ausschalten",
         "expandedLabel": "Transkribieren ist derzeit eingeschaltet",
         "failed": "Transkribieren fehlgeschlagen",
@@ -1623,10 +1653,13 @@
         "mute": "Person ist stumm geschaltet",
         "muted": "Stummgeschaltet",
         "pinToStage": "Anheften",
+        "receivingTranslatedAudio": "Sie empfangen übersetzten Ton",
         "remoteControl": "Fernsteuerung",
         "screenSharing": "Person teilt den Bildschirm",
         "show": "Im Vordergrund anzeigen",
         "showSelfView": "Eigene Ansicht anzeigen",
+        "translationEnabledForYou": "Übersetzung für Sie aktiviert",
+        "translationOnAndReceiving": "Übersetzung eingeschaltet · empfange",
         "unpinFromStage": "Lösen",
         "verify": "Person verifizieren",
         "videoMuted": "Kamera ausgeschaltet",
