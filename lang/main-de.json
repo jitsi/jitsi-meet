@@ -48,6 +48,15 @@
         "errorSpeakerUnavailable": "Diese Person kann nicht übersetzt werden, sie ist nicht mehr Teil der Konferenz.",
         "labelTooltip": "Übersetzung aktiv"
     },
+    "audioTranslation": {
+        "disabledForRoom": "Die Audio-Übersetzung wurde für diese Konferenz deaktiviert.",
+        "errorForbidden": "Sie haben nicht die Berechtigung für die Audio-Übersetzung zu nutzen.",
+        "errorGeneric": "Audio-Übersetzung konnte nicht gestartet werden, bitte erneut versuchen.",
+        "errorLimitReached": "Nicht jeder Anwesende kann übersetzt werden. Bitte Audio-Übersetzung für einzelne Anwesende einschalten.",
+        "errorRoomDisabled": "Audio-Übersetzung ist für diese Konferenz deaktiviert. Bitte in den Moderationseinstellungen aktivieren.",
+        "errorSpeakerUnavailable": "Diese Person kann nicht übersetzt werden, sie ist nicht mehr Teil der Konferenz.",
+        "labelTooltip": "Übersetzung aktiv"
+    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "z.B. 10000000 für 10 Mbps",
         "assumedBandwidthBpsWarning": "Höhere Werte können zu Netzwerk-Problemen führen.",
