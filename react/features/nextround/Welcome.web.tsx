@@ -723,8 +723,12 @@ export default function Welcome() {
                 } as React.CSSProperties}>
                 { /* Title lives in the content slot, not the `headline` slot:
                      MD3's shadow-DOM headline block clips the text in this build
-                     (Google Sans + global CSS). The content slot renders cleanly. */ }
-                <div slot = 'content'>
+                     (Google Sans + global CSS). The content slot renders cleanly.
+                     MD3's default dialog padding is zeroed in this build, so pad
+                     the slotted content/actions explicitly. */ }
+                <div
+                    slot = 'content'
+                    style = {{ padding: '24px 24px 0' }}>
                     <div
                         style = {{
                             fontFamily: FONT_STACK,
@@ -770,7 +774,14 @@ export default function Welcome() {
                         </p>
                     ) }
                 </div>
-                <div slot = 'actions'>
+                <div
+                    slot = 'actions'
+                    style = {{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        gap: '8px',
+                        padding: '16px 24px 24px'
+                    }}>
                     <md-text-button onClick = { closeModal }>Закрыть</md-text-button>
                     <md-filled-button onClick = { onJoinAsHost }>Войти как интервьюер</md-filled-button>
                 </div>
