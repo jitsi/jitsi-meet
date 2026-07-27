@@ -714,14 +714,26 @@ export default function Welcome() {
             </div>
 
             <md-dialog
+                aria-label = 'Данные для подключения к встрече'
                 open = { Boolean(inviteUrl) }
                 ref = { dialogRef }
                 style = {{
-                    '--md-dialog-container-shape': '28px',
+                    '--md-dialog-container-shape': '24px',
                     width: 'min(512px, calc(100vw - 48px))'
                 } as React.CSSProperties}>
-                <div slot = 'headline'>Данные для подключения к встрече</div>
+                { /* Title lives in the content slot, not the `headline` slot:
+                     MD3's shadow-DOM headline block clips the text in this build
+                     (Google Sans + global CSS). The content slot renders cleanly. */ }
                 <div slot = 'content'>
+                    <div
+                        style = {{
+                            fontFamily: FONT_STACK,
+                            fontSize: '22px',
+                            color: '#202124',
+                            margin: '0 0 16px'
+                        }}>
+                        Данные для подключения к встрече
+                    </div>
                     <p style = {{ color: '#5f6368', fontSize: '15px', margin: '0 0 20px' }}>
                         Отправьте эту ссылку кандидату. Сохраните её, если планируете
                         интервью позже.
