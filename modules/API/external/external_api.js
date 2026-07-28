@@ -770,6 +770,19 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns a local participant property.
+     *
+     * @param {string} property - The name of the property to retrieve.
+     * @returns {Promise<string|undefined>} The value of the property if it exists, otherwise undefined.
+     */
+    getLocalParticipantProperty(property) {
+        return this._transport.sendRequest({
+            name: 'get-local-participant-property',
+            property
+        });
+    }
+
+    /**
      * Returns the Shared Document Url of the conference.
      *
      * @returns {Promise<string>} Shared Document URL.

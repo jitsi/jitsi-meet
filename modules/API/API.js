@@ -1175,6 +1175,12 @@ function initCommands() {
             callback(getRoomsInfo(APP.store.getState(), includeHidden));
             break;
         }
+        case 'get-local-participant-property': {
+            const { property } = request;
+
+            callback(APP.conference.getLocalParticipantProperty(property));
+            break;
+        }
         case 'get-shared-document-url': {
             const { etherpad } = APP.store.getState()['features/etherpad'];
 

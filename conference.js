@@ -918,6 +918,15 @@ export default {
     },
 
     /**
+     * Gets a local participant property.
+     * @param {string} name - The name of the property to retrieve.
+     * @returns {string|undefined} The value of the property if it exists, otherwise undefined.
+     */
+    getLocalParticipantProperty(name) {
+        return room && room.getLocalParticipantProperty(name);
+    },
+
+    /**
      * Returns the stats.
      */
     getStats() {
