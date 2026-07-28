@@ -166,6 +166,11 @@ const CopyIcon = () => (
         <path d = 'M5 15V5a2 2 0 0 1 2-2h10' stroke = 'currentColor' strokeWidth = '2' />
     </svg>
 );
+const CloseIcon = () => (
+    <svg fill = 'currentColor' height = '20' viewBox = '0 0 24 24' width = '20'>
+        <path d = 'M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z' />
+    </svg>
+);
 const SlideLinkIcon = () => (
     <svg fill = 'none' height = '56' viewBox = '0 0 24 24' width = '56'>
         <path d = 'M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1' stroke = '#1a73e8' strokeLinecap = 'round' strokeWidth = '2' />
@@ -719,7 +724,8 @@ export default function Welcome() {
                 ref = { dialogRef }
                 style = {{
                     '--md-dialog-container-shape': '24px',
-                    width: 'min(512px, calc(100vw - 48px))'
+                    '--md-dialog-container-color': '#e9eef6',
+                    width: 'min(360px, calc(100vw - 48px))'
                 } as React.CSSProperties}>
                 { /* Title lives in the content slot, not the `headline` slot:
                      MD3's shadow-DOM headline block clips the text in this build
@@ -728,16 +734,27 @@ export default function Welcome() {
                      the slotted content/actions explicitly. */ }
                 <div
                     slot = 'content'
-                    style = {{ padding: '24px 24px 0' }}>
+                    style = {{ position: 'relative', padding: '20px 24px 0' }}>
+                    { /* Google-Meet-style header: title on the left, close (X) hugging
+                         the top-right corner. */ }
                     <div
                         style = {{
                             fontFamily: FONT_STACK,
                             fontSize: '22px',
+                            fontWeight: 400,
+                            lineHeight: '28px',
                             color: '#202124',
-                            margin: '0 0 16px'
+                            margin: '0 44px 16px 0'
                         }}>
                         Данные для подключения к встрече
                     </div>
+                    <md-icon-button
+                        aria-label = 'Закрыть'
+                        onClick = { closeModal }
+                        style = {{ position: 'absolute', top: '8px', right: '12px', color: '#5f6368' }}
+                        title = 'Закрыть'>
+                        <CloseIcon />
+                    </md-icon-button>
                     <p style = {{ color: '#5f6368', fontSize: '15px', margin: '0 0 20px' }}>
                         Отправьте эту ссылку кандидату. Сохраните её, если планируете
                         интервью позже.
@@ -746,10 +763,10 @@ export default function Welcome() {
                         style = {{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '10px',
-                            background: '#e8f0fe',
-                            borderRadius: '10px',
-                            padding: '12px 16px'
+                            gap: '8px',
+                            background: '#f1f3f4',
+                            borderRadius: '12px',
+                            padding: '6px 6px 6px 16px'
                         }}>
                         <span
                             style = {{
@@ -763,8 +780,10 @@ export default function Welcome() {
                             { inviteUrl }
                         </span>
                         <md-icon-button
+                            aria-label = 'Копировать ссылку'
                             onClick = { onCopy }
-                            title = 'Скопировать'>
+                            style = {{ color: '#1a73e8' }}
+                            title = 'Копировать ссылку'>
                             <CopyIcon />
                         </md-icon-button>
                     </div>
@@ -779,10 +798,8 @@ export default function Welcome() {
                     style = {{
                         display: 'flex',
                         justifyContent: 'flex-end',
-                        gap: '8px',
-                        padding: '16px 24px 24px'
+                        padding: '20px 24px 24px'
                     }}>
-                    <md-text-button onClick = { closeModal }>Закрыть</md-text-button>
                     <md-filled-button onClick = { onJoinAsHost }>Войти как интервьюер</md-filled-button>
                 </div>
             </md-dialog>
