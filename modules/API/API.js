@@ -966,7 +966,7 @@ function initCommands() {
             APP.store.dispatch(overwriteConfig(whitelistedConfig));
         },
         'toggle-virtual-background': () => {
-            APP.store.dispatch(toggleDialog(SettingsDialog, {
+            APP.store.dispatch(toggleDialog('SettingsDialog', SettingsDialog, {
                 defaultTab: SETTINGS_TABS.VIRTUAL_BACKGROUND }));
         },
         'end-conference': () => {
