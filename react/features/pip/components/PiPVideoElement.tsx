@@ -4,6 +4,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../app/types';
 import { getAvatarFont, getAvatarInitialsColor } from '../../base/avatar/components/web/styles';
+import { browser } from '../../base/lib-jitsi-meet';
 import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants/functions';
 import { isTrackStreamingStatusActive } from '../../connection-indicator/functions';
 import { getDisplayNameColor } from '../../display-name/components/web/styles';
@@ -11,9 +12,11 @@ import { getThumbnailBackgroundColor } from '../../filmstrip/functions.web';
 import { getLargeVideoParticipant } from '../../large-video/functions';
 import { isPrejoinPageVisible } from '../../prejoin/functions.any';
 import { handlePiPLeaveEvent, handlePipEnterEvent, handleWindowBlur, handleWindowFocus } from '../actions';
+import { FOCUS_CHECK_DELAY_MS } from '../constants';
 import { getPiPVideoTrack } from '../functions';
 import { useCanvasAvatar } from '../hooks';
 import logger from '../logger';
+import type { IWebKitPictureInPictureVideoElement } from '../types';
 
 const useStyles = makeStyles()(() => {
     return {
@@ -135,13 +138,83 @@ const PiPVideoElement: React.FC = () => {
     }, [ videoTrack, shouldShowAvatar ]);
 
     /**
-     * Effect: Window blur/focus and visibility change listeners.
-     * Enters PiP on blur, exits on focus (matches old AOT behavior).
+     * Effect: Use WebKit presentation modes to enter and leave Video PiP on tab switches.
+     *
+     */
+    useEffect(() => {
+        const videoElement = videoRef.current as IWebKitPictureInPictureVideoElement | null;
+
+        if (!videoElement
+                || !browser.isWebKitBased()
+                || typeof videoElement.webkitSupportsPresentationMode !== 'function'
+                || typeof videoElement.webkitSetPresentationMode !== 'function') {
+            return;
+        }
+
+        const enterWebKitPiP = () => {
+            const hasCurrentMedia = !videoElement.ended
+                && videoElement.readyState >= videoElement.HAVE_CURRENT_DATA;
+
+            // Safari may mark an offscreen MediaStream video as paused while hiding its tab. The presence of current
+            // media data is the stable eligibility signal here; WebKit performs the final PiP eligibility check.
+            if (!hasCurrentMedia
+                    || videoElement.webkitPresentationMode === 'picture-in-picture'
+                    || !videoElement.webkitSupportsPresentationMode?.('picture-in-picture')) {
+                return;
+            }
+
+            try {
+                videoElement.webkitSetPresentationMode?.('picture-in-picture');
+            } catch (error) {
+                logger.warn('Failed to enter WebKit Picture-in-Picture:', error);
+            }
+        };
+        const exitWebKitPiP = () => {
+            if (videoElement.webkitPresentationMode !== 'picture-in-picture') {
+                return;
+            }
+
+            try {
+                videoElement.webkitSetPresentationMode?.('inline');
+            } catch (error) {
+                logger.warn('Failed to exit WebKit Picture-in-Picture:', error);
+            }
+        };
+        const onVisibilityChange = (event: Event) => {
+            if (!event.isTrusted) {
+                return;
+            }
+
+            if (document.hidden) {
+                enterWebKitPiP();
+            } else {
+                exitWebKitPiP();
+            }
+        };
+        const onPlaying = (event: Event) => {
+            if (event.isTrusted && document.hidden) {
+                enterWebKitPiP();
+            }
+        };
+
+        document.addEventListener('visibilitychange', onVisibilityChange);
+        videoElement.addEventListener('playing', onPlaying);
+
+        return () => {
+            document.removeEventListener('visibilitychange', onVisibilityChange);
+            videoElement.removeEventListener('playing', onPlaying);
+            exitWebKitPiP();
+        };
+    }, []);
+
+    /**
+     * Effect: Electron-only window blur/focus and visibility change listeners.
+     * Enters PiP on blur and exits on focus, matching the old AOT behavior.
      */
     useEffect(() => {
         const videoElement = videoRef.current;
 
-        if (!videoElement) {
+        if (!videoElement || !browser.isElectron()) {
             return;
         }
 
@@ -156,7 +229,7 @@ const PiPVideoElement: React.FC = () => {
             // is triggered after the leavepictureinpicture event and everything seems to work well.
             setTimeout(() => {
                 dispatch(handleWindowFocus());
-            }, 100);
+            }, FOCUS_CHECK_DELAY_MS);
         };
         const onVisibilityChange = () => {
             if (document.hidden) {

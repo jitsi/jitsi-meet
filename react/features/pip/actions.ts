@@ -1,17 +1,30 @@
 import { IStore } from '../app/types';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { isLocalTrackMuted } from '../base/tracks/functions.any';
+import { showErrorNotification } from '../notifications/actions';
 import { handleToggleVideoMuted } from '../toolbox/actions.any';
 import { muteLocal } from '../video-menu/actions.any';
 
 import { SET_PIP_ACTIVE } from './actionTypes';
+import { DEFAULT_DOCUMENT_PIP_HEIGHT, DEFAULT_DOCUMENT_PIP_WIDTH } from './constants';
 import {
     cleanupMediaSessionHandlers,
-    enterPiP,
+    clearPiPWindow,
+    closeDocumentPiPWindow,
+    enterVideoPiP,
+    getStoredPiPWindow,
+    initPiPWindow,
+    isDocumentPiPRequestPending,
+    isDocumentPiPSupported,
+    setDocumentPiPRequestPending,
     setupMediaSessionHandlers,
-    shouldShowPiP
+    shouldShowPiP,
 } from './functions';
 import logger from './logger';
+
+interface IOpenDocumentPiPOptions {
+    notifyOnFailure?: boolean;
+}
 
 /**
  * Action to set Picture-in-Picture active state.
@@ -63,6 +76,7 @@ export function toggleVideoFromPiP() {
 
 /**
  * Action to exit Picture-in-Picture mode.
+ * Handles both Document PiP and Video PiP.
  *
  * @returns {Function}
  */
@@ -70,14 +84,16 @@ export function exitPiP() {
     return (dispatch: IStore['dispatch']) => {
         logger.debug('exitPiP called');
 
+        closeDocumentPiPWindow();
+
         if (document.pictureInPictureElement) {
             document.exitPictureInPicture()
-            .then(() => {
-                logger.debug('Exited Picture-in-Picture mode');
-            })
-            .catch((err: Error) => {
-                logger.error(`Error while exiting PiP: ${err.message}`);
-            });
+                .then(() => {
+                    logger.debug('Exited Picture-in-Picture mode');
+                })
+                .catch((err: Error) => {
+                    logger.error(`Error while exiting PiP: ${err.message}`);
+                });
         }
 
         dispatch(setPiPActive(false));
@@ -100,7 +116,7 @@ export function handleWindowBlur(videoElement: HTMLVideoElement) {
         logger.debug(`Window blur detected, isPiPActive=${isPiPActive}`);
 
         if (!isPiPActive) {
-            enterPiP(videoElement);
+            enterVideoPiP(videoElement);
         }
     };
 }
@@ -163,7 +179,7 @@ export function handlePipEnterEvent() {
  * @returns {Function}
  */
 export function showPiP() {
-    return (_dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const isPiPActive = state['features/pip']?.isPiPActive;
         const _shouldShowPip = shouldShowPiP(state);
@@ -175,15 +191,19 @@ export function showPiP() {
         }
 
         if (!isPiPActive) {
-            const videoElement = document.getElementById('pipVideo') as HTMLVideoElement;
+            if (isDocumentPiPSupported()) {
+                dispatch(openDocumentPiP());
+            } else {
+                const videoElement = document.getElementById('pipVideo') as HTMLVideoElement;
 
-            if (!videoElement) {
-                logger.warn('showPiP: pipVideo element not found');
+                if (!videoElement) {
+                    logger.warn('showPiP: pipVideo element not found');
 
-                return;
+                    return;
+                }
+
+                enterVideoPiP(videoElement);
             }
-
-            enterPiP(videoElement);
         }
     };
 }
@@ -203,6 +223,140 @@ export function hidePiP() {
 
         if (isPiPActive) {
             dispatch(exitPiP());
+        }
+    };
+}
+
+/**
+ * Toggles PiP based on the current state and browser support.
+ *
+ * @returns {Function}
+ */
+
+export function togglePip() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const isPiPActive = state['features/pip']?.isPiPActive;
+        const _shouldShowPip = shouldShowPiP(state);
+
+        logger.debug(`togglePip called, shouldShow=${_shouldShowPip}, isPiPActive=${isPiPActive}`);
+
+        if (!_shouldShowPip) {
+            return;
+        }
+
+        if (isPiPActive) {
+            dispatch(exitPiP());
+
+            return;
+        }
+
+        if (isDocumentPiPSupported()) {
+            dispatch(openDocumentPiP({ notifyOnFailure: true }));
+        } else {
+            const videoElement = document.getElementById('pipVideo') as HTMLVideoElement;
+
+            if (videoElement) {
+                enterVideoPiP(videoElement);
+            }
+        }
+    };
+}
+
+/**
+ * Opens Document PiP from the toolbar or an automatic MediaSession request.
+ *
+ * @param {IOpenDocumentPiPOptions} options - Options controlling user-facing failure handling.
+ * @returns {Function}
+ */
+export function openDocumentPiP(options: IOpenDocumentPiPOptions = {}) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const _shouldShowPip = shouldShowPiP(state);
+
+        if (!_shouldShowPip) {
+            return;
+        }
+
+        const docPiP = window.documentPictureInPicture;
+
+        if (!isDocumentPiPSupported() || !docPiP) {
+            logger.warn('Document Picture-in-Picture not supported');
+
+            return;
+        }
+
+        const pipConfig = state['features/base/config']?.pip;
+        const docPiPConfig = pipConfig?.documentPiP?.windowOptions;
+        const docPiPWindow = docPiP.window;
+        const storedWindow = getStoredPiPWindow();
+
+        // Two sources can diverge: storedWindow is the window this feature opened and initialized, while
+        // docPiP.window is the browser's view of any Document PiP window open for this page. Only one Document PiP
+        // window may exist per page and requestWindow() closes an existing one, so do not open if either is active.
+        const isPiPWindowAlreadyOpen = Boolean(
+            (storedWindow && !storedWindow.closed) || (docPiPWindow && !docPiPWindow.closed));
+
+        if (isPiPWindowAlreadyOpen) {
+            logger.debug('Document PiP is already open');
+
+            return;
+        }
+
+        if (storedWindow?.closed) {
+            closeDocumentPiPWindow();
+        }
+
+        if (isDocumentPiPRequestPending()) {
+            logger.debug('Document PiP request already pending, skipping duplicate request');
+
+            return;
+        }
+
+        setDocumentPiPRequestPending(true);
+
+        const handleError = (error: unknown) => {
+            logger.error('Failed to open Document PiP:', error);
+            dispatch(setPiPActive(false));
+
+            if (options.notifyOnFailure) {
+                dispatch(showErrorNotification({
+                    descriptionKey: 'notify.pipOpenFailedDescription',
+                    titleKey: 'notify.pipOpenFailedTitle'
+                }));
+            }
+        };
+
+        try {
+            return docPiP.requestWindow({
+                width: docPiPConfig?.width ?? DEFAULT_DOCUMENT_PIP_WIDTH,
+                height: docPiPConfig?.height ?? DEFAULT_DOCUMENT_PIP_HEIGHT,
+                disallowReturnToOpener: docPiPConfig?.disallowReturnToOpener ?? false,
+                preferInitialWindowPlacement: docPiPConfig?.preferInitialWindowPlacement ?? false,
+            })
+                .then((pipWindow: Window) => {
+                    if (pipWindow.closed) {
+                        clearPiPWindow();
+                        dispatch(setPiPActive(false));
+
+                        return;
+                    }
+
+                    pipWindow.addEventListener('pagehide', () => {
+                        clearPiPWindow();
+                        dispatch(handlePiPLeaveEvent());
+                    });
+
+                    initPiPWindow(pipWindow);
+                    dispatch(handlePipEnterEvent());
+                })
+                .catch(handleError)
+                .finally(() => {
+                    setDocumentPiPRequestPending(false);
+                });
+        } catch (error) {
+            setDocumentPiPRequestPending(false);
+            handleError(error);
         }
     };
 }

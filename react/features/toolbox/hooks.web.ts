@@ -37,6 +37,7 @@ import {
     isParticipantsPaneEnabled
 } from '../participants-pane/functions';
 import { useParticipantPaneButton } from '../participants-pane/hooks.web';
+import { usePipToggleButton } from '../pip/hooks';
 import { usePollsButton } from '../polls/hooks.web';
 import { addReactionToBuffer } from '../reactions/actions.any';
 import { toggleReactionsMenuVisibility } from '../reactions/actions.web';
@@ -311,6 +312,7 @@ export function useToolboxButtons(
     const _help = useHelpButton();
     const _invite = useInviteButton();
     const customPanel = useCustomPanelButton();
+    const togglePiPButton = usePipToggleButton();
 
     const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
         microphone,
@@ -324,6 +326,7 @@ export function useToolboxButtons(
         invite: _invite,
         tileview,
         'toggle-camera': toggleCameraButton,
+        'toggle-pip': togglePiPButton,
         videoquality: videoQuality,
         fullscreen: _fullscreen,
         security,

@@ -11,18 +11,47 @@ import { isPrejoinPageVisible } from '../prejoin/functions.any';
 import { toggleAudioFromPiP, toggleVideoFromPiP } from './actions';
 import { isPiPEnabled } from './external-api.shared';
 import logger from './logger';
-import { IMediaSessionState } from './types';
+import {
+    ExtendedMediaSessionAction,
+    ExtendedMediaSessionActionHandler,
+    IMediaSessionState
+} from './types';
 
 /**
  * Flag to track if a PiP request is currently pending (requested but not yet entered).
  *
  * This prevents duplicate PiP entry requests that can occur on macOS when minimizing
  * a window. On minimize, both the 'blur' event and 'visibilitychange' event fire in
- * rapid succession (within ~10ms), each triggering enterPiP(). Without this guard,
+ * rapid succession (within ~10ms), each triggering enterVideoPiP(). Without this guard,
  * Electron receives two PiP requests before the first one completes, causing the
  * first PiP to immediately exit and triggering a pip leave event that will cause the window to be restored.
  */
 let pipRequestPending = false;
+
+/**
+ * Flag to track if a Document PiP request is currently pending.
+ * Prevents duplicate requestWindow() calls before the first one resolves.
+ */
+let docPiPRequestPending = false;
+
+/**
+ * Returns whether a Document PiP request is currently pending.
+ *
+ * @returns {boolean}
+ */
+export function isDocumentPiPRequestPending() {
+    return docPiPRequestPending;
+}
+
+/**
+ * Updates the pending state of the Document PiP request.
+ *
+ * @param {boolean} pending - Whether a Document PiP request is pending.
+ * @returns {void}
+ */
+export function setDocumentPiPRequestPending(pending: boolean) {
+    docPiPRequestPending = pending;
+}
 
 /**
  * Gets the appropriate video track for PiP based on prejoin state.
@@ -295,11 +324,13 @@ export function requestPictureInPicture() {
 
     if (!video) {
         logger.error('PiP video element (#pipVideo) not found');
+        pipRequestPending = false;
 
         return;
     }
     if (document.pictureInPictureElement) {
         logger.warn('Already in PiP mode');
+        pipRequestPending = false;
 
         return;
     }
@@ -309,11 +340,36 @@ export function requestPictureInPicture() {
     if (video.readyState < 1) {
         logger.warn('Video metadata not loaded yet, waiting...');
 
-        // Wait for metadata to load before requesting PiP.
+        // Two known limitations of this deferred request, deliberately not handled for now:
+        //
+        // 1. 'loadedmetadata' may never fire (e.g. the avatar image fetch stalls forever, so the
+        //    canvas captureStream(0) never produces a frame, or a video track never delivers a
+        //    frame). pipRequestPending then stays true and PiP is blocked until page reload.
+        //    If reports of a permanently dead PiP button ever come in, bound the wait:
+        //
+        //        const onMetadata = () => {
+        //            clearTimeout(timer);
+        //            // ...existing requestPictureInPicture() logic...
+        //        };
+        //        const timer = setTimeout(() => {
+        //            video.removeEventListener('loadedmetadata', onMetadata);
+        //            logger.warn('Timed out waiting for video metadata, resetting PiP request state.');
+        //            pipRequestPending = false;
+        //        }, 5000);
+        //        video.addEventListener('loadedmetadata', onMetadata, { once: true });
+        //
+        // 2. TODO: In browsers, by the time 'loadedmetadata' fires the click's transient activation
+        //    has expired, so requestPictureInPicture() below rejects with NotAllowedError and the
+        //    click fails silently; clicking again once media is flowing works. This only happens
+        //    when the click lands in a readyState < 1 window: the brief moment right after mount,
+        //    the ~100ms srcObject swap when the large-video participant changes or the camera is
+        //    toggled, or while a slow avatar image fetch delays the first canvas frame — so it is
+        //    rare in practice. Revisit if it shows up in reports (e.g. a short bounded wait within
+        //    the activation window). The Electron flow is unaffected: it requests PiP from the main
+        //    process with userGesture: true, and its behavior here is pre-existing.
         video.addEventListener('loadedmetadata', () => {
             logger.debug(`Calling video.requestPictureInPicture(), readyState=${video.readyState}`);
 
-            // @ts-ignore - requestPictureInPicture is not yet in all TypeScript definitions.
             video.requestPictureInPicture().then(() => {
                 logger.debug('video.requestPictureInPicture() succeeded');
             }).catch((err: Error) => {
@@ -332,7 +388,6 @@ export function requestPictureInPicture() {
 
     logger.debug(`Calling video.requestPictureInPicture(), readyState=${video.readyState}`);
 
-    // @ts-ignore - requestPictureInPicture is not yet in all TypeScript definitions.
     video.requestPictureInPicture().then(() => {
         logger.debug('video.requestPictureInPicture() succeeded');
     }).catch((err: Error) => {
@@ -353,7 +408,7 @@ export function requestPictureInPicture() {
  * @param {HTMLVideoElement} videoElement - The video element to call requestPictureInPicuture on.
  * @returns {void}
  */
-export function enterPiP(videoElement: HTMLVideoElement | undefined | null) {
+export function enterVideoPiP(videoElement: HTMLVideoElement | undefined | null) {
     if (!videoElement) {
         logger.error('PiP video element not found');
 
@@ -400,12 +455,29 @@ export function enterPiP(videoElement: HTMLVideoElement | undefined | null) {
             return;
         }
 
-        // TODO: Enable PiP for browsers:
-        // In browsers, we should directly call requestPictureInPicture.
-        // @ts-ignore - requestPictureInPicture is not yet in all TypeScript definitions.
-        // requestPictureInPicture();
+        // In browsers, directly request Video PiP.
+        pipRequestPending = true;
+        requestPictureInPicture();
     } catch (error) {
+        pipRequestPending = false;
         logger.error('Error entering Picture-in-Picture:', error);
+    }
+}
+
+/**
+ * Sets an extended MediaSession action handler when supported by the browser.
+ *
+ * @param {ExtendedMediaSessionAction} action - The MediaSession action to configure.
+ * @param {ExtendedMediaSessionActionHandler | null} handler - The action handler, or null to clear it.
+ * @returns {void}
+ */
+function setExtendedMediaSessionActionHandler(
+        action: ExtendedMediaSessionAction,
+        handler: ExtendedMediaSessionActionHandler | null) {
+    try {
+        navigator.mediaSession.setActionHandler(action, handler);
+    } catch (error) {
+        logger.debug(`MediaSession action '${action}' is not supported:`, error);
     }
 }
 
@@ -417,33 +489,25 @@ export function enterPiP(videoElement: HTMLVideoElement | undefined | null) {
  * @returns {void}
  */
 export function setupMediaSessionHandlers(dispatch: IStore['dispatch']) {
-    // @ts-ignore - MediaSession API is not fully typed in all environments.
-    if ('mediaSession' in navigator && navigator.mediaSession?.setActionHandler) {
-        try {
-            // Set up audio mute toggle handler.
-            // Dispatch action that will query current state and toggle.
-            // @ts-ignore - togglemicrophone is a newer MediaSession action.
-            navigator.mediaSession.setActionHandler('togglemicrophone', () => {
-                dispatch(toggleAudioFromPiP());
-            });
+    if ('mediaSession' in navigator && typeof navigator.mediaSession?.setActionHandler === 'function') {
+        // Set up audio mute toggle handler.
+        // Dispatch action that will query current state and toggle.
+        setExtendedMediaSessionActionHandler('togglemicrophone', () => {
+            dispatch(toggleAudioFromPiP());
+        });
 
-            // Set up video mute toggle handler.
-            // Dispatch action that will query current state and toggle.
-            // @ts-ignore - togglecamera is a newer MediaSession action.
-            navigator.mediaSession.setActionHandler('togglecamera', () => {
-                dispatch(toggleVideoFromPiP());
-            });
+        // Set up video mute toggle handler.
+        // Dispatch action that will query current state and toggle.
+        setExtendedMediaSessionActionHandler('togglecamera', () => {
+            dispatch(toggleVideoFromPiP());
+        });
 
-            // Set up hangup handler.
-            // @ts-ignore - hangup is a newer MediaSession action.
-            navigator.mediaSession.setActionHandler('hangup', () => {
-                dispatch(leaveConference());
-            });
+        // Set up hangup handler.
+        setExtendedMediaSessionActionHandler('hangup', () => {
+            dispatch(leaveConference());
+        });
 
-            logger.log('MediaSession API handlers registered for PiP controls');
-        } catch (error) {
-            logger.warn('Some MediaSession actions not supported:', error);
-        }
+        logger.log('MediaSession API handlers registered for supported PiP controls');
     } else {
         logger.warn('MediaSession API not supported in this browser');
     }
@@ -457,18 +521,27 @@ export function setupMediaSessionHandlers(dispatch: IStore['dispatch']) {
  * @returns {void}
  */
 export function updateMediaSessionState(state: IMediaSessionState) {
+    // Safari requires user activation when setting MediaSession capture state.
+    // This runs from a Redux subscriber outside the initiating user gesture,
+    // so Safari rejects the request. Skip state synchronization for Safari.
+    // observed behavior in v26.5.2
+    if (browser.isSafari()) {
+        return;
+    }
+
     if ('mediaSession' in navigator) {
+        const mediaSession = navigator.mediaSession as MediaSession & {
+            setCameraActive?: (active: boolean) => void;
+            setMicrophoneActive?: (active: boolean) => void;
+        };
+
         try {
-            // @ts-ignore - setMicrophoneActive is a newer MediaSession method.
-            if (navigator.mediaSession.setMicrophoneActive) {
-                // @ts-ignore
-                navigator.mediaSession.setMicrophoneActive(state.microphoneActive);
+            if (mediaSession.setMicrophoneActive) {
+                mediaSession.setMicrophoneActive(state.microphoneActive);
             }
 
-            // @ts-ignore - setCameraActive is a newer MediaSession method.
-            if (navigator.mediaSession.setCameraActive) {
-                // @ts-ignore
-                navigator.mediaSession.setCameraActive(state.cameraActive);
+            if (mediaSession.setCameraActive) {
+                mediaSession.setCameraActive(state.cameraActive);
             }
 
             logger.log('MediaSession state updated:', state);
@@ -485,20 +558,124 @@ export function updateMediaSessionState(state: IMediaSessionState) {
  */
 export function cleanupMediaSessionHandlers() {
     if ('mediaSession' in navigator) {
-        try {
-            // Note: Setting handlers to null is commented out as it may cause issues
-            // in some browsers. The handlers will be overwritten when entering PiP again.
-            // @ts-ignore - togglemicrophone is a newer MediaSession action.
-            navigator.mediaSession.setActionHandler('togglemicrophone', null);
-            // @ts-ignore - togglecamera is a newer MediaSession action.
-            navigator.mediaSession.setActionHandler('togglecamera', null);
-            // @ts-ignore - hangup is a newer MediaSession action.
-            navigator.mediaSession.setActionHandler('hangup', null);
-            logger.log('MediaSession API handlers cleaned up');
-        } catch (error) {
-            logger.error('Error cleaning up MediaSession handlers:', error);
-        }
+        setExtendedMediaSessionActionHandler('togglemicrophone', null);
+        setExtendedMediaSessionActionHandler('togglecamera', null);
+        setExtendedMediaSessionActionHandler('hangup', null);
+        logger.log('Supported MediaSession API handlers cleaned up');
     }
+}
+
+/**
+ * Reference to the currently opened window.
+ * It is required cause while using the pagehide event, we want to close the window that is open.
+ */
+let _pipWindow: Window | null = null;
+
+/**
+ * Returns the Document PiP window that this feature opened and initialized, including copied stylesheets,
+ * the #pip-root container and its pagehide listener. This differs from window.documentPictureInPicture.window,
+ * which is the browser's view of any Document PiP window open for the page, regardless of who opened it.
+ *
+ * @returns {Window | null} The PiP window owned by this feature, or null.
+ */
+export function getStoredPiPWindow(): Window | null {
+    return _pipWindow;
+}
+
+/**
+ * Closes the stored window if open and clears the stored reference.
+ *
+ * @returns {void}
+ */
+export function closeDocumentPiPWindow() {
+    const pipWindow = getStoredPiPWindow();
+
+    _pipWindow = null;
+
+    if (pipWindow && !pipWindow.closed) {
+        pipWindow.close();
+    }
+}
+
+/**
+ * Applies initial stylings of the main window to PiP window.
+ * Creates the container for the PiP window.
+ *
+ * @param {Window} pipWindow - Current window.
+ * @returns {void}
+ */
+export function initPiPWindow(pipWindow: Window) {
+    _pipWindow = pipWindow;
+    copyStylesheets(pipWindow);
+    createPiPContainer(pipWindow);
+}
+
+/**
+ * Clears the PiP window reference.
+ *
+ * @returns {void}
+ */
+export function clearPiPWindow() {
+    _pipWindow = null;
+}
+
+/**
+ * Applies CSS style sheets from the originating window.
+ *
+ * @see https://developer.chrome.com/docs/web-platform/document-picture-in-picture#copy_style_sheets_to_pip
+ * @param {Window} pipWindow - Current window.
+ * @returns {void}
+ */
+
+export function copyStylesheets(pipWindow: Window) {
+    const { document: pipDoc } = pipWindow;
+
+    document.head.querySelectorAll('link[rel="stylesheet"]').forEach(node => {
+        try {
+            if (!(node instanceof HTMLLinkElement) || !node.href) {
+                return;
+            }
+
+            const link = pipDoc.createElement('link');
+
+            Array.from(node.attributes).forEach(attribute => {
+                if (attribute.name !== 'href' && (attribute.name !== 'type' || attribute.value)) {
+                    link.setAttribute(attribute.name, attribute.value);
+                }
+            });
+            link.href = node.href;
+
+            pipDoc.head.appendChild(link);
+        } catch (error) {
+            logger.warn('Failed to copy stylesheet:', error);
+        }
+    });
+}
+
+/**
+ * Creates container for pip. Helpful for react portals.
+ *
+ * @see https://react.dev/reference/react-dom/createPortal
+ * @param {Window} pipWindow - Current window.
+ * @returns {void}
+ */
+function createPiPContainer(pipWindow: Window) {
+    const container = pipWindow.document.createElement('div');
+
+    container.id = 'pip-root';
+    // surface02 token from jitsiTokens.json. This would at least keep the PiP window on-palette when the theme changes
+    container.style.cssText = 'margin: 0; padding: 0; overflow: hidden; height: 100vh; width: 100vw; background: #141414;';
+    pipWindow.document.body.appendChild(container);
+}
+
+/**
+ * Checks if the Document Picture-in-Picture API is supported.
+ * Keeps Electron on its existing Video PiP implementation.
+ *
+ * @returns {boolean} True if Document PiP is supported.
+ */
+export function isDocumentPiPSupported(): boolean {
+    return !browser.isElectron() && 'documentPictureInPicture' in window;
 }
 
 // Re-export from shared file for external use.
