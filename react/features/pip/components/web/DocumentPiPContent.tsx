@@ -8,13 +8,18 @@ import { IReduxState } from '../../../app/types';
 import GlobalStyles from '../../../base/ui/components/GlobalStyles.web';
 import { getStoredPiPWindow } from '../../functions';
 import { useDocumentPiPMediaSession } from '../../hooks';
+
+import HangupButton from '../../../toolbox/components/HangupButton';
+import AudioMuteButton from '../../../toolbox/components/web/AudioMuteButton';
+import VideoMuteButton from '../../../toolbox/components/web/VideoMuteButton';
 import CompactLayout from '../layouts/CompactLayout';
-import PiPControls from '../controls/PiPControls';
+
 /**
  * Inner component for the Document PiP.
  *
  * @returns {React.ReactElement | null}
  */
+
 export function DocumentPiPContent() {
     useDocumentPiPMediaSession();
 
@@ -49,7 +54,11 @@ export function DocumentPiPContent() {
                 <div className = 'doc-pip-videos-container'>
                     <CompactLayout />
                 </div>
-                <PiPControls />
+                <div className = 'doc-pip-controls'>
+                    <AudioMuteButton />
+                    <VideoMuteButton />
+                    <HangupButton customClass = 'hangup-button' />
+                </div>
             </div>
         </div>
         </CacheProvider>,
