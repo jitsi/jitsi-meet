@@ -60,7 +60,7 @@ function provider.delete_user(username)
     return nil;
 end
 
-function first_stage_auth(session)
+function first_stage_auth(session, skip_verify)
     -- retrieve custom public key from server and save it on the session
     local pre_event_result = prosody.events.fire_event("pre-jitsi-authentication-fetch-key", session);
     if pre_event_result ~= nil and pre_event_result.res == false then
@@ -72,6 +72,9 @@ function first_stage_auth(session)
     end
 
     local res, error, reason = token_util:process_and_verify_token(session);
+    if skip_verify then
+        res = true;
+    end
     if res == false then
         module:log("warn",
             "Error verifying token err:%s, reason:%s tenant:%s room:%s user_agent:%s",
@@ -107,22 +110,25 @@ function provider.get_sasl_handler(session)
 
     local function get_username_from_token(self, message)
 
-        local s1_result = first_stage_auth(session);
-        if s1_result.res == false then
-            return s1_result.res, s1_result.error, s1_result.reason;
-        end
-
-        if s1_result.custom_username then
-            self.username = s1_result.custom_username;
-        elseif session.previd ~= nil then
+        local resuming_without_token = false;
+        if session.previd ~= nil then
             for _, session1 in pairs(sessions) do
                 if (session1.resumption_token == session.previd) then
                     self.username = session1.username;
+                    resuming_without_token = not session.auth_token;
                     break;
                 end
             end
         else
             self.username = message;
+        end
+
+        local s1_result = first_stage_auth(session, resuming_without_token);
+        if s1_result.res == false then
+            return s1_result.res, s1_result.error, s1_result.reason;
+        end
+        if s1_result.custom_username then
+            self.username = s1_result.custom_username;
         end
 
         local s2_result = second_stage_auth(session);
