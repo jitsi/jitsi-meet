@@ -340,13 +340,33 @@ export function requestPictureInPicture() {
     if (video.readyState < 1) {
         logger.warn('Video metadata not loaded yet, waiting...');
 
-        // Two known limitations of this deferred request are deliberately not handled here:
+        // Two known limitations of this deferred request, deliberately not handled for now:
         //
-        // 1. loadedmetadata may never fire if the source never produces a frame. In that case the pending flag
-        // remains set until reload. Add a bounded timeout if reports of a permanently disabled PiP button occur.
-        // 2. In browsers, transient activation may expire before loadedmetadata fires, so this request can reject
-        // with NotAllowedError. A second click works once media is flowing. Electron is unaffected because its main
-        // process makes the request with userGesture: true.
+        // 1. 'loadedmetadata' may never fire (e.g. the avatar image fetch stalls forever, so the
+        //    canvas captureStream(0) never produces a frame, or a video track never delivers a
+        //    frame). pipRequestPending then stays true and PiP is blocked until page reload.
+        //    If reports of a permanently dead PiP button ever come in, bound the wait:
+        //
+        //        const onMetadata = () => {
+        //            clearTimeout(timer);
+        //            // ...existing requestPictureInPicture() logic...
+        //        };
+        //        const timer = setTimeout(() => {
+        //            video.removeEventListener('loadedmetadata', onMetadata);
+        //            logger.warn('Timed out waiting for video metadata, resetting PiP request state.');
+        //            pipRequestPending = false;
+        //        }, 5000);
+        //        video.addEventListener('loadedmetadata', onMetadata, { once: true });
+        //
+        // 2. TODO: In browsers, by the time 'loadedmetadata' fires the click's transient activation
+        //    has expired, so requestPictureInPicture() below rejects with NotAllowedError and the
+        //    click fails silently; clicking again once media is flowing works. This only happens
+        //    when the click lands in a readyState < 1 window: the brief moment right after mount,
+        //    the ~100ms srcObject swap when the large-video participant changes or the camera is
+        //    toggled, or while a slow avatar image fetch delays the first canvas frame — so it is
+        //    rare in practice. Revisit if it shows up in reports (e.g. a short bounded wait within
+        //    the activation window). The Electron flow is unaffected: it requests PiP from the main
+        //    process with userGesture: true, and its behavior here is pre-existing.
         video.addEventListener('loadedmetadata', () => {
             logger.debug(`Calling video.requestPictureInPicture(), readyState=${video.readyState}`);
 
