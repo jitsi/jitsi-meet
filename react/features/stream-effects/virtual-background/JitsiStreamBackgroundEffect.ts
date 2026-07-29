@@ -38,12 +38,13 @@ export interface IV2EffectInit {
 /**
  * Virtual background stream effect.
  *
- * When {@code enableV2} is false (default), the class behaves identically to the original V1
+ * When {@code enableV2} is false, the class behaves identically to the original V1
  * engine: main-thread TFLite WASM inference, Canvas 2D compositing, TimerWorker frame driver.
  *
- * When {@code enableV2} is true, the constructor delegates to the pipeline/backend/compositor
- * abstraction: Worker-based inference, WebGL compositing, and insertable streams (with
- * captureStream fallback). The captureStream fallback reuses the shared video/canvas/timer.
+ * When {@code enableV2} is true (default), the constructor delegates to the
+ * pipeline/backend/compositor abstraction: Worker-based inference, WebGL compositing, and
+ * insertable streams (with captureStream fallback). The captureStream fallback reuses the
+ * shared video/canvas/timer.
  */
 export default class JitsiStreamBackgroundEffect {
     _backend: WorkerSegmentationBackend | null = null;
