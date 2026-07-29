@@ -29,5 +29,5 @@ export function isPiPEnabled(pipConfig?: { disabled?: boolean; }): boolean {
 
     return isElectron()
         || 'documentPictureInPicture' in window
-        || 'pictureInPictureEnabled' in document;
+        || Boolean(document.pictureInPictureEnabled);
 }

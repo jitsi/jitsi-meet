@@ -6,12 +6,12 @@ import { handleToggleVideoMuted } from '../toolbox/actions.any';
 import { muteLocal } from '../video-menu/actions.any';
 
 import { SET_PIP_ACTIVE } from './actionTypes';
+import { DEFAULT_DOCUMENT_PIP_HEIGHT, DEFAULT_DOCUMENT_PIP_WIDTH } from './constants';
 import {
     cleanupMediaSessionHandlers,
     clearPiPWindow,
     closeDocumentPiPWindow,
     enterVideoPiP,
-    getDocumentPiPWindow,
     getStoredPiPWindow,
     initPiPWindow,
     isDocumentPiPRequestPending,
@@ -288,8 +288,12 @@ export function openDocumentPiP(options: IOpenDocumentPiPOptions = {}) {
 
         const pipConfig = state['features/base/config']?.pip;
         const docPiPConfig = pipConfig?.documentPiP?.windowOptions;
-        const docPiPWindow = getDocumentPiPWindow();
+        const docPiPWindow = docPiP.window;
         const storedWindow = getStoredPiPWindow();
+
+        // Two sources can diverge: storedWindow is the window this feature opened and initialized, while
+        // docPiP.window is the browser's view of any Document PiP window open for this page. Only one Document PiP
+        // window may exist per page and requestWindow() closes an existing one, so do not open if either is active.
         const isPiPWindowAlreadyOpen = Boolean(
             (storedWindow && !storedWindow.closed) || (docPiPWindow && !docPiPWindow.closed));
 
@@ -324,14 +328,12 @@ export function openDocumentPiP(options: IOpenDocumentPiPOptions = {}) {
         };
 
         try {
-            const promise = docPiP.requestWindow({
-                width: docPiPConfig?.width ?? 600,
-                height: docPiPConfig?.height ?? 450,
+            return docPiP.requestWindow({
+                width: docPiPConfig?.width ?? DEFAULT_DOCUMENT_PIP_WIDTH,
+                height: docPiPConfig?.height ?? DEFAULT_DOCUMENT_PIP_HEIGHT,
                 disallowReturnToOpener: docPiPConfig?.disallowReturnToOpener ?? false,
                 preferInitialWindowPlacement: docPiPConfig?.preferInitialWindowPlacement ?? false,
-            });
-
-            return promise
+            })
                 .then((pipWindow: Window) => {
                     if (pipWindow.closed) {
                         clearPiPWindow();

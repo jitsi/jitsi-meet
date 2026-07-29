@@ -114,3 +114,28 @@ export interface IExtendedMediaSessionActionDetails {
 export type ExtendedMediaSessionActionHandler = (
     details: IExtendedMediaSessionActionDetails
 ) => void;
+
+/**
+ * WebKit video presentation modes used to enter and leave Safari's native Video PiP.
+ */
+export type WebKitPresentationMode = 'inline' | 'picture-in-picture';
+
+/**
+ * Safari's non-standard Video PiP additions to HTMLVideoElement.
+ */
+export interface IWebKitPictureInPictureVideoElement extends HTMLVideoElement {
+    /**
+     * The video's current WebKit presentation mode.
+     */
+    webkitPresentationMode?: WebKitPresentationMode;
+
+    /**
+     * Changes the video's WebKit presentation mode.
+     */
+    webkitSetPresentationMode?: (mode: WebKitPresentationMode) => void;
+
+    /**
+     * Returns whether the video currently supports the requested WebKit presentation mode.
+     */
+    webkitSupportsPresentationMode?: (mode: WebKitPresentationMode) => boolean;
+}

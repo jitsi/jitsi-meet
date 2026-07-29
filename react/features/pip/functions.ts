@@ -324,11 +324,13 @@ export function requestPictureInPicture() {
 
     if (!video) {
         logger.error('PiP video element (#pipVideo) not found');
+        pipRequestPending = false;
 
         return;
     }
     if (document.pictureInPictureElement) {
         logger.warn('Already in PiP mode');
+        pipRequestPending = false;
 
         return;
     }
@@ -338,7 +340,13 @@ export function requestPictureInPicture() {
     if (video.readyState < 1) {
         logger.warn('Video metadata not loaded yet, waiting...');
 
-        // Wait for metadata to load before requesting PiP.
+        // Two known limitations of this deferred request are deliberately not handled here:
+        //
+        // 1. loadedmetadata may never fire if the source never produces a frame. In that case the pending flag
+        // remains set until reload. Add a bounded timeout if reports of a permanently disabled PiP button occur.
+        // 2. In browsers, transient activation may expire before loadedmetadata fires, so this request can reject
+        // with NotAllowedError. A second click works once media is flowing. Electron is unaffected because its main
+        // process makes the request with userGesture: true.
         video.addEventListener('loadedmetadata', () => {
             logger.debug(`Calling video.requestPictureInPicture(), readyState=${video.readyState}`);
 
@@ -431,6 +439,7 @@ export function enterVideoPiP(videoElement: HTMLVideoElement | undefined | null)
         pipRequestPending = true;
         requestPictureInPicture();
     } catch (error) {
+        pipRequestPending = false;
         logger.error('Error entering Picture-in-Picture:', error);
     }
 }
@@ -495,6 +504,7 @@ export function updateMediaSessionState(state: IMediaSessionState) {
     // Safari requires user activation when setting MediaSession capture state.
     // This runs from a Redux subscriber outside the initiating user gesture,
     // so Safari rejects the request. Skip state synchronization for Safari.
+    // observed behavior in v26.5.2
     if (browser.isSafari()) {
         return;
     }
@@ -542,9 +552,11 @@ export function cleanupMediaSessionHandlers() {
 let _pipWindow: Window | null = null;
 
 /**
- * Returns the stored window reference.
+ * Returns the Document PiP window that this feature opened and initialized, including copied stylesheets,
+ * the #pip-root container and its pagehide listener. This differs from window.documentPictureInPicture.window,
+ * which is the browser's view of any Document PiP window open for the page, regardless of who opened it.
  *
- * @returns {Window | null}
+ * @returns {Window | null} The PiP window owned by this feature, or null.
  */
 export function getStoredPiPWindow(): Window | null {
     return _pipWindow;
@@ -644,17 +656,6 @@ function createPiPContainer(pipWindow: Window) {
  */
 export function isDocumentPiPSupported(): boolean {
     return !browser.isElectron() && 'documentPictureInPicture' in window;
-}
-
-/**
- * Gets the current Document PiP window if one is active.
- *
- * @returns {Window | null} The PiP window or null.
- */
-export function getDocumentPiPWindow(): Window | null {
-    const pip = window.documentPictureInPicture;
-
-    return pip?.window ?? null;
 }
 
 // Re-export from shared file for external use.

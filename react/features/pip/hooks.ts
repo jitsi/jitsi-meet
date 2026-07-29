@@ -198,9 +198,9 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
 }
 
 /**
- * Manages Document Picture-in-Picture via the MediaSession API.
- * Opens a PiP window when a tab switch occurs using the
- * enterpictureinpicture MediaSession action handler.
+ * Manages Document Picture-in-Picture via the MediaSession API in browsers that support its
+ * enterpictureinpicture action. WebKit automatic Video PiP on tab switches is managed separately by PiPVideoElement
+ * through the presentation-mode API.
  * Closes the PiP window when the tab becomes visible again.
  *
  * @see https://googlechrome.github.io/samples/media-session/video-conferencing.html
@@ -270,5 +270,7 @@ export function useDocumentPiPMediaSession() {
 export function usePipToggleButton() {
     const visible = useSelector(shouldShowPiP);
 
-    return visible && (isDocumentPiPSupported() || 'pictureInPictureEnabled' in document) ? togglePiP : undefined;
+    return visible && (isDocumentPiPSupported() || Boolean(document.pictureInPictureEnabled))
+        ? togglePiP
+        : undefined;
 }

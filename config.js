@@ -802,13 +802,13 @@ var config = {
     //         windowOptions: {
     //             // Hide the browser control that returns to the opener. Defaults to false.
     //             disallowReturnToOpener: false,
-    //             // Initial window height in pixels. Defaults to 450.
-    //             height: 450,
+    //             // Initial window height in pixels. Defaults to 160.
+    //             height: 160,
     //             // Prefer the default initial placement instead of reusing the previous position and size.
     //             // Defaults to false.
     //             preferInitialWindowPlacement: false,
-    //             // Initial window width in pixels. Defaults to 600.
-    //             width: 600
+    //             // Initial window width in pixels. Defaults to 284.
+    //             width: 284
     //         }
     //     }
     // },

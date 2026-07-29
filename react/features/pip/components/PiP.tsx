@@ -19,7 +19,6 @@ function PiP() {
         return null;
     }
 
-    // Electron's Chromium also exposes documentPictureInPicture, so guard explicitly to keep Video PiP as the Electron path.
     if (isDocumentPiPSupported()) {
         return <DocumentPiPContent />;
     }
