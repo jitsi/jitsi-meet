@@ -68,6 +68,7 @@ import { default as IconPerformance } from './performance.svg';
 import { default as IconPhoneRinging } from './phone-ringing.svg';
 import { default as IconPin } from './pin.svg';
 import { default as IconPinned } from './pinned.svg';
+import { default as IconPip } from './pip.svg';
 import { default as IconPlay } from './play.svg';
 import { default as IconPlus } from './plus.svg';
 import { default as IconRaiseHand } from './raise-hand.svg';
@@ -180,6 +181,7 @@ export const DEFAULT_ICON: Record<string, any> = {
     IconPhoneRinging,
     IconPin,
     IconPinned,
+    IconPip,
     IconPlay,
     IconPlus,
     IconRaiseHand,

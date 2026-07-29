@@ -792,6 +792,27 @@ var config = {
     // The client id for the google APIs used for the calendar integration, youtube livestreaming, etc.
     // googleApiApplicationClientID: '<client_id>',
 
+    // Picture-in-Picture configuration.
+    // pip: {
+    //     // Disable Picture-in-Picture entirely. Defaults to false.
+    //     disabled: false,
+    //     // Allow Picture-in-Picture on the prejoin page. Defaults to false.
+    //     showOnPrejoin: false,
+    //     documentPiP: {
+    //         windowOptions: {
+    //             // Hide the browser control that returns to the opener. Defaults to false.
+    //             disallowReturnToOpener: false,
+    //             // Initial window height in pixels. Defaults to 160.
+    //             height: 160,
+    //             // Prefer the default initial placement instead of reusing the previous position and size.
+    //             // Defaults to false.
+    //             preferInitialWindowPlacement: false,
+    //             // Initial window width in pixels. Defaults to 284.
+    //             width: 284
+    //         }
+    //     }
+    // },
+
     // Configs for prejoin page.
     // prejoinConfig: {
     //     // When 'true', it shows an intermediate page before joining, where the user can configure their devices.

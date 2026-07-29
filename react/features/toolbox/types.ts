@@ -54,6 +54,7 @@ export type ToolbarButton = 'camera' |
     'stats' |
     'tileview' |
     'toggle-camera' |
+    'toggle-pip' |
     'videoquality' |
     'whiteboard' |
     '__end';

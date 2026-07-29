@@ -598,6 +598,19 @@ export interface IConfig {
     peopleSearchUrl?: string;
     pip?: {
         disabled?: boolean;
+        /**
+         * Document Picture-in-Picture configuration.
+         *
+         * @see https://developer.chrome.com/docs/web-platform/document-picture-in-picture#methods
+         */
+        documentPiP?: {
+            windowOptions?: {
+                disallowReturnToOpener?: boolean;
+                height?: number;
+                preferInitialWindowPlacement?: boolean;
+                width?: number;
+            };
+        };
         showOnPrejoin?: boolean;
     };
     preferBosh?: boolean;

@@ -1,10 +1,19 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { IStore } from '../app/types';
 import IconUserSVG from '../base/icons/svg/user.svg?raw';
 import { IParticipant } from '../base/participants/types';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
-import { renderAvatarOnCanvas } from './functions';
+import { exitPiP, openDocumentPiP } from './actions';
+import PiPTriggerButton from './components/web/PiPTriggerButton';
+import {
+    getStoredPiPWindow,
+    isDocumentPiPSupported,
+    renderAvatarOnCanvas,
+    shouldShowPiP,
+} from './functions';
 import logger from './logger';
 
 /**
@@ -18,6 +27,12 @@ const CANVAS_HEIGHT = Math.floor(CANVAS_WIDTH / TILE_ASPECT_RATIO);
  * We manually request frames after drawing to ensure capture.
  */
 const CANVAS_FRAME_RATE = 0;
+
+const togglePiP = {
+    key: 'toggle-pip',
+    Content: PiPTriggerButton,
+    group: 2
+};
 
 /**
  * Options for the useCanvasAvatar hook.
@@ -180,4 +195,82 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
     return {
         canvasStreamRef: streamRef
     };
+}
+
+/**
+ * Manages Document Picture-in-Picture via the MediaSession API in browsers that support its
+ * enterpictureinpicture action. WebKit automatic Video PiP on tab switches is managed separately by PiPVideoElement
+ * through the presentation-mode API.
+ * Closes the PiP window when the tab becomes visible again.
+ *
+ * @see https://googlechrome.github.io/samples/media-session/video-conferencing.html
+ *
+ * @returns {void}
+ */
+export function useDocumentPiPMediaSession() {
+    const dispatch: IStore['dispatch'] = useDispatch();
+
+    const openDocumentPip = useCallback(
+        () => dispatch(openDocumentPiP()),
+        [ dispatch ]
+    );
+
+    useEffect(() => {
+        if (!isDocumentPiPSupported()) {
+            return;
+        }
+
+        try {
+            navigator.mediaSession.setActionHandler('enterpictureinpicture', async details => {
+                const reason = details?.enterPictureInPictureReason;
+
+                if (reason === 'useraction') {
+                    logger.log('User clicked Enter Picture-in-Picture icon.');
+                } else if (reason === 'contentoccluded') {
+                    logger.log('Automatically enter picture-in-picture.');
+                }
+
+                await openDocumentPip();
+            });
+        } catch (error) {
+            logger.warn('enterpictureinpicture MediaSession action not supported:', error);
+        }
+
+        return () => {
+            navigator.mediaSession.setActionHandler('enterpictureinpicture', null);
+        };
+    }, [ openDocumentPip ]);
+
+    useEffect(() => {
+        if (!isDocumentPiPSupported()) {
+            return;
+        }
+
+        const onVisibilityChange = () => {
+            const pipWindow = getStoredPiPWindow();
+
+            if (!document.hidden && pipWindow && !pipWindow.closed) {
+                dispatch(exitPiP());
+            }
+        };
+
+        document.addEventListener('visibilitychange', onVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', onVisibilityChange);
+        };
+    }, [ dispatch ]);
+}
+
+/**
+ * Returns the PiP toggle button when PiP is enabled and supported by the browser.
+ *
+ * @returns {Object | undefined} The PiP toggle button or undefined.
+ */
+export function usePipToggleButton() {
+    const visible = useSelector(shouldShowPiP);
+
+    return visible && (isDocumentPiPSupported() || Boolean(document.pictureInPictureEnabled))
+        ? togglePiP
+        : undefined;
 }
