@@ -6,7 +6,7 @@
  * the NextRound API backend, never in this frontend.
  */
 export const CLERK_PUBLISHABLE_KEY
-    = 'pk_test_bWFueS1vYXJmaXNoLTg2LmNsZXJrLmFjY291bnRzLmRldiQ';
+    = 'pk_live_Y2xlcmsubWVldC5uZXh0LXJvdW5kLm9ubGluZSQ';
 
 /**
  * Base URL of the NextRound API.
