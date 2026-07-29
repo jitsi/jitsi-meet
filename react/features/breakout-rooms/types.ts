@@ -33,6 +33,7 @@ export interface IRoomsInfo {
 }
 
 export interface IRoomInfoParticipant {
+    audioMuted?: boolean;
     avatarUrl: string;
     displayName: string;
     id: string;
@@ -45,4 +46,5 @@ export interface IRoomInfoParticipant {
         id?: string;
         name?: string;
     };
+    videoMuted?: boolean;
 }

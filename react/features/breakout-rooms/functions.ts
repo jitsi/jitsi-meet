@@ -100,7 +100,9 @@ export const getRoomsInfo = (stateful: IStateful, includeHidden = false) => {
                                 id: participantItem.getId(),
                                 userContext: storeParticipant?.userContext,
                                 isJigasi: participantItem.getProperty('features_jigasi') === true,
-                                isJibri: participantItem.isHidden() || participantItem.isHiddenFromRecorder()
+                                isJibri: participantItem.isHidden() || participantItem.isHiddenFromRecorder(),
+                                audioMuted: participantItem.isAudioMuted(),
+                                videoMuted: participantItem.isVideoMuted()
                             } as IRoomInfoParticipant;
                         }) ]
                     : [ localParticipantInfo ]

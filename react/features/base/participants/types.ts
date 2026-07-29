@@ -95,8 +95,10 @@ export interface IJitsiParticipant {
     getProperty: (name: string) => any;
     getRole: () => string;
     getSources: () => Map<string, Map<string, ISourceInfo>>;
+    isAudioMuted: () => boolean;
     isHidden: () => boolean;
     isHiddenFromRecorder: () => boolean;
+    isVideoMuted: () => boolean;
 }
 
 export type ParticipantFeaturesKey = keyof IParticipantFeatures;
