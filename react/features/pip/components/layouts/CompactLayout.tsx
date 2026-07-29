@@ -3,52 +3,56 @@ import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
-import { getLocalParticipant, getPinnedParticipant, getDominantSpeakerParticipant } from '../../../base/participants/functions';
-import { isParticipantVideoMuted } from '../../../base/tracks/functions.any';
-import { getVideoTrackByParticipant } from '../../../base/tracks/functions.web';
+import { getLocalParticipant, getParticipantDisplayName } from '../../../base/participants/functions';
+import { isTrackStreamingStatusActive } from '../../../connection-indicator/functions';
+import { getLargeVideoParticipant } from '../../../large-video/functions';
+import { isPrejoinPageVisible } from '../../../prejoin/functions.any';
+import { getPiPVideoTrack } from '../../functions';
+import logger from '../../logger';
 
 const CompactLayout: React.FC = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
 
+    const isOnPrejoin = useSelector(isPrejoinPageVisible);
     const localParticipant = useSelector((state: IReduxState) => getLocalParticipant(state));
-    const pinnedParticipant = useSelector((state: IReduxState) => getPinnedParticipant(state));
-    const dominantSpeaker = useSelector((state: IReduxState) => getDominantSpeakerParticipant(state));
+    const largeVideoParticipant = useSelector(getLargeVideoParticipant);
+    const participant = isOnPrejoin ? localParticipant : largeVideoParticipant;
+    const videoTrack = useSelector((state: IReduxState) => getPiPVideoTrack(state, participant));
+    const participantName = useSelector((state: IReduxState) =>
+        participant?.id ? getParticipantDisplayName(state, participant.id) : '');
+    const shouldShowAvatar = !videoTrack
+        || videoTrack.muted
+        || (!videoTrack.local && !isTrackStreamingStatusActive(videoTrack));
 
-    // Determine active participant: pinned > dominant > local
-    const activeParticipant = pinnedParticipant || dominantSpeaker || localParticipant;
-
-    // video track for the active participant
-    const videoTrack = useSelector((state: IReduxState) => {
-        if (!activeParticipant) return null;
-        return getVideoTrackByParticipant(state, activeParticipant);
-    });
-
-    const isVideoMuted = useSelector((state: IReduxState) => {
-        if (!activeParticipant) return true;
-        return isParticipantVideoMuted(activeParticipant, state);
-    });
-
+    /**
+     * Attach the active track and detach it whenever the track changes or the layout unmounts.
+     */
     useEffect(() => {
         const video = videoRef.current;
-        if (!video || !videoTrack?.jitsiTrack) return;
 
-        if (isVideoMuted) {
+        if (!video || shouldShowAvatar || !videoTrack?.jitsiTrack) {
             return;
         }
 
         videoTrack.jitsiTrack.attach(video).catch((error: Error) => {
-            console.error('Failed to attach video track in CompactLayout:', error);
+            logger.error('Failed to attach video track in CompactLayout:', error);
         });
-    }, [videoTrack, isVideoMuted]);
 
-    const participantName = activeParticipant?.name || 'You';
+        return () => {
+            try {
+                videoTrack.jitsiTrack.detach(video);
+            } catch (error) {
+                logger.error('Failed to detach video track in CompactLayout:', error);
+            }
+        };
+    }, [ videoTrack, shouldShowAvatar ]);
 
     return (
         <div className = 'doc-pip-compact-layout'>
-            {isVideoMuted ? (
+            {shouldShowAvatar ? (
                 <div className = 'doc-pip-avatar-placeholder'>
                     <Avatar
-                        participantId = { activeParticipant?.id }
+                        participantId = { participant?.id }
                         size = { 120 } />
                 </div>
             ) : (

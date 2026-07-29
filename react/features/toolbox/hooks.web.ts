@@ -67,7 +67,6 @@ import { useWhiteboardButton } from '../whiteboard/hooks';
 import { setFullScreen } from './actions.web';
 import DownloadButton from './components/DownloadButton';
 import HelpButton from './components/HelpButton';
-import AudioMuteButton from './components/web/AudioMuteButton';
 import AudioSettingsButton from './components/web/AudioSettingsButton';
 import CustomOptionButton from './components/web/CustomOptionButton';
 import FullscreenButton from './components/web/FullscreenButton';
@@ -75,7 +74,6 @@ import LinkToSalesforceButton from './components/web/LinkToSalesforceButton';
 import ProfileButton from './components/web/ProfileButton';
 import ShareDesktopButton from './components/web/ShareDesktopButton';
 import ToggleCameraButton from './components/web/ToggleCameraButton';
-import VideoMuteButton from './components/web/VideoMuteButton';
 import VideoSettingsButton from './components/web/VideoSettingsButton';
 import { isButtonEnabled, isDesktopShareButtonDisabled } from './functions.web';
 import { ICustomToolbarButton, IToolboxButton, ToolbarButton } from './types';
@@ -87,21 +85,9 @@ const microphone = {
     group: 0
 };
 
-const audioMute = {
-    key: 'audio-mute',
-    Content: AudioMuteButton,
-    group: 0
-};
-
 const camera = {
     key: 'camera',
     Content: VideoSettingsButton,
-    group: 0
-};
-
-const videoMute = {
-    key: 'video-mute',
-    Content: VideoMuteButton,
     group: 0
 };
 
@@ -327,8 +313,6 @@ export function useToolboxButtons(
     const togglePiPButton = usePipToggleButton();
 
     const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
-        'audio-mute': audioMute,
-        'video-mute': videoMute,
         microphone,
         camera,
         profile,

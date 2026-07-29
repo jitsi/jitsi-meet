@@ -16,8 +16,7 @@ export interface IToolboxNativeButton {
     text?: string;
 }
 
-export type ToolbarButton = 'audio-mute' |
-    'camera' |
+export type ToolbarButton = 'camera' |
     'chat' |
     'closedcaptions' |
     'custom-panel' |
@@ -56,7 +55,6 @@ export type ToolbarButton = 'audio-mute' |
     'tileview' |
     'toggle-camera' |
     'toggle-pip' |
-    'video-mute' |
     'videoquality' |
     'whiteboard' |
     '__end';

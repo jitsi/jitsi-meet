@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IStore } from '../app/types';
+import { IReduxState, IStore } from '../app/types';
 import IconUserSVG from '../base/icons/svg/user.svg?raw';
 import { IParticipant } from '../base/participants/types';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
@@ -271,7 +271,8 @@ export function useDocumentPiPMediaSession() {
  * @returns {Object | undefined} The PiP toggle button or undefined.
  */
 export function usePipToggleButton() {
-    const visible = useSelector(shouldShowPiP);
+    const visible = useSelector((state: IReduxState) =>
+        state['features/base/config'].pip?.showToolbarButton !== false && shouldShowPiP(state));
 
     return visible && (isDocumentPiPSupported() || Boolean(document.pictureInPictureEnabled))
         ? togglePiP
