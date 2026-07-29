@@ -1177,8 +1177,9 @@ function initCommands() {
         }
         case 'get-local-participant-property': {
             const { property } = request;
+            const conference = APP.store.getState()['features/base/conference'].conference;
 
-            callback(APP.conference.getLocalParticipantProperty(property));
+            callback(conference?.getLocalParticipantProperty(property));
             break;
         }
         case 'get-shared-document-url': {
