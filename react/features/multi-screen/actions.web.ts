@@ -24,7 +24,11 @@ export function setSecondScreen(id: string, source?: ISecondScreenSource, screen
         type: SET_SECOND_SCREEN,
         id,
         source,
-        screenId
+        screenId,
+
+        // Stamped here rather than in the reducer to keep the reducer pure; it
+        // orders the in-app windows by how recently they were targeted.
+        setAt: Date.now()
     };
 }
 
