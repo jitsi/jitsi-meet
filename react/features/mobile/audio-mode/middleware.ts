@@ -12,7 +12,6 @@ import { getCurrentConference } from '../../base/conference/functions';
 import { SET_CONFIG } from '../../base/config/actionTypes';
 import { AUDIO_FOCUS_DISABLED } from '../../base/flags/constants';
 import { getFeatureFlag } from '../../base/flags/functions';
-import { SET_LOW_BANDWIDTH_MODE } from '../../base/low-bandwidth-mode/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import { parseURIString } from '../../base/util/uri';
 
@@ -24,8 +23,7 @@ const AudioModeEmitter = new NativeEventEmitter(AudioMode);
 
 /**
  * Middleware that captures conference actions and sets the correct audio mode
- * based on the type of conference. Audio-only conferences don't use the speaker
- * by default, and video conferences do.
+ * based on whether we are in a conference or not.
  *
  * @param {Store} store - The redux store.
  * @returns {Function}
@@ -59,7 +57,6 @@ MiddlewareRegistry.register(store => next => action => {
     * conference after the password prompt appears.
     */
     case CONFERENCE_JOINED:
-    case SET_LOW_BANDWIDTH_MODE:
         return _updateAudioMode(store, next, action);
 
     case SET_CONFIG: {
@@ -159,13 +156,12 @@ function _updateAudioMode({ getState }: IStore, next: Function, action: AnyActio
     const result = next(action);
     const state = getState();
     const conference = getCurrentConference(state);
-    const { enabled: audioOnly } = state['features/base/low-bandwidth-mode'];
     let mode: string;
 
     if (getFeatureFlag(state, AUDIO_FOCUS_DISABLED, false)) {
         return result;
     } else if (conference) {
-        mode = audioOnly ? AudioMode.AUDIO_CALL : AudioMode.VIDEO_CALL;
+        mode = AudioMode.IN_CALL;
     } else {
         mode = AudioMode.DEFAULT;
     }
