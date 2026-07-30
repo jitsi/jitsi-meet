@@ -663,8 +663,7 @@ function createPiPContainer(pipWindow: Window) {
     const container = pipWindow.document.createElement('div');
 
     container.id = 'pip-root';
-    // surface02 token from jitsiTokens.json. This would at least keep the PiP window on-palette when the theme changes
-    container.style.cssText = 'margin: 0; padding: 0; overflow: hidden; height: 100vh; width: 100vw; background: #141414;';
+    container.style.cssText = 'margin: 0; padding: 0; overflow: hidden; height: 100vh; width: 100vw;';
     pipWindow.document.body.appendChild(container);
 }
 
@@ -680,4 +679,3 @@ export function isDocumentPiPSupported(): boolean {
 
 // Re-export from shared file for external use.
 export { isPiPEnabled };
-

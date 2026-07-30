@@ -1,17 +1,14 @@
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import GlobalStyles from '../../../base/ui/components/GlobalStyles.web';
-import HangupButton from '../../../toolbox/components/HangupButton';
-import AudioMuteButton from '../../../toolbox/components/web/AudioMuteButton';
-import VideoMuteButton from '../../../toolbox/components/web/VideoMuteButton';
 import { getStoredPiPWindow } from '../../functions';
 import { useDocumentPiPMediaSession } from '../../hooks';
-import CompactLayout from '../layouts/CompactLayout';
+import { DocumentPiPView } from './DocumentPiPView';
 
 /**
  * Inner component for the Document PiP.
@@ -47,18 +44,7 @@ export function DocumentPiPContent() {
     return createPortal(
         <CacheProvider value = { pipCache }>
             <GlobalStyles />
-            <div className = 'doc-pip-container'>
-                <div className = 'doc-pip-video-area'>
-                    <div className = 'doc-pip-videos-container'>
-                        <CompactLayout />
-                    </div>
-                    <div className = 'doc-pip-controls'>
-                        <AudioMuteButton registerKeyboardShortcut = { false } />
-                        <VideoMuteButton registerKeyboardShortcut = { false } />
-                        <HangupButton customClass = 'hangup-button' />
-                    </div>
-                </div>
-            </div>
+            <DocumentPiPView />
         </CacheProvider>,
         pipRoot
     );
