@@ -37,6 +37,8 @@ import { ITrack } from '../../../base/tracks/types';
 import { getVideoObjectPosition } from '../../../face-landmarks/functions';
 import { hideGif, showGif } from '../../../gifs/actions';
 import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
+import SendToSecondScreenIcon from '../../../multi-screen/components/SendToSecondScreenIcon';
+import { ISecondScreenSource } from '../../../multi-screen/types';
 import PresenceLabel from '../../../presence-status/components/PresenceLabel';
 import { LAYOUTS } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.web';
@@ -62,6 +64,12 @@ import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';
 import VirtualScreenshareParticipant from './VirtualScreenshareParticipant';
+
+/**
+ * Module-scoped so the second-screen trigger's click handler stays stable
+ * across renders.
+ */
+const SHARED_VIDEO_SECOND_SCREEN_SOURCE: ISecondScreenSource = { role: 'sharedvideo' };
 
 /**
  * The type of the React {@code Component} state of {@link Thumbnail}.
@@ -278,6 +286,20 @@ const defaultStyles = (theme: Theme) => {
 
         indicatorsBottomContainer: {
             bottom: 0
+        },
+
+        /**
+         * The shared-video thumbnail has no indicators row, so its second-screen
+         * trigger is placed on its own, where the menu trigger sits on the other
+         * thumbnails.
+         */
+        sharedVideoTopRight: {
+            position: 'absolute' as const,
+            top: 0,
+            right: 0,
+            padding: theme.spacing(1),
+            zIndex: 10,
+            display: 'flex'
         },
 
         indicatorsBackground: {
@@ -812,6 +834,8 @@ class Thumbnail extends Component<IProps, IState> {
      */
     _renderFakeParticipant() {
         const { _isMobile, _participant: { avatarURL, pinned, name } } = this.props;
+        const { isHovered } = this.state;
+        const classes = withStyles.getClasses(this.props);
         const styles = this._getStyles();
         const containerClassName = this._getContainerClassName();
 
@@ -839,6 +863,11 @@ class Thumbnail extends Component<IProps, IState> {
                         src = { avatarURL } />
                 )
                     : this._renderAvatar(styles.avatar)}
+                <div className = { classes.sharedVideoTopRight }>
+                    <SendToSecondScreenIcon
+                        source = { SHARED_VIDEO_SECOND_SCREEN_SOURCE }
+                        visible = { isHovered } />
+                </div>
             </span>
         );
     }
