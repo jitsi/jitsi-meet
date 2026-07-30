@@ -1052,6 +1052,7 @@
             "empty": "There are no polls in the meeting yet.",
             "hideDetailedResults": "Hide details",
             "showDetailedResults": "Show details",
+            "value": "{{ percent }} percent",
             "vote": "Vote"
         }
     },
