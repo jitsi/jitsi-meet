@@ -4,8 +4,13 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { REMOVE_SECOND_SCREEN, RESET_SECOND_SCREENS, SET_SECOND_SCREEN } from './actionTypes';
 import { resetSecondScreens } from './actions.web';
-import { closeAllSecondScreens, closeSecondScreenHandle, getHandle, openOrUpdateSecondScreen } from './functions.web';
-import logger from './logger';
+import {
+    closeAllSecondScreens,
+    closeSecondScreenHandle,
+    getHandle,
+    handleSecondScreenOpenError,
+    openOrUpdateSecondScreen
+} from './functions.web';
 
 import './subscriber.web';
 
@@ -38,7 +43,7 @@ MiddlewareRegistry.register((store: IStore) => {
             const result = next(action);
 
             openOrUpdateSecondScreen(store, action.id, action.screenId)
-                .catch(e => logger.error('Failed to open second screen', e));
+                .catch(e => handleSecondScreenOpenError(store, action.id, e));
 
             return result;
         }

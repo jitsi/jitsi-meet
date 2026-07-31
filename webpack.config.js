@@ -70,6 +70,12 @@ function devServerProxyBypass({ path }) {
         tpath = tpath.replace(/\/v1\/_cdn\/[^/]+\//, '/');
     }
 
+    // A page opened from a tenant meeting URL asks for its static assets under
+    // that tenant (e.g. /tenant/static/secondScreen.html), which would otherwise
+    // be proxied to the dev target and serve that deployment's copy, or a 404 for
+    // a file that only exists locally.
+    tpath = tpath.replace(/^\/[^/]+\/static\//, '/static/');
+
     if (tpath.startsWith('/css/')
             || tpath.startsWith('/doc/')
             || tpath.startsWith('/fonts/')
