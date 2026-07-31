@@ -457,24 +457,6 @@ function readWindowLocation(win: Window): string | undefined {
 }
 
 /**
- * Whether a second-screen window has already loaded its shell page, in which
- * case waiting for its {@code load} event would never resolve (the event has
- * already fired). Happens when a window is opened again for an id whose window
- * is still open, since {@code window.open} reuses the window with the same name.
- *
- * @param {Window} win - The opened window.
- * @returns {boolean}
- */
-function isShellPageLoaded(win: Window): boolean {
-    try {
-        return win.document.readyState === 'complete' && hasShellMarker(win);
-    } catch (_e) {
-        // Mid-navigation (or an unreadable document); treat it as not loaded and wait.
-        return false;
-    }
-}
-
-/**
  * How a wait for a second-screen window's shell page ended: the shell loaded,
  * the window was closed while it was loading, the load timed out, or something
  * other than the shell page was served. They are reported differently: only the
@@ -500,14 +482,16 @@ type SecondScreenLoadResult = 'loaded' | 'closed' | 'timeout' | 'wrong-page';
  * that delivered something other than the shell page is reported separately,
  * since the event fires for any served response.
  *
+ * There is deliberately no fast path for a window that has already loaded: the
+ * caller always opens with the shell URL, and navigating a reused named context
+ * loads it again, so {@code load} is always still to come. A document that reads
+ * as complete here is a stale outgoing one, which carries the marker too, so
+ * taking it would build the handle on a document that is about to be replaced.
+ *
  * @param {Window} win - The opened window.
  * @returns {Promise<SecondScreenLoadResult>}
  */
 function awaitSecondScreenLoad(win: Window): Promise<SecondScreenLoadResult> {
-    if (isShellPageLoaded(win)) {
-        return Promise.resolve('loaded');
-    }
-
     return new Promise<SecondScreenLoadResult>(resolve => {
         let poll = 0;
         let timeout = 0;
@@ -747,10 +731,21 @@ export async function openOrUpdateSecondScreen(store: IStore, id: string, screen
     // would reach window.open with the same window name and re-navigate (or, on
     // the initial empty document, share) the window the first call is building
     // on, which orphans load listeners, duplicates roots and pagehide listeners,
-    // and can close a window that was just set up. Nothing is lost by returning:
-    // the source lives in redux, so the open already in flight picks up the
-    // newest one when it applies it at the end. A screenId that changed in the
-    // meantime is ignored, exactly as it is for a window that is already open.
+    // and can close a window that was just set up. The dropped request is not
+    // re-run later, so what it leaves behind depends on how the open in flight
+    // ends. If that one succeeds, nothing is lost: the source lives in redux, so
+    // it applies the newest one at the end. If it fails, its teardown dispatches
+    // removeSecondScreen(id), which also removes the entry the dropped request
+    // had just written, leaving that request with neither a window nor an entry
+    // of its own. That is accepted rather than handled: the end state is
+    // consistent rather than corrupt, the embedder is told through
+    // secondScreenError for the id and can retry, and whatever caused the
+    // failure usually applies to both requests anyway. The window for this is
+    // wider than the load timeout, since computeFeatures below raises the
+    // window-management permission prompt, which sits until the user answers it
+    // and lands on window-management-unavailable if they deny it. A screenId that
+    // changed in the meantime is ignored, exactly as it is for a window that is
+    // already open.
     if (opening.has(id)) {
         return;
     }
