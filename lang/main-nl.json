@@ -45,7 +45,8 @@
         "errorGeneric": "Kon audiovertaling niet inschakelen. Probeer het opnieuw.",
         "errorLimitReached": "Kon niet iedereen tegelijk vertalen. Schakel vertaling in voor individuele deelnemers.",
         "errorRoomDisabled": "Audiovertaling is voor deze vergadering uitgeschakeld. Schakel het in bij Moderator-instellingen.",
-        "errorSpeakerUnavailable": "Kan deze deelnemer niet vertalen — is niet langer in de vergadering."
+        "errorSpeakerUnavailable": "Kan deze deelnemer niet vertalen — is niet langer in de vergadering.",
+        "labelTooltip": "Vertalen..."
     },
     "bandwidthSettings": {
         "assumedBandwidthBps": "bijv. 10000000 voor 10 Mbps",
@@ -168,7 +169,7 @@
         "buttonText": "Chrome Extensie installeren",
         "buttonTextEdge": "Edge Extensie installeren",
         "close": "Sluiten",
-        "dontShowAgain": "Laat me dit niet meer zien",
+        "dontShowAgain": "Laat mij dit niet meer zien",
         "installExtensionText": "Installeer de extensie voor integratie met Google Agenda en Office 365"
     },
     "closedCaptionsTab": {
@@ -836,6 +837,15 @@
         "lowBandwidthMode": "Beperkte bandbreedte"
     },
     "me": "ik",
+    "multiScreen": {
+        "noParticipants": "Geen deelnemers",
+        "sharedVideoError": "De gedeelde video kon niet op dit scherm worden afgespeeld",
+        "sharedVideoInactive": "Deel een video in de vergadering om deze op het tweede scherm weer te geven",
+        "showOnStage": "{{name}} weergeven op het tweede scherm",
+        "unpinFromStage": "Weergave van {{name}} op het tewwede scherm beëindigen",
+        "whiteboardInactive": "Open het whiteboard in de vergadering om dit op het tweede scherm weer te geven",
+        "whiteboardTitle": "Whiteboard"
+    },
     "notify": {
         "OldElectronAPPTitle": "Beveiligingskwetsbaarheid!",
         "allowAll": "Alles toestaan",
@@ -866,7 +876,7 @@
         "dismissError": "Voorstellen negeren is mislukt",
         "dismissSuccess": "Voorstellen genegeerd",
         "displayNotifications": "Toon meldingen voor",
-        "dontRemindMe": "Herinner me er niet aan",
+        "dontRemindMe": "Herinner mij er niet aan",
         "focus": "Focus van vergadering",
         "focusFail": "{{component}} niet beschikbaar - probeer over {{ms}} sec. opnieuw",
         "gifsMenu": "GIPHY",
@@ -1645,10 +1655,13 @@
         "mute": "Deelnemer is gedempt",
         "muted": "Gedempt",
         "pinToStage": "Vastzetten aan het podium",
+        "receivingTranslatedAudio": "U ontvangt vertaalde audio",
         "remoteControl": "Extern beheer starten / stoppen",
         "screenSharing": "Deelnemer deelt hun scherm",
         "show": "Op podium weergeven",
         "showSelfView": "Zelfbeeld weergeven",
+        "translationEnabledForYou": "Vertaling is voor u ingeschakeld",
+        "translationOnAndReceiving": "Vertaling op · ontvangen",
         "unpinFromStage": "Losmaken",
         "verify": "Deelnemer verifiëren",
         "videoMuted": "Camera uitgeschakeld",
