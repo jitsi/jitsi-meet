@@ -45,9 +45,15 @@ const LANDING_HTML = `
     font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased;
     display:block;
   }
-  .nr-root h1,.nr-root h2,.nr-root h3{font-family:"Poppins",sans-serif; font-weight:600; color:var(--ink); margin:0; letter-spacing:-.01em;}
-  .nr-root p{margin:0;}
-  .nr-root a{color:inherit; text-decoration:none;}
+  /* Bare element selectors (not '.nr-root X') so these base resets stay
+     lower-specificity than the component rules that set per-element margins /
+     colours (e.g. .hero-note's margin-top, .cta h2's white). Shadow DOM already
+     scopes them to the landing. */
+  h1,h2,h3{font-family:"Poppins",sans-serif; font-weight:600; color:var(--ink); margin:0; letter-spacing:-.01em;}
+  p{margin:0;}
+  /* Bare 'a' (not '.nr-root a') so this reset stays lower-specificity than the
+     .btn colour rules below — otherwise .btn-primary's white text loses. */
+  a{color:inherit; text-decoration:none;}
   .wrap{max-width:var(--maxw); margin:0 auto; padding:0 24px;}
 
   /* ---------- Buttons ---------- */
@@ -818,6 +824,38 @@ export default function Landing() {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         });
+
+        // --- In-page section anchors (#ai, #integrity, #pricing, #faq, ...) ---
+        // The sections live inside the shadow root, so a plain `href="#id"` can't
+        // resolve them against the light DOM — nothing scrolls. Intercept the
+        // clicks and scroll the shadow element into view, offset for the ~64px
+        // sticky header. A bare `href="#"` (placeholder link) is just neutralised.
+        const STICKY_OFFSET = 76;
+        const scrollToId = (id: string) => {
+            const target = id && root.getElementById(id);
+
+            if (target) {
+                const y = target.getBoundingClientRect().top + window.scrollY - STICKY_OFFSET;
+
+                window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+
+                return true;
+            }
+
+            return false;
+        };
+
+        root.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach(a => {
+            on(a, 'click', (e: Event) => {
+                e.preventDefault();
+                scrollToId((a.getAttribute('href') || '').slice(1));
+            });
+        });
+
+        // Honour a hash in the URL on load (e.g. /#integrity), once laid out.
+        if (window.location.hash.length > 1) {
+            requestAnimationFrame(() => scrollToId(window.location.hash.slice(1)));
+        }
 
         // --- Sticky header shadow on scroll ---
         const hdr = root.getElementById('hdr');
