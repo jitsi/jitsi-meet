@@ -693,6 +693,11 @@ var config = {
     // the bridge going down.
     // enableForcedReload: true,
 
+    // Enables in-place ICE restarts of the bridge connection (e.g. after a network change), instead of the
+    // legacy recovery flow which re-creates the whole media session. Requires support in jitsi-videobridge
+    // (default: disabled).
+    // enableIceRestart: false,
+
     // Use TURN/UDP servers for the jitsi-videobridge connection (by default
     // we filter out TURN/UDP because it is usually not needed since the
     // bridge itself is reachable via UDP)
