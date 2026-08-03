@@ -739,6 +739,29 @@ export default function Landing() {
         root.innerHTML = LANDING_HTML;
 
         const cleanups: Array<() => void> = [];
+
+        // Jitsi is a single-screen SPA: its base stylesheet pins <html>/<body>
+        // to the viewport height with `overflow: clip`. The landing is a tall,
+        // scrolling marketing page, so that clipping traps its content. Relax it
+        // with inline overrides while the landing is mounted, and restore the
+        // originals on unmount so the fixed-viewport app/room behaves normally
+        // once the user signs in.
+        [ document.documentElement, document.body ].forEach(el => {
+            const prev = {
+                height: el.style.height,
+                overflowX: el.style.overflowX,
+                overflowY: el.style.overflowY
+            };
+
+            el.style.height = 'auto';
+            el.style.overflowX = 'hidden';
+            el.style.overflowY = 'auto';
+            cleanups.push(() => {
+                el.style.height = prev.height;
+                el.style.overflowX = prev.overflowX;
+                el.style.overflowY = prev.overflowY;
+            });
+        });
         const on = (
                 el: EventTarget | null,
                 type: string,
