@@ -798,6 +798,8 @@ var config = {
     //     disabled: false,
     //     // Allow Picture-in-Picture on the prejoin page. Defaults to false.
     //     showOnPrejoin: false,
+    //     // Show the Picture-in-Picture toolbar button when supported. Defaults to true.
+    //     showToolbarButton: true,
     //     documentPiP: {
     //         windowOptions: {
     //             // Hide the browser control that returns to the opener. Defaults to false.

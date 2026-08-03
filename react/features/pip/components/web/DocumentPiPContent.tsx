@@ -9,6 +9,8 @@ import GlobalStyles from '../../../base/ui/components/GlobalStyles.web';
 import { getStoredPiPWindow } from '../../functions';
 import { useDocumentPiPMediaSession } from '../../hooks';
 
+import { DocumentPiPView } from './DocumentPiPView';
+
 /**
  * Inner component for the Document PiP.
  *
@@ -43,11 +45,7 @@ export function DocumentPiPContent() {
     return createPortal(
         <CacheProvider value = { pipCache }>
             <GlobalStyles />
-            <div id = 'document-pip-container'>
-                <div id = 'document-pip-player'>
-                    {/* TODO: document pip contents */}
-                </div>
-            </div>
+            <DocumentPiPView />
         </CacheProvider>,
         pipRoot
     );

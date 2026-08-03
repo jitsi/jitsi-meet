@@ -612,6 +612,10 @@ export interface IConfig {
             };
         };
         showOnPrejoin?: boolean;
+        /**
+         * Whether to show the Picture-in-Picture toolbar button when supported.
+         */
+        showToolbarButton?: boolean;
     };
     preferBosh?: boolean;
     preferVisitor?: boolean;
