@@ -1,6 +1,6 @@
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useSelector } from 'react-redux';
 
@@ -8,6 +8,7 @@ import { IReduxState } from '../../../app/types';
 import GlobalStyles from '../../../base/ui/components/GlobalStyles.web';
 import { getStoredPiPWindow } from '../../functions';
 import { useDocumentPiPMediaSession } from '../../hooks';
+
 import { DocumentPiPView } from './DocumentPiPView';
 
 /**
