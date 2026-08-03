@@ -22,7 +22,8 @@ import {
     SET_USER_CHAT_WIDTH
 } from './actionTypes';
 import { CHAT_SIZE, ChatTabs } from './constants';
-import { IMessage } from './types';
+import { addPendingEdit } from './functions';
+import { IMessage, IPendingEditsMap } from './types';
 
 const DEFAULT_STATE = {
     groupChatWithPermissions: false,
@@ -57,13 +58,7 @@ export interface IChatState {
     } | ILocalParticipant;
     messages: IMessage[];
     notifyPrivateRecipientsChangedTimestamp?: number;
-    pendingEdits: {
-        [messageId: string]: {
-            editedAt: number;
-            message: string;
-            participantId?: string;
-        };
-    };
+    pendingEdits: IPendingEditsMap;
     privateMessageRecipient?: IParticipant | IVisitorChatParticipant;
     unreadFilesCount: number;
     unreadMessagesCount: number;
@@ -101,7 +96,13 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
         const pendingEdit = action.messageId ? state.pendingEdits[action.messageId] : undefined;
 
-        const finalMessage = pendingEdit
+        // only apply a cached pending edit if its claimed author matches
+        // the author of the message that actually arrived. Prevents a forged/mismatched
+        // edit that was queued for a not-yet-seen messageId from silently overwriting
+        // someone else's message once it shows up.
+        const pendingEditValid = pendingEdit?.participantId === action.participantId;
+
+        const finalMessage = pendingEdit && pendingEditValid
             ? {
                 ...newMessage,
                 message: pendingEdit.message,
@@ -177,14 +178,21 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         };
 
     case EDIT_MESSAGE: {
-        let found = false;
         const newMessage = action.message;
+        let messageExists = false;
+        let applied = false;
+
         const messages = state.messages.map(m => {
             if (m.messageId === newMessage.messageId) {
+                messageExists = true;
+
+                // SECURITY: participantId must be present AND match the original
+                // author. A missing participantId must fail closed, not open.
                 if (newMessage.participantId && m.participantId !== newMessage.participantId) {
                     return m;
                 }
-                found = true;
+
+                applied = true;
 
                 return {
                     ...m,
@@ -197,19 +205,21 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             return m;
         });
 
-        // no change
-        if (!found) {
+        // Message hasn't arrived yet — cache it as a pending edit so it can be
+        // applied later, once ADD_MESSAGE validates authorship.
+        if (!messageExists) {
             return {
                 ...state,
-                pendingEdits: {
-                    ...state.pendingEdits,
-                    [newMessage.messageId]: {
-                        message: newMessage.message,
-                        editedAt: newMessage.editedAt,
-                        participantId: newMessage.participantId
-                    }
-                }
+                pendingEdits: addPendingEdit(state.pendingEdits, newMessage.messageId, {
+                    message: newMessage.message,
+                    editedAt: newMessage.editedAt,
+                    participantId: newMessage.participantId
+                })
             };
+        }
+
+        if (!applied) {
+            return state;
         }
 
         return {

@@ -62,6 +62,7 @@ import {
 } from './actions';
 import { ChatPrivacyDialog } from './components';
 import {
+    CHAR_LIMIT,
     ChatTabs,
     EDIT_CHAT_MESSAGE,
     INCOMING_MSG_SOUND_ID,
@@ -150,9 +151,11 @@ MiddlewareRegistry.register(store => next => action => {
         const { participant, data } = action;
 
         if (data?.type === EDIT_CHAT_MESSAGE && data.messageId && data.message) {
+            const trimmedMessage = String(data.message).slice(0, CHAR_LIMIT);
+
             store.dispatch(editMessage({
                 messageId: data.messageId,
-                message: data.message,
+                message: trimmedMessage,
                 editedAt: data.editedAt,
                 participantId: participant.getId()
             }));
@@ -353,7 +356,9 @@ MiddlewareRegistry.register(store => next => action => {
                 conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient), undefined, messageId);
                 _persistSentPrivateMessage(store, privateMessageRecipient, action.message, false, messageId);
             } else {
-                conference.sendTextMessage(action.message);
+                const messageId = uuidv4();
+
+                conference.sendTextMessage(action.message, undefined, undefined, messageId);
             }
         }
         break;
@@ -367,11 +372,20 @@ MiddlewareRegistry.register(store => next => action => {
             message => message.messageId === action.messageId
         );
 
-        if (conference && localParticipant?.id && messageToEdit) {
+        if (
+            conference
+            && localParticipant?.id
+            && messageToEdit
+            && messageToEdit.participantId === localParticipant.id
+            && messageToEdit.messageType === MESSAGE_TYPE_LOCAL
+            && !messageToEdit.isFromVisitor
+        ) {
+            const trimmedMessage = String(action.message).trim().slice(0, CHAR_LIMIT);
+
             const payload = {
                 type: EDIT_CHAT_MESSAGE,
                 messageId: action.messageId,
-                message: action.message,
+                message: trimmedMessage,
                 editedAt
             };
 
@@ -387,7 +401,7 @@ MiddlewareRegistry.register(store => next => action => {
 
             store.dispatch(editMessage({
                 messageId: action.messageId,
-                message: action.message,
+                message: trimmedMessage,
                 editedAt,
                 participantId: localParticipant.id
             }));
@@ -536,9 +550,11 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
                 const data = JSON.parse(message);
 
                 if (data?.type === EDIT_CHAT_MESSAGE && data.messageId && data.message) {
+                    const trimmedMessage = String(data.message).slice(0, CHAR_LIMIT);
+
                     store.dispatch(editMessage({
                         messageId: data.messageId,
-                        message: data.message,
+                        message: trimmedMessage,
                         editedAt: data.editedAt,
                         participantId
                     }));

@@ -10,7 +10,7 @@ import { translate } from '../../../base/i18n/functions';
 import { IconFaceSmile, IconSend } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
-import { CHAT_SIZE } from '../../constants';
+import { CHAR_LIMIT, CHAT_SIZE } from '../../constants';
 import { areSmileysDisabled, isSendGroupChatDisabled } from '../../functions';
 import { IMessage } from '../../types';
 
@@ -254,7 +254,7 @@ class ChatInput extends Component<IProps, IState> {
             return;
         }
 
-        const trimmed = this.state.message.trim();
+        const trimmed = this.state.message.trim().slice(0, CHAR_LIMIT);
 
         if (trimmed) {
             onSend(trimmed);
@@ -319,7 +319,7 @@ class ChatInput extends Component<IProps, IState> {
      * @returns {void}
      */
     _onMessageChange(value: string) {
-        this.setState({ message: value });
+        this.setState({ message: value.slice(0, CHAR_LIMIT) });
     }
 
     /**

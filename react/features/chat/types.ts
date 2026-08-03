@@ -101,3 +101,19 @@ export interface IChatMessageProps extends WithTranslation {
      */
     showTimestamp: boolean;
 }
+
+/**
+ * The shape of a single cached pending edit, keyed by messageId in Redux state.
+ */
+export interface IPendingEdit {
+    editedAt: number;
+    message: string;
+    participantId?: string;
+}
+
+/**
+ * The shape of the pendingEdits map in Redux state.
+ */
+export interface IPendingEditsMap {
+    [messageId: string]: IPendingEdit;
+}

@@ -399,6 +399,7 @@ const ChatMessage = ({
     const canEdit = message.messageType === MESSAGE_TYPE_LOCAL
         && !message.lobbyChat
         && !message.isReaction
+        && !message.isFromVisitor
         && !isFileMessage(message);
 
     return (
