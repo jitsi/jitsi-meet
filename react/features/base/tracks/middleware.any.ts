@@ -90,7 +90,7 @@ MiddlewareRegistry.register(store => next => action => {
 
             // Don't mirror the video of the back/environment-facing camera.
             const mirror
-                = jitsiTrack.getCameraFacingMode() === CAMERA_FACING_MODE.USER;
+                = store.getState()['features/base/media'].video.facingMode !== CAMERA_FACING_MODE.USER;
 
             store.dispatch({
                 type: TRACK_UPDATED,
