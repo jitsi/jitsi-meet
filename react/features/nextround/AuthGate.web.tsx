@@ -1,12 +1,12 @@
 /* eslint-disable react-native/no-inline-styles, react-native/no-color-literals, react/no-multi-comp */
 import {
     ClerkProvider,
-    SignIn,
     SignedIn,
     SignedOut
 } from '@clerk/clerk-react';
 import React from 'react';
 
+import Landing from './Landing.web';
 import Welcome from './Welcome.web';
 import { CLERK_PUBLISHABLE_KEY, FONT_STACK, NEXTROUND_API_BASE } from './constants';
 
@@ -218,39 +218,6 @@ function GuestRoomEntry({ code }: { code: string; }) {
 }
 
 /**
- * Branded, centered sign-in screen shown to staff who reach NextRound without a
- * room token and without a Clerk session.
- *
- * @returns {ReactElement}
- */
-function NextRoundSignIn() {
-    return (
-        <div
-            style = {{
-                minHeight: '100vh',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '24px',
-                background: '#040404',
-                fontFamily: FONT_STACK
-            }}>
-            <div
-                style = {{
-                    color: '#fff',
-                    fontSize: '22px',
-                    fontWeight: 600,
-                    letterSpacing: '0.5px'
-                }}>
-                NextRound
-            </div>
-            <SignIn routing = 'virtual' />
-        </div>
-    );
-}
-
-/**
  * Removes any leftover room token from the URL and sessionStorage. Jitsi's
  * hang-up redirect returns to the base URL with the room's `jwt` still attached.
  *
@@ -356,7 +323,9 @@ function RootLanding() {
                 <Welcome />
             </SignedInGate>
             <SignedOutGate>
-                <NextRoundSignIn />
+                { /* Unauthenticated visitors get the marketing landing; its
+                     call-to-actions open Clerk's sign-in modal. */ }
+                <Landing />
             </SignedOutGate>
         </ClerkProvider>
     );
