@@ -21,6 +21,7 @@ import {
     shouldShowPiP,
 } from './functions';
 import logger from './logger';
+import type { IWebKitPictureInPictureVideoElement } from './types';
 
 interface IOpenDocumentPiPOptions {
     notifyOnFailure?: boolean;
@@ -86,7 +87,16 @@ export function exitPiP() {
 
         closeDocumentPiPWindow();
 
-        if (document.pictureInPictureElement) {
+        const webKitPiPVideo = document.getElementById('pipVideo') as IWebKitPictureInPictureVideoElement | null;
+
+        if (webKitPiPVideo?.webkitPresentationMode === 'picture-in-picture'
+                && typeof webKitPiPVideo.webkitSetPresentationMode === 'function') {
+            try {
+                webKitPiPVideo.webkitSetPresentationMode('inline');
+            } catch (error) {
+                logger.error('Error while exiting WebKit PiP:', error);
+            }
+        } else if (document.pictureInPictureElement) {
             document.exitPictureInPicture()
                 .then(() => {
                     logger.debug('Exited Picture-in-Picture mode');
