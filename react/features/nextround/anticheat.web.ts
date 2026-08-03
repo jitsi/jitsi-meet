@@ -28,6 +28,9 @@ import { IReduxState } from '../app/types';
  * The NextRound context carried inside the Jitsi JWT.
  */
 export interface INextRoundContext {
+    // True for a candidate joining an AI-screening room: show the "Aina joins
+    // shortly" waiting banner until the bot is in the call.
+    ai_screening?: boolean;
     apiBase: string;
     eventsToken: string;
     interviewId: string;
@@ -560,6 +563,84 @@ function startStaffWatching(nr: INextRoundContext): void {
 
     // eslint-disable-next-line no-console
     console.log('[NextRound] watching candidate events for interview', nr.interviewId);
+}
+
+// --- candidate side: "AI recruiter joining" waiting banner -----------
+//
+// A prescreening candidate opens their link and lands in the room before the
+// bot — which may be busy screening someone else (the launcher runs one at a
+// time). Show a friendly banner so an empty room isn't confusing; it clears the
+// moment the bot ("Aina") is in the call (dismissed from the middleware).
+
+let waitingBannerEl: HTMLElement | undefined;
+let waitingDotsTimer: number | undefined;
+let waitingSafetyTimer: number | undefined;
+
+/**
+ * Removes the waiting banner and stops its timers. Idempotent.
+ *
+ * @returns {void}
+ */
+export function dismissWaitingBanner(): void {
+    if (waitingDotsTimer) {
+        clearInterval(waitingDotsTimer);
+        waitingDotsTimer = undefined;
+    }
+    if (waitingSafetyTimer) {
+        clearTimeout(waitingSafetyTimer);
+        waitingSafetyTimer = undefined;
+    }
+    if (waitingBannerEl?.parentNode) {
+        waitingBannerEl.parentNode.removeChild(waitingBannerEl);
+    }
+    waitingBannerEl = undefined;
+}
+
+/**
+ * Shows the "AI recruiter will join shortly" banner for a prescreening
+ * candidate. No-op unless this is a candidate in an AI-screening room.
+ *
+ * @param {INextRoundContext} nr - The NextRound context.
+ * @returns {void}
+ */
+export function startWaitingBanner(nr: INextRoundContext): void {
+    if (nr.role !== 'candidate' || !nr.ai_screening || waitingBannerEl) {
+        return;
+    }
+    try {
+        const el = document.createElement('div');
+
+        el.id = 'nr-waiting-banner';
+        el.style.cssText = [
+            'position:fixed', 'top:20px', 'left:50%', 'transform:translateX(-50%)',
+            'z-index:2147483646', 'display:flex', 'align-items:center', 'gap:10px',
+            'background:rgba(26,115,232,0.96)', 'color:#fff', 'padding:12px 18px',
+            'border-radius:999px', 'box-shadow:0 6px 22px rgba(0,0,0,0.35)',
+            'font:14px/1.4 system-ui,-apple-system,sans-serif', 'pointer-events:none',
+            'max-width:calc(100vw - 32px)'
+        ].join(';');
+        el.innerHTML
+            = '<span style="font-size:18px">&#129302;</span>'
+            + '<span>AI-рекрутер <b>Aina</b> присоединится через мгновение'
+            + '<span id="nr-waiting-dots"></span></span>';
+        document.body.appendChild(el);
+        waitingBannerEl = el;
+
+        const dots = el.querySelector('#nr-waiting-dots');
+        let n = 0;
+
+        waitingDotsTimer = window.setInterval(() => {
+            n = (n + 1) % 4;
+            if (dots) {
+                dots.textContent = '.'.repeat(n);
+            }
+        }, 500);
+
+        // Safety net: never leave the banner up forever if the bot never comes.
+        waitingSafetyTimer = window.setTimeout(dismissWaitingBanner, 5 * 60 * 1000);
+    } catch (e) {
+        /* best-effort */
+    }
 }
 
 /**

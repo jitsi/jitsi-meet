@@ -35,6 +35,8 @@ declare global {
                 disabled?: boolean;
                 label?: string;
                 placeholder?: string;
+                rows?: number;
+                type?: string;
                 value?: string;
             };
             'md-menu': MdElement & {

@@ -1,9 +1,12 @@
 import { getCurrentConference } from '../base/conference/functions';
-import { isLocalParticipantModerator } from '../base/participants/functions';
+import { getRemoteParticipants, isLocalParticipantModerator } from '../base/participants/functions';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { toggleLobbyMode } from '../lobby/actions.any';
 
-import { readNextRoundContext, startAntiCheat } from './anticheat.web';
+import { dismissWaitingBanner, readNextRoundContext, startAntiCheat, startWaitingBanner } from './anticheat.web';
+
+// Display name the AI-recruiter bot joins under (matches the launcher's BOT_NAME).
+const BOT_DISPLAY_NAME = 'Aina';
 
 /**
  * NextRound: an interview should gate entry behind the interviewer. As soon as
@@ -39,6 +42,31 @@ StateListenerRegistry.register(
 
         if (nr) {
             startAntiCheat(nr);
+
+            // Prescreening candidate: show "Aina joins shortly" until the bot is in.
+            startWaitingBanner(nr);
+        }
+    }
+);
+
+/**
+ * NextRound prescreening: dismiss the candidate's "Aina joins shortly" banner as
+ * soon as the bot participant is in the call. The selector returns a stable
+ * boolean, so the listener fires once when the bot arrives.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => {
+        for (const p of getRemoteParticipants(state).values()) {
+            if (p.name === BOT_DISPLAY_NAME) {
+                return true;
+            }
+        }
+
+        return false;
+    },
+    /* listener */ botPresent => {
+        if (botPresent) {
+            dismissWaitingBanner();
         }
     }
 );

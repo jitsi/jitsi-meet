@@ -166,6 +166,14 @@ const CopyIcon = () => (
         <path d = 'M5 15V5a2 2 0 0 1 2-2h10' stroke = 'currentColor' strokeWidth = '2' />
     </svg>
 );
+const BotIcon = () => (
+    <svg fill = 'none' height = '20' viewBox = '0 0 24 24' width = '20'>
+        <rect height = '11' rx = '2' stroke = 'currentColor' strokeWidth = '2' width = '16' x = '4' y = '9' />
+        <path d = 'M12 6v3' stroke = 'currentColor' strokeLinecap = 'round' strokeWidth = '2' />
+        <circle cx = '12' cy = '5' r = '1.5' stroke = 'currentColor' strokeWidth = '2' />
+        <path d = 'M9 13h.01M15 13h.01' stroke = 'currentColor' strokeLinecap = 'round' strokeWidth = '2' />
+    </svg>
+);
 const CloseIcon = () => (
     <svg fill = 'currentColor' height = '20' viewBox = '0 0 24 24' width = '20'>
         <path d = 'M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z' />
@@ -230,8 +238,15 @@ export default function Welcome() {
     const [ nav, setNav ] = useState<'calls' | 'meetings'>('meetings');
     const [ slide, setSlide ] = useState(0);
 
+    // "Prescreening session" modal: collect the position's requirements, then
+    // show the shareable candidate link (the bot auto-joins when they open it).
+    const [ prescreenOpen, setPrescreenOpen ] = useState(false);
+    const [ requirements, setRequirements ] = useState('');
+    const [ prescreenLink, setPrescreenLink ] = useState<string | null>(null);
+
     const menuRef = useRef<HTMLElement>(null);
     const dialogRef = useRef<HTMLElement>(null);
+    const prescreenDialogRef = useRef<HTMLElement>(null);
 
     // Meet drops the nav rail and shrinks the hero on small screens.
     const isMobile = useMediaQuery('(max-width: 720px)');
@@ -262,6 +277,12 @@ export default function Welcome() {
         setInviteUrl(null);
         setHost(null);
     }, []);
+    const closePrescreen = useCallback(() => {
+        setPrescreenOpen(false);
+        setPrescreenLink(null);
+        setRequirements('');
+        setCopied(false);
+    }, []);
 
     // React maps only known DOM events, so md-menu / md-dialog "closed" events
     // (outside click, Esc) need native listeners to stay in sync with state.
@@ -290,6 +311,19 @@ export default function Welcome() {
 
         return () => el.removeEventListener('closed', onClosed);
     }, [ closeModal ]);
+
+    useEffect(() => {
+        const el = prescreenDialogRef.current;
+
+        if (!el) {
+            return;
+        }
+        const onClosed = () => closePrescreen();
+
+        el.addEventListener('closed', onClosed);
+
+        return () => el.removeEventListener('closed', onClosed);
+    }, [ closePrescreen ]);
 
     const onJoinAsHost = useCallback(() => {
         if (host) {
@@ -343,6 +377,55 @@ export default function Welcome() {
             // Clipboard can be blocked; the link stays visible to copy manually.
         }
     }, [ inviteUrl ]);
+
+    // "Prescreening session": open the modal to collect the position requirements.
+    const onOpenPrescreen = useCallback(() => {
+        setMenuOpen(false);
+        setError('');
+        setCopied(false);
+        setPrescreenLink(null);
+        setRequirements('');
+        setPrescreenOpen(true);
+    }, []);
+
+    // md-outlined-text-field re-dispatches the native `input` event (see onCodeChange).
+    const onRequirementsChange = useCallback(
+        (e: React.FormEvent<HTMLElement>) => setRequirements((e.target as HTMLInputElement).value ?? ''), []);
+
+    // Create the AI-screening room and show its shareable candidate link. The
+    // link is `<origin>/<code>`; opening it mints a guest token and the bot
+    // auto-joins to screen the candidate against these requirements.
+    const onCreatePrescreen = useCallback(async () => {
+        const reqs = requirements.trim();
+
+        if (!reqs) {
+            return;
+        }
+        setBusy(true);
+        setError('');
+        setCopied(false);
+        try {
+            const m = await api.createPrescreening(reqs);
+
+            setPrescreenLink(`${window.location.origin}/${m.roomName}`);
+        } catch (e: any) {
+            setError(e.message);
+        } finally {
+            setBusy(false);
+        }
+    }, [ api, requirements ]);
+
+    const onCopyPrescreen = useCallback(async () => {
+        if (!prescreenLink) {
+            return;
+        }
+        try {
+            await navigator.clipboard.writeText(prescreenLink);
+            setCopied(true);
+        } catch (e) {
+            // Clipboard can be blocked; the link stays visible to copy manually.
+        }
+    }, [ prescreenLink ]);
 
     const onJoin = useCallback(async () => {
         const meetingCode = normalizeMeetingCode(code);
@@ -563,6 +646,16 @@ export default function Welcome() {
                                             slot = 'headline'
                                             style = {{ whiteSpace: 'nowrap' }}>
                                             Начать интервью сейчас
+                                        </div>
+                                    </md-menu-item>
+                                    <md-menu-item onClick = { onOpenPrescreen }>
+                                        <span slot = 'start'>
+                                            <BotIcon />
+                                        </span>
+                                        <div
+                                            slot = 'headline'
+                                            style = {{ whiteSpace: 'nowrap' }}>
+                                            Прескрининг-сессия (AI)
                                         </div>
                                     </md-menu-item>
                                 </md-menu>
@@ -801,6 +894,127 @@ export default function Welcome() {
                         padding: '20px 24px 24px'
                     }}>
                     <md-filled-button onClick = { onJoinAsHost }>Войти как интервьюер</md-filled-button>
+                </div>
+            </md-dialog>
+
+            <md-dialog
+                aria-label = 'Прескрининг-сессия'
+                open = { prescreenOpen }
+                ref = { prescreenDialogRef }
+                style = {{
+                    '--md-dialog-container-shape': '24px',
+                    '--md-dialog-container-color': '#e9eef6',
+                    width: 'min(420px, calc(100vw - 48px))'
+                } as React.CSSProperties}>
+                <div
+                    slot = 'content'
+                    style = {{ position: 'relative', padding: '20px 24px 0' }}>
+                    <div
+                        style = {{
+                            fontFamily: FONT_STACK,
+                            fontSize: '22px',
+                            fontWeight: 400,
+                            lineHeight: '28px',
+                            color: '#202124',
+                            margin: '0 44px 16px 0'
+                        }}>
+                        Прескрининг-сессия (AI)
+                    </div>
+                    <md-icon-button
+                        aria-label = 'Закрыть'
+                        onClick = { closePrescreen }
+                        style = {{ position: 'absolute', top: '8px', right: '12px', color: '#5f6368' }}
+                        title = 'Закрыть'>
+                        <CloseIcon />
+                    </md-icon-button>
+
+                    { prescreenLink ? (
+                        <>
+                            <p style = {{ color: '#5f6368', fontSize: '15px', margin: '0 0 20px' }}>
+                                Отправьте эту ссылку кандидату. AI-рекрутер присоединится к
+                                нему автоматически и проведёт первичный скрининг.
+                            </p>
+                            <div
+                                style = {{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    background: '#f1f3f4',
+                                    borderRadius: '12px',
+                                    padding: '6px 6px 6px 16px'
+                                }}>
+                                <span
+                                    style = {{
+                                        flex: 1,
+                                        fontSize: '15px',
+                                        color: '#202124',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap'
+                                    }}>
+                                    { prescreenLink }
+                                </span>
+                                <md-icon-button
+                                    aria-label = 'Копировать ссылку'
+                                    onClick = { onCopyPrescreen }
+                                    style = {{ color: '#1a73e8' }}
+                                    title = 'Копировать ссылку'>
+                                    <CopyIcon />
+                                </md-icon-button>
+                            </div>
+                            { copied && (
+                                <p style = {{ color: '#1e8e3e', fontSize: '13px', margin: '10px 0 0' }}>
+                                    Ссылка скопирована
+                                </p>
+                            ) }
+                        </>
+                    ) : (
+                        <>
+                            <p style = {{ color: '#5f6368', fontSize: '15px', margin: '0 0 16px' }}>
+                                Опишите позицию и ключевые требования — AI-рекрутер будет
+                                задавать вопросы по этому контексту.
+                            </p>
+                            <md-outlined-text-field
+                                disabled = { busy }
+                                label = 'Требования к позиции'
+                                onInput = { onRequirementsChange }
+                                placeholder = 'Напр.: Backend (Python), middle. FastAPI/Django, PostgreSQL, очереди (Celery/Kafka), Docker.'
+                                rows = { 5 }
+                                style = {{ width: '100%' }}
+                                type = 'textarea'
+                                value = { requirements } />
+                            { error && (
+                                <p style = {{ color: '#d93025', fontSize: '13px', margin: '10px 0 0' }}>
+                                    { error }
+                                </p>
+                            ) }
+                        </>
+                    ) }
+                </div>
+                <div
+                    slot = 'actions'
+                    style = {{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        gap: '8px',
+                        padding: '20px 24px 24px'
+                    }}>
+                    { prescreenLink ? (
+                        <md-filled-button onClick = { closePrescreen }>Готово</md-filled-button>
+                    ) : (
+                        <>
+                            <md-text-button
+                                disabled = { busy }
+                                onClick = { closePrescreen }>
+                                Отмена
+                            </md-text-button>
+                            <md-filled-button
+                                disabled = { busy || !requirements.trim() }
+                                onClick = { onCreatePrescreen }>
+                                { busy ? 'Создаём…' : 'Создать ссылку' }
+                            </md-filled-button>
+                        </>
+                    ) }
                 </div>
             </md-dialog>
         </div>

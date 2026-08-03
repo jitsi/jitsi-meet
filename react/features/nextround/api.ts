@@ -10,6 +10,12 @@ export interface IRoomToken {
     roomName: string;
 }
 
+export interface IPrescreeningRoom {
+    domain: string;
+    id: string;
+    roomName: string;
+}
+
 /**
  * Minimal client for the NextRound room endpoints. Every call carries the
  * caller's Clerk session token; the backend derives their org from it.
@@ -54,7 +60,16 @@ export function createApi(getToken: GetToken) {
 
         // Join an existing room in the org by its code.
         joinByCode: (code: string): Promise<IRoomToken> =>
-            request('/api/rooms/join', { method: 'POST', body: JSON.stringify({ code }) })
+            request('/api/rooms/join', { method: 'POST', body: JSON.stringify({ code }) }),
+
+        // "Prescreening session": create an AI-only screening room and get its
+        // code for a shareable candidate link. The bot auto-joins when the
+        // candidate does; `requirements` becomes the bot's prompt context.
+        createPrescreening: (requirements: string): Promise<IPrescreeningRoom> =>
+            request('/api/rooms/prescreening', {
+                method: 'POST',
+                body: JSON.stringify({ requirements })
+            })
     };
 }
 
