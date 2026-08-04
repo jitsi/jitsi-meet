@@ -32,6 +32,18 @@ export function isParticipantAudioTranslationActive(state: IReduxState, particip
 }
 
 /**
+ * The target language encoded in a translated source name — the substring after the last {@code .}.
+ *
+ * @param {string} sourceName - The translated source name.
+ * @returns {string}
+ */
+export function getSourceLanguage(sourceName: string): string {
+    const dotIndex = sourceName.lastIndexOf('.');
+
+    return dotIndex === -1 ? '' : sourceName.substring(dotIndex + 1);
+}
+
+/**
  * The owner endpoint id encoded in a translated source name — the substring before the first {@code -}.
  * Translated sources follow the {@code <endpointId>-a<idx>.<lang>} convention (endpoint ids are dash/dot-free).
  * Returns an empty string for a source without a dash.
@@ -254,7 +266,19 @@ export function getDuckedVolumeForParticipant(state: IReduxState, participantId?
  * @returns {number}
  */
 export function getTranslationDeliveryPendingCount(state: IReduxState, participantId: string): number {
-    return state['features/audio-translation'].deliveryPending[participantId] ?? 0;
+    const counts = state['features/base/conference'].metadata?.audioTranslationListenerCounts?.[participantId];
+
+    if (!counts) {
+        return 0;
+    }
+
+    // Sum the subscribers of only the languages the bridge is still sending for this speaker: the in-flight
+    // language count alone undercounts (one source serves every listener of that language) and the speaker's
+    // subscriber total overcounts (a language whose stream already finished).
+    return state['features/audio-translation'].receivingSources.reduce((total, sourceName) =>
+        getSourceOwnerEndpointId(sourceName) === participantId
+            ? total + (counts[getSourceLanguage(sourceName)] ?? 0)
+            : total, 0);
 }
 
 /**

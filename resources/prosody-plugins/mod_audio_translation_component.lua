@@ -82,6 +82,10 @@ local ENABLED_METADATA_KEY = 'audioTranslation';
 -- Aggregate map exposed to jicofo only. Stored on room._data (never in
 -- jitsiMetadata) so it is never broadcast to regular clients.
 local REQUESTS_METADATA_KEY = 'audioTranslationRequests';
+-- Per-(sender, language) subscriber counts. Client-visible (kept in jitsiMetadata): counts only, never
+-- identities. Clients combine these with the bridge's synthetic-source sending state to show how many
+-- participants are still hearing a given speaker.
+local LISTENER_COUNTS_METADATA_KEY = 'audioTranslationListenerCounts';
 
 local ENABLE_PERMISSION = 'live-translation';
 local SUBSCRIBE_PERMISSION = 'live-translation-subscribe';
@@ -322,6 +326,27 @@ local function compute_aggregate(room)
     return out;
 end
 
+-- Builds { [senderId] = { [lang] = <subscriber count> } }, or nil when there are no subscriptions.
+local function compute_listener_counts(room)
+    local out = {};
+    local any = false;
+
+    for _, subs in pairs(get_state(room).receivers) do
+        for sender_id, lang in pairs(subs) do
+            local counts = out[sender_id];
+
+            if not counts then
+                counts = {};
+                out[sender_id] = counts;
+            end
+            counts[lang] = (counts[lang] or 0) + 1;
+            any = true;
+        end
+    end
+
+    return any and out or nil;
+end
+
 -- Recomputes the aggregate and, when it changed, publishes it to jicofo via
 -- RoomMetadata. Stored on room._data so mod_room_metadata_component only forwards
 -- it to admin (jicofo) occupants.
@@ -343,8 +368,13 @@ local function publish(room)
     -- The request set the receivers have asked for, independent of gating. Computed
     -- unconditionally so we can tell "nothing requested" apart from "requests suppressed".
     local requested = compute_aggregate(room);
-    local aggregate = (allow_publish and is_enabled(room)) and requested or nil;
-    local encoded = aggregate and json.encode(aggregate) or nil;
+    local gated = allow_publish and is_enabled(room);
+    local aggregate = gated and requested or nil;
+    local listener_counts = gated and compute_listener_counts(room) or nil;
+    -- Deduped on both: counts can change while the language set does not (a second receiver picking a
+    -- language another receiver already requested).
+    local encoded = (aggregate and json.encode(aggregate) or '')
+        ..'|'..(listener_counts and json.encode(listener_counts) or '');
 
     if encoded == room._audio_translation.last_published then
         return;
@@ -361,6 +391,8 @@ local function publish(room)
     end
 
     room._data.audioTranslationRequests = aggregate;
+    room.jitsiMetadata = room.jitsiMetadata or {};
+    room.jitsiMetadata[LISTENER_COUNTS_METADATA_KEY] = listener_counts;
 
     main_muc_module:fire_event('room-metadata-changed', { room = room; });
 end
