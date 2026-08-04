@@ -39,8 +39,14 @@
         "phone": "Hörer",
         "speaker": "Lautsprecher"
     },
-    "audioOnly": {
-        "audioOnly": "Geringe Bandbreite"
+    "audioTranslation": {
+        "disabledForRoom": "Die Audio-Übersetzung wurde für diese Konferenz deaktiviert.",
+        "errorForbidden": "Sie haben nicht die Berechtigung die Audio-Übersetzung zu nutzen.",
+        "errorGeneric": "Audio-Übersetzung konnte nicht gestartet werden, bitte erneut versuchen.",
+        "errorLimitReached": "Nicht jeder Anwesende kann übersetzt werden. Bitte Audio-Übersetzung für einzelne Anwesende einschalten.",
+        "errorRoomDisabled": "Audio-Übersetzung ist für diese Konferenz deaktiviert. Bitte in den Moderationseinstellungen aktivieren.",
+        "errorSpeakerUnavailable": "Diese Person kann nicht übersetzt werden, sie ist nicht mehr Teil der Konferenz.",
+        "labelTooltip": "Übersetzung aktiv"
     },
     "bandwidthSettings": {
         "assumedBandwidthBps": "z.B. 10000000 für 10 Mbps",
@@ -314,6 +320,7 @@
         "alreadySharedVideoMsg": "Eine andere Person gibt bereits ein Video weiter. Bei dieser Konferenz ist jeweils nur ein geteiltes Video möglich.",
         "alreadySharedVideoTitle": "Nur ein geteiltes Video gleichzeitig",
         "applicationWindow": "Anwendungsfenster",
+        "applyChanges": "Änderungen anwenden",
         "authenticationRequired": "Authentifizierung benötigt",
         "cameraCaptureDialog": {
             "description": "Ein Bild mit Ihrer Kamera aufnehmen und senden",
@@ -449,6 +456,7 @@
         "permissionMicRequiredError": "Der Zugriff auf das Mikrofon wird benötigt, um an Konferenzen mit Ton teilzunehmen. Bitte in den Einstellungen zulassen",
         "readMore": "mehr",
         "recentlyUsedObjects": "Ihre zuletzt verwendeten Objekte",
+        "recordAndTranscribe": "Aufnehmen & Übersetzen",
         "recording": "Aufnahme",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Während eines Livestreams nicht möglich",
         "recordingInProgressDescription": "Diese Konferenz wird aufgezeichnet und von KI analysiert. Ihr Ton und Video ist deaktiviert, wenn Sie es aktivieren, stimmen Sie der Aufzeichnung zu.",
@@ -517,10 +525,14 @@
         "startLiveStreaming": "Livestream starten",
         "startRecording": "Aufnahme starten",
         "startRemoteControlErrorMessage": "Beim Versuch, die Fernsteuerung zu starten, ist ein Fehler aufgetreten!",
+        "startTranscribing": "Transkription starten",
+        "startTranscription": "Transkription starten",
         "stopLiveStreaming": "Livestream stoppen",
         "stopRecording": "Aufnahme stoppen",
         "stopRecordingWarning": "Sind Sie sicher, dass Sie die Aufnahme stoppen möchten?",
         "stopStreamingWarning": "Sind Sie sicher, dass Sie den Livestream stoppen möchten?",
+        "stopTranscription": "Transkription beenden",
+        "stopTranscriptionWarning": "Sind Sie sicher, dass Sie die Transkription beenden möchten?",
         "streamKey": "Streamschlüssel",
         "suggestedAccounts": "Vorgeschlagene Accounts",
         "suggestedDeals": "Vorgeschlagene Deals",
@@ -673,6 +685,9 @@
         "support": "Support",
         "supportMsg": "Wenn der Fehler erneut auftritt, bitte kontaktieren Sie"
     },
+    "inputAction": {
+        "deleteInput": "Eingabe löschen"
+    },
     "inviteDialog": {
         "alertText": "Die Einladung einiger Personen ist fehlgeschlagen.",
         "header": "Einladen",
@@ -818,7 +833,17 @@
         "button": "Andere einladen",
         "youAreAlone": "Nur Sie sind in dieser Konferenz"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Geringe Bandbreite"
+    },
     "me": "ich",
+    "multiScreen": {
+        "noParticipants": "Niemand anwesend",
+        "showOnStage": "{{name}} auf dem zweiten Bildschirm anzeigen",
+        "unpinFromStage": "{{name}} von zweitem Bildschirm entfernen",
+        "whiteboardInactive": "Das Whiteboard in der Konferenz öffnen und auf dem zweiten Bildschirm anzeigen",
+        "whiteboardTitle": "Whiteboard"
+    },
     "notify": {
         "OldElectronAPPTitle": "Sicherheitslücke!",
         "allowAll": "Alles einschalten",
@@ -1132,6 +1157,7 @@
         }
     },
     "recording": {
+        "alsoTranscribe": "Auch Transkription starten?",
         "authDropboxText": "In Dropbox hochladen",
         "availableSpace": "Verfügbarer Speicherplatz: {{spaceLeft}} MB (ca. {{duration}} Minuten Aufzeichnung)",
         "beta": "BETA",
@@ -1198,7 +1224,7 @@
         "about": "Sie können Ihre Konferenz mit einem $t(lockRoomPassword) sichern. Personen müssen das $t(lockRoomPassword) eingeben, bevor sie an der Konferenz teilnehmen dürfen.",
         "aboutReadOnly": "Mit Moderationsrechten kann die Konferenz mit einem $t(lockRoomPassword) gesichert werden. Personen müssen das $t(lockRoomPassword) eingeben, bevor sie an der Konferenz teilnehmen dürfen.",
         "insecureRoomNameWarningNative": "Der Raumname ist unsicher. Unerwünschte Personen könnten Ihrer Konferenz beitreten. {{recommendAction}} Lernen Sie mehr über die Absicherung Ihrer Konferenz ",
-        "insecureRoomNameWarningWeb": "Der Raumname ist unsicher. Unerwünschte Personen könnten Ihrer Konferenz beitreten {{recommendAction}} Lernen Sie <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">hier</a> mehr über die Absicherung Ihrer Konferenz.",
+        "insecureRoomNameWarningWeb": "Der Raumname ist unsicher. Unerwünschte Personen könnten Ihrer Konferenz beitreten {{recommendAction}} Lernen Sie <a href=\"{{securityUrl}}\" target=\"_blank\">hier</a> mehr über die Absicherung Ihrer Konferenz.",
         "title": "Sicherheitsoptionen",
         "unsafeRoomActions": {
             "meeting": "Erwägen Sie die Absicherung Ihrer Konferenz über den Sicherheits-Button.",
@@ -1208,6 +1234,7 @@
     },
     "settings": {
         "audio": "Audio",
+        "audioTranslation": "Audio-Übersetzung einschalten",
         "buttonLabel": "Einstellungen",
         "calendar": {
             "about": "Die Kalenderintegration von {{appName}} wird verwendet, um ein sicheres Zugreifen auf Ihren Kalender und Auslesen der bevorstehenden Termine zu ermöglichen.",
@@ -1326,13 +1353,17 @@
     "termsView": {
         "title": "Nutzungsbedingungen"
     },
+    "timeTimer": {
+        "endedOver": "Sie sind {{time}} über der Zeit.",
+        "endedTitle": "Zeit abgelaufen"
+    },
     "toggleTopPanelLabel": "Obere Leiste ein-/ausschalten",
     "toolbar": {
         "Settings": "Einstellungen",
         "accessibilityLabel": {
             "Settings": "Einstellungen einschalten",
-            "audioOnly": "„Nur Audio“ ein-/ausschalten",
             "audioRoute": "Audiogerät auswählen",
+            "audioTranslation": "Audio-Übersetzung",
             "boo": "Buhen",
             "breakoutRooms": "Breakout-Räume",
             "callQuality": "Qualitätseinstellungen",
@@ -1375,6 +1406,7 @@
             "localRecording": "Lokale Aufzeichnungssteuerelemente ein-/ausschalten",
             "lockRoom": "Konferenzpasswort ein-/ausschalten",
             "love": "Herz",
+            "lowBandwidthMode": "„Nur Audio“ ein-/ausschalten",
             "lowerHand": "Hand senken",
             "moreActions": "Menü „Weitere Einstellungen“ ein-/ausschalten",
             "moreActionsMenu": "Menü „Weitere Einstellungen“",
@@ -1437,10 +1469,10 @@
                 "label": "Stereo"
             }
         },
-        "audioOnlyOff": "Modus „Nur Audio“ deaktivieren",
-        "audioOnlyOn": "Modus „Nur Audio“ aktivieren",
         "audioRoute": "Audiogerät auswählen",
         "audioSettings": "Ton-Einstellungen",
+        "audioTranslation": "Audio-Übersetzung",
+        "audioTranslationOff": "Aus",
         "authenticate": "Anmelden",
         "boo": "Buhen",
         "callQuality": "Qualitätseinstellungen",
@@ -1483,6 +1515,8 @@
         "login": "Anmelden",
         "logout": "Abmelden",
         "love": "Herz",
+        "lowBandwidthModeOff": "Modus „Nur Audio“ deaktivieren",
+        "lowBandwidthModeOn": "Modus „Nur Audio“ aktivieren",
         "lowerYourHand": "Hand senken",
         "moreActions": "Weitere Einstellungen",
         "moreOptions": "Weitere Optionen",
@@ -1516,6 +1550,8 @@
         "reactionSilence": "Stille senden",
         "reactionSurprised": "Überrascht senden",
         "reactions": "Interaktionen",
+        "record": "Aufnehmen",
+        "recordAndTranscribe": "Aufnehmen & Transkribieren",
         "security": "Sicherheitsoptionen",
         "selectBackground": "Hintergrund auswählen",
         "shareRoom": "Person einladen",
@@ -1542,6 +1578,7 @@
         "videounmute": "Kamera einschalten"
     },
     "transcribing": {
+        "alsoRecord": "Diese Konferenz auch aufnehmen?",
         "ccButtonTooltip": "Untertitel ein-/ausschalten",
         "expandedLabel": "Transkribieren ist derzeit eingeschaltet",
         "failed": "Transkribieren fehlgeschlagen",
@@ -1578,8 +1615,6 @@
     },
     "videoStatus": {
         "adjustFor": "Einstellen für:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Sie befinden sich im Modus „Nur Audio“. Dieser Modus benötigt weniger Bandbreite, Sie sehen jedoch nicht die Videos der anderen.",
         "bestPerformance": "Beste Leistung",
         "callQuality": "Videoqualität",
         "hd": "HD",
@@ -1587,9 +1622,11 @@
         "highDefinition": "Hohe Auflösung",
         "highestQuality": "Höchste Qualität",
         "labelTooiltipNoVideo": "Kein Video",
-        "labelTooltipAudioOnly": "„Nur Audio“-Modus aktiv",
+        "labelTooltipLowBandwidthMode": "„Nur Audio“-Modus aktiv",
         "ld": "LD",
         "ldTooltip": "Video wird in niedriger Auflösung angezeigt",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Sie befinden sich im Modus „Nur Audio“. Dieser Modus benötigt weniger Bandbreite, Sie sehen jedoch nicht die Videos der anderen.",
         "lowDefinition": "Niedrige Auflösung",
         "performanceSettings": "Qualitätseinstellungen",
         "recording": "Aufnahme läuft.",
@@ -1616,10 +1653,13 @@
         "mute": "Person ist stumm geschaltet",
         "muted": "Stummgeschaltet",
         "pinToStage": "Anheften",
+        "receivingTranslatedAudio": "Sie empfangen übersetzten Ton",
         "remoteControl": "Fernsteuerung",
         "screenSharing": "Person teilt den Bildschirm",
         "show": "Im Vordergrund anzeigen",
         "showSelfView": "Eigene Ansicht anzeigen",
+        "translationEnabledForYou": "Übersetzung für Sie aktiviert",
+        "translationOnAndReceiving": "Übersetzung eingeschaltet · empfange",
         "unpinFromStage": "Lösen",
         "verify": "Person verifizieren",
         "videoMuted": "Kamera ausgeschaltet",

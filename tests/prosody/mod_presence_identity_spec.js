@@ -167,6 +167,59 @@ describe('mod_presence_identity', () => {
     });
 
     // -------------------------------------------------------------------------
+    // malformed JWT context.user keys
+    // -------------------------------------------------------------------------
+    //
+    // update_presence_identity() iterates over JWT context.user keys and uses
+    // each key as an XML element name: presence:tag(key):text(tostring(value)).
+    // Fixed in 2e8980d2b: keys that do not match the XML name pattern
+    // ^[%a_][%w%-%.%:_]*$ are now silently skipped before reaching tag().
+    // This test verifies that bad keys are dropped and valid keys are preserved.
+
+    describe('malformed JWT context.user keys', () => {
+
+        it('survives context.user keys that contain XML-special characters', async () => {
+            const r = room();
+
+            // Key names with '<' and '>' — these become XML element names.
+            // Prosody / LuaXML may escape, drop, or crash on them.
+            const identity = await hs256Client(r, {
+                context: {
+                    user: {
+                        id: 'safe-id',
+                        'bad<key>': 'value'
+                    }
+                }
+            });
+
+            clients.push(identity);
+            await identity.joinRoom(r);
+
+            const observer = await createXmppClient();
+
+            clients.push(observer);
+            await observer.joinRoom(r);
+
+            // If Prosody crashed the hook the join presence would never arrive.
+            const presence = await waitForOtherPresence(observer, r, observer.nick);
+
+            assert.ok(presence, 'join presence must arrive even with unusual key names');
+
+            // The safe 'id' element must be present and correct.
+            const identityEl = presence.getChild('identity');
+
+            assert.ok(identityEl, 'presence must still contain <identity>');
+            assert.strictEqual(
+                identityEl.getChild('user')?.getChild('id')
+                    ?.text(),
+                'safe-id',
+                'safe id field must be present and unmodified'
+            );
+        });
+
+    });
+
+    // -------------------------------------------------------------------------
     // spoofing prevention
     // -------------------------------------------------------------------------
     describe('spoofing prevention', () => {

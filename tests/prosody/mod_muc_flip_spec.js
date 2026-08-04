@@ -2,7 +2,9 @@ import { xml } from '@xmpp/client';
 import assert from 'assert';
 
 
-import { enableLobby, getRoomParticipants, setRoomMaxOccupants, setSessionContext } from './helpers/test_observer.js';
+import {
+    enableLobby, getRoomParticipants, setAffiliation, setRoomMaxOccupants, setSessionContext
+} from './helpers/test_observer.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
@@ -177,60 +179,6 @@ describe('mod_muc_flip', () => {
     }); // flip_device tag stripping
 
     // -------------------------------------------------------------------------
-    // participants_details tracking
-    // -------------------------------------------------------------------------
-    describe('participants_details', () => {
-
-        it('records the occupant nick for a JWT user on join', async () => {
-            const r = room();
-
-            await focusJoin(r);
-
-            const clientA = await connect();
-
-            await setSessionContext(clientA.jid, USER_A_ID, { flip: false });
-            const joinPresence = await clientA.joinRoom(r);
-            const nick = nickFrom(joinPresence);
-
-            const state = await getRoomParticipants(r);
-
-            assert.ok(
-                state.participants_details[USER_A_ID],
-                `participants_details must have an entry for user id ${USER_A_ID}`
-            );
-            assert.ok(
-                state.participants_details[USER_A_ID].endsWith(`/${nick}`),
-                'recorded value must reference the occupant nick'
-            );
-        });
-
-        it('removes the occupant entry when the JWT user leaves', async () => {
-            const r = room();
-
-            await focusJoin(r);
-
-            const clientA = await connect();
-
-            await setSessionContext(clientA.jid, USER_A_ID, { flip: false });
-            await clientA.joinRoom(r);
-
-            await clientA.disconnect();
-            clients.splice(clients.indexOf(clientA), 1);
-
-            // Give Prosody a moment to process the leave.
-            await new Promise(res => setTimeout(res, 300));
-
-            const state = await getRoomParticipants(r);
-
-            assert.ok(
-                !state.participants_details[USER_A_ID],
-                'participants_details entry must be cleared after the user leaves'
-            );
-        });
-
-    }); // participants_details
-
-    // -------------------------------------------------------------------------
     // Successful flip
     // -------------------------------------------------------------------------
     describe('flip', () => {
@@ -299,6 +247,61 @@ describe('mod_muc_flip', () => {
             );
         });
 
+        it('transfers moderator role to flip device and tags the kicked occupant presence', async () => {
+            const r = room();
+
+            await focusJoin(r);
+            await setRoomMaxOccupants(r, 10);
+
+            const device1 = await connect();
+
+            await setSessionContext(device1.jid, USER_A_ID, { flip: true });
+            const d1Presence = await device1.joinRoom(r);
+            const d1Nick = nickFrom(d1Presence);
+
+            // Promote device1 to owner so it holds moderator role.
+            await setAffiliation(r, device1.jid.split('/')[0], 'owner');
+
+            // Watch for device1's own kick before device2 joins to avoid missing it.
+            const d1KickPromise = device1.waitForPresenceFrom(
+                `${r}/${d1Nick}`, { type: 'unavailable' }
+            );
+
+            const observer = await connect();
+            const observerJoinPresence = await observer.joinRoom(r);
+            const observerNick = nickFrom(observerJoinPresence);
+
+            const d1FlipTagPromise = observer.waitForPresenceFrom(
+                `${r}/${d1Nick}`, { type: 'unavailable' }
+            );
+
+            const device2 = await connect();
+
+            await setSessionContext(device2.jid, USER_A_ID, { flip: true });
+            await device2.joinRoom(r, null, { extensions: [ xml('flip_device') ] });
+
+            await d1KickPromise;
+            const d1KickPresence = await d1FlipTagPromise;
+
+            assert.ok(
+                d1KickPresence.getChild('flip_device'),
+                'kicked device presence must contain flip_device tag'
+            );
+
+            // Verify device2 has moderator role by performing a moderator-only action:
+            // kicking the observer. Only a moderator can set role='none'.
+            const observerKickPromise = observer.waitForPresenceFrom(
+                `${r}/${observerNick}`, { type: 'unavailable' }
+            );
+            const kickResponse = await device2.sendMucAdmin(r, {
+                nick: observerNick,
+                role: 'none'
+            });
+
+            assert.notEqual(kickResponse.attrs.type, 'error', 'device2 must have moderator role');
+            await observerKickPromise;
+        });
+
     }); // flip
 
     // -------------------------------------------------------------------------
@@ -342,6 +345,42 @@ describe('mod_muc_flip', () => {
 
             // The flip also kicks device1 from the main room.
             await d1KickedPromise;
+        });
+
+        it('requires first device to be in main room for flip to proceed', async () => {
+            const r = room();
+
+            await focusJoin(r);
+            await enableLobby(r);
+
+            // device1 joins but does not reach the main room.
+            const device1 = await connect();
+
+            await setSessionContext(device1.jid, USER_A_ID, { flip: true });
+
+            const d1JoinResult = await device1.joinRoom(r, null, { displayName: 'Device One' });
+
+            assert.equal(
+                d1JoinResult.attrs.type, 'error',
+                'device1 must not reach the main room (precondition)'
+            );
+
+            // device2 joins with flip_device and the same JWT user id.
+            // No occupant with that id is in the main room, so the flip tag
+            // is ignored and device2 is treated as a regular join.
+            const device2 = await connect();
+
+            await setSessionContext(device2.jid, USER_A_ID, { flip: true });
+
+            const d2JoinResult = await device2.joinRoom(r, null, {
+                displayName: 'Device Two',
+                extensions: [ xml('flip_device') ]
+            });
+
+            assert.equal(
+                d2JoinResult.attrs.type, 'error',
+                'flip must not proceed when no matching occupant is in the main room'
+            );
         });
 
     }); // lobby interactions

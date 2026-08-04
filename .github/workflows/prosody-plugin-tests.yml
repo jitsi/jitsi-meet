@@ -2,6 +2,8 @@ name: Prosody Plugin Tests
 
 on:
   push:
+    branches:
+      - master
     paths:
       - 'resources/prosody-plugins/**'
       - 'tests/prosody/**'

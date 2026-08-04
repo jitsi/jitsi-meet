@@ -80,6 +80,7 @@ export default class SectionList extends Component<IProps> {
                 style = { styles.container as ViewStyle } >
                 <ReactNativeSectionList
                     ListEmptyComponent = { this.props.ListEmptyComponent }
+                    contentContainerStyle = { styles.listContentContainer as ViewStyle }
                     keyExtractor = { this.props.keyExtractor }
                     onRefresh = { this.props.onRefresh }
                     refreshing = { this.props.refreshing }

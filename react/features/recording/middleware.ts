@@ -7,6 +7,8 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import { openDialog } from '../base/dialog/actions';
+import { MEET_FEATURES } from '../base/jwt/constants';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import JitsiMeetJS, {
     JitsiConferenceEvents,
     JitsiRecordingConstants
@@ -21,7 +23,11 @@ import { MEDIA_TYPE } from '../base/media/constants';
 import { PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
 import { updateLocalRecordingStatus } from '../base/participants/actions';
 import { PARTICIPANT_ROLE } from '../base/participants/constants';
-import { getLocalParticipant, getParticipantDisplayName } from '../base/participants/functions';
+import {
+    getLocalParticipant,
+    getParticipantDisplayName,
+    isLocalParticipantModerator
+} from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import {
@@ -31,13 +37,14 @@ import {
 import { TRACK_ADDED } from '../base/tracks/actionTypes';
 import { hideNotification, showErrorNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
-import { isRecorderTranscriptionsRunning, isTranscribing } from '../transcribing/functions';
+import { canAddTranscriber, isRecorderTranscriptionsRunning, isTranscribing } from '../transcribing/functions';
 
 import { RECORDING_SESSION_UPDATED, START_LOCAL_RECORDING, STOP_LOCAL_RECORDING } from './actionTypes';
 import {
     clearRecordingSessions,
     hidePendingRecordingNotification,
     markConsentRequested,
+    setLocalRecordingRunning,
     setStartRecordingIntent,
     setStopRecordingIntent,
     showPendingRecordingNotification,
@@ -69,6 +76,7 @@ import {
     unregisterRecordingAudioFiles
 } from './functions';
 import logger from './logger';
+import { getNudge } from './nudge';
 import { ISessionData } from './reducer';
 
 /**
@@ -161,18 +169,37 @@ export function maybeNotifyRecordingStart(dispatch: IStore['dispatch'], getState
         dispatch(playSound(soundID));
     }
 
+    // Nudge to start the complementary service when only one was just started and the other is not
+    // already running — shown to any participant that has the right to start that other service:
+    // transcription needs the transcription feature; cloud recording needs moderator + the recording
+    // feature. (A recording-only participant is never nudged to transcribe, nor vice versa.)
+    const canStartTranscription = canAddTranscriber(state);
+    const canStartRecording = isLocalParticipantModerator(state)
+        && isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false);
+    const nudgeNeeded = (wantsRecording !== wantsTranscription)
+        && (wantsRecording ? (!transcriptionOn && canStartTranscription) : (!recordingOn && canStartRecording));
+    const nudge = nudgeNeeded
+        ? getNudge(wantsRecording ? 'recording' : 'transcription', dispatch)
+        : null;
+
     if (recordingOn && fileSession?.initiator && fileSession.id) {
         dispatch(showStartedRecordingNotification(
             modeConstants.FILE,
             fileSession.initiator,
             fileSession.id,
-            recordingOn && transcriptionOn));
+            recordingOn && transcriptionOn,
+            nudge ?? undefined));
     } else if (transcriptionOn && !recordingOn) {
         // Transcription-only case (recording failed or wasn't requested).
         dispatch(showNotification({
             descriptionKey: 'transcribing.on',
-            titleKey: 'dialog.recording'
-        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+            titleKey: 'dialog.recording',
+            ...(nudge ? {
+                description: nudge.descriptionText,
+                customActionNameKey: [ nudge.actionNameKey ],
+                customActionHandler: [ nudge.handler ]
+            } : {})
+        }, nudge ? NOTIFICATION_TIMEOUT_TYPE.LONG : NOTIFICATION_TIMEOUT_TYPE.SHORT));
     }
 }
 
@@ -243,7 +270,9 @@ export function maybeNotifyRecordingStop(dispatch: IStore['dispatch'], getState:
     dispatch(setStopRecordingIntent(null));
 
     if (offSoundID) {
-        if (onSoundID) {
+        // Always stop the combined sound in case both services were started together.
+        dispatch(stopSound(RECORDING_AND_TRANSCRIPTION_ON_SOUND_ID));
+        if (onSoundID && onSoundID !== RECORDING_AND_TRANSCRIPTION_ON_SOUND_ID) {
             dispatch(stopSound(onSoundID));
         }
         dispatch(playSound(offSoundID));
@@ -404,6 +433,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 titleKey: 'recording.localRecordingStartWarningTitle',
                 descriptionKey: 'recording.localRecordingStartWarning'
             }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+            dispatch(setLocalRecordingRunning(true));
             dispatch(updateLocalRecordingStatus(true, onlySelf));
             sendAnalytics(createRecordingEvent('started', `local${onlySelf ? '.self' : ''}`));
             if (typeof APP !== 'undefined') {
@@ -443,9 +473,13 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const { localRecording } = getState()['features/base/config'];
 
         if (LocalRecordingManager.isRecordingLocally()) {
+            // Capture before stopping — the recorder's stop handler resets the flag.
+            const wasSelfRecording = LocalRecordingManager.selfRecording.on;
+
             LocalRecordingManager.stopLocalRecording();
+            dispatch(setLocalRecordingRunning(false));
             dispatch(updateLocalRecordingStatus(false));
-            if (localRecording?.notifyAllParticipants && !LocalRecordingManager.selfRecording) {
+            if (localRecording?.notifyAllParticipants && !wasSelfRecording) {
                 dispatch(playSound(RECORDING_OFF_SOUND_ID));
             }
             if (typeof APP !== 'undefined') {

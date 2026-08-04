@@ -14,7 +14,7 @@ interface IProps extends WithTranslation {
     /**
      * Whether or not the conference is in audio only mode.
      */
-    _audioOnly: boolean;
+    _lowBandwidthMode: boolean;
 
     /**
      * Style of the component passed as props.
@@ -39,17 +39,17 @@ class VideoQualityLabel extends Component<IProps> {
      * @inheritdoc
      */
     override render() {
-        const { _audioOnly, style, t } = this.props;
+        const { _lowBandwidthMode, style, t } = this.props;
 
-        if (!_audioOnly) {
+        if (!_lowBandwidthMode) {
             // We don't have info about the quality so no need for the indicator
             return null;
         }
 
         return (
             <Label // @ts-ignore
-                style = { combineStyles(styles.indicatorAudioOnly, style) }
-                text = { t('videoStatus.audioOnly') } />
+                style = { combineStyles(styles.indicatorLowBandwidthMode, style) }
+                text = { t('videoStatus.lowBandwidthMode') } />
         );
     }
 }
@@ -61,14 +61,14 @@ class VideoQualityLabel extends Component<IProps> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _audioOnly: boolean
+ *     _lowBandwidthMode: boolean
  * }}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { enabled: audioOnly } = state['features/base/audio-only'];
+    const { enabled: audioOnly } = state['features/base/low-bandwidth-mode'];
 
     return {
-        _audioOnly: audioOnly
+        _lowBandwidthMode: audioOnly
     };
 }
 

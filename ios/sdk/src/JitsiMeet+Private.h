@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#import <React/RCTBridge.h>
 #import <RCTReactNativeFactory.h>
 
 #import "ExternalAPI.h"

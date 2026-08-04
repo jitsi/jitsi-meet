@@ -36,9 +36,6 @@
         "phone": "telefon",
         "speaker": "zvočnik"
     },
-    "audioOnly": {
-        "audioOnly": "Samo glas (nizka pasovna širina)"
-    },
     "calendarSync": {
         "addMeetingURL": "Dodaj povezavo na srečanje",
         "confirmAddLink": "Ali želite dodati Jitsi povezavo za ta dogodek?",
@@ -565,6 +562,9 @@
         "button": "Povabi ostale",
         "youAreAlone": "V sestanku ste sami"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Samo glas (nizka pasovna širina)"
+    },
     "me": "jaz",
     "notify": {
         "OldElectronAPPTitle": "Varnostna ranljivost!",
@@ -892,7 +892,6 @@
         "Settings": "Nastavitve",
         "accessibilityLabel": {
             "Settings": "Preklopi nastavitve",
-            "audioOnly": "Preklopi samo na avdio",
             "audioRoute": "Izberi zvočno napravo",
             "boo": "Bu",
             "callQuality": "Upravljaj kvaliteto videa",
@@ -916,6 +915,7 @@
             "lobbyButton": "Vklopi/izklopi način predsobe",
             "localRecording": "Preklopi kontrolnik lokalnega snemanja",
             "lockRoom": "Preklopi geslo srečanja",
+            "lowBandwidthMode": "Preklopi samo na avdio",
             "moreActions": "Preklopi meni z več možnostmi",
             "moreActionsMenu": "Meni z več možnostmi",
             "moreOptions": "Prikaži več možnosti",
@@ -951,8 +951,6 @@
             "videomute": "Preklopi izklop videa"
         },
         "addPeople": "Dodaj druge udeležence v vaš klic",
-        "audioOnlyOff": "Onemogoči način nizke pasovne širine",
-        "audioOnlyOn": "Omogoči način nizke pasovne širine",
         "audioRoute": "Izberi zvočno napravo",
         "audioSettings": "Nastavitve zvoka",
         "authenticate": "Overi",
@@ -982,6 +980,8 @@
         "lobbyButtonEnable": "Vklopi način predsobe",
         "login": "Prijava",
         "logout": "Odjava",
+        "lowBandwidthModeOff": "Onemogoči način nizke pasovne širine",
+        "lowBandwidthModeOn": "Omogoči način nizke pasovne širine",
         "lowerYourHand": "Spusti svojo roko",
         "moreActions": "Več možnosti",
         "moreOptions": "Več možnosti",
@@ -1056,16 +1056,16 @@
         "pending": "{{displayName}} je bil povabljen"
     },
     "videoStatus": {
-        "audioOnly": "ZVOK",
-        "audioOnlyExpanded": "Ste v načinu nizke pasovne širine. V tem načinu boste prejemali samo avdio in deljenje zaslona.",
         "callQuality": "Kvaliteta videa",
         "hd": "HD",
         "hdTooltip": "Prenos videa v visoki ločljivosti",
         "highDefinition": "Visoka ločljivost",
         "labelTooiltipNoVideo": "Ni videa",
-        "labelTooltipAudioOnly": "Omogočen je način nizke pasovne širine",
+        "labelTooltipLowBandwidthMode": "Omogočen je način nizke pasovne širine",
         "ld": "LD",
         "ldTooltip": "Prenos videa v nizki ločljivosti",
+        "lowBandwidthMode": "ZVOK",
+        "lowBandwidthModeExpanded": "Ste v načinu nizke pasovne širine. V tem načinu boste prejemali samo avdio in deljenje zaslona.",
         "lowDefinition": "Nizka ločljivost",
         "sd": "SD",
         "sdTooltip": "Prenos videa v standardni ločljivosti",

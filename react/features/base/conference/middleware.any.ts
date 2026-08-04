@@ -770,7 +770,15 @@ async function _trackAddedOrRemoved(store: IStore, next: Function, action: AnyAc
                         const audioMixerEffect = new AudioMixerEffect(desktopAudioTrack);
 
                         await jitsiTrack.setEffect(audioMixerEffect);
-                        await conference.replaceTrack(null, jitsiTrack);
+
+                        // Only add the track to the conference if it isn't already there. During a breakout room
+                        // switch, replaceLocalTrack already called conference.replaceTrack which invoked
+                        // _setupNewTrack and pushed the track into rtc.localTracks. A second replaceTrack(null,
+                        // track) call would push it again, creating a duplicate that makes setOfferAnswerCycle
+                        // fail with "is already in TPC" when the JVB session offer arrives.
+                        if (!conference.getLocalTracks().includes(jitsiTrack)) {
+                            await conference.replaceTrack(null, jitsiTrack);
+                        }
                     } else {
                         await _addLocalTracksToConference(conference, [ jitsiTrack ]);
                     }

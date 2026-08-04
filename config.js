@@ -206,7 +206,7 @@ var config = {
 
     // Start the conference in audio only mode (no video is being received nor
     // sent).
-    // startAudioOnly: false,
+    // startLowBandwidthMode: false,
 
     // Every participant after the Nth will start audio muted.
     // startAudioMuted: 10,
@@ -230,6 +230,21 @@ var config = {
     //     stereo: false,
     //     opusMaxAverageBitrate: null, // Value to fit the 6000 to 510000 range.
     //     enableOpusDtx: false,
+    // },
+
+    // Audio translation feature (requires bridge backend support).
+    // audioTranslation: {
+    //     enabled: false,
+    //
+    //     // Volume (0..1) a speaker's original audio is ducked to while its translation plays.
+    //     // Defaults to 0.15. Ignored on iOS, where the original is muted instead because the
+    //     // element volume cannot be lowered there.
+    //     duckedVolume: 0.15,
+    //
+    //     // Whether to process the bridge's translated-source sending notifications, which drive the
+    //     // per-participant "receiving translated audio" indicator. Off by default until the bridge
+    //     // emits stop notifications as well as start ones.
+    //     enableSendingChangeEvents: false,
     // },
 
     // Noise suppression configuration. By default rnnoise is used. Optionally Krisp
@@ -493,6 +508,9 @@ var config = {
     //     // Translation languages.
     //     // Available languages can be found in
     //     // ./lang/translation-languages.json.
+    //     // Whether to enable translation (language selection) UI. Defaults to true.
+    //     translationEnabled: true,
+
     //     translationLanguages: ['en', 'es', 'fr', 'ro'],
 
     //     // Important languages to show on the top of the language list.
@@ -534,7 +552,16 @@ var config = {
     //
     //     // When the backend provides diarization by setting a "speaker" field, append [Speaker N] for transcription
     //     // events from non-0 speakers.
-    //     renderTranscriptDetails: false
+    //     renderTranscriptDetails: false,
+    //
+    //     // Requests that the transcriber diarize (split by speaker) this participant's own audio, i.e. label
+    //     // segments as coming from different speakers. Enable it only for endpoints that genuinely carry
+    //     // multiple speakers on a single audio stream (conference-room systems, dial-in/PSTN legs); on a
+    //     // normal single-person stream a diarizer can spuriously split one talker into several speakers.
+    //     // The flag is advertised to jicofo in MUC presence and takes effect only at join time (it must be
+    //     // set before joining, e.g. via this config or the #config.transcription.diarize=true URL override;
+    //     // toggling it mid-call has no effect). Defaults to false.
+    //     diarize: false
 
     // },
 
@@ -888,7 +915,6 @@ var config = {
     //    'embedmeeting',
     //    'etherpad',
     //    'feedback',
-    //    'filmstrip',
     //    'fullscreen',
     //    'hangup',
     //    'help',
@@ -1599,6 +1625,15 @@ var config = {
     // If true, tile view will not be enabled automatically when the participants count threshold is reached.
     // disableTileView: true,
 
+    // Multi-screen support: lets an embedder (via the iframe External API `setSecondScreen` command)
+    // render a meeting surface (the active-speaker stage, the screenshare, or a pinned participant) on
+    // a second display, in its own fullscreen window. Disabled by default; it is Chromium-only and
+    // intended for managed/kiosk room appliances, which must also delegate `allow="window-management;
+    // fullscreen"` to the iframe and grant the window-management + automatic-fullscreen permissions.
+    // secondScreen: {
+    //     enabled: false
+    // },
+
     // If true, the tiles will be displayed contained within the available space rather than enlarged to cover it,
     // with a 16:9 aspect ratio (old behaviour).
     // disableTileEnlargement: true,
@@ -1607,7 +1642,7 @@ var config = {
     // If a label's id is not in any of the 2 arrays, it will not be visible at all on the header.
     // conferenceInfo: {
     //     // those labels will not be hidden in tandem with the toolbox.
-    //     alwaysVisible: ['recording', 'raised-hands-count'],
+    //     alwaysVisible: ['recording', 'raised-hands-count', 'time-timer'],
     //     // those labels will be auto-hidden in tandem with the toolbox buttons.
     //     autoHide: [
     //         'subject',
@@ -1864,9 +1899,6 @@ var config = {
     // List of notifications to be disabled. Works in tandem with the above setting.
     // disabledNotifications: [],
 
-    // Prevent the filmstrip from autohiding when screen width is under a certain threshold
-    // disableFilmstripAutohiding: false,
-
     // filmstrip: {
     //     // Disable the vertical/horizontal filmstrip.
     //     disabled: false,
@@ -1942,6 +1974,15 @@ var config = {
 
     // Application logo url
     // defaultLogoUrl: 'images/watermark.svg',
+
+    // Meeting-pace timer shown in the conference info bar. It only appears
+    // once a meeting duration is known — from a calendar event (calendar
+    // sync) or pushed at runtime via the `setMeetingTimer` iframe API
+    // command. With no such info nothing is shown, so it is enabled by
+    // default; set `enabled: false` to hide it even when that info exists.
+    // timeTimer: {
+    //     enabled: true,
+    // },
 
     // Settings for the Excalidraw whiteboard integration.
     // whiteboard: {

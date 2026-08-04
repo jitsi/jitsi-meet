@@ -34,7 +34,7 @@ import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { resetUnreadPollsCount } from '../polls/actions';
 import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
-import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
+import { ENDPOINT_REACTION_NAME, REACTIONS } from '../reactions/constants';
 import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
 import { isCCTabEnabled } from '../subtitles/functions.any';
 import { showToolbox } from '../toolbox/actions';
@@ -150,8 +150,14 @@ MiddlewareRegistry.register(store => next => action => {
         const { participant, data } = action;
 
         if (data?.name === ENDPOINT_REACTION_NAME) {
-            // Skip duplicates, keep just 3.
-            const reactions = Array.from(new Set(data.reactions)).slice(0, 3) as string[];
+            // Only accept known reaction keys, skip duplicates and keep just 3.
+            const reactions = Array.from(new Set(Array.isArray(data.reactions) ? data.reactions : []))
+                .filter((reaction): reaction is string => typeof reaction === 'string' && reaction in REACTIONS)
+                .slice(0, 3);
+
+            if (!reactions.length) {
+                break;
+            }
 
             store.dispatch(pushReactions(reactions));
 

@@ -65,7 +65,7 @@ package.preload['cjson.safe'] = function()
     }
 end
 
-package.preload['prosody.util.queue'] = function()
+package.preload['util.queue'] = function()
     return {
         new = function(max_size)
             local items = {}
@@ -89,7 +89,7 @@ package.preload['prosody.util.queue'] = function()
     }
 end
 
-package.preload['prosody.util.array'] = function()
+package.preload['util.array'] = function()
     -- Prosody's util.array module is itself callable as a constructor.
     local arr_mt = {}
     arr_mt.__index = arr_mt

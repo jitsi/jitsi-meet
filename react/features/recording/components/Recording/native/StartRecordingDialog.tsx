@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../../base/i18n/functions';
+import { IReduxState } from '../../../../app/types';
+import { translate } from '../../../../base/i18n/functions.native';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import HeaderNavigationButton
     from '../../../../mobile/navigation/components/HeaderNavigationButton';
@@ -10,7 +11,7 @@ import { goBack } from
 import { RECORDING_TYPES } from '../../../constants';
 import AbstractStartRecordingDialog, {
     IProps,
-    mapStateToProps
+    mapStateToProps as abstractMapStateToProps
 } from '../AbstractStartRecordingDialog';
 import styles from '../styles.native';
 
@@ -165,6 +166,23 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
             </JitsiScreen>
         );
     }
+}
+
+/**
+ * Maps redux state to component props, bridging the navigation route params
+ * (native-only) into the shared {@code recordAudioAndVideo} prop.
+ *
+ * @param {Object} state - Redux state.
+ * @param {any} ownProps - Component's own props.
+ * @returns {Object}
+ */
+function mapStateToProps(state: IReduxState, ownProps: any) {
+    return {
+        ...abstractMapStateToProps(state, {
+            ...ownProps,
+            recordAudioAndVideo: ownProps.recordAudioAndVideo ?? ownProps.route?.params?.recordAudioAndVideo
+        })
+    };
 }
 
 export default translate(connect(mapStateToProps)(StartRecordingDialog));

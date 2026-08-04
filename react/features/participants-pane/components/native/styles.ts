@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 /**
@@ -249,7 +251,7 @@ export default {
     },
 
     centerInput: {
-        textAlign: 'center'
+        ...Platform.select({ ios: { textAlign: 'center' } })
     },
 
     visitorsLabel: {

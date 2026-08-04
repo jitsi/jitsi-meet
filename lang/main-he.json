@@ -24,9 +24,6 @@
         "phone": "טלפון",
         "speaker": "רמקול"
     },
-    "audioOnly": {
-        "audioOnly": "רוחב פס נמוך"
-    },
     "calendarSync": {
         "addMeetingURL": "הוסף קישור מפגש",
         "confirmAddLink": "האם ברצונך הוסיף קישור Jitsi לאירוע זה?",
@@ -439,6 +436,9 @@
         "button": "הזמן אחרים",
         "youAreAlone": "אתה היחידי במפגש זה"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "רוחב פס נמוך"
+    },
     "me": "אני",
     "notify": {
         "OldElectronAPPTitle": "פגיעות אבטחה!",
@@ -607,7 +607,6 @@
         "Settings": "הגדרות",
         "accessibilityLabel": {
             "Settings": "שנה הגדרות",
-            "audioOnly": "שנה שמע בלבד",
             "audioRoute": "בחר התקן שמע",
             "callQuality": "נהל איכות שיחה",
             "cc": "שנה כתוביות",
@@ -622,6 +621,7 @@
             "kick": "גרש משתתף",
             "localRecording": "שנה פקדי הקלטה מקומיים",
             "lockRoom": "שנה את סיסמת הפגישה",
+            "lowBandwidthMode": "שנה שמע בלבד",
             "moreActions": "שנה תפריט פעולות נוספות",
             "moreActionsMenu": "תפריט פעולות נוספות",
             "moreOptions": "הצג אפשרויות נוספות",
@@ -646,8 +646,6 @@
             "videomute": "שנה השתקת וידאו"
         },
         "addPeople": "הוסף אנשים לשיחה שלך",
-        "audioOnlyOff": "כבה מצב שמע בלבד",
-        "audioOnlyOn": "הפעל מצב שמע בלבד",
         "audioRoute": "בחר התקן שמע",
         "authenticate": "אימות",
         "callQuality": "נהל איכות שיחה",
@@ -666,6 +664,8 @@
         "invite": "הזמן אנשים",
         "login": "התחבר",
         "logout": "התנתק",
+        "lowBandwidthModeOff": "כבה מצב שמע בלבד",
+        "lowBandwidthModeOn": "הפעל מצב שמע בלבד",
         "lowerYourHand": "הורד את היד",
         "moreActions": "פעולות נוספות",
         "moreOptions": "אפשרויות נוספות",
@@ -726,16 +726,16 @@
         "pending": "{{displayName}} הוזמן"
     },
     "videoStatus": {
-        "audioOnly": "שמע",
-        "audioOnlyExpanded": "אתה נמצא במצב שמע בלבד. מצב זה חוסך רוחב פס אך לא תראה קטעי וידאו של אחרים.",
         "callQuality": "איכות שיחה",
         "hd": "HD",
         "hdTooltip": "צופה בוידיאו בהבחנה גבוהה",
         "highDefinition": "הבחנה גבוהה",
         "labelTooiltipNoVideo": "ללא וידאו",
-        "labelTooltipAudioOnly": "מצב שמע בלבד מופעל",
+        "labelTooltipLowBandwidthMode": "מצב שמע בלבד מופעל",
         "ld": "LD",
         "ldTooltip": "צופה בוידאו בהבחנה נמוכה",
+        "lowBandwidthMode": "שמע",
+        "lowBandwidthModeExpanded": "אתה נמצא במצב שמע בלבד. מצב זה חוסך רוחב פס אך לא תראה קטעי וידאו של אחרים.",
         "lowDefinition": "הבחנה נמוכה",
         "onlyAudioAvailable": "שמע בלבד זמין",
         "onlyAudioSupported": "אנו תומכים בשמע בלבד בדפדפן זה.",

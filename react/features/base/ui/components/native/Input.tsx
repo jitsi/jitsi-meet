@@ -1,5 +1,7 @@
 import React, { forwardRef, useCallback, useState } from 'react';
 import {
+    BlurEvent,
+    FocusEvent,
     KeyboardTypeOptions,
     NativeSyntheticEvent,
     ReturnKeyTypeOptions,
@@ -7,7 +9,6 @@ import {
     Text,
     TextInput,
     TextInputChangeEventData,
-    TextInputFocusEventData,
     TextInputKeyPressEventData,
     TextInputSubmitEditingEventData,
     TextStyle,
@@ -15,6 +16,7 @@ import {
     View,
     ViewStyle
 } from 'react-native';
+
 
 import Icon from '../../../icons/components/Icon';
 import { IconCloseCircle } from '../../../icons/svg';
@@ -43,8 +45,8 @@ interface IProps extends IInputProps {
     minHeight?: number | string | undefined;
     multiline?: boolean | undefined;
     numberOfLines?: number | undefined;
-    onBlur?: ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void) | undefined;
-    onFocus?: ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void) | undefined;
+    onBlur?: ((e: BlurEvent) => void) | undefined;
+    onFocus?: ((e: FocusEvent) => void) | undefined;
     onKeyPress?: ((e: NativeSyntheticEvent<TextInputKeyPressEventData>) => void) | undefined;
     onSubmitEditing?: (value: string) => void;
     pointerEvents?: 'box-none' | 'none' | 'box-only' | 'auto' | undefined;
@@ -99,12 +101,12 @@ const Input = forwardRef<TextInput, IProps>(({
         onChange?.('');
     }, [ onChange ]);
 
-    const handleBlur = useCallback((e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    const handleBlur = useCallback((e: BlurEvent) => {
         setFocused(false);
         onBlur?.(e);
     }, [ onBlur ]);
 
-    const handleFocus = useCallback((e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    const handleFocus = useCallback((e: FocusEvent) => {
         setFocused(true);
         onFocus?.(e);
     }, [ onFocus ]);

@@ -13,7 +13,7 @@
 --
 -- Must be loaded on both the main virtual host and the jicofo virtual host.
 
-local json = require 'cjson';
+local json = require 'cjson.safe';
 
 local util = module:require 'util';
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
@@ -32,7 +32,12 @@ local stanza = event.stanza;
                 local update_app_data = false;
                 local app_data = jibri.attr.app_data;
                 if app_data then
-                    app_data = json.decode(app_data);
+                    local err;
+                    app_data, err = json.decode(app_data);
+                    if err then
+                        module:log('warn', 'Failed to decode jibri app_data from %s: %s', stanza.attr.from, err);
+                        return;
+                    end
                 else
                     app_data = {};
                 end

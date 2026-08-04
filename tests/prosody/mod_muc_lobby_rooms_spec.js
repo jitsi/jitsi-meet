@@ -377,4 +377,70 @@ describe('mod_muc_lobby_rooms', () => {
                 'moderator token user who bypassed lobby via password must get moderator role');
         });
     });
+
+    // -------------------------------------------------------------------------
+    // muc#admin set — nick reservation must not act before authorization
+    // -------------------------------------------------------------------------
+    //
+    // handle_admin_query_set_command_item's "nickname is reserved" branch kicks
+    // whoever currently holds the requested nick when the item's jid doesn't
+    // match. That kick must only happen once set_affiliation has confirmed the
+    // sender is allowed to act — otherwise an unauthorized sender can remove an
+    // occupant just by naming their nick, before the affiliation check ever
+    // gets a chance to reject the request.
+    describe('admin-set nick reservation', () => {
+
+        it('does not remove an occupant before authorizing the affiliation change', async () => {
+            const r = room();
+
+            await focusJoin(r);
+
+            const occupant = await connect();
+
+            await occupant.joinRoom(r, 'participant', { displayName: 'Participant' });
+
+            // Never joins the room — permission is checked from the sender's own
+            // bare jid, which has no affiliation record here regardless.
+            const sender = await connect();
+
+            const resp = await sender.sendMucAdmin(r, {
+                nick: 'participant',
+                jid: 'someone-else@example.com',
+                affiliation: 'member'
+            });
+
+            // The real proof: a successful kick sends the occupant an unavailable
+            // self-presence. Its absence means the kick never happened.
+            const kicked = await occupant.waitForPresenceFrom(`${r}/participant`, { type: 'unavailable',
+                timeout: 500 })
+                .then(() => true, () => false);
+
+            assert.strictEqual(kicked, false, 'occupant must not be removed by an unauthorized sender');
+            assert.equal(resp.attrs.type, 'error', 'IQ must be rejected');
+        });
+
+        it('does not remove focus before authorizing the affiliation change', async () => {
+            const r = room();
+
+            const focus = await focusJoin(r);
+
+            // Also rejected outright by mod_muc_meeting_id's filter_admin_set,
+            // which runs at a higher priority for any item naming focus's nick.
+            // Kept here so a regression in either guard is still caught.
+            const sender = await connect();
+
+            const resp = await sender.sendMucAdmin(r, {
+                nick: 'focus',
+                jid: 'someone-else@example.com',
+                affiliation: 'member'
+            });
+
+            const kicked = await focus.waitForPresenceFrom(`${r}/focus`, { type: 'unavailable',
+                timeout: 500 })
+                .then(() => true, () => false);
+
+            assert.strictEqual(kicked, false, 'focus must not be removed by an unauthorized sender');
+            assert.equal(resp.attrs.type, 'error', 'IQ must be rejected');
+        });
+    });
 });

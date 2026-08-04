@@ -99,5 +99,8 @@
     },
     "keywords": [
         "react-native"
-    ]
+    ],
+    "overrides": {
+        "hermes-compiler": "0.0.0"
+    }
 }

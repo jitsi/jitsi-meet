@@ -146,6 +146,7 @@ export const SPINNER_COLOR = '#929292';
  * @type Array<string>
  */
 export const TOOLBAR_BUTTONS: ToolbarButton[] = [
+    'audiotranslation',
     'camera',
     'chat',
     'closedcaptions',
@@ -156,7 +157,6 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'etherpad',
     'feedback',
     'filesharing',
-    'filmstrip',
     'fullscreen',
     'hangup',
     'help',

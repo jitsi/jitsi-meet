@@ -64,11 +64,6 @@ interface IProps extends AbstractProps {
     _aspectRatio: Symbol;
 
     /**
-     * Whether the audio only is enabled or not.
-     */
-    _audioOnlyEnabled: boolean;
-
-    /**
      * Branding styles for conference.
      */
     _brandingStyles: StyleType;
@@ -110,6 +105,11 @@ interface IProps extends AbstractProps {
      * Local participant's display name.
      */
     _localParticipantDisplayName: string;
+
+    /**
+     * Whether the audio only is enabled or not.
+     */
+    _lowBandwidthModeEnabled: boolean;
 
     /**
      * Whether Picture-in-Picture is enabled.
@@ -206,14 +206,14 @@ class Conference extends AbstractConference<IProps, State> {
      */
     override componentDidMount() {
         const {
-            _audioOnlyEnabled,
+            _lowBandwidthModeEnabled,
             _startCarMode,
             navigation
         } = this.props;
 
         this._hardwareBackPressSubscription = BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
 
-        if (_audioOnlyEnabled && _startCarMode) {
+        if (_lowBandwidthModeEnabled && _startCarMode) {
             navigation.navigate(screen.conference.carmode);
         }
     }
@@ -225,7 +225,7 @@ class Conference extends AbstractConference<IProps, State> {
      */
     override componentDidUpdate(prevProps: IProps) {
         const {
-            _audioOnlyEnabled,
+            _lowBandwidthModeEnabled,
             _showLobby,
             _startCarMode,
             navigation
@@ -236,7 +236,7 @@ class Conference extends AbstractConference<IProps, State> {
         }
 
         if (prevProps._showLobby && !_showLobby) {
-            if (_audioOnlyEnabled && _startCarMode) {
+            if (_lowBandwidthModeEnabled && _startCarMode) {
                 navigation.navigate(screen.conference.carmode);
             } else {
                 navigation.navigate(screen.conference.main);
@@ -568,7 +568,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
     const { backgroundColor } = state['features/dynamic-branding'];
     const { startCarMode } = state['features/base/settings'];
-    const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
+    const { enabled: lowBandwidthModeEnabled } = state['features/base/low-bandwidth-mode'];
     const brandingStyles = backgroundColor ? {
         background: backgroundColor
     } : undefined;
@@ -576,7 +576,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     return {
         ...abstractMapStateToProps(state),
         _aspectRatio: aspectRatio,
-        _audioOnlyEnabled: Boolean(audioOnlyEnabled),
+        _lowBandwidthModeEnabled: Boolean(lowBandwidthModeEnabled),
         _brandingStyles: brandingStyles,
         _calendarEnabled: isCalendarEnabled(state),
         _connecting: isConnecting(state),

@@ -6,6 +6,7 @@ import Logger from '@jitsi/logger';
 import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 import Recorder from './modules/recorder/Recorder';
+import ExternalShareReceiver from './modules/screenshare-cast/ExternalShareReceiver';
 import { createTaskQueue } from './modules/util/helpers';
 import {
     createDeviceChangedEvent,
@@ -390,7 +391,7 @@ export default {
      * the errors resulting from that process.
      * @param {object} options
      * @param {boolean} option.isBreakoutRoom - true if we are creating the initial local tracks in breakout room.
-     * @param {boolean} options.startAudioOnly=false - if <tt>true</tt> then
+     * @param {boolean} options.startLowBandwidthMode=false - if <tt>true</tt> then
      * only audio track will be created and the audio only mode will be turned
      * on.
      * @param {boolean} options.startScreenSharing=false - if <tt>true</tt>
@@ -415,7 +416,7 @@ export default {
 
         if ((!config.disableInitialGUM || isBreakoutRoom)
                 && !options.startWithVideoMuted
-                && !options.startAudioOnly
+                && !options.startLowBandwidthMode
                 && !options.startScreenSharing) {
             initialDevices.push(MEDIA_TYPE.VIDEO);
             requestedVideo = true;
@@ -535,7 +536,7 @@ export default {
     async init({ roomName, shouldDispatchConnect }) {
         const state = APP.store.getState();
         const initialOptions = {
-            startAudioOnly: config.startAudioOnly,
+            startLowBandwidthMode: config.startLowBandwidthMode,
             startScreenSharing: config.startScreenSharing,
             startWithAudioMuted: getStartWithAudioMuted(state) || isUserInteractionRequiredForUnmute(state),
             startWithVideoMuted: getStartWithVideoMuted(state) || isUserInteractionRequiredForUnmute(state)
@@ -947,6 +948,22 @@ export default {
     },
 
     /**
+     * Sets multiple properties for the local participant in a single presence update.
+     *
+     * @param {Object} properties - Object of property names to values.
+     * @returns {void}
+     */
+    setLocalParticipantProperties(properties) {
+        if (!room) {
+            logger.warn('Not setting participant properties, conference not initialized');
+
+            return;
+        }
+
+        room.setLocalParticipantProperties(properties);
+    },
+
+    /**
      * Exposes a Command(s) API on this instance. It is necessitated by (1) the
      * desire to keep room private to this instance and (2) the need of other
      * modules to send and receive commands to and from participants.
@@ -1184,8 +1201,8 @@ export default {
      *
      * @returns {boolean}
      */
-    isAudioOnly() {
-        return Boolean(APP.store.getState()['features/base/audio-only'].enabled);
+    isLowBandwidthMode() {
+        return Boolean(APP.store.getState()['features/base/low-bandwidth-mode'].enabled);
     },
 
     /**
@@ -1220,6 +1237,7 @@ export default {
         APP.store.dispatch(stopReceiver());
 
         this._stopProxyConnection();
+        this._stopExternalShare();
 
         APP.store.dispatch(toggleScreenshotCaptureSummary(false));
         const tracks = APP.store.getState()['features/base/tracks'];
@@ -1804,7 +1822,7 @@ export default {
         .then(([ stream ]) => {
             // if we are in audio only mode or video was muted before
             // changing device, then mute
-            if (this.isAudioOnly() || videoWasMuted) {
+            if (this.isLowBandwidthMode() || videoWasMuted) {
                 return stream.mute()
                     .then(() => stream);
             }
@@ -1826,7 +1844,7 @@ export default {
     /**
      * Handles audio only changes.
      */
-    onToggleAudioOnly() {
+    onToggleLowBandwidthMode() {
         // Immediately update the UI by having remote videos and the large video update themselves.
         const displayedUserId = APP.UI.getLargeVideoID();
 
@@ -2118,6 +2136,7 @@ export default {
         APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();
+        this._stopExternalShare();
 
         APP.store.dispatch(destroyLocalTracks());
         this._localTracksInitialized = false;
@@ -2311,6 +2330,78 @@ export default {
         }
 
         this._proxyConnection.processMessage(event);
+    },
+
+    /**
+     * Handle a direct-cast screenshare signalling message from a remote sharer.
+     *
+     * Direct-cast is the successor to the {@code ProxyConnectionService} path above: a
+     * remote sharer (e.g. a laptop) opens a PLAIN RTCPeerConnection straight to this
+     * Jitsi Meet instance and adds its screen — and optionally system audio — tracks.
+     * {@link ExternalShareReceiver} terminates that peer connection here and Jitsi moves
+     * the received track(s) into the conference as the local screenshare. No
+     * ProxyConnectionService, no Jingle, no XMPP/Strophe JIDs, and audio comes along for
+     * free.
+     *
+     * @param {Object} signal - The signalling message ({ kind, sdp | candidate }).
+     * @returns {void}
+     */
+    onExternalShareSignal(signal) {
+        // A fresh offer begins a new cast session. If a receiver is already around (a
+        // second/reconnecting sharer, or a stale one whose PC died), tear it down first
+        // rather than feeding the new offer into the old — possibly already-published —
+        // peer connection, where _publish's once-only guard would swallow it.
+        // Optional chaining: signal is embedder-supplied, so it may be malformed/absent.
+        if (signal?.kind === 'offer') {
+            this._stopExternalShare();
+        }
+
+        if (!this._externalShare) {
+            this._externalShare = new ExternalShareReceiver({
+
+                // Reuse the meeting's own TURN credentials — the same source the old
+                // proxy borrowed — minus the XMPP signalling.
+                pcConfig: APP.connection?.xmpp?.connection?.jingle?.p2pIceConfig,
+
+                onSignal: out => APP.API.sendExternalShareSignal(out),
+
+                onTracks: ({ desktopVideoTrack, desktopAudioTrack }) => {
+                    APP.store.dispatch(toggleScreensharingA(true, false, {
+                        desktopStream: desktopVideoTrack,
+                        desktopAudioTrack
+                    }));
+                },
+
+                onClosed: ({ spontaneous, published } = {}) => {
+                    // If the sharer's connection dropped on its own (ICE failure, laptop
+                    // closed, sharer navigated away) while a share was live, the published
+                    // screenshare is now frozen in the meeting — take it down. Explicit
+                    // teardowns (hangup / _stopExternalShare) are driven from the conference
+                    // and remove the share through their own path, so we skip it there.
+                    if (spontaneous && published) {
+                        APP.store.dispatch(toggleScreensharingA(false, false));
+                    }
+
+                    this._externalShare = null;
+                }
+            });
+        }
+
+        this._externalShare.handleSignal(signal);
+    },
+
+    /**
+     * Terminates any direct-cast screenshare connection that is active.
+     *
+     * @private
+     * @returns {void}
+     */
+    _stopExternalShare() {
+        if (this._externalShare) {
+            this._externalShare.stop();
+        }
+
+        this._externalShare = null;
     },
 
     /**

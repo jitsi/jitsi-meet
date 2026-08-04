@@ -377,9 +377,16 @@ function replaceStoredTracks(oldTrack: any, newTrack: any) {
  */
 export function trackAdded(track: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        track.on(
-            JitsiTrackEvents.TRACK_MUTE_CHANGED,
-            () => dispatch(trackMutedChanged(track)));
+        // Translated audio tracks (source name <regularSourceName>.<language>) have no mute lifecycle, since
+        // presence/source-info is only signaled for the original source. Skip the inert mute listener for them.
+        const sourceName = track.getSourceName?.();
+        const isTranslatedTrack = typeof sourceName === 'string' && sourceName.includes('.');
+
+        if (!isTranslatedTrack) {
+            track.on(
+                JitsiTrackEvents.TRACK_MUTE_CHANGED,
+                () => dispatch(trackMutedChanged(track)));
+        }
         track.on(
             JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED,
             (type: VideoType) => dispatch(trackVideoTypeChanged(track, type)));

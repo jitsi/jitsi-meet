@@ -17,7 +17,7 @@ import type { IRoomsInfo } from '../react/features/breakout-rooms/types';
 
 import { appNavigate } from './react/features/app/actions.native';
 import { App } from './react/features/app/components/App.native';
-import { setAudioOnly } from './react/features/base/audio-only/actions';
+import { setLowBandwidthMode } from './react/features/base/low-bandwidth-mode/actions';
 import { setAudioMuted, setVideoMuted } from './react/features/base/media/actions';
 import { getRoomsInfo } from './react/features/breakout-rooms/functions';
 
@@ -56,7 +56,7 @@ interface IAppProps {
 
 export interface JitsiRefProps {
     close: Function;
-    setAudioOnly?: (value: boolean) => void;
+    setLowBandwidthMode?: (value: boolean) => void;
     setAudioMuted?: (muted: boolean) => void;
     setVideoMuted?: (muted: boolean) => void;
     getRoomsInfo?: () => IRoomsInfo;
@@ -86,10 +86,10 @@ export const JitsiMeeting = forwardRef<JitsiRefProps, IAppProps>((props, ref) =>
 
             dispatch(appNavigate(undefined));
         },
-        setAudioOnly: value => {
+        setLowBandwidthMode: value => {
             const dispatch = app.current.state.store.dispatch;
 
-            dispatch(setAudioOnly(value));
+            dispatch(setLowBandwidthMode(value));
         },
         setAudioMuted: muted => {
             const dispatch = app.current.state.store.dispatch;

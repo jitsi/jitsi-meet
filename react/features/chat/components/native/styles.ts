@@ -233,10 +233,16 @@ export default {
     },
 
     gifImage: {
+        flexGrow: 1,
+        height: undefined,
+        resizeMode: 'contain',
+        width: 250
+    },
+
+    gifMedia: {
+        height: 150,
         resizeMode: 'contain',
         width: 250,
-        height: undefined,
-        flexGrow: 1
     },
 
     senderDisplayName: {

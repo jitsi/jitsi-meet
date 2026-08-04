@@ -91,6 +91,9 @@ end
 
 -- Helper function to convert JWK to PEM format
 function M.jwk_to_pem(jwk)
+    if not jwk.n or not jwk.e then
+        return nil;
+    end
     -- Decode the modulus (n) and exponent (e) from base64url
     local n_bytes = base64url_decode(jwk.n)
     local e_bytes = base64url_decode(jwk.e)

@@ -68,7 +68,7 @@ const JitsiScreen = ({
     children,
     disableForcedKeyboardDismiss = false,
     footerComponent,
-    footerKeyboardSpacing = BaseTheme.spacing[4],
+    footerKeyboardSpacing = BaseTheme.spacing[3],
     hasBottomTextInput = false,
     hasExtraHeaderHeight = false,
     safeAreaInsets = [ 'bottom', 'left', 'right' ],

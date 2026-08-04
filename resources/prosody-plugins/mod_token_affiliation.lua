@@ -44,6 +44,10 @@ local function affiliation_from_token(session)
     return "member"
 end
 
+-- Hook priority -3.5: runs after lobby-bypass plugins such as mod_token_lobby_bypass
+-- (priority -3), so any affiliation they grant is visible here and can be upgraded
+-- to the correct token-derived value.  Runs before the lobby gate (-4) and
+-- Prosody's built-in members_only check (-5).
 module:hook("muc-occupant-pre-join", function(event)
     local room, occupant, session = event.room, event.occupant, event.origin
 
@@ -52,13 +56,10 @@ module:hook("muc-occupant-pre-join", function(event)
         return
     end
 
-    -- When lobby is active (members-only) and the user has no pre-existing
-    -- affiliation, let the lobby gate handle this join attempt.  Once a
-    -- moderator approves them (their affiliation is set to ≥member by the
-    -- lobby module), the next join attempt will have an existing affiliation
-    -- and this hook will upgrade it normally.
-    -- Exception: if the user is bypassing the lobby with the room password,
-    -- apply affiliation immediately so they keep their moderator role.
+    -- When lobby is active (members-only) only proceed when the user already
+    -- has a non-none affiliation (admitted by moderator, or granted by a bypass
+    -- plugin that ran at priority -3) or is bypassing via the room password.
+    -- Otherwise let the lobby gate (-4) block this first join attempt.
     if room:get_members_only() then
         local existing = room:get_affiliation(occupant.bare_jid)
         if not existing or existing == 'none' then
@@ -82,4 +83,4 @@ module:hook("muc-occupant-pre-join", function(event)
         occupant.role = "moderator"
     end
     module:log(LOGLEVEL, "set affiliation=%s for %s", affiliation, occupant.bare_jid)
-end)
+end, -3.5)

@@ -1,4 +1,4 @@
-import { createXmppClient, joinWithFocus } from './xmpp_client.js';
+import { createXmppClient, joinWithFocus, joinWithJibri, joinWithTranscriber } from './xmpp_client.js';
 
 /**
  * Creates a per-test context that tracks connected clients and provides
@@ -14,10 +14,12 @@ export function createTestContext() {
         /**
          * Creates a regular XMPP client and registers it for cleanup.
          *
+         * @param {object} [opts]  Options forwarded to createXmppClient (e.g.
+         *                         { params: { token } } to authenticate with a JWT).
          * @returns {Promise<XmppTestClient>}
          */
-        async connect() {
-            const c = await createXmppClient();
+        async connect(opts) {
+            const c = await createXmppClient(opts);
 
             clients.push(c);
 
@@ -48,6 +50,39 @@ export function createTestContext() {
          */
         async connectFocus(roomJid) {
             const c = await joinWithFocus(roomJid);
+
+            clients.push(c);
+
+            return c;
+        },
+
+        /**
+         * Joins the room as a Jibri recorder (recorder@recorder.localhost).
+         * The client's bare JID starts with 'recorder@recorder.' so is_jibri()
+         * returns true for this client. Registers the client for cleanup.
+         *
+         * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
+         * @returns {Promise<XmppTestClient>}
+         */
+        async connectJibri(roomJid) {
+            const c = await joinWithJibri(roomJid);
+
+            clients.push(c);
+
+            return c;
+        },
+
+        /**
+         * Joins the room as a transcriber (transcriber@recorder.localhost).
+         * The client's bare JID starts with 'transcriber@recorder.' so
+         * is_transcriber() returns true for this client. Registers the client
+         * for cleanup.
+         *
+         * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
+         * @returns {Promise<XmppTestClient>}
+         */
+        async connectTranscriber(roomJid) {
+            const c = await joinWithTranscriber(roomJid);
 
             clients.push(c);
 

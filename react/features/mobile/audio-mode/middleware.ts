@@ -3,7 +3,6 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
-import { SET_AUDIO_ONLY } from '../../base/audio-only/actionTypes';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -24,8 +23,7 @@ const AudioModeEmitter = new NativeEventEmitter(AudioMode);
 
 /**
  * Middleware that captures conference actions and sets the correct audio mode
- * based on the type of conference. Audio-only conferences don't use the speaker
- * by default, and video conferences do.
+ * based on whether we are in a conference or not.
  *
  * @param {Store} store - The redux store.
  * @returns {Function}
@@ -59,7 +57,6 @@ MiddlewareRegistry.register(store => next => action => {
     * conference after the password prompt appears.
     */
     case CONFERENCE_JOINED:
-    case SET_AUDIO_ONLY:
         return _updateAudioMode(store, next, action);
 
     case SET_CONFIG: {
@@ -159,13 +156,12 @@ function _updateAudioMode({ getState }: IStore, next: Function, action: AnyActio
     const result = next(action);
     const state = getState();
     const conference = getCurrentConference(state);
-    const { enabled: audioOnly } = state['features/base/audio-only'];
     let mode: string;
 
     if (getFeatureFlag(state, AUDIO_FOCUS_DISABLED, false)) {
         return result;
     } else if (conference) {
-        mode = audioOnly ? AudioMode.AUDIO_CALL : AudioMode.VIDEO_CALL;
+        mode = AudioMode.IN_CALL;
     } else {
         mode = AudioMode.DEFAULT;
     }

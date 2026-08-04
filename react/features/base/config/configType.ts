@@ -217,6 +217,16 @@ export interface IConfig {
         opusMaxAverageBitrate?: number | null;
         stereo?: boolean;
     };
+
+    /**
+     * Configuration for AI audio translation. Requires a deployment with the
+     * bridge translation backend; the toolbar control is only shown when enabled.
+     */
+    audioTranslation?: {
+        duckedVolume?: number;
+        enableSendingChangeEvents?: boolean;
+        enabled?: boolean;
+    };
     /**
      * @deprecated Use `transcription.autoTranscribeOnRecord` instead.
      */
@@ -323,7 +333,6 @@ export interface IConfig {
      * @deprecated Use `deeplinking.disabled` instead.
      */
     disableDeepLinking?: boolean;
-    disableFilmstripAutohiding?: boolean;
     disableFocus?: boolean;
     disableIframeAPI?: boolean;
     /**
@@ -671,6 +680,17 @@ export interface IConfig {
         enabled?: boolean;
         mode?: 'always' | 'recording';
     };
+
+    /**
+     * Multi-screen support. When enabled, an embedder can use the iframe External
+     * API `setSecondScreen` command to render a meeting surface (the stage, the
+     * screenshare, or a pinned participant) on a second display in its own
+     * fullscreen window. Chromium-only; intended for managed/kiosk room
+     * appliances. Disabled by default.
+     */
+    secondScreen?: {
+        enabled?: boolean;
+    };
     securityUi?: {
         disableLobbyPassword?: boolean;
         hideLobbyButton?: boolean;
@@ -689,8 +709,8 @@ export interface IConfig {
      */
     speakerStatsOrder?: Array<'role' | 'name' | 'hasLeft'>;
     startAudioMuted?: number;
-    startAudioOnly?: boolean;
     startLastN?: number;
+    startLowBandwidthMode?: boolean;
     startScreenSharing?: boolean;
     startSilent?: boolean;
     startVideoMuted?: number;
@@ -712,6 +732,9 @@ export interface IConfig {
     tileView?: {
         disabled?: boolean;
         numberOfVisibleTiles?: number;
+    };
+    timeTimer?: {
+        enabled?: boolean;
     };
     tokenAuthInline?: boolean;
     tokenAuthUrl?: string;
@@ -742,10 +765,22 @@ export interface IConfig {
         autoCaptionOnTranscribe?: boolean;
         autoTranscribeOnRecord?: boolean;
         customLanguages?: object;
+
+        /**
+         * When true, advertises (via a MUC presence participant property) that this participant's audio
+         * should be diarized by the transcriber. Intended for endpoints carrying multiple speakers, e.g.
+         * conference-room systems or dial-in.
+         *
+         * Takes effect only at join time: the flag is included in the initial presence and read by jicofo
+         * when it allocates the colibri endpoint. It must be set before joining (e.g. via config or the
+         * `#config.transcription.diarize=true` URL override); toggling it during a call has no effect.
+         */
+        diarize?: boolean;
         disableClosedCaptions?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
         renderTranscriptDetails?: boolean;
+        translationEnabled?: boolean;
         translationLanguages?: Array<string>;
         translationLanguagesHead?: Array<string>;
         useAppLanguage?: boolean;

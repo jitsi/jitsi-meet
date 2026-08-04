@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { IOS_SCREENSHARING_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
-import { translate } from '../../../base/i18n/functions';
+import { translate } from '../../../base/i18n/functions.native';
 import { IconScreenshare } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { isLocalVideoTrackDesktop } from '../../../base/tracks/functions.native';
@@ -29,7 +29,9 @@ interface IProps extends AbstractButtonProps {
 
 const styles = {
     screenCapturePickerView: {
-        display: 'none'
+        position: 'absolute',
+        width: 0,
+        height: 0
     }
 };
 

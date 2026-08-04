@@ -20,6 +20,8 @@ static NSString * const sendEventNotificationName = @"org.jitsi.meet.SendEvent";
 
 @interface ExternalAPI : RCTEventEmitter<RCTBridgeModule>
 
++ (ExternalAPI *)sharedInstance;
+
 - (void)sendHangUp;
 - (void)sendSetAudioMuted:(BOOL)muted;
 - (void)sendEndpointTextMessage:(NSString*)message :(NSString*)to;

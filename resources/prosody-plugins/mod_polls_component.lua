@@ -255,6 +255,9 @@ end
             }
 
             -- now send message to all participants
+            -- Only relay the sanitized answers (name only) so no unexpected
+            -- fields from the sender's payload are forwarded to participants.
+            data.answers = answers;
             data.senderId = poll_creator.occupant_id;
             data.type = 'polls';
             local json_msg_str, error = json.encode(data);

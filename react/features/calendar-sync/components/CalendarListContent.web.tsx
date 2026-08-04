@@ -6,9 +6,23 @@ import { sendAnalytics } from '../../analytics/functions';
 import { appNavigate } from '../../app/actions.web';
 import { IReduxState, IStore } from '../../app/types';
 import MeetingsList from '../../base/react/components/web/MeetingsList';
+import { setCalendarTimerDuration } from '../../time-timer/actions';
 
 import AddMeetingUrlButton from './AddMeetingUrlButton.web';
 import JoinButton from './JoinButton.web';
+
+/**
+ * A calendar event, limited to the fields this component reads. Mirrors the
+ * shape stored in {@code features/calendar-sync}: the dates are ISO strings.
+ */
+interface ICalendarEvent {
+    calendarId?: string;
+    endDate?: string;
+    id?: string;
+    startDate?: string;
+    title?: string;
+    url?: string;
+}
 
 /**
  * The type of the React {@code Component} props of
@@ -19,7 +33,7 @@ interface IProps {
     /**
      * The calendar event list.
      */
-    _eventList: Array<Object>;
+    _eventList: Array<any>;
 
     /**
      * Indicates if the list is disabled or not.
@@ -117,6 +131,26 @@ class CalendarListContent extends Component<IProps> {
      */
     _onPress(url: string, analyticsEventName = 'meeting.tile') {
         sendAnalytics(createCalendarClickedEvent(analyticsEventName));
+
+        // Find the event being joined and, if it has a parseable start + end,
+        // record its duration for the time-timer keyed to this URL. The
+        // middleware only applies it when the joined conference matches that
+        // URL, so opening a meeting and bailing at prejoin cannot leak its
+        // duration into a different meeting joined afterwards.
+        const event: ICalendarEvent | undefined = this.props._eventList?.find(e => e.url === url);
+        const startUnix = event?.startDate ? Date.parse(event.startDate) : NaN;
+        const endUnix = event?.endDate ? Date.parse(event.endDate) : NaN;
+
+        if (!isNaN(startUnix) && !isNaN(endUnix) && endUnix > startUnix) {
+            this.props.dispatch(setCalendarTimerDuration(
+                Math.round((endUnix - startUnix) / 1000),
+                {
+                    startTimeUnix: startUnix,
+                    url
+                }));
+        } else {
+            this.props.dispatch(setCalendarTimerDuration(undefined));
+        }
 
         this.props.dispatch(appNavigate(url));
     }

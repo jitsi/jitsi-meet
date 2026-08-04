@@ -36,6 +36,45 @@ async function openVBDialog() {
 }
 
 /**
+ * Reads the V2 effect's processor state from the local video JitsiLocalTrack.
+ * Returns `{ isReady, frameCount }` or `null` when the effect or processor is absent.
+ *
+ * Used to test the mute/unmute fix directly without depending on pixel rendering of the
+ * stage or filmstrip thumbnail — both of which are unreliable in headless Chrome.
+ */
+async function getV2ProcessorState(): Promise<{ frameCount: number; isReady: boolean; } | null> {
+    return ctx.p1.execute(() => {
+        const tracks = APP.store.getState()['features/base/tracks'];
+        const localVideo = tracks.find((t: any) => t.local && t.mediaType === 'video');
+        const processor = (localVideo?.jitsiTrack as any)?._streamEffect?._processor;
+
+        if (!processor) {
+            return null;
+        }
+
+        return {
+            frameCount: processor._frameCount ?? 0,
+            isReady: Boolean(processor._isReady)
+        };
+    });
+}
+
+/**
+ * Waits until the V2 effect's inference worker has finished initialising. Redux flips
+ * backgroundEffectEnabled to true the moment setEffect dispatches — well before the worker
+ * has loaded the segmentation model. Tests that immediately mute/unmute after waiting only
+ * on the Redux flag race against the worker init, intermittently failing on slower runners.
+ *
+ * @param {number} timeout - How long to wait in ms.
+ */
+async function waitForV2EffectReady(timeout = 15000): Promise<void> {
+    await ctx.p1.driver.waitUntil(
+        async () => Boolean((await getV2ProcessorState())?.isReady),
+        { timeout, timeoutMsg: `V2 effect processor not ready within ${timeout}ms` }
+    );
+}
+
+/**
  * Waits until backgroundEffectEnabled settles to the expected value.
  * When expecting true, the value must remain stable for stabilityWindow ms to confirm the
  * async setEffect() did not roll back.
@@ -98,12 +137,50 @@ describe('Virtual backgrounds V2 engine', () => {
         await vbDialog.confirm();
         await waitForEffectEnabled(true);
 
+        // Worker model load is async; the next test mute/unmutes immediately after, so wait
+        // for the processor to actually be ready before letting the suite proceed.
+        await waitForV2EffectReady();
+
         const state = await getVBState();
 
         expect(state.backgroundEffectEnabled).toBe(true);
         expect(state.backgroundType).toBe('blur');
         expect(state.blurValue).toBe(25);
         expect(state.selectedThumbnail).toBe('blur');
+    });
+
+    it('mute and unmute camera while blur is active — processor stays ready across cycle', async () => {
+        // Blur was enabled by the prior test (which also waited for the processor to be ready).
+        let state = await getVBState();
+
+        expect(state.backgroundEffectEnabled).toBe(true);
+        expect(state.backgroundType).toBe('blur');
+
+        const baseline = await getV2ProcessorState();
+
+        expect(baseline).not.toBeNull();
+        expect(baseline!.isReady).toBe(true);
+
+        // Mute then unmute. Pre-fix this disposed the processor (_isReady -> false) and unmute
+        // had to reload the model (~1-2s). Post-fix the processor stays alive throughout.
+        // Hold mute for 2s so that the mute fully settles before unmuting.
+        await ctx.p1.getToolbar().clickVideoMuteButton();
+        await ctx.p1.driver.pause(2000);
+        await ctx.p1.getToolbar().clickVideoUnmuteButton();
+        await ctx.p1.driver.pause(1000);
+
+        // Immediately after unmute the processor must still be ready (no dispose on mute).
+        // If the dispose-on-stopEffect regression returned, _isReady would be false for the
+        // ~1-2s it takes to reload the worker model.
+        const afterUnmute = await getV2ProcessorState();
+
+        expect(afterUnmute).not.toBeNull();
+        expect(afterUnmute!.isReady).toBe(true);
+
+        // Effect state should remain consistent.
+        state = await getVBState();
+        expect(state.backgroundEffectEnabled).toBe(true);
+        expect(state.backgroundType).toBe('blur');
     });
 
     it('select slight blur with V2 engine — redux state correct', async () => {

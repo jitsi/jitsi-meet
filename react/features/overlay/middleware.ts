@@ -42,7 +42,8 @@ const RN_NO_RELOAD_DIALOG_ERRORS = [
     JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED,
     JitsiConferenceErrors.CONFERENCE_DESTROYED,
     JitsiConferenceErrors.CONNECTION_ERROR,
-    JitsiConferenceErrors.CONFERENCE_RESTARTED
+    JitsiConferenceErrors.CONFERENCE_RESTARTED,
+    JitsiConferenceErrors.DISPLAY_NAME_REQUIRED
 ];
 
 const ERROR_TYPES = {
