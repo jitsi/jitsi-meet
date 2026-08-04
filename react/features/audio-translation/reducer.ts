@@ -5,6 +5,7 @@ import {
     CLEAR_RECEIVING_TRANSLATED_SOURCES,
     SET_AUDIO_TRANSLATION_LANGUAGE,
     SET_PARTICIPANT_AUDIO_TRANSLATION_LANGUAGE,
+    SET_TRANSLATION_DELIVERY_PENDING,
     SET_TRANSLATION_LISTENERS,
     UPDATE_TRANSLATED_SOURCE_SENDING
 } from './actionTypes';
@@ -13,6 +14,12 @@ import {
  * The redux state of the audio-translation feature.
  */
 export interface IAudioTranslationState {
+
+    /**
+     * Per-speaker count of participants still hearing that speaker's translated audio, published by the
+     * speaker itself. Drives the "wait before speaking" ring; absent/0 means nothing pending.
+     */
+    deliveryPending: { [participantId: string]: number; };
 
     /**
      * The default target language remote audio is translated into, or null when off.
@@ -39,6 +46,7 @@ export interface IAudioTranslationState {
 }
 
 const DEFAULT_STATE: IAudioTranslationState = {
+    deliveryPending: {},
     language: null,
     participantLanguages: {},
     receivingSources: [],
@@ -52,8 +60,10 @@ ReducerRegistry.register<IAudioTranslationState>(
         case CLEAR_AUDIO_TRANSLATION:
             return DEFAULT_STATE;
         case CLEAR_RECEIVING_TRANSLATED_SOURCES:
+            // Both are transient bridge-derived delivery state; they are cleared together.
             return {
                 ...state,
+                deliveryPending: {},
                 receivingSources: []
             };
         case SET_AUDIO_TRANSLATION_LANGUAGE:
@@ -69,6 +79,26 @@ ReducerRegistry.register<IAudioTranslationState>(
                     [action.participantId]: action.language
                 }
             };
+        case SET_TRANSLATION_DELIVERY_PENDING: {
+            const { count, participantId } = action;
+
+            if ((state.deliveryPending[participantId] ?? 0) === count) {
+                return state;
+            }
+
+            const deliveryPending = { ...state.deliveryPending };
+
+            if (count > 0) {
+                deliveryPending[participantId] = count;
+            } else {
+                delete deliveryPending[participantId];
+            }
+
+            return {
+                ...state,
+                deliveryPending
+            };
+        }
         case SET_TRANSLATION_LISTENERS:
             return {
                 ...state,

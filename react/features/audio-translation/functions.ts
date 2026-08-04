@@ -3,7 +3,7 @@ import { AUDIO_TRANSLATION_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
-import { isLocalParticipantModerator } from '../base/participants/functions';
+import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants/functions';
 import { ITrack } from '../base/tracks/types';
 
 import { DUCKED_ORIGINAL_VOLUME, TranslationTreatment } from './constants';
@@ -54,8 +54,17 @@ export function getSourceOwnerEndpointId(sourceName: string): string {
  * @returns {boolean}
  */
 export function isReceivingTranslationFrom(state: IReduxState, participantId: string): boolean {
+    const language = getEffectiveTranslationLanguage(state, participantId);
+
+    // The bridge announces sending changes to every endpoint, so a source being in flight does not mean we
+    // subscribed to it; require our own selection for this speaker to match the source's language.
+    if (!language) {
+        return false;
+    }
+
     return state['features/audio-translation'].receivingSources
-        .some(sourceName => getSourceOwnerEndpointId(sourceName) === participantId);
+        .some(sourceName => getSourceOwnerEndpointId(sourceName) === participantId
+            && sourceName.endsWith(`.${language}`));
 }
 
 /**
@@ -234,4 +243,55 @@ export function getDuckedVolumeForParticipant(state: IReduxState, participantId?
     const userVolume = participantId ? state['features/filmstrip'].participantsVolume[participantId] : undefined;
 
     return typeof userVolume === 'number' ? Math.min(userVolume, duckedVolume) : duckedVolume;
+}
+
+/**
+ * The number of participants still hearing the given speaker's translated audio, as published by that
+ * speaker. 0 when nothing is pending or the speaker's client does not publish the count.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} participantId - The speaker's participant id.
+ * @returns {number}
+ */
+export function getTranslationDeliveryPendingCount(state: IReduxState, participantId: string): number {
+    return state['features/audio-translation'].deliveryPending[participantId] ?? 0;
+}
+
+/**
+ * Whether translated audio for the given speaker is still being delivered, so others should wait before
+ * speaking. Falls back to any in-flight translated source owned by the speaker, so the ring still shows when
+ * the speaker's client does not publish a count.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} participantId - The speaker's participant id.
+ * @returns {boolean}
+ */
+export function isTranslationDeliveryPending(state: IReduxState, participantId: string): boolean {
+    if (getTranslationDeliveryPendingCount(state, participantId) > 0) {
+        return true;
+    }
+
+    return state['features/audio-translation'].receivingSources
+        .some(sourceName => getSourceOwnerEndpointId(sourceName) === participantId);
+}
+
+/**
+ * The number of participants still hearing the local participant's translated audio: everyone translating us
+ * while any of our translated sources is still in flight. This is what the local client publishes so other
+ * clients can render the count.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {number}
+ */
+export function getLocalTranslationDeliveryPendingCount(state: IReduxState): number {
+    const localId = getLocalParticipant(state)?.id;
+
+    if (!localId) {
+        return 0;
+    }
+
+    const { receivingSources, translationListeners } = state['features/audio-translation'];
+    const inFlight = receivingSources.some(sourceName => getSourceOwnerEndpointId(sourceName) === localId);
+
+    return inFlight ? translationListeners.length : 0;
 }

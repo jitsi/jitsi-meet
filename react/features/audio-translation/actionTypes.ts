@@ -24,6 +24,12 @@ export const SET_AUDIO_TRANSLATION_LANGUAGE = 'SET_AUDIO_TRANSLATION_LANGUAGE';
 export const SET_PARTICIPANT_AUDIO_TRANSLATION_LANGUAGE = 'SET_PARTICIPANT_AUDIO_TRANSLATION_LANGUAGE';
 
 /**
+ * The type of (redux) action which records how many participants are still hearing a speaker's translated
+ * audio after the speaker stopped talking (0 clears it).
+ */
+export const SET_TRANSLATION_DELIVERY_PENDING = 'SET_TRANSLATION_DELIVERY_PENDING';
+
+/**
  * The type of (redux) action which sets the list of remote participants currently translating the local
  * participant's audio (i.e. who to show the "translation enabled" badge on).
  */

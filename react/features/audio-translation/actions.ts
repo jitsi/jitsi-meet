@@ -3,6 +3,7 @@ import {
     CLEAR_RECEIVING_TRANSLATED_SOURCES,
     SET_AUDIO_TRANSLATION_LANGUAGE,
     SET_PARTICIPANT_AUDIO_TRANSLATION_LANGUAGE,
+    SET_TRANSLATION_DELIVERY_PENDING,
     SET_TRANSLATION_LISTENERS,
     UPDATE_TRANSLATED_SOURCE_SENDING
 } from './actionTypes';
@@ -114,5 +115,25 @@ export function updateTranslatedSourceSending(sourceName: string, sending: boole
         sending,
         sourceName,
         timestamp
+    };
+}
+
+/**
+ * Records how many participants are still hearing the given speaker's translated audio, so a "wait before
+ * speaking" ring can be shown on that speaker's thumbnail. A count of 0 clears it.
+ *
+ * @param {string} participantId - The speaker whose translated audio is still being delivered.
+ * @param {number} count - The number of participants still hearing the translation.
+ * @returns {{
+ *     count: number,
+ *     participantId: string,
+ *     type: string
+ * }}
+ */
+export function setTranslationDeliveryPending(participantId: string, count: number) {
+    return {
+        type: SET_TRANSLATION_DELIVERY_PENDING,
+        count,
+        participantId
     };
 }
