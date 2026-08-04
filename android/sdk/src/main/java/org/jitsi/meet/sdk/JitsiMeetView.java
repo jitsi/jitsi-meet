@@ -17,6 +17,7 @@
 package org.jitsi.meet.sdk;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -191,6 +192,12 @@ public class JitsiMeetView extends FrameLayout {
         }
 
         ReactHost reactHost = ReactHostHolder.getReactHost();
+        if (reactHost == null) {
+            // Rebuild the host after destroyReactNative().
+            JitsiMeetLogger.w("ReactHost not initialized, re-creating");
+            ReactHostHolder.initReactHost((Application) getContext().getApplicationContext());
+            reactHost = ReactHostHolder.getReactHost();
+        }
         if (reactHost == null) {
             JitsiMeetLogger.w("Cannot create surface, ReactHost is not initialized");
             return;

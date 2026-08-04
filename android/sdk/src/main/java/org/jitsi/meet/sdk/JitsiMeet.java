@@ -78,6 +78,23 @@ public class JitsiMeet {
         }
     }
 
+    /**
+     * Starts the React Native runtime if it's not already running. Optional
+     * warm-up after {@link #destroyReactNative()}; joining a conference also
+     * restarts it on demand.
+     */
+    public static void instantiateReactNative() {
+        ReactHostHolder.instantiateReactNative();
+    }
+
+    /**
+     * Destroys the React Native runtime, freeing its resources. Teardown is
+     * asynchronous. Every {@link JitsiMeetView} must be disposed first.
+     */
+    public static void destroyReactNative() {
+        ReactHostHolder.destroyReactHost();
+    }
+
     public static boolean isCrashReportingDisabled(Context context) {
         SharedPreferences preferences = context.getSharedPreferences("jitsi-default-preferences", Context.MODE_PRIVATE);
         String value = preferences.getString("isCrashReportingDisabled", "");
