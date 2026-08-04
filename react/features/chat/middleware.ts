@@ -78,9 +78,9 @@ import {
     isSendGroupChatDisabled,
     isVisitorChatParticipant
 } from './functions';
+import logger from './logger';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
 import './subscriber';
-
 /**
  * Timeout for when to show the privacy notice after a private message was received.
  *
@@ -301,11 +301,14 @@ MiddlewareRegistry.register(store => next => action => {
             }
 
             if (isLobbyChatActive && lobbyMessageRecipient) {
+                const messageId = uuidv4();
+
                 conference.sendLobbyMessage({
                     type: LOBBY_CHAT_MESSAGE,
-                    message: action.message
+                    message: action.message,
+                    messageId
                 }, lobbyMessageRecipient.id);
-                _persistSentPrivateMessage(store, lobbyMessageRecipient, action.message, true);
+                _persistSentPrivateMessage(store, lobbyMessageRecipient, action.message, true, messageId);
             } else if (privateMessageRecipient) {
                 const messageId = uuidv4();
 
@@ -322,18 +325,26 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const conference = getCurrentConference(state);
 
+        if (!localParticipant || action.message.participantId !== localParticipant.id) {
+            logger.warn('Ignoring retraction request for a message that does not belong to the local participant.');
+            break;
+        }
         if (conference) {
-            conference.sendMessageRetraction(
-                action.message.messageId,
-                action.message.privateMessage
-                    ? action.message.recipientId
-                    : undefined,
-                action.message.sentToVisitor
-            );
+            if (action.message.lobbyChat) {
+                conference.sendLobbyMessageRetraction(action.message.messageId, action.message.recipientId);
+            } else {
+                conference.sendMessageRetraction(
+                    action.message.messageId,
+                    action.message.privateMessage
+                        ? action.message.recipientId
+                        : undefined,
+                    action.message.sentToVisitor
+                );
+            }
 
             // For group chat this comes back via the MUC echo, but private
             // messages don't echo back to the sender via the normal path.
-            if ((action.message.privateMessage || action.message.lobbyChat) && localParticipant) {
+            if ((action.message.privateMessage || action.message.lobbyChat)) {
                 dispatch(retractMessage(action.message.messageId, localParticipant.id));
             }
         }
@@ -619,19 +630,45 @@ function _handleChatError({ dispatch }: IStore, error: Error) {
  *
  * @param {string} message - The message received.
  * @param {string} participantId - The participant id.
+ * @param {string} messageId - The optional message id.
  * @returns {Function}
  */
-export function handleLobbyMessageReceived(message: string, participantId: string) {
+export function handleLobbyMessageReceived(message: string, participantId: string, messageId?: string) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         _handleReceivedMessage({ dispatch,
             getState }, { participantId,
             message,
             privateMessage: false,
             lobbyChat: true,
+            messageId,
             timestamp: Date.now() });
     };
 }
 
+/**
+ * Handles a retracted message received from the lobby room.
+ *
+ * @param {string} messageId - The id of the message that is retracted.
+ * @param {string} participantId - Id of the participant that sent the message.
+ * @returns {Function}
+ */
+export function handleLobbyMessageRetracted(messageId: string, participantId: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { messages } = getState()['features/chat'];
+
+        const originalMessage = messages.find(message => message.messageId === messageId);
+
+        if (!originalMessage) {
+            return;
+        }
+
+        if (originalMessage.participantId !== participantId) {
+            return;
+        }
+
+        dispatch(retractMessage(messageId, participantId));
+    };
+}
 
 /**
  * Function to get lobby chat user display name.

@@ -96,6 +96,7 @@ export interface IConferenceMetadata {
 export interface IJitsiConference {
     addCommandListener: Function;
     addLobbyMessageListener: Function;
+    addLobbyMessageRetractionListener: Function;
     addTrack: Function;
     authenticateAndUpgradeRole: Function;
     avModerationApprove: Function;
@@ -159,6 +160,7 @@ export interface IJitsiConference {
     sendFaceLandmarks: (faceLandmarks: FaceLandmarks) => void;
     sendFeedback: Function;
     sendLobbyMessage: Function;
+    sendLobbyMessageRetraction: Function;
     sendMessage: Function;
     sendMessageRetraction: Function;
     sendPrivateTextMessage: Function;
