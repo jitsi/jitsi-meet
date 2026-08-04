@@ -31,6 +31,7 @@
     "@jitsi/rnnoise-wasm": "0.2.1",
     "@matrix-org/olm": "3.2.15",
     "@mediapipe/selfie_segmentation": "0.1.1675465747",
+    "@mediapipe/tasks-vision": "0.10.35",
     "@microsoft/microsoft-graph-client": "3.0.1",
     "@mui/material": "5.12.1",
     "@react-native-async-storage/async-storage": "1.23.1",

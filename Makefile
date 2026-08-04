@@ -10,6 +10,7 @@ EXCALIDRAW_DIR_DEV = node_modules/@jitsi/excalidraw/dist/dev
 TFLITE_WASM = react/features/stream-effects/virtual-background/vendor/tflite
 MEET_MODELS_DIR  = react/features/stream-effects/virtual-background/vendor/models
 MEDIAPIPE_SEGMENTATION_DIR = node_modules/@mediapipe/selfie_segmentation
+MEDIAPIPE_VISION_DIR = node_modules/@mediapipe/tasks-vision/wasm
 FACE_MODELS_DIR = node_modules/@vladmandic/human-models/models
 NODE_SASS = ./node_modules/.bin/sass
 NPM = npm
@@ -35,7 +36,7 @@ clean:
 	rm -fr $(BUILD_DIR)
 
 .NOTPARALLEL:
-deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-excalidraw deploy-tflite deploy-meet-models deploy-mediapipe-segmentation deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-css deploy-local deploy-face-landmarks
+deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-excalidraw deploy-tflite deploy-meet-models deploy-mediapipe-segmentation deploy-ar-wasm deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-css deploy-local deploy-face-landmarks
 
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
@@ -100,6 +101,7 @@ deploy-excalidraw-dev:
 deploy-meet-models:
 	cp \
 		$(MEET_MODELS_DIR)/*.tflite \
+		$(MEET_MODELS_DIR)/face_landmarker.task \
 		$(DEPLOY_DIR)
 
 deploy-mediapipe-segmentation:
@@ -116,6 +118,13 @@ deploy-face-landmarks:
 		$(FACE_MODELS_DIR)/emotion.json \
 		$(DEPLOY_DIR)
 
+deploy-ar-wasm:
+	mkdir -p $(DEPLOY_DIR)/mediapipe-vision
+	cp \
+		$(MEDIAPIPE_VISION_DIR)/vision_wasm_internal.js \
+		$(MEDIAPIPE_VISION_DIR)/vision_wasm_internal.wasm \
+		$(DEPLOY_DIR)/mediapipe-vision
+
 deploy-css:
 	$(NODE_SASS) $(STYLES_MAIN) $(STYLES_BUNDLE) && \
 	$(CLEANCSS) --skip-rebase $(STYLES_BUNDLE) > $(STYLES_DESTINATION) && \
@@ -125,7 +134,7 @@ deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-mediapipe-segmentation deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-excalidraw-dev deploy-face-landmarks
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-mediapipe-segmentation deploy-ar-wasm deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-excalidraw-dev deploy-face-landmarks
 	$(WEBPACK_DEV_SERVER)
 
 source-package: compile deploy
