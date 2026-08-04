@@ -3,7 +3,7 @@ import { AUDIO_TRANSLATION_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
-import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants/functions';
+import { isLocalParticipantModerator } from '../base/participants/functions';
 import { ITrack } from '../base/tracks/types';
 
 import { DUCKED_ORIGINAL_VOLUME, TranslationTreatment } from './constants';
@@ -273,25 +273,4 @@ export function isTranslationDeliveryPending(state: IReduxState, participantId: 
 
     return state['features/audio-translation'].receivingSources
         .some(sourceName => getSourceOwnerEndpointId(sourceName) === participantId);
-}
-
-/**
- * The number of participants still hearing the local participant's translated audio: everyone translating us
- * while any of our translated sources is still in flight. This is what the local client publishes so other
- * clients can render the count.
- *
- * @param {IReduxState} state - The redux state.
- * @returns {number}
- */
-export function getLocalTranslationDeliveryPendingCount(state: IReduxState): number {
-    const localId = getLocalParticipant(state)?.id;
-
-    if (!localId) {
-        return 0;
-    }
-
-    const { receivingSources, translationListeners } = state['features/audio-translation'];
-    const inFlight = receivingSources.some(sourceName => getSourceOwnerEndpointId(sourceName) === localId);
-
-    return inFlight ? translationListeners.length : 0;
 }

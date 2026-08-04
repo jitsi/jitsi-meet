@@ -12,14 +12,10 @@ import {
 import {
     clearAudioTranslation,
     clearReceivingTranslatedSources,
-    setTranslationDeliveryPending,
     setTranslationListeners,
     updateTranslatedSourceSending
 } from './actions';
-import {
-    getLocalTranslationDeliveryPendingCount,
-    isAudioTranslationRoomEnabled
-} from './functions';
+import { isAudioTranslationRoomEnabled } from './functions';
 import logger from './logger';
 
 /**
@@ -34,10 +30,6 @@ const ERROR_NOTIFICATION_KEYS: { [condition: string]: string; } = {
 
 const DEFAULT_ERROR_KEY = 'audioTranslation.errorGeneric';
 
-/**
- * Participant property carrying the number of participants still hearing that participant's translation.
- */
-const TRANSLATION_DELIVERY_PENDING_PROPERTY = 'translationDeliveryPending';
 
 /**
  * Middleware that drives the bridge-side translation when the local user changes
@@ -173,44 +165,4 @@ StateListenerRegistry.register(
                 titleKey: 'audioTranslation.disabledForRoom'
             }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
         }
-    });
-
-/**
- * Publishes how many participants are still hearing the local participant's translated audio, so remote
- * clients can show the "wait before speaking" ring and count on our thumbnail.
- */
-StateListenerRegistry.register(
-    state => getLocalTranslationDeliveryPendingCount(state),
-    (count, { getState }) => {
-        getState()['features/base/conference'].conference
-            ?.setLocalParticipantProperty(TRANSLATION_DELIVERY_PENDING_PROPERTY, count);
-    });
-
-/**
- * Ingests the delivery-pending count published by remote speakers.
- */
-StateListenerRegistry.register(
-    state => state['features/base/conference'].conference,
-    (conference, { dispatch }) => {
-        if (!conference) {
-            return;
-        }
-
-        const update = (participant: any, value: unknown) =>
-            dispatch(setTranslationDeliveryPending(participant.getId(), Number(value) || 0));
-
-        conference.getParticipants().forEach((participant: any) => {
-            const value = participant.getProperty(TRANSLATION_DELIVERY_PENDING_PROPERTY);
-
-            if (value !== undefined) {
-                update(participant, value);
-            }
-        });
-
-        conference.on(JitsiConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
-            (participant: any, name: string, _oldValue: unknown, newValue: unknown) => {
-                if (name === TRANSLATION_DELIVERY_PENDING_PROPERTY) {
-                    update(participant, newValue);
-                }
-            });
     });
