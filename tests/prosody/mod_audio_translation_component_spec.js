@@ -795,9 +795,11 @@ describe('mod_audio_translation_component', () => {
 
             await pushAndGetRequests(rx1, foc, { [sender.nick]: 'en' });
 
-            // rx2 also wants en — aggregate unchanged, so no broadcast fires.
+            // rx2 also wants en: the language set is unchanged, but the per-language listener counts
+            // change (1 -> 2), so a broadcast still fires. Consume it, otherwise the next wait would
+            // return this one and see the pre-switch aggregate.
             rx2.sendAudioTranslation(AT_COMPONENT, { [sender.nick]: 'en' });
-            await settle();
+            await waitForMetadata(foc);
 
             // rx1 switches to es; rx2 still references en → { sender: [en, es] }.
             const requests = await pushAndGetRequests(rx1, foc, { [sender.nick]: 'es' });
