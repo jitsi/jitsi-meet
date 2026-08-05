@@ -62,11 +62,6 @@ class ReactHostHolder {
      */
     private static ReactHost reactHost;
 
-    /**
-     * Application reference kept for re-creating the host after destroy.
-     */
-    private static Application application;
-
     private static List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> nativeModules
             = new ArrayList<>(Arrays.<NativeModule>asList(
@@ -217,8 +212,6 @@ class ReactHostHolder {
             return;
         }
 
-        application = app;
-
         // Initialize the WebRTC module options.
         WebRTCModuleOptions options = WebRTCModuleOptions.getInstance();
         options.enableMediaProjectionService = true;
@@ -234,9 +227,8 @@ class ReactHostHolder {
 
         JitsiMeetLogger.d(TAG + " initializing RN");
 
-        // Same construction DefaultReactHost.getDefaultReactHost does internally,
-        // minus its never-cleared static cache, so the host can be rebuilt after
-        // destroyReactHost().
+        // Same construction getDefaultReactHost() does, minus its private static cache
+        // that only an internal invalidate() clears — a destroyed host is never replaced.
         JSBundleLoader bundleLoader
             = JSBundleLoader.createAssetLoader(app, "assets://index.android.bundle", true);
 
@@ -270,18 +262,6 @@ class ReactHostHolder {
             BuildConfig.DEBUG       /* useDevSupport */);
 
         reactHost.start();
-    }
-
-    /**
-     * Starts the React Native runtime if it's not already running.
-     */
-    static void instantiateReactNative() {
-        if (application == null) {
-            JitsiMeetLogger.w(TAG + " Cannot instantiate RN, SDK is not initialized");
-            return;
-        }
-
-        initReactHost(application);
     }
 
     /**

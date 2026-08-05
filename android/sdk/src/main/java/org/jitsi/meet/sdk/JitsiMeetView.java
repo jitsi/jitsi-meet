@@ -17,7 +17,6 @@
 package org.jitsi.meet.sdk;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -195,7 +194,7 @@ public class JitsiMeetView extends FrameLayout {
         if (reactHost == null) {
             // Rebuild the host after destroyReactNative().
             JitsiMeetLogger.w("ReactHost not initialized, re-creating");
-            ReactHostHolder.initReactHost((Application) getContext().getApplicationContext());
+            JitsiMeet.instantiateReactNative(getContext());
             reactHost = ReactHostHolder.getReactHost();
         }
         if (reactHost == null) {

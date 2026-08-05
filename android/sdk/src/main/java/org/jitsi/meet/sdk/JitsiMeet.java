@@ -16,6 +16,7 @@
 package org.jitsi.meet.sdk;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -82,14 +83,17 @@ public class JitsiMeet {
      * Starts the React Native runtime if it's not already running. Optional
      * warm-up after {@link #destroyReactNative()}; joining a conference also
      * restarts it on demand.
+     *
+     * @param context - Any {@link Context}; its application context is used.
      */
-    public static void instantiateReactNative() {
-        ReactHostHolder.instantiateReactNative();
+    public static void instantiateReactNative(Context context) {
+        ReactHostHolder.initReactHost((Application) context.getApplicationContext());
     }
 
     /**
      * Destroys the React Native runtime, freeing its resources. Teardown is
-     * asynchronous. Every {@link JitsiMeetView} must be disposed first.
+     * asynchronous. Every {@link JitsiMeetView} must be disposed first; the
+     * next {@link JitsiMeetView} join() re-creates the runtime.
      */
     public static void destroyReactNative() {
         ReactHostHolder.destroyReactHost();
