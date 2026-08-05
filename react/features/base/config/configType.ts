@@ -606,6 +606,10 @@ export interface IConfig {
     peopleSearchTokenLocation?: string;
     peopleSearchUrl?: string;
     pip?: {
+        /**
+         * Browser enabled PiP feature.
+         */
+        disableBrowserPiP?: boolean;
         disabled?: boolean;
         /**
          * Document Picture-in-Picture configuration.
