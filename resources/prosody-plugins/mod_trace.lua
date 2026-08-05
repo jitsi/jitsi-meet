@@ -43,4 +43,4 @@ module:hook("iq/full", function(event)
     span:end_span()
 
     traceparent.attr.parent_id = span.span_id
-end, -1)
+end, 1)
