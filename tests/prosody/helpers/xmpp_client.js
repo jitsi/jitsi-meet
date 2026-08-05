@@ -453,6 +453,7 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
             const children = traceId === undefined
                 ? []
                 : [ xml('traceparent', {
+                    // eslint-disable-next-line camelcase
                     trace_id: traceId,
                     // eslint-disable-next-line camelcase
                     parent_id: parentId

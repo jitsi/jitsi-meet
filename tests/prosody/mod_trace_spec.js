@@ -74,7 +74,8 @@ describe('mod_trace', () => {
             const iq = await b.waitForIq(s => s.getChild('conference-modify', 'jitsi:colibri2'));
             const cm = iq.getChild('conference-modify', 'jitsi:colibri2');
 
-            assert.ok(!cm.getChild('traceparent'), 'no traceparent should be added when the sender did not include one');
+            assert.ok(!cm.getChild('traceparent'),
+                'no traceparent should be added when the sender did not include one' );
 
             // Give Prosody a moment to (not) export before asserting the negative.
             await new Promise(r => setTimeout(r, 300));
