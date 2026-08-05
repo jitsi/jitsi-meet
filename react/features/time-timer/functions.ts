@@ -178,6 +178,51 @@ export function getTimerVisualState(state: ITimeTimerState): ITimerVisualState {
 }
 
 /**
+ * A calendar event, limited to the fields this function reads.
+ *
+ * {@code startDate}/{@code endDate} are already-parsed epoch-millisecond
+ * numbers by the time an event reaches redux — {@code _parseCalendarEntry} in
+ * calendar-sync/functions.any.ts runs {@code Date.parse()} on the raw native/
+ * web calendar payload before storing it. Accepting a string here too (and
+ * coercing rather than re-running {@code Date.parse}, which returns NaN for a
+ * numeric timestamp) keeps this safe if a raw ISO-string event is ever passed
+ * in directly.
+ */
+interface ICalendarTimerEvent {
+    endDate?: number | string;
+    startDate?: number | string;
+    url?: string;
+}
+
+/**
+ * Computes the {@code setCalendarTimerDuration} arguments for a calendar
+ * event the user is about to join, or {@code undefined} when the event has
+ * no parseable start/end (so the caller should clear any stale duration
+ * instead). Shared by web's and native's calendar list `_onPress`, so both
+ * platforms record the same duration/start-time the same way.
+ *
+ * @param {ICalendarTimerEvent} [event] - The calendar event being joined.
+ * @returns {{ durationSeconds: number, startTimeUnix: number }|undefined}
+ */
+export function computeCalendarTimerDuration(event?: ICalendarTimerEvent) {
+    const startUnix = typeof event?.startDate === 'number'
+        ? event.startDate
+        : Date.parse(event?.startDate ?? '');
+    const endUnix = typeof event?.endDate === 'number'
+        ? event.endDate
+        : Date.parse(event?.endDate ?? '');
+
+    if (!isNaN(startUnix) && !isNaN(endUnix) && endUnix > startUnix) {
+        return {
+            durationSeconds: Math.round((endUnix - startUnix) / 1000),
+            startTimeUnix: startUnix
+        };
+    }
+
+    return undefined;
+}
+
+/**
  * Whether the time-timer is enabled. It is enabled by default — only an
  * explicit {@code timeTimer.enabled === false} turns it off. The timer
  * renders nothing until a duration is known, so being on by default is

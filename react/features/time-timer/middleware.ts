@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { IStore } from '../app/types';
 import { CONFERENCE_JOINED, CONFERENCE_LEFT } from '../base/conference/actionTypes';
 import { getRoomName } from '../base/conference/functions';
@@ -8,7 +6,7 @@ import { parseURIString } from '../base/util/uri';
 import { HIDE_NOTIFICATION } from '../notifications/actionTypes';
 import { showNotification } from '../notifications/actions';
 import { NOTIFICATION_ICON, NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
-import { showToolbox } from '../toolbox/actions.web';
+import { showToolbox } from '../toolbox/actions';
 
 import { START_TIME_TIMER, STOP_TIME_TIMER, TICK_TIME_TIMER } from './actionTypes';
 import {
@@ -19,13 +17,13 @@ import {
     stopTimeTimer,
     tickTimeTimer
 } from './actions';
-import TimeTimerEndedDescription from './components/web/TimeTimerEndedDescription';
 import {
     TIME_TIMER_NOTIFICATION_ID,
     WARNING_THRESHOLD_SECONDS
 } from './constants';
 import { isTimeTimerEnabled } from './functions';
 import logger from './logger';
+import { DESCRIPTION_SELF_TICKS, buildTimerEndedDescription } from './notificationDescription';
 
 let _tickInterval: ReturnType<typeof setInterval> | undefined;
 
@@ -48,27 +46,44 @@ function _clearTick() {
 }
 
 /**
- * Posts the sticky "Timer ended" notification once per timer. Its description
- * is a connected component that subscribes to `overSeconds`, so the live
- * counter ticks via that component's own re-renders — the notification itself
- * is never re-dispatched.
+ * (Re)posts the sticky "Timer ended" notification with the description for the
+ * current `overSeconds`. Reusing the same uid means the notification reducer
+ * replaces any existing entry in place rather than stacking a new one, so this
+ * is safe to call repeatedly.
  *
- * @param {Function} dispatch - The redux dispatch.
+ * @param {IStore} store - The redux store.
  * @returns {void}
  */
-function _notifyExpiredOnce(dispatch: IStore['dispatch']) {
+function _postExpiredNotification({ dispatch, getState }: IStore) {
+    const { overSeconds } = getState()['features/time-timer'];
+
+    dispatch(showNotification({
+        appearance: NOTIFICATION_TYPE.NORMAL,
+        description: buildTimerEndedDescription(overSeconds),
+        icon: NOTIFICATION_ICON.ERROR,
+        titleKey: 'timeTimer.endedTitle',
+        uid: TIME_TIMER_NOTIFICATION_ID
+    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+}
+
+/**
+ * Posts the sticky "Timer ended" notification the first time the timer
+ * expires. On web the description is a connected component that ticks
+ * `overSeconds` via its own re-renders, so one post is enough. On native the
+ * description is a static string, so the per-tick handler re-posts it (see the
+ * TICK_TIME_TIMER branch) to keep the overrun counter live — but the initial
+ * post still happens here so it appears the instant the timer crosses zero.
+ *
+ * @param {IStore} store - The redux store.
+ * @returns {void}
+ */
+function _notifyExpiredOnce(store: IStore) {
     if (_notifiedExpiry) {
         return;
     }
     _notifiedExpiry = true;
 
-    dispatch(showNotification({
-        appearance: NOTIFICATION_TYPE.NORMAL,
-        description: React.createElement(TimeTimerEndedDescription),
-        icon: NOTIFICATION_ICON.ERROR,
-        titleKey: 'timeTimer.endedTitle',
-        uid: TIME_TIMER_NOTIFICATION_ID
-    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+    _postExpiredNotification(store);
 }
 
 MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any) => {
@@ -147,7 +162,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         // hit the live "crossing" branch below. Post the notification here in
         // that case; _notifyExpiredOnce keeps it to a single notification.
         if (getState()['features/time-timer'].expired) {
-            _notifyExpiredOnce(dispatch);
+            _notifyExpiredOnce(store);
         }
         break;
     }
@@ -164,7 +179,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         break;
     }
     case TICK_TIME_TIMER: {
-        const { expired, remainingSeconds, running, warningTriggered }
+        const { acknowledged, expired, remainingSeconds, running, warningTriggered }
             = getState()['features/time-timer'];
 
         if (!running) {
@@ -192,11 +207,24 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         }
 
         // Post the sticky "ended" notification while expired. _notifyExpiredOnce
-        // makes it fire exactly once per timer — covering both the live
-        // crossing above and the already-expired-at-start case handled in
-        // START_TIME_TIMER.
+        // makes the FIRST post fire exactly once per timer — covering both the
+        // live crossing above and the already-expired-at-start case handled in
+        // START_TIME_TIMER. When the platform's description does not tick
+        // itself (native — a static string), re-post it each tick so the
+        // overrun counter climbs live; same uid replaces in place. On web the
+        // description is a self-ticking component, so one post suffices.
         if (remainingSeconds <= 0) {
-            _notifyExpiredOnce(dispatch);
+            if (_notifiedExpiry) {
+                // Already posted once. Re-post each tick only on platforms whose
+                // description is a static string (native), and only while the
+                // user hasn't dismissed it — otherwise a dismissed notification
+                // would immediately reappear on the next tick.
+                if (!DESCRIPTION_SELF_TICKS && !acknowledged) {
+                    _postExpiredNotification(store);
+                }
+            } else {
+                _notifyExpiredOnce(store);
+            }
         }
         break;
     }

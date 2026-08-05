@@ -1,4 +1,5 @@
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+import { EXPIRED_DISK_COLOR } from '../../../time-timer/functions';
 
 export const INSECURE_ROOM_NAME_LABEL_COLOR = BaseTheme.palette.actionDanger;
 
@@ -208,5 +209,26 @@ export default {
     raisedHandsCountLabelText: {
         color: BaseTheme.palette.uiBackground,
         paddingLeft: BaseTheme.spacing[2]
+    },
+
+    /**
+     * Red frame drawn over the whole conference area (edge to edge) once the
+     * meeting has run past its scheduled end — native counterpart of web's
+     * `#videospace.timer-expired::after` red frame. Absolutely positioned to
+     * the screen edges and non-interactive. The `borderRadius` is applied
+     * inline from {@code SCREEN_CORNER_RADIUS} (resolved per-device via
+     * react-native-device-info) so the frame's corners match the real hardware
+     * screen curve on every device — see screenCornerRadius.ts.
+     */
+    timerExpiredFrame: {
+        borderColor: EXPIRED_DISK_COLOR,
+        borderCurve: 'continuous',
+        borderWidth: 3,
+        bottom: 0,
+        left: 0,
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        zIndex: 1000
     }
 };
