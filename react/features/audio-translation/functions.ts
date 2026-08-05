@@ -58,8 +58,9 @@ export function getSourceOwnerEndpointId(sourceName: string): string {
 }
 
 /**
- * Whether the bridge is currently forwarding any translated audio owned by the given participant to us (i.e. we
- * are hearing that participant translated), per the {@code receivingSources} set.
+ * Whether we are hearing the given participant translated. The bridge floods sending changes to every
+ * endpoint, so {@code receivingSources} is every translated source in flight anywhere, not just ours; a
+ * source counts as ours only when its language matches the one we selected for this participant.
  *
  * @param {IReduxState} state - The redux state.
  * @param {string} participantId - The participant (endpoint) id to check.

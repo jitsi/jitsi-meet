@@ -43,7 +43,6 @@ const useStyles = makeStyles()(() => {
             display: 'flex',
             gap: '4px',
             padding: '2px 6px',
-            pointerEvents: 'none' as const,
             position: 'absolute' as const,
             right: '4px',
             top: '4px',

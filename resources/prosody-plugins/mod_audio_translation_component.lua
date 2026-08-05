@@ -372,9 +372,12 @@ local function publish(room)
     local aggregate = gated and requested or nil;
     local listener_counts = gated and compute_listener_counts(room) or nil;
     -- Deduped on both: counts can change while the language set does not (a second receiver picking a
-    -- language another receiver already requested).
-    local encoded = (aggregate and json.encode(aggregate) or '')
-        ..'|'..(listener_counts and json.encode(listener_counts) or '');
+    -- language another receiver already requested). Stays nil when there is nothing to publish, so a gated
+    -- or empty room still broadcasts nothing.
+    local encoded = (aggregate or listener_counts)
+        and ((aggregate and json.encode(aggregate) or '')
+            ..'|'..(listener_counts and json.encode(listener_counts) or ''))
+        or nil;
 
     if encoded == room._audio_translation.last_published then
         return;
