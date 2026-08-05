@@ -22,12 +22,18 @@ import androidx.annotation.Nullable;
 
 import com.facebook.react.ReactHost;
 import com.facebook.react.ReactPackage;
+import com.facebook.react.bridge.JSBundleLoader;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.RetryableMountingLayerException;
-import com.facebook.react.defaults.DefaultReactHost;
+import com.facebook.react.defaults.DefaultComponentsRegistry;
+import com.facebook.react.defaults.DefaultReactHostDelegate;
+import com.facebook.react.defaults.DefaultTurboModuleManagerDelegate;
+import com.facebook.react.fabric.ComponentFactory;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.facebook.react.runtime.ReactHostImpl;
+import com.facebook.react.runtime.hermes.HermesInstance;
 import com.facebook.react.uimanager.ViewManager;
 import com.oney.WebRTCModule.EglUtils;
 import com.oney.WebRTCModule.WebRTCModuleOptions;
@@ -219,17 +225,19 @@ class ReactHostHolder {
             }
         }
 
-        JitsiMeetLogger.d(TAG, "initializing RN");
+        JitsiMeetLogger.d(TAG + " initializing RN");
 
-        reactHost = DefaultReactHost.getDefaultReactHost(
-            app,
+        // Same construction getDefaultReactHost() does, minus its private static cache
+        // that only an internal invalidate() clears — a destroyed host is never replaced.
+        JSBundleLoader bundleLoader
+            = JSBundleLoader.createAssetLoader(app, "assets://index.android.bundle", true);
+
+        DefaultReactHostDelegate delegate = new DefaultReactHostDelegate(
+            "index.android",        /* jsMainModulePath */
+            bundleLoader,
             getReactNativePackages(),
-            "index.android",       /* jsMainModulePath */
-            "index.android.bundle", /* jsBundleAssetPath */
-            null,                   /* jsBundleFilePath */
-            null,                   /* jsRuntimeFactory (defaults to Hermes) */
-            BuildConfig.DEBUG, /* useDevSupport */
-            Collections.emptyList(), /* cxxReactPackageProviders */
+            new HermesInstance(),
+            null,                   /* bindingsInstaller */
             e -> {
                 // Backport of react-native #57181: ignore the benign missing-viewState
                 // mount race. Remove once RN ships the fix.
@@ -240,11 +248,35 @@ class ReactHostHolder {
                     throw new RuntimeException(e);
                 }
                 return kotlin.Unit.INSTANCE;
-            }, /* exceptionHandler */
-            null                    /* bindingsInstaller */
-        );
+            },                      /* exceptionHandler */
+            new DefaultTurboModuleManagerDelegate.Builder());
+
+        ComponentFactory componentFactory = new ComponentFactory();
+        DefaultComponentsRegistry.register(componentFactory);
+
+        reactHost = new ReactHostImpl(
+            app,
+            delegate,
+            componentFactory,
+            true,                   /* allowPackagerServerAccess */
+            BuildConfig.DEBUG       /* useDevSupport */);
 
         reactHost.start();
+    }
+
+    /**
+     * Destroys the React Native runtime and drops the host reference so a
+     * new one can be built. Teardown is asynchronous.
+     */
+    static void destroyReactHost() {
+        if (reactHost == null) {
+            return;
+        }
+
+        JitsiMeetLogger.d(TAG + " destroying RN");
+
+        reactHost.invalidate();
+        reactHost = null;
     }
 
     // Matches the missing-viewState mount race fixed upstream in react-native #57181.

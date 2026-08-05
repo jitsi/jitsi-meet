@@ -24,6 +24,11 @@ local jid_lib = require "util.jid";
 -- Reset to the default (allow, 200) between tests via POST /test-observer/access-manager.
 local access_manager_state = { access = true, status = 200, non_json = false };
 
+-- Mock OTLP trace receiver for mod_trace tests. Stores every exported
+-- resource_spans payload POSTed by the module's Exporter so tests can assert
+-- a span was (or was not) exported without needing a real OTLP collector.
+local otlp_traces = {};
+
 -- ASAP public key servers: serve test RSA public keys so that Prosody can
 -- fetch them when verifying RS256 tokens signed by the matching private keys.
 -- util.lib.lua constructs the URL as: <asap_key_server>/<sha256hex(kid)>.pem
@@ -379,6 +384,39 @@ module:provides("http", {
                 headers = { ["Content-Type"] = "application/json" };
                 body = '{"ok":true}';
             };
+        end;
+
+        -- POST /test-observer/otlp-traces
+        -- Called by mod_trace's Exporter. Body is the raw OTLP
+        -- ExportTraceServiceRequest JSON; stored verbatim for test assertions.
+        ["POST /otlp-traces"] = function(event)
+            local data = json.decode(event.request.body or "{}");
+            if data then
+                table.insert(otlp_traces, data);
+            end
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = "{}";
+            };
+        end;
+
+        -- GET /test-observer/otlp-traces
+        -- Returns every ExportTraceServiceRequest body received so far.
+        ["GET /otlp-traces"] = function()
+            local body = #otlp_traces == 0 and "[]" or json.encode(otlp_traces);
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = body;
+            };
+        end;
+
+        -- DELETE /test-observer/otlp-traces
+        -- Clears the recorded export list. Call before each test.
+        ["DELETE /otlp-traces"] = function()
+            otlp_traces = {};
+            return { status_code = 204 };
         end;
 
         -- GET /test-observer/access-manager
