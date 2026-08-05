@@ -1,6 +1,4 @@
 local otel = module:require "otel"
-local jid = require "util.jid";
-local json = require "util.json";
 local http = require "net.http"
 
 local otlp_endpoint = module:get_option("otlp_endpoint")
