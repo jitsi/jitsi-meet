@@ -439,6 +439,35 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a colibri2 conference-modify IQ to the given full JID, optionally
+         * carrying a <traceparent> extension (as jicofo/JVB do when tracing is
+         * enabled). Fire-and-forget — mod_trace does not reply; assert on the
+         * recipient's own stanza queue (waitForIq) and/or the OTLP mock receiver.
+         *
+         * @param {string} to  Destination full JID.
+         * @param {object} [opts]
+         * @param {string} [opts.traceId]   32-hex-char trace id. Omit to send no <traceparent>.
+         * @param {string} [opts.parentId]  16-hex-char parent span id. Required when traceId is set.
+         */
+        sendConferenceModifyIq(to, { traceId, parentId } = {}) {
+            const children = traceId === undefined
+                ? []
+                : [ xml('traceparent', {
+                    trace_id: traceId,
+                    // eslint-disable-next-line camelcase
+                    parent_id: parentId
+                }) ];
+
+            return xmpp.send(
+                xml('iq', { type: 'set',
+                    to,
+                    id: `cm-${++_counter}` },
+                    xml('conference-modify', { xmlns: 'jitsi:colibri2' }, ...children)
+                )
+            );
+        },
+
+        /**
          * Sends a disco#info IQ and resolves with the response stanza.
          * @param {string} targetJid
          */
