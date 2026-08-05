@@ -256,7 +256,11 @@ describe('mod_muc_lobby_rooms', () => {
     // -------------------------------------------------------------------------
     describe('token_affiliation interaction', () => {
 
-        it('moderator token holder is blocked by lobby, not bypassed by affiliation grant', async () => {
+        it('authenticated moderator token holder bypasses the lobby', async () => {
+            // Regression test: a moderator who owns the room (proven by their JWT)
+            // must be routed straight in even when the lobby is enabled and they
+            // hold no stored affiliation — e.g. the moderator who created the room,
+            // enabled the lobby and then reconnected after a dropped connection.
             const r = room();
             const roomName = r.split('@')[0];
 
@@ -268,16 +272,15 @@ describe('mod_muc_lobby_rooms', () => {
             const c = await connect({ params: { token } });
             const presence = await c.joinRoom(r, undefined, { displayName: 'TokenMod' });
 
-            assert.equal(presence.attrs.type, 'error',
-                'moderator token user must be blocked by lobby');
+            assert.notEqual(presence.attrs.type, 'error',
+                'authenticated moderator token user must bypass the lobby');
 
-            const error = presence.getChild('error');
+            const { role, affiliation } = getRoleAndAffiliation(presence);
 
-            assert.ok(error, 'error element must be present');
-            assert.ok(
-                error.getChild('registration-required'),
-                'error condition must be registration-required'
-            );
+            assert.equal(affiliation, 'owner',
+                'moderator token user must join with owner affiliation');
+            assert.equal(role, 'moderator',
+                'moderator token user must join with moderator role');
         });
 
         it('non-moderator token holder is blocked by lobby', async () => {
@@ -308,7 +311,7 @@ describe('mod_muc_lobby_rooms', () => {
         // lobby + room password
         // ---------------------------------------------------------------------
 
-        it('moderator token user admitted from lobby joins directly without password prompt', async () => {
+        it('moderator token user bypasses lobby and room password without a prompt', async () => {
             const r = room();
             const roomName = r.split('@')[0];
             const focus = await focusJoin(r);
@@ -320,32 +323,19 @@ describe('mod_muc_lobby_rooms', () => {
                 context: { user: { moderator: true } } });
             const c = await connect({ params: { token } });
 
-            // First attempt — blocked by lobby
-            const blocked = await c.joinRoom(r, undefined, { displayName: 'TokenMod' });
-
-            assert.equal(blocked.attrs.type, 'error', 'first join must be blocked by lobby');
-            assert.ok(
-                blocked.getChild('error')?.getChild('registration-required'),
-                'must be blocked with registration-required'
-            );
-
-            // Simulate moderator approval
-            const userBareJid = c.jid.split('/')[0];
-
-            await setAffiliation(r, userBareJid, 'member');
-
-            // Second attempt — admitted user must join directly as moderator, no password required
+            // An authenticated moderator owns the room: they are routed straight in,
+            // without knocking and without being asked for the room password.
             const presence = await c.joinRoom(r, undefined, { displayName: 'TokenMod' });
 
             assert.notEqual(presence.attrs.type, 'error',
-                'admitted user must not be asked for password');
+                'authenticated moderator must not be blocked by lobby or password');
 
             const { role, affiliation } = getRoleAndAffiliation(presence);
 
             assert.equal(affiliation, 'owner',
-                'admitted moderator token user must get owner affiliation');
+                'moderator token user must join with owner affiliation');
             assert.equal(role, 'moderator',
-                'admitted moderator token user must get moderator role');
+                'moderator token user must join with moderator role');
         });
 
         it('moderator token user who bypasses lobby with room password gets moderator role', async () => {

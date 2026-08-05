@@ -117,6 +117,29 @@ load_config();
 local lobby_muc_service;
 local main_muc_service;
 
+-- Returns true when the joining session is an authenticated owner/moderator that
+-- must bypass the lobby. Their JWT still proves ownership, so a moderator who
+-- created the room, enabled the lobby and then reconnected after a dropped
+-- connection is routed straight in instead of being trapped in the lobby (their
+-- stored affiliation is gone, but the token isn't). Mirrors the owner detection
+-- in mod_token_affiliation.
+local function is_authenticated_owner(session)
+    if not session or not session.auth_token then
+        return false;
+    end
+
+    local context_user = session.jitsi_meet_context_user;
+    if not context_user then
+        return false;
+    end
+
+    return context_user.affiliation == 'owner'
+        or context_user.affiliation == 'moderator'
+        or context_user.affiliation == 'teacher'
+        or context_user.moderator == 'true'
+        or context_user.moderator == true;
+end
+
 function broadcast_json_msg(room, from, json_msg)
     json_msg.type = NOTIFY_JSON_MESSAGE_TYPE;
 
@@ -623,6 +646,17 @@ process_host_module(main_muc_component_config, function(host_module, host)
             if valid_affiliations[affiliation or 'none'] >= valid_affiliations.member and not password then
                 join:tag('password', { xmlns = MUC_NS }):text(room:get_password());
             end
+        end
+
+        -- An authenticated owner/moderator (proven by their JWT) must bypass the
+        -- lobby entirely, so a moderator who owns the room is never trapped in it
+        -- after a reconnect. Grant the owner affiliation and let the join proceed.
+        if is_authenticated_owner(event.origin) then
+            occupant.role = 'moderator';
+            room:set_affiliation(true, invitee_bare_jid, 'owner');
+            room:save_occupant(occupant);
+
+            return;
         end
 
         -- Check for display name if missing return an error
