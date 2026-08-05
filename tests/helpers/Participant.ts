@@ -792,6 +792,12 @@ export class Participant {
         );
         console.log(`Hung up (${this.name})`);
 
+        // If the driver is currently focused on an iframe (iFrameApi mode), switch back to the
+        // top-level context before navigating away. Otherwise driver.url() targets the iframe
+        // browsing context instead of the outer page, which leaves the outer page still at the
+        // conference URL and puts the driver in a broken state for any subsequent ensureOneParticipant call.
+        await this.switchToMainFrame();
+
         await this.driver.url('/base.html')
 
             // This was fixed in wdio v9.9.1, we can drop once we update to that version
