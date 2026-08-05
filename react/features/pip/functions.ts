@@ -78,9 +78,15 @@ export function getPiPVideoTrack(state: IReduxState, participant: IParticipant |
  */
 export function shouldShowPiP(state: IReduxState): boolean {
     const pipConfig = state['features/base/config'].pip;
+    const isBrowserPiPDisabled = pipConfig?.disableBrowserPiP;
 
     // Check if PiP is enabled at all.
     if (!isPiPEnabled(pipConfig)) {
+        return false;
+    }
+
+    // Check if PiP is enabled for browser meetings.
+    if (!browser.isElectron() && isBrowserPiPDisabled) {
         return false;
     }
 
