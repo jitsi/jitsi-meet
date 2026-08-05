@@ -123,3 +123,17 @@ VirtualHost "shared-secret.localhost"
 
 VirtualHost "whitelist.localhost"
     authentication = "anonymous"
+
+-- VirtualHost for mod_trace tests, with otlp_endpoint configured so the
+-- module is active. Points at the mock OTLP receiver served by
+-- mod_test_observer_http on the main VirtualHost.
+VirtualHost "trace.localhost"
+    authentication = "anonymous"
+    modules_enabled = { "trace" }
+    otlp_endpoint = "http://localhost:5280/test-observer/otlp-traces"
+
+-- VirtualHost for mod_trace tests with otlp_endpoint left unset: the module
+-- must log a warning and no-op rather than hook anything.
+VirtualHost "trace-disabled.localhost"
+    authentication = "anonymous"
+    modules_enabled = { "trace" }
