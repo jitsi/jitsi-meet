@@ -37,7 +37,7 @@ export interface IRoomInfoParticipant {
     avatarUrl: string;
     displayName: string;
     id: string;
-    isJibri?: boolean;
+    isHidden?: boolean;
     isJigasi?: boolean;
     jid: string;
     role: string;

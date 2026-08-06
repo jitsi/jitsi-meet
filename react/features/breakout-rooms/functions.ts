@@ -57,6 +57,7 @@ export const getRoomsInfo = (stateful: IStateful, includeHidden = false) => {
     };
     const breakoutRooms = getBreakoutRooms(stateful);
     const conference = getCurrentConference(stateful);
+    const { iAmRecorder } = state['features/base/config'];
 
     const initialRoomsInfo = {
         rooms: []
@@ -100,7 +101,9 @@ export const getRoomsInfo = (stateful: IStateful, includeHidden = false) => {
                                 id: participantItem.getId(),
                                 userContext: storeParticipant?.userContext,
                                 isJigasi: participantItem.getProperty('features_jigasi') === true,
-                                isJibri: participantItem.isHidden() || participantItem.isHiddenFromRecorder(),
+                                // A participant can be hidden because it's a transcriber or Jibri using
+                                // the hidden domain, or it can be a user hidden from the recorder.
+                                isHidden: participantItem.isHidden() || (iAmRecorder && participantItem.isHiddenFromRecorder()),
                                 audioMuted: participantItem.isAudioMuted(),
                                 videoMuted: participantItem.isVideoMuted()
                             } as IRoomInfoParticipant;
