@@ -224,9 +224,11 @@ export default {
 
     // Red frame around the conference area when the meeting runs past its
     // scheduled end. borderRadius is applied inline (SCREEN_CORNER_RADIUS).
+    // A circular curve matches the hardware screen corner; a continuous
+    // (squircle) curve renders visually tighter than the bezel and leaves a gap.
     timerExpiredFrame: {
         borderColor: EXPIRED_DISK_COLOR,
-        borderCurve: 'continuous',
+        borderCurve: 'circular',
         borderWidth: 3,
         bottom: 0,
         left: 0,

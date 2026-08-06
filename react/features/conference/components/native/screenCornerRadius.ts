@@ -1,13 +1,18 @@
-import { ScreenCornerRadius } from 'react-native-screen-corner-radius';
+import { NativeModules } from 'react-native';
 
 /**
  * The device's physical screen corner radius (points), used to make the
  * expired-timer frame hug the screen edges on every device.
  *
- * {@code react-native-screen-corner-radius} reads the real hardware radius; it
- * returns 0 when it can't detect one (e.g. some Android devices), so we fall
- * back to a small inset that reads cleanly and never overshoots the curve.
+ * Reads the native {@code ScreenCornerRadius} module from
+ * react-native-screen-corner-radius. The module is absent on platforms/devices
+ * it doesn't support (e.g. Android), where accessing it directly would throw —
+ * so we read it defensively and fall back to a small inset that reads cleanly
+ * and never overshoots the curve.
  */
 const FALLBACK_RADIUS = 24;
 
-export const SCREEN_CORNER_RADIUS = ScreenCornerRadius > 0 ? ScreenCornerRadius : FALLBACK_RADIUS;
+const nativeRadius = NativeModules.ScreenCornerRadius?.cornerRadius;
+
+export const SCREEN_CORNER_RADIUS
+    = typeof nativeRadius === 'number' && nativeRadius > 0 ? nativeRadius : FALLBACK_RADIUS;
