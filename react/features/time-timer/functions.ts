@@ -2,117 +2,38 @@ import { IReduxState } from '../app/types';
 
 import { WARNING_THRESHOLD_SECONDS } from './constants';
 import { ITimeTimerState } from './reducer';
+import { ICalendarTimerEvent, ITimerVisualState } from './types';
 
-/**
- * Minimum visible fraction of the disk drawn in red right after the timer
- * expires. Without this floor, the wedge would start at ~0 and be invisible
- * for the first several minutes of overrun; a small floor keeps the red
- * slice visible from the moment the timer ends. Real overrun catches up
- * once `overSeconds / durationSeconds` exceeds this floor.
- */
+// Minimum visible red disk fraction right at expiry, so the wedge isn't
+// invisible for the first minutes of overrun. Real overrun takes over above it.
 const EXPIRED_WEDGE_FLOOR = 0.02;
 
-/**
- * Soft pink/rose used for the elapsed-time digits in the pill once the
- * meeting is over schedule. Reads well on the pill's dark background.
- */
-export const EXPIRED_PILL_TEXT_COLOR = '#FF9DA0';
+// Pill colours per state. Each state has a lighter-left / deeper-right segment
+// pair plus an elapsed-digits colour; the disk uses fillColor from getTimerVisualState.
 
-/**
- * Amber used for the disk fill and the remaining-time digits during the
- * final {@code WARNING_THRESHOLD_SECONDS} of the meeting. Matches the
- * Figma amber-state spec.
- */
+// Baseline (running).
+export const DISK_BLUE = '#1084FE';
+
+// Warning window (amber).
 export const WARNING_COLOR = '#F8AE1A';
-
-/**
- * Background colours for the amber/warning state — mirror the blue baseline
- * pattern (right segment is the deeper one).
- */
 export const WARNING_NAME_SEGMENT_BG = '#3C2E1D';
 export const WARNING_TIMER_SEGMENT_BG = '#302417';
 
-/**
- * Background colours for the red/expired state — same lighter-left /
- * deeper-right pattern as the other states, in warm wine tones.
- */
+// Expired (red/wine).
+export const EXPIRED_PILL_TEXT_COLOR = '#FF9DA0';
 export const EXPIRED_NAME_SEGMENT_BG = '#4F2627';
 export const EXPIRED_TIMER_SEGMENT_BG = '#3E1D1E';
-
-/**
- * Coral-red used for the disk fill once the meeting is over schedule —
- * matches Figma's expired-state spec. Stronger / warmer than the previous
- * `theme.palette.iconError`.
- */
 export const EXPIRED_DISK_COLOR = '#F24D5F';
 
-/**
- * Deep wine red the overrun lap-2+ sweep darkens toward at its leading
- * edge. Once the disk is fully filled (lap 1 complete), each subsequent
- * lap is drawn as a continuous conic gradient running from
- * {@code EXPIRED_DISK_COLOR} at the 12 o'clock origin to this darker tone
- * at the current leading edge — conveying ongoing motion without leaving
- * the red family. See {@code TimeTimerPill} / {@code Disk}.
- */
+// Darker red the lap-2+ overrun sweep fades toward at its leading edge.
 export const EXPIRED_OVERRUN_EDGE_COLOR = '#8E2530';
 
-/**
- * Bright 8x8 blue used for the disk in the normal/running state — matches
- * the Figma spec for the time-timer pill baseline.
- */
-export const DISK_BLUE = '#1084FE';
-
-/**
- * Disk-red used for the overrun-time text in the "Timer ended" notification.
- * Matches the colour of the disk's expired wedge — same hex as
- * `theme.palette.iconError` resolves to in the current Jitsi theme — and
- * reads with stronger contrast on the notification's white background.
- */
+// Overrun-time text in the "Timer ended" notification (reads on white).
 export const EXPIRED_NOTIFICATION_TEXT_COLOR = '#D83848';
 
-export interface ITimerVisualState {
-
-    /**
-     * Time elapsed since the calendar event's scheduled start, in seconds.
-     * Derived so that every participant sees the same value regardless of
-     * when they joined.
-     */
-    elapsedSeconds: number;
-
-    /**
-     * Fill colour for the disk (white during the meeting, amber during the
-     * final {@code WARNING_THRESHOLD_SECONDS}, red once over schedule).
-     */
-    fillColor: string;
-
-    /**
-     * Fraction of the disk to fill (0..1).
-     */
-    fraction: number;
-
-    /**
-     * Angular position (degrees, clockwise from the top / 12 o'clock) of
-     * the leading edge of the overrun sweep during lap 2 and onward — once
-     * the disk has filled once, subsequent overrun laps draw a continuous
-     * conic gradient (base red → darker red at this angle) over the solid
-     * disk to make the ongoing motion visible. `undefined` during normal
-     * running, warning and the first overrun lap (which still uses the
-     * standard growing wedge).
-     */
-    overrunArcEndDeg?: number;
-
-    /**
-     * True during the warning window — the final
-     * {@code WARNING_THRESHOLD_SECONDS} before scheduled end. Drives the
-     * amber colour treatment in the pill (disk + elapsed digits).
-     */
-    warning: boolean;
-}
-
 /**
- * Derives the visual state of the time-timer disk (color + fill fraction +
- * elapsed seconds) from the timer reducer state. Consumed by
- * {@code TimeTimerPill}.
+ * Derives the disk's visual state (colour, fill fraction, elapsed seconds)
+ * from the timer reducer state.
  *
  * @param {ITimeTimerState} state - The current time-timer reducer state.
  * @returns {ITimerVisualState}
@@ -175,23 +96,6 @@ export function getTimerVisualState(state: ITimeTimerState): ITimerVisualState {
     }
 
     return { elapsedSeconds, fillColor, fraction, overrunArcEndDeg, warning };
-}
-
-/**
- * A calendar event, limited to the fields this function reads.
- *
- * {@code startDate}/{@code endDate} are already-parsed epoch-millisecond
- * numbers by the time an event reaches redux — {@code _parseCalendarEntry} in
- * calendar-sync/functions.any.ts runs {@code Date.parse()} on the raw native/
- * web calendar payload before storing it. Accepting a string here too (and
- * coercing rather than re-running {@code Date.parse}, which returns NaN for a
- * numeric timestamp) keeps this safe if a raw ISO-string event is ever passed
- * in directly.
- */
-interface ICalendarTimerEvent {
-    endDate?: number | string;
-    startDate?: number | string;
-    url?: string;
 }
 
 /**

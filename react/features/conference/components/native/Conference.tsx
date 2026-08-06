@@ -490,17 +490,7 @@ class Conference extends AbstractConference<IProps, State> {
                     </>
                 }
 
-                {/*
-                  * Full-screen red frame drawn over the whole conference area
-                  * once the meeting has run past its scheduled end (and the
-                  * timer-ended notification is still unacknowledged) — the
-                  * native counterpart of web's `#videospace.timer-expired`
-                  * frame. Non-interactive so it never intercepts touches. The
-                  * corner radius is the real per-device screen radius
-                  * (SCREEN_CORNER_RADIUS) so the frame hugs the hardware curve
-                  * edge-to-edge on every device, in both the expanded and
-                  * collapsed (toolbar-hidden) states.
-                  */
+                {
                     _timerExpired
                         && <View
                             pointerEvents = 'none'
