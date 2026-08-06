@@ -1663,6 +1663,7 @@
         "translationEnabledForYou": "Translation enabled for you",
         "translationOnAndReceiving": "Translation on · receiving",
         "translationStillListening": "{{count}} participant is still hearing the translation — wait before speaking",
+        "translationStillListeningShort": "{{num}} still listening",
         "translationStillListening_plural": "{{count}} participants are still hearing the translation — wait before speaking",
         "unpinFromStage": "Unpin",
         "verify": "Verify participant",

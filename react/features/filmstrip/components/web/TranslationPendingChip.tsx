@@ -94,13 +94,14 @@ const TranslationPendingChip = ({ participantId, thumbnailType }: IProps) => {
     }
 
     const isCompact = thumbnailType !== THUMBNAIL_TYPE.TILE;
-    const label = t('videothumbnail.translationStillListening', { count });
+    const tooltip = t('videothumbnail.translationStillListening', { count });
+    const label = t('videothumbnail.translationStillListeningShort', { num: count });
 
     return (
         <div
-            aria-label = { label }
+            aria-label = { tooltip }
             className = { cx(classes.chip, isCompact && classes.compact) }
-            title = { label }>
+            title = { tooltip }>
             <span className = { classes.dot } />
             <span className = { classes.label }>
                 { isCompact ? count : label }
