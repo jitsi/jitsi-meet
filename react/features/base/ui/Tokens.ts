@@ -327,7 +327,7 @@ export const colorMap = {
     pollsSendLabel: 'text01',                // Poll send button label
     pollsSendDisabled: 'text03',             // Poll send button disabled label
     pollsPaneBackground: 'ui01',             // Poll pane container background
-    pollsPaneBorder: 'ui05',                 // Poll pane border
+    pollsPaneBorder: 'ui04',                 // Poll pane border
     pollsCreateBackground: 'uiBackground',   // Poll create dialog background
     pollsCreateBorder: 'ui06',               // Poll create dialog border
 

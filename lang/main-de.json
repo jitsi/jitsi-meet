@@ -1052,6 +1052,7 @@
             "empty": "Es gibt bisher keine Umfragen in dieser Konferenz.",
             "hideDetailedResults": "Details verbergen",
             "showDetailedResults": "Details anzeigen",
+            "value": "{{ percent }} Prozent",
             "vote": "Vote"
         }
     },
