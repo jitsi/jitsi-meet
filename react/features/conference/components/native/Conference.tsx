@@ -36,6 +36,7 @@ import { getIsLobbyVisible } from '../../../lobby/functions';
 import { screen } from '../../../mobile/navigation/routes';
 import { isPipEnabled, setPictureInPictureEnabled } from '../../../mobile/picture-in-picture/functions';
 import Captions from '../../../subtitles/components/native/Captions';
+import { isTimeTimerExpiredUnacknowledged } from '../../../time-timer/functions';
 import { setToolboxVisible } from '../../../toolbox/actions.native';
 import Toolbox from '../../../toolbox/components/native/Toolbox';
 import { isToolboxVisible } from '../../../toolbox/functions.native';
@@ -51,6 +52,7 @@ import ExpandedLabelPopup from './ExpandedLabelPopup';
 import LonelyMeetingExperience from './LonelyMeetingExperience';
 import TitleBar from './TitleBar';
 import { EXPANDED_LABEL_TIMEOUT } from './constants';
+import { SCREEN_CORNER_RADIUS } from './screenCornerRadius';
 import styles from './styles';
 
 /**
@@ -131,6 +133,12 @@ interface IProps extends AbstractProps {
      * Indicates whether the car mode is enabled.
      */
     _startCarMode: boolean;
+
+    /**
+     * Whether the meeting has run past its scheduled end and the timer-ended
+     * notification has not been dismissed yet — drives the red expired frame.
+     */
+    _timerExpired: boolean;
 
     /**
      * The indicator which determines whether the Toolbox is visible.
@@ -368,6 +376,7 @@ class Conference extends AbstractConference<IProps, State> {
             _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView,
+            _timerExpired,
             _toolboxVisible
         } = this.props;
 
@@ -480,6 +489,16 @@ class Conference extends AbstractConference<IProps, State> {
                         <Toolbox />
                     </>
                 }
+
+                {
+                    _timerExpired
+                        && <View
+                            pointerEvents = 'none'
+                            style = { [
+                                styles.timerExpiredFrame as ViewStyle,
+                                { borderRadius: SCREEN_CORNER_RADIUS }
+                            ] } />
+                }
             </>
         );
     }
@@ -588,6 +607,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _reducedUI: reducedUI,
         _showLobby: getIsLobbyVisible(state),
         _startCarMode: startCarMode,
+        _timerExpired: isTimeTimerExpiredUnacknowledged(state),
         _toolboxVisible: isToolboxVisible(state)
     };
 }
