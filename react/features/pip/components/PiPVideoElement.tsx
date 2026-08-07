@@ -221,6 +221,8 @@ const PiPVideoElement: React.FC = () => {
 
     return (
         <video
+            // @ts-ignore - autoPictureInPicture lets Chromium auto-enter PiP on tab switch without a user gesture.
+            autoPictureInPicture = { true }
             autoPlay = { true }
             className = { classes.hiddenVideo }
             id = 'pipVideo'

@@ -3,13 +3,14 @@ import { AVATAR_DEFAULT_BACKGROUND_COLOR } from '../base/avatar/components/web/s
 import { getAvatarColor, getInitials } from '../base/avatar/functions';
 import { leaveConference } from '../base/conference/actions';
 import { browser } from '../base/lib-jitsi-meet';
+import { getParticipantById, getRemoteParticipants, getRemoteParticipantsSorted } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
 import { getLocalVideoTrack } from '../base/tracks/functions.any';
 import { getVideoTrackByParticipant } from '../base/tracks/functions.web';
 import { isPrejoinPageVisible } from '../prejoin/functions.any';
 
 import { toggleAudioFromPiP, toggleVideoFromPiP } from './actions';
-import { isPiPEnabled } from './external-api.shared';
+import { isDocumentPiPSupported, isPiPEnabled } from './external-api.shared';
 import logger from './logger';
 import { IMediaSessionState } from './types';
 
@@ -38,6 +39,28 @@ export function getPiPVideoTrack(state: IReduxState, participant: IParticipant |
     return isOnPrejoin
         ? getLocalVideoTrack(state['features/base/tracks'])
         : getVideoTrackByParticipant(state, participant);
+}
+
+/**
+ * Maximum number of remote participant tiles shown in the Document PiP grid.
+ */
+const MAX_PIP_GRID_TILES = 8;
+
+/**
+ * Gets the remote participants displayed in the Document PiP grid, ordered as
+ * in the filmstrip and capped to keep the floating window readable.
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {Array<IParticipant>} The participants to render in the grid.
+ */
+export function getPiPGridParticipants(state: IReduxState): IParticipant[] {
+    const sortedIds = getRemoteParticipantsSorted(state);
+    const ids = sortedIds.length ? sortedIds : Array.from(getRemoteParticipants(state).keys());
+
+    return ids
+        .slice(0, MAX_PIP_GRID_TILES)
+        .map(id => getParticipantById(state, id))
+        .filter((p): p is IParticipant => Boolean(p));
 }
 
 /**
@@ -400,12 +423,149 @@ export function enterPiP(videoElement: HTMLVideoElement | undefined | null) {
             return;
         }
 
-        // TODO: Enable PiP for browsers:
-        // In browsers, we should directly call requestPictureInPicture.
-        // @ts-ignore - requestPictureInPicture is not yet in all TypeScript definitions.
-        // requestPictureInPicture();
+        // In browsers, directly request native (video element) Picture-in-Picture.
+        // requestPictureInPicture() resets pipRequestPending in its finally block.
+        // NOTE: browsers may require transient user activation; if so the request
+        // rejects and is logged without breaking the app (clean fallback). The
+        // video's `autoPictureInPicture` attribute covers the auto-enter case.
+        pipRequestPending = true;
+        requestPictureInPicture();
     } catch (error) {
         logger.error('Error entering Picture-in-Picture:', error);
+    }
+}
+
+/**
+ * Module-level reference to the currently open Document Picture-in-Picture window.
+ * Kept here (instead of Redux) because a Window object is not serializable.
+ */
+let documentPiPWindow: Window | null = null;
+
+/**
+ * Observer that keeps the PiP window stylesheets in sync with the main document.
+ */
+let pipStyleObserver: MutationObserver | null = null;
+
+/**
+ * Guards against concurrent requestWindow() calls. The auto-enter triggers
+ * (MediaSession action + window blur/visibilitychange) can fire within the same
+ * tick, and requestWindow() is async, so without this flag two windows could be
+ * requested before the first sets documentPiPWindow.
+ */
+let documentPiPRequestPending = false;
+
+/**
+ * Returns the currently open Document PiP window, or null if none is open.
+ *
+ * @returns {Window | null} The PiP window.
+ */
+export function getDocumentPiPWindow(): Window | null {
+    return documentPiPWindow;
+}
+
+/**
+ * Copies the parent document stylesheets into the Document PiP window so the
+ * portaled React content is styled identically. Also keeps the PiP window in
+ * sync with stylesheets injected later (e.g. tss-react/makeStyles on first
+ * render), so the very first PiP open is styled correctly too.
+ *
+ * @param {Window} pipWindow - The Picture-in-Picture window.
+ * @returns {void}
+ */
+function copyStylesToPiP(pipWindow: Window) {
+    const syncStyles = () => {
+        pipWindow.document.head.querySelectorAll('style, link[rel="stylesheet"]').forEach(n => n.remove());
+        Array.from(document.styleSheets).forEach(sheet => {
+            try {
+                const cssRules = Array.from(sheet.cssRules).map(rule => rule.cssText).join('');
+                const style = pipWindow.document.createElement('style');
+
+                style.textContent = cssRules;
+                pipWindow.document.head.appendChild(style);
+            } catch {
+                // Cross-origin stylesheet: copy by link reference instead.
+                const link = pipWindow.document.createElement('link');
+
+                link.rel = 'stylesheet';
+                link.href = (sheet as CSSStyleSheet).href ?? '';
+                pipWindow.document.head.appendChild(link);
+            }
+        });
+    };
+
+    syncStyles();
+
+    // Re-sync after the first frames to capture rules injected via insertRule into
+    // existing tags (CSS-in-JS), which a childList observer would not catch.
+    pipWindow.requestAnimationFrame(syncStyles);
+    setTimeout(syncStyles, 200);
+
+    // Re-sync when stylesheets are injected later (e.g. tss-react/makeStyles on first render).
+    pipStyleObserver = new MutationObserver(syncStyles);
+    pipStyleObserver.observe(document.head, { childList: true });
+}
+
+/**
+ * Opens the rich Document Picture-in-Picture window (Google Meet style). The
+ * React content is rendered into it by the DocumentPiP component via a portal.
+ *
+ * @param {Function} onClose - Callback invoked when the PiP window is closed.
+ * @returns {Promise<Window | null>} The opened window or null on failure.
+ */
+export async function openDocumentPiP(onClose: () => void): Promise<Window | null> {
+    if (!isDocumentPiPSupported()) {
+        return null;
+    }
+
+    if (documentPiPWindow) {
+        return documentPiPWindow;
+    }
+
+    if (documentPiPRequestPending) {
+        return null;
+    }
+
+    documentPiPRequestPending = true;
+
+    try {
+        // @ts-ignore - documentPictureInPicture is not yet in all TS lib definitions.
+        const pipWindow: Window = await window.documentPictureInPicture.requestWindow({
+            width: 360,
+            height: 240
+        });
+
+        copyStylesToPiP(pipWindow);
+        documentPiPWindow = pipWindow;
+        pipWindow.addEventListener('pagehide', () => {
+            pipStyleObserver?.disconnect();
+            pipStyleObserver = null;
+            documentPiPWindow = null;
+            onClose();
+        }, { once: true });
+
+        return pipWindow;
+    } catch (error) {
+        logger.error('Failed to open Document PiP window:', error);
+
+        return null;
+    } finally {
+        documentPiPRequestPending = false;
+    }
+}
+
+/**
+ * Closes the Document Picture-in-Picture window if open.
+ *
+ * @returns {void}
+ */
+export function closeDocumentPiP() {
+    if (pipStyleObserver) {
+        pipStyleObserver.disconnect();
+        pipStyleObserver = null;
+    }
+    if (documentPiPWindow) {
+        documentPiPWindow.close();
+        documentPiPWindow = null;
     }
 }
 
