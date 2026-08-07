@@ -830,6 +830,8 @@ var config = {
     //     // Show the Picture-in-Picture toolbar button when supported. Defaults to true.
     //     showToolbarButton: true,
     //     documentPiP: {
+    //         // Enable host-owned Document PiP for iframe meetings. Missing values default to disabled.
+    //         embedMode: 'auto',
     //         windowOptions: {
     //             // Hide the browser control that returns to the opener. Defaults to false.
     //             disallowReturnToOpener: false,

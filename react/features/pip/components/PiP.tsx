@@ -1,9 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import { isEmbedded } from '../../base/util/embedUtils';
 import { isDocumentPiPSupported, shouldShowPiP } from '../functions';
 
 import PiPVideoElement from './PiPVideoElement';
+import EmbeddedPiP from './embedded/EmbeddedPiP';
 import { DocumentPiPContent } from './web/DocumentPiPContent';
 
 /**
@@ -15,7 +17,11 @@ import { DocumentPiPContent } from './web/DocumentPiPContent';
 function PiP() {
     const showPiP = useSelector(shouldShowPiP);
 
-     if (!showPiP) {
+    if (isEmbedded()) {
+        return <EmbeddedPiP showPiP = { showPiP } />;
+    }
+
+    if (!showPiP) {
         return null;
     }
 

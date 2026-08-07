@@ -5,9 +5,6 @@ import { CONFERENCE_FAILED, CONFERENCE_LEFT, CONFERENCE_WILL_LEAVE } from '../ba
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
-import { exitPiP } from './actions';
-import './subscriber';
-
 import {
     EMBEDDED_DOCUMENT_PIP_ANSWER_RECEIVED,
     EMBEDDED_DOCUMENT_PIP_CONNECTION_STATE_CHANGED,
@@ -17,7 +14,7 @@ import {
     SET_EMBEDDED_DOCUMENT_PIP_LIFECYCLE,
     SET_EMBEDDED_DOCUMENT_PIP_RENDERER_READY
 } from './actionTypes';
-import { clearEmbeddedDocumentPiPRequestTimer } from './actions';
+import { clearEmbeddedDocumentPiPRequestTimer, exitPiP } from './actions';
 import {
     IEmbeddedDocumentPiPVideoBridge,
     getEmbeddedDocumentPiPParticipant,
@@ -61,7 +58,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         if (store.getState()['features/pip'].isPiPActive) {
             store.dispatch(exitPiP());
         }
-   }
+    }
 
     return result;
 });
@@ -447,3 +444,7 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
         }
         break;
     }
+    }
+
+    return result;
+});

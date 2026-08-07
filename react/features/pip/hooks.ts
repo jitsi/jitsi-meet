@@ -36,7 +36,7 @@ const CANVAS_HEIGHT = Math.floor(CANVAS_WIDTH / TILE_ASPECT_RATIO);
  * We manually request frames after drawing to ensure capture.
  */
 const CANVAS_FRAME_RATE = 0;
-const EMBEDDED_DOCUMENT_PIP_CAPABILITY_TIMEOUT = 3000;
+const EMBEDDED_DOCUMENT_PIP_CAPABILITY_TIMEOUT = 10000;
 
 const togglePiP = {
     key: 'toggle-pip',
@@ -262,7 +262,7 @@ export function useDocumentPiPMediaSession() {
         return () => {
             navigator.mediaSession.setActionHandler('enterpictureinpicture', null);
         };
-    }, [ openDocumentPip ]);
+    }, [ documentPiPAvailable, openDocumentPip ]);
 
     useEffect(() => {
         if (!embedded || !embeddedDocumentPiPCapabilityPending) {
@@ -283,8 +283,11 @@ export function useDocumentPiPMediaSession() {
 
         const onVisibilityChange = () => {
             const pipWindow = getStoredPiPWindow();
+            const shouldClose = embedded
+                ? isPiPActive
+                : Boolean(pipWindow && !pipWindow.closed);
 
-            if (!document.hidden && pipWindow && !pipWindow.closed) {
+            if (!document.hidden && shouldClose) {
                 dispatch(exitPiP());
             }
         };
