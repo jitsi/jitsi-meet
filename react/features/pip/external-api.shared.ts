@@ -17,6 +17,28 @@ function isElectron(): boolean {
 }
 
 /**
+ * Checks if the browser supports the native (video element) Picture-in-Picture API.
+ * Inline check to keep this file lightweight (no BrowserDetection dependency).
+ *
+ * @returns {boolean} - True if Picture-in-Picture is supported and not disabled by the UA.
+ */
+function isVideoPiPSupported(): boolean {
+    return typeof document !== 'undefined'
+        && 'pictureInPictureEnabled' in document
+        && document.pictureInPictureEnabled === true;
+}
+
+/**
+ * Checks if the browser supports the Document Picture-in-Picture API (rich, always-on-top
+ * HTML window, as used by Google Meet). Available on Chromium and Firefox 151+ desktop.
+ *
+ * @returns {boolean} - True if the Document PiP API is available.
+ */
+export function isDocumentPiPSupported(): boolean {
+    return typeof window !== 'undefined' && 'documentPictureInPicture' in window;
+}
+
+/**
  * Checks if PiP is enabled based on config and environment.
  *
  * @param {Object} pipConfig - The pip config object.
@@ -27,5 +49,5 @@ export function isPiPEnabled(pipConfig?: { disabled?: boolean; }): boolean {
         return false;
     }
 
-    return isElectron();
+    return isElectron() || isVideoPiPSupported() || isDocumentPiPSupported();
 }

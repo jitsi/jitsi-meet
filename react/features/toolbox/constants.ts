@@ -168,6 +168,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'mute-everyone',
     'mute-video-everyone',
     'participants-pane',
+    'pip',
     'polls',
     'profile',
     'raisehand',

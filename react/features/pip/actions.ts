@@ -1,13 +1,18 @@
 import { IStore } from '../app/types';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { isLocalTrackMuted } from '../base/tracks/functions.any';
+import { startScreenShareFlow } from '../screen-share/actions.web';
+import { isScreenVideoShared } from '../screen-share/functions';
 import { handleToggleVideoMuted } from '../toolbox/actions.any';
 import { muteLocal } from '../video-menu/actions.any';
 
 import { SET_PIP_ACTIVE } from './actionTypes';
+import { isDocumentPiPSupported } from './external-api.shared';
 import {
     cleanupMediaSessionHandlers,
+    closeDocumentPiP,
     enterPiP,
+    openDocumentPiP,
     setupMediaSessionHandlers,
     shouldShowPiP
 } from './functions';
@@ -62,6 +67,22 @@ export function toggleVideoFromPiP() {
 }
 
 /**
+ * Toggles screen sharing from PiP controls.
+ * Uses exact same logic as the toolbar share-desktop button.
+ *
+ * @returns {Function}
+ */
+export function toggleScreenShareFromPiP() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const screenSharing = isScreenVideoShared(state);
+
+        // Use the exact same action as toolbar button.
+        dispatch(startScreenShareFlow(!screenSharing));
+    };
+}
+
+/**
  * Action to exit Picture-in-Picture mode.
  *
  * @returns {Function}
@@ -69,6 +90,8 @@ export function toggleVideoFromPiP() {
 export function exitPiP() {
     return (dispatch: IStore['dispatch']) => {
         logger.debug('exitPiP called');
+
+        closeDocumentPiP();
 
         if (document.pictureInPictureElement) {
             document.exitPictureInPicture()
@@ -204,5 +227,71 @@ export function hidePiP() {
         if (isPiPActive) {
             dispatch(exitPiP());
         }
+    };
+}
+
+/**
+ * Toggles Picture-in-Picture from a user gesture (toolbar button).
+ * Entering from a real click satisfies the browser's transient activation
+ * requirement; afterwards the video's `autoPictureInPicture` attribute keeps
+ * it working on subsequent tab switches without further gestures.
+ *
+ * @returns {Function}
+ */
+export function togglePiP() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const isPiPActive = getState()['features/pip']?.isPiPActive;
+
+        if (isPiPActive) {
+            dispatch(exitPiP());
+
+            return;
+        }
+
+        // Prefer the rich Document PiP window (Google Meet style) when available.
+        if (isDocumentPiPSupported()) {
+            dispatch(enterDocumentPiP());
+
+            return;
+        }
+
+        const videoElement = document.getElementById('pipVideo') as HTMLVideoElement;
+
+        if (!videoElement) {
+            logger.warn('togglePiP: pipVideo element not found');
+
+            return;
+        }
+
+        enterPiP(videoElement);
+    };
+}
+
+/**
+ * Opens the rich Document Picture-in-Picture window and updates state.
+ *
+ * @returns {Function}
+ */
+export function enterDocumentPiP() {
+    return async (dispatch: IStore['dispatch']) => {
+        const pipWindow = await openDocumentPiP(() => dispatch(setPiPActive(false)));
+
+        if (pipWindow) {
+            dispatch(setPiPActive(true));
+            APP.API.notifyPictureInPictureEntered();
+        }
+    };
+}
+
+/**
+ * Closes the rich Document Picture-in-Picture window and updates state.
+ *
+ * @returns {Function}
+ */
+export function exitDocumentPiP() {
+    return (dispatch: IStore['dispatch']) => {
+        closeDocumentPiP();
+        dispatch(setPiPActive(false));
+        APP.API.notifyPictureInPictureLeft();
     };
 }
