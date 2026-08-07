@@ -36,12 +36,6 @@ import {
 import logger from './logger';
 import type { IOpenDocumentPiPOptions, IWebKitPictureInPictureVideoElement } from './types';
 
-/**
- * Flag to track if a Document PiP request is currently pending.
- * Prevents duplicate requestWindow() calls before the first one resolves.
- */
-
-let docPiPPending = false;
 let embeddedDocumentPiPRequestTimer: number | undefined;
 
 const EMBEDDED_DOCUMENT_PIP_REQUEST_TIMEOUT = 10000;
@@ -398,7 +392,8 @@ export function togglePip() {
             return;
         }
 
-        if (isDocumentPiPSupported()) {
+        if ((isEmbedded() && isEmbeddedDocumentPiPAvailable(state))
+                || (!isEmbedded() && isDocumentPiPSupported())) {
             dispatch(openDocumentPiP({ notifyOnFailure: true }));
         } else {
             const videoElement = document.getElementById('pipVideo') as HTMLVideoElement;

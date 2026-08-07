@@ -1,0 +1,116 @@
+.embedded-doc-pip {
+    background: #141517;
+    color: #fff;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    width: 100vw;
+
+    &,
+    .doc-pip-video-area,
+    .doc-pip-videos-container,
+    .doc-pip-compact-layout,
+    .doc-pip-video-element,
+    .doc-pip-avatar-placeholder,
+    .doc-pip-participant-name,
+    .doc-pip-controls {
+        box-sizing: border-box;
+    }
+
+    .doc-pip-video-area,
+    .doc-pip-videos-container,
+    .doc-pip-compact-layout {
+        height: 100%;
+        position: relative;
+        width: 100%;
+    }
+
+    .doc-pip-video-area {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .doc-pip-video-element {
+        background: #141517;
+        height: 100%;
+        object-fit: contain;
+        width: 100%;
+
+        &[hidden] {
+            display: none;
+        }
+    }
+
+    .doc-pip-avatar-placeholder {
+        align-items: center;
+        background: #2b2b2b;
+        display: flex;
+        inset: 0;
+        justify-content: center;
+        position: absolute;
+    }
+
+    .doc-pip-participant-name {
+        bottom: 72px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        left: 16px;
+        overflow: hidden;
+        pointer-events: none;
+        position: absolute;
+        right: 16px;
+        text-align: center;
+        text-overflow: ellipsis;
+        text-shadow: 0 1px 2px #000;
+        white-space: nowrap;
+        z-index: 9;
+    }
+
+    .doc-pip-controls {
+        bottom: 16px;
+        display: flex;
+        gap: 8px;
+        left: 50%;
+        opacity: 1;
+        padding: 3px !important;
+        pointer-events: auto;
+        position: absolute;
+        transform: translateX(-50%);
+        visibility: visible;
+        z-index: 10;
+
+        .toolbox-button {
+            flex: 0 0 auto;
+        }
+
+        .toolbox-icon {
+            box-sizing: content-box;
+        }
+    }
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .embedded-doc-pip {
+        .doc-pip-controls {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 300ms ease, visibility 0s linear 300ms;
+            visibility: hidden;
+        }
+
+        .doc-pip-video-area:hover .doc-pip-controls {
+            opacity: 1;
+            pointer-events: auto;
+            transition-delay: 0s;
+            visibility: visible;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .embedded-doc-pip .doc-pip-controls {
+        transition: none;
+    }
+}

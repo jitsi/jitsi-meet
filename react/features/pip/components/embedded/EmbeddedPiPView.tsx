@@ -36,7 +36,7 @@ const EmbeddedPiPView = ({
     const showAvatar = Boolean(state.videoMuted || !state.videoAvailable || !hasPlayableVideo);
 
     return (
-        <div className = 'doc-pip-container embedded-doc-pip'>
+        <div className = 'embedded-doc-pip'>
             <div className = 'doc-pip-video-area'>
                 <div className = 'doc-pip-videos-container'>
                     <div className = 'doc-pip-compact-layout'>
@@ -61,7 +61,7 @@ const EmbeddedPiPView = ({
                         <div className = 'doc-pip-participant-name'>{state.displayName || ''}</div>
                     </div>
                 </div>
-                <div className = 'doc-pip-controls'>
+                <div className = 'doc-pip-controls toolbox-content-items always-on-top-toolbox'>
                     {state.controls && <EmbeddedPiPControls
                         onAudioClick = { onAudioClick }
                         onHangupClick = { onHangupClick }

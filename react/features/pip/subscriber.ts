@@ -60,6 +60,7 @@ if (browser.isElectron()) {
         /* selector */ shouldShowPiP,
         /* listener */ (_shouldShowPiP: boolean) => {
             const electronNS = getElectronGlobalNS();
+
             if (_shouldShowPiP) {
                 // Expose requestPictureInPicture for Electron main process.
                 if (!electronNS.requestPictureInPicture) {
@@ -74,26 +75,34 @@ if (browser.isElectron()) {
     );
 }
 
-if (isEmbedded()){
+if (isEmbedded()) {
     StateListenerRegistry.register(
-    /* selector */ (state: IReduxState) => {
-        const pipState = state['features/pip'];
-
-        if (!isEmbeddedDocumentPiPAvailable(state)
-                || pipState?.embeddedDocumentPiPLifecycle !== EmbeddedDocumentPiPLifecycle.ACTIVE
-                || !pipState.embeddedDocumentPiPRendererReady) {
-            return null;
+        /* selector */ (state: IReduxState) =>
+            isEmbeddedDocumentPiPAvailable(state) && shouldShowPiP(state),
+        /* listener */ (available: boolean) => {
+            APP.API.notifyDocumentPiPAvailability({ available });
         }
+    );
 
-        return getEmbeddedDocumentPiPViewModel(state);
-    },
-    /* listener */ (_state: ReturnType<typeof getEmbeddedDocumentPiPViewModel> | null) => {
-        if (_state) {
-            APP.API.notifyDocumentPiPState(_state);
+    StateListenerRegistry.register(
+        /* selector */ (state: IReduxState) => {
+            const pipState = state['features/pip'];
+
+            if (!isEmbeddedDocumentPiPAvailable(state)
+                    || pipState?.embeddedDocumentPiPLifecycle !== EmbeddedDocumentPiPLifecycle.ACTIVE
+                    || !pipState.embeddedDocumentPiPRendererReady) {
+                return null;
+            }
+
+            return getEmbeddedDocumentPiPViewModel(state);
+        },
+        /* listener */ (_state: ReturnType<typeof getEmbeddedDocumentPiPViewModel> | null) => {
+            if (_state) {
+                APP.API.notifyDocumentPiPState(_state);
+            }
+        },
+        {
+            deepEquals: true
         }
-    },
-    {
-        deepEquals: true
-    }
-);
+    );
 }
