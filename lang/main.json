@@ -152,6 +152,7 @@
         "search": {
             "close": "Close search",
             "next": "Next match",
+            "noResults": "No results",
             "open": "Search messages",
             "placeholder": "Search in chat",
             "previous": "Previous match",
