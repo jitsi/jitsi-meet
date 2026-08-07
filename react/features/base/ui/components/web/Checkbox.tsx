@@ -189,7 +189,7 @@ const Checkbox = ({
 
     const toggleCheckbox = useCallback(() => {
         labelRef.current?.click();
-    }, [ labelRef ]);
+    }, []);
 
     let inputId = id;
 
