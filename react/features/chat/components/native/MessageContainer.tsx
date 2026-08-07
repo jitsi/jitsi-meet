@@ -2,14 +2,17 @@ import React, { Component } from 'react';
 import { FlatList, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IMessageGroup, groupMessagesBySender } from '../../../base/util/messageGrouping';
+import { getActiveChatSearchMatch } from '../../functions';
 import { IMessage } from '../../types';
 
 import ChatMessageGroup from './ChatMessageGroup';
 import styles from './styles';
 
 interface IProps {
+    _activeMatch?: IMessage;
     messages: IMessage[];
     t: Function;
 }
@@ -23,6 +26,8 @@ class MessageContainer extends Component<IProps, any> {
         messages: [] as IMessage[]
     };
 
+    _flatListRef: React.RefObject<FlatList<any>>;
+    
     /**
      * Instantiates a new instance of the component.
      *
@@ -31,10 +36,70 @@ class MessageContainer extends Component<IProps, any> {
     constructor(props: IProps) {
         super(props);
 
+        this._flatListRef = React.createRef();
         this._keyExtractor = this._keyExtractor.bind(this);
         this._renderListEmptyComponent = this._renderListEmptyComponent.bind(this);
         this._renderMessageGroup = this._renderMessageGroup.bind(this);
         this._getMessagesGroupedBySender = this._getMessagesGroupedBySender.bind(this);
+        this._onScrollToIndexFailed = this._onScrollToIndexFailed.bind(this);
+    }
+
+    /**
+     * Implements {@code Component#componentDidUpdate}.
+     *
+     * @inheritdoc
+     */
+    override componentDidUpdate(prevProps: IProps) {
+        const { _activeMatch } = this.props;
+
+        if (_activeMatch && _activeMatch.messageId !== prevProps._activeMatch?.messageId) {
+            this._scrollToActiveMatch();
+        }
+    }
+
+    /**
+     * Scrolls the list so the group containing the active search match is visible.
+     *
+     * @returns {void}
+     */
+    _scrollToActiveMatch() {
+        const { _activeMatch } = this.props;
+
+        if (!_activeMatch) {
+            return;
+        }
+
+        const data = this._getMessagesGroupedBySender();
+        const index = data.findIndex((group: IMessageGroup<IMessage>) =>
+            group.messages.some(m => m.messageId === _activeMatch.messageId));
+
+        if (index === -1) {
+            return;
+        }
+
+        requestAnimationFrame(() => {
+            this._flatListRef.current?.scrollToIndex({
+                animated: true,
+                index,
+                viewPosition: 0.5
+            });
+        });
+    }
+
+    /**
+     * Fallback for when scrollToIndex fires before the target row is measured.
+     *
+     * @param {Object} info - Info about the failed scroll attempt.
+     * @returns {void}
+     */
+    _onScrollToIndexFailed(info: { index: number; }) {
+        setTimeout(() => {
+            this._flatListRef.current?.scrollToIndex({
+                animated: true,
+                index: info.index,
+                viewPosition: 0.5
+            });
+        }, 100);
     }
 
     /**
@@ -59,6 +124,8 @@ class MessageContainer extends Component<IProps, any> {
                 inverted = { Boolean(data.length) }
                 keyExtractor = { this._keyExtractor }
                 keyboardShouldPersistTaps = 'handled'
+                onScrollToIndexFailed = { this._onScrollToIndexFailed }
+                ref = { this._flatListRef }
                 renderItem = { this._renderMessageGroup }
                 style = { noMessages && styles.emptyListStyle } />
         );
@@ -116,6 +183,12 @@ class MessageContainer extends Component<IProps, any> {
     _getMessagesGroupedBySender() {
         return groupMessagesBySender(this.props.messages);
     }
+}
+
+function _mapStateToProps(state: IReduxState) {
+    return {
+        _activeMatch: getActiveChatSearchMatch(state)
+    };
 }
 
 export default translate(connect()(MessageContainer));

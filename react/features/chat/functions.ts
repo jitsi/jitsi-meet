@@ -230,6 +230,41 @@ export function getMessageText(message: IMessage): string {
         : message.message;
 }
 
+/**
+ * Escapes regexp special characters in a string.
+ *
+ * @param {string} value - The string to escape.
+ * @returns {string}
+ */
+export function escapeSearchRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Splits message text into segments, flagging which ones match the search
+ * query (case-insensitive), so callers can render matches with a highlight
+ * style. Shared between web and native so both wrap matches identically.
+ *
+ * @param {string} text - The message text.
+ * @param {string} query - The search query.
+ * @returns {Array<{ match: boolean; text: string; }>}
+ */
+export function getHighlightSegments(text: string, query: string): Array<{ match: boolean; text: string; }> {
+    if (!query) {
+        return [ { match: false,
+            text } ];
+    }
+
+    const regexp = new RegExp(`(${escapeSearchRegExp(query)})`, 'gi');
+
+    return text
+        .split(regexp)
+        .filter(part => part.length > 0)
+        .map(part => ({
+            match: part.toLowerCase() === query.toLowerCase(),
+            text: part
+        }));
+}
 
 /**
  * Returns whether a message can be replied to.

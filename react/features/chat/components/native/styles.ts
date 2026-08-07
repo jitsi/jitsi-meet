@@ -81,6 +81,51 @@ export default {
         underlayColor: 'transparent'
     },
 
+    chatMessageHighlight: {
+        backgroundColor: BaseTheme.palette.warning02,
+        color: BaseTheme.palette.text01
+    },
+
+    chatMessageHighlightActive: {
+        backgroundColor: BaseTheme.palette.warning01,
+        color: BaseTheme.palette.text01
+    },
+
+    searchBarContainer: {
+        alignItems: 'center',
+        backgroundColor: BaseTheme.palette.ui02,
+        borderRadius: BaseTheme.shape.borderRadius,
+        flexDirection: 'row',
+        height: 40,
+        marginBottom: BaseTheme.spacing[1],
+        marginHorizontal: BaseTheme.spacing[3],
+        marginTop: BaseTheme.spacing[2],
+        paddingHorizontal: BaseTheme.spacing[2]
+    },
+
+    searchBarIcon: {
+        marginRight: BaseTheme.spacing[1]
+    },
+
+    searchBarInput: {
+        ...BaseTheme.typography.bodyShortRegular,
+        color: BaseTheme.palette.text01,
+        flex: 1,
+        padding: 0
+    },
+
+    searchBarCounter: {
+        ...BaseTheme.typography.labelRegular,
+        color: BaseTheme.palette.text03,
+        marginHorizontal: BaseTheme.spacing[1]
+    },
+
+    searchBarNavButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: BaseTheme.spacing[1]
+    },
+
     /**
      * Wrapper View for the avatar.
      */
