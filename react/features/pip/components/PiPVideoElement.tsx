@@ -12,7 +12,7 @@ import { getThumbnailBackgroundColor } from '../../filmstrip/functions.web';
 import { getLargeVideoParticipant } from '../../large-video/functions';
 import { isPrejoinPageVisible } from '../../prejoin/functions.any';
 import { handlePiPLeaveEvent, handlePipEnterEvent, handleWindowBlur, handleWindowFocus } from '../actions';
-import { FOCUS_CHECK_DELAY_MS, WEBKIT_PIP_PLAYBACK_RECOVERY_TIMEOUT_MS } from '../constants';
+import { FOCUS_CHECK_DELAY_MS } from '../constants';
 import { getPiPVideoTrack } from '../functions';
 import { useCanvasAvatar } from '../hooks';
 import logger from '../logger';
@@ -53,7 +53,6 @@ const PiPVideoElement: React.FC = () => {
     const { classes, theme } = useStyles();
     const videoRef = useRef<HTMLVideoElement>(null);
     const previousTrackRef = useRef<any>(null);
-
 
     // Safari 26.5.2 fires `playing` after PiP is dismissed while hidden, which would immediately reopen PiP.
     const webKitPiPDismissedRef = useRef(false);
@@ -150,7 +149,8 @@ const PiPVideoElement: React.FC = () => {
                 }
             }
         };
-    // without videoElementKey, after closing PiP window in Safari, it will not reopen.
+    // Changing videoElementKey remounts the <video> with a fresh DOM node (Safari refuses to re-enter PiP with an element that already presented a dismissed PiP session).
+    // So this effect must re-run to attach the stream to the new node.
     }, [ videoTrack, shouldShowAvatar, videoElementKey ]);
 
     /**
@@ -169,31 +169,16 @@ const PiPVideoElement: React.FC = () => {
 
         let enteringWebKitPiP = false;
         let isPiPActive = false;
-        let playbackRecoveryArmed = false;
-        let playbackRecoveryTimeout: number | undefined;
-        let resumePlaybackTimeout: number | undefined;
 
-        const clearPlaybackRecovery = () => {
-            playbackRecoveryArmed = false;
-            window.clearTimeout(playbackRecoveryTimeout);
-            window.clearTimeout(resumePlaybackTimeout);
-        };
         const resumeWebKitPiPPlayback = () => {
-            if (!playbackRecoveryArmed
-                    || videoElement.webkitPresentationMode !== 'picture-in-picture'
+            if (videoElement.webkitPresentationMode !== 'picture-in-picture'
                     || !videoElement.paused) {
                 return;
             }
 
-            playbackRecoveryArmed = false;
-            window.clearTimeout(playbackRecoveryTimeout);
-            window.clearTimeout(resumePlaybackTimeout);
-            resumePlaybackTimeout = window.setTimeout(() => {
-                if (videoElement.webkitPresentationMode === 'picture-in-picture' && videoElement.paused) {
-                    videoElement.play()
-                        .catch(error => logger.warn('Failed to resume WebKit Picture-in-Picture video:', error));
-                }
-            });
+            // Pausing this muted live-stream mirror only freezes its PiP frame, so always resume it while in PiP.
+            videoElement.play()
+                .catch(error => logger.warn('Failed to resume WebKit Picture-in-Picture video:', error));
         };
         const onEnterPiP = () => {
             if (!isPiPActive) {
@@ -202,8 +187,6 @@ const PiPVideoElement: React.FC = () => {
             }
         };
         const onLeavePiP = () => {
-            clearPlaybackRecovery();
-
             if (!isPiPActive) {
                 return;
             }
@@ -211,6 +194,8 @@ const PiPVideoElement: React.FC = () => {
             isPiPActive = false;
             dispatch(handlePiPLeaveEvent());
             webKitPiPDismissedRef.current = document.hidden;
+
+            // Safari refuses to re-enter PiP with a video node whose previous PiP session was dismissed.
             setVideoElementKey(key => key + 1);
         };
         const enterWebKitPiP = async () => {
@@ -221,7 +206,16 @@ const PiPVideoElement: React.FC = () => {
 
             try {
                 if (videoElement.paused) {
-                    await videoElement.play();
+                    // Safari pauses hidden MediaStream videos, but a rejected play() (autoplay policy)
+                    // must not prevent the PiP entry attempt — WebKit does the final eligibility check
+                    // and the playback recovery below resumes playback once PiP is entered.
+                    await videoElement.play()
+                        .catch(error => logger.warn('Failed to play video before entering WebKit PiP:', error));
+                }
+
+                // The tab may have become visible or PiP may have been dismissed while play() was pending.
+                if (!document.hidden || webKitPiPDismissedRef.current) {
+                    return;
                 }
 
                 const hasCurrentMedia = !videoElement.ended
@@ -229,12 +223,9 @@ const PiPVideoElement: React.FC = () => {
 
                 if (hasCurrentMedia
                         && videoElement.webkitSupportsPresentationMode?.('picture-in-picture')) {
-                    clearPlaybackRecovery();
-                    playbackRecoveryArmed = true;
                     videoElement.webkitSetPresentationMode?.('picture-in-picture');
                 }
             } catch (error) {
-                clearPlaybackRecovery();
                 logger.warn('Failed to enter WebKit Picture-in-Picture:', error);
             } finally {
                 enteringWebKitPiP = false;
@@ -272,10 +263,6 @@ const PiPVideoElement: React.FC = () => {
         };
         const onWebKitPresentationModeChanged = () => {
             if (videoElement.webkitPresentationMode === 'picture-in-picture') {
-                window.clearTimeout(playbackRecoveryTimeout);
-                playbackRecoveryTimeout = window.setTimeout(
-                    clearPlaybackRecovery,
-                    WEBKIT_PIP_PLAYBACK_RECOVERY_TIMEOUT_MS);
                 resumeWebKitPiPPlayback();
                 onEnterPiP();
             } else {
@@ -289,7 +276,6 @@ const PiPVideoElement: React.FC = () => {
         videoElement.addEventListener('webkitpresentationmodechanged', onWebKitPresentationModeChanged);
 
         return () => {
-            clearPlaybackRecovery();
             document.removeEventListener('visibilitychange', onVisibilityChange);
             videoElement.removeEventListener('pause', resumeWebKitPiPPlayback);
             videoElement.removeEventListener('playing', onPlaying);
