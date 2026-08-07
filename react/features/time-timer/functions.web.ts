@@ -1,6 +1,7 @@
 import React from 'react';
 
 import TimeTimerEndedDescription from './components/web/TimeTimerEndedDescription';
+export * from './functions.any';
 
 /**
  * Description for the "Timer ended" notification on web: a component that

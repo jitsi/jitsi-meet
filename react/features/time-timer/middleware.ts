@@ -17,12 +17,11 @@ import {
     stopTimeTimer,
     tickTimeTimer
 } from './actions';
-import { buildTimerEndedDescription } from './buildTimerEndedDescription';
 import {
     TIME_TIMER_NOTIFICATION_ID,
     WARNING_THRESHOLD_SECONDS
 } from './constants';
-import { isTimeTimerEnabled } from './functions';
+import { buildTimerEndedDescription, isTimeTimerEnabled } from './functions';
 import logger from './logger';
 
 let _tickInterval: ReturnType<typeof setInterval> | undefined;
