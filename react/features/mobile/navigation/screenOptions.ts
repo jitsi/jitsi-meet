@@ -130,6 +130,11 @@ export const liveStreamScreenOptions = presentationScreenOptions;
 export const participantsScreenOptions = presentationScreenOptions;
 
 /**
+ * Screen options for custom panel modal.
+ */
+export const customPanelScreenOptions = presentationScreenOptions;
+
+/**
  * Screen options for speaker stats modal.
  */
 export const speakerStatsScreenOptions = presentationScreenOptions;
