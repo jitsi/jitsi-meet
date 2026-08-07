@@ -20,11 +20,14 @@ export interface IMessage {
     fileMetadata?: IFileMetadata;
     isFromGuest?: boolean;
     isFromVisitor?: boolean;
+    isModerated?: boolean;
     isReaction: boolean;
     lobbyChat: boolean;
     message: string;
     messageId: string;
     messageType: ChatMessageType;
+    moderatedBy?: string;
+    moderationReason?: string;
     participantId: string;
     privateMessage: boolean;
     reactions: Map<string, Set<string>>;

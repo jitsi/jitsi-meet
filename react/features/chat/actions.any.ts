@@ -10,10 +10,12 @@ import {
     CLEAR_CHAT_STATE,
     CLOSE_CHAT,
     EDIT_MESSAGE,
+    MODERATE_MESSAGE,
     NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
     OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SEND_MESSAGE,
+    SEND_MESSAGE_MODERATION,
     SEND_REACTION,
     SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
@@ -21,6 +23,7 @@ import {
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
 import { ChatTabs } from './constants';
+import { IMessage } from './types';
 
 /**
  * Adds a chat message to the collection of messages.
@@ -383,5 +386,48 @@ export function handleLobbyChatInitialized(participantId: string) {
 
         // notify other moderators.
         return conference?.sendLobbyMessage(payload);
+    };
+}
+
+/**
+ * Requests moderation of a chat message.
+ *
+ * Dispatches the network action so other participants get notified, and
+ * optimistically marks the message as moderated in the local store too,
+ * since MESSAGE_MODERATED isn't guaranteed to be echoed back to the sender.
+ *
+ * @param {IMessage} message - The message to moderate.
+ * @param {string} reason - Reason to delete message.
+ * @returns {Function}
+ */
+export function sendMessageModeration(message: IMessage, reason?: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const localParticipant = getLocalParticipant(state);
+
+        dispatch({
+            type: SEND_MESSAGE_MODERATION,
+            message,
+            reason
+        });
+
+        dispatch(moderateMessage(message.messageId, localParticipant?.id, reason));
+    };
+}
+
+/**
+ * Marks a message as moderated.
+ *
+ * @param {string} messageId - The moderated message id.
+ * @param {string} moderatorId - The participant id of the moderator.
+ * @param {string} reason - Optional moderation reason.
+ * @returns {Object}
+ */
+export function moderateMessage(messageId: string, moderatorId?: string, reason?: string) {
+    return {
+        type: MODERATE_MESSAGE,
+        messageId,
+        moderatorId,
+        reason
     };
 }
