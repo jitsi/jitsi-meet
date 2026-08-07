@@ -19,7 +19,7 @@ const useStyles = makeStyles()(theme => {
             margin: '24px',
             padding: '16px',
             backgroundColor: theme.palette.pollsBackground,
-            border: `1px solid ${theme.palette.contrastBorder02}`,
+            border: `1px solid ${theme.palette.pollsPaneBorder}`,
             borderRadius: '8px',
             wordBreak: 'break-word'
         },
