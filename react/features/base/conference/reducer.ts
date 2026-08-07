@@ -64,6 +64,13 @@ export interface IConferenceMetadata {
      * means available.
      */
     audioTranslationAvailable?: boolean;
+
+    /**
+     * Per-speaker, per-language count of participants subscribed to that speaker's translated audio, published
+     * by the audio-translation component. Combined with the bridge's synthetic-source sending state to show how
+     * many participants are still hearing a speaker.
+     */
+    audioTranslationListenerCounts?: { [senderId: string]: { [language: string]: number; }; };
     dialinEnabled?: boolean;
     files: {
         [fileId: string]: {

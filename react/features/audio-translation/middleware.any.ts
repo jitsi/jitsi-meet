@@ -1,5 +1,4 @@
 import { JitsiAudioTranslationErrors, JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { getLocalParticipant } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { showErrorNotification, showNotification } from '../notifications/actions';
@@ -16,7 +15,7 @@ import {
     setTranslationListeners,
     updateTranslatedSourceSending
 } from './actions';
-import { getSourceOwnerEndpointId, isAudioTranslationRoomEnabled } from './functions';
+import { isAudioTranslationRoomEnabled } from './functions';
 import logger from './logger';
 
 /**
@@ -30,6 +29,7 @@ const ERROR_NOTIFICATION_KEYS: { [condition: string]: string; } = {
 };
 
 const DEFAULT_ERROR_KEY = 'audioTranslation.errorGeneric';
+
 
 /**
  * Middleware that drives the bridge-side translation when the local user changes
@@ -135,11 +135,6 @@ StateListenerRegistry.register(
                     return;
                 }
 
-                // The bridge broadcasts sending changes to every endpoint, including the translated
-                // participant itself; our own translated source is not audio we receive.
-                if (getSourceOwnerEndpointId(sourceName) === getLocalParticipant(getState())?.id) {
-                    return;
-                }
                 dispatch(updateTranslatedSourceSending(sourceName, sending, timestamp));
             });
 

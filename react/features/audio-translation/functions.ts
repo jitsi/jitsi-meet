@@ -32,6 +32,18 @@ export function isParticipantAudioTranslationActive(state: IReduxState, particip
 }
 
 /**
+ * The target language encoded in a translated source name — the substring after the last {@code .}.
+ *
+ * @param {string} sourceName - The translated source name.
+ * @returns {string}
+ */
+export function getSourceLanguage(sourceName: string): string {
+    const dotIndex = sourceName.lastIndexOf('.');
+
+    return dotIndex === -1 ? '' : sourceName.substring(dotIndex + 1);
+}
+
+/**
  * The owner endpoint id encoded in a translated source name — the substring before the first {@code -}.
  * Translated sources follow the {@code <endpointId>-a<idx>.<lang>} convention (endpoint ids are dash/dot-free).
  * Returns an empty string for a source without a dash.
@@ -46,16 +58,26 @@ export function getSourceOwnerEndpointId(sourceName: string): string {
 }
 
 /**
- * Whether the bridge is currently forwarding any translated audio owned by the given participant to us (i.e. we
- * are hearing that participant translated), per the {@code receivingSources} set.
+ * Whether we are hearing the given participant translated. The bridge floods sending changes to every
+ * endpoint, so {@code receivingSources} is every translated source in flight anywhere, not just ours; a
+ * source counts as ours only when its language matches the one we selected for this participant.
  *
  * @param {IReduxState} state - The redux state.
  * @param {string} participantId - The participant (endpoint) id to check.
  * @returns {boolean}
  */
 export function isReceivingTranslationFrom(state: IReduxState, participantId: string): boolean {
+    const language = getEffectiveTranslationLanguage(state, participantId);
+
+    // The bridge announces sending changes to every endpoint, so a source being in flight does not mean we
+    // subscribed to it; require our own selection for this speaker to match the source's language.
+    if (!language) {
+        return false;
+    }
+
     return state['features/audio-translation'].receivingSources
-        .some(sourceName => getSourceOwnerEndpointId(sourceName) === participantId);
+        .some(sourceName => getSourceOwnerEndpointId(sourceName) === participantId
+            && sourceName.endsWith(`.${language}`));
 }
 
 /**
@@ -234,4 +256,46 @@ export function getDuckedVolumeForParticipant(state: IReduxState, participantId?
     const userVolume = participantId ? state['features/filmstrip'].participantsVolume[participantId] : undefined;
 
     return typeof userVolume === 'number' ? Math.min(userVolume, duckedVolume) : duckedVolume;
+}
+
+/**
+ * The number of participants still hearing the given speaker's translated audio, as published by that
+ * speaker. 0 when nothing is pending or the speaker's client does not publish the count.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} participantId - The speaker's participant id.
+ * @returns {number}
+ */
+export function getTranslationDeliveryPendingCount(state: IReduxState, participantId: string): number {
+    const counts = state['features/base/conference'].metadata?.audioTranslationListenerCounts?.[participantId];
+
+    if (!counts) {
+        return 0;
+    }
+
+    // Sum the subscribers of only the languages the bridge is still sending for this speaker: the in-flight
+    // language count alone undercounts (one source serves every listener of that language) and the speaker's
+    // subscriber total overcounts (a language whose stream already finished).
+    return state['features/audio-translation'].receivingSources.reduce((total, sourceName) =>
+        getSourceOwnerEndpointId(sourceName) === participantId
+            ? total + (counts[getSourceLanguage(sourceName)] ?? 0)
+            : total, 0);
+}
+
+/**
+ * Whether translated audio for the given speaker is still being delivered, so others should wait before
+ * speaking. Falls back to any in-flight translated source owned by the speaker, so the ring still shows when
+ * the speaker's client does not publish a count.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} participantId - The speaker's participant id.
+ * @returns {boolean}
+ */
+export function isTranslationDeliveryPending(state: IReduxState, participantId: string): boolean {
+    if (getTranslationDeliveryPendingCount(state, participantId) > 0) {
+        return true;
+    }
+
+    return state['features/audio-translation'].receivingSources
+        .some(sourceName => getSourceOwnerEndpointId(sourceName) === participantId);
 }
