@@ -284,6 +284,9 @@ const PiPVideoElement: React.FC = () => {
             videoElement.removeEventListener('webkitpresentationmodechanged', onWebKitPresentationModeChanged);
             exitWebKitPiP();
         };
+        // Changing videoElementKey remounts the <video> with a fresh DOM node (Safari refuses to re-enter
+        // PiP with an element that already presented a dismissed PiP session).
+        // So this effect must re-run to register the PiP event listeners on the new node.
     }, [ dispatch, videoElementKey ]);
 
     /**
