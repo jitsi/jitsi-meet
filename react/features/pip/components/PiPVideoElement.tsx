@@ -176,7 +176,9 @@ const PiPVideoElement: React.FC = () => {
                 return;
             }
 
-            // Pausing this muted live-stream mirror only freezes its PiP frame, so always resume it while in PiP.
+            // A muted live-MediaStream mirror has no meaningful paused state: any pause while in PiP
+            // (Safari's hidden-tab interruption churn around the PiP transition, media keys) just
+            // freezes the PiP frame, so playback is always resumed.
             videoElement.play()
                 .catch(error => logger.warn('Failed to resume WebKit Picture-in-Picture video:', error));
         };
