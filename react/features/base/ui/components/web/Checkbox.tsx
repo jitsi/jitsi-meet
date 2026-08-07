@@ -152,6 +152,27 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
+/**
+ * Hack the useId hook.
+ * This is used rarely and the entropy is high enough to not worry about duplication.
+ * TODO: When v17->v18 is completed, remove this! Ref: https://github.com/jitsi/jitsi-meet/issues/15709.
+ *
+ * @returns {string} Random ten digit ID string.
+ */
+const useId = (): string => {
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz1234567890';
+
+    let newId = '';
+
+    for (let i = 0; i < 10; i++) {
+        const index = Math.floor(Math.random() * alphabet.length);
+
+        newId += alphabet[index];
+    }
+
+    return newId;
+};
+
 const Checkbox = ({
     checked,
     className,
@@ -163,7 +184,8 @@ const Checkbox = ({
 }: ICheckboxProps) => {
     const { classes: styles, cx, theme } = useStyles();
     const isMobile = isMobileBrowser();
-    const labelRef = useRef<HTMLLabelElement>(null);
+    const labelRef = useRef<HTMLLabelElement | null>(null);
+    const generatedIdRef = useRef<string | null>(null);
 
     const toggleCheckbox = useCallback(() => {
         labelRef.current?.click();
@@ -171,29 +193,12 @@ const Checkbox = ({
 
     let inputId = id;
 
-    // Hack the useId hook.
-    // This is used rarely and the entropy is high enough to not worry about duplication.
-    // TODO: When v17->v18 is completed, remove this! Ref: https://github.com/jitsi/jitsi-meet/issues/15709
-    const useId = () => {
-        const alphabet = 'abcdefghijklmnopqrstuvwxyz1234567890';
-
-        let newId = '';
-
-        for (let i = 0; i < 10; i++) {
-            const index = Math.floor(Math.random() * alphabet.length);
-
-            newId += alphabet[index];
-        }
-
-        return newId;
-    };
-
     if (!inputId) {
-        if (name) {
-            inputId = name;
-        } else {
-            inputId = `checkbox-${useId()}`;
+        if (!generatedIdRef.current) {
+            generatedIdRef.current = name ? `checkbox-${name}-${useId()}` : `checkbox-${useId()}`;
         }
+
+        inputId = generatedIdRef.current;
     }
 
     return (
