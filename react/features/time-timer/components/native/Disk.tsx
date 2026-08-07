@@ -1,21 +1,13 @@
 import React from 'react';
 import Svg, { Circle, Path } from 'react-native-svg';
 
-import { EXPIRED_DISK_COLOR, EXPIRED_OVERRUN_EDGE_COLOR } from '../../functions';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 /**
- * Native SVG disk renderer used by {@code TimeTimerLabel}. This is the
- * react-native counterpart of web's {@code components/web/Disk}: it draws a
- * ring with an optional filled wedge growing clockwise from 12 o'clock.
- *
- * During overrun lap 2+ (once the disk has filled once) web overlays a CSS
- * {@code conic-gradient} that runs from {@code EXPIRED_DISK_COLOR} at the 12
- * o'clock origin to {@code EXPIRED_OVERRUN_EDGE_COLOR} at the current leading
- * edge, then back to the base colour for the rest of the disk. Since
- * react-native-svg has no conic gradient, we reproduce the SAME math by
- * slicing the swept region into many thin angular wedges and filling each with
- * the colour the gradient would have at that angle — visually identical to the
- * web overlay.
+ * Native SVG disk for {@code TimeTimerLabel}: a ring with a wedge growing
+ * clockwise from 12 o'clock. Since react-native-svg has no conic gradient, the
+ * lap-2+ overrun sweep is drawn as thin angular slices whose colours
+ * interpolate the same gradient web renders with CSS.
  */
 
 const CX = 50;
@@ -182,7 +174,10 @@ const Disk = ({ color, fraction, overrunArcEndDeg, size }: IProps) => {
             return (
                 <Path
                     d = { slicePath(a0, a1) }
-                    fill = { lerpHexColor(EXPIRED_DISK_COLOR, EXPIRED_OVERRUN_EDGE_COLOR, t) }
+                    fill = { lerpHexColor(
+                        BaseTheme.palette.timeTimerExpiredDisk,
+                        BaseTheme.palette.timeTimerExpiredOverrunEdge,
+                        t) }
                     key = { i } />
             );
         });

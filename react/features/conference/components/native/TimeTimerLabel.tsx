@@ -6,26 +6,14 @@ import { IReduxState } from '../../../app/types';
 import { getLocalizedDurationFormatter } from '../../../base/i18n/dateUtil';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Disk from '../../../time-timer/components/native/Disk';
-import {
-    EXPIRED_NAME_SEGMENT_BG,
-    EXPIRED_PILL_TEXT_COLOR,
-    EXPIRED_TIMER_SEGMENT_BG,
-    WARNING_COLOR,
-    WARNING_NAME_SEGMENT_BG,
-    WARNING_TIMER_SEGMENT_BG,
-    getTimerVisualState,
-    isTimeTimerEnabled
-} from '../../../time-timer/functions';
+import { getTimerVisualState, isTimeTimerEnabled } from '../../../time-timer/functions';
 
 import styles, { TIME_TIMER_COLLAPSE_DURATION, TIME_TIMER_DISK } from './styles';
 
 /**
- * Native port of web's two-segment time-timer pill, sized to align with the
- * Record/Transcribe labels. The left segment shows the scheduled duration, the
- * right the elapsed time + a progress {@code Disk}. All colours (blue baseline
- * / amber warning / red expired) come from the shared {@code getTimerVisualState}
- * so behaviour matches desktop. When the toolbox hides, the pill retracts to a
- * disk-only chip, cross-faded to read as a morph.
+ * Native two-segment time-timer pill: scheduled duration | elapsed + a progress
+ * {@code Disk}. Colours come from the shared {@code getTimerVisualState}. When
+ * the toolbox hides, it retracts to a disk-only chip.
  *
  * @returns {ReactElement|null}
  */
@@ -33,17 +21,14 @@ const TimeTimerLabel = () => {
     const timerState = useSelector((state: IReduxState) => state['features/time-timer']);
     const timerEnabled = useSelector(isTimeTimerEnabled);
 
-    // Read the RAW toolbox `visible` flag, not the isToolboxVisible selector:
-    // that selector forces `true` for a solo participant, so the pill would
-    // never collapse in a one-person meeting. The raw flag tracks the actual
-    // show/hide of the bar — the cue web collapses on too.
+    // Raw `visible` flag, not isToolboxVisible — that selector forces true for
+    // a solo participant, which would stop the pill collapsing when alone.
     const toolboxVisible = useSelector((state: IReduxState) => state['features/toolbox'].visible);
 
     const collapsed = !toolboxVisible;
     const opacity = useRef(new Animated.Value(1)).current;
 
-    // Fade out then in on collapse/expand so the swap between the full pill and
-    // the disk-only chip reads as a morph rather than a hard cut.
+    // Fade out then in on collapse/expand so the swap reads as a morph.
     useEffect(() => {
         opacity.setValue(0);
         Animated.timing(opacity, {
@@ -62,20 +47,19 @@ const TimeTimerLabel = () => {
     const scheduled = getLocalizedDurationFormatter(timerState.durationSeconds * 1000);
     const elapsed = getLocalizedDurationFormatter(elapsedSeconds * 1000);
 
-    // State-driven segment/text colours — expired wins over warning (they are
-    // mutually exclusive in practice).
+    // Expired wins over warning.
     let scheduledSegmentBg = BaseTheme.palette.timeTimerNameSegmentBackground;
     let timerSegmentBg = BaseTheme.palette.timeTimerTimerSegmentBackground;
     let elapsedColor = BaseTheme.palette.timeTimerElapsedText;
 
     if (expired) {
-        scheduledSegmentBg = EXPIRED_NAME_SEGMENT_BG;
-        timerSegmentBg = EXPIRED_TIMER_SEGMENT_BG;
-        elapsedColor = EXPIRED_PILL_TEXT_COLOR;
+        scheduledSegmentBg = BaseTheme.palette.timeTimerExpiredNameSegmentBackground;
+        timerSegmentBg = BaseTheme.palette.timeTimerExpiredTimerSegmentBackground;
+        elapsedColor = BaseTheme.palette.timeTimerExpiredText;
     } else if (warning) {
-        scheduledSegmentBg = WARNING_NAME_SEGMENT_BG;
-        timerSegmentBg = WARNING_TIMER_SEGMENT_BG;
-        elapsedColor = WARNING_COLOR;
+        scheduledSegmentBg = BaseTheme.palette.timeTimerWarningNameSegmentBackground;
+        timerSegmentBg = BaseTheme.palette.timeTimerWarningTimerSegmentBackground;
+        elapsedColor = BaseTheme.palette.timeTimerWarning;
     }
 
     const disk = (

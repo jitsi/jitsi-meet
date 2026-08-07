@@ -17,21 +17,24 @@ import {
     stopTimeTimer,
     tickTimeTimer
 } from './actions';
+import { buildTimerEndedDescription } from './buildTimerEndedDescription';
 import {
     TIME_TIMER_NOTIFICATION_ID,
     WARNING_THRESHOLD_SECONDS
 } from './constants';
 import { isTimeTimerEnabled } from './functions';
 import logger from './logger';
-import { DESCRIPTION_SELF_TICKS, buildTimerEndedDescription } from './notificationDescription';
 
 let _tickInterval: ReturnType<typeof setInterval> | undefined;
 
-// True once the sticky "ended" notification has been posted for the current
-// timer, so it is posted exactly once whether the meeting crosses the end
-// live or starts already past it (e.g. a late joiner / an embedder pushing an
-// already-overrun timer). Reset whenever a timer starts or stops.
+// True once the "ended" notification has been posted for the current timer,
+// so it fires exactly once. Reset when a timer starts or stops.
 let _notifiedExpiry = false;
+
+// A string description (native) can't update itself, so the middleware
+// re-posts it each tick to keep the overrun counter live. A React element
+// (web) ticks itself, so a single post is enough.
+const _descriptionSelfTicks = typeof buildTimerEndedDescription(0) !== 'string';
 
 /**
  * Clears the per-second tick interval if one is running.
@@ -46,10 +49,8 @@ function _clearTick() {
 }
 
 /**
- * (Re)posts the sticky "Timer ended" notification with the description for the
- * current `overSeconds`. Reusing the same uid means the notification reducer
- * replaces any existing entry in place rather than stacking a new one, so this
- * is safe to call repeatedly.
+ * (Re)posts the sticky "Timer ended" notification. The shared uid replaces any
+ * existing entry in place, so this is safe to call repeatedly.
  *
  * @param {IStore} store - The redux store.
  * @returns {void}
@@ -67,12 +68,7 @@ function _postExpiredNotification({ dispatch, getState }: IStore) {
 }
 
 /**
- * Posts the sticky "Timer ended" notification the first time the timer
- * expires. On web the description is a connected component that ticks
- * `overSeconds` via its own re-renders, so one post is enough. On native the
- * description is a static string, so the per-tick handler re-posts it (see the
- * TICK_TIME_TIMER branch) to keep the overrun counter live — but the initial
- * post still happens here so it appears the instant the timer crosses zero.
+ * Posts the "Timer ended" notification the first time the timer expires.
  *
  * @param {IStore} store - The redux store.
  * @returns {void}
@@ -92,44 +88,25 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
 
     switch (action.type) {
     case CONFERENCE_JOINED: {
-        // Enabled by default (see isTimeTimerEnabled). A deployment opts out
-        // with `timeTimer: { enabled: false }` to hide it even when a
-        // duration is available (e.g. calendar users who don't want it).
+        // Enabled by default; a deployment opts out via timeTimer.enabled=false.
         if (isTimeTimerEnabled(getState())) {
             const { calendarDurationSeconds, calendarStartTimeUnix, calendarUrl }
                 = getState()['features/time-timer'];
 
-            // A real meeting duration must come from a source: a native
-            // calendar event, or the `setMeetingTimer` iframe API command at
-            // runtime. With nothing here we DON'T start the timer — there is
-            // no meaningful countdown to show for a meeting we have no
-            // schedule for. The iframe-API path drives the timer later, on
-            // its own, independent of this join-time check.
-            //
-            // The calendar duration is only honoured when it was recorded for
-            // the room actually being joined — otherwise a duration left over
-            // from a meeting the user opened but bailed on at prejoin would
-            // leak into a different meeting. Compare by room name (robust to
-            // differing URL forms) rather than raw URL equality, and
-            // case-insensitively since room names are normalised to lowercase
-            // while a calendar URL may preserve the original casing.
+            // Only start from a calendar duration recorded for the room being
+            // joined — otherwise a duration from a meeting bailed on at prejoin
+            // could leak in. Match by room name (case-insensitive), not raw URL.
+            // The iframe-API path drives the timer separately, later.
             const calendarRoom = calendarUrl ? parseURIString(calendarUrl)?.room?.toLowerCase() : undefined;
             const joinedRoom = getRoomName(getState())?.toLowerCase();
             const calendarMatchesRoom = !calendarRoom || calendarRoom === joinedRoom;
 
             if (calendarMatchesRoom
                     && typeof calendarDurationSeconds === 'number' && calendarDurationSeconds > 0) {
-                // Elapsed-since-SCHEDULED-START is the single source of truth,
-                // anchored to the calendar event's absolute start time — never
-                // to when this particular participant joined. That keeps the
-                // displayed time identical for everyone at a given wall-clock
-                // moment, regardless of who joins early (including the
-                // organizer). It MAY be negative (joined before the scheduled
-                // start) or exceed the duration (joined after the scheduled
-                // end); the reducer pins the scheduled end from it and derives
-                // the rest. A negative value naturally shows 00:00 / full
-                // duration until the start arrives, then counts up. With no
-                // start time we fall back to 0 (start counting from now).
+                // Elapsed since the event's scheduled start (not since join),
+                // so the time matches for everyone. May be negative (joined
+                // early) or past the duration (joined late); the reducer
+                // handles both. No start time falls back to 0 (count from now).
                 const elapsed = typeof calendarStartTimeUnix === 'number'
                     ? Math.round((Date.now() - calendarStartTimeUnix) / 1000)
                     : 0;
@@ -140,10 +117,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         break;
     }
     case CONFERENCE_LEFT: {
-        // Stop the interval and fully reset the timer so the next meeting
-        // never inherits a frozen / expired pill or a lingering red border.
-        // `stopTimeTimer` resets the running state; the calendar inputs are
-        // cleared separately on the next selection.
+        // Reset so the next meeting never inherits a stale pill or red border.
         _clearTick();
         dispatch(stopTimeTimer());
         break;
@@ -156,11 +130,8 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
             dispatch(tickTimeTimer());
         }, 1000);
 
-        // The reducer derives `expired` synchronously from the start values, so
-        // a timer that begins already past its end (late joiner / an embedder
-        // pushing an overrun timer) is expired from tick zero and would never
-        // hit the live "crossing" branch below. Post the notification here in
-        // that case; _notifyExpiredOnce keeps it to a single notification.
+        // A timer that starts already expired never hits the live-crossing
+        // branch below, so post its notification here.
         if (getState()['features/time-timer'].expired) {
             _notifyExpiredOnce(store);
         }
@@ -170,8 +141,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         _clearTick();
         _notifiedExpiry = false;
 
-        // The timer (and thus its sticky "ended" notification) is gone — clear
-        // the notification so it does not outlive the timer that produced it.
+        // Clear the notification so it doesn't outlive the timer.
         dispatch({
             type: HIDE_NOTIFICATION,
             uid: TIME_TIMER_NOTIFICATION_ID
@@ -186,40 +156,25 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
             break;
         }
 
-        // Warning crossing — fire the one-time attention-grab the moment we
-        // enter the final `WARNING_THRESHOLD_SECONDS`. Using `<=` (rather than
-        // an exact match) keeps it robust to a throttled background tab that
-        // snaps several seconds forward in a single tick. `warningTriggered`
-        // is one-shot and is also pre-set at start when joining mid-warning,
-        // so the animation is suppressed in that case.
+        // Entering the warning window: fire the one-time bar-expand. `<=`
+        // (not `===`) survives a background tab that jumps several seconds.
         if (!warningTriggered && !expired && remainingSeconds <= WARNING_THRESHOLD_SECONDS) {
             dispatch(setTimeTimerWarningTriggered());
             dispatch(showToolbox());
         }
 
-        // First moment we cross the scheduled end live: flag expired and give
-        // the bar the same one-time attention-grab expand we use at the
-        // warning threshold. The `!expired` guard runs this only on the
-        // transition tick.
+        // Crossing the scheduled end: flag expired and expand the bar once.
         if (remainingSeconds <= 0 && !expired) {
             dispatch(setTimeTimerExpired());
             dispatch(showToolbox());
         }
 
-        // Post the sticky "ended" notification while expired. _notifyExpiredOnce
-        // makes the FIRST post fire exactly once per timer — covering both the
-        // live crossing above and the already-expired-at-start case handled in
-        // START_TIME_TIMER. When the platform's description does not tick
-        // itself (native — a static string), re-post it each tick so the
-        // overrun counter climbs live; same uid replaces in place. On web the
-        // description is a self-ticking component, so one post suffices.
+        // While expired: post once, then (native only) re-post each tick so
+        // the static-string overrun counter keeps climbing — but not after the
+        // user dismisses it. Web's description self-ticks, so one post suffices.
         if (remainingSeconds <= 0) {
             if (_notifiedExpiry) {
-                // Already posted once. Re-post each tick only on platforms whose
-                // description is a static string (native), and only while the
-                // user hasn't dismissed it — otherwise a dismissed notification
-                // would immediately reappear on the next tick.
-                if (!DESCRIPTION_SELF_TICKS && !acknowledged) {
+                if (!_descriptionSelfTicks && !acknowledged) {
                     _postExpiredNotification(store);
                 }
             } else {
@@ -229,9 +184,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         break;
     }
     case HIDE_NOTIFICATION: {
-        // The user (or anything else) closed our timer-ended notification —
-        // treat that as acknowledgment, which clears the red border around
-        // the conference grid (Conference.tsx reads expired && !acknowledged).
+        // Closing the notification acknowledges it, clearing the red border.
         if (action.uid === TIME_TIMER_NOTIFICATION_ID) {
             dispatch(setTimeTimerAcknowledged());
         }

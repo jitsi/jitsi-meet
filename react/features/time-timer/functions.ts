@@ -1,35 +1,12 @@
 import { IReduxState } from '../app/types';
+import BaseTheme from '../base/ui/components/BaseTheme';
 
 import { WARNING_THRESHOLD_SECONDS } from './constants';
 import { ITimeTimerState } from './reducer';
 import { ICalendarTimerEvent, ITimerVisualState } from './types';
 
-// Minimum visible red disk fraction right at expiry, so the wedge isn't
-// invisible for the first minutes of overrun. Real overrun takes over above it.
+// Minimum visible red disk fraction at expiry, so the wedge isn't invisible.
 const EXPIRED_WEDGE_FLOOR = 0.02;
-
-// Pill colours per state. Each state has a lighter-left / deeper-right segment
-// pair plus an elapsed-digits colour; the disk uses fillColor from getTimerVisualState.
-
-// Baseline (running).
-export const DISK_BLUE = '#1084FE';
-
-// Warning window (amber).
-export const WARNING_COLOR = '#F8AE1A';
-export const WARNING_NAME_SEGMENT_BG = '#3C2E1D';
-export const WARNING_TIMER_SEGMENT_BG = '#302417';
-
-// Expired (red/wine).
-export const EXPIRED_PILL_TEXT_COLOR = '#FF9DA0';
-export const EXPIRED_NAME_SEGMENT_BG = '#4F2627';
-export const EXPIRED_TIMER_SEGMENT_BG = '#3E1D1E';
-export const EXPIRED_DISK_COLOR = '#F24D5F';
-
-// Darker red the lap-2+ overrun sweep fades toward at its leading edge.
-export const EXPIRED_OVERRUN_EDGE_COLOR = '#8E2530';
-
-// Overrun-time text in the "Timer ended" notification (reads on white).
-export const EXPIRED_NOTIFICATION_TEXT_COLOR = '#D83848';
 
 /**
  * Derives the disk's visual state (colour, fill fraction, elapsed seconds)
@@ -56,19 +33,19 @@ export function getTimerVisualState(state: ITimeTimerState): ITimerVisualState {
     // colouring and (in middleware) to trigger the one-time bar-expand.
     const warning = !expired && remainingSeconds > 0 && remainingSeconds <= WARNING_THRESHOLD_SECONDS;
 
-    let fillColor = DISK_BLUE; // Bright blue during normal running state.
+    let fillColor = BaseTheme.palette.timeTimerDisk;
     let fraction = durationSeconds > 0
         ? (durationSeconds - remainingSeconds) / durationSeconds
         : 0;
 
     if (warning) {
-        fillColor = WARNING_COLOR;
+        fillColor = BaseTheme.palette.timeTimerWarning;
     }
 
     let overrunArcEndDeg: number | undefined;
 
     if (expired) {
-        fillColor = EXPIRED_DISK_COLOR;
+        fillColor = BaseTheme.palette.timeTimerExpiredDisk;
 
         if (durationSeconds > 0) {
             // Treat overrun as a series of laps, each one

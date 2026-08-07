@@ -1,17 +1,13 @@
 import { LABEL_SIZE } from '../../../base/label/components/native/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
-import { EXPIRED_DISK_COLOR } from '../../../time-timer/functions';
 
 export const INSECURE_ROOM_NAME_LABEL_COLOR = BaseTheme.palette.actionDanger;
 
 const TITLE_BAR_BUTTON_SIZE = 24;
 
-// Collapse/expand fade duration for the time-timer pill (ms) — matches web's .6s.
 export const TIME_TIMER_COLLAPSE_DURATION = 600;
 
-// The pill matches the Record/Transcribe chips: same 28pt height (LABEL_SIZE)
-// and 8pt horizontal padding (spacing[2]) as their base Label, whose corners
-// use a 3pt radius.
+// Sized to match the Record/Transcribe chips.
 const TIME_TIMER_DISK_SIZE = 20;
 const TIME_TIMER_RADIUS = 3;
 const TIME_TIMER_PAD_X = BaseTheme.spacing[2];
@@ -222,12 +218,8 @@ export default {
         paddingLeft: BaseTheme.spacing[2]
     },
 
-    // Red frame around the conference area when the meeting runs past its
-    // scheduled end. borderRadius is applied inline (SCREEN_CORNER_RADIUS).
-    // A circular curve matches the hardware screen corner; a continuous
-    // (squircle) curve renders visually tighter than the bezel and leaves a gap.
     timerExpiredFrame: {
-        borderColor: EXPIRED_DISK_COLOR,
+        borderColor: BaseTheme.palette.timeTimerExpiredDisk,
         borderCurve: 'circular',
         borderWidth: 3,
         bottom: 0,
@@ -238,9 +230,6 @@ export default {
         zIndex: 1000
     },
 
-    // Two-segment time-timer pill. The rounded corners live on each segment
-    // (not on the row via overflow: hidden, which RN doesn't clip reliably),
-    // so the left segment rounds its left corners and the right its right.
     timeTimerContainer: {
         alignItems: 'center',
         flexDirection: 'row',
@@ -249,7 +238,6 @@ export default {
         marginRight: BaseTheme.spacing[1]
     },
 
-    // Left segment: scheduled duration.
     timeTimerScheduledSegment: {
         alignItems: 'center',
         alignSelf: 'stretch',
@@ -265,7 +253,6 @@ export default {
         color: BaseTheme.palette.text01
     },
 
-    // Right segment: elapsed time + disk.
     timeTimerTimerSegment: {
         alignItems: 'center',
         alignSelf: 'stretch',
@@ -281,8 +268,6 @@ export default {
         marginRight: BaseTheme.spacing[2]
     },
 
-    // Collapsed chip — the disk alone in a rounded square, shown when the
-    // toolbox hides (web's retracted state).
     timeTimerCollapsedChip: {
         alignItems: 'center',
         borderRadius: TIME_TIMER_RADIUS,
@@ -294,6 +279,4 @@ export default {
     }
 };
 
-// Disk diameter for the time-timer pill. Exported for the component to size
-// the shared Disk to the pill.
 export const TIME_TIMER_DISK = TIME_TIMER_DISK_SIZE;
