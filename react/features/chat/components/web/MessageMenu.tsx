@@ -165,7 +165,7 @@ const MessageMenu = ({ message, isFromVisitor, isLobbyMessage, enablePrivateChat
                     <div
                         className = { classes.menuItem }
                         onClick = { handleDeleteClick }>
-                        {t('Delete')}
+                        {t('chat.deleteMessage')}
                     </div>
                 )}
         </div>

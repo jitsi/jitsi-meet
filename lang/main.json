@@ -119,6 +119,7 @@
     "chat": {
         "deletedMessage": "This message was deleted.",
         "deletedMessageByMe": "You deleted this message.",
+        "deleteMessage": "Delete",
         "disabled": "Sending chat messages is disabled.",
         "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
@@ -356,7 +357,6 @@
         "copied": "Copied",
         "copy": "Copy",
         "currentLinks": "Current Links",
-        "delete": "Delete",
         "demoteParticipantDialog": "Are you sure you want to move this participant to viewer?",
         "demoteParticipantTitle": "Move to viewer",
         "dismiss": "Dismiss",
