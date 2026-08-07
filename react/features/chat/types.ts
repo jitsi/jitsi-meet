@@ -18,6 +18,7 @@ export interface IMessage {
     displayName: string;
     error?: unknown;
     fileMetadata?: IFileMetadata;
+    isDeleted?: boolean;
     isFromGuest?: boolean;
     isFromVisitor?: boolean;
     isReaction: boolean;
@@ -29,10 +30,12 @@ export interface IMessage {
     privateMessage: boolean;
     reactions: Map<string, Set<string>>;
     recipient: string;
+    recipientId?: string;
     /**
      * When set, XMPP message id of the message this one replies to (XEP-0461), from lib-jitsi-meet.
      */
     replyToMessageId?: string;
+    retractedBy?: string;
     sentToVisitor?: boolean;
     timestamp: number;
 }

@@ -159,6 +159,10 @@ const useStyles = makeStyles()((theme: Theme) => {
             whiteSpace: 'pre-wrap',
             wordBreak: 'break-word'
         },
+        deletedMessage: {
+            fontStyle: 'italic',
+            opacity: 0.7
+        },
         privateMessageNotice: {
             ...theme.typography.labelRegular,
             color: theme.palette.chatPrivateNotice,
@@ -363,8 +367,7 @@ const ChatMessage = ({
                             isFileMessage = { isFileMessage(message) }
                             isFromVisitor = { message.isFromVisitor }
                             isLobbyMessage = { message.lobbyChat }
-                            message = { message.message }
-                            participantId = { message.participantId } />}
+                            message = { message } />}
                     </div>
                 )}
                 <div
@@ -379,7 +382,7 @@ const ChatMessage = ({
                     <div className = { classes.replyWrapper }>
                         <div className = { cx('messagecontent', classes.messageContent) }>
                             {showDisplayName && _renderDisplayName()}
-                            <div className = { cx('usermessage', classes.userMessage) }>
+                            <div className = { cx('usermessage', classes.userMessage, message.isDeleted && classes.deletedMessage) }>
                                 {isFileMessage(message) ? (
                                     <FileMessage
                                         message = { message }
@@ -396,13 +399,21 @@ const ChatMessage = ({
                                             : t<string>('chat.messageAccessibleTitle', {
                                                 user: message.displayName
                                             }) }
-                                        text = { getMessageText(message) } />
+                                        text = {
+                                            message.isDeleted
+                                                ? (
+                                                    message.messageType === MESSAGE_TYPE_LOCAL
+                                                        ? t<string>('chat.deletedMessageByMe')
+                                                        : t<string>('chat.deletedMessage')
+                                                )
+                                                : getMessageText(message)
+                                        } />
                                 )}
                                 {(message.privateMessage || (message.lobbyChat && !knocking))
                                     && _renderPrivateNotice()}
                                 <div className = { classes.chatMessageFooter }>
                                     <div className = { classes.chatMessageFooterLeft }>
-                                        {message.reactions && message.reactions.size > 0 && (
+                                        {!message.isDeleted && message.reactions && message.reactions.size > 0 && (
                                             <>
                                                 {renderReactions}
                                             </>
@@ -417,7 +428,7 @@ const ChatMessage = ({
                 {shouldDisplayMenuOnRight && (
                     <div className = { classes.sideBySideContainer }>
                         {!message.privateMessage && !message.lobbyChat
-                        && !message.isReaction && <div>
+                        && !message.isReaction && !message.isDeleted && <div>
                             <div className = { classes.optionsButtonContainer }>
                                 {isHovered && <ReactButton
                                     messageId = { message.messageId }
@@ -426,14 +437,13 @@ const ChatMessage = ({
                         </div>}
                         <div>
                             <div className = { classes.optionsButtonContainer }>
-                                {isHovered && <MessageMenu
+                                {isHovered && !message.isDeleted && <MessageMenu
                                     displayName = { message.displayName }
                                     enablePrivateChat = { Boolean(enablePrivateChat) }
                                     isFileMessage = { isFileMessage(message) }
                                     isFromVisitor = { message.isFromVisitor }
                                     isLobbyMessage = { message.lobbyChat }
-                                    message = { message.message }
-                                    participantId = { message.participantId } />}
+                                    message = { message } />}
                             </div>
                         </div>
                     </div>
