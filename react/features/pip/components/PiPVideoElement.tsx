@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -56,7 +56,6 @@ const PiPVideoElement: React.FC = () => {
 
     // Safari 26.5.2 fires `playing` after PiP is dismissed while hidden, which would immediately reopen PiP.
     const webKitPiPDismissedRef = useRef(false);
-    const [ videoElementKey, setVideoElementKey ] = useState(0);
 
     // Redux selectors.
     const isOnPrejoin = useSelector(isPrejoinPageVisible);
@@ -149,9 +148,7 @@ const PiPVideoElement: React.FC = () => {
                 }
             }
         };
-    // Changing videoElementKey remounts the <video> with a fresh DOM node (Safari refuses to re-enter PiP with an element that already presented a dismissed PiP session).
-    // So this effect must re-run to attach the stream to the new node.
-    }, [ videoTrack, shouldShowAvatar, videoElementKey ]);
+    }, [ videoTrack, shouldShowAvatar ]);
 
     /**
      * Effect: Use WebKit presentation modes to enter and leave Video PiP on tab switches.
@@ -197,8 +194,6 @@ const PiPVideoElement: React.FC = () => {
             dispatch(handlePiPLeaveEvent());
             webKitPiPDismissedRef.current = document.hidden;
 
-            // Safari refuses to re-enter PiP with a video node whose previous PiP session was dismissed.
-            setVideoElementKey(key => key + 1);
         };
         const enterWebKitPiP = async () => {
             if (enteringWebKitPiP || videoElement.webkitPresentationMode === 'picture-in-picture') {
@@ -284,10 +279,7 @@ const PiPVideoElement: React.FC = () => {
             videoElement.removeEventListener('webkitpresentationmodechanged', onWebKitPresentationModeChanged);
             exitWebKitPiP();
         };
-        // Changing videoElementKey remounts the <video> with a fresh DOM node (Safari refuses to re-enter
-        // PiP with an element that already presented a dismissed PiP session).
-        // So this effect must re-run to register the PiP event listeners on the new node.
-    }, [ dispatch, videoElementKey ]);
+    }, [ dispatch ]);
 
     /**
      * Effect: Electron-only window blur/focus and visibility change listeners.
@@ -379,7 +371,6 @@ const PiPVideoElement: React.FC = () => {
             autoPlay = { true }
             className = { browser.isWebKitBased() ? classes.webKitVideo : classes.hiddenVideo }
             id = 'pipVideo'
-            key = { videoElementKey }
             muted = { true }
             playsInline = { true }
             ref = { videoRef } />
