@@ -18,16 +18,26 @@ import { useCanvasAvatar } from '../hooks';
 import logger from '../logger';
 import type { IWebKitPictureInPictureVideoElement } from '../types';
 
+const baseVideoStyle = {
+    width: '1px',
+    height: '1px',
+    pointerEvents: 'none' as const,
+    opacity: 0,
+    position: 'absolute' as const
+};
+
 const useStyles = makeStyles()(() => {
     return {
         hiddenVideo: {
-            position: 'absolute' as const,
-            width: '1px',
-            height: '1px',
-            opacity: 0,
-            pointerEvents: 'none' as const,
+            ...baseVideoStyle,
             left: '-9999px',
             top: '-9999px'
+        },
+        // Safari 26.5.2 was observed to produce black PiP content when this video was positioned offscreen.
+        webKitVideo: {
+            ...baseVideoStyle,
+            left: 0,
+            top: 0
         }
     };
 });
@@ -43,6 +53,9 @@ const PiPVideoElement: React.FC = () => {
     const { classes, theme } = useStyles();
     const videoRef = useRef<HTMLVideoElement>(null);
     const previousTrackRef = useRef<any>(null);
+
+    // Safari 26.5.2 fires `playing` after PiP is dismissed while hidden, which would immediately reopen PiP.
+    const webKitPiPDismissedRef = useRef(false);
 
     // Redux selectors.
     const isOnPrejoin = useSelector(isPrejoinPageVisible);
@@ -151,22 +164,68 @@ const PiPVideoElement: React.FC = () => {
             return;
         }
 
-        const enterWebKitPiP = () => {
-            const hasCurrentMedia = !videoElement.ended
-                && videoElement.readyState >= videoElement.HAVE_CURRENT_DATA;
+        let enteringWebKitPiP = false;
+        let isPiPActive = false;
 
-            // Safari may mark an offscreen MediaStream video as paused while hiding its tab. The presence of current
-            // media data is the stable eligibility signal here; WebKit performs the final PiP eligibility check.
-            if (!hasCurrentMedia
-                    || videoElement.webkitPresentationMode === 'picture-in-picture'
-                    || !videoElement.webkitSupportsPresentationMode?.('picture-in-picture')) {
+        const resumeWebKitPiPPlayback = () => {
+            if (videoElement.webkitPresentationMode !== 'picture-in-picture'
+                    || !videoElement.paused) {
                 return;
             }
 
+            // A muted live-MediaStream mirror has no meaningful paused state: any pause while in PiP
+            // (Safari's hidden-tab interruption churn around the PiP transition, media keys) just
+            // freezes the PiP frame, so playback is always resumed.
+            videoElement.play()
+                .catch(error => logger.warn('Failed to resume WebKit Picture-in-Picture video:', error));
+        };
+        const onEnterPiP = () => {
+            if (!isPiPActive) {
+                isPiPActive = true;
+                dispatch(handlePipEnterEvent());
+            }
+        };
+        const onLeavePiP = () => {
+            if (!isPiPActive) {
+                return;
+            }
+
+            isPiPActive = false;
+            dispatch(handlePiPLeaveEvent());
+            webKitPiPDismissedRef.current = document.hidden;
+
+        };
+        const enterWebKitPiP = async () => {
+            if (enteringWebKitPiP || videoElement.webkitPresentationMode === 'picture-in-picture') {
+                return;
+            }
+            enteringWebKitPiP = true;
+
             try {
-                videoElement.webkitSetPresentationMode?.('picture-in-picture');
+                if (videoElement.paused) {
+                    // Safari pauses hidden MediaStream videos, but a rejected play() (autoplay policy)
+                    // must not prevent the PiP entry attempt — WebKit does the final eligibility check
+                    // and the playback recovery below resumes playback once PiP is entered.
+                    await videoElement.play()
+                        .catch(error => logger.warn('Failed to play video before entering WebKit PiP:', error));
+                }
+
+                // The tab may have become visible or PiP may have been dismissed while play() was pending.
+                if (!document.hidden || webKitPiPDismissedRef.current) {
+                    return;
+                }
+
+                const hasCurrentMedia = !videoElement.ended
+                    && videoElement.readyState >= videoElement.HAVE_CURRENT_DATA;
+
+                if (hasCurrentMedia
+                        && videoElement.webkitSupportsPresentationMode?.('picture-in-picture')) {
+                    videoElement.webkitSetPresentationMode?.('picture-in-picture');
+                }
             } catch (error) {
                 logger.warn('Failed to enter WebKit Picture-in-Picture:', error);
+            } finally {
+                enteringWebKitPiP = false;
             }
         };
         const exitWebKitPiP = () => {
@@ -186,26 +245,41 @@ const PiPVideoElement: React.FC = () => {
             }
 
             if (document.hidden) {
-                enterWebKitPiP();
+                if (!webKitPiPDismissedRef.current) {
+                    void enterWebKitPiP();
+                }
             } else {
+                webKitPiPDismissedRef.current = false;
                 exitWebKitPiP();
             }
         };
         const onPlaying = (event: Event) => {
-            if (event.isTrusted && document.hidden) {
-                enterWebKitPiP();
+            if (event.isTrusted && document.hidden && !webKitPiPDismissedRef.current) {
+                void enterWebKitPiP();
+            }
+        };
+        const onWebKitPresentationModeChanged = () => {
+            if (videoElement.webkitPresentationMode === 'picture-in-picture') {
+                resumeWebKitPiPPlayback();
+                onEnterPiP();
+            } else {
+                onLeavePiP();
             }
         };
 
         document.addEventListener('visibilitychange', onVisibilityChange);
+        videoElement.addEventListener('pause', resumeWebKitPiPPlayback);
         videoElement.addEventListener('playing', onPlaying);
+        videoElement.addEventListener('webkitpresentationmodechanged', onWebKitPresentationModeChanged);
 
         return () => {
             document.removeEventListener('visibilitychange', onVisibilityChange);
+            videoElement.removeEventListener('pause', resumeWebKitPiPPlayback);
             videoElement.removeEventListener('playing', onPlaying);
+            videoElement.removeEventListener('webkitpresentationmodechanged', onWebKitPresentationModeChanged);
             exitWebKitPiP();
         };
-    }, []);
+    }, [ dispatch ]);
 
     /**
      * Effect: Electron-only window blur/focus and visibility change listeners.
@@ -272,7 +346,7 @@ const PiPVideoElement: React.FC = () => {
     useEffect(() => {
         const videoElement = videoRef.current;
 
-        if (!videoElement) {
+        if (!videoElement || browser.isWebKitBased()) {
             return;
         }
 
@@ -295,7 +369,7 @@ const PiPVideoElement: React.FC = () => {
     return (
         <video
             autoPlay = { true }
-            className = { classes.hiddenVideo }
+            className = { browser.isWebKitBased() ? classes.webKitVideo : classes.hiddenVideo }
             id = 'pipVideo'
             muted = { true }
             playsInline = { true }
