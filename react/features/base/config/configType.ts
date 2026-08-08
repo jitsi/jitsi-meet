@@ -609,13 +609,13 @@ export interface IConfig {
     peopleSearchUrl?: string;
     pip?: {
         disabled?: boolean;
+        disableEmbedPiP?: boolean;
         /**
          * Document Picture-in-Picture configuration.
          *
          * @see https://developer.chrome.com/docs/web-platform/document-picture-in-picture#methods
          */
         documentPiP?: {
-            embedMode?: 'auto' | 'disabled';
             windowOptions?: {
                 disallowReturnToOpener?: boolean;
                 height?: number;

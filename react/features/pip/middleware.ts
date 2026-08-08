@@ -1,259 +1,177 @@
 import { AnyAction } from 'redux';
 
-import { IStore } from '../app/types';
+import { IReduxState, IStore } from '../app/types';
 import { CONFERENCE_FAILED, CONFERENCE_LEFT, CONFERENCE_WILL_LEAVE } from '../base/conference/actionTypes';
+import { getLocalParticipant } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { getLargeVideoParticipant } from '../large-video/functions';
+import { isPrejoinPageVisible } from '../prejoin/functions.any';
 
 import {
-    EMBEDDED_DOCUMENT_PIP_ANSWER_RECEIVED,
-    EMBEDDED_DOCUMENT_PIP_CONNECTION_STATE_CHANGED,
-    EMBEDDED_DOCUMENT_PIP_ICE_RECEIVED,
-    EMBEDDED_DOCUMENT_PIP_RECONNECT_REQUESTED,
-    SET_EMBEDDED_DOCUMENT_PIP_CAPABILITY,
-    SET_EMBEDDED_DOCUMENT_PIP_LIFECYCLE,
-    SET_EMBEDDED_DOCUMENT_PIP_RENDERER_READY
+    EMBEDDED_DOCUMENT_PIP_SIGNAL_RECEIVED,
+    SET_EMBEDDED_DOCUMENT_PIP_AVAILABLE,
+    SET_PIP_ACTIVE
 } from './actionTypes';
-import { clearEmbeddedDocumentPiPRequestTimer, exitPiP } from './actions';
-import {
-    IEmbeddedDocumentPiPVideoBridge,
-    getEmbeddedDocumentPiPParticipant,
-    getEmbeddedDocumentPiPVideoBridge
-} from './embeddedDocumentPiP';
+import { exitPiP } from './actions';
+import { getPiPVideoTrack, isDocumentPiPRequestPending, setDocumentPiPRequestPending } from './functions';
 import logger from './logger';
-import { EmbeddedDocumentPiPCapability, EmbeddedDocumentPiPLifecycle } from './types';
+import type { DocumentPiPSignal } from './types';
 
 import './subscriber';
 
-interface IEmbeddedDocumentPiPBridgeSession {
-    appliedBridge: IEmbeddedDocumentPiPVideoBridge | null;
-    desiredBridge: IEmbeddedDocumentPiPVideoBridge | null;
+interface IEmbeddedDocumentPiPSender {
     generation: number;
     peerConnection: RTCPeerConnection;
-    pendingIceCandidates: RTCIceCandidateInit[];
     reconnectTimer?: number;
-    remoteDescriptionSet: boolean;
-    replaceTrackChain: Promise<void>;
+    replaceTrackQueue: Promise<void>;
+    sender: RTCRtpSender;
+    signalQueue: Promise<void>;
     store: IStore;
-    videoSender: RTCRtpSender;
 }
-
-let bridgeGeneration = 0;
-let bridgeSession: IEmbeddedDocumentPiPBridgeSession | undefined;
 
 const RECONNECT_DELAY = 1000;
 
-/**
- * Middleware that intercepts conference termination actions and exits active Picture-in-Picture mode.
- *
- * @param {Store} store - The Redux store.
- * @returns {Function}
- */
-MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyAction) => {
-    const result = next(action);
+let generation = 0;
+let senderSession: IEmbeddedDocumentPiPSender | undefined;
 
-    switch (action.type) {
-    case CONFERENCE_FAILED:
-    case CONFERENCE_LEFT:
-        if (store.getState()['features/pip'].isPiPActive) {
-            store.dispatch(exitPiP());
-        }
-        break;
-    }
-
-    return result;
-});
-
-function getRTCConfig(state: ReturnType<IStore['getState']>): RTCConfiguration {
-    const stunServers = state['features/base/config']?.p2p?.stunServers;
-
-    if (Array.isArray(stunServers) && stunServers.length) {
-        return {
-            iceServers: stunServers as RTCIceServer[]
-        };
-    }
-
-    return {};
+function isCurrentSession(session: IEmbeddedDocumentPiPSender) {
+    return senderSession === session;
 }
 
-function isCurrentSession(session: IEmbeddedDocumentPiPBridgeSession) {
-    return bridgeSession === session && bridgeSession.generation === session.generation;
-}
-
-function clearReconnectTimer(session: IEmbeddedDocumentPiPBridgeSession) {
-    if (session.reconnectTimer) {
-        window.clearTimeout(session.reconnectTimer);
-        session.reconnectTimer = undefined;
-    }
-}
-
-function closePeerConnection() {
-    const session = bridgeSession;
+function closeSender() {
+    const session = senderSession;
 
     if (!session) {
         return;
     }
 
-    bridgeSession = undefined;
-    clearReconnectTimer(session);
-    session.pendingIceCandidates.length = 0;
+    senderSession = undefined;
+    if (session.reconnectTimer) {
+        window.clearTimeout(session.reconnectTimer);
+    }
     session.peerConnection.onconnectionstatechange = null;
     session.peerConnection.onicecandidate = null;
-    session.peerConnection.oniceconnectionstatechange = null;
     session.peerConnection.close();
 }
 
-function areVideoBridgesEqual(
-        current: IEmbeddedDocumentPiPVideoBridge | null,
-        next: IEmbeddedDocumentPiPVideoBridge | null) {
-    return current?.participantId === next?.participantId
-        && current?.reduxTrack === next?.reduxTrack
-        && current?.jitsiTrack === next?.jitsiTrack
-        && current?.browserTrack === next?.browserTrack
-        && current?.muted === next?.muted
-        && current?.ready === next?.ready;
+function getNativePiPTrack(state: IReduxState): MediaStreamTrack | null {
+    const participant = isPrejoinPageVisible(state)
+        ? getLocalParticipant(state)
+        : getLargeVideoParticipant(state);
+    const videoTrack = getPiPVideoTrack(state, participant);
+    const nativeTrack = videoTrack?.jitsiTrack?.getTrack();
+
+    return videoTrack?.muted || nativeTrack?.readyState !== 'live' ? null : nativeTrack;
 }
 
-async function syncEmbeddedDocumentPiPVideoTrack(nextBridge: IEmbeddedDocumentPiPVideoBridge | null) {
-    const session = bridgeSession;
+/**
+ * Replaces the track on the existing sender instead of projecting participant
+ * state into a second view model. Serialization prevents rapid large-video and
+ * mute changes from applying out of order.
+ *
+ * @param {MediaStreamTrack|null} track - The currently selected native PiP track.
+ * @returns {Promise<void>}
+ */
+function replaceTrack(track: MediaStreamTrack | null) {
+    const session = senderSession;
 
     if (!session) {
-        return;
+        return Promise.resolve();
     }
 
-    session.desiredBridge = nextBridge;
-    session.replaceTrackChain = session.replaceTrackChain
-        .catch(error => logger.error('Previous embedded Document PiP track replacement failed:', error))
+    session.replaceTrackQueue = session.replaceTrackQueue
+        .catch(error => logger.warn('Previous embedded Document PiP track replacement failed:', error))
         .then(async () => {
-            if (!isCurrentSession(session)) {
-                return;
+            if (isCurrentSession(session) && session.sender.track !== track) {
+                await session.sender.replaceTrack(track);
             }
-
-            const desiredBridge = session.desiredBridge;
-
-            if (areVideoBridgesEqual(session.appliedBridge, desiredBridge)) {
-                return;
-            }
-
-            const track = desiredBridge?.ready ? desiredBridge.browserTrack : null;
-
-            logger.info('Replacing embedded Document PiP sender track:', {
-                browserTrackId: desiredBridge?.browserTrack?.id,
-                generation: session.generation,
-                muted: desiredBridge?.muted,
-                participantId: desiredBridge?.participantId,
-                ready: desiredBridge?.ready,
-                readyState: desiredBridge?.browserTrack?.readyState,
-                senderTrackId: session.videoSender.track?.id
-            });
-            await session.videoSender.replaceTrack(track);
-
-            if (!isCurrentSession(session)) {
-                return;
-            }
-
-            session.appliedBridge = desiredBridge;
-            logger.info('Embedded Document PiP sender synchronized:', {
-                browserTrackId: desiredBridge?.browserTrack?.id,
-                generation: session.generation,
-                participantId: desiredBridge?.participantId,
-                senderTrackId: session.videoSender.track?.id
-            });
         });
 
-    return session.replaceTrackChain;
+    return session.replaceTrackQueue;
 }
 
-function scheduleEmbeddedDocumentPiPReconnect(expectedGeneration?: number) {
-    const session = bridgeSession;
-    const lifecycle = session?.store.getState()['features/pip']?.embeddedDocumentPiPLifecycle;
+function canReconnect(session: IEmbeddedDocumentPiPSender) {
+    const pipState = session.store.getState()['features/pip'];
 
-    if (!session
-            || (expectedGeneration !== undefined && expectedGeneration !== session.generation)
-            || lifecycle !== EmbeddedDocumentPiPLifecycle.ACTIVE
+    return isCurrentSession(session)
+        && pipState?.embeddedDocumentPiPAvailable === true
+        && pipState.isPiPActive;
+}
+
+/**
+ * The meeting iframe is the sole reconnect owner. Receiver failures are merely
+ * restart requests; this one guarded timer advances the generation and creates
+ * the replacement peer, while transient `disconnected` states are ignored.
+ *
+ * @param {IEmbeddedDocumentPiPSender} session - The failed current sender.
+ * @param {number} expectedGeneration - Generation that requested the restart.
+ * @returns {void}
+ */
+function scheduleReconnect(session: IEmbeddedDocumentPiPSender, expectedGeneration = session.generation) {
+    if (!canReconnect(session)
+            || expectedGeneration !== session.generation
             || session.reconnectTimer) {
         return;
     }
 
     session.reconnectTimer = window.setTimeout(() => {
-        if (!isCurrentSession(session)) {
+        if (!canReconnect(session)) {
             return;
         }
 
         session.reconnectTimer = undefined;
-        startEmbeddedDocumentPiPStream(session.store).catch(error => {
-            logger.error('Failed to reconnect embedded Document PiP stream:', error);
-            scheduleEmbeddedDocumentPiPReconnect(session.generation);
-        });
+        startSenderWithRetry(session.store);
     }, RECONNECT_DELAY);
 }
 
-async function startEmbeddedDocumentPiPStream(store: IStore) {
-    closePeerConnection();
+/**
+ * Creates the unavoidable media-plane bridge. Existing postMessage transport
+ * carries control data but cannot carry a live MediaStreamTrack, so the iframe
+ * offers one same-device RTCPeerConnection and trickles ICE through that
+ * already-authenticated transport.
+ *
+ * @param {IStore} store - Redux store owning the selected PiP track.
+ * @returns {Promise<void>}
+ */
+async function startSender(store: IStore) {
+    closeSender();
 
-    const state = store.getState();
-    const rtcConfig = getRTCConfig(state);
-    const peerConnection = new RTCPeerConnection(rtcConfig);
-    const transceiver = peerConnection.addTransceiver('video', {
-        direction: 'sendonly'
-    });
-    const session: IEmbeddedDocumentPiPBridgeSession = {
-        appliedBridge: null,
-        desiredBridge: null,
-        generation: ++bridgeGeneration,
+    const peerConnection = new RTCPeerConnection();
+    const sender = peerConnection.addTransceiver('video', { direction: 'sendonly' }).sender;
+    const session: IEmbeddedDocumentPiPSender = {
+        generation: ++generation,
         peerConnection,
-        pendingIceCandidates: [],
-        remoteDescriptionSet: false,
-        replaceTrackChain: Promise.resolve(),
-        store,
-        videoSender: transceiver.sender
+        replaceTrackQueue: Promise.resolve(),
+        sender,
+        signalQueue: Promise.resolve(),
+        store
     };
 
-    bridgeSession = session;
-    logger.info('Embedded Document PiP bridge created:', {
-        generation: session.generation,
-        participantId: getEmbeddedDocumentPiPParticipant(state)?.id
-    });
+    senderSession = session;
 
     peerConnection.onicecandidate = event => {
-        if (isCurrentSession(session) && event.candidate) {
-            logger.debug('Embedded Document PiP local ICE candidate:', event.candidate.type);
-            APP.API.notifyDocumentPiPIce({
-                candidate: event.candidate.toJSON(),
-                generation: session.generation
+        const candidate = event.candidate;
+
+        if (!candidate) {
+            return;
+        }
+
+        if (isCurrentSession(session)) {
+            APP.API.notifyDocumentPiPSignal({
+                type: 'candidate',
+                generation: session.generation,
+                candidate: candidate.toJSON()
             });
         }
     };
     peerConnection.onconnectionstatechange = () => {
-        if (!isCurrentSession(session)) {
-            return;
-        }
-
-        const { connectionState } = peerConnection;
-
-        logger.info('Embedded Document PiP sender connection state:', connectionState);
-
-        if (connectionState === 'connected') {
-            syncEmbeddedDocumentPiPVideoTrack(getEmbeddedDocumentPiPVideoBridge(store.getState()))
-                .catch(error => logger.error('Failed to resynchronize connected Document PiP sender:', error));
-        } else if (connectionState === 'failed' || connectionState === 'disconnected') {
-            scheduleEmbeddedDocumentPiPReconnect();
-        }
-    };
-    peerConnection.oniceconnectionstatechange = () => {
-        if (!isCurrentSession(session)) {
-            return;
-        }
-
-        const { iceConnectionState } = peerConnection;
-
-        logger.debug('Embedded Document PiP sender ICE state:', iceConnectionState);
-        if (iceConnectionState === 'failed' || iceConnectionState === 'disconnected') {
-            scheduleEmbeddedDocumentPiPReconnect();
+        if (isCurrentSession(session) && peerConnection.connectionState === 'failed') {
+            scheduleReconnect(session);
         }
     };
 
-    await syncEmbeddedDocumentPiPVideoTrack(getEmbeddedDocumentPiPVideoBridge(state));
+    await replaceTrack(getNativePiPTrack(store.getState()));
 
     if (!isCurrentSession(session)) {
         return;
@@ -261,190 +179,117 @@ async function startEmbeddedDocumentPiPStream(store: IStore) {
 
     const offer = await peerConnection.createOffer();
 
-    if (!isCurrentSession(session)) {
-        return;
-    }
+    const setLocalDescription = peerConnection.setLocalDescription(offer);
 
-    await peerConnection.setLocalDescription(offer);
-
-    if (!isCurrentSession(session)) {
-        return;
-    }
-
-    logger.info('Embedded Document PiP offer created:', { generation: session.generation });
-    APP.API.notifyDocumentPiPOffer({
+    // Send the offer synchronously after starting setLocalDescription. ICE events
+    // are queued tasks, so the existing postMessage transport observes SDP first.
+    APP.API.notifyDocumentPiPSignal({
+        type: 'offer',
         generation: session.generation,
-        offer,
-        rtcConfig
+        description: offer
+    });
+    await setLocalDescription;
+}
+
+function startSenderWithRetry(store: IStore) {
+    startSender(store).catch(error => {
+        logger.error('Failed to start embedded Document PiP:', error);
+        const current = senderSession;
+
+        if (current) {
+            scheduleReconnect(current);
+        }
     });
 }
 
-async function handleEmbeddedDocumentPiPAnswer(data: {
-    answer: RTCSessionDescriptionInit;
-    generation: number;
-}) {
-    const session = bridgeSession;
+/**
+ * Serializes answer, candidate, and restart processing. Generations make late
+ * signals from a replaced peer harmless without maintaining candidate buffers
+ * or parallel connection state machines.
+ *
+ * @param {DocumentPiPSignal} signal - Signal received from the embedding page.
+ * @returns {void}
+ */
+function queueSignal(signal: DocumentPiPSignal) {
+    const session = senderSession;
 
-    if (!session || data.generation !== session.generation) {
+    if (!session) {
         return;
     }
 
-    await session.peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
-
-    if (!isCurrentSession(session)) {
-        return;
-    }
-
-    session.remoteDescriptionSet = true;
-    logger.info('Embedded Document PiP answer applied:', { generation: session.generation });
-
-    await syncEmbeddedDocumentPiPVideoTrack(getEmbeddedDocumentPiPVideoBridge(session.store.getState()));
-
-    if (!isCurrentSession(session)) {
-        return;
-    }
-
-    while (session.pendingIceCandidates.length && isCurrentSession(session)) {
-        const candidate = session.pendingIceCandidates.shift();
-
-        if (candidate) {
-            try {
-                await session.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-            } catch (error) {
-                logger.warn('Ignoring unusable queued embedded Document PiP ICE candidate:', error);
+    session.signalQueue = session.signalQueue
+        .then(async () => {
+            if (!isCurrentSession(session) || signal.generation !== session.generation) {
+                return;
             }
-        }
-    }
-}
 
-async function handleEmbeddedDocumentPiPIce(data: {
-    candidate: RTCIceCandidateInit;
-    generation: number;
-}) {
-    const session = bridgeSession;
-
-    if (!session || data.generation !== session.generation) {
-        return;
-    }
-
-    if (!session.remoteDescriptionSet) {
-        logger.debug('Buffering embedded Document PiP remote ICE candidate');
-        session.pendingIceCandidates.push(data.candidate);
-
-        return;
-    }
-
-    try {
-        await session.peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
-    } catch (error) {
-        logger.warn('Ignoring unusable embedded Document PiP ICE candidate:', error);
-
-        return;
-    }
-
-    if (isCurrentSession(session)) {
-        logger.debug('Applied embedded Document PiP remote ICE candidate');
-    }
-}
-
-function handleEmbeddedDocumentPiPConnectionState(state: {
-    connectionState?: RTCPeerConnectionState | string;
-    error?: string;
-    generation?: number;
-    iceConnectionState?: RTCIceConnectionState | string;
-}) {
-    const session = bridgeSession;
-
-    if (!session || state.generation !== session.generation) {
-        return;
-    }
-
-    logger.debug('Embedded Document PiP renderer connection state:', state);
-
-    if (state.connectionState === 'failed' || state.connectionState === 'disconnected'
-            || state.iceConnectionState === 'failed' || state.iceConnectionState === 'disconnected') {
-        scheduleEmbeddedDocumentPiPReconnect();
-    }
+            switch (signal.type) {
+            case 'answer':
+                await session.peerConnection.setRemoteDescription(signal.description);
+                break;
+            case 'candidate':
+                await session.peerConnection.addIceCandidate(signal.candidate);
+                break;
+            case 'restart':
+                scheduleReconnect(session, signal.generation);
+                break;
+            }
+        })
+        .catch(error => {
+            logger.error('Failed to process embedded Document PiP signal:', error);
+            if (isCurrentSession(session)) {
+                scheduleReconnect(session);
+            }
+        });
 }
 
 StateListenerRegistry.register(
-    /* selector */ state => state['features/pip']?.embeddedDocumentPiPLifecycle
-        === EmbeddedDocumentPiPLifecycle.ACTIVE
-        ? getEmbeddedDocumentPiPVideoBridge(state)
-        : null,
-    /* listener */ (bridge: IEmbeddedDocumentPiPVideoBridge | null) => {
-        syncEmbeddedDocumentPiPVideoTrack(bridge).catch(error => {
-            logger.error('Failed to synchronize embedded Document PiP video track:', error);
-        });
+    /* selector */ (state: IReduxState) => {
+        const pipState = state['features/pip'];
+
+        return pipState?.embeddedDocumentPiPAvailable === true && pipState.isPiPActive
+            ? getNativePiPTrack(state)
+            : undefined;
+    },
+    /* listener */ (track: MediaStreamTrack | null | undefined) => {
+        if (track !== undefined) {
+            replaceTrack(track).catch(error => logger.error('Failed to update embedded Document PiP track:', error));
+        }
     }
 );
 
-MiddlewareRegistry.register((store: IStore) => next => action => {
+MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyAction) => {
     const result = next(action);
 
     switch (action.type) {
-    case SET_EMBEDDED_DOCUMENT_PIP_RENDERER_READY:
-        if (action.ready
-                && store.getState()['features/pip']?.embeddedDocumentPiPLifecycle
-                    === EmbeddedDocumentPiPLifecycle.ACTIVE) {
-            if (!bridgeSession) {
-                startEmbeddedDocumentPiPStream(store).catch(error => {
-                    logger.error('Failed to start embedded Document PiP stream:', error);
-                    scheduleEmbeddedDocumentPiPReconnect();
-                });
+    case SET_PIP_ACTIVE:
+        if (store.getState()['features/pip']?.embeddedDocumentPiPAvailable === true) {
+            if (action.isPiPActive) {
+                startSenderWithRetry(store);
+            } else {
+                closeSender();
             }
-        } else {
-            closePeerConnection();
         }
         break;
-    case SET_EMBEDDED_DOCUMENT_PIP_LIFECYCLE:
-        if (action.lifecycle !== EmbeddedDocumentPiPLifecycle.ACTIVE) {
-            closePeerConnection();
+    case SET_EMBEDDED_DOCUMENT_PIP_AVAILABLE:
+        if (!action.available) {
+            closeSender();
         }
         break;
-    case SET_EMBEDDED_DOCUMENT_PIP_CAPABILITY:
-        if (action.capability !== EmbeddedDocumentPiPCapability.AVAILABLE) {
-            closePeerConnection();
-        }
+    case EMBEDDED_DOCUMENT_PIP_SIGNAL_RECEIVED:
+        queueSignal(action.signal);
         break;
-    case EMBEDDED_DOCUMENT_PIP_ANSWER_RECEIVED:
-        handleEmbeddedDocumentPiPAnswer(action.data).catch(error => {
-            logger.error('Failed to apply embedded Document PiP answer:', error);
-            scheduleEmbeddedDocumentPiPReconnect(action.data.generation);
-        });
-        break;
-    case EMBEDDED_DOCUMENT_PIP_ICE_RECEIVED:
-        handleEmbeddedDocumentPiPIce(action.data).catch(error => {
-            logger.error('Failed to apply embedded Document PiP ICE candidate:', error);
-        });
-        break;
-    case EMBEDDED_DOCUMENT_PIP_CONNECTION_STATE_CHANGED:
-        handleEmbeddedDocumentPiPConnectionState(action.state);
-        break;
-    case EMBEDDED_DOCUMENT_PIP_RECONNECT_REQUESTED:
-        scheduleEmbeddedDocumentPiPReconnect(action.generation);
-        break;
-    case CONFERENCE_WILL_LEAVE: {
-        const pipState = store.getState()['features/pip'];
-        const hasEmbeddedDocumentPiP = Boolean(bridgeSession
-            || pipState?.embeddedDocumentPiPLifecycle === EmbeddedDocumentPiPLifecycle.ACTIVE
-            || pipState?.embeddedDocumentPiPLifecycle === EmbeddedDocumentPiPLifecycle.REQUESTING);
-
-        if (hasEmbeddedDocumentPiP) {
-            clearEmbeddedDocumentPiPRequestTimer();
+    case CONFERENCE_WILL_LEAVE:
+    case CONFERENCE_FAILED:
+    case CONFERENCE_LEFT:
+        if (store.getState()['features/pip']?.isPiPActive) {
+            store.dispatch(exitPiP());
+        } else if (isDocumentPiPRequestPending()) {
+            setDocumentPiPRequestPending(false);
             APP.API.notifyDocumentPiPClose();
-            closePeerConnection();
-            store.dispatch({
-                type: SET_EMBEDDED_DOCUMENT_PIP_RENDERER_READY,
-                ready: false
-            });
-            store.dispatch({
-                type: SET_EMBEDDED_DOCUMENT_PIP_LIFECYCLE,
-                lifecycle: EmbeddedDocumentPiPLifecycle.IDLE
-            });
         }
+        closeSender();
         break;
-    }
     }
 
     return result;

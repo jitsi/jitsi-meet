@@ -11,9 +11,7 @@ const DEFAULT_STATE = {
 };
 
 export interface IPipState {
-    embeddedDocumentPiPCapability: EmbeddedDocumentPiPCapability;
-    embeddedDocumentPiPLifecycle: EmbeddedDocumentPiPLifecycle;
-    embeddedDocumentPiPRendererReady: boolean;
+    embeddedDocumentPiPAvailable?: boolean;
     isPiPActive: boolean;
 
     /**
@@ -37,58 +35,10 @@ export interface IPipState {
  */
 ReducerRegistry.register<IPipState>('features/pip', (state = DEFAULT_STATE, action): IPipState => {
     switch (action.type) {
-    case SET_EMBEDDED_DOCUMENT_PIP_CAPABILITY:
-        if (action.capability !== EmbeddedDocumentPiPCapability.AVAILABLE) {
-            return {
-                ...state,
-                embeddedDocumentPiPCapability: action.capability,
-                embeddedDocumentPiPLifecycle: EmbeddedDocumentPiPLifecycle.UNAVAILABLE,
-                embeddedDocumentPiPRendererReady: false,
-                isPiPActive: false
-            };
-        }
-
+    case SET_EMBEDDED_DOCUMENT_PIP_AVAILABLE:
         return {
             ...state,
-            embeddedDocumentPiPCapability: action.capability,
-            embeddedDocumentPiPLifecycle: state.embeddedDocumentPiPLifecycle === EmbeddedDocumentPiPLifecycle.UNAVAILABLE
-                ? EmbeddedDocumentPiPLifecycle.IDLE
-                : state.embeddedDocumentPiPLifecycle
-        };
-    case SET_EMBEDDED_DOCUMENT_PIP_LIFECYCLE:
-        if (state.embeddedDocumentPiPCapability !== EmbeddedDocumentPiPCapability.AVAILABLE) {
-            return {
-                ...state,
-                embeddedDocumentPiPLifecycle: EmbeddedDocumentPiPLifecycle.UNAVAILABLE,
-                embeddedDocumentPiPRendererReady: false,
-                isPiPActive: false
-            };
-        }
-
-        return {
-            ...state,
-            embeddedDocumentPiPLifecycle: action.lifecycle,
-            embeddedDocumentPiPRendererReady: action.lifecycle === EmbeddedDocumentPiPLifecycle.ACTIVE
-                ? state.embeddedDocumentPiPRendererReady
-                : false,
-            isPiPActive: action.lifecycle === EmbeddedDocumentPiPLifecycle.ACTIVE
-        };
-    case SET_EMBEDDED_DOCUMENT_PIP_RENDERER_READY:
-        if (!action.ready) {
-            return {
-                ...state,
-                embeddedDocumentPiPRendererReady: false
-            };
-        }
-
-        if (state.embeddedDocumentPiPCapability !== EmbeddedDocumentPiPCapability.AVAILABLE
-                || state.embeddedDocumentPiPLifecycle !== EmbeddedDocumentPiPLifecycle.ACTIVE) {
-            return state;
-        }
-
-        return {
-            ...state,
-            embeddedDocumentPiPRendererReady: true
+            embeddedDocumentPiPAvailable: action.available
         };
     case SET_PIP_ACTIVE:
         return {
