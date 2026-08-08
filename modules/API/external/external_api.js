@@ -347,7 +347,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._myUserID = undefined;
         this._onStageParticipant = undefined;
         this._iAmvisitor = undefined;
-        this._pipConfig = configOverwrite?.pip;
+        this._pipConfig = configOverwrite.pip || {};
         this._setupListeners();
         id++;
     }
@@ -699,7 +699,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     _setupIntersectionObserver() {
-        if (!isPiPEnabled(this._pipConfig)) {
+        if (!isPiPEnabled(this._pipConfig, true)) {
             return;
         }
 
@@ -921,8 +921,11 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             return;
         }
 
-        const request = window.documentPictureInPicture.requestWindow(
-            this._pipConfig?.documentPiP?.windowOptions);
+        const request = window.documentPictureInPicture.requestWindow({
+            height: 160, // DEFAULT_DOCUMENT_PIP_HEIGHT
+            width: 284, // DEFAULT_DOCUMENT_PIP_WIDTH
+            ...this._pipConfig.documentPiP?.windowOptions
+        });
 
         this._hostPiP = request;
 
@@ -1225,14 +1228,14 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         let pipTransition = null;
 
         if (pipOverwrite !== undefined) {
-            const wasEnabled = isPiPEnabled(this._pipConfig);
+            const wasEnabled = isPiPEnabled(this._pipConfig, true);
 
             this._pipConfig = {
                 ...this._pipConfig,
                 ...pipOverwrite
             };
 
-            const isEnabled = isPiPEnabled(this._pipConfig);
+            const isEnabled = isPiPEnabled(this._pipConfig, true);
 
             if (!wasEnabled && isEnabled) {
                 this._setupIntersectionObserver();
