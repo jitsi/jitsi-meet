@@ -823,6 +823,8 @@ var config = {
     // pip: {
     //     // Disable Picture-in-Picture for browser meetings entirely. Defaults to true.
     //     disableBrowserPiP: true,
+    //     // Enable host-owned PiP for iframe meetings. Defaults to disabled true.
+    //     disableEmbedPiP: true,
     //     // Disable Picture-in-Picture entirely. Defaults to false.
     //     disabled: false,
     //     // Allow Picture-in-Picture on the prejoin page. Defaults to false.
@@ -830,8 +832,6 @@ var config = {
     //     // Show the Picture-in-Picture toolbar button when supported. Defaults to true.
     //     showToolbarButton: true,
     //     documentPiP: {
-    //         // Enable host-owned Document PiP for iframe meetings. Missing values default to disabled.
-    //         embedMode: 'auto',
     //         windowOptions: {
     //             // Hide the browser control that returns to the opener. Defaults to false.
     //             disallowReturnToOpener: false,

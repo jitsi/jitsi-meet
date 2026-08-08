@@ -10,19 +10,12 @@ import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 import { exitPiP, handleEmbeddedDocumentPiPCapabilityTimeout, openDocumentPiP } from './actions';
 import PiPTriggerButton from './components/web/PiPTriggerButton';
 import {
-    cleanupMediaSessionHandlers,
     getStoredPiPWindow,
+    isDocumentPiPRequestPending,
     isDocumentPiPSupported,
     renderAvatarOnCanvas,
-    setupMediaSessionHandlers,
     shouldShowPiP,
-} from "./functions";
-
-import {
-    isEmbeddedDocumentPiPAvailable,
-    isEmbeddedDocumentPiPCapabilityPending
-} from './embeddedDocumentPiP';
-
+} from './functions';
 import logger from './logger';
 
 /**
@@ -229,12 +222,13 @@ export function useDocumentPiPMediaSession() {
     );
 
     const embedded = isEmbedded();
-    const embeddedDocumentPiPAvailable = useSelector(isEmbeddedDocumentPiPAvailable);
-    const embeddedDocumentPiPCapabilityPending = useSelector(isEmbeddedDocumentPiPCapabilityPending);
+    const embeddedDocumentPiPAvailable = useSelector(
+        (state: IReduxState) => state['features/pip']?.embeddedDocumentPiPAvailable);
     const isPiPActive = useSelector((state: IReduxState) => state['features/pip']?.isPiPActive ?? false);
-    const documentPiPAvailable = embedded
+    const pipEnabled = useSelector(shouldShowPiP);
+    const documentPiPAvailable = pipEnabled && (embedded
         ? embeddedDocumentPiPAvailable
-        : isDocumentPiPSupported();
+        : isDocumentPiPSupported());
 
     useEffect(() => {
         if (!documentPiPAvailable
@@ -265,7 +259,7 @@ export function useDocumentPiPMediaSession() {
     }, [ documentPiPAvailable, openDocumentPip ]);
 
     useEffect(() => {
-        if (!embedded || !embeddedDocumentPiPCapabilityPending) {
+        if (!embedded || embeddedDocumentPiPAvailable !== undefined) {
             return;
         }
 
@@ -274,7 +268,7 @@ export function useDocumentPiPMediaSession() {
         }, EMBEDDED_DOCUMENT_PIP_CAPABILITY_TIMEOUT);
 
         return () => window.clearTimeout(timeout);
-    }, [ dispatch, embedded, embeddedDocumentPiPCapabilityPending ]);
+    }, [ dispatch, embedded, embeddedDocumentPiPAvailable ]);
 
     useEffect(() => {
         if (!documentPiPAvailable) {
@@ -284,7 +278,7 @@ export function useDocumentPiPMediaSession() {
         const onVisibilityChange = () => {
             const pipWindow = getStoredPiPWindow();
             const shouldClose = embedded
-                ? isPiPActive
+                ? isPiPActive || isDocumentPiPRequestPending()
                 : Boolean(pipWindow && !pipWindow.closed);
 
             if (!document.hidden && shouldClose) {
@@ -299,15 +293,6 @@ export function useDocumentPiPMediaSession() {
         };
     }, [ dispatch, documentPiPAvailable, embedded, isPiPActive ]);
 
-    useEffect(() => {
-        if (!documentPiPAvailable || !isPiPActive) {
-            return;
-        }
-
-        setupMediaSessionHandlers(dispatch);
-
-        return cleanupMediaSessionHandlers;
-    }, [ dispatch, documentPiPAvailable, isPiPActive ]);
 }
 
 /**
@@ -316,10 +301,19 @@ export function useDocumentPiPMediaSession() {
  * @returns {Object | undefined} The PiP toggle button or undefined.
  */
 export function usePipToggleButton() {
-    const visible = useSelector((state: IReduxState) =>
-        state['features/base/config'].pip?.showToolbarButton !== false && shouldShowPiP(state));
+    const visible = useSelector((state: IReduxState) => {
+        if (state['features/base/config'].pip?.showToolbarButton === false || !shouldShowPiP(state)) {
+            return false;
+        }
 
-    return visible && (isDocumentPiPSupported() || Boolean(document.pictureInPictureEnabled))
-        ? togglePiP
-        : undefined;
+        if (isEmbedded()) {
+            const available = state['features/pip']?.embeddedDocumentPiPAvailable;
+
+            return available === true || (available === false && Boolean(document.pictureInPictureEnabled));
+        }
+
+        return isDocumentPiPSupported() || Boolean(document.pictureInPictureEnabled);
+    });
+
+    return visible ? togglePiP : undefined;
 }

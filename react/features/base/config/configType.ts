@@ -611,13 +611,13 @@ export interface IConfig {
          */
         disableBrowserPiP?: boolean;
         disabled?: boolean;
+        disableEmbedPiP?: boolean;
         /**
          * Document Picture-in-Picture configuration.
          *
          * @see https://developer.chrome.com/docs/web-platform/document-picture-in-picture#methods
          */
         documentPiP?: {
-            embedMode?: 'auto' | 'disabled';
             windowOptions?: {
                 disallowReturnToOpener?: boolean;
                 height?: number;
