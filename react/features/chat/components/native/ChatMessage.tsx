@@ -10,8 +10,11 @@ import { isGifEnabled, isGifMessage } from '../../../gifs/functions.native';
 import { CHAR_LIMIT, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../../constants';
 import {
     getCanReplyToMessage,
+    getChatSearchQuery,
+    getActiveChatSearchMatch,
     getDisplayNameSuffix,
     getFormattedTimestamp,
+    getHighlightSegments,
     getMessageText,
     getPrivateNoticeMessage,
     replaceNonUnicodeEmojis
@@ -145,8 +148,19 @@ class ChatMessage extends Component<IChatMessageProps> {
      * @returns {React.ReactElement<*>}
      */
     _renderMessageTextComponent(messageText: string) {
+        const { highlightQuery, isActiveMatch } = this.props;
 
         if (messageText.length >= CHAR_LIMIT) {
+            if (highlightQuery) {
+                return (
+                    <Text
+                        selectable = { true }
+                        style = { styles.chatMessage }>
+                        { this._renderHighlightedSegments(messageText, highlightQuery, isActiveMatch) }
+                    </Text>
+                );
+            }
+
             return (
                 <Text
                     selectable = { true }
@@ -156,13 +170,37 @@ class ChatMessage extends Component<IChatMessageProps> {
             );
         }
 
+        const processedText = replaceNonUnicodeEmojis(messageText);
+
         return (
             <Linkify
                 linkStyle = { styles.chatLink }
                 style = { styles.chatMessage }>
-                { replaceNonUnicodeEmojis(messageText) }
+                { highlightQuery
+                    ? this._renderHighlightedSegments(processedText, highlightQuery, isActiveMatch)
+                    : processedText }
             </Linkify>
         );
+    }
+
+    /**
+     * Splits text into highlight/non-highlight segments and renders them.
+     *
+     * @param {string} text - The text to split.
+     * @param {string} query - The active search query.
+     * @param {boolean} [isActiveMatch] - Whether this message is the focused match.
+     * @returns {Array<React.ReactNode>}
+     */
+    _renderHighlightedSegments(text: string, query: string, isActiveMatch?: boolean) {
+        return getHighlightSegments(text, query).map((segment, index) => segment.match
+            ? (
+                <Text
+                    key = { index }
+                    style = { isActiveMatch ? styles.chatMessageHighlightActive : styles.chatMessageHighlight }>
+                    { segment.text }
+                </Text>
+            )
+            : segment.text);
     }
 
     /**
@@ -235,9 +273,13 @@ class ChatMessage extends Component<IChatMessageProps> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, { message }: IChatMessageProps) {
+    const activeMatch = getActiveChatSearchMatch(state);
+
     return {
         canReply: getCanReplyToMessage(state, message),
         gifEnabled: isGifEnabled(state),
+        highlightQuery: getChatSearchQuery(state),
+        isActiveMatch: Boolean(activeMatch && activeMatch.messageId === message.messageId),
         knocking: state['features/lobby'].knocking
     };
 }
