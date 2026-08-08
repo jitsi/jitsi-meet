@@ -70,31 +70,19 @@ export function setEmbeddedDocumentPiPAvailable(available: boolean) {
  */
 export function handleEmbeddedDocumentPiPCapability(available: boolean) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const pipState = getState()['features/pip'];
+        const state = getState();
+        const pipState = state['features/pip'];
+        const embeddedDocumentPiPAvailable
+            = available && state['features/base/config'].pip?.disableEmbedPiP !== true;
         const wasHostDocumentPiPActive
             = pipState?.embeddedDocumentPiPAvailable === true && pipState.isPiPActive;
         const requestPending = isDocumentPiPRequestPending();
 
-        dispatch(setEmbeddedDocumentPiPAvailable(available));
+        dispatch(setEmbeddedDocumentPiPAvailable(embeddedDocumentPiPAvailable));
 
-        if (!available && (wasHostDocumentPiPActive || requestPending)) {
+        if (!embeddedDocumentPiPAvailable && (wasHostDocumentPiPActive || requestPending)) {
             setDocumentPiPRequestPending(false);
             APP.API.notifyDocumentPiPClose();
-        }
-    };
-}
-
-/**
- * Treats an unanswered capability handshake as an old host and enables the
- * existing Video PiP fallback.
- *
- * @returns {Function}
- */
-export function handleEmbeddedDocumentPiPCapabilityTimeout() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        if (getState()['features/pip']?.embeddedDocumentPiPAvailable === undefined) {
-            logger.info('Embedded Document PiP capability handshake timed out; using Video PiP');
-            dispatch(setEmbeddedDocumentPiPAvailable(false));
         }
     };
 }

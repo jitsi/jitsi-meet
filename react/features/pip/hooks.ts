@@ -7,7 +7,7 @@ import { IParticipant } from '../base/participants/types';
 import { isEmbedded } from '../base/util/embedUtils';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
-import { exitPiP, handleEmbeddedDocumentPiPCapabilityTimeout, openDocumentPiP } from './actions';
+import { exitPiP, openDocumentPiP, setEmbeddedDocumentPiPAvailable } from './actions';
 import PiPTriggerButton from './components/web/PiPTriggerButton';
 import {
     getStoredPiPWindow,
@@ -264,7 +264,8 @@ export function useDocumentPiPMediaSession() {
         }
 
         const timeout = window.setTimeout(() => {
-            dispatch(handleEmbeddedDocumentPiPCapabilityTimeout());
+            logger.info('Embedded Document PiP capability handshake timed out; using Video PiP');
+            dispatch(setEmbeddedDocumentPiPAvailable(false));
         }, EMBEDDED_DOCUMENT_PIP_CAPABILITY_TIMEOUT);
 
         return () => window.clearTimeout(timeout);
