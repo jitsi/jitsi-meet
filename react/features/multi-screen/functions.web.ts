@@ -11,8 +11,11 @@ import {
     getVirtualScreenshareParticipantTrack
 } from '../base/tracks/functions.any';
 import { getLargeVideoParticipant } from '../large-video/functions';
+import { showWarningNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { removeSecondScreen, setSecondScreenWindow } from './actions.web';
+import { UI_SECOND_SCREEN_ID_PREFIX } from './constants';
 import logger from './logger';
 import { ISecondScreenSource } from './types';
 
@@ -141,8 +144,16 @@ export function resolveSource(state: IReduxState, source: ISecondScreenSource) {
         participant = getLargeVideoParticipant(state);
         iTrack = getVideoTrackByParticipant(state, participant);
     } else if (source.role === 'screenshare') {
-        iTrack = tracks.find(t => t.videoType === VIDEO_TYPE.DESKTOP && !t.muted && Boolean(t.jitsiTrack));
-        participant = iTrack ? getParticipantById(state, iTrack.participantId) : undefined;
+        // A screenshare sent from its own tile names the virtual screenshare
+        // participant that owns it, so the right one is rendered when several
+        // are live at once; without one, fall back to whatever is being shared.
+        if (source.participant) {
+            iTrack = getVirtualScreenshareParticipantTrack(tracks, source.participant);
+            participant = getParticipantById(state, source.participant);
+        } else {
+            iTrack = tracks.find(t => t.videoType === VIDEO_TYPE.DESKTOP && !t.muted && Boolean(t.jitsiTrack));
+            participant = iTrack ? getParticipantById(state, iTrack.participantId) : undefined;
+        }
     } else if (source.participant) {
         participant = getParticipantById(state, source.participant);
 
@@ -239,15 +250,169 @@ function getSecondScreenPageUrl(state: IReduxState): string {
 }
 
 /**
- * Computes the {@code window.open} features string, placing the window on a
- * physical screen via the Window Management API. Rejects if the API is
- * unavailable/denied (the feature requires it).
- *
- * @param {number} screenId - Optional target screen index.
- * @returns {Promise<string>}
+ * The {@code ScreenDetails} object, cached after the first successful call. The
+ * object is live (the browser keeps its {@code screens} and
+ * {@code currentScreen} up to date and fires {@code screenschange}), so it never
+ * needs to be invalidated, and caching it is what lets a window be opened
+ * synchronously: {@code window.open} then runs in the same task as the click
+ * that asked for it, keeping the user activation that the popup blocker
+ * requires.
  */
-async function computeFeatures(screenId?: number): Promise<string> {
-    const details = await window.getScreenDetails();
+let screenDetails: ScreenDetails | undefined;
+
+/**
+ * Returns the cached {@code ScreenDetails}, or {@code undefined} if it has not
+ * been obtained yet (see {@link loadScreenDetails}).
+ *
+ * @returns {ScreenDetails | undefined}
+ */
+export function getCachedScreenDetails(): ScreenDetails | undefined {
+    return screenDetails;
+}
+
+/**
+ * Obtains and caches the {@code ScreenDetails}. The first call requests the
+ * window-management permission, so it may prompt.
+ *
+ * @returns {Promise<ScreenDetails>}
+ */
+export async function loadScreenDetails(): Promise<ScreenDetails> {
+    screenDetails = screenDetails ?? await window.getScreenDetails();
+
+    return screenDetails;
+}
+
+/**
+ * Pre-loads the {@code ScreenDetails} when the window-management permission has
+ * already been granted, so the first in-app trigger can open its window without
+ * awaiting anything. Deliberately does not prompt: permission is only ever
+ * requested by an actual open, never just to decide what to draw.
+ *
+ * @returns {void}
+ */
+export function preloadScreenDetails() {
+    if (screenDetails || !isSecondScreenSupported()) {
+        return;
+    }
+
+    navigator.permissions?.query({ name: 'window-management' as PermissionName })
+        .then(status => (status.state === 'granted' ? loadScreenDetails() : undefined))
+        .catch(e => logger.debug('Could not pre-load the screen details', e));
+}
+
+/**
+ * The indices of the screens the meeting window is not on, in the order the
+ * Window Management API reports them.
+ *
+ * @param {ScreenDetails} details - The screen details.
+ * @returns {number[]}
+ */
+function getExternalScreenIndices(details: ScreenDetails): number[] {
+    const { currentScreen } = details;
+
+    return details.screens
+        .map((screen, index) => ({ screen,
+            index }))
+        .filter(({ screen }) => screen.left !== currentScreen.left || screen.top !== currentScreen.top)
+        .map(({ index }) => index);
+}
+
+/**
+ * Picks which second-screen window an in-app trigger should target. Each screen
+ * shows its own source, so a trigger fills the first external screen that has no
+ * window yet; once they all have one it takes over the window this feature
+ * targeted longest ago. Windows opened through the external API are never taken
+ * over, only counted as occupying their screen.
+ *
+ * Falls back to a single window on the current screen when there is no external
+ * screen at all, which is what {@link computeFeatures} places it on.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {Object} The window id to target and the screen index to place it on.
+ */
+export function pickSecondScreenTarget(state: IReduxState): { id: string; screenId?: number; } {
+    const details = screenDetails;
+    const external = details ? getExternalScreenIndices(details) : [];
+
+    if (!external.length) {
+        return { id: `${UI_SECOND_SCREEN_ID_PREFIX}0` };
+    }
+
+    const { screens } = state['features/multi-screen'];
+
+    // An entry with no explicit screenId went to the first external screen,
+    // which is what computeFeatures picks for it.
+    const taken = new Set(Object.values(screens).map(entry => entry.screenId ?? external[0]));
+    const free = external.find(index => !taken.has(index));
+
+    if (typeof free === 'number') {
+        return { id: `${UI_SECOND_SCREEN_ID_PREFIX}${free}`,
+            screenId: free };
+    }
+
+    const ours = Object.entries(screens).filter(([ id ]) => id.startsWith(UI_SECOND_SCREEN_ID_PREFIX));
+
+    // Every screen is taken by the embedder's windows: open on the first one
+    // anyway rather than taking one of them over.
+    if (!ours.length) {
+        return { id: `${UI_SECOND_SCREEN_ID_PREFIX}${external[0]}`,
+            screenId: external[0] };
+    }
+
+    const [ id, entry ] = ours.reduce((oldest, current) =>
+        ((current[1].setAt ?? 0) < (oldest[1].setAt ?? 0) ? current : oldest));
+
+    return { id,
+        screenId: entry.screenId ?? external[0] };
+}
+
+/**
+ * Whether two source descriptors select the same thing, so a trigger can tell
+ * that what it would send is already on a second screen. Only {@code media} is
+ * defaulted: an absent {@code role} is not the same as {@code 'stage'} (it pins
+ * the named participant rather than following the large video), so the roles are
+ * compared as they are.
+ *
+ * @param {ISecondScreenSource} a - A source descriptor.
+ * @param {ISecondScreenSource} b - The source descriptor to compare it against.
+ * @returns {boolean}
+ */
+export function isSameSecondScreenSource(a?: ISecondScreenSource, b?: ISecondScreenSource): boolean {
+    if (!a || !b) {
+        return false;
+    }
+
+    return a.role === b.role
+        && a.participant === b.participant
+        && (a.media ?? 'camera') === (b.media ?? 'camera');
+}
+
+/**
+ * The id of the in-app second-screen window already showing {@code source}, if
+ * there is one. Only the in-app windows are considered, for the same reason
+ * {@link pickSecondScreenTarget} only takes those over: a trigger must not turn
+ * off a window the embedder opened and is managing through the external API.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {ISecondScreenSource} source - The source to look for.
+ * @returns {string | undefined} The window id, if any.
+ */
+export function getSecondScreenShowing(state: IReduxState, source: ISecondScreenSource): string | undefined {
+    const { screens } = state['features/multi-screen'];
+
+    return Object.keys(screens).find(id =>
+        id.startsWith(UI_SECOND_SCREEN_ID_PREFIX) && isSameSecondScreenSource(screens[id].source, source));
+}
+
+/**
+ * Computes the {@code window.open} features string, placing the window on a
+ * physical screen via the Window Management API.
+ *
+ * @param {ScreenDetails} details - The screen details.
+ * @param {number} screenId - Optional target screen index.
+ * @returns {string}
+ */
+function computeFeatures(details: ScreenDetails, screenId?: number): string {
     const target = (typeof screenId === 'number' && details.screens[screenId])
         || details.screens.find(s => s.left !== details.currentScreen.left || s.top !== details.currentScreen.top)
         || details.currentScreen;
@@ -292,24 +457,6 @@ function readWindowLocation(win: Window): string | undefined {
 }
 
 /**
- * Whether a second-screen window has already loaded its shell page, in which
- * case waiting for its {@code load} event would never resolve (the event has
- * already fired). Happens when a window is opened again for an id whose window
- * is still open, since {@code window.open} reuses the window with the same name.
- *
- * @param {Window} win - The opened window.
- * @returns {boolean}
- */
-function isShellPageLoaded(win: Window): boolean {
-    try {
-        return win.document.readyState === 'complete' && hasShellMarker(win);
-    } catch (_e) {
-        // Mid-navigation (or an unreadable document); treat it as not loaded and wait.
-        return false;
-    }
-}
-
-/**
  * How a wait for a second-screen window's shell page ended: the shell loaded,
  * the window was closed while it was loading, the load timed out, or something
  * other than the shell page was served. They are reported differently: only the
@@ -335,14 +482,16 @@ type SecondScreenLoadResult = 'loaded' | 'closed' | 'timeout' | 'wrong-page';
  * that delivered something other than the shell page is reported separately,
  * since the event fires for any served response.
  *
+ * There is deliberately no fast path for a window that has already loaded: the
+ * caller always opens with the shell URL, and navigating a reused named context
+ * loads it again, so {@code load} is always still to come. A document that reads
+ * as complete here is a stale outgoing one, which carries the marker too, so
+ * taking it would build the handle on a document that is about to be replaced.
+ *
  * @param {Window} win - The opened window.
  * @returns {Promise<SecondScreenLoadResult>}
  */
 function awaitSecondScreenLoad(win: Window): Promise<SecondScreenLoadResult> {
-    if (isShellPageLoaded(win)) {
-        return Promise.resolve('loaded');
-    }
-
     return new Promise<SecondScreenLoadResult>(resolve => {
         let poll = 0;
         let timeout = 0;
@@ -495,7 +644,41 @@ function failSecondScreenOpen(store: IStore, id: string, error: string, win?: Wi
     }
 
     APP.API?.notifySecondScreenError?.({ id, error });
+    notifySecondScreenOpenFailed(store, id, error);
     store.dispatch(removeSecondScreen(id));
+}
+
+/**
+ * The notification shown for a failed in-app send, keyed by the error reported
+ * to the embedder. The two listed here are the ones the user can act on; the
+ * rest fall back to a generic message.
+ */
+const OPEN_ERROR_DESCRIPTIONS: { [error: string]: string; } = {
+    'popup-blocked': 'multiScreen.popupBlocked',
+    'window-management-unavailable': 'multiScreen.permissionDenied'
+};
+
+/**
+ * Tells the user that a send to a second screen failed. Only for the windows
+ * opened by the in-app triggers: an embedder handles its own windows' failures
+ * through {@code notifySecondScreenError}, and a notification in the meeting
+ * would be talking about a window the user never asked for. Without this an
+ * in-app click that is blocked does nothing observable at all.
+ *
+ * @param {IStore} store - The redux store.
+ * @param {string} id - The window id.
+ * @param {string} error - The error reported to the embedder.
+ * @returns {void}
+ */
+export function notifySecondScreenOpenFailed(store: IStore, id: string, error: string) {
+    if (!id.startsWith(UI_SECOND_SCREEN_ID_PREFIX)) {
+        return;
+    }
+
+    store.dispatch(showWarningNotification({
+        descriptionKey: OPEN_ERROR_DESCRIPTIONS[error] ?? 'multiScreen.openFailed',
+        titleKey: 'multiScreen.openFailedTitle'
+    }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 }
 
 /**
@@ -548,10 +731,21 @@ export async function openOrUpdateSecondScreen(store: IStore, id: string, screen
     // would reach window.open with the same window name and re-navigate (or, on
     // the initial empty document, share) the window the first call is building
     // on, which orphans load listeners, duplicates roots and pagehide listeners,
-    // and can close a window that was just set up. Nothing is lost by returning:
-    // the source lives in redux, so the open already in flight picks up the
-    // newest one when it applies it at the end. A screenId that changed in the
-    // meantime is ignored, exactly as it is for a window that is already open.
+    // and can close a window that was just set up. The dropped request is not
+    // re-run later, so what it leaves behind depends on how the open in flight
+    // ends. If that one succeeds, nothing is lost: the source lives in redux, so
+    // it applies the newest one at the end. If it fails, its teardown dispatches
+    // removeSecondScreen(id), which also removes the entry the dropped request
+    // had just written, leaving that request with neither a window nor an entry
+    // of its own. That is accepted rather than handled: the end state is
+    // consistent rather than corrupt, the embedder is told through
+    // secondScreenError for the id and can retry, and whatever caused the
+    // failure usually applies to both requests anyway. The window for this is
+    // wider than the load timeout, since computeFeatures below raises the
+    // window-management permission prompt, which sits until the user answers it
+    // and lands on window-management-unavailable if they deny it. A screenId that
+    // changed in the meantime is ignored, exactly as it is for a window that is
+    // already open.
     if (opening.has(id)) {
         return;
     }
@@ -583,7 +777,11 @@ async function openSecondScreenWindow(store: IStore, id: string, screenId?: numb
     let features;
 
     try {
-        features = await computeFeatures(screenId);
+        // Only awaits the first time, before the permission has been granted:
+        // afterwards the details are cached, so everything up to window.open
+        // below stays in the task that dispatched, and a window opened from a
+        // click still counts as user-initiated to the popup blocker.
+        features = computeFeatures(screenDetails ?? await loadScreenDetails(), screenId);
     } catch (e) {
         logger.warn(`Window Management API unavailable; cannot place second-screen window "${id}"`, e);
         failSecondScreenOpen(store, id, 'window-management-unavailable');

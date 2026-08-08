@@ -29,7 +29,8 @@ interface IProps {
  * Routes a single second-screen window to a layout from its redux source
  * descriptor. A {@code whiteboard} source renders the {@link SecondScreenWhiteboard}
  * iframe; a {@code sharedvideo} source renders the meeting's shared video via
- * {@link SecondScreenSharedVideo}; a {@code tile} source renders the
+ * {@link SecondScreenSharedVideo}; a {@code screenshare} source renders that
+ * screenshare full-bleed; a {@code tile} source renders the
  * {@link SecondScreenGallery} grid; a stage or participant source renders the
  * {@link SecondScreenStage} layout (featured participant plus filmstrip); any
  * other source renders the single track/avatar via {@link SecondScreenSingle}.
@@ -51,6 +52,17 @@ const SecondScreenView = ({ id, win }: IProps) => {
         return (
             <SecondScreenSharedVideo
                 id = { id } />
+        );
+    }
+
+    // Before the participant check below: a screenshare names its virtual
+    // screenshare participant to say which one to show, but it is still shown
+    // full-bleed on its own rather than in the stage layout.
+    if (source?.role === 'screenshare') {
+        return (
+            <SecondScreenSingle
+                id = { id }
+                win = { win } />
         );
     }
 

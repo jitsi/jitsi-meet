@@ -39,7 +39,8 @@ ReducerRegistry.register<IMultiScreenState>('features/multi-screen',
                 [action.id]: {
                     ...state.screens[action.id],
                     source: action.source,
-                    screenId: action.screenId
+                    screenId: action.screenId,
+                    setAt: action.setAt
                 }
             }
         };

@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useMemo } from 'react';
+import { useSelector, useStore } from 'react-redux';
 
 import { IReduxState } from '../app/types';
 import {
@@ -7,6 +7,18 @@ import {
     getLocalParticipant,
     getLocalScreenShareParticipant
 } from '../base/participants/functions';
+
+import { removeSecondScreen, setSecondScreen } from './actions.web';
+import {
+    getCachedScreenDetails,
+    getSecondScreenShowing,
+    isSecondScreenEnabled,
+    loadScreenDetails,
+    notifySecondScreenOpenFailed,
+    pickSecondScreenTarget
+} from './functions.web';
+import logger from './logger';
+import { ISecondScreenSource } from './types';
 
 /**
  * Returns the ordered participant ids for a second-screen layout: the local
@@ -47,4 +59,69 @@ export function useSecondScreenParticipantIds(): string[] {
  */
 export function useDominantSpeakerId(): string | null {
     return useSelector((state: IReduxState) => getDominantSpeakerParticipant(state)?.id ?? null);
+}
+
+/**
+ * Backs the in-app "send to second screen" triggers: whether to show one,
+ * whether the source is already on a screen, and the handler that toggles it.
+ * The handler dispatches {@code setSecondScreen}, the same action the external
+ * API dispatches, so the API stays the single control plane;
+ * {@link pickSecondScreenTarget} chooses which window it lands on.
+ *
+ * The trigger is shown whenever the feature is enabled and the browser can
+ * place a window on another screen, without checking that a second monitor is
+ * actually attached: that answer needs the window-management permission, and
+ * the click itself is what should ask for it. With no second monitor the window
+ * opens on the current screen.
+ *
+ * @param {ISecondScreenSource} source - What to send.
+ * @returns {Object} Whether the trigger is visible, whether its source is
+ * already on a second screen, and its click handler.
+ */
+export function useSendToSecondScreen(source: ISecondScreenSource): {
+    active: boolean; onClick: () => void; visible: boolean;
+} {
+    const store = useStore<IReduxState>();
+    const visible = useSelector(isSecondScreenEnabled);
+    const activeId = useSelector((state: IReduxState) => getSecondScreenShowing(state, source));
+
+    const onClick = useCallback(() => {
+
+        // Already on a screen: the trigger turns it off again. This is the only
+        // way to close an in-app second screen from the meeting window, short of
+        // closing the popup by hand on the other display.
+        if (activeId) {
+            store.dispatch(removeSecondScreen(activeId));
+
+            return;
+        }
+
+        const send = () => {
+            const { id, screenId } = pickSecondScreenTarget(store.getState());
+
+            store.dispatch(setSecondScreen(id, source, screenId));
+        };
+
+        // Stay synchronous once the screen details are known, so the window is
+        // opened in this click's task and the popup blocker sees it as
+        // user-initiated. Only the very first send has to await the permission.
+        if (getCachedScreenDetails()) {
+            send();
+        } else {
+            loadScreenDetails()
+                .then(send)
+                .catch((e: any) => {
+                    logger.warn('Could not send to a second screen', e);
+
+                    // No window was opened, so no id exists yet to report
+                    // against; the failure paths inside the open cover the rest.
+                    notifySecondScreenOpenFailed(
+                        store, pickSecondScreenTarget(store.getState()).id, 'window-management-unavailable');
+                });
+        }
+    }, [ activeId, source, store ]);
+
+    return { active: Boolean(activeId),
+        onClick,
+        visible };
 }
