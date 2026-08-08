@@ -2,11 +2,9 @@ import { AnyAction } from 'redux';
 
 import { IReduxState, IStore } from '../app/types';
 import { CONFERENCE_FAILED, CONFERENCE_LEFT, CONFERENCE_WILL_LEAVE } from '../base/conference/actionTypes';
-import { getLocalParticipant } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { getLargeVideoParticipant } from '../large-video/functions';
-import { isPrejoinPageVisible } from '../prejoin/functions.any';
 
 import {
     EMBEDDED_DOCUMENT_PIP_SIGNAL_RECEIVED,
@@ -24,7 +22,6 @@ interface IEmbeddedDocumentPiPSender {
     generation: number;
     peerConnection: RTCPeerConnection;
     reconnectTimer?: number;
-    replaceTrackQueue: Promise<void>;
     sender: RTCRtpSender;
     signalQueue: Promise<void>;
     store: IStore;
@@ -56,19 +53,16 @@ function closeSender() {
 }
 
 function getNativePiPTrack(state: IReduxState): MediaStreamTrack | null {
-    const participant = isPrejoinPageVisible(state)
-        ? getLocalParticipant(state)
-        : getLargeVideoParticipant(state);
-    const videoTrack = getPiPVideoTrack(state, participant);
+    const videoTrack = getPiPVideoTrack(state, getLargeVideoParticipant(state));
     const nativeTrack = videoTrack?.jitsiTrack?.getTrack();
 
     return videoTrack?.muted || nativeTrack?.readyState !== 'live' ? null : nativeTrack;
 }
 
 /**
- * Replaces the track on the existing sender instead of projecting participant
- * state into a second view model. Serialization prevents rapid large-video and
- * mute changes from applying out of order.
+ * Replaces the native track without projecting participant state into a second
+ * view model. RTCRtpSender operations use the peer connection's operations
+ * chain, so a second application-level promise queue would duplicate ordering.
  *
  * @param {MediaStreamTrack|null} track - The currently selected native PiP track.
  * @returns {Promise<void>}
@@ -76,19 +70,11 @@ function getNativePiPTrack(state: IReduxState): MediaStreamTrack | null {
 function replaceTrack(track: MediaStreamTrack | null) {
     const session = senderSession;
 
-    if (!session) {
+    if (!session || !isCurrentSession(session) || session.sender.track === track) {
         return Promise.resolve();
     }
 
-    session.replaceTrackQueue = session.replaceTrackQueue
-        .catch(error => logger.warn('Previous embedded Document PiP track replacement failed:', error))
-        .then(async () => {
-            if (isCurrentSession(session) && session.sender.track !== track) {
-                await session.sender.replaceTrack(track);
-            }
-        });
-
-    return session.replaceTrackQueue;
+    return session.sender.replaceTrack(track);
 }
 
 function canReconnect(session: IEmbeddedDocumentPiPSender) {
@@ -142,7 +128,6 @@ async function startSender(store: IStore) {
     const session: IEmbeddedDocumentPiPSender = {
         generation: ++generation,
         peerConnection,
-        replaceTrackQueue: Promise.resolve(),
         sender,
         signalQueue: Promise.resolve(),
         store

@@ -46,16 +46,3 @@ export function isPiPEnabled(pipConfig?: { disabled?: boolean; enableBrowserPiP?
     return 'documentPictureInPicture' in window
         || Boolean(document.pictureInPictureEnabled);
 }
-
-/**
- * Checks whether host-assisted Document PiP is explicitly enabled.
- * A missing embedMode is disabled for backwards compatibility.
- *
- * @param {Object} pipConfig - The pip config object.
- * @returns {boolean} - True if embedded Document PiP is enabled.
- */
-export function isEmbeddedDocumentPiPEnabled(pipConfig?: {
-    disableEmbedPiP?: boolean;
-}): boolean {
-    return pipConfig?.disableEmbedPiP != true;
-}

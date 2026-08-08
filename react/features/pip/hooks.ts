@@ -307,7 +307,8 @@ export function useDocumentPiPMediaSession() {
         }
 
         const timeout = window.setTimeout(() => {
-            dispatch(handleEmbeddedDocumentPiPCapabilityTimeout());
+            logger.info('Embedded Document PiP capability handshake timed out; using Video PiP');
+            dispatch(setEmbeddedDocumentPiPAvailable(false));
         }, EMBEDDED_DOCUMENT_PIP_CAPABILITY_TIMEOUT);
 
         return () => window.clearTimeout(timeout);

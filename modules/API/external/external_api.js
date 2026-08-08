@@ -2,10 +2,7 @@ import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import EventEmitter from 'events';
 
 import { urlObjectToString } from '../../../react/features/base/util/uri';
-import {
-    isEmbeddedDocumentPiPEnabled,
-    isPiPEnabled
-} from '../../../react/features/pip/external-api.shared';
+import { isPiPEnabled } from '../../../react/features/pip/external-api.shared';
 import {
     PostMessageTransportBackend,
     Transport
@@ -653,7 +650,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
                 return true;
             case '_document-pip-signal':
-                this._hostPiP?.signal?.(data.data);
+                if (this._hostPiP && this._hostPiP.signal) {
+                    this._hostPiP.signal(data.data);
+                }
 
                 return true;
             case 'breakout-rooms-updated':
@@ -748,8 +747,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     _sendCap() {
         this._sendPiP(
             'capability',
-            isEmbeddedDocumentPiPEnabled(this._pipConfig)
-                && window === window.top
+            window === window.top
                 && 'documentPictureInPicture' in window);
     }
 
@@ -757,12 +755,12 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Sends an internal command to the embedded meeting iframe.
      *
      * @param {string} name - Command name.
-     * @param {...any} args - Command arguments.
+     * @param {any} [data] - Optional command payload.
      * @returns {void}
      */
-    _sendPiP(name, ...args) {
+    _sendPiP(name, data) {
         this._transport.sendEvent({
-            data: args,
+            data: data === undefined ? [] : [ data ],
             name: `document-pip-${name}`
         });
     }
@@ -783,6 +781,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         const api = Object.create(this);
         let generation = 0;
         let peerConnection;
+        let receivedTrack;
         let signalQueue = Promise.resolve();
 
         pipDocument.head.innerHTML = `<link rel=stylesheet href="${stylesheetURL}">`;
@@ -790,20 +789,44 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             = '<div class=videocontainer style=height:100%><video hidden autoplay muted '
                 + 'style=object-fit:contain></video><div id=react></div></div>';
         const video = pipDocument.querySelector('video');
-        const getVideo = visible => visible && !video.hidden && video;
         const sendSignal = (type, data) => this._sendPiP('signal', {
             ...data,
             type,
             generation
         });
+        const syncVideoVisibility = () => {
+            // replaceTrack(null) and the meeting's large-video visibility event can
+            // arrive before the receiver reports its track as muted. Apply both
+            // existing sources so the absolutely positioned video cannot cover the
+            // Always-on-Top avatar with a stale frame.
+            const sourceVisible = this._isLargeVideoVisible || this._isPrejoinVideoVisible;
 
-        api._getLargeVideo = () => getVideo(this._isLargeVideoVisible);
-        api._getPrejoinVideo = () => getVideo(this._isPrejoinVideoVisible);
+            video.hidden = !sourceVisible || !receivedTrack || receivedTrack.muted;
+        };
+        const clearReceivedTrack = () => {
+            if (receivedTrack) {
+                receivedTrack.onmute = null;
+                receivedTrack.onunmute = null;
+                receivedTrack = undefined;
+            }
+
+            video.srcObject = null;
+            syncVideoVisibility();
+        };
+
+        api._getLargeVideo = api._getPrejoinVideo = () => !video.hidden && video;
+        this.on('largeVideoChanged', syncVideoVisibility);
+        this.on('prejoinVideoChanged', syncVideoVisibility);
         pipWindow.alwaysOnTop = { api };
         script.src = scriptURL;
         pipDocument.body.appendChild(script);
         pipWindow._dispose = () => {
-            peerConnection?.close();
+            this.removeListener('largeVideoChanged', syncVideoVisibility);
+            this.removeListener('prejoinVideoChanged', syncVideoVisibility);
+            clearReceivedTrack();
+            if (peerConnection) {
+                peerConnection.close();
+            }
             peerConnection = undefined;
         };
 
@@ -828,20 +851,28 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                     return;
                 }
 
-                peerConnection?.close();
+                clearReceivedTrack();
+                if (peerConnection) {
+                    peerConnection.close();
+                }
 
                 const receiver = new RTCPeerConnection();
 
                 generation = signal.generation;
                 peerConnection = receiver;
-                receiver.ontrack = ({ track: receivedTrack }) => {
+                receiver.ontrack = ({ track }) => {
                     const notifyVideoChanged = () => {
-                        video.hidden = receivedTrack.muted;
+                        if (receivedTrack !== track) {
+                            return;
+                        }
+
+                        syncVideoVisibility();
                         this.emit('largeVideoChanged');
                     };
 
-                    video.srcObject = new MediaStream([ receivedTrack ]);
-                    receivedTrack.onmute = receivedTrack.onunmute = notifyVideoChanged;
+                    receivedTrack = track;
+                    video.srcObject = new MediaStream([ track ]);
+                    track.onmute = track.onunmute = notifyVideoChanged;
                     notifyVideoChanged();
                 };
                 receiver.onicecandidate = ({ candidate }) => {
@@ -886,12 +917,6 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @private
      */
     async _openPiP() {
-        if (!isEmbeddedDocumentPiPEnabled(this._pipConfig)) {
-            this._sendPiP('open-failed');
-
-            return;
-        }
-
         if (this._hostPiP) {
             return;
         }
