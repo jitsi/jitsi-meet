@@ -823,6 +823,8 @@ var config = {
     // pip: {
     //     // Disable Picture-in-Picture for browser meetings entirely. Defaults to true.
     //     disableBrowserPiP: true,
+    //     // Disable all Picture-in-Picture implementations for iframe meetings. Defaults to false.
+    //     disableEmbedPiP: true,
     //     // Disable Picture-in-Picture entirely. Defaults to false.
     //     disabled: false,
     //     // Allow Picture-in-Picture on the prejoin page. Defaults to false.

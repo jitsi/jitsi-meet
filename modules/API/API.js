@@ -108,7 +108,15 @@ import {
     open as openParticipantsPane
 } from '../../react/features/participants-pane/actions';
 import { getParticipantsPaneOpen } from '../../react/features/participants-pane/functions';
-import { hidePiP, showPiP } from '../../react/features/pip/actions';
+import {
+    handleEmbeddedDocumentPiPCapability,
+    handleEmbeddedDocumentPiPOpenFailed,
+    handleEmbeddedDocumentPiPOpened,
+    handleEmbeddedDocumentPiPSignal,
+    handleEmbeddedDocumentPiPWindowClosed,
+    hidePiP,
+    showPiP
+} from '../../react/features/pip/actions';
 import {
     setStartRecordingIntent,
     setStopRecordingIntent,
@@ -1000,6 +1008,21 @@ function initCommands() {
         },
         'hide-pip': () => {
             APP.store.dispatch(hidePiP());
+        },
+        'document-pip-capability': available => {
+            APP.store.dispatch(handleEmbeddedDocumentPiPCapability(Boolean(available)));
+        },
+        'document-pip-opened': () => {
+            APP.store.dispatch(handleEmbeddedDocumentPiPOpened());
+        },
+        'document-pip-open-failed': () => {
+            APP.store.dispatch(handleEmbeddedDocumentPiPOpenFailed());
+        },
+        'document-pip-closed': () => {
+            APP.store.dispatch(handleEmbeddedDocumentPiPWindowClosed());
+        },
+        'document-pip-signal': signal => {
+            APP.store.dispatch(handleEmbeddedDocumentPiPSignal(signal));
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -2416,6 +2439,37 @@ class API {
             name: 'peer-connection-failure',
             isP2P,
             wasConnected
+        });
+    }
+
+    /**
+     * Requests that the embedding page close Document PiP.
+     *
+     * @returns {void}
+     */
+    notifyDocumentPiPClose() {
+        this._sendEvent({ name: '_document-pip-close' });
+    }
+
+    /**
+     * Requests a host-owned Document PiP window.
+     *
+     * @returns {void}
+     */
+    notifyDocumentPiPRequested() {
+        this._sendEvent({ name: '_document-pip-requested' });
+    }
+
+    /**
+     * Sends one ordered WebRTC signal to the embedding page.
+     *
+     * @param {Object} signal - Offer, answer, candidate, or restart signal.
+     * @returns {void}
+     */
+    notifyDocumentPiPSignal(signal) {
+        this._sendEvent({
+            data: signal,
+            name: '_document-pip-signal'
         });
     }
 

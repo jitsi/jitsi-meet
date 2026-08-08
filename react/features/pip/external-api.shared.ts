@@ -20,10 +20,13 @@ function isElectron(): boolean {
  * Checks if PiP is enabled based on config and environment.
  *
  * @param {Object} pipConfig - The pip config object.
+ * @param {boolean} embedded - Whether PiP is being evaluated for an embedded meeting.
  * @returns {boolean} - True if PiP is enabled.
  */
-export function isPiPEnabled(pipConfig?: { disabled?: boolean; }): boolean {
-    if (pipConfig?.disabled) {
+export function isPiPEnabled(
+        pipConfig?: { disableEmbedPiP?: boolean; disabled?: boolean; },
+        embedded = false): boolean {
+    if (pipConfig?.disabled || (embedded && pipConfig?.disableEmbedPiP === true)) {
         return false;
     }
 

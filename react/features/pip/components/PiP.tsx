@@ -1,7 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import { IReduxState } from '../../app/types';
+import { isEmbedded } from '../../base/util/embedUtils';
 import { isDocumentPiPSupported, shouldShowPiP } from '../functions';
+import { useDocumentPiPMediaSession } from '../hooks';
 
 import PiPVideoElement from './PiPVideoElement';
 import { DocumentPiPContent } from './web/DocumentPiPContent';
@@ -13,7 +16,17 @@ import { DocumentPiPContent } from './web/DocumentPiPContent';
  * @returns {React.ReactElement | null}
  */
 function PiP() {
+    useDocumentPiPMediaSession();
+
     const showPiP = useSelector(shouldShowPiP);
+    const embeddedDocumentPiPAvailable = useSelector(
+        (state: IReduxState) => state['features/pip']?.embeddedDocumentPiPAvailable);
+
+    if (isEmbedded()) {
+        // The host owns the Document PiP document. The iframe only renders the existing
+        // Video PiP element when PiP remains enabled and capability negotiation selects the fallback.
+        return showPiP && embeddedDocumentPiPAvailable === false ? <PiPVideoElement /> : null;
+    }
 
     if (!showPiP) {
         return null;

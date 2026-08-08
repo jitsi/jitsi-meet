@@ -608,8 +608,12 @@ export interface IConfig {
     pip?: {
         /**
          * Browser enabled PiP feature.
-         */
+        */
         disableBrowserPiP?: boolean;
+        /**
+         * Disables all Picture-in-Picture implementations for embedded meetings.
+         */
+        disableEmbedPiP?: boolean;
         disabled?: boolean;
         /**
          * Document Picture-in-Picture configuration.
