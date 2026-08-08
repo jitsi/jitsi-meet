@@ -7,6 +7,7 @@ import { translate } from '../../../base/i18n/functions';
 import { IconPip } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { togglePip } from '../../actions';
+import { shouldShowPiP } from '../../functions';
 
 interface IProps extends AbstractButtonProps {
 
@@ -58,7 +59,8 @@ class PiPTriggerButton extends AbstractButton<IProps> {
  */
 function mapStateToProps(state: IReduxState) {
     return {
-        _isPiPActive: Boolean(state['features/pip']?.isPiPActive)
+        _isPiPActive: Boolean(state['features/pip']?.isPiPActive),
+        visible: shouldShowPiP(state)
     };
 }
 

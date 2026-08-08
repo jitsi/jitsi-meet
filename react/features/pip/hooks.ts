@@ -259,17 +259,17 @@ export function useDocumentPiPMediaSession() {
     }, [ documentPiPAvailable, openDocumentPip ]);
 
     useEffect(() => {
-        if (!embedded || embeddedDocumentPiPAvailable !== undefined) {
+        if (!embedded || !pipEnabled || embeddedDocumentPiPAvailable !== undefined) {
             return;
         }
 
         const timeout = window.setTimeout(() => {
-            logger.info('Embedded Document PiP capability handshake timed out; using Video PiP');
+            logger.info('Embedded Document PiP capability handshake timed out; treating it as unavailable');
             dispatch(setEmbeddedDocumentPiPAvailable(false));
         }, EMBEDDED_DOCUMENT_PIP_CAPABILITY_TIMEOUT);
 
         return () => window.clearTimeout(timeout);
-    }, [ dispatch, embedded, embeddedDocumentPiPAvailable ]);
+    }, [ dispatch, embedded, embeddedDocumentPiPAvailable, pipEnabled ]);
 
     useEffect(() => {
         if (!documentPiPAvailable) {

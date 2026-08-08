@@ -24,7 +24,7 @@ function PiP() {
 
     if (isEmbedded()) {
         // The host owns the Document PiP document. The iframe only renders the existing
-        // Video PiP element after capability negotiation has selected the legacy fallback.
+        // Video PiP element when PiP remains enabled and capability negotiation selects the fallback.
         return showPiP && embeddedDocumentPiPAvailable === false ? <PiPVideoElement /> : null;
     }
 

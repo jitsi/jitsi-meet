@@ -611,7 +611,7 @@ export interface IConfig {
         */
         disableBrowserPiP?: boolean;
         /**
-         * Disables host-owned Document PiP for embedded meetings while retaining the Video PiP fallback.
+         * Disables all Picture-in-Picture implementations for embedded meetings.
          */
         disableEmbedPiP?: boolean;
         disabled?: boolean;

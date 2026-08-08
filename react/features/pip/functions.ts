@@ -6,6 +6,7 @@ import { browser } from '../base/lib-jitsi-meet';
 import { IParticipant } from '../base/participants/types';
 import { getLocalVideoTrack } from '../base/tracks/functions.any';
 import { getVideoTrackByParticipant } from '../base/tracks/functions.web';
+import { isEmbedded } from '../base/util/embedUtils';
 import { isPrejoinPageVisible } from '../prejoin/functions.any';
 
 import { toggleAudioFromPiP, toggleVideoFromPiP } from './actions';
@@ -81,7 +82,7 @@ export function shouldShowPiP(state: IReduxState): boolean {
     const isBrowserPiPDisabled = pipConfig?.disableBrowserPiP;
 
     // Check if PiP is enabled at all.
-    if (!isPiPEnabled(pipConfig)) {
+    if (!isPiPEnabled(pipConfig, isEmbedded())) {
         return false;
     }
 

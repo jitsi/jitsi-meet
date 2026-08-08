@@ -823,7 +823,7 @@ var config = {
     // pip: {
     //     // Disable Picture-in-Picture for browser meetings entirely. Defaults to true.
     //     disableBrowserPiP: true,
-    //     // Disable host-owned Document PiP for iframe meetings. Defaults to false.
+    //     // Disable all Picture-in-Picture implementations for iframe meetings. Defaults to false.
     //     disableEmbedPiP: true,
     //     // Disable Picture-in-Picture entirely. Defaults to false.
     //     disabled: false,
