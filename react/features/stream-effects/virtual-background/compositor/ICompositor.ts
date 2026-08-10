@@ -2,6 +2,8 @@
  * Per-frame compositing parameters passed to every {@link ICompositor#composite} call.
  */
 export interface ICompositeOptions {
+    /** AR overlay canvas. Composited on top of camera+background+mask result. Null when AR disabled. */
+    arOverlayCanvas?: HTMLCanvasElement | null;
 
     /** CSS blur filter for the mask in Canvas 2D fallback (e.g. 'blur(4px)'). */
     cssBlurFilter: string;
@@ -14,11 +16,12 @@ export interface ICompositeOptions {
 
     /** Gaussian blur radius in mask-texture pixels (0 disables blur). */
     maskBlurRadius: number;
+
 }
 
 /**
  * Abstraction over the compositing backend that blends camera, background,
- * and segmentation mask into a single output frame.
+ * segmentation mask and AR overlay (when supplied) into a single output frame.
  *
  * Two implementations exist:
  * - {@code WebGLCompositor} — GPU-accelerated with temporal smoothing and edge feathering.
@@ -27,12 +30,12 @@ export interface ICompositeOptions {
 export interface ICompositor {
 
     /**
-     * Composites one frame: blends camera foreground, background, and mask.
+     * Composites one frame: blends camera foreground, background, mask and AR overlay (when supplied).
      *
      * @param {CanvasImageSource} camera - Live camera frame.
      * @param {CanvasImageSource} background - Pre-rendered background (blur or image).
      * @param {ImageData} maskData - Raw segmentation mask bytes.
-     * @param {ICompositeOptions} options - Edge thresholds and blur radius.
+     * @param {ICompositeOptions} options - Edge thresholds, blur radius and AR overlay canvas.
      * @returns {void}
      */
     composite: (

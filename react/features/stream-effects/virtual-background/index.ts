@@ -1,11 +1,15 @@
 /* eslint-disable lines-around-comment */
+
+import { getBaseUrl } from '../../base/util/helpers';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
+import { AR_FILTERS } from '../../virtual-background/constants';
 import { timeout } from '../../virtual-background/functions';
 import logger from '../../virtual-background/logger';
 import { IVirtualBackground } from '../../virtual-background/reducer';
 
-import { detectDeviceTier } from './DeviceTierDetector';
+import { BackendType, detectDeviceTier } from './DeviceTierDetector';
+import { IARFilterConfig } from './JitsiStreamAREffect';
 import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect';
 // @ts-ignore
 import createTFLiteModule from './vendor/tflite/tflite';
@@ -47,7 +51,28 @@ export async function createVirtualBackgroundEffect(virtualBackground: IVirtualB
             + ` tier: ${capabilities.tier}, backend: ${capabilities.backend}`
         );
 
+        const arGated = capabilities.backend !== BackendType.TFLITE;
+        const base = getBaseUrl();
+
+        const selectedFilter = virtualBackground.selectedARFilterId
+            ? AR_FILTERS.find(f => f.id === virtualBackground.selectedARFilterId)
+            : undefined;
+
+        const arFilter: IARFilterConfig | undefined = (arGated && selectedFilter)
+            ? {
+                anchorLandmark: selectedFilter.anchorLandmark,
+                depthOffset: selectedFilter.depthOffset,
+                id: selectedFilter.id,
+                modelFile: selectedFilter.modelFile,
+                scaleMultiplier: selectedFilter.scaleMultiplier,
+                tooltip: selectedFilter.tooltip,
+                verticalOffset: selectedFilter.verticalOffset
+            } : undefined;
+
         const effect = new JitsiStreamBackgroundEffect(undefined, virtualBackground, {
+            arFilter,
+            arModelPath: arFilter ? `${base}libs/face_landmarker.task` : undefined,
+            arWasmBase: arFilter ? `${base}libs/mediapipe-vision/` : undefined,
             capabilities,
             enableV2: true,
             vbConfig

@@ -2,11 +2,24 @@ import { getBaseUrl } from '../../../base/util/helpers';
 import logger from '../../../virtual-background/logger';
 import { BackendType, IDeviceCapabilities } from '../DeviceTierDetector';
 
+export interface IInferResult {
+    faceLandmarks: number[][] | null;
+    facialTransformationMatrix: number[] | null;
+    mask: ImageData | null;
+}
+
+/** Options for enabling AR alongside segmentation. */
+export interface IArIninOptions {
+    enable: boolean;
+    modelPath: string;
+    wasmBase: string;
+}
+
 /**
  * Worker-based segmentation backend.
  *
  * Wraps the {@link VBInferenceWorker} message protocol. The worker runs TF.js body-segmentation
- * (MEDIUM/HIGH tiers via WebGL/WebGPU) or TFLite WASM (LOW tier via selfie_segmentation_landscape)
+ * and FaceLandmarker if enabled (MEDIUM/HIGH tiers via WebGL/WebGPU) or TFLite WASM (LOW tier via selfie_segmentation_landscape)
  * in a dedicated Web Worker thread.
  *
  * The worker may fall back from a GPU backend to TFLite if the GPU context is unavailable inside
@@ -19,7 +32,7 @@ import { BackendType, IDeviceCapabilities } from '../DeviceTierDetector';
 export default class WorkerSegmentationBackend {
     _capabilities: IDeviceCapabilities;
     _pendingInferHandler: ((e: MessageEvent) => void) | null = null;
-    _pendingInferResolve: ((value: ImageData | null) => void) | null = null;
+    _pendingInferResolve: ((value: IInferResult) => void) | null = null;
     _worker: Worker | null = null;
     _workerReady = false;
 
@@ -51,10 +64,14 @@ export default class WorkerSegmentationBackend {
      * Resolves when the worker signals init_done. If the worker falls back to a different backend,
      * capabilities are updated to reflect the actual backend and segmentation dimensions.
      *
+     * AR failing results in `null` for `facialTransformationMatrix` and `faceLandmarks`,
+     * will not cause the worker to fail.
+     *
+     * @param {IArIninOptions} arOptions - Options for AR (face tracking) initialization.
      * @returns {Promise<void>} Resolves when the worker is ready for inference.
      * @throws {Error} When the worker signals init_error.
      */
-    async init(): Promise<void> {
+    async init(arOptions?: IArIninOptions): Promise<void> {
         const base = getBaseUrl().replace(/\/?$/, '/');
         const workerUrl = `${base}libs/vb-inference-worker.min.js`;
 
@@ -118,7 +135,10 @@ export default class WorkerSegmentationBackend {
             } else if (e.data.type === 'init_error') {
                 this._worker?.removeEventListener('message', handler);
                 reject(new Error(`Inference worker init error: ${e.data.error}`));
+            } else if (e.data.type === 'ar_init_error') {
+                logger.warn(`[WorkerBackend] AR init failed: ${e.data.error}`);
             }
+
         };
 
         this._worker.addEventListener('message', handler);
@@ -129,9 +149,13 @@ export default class WorkerSegmentationBackend {
             `[WorkerBackend] Initialising inference worker — backend: ${this._capabilities.backend}`
             + ` | model: ${tfliteModelPath}`
             + ` | seg: ${this._capabilities.segWidth}x${this._capabilities.segHeight}`
+            + ` | ar: ${arOptions?.enable ?? false}`
         );
 
         this._worker.postMessage({
+            arEnabled: arOptions?.enable ?? false,
+            arModelPath: arOptions?.modelPath,
+            arWasmBase: arOptions?.wasmBase,
             backend: this._capabilities.backend,
             segHeight: this._capabilities.segHeight,
             segWidth: this._capabilities.segWidth,
@@ -148,26 +172,29 @@ export default class WorkerSegmentationBackend {
     }
 
     /**
-     * Sends a pre-scaled ImageBitmap to the inference worker and awaits the mask.
+     * Sends a pre-scaled ImageBitmap to the inference worker and awaits the result.
      *
-     * The bitmap is transferred (zero-copy). The worker runs segmentation and returns the raw
-     * mask Uint8ClampedArray (also transferred). The mask is wrapped in an ImageData and returned
-     * directly — no EMA smoothing is applied here.
+     * Both bitmaps are transferred (zero-copy). The worker runs segmentation on {@code bitmap}
+     * and returns the raw mask Uint8ClampedArray (also transferred) and facial transformation
+     * matrix on {@code arBitmap} (if AR is enabled). The mask is wrapped in an ImageData and
+     * returned directly — no EMA smoothing is applied here.
      *
      * Only one inference call can be in flight at a time. The caller (processor) is responsible
      * for enforcing sequential call discipline.
      *
      * @param {ImageBitmap} bitmap - Pre-scaled camera frame at seg resolution.
-     * @returns {Promise<ImageData | null>} Raw mask, or null if inference failed.
+     * @param {ImageBitmap} arBitmap - Pre-scaled AR frame at seg resolution for face landmarking.
+     * @returns {Promise<IInferResult>} Raw mask, or null if segmentation inference failed.
      */
-    infer(bitmap: ImageBitmap): Promise<ImageData | null> {
+    infer(bitmap: ImageBitmap, arBitmap: ImageBitmap | null = null): Promise<IInferResult> {
         if (!this._worker || !this._workerReady) {
             bitmap.close();
+            arBitmap?.close();
 
-            return Promise.resolve(null);
+            return Promise.resolve({ faceLandmarks: null, facialTransformationMatrix: null, mask: null });
         }
 
-        const { promise, resolve } = Promise.withResolvers<ImageData | null>();
+        const { promise, resolve } = Promise.withResolvers<IInferResult>();
 
         this._pendingInferResolve = resolve;
 
@@ -181,11 +208,15 @@ export default class WorkerSegmentationBackend {
                     this._pendingInferResolve = null;
                 }
 
-                resolve(new ImageData(
-                    e.data.data as Uint8ClampedArray,
-                    e.data.width as number,
-                    e.data.height as number
-                ));
+                resolve({
+                    facialTransformationMatrix: e.data.facialTransformationMatrix ?? null,
+                    faceLandmarks: e.data.faceLandmarks ?? null,
+                    mask: new ImageData(
+                        e.data.data as Uint8ClampedArray,
+                        e.data.width as number,
+                        e.data.height as number
+                    )
+                });
             } else if (e.data.type === 'infer_error') {
                 this._worker?.removeEventListener('message', handler);
                 if (this._pendingInferHandler === handler) {
@@ -195,15 +226,24 @@ export default class WorkerSegmentationBackend {
                     this._pendingInferResolve = null;
                 }
                 logger.warn('[WorkerBackend] Worker inference error:', e.data.error);
-                resolve(null);
+                resolve({ faceLandmarks: null, facialTransformationMatrix: null, mask: null });
+            } else if (e.data.type === 'ar_infer_error') {
+                logger.warn('[WorkerBackend] AR inference error:', e.data.error);
             }
         };
 
         this._pendingInferHandler = handler;
         this._worker.addEventListener('message', handler);
+
+        const transfer: Transferable[] = [ bitmap as unknown as Transferable ];
+
+        if (arBitmap) {
+            transfer.push(arBitmap as unknown as Transferable);
+        }
+
         this._worker.postMessage(
-            { bitmap, type: 'infer' },
-            [ bitmap as unknown as Transferable ]
+            { arBitmap, bitmap, type: 'infer' },
+            transfer
         );
 
         return promise;
@@ -222,7 +262,7 @@ export default class WorkerSegmentationBackend {
             this._worker.removeEventListener('message', this._pendingInferHandler);
         }
         this._pendingInferHandler = null;
-        this._pendingInferResolve?.(null);
+        this._pendingInferResolve?.({ facialTransformationMatrix: null, faceLandmarks: null, mask: null });
         this._pendingInferResolve = null;
 
         if (this._worker) {
