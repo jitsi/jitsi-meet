@@ -397,8 +397,8 @@ class Conference extends AbstractConference<IProps, State> {
 
         const FALLBACK_RADIUS = 24;
         const nativeRadius = NativeModules.ScreenCornerRadius?.cornerRadius;
-        const SCREEN_CORNER_RADIUS 
-        = typeof nativeRadius === 'number' && nativeRadius > 0 ? nativeRadius : FALLBACK_RADIUS;
+        const SCREEN_CORNER_RADIUS
+            = typeof nativeRadius === 'number' && nativeRadius > 0 ? nativeRadius : FALLBACK_RADIUS;
 
         return (
             <>
