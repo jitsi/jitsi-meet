@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState, IStore } from '../app/types';
 import IconUserSVG from '../base/icons/svg/user.svg?raw';
+import { browser } from '../base/lib-jitsi-meet';
 import { IParticipant } from '../base/participants/types';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
@@ -15,7 +16,6 @@ import {
     shouldShowPiP,
 } from './functions';
 import logger from './logger';
-import { browser } from '../base/lib-jitsi-meet';
 
 /**
  * Canvas dimensions for PiP avatar rendering.
