@@ -12,6 +12,7 @@ import { isLiveStreamingRunning } from '../../../recording/functions';
 import VisitorsCountLabel from '../../../visitors/components/native/VisitorsCountLabel';
 
 import RaisedHandsCountLabel from './RaisedHandsCountLabel';
+import TimeTimerLabel from './TimeTimerLabel';
 import {
     LABEL_ID_AUDIO_TRANSLATION,
     LABEL_ID_RAISED_HANDS_COUNT,
@@ -56,6 +57,7 @@ const AlwaysOnLabels = ({ createOnPress }: IProps) => {
             onPress = { createOnPress(LABEL_ID_TRANSCRIBING) } >
             <TranscribingLabel />
         </TouchableOpacity>
+        <TimeTimerLabel />
         <TouchableOpacity
             hitSlop = { LabelHitSlop }
             onPress = { openHighlightDialogCallback }>

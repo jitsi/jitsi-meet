@@ -2202,6 +2202,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - react-native-screen-corner-radius (0.2.3):
+    - React
   - react-native-slider (5.1.2):
     - boost
     - DoubleConversion
@@ -3289,6 +3291,7 @@ DEPENDENCIES:
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-performance (from `../node_modules/react-native-performance`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-screen-corner-radius (from `../node_modules/react-native-screen-corner-radius`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - react-native-video (from `../node_modules/react-native-video`)
   - react-native-webrtc (from `../node_modules/react-native-webrtc`)
@@ -3474,6 +3477,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-performance"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-screen-corner-radius:
+    :path: "../node_modules/react-native-screen-corner-radius"
   react-native-slider:
     :path: "../node_modules/@react-native-community/slider"
   react-native-video:
@@ -3650,6 +3655,7 @@ SPEC CHECKSUMS:
   react-native-pager-view: f8f63370fc0f4174f7510863b4812b8e034d2d0d
   react-native-performance: b48d1aba7501a54af5e1a7efb0dab1ab25dc734f
   react-native-safe-area-context: c6e2edd1c1da07bdce287fa9d9e60c5f7b514616
+  react-native-screen-corner-radius: ebd0d3258fcc894571b41d25ee3db7569d375153
   react-native-slider: 34064ca1a6864d7b263e44dd76a2d794e8d26744
   react-native-video: ce907959c67ad2abaa0411082db621036944737a
   react-native-webrtc: da75ba1f85a36981cbcb3fdae7dfbab7ad63c040
