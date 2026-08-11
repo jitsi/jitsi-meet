@@ -36,7 +36,7 @@ import { getIsLobbyVisible } from '../../../lobby/functions';
 import { screen } from '../../../mobile/navigation/routes';
 import { isPipEnabled, setPictureInPictureEnabled } from '../../../mobile/picture-in-picture/functions';
 import Captions from '../../../subtitles/components/native/Captions';
-import { isTimeTimerExpiredUnacknowledged } from '../../../time-timer/functions';
+import { isTimeTimerExpiredUnacknowledged } from '../../../time-timer/functions.native';
 import { setToolboxVisible } from '../../../toolbox/actions.native';
 import Toolbox from '../../../toolbox/components/native/Toolbox';
 import { isToolboxVisible } from '../../../toolbox/functions.native';
@@ -52,7 +52,6 @@ import ExpandedLabelPopup from './ExpandedLabelPopup';
 import LonelyMeetingExperience from './LonelyMeetingExperience';
 import TitleBar from './TitleBar';
 import { EXPANDED_LABEL_TIMEOUT } from './constants';
-import { SCREEN_CORNER_RADIUS } from './screenCornerRadius';
 import styles from './styles';
 
 /**
@@ -395,6 +394,11 @@ class Conference extends AbstractConference<IProps, State> {
             alwaysOnTitleBarStyles = styles.alwaysOnTitleBar;
 
         }
+
+        const FALLBACK_RADIUS = 24;
+        const nativeRadius = NativeModules.ScreenCornerRadius?.cornerRadius;
+        const SCREEN_CORNER_RADIUS 
+        = typeof nativeRadius === 'number' && nativeRadius > 0 ? nativeRadius : FALLBACK_RADIUS;
 
         return (
             <>
