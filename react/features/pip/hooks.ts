@@ -15,6 +15,7 @@ import {
     shouldShowPiP,
 } from './functions';
 import logger from './logger';
+import { browser } from '../base/lib-jitsi-meet';
 
 /**
  * Canvas dimensions for PiP avatar rendering.
@@ -274,7 +275,7 @@ export function usePipToggleButton() {
     const visible = useSelector((state: IReduxState) =>
         state['features/base/config'].pip?.showToolbarButton !== false && shouldShowPiP(state));
 
-    return visible && (isDocumentPiPSupported() || Boolean(document.pictureInPictureEnabled))
+    return !browser.isElectron() && visible && (isDocumentPiPSupported() || Boolean(document.pictureInPictureEnabled))
         ? togglePiP
         : undefined;
 }
