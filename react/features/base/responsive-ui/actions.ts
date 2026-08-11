@@ -2,7 +2,7 @@ import { batch } from 'react-redux';
 
 import { IStore } from '../../app/types';
 import { CHAT_SIZE } from '../../chat/constants';
-import { getCustomPanelWidth } from '../../custom-panel/functions';
+import { getCustomPanelWidth } from '../../custom-panel/functions.any';
 import { getParticipantsPaneWidth } from '../../participants-pane/functions';
 
 import {
