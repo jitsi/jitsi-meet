@@ -63,9 +63,10 @@ export function setEmbeddedDocumentPiPAvailable(available: boolean) {
 export function handleEmbeddedDocumentPiPCapability(available: boolean) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
+        const isEmbeddedPiPDisabled = state['features/base/config'].pip?.disableEmbedPiP ?? true;
         const pipState = state['features/pip'];
         const embeddedDocumentPiPAvailable
-            = available && state['features/base/config'].pip?.disableEmbedPiP !== true;
+            = available && isEmbeddedPiPDisabled !== true;
         const wasHostDocumentPiPActive
             = pipState?.embeddedDocumentPiPAvailable === true && pipState.isPiPActive;
         const requestPending = isDocumentPiPRequestPending();

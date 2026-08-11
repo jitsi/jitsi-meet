@@ -343,7 +343,8 @@ export function useDocumentPiPMediaSession() {
  */
 export function usePipToggleButton() {
     const visible = useSelector((state: IReduxState) => {
-        if (state['features/base/config'].pip?.showToolbarButton === false || !shouldShowPiP(state)) {
+        const isToolBarAllowed = state['features/base/config'].pip?.showToolbarButton ?? true;
+        if ( isToolBarAllowed === false || !shouldShowPiP(state)) {
             return false;
         }
 
