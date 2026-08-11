@@ -626,7 +626,7 @@ export function clearPiPWindow() {
 }
 
 /**
- * Applies CSS style sheets from the originating window.
+ * Applies stylesheet links and inline styles from the originating window.
  *
  * @see https://developer.chrome.com/docs/web-platform/document-picture-in-picture#copy_style_sheets_to_pip
  * @param {Window} pipWindow - Current window.
@@ -636,8 +636,14 @@ export function clearPiPWindow() {
 export function copyStylesheets(pipWindow: Window) {
     const { document: pipDoc } = pipWindow;
 
-    document.head.querySelectorAll('link[rel="stylesheet"]').forEach(node => {
+    document.head.querySelectorAll('link[rel="stylesheet"], style').forEach(node => {
         try {
+            if (node instanceof HTMLStyleElement) {
+                pipDoc.head.appendChild(pipDoc.importNode(node, true));
+
+                return;
+            }
+
             if (!(node instanceof HTMLLinkElement) || !node.href) {
                 return;
             }
