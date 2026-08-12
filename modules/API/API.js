@@ -68,6 +68,7 @@ import {
     sendParticipantToRoom
 } from '../../react/features/breakout-rooms/actions';
 import { getBreakoutRooms, getRoomsInfo } from '../../react/features/breakout-rooms/functions';
+import { setFarEndControlOptIn } from '../../react/features/camera-ptz/actions';
 import {
     sendMessage,
     setPrivateMessageRecipient,
@@ -386,6 +387,9 @@ function initCommands() {
             const muted = tracks ? isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO) : isVideoMutedByUser(APP.store);
 
             APP.store.dispatch(toggleBlurredBackgroundEffect(videoTrack, blurType, muted));
+        },
+        'set-far-end-camera-control': enabled => {
+            APP.store.dispatch(setFarEndControlOptIn(enabled));
         },
         'set-follow-me': (value, recorderOnly) => {
 

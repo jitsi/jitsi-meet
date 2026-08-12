@@ -64,6 +64,7 @@ const commands = {
     setLowBandwidthMode: 'set-low-bandwidth-mode',
     setAssumedBandwidthBps: 'set-assumed-bandwidth-bps',
     setBlurredBackground: 'set-blurred-background',
+    setFarEndCameraControl: 'set-far-end-camera-control',
     setFollowMe: 'set-follow-me',
     setLargeVideoParticipant: 'set-large-video-participant',
     setMediaEncryptionKey: 'set-media-encryption-key',
