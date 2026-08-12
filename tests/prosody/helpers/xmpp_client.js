@@ -1040,6 +1040,31 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a <breakout_rooms> control message to the breakout rooms component.
+         * The session must have jitsi_web_query_room set (connect with
+         * params: { room: '<roomname>' }) and the sender must be a moderator
+         * occupant of the main room for the module to process the message.
+         *
+         * @param {string} componentJid  e.g. 'breakout.conference.localhost'
+         * @param {string} type          operation type, e.g. 'features/breakout-rooms/add'
+         * @param {object} [extraAttrs]  extra attributes on the <breakout_rooms> element,
+         *                              e.g. { subject: 'Group A' } or { breakoutRoomJid: '...' }
+         */
+        sendBreakoutRoomsMessage(componentJid, type, extraAttrs = {}) {
+            return xmpp.send(
+                xml('message', {
+                    to: componentJid,
+                    id: `br-${++_counter}`
+                },
+                    xml('breakout_rooms', {
+                        type,
+                        ...extraAttrs
+                    })
+                )
+            );
+        },
+
+        /**
          * Sends a raw file-sharing message. Use this to test malformed payloads
          * or non-standard message types (e.g. type='error').
          *
