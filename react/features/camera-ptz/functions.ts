@@ -1,10 +1,18 @@
 import { IReduxState } from '../app/types';
+import { IJitsiConference } from '../base/conference/reducer';
 import { isMobileBrowser } from '../base/environment/utils';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../base/media/constants';
 
-import { PTZControlState } from './constants';
+import {
+    CAMERA_CONTROL_MESSAGE_NAME,
+    PAN_TILT_RANGE,
+    PTZControlState,
+    PTZ_AXES,
+    ZOOM_RANGE
+} from './constants';
+import logger from './logger';
 import { ICameraPtzState } from './reducer';
-import { IPTZRange } from './types';
+import { ICameraControlMessage, IPTZCapabilities, IPTZRange, IPTZValues } from './types';
 
 /**
  * Returns the camera PTZ state.
@@ -139,6 +147,81 @@ export function isOwnerLeaseValid(state: IReduxState, now: number): boolean {
     const { heldBy, leaseUntil } = getCameraPtzState(state).owner;
 
     return Boolean(heldBy) && (leaseUntil ?? 0) > now;
+}
+
+/**
+ * Sends a camera control message to a single participant over the bridge channel.
+ *
+ * @param {IJitsiConference} conference - The conference to send on.
+ * @param {string} to - The participant to send to.
+ * @param {ICameraControlMessage} message - The message to send.
+ * @returns {boolean} Whether the message was handed off for sending.
+ */
+export function sendCameraControlMessage(
+        conference: IJitsiConference | undefined,
+        to: string | undefined,
+        message: Omit<ICameraControlMessage, 'name'>): boolean {
+    if (!conference || !to) {
+        return false;
+    }
+
+    try {
+        conference.sendEndpointMessage(to, {
+            name: CAMERA_CONTROL_MESSAGE_NAME,
+            ...message
+        });
+
+        return true;
+    } catch (error) {
+        // Sending fails while there is no bridge channel, which is the case in a peer to peer call.
+        logger.error('Failed to send a camera control message', error);
+
+        return false;
+    }
+}
+
+/**
+ * Keeps the pan/tilt/zoom values that are finite numbers, so that what a remote participant sent cannot be handed to
+ * the camera unchecked.
+ *
+ * @param {IPTZValues} values - The values to sanitise.
+ * @returns {IPTZValues}
+ */
+export function sanitizePtzValues(values?: IPTZValues): IPTZValues {
+    const sanitized: IPTZValues = {};
+
+    PTZ_AXES.forEach(axis => {
+        const value = values?.[axis];
+
+        if (typeof value === 'number' && Number.isFinite(value)) {
+            sanitized[axis] = value;
+        }
+    });
+
+    return sanitized;
+}
+
+/**
+ * Maps device independent pan/tilt/zoom values onto the ranges the camera actually accepts. An axis the camera does
+ * not expose is dropped.
+ *
+ * @param {IPTZValues} values - The values to map.
+ * @param {IPTZCapabilities} capabilities - The ranges the camera reports.
+ * @returns {IPTZValues}
+ */
+export function toDeviceValues(values: IPTZValues, capabilities: IPTZCapabilities): IPTZValues {
+    const mapped: IPTZValues = {};
+
+    PTZ_AXES.forEach(axis => {
+        const value = values[axis];
+        const range = capabilities[axis];
+
+        if (value !== undefined && range) {
+            mapped[axis] = scaleValue(value, axis === 'zoom' ? ZOOM_RANGE : PAN_TILT_RANGE, range);
+        }
+    });
+
+    return mapped;
 }
 
 /**

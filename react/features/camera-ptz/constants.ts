@@ -16,6 +16,11 @@ export enum CameraControlAction {
     SET = 'set'
 }
 
+/**
+ * The axes, in the order the UI presents them.
+ */
+export const PTZ_AXES = [ 'pan', 'tilt', 'zoom' ] as const;
+
 export enum CameraControlDenyReason {
     BUSY = 'busy',
     DENIED = 'denied',
