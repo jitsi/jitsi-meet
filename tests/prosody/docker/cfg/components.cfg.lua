@@ -8,6 +8,16 @@ Component "lobby.conference.localhost" "muc"
     muc_room_locking = false
     muc_room_default_public_jids = true
 
+-- Breakout MUC component for mod_muc_breakout_rooms tests.
+-- Only Prosody admins (focus@auth.localhost) may create rooms here; the module
+-- creates them programmatically. Joining an unregistered UUID room triggers
+-- on_breakout_room_pre_create which destroys it and returns an error.
+Component "breakout.conference.localhost" "muc"
+    storage = "memory"
+    restrict_room_creation = true
+    muc_room_locking = false
+    muc_room_default_public_jids = true
+
 -- Internal MUC used by mod_muc_jigasi_invite: the module resolves the Jigasi
 -- brewery room from this component via process_host_module. Without this
 -- component main_muc_service would remain nil and requests that reach the
