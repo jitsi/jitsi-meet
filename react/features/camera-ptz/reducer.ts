@@ -5,30 +5,31 @@ import {
     CLEAR_OWNER_LOCK,
     SET_CONTROLLER_SESSION,
     SET_FAR_END_CONTROL_OPT_IN,
-    SET_LOCAL_PTZ_SUPPORT,
     SET_OWNER_LOCK,
     SET_OWNER_PENDING_REQUEST,
-    SET_PARTICIPANT_PTZ_CAPABILITY
+    SET_PARTICIPANT_PTZ_CAPABILITY,
+    UPDATE_LOCAL_PTZ_SUPPORT
 } from './actionTypes';
 import { PTZControlState } from './constants';
-import { IPTZCapabilities, PTZPermissionState } from './types';
+import { ILocalPTZSupport } from './types';
 
 const DEFAULT_STATE = {
     controller: {
         state: PTZControlState.IDLE
     },
+    local: {},
     owner: {},
     participantCapabilities: {}
 };
 
 export interface ICameraPtzState {
-    capabilities?: IPTZCapabilities;
     controller: {
         state: PTZControlState;
         target?: string;
         token?: number;
     };
     farEndControlOptIn?: boolean;
+    local: ILocalPTZSupport;
     owner: {
         heldBy?: string;
         leaseUntil?: number;
@@ -36,7 +37,6 @@ export interface ICameraPtzState {
         token?: number;
     };
     participantCapabilities: { [participantId: string]: boolean; };
-    permission?: PTZPermissionState;
 }
 
 ReducerRegistry.register<ICameraPtzState>(
@@ -79,11 +79,13 @@ ReducerRegistry.register<ICameraPtzState>(
                 ...state,
                 participantCapabilities: set(state.participantCapabilities, action.participantId, action.capable)
             };
-        case SET_LOCAL_PTZ_SUPPORT:
+        case UPDATE_LOCAL_PTZ_SUPPORT:
             return {
                 ...state,
-                capabilities: action.capabilities,
-                permission: action.permission ?? state.permission
+                local: {
+                    ...state.local,
+                    ...action.support
+                }
             };
         }
 

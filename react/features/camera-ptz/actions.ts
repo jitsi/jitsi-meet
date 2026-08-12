@@ -2,13 +2,13 @@ import {
     CLEAR_OWNER_LOCK,
     SET_CONTROLLER_SESSION,
     SET_FAR_END_CONTROL_OPT_IN,
-    SET_LOCAL_PTZ_SUPPORT,
     SET_OWNER_LOCK,
     SET_OWNER_PENDING_REQUEST,
-    SET_PARTICIPANT_PTZ_CAPABILITY
+    SET_PARTICIPANT_PTZ_CAPABILITY,
+    UPDATE_LOCAL_PTZ_SUPPORT
 } from './actionTypes';
 import { PTZControlState } from './constants';
-import { IPTZCapabilities, PTZPermissionState } from './types';
+import { ILocalPTZSupport } from './types';
 
 /**
  * Updates the local participant's session as the controller of a remote camera.
@@ -84,17 +84,15 @@ export function setParticipantPtzCapability(participantId: string, capable: bool
 }
 
 /**
- * Stores the local camera's PTZ capabilities and the browser's PTZ permission state.
+ * Merges what is known about controlling the local camera.
  *
- * @param {IPTZCapabilities} capabilities - The capabilities of the local camera.
- * @param {PTZPermissionState} permission - The browser's pan/tilt/zoom permission state.
+ * @param {ILocalPTZSupport} support - The fields to update.
  * @returns {Object}
  */
-export function setLocalPtzSupport(capabilities?: IPTZCapabilities, permission?: PTZPermissionState) {
+export function updateLocalPtzSupport(support: ILocalPTZSupport) {
     return {
-        type: SET_LOCAL_PTZ_SUPPORT,
-        capabilities,
-        permission
+        type: UPDATE_LOCAL_PTZ_SUPPORT,
+        support
     };
 }
 
