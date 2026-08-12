@@ -14,6 +14,11 @@ setTestProperties(__filename, {
  * Every code the feature can report. Which one comes back depends on the
  * environment, so the tests below assert membership of this set rather than a
  * specific value, except where the outcome is deterministic.
+ *
+ * Placement on a real second display and the fullscreen behaviour are not
+ * covered here at all: both need hardware and a granted permission that CI does
+ * not have, and stubbing the Window Management API would test the stub rather
+ * than the feature.
  */
 const ERROR_CODES = [
     'second-screen-disabled',
@@ -130,19 +135,24 @@ describe('setSecondScreen iframe API command', () => {
             source: { role: 'stage' }
         });
 
-        // What happens next genuinely depends on the environment. A headless CI
-        // browser has one display, no user gesture behind the command and no
-        // window-management permission, so the open is expected to fail; a real
-        // Chromium session with the permission granted opens a window. Both are
+        // What happens next depends on the environment, and both outcomes are
         // acceptable. What the feature must never do is accept the command and
         // then say nothing, which is what this pins down.
+        //
+        // Headless Chrome is not the "unsupported browser" case it is sometimes
+        // assumed to be: it does expose getScreenDetails, so the feature reports
+        // itself as supported and the command gets past the enablement gate.
+        // What it cannot do is answer the window-management permission prompt,
+        // which sits at `prompt` with nobody to grant it, so the open resolves to
+        // window-management-unavailable once the wait on it is given up on. The
+        // budget here has to clear that wait, which is why it is generous.
         const outcome = await p1.driver.waitUntil(async () => {
             const error = await p1.getIframeAPI().getEventResult('secondScreenError');
             const changed = await p1.getIframeAPI().getEventResult('secondScreenSourceChanged');
 
             return error || changed || false;
         }, {
-            timeout: 15000,
+            timeout: 45000,
             timeoutMsg: 'setSecondScreen reported neither a source change nor an error'
         });
 
