@@ -1,5 +1,6 @@
 import { IReduxState } from '../app/types';
 import { isMobileBrowser } from '../base/environment/utils';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../base/media/constants';
 
 import { PTZControlState } from './constants';
 import { ICameraPtzState } from './reducer';
@@ -26,19 +27,40 @@ export function isCameraPtzEnabled(state: IReduxState): boolean {
 }
 
 /**
- * Whether the local camera exposes at least one controllable axis and the browser has not denied PTZ access. Local
- * controls are not offered on mobile browsers, where the pan/tilt/zoom constraints are unsupported or zoom only.
+ * Returns the local camera track, which is the one pan/tilt/zoom applies to even while an effect such as a virtual
+ * background is replacing the track sent to the conference.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {Object|undefined}
+ */
+export function getLocalCameraTrack(state: IReduxState) {
+    return state['features/base/tracks'].find(track => track.local
+        && track.mediaType === MEDIA_TYPE.VIDEO
+        && track.videoType === VIDEO_TYPE.CAMERA)?.jitsiTrack;
+}
+
+/**
+ * Whether the selected camera can be driven at all: it reports at least one axis and the pan/tilt/zoom permission
+ * has not been denied. Nothing may claim a camera is controllable without this.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function hasControllableLocalCamera(state: IReduxState): boolean {
+    const { axes, permission } = getCameraPtzState(state).local;
+
+    return permission !== 'denied' && Boolean(axes && (axes.pan || axes.tilt || axes.zoom));
+}
+
+/**
+ * Whether to offer pan/tilt/zoom controls for the local camera. Not on mobile browsers, where the constraints are
+ * either unsupported or zoom only.
  *
  * @param {IReduxState} state - The redux state.
  * @returns {boolean}
  */
 export function isLocalPtzControllable(state: IReduxState): boolean {
-    const { capabilities, permission } = getCameraPtzState(state);
-
-    return isCameraPtzEnabled(state)
-        && !isMobileBrowser()
-        && permission !== 'denied'
-        && Object.keys(capabilities ?? {}).length > 0;
+    return isCameraPtzEnabled(state) && !isMobileBrowser() && hasControllableLocalCamera(state);
 }
 
 /**
@@ -62,7 +84,8 @@ export function isLocalCameraOfferedForFarEndControl(state: IReduxState): boolea
     const { farEndControlOptIn } = getCameraPtzState(state);
 
     return isFarEndCameraControlPermitted(state)
-        && (farEndControlOptIn ?? Boolean(state['features/base/config'].offerFarEndCameraControl));
+        && (farEndControlOptIn ?? Boolean(state['features/base/config'].offerFarEndCameraControl))
+        && hasControllableLocalCamera(state);
 }
 
 /**

@@ -62,12 +62,12 @@ export const SET_OWNER_PENDING_REQUEST = 'SET_OWNER_PENDING_REQUEST';
 export const SET_PARTICIPANT_PTZ_CAPABILITY = 'SET_PARTICIPANT_PTZ_CAPABILITY';
 
 /**
- * Stores the local camera's PTZ capabilities and the browser's PTZ permission state.
+ * Merges what is known about controlling the local camera, as the selected device, its capabilities or the
+ * pan/tilt/zoom permission change.
  *
  * {
- *     type: SET_LOCAL_PTZ_SUPPORT,
- *     capabilities?: IPTZCapabilities,
- *     permission?: PTZPermissionState
+ *     type: UPDATE_LOCAL_PTZ_SUPPORT,
+ *     support: ILocalPTZSupport
  * }
  */
-export const SET_LOCAL_PTZ_SUPPORT = 'SET_LOCAL_PTZ_SUPPORT';
+export const UPDATE_LOCAL_PTZ_SUPPORT = 'UPDATE_LOCAL_PTZ_SUPPORT';

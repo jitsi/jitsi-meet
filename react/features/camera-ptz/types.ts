@@ -21,6 +21,25 @@ export interface IPTZCapabilities {
 }
 
 /**
+ * The axes a camera can be driven on, as reported by the device without needing the pan/tilt/zoom permission.
+ */
+export interface IPTZAxes {
+    pan: boolean;
+    tilt: boolean;
+    zoom: boolean;
+}
+
+/**
+ * What is known locally about controlling this endpoint's camera. The axes come from the device, the ranges only
+ * once the pan/tilt/zoom permission has been granted.
+ */
+export interface ILocalPTZSupport {
+    axes?: IPTZAxes;
+    capabilities?: IPTZCapabilities;
+    permission?: PTZPermissionState;
+}
+
+/**
  * Absolute pan/tilt/zoom values in the device independent {@link PAN_TILT_RANGE}/{@link ZOOM_RANGE} space.
  */
 export interface IPTZValues {
