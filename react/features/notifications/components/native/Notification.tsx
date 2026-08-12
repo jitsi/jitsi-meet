@@ -89,7 +89,7 @@ const Notification = ({
     }, [ onDismissed, uid ]);
 
     const mapAppearanceToButtons = () => {
-        if (customActionNameKey?.length && customActionHandler?.length && customActionType?.length) {
+        if (customActionNameKey?.length && customActionHandler?.length) {
             return customActionNameKey?.map((customAction: string, index: number) => (
                 <Button
                     accessibilityLabel = { customAction }
@@ -105,7 +105,7 @@ const Notification = ({
                     style = { styles.btn }
 
                     // @ts-ignore
-                    type = { customActionType[index] } />
+                    type = { customActionType?.[index] ?? BUTTON_TYPES.PRIMARY } />
             ));
         }
 

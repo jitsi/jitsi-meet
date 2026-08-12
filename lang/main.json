@@ -320,6 +320,7 @@
         "alreadySharedVideoMsg": "Another participant is already sharing a video. This conference allows only one shared video at a time.",
         "alreadySharedVideoTitle": "Only one shared video is allowed at a time",
         "applicationWindow": "Application window",
+        "apply": "Apply",
         "applyChanges": "Apply changes",
         "authenticationRequired": "Authentication required",
         "cameraCaptureDialog": {

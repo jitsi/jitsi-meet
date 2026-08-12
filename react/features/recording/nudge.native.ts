@@ -16,14 +16,14 @@ import { INudge } from './actions.any';
 export function getNudge(scenario: 'recording' | 'transcription', _dispatch: IStore['dispatch']): INudge {
     if (scenario === 'recording') {
         return {
-            descriptionText: `· ${i18next.t('recording.alsoTranscribe')}`,
+            descriptionText: i18next.t('recording.alsoTranscribe'),
             actionNameKey: 'dialog.startTranscribing',
             handler: () => navigate(screen.conference.recording)
         };
     }
 
     return {
-        descriptionText: `· ${i18next.t('transcribing.alsoRecord')}`,
+        descriptionText: i18next.t('transcribing.alsoRecord'),
         actionNameKey: 'dialog.startRecording',
         handler: () => navigate(screen.conference.recording)
     };

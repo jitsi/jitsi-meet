@@ -141,8 +141,23 @@ export const securityScreenOptions = presentationScreenOptions;
 
 /**
  * Screen options for recording modal.
+ *
+ * Both header actions carry text labels that are wider than the half of the leftover header
+ * width a centered title leaves for them, so each side is sized to its own content and the
+ * title takes what is left, shrinking to an ellipsis rather than wrapping the labels.
  */
-export const recordingScreenOptions = presentationScreenOptions;
+export const recordingScreenOptions = {
+    ...presentationScreenOptions,
+    headerLeftContainerStyle: {
+        flexBasis: 'auto' as const
+    },
+    headerRightContainerStyle: {
+        flexBasis: 'auto' as const
+    },
+    headerTitleContainerStyle: {
+        flexShrink: 1
+    }
+};
 
 /**
  * Screen options for the audio-translation language selector modal.

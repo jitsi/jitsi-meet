@@ -75,7 +75,7 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
             headerRight: () => (
                 <HeaderNavigationButton
                     disabled = { servicesRunning ? !this._isChanged() : this.isStartRecordingDisabled() }
-                    label = { servicesRunning ? t('dialog.applyChanges') : t('dialog.start') }
+                    label = { servicesRunning ? t('dialog.apply') : t('dialog.start') }
                     onPress = { this._onStartPress }
                     twoActions = { true } />
             )
