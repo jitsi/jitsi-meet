@@ -211,7 +211,7 @@ export default function CustomPanel(): JSX.Element | null {
 
             // Handle is on LEFT edge: dragging left (negative diff) increases width.
             const newWidth = Math.max(
-                Math.min(dragPanelWidth - diff, maxPanelWidth),
+                Math.min(dragPanelWidth - diff, maxPanelWidth as number),
                 DEFAULT_CUSTOM_PANEL_WIDTH
             );
 
