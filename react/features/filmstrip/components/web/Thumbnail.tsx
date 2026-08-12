@@ -300,7 +300,10 @@ const defaultStyles = (theme: Theme) => {
         /**
          * The shared-video thumbnail has no indicators row, so its second-screen
          * trigger is placed on its own, where the menu trigger sits on the other
-         * thumbnails.
+         * thumbnails. Applied to the trigger itself rather than to a container
+         * around it: the trigger renders nothing at all where the feature is off,
+         * and an empty box here would still take the corner of a thumbnail that
+         * is itself the click target for pinning.
          */
         sharedVideoTopRight: {
             position: 'absolute' as const,
@@ -895,11 +898,10 @@ class Thumbnail extends Component<IProps, IState> {
                         src = { avatarURL } />
                 )
                     : this._renderAvatar(styles.avatar)}
-                <div className = { classes.sharedVideoTopRight }>
-                    <SendToSecondScreenIcon
-                        source = { SHARED_VIDEO_SECOND_SCREEN_SOURCE }
-                        visible = { isHovered } />
-                </div>
+                <SendToSecondScreenIcon
+                    className = { classes.sharedVideoTopRight }
+                    source = { SHARED_VIDEO_SECOND_SCREEN_SOURCE }
+                    visible = { isHovered } />
             </span>
         );
     }

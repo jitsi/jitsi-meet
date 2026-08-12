@@ -10,14 +10,10 @@ import {
 
 import { removeSecondScreen, setSecondScreen } from './actions.web';
 import {
-    getCachedScreenDetails,
     getSecondScreenShowing,
     isSecondScreenEnabled,
-    loadScreenDetails,
-    notifySecondScreenOpenFailed,
     pickSecondScreenTarget
 } from './functions.web';
-import logger from './logger';
 import { ISecondScreenSource } from './types';
 
 /**
@@ -96,29 +92,19 @@ export function useSendToSecondScreen(source: ISecondScreenSource): {
             return;
         }
 
-        const send = () => {
-            const { id, screenId } = pickSecondScreenTarget(store.getState());
+        // Dispatch synchronously, always. window.open has to run in this click's
+        // own task for the popup blocker to see it as user-initiated, and on a
+        // profile that has not granted window-management yet, obtaining the
+        // screen details here would spend that activation waiting on a
+        // permission prompt: Chromium expires it after 5s and the prompt sits
+        // until the user answers it. The open asks for the permission itself and
+        // places the window once it has an answer (see openSecondScreenWindow),
+        // which is also why the target picked here has no screen index on that
+        // first send: without the details there are no screens to choose between,
+        // and the open puts it on the first external one.
+        const { id, screenId } = pickSecondScreenTarget(store.getState());
 
-            store.dispatch(setSecondScreen(id, source, screenId));
-        };
-
-        // Stay synchronous once the screen details are known, so the window is
-        // opened in this click's task and the popup blocker sees it as
-        // user-initiated. Only the very first send has to await the permission.
-        if (getCachedScreenDetails()) {
-            send();
-        } else {
-            loadScreenDetails()
-                .then(send)
-                .catch((e: any) => {
-                    logger.warn('Could not send to a second screen', e);
-
-                    // No window was opened, so no id exists yet to report
-                    // against; the failure paths inside the open cover the rest.
-                    notifySecondScreenOpenFailed(
-                        store, pickSecondScreenTarget(store.getState()).id, 'window-management-unavailable');
-                });
-        }
+        store.dispatch(setSecondScreen(id, source, screenId));
     }, [ activeId, source, store ]);
 
     return { active: Boolean(activeId),

@@ -11,6 +11,14 @@ import { ISecondScreenSource } from '../types';
 interface IProps {
 
     /**
+     * Class name for the button's wrapper. Applied here rather than to a
+     * container around this component so that a thumbnail that positions the
+     * trigger itself does not lay out an empty box over its own corner on the
+     * deployments where the feature is off and nothing renders.
+     */
+    className?: string;
+
+    /**
      * What to show on the second screen.
      */
     source: ISecondScreenSource;
@@ -44,7 +52,7 @@ const useStyles = makeStyles()(() => {
  * @param {IProps} props - The component props.
  * @returns {ReactElement | null}
  */
-const SendToSecondScreenIcon = ({ source, visible }: IProps) => {
+const SendToSecondScreenIcon = ({ className, source, visible }: IProps) => {
     const { classes } = useStyles();
     const { t } = useTranslation();
     const { active, onClick, visible: enabled } = useSendToSecondScreen(source);
@@ -71,7 +79,9 @@ const SendToSecondScreenIcon = ({ source, visible }: IProps) => {
     }
 
     return (
-        <span onKeyDown = { _onKeyDown }>
+        <span
+            className = { className }
+            onKeyDown = { _onKeyDown }>
             <Button
                 accessibilityLabel = {
                     t(active ? 'multiScreen.removeFromSecondScreen' : 'multiScreen.sendToSecondScreen') }
