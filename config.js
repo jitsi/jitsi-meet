@@ -2019,6 +2019,19 @@ var config = {
     // If true remove the tint foreground on focused user camera in filmstrip
     // disableCameraTintForeground: false,
 
+    // Disables the pan/tilt/zoom controls for the local camera, on cameras that support them.
+    // disableCameraPtz: false,
+
+    // Rolls far end camera control out to this deployment. On its own it makes no camera controllable, it only
+    // allows an endpoint to control the cameras of participants that offer theirs.
+    // enableFarEndCameraControl: false,
+
+    // Offers this endpoint's camera to remote participants, on cameras that support pan/tilt/zoom. Off by default,
+    // so rolling the feature out does not start advertising the cameras of regular participants. Applications
+    // embedding Jitsi opt in at runtime with the setFarEndCameraControl iframe API command instead, which overrides
+    // this value.
+    // offerFarEndCameraControl: false,
+
     // File sharign service.
     // fileSharing: {
     //     // The URL of the file sharing service API. See resources/file-sharing.yaml for more details.
