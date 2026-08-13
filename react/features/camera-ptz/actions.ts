@@ -18,13 +18,17 @@ import {
     CONTROL_REQUEST_TIMEOUT_MS,
     CameraControlAction,
     CameraControlDenyReason,
-    PTZControlState
+    PTZControlState,
+    ZOOM_RANGE
 } from './constants';
 import {
     canControlRemoteCamera,
+    fromDeviceValues,
     getCameraPtzState,
     getLocalCameraTrack,
-    sendCameraControlMessage
+    sanitizePtzValues,
+    sendCameraControlMessage,
+    toDeviceValues
 } from './functions';
 import logger from './logger';
 import { CameraControlTimer, clearTimer, startTimeout } from './timers';
@@ -413,7 +417,8 @@ export function acquireCameraPtzCapabilities() {
                 zoom: Boolean(ranges.zoom)
             },
             capabilities: ranges,
-            permission: driveable ? 'granted' : 'denied'
+            permission: driveable ? 'granted' : 'denied',
+            values: fromDeviceValues(newTrack.getCameraControlSettings(), ranges)
         }));
 
         if (!driveable) {
@@ -424,6 +429,63 @@ export function acquireCameraPtzCapabilities() {
 
         return ranges;
     };
+}
+
+/**
+ * Drives the local camera. Taking hold of it locally ends a remote session, since the two would otherwise fight over
+ * the same camera, and the local participant owns it.
+ *
+ * The target is held as commanded until the camera reports it has arrived, which is what lets the UI show where the
+ * camera is going while it is still travelling.
+ *
+ * @param {IPTZValues} values - The absolute values to move to, in the device independent range.
+ * @returns {Function}
+ */
+export function setLocalCameraControl(values: IPTZValues) {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const ranges = await dispatch(acquireCameraPtzCapabilities());
+
+        if (!ranges) {
+            return;
+        }
+
+        if (getCameraPtzState(getState()).owner.heldBy) {
+            dispatch(revokeCameraControl());
+        }
+
+        const track = getLocalCameraTrack(getState());
+        const commanded = sanitizePtzValues(values);
+
+        if (!track || !Object.keys(commanded).length) {
+            return;
+        }
+
+        dispatch(updateLocalPtzSupport({ commanded }));
+
+        try {
+            await track.setCameraControl(toDeviceValues(commanded, ranges));
+            dispatch(updateLocalPtzSupport({
+                commanded: undefined,
+                values: fromDeviceValues(track.getCameraControlSettings(), ranges)
+            }));
+        } catch (error) {
+            logger.warn('The camera rejected the pan/tilt/zoom values', error);
+            dispatch(updateLocalPtzSupport({ commanded: undefined }));
+        }
+    };
+}
+
+/**
+ * Returns the local camera to the middle of its range, fully zoomed out.
+ *
+ * @returns {Function}
+ */
+export function resetLocalCameraFraming() {
+    return setLocalCameraControl({
+        pan: 0,
+        tilt: 0,
+        zoom: ZOOM_RANGE.min
+    });
 }
 
 /**
