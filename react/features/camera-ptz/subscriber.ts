@@ -2,11 +2,23 @@ import { IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
 import { IJitsiConference } from '../base/conference/reducer';
 import JitsiMeetJS, { browser } from '../base/lib-jitsi-meet';
+import { getParticipantDisplayName } from '../base/participants/functions';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { BUTTON_TYPES } from '../base/ui/constants.any';
+import { hideNotification, showNotification } from '../notifications/actions';
+import { NOTIFICATION_ICON, NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
-import { updateLocalPtzSupport } from './actions';
-import { CAMERA_PTZ_CAPABILITY_PROPERTY } from './constants';
-import { getLocalCameraTrack, isLocalCameraOfferedForFarEndControl } from './functions';
+import {
+    approveCameraControlRequest,
+    denyCameraControlRequest,
+    updateLocalPtzSupport
+} from './actions';
+import { CAMERA_CONTROL_NOTIFICATION_ID, CAMERA_PTZ_CAPABILITY_PROPERTY, PTZControlState } from './constants';
+import {
+    getCameraPtzState,
+    getLocalCameraTrack,
+    isLocalCameraOfferedForFarEndControl
+} from './functions';
 import logger from './logger';
 import { PTZPermissionState } from './types';
 
@@ -37,6 +49,52 @@ StateListenerRegistry.register(
         const conference = getCurrentConference(getState());
 
         conference && _advertise(conference, offered);
+    });
+
+/**
+ * A request only becomes a grant once the local participant says so, so the ask is put in front of them for as long
+ * as it stands. Whatever settles the request takes the notification down, including the timeout that refuses it.
+ */
+StateListenerRegistry.register(
+    state => getCameraPtzState(state).owner.pendingRequest,
+    (pendingRequest, { dispatch, getState }) => {
+        if (!pendingRequest) {
+            dispatch(hideNotification(CAMERA_CONTROL_NOTIFICATION_ID));
+
+            return;
+        }
+
+        dispatch(showNotification({
+            customActionHandler: [
+                () => dispatch(approveCameraControlRequest()),
+                () => dispatch(denyCameraControlRequest())
+            ],
+            customActionNameKey: [ 'dialog.allow', 'dialog.deny' ],
+            customActionType: [ BUTTON_TYPES.PRIMARY, BUTTON_TYPES.DESTRUCTIVE ],
+            descriptionKey: 'notify.cameraControlRequest',
+            icon: NOTIFICATION_ICON.PARTICIPANT,
+            title: getParticipantDisplayName(getState(), pendingRequest),
+            uid: CAMERA_CONTROL_NOTIFICATION_ID
+        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+    });
+
+/**
+ * Says when a camera that was being driven is no longer under control, since controls going away on their own would
+ * otherwise look like a fault.
+ */
+StateListenerRegistry.register(
+    state => getCameraPtzState(state).controller.state,
+    (controlState, { dispatch, getState }, previousState) => {
+        if (previousState !== PTZControlState.CONTROLLING || controlState === PTZControlState.CONTROLLING) {
+            return;
+        }
+
+        const { target } = getCameraPtzState(getState()).controller;
+
+        dispatch(showNotification({
+            descriptionArguments: { name: target ? getParticipantDisplayName(getState(), target) : '' },
+            descriptionKey: 'notify.cameraControlTaken'
+        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
     });
 
 /**
