@@ -38,7 +38,10 @@ const useStyles = makeStyles()((theme: Theme) => {
             overflow: 'hidden'
         },
         chatMessageWrapper: {
-            maxWidth: '100%'
+            listStyleType: 'none',
+            margin: 0,
+            maxWidth: '100%',
+            padding: 0
         },
         chatMessage: {
             display: 'inline-flex',
@@ -348,7 +351,7 @@ const ChatMessage = ({
     }, [ message?.reactions, isHovered, isReactionsOpen ]);
 
     return (
-        <div
+        <li
             className = { cx(classes.chatMessageWrapper, className) }
             id = { message.messageId }
             onMouseEnter = { handleMouseEnter }
@@ -439,7 +442,7 @@ const ChatMessage = ({
                     </div>
                 )}
             </div>
-        </div>
+        </li>
     );
 };
 

@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { WithTranslation } from 'react-i18next';
 
 import { IReduxState, IStore } from '../../app/types';
 import { conferenceWillJoin } from '../../base/conference/actions.any';
@@ -105,7 +106,7 @@ export interface IProps {
     /**
      * Function to be used to translate i18n labels.
      */
-    t: Function;
+    t: WithTranslation['t'];
 }
 
 interface IState {

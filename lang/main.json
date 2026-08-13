@@ -128,6 +128,7 @@
         "message": "Message",
         "messageAccessibleTitle": "{{user}} says:",
         "messageAccessibleTitleMe": "me says:",
+        "messageListLabel": "Chat messages",
         "messageTo": "Private message to {{recipient}}",
         "messagebox": "Type a message",
         "newMessages": "New messages",

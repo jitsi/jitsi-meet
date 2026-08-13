@@ -135,7 +135,8 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
                 </div>
                 <MessageContainer
                     messages = { _lobbyChatMessages }
-                    ref = { this._messageContainerRef } />
+                    ref = { this._messageContainerRef }
+                    t = { t } />
                 <ChatInput onSend = { this._onSendMessage } />
             </div>
         );

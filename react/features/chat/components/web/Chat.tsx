@@ -484,7 +484,8 @@ const Chat = ({
                     tabIndex = { 0 }>
                     <MessageContainer
                         isVisible = { _focusedTab === ChatTabs.CHAT }
-                        messages = { _messages } />
+                        messages = { _messages }
+                        t = { t } />
                     <MessageRecipient />
                     {isPrivateChatAllowed && (
                         <Select
