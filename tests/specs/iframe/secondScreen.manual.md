@@ -52,12 +52,14 @@ master.
 |---|---|---|
 | A1 | On a granted profile, `setSecondScreen` with `{ id: 'a', source: { role: 'stage' } }` | Window opens on an external display, fullscreen, showing the active speaker. `secondScreenSourceChanged` fires with `id: 'a'`. |
 | A2 | On an ungranted profile, send the same command and press **Allow** promptly | Prompt appears, window opens and moves onto the external display. One `secondScreenSourceChanged`. |
-| A3 | Same as A2, but wait ~30s before pressing Allow | The window still opens and places correctly. It must not be blocked by the popup blocker, and no error is reported. This is the transient-activation case: the open runs before anything is awaited. |
+| A3 | Same as A2, but wait ~30s before pressing Allow | The window still opens and places correctly. It must not be blocked by the popup blocker, and no error is reported. This is the transient-activation case: the open runs before anything is awaited. **[#17666]** The window renders its content on the meeting's own screen while the prompt is up, and jumps to the external display on Allow; it is not blank while waiting. |
 | A4 | Same as A2, but press **Block** | `secondScreenError` with `window-management-unavailable`. No window is left on screen. |
-| A5 | Same as A2, but dismiss nothing and leave the prompt open | **[#17666]** After 30s, `secondScreenError` with `window-management-unavailable` and the window closes. On master the open stays pending forever with no event, which is the bug that bound fixes. |
+| A5 | Same as A2, but dismiss nothing and leave the prompt open | **[#17666]** The window renders on the meeting's own screen meanwhile, so it looks like it worked; after 30s `secondScreenError` with `window-management-unavailable` and the window closes. On master the open stays pending forever with no event, which is the bug that bound fixes. |
+| A5b | During A5, while the prompt is still up, click the trigger again to cancel | **[#17666]** The window closes at once and `secondScreenClosed` is reported. It must not stay up until the prompt is answered, and the trigger must not stay inverted. |
+| A5c | During A5, while the prompt is still up, send the same id again | **[#17666]** The existing window re-sources in place. It must not open a second window and must not return silently. |
 | A6 | Repeat A1 in Firefox or Safari | `secondScreenError` with `second-screen-disabled`. No window. |
 | A7 | With popups blocked for the site, repeat A1 | `secondScreenError` with `popup-blocked`. |
-| A8 | On a profile where window-management was previously **denied**, send the command | **[#17666]** The window closes almost immediately rather than sitting on screen for a full page load first. |
+| A8 | On a profile where window-management was previously **denied**, send the command | **[#17666]** `secondScreenError` with `window-management-unavailable`, and no window is left behind. Expect a brief flash: the rejection is not acted on until the window is registered, so it opens, loads and renders before being torn down. Shortening that needs the denied state to be known before the open, which `preloadScreenDetails` could cache. |
 
 ## B. Sources and live behaviour
 
