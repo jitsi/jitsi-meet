@@ -314,7 +314,8 @@ const ParticipantContextMenu = ({
         );
     }
 
-    if (!participant?.local) {
+    // Only from a tile, since controlling a camera the local participant cannot see has nothing to aim at.
+    if (thumbnailMenu && !participant?.local) {
         buttons2.push(<ControlCameraButton { ...getButtonProps(BUTTONS.CAMERA_CONTROL) } />);
     }
 
