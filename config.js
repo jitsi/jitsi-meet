@@ -698,6 +698,11 @@ var config = {
     // (default: disabled).
     // enableIceRestart: false,
 
+    // Whether an in-place ICE restart is requested proactively when the device changes network (mobile only),
+    // instead of waiting for ICE to fail. Only has an effect when 'enableIceRestart' is enabled
+    // (default: enabled).
+    // enableIceRestartOnNetworkChange: true,
+
     // Use TURN/UDP servers for the jitsi-videobridge connection (by default
     // we filter out TURN/UDP because it is usually not needed since the
     // bridge itself is reachable via UDP)

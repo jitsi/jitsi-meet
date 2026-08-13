@@ -139,6 +139,7 @@ export interface IJitsiConference {
     isE2EEEnabled: Function;
     isE2EESupported: Function;
     isEndConferenceSupported: Function;
+    isIceRestartSupported: Function;
     isLobbySupported: Function;
     isP2PActive: Function;
     isSIPCallingSupported: Function;
@@ -158,6 +159,7 @@ export interface IJitsiConference {
     options: any;
     removeTrack: Function;
     replaceTrack: Function;
+    restartJvbIce: (reason?: string) => Promise<void>;
     room: IJitsiConferenceRoom;
     sendApplicationLog: Function;
     sendCommand: Function;

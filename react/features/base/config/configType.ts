@@ -422,6 +422,7 @@ export interface IConfig {
     enableEncodedTransformSupport?: boolean;
     enableForcedReload?: boolean;
     enableIceRestart?: boolean;
+    enableIceRestartOnNetworkChange?: boolean;
     enableInsecureRoomNameWarning?: boolean;
     /**
      * @deprecated Use `lobby.enableChat` instead.
