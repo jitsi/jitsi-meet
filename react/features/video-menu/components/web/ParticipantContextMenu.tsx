@@ -18,6 +18,7 @@ import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { IRoom } from '../../../breakout-rooms/types';
+import ControlCameraButton from '../../../camera-ptz/components/web/ControlCameraButton';
 import { displayVerification } from '../../../e2ee/functions';
 import { setVolume } from '../../../filmstrip/actions.web';
 import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
@@ -311,6 +312,10 @@ const ParticipantContextMenu = ({
             onClick = { onRemoteControlToggle }
             remoteControlState = { remoteControlState } />
         );
+    }
+
+    if (!participant?.local) {
+        buttons2.push(<ControlCameraButton { ...getButtonProps(BUTTONS.CAMERA_CONTROL) } />);
     }
 
     if (customParticipantMenuButtons) {

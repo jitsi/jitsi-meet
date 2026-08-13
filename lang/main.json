@@ -1653,6 +1653,7 @@
     },
     "videothumbnail": {
         "connectionInfo": "Connection Info",
+        "controlCamera": "Control camera",
         "demote": "Move to viewer",
         "domute": "Mute",
         "domuteDesktop": "Stop screen-sharing",
@@ -1674,6 +1675,7 @@
         "screenSharing": "Participant is sharing their screen",
         "show": "Show on stage",
         "showSelfView": "Show self view",
+        "stopControllingCamera": "Stop controlling camera",
         "translationEnabledForYou": "Translation enabled for you",
         "translationOnAndReceiving": "Translation on · receiving",
         "translationStillListening": "{{count}} participant is still hearing the translation — wait before speaking",
