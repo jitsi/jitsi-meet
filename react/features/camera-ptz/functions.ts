@@ -1,6 +1,7 @@
 import { IReduxState } from '../app/types';
 import { IJitsiConference } from '../base/conference/reducer';
 import { isMobileBrowser } from '../base/environment/utils';
+import { browser } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../base/media/constants';
 
 import {
@@ -61,6 +62,23 @@ export function hasControllableLocalCamera(state: IReduxState): boolean {
 }
 
 /**
+ * Whether the local camera might be drivable. A camera only reports its axes once the pan/tilt/zoom permission has
+ * been granted, and that permission is only asked for when the controls are used, so before then the browser
+ * supporting pan/tilt/zoom at all is as much as can be known. Asking is what settles it either way.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function mayHaveControllableLocalCamera(state: IReduxState): boolean {
+    const { axes, permission } = getCameraPtzState(state).local;
+
+    return Boolean(browser.supportsCameraPtz?.())
+        && permission !== 'denied'
+        && Boolean(getLocalCameraTrack(state))
+        && (!axes || axes.pan || axes.tilt || axes.zoom);
+}
+
+/**
  * Whether to offer pan/tilt/zoom controls for the local camera. Not on mobile browsers, where the constraints are
  * either unsupported or zoom only.
  *
@@ -68,7 +86,7 @@ export function hasControllableLocalCamera(state: IReduxState): boolean {
  * @returns {boolean}
  */
 export function isLocalPtzControllable(state: IReduxState): boolean {
-    return isCameraPtzEnabled(state) && !isMobileBrowser() && hasControllableLocalCamera(state);
+    return isCameraPtzEnabled(state) && !isMobileBrowser() && mayHaveControllableLocalCamera(state);
 }
 
 /**
@@ -88,12 +106,22 @@ export function isFarEndCameraControlPermitted(state: IReduxState): boolean {
  * @param {IReduxState} state - The redux state.
  * @returns {boolean}
  */
-export function isLocalCameraOfferedForFarEndControl(state: IReduxState): boolean {
+export function isFarEndControlOptedIn(state: IReduxState): boolean {
     const { farEndControlOptIn } = getCameraPtzState(state);
 
     return isFarEndCameraControlPermitted(state)
-        && (farEndControlOptIn ?? Boolean(state['features/base/config'].offerFarEndCameraControl))
-        && hasControllableLocalCamera(state);
+        && (farEndControlOptIn ?? Boolean(state['features/base/config'].offerFarEndCameraControl));
+}
+
+/**
+ * Whether the local camera is advertised to remote participants. Unlike offering the controls locally, this claims
+ * something to others, so it waits until the camera has actually reported what it can do.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function isLocalCameraOfferedForFarEndControl(state: IReduxState): boolean {
+    return isFarEndControlOptedIn(state) && hasControllableLocalCamera(state);
 }
 
 /**

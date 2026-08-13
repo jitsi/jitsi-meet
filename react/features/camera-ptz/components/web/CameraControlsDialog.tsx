@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import Video from '../../../base/media/components/web/Video';
 import Dialog from '../../../base/ui/components/web/Dialog';
-import { resetLocalCameraFraming, setLocalCameraControl } from '../../actions';
+import { acquireCameraPtzCapabilities, resetLocalCameraFraming, setLocalCameraControl } from '../../actions';
 import { ZOOM_RANGE } from '../../constants';
 import { getCameraPtzState, getLocalCameraTrack } from '../../functions';
 
@@ -93,6 +93,12 @@ const CameraControlsDialog = () => {
 
     const onReset = useCallback(() => {
         dispatch(resetLocalCameraFraming());
+    }, [ dispatch ]);
+
+    // Opening the controls is the point at which the pan/tilt/zoom permission is worth asking for, and the ranges
+    // the camera reports are what the map and the slider are drawn from.
+    useEffect(() => {
+        dispatch(acquireCameraPtzCapabilities());
     }, [ dispatch ]);
 
     return (
