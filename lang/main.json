@@ -106,6 +106,8 @@
     },
     "cameraPtz": {
         "commanded": "Commanded",
+        "controlling": "Controlling · {{name}}",
+        "done": "Done",
         "fieldOfView": "Full field of view",
         "framingHelp": "Drag the rectangle to command a new framing. The dashed outline holds your target while the camera travels to it.",
         "moving": "Moving to new framing",

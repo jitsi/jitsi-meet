@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import Video from '../../../base/media/components/web/Video';
 import Dialog from '../../../base/ui/components/web/Dialog';
-import { setLocalCameraControl } from '../../actions';
+import { resetLocalCameraFraming, setLocalCameraControl } from '../../actions';
 import { ZOOM_RANGE } from '../../constants';
 import { getCameraPtzState, getLocalCameraTrack } from '../../functions';
 
@@ -87,6 +87,14 @@ const CameraControlsDialog = () => {
             tilt }));
     }, [ dispatch ]);
 
+    const onZoomChange = useCallback((zoom: number) => {
+        dispatch(setLocalCameraControl({ zoom }));
+    }, [ dispatch ]);
+
+    const onReset = useCallback(() => {
+        dispatch(resetLocalCameraFraming());
+    }, [ dispatch ]);
+
     return (
         <Dialog
             cancel = {{ hidden: true }}
@@ -112,6 +120,8 @@ const CameraControlsDialog = () => {
                         pannable = { Boolean(axes?.pan || axes?.tilt) } />
                     <CameraZoomControls
                         framing = { framing }
+                        onChange = { onZoomChange }
+                        onReset = { onReset }
                         zoomable = { Boolean(axes?.zoom) } />
                 </div>
             </div>

@@ -1,11 +1,9 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
-import { resetLocalCameraFraming, setLocalCameraControl } from '../../actions';
 import { ZOOM_RANGE } from '../../constants';
 import { IPTZValues } from '../../types';
 
@@ -15,6 +13,16 @@ interface IProps {
      * Where the camera is now.
      */
     framing: Required<IPTZValues>;
+
+    /**
+     * Called with the zoom the user asked for.
+     */
+    onChange: (zoom: number) => void;
+
+    /**
+     * Called to put the camera back to the framing it started from.
+     */
+    onReset: () => void;
 
     /**
      * Whether the camera can be zoomed at all.
@@ -79,23 +87,18 @@ const useStyles = makeStyles()(theme => {
 });
 
 /**
- * The zoom of the local camera, and a way back to the framing it started from.
+ * The zoom of a camera, and a way back to the framing it started from.
  *
  * @param {IProps} props - The props of the component.
  * @returns {JSX.Element}
  */
-const CameraZoomControls = ({ framing, zoomable }: IProps) => {
+const CameraZoomControls = ({ framing, onChange, onReset, zoomable }: IProps) => {
     const { classes } = useStyles();
     const { t } = useTranslation();
-    const dispatch = useDispatch();
 
     const onZoom = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-        dispatch(setLocalCameraControl({ zoom: Number(event.target.value) }));
-    }, [ dispatch ]);
-
-    const onReset = useCallback(() => {
-        dispatch(resetLocalCameraFraming());
-    }, [ dispatch ]);
+        onChange(Number(event.target.value));
+    }, [ onChange ]);
 
     return (
         <div className = { classes.container }>

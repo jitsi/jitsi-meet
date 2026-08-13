@@ -12,6 +12,7 @@ import { getHideSelfView } from '../../base/settings/functions.any';
 import { getVideoTrackByParticipant } from '../../base/tracks/functions.web';
 import { setColorAlpha } from '../../base/util/helpers';
 import { isSpotTV } from '../../base/util/spot';
+import RemoteCameraControls from '../../camera-ptz/components/web/RemoteCameraControls';
 import StageParticipantNameLabel from '../../display-name/components/web/StageParticipantNameLabel';
 import { FILMSTRIP_BREAKPOINT } from '../../filmstrip/constants';
 import { getVerticalViewMaxWidth, isFilmstripResizable } from '../../filmstrip/functions.web';
@@ -262,6 +263,7 @@ class LargeVideo extends Component<IProps> {
                         _showDominantSpeakerBadge && <StageParticipantNameLabel />
                     )
                 }
+                <RemoteCameraControls />
             </div>
         );
     }
