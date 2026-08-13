@@ -143,17 +143,19 @@ describe('setSecondScreen iframe API command', () => {
         // Headless Chrome is not the "unsupported browser" case it is sometimes
         // assumed to be: it does expose getScreenDetails, so the feature reports
         // itself as supported and the command gets past the enablement gate.
-        // What it cannot do is answer the window-management permission prompt,
-        // which sits at `prompt` with nobody to grant it, so the open resolves to
-        // window-management-unavailable once the wait on it is given up on. The
-        // budget here has to clear that wait, which is why it is generous.
+        // The permission reports `prompt`, but no prompt is ever raised here,
+        // because a command arriving over the external API carries no user
+        // activation and Chromium refuses to ask without one. The call rejects
+        // with NotAllowedError in a couple of milliseconds (verified on 151), so
+        // this lands on window-management-unavailable almost at once rather than
+        // waiting out the permission bound.
         const outcome = await p1.driver.waitUntil(async () => {
             const error = await p1.getIframeAPI().getEventResult('secondScreenError');
             const changed = await p1.getIframeAPI().getEventResult('secondScreenSourceChanged');
 
             return error || changed || false;
         }, {
-            timeout: 45000,
+            timeout: 15000,
             timeoutMsg: 'setSecondScreen reported neither a source change nor an error'
         });
 

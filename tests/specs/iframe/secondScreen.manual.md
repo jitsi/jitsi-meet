@@ -12,13 +12,18 @@ CI runs headless with a single display. Two things follow, and only the second i
 the obvious one.
 
 Headless Chrome **does** expose `getScreenDetails`, so the feature reports itself
-as supported and a command gets past the enablement gate. What headless cannot do
-is answer the window-management permission prompt: `navigator.permissions.query`
-reports `prompt`, nothing grants it, and the request never settles. Verified on
-HeadlessChrome/151, with a control run confirming unrelated timers still fire, so
-it is the request that hangs rather than the page. An enabled command in CI
-therefore lands on `window-management-unavailable` once the wait is given up on,
+as supported and a command gets past the enablement gate. It is not the
+"unsupported browser" case it is often assumed to be. What it cannot do is reach
+the permission: `navigator.permissions.query` reports `prompt`, but no prompt is
+ever raised, because a command arriving over the external API carries no
+transient user activation and Chromium refuses to ask without one. The call
+rejects with `NotAllowedError` in ~2ms (verified on HeadlessChrome/151), so an
+enabled command in CI lands on `window-management-unavailable` almost at once,
 not on `second-screen-disabled`.
+
+That also means a prompt left unanswered is only reachable from an in-app
+trigger in a real browser, which is why cases A3 and A5 below cannot be
+approximated in CI at all.
 
 And with one display there is no second screen to place a window on, so placement,
 fullscreen, occupancy and every multi-display behaviour below are unreachable
