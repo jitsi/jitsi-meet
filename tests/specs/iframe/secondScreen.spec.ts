@@ -18,7 +18,8 @@ setTestProperties(__filename, {
  * Placement on a real second display and the fullscreen behaviour are not
  * covered here at all: both need hardware and a granted permission that CI does
  * not have, and stubbing the Window Management API would test the stub rather
- * than the feature.
+ * than the feature. Those cases are written up as a reproducible checklist in
+ * secondScreen.manual.md, alongside this file.
  */
 const ERROR_CODES = [
     'second-screen-disabled',
