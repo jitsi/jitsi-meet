@@ -53,6 +53,20 @@ const SECOND_SCREEN_LOAD_TIMEOUT = 10000;
 const SECOND_SCREEN_LOAD_POLL_INTERVAL = 250;
 
 /**
+ * How long to wait for the window-management permission before giving up on an
+ * open. A call to {@code getScreenDetails()} does not settle while its prompt is
+ * on screen, and one that is never answered never settles it at all: verified in
+ * headless Chrome, where the permission sits at {@code prompt}, nothing answers
+ * it, and the promise stays pending for the life of the page. Without a bound
+ * the open would produce no window, no error and no event, and its entry in
+ * {@link opening} would never clear, so that id could never be opened again.
+ * Generous enough for someone to read the prompt before answering, and a later
+ * answer is not wasted, since {@link loadScreenDetails} still caches the result
+ * for the next attempt.
+ */
+const SECOND_SCREEN_PERMISSION_TIMEOUT = 30000;
+
+/**
  * The name of the {@code meta} marker carried by the shell page (see
  * {@link getSecondScreenPageUrl}). A {@code load} event only says that
  * *something* was served, so the marker is what tells the shell apart from a 404
@@ -296,6 +310,25 @@ export async function loadScreenDetails(): Promise<ScreenDetails> {
     screenDetails = screenDetails ?? await window.getScreenDetails();
 
     return screenDetails;
+}
+
+/**
+ * Bounds a wait on the screen details, so an open cannot be left pending forever
+ * behind a permission prompt nobody answers (see
+ * {@link SECOND_SCREEN_PERMISSION_TIMEOUT}). Rejects on the timeout, which the
+ * caller treats exactly like a denial: either way the window cannot be placed.
+ *
+ * @param {Promise<ScreenDetails>} pending - The in-flight request.
+ * @returns {Promise<ScreenDetails>}
+ */
+function awaitScreenDetails(pending: Promise<ScreenDetails>): Promise<ScreenDetails> {
+    return new Promise<ScreenDetails>((resolve, reject) => {
+        const timeout = setTimeout(
+            () => reject(new Error('Timed out waiting for the window-management permission')),
+            SECOND_SCREEN_PERMISSION_TIMEOUT);
+
+        pending.then(resolve, reject).finally(() => clearTimeout(timeout));
+    });
 }
 
 /**
@@ -1016,12 +1049,14 @@ async function openSecondScreenWindow(store: IStore, id: string, screenId?: numb
     // event fires, and the prompt can easily outlast the load of a same-origin
     // page. Denying the permission fails the open, as it does on every other
     // path: without it the window cannot be put on another screen at all, which
-    // is the whole point of the feature.
+    // is the whole point of the feature. A prompt that is never answered is
+    // failed the same way once it is clearly not coming, rather than leaving the
+    // open pending forever with nothing reported to anyone.
     if (pendingDetails) {
         let resolved;
 
         try {
-            resolved = await pendingDetails;
+            resolved = await awaitScreenDetails(pendingDetails);
         } catch (e) {
             logger.warn(`Window Management API unavailable; cannot place second-screen window "${id}"`, e);
             failSecondScreenOpen(store, id, 'window-management-unavailable', win);
