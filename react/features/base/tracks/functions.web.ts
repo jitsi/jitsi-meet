@@ -42,6 +42,7 @@ export * from './functions.any';
 export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore, recordTimeMetrics = false) {
     let { cameraDeviceId, micDeviceId } = options;
     const {
+        cameraPtz,
         desktopSharingSourceDevice,
         desktopSharingSources,
         timeout
@@ -84,6 +85,7 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore, 
             return JitsiMeetJS.createLocalTracks(
                 {
                     cameraDeviceId,
+                    cameraPtz,
                     constraints,
                     desktopSharingFrameRate,
                     desktopSharingSourceDevice,

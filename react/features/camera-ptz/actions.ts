@@ -1,5 +1,8 @@
 import { IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
+import { MEDIA_TYPE } from '../base/media/constants';
+import { replaceLocalTrack } from '../base/tracks/actions';
+import { createLocalTracksF } from '../base/tracks/functions';
 
 import {
     CLEAR_OWNER_LOCK,
@@ -20,6 +23,7 @@ import {
 import {
     canControlRemoteCamera,
     getCameraPtzState,
+    getLocalCameraTrack,
     sendCameraControlMessage
 } from './functions';
 import logger from './logger';
@@ -260,7 +264,15 @@ export function denyCameraControlRequest(
  * @returns {Function}
  */
 export function grantCameraControl(participantId: string) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        // Nobody can move the camera until it has been acquired with the pan/tilt/zoom constraints, which is what
+        // asks the local participant for the second permission.
+        if (!await dispatch(acquireCameraPtzCapabilities())) {
+            dispatch(denyCameraControlRequest(CameraControlDenyReason.DISABLED, participantId));
+
+            return;
+        }
+
         const token = nextToken();
 
         if (!sendCameraControlMessage(getCurrentConference(getState()), participantId, {
@@ -337,6 +349,71 @@ export function sendCameraControlKeepalive(participantId: string, token?: number
             action: CameraControlAction.KEEPALIVE,
             token
         });
+    };
+}
+
+/**
+ * Acquires the camera with the pan/tilt/zoom constraints, which is what asks the local participant for the
+ * pan/tilt/zoom permission and is the only way a browser exposes the ranges the camera accepts. The same camera is
+ * kept, so the replacement is invisible to the conference beyond a brief re-acquire.
+ *
+ * The axes are taken from the ranges the acquired track reports, which is authoritative where the earlier device
+ * probe was only a hint.
+ *
+ * @returns {Function} Resolves with the ranges, or undefined when the camera cannot be driven.
+ */
+export function acquireCameraPtzCapabilities() {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { capabilities } = getCameraPtzState(getState()).local;
+
+        if (capabilities) {
+            return capabilities;
+        }
+
+        const oldTrack = getLocalCameraTrack(getState());
+
+        if (!oldTrack) {
+            return undefined;
+        }
+
+        let newTrack;
+
+        try {
+            [ newTrack ] = await createLocalTracksF({
+                cameraDeviceId: oldTrack.getDeviceId(),
+                cameraPtz: true,
+                devices: [ MEDIA_TYPE.VIDEO ]
+            }, { dispatch,
+                getState });
+
+            await dispatch(replaceLocalTrack(oldTrack, newTrack));
+        } catch (error) {
+            logger.error('Could not acquire the camera with pan/tilt/zoom', error);
+            newTrack?.dispose();
+
+            return undefined;
+        }
+
+        const ranges = newTrack.getCameraControlCapabilities();
+        const driveable = Boolean(ranges.pan || ranges.tilt || ranges.zoom);
+
+        dispatch(updateLocalPtzSupport({
+            axes: {
+                pan: Boolean(ranges.pan),
+                tilt: Boolean(ranges.tilt),
+                zoom: Boolean(ranges.zoom)
+            },
+            capabilities: ranges,
+            permission: driveable ? 'granted' : 'denied'
+        }));
+
+        if (!driveable) {
+            logger.warn('The camera was acquired without pan/tilt/zoom, the permission was refused');
+
+            return undefined;
+        }
+
+        return ranges;
     };
 }
 
