@@ -9,6 +9,7 @@ import { hideNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_ICON, NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import {
+    acquireCameraPtzCapabilities,
     approveCameraControlRequest,
     denyCameraControlRequest,
     updateLocalPtzSupport
@@ -17,6 +18,7 @@ import { CAMERA_CONTROL_NOTIFICATION_ID, CAMERA_PTZ_CAPABILITY_PROPERTY, PTZCont
 import {
     getCameraPtzState,
     getLocalCameraTrack,
+    isFarEndControlOptedIn,
     isLocalCameraOfferedForFarEndControl
 } from './functions';
 import logger from './logger';
@@ -38,6 +40,17 @@ StateListenerRegistry.register(
     state => getCurrentConference(state),
     (conference, { getState }) => {
         conference && isLocalCameraOfferedForFarEndControl(getState()) && _advertise(conference, true);
+    });
+
+/**
+ * An endpoint that offers its camera has to know what that camera can do before it can claim anything to others,
+ * and finding out means asking for the pan/tilt/zoom permission. It is asked for here rather than at join, so only
+ * endpoints that opt in are ever asked.
+ */
+StateListenerRegistry.register(
+    state => isFarEndControlOptedIn(state) && Boolean(getLocalCameraTrack(state)),
+    (optedIn, { dispatch }) => {
+        optedIn && dispatch(acquireCameraPtzCapabilities());
     });
 
 /**
@@ -112,7 +125,17 @@ function _probeCameraAxes({ dispatch }: IStore, deviceId?: string) {
         return;
     }
 
-    dispatch(updateLocalPtzSupport({ axes: JitsiMeetJS.mediaDevices.getCameraPTZCapabilities(deviceId) }));
+    const support = JitsiMeetJS.mediaDevices.getCameraPTZCapabilities(deviceId) ?? {};
+    const axes = {
+        pan: Boolean(support.pan),
+        tilt: Boolean(support.tilt),
+        zoom: Boolean(support.zoom)
+    };
+
+    // Enumeration lists the pan/tilt/zoom of a device only once that permission has been granted, so it cannot tell
+    // a camera that has none from one that has them but has never been asked for. Only acquiring the camera with
+    // those constraints settles it, which is why nothing found here is recorded as not known rather than as none.
+    dispatch(updateLocalPtzSupport({ axes: axes.pan || axes.tilt || axes.zoom ? axes : undefined }));
 
     JitsiMeetJS.mediaDevices.getCameraPTZPermission()
         .then((permission: PTZPermissionState) => dispatch(updateLocalPtzSupport({ permission })))
