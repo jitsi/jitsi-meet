@@ -513,6 +513,7 @@ export interface IConfig {
      */
     hideLobbyButton?: boolean;
     hideLoginButton?: boolean;
+    hideMissingCapabilityWarnings?: boolean;
     hideParticipantsStats?: boolean;
     hideRecordingLabel?: boolean;
     hosts?: {

@@ -1645,6 +1645,11 @@ var config = {
     // Hides the participants stats
     // hideParticipantsStats: true,
 
+    // Hides the warning which is shown when the server signals that this client does not advertise a capability that
+    // the deployment expects (i.e. that the client needs an update). The error which is shown when the client is not
+    // allowed in the conference at all is always shown.
+    // hideMissingCapabilityWarnings: false,
+
     // Sets the conference subject
     // subject: 'Conference Subject',
 

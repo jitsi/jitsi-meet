@@ -171,6 +171,7 @@ export default [
     'hideAddRoomButton',
     'hideEmailInSettings',
     'hideLobbyButton',
+    'hideMissingCapabilityWarnings',
     'iAmRecorder',
     'iAmSipGateway',
     'iAmSpot',
