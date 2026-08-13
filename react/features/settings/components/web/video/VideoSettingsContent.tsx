@@ -12,6 +12,7 @@ import Checkbox from '../../../../base/ui/components/web/Checkbox';
 import ContextMenu from '../../../../base/ui/components/web/ContextMenu';
 import ContextMenuItem from '../../../../base/ui/components/web/ContextMenuItem';
 import ContextMenuItemGroup from '../../../../base/ui/components/web/ContextMenuItemGroup';
+import CameraControlsMenuItem from '../../../../camera-ptz/components/web/CameraControlsMenuItem';
 import { checkBlurSupport, checkVirtualBackgroundEnabled } from '../../../../virtual-background/functions';
 import { openSettingsDialog } from '../../../actions';
 import { SETTINGS_TABS } from '../../../constants';
@@ -310,6 +311,7 @@ const VideoSettingsContent = ({
                 {trackData.map((data, i) => _renderPreviewEntry(data, i))}
             </ContextMenuItemGroup>
             <ContextMenuItemGroup role = 'group'>
+                <CameraControlsMenuItem />
                 { visibleVirtualBackground && <ContextMenuItem
                     accessibilityLabel = { t('virtualBackground.title') }
                     icon = { IconImage }

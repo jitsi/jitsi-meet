@@ -104,6 +104,17 @@
         "refresh": "Refresh calendar",
         "today": "Today"
     },
+    "cameraPtz": {
+        "commanded": "Commanded",
+        "fieldOfView": "Full field of view",
+        "framingHelp": "Drag the rectangle to command a new framing. The dashed outline holds your target while the camera travels to it.",
+        "moving": "Moving to new framing",
+        "now": "Now",
+        "onTarget": "On target",
+        "reset": "Reset framing",
+        "title": "Camera controls",
+        "zoom": "Zoom"
+    },
     "carmode": {
         "actions": {
             "selectSoundDevice": "Select sound device"
