@@ -2,6 +2,8 @@ export const CAMERA_CONTROL_MESSAGE_NAME = 'camera-control';
 
 export const CAMERA_PTZ_CAPABILITY_PROPERTY = 'ptzCameraControl';
 
+export const CAMERA_CONTROL_NOTIFICATION_ID = 'camera-control-request';
+
 /**
  * The camera owner is the sole authority for its own camera's lock: the controller sends
  * REQUEST/SET/KEEPALIVE/RELEASE, the owner replies GRANT/DENY/REVOKE.
