@@ -35,8 +35,18 @@ regardless of permissions. Stubbing `getScreenDetails` would test the stub.
   and Safari are only useful for confirming the feature stays off (case A6).
 - At least two physical displays. Cases D1 to D4 need one that can be undocked or
   unplugged.
-- `secondScreen: { enabled: true }` in `config.js`.
+- `secondScreen: { enabled: true }`, either in `config.js` or as
+  `#config.secondScreen.enabled=true` on the URL, since the option is in
+  `configWhitelist`.
 - For an iframe embed, the iframe needs `allow="window-management; fullscreen"`.
+- **Allow popups for the origin.** A command arriving over the External API runs
+  with no user activation, so the popup blocker refuses the window and every such
+  case reports `popup-blocked` instead of what it was meant to test. An in-app
+  trigger is a real click and does not need this.
+- **Grant window-management out of band for the API cases.** For the same reason,
+  Chromium will not raise the permission prompt for an API-driven open: it rejects
+  immediately, and the case reports `window-management-unavailable`. Grant it under
+  the site settings padlock first, or drive the case from an in-app trigger.
 - Start each permission case from a profile where window-management has not been
   answered yet. Reset it under the site settings padlock, or use a fresh profile;
   the permission is sticky per origin, so a second run of A2 tests nothing.
@@ -48,10 +58,17 @@ master.
 
 ## A. Opening, permissions and placement
 
+**A2 to A5c have to be driven by an in-app trigger, not by the External API**, and
+are therefore **[#17666]** cases whatever else they test. Only a real click carries
+the user activation Chromium requires before it will raise the permission prompt;
+over the API the call rejects at once and the case never reaches what it was
+written for. On master the prompt is unreachable altogether, since there are no
+in-app triggers there.
+
 | # | Steps | Expected |
 |---|---|---|
 | A1 | On a granted profile, `setSecondScreen` with `{ id: 'a', source: { role: 'stage' } }` | Window opens on an external display, fullscreen, showing the active speaker. `secondScreenSourceChanged` fires with `id: 'a'`. |
-| A2 | On an ungranted profile, send the same command and press **Allow** promptly | Prompt appears, window opens and moves onto the external display. One `secondScreenSourceChanged`. |
+| A2 | On an ungranted profile, click an in-app trigger and press **Allow** promptly | Prompt appears, window opens and moves onto the external display. One `secondScreenSourceChanged`. |
 | A3 | Same as A2, but wait ~30s before pressing Allow | The window still opens and places correctly. It must not be blocked by the popup blocker, and no error is reported. This is the transient-activation case: the open runs before anything is awaited. **[#17666]** The window renders its content on the meeting's own screen while the prompt is up, and jumps to the external display on Allow; it is not blank while waiting. |
 | A4 | Same as A2, but press **Block** | `secondScreenError` with `window-management-unavailable`. No window is left on screen. |
 | A5 | Same as A2, but dismiss nothing and leave the prompt open | **[#17666]** The window renders on the meeting's own screen meanwhile, so it looks like it worked; after 30s `secondScreenError` with `window-management-unavailable` and the window closes. On master the open stays pending forever with no event, which is the bug that bound fixes. |
@@ -59,7 +76,7 @@ master.
 | A5c | During A5, while the prompt is still up, send the same id again | **[#17666]** The existing window re-sources in place. It must not open a second window and must not return silently. |
 | A6 | Repeat A1 in Firefox or Safari | `secondScreenError` with `second-screen-disabled`. No window. |
 | A7 | With popups blocked for the site, repeat A1 | `secondScreenError` with `popup-blocked`. |
-| A8 | On a profile where window-management was previously **denied**, send the command | **[#17666]** `secondScreenError` with `window-management-unavailable`, and no window is left behind. Expect a brief flash: the rejection is not acted on until the window is registered, so it opens, loads and renders before being torn down. Shortening that needs the denied state to be known before the open, which `preloadScreenDetails` could cache. |
+| A8 | On a profile where window-management was previously **denied**, click an in-app trigger | **[#17666]** `secondScreenError` with `window-management-unavailable`, and no window is left behind. Expect a brief flash: the rejection is not acted on until the window is registered, so it opens, loads and renders before being torn down. Shortening that needs the denied state to be known before the open, which `preloadScreenDetails` could cache. |
 
 ## B. Sources and live behaviour
 
