@@ -54,16 +54,17 @@ const SECOND_SCREEN_LOAD_TIMEOUT = 10000;
 const SECOND_SCREEN_LOAD_POLL_INTERVAL = 250;
 
 /**
- * How long to wait for the window-management permission before giving up on an
- * open. A call to {@code getScreenDetails()} does not settle while its prompt is
- * on screen, and one that is never answered never settles it at all: verified in
- * headless Chrome, where the permission sits at {@code prompt}, nothing answers
- * it, and the promise stays pending for the life of the page. Without a bound
- * the open would produce no window, no error and no event, and its entry in
- * {@link opening} would never clear, so that id could never be opened again.
- * Generous enough for someone to read the prompt before answering, and a later
- * answer is not wasted, since {@link loadScreenDetails} still caches the result
- * for the next attempt.
+ * How long to wait for the window-management permission before giving up on
+ * placing a window. A call to {@code getScreenDetails()} does not settle while
+ * its prompt is on screen, and one that is never answered never settles it at
+ * all. The prompt is only ever raised where the call carries transient user
+ * activation, which is the in-app triggers; without it Chromium rejects at once
+ * with {@code NotAllowedError}, which is why the external API path fails fast
+ * rather than hanging, and why headless does too. Without a bound the window
+ * would sit unplaced on the meeting's own screen indefinitely, with nobody told
+ * anything either way. Generous enough for someone to read the prompt before
+ * answering, and a later answer is not wasted, since {@link loadScreenDetails}
+ * still caches the result for the next attempt.
  */
 const SECOND_SCREEN_PERMISSION_TIMEOUT = 30000;
 
@@ -1015,12 +1016,12 @@ export async function openOrUpdateSecondScreen(store: IStore, id: string, screen
     // of its own. That is accepted rather than handled: the end state is
     // consistent rather than corrupt, the embedder is told through
     // secondScreenError for the id and can retry, and whatever caused the
-    // failure usually applies to both requests anyway. The window for this is
-    // wider than the load timeout: a first open also waits on the
-    // window-management permission prompt, which sits until the user answers it
-    // and lands on window-management-unavailable if they deny it. A screenId that
-    // changed in the meantime is ignored, exactly as it is for a window that is
-    // already open.
+    // failure usually applies to both requests anyway. This spans the page load
+    // and nothing else: the window-management permission is answered after the
+    // handle is in state, by a tail that holds no guard (see
+    // {@link openSecondScreenWindow}), so a request arriving during a prompt
+    // finds a live handle above and re-sources it. A screenId that changed in the
+    // meantime is ignored, exactly as it is for a window that is already open.
     if (opening.has(id)) {
         return;
     }
@@ -1032,6 +1033,78 @@ export async function openOrUpdateSecondScreen(store: IStore, id: string, screen
     } finally {
         opening.delete(id);
     }
+}
+
+/**
+ * Fullscreens a second-screen window. Needs the AutomaticFullscreen permission on
+ * a managed device; without it the window simply stays windowed, which is why a
+ * refusal is logged rather than failing the open.
+ *
+ * @param {Window} win - The window to fullscreen.
+ * @param {string} id - The window id, for the log line.
+ * @returns {Promise<void>}
+ */
+async function fullscreenSecondScreen(win: Window, id: string): Promise<void> {
+    try {
+        await win.document.documentElement.requestFullscreen();
+    } catch (e) {
+        logger.debug(`Auto-fullscreen not granted for second screen "${id}"`, e);
+    }
+}
+
+/**
+ * Places and fullscreens a window once the window-management permission has been
+ * answered, for the open that could not place it at {@code window.open} time. Runs
+ * after the window is already registered and rendering, so everything it touches
+ * has to be re-checked: the answer can arrive long after the open finished, and
+ * the meeting has been free to close the window or open another for the same id
+ * in the meantime.
+ *
+ * Ownership is compared by handle identity rather than by asking whether an entry
+ * exists, so a window that was closed and opened again for the same id is neither
+ * placed nor torn down by the open it replaced.
+ *
+ * A denial (or a prompt left unanswered past {@link SECOND_SCREEN_PERMISSION_TIMEOUT})
+ * fails the open as it does everywhere else: without the permission the window
+ * cannot be put on another screen, which is the point of the feature, so it is
+ * closed and reported rather than left on the meeting's own display.
+ *
+ * @param {IStore} store - The redux store.
+ * @param {string} id - The window id.
+ * @param {ISecondScreenHandle} handle - The handle this open registered.
+ * @param {Promise<ScreenDetails>} pending - The in-flight permission request.
+ * @param {number} screenId - Optional target screen index.
+ * @returns {Promise<void>}
+ */
+async function placeSecondScreenWhenPermitted(
+        store: IStore,
+        id: string,
+        handle: ISecondScreenHandle,
+        pending: Promise<ScreenDetails>,
+        screenId?: number): Promise<void> {
+    let error: unknown;
+    const resolved = await pending.then(details => details, e => {
+        error = e;
+
+        return undefined;
+    });
+
+    if (getHandle(store.getState(), id) !== handle || handle.win.closed) {
+        logger.debug(`Dropping the window-management answer for second screen "${id}": `
+            + 'it no longer owns that window');
+
+        return;
+    }
+
+    if (!resolved) {
+        logger.warn(`Window Management API unavailable; cannot place second-screen window "${id}"`, error);
+        failSecondScreenOpen(store, id, 'window-management-unavailable', handle.win);
+
+        return;
+    }
+
+    placeSecondScreenWindow(handle.win, resolved, screenId);
+    await fullscreenSecondScreen(handle.win, id);
 }
 
 /**
@@ -1070,48 +1143,16 @@ async function openSecondScreenWindow(store: IStore, id: string, screenId?: numb
         return;
     }
 
-    // Place the window as soon as there is an answer, rather than after the load.
-    // moveTo/resizeTo need no document, so placement never had to wait for the
-    // page; only the load listener has to be attached before the load event
-    // fires, which is a constraint on that wait alone. Hanging it off the answer
-    // instead also means a profile that has already denied the permission, which
-    // rejects without prompting at all, takes the window back off the screen at
-    // once rather than leaving it up for a whole page load first. Denying fails
-    // the open, as it does on every other path: without the permission the
-    // window cannot be put on another screen, which is the whole point of the
-    // feature. A prompt that is never answered is failed the same way once it is
-    // clearly not coming, rather than leaving the open pending forever with
-    // nothing reported to anyone.
-    let placementFailed = false;
-    const placement = details ? undefined : awaitScreenDetails(loadScreenDetails()).then(
-        resolved => {
+    // Start the request now so it runs alongside the page load rather than after
+    // it. Its outcome is handled once there is a handle to hang it on; this only
+    // keeps a rejection that arrives first from counting as unhandled.
+    const pendingDetails = details ? undefined : awaitScreenDetails(loadScreenDetails());
 
-            // A cancel can land while the answer is outstanding: the entry is in
-            // state for the whole open, so the trigger reads as active and a
-            // second click removes it, with no handle yet for
-            // closeSecondScreenHandle to close. Checking here rather than only
-            // below stops the window flying to the other screen a moment before
-            // it is closed for being unwanted.
-            if (!win.closed && store.getState()['features/multi-screen'].screens[id]) {
-                placeSecondScreenWindow(win, resolved, screenId);
-            }
-        },
-        e => {
-            placementFailed = true;
-            logger.warn(`Window Management API unavailable; cannot place second-screen window "${id}"`, e);
-            failSecondScreenOpen(store, id, 'window-management-unavailable', win);
-        });
+    pendingDetails?.catch(() => undefined);
 
     // Wait for the shell page to replace the popup's initial empty document
     // before building the handle on it.
     const result = win.closed ? 'closed' : await awaitSecondScreenLoad(win);
-
-    // A permission refused during the load has already reported the failure and
-    // closed the window, which the load wait sees as the window going away.
-    // Checked before the result so that is not reported a second time.
-    if (placementFailed) {
-        return;
-    }
 
     if (result === 'closed' || win.closed) {
         handleWindowClosedWhileOpening(store, id, 'loading');
@@ -1137,26 +1178,6 @@ async function openSecondScreenWindow(store: IStore, id: string, screenId?: numb
         failSecondScreenOpen(store, id, 'window-load-failed', win);
 
         return;
-    }
-
-    // The page is up; the answer may not be here yet. Nothing is built on the
-    // window until it is, so an open ends either placed or failed, never with a
-    // live portal on a window that is about to be torn down.
-    if (placement) {
-        await placement;
-
-        if (placementFailed) {
-            return;
-        }
-
-        // Unlike the load, the prompt is answered by the user, so the window can
-        // have been up for as long as they took over it, in front of them and
-        // closeable the whole time.
-        if (win.closed) {
-            handleWindowClosedWhileOpening(store, id, 'the window-management permission was pending');
-
-            return;
-        }
     }
 
     // A removal (or a conference end) can land while the window is loading. Its
@@ -1197,13 +1218,31 @@ async function openSecondScreenWindow(store: IStore, id: string, screenId?: numb
     store.dispatch(setSecondScreenWindow(id, handle));
     win.addEventListener('pagehide', () => handleWindowClosed(store, id), { once: true });
 
-    try {
-        await win.document.documentElement.requestFullscreen();
-    } catch (e) {
-        logger.debug(`Auto-fullscreen not granted for second screen "${id}"`, e);
+    // From here the window has the ordinary lifecycle rather than a half-open one:
+    // a cancel, a source leaving the meeting, or the conference ending all close
+    // it through closeSecondScreenHandle and report secondScreenClosed, and a
+    // repeat send finds a live handle above and re-sources it. Registering only
+    // after the permission was answered is what left all three of those with an
+    // entry, no handle, and nothing reported.
+    applySource(store, id);
+
+    if (!pendingDetails) {
+        await fullscreenSecondScreen(win, id);
+
+        return;
     }
 
-    applySource(store, id);
+    // Placement waits on the permission, so it becomes a tail rather than part of
+    // the open. Deliberately not awaited: holding the in-flight guard until a user
+    // answers a prompt is exactly what made a cancel silent. Fullscreen goes with
+    // it, and only after placement, or the window would fill the meeting's own
+    // screen for as long as the prompt is up.
+    // Caught here rather than by handleSecondScreenOpenError: the tail outlives the
+    // open, so it is no longer inside that catch-all. The window is live and
+    // registered by this point, so a throw costs it its placement, not its
+    // existence, and the meeting can still close it.
+    placeSecondScreenWhenPermitted(store, id, handle, pendingDetails, screenId)
+        .catch(e => logger.warn(`Could not place second-screen window "${id}" after the permission answer`, e));
 }
 
 /**
