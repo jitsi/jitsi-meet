@@ -14,6 +14,7 @@ import { getLargeVideoParticipant } from '../large-video/functions';
 import { showWarningNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { isVideoPlaying } from '../shared-video/functions';
+import { isWhiteboardPresent } from '../whiteboard/functions';
 
 import { removeSecondScreen, setSecondScreenWindow } from './actions.web';
 import { UI_SECOND_SCREEN_ID_PREFIX } from './constants';
@@ -206,12 +207,17 @@ export function resolveSource(state: IReduxState, source: ISecondScreenSource) {
  */
 function getSourceSignature(state: IReduxState, source: ISecondScreenSource): string {
 
-    // The shared video resolves to neither a track nor a participant (its player
-    // owns its own element), so what has to be signed is whether one is being
-    // shared at all. Without this, stopping the share reads exactly like still
-    // sharing and nothing re-runs.
+    // The shared video and the whiteboard resolve to neither a track nor a
+    // participant (each owns its own element: a player, an iframe), so what has
+    // to be signed is whether the thing is there at all. Without this both sign
+    // as the constant `avatar:::`, so stopping the share or closing the
+    // whiteboard reads exactly like still having it and nothing re-runs.
     if (source.role === 'sharedvideo') {
         return `sharedvideo:${isVideoPlaying(state)}`;
+    }
+
+    if (source.role === 'whiteboard') {
+        return `whiteboard:${isWhiteboardPresent(state)}`;
     }
 
     const { track, participant } = resolveSource(state, source);
@@ -394,8 +400,9 @@ function getWindowScreenIndex(details: ScreenDetails, win: Window): number | und
     } catch (_e) {
 
         // The second-screen windows are same-origin by the time they have a
-        // handle, so this is not expected; treat the position as unknown rather
-        // than as free, which would stack a window on top of this one.
+        // handle, so this is not expected. Answering "unknown" rather than
+        // guessing a screen leaves it to the caller, which fails closed (see
+        // {@link getEntryScreenIndex}).
         return undefined;
     }
 
@@ -403,11 +410,40 @@ function getWindowScreenIndex(details: ScreenDetails, win: Window): number | und
 }
 
 /**
- * The screen indices the second-screen windows currently occupy. Read from each
- * live window rather than from the entries, so it survives the browser
- * renumbering the screens and frees the screen of a window the user closed by
- * hand. An entry whose window is still opening has no position yet, so it falls
- * back to the screen it asked for, which is where the open is about to put it.
+ * The screen a second-screen entry counts as being on: where its window actually
+ * is, else the screen it asked for, else {@code fallback} (an entry that named
+ * no screen is placed on the first external one, which is what
+ * {@link getTargetScreen} does with it).
+ *
+ * The position is preferred because {@code screenId} only records where the
+ * window was asked to go at open time: a window is never re-placed afterwards,
+ * so it goes stale when the user drags the window or the browser renumbers
+ * {@code details.screens} on a display change. Falling back rather than
+ * answering "nowhere" is deliberate: a window whose position cannot be read
+ * (still opening, or centred outside every reported screen, as a minimized
+ * popup may report) still holds a screen, and treating it as free would open
+ * another window on top of it.
+ *
+ * @param {ScreenDetails} details - The screen details.
+ * @param {ISecondScreenEntry} entry - The entry to locate.
+ * @param {number} fallback - The screen an entry that named none is placed on.
+ * @returns {number}
+ */
+function getEntryScreenIndex(details: ScreenDetails, entry: ISecondScreenEntry, fallback: number): number {
+    const win = (entry.handle as ISecondScreenHandle | undefined)?.win;
+
+    // A ternary rather than && so an unreadable position and a window without a
+    // handle both arrive here as undefined; ?? would pass a false straight
+    // through as the answer.
+    const index = win && !win.closed ? getWindowScreenIndex(details, win) : undefined;
+
+    return index ?? entry.screenId ?? fallback;
+}
+
+/**
+ * The screen indices the second-screen windows currently occupy. Read from the
+ * live windows rather than from the entries, so it survives the browser
+ * renumbering the screens and follows a window the user moved.
  *
  * @param {ScreenDetails} details - The screen details.
  * @param {Object} screens - The second-screen entries.
@@ -424,24 +460,37 @@ function getOccupiedScreens(
     Object.values(screens).forEach(entry => {
         const win = (entry.handle as ISecondScreenHandle | undefined)?.win;
 
-        if (!win) {
-            occupied.add(entry.screenId ?? fallback);
-
+        // A window the user closed by hand frees its screen. One that has no
+        // handle yet does not: it is still opening onto the screen it asked for.
+        if (win?.closed) {
             return;
         }
 
-        if (win.closed) {
-            return;
-        }
-
-        const index = getWindowScreenIndex(details, win);
-
-        if (typeof index === 'number') {
-            occupied.add(index);
-        }
+        occupied.add(getEntryScreenIndex(details, entry, fallback));
     });
 
     return occupied;
+}
+
+/**
+ * An id no second-screen window is using. Deliberately carries no screen index:
+ * occupancy is positional now, and an id that encodes a screen is a second,
+ * conflicting answer to "which window is on that screen" that goes stale the
+ * moment a display is undocked. It only has to be unique, or a "nothing is on
+ * that screen, open one" decision hands back the id of a window that exists and
+ * re-sources it instead, leaving the screen empty.
+ *
+ * @param {Object} screens - The second-screen entries.
+ * @returns {string}
+ */
+function mintSecondScreenId(screens: { [id: string]: ISecondScreenEntry; }): string {
+    let n = 0;
+
+    while (screens[`${UI_SECOND_SCREEN_ID_PREFIX}${n}`]) {
+        n++;
+    }
+
+    return `${UI_SECOND_SCREEN_ID_PREFIX}${n}`;
 }
 
 /**
@@ -464,26 +513,35 @@ function getOccupiedScreens(
 export function pickSecondScreenTarget(state: IReduxState): { id: string; screenId?: number; } {
     const details = screenDetails;
     const external = details ? getExternalScreenIndices(details) : [];
+    const { screens } = state['features/multi-screen'];
 
+    // One screen, so one window: a fixed id, which re-targets the window already
+    // up instead of opening another on top of it.
     if (!details || !external.length) {
         return { id: `${UI_SECOND_SCREEN_ID_PREFIX}0` };
     }
 
-    const { screens } = state['features/multi-screen'];
     const taken = getOccupiedScreens(details, screens, external[0]);
     const free = external.find(index => !taken.has(index));
 
     if (typeof free === 'number') {
-        return { id: `${UI_SECOND_SCREEN_ID_PREFIX}${free}`,
+        return { id: mintSecondScreenId(screens),
             screenId: free };
     }
 
-    const ours = Object.entries(screens).filter(([ id ]) => id.startsWith(UI_SECOND_SCREEN_ID_PREFIX));
+    // Only a window that is actually on an external screen can be taken over. One
+    // that has ended up on the meeting's own screen (dragged there, or relocated
+    // by the browser when its display was undocked) would otherwise be the oldest
+    // and get picked, putting the content on top of the meeting while the
+    // external screens keep what they were already showing.
+    const ours = Object.entries(screens).filter(([ id, entry ]) =>
+        id.startsWith(UI_SECOND_SCREEN_ID_PREFIX)
+            && external.includes(getEntryScreenIndex(details, entry, external[0])));
 
-    // Every screen is taken by the embedder's windows: open on the first one
-    // anyway rather than taking one of them over.
+    // Every external screen is taken by windows this trigger must not touch:
+    // open on the first one anyway rather than taking one of them over.
     if (!ours.length) {
-        return { id: `${UI_SECOND_SCREEN_ID_PREFIX}${external[0]}`,
+        return { id: mintSecondScreenId(screens),
             screenId: external[0] };
     }
 
@@ -493,11 +551,8 @@ export function pickSecondScreenTarget(state: IReduxState): { id: string; screen
     // Re-target where that window is now, not where it was first sent, so taking
     // it over does not also move it. Only used if it has to be re-opened: a
     // window that is still up keeps its position either way.
-    const win = (entry.handle as ISecondScreenHandle | undefined)?.win;
-    const current = win && !win.closed ? getWindowScreenIndex(details, win) : undefined;
-
     return { id,
-        screenId: current ?? entry.screenId ?? external[0] };
+        screenId: getEntryScreenIndex(details, entry, external[0]) };
 }
 
 /**
@@ -547,9 +602,11 @@ export function getSecondScreenShowing(state: IReduxState, source: ISecondScreen
  * What is left is a window showing an anonymous avatar on black that nobody in
  * the meeting can close, only somebody standing at the other display.
  *
- * Only a source that names something can go away this way: {@code stage} and
- * {@code tile} follow the meeting itself, and a {@code screenshare} with no
- * participant falls back to whatever is being shared.
+ * Only a source that selects one particular thing can go away this way:
+ * {@code stage} and {@code tile} follow the meeting itself, and a
+ * {@code screenshare} with no participant falls back to whatever is being
+ * shared. The rest are asked either by the participant they name or, where they
+ * name none, by role.
  *
  * @param {IReduxState} state - The redux state.
  * @param {ISecondScreenSource} source - The source to check.
@@ -558,6 +615,13 @@ export function getSecondScreenShowing(state: IReduxState, source: ISecondScreen
 function isSecondScreenSourceGone(state: IReduxState, source: ISecondScreenSource): boolean {
     if (source.role === 'sharedvideo') {
         return !isVideoPlaying(state);
+    }
+
+    // Closing the whiteboard removes its fake participant, taking the tile and
+    // the context menu holding the only trigger with it. The source names no
+    // participant, so it has to be asked for by role like the shared video.
+    if (source.role === 'whiteboard') {
+        return !isWhiteboardPresent(state);
     }
 
     // A screenshare names the virtual participant that owns it, which is removed
@@ -1006,16 +1070,48 @@ async function openSecondScreenWindow(store: IStore, id: string, screenId?: numb
         return;
     }
 
-    // Start the prompt now so it runs alongside the shell page load instead of
-    // after it. Awaited (and its rejection handled) below; this only keeps an
-    // early rejection from counting as unhandled.
-    const pendingDetails = details ? undefined : loadScreenDetails();
+    // Place the window as soon as there is an answer, rather than after the load.
+    // moveTo/resizeTo need no document, so placement never had to wait for the
+    // page; only the load listener has to be attached before the load event
+    // fires, which is a constraint on that wait alone. Hanging it off the answer
+    // instead also means a profile that has already denied the permission, which
+    // rejects without prompting at all, takes the window back off the screen at
+    // once rather than leaving it up for a whole page load first. Denying fails
+    // the open, as it does on every other path: without the permission the
+    // window cannot be put on another screen, which is the whole point of the
+    // feature. A prompt that is never answered is failed the same way once it is
+    // clearly not coming, rather than leaving the open pending forever with
+    // nothing reported to anyone.
+    let placementFailed = false;
+    const placement = details ? undefined : awaitScreenDetails(loadScreenDetails()).then(
+        resolved => {
 
-    pendingDetails?.catch(() => undefined);
+            // A cancel can land while the answer is outstanding: the entry is in
+            // state for the whole open, so the trigger reads as active and a
+            // second click removes it, with no handle yet for
+            // closeSecondScreenHandle to close. Checking here rather than only
+            // below stops the window flying to the other screen a moment before
+            // it is closed for being unwanted.
+            if (!win.closed && store.getState()['features/multi-screen'].screens[id]) {
+                placeSecondScreenWindow(win, resolved, screenId);
+            }
+        },
+        e => {
+            placementFailed = true;
+            logger.warn(`Window Management API unavailable; cannot place second-screen window "${id}"`, e);
+            failSecondScreenOpen(store, id, 'window-management-unavailable', win);
+        });
 
     // Wait for the shell page to replace the popup's initial empty document
     // before building the handle on it.
     const result = win.closed ? 'closed' : await awaitSecondScreenLoad(win);
+
+    // A permission refused during the load has already reported the failure and
+    // closed the window, which the load wait sees as the window going away.
+    // Checked before the result so that is not reported a second time.
+    if (placementFailed) {
+        return;
+    }
 
     if (result === 'closed' || win.closed) {
         handleWindowClosedWhileOpening(store, id, 'loading');
@@ -1043,24 +1139,13 @@ async function openSecondScreenWindow(store: IStore, id: string, screenId?: numb
         return;
     }
 
-    // Place the window now if it could not be placed as it opened. After the
-    // load rather than before it, because the load wait deliberately has no fast
-    // path (see awaitSecondScreenLoad): it has to be waiting before the load
-    // event fires, and the prompt can easily outlast the load of a same-origin
-    // page. Denying the permission fails the open, as it does on every other
-    // path: without it the window cannot be put on another screen at all, which
-    // is the whole point of the feature. A prompt that is never answered is
-    // failed the same way once it is clearly not coming, rather than leaving the
-    // open pending forever with nothing reported to anyone.
-    if (pendingDetails) {
-        let resolved;
+    // The page is up; the answer may not be here yet. Nothing is built on the
+    // window until it is, so an open ends either placed or failed, never with a
+    // live portal on a window that is about to be torn down.
+    if (placement) {
+        await placement;
 
-        try {
-            resolved = await awaitScreenDetails(pendingDetails);
-        } catch (e) {
-            logger.warn(`Window Management API unavailable; cannot place second-screen window "${id}"`, e);
-            failSecondScreenOpen(store, id, 'window-management-unavailable', win);
-
+        if (placementFailed) {
             return;
         }
 
@@ -1072,8 +1157,6 @@ async function openSecondScreenWindow(store: IStore, id: string, screenId?: numb
 
             return;
         }
-
-        placeSecondScreenWindow(win, resolved, screenId);
     }
 
     // A removal (or a conference end) can land while the window is loading. Its
