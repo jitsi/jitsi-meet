@@ -83,6 +83,12 @@ const PiPVideoElement: React.FC = () => {
     const fontFamily = (avatarFont as any).fontFamily ?? 'Inter, sans-serif';
     const initialsColor = getAvatarInitialsColor(theme);
     const displayNameColor = getDisplayNameColor(theme);
+
+    // Determine if we should show avatar instead of video.
+    const shouldShowAvatar = !videoTrack
+        || videoTrack.muted
+        || (!videoTrack.local && !isTrackStreamingStatusActive(videoTrack));
+
     const { canvasStreamRef } = useCanvasAvatar({
         participant,
         displayName,
@@ -90,13 +96,9 @@ const PiPVideoElement: React.FC = () => {
         backgroundColor: getThumbnailBackgroundColor(theme),
         fontFamily,
         initialsColor,
-        displayNameColor
+        displayNameColor,
+        isAvatarVisible: shouldShowAvatar
     });
-
-    // Determine if we should show avatar instead of video.
-    const shouldShowAvatar = !videoTrack
-        || videoTrack.muted
-        || (!videoTrack.local && !isTrackStreamingStatusActive(videoTrack));
 
     /**
      * Effect: Handle switching between real video track and canvas avatar stream.

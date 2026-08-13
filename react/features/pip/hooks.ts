@@ -45,6 +45,7 @@ interface IUseCanvasAvatarOptions {
     displayNameColor: string;
     fontFamily: string;
     initialsColor: string;
+    isAvatarVisible: boolean;
     participant: IParticipant | undefined;
 }
 
@@ -104,13 +105,16 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
         backgroundColor,
         fontFamily,
         initialsColor,
-        displayNameColor
+        displayNameColor,
+        isAvatarVisible
     } = options;
 
     const refs = useRef<ICanvasRefs>({
         canvas: null,
         defaultIcon: null
     });
+
+    const shouldSkipAvatarRender = !browser.isElectron() && !isAvatarVisible;
 
     // Separate ref for the stream to return to consumers.
     // This allows consumers to access .current inside their effects.
@@ -158,7 +162,7 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
     useEffect(() => {
         const { canvas, defaultIcon } = refs.current;
 
-        if (!canvas) {
+        if (!canvas || shouldSkipAvatarRender) {
             return;
         }
 
@@ -191,7 +195,7 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
                 logger.log('Canvas frame requested after render');
             }
         }).catch((error: Error) => logger.error('Error rendering avatar on canvas:', error));
-    }, [ participant?.loadableAvatarUrl, participant?.name, displayName, customAvatarBackgrounds, backgroundColor, fontFamily, initialsColor, displayNameColor ]);
+    }, [ participant?.loadableAvatarUrl, participant?.loadableAvatarUrlUseCORS, participant?.name, displayName, customAvatarBackgrounds, backgroundColor, fontFamily, initialsColor, displayNameColor, shouldSkipAvatarRender ]);
 
     return {
         canvasStreamRef: streamRef
