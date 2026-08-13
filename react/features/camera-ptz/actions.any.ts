@@ -38,6 +38,12 @@ import { ILocalPTZSupport, IPTZValues } from './types';
 let lastToken = 0;
 
 /**
+ * Acquiring replaces the camera track, which other parts of the application react to, so overlapping attempts would
+ * chase each other.
+ */
+let acquiring = false;
+
+/**
  * Returns the next grant token. Tokens only ever increase, so a message belonging to a superseded grant can be told
  * apart from a current one.
  *
@@ -420,12 +426,18 @@ export function sendCameraControlKeepalive(participantId: string, token?: number
  */
 export function acquireCameraPtzCapabilities() {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const { capabilities } = getCameraPtzState(getState()).local;
+        const { axes, capabilities } = getCameraPtzState(getState()).local;
 
         // A refused permission leaves an empty set of ranges behind, which must not read as a camera that can be
         // driven, or a later grant would succeed and then move nothing.
         if (capabilities && Object.keys(capabilities).length) {
             return capabilities;
+        }
+
+        // Asking replaces the camera track, and the things that ask are the same things that watch the camera, so a
+        // camera that has already answered is never asked again. Without this the answer triggers the next ask.
+        if (axes || acquiring) {
+            return undefined;
         }
 
         const oldTrack = getLocalCameraTrack(getState());
@@ -435,6 +447,8 @@ export function acquireCameraPtzCapabilities() {
         }
 
         let newTrack;
+
+        acquiring = true;
 
         try {
             [ newTrack ] = await createLocalTracksF({
@@ -450,6 +464,8 @@ export function acquireCameraPtzCapabilities() {
             newTrack?.dispose();
 
             return undefined;
+        } finally {
+            acquiring = false;
         }
 
         const ranges = newTrack.getCameraControlCapabilities();
