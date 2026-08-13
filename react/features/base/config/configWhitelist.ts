@@ -142,6 +142,7 @@ export default [
     'enableDisplayNameInStats',
     'enableEmailInStats',
     'enableEncodedTransformSupport',
+    'enableIceRestart',
     'enableInsecureRoomNameWarning',
     'enableLobbyChat',
     'enableOpusRed',
