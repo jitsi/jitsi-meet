@@ -1735,6 +1735,7 @@
     },
     "videothumbnail": {
         "connectionInfo": "Connection Info",
+        "controlCamera": "Control camera",
         "demote": "Move to viewer",
         "domute": "Mute",
         "domuteDesktop": "Stop screen-sharing",
@@ -1755,6 +1756,7 @@
         "screenSharing": "Participant is sharing their screen",
         "show": "Show on stage",
         "showSelfView": "Show self view",
+        "stopControllingCamera": "Stop controlling camera",
         "unpinFromStage": "Unpin",
         "verify": "Verify participant",
         "videoMuted": "Camera disabled",
