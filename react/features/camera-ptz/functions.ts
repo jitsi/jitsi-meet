@@ -225,6 +225,32 @@ export function toDeviceValues(values: IPTZValues, capabilities: IPTZCapabilitie
 }
 
 /**
+ * Maps what the camera reports back into the device independent range the UI and the wire use, so that a framing
+ * means the same thing on a camera with a different range.
+ *
+ * @param {IPTZValues} values - The values as the camera reports them.
+ * @param {IPTZCapabilities} capabilities - The ranges the camera reports.
+ * @returns {IPTZValues}
+ */
+export function fromDeviceValues(values: IPTZValues, capabilities: IPTZCapabilities): IPTZValues {
+    const mapped: IPTZValues = {};
+
+    PTZ_AXES.forEach(axis => {
+        const value = values[axis];
+        const range = capabilities[axis];
+
+        if (value !== undefined && range) {
+            const target = axis === 'zoom' ? ZOOM_RANGE : PAN_TILT_RANGE;
+            const ratio = range.max === range.min ? 0 : (value - range.min) / (range.max - range.min);
+
+            mapped[axis] = target.min + (Math.min(Math.max(ratio, 0), 1) * (target.max - target.min));
+        }
+    });
+
+    return mapped;
+}
+
+/**
  * Maps a value from one range onto another, clamped to the target range and snapped to its step.
  *
  * @param {number} value - The value to map.

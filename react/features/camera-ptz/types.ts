@@ -36,7 +36,18 @@ export interface IPTZAxes {
 export interface ILocalPTZSupport {
     axes?: IPTZAxes;
     capabilities?: IPTZCapabilities;
+
+    /**
+     * Where the camera has been asked to go while it is still travelling there. The UI holds the target in front of
+     * the user until the camera arrives, since a camera takes a moment to move.
+     */
+    commanded?: IPTZValues;
     permission?: PTZPermissionState;
+
+    /**
+     * Where the camera is now, as far as it has reported.
+     */
+    values?: IPTZValues;
 }
 
 /**
