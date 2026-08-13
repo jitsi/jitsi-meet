@@ -1,5 +1,9 @@
 export enum CameraControlTimer {
 
+    // Owner side: refuses a request the local participant never answered. Distinct from REQUEST because an endpoint
+    // can be waiting for an answer about someone else's camera while being asked about its own.
+    APPROVAL = 'approval',
+
     // Controller side: keeps an idle lease alive.
     KEEPALIVE = 'keepalive',
 

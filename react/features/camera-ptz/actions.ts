@@ -251,7 +251,10 @@ export function denyCameraControlRequest(
             reason
         });
 
-        to === pendingRequest && dispatch(setOwnerPendingRequest());
+        if (to === pendingRequest) {
+            clearTimer(CameraControlTimer.APPROVAL);
+            dispatch(setOwnerPendingRequest());
+        }
     };
 }
 
@@ -265,6 +268,10 @@ export function denyCameraControlRequest(
  */
 export function grantCameraControl(participantId: string) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        // The local participant has answered, so the timeout that would refuse for them must not fire while the
+        // browser is asking them for the pan/tilt/zoom permission.
+        clearTimer(CameraControlTimer.APPROVAL);
+
         // Nobody can move the camera until it has been acquired with the pan/tilt/zoom constraints, which is what
         // asks the local participant for the second permission.
         if (!await dispatch(acquireCameraPtzCapabilities())) {
@@ -366,7 +373,9 @@ export function acquireCameraPtzCapabilities() {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { capabilities } = getCameraPtzState(getState()).local;
 
-        if (capabilities) {
+        // A refused permission leaves an empty set of ranges behind, which must not read as a camera that can be
+        // driven, or a later grant would succeed and then move nothing.
+        if (capabilities && Object.keys(capabilities).length) {
             return capabilities;
         }
 
