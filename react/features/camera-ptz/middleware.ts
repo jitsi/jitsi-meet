@@ -82,6 +82,8 @@ function _applyCameraControl({ getState }: IStore, message: ICameraControlMessag
     const values = toDeviceValues(sanitizePtzValues(message.values), capabilities);
 
     if (!Object.keys(values).length) {
+        logger.warn('Nothing to apply to the camera, no requested axis is driveable on it');
+
         return;
     }
 
@@ -221,7 +223,7 @@ function _onParticipantLeft(store: IStore, participantId: string) {
     }
 
     if (owner.pendingRequest === participantId) {
-        clearTimer(CameraControlTimer.REQUEST);
+        clearTimer(CameraControlTimer.APPROVAL);
         dispatch(setOwnerPendingRequest());
     }
 
@@ -255,7 +257,7 @@ function _onKeepalive({ dispatch, getState }: IStore) {
  * @returns {void}
  */
 function _startApprovalTimeout({ dispatch, getState }: IStore, from: string) {
-    startTimeout(CameraControlTimer.REQUEST, CONTROL_REQUEST_TIMEOUT_MS, () => {
+    startTimeout(CameraControlTimer.APPROVAL, CONTROL_REQUEST_TIMEOUT_MS, () => {
         if (getCameraPtzState(getState()).owner.pendingRequest === from) {
             logger.info(`Camera control request from ${from} was not answered`);
             dispatch(denyCameraControlRequest(CameraControlDenyReason.DENIED, from));
