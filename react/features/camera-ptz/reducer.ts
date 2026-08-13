@@ -3,6 +3,7 @@ import { set } from '../base/redux/functions';
 
 import {
     CLEAR_OWNER_LOCK,
+    SET_CONTROLLER_FRAMING,
     SET_CONTROLLER_SESSION,
     SET_FAR_END_CONTROL_OPT_IN,
     SET_OWNER_LOCK,
@@ -11,7 +12,7 @@ import {
     UPDATE_LOCAL_PTZ_SUPPORT
 } from './actionTypes';
 import { PTZControlState } from './constants';
-import { ILocalPTZSupport } from './types';
+import { ILocalPTZSupport, IPTZValues } from './types';
 
 const DEFAULT_STATE = {
     controller: {
@@ -24,9 +25,19 @@ const DEFAULT_STATE = {
 
 export interface ICameraPtzState {
     controller: {
+
+        /**
+         * What the camera under control was last asked for, until its owner confirms it arrived.
+         */
+        commanded?: IPTZValues;
         state: PTZControlState;
         target?: string;
         token?: number;
+
+        /**
+         * Where the camera under control is, as its owner reports it.
+         */
+        values?: IPTZValues;
     };
     farEndControlOptIn?: boolean;
     local: ILocalPTZSupport;
@@ -58,6 +69,14 @@ ReducerRegistry.register<ICameraPtzState>(
                     // Granting the lock resolves the request that asked for it.
                     pendingRequest: undefined,
                     token: action.token
+                }
+            };
+        case SET_CONTROLLER_FRAMING:
+            return {
+                ...state,
+                controller: {
+                    ...state.controller,
+                    ...action.framing
                 }
             };
         case SET_FAR_END_CONTROL_OPT_IN:

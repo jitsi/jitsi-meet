@@ -6,7 +6,8 @@ export const CAMERA_CONTROL_NOTIFICATION_ID = 'camera-control-request';
 
 /**
  * The camera owner is the sole authority for its own camera's lock: the controller sends
- * REQUEST/SET/KEEPALIVE/RELEASE, the owner replies GRANT/DENY/REVOKE.
+ * REQUEST/SET/KEEPALIVE/RELEASE, the owner replies GRANT/DENY/REVOKE and reports where the camera ended up with
+ * STATE, which is the only way the controlling side can know rather than assume.
  */
 export enum CameraControlAction {
     DENY = 'deny',
@@ -15,7 +16,8 @@ export enum CameraControlAction {
     RELEASE = 'release',
     REQUEST = 'request',
     REVOKE = 'revoke',
-    SET = 'set'
+    SET = 'set',
+    STATE = 'state'
 }
 
 /**

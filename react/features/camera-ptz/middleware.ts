@@ -11,8 +11,10 @@ import {
     denyCameraControlRequest,
     refreshOwnerLease,
     releaseCameraControl,
+    reportCameraFraming,
     revokeCameraControl,
     sendCameraControlKeepalive,
+    setControllerFraming,
     setControllerSession,
     setOwnerPendingRequest,
     setParticipantPtzCapability
@@ -27,6 +29,7 @@ import {
     PTZControlState
 } from './constants';
 import {
+    fromDeviceValues,
     getCameraPtzState,
     getLocalCameraTrack,
     isLocalCameraOfferedForFarEndControl,
@@ -60,11 +63,15 @@ MiddlewareRegistry.register(store => next => action => {
  * Values arrive in a device independent range, so they are mapped onto what this camera accepts before being applied.
  * The ranges are only known once the pan/tilt/zoom permission has been granted.
  *
+ * Where the camera settles is reported back, since it is free to clamp what it was asked for and the controlling
+ * side has no other way of knowing where it is pointing.
+ *
  * @param {IStore} store - The redux store.
+ * @param {string} from - The participant driving the camera.
  * @param {ICameraControlMessage} message - The message asking for the move.
- * @returns {void}
+ * @returns {Promise<void>}
  */
-function _applyCameraControl({ getState }: IStore, message: ICameraControlMessage) {
+async function _applyCameraControl({ dispatch, getState }: IStore, from: string, message: ICameraControlMessage) {
     const state = getState();
     const { capabilities } = getCameraPtzState(state).local;
     const track = getLocalCameraTrack(state);
@@ -87,8 +94,14 @@ function _applyCameraControl({ getState }: IStore, message: ICameraControlMessag
         return;
     }
 
-    track.setCameraControl(values)
-        .catch((error: Error) => logger.warn('The camera rejected the pan/tilt/zoom values', error));
+    try {
+        await track.setCameraControl(values);
+    } catch (error) {
+        logger.warn('The camera rejected the pan/tilt/zoom values', error);
+    }
+
+    // Reported either way: a camera that refused the values is still somewhere, and the driving side needs to know.
+    dispatch(reportCameraFraming(from, fromDeviceValues(track.getCameraControlSettings(), capabilities)));
 }
 
 /**
@@ -115,6 +128,7 @@ function _onEndpointMessage(store: IStore, from: string | undefined, data?: ICam
     case CameraControlAction.GRANT:
     case CameraControlAction.DENY:
     case CameraControlAction.REVOKE:
+    case CameraControlAction.STATE:
         _onControllerMessage(store, from, data);
         break;
     }
@@ -137,22 +151,29 @@ function _onControllerMessage(store: IStore, from: string, message: ICameraContr
         return;
     }
 
-    clearTimer(CameraControlTimer.REQUEST);
-
     switch (message.action) {
     case CameraControlAction.GRANT:
         logger.info(`Granted control of the camera of ${from} under token ${message.token}`);
+        clearTimer(CameraControlTimer.REQUEST);
         dispatch(setControllerSession(PTZControlState.CONTROLLING, from, message.token));
         startInterval(CameraControlTimer.KEEPALIVE, CONTROL_KEEPALIVE_INTERVAL_MS, () => _onKeepalive(store));
         break;
     case CameraControlAction.DENY:
         logger.info(`Control of the camera of ${from} was denied: ${message.reason}`);
+        clearTimer(CameraControlTimer.REQUEST);
         dispatch(setControllerSession(_deniedState(message.reason), from));
         break;
     case CameraControlAction.REVOKE:
         logger.info(`Control of the camera of ${from} was taken back: ${message.reason}`);
         clearTimer(CameraControlTimer.KEEPALIVE);
+        clearTimer(CameraControlTimer.REQUEST);
         dispatch(setControllerSession(PTZControlState.IDLE));
+        break;
+    case CameraControlAction.STATE:
+        dispatch(setControllerFraming({
+            commanded: undefined,
+            values: sanitizePtzValues(message.values)
+        }));
         break;
     }
 }
@@ -187,7 +208,7 @@ function _onOwnerMessage(store: IStore, from: string, message: ICameraControlMes
         break;
     case CameraControlAction.SET:
         if (isHolder) {
-            _applyCameraControl(store, message);
+            _applyCameraControl(store, from, message);
             dispatch(refreshOwnerLease());
         }
         break;

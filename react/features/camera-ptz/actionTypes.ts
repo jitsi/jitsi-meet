@@ -22,6 +22,17 @@ export const SET_CONTROLLER_SESSION = 'SET_CONTROLLER_SESSION';
 export const SET_FAR_END_CONTROL_OPT_IN = 'SET_FAR_END_CONTROL_OPT_IN';
 
 /**
+ * Records where the camera under control is, as its owner reports it, and what it was last asked for while it is
+ * still travelling.
+ *
+ * {
+ *     type: SET_CONTROLLER_FRAMING,
+ *     framing: { commanded?: IPTZValues, values?: IPTZValues }
+ * }
+ */
+export const SET_CONTROLLER_FRAMING = 'SET_CONTROLLER_FRAMING';
+
+/**
  * Records the remote participant holding the lock on the local camera until the lease expires.
  *
  * {
