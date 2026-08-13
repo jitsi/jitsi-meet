@@ -6,6 +6,7 @@ import { createLocalTracksF } from '../base/tracks/functions';
 
 import {
     CLEAR_OWNER_LOCK,
+    SET_CONTROLLER_FRAMING,
     SET_CONTROLLER_SESSION,
     SET_FAR_END_CONTROL_OPT_IN,
     SET_OWNER_LOCK,
@@ -190,11 +191,52 @@ export function sendCameraControl(values: IPTZValues) {
             return;
         }
 
-        sendCameraControlMessage(getCurrentConference(state), target, {
+        const commanded = sanitizePtzValues(values);
+
+        if (!sendCameraControlMessage(getCurrentConference(state), target, {
             action: CameraControlAction.SET,
             token,
+            values: commanded
+        })) {
+            return;
+        }
+
+        // Held until the owner reports where the camera actually ended up, which may not be what was asked for.
+        dispatch(setControllerFraming({ commanded }));
+    };
+}
+
+/**
+ * Tells the participant driving the local camera where it ended up, and records it locally, since a camera is free
+ * to clamp what it was asked for.
+ *
+ * @param {string} to - The participant driving the camera.
+ * @param {IPTZValues} values - Where the camera settled.
+ * @returns {Function}
+ */
+export function reportCameraFraming(to: string, values: IPTZValues) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        dispatch(updateLocalPtzSupport({ commanded: undefined,
+            values }));
+
+        sendCameraControlMessage(getCurrentConference(getState()), to, {
+            action: CameraControlAction.STATE,
+            token: getCameraPtzState(getState()).owner.token,
             values
         });
+    };
+}
+
+/**
+ * Records where the camera under control is, and what it was last asked for.
+ *
+ * @param {Object} framing - The reported and commanded values to merge.
+ * @returns {Object}
+ */
+export function setControllerFraming(framing: { commanded?: IPTZValues; values?: IPTZValues; }) {
+    return {
+        type: SET_CONTROLLER_FRAMING,
+        framing
     };
 }
 
@@ -299,6 +341,9 @@ export function grantCameraControl(participantId: string) {
         logger.info(`Camera control granted to ${participantId} under token ${token}`);
         dispatch(setOwnerLock(participantId, token, Date.now() + CONTROL_LEASE_MS));
         dispatch(startOwnerLeaseTimer());
+
+        // So that the controlling side starts out knowing where the camera is pointing rather than guessing.
+        dispatch(reportCameraFraming(participantId, getCameraPtzState(getState()).local.values ?? {}));
     };
 }
 
