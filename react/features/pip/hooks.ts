@@ -45,17 +45,18 @@ interface IUseCanvasAvatarOptions {
     displayNameColor: string;
     fontFamily: string;
     initialsColor: string;
-    isAvatarVisible: boolean;
     participant: IParticipant | undefined;
+    shouldShowAvatar: boolean;
 }
 
 /**
  * Result returned by the useCanvasAvatar hook.
- * Returns a ref object so consumers can access .current inside effects
- * (the stream is created in an effect and won't be available at render time).
+ * The stream ref is populated in an effect, while publishFrame lets consumers
+ * explicitly deliver the current canvas after attaching it to a video element.
  */
 interface IUseCanvasAvatarResult {
     canvasStreamRef: React.MutableRefObject<MediaStream | null>;
+    publishFrame: () => void;
 }
 
 /**
@@ -92,10 +93,11 @@ function createDefaultIconImage(): HTMLImageElement {
 /**
  * Custom hook that manages canvas-based avatar rendering for Picture-in-Picture.
  * Creates and maintains a canvas element with a MediaStream that can be used
- * as a video source when the participant's video is unavailable.
+ * as a video source when the participant's video is unavailable. Avatar rendering
+ * is gated by shouldShowAvatar, while hidden content is cleared to avoid stale identity frames.
  *
  * @param {IUseCanvasAvatarOptions} options - The hook options.
- * @returns {IUseCanvasAvatarResult} The canvas stream for use as video source.
+ * @returns {IUseCanvasAvatarResult} The canvas stream and frame publication callback.
  */
 export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAvatarResult {
     const {
@@ -106,15 +108,13 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
         fontFamily,
         initialsColor,
         displayNameColor,
-        isAvatarVisible
+        shouldShowAvatar
     } = options;
 
     const refs = useRef<ICanvasRefs>({
         canvas: null,
         defaultIcon: null
     });
-
-    const shouldSkipAvatarRender = !browser.isElectron() && !isAvatarVisible;
 
     // Separate ref for the stream to return to consumers.
     // This allows consumers to access .current inside their effects.
@@ -124,6 +124,20 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
     // To fix this, we could return an additional state flag like `streamReady` that
     // changes when the stream is set, and consumers would add it to their effect deps.
     const streamRef = useRef<MediaStream | null>(null);
+
+    /**
+     * Publishes the canvas's current contents to its on-demand capture stream.
+     *
+     * @returns {void}
+     */
+    const publishFrame = useCallback(() => {
+        const track = streamRef.current?.getVideoTracks()[0] as MediaStreamTrack & { requestFrame?: () => void; };
+
+        if (track?.requestFrame) {
+            track.requestFrame();
+            logger.log('Canvas frame requested');
+        }
+    }, []);
 
     /**
      * Initialize canvas, stream, and default icon on mount.
@@ -157,12 +171,12 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
     }, []);
 
     /**
-     * Re-render avatar when participant or display name changes.
+     * Renders the avatar when it should be shown and clears stale participant content otherwise.
      */
     useEffect(() => {
         const { canvas, defaultIcon } = refs.current;
 
-        if (!canvas || shouldSkipAvatarRender) {
+        if (!canvas) {
             return;
         }
 
@@ -171,6 +185,14 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
         if (!ctx) {
             logger.error('Failed to get canvas 2D context');
 
+            return;
+        }
+
+        // Clear participant identity synchronously before the canvas can be attached to a new sink.
+        ctx.fillStyle = backgroundColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        if (!shouldShowAvatar) {
             return;
         }
 
@@ -185,20 +207,13 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
             fontFamily,
             initialsColor,
             displayNameColor
-        ).then(() => {
-            // Request a frame capture after drawing.
-            // For captureStream(0), we need to manually trigger frame capture.
-            const track = streamRef.current?.getVideoTracks()[0] as MediaStreamTrack & { requestFrame?: () => void; };
-
-            if (track?.requestFrame) {
-                track.requestFrame();
-                logger.log('Canvas frame requested after render');
-            }
-        }).catch((error: Error) => logger.error('Error rendering avatar on canvas:', error));
-    }, [ participant?.loadableAvatarUrl, participant?.loadableAvatarUrlUseCORS, participant?.name, displayName, customAvatarBackgrounds, backgroundColor, fontFamily, initialsColor, displayNameColor, shouldSkipAvatarRender ]);
+        ).then(publishFrame)
+            .catch((error: Error) => logger.error('Error rendering avatar on canvas:', error));
+    }, [ participant?.loadableAvatarUrl, participant?.loadableAvatarUrlUseCORS, participant?.name, displayName, customAvatarBackgrounds, backgroundColor, fontFamily, initialsColor, displayNameColor, shouldShowAvatar, publishFrame ]);
 
     return {
-        canvasStreamRef: streamRef
+        canvasStreamRef: streamRef,
+        publishFrame
     };
 }
 

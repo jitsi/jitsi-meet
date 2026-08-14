@@ -6,6 +6,8 @@ import { browser } from '../base/lib-jitsi-meet';
 import { IParticipant } from '../base/participants/types';
 import { getLocalVideoTrack } from '../base/tracks/functions.any';
 import { getVideoTrackByParticipant } from '../base/tracks/functions.web';
+import { ITrack } from '../base/tracks/types';
+import { isTrackStreamingStatusActive } from '../connection-indicator/functions';
 import { isPrejoinPageVisible } from '../prejoin/functions.any';
 
 import { toggleAudioFromPiP, toggleVideoFromPiP } from './actions';
@@ -67,6 +69,18 @@ export function getPiPVideoTrack(state: IReduxState, participant: IParticipant |
     return isOnPrejoin
         ? getLocalVideoTrack(state['features/base/tracks'])
         : getVideoTrackByParticipant(state, participant);
+}
+
+/**
+ * Returns whether PiP should show an avatar instead of the selected video track.
+ *
+ * @param {ITrack | undefined} videoTrack - The selected PiP video track.
+ * @returns {boolean} Whether the avatar should be shown.
+ */
+export function shouldShowPiPAvatar(videoTrack: ITrack | undefined): boolean {
+    return !videoTrack
+        || videoTrack.muted
+        || (!videoTrack.local && !isTrackStreamingStatusActive(videoTrack));
 }
 
 /**

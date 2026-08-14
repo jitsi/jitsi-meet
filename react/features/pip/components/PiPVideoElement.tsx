@@ -6,14 +6,13 @@ import { IReduxState, IStore } from '../../app/types';
 import { getAvatarFont, getAvatarInitialsColor } from '../../base/avatar/components/web/styles';
 import { browser } from '../../base/lib-jitsi-meet';
 import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants/functions';
-import { isTrackStreamingStatusActive } from '../../connection-indicator/functions';
 import { getDisplayNameColor } from '../../display-name/components/web/styles';
 import { getThumbnailBackgroundColor } from '../../filmstrip/functions.web';
 import { getLargeVideoParticipant } from '../../large-video/functions';
 import { isPrejoinPageVisible } from '../../prejoin/functions.any';
 import { handlePiPLeaveEvent, handlePipEnterEvent, handleWindowBlur, handleWindowFocus } from '../actions';
 import { FOCUS_CHECK_DELAY_MS } from '../constants';
-import { getPiPVideoTrack } from '../functions';
+import { getPiPVideoTrack, shouldShowPiPAvatar } from '../functions';
 import { useCanvasAvatar } from '../hooks';
 import logger from '../logger';
 import type { IWebKitPictureInPictureVideoElement } from '../types';
@@ -85,11 +84,9 @@ const PiPVideoElement: React.FC = () => {
     const displayNameColor = getDisplayNameColor(theme);
 
     // Determine if we should show avatar instead of video.
-    const shouldShowAvatar = !videoTrack
-        || videoTrack.muted
-        || (!videoTrack.local && !isTrackStreamingStatusActive(videoTrack));
+    const shouldShowAvatar = shouldShowPiPAvatar(videoTrack);
 
-    const { canvasStreamRef } = useCanvasAvatar({
+    const { canvasStreamRef, publishFrame } = useCanvasAvatar({
         participant,
         displayName,
         customAvatarBackgrounds,
@@ -97,7 +94,7 @@ const PiPVideoElement: React.FC = () => {
         fontFamily,
         initialsColor,
         displayNameColor,
-        isAvatarVisible: shouldShowAvatar
+        shouldShowAvatar
     });
 
     /**
@@ -129,6 +126,7 @@ const PiPVideoElement: React.FC = () => {
             // Only set srcObject if it's different to avoid interrupting playback.
             if (canvasStream && videoElement.srcObject !== canvasStream) {
                 videoElement.srcObject = canvasStream;
+                publishFrame();
             }
         } else if (videoTrack?.jitsiTrack) {
             // Attach real video track.
@@ -150,7 +148,7 @@ const PiPVideoElement: React.FC = () => {
                 }
             }
         };
-    }, [ videoTrack, shouldShowAvatar ]);
+    }, [ videoTrack, shouldShowAvatar, publishFrame ]);
 
     /**
      * Effect: Use WebKit presentation modes to enter and leave Video PiP on tab switches.
