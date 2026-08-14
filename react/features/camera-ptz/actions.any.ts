@@ -1,5 +1,6 @@
 import { IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
+import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { replaceLocalTrack } from '../base/tracks/actions';
 import { createLocalTracksF } from '../base/tracks/functions';
@@ -42,6 +43,22 @@ let lastToken = 0;
  * chase each other.
  */
 let acquiring = false;
+
+/**
+ * Whether the local participant has refused pan/tilt/zoom for this origin, as opposed to the camera simply not
+ * having any. A browser that will not answer is taken as not having refused.
+ *
+ * @returns {Promise<boolean>}
+ */
+async function _isPtzPermissionRefused(): Promise<boolean> {
+    try {
+        return await JitsiMeetJS.mediaDevices.getCameraPTZPermission() === 'denied';
+    } catch (error) {
+        logger.warn('Could not read the camera PTZ permission', error);
+
+        return false;
+    }
+}
 
 /**
  * Returns the next grant token. Tokens only ever increase, so a message belonging to a superseded grant can be told
@@ -471,6 +488,12 @@ export function acquireCameraPtzCapabilities() {
         const ranges = newTrack.getCameraControlCapabilities();
         const driveable = Boolean(ranges.pan || ranges.tilt || ranges.zoom);
 
+        // A camera that reports nothing was either refused or has nothing to report, and the two are not the same:
+        // refusing applies to every camera on the origin, while a camera without the controls says nothing about
+        // the next one. Only the permission itself tells them apart, and a browser never asks about a camera that
+        // has no pan/tilt/zoom to ask about.
+        const refused = !driveable && await _isPtzPermissionRefused();
+
         dispatch(updateLocalPtzSupport({
             axes: {
                 pan: Boolean(ranges.pan),
@@ -478,12 +501,14 @@ export function acquireCameraPtzCapabilities() {
                 zoom: Boolean(ranges.zoom)
             },
             capabilities: ranges,
-            permission: driveable ? 'granted' : 'denied',
+            permission: refused ? 'denied' : 'granted',
             values: fromDeviceValues(newTrack.getCameraControlSettings(), ranges)
         }));
 
         if (!driveable) {
-            logger.warn('The camera was acquired without pan/tilt/zoom, the permission was refused');
+            logger.warn(refused
+                ? 'The pan/tilt/zoom permission was refused'
+                : 'This camera reports no pan/tilt/zoom, so there is nothing to drive');
 
             return undefined;
         }
