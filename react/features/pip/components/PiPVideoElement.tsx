@@ -82,8 +82,6 @@ const PiPVideoElement: React.FC = () => {
     const fontFamily = (avatarFont as any).fontFamily ?? 'Inter, sans-serif';
     const initialsColor = getAvatarInitialsColor(theme);
     const displayNameColor = getDisplayNameColor(theme);
-
-    // Determine if we should show avatar instead of video.
     const shouldShowAvatar = shouldShowPiPAvatar(videoTrack);
 
     const { canvasStreamRef, publishFrame } = useCanvasAvatar({
