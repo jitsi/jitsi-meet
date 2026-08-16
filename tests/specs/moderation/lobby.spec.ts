@@ -8,7 +8,6 @@ import {
     hangupAllParticipants
 } from '../../helpers/participants';
 import type { IJoinOptions } from '../../helpers/types';
-import type PreMeetingScreen from '../../pageobjects/PreMeetingScreen';
 
 setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2', 'p3' ]
@@ -40,8 +39,8 @@ describe('Lobby', () => {
 
         const notificationText = await p2.getNotifications().getLobbyParticipantAccessGranted();
 
-        expect(notificationText.includes(P1)).toBe(true);
-        expect(notificationText.includes(P3)).toBe(true);
+        expect(notificationText).toContain(P1);
+        expect(notificationText).toContain(P3);
 
         await p2.getNotifications().closeLobbyParticipantAccessGranted();
 
@@ -73,8 +72,8 @@ describe('Lobby', () => {
         // deny notification on 2nd participant
         const notificationText = await p2.getNotifications().getLobbyParticipantAccessDenied();
 
-        expect(notificationText.includes(P1)).toBe(true);
-        expect(notificationText.includes(P3)).toBe(true);
+        expect(notificationText).toContain(P1);
+        expect(notificationText).toContain(P3);
 
         await p2.getNotifications().closeLobbyParticipantAccessDenied();
 
@@ -393,7 +392,7 @@ async function enableLobby() {
     await p1SecurityDialog.toggleLobby();
     await p1SecurityDialog.waitForLobbyEnabled();
 
-    expect((await p2.getNotifications().getLobbyEnabledText()).includes(p1.name)).toBe(true);
+    expect(await p2.getNotifications().getLobbyEnabledText()).toContain(p1.name);
 
     await p2.getNotifications().closeLobbyEnabled();
 
@@ -445,10 +444,8 @@ async function enterLobby(participant: Participant, enterDisplayName = false, us
     });
 
     const { p3 } = ctx;
-    let screen: PreMeetingScreen;
+    let screen;
 
-    // WebParticipant participant3 = getParticipant3();
-    // ParentPreMeetingScreen lobbyScreen;
     if (usePreJoin) {
         screen = p3.getPreJoinScreen();
     } else {
@@ -469,11 +466,11 @@ async function enterLobby(participant: Participant, enterDisplayName = false, us
     expect(await joinButton.isExisting()).toBe(true);
 
     if (enterDisplayName) {
-        let classes = await joinButton.getAttribute('class');
+        let classes = await joinButton.getAttribute('class') || '';
 
         if (!usePreJoin) {
             // check join button is disabled
-            expect(classes.includes('disabled')).toBe(true);
+            expect(classes).toContain('disabled');
         }
 
         // TODO check that password is hidden as the room does not have password
@@ -483,8 +480,8 @@ async function enterLobby(participant: Participant, enterDisplayName = false, us
         await screen.enterDisplayName(P3);
 
         // check join button is enabled
-        classes = await joinButton.getAttribute('class');
-        expect(classes.includes('disabled')).toBe(false);
+        classes = await joinButton.getAttribute('class') || '';
+        expect(classes).not.toContain('disabled');
     }
 
     // click join button

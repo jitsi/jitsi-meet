@@ -40,10 +40,11 @@ export const getMainRoom = (stateful: IStateful) => {
  * Returns the rooms info.
  *
  * @param {IStateful} stateful - The redux store, the redux.
-
-* @returns {IRoomsInfo} The rooms info.
+ * @param {boolean} includeHidden - Whether to include hidden participants
+ * (e.g. Jibri, transcriber) in the result. Defaults to false.
+ * @returns {IRoomsInfo} The rooms info.
  */
-export const getRoomsInfo = (stateful: IStateful) => {
+export const getRoomsInfo = (stateful: IStateful, includeHidden = false) => {
     const state = toState(stateful);
     const localParticipant = getLocalParticipant(stateful);
     const jwtUser = state['features/base/jwt']?.user;
@@ -56,6 +57,7 @@ export const getRoomsInfo = (stateful: IStateful) => {
     };
     const breakoutRooms = getBreakoutRooms(stateful);
     const conference = getCurrentConference(stateful);
+    const { iAmRecorder } = state['features/base/config'];
 
     const initialRoomsInfo = {
         rooms: []
@@ -65,7 +67,7 @@ export const getRoomsInfo = (stateful: IStateful) => {
     if (!breakoutRooms || Object.keys(breakoutRooms).length === 0) {
         // filter out hidden participants
         const conferenceParticipants = conference?.getParticipants()
-            .filter((participant: IJitsiParticipant) => !participant.isHidden());
+            .filter((participant: IJitsiParticipant) => includeHidden || !participant.isHidden());
 
         let localParticipantInfo;
 
@@ -97,7 +99,13 @@ export const getRoomsInfo = (stateful: IStateful) => {
                                 displayName: participantItem.getDisplayName(),
                                 avatarUrl: storeParticipant?.loadableAvatarUrl,
                                 id: participantItem.getId(),
-                                userContext: storeParticipant?.userContext
+                                userContext: storeParticipant?.userContext,
+                                isJigasi: participantItem.getProperty('features_jigasi') === true,
+                                // A participant can be hidden because it's a transcriber or Jibri using
+                                // the hidden domain, or it can be a user hidden from the recorder.
+                                isHidden: participantItem.isHidden() || (iAmRecorder && participantItem.isHiddenFromRecorder()),
+                                audioMuted: participantItem.isAudioMuted(),
+                                videoMuted: participantItem.isVideoMuted()
                             } as IRoomInfoParticipant;
                         }) ]
                     : [ localParticipantInfo ]

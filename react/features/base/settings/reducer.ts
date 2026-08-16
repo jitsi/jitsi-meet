@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { escape } from 'lodash-es';
 
@@ -36,7 +35,7 @@ const DEFAULT_STATE: ISettingsState = {
     soundsParticipantLeft: true,
     soundsTalkWhileMuted: true,
     soundsReactions: true,
-    startAudioOnly: false,
+    startLowBandwidthMode: false,
     startCarMode: false,
     startWithAudioMuted: false,
     startWithVideoMuted: false,
@@ -82,8 +81,8 @@ export interface ISettingsState {
     soundsParticipantLeft?: boolean;
     soundsReactions?: boolean;
     soundsTalkWhileMuted?: boolean;
-    startAudioOnly?: boolean;
     startCarMode?: boolean;
+    startLowBandwidthMode?: boolean;
     startWithAudioMuted?: boolean;
     startWithVideoMuted?: boolean;
     userSelectedAudioOutputDeviceId?: string;

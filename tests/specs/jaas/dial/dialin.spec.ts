@@ -48,7 +48,7 @@ describe('Dial-in', () => {
         if (expectations.dialIn.enabled !== null) {
             await assertDialInDisplayed(p1, expectations.dialIn.enabled);
         }
-        if (expectations.dialIn.enabled === true) {
+        if (expectations.dialIn.moreNumbersPage) {
             // TODO: assert the page is NOT shown when the expectation is false.
             await verifyMoreNumbersPage(p1);
         }
@@ -57,7 +57,7 @@ describe('Dial-in', () => {
     it('dial-in', async () => {
         const dialInPin = await p1.getDialInPin();
 
-        expect(dialInPin.length >= 8).toBe(true);
+        expect(dialInPin.length).toBeGreaterThanOrEqual(8);
 
         await dialIn(dialInPin);
         await waitForMedia(p1);

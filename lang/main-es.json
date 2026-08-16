@@ -36,9 +36,6 @@
         "phone": "Teléfono",
         "speaker": "Altavoz"
     },
-    "audioOnly": {
-        "audioOnly": "Solo sonido y pantalla compartida"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "por ejemplo 10000000 para 10 Mbps",
         "assumedBandwidthBpsWarning": "Valores más altos podrían causar problemas de red.",
@@ -578,8 +575,6 @@
         "googlePrivacyPolicy": "Política de Privacidad de Google",
         "inProgress": "Grabación o transmisión en vivo en curso",
         "invalidStreamKey": "Es posible que la clave de transmisión sea incorrecta, o no es de YouTube.",
-        "limitNotificationDescriptionNative": "Su transmisión estará limitada a {{limit}} minutos. Puede obtener transmisiones ilimitadas en {{app}}.",
-        "limitNotificationDescriptionWeb": "Debido a la alta demanda su transmisión estará limitada a {{limit}} minutos. Puede obtener transmisiones ilimitadas en <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "off": "Se detuvo la transmisión",
         "offBy": "{{name}} detuvo la transmisión",
         "on": "Transmitiendo en vivo",
@@ -669,6 +664,9 @@
     "lonelyMeetingExperience": {
         "button": "Invita a otros",
         "youAreAlone": "Estás solo"
+    },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Solo sonido y pantalla compartida"
     },
     "me": "yo",
     "notify": {
@@ -885,6 +883,7 @@
         "or": "o",
         "premeeting": "Pre-reunión",
         "proceedAnyway": "Continuar de todos modos",
+        "recordingWarning": "Otros participantes pueden estar grabando esta llamada",
         "screenSharingError": "Error al compartir pantalla:",
         "startWithPhone": "Iniciar con audio de llamada telefónica",
         "unsafeRoomConsent": "Comprendo los riesgos, quiero unirme a la reunión",
@@ -947,8 +946,6 @@
         "highlightMomentSuccess": "Momento destacado",
         "highlightMomentSucessDescription": "Su momento destacado será agregado al resumen de la reunión.",
         "inProgress": "Grabación o transmisión en vivo en curso",
-        "limitNotificationDescriptionNative": "Su grabación estará limitada a {{limit}} minutos. Puede obtener grabaciones ilimitadas en <3>{{app}}</3>.",
-        "limitNotificationDescriptionWeb": "Debido a la alta demanda su grabación estará limitada a {{limit}} minutos. Puede obtener grabaciones ilimitadas en <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Hemos generado un enlace a su grabación.",
         "live": "EN VIVO",
         "localRecordingNoNotificationWarning": "La grabación no será anunciada al resto de participantes. Necesitarás hacerles saber que la reunión está siendo grabada.",
@@ -990,7 +987,7 @@
         "about": "Puedes agregar una contraseña a la reunión. Los participantes necesitarán la contraseña para unirse a la reunión.",
         "aboutReadOnly": "Los participantes moderadores pueden agregar una $t(lockRoomPassword) a la reunión. Los participantes deberán proporcionar la $t(lockRoomPassword) antes de que se les permita unirse a la reunión.",
         "insecureRoomNameWarningNative": "El nombre de esta sala es inseguro. Participantes indeseados podrían ingresar a su reunión. {{recommendAction}} Aprenda más sobre asegurar su reunión ",
-        "insecureRoomNameWarningWeb": "El nombre de esta sala es inseguro. Participantes indeseados podrían ingresar a su reunión. {{recommendAction}} Aprenda más sobre asegurar su reunión <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">aquí</a>.",
+        "insecureRoomNameWarningWeb": "El nombre de esta sala es inseguro. Participantes indeseados podrían ingresar a su reunión. {{recommendAction}} Aprenda más sobre asegurar su reunión <a href=\"{{securityUrl}}\" target=\"_blank\">aquí</a>.",
         "title": "Opciones de seguridad",
         "unsafeRoomActions": {
             "meeting": "Considere hacer más segura su reunión utilizando el botón de seguridad.",
@@ -1115,7 +1112,6 @@
         "Settings": "Configuración",
         "accessibilityLabel": {
             "Settings": "Alternar configuración",
-            "audioOnly": "Alternar cámaras de los demás",
             "audioRoute": "Seleccionar el dispositivo de sonido",
             "boo": "Boo",
             "breakoutRoom": "Unirse/abandonar sala para grupos pequeños",
@@ -1156,6 +1152,7 @@
             "lobbyButton": "Activar / desactivar el modo lobby",
             "localRecording": "Alternar controles de grabación local",
             "lockRoom": "Alternar contraseña de la reunión",
+            "lowBandwidthMode": "Alternar cámaras de los demás",
             "lowerHand": "Bajar mano",
             "moreActions": "Alternar más acciones",
             "moreActionsMenu": "Menú de más acciones",
@@ -1203,8 +1200,6 @@
             "videounmute": "Encender cámara"
         },
         "addPeople": "Agregar personas a la llamada",
-        "audioOnlyOff": "Mostrar cámaras de los demás",
-        "audioOnlyOn": "Ocultar cámaras de los demás (para ahorrar datos)",
         "audioRoute": "Selecciona el dispositivo de sonido",
         "audioSettings": "Ajustes de audio",
         "authenticate": "Autenticar",
@@ -1244,6 +1239,8 @@
         "lobbyButtonEnable": "Activar el modo lobby",
         "login": "Inicio de sesión",
         "logout": "Cerrar sesión",
+        "lowBandwidthModeOff": "Mostrar cámaras de los demás",
+        "lowBandwidthModeOn": "Ocultar cámaras de los demás (para ahorrar datos)",
         "lowerYourHand": "Bajar la mano",
         "moreActions": "Más acciones",
         "moreOptions": "Más opciones",
@@ -1331,8 +1328,6 @@
     },
     "videoStatus": {
         "adjustFor": "Ajustar para:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Estás en modo de ancho de banda bajo. En este modo, sólo recibirás audio y pantalla compartida.",
         "bestPerformance": "Mejor rendimiento",
         "callQuality": "Calidad de vídeo",
         "hd": "HD",
@@ -1340,9 +1335,11 @@
         "highDefinition": "Alta definición",
         "highestQuality": "Calidad máxima",
         "labelTooiltipNoVideo": "Sin vídeo",
-        "labelTooltipAudioOnly": "Modo de ancho de banda bajo habilitado",
+        "labelTooltipLowBandwidthMode": "Modo de ancho de banda bajo habilitado",
         "ld": "LD",
         "ldTooltip": "Viendo vídeo en baja definición",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Estás en modo de ancho de banda bajo. En este modo, sólo recibirás audio y pantalla compartida.",
         "lowDefinition": "Baja definición",
         "performanceSettings": "Ajustes de rendimiento",
         "recording": "Grabación en curso",

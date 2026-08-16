@@ -260,4 +260,12 @@ function M.verify(token, expectedAlgo, key, acceptedIssuers, acceptedAudiences)
 	return body
 end
 
+-- Expose internals for unit testing (harmless in production).
+M._internals = {
+    verify_claim    = verify_claim,
+    split_token     = split_token,
+    parse_token     = parse_token,
+    strip_signature = strip_signature,
+}
+
 return M

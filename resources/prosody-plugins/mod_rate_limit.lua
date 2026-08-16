@@ -39,6 +39,8 @@ local function load_config()
 	config.iq_rate = module:get_option_number("rate_limit_iq_rate", 15);
 	-- Max allowed message rate in events per second.
 	config.message_rate = module:get_option_number("rate_limit_message_rate", 3);
+    -- Number of stanza rate violations allowed while already throttled before the session is closed.
+    config.max_violations = module:get_option_number("rate_limit_max_violations", 10);
 
 	-- A list of hosts for which sessions we ignore rate limiting
 	config.whitelist_hosts = module:get_option_set("rate_limit_whitelist_hosts", {});
@@ -50,8 +52,8 @@ local function load_config()
 	module:log("info", "Loaded configuration: ");
 	module:log("info", "- ip_rate=%s bytes/sec, session_rate=%s bytes/sec, timeout=%s sec, cache size=%s, whitelist=%s, whitelist_hosts=%s",
             config.ip_rate, config.session_rate, config.timeout, config.cache_size, wl, wl_hosts);
-	module:log("info", "- login_rate=%s/sec, presence_rate=%s/sec, iq_rate=%s/sec, message_rate=%s/sec",
-			config.login_rate, config.presence_rate, config.iq_rate, config.message_rate);
+    module:log("info", "- login_rate=%s/sec, presence_rate=%s/sec, iq_rate=%s/sec, message_rate=%s/sec, max_violations=%s",
+            config.login_rate, config.presence_rate, config.iq_rate, config.message_rate, config.max_violations);
 end
 load_config();
 
@@ -117,12 +119,13 @@ end
 
 -- Throttles reading from the connection of a specific session.
 local function throttle_session(session, rate, timeout)
-    if not session.jitsi_throttle then
+    if not session.jitsi_throttle and not session.jitsi_throttle_setlimit then
         if (session.conn and session.conn.setlimit) then
             session.jitsi_throttle_counter = session.jitsi_throttle_counter + 1;
             module:log("info", "Enabling throttle (%s bytes/s) via setlimit, session=%s, ip=%s, counter=%s.",
                 rate, session.id, session.ip, session.jitsi_throttle_counter);
             session.conn:setlimit(rate);
+            session.jitsi_throttle_setlimit = true;
             if timeout then
                 if session.jitsi_throttle_timer then
                     -- if there was a timer stop it as we will schedule a new one
@@ -134,7 +137,9 @@ local function throttle_session(session, rate, timeout)
                         module:log("info", "Stop throttling session=%s, ip=%s.", session.id, session.ip);
                         session.conn:setlimit(0);
                     end
+                    session.jitsi_throttle_setlimit = nil;
                     session.jitsi_throttle_timer = nil;
+                    session.jitsi_throttle_violations = 0;
                 end);
             end
         else
@@ -146,7 +151,9 @@ local function throttle_session(session, rate, timeout)
         end
 	else
 		-- update the throttling start
-		session.jitsi_throttle.start = gettime();
+        if session.jitsi_throttle then
+            session.jitsi_throttle.start = gettime();
+        end
 	end
 end
 
@@ -156,10 +163,20 @@ function filter_stanza(stanza, session)
 	if rate then
 		local ok, _, _ = rate:poll(1, true);
 		if not ok then
-			module:log("info", "%s rate exceeded for %s, limiting.", stanza.name, session.full_jid);
-			throttle_session(session, config.session_rate, config.timeout);
-		end
-	end
+            if session.jitsi_throttle or session.jitsi_throttle_setlimit then
+                -- already throttled and still violating
+                session.jitsi_throttle_violations = session.jitsi_throttle_violations + 1;
+                if session.jitsi_throttle_violations >= config.max_violations then
+                    module:log("warn", "%s rate exceeded %d times while throttled for %s, closing connection.",
+                        stanza.name, session.jitsi_throttle_violations, session.full_jid);
+                    session:close({ condition = "policy-violation", text = "Rate limit exceeded" });
+                    return;
+                end
+            end
+            module:log("info", "%s rate exceeded for %s, limiting.", stanza.name, session.full_jid);
+            throttle_session(session, config.session_rate, config.timeout);
+        end
+    end
 
 	return stanza;
 end
@@ -195,6 +212,7 @@ local function filter_hook(session)
 
 	-- creates the stanzas rates
 	session.jitsi_throttle_counter = 0;
+    session.jitsi_throttle_violations = 0;
 	session.presence_rate = new_throttle(config.presence_rate, 2);
 	session.iq_rate = new_throttle(config.iq_rate, 2);
 	session.message_rate = new_throttle(config.message_rate, 2);

@@ -72,6 +72,11 @@ export interface IToggleScreenSharingOptions {
 export type DesktopSharingSourceType = 'screen' | 'window';
 
 export interface IShareOptions {
+    // Direct-cast screenshare: a screenshare arriving over a plain RTCPeerConnection can
+    // carry system audio too. When present alongside
+    // desktopStream, this audio track is published via the native screenshare-audio
+    // path (AudioMixer effect + setScreenshareAudioTrack).
+    desktopAudioTrack?: any;
     desktopSharingSourceDevice?: string;
     desktopSharingSources?: Array<DesktopSharingSourceType>;
     desktopStream?: any;

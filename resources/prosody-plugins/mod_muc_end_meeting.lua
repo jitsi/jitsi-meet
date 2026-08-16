@@ -1,5 +1,25 @@
--- A global module which can be used as http endpoint to end meetings. The provided token
---- in the request is verified whether it has the right to do so.
+-- Global HTTP module that exposes a POST /end-meeting endpoint for terminating
+-- MUC rooms via an authenticated API call.  Intended for internal system use
+-- (e.g. by a backend service), not for end-user clients.
+--
+-- Authentication uses a SEPARATE ASAP key pair from the one used for login
+-- tokens (mod_auth_token).  The key server URL is read from
+-- prosody_password_public_key_repo_url (not asap_key_server), so login tokens
+-- are not accepted.
+--
+-- Request format:
+--   POST /end-meeting?conference=<room-jid>[&silent-reconnect=true]
+--   Authorization: Bearer <system-token>
+--
+-- Responses:
+--   200  Room destroyed.
+--   400  Missing or invalid query parameters.
+--   401  Missing, malformed, or unverifiable token.
+--   404  Room not found.
+--
+-- When silent-reconnect=true the room is destroyed with an alternate-venue JID
+-- so clients silently reconnect rather than showing a "meeting ended" screen.
+--
 -- Copyright (C) 2023-present 8x8, Inc.
 
 module:set_global();
@@ -11,8 +31,7 @@ local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 local starts_with = util.starts_with;
 
-local neturl = require "net.url";
-local parse = neturl.parseQuery;
+local parse = require "util.http".formdecode;
 
 -- will be initialized once the main virtual host module is initialized
 local token_util;

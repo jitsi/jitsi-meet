@@ -39,9 +39,6 @@
         "phone": "Sími",
         "speaker": "Hátalari"
     },
-    "audioOnly": {
-        "audioOnly": "Lítil bandbreidd"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "t.d. 10000000 fyrir 10 Mbps",
         "assumedBandwidthBpsWarning": "Hærri gildi geta leitt til vandamála í netkerfi.",
@@ -622,8 +619,6 @@
         "googlePrivacyPolicy": "Meðferð persónuupplýsinga hjá Google",
         "inProgress": "Upptaka eða beint streymi í gangi",
         "invalidStreamKey": "Lykill fyrir beint streymi gæti verið rangur.",
-        "limitNotificationDescriptionNative": "Streymið þitt verður takmarkað við {{limit}} mínútur. Fyrir ótakmarkað streymi ættirðu að prófa {{app}}.",
-        "limitNotificationDescriptionWeb": "Vegna mikils álags verður streymið þitt takmarkað við {{limit}} mínútur. Fyrir ótakmarkað streymi ættirðu að prófa <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "off": "Beint streymi stöðvað",
         "offBy": "{{name}} stöðvaði beina streymið",
         "on": "Beint streymi er hafið",
@@ -715,6 +710,9 @@
     "lonelyMeetingExperience": {
         "button": "Bjóddu öðrum",
         "youAreAlone": "Þú ert sá eini á fundinum"
+    },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Lítil bandbreidd"
     },
     "me": "ég",
     "notify": {
@@ -997,8 +995,6 @@
         "highlightMomentSuccess": "Áherslulitað augnablik",
         "highlightMomentSucessDescription": "Áherslulituðum augnablikum mun verða bætt við yfirlit fundarins.",
         "inProgress": "Upptaka eða beint streymi í gangi",
-        "limitNotificationDescriptionNative": "Vegna mikils álags verður upptakan þín takmörkuð við {{limit}} mínútur. Fyrir ótakmarkaðar upptökur ættirðu að prófa <3>{{app}}</3>.",
-        "limitNotificationDescriptionWeb": "Vegna mikils álags verður upptakan þín takmörkuð við {{limit}} mínútur. Fyrir ótakmarkaðar upptökur ættirðu að prófa <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Við höfum útbúið tengil á upptökuna þína.",
         "localRecordingNoNotificationWarning": "Upptakan verður ekki tilkynnt öðrum þátttakendum. Þú þarft að láta aðra vita að fundurinn sé tekinn upp.",
         "localRecordingNoVideo": "Ekki er verið að taka upp myndmerki",
@@ -1041,7 +1037,7 @@
         "about": "Þú getur bætt $t(lockRoomPassword)i á fundinn. Þátttakendur munu þurfa að gefa upp $t(lockRoomPassword)ið áður en þeim er hleypt inn á fundinn.",
         "aboutReadOnly": "Þátttakendur með umsjónarréttindi geta bætt $t(lockRoomPassword)i á fundinn. Þátttakendur munu þurfa að gefa upp $t(lockRoomPassword)ið áður en þeim er hleypt inn á fundinn.",
         "insecureRoomNameWarningNative": "Heiti spjallrásarinnar er ekki öruggt. Óæskilegir þátttakendur gætu reynt að taka þátt í fundinum þínum. {{recommendAction}} Sjáðu meira um hvernig þú getur gert fundinn öruggari ",
-        "insecureRoomNameWarningWeb": "Heiti spjallrásarinnar er ekki öruggt. Óæskilegir þátttakendur gætu reynt að taka þátt í fundinum þínum. {{recommendAction}} Sjáðu meira <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">hér</a>um hvernig þú getur gert fundinn öruggari.",
+        "insecureRoomNameWarningWeb": "Heiti spjallrásarinnar er ekki öruggt. Óæskilegir þátttakendur gætu reynt að taka þátt í fundinum þínum. {{recommendAction}} Sjáðu meira <a href=\"{{securityUrl}}\" target=\"_blank\">hér</a>um hvernig þú getur gert fundinn öruggari.",
         "title": "Öryggisvalkostir",
         "unsafeRoomActions": {
             "meeting": "Íhugaðu að gera fundinn þinn öruggari með því að nota öryggishnappinn.",
@@ -1169,7 +1165,6 @@
         "Settings": "Stillingar",
         "accessibilityLabel": {
             "Settings": "Opna stillingar",
-            "audioOnly": "Víxla einungis hljóð af/á",
             "audioRoute": "Veldu hljóðtæki",
             "boo": "Vanþóknun",
             "breakoutRooms": "Aukarásir",
@@ -1210,6 +1205,7 @@
             "lobbyButton": "Gera biðsvæðisham virkan/óvirkan",
             "localRecording": "Víxla stýringum fyrir upptöku á tölvunni af/á",
             "lockRoom": "Víxla lykilorði fundar af/á",
+            "lowBandwidthMode": "Víxla einungis hljóð af/á",
             "lowerHand": "Leggja niður höndina",
             "moreActions": "Fleiri aðgerðir",
             "moreActionsMenu": "Valmynd fyrir fleiri aðgerðir",
@@ -1257,8 +1253,6 @@
             "videounmute": "Ræsa myndavélina"
         },
         "addPeople": "Bæta fólki við símtalið þitt",
-        "audioOnlyOff": "Gera ham fyrir litla bandbreidd óvirkan",
-        "audioOnlyOn": "Virkja ham fyrir litla bandbreidd",
         "audioRoute": "Veldu hljóðtæki",
         "audioSettings": "Hljóðstillingar",
         "authenticate": "Auðkenna",
@@ -1298,6 +1292,8 @@
         "lobbyButtonEnable": "Virkja biðsvæðisham",
         "login": "Skrá inn",
         "logout": "Skrá út",
+        "lowBandwidthModeOff": "Gera ham fyrir litla bandbreidd óvirkan",
+        "lowBandwidthModeOn": "Virkja ham fyrir litla bandbreidd",
         "lowerYourHand": "Leggja niður höndina",
         "moreActions": "Fleiri aðgerðir",
         "moreOptions": "Fleiri valkostir",
@@ -1386,8 +1382,6 @@
     },
     "videoStatus": {
         "adjustFor": "Aðlaga fyrir:",
-        "audioOnly": "HLJ",
-        "audioOnlyExpanded": "Þú ert í ham fyrir litla bandbreidd. Í þessum ham geturðu einungis heyrt hljóð og séð deilda skjái.",
         "bestPerformance": "Bestu afköst",
         "callQuality": "Gæði myndmerkis (0 fyrir mestu afköst, 3 fyrir mestu gæði)",
         "hd": "HD",
@@ -1395,9 +1389,11 @@
         "highDefinition": "Hágæði",
         "highestQuality": "Mestu gæði",
         "labelTooiltipNoVideo": "Ekkert myndmerki",
-        "labelTooltipAudioOnly": "Hamur fyrir litla bandbreidd er virkur",
+        "labelTooltipLowBandwidthMode": "Hamur fyrir litla bandbreidd er virkur",
         "ld": "LD",
         "ldTooltip": "Skoða myndmerki í lággæðum",
+        "lowBandwidthMode": "HLJ",
+        "lowBandwidthModeExpanded": "Þú ert í ham fyrir litla bandbreidd. Í þessum ham geturðu einungis heyrt hljóð og séð deilda skjái.",
         "lowDefinition": "Lággæði",
         "performanceSettings": "Stillingar afkasta",
         "recording": "Upptaka í gangi",

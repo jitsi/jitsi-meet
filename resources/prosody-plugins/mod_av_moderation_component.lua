@@ -6,6 +6,7 @@ local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local process_host_module = util.process_host_module;
 local table_shallow_copy = util.table_shallow_copy;
 local is_admin = util.is_admin;
+local is_focus = util.is_focus;
 local array = require "util.array";
 local json = require 'cjson.safe';
 local st = require 'util.stanza';
@@ -161,7 +162,7 @@ function start_av_moderation(room, mediaType, occupant)
 
     -- add all current moderators to the new whitelist
     for _, room_occupant in room:each_occupant() do
-        if room_occupant.role == 'moderator' and not ends_with(room_occupant.nick, '/focus') then
+        if room_occupant.role == 'moderator' and not is_focus(room_occupant.nick) then
             room.av_moderation[mediaType]:push(internal_room_jid_match_rewrite(room_occupant.nick));
         end
     end

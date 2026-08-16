@@ -311,8 +311,12 @@ export function requestPictureInPicture() {
 
         // Wait for metadata to load before requesting PiP.
         video.addEventListener('loadedmetadata', () => {
+            logger.debug(`Calling video.requestPictureInPicture(), readyState=${video.readyState}`);
+
             // @ts-ignore - requestPictureInPicture is not yet in all TypeScript definitions.
-            video.requestPictureInPicture().catch((err: Error) => {
+            video.requestPictureInPicture().then(() => {
+                logger.debug('video.requestPictureInPicture() succeeded');
+            }).catch((err: Error) => {
                 logger.error(`Error while requesting PiP after metadata loaded: ${err.message}`);
             }).finally(() => {
                 // Currently Electron will only pass the requests and execute requestPictureInPicture but
@@ -326,8 +330,12 @@ export function requestPictureInPicture() {
         return;
     }
 
+    logger.debug(`Calling video.requestPictureInPicture(), readyState=${video.readyState}`);
+
     // @ts-ignore - requestPictureInPicture is not yet in all TypeScript definitions.
-    video.requestPictureInPicture().catch((err: Error) => {
+    video.requestPictureInPicture().then(() => {
+        logger.debug('video.requestPictureInPicture() succeeded');
+    }).catch((err: Error) => {
         logger.error(`Error while requesting PiP: ${err.message}`);
     }).finally(() => {
         // Currently Electron will only pass the requests and execute requestPictureInPicture but

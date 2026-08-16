@@ -148,7 +148,7 @@ function Util.new(module)
             if content ~= nil then
                 local keys_to_delete = table_shallow_copy(self.cachedKeys);
                 -- Let's convert any certificate to public key
-                for k, v in pairs(cjson_safe.decode(content)) do
+                for k, v in pairs(cjson_safe.decode(content) or {}) do
                     -- JWKS format
                     if k == "keys" and type(v) == "table" then
                         for _, key in ipairs(v) do
@@ -279,7 +279,9 @@ function Util:process_and_verify_token(session)
         -- We're fetching an public key from an ASAP server
         local dotFirst = session.auth_token:find("%.");
         if not dotFirst then return false, "not-allowed", "Invalid token" end
-        local header, err = json_safe.decode(basexx.from_url64(session.auth_token:sub(1,dotFirst-1)));
+        local headerPartEncoded = basexx.from_url64(session.auth_token:sub(1,dotFirst-1));
+        if not headerPartEncoded then return false, "not-allowed", "Invalid token" end
+        local header, err = json_safe.decode(headerPartEncoded);
         if err then
             return false, "not-allowed", "bad token format";
         end
@@ -325,13 +327,16 @@ function Util:process_and_verify_token(session)
         if self.requireRoomClaim then
             local roomClaim = claims["room"];
             if roomClaim == nil then
-                return false, "'room' claim is missing";
+                return false, "not-authorized", "room claim is missing";
             end
         end
 
         -- Binds room name to the session which is later checked on MUC join
         session.jitsi_meet_room = claims["room"];
         -- Binds domain name to the session
+        if claims["sub"] == nil then
+            return false, "not-authorized", "sub claim is missing";
+        end
         session.jitsi_meet_domain = claims["sub"];
         session.jitsi_meet_auth_issuer = claims["iss"];
 
@@ -448,12 +453,12 @@ function Util:verify_room(session, room_address)
     else
         -- no wildcard, so check room against authorized room from the token
         if session.jitsi_meet_context_room and (session.jitsi_meet_context_room["regex"] == true or session.jitsi_meet_context_room["regex"] == "true") then
-            if target_room ~= nil then
-                -- room with subdomain
-                room_to_check = target_room:match(auth_room);
-            else
-                room_to_check = room_node:match(auth_room);
+            local match_target = target_room ~= nil and target_room or room_node;
+            local ok, result = pcall(string.match, match_target, auth_room);
+            if not ok then
+                return false, 'invalid-regex', 'Room claim is not a valid Lua pattern';
             end
+            room_to_check = result;
         else
             -- not a regex
             room_to_check = auth_room;

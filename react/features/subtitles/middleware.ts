@@ -9,6 +9,7 @@ import { TRANSCRIBER_ID } from '../base/participants/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { showErrorNotification } from '../notifications/actions';
 import { RECORDING_METADATA_ID } from '../recording/constants';
+import { maybeNotifyRecordingStart } from '../recording/middleware';
 import { TRANSCRIBER_JOINED } from '../transcribing/actionTypes';
 
 import {
@@ -92,13 +93,19 @@ MiddlewareRegistry.register(store => next => action => {
         const { transcription } = store.getState()['features/base/config'];
 
         if (transcription?.autoCaptionOnTranscribe) {
-            store.dispatch(setRequestingSubtitles(true));
+            // The transcriber was started by someone else — skip metadata update
+            // to avoid overwriting the initiator's isRecordingRequested flag.
+            store.dispatch(setRequestingSubtitles(
+                true, undefined, undefined, undefined, undefined, true));
         }
 
         break;
     }
     case SET_REQUESTING_SUBTITLES:
-        _requestingSubtitlesChange(store, action.enabled, action.language, action.forceBackendRecordingOn);
+        _requestingSubtitlesChange(
+            store, action.enabled, action.language,
+            action.forceBackendRecordingOn, action.isRecordingRequested,
+            action.skipMetadataUpdate);
         break;
     }
 
@@ -141,7 +148,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
     const state = getState();
     const _areClosedCaptionsEnabled = areClosedCaptionsEnabled(store.getState());
     const transcriptMessageID = json.message_id;
-    const { name, id, avatar_url: avatarUrl } = json.participant;
+    const { name, id, avatar_url: avatarUrl } = json.participant ?? {};
     const participant = {
         avatarUrl,
         id,
@@ -149,6 +156,23 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
     };
     const { timestamp } = json;
     const participantId = participant.id;
+    const speaker = json.speaker;
+    const renderTranscriptDetails = state['features/base/config'].transcription?.renderTranscriptDetails;
+    let detailsPrefix = '';
+
+    if (renderTranscriptDetails) {
+        const parts = [];
+
+        if (speaker != null) {
+            parts.push(`Speaker ${speaker}`);
+        }
+        if (json.language) {
+            parts.push(json.language);
+        }
+        if (parts.length > 0) {
+            detailsPrefix = `[${parts.join(', ')}] `;
+        }
+    }
 
     // Handle transcript messages
     const language = state['features/base/conference'].conference
@@ -163,7 +187,8 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
             return next(action);
         }
 
-        const translation = json.text?.trim();
+        const translationText = json.text?.trim();
+        const translation = translationText ? `${detailsPrefix}${translationText}` : translationText;
 
         if (isCCTabEnabled(state)) {
             dispatch(storeSubtitle({
@@ -184,7 +209,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
             // enabled.
             newTranscriptMessage = {
                 clearTimeOut: undefined,
-                final: json.text?.trim(),
+                final: translation,
                 participant
             };
         }
@@ -194,7 +219,11 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
         // Displays interim and final results without any translation if
         // translations are disabled.
 
+        if (!Array.isArray(json.transcript) || !json.transcript[0]) {
+            return next(action);
+        }
         const { text } = json.transcript[0];
+        const displayText = `${detailsPrefix}${text}`;
 
         // First, notify the external API.
         if (!(isInterim && skipInterimTranscriptions)) {
@@ -246,7 +275,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
             id: transcriptMessageID,
             participantId,
             language: json.language,
-            text,
+            text: displayText,
             interim: isInterim,
             timestamp,
             isTranscription: true
@@ -258,11 +287,19 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
             return next(action);
         }
 
-        // If the user is not requesting transcriptions just bail.
-        // Regex to filter out all possible country codes after language code:
-        // this should catch all notations like 'en-GB' 'en_GB' and 'enGB'
-        // and be independent of the country code length
-        if (!language || (_getPrimaryLanguageCode(json.language) !== _getPrimaryLanguageCode(language))) {
+        // Only display transcription results when the local user is showing subtitles and either
+        // wants the source language (no translation language selected) or the transcription's
+        // language matches the selected one. We rely on the redux _language (which is cleared when
+        // switching back to the original language) rather than the translation_language participant
+        // property, which is never cleared and can become stale.
+        // The primary language code comparison catches all country-code notations like 'en-GB',
+        // 'en_GB' and 'enGB' independent of the country code length.
+        const { _language, _requestingSubtitles } = state['features/subtitles'];
+        const selectedLanguage = _language?.replace('translation-languages:', '');
+
+        if (!_requestingSubtitles
+                || (selectedLanguage
+                    && _getPrimaryLanguageCode(json.language) !== _getPrimaryLanguageCode(selectedLanguage))) {
             return next(action);
         }
 
@@ -283,17 +320,17 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
         // If this is final result, update the state as a final result
         // and start a count down to remove the subtitle from the state
         if (!json.is_interim) {
-            newTranscriptMessage.final = text;
+            newTranscriptMessage.final = displayText;
         } else if (json.stability > STABLE_TRANSCRIPTION_FACTOR) {
             // If the message has a high stability, we can update the
             // stable field of the state and remove the previously
             // unstable results
-            newTranscriptMessage.stable = text;
+            newTranscriptMessage.stable = displayText;
         } else {
             // Otherwise, this result has an unstable result, which we
             // add to the state. The unstable result will be appended
             // after the stable part.
-            newTranscriptMessage.unstable = text;
+            newTranscriptMessage.unstable = displayText;
         }
     }
 
@@ -346,6 +383,11 @@ function _getPrimaryLanguageCode(language: string) {
  * @param {string} language - The language to use for translation.
  * @param {boolean} forceBackendRecordingOn - Whether to force backend recording is on or not. This is used only when
  * we start recording, stopping is based on whether isTranscribingEnabled is already set.
+ * @param {boolean} isRecordingRequested - Whether recording was also requested alongside transcription.
+ * Passed through to metadata so remote clients receive both intent fields in a single atomic update.
+ * @param {boolean} skipMetadataUpdate - When true, skips setting room metadata. Used when reacting
+ * to a transcriber started by someone else (e.g. autoCaptionOnTranscribe) to avoid overwriting
+ * the initiator's metadata.
  * @private
  * @returns {void}
  */
@@ -353,7 +395,9 @@ function _requestingSubtitlesChange(
         { dispatch, getState }: IStore,
         enabled: boolean,
         language?: string | null,
-        forceBackendRecordingOn: boolean = false) {
+        forceBackendRecordingOn: boolean = false,
+        isRecordingRequested: boolean = false,
+        skipMetadataUpdate: boolean = false) {
     const state = getState();
     const { conference } = state['features/base/conference'];
     const backendRecordingOn = conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription;
@@ -377,12 +421,22 @@ function _requestingSubtitlesChange(
                         titleKey: 'transcribing.failed'
                     }));
                     dispatch(setSubtitlesError(true));
+
+                    // Transcription failed — re-evaluate. _hasError is now true,
+                    // so maybeNotifyRecordingStart will see transcription as resolved-failed
+                    // and play recording-only sound if recording succeeded.
+                    const intent = getState()['features/recording'].startRecordingIntent;
+
+                    if (intent) {
+                        maybeNotifyRecordingStart(dispatch, getState);
+                    }
                 });
         }
 
-        if (backendRecordingOn || forceBackendRecordingOn) {
+        if (!skipMetadataUpdate && (backendRecordingOn || forceBackendRecordingOn)) {
             conference?.getMetadataHandler()?.setMetadata(RECORDING_METADATA_ID, {
-                isTranscribingEnabled: true
+                isTranscribingEnabled: true,
+                ...(isRecordingRequested && { isRecordingRequested: true })
             });
         }
     }
@@ -393,9 +447,10 @@ function _requestingSubtitlesChange(
             language.replace('translation-languages:', ''));
     }
 
-    if (!enabled && (backendRecordingOn || forceBackendRecordingOn)
+    if (!enabled && !skipMetadataUpdate && (backendRecordingOn || forceBackendRecordingOn)
         && conference?.getMetadataHandler()?.getMetadata()[RECORDING_METADATA_ID]?.isTranscribingEnabled) {
         conference?.getMetadataHandler()?.setMetadata(RECORDING_METADATA_ID, {
+            isRecordingRequested: false,
             isTranscribingEnabled: false
         });
     }

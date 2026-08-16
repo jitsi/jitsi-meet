@@ -35,6 +35,12 @@ import logger from './logger';
 import { IJitsiConference } from './reducer';
 
 /**
+ * The local participant property used to advertise to jicofo that this
+ * participant's audio should be diarized by the transcriber.
+ */
+const P_NAME_DIARIZE = 'diarize';
+
+/**
  * Returns root conference state.
  *
  * @param {IReduxState} state - Global state.
@@ -95,12 +101,6 @@ export function commonUserJoinedHandling(
         const isPromoted = conference?.getMetadataHandler().getMetadata()?.visitors?.promoted?.[id];
         const userIdentity = user.getIdentity()?.user;
 
-        // Map identity from JWT context to userContext for external API
-        const userContext = userIdentity ? {
-            id: userIdentity.id,
-            name: userIdentity.name
-        } : undefined;
-
         // the identity and avatar come from jwt and never change in the presence
         dispatch(participantJoined({
             avatarURL: userIdentity?.avatar,
@@ -113,7 +113,7 @@ export function commonUserJoinedHandling(
             isPromoted,
             isReplacing,
             sources: user.getSources(),
-            userContext
+            userContext: userIdentity
         }));
     }
 }
@@ -569,6 +569,16 @@ export function sendLocalParticipant(
 
     if (features && features['screen-sharing'] === 'true') {
         conference?.setLocalParticipantProperty('features_screen-sharing', true);
+    }
+
+    // Advertise to jicofo that this participant's audio should be diarized by the transcriber.
+    // Only published when explicitly enabled, to keep presence clean.
+    // NOTE: this must be published here, before conference.join(), so it is part of the initial
+    // presence. jicofo allocates the colibri2 endpoint from the join presence and reads this flag
+    // only at allocation time (the endpoint create path, in both jicofo and the bridge). A value
+    // set after join would be ignored, so do not move this to a lazy/runtime toggle.
+    if (toState(stateful)['features/base/config'].transcription?.diarize === true) {
+        conference?.setLocalParticipantProperty(P_NAME_DIARIZE, true);
     }
 
     conference?.setDisplayName(name);

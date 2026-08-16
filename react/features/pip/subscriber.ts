@@ -5,6 +5,7 @@ import { isLocalTrackMuted } from '../base/tracks/functions.any';
 import { getElectronGlobalNS } from '../base/util/helpers';
 
 import { requestPictureInPicture, shouldShowPiP, updateMediaSessionState } from './functions';
+import logger from './logger';
 
 /**
  * Listens to audio and video mute state changes when PiP is active
@@ -51,9 +52,11 @@ StateListenerRegistry.register(
         if (_shouldShowPiP) {
             // Expose requestPictureInPicture for Electron main process.
             if (!electronNS.requestPictureInPicture) {
+                logger.debug('Exposing requestPictureInPicture to Electron namespace');
                 electronNS.requestPictureInPicture = requestPictureInPicture;
             }
         } else if (typeof electronNS.requestPictureInPicture === 'function') {
+            logger.debug('Removing requestPictureInPicture from Electron namespace (PiP disabled)');
             delete electronNS.requestPictureInPicture;
         }
     }

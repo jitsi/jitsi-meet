@@ -55,17 +55,13 @@ export function generateDeepLinkingURL(state: IReduxState) {
 export function getDeepLinkingPage(state: IReduxState) {
     const { room } = state['features/base/conference'];
     const { launchInWeb } = state['features/deep-linking'];
-    const deeplinking = state['features/base/config'].deeplinking || {};
-
-    // @ts-ignore
-    const { appScheme } = deeplinking?.[Platform.OS as keyof typeof deeplinking] || {};
 
     // Show only if we are about to join a conference.
     if (launchInWeb
             || !room
             || state['features/base/config'].deeplinking?.disabled
             || browser.isElectron()
-            || (isVpaasMeeting(state) && (!appScheme || appScheme === 'com.8x8.meet'))) {
+            || (isVpaasMeeting(state))) {
         return Promise.resolve();
     }
 

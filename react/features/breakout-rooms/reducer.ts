@@ -19,6 +19,7 @@ export interface IBreakoutRoomsState {
     rooms: IRooms;
     userContextCache: {
         [participantId: string]: {
+            [key: string]: any;
             id?: string;
             name?: string;
         };

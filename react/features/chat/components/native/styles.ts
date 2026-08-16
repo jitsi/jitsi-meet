@@ -137,7 +137,7 @@ export default {
      * A special padding to avoid issues on some devices (such as Android devices with custom suggestions bar).
      */
     extraBarPadding: {
-        paddingBottom: BaseTheme.spacing[8]
+        paddingBottom: BaseTheme.spacing[6]
     },
 
     inputBar: {
@@ -147,12 +147,12 @@ export default {
     },
 
     sendButton: {
-        marginRight: BaseTheme.spacing[5],
+        marginRight: BaseTheme.spacing[4],
         marginLeft: BaseTheme.spacing[2]
     },
 
     customInputContainer: {
-        marginLeft: BaseTheme.spacing[5],
+        marginLeft: BaseTheme.spacing[4],
         flex: 1
     },
 
@@ -233,10 +233,16 @@ export default {
     },
 
     gifImage: {
+        flexGrow: 1,
+        height: undefined,
+        resizeMode: 'contain',
+        width: 250
+    },
+
+    gifMedia: {
+        height: 150,
         resizeMode: 'contain',
         width: 250,
-        height: undefined,
-        flexGrow: 1
     },
 
     senderDisplayName: {

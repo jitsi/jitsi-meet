@@ -32,7 +32,8 @@ buildscript {
         googleServicesEnabled = project.file('app/google-services.json').exists() && !libreBuild
 
         //React Native and Hermes Version
-        rnVersion = "0.77.2"
+        rnVersion = "0.85.2"
+        hermesVersion = "0.16.0"
 
         // Java dependencies
         javaVersion = JavaVersion.VERSION_17
@@ -46,6 +47,7 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$rootProject.ext.kotlinVersion"
         classpath "com.android.tools.build:gradle:$rootProject.ext.gradlePluginVersion"
+        classpath "com.facebook.react:react-native-gradle-plugin:$rootProject.ext.rnVersion"
         classpath 'com.google.gms:google-services:4.4.0'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
     }
@@ -79,7 +81,7 @@ allprojects {
     // on and which are not available in third-party Maven repositories need to
     // be deployed in a Maven repository of ours.
 
-    if (project.name.startsWith('react-native-')) {
+    if (project.name.contains('react-native')) {
         apply plugin: 'maven-publish'
         publishing {
             publications {}
@@ -110,7 +112,20 @@ allprojects {
             }
         }
 
-        if (project.name.startsWith('react-native-')) {
+        if (project.plugins.hasPlugin('com.android.application')) {
+            project.android.packagingOptions {
+                pickFirst '**/libfbjni.so'
+                pickFirst '**/libreactnative.so'
+                pickFirst '**/libjsi.so'
+                pickFirst '**/libc++_shared.so'
+                pickFirst '**/libhermesvm.so'
+                pickFirst '**/libhermestooling.so'
+                exclude '**/libjsc.so'
+                exclude '**/libjsctooling.so'
+            }
+        }
+
+        if (project.name.contains('react-native')) {
             def npmManifest = project.file('../package.json')
             def json = new JsonSlurper().parseText(npmManifest.text)
 
@@ -147,6 +162,7 @@ allprojects {
 
                         def dependencies = pomXml.appendNode('dependencies')
                         configurations.getByName('releaseCompileClasspath').getResolvedConfiguration().getFirstLevelModuleDependencies().each {
+                            def groupId = it.moduleGroup
                             def artifactId = it.moduleName
                             def version = it.moduleVersion
                             // React Native signals breaking changes by
@@ -158,9 +174,13 @@ allprojects {
                                 def versionNumber = VersionNumber.parse(version)
                                 version = "${versionNumber.major}.${versionNumber.minor}"
                             }
+                            // Pin react-native-* deps to the groupId we publish them under.
+                            if (artifactId.contains('react-native')) {
+                                groupId = rootProject.ext.moduleGroupId
+                            }
 
                             def dependency = dependencies.appendNode('dependency')
-                            dependency.appendNode('groupId', it.moduleGroup)
+                            dependency.appendNode('groupId', groupId)
                             dependency.appendNode('artifactId', artifactId)
                             dependency.appendNode('version', version)
                         }

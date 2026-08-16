@@ -36,9 +36,6 @@
         "phone": "Tiliɣri",
         "speaker": "Asawaḍ"
     },
-    "audioOnly": {
-        "audioOnly": "Imesli kan"
-    },
     "calendarSync": {
         "addMeetingURL": "Rnu aseɣwen n temlilit",
         "confirmAddLink": "Tebɣiḍ ad ternuḍ aseɣwen n Jitsi i uneḍru-a?",
@@ -480,8 +477,6 @@
         "getStreamKeyManually": "Ur nessaweḍ ara ad d-nerr ula d yiwen n usuddem usrid. Ɛreḍ ad d-tawiḍ tasarut-ik·im n usuddem usrid seg Youtube.",
         "googlePrivacyPolicy": "Tasertit tabaḍnit n Google",
         "invalidStreamKey": "Tasarut n usuddem usrid yezmer mačči d tameɣtut.",
-        "limitNotificationDescriptionNative": "Asuddem-inek·inem ad yesɛu kan {{limit}} tesdidin. I usuddem war talast ɛreḍ {{app}}.",
-        "limitNotificationDescriptionWeb": "Seg wakken yegget usuter, asuddem-inek·inem ad yesɛu talast n {{limit}} tesdidin. I usuddem n war tilas, ɛreḍ <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "off": "Asuddem usrid yettuḥbes",
         "offBy": "{{name}} iseḥbes asuddem usrid",
         "on": "Yebda usuddem usrid",
@@ -565,6 +560,9 @@
     "lonelyMeetingExperience": {
         "button": "Snubget-d wiyaḍ",
         "youAreAlone": "D kečč·kemm kan i yellan deg temlilit"
+    },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Imesli kan"
     },
     "me": "nek",
     "notify": {
@@ -777,8 +775,6 @@
         "expandedPending": "Asekles ha-t-an yebda….",
         "failedToStart": "Beddu n usekles ur yeddi ara",
         "fileSharingdescription": "Bḍu asekles d yimttekkiyen n temlilit",
-        "limitNotificationDescriptionNative": "Seg tuget n usuter, asekles-inek·inem ad yesɛu kan {{limit}} tesdidin. I yiseklas war tilas, ɛreḍ <3>{{app}}</3>.",
-        "limitNotificationDescriptionWeb": "Seg tuget n usuter, asekles-inek·inem ad yesɛu kan {{limit}} tesdidin. I yiseklas war tilas, ɛreḍ <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Nsirew-d aseɣwen i usekles-inek·inem.",
         "live": "SRID",
         "loggedIn": "Yekcem s {{userName}}",
@@ -895,7 +891,6 @@
         "Settings": "Iɣewwaren",
         "accessibilityLabel": {
             "Settings": "Sken/Fneẓ iɣewwaren",
-            "audioOnly": "Rmed/Sens imesli kan",
             "audioRoute": "Fren ibenk n yimesli",
             "boo": "Boo",
             "callQuality": "Sefrek taɣara n tvidyut",
@@ -919,6 +914,7 @@
             "lobbyButton": "Rmed/sens askar Lobby",
             "localRecording": "Ɛeddi ɣer yisenqaden n usekles adigan",
             "lockRoom": "Snefli awal uffir n temlilit",
+            "lowBandwidthMode": "Rmed/Sens imesli kan",
             "moreActions": "Ldi/mdel umuɣ n wugar n tigawin",
             "moreActionsMenu": "Umuɣ n wugar n tigawin",
             "moreOptions": "Sken ugar n textiṛiyin",
@@ -954,8 +950,6 @@
             "videomute": "Rmed/Sens tavidyut"
         },
         "addPeople": "Rnu-d imdanen ɣer usiwel-inek·inem",
-        "audioOnlyOff": "Sens askar n tehri n tesfift adday",
-        "audioOnlyOn": "Rmed askar n tehri n tesfift adday",
         "audioRoute": "Fren ibenk n yimesli",
         "audioSettings": "Iɣewwaren n umeslaw",
         "authenticate": "Sesteb",
@@ -985,6 +979,8 @@
         "lobbyButtonEnable": "Rmed askar Lobby",
         "login": "Qqen",
         "logout": "Tufɣa",
+        "lowBandwidthModeOff": "Sens askar n tehri n tesfift adday",
+        "lowBandwidthModeOn": "Rmed askar n tehri n tesfift adday",
         "lowerYourHand": "Ṣubb afus-ik·im",
         "moreActions": "Ugar n tigawin",
         "moreOptions": "Ugar n textiṛiyin",
@@ -1059,16 +1055,16 @@
         "pending": "{{displayName}} yettwanced-d"
     },
     "videoStatus": {
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Aql-ak·akem deg uskar n tehri n tesfift taddayt. Deg uskar-a ad d-tremseḍ kan ameslaw d beṭṭu n ugdil.",
         "callQuality": "Taɣara n tvidyut",
         "hd": "HD",
         "hdTooltip": "Awali n tvidyut n tbadut tafellayt",
         "highDefinition": "Tabadut tafellayt",
         "labelTooiltipNoVideo": "Ulac tavidyut",
-        "labelTooltipAudioOnly": "Askar n tehri n tesfift adday yermed",
+        "labelTooltipLowBandwidthMode": "Askar n tehri n tesfift adday yermed",
         "ld": "LD",
         "ldTooltip": "Awali n tvidyut n tbadut taddayt",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Aql-ak·akem deg uskar n tehri n tesfift taddayt. Deg uskar-a ad d-tremseḍ kan ameslaw d beṭṭu n ugdil.",
         "lowDefinition": "Tabadut taddayt",
         "sd": "SD",
         "sdTooltip": "Awali n tvidyut s tbadut taslugant",

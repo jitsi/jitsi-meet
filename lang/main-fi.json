@@ -39,9 +39,6 @@
         "phone": "Puhelin",
         "speaker": "Puhuja"
     },
-    "audioOnly": {
-        "audioOnly": "Vain ääni"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "esim. 10000000 tarkoittaa 10 Mbps",
         "assumedBandwidthBpsWarning": "Korkeammat arvot voivat aiheuttaa verkko-ongelmia.",
@@ -373,7 +370,7 @@
         "kickParticipantTitle": "Poista tämä osallistuja?",
         "kickSystemTitle": "Hups! Sinut poistettiin kokouksesta",
         "kickTitle": "Hups! {{participantDisplayName}} poisti sinut kokouksesta",
-        "learnMore": "lue lisää",
+        "learnMore": "Lue lisää",
         "linkMeeting": "Linkitä kokous",
         "linkMeetingTitle": "Linkitä kokous Salesforceen",
         "liveStreaming": "Suoratoisto",
@@ -443,9 +440,7 @@
         "recentlyUsedObjects": "Viimeksi käyttämäsi objektit",
         "recording": "Nauhoitetaan",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Ei mahdollista suoratoiston ollessa käynnissä",
-        "recordingInProgressDescription": "Tämä kokous nauhoitetaan ja analysoidaan tekolyn avulla{{learnMore}}. Äänesi ja videosi on mykistetty. Jos poistat mykistyksen, suostut nauhoitukseen.",
-        "recordingInProgressDescriptionFirstHalf": "Tämä kokous nauhoitetaan ja analysoidaan tekolyn avulla",
-        "recordingInProgressDescriptionSecondHalf": ". Äänesi ja videosi on mykistetty. Jos poistat mykistyksen, suostut nauhoitukseen.",
+        "recordingInProgressDescription": "Tämä kokous nauhoitetaan ja analysoidaan tekolyn avulla. Äänesi ja videosi on mykistetty. Jos poistat mykistyksen, suostut nauhoitukseen.",
         "recordingInProgressTitle": "Nauhoitus käynnissä",
         "rejoinNow": "Liity nyt uudelleen",
         "remoteControlAllowedMessage": "{{user}} hyväksyi etäkäyttöpyyntösi!",
@@ -710,8 +705,6 @@
         "googlePrivacyPolicy": "Googlen tietosuojakäytäntö",
         "inProgress": "Nauhoitus tai suoratoisto käynnissä",
         "invalidStreamKey": "Suoratoistokoodi voi olla virheellinen.",
-        "limitNotificationDescriptionNative": "Suoratoistosi rajoitetaan {{limit}} minuuttiin. Rajattomaan suoratoistoon kokeile sovellusta {{app}}.",
-        "limitNotificationDescriptionWeb": "Suuren kysynnän vuoksi suoratoistosi rajoitetaan {{limit}} minuuttiin. Rajattomaan suoratoistoon kokeile <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "off": "Suoratoisto päättyi",
         "offBy": "{{name}} pysäytti suoratoiston",
         "on": "Suoratoisto",
@@ -805,6 +798,9 @@
     "lonelyMeetingExperience": {
         "button": "Kutsu muita",
         "youAreAlone": "Olet ainoa kokouksessa"
+    },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Vain ääni"
     },
     "me": "minä",
     "notify": {
@@ -1131,8 +1127,6 @@
         "highlightMomentSuccess": "Hetki korostettu",
         "highlightMomentSucessDescription": "Korostamasi hetki lisätään kokouksen yhteenvetoon.",
         "inProgress": "Nauhoitus tai suoratoisto käynnissä",
-        "limitNotificationDescriptionNative": "Suuren kysynnän vuoksi nauhoituksesi rajoitetaan {{limit}} minuuttiin. Rajattomia nauhoituksia varten kokeile <3>{{app}}</3>.",
-        "limitNotificationDescriptionWeb": "Suuren kysynnän vuoksi nauhoituksesi rajoitetaan {{limit}} minuuttiin. Rajattomia nauhoituksia varten kokeile <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Olemme luoneet linkin nauhoitukseesi.",
         "localRecordingNoNotificationWarning": "Nauhoituksesta ei ilmoiteta muille osallistujille. Sinun täytyy kertoa heille, että kokousta nauhoitetaan.",
         "localRecordingNoVideo": "Videota ei nauhoiteta",
@@ -1176,7 +1170,7 @@
         "about": "Voit lisätä $t(lockRoomPassword) kokaukseesi. Osallistujien on annettava $t(lockRoomPassword) ennen kuin he voivat liittyä kokoukseen.",
         "aboutReadOnly": "Moderaattoriosallistujat voivat lisätä $t(lockRoomPassword) kokoukseen. Osallistujien on annettava $t(lockRoomPassword) ennen kuin he voivat liittyä kokoukseen.",
         "insecureRoomNameWarningNative": "Huoneen nimi ei ole turvallinen. Ei-toivotut osallistujat saattavat liittyä kokaukseesi. {{recommendAction}} Lue lisää kokouksesi turvaamisesta ",
-        "insecureRoomNameWarningWeb": "Huoneen nimi ei ole turvallinen. Ei-toivotut osallistujat saattavat liittyä kokaukseesi. {{recommendAction}} Lue lisää kokouksesi turvaamisesta <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">täältä</a>.",
+        "insecureRoomNameWarningWeb": "Huoneen nimi ei ole turvallinen. Ei-toivotut osallistujat saattavat liittyä kokaukseesi. {{recommendAction}} Lue lisää kokouksesi turvaamisesta <a href=\"{{securityUrl}}\" target=\"_blank\">täältä</a>.",
         "title": "Turvallisuusasetukset",
         "unsafeRoomActions": {
             "meeting": "Harkitse kokouksesi turvaamista käyttämällä turvallisuuspainiketta.",
@@ -1309,7 +1303,6 @@
         "Settings": "Asetukset",
         "accessibilityLabel": {
             "Settings": "Säädä asetuksia",
-            "audioOnly": "Säädä Vain ääni -tilaa",
             "audioRoute": "Valitse äänilaite",
             "boo": "Buu",
             "breakoutRooms": "Pienryhmähuoneet",
@@ -1353,6 +1346,7 @@
             "localRecording": "Säädä paikallisia nauhoitusohjaimia",
             "lockRoom": "Säädä kokouksen salasanaa",
             "love": "Sydän",
+            "lowBandwidthMode": "Säädä Vain ääni -tilaa",
             "lowerHand": "Laske kätesi",
             "moreActions": "Säädä Lisää toimintoja -valikkoa",
             "moreActionsMenu": "Lisää toimintoja -valikko",
@@ -1414,8 +1408,6 @@
                 "label": "Stereo"
             }
         },
-        "audioOnlyOff": "Poista Vain ääni -tila käytöstä",
-        "audioOnlyOn": "Ota Vain ääni -tila käyttöön",
         "audioRoute": "Valitse äänilaite",
         "audioSettings": "Ääniasetukset",
         "authenticate": "Todenna",
@@ -1460,6 +1452,8 @@
         "login": "Kirjaudu sisään",
         "logout": "Kirjaudu ulos",
         "love": "Sydän",
+        "lowBandwidthModeOff": "Poista Vain ääni -tila käytöstä",
+        "lowBandwidthModeOn": "Ota Vain ääni -tila käyttöön",
         "lowerYourHand": "Laske käsi",
         "moreActions": "Lisää toimintoja",
         "moreOptions": "Lisää vaihtoehtoja",
@@ -1551,8 +1545,6 @@
     },
     "videoStatus": {
         "adjustFor": "Muokkaa:",
-        "audioOnly": "ÄÄNI",
-        "audioOnlyExpanded": "Käytössäsi on Vain ääni -tila. Se säästää kaistanleveyttä, mutta et näe muiden videoita.",
         "bestPerformance": "Paras suorituskyky",
         "callQuality": "Videon laatu",
         "hd": "HD",
@@ -1560,9 +1552,11 @@
         "highDefinition": "Teräväpiirto",
         "highestQuality": "Korkein laatu",
         "labelTooiltipNoVideo": "Ei videota",
-        "labelTooltipAudioOnly": "Vain ääni -tila käytössä",
+        "labelTooltipLowBandwidthMode": "Vain ääni -tila käytössä",
         "ld": "LD",
         "ldTooltip": "Katselee matalatarkkuuksista videota",
+        "lowBandwidthMode": "ÄÄNI",
+        "lowBandwidthModeExpanded": "Käytössäsi on Vain ääni -tila. Se säästää kaistanleveyttä, mutta et näe muiden videoita.",
         "lowDefinition": "Alhainen kuvanlaatu",
         "performanceSettings": "Suorituskykyasetukset",
         "recording": "Tätä kokousta nauhoitetaan.",

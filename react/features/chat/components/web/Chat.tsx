@@ -151,7 +151,7 @@ const useStyles = makeStyles<{
 
             '*': {
                 userSelect: 'text',
-                '-webkit-user-select': 'text'
+                WebkitUserSelect: 'text'
             }
         },
 
@@ -483,6 +483,7 @@ const Chat = ({
                     role = 'tabpanel'
                     tabIndex = { 0 }>
                     <MessageContainer
+                        isVisible = { _focusedTab === ChatTabs.CHAT }
                         messages = { _messages } />
                     <MessageRecipient />
                     {isPrivateChatAllowed && (

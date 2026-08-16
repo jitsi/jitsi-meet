@@ -4,6 +4,7 @@ import { batch, useDispatch, useSelector } from 'react-redux';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IReduxState } from '../app/types';
+import { useAudioTranslationButton } from '../audio-translation/hooks.web';
 import { toggleDialog } from '../base/dialog/actions';
 import { isIosMobileBrowser, isIpadMobileBrowser } from '../base/environment/utils';
 import { HELP_BUTTON_ENABLED } from '../base/flags/constants';
@@ -12,6 +13,7 @@ import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { raiseHand } from '../base/participants/actions';
 import { getLocalParticipant, hasRaisedHand } from '../base/participants/functions';
 import { isToggleCameraEnabled } from '../base/tracks/functions.web';
+import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { toggleChat } from '../chat/actions.web';
 import { isChatDisabled } from '../chat/functions';
 import { useChatButton } from '../chat/hooks.web';
@@ -261,6 +263,19 @@ function useHelpButton() {
 }
 
 /**
+ * Hide invite button for breakout-rooms.
+ *
+ * @returns {Object | undefined}
+ */
+function useInviteButton() {
+    const visible = useSelector((state: IReduxState) => !isInBreakoutRoom(state));
+
+    if (visible) {
+        return invite;
+    }
+}
+
+/**
 * Returns all buttons that could be rendered.
 *
 * @param {Object} _customToolbarButtons - An array containing custom buttons objects.
@@ -277,6 +292,7 @@ export function useToolboxButtons(
     const tileview = useTileViewButton();
     const chat = useChatButton();
     const cc = useClosedCaptionButton();
+    const audioTranslation = useAudioTranslationButton();
     const polls = usePollsButton();
     const filesharing = useFileSharingButton();
     const recording = useRecordingButton();
@@ -293,6 +309,7 @@ export function useToolboxButtons(
     const feedback = useFeedbackButton();
     const _download = useDownloadButton();
     const _help = useHelpButton();
+    const _invite = useInviteButton();
     const customPanel = useCustomPanelButton();
 
     const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
@@ -304,13 +321,14 @@ export function useToolboxButtons(
         raisehand,
         reactions,
         'participants-pane': participants,
-        invite,
+        invite: _invite,
         tileview,
         'toggle-camera': toggleCameraButton,
         videoquality: videoQuality,
         fullscreen: _fullscreen,
         security,
         closedcaptions: cc,
+        audiotranslation: audioTranslation,
         polls,
         filesharing,
         recording,

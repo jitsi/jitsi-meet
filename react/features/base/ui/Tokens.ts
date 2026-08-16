@@ -214,7 +214,7 @@ export const colorMap = {
     // Visitors
     visitorsCountBadge: 'warning02',    // Visitors count badge background
     visitorsCountText: 'uiBackground',  // Visitors count badge text
-    visitorsCountIcon: 'icon04',        // Visitors count icon
+    visitorsCountIcon: 'iconSvgFill',   // Visitors count icon
     visitorsQueueBackground: 'ui01',    // Visitors queue panel background
     visitorsQueueText: 'text01',        // Visitors queue text
     visitorsArrowBackground: 'ui02',    // Visitors arrow container background
@@ -355,7 +355,7 @@ export const colorMap = {
     dialInSecondaryText: 'text02',           // Dial-in summary secondary text
 
     // Reactions
-    reactionsMenuBackground: 'ui01',         // Reactions menu background
+    reactionsMenuBackground: '#242528', // Reactions menu background
     reactionsMenuBorder: 'ui02',             // Reactions menu border
     reactionsMenuButtonToggled: 'surface01', // Reactions menu button toggled state background
     reactionsMenuBoxShadow1: 'ui09',         // Reactions menu box shadow primary
@@ -370,6 +370,7 @@ export const colorMap = {
     recordingHighlightButtonIconDisabled: 'text03', // Recording highlight button disabled icon color
     recordingNotificationText: 'surface01',  // Recording notification text color
     recordingNotificationAction: 'action01', // Recording notification action color
+    transcriptionIndicator: 'success01',     // Transcription indicator background
 
     // Virtual Background
     virtualBackgroundBackground: 'ui01',     // Virtual background picker background
@@ -384,6 +385,21 @@ export const colorMap = {
     conferenceNoticeText: 'text01',          // Conference notice text
     conferenceRaisedHandLabelText: 'uiBackground', // Raised hands count label text
     conferenceRaisedHandLabelIcon: 'surface01', // Raised hands count label icon
+
+    // Time-timer pill
+    timeTimerNameSegmentBackground: 'timeTimerNameSegment',
+    timeTimerTimerSegmentBackground: 'timeTimerTimerSegment',
+    timeTimerElapsedText: 'timeTimerElapsedText',
+    timeTimerDisk: 'timeTimerDisk',
+    timeTimerWarning: 'timeTimerWarning',
+    timeTimerWarningNameSegmentBackground: 'timeTimerWarningNameSegment',
+    timeTimerWarningTimerSegmentBackground: 'timeTimerWarningTimerSegment',
+    timeTimerExpiredText: 'timeTimerExpiredText',
+    timeTimerExpiredNameSegmentBackground: 'timeTimerExpiredNameSegment',
+    timeTimerExpiredTimerSegmentBackground: 'timeTimerExpiredTimerSegment',
+    timeTimerExpiredDisk: 'timeTimerExpiredDisk',
+    timeTimerExpiredOverrunEdge: 'timeTimerExpiredOverrunEdge',
+    timeTimerExpiredNotificationText: 'timeTimerExpiredNotificationText',
 
     // Subtitle Messages
     subtitleMessageBackground: 'ui02',       // Subtitle message background
@@ -411,7 +427,7 @@ export const colorMap = {
     fileSharingItemBorder: 'ui02',           // File sharing item hover/border
 
     // Gifs
-    gifsBackground: 'ui01',                  // GIFs panel background
+    gifsBackground: '#242528',                  // GIFs panel background
     gifsText: 'text01',                      // GIFs panel text
 
     // Whiteboard

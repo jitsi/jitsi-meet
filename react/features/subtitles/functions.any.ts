@@ -2,6 +2,7 @@ import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD } from '../base/i18n/i18next';
 import { toState } from '../base/redux/functions';
+import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { canAddTranscriber, isTranscribing } from '../transcribing/functions';
 
 /**
@@ -47,6 +48,18 @@ export function getAvailableSubtitlesLanguages(stateful: IStateful, selectedLang
 
 
 /**
+ * Determines if translation (language selection) is enabled.
+ *
+ * @param {IReduxState} state - The Redux state object.
+ * @returns {boolean} A boolean indicating whether translation is enabled.
+ */
+export function isTranslationEnabled(state: IReduxState) {
+    const { transcription } = state['features/base/config'];
+
+    return transcription?.translationEnabled !== false;
+}
+
+/**
  * Determines if closed captions are enabled.
  *
  * @param {IReduxState} state - The Redux state object.
@@ -67,5 +80,5 @@ export function areClosedCaptionsEnabled(state: IReduxState) {
 export function isCCTabEnabled(state: IReduxState) {
     const { showSubtitlesOnStage = false } = state['features/base/settings'];
 
-    return areClosedCaptionsEnabled(state) && !showSubtitlesOnStage;
+    return areClosedCaptionsEnabled(state) && !showSubtitlesOnStage && !isInBreakoutRoom(state);
 }

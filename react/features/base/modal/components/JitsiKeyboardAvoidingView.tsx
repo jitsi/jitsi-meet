@@ -1,5 +1,5 @@
-import { useHeaderHeight } from '@react-navigation/elements';
-import React, { useCallback, useEffect, useState } from 'react';
+import { HeaderHeightContext } from '@react-navigation/elements';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
     Keyboard,
     KeyboardAvoidingView,
@@ -59,7 +59,8 @@ const JitsiKeyboardAvoidingView = (
             hasExtraHeaderHeight,
             style
         }: IProps) => {
-    const headerHeight = useHeaderHeight();
+    // Default to 0 when outside a navigator.
+    const headerHeight = useContext(HeaderHeightContext) ?? 0;
     const insets = useSafeAreaInsets();
     const [ bottomPadding, setBottomPadding ] = useState(insets.bottom);
 
@@ -86,7 +87,7 @@ const JitsiKeyboardAvoidingView = (
 
     return (
         <KeyboardAvoidingView
-            behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
+            behavior = { 'padding' }
             contentContainerStyle = { contentContainerStyle as ViewStyle }
             enabled = { true }
             keyboardVerticalOffset = {

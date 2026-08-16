@@ -39,9 +39,6 @@
         "phone": "폰",
         "speaker": "스피커"
     },
-    "audioOnly": {
-        "audioOnly": "음성 전용"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "예: 10000000 (10 Mbps)",
         "assumedBandwidthBpsWarning": "더 높은 값은 네트워크 문제를 일으킬 수 있습니다.",
@@ -634,8 +631,6 @@
         "googlePrivacyPolicy": "Google 개인 정보 보호 정책",
         "inProgress": "녹화 또는 실시간 스트리밍 진행 중",
         "invalidStreamKey": "라이브 스트림 키가 잘못되었을 수 있습니다.",
-        "limitNotificationDescriptionNative": "스트리밍이 {{limit}}분으로 제한됩니다. 무제한 스트리밍을 사용하려면 {{app}}을 시도해 보세요.",
-        "limitNotificationDescriptionWeb": "수요가 많아 스트리밍이 {{limit}}분으로 제한됩니다. 무제한 스트리밍을 사용하려면 <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>을 시도해 보세요.",
         "off": "실시간 스트리밍이 중지됨",
         "offBy": "{{name}}님이 실시간 스트리밍을 중지했습니다",
         "on": "실시간 스트리밍",
@@ -728,6 +723,9 @@
     "lonelyMeetingExperience": {
         "button": "초대하기",
         "youAreAlone": "회의에 참여자가 없습니다."
+    },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "음성 전용"
     },
     "me": "나",
     "notify": {
@@ -1036,8 +1034,6 @@
         "highlightMomentSuccess": "순간 강조 표시됨",
         "highlightMomentSucessDescription": "강조 표시된 순간이 회의 요약에 추가됩니다.",
         "inProgress": "녹화 또는 실시간 스트리밍 진행 중",
-        "limitNotificationDescriptionNative": "수요가 많아 녹화가 {{limit}}분으로 제한됩니다. 무제한 녹화를 사용하려면 {{app}}을 시도해 보세요.",
-        "limitNotificationDescriptionWeb": "수요가 많아 녹화가 {{limit}}분으로 제한됩니다. 무제한 녹화를 사용하려면 <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>을 시도해 보세요.",
         "linkGenerated": "녹화에 대한 링크를 생성했습니다.",
         "localRecordingNoNotificationWarning": "녹화가 다른 참가자에게 알리지 않습니다. 회의가 녹화되고 있음을 알려야 합니다.",
         "localRecordingNoVideo": "비디오는 녹화되지 않습니다",
@@ -1081,7 +1077,7 @@
         "about": "회의에 $t(lockRoomPassword)를 추가할 수 있습니다. 참가자는 회의에 참여하기 위해 $t(lockRoomPassword)를 입력해야합니다.",
         "aboutReadOnly": "방장은 회의에 $t(lockRoomPassword)를 추가할 수 있습니다. 참가자는 회의에 참여하기 위해 $t(lockRoomPassword)를 입력해야합니다.",
         "insecureRoomNameWarningNative": "방 이름이 안전하지 않습니다. 원하지 않는 참가자가 회의에 참여할 수 있습니다. {{recommendAction}} 회의를 보호하는 방법을 알아보세요",
-        "insecureRoomNameWarningWeb": "방 이름이 안전하지 않습니다. 원하지 않는 참가자가 회의에 참여할 수 있습니다. {{recommendAction}} 회의를 보호하는 방법은 <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">여기</a>에서 알아보세요.",
+        "insecureRoomNameWarningWeb": "방 이름이 안전하지 않습니다. 원하지 않는 참가자가 회의에 참여할 수 있습니다. {{recommendAction}} 회의를 보호하는 방법은 <a href=\"{{securityUrl}}\" target=\"_blank\">여기</a>에서 알아보세요.",
         "title": "보안 옵션",
         "unsafeRoomActions": {
             "meeting": "회의 보안을 위해 보안 버튼을 사용하세요.",
@@ -1210,7 +1206,6 @@
         "Settings": "설정",
         "accessibilityLabel": {
             "Settings": "설정 전환",
-            "audioOnly": "음성 전용 모드 전환",
             "audioRoute": "음성 장비 선택하기",
             "boo": "야유",
             "breakoutRooms": "소회의실",
@@ -1252,6 +1247,7 @@
             "localRecording": "로컬 녹화 제어 전환",
             "lockRoom": "회의 비밀번호 전환",
             "love": "하트",
+            "lowBandwidthMode": "음성 전용 모드 전환",
             "lowerHand": "손 내리기",
             "moreActions": "추가 작업",
             "moreActionsMenu": "추가 작업 메뉴",
@@ -1300,8 +1296,6 @@
             "videounmute": "카메라 시작"
         },
         "addPeople": "통화에 사용자 추가",
-        "audioOnlyOff": "음성전용 모드 끄기",
-        "audioOnlyOn": "음성전용 모드 켜기",
         "audioRoute": "음성 장비 선택하기",
         "audioSettings": "오디오 설정",
         "authenticate": "인증중",
@@ -1342,6 +1336,8 @@
         "login": "로그인",
         "logout": "로그아웃",
         "love": "하트",
+        "lowBandwidthModeOff": "음성전용 모드 끄기",
+        "lowBandwidthModeOn": "음성전용 모드 켜기",
         "lowerYourHand": "손을 내려주세요",
         "moreActions": "추가 액션",
         "moreOptions": "옵션 더보기",
@@ -1427,8 +1423,6 @@
     },
     "videoStatus": {
         "adjustFor": "조정 대상:",
-        "audioOnly": "오디오 전용",
-        "audioOnlyExpanded": "낮은 대역폭 모드에 있습니다. 이 모드에서는 오디오 및 화면 공유만 수신합니다.",
         "bestPerformance": "최고의 성능",
         "callQuality": "비디오 품질",
         "hd": "HD",
@@ -1436,9 +1430,11 @@
         "highDefinition": "고해상도",
         "highestQuality": "최고 품질",
         "labelTooiltipNoVideo": "비디오 없음",
-        "labelTooltipAudioOnly": "오디오 전용 모드 사용",
+        "labelTooltipLowBandwidthMode": "오디오 전용 모드 사용",
         "ld": "LD",
         "ldTooltip": "저해상도 비디오 보기",
+        "lowBandwidthMode": "오디오 전용",
+        "lowBandwidthModeExpanded": "낮은 대역폭 모드에 있습니다. 이 모드에서는 오디오 및 화면 공유만 수신합니다.",
         "lowDefinition": "저해상도",
         "performanceSettings": "성능 설정",
         "recording": "녹화 진행 중",

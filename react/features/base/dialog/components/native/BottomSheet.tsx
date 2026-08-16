@@ -123,7 +123,7 @@ class BottomSheet extends PureComponent<Props> {
                         style = { styles.sheetAreaCover } />
                     { renderHeader?.() }
                     <SafeAreaView
-                        edges = { [ 'left', 'right' ] }
+                        edges = { [ ] }
                         style = { [
                             styles.sheetItemContainer,
                             renderHeader

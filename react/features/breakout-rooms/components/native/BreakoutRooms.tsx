@@ -14,10 +14,9 @@ import {
     isInBreakoutRoom
 } from '../../functions';
 
-import AddBreakoutRoomButton from './AddBreakoutRoomButton';
 import AutoAssignButton from './AutoAssignButton';
-import { CollapsibleRoom } from './CollapsibleRoom';
-import LeaveBreakoutRoomButton from './LeaveBreakoutRoomButton';
+import { BreakoutRoom } from './BreakoutRoom';
+import BreakoutRoomsFooter from './BreakoutRoomsFooter';
 import styles from './styles';
 
 
@@ -33,24 +32,22 @@ const BreakoutRooms = () => {
         .sort((p1, p2) => (p1?.name || '').localeCompare(p2?.name || ''));
     const showAddBreakoutRoom = useSelector(isAddBreakoutRoomButtonVisible);
     const showAutoAssign = useSelector(isAutoAssignParticipantsVisible);
+    const showFooter = (isLocalModerator && showAddBreakoutRoom) || inBreakoutRoom;
     const renderListHeaderComponent = useMemo(() => (
         <>
             { showAutoAssign && <AutoAssignButton /> }
-            { inBreakoutRoom && <LeaveBreakoutRoomButton /> }
             {
                 isBreakoutRoomsSupported
-                && rooms.map(room => (<CollapsibleRoom
+                && rooms.map(room => (<BreakoutRoom
                     key = { room.id }
-                    room = { room }
-                    roomId = { room.id } />))
+                    room = { room } />))
             }
         </>
-    ), [ showAutoAssign, inBreakoutRoom, isBreakoutRoomsSupported, rooms ]);
+    ), [ showAutoAssign, isBreakoutRoomsSupported, rooms ]);
 
     return (
         <JitsiScreen
-            footerComponent = { isLocalModerator && showAddBreakoutRoom
-                ? AddBreakoutRoomButton : undefined }
+            footerComponent = { showFooter ? BreakoutRoomsFooter : undefined }
             style = { styles.breakoutRoomsContainer }>
 
             { /* Fixes warning regarding nested lists */ }

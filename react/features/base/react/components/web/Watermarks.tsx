@@ -162,7 +162,7 @@ class Watermarks extends Component<IProps, State> {
 
         let reactElement = null;
 
-        if (_showJitsiWatermark) {
+        if (_showJitsiWatermark && _logoUrl) {
             const style = {
                 backgroundImage: `url(${_logoUrl})`,
                 position: _logoLink ? 'static' : 'absolute'

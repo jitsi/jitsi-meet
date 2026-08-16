@@ -1,6 +1,10 @@
 # The build artifacts of the jitsi-meet project.
 build/*
 
+# Generated Allure test reports.
+tests/prosody/allure-report/*
+tests/prosody/allure-results/*
+
 doc/*
 
 # Third-party source code which we (1) do not want to modify or (2) try to

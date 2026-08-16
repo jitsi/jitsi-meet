@@ -1,4 +1,5 @@
 import '../analytics/middleware';
+import '../audio-translation/middleware';
 import '../authentication/middleware';
 import '../av-moderation/middleware';
 import '../base/conference/middleware';
@@ -46,6 +47,7 @@ import '../room-lock/middleware';
 import '../rtcstats/middleware';
 import '../speaker-stats/middleware';
 import '../subtitles/middleware';
+import '../time-timer/middleware';
 import '../transcribing/middleware';
 import '../video-layout/middleware';
 import '../video-quality/middleware';

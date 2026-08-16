@@ -1,4 +1,4 @@
-import { NavigationContainerRef } from '@react-navigation/native';
+import { NavigationContainerRef, StackActions } from '@react-navigation/native';
 import React from 'react';
 
 import { IStore } from '../../app/types';
@@ -21,6 +21,17 @@ export const rootNavigationRef = React.createRef<NavigationContainerRef<any>>();
  */
 export function navigateRoot(name: string, params?: Object) {
     return rootNavigationRef.current?.navigate(name, params);
+}
+
+/**
+ * Replaces the currently focused screen in the root navigation stack.
+ *
+ * @param {string} name - Destination route name.
+ * @param {Object} params - Params to pass to the destination route.
+ * @returns {void}
+ */
+export function replaceRoot(name: string, params?: Object) {
+    return rootNavigationRef.current?.dispatch(StackActions.replace(name, params));
 }
 
 /**

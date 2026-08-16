@@ -8,7 +8,7 @@ import { AudioSupportedLanguage, VIDEO_MUTISM_AUTHORITY } from './constants';
 // XXX The configurations/preferences/settings startWithAudioMuted and startWithVideoMuted were introduced for
 // conferences/meetings. So it makes sense for these to not be considered outside of conferences/meetings
 // (e.g. WelcomePage). Later on, though, we introduced a "Video <-> Voice" toggle on the WelcomePage which utilizes
-// startAudioOnly outside of conferences/meetings so that particular configuration/preference/setting employs slightly
+// startLowBandwidthMode outside of conferences/meetings so that particular configuration/preference/setting employs slightly
 // exclusive logic.
 const START_WITH_AUDIO_VIDEO_MUTED_SOURCES = {
     // We have startWithAudioMuted and startWithVideoMuted here:
@@ -42,9 +42,9 @@ export function isAudioMuted(stateful: IStateful) {
  * {@code getState} function.
  * @returns {boolean}
  */
-export function isVideoMutedByAudioOnly(stateful: IStateful) {
+export function isVideoMutedByLowBandwidthMode(stateful: IStateful) {
     return (
-        _isVideoMutedByAuthority(stateful, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
+        _isVideoMutedByAuthority(stateful, VIDEO_MUTISM_AUTHORITY.LOW_BANDWIDTH_MODE));
 }
 
 /**
@@ -146,11 +146,18 @@ export function shouldRenderVideoTrack(
  * @returns {string}
  */
 export const getSoundFileSrc = (file: string, language: string): string => {
-    if (!AudioSupportedLanguage[language as keyof typeof AudioSupportedLanguage]
-        || language === AudioSupportedLanguage.en) {
+    if (!language) {
+        return file;
+    }
+
+    // Normalize language code: 'fr-CA' -> 'frCA' to match AudioSupportedLanguage enum and file naming
+    const normalizedLanguage = language.replace('-', '');
+
+    if (!AudioSupportedLanguage[normalizedLanguage as keyof typeof AudioSupportedLanguage]
+        || normalizedLanguage === AudioSupportedLanguage.en) {
         return file;
     }
     const fileTokens = file.split('.');
 
-    return `${fileTokens[0]}_${language}.${fileTokens[1]}`;
+    return `${fileTokens[0]}_${normalizedLanguage}.${fileTokens[1]}`;
 };

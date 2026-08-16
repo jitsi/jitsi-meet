@@ -1,9 +1,11 @@
 import { maybeRedirectToWelcomePage } from '../app/actions.web';
 import { IStore } from '../app/types';
+import { connect } from '../base/connection/actions';
 import { openDialog } from '../base/dialog/actions';
 import { setJWT } from '../base/jwt/actions';
 import { browser } from '../base/lib-jitsi-meet';
-import { showErrorNotification } from '../notifications/actions';
+import { hideNotification, showErrorNotification, showNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 
 import { CANCEL_LOGIN } from './actionTypes';
 import LoginQuestionDialog from './components/web/LoginQuestionDialog';
@@ -11,6 +13,43 @@ import { isTokenAuthInline } from './functions.any';
 import logger from './logger';
 
 export * from './actions.any';
+
+const PROMPT_POPUP_NOTIFICATION_ID = 'PROMPT_POPUP_NOTIFICATION_ID';
+
+/**
+ * Custom error that includes a recovery callback.
+ */
+class PopupBlockedError extends Error {
+    constructor(
+            message: string = 'Popup was blocked by browser',
+            public readonly retry?: () => Window | null
+    ) {
+        super(message);
+        this.name = 'PopupBlockedError';
+        Error.captureStackTrace(this, PopupBlockedError);
+    }
+}
+
+/**
+ * Custom error thrown when a pending inline login popup is closed
+ * programmatically (e.g. the participant is admitted to the conference while
+ * the popup is still open), as opposed to failing to authenticate.
+ */
+class LoginCancelledError extends Error {
+    constructor(message: string = 'Login cancelled') {
+        super(message);
+        this.name = 'LoginCancelledError';
+        Error.captureStackTrace(this, LoginCancelledError);
+    }
+}
+
+/**
+ * Holds a function that closes the currently open inline login popup (if any)
+ * and settles its pending promise. It is set while a popup is open and cleared
+ * once the popup is closed, so it can be used to dismiss the popup when it is no
+ * longer needed (e.g. when the participant is admitted to the conference).
+ */
+let closeActiveLoginPopup: (() => void) | undefined;
 
 /**
  * Cancels {@ink LoginDialog}.
@@ -67,17 +106,12 @@ function generateNonce(): string {
  * Performs login with a popup window.
  *
  * @param {string} tokenAuthServiceUrl - Authentication service URL.
+ * @param {Window|undefined} popup - Authentication service URL.
  * @returns {Promise<any>} A promise that resolves with the authentication
  * result or rejects with an error.
  */
-export function loginWithPopup(tokenAuthServiceUrl: string): Promise<any> {
+export function loginWithPopup(tokenAuthServiceUrl: string, popup?: Window | null): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-        // Open popup
-        const width = 500;
-        const height = 600;
-        const left = window.screen.width / 2 - width / 2;
-        const top = window.screen.height / 2 - height / 2;
-
         let nonceParam = '';
 
         try {
@@ -96,14 +130,30 @@ export function loginWithPopup(tokenAuthServiceUrl: string): Promise<any> {
             }
         }
 
-        const popup = window.open(
-            `${tokenAuthServiceUrl}${nonceParam}`,
-            `Auth-${Date.now()}`,
-            `width=${width},height=${height},left=${left},top=${top}`
-        );
+        const openPopup = () => {
+            // Open popup
+            const width = 500;
+            const height = 600;
+            const left = window.screen.width / 2 - width / 2;
+            const top = window.screen.height / 2 - height / 2;
+
+            return window.open(
+                `${tokenAuthServiceUrl}${nonceParam}`,
+                `Auth-${Date.now()}`,
+                `width=${width},height=${height},left=${left},top=${top}`
+            );
+        };
 
         if (!popup) {
-            reject(new Error('Popup blocked'));
+            popup = openPopup();
+        }
+
+        if (!popup) {
+            // adds a callback to the error that can be used to directly retry where window.open will be executed
+            // on the user click without any promises(dispatches) incoved
+            reject(new PopupBlockedError('Popup blocked', () => {
+                return openPopup();
+            }));
 
             return;
         }
@@ -112,7 +162,8 @@ export function loginWithPopup(tokenAuthServiceUrl: string): Promise<any> {
         const cleanup = (handler: (event: MessageEvent) => void) => {
             window.removeEventListener('message', handler);
             clearInterval(closedPollInterval);
-            popup.close();
+            popup?.close();
+            closeActiveLoginPopup = undefined;
 
             try {
                 sessionStorage.removeItem('oauth_nonce');
@@ -150,9 +201,17 @@ export function loginWithPopup(tokenAuthServiceUrl: string): Promise<any> {
         // Listen for messages from the popup
         window.addEventListener('message', handler);
 
+        // Expose a way to close this popup externally, so it can be dismissed
+        // when it is no longer needed (e.g. the participant was admitted to the
+        // conference while the popup was still open).
+        closeActiveLoginPopup = () => {
+            cleanup(handler);
+            reject(new LoginCancelledError());
+        };
+
         // Detect manual popup close before authentication completes
         closedPollInterval = setInterval(() => {
-            if (popup.closed) {
+            if (popup?.closed) {
                 cleanup(handler);
                 reject(new Error('Login cancelled'));
             }
@@ -192,6 +251,17 @@ export function silentLogout(tokenAuthLogoutServiceUrl: string): any {
 }
 
 /**
+ * Closes the currently open inline login popup (if any) and settles its pending
+ * promise. Used to dismiss the popup when it is no longer needed, e.g. when the
+ * participant is admitted to the conference while the popup is still open.
+ *
+ * @returns {void}
+ */
+export function closeLoginPopup() {
+    closeActiveLoginPopup?.();
+}
+
+/**
  * Opens token auth URL page.
  *
  * @param {string} tokenAuthServiceUrl - Authentication service URL.
@@ -209,37 +279,67 @@ export function openTokenAuthUrl(tokenAuthServiceUrl: string): any {
         };
 
         if (!browser.isElectron() && isTokenAuthInline(getState()['features/base/config'])) {
-            loginWithPopup(tokenAuthServiceUrl)
-                .then((result: { accessToken: string; idToken: string; refreshToken?: string; }) => {
-                    // @ts-ignore
-                    const token: string = result.accessToken;
-                    const idToken: string = result.idToken;
-                    const refreshToken: string | undefined = result.refreshToken;
+            const login = (popup?: Window | null) => {
+                return loginWithPopup(tokenAuthServiceUrl, popup)
+                    .then((result: { accessToken: string; idToken: string; refreshToken?: string; }) => {
+                        // @ts-ignore
+                        const token: string = result.accessToken;
+                        const idToken: string = result.idToken;
+                        const refreshToken: string | undefined = result.refreshToken;
 
-                    // @ts-ignore
-                    dispatch(setJWT(token, idToken, refreshToken));
+                        // @ts-ignore
+                        dispatch(setJWT(token, idToken, refreshToken));
 
-                    logger.info('Reconnecting to conference with new token.');
+                        logger.info('Reconnecting to conference with new token.');
 
-                    const { connection } = getState()['features/base/connection'];
+                        const { connection } = getState()['features/base/connection'];
 
-                    connection?.refreshToken(token).then(
-                        () => {
-                            const { membersOnly } = getState()['features/base/conference'];
+                        if (connection) {
+                            connection.refreshToken(token).then(
+                                () => {
+                                    const { membersOnly } = getState()['features/base/conference'];
 
-                            membersOnly?.join();
-                        })
-                        .catch((err: any) => {
-                            dispatch(setJWT());
-                            logger.error(err);
-                        });
-                })
-                .catch(err => {
+                                    membersOnly?.join();
+                                })
+                                .catch((err: any) => {
+                                    dispatch(setJWT());
+                                    logger.error(err);
+                                });
+                        } else {
+                            dispatch(connect());
+                        }
+                    });
+            };
+
+            login().catch(err => {
+                if (err instanceof PopupBlockedError) {
+                    dispatch(showNotification({
+                        titleKey: 'dialog.loginPopupBlocked',
+                        uid: PROMPT_POPUP_NOTIFICATION_ID,
+                        customActionNameKey: [ 'dialog.retry' ],
+                        customActionHandler: [ () => {
+                            dispatch(hideNotification(PROMPT_POPUP_NOTIFICATION_ID));
+
+                            // the window.open will be executed directly from the onClick handler of the notification action button
+                            login(err.retry ? err.retry() : undefined)
+                                .catch(logger.error);
+                        } ],
+                        appearance: NOTIFICATION_TYPE.ERROR
+                    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+                    logger.error(err);
+                } else if (err instanceof LoginCancelledError) {
+                    // The popup was closed programmatically (e.g. we were
+                    // admitted to the conference while it was still open); this
+                    // is not an authentication failure, so nothing to report.
+                    logger.info('Inline login popup closed:', err.message);
+                } else {
+                    // let's add expand that will show the error message in the notification
                     dispatch(showErrorNotification({
                         titleKey: 'dialog.loginFailed'
                     }));
                     logger.error(err);
-                });
+                }
+            });
 
             return;
         }

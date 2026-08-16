@@ -46,15 +46,18 @@ export const resetWhiteboard = (): IWhiteboardAction => {
  * Sets the whiteboard visibility status.
  *
  * @param {boolean} isOpen - The whiteboard visibility flag.
+ * @param {boolean} userInitiated - Whether the action was triggered by a user interaction.
  * @returns {{
  *      type: SET_WHITEBOARD_OPEN,
- *      isOpen
+ *      isOpen,
+ *      userInitiated
  * }}
  */
-export const setWhiteboardOpen = (isOpen: boolean): IWhiteboardAction => {
+export const setWhiteboardOpen = (isOpen: boolean, userInitiated?: boolean): IWhiteboardAction => {
     return {
         type: SET_WHITEBOARD_OPEN,
-        isOpen
+        isOpen,
+        userInitiated
     };
 };
 

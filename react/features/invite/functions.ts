@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import { IReduxState } from '../app/types';
@@ -17,6 +16,7 @@ import { parseURLParams } from '../base/util/parseURLParams';
 import {
     StatusCode,
     appendURLParam,
+    getNormalizedRoomName,
     parseURIString
 } from '../base/util/uri';
 import { isVpaasMeeting } from '../jaas/functions';
@@ -503,10 +503,9 @@ export function isDialOutEnabled(state: IReduxState): boolean {
  * @returns {boolean} Indication of whether dial out is currently enabled.
  */
 export function isDialInEnabled(state: IReduxState): boolean {
-    const dialInDisabled = state['features/base/conference']
-        .conference?.getMetadataHandler()?.getMetadata()?.dialinEnabled === false;
+    const { metadata } = state['features/base/conference'];
 
-    if (dialInDisabled) {
+    if (metadata?.dialinEnabled === false) {
         return false;
     }
 
@@ -729,7 +728,7 @@ export function getDialInfoPageURL(state: IReduxState, roomName?: string) {
     const conferenceName = roomName ?? getRoomName(state);
     const { locationURL } = state['features/base/connection'];
     const { href = '' } = locationURL ?? {};
-    const room = _decodeRoomURI(conferenceName ?? '');
+    const room = getNormalizedRoomName(conferenceName) ?? '';
 
     const url = didPageUrl || `${href.substring(0, href.lastIndexOf('/'))}/${DIAL_IN_INFO_PAGE_PATH_NAME}`;
 

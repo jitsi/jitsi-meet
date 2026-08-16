@@ -116,7 +116,7 @@ const Switch = ({ className, id, checked, disabled, onChange }: IProps) => {
 
     const change = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         onChange(e.target.checked);
-    }, []);
+    }, [ onChange ]);
 
     return (
         <span

@@ -41,9 +41,6 @@
         "phone": "تلفن",
         "speaker": "بلندگو"
     },
-    "audioOnly": {
-        "audioOnly": "پهنای باند کم"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "برای مثال ۱۰۰۰۰۰۰۰ برای ۱۰ مگابایت",
         "assumedBandwidthBpsWarning": "مقدارهای بالاتر ممکن است باعث مشکلات شبکه شوند.",
@@ -442,9 +439,7 @@
         "recentlyUsedObjects": "اشیائی که به‌تازگی استفاده کرده‌اید",
         "recording": "درحال ضبط",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "هنگامی که پخش زنده در جریان است ممکن نیست",
-        "recordingInProgressDescription": "این جلسه در حال ضبط و تحلیل توسط هوش مصنوعی است{{learnMore}}. صدا و تصویر شما بی‌صدا شده‌اند. اگر صدا یا تصویر خود را روشن کنید، به ضبط شدن رضایت می‌دهید.",
-        "recordingInProgressDescriptionFirstHalf": "این جلسه در حال ضبط و تحلیل توسط هوش مصنوعی است",
-        "recordingInProgressDescriptionSecondHalf": ". صدا و تصویر شما بی‌صدا شده‌اند. اگر صدا یا تصویر خود را روشن کنید، به ضبط شدن رضایت می‌دهید.",
+        "recordingInProgressDescription": "این جلسه در حال ضبط و تحلیل توسط هوش مصنوعی است. صدا و تصویر شما بی‌صدا شده‌اند. اگر صدا یا تصویر خود را روشن کنید، به ضبط شدن رضایت می‌دهید.",
         "recordingInProgressTitle": "ضبط در حال انجام است",
         "rejoinNow": "پیوستن مجدد",
         "remoteControlAllowedMessage": "{{user}} درخواست کنترل از راه دور را پذیرفت!",
@@ -708,8 +703,6 @@
         "googlePrivacyPolicy": "سیاست محرمانگی گوگل",
         "inProgress": "ضبط یا پخش زنده درحال انجام است",
         "invalidStreamKey": "کلید پخش زنده ممکن است اشتباه باشد.",
-        "limitNotificationDescriptionNative": "پخش زنده شما به {{limit}} دقیقه محدود خواهد شد. برای پخش نامحدود از {{app}} استفاده کنید.",
-        "limitNotificationDescriptionWeb": "به دلیل درخواست‌های زیاد، پخش زندهٔ شما به {{limit}} دقیقه محدود خواهد شد. برای پخش نامحدود از <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a> استفاده کنید.",
         "off": "پخش زنده قطع شد",
         "offBy": "{{name}} پخش زنده را متوقف کرد",
         "on": "پخش زنده شروع شد",
@@ -803,6 +796,9 @@
     "lonelyMeetingExperience": {
         "button": "دعوت از دیگران",
         "youAreAlone": "شما در جلسه تنها هستید"
+    },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "پهنای باند کم"
     },
     "me": "من",
     "notify": {
@@ -1133,8 +1129,6 @@
         "highlightMomentSuccess": "لحظه علامت‌گذاری شد",
         "highlightMomentSucessDescription": "لحظه‌های علامت‌گذاری‌شدهٔ شما به خلاصهٔ جلسه افزوده خواهند شد.",
         "inProgress": "ضبط یا پخش زنده درحال انجام است",
-        "limitNotificationDescriptionNative": "به دلیل درخواست‌های زیاد، ضبط شما به {{limit}} دقیقه محدود خواهد شد. برای ضبط نامحدود از <3>{{app}}</3> استفاده کنید.",
-        "limitNotificationDescriptionWeb": "به دلیل درخواست‌های زیاد، ضبط شما به {{limit}} دقیقه محدود خواهد شد. برای ضبط نامحدود از <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a> استفاده کنید.",
         "linkGenerated": "ما لینکی برای ضبط شما ایجاد کرده‌ایم.",
         "live": "<b>زنده</b>",
         "localRecordingNoNotificationWarning": "این ضبط به آگاهی دیگر شرکت‌کنندگان نخواهد رسید. لازم است که به آن‌ها بگویید که جلسه ضبط شده است.",
@@ -1180,7 +1174,7 @@
         "about": "می‌توانید به جلسه خود یک $t(lockRoomPassword) بیافزایید.شرکت‌کنندگان باید پیش از این‌که بتوانند به جلسه بلینکند، $t(lockRoomPassword) را ارائه کنند.",
         "aboutReadOnly": "مدیر جلسه می‌تواند به جلسه یک $t(lockRoomPassword) بیافزاید. شرکت‌کنندگان باید پیش از این‌که بتوانند به جلسه بلینکند، $t(lockRoomPassword) را ارائه کنند.",
         "insecureRoomNameWarningNative": "نام اتاق ناامن است. شرکت‌کنندگان ناخواسته ممکن است به جلسه شما بلینکند. {{recommendAction}} دربارهٔ تأمین جلسهٔ خود بیش‌تر بیاموزید ",
-        "insecureRoomNameWarningWeb": "نام اتاق ناامن است. شرکت‌کنندگان ناخواسته ممکن است به جلسه شما بلینکند. {{recommendAction}} از <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">این‌جا</a> دربارهٔ تأمین جلسهٔ خود بیش‌تر بیاموزید.",
+        "insecureRoomNameWarningWeb": "نام اتاق ناامن است. شرکت‌کنندگان ناخواسته ممکن است به جلسه شما بلینکند. {{recommendAction}} از <a href=\"{{securityUrl}}\" target=\"_blank\">این‌جا</a> دربارهٔ تأمین جلسهٔ خود بیش‌تر بیاموزید.",
         "title": "انتخاب‌های امنیت",
         "unsafeRoomActions": {
             "meeting": "با استفاده از دکمهٔ امنیت جلسه خود را ایمن کنید.",
@@ -1313,7 +1307,6 @@
         "Settings": "تنظیمات",
         "accessibilityLabel": {
             "Settings": "باز کردن تنظیمات",
-            "audioOnly": "تغییر وضعیت حالتِ فقط صدا",
             "audioRoute": "دستگاه صوتی را انتخاب کنید",
             "boo": "هُوکردن",
             "breakoutRooms": "اتاق‌های جانبی",
@@ -1356,6 +1349,7 @@
             "localRecording": "تغییر وضعیت کنترل‌های ضبط محلی",
             "lockRoom": "تغییر وضعیت گذرواژهٔ جلسه",
             "love": "قلب",
+            "lowBandwidthMode": "تغییر وضعیت حالتِ فقط صدا",
             "lowerHand": "پایین‌آوردن دستتان",
             "moreActions": "اقدامات بیش‌تر",
             "moreActionsMenu": "فهرست اقدامات بیش‌تر",
@@ -1418,8 +1412,6 @@
                 "label": "استریو"
             }
         },
-        "audioOnlyOff": "غیرفعال‌کردن حالت پهنای باند کم",
-        "audioOnlyOn": "فعال‌کردن حالت پهنای باند کم",
         "audioRoute": "انتخاب دستگاه صوتی",
         "audioSettings": "تنظیمات صدا",
         "authenticate": "احراز هویت",
@@ -1462,6 +1454,8 @@
         "login": "ورود",
         "logout": "خروج",
         "love": "قلب",
+        "lowBandwidthModeOff": "غیرفعال‌کردن حالت پهنای باند کم",
+        "lowBandwidthModeOn": "فعال‌کردن حالت پهنای باند کم",
         "lowerYourHand": "پایین‌آوردن دستتان",
         "moreActions": "اقدامات بیش‌تر",
         "moreOptions": "انتخاب‌های بیش‌تر",
@@ -1553,8 +1547,6 @@
     },
     "videoStatus": {
         "adjustFor": "تنظیم‌کردن برای:",
-        "audioOnly": "فقط صدا",
-        "audioOnlyExpanded": "شما در حالت پهنای باند کم هستید. در این حالت فقط صدا و اشتراک‌گذاری صفحهٔ نمایش را دریافت خواهید کرد.",
         "bestPerformance": "بهترین کارایی",
         "callQuality": "کیفیت ویدیو (۰ برای بهترین کارایی، ۳ برای بالاترین کیفیت)",
         "hd": "کیفیت بالا",
@@ -1562,9 +1554,11 @@
         "highDefinition": "کیفیت بالا",
         "highestQuality": "بالاترین کیفیت",
         "labelTooiltipNoVideo": "بدون ویدیو",
-        "labelTooltipAudioOnly": "حالت پهنای باند کم فعال‌شد",
+        "labelTooltipLowBandwidthMode": "حالت پهنای باند کم فعال‌شد",
         "ld": "کیفیت پایین",
         "ldTooltip": "مشاهدهٔ ویدیوی کیفیت پایین",
+        "lowBandwidthMode": "فقط صدا",
+        "lowBandwidthModeExpanded": "شما در حالت پهنای باند کم هستید. در این حالت فقط صدا و اشتراک‌گذاری صفحهٔ نمایش را دریافت خواهید کرد.",
         "lowDefinition": "کیفیت پایین",
         "performanceSettings": "تنظیمات کارایی",
         "recording": "این جلسه در حال ضبط است.",

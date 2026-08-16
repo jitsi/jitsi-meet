@@ -1,3 +1,6 @@
+-- Records the timestamp (ms since epoch) when a MUC room first reaches two
+-- occupants and exposes it as the muc#roominfo_created_timestamp field in
+-- disco#info responses, so clients can display how long the conference has run.
 local it = require "util.iterators";
 local process_host_module = module:require "util".process_host_module;
 

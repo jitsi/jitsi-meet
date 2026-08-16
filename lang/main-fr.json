@@ -39,9 +39,6 @@
         "phone": "Téléphone",
         "speaker": "Haut-parleur"
     },
-    "audioOnly": {
-        "audioOnly": "Bande passante faible"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "p. ex. 10000000 pour 10 Mbps ",
         "assumedBandwidthBpsWarning": "Des valeurs élevées peuvent provoquer des problèmes réseaux.",
@@ -373,7 +370,7 @@
         "kickParticipantTitle": "Expulser ce participant ?",
         "kickSystemTitle": "Oups ! Vous avez été expulsé de la réunion",
         "kickTitle": "Oups ! vous avez été expulsé(e) par {{participantDisplayName}}",
-        "learnMore": "en savoir plus",
+        "learnMore": "En savoir plus",
         "linkMeeting": "Relier la conférence",
         "linkMeetingTitle": "Relier la conférence à Salesforce",
         "liveStreaming": "Direct",
@@ -443,9 +440,7 @@
         "recentlyUsedObjects": "Vos objets récemment utilisés",
         "recording": "Enregistrement",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Impossible durant le direct",
-        "recordingInProgressDescription": "Cette réunion est en cours d'enregistrement et d'analyse par IA{{learnMore}}. Votre audio et vidéo ont été coupés. Si vous choisissez de vous réactiver, vous consentez à être enregistré.",
-        "recordingInProgressDescriptionFirstHalf": "Cette réunion est en cours d'enregistrement et d'analyse par IA",
-        "recordingInProgressDescriptionSecondHalf": ". Votre audio et vidéo ont été coupés. Si vous choisissez de vous réactiver, vous consentez à être enregistré.",
+        "recordingInProgressDescription": "Cette réunion est en cours d'enregistrement et d'analyse par IA. Votre audio et vidéo ont été coupés. Si vous choisissez de vous réactiver, vous consentez à être enregistré.",
         "recordingInProgressTitle": "Enregistrement en cours",
         "rejoinNow": "Rejoindre maintenant",
         "remoteControlAllowedMessage": "{{user}} a accepté votre demande de prise en main à distance !",
@@ -709,8 +704,6 @@
         "googlePrivacyPolicy": "Politique de confidentialité de Google",
         "inProgress": "Enregisrtement ou diffusion en cours",
         "invalidStreamKey": "La clé de diffusion en direct n'est peut-être pas correcte.",
-        "limitNotificationDescriptionNative": "Votre diffusion sera limitée à {{limit}} min. Pour une diffusion illimitée, essayez {{app}}.",
-        "limitNotificationDescriptionWeb": "En raison d'une forte demande, votre diffusion sera limitée à {{limit}} min. Pour une diffusion illimitée, essayez <a href={{url}} rel='noopener noreferrer' target='_blank'> {{app}} </a>.",
         "off": "La diffusion en direct (streaming) a été arrêté",
         "offBy": "{{name}} a arrêté la diffusion en direct",
         "on": "En direct",
@@ -804,6 +797,9 @@
     "lonelyMeetingExperience": {
         "button": "Inviter d'autres personnes",
         "youAreAlone": "Vous êtes le seul participant de la réunion"
+    },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Bande passante faible"
     },
     "me": "moi",
     "notify": {
@@ -1130,8 +1126,6 @@
         "highlightMomentSuccess": "Moment souligné",
         "highlightMomentSucessDescription": "Votre moment souligné sera ajouté au résumé de la réunion.",
         "inProgress": "Enregistrement ou diffusion en cours",
-        "limitNotificationDescriptionNative": "En raison d'une forte demande, votre enregistrement sera limité à {{limit}} min. Pour des enregistrements illimités, essayez <3> {{app}} </3>.",
-        "limitNotificationDescriptionWeb": "En raison d'une forte demande, votre enregistrement sera limité à {{limit}} min. Pour des enregistrements illimités, essayez <a href={{url}} rel='noopener noreferrer' target='_blank'> {{app}} </a>.",
         "linkGenerated": "Nous avons généré un lien à votre enregistrement.",
         "localRecordingNoNotificationWarning": "Le démarrage de l’enregistrement ne sera pas annoncé aux autres participants. Vous devrez les informer par vous-même que la réunion sera enregistrée.",
         "localRecordingNoVideo": "La vidéo n'est pas en cours d’enregistrement",
@@ -1145,6 +1139,8 @@
         "noStreams": "Aucun flux audio ou vidéo détectés.",
         "off": "Enregistrement arrêté",
         "offBy": "{{name}} a arrêté l'enregistrement",
+        "offByWithTranscription": "{{name}} a arrêté l'enregistrement et la transcription",
+        "offWithTranscription": "L'enregistrement et la transcription sont arrêtés",
         "on": "Enregistrement",
         "onBy": "{{name}} a démarré l'enregistrement",
         "onlyRecordSelf": "Enregistrer seulement mon audio et ma vidéo.",
@@ -1175,7 +1171,7 @@
         "about": "Vous pouvez ajouter un mot de passe à votre réunion. Les participants devront fournir le mot de passe avant de pouvoir rejoindre la réunion.",
         "aboutReadOnly": "Les modérateurs peuvent ajouter un mot de passe à la réunion. Les participants devront fournir le mot de passe avant de pouvoir rejoindre la réunion.",
         "insecureRoomNameWarningNative": "Le nom de la réunion n’est pas sûr. Des participants non voulus pourraient rejoindre cette réunion. {{recommendAction}} En apprendre plus sur la sécurisation des réunions.",
-        "insecureRoomNameWarningWeb": "Le nom de la réunion n’est pas sûr. Des participants non voulus pourraient rejoindre cette réunion. {{recommendAction}} En apprendre plus sur la sécurisation des réunions <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">here</a>.",
+        "insecureRoomNameWarningWeb": "Le nom de la réunion n’est pas sûr. Des participants non voulus pourraient rejoindre cette réunion. {{recommendAction}} En apprendre plus sur la sécurisation des réunions <a href=\"{{securityUrl}}\" target=\"_blank\">here</a>.",
         "title": "Options de sécurité",
         "unsafeRoomActions": {
             "meeting": "Envisagez de sécuriser votre réunion en utilisant le bouton options de sécurité.",
@@ -1308,7 +1304,6 @@
         "Settings": "Paramètres",
         "accessibilityLabel": {
             "Settings": "Ouvrir le menu des paramètres",
-            "audioOnly": "Activer / Désactiver le mode voix uniquement",
             "audioRoute": "Sélectionner la source audio",
             "boo": "Hou",
             "breakoutRooms": "Rejoindre / quitter une salle annexe",
@@ -1352,6 +1347,7 @@
             "localRecording": "Activer / Désactiver les contrôles d'enregistrement local",
             "lockRoom": "Activer / Désactiver le mot de passe de la réunion",
             "love": "Cœur",
+            "lowBandwidthMode": "Activer / Désactiver le mode voix uniquement",
             "lowerHand": "Baisser la main",
             "moreActions": "Activer / Désactiver le menu d'actions supplémentaires",
             "moreActionsMenu": "Menu d'actions supplémentaires",
@@ -1414,8 +1410,6 @@
                 "label": "Stéréo"
             }
         },
-        "audioOnlyOff": "Désactiver le mode bande passante réduite",
-        "audioOnlyOn": "Activer le mode bande passante réduite",
         "audioRoute": "Sélectionner la source audio",
         "audioSettings": "Paramètres audio",
         "authenticate": "Authentifiez-vous",
@@ -1460,6 +1454,8 @@
         "login": "Connexion",
         "logout": "Déconnexion",
         "love": "Cœur",
+        "lowBandwidthModeOff": "Désactiver le mode bande passante réduite",
+        "lowBandwidthModeOn": "Activer le mode bande passante réduite",
         "lowerYourHand": "Baisser la main",
         "moreActions": "Plus d'actions",
         "moreOptions": "Plus d'options",
@@ -1524,6 +1520,10 @@
         "failed": "La transcription a échoué",
         "labelTooltip": "La transcription de la réunion est en cours",
         "labelTooltipExtra": "Une transcription sera disponible plus tard.",
+        "off": "Transcription arrêtée",
+        "on": "Transcription démarrée",
+        "onBy": "{{name}} a démarré la transcription",
+        "onWithRecording": "Une transcription sera également disponible après la réunion.",
         "openClosedCaptions": "Ouvrir les sous-titres",
         "original": "Original",
         "sourceLanguageDesc": "Actuellement, la langue de la réunion est sélectionnée à <b>{{sourceLanguage}}</b>. <br/> Vous pouvez la changer à partir de ",
@@ -1551,8 +1551,6 @@
     },
     "videoStatus": {
         "adjustFor": "Ajuster pour:",
-        "audioOnly": "VOIX",
-        "audioOnlyExpanded": "Vous êtes en mode bande passante réduite. Dans ce mode, vous ne recevrez que le partage audio et le partage d'écran.",
         "bestPerformance": "la meilleure performance",
         "callQuality": "Qualité vidéo",
         "hd": "HD",
@@ -1560,9 +1558,11 @@
         "highDefinition": "Haute définition",
         "highestQuality": "la meilleure qualité",
         "labelTooiltipNoVideo": "Aucune vidéo",
-        "labelTooltipAudioOnly": "Mode bande passante réduite activé",
+        "labelTooltipLowBandwidthMode": "Mode bande passante réduite activé",
         "ld": "BD",
         "ldTooltip": "Regardez la vidéo en basse définition",
+        "lowBandwidthMode": "VOIX",
+        "lowBandwidthModeExpanded": "Vous êtes en mode bande passante réduite. Dans ce mode, vous ne recevrez que le partage audio et le partage d'écran.",
         "lowDefinition": "Basse définition",
         "performanceSettings": "Paramètres de performance",
         "recording": "Enregistrement en cours",

@@ -8,11 +8,11 @@ local array = require 'util.array';
 local st = require("util.stanza");
 local jid = require "util.jid";
 local util = module:require("util");
-local muc = module:depends("muc");
 
 local NS_NICK = 'http://jabber.org/protocol/nick';
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local get_room_from_jid = util.get_room_from_jid;
+local get_occupant_by_real_jid = util.get_occupant_by_real_jid;
 local is_healthcheck_room = util.is_healthcheck_room;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
@@ -141,22 +141,14 @@ end
             local main_room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
             local occupant_jid = stanza.attr.from;
 
-            occupant = main_room:get_occupant_by_real_jid(occupant_jid);
-
-            if main_room._data.breakout_rooms_active and not occupant then
-                -- let's find is this participant in the main room or in some breakout room
-                -- not in main room, let's check breakout rooms
-                for breakout_room_jid, subject in pairs(main_room._data.breakout_rooms or {}) do
-                    local breakout_room = get_room_from_jid(breakout_room_jid);
-                    occupant = breakout_room:get_occupant_by_real_jid(occupant_jid);
-                    if occupant then
-                        room = breakout_room;
-                        break;
-                    end
-                end
-            else
-                room = main_room;
+            if not main_room then
+                module:log('warn', 'No main room found for %s %s', session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+                return;
             end
+
+            local found_room;
+            occupant, found_room = get_occupant_by_real_jid(main_room, occupant_jid);
+            room = found_room or main_room;
 
             if not occupant then
                 module:log('error', 'Occupant sending poll msg %s was not found in room %s', occupant_jid, room.jid)
@@ -263,6 +255,9 @@ end
             }
 
             -- now send message to all participants
+            -- Only relay the sanitized answers (name only) so no unexpected
+            -- fields from the sender's payload are forwarded to participants.
+            data.answers = answers;
             data.senderId = poll_creator.occupant_id;
             data.type = 'polls';
             local json_msg_str, error = json.encode(data);
@@ -280,6 +275,46 @@ end
             end
 
             local voter = occupant_details;
+
+            -- Capture the voter's current vote state so we can detect changes.
+            local previous_answers = {};
+            for idx, answer in ipairs(poll.answers) do
+                previous_answers[idx] = false;
+                if answer.voters then
+                    for _, v in ipairs(answer.voters) do
+                        if v.id == voter.occupant_id then
+                            previous_answers[idx] = true;
+                            break;
+                        end
+                    end
+                end
+            end
+
+            -- Skip processing if the vote is identical to the previous one.
+            local vote_changed = false;
+            for idx, vote_flag in ipairs(data.answers) do
+                if previous_answers[idx] ~= vote_flag then
+                    vote_changed = true;
+                    break;
+                end
+            end
+            if not vote_changed then
+                return true;
+            end
+
+            -- Remove any previous votes by this voter before recording new ones,
+            -- preventing duplicate votes for the same option.
+            for _, answer in ipairs(poll.answers) do
+                if answer.voters then
+                    local filtered = {};
+                    for _, v in ipairs(answer.voters) do
+                        if v.id ~= voter.occupant_id then
+                            table.insert(filtered, v);
+                        end
+                    end
+                    answer.voters = filtered;
+                end
+            end
 
             local answers = {};
             for vote_option_idx, vote_flag in ipairs(data.answers) do

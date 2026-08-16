@@ -1,3 +1,10 @@
+-- Tracks speaking time statistics for conference participants and broadcasts
+-- them to clients via XMPP messages. Receives incoming <message> stanzas
+-- carrying <speakerstats> (dominant speaker events) or <faceLandmarks> children
+-- from clients, and sends outgoing <message> stanzas with a <json-message>
+-- payload (type "speakerstats") to each occupant on request or on join.
+-- Aggregates per-room stats across Jicofo and MUC events, supporting Jibri
+-- recording sessions and face landmarks data.
 local util = module:require "util";
 local is_admin = util.is_admin;
 local get_room_from_jid = util.get_room_from_jid;
@@ -5,12 +12,15 @@ local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local is_jibri = util.is_jibri;
 local is_healthcheck_room = util.is_healthcheck_room;
 local process_host_module = util.process_host_module;
-local is_transcriber_jigasi = util.is_transcriber_jigasi;
+local is_focus_nick = util.is_focus_nick;
+local is_transcriber = util.is_transcriber;
 local jid_resource = require "util.jid".resource;
 local st = require "util.stanza";
 local socket = require "socket";
 local json = require 'cjson.safe';
 local jid_split = require 'util.jid'.split;
+local queue = require "util.queue";
+local array = require "util.array";
 
 -- we use async to detect Prosody 0.10 and earlier
 local have_async = pcall(require, "util.async");
@@ -27,6 +37,7 @@ if muc_component_host == nil or main_virtual_host == nil then
     return;
 end
 local breakout_room_component_host = "breakout." .. main_virtual_host;
+local face_landmarks_history_size = module:get_option_number('faceLandmarks_history_size', 20);
 
 module:log("info", "Starting speakerstats for %s", muc_component_host);
 
@@ -122,7 +133,7 @@ function on_message(event)
             return false;
         end
         local faceLandmarks = room.speakerStats[occupant.jid].faceLandmarks;
-        table.insert(faceLandmarks,
+        faceLandmarks:push(
             {
                 faceExpression = newFaceLandmarks.attr.faceExpression,
                 timestamp = tonumber(newFaceLandmarks.attr.timestamp),
@@ -146,7 +157,7 @@ function new_SpeakerStats(nick, context_user)
         nick = nick;
         context_user = context_user;
         displayName = nil;
-        faceLandmarks = {};
+        faceLandmarks = queue.new(face_landmarks_history_size);
     }, SpeakerStats);
 end
 
@@ -223,7 +234,7 @@ function occupant_joined(event)
 
     if is_healthcheck_room(room.jid)
         or is_admin(occupant.bare_jid)
-        or is_transcriber_jigasi(stanza)
+        or is_transcriber(occupant.jid)
         or is_jibri(occupant) then
         return;
     end
@@ -238,7 +249,7 @@ function occupant_joined(event)
             for jid, values in pairs(room.speakerStats) do
                 -- skip reporting those without a nick('dominantSpeakerId')
                 -- and skip focus if sneaked into the table
-                if values and type(values) == 'table' and values.nick ~= nil and values.nick ~= 'focus' then
+                if values and type(values) == 'table' and values.nick ~= nil and not is_focus_nick(values.nick) then
                     local totalDominantSpeakerTime = values.totalDominantSpeakerTime;
                     local faceLandmarks = values.faceLandmarks;
                     if totalDominantSpeakerTime > 0 or room:get_occupant_jid(jid) == nil or values:isDominantSpeaker()
@@ -252,7 +263,7 @@ function occupant_joined(event)
                         users_json[values.nick] =  {
                             displayName = values.displayName,
                             totalDominantSpeakerTime = totalDominantSpeakerTime,
-                            faceLandmarks = faceLandmarks
+                            faceLandmarks = array(faceLandmarks:items())
                         };
                     end
                 end

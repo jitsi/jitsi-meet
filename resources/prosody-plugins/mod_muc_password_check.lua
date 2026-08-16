@@ -1,3 +1,36 @@
+-- HTTP module that exposes GET and PUT endpoints at /room-info for querying
+-- and validating MUC room password information.
+--
+-- Endpoints:
+--   GET  /room-info?room=<name>[&prefix=<subdomain>]
+--     Returns a JSON object: { conference, passcodeProtected, lobbyEnabled }
+--     where conference is the full room JID, passcodeProtected is true when the
+--     room has a password set, and lobbyEnabled is true when a lobby room is
+--     attached.
+--
+--   PUT  /room-info?room=<name>[&prefix=<subdomain>]
+--     Body: application/json  { passcode: "<value>" }
+--     Returns: { valid: true|false } indicating whether the submitted passcode
+--     matches the room password.
+--
+-- Authentication:
+--   Both endpoints require a valid ASAP Bearer token (RS256) in the
+--   Authorization header.  Token verification is controlled by the
+--   enable_password_token_verification option (default: true).
+--
+-- Error responses:
+--   400  Missing or invalid parameters (no room param, wrong Content-Type,
+--        empty body, missing passcode key).
+--   403  Missing or invalid Bearer token.
+--   404  Room not found.
+--
+-- The HTTP routes are registered on the MUC base domain (muc_mapper_domain_base,
+-- default "localhost") because the HTTP server runs on port 5280 on that host.
+-- The room query parameter is decoded using the muc_mapper_domain_prefix option
+-- (default "conference") to build the full internal MUC JID.
+--
+-- Copyright (C) 2023-present 8x8, Inc.
+
 local inspect = require "inspect";
 local formdecode = require "util.http".formdecode;
 local urlencode = require "util.http".urlencode;

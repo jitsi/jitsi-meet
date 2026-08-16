@@ -4,10 +4,13 @@ import {
     CLEAR_RECORDING_SESSIONS,
     MARK_CONSENT_REQUESTED,
     RECORDING_SESSION_UPDATED,
+    SET_LOCAL_RECORDING_RUNNING,
     SET_MEETING_HIGHLIGHT_BUTTON_STATE,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
     SET_SELECTED_RECORDING_SERVICE,
+    SET_START_RECORDING_INTENT,
     SET_START_RECORDING_NOTIFICATION_SHOWN,
+    SET_STOP_RECORDING_INTENT,
     SET_STREAM_KEY
 } from './actionTypes';
 
@@ -30,14 +33,36 @@ export interface ISessionData {
     timestamp?: number;
 }
 
+/**
+ * Tracks the user's intent when starting recording with or without transcription.
+ * Set synchronously before any async operations begin to coordinate sound/notification timing.
+ */
+export interface IStartRecordingIntent {
+    recording: boolean;
+    transcription: boolean;
+}
+
+/**
+ * Tracks what is being stopped (recording and/or transcription). Mirrors
+ * IStartRecordingIntent. Used by maybeNotifyRecordingStop to coordinate the
+ * off-sound/notification across the recording and transcription stop events.
+ */
+export interface IStopRecordingIntent {
+    recording: boolean;
+    transcription: boolean;
+}
+
 export interface IRecordingState {
     consentRequested: Set<any>;
     disableHighlightMeetingMoment: boolean;
+    localRecordingRunning?: boolean;
     pendingNotificationUids: {
         [key: string]: string | undefined;
     };
     selectedRecordingService: string;
     sessionDatas: Array<ISessionData>;
+    startRecordingIntent?: IStartRecordingIntent | null;
+    stopRecordingIntent?: IStopRecordingIntent | null;
     streamKey?: string;
     wasStartRecordingSuggested?: boolean;
 }
@@ -65,7 +90,9 @@ ReducerRegistry.register<IRecordingState>(STORE_NAME,
         case CLEAR_RECORDING_SESSIONS:
             return {
                 ...state,
-                sessionDatas: []
+                sessionDatas: [],
+                startRecordingIntent: null,
+                stopRecordingIntent: null
             };
 
         case MARK_CONSENT_REQUESTED:
@@ -116,10 +143,28 @@ ReducerRegistry.register<IRecordingState>(STORE_NAME,
                 disableHighlightMeetingMoment: action.disabled
             };
 
+        case SET_START_RECORDING_INTENT:
+            return {
+                ...state,
+                startRecordingIntent: action.intent
+            };
+
+        case SET_STOP_RECORDING_INTENT:
+            return {
+                ...state,
+                stopRecordingIntent: action.intent
+            };
+
         case SET_START_RECORDING_NOTIFICATION_SHOWN:
             return {
                 ...state,
                 wasStartRecordingSuggested: true
+            };
+
+        case SET_LOCAL_RECORDING_RUNNING:
+            return {
+                ...state,
+                localRecordingRunning: action.running
             };
 
         default:

@@ -1,4 +1,7 @@
--- This module makes all MUCs in Prosody unavailable on disco#items query
+-- Hides all MUC rooms from disco#items queries on the MUC component, so that
+-- room enumeration by external clients is prevented. Rooms are still joinable
+-- by full JID; they simply do not appear in the public room list.
+-- This module is enabled under the MUC component.
 -- Copyright (C) 2023-present 8x8, Inc.
 local jid = require 'util.jid';
 local st = require 'util.stanza';

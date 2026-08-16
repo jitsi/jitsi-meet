@@ -4,7 +4,6 @@ import {
     CONFERENCE_JOINED,
     CONFERENCE_LEFT
 } from '../base/conference/actionTypes';
-import { isRoomValid } from '../base/conference/functions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/actionTypes';
 import { hideDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
@@ -16,7 +15,6 @@ import { MEDIA_TYPE } from '../base/media/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { isLocalTrackMuted } from '../base/tracks/functions.any';
 import { parseURIString } from '../base/util/uri';
-import { PREJOIN_JOINING_IN_PROGRESS } from '../prejoin/actionTypes';
 import { openLogoutDialog } from '../settings/actions';
 
 import {
@@ -28,6 +26,7 @@ import {
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
+    closeLoginPopup,
     disableModeratorLogin,
     enableModeratorLogin,
     hideLoginDialog,
@@ -35,7 +34,6 @@ import {
     openTokenAuthUrl,
     openWaitForOwnerDialog,
     redirectToDefaultLocation,
-    setTokenAuthUrlSuccess,
     stopWaitForOwner,
     waitForOwner
 } from './actions';
@@ -126,25 +124,21 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case CONFERENCE_JOINED: {
-        const { dispatch, getState } = store;
-        const state = getState();
-        const config = state['features/base/config'];
-
-        if (isTokenAuthEnabled(state)
-            && config.tokenAuthUrlAutoRedirect
-            && state['features/base/jwt'].jwt) {
-            // auto redirect is turned on and we have successfully logged in
-            // let's mark that
-            dispatch(setTokenAuthUrlSuccess(true));
-        }
+        const { dispatch } = store;
 
         if (_isWaitingForModerator(store)) {
-            store.dispatch(disableModeratorLogin());
+            dispatch(disableModeratorLogin());
         }
         if (_isWaitingForOwner(store)) {
-            store.dispatch(stopWaitForOwner());
+            dispatch(stopWaitForOwner());
         }
-        store.dispatch(hideLoginDialog());
+        dispatch(hideLoginDialog());
+
+        // We may have been admitted to the conference while an inline token
+        // auth popup was still open (e.g. an authenticated participant joined
+        // and the backend let us in automatically). Dismiss the popup so it
+        // doesn't linger on top of the conference.
+        closeLoginPopup();
         break;
     }
 
@@ -183,30 +177,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case LOGOUT: {
         _handleLogout(store);
-
-        break;
-    }
-
-    case PREJOIN_JOINING_IN_PROGRESS: {
-        if (!action.value) {
-            break;
-        }
-
-        const { dispatch, getState } = store;
-        const state = getState();
-        const config = state['features/base/config'];
-        const room = state['features/base/conference'].room;
-
-        if (isRoomValid(room)
-            && config.tokenAuthUrl && config.tokenAuthUrlAutoRedirect
-            && state['features/authentication'].tokenAuthUrlSuccessful
-            && !state['features/base/jwt'].jwt) {
-            // if we have auto redirect enabled, and we have previously logged in successfully
-            // we will redirect to the auth url to get the token and login again
-            // we want to mark token auth success to false as if login is unsuccessful
-            // the participant can join anonymously and not go in login loop
-            dispatch(setTokenAuthUrlSuccess(false));
-        }
 
         break;
     }
@@ -289,7 +259,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
     const room = state['features/base/conference'].room;
     const { locationURL = { href: '' } as URL } = state['features/base/connection'];
     const { tenant } = parseURIString(locationURL.href) || {};
-    const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
+    const { enabled: lowBandwidthModeEnabled } = state['features/base/low-bandwidth-mode'];
     const audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
     const videoMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
     const refreshToken = state['features/base/jwt'].refreshToken;
@@ -311,7 +281,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
         locationURL,
         {
             audioMuted,
-            audioOnlyEnabled,
+            lowBandwidthModeEnabled,
             skipPrejoin: true,
             videoMuted
         },

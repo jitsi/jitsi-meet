@@ -1,9 +1,32 @@
--- http endpoint to kick participants, access is based on provided jwt token
--- the correct jigasi we fined based on the display name and the number provided
+-- HTTP module that exposes a PUT /kick-participant endpoint for removing a
+-- specific participant from a MUC room via an authenticated API call.
+-- Intended for internal system use (e.g. by a backend service), not for
+-- end-user clients.
+--
+-- Authentication uses a SEPARATE ASAP key pair from the one used for login
+-- tokens (mod_auth_token).  The key server URL is read from
+-- prosody_password_public_key_repo_url (not asap_key_server), so login tokens
+-- are not accepted.
+--
+-- Request format:
+--   PUT /kick-participant?room=<room-name>[&prefix=<subdomain>]
+--   Content-Type: application/json
+--   Authorization: Bearer <system-token>
+--   Body: { "participantId": "<occupant-nick>" }
+--     OR: { "number": "<phone-prefix>" }   (matches SIP Jigasi by display name)
+-- Exactly one of participantId or number must be provided.
+--
+-- Responses:
+--   200  Participant kicked.
+--   400  Missing or invalid parameters / wrong Content-Type.
+--   403  Missing, malformed, or unverifiable token.
+--   404  Room not found, or no matching participant found.
+--
 -- Copyright (C) 2023-present 8x8, Inc.
 
 local util = module:require "util";
 local async_handler_wrapper = util.async_handler_wrapper;
+local get_room_from_jid = util.get_room_from_jid;
 local is_sip_jigasi = util.is_sip_jigasi;
 local starts_with = util.starts_with;
 local formdecode = require "util.http".formdecode;
@@ -126,7 +149,7 @@ function handle_kick_participant (event)
 
     if error_code and error_code ~= 200 then
         module:log("error", "Error validating %s", error_code);
-        return { error_code = 400; }
+        return { status_code = error_code; }
     end
 
     if not room then

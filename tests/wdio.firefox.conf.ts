@@ -1,6 +1,6 @@
 // wdio.firefox.conf.ts
 // extends the main configuration file changing first participant to be Firefox
-import { merge } from 'lodash-es';
+import { mergeWith } from 'lodash-es';
 import process from 'node:process';
 
 // @ts-ignore
@@ -19,7 +19,7 @@ if (process.env.HEADLESS === 'true') {
     ffArgs.push('--headless');
 }
 
-const mergedConfig = merge(defaultConfig, {
+const mergedConfig = mergeWith(defaultConfig, {
     exclude: [
         'specs/iframe/*.spec.ts', // FF does not support uploading files (uploadFile)
 
@@ -41,7 +41,11 @@ const mergedConfig = merge(defaultConfig, {
         p1: {
             capabilities: {
                 browserName: 'firefox',
-                browserVersion: process.env.BROWSER_FF_BETA ? 'beta' : undefined,
+                // Only pin the custom jitsi-stable/jitsi-beta aliases when routing through
+                // Selenium Grid. Local geckodriver doesn't know these aliases.
+                ...(process.env.GRID_HOST_URL ? {
+                    browserVersion: process.env.BROWSER_FF_BETA ? 'jitsi-beta' : 'jitsi-stable'
+                } : {}),
                 'moz:firefoxOptions': {
                     args: ffArgs,
                     prefs: ffPreferences
@@ -50,7 +54,11 @@ const mergedConfig = merge(defaultConfig, {
             }
         }
     }
-}, { clone: false });
+}, (objValue: any, srcValue: any) => {
+    if (Array.isArray(objValue)) {
+        return objValue.concat(srcValue);
+    }
+});
 
 // Remove the chrome options from the first participant
 // @ts-ignore

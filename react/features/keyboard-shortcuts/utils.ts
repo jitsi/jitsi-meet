@@ -41,6 +41,10 @@ export const getKeyboardKey = (e: KeyboardEvent): string => {
 
     const replacedKey = code.replace('Key', '');
 
+    if (ctrlKey && altKey) {
+        return `-:${replacedKey}`;
+    }
+
     if (altKey) {
         return `:${replacedKey}`;
     }

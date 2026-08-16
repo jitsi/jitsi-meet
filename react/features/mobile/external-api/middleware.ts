@@ -614,13 +614,7 @@ function _registerForNativeEvents(store: IStore) {
 
         const activeSession = getActiveSession(state, mode);
 
-        if (!activeSession?.id) {
-            logger.error('No recording or streaming session found');
-
-            return;
-        }
-
-        conference.stopRecording(activeSession.id);
+        conference.stopRecording(activeSession?.id);
     });
 
     eventEmitter.addListener(ExternalAPI.OVERWRITE_CONFIG, ({ config }: any) => {

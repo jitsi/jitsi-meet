@@ -159,6 +159,21 @@ local function anonymous(self, message)
 
 sasl.registerMechanism("ANONYMOUS", {"anonymous"}, anonymous);
 
+-- Fired by Prosody's sessionmanager.update_session() during smacks (XEP-0198) session
+-- resumption. The naming can be counter-intuitive:
+--   event.session      (session)      – the OLD hibernating session being kept alive.
+--                                       It holds all MUC state, auth state, and custom
+--                                       fields accumulated during the call.
+--   event.from_session (from_session) – the NEW incoming TCP session being absorbed and
+--                                       then retired.  It has JWT fields freshly extracted
+--                                       from the reconnect URL by mod_jitsi_session, but
+--                                       no MUC state (it never joined a room).
+-- The copies below refresh the old session's JWT claims with the latest values from the
+-- new connection (useful when the client reconnects with a rotated token).  Fields that
+-- represent runtime MUC state (e.g. jitsi_breakout_main_jid, set by
+-- mod_muc_breakout_rooms when the session joins the main room) must NOT be copied here —
+-- from_session will have nil for those, which would silently overwrite the valid value
+-- on the old session.
 module:hook_global('c2s-session-updated', function (event)
     local session, from_session = event.session, event.from_session;
 

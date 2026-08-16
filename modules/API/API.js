@@ -14,7 +14,6 @@ import {
     requestEnableVideoModeration
 } from '../../react/features/av-moderation/actions';
 import { isEnabledFromState, isForceMuted } from '../../react/features/av-moderation/functions';
-import { setAudioOnly } from '../../react/features/base/audio-only/actions';
 import {
     endConference,
     sendTones,
@@ -31,6 +30,7 @@ import { isSupportedBrowser } from '../../react/features/base/environment/enviro
 import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
+import { setLowBandwidthMode } from '../../react/features/base/low-bandwidth-mode/actions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../react/features/base/media/constants';
 import { isVideoMutedByUser } from '../../react/features/base/media/functions';
 import {
@@ -99,6 +99,7 @@ import {
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
 import { answerKnockingParticipant, toggleLobbyMode } from '../../react/features/lobby/actions';
+import { setSecondScreen } from '../../react/features/multi-screen/actions.web';
 import { setNoiseSuppressionEnabled } from '../../react/features/noise-suppression/actions';
 import { hideNotification, showNotification } from '../../react/features/notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../react/features/notifications/constants';
@@ -108,9 +109,14 @@ import {
 } from '../../react/features/participants-pane/actions';
 import { getParticipantsPaneOpen } from '../../react/features/participants-pane/functions';
 import { hidePiP, showPiP } from '../../react/features/pip/actions';
-import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording/actions.any';
+import {
+    setStartRecordingIntent,
+    setStopRecordingIntent,
+    startLocalVideoRecording,
+    stopLocalVideoRecording
+} from '../../react/features/recording/actions.any';
 import { grantRecordingConsent, grantRecordingConsentAndUnmute } from '../../react/features/recording/actions.web';
-import { RECORDING_TYPES } from '../../react/features/recording/constants';
+import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
 import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
 import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
@@ -124,6 +130,7 @@ import { SETTINGS_TABS } from '../../react/features/settings/constants';
 import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions';
 import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functions';
 import { setRequestingSubtitles, toggleRequestingSubtitles } from '../../react/features/subtitles/actions';
+import { setMeetingTimer } from '../../react/features/time-timer/actions';
 import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';
 import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
 import { muteAllParticipants, muteRemote } from '../../react/features/video-menu/actions';
@@ -329,6 +336,12 @@ function initCommands() {
         'proxy-connection-event': event => {
             APP.conference.onProxyConnectionEvent(event);
         },
+        'external-share-signal': signal => {
+            // Direct-cast screenshare — a plain RTCPeerConnection signalling message
+            // from a remote sharer, the successor to 'proxy-connection-event'. See
+            // conference.onExternalShareSignal.
+            APP.conference.onExternalShareSignal(signal);
+        },
         'reject-participant': (participantId, mediaType) => {
             if (!isLocalParticipantModerator(APP.store.getState())) {
                 return;
@@ -412,6 +425,9 @@ function initCommands() {
             dispatch(setTileView(false));
             sendAnalytics(createApiEvent('largevideo.participant.set'));
             dispatch(selectParticipantInLargeVideo(participant.id));
+        },
+        'set-participant-properties': properties => {
+            APP.conference.setLocalParticipantProperties(properties);
         },
         'set-participant-volume': (participantId, volume) => {
             APP.store.dispatch(setVolume(participantId, volume));
@@ -520,6 +536,10 @@ function initCommands() {
             sendAnalytics(createApiEvent('screen.sharing.toggled'));
             toggleScreenSharing(options.enable);
         },
+        'set-meeting-timer': (options = {}) => {
+            sendAnalytics(createApiEvent('meeting.timer.set'));
+            APP.store.dispatch(setMeetingTimer(options));
+        },
         'set-noise-suppression-enabled': (options = {}) => {
             APP.store.dispatch(setNoiseSuppressionEnabled(options.enabled));
         },
@@ -534,6 +554,9 @@ function initCommands() {
             sendAnalytics(createApiEvent('tile-view.toggled'));
 
             APP.store.dispatch(toggleTileView());
+        },
+        'set-second-screen': (options = {}) => {
+            APP.store.dispatch(setSecondScreen(options.id ?? 'default', options.source, options.screen));
         },
         'set-tile-view': enabled => {
             APP.store.dispatch(setTileView(enabled));
@@ -604,9 +627,9 @@ function initCommands() {
             sendAnalytics(createApiEvent('set.video.quality'));
             APP.store.dispatch(setVideoQuality(frameHeight));
         },
-        'set-audio-only': enable => {
-            sendAnalytics(createApiEvent('set.audio.only'));
-            APP.store.dispatch(setAudioOnly(enable));
+        'set-low-bandwidth-mode': enable => {
+            sendAnalytics(createApiEvent('set.low.bandwidth.mode'));
+            APP.store.dispatch(setLowBandwidthMode(enable));
         },
         'start-share-video': url => {
             sendAnalytics(createApiEvent('share.video.start'));
@@ -798,13 +821,37 @@ function initCommands() {
                 APP.store.dispatch(toggleScreenshotCaptureSummary(true));
             }
 
+            const wantsRecording = mode === JitsiRecordingConstants.mode.FILE;
+            const wantsTranscription = Boolean(transcription);
+
+            // Seed startRecordingIntent so maybeNotifyRecordingStart can coordinate
+            // the start sound/notification once recording (and transcription, if
+            // requested) resolve. Without this, notifyRecordingLinkAvailable is
+            // never emitted for iFrame-initiated recordings.
+            if (wantsRecording || wantsTranscription) {
+                APP.store.dispatch(setStartRecordingIntent({
+                    recording: wantsRecording,
+                    transcription: wantsTranscription
+                }));
+            }
+
             // Start audio / video recording, if requested.
             if (typeof recordingConfig !== 'undefined') {
                 conference.startRecording(recordingConfig);
             }
 
-            if (transcription) {
-                APP.store.dispatch(setRequestingSubtitles(true, false, null, true));
+            // Update room metadata so remote participants see the combined
+            // recording/transcription intent. When transcription is requested,
+            // setRequestingSubtitles routes through the subtitles middleware
+            // which writes both metadata fields atomically; otherwise we write
+            // the recording-only metadata directly, mirroring the start dialog.
+            if (wantsTranscription) {
+                APP.store.dispatch(setRequestingSubtitles(true, false, null, true, wantsRecording));
+            } else if (wantsRecording) {
+                conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                    isRecordingRequested: true,
+                    isTranscribingEnabled: false
+                });
             }
         },
 
@@ -825,11 +872,10 @@ function initCommands() {
                 return;
             }
 
-            if (transcription) {
-                APP.store.dispatch(setRequestingSubtitles(false, false, null, true));
-            }
-
             if (mode === 'local') {
+                if (transcription) {
+                    APP.store.dispatch(setRequestingSubtitles(false, false, null, true));
+                }
                 APP.store.dispatch(stopLocalVideoRecording());
 
                 return;
@@ -842,13 +888,34 @@ function initCommands() {
             }
 
             const activeSession = getActiveSession(state, mode);
+            const wantsStopRecording = mode === JitsiRecordingConstants.mode.FILE && Boolean(activeSession);
+            const wantsStopTranscription = Boolean(transcription);
 
-            if (activeSession && activeSession.id) {
-                APP.store.dispatch(toggleScreenshotCaptureSummary(false));
-                conference.stopRecording(activeSession.id);
-            } else {
-                logger.error('No recording or streaming session found');
+            // Seed stopRecordingIntent so maybeNotifyRecordingStop can coordinate
+            // the off sound/notification across recording and transcription stops.
+            if (wantsStopRecording || wantsStopTranscription) {
+                APP.store.dispatch(setStopRecordingIntent({
+                    recording: wantsStopRecording,
+                    transcription: wantsStopTranscription
+                }));
             }
+
+            if (wantsStopTranscription) {
+                APP.store.dispatch(setRequestingSubtitles(false, false, null, true));
+            }
+
+            // Mirror AbstractStopRecordingDialog — clear both fields atomically so
+            // remote clients see the end of the recording/transcription intent.
+            // Covers recording-only, transcription-only, and combined stops.
+            if (wantsStopRecording || wantsStopTranscription) {
+                conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                    isRecordingRequested: false,
+                    isTranscribingEnabled: false
+                });
+            }
+
+            APP.store.dispatch(toggleScreenshotCaptureSummary(false));
+            conference.stopRecording(activeSession?.id);
         },
         'initiate-private-chat': participantId => {
             const state = APP.store.getState();
@@ -899,7 +966,7 @@ function initCommands() {
             APP.store.dispatch(overwriteConfig(whitelistedConfig));
         },
         'toggle-virtual-background': () => {
-            APP.store.dispatch(toggleDialog(SettingsDialog, {
+            APP.store.dispatch(toggleDialog('SettingsDialog', SettingsDialog, {
                 defaultTab: SETTINGS_TABS.VIRTUAL_BACKGROUND }));
         },
         'end-conference': () => {
@@ -915,8 +982,8 @@ function initCommands() {
                 logger.error(' End Conference not supported');
             }
         },
-        'toggle-whiteboard': () => {
-            APP.store.dispatch(toggleWhiteboard());
+        'toggle-whiteboard': open => {
+            APP.store.dispatch(toggleWhiteboard(open));
         },
         'set-virtual-background': (enabled, backgroundImage) => {
             const tracks = APP.store.getState()['features/base/tracks'];
@@ -982,6 +1049,13 @@ function initCommands() {
             APP.store.dispatch(openCameraCaptureDialog(callback, { cameraFacingMode,
                 descriptionText,
                 titleText }));
+            break;
+        }
+        case 'connection-stats': {
+            callback({
+                ...APP.conference.getStats(),
+                iceConnected: APP.conference.getConnectionState() === 'connected'
+            });
             break;
         }
         case 'deployment-info':
@@ -1096,7 +1170,9 @@ function initCommands() {
             break;
         }
         case 'rooms-info': {
-            callback(getRoomsInfo(APP.store.getState()));
+            const { includeHidden } = request;
+
+            callback(getRoomsInfo(APP.store.getState(), includeHidden));
             break;
         }
         case 'get-shared-document-url': {
@@ -1297,6 +1373,21 @@ class API {
     }
 
     /**
+     * Notifies the external application (the sharer, via the embedder) of a direct-cast
+     * screenshare signalling message (answer / ICE candidate). The successor to
+     * {@link sendProxyConnectionEvent}; plain SDP/ICE, no Jingle.
+     *
+     * @param {Object} signal - The signalling message to pass back to the sharer.
+     * @returns {void}
+     */
+    sendExternalShareSignal(signal) {
+        this._sendEvent({
+            name: 'external-share-signal',
+            signal
+        });
+    }
+
+    /**
      * Sends event to the external application.
      *
      * @param {Object} event - The event to be sent.
@@ -1493,19 +1584,29 @@ class API {
      * @returns {void}
      */
     notifyReceivedChatMessage(
-            { body, from, nick, privateMessage, ts } = {}) {
+            { body, from, nick, privateMessage, ts, messageId, replyToMessageId } = {}) {
         if (APP.conference.isLocalId(from)) {
             return;
         }
 
-        this._sendEvent({
+        const event = {
             name: 'incoming-message',
             from,
             message: body,
             nick,
             privateMessage,
             stamp: ts
-        });
+        };
+
+        if (typeof messageId === 'string' && messageId !== '') {
+            event.messageId = messageId;
+        }
+
+        if (typeof replyToMessageId === 'string' && replyToMessageId !== '') {
+            event.replyToMessageId = replyToMessageId;
+        }
+
+        this._sendEvent(event);
     }
 
     /**
@@ -2325,6 +2426,7 @@ class API {
      * @returns {void}
      */
     notifyPictureInPictureRequested() {
+        logger.debug('Sending _pip-requested event to External API');
         this._sendEvent({
             name: '_pip-requested'
         });
@@ -2336,6 +2438,7 @@ class API {
      * @returns {void}
      */
     notifyPictureInPictureEntered() {
+        logger.debug('Sending pip-entered event to External API');
         this._sendEvent({
             name: 'pip-entered'
         });
@@ -2347,8 +2450,50 @@ class API {
      * @returns {void}
      */
     notifyPictureInPictureLeft() {
+        logger.debug('Sending pip-left event to External API');
         this._sendEvent({
             name: 'pip-left'
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a second-screen window now renders a
+     * given source/participant.
+     *
+     * @param {Object} data - The event payload ({ id, source, participantId }).
+     * @returns {void}
+     */
+    notifySecondScreenSourceChanged(data) {
+        this._sendEvent({
+            name: 'second-screen-source-changed',
+            ...data
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a second-screen window was closed.
+     *
+     * @param {Object} data - The event payload ({ id }).
+     * @returns {void}
+     */
+    notifySecondScreenClosed(data) {
+        this._sendEvent({
+            name: 'second-screen-closed',
+            ...data
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a second-screen window could not be
+     * opened/updated (e.g. popup blocked or the feature disabled).
+     *
+     * @param {Object} data - The event payload ({ id, error }).
+     * @returns {void}
+     */
+    notifySecondScreenError(data) {
+        this._sendEvent({
+            name: 'second-screen-error',
+            ...data
         });
     }
 
@@ -2447,9 +2592,9 @@ class API {
      * @param {boolean} enabled - Whether the audio only is enabled or not.
      * @returns {void}
      */
-    notifyAudioOnlyChanged(enabled) {
+    notifyLowBandwidthModeChanged(enabled) {
         this._sendEvent({
-            name: 'audio-only-changed',
+            name: 'low-bandwidth-mode-changed',
             enabled
         });
     }

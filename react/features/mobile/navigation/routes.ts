@@ -1,10 +1,11 @@
 export const screen = {
     conference: {
+        audioTranslation: 'Audio Translation',
         breakoutRooms: 'Breakout Rooms',
         carmode: 'Car Mode',
         chat: 'Chat',
         chatTabs: {
-            main: 'Chat',
+            main: 'Chat Main',
             tab: {
                 chat: 'Chat',
                 polls: 'Polls',

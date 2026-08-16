@@ -430,6 +430,20 @@ function _translateLegacyConfig(oldValue: IConfig) {
         newValue.raisedHands.disableRemoveRaisedHandOnFocus = oldValue.disableRemoveRaisedHandOnFocus;
     }
 
+    newValue.virtualBackground = newValue.virtualBackground || {};
+
+    if (oldValue.hasOwnProperty('disableVirtualBackground')
+        && !newValue.virtualBackground.hasOwnProperty('disabled')
+    ) {
+        newValue.virtualBackground.disabled = oldValue.disableVirtualBackground;
+    }
+
+    if (oldValue.hasOwnProperty('disableAddingBackgroundImages')
+        && !newValue.virtualBackground.hasOwnProperty('disableAddingImages')
+    ) {
+        newValue.virtualBackground.disableAddingImages = oldValue.disableAddingBackgroundImages;
+    }
+
     if (oldValue.stereo || oldValue.opusMaxAverageBitrate) {
         newValue.audioQuality = {
             opusMaxAverageBitrate: oldValue.audioQuality?.opusMaxAverageBitrate ?? oldValue.opusMaxAverageBitrate,

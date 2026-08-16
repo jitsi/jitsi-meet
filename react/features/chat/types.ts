@@ -3,9 +3,20 @@ import { WithTranslation } from 'react-i18next';
 import { IStore } from '../app/types';
 import { IFileMetadata } from '../file-sharing/types';
 
+import {
+    MESSAGE_TYPE_ERROR,
+    MESSAGE_TYPE_LOCAL,
+    MESSAGE_TYPE_REMOTE
+} from './constants';
+
+export type ChatMessageType =
+    | typeof MESSAGE_TYPE_LOCAL
+    | typeof MESSAGE_TYPE_ERROR
+    | typeof MESSAGE_TYPE_REMOTE;
+
 export interface IMessage {
     displayName: string;
-    error?: Object;
+    error?: unknown;
     fileMetadata?: IFileMetadata;
     isFromGuest?: boolean;
     isFromVisitor?: boolean;
@@ -13,11 +24,15 @@ export interface IMessage {
     lobbyChat: boolean;
     message: string;
     messageId: string;
-    messageType: string;
+    messageType: ChatMessageType;
     participantId: string;
     privateMessage: boolean;
     reactions: Map<string, Set<string>>;
     recipient: string;
+    /**
+     * When set, XMPP message id of the message this one replies to (XEP-0461), from lib-jitsi-meet.
+     */
+    replyToMessageId?: string;
     sentToVisitor?: boolean;
     timestamp: number;
 }

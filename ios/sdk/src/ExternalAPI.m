@@ -46,6 +46,21 @@ static void initializeViewsMap(void) {
 
 RCT_EXPORT_MODULE();
 
+static __weak ExternalAPI *_sharedExternalAPI = nil;
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _sharedExternalAPI = self;
+    }
+
+    return self;
+}
+
++ (ExternalAPI *)sharedInstance {
+    return _sharedExternalAPI;
+}
+
 - (NSDictionary *)constantsToExport {
     return @{
         @"HANG_UP": hangUpAction,

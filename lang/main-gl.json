@@ -24,9 +24,6 @@
         "phone": "Teléfono",
         "speaker": "Altofalante"
     },
-    "audioOnly": {
-        "audioOnly": "Largo de banda escaso"
-    },
     "calendarSync": {
         "addMeetingURL": "Engadir unha ligazón de reunión",
         "confirmAddLink": "Quere engadir unha ligazón de Jitsi a esta reunión?",
@@ -420,6 +417,9 @@
     },
     "lockRoomPassword": "contrasinal",
     "lockRoomPasswordUppercase": "Contrasinal",
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Largo de banda escaso"
+    },
     "me": "eu",
     "notify": {
         "connectedOneMember": "{{name}} uniuse á reunión",
@@ -582,7 +582,6 @@
         "Settings": "Configuración",
         "accessibilityLabel": {
             "Settings": "Alternar axustes",
-            "audioOnly": "Trocar só o son",
             "audioRoute": "Seleccionar o dispositivo de son",
             "callQuality": "Xestionar a calidade do vídeo",
             "cc": "Trocar subtítulos",
@@ -597,6 +596,7 @@
             "kick": "Expulsar participante",
             "localRecording": "Trocar os controis de gravación local",
             "lockRoom": "Trocar o contrasinal da reunión",
+            "lowBandwidthMode": "Trocar só o son",
             "moreActions": "Trocar o menú de accións complementarias",
             "moreActionsMenu": "Menú de accións complementarias",
             "mute": "Trocar o silenciador de son",
@@ -618,8 +618,6 @@
             "videomute": "Trocar o activador de vídeo"
         },
         "addPeople": "Engadir xente á súa chamada",
-        "audioOnlyOff": "Desactivar o modo de largo de banda reducido",
-        "audioOnlyOn": "Activar o modo de largo de banda reducido",
         "audioRoute": "Seleccionar o dispositivo de son",
         "authenticate": "Autenticar",
         "callQuality": "Xestionar a calidade do vídeo",
@@ -638,6 +636,8 @@
         "invite": "Convidar xente",
         "login": "Inicio de sesión",
         "logout": "Saír",
+        "lowBandwidthModeOff": "Desactivar o modo de largo de banda reducido",
+        "lowBandwidthModeOn": "Activar o modo de largo de banda reducido",
         "lowerYourHand": "Baixar a man",
         "moreActions": "Accións complementarias",
         "mute": "Silenciar / Activar",
@@ -694,16 +694,16 @@
         "pending": "Convidouse a {{displayName}}"
     },
     "videoStatus": {
-        "audioOnly": "SON",
-        "audioOnlyExpanded": "Está en modo de largo de banda reducido. Neste modo recibirá soamente son e pantalla compartida.",
         "callQuality": "Calidade de vídeo",
         "hd": "HD",
         "hdTooltip": "Visualizando vídeo en alta definición",
         "highDefinition": "Alta definición",
         "labelTooiltipNoVideo": "Ningún vídeo",
-        "labelTooltipAudioOnly": "Activado o modo de largo de banda reducido.",
+        "labelTooltipLowBandwidthMode": "Activado o modo de largo de banda reducido.",
         "ld": "BD",
         "ldTooltip": "Vendo o vídeo en baixa definición",
+        "lowBandwidthMode": "SON",
+        "lowBandwidthModeExpanded": "Está en modo de largo de banda reducido. Neste modo recibirá soamente son e pantalla compartida.",
         "lowDefinition": "Baixa definición",
         "onlyAudioAvailable": "Soamente está dispoñíbel o son",
         "onlyAudioSupported": "Soamente está dispoñíbel o son neste navegador.",

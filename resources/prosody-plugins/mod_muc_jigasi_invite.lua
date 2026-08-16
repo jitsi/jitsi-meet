@@ -1,14 +1,42 @@
--- A http endpoint to invite jigasi to a meeting via http endpoint
--- jwt is used to validate access
+-- HTTP module that exposes a POST /invite-jigasi endpoint for inviting a Jigasi
+-- SIP gateway instance to dial out to a phone number and connect it to a
+-- conference. Intended for internal system use (e.g. by a backend service),
+-- not for end-user clients.
+--
+-- Authentication uses a SEPARATE ASAP key pair from the one used for login
+-- tokens (mod_auth_token). The key server URL is read from
+-- prosody_password_public_key_repo_url (not asap_key_server), so login tokens
+-- are not accepted.
+--
+-- Request format:
+--   POST /invite-jigasi
+--   Content-Type: application/json
+--   Authorization: Bearer <system-token>
+--   Body: { "conference": "<room-jid>", "phoneNo": "<dial-target>" }
+--
+-- The module selects a Jigasi instance from the brewery room
+-- (muc_jigasi_brewery_jid, default: jigasibrewery@internal.auth.<base>):
+--   1. Iterates brewery occupants, skips focus.
+--   2. Filters for occupants with supports_sip=true in their colibri stats.
+--   3. Among those, picks the one with the lowest stress_level.
+--   4. Sends a Rayo <dial> IQ to that occupant (impersonating focus) with
+--      phoneNo as the dial target and conference as JvbRoomName.
+--
+-- Responses:
+--   200  Jigasi invited successfully.
+--   400  Missing or invalid parameters / wrong Content-Type.
+--   401  Missing, malformed, or unverifiable token.
+--   404  Brewery room not found, or no SIP-capable Jigasi available.
+--
 -- Copyright (C) 2023-present 8x8, Inc.
 
-local jid_split = require "util.jid".split;
 local hashes = require "util.hashes";
 local random = require "util.random";
 local st = require("util.stanza");
 local json = require 'cjson.safe';
 local util = module:require "util";
 local async_handler_wrapper = util.async_handler_wrapper;
+local is_focus = util.is_focus;
 local process_host_module = util.process_host_module;
 
 local muc_domain_base = module:get_option_string("muc_mapper_domain_base");
@@ -18,7 +46,6 @@ local muc_domain = module:get_option_string("muc_internal_domain_base", 'interna
 
 local jigasi_brewery_room_jid = module:get_option_string("muc_jigasi_brewery_jid", 'jigasibrewery@' .. muc_domain);
 
-local jigasi_bare_jid = module:get_option_string("muc_jigasi_jid", "jigasi@auth." .. muc_domain_base);
 local focus_jid = module:get_option_string("muc_jicofo_brewery_jid", jigasi_brewery_room_jid .. "/focus");
 
 local main_muc_service;
@@ -43,46 +70,46 @@ local function invite_jigasi(conference, phone_no)
 
     --select least stressed Jigasi
     local least_stressed_value = math.huge;
-    local least_stressed_jigasi_jid;
+    local least_stressed_jigasi_occupant;
     for occupant_jid, occupant in jigasi_brewery_room:each_occupant() do
-        local _, _, resource = jid_split(occupant_jid);
-        if resource ~= 'focus' then
+        if not is_focus(occupant_jid) then
             local occ = occupant:get_presence();
             local stats_child = occ:get_child("stats", "http://jitsi.org/protocol/colibri")
 
-            local is_sip_jigasi = true;
-            for stats_tag in stats_child:children() do
-                if stats_tag.attr.name == 'supports_sip' and stats_tag.attr.value == 'false' then
-                    is_sip_jigasi = false;
-                end
-            end
-
-            if is_sip_jigasi then
+            if not stats_child then
+                module:log("warn", "Jigasi occupant %s has no stats element, skipping", occupant_jid);
+            else
+                local is_sip_jigasi = true;
                 for stats_tag in stats_child:children() do
-                    if stats_tag.attr.name == 'stress_level' then
-                        local stress_level = tonumber(stats_tag.attr.value);
-                        module:log("debug", "Stressed level %s %s ", stress_level, occupant_jid)
-                        if stress_level < least_stressed_value then
-                            least_stressed_jigasi_jid = occupant_jid
-                            least_stressed_value = stress_level
+                    if stats_tag.attr.name == 'supports_sip' and stats_tag.attr.value == 'false' then
+                        is_sip_jigasi = false;
+                    end
+                end
+
+                if is_sip_jigasi then
+                    for stats_tag in stats_child:children() do
+                        if stats_tag.attr.name == 'stress_level' then
+                            local stress_level = tonumber(stats_tag.attr.value);
+                            module:log("debug", "Stressed level %s %s ", stress_level, occupant_jid)
+                            if stress_level < least_stressed_value then
+                                least_stressed_jigasi_occupant = occupant;
+                                least_stressed_value = stress_level
+                            end
                         end
                     end
                 end
             end
         end
     end
-    module:log("debug", "Least stressed jigasi selected jid %s value %s", least_stressed_jigasi_jid, least_stressed_value)
-    if not least_stressed_jigasi_jid then
+    if not least_stressed_jigasi_occupant then
         module:log("error", "Cannot invite jigasi from room %s", jigasi_brewery_room.jid)
         return 404, 'Jigasi not found'
     end
+    module:log("debug", "Least stressed jigasi selected jid %s value %s", least_stressed_jigasi_occupant.jid, least_stressed_value)
 
     -- invite Jigasi to join the conference
-    local _, _, jigasi_res = jid_split(least_stressed_jigasi_jid)
-    local jigasi_full_jid = jigasi_bare_jid .. "/" .. jigasi_res;
     local stanza_id = hashes.sha256(random.bytes(8), true);
-
-    local invite_jigasi_stanza = st.iq({ xmlns = "jabber:client", type = "set", to = jigasi_full_jid, from = focus_jid, id = stanza_id })
+    local invite_jigasi_stanza = st.iq({ xmlns = "jabber:client", type = "set", to = least_stressed_jigasi_occupant.jid, from = focus_jid, id = stanza_id })
                                    :tag("dial", { xmlns = "urn:xmpp:rayo:1", from = "fromnumber", to = phone_no })
                                    :tag("header", { xmlns = "urn:xmpp:rayo:1", name = "JvbRoomName", value = conference })
 

@@ -36,9 +36,6 @@
         "phone": "Telèfon",
         "speaker": "Altaveu"
     },
-    "audioOnly": {
-        "audioOnly": "Poca amplada de banda"
-    },
     "breakoutRooms": {
         "actions": {
             "add": "Afegeix una sala de descans",
@@ -541,8 +538,6 @@
         "googlePrivacyPolicy": "Polítiques de privadesa de Google",
         "inProgress": "L'enregistrament o la transmissió en directe és en progrés",
         "invalidStreamKey": "La clau de transmissió en directe pot ser incorrecta.",
-        "limitNotificationDescriptionNative": "L'emissió es limitarà a {{limit}} min. Per a emissions sense límit proveu {{app}}.",
-        "limitNotificationDescriptionWeb": "Atesa l'alta demanda, la vostra emissió es limitarà a {{limit}} minuts. Per a emissions il·limitades, proveu <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>",
         "off": "S'ha aturat la transmissió en directe",
         "offBy": "{{name}} ha aturat la transmissió en directe",
         "on": "Ha començat la transmissió en directe",
@@ -633,6 +628,9 @@
     "lonelyMeetingExperience": {
         "button": "Convideu altres persones",
         "youAreAlone": "Sou l'únic participant de la reunió"
+    },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Poca amplada de banda"
     },
     "me": "jo",
     "notify": {
@@ -905,8 +903,6 @@
         "highlightMomentSuccess": "Moment destacat",
         "highlightMomentSucessDescription": "S'ha afegit el moment destacat al resum de la reunió.",
         "inProgress": "L'enregistrament o la transmissió en directe és en progrés",
-        "limitNotificationDescriptionNative": "A causa de la gran demanda, el vostre enregistrament es limitarà a {{limit}} min. Per a enregistraments il·limitats, proveu <3>{{app}}</3>.",
-        "limitNotificationDescriptionWeb": "A causa de la gran demanda, l'enregistrament es limitarà a {{limit}} min. Per a enregistraments il·limitats, proveu <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "S'ha generat un enllaç a l'enregistrament.",
         "live": "EN DIRECTE",
         "localRecordingNoNotificationWarning": "L'enregistrament no s'anunciarà als altres participants. Els haureu d'informar que la reunió s'està enregistrant.",
@@ -1062,7 +1058,6 @@
         "Settings": "Configuració",
         "accessibilityLabel": {
             "Settings": "Activa o desactiva la configuració",
-            "audioOnly": "Activa o desactiva només l'àudio",
             "audioRoute": "Seleccioneu l'aparell de so",
             "boo": "Esbroncada",
             "breakoutRoom": "Entra o surt de la sala de descans",
@@ -1092,6 +1087,7 @@
             "lobbyButton": "Activa o desactiva la sala d'espera",
             "localRecording": "Activa o desactiva els controls d'enregistrament local",
             "lockRoom": "Activa o desactiva la contrasenya de la reunió",
+            "lowBandwidthMode": "Activa o desactiva només l'àudio",
             "moreActions": "Més accions",
             "moreActionsMenu": "Menú d'accions addicionals",
             "moreOptions": "Mostra més opcions",
@@ -1130,8 +1126,6 @@
             "whiteboard": "Mostra o amaga la pissarra"
         },
         "addPeople": "Afegeix persones a la trucada",
-        "audioOnlyOff": "Desactiva el mode de poca amplada de banda",
-        "audioOnlyOn": "Activa el mode de poc ampleda de banda",
         "audioRoute": "Seleccioneu l'aparell de so",
         "audioSettings": "Paràmetres d'àudio",
         "authenticate": "Autentica",
@@ -1169,6 +1163,8 @@
         "lobbyButtonEnable": "Activa el mode de sala d'espera",
         "login": "Inicia sessió",
         "logout": "Tanca la sessió",
+        "lowBandwidthModeOff": "Desactiva el mode de poca amplada de banda",
+        "lowBandwidthModeOn": "Activa el mode de poc ampleda de banda",
         "lowerYourHand": "Abaixa la mà",
         "moreActions": "Més accions",
         "moreOptions": "Més opcions",
@@ -1250,8 +1246,6 @@
     },
     "videoStatus": {
         "adjustFor": "Ajusta per a:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Ara sou en el mode de poca amplada de banda. En aquest mode només rebreu àudio i compartició de pantalla.",
         "bestPerformance": "Millor rendiment",
         "callQuality": "Qualitat de vídeo",
         "hd": "HD",
@@ -1259,9 +1253,11 @@
         "highDefinition": "Alta definició",
         "highestQuality": "Qualitat més alta",
         "labelTooiltipNoVideo": "Sense vídeo",
-        "labelTooltipAudioOnly": "S'ha activat el mode de poca amplada de banda",
+        "labelTooltipLowBandwidthMode": "S'ha activat el mode de poca amplada de banda",
         "ld": "LD",
         "ldTooltip": "Vídeo en baixa definició",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Ara sou en el mode de poca amplada de banda. En aquest mode només rebreu àudio i compartició de pantalla.",
         "lowDefinition": "Baixa definició",
         "performanceSettings": "Paràmetres de rendiment",
         "sd": "SD",

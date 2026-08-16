@@ -36,9 +36,6 @@
         "phone": "Телефон",
         "speaker": "Динамік"
     },
-    "audioOnly": {
-        "audioOnly": "Економічний режим"
-    },
     "breakoutRooms": {
         "actions": {
             "add": "Додати кімнату підгрупи",
@@ -564,8 +561,6 @@
         "googlePrivacyPolicy": "Політика конфіденційності Google",
         "inProgress": "Триває запис або трансляція наживо",
         "invalidStreamKey": "Ключ до трансляції наживо неправильний.",
-        "limitNotificationDescriptionNative": "Ваша трансляція наживо буде обмежена {{limit}} хв. Для необмеженої трансляції, спробуйте {{app}}",
-        "limitNotificationDescriptionWeb": "Через високе навантаження, трансляція наживо буде обмежена {{limit}} хв. Для необмеженої трансляції, спробуйте <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "off": "Трансляцію наживо зупинено",
         "offBy": "{{name}} зупинив трансляцію наживо",
         "on": "Трансляція наживо",
@@ -655,6 +650,9 @@
     "lonelyMeetingExperience": {
         "button": "Запросити",
         "youAreAlone": "Ви одні на цій зустрічі"
+    },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Економічний режим"
     },
     "me": "я",
     "notify": {
@@ -930,8 +928,6 @@
         "highlightMomentSuccess": "Подію виділено",
         "highlightMomentSucessDescription": "Виділену подію буде додано до підсумку зустрічі.",
         "inProgress": "Триває запис або трансляція наживо",
-        "limitNotificationDescriptionNative": "Через велике навантаження сервера ваш запис буде обмежено {{limit}}хв. Для можливості безлімітних записів, спробуйте <3>{{app}}</3>.",
-        "limitNotificationDescriptionWeb": "Через велике навантаження сервера ваш запис буде обмежено {{limit}} хв. Для можливості безлімітних записів, спробуйте <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Готово посилання на ваш запис.",
         "live": "НАЖИВО",
         "localRecordingNoNotificationWarning": "Наявність посилання на запис зустрічі не анонсується іншим учасникам. Повідомте їм про це окремо.",
@@ -1092,7 +1088,6 @@
         "Settings": "Налаштування",
         "accessibilityLabel": {
             "Settings": "Показати/приховати меню налаштувань",
-            "audioOnly": "Лише звук",
             "audioRoute": "Вибрати звуковий пристрій",
             "boo": "невдоволення",
             "breakoutRoom": "Приєднатися/вийти з підгрупи",
@@ -1133,6 +1128,7 @@
             "lobbyButton": "Увімкнути/вимкнути приймальну",
             "localRecording": "Показати/приховати панель керування відеозаписом",
             "lockRoom": "Встановити/прибрати пароль",
+            "lowBandwidthMode": "Лише звук",
             "lowerHand": "Опустити руку",
             "moreActions": "Додаткові команди",
             "moreActionsMenu": "Меню додаткових команд",
@@ -1177,8 +1173,6 @@
             "videounmute": "Увімкнути камеру"
         },
         "addPeople": "Додати учасників до зустрічі",
-        "audioOnlyOff": "Вимкнути режим економії",
-        "audioOnlyOn": "Увімкнути режим економії",
         "audioRoute": "Вибрати звуковий пристрій",
         "audioSettings": "Налаштування звуку",
         "authenticate": "Авторизуватися",
@@ -1218,6 +1212,8 @@
         "lobbyButtonEnable": "Увімкнути приймальну",
         "login": "Увійти",
         "logout": "Вийти",
+        "lowBandwidthModeOff": "Вимкнути режим економії",
+        "lowBandwidthModeOn": "Увімкнути режим економії",
         "lowerYourHand": "Опустити руку",
         "moreActions": "Додаткові команди",
         "moreOptions": "Додаткові параметри",
@@ -1302,8 +1298,6 @@
     },
     "videoStatus": {
         "adjustFor": "Рівень:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Увімкнено режим економії трафіку. У цьому режимі доступні лише аудіо та можливість спільного перегляду екрану інших учасників.",
         "bestPerformance": "Найкраща продуктивність",
         "callQuality": "Якість відео",
         "hd": "HD",
@@ -1311,9 +1305,11 @@
         "highDefinition": "Висока якість (HD)",
         "highestQuality": "Найвища якість",
         "labelTooiltipNoVideo": "Без відео",
-        "labelTooltipAudioOnly": "Увімкнено режим заощадження трафіку",
+        "labelTooltipLowBandwidthMode": "Увімкнено режим заощадження трафіку",
         "ld": "LD",
         "ldTooltip": "Відео низької якості",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Увімкнено режим економії трафіку. У цьому режимі доступні лише аудіо та можливість спільного перегляду екрану інших учасників.",
         "lowDefinition": "Низька якість (LD)",
         "performanceSettings": "Параметри продуктивності",
         "recording": "Триває запис",

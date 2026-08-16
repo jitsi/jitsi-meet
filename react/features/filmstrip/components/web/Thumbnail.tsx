@@ -4,15 +4,16 @@ import { debounce } from 'lodash-es';
 import React, { Component, KeyboardEvent, RefObject, createRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { keyframes } from 'tss-react';
 import { withStyles } from 'tss-react/mui';
 
 import { createScreenSharingIssueEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
+import { isTranslationDeliveryPending } from '../../../audio-translation/functions';
 import Avatar from '../../../base/avatar/components/Avatar';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
-import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import VideoTrack from '../../../base/media/components/web/VideoTrack';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { pinParticipant } from '../../../base/participants/actions';
@@ -28,12 +29,12 @@ import {
 import { IParticipant } from '../../../base/participants/types';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
-import { trackStreamingStatusChanged } from '../../../base/tracks/actions';
 import {
     getLocalAudioTrack,
     getTrackByMediaTypeAndParticipant,
     getVideoTrackByParticipant
 } from '../../../base/tracks/functions';
+import { useTrackStreamingStatus } from '../../../base/tracks/hooks.any';
 import { ITrack } from '../../../base/tracks/types';
 import { getVideoObjectPosition } from '../../../face-landmarks/functions';
 import { hideGif, showGif } from '../../../gifs/actions';
@@ -62,6 +63,7 @@ import {
 import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';
+import TranslationPendingChip from './TranslationPendingChip';
 import VirtualScreenshareParticipant from './VirtualScreenshareParticipant';
 
 /**
@@ -122,11 +124,6 @@ export interface IProps extends WithTranslation {
     _isActiveParticipant: boolean;
 
     /**
-     * Indicates whether audio only mode is enabled.
-     */
-    _isAudioOnly: boolean;
-
-    /**
      * Indicates whether the participant associated with the thumbnail is displayed on the large video.
      */
     _isCurrentlyOnLargeVideo: boolean;
@@ -140,6 +137,11 @@ export interface IProps extends WithTranslation {
      * Indicates whether the thumbnail should be hidden or not.
      */
     _isHidden: boolean;
+
+    /**
+     * Indicates whether audio only mode is enabled.
+     */
+    _isLowBandwidthMode: boolean;
 
     /**
      * Whether we are currently running in a mobile browser.
@@ -203,6 +205,12 @@ export interface IProps extends WithTranslation {
      * The type of thumbnail to display.
      */
     _thumbnailType: string;
+
+    /**
+     * Whether translated audio from this participant is still reaching other participants, so anyone about to
+     * speak should wait. Takes precedence over the dominant-speaker ring.
+     */
+    _translationDeliveryPending: boolean;
 
     /**
      * The video object position for the participant.
@@ -327,6 +335,29 @@ const defaultStyles = (theme: Theme) => {
             }
         },
 
+        translationPending: {
+            '& .translation-pending-border': {
+                animation: `${keyframes`
+                    0% {
+                        opacity: 0.45;
+                    }
+                    50% {
+                        opacity: 1;
+                    }
+                    100% {
+                        opacity: 0.45;
+                    }
+                `} 1.6s ease-in-out infinite`,
+                outline: '3px dashed #F8AE1A',
+                outlineOffset: '-1.5px',
+
+                '@media (prefers-reduced-motion: reduce)': {
+                    animation: 'none',
+                    opacity: 0.85
+                }
+            }
+        },
+
         raisedHand: {
             '& .raised-hand-border': {
                 boxShadow: `inset 0px 0px 0px 2px ${theme.palette.warning02} !important`
@@ -441,11 +472,10 @@ class Thumbnail extends Component<IProps, IState> {
         this._hidePopover = this._hidePopover.bind(this);
         this._onGifMouseEnter = this._onGifMouseEnter.bind(this);
         this._onGifMouseLeave = this._onGifMouseLeave.bind(this);
-        this.handleTrackStreamingStatusChanged = this.handleTrackStreamingStatusChanged.bind(this);
     }
 
     /**
-     * Starts listening for track streaming status updates after the initial render.
+     * Implements React Component's componentDidMount.
      *
      * @inheritdoc
      * @returns {void}
@@ -454,80 +484,18 @@ class Thumbnail extends Component<IProps, IState> {
         this._onDisplayModeChanged();
 
 
-        // Listen to track streaming status changed event to keep it updated.
-        // TODO: after converting this component to a react function component,
-        // use a custom hook to update local track streaming status.
-        const { _videoTrack, dispatch } = this.props;
-
-        if (_videoTrack && !_videoTrack.local) {
-            _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                this.handleTrackStreamingStatusChanged);
-            dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
-                _videoTrack.jitsiTrack.getTrackStreamingStatus()));
-        }
     }
 
     /**
-     * Remove listeners for track streaming status update.
+     * Implements React Component's componentDidUpdate.
      *
      * @inheritdoc
      * @returns {void}
      */
-    override componentWillUnmount() {
-        // TODO: after converting this component to a react function component,
-        // use a custom hook to update local track streaming status.
-        const { _videoTrack, dispatch } = this.props;
-
-        if (_videoTrack && !_videoTrack.local) {
-            _videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                this.handleTrackStreamingStatusChanged);
-            dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
-                _videoTrack.jitsiTrack.getTrackStreamingStatus()));
-        }
-    }
-
-    /**
-     * Stops listening for track streaming status updates on the old track and starts
-     * listening instead on the new track.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    override componentDidUpdate(prevProps: IProps, prevState: IState) {
+    override componentDidUpdate(_prevProps: IProps, prevState: IState) {
         if (prevState.displayMode !== this.state.displayMode) {
             this._onDisplayModeChanged();
         }
-
-        // TODO: after converting this component to a react function component,
-        // use a custom hook to update local track streaming status.
-        const { _videoTrack, dispatch } = this.props;
-
-        if (prevProps._videoTrack?.jitsiTrack?.getSourceName() !== _videoTrack?.jitsiTrack?.getSourceName()) {
-            if (prevProps._videoTrack && !prevProps._videoTrack.local) {
-                prevProps._videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                    this.handleTrackStreamingStatusChanged);
-                dispatch(trackStreamingStatusChanged(prevProps._videoTrack.jitsiTrack,
-                    prevProps._videoTrack.jitsiTrack.getTrackStreamingStatus()));
-            }
-            if (_videoTrack && !_videoTrack.local) {
-                _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                    this.handleTrackStreamingStatusChanged);
-                dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
-                    _videoTrack.jitsiTrack.getTrackStreamingStatus()));
-            }
-        }
-    }
-
-    /**
-     * Handle track streaming status change event by
-     * by dispatching an action to update track streaming status for the given track in app state.
-     *
-     * @param {JitsiTrack} jitsiTrack - The track with streaming status updated.
-     * @param {JitsiTrackStreamingStatus} streamingStatus - The updated track streaming status.
-     * @returns {void}
-     */
-    handleTrackStreamingStatusChanged(jitsiTrack: any, streamingStatus: any) {
-        this.props.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus));
     }
 
     /**
@@ -549,7 +517,7 @@ class Thumbnail extends Component<IProps, IState> {
      */
     _maybeSendScreenSharingIssueEvents(input: any) {
         const {
-            _isAudioOnly,
+            _isLowBandwidthMode,
             _isScreenSharing,
             _thumbnailType
         } = this.props;
@@ -559,7 +527,7 @@ class Thumbnail extends Component<IProps, IState> {
         if (!(DISPLAY_VIDEO === displayMode)
             && isTileType
             && _isScreenSharing
-            && !_isAudioOnly) {
+            && !_isLowBandwidthMode) {
             sendAnalytics(createScreenSharingIssueEvent({
                 source: 'thumbnail',
                 ...input
@@ -951,7 +919,10 @@ class Thumbnail extends Component<IProps, IState> {
             className += ` ${classes.raisedHand}`;
         }
 
-        if (!_isDominantSpeakerDisabled && _participant?.dominantSpeaker) {
+        if (this.props._translationDeliveryPending) {
+            // Others are still hearing this speaker translated; this ring replaces the dominant-speaker one.
+            className += ` ${classes.translationPending}`;
+        } else if (!_isDominantSpeakerDisabled && _participant?.dominantSpeaker) {
             className += ` ${classes.activeSpeaker} dominant-speaker`;
         }
         if (_thumbnailType !== THUMBNAIL_TYPE.TILE && _participant?.pinned) {
@@ -1150,6 +1121,13 @@ class Thumbnail extends Component<IProps, IState> {
                     className = { clsx(classes.borderIndicator,
                     _gifSrc && classes.borderIndicatorOnTop,
                     'active-speaker-indicator') } />
+                <div
+                    className = { clsx(classes.borderIndicator,
+                    _gifSrc && classes.borderIndicatorOnTop,
+                    'translation-pending-border') } />
+                <TranslationPendingChip
+                    participantId = { id }
+                    thumbnailType = { _thumbnailType } />
                 {_gifSrc && (
                     <div
                         className = { clsx(classes.borderIndicator, classes.borderIndicatorOnTop) }
@@ -1372,7 +1350,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         _disableTileEnlargement: Boolean(disableTileEnlargement),
         _isActiveParticipant: isActiveParticipant,
         _isHidden: isLocal && iAmRecorder && !iAmSipGateway,
-        _isAudioOnly: Boolean(state['features/base/audio-only'].enabled),
+        _isLowBandwidthMode: Boolean(state['features/base/low-bandwidth-mode'].enabled),
         _isCurrentlyOnLargeVideo: participantCurrentlyOnLargeVideo,
         _isDominantSpeakerDisabled: interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR,
         _isMobile,
@@ -1386,6 +1364,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         _stageFilmstripLayout: isStageFilmstripAvailable(state),
         _stageParticipantsVisible: _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW,
         _shouldDisplayTintBackground: !disableTintForeground && shouldDisplayTintBackground,
+        _translationDeliveryPending: isTranslationDeliveryPending(state, id),
         _thumbnailType: tileType,
         _videoObjectPosition: getVideoObjectPosition(state, participant?.id),
         _videoTrack,
@@ -1394,4 +1373,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
     };
 }
 
-export default connect(_mapStateToProps)(withStyles(translate(Thumbnail), defaultStyles));
+export default connect(_mapStateToProps)(withStyles(translate((props: IProps) => {
+    useTrackStreamingStatus(props._videoTrack);
+
+    return <Thumbnail { ...props } />;
+}), defaultStyles));

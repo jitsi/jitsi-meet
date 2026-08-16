@@ -39,9 +39,6 @@
         "phone": "Telefon",
         "speaker": "Højttaler"
     },
-    "audioOnly": {
-        "audioOnly": "Lav båndbredde"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "eks. 10000000 for 10 Mbps",
         "assumedBandwidthBpsWarning": "højere værdier kan forårsage netværksproblemer",
@@ -440,9 +437,7 @@
         "recentlyUsedObjects": "Dine nyligt anvendte objekter",
         "recording": "Optagelse",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Ikke mulig, mens en livestream er igang",
-        "recordingInProgressDescription": "Dette møde bliver optaget og bearbejdet af AI{{learnMore}}. Din video og lyd er blevet deaktiveret. Hvis du vælger at unmute din video og lyd, giver du samtykke til at blive optaget.",
-        "recordingInProgressDescriptionFirstHalf": "Dette møde bliver optaget og bearbejdet af AI",
-        "recordingInProgressDescriptionSecondHalf": ". Din video og lyd er blevet deaktiveret. Hvis du vælger at unmute din video og lyd, giver du samtykke til at blive optaget.",
+        "recordingInProgressDescription": "Dette møde bliver optaget og bearbejdet af AI. Din video og lyd er blevet deaktiveret. Hvis du vælger at unmute din video og lyd, giver du samtykke til at blive optaget.",
         "recordingInProgressTitle": "Optagelse er igang",
         "rejoinNow": "Genforbind nu",
         "remoteControlAllowedMessage": "{{user}} accepterede din anmodning om fjernbetjening!",
@@ -706,8 +701,6 @@
         "googlePrivacyPolicy": "Google Privatlivspolitik",
         "inProgress": "Optagelse eller livestreaming i gang",
         "invalidStreamKey": "Vilkår og privatlivspolitik gælder KUN hvis der streames til Youtube",
-        "limitNotificationDescriptionNative": "Din streaming vil være begrænset til {{limit}} min. For ubegrænset streaming prøv {{app}}.",
-        "limitNotificationDescriptionWeb": "På grund af stor efterspørgsel vil din streaming være begrænset til {{limit}} min. For ubegrænset streaming prøv <a href={{url}} rel='noopener noreferrer' target='_blank'> {{app}} </a>.",
         "off": "Livestreaming stoppede",
         "offBy": "{{name}} stoppede livestreaming",
         "on": "Livestreaming startede",
@@ -801,6 +794,9 @@
     "lonelyMeetingExperience": {
         "button": "Inviter andre",
         "youAreAlone": "Du er den eneste i mødet"
+    },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Lav båndbredde"
     },
     "me": "mig",
     "notify": {
@@ -1127,8 +1123,6 @@
         "highlightMomentSuccess": "Øjeblik fremhævet",
         "highlightMomentSucessDescription": "Dit fremhævede øjeblik vil blive føjet til mødesammendrag.",
         "inProgress": "Optagelse eller livestreaming i gang",
-        "limitNotificationDescriptionNative": "På grund af stor efterspørgsel vil din optagelse være begrænset til {{limit}} min. For ubegrænsede optagelser prøv <3> {{app}} </3>.",
-        "limitNotificationDescriptionWeb": "På grund af stor efterspørgsel vil din optagelse være begrænset til {{limit}} min. For ubegrænsede optagelser kan du prøve <a href={1y rel='noopener noreferrer' Target='_blank'> {{app}} </a>.",
         "linkGenerated": "Vi har genereret et link til din optagelse.",
         "localRecordingNoNotificationWarning": "Optagelsen vil ikke blive annonceret til andre deltagere. Du bliver nødt til at fortælle dem, at mødet er optaget.",
         "localRecordingNoVideo": "Video optages ikke",
@@ -1172,7 +1166,7 @@
         "about": "Du kan tilføje en $t(lockRoomPassword) til dit møde. Deltagerne bliver nødt til at give $t(lockRoomPassword), før de får lov til at deltage i mødet.",
         "aboutReadOnly": "Moderatorer kan tilføje en $t(lockRoomPassword) til mødet. Deltagerne bliver nødt til at give $t(lockRoomPassword), før de får lov til at deltage i mødet.",
         "insecureRoomNameWarningNative": "Rummets navn er usikkert. Uønskede deltagere kan tilslutte sig mødet. {{recommendAction}} Lær mere om hvordan man sikre sit møde.",
-        "insecureRoomNameWarningWeb": "Rummets navn er usikkert. Uønskede deltagere kan tilslutte sig mødet. {{recommendAction}} Lær mere om hvordan man sikre sit møde <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">her</a>.",
+        "insecureRoomNameWarningWeb": "Rummets navn er usikkert. Uønskede deltagere kan tilslutte sig mødet. {{recommendAction}} Lær mere om hvordan man sikre sit møde <a href=\"{{securityUrl}}\" target=\"_blank\">her</a>.",
         "title": "Sikkerhedsindstillinger",
         "unsafeRoomActions": {
             "meeting": "Overvej at sikre dit møde ved at bruge sikkerhedsknappen.",
@@ -1305,7 +1299,6 @@
         "Settings": "Indstillinger",
         "accessibilityLabel": {
             "Settings": "Til/fra for indstillinger",
-            "audioOnly": "Slå 'kun lyd' til eller fra",
             "audioRoute": "Vælg lydenheden",
             "boo": "Boo",
             "breakoutRooms": "Grupperum",
@@ -1348,6 +1341,7 @@
             "localRecording": "Til/fra for lokal optagelseskontrol",
             "lockRoom": "Til/fra for mødeadgangskode",
             "love": "Hjerte",
+            "lowBandwidthMode": "Slå 'kun lyd' til eller fra",
             "lowerHand": "Stop med at række hånd op",
             "moreActions": "Flere handlinger",
             "moreActionsMenu": "Flere handlinger menu",
@@ -1410,8 +1404,6 @@
                 "label": "Stereo"
             }
         },
-        "audioOnlyOff": "Deaktiver lav båndbredde-tilstand",
-        "audioOnlyOn": "Aktivér lav båndbredde-tilstand",
         "audioRoute": "Vælg lydenheden",
         "audioSettings": "Lydindstillinger",
         "authenticate": "Autentificer",
@@ -1454,6 +1446,8 @@
         "login": "Log på",
         "logout": "Log ud",
         "love": "Hjerte",
+        "lowBandwidthModeOff": "Deaktiver lav båndbredde-tilstand",
+        "lowBandwidthModeOn": "Aktivér lav båndbredde-tilstand",
         "lowerYourHand": "Sænk din hånd",
         "moreActions": "Flere handlinger",
         "moreOptions": "Flere muligheder",
@@ -1545,8 +1539,6 @@
     },
     "videoStatus": {
         "adjustFor": "Juster for:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Du er i lav-båndbredde tilstand. I denne tilstand modtager du kun lyd- og skærmdelinger.",
         "bestPerformance": "Bedste ydeevne",
         "callQuality": "Videokvalitet",
         "hd": "HD",
@@ -1554,9 +1546,11 @@
         "highDefinition": "Høj opløsning",
         "highestQuality": "Højeste kvalitet",
         "labelTooiltipNoVideo": "Ingen video",
-        "labelTooltipAudioOnly": "Lav-båndbredde tilstand aktiveret",
+        "labelTooltipLowBandwidthMode": "Lav-båndbredde tilstand aktiveret",
         "ld": "LD",
         "ldTooltip": "Visning af lav-opløsnings video",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Du er i lav-båndbredde tilstand. I denne tilstand modtager du kun lyd- og skærmdelinger.",
         "lowDefinition": "Lav definition",
         "performanceSettings": "Indstillinger for kvalitet",
         "recording": "Optagelse i gang",

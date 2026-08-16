@@ -36,9 +36,6 @@
         "phone": "Telefon",
         "speaker": "Głośnik"
     },
-    "audioOnly": {
-        "audioOnly": "Niska przepustowość"
-    },
     "breakoutRooms": {
         "actions": {
             "add": "Dodaj pokój podgrupy",
@@ -566,8 +563,6 @@
         "googlePrivacyPolicy": "Polityka prywatności Google",
         "inProgress": "Trwa nagrywanie lub transmisja na żywo",
         "invalidStreamKey": "Klucz transmisji na żywo może być nieprawidłowy.",
-        "limitNotificationDescriptionNative": "Twoje strumieniowanie będzie ograniczone do {{limit}} minut. Aby strumieniować bez ograniczeń wybróbuj {{app}}.",
-        "limitNotificationDescriptionWeb": "Ze względu na duże zapotrzebowanie twoje strumieniowanie będzie ograniczone do {{limit}} minut. Aby strumieniować bez ograniczeń wybróbuj <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "off": "Transmitowanie na żywo zostało zatrzymane",
         "offBy": "{{name}} zatrzymał transmisję na żywo",
         "on": "Strumień live",
@@ -657,6 +652,9 @@
     "lonelyMeetingExperience": {
         "button": "Zaproś innych uczestników",
         "youAreAlone": "Tylko ty uczestniczysz w tym spotkaniu"
+    },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Niska przepustowość"
     },
     "me": "to ja",
     "notify": {
@@ -873,6 +871,7 @@
         "or": "lub",
         "premeeting": "Przed spotkaniem",
         "proceedAnyway": "Kontynuuj mimo to",
+        "recordingWarning": "Inni uczestnicy mogą nagrywać tę rozmowę",
         "screenSharingError": "Błąd udostępniania ekranu:",
         "startWithPhone": "Uruchom przez telefon",
         "unsafeRoomConsent": "Rozumiem ryzyko, chcę dołączyć do spotkania",
@@ -935,8 +934,6 @@
         "highlightMomentSuccess": "Zaznaczony moment",
         "highlightMomentSucessDescription": "Zaznaczony moment zostanie dodany do podsumowania spotkania.",
         "inProgress": "Trwa nagrywanie lub transmisja na żywo",
-        "limitNotificationDescriptionNative": "Ze względu na duże zapotrzebowanie twoje nagrywanie będzie ograniczone do {{limit}} minut. Aby strumieniować bez ograniczeń wybróbuj <3>{{app}}</3>.",
-        "limitNotificationDescriptionWeb": "Ze względu na duże zapotrzebowanie twoje nagrywanie będzie ograniczone do {{limit}} minut. Aby strumieniować bez ograniczeń wybróbuj <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Wygenerowano link do nagrania.",
         "live": "NA ŻYWO",
         "localRecordingNoNotificationWarning": "Nagranie nie zostanie ogłoszone innym uczestnikom. Musisz poinformować ich, że spotkanie jest nagrywane.",
@@ -978,7 +975,7 @@
         "about": "Możesz dodać $t(lockRoomPassword) do spotkania. Uczestnicy będą musieli wprowadzić $t(lockRoomPassword) przed dołączeniem do spotkania.",
         "aboutReadOnly": "Uczestnicy posiadający uprawnienia do moderacji mogą ustawić $t(lockRoomPassword) do spotkania. Uczestnicy będą musieli wprowadzić $t(lockRoomPassword) zanim zostaną dołączeni do spotkania.",
         "insecureRoomNameWarningNative": "Nazwa pokoju jest niebezpieczna. Niechciani uczestnicy mogą dołączyć do Twojego spotkania. {{recommendAction}} Dowiedz się więcej o zabezpieczeniu spotkania ",
-        "insecureRoomNameWarningWeb": "Nazwa pokoju jest niebezpieczna. Niechciani uczestnicy mogą dołączyć do Twojego spotkania. {{recommendAction}} Dowiedz się więcej o zabezpieczeniu spotkania <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">tutaj</a>.",
+        "insecureRoomNameWarningWeb": "Nazwa pokoju jest niebezpieczna. Niechciani uczestnicy mogą dołączyć do Twojego spotkania. {{recommendAction}} Dowiedz się więcej o zabezpieczeniu spotkania <a href=\"{{securityUrl}}\" target=\"_blank\">tutaj</a>.",
         "title": "Opcje zabezpieczeń",
         "unsafeRoomActions": {
             "meeting": "Rozważ zabezpieczenie spotkania za pomocą przycisku bezpieczeństwa.",
@@ -1103,7 +1100,6 @@
         "Settings": "Ustawienia",
         "accessibilityLabel": {
             "Settings": "Ustawienia przełączania",
-            "audioOnly": "Przełączanie tylko audio",
             "audioRoute": "Wybierz urządzenie dźwiękowe",
             "boo": "Buczenie",
             "breakoutRoom": "Dołącz/opuść pokój podgrupy",
@@ -1144,6 +1140,7 @@
             "lobbyButton": "Włącz/wyłącz tryb lobby",
             "localRecording": "Przełączanie lokalnych urządzeń sterujących zapisem danych",
             "lockRoom": "Przełączenie hasła spotkania",
+            "lowBandwidthMode": "Przełączanie tylko audio",
             "lowerHand": "Opuść rękę",
             "moreActions": "Przełączanie menu więcej działań",
             "moreActionsMenu": "Więcej działań w menu",
@@ -1191,8 +1188,6 @@
             "videounmute": "Uruchom kamerę"
         },
         "addPeople": "Dodaj ludzi do swojej rozmowy",
-        "audioOnlyOff": "Wyłącz tryb słabego łącza",
-        "audioOnlyOn": "Włącz tryb słabego łącza",
         "audioRoute": "Wybierz urządzenie dźwiękowe",
         "audioSettings": "Ustawienia audio",
         "authenticate": "Uwierzytelnianie",
@@ -1232,6 +1227,8 @@
         "lobbyButtonEnable": "Włącz tryb lobby",
         "login": "Zaloguj",
         "logout": "Wyloguj",
+        "lowBandwidthModeOff": "Wyłącz tryb słabego łącza",
+        "lowBandwidthModeOn": "Włącz tryb słabego łącza",
         "lowerYourHand": "Opuść rękę",
         "moreActions": "Więcej działań",
         "moreOptions": "Więcej opcji",
@@ -1319,8 +1316,6 @@
     },
     "videoStatus": {
         "adjustFor": "Dostosuj do:",
-        "audioOnly": "DŹW",
-        "audioOnlyExpanded": "Jesteś w trybie słabego łącza. W tym trybie będziesz otrzymywać tylko dźwięk i udostępnianie ekranu.",
         "bestPerformance": "Najlepsza wydajność",
         "callQuality": "Jakość obrazu",
         "hd": "HD",
@@ -1328,9 +1323,11 @@
         "highDefinition": "Wysoka rozdzielczość",
         "highestQuality": "Najwyższa jakość",
         "labelTooiltipNoVideo": "Brak obrazu",
-        "labelTooltipAudioOnly": "Włączono tryb słabego łącza",
+        "labelTooltipLowBandwidthMode": "Włączono tryb słabego łącza",
         "ld": "LD",
         "ldTooltip": "Podgląd obrazu w niskiej rozdzielczości",
+        "lowBandwidthMode": "DŹW",
+        "lowBandwidthModeExpanded": "Jesteś w trybie słabego łącza. W tym trybie będziesz otrzymywać tylko dźwięk i udostępnianie ekranu.",
         "lowDefinition": "Niska rozdzielczość",
         "performanceSettings": "Ustawienia wydajności",
         "recording": "Trwa nagrywanie",

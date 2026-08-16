@@ -1,8 +1,9 @@
 import React from 'react';
+import { Trans } from 'react-i18next';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../../app/types';
-import { translate } from '../../../../base/i18n/functions';
+import { translate } from '../../../../base/i18n/functions.web';
 import Dialog from '../../../../base/ui/components/web/Dialog';
 import Spinner from '../../../../base/ui/components/web/Spinner';
 import {
@@ -80,7 +81,7 @@ class StartLiveStreamDialog
      * @inheritdoc
      */
     override render() {
-        const { _googleApiApplicationClientID } = this.props;
+        const { _googleApiApplicationClientID, t } = this.props;
 
         return (
             <Dialog
@@ -91,6 +92,9 @@ class StartLiveStreamDialog
                 <div className = 'live-stream-dialog'>
                     { _googleApiApplicationClientID
                         ? this._renderYouTubePanel() : null }
+                    <div className = 'youtube-go-live-warning'>
+                        { t('liveStreaming.youTubeGoLiveWarning') }
+                    </div>
                     <StreamKeyForm
                         onChange = { this._onStreamKeyChange }
                         value = {
@@ -272,19 +276,14 @@ class StartLiveStreamDialog
                 ;
             }
 
-            /**
-             * FIXME: Ideally this help text would be one translation string
-             * that also accepts the anchor. This can be done using the Trans
-             * component of react-i18next but I couldn't get it working...
-             */
             helpText = (
-                <div>
-                    { `${t('liveStreaming.chooseCTA',
-                        { email: _googleProfileEmail })} ` }
-                    <a onClick = { this._onRequestGoogleSignIn }>
-                        { t('liveStreaming.changeSignIn') }
-                    </a>
-                </div>
+                <Trans
+                    components = { [ <a
+                        key = 'change-sign-in'
+                        onClick = { this._onRequestGoogleSignIn } /> ] }
+                    i18nKey = 'liveStreaming.chooseCTAWithChangeSignIn'
+                    t = { t }
+                    values = {{ email: _googleProfileEmail }} />
             );
 
             break;

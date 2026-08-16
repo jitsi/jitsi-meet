@@ -18,6 +18,7 @@ import {
     getInviteText,
     getInviteTextiOS,
     isAddPeopleEnabled,
+    isDialInEnabled,
     isDialOutEnabled,
     isSharingEnabled,
     sharingFeatures
@@ -205,7 +206,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
 
     return {
         _dialIn: dialIn,
-        _dialInVisible: isSharingEnabled(sharingFeatures.dialIn),
+        _dialInVisible: isSharingEnabled(sharingFeatures.dialIn) && isDialInEnabled(state),
         _urlSharingVisible: isDynamicBrandingDataLoaded(state) && isSharingEnabled(sharingFeatures.url),
         _emailSharingVisible: isSharingEnabled(sharingFeatures.email),
         _invitationText: getInviteText({ state,

@@ -2,6 +2,7 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../app/types';
 import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../base/conference/actionTypes';
+import { SET_CONFIG } from '../base/config/actionTypes';
 import { CONNECTION_FAILED } from '../base/connection/actionTypes';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
@@ -10,13 +11,14 @@ import {
     TRACK_ADDED,
     TRACK_NO_DATA_FROM_SOURCE
 } from '../base/tracks/actionTypes';
+import { preloadZxcvbn } from '../base/util/isInsecureRoomName';
 
 import {
     setDeviceStatusOk,
     setDeviceStatusWarning,
     setJoiningInProgress
 } from './actions';
-import { isPrejoinPageVisible } from './functions.any';
+import { isPrejoinPageVisible, isUnsafeRoomWarningEnabled } from './functions.any';
 
 /**
  * The redux middleware for {@link PrejoinPage}.
@@ -26,6 +28,15 @@ import { isPrejoinPageVisible } from './functions.any';
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case SET_CONFIG: {
+        const result = next(action);
+
+        if (isUnsafeRoomWarningEnabled(store.getState())) {
+            preloadZxcvbn();
+        }
+
+        return result;
+    }
     case SET_AUDIO_MUTED: {
         if (isPrejoinPageVisible(store.getState())) {
             store.dispatch(updateSettings({

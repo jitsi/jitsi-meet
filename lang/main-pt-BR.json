@@ -39,9 +39,6 @@
         "phone": "Celular",
         "speaker": "Alto-falantes"
     },
-    "audioOnly": {
-        "audioOnly": "Largura de banda baixa"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "Ex. 10000000 para 10 Mbps",
         "assumedBandwidthBpsWarning": "Valores mais altos podem causar erros de rede.",
@@ -622,8 +619,6 @@
         "googlePrivacyPolicy": "Política de Privacidade do Google",
         "inProgress": "Gravação ou live streaming em andamento",
         "invalidStreamKey": "A senha para transmissão ao vivo pode estar incorreta.",
-        "limitNotificationDescriptionNative": "Sua transmissão será limitada a {{limit}} minutos. Para transmissão ilimitada tente {{app}}.",
-        "limitNotificationDescriptionWeb": "Devido a alta demanda sua transmissão será limitada a {{limit}} minutos. Para transmissão ilimitada tente <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "off": "Transmissão ao vivo encerrada",
         "offBy": "{{name}} parou a transmissão ao vivo",
         "on": "Transmissão ao Vivo",
@@ -715,6 +710,9 @@
     "lonelyMeetingExperience": {
         "button": "Convidar outros",
         "youAreAlone": "Você é o único na reunião"
+    },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Largura de banda baixa"
     },
     "me": "eu",
     "notify": {
@@ -996,8 +994,6 @@
         "highlightMomentSuccess": "Momento destacado",
         "highlightMomentSucessDescription": "Seu momento destacado será adicionado ao sumário da reunião.",
         "inProgress": "Gravação ou live streaming em andamento",
-        "limitNotificationDescriptionNative": "Devido a demanda, sua gravação ficará limitada a {{limit}} minutos. Para gravação ilimitada tente <3>{{app}}</3>.",
-        "limitNotificationDescriptionWeb": "Devido a demanda, sua gravação ficará limitada a {{limit}} minutos. Para gravação ilimitada tente <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Geramos um link para sua gravação.",
         "live": "AO VIVO",
         "localRecordingNoNotificationWarning": "A gravação não será anunciada aos outros participantes. Você precisará avisá-los que a reunião está sendo gravada.",
@@ -1039,7 +1035,7 @@
         "about": "Você pode adicionar $t(lockRoomPassword) a sua reunião. Participantes terão que fornecer $t(lockRoomPassword) antes de entrar na reunião.",
         "aboutReadOnly": "Moderadores podem adicionar $t(lockRoomPassword) à reunião. Participantes terão que fornecer $t(lockRoomPassword) antes de entrar na reunião.",
         "insecureRoomNameWarningNative": "O nome da sala é não é seguro. Participantes não desejados podem ingressar na reunião. {{recommendAction}} Saiba mais sobre como proteger sua reunião ",
-        "insecureRoomNameWarningWeb": "O nome da sala é não é seguro. Participantes não desejados podem ingressar na reunião. {{recommendAction}} Saiba mais sobre como proteger sua reunião <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">aqui</a>.",
+        "insecureRoomNameWarningWeb": "O nome da sala é não é seguro. Participantes não desejados podem ingressar na reunião. {{recommendAction}} Saiba mais sobre como proteger sua reunião <a href=\"{{securityUrl}}\" target=\"_blank\">aqui</a>.",
         "title": "Opções de segurança",
         "unsafeRoomActions": {
             "meeting": "Considere usar o botão de segurança para proteger sua reunião.",
@@ -1167,7 +1163,6 @@
         "Settings": "Configurações",
         "accessibilityLabel": {
             "Settings": "Alternar configurações",
-            "audioOnly": "Alternar para apenas áudio",
             "audioRoute": "Selecionar o dispositivo de som",
             "boo": "Vaia",
             "breakoutRooms": "Entrar/sair da sala de apoio",
@@ -1208,6 +1203,7 @@
             "lobbyButton": "Habilitar/desabilitar sala de espera",
             "localRecording": "Alternar controles de gravação local",
             "lockRoom": "Ativar/desativar senha de reunião",
+            "lowBandwidthMode": "Alternar para apenas áudio",
             "lowerHand": "Abaixar a mão",
             "moreActions": "Alternar mais menu de ações",
             "moreActionsMenu": "Menu de mais ações",
@@ -1255,8 +1251,6 @@
             "videounmute": "Ativar câmera"
         },
         "addPeople": "Adicionar pessoas à sua chamada",
-        "audioOnlyOff": "Desabilitar modo de largura de banda baixa",
-        "audioOnlyOn": "Habilitar modo de largura de banda baixa",
         "audioRoute": "Selecionar o dispositivo de som",
         "audioSettings": "Configurações de áudio",
         "authenticate": "Autenticar",
@@ -1296,6 +1290,8 @@
         "lobbyButtonEnable": "Habilitar sala de espera",
         "login": "Iniciar sessão",
         "logout": "Encerrar sessão",
+        "lowBandwidthModeOff": "Desabilitar modo de largura de banda baixa",
+        "lowBandwidthModeOn": "Habilitar modo de largura de banda baixa",
         "lowerYourHand": "Baixar a mão",
         "moreActions": "Mais ações",
         "moreOptions": "Mais opções",
@@ -1383,8 +1379,6 @@
     },
     "videoStatus": {
         "adjustFor": "Ajustar para:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Você está em modo de banda baixa. Neste modo, se recebe somente áudio e compartilhamento de tela.",
         "bestPerformance": "Melhor performance",
         "callQuality": "Qualidade de vídeo",
         "hd": "HD",
@@ -1392,9 +1386,11 @@
         "highDefinition": "Alta definição (HD)",
         "highestQuality": "Alta qualidade",
         "labelTooiltipNoVideo": "Sem vídeo",
-        "labelTooltipAudioOnly": "Modo de largura de banda baixa habilitada",
+        "labelTooltipLowBandwidthMode": "Modo de largura de banda baixa habilitada",
         "ld": "LD",
         "ldTooltip": "Ver vídeo em baixa definição",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Você está em modo de banda baixa. Neste modo, se recebe somente áudio e compartilhamento de tela.",
         "lowDefinition": "Baixa definição (LD)",
         "performanceSettings": "Configurações de performance",
         "recording": "Gravação em andamento",

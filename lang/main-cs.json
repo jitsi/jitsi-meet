@@ -39,9 +39,6 @@
         "phone": "Telefon",
         "speaker": "Reproduktor"
     },
-    "audioOnly": {
-        "audioOnly": "Nízká přenosová rychlost"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "např. 10000000 pro 10 Mbps",
         "assumedBandwidthBpsWarning": "Vyšší hodnoty mohou způsobit problémy se sítí.",
@@ -635,8 +632,6 @@
         "googlePrivacyPolicy": "Zásady soukromí Google",
         "inProgress": "Probíhá nahrávání nebo živé visílání",
         "invalidStreamKey": "Klíč k živému přenosu může být chybný.",
-        "limitNotificationDescriptionNative": "Váš živý přenos může trvat nejvýše {{limit}} min. Pro neomezený přenos vyzkoušejte {{app}}.",
-        "limitNotificationDescriptionWeb": "Kvůli vysokému zájmu může váš přenos trvat nejvýše {{limit}} min. Pro neomezený přenos vyzkoušejte <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "off": "Živý přenos skončil",
         "offBy": "{{name}} zastavil/a živý přenos",
         "on": "Živý přenos",
@@ -729,6 +724,9 @@
     "lonelyMeetingExperience": {
         "button": "Pozvat další",
         "youAreAlone": "Jste v tomto setkání jediný/á"
+    },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Nízká přenosová rychlost"
     },
     "me": "já",
     "notify": {
@@ -1037,8 +1035,6 @@
         "highlightMomentSuccess": "Zvýrazněný okamžik",
         "highlightMomentSucessDescription": "Váš zvýrazněný okamžik bude přidán do shrnutí setkání.",
         "inProgress": "Probíhá nahrávání nebo živé vysílání",
-        "limitNotificationDescriptionNative": "Kvůli vysokému zájmu bude vaše nahrávka omezena na nejvýše {{limit}} min. Pro neomezené nahrávání zkuste <3>{{app}}</3>.",
-        "limitNotificationDescriptionWeb": "Kvůli vysokému zájmu bude vaše nahrávka omezena na nejvýše {{limit}} min. Pro neomezené nahrávání zkuste <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Vygenerovali jsme odkaz na vaši nahrávku.",
         "localRecordingNoNotificationWarning": "Nahrávka nebude oznámena ostatním účastníkům. Budete jim muset dát vědět, že schůzka je nahrána.",
         "localRecordingNoVideo": "Video se nenahrává",
@@ -1082,7 +1078,7 @@
         "about": "Můžete pro setkání nastavit $t(lockRoomPassword). Účastníci budou muset $t(lockRoomPassword) zadat, než se budou moct do setkání připojit.",
         "aboutReadOnly": "Moderující účastníci můžou pro setkání nastavit $t(lockRoomPassword). Účastníci budou muset $t(lockRoomPassword) zadat, než se budou moct do setkání připojit.",
         "insecureRoomNameWarningNative": "Název místnosti není bezpečný. K vaší schůzce se mohou připojit nežádoucí účastníci. {{recommendAction}} Další informace o zabezpečení schůzky ",
-        "insecureRoomNameWarningWeb": "Název místnosti není bezpečný. K vaší schůzce se mohou připojit nežádoucí účastníci. {{recommendAction}} Další informace o zabezpečení schůzky naleznete <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">zde</a>.",
+        "insecureRoomNameWarningWeb": "Název místnosti není bezpečný. K vaší schůzce se mohou připojit nežádoucí účastníci. {{recommendAction}} Další informace o zabezpečení schůzky naleznete <a href=\"{{securityUrl}}\" target=\"_blank\">zde</a>.",
         "title": "Možnosti zabezpečení",
         "unsafeRoomActions": {
             "meeting": "Zvažte zabezpečení schůzky pomocí bezpečnostního tlačítka.",
@@ -1211,7 +1207,6 @@
         "Settings": "Nastavení",
         "accessibilityLabel": {
             "Settings": "Přepnout nastavení",
-            "audioOnly": "Přepnout režim pouze zvuku",
             "audioRoute": "Vybrat zvukové zařízení",
             "boo": "Bú",
             "breakoutRooms": "Podmístnosti",
@@ -1253,6 +1248,7 @@
             "localRecording": "Přepnout ovládání místního nahrávání",
             "lockRoom": "Přepnout heslo setkání",
             "love": "Srdce",
+            "lowBandwidthMode": "Přepnout režim pouze zvuku",
             "lowerHand": "Spustit ruku dolů",
             "moreActions": "Přepnout nabídku více činností",
             "moreActionsMenu": "Nabídka více činností",
@@ -1301,8 +1297,6 @@
             "videounmute": "Zapnpout kameru"
         },
         "addPeople": "Přidat do hovoru účastníky",
-        "audioOnlyOff": "Vypnout mód slabého připojení",
-        "audioOnlyOn": "Zapnout mód slabého připojení",
         "audioRoute": "Vybrat zvukové zařízení",
         "audioSettings": "Nastavení zvuku",
         "authenticate": "Ověřit",
@@ -1343,6 +1337,8 @@
         "login": "Přihlásit se",
         "logout": "Odhlásit se",
         "love": "Srdce",
+        "lowBandwidthModeOff": "Vypnout mód slabého připojení",
+        "lowBandwidthModeOn": "Zapnout mód slabého připojení",
         "lowerYourHand": "Přestat se hlásit",
         "moreActions": "Více činností",
         "moreOptions": "Více možností",
@@ -1428,8 +1424,6 @@
     },
     "videoStatus": {
         "adjustFor": "Přizpůsobit pro",
-        "audioOnly": "AU",
-        "audioOnlyExpanded": "Jste v režimu slabého připojení. V tomto režimu je k dispozici jen zvuk a sdílení obrazovky.",
         "bestPerformance": "Nejlepší výkon",
         "callQuality": "Kvalita hovoru",
         "hd": "HD",
@@ -1437,9 +1431,11 @@
         "highDefinition": "Vysoká kvalita",
         "highestQuality": "Nejvyšší kvalita",
         "labelTooiltipNoVideo": "Žádné video",
-        "labelTooltipAudioOnly": "Zapnut režim slabého připojení",
+        "labelTooltipLowBandwidthMode": "Zapnut režim slabého připojení",
         "ld": "LD",
         "ldTooltip": "Sledujete obraz v nízké kvalitě",
+        "lowBandwidthMode": "AU",
+        "lowBandwidthModeExpanded": "Jste v režimu slabého připojení. V tomto režimu je k dispozici jen zvuk a sdílení obrazovky.",
         "lowDefinition": "Nízká kvalita",
         "performanceSettings": "Nastavení výkonu",
         "recording": "Probíhá nahrávání",

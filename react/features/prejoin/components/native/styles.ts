@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const preJoinStyles = {
@@ -74,8 +76,8 @@ export const preJoinStyles = {
     },
 
     customInput: {
-        textAlign: 'center',
-        width: 352
+        width: 352,
+        ...Platform.select({ ios: { textAlign: 'center' } })
     },
 
     errorContainer: {

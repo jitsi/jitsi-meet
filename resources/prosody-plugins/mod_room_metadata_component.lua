@@ -1,4 +1,56 @@
--- This module implements a generic metadata storage system for rooms.
+-- mod_room_metadata_component.lua
+--
+-- Prosody component that provides a generic key-value metadata store for MUC
+-- rooms. Metadata is held in room.jitsiMetadata (a Lua table) and broadcast
+-- to all occupants as a JSON <json-message> stanza whenever it changes.
+--
+-- ── Metadata updates (client → component) ────────────────────────────────────
+-- Clients send a <message> to this component containing a <room_metadata
+-- xmlns='http://jitsi.org/jitmeet'> child whose text is JSON:
+--
+--   { "key": "<field-name>", "data": <any JSON value> }
+--
+-- Authorization is a three-step process (on_message):
+--  1. The sender must be an occupant of the room identified by the session's
+--     jitsi_web_query_room field (set from the WebSocket ?room= URL param).
+--  2. The 'jitsi-metadata-allow-moderation' event is fired on the main virtual
+--     host so that other modules can override the default access rules:
+--       · returns false   → deny the update unconditionally
+--       · returns non-nil → allow the update and use the returned value as data
+--       · returns nil     → fall through to the default moderator-only check
+--  3. Default: the occupant must have role='moderator'.
+--
+-- If authorized and the value changed, room.jitsiMetadata[key] is updated and
+-- the full metadata table is broadcast to every occupant. A
+-- 'jitsi-metadata-updated' event is also fired on the main MUC module so that
+-- other modules can react to specific key changes.
+--
+-- ── Metadata delivery (component → client) ────────────────────────────────────
+-- Initial delivery: a stanza filter intercepts the self-presence (status 110)
+-- about to be sent to a newly-joining occupant and, before it goes out, pushes
+-- the current metadata to that client. TURN credentials (from external_services)
+-- are included in this initial push. room.sent_initial_metadata[bare_jid] is
+-- set to prevent double-delivery on admin reconnects.
+--
+-- Broadcast: broadcastMetadata() / send_metadata() send a <json-message> to
+-- every occupant. Admins (jicofo) additionally receive the room's participant
+-- and moderator lists from room._data, plus the transcription HTTP headers.
+-- Those headers may carry secrets (e.g. a custom OpenAI API key), so they are
+-- stripped from the payload sent to regular occupants (and redacted in logs).
+--
+-- ── Internal metadata changes ─────────────────────────────────────────────────
+-- Other modules update room.jitsiMetadata directly and then fire
+-- 'room-metadata-changed' on the MUC host to trigger a broadcast.
+--
+-- ── Legacy startMuted shim ────────────────────────────────────────────────────
+-- When a moderator sends a presence containing <startmuted> (old client API),
+-- the values are copied into room.jitsiMetadata.startMuted and a
+-- 'room-metadata-changed' broadcast is triggered. This preserves backward
+-- compatibility until all clients switch to the metadata API.
+--
+-- ── TURN / extdisco gating (optional) ────────────────────────────────────────
+-- When extdisco_occpuant_check=true, extdisco IQ-get requests are intercepted
+-- at priority 100 so that only room occupants can obtain TURN credentials.
 --
 -- Component "metadata.jitmeet.example.com" "room_metadata_component"
 --      muc_component = "conference.jitmeet.example.com"
@@ -20,6 +72,12 @@ local process_host_module = util.process_host_module;
 local table_shallow_copy = util.table_shallow_copy;
 local table_add = util.table_add;
 local table_equals = util.table_equals;
+local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
+local get_occupant_by_real_jid = util.get_occupant_by_real_jid;
+
+local dt = require "util.datetime";
+local ext_services = module:depends("external_services");
+local get_services = ext_services.get_services;
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
 local COMPONENT_IDENTITY_TYPE = 'room_metadata';
@@ -39,6 +97,28 @@ if not main_virtual_host then
 end
 
 local breakout_rooms_component_host = module:get_option_string('breakout_rooms_component');
+-- TODO: flip default once mobile clients update to latest ljm that supports transition of turn data in metadata
+local extdisco_occpuant_check = module:get_option_boolean('extdisco_occpuant_check', false);
+
+-- Keys that clients (including moderators) are not allowed to set via the
+-- metadata message API. These are either server-controlled fields or keys whose
+-- values are assembled and injected by the server at broadcast time.
+local blocked_metadata_keys = module:get_option_set('room_metadata_blocked_keys', {
+    'allownersEnabled',
+    'asyncTranscription',
+    'audioTranslationAvailable',
+    'audioTranslationListenerCounts',
+    'audioTranslationRequests',
+    'conferencePresetsServiceEnabled',
+    'dialinEnabled',
+    'moderators',
+    'participants',
+    'participantsSoftLimit',
+    'services',
+    'transcriberType',
+    'transcription',
+    'visitorsEnabled',
+});
 
 module:log("info", "Starting room metadata for %s", muc_component_host);
 
@@ -62,22 +142,44 @@ function getMetadataJSON(room, metadata)
     return res;
 end
 
-function broadcastMetadata(room, json_msg)
-    if not json_msg then
+-- Returns a shallow copy of the room metadata with jicofo-only fields removed,
+-- suitable for sending to regular (non-admin) occupants. Currently this strips
+-- transcription.httpHeaders, which may carry secrets (e.g. a custom OpenAI API
+-- key) meant only for jicofo and the transcriber.
+function get_client_metadata(room)
+    local metadata = table_shallow_copy(room.jitsiMetadata) or {};
+
+    if metadata.transcription and metadata.transcription.httpHeaders then
+        local transcription_copy = table_shallow_copy(metadata.transcription);
+        transcription_copy.httpHeaders = nil;
+        metadata.transcription = transcription_copy;
+    end
+
+    return metadata;
+end
+
+function broadcastMetadata(room)
+    -- Build the client-safe payload once and reuse it for every non-admin
+    -- occupant; admins get a freshly assembled payload in send_metadata.
+    local client_json = getMetadataJSON(room, get_client_metadata(room));
+    if not client_json then
         return;
     end
 
     for _, occupant in room:each_occupant() do
-        send_metadata(occupant, room, json_msg)
+        send_metadata(occupant, room, client_json)
     end
 end
 
-function send_metadata(occupant, room, json_msg)
+function send_metadata(occupant, room, json_msg, include_services)
     if not json_msg or is_admin(occupant.bare_jid) then
-        local metadata_to_send = room.jitsiMetadata or {};
+        local metadata_to_send;
 
-        -- we want to send the main meeting participants only to jicofo
         if is_admin(occupant.bare_jid) then
+            -- jicofo gets the full metadata (including transcription httpHeaders)
+            -- plus the main meeting participant and moderator lists.
+            metadata_to_send = table_shallow_copy(room.jitsiMetadata) or {};
+
             local participants;
             local moderators = array();
 
@@ -86,19 +188,53 @@ function send_metadata(occupant, room, json_msg)
                 participants:append(room._data.participants);
             end
 
-            if room._data.moderator_id then
-                moderators:push(room._data.moderator_id);
-            end
-
             if room._data.moderators then
                 moderators:append(room._data.moderators);
             end
 
-            metadata_to_send = table_shallow_copy(metadata_to_send);
             metadata_to_send.participants = participants;
             metadata_to_send.moderators = moderators;
 
+            -- The aggregated live-translation request map is for jicofo only.
+            -- It is kept on room._data (never in jitsiMetadata) so it is never
+            -- broadcast to regular clients.
+            metadata_to_send.audioTranslationRequests = room._data.audioTranslationRequests;
+
+            -- Neutral, default-open extension point: an external module may contribute
+            -- additional jicofo-only metadata fields by returning a table from this
+            -- event -- for instance per-room translator connect headers. Fired inside
+            -- the admin branch, so injected fields reach only jicofo and are never
+            -- broadcast to client occupants. No handler means nothing is added; this
+            -- module holds no token/entitlement logic of its own.
+            local admin_extra = main_muc_module and main_muc_module:fire_event(
+                'jitsi-room-metadata-admin-extra', { room = room; });
+            if type(admin_extra) == 'table' then
+                for k, v in pairs(admin_extra) do
+                    metadata_to_send[k] = v;
+                end
+            end
+
             module:log('info', 'Sending metadata to jicofo room=%s,meeting_id=%s', room.jid, room._data.meetingId);
+        else
+            -- regular occupants get a sanitized copy (jicofo-only fields removed)
+            metadata_to_send = get_client_metadata(room);
+
+            if include_services then
+                metadata_to_send.services = {};
+
+                for _, srv in ipairs(get_services()) do
+                    table.insert(metadata_to_send.services, {
+                        type = srv.type;
+                        transport = srv.transport;
+                        host = srv.host;
+                        port = srv.port and string.format('%d', srv.port) or nil;
+                        username = srv.username;
+                        password = srv.password;
+                        expires = srv.expires and dt.datetime(srv.expires) or nil;
+                        restricted = srv.restricted and '1' or nil;
+                    });
+                end
+            end
         end
 
         json_msg = getMetadataJSON(room, metadata_to_send);
@@ -141,13 +277,20 @@ function on_message(event)
     end
 
     local message = event.stanza:get_child(COMPONENT_IDENTITY_TYPE, 'http://jitsi.org/jitmeet');
-    local messageText = message:get_text();
+    if not message then
+        return true;
+    end
 
-    if not message or not messageText then
-        return false;
+    local messageText = message:get_text();
+    if not messageText or messageText == '' then
+        return true;
     end
 
     local roomJid = message.attr.room;
+    if not roomJid then
+        return true;
+    end
+
     local room = get_room_from_jid(room_jid_match_rewrite(roomJid));
 
     if not room then
@@ -171,22 +314,42 @@ function on_message(event)
         return false;
     end
 
-    if jsonData.key == nil or jsonData.data == nil then
+    if type(jsonData.key) ~= 'string' then
+        module:log('error', 'Invalid JSON payload, key is not a string: %s', messageText);
+        return true;
+    end
+
+    if jsonData.key == nil or jsonData.data == nil or jsonData.data == json.null then
         module:log("error", "Invalid JSON payload, key or data are missing: %s", messageText);
         return false;
     end
 
-    if occupant.role ~= 'moderator' then
-        -- will return a non nil filtered data to use, if it is nil, it is not allowed
-        local res = module:context(main_virtual_host):fire_event('jitsi-metadata-allow-moderation',
-                { room = room; actor = occupant; key = jsonData.key ; data = jsonData.data; session = session; });
+    -- Fire 'jitsi-metadata-allow-moderation' so other modules can override the
+    -- default moderator-only access control on a per-key basis.
+    --   false    → deny the update unconditionally (e.g. key restricted to server)
+    --   non-nil  → allow the update; the returned value replaces jsonData.data
+    --              (lets a hook sanitise or filter the payload before it is stored)
+    --   nil      → no opinion; fall through to the default moderator-only check
+    local res = module:context(main_virtual_host):fire_event('jitsi-metadata-allow-moderation',
+            { room = room; actor = occupant; key = jsonData.key ; data = jsonData.data; session = session; });
 
-        if not res then
-            module:log('warn', 'Occupant %s is not moderator and not allowed this operation for %s', from, room.jid);
+    if res == false then
+        module:log('warn', 'Occupant %s features do not allow this operation(%s) for %s', from, jsonData.key, room.jid);
+        return false;
+    elseif res ~= nil then
+        jsonData.data = res;
+    else
+        if occupant.role ~= 'moderator' then
+            module:log('warn', 'Occupant %s is not moderator and not allowed this operation(%s) for %s',
+                from, jsonData.key, room.jid);
             return false;
         end
+    end
 
-        jsonData.data = res;
+    if blocked_metadata_keys:contains(jsonData.key) then
+        module:log('warn', 'Occupant %s attempted to set blocked metadata key "%s" in room:%s',
+            from, jsonData.key, room.jid);
+        return false;
     end
 
     local old_value = room.jitsiMetadata[jsonData.key];
@@ -194,7 +357,7 @@ function on_message(event)
         room.jitsiMetadata[jsonData.key] = jsonData.data;
 
         module:log('info', 'Metadata key "%s" updated by %s in room:%s,meeting_id:%s', jsonData.key, from, room.jid, room._data.meetingId);
-        broadcastMetadata(room, getMetadataJSON(room));
+        broadcastMetadata(room);
 
         -- fire and event for the change
         main_muc_module:fire_event('jitsi-metadata-updated', { room = room; actor = occupant; key = jsonData.key; });
@@ -222,8 +385,21 @@ function process_main_muc_loaded(main_muc, host_module)
         local room = event.room;
         local json_msg = getMetadataJSON(room);
 
-        module:log('info', 'Metadata changed internally in room:%s,meeting_id:%s - broadcasting data:%s', room.jid, room._data.meetingId, json_msg);
-        broadcastMetadata(room, json_msg);
+        local log_json = json_msg;
+        if room.jitsiMetadata and room.jitsiMetadata.transcription
+                and room.jitsiMetadata.transcription.httpHeaders then
+            local metadata_copy = table_shallow_copy(room.jitsiMetadata);
+            local transcription_copy = table_shallow_copy(metadata_copy.transcription);
+            local headers_redacted = {};
+            for k, _ in pairs(transcription_copy.httpHeaders) do
+                headers_redacted[k] = '***';
+            end
+            transcription_copy.httpHeaders = headers_redacted;
+            metadata_copy.transcription = transcription_copy;
+            log_json = getMetadataJSON(room, metadata_copy) or log_json;
+        end
+        module:log('info', 'Metadata changed internally in room:%s,meeting_id:%s - broadcasting data:%s', room.jid, room._data.meetingId, log_json);
+        broadcastMetadata(room);
     end);
 
     -- TODO: Once clients update to read/write metadata for startMuted policy we can drop this
@@ -320,6 +496,36 @@ if breakout_rooms_component_host then
     end);
 end
 
+-- checks whether the event is from an occupant of the room specified in the session,
+-- if not, it returns an error and stops the processing of the event
+local function check_occupant(event)
+    local origin, stanza = event.origin, event.stanza;
+
+    local room_name = origin.jitsi_web_query_room;
+    if not room_name then
+        module:log('warn', 'No room in session: %s', origin.full_jid);
+        origin.send(st.error_reply(stanza, 'auth', 'forbidden'));
+        return true;
+    end
+
+    local subdomain = origin.jitsi_web_query_prefix or '';
+    local room = get_room_by_name_and_subdomain(room_name, subdomain);
+    if not room then
+        module:log('warn', 'Room not found (%s/%s) for %s', subdomain, room_name, origin.full_jid);
+        origin.send(st.error_reply(stanza, 'auth', 'forbidden'));
+        return true;
+    end
+
+    local from = stanza.attr.from or origin.full_jid;
+    local occupant = get_occupant_by_real_jid(room, from);
+
+    if not occupant then
+        module:log('warn', '%s not an occupant of %s/%s', from, subdomain, room_name);
+        origin.send(st.error_reply(stanza, 'auth', 'forbidden'));
+        return true;
+    end
+end
+
 -- Send a message update for metadata before sending the first self presence
 function filter_stanza(stanza, session)
     if not stanza.attr or not stanza.attr.to or stanza.name ~= 'presence' or stanza.attr.type == 'unavailable' then
@@ -356,7 +562,7 @@ function filter_stanza(stanza, session)
 
     room.sent_initial_metadata[bare_to] = true;
 
-    send_metadata(occupant, room);
+    send_metadata(occupant, room, nil, true);
 
     return stanza;
 end
@@ -370,7 +576,16 @@ end
 filters.add_filter_hook(filter_session);
 
 process_host_module(main_virtual_host, function(host_module)
-    module:context(host_module.host):fire_event('jitsi-add-identity', {
+    local main_host_module = module:context(host_module.host);
+    main_host_module:fire_event('jitsi-add-identity', {
         name = 'room_metadata'; host = module.host;
     });
+
+    if extdisco_occpuant_check then
+        -- Hook at priority 100 so we run before mod_external_services (default priority 0) for both XEP-0215 v2 and legacy v1.
+        main_host_module:hook('iq-get/host/urn:xmpp:extdisco:2:services', check_occupant, 100);
+        main_host_module:hook('iq-get/host/urn:xmpp:extdisco:2:service',  check_occupant, 100);
+        main_host_module:hook('iq-get/host/urn:xmpp:extdisco:1:services', check_occupant, 100);
+        main_host_module:hook('iq-get/host/urn:xmpp:extdisco:1:service',  check_occupant, 100);
+    end
 end);

@@ -52,15 +52,15 @@ export default function RecordingConsentDialog({ audioWasMuted = false, videoWas
             title = { 'dialog.recordingInProgressTitle' }
             verticalButtons = { true }>
             <Dialog.Description>
-                {t('dialog.recordingInProgressDescriptionFirstHalf')}
+                {t('dialog.recordingInProgressDescription')}
                 {consentLearnMoreLink && (
                     <Link
                         style = { styles.learnMoreLink }
                         url = { consentLearnMoreLink }>
-                        {`(${t('dialog.learnMore')})`}
+                        {` (${t('dialog.learnMore')})`}
                     </Link>
                 )}
-                {t('dialog.recordingInProgressDescriptionSecondHalf')}
+                {'.'}
             </Dialog.Description>
         </ConfirmDialog>
     );

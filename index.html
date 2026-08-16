@@ -22,7 +22,7 @@
                 : pathname.substring(0, contextRootEndIndex + 1)
             );
         }
-        window.EXCALIDRAW_ASSET_PATH = 'libs/';
+        window.EXCALIDRAW_ASSET_PATH = 'libs/excalidraw/';
         // Dynamically generate the manifest location URL. It must be served from the document origin, and we may have
         // the base pointing to the CDN. This way we can generate a full URL which will bypass the base.
         document.querySelector('#manifest-placeholder').setAttribute('href', window.location.origin + contextRoot(window.location.pathname) + 'manifest.json');

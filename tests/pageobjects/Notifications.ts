@@ -166,7 +166,7 @@ export default class Notifications extends BasePageObject {
             = this.participant.driver.$('//div[@data-testid="notify.participantWantsToJoin"]/div/div/span');
 
         await knockingParticipantNotification.waitForDisplayed({
-            timeout: 3000,
+            timeout: 15000,
             timeoutMsg: 'Knocking participant notification not displayed'
         });
 

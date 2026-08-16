@@ -36,9 +36,6 @@
         "phone": "Telefon",
         "speaker": "Zvučnik"
     },
-    "audioOnly": {
-        "audioOnly": "Niska stopa prijenosa podataka"
-    },
     "breakoutRooms": {
         "actions": {
             "add": "Dodaj sobu za podgrupu",
@@ -541,8 +538,6 @@
         "googlePrivacyPolicy": "Google politika privatnosti",
         "inProgress": "U tijeku je snimanje ili prijenos uživo",
         "invalidStreamKey": "Ključ prijenosa uživo možda nije ispravan.",
-        "limitNotificationDescriptionNative": "Tvoj prijenos će biti ograničen na {{limit}} min. Za neograničeni prijenos isprobaj {{app}}.",
-        "limitNotificationDescriptionWeb": "Zbog velike potražnje će tvoj prijenos biti ograničen na {{limit}} min. Za neograničeni prijenos isprobaj <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "off": "Prijenos uživo prekinut",
         "offBy": "{{name}} je prekinuo/la prijenos uživo",
         "on": "Prijenos uživo pokrenut",
@@ -633,6 +628,9 @@
     "lonelyMeetingExperience": {
         "button": "Pozovi druge",
         "youAreAlone": "Ti si jedina osoba na sastanku"
+    },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Niska stopa prijenosa podataka"
     },
     "me": "ja",
     "notify": {
@@ -903,8 +901,6 @@
         "highlightMomentSuccess": "Trenutak istaknut",
         "highlightMomentSucessDescription": "Tvoj istaknuti trenutak će se dodati u sažetak sastanka.",
         "inProgress": "Snimanje ili prijenos uživo u tijeku",
-        "limitNotificationDescriptionNative": "Zbog velike potražnje, tvoje će snimanje biti ograničeno na {{limit}} min. Za neograničeno snimanje isprobaj <3>{{app}}</3>.",
-        "limitNotificationDescriptionWeb": "Zbog velike potražnje, tvoje će snimanje biti ograničeno na {{limit}} min. Za neograničeno snimanje isprobaj <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Generirali smo poveznicu za tvoje snimanje.",
         "live": "UŽIVO",
         "localRecordingNoNotificationWarning": "Snimanje se neće najaviti ostalim sudionicima. Morat ćeš ih obavijestiti da se sastanak snima.",
@@ -1059,7 +1055,6 @@
         "Settings": "Postavke",
         "accessibilityLabel": {
             "Settings": "Uključi/Isključi postavke",
-            "audioOnly": "Uključi/Isključi opciju samo zvuk",
             "audioRoute": "Odaberi audio uređaj",
             "boo": "Negoduj",
             "breakoutRoom": "Pridruži se/Napusti sobu podgrupe",
@@ -1089,6 +1084,7 @@
             "lobbyButton": "Uključi/Isključi modus predvorja",
             "localRecording": "Uključi/Isključi kontrole lokalnog snimanja",
             "lockRoom": "Uključi/Isključi lozinku sastanka",
+            "lowBandwidthMode": "Uključi/Isključi opciju samo zvuk",
             "moreActions": "Više radnji",
             "moreActionsMenu": "Izbornik za više radnje",
             "moreOptions": "Pokaži više opcija",
@@ -1127,8 +1123,6 @@
             "whiteboard": "Pokaži/Sakrij ploču za prezentacije"
         },
         "addPeople": "Dodaj ljude svom pozivu",
-        "audioOnlyOff": "Isključi modus niske stope prijenosa podataka",
-        "audioOnlyOn": "Uključi modus niske stope prijenosa podataka",
         "audioRoute": "Odaberi audio uređaj",
         "audioSettings": "Postavke zvuka",
         "authenticate": "Autentificiraj se",
@@ -1166,6 +1160,8 @@
         "lobbyButtonEnable": "Uključi modus predvorja",
         "login": "Prijava",
         "logout": "Odjava",
+        "lowBandwidthModeOff": "Isključi modus niske stope prijenosa podataka",
+        "lowBandwidthModeOn": "Uključi modus niske stope prijenosa podataka",
         "lowerYourHand": "Spusti ruku",
         "moreActions": "Više radnji",
         "moreOptions": "Više opcija",
@@ -1247,8 +1243,6 @@
     },
     "videoStatus": {
         "adjustFor": "Prilagodi za:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Koristiš modus niske stope prijenosa podataka. U ovom modusu primat ćeš samo zvuk i dijeljenje ekrana.",
         "bestPerformance": "Najbolja performanca",
         "callQuality": "Kvaliteta videa",
         "hd": "HD",
@@ -1256,9 +1250,11 @@
         "highDefinition": "Visoka rezolucija",
         "highestQuality": "Najviše kvlaiteta",
         "labelTooiltipNoVideo": "Bez videa",
-        "labelTooltipAudioOnly": "Modus niske stope prijenosa podataka je uključen",
+        "labelTooltipLowBandwidthMode": "Modus niske stope prijenosa podataka je uključen",
         "ld": "LD",
         "ldTooltip": "Prikazivanje videa u niskoj rezoluciji",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Koristiš modus niske stope prijenosa podataka. U ovom modusu primat ćeš samo zvuk i dijeljenje ekrana.",
         "lowDefinition": "Niska rezolucija",
         "performanceSettings": "Postavke performance",
         "sd": "SD",

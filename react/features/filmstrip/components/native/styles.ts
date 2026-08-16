@@ -178,5 +178,28 @@ export default {
     thumbnailGif: {
         flexGrow: 1,
         resizeMode: 'contain'
+    },
+
+    translationIndicatorDot: {
+        backgroundColor: BaseTheme.palette.icon01,
+        borderColor: BaseTheme.palette.uiBackground,
+        borderRadius: 3,
+        borderWidth: 1,
+        height: 6,
+        position: 'absolute',
+        right: -1,
+        top: -1,
+        width: 6
+    },
+
+    translationIndicatorFilled: {
+        backgroundColor: BaseTheme.palette.action01,
+        borderRadius: 4
+    },
+
+    translationIndicatorOutlined: {
+        borderColor: BaseTheme.palette.action01,
+        borderRadius: 4,
+        borderWidth: 1
     }
 };

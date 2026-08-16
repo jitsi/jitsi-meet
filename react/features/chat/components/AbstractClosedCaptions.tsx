@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../app/types';
 import { openDialog } from '../../base/dialog/actions';
+import { MEET_FEATURES } from '../../base/jwt/constants';
 import { IMessageGroup, groupMessagesBySender } from '../../base/util/messageGrouping';
-// @ts-ignore
-import { StartRecordingDialog } from '../../recording/components/Recording';
+import { maybeShowPremiumFeatureDialog } from '../../jaas/actions';
+import { RecordingTranscriptionDialog } from '../../recording/components/Recording';
 import { setRequestingSubtitles } from '../../subtitles/actions.any';
 import { canStartSubtitles } from '../../subtitles/functions.any';
 import { ISubtitle } from '../../subtitles/types';
@@ -64,8 +65,12 @@ const AbstractClosedCaptions = (Component: ComponentType<AbstractProps>) => () =
         groupMessagesBySender(filteredSubtitles), [ filteredSubtitles ]);
 
     const startClosedCaptions = useCallback(() => {
+        if (dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING))) {
+            return;
+        }
+
         if (isAsyncTranscriptionEnabled) {
-            dispatch(openDialog('StartRecordingDialog', StartRecordingDialog, {
+            dispatch(openDialog('RecordingTranscriptionDialog', RecordingTranscriptionDialog, {
                 recordAudioAndVideo: false
             }));
         } else {

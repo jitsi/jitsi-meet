@@ -8,7 +8,8 @@ import { IJitsiConference } from '../../../base/conference/reducer';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { setVideoMuted } from '../../../base/media/actions';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
-import { stopLocalVideoRecording } from '../../actions';
+import { isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
+import { setStopRecordingIntent, stopLocalVideoRecording } from '../../actions';
 import { RECORDING_METADATA_ID } from '../../constants';
 import { getActiveSession } from '../../functions';
 import { ISessionData } from '../../reducer';
@@ -47,6 +48,11 @@ export interface IProps extends WithTranslation {
     _subtitlesLanguage: string | null;
 
     /**
+     * Whether a transcription session is running.
+     */
+    _transcriptionRunning: boolean;
+
+    /**
      * The redux dispatch function.
      */
     dispatch: IStore['dispatch'];
@@ -55,6 +61,13 @@ export interface IProps extends WithTranslation {
      * The user trying to stop the video while local recording is running.
      */
     localRecordingVideoStop?: boolean;
+
+    /**
+     * Controls which service is stopped: 'recording' stops the file recording
+     * session, 'transcription' stops only transcription and leaves recording
+     * running.
+     */
+    stopMode: 'recording' | 'transcription';
 }
 
 /**
@@ -93,27 +106,55 @@ export default class AbstractStopRecordingDialog<P extends IProps>
             _fileRecordingSession,
             _localRecording,
             _subtitlesLanguage,
+            _transcriptionRunning,
             dispatch,
-            localRecordingVideoStop
+            localRecordingVideoStop,
+            stopMode
         } = this.props;
 
-        if (_localRecording) {
-            dispatch(stopLocalVideoRecording());
-            if (localRecordingVideoStop) {
-                dispatch(setVideoMuted(true));
+        const stoppingRecording = stopMode === 'recording';
+        const stoppingTranscription = stopMode === 'transcription';
+
+        // Pre-seed stopRecordingIntent so the off-sound/notification coordinator
+        // (maybeNotifyRecordingStop) knows what to wait for. Each button only
+        // signals the service it is responsible for stopping.
+        if (!_localRecording) {
+            const recordingRunning = stoppingRecording && Boolean(_fileRecordingSession);
+            const transcriptionRunning = stoppingTranscription && _transcriptionRunning;
+
+            if (recordingRunning || transcriptionRunning) {
+                dispatch(setStopRecordingIntent({
+                    recording: recordingRunning,
+                    transcription: transcriptionRunning
+                }));
             }
-        } else if (_fileRecordingSession) {
-            _conference?.stopRecording(_fileRecordingSession.id);
-            this._toggleScreenshotCapture();
         }
 
-        // TODO: this should be an action in transcribing. -saghul
-        this.props.dispatch(
-            setRequestingSubtitles(Boolean(_displaySubtitles), _displaySubtitles, _subtitlesLanguage, true));
+        if (stoppingRecording) {
+            if (_localRecording) {
+                dispatch(stopLocalVideoRecording());
+                if (localRecordingVideoStop) {
+                    dispatch(setVideoMuted(true));
+                }
+            } else if (_fileRecordingSession) {
+                _conference?.stopRecording(_fileRecordingSession.id);
+                this._toggleScreenshotCapture();
+            }
 
-        this.props._conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-            isTranscribingEnabled: false
-        });
+            _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                isRecordingRequested: false
+            });
+        }
+
+        if (stoppingTranscription) {
+            // TODO: this should be an action in transcribing. -saghul
+            dispatch(
+                setRequestingSubtitles(Boolean(_displaySubtitles), _displaySubtitles, _subtitlesLanguage, true));
+
+            _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                isTranscribingEnabled: false
+            });
+        }
 
         return true;
     }
@@ -148,6 +189,7 @@ export function _mapStateToProps(state: IReduxState) {
         _fileRecordingSession:
             getActiveSession(state, JitsiRecordingConstants.mode.FILE),
         _localRecording: LocalRecordingManager.isRecordingLocally(),
-        _subtitlesLanguage
+        _subtitlesLanguage,
+        _transcriptionRunning: isRecorderTranscriptionsRunning(state)
     };
 }

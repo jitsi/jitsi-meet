@@ -3,17 +3,17 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../../app/types';
 import { openDialog } from '../../../../base/dialog/actions';
 import { translate } from '../../../../base/i18n/functions';
+import { isRecordingRunning } from '../../../functions';
 import AbstractRecordButton, {
     IProps,
     _mapStateToProps as _abstractMapStateToProps
 } from '../AbstractRecordButton';
 
-import StartRecordingDialog from './StartRecordingDialog';
-import StopRecordingDialog from './StopRecordingDialog';
+import RecordingTranscriptionDialog from './RecordingTranscriptionDialog';
 
 
 /**
- * Button for opening a dialog where a recording session can be started.
+ * Button for opening the unified recording & transcription management dialog.
  */
 class RecordingButton extends AbstractRecordButton<IProps> {
 
@@ -25,11 +25,9 @@ class RecordingButton extends AbstractRecordButton<IProps> {
      * @returns {void}
      */
     override _onHandleClick() {
-        const { _isRecordingRunning, dispatch } = this.props;
-        const dialogComponent = _isRecordingRunning ? StopRecordingDialog : StartRecordingDialog;
-        const dialogName = _isRecordingRunning ? 'StopRecordingDialog' : 'StartRecordingDialog';
+        const { dispatch } = this.props;
 
-        dispatch(openDialog(dialogName, dialogComponent));
+        dispatch(openDialog('RecordingTranscriptionDialog', RecordingTranscriptionDialog));
     }
 }
 
@@ -53,6 +51,7 @@ export function _mapStateToProps(state: IReduxState) {
 
     return {
         ...abstractProps,
+        _isRecordingRunning: isRecordingRunning(state),
         visible
     };
 }

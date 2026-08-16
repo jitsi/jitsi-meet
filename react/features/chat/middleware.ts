@@ -34,7 +34,7 @@ import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { resetUnreadPollsCount } from '../polls/actions';
 import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
-import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
+import { ENDPOINT_REACTION_NAME, REACTIONS } from '../reactions/constants';
 import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
 import { isCCTabEnabled } from '../subtitles/functions.any';
 import { showToolbox } from '../toolbox/actions';
@@ -53,7 +53,7 @@ import {
 import {
     addMessage,
     addMessageReaction,
-    clearMessages,
+    clearChatState,
     closeChat,
     notifyPrivateRecipientsChanged,
     openChat,
@@ -152,8 +152,14 @@ MiddlewareRegistry.register(store => next => action => {
         const { participant, data } = action;
 
         if (data?.name === ENDPOINT_REACTION_NAME) {
-            // Skip duplicates, keep just 3.
-            const reactions = Array.from(new Set(data.reactions)).slice(0, 3) as string[];
+            // Only accept known reaction keys, skip duplicates and keep just 3.
+            const reactions = Array.from(new Set(Array.isArray(data.reactions) ? data.reactions : []))
+                .filter((reaction): reaction is string => typeof reaction === 'string' && reaction in REACTIONS)
+                .slice(0, 3);
+
+            if (!reactions.length) {
+                break;
+            }
 
             store.dispatch(pushReactions(reactions));
 
@@ -354,7 +360,7 @@ StateListenerRegistry.register(
             }
 
             // Clear chat messages.
-            dispatch(clearMessages());
+            dispatch(clearChatState());
         }
     });
 
@@ -408,7 +414,7 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
         JitsiConferenceEvents.MESSAGE_RECEIVED,
         /* eslint-disable max-params */
         (participantId: string, message: string, timestamp: number,
-                displayName: string, isFromVisitor: boolean, messageId: string, source: string) => {
+                displayName: string, isFromVisitor: boolean, messageId: string, source: string, replyToId?: string) => {
         /* eslint-enable max-params */
             _onConferenceMessageReceived(store, {
                 // in case of messages coming from visitors we can have unknown id
@@ -418,6 +424,7 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
                 displayName,
                 isFromVisitor,
                 messageId,
+                replyToMessageId: replyToId,
                 source,
                 privateMessage: false
             });
@@ -443,7 +450,8 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
 
     conference.on(
         JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
-        (participantId: string, message: string, timestamp: number, messageId: string, displayName?: string, isFromVisitor?: boolean) => {
+        (participantId: string, message: string, timestamp: number, messageId: string, displayName?: string,
+                isFromVisitor?: boolean, replyToId?: string) => {
             _onConferenceMessageReceived(store, {
                 participantId,
                 message,
@@ -451,7 +459,8 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
                 displayName,
                 messageId,
                 privateMessage: true,
-                isFromVisitor
+                isFromVisitor,
+                replyToMessageId: replyToId
             });
         }
     );
@@ -490,9 +499,9 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
  * @returns {void}
  */
 function _onConferenceMessageReceived(store: IStore,
-        { displayName, isFromVisitor, message, messageId, participantId, privateMessage, timestamp, source }: {
+        { displayName, isFromVisitor, message, messageId, participantId, privateMessage, replyToMessageId, timestamp, source }: {
             displayName?: string; isFromVisitor?: boolean; message: string; messageId?: string;
-            participantId: string; privateMessage: boolean; source?: string; timestamp: number; }
+            participantId: string; privateMessage: boolean; replyToMessageId?: string; source?: string; timestamp: number; }
 ) {
 
     const isGif = isGifEnabled(store.getState()) && isGifMessage(message);
@@ -512,6 +521,7 @@ function _onConferenceMessageReceived(store: IStore,
         lobbyChat: false,
         timestamp,
         messageId,
+        replyToMessageId,
         source
     }, true, isGif);
 }
@@ -621,9 +631,10 @@ function getLobbyChatDisplayName(state: IReduxState, participantId: string) {
  * @returns {void}
  */
 function _handleReceivedMessage({ dispatch, getState }: IStore,
-        { displayName, isFromVisitor, lobbyChat, message, messageId, participantId, privateMessage, source, timestamp }: {
+        { displayName, isFromVisitor, lobbyChat, message, messageId, participantId, privateMessage, replyToMessageId, source, timestamp }: {
             displayName?: string; isFromVisitor?: boolean; lobbyChat: boolean; message: string;
-            messageId?: string; participantId: string; privateMessage: boolean; source?: string; timestamp: number; },
+            messageId?: string; participantId: string; privateMessage: boolean; replyToMessageId?: string;
+            source?: string; timestamp: number; },
         shouldPlaySound = true,
         isReaction = false
 ) {
@@ -674,6 +685,7 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
         recipient: getParticipantDisplayName(state, localParticipant?.id ?? ''),
         timestamp: millisecondsTimestamp,
         messageId,
+        replyToMessageId,
         isReaction,
         isFromVisitor,
         isFromGuest: source === 'guest'
@@ -709,7 +721,9 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
             from: participantId,
             nick: notificationDisplayName,
             privateMessage,
-            ts: timestamp
+            ts: timestamp,
+            messageId: newMessage.messageId,
+            replyToMessageId: newMessage.replyToMessageId
         });
     }
 }

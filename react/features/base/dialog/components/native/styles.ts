@@ -182,7 +182,7 @@ export const brandedDialog = {
     },
 
     overlayTouchable: {
-        ...StyleSheet.absoluteFillObject
+        ...StyleSheet.absoluteFill
     }
 };
 

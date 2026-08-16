@@ -18,7 +18,7 @@ local util = module:require 'util';
 local is_vpaas = util.is_vpaas;
 local process_host_module = util.process_host_module;
 local table_find = util.table_find;
-local create_throttle = require 'prosody.util.throttle'.create;
+local create_throttle = require 'util.throttle'.create;
 
 local SERVICE_TYPE = 'short-lived-token';
 local options = module:get_option('short_lived_token');

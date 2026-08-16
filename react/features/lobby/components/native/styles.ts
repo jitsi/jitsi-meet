@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export default {
@@ -30,9 +32,9 @@ export default {
 
     customInput: {
         position: 'relative',
-        textAlign: 'center',
         top: BaseTheme.spacing[6],
-        width: 352
+        width: 352,
+        ...Platform.select({ ios: { textAlign: 'center' } })
     },
 
     joiningMessage: {

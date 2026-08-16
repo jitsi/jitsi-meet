@@ -112,7 +112,7 @@
         background-color: #FFD740;
         color: black;
         display: inline-flex;
-        margin: 32px 0;
+        margin: 16px 0 8px;
         width: 100%;
     }
 
@@ -195,5 +195,15 @@
     .warning-text {
         color:#FFD740;
         font-size: 0.75rem;
+    }
+
+    .youtube-go-live-warning {
+        margin-bottom: 16px;
+        padding: 8px 12px;
+        background-color: rgba(248, 174, 26, 0.1);
+        border-left: 3px solid #FFD740;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        color: #FFD740;
     }
 }

@@ -1,4 +1,3 @@
-// @ts-ignore
 import { safeJsonParse } from '@jitsi/js-utils/json';
 // @ts-ignore
 import { Worklets } from 'react-native-worklets-core';

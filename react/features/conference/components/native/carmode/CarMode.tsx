@@ -46,15 +46,6 @@ const CarMode = (): JSX.Element => {
         <JitsiScreen
             footerComponent = { CarModeFooter }
             style = { styles.conference }>
-            {/*
-                  * The activity/loading indicator goes above everything, except
-                  * the toolbox/toolbars and the dialogs.
-                  */
-                connecting
-                && <TintedView>
-                    <LoadingIndicator />
-                </TintedView>
-            }
             <View
                 pointerEvents = 'box-none'
                 style = { styles.titleBarSafeViewColor as ViewStyle }>
@@ -69,6 +60,12 @@ const CarMode = (): JSX.Element => {
                 style = { styles.microphoneContainer as ViewStyle }>
                 <MicrophoneButton />
             </View>
+            {
+                connecting
+                && <TintedView>
+                    <LoadingIndicator />
+                </TintedView>
+            }
         </JitsiScreen>
     );
 };

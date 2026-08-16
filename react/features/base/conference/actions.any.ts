@@ -1,4 +1,6 @@
+import { maybeRedirectToTokenAuthUrl } from '../../app/actions.any';
 import { IReduxState, IStore } from '../../app/types';
+import { isTokenAuthInline } from '../../authentication/functions.any';
 import { readyToClose } from '../../mobile/external-api/actions';
 import { transcriberJoined, transcriberLeft } from '../../transcribing/actions';
 import { setIAmVisitor } from '../../visitors/actions';
@@ -36,6 +38,7 @@ import { getBackendSafeRoomName } from '../util/uri';
 
 import {
     AUTH_STATUS_CHANGED,
+    CONFERENCE_CONNECTION_ESTABLISHED,
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_JOIN_IN_PROGRESS,
@@ -124,6 +127,13 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
     conference.on(
         JitsiConferenceEvents.CONFERENCE_JOIN_IN_PROGRESS,
         (..._args: any[]) => dispatch(conferenceJoinInProgress(conference)));
+    // CONNECTION_ESTABLISHED is skipped when P2P wins the ICE race; CONNECTION_RESTORED covers it.
+    conference.on(
+        JitsiConferenceEvents.CONNECTION_ESTABLISHED,
+        (..._args: any[]) => dispatch(conferenceConnectionEstablished(conference)));
+    conference.on(
+        JitsiConferenceEvents.CONNECTION_RESTORED,
+        (..._args: any[]) => dispatch(conferenceConnectionEstablished(conference)));
     conference.on(
         JitsiConferenceEvents.CONFERENCE_LEFT,
         (..._args: any[]) => {
@@ -421,6 +431,19 @@ export function conferenceJoined(conference: IJitsiConference) {
 export function conferenceJoinInProgress(conference: IJitsiConference) {
     return {
         type: CONFERENCE_JOIN_IN_PROGRESS,
+        conference
+    };
+}
+
+/**
+ * Signals that the conference's ICE connection was established (media flowing).
+ *
+ * @param {JitsiConference} conference - The conference whose ICE connection was established.
+ * @returns {{ type: CONFERENCE_CONNECTION_ESTABLISHED, conference: JitsiConference }}
+ */
+export function conferenceConnectionEstablished(conference: IJitsiConference) {
+    return {
+        type: CONFERENCE_CONNECTION_ESTABLISHED,
         conference
     };
 }
@@ -1078,6 +1101,15 @@ export function redirect(vnode: string, focusJid: string, username: string) {
             .then(() => {
                 dispatch(conferenceWillInit());
                 logger.info(`Dispatching connect from redirect (visitor = ${Boolean(vnode)}).`);
+
+                // obtaining the new token just before joining the main room from a visitor one will work
+                // only when using inline auth and will not work when using redirection
+                if (isTokenAuthInline(getState()['features/base/config'])
+                        && maybeRedirectToTokenAuthUrl(dispatch, getState, (e: Error) => {
+                            logger.error('Token is expired and there was an error refreshing it.', e);
+                        })) {
+                    return;
+                }
 
                 return dispatch(connect());
             })

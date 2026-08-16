@@ -39,9 +39,6 @@
         "phone": "Điện thoại",
         "speaker": "Diễn giả"
     },
-    "audioOnly": {
-        "audioOnly": "Chỉ nghe âm thanh"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "ví dụ. 10000000 cho 10 Mb/giây",
         "assumedBandwidthBpsWarning": "Giá trị cao hơn có thể gây ra sự cố mạng.",
@@ -629,8 +626,6 @@
         "googlePrivacyPolicy": "Chính sách bảo mật của Google",
         "inProgress": "Đang ghi hoặc phát trực tiếp",
         "invalidStreamKey": "Mã phát trực tuyến có thể sai.",
-        "limitNotificationDescriptionNative": "Việc phát trực tuyến của bạn sẽ bị giới hạn ở {{limit}} phút. Để phát trực tuyến không giới hạn, hãy thử {{app}}.",
-        "limitNotificationDescriptionWeb": "Do nhu cầu cao, việc phát trực tuyến của bạn sẽ bị giới hạn ở {{limit}} phút. Để phát trực tuyến không giới hạn, hãy thử <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}</a>.",
         "off": "Phát trực tuyến đã dừng",
         "offBy": "{{name}} đã dừng ghi",
         "on": "Phát trực tuyến",
@@ -722,6 +717,9 @@
     "lonelyMeetingExperience": {
         "button": "Mời người khác",
         "youAreAlone": "Chỉ có một mình bạn trong cuộc họp"
+    },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Chỉ nghe âm thanh"
     },
     "me": "Tôi",
     "notify": {
@@ -1009,8 +1007,6 @@
         "highlightMomentSuccess": "Khoảnh khắc được đánh dấu",
         "highlightMomentSucessDescription": "Khoảnh khắc bạn đã đánh dấu sẽ được thêm vào tóm tắt cuộc họp.",
         "inProgress": "Đang ghi âm hoặc phát trực tiếp",
-        "limitNotificationDescriptionNative": "Do nhu cầu cao, ghi âm của bạn sẽ bị giới hạn trong {{limit}} phút. Để có ghi âm không giới hạn, hãy thử <3>{{app}}</3>.",
-        "limitNotificationDescriptionWeb": "Do nhu cầu cao, ghi âm của bạn sẽ bị giới hạn trong {{limit}} phút. Để có ghi âm không giới hạn, hãy thử <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "Chúng tôi đã tạo một liên kết đến ghi âm của bạn.",
         "localRecordingNoNotificationWarning": "Cuộc họp sẽ không được thông báo cho các thành viên khác. Bạn sẽ cần thông báo cho họ biết cuộc họp đang được ghi âm.",
         "localRecordingNoVideo": "Video không được ghi lại",
@@ -1053,7 +1049,7 @@
         "about": "Bạn có thể thiết lập mật khẩu cho cuộc họp. Người tham dự cần phải nhập mật khẩu trước khi được phép vào phòng họp.",
         "aboutReadOnly": "Người điều hành cuộc họp có thể thêm một $t(lockRoomPassword) vào cuộc họp. Người tham gia sẽ cần cung cấp $t(lockRoomPassword) trước khi được phép tham gia cuộc họp.",
         "insecureRoomNameWarningNative": "Tên phòng không an toàn. Người tham gia không mong muốn có thể tham gia cuộc họp của bạn. {{recommendAction}} Tìm hiểu thêm về cách bảo mật cuộc họp của bạn ",
-        "insecureRoomNameWarningWeb": "Tên phòng không an toàn. Người tham gia không mong muốn có thể tham gia cuộc họp của bạn. {{recommendAction}} Tìm hiểu thêm về cách bảo mật cuộc họp của bạn <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">tại đây</a>.",
+        "insecureRoomNameWarningWeb": "Tên phòng không an toàn. Người tham gia không mong muốn có thể tham gia cuộc họp của bạn. {{recommendAction}} Tìm hiểu thêm về cách bảo mật cuộc họp của bạn <a href=\"{{securityUrl}}\" target=\"_blank\">tại đây</a>.",
         "title": "Tùy chọn Bảo mật",
         "unsafeRoomActions": {
             "meeting": "Cân nhắc bảo mật cuộc họp của bạn bằng cách sử dụng nút bảo mật.",
@@ -1181,7 +1177,6 @@
         "Settings": "Cài đặt",
         "accessibilityLabel": {
             "Settings": "Mở/Đóng Cấu hình",
-            "audioOnly": "Chuyển sang chỉ nghe âm thanh",
             "audioRoute": "Chọn thiết bị âm thanh",
             "boo": "Boo",
             "breakoutRooms": "Phòng nhóm",
@@ -1222,6 +1217,7 @@
             "lobbyButton": "Bật/Tắt chế độ sảnh chờ",
             "localRecording": "Bật/Tắt điều khiển ghi hình cục bộ",
             "lockRoom": "Mở/Đóng mật khẩu phòng họp",
+            "lowBandwidthMode": "Chuyển sang chỉ nghe âm thanh",
             "lowerHand": "Hạ tay xuống",
             "moreActions": "Xem thêm",
             "moreActionsMenu": "Menu thêm",
@@ -1269,8 +1265,6 @@
             "videounmute": "Bật camera"
         },
         "addPeople": "Thêm người vào cuộc họp",
-        "audioOnlyOff": "Tắt chế độ chỉ nghe âm thanh",
-        "audioOnlyOn": "Bật chế độ chỉ nghe âm thanh",
         "audioRoute": "Chọn thiết bị âm thanh",
         "audioSettings": "Cài đặt âm thanh",
         "authenticate": "Xác thực",
@@ -1310,6 +1304,8 @@
         "lobbyButtonEnable": "Bật chế độ lối vào",
         "login": "Đăng nhập",
         "logout": "Đăng xuất",
+        "lowBandwidthModeOff": "Tắt chế độ chỉ nghe âm thanh",
+        "lowBandwidthModeOn": "Bật chế độ chỉ nghe âm thanh",
         "lowerYourHand": "Hạ tay",
         "moreActions": "Thêm hành động",
         "moreOptions": "Hiển thị thêm tùy chọn",
@@ -1394,8 +1390,6 @@
     },
     "videoStatus": {
         "adjustFor": "Điều chỉnh cho:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Bạn đang ở chế độ chỉ nghe âm thanh. Chế độ này giảm băng thông nhưng không thấy hình ảnh người khác.",
         "bestPerformance": "Hiệu suất tốt nhất",
         "callQuality": "Chất lượng hình ảnh",
         "hd": "HD",
@@ -1403,9 +1397,11 @@
         "highDefinition": "Độ phân giải cao",
         "highestQuality": "Chất lượng cao nhất",
         "labelTooiltipNoVideo": "Không hình ảnh",
-        "labelTooltipAudioOnly": "Chế độ chỉ nghe âm thanh đã bật",
+        "labelTooltipLowBandwidthMode": "Chế độ chỉ nghe âm thanh đã bật",
         "ld": "LD",
         "ldTooltip": "Xem video chất lượng thấp",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Bạn đang ở chế độ chỉ nghe âm thanh. Chế độ này giảm băng thông nhưng không thấy hình ảnh người khác.",
         "lowDefinition": "Độ phân giải thấp",
         "performanceSettings": "Cài đặt hiệu suất",
         "recording": "Đang ghi",

@@ -22,6 +22,7 @@ html {
     height: 100%;
     width: 100%;
     overflow: hidden;
+    overflow: clip;
 }
 
 body {
@@ -30,7 +31,14 @@ body {
     height: 100%;
     font-size: 0.75rem;
     font-weight: 400;
+    // `clip` (vs. `hidden`) makes the element a non-scroll container so the
+    // engine cannot programmatically scroll it. Prevents Chrome's smooth
+    // cross-frame `scrollIntoView` from sliding `body` up by the off-screen
+    // toolbar's height when content inside an iframe (e.g. the custom panel)
+    // requests an auto-scroll. The `hidden` line is the fallback for browsers
+    // that do not understand `clip` (Chrome <90, Safari <16).
     overflow: hidden;
+    overflow: clip;
     color: #F1F1F1;
     background: #040404; // should match DEFAULT_BACKGROUND from interface_config
 }

@@ -4,13 +4,28 @@ import { connect } from 'react-redux';
 import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
 import { IReduxState } from '../../../../app/types';
+import { DEFAULT_ORIGINAL_VOLUME } from '../../../../audio-translation/constants';
+import { getDuckedVolumeForParticipant, shouldDuckOriginalAudio }
+    from '../../../../audio-translation/functions';
+import { browser } from '../../../lib-jitsi-meet';
 import { ITrack } from '../../../tracks/types';
 import logger from '../../logger';
+
+// iOS (WebKit) ignores programmatic HTMLMediaElement.volume — it is under the user's hardware control, so
+// assigning it is a no-op. Ducking therefore can't lower the volume there; we fall back to muting the
+// original entirely while its translation plays. `element.muted` IS honoured on iOS.
+const IS_IOS_BROWSER = browser.isIosBrowser();
 
 /**
  * The type of the React {@code Component} props of {@link AudioTrack}.
  */
 interface IProps {
+
+    /**
+     * Whether this track's original audio is currently ducked because its translated counterpart is playing.
+     * On iOS, where element volume cannot be lowered, this causes the element to be muted instead.
+     */
+    _ducked?: boolean;
 
     /**
      * Represents muted property of the underlying audio element.
@@ -54,9 +69,16 @@ class AudioTrack extends Component<IProps> {
     _ref: React.RefObject<HTMLAudioElement>;
 
     /**
-     * The current timeout ID for play() retries.
+     * The current timeout ID for attach or play retries. Shared so that
+     * {@link _detachTrack} can cancel whichever retry is pending.
      */
-    _playTimeout: number | undefined;
+    _retryTimeout: number | undefined;
+
+    /**
+     * Tracks how many full re-attach cycles (attach retries + play retries exhausted) have occurred
+     * to prevent infinite recovery loops.
+     */
+    _reattachCount = 0;
 
     /**
      * Default values for {@code AudioTrack} component's properties.
@@ -96,15 +118,13 @@ class AudioTrack extends Component<IProps> {
 
         if (this._ref?.current) {
             const audio = this._ref?.current;
-            const { _muted, _volume } = this.props;
+            const { _volume } = this.props;
 
             if (typeof _volume === 'number') {
                 audio.volume = _volume;
             }
 
-            if (typeof _muted === 'boolean') {
-                audio.muted = _muted;
-            }
+            audio.muted = this._isMuted(this.props);
 
             // @ts-ignore
             audio.addEventListener('error', this._errorHandler);
@@ -157,16 +177,28 @@ class AudioTrack extends Component<IProps> {
             }
 
             const currentMuted = audio.muted;
-            const nextMuted = nextProps._muted;
+            const nextMuted = this._isMuted(nextProps);
 
-            if (typeof nextMuted === 'boolean' && currentMuted !== nextMuted) {
-                logger.debug(`Setting audio element ${nextProps?.id} muted to true`);
+            if (currentMuted !== nextMuted) {
+                logger.debug(`Setting audio element ${nextProps?.id} muted to ${nextMuted}`);
 
                 audio.muted = nextMuted;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Computes the effective muted state of the audio element: muted when the conference is joined silently
+     * ({@code _muted}), or — on iOS, where the volume cannot be lowered — while the track is ducked because
+     * its translation is playing.
+     *
+     * @param {IProps} props - The props to evaluate.
+     * @returns {boolean}
+     */
+    _isMuted(props: IProps) {
+        return Boolean(props._muted) || (IS_IOS_BROWSER && Boolean(props._ducked));
     }
 
     /**
@@ -190,10 +222,11 @@ class AudioTrack extends Component<IProps> {
      * Calls into the passed in track to associate the track with the component's audio element.
      *
      * @param {Object} track - The redux representation of the {@code JitsiLocalTrack}.
+     * @param {number} retryCount - The number of previously failed attach retries.
      * @private
      * @returns {void}
      */
-    _attachTrack(track?: ITrack) {
+    _attachTrack(track?: ITrack, retryCount = 0) {
         const { id } = this.props;
 
         if (!track?.jitsiTrack) {
@@ -209,13 +242,24 @@ class AudioTrack extends Component<IProps> {
         }
 
         track.jitsiTrack.attach(this._ref.current)
+            .then(() => {
+                if (retryCount !== 0) {
+                    logger.info(`Successfully attached audio track on element ${id} after ${retryCount} retries`);
+                }
+                this._play();
+            })
             .catch((error: Error) => {
                 logger.error(
-                    `Attaching the remote track ${track.jitsiTrack} to video with id ${id} has failed with `,
+                    `Attaching the remote track ${track.jitsiTrack} to audio with id ${id} has failed with `,
                     error);
-            })
-            .finally(() => {
-                this._play();
+
+                if (retryCount < 3) {
+                    this._retryTimeout = window.setTimeout(() => {
+                        this._attachTrack(track, retryCount + 1);
+                    }, 1000);
+                } else {
+                    logger.error(`Failed to attach audio track on element ${id} after ${retryCount} retries`);
+                }
             });
     }
 
@@ -229,8 +273,8 @@ class AudioTrack extends Component<IProps> {
      */
     _detachTrack(track?: ITrack) {
         if (this._ref?.current && track?.jitsiTrack) {
-            clearTimeout(this._playTimeout);
-            this._playTimeout = undefined;
+            clearTimeout(this._retryTimeout);
+            this._retryTimeout = undefined;
             track.jitsiTrack.detach(this._ref.current);
         }
     }
@@ -272,22 +316,33 @@ class AudioTrack extends Component<IProps> {
             .then(() => {
                 if (retries !== 0) {
                     // success after some failures
-                    this._playTimeout = undefined;
+                    this._retryTimeout = undefined;
                     sendAnalytics(createAudioPlaySuccessEvent(id));
                     logger.info(`Successfully played audio track! retries: ${retries}`);
                 }
+                this._reattachCount = 0;
             }, e => {
                 logger.error(`Failed to play audio track on audio element ${id}! retry: ${retries} ; Error:`, e);
 
                 if (retries < 3) {
-                    this._playTimeout = window.setTimeout(() => this._play(retries + 1), 1000);
+                    this._retryTimeout = window.setTimeout(() => this._play(retries + 1), 1000);
 
                     if (retries === 0) {
                         // send only 1 error event.
                         sendAnalytics(createAudioPlayErrorEvent(id));
                     }
                 } else {
-                    this._playTimeout = undefined;
+                    this._retryTimeout = undefined;
+
+                    // Play retries exhausted — re-attach the track and try again (once).
+                    if (this._reattachCount < 1) {
+                        this._reattachCount++;
+                        logger.warn(`Play retries exhausted for audio element ${id}, re-attaching track`);
+                        this._detachTrack(this.props.audioTrack);
+                        this._attachTrack(this.props.audioTrack);
+                    } else {
+                        logger.error(`Audio recovery failed for element ${id} after re-attach`);
+                    }
                 }
             });
         }
@@ -304,10 +359,26 @@ class AudioTrack extends Component<IProps> {
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantsVolume } = state['features/filmstrip'];
+    const audioTranslationConfigured = Boolean(state['features/base/config'].audioTranslation);
+
+    let _volume: number | boolean | undefined = participantsVolume[ownProps.participantId];
+
+    // Driven by actual translated-audio presence, not isAudioTranslationAvailable: ducking follows the
+    // media, and must not un-duck mid-playback on a permission/flag change.
+    const sourceName: string | undefined = ownProps.audioTrack?.jitsiTrack?.getSourceName?.();
+    const ducked = shouldDuckOriginalAudio(state, sourceName, ownProps.participantId);
+
+    if (ducked) {
+        _volume = getDuckedVolumeForParticipant(state, ownProps.participantId);
+    } else if (audioTranslationConfigured && _volume === undefined) {
+        // Restore full volume after ducking (config presence, not enabled, so a mid-call disable un-ducks).
+        _volume = DEFAULT_ORIGINAL_VOLUME;
+    }
 
     return {
+        _ducked: ducked,
         _muted: state['features/base/config'].startSilent,
-        _volume: participantsVolume[ownProps.participantId]
+        _volume
     };
 }
 

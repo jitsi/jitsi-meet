@@ -7,7 +7,7 @@
         "jsx": "react",
         "lib": [ "ES2024", "DOM" ],
         "skipLibCheck": true,
-        "moduleResolution": "Node",
+        "moduleResolution": "Bundler",
         "strict": true,
         "noImplicitAny": true,
         "noImplicitOverride": true,

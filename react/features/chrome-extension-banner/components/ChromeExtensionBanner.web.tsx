@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';

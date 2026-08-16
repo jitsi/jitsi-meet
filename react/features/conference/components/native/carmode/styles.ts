@@ -37,7 +37,9 @@ export default {
 
     microphoneStyles: {
         container: {
+            borderColor: 'transparent',
             borderRadius: MICROPHONE_SIZE / 2,
+            borderWidth: BaseTheme.spacing[0],
             height: MICROPHONE_SIZE,
             maxHeight: MICROPHONE_SIZE,
             justifyContent: 'center',
@@ -64,7 +66,7 @@ export default {
         },
 
         unmuted: {
-            borderWidth: 4,
+            borderWidth: BaseTheme.spacing[1],
             borderColor: BaseTheme.palette.success01
         }
     },

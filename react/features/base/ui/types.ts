@@ -185,6 +185,19 @@ export interface IPalette {
     thumbnailRaisedHandIcon: string;
     thumbnailTintBackground: string;
     thumbnailVideoBackground: string;
+    timeTimerDisk: string;
+    timeTimerElapsedText: string;
+    timeTimerExpiredDisk: string;
+    timeTimerExpiredNameSegmentBackground: string;
+    timeTimerExpiredNotificationText: string;
+    timeTimerExpiredOverrunEdge: string;
+    timeTimerExpiredText: string;
+    timeTimerExpiredTimerSegmentBackground: string;
+    timeTimerNameSegmentBackground: string;
+    timeTimerTimerSegmentBackground: string;
+    timeTimerWarning: string;
+    timeTimerWarningNameSegmentBackground: string;
+    timeTimerWarningTimerSegmentBackground: string;
     toolbarButton: string;
     toolbarButtonActive: string;
     toolbarButtonHover: string;
@@ -326,6 +339,7 @@ export interface IPalette {
     recordingNotificationAction: string;
     recordingNotificationText: string;
     recordingText: string;
+    transcriptionIndicator: string;
     securityDialogBackground: string;
     securityDialogBorder: string;
     securityDialogSecondaryText: string;

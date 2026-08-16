@@ -3,7 +3,8 @@ import { Image, ImageStyle, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
-import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
+import { TranslationTreatment } from '../../../audio-translation/constants';
+import { getTranslationTreatment, isAudioTranslationAvailable } from '../../../audio-translation/functions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../base/media/constants';
 import { pinParticipant } from '../../../base/participants/actions';
 import ParticipantView from '../../../base/participants/components/ParticipantView.native';
@@ -19,11 +20,11 @@ import {
 import { FakeParticipant } from '../../../base/participants/types';
 import Container from '../../../base/react/components/native/Container';
 import { StyleType } from '../../../base/styles/functions.any';
-import { trackStreamingStatusChanged } from '../../../base/tracks/actions.native';
 import {
     getTrackByMediaTypeAndParticipant,
     getVideoTrackByParticipant
 } from '../../../base/tracks/functions.native';
+import { useTrackStreamingStatus } from '../../../base/tracks/hooks.any';
 import { ITrack } from '../../../base/tracks/types';
 import ConnectionIndicator from '../../../connection-indicator/components/native/ConnectionIndicator';
 import DisplayNameLabel from '../../../display-name/components/native/DisplayNameLabel';
@@ -42,6 +43,7 @@ import ModeratorIndicator from './ModeratorIndicator';
 import PinnedIndicator from './PinnedIndicator';
 import RaisedHandIndicator from './RaisedHandIndicator';
 import ScreenShareIndicator from './ScreenShareIndicator';
+import TranslationIndicator from './TranslationIndicator';
 import styles, { AVATAR_SIZE } from './styles';
 
 
@@ -116,6 +118,11 @@ interface IProps {
     _shouldDisplayTileView: boolean;
 
     /**
+     * The audio-translation treatment to render for this participant (NONE renders no indicator).
+     */
+    _translationTreatment: TranslationTreatment;
+
+    /**
      * The video track that will be displayed in the thumbnail.
      */
     _videoTrack?: ITrack;
@@ -162,7 +169,6 @@ class Thumbnail extends PureComponent<IProps> {
 
         this._onClick = this._onClick.bind(this);
         this._onThumbnailLongPress = this._onThumbnailLongPress.bind(this);
-        this.handleTrackStreamingStatusChanged = this.handleTrackStreamingStatusChanged.bind(this);
     }
 
     /**
@@ -186,7 +192,14 @@ class Thumbnail extends PureComponent<IProps> {
      * @returns {void}
      */
     _onThumbnailLongPress() {
-        const { _fakeParticipant, _participantId, _local, _localVideoOwner, dispatch } = this.props;
+        const {
+            _fakeParticipant,
+            _isVirtualScreenshare,
+            _participantId,
+            _local,
+            _localVideoOwner,
+            dispatch
+        } = this.props;
 
         if (_fakeParticipant && _localVideoOwner) {
             dispatch(showSharedVideoMenu(_participantId));
@@ -196,6 +209,8 @@ class Thumbnail extends PureComponent<IProps> {
             } else {
                 dispatch(showContextMenuDetails(_participantId));
             }
+        } else if (_isVirtualScreenshare) {
+            dispatch(pinParticipant(_participantId));
         } // else no-op
     }
 
@@ -213,6 +228,7 @@ class Thumbnail extends PureComponent<IProps> {
             _participantId: participantId,
             _pinned,
             _renderModeratorIndicator: renderModeratorIndicator,
+            _translationTreatment: translationTreatment,
             _shouldDisplayTileView,
             renderDisplayName,
             tileView
@@ -223,7 +239,8 @@ class Thumbnail extends PureComponent<IProps> {
 
         if (_shouldDisplayTileView) {
             bottomIndicatorsContainerStyle = styles.bottomIndicatorsContainer;
-        } else if (audioMuted || renderModeratorIndicator) {
+        } else if (audioMuted || renderModeratorIndicator
+                || translationTreatment !== TranslationTreatment.NONE) {
             bottomIndicatorsContainerStyle = styles.bottomIndicatorsContainer;
         } else {
             bottomIndicatorsContainerStyle = null;
@@ -247,6 +264,8 @@ class Thumbnail extends PureComponent<IProps> {
                 <Container
                     style = { bottomIndicatorsContainerStyle as StyleType }>
                     { audioMuted && !_isVirtualScreenshare && <AudioMutedIndicator /> }
+                    { translationTreatment !== TranslationTreatment.NONE
+                        && <TranslationIndicator treatment = { translationTreatment } /> }
                     { !tileView && _pinned && <PinnedIndicator />}
                     { renderModeratorIndicator && !_isVirtualScreenshare && <ModeratorIndicator />}
                     { !tileView && (isScreenShare || _isVirtualScreenshare) && <ScreenShareIndicator /> }
@@ -268,79 +287,6 @@ class Thumbnail extends PureComponent<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    override componentDidMount() {
-        // Listen to track streaming status changed event to keep it updated.
-        // TODO: after converting this component to a react function component,
-        // use a custom hook to update local track streaming status.
-        const { _videoTrack, dispatch } = this.props;
-
-        if (_videoTrack && !_videoTrack.local) {
-            _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                this.handleTrackStreamingStatusChanged);
-            dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
-                _videoTrack.jitsiTrack.getTrackStreamingStatus()));
-        }
-    }
-
-    /**
-     * Stops listening for track streaming status updates on the old track and starts listening instead on the new
-     * track.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    override componentDidUpdate(prevProps: IProps) {
-        // TODO: after converting this component to a react function component,
-        // use a custom hook to update local track streaming status.
-        const { _videoTrack, dispatch } = this.props;
-
-        if (prevProps._videoTrack?.jitsiTrack?.getSourceName() !== _videoTrack?.jitsiTrack?.getSourceName()) {
-            if (prevProps._videoTrack && !prevProps._videoTrack.local) {
-                prevProps._videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                    this.handleTrackStreamingStatusChanged);
-                dispatch(trackStreamingStatusChanged(prevProps._videoTrack.jitsiTrack,
-                    prevProps._videoTrack.jitsiTrack.getTrackStreamingStatus()));
-            }
-            if (_videoTrack && !_videoTrack.local) {
-                _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                    this.handleTrackStreamingStatusChanged);
-                dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
-                    _videoTrack.jitsiTrack.getTrackStreamingStatus()));
-            }
-        }
-    }
-
-    /**
-     * Remove listeners for track streaming status update.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    override componentWillUnmount() {
-        // TODO: after converting this component to a react function component,
-        // use a custom hook to update local track streaming status.
-        const { _videoTrack, dispatch } = this.props;
-
-        if (_videoTrack && !_videoTrack.local) {
-            _videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                this.handleTrackStreamingStatusChanged);
-            dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
-                _videoTrack.jitsiTrack.getTrackStreamingStatus()));
-        }
-    }
-
-    /**
-     * Handle track streaming status change event by by dispatching an action to update track streaming status for the
-     * given track in app state.
-     *
-     * @param {JitsiTrack} jitsiTrack - The track with streaming status updated.
-     * @param {JitsiTrackStreamingStatus} streamingStatus - The updated track streaming status.
-     * @returns {void}
-     */
-    handleTrackStreamingStatusChanged(jitsiTrack: any, streamingStatus: string) {
-        this.props.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus));
-    }
-
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -420,6 +366,10 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const _isEveryoneModerator = isEveryoneModerator(state);
     const renderModeratorIndicator = tileView && !_isEveryoneModerator
         && participant?.role === PARTICIPANT_ROLE.MODERATOR;
+    const translationTreatment = !participant?.local && !isScreenShareParticipant(participant)
+        && isAudioTranslationAvailable(state)
+        ? getTranslationTreatment(state, id ?? '')
+        : TranslationTreatment.NONE;
     const { gifUrl: gifSrc } = getGifForParticipant(state, id ?? '');
     const mode = getGifDisplayMode(state);
 
@@ -436,9 +386,14 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _raisedHand: hasRaisedHand(participant),
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
+        _translationTreatment: translationTreatment,
         _shouldDisplayTileView: shouldDisplayTileView(state),
         _videoTrack: videoTrack
     };
 }
 
-export default connect(_mapStateToProps)(Thumbnail);
+export default connect(_mapStateToProps)((props: IProps) => {
+    useTrackStreamingStatus(props._videoTrack);
+
+    return <Thumbnail { ...props } />;
+});
