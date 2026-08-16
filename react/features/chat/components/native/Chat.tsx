@@ -9,8 +9,7 @@ import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { StyleType } from '../../../base/styles/functions.native';
 import { TabBarLabelCounter } from '../../../mobile/navigation/components/TabBarLabelCounter';
 import { pollsStyles } from '../../../polls/components/native/styles';
-import { closeChat, sendMessage } from '../../actions.native';
-import { clearChatSearch } from '../../actions.native';
+import { clearChatSearch, closeChat, sendMessage } from '../../actions.native';
 import { ChatTabs } from '../../constants';
 import { IChatProps as AbstractProps } from '../../types';
 

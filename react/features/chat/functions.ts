@@ -247,7 +247,7 @@ export function escapeSearchRegExp(value: string): string {
  *
  * @param {string} text - The message text.
  * @param {string} query - The search query.
- * @returns {Array<{ match: boolean; text: string; }>}
+ * @returns {Array<Object>}
  */
 export function getHighlightSegments(text: string, query: string): Array<{ match: boolean; text: string; }> {
     if (!query) {

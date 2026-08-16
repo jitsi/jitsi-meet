@@ -9,9 +9,9 @@ import Linkify from '../../../base/react/components/native/Linkify';
 import { isGifEnabled, isGifMessage } from '../../../gifs/functions.native';
 import { CHAR_LIMIT, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../../constants';
 import {
+    getActiveChatSearchMatch,
     getCanReplyToMessage,
     getChatSearchQuery,
-    getActiveChatSearchMatch,
     getDisplayNameSuffix,
     getFormattedTimestamp,
     getHighlightSegments,
