@@ -27,7 +27,7 @@ class MessageContainer extends Component<IProps, any> {
     };
 
     _flatListRef: React.RefObject<FlatList<any>>;
-    
+
     /**
      * Instantiates a new instance of the component.
      *
@@ -191,4 +191,4 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-export default translate(connect()(MessageContainer));
+export default translate(connect(_mapStateToProps)(MessageContainer));

@@ -82,12 +82,12 @@ export default {
     },
 
     chatMessageHighlight: {
-        backgroundColor: BaseTheme.palette.warning02,
+        backgroundColor: BaseTheme.palette.action02,
         color: BaseTheme.palette.text01
     },
 
     chatMessageHighlightActive: {
-        backgroundColor: BaseTheme.palette.warning01,
+        backgroundColor: BaseTheme.palette.action01,
         color: BaseTheme.palette.text01
     },
 
@@ -103,17 +103,6 @@ export default {
         paddingHorizontal: BaseTheme.spacing[2]
     },
 
-    searchBarIcon: {
-        marginRight: BaseTheme.spacing[1]
-    },
-
-    searchBarInput: {
-        ...BaseTheme.typography.bodyShortRegular,
-        color: BaseTheme.palette.text01,
-        flex: 1,
-        padding: 0
-    },
-
     searchBarCounter: {
         ...BaseTheme.typography.labelRegular,
         color: BaseTheme.palette.text03,
@@ -124,6 +113,15 @@ export default {
         alignItems: 'center',
         justifyContent: 'center',
         padding: BaseTheme.spacing[1]
+    },
+
+    searchInputContainer: {
+        flex: 1,
+        marginBottom: 0
+    },
+
+    searchInput: {
+        height: 40
     },
 
     /**
