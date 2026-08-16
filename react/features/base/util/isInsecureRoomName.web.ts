@@ -49,17 +49,6 @@ function _estimateRoomNameStrength(roomName: string): number {
 }
 
 /**
- * No-op kept for API compatibility. Previously triggered the asynchronous
- * load of the zxcvbn library. The library has been replaced with a
- * lightweight built-in heuristic that requires no preloading.
- *
- * @returns {void}
- */
-export function preloadZxcvbn() {
-    // No-op: zxcvbn has been removed; no preloading is needed.
-}
-
-/**
  * Checks if the given string is a valid UUID or not.
  *
  * @param {string} str - The string to be checked.

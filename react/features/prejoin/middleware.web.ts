@@ -11,8 +11,6 @@ import {
     TRACK_ADDED,
     TRACK_NO_DATA_FROM_SOURCE
 } from '../base/tracks/actionTypes';
-import { preloadZxcvbn } from '../base/util/isInsecureRoomName';
-
 import {
     setDeviceStatusOk,
     setDeviceStatusWarning,
@@ -28,15 +26,8 @@ import { isPrejoinPageVisible, isUnsafeRoomWarningEnabled } from './functions.an
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case SET_CONFIG: {
-        const result = next(action);
-
-        if (isUnsafeRoomWarningEnabled(store.getState())) {
-            preloadZxcvbn();
-        }
-
-        return result;
-    }
+    case SET_CONFIG:
+        return next(action);
     case SET_AUDIO_MUTED: {
         if (isPrejoinPageVisible(store.getState())) {
             store.dispatch(updateSettings({
