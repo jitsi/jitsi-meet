@@ -235,7 +235,7 @@ GEM
       concurrent-ruby (~> 1.0)
     jmespath (1.6.2)
     json (2.10.1)
-    jwt (2.10.1)
+    jwt (2.10.3)
       base64
     logger (1.6.6)
     mini_magick (4.13.2)
