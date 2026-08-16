@@ -1,53 +1,13 @@
 import { isEqual } from 'lodash-es';
 import { NIL, parse as parseUUID } from 'uuid';
 
+import { estimateRoomNameStrength } from './roomNameStrength';
+
 // The null UUID.
 const NIL_UUID = parseUUID(NIL);
 
 const _SCORE_CACHE_MAX = 200;
 const _scoreCache = new Map<string, number>();
-
-/**
- * Estimates a rough strength score (0–4) for a room name without using
- * the heavy zxcvbn library (~800 KB minified). Only the score field was
- * ever read from zxcvbn, so a lightweight length-plus-variety heuristic
- * is a sufficient replacement for this use-case.
- *
- * @param {string} roomName - The room name to score.
- * @returns {number} - A score between 0 and 4 (< 3 means weak/insecure).
- */
-function _estimateRoomNameStrength(roomName: string): number {
-    const len = roomName.length;
-
-    if (len < 8) {
-        return 0;
-    }
-    if (len < 12) {
-        return 1;
-    }
-
-    const hasLower = /[a-z]/.test(roomName);
-    const hasUpper = /[A-Z]/.test(roomName);
-    const hasDigit = /[0-9]/.test(roomName);
-    const hasSpecial = /[^a-zA-Z0-9]/.test(roomName);
-
-    const varietyCount = [ hasLower, hasUpper, hasDigit, hasSpecial ]
-        .filter(Boolean).length;
-
-    if (varietyCount === 1) {
-        return 1;
-    }
-
-    if (varietyCount === 2 && len < 16) {
-        return 2;
-    }
-
-    if (varietyCount >= 3 || len >= 16) {
-        return 3;
-    }
-
-    return 2;
-}
 
 /**
  * Checks if the given string is a valid UUID or not.
@@ -78,7 +38,7 @@ function _checkRoomName(roomName = '') {
         return _scoreCache.get(roomName);
     }
 
-    const score = _estimateRoomNameStrength(roomName);
+    const score = estimateRoomNameStrength(roomName);
 
     if (_scoreCache.size >= _SCORE_CACHE_MAX) {
         const oldestKey = _scoreCache.keys().next().value;
