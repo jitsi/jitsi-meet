@@ -4,34 +4,59 @@ import { NIL, parse as parseUUID } from 'uuid';
 // The null UUID.
 const NIL_UUID = parseUUID(NIL);
 
-const _zxcvbnCache = new Map();
-let _zxcvbn: ((password: string) => { score: number; }) | null = null;
+const _scoreCache = new Map<string, number>();
 
 /**
- * Triggers the asynchronous load of the zxcvbn library if not already loaded.
- * Can be called early (e.g. on config load) to ensure the library is ready
- * before the first call to {@link isInsecureRoomName}.
+ * Estimates a rough strength score (0–4) for a room name without using
+ * the heavy zxcvbn library (~800 KB minified). Only the score field was
+ * ever read from zxcvbn, so a lightweight length-plus-variety heuristic
+ * is a sufficient replacement for this use-case.
+ *
+ * @param {string} roomName - The room name to score.
+ * @returns {number} - A score between 0 and 4 (< 3 means weak/insecure).
+ */
+function _estimateRoomNameStrength(roomName: string): number {
+    const len = roomName.length;
+
+    if (len < 8) {
+        return 0;
+    }
+    if (len < 12) {
+        return 1;
+    }
+
+    const hasLower = /[a-z]/.test(roomName);
+    const hasUpper = /[A-Z]/.test(roomName);
+    const hasDigit = /[0-9]/.test(roomName);
+    const hasSpecial = /[^a-zA-Z0-9]/.test(roomName);
+
+    const varietyCount = [ hasLower, hasUpper, hasDigit, hasSpecial ]
+        .filter(Boolean).length;
+
+    if (varietyCount === 1) {
+        return 1;
+    }
+
+    if (varietyCount === 2 && len < 16) {
+        return 2;
+    }
+
+    if (varietyCount >= 3 || len >= 16) {
+        return 3;
+    }
+
+    return 2;
+}
+
+/**
+ * No-op kept for API compatibility. Previously triggered the asynchronous
+ * load of the zxcvbn library. The library has been replaced with a
+ * lightweight built-in heuristic that requires no preloading.
  *
  * @returns {void}
  */
 export function preloadZxcvbn() {
-    _ensureZxcvbn();
-}
-
-/**
- * Triggers the asynchronous load of the zxcvbn library if not already loaded.
- *
- * @returns {void}
- */
-function _ensureZxcvbn() {
-    if (_zxcvbn !== null) {
-        return;
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    import(/* webpackChunkName: "zxcvbn" */ 'zxcvbn').then((m: any) => {
-        _zxcvbn = m.default ?? m;
-    });
+    // No-op: zxcvbn has been removed; no preloading is needed.
 }
 
 /**
@@ -54,32 +79,24 @@ function isValidUUID(str: string) {
 
 /**
  * Checks a room name and caches the result.
- * Returns undefined if zxcvbn is not yet loaded.
  *
  * @param {string} roomName - The room name.
- * @returns {Object|undefined}
+ * @returns {number}
  */
 function _checkRoomName(roomName = '') {
-    if (_zxcvbnCache.has(roomName)) {
-        return _zxcvbnCache.get(roomName);
+    if (_scoreCache.has(roomName)) {
+        return _scoreCache.get(roomName);
     }
 
-    _ensureZxcvbn();
+    const score = _estimateRoomNameStrength(roomName);
 
-    if (!_zxcvbn) {
-        return undefined;
-    }
+    _scoreCache.set(roomName, score);
 
-    const result = _zxcvbn(roomName);
-
-    _zxcvbnCache.set(roomName, result);
-
-    return result;
+    return score;
 }
 
 /**
  * Returns true if the room name is considered a weak (insecure) one.
- * Returns false (treats as secure) while the zxcvbn library is still loading.
  *
  * @param {string} roomName - The room name.
  * @returns {boolean}
@@ -87,5 +104,5 @@ function _checkRoomName(roomName = '') {
 export default function isInsecureRoomName(roomName = ''): boolean {
 
     // room names longer than 200 chars we consider secure
-    return !isValidUUID(roomName) && (roomName.length < 200 && (_checkRoomName(roomName)?.score ?? 3) < 3);
+    return !isValidUUID(roomName) && (roomName.length < 200 && (_checkRoomName(roomName) ?? 3) < 3);
 }

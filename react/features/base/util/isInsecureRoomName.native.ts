@@ -1,12 +1,53 @@
 import { isEqual } from 'lodash-es';
 import { NIL, parse as parseUUID } from 'uuid';
-import zxcvbn from 'zxcvbn';
 
 // The null UUID.
 const NIL_UUID = parseUUID(NIL);
 
-const _ZXCVBN_CACHE_MAX = 200;
-const _zxcvbnCache = new Map<string, ReturnType<typeof zxcvbn>>();
+const _SCORE_CACHE_MAX = 200;
+const _scoreCache = new Map<string, number>();
+
+/**
+ * Estimates a rough strength score (0–4) for a room name without using
+ * the heavy zxcvbn library (~800 KB minified). Only the score field was
+ * ever read from zxcvbn, so a lightweight length-plus-variety heuristic
+ * is a sufficient replacement for this use-case.
+ *
+ * @param {string} roomName - The room name to score.
+ * @returns {number} - A score between 0 and 4 (< 3 means weak/insecure).
+ */
+function _estimateRoomNameStrength(roomName: string): number {
+    const len = roomName.length;
+
+    if (len < 8) {
+        return 0;
+    }
+    if (len < 12) {
+        return 1;
+    }
+
+    const hasLower = /[a-z]/.test(roomName);
+    const hasUpper = /[A-Z]/.test(roomName);
+    const hasDigit = /[0-9]/.test(roomName);
+    const hasSpecial = /[^a-zA-Z0-9]/.test(roomName);
+
+    const varietyCount = [ hasLower, hasUpper, hasDigit, hasSpecial ]
+        .filter(Boolean).length;
+
+    if (varietyCount === 1) {
+        return 1;
+    }
+
+    if (varietyCount === 2 && len < 16) {
+        return 2;
+    }
+
+    if (varietyCount >= 3 || len >= 16) {
+        return 3;
+    }
+
+    return 2;
+}
 
 /**
  * Checks if the given string is a valid UUID or not.
@@ -30,25 +71,25 @@ function isValidUUID(str: string) {
  * Checks a room name and caches the result.
  *
  * @param {string} roomName - The room name.
- * @returns {Object}
+ * @returns {number}
  */
 function _checkRoomName(roomName = '') {
-    if (_zxcvbnCache.has(roomName)) {
-        return _zxcvbnCache.get(roomName);
+    if (_scoreCache.has(roomName)) {
+        return _scoreCache.get(roomName);
     }
 
-    const result = zxcvbn(roomName);
+    const score = _estimateRoomNameStrength(roomName);
 
-    if (_zxcvbnCache.size >= _ZXCVBN_CACHE_MAX) {
-        const oldestKey = _zxcvbnCache.keys().next().value;
+    if (_scoreCache.size >= _SCORE_CACHE_MAX) {
+        const oldestKey = _scoreCache.keys().next().value;
 
         if (oldestKey !== undefined) {
-            _zxcvbnCache.delete(oldestKey);
+            _scoreCache.delete(oldestKey);
         }
     }
-    _zxcvbnCache.set(roomName, result);
+    _scoreCache.set(roomName, score);
 
-    return result;
+    return score;
 }
 
 /**
@@ -60,5 +101,5 @@ function _checkRoomName(roomName = '') {
 export default function isInsecureRoomName(roomName = ''): boolean {
 
     // room names longer than 200 chars we consider secure
-    return !isValidUUID(roomName) && (roomName.length < 200 && (_checkRoomName(roomName)?.score ?? 3) < 3);
+    return !isValidUUID(roomName) && (roomName.length < 200 && (_checkRoomName(roomName) ?? 3) < 3);
 }
