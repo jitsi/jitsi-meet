@@ -28,6 +28,7 @@ export const PARTICIPANT_MENU_BUTTONS = {
     KICK: 'kick',
     LOWER_PARTICIPANT_HAND: 'lower-participant-hand',
     MUTE: 'mute',
+    MUTE_CHAT: 'mute-chat',
     MUTE_DESKTOP: 'mute-desktop',
     MUTE_OTHERS: 'mute-others',
     MUTE_OTHERS_DESKTOP: 'mute-others-desktop',

@@ -35,6 +35,7 @@ import GrantModeratorButton from './GrantModeratorButton';
 import KickButton from './KickButton';
 import LowerHandButton from './LowerHandButton';
 import MuteButton from './MuteButton';
+import MuteChatButton from './MuteChatButton';
 import MuteDesktopButton from './MuteDesktopButton';
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 import MuteEveryoneElsesDesktopButton from './MuteEveryoneElsesDesktopButton';
@@ -135,6 +136,8 @@ const ParticipantContextMenu = ({
     const { classes: styles } = useStyles();
 
     const localParticipant = useSelector(getLocalParticipant);
+    const _isChatMuted = useSelector((state: IReduxState) =>
+        state['features/chat'].mutedParticipantIds.includes(participant?.id ?? ''));
     const _isModerator = Boolean(localParticipant?.role === PARTICIPANT_ROLE.MODERATOR);
     const _isVideoForceMuted = useSelector<IReduxState>(state =>
         isForceMuted(participant, AVM_MEDIA_TYPE.VIDEO, state));
@@ -246,6 +249,11 @@ const ParticipantContextMenu = ({
             if (!(isClickedFromParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.MUTE)) {
                 buttons.push(<MuteButton { ...getButtonProps(BUTTONS.MUTE) } />);
             }
+            buttons.push(
+                <MuteChatButton
+                    { ...getButtonProps(BUTTONS.MUTE_CHAT) }
+                    isChatMuted = { _isChatMuted } />
+            );
             buttons.push(<MuteEveryoneElseButton { ...getButtonProps(BUTTONS.MUTE_OTHERS) } />);
             if (!(isClickedFromParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.STOP_VIDEO)) {
                 buttons.push(<MuteVideoButton { ...getButtonProps(BUTTONS.MUTE_VIDEO) } />);

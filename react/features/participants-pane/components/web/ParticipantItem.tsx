@@ -14,6 +14,7 @@ import {
     VideoStateIcons
 } from '../../constants';
 
+import { ChatMutedIndicator } from './ChatMutedIndicator';
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 
 interface IProps extends WithTranslation {
@@ -42,6 +43,12 @@ interface IProps extends WithTranslation {
      * The name of the participant. Used for showing lobby names.
      */
     displayName?: string;
+
+    /**
+     * Whether or not this participant's chat is shadow-muted. Only ever
+     * passed as true when the local viewer is a moderator.
+     */
+    isChatMuted?: boolean;
 
     /**
      * Is this item highlighted/raised.
@@ -131,6 +138,7 @@ function ParticipantItem({
     children,
     disableModeratorIndicator,
     displayName,
+    isChatMuted,
     isHighlighted,
     isModerator,
     local,
@@ -176,6 +184,7 @@ function ParticipantItem({
     const indicators = (
         <>
             {raisedHand && <RaisedHandIndicator />}
+            {isChatMuted && <ChatMutedIndicator />}
             {VideoStateIcons[videoMediaState]}
             {AudioStateIcons[audioMediaState]}
         </>

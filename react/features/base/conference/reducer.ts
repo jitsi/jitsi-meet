@@ -127,6 +127,7 @@ export interface IJitsiConference {
     lobbyDenyAccess: Function;
     lock: Function;
     markParticipantVerified: Function;
+    muteChatParticipant: Function;
     muteParticipant: Function;
     myLobbyUserId: Function;
     myUserId: Function;
@@ -164,6 +165,7 @@ export interface IJitsiConference {
     startVerification: Function;
     stopRecording: Function;
     toggleE2EE: Function;
+    unmuteChatParticipant: Function;
 }
 
 export interface IConferenceState {

@@ -385,3 +385,31 @@ export function handleLobbyChatInitialized(participantId: string) {
         return conference?.sendLobbyMessage(payload);
     };
 }
+
+/**
+ * Shadow-mutes a participant's chat.
+ *
+ * @param {string} id - The participant id to mute.
+ * @returns {Function}
+ */
+export function muteChatParticipant(id: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const conference = getCurrentConference(getState());
+
+        conference?.muteChatParticipant(id);
+    };
+}
+
+/**
+ * Restores a shadow-muted participant's chat.
+ *
+ * @param {string} id - The participant id to unmute.
+ * @returns {Function}
+ */
+export function unmuteChatParticipant(id: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const conference = getCurrentConference(getState());
+
+        conference?.unmuteChatParticipant(id);
+    };
+}

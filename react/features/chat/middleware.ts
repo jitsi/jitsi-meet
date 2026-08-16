@@ -42,6 +42,8 @@ import { getDisplayName } from '../visitors/functions';
 
 import {
     ADD_MESSAGE,
+    CHAT_PARTICIPANT_MUTED,
+    CHAT_PARTICIPANT_UNMUTED,
     CLOSE_CHAT,
     OPEN_CHAT,
     SEND_MESSAGE,
@@ -450,6 +452,26 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
                 messageId,
                 privateMessage: true,
                 isFromVisitor
+            });
+        }
+    );
+
+    conference.on(
+        JitsiConferenceEvents.CHAT_PARTICIPANT_MUTED,
+        (participantId: string) => {
+            store.dispatch({
+                type: CHAT_PARTICIPANT_MUTED,
+                participantId
+            });
+        }
+    );
+
+    conference.on(
+        JitsiConferenceEvents.CHAT_PARTICIPANT_UNMUTED,
+        (participantId: string) => {
+            store.dispatch({
+                type: CHAT_PARTICIPANT_UNMUTED,
+                participantId
             });
         }
     );

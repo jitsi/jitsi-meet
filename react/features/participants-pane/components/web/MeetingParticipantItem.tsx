@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../../base/media/constants';
+import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
 import {
     getLocalParticipant,
     getParticipantByIdOrUndefined,
@@ -52,6 +53,11 @@ interface IProps {
      * The display name of the participant.
      */
     _displayName: string;
+
+    /**
+     * Whether the chat is muted or not.
+     */
+    _isChatMuted: boolean;
 
     /**
      * Whether or not moderation is supported.
@@ -173,6 +179,7 @@ function MeetingParticipantItem({
     _audioTrack,
     _disableModeratorIndicator,
     _displayName,
+    _isChatMuted,
     _local,
     _localVideoOwner,
     _matchesSearch,
@@ -238,6 +245,7 @@ function MeetingParticipantItem({
             }
             disableModeratorIndicator = { _disableModeratorIndicator }
             displayName = { _displayName }
+            isChatMuted = { _isChatMuted }
             isHighlighted = { isHighlighted }
             isModerator = { isParticipantModerator(_participant) }
             local = { _local }
@@ -299,11 +307,17 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
     const { disableModeratorIndicator } = state['features/base/config'];
 
+    const localParticipant = getLocalParticipant(state);
+    const _localModerator = localParticipant?.role === PARTICIPANT_ROLE.MODERATOR;
+    const _isChatMuted = _localModerator
+        && state['features/chat'].mutedParticipantIds.includes(participant?.id ?? '');
+
     return {
         _audioMediaState,
         _audioTrack,
         _disableModeratorIndicator: Boolean(disableModeratorIndicator),
         _displayName,
+        _isChatMuted,
         _local: Boolean(participant?.local),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _matchesSearch,

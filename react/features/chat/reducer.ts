@@ -7,6 +7,8 @@ import { IVisitorChatParticipant } from '../visitors/types';
 import {
     ADD_MESSAGE,
     ADD_MESSAGE_REACTION,
+    CHAT_PARTICIPANT_MUTED,
+    CHAT_PARTICIPANT_UNMUTED,
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     EDIT_MESSAGE,
@@ -28,6 +30,7 @@ const DEFAULT_STATE = {
     groupChatWithPermissions: false,
     isOpen: false,
     messages: [],
+    mutedParticipantIds: [],
     notifyPrivateRecipientsChangedTimestamp: undefined,
     reactions: {},
     unreadMessagesCount: 0,
@@ -55,6 +58,7 @@ export interface IChatState {
         name: string;
     } | ILocalParticipant;
     messages: IMessage[];
+    mutedParticipantIds: string[];
     notifyPrivateRecipientsChangedTimestamp?: number;
     privateMessageRecipient?: IParticipant | IVisitorChatParticipant;
     unreadFilesCount: number;
@@ -139,6 +143,20 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             messages
         };
     }
+
+    case CHAT_PARTICIPANT_MUTED:
+        return {
+            ...state,
+            mutedParticipantIds: state.mutedParticipantIds.includes(action.participantId)
+                ? state.mutedParticipantIds
+                : [ ...state.mutedParticipantIds, action.participantId ]
+        };
+
+    case CHAT_PARTICIPANT_UNMUTED:
+        return {
+            ...state,
+            mutedParticipantIds: state.mutedParticipantIds.filter(id => id !== action.participantId)
+        };
 
     case CLEAR_MESSAGES:
         return {

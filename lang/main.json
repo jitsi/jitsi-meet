@@ -946,6 +946,7 @@
             "moreParticipantOptions": "More participant options",
             "mute": "Mute",
             "muteAll": "Mute all",
+            "muteChat": "Mute chat",
             "muteEveryoneElse": "Mute everyone else",
             "reject": "Reject",
             "stopDesktop": "Stop screen sharing",
@@ -953,6 +954,7 @@
             "stopEveryonesVideo": "Stop everyone's video",
             "stopVideo": "Stop video",
             "unblockEveryoneMicCamera": "Unblock everyone's mic and camera",
+            "unmuteChat": "Unmute chat",
             "videoModeration": "Start their video"
         },
         "close": "Close",

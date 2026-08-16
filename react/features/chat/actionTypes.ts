@@ -26,6 +26,28 @@ export const ADD_MESSAGE = 'ADD_MESSAGE';
 export const ADD_MESSAGE_REACTION = 'ADD_MESSAGE_REACTION';
 
 /**
+ * The type of the action which signals a moderator has shadow-muted a
+ * participant's chat.
+ *
+ * {
+ *     type: CHAT_PARTICIPANT_MUTED,
+ *     participantId: string
+ * }
+ */
+export const CHAT_PARTICIPANT_MUTED = 'CHAT_PARTICIPANT_MUTED';
+
+/**
+ * The type of the action which signals a moderator has restored a
+ * participant's chat.
+ *
+ * {
+ *     type: CHAT_PARTICIPANT_UNMUTED,
+ *     participantId: string
+ * }
+ */
+export const CHAT_PARTICIPANT_UNMUTED = 'CHAT_PARTICIPANT_UNMUTED';
+
+/**
  * The type of the action which signals to clear messages in Redux.
  *
  * {
