@@ -5,7 +5,6 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
 import { getLocalParticipant, getParticipantDisplayName } from '../../../base/participants/functions';
-import { isTrackStreamingStatusActive } from '../../../connection-indicator/functions';
 import DisplayNameBadge from '../../../display-name/components/web/DisplayNameBadge';
 import { getStageParticipantTypography } from '../../../display-name/components/web/styles';
 import { getLargeVideoParticipant } from '../../../large-video/functions';
@@ -13,7 +12,7 @@ import { isPrejoinPageVisible } from '../../../prejoin/functions.any';
 import HangupButton from '../../../toolbox/components/HangupButton';
 import AudioMuteButton from '../../../toolbox/components/web/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/web/VideoMuteButton';
-import { getPiPVideoTrack } from '../../functions';
+import { getPiPVideoTrack, shouldShowPiPAvatar } from '../../functions';
 import logger from '../../logger';
 
 const useStyles = makeStyles<void, 'controls'>()((theme, _params, classes) => {
@@ -120,9 +119,7 @@ export function DocumentPiPView() {
     const videoTrack = useSelector((state: IReduxState) => getPiPVideoTrack(state, participant));
     const participantName = useSelector((state: IReduxState) =>
         participant?.id ? getParticipantDisplayName(state, participant.id) : '');
-    const shouldShowAvatar = !videoTrack
-        || videoTrack.muted
-        || (!videoTrack.local && !isTrackStreamingStatusActive(videoTrack));
+    const shouldShowAvatar = shouldShowPiPAvatar(videoTrack);
 
     useEffect(() => {
         const video = videoRef.current;
