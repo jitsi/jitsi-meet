@@ -173,9 +173,10 @@
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration"
     },
     "clientRequirements": {
-        "rejectDescription": "This app version can not send or receive audio or video in this meeting. Please update it. {{description}}",
+        "rejectDescription": "This app version can not send or receive audio or video in this meeting.",
         "rejectTitle": "An update is required",
-        "warnDescription": "This app version is missing a feature that this meeting uses. Please update it. {{description}}",
+        "seeDetails": "See details here",
+        "warnDescription": "This app version is missing a feature that this meeting uses. Please update it.",
         "warnTitle": "An update is recommended"
     },
     "closedCaptionsTab": {

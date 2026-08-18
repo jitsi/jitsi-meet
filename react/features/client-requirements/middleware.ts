@@ -7,11 +7,12 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { showErrorNotification, showWarningNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
+import { getDescriptionProps } from './functions';
 import logger from './logger';
 import { IClientRequirements, IMissingFeature } from './types';
 
 /**
- * Middleware that handles jicofo signaling that this client does not advertise capabilities that the deployment
+ * Middleware that handles the server signaling that this client does not advertise capabilities that the deployment
  * requires.
  *
  * @param {IStore} store - The redux store.
@@ -38,23 +39,14 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
  * @param {IMissingFeature} missingFeature - The missing capability.
  * @returns {string}
  */
-function _getDescription(missingFeature: IMissingFeature): string {
+function _getFeatureText(missingFeature: IMissingFeature): string {
     const key = `clientRequirements.features.${missingFeature.name}`;
-    const parts = [];
 
     if (missingFeature.name && i18n.exists(key)) {
-        parts.push(i18n.t(key));
-    } else if (missingFeature.details) {
-        parts.push(missingFeature.details);
-    } else {
-        parts.push(missingFeature.name ?? missingFeature.feature);
+        return i18n.t(key);
     }
 
-    if (missingFeature.url) {
-        parts.push(missingFeature.url);
-    }
-
-    return parts.join(' ');
+    return missingFeature.details ?? missingFeature.name ?? missingFeature.feature;
 }
 
 /**
@@ -72,30 +64,30 @@ function _onClientRequirements({ dispatch, getState }: IStore, requirements: ICl
         return;
     }
 
-    const description = features.map(_getDescription).join(' ');
-
     logger.warn(`This client is missing required capabilities (action=${action}): `
         + `${features.map(f => f.name ?? f.feature).join(', ')}`);
 
-    if (action === 'reject') {
-        // We are not in the conference, and can not send or receive media. Show this even if warnings are hidden.
-        dispatch(showErrorNotification({
-            descriptionArguments: { description },
-            descriptionKey: 'clientRequirements.rejectDescription',
-            hideErrorSupportLink: true,
-            titleKey: 'clientRequirements.rejectTitle'
-        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+    const isReject = action === 'reject';
 
+    if (!isReject && getState()['features/base/config'].hideMissingCapabilityWarnings) {
         return;
     }
 
-    if (getState()['features/base/config'].hideMissingCapabilityWarnings) {
-        return;
-    }
+    const descriptionKey = isReject ? 'clientRequirements.rejectDescription' : 'clientRequirements.warnDescription';
+    const text = [ i18n.t(descriptionKey) ].concat(features.map(_getFeatureText)).join(' ');
 
-    dispatch(showWarningNotification({
-        descriptionArguments: { description },
-        descriptionKey: 'clientRequirements.warnDescription',
-        titleKey: 'clientRequirements.warnTitle'
-    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+    // The first URL that the server sent, if any.
+    const url = features.find(feature => feature.url)?.url;
+    const notification = {
+        ...getDescriptionProps(text, url, i18n.t.bind(i18n)),
+        hideErrorSupportLink: true,
+        titleKey: isReject ? 'clientRequirements.rejectTitle' : 'clientRequirements.warnTitle'
+    };
+
+    if (isReject) {
+        // We are not in the conference and can not send or receive media. Show this even if warnings are hidden.
+        dispatch(showErrorNotification(notification, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+    } else {
+        dispatch(showWarningNotification(notification, NOTIFICATION_TIMEOUT_TYPE.LONG));
+    }
 }
