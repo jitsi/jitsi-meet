@@ -36,6 +36,16 @@ export type DocumentPiPMediaSessionActionHandler = (
 ) => void;
 
 /**
+ * Options controlling user-facing failure handling when opening Document PiP.
+ */
+export interface IOpenDocumentPiPOptions {
+    /**
+     * Whether to show an error notification when opening the PiP window fails.
+     */
+    notifyOnFailure?: boolean;
+}
+
+/**
  * The browser's Document Picture-in-Picture API.
  */
 export interface IDocumentPictureInPicture {

@@ -21,11 +21,7 @@ import {
     shouldShowPiP,
 } from './functions';
 import logger from './logger';
-import type { IWebKitPictureInPictureVideoElement } from './types';
-
-interface IOpenDocumentPiPOptions {
-    notifyOnFailure?: boolean;
-}
+import type { IOpenDocumentPiPOptions, IWebKitPictureInPictureVideoElement } from './types';
 
 /**
  * Action to set Picture-in-Picture active state.
