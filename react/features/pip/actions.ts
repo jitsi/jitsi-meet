@@ -327,7 +327,6 @@ export function openDocumentPiP(options: IOpenDocumentPiPOptions = {}) {
 
         const handleError = (error: unknown) => {
             logger.error('Failed to open Document PiP:', error);
-            dispatch(setPiPActive(false));
 
             if (options.notifyOnFailure) {
                 dispatch(showErrorNotification({
