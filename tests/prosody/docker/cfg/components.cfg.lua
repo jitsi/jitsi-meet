@@ -9,9 +9,10 @@ Component "lobby.conference.localhost" "muc"
     muc_room_default_public_jids = true
 
 -- Breakout MUC component for mod_muc_breakout_rooms tests.
--- Only Prosody admins (focus@auth.localhost) may create rooms here; the module
--- creates them programmatically. Joining an unregistered UUID room triggers
--- on_breakout_room_pre_create which destroys it and returns an error.
+-- Only Prosody admins (focus@auth.localhost) may create rooms here, matching
+-- real-life behaviour where Jicofo creates breakout rooms on behalf of the
+-- moderator. The on_breakout_room_pre_create hook then enforces that the UUID
+-- is registered in the main room before admitting non-admin occupants.
 Component "breakout.conference.localhost" "muc"
     storage = "memory"
     restrict_room_creation = true

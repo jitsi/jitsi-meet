@@ -252,6 +252,74 @@ describe('mod_muc_breakout_rooms', () => {
     });
 
     // -------------------------------------------------------------------------
+    // smacks regression: eb43cf601
+    // -------------------------------------------------------------------------
+    describe('smacks session resume', () => {
+
+        it('participant can join breakout room after smacks session resume', async () => {
+            // Regression test for eb43cf601:
+            // mod_auth_token.lua's c2s-session-updated handler used to copy
+            // jitsi_breakout_main_jid from the fresh TCP session (which never
+            // joined a room, so the field is nil) onto the old hibernating
+            // session, silently overwriting the valid value set when the user
+            // originally joined the main room.  Without the fix, the subsequent
+            // on_occupant_pre_join_or_change check
+            //   origin.jitsi_breakout_main_jid ~= main_room.jid
+            // fails with nil ~= main_room_jid → not-allowed error.
+            const name = nextRoomName();
+            const { focus, moderator } = await createRoom(name);
+
+            clients.push(focus, moderator);
+
+            // Register a breakout room via the OP_ADD message flow and capture its JID.
+            await moderator.sendBreakoutRoomsMessage(BREAKOUT_MUC, OP_ADD, { subject: 'Breakout 1' });
+            const createPayload = await waitForBreakoutUpdate(moderator);
+            const breakoutJid = Object.values(createPayload.rooms).find(r => !r.isMainRoom)?.jid;
+
+            assert.ok(breakoutJid, 'breakout room JID must be in the create broadcast');
+
+            // Focus (jicofo) joins the breakout room first to physically create it,
+            // matching the real-life flow where Jicofo creates the room on the
+            // breakout component (which has restrict_room_creation=true, so only
+            // Prosody admins like focus@auth.localhost can create rooms here).
+            const focusBreakoutPresence = await focus.joinRoom(breakoutJid, 'focus');
+
+            assert.notEqual(
+                focusBreakoutPresence.attrs.type,
+                'error',
+                'focus must be able to join (create) the breakout room'
+            );
+
+            // Arm the reconnect listener BEFORE dropping so we cannot miss the
+            // 'reconnected' event even if the reconnect is very fast.
+            const reconnected = moderator.waitForReconnect();
+
+            // Snap the WebSocket.  @xmpp/client schedules a reconnect after ~1 s;
+            // on reconnect it sends <resume> which triggers Prosody's
+            // c2s-session-updated — the event where the bug cleared jitsi_breakout_main_jid.
+            moderator.dropConnection();
+
+            // Wait until SMACKS resume is fully complete (entity.status === 'online').
+            // waitForReconnect() polls entity.status after the @xmpp/reconnect
+            // 'reconnected' event, because that event fires on stream-open which
+            // is before stream features (including SMACKS) are negotiated.
+            await reconnected;
+
+            // The moderator now tries to join the breakout room.
+            // With the bug:   jitsi_breakout_main_jid is nil → not-allowed error.
+            // With the fix:   jitsi_breakout_main_jid is preserved → join succeeds.
+            const presence = await moderator.joinRoom(breakoutJid);
+
+            assert.notEqual(
+                presence.attrs.type,
+                'error',
+                'participant must be able to join breakout room after smacks session resume'
+            );
+        });
+
+    });
+
+    // -------------------------------------------------------------------------
     // access control
     // -------------------------------------------------------------------------
     describe('access control', () => {
@@ -268,7 +336,7 @@ describe('mod_muc_breakout_rooms', () => {
             clients.push(user);
 
             const fakeBreakoutJid = `00000000-0000-0000-0000-000000000000@${BREAKOUT_MUC}`;
-            const presence = await user.joinRoom(fakeBreakoutJid);
+            const presence = await user.joinRoom(fakeBreakoutJid, undefined, { timeout: 15000 });
 
             assert.equal(
                 presence.attrs.type,
