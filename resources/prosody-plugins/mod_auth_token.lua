@@ -182,7 +182,11 @@ module:hook_global('c2s-session-updated', function (event)
     end
 
     -- we care to handle sessions from other hosts (anonymous hosts)
-    if module.host ~= event.from_session.host then
+    -- Skip if from_session was already authenticated by its own token-auth module
+    -- (indicated by _jitsi_auth_done=true), to avoid a second module instance
+    -- on a different VirtualHost (e.g. hs256.localhost) incorrectly re-verifying
+    -- a token signed for the original host and then closing the session.
+    if module.host ~= event.from_session.host and not from_session._jitsi_auth_done then
         -- Handle session updates (e.g., when a session is resumed on some anonymous host with a token we need to do all the checks here)
         session.auth_token = event.from_session.auth_token;
 

@@ -1040,6 +1040,31 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a <breakout_rooms> control message to the breakout rooms component.
+         * The session must have jitsi_web_query_room set (connect with
+         * params: { room: '<roomname>' }) and the sender must be a moderator
+         * occupant of the main room for the module to process the message.
+         *
+         * @param {string} componentJid  e.g. 'breakout.conference.localhost'
+         * @param {string} type          operation type, e.g. 'features/breakout-rooms/add'
+         * @param {object} [extraAttrs]  extra attributes on the <breakout_rooms> element,
+         *                              e.g. { subject: 'Group A' } or { breakoutRoomJid: '...' }
+         */
+        sendBreakoutRoomsMessage(componentJid, type, extraAttrs = {}) {
+            return xmpp.send(
+                xml('message', {
+                    to: componentJid,
+                    id: `br-${++_counter}`
+                },
+                    xml('breakout_rooms', {
+                        type,
+                        ...extraAttrs
+                    })
+                )
+            );
+        },
+
+        /**
          * Sends a raw file-sharing message. Use this to test malformed payloads
          * or non-standard message types (e.g. type='error').
          *
@@ -1083,15 +1108,103 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
-         * Abruptly closes the underlying WebSocket without sending a stream
-         * close. Prosody will put the session into smacks hibernation, keeping
-         * it in full_sessions so mod_auth_jitsi-anonymous can find it by
-         * resumption_token on the next connect.
+         * Abruptly terminates the underlying WebSocket without a close
+         * handshake.  Prosody sees an unclean disconnect and hibernates the
+         * SMACKS session.  On reconnect the library sends <resume>, which
+         * triggers Prosody's c2s-session-updated hook (where the
+         * breakout-rooms bug manifested).
+         *
+         * Jitsi's SMACKS resume flow (mod_auth_token.lua + mod_smacks.lua):
+         *   1. Client reconnects with ?previd=<smacks-id> in the WebSocket URL.
+         *   2. mod_jitsi_session.lua sets session.previd from the URL param.
+         *   3. SASL runs; mod_auth_token.lua's get_username_from_token finds
+         *      the hibernating session whose resumption_token == session.previd
+         *      and copies its username, preserving the original UUID.
+         *   4. Post-auth features include <sm>; @xmpp/stream-management sends
+         *      <resume previd='...'>.  mod_smacks looks up the session with
+         *      registry key "uuid@host/smacks_id" — which now matches because
+         *      step 3 preserved the UUID — and resumes successfully.
+         *   5. sessionmanager.update_session fires c2s-session-updated.
+         *
+         * Without ?previd in the URL, step 3 assigns a fresh UUID, the key
+         * doesn't match, mod_smacks falls back to a new session, and the
+         * regression is never exercised.
+         *
+         * IMPORTANT: must use ws.terminate() (TCP RST, no close frame), NOT
+         * ws.close() / Socket.end().  A clean WebSocket close (code 1000)
+         * causes Prosody to destroy the SMACKS session rather than hibernate it.
+         *
+         * xmpp.socket           – @xmpp/websocket Socket wrapper
+         * xmpp.socket.socket    – underlying ws.WebSocket instance with terminate()
          */
         dropConnection() {
+            // Patch the reconnect URL to carry ?previd=<smacks-id> so that
+            // mod_jitsi_session.lua sets session.previd and mod_auth_token.lua
+            // can preserve session.username across the SASL exchange, allowing
+            // mod_smacks.lua's registry lookup to succeed.
+            const smId = xmpp.streamManagement?.id;
+
+            if (smId) {
+                try {
+                    const serviceUrl = new URL(xmpp.options.service);
+
+                    serviceUrl.searchParams.set('previd', smId);
+                    xmpp.options.service = serviceUrl.toString();
+                } catch { /* ignore */ }
+            }
             try {
-                xmpp.websocket?.socket?.end();
+                const ws = xmpp.socket?.socket;
+
+                if (ws?.terminate) {
+                    ws.terminate();
+                } else {
+                    xmpp.socket?.end();
+                }
             } catch { /* ignore */ }
+        },
+
+        /**
+         * Resolves when the SMACKS (XEP-0198) session resume is fully complete
+         * after a dropConnection().  Set up this listener BEFORE calling
+         * dropConnection() to avoid a race with a very fast reconnect.
+         *
+         * The @xmpp/reconnect 'reconnected' event fires after entity.open()
+         * resolves, which happens on the stream-open header — BEFORE stream
+         * features are processed and therefore BEFORE SMACKS sends <resume>
+         * and receives <resumed>.  The SMACKS handler then sets entity.status
+         * = 'online' directly (no event emitted).  We poll that field after
+         * 'reconnected' to detect the moment the resume is complete, so that
+         * any stanza sent afterwards is processed on the fully-resumed session.
+         *
+         * @param {number} [timeout=10000]
+         */
+        waitForReconnect(timeout = 10000) {
+            return new Promise((resolve, reject) => {
+                let done = false;
+                const timer = setTimeout(() => {
+                    if (!done) {
+                        done = true;
+                        reject(new Error('Timeout waiting for session to reconnect'));
+                    }
+                }, timeout);
+
+                xmpp.reconnect.once('reconnected', () => {
+                    const checkOnline = () => {
+                        if (done) {
+                            return;
+                        }
+                        if (xmpp.status === 'online') {
+                            done = true;
+                            clearTimeout(timer);
+                            resolve();
+                        } else {
+                            setTimeout(checkOnline, 50);
+                        }
+                    };
+
+                    checkOnline();
+                });
+            });
         }
     };
 }
