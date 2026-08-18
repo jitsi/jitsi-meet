@@ -22,6 +22,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         if (store.getState()['features/pip'].isPiPActive) {
             store.dispatch(exitPiP());
         }
+        break;
     }
 
     return result;
