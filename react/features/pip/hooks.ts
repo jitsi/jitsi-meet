@@ -254,7 +254,7 @@ export function useDocumentPiPMediaSession() {
     const dispatch: IStore['dispatch'] = useDispatch();
 
     const openDocumentPip = useCallback(
-        () => dispatch(openDocumentPiP()),
+        (notifyOnFailure: boolean) => dispatch(openDocumentPiP({ notifyOnFailure })),
         [ dispatch ]
     );
 
@@ -264,7 +264,7 @@ export function useDocumentPiPMediaSession() {
         }
 
         try {
-            navigator.mediaSession.setActionHandler('enterpictureinpicture', async details => {
+            navigator.mediaSession.setActionHandler('enterpictureinpicture', details => {
                 const reason = details?.enterPictureInPictureReason;
 
                 if (reason === 'useraction') {
@@ -273,7 +273,12 @@ export function useDocumentPiPMediaSession() {
                     logger.log('Automatically enter picture-in-picture.');
                 }
 
-                await openDocumentPip();
+                // The browser invokes this handler fire-and-forget, so nothing may leak a
+                // rejection here. openDocumentPiP() reports every failure internally: it always
+                // logs, and for user-initiated entries it also shows the same error notification
+                // as the toolbar button; automatic entries stay silent to avoid nagging on every
+                // tab switch.
+                openDocumentPip(reason === 'useraction');
             });
         } catch (error) {
             logger.warn('enterpictureinpicture MediaSession action not supported:', error);
