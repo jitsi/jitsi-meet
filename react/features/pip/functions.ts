@@ -650,8 +650,7 @@ export function clearPiPWindow() {
  * @param {Window} pipWindow - Current window.
  * @returns {void}
  */
-
-export function copyStylesheets(pipWindow: Window) {
+function copyStylesheets(pipWindow: Window) {
     const { document: pipDoc } = pipWindow;
 
     document.head.querySelectorAll('link[rel="stylesheet"], style').forEach(node => {
