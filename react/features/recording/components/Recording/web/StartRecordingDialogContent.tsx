@@ -39,6 +39,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      */
     _renderSessionToggles() {
         const {
+            _isLiveStreamRunning,
             _localRecordingRunning,
             _renderRecording,
             shouldRecordAudioAndVideo,
@@ -48,7 +49,8 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
 
         // A participant who started a local recording must always be able to stop it,
         // even without the JWT recording feature that _renderRecording reflects.
-        const renderRecordingToggle = _renderRecording || _localRecordingRunning;
+        // Cloud recording (Jibri) cannot run alongside an active live stream.
+        const renderRecordingToggle = (!_isLiveStreamRunning && _renderRecording) || _localRecordingRunning;
 
         return (
             <>
@@ -88,6 +90,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
     override render() {
         const {
             _canStartTranscribing,
+            _isLiveStreamRunning,
             _renderRecording,
             _transcriptionRunning,
             fileRecordingsServiceEnabled,
@@ -113,14 +116,18 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                 <Container className = 'recording-dialog'>
                     { this._renderFileSharingContent() }
                     { this._renderSessionToggles() }
+                    { /* _renderSessionToggles already covers local recording when !_renderRecording */ }
+                    { _renderRecording && this._renderLocalRecordingContent() }
                 </Container>
             );
         }
 
-        // Cloud recording is only usable when a service (file recording or integration) is available;
-        // the JWT recording feature alone doesn't imply one. Transcription nests under the cloud
-        // options when it's supported, otherwise it shows standalone.
-        const supportsCloudRecording = _renderRecording && (fileRecordingsServiceEnabled || integrationsEnabled);
+        // Cloud recording is only usable when a service (file recording or integration) is available,
+        // the JWT recording feature alone doesn't imply one, and it cannot run alongside an active live
+        // stream (both require Jibri). Transcription nests under the cloud options when supported,
+        // otherwise it shows standalone.
+        const supportsCloudRecording = _renderRecording && (fileRecordingsServiceEnabled || integrationsEnabled)
+            && !_isLiveStreamRunning;
         const showTranscription = _canStartTranscribing && !supportsCloudRecording;
 
         return (
