@@ -40,6 +40,7 @@ export type ToolbarButton = 'audiotranslation' |
     'noisesuppression' |
     'overflowmenu' |
     'participants-pane' |
+    'pip' |
     'polls' |
     'profile' |
     'raisehand' |

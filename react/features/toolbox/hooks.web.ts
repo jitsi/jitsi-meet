@@ -37,6 +37,7 @@ import {
     isParticipantsPaneEnabled
 } from '../participants-pane/functions';
 import { useParticipantPaneButton } from '../participants-pane/hooks.web';
+import { usePiPButton } from '../pip/buttonHooks.web';
 import { usePollsButton } from '../polls/hooks.web';
 import { addReactionToBuffer } from '../reactions/actions.any';
 import { toggleReactionsMenuVisibility } from '../reactions/actions.web';
@@ -305,6 +306,7 @@ export function useToolboxButtons(
     const virtualBackground = useVirtualBackgroundButton();
     const speakerStats = useSpeakerStatsButton();
     const shortcuts = useKeyboardShortcutsButton();
+    const pip = usePiPButton();
     const embed = useEmbedButton();
     const feedback = useFeedbackButton();
     const _download = useDownloadButton();
@@ -343,6 +345,7 @@ export function useToolboxButtons(
         stats: speakerStats,
         settings,
         shortcuts,
+        pip,
         embedmeeting: embed,
         feedback,
         download: _download,
