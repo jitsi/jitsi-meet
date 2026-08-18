@@ -172,15 +172,19 @@ describe('setSecondScreen iframe API command', () => {
         }
     });
 
-    it('reports the source it resolved rather than only what was asked for', async () => {
+    it('reports the source it resolved rather than only what was asked for', async function() {
         const { p1 } = ctx;
 
         const changed = await p1.getIframeAPI().getEventResult('secondScreenSourceChanged');
 
         if (!changed) {
-            // The window could not be opened in this environment, which the
-            // previous test has already accounted for.
-            return;
+            // No window was opened in this environment, which the previous test
+            // has already accounted for. Skip rather than return: headless
+            // cannot grant the window-management permission, so this would
+            // otherwise report green without ever touching the payload it is
+            // named for.
+            // eslint-disable-next-line @typescript-eslint/no-invalid-this
+            this.skip();
         }
 
         // participantId is what the role resolved to, and is null when nothing
@@ -189,11 +193,14 @@ describe('setSecondScreen iframe API command', () => {
         expect(changed).toHaveProperty('source');
     });
 
-    it('closes an open window and reports it', async () => {
+    it('closes an open window and reports it', async function() {
         const { p1 } = ctx;
 
         if (!await p1.getIframeAPI().getEventResult('secondScreenSourceChanged')) {
-            return;
+            // Nothing to close, for the same reason as above, and for the same
+            // reason it is a skip rather than a pass.
+            // eslint-disable-next-line @typescript-eslint/no-invalid-this
+            this.skip();
         }
 
         await p1.switchToMainFrame();
