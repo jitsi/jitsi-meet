@@ -606,10 +606,6 @@ export interface IConfig {
     peopleSearchTokenLocation?: string;
     peopleSearchUrl?: string;
     pip?: {
-        /**
-         * Browser enabled PiP feature.
-         */
-        disableBrowserPiP?: boolean;
         disabled?: boolean;
         /**
          * Document Picture-in-Picture configuration.
@@ -624,6 +620,11 @@ export interface IConfig {
                 width?: number;
             };
         };
+        /**
+         * Whether Picture-in-Picture is enabled for browser (non-Electron) meetings.
+         * Opt-in: defaults to false.
+         */
+        enableBrowserPiP?: boolean;
         showOnPrejoin?: boolean;
         /**
          * Whether to show the Picture-in-Picture toolbar button when supported.

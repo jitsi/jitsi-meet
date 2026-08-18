@@ -19,7 +19,7 @@ function isElectron(): boolean {
 /**
  * Checks if PiP is enabled based on config and environment.
  *
- * Honors the config it is given, but when `disableBrowserPiP` is absent it deliberately stays
+ * Honors the config it is given, but when `enableBrowserPiP` is absent it deliberately stays
  * permissive: the external API evaluates this against only the embedder-provided config, never
  * the deployment's server-side config, so applying the opt-in default here would silently
  * disable embedded auto-PiP for deployments that opt in server-side. The authoritative opt-in
@@ -30,7 +30,7 @@ function isElectron(): boolean {
  * @param {Object} pipConfig - The pip config object.
  * @returns {boolean} - True if PiP is enabled.
  */
-export function isPiPEnabled(pipConfig?: { disableBrowserPiP?: boolean; disabled?: boolean; }): boolean {
+export function isPiPEnabled(pipConfig?: { disabled?: boolean; enableBrowserPiP?: boolean; }): boolean {
     if (pipConfig?.disabled) {
         return false;
     }
@@ -39,7 +39,7 @@ export function isPiPEnabled(pipConfig?: { disableBrowserPiP?: boolean; disabled
         return true;
     }
 
-    if (pipConfig?.disableBrowserPiP === true) {
+    if (pipConfig?.enableBrowserPiP === false) {
         return false;
     }
 

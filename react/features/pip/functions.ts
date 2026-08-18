@@ -93,18 +93,18 @@ export function shouldShowPiPAvatar(videoTrack: ITrack | undefined): boolean {
 export function shouldShowPiP(state: IReduxState): boolean {
     const pipConfig = state['features/base/config'].pip;
 
-    // Covers the global kill switch (disabled), an explicit disableBrowserPiP: true and browser
+    // Covers the global kill switch (disabled), an explicit enableBrowserPiP: false and browser
     // API support.
     if (!isPiPEnabled(pipConfig)) {
         return false;
     }
 
     // Browser PiP is opt-in: it stays disabled unless the deployment explicitly sets
-    // disableBrowserPiP: false (Electron is unaffected). This authoritative default lives here
+    // enableBrowserPiP: true (Electron is unaffected). This authoritative default lives here
     // rather than in isPiPEnabled() because the external API evaluates isPiPEnabled() against
     // only the embedder-provided config, without the deployment's config.js — it must stay
     // permissive when the flag is absent (see isPiPEnabled()).
-    if (!browser.isElectron() && (pipConfig?.disableBrowserPiP ?? true)) {
+    if (!browser.isElectron() && pipConfig?.enableBrowserPiP !== true) {
         return false;
     }
 
