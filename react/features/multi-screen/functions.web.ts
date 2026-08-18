@@ -915,6 +915,22 @@ const opening = new Set<string>();
  * @returns {void}
  */
 function failSecondScreenOpen(store: IStore, id: string, error: string, win?: Window | null) {
+
+    // Detach the handle before removing the entry, so the middleware's REMOVE
+    // handler finds none and the removal stays silent: a failed open reports
+    // secondScreenError alone, as it does on master, and never a
+    // secondScreenClosed on top of it. Only the window-management denial reaches
+    // here with a handle in state, since that is the one failure that now comes
+    // after the window was registered, but the detach covers any later one too.
+    // An embedder that reopens on secondScreenClosed would otherwise loop on it.
+    // Detaching first also unmounts the portal while the window is still open,
+    // which is the ordering the REMOVE handler documents. Nothing awaits between
+    // the two dispatches, so no cancel or resend can observe the entry without
+    // its handle.
+    if (getHandle(store.getState(), id)) {
+        store.dispatch(setSecondScreenWindow(id, undefined));
+    }
+
     if (win && !win.closed) {
         win.close();
     }
@@ -1224,6 +1240,15 @@ async function openSecondScreenWindow(store: IStore, id: string, screenId?: numb
     // repeat send finds a live handle above and re-sources it. Registering only
     // after the permission was answered is what left all three of those with an
     // entry, no handle, and nothing reported.
+    //
+    // applySource runs here rather than behind placement. The window renders the
+    // source from this point, so the event is true when it is sent, and holding
+    // it back would not make "no event before placement" hold anyway: the
+    // subscriber calls applySource for every entry that has a handle, so a live
+    // role that resolves to someone else while the prompt is up emits it
+    // regardless. Deferring would only make the first event intermittent, and
+    // would drop it altogether where placement throws on a window that is live
+    // and rendering.
     applySource(store, id);
 
     if (!pendingDetails) {
