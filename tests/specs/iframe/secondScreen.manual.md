@@ -124,10 +124,11 @@ ideal; two will exercise D1 and D2.
 | E1 | With the feature **disabled**, hover a screenshare tile and the shared-video tile | No trigger, and no invisible hit area: clicking the top-right corner of the tile still pins as it always did. |
 | E2 | Hover a screenshare tile with the feature enabled | Trigger appears; clicking sends that share to a second screen. |
 | E3 | Click the same trigger again | The window closes. |
-| E4 | Send a screenshare, then have the sharer stop sharing | The window closes on its own and reports `secondScreenClosed`. The tile and its trigger are gone, so nothing else could have closed it. |
-| E5 | Send a participant, then have them leave | Same as E4. |
-| E6 | Send the shared video, then stop the share | Same as E4. |
-| E7 | Send the whiteboard from its context menu, then close the whiteboard | Same as E4. The window must not be left showing the whiteboard placeholder. |
+| E4 | Send a screenshare, then have the sharer stop sharing | The window closes on its own and reports `secondScreenClosed`, about 5s later. The tile and its trigger are gone, so nothing else could have closed it. |
+| E5 | Send a participant, then have them leave | Same as E4, including the delay. |
+| E6 | Send the shared video, then stop the share | The window closes at once: the shared video is not participant-backed, so it does not wait. |
+| E7 | Send the whiteboard from its context menu, then close the whiteboard | Same as E6, at once. The window must not be left showing the whiteboard placeholder. |
+| E7b | Send a participant, then take their tab offline in DevTools for ~2s and let it recover | The window survives. This is the case the 5s grace exists for: the participant is briefly absent, and closing on absence alone would destroy a window with no way to get it back. Best-effort, since it needs the client to resume the same session rather than rejoin as a new one; a full reload is a new id and the window closes correctly after the grace. |
 | E8 | Start a send, and while the permission prompt is still open, click the trigger again to cancel | The window closes. It must not first fly to the other display and then vanish. |
 | E9 | Open a window through the External API, then use an in-app trigger | The trigger opens its own window; it must never take over or close the embedder's. |
 
