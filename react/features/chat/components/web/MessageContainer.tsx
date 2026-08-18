@@ -1,5 +1,6 @@
 import { throttle } from 'lodash-es';
 import React, { Component, RefObject } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { scrollIntoView } from 'seamless-scroll-polyfill';
 
 import { groupMessagesBySender } from '../../../base/util/messageGrouping';
@@ -18,6 +19,11 @@ interface IProps {
      */
     isVisible?: boolean;
     messages: IMessage[];
+
+    /**
+     * The translation function.
+     */
+    t: WithTranslation['t'];
 }
 
 interface IState {
@@ -109,6 +115,7 @@ export default class MessageContainer extends Component<IProps, IState> {
      * @inheritdoc
      */
     override render() {
+        const { t } = this.props;
         const groupedMessages = this._getMessagesGroupedBySender();
         const content = groupedMessages.map((group, index) => {
             const { messages } = group;
@@ -131,7 +138,11 @@ export default class MessageContainer extends Component<IProps, IState> {
                     ref = { this._messageListRef }
                     role = 'log'
                     tabIndex = { 0 }>
-                    { content }
+                    <ul
+                        aria-label = { t('chat.messageListLabel') }
+                        className = 'chat-message-list'>
+                        { content }
+                    </ul>
 
                     { !this.state.isScrolledToBottom && this.state.hasNewMessages
                         && <NewMessagesButton

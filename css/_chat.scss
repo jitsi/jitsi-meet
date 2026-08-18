@@ -58,6 +58,12 @@
     padding: 0 16px 24px;
 }
 
+.chat-message-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
 #chat-input {
     display: flex;
     align-items: flex-end;
