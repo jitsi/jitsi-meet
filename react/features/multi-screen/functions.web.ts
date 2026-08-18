@@ -69,6 +69,22 @@ const SECOND_SCREEN_LOAD_POLL_INTERVAL = 250;
 const SECOND_SCREEN_PERMISSION_TIMEOUT = 30000;
 
 /**
+ * How long a source that names a participant is given to come back before its
+ * window is closed. Absence is not proof of a departure: a participant whose
+ * presence flaps, or whose client rejoins the room, is removed and re-added, and
+ * the check that runs in between cannot tell that apart from someone leaving for
+ * good. Closing is one-way, because the send was a one-shot action whose trigger
+ * left with the tile, so being wrong costs a window the user cannot get back
+ * while being slow costs a few seconds of a window that is already showing an
+ * avatar. Only the participant-backed sources wait: the whiteboard and the
+ * shared video go when the local user stops them, which is deliberate and should
+ * not lag. A teardown of the whole participant list needs the room to be left,
+ * which ends the conference and resets every window anyway, so nothing here
+ * covers that case or could.
+ */
+const SECOND_SCREEN_SOURCE_GONE_GRACE = 5000;
+
+/**
  * The name of the {@code meta} marker carried by the shell page (see
  * {@link getSecondScreenPageUrl}). A {@code load} event only says that
  * *something* was served, so the marker is what tells the shell apart from a 404
@@ -1308,7 +1324,95 @@ export function closeSecondScreen(store: IStore, id: string) {
  * @returns {void}
  */
 export function closeAllSecondScreens(store: IStore) {
-    Object.keys(store.getState()['features/multi-screen'].screens).forEach(id => closeSecondScreen(store, id));
+    Object.keys(store.getState()['features/multi-screen'].screens).forEach(id => {
+        cancelSourceGoneClose(id);
+        closeSecondScreen(store, id);
+    });
+}
+
+/**
+ * The countdowns started for windows whose source has gone, keyed by window id
+ * and stamped with the send they belong to.
+ */
+const sourceGoneTimers = new Map<string, { setAt?: number; timeoutId: number; }>();
+
+/**
+ * Closes a window whose source did not come back within
+ * {@link SECOND_SCREEN_SOURCE_GONE_GRACE}.
+ *
+ * @param {IStore} store - The redux store.
+ * @param {string} id - The window id.
+ * @param {number} setAt - The send this countdown was started for.
+ * @returns {void}
+ */
+function closeGoneSource(store: IStore, id: string, setAt?: number) {
+    sourceGoneTimers.delete(id);
+
+    const state = store.getState();
+    const entry = state['features/multi-screen'].screens[id];
+
+    // The entry has to still be the one this was scheduled for. The in-app ids
+    // are reused (a one-monitor machine always sends to ui-screen-0), so a window
+    // closed and reopened, or re-sourced, while the countdown ran must not be
+    // torn down by it; setAt identifies the send rather than the id. Re-checking
+    // the source covers the rest: a refresh cancels a countdown when the source
+    // is back, but the entry may also have been given a different one.
+    if (!entry || entry.setAt !== setAt || !isSecondScreenSourceGone(state, entry.source)) {
+        return;
+    }
+
+    logger.debug(`Closing second screen "${id}": its source did not come back`);
+    store.dispatch(removeSecondScreen(id));
+}
+
+/**
+ * Starts the countdown to closing a window whose source has gone, if one is not
+ * already running for that send. Deliberately not restarted on every refresh:
+ * the subscriber runs on any window's signature change, so restarting would let
+ * unrelated traffic hold the deadline open indefinitely.
+ *
+ * @param {IStore} store - The redux store.
+ * @param {string} id - The window id.
+ * @param {number} setAt - The send the countdown belongs to.
+ * @returns {void}
+ */
+function scheduleSourceGoneClose(store: IStore, id: string, setAt?: number) {
+    const pending = sourceGoneTimers.get(id);
+
+    if (pending) {
+        if (pending.setAt === setAt) {
+            return;
+        }
+
+        window.clearTimeout(pending.timeoutId);
+    }
+
+    logger.debug(`Second screen "${id}" lost its source; closing it in `
+        + `${SECOND_SCREEN_SOURCE_GONE_GRACE}ms unless it comes back`);
+
+    sourceGoneTimers.set(id, {
+        setAt,
+        timeoutId: window.setTimeout(
+            () => closeGoneSource(store, id, setAt),
+            SECOND_SCREEN_SOURCE_GONE_GRACE)
+    });
+}
+
+/**
+ * Stops the countdown for a window, if one is running.
+ *
+ * @param {string} id - The window id.
+ * @returns {void}
+ */
+function cancelSourceGoneClose(id: string) {
+    const pending = sourceGoneTimers.get(id);
+
+    if (!pending) {
+        return;
+    }
+
+    window.clearTimeout(pending.timeoutId);
+    sourceGoneTimers.delete(id);
 }
 
 /**
@@ -1334,13 +1438,28 @@ export function refreshSecondScreens(store: IStore) {
             handleWindowClosed(store, id);
         } else if (entry && id.startsWith(UI_SECOND_SCREEN_ID_PREFIX) && isSecondScreenSourceGone(state, entry.source)) {
 
-            // Closes the window and reports secondScreenClosed, the same as the
+            // Closing the window reports secondScreenClosed, the same as the
             // trigger the user no longer has. An entry whose window is still
-            // opening is left with none, which that open already handles.
-            logger.debug(`Closing second screen "${id}": its source is no longer in the meeting`);
-            store.dispatch(removeSecondScreen(id));
-        } else if (handle) {
-            applySource(store, id);
+            // opening is left with none, which that open already handles. A
+            // participant-backed source gets the grace period first, since its
+            // absence may be a flap rather than a departure; the whiteboard and
+            // the shared video go at once, because those only stop when someone
+            // stops them.
+            if (entry.source.participant) {
+                scheduleSourceGoneClose(store, id, entry.setAt);
+            } else {
+                logger.debug(`Closing second screen "${id}": its source is no longer in the meeting`);
+                store.dispatch(removeSecondScreen(id));
+            }
+        } else {
+
+            // Either it never went or it came back within the grace period, so
+            // drop any countdown before re-applying.
+            cancelSourceGoneClose(id);
+
+            if (handle) {
+                applySource(store, id);
+            }
         }
     });
 }
