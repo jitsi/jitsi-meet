@@ -73,7 +73,8 @@ import {
     getUnreadCount,
     isChatDisabled,
     isSendGroupChatDisabled,
-    isVisitorChatParticipant
+    isVisitorChatParticipant,
+    stripXMLInvalidChars
 } from './functions';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
 import './subscriber';
@@ -264,6 +265,12 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case SEND_MESSAGE: {
+        // The message is transmitted over XMPP, so strip the characters that
+        // are not allowed in an XML 1.0 document. Sending them (e.g. the START
+        // OF TEXT character U+0002) produces a malformed stanza which makes the
+        // XMPP server terminate the stream and drops everyone from the meeting.
+        // See https://github.com/jitsi/jitsi-meet/issues/17267.
+        const message = stripXMLInvalidChars(action.message);
         const state = store.getState();
         const conference = getCurrentConference(state);
 
@@ -277,7 +284,7 @@ MiddlewareRegistry.register(store => next => action => {
 
                 if (participantExists || shouldSendPrivateMessageTo.isFromVisitor) {
                     dispatch(openDialog('ChatPrivacyDialog', ChatPrivacyDialog, {
-                        message: action.message,
+                        message,
                         participantID: shouldSendPrivateMessageTo.id,
                         isFromVisitor: shouldSendPrivateMessageTo.isFromVisitor,
                         displayName: shouldSendPrivateMessageTo.name
@@ -294,20 +301,20 @@ MiddlewareRegistry.register(store => next => action => {
                 = state['features/chat'];
 
             if (typeof APP !== 'undefined') {
-                APP.API.notifySendingChatMessage(action.message, Boolean(privateMessageRecipient));
+                APP.API.notifySendingChatMessage(message, Boolean(privateMessageRecipient));
             }
 
             if (isLobbyChatActive && lobbyMessageRecipient) {
                 conference.sendLobbyMessage({
                     type: LOBBY_CHAT_MESSAGE,
-                    message: action.message
+                    message
                 }, lobbyMessageRecipient.id);
-                _persistSentPrivateMessage(store, lobbyMessageRecipient, action.message, true);
+                _persistSentPrivateMessage(store, lobbyMessageRecipient, message, true);
             } else if (privateMessageRecipient) {
-                conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient));
-                _persistSentPrivateMessage(store, privateMessageRecipient, action.message);
+                conference.sendPrivateTextMessage(privateMessageRecipient.id, message, 'body', isVisitorChatParticipant(privateMessageRecipient));
+                _persistSentPrivateMessage(store, privateMessageRecipient, message);
             } else {
-                conference.sendTextMessage(action.message);
+                conference.sendTextMessage(message);
             }
         }
         break;
