@@ -11,11 +11,28 @@ import { getThumbnailBackgroundColor } from '../../filmstrip/functions.web';
 import { getLargeVideoParticipant } from '../../large-video/functions';
 import { isPrejoinPageVisible } from '../../prejoin/functions.any';
 import { handlePiPLeaveEvent, handlePipEnterEvent, handleWindowBlur, handleWindowFocus } from '../actions';
-import { FOCUS_CHECK_DELAY_MS } from '../constants';
 import { getPiPVideoTrack, shouldShowPiPAvatar } from '../functions';
 import { useCanvasAvatar } from '../hooks';
 import logger from '../logger';
 import type { IWebKitPictureInPictureVideoElement } from '../types';
+
+/**
+ * Electron-only delay before reacting to window focus, so that the browser's
+ * leavepictureinpicture event is processed first (see the comment at the usage site).
+ */
+const FOCUS_CHECK_DELAY_MS = 100;
+
+/**
+ * Interval between canvas frame re-publish attempts while WebKit asynchronously wires the video
+ * element to the canvas stream (see the comment at the usage site for why polling is needed).
+ */
+const WEBKIT_REPUBLISH_INTERVAL_MS = 50;
+
+/**
+ * Cap on canvas frame re-publish attempts (a ~1.25 s total budget). One attempt has been enough
+ * in practice (Safari 26.6); the bound only prevents polling forever against a dead stream.
+ */
+const WEBKIT_REPUBLISH_MAX_ATTEMPTS = 25;
 
 const baseVideoStyle = {
     width: '1px',
@@ -53,8 +70,10 @@ const PiPVideoElement: React.FC = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const previousTrackRef = useRef<any>(null);
 
-    // Safari 26.5.2 fires `playing` after PiP is dismissed while hidden, which would immediately reopen PiP.
-    const webKitPiPDismissedRef = useRef(false);
+    // True only when PiP was dismissed while the tab was still hidden; reset once the tab becomes
+    // visible again. Safari 26.5.2 fires `playing` after such a dismissal, which would immediately
+    // reopen PiP, so automatic re-entry is suppressed while this is set.
+    const webKitPiPDismissedWhileHiddenRef = useRef(false);
 
     // Redux selectors.
     const isOnPrejoin = useSelector(isPrejoinPageVisible);
@@ -141,7 +160,7 @@ const PiPVideoElement: React.FC = () => {
                         const done = videoElement.readyState >= videoElement.HAVE_CURRENT_DATA
                             || videoElement.srcObject !== canvasStream;
 
-                        if (done || ++attempts > 25) {
+                        if (done || ++attempts > WEBKIT_REPUBLISH_MAX_ATTEMPTS) {
                             window.clearInterval(republishInterval);
                             republishInterval = undefined;
 
@@ -153,7 +172,7 @@ const PiPVideoElement: React.FC = () => {
                         }
 
                         publishFrame();
-                    }, 50);
+                    }, WEBKIT_REPUBLISH_INTERVAL_MS);
                 }
             }
         } else if (videoTrack?.jitsiTrack) {
@@ -223,7 +242,7 @@ const PiPVideoElement: React.FC = () => {
 
             isPiPActive = false;
             dispatch(handlePiPLeaveEvent());
-            webKitPiPDismissedRef.current = document.hidden;
+            webKitPiPDismissedWhileHiddenRef.current = document.hidden;
 
         };
         const enterWebKitPiP = async () => {
@@ -242,7 +261,7 @@ const PiPVideoElement: React.FC = () => {
                 }
 
                 // The tab may have become visible or PiP may have been dismissed while play() was pending.
-                if (!document.hidden || webKitPiPDismissedRef.current) {
+                if (!document.hidden || webKitPiPDismissedWhileHiddenRef.current) {
                     return;
                 }
 
@@ -276,16 +295,16 @@ const PiPVideoElement: React.FC = () => {
             }
 
             if (document.hidden) {
-                if (!webKitPiPDismissedRef.current) {
+                if (!webKitPiPDismissedWhileHiddenRef.current) {
                     void enterWebKitPiP();
                 }
             } else {
-                webKitPiPDismissedRef.current = false;
+                webKitPiPDismissedWhileHiddenRef.current = false;
                 exitWebKitPiP();
             }
         };
         const onPlaying = (event: Event) => {
-            if (event.isTrusted && document.hidden && !webKitPiPDismissedRef.current) {
+            if (event.isTrusted && document.hidden && !webKitPiPDismissedWhileHiddenRef.current) {
                 void enterWebKitPiP();
             }
         };
