@@ -2059,7 +2059,7 @@ PODS:
     - Yoga
   - react-native-orientation-locker (1.7.0):
     - React-Core
-  - react-native-pager-view (6.8.1):
+  - react-native-pager-view (8.0.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -2086,6 +2086,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - SocketRocket
+    - SwiftUIIntrospect (~> 1.0)
     - Yoga
   - react-native-performance (6.0.0):
     - boost
@@ -3230,6 +3231,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - SwiftUIIntrospect (1.3.0)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -3368,6 +3370,7 @@ SPEC REPOS:
     - PromisesObjC
     - React-Codegen
     - SocketRocket
+    - SwiftUIIntrospect
 
 EXTERNAL SOURCES:
   amplitude-react-native:
@@ -3652,7 +3655,7 @@ SPEC CHECKSUMS:
   react-native-keep-awake: 129cb4bd75d0f304a479b4c4527d2994fe18e43c
   react-native-netinfo: 57447b5a45c98808f8eae292cf641f3d91d13830
   react-native-orientation-locker: cc6f357b289a2e0dd2210fea0c52cb8e0727fdaa
-  react-native-pager-view: f8f63370fc0f4174f7510863b4812b8e034d2d0d
+  react-native-pager-view: 05683d783242b28d372d6fde6c11605b1c24e140
   react-native-performance: b48d1aba7501a54af5e1a7efb0dab1ab25dc734f
   react-native-safe-area-context: c6e2edd1c1da07bdce287fa9d9e60c5f7b514616
   react-native-screen-corner-radius: ebd0d3258fcc894571b41d25ee3db7569d375153
@@ -3706,6 +3709,7 @@ SPEC CHECKSUMS:
   RNSVG: 9037a5826c3e0ad3f7e2aee7607b64d6710f048e
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   SplashView: 06e084339d80e51113ad4ecf465f7820598ddc95
+  SwiftUIIntrospect: fee9aa07293ee280373a591e1824e8ddc869ba5d
   Yoga: 6eb5d794e5d7a35a2750bb469e2e5320d41492f5
 
 PODFILE CHECKSUM: 98734fcd108457e12c41a03e36ef73df6f0de2ad
