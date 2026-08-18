@@ -1,4 +1,5 @@
 import { IStore } from '../../app/types';
+import { JitsiIceRestartReason } from '../lib-jitsi-meet';
 import { INetInfoState } from '../net-info/reducer';
 
 import { getCurrentConference } from './functions';
@@ -163,7 +164,7 @@ function _restartIce(store: IStore): void {
     // another restart.
     lastRequestTime = Date.now();
 
-    conference.restartJvbIce('network-change')
+    conference.restartJvbIce(JitsiIceRestartReason.NETWORK_CHANGE)
         .then(() => {
             // The request was accepted; the bridge's new transport arrives asynchronously. Treat the new network
             // as the session's own from here so a repeat of the same change is not acted upon again.

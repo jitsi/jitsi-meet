@@ -159,7 +159,8 @@ export interface IJitsiConference {
     options: any;
     removeTrack: Function;
     replaceTrack: Function;
-    restartJvbIce: (reason?: string) => Promise<void>;
+    // Keep in sync with lib-jitsi-meet's IceRestartReason (service/RTC/IceRestartReason.ts).
+    restartJvbIce: (reason?: 'api' | 'ice-failed' | 'network-change') => Promise<void>;
     room: IJitsiConferenceRoom;
     sendApplicationLog: Function;
     sendCommand: Function;
