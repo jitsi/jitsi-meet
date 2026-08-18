@@ -10,7 +10,6 @@ import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 import { exitPiP, openDocumentPiP } from './actions';
 import PiPTriggerButton from './components/web/PiPTriggerButton';
 import {
-    getStoredPiPWindow,
     isDocumentPiPSupported,
     renderAvatarOnCanvas,
     shouldShowPiP,
@@ -252,6 +251,7 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
  */
 export function useDocumentPiPMediaSession() {
     const dispatch: IStore['dispatch'] = useDispatch();
+    const pipWindow = useSelector((state: IReduxState) => state['features/pip'].pipWindow);
 
     const openDocumentPip = useCallback(
         (notifyOnFailure: boolean) => dispatch(openDocumentPiP({ notifyOnFailure })),
@@ -295,8 +295,6 @@ export function useDocumentPiPMediaSession() {
         }
 
         const onVisibilityChange = () => {
-            const pipWindow = getStoredPiPWindow();
-
             if (!document.hidden && pipWindow && !pipWindow.closed) {
                 dispatch(exitPiP());
             }
@@ -307,7 +305,7 @@ export function useDocumentPiPMediaSession() {
         return () => {
             document.removeEventListener('visibilitychange', onVisibilityChange);
         };
-    }, [ dispatch ]);
+    }, [ dispatch, pipWindow ]);
 }
 
 /**

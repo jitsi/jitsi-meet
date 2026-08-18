@@ -590,57 +590,18 @@ export function cleanupMediaSessionHandlers() {
 }
 
 /**
- * Reference to the currently opened window.
- * It is required cause while using the pagehide event, we want to close the window that is open.
- */
-let _pipWindow: Window | null = null;
-
-/**
- * Returns the Document PiP window that this feature opened and initialized, including copied stylesheets,
- * the #pip-root container and its pagehide listener. This differs from window.documentPictureInPicture.window,
- * which is the browser's view of any Document PiP window open for the page, regardless of who opened it.
- *
- * @returns {Window | null} The PiP window owned by this feature, or null.
- */
-export function getStoredPiPWindow(): Window | null {
-    return _pipWindow;
-}
-
-/**
- * Closes the stored window if open and clears the stored reference.
- *
- * @returns {void}
- */
-export function closeDocumentPiPWindow() {
-    const pipWindow = getStoredPiPWindow();
-
-    _pipWindow = null;
-
-    if (pipWindow && !pipWindow.closed) {
-        pipWindow.close();
-    }
-}
-
-/**
  * Applies initial stylings of the main window to PiP window.
  * Creates the container for the PiP window.
+ *
+ * The reference to the opened window lives in the pip Redux state (see setPiPWindow), not here,
+ * so that every change to it is observable by React.
  *
  * @param {Window} pipWindow - Current window.
  * @returns {void}
  */
 export function initPiPWindow(pipWindow: Window) {
-    _pipWindow = pipWindow;
     copyStylesheets(pipWindow);
     createPiPContainer(pipWindow);
-}
-
-/**
- * Clears the PiP window reference.
- *
- * @returns {void}
- */
-export function clearPiPWindow() {
-    _pipWindow = null;
 }
 
 /**

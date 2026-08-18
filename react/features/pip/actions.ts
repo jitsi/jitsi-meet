@@ -5,14 +5,11 @@ import { showErrorNotification } from '../notifications/actions';
 import { handleToggleVideoMuted } from '../toolbox/actions.any';
 import { muteLocal } from '../video-menu/actions.any';
 
-import { SET_PIP_ACTIVE } from './actionTypes';
+import { SET_PIP_ACTIVE, SET_PIP_WINDOW } from './actionTypes';
 import { DEFAULT_DOCUMENT_PIP_HEIGHT, DEFAULT_DOCUMENT_PIP_WIDTH } from './constants';
 import {
     cleanupMediaSessionHandlers,
-    clearPiPWindow,
-    closeDocumentPiPWindow,
     enterVideoPiP,
-    getStoredPiPWindow,
     initPiPWindow,
     isDocumentPiPRequestPending,
     isDocumentPiPSupported,
@@ -36,6 +33,22 @@ export function setPiPActive(isPiPActive: boolean) {
     return {
         type: SET_PIP_ACTIVE,
         isPiPActive
+    };
+}
+
+/**
+ * Action to store the Document PiP window reference.
+ *
+ * @param {Window|null} pipWindow - The open Document PiP window, or null when none is open.
+ * @returns {{
+ *     type: SET_PIP_WINDOW,
+ *     pipWindow: (Window|null)
+ * }}
+ */
+export function setPiPWindow(pipWindow: Window | null) {
+    return {
+        type: SET_PIP_WINDOW,
+        pipWindow
     };
 }
 
@@ -78,10 +91,20 @@ export function toggleVideoFromPiP() {
  * @returns {Function}
  */
 export function exitPiP() {
-    return (dispatch: IStore['dispatch']) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         logger.debug('exitPiP called');
 
-        closeDocumentPiPWindow();
+        const { pipWindow } = getState()['features/pip'];
+
+        if (pipWindow) {
+            // Clear the reference before close() so the window's pagehide listener runs against
+            // the already-cleared state, mirroring the browser-initiated close flow.
+            dispatch(setPiPWindow(null));
+
+            if (!pipWindow.closed) {
+                pipWindow.close();
+            }
+        }
 
         const webKitPiPVideo = document.getElementById('pipVideo') as IWebKitPictureInPictureVideoElement | null;
 
@@ -295,7 +318,7 @@ export function openDocumentPiP(options: IOpenDocumentPiPOptions = {}) {
         const pipConfig = state['features/base/config']?.pip;
         const docPiPConfig = pipConfig?.documentPiP?.windowOptions;
         const docPiPWindow = docPiP.window;
-        const storedWindow = getStoredPiPWindow();
+        const storedWindow = state['features/pip'].pipWindow;
 
         // Two sources can diverge: storedWindow is the window this feature opened and initialized, while
         // docPiP.window is the browser's view of any Document PiP window open for this page. Only one Document PiP
@@ -310,7 +333,7 @@ export function openDocumentPiP(options: IOpenDocumentPiPOptions = {}) {
         }
 
         if (storedWindow?.closed) {
-            closeDocumentPiPWindow();
+            dispatch(setPiPWindow(null));
         }
 
         if (isDocumentPiPRequestPending()) {
@@ -340,19 +363,19 @@ export function openDocumentPiP(options: IOpenDocumentPiPOptions = {}) {
                 preferInitialWindowPlacement: docPiPConfig?.preferInitialWindowPlacement ?? false,
             })
                 .then((pipWindow: Window) => {
+                    // The window can be closed before this resolves; nothing has been stored or
+                    // dispatched for it yet, so simply do not initialize it.
                     if (pipWindow.closed) {
-                        clearPiPWindow();
-                        dispatch(setPiPActive(false));
-
                         return;
                     }
 
                     pipWindow.addEventListener('pagehide', () => {
-                        clearPiPWindow();
+                        dispatch(setPiPWindow(null));
                         dispatch(handlePiPLeaveEvent());
                     });
 
                     initPiPWindow(pipWindow);
+                    dispatch(setPiPWindow(pipWindow));
                     dispatch(handlePipEnterEvent());
                 })
                 .catch(handleError)
