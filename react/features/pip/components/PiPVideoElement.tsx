@@ -106,6 +106,7 @@ const PiPVideoElement: React.FC = () => {
         }
 
         const previousTrack = previousTrackRef.current;
+        let republishInterval: number | undefined;
 
         // Detach previous track.
         if (previousTrack?.jitsiTrack) {
@@ -125,6 +126,35 @@ const PiPVideoElement: React.FC = () => {
             if (canvasStream && videoElement.srcObject !== canvasStream) {
                 videoElement.srcObject = canvasStream;
                 publishFrame();
+
+                // Safari wires the element to a new srcObject asynchronously and silently drops canvas
+                // frames published before that completes: streams never buffer for late sinks (W3C
+                // resolution in w3c/mediacapture-transform#114) and the media-provider fetch runs
+                // "in parallel" per the HTML spec, so no readiness event exists — republishing until
+                // the element itself reports data is the only reliable strategy. Chromium captures
+                // synchronously on requestFrame() and redelivers the current frame to late sinks,
+                // so it needs no retry.
+                if (browser.isWebKitBased()) {
+                    let attempts = 0;
+
+                    republishInterval = window.setInterval(() => {
+                        const done = videoElement.readyState >= videoElement.HAVE_CURRENT_DATA
+                            || videoElement.srcObject !== canvasStream;
+
+                        if (done || ++attempts > 25) {
+                            window.clearInterval(republishInterval);
+                            republishInterval = undefined;
+
+                            if (!done) {
+                                logger.warn('Canvas stream produced no data after repeated frame requests');
+                            }
+
+                            return;
+                        }
+
+                        publishFrame();
+                    }, 50);
+                }
             }
         } else if (videoTrack?.jitsiTrack) {
             // Attach real video track.
@@ -138,6 +168,9 @@ const PiPVideoElement: React.FC = () => {
 
         // Cleanup on unmount or track change.
         return () => {
+            if (republishInterval) {
+                window.clearInterval(republishInterval);
+            }
             if (videoTrack?.jitsiTrack && videoElement) {
                 try {
                     videoTrack.jitsiTrack.detach(videoElement);

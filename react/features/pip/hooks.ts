@@ -132,11 +132,31 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
      */
     const publishFrame = useCallback(() => {
         const track = streamRef.current?.getVideoTracks()[0] as MediaStreamTrack & { requestFrame?: () => void; };
+        const canvas = refs.current.canvas;
 
-        if (track?.requestFrame) {
-            track.requestFrame();
-            logger.log('Canvas frame requested');
+        if (!track?.requestFrame || !canvas) {
+            return;
         }
+
+        track.requestFrame();
+
+        // WebKit emits a canvas-capture frame only when the canvas is painted AFTER requestFrame()
+        // has armed the capture — a bare requestFrame() on a static canvas produces nothing and the
+        // PiP video stays at readyState 0 (verified on Safari 26.6). Nudge the canvas with an
+        // imperceptible 1px draw so an emission paint always follows the arm. Chromium captures
+        // the current canvas contents immediately on requestFrame(), so it needs no nudge.
+        if (browser.isWebKitBased()) {
+            const ctx = canvas.getContext('2d');
+
+            if (ctx) {
+                ctx.save();
+                ctx.globalAlpha = 0.01;
+                ctx.fillRect(0, 0, 1, 1);
+                ctx.restore();
+            }
+        }
+
+        logger.log('Canvas frame requested');
     }, []);
 
     /**
