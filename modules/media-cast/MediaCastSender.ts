@@ -9,6 +9,7 @@ interface IMediaCastSenderOptions {
 
 interface ISenderSession {
     generation: number;
+    muteNotified?: boolean;
     offerSent: boolean;
     peerConnection: RTCPeerConnection;
     pendingCandidates: RTCIceCandidateInit[];
@@ -83,6 +84,10 @@ export default class MediaCastSender {
 
         try {
             await session.sender.replaceTrack(track);
+
+            if (this._session === session) {
+                this._notifyMute(session);
+            }
         } catch (error) {
             if (this._session === session) {
                 this._reportError(error);
@@ -177,6 +182,21 @@ export default class MediaCastSender {
             this._stop(false);
             break;
         }
+    }
+
+    private _notifyMute(session: ISenderSession): void {
+        const muted = this._track === null;
+
+        if (session.muteNotified === muted) {
+            return;
+        }
+
+        session.muteNotified = muted;
+        this._onSignal({
+            generation: session.generation,
+            kind: 'mute',
+            muted
+        });
     }
 
     private _reportError(error: unknown): void {
@@ -278,6 +298,8 @@ export default class MediaCastSender {
                     kind: 'candidate'
                 });
             }
+
+            this._notifyMute(session);
         } catch (error) {
             if (this._session === session) {
                 this._reportError(error);

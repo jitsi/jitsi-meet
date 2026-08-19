@@ -575,6 +575,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             case 'ready': {
                 // Fake the iframe onload event because it's not reliable.
                 this._onload?.();
+
+                // A reloaded meeting must not keep a stale PiP window alive.
+                this._documentPiP?.close();
                 this._sendPiPCapability();
                 break;
             }
@@ -769,7 +772,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     _sendPiPCapability() {
-        this._sendPiPEvent(
+        this._sendPiPCommand(
             'capability',
             isPiPEnabled(this._pipConfig) && DocumentPiPController.isSupported());
     }
@@ -799,7 +802,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     _sendDocumentPiPSignal(signal) {
-        this._sendPiPEvent('signal', signal);
+        this._sendPiPCommand('signal', signal);
     }
 
     /**
@@ -809,7 +812,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @param {any} [data] - Optional command payload.
      * @returns {void}
      */
-    _sendPiPEvent(name, data) {
+    _sendPiPCommand(name, data) {
         this._transport.sendEvent({
             data: data === undefined ? [] : [ data ],
             name: `document-pip-${name}`

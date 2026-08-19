@@ -5,6 +5,7 @@ export type MediaCastSignal =
     | { generation: number; kind: 'offer'; sdp: RTCSessionDescriptionInit; }
     | { generation: number; kind: 'answer'; sdp: RTCSessionDescriptionInit; }
     | { candidate: RTCIceCandidateInit; generation: number; kind: 'candidate'; }
+    | { generation: number; kind: 'mute'; muted: boolean; }
     | { generation: number; kind: 'restart'; }
     | { generation: number; kind: 'stop'; };
 

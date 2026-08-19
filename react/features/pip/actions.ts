@@ -10,7 +10,8 @@ import { muteLocal } from '../video-menu/actions.any';
 import {
     HOST_DOCUMENT_PIP_SIGNAL_RECEIVED,
     SET_HOST_DOCUMENT_PIP_AVAILABLE,
-    SET_PIP_ACTIVE
+    SET_PIP_ACTIVE,
+    SET_PIP_WINDOW
 } from './actionTypes';
 import { DEFAULT_DOCUMENT_PIP_HEIGHT, DEFAULT_DOCUMENT_PIP_WIDTH } from './constants';
 import {
@@ -78,6 +79,20 @@ export function setPiPActive(isPiPActive: boolean) {
 }
 
 /**
+ * Action to store the Document PiP window reference.
+ *
+ * @param {Window|null} pipWindow - The Document PiP window this feature opened and initialized,
+ * or null when none is open.
+ * @returns {Object}
+ */
+export function setPiPWindow(pipWindow: Window | null) {
+    return {
+        type: SET_PIP_WINDOW,
+        pipWindow
+    };
+}
+
+/**
  * Stores the host capability result. Undefined is deliberately represented by
  * the absence of this action so the old-host timeout remains derived state.
  *
@@ -110,6 +125,10 @@ export function handleHostDocumentPiPCapability(available: boolean) {
             clearHostDocumentPiPPendingState();
             setDocumentPiPRequestPending(false);
             APP.API.notifyDocumentPiPClose();
+
+            if (wasHostDocumentPiPActive) {
+                dispatch(handlePiPLeaveEvent());
+            }
         }
     };
 }
@@ -172,6 +191,7 @@ export function exitPiP() {
         if (isEmbedded() && getState()['features/pip']?.hostDocumentPiPAvailable === true) {
             setDocumentPiPRequestPending(false);
             APP.API.notifyDocumentPiPClose();
+            dispatch(handlePiPLeaveEvent());
 
             return;
         }

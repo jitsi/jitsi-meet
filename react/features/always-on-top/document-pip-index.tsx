@@ -56,5 +56,5 @@ const cleanup = () => {
     root.unmount();
 };
 
-window.addEventListener('beforeunload', cleanup, { once: true });
-window.addEventListener('pagehide', cleanup, { once: true });
+window.addEventListener('beforeunload', cleanup);
+window.addEventListener('pagehide', cleanup);

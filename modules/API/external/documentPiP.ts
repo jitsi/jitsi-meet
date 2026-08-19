@@ -55,7 +55,7 @@ export default class DocumentPiPController {
             }
 
             if (notify && hadSession) {
-                api._sendPiPEvent('closed');
+                api._sendPiPCommand('closed');
             }
         };
         const initializeWindow = (newPiPWindow: Window) => {
@@ -89,13 +89,13 @@ export default class DocumentPiPController {
 
             script.addEventListener('load', () => {
                 if (this._pipWindow === newPiPWindow) {
-                    api._sendPiPEvent('opened');
+                    api._sendPiPCommand('opened');
                 }
             }, { once: true });
             script.addEventListener('error', () => {
                 if (this._pipWindow === newPiPWindow) {
                     closeSession(false);
-                    api._sendPiPEvent('open-failed');
+                    api._sendPiPCommand('open-failed');
                 }
             }, { once: true });
             script.src = new URL(DOCUMENT_PIP_SCRIPT, baseURL).href;
@@ -143,10 +143,12 @@ export default class DocumentPiPController {
                 this._pipWindow = newPiPWindow;
                 initializeWindow(newPiPWindow);
             } catch (error) {
-                if (!request || this._pendingRequest === request || this._pipWindow) {
+                // Only own the failure when this request is still current. A newer request may
+                // have superseded it; closing _pipWindow here would tear down a live window.
+                if (!request || this._pendingRequest === request) {
                     this._pendingRequest = undefined;
                     closeSession(false);
-                    api._sendPiPEvent('open-failed');
+                    api._sendPiPCommand('open-failed');
                 }
 
                 throw error;

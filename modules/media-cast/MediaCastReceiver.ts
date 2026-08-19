@@ -20,7 +20,9 @@ interface IReceiverSession {
  */
 export default class MediaCastReceiver {
     private _closed = false;
+    private _currentTrack: MediaStreamTrack | null = null;
     private _generation = 0;
+    private _muted = false;
     private _onError: (error: unknown) => void;
     private _onSignal: MediaCastSignalHandler;
     private _onTrack: (track: MediaStreamTrack | null) => void;
@@ -76,6 +78,8 @@ export default class MediaCastReceiver {
         const session = this._session;
 
         this._session = undefined;
+        this._currentTrack = null;
+        this._muted = false;
         this._onTrack(null);
 
         if (!session) {
@@ -109,6 +113,9 @@ export default class MediaCastReceiver {
         case 'candidate':
             await session.peerConnection.addIceCandidate(signal.candidate);
             break;
+        case 'mute':
+            this._setMuted(signal.muted);
+            break;
         case 'stop':
             this.stop();
             break;
@@ -136,7 +143,8 @@ export default class MediaCastReceiver {
 
         peerConnection.ontrack = ({ track }) => {
             if (this._session === session && track.kind === 'video') {
-                this._onTrack(track);
+                this._currentTrack = track;
+                this._onTrack(this._muted ? null : track);
             }
         };
         peerConnection.onicecandidate = ({ candidate }) => {
@@ -205,5 +213,17 @@ export default class MediaCastReceiver {
             generation,
             kind: 'restart'
         });
+    }
+
+    /**
+     * Applies the sender's mute state, re-surfacing the held track when unmuted
+     * without waiting for a new ontrack event.
+     *
+     * @param {boolean} muted - Whether the sender is currently transmitting a null track.
+     * @returns {void}
+     */
+    private _setMuted(muted: boolean): void {
+        this._muted = muted;
+        this._onTrack(muted ? null : this._currentTrack);
     }
 }
