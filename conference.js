@@ -951,16 +951,17 @@ export default {
      * Sets multiple properties for the local participant in a single presence update.
      *
      * @param {Object} properties - Object of property names to values.
+     * @param {boolean} [useRawKeys] - Skip the "jitsi_participant_" prefix when true.
      * @returns {void}
      */
-    setLocalParticipantProperties(properties) {
+    setLocalParticipantProperties(properties, useRawKeys = false) {
         if (!room) {
             logger.warn('Not setting participant properties, conference not initialized');
 
             return;
         }
 
-        room.setLocalParticipantProperties(properties);
+        room.setLocalParticipantProperties(properties, useRawKeys);
     },
 
     /**
