@@ -7,7 +7,7 @@ import { browser } from '../base/lib-jitsi-meet';
 import { IParticipant } from '../base/participants/types';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
-import { exitPiP, openDocumentPiP } from './actions';
+import { hidePiP, openDocumentPiP } from './actions';
 import PiPTriggerButton from './components/web/PiPTriggerButton';
 import {
     isDocumentPiPSupported,
@@ -251,7 +251,6 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
  */
 export function useDocumentPiPMediaSession() {
     const dispatch: IStore['dispatch'] = useDispatch();
-    const pipWindow = useSelector((state: IReduxState) => state['features/pip'].pipWindow);
 
     const openDocumentPip = useCallback(
         (notifyOnFailure: boolean) => dispatch(openDocumentPiP({ notifyOnFailure })),
@@ -295,8 +294,10 @@ export function useDocumentPiPMediaSession() {
         }
 
         const onVisibilityChange = () => {
-            if (!document.hidden && pipWindow && !pipWindow.closed) {
-                dispatch(exitPiP());
+            // hidePiP() checks the current PiP state inside the thunk, so the handler needs no
+            // state in its closure and the listener registers once for the lifetime of the mount.
+            if (!document.hidden) {
+                dispatch(hidePiP());
             }
         };
 
@@ -305,7 +306,7 @@ export function useDocumentPiPMediaSession() {
         return () => {
             document.removeEventListener('visibilitychange', onVisibilityChange);
         };
-    }, [ dispatch, pipWindow ]);
+    }, [ dispatch ]);
 }
 
 /**
