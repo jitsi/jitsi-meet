@@ -426,8 +426,8 @@ function initCommands() {
             sendAnalytics(createApiEvent('largevideo.participant.set'));
             dispatch(selectParticipantInLargeVideo(participant.id));
         },
-        'set-participant-properties': properties => {
-            APP.conference.setLocalParticipantProperties(properties);
+        'set-participant-properties': (properties, useRawKeys = false) => {
+            APP.conference.setLocalParticipantProperties(properties, useRawKeys);
         },
         'set-participant-volume': (participantId, volume) => {
             APP.store.dispatch(setVolume(participantId, volume));
