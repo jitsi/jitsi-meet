@@ -8,7 +8,7 @@ import { IParticipant } from '../base/participants/types';
 import { isEmbedded } from '../base/util/embedUtils';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
-import { hidePiP, openDocumentPiP, setHostDocumentPiPAvailable } from './actions';
+import { hidePiP, openDocumentPiP } from './actions';
 import PiPTriggerButton from './components/web/PiPTriggerButton';
 import {
     isDocumentPiPSupported,
@@ -28,7 +28,6 @@ const CANVAS_HEIGHT = Math.floor(CANVAS_WIDTH / TILE_ASPECT_RATIO);
  * We manually request frames after drawing to ensure capture.
  */
 const CANVAS_FRAME_RATE = 0;
-const HOST_DOCUMENT_PIP_CAPABILITY_TIMEOUT = 10000;
 
 const togglePiP = {
     key: 'toggle-pip',
@@ -259,14 +258,8 @@ export function useDocumentPiPMediaSession() {
         [ dispatch ]
     );
 
-    const embedded = isEmbedded();
-    const hostDocumentPiPAvailable = useSelector(
-        (state: IReduxState) => state['features/pip']?.hostDocumentPiPAvailable);
-    const isPiPActive = useSelector((state: IReduxState) => state['features/pip']?.isPiPActive ?? false);
     const pipEnabled = useSelector(shouldShowPiP);
-    const documentPiPAvailable = pipEnabled && (embedded
-        ? hostDocumentPiPAvailable
-        : isDocumentPiPSupported());
+    const documentPiPAvailable = pipEnabled && isDocumentPiPSupported();
 
     useEffect(() => {
         if (!documentPiPAvailable
@@ -302,19 +295,6 @@ export function useDocumentPiPMediaSession() {
     }, [ documentPiPAvailable, openDocumentPip ]);
 
     useEffect(() => {
-        if (!embedded || !pipEnabled || hostDocumentPiPAvailable !== undefined) {
-            return;
-        }
-
-        const timeout = window.setTimeout(() => {
-            logger.info('Embedded Document PiP capability handshake timed out; treating it as unavailable');
-            dispatch(setHostDocumentPiPAvailable(false));
-        }, HOST_DOCUMENT_PIP_CAPABILITY_TIMEOUT);
-
-        return () => window.clearTimeout(timeout);
-    }, [ dispatch, embedded, hostDocumentPiPAvailable, pipEnabled ]);
-
-    useEffect(() => {
         if (!documentPiPAvailable) {
             return;
         }
@@ -332,7 +312,7 @@ export function useDocumentPiPMediaSession() {
         return () => {
             document.removeEventListener('visibilitychange', onVisibilityChange);
         };
-    }, [ dispatch, documentPiPAvailable, embedded, isPiPActive ]);
+    }, [ dispatch, documentPiPAvailable ]);
 
 }
 
