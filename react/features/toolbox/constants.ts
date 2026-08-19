@@ -182,6 +182,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'stats',
     'tileview',
     'toggle-camera',
+    'toggle-pip',
     'videoquality',
     'whiteboard'
 ];

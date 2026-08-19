@@ -1,13 +1,20 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { shouldShowPiP } from '../functions';
+import { isDocumentPiPSupported, shouldShowPiP } from '../functions';
 
 import PiPVideoElement from './PiPVideoElement';
+import { DocumentPiPContent } from './web/DocumentPiPContent';
 
 /**
- * Wrapper component that conditionally renders PiPVideoElement.
- * Prevents mounting when PiP is disabled or on prejoin without showOnPrejoin flag.
+ * Document PiP support cannot change during the page lifetime, so it is computed once at module
+ * load instead of on every render.
+ */
+const IS_DOCUMENT_PIP_SUPPORTED = isDocumentPiPSupported();
+
+/**
+ * Wrapper component that selects the appropriate PiP implementation.
+ * Uses Document PiP API when available, falls back to Video PiP.
  *
  * @returns {React.ReactElement | null}
  */
@@ -16,6 +23,10 @@ function PiP() {
 
     if (!showPiP) {
         return null;
+    }
+
+    if (IS_DOCUMENT_PIP_SUPPORTED) {
+        return <DocumentPiPContent />;
     }
 
     return <PiPVideoElement />;

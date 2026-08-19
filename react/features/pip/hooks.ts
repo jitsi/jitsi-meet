@@ -1,10 +1,19 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { IReduxState, IStore } from '../app/types';
 import IconUserSVG from '../base/icons/svg/user.svg?raw';
+import { browser } from '../base/lib-jitsi-meet';
 import { IParticipant } from '../base/participants/types';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
-import { renderAvatarOnCanvas } from './functions';
+import { hidePiP, openDocumentPiP } from './actions';
+import PiPTriggerButton from './components/web/PiPTriggerButton';
+import {
+    isDocumentPiPSupported,
+    renderAvatarOnCanvas,
+    shouldShowPiP,
+} from './functions';
 import logger from './logger';
 
 /**
@@ -19,6 +28,12 @@ const CANVAS_HEIGHT = Math.floor(CANVAS_WIDTH / TILE_ASPECT_RATIO);
  */
 const CANVAS_FRAME_RATE = 0;
 
+const togglePiP = {
+    key: 'toggle-pip',
+    Content: PiPTriggerButton,
+    group: 2
+};
+
 /**
  * Options for the useCanvasAvatar hook.
  */
@@ -30,15 +45,17 @@ interface IUseCanvasAvatarOptions {
     fontFamily: string;
     initialsColor: string;
     participant: IParticipant | undefined;
+    shouldShowAvatar: boolean;
 }
 
 /**
  * Result returned by the useCanvasAvatar hook.
- * Returns a ref object so consumers can access .current inside effects
- * (the stream is created in an effect and won't be available at render time).
+ * The stream ref is populated in an effect, while publishFrame lets consumers
+ * explicitly deliver the current canvas after attaching it to a video element.
  */
 interface IUseCanvasAvatarResult {
     canvasStreamRef: React.MutableRefObject<MediaStream | null>;
+    publishFrame: () => void;
 }
 
 /**
@@ -75,10 +92,11 @@ function createDefaultIconImage(): HTMLImageElement {
 /**
  * Custom hook that manages canvas-based avatar rendering for Picture-in-Picture.
  * Creates and maintains a canvas element with a MediaStream that can be used
- * as a video source when the participant's video is unavailable.
+ * as a video source when the participant's video is unavailable. Avatar rendering
+ * is gated by shouldShowAvatar, while hidden content is cleared to avoid stale identity frames.
  *
  * @param {IUseCanvasAvatarOptions} options - The hook options.
- * @returns {IUseCanvasAvatarResult} The canvas stream for use as video source.
+ * @returns {IUseCanvasAvatarResult} The canvas stream and frame publication callback.
  */
 export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAvatarResult {
     const {
@@ -88,7 +106,8 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
         backgroundColor,
         fontFamily,
         initialsColor,
-        displayNameColor
+        displayNameColor,
+        shouldShowAvatar
     } = options;
 
     const refs = useRef<ICanvasRefs>({
@@ -104,6 +123,40 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
     // To fix this, we could return an additional state flag like `streamReady` that
     // changes when the stream is set, and consumers would add it to their effect deps.
     const streamRef = useRef<MediaStream | null>(null);
+
+    /**
+     * Publishes the canvas's current contents to its on-demand capture stream.
+     *
+     * @returns {void}
+     */
+    const publishFrame = useCallback(() => {
+        const track = streamRef.current?.getVideoTracks()[0] as MediaStreamTrack & { requestFrame?: () => void; };
+        const canvas = refs.current.canvas;
+
+        if (!track?.requestFrame || !canvas) {
+            return;
+        }
+
+        track.requestFrame();
+
+        // WebKit emits a canvas-capture frame only when the canvas is painted AFTER requestFrame()
+        // has armed the capture — a bare requestFrame() on a static canvas produces nothing and the
+        // PiP video stays at readyState 0 (verified on Safari 26.6). Nudge the canvas with an
+        // imperceptible 1px draw so an emission paint always follows the arm. Chromium captures
+        // the current canvas contents immediately on requestFrame(), so it needs no nudge.
+        if (browser.isWebKitBased()) {
+            const ctx = canvas.getContext('2d');
+
+            if (ctx) {
+                ctx.save();
+                ctx.globalAlpha = 0.01;
+                ctx.fillRect(0, 0, 1, 1);
+                ctx.restore();
+            }
+        }
+
+        logger.log('Canvas frame requested');
+    }, []);
 
     /**
      * Initialize canvas, stream, and default icon on mount.
@@ -137,7 +190,7 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
     }, []);
 
     /**
-     * Re-render avatar when participant or display name changes.
+     * Renders the avatar when it should be shown and clears stale participant content otherwise.
      */
     useEffect(() => {
         const { canvas, defaultIcon } = refs.current;
@@ -154,6 +207,14 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
             return;
         }
 
+        // Clear participant identity synchronously before the canvas can be attached to a new sink.
+        ctx.fillStyle = backgroundColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        if (!shouldShowAvatar) {
+            return;
+        }
+
         renderAvatarOnCanvas(
             canvas,
             ctx,
@@ -165,19 +226,99 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
             fontFamily,
             initialsColor,
             displayNameColor
-        ).then(() => {
-            // Request a frame capture after drawing.
-            // For captureStream(0), we need to manually trigger frame capture.
-            const track = streamRef.current?.getVideoTracks()[0] as MediaStreamTrack & { requestFrame?: () => void; };
-
-            if (track?.requestFrame) {
-                track.requestFrame();
-                logger.log('Canvas frame requested after render');
-            }
-        }).catch((error: Error) => logger.error('Error rendering avatar on canvas:', error));
-    }, [ participant?.loadableAvatarUrl, participant?.name, displayName, customAvatarBackgrounds, backgroundColor, fontFamily, initialsColor, displayNameColor ]);
+        ).then(publishFrame)
+            .catch((error: Error) => logger.error('Error rendering avatar on canvas:', error));
+    }, [ participant?.loadableAvatarUrl, participant?.loadableAvatarUrlUseCORS, participant?.name, displayName, customAvatarBackgrounds, backgroundColor, fontFamily, initialsColor, displayNameColor, shouldShowAvatar, publishFrame ]);
 
     return {
-        canvasStreamRef: streamRef
+        canvasStreamRef: streamRef,
+        publishFrame
     };
+}
+
+/**
+ * Manages Document Picture-in-Picture via the MediaSession API in browsers that support its
+ * enterpictureinpicture action. WebKit automatic Video PiP on tab switches is managed separately by PiPVideoElement
+ * through the presentation-mode API.
+ * Closes the PiP window when the tab becomes visible again.
+ *
+ * MediaSession playback state is kept in sync by the subscriber in
+ * subscriber.ts, so this hook only handles the window lifecycle.
+ *
+ * @see https://googlechrome.github.io/samples/media-session/video-conferencing.html
+ *
+ * @returns {void}
+ */
+export function useDocumentPiPMediaSession() {
+    const dispatch: IStore['dispatch'] = useDispatch();
+
+    const openDocumentPip = useCallback(
+        (notifyOnFailure: boolean) => dispatch(openDocumentPiP({ notifyOnFailure })),
+        [ dispatch ]
+    );
+
+    useEffect(() => {
+        if (!isDocumentPiPSupported()) {
+            return;
+        }
+
+        try {
+            navigator.mediaSession.setActionHandler('enterpictureinpicture', details => {
+                const reason = details?.enterPictureInPictureReason;
+
+                if (reason === 'useraction') {
+                    logger.log('User clicked Enter Picture-in-Picture icon.');
+                } else if (reason === 'contentoccluded') {
+                    logger.log('Automatically enter picture-in-picture.');
+                }
+
+                // The browser invokes this handler fire-and-forget, so nothing may leak a
+                // rejection here. openDocumentPiP() reports every failure internally: it always
+                // logs, and for user-initiated entries it also shows the same error notification
+                // as the toolbar button; automatic entries stay silent to avoid nagging on every
+                // tab switch.
+                openDocumentPip(reason === 'useraction');
+            });
+        } catch (error) {
+            logger.warn('enterpictureinpicture MediaSession action not supported:', error);
+        }
+
+        return () => {
+            navigator.mediaSession.setActionHandler('enterpictureinpicture', null);
+        };
+    }, [ openDocumentPip ]);
+
+    useEffect(() => {
+        if (!isDocumentPiPSupported()) {
+            return;
+        }
+
+        const onVisibilityChange = () => {
+            // hidePiP() checks the current PiP state inside the thunk, so the handler needs no
+            // state in its closure and the listener registers once for the lifetime of the mount.
+            if (!document.hidden) {
+                dispatch(hidePiP());
+            }
+        };
+
+        document.addEventListener('visibilitychange', onVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', onVisibilityChange);
+        };
+    }, [ dispatch ]);
+}
+
+/**
+ * Returns the PiP toggle button when PiP is enabled and supported by the browser.
+ *
+ * @returns {Object | undefined} The PiP toggle button or undefined.
+ */
+export function usePipToggleButton() {
+    const visible = useSelector((state: IReduxState) =>
+        state['features/base/config'].pip?.showToolbarButton !== false && shouldShowPiP(state));
+
+    return !browser.isElectron() && visible && (isDocumentPiPSupported() || Boolean(document.pictureInPictureEnabled))
+        ? togglePiP
+        : undefined;
 }
