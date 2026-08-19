@@ -39,7 +39,15 @@ ReducerRegistry.register<IMultiScreenState>('features/multi-screen',
                 [action.id]: {
                     ...state.screens[action.id],
                     source: action.source,
-                    screenId: action.screenId
+
+                    // Keep the screen an existing window was configured for when
+                    // the new request names none: re-sourcing a window (a
+                    // setSecondScreen with no `screen`) says what it should show,
+                    // not that it should go back to the default screen. Dropping
+                    // it would also be read as "wherever a window with no screen
+                    // goes" everywhere the id is used.
+                    screenId: action.screenId ?? state.screens[action.id]?.screenId,
+                    setAt: action.setAt
                 }
             }
         };
