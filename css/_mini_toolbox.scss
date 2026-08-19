@@ -18,10 +18,6 @@
             cursor: initial;
         }
     }
-
-    .toolbox-button:not(.disabled):hover .toolbox-icon:not(.hangup-button) {
-        background: rgba(255, 255, 255, 0.2);
-    }
 }
 
 .always-on-top-toolbox {

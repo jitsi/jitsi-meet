@@ -1,8 +1,9 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { IReduxState } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { isEmbedded } from '../../base/util/embedUtils';
+import { retryHostDocumentPiPShow } from '../actions';
 import { isDocumentPiPSupported, shouldShowPiP } from '../functions';
 import { useDocumentPiPMediaSession } from '../hooks';
 
@@ -24,14 +25,22 @@ const IS_DOCUMENT_PIP_SUPPORTED = isDocumentPiPSupported();
 function PiP() {
     useDocumentPiPMediaSession();
 
+    const dispatch: IStore['dispatch'] = useDispatch();
+    const embedded = isEmbedded();
     const showPiP = useSelector(shouldShowPiP);
-    const embeddedDocumentPiPAvailable = useSelector(
-        (state: IReduxState) => state['features/pip']?.embeddedDocumentPiPAvailable);
+    const hostDocumentPiPAvailable = useSelector(
+        (state: IReduxState) => state['features/pip']?.hostDocumentPiPAvailable);
 
-    if (isEmbedded()) {
+    useEffect(() => {
+        if (embedded && hostDocumentPiPAvailable !== undefined) {
+            dispatch(retryHostDocumentPiPShow());
+        }
+    }, [ dispatch, embedded, hostDocumentPiPAvailable ]);
+
+    if (embedded) {
         // The host owns the Document PiP document. The iframe only renders the existing
         // Video PiP element when PiP remains enabled and capability negotiation selects the fallback.
-        return showPiP && embeddedDocumentPiPAvailable === false ? <PiPVideoElement /> : null;
+        return showPiP && hostDocumentPiPAvailable === false ? <PiPVideoElement /> : null;
     }
 
     if (!showPiP) {

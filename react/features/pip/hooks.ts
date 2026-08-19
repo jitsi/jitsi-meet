@@ -8,7 +8,7 @@ import { IParticipant } from '../base/participants/types';
 import { isEmbedded } from '../base/util/embedUtils';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
-import { hidePiP, openDocumentPiP } from './actions';
+import { hidePiP, openDocumentPiP, setHostDocumentPiPAvailable } from './actions';
 import PiPTriggerButton from './components/web/PiPTriggerButton';
 import {
     isDocumentPiPSupported,
@@ -28,7 +28,7 @@ const CANVAS_HEIGHT = Math.floor(CANVAS_WIDTH / TILE_ASPECT_RATIO);
  * We manually request frames after drawing to ensure capture.
  */
 const CANVAS_FRAME_RATE = 0;
-const EMBEDDED_DOCUMENT_PIP_CAPABILITY_TIMEOUT = 10000;
+const HOST_DOCUMENT_PIP_CAPABILITY_TIMEOUT = 10000;
 
 const togglePiP = {
     key: 'toggle-pip',
@@ -260,12 +260,12 @@ export function useDocumentPiPMediaSession() {
     );
 
     const embedded = isEmbedded();
-    const embeddedDocumentPiPAvailable = useSelector(
-        (state: IReduxState) => state['features/pip']?.embeddedDocumentPiPAvailable);
+    const hostDocumentPiPAvailable = useSelector(
+        (state: IReduxState) => state['features/pip']?.hostDocumentPiPAvailable);
     const isPiPActive = useSelector((state: IReduxState) => state['features/pip']?.isPiPActive ?? false);
     const pipEnabled = useSelector(shouldShowPiP);
     const documentPiPAvailable = pipEnabled && (embedded
-        ? embeddedDocumentPiPAvailable
+        ? hostDocumentPiPAvailable
         : isDocumentPiPSupported());
 
     useEffect(() => {
@@ -302,17 +302,17 @@ export function useDocumentPiPMediaSession() {
     }, [ documentPiPAvailable, openDocumentPip ]);
 
     useEffect(() => {
-        if (!embedded || !pipEnabled || embeddedDocumentPiPAvailable !== undefined) {
+        if (!embedded || !pipEnabled || hostDocumentPiPAvailable !== undefined) {
             return;
         }
 
         const timeout = window.setTimeout(() => {
             logger.info('Embedded Document PiP capability handshake timed out; treating it as unavailable');
-            dispatch(setEmbeddedDocumentPiPAvailable(false));
-        }, EMBEDDED_DOCUMENT_PIP_CAPABILITY_TIMEOUT);
+            dispatch(setHostDocumentPiPAvailable(false));
+        }, HOST_DOCUMENT_PIP_CAPABILITY_TIMEOUT);
 
         return () => window.clearTimeout(timeout);
-    }, [ dispatch, embedded, embeddedDocumentPiPAvailable, pipEnabled ]);
+    }, [ dispatch, embedded, hostDocumentPiPAvailable, pipEnabled ]);
 
     useEffect(() => {
         if (!documentPiPAvailable) {
@@ -350,7 +350,7 @@ export function usePipToggleButton() {
         }
 
         if (isEmbedded()) {
-            const available = state['features/pip']?.embeddedDocumentPiPAvailable;
+            const available = state['features/pip']?.hostDocumentPiPAvailable;
 
             return available === true || (available === false && Boolean(document.pictureInPictureEnabled));
         }

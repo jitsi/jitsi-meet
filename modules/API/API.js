@@ -109,11 +109,11 @@ import {
 } from '../../react/features/participants-pane/actions';
 import { getParticipantsPaneOpen } from '../../react/features/participants-pane/functions';
 import {
-    handleEmbeddedDocumentPiPCapability,
-    handleEmbeddedDocumentPiPOpenFailed,
-    handleEmbeddedDocumentPiPOpened,
-    handleEmbeddedDocumentPiPSignal,
-    handleEmbeddedDocumentPiPWindowClosed,
+    handleHostDocumentPiPCapability,
+    handleHostDocumentPiPOpenFailed,
+    handleHostDocumentPiPOpened,
+    handleHostDocumentPiPSignal,
+    handleHostDocumentPiPWindowClosed,
     hidePiP,
     showPiP
 } from '../../react/features/pip/actions';
@@ -1010,19 +1010,19 @@ function initCommands() {
             APP.store.dispatch(hidePiP());
         },
         'document-pip-capability': available => {
-            APP.store.dispatch(handleEmbeddedDocumentPiPCapability(Boolean(available)));
+            APP.store.dispatch(handleHostDocumentPiPCapability(Boolean(available)));
         },
         'document-pip-opened': () => {
-            APP.store.dispatch(handleEmbeddedDocumentPiPOpened());
+            APP.store.dispatch(handleHostDocumentPiPOpened());
         },
         'document-pip-open-failed': () => {
-            APP.store.dispatch(handleEmbeddedDocumentPiPOpenFailed());
+            APP.store.dispatch(handleHostDocumentPiPOpenFailed());
         },
         'document-pip-closed': () => {
-            APP.store.dispatch(handleEmbeddedDocumentPiPWindowClosed());
+            APP.store.dispatch(handleHostDocumentPiPWindowClosed());
         },
         'document-pip-signal': signal => {
-            APP.store.dispatch(handleEmbeddedDocumentPiPSignal(signal));
+            APP.store.dispatch(handleHostDocumentPiPSignal(signal));
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -2468,8 +2468,8 @@ class API {
      */
     notifyDocumentPiPSignal(signal) {
         this._sendEvent({
-            data: signal,
-            name: '_document-pip-signal'
+            name: '_document-pip-signal',
+            signal
         });
     }
 

@@ -28,7 +28,6 @@ function isElectron(): boolean {
  * show-PiP request that the client refuses.
  *
  * @param {Object} pipConfig - The pip config object.
- * @param {boolean} embedded - Whether PiP is being evaluated for an embedded meeting.
  * @returns {boolean} - True if PiP is enabled.
  */
 export function isPiPEnabled(pipConfig?: { disabled?: boolean; enableBrowserPiP?: boolean; }): boolean {

@@ -609,7 +609,6 @@ export interface IConfig {
     peopleSearchUrl?: string;
     pip?: {
         disabled?: boolean;
-        disableEmbedPiP?: boolean;
         /**
          * Document Picture-in-Picture configuration.
          *

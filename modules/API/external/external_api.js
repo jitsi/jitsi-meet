@@ -8,6 +8,7 @@ import {
     Transport
 } from '../../transport';
 
+import DocumentPiPController from './documentPiP';
 import {
     getAvailableDevices,
     getCurrentDevices,
@@ -109,6 +110,7 @@ const commands = {
  * events expected by jitsi-meet.
  */
 const events = {
+    '_document-pip-signal': '_documentPiPSignal',
     '_pip-requested': '_pipRequested',
     'pip-entered': 'pipEntered',
     'pip-left': 'pipLeft',
@@ -340,14 +342,15 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
         this._onload = onload;
         this._tmpE2EEKey = e2eeKey;
-        this._isLargeVideoVisible = false;
-        this._isPrejoinVideoVisible = false;
+        this._largeVideoVisible = false;
+        this._prejoinVideoVisible = false;
         this._numberOfParticipants = 0;
         this._participants = {};
         this._myUserID = undefined;
         this._onStageParticipant = undefined;
         this._iAmvisitor = undefined;
-        this._pipConfig = configOverwrite.pip || {};
+        this._pipConfig = configOverwrite?.pip;
+        this._documentPiP = undefined;
         this._setupListeners();
         id++;
     }
@@ -414,10 +417,21 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {Array<string>}
      */
     _getAlwaysOnTopResources() {
-        // The embedding page cannot inspect a cross-origin meeting document. The
-        // URL used to create that iframe is already the authoritative asset base.
+        const iframeWindow = this._frame.contentWindow;
+        const iframeDocument = iframeWindow.document;
+        let baseURL = '';
+        const base = iframeDocument.querySelector('base');
+
+        if (base && base.href) {
+            baseURL = base.href;
+        } else {
+            const { protocol, host } = iframeWindow.location;
+
+            baseURL = `${protocol}//${host}`;
+        }
+
         return ALWAYS_ON_TOP_FILENAMES.map(
-            filename => new URL(filename, this._url).href
+            filename => new URL(filename, baseURL).href
         );
     }
 
@@ -443,6 +457,24 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         return this._onStageParticipant;
     }
 
+    /**
+     * Returns whether the meeting's large video is currently visible.
+     *
+     * @returns {boolean}
+     */
+    _isLargeVideoVisible() {
+        return this._largeVideoVisible;
+    }
+
+    /**
+     * Returns whether the meeting's prejoin video is currently visible.
+     *
+     * @returns {boolean}
+     */
+    _isPrejoinVideoVisible() {
+        return this._prejoinVideoVisible;
+    }
+
 
     /**
      * Getter for the large video element in Jitsi Meet.
@@ -452,7 +484,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     _getLargeVideo() {
         const iframe = this.getIFrame();
 
-        if (!this._isLargeVideoVisible
+        if (!this._largeVideoVisible
                 || !iframe
                 || !iframe.contentWindow
                 || !iframe.contentWindow.document) {
@@ -470,7 +502,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     _getPrejoinVideo() {
         const iframe = this.getIFrame();
 
-        if (!this._isPrejoinVideoVisible
+        if (!this._prejoinVideoVisible
                 || !iframe
                 || !iframe.contentWindow
                 || !iframe.contentWindow.document) {
@@ -543,7 +575,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             case 'ready': {
                 // Fake the iframe onload event because it's not reliable.
                 this._onload?.();
-                this._sendCap();
+                this._sendPiPCapability();
                 break;
             }
             case 'video-conference-joined': {
@@ -618,7 +650,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 this.emit('largeVideoChanged');
                 break;
             case 'large-video-visibility-changed':
-                this._isLargeVideoVisible = data.isVisible;
+                this._largeVideoVisible = data.isVisible;
                 this.emit('largeVideoChanged');
                 break;
             case 'prejoin-screen-loaded':
@@ -628,7 +660,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 };
                 break;
             case 'on-prejoin-video-changed':
-                this._isPrejoinVideoVisible = data.isVisible;
+                this._prejoinVideoVisible = data.isVisible;
                 this.emit('prejoinVideoChanged');
                 break;
             case 'video-conference-left':
@@ -639,20 +671,12 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 this._videoQuality = data.videoQuality;
                 break;
             case '_document-pip-requested':
-                this._openPiP().catch(() => {
-                    this._closePiP();
-                    this._sendPiP('open-failed');
-                });
+                this._getDocumentPiPController().open()
+                    .catch(() => undefined);
 
                 return true;
             case '_document-pip-close':
-                this._closePiP();
-
-                return true;
-            case '_document-pip-signal':
-                if (this._hostPiP && this._hostPiP.signal) {
-                    this._hostPiP.signal(data.data);
-                }
+                this._documentPiP?.close();
 
                 return true;
             case 'breakout-rooms-updated':
@@ -699,7 +723,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     _setupIntersectionObserver() {
-        if (!isPiPEnabled(this._pipConfig, true)) {
+        if (!isPiPEnabled(this._pipConfig)) {
             return;
         }
 
@@ -744,11 +768,38 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      *
      * @returns {void}
      */
-    _sendCap() {
-        this._sendPiP(
+    _sendPiPCapability() {
+        this._sendPiPEvent(
             'capability',
-            window === window.top
-                && 'documentPictureInPicture' in window);
+            isPiPEnabled(this._pipConfig) && DocumentPiPController.isSupported());
+    }
+
+    /**
+     * Returns this API instance's lazily created Document PiP controller.
+     *
+     * @returns {DocumentPiPController}
+     */
+    _getDocumentPiPController() {
+        if (!this._documentPiP) {
+            this._documentPiP = new DocumentPiPController({
+                api: this,
+                frame: this._frame,
+                getWindowOptions: () => this._pipConfig?.documentPiP?.windowOptions,
+                meetingUrl: this._url
+            });
+        }
+
+        return this._documentPiP;
+    }
+
+    /**
+     * Sends a media-cast signal from the Document PiP renderer to the meeting iframe.
+     *
+     * @param {Object} signal - Answer, candidate, restart, or stop signal.
+     * @returns {void}
+     */
+    _sendDocumentPiPSignal(signal) {
+        this._sendPiPEvent('signal', signal);
     }
 
     /**
@@ -758,217 +809,11 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @param {any} [data] - Optional command payload.
      * @returns {void}
      */
-    _sendPiP(name, data) {
+    _sendPiPEvent(name, data) {
         this._transport.sendEvent({
             data: data === undefined ? [] : [ data ],
             name: `document-pip-${name}`
         });
-    }
-
-    /**
-     * Populates the accessible blank PiP document with only the received video
-     * and the repository's existing Always-on-Top resources. The adapter inherits
-     * the existing API contract and overrides only cross-origin DOM getters.
-     *
-     * @param {Window} pipWindow - Current Document PiP window.
-     * @returns {void}
-     * @private
-     */
-    _initPiP(pipWindow) {
-        const pipDocument = pipWindow.document;
-        const [ stylesheetURL, scriptURL ] = this._getAlwaysOnTopResources();
-        const script = pipDocument.createElement('script');
-        const api = Object.create(this);
-        let generation = 0;
-        let peerConnection;
-        let receivedTrack;
-        let signalQueue = Promise.resolve();
-
-        pipDocument.head.innerHTML = `<link rel=stylesheet href="${stylesheetURL}">`;
-        pipDocument.body.innerHTML
-            = '<div class=videocontainer style=height:100%><video hidden autoplay muted '
-                + 'style=object-fit:contain></video><div id=react></div></div>';
-        const video = pipDocument.querySelector('video');
-        const sendSignal = (type, data) => this._sendPiP('signal', {
-            ...data,
-            type,
-            generation
-        });
-        const syncVideoVisibility = () => {
-            // replaceTrack(null) and the meeting's large-video visibility event can
-            // arrive before the receiver reports its track as muted. Apply both
-            // existing sources so the absolutely positioned video cannot cover the
-            // Always-on-Top avatar with a stale frame.
-            const sourceVisible = this._isLargeVideoVisible || this._isPrejoinVideoVisible;
-
-            video.hidden = !sourceVisible || !receivedTrack || receivedTrack.muted;
-        };
-        const clearReceivedTrack = () => {
-            if (receivedTrack) {
-                receivedTrack.onmute = null;
-                receivedTrack.onunmute = null;
-                receivedTrack = undefined;
-            }
-
-            video.srcObject = null;
-            syncVideoVisibility();
-        };
-
-        api._getLargeVideo = api._getPrejoinVideo = () => !video.hidden && video;
-        this.on('largeVideoChanged', syncVideoVisibility);
-        this.on('prejoinVideoChanged', syncVideoVisibility);
-        pipWindow.alwaysOnTop = { api };
-        script.src = scriptURL;
-        pipDocument.body.appendChild(script);
-        pipWindow._dispose = () => {
-            this.removeListener('largeVideoChanged', syncVideoVisibility);
-            this.removeListener('prejoinVideoChanged', syncVideoVisibility);
-            clearReceivedTrack();
-            if (peerConnection) {
-                peerConnection.close();
-            }
-            peerConnection = undefined;
-        };
-
-        // SDP/ICE operations are async even though postMessage delivery is ordered.
-        // One queue and generation reject stale work without candidate buffers.
-        pipWindow.signal = signal => {
-            signalQueue = signalQueue
-            .then(async () => {
-                if (this._hostPiP !== pipWindow) {
-                    return;
-                }
-
-                if (signal.type === 'candidate') {
-                    if (signal.generation === generation && peerConnection) {
-                        await peerConnection.addIceCandidate(signal.candidate);
-                    }
-
-                    return;
-                }
-
-                if (signal.type !== 'offer' || signal.generation <= generation) {
-                    return;
-                }
-
-                clearReceivedTrack();
-                if (peerConnection) {
-                    peerConnection.close();
-                }
-
-                const receiver = new RTCPeerConnection();
-
-                generation = signal.generation;
-                peerConnection = receiver;
-                receiver.ontrack = ({ track }) => {
-                    const notifyVideoChanged = () => {
-                        if (receivedTrack !== track) {
-                            return;
-                        }
-
-                        syncVideoVisibility();
-                        this.emit('largeVideoChanged');
-                    };
-
-                    receivedTrack = track;
-                    video.srcObject = new MediaStream([ track ]);
-                    track.onmute = track.onunmute = notifyVideoChanged;
-                    notifyVideoChanged();
-                };
-                receiver.onicecandidate = ({ candidate }) => {
-                    if (candidate
-                            && peerConnection === receiver) {
-                        sendSignal('candidate', {
-                            candidate: candidate.toJSON()
-                        });
-                    }
-                };
-                receiver.onconnectionstatechange = () => {
-                    if (receiver.connectionState === 'failed') {
-                        sendSignal('restart');
-                    }
-                };
-
-                await receiver.setRemoteDescription(signal.description);
-
-                const answer = await receiver.createAnswer();
-                const setLocalDescription = receiver.setLocalDescription(answer);
-
-                // ICE callbacks are tasks, so sending the answer now preserves SDP-first ordering.
-                sendSignal('answer', {
-                    description: answer
-                });
-                await setLocalDescription;
-            })
-            .catch(() => {
-                if (peerConnection) {
-                    sendSignal('restart');
-                }
-            });
-        };
-    }
-
-    /**
-     * Opens the Document PiP window in the top-level embedding context. A blank
-     * Document PiP window inherits the opener's origin, so the parent can own
-     * its DOM directly and does not need a renderer iframe or another transport.
-     *
-     * @returns {Promise<void>}
-     * @private
-     */
-    async _openPiP() {
-        if (this._hostPiP) {
-            return;
-        }
-
-        const request = window.documentPictureInPicture.requestWindow({
-            height: 160, // DEFAULT_DOCUMENT_PIP_HEIGHT
-            width: 284, // DEFAULT_DOCUMENT_PIP_WIDTH
-            ...this._pipConfig.documentPiP?.windowOptions
-        });
-
-        this._hostPiP = request;
-
-        try {
-            const pipWindow = await request;
-
-            if (this._hostPiP !== request) {
-                pipWindow.close();
-
-                return;
-            }
-
-            this._hostPiP = pipWindow;
-            pipWindow.onpagehide = () => {
-                if (this._hostPiP === pipWindow) {
-                    this._closePiP();
-                }
-            };
-
-            this._initPiP(pipWindow);
-            this._sendPiP('opened');
-        } finally {
-            if (this._hostPiP === request) {
-                this._hostPiP = null;
-            }
-        }
-    }
-
-    /**
-     * Closes a host-assisted Document PiP window if one exists.
-     *
-     * @returns {void}
-     */
-    _closePiP() {
-        const session = this._hostPiP;
-
-        this._hostPiP = null;
-        session?._dispose?.();
-        session?.close?.();
-
-        if (session) {
-            this._sendPiP('closed');
-        }
     }
 
     /**
@@ -1187,7 +1032,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      */
     dispose() {
         this.emit('_willDispose');
-        this._closePiP();
+        this._documentPiP?.close();
         this._transport.dispose();
         this.removeAllListeners();
         this._teardownIntersectionObserver();
@@ -1224,18 +1069,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         // Handle pip config changes locally.
         // We update local state, send command to iframe, then handle PiP show/hide
         // so the iframe config is updated before we try to show PiP.
-        const pipOverwrite = name === 'overwriteConfig' ? args[0]?.pip : undefined;
         let pipTransition = null;
 
-        if (pipOverwrite !== undefined) {
-            const wasEnabled = isPiPEnabled(this._pipConfig, true);
+        if (name === 'overwriteConfig' && args[0]?.pip !== undefined) {
+            const wasEnabled = isPiPEnabled(this._pipConfig);
 
             this._pipConfig = {
                 ...this._pipConfig,
-                ...pipOverwrite
+                ...args[0].pip
             };
 
-            const isEnabled = isPiPEnabled(this._pipConfig, true);
+            const isEnabled = isPiPEnabled(this._pipConfig);
 
             if (!wasEnabled && isEnabled) {
                 this._setupIntersectionObserver();
@@ -1252,8 +1096,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             name: commands[name]
         });
 
-        if (pipOverwrite !== undefined) {
-            this._sendCap();
+        if (name === 'overwriteConfig' && args[0]?.pip !== undefined) {
+            this._sendPiPCapability();
         }
 
         // Handle PiP state after command is sent so iframe config is updated.
@@ -1910,7 +1754,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     hidePiP() {
-        this._closePiP();
+        this._documentPiP?.close();
         this.executeCommand('hidePiP');
     }
 

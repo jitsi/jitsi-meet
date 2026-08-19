@@ -11,9 +11,9 @@ export const SET_PIP_WINDOW = 'SET_PIP_WINDOW';
 /**
  * Action type to set the embedded document pip capability.
  */
-export const SET_EMBEDDED_DOCUMENT_PIP_AVAILABLE = 'SET_EMBEDDED_DOCUMENT_PIP_AVAILABLE';
+export const SET_HOST_DOCUMENT_PIP_AVAILABLE = 'SET_HOST_DOCUMENT_PIP_AVAILABLE';
 
 /**
  * Internal action carrying an ordered WebRTC signal from the embedding page.
  */
-export const EMBEDDED_DOCUMENT_PIP_SIGNAL_RECEIVED = 'EMBEDDED_DOCUMENT_PIP_SIGNAL_RECEIVED';
+export const HOST_DOCUMENT_PIP_SIGNAL_RECEIVED = 'HOST_DOCUMENT_PIP_SIGNAL_RECEIVED';

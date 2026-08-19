@@ -1,6 +1,10 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
-import { SET_PIP_ACTIVE, SET_PIP_WINDOW } from './actionTypes';
+import {
+    SET_HOST_DOCUMENT_PIP_AVAILABLE,
+    SET_PIP_ACTIVE,
+    SET_PIP_WINDOW,
+} from './actionTypes';
 
 /**
  * The default state for the pip feature.
@@ -11,7 +15,7 @@ const DEFAULT_STATE = {
 };
 
 export interface IPipState {
-    embeddedDocumentPiPAvailable?: boolean;
+    hostDocumentPiPAvailable?: boolean;
     isPiPActive: boolean;
 
     /**
@@ -35,10 +39,10 @@ export interface IPipState {
  */
 ReducerRegistry.register<IPipState>('features/pip', (state = DEFAULT_STATE, action): IPipState => {
     switch (action.type) {
-    case SET_EMBEDDED_DOCUMENT_PIP_AVAILABLE:
+    case SET_HOST_DOCUMENT_PIP_AVAILABLE:
         return {
             ...state,
-            embeddedDocumentPiPAvailable: action.available
+            hostDocumentPiPAvailable: action.available
         };
     case SET_PIP_ACTIVE:
         return {
