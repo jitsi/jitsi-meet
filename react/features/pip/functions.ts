@@ -650,11 +650,19 @@ function copyStylesheets(pipWindow: Window) {
  * @returns {void}
  */
 function createPiPContainer(pipWindow: Window) {
-    const container = pipWindow.document.createElement('div');
+    const pipDoc = pipWindow.document;
+
+    // The copied stylesheets load asynchronously; until they land, the UA default body margin
+    // and overflow would make the 100vw/100vh container overflow and flash scrollbars on every
+    // open, so reset them synchronously.
+    pipDoc.body.style.margin = '0';
+    pipDoc.body.style.overflow = 'hidden';
+
+    const container = pipDoc.createElement('div');
 
     container.id = 'pip-root';
     container.style.cssText = 'margin: 0; padding: 0; overflow: hidden; height: 100vh; width: 100vw;';
-    pipWindow.document.body.appendChild(container);
+    pipDoc.body.appendChild(container);
 }
 
 /**
