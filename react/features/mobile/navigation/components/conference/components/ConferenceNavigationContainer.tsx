@@ -19,6 +19,7 @@ import Conference from '../../../../../conference/components/native/Conference';
 import CarMode from '../../../../../conference/components/native/carmode/CarMode';
 // @ts-ignore
 import { arePollsDisabled } from '../../../../../conference/functions';
+import CustomPanel from '../../../../../custom-panel/components/native/CustomPanel';
 // @ts-ignore
 import SharedDocument from '../../../../../etherpad/components/native/SharedDocument';
 // @ts-ignore
@@ -55,6 +56,7 @@ import {
     carmodeScreenOptions,
     chatScreenOptions,
     conferenceScreenOptions,
+    customPanelScreenOptions,
     gifsMenuOptions,
     inviteScreenOptions,
     liveStreamScreenOptions,
@@ -246,6 +248,13 @@ const ConferenceNavigationContainer = () => {
                     options = {{
                         ...whiteboardScreenOptions,
                         title: t('whiteboard.screenTitle')
+                    }} />
+                <ConferenceStack.Screen
+                    component = { CustomPanel }
+                    name = { screen.conference.customPanel }
+                    options = {{
+                        ...customPanelScreenOptions,
+                        title: t('toolbar.copilot')
                     }} />
             </ConferenceStack.Navigator>
         </NavigationContainer>

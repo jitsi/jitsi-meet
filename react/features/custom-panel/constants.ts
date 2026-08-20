@@ -1,4 +1,9 @@
 /**
+ * Default advisor URL used when none is configured.
+ */
+export const DEFAULT_CUSTOM_PANEL_URL = 'https://advisor.ai.8x8.vc';
+
+/**
  * Default width for the custom panel in pixels.
  */
 export const DEFAULT_CUSTOM_PANEL_WIDTH = 315;

@@ -13,7 +13,7 @@ import { getParticipantById, isPrivateChatEnabled } from '../base/participants/f
 import { IParticipant } from '../base/participants/types';
 import { escapeRegexp } from '../base/util/helpers';
 import { arePollsDisabled } from '../conference/functions.any';
-import { getCustomPanelWidth } from '../custom-panel/functions';
+import { getCustomPanelWidth } from '../custom-panel/functions.any';
 import { isFileSharingEnabled } from '../file-sharing/functions.any';
 import { getParticipantsPaneWidth } from '../participants-pane/functions';
 import { isCCTabEnabled } from '../subtitles/functions.any';
