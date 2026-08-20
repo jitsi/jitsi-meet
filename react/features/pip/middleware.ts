@@ -1,17 +1,19 @@
 import { AnyAction } from 'redux';
 
-import MediaCastSender from '../../../modules/media-cast/MediaCastSender';
-import type { MediaCastSignal } from '../../../modules/media-cast/types';
 import { IReduxState, IStore } from '../app/types';
 import { CONFERENCE_FAILED, CONFERENCE_LEFT, CONFERENCE_WILL_LEAVE } from '../base/conference/actionTypes';
+import { browser } from '../base/lib-jitsi-meet';
+import MediaCastSender from '../base/media-cast/MediaCastSender';
+import type { MediaCastSignal } from '../base/media-cast/types.web';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { isEmbedded } from '../base/util/embedUtils';
 import { getLargeVideoParticipant } from '../large-video/functions';
 
 import {
-    HOST_DOCUMENT_PIP_SIGNAL_RECEIVED,
-    SET_HOST_DOCUMENT_PIP_AVAILABLE,
-    SET_PIP_ACTIVE
+    HOST_DOCUMENT_PIP_CLOSED,
+    HOST_DOCUMENT_PIP_OPENED,
+    HOST_DOCUMENT_PIP_SIGNAL_RECEIVED
 } from './actionTypes';
 import { clearHostDocumentPiPPendingState, exitPiP } from './actions';
 import { getPiPVideoTrack, isDocumentPiPRequestPending, setDocumentPiPRequestPending } from './functions';
@@ -19,6 +21,9 @@ import logger from './logger';
 
 import './subscriber';
 
+/**
+ * Sender associated with the currently open host-owned Document PiP window.
+ */
 let mediaCastSender: MediaCastSender | undefined;
 
 /**
@@ -68,7 +73,7 @@ StateListenerRegistry.register(
     /* selector */ (state: IReduxState) => {
         const pipState = state['features/pip'];
 
-        return pipState?.hostDocumentPiPAvailable === true && pipState.isPiPActive
+        return isEmbedded() && pipState?.isPiPActive
             ? getNativePiPTrack(state)
             : undefined;
     },
@@ -84,19 +89,14 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
     const result = next(action);
 
     switch (action.type) {
-    case SET_PIP_ACTIVE:
-        if (store.getState()['features/pip']?.hostDocumentPiPAvailable === true) {
-            if (action.isPiPActive) {
-                startSender(store);
-            } else {
-                stopSender();
-            }
+    case HOST_DOCUMENT_PIP_OPENED:
+        // Electron stays on Video PiP and never has a host receiver, so no sender is started.
+        if (!browser.isElectron()) {
+            startSender(store);
         }
         break;
-    case SET_HOST_DOCUMENT_PIP_AVAILABLE:
-        if (!action.available) {
-            stopSender();
-        }
+    case HOST_DOCUMENT_PIP_CLOSED:
+        stopSender();
         break;
     case HOST_DOCUMENT_PIP_SIGNAL_RECEIVED:
         mediaCastSender?.handleSignal(action.signal as MediaCastSignal);

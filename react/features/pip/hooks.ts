@@ -5,7 +5,6 @@ import { IReduxState, IStore } from '../app/types';
 import IconUserSVG from '../base/icons/svg/user.svg?raw';
 import { browser } from '../base/lib-jitsi-meet';
 import { IParticipant } from '../base/participants/types';
-import { isEmbedded } from '../base/util/embedUtils';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
 import { hidePiP, openDocumentPiP } from './actions';
@@ -313,7 +312,6 @@ export function useDocumentPiPMediaSession() {
             document.removeEventListener('visibilitychange', onVisibilityChange);
         };
     }, [ dispatch, documentPiPAvailable ]);
-
 }
 
 /**
@@ -322,21 +320,11 @@ export function useDocumentPiPMediaSession() {
  * @returns {Object | undefined} The PiP toggle button or undefined.
  */
 export function usePipToggleButton() {
-    const visible = useSelector((state: IReduxState) => {
-        const isToolBarAllowed = state['features/base/config'].pip?.showToolbarButton ?? true;
+    const visible = useSelector((state: IReduxState) =>
+        state['features/base/config'].pip?.showToolbarButton !== false && shouldShowPiP(state));
 
-        if (isToolBarAllowed === false || !shouldShowPiP(state)) {
-            return false;
-        }
-
-        if (isEmbedded()) {
-            const available = state['features/pip']?.hostDocumentPiPAvailable;
-
-            return available === true || (available === false && Boolean(document.pictureInPictureEnabled));
-        }
-
-        return !browser.isElectron() && (isDocumentPiPSupported() || Boolean(document.pictureInPictureEnabled));
-    });
-
-    return visible ? togglePiP : undefined;
+    return !browser.isElectron() && visible
+        && (isDocumentPiPSupported() || Boolean(document.pictureInPictureEnabled))
+        ? togglePiP
+        : undefined;
 }

@@ -1,39 +1,141 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import MediaCastReceiver from '../../../modules/media-cast/MediaCastReceiver';
-import type { MediaCastSignal, MediaCastSignalHandler } from '../../../modules/media-cast/types';
+import MediaCastReceiver from '../base/media-cast/MediaCastReceiver';
+import type { MediaCastSignal, MediaCastSignalHandler } from '../base/media-cast/types.web';
 
 import AlwaysOnTopView from './AlwaysOnTopView';
 
+/**
+ * External API instance exposed to the dedicated Document PiP window.
+ */
 const { api } = window.alwaysOnTop;
+
+/**
+ * Delay in milliseconds before hiding the PiP toolbar after pointer activity stops.
+ */
 const TOOLBAR_TIMEOUT = 4000;
+
+/**
+ * Layout applied to the React-owned video element without cropping shared content.
+ */
 const VIDEO_STYLE: React.CSSProperties = {
     height: '100%',
     left: 0,
-    objectFit: 'cover',
+    objectFit: 'contain',
     position: 'absolute',
     top: 0,
     width: '100%'
 };
 
+/**
+ * Participant metadata rendered by the shared always-on-top presentation.
+ */
 interface IParticipantState {
+    /** Participant avatar URL. */
     avatarURL: string;
+
+    /** Configured avatar background palette. */
     customAvatarBackgrounds: string[];
+
+    /** Participant display name used for avatar hashing. */
     displayName: string;
+
+    /** Participant display name formatted for presentation. */
     formattedDisplayName: string;
 }
 
-interface IProps {
-    registerSignalHandler: (handler: MediaCastSignalHandler) => () => void;
-    sendSignal: (signal: MediaCastSignal) => void;
-}
+/**
+ * Signals received from the meeting iframe before the media-cast receiver is ready are buffered
+ * here and flushed once the receiver registers itself. The host forwards signals through the
+ * embedder API, which is available from the moment this bundle executes, so buffering must start
+ * at module scope rather than on React mount.
+ */
+const pendingSignals: MediaCastSignal[] = [];
+
+/**
+ * The signal handler the media-cast receiver has registered, if any.
+ */
+let receiverSignalHandler: MediaCastSignalHandler | undefined;
+
+/**
+ * Whether the API signal listener is currently registered.
+ */
+let signalBridgeRegistered = false;
+
+/**
+ * Forwards one media-cast signal to the receiver, buffering it until the receiver is ready.
+ *
+ * @param {Object} payload - Event payload received from the embedder API.
+ * @param {MediaCastSignal} payload.signal - The signal to forward.
+ * @returns {void}
+ */
+const onSignal = ({ signal }: { signal: MediaCastSignal; }) => {
+    if (receiverSignalHandler) {
+        receiverSignalHandler(signal);
+    } else {
+        pendingSignals.push(signal);
+    }
+};
+
+/**
+ * Registers the media-cast receiver's signal handler, flushing any buffered signals, and returns
+ * a function that unregisters it.
+ *
+ * @param {MediaCastSignalHandler} handler - The receiver's signal handler.
+ * @returns {Function} Unregister function.
+ */
+const registerSignalHandler = (handler: MediaCastSignalHandler): (() => void) => {
+    receiverSignalHandler = handler;
+
+    for (const signal of pendingSignals.splice(0)) {
+        handler(signal);
+    }
+
+    return () => {
+        if (receiverSignalHandler === handler) {
+            receiverSignalHandler = undefined;
+        }
+    };
+};
+
+/**
+ * Registers the API listener at most once. It is invoked at module load so signals arriving before
+ * React mounts are buffered, and again on mount to tolerate development-only remounts.
+ *
+ * @returns {void}
+ */
+const registerSignalBridge = () => {
+    if (signalBridgeRegistered) {
+        return;
+    }
+
+    signalBridgeRegistered = true;
+    api.on('_documentPiPSignal', onSignal);
+};
+
+/**
+ * Removes the API listener and clears all receiver and buffered-signal references.
+ *
+ * @returns {void}
+ */
+const cleanupSignalBridge = () => {
+    if (signalBridgeRegistered) {
+        api.removeListener('_documentPiPSignal', onSignal);
+        signalBridgeRegistered = false;
+    }
+
+    receiverSignalHandler = undefined;
+    pendingSignals.length = 0;
+};
+
+registerSignalBridge();
 
 /**
  * Document PiP renderer backed by a media-cast receiver.
  *
  * @returns {ReactElement}
  */
-export default function DocumentPiP({ registerSignalHandler, sendSignal }: IProps) {
+export default function DocumentPiP() {
     const [ participant, setParticipant ] = useState<IParticipantState>({
         avatarURL: '',
         customAvatarBackgrounds: [],
@@ -83,9 +185,12 @@ export default function DocumentPiP({ registerSignalHandler, sendSignal }: IProp
 
     useEffect(() => {
         let active = true;
+
+        registerSignalBridge();
+
         const receiver = new MediaCastReceiver({
             onError: error => console.error('Document PiP receiver failed', error),
-            onSignal: sendSignal,
+            onSignal: signal => api._sendDocumentPiPSignal(signal),
             onTrack: nextTrack => {
                 if (active) {
                     setTrack(nextTrack);
@@ -97,9 +202,10 @@ export default function DocumentPiP({ registerSignalHandler, sendSignal }: IProp
         return () => {
             active = false;
             unregister();
-            receiver.stop();
+            receiver.dispose();
+            cleanupSignalBridge();
         };
-    }, [ registerSignalHandler, sendSignal ]);
+    }, []);
 
     useEffect(() => {
         if (!track) {

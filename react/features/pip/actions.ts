@@ -1,6 +1,7 @@
-import type { MediaCastSignal } from '../../../modules/media-cast/types';
 import { IStore } from '../app/types';
+import { browser } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media/constants';
+import type { MediaCastSignal } from '../base/media-cast/types.web';
 import { isLocalTrackMuted } from '../base/tracks/functions.any';
 import { isEmbedded } from '../base/util/embedUtils';
 import { showErrorNotification } from '../notifications/actions';
@@ -8,8 +9,9 @@ import { handleToggleVideoMuted } from '../toolbox/actions.any';
 import { muteLocal } from '../video-menu/actions.any';
 
 import {
+    HOST_DOCUMENT_PIP_CLOSED,
+    HOST_DOCUMENT_PIP_OPENED,
     HOST_DOCUMENT_PIP_SIGNAL_RECEIVED,
-    SET_HOST_DOCUMENT_PIP_AVAILABLE,
     SET_PIP_ACTIVE,
     SET_PIP_WINDOW
 } from './actionTypes';
@@ -25,41 +27,20 @@ import {
     shouldShowPiP,
 } from './functions';
 import logger from './logger';
-import type { IWebKitPictureInPictureVideoElement } from './types';
+import type { IOpenDocumentPiPOptions, IWebKitPictureInPictureVideoElement } from './types';
 
-interface IOpenDocumentPiPOptions {
-    notifyOnFailure?: boolean;
-}
-
-let hostDocumentPiPShowPending = false;
+/**
+ * Whether the current host-owned request should notify the user if opening fails.
+ */
 let hostDocumentPiPNotifyOnFailure = false;
 
 /**
- * Clears pending host-owned PiP request state.
+ * Clears the pending host-owned PiP request state.
  *
  * @returns {void}
  */
 export function clearHostDocumentPiPPendingState() {
-    hostDocumentPiPShowPending = false;
     hostDocumentPiPNotifyOnFailure = false;
-}
-
-/**
- * Retries an early automatic PiP request after the capability-selected renderer mounts.
- *
- * @returns {Function}
- */
-export function retryHostDocumentPiPShow() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const available = getState()['features/pip']?.hostDocumentPiPAvailable;
-
-        if (!hostDocumentPiPShowPending || available === undefined) {
-            return;
-        }
-
-        hostDocumentPiPShowPending = false;
-        dispatch(showPiP());
-    };
 }
 
 /**
@@ -81,55 +62,16 @@ export function setPiPActive(isPiPActive: boolean) {
 /**
  * Action to store the Document PiP window reference.
  *
- * @param {Window|null} pipWindow - The Document PiP window this feature opened and initialized,
- * or null when none is open.
- * @returns {Object}
+ * @param {Window|null} pipWindow - The open Document PiP window, or null when none is open.
+ * @returns {{
+ *     type: SET_PIP_WINDOW,
+ *     pipWindow: (Window|null)
+ * }}
  */
 export function setPiPWindow(pipWindow: Window | null) {
     return {
         type: SET_PIP_WINDOW,
         pipWindow
-    };
-}
-
-/**
- * Stores the host capability result. Undefined is deliberately represented by
- * the absence of this action so the old-host timeout remains derived state.
- *
- * @param {boolean} available - Whether the embedding page can own Document PiP.
- * @returns {Object}
- */
-export function setHostDocumentPiPAvailable(available: boolean) {
-    return {
-        type: SET_HOST_DOCUMENT_PIP_AVAILABLE,
-        available
-    };
-}
-
-/**
- * Applies a capability response from the embedding page.
- *
- * @param {boolean} available - Whether host-owned Document PiP is available.
- * @returns {Function}
- */
-export function handleHostDocumentPiPCapability(available: boolean) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const pipState = getState()['features/pip'];
-        const wasHostDocumentPiPActive
-            = pipState?.hostDocumentPiPAvailable === true && pipState.isPiPActive;
-        const requestPending = isDocumentPiPRequestPending();
-
-        dispatch(setHostDocumentPiPAvailable(available));
-
-        if (!available && (wasHostDocumentPiPActive || requestPending)) {
-            clearHostDocumentPiPPendingState();
-            setDocumentPiPRequestPending(false);
-            APP.API.notifyDocumentPiPClose();
-
-            if (wasHostDocumentPiPActive) {
-                dispatch(handlePiPLeaveEvent());
-            }
-        }
     };
 }
 
@@ -176,6 +118,7 @@ export function exitPiP() {
         logger.debug('exitPiP called');
         clearHostDocumentPiPPendingState();
 
+        const wasActive = getState()['features/pip']?.isPiPActive;
         const { pipWindow } = getState()['features/pip'];
 
         if (pipWindow) {
@@ -188,10 +131,15 @@ export function exitPiP() {
             }
         }
 
-        if (isEmbedded() && getState()['features/pip']?.hostDocumentPiPAvailable === true) {
+        if (isEmbedded() && isDocumentPiPSupported()) {
             setDocumentPiPRequestPending(false);
             APP.API.notifyDocumentPiPClose();
-            dispatch(handlePiPLeaveEvent());
+
+            // hidePiP() may run while the host has not answered yet, in which case PiP never
+            // opened and emitting pipLeft without a matching pipEntered would be unbalanced.
+            if (wasActive) {
+                dispatch(handlePiPLeaveEvent());
+            }
 
             return;
         }
@@ -310,17 +258,7 @@ export function showPiP() {
         }
 
         if (!isPiPActive) {
-            const embedded = isEmbedded();
-            const hostDocumentPiPAvailable = state['features/pip']?.hostDocumentPiPAvailable;
-
-            if (embedded && hostDocumentPiPAvailable === undefined) {
-                hostDocumentPiPShowPending = true;
-
-                return;
-            }
-
-            if ((embedded && hostDocumentPiPAvailable === true)
-                    || (!embedded && isDocumentPiPSupported())) {
+            if (isDocumentPiPSupported()) {
                 dispatch(openDocumentPiP());
             } else {
                 const videoElement = document.getElementById('pipVideo') as HTMLVideoElement;
@@ -350,7 +288,7 @@ export function hidePiP() {
         const state = getState();
         const isPiPActive = state['features/pip']?.isPiPActive;
         const embeddedRequestPending = isEmbedded()
-            && state['features/pip']?.hostDocumentPiPAvailable === true
+            && isDocumentPiPSupported()
             && isDocumentPiPRequestPending();
 
         logger.debug(`hidePiP called, isPiPActive=${isPiPActive}`);
@@ -385,8 +323,7 @@ export function togglePip() {
             return;
         }
 
-        if ((isEmbedded() && state['features/pip']?.hostDocumentPiPAvailable === true)
-                || (!isEmbedded() && isDocumentPiPSupported())) {
+        if (isDocumentPiPSupported()) {
             dispatch(openDocumentPiP({ notifyOnFailure: true }));
         } else {
             const videoElement = document.getElementById('pipVideo') as HTMLVideoElement;
@@ -415,10 +352,16 @@ export function openDocumentPiP(options: IOpenDocumentPiPOptions = {}) {
             return;
         }
 
+        // Electron must not change and must never ask the host for a Document PiP window; browsers
+        // without the Document PiP API fall back to the Video PiP element instead.
+        if (browser.isElectron() || !isDocumentPiPSupported()) {
+            logger.warn('Document Picture-in-Picture not supported');
+
+            return;
+        }
+
         if (isEmbedded()) {
-            if (state['features/pip']?.hostDocumentPiPAvailable !== true
-                    || state['features/pip']?.isPiPActive
-                    || isDocumentPiPRequestPending()) {
+            if (state['features/pip']?.isPiPActive || isDocumentPiPRequestPending()) {
                 return;
             }
 
@@ -431,7 +374,7 @@ export function openDocumentPiP(options: IOpenDocumentPiPOptions = {}) {
 
         const docPiP = window.documentPictureInPicture;
 
-        if (!isDocumentPiPSupported() || !docPiP) {
+        if (!docPiP) {
             logger.warn('Document Picture-in-Picture not supported');
 
             return;
@@ -512,8 +455,8 @@ export function openDocumentPiP(options: IOpenDocumentPiPOptions = {}) {
 }
 
 /**
- * Applies the host acknowledgement only after the parent-owned document and
- * dedicated Document PiP renderer bundle are ready.
+ * Applies the host acknowledgement once the parent-owned document and the dedicated Document PiP
+ * renderer bundle are ready, and signals the sender to start streaming.
  *
  * @returns {Function}
  */
@@ -524,7 +467,7 @@ export function handleHostDocumentPiPOpened() {
 
         const state = getState();
 
-        if (!shouldShowPiP(state) || state['features/pip']?.hostDocumentPiPAvailable !== true) {
+        if (!shouldShowPiP(state)) {
             APP.API.notifyDocumentPiPClose();
 
             return;
@@ -533,6 +476,8 @@ export function handleHostDocumentPiPOpened() {
         if (!state['features/pip']?.isPiPActive) {
             dispatch(handlePipEnterEvent());
         }
+
+        dispatch({ type: HOST_DOCUMENT_PIP_OPENED });
     };
 }
 
@@ -548,6 +493,7 @@ export function handleHostDocumentPiPOpenFailed() {
         logger.warn('Embedded Document PiP open failed.');
         clearHostDocumentPiPPendingState();
         setDocumentPiPRequestPending(false);
+        dispatch({ type: HOST_DOCUMENT_PIP_CLOSED });
 
         if (notifyOnFailure) {
             dispatch(showErrorNotification({
@@ -569,6 +515,8 @@ export function handleHostDocumentPiPWindowClosed() {
 
         clearHostDocumentPiPPendingState();
         setDocumentPiPRequestPending(false);
+        dispatch({ type: HOST_DOCUMENT_PIP_CLOSED });
+
         if (wasActive) {
             dispatch(handlePiPLeaveEvent());
         }

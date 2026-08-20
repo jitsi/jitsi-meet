@@ -8,15 +8,35 @@ import { DEFAULT_ICON } from '../base/icons/svg/constants';
 
 import Toolbar from './Toolbar';
 
+/**
+ * Props shared by the legacy Always-on-Top and dedicated Document PiP renderers.
+ */
 interface IProps {
+    /** Participant avatar URL. */
     avatarURL: string;
+
+    /** Optional renderer-owned media element. */
     children?: ReactNode;
+
+    /** Configured avatar background palette. */
     customAvatarBackgrounds: string[];
+
+    /** Participant display name used for initials and avatar hashing. */
     displayName: string;
+
+    /** Display name formatted for presentation. */
     formattedDisplayName: string;
+
+    /** Whether media is visible instead of the avatar fallback. */
     isVideoDisplayed: boolean;
+
+    /** Pointer-leave handler used by toolbar visibility management. */
     onMouseOut: (event?: React.MouseEvent) => void;
+
+    /** Pointer-enter handler used by toolbar visibility management. */
     onMouseOver: (event?: React.MouseEvent) => void;
+
+    /** Whether the shared toolbar is visible. */
     toolbarVisible: boolean;
 }
 

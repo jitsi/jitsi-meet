@@ -109,7 +109,6 @@ import {
 } from '../../react/features/participants-pane/actions';
 import { getParticipantsPaneOpen } from '../../react/features/participants-pane/functions';
 import {
-    handleHostDocumentPiPCapability,
     handleHostDocumentPiPOpenFailed,
     handleHostDocumentPiPOpened,
     handleHostDocumentPiPSignal,
@@ -1008,9 +1007,6 @@ function initCommands() {
         },
         'hide-pip': () => {
             APP.store.dispatch(hidePiP());
-        },
-        'document-pip-capability': available => {
-            APP.store.dispatch(handleHostDocumentPiPCapability(Boolean(available)));
         },
         'document-pip-opened': () => {
             APP.store.dispatch(handleHostDocumentPiPOpened());
@@ -2463,7 +2459,7 @@ class API {
     /**
      * Sends one ordered WebRTC signal to the embedding page.
      *
-     * @param {Object} signal - Offer, answer, candidate, or restart signal.
+     * @param {Object} signal - Offer, answer, candidate, mute, restart, or stop signal.
      * @returns {void}
      */
     notifyDocumentPiPSignal(signal) {

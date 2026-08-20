@@ -1,47 +1,31 @@
+/**
+ * Entry point for the Document PiP window renderer.
+ *
+ * Bootstraps the React tree into the PiP window document and unmounts it when
+ * the window is closed or reloaded.
+ */
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { MediaCastSignal, MediaCastSignalHandler } from '../../../modules/media-cast/types';
-
 import DocumentPiP from './DocumentPiP';
 
-const { api } = window.alwaysOnTop;
-const pendingSignals: MediaCastSignal[] = [];
-let receiverSignalHandler: MediaCastSignalHandler | undefined;
-
-const onSignal = ({ signal }: { signal: MediaCastSignal; }) => {
-    if (receiverSignalHandler) {
-        receiverSignalHandler(signal);
-    } else {
-        pendingSignals.push(signal);
-    }
-};
-const registerSignalHandler = (handler: MediaCastSignalHandler) => {
-    receiverSignalHandler = handler;
-
-    for (const signal of pendingSignals.splice(0)) {
-        handler(signal);
-    }
-
-    return () => {
-        if (receiverSignalHandler === handler) {
-            receiverSignalHandler = undefined;
-        }
-    };
-};
-const sendSignal = (signal: MediaCastSignal) => api._sendDocumentPiPSignal(signal);
-
-api.on('_documentPiPSignal', onSignal);
-
+/**
+ * React root attached to the Document PiP window document.
+ */
 const root = createRoot(document.getElementById('react') as HTMLElement);
 
-root.render(
-    <DocumentPiP
-        registerSignalHandler = { registerSignalHandler }
-        sendSignal = { sendSignal } />
-);
+root.render(<DocumentPiP />);
 
+/**
+ * Whether the renderer has already been cleaned up.
+ */
 let cleanedUp = false;
+
+/**
+ * Unmounts the Document PiP renderer before the PiP window is closed or reloaded.
+ *
+ * @returns {void}
+ */
 const cleanup = () => {
     if (cleanedUp) {
         return;
@@ -50,9 +34,6 @@ const cleanup = () => {
     cleanedUp = true;
     window.removeEventListener('beforeunload', cleanup);
     window.removeEventListener('pagehide', cleanup);
-    api.removeListener('_documentPiPSignal', onSignal);
-    receiverSignalHandler = undefined;
-    pendingSignals.length = 0;
     root.unmount();
 };
 

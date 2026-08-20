@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
-import { IReduxState, IStore } from '../../app/types';
+import { browser } from '../../base/lib-jitsi-meet';
 import { isEmbedded } from '../../base/util/embedUtils';
-import { retryHostDocumentPiPShow, setHostDocumentPiPAvailable } from '../actions';
 import { isDocumentPiPSupported, shouldShowPiP } from '../functions';
 import { useDocumentPiPMediaSession } from '../hooks';
 
@@ -17,11 +16,6 @@ import { DocumentPiPContent } from './web/DocumentPiPContent';
 const IS_DOCUMENT_PIP_SUPPORTED = isDocumentPiPSupported();
 
 /**
- * The timeout in ms before an unanswered host capability handshake is treated as unavailable.
- */
-const HOST_DOCUMENT_PIP_CAPABILITY_TIMEOUT = 10000;
-
-/**
  * Wrapper component that selects the appropriate PiP implementation.
  * Uses Document PiP API when available, falls back to Video PiP.
  * Embedded meetings defer to the host-owned Document PiP window.
@@ -31,42 +25,17 @@ const HOST_DOCUMENT_PIP_CAPABILITY_TIMEOUT = 10000;
 function PiP() {
     useDocumentPiPMediaSession();
 
-    const dispatch: IStore['dispatch'] = useDispatch();
-    const embedded = isEmbedded();
     const showPiP = useSelector(shouldShowPiP);
-    const hostDocumentPiPAvailable = useSelector(
-        (state: IReduxState) => state['features/pip']?.hostDocumentPiPAvailable);
-
-    useEffect(() => {
-        if (!embedded) {
-            return;
-        }
-
-        if (hostDocumentPiPAvailable !== undefined) {
-            dispatch(retryHostDocumentPiPShow());
-
-            return;
-        }
-
-        if (!showPiP) {
-            return;
-        }
-
-        const timeout = window.setTimeout(() => {
-            dispatch(setHostDocumentPiPAvailable(false));
-        }, HOST_DOCUMENT_PIP_CAPABILITY_TIMEOUT);
-
-        return () => window.clearTimeout(timeout);
-    }, [ dispatch, embedded, hostDocumentPiPAvailable, showPiP ]);
-
-    if (embedded) {
-        // The host owns the Document PiP document. The iframe only renders the existing
-        // Video PiP element when PiP remains enabled and capability negotiation selects the fallback.
-        return showPiP && hostDocumentPiPAvailable === false ? <PiPVideoElement /> : null;
-    }
 
     if (!showPiP) {
         return null;
+    }
+
+    if (isEmbedded()) {
+        // The host owns the Document PiP document. Electron stays on Video PiP and browsers
+        // without the Document PiP API fall back to the existing Video PiP element; everywhere
+        // else the embedded meeting renders nothing here.
+        return browser.isElectron() || !IS_DOCUMENT_PIP_SUPPORTED ? <PiPVideoElement /> : null;
     }
 
     if (IS_DOCUMENT_PIP_SUPPORTED) {

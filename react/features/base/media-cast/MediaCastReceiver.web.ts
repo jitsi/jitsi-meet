@@ -1,37 +1,78 @@
-import type { MediaCastSignal, MediaCastSignalHandler } from './types';
-
-interface IMediaCastReceiverOptions {
-    onError?: (error: unknown) => void;
-    onSignal: MediaCastSignalHandler;
-    onTrack: (track: MediaStreamTrack | null) => void;
-    pcConfig?: RTCConfiguration;
-}
-
-interface IReceiverSession {
-    answerSent: boolean;
-    generation: number;
-    peerConnection: RTCPeerConnection;
-    pendingCandidates: RTCIceCandidateInit[];
-    restartSent: boolean;
-}
+import {
+    type IMediaCastReceiverOptions,
+    type IReceiverSession,
+    type MediaCastSignal,
+    type MediaCastSignalHandler,
+    isMediaCastSignal
+} from './types.web';
 
 /**
- * Receives one video track over a plain RTCPeerConnection.
+ * The subset of {@link MediaCastSignal} that carries a new SDP offer.
+ */
+type OfferSignal = Extract<MediaCastSignal, { kind: 'offer'; }>;
+
+/**
+ * Receives one media track over a plain RTCPeerConnection.
+ *
+ * The receiver owns the connection lifecycle while the caller owns the received track:
+ * the current track is surfaced through the onTrack handler and released on close. Session
+ * state is versioned by a generation counter so signals from superseded sessions are ignored.
  */
 export default class MediaCastReceiver {
-    private _closed = false;
+    /**
+     * Whether the receiver has been permanently disposed and must ignore further signals.
+     */
+    private _disposed = false;
+
+    /**
+     * The media track received by the current session, if any.
+     */
     private _currentTrack: MediaStreamTrack | null = null;
+
+    /**
+     * The generation of the most recently negotiated session.
+     */
     private _generation = 0;
+
+    /**
+     * Whether the sender is currently transmitting a null (muted) track.
+     */
     private _muted = false;
+
+    /**
+     * Handler invoked when an asynchronous receiving error occurs.
+     */
     private _onError: (error: unknown) => void;
+
+    /**
+     * Handler used to forward outgoing signals to the remote peer.
+     */
     private _onSignal: MediaCastSignalHandler;
+
+    /**
+     * Handler invoked whenever the received media track changes.
+     */
     private _onTrack: (track: MediaStreamTrack | null) => void;
+
+    /**
+     * Optional RTCPeerConnection configuration applied to new connections.
+     */
     private _pcConfig?: RTCConfiguration;
+
+    /**
+     * The live incoming session, if any.
+     */
     private _session?: IReceiverSession;
+
+    /**
+     * Promise chain enforcing transport ordering of incoming signals.
+     */
     private _signalQueue = Promise.resolve();
 
     /**
      * Creates a media-cast receiver.
+     *
+     * @param {IMediaCastReceiverOptions} options - Configuration for the receiver.
      */
     constructor({
         onError = () => undefined,
@@ -52,28 +93,57 @@ export default class MediaCastReceiver {
      * @returns {void}
      */
     handleSignal(signal: MediaCastSignal): void {
+        if (!isMediaCastSignal(signal)) {
+            this._onError(new TypeError('Malformed media-cast signal received.'));
+
+            return;
+        }
+
+        const generation = signal.generation;
+
         this._signalQueue = this._signalQueue
             .then(() => this._processSignal(signal))
             .catch(error => {
                 this._onError(error);
-                this._requestRestart(signal.generation);
+                this._requestRestart(generation);
             });
     }
 
     /**
-     * Closes the receiver and releases its remote track reference.
+     * Stops the current session and resets generation tracking so this receiver can accept
+     * a new sender whose first offer starts again at generation one.
      *
      * @returns {void}
      */
     stop(): void {
-        if (this._closed) {
+        if (this._disposed) {
             return;
         }
 
-        this._closed = true;
+        this._generation = 0;
         this._closeSession();
     }
 
+    /**
+     * Permanently disposes the receiver and ignores queued or future signals.
+     *
+     * @returns {void}
+     */
+    dispose(): void {
+        if (this._disposed) {
+            return;
+        }
+
+        this._disposed = true;
+        this._generation = 0;
+        this._closeSession();
+    }
+
+    /**
+     * Closes the current session's RTCPeerConnection and releases the received track.
+     *
+     * @returns {void}
+     */
     private _closeSession(): void {
         const session = this._session;
 
@@ -92,8 +162,14 @@ export default class MediaCastReceiver {
         session.peerConnection.close();
     }
 
+    /**
+     * Applies one incoming signal to the current session, or handles a new offer.
+     *
+     * @param {MediaCastSignal} signal - Signal received from the remote peer.
+     * @returns {Promise<void>}
+     */
     private async _processSignal(signal: MediaCastSignal): Promise<void> {
-        if (this._closed) {
+        if (this._disposed) {
             return;
         }
 
@@ -122,7 +198,13 @@ export default class MediaCastReceiver {
         }
     }
 
-    private async _handleOffer(signal: Extract<MediaCastSignal, { kind: 'offer'; }>): Promise<void> {
+    /**
+     * Negotiates an answer for an incoming offer, replacing any previous session.
+     *
+     * @param {OfferSignal} signal - The received offer.
+     * @returns {Promise<void>}
+     */
+    private async _handleOffer(signal: OfferSignal): Promise<void> {
         if (signal.generation <= this._generation) {
             return;
         }
@@ -142,7 +224,7 @@ export default class MediaCastReceiver {
         this._session = session;
 
         peerConnection.ontrack = ({ track }) => {
-            if (this._session === session && track.kind === 'video') {
+            if (this._session === session) {
                 this._currentTrack = track;
                 this._onTrack(this._muted ? null : track);
             }
@@ -201,6 +283,12 @@ export default class MediaCastReceiver {
         }
     }
 
+    /**
+     * Requests an ICE restart from the sender unless one is already pending for this session.
+     *
+     * @param {number} generation - The generation that is allowed to request a restart.
+     * @returns {void}
+     */
     private _requestRestart(generation: number): void {
         const session = this._session;
 

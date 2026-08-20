@@ -2,13 +2,13 @@ import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import EventEmitter from 'events';
 
 import { urlObjectToString } from '../../../react/features/base/util/uri';
+import DocumentPiPController from '../../../react/features/external-api/DocumentPiPController.web';
 import { isPiPEnabled } from '../../../react/features/pip/external-api.shared';
 import {
     PostMessageTransportBackend,
     Transport
 } from '../../transport';
 
-import DocumentPiPController from './documentPiP';
 import {
     getAvailableDevices,
     getCurrentDevices,
@@ -350,7 +350,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._onStageParticipant = undefined;
         this._iAmvisitor = undefined;
         this._pipConfig = configOverwrite?.pip;
-        this._documentPiP = undefined;
+        this._documentPiPController = undefined;
         this._setupListeners();
         id++;
     }
@@ -577,8 +577,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 this._onload?.();
 
                 // A reloaded meeting must not keep a stale PiP window alive.
-                this._documentPiP?.close();
-                this._sendPiPCapability();
+                this._documentPiPController?.close();
                 break;
             }
             case 'video-conference-joined': {
@@ -675,11 +674,11 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 break;
             case '_document-pip-requested':
                 this._getDocumentPiPController().open()
-                    .catch(() => undefined);
+                    .catch(error => console.error('Document PiP open failed:', error));
 
                 return true;
             case '_document-pip-close':
-                this._documentPiP?.close();
+                this._documentPiPController?.close();
 
                 return true;
             case 'breakout-rooms-updated':
@@ -767,32 +766,22 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
-     * Sends the current host capability after ready and runtime config changes.
-     *
-     * @returns {void}
-     */
-    _sendPiPCapability() {
-        this._sendPiPCommand(
-            'capability',
-            isPiPEnabled(this._pipConfig) && DocumentPiPController.isSupported());
-    }
-
-    /**
      * Returns this API instance's lazily created Document PiP controller.
      *
      * @returns {DocumentPiPController}
      */
     _getDocumentPiPController() {
-        if (!this._documentPiP) {
-            this._documentPiP = new DocumentPiPController({
+        if (!this._documentPiPController) {
+            this._documentPiPController = new DocumentPiPController({
                 api: this,
                 frame: this._frame,
-                getWindowOptions: () => this._pipConfig?.documentPiP?.windowOptions,
+                transport: this._transport,
+                windowOptions: this._pipConfig?.documentPiP?.windowOptions,
                 meetingUrl: this._url
             });
         }
 
-        return this._documentPiP;
+        return this._documentPiPController;
     }
 
     /**
@@ -802,21 +791,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     _sendDocumentPiPSignal(signal) {
-        this._sendPiPCommand('signal', signal);
-    }
-
-    /**
-     * Sends an internal command to the embedded meeting iframe.
-     *
-     * @param {string} name - Command name.
-     * @param {any} [data] - Optional command payload.
-     * @returns {void}
-     */
-    _sendPiPCommand(name, data) {
-        this._transport.sendEvent({
-            data: data === undefined ? [] : [ data ],
-            name: `document-pip-${name}`
-        });
+        this._getDocumentPiPController().sendSignal(signal);
     }
 
     /**
@@ -1035,7 +1010,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      */
     dispose() {
         this.emit('_willDispose');
-        this._documentPiP?.close();
+        this._documentPiPController?.close();
         this._transport.dispose();
         this.removeAllListeners();
         this._teardownIntersectionObserver();
@@ -1098,10 +1073,6 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             data: args,
             name: commands[name]
         });
-
-        if (name === 'overwriteConfig' && args[0]?.pip !== undefined) {
-            this._sendPiPCapability();
-        }
 
         // Handle PiP state after command is sent so iframe config is updated.
         if (pipTransition === 'enabled') {
@@ -1757,7 +1728,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     hidePiP() {
-        this._documentPiP?.close();
+        this._documentPiPController?.close();
         this.executeCommand('hidePiP');
     }
 
