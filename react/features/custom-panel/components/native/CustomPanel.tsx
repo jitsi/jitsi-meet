@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import { View, useColorScheme } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useSelector } from 'react-redux';
 
@@ -9,28 +9,10 @@ import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 import { buildCustomPanelUri, getCustomPanelUrl } from '../../functions.native';
 
-const styles = StyleSheet.create({
-    backDrop: {
-        flex: 1
-    },
-    loadingWrapper: {
-        alignItems: 'center',
-        flex: 1,
-        justifyContent: 'center'
-    },
-    webView: {
-        flex: 1
-    }
-});
+import styles from './styles';
 
 /**
- * The Copilot screen — renders the advisor web app in a WebView.
- *
- * The WebView is created on open and destroyed on close / meeting-end, like the
- * web iframe. Persistent storage stays ON (`incognito={false}` +
- * `domStorageEnabled`) so the advisor restores from its own localStorage on
- * reopen. Closing is handled by navigation (the header close button); there is
- * no WebView↔native messaging.
+ * Renders the advisor web app in a WebView, themed to the OS setting and loaded only with a JWT.
  *
  * @returns {JSX.Element | null}
  */
@@ -38,27 +20,29 @@ const CustomPanel = (): JSX.Element | null => {
     const url = useSelector(getCustomPanelUrl);
     const jwt = useSelector((state: IReduxState) => state['features/base/jwt'].jwt);
     const meetingId = useSelector((state: IReduxState) => getCurrentConference(state)?.getMeetingUniqueId());
-    const uri = buildCustomPanelUri(url, jwt, meetingId);
+    const theme = useColorScheme() === 'dark' ? 'dark' : 'light';
+    const uri = buildCustomPanelUri(url, jwt, meetingId, theme);
+    const backgroundStyle = theme === 'dark' ? styles.darkBackground : styles.lightBackground;
 
     const renderLoading = useCallback(() => (
-        <View style = { styles.loadingWrapper as ViewStyle }>
+        <View style = { [ styles.loadingWrapper, backgroundStyle ] }>
             <LoadingIndicator size = 'large' />
         </View>
-    ), []);
+    ), [ backgroundStyle ]);
 
     if (!uri) {
         return null;
     }
 
     return (
-        <JitsiScreen style = { styles.backDrop }>
+        <JitsiScreen style = { [ styles.backDrop, backgroundStyle ] }>
             <WebView
                 domStorageEnabled = { true }
                 incognito = { false }
                 renderLoading = { renderLoading }
                 source = {{ uri }}
                 startInLoadingState = { true }
-                style = { styles.webView as ViewStyle }
+                style = { [ styles.webView, backgroundStyle ] }
                 webviewDebuggingEnabled = { true } />
         </JitsiScreen>
     );
