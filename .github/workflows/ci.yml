@@ -31,6 +31,9 @@ jobs:
     - name: Check lang files are formatted correctly
       if: steps.lang-files.outputs.all
       run: npm run lint:lang
+    - name: Check lang files for translation errors
+      if: steps.lang-files.outputs.all
+      run: npm run lint:i18n
     - name: Check if the git repository is clean
       run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
     - run: npm run lint:ci && npm run tsc:ci
