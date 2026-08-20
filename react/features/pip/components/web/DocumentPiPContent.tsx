@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import GlobalStyles from '../../../base/ui/components/GlobalStyles.web';
-import { useDocumentPiPMediaSession } from '../../hooks';
 
 import { DocumentPiPView } from './DocumentPiPView';
 
@@ -16,8 +15,6 @@ import { DocumentPiPView } from './DocumentPiPView';
  * @returns {React.ReactElement | null}
  */
 export function DocumentPiPContent() {
-    useDocumentPiPMediaSession();
-
     const pipWindow = useSelector((state: IReduxState) => state['features/pip'].pipWindow);
     const pipCache = useMemo(() => {
         if (!pipWindow || pipWindow.closed) {

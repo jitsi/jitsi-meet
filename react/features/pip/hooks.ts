@@ -257,8 +257,13 @@ export function useDocumentPiPMediaSession() {
         [ dispatch ]
     );
 
+    const pipEnabled = useSelector(shouldShowPiP);
+    const documentPiPAvailable = pipEnabled && isDocumentPiPSupported();
+
     useEffect(() => {
-        if (!isDocumentPiPSupported()) {
+        if (!documentPiPAvailable
+                || !('mediaSession' in navigator)
+                || typeof navigator.mediaSession?.setActionHandler !== 'function') {
             return;
         }
 
@@ -286,10 +291,10 @@ export function useDocumentPiPMediaSession() {
         return () => {
             navigator.mediaSession.setActionHandler('enterpictureinpicture', null);
         };
-    }, [ openDocumentPip ]);
+    }, [ documentPiPAvailable, openDocumentPip ]);
 
     useEffect(() => {
-        if (!isDocumentPiPSupported()) {
+        if (!documentPiPAvailable) {
             return;
         }
 
@@ -306,7 +311,7 @@ export function useDocumentPiPMediaSession() {
         return () => {
             document.removeEventListener('visibilitychange', onVisibilityChange);
         };
-    }, [ dispatch ]);
+    }, [ dispatch, documentPiPAvailable ]);
 }
 
 /**
@@ -318,7 +323,8 @@ export function usePipToggleButton() {
     const visible = useSelector((state: IReduxState) =>
         state['features/base/config'].pip?.showToolbarButton !== false && shouldShowPiP(state));
 
-    return !browser.isElectron() && visible && (isDocumentPiPSupported() || Boolean(document.pictureInPictureEnabled))
+    return !browser.isElectron() && visible
+        && (isDocumentPiPSupported() || Boolean(document.pictureInPictureEnabled))
         ? togglePiP
         : undefined;
 }

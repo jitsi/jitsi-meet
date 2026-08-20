@@ -1,11 +1,20 @@
 import { IStore } from '../app/types';
+import { browser } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media/constants';
+import type { MediaCastSignal } from '../base/media-cast/types.web';
 import { isLocalTrackMuted } from '../base/tracks/functions.any';
+import { isEmbedded } from '../base/util/embedUtils';
 import { showErrorNotification } from '../notifications/actions';
 import { handleToggleVideoMuted } from '../toolbox/actions.any';
 import { muteLocal } from '../video-menu/actions.any';
 
-import { SET_PIP_ACTIVE, SET_PIP_WINDOW } from './actionTypes';
+import {
+    HOST_DOCUMENT_PIP_CLOSED,
+    HOST_DOCUMENT_PIP_OPENED,
+    HOST_DOCUMENT_PIP_SIGNAL_RECEIVED,
+    SET_PIP_ACTIVE,
+    SET_PIP_WINDOW
+} from './actionTypes';
 import { DEFAULT_DOCUMENT_PIP_HEIGHT, DEFAULT_DOCUMENT_PIP_WIDTH } from './constants';
 import {
     cleanupMediaSessionHandlers,
@@ -19,6 +28,20 @@ import {
 } from './functions';
 import logger from './logger';
 import type { IOpenDocumentPiPOptions, IWebKitPictureInPictureVideoElement } from './types';
+
+/**
+ * Whether the current host-owned request should notify the user if opening fails.
+ */
+let hostDocumentPiPNotifyOnFailure = false;
+
+/**
+ * Clears the pending host-owned PiP request state.
+ *
+ * @returns {void}
+ */
+export function clearHostDocumentPiPPendingState() {
+    hostDocumentPiPNotifyOnFailure = false;
+}
 
 /**
  * Action to set Picture-in-Picture active state.
@@ -93,7 +116,9 @@ export function toggleVideoFromPiP() {
 export function exitPiP() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         logger.debug('exitPiP called');
+        clearHostDocumentPiPPendingState();
 
+        const wasActive = getState()['features/pip']?.isPiPActive;
         const { pipWindow } = getState()['features/pip'];
 
         if (pipWindow) {
@@ -104,6 +129,19 @@ export function exitPiP() {
             if (!pipWindow.closed) {
                 pipWindow.close();
             }
+        }
+
+        if (isEmbedded() && isDocumentPiPSupported()) {
+            setDocumentPiPRequestPending(false);
+            APP.API.notifyDocumentPiPClose();
+
+            // hidePiP() may run while the host has not answered yet, in which case PiP never
+            // opened and emitting pipLeft without a matching pipEntered would be unbalanced.
+            if (wasActive) {
+                dispatch(handlePiPLeaveEvent());
+            }
+
+            return;
         }
 
         const webKitPiPVideo = document.getElementById('pipVideo') as IWebKitPictureInPictureVideoElement | null;
@@ -245,12 +283,17 @@ export function showPiP() {
  */
 export function hidePiP() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        clearHostDocumentPiPPendingState();
+
         const state = getState();
         const isPiPActive = state['features/pip']?.isPiPActive;
+        const embeddedRequestPending = isEmbedded()
+            && isDocumentPiPSupported()
+            && isDocumentPiPRequestPending();
 
         logger.debug(`hidePiP called, isPiPActive=${isPiPActive}`);
 
-        if (isPiPActive) {
+        if (isPiPActive || embeddedRequestPending) {
             dispatch(exitPiP());
         }
     };
@@ -294,6 +337,8 @@ export function togglePip() {
 
 /**
  * Opens Document PiP from the toolbar or an automatic MediaSession request.
+ * Embedded meetings only request the host-owned window; the host config is the
+ * single source of truth for window options.
  *
  * @param {IOpenDocumentPiPOptions} options - Options controlling user-facing failure handling.
  * @returns {Function}
@@ -307,9 +352,29 @@ export function openDocumentPiP(options: IOpenDocumentPiPOptions = {}) {
             return;
         }
 
+        // Electron must not change and must never ask the host for a Document PiP window; browsers
+        // without the Document PiP API fall back to the Video PiP element instead.
+        if (browser.isElectron() || !isDocumentPiPSupported()) {
+            logger.warn('Document Picture-in-Picture not supported');
+
+            return;
+        }
+
+        if (isEmbedded()) {
+            if (state['features/pip']?.isPiPActive || isDocumentPiPRequestPending()) {
+                return;
+            }
+
+            setDocumentPiPRequestPending(true);
+            hostDocumentPiPNotifyOnFailure = Boolean(options.notifyOnFailure);
+            APP.API.notifyDocumentPiPRequested();
+
+            return;
+        }
+
         const docPiP = window.documentPictureInPicture;
 
-        if (!isDocumentPiPSupported() || !docPiP) {
+        if (!docPiP) {
             logger.warn('Document Picture-in-Picture not supported');
 
             return;
@@ -386,5 +451,87 @@ export function openDocumentPiP(options: IOpenDocumentPiPOptions = {}) {
             setDocumentPiPRequestPending(false);
             handleError(error);
         }
+    };
+}
+
+/**
+ * Applies the host acknowledgement once the parent-owned document and the dedicated Document PiP
+ * renderer bundle are ready, and signals the sender to start streaming.
+ *
+ * @returns {Function}
+ */
+export function handleHostDocumentPiPOpened() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        clearHostDocumentPiPPendingState();
+        setDocumentPiPRequestPending(false);
+
+        const state = getState();
+
+        if (!shouldShowPiP(state)) {
+            APP.API.notifyDocumentPiPClose();
+
+            return;
+        }
+
+        if (!state['features/pip']?.isPiPActive) {
+            dispatch(handlePipEnterEvent());
+        }
+
+        dispatch({ type: HOST_DOCUMENT_PIP_OPENED });
+    };
+}
+
+/**
+ * Clears the request guard after the host rejects requestWindow or resource setup.
+ *
+ * @returns {Function}
+ */
+export function handleHostDocumentPiPOpenFailed() {
+    return (dispatch: IStore['dispatch']) => {
+        const notifyOnFailure = hostDocumentPiPNotifyOnFailure;
+
+        logger.warn('Embedded Document PiP open failed.');
+        clearHostDocumentPiPPendingState();
+        setDocumentPiPRequestPending(false);
+        dispatch({ type: HOST_DOCUMENT_PIP_CLOSED });
+
+        if (notifyOnFailure) {
+            dispatch(showErrorNotification({
+                descriptionKey: 'notify.pipOpenFailedDescription',
+                titleKey: 'notify.pipOpenFailedTitle'
+            }));
+        }
+    };
+}
+
+/**
+ * Handles the authoritative close acknowledgement from the embedding page.
+ *
+ * @returns {Function}
+ */
+export function handleHostDocumentPiPWindowClosed() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const wasActive = getState()['features/pip']?.isPiPActive;
+
+        clearHostDocumentPiPPendingState();
+        setDocumentPiPRequestPending(false);
+        dispatch({ type: HOST_DOCUMENT_PIP_CLOSED });
+
+        if (wasActive) {
+            dispatch(handlePiPLeaveEvent());
+        }
+    };
+}
+
+/**
+ * Carries the one internal signaling union into the ordered sender queue.
+ *
+ * @param {MediaCastSignal} signal - WebRTC signal from the embedding page.
+ * @returns {Object}
+ */
+export function handleHostDocumentPiPSignal(signal: MediaCastSignal) {
+    return {
+        type: HOST_DOCUMENT_PIP_SIGNAL_RECEIVED,
+        signal
     };
 }
