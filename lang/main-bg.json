@@ -796,7 +796,7 @@
         "audioUnmuteBlockedTitle": "Включването на микрофона е блокирано!",
         "chatMessages": "Съобщения от чата",
         "connectedOneMember": "{{name}} влезе в срещата",
-        "connectedThreePlusMembers": "{{name}} и още {{count}} влязоха в срещата",
+        "connectedThreePlusMembers": "{{name}} и много други се присъединиха към срещата",
         "connectedTwoMembers": "{{first}} и {{second}} влязоха в срещата",
         "connectionFailed": "Връзката се провали. Моля, опитайте отново по-късно!",
         "dataChannelClosed": "Качеството на видеото може да бъде нарушено",
@@ -867,7 +867,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) е премахната от друг потребител",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) създадена от друг потребител",
         "raiseHandAction": "Вдигни ръка",
-        "raisedHand": "{{name}} иска думата.",
+        "raisedHand": "Иска да участва.",
         "raisedHands": "{{participantName}} и още {{raisedHands}} души",
         "reactionSounds": "Изключи звуците",
         "reactionSoundsForAll": "Изключи звуците за всички",
@@ -968,8 +968,7 @@
             "pollQuestion": "Въпрос за анкета",
             "questionPlaceholder": "Задай въпрос",
             "removeOption": "Премахни опция",
-            "save": "Запази",
-            "send": "Изпрати"
+            "save": "Запази"
         },
         "errors": {
             "notUniqueOption": "Опциите трябва да са уникални"
@@ -1473,7 +1472,7 @@
         "silence": "Тишина",
         "speakerStats": "Статистика за говорителите",
         "startScreenSharing": "Започни споделяне на екрана",
-        "startSubtitles": "Пускане на субтитри",
+        "startSubtitles": "Субтитри • {{language}}",
         "stopAudioSharing": "Спри споделянето на аудио",
         "stopScreenSharing": "Спиране споделяне на екрана",
         "stopSharedVideo": "Спиране на видео",
