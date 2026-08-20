@@ -1657,10 +1657,12 @@
     "virtualBackground": {
         "accessibilityLabel": {
             "currentBackground": "Current background: {{background}}",
-            "selectBackground": "Select a background"
+            "selectBackground": "Select a background",
+            "selectARFilter": "Select AR filter"
         },
         "addBackground": "Add background",
         "apply": "Apply",
+        "arFilters": "AR Filters",
         "backgroundEffectError": "Failed to apply background effect.",
         "backgroundLimitReached": "Custom background limit reached",
         "blur": "Blur",

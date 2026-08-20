@@ -14,6 +14,7 @@ import Spinner from '../../base/ui/components/web/Spinner';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import {
+    AR_FILTERS,
     BACKGROUNDS_LIMIT,
     IMAGES,
     type Image,
@@ -83,6 +84,13 @@ const useStyles = makeStyles()(theme => {
             width: '100%',
             display: 'flex',
             flexDirection: 'column'
+        },
+
+        arLabel: {
+            ...theme.typography.labelBold,
+            color: theme.palette.text01,
+            marginTop: theme.spacing(3),
+            marginBottom: theme.spacing(1)
         },
 
         thumbnailContainer: {
@@ -235,6 +243,7 @@ function VirtualBackgrounds({
             backgroundEffectEnabled: true,
             backgroundType: VIRTUAL_BACKGROUND_TYPE.BLUR,
             blurValue: 25,
+            selectedARFilterId: undefined,
             selectedThumbnail: 'blur'
         });
         logger.info('"Blur" option set for virtual background preview!');
@@ -253,6 +262,7 @@ function VirtualBackgrounds({
             backgroundEffectEnabled: true,
             backgroundType: VIRTUAL_BACKGROUND_TYPE.BLUR,
             blurValue: 8,
+            selectedARFilterId: undefined,
             selectedThumbnail: 'slight-blur'
         });
         logger.info('"Slight-blur" option set for virtual background preview!');
@@ -269,6 +279,7 @@ function VirtualBackgrounds({
     const removeBackground = useCallback(async () => {
         onOptionsChange({
             backgroundEffectEnabled: false,
+            selectedARFilterId: undefined,
             selectedThumbnail: 'none'
         });
         logger.info('"None" option set for virtual background preview!');
@@ -282,6 +293,38 @@ function VirtualBackgrounds({
         }
     }, [ removeBackground ]);
 
+    const setARFilter = useCallback(async e => {
+        const filterId = e.currentTarget.getAttribute('data-filterid');
+
+        onOptionsChange({
+            ...options,
+            selectedARFilterId: filterId
+        });
+        logger.info(`AR filter "${filterId}" set for virtual background preview`);
+    }, [ onOptionsChange, options ]);
+
+    const removeARFilter = useCallback(async () => {
+        onOptionsChange({
+            ...options,
+            selectedARFilterId: undefined
+        });
+        logger.info('AR filter removed');
+    }, [ onOptionsChange, options ]);
+
+    const setARFilterKeyPress = useCallback(e => {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            setARFilter(e);
+        }
+    }, [ setARFilter ]);
+
+    const removeARFilterKeyPress = useCallback(e => {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            removeARFilter();
+        }
+    }, [ removeARFilter ]);
+
     const setUploadedImageBackground = useCallback(async e => {
         const imageId = e.currentTarget.getAttribute('data-imageid');
         const image = storedImages.find(img => img.id === imageId);
@@ -290,6 +333,7 @@ function VirtualBackgrounds({
             onOptionsChange({
                 backgroundEffectEnabled: true,
                 backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
+                selectedARFilterId: undefined,
                 selectedThumbnail: image.id,
                 virtualSource: image.src
             });
@@ -309,6 +353,7 @@ function VirtualBackgrounds({
                     backgroundEffectEnabled: true,
                     backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
                     selectedThumbnail: image.id,
+                    selectedARFilterId: undefined,
                     virtualSource: url
                 });
                 logger.info('Image set for virtual background preview!');
@@ -484,6 +529,48 @@ function VirtualBackgrounds({
                                     src = { IconCloseLarge }
                                     tabIndex = { 0 } />
                             </div>
+                        ))}
+                    </div>
+                    <div className = { classes.arLabel }>
+                        { t('virtualBackground.arFilters') }
+                    </div>
+                    <div
+                        aria-label = { t('virtualBackground.accessibilityLabel.selectARFilter') }
+                        className = { classes.thumbnailContainer }
+                        role = 'radiogroup'
+                        tabIndex = { -1 } >
+                        <Tooltip
+                            content = { t('virtualBackground.none') }
+                            position = { 'top' } >
+                            <div
+                                aria-checked = { !options?.selectedARFilterId }
+                                aria-label = { t('virtualBackground.none') }
+                                className = { cx(classes.thumbnail, classes.noneThumbnail,
+                                    !options?.selectedARFilterId && classes.selectedThumbnail) }
+                                onClick = { removeARFilter }
+                                onKeyPress = { removeARFilterKeyPress }
+                                role = 'radio'
+                                tabIndex = { 0 }>
+                                {t('virtualBackground.none')}
+                            </div>
+                        </Tooltip>
+                        {AR_FILTERS.map(filter => (
+                            <Tooltip
+                                content = { (filter.tooltip && t(`virtualBackground.${filter.tooltip}`)) ?? '' }
+                                key = { filter.id }
+                                position = { 'top' }>
+                                <img
+                                    alt = { filter.tooltip ? t(`virtualBackground.${filter.tooltip}`) : filter.id }
+                                    aria-checked = { options?.selectedARFilterId === filter.id }
+                                    className = { cx(classes.thumbnail,
+                                        options?.selectedARFilterId === filter.id && classes.selectedThumbnail) }
+                                    data-filterid = { filter.id }
+                                    onClick = { setARFilter }
+                                    onKeyPress = { setARFilterKeyPress }
+                                    role = 'radio'
+                                    src = { filter.src }
+                                    tabIndex = { 0 } />
+                            </Tooltip>
                         ))}
                     </div>
                 </div>

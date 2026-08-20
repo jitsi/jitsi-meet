@@ -1,3 +1,4 @@
+import { IARFilterConfig } from '../stream-effects/virtual-background/JitsiStreamAREffect';
 /**
  * An enumeration of the different virtual background types.
  *
@@ -58,4 +59,20 @@ export const IMAGES: Array<Image> = [
         id: '7',
         src: 'images/virtual-background/background-7.jpg'
     }
+];
+
+
+export type ARFilterOption = IARFilterConfig & { src: string; };
+
+export const AR_FILTERS: Array<ARFilterOption> = [
+    // {
+    //     tooltip: // tooltip
+    //     id: // id for the model
+    //     modelFile: // 3D model file
+    //     anchorLandmark: // https://storage.googleapis.com/mediapipe-assets/documentation/mediapipe_face_landmark_fullsize.png
+    //     scaleMultiplier: // multiplies scale
+    //     depthOffset: // to move in z-axis, positive moves -z,
+    //     src: // thumbnail file name,
+    //     verticalOffset: // To move vertically, Positive moves upward
+    // },
 ];
