@@ -113,7 +113,8 @@ export function setVirtualBackground(options?: IVirtualBackground) {
         virtualSource: options?.virtualSource,
         blurValue: options?.blurValue,
         backgroundType: options?.backgroundType,
-        selectedThumbnail: options?.selectedThumbnail
+        selectedThumbnail: options?.selectedThumbnail,
+        selectedARFilterId: options?.selectedARFilterId
     };
 }
 

@@ -3,7 +3,6 @@
 import { getBaseUrl } from '../../base/util/helpers';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-import { AR_FILTERS } from '../../virtual-background/constants';
 import { timeout } from '../../virtual-background/functions';
 import logger from '../../virtual-background/logger';
 import { IVirtualBackground } from '../../virtual-background/reducer';
@@ -11,6 +10,7 @@ import { IVirtualBackground } from '../../virtual-background/reducer';
 import { BackendType, detectDeviceTier } from './DeviceTierDetector';
 import { IARFilterConfig } from './JitsiStreamAREffect';
 import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect';
+import { AR_FILTERS } from './arFilters';
 // @ts-ignore
 import createTFLiteModule from './vendor/tflite/tflite';
 // @ts-ignore
