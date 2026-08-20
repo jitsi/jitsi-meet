@@ -124,7 +124,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
         const pendingEdits = { ...state.pendingEdits };
 
-        if (pendingEdit && action.messageId) {
+        if (pendingEdit && pendingEditValid && action.messageId) {
             delete pendingEdits[action.messageId];
         }
 
