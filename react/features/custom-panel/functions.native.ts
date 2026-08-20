@@ -23,30 +23,26 @@ export function getCustomPanelUrl(state: IReduxState): string {
 }
 
 /**
- * Builds the advisor URL with token + meeting query params. Pure function.
- * Mirrors the web iframe contract: `?token=<jwt>&meeting=<meetingId>`.
+ * Builds the advisor URL. Returns '' without a url or jwt (no token, no access).
  *
  * @param {string} [url] - The base advisor URL.
  * @param {string} [jwt] - The meeting JWT.
  * @param {string} [meetingId] - The meeting unique id.
- * @returns {string} The full URI, or '' when no url is provided.
+ * @param {string} [theme] - The color scheme to render ('dark' or 'light').
+ * @returns {string} The full URI, or '' when no url or no jwt is provided.
  */
-export function buildCustomPanelUri(url?: string, jwt?: string, meetingId?: string): string {
-    if (!url) {
+export function buildCustomPanelUri(url?: string, jwt?: string, meetingId?: string, theme?: string): string {
+    if (!url || !jwt) {
         return '';
     }
 
-    const params: string[] = [];
+    const params: string[] = [ `token=${encodeURIComponent(jwt)}` ];
 
-    if (jwt) {
-        params.push(`token=${encodeURIComponent(jwt)}`);
-    }
     if (meetingId) {
         params.push(`meeting=${encodeURIComponent(meetingId)}`);
     }
-
-    if (!params.length) {
-        return url;
+    if (theme) {
+        params.push(`theme=${encodeURIComponent(theme)}`);
     }
 
     const separator = url.includes('?') ? '&' : '?';
