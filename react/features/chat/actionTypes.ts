@@ -75,6 +75,17 @@ export const OPEN_CHAT = 'OPEN_CHAT';
 export const SEND_MESSAGE = 'SEND_MESSAGE';
 
 /**
+ * The type of the action which signals sending an edit for an existing chat message.
+ *
+ * {
+ *     type: SEND_MESSAGE_EDIT,
+ *     messageId: string,
+ *     message: string
+ * }
+ */
+export const SEND_MESSAGE_EDIT = 'SEND_MESSAGE_EDIT';
+
+/**
  * The type of the action which signals a reaction to a message.
  *
  * {

@@ -14,6 +14,7 @@ import {
     OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SEND_MESSAGE,
+    SEND_MESSAGE_EDIT,
     SEND_REACTION,
     SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
@@ -152,6 +153,25 @@ export function sendReaction(reaction: string, messageId: string, receiverId?: s
         reaction,
         messageId,
         receiverId
+    };
+}
+
+/**
+ * Sends an edit for an existing chat message to everyone in the conference.
+ *
+ * @param {string} messageId - The ID of the message being edited.
+ * @param {string} message - The updated chat message.
+ * @returns {{
+ *     type: SEND_MESSAGE_EDIT,
+ *     messageId: string,
+ *     message: string
+ * }}
+ */
+export function sendMessageEdit(messageId: string, message: string) {
+    return {
+        type: SEND_MESSAGE_EDIT,
+        messageId,
+        message
     };
 }
 
