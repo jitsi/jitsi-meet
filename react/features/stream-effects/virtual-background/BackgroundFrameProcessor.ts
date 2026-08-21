@@ -1,9 +1,11 @@
 import { IVirtualBackgroundAdvancedConfig } from '../../base/config/configType';
+import { getBaseUrl } from '../../base/util/helpers';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../virtual-background/constants';
 import logger from '../../virtual-background/logger';
 import { IVirtualBackground } from '../../virtual-background/reducer';
 
 import { BackendType } from './DeviceTierDetector';
+import { IARFilterConfig, JitsiStreamAREffect } from './JitsiStreamAREffect';
 import WorkerSegmentationBackend from './backend/WorkerSegmentationBackend';
 import { ICompositor } from './compositor/ICompositor';
 
@@ -53,10 +55,16 @@ const TARGET_BLUR_CAMERA_PX = 20;
  */
 const TARGET_BLUR_CAMERA_PX_TFLITE = 32;
 
+const AR_BITMAP_WIDTH = 480;
+const AR_BITMAP_HEIGHT = 270;
+
 /**
  * Options for constructing a BackgroundFrameProcessor.
  */
 interface IProcessorOptions {
+    arFilter?: IARFilterConfig;
+    arModelPath?: string;
+    arWasmBase?: string;
     backend: WorkerSegmentationBackend;
     compositor: ICompositor;
     vbConfig?: IVirtualBackgroundAdvancedConfig;
@@ -80,12 +88,18 @@ interface IProcessorOptions {
 const FAILURE_THRESHOLD = 30;
 
 export default class BackgroundFrameProcessor {
+    _arEffect: JitsiStreamAREffect | null = null;
+    _arEnabled = false;
+    _arModelPath?: string;
+    _arWasmBase?: string;
     _backend: WorkerSegmentationBackend;
     _backgroundCanvas: HTMLCanvasElement;
     _backgroundCtx: CanvasRenderingContext2D | null = null;
     _benchmarkAccumTotal = 0;
     _benchmarkFrameCount = 0;
+    _cachedFaceLandmarks: number[][] | null = null;
     _cachedMaskData: ImageData | null = null;
+    _cachedTransformationMatrix: number[] | null = null;
     _compositor: ICompositor;
     _consecutiveFailures = 0;
     _edgeHigh: number;
@@ -117,6 +131,8 @@ export default class BackgroundFrameProcessor {
         this._compositor = opts.compositor;
         this._vbConfig = opts.vbConfig;
         this._options = opts.virtualBackground;
+        this._arModelPath = opts.arModelPath;
+        this._arWasmBase = opts.arWasmBase;
 
         this._temporalBlendRatio = opts.vbConfig?.temporalBlendRatio
             ?? DEFAULT_TEMPORAL_BLEND_RATIO;
@@ -138,6 +154,15 @@ export default class BackgroundFrameProcessor {
         }
 
         this._backgroundCanvas = document.createElement('canvas');
+
+        this._arEnabled = Boolean(opts.arFilter) && !isTFLite;
+
+        if (this._arEnabled && opts.arFilter) {
+            const baseUrl = getBaseUrl();
+
+            this._arEffect = new JitsiStreamAREffect(baseUrl, AR_BITMAP_WIDTH, AR_BITMAP_HEIGHT);
+            this._arEffect.loadFilter(opts.arFilter);
+        }
     }
 
     /**
@@ -150,7 +175,13 @@ export default class BackgroundFrameProcessor {
         if (this._isReady) {
             return;
         }
-        await this._backend.init();
+        await this._backend.init(
+            this._arEnabled
+                ? {
+                    enable: true, modelPath: this._arModelPath ?? '', wasmBase: this._arWasmBase ?? ''
+                }
+                : undefined
+        );
         this._isReady = true;
         logger.debug('[BackgroundFrameProcessor] Backend init complete');
     }
@@ -188,15 +219,28 @@ export default class BackgroundFrameProcessor {
                     resizeWidth: segWidth
                 });
 
-                const fresh = await this._backend.infer(bitmap);
+                let arBitmap: ImageBitmap | null = null;
 
-                if (fresh) {
-                    this._cachedMaskData = this._applyMaskEMA(fresh);
+                if (this._arEnabled) {
+                    arBitmap = await createImageBitmap(source, {
+                        resizeHeight: AR_BITMAP_HEIGHT,
+                        resizeQuality: 'medium',
+                        resizeWidth: AR_BITMAP_WIDTH
+                    });
+                }
+
+                const result = await this._backend.infer(bitmap, arBitmap);
+
+                if (result.mask) {
+                    this._cachedMaskData = this._applyMaskEMA(result.mask);
                     this._consecutiveFailures = 0;
                 } else {
                     this._consecutiveFailures++;
                     this._checkFailureThreshold();
                 }
+
+                this._cachedFaceLandmarks = result.faceLandmarks;
+                this._cachedTransformationMatrix = result.facialTransformationMatrix;
             } catch (err) {
                 logger.error('[BackgroundFrameProcessor] Inference error', err);
                 this._consecutiveFailures++;
@@ -229,15 +273,20 @@ export default class BackgroundFrameProcessor {
             ?? (source as HTMLVideoElement).height;
 
         if (this._backgroundCanvas.width !== srcWidth
-                || this._backgroundCanvas.height !== srcHeight) {
+            || this._backgroundCanvas.height !== srcHeight) {
             this._backgroundCanvas.width = srcWidth;
             this._backgroundCanvas.height = srcHeight;
             this._backgroundCtx = this._backgroundCanvas.getContext('2d');
             this._compositor.resize(srcWidth, srcHeight);
+            this._arEffect?.resize(srcWidth, srcHeight);
         }
 
         // Prepare background canvas (blur or image).
         this._prepareBackground(source);
+
+        if (this._arEnabled && this._arEffect) {
+            this._arEffect.update(this._cachedFaceLandmarks, this._cachedTransformationMatrix);
+        }
 
         // Composite. The TFLite tier gets a wider feathering radius because its 256x144 mask
         // upscales by ~5x to the output and benefits from extra softening at the person boundary.
@@ -254,10 +303,18 @@ export default class BackgroundFrameProcessor {
             cssBlurFilter,
             edgeHigh: this._edgeHigh,
             edgeLow: this._edgeLow,
+            arOverlayCanvas: this._arEnabled ? this._arEffect?.getCanvas() ?? null : null,
             maskBlurRadius
         });
 
         return this._compositor.outputCanvas;
+    }
+
+    setARFilter(filter: IARFilterConfig): void {
+        if (!this._arEnabled || !this._arEffect) {
+            return;
+        }
+        this._arEffect.loadFilter(filter);
     }
 
     /**
@@ -266,8 +323,12 @@ export default class BackgroundFrameProcessor {
      * @returns {void}
      */
     dispose(): void {
+        this._arEffect?.dispose();
+        this._arEffect = null;
         this._compositor.dispose();
         this._cachedMaskData = null;
+        this._cachedFaceLandmarks = null;
+        this._cachedTransformationMatrix = null;
         this._consecutiveFailures = 0;
         this._firstMaskFrame = true;
         this._maskAccumF32 = null;
