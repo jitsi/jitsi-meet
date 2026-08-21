@@ -185,27 +185,30 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
                     audioOutput: undefined,
                     videoInput: undefined
                 };
-                const currentlyUsedDeviceIds = new Set([
-                    getAudioOutputDeviceId(),
-                    settings.micDeviceId ?? getUserSelectedMicDeviceId(state),
-                    settings.cameraDeviceId ?? getUserSelectedCameraDeviceId(state)
-                ]);
+
+                const audioOutputDeviceId = getAudioOutputDeviceId();
+                const audioInputDeviceId = settings.micDeviceId ?? getUserSelectedMicDeviceId(state);
+                const videoInputDeviceId = settings.cameraDeviceId ?? getUserSelectedCameraDeviceId(state);
 
                 devices.forEach(device => {
                     const { deviceId, kind } = device;
 
-                    if (currentlyUsedDeviceIds.has(deviceId)) {
-                        switch (kind) {
+                    switch (kind) {
                         case 'audioinput':
-                            deviceDescriptions.audioInput = device;
+                            if(deviceId === audioInputDeviceId) {
+                                deviceDescriptions.audioInput = device;
+                            }
                             break;
                         case 'audiooutput':
-                            deviceDescriptions.audioOutput = device;
+                            if(deviceId === audioOutputDeviceId) {
+                                deviceDescriptions.audioOutput = device;
+                            }
                             break;
                         case 'videoinput':
-                            deviceDescriptions.videoInput = device;
+                            if(deviceId === videoInputDeviceId) {
+                                deviceDescriptions.videoInput = device;
+                            }
                             break;
-                        }
                     }
                 });
 
