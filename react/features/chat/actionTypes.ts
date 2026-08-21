@@ -54,6 +54,18 @@ export const CLOSE_CHAT = 'CLOSE_CHAT';
 export const EDIT_MESSAGE = 'EDIT_MESSAGE';
 
 /**
+ * The type of the action which signals to moderate a message
+ * 
+ * {
+ *     type: MODERATE_MESSAGE,
+ *     messageId: string,
+ *     moderatedBy: string,
+ *     reason: string  
+ * }
+ */
+export const MODERATE_MESSAGE = 'MODERATE_MESSAGE';
+
+/**
  * The type of the action which signals to display the chat panel.
  *
  * {
@@ -73,6 +85,17 @@ export const OPEN_CHAT = 'OPEN_CHAT';
  * }
  */
 export const SEND_MESSAGE = 'SEND_MESSAGE';
+
+/**
+ * The type of the action which signals to moderates a chat message.
+ * 
+ * {
+ *     type: SEND_MESSAGE_MODERATION,
+ *     message: IMessage,
+ *     reason: string
+ * }
+ */
+export const SEND_MESSAGE_MODERATION = 'SEND_MESSAGE_MODERATION';
 
 /**
  * The type of the action which signals a reaction to a message.
