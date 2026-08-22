@@ -104,6 +104,7 @@ local extdisco_occpuant_check = module:get_option_boolean('extdisco_occpuant_che
 -- metadata message API. These are either server-controlled fields or keys whose
 -- values are assembled and injected by the server at broadcast time.
 local blocked_metadata_keys = module:get_option_set('room_metadata_blocked_keys', {
+    'agents',
     'allownersEnabled',
     'asyncTranscription',
     'audioTranslationAvailable',
@@ -200,16 +201,27 @@ function send_metadata(occupant, room, json_msg, include_services)
             -- broadcast to regular clients.
             metadata_to_send.audioTranslationRequests = room._data.audioTranslationRequests;
 
-            -- Neutral, default-open extension point: an external module may contribute
-            -- additional jicofo-only metadata fields by returning a table from this
-            -- event -- for instance per-room translator connect headers. Fired inside
+            -- Neutral, default-open extension point: other modules may contribute
+            -- additional jicofo-only metadata fields -- for instance per-room
+            -- translator connect headers, or voice-agent connect config. Fired inside
             -- the admin branch, so injected fields reach only jicofo and are never
             -- broadcast to client occupants. No handler means nothing is added; this
             -- module holds no token/entitlement logic of its own.
-            local admin_extra = main_muc_module and main_muc_module:fire_event(
-                'jitsi-room-metadata-admin-extra', { room = room; });
-            if type(admin_extra) == 'table' then
-                for k, v in pairs(admin_extra) do
+            --
+            -- Contributors should write into event.extra and return nil, so multiple
+            -- modules can contribute (a non-nil return stops the handler chain).
+            -- Returning a table is still honored for backward compatibility with
+            -- single-contributor deployments.
+            if main_muc_module then
+                local admin_extra_event = { room = room; extra = {}; };
+                local admin_extra = main_muc_module:fire_event(
+                    'jitsi-room-metadata-admin-extra', admin_extra_event);
+                if type(admin_extra) == 'table' then
+                    for k, v in pairs(admin_extra) do
+                        metadata_to_send[k] = v;
+                    end
+                end
+                for k, v in pairs(admin_extra_event.extra) do
                     metadata_to_send[k] = v;
                 end
             end

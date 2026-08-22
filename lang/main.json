@@ -1784,6 +1784,11 @@
         "title": "Secure, fully featured, and completely free video conferencing",
         "upcomingMeetings": "Your upcoming meetings"
     },
+    "voiceAgents": {
+        "allow": "Allow audio",
+        "consentDescription": "The agent can hear the meeting. Do you want to hear the agent's audio?",
+        "joinedTitle": "{{name}} joined as an AI agent"
+    },
     "whiteboard": {
         "accessibilityLabel": {
             "heading": "Whiteboard"
