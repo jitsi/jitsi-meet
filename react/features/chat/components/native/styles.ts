@@ -81,6 +81,10 @@ export default {
         underlayColor: 'transparent'
     },
 
+    activeMatchMessageBubble: {
+        backgroundColor: BaseTheme.palette.warning02
+    },
+
     chatMessageHighlight: {
         backgroundColor: BaseTheme.palette.action02,
         color: BaseTheme.palette.text01
@@ -93,8 +97,10 @@ export default {
 
     searchBarContainer: {
         alignItems: 'center',
-        backgroundColor: BaseTheme.palette.ui02,
+        backgroundColor: BaseTheme.palette.ui03,
+        borderColor: BaseTheme.palette.ui03,
         borderRadius: BaseTheme.shape.borderRadius,
+        borderWidth: 2,
         flexDirection: 'row',
         height: 40,
         marginBottom: BaseTheme.spacing[1],
@@ -111,8 +117,14 @@ export default {
 
     searchBarNavButton: {
         alignItems: 'center',
+        alignSelf: 'stretch',
         justifyContent: 'center',
         padding: BaseTheme.spacing[1]
+    },
+
+    searchClearButton: {
+        height: 40,
+        top: 0
     },
 
     searchInputContainer: {
@@ -121,7 +133,10 @@ export default {
     },
 
     searchInput: {
-        height: 40
+        backgroundColor: 'transparent',
+        borderWidth: 0,
+        height: 40,
+        paddingHorizontal: 0
     },
 
     /**

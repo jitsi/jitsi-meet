@@ -36,7 +36,7 @@ class ChatMessage extends Component<IChatMessageProps> {
      * @inheritdoc
      */
     override render() {
-        const { gifEnabled, message, knocking } = this.props;
+        const { gifEnabled, message, knocking, isActiveMatch } = this.props;
         const localMessage = message.messageType === MESSAGE_TYPE_LOCAL;
         const { privateMessage, lobbyChat } = message;
 
@@ -75,6 +75,10 @@ class ChatMessage extends Component<IChatMessageProps> {
 
         if (lobbyChat && !knocking) {
             messageBubbleStyle.push(styles.lobbyMessageBubble);
+        }
+
+        if (isActiveMatch) {
+            messageBubbleStyle.push(styles.activeMatchMessageBubble);
         }
 
         const messageText = getMessageText(this.props.message);
@@ -151,7 +155,7 @@ class ChatMessage extends Component<IChatMessageProps> {
         const { highlightQuery, isActiveMatch } = this.props;
 
         if (messageText.length >= CHAR_LIMIT) {
-            if (highlightQuery) {
+            if (highlightQuery && !isActiveMatch) {
                 return (
                     <Text
                         selectable = { true }
@@ -176,7 +180,7 @@ class ChatMessage extends Component<IChatMessageProps> {
             <Linkify
                 linkStyle = { styles.chatLink }
                 style = { styles.chatMessage }>
-                { highlightQuery
+                { highlightQuery && !isActiveMatch
                     ? this._renderHighlightedSegments(processedText, highlightQuery, isActiveMatch)
                     : processedText }
             </Linkify>

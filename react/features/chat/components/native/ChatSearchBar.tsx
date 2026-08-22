@@ -61,6 +61,7 @@ const ChatSearchBar = ({ t }: IProps) => {
             <Input
                 clearable = { true }
                 customStyles = {{
+                    clearButton: styles.searchClearButton,
                     container: styles.searchInputContainer,
                     input: styles.searchInput
                 }}
