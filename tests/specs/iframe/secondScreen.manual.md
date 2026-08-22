@@ -51,8 +51,8 @@ regardless of permissions. Stubbing `getScreenDetails` would test the stub.
   answered yet. Reset it under the site settings padlock, or use a fresh profile;
   the permission is sticky per origin, so a second run of A2 tests nothing.
 
-Cases marked **[#17666]** need the in-app triggers branch. The rest work against
-master.
+Cases marked **[#17666]** cover behaviour the in-app triggers added. That PR
+merged on 19 August, so every case here runs against master.
 
 ---
 
@@ -62,8 +62,7 @@ master.
 are therefore **[#17666]** cases whatever else they test. Only a real click carries
 the user activation Chromium requires before it will raise the permission prompt;
 over the API the call rejects at once and the case never reaches what it was
-written for. On master the prompt is unreachable altogether, since there are no
-in-app triggers there.
+written for.
 
 | # | Steps | Expected |
 |---|---|---|
@@ -71,7 +70,7 @@ in-app triggers there.
 | A2 | On an ungranted profile, click an in-app trigger and press **Allow** promptly | Prompt appears, window opens and moves onto the external display. One `secondScreenSourceChanged`. |
 | A3 | Same as A2, but wait ~30s before pressing Allow | The window still opens and places correctly. It must not be blocked by the popup blocker, and no error is reported. This is the transient-activation case: the open runs before anything is awaited. **[#17666]** The window renders its content on the meeting's own screen while the prompt is up, and jumps to the external display on Allow; it is not blank while waiting. |
 | A4 | Same as A2, but press **Block** | `secondScreenError` with `window-management-unavailable`, and nothing after it. No window is left on screen, and no `secondScreenClosed` follows the error: reporting the error alone is master's contract for a failed open, and an embedder that reopens on `secondScreenClosed` would loop on the extra event. **[#17666]** |
-| A5 | Same as A2, but dismiss nothing and leave the prompt open | **[#17666]** The window renders on the meeting's own screen meanwhile, so it looks like it worked; after 30s `secondScreenError` with `window-management-unavailable`, the window closes, and again no `secondScreenClosed` follows. The case does not exist on master, which has no in-app trigger to raise a prompt from; the bound is what keeps an unanswered prompt from parking the open forever. |
+| A5 | Same as A2, but dismiss nothing and leave the prompt open | **[#17666]** The window renders on the meeting's own screen meanwhile, so it looks like it worked; after 30s `secondScreenError` with `window-management-unavailable`, the window closes, and again no `secondScreenClosed` follows. The bound is what keeps an unanswered prompt from parking the open forever. |
 | A5b | During A5, while the prompt is still up, click the trigger again to cancel | **[#17666]** The window closes at once and `secondScreenClosed` is reported. It must not stay up until the prompt is answered, and the trigger must not stay inverted. |
 | A5c | During A5, while the prompt is still up, send the same id again | **[#17666]** The existing window re-sources in place. It must not open a second window and must not return silently. |
 | A6 | Repeat A1 in Firefox or Safari | `secondScreenError` with `second-screen-disabled`. No window. |
