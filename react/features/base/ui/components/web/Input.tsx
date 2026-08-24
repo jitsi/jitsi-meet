@@ -26,7 +26,6 @@ interface IProps extends IInputProps {
      * info (label, error) so that screen reader users don't get lost.
      */
     id: string;
-    invalidReason?: 'grammar' | 'spelling' | boolean;
 
     /**
      * Optional class name applied to the actual input/textarea element (as opposed to
@@ -35,6 +34,7 @@ interface IProps extends IInputProps {
      * own background/border so only one visual box shows.
      */
     inputClassName?: string;
+    invalidReason?: 'grammar' | 'spelling' | boolean;
     maxLength?: number;
     maxRows?: number;
     maxValue?: number;
