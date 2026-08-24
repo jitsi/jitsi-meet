@@ -1,21 +1,6 @@
 import { setTestProperties } from '../../helpers/TestProperties';
 import { expectations } from '../../helpers/expectations';
 import { ensureOneParticipant } from '../../helpers/participants';
-import RecordingTranscriptionDialog from '../../pageobjects/RecordingTranscriptionDialog';
-
-/**
- * Turns both toggles off so the selection matches the idle (nothing-running) state. This makes the
- * OK button assertions deterministic regardless of whether the deployment pre-checks transcription
- * via autoTranscribeOnRecord (which JaaS forces server-side).
- */
-async function clearToggles(dialog: RecordingTranscriptionDialog): Promise<void> {
-    if (await dialog.isRecordingToggleChecked()) {
-        await dialog.clickRecordingToggle();
-    }
-    if (await dialog.isTranscriptionToggleChecked()) {
-        await dialog.clickTranscriptionToggle();
-    }
-}
 
 setTestProperties(__filename, {
     description: 'Unified Recording & Transcription dialog structure',
@@ -53,98 +38,104 @@ describe('Recording & Transcription dialog', () => {
         await dialog.cancel();
     });
 
-    it('OK button reads "Start recording" when nothing is running', async () => {
+    it('both sections offer Start buttons when nothing is running', async () => {
         const p1 = ctx.p1;
         const dialog = p1.getRecordingTranscriptionDialog();
 
         await p1.getToolbar().clickRecordingButton();
         await dialog.waitForDisplay();
 
-        // Nothing is running yet, so the primary action starts a service rather than applying changes.
-        expect(await dialog.getOkButtonText()).toBe('Start recording');
+        expect(await dialog.hasStartRecordingButton()).toBe(true);
+        expect(await dialog.hasStartTranscriptionButton()).toBe(true);
+        expect(await dialog.hasStopRecordingButton()).toBe(false);
+        expect(await dialog.hasStopTranscriptionButton()).toBe(false);
 
         await dialog.cancel();
     });
 
-    it('dialog contains recording and transcription toggles', async () => {
+    it('footer shows only "Start both" when nothing is running', async () => {
         const p1 = ctx.p1;
         const dialog = p1.getRecordingTranscriptionDialog();
 
         await p1.getToolbar().clickRecordingButton();
         await dialog.waitForDisplay();
 
-        expect(await dialog.hasRecordingToggle()).toBe(true);
-        expect(await dialog.hasTranscriptionToggle()).toBe(true);
+        expect(await dialog.hasStartBothButton()).toBe(true);
+        expect(await dialog.hasStopBothButton()).toBe(false);
 
         await dialog.cancel();
     });
 
-    it('OK button is disabled when no service is selected', async () => {
+    it('start buttons are enabled when a recording service is available', async () => {
         const p1 = ctx.p1;
         const dialog = p1.getRecordingTranscriptionDialog();
 
         await p1.getToolbar().clickRecordingButton();
         await dialog.waitForDisplay();
 
-        // With nothing running and both toggles off, the selection matches the running state —
-        // there is nothing to apply.
-        await clearToggles(dialog);
-        expect(await dialog.isOkButtonEnabled()).toBe(false);
+        expect(await dialog.isStartRecordingEnabled()).toBe(true);
+        expect(await dialog.isStartBothEnabled()).toBe(true);
 
         await dialog.cancel();
     });
 
-    it('OK button enables after toggling recording on', async () => {
+    it('options accordions are collapsed by default', async () => {
         const p1 = ctx.p1;
         const dialog = p1.getRecordingTranscriptionDialog();
 
         await p1.getToolbar().clickRecordingButton();
         await dialog.waitForDisplay();
 
-        await clearToggles(dialog);
-        expect(await dialog.isOkButtonEnabled()).toBe(false);
+        expect(await dialog.hasRecordingOptions()).toBe(true);
+        expect(await dialog.hasTranscriptionOptions()).toBe(true);
+        expect(await dialog.isRecordingOptionsExpanded()).toBe(false);
+        expect(await dialog.isTranscriptionOptionsExpanded()).toBe(false);
 
-        await dialog.clickRecordingToggle();
-
-        expect(await dialog.isRecordingToggleChecked()).toBe(true);
-        expect(await dialog.isOkButtonEnabled()).toBe(true);
+        // The dropdowns are only rendered once the accordions are expanded.
+        expect(await dialog.hasServiceSelect()).toBe(false);
+        expect(await dialog.hasLanguageSelect()).toBe(false);
 
         await dialog.cancel();
     });
 
-    it('OK button enables after toggling transcription on', async () => {
+    it('expanding recording options reveals the storage service dropdown', async () => {
         const p1 = ctx.p1;
         const dialog = p1.getRecordingTranscriptionDialog();
 
         await p1.getToolbar().clickRecordingButton();
         await dialog.waitForDisplay();
 
-        await clearToggles(dialog);
-        expect(await dialog.isOkButtonEnabled()).toBe(false);
+        await dialog.toggleRecordingOptions();
+        expect(await dialog.isRecordingOptionsExpanded()).toBe(true);
+        expect(await dialog.hasServiceSelect()).toBe(true);
 
-        await dialog.clickTranscriptionToggle();
+        // A service is preselected — the trigger shows its name.
+        expect((await dialog.getSelectedService()).length).toBeGreaterThan(0);
 
-        expect(await dialog.isTranscriptionToggleChecked()).toBe(true);
-        expect(await dialog.isOkButtonEnabled()).toBe(true);
+        // Collapsing hides the options again.
+        await dialog.toggleRecordingOptions();
+        expect(await dialog.isRecordingOptionsExpanded()).toBe(false);
+        expect(await dialog.hasServiceSelect()).toBe(false);
 
         await dialog.cancel();
     });
 
-    it('toggling and then toggling back disables OK again', async () => {
+    it('expanding transcription options allows changing the language', async () => {
         const p1 = ctx.p1;
         const dialog = p1.getRecordingTranscriptionDialog();
 
         await p1.getToolbar().clickRecordingButton();
         await dialog.waitForDisplay();
 
-        await clearToggles(dialog);
+        await dialog.toggleTranscriptionOptions();
+        expect(await dialog.isTranscriptionOptionsExpanded()).toBe(true);
+        expect(await dialog.hasLanguageSelect()).toBe(true);
 
-        await dialog.clickRecordingToggle();
-        expect(await dialog.isOkButtonEnabled()).toBe(true);
+        await dialog.selectLanguage('French');
+        expect(await dialog.getSelectedLanguage()).toBe('French');
 
-        // Toggle back to original state — should no longer differ from running state.
-        await dialog.clickRecordingToggle();
-        expect(await dialog.isOkButtonEnabled()).toBe(false);
+        await dialog.selectLanguage('English');
+        expect(await dialog.getSelectedLanguage()).toBe('English');
 
         await dialog.cancel();
     });

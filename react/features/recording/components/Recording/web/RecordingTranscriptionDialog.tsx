@@ -2,12 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../../app/types';
+import { hideDialog } from '../../../../base/dialog/actions';
 import { translate } from '../../../../base/i18n/functions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
 import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture/actions';
 import { isScreenshotCaptureEnabled } from '../../../../screenshot-capture/functions';
-import { RECORDING_TYPES } from '../../../constants';
 import AbstractStartRecordingDialog, {
+    IProps,
     mapStateToProps as abstractMapStateToProps
 } from '../AbstractStartRecordingDialog';
 
@@ -15,43 +16,91 @@ import StartRecordingDialogContent from './StartRecordingDialogContent';
 
 
 /**
- * React Component for getting confirmation to start a file recording session in
- * progress.
+ * React Component for the recording & transcription dialog. Each section
+ * (audio & video recording, transcription) has its own start/stop button
+ * which applies the action immediately and closes the dialog.
  *
  * @augments Component
  */
 class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
 
     /**
-     * Returns true when the primary button should be disabled.
+     * Initializes a new {@code RecordingTranscriptionDialog} instance.
      *
-     * Disabled when nothing has changed (no-op), or when starting recording
-     * but the recording service selection is invalid.
-     *
-     * @returns {boolean}
+     * @inheritdoc
      */
-    isStartRecordingDisabled() {
-        if (!this._isChanged()) {
-            return true;
-        }
+    constructor(props: IProps) {
+        super(props);
 
-        const { _recordingRunning } = this.props;
-        const { isTokenValid, selectedRecordingService, shouldRecordAudioAndVideo } = this.state;
-        const startingRecording = !_recordingRunning && shouldRecordAudioAndVideo;
+        this._onStartRecordingPress = this._onStartRecordingPress.bind(this);
+        this._onStopRecordingPress = this._onStopRecordingPress.bind(this);
+        this._onStartTranscriptionPress = this._onStartTranscriptionPress.bind(this);
+        this._onStopTranscriptionPress = this._onStopTranscriptionPress.bind(this);
+        this._onStartBothPress = this._onStartBothPress.bind(this);
+        this._onStopBothPress = this._onStopBothPress.bind(this);
+    }
 
-        if (!startingRecording) {
-            return false;
-        }
+    /**
+     * Closes the dialog.
+     *
+     * @returns {void}
+     */
+    _closeDialog() {
+        this.props.dispatch(hideDialog());
+    }
 
-        if (selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) {
-            return false;
-        } else if (selectedRecordingService === RECORDING_TYPES.DROPBOX) {
-            return !isTokenValid;
-        } else if (selectedRecordingService === RECORDING_TYPES.LOCAL) {
-            return false;
-        }
+    /**
+     * Starts the recording and closes the dialog.
+     *
+     * @returns {void}
+     */
+    _onStartRecordingPress() {
+        this._onStartRecording() && this._closeDialog();
+    }
 
-        return true;
+    /**
+     * Stops the recording and closes the dialog.
+     *
+     * @returns {void}
+     */
+    _onStopRecordingPress() {
+        this._onStopRecording() && this._closeDialog();
+    }
+
+    /**
+     * Starts the transcription and closes the dialog.
+     *
+     * @returns {void}
+     */
+    _onStartTranscriptionPress() {
+        this._onStartTranscription() && this._closeDialog();
+    }
+
+    /**
+     * Stops the transcription and closes the dialog.
+     *
+     * @returns {void}
+     */
+    _onStopTranscriptionPress() {
+        this._onStopTranscription() && this._closeDialog();
+    }
+
+    /**
+     * Starts the services which are not running and closes the dialog.
+     *
+     * @returns {void}
+     */
+    _onStartBothPress() {
+        this._onStartBoth() && this._closeDialog();
+    }
+
+    /**
+     * Stops the running services and closes the dialog.
+     *
+     * @returns {void}
+     */
+    _onStopBothPress() {
+        this._onStopBoth() && this._closeDialog();
     }
 
     /**
@@ -64,10 +113,9 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
             isTokenValid,
             isValidating,
             localRecordingOnlySelf,
+            selectedLanguage,
             selectedRecordingService,
             sharingEnabled,
-            shouldRecordAudioAndVideo,
-            shouldRecordTranscription,
             spaceLeft,
             userName
         } = this.state;
@@ -79,17 +127,11 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
             _transcriptionRunning
         } = this.props;
 
-        const sessionRunning = Boolean(_recordingRunning || _transcriptionRunning);
-
         return (
             <Dialog
-                ok = {{
-                    // On first open (nothing running) the primary action starts a service; once a
-                    // service is active the dialog manages it, so the button applies the changes.
-                    translationKey: sessionRunning ? 'dialog.applyChanges' : 'dialog.startRecording',
-                    disabled: this.isStartRecordingDisabled()
-                }}
-                onSubmit = { this._onSubmit }
+                cancel = {{ hidden: true }}
+                disableEnter = { true }
+                ok = {{ hidden: true }}
                 titleKey = { _canTranscribe ? 'dialog.recordAndTranscribe' : 'toolbar.record' }>
                 <StartRecordingDialogContent
                     fileRecordingsServiceEnabled = { _fileRecordingsServiceEnabled }
@@ -98,18 +140,23 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
                     isTokenValid = { isTokenValid }
                     isValidating = { isValidating }
                     localRecordingOnlySelf = { localRecordingOnlySelf }
-                    onChange = { this._onSelectedRecordingServiceChanged }
                     onLocalRecordingSelfChange = { this._onLocalRecordingSelfChange }
-                    onRecordAudioAndVideoChange = { this._onRecordAudioAndVideoChange }
+                    onRecordingServiceChange = { this._onSelectedRecordingServiceChanged }
                     onSharingSettingChanged = { this._onSharingSettingChanged }
-                    onTranscriptionChange = { this._onTranscriptionChange }
+                    onStartBoth = { this._onStartBothPress }
+                    onStartRecording = { this._onStartRecordingPress }
+                    onStartTranscription = { this._onStartTranscriptionPress }
+                    onStopBoth = { this._onStopBothPress }
+                    onStopRecording = { this._onStopRecordingPress }
+                    onStopTranscription = { this._onStopTranscriptionPress }
+                    onSubtitlesLanguageChange = { this._onSubtitlesLanguageChanged }
                     recordingRunning = { Boolean(_recordingRunning) }
+                    selectedLanguage = { selectedLanguage }
                     selectedRecordingService = { selectedRecordingService }
-                    servicesRunning = { Boolean(_recordingRunning || _transcriptionRunning) }
                     sharingSetting = { sharingEnabled }
-                    shouldRecordAudioAndVideo = { shouldRecordAudioAndVideo }
-                    shouldRecordTranscription = { shouldRecordTranscription }
                     spaceLeft = { spaceLeft }
+                    startRecordingDisabled = { this._isStartRecordingDisabled() }
+                    transcriptionRunning = { Boolean(_transcriptionRunning) }
                     userName = { userName } />
             </Dialog>
         );
