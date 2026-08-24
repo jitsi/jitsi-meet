@@ -1354,7 +1354,7 @@
             "muteGUMPending": "Forbinder til din mikrofon",
             "noiseSuppression": "Støjdæmpning",
             "openChat": "Åben chat",
-            "participants": "Åbn deltagerliste",
+            "participants": "Åbn deltagerpanelet. {{participantsCount}} deltagere",
             "pip": "Til/fra for billed-i-billede-tilstand",
             "privateMessage": "Send privat besked",
             "profile": "Rediger din profil",

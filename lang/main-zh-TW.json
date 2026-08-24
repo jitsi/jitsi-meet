@@ -280,7 +280,6 @@
         "Submit": "送出",
         "Understand": "我了解，暫時保持靜音",
         "UnderstandAndUnmute": "我了解，請為我解除靜音",
-        "WaitForHostMsg": "此會議尚未開始，如果您是會議主持人，請進行認證並以主持人身分開始會議。",
         "WaitForHostNoAuthMsg": "此會議尚未開始，目前沒有主持人加入，請稍候。",
         "WaitingForHostButton": "等待主持人",
         "WaitingForHostTitle": "正在等候主持人加入…",
@@ -796,7 +795,6 @@
         "OldElectronAPPTitle": "安全漏洞！",
         "allowAll": "允許全部",
         "allowAudio": "允許音訊",
-        "allowBoth": "允許音訊與視訊",
         "allowDesktop": "允許螢幕分享",
         "allowVideo": "允許視訊",
         "allowedUnmute": "您可以將麥克風解除靜音、開啟視訊，或是分享您的螢幕。",
@@ -875,7 +873,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) 已被其他與會者移除",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) 由其他與會者設定",
         "raiseHandAction": "舉手發言",
-        "raisedHand": "{{name}}想要發言。",
+        "raisedHand": "想要參與。",
         "raisedHands": "{{participantName}} 與其他 {{raisedHands}} 人",
         "reactionSounds": "停用音效",
         "reactionSoundsForAll": "停用所有音效",
@@ -979,8 +977,7 @@
             "pollQuestion": "投票問題",
             "questionPlaceholder": "詢問問題",
             "removeOption": "移除選項",
-            "save": "儲存",
-            "send": "傳送"
+            "save": "儲存"
         },
         "errors": {
             "notUniqueOption": "選項必須是唯一的"
@@ -1349,7 +1346,7 @@
             "muteGUMPending": "正在準備您的麥克風",
             "noiseSuppression": "雜訊抑制（BETA）",
             "openChat": "打開聊天",
-            "participants": "打開與會者窗格",
+            "participants": "開啟參與者面板。{{participantsCount}} 位參與者",
             "pip": "切換子母螢幕模式",
             "privateMessage": "傳送私人訊息",
             "profile": "編輯您的個人檔案",
