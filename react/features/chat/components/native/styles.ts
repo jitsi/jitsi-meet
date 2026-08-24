@@ -123,7 +123,9 @@ export default {
     },
 
     searchClearButton: {
+        alignItems: 'center',
         height: 40,
+        justifyContent: 'center',
         top: 0
     },
 
