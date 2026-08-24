@@ -74,6 +74,26 @@ const SLACK_EMOJI_REGEXP_ARRAY: Array<[RegExp, string]> = [];
 })();
 
 /**
+ * A regexp matching the characters that are not allowed in an XML 1.0 document.
+ * Sending such characters (e.g. the START OF TEXT control character U+0002)
+ * over XMPP produces a malformed stanza which makes the server terminate the
+ * stream, dropping everyone from the meeting.
+ */
+// eslint-disable-next-line no-control-regex
+const INVALID_XML_CHARS_REGEXP = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFE\uFFFF]/g;
+
+/**
+ * Removes the characters that are not allowed in an XML 1.0 document from the
+ * given string.
+ *
+ * @param {string} text - The text to be sanitized.
+ * @returns {string} The text with all XML-invalid characters removed.
+ */
+export function stripXMLInvalidChars(text: string): string {
+    return text.replace(INVALID_XML_CHARS_REGEXP, '');
+}
+
+/**
  * Replaces ASCII and other non-unicode emoticons with unicode emojis to let the emojis be rendered
  * by the platform native renderer.
  *
