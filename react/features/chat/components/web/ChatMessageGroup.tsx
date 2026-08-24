@@ -25,7 +25,10 @@ const useStyles = makeStyles()(theme => {
         messageGroup: {
             display: 'flex',
             flexDirection: 'column',
+            listStyleType: 'none',
+            margin: 0,
             maxWidth: '100%',
+            padding: 0,
 
             '&.remote, &.file': {
                 maxWidth: 'calc(100% - 40px)' // 100% - avatar and margin
@@ -34,6 +37,9 @@ const useStyles = makeStyles()(theme => {
 
         groupContainer: {
             display: 'flex',
+            listStyleType: 'none',
+            margin: 0,
+            padding: 0,
 
             '&.local': {
                 justifyContent: 'flex-end',
@@ -63,12 +69,12 @@ const ChatMessageGroup = ({ className = '', messages }: IProps) => {
     }
 
     return (
-        <div className = { clsx(classes.groupContainer, className) }>
+        <li className = { clsx(classes.groupContainer, className) }>
             <Avatar
                 className = { clsx(classes.avatar, 'avatar') }
                 participantId = { messages[0].participantId }
                 size = { 32 } />
-            <div className = { `${classes.messageGroup} chat-message-group ${className}` }>
+            <ul className = { `${classes.messageGroup} chat-message-group ${className}` }>
                 {messages.map((message, i) => (
                     <ChatMessage
                         className = { className }
@@ -77,8 +83,8 @@ const ChatMessageGroup = ({ className = '', messages }: IProps) => {
                         showDisplayName = { i === 0 }
                         showTimestamp = { i === messages.length - 1 } />
                 ))}
-            </div>
-        </div>
+            </ul>
+        </li>
     );
 };
 
