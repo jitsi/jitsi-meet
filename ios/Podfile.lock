@@ -3027,7 +3027,7 @@ PODS:
     - React-Core
   - RNDeviceInfo (14.1.1):
     - React-Core
-  - RNGestureHandler (2.28.0):
+  - RNGestureHandler (3.0.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -3702,7 +3702,7 @@ SPEC CHECKSUMS:
   RNCClipboard: 4b58c780f63676367640f23c8e114e9bd0cf86ac
   RNDefaultPreference: ee13d69e6693d193cd223d10e15e5b3c012d31ba
   RNDeviceInfo: bcce8752b5043a623fe3c26789679b473f705d3c
-  RNGestureHandler: 634b358743823bc9e47ba20dc1e6ccb5439512fc
+  RNGestureHandler: 8f606e053c7823429953e994c8feab9f3f57be7f
   RNGoogleSignin: 30e1aee80140dc0706cd78a4951c411376c88329
   RNScreens: 833237c48c756d40764540246a501b47dadb2cac
   RNSound: b6bd5e049ad15c0b03f9dda1f817d0bb1d5e87cb
