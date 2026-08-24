@@ -150,6 +150,7 @@ export interface IJitsiConference {
     sendTones: Function;
     sessionId: string;
     setAssumedBandwidthBps: (value: number) => void;
+    setChatShadowBan: Function;
     setDesktopSharingFrameRate: Function;
     setDisplayName: Function;
     setIsSilent: Function;

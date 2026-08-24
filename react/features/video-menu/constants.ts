@@ -36,6 +36,7 @@ export const PARTICIPANT_MENU_BUTTONS = {
     PIN_TO_STAGE: 'pinToStage',
     PRIVATE_MESSAGE: 'privateMessage',
     REMOTE_CONTROL: 'remote-control',
+    SHADOW_BAN: 'shadow-ban',
     SEND_PARTICIPANT_TO_ROOM: 'send-participant-to-room',
     VERIFY: 'verify'
 };

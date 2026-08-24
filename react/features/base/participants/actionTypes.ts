@@ -158,6 +158,17 @@ export const PARTICIPANT_UPDATED = 'PARTICIPANT_UPDATED';
 export const PIN_PARTICIPANT = 'PIN_PARTICIPANT';
 
 /**
+ * Create an action for enabling or disabling chat shadow-ban for a participant.
+ *
+ * {
+ *     type: SET_CHAT_SHADOW_BAN,
+ *     id: string,
+ *     enabled: boolean
+ * }
+ */
+export const SET_CHAT_SHADOW_BAN = 'SET_CHAT_SHADOW_BAN';
+
+/**
  * The type of Redux action which notifies the app that the loadable avatar URL has changed.
  *
  * {

@@ -43,6 +43,7 @@ import MuteVideoButton from './MuteVideoButton';
 import PrivateMessageMenuButton from './PrivateMessageMenuButton';
 import RemoteControlButton, { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
 import SendToRoomButton from './SendToRoomButton';
+import ShadowBanButton from './ShadowBanButton';
 import TogglePinToStageButton from './TogglePinToStageButton';
 import VerifyParticipantButton from './VerifyParticipantButton';
 import VolumeSlider from './VolumeSlider';
@@ -272,6 +273,7 @@ const ParticipantContextMenu = ({
         if (!disableKick) {
             buttons2.push(<KickButton { ...getButtonProps(BUTTONS.KICK) } />);
         }
+        buttons2.push(<ShadowBanButton { ...getButtonProps(BUTTONS.SHADOW_BAN) } />);
 
         if (shouldDisplayVerification) {
             buttons2.push(<VerifyParticipantButton { ...getButtonProps(BUTTONS.VERIFY) } />);
