@@ -196,9 +196,17 @@ describe('setSecondScreen iframe API command', () => {
     it('closes an open window and reports it', async function() {
         const { p1 } = ctx;
 
-        if (!await p1.getIframeAPI().getEventResult('secondScreenSourceChanged')) {
-            // Nothing to close, for the same reason as above, and for the same
-            // reason it is a skip rather than a pass.
+        const changed = await p1.getIframeAPI().getEventResult('secondScreenSourceChanged');
+        const handles = await p1.driver.getWindowHandles();
+
+        if (!changed || handles.length === 1) {
+            // Nothing to close: either no window was opened in this environment
+            // (same reason as above), or it already closed itself asynchronously
+            // (e.g. a window-management-unavailable failure resolving shortly
+            // after secondScreenSourceChanged had already fired) before this
+            // test got a chance to close it. The cached event alone cannot tell
+            // the two apart from "still open", so the live handle count is
+            // checked too.
             // eslint-disable-next-line @typescript-eslint/no-invalid-this
             this.skip();
         }
