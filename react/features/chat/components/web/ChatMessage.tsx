@@ -248,9 +248,29 @@ const ChatMessage = ({
     const messageRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (isActiveSearchMatch) {
-            messageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (!isActiveSearchMatch || !messageRef.current) {
+            return;
         }
+
+        const messageElement = messageRef.current;
+        const container = messageElement.closest('#chatconversation') as HTMLElement | null;
+
+        if (!container) {
+            return;
+        }
+
+        const messageRect = messageElement.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+
+        const offset = messageRect.top
+            - containerRect.top
+            - (containerRect.height / 2)
+            + (messageRect.height / 2);
+
+        container.scrollTo({
+            top: container.scrollTop + offset,
+            behavior: 'smooth'
+        });
     }, [ isActiveSearchMatch ]);
 
     const handleMouseEnter = useCallback(() => {

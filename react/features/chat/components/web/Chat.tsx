@@ -128,6 +128,8 @@ const useStyles = makeStyles<{
             position: 'relative',
             transition: _isResizing ? undefined : 'width .16s ease-in-out',
             width: `${width}px`,
+            height: '100%',
+            minHeight: 0,
             zIndex: 300,
 
             // On non-touch devices (desktop), show handle on hover
@@ -178,6 +180,7 @@ const useStyles = makeStyles<{
         chatPanel: {
             display: 'flex',
             flexDirection: 'column',
+            minHeight: 0,
 
             // extract header + tabs height
             height: 'calc(100% - 110px)'
@@ -185,7 +188,8 @@ const useStyles = makeStyles<{
 
         chatPanelNoTabs: {
             // extract header height
-            height: 'calc(100% - 60px)'
+            height: 'calc(100% - 60px)',
+            minHeight: 0
         },
 
         pollsPanel: {
