@@ -7,6 +7,7 @@ import { LOBBY_CHAT_INITIALIZED } from '../lobby/constants';
 import {
     ADD_MESSAGE,
     ADD_MESSAGE_REACTION,
+    CLEAR_CHAT_SEARCH,
     CLEAR_CHAT_STATE,
     CLOSE_CHAT,
     EDIT_MESSAGE,
@@ -15,6 +16,8 @@ import {
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SEND_MESSAGE,
     SEND_REACTION,
+    SET_CHAT_SEARCH_MATCH_INDEX,
+    SET_CHAT_SEARCH_QUERY,
     SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
@@ -93,6 +96,19 @@ export function editMessage(message: Object) {
 }
 
 /**
+ * Clears the chat search query and match index.
+ *
+ * @returns {{
+ *     type: CLEAR_CHAT_SEARCH
+ * }}
+ */
+export function clearChatSearch() {
+    return {
+        type: CLEAR_CHAT_SEARCH
+    };
+}
+
+/**
  * Clears the chat features state from Redux.
  *
  * @returns {{
@@ -152,6 +168,38 @@ export function sendReaction(reaction: string, messageId: string, receiverId?: s
         reaction,
         messageId,
         receiverId
+    };
+}
+
+/**
+ * Sets the chat search query and resets the match index back to the first result.
+ *
+ * @param {string} query - The search text.
+ * @returns {{
+ *     type: SET_CHAT_SEARCH_QUERY,
+ *     query: string
+ * }}
+ */
+export function setChatSearchQuery(query: string) {
+    return {
+        type: SET_CHAT_SEARCH_QUERY,
+        query
+    };
+}
+
+/**
+ * Sets which search match is currently focused (for prev/next navigation).
+ *
+ * @param {number} index - The index into the matches array.
+ * @returns {{
+ *     type: SET_CHAT_SEARCH_MATCH_INDEX,
+ *     index: number
+ * }}
+ */
+export function setChatSearchMatchIndex(index: number) {
+    return {
+        type: SET_CHAT_SEARCH_MATCH_INDEX,
+        index
     };
 }
 
