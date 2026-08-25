@@ -638,7 +638,14 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
                 dispatch(setRequestingSubtitles(
                     true, _displaySubtitles, selectedLanguage, true, startRecording || _recordingRunning));
             } else {
+                // Spread the existing metadata so that starting transcription while a non-Jitsi
+                // recording is already running does not drop isRecordingRequested — that would
+                // read as recording having stopped to the metadata listener (see the stopRecording
+                // and stopTranscription branches above, which spread for the same reason).
+                const existingRecMeta = _conference?.getMetadataHandler()?.getMetadata()[RECORDING_METADATA_ID] ?? {};
+
                 _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                    ...existingRecMeta,
                     ...(startRecording && { isRecordingRequested: true }),
                     isTranscribingEnabled: true
                 });
