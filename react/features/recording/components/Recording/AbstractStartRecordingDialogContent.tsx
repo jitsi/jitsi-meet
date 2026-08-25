@@ -219,6 +219,13 @@ export interface IProps extends WithTranslation {
     onSubtitlesLanguageChange: (language: string) => void;
 
     /**
+     * When false, the recording section starts collapsed and the
+     * transcription section starts expanded, putting the focus on
+     * transcription (e.g. subtitles/nudge flows).
+     */
+    recordAudioAndVideo?: boolean;
+
+    /**
      * When true, audio/video recording is specifically in progress.
      */
     recordingRunning: boolean;
@@ -307,10 +314,13 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
         this._onToggleTranscriptionOptions = this._onToggleTranscriptionOptions.bind(this);
         this._onToggleLanguageList = this._onToggleLanguageList.bind(this);
 
+        // Both sections start collapsed, except transcription options are pre-expanded when a
+        // caller (e.g. the transcription nudge) explicitly asks to focus transcription instead
+        // of recording by passing recordAudioAndVideo: false.
         this.state = {
             showLanguageList: false,
             showRecordingOptions: false,
-            showTranscriptionOptions: false
+            showTranscriptionOptions: props.recordAudioAndVideo === false
         };
     }
 

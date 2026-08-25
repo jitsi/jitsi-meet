@@ -105,7 +105,8 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
             _fileRecordingsServiceEnabled,
             _fileRecordingsServiceSharingEnabled,
             _recordingRunning,
-            _transcriptionRunning
+            _transcriptionRunning,
+            recordAudioAndVideo
         } = this.props;
         const {
             isTokenValid,
@@ -138,6 +139,7 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
                         onStopRecording = { this._onStopRecordingPress }
                         onStopTranscription = { this._onStopTranscriptionPress }
                         onSubtitlesLanguageChange = { this._onSubtitlesLanguageChanged }
+                        recordAudioAndVideo = { recordAudioAndVideo }
                         recordingRunning = { Boolean(_recordingRunning) }
                         selectedLanguage = { selectedLanguage }
                         selectedRecordingService = { selectedRecordingService }
