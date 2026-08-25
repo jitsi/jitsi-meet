@@ -10,6 +10,7 @@ import LoadingIndicator from '../../../../base/react/components/native/LoadingIn
 import Button from '../../../../base/ui/components/native/Button';
 import Switch from '../../../../base/ui/components/native/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
+import LanguageListItem from '../../../../subtitles/components/native/LanguageListItem';
 import { RECORDING_TYPES } from '../../../constants';
 import { getRecordingDurationEstimation } from '../../../functions';
 import AbstractStartRecordingDialogContent, { IProps, mapStateToProps } from '../AbstractStartRecordingDialogContent';
@@ -459,12 +460,11 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                             </View>
                             { showLanguageList && !transcriptionRunning
                                 && _availableLanguages.map((language: string) => (
-                                    <RecordingOptionRow
+                                    <LanguageListItem
                                         key = { language }
-                                        label = { t(language) }
-                                        onSelect = { this._onLanguageSelected }
-                                        selected = { selectedLanguage === language }
-                                        value = { language } />
+                                        lang = { language }
+                                        onLanguageSelected = { this._onLanguageSelected }
+                                        selected = { selectedLanguage === language } />
                                 )) }
                         </>
                     ),
