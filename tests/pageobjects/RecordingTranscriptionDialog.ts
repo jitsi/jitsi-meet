@@ -11,12 +11,15 @@ const START_BOTH = '[data-testid="recordingDialog.startBoth"]';
 const STOP_BOTH = '[data-testid="recordingDialog.stopBoth"]';
 
 const RECORDING_OPTIONS_HEADER = '#recording-options';
+const RECORDING_OPTIONS_BODY = '#recording-options-content';
 const TRANSCRIPTION_OPTIONS_HEADER = '#transcription-options';
 const SERVICE_SELECT = '#recording-service-select';
 const SERVICE_SELECT_MENU = '#recording-service-select-menu';
 const LANGUAGE_SELECT = '#transcription-language-select';
 const LANGUAGE_SELECT_MENU = '#transcription-language-select-menu';
 const FOLLOW_ME_RECORDER_SWITCH = '#recording-switch-follow-me';
+const FILE_SHARING_SWITCH = '#recording-switch-share';
+const LOCAL_RECORDING_ONLY_SELF_SWITCH = '#recording-switch-myself';
 
 /**
  * Page object for the unified Recording & Transcription dialog: two sections
@@ -273,6 +276,37 @@ export default class RecordingTranscriptionDialog extends BasePageObject {
      */
     isFollowMeRecorderEnabled(): Promise<boolean> {
         return this.participant.driver.$(FOLLOW_ME_RECORDER_SWITCH).isEnabled();
+    }
+
+    /**
+     * Whether the "Share the recording link" switch is shown (Jitsi
+     * recording service selected and sharing is enabled server-side).
+     */
+    hasFileSharingSwitch(): Promise<boolean> {
+        return this.participant.driver.$(FILE_SHARING_SWITCH).isExisting();
+    }
+
+    /**
+     * Whether the "Record only my audio and video streams" switch is shown
+     * (local recording selected).
+     */
+    hasLocalRecordingOnlySelfSwitch(): Promise<boolean> {
+        return this.participant.driver.$(LOCAL_RECORDING_ONLY_SELF_SWITCH).isExisting();
+    }
+
+    /**
+     * Toggles the "Record only my audio and video streams" switch.
+     */
+    toggleLocalRecordingOnlySelfSwitch(): Promise<void> {
+        return this.participant.driver.$(LOCAL_RECORDING_ONLY_SELF_SWITCH).click();
+    }
+
+    /**
+     * The text content of the (expanded) recording options accordion body,
+     * e.g. to check for the local-recording warning texts.
+     */
+    getRecordingOptionsBodyText(): Promise<string> {
+        return this.participant.driver.$(RECORDING_OPTIONS_BODY).getText();
     }
 
     /**
