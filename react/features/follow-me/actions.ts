@@ -1,3 +1,5 @@
+import { IStore } from '../app/types';
+
 import {
     SET_FOLLOW_ME,
     SET_FOLLOW_ME_MODERATOR,
@@ -69,5 +71,22 @@ export function setFollowMeRecorder(enabled: boolean) {
     return {
         type: SET_FOLLOW_ME_RECORDER,
         enabled
+    };
+}
+
+/**
+ * Enables or disables the Follow Me feature used only for the recorder, disabling the regular
+ * Follow Me feature first if it was enabled — the two are mutually exclusive, so a caller wanting
+ * to flip one on doesn't also need to know to flip the other off.
+ *
+ * @param {boolean} enabled - Whether Follow Me should be enabled and used only by the recorder.
+ * @returns {Function}
+ */
+export function setFollowMeRecorderExclusive(enabled: boolean) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        if (enabled && getState()['features/follow-me'].followMeEnabled) {
+            dispatch(setFollowMe(false));
+        }
+        dispatch(setFollowMeRecorder(enabled));
     };
 }
