@@ -71,6 +71,17 @@ export interface IChatMessageProps extends WithTranslation {
     gifEnabled?: boolean;
 
     /**
+     * Case-insensitive search query whose matches in the message text should be highlighted.
+     * Left undefined/empty for no highlighting.
+     */
+    highlightQuery?: string;
+
+    /**
+     * Whether this message is the currently focused search match (for prev/next navigation).
+     */
+    isActiveMatch?: boolean;
+
+    /**
      * Whether current participant is currently knocking in the lobby room.
      */
     knocking?: boolean;
