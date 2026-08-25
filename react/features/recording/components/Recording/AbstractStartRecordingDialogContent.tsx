@@ -10,7 +10,7 @@ import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox/actions';
-import { setFollowMe, setFollowMeRecorder } from '../../../follow-me/actions';
+import { setFollowMeRecorderExclusive } from '../../../follow-me/actions';
 import { isFollowMeActive, isFollowMeRecorderActive } from '../../../follow-me/functions';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { getAvailableSubtitlesLanguages } from '../../../subtitles/functions.any';
@@ -50,11 +50,6 @@ export interface IProps extends WithTranslation {
      * Whether any moderator has the regular Follow Me feature active.
      */
     _followMeActive: boolean;
-
-    /**
-     * Whether the local participant has the regular Follow Me setting enabled.
-     */
-    _followMeEnabled: boolean;
 
     /**
      * Whether any moderator has the recorder Follow Me feature active.
@@ -576,21 +571,15 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
     }
 
     /**
-     * Handler for the recorder follow me setting. Mirrors the moderator
-     * settings tab behavior: the regular and the recorder-only Follow Me are
-     * mutually exclusive.
+     * Handler for the recorder follow me setting.
      *
      * @param {boolean} enabled - The new value.
      * @returns {void}
      */
     _onFollowMeRecorderChange(enabled?: boolean) {
-        const { _followMeEnabled, dispatch } = this.props;
         const value = enabled ?? !this.props._followMeRecorderEnabled;
 
-        if (value && _followMeEnabled) {
-            dispatch(setFollowMe(false));
-        }
-        dispatch(setFollowMeRecorder(value));
+        this.props.dispatch(setFollowMeRecorderExclusive(value));
     }
 
     /**
@@ -649,10 +638,7 @@ export function mapStateToProps(state: IReduxState) {
     const _localRecordingAvailable = !localRecording?.disable && supportsLocalRecording();
     const canManageRecordingOrTranscription
         = isLocalParticipantModerator(state) || hasRecordingOrTranscriptionFeature(state);
-    const {
-        followMeEnabled,
-        followMeRecorderEnabled
-    } = state['features/follow-me'];
+    const { followMeRecorderEnabled } = state['features/follow-me'];
     const subtitlesLanguage = state['features/subtitles']._language?.replace('translation-languages:', '');
 
     return {
@@ -663,7 +649,6 @@ export function mapStateToProps(state: IReduxState) {
         _canManageRecordingOrTranscription: canManageRecordingOrTranscription,
         _canStartTranscribing: canAddTranscriber(state),
         _followMeActive: isFollowMeActive(state),
-        _followMeEnabled: Boolean(followMeEnabled),
         _followMeRecorderActive: isFollowMeRecorderActive(state),
         _followMeRecorderEnabled: Boolean(followMeRecorderEnabled),
         _isLiveStreamRunning: isLiveStreamingRunning(state),
