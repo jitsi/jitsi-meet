@@ -160,7 +160,9 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     _renderRecordingSection() {
-        if (!this._shouldRenderRecordingSection()) {
+        const recordingServiceOptions = this._getRecordingServiceOptions();
+
+        if (!this._shouldRenderRecordingSection(recordingServiceOptions)) {
             return null;
         }
 
@@ -197,7 +199,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                                 }}>
                                 { t('recording.storageLocation') }
                             </Text>
-                            { this._getRecordingServiceOptions().map(service => (
+                            { recordingServiceOptions.map(service => (
                                 <RecordingOptionRow
                                     disabled = { recordingRunning || isValidating }
                                     key = { service }
@@ -215,7 +217,10 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                     ),
                     expanded: showRecordingOptions,
                     onToggle: this._onToggleRecordingOptions,
-                    summary: this._getRecordingSummary(),
+
+                    // Only rendered by _renderAccordion while collapsed — skip computing it
+                    // (and its nested t() calls) while the section is expanded.
+                    summary: showRecordingOptions ? '' : this._getRecordingSummary(),
                     titleKey: 'recording.recordingOptions'
                 }) }
             </View>
@@ -465,7 +470,10 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                     ),
                     expanded: showTranscriptionOptions,
                     onToggle: this._onToggleTranscriptionOptions,
-                    summary: this._getTranscriptionSummary(),
+
+                    // Only rendered by _renderAccordion while collapsed — skip computing it while
+                    // the section is expanded.
+                    summary: showTranscriptionOptions ? '' : this._getTranscriptionSummary(),
                     titleKey: 'recording.transcriptionOptions'
                 }) }
             </View>

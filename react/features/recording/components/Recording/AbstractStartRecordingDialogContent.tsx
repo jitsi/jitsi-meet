@@ -403,10 +403,12 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
     /**
      * Whether the audio & video recording section should be rendered.
      *
+     * @param {Array<string>} [options] - The result of {@code _getRecordingServiceOptions()},
+     * when the caller already computed it (avoids recomputing it a second time).
      * @returns {boolean}
      */
-    _shouldRenderRecordingSection() {
-        return this.props.recordingRunning || this._getRecordingServiceOptions().length > 0;
+    _shouldRenderRecordingSection(options: Array<string> = this._getRecordingServiceOptions()) {
+        return this.props.recordingRunning || options.length > 0;
     }
 
     /**

@@ -105,7 +105,9 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     _renderRecordingSection() {
-        if (!this._shouldRenderRecordingSection()) {
+        const recordingServiceOptions = this._getRecordingServiceOptions();
+
+        if (!this._shouldRenderRecordingSection(recordingServiceOptions)) {
             return null;
         }
 
@@ -120,7 +122,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         } = this.props;
         const { showRecordingOptions } = this.state;
         const classes = this.props.classes ?? {};
-        const serviceOptions = this._getRecordingServiceOptions().map(service => {
+        const serviceOptions = recordingServiceOptions.map(service => {
             return {
                 label: t(this._getServiceLabelKey(service)),
                 value: service
@@ -174,7 +176,10 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                     expanded: showRecordingOptions,
                     id: 'recording-options',
                     onToggle: this._onToggleRecordingOptions,
-                    summary: this._getRecordingSummary(),
+
+                    // Only rendered by _renderAccordion while collapsed — skip computing it
+                    // (and its nested t() calls) while the section is expanded.
+                    summary: showRecordingOptions ? '' : this._getRecordingSummary(),
                     titleKey: 'recording.recordingOptions'
                 }) }
             </Container>
@@ -480,7 +485,10 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                     expanded: showTranscriptionOptions,
                     id: 'transcription-options',
                     onToggle: this._onToggleTranscriptionOptions,
-                    summary: this._getTranscriptionSummary(),
+
+                    // Only rendered by _renderAccordion while collapsed — skip computing it while
+                    // the section is expanded.
+                    summary: showTranscriptionOptions ? '' : this._getTranscriptionSummary(),
                     titleKey: 'recording.transcriptionOptions'
                 }) }
             </Container>
