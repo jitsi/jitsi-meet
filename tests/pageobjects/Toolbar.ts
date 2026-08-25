@@ -6,6 +6,7 @@ const RECORDING = 'Record & Transcribe';
 // Non-moderators (who can only do local recording) get a "Record" button instead of the
 // moderator's "Record & Transcribe" — see AbstractRecordButton._getAccessibilityLabel().
 const RECORDING_NON_MODERATOR = 'Record';
+const LIVE_STREAMING = 'Start live stream';
 const AUDIO_UNMUTE = 'Unmute microphone';
 const CHAT = 'Open chat';
 const CLOSE_CHAT = 'Close chat';
@@ -87,6 +88,23 @@ export default class Toolbar extends BasePageObject {
         // The recording button lives in the overflow ("More actions") menu; open it, click, close
         // (matches clickSettings/clickSecurity — closeOverflowMenu is a no-op once the dialog opens).
         return this.clickButtonInOverflowMenu(RECORDING);
+    }
+
+    /**
+     * Returns whether the live streaming button exists in the DOM for this participant.
+     *
+     * @returns {Promise<boolean>}
+     */
+    async hasLiveStreamingButton(): Promise<boolean> {
+        // Same reasoning as hasRecordingButton: the button lives in the overflow menu, so open it
+        // first to make sure it is in the DOM regardless of whether it got promoted to the main bar.
+        await this.openOverflowMenu();
+
+        const exists = await this.getButton(LIVE_STREAMING).isExisting();
+
+        await this.closeOverflowMenu();
+
+        return exists;
     }
 
     /**
