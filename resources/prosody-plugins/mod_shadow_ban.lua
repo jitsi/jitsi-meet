@@ -3,14 +3,13 @@ local st = require 'util.stanza';
 
 local util = module:require 'util';
 local process_host_module = util.process_host_module;
+local get_room_from_jid = util.get_room_from_jid;
 
 --
--- JID -> true
+-- Shadow-banned JIDs are now stored per-room (room.shadow_banned_jids),
+-- so they are naturally cleaned up when the room is destroyed and do
+-- not leak across module reloads.
 --
--- This is intentionally in memory for the first implementation.
--- Restarting Prosody will clear the shadow-ban list.
---
-local shadow_banned_jids = {};
 
 local function get_bare_jid(value)
     if not value then
@@ -20,10 +19,63 @@ local function get_bare_jid(value)
     return jid.bare(value);
 end
 
-local function is_shadow_banned(value)
+local function get_shadow_banned_jids(room)
+    if not room.shadow_banned_jids then
+        room.shadow_banned_jids = {};
+    end
+
+    return room.shadow_banned_jids;
+end
+
+local function is_shadow_banned(room, value)
+    if not room then
+        return false;
+    end
+
     local bare = get_bare_jid(value);
 
-    return bare ~= nil and shadow_banned_jids[bare] == true;
+    return bare ~= nil and room.shadow_banned_jids ~= nil and room.shadow_banned_jids[bare] == true;
+end
+
+--
+-- Permission check: moderators can always shadow-ban; otherwise defer to
+-- the occupant's granted feature permissions, populated by
+-- mod_jitsi_permissions.lua on session.jitsi_meet_context_features
+-- (from either the JWT token's context features or the non-JWT
+-- default_permissions).
+--
+local sessions = prosody.full_sessions;
+
+local function get_occupant_by_jid(room, jid_to_check)
+    local bare = get_bare_jid(jid_to_check);
+
+    for _, occupant in room:each_occupant() do
+        if occupant.bare_jid == bare then
+            return occupant;
+        end
+    end
+
+    return nil;
+end
+
+local function has_shadow_ban_permission(room, actor_jid)
+    local occupant = get_occupant_by_jid(room, actor_jid);
+
+    if not occupant then
+        return false;
+    end
+
+    if occupant.role == 'moderator' then
+        return true;
+    end
+
+    local occupant_session = sessions[occupant.jid];
+
+    if occupant_session and occupant_session.jitsi_meet_context_features then
+        return occupant_session.jitsi_meet_context_features['shadow-ban'] == true;
+    end
+
+    return false;
 end
 
 --
@@ -36,9 +88,10 @@ local function handle_message(event)
         return;
     end
 
+    local room = get_room_from_jid(jid.bare(stanza.attr.to));
     local from = stanza.attr.from;
 
-    if is_shadow_banned(from) then
+    if is_shadow_banned(room, from) then
         module:log(
             'info',
             'Shadow-ban: dropping message from %s',
@@ -59,9 +112,13 @@ local function handle_visitor_message(event)
         return;
     end
 
+    -- Prefer a room already provided on the event, if the
+    -- jitsi-visitor-groupchat-pre-route event exposes one; otherwise
+    -- resolve it from the stanza's destination.
+    local room = event.room or get_room_from_jid(jid.bare(stanza.attr.to));
     local from = stanza.attr.from;
 
-    if is_shadow_banned(from) then
+    if is_shadow_banned(room, from) then
         module:log(
             'info',
             'Shadow-ban: dropping visitor message from %s',
@@ -71,56 +128,6 @@ local function handle_visitor_message(event)
         return true;
     end
 end
-
---
--- Internal events for adding/removing a JID.
---
-
-module:hook('shadow-ban/jid', function(event)
-    local banned_jid = get_bare_jid(event.jid);
-
-    if not banned_jid then
-        module:log(
-            'warn',
-            'Shadow-ban requested without a valid JID'
-        );
-
-        return;
-    end
-
-    shadow_banned_jids[banned_jid] = true;
-
-    module:log(
-        'info',
-        'Shadow-ban enabled for %s',
-        banned_jid
-    );
-
-    return true;
-end);
-
-module:hook('shadow-unban/jid', function(event)
-    local banned_jid = get_bare_jid(event.jid);
-
-    if not banned_jid then
-        module:log(
-            'warn',
-            'Shadow-unban requested without a valid JID'
-        );
-
-        return;
-    end
-
-    shadow_banned_jids[banned_jid] = nil;
-
-    module:log(
-        'info',
-        'Shadow-ban removed for %s',
-        banned_jid
-    );
-
-    return true;
-end);
 
 --
 -- XMPP IQ handler.
@@ -143,6 +150,18 @@ local function handle_shadow_ban_iq(event)
         return;
     end
 
+    local room = get_room_from_jid(stanza.attr.to);
+
+    if not room then
+        origin.send(st.error_reply(stanza, 'cancel', 'item-not-found', 'Room not found'));
+        return true;
+    end
+
+    if not has_shadow_ban_permission(room, stanza.attr.from) then
+        origin.send(st.error_reply(stanza, 'auth', 'forbidden', 'Not authorized to shadow-ban'));
+        return true;
+    end
+
     local target_jid = shadow_ban.attr.jid;
 
     if not target_jid then
@@ -159,14 +178,15 @@ local function handle_shadow_ban_iq(event)
         return true;
     end
 
+    local banned = get_shadow_banned_jids(room);
     local enabled = shadow_ban:get_text() == 'true';
 
     if enabled then
-        shadow_banned_jids[bare_jid] = true;
-        module:log('info', 'Shadow-ban enabled via IQ for %s', bare_jid);
+        banned[bare_jid] = true;
+        module:log('info', 'Shadow-ban enabled via IQ for %s in room %s', bare_jid, room.jid);
     else
-        shadow_banned_jids[bare_jid] = nil;
-        module:log('info', 'Shadow-ban removed via IQ for %s', bare_jid);
+        banned[bare_jid] = nil;
+        module:log('info', 'Shadow-ban removed via IQ for %s in room %s', bare_jid, room.jid);
     end
 
     --
@@ -201,6 +221,16 @@ process_host_module(main_muc_component_config, function(host_module, host)
         'Shadow-ban hooks attached to main MUC host %s',
         host
     );
+
+    --
+    -- Advertise shadow-ban support via disco#info so the client can
+    -- detect whether the feature is available before showing UI.
+    --
+    host_module:hook('muc-disco#info', function(event)
+        local reply = event.reply;
+
+        reply:tag('feature', { var = shadow_ban_namespace }):up();
+    end);
 
     --
     -- IQ addressed to a conference room.
@@ -244,53 +274,3 @@ module:hook(
     handle_visitor_message,
     100
 );
-
---
--- Temporary test hooks.
---
-
-module:hook('shadow-ban/test', function(event)
-    local banned_jid = get_bare_jid(event.jid);
-
-    if not banned_jid then
-        module:log(
-            'warn',
-            'Shadow-ban test requested without a valid JID'
-        );
-
-        return;
-    end
-
-    shadow_banned_jids[banned_jid] = true;
-
-    module:log(
-        'info',
-        'Shadow-ban TEST enabled for %s',
-        banned_jid
-    );
-
-    return true;
-end);
-
-module:hook('shadow-unban/test', function(event)
-    local banned_jid = get_bare_jid(event.jid);
-
-    if not banned_jid then
-        module:log(
-            'warn',
-            'Shadow-unban test requested without a valid JID'
-        );
-
-        return;
-    end
-
-    shadow_banned_jids[banned_jid] = nil;
-
-    module:log(
-        'info',
-        'Shadow-ban TEST removed for %s',
-        banned_jid
-    );
-
-    return true;
-end);
