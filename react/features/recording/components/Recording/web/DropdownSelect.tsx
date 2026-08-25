@@ -304,7 +304,10 @@ const DropdownSelect = ({ disabled, id, label, onChange, options, value }: IProp
         };
     }, [ isOpen ]);
 
-    const selectedLabel = options.find(option => option.value === value)?.label ?? '';
+    // Fall back to the first option's label when the current value isn't among the options
+    // (e.g. it just became unavailable while the dialog stayed open) — otherwise the trigger
+    // would render blank instead of a usable service name.
+    const selectedLabel = options.find(option => option.value === value)?.label ?? options[0]?.label ?? '';
 
     return (
         <div className = { classes.container }>
