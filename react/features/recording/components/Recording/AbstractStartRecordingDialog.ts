@@ -234,6 +234,12 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
         this._onStopTranscription = this._onStopTranscription.bind(this);
         this._onStartBoth = this._onStartBoth.bind(this);
         this._onStopBoth = this._onStopBoth.bind(this);
+        this._onStartRecordingPress = this._onStartRecordingPress.bind(this);
+        this._onStopRecordingPress = this._onStopRecordingPress.bind(this);
+        this._onStartTranscriptionPress = this._onStartTranscriptionPress.bind(this);
+        this._onStopTranscriptionPress = this._onStopTranscriptionPress.bind(this);
+        this._onStartBothPress = this._onStartBothPress.bind(this);
+        this._onStopBothPress = this._onStopBothPress.bind(this);
 
         let selectedRecordingService = '';
 
@@ -673,6 +679,69 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
      */
     _toggleScreenshotCapture() {
         // To be implemented by subclass.
+    }
+
+    /**
+     * Dismisses the dialog/screen once an action from the list below has been applied.
+     *
+     * @returns {void}
+     */
+    _dismiss() {
+        // To be implemented by subclass.
+    }
+
+    /**
+     * Starts the recording and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStartRecordingPress() {
+        this._onStartRecording() && this._dismiss();
+    }
+
+    /**
+     * Stops the recording and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStopRecordingPress() {
+        this._onStopRecording() && this._dismiss();
+    }
+
+    /**
+     * Starts the transcription and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStartTranscriptionPress() {
+        this._onStartTranscription() && this._dismiss();
+    }
+
+    /**
+     * Stops the transcription and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStopTranscriptionPress() {
+        this._onStopTranscription() && this._dismiss();
+    }
+
+    /**
+     * Starts every service which is not running yet and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStartBothPress() {
+        this._onStartBoth() && this._dismiss();
+    }
+
+    /**
+     * Stops every running service and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStopBothPress() {
+        this._onStopBoth() && this._dismiss();
     }
 
     /**

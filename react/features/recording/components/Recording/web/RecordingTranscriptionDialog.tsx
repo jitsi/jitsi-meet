@@ -8,7 +8,6 @@ import Dialog from '../../../../base/ui/components/web/Dialog';
 import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture/actions';
 import { isScreenshotCaptureEnabled } from '../../../../screenshot-capture/functions';
 import AbstractStartRecordingDialog, {
-    IProps,
     mapStateToProps as abstractMapStateToProps
 } from '../AbstractStartRecordingDialog';
 
@@ -25,82 +24,13 @@ import StartRecordingDialogContent from './StartRecordingDialogContent';
 class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
 
     /**
-     * Initializes a new {@code RecordingTranscriptionDialog} instance.
+     * Dismisses the dialog.
      *
      * @inheritdoc
-     */
-    constructor(props: IProps) {
-        super(props);
-
-        this._onStartRecordingPress = this._onStartRecordingPress.bind(this);
-        this._onStopRecordingPress = this._onStopRecordingPress.bind(this);
-        this._onStartTranscriptionPress = this._onStartTranscriptionPress.bind(this);
-        this._onStopTranscriptionPress = this._onStopTranscriptionPress.bind(this);
-        this._onStartBothPress = this._onStartBothPress.bind(this);
-        this._onStopBothPress = this._onStopBothPress.bind(this);
-    }
-
-    /**
-     * Closes the dialog.
-     *
      * @returns {void}
      */
-    _closeDialog() {
+    override _dismiss() {
         this.props.dispatch(hideDialog());
-    }
-
-    /**
-     * Starts the recording and closes the dialog.
-     *
-     * @returns {void}
-     */
-    _onStartRecordingPress() {
-        this._onStartRecording() && this._closeDialog();
-    }
-
-    /**
-     * Stops the recording and closes the dialog.
-     *
-     * @returns {void}
-     */
-    _onStopRecordingPress() {
-        this._onStopRecording() && this._closeDialog();
-    }
-
-    /**
-     * Starts the transcription and closes the dialog.
-     *
-     * @returns {void}
-     */
-    _onStartTranscriptionPress() {
-        this._onStartTranscription() && this._closeDialog();
-    }
-
-    /**
-     * Stops the transcription and closes the dialog.
-     *
-     * @returns {void}
-     */
-    _onStopTranscriptionPress() {
-        this._onStopTranscription() && this._closeDialog();
-    }
-
-    /**
-     * Starts the services which are not running and closes the dialog.
-     *
-     * @returns {void}
-     */
-    _onStartBothPress() {
-        this._onStartBoth() && this._closeDialog();
-    }
-
-    /**
-     * Stops the running services and closes the dialog.
-     *
-     * @returns {void}
-     */
-    _onStopBothPress() {
-        this._onStopBoth() && this._closeDialog();
     }
 
     /**
