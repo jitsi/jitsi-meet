@@ -12,7 +12,7 @@ import Switch from '../../../../base/ui/components/native/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 import { RECORDING_TYPES } from '../../../constants';
 import { getRecordingDurationEstimation } from '../../../functions';
-import AbstractStartRecordingDialogContent, { mapStateToProps } from '../AbstractStartRecordingDialogContent';
+import AbstractStartRecordingDialogContent, { IProps, mapStateToProps } from '../AbstractStartRecordingDialogContent';
 import {
     ICON_INFO,
     ICON_USERS
@@ -30,7 +30,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      *
      * @inheritdoc
      */
-    constructor(props: any) {
+    constructor(props: IProps) {
         super(props);
 
         this._onLanguageSelected = this._onLanguageSelected.bind(this);

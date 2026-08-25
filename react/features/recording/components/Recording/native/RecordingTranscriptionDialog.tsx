@@ -159,7 +159,11 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
  * (native-only) into the shared {@code recordAudioAndVideo} prop.
  *
  * @param {Object} state - Redux state.
- * @param {any} ownProps - Component's own props.
+ * @param {any} ownProps - Component's own props. Kept as `any`: this component is registered
+ * directly as a react-navigation Screen (see ConferenceNavigationContainer.tsx), whose generic
+ * `route`/`navigation` prop types don't compose with a narrower own-props type here without
+ * modeling the whole navigation ParamList, which AbstractStartRecordingDialog's own
+ * mapStateToProps(_ownProps: any) already opts out of for the same reason.
  * @returns {Object}
  */
 function mapStateToProps(state: IReduxState, ownProps: any) {
