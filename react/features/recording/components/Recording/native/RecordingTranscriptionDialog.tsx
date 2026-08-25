@@ -8,7 +8,6 @@ import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { goBack } from
     '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import AbstractStartRecordingDialog, {
-    IProps,
     mapStateToProps as abstractMapStateToProps
 } from '../AbstractStartRecordingDialog';
 import styles from '../styles.native';
@@ -26,73 +25,13 @@ import StartRecordingDialogContent from './StartRecordingDialogContent';
 class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
 
     /**
-     * Constructor of the component.
+     * Dismisses the screen by navigating back.
      *
      * @inheritdoc
-     */
-    constructor(props: IProps) {
-        super(props);
-
-        this._onStartRecordingPress = this._onStartRecordingPress.bind(this);
-        this._onStopRecordingPress = this._onStopRecordingPress.bind(this);
-        this._onStartTranscriptionPress = this._onStartTranscriptionPress.bind(this);
-        this._onStopTranscriptionPress = this._onStopTranscriptionPress.bind(this);
-        this._onStartBothPress = this._onStartBothPress.bind(this);
-        this._onStopBothPress = this._onStopBothPress.bind(this);
-    }
-
-    /**
-     * Starts the recording and navigates back.
-     *
      * @returns {void}
      */
-    _onStartRecordingPress() {
-        this._onStartRecording() && goBack();
-    }
-
-    /**
-     * Stops the recording and navigates back.
-     *
-     * @returns {void}
-     */
-    _onStopRecordingPress() {
-        this._onStopRecording() && goBack();
-    }
-
-    /**
-     * Starts the transcription and navigates back.
-     *
-     * @returns {void}
-     */
-    _onStartTranscriptionPress() {
-        this._onStartTranscription() && goBack();
-    }
-
-    /**
-     * Stops the transcription and navigates back.
-     *
-     * @returns {void}
-     */
-    _onStopTranscriptionPress() {
-        this._onStopTranscription() && goBack();
-    }
-
-    /**
-     * Starts the services which are not running and navigates back.
-     *
-     * @returns {void}
-     */
-    _onStartBothPress() {
-        this._onStartBoth() && goBack();
-    }
-
-    /**
-     * Stops the running services and navigates back.
-     *
-     * @returns {void}
-     */
-    _onStopBothPress() {
-        this._onStopBoth() && goBack();
+    override _dismiss() {
+        goBack();
     }
 
     /**
