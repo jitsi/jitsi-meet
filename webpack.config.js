@@ -70,6 +70,12 @@ function devServerProxyBypass({ path }) {
         tpath = tpath.replace(/\/v1\/_cdn\/[^/]+\//, '/');
     }
 
+    // A page opened from a tenant meeting URL asks for its static assets under
+    // that tenant (e.g. /tenant/static/secondScreen.html), which would otherwise
+    // be proxied to the dev target and serve that deployment's copy, or a 404 for
+    // a file that only exists locally.
+    tpath = tpath.replace(/^\/[^/]+\/static\//, '/static/');
+
     if (tpath.startsWith('/css/')
             || tpath.startsWith('/doc/')
             || tpath.startsWith('/fonts/')
@@ -297,7 +303,7 @@ function getDevServerConfig() {
         static: {
             directory: process.cwd(),
             watch: {
-                ignored: file => file.endsWith('.log')
+                ignored: file => file.endsWith('.log') || file.includes('node_modules')
             }
         }
     };
@@ -354,6 +360,15 @@ module.exports = (_env, argv) => {
             performance: getPerformanceHints(perfHintOptions, 800 * 1024) },
         { ...config,
             entry: {
+                'documentpip': './react/features/always-on-top/document-pip-index.tsx'
+            },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'documentpip')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 800 * 1024) },
+        { ...config,
+            entry: {
                 'close3': './static/close3.js'
             },
             plugins: [
@@ -381,6 +396,16 @@ module.exports = (_env, argv) => {
             plugins: [
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'face-landmarks-worker')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2) },
+        { ...config,
+            entry: {
+                'vb-inference-worker':
+                    './react/features/stream-effects/virtual-background/workers/VBInferenceWorker.ts'
+            },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'vb-inference-worker')
             ],
             performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2) },
         { ...config, /**

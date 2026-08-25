@@ -11,7 +11,7 @@ export function getURLWithoutParams(url: URL): URL {
 
     if ((hash && hash.length > 1) || (search && search.length > 1)) {
         url = new URL(url.href); // eslint-disable-line no-param-reassign
-        url.hash = '';
+        (url as Mutable<URL>).hash = '';
         url.search = '';
 
         // XXX The implementation of URL at least on React Native appends ? and

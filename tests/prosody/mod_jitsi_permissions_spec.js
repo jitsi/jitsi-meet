@@ -77,7 +77,8 @@ describe('mod_jitsi_permissions', () => {
 
             clients.push(await joinWithFocus(r));
 
-            const token = mintAsapToken({ context: { user: { moderator: true } } });
+            const token = mintAsapToken({ room: r.split('@')[0],
+                context: { user: { moderator: true } } });
             const c = await connect({ params: { token } });
             const presence = await c.joinRoom(r);
 
@@ -106,6 +107,7 @@ describe('mod_jitsi_permissions', () => {
             clients.push(await joinWithFocus(r));
 
             const token = mintAsapToken({
+                room: r.split('@')[0],
                 context: {
                     user: { moderator: true },
                     features: {
@@ -138,7 +140,8 @@ describe('mod_jitsi_permissions', () => {
 
             clients.push(await joinWithFocus(r));
 
-            const token = mintAsapToken({ context: { user: { id: 'user1' } } });
+            const token = mintAsapToken({ room: r.split('@')[0],
+                context: { user: { id: 'user1' } } });
             const c = await connect({ params: { token } });
             const presence = await c.joinRoom(r);
 
@@ -155,6 +158,7 @@ describe('mod_jitsi_permissions', () => {
             clients.push(await joinWithFocus(r));
 
             const token = mintAsapToken({
+                room: r.split('@')[0],
                 context: {
                     user: { moderator: false },
                     features: { recording: true }
@@ -213,6 +217,7 @@ describe('mod_jitsi_permissions', () => {
             clients.push(await joinWithFocus(r));
 
             const token = mintAsapToken({
+                room: r.split('@')[0],
                 context: {
                     user: { moderator: true },
                     features: {
@@ -237,6 +242,7 @@ describe('mod_jitsi_permissions', () => {
             clients.push(await joinWithFocus(r));
 
             const token = mintAsapToken({
+                room: r.split('@')[0],
                 context: {
                     user: { id: 'user1' },
                     features: {
@@ -260,7 +266,8 @@ describe('mod_jitsi_permissions', () => {
 
             clients.push(await joinWithFocus(r));
 
-            const token = mintAsapToken({ context: { user: { moderator: true } } });
+            const token = mintAsapToken({ room: r.split('@')[0],
+                context: { user: { moderator: true } } });
             const c = await connect({ params: { token } });
 
             await c.joinRoom(r);
@@ -278,7 +285,8 @@ describe('mod_jitsi_permissions', () => {
 
             clients.push(await joinWithFocus(r));
 
-            const token = mintAsapToken({ context: { user: { id: 'user1' } } });
+            const token = mintAsapToken({ room: r.split('@')[0],
+                context: { user: { id: 'user1' } } });
             const c = await connect({ params: { token } });
 
             await c.joinRoom(r);

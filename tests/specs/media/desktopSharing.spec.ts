@@ -1,4 +1,4 @@
-import { SET_AUDIO_ONLY } from '../../../react/features/base/audio-only/actionTypes';
+import { SET_LOW_BANDWIDTH_MODE } from '../../../react/features/base/low-bandwidth-mode/actionTypes';
 import { setTestProperties } from '../../helpers/TestProperties';
 import {
     checkForScreensharingTile,
@@ -255,10 +255,10 @@ describe('Desktop sharing', () => {
         await p1.execute(type => {
             APP?.store?.dispatch({
                 type,
-                audioOnly: true
+                lowBandwidthMode: true
             });
-            APP?.conference?.onToggleAudioOnly();
-        }, SET_AUDIO_ONLY);
+            APP?.conference?.onToggleLowBandwidthMode();
+        }, SET_LOW_BANDWIDTH_MODE);
         await p1.getToolbar().clickAudioMuteButton();
 
         await ensureThreeParticipants({
@@ -299,10 +299,10 @@ describe('Desktop sharing', () => {
         await p1.execute(type => {
             APP?.store?.dispatch({
                 type,
-                audioOnly: true
+                lowBandwidthMode: true
             });
-            APP?.conference?.onToggleAudioOnly();
-        }, SET_AUDIO_ONLY);
+            APP?.conference?.onToggleLowBandwidthMode();
+        }, SET_LOW_BANDWIDTH_MODE);
 
         await ensureTwoParticipants({
             configOverwrite: {

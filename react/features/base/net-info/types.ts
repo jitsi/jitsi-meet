@@ -19,6 +19,12 @@ export type NetworkInfo = {
         cellularGeneration?: NetInfoCellularGeneration | null;
 
         /**
+         * The local IP address on the current interface. Reported for wifi and ethernet only (cellular does not
+         * expose it), and used to tell one wifi network apart from another.
+         */
+        ipAddress?: string | null;
+
+        /**
          * Indicates whether or not the connection is expensive.
          */
         isConnectionExpensive?: boolean;

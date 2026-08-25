@@ -69,7 +69,7 @@ describe('mod_muc_end_meeting', () => {
             const { roomJid, clients } = await createRoom();
 
             try {
-                const loginToken = mintAsapToken();
+                const loginToken = mintAsapToken({ room: '*' });
                 const { status } = await endMeeting(roomJid, loginToken);
 
                 assert.strictEqual(status, 401,

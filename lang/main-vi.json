@@ -39,9 +39,6 @@
         "phone": "Điện thoại",
         "speaker": "Diễn giả"
     },
-    "audioOnly": {
-        "audioOnly": "Chỉ nghe âm thanh"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "ví dụ. 10000000 cho 10 Mb/giây",
         "assumedBandwidthBpsWarning": "Giá trị cao hơn có thể gây ra sự cố mạng.",
@@ -110,7 +107,7 @@
     },
     "chat": {
         "enter": "Vào phòng",
-        "error": "Lỗi: tin nhắn của bạn \"{{originalText}}\" không được gửi. Nguyên nhân: {{error}}",
+        "error": "Lỗi: tin nhắn của bạn chưa được gửi. Lý do: {{error}}",
         "fieldPlaceHolder": "Aa",
         "lobbyChatMessageTo": "Tin nhắn trò chuyện tại sảnh tới {{recipient}}",
         "message": "Tin nhắn",
@@ -262,8 +259,6 @@
         "Remove": "Xóa",
         "Share": "Chia sẻ",
         "Submit": "Đăng ký",
-        "WaitForHostMsg": "Cuộc họp chưa được bắt đầu. Nếu bạn là quản trị viên vui lòng xác thực. Nếu không, vui lòng đợi quản trị viên.",
-        "WaitingForHost": "Đang đợi quản trị viên…",
         "WaitingForHostButton": "Chờ người điều hành",
         "WaitingForHostTitle": "Chờ người điều hành…",
         "Yes": "Có",
@@ -320,7 +315,7 @@
         "enterDisplayName": "Nhập tên của bạn",
         "error": "Lỗi",
         "gracefulShutdown": "Dịch vụ của chúng tôi hiện đang bảo trì. Vui lòng thử lại sau.",
-        "grantModeratorDialog": "Bạn có thực sự muốn cấp quyền quản trị cho người này?",
+        "grantModeratorDialog": "Bạn có chắc chắn muốn cấp quyền điều hành cho {{participantName}} không?",
         "grantModeratorTitle": "Cấp quyền điều hành",
         "hide": "Ẩn",
         "hideShareAudioHelper": "Không hiển thị lại hộp thoại này",
@@ -332,7 +327,7 @@
         "kickParticipantButton": "Đuổi ra",
         "kickParticipantDialog": "Bạn có chắc muốn đuổi người này ra?",
         "kickParticipantTitle": "Tắt tiếng của người tham dự này?",
-        "kickTitle": "Ôi! {{Participant Display Name}} đã đuổi bạn ra khỏi cuộc họp",
+        "kickTitle": "Ôi! {{participantDisplayName}} đã đuổi bạn ra khỏi cuộc họp",
         "linkMeeting": "Liên kết cuộc họp",
         "linkMeetingTitle": "Liên kết cuộc họp với Salesforce",
         "liveStreaming": "Phát trực tuyến",
@@ -505,7 +500,7 @@
     },
     "feedback": {
         "accessibilityLabel": {
-            "yourChoice": "Lựa chọn của bạn: {{xếp hạng}}"
+            "yourChoice": "Lựa chọn của bạn: {{rating}}"
         },
         "average": "Trung bình",
         "bad": "Kém",
@@ -721,21 +716,22 @@
         "button": "Mời người khác",
         "youAreAlone": "Chỉ có một mình bạn trong cuộc họp"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Chỉ nghe âm thanh"
+    },
     "me": "Tôi",
     "notify": {
         "OldElectronAPPTitle": "Lỗ hổng bảo mật!",
-        "allowAction": "Cho phép",
         "allowedUnmute": "Bạn có thể bật âm thanh, bật camera hoặc chia sẻ màn hình của mình.",
         "audioUnmuteBlockedDescription": "Hoạt động bật âm thanh đã bị tạm thời chặn do giới hạn hệ thống.",
         "audioUnmuteBlockedTitle": "Chặn việc bật âm thanh!",
         "chatMessages": "Thông điệp trò chuyện",
         "connectedOneMember": "{{name}} đã tham gia cuộc họp",
-        "connectedThreePlusMembers": "{{name}} và {{count}} người khác đã tham gia cuộc họp",
+        "connectedThreePlusMembers": "{{name}} và nhiều người khác đã tham gia cuộc họp",
         "connectedTwoMembers": "{{first}} và {{second}} đã tham gia cuộc họp",
         "dataChannelClosed": "Chất lượng video bị suy giảm",
         "dataChannelClosedDescription": "Kênh cầu nối đã bị ngắt kết nối và do đó chất lượng video bị giới hạn ở cài đặt thấp nhất.",
         "disabledIframe": "Nhúng chỉ dành cho mục đích thử nghiệm, cuộc gọi này sẽ ngắt kết nối sau {{timeout}} phút.",
-        "disabledIframeSecondary": "Nhúng {{domain}} chỉ dành cho mục đích thử nghiệm, cuộc gọi này sẽ ngắt kết nối sau {{timeout}} phút. Vui lòng sử dụng <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> cho việc nhúng vào sản xuất!",
         "disconnected": "đã ngắt kết nối",
         "displayNotifications": "Hiển thị thông báo cho",
         "dontRemindMe": "Đừng nhắc tôi",
@@ -791,7 +787,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) đã bị xóa bởi một người tham gia khác",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) đã được thiết lập bởi một người tham gia khác",
         "raiseHandAction": "Giơ tay",
-        "raisedHand": "{{name}} muốn phát biểu.",
+        "raisedHand": "Muốn phát biểu.",
         "raisedHands": "{{participantName}} và {{raisedHands}} người nữa đã giơ tay",
         "reactionSounds": "Tắt âm",
         "reactionSoundsForAll": "Tắt âm cho tất cả",
@@ -871,8 +867,7 @@
             "pollOption": "Tùy chọn bình chọn {{index}}",
             "pollQuestion": "Câu hỏi bình chọn",
             "questionPlaceholder": "Hỏi một câu hỏi",
-            "removeOption": "Xóa tùy chọn",
-            "send": "Gửi"
+            "removeOption": "Xóa tùy chọn"
         },
         "errors": {
             "notUniqueOption": "Tùy chọn phải là duy nhất"
@@ -927,7 +922,7 @@
         "errorDialOut": "Không thể gọi ra",
         "errorDialOutDisconnected": "Không thể gọi ra. Đã ngắt kết nối",
         "errorDialOutFailed": "Không thể gọi ra. Cuộc gọi thất bại",
-        "errorDialOutStatus": "Lỗi khi lấy trạng thái gọi ra: {{status}}",
+        "errorDialOutStatus": "Lỗi khi lấy trạng thái cuộc gọi đi",
         "errorMissingName": "Vui lòng nhập tên của bạn để tham gia cuộc họp",
         "errorNoPermissions": "Bạn cần phải cho phép truy cập vào micro và camera",
         "errorStatusCode": "Lỗi khi gọi ra, mã trạng thái: {{status}}",
@@ -1049,7 +1044,7 @@
         "about": "Bạn có thể thiết lập mật khẩu cho cuộc họp. Người tham dự cần phải nhập mật khẩu trước khi được phép vào phòng họp.",
         "aboutReadOnly": "Người điều hành cuộc họp có thể thêm một $t(lockRoomPassword) vào cuộc họp. Người tham gia sẽ cần cung cấp $t(lockRoomPassword) trước khi được phép tham gia cuộc họp.",
         "insecureRoomNameWarningNative": "Tên phòng không an toàn. Người tham gia không mong muốn có thể tham gia cuộc họp của bạn. {{recommendAction}} Tìm hiểu thêm về cách bảo mật cuộc họp của bạn ",
-        "insecureRoomNameWarningWeb": "Tên phòng không an toàn. Người tham gia không mong muốn có thể tham gia cuộc họp của bạn. {{recommendAction}} Tìm hiểu thêm về cách bảo mật cuộc họp của bạn <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">tại đây</a>.",
+        "insecureRoomNameWarningWeb": "Tên phòng không an toàn. Người tham gia không mong muốn có thể tham gia cuộc họp của bạn. {{recommendAction}} Tìm hiểu thêm về cách bảo mật cuộc họp của bạn <a href=\"{{securityUrl}}\" target=\"_blank\">tại đây</a>.",
         "title": "Tùy chọn Bảo mật",
         "unsafeRoomActions": {
             "meeting": "Cân nhắc bảo mật cuộc họp của bạn bằng cách sử dụng nút bảo mật.",
@@ -1177,7 +1172,6 @@
         "Settings": "Cài đặt",
         "accessibilityLabel": {
             "Settings": "Mở/Đóng Cấu hình",
-            "audioOnly": "Chuyển sang chỉ nghe âm thanh",
             "audioRoute": "Chọn thiết bị âm thanh",
             "boo": "Boo",
             "breakoutRooms": "Phòng nhóm",
@@ -1218,6 +1212,7 @@
             "lobbyButton": "Bật/Tắt chế độ sảnh chờ",
             "localRecording": "Bật/Tắt điều khiển ghi hình cục bộ",
             "lockRoom": "Mở/Đóng mật khẩu phòng họp",
+            "lowBandwidthMode": "Chuyển sang chỉ nghe âm thanh",
             "lowerHand": "Hạ tay xuống",
             "moreActions": "Xem thêm",
             "moreActionsMenu": "Menu thêm",
@@ -1230,7 +1225,7 @@
             "muteGUMPending": "Đang kết nối microphone của bạn",
             "noiseSuppression": "Chế độ chống ồn",
             "openChat": "Mở chat",
-            "participants": "Mở khung người tham gia",
+            "participants": "Mở bảng người tham gia. {{participantsCount}} người tham gia",
             "pip": "Bật/Tắt chế độ Hình-trong-Hình",
             "privateMessage": "Gửi tin nhắn riêng tư",
             "profile": "Chỉnh sửa hồ sơ cá nhân",
@@ -1265,8 +1260,6 @@
             "videounmute": "Bật camera"
         },
         "addPeople": "Thêm người vào cuộc họp",
-        "audioOnlyOff": "Tắt chế độ chỉ nghe âm thanh",
-        "audioOnlyOn": "Bật chế độ chỉ nghe âm thanh",
         "audioRoute": "Chọn thiết bị âm thanh",
         "audioSettings": "Cài đặt âm thanh",
         "authenticate": "Xác thực",
@@ -1306,6 +1299,8 @@
         "lobbyButtonEnable": "Bật chế độ lối vào",
         "login": "Đăng nhập",
         "logout": "Đăng xuất",
+        "lowBandwidthModeOff": "Tắt chế độ chỉ nghe âm thanh",
+        "lowBandwidthModeOn": "Bật chế độ chỉ nghe âm thanh",
         "lowerYourHand": "Hạ tay",
         "moreActions": "Thêm hành động",
         "moreOptions": "Hiển thị thêm tùy chọn",
@@ -1346,7 +1341,7 @@
         "silence": "Im lặng",
         "speakerStats": "Thống kê về người tham dự",
         "startScreenSharing": "Bắt đầu chia sẻ màn hình",
-        "startSubtitles": "Bắt đầu phụ đề",
+        "startSubtitles": "Phụ đề • {{language}}",
         "stopAudioSharing": "Dừng chia sẻ âm thanh",
         "stopScreenSharing": "Dừng chia sẻ màn hình",
         "stopSharedVideo": "Dừng video",
@@ -1364,8 +1359,6 @@
     "transcribing": {
         "ccButtonTooltip": "Chạy/Dừng phụ đề",
         "expandedLabel": "Phiên âm đang bật",
-        "failedToStart": "Khởi chạy phiên âm thất bại",
-        "labelToolTip": "Cuộc họp đang được phiên âm",
         "sourceLanguageDesc": "Hiện tại ngôn ngữ của cuộc họp được đặt là <b>{{sourceLanguage}}</b>. <br/> Bạn có thể thay đổi nó từ",
         "sourceLanguageHere": "đây",
         "start": "Bắt đầu hiển thị phụ đề",
@@ -1390,8 +1383,6 @@
     },
     "videoStatus": {
         "adjustFor": "Điều chỉnh cho:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Bạn đang ở chế độ chỉ nghe âm thanh. Chế độ này giảm băng thông nhưng không thấy hình ảnh người khác.",
         "bestPerformance": "Hiệu suất tốt nhất",
         "callQuality": "Chất lượng hình ảnh",
         "hd": "HD",
@@ -1399,9 +1390,11 @@
         "highDefinition": "Độ phân giải cao",
         "highestQuality": "Chất lượng cao nhất",
         "labelTooiltipNoVideo": "Không hình ảnh",
-        "labelTooltipAudioOnly": "Chế độ chỉ nghe âm thanh đã bật",
+        "labelTooltipLowBandwidthMode": "Chế độ chỉ nghe âm thanh đã bật",
         "ld": "LD",
         "ldTooltip": "Xem video chất lượng thấp",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Bạn đang ở chế độ chỉ nghe âm thanh. Chế độ này giảm băng thông nhưng không thấy hình ảnh người khác.",
         "lowDefinition": "Độ phân giải thấp",
         "performanceSettings": "Cài đặt hiệu suất",
         "recording": "Đang ghi",
@@ -1468,7 +1461,6 @@
         "labelTooltip": "Số lượt truy cập: {{count}}",
         "notification": {
             "demoteDescription": "Được gửi đến đây bởi {{actor}}, giơ tay để tham gia",
-            "description": "Để tham gia, hãy giơ tay",
             "title": "Bạn là một khách trong cuộc họp"
         }
     },

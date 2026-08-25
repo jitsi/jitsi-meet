@@ -5,7 +5,9 @@ import {
     configWillLoad,
     setConfig
 } from '../base/config/actions';
+import { buildConfigURL } from '../base/config/functions.any';
 import { setLocationURL } from '../base/connection/actions.web';
+import { loadConfig } from '../base/lib-jitsi-meet/functions.web';
 import { isEmbedded } from '../base/util/embedUtils';
 import { parseURIString } from '../base/util/uri';
 import { isVpaasMeeting } from '../jaas/functions';
@@ -70,7 +72,24 @@ export function appNavigate(uri?: string) {
 
         dispatch(configWillLoad(locationURL));
         dispatch(setLocationURL(locationURL));
-        dispatch(setConfig(window.config));
+
+        let config = window.config;
+
+        if (!config) {
+            const url = buildConfigURL(locationURL, room);
+
+            try {
+                config = await loadConfig(url);
+
+                // Mirror to window.config so legacy bare `config` global
+                // references (UI.js, etc.) resolve when SSI did not inject it.
+                window.config = config;
+            } catch (err) {
+                logger.error(`Failed to load config from ${url}`, err);
+            }
+        }
+
+        dispatch(setConfig(config));
         dispatch(setRoom(room));
     };
 }
@@ -169,6 +188,15 @@ export function reloadNow() {
 
         const reloadAction = () => {
             logger.info(`Reloading the conference using URL: ${locationURL}`);
+
+            // Fire videoConferenceLeft before navigation so it is delivered
+            // while the postis channel is still active. postMessage sent from
+            // beforeunload is unreliable in Chrome when the iframe navigates.
+            // @ts-ignore
+            APP.API.notifyConferenceLeft(APP.conference.roomName);
+
+            // @ts-ignore
+            APP.API.dispose(); // prevent double-fire from the beforeunload handler
 
             dispatch(reloadWithStoredParams());
         };

@@ -7,10 +7,9 @@ import { sendAnalytics } from '../../analytics/functions';
 import { appNavigate } from '../../app/actions.native';
 import { IReduxState, IStore } from '../../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
-import { SET_AUDIO_ONLY } from '../../base/audio-only/actionTypes';
 import {
+    CONFERENCE_CONNECTION_ESTABLISHED,
     CONFERENCE_FAILED,
-    CONFERENCE_JOINED,
     CONFERENCE_JOIN_IN_PROGRESS,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_LEAVE
@@ -21,9 +20,10 @@ import {
 } from '../../base/conference/functions';
 import { IJitsiConference } from '../../base/conference/reducer';
 import { getInviteURL } from '../../base/connection/functions';
+import { SET_LOW_BANDWIDTH_MODE } from '../../base/low-bandwidth-mode/actionTypes';
 import { setAudioMuted } from '../../base/media/actions';
 import { MEDIA_TYPE } from '../../base/media/constants';
-import { isVideoMutedByAudioOnly } from '../../base/media/functions';
+import { isVideoMutedByLowBandwidthMode } from '../../base/media/functions';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import {
     TRACK_ADDED,
@@ -64,9 +64,6 @@ CallIntegration && MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_FAILED:
         return _conferenceFailed(store, next, action);
 
-    case CONFERENCE_JOINED:
-        return _conferenceJoined(store, next, action);
-
     // If a conference is being left in a graceful manner then
     // the CONFERENCE_WILL_LEAVE fires as soon as the conference starts
     // disconnecting. We need to destroy the call on the native side as soon
@@ -80,8 +77,11 @@ CallIntegration && MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_JOIN_IN_PROGRESS:
         return _conferenceWillJoin(store, next, action);
 
-    case SET_AUDIO_ONLY:
-        return _setAudioOnly(store, next, action);
+    case CONFERENCE_CONNECTION_ESTABLISHED:
+        return _conferenceConnectionEstablished(store, next, action);
+
+    case SET_LOW_BANDWIDTH_MODE:
+        return _setLowBandwidthMode(store, next, action);
 
     case TRACK_ADDED:
     case TRACK_REMOVED:
@@ -167,26 +167,30 @@ function _conferenceFailed({ getState }: IStore, next: Function, action: AnyActi
 }
 
 /**
- * Notifies the feature callkit that the action {@link CONFERENCE_JOINED} is
- * being dispatched within a specific redux {@code store}.
+ * Notifies the feature callkit that the action {@link CONFERENCE_CONNECTION_ESTABLISHED}
+ * is being dispatched. Reports the outgoing call connected when its ICE connection (media)
+ * is up, so CallKit gets a real connecting->connected transition.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
  * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
  * specified {@code action} in the specified {@code store}.
- * @param {Action} action - The redux action {@code CONFERENCE_JOINED} which is
- * being dispatched in the specified {@code store}.
+ * @param {Action} action - The redux action {@code CONFERENCE_CONNECTION_ESTABLISHED}
+ * which is being dispatched in the specified {@code store}.
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _conferenceJoined({ getState }: IStore, next: Function, action: AnyAction) {
+function _conferenceConnectionEstablished({ getState }: IStore, next: Function, action: AnyAction) {
+    // Report connected once; this action also fires on CONNECTION_RESTORED mid-call.
+    const wasConnected = getState()['features/base/conference'].iceConnected;
     const result = next(action);
 
-    if (!isCallIntegrationEnabled(getState)) {
+    if (!isCallIntegrationEnabled(getState) || wasConnected) {
         return result;
     }
 
-    const { callUUID } = action.conference;
+    const { conference } = action;
+    const { callUUID } = conference;
 
     if (callUUID) {
         CallIntegration.reportConnectedOutgoingCall(callUUID)
@@ -194,7 +198,7 @@ function _conferenceJoined({ getState }: IStore, next: Function, action: AnyActi
                 // iOS 13 doesn't like the mute state to be false before the call is started
                 // so we update it here in case the user selected startWithAudioMuted.
                 if (Platform.OS === 'ios') {
-                    _updateCallIntegrationMuted(action.conference, getState());
+                    _updateCallIntegrationMuted(conference, getState());
                 }
             })
             .catch(() => {
@@ -213,7 +217,9 @@ function _conferenceJoined({ getState }: IStore, next: Function, action: AnyActi
 
 /**
  * Notifies the feature callkit that the action {@link CONFERENCE_LEFT} is being
- * dispatched within a specific redux {@code store}.
+ * dispatched within a specific redux {@code store}. No-ops when call integration
+ * is disabled or when the action carries no {@code conference} (as dispatched by
+ * the generic {@code hangup()}, in which case there is no callUUID to report).
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
@@ -243,15 +249,16 @@ function _conferenceLeft({ getState }: IStore, next: Function, action: AnyAction
 }
 
 /**
- * Notifies the feature callkit that the action {@link CONFERENCE_WILL_JOIN} is
- * being dispatched within a specific redux {@code store}.
+ * Notifies the feature callkit that the action {@link CONFERENCE_JOIN_IN_PROGRESS}
+ * is being dispatched. Starts the outgoing call (reports connecting); connected is
+ * reported later on {@link CONFERENCE_CONNECTION_ESTABLISHED}.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
  * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
  * specified {@code action} in the specified {@code store}.
- * @param {Action} action - The redux action {@code CONFERENCE_WILL_JOIN} which
- * is being dispatched in the specified {@code store}.
+ * @param {Action} action - The redux action {@code CONFERENCE_JOIN_IN_PROGRESS}
+ * which is being dispatched in the specified {@code store}.
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
@@ -267,7 +274,7 @@ function _conferenceWillJoin({ dispatch, getState }: IStore, next: Function, act
     const { callHandle, callUUID } = state['features/base/config'];
     const url = getInviteURL(state);
     const handle = callHandle || url.toString();
-    const hasVideo = !isVideoMutedByAudioOnly(state);
+    const hasVideo = !isVideoMutedByLowBandwidthMode(state);
 
     // If we already have a callUUID set, don't start a new call.
     if (conference.callUUID) {
@@ -345,10 +352,8 @@ function _handleConnectionServiceFailure(state: IReduxState) {
         if (AudioMode.setUseConnectionService) {
             AudioMode.setUseConnectionService(false);
 
-            const hasVideo = !isVideoMutedByAudioOnly(state);
-
             // Set the desired audio mode, since we just reset the whole thing.
-            AudioMode.setMode(hasVideo ? AudioMode.VIDEO_CALL : AudioMode.AUDIO_CALL);
+            AudioMode.setMode(AudioMode.IN_CALL);
         }
     }
 }
@@ -398,15 +403,15 @@ function _onPerformSetMutedCallAction({ callUUID, muted }: { callUUID: string; m
 }
 
 /**
- * Update CallKit with the audio only state of the conference. When a conference
- * is in audio only mode we will tell CallKit the call has no video. This
- * affects how the call is saved in the recent calls list.
+ * Update CallKit with the low bandwidth mode state of the conference. When a
+ * conference is in low bandwidth mode we will tell CallKit the call has no
+ * video. This affects how the call is saved in the recent calls list.
  *
- * XXX: Note that here we are taking the `audioOnly` value straight from the
- * action, instead of examining the state. This is intentional, as setting the
- * audio only involves multiple actions which will be reflected in the state
- * later, but we are just interested in knowing if the mode is going to be
- * set or not.
+ * XXX: Note that here we are taking the `lowBandwidthMode` value straight from
+ * the action, instead of examining the state. This is intentional, as setting
+ * the low bandwidth mode involves multiple actions which will be reflected in
+ * the state later, but we are just interested in knowing if the mode is going
+ * to be set or not.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
@@ -417,7 +422,7 @@ function _onPerformSetMutedCallAction({ callUUID, muted }: { callUUID: string; m
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _setAudioOnly({ getState }: IStore, next: Function, action: AnyAction) {
+function _setLowBandwidthMode({ getState }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
     const state = getState();
 
@@ -430,7 +435,7 @@ function _setAudioOnly({ getState }: IStore, next: Function, action: AnyAction) 
     if (conference?.callUUID) {
         CallIntegration.updateCall(
             conference.callUUID,
-            { hasVideo: !action.audioOnly });
+            { hasVideo: !action.lowBandwidthMode });
     }
 
     return result;
@@ -495,7 +500,7 @@ function _syncTrackState({ getState }: IStore, next: Function, action: AnyAction
         case 'video': {
             CallIntegration.updateCall(
                 conference.callUUID,
-                { hasVideo: !isVideoMutedByAudioOnly(state) });
+                { hasVideo: !isVideoMutedByLowBandwidthMode(state) });
             break;
         }
 

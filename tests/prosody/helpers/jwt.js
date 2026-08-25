@@ -61,7 +61,7 @@ function buildPayload(overrides = {}, { expired = false, notYetValid = false } =
  *   - exp, iss, aud claims
  *
  * util.lib.lua additionally checks:
- *   - requireRoomClaim (false in test config)
+ *   - requireRoomClaim (true; callers must include room claim)
  *   - sets session.jitsi_meet_context_features from claims.context.features
  *
  * @param {object} [overrides]  Fields to merge / override in the payload.
@@ -135,6 +135,7 @@ export function mintSystemToken(overrides = {}, {
 } = {}) {
     return jwt.sign(
         buildPayload({ sub: 'system.localhost',
+            room: '*',
             ...overrides }, { expired,
             notYetValid }),
         privateKey,

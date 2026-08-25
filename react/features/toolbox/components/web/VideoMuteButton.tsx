@@ -40,6 +40,11 @@ export interface IProps extends AbstractVideoMuteButtonProps {
      * An object containing the CSS classes.
      */
     classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
+
+    /**
+     * Whether this instance should manage the global video-mute keyboard shortcut.
+     */
+    registerKeyboardShortcut?: boolean;
 }
 
 /**
@@ -70,11 +75,13 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      * @returns {void}
      */
     override componentDidMount() {
-        this.props.dispatch(registerShortcut({
-            character: 'V',
-            helpDescription: 'keyboardShortcuts.videoMute',
-            handler: this._onKeyboardShortcut
-        }));
+        if (this.props.registerKeyboardShortcut !== false) {
+            this.props.dispatch(registerShortcut({
+                character: 'V',
+                helpDescription: 'keyboardShortcuts.videoMute',
+                handler: this._onKeyboardShortcut
+            }));
+        }
     }
 
     /**
@@ -84,7 +91,9 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      * @returns {void}
      */
     override componentWillUnmount() {
-        this.props.dispatch(unregisterShortcut('V'));
+        if (this.props.registerKeyboardShortcut !== false) {
+            this.props.dispatch(unregisterShortcut('V'));
+        }
     }
 
     /**

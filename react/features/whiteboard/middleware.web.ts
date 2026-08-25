@@ -10,6 +10,8 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { getCurrentRoomId } from '../breakout-rooms/functions';
 import { addStageParticipant } from '../filmstrip/actions.web';
 import { isStageFilmstripAvailable } from '../filmstrip/functions.web';
+import { showErrorNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { RESET_WHITEBOARD, SET_WHITEBOARD_OPEN } from './actionTypes';
 import {
@@ -22,10 +24,12 @@ import { WHITEBOARD_ID, WHITEBOARD_PARTICIPANT_NAME } from './constants';
 import {
     generateCollabServerUrl,
     getCollabDetails,
+    getCollabServerUrl,
     isWhiteboardPresent,
     shouldEnforceUserLimit,
     shouldNotifyUserLimit
 } from './functions';
+import logger from './logger';
 import { WhiteboardStatus } from './types';
 
 import './middleware.any';
@@ -66,25 +70,65 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
     switch (action.type) {
     case SET_WHITEBOARD_OPEN: {
         const existingCollabDetails = getCollabDetails(state);
+        const collabServerUrl = getCollabServerUrl(state);
         const enforceUserLimit = shouldEnforceUserLimit(state);
         const notifyUserLimit = shouldNotifyUserLimit(state);
         const iAmRecorder = Boolean(state['features/base/config'].iAmRecorder);
 
+        const iAmSipGateway = Boolean(state['features/base/config'].iAmSipGateway);
+
+        if ((iAmRecorder || iAmSipGateway) && action.isOpen) {
+            logger.info('Whiteboard open skipped, not supported in recorder mode');
+
+            return next(action);
+        }
+
         if (enforceUserLimit) {
             dispatch(restrictWhiteboard(false));
             dispatch(openDialog('WhiteboardLimitDialog', WhiteboardLimitDialog));
-            iAmRecorder && setTimeout(() => dispatch(hideDialog('WhiteboardLimitDialog', WhiteboardLimitDialog)), 3000);
 
             return next(action);
         }
 
         if (!existingCollabDetails) {
-            setNewWhiteboardOpen(store);
+            if (action.isOpen) {
+                if (!generateCollabServerUrl(state)) {
+                    logger.error('Whiteboard open failed, collabServerBaseUrl not configured');
+
+                    if (action.userInitiated) {
+                        dispatch(showErrorNotification({
+                            titleKey: 'info.noWhiteboard'
+                        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+                    }
+
+                    return;
+                }
+                setNewWhiteboardOpen(store);
+
+                return;
+            }
 
             return next(action);
         }
 
         if (action.isOpen) {
+            if (!existingCollabDetails.roomId || !existingCollabDetails.roomKey || !collabServerUrl) {
+                const missing = [
+                    !existingCollabDetails.roomId && 'roomId',
+                    !existingCollabDetails.roomKey && 'roomKey',
+                    !collabServerUrl && 'collabServerUrl'
+                ].filter(Boolean).join(', ');
+
+                logger.error(`Whiteboard open failed, missing collaboration data: ${missing}`);
+
+                if (action.userInitiated) {
+                    dispatch(showErrorNotification({
+                        titleKey: 'info.noWhiteboard'
+                    }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+                }
+
+                return;
+            }
             if (enforceUserLimit) {
                 dispatch(restrictWhiteboard());
 
@@ -155,8 +199,8 @@ async function setNewWhiteboardOpen(store: IStore) {
         collabServerUrl
     };
 
-    focusWhiteboard(store);
     dispatch(setupWhiteboard(collabData));
     conference?.getMetadataHandler().setMetadata(WHITEBOARD_ID, collabData);
     raiseWhiteboardNotification(WhiteboardStatus.INSTANTIATED);
 }
+

@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { IconAudioOnlyOff } from '../../../base/icons/svg';
+import { IconLowBandwidthModeOff } from '../../../base/icons/svg';
 import { updateSettings } from '../../../base/settings/actions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
@@ -22,7 +22,7 @@ interface IProps extends AbstractButtonProps {
  */
 class ToggleSelfViewButton extends AbstractButton<IProps> {
     override accessibilityLabel = 'toolbar.accessibilityLabel.selfView';
-    override icon = IconAudioOnlyOff;
+    override icon = IconLowBandwidthModeOff;
     override label = 'videothumbnail.hideSelfView';
     override toggledLabel = 'videothumbnail.showSelfView';
 

@@ -1,0 +1,22 @@
+/**
+ * When the meeting time-timer has reached / passed the scheduled end, draw a
+ * red inset frame around the whole conference video area. Implemented via an
+ * `::after` pseudo-element so the frame paints on top of LargeVideo / the
+ * filmstrip (those children fill #videospace and would otherwise cover any
+ * shadow / border drawn on the parent itself). The pseudo-element is
+ * non-interactive so it doesn't intercept clicks.
+ */
+// #videospace already has `position: absolute` so it acts as the
+// containing block for our absolutely-positioned ::after.
+#videospace.timer-expired::after {
+    border: 3px solid #F24D5F;
+    box-sizing: border-box;
+    content: '';
+    height: 100%;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}

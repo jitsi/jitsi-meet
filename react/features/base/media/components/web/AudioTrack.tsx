@@ -4,13 +4,28 @@ import { connect } from 'react-redux';
 import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
 import { IReduxState } from '../../../../app/types';
+import { DEFAULT_ORIGINAL_VOLUME } from '../../../../audio-translation/constants';
+import { getDuckedVolumeForParticipant, shouldDuckOriginalAudio }
+    from '../../../../audio-translation/functions';
+import { browser } from '../../../lib-jitsi-meet';
 import { ITrack } from '../../../tracks/types';
 import logger from '../../logger';
+
+// iOS (WebKit) ignores programmatic HTMLMediaElement.volume — it is under the user's hardware control, so
+// assigning it is a no-op. Ducking therefore can't lower the volume there; we fall back to muting the
+// original entirely while its translation plays. `element.muted` IS honoured on iOS.
+const IS_IOS_BROWSER = browser.isIosBrowser();
 
 /**
  * The type of the React {@code Component} props of {@link AudioTrack}.
  */
 interface IProps {
+
+    /**
+     * Whether this track's original audio is currently ducked because its translated counterpart is playing.
+     * On iOS, where element volume cannot be lowered, this causes the element to be muted instead.
+     */
+    _ducked?: boolean;
 
     /**
      * Represents muted property of the underlying audio element.
@@ -103,15 +118,13 @@ class AudioTrack extends Component<IProps> {
 
         if (this._ref?.current) {
             const audio = this._ref?.current;
-            const { _muted, _volume } = this.props;
+            const { _volume } = this.props;
 
             if (typeof _volume === 'number') {
                 audio.volume = _volume;
             }
 
-            if (typeof _muted === 'boolean') {
-                audio.muted = _muted;
-            }
+            audio.muted = this._isMuted(this.props);
 
             // @ts-ignore
             audio.addEventListener('error', this._errorHandler);
@@ -164,16 +177,28 @@ class AudioTrack extends Component<IProps> {
             }
 
             const currentMuted = audio.muted;
-            const nextMuted = nextProps._muted;
+            const nextMuted = this._isMuted(nextProps);
 
-            if (typeof nextMuted === 'boolean' && currentMuted !== nextMuted) {
-                logger.debug(`Setting audio element ${nextProps?.id} muted to true`);
+            if (currentMuted !== nextMuted) {
+                logger.debug(`Setting audio element ${nextProps?.id} muted to ${nextMuted}`);
 
                 audio.muted = nextMuted;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Computes the effective muted state of the audio element: muted when the conference is joined silently
+     * ({@code _muted}), or — on iOS, where the volume cannot be lowered — while the track is ducked because
+     * its translation is playing.
+     *
+     * @param {IProps} props - The props to evaluate.
+     * @returns {boolean}
+     */
+    _isMuted(props: IProps) {
+        return Boolean(props._muted) || (IS_IOS_BROWSER && Boolean(props._ducked));
     }
 
     /**
@@ -334,10 +359,26 @@ class AudioTrack extends Component<IProps> {
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantsVolume } = state['features/filmstrip'];
+    const audioTranslationConfigured = Boolean(state['features/base/config'].audioTranslation);
+
+    let _volume: number | boolean | undefined = participantsVolume[ownProps.participantId];
+
+    // Driven by actual translated-audio presence, not isAudioTranslationAvailable: ducking follows the
+    // media, and must not un-duck mid-playback on a permission/flag change.
+    const sourceName: string | undefined = ownProps.audioTrack?.jitsiTrack?.getSourceName?.();
+    const ducked = shouldDuckOriginalAudio(state, sourceName, ownProps.participantId);
+
+    if (ducked) {
+        _volume = getDuckedVolumeForParticipant(state, ownProps.participantId);
+    } else if (audioTranslationConfigured && _volume === undefined) {
+        // Restore full volume after ducking (config presence, not enabled, so a mid-call disable un-ducks).
+        _volume = DEFAULT_ORIGINAL_VOLUME;
+    }
 
     return {
+        _ducked: ducked,
         _muted: state['features/base/config'].startSilent,
-        _volume: participantsVolume[ownProps.participantId]
+        _volume
     };
 }
 

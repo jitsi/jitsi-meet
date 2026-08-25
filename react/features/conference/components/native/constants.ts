@@ -1,5 +1,6 @@
 import React from 'react';
 
+import TranslationExpandedLabel from '../../../audio-translation/components/native/TranslationExpandedLabel';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import RecordingExpandedLabel from '../../../recording/components/native/RecordingExpandedLabel';
 import TranscribingExpandedLabel from '../../../recording/components/native/TranscribingExpandedLabel';
@@ -27,6 +28,7 @@ export const LABEL_ID_TRANSCRIBING = 'transcribing';
 export const LABEL_ID_INSECURE_ROOM_NAME = 'insecure-room-name';
 export const LABEL_ID_RAISED_HANDS_COUNT = 'raised-hands-count';
 export const LABEL_ID_VISITORS_COUNT = 'visitors-count';
+export const LABEL_ID_AUDIO_TRANSLATION = 'audio-translation';
 
 interface IExpandedLabel {
     alwaysOn?: boolean;
@@ -67,6 +69,10 @@ export const EXPANDED_LABELS: {
     },
     [LABEL_ID_RAISED_HANDS_COUNT]: {
         component: RaisedHandsCountExpandedLabel,
+        alwaysOn: true
+    },
+    [LABEL_ID_AUDIO_TRANSLATION]: {
+        component: TranslationExpandedLabel,
         alwaysOn: true
     }
 };

@@ -1,5 +1,24 @@
--- Module to be enabled under main muc component
--- Clean up the room in case it is empty and has only jibri and jigasi-transcriber left in the meeting
+-- Module to be enabled under the main MUC component.
+-- Destroys a conference room after a configurable timeout (default 20 s,
+-- overridable via services_empty_meeting_timeout) when the room is left
+-- occupied only by backend services — Jibri recorders or transcribers —
+-- with no regular participants remaining.
+--
+-- Identity is determined by JID prefix (util.lib.lua):
+--   is_jibri():       JID starts with 'recorder@recorder.', 'jibria@recorder.',
+--                     or 'jibrib@recorder.'
+--   is_transcriber(): JID starts with 'transcriber@recorder.',
+--                     'transcribera@recorder.', or 'transcriberb@recorder.'
+--   is_admin():       bare JID is in the Prosody admins list
+--
+-- Hook summary:
+--   muc-occupant-joined  (-100) — cancel the destroy timer when a regular user
+--                                  (not jibri, not transcriber) joins.
+--   muc-occupant-left    (-100) — start the destroy timer when the leaver is a
+--                                  regular user and only backend services remain;
+--                                  skip entirely if the leaver is admin, jibri,
+--                                  or transcriber, or if breakout_rooms_active.
+--   muc-room-destroyed   (1)    — cancel and clear the timer reference.
 
 local util = module:require 'util';
 local is_admin = util.is_admin;

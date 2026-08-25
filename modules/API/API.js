@@ -14,7 +14,6 @@ import {
     requestEnableVideoModeration
 } from '../../react/features/av-moderation/actions';
 import { isEnabledFromState, isForceMuted } from '../../react/features/av-moderation/functions';
-import { setAudioOnly } from '../../react/features/base/audio-only/actions';
 import {
     endConference,
     sendTones,
@@ -31,6 +30,7 @@ import { isSupportedBrowser } from '../../react/features/base/environment/enviro
 import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
+import { setLowBandwidthMode } from '../../react/features/base/low-bandwidth-mode/actions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../react/features/base/media/constants';
 import { isVideoMutedByUser } from '../../react/features/base/media/functions';
 import {
@@ -99,6 +99,7 @@ import {
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
 import { answerKnockingParticipant, toggleLobbyMode } from '../../react/features/lobby/actions';
+import { setSecondScreen } from '../../react/features/multi-screen/actions.web';
 import { setNoiseSuppressionEnabled } from '../../react/features/noise-suppression/actions';
 import { hideNotification, showNotification } from '../../react/features/notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../react/features/notifications/constants';
@@ -107,7 +108,14 @@ import {
     open as openParticipantsPane
 } from '../../react/features/participants-pane/actions';
 import { getParticipantsPaneOpen } from '../../react/features/participants-pane/functions';
-import { hidePiP, showPiP } from '../../react/features/pip/actions';
+import {
+    handleHostDocumentPiPOpenFailed,
+    handleHostDocumentPiPOpened,
+    handleHostDocumentPiPSignal,
+    handleHostDocumentPiPWindowClosed,
+    hidePiP,
+    showPiP
+} from '../../react/features/pip/actions';
 import {
     setStartRecordingIntent,
     setStopRecordingIntent,
@@ -129,6 +137,7 @@ import { SETTINGS_TABS } from '../../react/features/settings/constants';
 import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions';
 import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functions';
 import { setRequestingSubtitles, toggleRequestingSubtitles } from '../../react/features/subtitles/actions';
+import { setMeetingTimer } from '../../react/features/time-timer/actions';
 import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';
 import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
 import { muteAllParticipants, muteRemote } from '../../react/features/video-menu/actions';
@@ -334,6 +343,12 @@ function initCommands() {
         'proxy-connection-event': event => {
             APP.conference.onProxyConnectionEvent(event);
         },
+        'external-share-signal': signal => {
+            // Direct-cast screenshare — a plain RTCPeerConnection signalling message
+            // from a remote sharer, the successor to 'proxy-connection-event'. See
+            // conference.onExternalShareSignal.
+            APP.conference.onExternalShareSignal(signal);
+        },
         'reject-participant': (participantId, mediaType) => {
             if (!isLocalParticipantModerator(APP.store.getState())) {
                 return;
@@ -417,6 +432,9 @@ function initCommands() {
             dispatch(setTileView(false));
             sendAnalytics(createApiEvent('largevideo.participant.set'));
             dispatch(selectParticipantInLargeVideo(participant.id));
+        },
+        'set-participant-properties': (properties, useRawKeys = false) => {
+            APP.conference.setLocalParticipantProperties(properties, useRawKeys);
         },
         'set-participant-volume': (participantId, volume) => {
             APP.store.dispatch(setVolume(participantId, volume));
@@ -525,6 +543,10 @@ function initCommands() {
             sendAnalytics(createApiEvent('screen.sharing.toggled'));
             toggleScreenSharing(options.enable);
         },
+        'set-meeting-timer': (options = {}) => {
+            sendAnalytics(createApiEvent('meeting.timer.set'));
+            APP.store.dispatch(setMeetingTimer(options));
+        },
         'set-noise-suppression-enabled': (options = {}) => {
             APP.store.dispatch(setNoiseSuppressionEnabled(options.enabled));
         },
@@ -539,6 +561,9 @@ function initCommands() {
             sendAnalytics(createApiEvent('tile-view.toggled'));
 
             APP.store.dispatch(toggleTileView());
+        },
+        'set-second-screen': (options = {}) => {
+            APP.store.dispatch(setSecondScreen(options.id ?? 'default', options.source, options.screen));
         },
         'set-tile-view': enabled => {
             APP.store.dispatch(setTileView(enabled));
@@ -609,9 +634,9 @@ function initCommands() {
             sendAnalytics(createApiEvent('set.video.quality'));
             APP.store.dispatch(setVideoQuality(frameHeight));
         },
-        'set-audio-only': enable => {
-            sendAnalytics(createApiEvent('set.audio.only'));
-            APP.store.dispatch(setAudioOnly(enable));
+        'set-low-bandwidth-mode': enable => {
+            sendAnalytics(createApiEvent('set.low.bandwidth.mode'));
+            APP.store.dispatch(setLowBandwidthMode(enable));
         },
         'start-share-video': url => {
             sendAnalytics(createApiEvent('share.video.start'));
@@ -948,7 +973,7 @@ function initCommands() {
             APP.store.dispatch(overwriteConfig(whitelistedConfig));
         },
         'toggle-virtual-background': () => {
-            APP.store.dispatch(toggleDialog(SettingsDialog, {
+            APP.store.dispatch(toggleDialog('SettingsDialog', SettingsDialog, {
                 defaultTab: SETTINGS_TABS.VIRTUAL_BACKGROUND }));
         },
         'end-conference': () => {
@@ -964,8 +989,8 @@ function initCommands() {
                 logger.error(' End Conference not supported');
             }
         },
-        'toggle-whiteboard': () => {
-            APP.store.dispatch(toggleWhiteboard());
+        'toggle-whiteboard': open => {
+            APP.store.dispatch(toggleWhiteboard(open));
         },
         'set-virtual-background': (enabled, backgroundImage) => {
             const tracks = APP.store.getState()['features/base/tracks'];
@@ -982,6 +1007,18 @@ function initCommands() {
         },
         'hide-pip': () => {
             APP.store.dispatch(hidePiP());
+        },
+        'document-pip-opened': () => {
+            APP.store.dispatch(handleHostDocumentPiPOpened());
+        },
+        'document-pip-open-failed': () => {
+            APP.store.dispatch(handleHostDocumentPiPOpenFailed());
+        },
+        'document-pip-closed': () => {
+            APP.store.dispatch(handleHostDocumentPiPWindowClosed());
+        },
+        'document-pip-signal': signal => {
+            APP.store.dispatch(handleHostDocumentPiPSignal(signal));
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -1031,6 +1068,13 @@ function initCommands() {
             APP.store.dispatch(openCameraCaptureDialog(callback, { cameraFacingMode,
                 descriptionText,
                 titleText }));
+            break;
+        }
+        case 'connection-stats': {
+            callback({
+                ...APP.conference.getStats(),
+                iceConnected: APP.conference.getConnectionState() === 'connected'
+            });
             break;
         }
         case 'deployment-info':
@@ -1145,7 +1189,9 @@ function initCommands() {
             break;
         }
         case 'rooms-info': {
-            callback(getRoomsInfo(APP.store.getState()));
+            const { includeHidden } = request;
+
+            callback(getRoomsInfo(APP.store.getState(), includeHidden));
             break;
         }
         case 'get-shared-document-url': {
@@ -1342,6 +1388,21 @@ class API {
         this._sendEvent({
             name: 'proxy-connection-event',
             ...event
+        });
+    }
+
+    /**
+     * Notifies the external application (the sharer, via the embedder) of a direct-cast
+     * screenshare signalling message (answer / ICE candidate). The successor to
+     * {@link sendProxyConnectionEvent}; plain SDP/ICE, no Jingle.
+     *
+     * @param {Object} signal - The signalling message to pass back to the sharer.
+     * @returns {void}
+     */
+    sendExternalShareSignal(signal) {
+        this._sendEvent({
+            name: 'external-share-signal',
+            signal
         });
     }
 
@@ -2378,6 +2439,37 @@ class API {
     }
 
     /**
+     * Requests that the embedding page close Document PiP.
+     *
+     * @returns {void}
+     */
+    notifyDocumentPiPClose() {
+        this._sendEvent({ name: '_document-pip-close' });
+    }
+
+    /**
+     * Requests a host-owned Document PiP window.
+     *
+     * @returns {void}
+     */
+    notifyDocumentPiPRequested() {
+        this._sendEvent({ name: '_document-pip-requested' });
+    }
+
+    /**
+     * Sends one ordered WebRTC signal to the embedding page.
+     *
+     * @param {Object} signal - Offer, answer, candidate, mute, restart, or stop signal.
+     * @returns {void}
+     */
+    notifyDocumentPiPSignal(signal) {
+        this._sendEvent({
+            name: '_document-pip-signal',
+            signal
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that Picture-in-Picture was requested.
      * Used by Electron to handle PiP requests with proper user gesture context.
      *
@@ -2411,6 +2503,47 @@ class API {
         logger.debug('Sending pip-left event to External API');
         this._sendEvent({
             name: 'pip-left'
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a second-screen window now renders a
+     * given source/participant.
+     *
+     * @param {Object} data - The event payload ({ id, source, participantId }).
+     * @returns {void}
+     */
+    notifySecondScreenSourceChanged(data) {
+        this._sendEvent({
+            name: 'second-screen-source-changed',
+            ...data
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a second-screen window was closed.
+     *
+     * @param {Object} data - The event payload ({ id }).
+     * @returns {void}
+     */
+    notifySecondScreenClosed(data) {
+        this._sendEvent({
+            name: 'second-screen-closed',
+            ...data
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a second-screen window could not be
+     * opened/updated (e.g. popup blocked or the feature disabled).
+     *
+     * @param {Object} data - The event payload ({ id, error }).
+     * @returns {void}
+     */
+    notifySecondScreenError(data) {
+        this._sendEvent({
+            name: 'second-screen-error',
+            ...data
         });
     }
 
@@ -2509,9 +2642,9 @@ class API {
      * @param {boolean} enabled - Whether the audio only is enabled or not.
      * @returns {void}
      */
-    notifyAudioOnlyChanged(enabled) {
+    notifyLowBandwidthModeChanged(enabled) {
         this._sendEvent({
-            name: 'audio-only-changed',
+            name: 'low-bandwidth-mode-changed',
             enabled
         });
     }

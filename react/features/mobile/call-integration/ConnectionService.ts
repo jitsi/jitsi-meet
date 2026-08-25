@@ -1,23 +1,21 @@
 import { NativeEventEmitter, NativeModules } from 'react-native';
 
-let ConnectionService = NativeModules.ConnectionService;
+const RNConnectionService = NativeModules.ConnectionService;
 
-// XXX Rather than wrapping ConnectionService in a new class and forwarding
-// the many methods of the latter to the former, add the one additional
-// method that we need to ConnectionService.
-if (ConnectionService) {
-    const eventEmitter = new NativeEventEmitter(ConnectionService);
+// Use a proxy because spreading a new arch native module silently loses its methods.
+let ConnectionService: any;
 
-    ConnectionService = {
-        ...ConnectionService,
+if (RNConnectionService) {
+    const eventEmitter = new NativeEventEmitter(RNConnectionService);
+    const augmented: Record<string, any> = {
         addListener: eventEmitter.addListener.bind(eventEmitter),
         registerSubscriptions(context: any, delegate: any) {
             return [
-                ConnectionService.addListener(
+                eventEmitter.addListener(
                     'org.jitsi.meet:features/connection_service#disconnect',
                     delegate._onPerformEndCallAction,
                     context),
-                ConnectionService.addListener(
+                eventEmitter.addListener(
                     'org.jitsi.meet:features/connection_service#abort',
                     delegate._onPerformEndCallAction,
                     context)
@@ -28,6 +26,16 @@ if (ConnectionService) {
             // the native side
         }
     };
+
+    ConnectionService = new Proxy(RNConnectionService, {
+        get(target, prop, receiver) {
+            if (prop in augmented) {
+                return augmented[prop as string];
+            }
+
+            return Reflect.get(target, prop, receiver);
+        }
+    });
 }
 
 export default ConnectionService;

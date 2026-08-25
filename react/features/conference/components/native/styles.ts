@@ -1,8 +1,16 @@
+import { LABEL_SIZE } from '../../../base/label/components/native/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const INSECURE_ROOM_NAME_LABEL_COLOR = BaseTheme.palette.actionDanger;
 
 const TITLE_BAR_BUTTON_SIZE = 24;
+
+export const TIME_TIMER_COLLAPSE_DURATION = 600;
+
+// Sized to match the Record/Transcribe chips.
+const TIME_TIMER_DISK_SIZE = 20;
+const TIME_TIMER_RADIUS = 3;
+const TIME_TIMER_PAD_X = BaseTheme.spacing[2];
 
 
 /**
@@ -208,5 +216,67 @@ export default {
     raisedHandsCountLabelText: {
         color: BaseTheme.palette.uiBackground,
         paddingLeft: BaseTheme.spacing[2]
+    },
+
+    timerExpiredFrame: {
+        borderColor: BaseTheme.palette.timeTimerExpiredDisk,
+        borderCurve: 'circular',
+        borderWidth: 3,
+        bottom: 0,
+        left: 0,
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        zIndex: 1000
+    },
+
+    timeTimerContainer: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        height: LABEL_SIZE,
+        marginBottom: 0,
+        marginRight: BaseTheme.spacing[1]
+    },
+
+    timeTimerScheduledSegment: {
+        alignItems: 'center',
+        alignSelf: 'stretch',
+        borderBottomLeftRadius: TIME_TIMER_RADIUS,
+        borderTopLeftRadius: TIME_TIMER_RADIUS,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        paddingHorizontal: TIME_TIMER_PAD_X
+    },
+
+    timeTimerScheduledText: {
+        ...BaseTheme.typography.labelRegular,
+        color: BaseTheme.palette.text01
+    },
+
+    timeTimerTimerSegment: {
+        alignItems: 'center',
+        alignSelf: 'stretch',
+        borderBottomRightRadius: TIME_TIMER_RADIUS,
+        borderTopRightRadius: TIME_TIMER_RADIUS,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        paddingHorizontal: TIME_TIMER_PAD_X
+    },
+
+    timeTimerElapsedText: {
+        ...BaseTheme.typography.labelRegular,
+        marginRight: BaseTheme.spacing[2]
+    },
+
+    timeTimerCollapsedChip: {
+        alignItems: 'center',
+        borderRadius: TIME_TIMER_RADIUS,
+        height: LABEL_SIZE,
+        justifyContent: 'center',
+        marginBottom: 0,
+        marginRight: BaseTheme.spacing[1],
+        paddingHorizontal: TIME_TIMER_PAD_X
     }
 };
+
+export const TIME_TIMER_DISK = TIME_TIMER_DISK_SIZE;

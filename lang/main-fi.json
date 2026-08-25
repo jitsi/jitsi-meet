@@ -39,9 +39,6 @@
         "phone": "Puhelin",
         "speaker": "Puhuja"
     },
-    "audioOnly": {
-        "audioOnly": "Vain ääni"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "esim. 10000000 tarkoittaa 10 Mbps",
         "assumedBandwidthBpsWarning": "Korkeammat arvot voivat aiheuttaa verkko-ongelmia.",
@@ -111,7 +108,7 @@
     "chat": {
         "disabled": "Chatti on poistettu käytöstä.",
         "enter": "Liity huoneeseen",
-        "error": "Virhe: viestiä \"{{originalText}}\" ei lähetetty. Syy: {{error}}",
+        "error": "Virhe: viestiäsi ei lähetetty. Syy: {{error}}",
         "everyone": "Kaikki",
         "fieldPlaceHolder": "Aa",
         "fileAccessibleTitle": "{{user}} latasi tiedoston",
@@ -802,6 +799,9 @@
         "button": "Kutsu muita",
         "youAreAlone": "Olet ainoa kokouksessa"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Vain ääni"
+    },
     "me": "minä",
     "notify": {
         "OldElectronAPPTitle": "Tietoturvahaavoittuvuus!",
@@ -814,7 +814,7 @@
         "audioUnmuteBlockedTitle": "Mikrofonin mykistyksen poisto estetty!",
         "chatMessages": "Chattiviestit",
         "connectedOneMember": "{{name}} liittyi kokoukseen",
-        "connectedThreePlusMembers": "{{name}} ja {{count}} muuta liittyivät kokoukseen",
+        "connectedThreePlusMembers": "{{name}} ja monet muut liittyivät kokoukseen",
         "connectedTwoMembers": "{{first}} ja {{second}} liittyivät kokoukseen",
         "connectionFailed": "Yhteys epäonnistui. Yritä uudelleen myöhemmin!",
         "dataChannelClosed": "Videon laatu saattaa heikentyä",
@@ -885,7 +885,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) poisti toinen osallistuja",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) asetti toinen osallistuja",
         "raiseHandAction": "Nosta käsi",
-        "raisedHand": "{{name}} pyytää puheenvuoroa.",
+        "raisedHand": "Haluaa osallistua.",
         "raisedHands": "{{participantName}} ja {{raisedHands}} muuta henkilöä",
         "reactionSounds": "Poista äänet käytöstä",
         "reactionSoundsForAll": "Poista äänet käytöstä kaikilta",
@@ -1170,7 +1170,7 @@
         "about": "Voit lisätä $t(lockRoomPassword) kokaukseesi. Osallistujien on annettava $t(lockRoomPassword) ennen kuin he voivat liittyä kokoukseen.",
         "aboutReadOnly": "Moderaattoriosallistujat voivat lisätä $t(lockRoomPassword) kokoukseen. Osallistujien on annettava $t(lockRoomPassword) ennen kuin he voivat liittyä kokoukseen.",
         "insecureRoomNameWarningNative": "Huoneen nimi ei ole turvallinen. Ei-toivotut osallistujat saattavat liittyä kokaukseesi. {{recommendAction}} Lue lisää kokouksesi turvaamisesta ",
-        "insecureRoomNameWarningWeb": "Huoneen nimi ei ole turvallinen. Ei-toivotut osallistujat saattavat liittyä kokaukseesi. {{recommendAction}} Lue lisää kokouksesi turvaamisesta <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">täältä</a>.",
+        "insecureRoomNameWarningWeb": "Huoneen nimi ei ole turvallinen. Ei-toivotut osallistujat saattavat liittyä kokaukseesi. {{recommendAction}} Lue lisää kokouksesi turvaamisesta <a href=\"{{securityUrl}}\" target=\"_blank\">täältä</a>.",
         "title": "Turvallisuusasetukset",
         "unsafeRoomActions": {
             "meeting": "Harkitse kokouksesi turvaamista käyttämällä turvallisuuspainiketta.",
@@ -1303,7 +1303,6 @@
         "Settings": "Asetukset",
         "accessibilityLabel": {
             "Settings": "Säädä asetuksia",
-            "audioOnly": "Säädä Vain ääni -tilaa",
             "audioRoute": "Valitse äänilaite",
             "boo": "Buu",
             "breakoutRooms": "Pienryhmähuoneet",
@@ -1347,6 +1346,7 @@
             "localRecording": "Säädä paikallisia nauhoitusohjaimia",
             "lockRoom": "Säädä kokouksen salasanaa",
             "love": "Sydän",
+            "lowBandwidthMode": "Säädä Vain ääni -tilaa",
             "lowerHand": "Laske kätesi",
             "moreActions": "Säädä Lisää toimintoja -valikkoa",
             "moreActionsMenu": "Lisää toimintoja -valikko",
@@ -1408,8 +1408,6 @@
                 "label": "Stereo"
             }
         },
-        "audioOnlyOff": "Poista Vain ääni -tila käytöstä",
-        "audioOnlyOn": "Ota Vain ääni -tila käyttöön",
         "audioRoute": "Valitse äänilaite",
         "audioSettings": "Ääniasetukset",
         "authenticate": "Todenna",
@@ -1454,6 +1452,8 @@
         "login": "Kirjaudu sisään",
         "logout": "Kirjaudu ulos",
         "love": "Sydän",
+        "lowBandwidthModeOff": "Poista Vain ääni -tila käytöstä",
+        "lowBandwidthModeOn": "Ota Vain ääni -tila käyttöön",
         "lowerYourHand": "Laske käsi",
         "moreActions": "Lisää toimintoja",
         "moreOptions": "Lisää vaihtoehtoja",
@@ -1497,7 +1497,7 @@
         "silence": "Hiljaisuus",
         "speakerStats": "Puhujatilastot",
         "startScreenSharing": "Aloita näytön jako",
-        "startSubtitles": "Käynnistä tekstitys",
+        "startSubtitles": "Tekstitys • {{language}}",
         "stopAudioSharing": "Lopeta äänen jakaminen",
         "stopScreenSharing": "Lopeta näytön jako",
         "stopSharedVideo": "Pysäytä video",
@@ -1516,7 +1516,6 @@
         "ccButtonTooltip": "Tekstitys päälle/pois",
         "expandedLabel": "Puhtaaksikirjoitus on käytössä",
         "failed": "Litterointi epäonnistui",
-        "labelToolTip": "Kokousta kirjoitetaan puhtaaksi",
         "labelTooltipExtra": "Lisäksi litterointi on saatavilla myöhemmin.",
         "openClosedCaptions": "Avaa tekstitykset",
         "original": "Alkuperäinen",
@@ -1545,8 +1544,6 @@
     },
     "videoStatus": {
         "adjustFor": "Muokkaa:",
-        "audioOnly": "ÄÄNI",
-        "audioOnlyExpanded": "Käytössäsi on Vain ääni -tila. Se säästää kaistanleveyttä, mutta et näe muiden videoita.",
         "bestPerformance": "Paras suorituskyky",
         "callQuality": "Videon laatu",
         "hd": "HD",
@@ -1554,9 +1551,11 @@
         "highDefinition": "Teräväpiirto",
         "highestQuality": "Korkein laatu",
         "labelTooiltipNoVideo": "Ei videota",
-        "labelTooltipAudioOnly": "Vain ääni -tila käytössä",
+        "labelTooltipLowBandwidthMode": "Vain ääni -tila käytössä",
         "ld": "LD",
         "ldTooltip": "Katselee matalatarkkuuksista videota",
+        "lowBandwidthMode": "ÄÄNI",
+        "lowBandwidthModeExpanded": "Käytössäsi on Vain ääni -tila. Se säästää kaistanleveyttä, mutta et näe muiden videoita.",
         "lowDefinition": "Alhainen kuvanlaatu",
         "performanceSettings": "Suorituskykyasetukset",
         "recording": "Tätä kokousta nauhoitetaan.",

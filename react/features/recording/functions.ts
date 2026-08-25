@@ -12,6 +12,7 @@ import { isSpotTV } from '../base/util/spot';
 import { isInBreakoutRoom as isInBreakoutRoomF } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
+import { isVpaasMeeting } from '../jaas/functions';
 import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../transcribing/functions';
 import { iAmVisitor } from '../visitors/functions';
 
@@ -147,8 +148,8 @@ export function getSessionStatusToShow(state: IReduxState, mode: string): string
             }
         }
     }
-    if (!status && mode === JitsiRecordingConstants.mode.FILE
-            && (LocalRecordingManager.isRecordingLocally() || isRemoteParticipantRecordingLocally(state))) {
+    if (mode === JitsiRecordingConstants.mode.FILE
+            && (state['features/recording'].localRecordingRunning || isRemoteParticipantRecordingLocally(state))) {
         status = JitsiRecordingConstants.status.ON;
     }
 
@@ -193,7 +194,7 @@ export function isLiveStreamingRunning(state: IReduxState) {
 export function isRecordingRunning(state: IReduxState) {
     return (
         isCloudRecordingRunning(state)
-        || LocalRecordingManager.isRecordingLocally()
+        || Boolean(state['features/recording'].localRecordingRunning)
     );
 }
 
@@ -216,7 +217,7 @@ export function hasRecordingOrTranscriptionFeature(state: IReduxState) {
  * @returns {boolean}
  */
 export function canStopRecording(state: IReduxState) {
-    if (LocalRecordingManager.isRecordingLocally()) {
+    if (state['features/recording'].localRecordingRunning) {
         return true;
     }
 
@@ -268,7 +269,7 @@ export function getRecordButtonProps(state: IReduxState) {
     // a button can be disabled/enabled if enableFeaturesBasedOnToken
     // is on or if the livestreaming is running.
     let disabled = false;
-    let tooltip = isRecordingRunning(state) ? 'dialog.stopRecording' : 'dialog.startRecording';
+    const tooltip = isRecordingRunning(state) ? 'dialog.stopRecording' : 'dialog.startRecording';
 
     // If the containing component provides the visible prop, that is one
     // above all, but if not, the button should be autonomus and decide on
@@ -290,12 +291,10 @@ export function getRecordButtonProps(state: IReduxState) {
         visible = recordingEnabled;
     } else if (isJwtFeatureEnabled(state, MEET_FEATURES.TRANSCRIPTION, false)) {
         visible = transcriptionEnabled;
-    }
-
-    // disable the button if the livestreaming is running.
-    if (visible && isLiveStreamingRunning(state)) {
-        disabled = true;
-        tooltip = 'dialog.recordingDisabledBecauseOfActiveLiveStreamingTooltip';
+    } else if (!isVpaasMeeting(state)) {
+        // Self-hosted without JWT: fall back to server config so moderators
+        // see the button when recordingService.enabled or transcription.enabled.
+        visible = recordingEnabled || transcriptionEnabled;
     }
 
     // disable the button if we are in a breakout room.

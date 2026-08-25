@@ -16,9 +16,9 @@ import VideoQualityDialog from './VideoQualityDialog.web';
 interface IProps extends AbstractButtonProps {
 
     /**
-     * Whether or not audio only mode is currently enabled.
+     * Whether or not low bandwidth mode is currently enabled.
      */
-    _audioOnly: boolean;
+    _lowBandwidthMode: boolean;
 
     /**
      * The currently configured maximum quality resolution to be received from

@@ -35,6 +35,7 @@ import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 import MuteVideoButton from './MuteVideoButton';
 import PinButton from './PinButton';
 import SendToBreakoutRoom from './SendToBreakoutRoom';
+import TranslateParticipantButton from './TranslateParticipantButton';
 import VolumeSlider from './VolumeSlider';
 import styles from './styles';
 
@@ -194,6 +195,7 @@ class RemoteVideoMenu extends PureComponent<IProps> {
                 { _showDemote && <DemoteToVisitorButton { ...buttonProps } /> }
                 { _enablePrivateChat && <PrivateMessageButton { ...buttonProps } /> }
                 <ConnectionStatusButton { ...connectionStatusButtonProps } />
+                <TranslateParticipantButton { ...buttonProps } />
                 {_moderator && _rooms.length > 1 && <>
                     {/* @ts-ignore */}
                     <Divider style = { styles.divider as ViewStyle } />

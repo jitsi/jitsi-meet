@@ -26,7 +26,7 @@ export function redirectWithStoredParams(pathname: string) {
         const { locationURL } = getState()['features/base/connection'];
         const newLocationURL = new URL(locationURL?.href ?? '');
 
-        newLocationURL.pathname = pathname;
+        (newLocationURL as Mutable<URL>).pathname = pathname;
         window.location.assign(newLocationURL.toString());
     };
 }
@@ -58,10 +58,10 @@ export function redirectToStaticPage(pathname: string, hashParam?: string) {
         }
 
         if (hashParam) {
-            windowLocation.hash = hashParam;
+            (windowLocation as Mutable<typeof windowLocation>).hash = hashParam;
         }
 
-        windowLocation.pathname = newPathname;
+        (windowLocation as Mutable<typeof windowLocation>).pathname = newPathname;
     };
 }
 
@@ -107,8 +107,8 @@ export function maybeRedirectToTokenAuthUrl(
         dispatch: IStore['dispatch'], getState: IStore['getState'], failureCallback: Function) {
     const state = getState();
     const config = state['features/base/config'];
-    const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
-    const { startAudioOnly } = config;
+    const { enabled: lowBandwidthModeEnabled } = state['features/base/low-bandwidth-mode'];
+    const { startLowBandwidthMode } = config;
     const { locationURL = { href: '' } as URL } = state['features/base/connection'];
     const audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
     const videoMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
@@ -132,7 +132,7 @@ export function maybeRedirectToTokenAuthUrl(
             locationURL,
             {
                 audioMuted,
-                audioOnlyEnabled: audioOnlyEnabled || startAudioOnly,
+                lowBandwidthModeEnabled: lowBandwidthModeEnabled || startLowBandwidthMode,
                 skipPrejoin: true,
                 videoMuted
             },

@@ -15,8 +15,8 @@ import {
 } from '../../functions';
 
 import AutoAssignButton from './AutoAssignButton';
+import { BreakoutRoom } from './BreakoutRoom';
 import BreakoutRoomsFooter from './BreakoutRoomsFooter';
-import { CollapsibleRoom } from './CollapsibleRoom';
 import styles from './styles';
 
 
@@ -38,10 +38,9 @@ const BreakoutRooms = () => {
             { showAutoAssign && <AutoAssignButton /> }
             {
                 isBreakoutRoomsSupported
-                && rooms.map(room => (<CollapsibleRoom
+                && rooms.map(room => (<BreakoutRoom
                     key = { room.id }
-                    room = { room }
-                    roomId = { room.id } />))
+                    room = { room } />))
             }
         </>
     ), [ showAutoAssign, isBreakoutRoomsSupported, rooms ]);

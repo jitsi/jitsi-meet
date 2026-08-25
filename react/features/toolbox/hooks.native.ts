@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 import ChatButton from '../chat/components/native/ChatButton';
@@ -64,73 +65,6 @@ const hangup = {
 };
 
 /**
- * A hook that returns the audio mute button.
- *
- *  @returns {Object | undefined}
- */
-function getAudioMuteButton() {
-    const _iAmVisitor = useSelector(iAmVisitor);
-
-    if (!_iAmVisitor) {
-        return microphone;
-    }
-}
-
-/**
- * A hook that returns the video mute button.
- *
- *  @returns {Object | undefined}
- */
-function getVideoMuteButton() {
-    const _iAmVisitor = useSelector(iAmVisitor);
-
-    if (!_iAmVisitor) {
-        return camera;
-    }
-}
-
-/**
- * A hook that returns the chat button.
- *
- *  @returns {Object | undefined}
- */
-function getChatButton() {
-    return chat;
-}
-
-/**
- * A hook that returns the screen sharing button.
- *
- *  @returns {Object | undefined}
- */
-function getScreenSharingButton() {
-    const _iAmVisitor = useSelector(iAmVisitor);
-    const _isScreenShareButtonDisabled = useSelector(isDesktopShareButtonDisabled);
-
-    if (!_isScreenShareButtonDisabled && !_iAmVisitor) {
-        return screensharing;
-    }
-}
-
-/**
- * A hook that returns the tile view button.
- *
- *  @returns {Object | undefined}
- */
-function getTileViewButton() {
-    return tileview;
-}
-
-/**
- * A hook that returns the overflow menu button.
- *
- *  @returns {Object | undefined}
- */
-function getOverflowMenuButton() {
-    return overflowmenu;
-}
-
-/**
  * Returns all buttons that could be rendered.
  *
  * @param {Object} _customToolbarButtons - An array containing custom buttons objects.
@@ -138,44 +72,44 @@ function getOverflowMenuButton() {
  */
 export function useNativeToolboxButtons(
         _customToolbarButtons?: ICustomToolbarButton[]): { [key: string]: IToolboxNativeButton; } {
-    const audioMuteButton = getAudioMuteButton();
-    const videoMuteButton = getVideoMuteButton();
-    const chatButton = getChatButton();
-    const screenSharingButton = getScreenSharingButton();
-    const tileViewButton = getTileViewButton();
-    const overflowMenuButton = getOverflowMenuButton();
+    const _iAmVisitor = useSelector(iAmVisitor);
+    const _isScreenShareButtonDisabled = useSelector(isDesktopShareButtonDisabled);
 
-    const buttons: { [key in NativeToolbarButton]?: IToolboxNativeButton; } = {
-        microphone: audioMuteButton,
-        camera: videoMuteButton,
-        chat: chatButton,
-        desktop: screenSharingButton,
-        raisehand,
-        tileview: tileViewButton,
-        overflowmenu: overflowMenuButton,
-        hangup
-    };
-    const buttonKeys = Object.keys(buttons) as NativeToolbarButton[];
-
-    buttonKeys.forEach(
-        key => typeof buttons[key] === 'undefined' && delete buttons[key]);
-
-    const customButtons = _customToolbarButtons?.reduce((prev, { backgroundColor, icon, id, text }) => {
-        prev[id] = {
-            backgroundColor,
-            key: id,
-            id,
-            Content: CustomOptionButton,
-            group: 4,
-            icon,
-            text
+    return useMemo(() => {
+        const buttons: { [key in NativeToolbarButton]?: IToolboxNativeButton; } = {
+            chat,
+            raisehand,
+            tileview,
+            overflowmenu,
+            hangup
         };
 
-        return prev;
-    }, {} as { [key: string]: ICustomToolbarButton; });
+        if (!_iAmVisitor) {
+            buttons.microphone = microphone;
+            buttons.camera = camera;
 
-    return {
-        ...buttons,
-        ...customButtons
-    };
+            if (!_isScreenShareButtonDisabled) {
+                buttons.desktop = screensharing;
+            }
+        }
+
+        const customButtons = _customToolbarButtons?.reduce((prev, { backgroundColor, icon, id, text }) => {
+            prev[id] = {
+                backgroundColor,
+                key: id,
+                id,
+                Content: CustomOptionButton,
+                group: 4,
+                icon,
+                text
+            };
+
+            return prev;
+        }, {} as { [key: string]: ICustomToolbarButton; });
+
+        return {
+            ...buttons,
+            ...customButtons
+        };
+    }, [ _iAmVisitor, _isScreenShareButtonDisabled, _customToolbarButtons ]);
 }

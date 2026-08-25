@@ -630,7 +630,7 @@ export function addHashParamsToURL(url: URL, hashParamsToAdd: Object = {}) {
     });
 
     if (urlParamsArray.length) {
-        url.hash = `#${urlParamsArray.join('&')}`;
+        (url as Mutable<URL>).hash = `#${urlParamsArray.join('&')}`;
     }
 
     return url;
@@ -684,7 +684,7 @@ export function appendURLHashParam(url: string, name: string, value: string) {
     dummyUrl.searchParams.append(name, value);
 
     // Write back as hash parameters.
-    newUrl.hash = dummyUrl.searchParams.toString();
+    (newUrl as Mutable<URL>).hash = dummyUrl.searchParams.toString();
 
     return newUrl.toString();
 }

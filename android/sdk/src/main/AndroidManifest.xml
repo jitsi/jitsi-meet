@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools">
     <!-- XXX ACCESS_NETWORK_STATE is required by WebRTC. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- XXX CHANGE_NETWORK_STATE lets WebRTC's own NetworkMonitorAutoDetect call
+         ConnectivityManager#requestNetwork for a cellular network. Without it that call throws
+         SecurityException (silently caught by WebRTC), the cellular interface never comes up
+         while wifi is active, and the client gathers only one ICE candidate pair - so a wifi
+         drop has no established backup pair to fail over to. -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />

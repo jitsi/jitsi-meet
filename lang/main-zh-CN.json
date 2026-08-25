@@ -39,9 +39,6 @@
         "phone": "电话",
         "speaker": "扬声器"
     },
-    "audioOnly": {
-        "audioOnly": "省流"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "例如，10000000为10兆",
         "assumedBandwidthBpsWarning": "较高的数值可能会导致网络问题。",
@@ -283,7 +280,6 @@
         "Submit": "提交",
         "Understand": "我已知晓，暂时保持静音",
         "UnderstandAndUnmute": "我已知晓，请为我解除静音",
-        "WaitForHostMsg": "会议尚未开始，主持人还未入会。如需成为主持人请先登录，或耐心等待会议开始。",
         "WaitForHostNoAuthMsg": "会议尚未开始，暂无主持人入会，请耐心等待",
         "WaitingForHostButton": "等待主持人",
         "WaitingForHostTitle": "正在等待主持人加入……",
@@ -483,7 +479,7 @@
         "shareScreenWarningH1": "如果你只想共享屏幕：",
         "shareScreenWarningTitle": "在共享你的屏幕之前，你需要停止共享音频",
         "shareVideoConfirmPlay": "即将打开外部网站，是否继续？",
-        "shareVideoConfirmPlayTitle": "需先停止音频共享才能分享屏幕",
+        "shareVideoConfirmPlayTitle": "{{name}} 向您分享了一个视频。",
         "shareVideoLinkError": "请提供正确的视频链接。",
         "shareVideoLinkStopped": "{{name}}向你分享了一个视频",
         "shareVideoTitle": "分享视频",
@@ -521,7 +517,7 @@
             "tokenExpired": "Token已过期。"
         },
         "tokenAuthFailedTitle": "验证失败",
-        "tokenAuthFailedWithReasons": "抱歉，你无法加入此通话，原因：",
+        "tokenAuthFailedWithReasons": "抱歉，您无权加入此通话。可能的原因：{{reason}}",
         "tokenAuthUnsupported": "Token地址不支持",
         "transcribing": "转录中",
         "unauthenticatedAccessDisabled": "此会议需要身份验证，请先登录后继续。",
@@ -791,12 +787,14 @@
         "button": "邀请其他人",
         "youAreAlone": "你是会议中唯一一个人"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "省流"
+    },
     "me": "我",
     "notify": {
         "OldElectronAPPTitle": "安全漏洞！",
         "allowAll": "允许全部",
         "allowAudio": "允许开启麦克风",
-        "allowBoth": "允许音视频",
         "allowDesktop": "允许屏幕共享",
         "allowVideo": "允许开启摄像头",
         "allowedUnmute": "你可以解除麦克风静音、启动摄像头或共享屏幕。",
@@ -979,8 +977,7 @@
             "pollQuestion": "投票内容",
             "questionPlaceholder": "请输入你的问题",
             "removeOption": "删除选项",
-            "save": "保存",
-            "send": "发布"
+            "save": "保存"
         },
         "errors": {
             "notUniqueOption": "选项必须是唯一的"
@@ -1161,7 +1158,7 @@
         "about": "你可以为会议添加一个$t(lockRoomPassword)，参会者需要输入$t(lockRoomPassword)才能加入会议。",
         "aboutReadOnly": "主持人可以为会议添加一个$t(lockRoomPassword))，参会者需要输入$t(lockRoomPassword)才能加入会议。",
         "insecureRoomNameWarningNative": "房间名称不安全，不受欢迎的参与者可能会加入你的会议，{{recommendAction}} 了解更多有关保护你的会议的信息",
-        "insecureRoomNameWarningWeb": "房间名称不安全，不受欢迎的参与者可能会加入你的会议，{{recommendAction}} 了解更多有关保护你的会议的信息<a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">这里</a>。",
+        "insecureRoomNameWarningWeb": "房间名称不安全，不受欢迎的参与者可能会加入你的会议，{{recommendAction}} 了解更多有关保护你的会议的信息<a href=\"{{securityUrl}}\" target=\"_blank\">这里</a>。",
         "title": "安全选项",
         "unsafeRoomActions": {
             "meeting": "考虑使用安全按钮保护你的会议。",
@@ -1294,7 +1291,6 @@
         "Settings": "打开设置",
         "accessibilityLabel": {
             "Settings": "切换设置",
-            "audioOnly": "切换仅音频模式",
             "audioRoute": "选择音频设备",
             "boo": "嘘声",
             "breakoutRooms": "分组讨论室",
@@ -1337,6 +1333,7 @@
             "localRecording": "切换本地录制",
             "lockRoom": "设置/取消会议密码",
             "love": "爱心",
+            "lowBandwidthMode": "切换仅音频模式",
             "lowerHand": "取消举手",
             "moreActions": "更多操作",
             "moreActionsMenu": "更多操作菜单",
@@ -1399,8 +1396,6 @@
                 "label": "立体声"
             }
         },
-        "audioOnlyOff": "关闭省流模式",
-        "audioOnlyOn": "开启省流模式",
         "audioRoute": "选择音频设备",
         "audioSettings": "音频设置",
         "authenticate": "身份验证",
@@ -1442,6 +1437,8 @@
         "login": "登录",
         "logout": "注销",
         "love": "爱心",
+        "lowBandwidthModeOff": "关闭省流模式",
+        "lowBandwidthModeOn": "开启省流模式",
         "lowerYourHand": "取消举手",
         "moreActions": "更多操作",
         "moreOptions": "显示更多选项",
@@ -1532,8 +1529,6 @@
     },
     "videoStatus": {
         "adjustFor": "调整为：",
-        "audioOnly": "仅语音",
-        "audioOnlyExpanded": "省流模式已开启，仅接收语音和共享屏幕。",
         "bestPerformance": "最佳性能",
         "callQuality": "视频质量（0 表示最佳性能，3 表示最高质量）",
         "hd": "高清",
@@ -1541,9 +1536,11 @@
         "highDefinition": "高清晰度",
         "highestQuality": "最佳品质",
         "labelTooiltipNoVideo": "无视频",
-        "labelTooltipAudioOnly": "省流模式已开启",
+        "labelTooltipLowBandwidthMode": "省流模式已开启",
         "ld": "低清",
         "ldTooltip": "观看低清视频",
+        "lowBandwidthMode": "仅语音",
+        "lowBandwidthModeExpanded": "省流模式已开启，仅接收语音和共享屏幕。",
         "lowDefinition": "低清晰度",
         "performanceSettings": "性能设置",
         "recording": "正在进行录制",

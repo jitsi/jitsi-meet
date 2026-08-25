@@ -4,6 +4,7 @@ import {
     CLEAR_RECORDING_SESSIONS,
     MARK_CONSENT_REQUESTED,
     RECORDING_SESSION_UPDATED,
+    SET_LOCAL_RECORDING_RUNNING,
     SET_MEETING_HIGHLIGHT_BUTTON_STATE,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
     SET_SELECTED_RECORDING_SERVICE,
@@ -54,6 +55,7 @@ export interface IStopRecordingIntent {
 export interface IRecordingState {
     consentRequested: Set<any>;
     disableHighlightMeetingMoment: boolean;
+    localRecordingRunning?: boolean;
     pendingNotificationUids: {
         [key: string]: string | undefined;
     };
@@ -157,6 +159,12 @@ ReducerRegistry.register<IRecordingState>(STORE_NAME,
             return {
                 ...state,
                 wasStartRecordingSuggested: true
+            };
+
+        case SET_LOCAL_RECORDING_RUNNING:
+            return {
+                ...state,
+                localRecordingRunning: action.running
             };
 
         default:
