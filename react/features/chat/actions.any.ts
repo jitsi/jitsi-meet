@@ -14,8 +14,10 @@ import {
     NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
     OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
+    RETRACT_MESSAGE,
     SEND_MESSAGE,
     SEND_MESSAGE_EDIT,
+    SEND_MESSAGE_RETRACTION,
     SEND_REACTION,
     SET_CHAT_SEARCH_MATCH_INDEX,
     SET_CHAT_SEARCH_QUERY,
@@ -25,6 +27,7 @@ import {
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
 import { ChatTabs } from './constants';
+import { IMessage } from './types';
 
 /**
  * Adds a chat message to the collection of messages.
@@ -155,6 +158,19 @@ export function sendMessage(message: string, ignorePrivacy = false) {
 }
 
 /**
+ * Requests retraction (delete) of a previously sent message.
+ *
+ * @param {IMessage} message - The message to retract.
+ * @returns {Object}
+ */
+export function sendMessageRetraction(message: IMessage) {
+    return {
+        type: SEND_MESSAGE_RETRACTION,
+        message
+    };
+}
+
+/**
  * Sends a reaction to a message.
  *
  * @param {string} reaction - The reaction to send.
@@ -255,6 +271,21 @@ export function setPrivateMessageRecipientById(participantId: string) {
         if (participant) {
             dispatch(setPrivateMessageRecipient(participant));
         }
+    };
+}
+
+/**
+ * Marks a message as retracted.
+ *
+ * @param {string} messageId - The retracted message id.
+ * @param {string} retractedBy - The participant ID of the user who retracted the message.
+ * @returns {Object}
+ */
+export function retractMessage(messageId: string, retractedBy: string) {
+    return {
+        type: RETRACT_MESSAGE,
+        messageId,
+        retractedBy
     };
 }
 

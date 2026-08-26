@@ -81,7 +81,9 @@ class ChatMessage extends Component<IChatMessageProps> {
             messageBubbleStyle.push(styles.activeMatchMessageBubble);
         }
 
-        const messageText = getMessageText(this.props.message);
+        const messageText = message.isDeleted
+            ? this.props.t(localMessage ? 'chat.deletedMessageByMe' : 'chat.deletedMessage')
+            : getMessageText(this.props.message);
 
         return (
             <View
@@ -97,7 +99,7 @@ class ChatMessage extends Component<IChatMessageProps> {
                                 : this._renderMessageTextComponent(messageText) }
                             { this._renderPrivateNotice() }
                         </View>
-                        { this._renderPrivateReplyButton() }
+                        { !message.isDeleted && this._renderPrivateReplyButton() }
                     </View>
                     { this._renderTimestamp() }
                 </View>
