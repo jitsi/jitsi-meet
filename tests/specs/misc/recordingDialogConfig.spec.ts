@@ -126,7 +126,10 @@ setTestProperties(__filename, {
  * regardless of what the test browser actually supports.
  */
 describe('Recording dialog config matrix — recording × transcription × local recording × live streaming', () => {
-    let localRecordingSupportedByBrowser: boolean;
+    // A const-bound holder object, rather than a reassigned `let`, so the it() closures created
+    // inside the loop below don't trip @typescript-eslint/no-loop-func — only its property (set
+    // once, in 'setup', before any of the loop's tests run) actually changes.
+    const localRecordingSupport = { byBrowser: false };
 
     it('setup', async () => {
         if (!testsConfig.jwt.kid || !testsConfig.jwt.privateKeyPath) {
@@ -137,7 +140,7 @@ describe('Recording dialog config matrix — recording × transcription × local
         }
 
         await joinWithConfig({});
-        localRecordingSupportedByBrowser = await isLocalRecordingSupportedByBrowser();
+        localRecordingSupport.byBrowser = await isLocalRecordingSupportedByBrowser();
     });
 
     const BOOLEANS = [ true, false ];
@@ -164,7 +167,7 @@ describe('Recording dialog config matrix — recording × transcription × local
                         // Orthogonal to the other three flags — always checked.
                         expect(await p1.getToolbar().hasLiveStreamingButton()).toBe(liveStreamingEnabled);
 
-                        const localRecordingAvailable = !localRecordingDisabled && localRecordingSupportedByBrowser;
+                        const localRecordingAvailable = !localRecordingDisabled && localRecordingSupport.byBrowser;
                         const dialogCanOpen = recordingServiceEnabled || localRecordingAvailable;
 
                         expect(await p1.getToolbar().hasRecordingButton()).toBe(dialogCanOpen);
