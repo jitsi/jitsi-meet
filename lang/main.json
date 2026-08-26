@@ -403,6 +403,7 @@
         "lockTitle": "Lock failed",
         "login": "Login",
         "loginFailed": "Login failed.",
+        "loginNotCompleted": "Login was not completed, so you are not connected to this meeting.",
         "loginOnResume": "Your authentication session has expired. You need to login again to continue the meeting.",
         "loginPopupBlocked": "Login popup was blocked by your browser.",
         "loginQuestion": "Are you sure you want to login and leave the conference?",

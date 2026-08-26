@@ -4,10 +4,13 @@ import { appNavigate } from '../app/actions.native';
 import { IStore } from '../app/types';
 import { conferenceLeft } from '../base/conference/actions';
 import { connectionFailed } from '../base/connection/actions.native';
+import { hideDialog, openDialog } from '../base/dialog/actions';
 import { set } from '../base/redux/functions';
 
 import { CANCEL_LOGIN } from './actionTypes';
 import { stopWaitForOwner } from './actions.any';
+import LoginRetryDialog from './components/native/LoginRetryDialog';
+import logger from './logger';
 
 export * from './actions.any';
 
@@ -68,6 +71,25 @@ export function cancelWaitForOwner() {
 }
 
 /**
+ * Hides {@link LoginRetryDialog}.
+ *
+ * @returns {Action}
+ */
+export function hideLoginRetryDialog() {
+    return hideDialog('LoginRetryDialog', LoginRetryDialog);
+}
+
+/**
+ * Opens {@link LoginRetryDialog} which warns the user that they are not
+ * connected to the meeting because the external login was not completed.
+ *
+ * @returns {Action}
+ */
+export function openLoginRetryDialog() {
+    return openDialog('LoginRetryDialog', LoginRetryDialog);
+}
+
+/**
  * Redirect to the default location (e.g. Welcome page).
  *
  * @returns {Function}
@@ -85,7 +107,8 @@ export function redirectToDefaultLocation() {
  */
 export function openTokenAuthUrl(tokenAuthServiceUrl: string) {
     return () => {
-        Linking.openURL(tokenAuthServiceUrl);
+        Linking.openURL(tokenAuthServiceUrl)
+            .catch(error => logger.error('Failed to open token auth URL', error));
     };
 }
 
