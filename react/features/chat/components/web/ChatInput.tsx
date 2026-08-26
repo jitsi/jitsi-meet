@@ -10,8 +10,9 @@ import { translate } from '../../../base/i18n/functions';
 import { IconFaceSmile, IconSend } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
-import { CHAT_SIZE } from '../../constants';
+import { CHAR_LIMIT, CHAT_SIZE } from '../../constants';
 import { areSmileysDisabled, isSendGroupChatDisabled } from '../../functions';
+import { IMessage } from '../../types';
 
 import SmileysPanel from './SmileysPanel';
 
@@ -77,6 +78,16 @@ interface IProps extends WithTranslation {
      * Invoked to send chat messages.
      */
     dispatch: IStore['dispatch'];
+
+    /**
+     * The message currently being edited, if any.
+     */
+    editingMessage?: IMessage;
+
+    /**
+     * Callback invoked to cancel message editing.
+     */
+    onCancelEdit?: () => void;
 
     /**
      * Callback to invoke on message send.
@@ -154,6 +165,12 @@ class ChatInput extends Component<IProps, IState> {
     override componentDidUpdate(prevProps: Readonly<IProps>) {
         if (prevProps._privateMessageRecipientId !== this.props._privateMessageRecipientId) {
             this._textArea?.current?.focus();
+        }
+        if (prevProps.editingMessage?.messageId !== this.props.editingMessage?.messageId) {
+            this.setState({
+                message: this.props.editingMessage?.message ?? ''
+            });
+            this._focus();
         }
     }
 
@@ -237,7 +254,7 @@ class ChatInput extends Component<IProps, IState> {
             return;
         }
 
-        const trimmed = this.state.message.trim();
+        const trimmed = this.state.message.trim().slice(0, CHAR_LIMIT);
 
         if (trimmed) {
             onSend(trimmed);
@@ -274,6 +291,16 @@ class ChatInput extends Component<IProps, IState> {
             return;
         }
 
+        if (event.key === 'Escape' && this.props.editingMessage) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            this.props.onCancelEdit?.();
+            this.setState({ message: '' });
+
+            return;
+        }
+
         if (event.key === 'Enter'
             && event.shiftKey === false
             && event.ctrlKey === false) {
@@ -292,7 +319,7 @@ class ChatInput extends Component<IProps, IState> {
      * @returns {void}
      */
     _onMessageChange(value: string) {
-        this.setState({ message: value });
+        this.setState({ message: value.slice(0, CHAR_LIMIT) });
     }
 
     /**
