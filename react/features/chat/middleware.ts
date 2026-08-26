@@ -1,4 +1,5 @@
 import { AnyAction } from 'redux';
+import { v4 as uuidv4 } from 'uuid';
 
 import { IReduxState, IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
@@ -45,6 +46,7 @@ import {
     CLOSE_CHAT,
     OPEN_CHAT,
     SEND_MESSAGE,
+    SEND_MESSAGE_EDIT,
     SEND_MESSAGE_MODERATION,
     SEND_REACTION,
     SET_FOCUSED_TAB
@@ -54,6 +56,7 @@ import {
     addMessageReaction,
     clearChatState,
     closeChat,
+    editMessage,
     moderateMessage,
     notifyPrivateRecipientsChanged,
     openChat,
@@ -61,7 +64,9 @@ import {
 } from './actions';
 import { ChatPrivacyDialog } from './components';
 import {
+    CHAR_LIMIT,
     ChatTabs,
+    EDIT_CHAT_MESSAGE,
     INCOMING_MSG_SOUND_ID,
     LOBBY_CHAT_MESSAGE,
     MESSAGE_TYPE_ERROR,
@@ -146,18 +151,28 @@ MiddlewareRegistry.register(store => next => action => {
 
     case ENDPOINT_MESSAGE_RECEIVED: {
         const state = store.getState();
-        const { data } = action;
+        const { participant, data } = action;
 
         if (data?.type === MODERATE_CHAT_MESSAGE) {
             _onMessageModerated(store, data.messageId, data.moderatedBy, data.reason);
+        }
+
+        if (data?.type === EDIT_CHAT_MESSAGE && data.messageId && data.message) {
+            const trimmedMessage = String(data.message).slice(0, CHAR_LIMIT);
+
+            store.dispatch(editMessage({
+                messageId: data.messageId,
+                message: trimmedMessage,
+                editedAt: data.editedAt,
+                participantId: participant.getId()
+            }));
+
             break;
         }
 
         if (!isReactionsEnabled(state)) {
             return next(action);
         }
-
-        const { participant } = action;
 
         if (data?.name === ENDPOINT_REACTION_NAME) {
             // Only accept known reaction keys, skip duplicates and keep just 3.
@@ -269,6 +284,11 @@ MiddlewareRegistry.register(store => next => action => {
             const moderatedMessages = state['features/chat'].messages.filter(
                 (m: IMessage) =>
                     m.isModerated
+            );
+
+            const editedMessages = state['features/chat'].messages.filter(
+                (m: IMessage) =>
+                    m.isEdited
                     && !m.privateMessage
                     && m.messageType === MESSAGE_TYPE_LOCAL
             );
@@ -297,10 +317,28 @@ MiddlewareRegistry.register(store => next => action => {
 
                 setTimeout(() => sendWithRetry(3), 3000);
             }
+
+            editedMessages.forEach(message => {
+                conference.sendPrivateTextMessage(
+                    action.participant.id,
+                    JSON.stringify({
+                        type: EDIT_CHAT_MESSAGE,
+                        messageId: message.messageId,
+                        message: message.message,
+                        editedAt: message.editedAt
+                    }),
+                    'json-message'
+                );
+            });
+        }
+
+        if (_shouldNotifyPrivateRecipientsChanged(store, action)) {
+            dispatch(notifyPrivateRecipientsChanged());
         }
 
         return result;
     }
+
     case PARTICIPANT_LEFT:
     case PARTICIPANT_UPDATED: {
         if (action.type === PARTICIPANT_LEFT) {
@@ -361,11 +399,60 @@ MiddlewareRegistry.register(store => next => action => {
                 }, lobbyMessageRecipient.id);
                 _persistSentPrivateMessage(store, lobbyMessageRecipient, action.message, true);
             } else if (privateMessageRecipient) {
-                conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient));
-                _persistSentPrivateMessage(store, privateMessageRecipient, action.message);
+                const messageId = uuidv4();
+
+                conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient), undefined, messageId);
+                _persistSentPrivateMessage(store, privateMessageRecipient, action.message, false, messageId);
             } else {
-                conference.sendTextMessage(action.message);
+                const messageId = uuidv4();
+
+                conference.sendTextMessage(action.message, undefined, undefined, messageId);
             }
+        }
+        break;
+    }
+
+    case SEND_MESSAGE_EDIT: {
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+        const editedAt = Date.now();
+        const messageToEdit = state['features/chat'].messages.find(
+            message => message.messageId === action.messageId
+        );
+
+        if (
+            conference
+            && localParticipant?.id
+            && messageToEdit
+            && messageToEdit.participantId === localParticipant.id
+            && messageToEdit.messageType === MESSAGE_TYPE_LOCAL
+            && !messageToEdit.isFromVisitor
+        ) {
+            const trimmedMessage = String(action.message).trim().slice(0, CHAR_LIMIT);
+
+            const payload = {
+                type: EDIT_CHAT_MESSAGE,
+                messageId: action.messageId,
+                message: trimmedMessage,
+                editedAt
+            };
+
+            if (messageToEdit.privateMessage && messageToEdit.recipientId) {
+                conference.sendPrivateTextMessage(
+                    messageToEdit.recipientId,
+                    JSON.stringify(payload),
+                    'json-message'
+                );
+            } else {
+                conference.sendTextMessage(JSON.stringify(payload), 'json-message');
+            }
+
+            store.dispatch(editMessage({
+                messageId: action.messageId,
+                message: trimmedMessage,
+                editedAt,
+                participantId: localParticipant.id
+            }));
         }
         break;
     }
@@ -521,6 +608,25 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
         JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
         (participantId: string, message: string, timestamp: number, messageId: string, displayName?: string,
                 isFromVisitor?: boolean, replyToId?: string) => {
+            try {
+                const data = JSON.parse(message);
+
+                if (data?.type === EDIT_CHAT_MESSAGE && data.messageId && data.message) {
+                    const trimmedMessage = String(data.message).slice(0, CHAR_LIMIT);
+
+                    store.dispatch(editMessage({
+                        messageId: data.messageId,
+                        message: trimmedMessage,
+                        editedAt: data.editedAt,
+                        participantId
+                    }));
+
+                    // Don't treat edit payload as a new chat message.
+                    return;
+                }
+            } catch (e) {
+                // Normal private message.
+            }
             _onConferenceMessageReceived(store, {
                 participantId,
                 message,
@@ -827,10 +933,11 @@ interface IRecipient {
  * @param {IRecipient} recipient - The recipient the private message was sent to.
  * @param {string} message - The sent message.
  * @param {boolean} isLobbyPrivateMessage - Is a lobby message.
+ * @param {string} messageId - The unique identifier of the private message used for message editing and tracking.
  * @returns {void}
  */
 function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipient: IRecipient,
-        message: string, isLobbyPrivateMessage = false) {
+        message: string, isLobbyPrivateMessage = false, messageId?: string) {
     const state = getState();
     const localParticipant = getLocalParticipant(state);
 
@@ -853,9 +960,11 @@ function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipient: I
         participantId: localParticipant.id,
         messageType: MESSAGE_TYPE_LOCAL,
         message,
+        messageId,
         privateMessage: !isLobbyPrivateMessage,
         lobbyChat: isLobbyPrivateMessage,
         recipient: recipientName,
+        recipientId: recipient.id,
         sentToVisitor: recipient.isVisitor,
         timestamp: Date.now()
     }));

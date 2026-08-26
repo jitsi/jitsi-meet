@@ -21,6 +21,9 @@ interface IProps extends IChatMessageProps {
     className?: string;
     enablePrivateChat?: boolean;
     isActiveSearchMatch?: boolean;
+    isEditing?: boolean;
+    onCancelEdit?: () => void;
+    onEditMessage?: (message: IChatMessageProps['message']) => void;
     searchQuery?: string;
     shouldDisplayMenuOnRight?: boolean;
     state?: IReduxState;
@@ -200,6 +203,12 @@ const useStyles = makeStyles()((theme: Theme) => {
             whiteSpace: 'nowrap',
             flexShrink: 0
         },
+        editedLabel: {
+            ...theme.typography.labelRegular,
+            color: theme.palette.chatTimestamp,
+            marginLeft: theme.spacing(1),
+            whiteSpace: 'nowrap'
+        },
         reactionsPopover: {
             padding: theme.spacing(2),
             backgroundColor: theme.palette.chatInputBackground,
@@ -230,12 +239,28 @@ const useStyles = makeStyles()((theme: Theme) => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
-        }
+        },
+        editingNotice: {
+            alignItems: 'center',
+            borderTop: `1px solid ${theme.palette.chatInputBorder}`,
+            color: theme.palette.chatMessageText,
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginTop: theme.spacing(1),
+            paddingTop: theme.spacing(1),
+            width: '100%',
+            ...theme.typography.labelRegular
+        },
+        cancelEdit: {
+            cursor: 'pointer',
+            color: theme.palette.link01
+        },
     };
 });
 
 const ChatMessage = ({
     className = '',
+    isEditing,
     message,
     state,
     showDisplayName,
@@ -244,6 +269,8 @@ const ChatMessage = ({
     searchQuery,
     enablePrivateChat,
     knocking,
+    onCancelEdit,
+    onEditMessage,
     t
 }: IProps) => {
     const { classes, cx } = useStyles();
@@ -276,6 +303,10 @@ const ChatMessage = ({
             behavior: 'smooth'
         });
     }, [ isActiveSearchMatch ]);
+
+    const handleEditMessage = useCallback(() => {
+        onEditMessage?.(message);
+    }, [ message, onEditMessage ]);
 
     const handleMouseEnter = useCallback(() => {
         setIsHovered(true);
@@ -334,6 +365,24 @@ const ChatMessage = ({
                 <p>
                     {getFormattedTimestamp(message)}
                 </p>
+            </div>
+        );
+    }
+
+    /**
+     * Renders the editing notice for which message is edited.
+     *
+     * @returns {React$Element<*>}
+     */
+    function _renderEditingNotice() {
+        return (
+            <div className = { classes.editingNotice }>
+                <span>{t('chat.editingMessage', 'Editing')}</span>
+                <span
+                    className = { classes.cancelEdit }
+                    onClick = { onCancelEdit }>
+                    {t('chat.cancel', 'Cancel')}
+                </span>
             </div>
         );
     }
@@ -408,6 +457,12 @@ const ChatMessage = ({
         ? t('chat.moderatedMessage')
         : getMessageText(message);
 
+    const canEdit = message.messageType === MESSAGE_TYPE_LOCAL
+        && !message.lobbyChat
+        && !message.isReaction
+        && !message.isFromVisitor
+        && !isFileMessage(message);
+
     return (
         <div
             className = { cx(classes.chatMessageWrapper, className) }
@@ -419,6 +474,7 @@ const ChatMessage = ({
                 {!shouldDisplayMenuOnRight && (
                     <div className = { classes.optionsButtonContainer }>
                         {isHovered && !message.isModerated && <MessageMenu
+                            canEdit = { canEdit }
                             displayName = { message.displayName }
                             enablePrivateChat = { Boolean(enablePrivateChat) }
                             isFileMessage = { isFileMessage(message) }
@@ -427,6 +483,7 @@ const ChatMessage = ({
                             isModerated = { message.isModerated }
                             message = { message.message }
                             messageId = { message.messageId }
+                            onEditMessage = { handleEditMessage }
                             participantId = { message.participantId } />}
                     </div>
                 )}
@@ -481,6 +538,11 @@ const ChatMessage = ({
                                             </>
                                         )}
                                     </div>
+                                    {message.isEdited && (
+                                        <div className = { classes.editedLabel }>
+                                            {t('chat.edited', '(edited)')}
+                                        </div>
+                                    )}
                                     {_renderTimestamp()}
                                 </div>
                             </div>
@@ -500,6 +562,7 @@ const ChatMessage = ({
                         <div>
                             <div className = { classes.optionsButtonContainer }>
                                 {isHovered && !message.isModerated && <MessageMenu
+                                    canEdit = { canEdit }
                                     displayName = { message.displayName }
                                     enablePrivateChat = { Boolean(enablePrivateChat) }
                                     isFileMessage = { isFileMessage(message) }
@@ -508,12 +571,14 @@ const ChatMessage = ({
                                     isModerated = { message.isModerated }
                                     message = { message.message }
                                     messageId = { message.messageId }
+                                    onEditMessage = { handleEditMessage }
                                     participantId = { message.participantId } />}
                             </div>
                         </div>
                     </div>
                 )}
             </div>
+            {isEditing && _renderEditingNotice()}
         </div>
     );
 };
