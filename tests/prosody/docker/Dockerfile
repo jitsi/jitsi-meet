@@ -38,6 +38,7 @@ COPY --chown=prosody:prosody resources/prosody-plugins/ /opt/prosody-jitsi-plugi
 COPY --chown=prosody:prosody tests/prosody/docker/inspect.lua /opt/prosody-jitsi-plugins/inspect.lua
 
 COPY --chown=prosody:prosody tests/prosody/docker/prosody.cfg.lua /etc/prosody/prosody.cfg.lua
+COPY --chown=prosody:prosody tests/prosody/docker/cfg/ /etc/prosody/cfg/
 
 # Test ASAP public keys — served by mod_test_observer_http for RS256 token verification tests.
 # Two separate key pairs are used: one for login tokens (mod_auth_token) and one for system

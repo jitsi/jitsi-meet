@@ -32,7 +32,7 @@ export const isTokenAuthInline = (config: IConfig): boolean =>
  * @param {URL} locationURL - The location URL.
  * @param {Object} options: - Config options {
  *     audioMuted: boolean | undefined
- *     audioOnlyEnabled: boolean | undefined,
+ *     lowBandwidthModeEnabled: boolean | undefined,
  *     skipPrejoin: boolean | undefined,
  *     videoMuted: boolean | undefined
  * }.
@@ -46,7 +46,7 @@ export const _getTokenAuthState = (
         locationURL: URL,
         options: {
             audioMuted: boolean | undefined;
-            audioOnlyEnabled: boolean | undefined;
+            lowBandwidthModeEnabled: boolean | undefined;
             skipPrejoin: boolean | undefined;
             videoMuted: boolean | undefined;
         },
@@ -62,7 +62,7 @@ export const _getTokenAuthState = (
 
     const {
         audioMuted = false,
-        audioOnlyEnabled = false,
+        lowBandwidthModeEnabled = false,
         skipPrejoin = false,
         videoMuted = false
     } = options;
@@ -73,10 +73,10 @@ export const _getTokenAuthState = (
         state['config.startWithAudioMuted'] = true;
     }
 
-    if (audioOnlyEnabled) {
+    if (lowBandwidthModeEnabled) {
 
         // @ts-ignore
-        state['config.startAudioOnly'] = true;
+        state['config.startLowBandwidthMode'] = true;
     }
 
     if (skipPrejoin) {

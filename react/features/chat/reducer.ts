@@ -7,6 +7,7 @@ import { IVisitorChatParticipant } from '../visitors/types';
 import {
     ADD_MESSAGE,
     ADD_MESSAGE_REACTION,
+    CLEAR_CHAT_SEARCH,
     CLEAR_CHAT_STATE,
     CLOSE_CHAT,
     EDIT_MESSAGE,
@@ -15,6 +16,8 @@ import {
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     RETRACT_MESSAGE,
     SET_CHAT_IS_RESIZING,
+    SET_CHAT_SEARCH_MATCH_INDEX,
+    SET_CHAT_SEARCH_QUERY,
     SET_CHAT_WIDTH,
     SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
@@ -34,6 +37,8 @@ const DEFAULT_STATE = {
     unreadMessagesCount: 0,
     unreadFilesCount: 0,
     privateMessageRecipient: undefined,
+    searchQuery: '',
+    searchMatchIndex: 0,
     lobbyMessageRecipient: undefined,
     isLobbyChatActive: false,
     focusedTab: undefined,
@@ -58,6 +63,8 @@ export interface IChatState {
     messages: IMessage[];
     notifyPrivateRecipientsChangedTimestamp?: number;
     privateMessageRecipient?: IParticipant | IVisitorChatParticipant;
+    searchMatchIndex: number;
+    searchQuery: string;
     unreadFilesCount: number;
     unreadMessagesCount: number;
     width: {
@@ -143,6 +150,13 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         };
     }
 
+    case CLEAR_CHAT_SEARCH:
+        return {
+            ...state,
+            searchQuery: '',
+            searchMatchIndex: 0
+        };
+
     case CLEAR_CHAT_STATE:
         return {
             ...DEFAULT_STATE,
@@ -193,6 +207,19 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         };
     }
 
+    case SET_CHAT_SEARCH_MATCH_INDEX:
+        return {
+            ...state,
+            searchMatchIndex: action.index
+        };
+
+    case SET_CHAT_SEARCH_QUERY:
+        return {
+            ...state,
+            searchQuery: action.query,
+            searchMatchIndex: 0
+        };
+
     case SET_PRIVATE_MESSAGE_RECIPIENT:
         return {
             ...state,
@@ -213,7 +240,9 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             lastReadMessage: state.messages[
                 navigator.product === 'ReactNative' ? 0 : state.messages.length - 1],
             privateMessageRecipient: action.participant,
-            isLobbyChatActive: false
+            isLobbyChatActive: false,
+            searchQuery: '',
+            searchMatchIndex: 0
         };
 
     case SET_LOBBY_CHAT_RECIPIENT:

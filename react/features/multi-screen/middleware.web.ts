@@ -1,11 +1,18 @@
 import { IStore } from '../app/types';
-import { CONFERENCE_FAILED, CONFERENCE_LEFT } from '../base/conference/actionTypes';
+import { CONFERENCE_FAILED, CONFERENCE_JOINED, CONFERENCE_LEFT } from '../base/conference/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { REMOVE_SECOND_SCREEN, RESET_SECOND_SCREENS, SET_SECOND_SCREEN } from './actionTypes';
 import { resetSecondScreens } from './actions.web';
-import { closeAllSecondScreens, closeSecondScreenHandle, getHandle, openOrUpdateSecondScreen } from './functions.web';
-import logger from './logger';
+import {
+    closeAllSecondScreens,
+    closeSecondScreenHandle,
+    getHandle,
+    handleSecondScreenOpenError,
+    isSecondScreenEnabled,
+    openOrUpdateSecondScreen,
+    preloadScreenDetails
+} from './functions.web';
 
 import './subscriber.web';
 
@@ -38,7 +45,7 @@ MiddlewareRegistry.register((store: IStore) => {
             const result = next(action);
 
             openOrUpdateSecondScreen(store, action.id, action.screenId)
-                .catch(e => logger.error('Failed to open second screen', e));
+                .catch(e => handleSecondScreenOpenError(store, action.id, e));
 
             return result;
         }
@@ -60,6 +67,18 @@ MiddlewareRegistry.register((store: IStore) => {
             closeAllSecondScreens(store);
 
             return next(action);
+        case CONFERENCE_JOINED: {
+            const result = next(action);
+
+            // Warm the screen details so an in-app trigger can open its window
+            // without awaiting, which is what keeps the click's user activation
+            // (see openOrUpdateSecondScreen). Never prompts on its own.
+            if (isSecondScreenEnabled(store.getState())) {
+                preloadScreenDetails();
+            }
+
+            return result;
+        }
         case CONFERENCE_FAILED:
         case CONFERENCE_LEFT:
 

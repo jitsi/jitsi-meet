@@ -40,6 +40,17 @@
 -- module injects audioTranslationRequests into the metadata only for admin
 -- (jicofo) occupants, so regular clients never see it.
 --
+-- ── Directed listeners push (component → each sender) ─────────────────────────────
+-- Alongside the jicofo aggregate, each sender is told which receivers currently translate it.
+-- An inverted map { [senderId] = set<receiverId> } is maintained in lockstep with the forward
+-- subscription map (updated incrementally on every delta and on occupant-leave), and a directed
+-- <translation-listeners xmlns='http://jitsi.org/jitmeet'> message (sorted JSON array) is sent to
+-- each sender whose listener set changed, so a client badges the receivers translating the local
+-- user. Only senders flagged dirty since the last publish are reconsidered, so the cost is
+-- proportional to what changed rather than to room size. Gated exactly like the aggregate; an empty
+-- array clears a sender whose last listener left. Handled in publish_listeners(), kept separate so
+-- the jicofo-facing publish() is unchanged.
+--
 -- ── Enable-flag write gating ─────────────────────────────────────────────────
 -- The audioTranslation metadata key (which carries the room-level enable flag)
 -- is written through mod_room_metadata_component. This module hooks
@@ -49,6 +60,7 @@
 --
 -- Component "audiotranslation.jitmeet.example.com" "audio_translation_component"
 --      muc_component = "conference.jitmeet.example.com"
+--      breakout_rooms_component = "breakout.jitmeet.example.com"
 local json = require 'util.json';
 local st = require 'util.stanza';
 local jid_resource = require 'util.jid'.resource;
@@ -70,6 +82,10 @@ local ENABLED_METADATA_KEY = 'audioTranslation';
 -- Aggregate map exposed to jicofo only. Stored on room._data (never in
 -- jitsiMetadata) so it is never broadcast to regular clients.
 local REQUESTS_METADATA_KEY = 'audioTranslationRequests';
+-- Per-(sender, language) subscriber counts. Client-visible (kept in jitsiMetadata): counts only, never
+-- identities. Clients combine these with the bridge's synthetic-source sending state to show how many
+-- participants are still hearing a given speaker.
+local LISTENER_COUNTS_METADATA_KEY = 'audioTranslationListenerCounts';
 
 local ENABLE_PERMISSION = 'live-translation';
 local SUBSCRIBE_PERMISSION = 'live-translation-subscribe';
@@ -81,6 +97,9 @@ if muc_component_host == nil then
     module:log('error', 'No muc_component specified. No muc to operate on!');
     return;
 end
+
+-- Breakout rooms live on a separate MUC component; hook it too (optional).
+local breakout_rooms_component_host = module:get_option_string('breakout_rooms_component');
 
 local main_virtual_host = module:get_option_string('muc_mapper_domain_base');
 if not main_virtual_host then
@@ -99,13 +118,66 @@ module:log('info', 'Starting audio_translation for %s (max_subscriptions=%s, deb
 local main_muc_module;
 
 -- Returns (creating if needed) the per-room translation state:
---   { receivers = { [receiverId] = { [senderId] = lang } }, last_published = <json|nil> }
+--   { receivers = { [receiverId] = { [senderId] = lang } },      -- forward map (source of truth)
+--     last_published = <json|nil>,                               -- jicofo aggregate dedup
+--     listeners_by_sender = { [senderId] = { [receiverId] = true } }, -- inverted map, kept in lockstep
+--     dirty_senders = { [senderId] = true },                     -- senders changed since last publish
+--     last_sent_listeners = { [senderId] = <json> } }            -- directed-push dedup
+-- receivers drives per-receiver atomic updates and the jicofo aggregate; listeners_by_sender is
+-- maintained alongside it so the directed per-sender push costs work proportional to what changed.
 local function get_state(room)
     if not room._audio_translation then
-        room._audio_translation = { receivers = {} };
+        room._audio_translation = {
+            receivers = {};
+            listeners_by_sender = {};
+            dirty_senders = {};
+            last_sent_listeners = {};
+        };
     end
 
     return room._audio_translation;
+end
+
+-- Flags a sender for reconsideration on the next listeners publish.
+local function mark_sender_dirty(state, sender_id)
+    state.dirty_senders[sender_id] = true;
+end
+
+-- Records that receiver_id now translates sender_id in the inverted map, flagging the sender dirty.
+local function add_listener(state, sender_id, receiver_id)
+    local set = state.listeners_by_sender[sender_id];
+
+    if not set then
+        set = {};
+        state.listeners_by_sender[sender_id] = set;
+    end
+    set[receiver_id] = true;
+    mark_sender_dirty(state, sender_id);
+end
+
+-- Records that receiver_id no longer translates sender_id, dropping the set once it empties and
+-- flagging the sender dirty so the change is pushed (an empty set clears the sender).
+local function remove_listener(state, sender_id, receiver_id)
+    local set = state.listeners_by_sender[sender_id];
+
+    if set then
+        set[receiver_id] = nil;
+        if next(set) == nil then
+            state.listeners_by_sender[sender_id] = nil;
+        end
+    end
+    mark_sender_dirty(state, sender_id);
+end
+
+-- Flags every currently-tracked sender dirty. Used when room-wide gating (the enable flag) flips,
+-- which changes every sender's pushed list at once with no per-sender delta to key off.
+local function mark_all_senders_dirty(state)
+    for sender_id in pairs(state.listeners_by_sender) do
+        state.dirty_senders[sender_id] = true;
+    end
+    for sender_id in pairs(state.last_sent_listeners) do
+        state.dirty_senders[sender_id] = true;
+    end
 end
 
 -- The endpoint id of an occupant is the resource part of its in-room nick.
@@ -199,6 +271,20 @@ local function apply_delta(room, receiver_id, delta)
 
     state.receivers[receiver_id] = next_map;
 
+    -- Update the inverted map in lockstep, now that the delta has fully validated (so a rejected
+    -- delta never mutates it). Only membership changes move listeners; a language-only change
+    -- (sender present before and after) is not a listener change and leaves the sender untouched.
+    for sender_id in pairs(current) do
+        if not next_map[sender_id] then
+            remove_listener(state, sender_id, receiver_id);
+        end
+    end
+    for sender_id in pairs(next_map) do
+        if not current[sender_id] then
+            add_listener(state, sender_id, receiver_id);
+        end
+    end
+
     return true;
 end
 
@@ -240,6 +326,27 @@ local function compute_aggregate(room)
     return out;
 end
 
+-- Builds { [senderId] = { [lang] = <subscriber count> } }, or nil when there are no subscriptions.
+local function compute_listener_counts(room)
+    local out = {};
+    local any = false;
+
+    for _, subs in pairs(get_state(room).receivers) do
+        for sender_id, lang in pairs(subs) do
+            local counts = out[sender_id];
+
+            if not counts then
+                counts = {};
+                out[sender_id] = counts;
+            end
+            counts[lang] = (counts[lang] or 0) + 1;
+            any = true;
+        end
+    end
+
+    return any and out or nil;
+end
+
 -- Recomputes the aggregate and, when it changed, publishes it to jicofo via
 -- RoomMetadata. Stored on room._data so mod_room_metadata_component only forwards
 -- it to admin (jicofo) occupants.
@@ -261,8 +368,16 @@ local function publish(room)
     -- The request set the receivers have asked for, independent of gating. Computed
     -- unconditionally so we can tell "nothing requested" apart from "requests suppressed".
     local requested = compute_aggregate(room);
-    local aggregate = (allow_publish and is_enabled(room)) and requested or nil;
-    local encoded = aggregate and json.encode(aggregate) or nil;
+    local gated = allow_publish and is_enabled(room);
+    local aggregate = gated and requested or nil;
+    local listener_counts = gated and compute_listener_counts(room) or nil;
+    -- Deduped on both: counts can change while the language set does not (a second receiver picking a
+    -- language another receiver already requested). Stays nil when there is nothing to publish, so a gated
+    -- or empty room still broadcasts nothing.
+    local encoded = (aggregate or listener_counts)
+        and ((aggregate and json.encode(aggregate) or '')
+            ..'|'..(listener_counts and json.encode(listener_counts) or ''))
+        or nil;
 
     if encoded == room._audio_translation.last_published then
         return;
@@ -279,8 +394,68 @@ local function publish(room)
     end
 
     room._data.audioTranslationRequests = aggregate;
+    room.jitsiMetadata = room.jitsiMetadata or {};
+    room.jitsiMetadata[LISTENER_COUNTS_METADATA_KEY] = listener_counts;
 
     main_muc_module:fire_event('room-metadata-changed', { room = room; });
+end
+
+-- Pushes each dirty sender the sorted receiver ids currently translating it, as a directed
+-- <translation-listeners> message, then clears the dirty set. Reads the incrementally-maintained
+-- inverted map (listeners_by_sender), so the cost is proportional to what changed, not room size.
+-- Kept separate from publish() so the jicofo-facing aggregate path stays untouched. Gated like the
+-- aggregate: while disabled/vetoed every dirty sender resolves to an empty list. Change-detected per
+-- sender against last_sent_listeners; an empty array is sent (then the tracker entry dropped) to
+-- clear a sender whose last listener left.
+local function publish_listeners(room)
+    if not room._audio_translation or not main_muc_module then
+        return;
+    end
+
+    local state = room._audio_translation;
+    local dirty = state.dirty_senders;
+
+    if not dirty or next(dirty) == nil then
+        return;
+    end
+    state.dirty_senders = {};
+
+    local allow_publish = main_muc_module:fire_event('jitsi-audio-translation-allow-publish', { room = room; }) ~= false;
+    local enabled = allow_publish and is_enabled(room);
+
+    for sender_id in pairs(dirty) do
+        local list = {};
+        local set = enabled and state.listeners_by_sender[sender_id];
+
+        if set then
+            for receiver_id in pairs(set) do
+                list[#list + 1] = receiver_id;
+            end
+            -- Sorted so set-iteration order never produces a spurious change.
+            table.sort(list);
+        end
+
+        -- util.json encodes an empty table as "{}"; force "[]" so clients always parse an array.
+        local encoded_listeners = (#list > 0) and json.encode(list) or '[]';
+
+        if encoded_listeners ~= state.last_sent_listeners[sender_id] then
+            local occupant = room:get_occupant_by_nick(room.jid..'/'..sender_id);
+
+            if occupant then
+                module:send(st.message({ from = module.host; to = occupant.jid; })
+                    :tag('translation-listeners', { xmlns = AUDIO_TRANSLATION_NS; })
+                    :text(encoded_listeners):up());
+            end
+
+            -- Only a delivered push is recorded; for a missing occupant the entry is dropped so a
+            -- rejoin with the same endpoint id gets a fresh push instead of being change-suppressed.
+            if occupant and #list > 0 then
+                state.last_sent_listeners[sender_id] = encoded_listeners;
+            else
+                state.last_sent_listeners[sender_id] = nil;
+            end
+        end
+    end
 end
 
 -- Schedules a debounced publish so a burst of updates produces a single metadata
@@ -298,7 +473,46 @@ local function schedule_publish(room)
             room._audio_translation.publish_scheduled = nil;
         end
         publish(room);
+        publish_listeners(room);
     end);
+end
+
+-- Prunes a leaving occupant from its room's state (as receiver and sender). Shared by both MUC hooks.
+local function prune_occupant(room, occupant)
+    if not room._audio_translation or is_healthcheck_room(room.jid) then
+        return;
+    end
+
+    local state = room._audio_translation;
+    local id = endpoint_id(occupant);
+    local changed = false;
+
+    local own = state.receivers[id];
+
+    if own then
+        state.receivers[id] = nil;
+        for sender_id in pairs(own) do
+            remove_listener(state, sender_id, id);
+        end
+        changed = true;
+    end
+
+    for _, subs in pairs(state.receivers) do
+        if subs[id] then
+            subs[id] = nil;
+            changed = true;
+        end
+    end
+    if state.listeners_by_sender[id] or state.last_sent_listeners[id] then
+        state.listeners_by_sender[id] = nil;
+        state.last_sent_listeners[id] = nil;
+        state.dirty_senders[id] = nil;
+        changed = true;
+    end
+
+    if changed then
+        schedule_publish(room);
+    end
 end
 
 function on_message(event)
@@ -324,10 +538,10 @@ function on_message(event)
         return true;
     end
 
-    local room = get_room_by_name_and_subdomain(
+    local main_room = get_room_by_name_and_subdomain(
         origin.jitsi_web_query_room, origin.jitsi_web_query_prefix or '');
 
-    if not room then
+    if not main_room then
         module:log('warn', 'No room found for %s/%s',
             origin.jitsi_web_query_prefix, origin.jitsi_web_query_room);
         origin.send(st.error_reply(stanza, 'cancel', 'item-not-found'));
@@ -336,10 +550,12 @@ function on_message(event)
     end
 
     local from = stanza.attr.from;
-    local occupant = get_occupant_by_real_jid(room, from);
+    -- The receiver may be in a breakout (different MUC); ?room= is always the main room. Resolve the
+    -- room it is actually in (get_occupant_by_real_jid fans out into breakouts) and track it there.
+    local occupant, room = get_occupant_by_real_jid(main_room, from);
 
     if not occupant then
-        module:log('warn', '%s is not an occupant of %s', from, room.jid);
+        module:log('warn', '%s is not an occupant of %s', from, main_room.jid);
         origin.send(st.error_reply(stanza, 'auth', 'forbidden'));
 
         return true;
@@ -389,33 +605,9 @@ function process_main_muc_loaded(main_muc, host_module)
 
     module:log('info', 'Hooked audio_translation to muc events on %s', muc_component_host);
 
-    -- Prune subscriptions when an occupant leaves: drop the leaver's own
-    -- subscriptions (receiver) and remove it as a sender from everyone else.
+    -- Prune a leaving occupant's subscriptions (shared with the breakout MUC hook below).
     host_module:hook('muc-occupant-left', function(event)
-        local room, occupant = event.room, event.occupant;
-
-        if not room._audio_translation or is_healthcheck_room(room.jid) then
-            return;
-        end
-
-        local id = endpoint_id(occupant);
-        local changed = false;
-
-        if room._audio_translation.receivers[id] then
-            room._audio_translation.receivers[id] = nil;
-            changed = true;
-        end
-
-        for _, subs in pairs(room._audio_translation.receivers) do
-            if subs[id] then
-                subs[id] = nil;
-                changed = true;
-            end
-        end
-
-        if changed then
-            schedule_publish(room);
-        end
+        prune_occupant(event.room, event.occupant);
     end);
 
     -- React when the room-level enable flag is toggled: republish so the aggregate
@@ -425,8 +617,21 @@ function process_main_muc_loaded(main_muc, host_module)
 
         if event.key == ENABLED_METADATA_KEY and room._audio_translation
                 and not is_healthcheck_room(room.jid) then
+            -- Room-wide gating changes every sender's pushed list at once, with no per-sender delta,
+            -- so flag them all for the listeners pass (publish() recomputes the aggregate itself).
+            mark_all_senders_dirty(room._audio_translation);
             schedule_publish(room);
         end
+    end);
+end
+
+-- Hook occupant-left on the breakout MUC so breakout subscriptions are pruned on leave. Publishing
+-- still flows through main_muc_module, whose room-metadata-changed handler broadcasts the given room.
+function process_breakout_muc_loaded(breakout_muc, host_module)
+    module:log('info', 'Hooked audio_translation to breakout muc events on %s', breakout_rooms_component_host);
+
+    host_module:hook('muc-occupant-left', function(event)
+        prune_occupant(event.room, event.occupant);
     end);
 end
 
@@ -444,6 +649,23 @@ process_host_module(muc_component_host, function(host_module, host)
         end);
     end
 end);
+
+if breakout_rooms_component_host then
+    process_host_module(breakout_rooms_component_host, function(host_module, host)
+        local muc_module = prosody.hosts[host].modules.muc;
+
+        if muc_module then
+            process_breakout_muc_loaded(muc_module, host_module);
+        else
+            module:log('debug', 'Will wait for breakout muc to be available');
+            prosody.hosts[host].events.add_handler('module-loaded', function(event)
+                if event.module == 'muc' then
+                    process_breakout_muc_loaded(prosody.hosts[host].modules.muc, host_module);
+                end
+            end);
+        end
+    end);
+end
 
 -- Advertise the component as a disco identity on the main virtual host so
 -- clients can discover it (handled by mod_features_identity), and gate writes to

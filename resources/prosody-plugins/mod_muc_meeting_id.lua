@@ -12,6 +12,7 @@ local uuid_gen = require "util.uuid".generate;
 local main_util = module:require "util";
 local is_admin = main_util.is_admin;
 local is_focus = main_util.is_focus;
+local is_focus_jid = main_util.is_focus_jid;
 local get_room_from_jid = main_util.get_room_from_jid;
 local is_healthcheck_room = main_util.is_healthcheck_room;
 local internal_room_jid_match_rewrite = main_util.internal_room_jid_match_rewrite;
@@ -206,25 +207,18 @@ local function filter_admin_set(event)
     end
 
     for item in query:childtags('item') do
-        local target_nick;
-
-        if item.attr.nick then
-            -- role changes target the occupant nick
-            target_nick = room.jid .. '/' .. item.attr.nick;
-        elseif item.attr.jid then
-            -- affiliation changes target the real jid, resolve the occupant
-            local target_bare_jid = jid.bare(item.attr.jid);
-            for _, occupant in room:each_occupant() do
-                if occupant.bare_jid == target_bare_jid then
-                    target_nick = occupant.nick;
-                    break;
-                end
-            end
+        -- An item may carry a nick (role changes) and/or a jid (affiliation
+        -- changes). Prosody's own handler applies a role change by nick and an
+        -- affiliation change by jid, so both must be checked independently: a
+        -- decoy nick must not mask a jid that targets focus (and vice versa).
+        if item.attr.nick and is_focus(room.jid .. '/' .. item.attr.nick) then
+            module:log('warn', 'Blocking attempt to modify %s in room %s', item.attr.nick, room.jid);
+            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed'));
+            return true;
         end
 
-        -- block any admin operation on that target
-        if target_nick and is_focus(target_nick) then
-            module:log('warn', 'Blocking attempt to modify %s in room %s', target_nick,room.jid);
+        if item.attr.jid and is_focus_jid(item.attr.jid) then
+            module:log('warn', 'Blocking attempt to modify %s in room %s', item.attr.jid, room.jid);
             origin.send(st.error_reply(stanza, 'cancel', 'not-allowed'));
             return true;
         end

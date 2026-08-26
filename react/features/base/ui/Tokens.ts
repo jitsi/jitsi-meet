@@ -386,6 +386,21 @@ export const colorMap = {
     conferenceRaisedHandLabelText: 'uiBackground', // Raised hands count label text
     conferenceRaisedHandLabelIcon: 'surface01', // Raised hands count label icon
 
+    // Time-timer pill
+    timeTimerNameSegmentBackground: 'timeTimerNameSegment',
+    timeTimerTimerSegmentBackground: 'timeTimerTimerSegment',
+    timeTimerElapsedText: 'timeTimerElapsedText',
+    timeTimerDisk: 'timeTimerDisk',
+    timeTimerWarning: 'timeTimerWarning',
+    timeTimerWarningNameSegmentBackground: 'timeTimerWarningNameSegment',
+    timeTimerWarningTimerSegmentBackground: 'timeTimerWarningTimerSegment',
+    timeTimerExpiredText: 'timeTimerExpiredText',
+    timeTimerExpiredNameSegmentBackground: 'timeTimerExpiredNameSegment',
+    timeTimerExpiredTimerSegmentBackground: 'timeTimerExpiredTimerSegment',
+    timeTimerExpiredDisk: 'timeTimerExpiredDisk',
+    timeTimerExpiredOverrunEdge: 'timeTimerExpiredOverrunEdge',
+    timeTimerExpiredNotificationText: 'timeTimerExpiredNotificationText',
+
     // Subtitle Messages
     subtitleMessageBackground: 'ui02',       // Subtitle message background
     subtitleMessageText: 'text01',           // Subtitle message text

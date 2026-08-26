@@ -311,6 +311,32 @@ export async function getAudioTranslationRequests(roomJid) {
 }
 
 /**
+ * Returns every OTLP ExportTraceServiceRequest body received by the mock
+ * receiver (mod_test_observer_http) so far. Used by mod_trace tests.
+ * @returns {Promise<Array<object>>}
+ */
+export async function getOtlpTraces() {
+    const res = await fetch(`${BASE}/otlp-traces`);
+
+    if (!res.ok) {
+        throw new Error(`GET /otlp-traces failed: ${res.status}`);
+    }
+
+    return res.json();
+}
+
+/**
+ * Clears the recorded OTLP export list.
+ */
+export async function clearOtlpTraces() {
+    const res = await fetch(`${BASE}/otlp-traces`, { method: 'DELETE' });
+
+    if (res.status !== 204) {
+        throw new Error(`DELETE /otlp-traces failed: ${res.status}`);
+    }
+}
+
+/**
  * Returns room state from Prosody's internal MUC state.
  * @param {string} roomJid  e.g. 'room@conference.localhost'
  * @returns {Promise<{jid: string, hidden: boolean, occupant_count: number}|null>}

@@ -38,8 +38,12 @@ export async function createVirtualBackgroundEffect(virtualBackground: IVirtualB
     }
     const fullVbConfig = APP.store.getState()['features/base/config'].virtualBackground;
 
-    if (fullVbConfig?.enableV2) {
-        const vbConfig = fullVbConfig.advanced;
+    // V2 is the default engine. V1 is only used when enableV2 is explicitly set to false.
+    // (The type of enableV2 is `boolean | undefined` per IConfig, so `undefined` picks V2.)
+    const useV2Engine = fullVbConfig?.enableV2 !== false;
+
+    if (useV2Engine) {
+        const vbConfig = fullVbConfig?.advanced;
         const capabilities = await detectDeviceTier(vbConfig);
 
         logger.info(

@@ -101,9 +101,10 @@ tsconfig.json
 # React Native SDK
 #
 react-native-sdk/*.tgz
-react-native-sdk/android/src
+react-native-sdk/android/src/**
+!react-native-sdk/android/src/**/
 !react-native-sdk/android/src/main/java/org/jitsi/meet/sdk/JitsiMeetReactNativePackage.java
-!react-native-sdk/android/src/main/java/org/jitsi/meet/sdk/JitsiMeetOngoingConferenceService.java
+!react-native-sdk/android/src/main/java/org/jitsi/meet/sdk/JMOngoingConferenceService.java
 !react-native-sdk/android/src/main/java/org/jitsi/meet/sdk/JMOngoingConferenceModule.java
 !react-native-sdk/android/src/main/java/org/jitsi/meet/sdk/RNOngoingNotification.java
 react-native-sdk/images

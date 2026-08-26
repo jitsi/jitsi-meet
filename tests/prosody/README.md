@@ -109,7 +109,12 @@ tests/prosody/
 ├── docker/
 │   ├── Dockerfile                  Prosody 13 image with lua-cjson + Jitsi plugins
 │   ├── docker-compose.yml          Exposes :5222 (XMPP) and :5280 (HTTP)
-│   └── prosody.cfg.lua             Minimal config: anonymous auth, no TLS, MUC at conference.localhost
+│   ├── prosody.cfg.lua             Top-level config: Includes the cfg/ fragments below
+│   └── cfg/                        Config fragments (see prosody.cfg.lua header)
+│       ├── global.cfg.lua          Global settings: no TLS, anonymous auth, HTTP on :5280
+│       ├── virtualhosts.cfg.lua    All VirtualHost blocks
+│       ├── components.cfg.lua      All Component blocks except conference.localhost
+│       └── conference.cfg.lua      conference.localhost (separate so extending images can re-declare it)
 │
 ├── helpers/
 │   ├── container.js                Holds the testcontainers container reference (set in setup.js)
@@ -163,3 +168,22 @@ export DOCKER_HOST=unix:///Users/$(whoami)/.colima/default/docker.sock
 export TESTCONTAINERS_RYUK_DISABLED=true   # Ryuk reaper fails under Colima
 npm test
 ```
+
+## Extending from another repo
+
+Repos with private Prosody plugins (e.g. jitsi-meet-branding) can reuse this
+setup by building on top of the test image:
+
+```bash
+npm run build:test-image    # builds jitsi-meet-prosody-test:latest
+```
+
+The extending image starts `FROM jitsi-meet-prosody-test:latest`, copies its
+plugins into an additional plugin path, and replaces
+`/etc/prosody/prosody.cfg.lua` with a config that Includes the baked-in
+`/etc/prosody/cfg/global.cfg.lua`, `virtualhosts.cfg.lua` and
+`components.cfg.lua` fragments, then re-declares `conference.localhost`
+(based on `cfg/conference.cfg.lua`) with the extra modules appended.
+Prosody Component blocks cannot be extended in place, which is why
+`conference.localhost` lives in its own fragment that extending configs
+replace wholesale.

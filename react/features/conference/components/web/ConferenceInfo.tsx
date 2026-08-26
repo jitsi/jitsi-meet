@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
+import TranslationLabel from '../../../audio-translation/components/web/TranslationLabel';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import E2EELabel from '../../../e2ee/components/E2EELabel';
 import HighlightButton from '../../../recording/components/Recording/web/HighlightButton';
@@ -105,6 +106,7 @@ const COMPONENTS: Array<{
                 <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />
                 <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
                 <TranscribingLabel />
+                <TranslationLabel />
             </>
         ),
         id: 'recording'

@@ -5,17 +5,9 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import { getConferenceName } from '../../../base/conference/functions';
 import { getLocalizedDurationFormatter } from '../../../base/i18n/dateUtil';
+import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
-import {
-    EXPIRED_NAME_SEGMENT_BG,
-    EXPIRED_PILL_TEXT_COLOR,
-    EXPIRED_TIMER_SEGMENT_BG,
-    WARNING_COLOR,
-    WARNING_NAME_SEGMENT_BG,
-    WARNING_TIMER_SEGMENT_BG,
-    getTimerVisualState,
-    isTimeTimerEnabled
-} from '../../functions';
+import { getTimerVisualState, isTimeTimerEnabled } from '../../functions';
 
 import Disk from './Disk';
 
@@ -165,38 +157,30 @@ const useStyles = makeStyles()(theme => {
             whiteSpace: 'nowrap'
         },
 
-        // During the final minutes (warning window) the elapsed digits go
-        // amber to match the disk colour change.
+        // Warning state (amber).
         elapsedWarning: {
-            color: WARNING_COLOR
+            color: BaseTheme.palette.timeTimerWarning
         },
 
-        // Warning-state segment backgrounds — same lighter-left /
-        // deeper-right pattern as the blue baseline, but in warm browns.
         nameSegmentWarning: {
-            backgroundColor: WARNING_NAME_SEGMENT_BG
+            backgroundColor: BaseTheme.palette.timeTimerWarningNameSegmentBackground
         },
 
         timerSegmentWarning: {
-            backgroundColor: WARNING_TIMER_SEGMENT_BG
+            backgroundColor: BaseTheme.palette.timeTimerWarningTimerSegmentBackground
         },
 
-        // Expired-state segment backgrounds — warm wine tones with the same
-        // lighter-left / deeper-right pattern. More urgent than warning;
-        // expired overrides warning when both could apply (though in
-        // practice they're mutually exclusive).
+        // Expired state (wine red); overrides warning.
         nameSegmentExpired: {
-            backgroundColor: EXPIRED_NAME_SEGMENT_BG
+            backgroundColor: BaseTheme.palette.timeTimerExpiredNameSegmentBackground
         },
 
         timerSegmentExpired: {
-            backgroundColor: EXPIRED_TIMER_SEGMENT_BG
+            backgroundColor: BaseTheme.palette.timeTimerExpiredTimerSegmentBackground
         },
 
-        // Once the timer has expired, the elapsed value shifts to a soft
-        // pink to flag that the meeting is now over schedule.
         elapsedExpired: {
-            color: EXPIRED_PILL_TEXT_COLOR
+            color: BaseTheme.palette.timeTimerExpiredText
         },
 
         textHidden: {

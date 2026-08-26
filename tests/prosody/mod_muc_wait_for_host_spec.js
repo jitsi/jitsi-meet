@@ -113,6 +113,30 @@ describe('mod_muc_wait_for_host', () => {
     });
 
     // -------------------------------------------------------------------------
+    // Room does not exist yet — creator bypass
+    // -------------------------------------------------------------------------
+    describe('room does not exist yet', () => {
+
+        it('anonymous guest creates the room and is admitted despite no host present', async () => {
+            const r = room();
+
+            // No focus, no prior occupant: the guest's join is the stanza that
+            // creates the MUC room. Prosody grants room creators a free pass
+            // (XEP-0045 §10.1.3 locked-room bypass) before muc_wait_for_host's
+            // muc-occupant-pre-join check can block it, and joinRoom() submits
+            // the empty config form to unlock the room on status code 201.
+            // This is why production locks room creation to jicofo alone
+            // (restrict_room_creation + the mod_muc_meeting_id jicofo lock) —
+            // this isolated test component has neither.
+            const guest = await connect();
+            const presence = await guest.joinRoom(r);
+
+            assert.ok(isAvailablePresence(presence),
+                'guest should be admitted: it created the room, so the host check never blocked it');
+        });
+    });
+
+    // -------------------------------------------------------------------------
     // Host present — guests admitted
     // -------------------------------------------------------------------------
     describe('host present', () => {

@@ -107,6 +107,7 @@ local blocked_metadata_keys = module:get_option_set('room_metadata_blocked_keys'
     'allownersEnabled',
     'asyncTranscription',
     'audioTranslationAvailable',
+    'audioTranslationListenerCounts',
     'audioTranslationRequests',
     'conferencePresetsServiceEnabled',
     'dialinEnabled',

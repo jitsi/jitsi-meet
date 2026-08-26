@@ -27,7 +27,7 @@ class VideoQualityExpandedLabel extends ExpandedLabel<Props> {
      * @returns {string}
      */
     _getLabel() {
-        return this.props.t('videoStatus.audioOnlyExpanded');
+        return this.props.t('videoStatus.lowBandwidthModeExpanded');
     }
 }
 

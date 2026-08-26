@@ -68,6 +68,7 @@ import { default as IconPerformance } from './performance.svg';
 import { default as IconPhoneRinging } from './phone-ringing.svg';
 import { default as IconPin } from './pin.svg';
 import { default as IconPinned } from './pinned.svg';
+import { default as IconPip } from './pip.svg';
 import { default as IconPlay } from './play.svg';
 import { default as IconPlus } from './plus.svg';
 import { default as IconRaiseHand } from './raise-hand.svg';
@@ -97,8 +98,8 @@ import { default as IconUser } from './user.svg';
 import { default as IconUsers } from './users.svg';
 import { default as IconVideoOff } from './video-off.svg';
 import { default as IconVideo } from './video.svg';
-import { default as IconAudioOnlyOff } from './visibility-off.svg';
-import { default as IconAudioOnly } from './visibility.svg';
+import { default as IconLowBandwidthModeOff } from './visibility-off.svg';
+import { default as IconLowBandwidthMode } from './visibility.svg';
 import { default as IconVolumeOff } from './volume-off.svg';
 import { default as IconVolumeUp } from './volume-up.svg';
 import { default as IconWarningCircle } from './warning-circle.svg';
@@ -122,8 +123,8 @@ export const DEFAULT_ICON: Record<string, any> = {
     IconArrowLeft,
     IconArrowUp,
     IconArrowUpLarge,
-    IconAudioOnly,
-    IconAudioOnlyOff,
+    IconLowBandwidthMode,
+    IconLowBandwidthModeOff,
     IconBluetooth,
     IconBell,
     IconCalendar,
@@ -181,6 +182,7 @@ export const DEFAULT_ICON: Record<string, any> = {
     IconPhoneRinging,
     IconPin,
     IconPinned,
+    IconPip,
     IconPlay,
     IconPlus,
     IconRaiseHand,

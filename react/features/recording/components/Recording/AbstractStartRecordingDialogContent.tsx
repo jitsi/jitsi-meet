@@ -13,7 +13,7 @@ import { authorizeDropbox, updateDropboxToken } from '../../../dropbox/actions';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
 import { RECORDING_TYPES } from '../../constants';
-import { hasRecordingOrTranscriptionFeature, supportsLocalRecording } from '../../functions';
+import { hasRecordingOrTranscriptionFeature, isLiveStreamingRunning, supportsLocalRecording } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of
@@ -41,6 +41,11 @@ export interface IProps extends WithTranslation {
      * Whether to hide the storage warning or not.
      */
     _hideStorageWarning: boolean;
+
+    /**
+     * Whether a live stream session is currently active.
+     */
+    _isLiveStreamRunning: boolean;
 
     /**
      * Whether the local participant is a moderator.
@@ -500,6 +505,7 @@ export function mapStateToProps(state: IReduxState) {
         isVpaas: isVpaasMeeting(state),
         _canManageRecordingOrTranscription: canManageRecordingOrTranscription,
         _canStartTranscribing: canAddTranscriber(state),
+        _isLiveStreamRunning: isLiveStreamingRunning(state),
         _hideStorageWarning: Boolean(recordingService?.hideStorageWarning),
         _isModerator: isLocalParticipantModerator(state),
         _renderRecording: isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false),

@@ -210,7 +210,11 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * @param {string} [opts.password]       room password to include in the join stanza
          * @param {string} [opts.displayName]    if set, includes a <nick> element in the presence
          */
-        async joinRoom(roomJid, nick, { timeout = 5000, password: roomPassword, extensions = [], displayName } = {}) {
+        async joinRoom(roomJid, nick, { timeout = 5000,
+            password: roomPassword,
+            extensions = [],
+            mucContent = [],
+            displayName } = {}) {
             // Default to the first 8 characters of the local part of the
             // server-assigned JID. Prosody's anonymous_strict mode requires MUC
             // resources to match this prefix, so callers that do not pass an
@@ -221,6 +225,12 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
 
             if (roomPassword !== undefined) {
                 mucX.c('password').t(roomPassword);
+            }
+
+            // Children placed INSIDE the muc <x> (e.g. a <billingid> element),
+            // as opposed to `extensions`, which are siblings of <x>.
+            for (const child of mucContent) {
+                mucX.cnode(child).up();
             }
 
             const nickEl = displayName
@@ -429,6 +439,36 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a colibri2 conference-modify IQ to the given full JID, optionally
+         * carrying a <traceparent> extension (as jicofo/JVB do when tracing is
+         * enabled). Fire-and-forget — mod_trace does not reply; assert on the
+         * recipient's own stanza queue (waitForIq) and/or the OTLP mock receiver.
+         *
+         * @param {string} to  Destination full JID.
+         * @param {object} [opts]
+         * @param {string} [opts.traceId]   32-hex-char trace id. Omit to send no <traceparent>.
+         * @param {string} [opts.parentId]  16-hex-char parent span id. Required when traceId is set.
+         */
+        sendConferenceModifyIq(to, { traceId, parentId } = {}) {
+            const children = traceId === undefined
+                ? []
+                : [ xml('traceparent', {
+                    // eslint-disable-next-line camelcase
+                    trace_id: traceId,
+                    // eslint-disable-next-line camelcase
+                    parent_id: parentId
+                }) ];
+
+            return xmpp.send(
+                xml('iq', { type: 'set',
+                    to,
+                    id: `cm-${++_counter}` },
+                    xml('conference-modify', { xmlns: 'jitsi:colibri2' }, ...children)
+                )
+            );
+        },
+
+        /**
          * Sends a disco#info IQ and resolves with the response stanza.
          * @param {string} targetJid
          */
@@ -583,6 +623,24 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sets the room subject by sending a groupchat message carrying only a
+         * <subject> element (XEP-0045 §8.1). Fire-and-forget — does NOT wait for
+         * the room's subject broadcast.
+         *
+         * @param {string} roomJid  e.g. 'room@conference.localhost'
+         * @param {string} subject  the new subject text
+         */
+        sendRoomSubject(roomJid, subject) {
+            return xmpp.send(
+                xml('message', { to: roomJid,
+                    type: 'groupchat',
+                    id: `subj-${++_counter}` },
+                    xml('subject', {}, subject)
+                )
+            );
+        },
+
+        /**
          * Sends a groupchat message with a <json-message> child to the room.
          * Fire-and-forget — does NOT wait for the MUC reflection stanza.
          * Use when testing hooks that may crash or block the message before it
@@ -646,6 +704,54 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
                     xml('query', { xmlns: 'http://jabber.org/protocol/muc#admin' },
                         xml('item', itemAttrs)
                     )
+                )
+            );
+        },
+
+        /**
+         * Sends a Jingle IQ (XEP-0166/XEP-0339) to an occupant's full JID in a
+         * MUC room. Fire-and-forget — does NOT wait for a response.
+         *
+         * The pre-iq/full hook fires on the MUC component before routing, so any
+         * module that hooks that event will see the stanza synchronously.
+         *
+         * For session-accept, a <content name="video"> child is included when
+         * videoType is non-null. For source-add, a content/description/source
+         * chain with a videoType attribute is included.
+         *
+         * @param {string} toFullJid  Occupant full JID, e.g. 'room@conference.localhost/focus'
+         * @param {string} action     'session-accept' | 'source-add'
+         * @param {string|null} videoType  'camera' | 'desktop' | null (audio-only: no video content)
+         */
+        sendJingleIq(toFullJid, action, videoType = null) {
+            let contentEl;
+
+            if (videoType === null) {
+                // Audio-only: a content element with name='audio' and no description.
+                // session-accept: no content with name='video' → no flags set.
+                // source-add: no description/source path → no flags set.
+                contentEl = xml('content', { name: 'audio' });
+            } else {
+                const sourceEl = xml('source', {
+                    xmlns: 'urn:xmpp:jingle:apps:rtp:ssma:0',
+                    videoType
+                });
+                const descEl = xml('description', {
+                    xmlns: 'urn:xmpp:jingle:apps:rtp:1',
+                    media: 'video'
+                }, sourceEl);
+
+                contentEl = xml('content', { name: 'video' }, descEl);
+            }
+
+            return xmpp.send(
+                xml('iq', { type: 'set',
+                    to: toFullJid,
+                    id: `jingle-${++_counter}` },
+                    xml('jingle', {
+                        xmlns: 'urn:xmpp:jingle:1',
+                        action
+                    }, contentEl)
                 )
             );
         },
@@ -934,6 +1040,31 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a <breakout_rooms> control message to the breakout rooms component.
+         * The session must have jitsi_web_query_room set (connect with
+         * params: { room: '<roomname>' }) and the sender must be a moderator
+         * occupant of the main room for the module to process the message.
+         *
+         * @param {string} componentJid  e.g. 'breakout.conference.localhost'
+         * @param {string} type          operation type, e.g. 'features/breakout-rooms/add'
+         * @param {object} [extraAttrs]  extra attributes on the <breakout_rooms> element,
+         *                              e.g. { subject: 'Group A' } or { breakoutRoomJid: '...' }
+         */
+        sendBreakoutRoomsMessage(componentJid, type, extraAttrs = {}) {
+            return xmpp.send(
+                xml('message', {
+                    to: componentJid,
+                    id: `br-${++_counter}`
+                },
+                    xml('breakout_rooms', {
+                        type,
+                        ...extraAttrs
+                    })
+                )
+            );
+        },
+
+        /**
          * Sends a raw file-sharing message. Use this to test malformed payloads
          * or non-standard message types (e.g. type='error').
          *
@@ -977,15 +1108,103 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
-         * Abruptly closes the underlying WebSocket without sending a stream
-         * close. Prosody will put the session into smacks hibernation, keeping
-         * it in full_sessions so mod_auth_jitsi-anonymous can find it by
-         * resumption_token on the next connect.
+         * Abruptly terminates the underlying WebSocket without a close
+         * handshake.  Prosody sees an unclean disconnect and hibernates the
+         * SMACKS session.  On reconnect the library sends <resume>, which
+         * triggers Prosody's c2s-session-updated hook (where the
+         * breakout-rooms bug manifested).
+         *
+         * Jitsi's SMACKS resume flow (mod_auth_token.lua + mod_smacks.lua):
+         *   1. Client reconnects with ?previd=<smacks-id> in the WebSocket URL.
+         *   2. mod_jitsi_session.lua sets session.previd from the URL param.
+         *   3. SASL runs; mod_auth_token.lua's get_username_from_token finds
+         *      the hibernating session whose resumption_token == session.previd
+         *      and copies its username, preserving the original UUID.
+         *   4. Post-auth features include <sm>; @xmpp/stream-management sends
+         *      <resume previd='...'>.  mod_smacks looks up the session with
+         *      registry key "uuid@host/smacks_id" — which now matches because
+         *      step 3 preserved the UUID — and resumes successfully.
+         *   5. sessionmanager.update_session fires c2s-session-updated.
+         *
+         * Without ?previd in the URL, step 3 assigns a fresh UUID, the key
+         * doesn't match, mod_smacks falls back to a new session, and the
+         * regression is never exercised.
+         *
+         * IMPORTANT: must use ws.terminate() (TCP RST, no close frame), NOT
+         * ws.close() / Socket.end().  A clean WebSocket close (code 1000)
+         * causes Prosody to destroy the SMACKS session rather than hibernate it.
+         *
+         * xmpp.socket           – @xmpp/websocket Socket wrapper
+         * xmpp.socket.socket    – underlying ws.WebSocket instance with terminate()
          */
         dropConnection() {
+            // Patch the reconnect URL to carry ?previd=<smacks-id> so that
+            // mod_jitsi_session.lua sets session.previd and mod_auth_token.lua
+            // can preserve session.username across the SASL exchange, allowing
+            // mod_smacks.lua's registry lookup to succeed.
+            const smId = xmpp.streamManagement?.id;
+
+            if (smId) {
+                try {
+                    const serviceUrl = new URL(xmpp.options.service);
+
+                    serviceUrl.searchParams.set('previd', smId);
+                    xmpp.options.service = serviceUrl.toString();
+                } catch { /* ignore */ }
+            }
             try {
-                xmpp.websocket?.socket?.end();
+                const ws = xmpp.socket?.socket;
+
+                if (ws?.terminate) {
+                    ws.terminate();
+                } else {
+                    xmpp.socket?.end();
+                }
             } catch { /* ignore */ }
+        },
+
+        /**
+         * Resolves when the SMACKS (XEP-0198) session resume is fully complete
+         * after a dropConnection().  Set up this listener BEFORE calling
+         * dropConnection() to avoid a race with a very fast reconnect.
+         *
+         * The @xmpp/reconnect 'reconnected' event fires after entity.open()
+         * resolves, which happens on the stream-open header — BEFORE stream
+         * features are processed and therefore BEFORE SMACKS sends <resume>
+         * and receives <resumed>.  The SMACKS handler then sets entity.status
+         * = 'online' directly (no event emitted).  We poll that field after
+         * 'reconnected' to detect the moment the resume is complete, so that
+         * any stanza sent afterwards is processed on the fully-resumed session.
+         *
+         * @param {number} [timeout=10000]
+         */
+        waitForReconnect(timeout = 10000) {
+            return new Promise((resolve, reject) => {
+                let done = false;
+                const timer = setTimeout(() => {
+                    if (!done) {
+                        done = true;
+                        reject(new Error('Timeout waiting for session to reconnect'));
+                    }
+                }, timeout);
+
+                xmpp.reconnect.once('reconnected', () => {
+                    const checkOnline = () => {
+                        if (done) {
+                            return;
+                        }
+                        if (xmpp.status === 'online') {
+                            done = true;
+                            clearTimeout(timer);
+                            resolve();
+                        } else {
+                            setTimeout(checkOnline, 50);
+                        }
+                    };
+
+                    checkOnline();
+                });
+            });
         }
     };
 }

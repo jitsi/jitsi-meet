@@ -5,9 +5,29 @@ export { changeLanguageBundle, translate } from './functions.any';
 
 const SANITIZE_CONFIG = {
     ALLOWED_TAGS: [ 'a', 'b', 'br', 'span' ],
-    ALLOWED_ATTR: [ 'href', 'target', 'rel' ],
+
+    // `target` and `rel` are intentionally not allowed here: they are forced to
+    // safe values by the hook below so a translation cannot control them.
+    ALLOWED_ATTR: [ 'href' ],
     ALLOWED_URI_REGEXP: /^https?:\/\//i
 };
+
+// A dedicated DOMPurify instance so the link-hardening hook below stays scoped
+// to translated HTML and does not leak into other consumers of the shared
+// instance (e.g. branding SVG sanitizing).
+const purify = DOMPurify(window);
+
+// Force links produced from (potentially translator-supplied) strings to open
+// in a new browsing context. This prevents a translation from navigating the
+// user out of an ongoing meeting via target="_self" (or "_top"/"_parent", or by
+// omitting target, which defaults to same-context navigation) and pairs the new
+// tab with rel="noopener noreferrer" to prevent reverse tabnabbing.
+purify.addHook('afterSanitizeAttributes', (node: Element) => {
+    if (node.tagName === 'A') {
+        node.setAttribute('target', '_blank');
+        node.setAttribute('rel', 'noopener noreferrer');
+    }
+});
 
 /**
  * Escapes a string for safe inclusion in HTML.
@@ -40,7 +60,7 @@ export function translateToHTML(t: Function, key: string, options: Record<string
         escapedOptions[k] = typeof v === 'string' ? escapeHTML(v) : v;
     }
 
-    const html = DOMPurify.sanitize(t(key, escapedOptions), SANITIZE_CONFIG);
+    const html = purify.sanitize(t(key, escapedOptions), SANITIZE_CONFIG);
 
     // eslint-disable-next-line react/no-danger
     return <span dangerouslySetInnerHTML = {{ __html: html }} />;

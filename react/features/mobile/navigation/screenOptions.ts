@@ -145,6 +145,11 @@ export const securityScreenOptions = presentationScreenOptions;
 export const recordingScreenOptions = presentationScreenOptions;
 
 /**
+ * Screen options for the audio-translation language selector modal.
+ */
+export const audioTranslationScreenOptions = presentationScreenOptions;
+
+/**
  * Screen options for subtitles modal.
  */
 export const subtitlesScreenOptions = presentationScreenOptions;

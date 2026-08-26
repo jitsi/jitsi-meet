@@ -118,7 +118,7 @@ export function createPrejoinTracks() {
     const initialDevices = [ MEDIA_TYPE.AUDIO ];
     const requestedAudio = true;
     let requestedVideo = false;
-    const { startAudioOnly, startWithVideoMuted } = APP.store.getState()['features/base/settings'];
+    const { startLowBandwidthMode, startWithVideoMuted } = APP.store.getState()['features/base/settings'];
     const startWithAudioMuted = getStartWithAudioMuted(APP.store.getState());
 
     // On Electron there is no permission prompt for granting permissions. That's why we don't need to
@@ -134,7 +134,7 @@ export function createPrejoinTracks() {
         APP.store.dispatch(setAudioMuted(true));
     }
 
-    if (!startWithVideoMuted && !startAudioOnly) {
+    if (!startWithVideoMuted && !startLowBandwidthMode) {
         initialDevices.push(MEDIA_TYPE.VIDEO);
         requestedVideo = true;
     }

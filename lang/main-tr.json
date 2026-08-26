@@ -39,9 +39,6 @@
         "phone": "Telefon",
         "speaker": "Konuşmacı"
     },
-    "audioOnly": {
-        "audioOnly": "Düşük bant genişliği"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "Örneğin 10 Mbps için 10000000",
         "assumedBandwidthBpsWarning": "Daha yüksek değerler ağ sorunlarına neden olabilir.",
@@ -263,7 +260,6 @@
         "Remove": "Kaldır",
         "Share": "Paylaş",
         "Submit": "Gönder",
-        "WaitForHostMsg": "Toplantı sahibi gelmediğinden toplantı henüz başlamadı. Toplantı sahibi sizseniz, lütfen kimlik doğrulaması yapın. Değilseniz lütfen toplantı sahibinin gelmesini bekleyin.",
         "WaitForHostNoAuthMsg": "Toplantı sahibi gelmediğinden toplantı henüz başlamadı. Lütfen bekleyin.",
         "WaitingForHostButton": "Toplantı sahibini bekle",
         "WaitingForHostTitle": "Toplantı sahibi bekleniyor…",
@@ -726,23 +722,24 @@
         "button": "Birilerini davet et",
         "youAreAlone": "Toplantıdaki tek kişisiniz"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Düşük bant genişliği"
+    },
     "me": "Ben",
     "notify": {
         "OldElectronAPPTitle": "Güvenlik açığı!",
-        "allowAction": "İzin ver",
         "allowedUnmute": "Mikrofonunuzu sessizden çıkarabilir, kameranızı başlatabilir veya ekranınızı paylaşabilirsiniz.",
         "audioUnmuteBlockedDescription": "Sistem sınırları nedeniyle mikrofon sesini açma işlemi geçici olarak engellendi",
         "audioUnmuteBlockedTitle": "Mikrofon sesini açma işlemi engellendi!",
         "chatMessages": "Sohbet mesajları",
         "connectedOneMember": "{{name}} toplantıya katıldı",
-        "connectedThreePlusMembers": "{{name}} ve {{count}} kişi daha toplantıya katıldı",
+        "connectedThreePlusMembers": "{{name}} ve diğer birçok kişi toplantıya katıldı",
         "connectedTwoMembers": "{{first}} ve {{second}} toplantıya katıldı",
         "dataChannelClosed": "Video kalitesi bozuldu",
         "dataChannelClosedDescription": "Köprü kanalının bağlantısı kesildi ve bu nedenle video kalitesi en düşük ayarla sınırlandı.",
         "dataChannelClosedDescriptionWithAudio": "Köprü kanalı kapalı olduğu için ses ve video kesintileri yaşanabilir.",
         "dataChannelClosedWithAudio": "Ses ve video kalitesi etkilenebilir.",
         "disabledIframe": "Yerleştirme yalnızca demo amaçlı olduğundan bu çağrının bağlantısı {{timeout}} dakika içinde kesilecek.",
-        "disabledIframeSecondary": "{{domain}} alanının yerleştirilmesi yalnızca demo amaçlı olduğundan bu çağrının bağlantısı {{timeout}} dakika içinde kesilecektir. Üretim yerleştirme için lütfen <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Hizmet olarak Jitsi</a>'yi kullanın!",
         "disconnected": "Bağlantı kesildi",
         "displayNotifications": "Bildirimleri görüntüle",
         "dontRemindMe": "Bana hatırlatma",
@@ -799,7 +796,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) başka bir katılımcı tarafından kaldırıldı",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) başka bir katılımcı tarafından ayarlandı",
         "raiseHandAction": "El kaldır",
-        "raisedHand": "{{name}} söz hakkı istiyor.",
+        "raisedHand": "Söz almak istiyor.",
         "raisedHands": "{{participantName}} ve {{raisedHands}}'ten daha fazla kişi",
         "reactionSounds": "Sesleri devre dışı bırak",
         "reactionSoundsForAll": "Herkes için sesleri devre dışı bırak",
@@ -818,7 +815,7 @@
         "suggestRecordingTitle": "Bu toplantıyı kaydet",
         "unmute": "Sessizden çıkar",
         "videoMutedRemotelyDescription": "Her zaman yeniden açabilirsiniz.",
-        "videoMutedRemotelyTitle": "{{moderator}} tarafından videonuz kapatıldı",
+        "videoMutedRemotelyTitle": "{{participantDisplayName}} tarafından videonuz kapatıldı",
         "videoUnmuteBlockedDescription": "Sistem sınırları nedeniyle kamera sesini açma ve masaüstü paylaşım işlemi geçici olarak engellendi.",
         "videoUnmuteBlockedTitle": "Kameranın sesini açma ve masaüstü paylaşımı engellendi!",
         "viewLobby": "Lobiyi göster",
@@ -890,8 +887,7 @@
             "pollQuestion": "Anket Sorusu",
             "questionPlaceholder": "Soru sor",
             "removeOption": "Seçeneği sil",
-            "save": "Kaydet",
-            "send": "Gönder"
+            "save": "Kaydet"
         },
         "errors": {
             "notUniqueOption": "Seçenekler benzersiz olmalı"
@@ -1071,7 +1067,7 @@
         "about": "Toplantınıza bir parola ekleyebilirsiniz. Katılımcıların toplantıya katılmasına izin verilmeden önce parolayı girmeleri gerekecektir.",
         "aboutReadOnly": "Moderatörler toplantıya toplantıya bir $t(lockRoomPassword) eklenebilir. Katılımcıların toplantıya katılmalarına izin verilmeden önce $t(lockRoomPassword) bilgilerini sağlamaları gerekir..",
         "insecureRoomNameWarningNative": "Oda adı güvenli değil. İstenmeyen katılımcılar toplantınıza katılabilir. {{recommendAction}} Toplantınızın güvenliğini sağlama hakkında daha fazla bilgi edinin",
-        "insecureRoomNameWarningWeb": "Oda adı güvenli değil. İstenmeyen katılımcılar toplantınıza katılabilir. {{recommendAction}} Toplantınızın güvenliğini sağlama hakkında daha fazla bilgi edinin <a href = \"{{securityUrl}}\" rel = \"security\" target = \"_blank\">buraya</a>.",
+        "insecureRoomNameWarningWeb": "Oda adı güvenli değil. İstenmeyen katılımcılar toplantınıza katılabilir. {{recommendAction}} Toplantınızın güvenliğini sağlama hakkında daha fazla bilgi edinin <a href = \"{{securityUrl}}\" target = \"_blank\">buraya</a>.",
         "title": "Güvenlik Seçenekleri",
         "unsafeRoomActions": {
             "meeting": "Güvenlik düğmesini kullanarak toplantınızın güvenliğini sağlamayı düşünün.",
@@ -1200,7 +1196,6 @@
         "Settings": "Ayarlar",
         "accessibilityLabel": {
             "Settings": "Ayarları göster/gizle",
-            "audioOnly": "Yalnızca sesi aç/kapat",
             "audioRoute": "Ses aygıtını seçin",
             "boo": "Boo",
             "breakoutRooms": "Alt odalar",
@@ -1241,6 +1236,7 @@
             "lobbyButton": "Lobi modunu etkinleştir / devre dışı bırak",
             "localRecording": "Kayıt denetimlerini aç/kapat",
             "lockRoom": "Toplantı parolasını aç/kapat",
+            "lowBandwidthMode": "Yalnızca sesi aç/kapat",
             "lowerHand": "Elini indir",
             "moreActions": "Diğer işlemler menüsünü aç/kapat",
             "moreActionsMenu": "Diğer işlemler menüsü",
@@ -1289,8 +1285,6 @@
             "videounmute": "Kamerayı başlat"
         },
         "addPeople": "Aramanıza kişi ekleyin",
-        "audioOnlyOff": "Yalnızca ses modunu devre dışı bırak",
-        "audioOnlyOn": "Yalnızca ses modunu etkinleştir",
         "audioRoute": "Ses aygıtını seçin",
         "audioSettings": "Ses ayarları",
         "authenticate": "Kimlik doğrula",
@@ -1330,6 +1324,8 @@
         "lobbyButtonEnable": "Lobi modunu devre aktifleştir",
         "login": "Oturum aç",
         "logout": "Oturum kapat",
+        "lowBandwidthModeOff": "Yalnızca ses modunu devre dışı bırak",
+        "lowBandwidthModeOn": "Yalnızca ses modunu etkinleştir",
         "lowerYourHand": "Elinizi indirin",
         "moreActions": "Daha fazla işlem",
         "moreOptions": "Daha fazla seçenek",
@@ -1370,7 +1366,7 @@
         "silence": "Sessiz",
         "speakerStats": "Konuşmacı istatistikleri",
         "startScreenSharing": "Ekran paylaşımını başlat",
-        "startSubtitles": "Altyazıları başlat",
+        "startSubtitles": "Altyazılar • {{language}}",
         "stopAudioSharing": "Ses paylaşımını durdur",
         "stopScreenSharing": "Ekran paylaşımını durdur",
         "stopSharedVideo": "Videosunu durdur",
@@ -1388,9 +1384,7 @@
     "transcribing": {
         "ccButtonTooltip": "Altyazılıar başlat / durdur",
         "expandedLabel": "Deşifre etme açık",
-        "failedToStart": "Deşifre etme başlatılamadı",
-        "labelToolTip": "Toplantı deşifre ediliyor",
-        "sourceLanguageDesc": "Şu anda toplantı dili <b>{{sourceLanguage}</b> olarak ayarlıdır. <br/> Bunu şuradan değiştirebilirsiniz",
+        "sourceLanguageDesc": "Şu anda toplantı dili <b>{{sourceLanguage}}</b> olarak ayarlı. <br/> Bunu şuradan değiştirebilirsiniz: ",
         "sourceLanguageHere": "burada",
         "start": "Altyazıları göstermeye başla",
         "stop": "Altyazıları göstermeyi durdur",
@@ -1414,8 +1408,6 @@
     },
     "videoStatus": {
         "adjustFor": "Ayarla:",
-        "audioOnly": "SES",
-        "audioOnlyExpanded": "Yalnızca ses modundasınız. Bu mod bant genişliğinden tasarruf sağlar, ancak başkalarının videolarını göremezsiniz.",
         "bestPerformance": "En iyi performans",
         "callQuality": "Arama Kalitesi",
         "hd": "HD",
@@ -1423,9 +1415,11 @@
         "highDefinition": "Yüksek çözünürlük",
         "highestQuality": "En yüksek kalite",
         "labelTooiltipNoVideo": "Görüntü yok",
-        "labelTooltipAudioOnly": "Yalnızca ses modu etkin",
+        "labelTooltipLowBandwidthMode": "Yalnızca ses modu etkin",
         "ld": "LD",
         "ldTooltip": "Düşük çözünürlüklü video görüntüleme",
+        "lowBandwidthMode": "SES",
+        "lowBandwidthModeExpanded": "Yalnızca ses modundasınız. Bu mod bant genişliğinden tasarruf sağlar, ancak başkalarının videolarını göremezsiniz.",
         "lowDefinition": "Düşük çözünürlük",
         "performanceSettings": "Performans ayarları",
         "recording": "Kayıt devam ediyor",
@@ -1520,7 +1514,7 @@
         },
         "calendar": "Takvim",
         "connectCalendarButton": "Takviminizi bağlayın",
-        "connectCalendarText": "{{app}} uygulamasındaki tüm toplantılarınızı görüntülemek için takviminizi bağlayın. Ayrıca, takviminize {{provide}} toplantı ekleyin ve tek tıklamayla başlatın.",
+        "connectCalendarText": "{{app}} uygulamasındaki tüm toplantılarınızı görüntülemek için takviminizi bağlayın. Ayrıca, takviminize {{provider}} toplantı ekleyin ve tek tıklamayla başlatın.",
         "enterRoomTitle": "Yeni bir toplantı başlat",
         "getHelp": "Yardım alın",
         "go": "GİT",

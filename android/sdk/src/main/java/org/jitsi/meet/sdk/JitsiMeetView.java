@@ -190,6 +190,9 @@ public class JitsiMeetView extends FrameLayout {
             props = new Bundle();
         }
 
+        // No-op while running; rebuilds the host after destroyReactNative().
+        JitsiMeet.instantiateReactNative(getContext());
+
         ReactHost reactHost = ReactHostHolder.getReactHost();
         if (reactHost == null) {
             JitsiMeetLogger.w("Cannot create surface, ReactHost is not initialized");

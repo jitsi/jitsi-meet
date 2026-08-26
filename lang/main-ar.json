@@ -36,9 +36,6 @@
         "phone": "هاتف",
         "speaker": "مكبر الصوت"
     },
-    "audioOnly": {
-        "audioOnly": "معدل تبادل البيانات منخفض"
-    },
     "breakoutRooms": {
         "actions": {
             "add": "أضف غرفة جانبية",
@@ -53,7 +50,7 @@
         "defaultName": "غرفة المُلتقيات الفرعية رقم {{index}}",
         "mainRoom": "الغرفة الرئيسية",
         "notifications": {
-            "joined": " الغرفة الجانبيةالانضمام إلى {{index}}",
+            "joined": " الغرفة الجانبيةالانضمام إلى {{name}}",
             "joinedMainRoom": "الانضمام للغرفة الرئيسية",
             "joinedTitle": "غرف جانبية"
         }
@@ -221,7 +218,6 @@
         "Remove": "أزل",
         "Share": "شارك",
         "Submit": "أرسل",
-        "WaitForHostMsg": "لم يبدأ المؤتمر بعد. إن كنت المضيف والراعي، فنرجو تأكيد ذلك عبر الاستيثاق أو انتظر وصول المضيف رجاءً. ",
         "WaitingForHostTitle": "في انتظار المضيف…",
         "Yes": "نعم",
         "accessibilityLabel": {
@@ -260,7 +256,7 @@
         "dismiss": "تجاهل",
         "displayNameRequired": "السلام عليكم! ما اسمك؟",
         "done": "اُنجِز",
-        "e2eeDescription": "<p>عملية التعمية من طرف لطرف <strong>قيد التجريب</strong> حاليًا. زر رجاءً <a href='https://jitsi.org/blog/e2ee/' target='_blank'>هذا المنشور</a> لمزيد من التفاصيل.</p><br/><p>ضع في ذهنك أن تشغيل عملية التعمية من طرف لطرف ستعطل عمل بعض الخدمات التي يقدمها المُخدِّم مثل: التسجيل، والبث الحي، الاشتراك عبر الهاتف. أضف إلى ذلك أن المُلتقى سيعمل مع الأشخاص المنضمين من المتصفح التي تدعم قابلية الدخول إلى البث.</p>",
+        "e2eeDescription": "التشفير من طرف إلى طرف تجريبي حاليًا. يُرجى العلم بأن تفعيله سيؤدي فعليًا إلى تعطيل الخدمات التي يوفرها الخادم، مثل: المشاركة عبر الهاتف. كما يُرجى العلم بأن الاجتماع لن يعمل إلا لمن ينضمون من متصفحات تدعم المسارات القابلة للإدراج (insertable streams).",
         "e2eeDisabledDueToMaxModeDescription": "لا يمكن تمكين التشفير من طرف إلى طرف بسبب العدد الكبير من المشاركين في المؤتمر.",
         "e2eeLabel": "المفتاح",
         "e2eeWarning": "تحذير: لا يبدو أن جميع المشاركين في هذا المُلتقى لديهم دعم للتشفير من طرف إلى طرف. إذا قمت بتمكينه فلن يتمكنوا من رؤيتك أو سماعك.",
@@ -269,7 +265,7 @@
         "enterDisplayName": "أدخل اسمك هنا، رجاءً",
         "error": "خطأ",
         "gracefulShutdown": "خدمتنا متوقفة حاليًا لعمليات الصيانة. جرب مرة أخرى في وقت لاحق.",
-        "grantModeratorDialog": "أما زلت راغب بجعل هذا المشارك رئيس الجلسة؟",
+        "grantModeratorDialog": "هل أنت متأكد من أنك تريد منح {{participantName}} صلاحيات المشرف؟",
         "grantModeratorTitle": "اجعله رئيس الجلسة",
         "hideShareAudioHelper": "لا تظهر هذا الحوار مرة أخرى",
         "incorrectPassword": "اسم المستخدم أو كلمة المرور خطأ",
@@ -333,8 +329,6 @@
         "permissionCameraRequiredError": "مطلوب إذن الكاميرا للمشاركة في المؤتمرات بالفيديو. يرجى منحه في الإعدادات",
         "permissionErrorTitle": "الإذن مطلوب",
         "permissionMicRequiredError": "مطلوب إذن الميكروفون للمشاركة في المؤتمرات مع الصوت. يرجى منحه في الإعدادات",
-        "popupError": "يمنع متصفحك النوافذ المنبثقة من هذا الموقع. فعِّل رجاءً النوافذ المنبثقة في المتصفح من إعدادات الحماية وحاول مرة أخرى.",
-        "popupErrorTitle": "النوافذ المنبثقة محجوبة.",
         "readMore": "أكثر",
         "recentlyUsedObjects": "الأشياء المستخدمة مؤخرًا",
         "recording": "قيد التسجيل",
@@ -436,9 +430,6 @@
         "noResults": "لم يتم العثور على نتائج :(",
         "search": "ابحث في GIPHY"
     },
-    "helpView": {
-        "title": "مركز المساعدة"
-    },
     "incomingCall": {
         "answer": "أجب",
         "audioCallTitle": "مكالمة صوتية واردة",
@@ -536,7 +527,7 @@
         "failedToStart": "فشلت عملية بدء البث الحي",
         "getStreamKeyManually": "لم نتمكن من الوصول إلى أي بث حي. جرب جلب مفتاح بث حي خاص بك من يوتيوب.",
         "googlePrivacyPolicy": "سياسية خصوصية غوغل",
-        "inProgress": "البث المباشر غير ممكّن على {{email}}. يرجى تمكين البث المباشر أو تسجيل الدخول إلى حساب مع تمكين البث المباشر.",
+        "inProgress": "جارٍ التسجيل أو البث المباشر",
         "invalidStreamKey": "يحتمل كون مفتاح البث الحي غير صحيح.",
         "off": "أُوقِف البث الحي",
         "offBy": "أوقف {{name}} البث الحي",
@@ -556,7 +547,6 @@
         "youtubeTerms": "شروط خدمة يوتيوب"
     },
     "lobby": {
-        "allow": "اسمح",
         "backToKnockModeButton": "لا يوجد كلمة مرور، اطلب الإذن بالدخول بدلًا من ذلك.",
         "chat": "دردشة",
         "dialogTitle": "ونضع غرفة الانتظار",
@@ -588,7 +578,6 @@
         "notificationLobbyDisabled": "عطَّل {{originParticipantName}} وضع غرفة الانتظار",
         "notificationLobbyEnabled": "فعَّل {{originParticipantName}} وضع غرفة الانتظار",
         "notificationTitle": "غرفة الانتظار",
-        "passwordField": "أدخل كلمة الدخول إلى المُلتقى",
         "passwordJoinButton": "انضم",
         "title": "غرفة الانتظار",
         "toggleLabel": "فعِّل غرفة الانتظار"
@@ -628,16 +617,18 @@
         "button": "ادعُ آخرين",
         "youAreAlone": "أنت بمفردك في المُلتقى"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "معدل تبادل البيانات منخفض"
+    },
     "me": "أنا",
     "notify": {
         "OldElectronAPPTitle": "ثغرة أمنية!",
-        "allowAction": "يسمح",
         "allowedUnmute": "يمكنك إعادة صوت الميكروفون و بدء تشغيل الكاميرا أو مشاركة شاشتك.",
         "audioUnmuteBlockedDescription": "تم حظر عملية إلغاء كتم صوت الميكروفون مؤقتًا بسبب قيود النظام.",
         "audioUnmuteBlockedTitle": "تم حظر إعادة صوت الميكروفون!",
         "chatMessages": "رسائل الدردشة",
         "connectedOneMember": "انضم {{name}} للمُلتقى",
-        "connectedThreePlusMembers": "انضم {{name}} وعدد {{count}} غيره إلى المُلتقى",
+        "connectedThreePlusMembers": "انضم {{name}} وآخرون كثيرون إلى الاجتماع",
         "connectedTwoMembers": "انضم {{first}} و {{second}} إلى المُلتقى",
         "disconnected": "انقطع الاتصال",
         "displayNotifications": "عرض الإخطارات لـ",
@@ -683,17 +674,16 @@
         "newDeviceCameraTitle": "اكتُشفَت كاميرا جديدة",
         "noiseSuppressionDesktopAudioDescription": "لا يمكن تمكين منع الضوضاء أثناء مشاركة صوت سطح المكتب ، يرجى تعطيله والمحاولة مرة أخرى.",
         "noiseSuppressionFailedTitle": "فشل في بدء قمع الضوضاء",
-        "noiseSuppressionNoTrackDescription": "يرجى إعادة صوت الميكروفون أولاً.",
         "noiseSuppressionStereoDescription": "قمع ضوضاء صوت الاستريو غير مدعوم حاليًا.",
         "oldElectronClientDescription1": "يبدو أنَّك تستعمل إصدارًا قديمًا من جيتسي يحوي ثغرة أمنية. تأكد رجاءً من أنَّك حدَّثته إلى ",
         "oldElectronClientDescription2": "أحدث إصدار",
         "oldElectronClientDescription3": " الآن!",
         "participantWantsToJoin": "يريد الانضمام إلى المُلتقى",
         "participantsWantToJoin": "يريد الانضمام إلى المُلتقى",
-        "passwordRemovedRemotely": "أزال أحد المشاركين {{participantDisplayName}}",
+        "passwordRemovedRemotely": "أزال مشارك آخر $t(lockRoomPasswordUppercase)",
         "passwordSetRemotely": "ضبط أحد المشاركين $t(lockRoomPasswordUppercase)",
         "raiseHandAction": "رفع اليد",
-        "raisedHand": "يريد {{name}} التحدث",
+        "raisedHand": "يرغب في المشاركة.",
         "raisedHands": "{{participantName}} و {{raisedHands}}المزيد من الناس",
         "reactionSounds": "تعطيل الأصوات",
         "reactionSoundsForAll": "تعطيل الأصوات للجميع",
@@ -752,7 +742,7 @@
             "skip": "تخطى",
             "submit": "يقدم"
         },
-        "by": "من",
+        "by": "بواسطة {{name}}",
         "create": {
             "addOption": "إضافة خيار",
             "answerPlaceholder": "خيار {{index}}",
@@ -761,8 +751,7 @@
             "pollOption": "خيار الاستطلاع {{index}}",
             "pollQuestion": "سؤال الاستطلاع",
             "questionPlaceholder": "طرح سؤال",
-            "removeOption": "إزالة خيار",
-            "send": "أرسل"
+            "removeOption": "إزالة خيار"
         },
         "errors": {
             "notUniqueOption": "يجب أن تكون الخيارات فريدة"
@@ -853,9 +842,6 @@
         "rejected": "مرفوض",
         "ringing": "يرن…"
     },
-    "privacyView": {
-        "title": "خصوصية"
-    },
     "profile": {
         "avatar": "avatar",
         "setDisplayNameLabel": "حدد اسمك المراد عرضه",
@@ -898,7 +884,6 @@
         "highlightMomentSucessDescription": "ستتم إضافة اللحظة المميزة إلى ملخص المُلتقى.",
         "inProgress": "التسجيل أو البث المباشر قيد التقدم",
         "linkGenerated": "لقد أنشأنا رابطًا لتسجيلك.",
-        "live": "مباشر",
         "localRecordingNoNotificationWarning": "لن يتم الإعلان عن التسجيل للمشاركين الآخرين. ستحتاج إلى إخبارهم بأنه تم تسجيل الاجتماع.",
         "localRecordingNoVideo": "لا يتم تسجيل الفيديو",
         "localRecordingStartWarning": "يرجى التأكد من إيقاف التسجيل قبل الخروج من الاجتماع من أجل حفظه.",
@@ -914,7 +899,6 @@
         "onBy": "بدأ {{name}} التسجيل",
         "onlyRecordSelf": "تسجيل فقط دفق الصوت والفيديو الخاصة بي",
         "pending": "التحضير لتسجيل المُلتقى…",
-        "rec": "تسجيل",
         "saveLocalRecording": "حفظ ملف التسجيل محليا",
         "serviceDescription": "ستحفظ خدمة التسجيل الفيديو المستجل",
         "serviceDescriptionCloud": "تسجيل سحابي",
@@ -936,7 +920,6 @@
     "security": {
         "about": "يمكنك إضافة $t(lockRoomPassword) إلى المُلتقى. سيتوجب على المشاركين إدخال $t(lockRoomPassword) قبل السماح لهم بالانضمام إلى المُلتقى.",
         "aboutReadOnly": "المشاركون بصفة رئيس الجلسة يمكنهم إضافة $t(lockRoomPassword) إلى المُلتقى. سيتوجب على المشاركين إدخال $t(lockRoomPassword) قبل السماح لهم بالانضمام إلى المُلتقى.",
-        "insecureRoomNameWarning": "اسم الغرفة غير آمن، فقد ينضم عبره مشاركون غرباء إلى المُلتقى. ننصحك بتأمين المُلتقى عبر  وسائل الحماية التي يوفرها زر الحماية.",
         "title": "خيارات الأمان"
     },
     "settings": {
@@ -976,7 +959,6 @@
         "selectMic": "المايكروفون",
         "selfView": "عرض ذاتي",
         "shortcuts": "اختصارات لوحة المفاتيح",
-        "sounds": "اصوات",
         "speakers": "المذياع (مكبر الصوت)",
         "startAudioMuted": "بدء الجميع مكتومي الصوت",
         "startReactionsMuted": "كتم رد فعل الصوت للجميع",
@@ -1054,10 +1036,8 @@
         "Settings": "الإعدادات",
         "accessibilityLabel": {
             "Settings": "اظهِر/اخفِ الإعدادات",
-            "audioOnly": "بدل الصوت فقط",
             "audioRoute": "اختر جهاز الصوت",
             "boo": "Boo",
-            "breakoutRoom": "الانضمام / مغادرة غرفة فرعية",
             "callQuality": "اضبط دقة الفيديو",
             "carmode": "وضع السيارة",
             "cc": "اظهِر/اخفِ الترجمة",
@@ -1084,6 +1064,7 @@
             "lobbyButton": "فعِّل/عطِّل وضع غرفة الانتظار",
             "localRecording": "اظهِر/اخفِ التحكم بالتسجيل المحلي",
             "lockRoom": "اظهِر/اخفِ كلمة مرور المُلتقى",
+            "lowBandwidthMode": "بدل الصوت فقط",
             "moreActions": "اظهِر/اخفِ قائمة المزيد من الإجراءات",
             "moreActionsMenu": "قائمة المزيد من الإجراءات",
             "moreOptions": "اظهر المزيد من الخيارت",
@@ -1093,7 +1074,7 @@
             "muteEveryoneElsesVideoStream": "وقّف فيديو أي شخص آخر",
             "muteEveryonesVideoStream": "وقّف فيديو الجميع",
             "noiseSuppression": "قمع الضوضاء",
-            "participants": "مشاركون",
+            "participants": "فتح لوحة المشاركين. {{participantsCount}} مشارك",
             "pip": "استعمل/اخرج من وضع صورة-في-صورة",
             "privateMessage": "أرسل رسالة خاصة",
             "profile": "عدِّل ملفك الشخصي",
@@ -1121,8 +1102,6 @@
             "videomute": "بدِّل وضع اخفاء الفيديو"
         },
         "addPeople": "اضف أحدًا إلى المكالمة",
-        "audioOnlyOff": "عطِّل وضع معدَّل نقل البيانات المنخفص",
-        "audioOnlyOn": "فعِّل وضع نقل البيانات المنخفض",
         "audioRoute": "اختر جهاز الصوت",
         "audioSettings": "إعدادات الصوت",
         "authenticate": "اَجرِ عملية الاستيثاق",
@@ -1159,6 +1138,8 @@
         "lobbyButtonEnable": "فعِّل وضع غرفة الانتظار",
         "login": "ادخل",
         "logout": "اخرج",
+        "lowBandwidthModeOff": "عطِّل وضع معدَّل نقل البيانات المنخفص",
+        "lowBandwidthModeOn": "فعِّل وضع نقل البيانات المنخفض",
         "lowerYourHand": "اخفض يدك",
         "moreActions": "المزيد من الإجراءات",
         "moreOptions": "المزيد من الخيارات",
@@ -1196,7 +1177,7 @@
         "silence": "سكوت",
         "speakerStats": "حالة المتحدث",
         "startScreenSharing": "ابدأ بمشاركة الشاشة",
-        "startSubtitles": "أظهر الترجمة",
+        "startSubtitles": "الترجمة النصية • {{language}}",
         "stopAudioSharing": "وقف مشاركة الصوت",
         "stopScreenSharing": "أوقف مشاركة الشاشة",
         "stopSharedVideo": "أوقف فيديو يوتيوب المشارك",
@@ -1210,12 +1191,8 @@
     },
     "transcribing": {
         "ccButtonTooltip": "أظهر / أخف الترجمة",
-        "error": "فشلت عملية الإذاعة. حاول مرة أخرى، رجاءً.",
         "expandedLabel": "عملية الإذاعة تعمل",
-        "failedToStart": "فشلت عملية بدء الإذاعة",
-        "labelToolTip": "يجري إذاعة المُلتقى",
         "off": "أوقفت الإذاعة",
-        "pending": "التحضير لإذاعة المُلتقى…",
         "start": "بدء إظهار الترجمة",
         "stop": "إيقاف عرض الترجمة",
         "subtitles": "ترجمات",
@@ -1237,8 +1214,6 @@
     },
     "videoStatus": {
         "adjustFor": "ضبط ل:",
-        "audioOnly": "صوت",
-        "audioOnlyExpanded": "أنت في وضع معدَّل البيانات المتبادلة  المنخفض. الصوت ومشاركة الشاشة هو المتاح فقط في هذا الوضع.",
         "bestPerformance": "أفضل أداء",
         "callQuality": "جودة الفيديو",
         "hd": "دقة عالية",
@@ -1246,9 +1221,11 @@
         "highDefinition": "دقة عالية",
         "highestQuality": "اعلى جودة",
         "labelTooiltipNoVideo": "بلا فيديو",
-        "labelTooltipAudioOnly": "فعِّل وضع معدَّل البيانات المتبادلة المنخفض",
+        "labelTooltipLowBandwidthMode": "فعِّل وضع معدَّل البيانات المتبادلة المنخفض",
         "ld": "دقة منخفضة",
         "ldTooltip": "عرض فيديو بدقة منخفضة",
+        "lowBandwidthMode": "صوت",
+        "lowBandwidthModeExpanded": "أنت في وضع معدَّل البيانات المتبادلة  المنخفض. الصوت ومشاركة الشاشة هو المتاح فقط في هذا الوضع.",
         "lowDefinition": "دقة منخفضة",
         "performanceSettings": "إعدادات الأداء",
         "sd": "دقة قياسية",

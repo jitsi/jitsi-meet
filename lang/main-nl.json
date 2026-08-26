@@ -39,16 +39,14 @@
         "phone": "Telefoon",
         "speaker": "Luidspreker"
     },
-    "audioOnly": {
-        "audioOnly": "Beperkte bandbreedte"
-    },
     "audioTranslation": {
         "disabledForRoom": "Audiovertaling is uitgeschakeld voor deze vergadering.",
         "errorForbidden": "U hebt geen toestemming om audiovertaling te gebruiken.",
         "errorGeneric": "Kon audiovertaling niet inschakelen. Probeer het opnieuw.",
         "errorLimitReached": "Kon niet iedereen tegelijk vertalen. Schakel vertaling in voor individuele deelnemers.",
         "errorRoomDisabled": "Audiovertaling is voor deze vergadering uitgeschakeld. Schakel het in bij Moderator-instellingen.",
-        "errorSpeakerUnavailable": "Kan deze deelnemer niet vertalen — is niet langer in de vergadering."
+        "errorSpeakerUnavailable": "Kan deze deelnemer niet vertalen — is niet langer in de vergadering.",
+        "labelTooltip": "Vertalen..."
     },
     "bandwidthSettings": {
         "assumedBandwidthBps": "bijv. 10000000 voor 10 Mbps",
@@ -119,7 +117,7 @@
     "chat": {
         "disabled": "Het verzenden van chatberichten is uitgeschakeld.",
         "enter": "Vertrek betreden",
-        "error": "Fout: uw bericht \"{{originalText}}\" is niet verzonden. Reden: {{error}}",
+        "error": "Fout: je bericht is niet verzonden. Reden: {{error}}",
         "everyone": "Iedereen",
         "fieldPlaceHolder": "Typ hier uw bericht",
         "fileAccessibleTitle": "{{user}} heeft een bestand geüploadet",
@@ -171,7 +169,7 @@
         "buttonText": "Chrome Extensie installeren",
         "buttonTextEdge": "Edge Extensie installeren",
         "close": "Sluiten",
-        "dontShowAgain": "Laat me dit niet meer zien",
+        "dontShowAgain": "Laat mij dit niet meer zien",
         "installExtensionText": "Installeer de extensie voor integratie met Google Agenda en Office 365"
     },
     "closedCaptionsTab": {
@@ -370,7 +368,7 @@
         "error": "Fout",
         "errorRoomCreationRestriction": "U probeerde te snel deel te nemen, kom alsjeblieft even later terug.",
         "gracefulShutdown": "Onze service is momenteel niet beschikbaar vanwege onderhoud. Probeer het later opnieuw.",
-        "grantModeratorDialog": "Weet u zeker dat u de moderatorrechten wilt verlenen aan deze deelnemer?",
+        "grantModeratorDialog": "Weet je zeker dat je moderatorrechten wilt toekennen aan {{participantName}}?",
         "grantModeratorTitle": "Moderatorrechten verlenen",
         "hide": "Verbergen",
         "hideShareAudioHelper": "Dit dialoogvenster niet meer tonen",
@@ -835,7 +833,19 @@
         "button": "Anderen uitnodigen",
         "youAreAlone": "U bent de enige in de vergadering"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Beperkte bandbreedte"
+    },
     "me": "ik",
+    "multiScreen": {
+        "noParticipants": "Geen deelnemers",
+        "sharedVideoError": "De gedeelde video kon niet op dit scherm worden afgespeeld",
+        "sharedVideoInactive": "Deel een video in de vergadering om deze op het tweede scherm weer te geven",
+        "showOnStage": "{{name}} weergeven op het tweede scherm",
+        "unpinFromStage": "Weergave van {{name}} op het tewwede scherm beëindigen",
+        "whiteboardInactive": "Open het whiteboard in de vergadering om dit op het tweede scherm weer te geven",
+        "whiteboardTitle": "Whiteboard"
+    },
     "notify": {
         "OldElectronAPPTitle": "Beveiligingskwetsbaarheid!",
         "allowAll": "Alles toestaan",
@@ -851,7 +861,7 @@
         "confirmDealError": "Deal bevestigen is mislukt",
         "confirmDealSuccess": "Deal bevestigd",
         "connectedOneMember": "{{name}} neemt nu deel aan de vergadering",
-        "connectedThreePlusMembers": "{{name}} en {{count}} anderen nemen nu deel aan de vergadering",
+        "connectedThreePlusMembers": "{{name}} en veel anderen hebben deelgenomen aan de vergadering",
         "connectedTwoMembers": "{{first}} en {{second}} nemen nu deel aan de vergadering",
         "connectionFailed": "Verbinding mislukt. Probeer het later nog eens!",
         "dataChannelClosed": "De videokwaliteit kan verminderd zijn",
@@ -860,13 +870,13 @@
         "dataChannelClosedWithAudio": "De audio- en videokwaliteit kan verminderd zijn",
         "desktopMutedRemotelyTitle": "Uw schermdeling is gestopt door {{participantDisplayName}}",
         "disabledIframe": "Insluiten is alleen bedoeld voor demo-doeleinden, dus deze oproep wordt binnen {{timeout}} minuten verbroken.",
-        "disabledIframeSecondaryNative": "Het insluiten van {{domein}} is alleen bedoeld voor demo-doeleinden, dus deze oproep wordt binnen {{timeout}} minuten verbroken.",
-        "disabledIframeSecondaryWeb": "Het insluiten van {{domein}} is alleen bedoeld voor demo-doeleinden, dus deze oproep wordt binnen {{timeout}} minuten verbroken. Gebruik alstublieft <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> voor productie-insluiting!",
+        "disabledIframeSecondaryNative": "Het insluiten van {{domain}} is alleen bedoeld voor demo-doeleinden, dus deze oproep wordt binnen {{timeout}} minuten verbroken.",
+        "disabledIframeSecondaryWeb": "Het insluiten van {{domain}} is alleen bedoeld voor demo-doeleinden, dus deze oproep wordt binnen {{timeout}} minuten verbroken. Gebruik alstublieft <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank>Jitsi as a Service</a> voor productie-insluiting!",
         "disconnected": "verbinding verbroken",
         "dismissError": "Voorstellen negeren is mislukt",
         "dismissSuccess": "Voorstellen genegeerd",
         "displayNotifications": "Toon meldingen voor",
-        "dontRemindMe": "Herinner me er niet aan",
+        "dontRemindMe": "Herinner mij er niet aan",
         "focus": "Focus van vergadering",
         "focusFail": "{{component}} niet beschikbaar - probeer over {{ms}} sec. opnieuw",
         "gifsMenu": "GIPHY",
@@ -1216,7 +1226,7 @@
         "about": "U kunt een $t(lockRoomPassword) toevoegen aan uw vergadering. Deelnemers moeten het $t(lockRoomPassword) opgeven voordat zij aan de vergadering mogen deelnemen.",
         "aboutReadOnly": "Moderators kunnen een $t(lockRoomPassword) toevoegen aan de vergadering. Deelnemers moeten het $t(lockRoomPassword) opgeven voordat zij aan de vergadering mogen deelnemen.",
         "insecureRoomNameWarningNative": "De kamernaam is onveilig. Ongewenste deelnemers kunnen deelnemen aan uw vergadering. {{recommendAction}} Lees meer over het beveiligen van uw vergadering",
-        "insecureRoomNameWarningWeb": "De kamernaam is onveilig. Ongewenste deelnemers kunnen deelnemen aan uw vergadering. {{recommendAction}} Lees <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">hier</a> meer over het beveiligen van uw vergadering.",
+        "insecureRoomNameWarningWeb": "De kamernaam is onveilig. Ongewenste deelnemers kunnen deelnemen aan uw vergadering. {{recommendAction}} Lees <a href=\"{{securityUrl}}\" target=\"_blank\">hier</a> meer over het beveiligen van uw vergadering.",
         "title": "Beveiligingsopties",
         "unsafeRoomActions": {
             "meeting": "Overweeg om uw vergadering te beveiligen met behulp van de beveiligingsknop.",
@@ -1354,7 +1364,6 @@
         "Settings": "Instellingen",
         "accessibilityLabel": {
             "Settings": "Instellingen in- of uitschakelen",
-            "audioOnly": "Alleen audio in- of uitschakelen",
             "audioRoute": "Het afspeelapparaat selecteren",
             "audioTranslation": "Audio vertalen",
             "boo": "Boe",
@@ -1399,6 +1408,7 @@
             "localRecording": "Besturingselementen voor lokale opname in- of uitschakelen",
             "lockRoom": "Wachtwoord voor vergadering in- of uitschakelen",
             "love": "Hart",
+            "lowBandwidthMode": "Alleen audio in- of uitschakelen",
             "lowerHand": "Hand omlaag doen",
             "moreActions": "Meer acties menu in- of uitschakelen",
             "moreActionsMenu": "Meer acties menu",
@@ -1411,7 +1421,7 @@
             "muteGUMPending": "Verbinding maken met uw microfoon",
             "noiseSuppression": "Ruisonderdrukking",
             "openChat": "Chat openen",
-            "participants": "Deelnemers",
+            "participants": "Deelnemerspaneel openen. {{participantsCount}} deelnemers",
             "pip": "Picture-in-Picture-modus in- of uitschakelen",
             "privateMessage": "Verstuur privébericht",
             "profile": "Uw profiel bewerken",
@@ -1461,8 +1471,6 @@
                 "label": "Stereo"
             }
         },
-        "audioOnlyOff": "Lage bandbreedte-modus uitschakelen",
-        "audioOnlyOn": "Lage bandbreedte-modus inschakelen",
         "audioRoute": "Het afspeelapparaat selecteren",
         "audioSettings": "Audio-instellingen",
         "audioTranslation": "Audiovertaling",
@@ -1509,6 +1517,8 @@
         "login": "Aanmelden",
         "logout": "Afmelden",
         "love": "Hart",
+        "lowBandwidthModeOff": "Lage bandbreedte-modus uitschakelen",
+        "lowBandwidthModeOn": "Lage bandbreedte-modus inschakelen",
         "lowerYourHand": "Uw hand laten zakken",
         "moreActions": "Meer acties",
         "moreOptions": "Meer opties",
@@ -1554,7 +1564,7 @@
         "silence": "Stilte",
         "speakerStats": "Sprekerstatistieken",
         "startScreenSharing": "Schermdeling starten",
-        "startSubtitles": "Ondertiteling starten",
+        "startSubtitles": "Ondertiteling • {{language}}",
         "stopAudioSharing": "Audio delen stoppen",
         "stopScreenSharing": "Schermdeling stoppen",
         "stopSharedVideo": "Video stoppen",
@@ -1607,8 +1617,6 @@
     },
     "videoStatus": {
         "adjustFor": "Aanpassen voor:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "U bent in beperkte bandbreedte-modus. In deze modus ontvangt u alleen audio en schermdeling.",
         "bestPerformance": "Beste prestatie",
         "callQuality": "Videokwaliteit",
         "hd": "HD",
@@ -1616,9 +1624,11 @@
         "highDefinition": "Hoge resolutie",
         "highestQuality": "Hoogste kwaliteit",
         "labelTooiltipNoVideo": "Geen video",
-        "labelTooltipAudioOnly": "Beperkte bandbreedte-modus ingeschakeld",
+        "labelTooltipLowBandwidthMode": "Beperkte bandbreedte-modus ingeschakeld",
         "ld": "LD",
         "ldTooltip": "U bekijkt video in lage resolutie",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "U bent in beperkte bandbreedte-modus. In deze modus ontvangt u alleen audio en schermdeling.",
         "lowDefinition": "Lage resolutie",
         "performanceSettings": "Prestatie instellingen",
         "recording": "Deze bijeenkomst wordt opgenomen.",
@@ -1645,10 +1655,13 @@
         "mute": "Deelnemer is gedempt",
         "muted": "Gedempt",
         "pinToStage": "Vastzetten aan het podium",
+        "receivingTranslatedAudio": "U ontvangt vertaalde audio",
         "remoteControl": "Extern beheer starten / stoppen",
         "screenSharing": "Deelnemer deelt hun scherm",
         "show": "Op podium weergeven",
         "showSelfView": "Zelfbeeld weergeven",
+        "translationEnabledForYou": "Vertaling is voor u ingeschakeld",
+        "translationOnAndReceiving": "Vertaling op · ontvangen",
         "unpinFromStage": "Losmaken",
         "verify": "Deelnemer verifiëren",
         "videoMuted": "Camera uitgeschakeld",

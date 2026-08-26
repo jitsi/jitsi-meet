@@ -190,6 +190,81 @@ describe('mod_filter_iq_rayo (feature-based authorization)', () => {
         });
     });
 
+    // ─── Per-room transcription throttle ────────────────────────────────────
+
+    describe('transcription per-room throttle', () => {
+        const transcribeOpts = { dialTo: 'jitsi_meet_transcribe' };
+
+        it('allows the first transcription dial in a room', async () => {
+            const { client: c, room } = await setup({ context: { features: { transcription: true } } });
+            const iqs = await sendAndCollect(c, room, transcribeOpts);
+
+            assert.strictEqual(iqs.length, 1, 'first dial should reach the MUC');
+            assert.strictEqual(iqs[0].dial_to, 'jitsi_meet_transcribe');
+        });
+
+        it('drops a second transcription dial to the same room within 10 s', async () => {
+            const { client: c, room } = await setup({ context: { features: { transcription: true } } });
+
+            const first = await sendAndCollect(c, room, transcribeOpts);
+
+            assert.strictEqual(first.length, 1, 'first dial should reach the MUC');
+
+            // Second dial: throttle budget exhausted, should be blocked
+            const second = await sendAndCollect(c, room, transcribeOpts);
+
+            assert.strictEqual(second.length, 0, 'second dial within 10 s should be throttled');
+        });
+
+        it('allows only one transcription dial when multiple are sent concurrently', async () => {
+            const { client: c, room } = await setup({ context: { features: { transcription: true } } });
+
+            await clearDialIqs();
+
+            // Fire three dials before Prosody has processed any of them
+            await Promise.all([
+                c.sendRayoIq(room, transcribeOpts),
+                c.sendRayoIq(room, transcribeOpts),
+                c.sendRayoIq(room, transcribeOpts)
+            ]);
+
+            await new Promise(r => setTimeout(r, 500));
+
+            const iqs = await getDialIqs();
+
+            assert.strictEqual(iqs.length, 1, 'exactly one concurrent transcription dial should pass');
+        });
+
+        it('does not apply the throttle across different rooms', async () => {
+            const { client: c1, room: room1 } = await setup({ context: { features: { transcription: true } } });
+            const { client: c2, room: room2 } = await setup({ context: { features: { transcription: true } } });
+
+            // First dial to room1 consumes room1's throttle budget
+            const iqs1 = await sendAndCollect(c1, room1, transcribeOpts);
+
+            assert.strictEqual(iqs1.length, 1, 'first dial to room1 should pass');
+
+            // First dial to room2 has its own independent throttle bucket
+            const iqs2 = await sendAndCollect(c2, room2, transcribeOpts);
+
+            assert.strictEqual(iqs2.length, 1, 'first dial to room2 should pass independently');
+        });
+
+        it('does not throttle outbound-call dials', async () => {
+            const { client: c, room } = await setup({ context: { features: { 'outbound-call': true } } });
+
+            const first = await sendAndCollect(c, room);
+
+            assert.strictEqual(first.length, 1, 'first outbound-call should pass');
+
+            // A second outbound-call to the same room must not be caught by the
+            // transcription throttle (which only applies to jitsi_meet_transcribe dials)
+            const second = await sendAndCollect(c, room);
+
+            assert.strictEqual(second.length, 1, 'second outbound-call should also pass');
+        });
+    });
+
     // ─── Header stripping ───────────────────────────────────────────────────
 
     describe('header stripping', () => {

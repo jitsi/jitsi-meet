@@ -38,6 +38,11 @@ export interface IProps extends WithTranslation {
     customClass?: string;
 
     /**
+     * Whether to suppress the tooltip while preserving the accessibility label.
+     */
+    disableTooltip?: boolean;
+
+    /**
      * Extra styles which will be applied in conjunction with `styles` or
      * `toggledStyles` when the button is disabled;.
      */

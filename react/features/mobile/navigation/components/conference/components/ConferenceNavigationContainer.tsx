@@ -6,6 +6,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
+import AudioTranslationDialog
+    from '../../../../../audio-translation/components/native/AudioTranslationDialog';
 import BreakoutRooms
 // @ts-ignore
     from '../../../../../breakout-rooms/components/native/BreakoutRooms';
@@ -48,6 +50,7 @@ import Whiteboard from '../../../../../whiteboard/components/native/Whiteboard';
 // @ts-ignore
 import { screen } from '../../../routes';
 import {
+    audioTranslationScreenOptions,
     breakoutRoomsScreenOptions,
     carmodeScreenOptions,
     chatScreenOptions,
@@ -221,6 +224,13 @@ const ConferenceNavigationContainer = () => {
                     options = {{
                         ...subtitlesScreenOptions,
                         title: t('transcribing.subtitles')
+                    }} />
+                <ConferenceStack.Screen
+                    component = { AudioTranslationDialog }
+                    name = { screen.conference.audioTranslation }
+                    options = {{
+                        ...audioTranslationScreenOptions,
+                        title: t('toolbar.audioTranslation')
                     }} />
                 <ConferenceStack.Screen
                     component = { BreakoutRooms }

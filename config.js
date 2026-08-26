@@ -206,7 +206,7 @@ var config = {
 
     // Start the conference in audio only mode (no video is being received nor
     // sent).
-    // startAudioOnly: false,
+    // startLowBandwidthMode: false,
 
     // Every participant after the Nth will start audio muted.
     // startAudioMuted: 10,
@@ -240,6 +240,11 @@ var config = {
     //     // Defaults to 0.15. Ignored on iOS, where the original is muted instead because the
     //     // element volume cannot be lowered there.
     //     duckedVolume: 0.15,
+    //
+    //     // Whether to process the bridge's translated-source sending notifications, which drive the
+    //     // per-participant "receiving translated audio" indicator. Off by default until the bridge
+    //     // emits stop notifications as well as start ones.
+    //     enableSendingChangeEvents: false,
     // },
 
     // Noise suppression configuration. By default rnnoise is used. Optionally Krisp
@@ -547,7 +552,16 @@ var config = {
     //
     //     // When the backend provides diarization by setting a "speaker" field, append [Speaker N] for transcription
     //     // events from non-0 speakers.
-    //     renderTranscriptDetails: false
+    //     renderTranscriptDetails: false,
+    //
+    //     // Requests that the transcriber diarize (split by speaker) this participant's own audio, i.e. label
+    //     // segments as coming from different speakers. Enable it only for endpoints that genuinely carry
+    //     // multiple speakers on a single audio stream (conference-room systems, dial-in/PSTN legs); on a
+    //     // normal single-person stream a diarizer can spuriously split one talker into several speakers.
+    //     // The flag is advertised to jicofo in MUC presence and takes effect only at join time (it must be
+    //     // set before joining, e.g. via this config or the #config.transcription.diarize=true URL override;
+    //     // toggling it mid-call has no effect). Defaults to false.
+    //     diarize: false
 
     // },
 
@@ -679,6 +693,16 @@ var config = {
     // the bridge going down.
     // enableForcedReload: true,
 
+    // Enables in-place ICE restarts of the bridge connection (e.g. after a network change), instead of the
+    // legacy recovery flow which re-creates the whole media session. Requires support in jitsi-videobridge
+    // (default: disabled).
+    // enableIceRestart: false,
+
+    // Whether an in-place ICE restart is requested proactively when the device changes network (mobile only),
+    // instead of waiting for ICE to fail. Only has an effect when 'enableIceRestart' is enabled
+    // (default: enabled).
+    // enableIceRestartOnNetworkChange: true,
+
     // Use TURN/UDP servers for the jitsi-videobridge connection (by default
     // we filter out TURN/UDP because it is usually not needed since the
     // bridge itself is reachable via UDP)
@@ -804,6 +828,31 @@ var config = {
 
     // The client id for the google APIs used for the calendar integration, youtube livestreaming, etc.
     // googleApiApplicationClientID: '<client_id>',
+
+    // Picture-in-Picture configuration.
+    // pip: {
+    //     // Enable Picture-in-Picture for browser meetings. Opt-in, defaults to false.
+    //     enableBrowserPiP: false,
+    //     // Disable Picture-in-Picture entirely. Defaults to false.
+    //     disabled: false,
+    //     // Allow Picture-in-Picture on the prejoin page. Defaults to false.
+    //     showOnPrejoin: false,
+    //     // Show the Picture-in-Picture toolbar button when supported. Defaults to true.
+    //     showToolbarButton: true,
+    //     documentPiP: {
+    //         windowOptions: {
+    //             // Hide the browser control that returns to the opener. Defaults to false.
+    //             disallowReturnToOpener: false,
+    //             // Initial window height in pixels. Defaults to 160.
+    //             height: 160,
+    //             // Prefer the default initial placement instead of reusing the previous position and size.
+    //             // Defaults to false.
+    //             preferInitialWindowPlacement: false,
+    //             // Initial window width in pixels. Defaults to 284.
+    //             width: 284
+    //         }
+    //     }
+    // },
 
     // Configs for prejoin page.
     // prejoinConfig: {

@@ -138,26 +138,33 @@
 #pragma mark - Utility methods
 
 - (void)createReactNativeFactory {
-    NSLog(@"Creating JitsiReactFactoryDelegate");
     _reactFactoryDelegate = [[JitsiReactFactoryDelegate alloc] init];
-
-    NSLog(@"Creating RCTAppDependencyProvider");
     id<RCTDependencyProvider> provider = [[RCTAppDependencyProvider alloc] init];
-    NSLog(@"RCTAppDependencyProvider created: %@", provider);
-
-    NSLog(@"Setting dependencyProvider on delegate");
     _reactFactoryDelegate.dependencyProvider = provider;
-
-    NSLog(@"Creating RCTReactNativeFactory with delegate");
     _reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:_reactFactoryDelegate];
-    NSLog(@"RCTReactNativeFactory created: %@", _reactNativeFactory);
+    NSLog(@"ReactNativeFactory created: %@", _reactNativeFactory);
 
     // Initialize WebRTC options.
     WebRTCModuleOptions *options = [WebRTCModuleOptions sharedInstance];
     options.audioDevice = _rtcAudioDevice;
     options.loggingSeverity = (RTCLoggingSeverity)_webRtcLoggingSeverity;
 }
-    
+
+- (void)instantiateReactNative {
+    if (_reactNativeFactory == nil) {
+        [self createReactNativeFactory];
+    }
+
+    [_reactNativeFactory.rootViewFactory initializeReactHostWithLaunchOptions:nil
+                                                          bundleConfiguration:_reactNativeFactory.bundleConfiguration
+                                                         devMenuConfiguration:_reactNativeFactory.devMenuConfiguration];
+}
+
+- (void)destroyReactNative {
+    _reactNativeFactory = nil;
+    _reactFactoryDelegate = nil;
+}
+
 - (JitsiMeetConferenceOptions *)getInitialConferenceOptions {
     if (_launchOptions[UIApplicationLaunchOptionsURLKey]) {
         NSURL *url = _launchOptions[UIApplicationLaunchOptionsURLKey];
@@ -210,7 +217,7 @@
 
         if (contacts && (url = contacts.firstObject.personHandle.value)) {
             return [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
-                builder.audioOnly = audioOnly;
+                builder.lowBandwidthMode = audioOnly;
                 builder.room = url;
             }];
         }

@@ -39,9 +39,6 @@
         "phone": "Sími",
         "speaker": "Hátalari"
     },
-    "audioOnly": {
-        "audioOnly": "Lítil bandbreidd"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "t.d. 10000000 fyrir 10 Mbps",
         "assumedBandwidthBpsWarning": "Hærri gildi geta leitt til vandamála í netkerfi.",
@@ -260,7 +257,6 @@
         "Remove": "Fjarlægja",
         "Share": "Deila",
         "Submit": "Senda inn",
-        "WaitForHostMsg": "Fjarfundurinn er ekki byrjaður vegna þess að engir umsjónarmenn eru mættir. Ef þú vilt gerast umsjónarmaður skaltu skrá þig inn. Annars ættirðu að bíða.",
         "WaitingForHostButton": "Bíddu eftir umsjónarmanni",
         "WaitingForHostTitle": "Bíð eftir umsjónarmanni…",
         "Yes": "Já",
@@ -548,7 +544,7 @@
         "inviteTextiOSInviteUrl": "Smelltu á eftirfarandi tengil til að taka þátt: {{inviteUrl}}.",
         "inviteTextiOSJoinSilent": "Ef þú ert að hringja inn í gegnum símanúmer fjarfundar, skaltu nota þennan tengil til að taka þátt án þess að tengjast með hljóði: {{silentUrl}}.",
         "inviteTextiOSPersonal": "{{name}} er að bjóða þér á fund.",
-        "inviteTextiOSPhone": "Til að tengjast með síma skaltu nota þetta númer: {{number}},,{{conferenceID}}#\n",
+        "inviteTextiOSPhone": "Til að taka þátt í gegnum síma skaltu nota þetta númer: {{number}},,{{conferenceID}}#. Ef þú ert að leita að öðru númeri er hér heildarlistinn: {{didUrl}}.",
         "inviteURLFirstPartGeneral": "Þér hefur verið boðið að taka þátt í fundi.",
         "inviteURLFirstPartPersonal": "{{name}} er að bjóða þér á fund.\n",
         "inviteURLSecondPart": "\nTaka þátt í fundinum:\n{{url}}\n",
@@ -714,10 +710,12 @@
         "button": "Bjóddu öðrum",
         "youAreAlone": "Þú ert sá eini á fundinum"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Lítil bandbreidd"
+    },
     "me": "ég",
     "notify": {
         "OldElectronAPPTitle": "Öryggisveikleiki!",
-        "allowAction": "Leyfa",
         "allowedUnmute": "Þú getur afþaggað hljóðnemann þinn, ræst myndavélina þína eða deilt skjánum þínum.",
         "audioUnmuteBlockedDescription": "Lokað hefur verið tímabundið fyrirá afþöggun hljóðnema vegna takmarkana í kerfinu.",
         "audioUnmuteBlockedTitle": "Lokað á afþöggun hljóðnema1",
@@ -728,7 +726,6 @@
         "dataChannelClosed": "Gæðum myndmerkis er ábótavant",
         "dataChannelClosedDescription": "Brúarrásin hefur verið aftengd og eru því gæði myndmerkis takmörkuð við lægstu stillinguna.",
         "disabledIframe": "Ívafning (embedding) er aðeins ætluð sem sýnidæmi, þannig að þetta mun aftengjast eftir {{timeout}} mínútur.",
-        "disabledIframeSecondary": "Ívafning (embedding) {{domain}} er aðeins ætluð sem sýnidæmi, þannig að þetta mun aftengjast eftir {{timeout}} mínútur. Notaðu <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi sem þjónustu</a> fyrir ívafningu í vinnuumhverfi!",
         "disconnected": "aftengt",
         "displayNotifications": "Birta tilkynningar frá",
         "dontRemindMe": "Ekki minna mig á",
@@ -860,8 +857,7 @@
             "pollOption": "Valkostur í könnun {{index}}",
             "pollQuestion": "Spurning könnunar",
             "questionPlaceholder": "Spurðu spurningar",
-            "removeOption": "Fjarlægja valkost",
-            "send": "Senda"
+            "removeOption": "Fjarlægja valkost"
         },
         "errors": {
             "notUniqueOption": "Valkostir hljóta að vera einstök"
@@ -1037,7 +1033,7 @@
         "about": "Þú getur bætt $t(lockRoomPassword)i á fundinn. Þátttakendur munu þurfa að gefa upp $t(lockRoomPassword)ið áður en þeim er hleypt inn á fundinn.",
         "aboutReadOnly": "Þátttakendur með umsjónarréttindi geta bætt $t(lockRoomPassword)i á fundinn. Þátttakendur munu þurfa að gefa upp $t(lockRoomPassword)ið áður en þeim er hleypt inn á fundinn.",
         "insecureRoomNameWarningNative": "Heiti spjallrásarinnar er ekki öruggt. Óæskilegir þátttakendur gætu reynt að taka þátt í fundinum þínum. {{recommendAction}} Sjáðu meira um hvernig þú getur gert fundinn öruggari ",
-        "insecureRoomNameWarningWeb": "Heiti spjallrásarinnar er ekki öruggt. Óæskilegir þátttakendur gætu reynt að taka þátt í fundinum þínum. {{recommendAction}} Sjáðu meira <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">hér</a>um hvernig þú getur gert fundinn öruggari.",
+        "insecureRoomNameWarningWeb": "Heiti spjallrásarinnar er ekki öruggt. Óæskilegir þátttakendur gætu reynt að taka þátt í fundinum þínum. {{recommendAction}} Sjáðu meira <a href=\"{{securityUrl}}\" target=\"_blank\">hér</a>um hvernig þú getur gert fundinn öruggari.",
         "title": "Öryggisvalkostir",
         "unsafeRoomActions": {
             "meeting": "Íhugaðu að gera fundinn þinn öruggari með því að nota öryggishnappinn.",
@@ -1165,7 +1161,6 @@
         "Settings": "Stillingar",
         "accessibilityLabel": {
             "Settings": "Opna stillingar",
-            "audioOnly": "Víxla einungis hljóð af/á",
             "audioRoute": "Veldu hljóðtæki",
             "boo": "Vanþóknun",
             "breakoutRooms": "Aukarásir",
@@ -1206,6 +1201,7 @@
             "lobbyButton": "Gera biðsvæðisham virkan/óvirkan",
             "localRecording": "Víxla stýringum fyrir upptöku á tölvunni af/á",
             "lockRoom": "Víxla lykilorði fundar af/á",
+            "lowBandwidthMode": "Víxla einungis hljóð af/á",
             "lowerHand": "Leggja niður höndina",
             "moreActions": "Fleiri aðgerðir",
             "moreActionsMenu": "Valmynd fyrir fleiri aðgerðir",
@@ -1218,7 +1214,7 @@
             "muteGUMPending": "Tengi hljóðnemann þinn",
             "noiseSuppression": "Truflanasíun",
             "openChat": "Opna spjall",
-            "participants": "Opna spjald með þátttakendum",
+            "participants": "Opna þátttakendaspjald. {{participantsCount}} þátttakendur",
             "pip": "Víxla mynd-í-mynd-ham af/á",
             "privateMessage": "Senda einkaskilaboð",
             "profile": "Breyta persónusniðinu þínu",
@@ -1253,8 +1249,6 @@
             "videounmute": "Ræsa myndavélina"
         },
         "addPeople": "Bæta fólki við símtalið þitt",
-        "audioOnlyOff": "Gera ham fyrir litla bandbreidd óvirkan",
-        "audioOnlyOn": "Virkja ham fyrir litla bandbreidd",
         "audioRoute": "Veldu hljóðtæki",
         "audioSettings": "Hljóðstillingar",
         "authenticate": "Auðkenna",
@@ -1294,6 +1288,8 @@
         "lobbyButtonEnable": "Virkja biðsvæðisham",
         "login": "Skrá inn",
         "logout": "Skrá út",
+        "lowBandwidthModeOff": "Gera ham fyrir litla bandbreidd óvirkan",
+        "lowBandwidthModeOn": "Virkja ham fyrir litla bandbreidd",
         "lowerYourHand": "Leggja niður höndina",
         "moreActions": "Fleiri aðgerðir",
         "moreOptions": "Fleiri valkostir",
@@ -1351,13 +1347,9 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Hefja / Hætta birtingu skjátexta",
-        "error": "Umritun mistókst. Reyndu aftur.",
         "expandedLabel": "Umritun er virk",
-        "failedToStart": "Tókst ekki að ræsa umritun",
-        "labelToolTip": "Verið er að taka umrita (transcribe) fundinn",
         "off": "Umritun stöðvuð",
         "on": "Umritun hafin",
-        "pending": "Undirbý að taka umrita fundinn…",
         "sourceLanguageDesc": "Núna er tungumál fundarins stillt á <b>{{sourceLanguage}}</b>. <br/> Þú getur breytt því ",
         "sourceLanguageHere": "hér",
         "start": "Hefja birtingu skjátexta",
@@ -1382,8 +1374,6 @@
     },
     "videoStatus": {
         "adjustFor": "Aðlaga fyrir:",
-        "audioOnly": "HLJ",
-        "audioOnlyExpanded": "Þú ert í ham fyrir litla bandbreidd. Í þessum ham geturðu einungis heyrt hljóð og séð deilda skjái.",
         "bestPerformance": "Bestu afköst",
         "callQuality": "Gæði myndmerkis (0 fyrir mestu afköst, 3 fyrir mestu gæði)",
         "hd": "HD",
@@ -1391,9 +1381,11 @@
         "highDefinition": "Hágæði",
         "highestQuality": "Mestu gæði",
         "labelTooiltipNoVideo": "Ekkert myndmerki",
-        "labelTooltipAudioOnly": "Hamur fyrir litla bandbreidd er virkur",
+        "labelTooltipLowBandwidthMode": "Hamur fyrir litla bandbreidd er virkur",
         "ld": "LD",
         "ldTooltip": "Skoða myndmerki í lággæðum",
+        "lowBandwidthMode": "HLJ",
+        "lowBandwidthModeExpanded": "Þú ert í ham fyrir litla bandbreidd. Í þessum ham geturðu einungis heyrt hljóð og séð deilda skjái.",
         "lowDefinition": "Lággæði",
         "performanceSettings": "Stillingar afkasta",
         "recording": "Upptaka í gangi",
@@ -1458,7 +1450,6 @@
         "chatIndicator": "(gestur)",
         "labelTooltip": "Fjöldi gesta: {{count}}",
         "notification": {
-            "description": "Til að taka þátt skaltu rétta upp höndina",
             "title": "Þú ert gestur á fundinum"
         }
     },

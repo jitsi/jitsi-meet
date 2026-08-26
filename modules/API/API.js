@@ -14,7 +14,6 @@ import {
     requestEnableVideoModeration
 } from '../../react/features/av-moderation/actions';
 import { isEnabledFromState, isForceMuted } from '../../react/features/av-moderation/functions';
-import { setAudioOnly } from '../../react/features/base/audio-only/actions';
 import {
     endConference,
     sendTones,
@@ -31,6 +30,7 @@ import { isSupportedBrowser } from '../../react/features/base/environment/enviro
 import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
+import { setLowBandwidthMode } from '../../react/features/base/low-bandwidth-mode/actions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../react/features/base/media/constants';
 import { isVideoMutedByUser } from '../../react/features/base/media/functions';
 import {
@@ -108,7 +108,14 @@ import {
     open as openParticipantsPane
 } from '../../react/features/participants-pane/actions';
 import { getParticipantsPaneOpen } from '../../react/features/participants-pane/functions';
-import { hidePiP, showPiP } from '../../react/features/pip/actions';
+import {
+    handleHostDocumentPiPOpenFailed,
+    handleHostDocumentPiPOpened,
+    handleHostDocumentPiPSignal,
+    handleHostDocumentPiPWindowClosed,
+    hidePiP,
+    showPiP
+} from '../../react/features/pip/actions';
 import {
     setStartRecordingIntent,
     setStopRecordingIntent,
@@ -426,6 +433,9 @@ function initCommands() {
             sendAnalytics(createApiEvent('largevideo.participant.set'));
             dispatch(selectParticipantInLargeVideo(participant.id));
         },
+        'set-participant-properties': (properties, useRawKeys = false) => {
+            APP.conference.setLocalParticipantProperties(properties, useRawKeys);
+        },
         'set-participant-volume': (participantId, volume) => {
             APP.store.dispatch(setVolume(participantId, volume));
         },
@@ -624,9 +634,9 @@ function initCommands() {
             sendAnalytics(createApiEvent('set.video.quality'));
             APP.store.dispatch(setVideoQuality(frameHeight));
         },
-        'set-audio-only': enable => {
-            sendAnalytics(createApiEvent('set.audio.only'));
-            APP.store.dispatch(setAudioOnly(enable));
+        'set-low-bandwidth-mode': enable => {
+            sendAnalytics(createApiEvent('set.low.bandwidth.mode'));
+            APP.store.dispatch(setLowBandwidthMode(enable));
         },
         'start-share-video': url => {
             sendAnalytics(createApiEvent('share.video.start'));
@@ -963,7 +973,7 @@ function initCommands() {
             APP.store.dispatch(overwriteConfig(whitelistedConfig));
         },
         'toggle-virtual-background': () => {
-            APP.store.dispatch(toggleDialog(SettingsDialog, {
+            APP.store.dispatch(toggleDialog('SettingsDialog', SettingsDialog, {
                 defaultTab: SETTINGS_TABS.VIRTUAL_BACKGROUND }));
         },
         'end-conference': () => {
@@ -997,6 +1007,18 @@ function initCommands() {
         },
         'hide-pip': () => {
             APP.store.dispatch(hidePiP());
+        },
+        'document-pip-opened': () => {
+            APP.store.dispatch(handleHostDocumentPiPOpened());
+        },
+        'document-pip-open-failed': () => {
+            APP.store.dispatch(handleHostDocumentPiPOpenFailed());
+        },
+        'document-pip-closed': () => {
+            APP.store.dispatch(handleHostDocumentPiPWindowClosed());
+        },
+        'document-pip-signal': signal => {
+            APP.store.dispatch(handleHostDocumentPiPSignal(signal));
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -1049,7 +1071,10 @@ function initCommands() {
             break;
         }
         case 'connection-stats': {
-            callback(APP.conference.getStats());
+            callback({
+                ...APP.conference.getStats(),
+                iceConnected: APP.conference.getConnectionState() === 'connected'
+            });
             break;
         }
         case 'deployment-info':
@@ -1164,7 +1189,9 @@ function initCommands() {
             break;
         }
         case 'rooms-info': {
-            callback(getRoomsInfo(APP.store.getState()));
+            const { includeHidden } = request;
+
+            callback(getRoomsInfo(APP.store.getState(), includeHidden));
             break;
         }
         case 'get-shared-document-url': {
@@ -2412,6 +2439,37 @@ class API {
     }
 
     /**
+     * Requests that the embedding page close Document PiP.
+     *
+     * @returns {void}
+     */
+    notifyDocumentPiPClose() {
+        this._sendEvent({ name: '_document-pip-close' });
+    }
+
+    /**
+     * Requests a host-owned Document PiP window.
+     *
+     * @returns {void}
+     */
+    notifyDocumentPiPRequested() {
+        this._sendEvent({ name: '_document-pip-requested' });
+    }
+
+    /**
+     * Sends one ordered WebRTC signal to the embedding page.
+     *
+     * @param {Object} signal - Offer, answer, candidate, mute, restart, or stop signal.
+     * @returns {void}
+     */
+    notifyDocumentPiPSignal(signal) {
+        this._sendEvent({
+            name: '_document-pip-signal',
+            signal
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that Picture-in-Picture was requested.
      * Used by Electron to handle PiP requests with proper user gesture context.
      *
@@ -2584,9 +2642,9 @@ class API {
      * @param {boolean} enabled - Whether the audio only is enabled or not.
      * @returns {void}
      */
-    notifyAudioOnlyChanged(enabled) {
+    notifyLowBandwidthModeChanged(enabled) {
         this._sendEvent({
-            name: 'audio-only-changed',
+            name: 'low-bandwidth-mode-changed',
             enabled
         });
     }

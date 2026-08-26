@@ -5,13 +5,13 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
-describe('Audio-only mode', () => {
+describe('Low bandwidth mode', () => {
     it('joining the meeting', () => ensureTwoParticipants());
 
     /**
-     * Enables audio only mode for p1 and verifies that the other participant sees participant1 as video muted.
+     * Enables low bandwidth mode for p1 and verifies that the other participant sees participant1 as video muted.
      */
-    it('set and check', () => setAudioOnlyAndCheck(true));
+    it('set and check', () => setLowBandwidthModeAndCheck(true));
 
     /**
      * Verifies that participant1 sees avatars for itself and other participants.
@@ -26,13 +26,13 @@ describe('Audio-only mode', () => {
     });
 
     /**
-     * Disables audio only mode and verifies that both participants see p1 as not video muted.
+     * Disables low bandwidth mode and verifies that both participants see p1 as not video muted.
      */
-    it('disable and check', () => setAudioOnlyAndCheck(false));
+    it('disable and check', () => setLowBandwidthModeAndCheck(false));
 
     /**
-     * Mutes video on participant1, toggles audio-only twice and then verifies if both participants see participant1
-     * as video muted.
+     * Mutes video on participant1, toggles low bandwidth mode twice and then verifies if both participants see
+     * participant1 as video muted.
      */
     it('mute video, set twice and check muted', async () => {
         const { p1 } = ctx;
@@ -42,13 +42,13 @@ describe('Audio-only mode', () => {
 
         await verifyVideoMute(true);
 
-        // Enable audio-only mode.
-        await setAudioOnlyAndCheck(true);
+        // Enable low bandwidth mode.
+        await setLowBandwidthModeAndCheck(true);
 
-        // Disable audio-only mode.
+        // Disable low bandwidth mode.
         await p1.getVideoQualityDialog().setVideoQuality(false);
 
-        // p1 should stay muted since it was muted before audio-only was enabled.
+        // p1 should stay muted since it was muted before low bandwidth mode was enabled.
         await verifyVideoMute(true);
     });
 
@@ -61,18 +61,18 @@ describe('Audio-only mode', () => {
 });
 
 /**
- * Toggles the audio only state of a p1 participant and verifies participant sees the audio only label and that
- * p2 participant sees a video mute state for the former.
+ * Toggles the low bandwidth mode state of a p1 participant and verifies participant sees the low bandwidth mode
+ * label and that p2 participant sees a video mute state for the former.
  * @param enable
  */
-async function setAudioOnlyAndCheck(enable: boolean) {
+async function setLowBandwidthModeAndCheck(enable: boolean) {
     const { p1 } = ctx;
 
     await p1.getVideoQualityDialog().setVideoQuality(enable);
 
     await verifyVideoMute(enable);
 
-    await p1.driver.$('//div[@id="videoResolutionLabel"][contains(@class, "audio-only")]')
+    await p1.driver.$('//div[@id="videoResolutionLabel"][contains(@class, "low-bandwidth-mode")]')
         .waitForDisplayed({ reverse: !enable });
 }
 

@@ -39,9 +39,6 @@
         "phone": "Утас",
         "speaker": "Чанга яригч"
     },
-    "audioOnly": {
-        "audioOnly": "Чанар багасгах"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "жишээ:10 Mbps = 10000000",
         "assumedBandwidthBpsWarning": "Өндөр утга нь сүлжээний асуудал үүсгэж болзошгүй",
@@ -809,6 +806,9 @@
         "button": "Бусдыг урь",
         "youAreAlone": "Та энэ уулзалтад ганцаараа байна"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Чанар багасгах"
+    },
     "me": "Надад",
     "notify": {
         "OldElectronAPPTitle": "Аюулгүй байдал эмзэг байна!",
@@ -821,7 +821,7 @@
         "audioUnmuteBlockedTitle": "Микрофон нээхийг хориглосон!",
         "chatMessages": "зурвас",
         "connectedOneMember": "{{name}} уулзалтад нэгдсэн",
-        "connectedThreePlusMembers": "{{name}} болон бусад {{count}} уулзалтад нэгдсэн",
+        "connectedThreePlusMembers": "{{name}} болон бусад олон хүн уулзалтад нэгдлээ",
         "connectedTwoMembers": "{{first}} ба {{second}} уулзалтад нэгдсэн",
         "connectionFailed": "Холболт амжилтгүй. Дараа дахин оролдоно уу!",
         "dataChannelClosed": "Видео чанар хангалтгүй",
@@ -892,7 +892,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) өөр оролцогч устгасан",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) өөр оролцогчийн тохируулсан",
         "raiseHandAction": "Гараа өргөх",
-        "raisedHand": "{{name}} оролцохыг хүсч байна.",
+        "raisedHand": "Оролцохыг хүсэж байна.",
         "raisedHands": "Нэмж {{participantName}} ба {{raisedHands}} хүмүүс",
         "reactionSounds": "Дууг хаах",
         "reactionSoundsForAll": "Бүгдийн дууг хаах",
@@ -1142,7 +1142,7 @@
         "localRecordingVideoStop": "Видео бичлэгээ зогсоовол өөр дээрээ файлаар хадгалах нь хамтдаа зогсоно. Та үргэлжлүүлэхдээ итгэлтэй байна уу?",
         "localRecordingVideoWarning": "Видеог бичихийн тулд бичлэг эхлүүлэх үед камер нээлттэй байх ёстой",
         "localRecordingWarning": "Дуу болон видео дамжуулалтын зөвшөөрлийг өгөхийн тулд энэ табыг сонгоно уу.",
-        "loggedIn": "{userName} нэвтэрнэ үү",
+        "loggedIn": "{{userName}} нэрээр нэвтэрсэн",
         "noMicPermission": "Микрофон олдсонгүй. Микрофон ашиглах зөвшөөрлөө өгнө үү.",
         "noStreams": "Дуу эсвэл видео дамжуулалт олдсонгүй.",
         "off": "Бичлэг зогссон",
@@ -1181,7 +1181,7 @@
         "about": "Та өөрийн уулзалтанд $t(lockRoomPassword) нууц үгийг нэмж болно. Оролцогчид энэ $t(lockRoomPassword)-г оруулснаар уулзалтанд орох боломжтой болно.",
         "aboutReadOnly": "Зохицуулагч уулзалтад оролцогч $t(lockRoomPassword) нэмж болно. Оролцогчид нэгдэхийн өмнө $t(lockRoomPassword)-г оруулах шаардлагатай.",
         "insecureRoomNameWarningNative": "Өрөөний нэр аюултай байна. Хүсээгүй оролцогчид таны уулзалтад нэгдэж магадгүй. {{recommendAction}} Уулзалтынхаа аюулгүй байдлыг хангах талаар дэлгэрэнгүй мэдээлэл аваарай",
-        "insecureRoomNameWarningWeb": "Өрөөний нэр аюулгүй биш байна. Хүсээгүй хүн орж болно. {{recommendAction}} Уулзалтаа хамгаалах талаар <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">энд</a> дэлгэрэнгүй мэдэх.",
+        "insecureRoomNameWarningWeb": "Өрөөний нэр аюулгүй биш байна. Хүсээгүй хүн орж болно. {{recommendAction}} Уулзалтаа хамгаалах талаар <a href=\"{{securityUrl}}\" target=\"_blank\">энд</a> дэлгэрэнгүй мэдэх.",
         "title": "Аюулгүй байдлын тохиргоо",
         "unsafeRoomActions": {
             "meeting": "Аюулгүй байдлын товч ашиглан уулзалтаа хамгаалах хэрэгтэй.",
@@ -1314,7 +1314,6 @@
         "Settings": "Тохиргоо",
         "accessibilityLabel": {
             "Settings": "Тохиргоо",
-            "audioOnly": "Зөвхөн дуу",
             "audioRoute": "Дууны төхөөрөмж сонго",
             "boo": "Boo",
             "breakoutRooms": "Дэд өрөөнүүд",
@@ -1358,6 +1357,7 @@
             "localRecording": "Дотоод бичлэгийн хяналт",
             "lockRoom": "Нууц үг өгөх",
             "love": "Зүрх",
+            "lowBandwidthMode": "Зөвхөн дуу",
             "lowerHand": "Гараа буулгана уу",
             "moreActions": "Бусад цэс",
             "moreActionsMenu": "Бусад цэс",
@@ -1420,8 +1420,6 @@
                 "label": "Стерео"
             }
         },
-        "audioOnlyOff": "Бага дамжуулах горимыг идэвхгүй болгох",
-        "audioOnlyOn": "Бага дамжуулах горимыг идэвхжүүлэх",
         "audioRoute": "Дууны төхөөрөмж сонгох",
         "audioSettings": "Дууны тохиргоо",
         "authenticate": "Баталгаажуулах",
@@ -1466,6 +1464,8 @@
         "login": "Нэвтрэх",
         "logout": "Гарах",
         "love": "Зүрх",
+        "lowBandwidthModeOff": "Бага дамжуулах горимыг идэвхгүй болгох",
+        "lowBandwidthModeOn": "Бага дамжуулах горимыг идэвхжүүлэх",
         "lowerYourHand": "Гараа буулгах",
         "moreActions": "Бусад үйлдэл",
         "moreOptions": "Бусад тохиргоо",
@@ -1509,7 +1509,7 @@
         "silence": "Чимээгүй",
         "speakerStats": "Яригчийн статистик",
         "startScreenSharing": "Дэлгэц хуваалцахыг эхлүүл",
-        "startSubtitles": "Хадмал орчуулгыг эхлүүл",
+        "startSubtitles": "Хадмал • {{language}}",
         "stopAudioSharing": "Дуу хуваалцахыг зогсоох",
         "stopScreenSharing": "Дэлгэц хуваалцахыг зогсоох",
         "stopSharedVideo": "YouTube видео зогсоох",
@@ -1561,8 +1561,6 @@
     },
     "videoStatus": {
         "adjustFor": "Тохируулах:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Таны дамжуулах чадвар муу байна. Энэ горимд та зөвхөн дуу болон дэлгэцийн хуваалцахыг хүлээн авах боломжтой.",
         "bestPerformance": "Хамгийн сан үзүүлэлт",
         "callQuality": "Видеоны чанар",
         "hd": "HD",
@@ -1570,9 +1568,11 @@
         "highDefinition": "Өндөр нягтаршил",
         "highestQuality": "Хамгийн өндөр нягтаршил",
         "labelTooiltipNoVideo": "Видео байхгүй",
-        "labelTooltipAudioOnly": "Дамжуулалтын багтаамж бага горим идэвхжсэн",
+        "labelTooltipLowBandwidthMode": "Дамжуулалтын багтаамж бага горим идэвхжсэн",
         "ld": "LD",
         "ldTooltip": "Бага нягтаршилтай видео үзэж байна",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Таны дамжуулах чадвар муу байна. Энэ горимд та зөвхөн дуу болон дэлгэцийн хуваалцахыг хүлээн авах боломжтой.",
         "lowDefinition": "Бага нягтаршил",
         "performanceSettings": "Үзүүлэлтийн тохиргоо",
         "recording": "Уулзалтын бичлэг хийж байна",
@@ -1673,7 +1673,7 @@
         },
         "calendar": "Хуанли",
         "connectCalendarButton": "Хуанлиг холбоно уу",
-        "connectCalendarText": "Хуанли дээрх уулзалтуудаа {{app}} дээр оруулж болно. Та хуанлиг холбоход болно.",
+        "connectCalendarText": "Хуанлигаа холбож, бүх уулзалтаа {{app}}-д харна уу. Түүнчлэн {{provider}} уулзалтуудыг хуанлидаа нэмж, нэг товшилтоор эхлүүлээрэй.",
         "enterRoomTitle": "Шинэ уулзалт эхлүүлэх",
         "getHelp": "Тусламж авах",
         "go": "OK",

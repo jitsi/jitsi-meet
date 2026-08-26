@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { batch, connect, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -17,6 +17,9 @@ import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuIte
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
 import { THUMBNAIL_TYPE } from '../../../filmstrip/constants';
 import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
+import SendToSecondScreenButton from '../../../multi-screen/components/SendToSecondScreenButton';
+import { isSecondScreenEnabled } from '../../../multi-screen/functions.web';
+import { ISecondScreenSource } from '../../../multi-screen/types';
 import { getParticipantMenuButtonsWithNotifyClick } from '../../../toolbox/functions.web';
 import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { renderConnectionStatus } from '../../actions.web';
@@ -74,6 +77,11 @@ interface IProps {
      * Whether to render the pin to stage button.
      */
     _showPinToStage: boolean;
+
+    /**
+     * Whether to render the send to second screen button.
+     */
+    _showSendToSecondScreen: boolean;
 
     /**
      * Whether or not the button should be visible.
@@ -141,6 +149,7 @@ const LocalVideoMenuTriggerButton = ({
     _showHideSelfViewButton,
     _showLocalVideoFlipButton,
     _showPinToStage,
+    _showSendToSecondScreen,
     buttonVisible,
     dispatch,
     hidePopover,
@@ -151,6 +160,10 @@ const LocalVideoMenuTriggerButton = ({
     const { t } = useTranslation();
     const buttonsWithNotifyClick = useSelector(getParticipantMenuButtonsWithNotifyClick);
     const visitorsSupported = useSelector((state: IReduxState) => state['features/visitors'].supported);
+    const localSource: ISecondScreenSource = useMemo(
+        () => ({ media: 'camera',
+            participant: _localParticipantId }),
+        [ _localParticipantId ]);
 
     const notifyClick = useCallback(
         (buttonKey: string) => {
@@ -214,6 +227,15 @@ const LocalVideoMenuTriggerButton = ({
                             onClick = { hidePopover }
                             participantID = { _localParticipantId } />
                     }
+                    <SendToSecondScreenButton
+                        className = { _overflowDrawer ? classes.flipText : '' }
+                        noIcon = { true }
+                        // eslint-disable-next-line react/jsx-no-bind
+                        notifyClick = { () => notifyClick(BUTTONS.SEND_TO_SECOND_SCREEN) }
+                        notifyMode = { buttonsWithNotifyClick?.get(BUTTONS.SEND_TO_SECOND_SCREEN) }
+                        onClick = { hidePopover }
+                        participantID = { _localParticipantId }
+                        source = { localSource } />
                     {
                         _showDemote && visitorsSupported && <DemoteToVisitorButton
                             className = { _overflowDrawer ? classes.flipText : '' }
@@ -236,7 +258,7 @@ const LocalVideoMenuTriggerButton = ({
         );
 
     return (
-        isMobileBrowser() || _showLocalVideoFlipButton || _showHideSelfViewButton
+        isMobileBrowser() || _showLocalVideoFlipButton || _showHideSelfViewButton || _showSendToSecondScreen
             ? <Popover
                 content = { content }
                 headingLabel = { t('dialog.localUserControls') }
@@ -298,7 +320,8 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         _overflowDrawer: overflowDrawer,
         _localParticipantId: localParticipant?.id ?? '',
         _showConnectionInfo: Boolean(showConnectionInfo),
-        _showPinToStage: isStageFilmstripAvailable(state)
+        _showPinToStage: isStageFilmstripAvailable(state),
+        _showSendToSecondScreen: isSecondScreenEnabled(state)
     };
 }
 
