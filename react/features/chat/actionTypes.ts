@@ -107,6 +107,17 @@ export const SEND_MESSAGE = 'SEND_MESSAGE';
 export const SEND_MESSAGE_MODERATION = 'SEND_MESSAGE_MODERATION';
 
 /*
+ * The type of the action which signals a request to retract
+ * (delete) a previously sent chat message.
+ * 
+ * {
+ *     type: SEND_MESSAGE_RETRACTION,
+ *     message: IMessage
+ * }
+ */
+export const SEND_MESSAGE_RETRACTION = 'SEND_MESSAGE_RETRACTION';
+
+/*
  * The type of the action which signals sending an edit for an existing chat message.
  *
  * {
@@ -198,6 +209,15 @@ export const SET_LOBBY_CHAT_ACTIVE_STATE = 'SET_LOBBY_CHAT_ACTIVE_STATE';
  * }
  */
 export const REMOVE_LOBBY_CHAT_PARTICIPANT = 'REMOVE_LOBBY_CHAT_PARTICIPANT';
+
+/**
+ * The type of action which signals to delete your own message after sending it (self deletion).
+ * 
+ * {
+ *     type: RETRACT_MESSAGE
+ * }
+ */
+export const RETRACT_MESSAGE = 'RETRACT_MESSAGE';
 
 /**
  * The type of action which signals to set the width of the chat panel.

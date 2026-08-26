@@ -115,7 +115,9 @@
         }
     },
     "chat": {
-        "delete": "Delete",
+        "deleteMessage": "Delete",
+        "deletedMessage": "This message was deleted.",
+        "deletedMessageByMe": "You deleted this message.",
         "disabled": "Sending chat messages is disabled.",
         "edited": "(edited)",
         "editingMessage": "Editing",

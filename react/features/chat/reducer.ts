@@ -15,6 +15,7 @@ import {
     NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
     OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
+    RETRACT_MESSAGE,
     SET_CHAT_IS_RESIZING,
     SET_CHAT_SEARCH_MATCH_INDEX,
     SET_CHAT_SEARCH_QUERY,
@@ -263,6 +264,26 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         };
     }
 
+    case RETRACT_MESSAGE: {
+        const messages = state.messages.map(message => {
+            if (message.messageId === action.messageId && message.participantId === action.retractedBy) {
+                return {
+                    ...message,
+                    message: '',
+                    isDeleted: true,
+                    retractedBy: action.retractedBy
+                };
+            }
+
+            return message;
+        });
+
+        return {
+            ...state,
+            messages
+        };
+    }
+
     case SET_CHAT_SEARCH_MATCH_INDEX:
         return {
             ...state,
@@ -316,6 +337,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             isOpen: action.payload || state.isOpen,
             privateMessageRecipient: undefined
         };
+
     case REMOVE_LOBBY_CHAT_PARTICIPANT:
         return {
             ...state,

@@ -5,7 +5,7 @@ import { getLocalParticipant } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
 import { onLobbyChatInitialized, removeLobbyChatParticipant, sendMessage } from '../chat/actions.any';
 import { LOBBY_CHAT_MESSAGE } from '../chat/constants';
-import { handleLobbyMessageReceived } from '../chat/middleware';
+import { handleLobbyMessageReceived, handleLobbyMessageRetracted } from '../chat/middleware';
 import { hideNotification, showNotification } from '../notifications/actions';
 import { LOBBY_NOTIFICATION_ID } from '../notifications/constants';
 import { joinConference } from '../prejoin/actions';
@@ -415,7 +415,7 @@ export function setLobbyMessageListener() {
 
         conference?.addLobbyMessageListener((message: any, participantId: string) => {
             if (message.type === LOBBY_CHAT_MESSAGE) {
-                return dispatch(handleLobbyMessageReceived(message.message, participantId));
+                return dispatch(handleLobbyMessageReceived(message.message, participantId, message.messageId));
             }
             if (message.type === LOBBY_CHAT_INITIALIZED) {
                 return dispatch(handleLobbyChatInitialized(message));
@@ -423,6 +423,10 @@ export function setLobbyMessageListener() {
             if (message.type === MODERATOR_IN_CHAT_WITH_LEFT) {
                 return dispatch(updateLobbyParticipantOnLeave(message.moderatorId));
             }
+        });
+
+        conference?.addLobbyMessageRetractionListener((messageId: string, participantId: string) => {
+            dispatch(handleLobbyMessageRetracted(messageId, participantId));
         });
     };
 }

@@ -453,9 +453,15 @@ const ChatMessage = ({
         );
     }, [ message?.reactions, isHovered, isReactionsOpen ]);
 
-    const messageText = message.isModerated
-        ? t('chat.moderatedMessage')
-        : getMessageText(message);
+    const messageText = message.isDeleted
+        ? (
+            message.messageType === MESSAGE_TYPE_LOCAL
+                ? t<string>('chat.deletedMessageByMe')
+                : t<string>('chat.deletedMessage')
+        )
+        : message.isModerated
+            ? t('chat.moderatedMessage')
+            : getMessageText(message);
 
     const canEdit = message.messageType === MESSAGE_TYPE_LOCAL
         && !message.lobbyChat
@@ -481,7 +487,7 @@ const ChatMessage = ({
                             isFromVisitor = { message.isFromVisitor }
                             isLobbyMessage = { message.lobbyChat }
                             isModerated = { message.isModerated }
-                            message = { message.message }
+                            message = { message }
                             messageId = { message.messageId }
                             onEditMessage = { handleEditMessage }
                             participantId = { message.participantId } />}
@@ -501,7 +507,7 @@ const ChatMessage = ({
                     <div className = { classes.replyWrapper }>
                         <div className = { cx('messagecontent', classes.messageContent) }>
                             {showDisplayName && _renderDisplayName()}
-                            <div className = { cx('usermessage', classes.userMessage, message.isModerated && classes.deletedMessage) }>
+                            <div className = { cx('usermessage', classes.userMessage, message.isDeleted && message.isModerated && classes.deletedMessage) }>
                                 {!message.isModerated && isFileMessage(message) ? (
                                     <FileMessage
                                         message = { message }
@@ -527,12 +533,13 @@ const ChatMessage = ({
                                             reason: message.moderationReason
                                         })}
                                     </div>
+
                                 )}
                                 {(message.privateMessage || (message.lobbyChat && !knocking))
                                     && _renderPrivateNotice()}
                                 <div className = { classes.chatMessageFooter }>
                                     <div className = { classes.chatMessageFooterLeft }>
-                                        {!message.isModerated && message.reactions && message.reactions.size > 0 && (
+                                        {!message.isDeleted && !message.isModerated && message.reactions && message.reactions.size > 0 && (
                                             <>
                                                 {renderReactions}
                                             </>
@@ -552,7 +559,7 @@ const ChatMessage = ({
                 {shouldDisplayMenuOnRight && (
                     <div className = { classes.sideBySideContainer }>
                         {!message.privateMessage && !message.lobbyChat
-                        && !message.isReaction && !message.isModerated && <div>
+                        && !message.isReaction && !message.isDeleted && !message.isModerated && <div>
                             <div className = { classes.optionsButtonContainer }>
                                 {isHovered && <ReactButton
                                     messageId = { message.messageId }
@@ -561,7 +568,7 @@ const ChatMessage = ({
                         </div>}
                         <div>
                             <div className = { classes.optionsButtonContainer }>
-                                {isHovered && !message.isModerated && <MessageMenu
+                                {isHovered && !message.isDeleted && !message.isModerated && <MessageMenu
                                     canEdit = { canEdit }
                                     displayName = { message.displayName }
                                     enablePrivateChat = { Boolean(enablePrivateChat) }
@@ -569,7 +576,7 @@ const ChatMessage = ({
                                     isFromVisitor = { message.isFromVisitor }
                                     isLobbyMessage = { message.lobbyChat }
                                     isModerated = { message.isModerated }
-                                    message = { message.message }
+                                    message = { message }
                                     messageId = { message.messageId }
                                     onEditMessage = { handleEditMessage }
                                     participantId = { message.participantId } />}
