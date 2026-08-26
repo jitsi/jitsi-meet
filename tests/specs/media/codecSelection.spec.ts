@@ -37,8 +37,8 @@ describe('Codec selection', () => {
         expect(await p2.execute(() => JitsiMeetJS.app.testing.isLargeVideoReceived())).toBe(true);
 
         // Check if p1 is sending VP9 and p2 is sending VP8 as per their codec preferences.
-        // Except on Firefox because it doesn't support VP9 encode.
-        const p1ExpectedCodec = p1.driver.isFirefox ? VP8 : VP9;
+        // Except on older versions of Firefox because they don't support VP9 encode.
+        const p1ExpectedCodec = supportsVp9Encode(p1) ? VP9 : VP8;
 
         await Promise.all([
             waitForCodec(p1, p1ExpectedCodec),
@@ -62,8 +62,8 @@ describe('Codec selection', () => {
         const majorVersion = parseInt(p1.driver.capabilities.browserVersion || '0', 10);
 
         // Check if p1 is encoding in VP9, p2 in VP8 and p3 in AV1 as per their codec preferences.
-        // Except on Firefox because it doesn't support VP9 encode.
-        const p1ExpectedCodec = p1.driver.isFirefox ? VP8 : VP9;
+        // Except on older versions of Firefox because they don't support VP9 encode.
+        const p1ExpectedCodec = supportsVp9Encode(p1) ? VP9 : VP8;
         const p3ExpectedCodec = (p1.driver.isFirefox && majorVersion < 136) ? VP9 : AV1;
 
         await Promise.all([
@@ -126,7 +126,21 @@ async function waitForCodec(p: Participant, codec: string) {
         () => p.execute(c => JitsiMeetJS.app.testing.getLocalCameraEncoding() === c, codec),
         {
             timeout: 10000,
-            timeoutMsg: `${p.name} failed to use VP8`
+            timeoutMsg: `${p.name} failed to use ${codec}`
         }
     );
+}
+
+/**
+ * Whether the given participant's browser is able to encode VP9. Firefox only supports VP9 encode on version 151 and
+ * above, see https://bugzilla.mozilla.org/show_bug.cgi?id=1633876.
+ *
+ * @param p The participant.
+ */
+function supportsVp9Encode(p: Participant) {
+    if (!p.driver.isFirefox) {
+        return true;
+    }
+
+    return parseInt(p.driver.capabilities.browserVersion || '0', 10) >= 151;
 }
