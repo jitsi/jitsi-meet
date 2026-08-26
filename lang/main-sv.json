@@ -1154,19 +1154,16 @@
         "recordAudioAndVideo": "Spela in ljud och bild",
         "recordTranscription": "Spela in transkribiering",
         "saveLocalRecording": "Spara inspelningsfil lokalt (beta)",
-        "serviceDescription": "Din inspelning kommer att sparas av inspelningstjänsten",
         "serviceDescriptionCloud": "Molninspelning",
         "serviceDescriptionCloudInfo": "Inspelade möten rensas automatiskt 24 timmar efter inspelningstiden.",
         "serviceName": "Inspelningstjänst",
         "sessionAlreadyActive": "Den här sessionen spelas redan in eller livestreamas.",
-        "showAdvancedOptions": "Visa avancerade inställningar",
         "signIn": "Logga in",
         "signOut": "Logga ut",
         "surfaceError": "Välj aktuell flik.",
         "title": "Inspelning",
         "unavailable": "{{serviceName}} är inte tillgänglig. Vi försöker åtgärda felet. Försök igen senare.",
-        "unavailableTitle": "Inspelning kan inte göras",
-        "uploadToCloud": "Ladda upp till molnet"
+        "unavailableTitle": "Inspelning kan inte göras"
     },
     "screenshareDisplayName": "{{name}}s skärm",
     "sectionList": {

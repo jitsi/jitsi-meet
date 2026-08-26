@@ -1204,19 +1204,16 @@
         "recordAudioAndVideo": "ऑडियो और वीडियो रिकॉर्ड करें",
         "recordTranscription": "ट्रांसक्रिप्शन रिकॉर्ड करें",
         "saveLocalRecording": "रिकॉर्डिंग फ़ाइल स्थानीय रूप से सहेजें (बीटा)",
-        "serviceDescription": "आपकी रिकॉर्डिंग को रिकॉर्डिंग सेवा द्वारा सहेजा जाएगा",
         "serviceDescriptionCloud": "क्लाउड रिकॉर्डिंग",
         "serviceDescriptionCloudInfo": "रिकॉर्ड की गई बैठकें रिकॉर्डिंग के 24 घंटे बाद स्वचालित रूप से हटा दी जाती हैं।",
         "serviceName": "रिकॉर्डिंग सेवा",
         "sessionAlreadyActive": "यह सत्र पहले से रिकॉर्ड या लाइव स्ट्रीम हो रहा है।",
-        "showAdvancedOptions": "उन्नत विकल्प",
         "signIn": "साइन इन करें",
         "signOut": "साइन आउट करें",
         "surfaceError": "कृपया वर्तमान टैब चुनें।",
         "title": "रिकॉर्डिंग",
         "unavailable": "ओह! {{serviceName}} वर्तमान में अनुपलब्ध है। हम इस समस्या को हल करने पर काम कर रहे हैं। कृपया बाद में पुनः प्रयास करें।",
-        "unavailableTitle": "रिकॉर्डिंग उपलब्ध नहीं है",
-        "uploadToCloud": "क्लाउड पर अपलोड करें"
+        "unavailableTitle": "रिकॉर्डिंग उपलब्ध नहीं है"
     },
     "screenshareDisplayName": "{{name}} की स्क्रीन",
     "sectionList": {

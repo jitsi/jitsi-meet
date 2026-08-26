@@ -768,15 +768,13 @@
         "on": "Snemanje",
         "onBy": "{{name}} je začel snemanje",
         "pending": "Priprava snemanja srečanja…",
-        "serviceDescription": "Vaš posnetek bo shranila storitev snemanja",
         "serviceDescriptionCloud": "Snemanje v oblak",
         "serviceName": "Storitev snemanja",
         "signIn": "Prijava",
         "signOut": "Odjava",
         "title": "Snemanje",
         "unavailable": "Ups! {{serviceName}} trenutno ni na voljo. Delamo na tem, da težavo odpravimo. Prosimo, poskusite kasneje.",
-        "unavailableTitle": "Snemanje ni mogoče",
-        "uploadToCloud": "Naloži v oblak"
+        "unavailableTitle": "Snemanje ni mogoče"
     },
     "sectionList": {
         "pullToRefresh": "Potegnite za osvežitev"

@@ -1136,19 +1136,16 @@
         "recordAudioAndVideo": "錄製音訊和視訊",
         "recordTranscription": "錄製字幕內容",
         "saveLocalRecording": "將錄製檔案保存在本機（測試版）",
-        "serviceDescription": "您的錄製會由錄製服務儲存",
         "serviceDescriptionCloud": "雲端錄製",
         "serviceDescriptionCloudInfo": "已錄製的會議將在 24 小時後自動清除。",
         "serviceName": "錄製服務",
         "sessionAlreadyActive": "已在錄製或直播此工作階段。",
-        "showAdvancedOptions": "進階選項",
         "signIn": "登入",
         "signOut": "登出",
         "surfaceError": "請選擇目前分頁",
         "title": "錄製中",
         "unavailable": "喔哦！{{serviceName}} 目前無法使用，我們正在解決此問題，請稍後再試。",
-        "unavailableTitle": "錄製無法使用",
-        "uploadToCloud": "上傳至雲端"
+        "unavailableTitle": "錄製無法使用"
     },
     "screenshareDisplayName": "{{name}} 的螢幕",
     "sectionList": {

@@ -957,7 +957,6 @@
         "onlyRecordSelf": "",
         "pending": "Preparando para grabar la reunión…",
         "saveLocalRecording": "Guardar archivo de grabación localmente (Beta)",
-        "serviceDescription": "El servicio de grabación guardará la grabación",
         "serviceDescriptionCloud": "Grabación en la nube",
         "serviceDescriptionCloudInfo": "Las reuniones grabadas son limpiadas 24h luego de su horario de grabación.",
         "serviceName": "Servicio de grabación",
@@ -967,8 +966,7 @@
         "surfaceError": "Por favor seleccione la pestaña actual.",
         "title": "Grabando",
         "unavailable": "¡Uy! {{serviceName}} actualmente no está disponible. Estamos trabajando para resolver el problema. Vuelve a intentarlo más tarde.",
-        "unavailableTitle": "Grabación no disponible",
-        "uploadToCloud": "Subir a la nube"
+        "unavailableTitle": "Grabación no disponible"
     },
     "screenshareDisplayName": "Pantalla de {{name}}",
     "sectionList": {

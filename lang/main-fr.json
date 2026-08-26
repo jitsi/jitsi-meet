@@ -1149,19 +1149,16 @@
         "recordAudioAndVideo": "Enregistrer l'audio et la vidéo",
         "recordTranscription": "Enregistrer la transcription",
         "saveLocalRecording": "Sauvegarder l’enregistrement local (Beta)",
-        "serviceDescription": "Votre enregistrement sera enregistré par le service dédié",
         "serviceDescriptionCloud": "Enregistrement Cloud",
         "serviceDescriptionCloudInfo": "Les conférences enregistrées sont automatiquement supprimées 24h après leur heure d'enregistrement.",
         "serviceName": "Service d'enregistrement",
         "sessionAlreadyActive": "Cette session est déjà en cours d'enregistrement ou de diffusion.",
-        "showAdvancedOptions": "Afficher les options avancées",
         "signIn": "Se connecter",
         "signOut": "Se déconnecter",
         "surfaceError": "Veuillez sélectionner l’onglet courant.",
         "title": "Enregistrement",
         "unavailable": "Oups ! Le {{serviceName}} est actuellement indisponible. Nous tentons de résoudre le problème. Veuillez réessayer plus tard.",
-        "unavailableTitle": "Enregistrement indisponible",
-        "uploadToCloud": "Envoyer vers le cloud"
+        "unavailableTitle": "Enregistrement indisponible"
     },
     "screenshareDisplayName": "Écran {{name}}",
     "sectionList": {

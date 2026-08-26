@@ -595,7 +595,6 @@
         "on": "Nahrávanie",
         "onBy": "{{name}} začal nahrávanie",
         "pending": "Pripravuje sa nahrávanie stretnutia…",
-        "serviceDescription": "Vaša nahrávka sa ukladá nahrávacou službou",
         "serviceName": "Nahrávacia služba",
         "signIn": "Prihlásiť",
         "signOut": "Odhlásiť",

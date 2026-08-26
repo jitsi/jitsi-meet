@@ -1204,19 +1204,16 @@
         "recordAudioAndVideo": "Audio en video opnemen",
         "recordTranscription": "Transcriptie opnemen",
         "saveLocalRecording": "Opnamebestand lokaal opslaan (Bèta)",
-        "serviceDescription": "Uw opname wordt opgeslagen door de opnameservice",
         "serviceDescriptionCloud": "Cloud-opname",
         "serviceDescriptionCloudInfo": "Opgenomen vergaderingen worden automatisch 24 uur na hun opnametijd gewist.",
         "serviceName": "Opnameservice",
         "sessionAlreadyActive": "Deze sessie wordt al opgenomen of live gestreamd.",
-        "showAdvancedOptions": "Geavanceerde opties",
         "signIn": "Aanmelden",
         "signOut": "Afmelden",
         "surfaceError": "Selecteer het huidige tabblad.",
         "title": "Opnemen",
         "unavailable": "Oeps! {{serviceName}} is momenteel niet beschikbaar. Er wordt aan een oplossing gewerkt. Probeer het later opnieuw.",
-        "unavailableTitle": "Opname niet beschikbaar",
-        "uploadToCloud": "Uploaden naar de cloud"
+        "unavailableTitle": "Opname niet beschikbaar"
     },
     "screenshareDisplayName": "Scherm van {{name}}",
     "sectionList": {

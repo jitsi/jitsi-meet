@@ -1022,19 +1022,16 @@
         "recordAudioAndVideo": "Ghi âm và video",
         "recordTranscription": "Ghi chú giọng nói",
         "saveLocalRecording": "Lưu tệp ghi âm cục bộ (Beta)",
-        "serviceDescription": "Ghi hình của bạn sẽ được lưu bởi dịch vụ ghi hình",
         "serviceDescriptionCloud": "Ghi âm trên đám mây",
         "serviceDescriptionCloudInfo": "Cuộc họp được ghi lại sẽ tự động xóa sau 24 giờ kể từ thời gian ghi âm.",
         "serviceName": "Dịch vụ ghi hình",
         "sessionAlreadyActive": "Phiên này đã được ghi âm hoặc phát trực tiếp.",
-        "showAdvancedOptions": "Tùy chọn nâng cao",
         "signIn": "Đăng nhập",
         "signOut": "Đăng xuất",
         "surfaceError": "Vui lòng chọn tab hiện tại.",
         "title": "Đang ghi hình",
         "unavailable": "Rất tiếc! Dịch vụ {{serviceName}} đang không sẵn sàng. Chúng tôi đang xử lý vấn đề này. Vui lòng thử lại sau.",
-        "unavailableTitle": "Ghi hình không hoạt động.",
-        "uploadToCloud": "Tải lên đám mây"
+        "unavailableTitle": "Ghi hình không hoạt động."
     },
     "screenshareDisplayName": "Màn hình của {{name}}",
     "sectionList": {

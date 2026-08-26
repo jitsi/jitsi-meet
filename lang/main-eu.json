@@ -675,7 +675,6 @@
         "on": "Grabaketa",
         "onBy": "{{name}} erabiltzaileak grabazioa hasi du",
         "pending": "Bilera grabatzeko prestatzen…",
-        "serviceDescription": "Zure grabazioa grabazio-zerbitzuan gordeko da",
         "serviceDescriptionCloud": "Lainoko grabazioa",
         "serviceName": "Grabazio-zerbitzua",
         "signIn": "Sartu",

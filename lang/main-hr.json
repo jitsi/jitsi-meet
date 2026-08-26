@@ -903,7 +903,6 @@
         "onlyRecordSelf": "Snimi samo moje audio i videoprijenose",
         "pending": "Pripremanje snimanja sastanka …",
         "saveLocalRecording": "Spremi datoteku snimanja lokalno (Beta)",
-        "serviceDescription": "Tvoje snimanje će spremiti usluga za snimanje",
         "serviceDescriptionCloud": "Snimanje u oblaku",
         "serviceDescriptionCloudInfo": "Snimljeni sastanci se automatski brišu nakon 24 sata.",
         "serviceName": "Usluga snimanja",
@@ -913,8 +912,7 @@
         "surfaceError": "Odaberi trenutačnu karticu.",
         "title": "Snimanje",
         "unavailable": "Ups! Usluga {{serviceName}} trenutačno nije dostupna. Radimo na rješavanju problema. Pokušaj kasnije ponovo.",
-        "unavailableTitle": "Snimanje nije dostupno",
-        "uploadToCloud": "Prenesi u oblak"
+        "unavailableTitle": "Snimanje nije dostupno"
     },
     "screenshareDisplayName": "Ekran od {{name}}",
     "sectionList": {

@@ -1127,19 +1127,16 @@
         "recordAudioAndVideo": "Записвай аудио и видео",
         "recordTranscription": "Записвай транскрипция",
         "saveLocalRecording": "Запази записа локално (Бета)",
-        "serviceDescription": "Записът Ви ще се запише от специална записваща услуга",
         "serviceDescriptionCloud": "Облачен запис",
         "serviceDescriptionCloudInfo": "Записаните срещи автоматично се изчистват 24 часа след времето на записа.",
         "serviceName": "Записваща услуга",
         "sessionAlreadyActive": "Тази сесия вече се записва или излъчва на живо.",
-        "showAdvancedOptions": "Разширени опции",
         "signIn": "Влизане",
         "signOut": "Излизане",
         "surfaceError": "Моля, изберете текущия таб.",
         "title": "Запис",
         "unavailable": "Упс! В момента {{serviceName}} е недостъпна. В момента се опитваме да решим проблема. Моля, опитайте отново малко по-късно.",
-        "unavailableTitle": "Записът е невъзможен",
-        "uploadToCloud": "Качи в облака"
+        "unavailableTitle": "Записът е невъзможен"
     },
     "screenshareDisplayName": "Екранът на {{name}}",
     "sectionList": {

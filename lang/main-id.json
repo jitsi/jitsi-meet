@@ -1030,19 +1030,16 @@
         "recordAudioAndVideo": "Rekam audio dan video",
         "recordTranscription": "Rekam transkripsi",
         "saveLocalRecording": "Simpan file rekaman secara lokal (Beta)",
-        "serviceDescription": "Rekaman Anda akan disimpan oleh layanan rekaman",
         "serviceDescriptionCloud": "Rekaman cloud",
         "serviceDescriptionCloudInfo": "Pertemuan yang direkam secara otomatis dihapus 24 jam setelah waktu rekaman mereka.",
         "serviceName": "Layanan rekaman",
         "sessionAlreadyActive": "Sesi ini sudah direkam atau disiarkan langsung.",
-        "showAdvancedOptions": "Opsi Lanjutan",
         "signIn": "Masuk",
         "signOut": "Keluar",
         "surfaceError": "Harap pilih tab saat ini.",
         "title": "Rekaman",
         "unavailable": "Ups! {{serviceName}} saat ini tidak tersedia. Kami sedang berupaya menyelesaikan masalah ini. Harap coba lagi nanti.",
-        "unavailableTitle": "Rekaman tidak tersedia",
-        "uploadToCloud": "Unggah ke cloud"
+        "unavailableTitle": "Rekaman tidak tersedia"
     },
     "screenshareDisplayName": "Layar {{name}}",
     "sectionList": {

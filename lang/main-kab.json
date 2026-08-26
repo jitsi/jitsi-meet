@@ -767,15 +767,13 @@
         "on": "Asekles",
         "onBy": "{{name}} yebda asekles",
         "pending": "Aheyyi n usekles n temlilit…",
-        "serviceDescription": "Asekles-inek·inem ad yettwasekles s umeẓlu n usekles",
         "serviceDescriptionCloud": "Asekles deg usigna",
         "serviceName": "Ameẓlu n usekles",
         "signIn": "Qqen",
         "signOut": "Ffeɣ",
         "title": "Asekles",
         "unavailable": "Suref-aɣ! {{serviceName}} akka tura ulac-it. Aql-aɣ nxeddem ad nefru ugur. Ma ulac aɣilif ɛreḍ tikkelt-nniḍen ticki.",
-        "unavailableTitle": "Ulac asekles",
-        "uploadToCloud": "Sali ɣer usigna"
+        "unavailableTitle": "Ulac asekles"
     },
     "sectionList": {
         "pullToRefresh": "Jbed-d i usnirem"
