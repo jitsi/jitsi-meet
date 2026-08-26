@@ -57,7 +57,7 @@ export default {
     },
 
     badgeContainer: {
-        ...StyleSheet.absoluteFillObject
+        ...StyleSheet.absoluteFill
     },
 
     initialsContainer: {
@@ -70,7 +70,7 @@ export default {
     initialsText: (size: number = DEFAULT_SIZE) => {
         return {
             color: 'white',
-            fontSize: size * 0.45,
+            fontSize: Math.max(size * 0.45, 1),
             fontWeight: '100'
         };
     },

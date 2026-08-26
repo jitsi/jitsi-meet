@@ -254,6 +254,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
                 return {
                     ...newProps,
+                    audioTranslationEnabled: tabState?.audioTranslationEnabled,
                     chatWithPermissionsEnabled: tabState?.chatWithPermissionsEnabled,
                     followMeEnabled: tabState?.followMeEnabled,
                     followMeRecorderEnabled: tabState?.followMeRecorderEnabled,

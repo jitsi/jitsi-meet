@@ -1,8 +1,9 @@
 import React, { useCallback } from 'react';
 
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import { goBack }
+import { goBack, navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { screen } from '../../../mobile/navigation/routes';
 import AbstractLanguageSelectorDialog, {
     IAbstractLanguageSelectorDialogProps
 } from '../AbstractLanguageSelectorDialog';
@@ -11,12 +12,16 @@ import LanguageList from './LanguageList';
 import styles from './styles';
 
 const LanguageSelectorDialog = (props: IAbstractLanguageSelectorDialogProps) => {
-    const { language, listItems, onLanguageSelected, subtitles } = props;
+    const { asyncTranscription, language, listItems, onLanguageSelected, subtitles } = props;
 
     const onSelected = useCallback((e: string) => {
-        onLanguageSelected(e);
-        goBack();
-    }, [ language ]);
+        if (asyncTranscription) {
+            navigate(screen.conference.recording, { recordAudioAndVideo: false });
+        } else {
+            onLanguageSelected(e);
+            goBack();
+        }
+    }, [ asyncTranscription, language ]);
 
     return (
         <JitsiScreen

@@ -212,21 +212,27 @@ async function joinParticipant( // eslint-disable-line max-params
     const p = ctx[participantOptions.name] as Participant;
 
     if (p) {
-        if (participantOptions.iFrameApi) {
-            await p.switchToIFrame();
-        }
+        // Skip the isInMuc check (and the iframe context switch it requires) when the participant
+        // is already on base.html — they cannot be in the MUC and there is no iframe to switch into.
+        const alreadyOnBasePage = (await p.driver.getUrl()).endsWith('/base.html');
 
-        if (await p.isInMuc()) {
-            return p;
-        }
+        if (!alreadyOnBasePage) {
+            if (participantOptions.iFrameApi) {
+                await p.switchToIFrame();
+            }
 
-        if (participantOptions.iFrameApi) {
-            // when loading url make sure we are on the top page context or strange errors may occur
-            await p.switchToMainFrame();
-        }
+            if (await p.isInMuc()) {
+                return p;
+            }
 
-        // Change the page so we can reload same url if we need to, base.html is supposed to be empty or close to empty
-        await p.driver.url('/base.html');
+            if (participantOptions.iFrameApi) {
+                // when loading url make sure we are on the top page context or strange errors may occur
+                await p.switchToMainFrame();
+            }
+
+            // Change the page so we can reload same url if we need to, base.html is supposed to be empty or close to empty
+            await p.driver.url('/base.html');
+        }
     }
 
     const newParticipant = new Participant(participantOptions);

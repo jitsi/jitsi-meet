@@ -12,6 +12,7 @@ local uuid_gen = require "util.uuid".generate;
 local main_util = module:require "util";
 local is_admin = main_util.is_admin;
 local is_focus = main_util.is_focus;
+local is_focus_jid = main_util.is_focus_jid;
 local get_room_from_jid = main_util.get_room_from_jid;
 local is_healthcheck_room = main_util.is_healthcheck_room;
 local internal_room_jid_match_rewrite = main_util.internal_room_jid_match_rewrite;
@@ -187,6 +188,46 @@ end
 
 module:hook('jicofo-unlock-room', handle_jicofo_unlock);
 
+-- Prevents some participant from being modified in any way through a
+-- muc#admin set IQ (kick, ban, role/affiliation change, ...). This runs at a high
+-- priority (10) so it precedes prosody's own admin-query handler (default priority
+-- -2) and any other module hooks (e.g. allowners at 5). There is no legitimate
+-- reason for a client/moderator to target certain participants, so any such item is rejected.
+local function filter_admin_set(event)
+    local origin, stanza = event.origin, event.stanza;
+    local room = get_room_from_jid(jid.bare(stanza.attr.to));
+
+    if not room then
+        return;
+    end
+
+    local query = stanza.tags[1];
+    if not query then
+        return;
+    end
+
+    for item in query:childtags('item') do
+        -- An item may carry a nick (role changes) and/or a jid (affiliation
+        -- changes). Prosody's own handler applies a role change by nick and an
+        -- affiliation change by jid, so both must be checked independently: a
+        -- decoy nick must not mask a jid that targets focus (and vice versa).
+        if item.attr.nick and is_focus(room.jid .. '/' .. item.attr.nick) then
+            module:log('warn', 'Blocking attempt to modify %s in room %s', item.attr.nick, room.jid);
+            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed'));
+            return true;
+        end
+
+        if item.attr.jid and is_focus_jid(item.attr.jid) then
+            module:log('warn', 'Blocking attempt to modify %s in room %s', item.attr.jid, room.jid);
+            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed'));
+            return true;
+        end
+    end
+end
+
+module:hook('iq-set/bare/http://jabber.org/protocol/muc#admin:query', filter_admin_set, 10);
+module:hook('iq-set/host/http://jabber.org/protocol/muc#admin:query', filter_admin_set, 10);
+
 -- make sure we remove nick if someone is sending it with a message to protect
 -- forgery of display name
 module:hook("muc-occupant-groupchat", function(event)
@@ -255,12 +296,20 @@ local function filterTranscriptionResult(event)
             end
 
             -- TODO what if we have multiple alternative transcriptions not just 1
+            if not transcription.transcript[1] then
+                module:log('warn', 'Empty transcript array in transcription-result from %s', stanza.attr.from);
+                return true;
+            end
             local text_message = transcription.transcript[1].text;
             --do not send empty messages
             if text_message == '' then
                 return;
             end
 
+            if not transcription.participant then
+                module:log('warn', 'Missing participant field in transcription-result from %s', stanza.attr.from);
+                return true;
+            end
             local user_id = transcription.participant.id;
             local who = room:get_occupant_by_nick(jid.bare(room.jid)..'/'..user_id);
 

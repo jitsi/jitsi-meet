@@ -13,7 +13,12 @@ import Tooltip from '../../base/tooltip/components/Tooltip';
 import Spinner from '../../base/ui/components/web/Spinner';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-import { BACKGROUNDS_LIMIT, IMAGES, type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
+import {
+    BACKGROUNDS_LIMIT,
+    IMAGES,
+    type Image,
+    VIRTUAL_BACKGROUND_TYPE
+} from '../constants';
 import { toDataURL } from '../functions';
 import logger from '../logger';
 import { IVirtualBackground } from '../reducer';
@@ -168,7 +173,8 @@ const useStyles = makeStyles()(theme => {
             [[ '&:hover', '&:focus' ] as any]: {
                 display: 'block'
             }
-        }
+        },
+
     };
 });
 
@@ -495,12 +501,13 @@ function VirtualBackgrounds({
  * @returns {{Props}}
  */
 function _mapStateToProps(state: IReduxState) {
+    const config = state['features/base/config'];
     const dynamicBrandingImages = state['features/dynamic-branding'].virtualBackgrounds;
     const hasBrandingImages = Boolean(dynamicBrandingImages.length);
 
     return {
         _images: (hasBrandingImages && dynamicBrandingImages) || IMAGES,
-        _showUploadButton: !state['features/base/config'].disableAddingBackgroundImages
+        _showUploadButton: !config.virtualBackground?.disableAddingImages
     };
 }
 

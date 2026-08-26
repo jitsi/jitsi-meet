@@ -14,9 +14,9 @@ import { getFeatureFlag } from '../../../../base/flags/functions';
 import Icon from '../../../../base/icons/components/Icon';
 import { IconMic, IconMicSlash } from '../../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../../base/media/constants';
-import { isLocalTrackMuted } from '../../../../base/tracks/functions';
+import { isLocalTrackMuted } from '../../../../base/tracks/functions.native';
 import { isAudioMuteButtonDisabled } from '../../../../toolbox/functions.any';
-import { muteLocal } from '../../../../video-menu/actions';
+import { muteLocal } from '../../../../video-menu/actions.native';
 
 import styles from './styles';
 
@@ -34,10 +34,6 @@ const MicrophoneButton = (): JSX.Element | null => {
     const disabled = useSelector(isAudioMuteButtonDisabled);
     const enabledFlag = useSelector((state: IReduxState) => getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true));
     const [ longPress, setLongPress ] = useState(false);
-
-    if (!enabledFlag) {
-        return null;
-    }
 
     const onPressIn = useCallback(() => {
         !disabled && dispatch(muteLocal(!audioMuted, MEDIA_TYPE.AUDIO));
@@ -66,6 +62,10 @@ const MicrophoneButton = (): JSX.Element | null => {
             dispatch(muteLocal(true, MEDIA_TYPE.AUDIO));
         }
     }, [ longPress, setLongPress ]);
+
+    if (!enabledFlag) {
+        return null;
+    }
 
     return (
         <TouchableOpacity

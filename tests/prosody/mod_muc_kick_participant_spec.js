@@ -62,7 +62,7 @@ describe('mod_muc_kick_participant', () => {
             const { roomJid, focus } = await createRoom();
 
             try {
-                const loginToken = mintAsapToken();
+                const loginToken = mintAsapToken({ room: '*' });
                 const { status } = await kickParticipant(roomJid, 'focus', loginToken);
 
                 assert.strictEqual(status, 403,

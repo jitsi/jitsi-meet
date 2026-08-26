@@ -33,10 +33,10 @@ import { isFilmstripVisible } from '../../../filmstrip/functions.native';
 import CalleeInfoContainer from '../../../invite/components/callee-info/CalleeInfoContainer';
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
-import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { isPipEnabled, setPictureInPictureEnabled } from '../../../mobile/picture-in-picture/functions';
 import Captions from '../../../subtitles/components/native/Captions';
+import { isTimeTimerExpiredUnacknowledged } from '../../../time-timer/functions.native';
 import { setToolboxVisible } from '../../../toolbox/actions.native';
 import Toolbox from '../../../toolbox/components/native/Toolbox';
 import { isToolboxVisible } from '../../../toolbox/functions.native';
@@ -63,11 +63,6 @@ interface IProps extends AbstractProps {
      * Application's aspect ratio.
      */
     _aspectRatio: Symbol;
-
-    /**
-     * Whether the audio only is enabled or not.
-     */
-    _audioOnlyEnabled: boolean;
 
     /**
      * Branding styles for conference.
@@ -113,6 +108,11 @@ interface IProps extends AbstractProps {
     _localParticipantDisplayName: string;
 
     /**
+     * Whether the audio only is enabled or not.
+     */
+    _lowBandwidthModeEnabled: boolean;
+
+    /**
      * Whether Picture-in-Picture is enabled.
      */
     _pictureInPictureEnabled: boolean;
@@ -132,6 +132,12 @@ interface IProps extends AbstractProps {
      * Indicates whether the car mode is enabled.
      */
     _startCarMode: boolean;
+
+    /**
+     * Whether the meeting has run past its scheduled end and the timer-ended
+     * notification has not been dismissed yet — drives the red expired frame.
+     */
+    _timerExpired: boolean;
 
     /**
      * The indicator which determines whether the Toolbox is visible.
@@ -207,14 +213,14 @@ class Conference extends AbstractConference<IProps, State> {
      */
     override componentDidMount() {
         const {
-            _audioOnlyEnabled,
+            _lowBandwidthModeEnabled,
             _startCarMode,
             navigation
         } = this.props;
 
         this._hardwareBackPressSubscription = BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
 
-        if (_audioOnlyEnabled && _startCarMode) {
+        if (_lowBandwidthModeEnabled && _startCarMode) {
             navigation.navigate(screen.conference.carmode);
         }
     }
@@ -226,21 +232,21 @@ class Conference extends AbstractConference<IProps, State> {
      */
     override componentDidUpdate(prevProps: IProps) {
         const {
-            _audioOnlyEnabled,
+            _lowBandwidthModeEnabled,
             _showLobby,
             _startCarMode,
             navigation
         } = this.props;
 
         if (!prevProps._showLobby && _showLobby) {
-            navigate(screen.lobby.root);
+            navigation.navigate(screen.lobby.root);
         }
 
         if (prevProps._showLobby && !_showLobby) {
-            if (_audioOnlyEnabled && _startCarMode) {
+            if (_lowBandwidthModeEnabled && _startCarMode) {
                 navigation.navigate(screen.conference.carmode);
             } else {
-                navigate(screen.conference.main);
+                navigation.navigate(screen.conference.main);
             }
         }
     }
@@ -369,6 +375,7 @@ class Conference extends AbstractConference<IProps, State> {
             _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView,
+            _timerExpired,
             _toolboxVisible
         } = this.props;
 
@@ -387,6 +394,11 @@ class Conference extends AbstractConference<IProps, State> {
             alwaysOnTitleBarStyles = styles.alwaysOnTitleBar;
 
         }
+
+        const FALLBACK_RADIUS = 24;
+        const nativeRadius = NativeModules.ScreenCornerRadius?.cornerRadius;
+        const SCREEN_CORNER_RADIUS
+            = typeof nativeRadius === 'number' && nativeRadius > 0 ? nativeRadius : FALLBACK_RADIUS;
 
         return (
             <>
@@ -481,6 +493,16 @@ class Conference extends AbstractConference<IProps, State> {
                         <Toolbox />
                     </>
                 }
+
+                {
+                    _timerExpired
+                        && <View
+                            pointerEvents = 'none'
+                            style = { [
+                                styles.timerExpiredFrame as ViewStyle,
+                                { borderRadius: SCREEN_CORNER_RADIUS }
+                            ] } />
+                }
             </>
         );
     }
@@ -569,7 +591,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
     const { backgroundColor } = state['features/dynamic-branding'];
     const { startCarMode } = state['features/base/settings'];
-    const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
+    const { enabled: lowBandwidthModeEnabled } = state['features/base/low-bandwidth-mode'];
     const brandingStyles = backgroundColor ? {
         background: backgroundColor
     } : undefined;
@@ -577,7 +599,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     return {
         ...abstractMapStateToProps(state),
         _aspectRatio: aspectRatio,
-        _audioOnlyEnabled: Boolean(audioOnlyEnabled),
+        _lowBandwidthModeEnabled: Boolean(lowBandwidthModeEnabled),
         _brandingStyles: brandingStyles,
         _calendarEnabled: isCalendarEnabled(state),
         _connecting: isConnecting(state),
@@ -589,6 +611,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _reducedUI: reducedUI,
         _showLobby: getIsLobbyVisible(state),
         _startCarMode: startCarMode,
+        _timerExpired: isTimeTimerExpiredUnacknowledged(state),
         _toolboxVisible: isToolboxVisible(state)
     };
 }

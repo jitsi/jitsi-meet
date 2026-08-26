@@ -3,6 +3,8 @@ import { Image, ImageStyle, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
+import { TranslationTreatment } from '../../../audio-translation/constants';
+import { getTranslationTreatment, isAudioTranslationAvailable } from '../../../audio-translation/functions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../base/media/constants';
 import { pinParticipant } from '../../../base/participants/actions';
 import ParticipantView from '../../../base/participants/components/ParticipantView.native';
@@ -41,6 +43,7 @@ import ModeratorIndicator from './ModeratorIndicator';
 import PinnedIndicator from './PinnedIndicator';
 import RaisedHandIndicator from './RaisedHandIndicator';
 import ScreenShareIndicator from './ScreenShareIndicator';
+import TranslationIndicator from './TranslationIndicator';
 import styles, { AVATAR_SIZE } from './styles';
 
 
@@ -115,6 +118,11 @@ interface IProps {
     _shouldDisplayTileView: boolean;
 
     /**
+     * The audio-translation treatment to render for this participant (NONE renders no indicator).
+     */
+    _translationTreatment: TranslationTreatment;
+
+    /**
      * The video track that will be displayed in the thumbnail.
      */
     _videoTrack?: ITrack;
@@ -184,7 +192,14 @@ class Thumbnail extends PureComponent<IProps> {
      * @returns {void}
      */
     _onThumbnailLongPress() {
-        const { _fakeParticipant, _participantId, _local, _localVideoOwner, dispatch } = this.props;
+        const {
+            _fakeParticipant,
+            _isVirtualScreenshare,
+            _participantId,
+            _local,
+            _localVideoOwner,
+            dispatch
+        } = this.props;
 
         if (_fakeParticipant && _localVideoOwner) {
             dispatch(showSharedVideoMenu(_participantId));
@@ -194,6 +209,8 @@ class Thumbnail extends PureComponent<IProps> {
             } else {
                 dispatch(showContextMenuDetails(_participantId));
             }
+        } else if (_isVirtualScreenshare) {
+            dispatch(pinParticipant(_participantId));
         } // else no-op
     }
 
@@ -211,6 +228,7 @@ class Thumbnail extends PureComponent<IProps> {
             _participantId: participantId,
             _pinned,
             _renderModeratorIndicator: renderModeratorIndicator,
+            _translationTreatment: translationTreatment,
             _shouldDisplayTileView,
             renderDisplayName,
             tileView
@@ -221,7 +239,8 @@ class Thumbnail extends PureComponent<IProps> {
 
         if (_shouldDisplayTileView) {
             bottomIndicatorsContainerStyle = styles.bottomIndicatorsContainer;
-        } else if (audioMuted || renderModeratorIndicator) {
+        } else if (audioMuted || renderModeratorIndicator
+                || translationTreatment !== TranslationTreatment.NONE) {
             bottomIndicatorsContainerStyle = styles.bottomIndicatorsContainer;
         } else {
             bottomIndicatorsContainerStyle = null;
@@ -245,6 +264,8 @@ class Thumbnail extends PureComponent<IProps> {
                 <Container
                     style = { bottomIndicatorsContainerStyle as StyleType }>
                     { audioMuted && !_isVirtualScreenshare && <AudioMutedIndicator /> }
+                    { translationTreatment !== TranslationTreatment.NONE
+                        && <TranslationIndicator treatment = { translationTreatment } /> }
                     { !tileView && _pinned && <PinnedIndicator />}
                     { renderModeratorIndicator && !_isVirtualScreenshare && <ModeratorIndicator />}
                     { !tileView && (isScreenShare || _isVirtualScreenshare) && <ScreenShareIndicator /> }
@@ -345,6 +366,10 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const _isEveryoneModerator = isEveryoneModerator(state);
     const renderModeratorIndicator = tileView && !_isEveryoneModerator
         && participant?.role === PARTICIPANT_ROLE.MODERATOR;
+    const translationTreatment = !participant?.local && !isScreenShareParticipant(participant)
+        && isAudioTranslationAvailable(state)
+        ? getTranslationTreatment(state, id ?? '')
+        : TranslationTreatment.NONE;
     const { gifUrl: gifSrc } = getGifForParticipant(state, id ?? '');
     const mode = getGifDisplayMode(state);
 
@@ -361,6 +386,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _raisedHand: hasRaisedHand(participant),
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
+        _translationTreatment: translationTreatment,
         _shouldDisplayTileView: shouldDisplayTileView(state),
         _videoTrack: videoTrack
     };

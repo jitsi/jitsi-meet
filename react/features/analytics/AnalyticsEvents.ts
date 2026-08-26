@@ -98,9 +98,9 @@ export function createApiEvent(action: string, attributes = {}) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createAudioOnlyChangedEvent(enabled: boolean) {
+export function createLowBandwidthModeChangedEvent(enabled: boolean) {
     return {
-        action: `audio.only.${enabled ? 'enabled' : 'disabled'}`
+        action: `low.bandwidth.mode.${enabled ? 'enabled' : 'disabled'}`
     };
 }
 
@@ -685,9 +685,9 @@ export function createShortcutEvent(
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createStartAudioOnlyEvent(audioOnly: boolean) {
+export function createStartLowBandwidthModeEvent(audioOnly: boolean) {
     return {
-        action: 'start.audio.only',
+        action: 'start.low.bandwidth.mode',
         attributes: {
             enabled: audioOnly
         }

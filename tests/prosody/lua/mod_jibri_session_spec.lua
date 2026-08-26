@@ -260,10 +260,12 @@ describe("mod_jibri_session", function()
     -- -----------------------------------------------------------------------
     describe("malformed app_data", function()
 
-        it("propagates a cjson.decode error for invalid JSON in app_data", function()
-            local jibri   = make_jibri_elem({ action = 'start', app_data = '{not valid json{{' })
+        it("silently ignores invalid JSON in app_data (cjson.safe: returns nil, no throw)", function()
+            local raw     = '{not valid json{{'
+            local jibri   = make_jibri_elem({ action = 'start', app_data = raw })
             local session = { jitsi_meet_context_user = { id = 'user-1' } }
-            assert.has_error(function() hooked_fn(make_event(make_iq(jibri), session)) end)
+            assert.has_no.errors(function() hooked_fn(make_event(make_iq(jibri), session)) end)
+            assert.equal(raw, jibri.attr.app_data)  -- unchanged: module returned early
         end)
 
     end)

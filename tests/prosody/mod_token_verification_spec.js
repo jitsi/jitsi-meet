@@ -76,19 +76,15 @@ describe('mod_token_verification', () => {
             );
         });
 
-        it('allows join with token that has no room claim', async () => {
-            const room = await setupRoom();
+        it('rejects connection when token has no room claim', async () => {
+            // asap_require_room_claim = true: a token without a room claim is
+            // rejected at SASL / connection time, before the client can join a room.
+            const token = mintAsapToken({ room: undefined });
 
-            // No 'room' field in payload → session.jitsi_meet_room = nil → passes.
-            const token = mintAsapToken();
-            const c = await createXmppClient({ params: { token } });
-
-            clients.push(c);
-
-            const presence = await c.joinRoom(room);
-
-            assert.ok(isAvailablePresence(presence),
-                'token without a room claim must be allowed (treated as anonymous)');
+            await assert.rejects(
+                createXmppClient({ params: { token } }),
+                'connection must be rejected when the room claim is absent'
+            );
         });
 
         it('allows join with token whose room claim matches the room', async () => {
@@ -118,6 +114,45 @@ describe('mod_token_verification', () => {
 
             assert.strictEqual(presence.attrs.type, 'error',
                 'mismatched room claim must be rejected');
+            assert.ok(
+                presence.getChild('error')?.getChild('not-allowed'),
+                'expected <not-allowed/> error condition');
+        });
+
+        it('blocks join for moderator token scoped to a different room', async () => {
+            const room = await setupRoom();
+
+            // Moderator token scoped to 'other-room' — mod_token_verification
+            // checks the room claim at priority 99, before mod_token_affiliation
+            // (priority 0) can grant owner status, so being a moderator is no bypass.
+            const token = mintAsapToken({ room: 'other-room',
+                context: { user: { moderator: true } } });
+            const c = await createXmppClient({ params: { token } });
+
+            clients.push(c);
+
+            const presence = await c.joinRoom(room);
+
+            assert.strictEqual(presence.attrs.type, 'error',
+                'moderator token for wrong room must be rejected');
+            assert.ok(
+                presence.getChild('error')?.getChild('not-allowed'),
+                'expected <not-allowed/> error condition');
+        });
+
+        it('blocks join for member token scoped to a different room', async () => {
+            const room = await setupRoom();
+
+            const token = mintAsapToken({ room: 'other-room',
+                context: { user: { id: 'user1' } } });
+            const c = await createXmppClient({ params: { token } });
+
+            clients.push(c);
+
+            const presence = await c.joinRoom(room);
+
+            assert.strictEqual(presence.attrs.type, 'error',
+                'member token for wrong room must be rejected');
             assert.ok(
                 presence.getChild('error')?.getChild('not-allowed'),
                 'expected <not-allowed/> error condition');

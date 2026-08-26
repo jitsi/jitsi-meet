@@ -17,9 +17,9 @@ class DefaultUnsupportedDesktopBrowser extends Component {
      */
     override componentDidMount() {
         if (!JitsiMeetJS.isWebRtcSupported()) {
-            window.location.pathname = 'static/webrtcUnsupported.html';
+            (window.location as Mutable<typeof window.location>).pathname = 'static/webrtcUnsupported.html';
         } else {
-            window.location.pathname = 'static/recommendedBrowsers.html';
+            (window.location as Mutable<typeof window.location>).pathname = 'static/recommendedBrowsers.html';
         }
     }
 

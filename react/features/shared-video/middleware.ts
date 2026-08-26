@@ -78,7 +78,10 @@ MiddlewareRegistry.register(store => next => action => {
 
                     if (isURLAllowedForSharedVideo(value, state['features/shared-video'].allowedUrlDomains, true)
                         || localParticipantId === from
-                        || state['features/shared-video'].confirmShowVideo) { // if confirmed skip asking again
+                        || state['features/shared-video'].confirmShowVideo // if confirmed skip asking again
+
+                        // jibri cannot confirm the dialog, just play
+                        || (state['features/base/config'].iAmRecorder && conference.isHidden())) {
                         handleSharingVideoStatus(store, value, {
                             ...attributes,
                             from

@@ -168,6 +168,26 @@ export interface IWatchRTCConfiguration {
     wsUrl?: string;
 }
 
+export interface IVirtualBackgroundAdvancedConfig {
+    edgeHigh?: number;
+    edgeLow?: number;
+    inferenceStride?: number;
+    segmentationHeight?: number;
+    segmentationWidth?: number;
+    targetFps?: number;
+    temporalBlendRatio?: number;
+    testMode?: boolean;
+    tierOverride?: 'high' | 'low' | 'medium';
+    useInsertableStreams?: boolean;
+}
+
+export interface IVirtualBackgroundConfig {
+    advanced?: IVirtualBackgroundAdvancedConfig;
+    disableAddingImages?: boolean;
+    disabled?: boolean;
+    enableV2?: boolean;
+}
+
 export interface IConfig {
     _desktopSharingSourceDevice?: string;
     _immediateReloadThreshold?: string;
@@ -196,6 +216,16 @@ export interface IConfig {
         enableAdvancedAudioSettings?: boolean;
         opusMaxAverageBitrate?: number | null;
         stereo?: boolean;
+    };
+
+    /**
+     * Configuration for AI audio translation. Requires a deployment with the
+     * bridge translation backend; the toolbar control is only shown when enabled.
+     */
+    audioTranslation?: {
+        duckedVolume?: number;
+        enableSendingChangeEvents?: boolean;
+        enabled?: boolean;
     };
     /**
      * @deprecated Use `transcription.autoTranscribeOnRecord` instead.
@@ -289,6 +319,10 @@ export interface IConfig {
     disableAEC?: boolean;
     disableAGC?: boolean;
     disableAP?: boolean;
+
+    /**
+     * @deprecated Use `virtualBackground.disableAddingImages` instead.
+     */
     disableAddingBackgroundImages?: boolean;
     disableAudioLevels?: boolean;
     disableBeforeUnloadHandlers?: boolean;
@@ -299,7 +333,6 @@ export interface IConfig {
      * @deprecated Use `deeplinking.disabled` instead.
      */
     disableDeepLinking?: boolean;
-    disableFilmstripAutohiding?: boolean;
     disableFocus?: boolean;
     disableIframeAPI?: boolean;
     /**
@@ -345,6 +378,10 @@ export interface IConfig {
     disableThirdPartyRequests?: boolean;
     disableTileEnlargement?: boolean;
     disableTileView?: boolean;
+
+    /**
+     * @deprecated Use `virtualBackground.disabled` instead.
+     */
     disableVirtualBackground?: boolean;
     disabledNotifications?: Array<string>;
     disabledSounds?: Array<Sounds>;
@@ -384,6 +421,8 @@ export interface IConfig {
     enableEmailInStats?: boolean;
     enableEncodedTransformSupport?: boolean;
     enableForcedReload?: boolean;
+    enableIceRestart?: boolean;
+    enableIceRestartOnNetworkChange?: boolean;
     enableInsecureRoomNameWarning?: boolean;
     /**
      * @deprecated Use `lobby.enableChat` instead.
@@ -570,7 +609,29 @@ export interface IConfig {
     peopleSearchUrl?: string;
     pip?: {
         disabled?: boolean;
+        /**
+         * Document Picture-in-Picture configuration.
+         *
+         * @see https://developer.chrome.com/docs/web-platform/document-picture-in-picture#methods
+         */
+        documentPiP?: {
+            windowOptions?: {
+                disallowReturnToOpener?: boolean;
+                height?: number;
+                preferInitialWindowPlacement?: boolean;
+                width?: number;
+            };
+        };
+        /**
+         * Whether Picture-in-Picture is enabled for browser (non-Electron) meetings.
+         * Opt-in: defaults to false.
+         */
+        enableBrowserPiP?: boolean;
         showOnPrejoin?: boolean;
+        /**
+         * Whether to show the Picture-in-Picture toolbar button when supported.
+         */
+        showToolbarButton?: boolean;
     };
     preferBosh?: boolean;
     preferVisitor?: boolean;
@@ -626,6 +687,17 @@ export interface IConfig {
         enabled?: boolean;
         mode?: 'always' | 'recording';
     };
+
+    /**
+     * Multi-screen support. When enabled, an embedder can use the iframe External
+     * API `setSecondScreen` command to render a meeting surface (the stage, the
+     * screenshare, or a pinned participant) on a second display in its own
+     * fullscreen window. Chromium-only; intended for managed/kiosk room
+     * appliances. Disabled by default.
+     */
+    secondScreen?: {
+        enabled?: boolean;
+    };
     securityUi?: {
         disableLobbyPassword?: boolean;
         hideLobbyButton?: boolean;
@@ -644,8 +716,8 @@ export interface IConfig {
      */
     speakerStatsOrder?: Array<'role' | 'name' | 'hasLeft'>;
     startAudioMuted?: number;
-    startAudioOnly?: boolean;
     startLastN?: number;
+    startLowBandwidthMode?: boolean;
     startScreenSharing?: boolean;
     startSilent?: boolean;
     startVideoMuted?: number;
@@ -667,6 +739,9 @@ export interface IConfig {
     tileView?: {
         disabled?: boolean;
         numberOfVisibleTiles?: number;
+    };
+    timeTimer?: {
+        enabled?: boolean;
     };
     tokenAuthInline?: boolean;
     tokenAuthUrl?: string;
@@ -697,10 +772,22 @@ export interface IConfig {
         autoCaptionOnTranscribe?: boolean;
         autoTranscribeOnRecord?: boolean;
         customLanguages?: object;
+
+        /**
+         * When true, advertises (via a MUC presence participant property) that this participant's audio
+         * should be diarized by the transcriber. Intended for endpoints carrying multiple speakers, e.g.
+         * conference-room systems or dial-in.
+         *
+         * Takes effect only at join time: the flag is included in the initial presence and read by jicofo
+         * when it allocates the colibri endpoint. It must be set before joining (e.g. via config or the
+         * `#config.transcription.diarize=true` URL override); toggling it during a call has no effect.
+         */
+        diarize?: boolean;
         disableClosedCaptions?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
         renderTranscriptDetails?: boolean;
+        translationEnabled?: boolean;
         translationLanguages?: Array<string>;
         translationLanguagesHead?: Array<string>;
         useAppLanguage?: boolean;
@@ -722,6 +809,7 @@ export interface IConfig {
         mobileCodecPreferenceOrder?: Array<string>;
         persist?: boolean;
     };
+    virtualBackground?: IVirtualBackgroundConfig;
     visitors?: {
         enableMediaOnPromote?: {
             audio?: boolean;

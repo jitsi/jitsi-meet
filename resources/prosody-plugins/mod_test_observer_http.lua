@@ -19,8 +19,15 @@ local jid_lib = require "util.jid";
 --   access: false → return {"access": false} (user banned)
 --   status: any non-200 value → return that HTTP status code with no JSON body
 --     (simulates HTTP errors; mod_muc_auth_ban fails open on non-200)
+--   non_json: true → return a 200 with a plain-text body (not valid JSON)
+--     (tests the nil-check bug: json.decode returns nil, r['access'] would crash)
 -- Reset to the default (allow, 200) between tests via POST /test-observer/access-manager.
-local access_manager_state = { access = true, status = 200 };
+local access_manager_state = { access = true, status = 200, non_json = false };
+
+-- Mock OTLP trace receiver for mod_trace tests. Stores every exported
+-- resource_spans payload POSTed by the module's Exporter so tests can assert
+-- a span was (or was not) exported without needing a real OTLP collector.
+local otlp_traces = {};
 
 -- ASAP public key servers: serve test RSA public keys so that Prosody can
 -- fetch them when verifying RS256 tokens signed by the matching private keys.
@@ -311,6 +318,51 @@ module:provides("http", {
             };
         end;
 
+        -- POST /test-observer/rooms/hide-display-name
+        -- Body: { "jid": "room@conference.localhost", "hidden": true|false }
+        -- Sets room._data.hideDisplayNameForGuests for mod_muc_displayname tests.
+        ["POST /rooms/hide-display-name"] = function(event)
+            local data = json.decode(event.request.body or "{}") or {};
+            local room_jid = data.jid;
+            local hidden = data.hidden;
+            if room_jid == nil or hidden == nil then
+                return { status_code = 400; body = '{"error":"missing jid or hidden"}' };
+            end
+            local room = (shared.rooms or {})[room_jid];
+            if not room then
+                return { status_code = 404; body = '{"error":"room not found"}' };
+            end
+            room._data.hideDisplayNameForGuests = hidden;
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = '{"ok":true}';
+            };
+        end;
+
+        -- POST /test-observer/rooms/breakout-rooms-active
+        -- Body: { "jid": "room@conference.localhost", "active": true|false }
+        -- Sets room._data.breakout_rooms_active, which mod_muc_cleanup_backend_services
+        -- checks to skip the destroy-timer logic when breakout rooms are running.
+        ["POST /rooms/breakout-rooms-active"] = function(event)
+            local data = json.decode(event.request.body or "{}") or {};
+            local room_jid = data.jid;
+            local active = data.active;
+            if room_jid == nil or active == nil then
+                return { status_code = 400; body = '{"error":"missing jid or active"}' };
+            end
+            local room = (shared.rooms or {})[room_jid];
+            if not room then
+                return { status_code = 404; body = '{"error":"room not found"}' };
+            end
+            room._data.breakout_rooms_active = active;
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = '{"ok":true}';
+            };
+        end;
+
         -- POST /test-observer/rooms/max-occupants
         -- Body: { "jid": "room@conference.localhost", "max_occupants": 4 }
         -- Sets room._data.max_occupants so per-room limit tests can override the
@@ -334,6 +386,39 @@ module:provides("http", {
             };
         end;
 
+        -- POST /test-observer/otlp-traces
+        -- Called by mod_trace's Exporter. Body is the raw OTLP
+        -- ExportTraceServiceRequest JSON; stored verbatim for test assertions.
+        ["POST /otlp-traces"] = function(event)
+            local data = json.decode(event.request.body or "{}");
+            if data then
+                table.insert(otlp_traces, data);
+            end
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = "{}";
+            };
+        end;
+
+        -- GET /test-observer/otlp-traces
+        -- Returns every ExportTraceServiceRequest body received so far.
+        ["GET /otlp-traces"] = function()
+            local body = #otlp_traces == 0 and "[]" or json.encode(otlp_traces);
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = body;
+            };
+        end;
+
+        -- DELETE /test-observer/otlp-traces
+        -- Clears the recorded export list. Call before each test.
+        ["DELETE /otlp-traces"] = function()
+            otlp_traces = {};
+            return { status_code = 204 };
+        end;
+
         -- GET /test-observer/access-manager
         -- Mock access-manager endpoint called by mod_muc_auth_ban.
         -- Returns {"access": true} or {"access": false} based on the current
@@ -344,6 +429,16 @@ module:provides("http", {
             if access_manager_state.status ~= 200 then
                 return { status_code = access_manager_state.status; body = "error" };
             end
+            if access_manager_state.non_json then
+                -- Return a 200 with a non-JSON body to exercise the nil-check
+                -- bug in mod_muc_auth_ban: json.decode returns nil, and
+                -- r['access'] would crash if the module doesn't guard for nil.
+                return {
+                    status_code = 200;
+                    headers = { ["Content-Type"] = "text/plain" };
+                    body = "not-valid-json";
+                };
+            end
             return {
                 status_code = 200;
                 headers = { ["Content-Type"] = "application/json" };
@@ -352,7 +447,7 @@ module:provides("http", {
         end;
 
         -- POST /test-observer/access-manager
-        -- Body: { "access": true|false, "status": <http-status-code> }
+        -- Body: { "access": true|false, "status": <http-status-code>, "non_json": true|false }
         -- Configures what the mock access manager returns.
         -- Call this from tests before connecting the client under test.
         -- Call with { "access": true, "status": 200 } to reset to the default.
@@ -363,6 +458,9 @@ module:provides("http", {
             end
             if data.status ~= nil then
                 access_manager_state.status = tonumber(data.status) or 200;
+            end
+            if data.non_json ~= nil then
+                access_manager_state.non_json = data.non_json;
             end
             return { status_code = 204 };
         end;
@@ -455,6 +553,35 @@ module:provides("http", {
             local encoded, err = json.encode({
                 jid = room.jid;
                 metadata = room.jitsiMetadata or {};
+            });
+            if not encoded then
+                return { status_code = 500; body = json.encode({ error = 'encode failed: ' .. tostring(err) }) };
+            end
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = encoded;
+            };
+        end;
+
+        -- GET /test-observer/rooms/audio-translation-requests?jid=room@conference.localhost
+        -- Returns: { jid, audioTranslationRequests } where the value is the
+        -- aggregated map stored on room._data by mod_audio_translation_component
+        -- (omitted when there are no subscriptions).
+        ["GET /rooms/audio-translation-requests"] = function(event)
+            local params = parse_query(event.request.url.query);
+            local room_jid = params["jid"];
+            if not room_jid then
+                return { status_code = 400; body = '{"error":"missing jid param"}' };
+            end
+            local rooms = shared.rooms or {};
+            local room = rooms[room_jid];
+            if not room then
+                return { status_code = 404; body = '{"error":"room not found"}' };
+            end
+            local encoded, err = json.encode({
+                jid = room.jid;
+                audioTranslationRequests = room._data.audioTranslationRequests;
             });
             if not encoded then
                 return { status_code = 500; body = json.encode({ error = 'encode failed: ' .. tostring(err) }) };

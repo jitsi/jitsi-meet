@@ -39,9 +39,6 @@
         "phone": "Telefòn",
         "speaker": "Nautparlaire"
     },
-    "audioOnly": {
-        "audioOnly": "Benda passanta febla"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "ex.10000000 per 10 Mbps",
         "assumedBandwidthBpsWarning": "De valors mai nautas pòdon causar de problèmas de ret.",
@@ -263,7 +260,6 @@
         "Remove": "Suprimir",
         "Share": "Partejar",
         "Submit": "Validar",
-        "WaitForHostMsg": "La conferéncia a pas encara començat. Se sètz l’òst volgatz ben vos identificar. Autrament esperatz qu’arribe l’òste.",
         "WaitForHostNoAuthMsg": "La conferéncia a pas encara començat perque cap de moderator es pas encara arribat. Volgatz esperar.",
         "WaitingForHostButton": "Esperar l'òste",
         "WaitingForHostTitle": "En espèra de l’òste…",
@@ -728,10 +724,12 @@
         "button": "Convidar d’autres",
         "youAreAlone": "Sètz l’unica persona de la reünion"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Benda passanta febla"
+    },
     "me": "ieu",
     "notify": {
         "OldElectronAPPTitle": "Problèma de seguretat !",
-        "allowAction": "Autorizar",
         "allowedUnmute": "Vos podètz restablir lo son del microfòn, aviar la camèra e partejar l’ecran.",
         "audioUnmuteBlockedDescription": "Las operacion de restabliment del son microfòn son estadas blocadas pel moment a causa de limitas sistèma.",
         "audioUnmuteBlockedTitle": "Restabliment del son del microfòn blocat !",
@@ -745,7 +743,6 @@
         "dataChannelClosedDescriptionWithAudio": "Lo canal pont es indisponible, alara de perturbacion de l'àudio e de la vidèo pòdon arribar.",
         "dataChannelClosedWithAudio": "La qualitat de l'àudio e de la vidèo pòt èsser deteriorada",
         "disabledIframe": "L'integracion d'iframe es sonque destinada a las demonstracion, aquesta sonada s'acabarà d'aquí {{timeout}} minutas.",
-        "disabledIframeSecondary": "L'integracion d'iframe de {{domain}} es sonque destinada a las demonstracion, aquesta sonada s'acabarà d'aquí {{timeout}} minutas. Mercés d'utilizar <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi coma servici</a> per una integracion en produccion.",
         "disconnected": "desconnectat",
         "displayNotifications": "Afichar las notificacions per",
         "dontRemindMe": "Lo me rapelar pas",
@@ -896,8 +893,7 @@
             "pollQuestion": "Question del sondatge",
             "questionPlaceholder": "Pausar una question",
             "removeOption": "Suprimir l'opcion",
-            "save": "Enregistrar",
-            "send": "Enviar"
+            "save": "Enregistrar"
         },
         "errors": {
             "notUniqueOption": "Las opcions devon èsser unicas"
@@ -1078,7 +1074,7 @@
         "about": "Podètz ajustar un $t(lockRoomPassword) per rejónher una reünion. Los participants deuràn fornir lo $t(lockRoomPassword) abans d’obténer l’autorizacion de dintrar dins la reünion.",
         "aboutReadOnly": "Los participants que son moderators pòdon ajustar un $t(lockRoomPassword) a la reünion. Los participants deuràn fornir lo $t(lockRoomPassword) abans d’aver l’autorizacion de rejónher la reünion.",
         "insecureRoomNameWarningNative": "Lo nom de la sala de reünion es pas segur. Participants non desirats poirián la rejónher. {{recommendAction}} Ne saber mai per securizar vòstras reünions ",
-        "insecureRoomNameWarningWeb": "Lo nom de la sala de reünion es pas segur. Participants non desirats poirián la rejónher. {{recommendAction}} Ne saber mai per securizar vòstras reünions <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">aquí</a>.",
+        "insecureRoomNameWarningWeb": "Lo nom de la sala de reünion es pas segur. Participants non desirats poirián la rejónher. {{recommendAction}} Ne saber mai per securizar vòstras reünions <a href=\"{{securityUrl}}\" target=\"_blank\">aquí</a>.",
         "title": "Opcions de seguretat",
         "unsafeRoomActions": {
             "meeting": "Consideratz de securizar vòstra reünion en utilizant lo boton opcions de seguretat.",
@@ -1207,7 +1203,6 @@
         "Settings": "Paramètres",
         "accessibilityLabel": {
             "Settings": "Passar als paramètres",
-            "audioOnly": "Passar al sol àudio",
             "audioRoute": "Seleccionar lo periferic àudio",
             "boo": "Aücar",
             "breakoutRooms": "Salas petitas",
@@ -1249,6 +1244,7 @@
             "localRecording": "Passar al panèl d’enregistraments locals",
             "lockRoom": "Tirar/Metre lo senhal de la reünion",
             "love": "Còr",
+            "lowBandwidthMode": "Passar al sol àudio",
             "lowerHand": "Baissar la man",
             "moreActions": "Passar al menú mai d’accions",
             "moreActionsMenu": "Mai de menús d’accion",
@@ -1297,8 +1293,6 @@
             "videounmute": "Aviar la camèra"
         },
         "addPeople": "Ajustar de monde a vòstra sonada",
-        "audioOnlyOff": "Desactivar lo mòde connexion febla",
-        "audioOnlyOn": "Activar lo mòde connexion febla",
         "audioRoute": "Seleccionar lo periferic àudio",
         "audioSettings": "Paramètres àudio",
         "authenticate": "Autentificatz-vos",
@@ -1339,6 +1333,8 @@
         "login": "Connexion",
         "logout": "Desconnexion",
         "love": "Còr",
+        "lowBandwidthModeOff": "Desactivar lo mòde connexion febla",
+        "lowBandwidthModeOn": "Activar lo mòde connexion febla",
         "lowerYourHand": "Baissar la man",
         "moreActions": "Mai d’opcions",
         "moreOptions": "Autras opcions",
@@ -1399,7 +1395,6 @@
         "ccButtonTooltip": "Aviar / Arrestat los sostítols",
         "expandedLabel": "La transcripcion es activada",
         "failed": "La transcipcion a pas capitat",
-        "labelToolTip": "La reünion es a èsser transcricha",
         "sourceLanguageDesc": "La lenga actuala de la reünion es definida a <b>{{sourceLanguage}}</b>.<br/>La podètz cambiar a partir d' ",
         "sourceLanguageHere": "aquí",
         "start": "Mostrar los sostítols",
@@ -1424,8 +1419,6 @@
     },
     "videoStatus": {
         "adjustFor": "Ajustar per :",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Sètz en mòde connexion febla. Amb aqueste mòde recebretz pas que l’àudio e lo partatge d’ecran.",
         "bestPerformance": "Melhora performança",
         "callQuality": "Qualitat vidèo",
         "hd": "HD",
@@ -1433,9 +1426,11 @@
         "highDefinition": "Nauta definicion",
         "highestQuality": "Qualitat mai nauta",
         "labelTooiltipNoVideo": "Pas cap de vidèo",
-        "labelTooltipAudioOnly": "Mòde connexion febla activat",
+        "labelTooltipLowBandwidthMode": "Mòde connexion febla activat",
         "ld": "Bassa definicion",
         "ldTooltip": "Difusion vidèo en bassa definicion",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Sètz en mòde connexion febla. Amb aqueste mòde recebretz pas que l’àudio e lo partatge d’ecran.",
         "lowDefinition": "Bassa definicion",
         "performanceSettings": "Paramètres de performança",
         "recording": "A enregistrar",

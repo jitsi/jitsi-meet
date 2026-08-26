@@ -12,7 +12,7 @@ import {
     SAVE_POLL
 } from './actionTypes';
 import logger from './logger';
-import { IIncomingAnswerData, IPollData } from './types';
+import { IIncomingAnswerData, IPollData, IVoterData } from './types';
 
 const INITIAL_STATE = {
     polls: {},
@@ -96,7 +96,7 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
         // if the poll exists, we update it with the incoming answer
         for (let i = 0; i < poll.answers.length; i++) {
             // if the answer was chosen, we add the senderId to the array of voters of this answer
-            let voters = poll.answers[i].voters || [];
+            let voters = Array.isArray(poll.answers[i].voters) ? poll.answers[i].voters as IVoterData[] : [];
 
             if (voters.find(user => user.id === answer.senderId)) {
                 if (!answer.answers[i]) {

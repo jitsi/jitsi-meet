@@ -1,5 +1,6 @@
 import i18next from 'i18next';
 
+import { SET_KNOCKING_STATE } from '../../lobby/actionTypes';
 import {
     setPrejoinPageVisibility,
     setSkipPrejoinOnReload
@@ -58,6 +59,11 @@ async function releaseScreenLock() {
  * @returns {void}
  */
 function requestWakeLock() {
+    // A wake lock is already held (e.g. requested while knocking in the lobby), no need to request another one.
+    if (screenLock && !screenLock.released) {
+        return;
+    }
+
     if (navigator.wakeLock?.request) {
         navigator.wakeLock.request('screen')
             .then(lock => {
@@ -95,6 +101,18 @@ function onWakeLockReleased() {
     logger.debug('Wake lock released');
 }
 
+function onVisibilityChange() {
+    logger.debug(`Page visibility changed to: ${document.visibilityState}`);
+}
+
+function onPageHide(e: PageTransitionEvent) {
+    logger.debug(`Page hidden, persisted (BFCache freeze): ${e.persisted}`);
+}
+
+function onPageShow(e: PageTransitionEvent) {
+    logger.debug(`Page shown, persisted (BFCache restore): ${e.persisted}`);
+}
+
 MiddlewareRegistry.register(store => next => action => {
     const { dispatch, getState } = store;
     const { enableForcedReload } = getState()['features/base/config'];
@@ -102,6 +120,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_JOIN_IN_PROGRESS: {
         dispatch(setPrejoinPageVisibility(false));
+        document.addEventListener('visibilitychange', onVisibilityChange);
+        window.addEventListener('pagehide', onPageHide);
+        window.addEventListener('pageshow', onPageShow);
 
         break;
     }
@@ -111,6 +132,17 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         requestWakeLock();
+
+        break;
+    }
+    case SET_KNOCKING_STATE: {
+        // Keep the screen awake while waiting in the lobby. The lock is kept on join (see CONFERENCE_JOINED, which
+        // no-ops if it is already held) and released by the CONFERENCE_FAILED/CONFERENCE_LEFT/KICKED_OUT handlers if
+        // knocking is rejected or the user leaves. We intentionally do not release here on knocking === false to avoid
+        // dropping the lock mid-meeting once a participant has been admitted.
+        if (action.knocking) {
+            requestWakeLock();
+        }
 
         break;
     }
@@ -140,12 +172,18 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         releaseScreenLock();
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+        window.removeEventListener('pagehide', onPageHide);
+        window.removeEventListener('pageshow', onPageShow);
 
         break;
     }
     case CONFERENCE_LEFT:
     case KICKED_OUT:
         releaseScreenLock();
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+        window.removeEventListener('pagehide', onPageHide);
+        window.removeEventListener('pageshow', onPageShow);
 
         break;
     case CONNECTION_DISCONNECTED: {

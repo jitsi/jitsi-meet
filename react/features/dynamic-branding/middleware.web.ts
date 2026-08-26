@@ -1,4 +1,4 @@
-import { APP_WILL_MOUNT } from '../base/app/actionTypes';
+import { SET_CONFIG } from '../base/config/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { SET_DYNAMIC_BRANDING_DATA } from './actionTypes';
@@ -9,10 +9,12 @@ import './middleware.any';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case APP_WILL_MOUNT: {
+    case SET_CONFIG: {
+        const result = next(action);
 
         store.dispatch(fetchCustomBrandingData());
-        break;
+
+        return result;
     }
     case SET_DYNAMIC_BRANDING_DATA: {
         const { customTheme } = action.value;

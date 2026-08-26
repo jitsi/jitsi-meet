@@ -1,8 +1,9 @@
 import '../analytics/reducer';
+import '../audio-translation/reducer';
 import '../authentication/reducer';
 import '../av-moderation/reducer';
 import '../base/app/reducer';
-import '../base/audio-only/reducer';
+import '../base/low-bandwidth-mode/reducer';
 import '../base/conference/reducer';
 import '../base/config/reducer';
 import '../base/connection/reducer';

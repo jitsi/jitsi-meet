@@ -39,9 +39,6 @@
         "phone": "Telefon",
         "speaker": "Høyttaler"
     },
-    "audioOnly": {
-        "audioOnly": "Lav båndbredde"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "f.eks. 10000000 for 10 Mbps",
         "assumedBandwidthBpsWarning": "Høyere verdier kan forårsake nettverksproblemer.",
@@ -263,7 +260,6 @@
         "Remove": "Fjern",
         "Share": "Del",
         "Submit": "Send inn",
-        "WaitForHostMsg": "Konferansen har ikke startet ennå fordi ingen moderatorer har ankommet. Hvis du vil bli moderator, vennligst logg inn. Ellers, vennligst vent.",
         "WaitForHostNoAuthMsg": "Konferansen har ikke startet ennå fordi ingen moderatorer har ankommet. Vennligst vent.",
         "WaitingForHostButton": "Vent på moderator",
         "WaitingForHostTitle": "Venter på en moderator…",
@@ -728,10 +724,12 @@
         "button": "Inviter andre",
         "youAreAlone": "Du er den eneste i møtet"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Lav båndbredde"
+    },
     "me": "meg",
     "notify": {
         "OldElectronAPPTitle": "Sikkerhetssårbarhet!",
-        "allowAction": "Tillat",
         "allowedUnmute": "Du kan slå på mikrofonen, starte kameraet eller dele skjermen din.",
         "audioUnmuteBlockedDescription": "Slå på mikrofonen er midlertidig blokkert på grunn av systembegrensninger.",
         "audioUnmuteBlockedTitle": "Mikrofonaktivering blokkert!",
@@ -745,7 +743,6 @@
         "dataChannelClosedDescriptionWithAudio": "Brokkanalen er nede, og dermed kan det oppstå forstyrrelser i lyd og video.",
         "dataChannelClosedWithAudio": "Lyd- og videokvaliteten kan være svekket",
         "disabledIframe": "Innebygging er kun ment for demonstrasjonsformål, så denne samtalen vil kobles fra om {{timeout}} minutter.",
-        "disabledIframeSecondary": "Innebygging av {{domain}} er kun ment for demonstrasjonsformål, så denne samtalen vil kobles fra om {{timeout}} minutter. Vennligst bruk <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> for innebygging i produksjon!",
         "disconnected": "frakoblet",
         "displayNotifications": "Vis varsler for",
         "dontRemindMe": "Ikke minn meg på dette",
@@ -896,8 +893,7 @@
             "pollQuestion": "Avstemningsspørsmål",
             "questionPlaceholder": "Still et spørsmål",
             "removeOption": "Fjern alternativ",
-            "save": "Lagre",
-            "send": "Send"
+            "save": "Lagre"
         },
         "errors": {
             "notUniqueOption": "Alternativene må være unike"
@@ -1078,7 +1074,7 @@
         "about": "Du kan legge til et $t(lockRoomPassword) for møtet ditt. Deltakere må oppgi $t(lockRoomPassword) før de får bli med i møtet.",
         "aboutReadOnly": "Moderatorer kan legge til et $t(lockRoomPassword) for møtet. Deltakere må oppgi $t(lockRoomPassword) før de får bli med i møtet.",
         "insecureRoomNameWarningNative": "Romnavnet er usikkert. Uønskede deltakere kan bli med i møtet ditt. {{recommendAction}} Lær mer om hvordan du sikrer møtet ditt.",
-        "insecureRoomNameWarningWeb": "Romnavnet er usikkert. Uønskede deltakere kan bli med i møtet ditt. {{recommendAction}} Lær mer om hvordan du sikrer møtet ditt <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">her</a>.",
+        "insecureRoomNameWarningWeb": "Romnavnet er usikkert. Uønskede deltakere kan bli med i møtet ditt. {{recommendAction}} Lær mer om hvordan du sikrer møtet ditt <a href=\"{{securityUrl}}\" target=\"_blank\">her</a>.",
         "title": "Sikkerhetsalternativer",
         "unsafeRoomActions": {
             "meeting": "Vurder å sikre møtet ditt ved å bruke sikkerhetsknappen.",
@@ -1208,7 +1204,6 @@
         "Settings": "Innstillinger",
         "accessibilityLabel": {
             "Settings": "Åpne innstillinger",
-            "audioOnly": "Veksle kun lyd",
             "audioRoute": "Velg lydenhet",
             "boo": "Buu",
             "breakoutRooms": "Grupperom",
@@ -1250,6 +1245,7 @@
             "localRecording": "Veksle kontroller for lokalt opptak",
             "lockRoom": "Veksle møtepassord",
             "love": "Hjerte",
+            "lowBandwidthMode": "Veksle kun lyd",
             "lowerHand": "Senk hånden",
             "moreActions": "Flere handlinger",
             "moreActionsMenu": "Meny for flere handlinger",
@@ -1298,8 +1294,6 @@
             "videounmute": "Start kamera"
         },
         "addPeople": "Legg til personer i samtalen din",
-        "audioOnlyOff": "Deaktiver modus for lav båndbredde",
-        "audioOnlyOn": "Aktiver modus for lav båndbredde",
         "audioRoute": "Velg lydenhet",
         "audioSettings": "Lydinnstillinger",
         "authenticate": "Autentiser",
@@ -1340,6 +1334,8 @@
         "login": "Logg inn",
         "logout": "Logg ut",
         "love": "Hjerte",
+        "lowBandwidthModeOff": "Deaktiver modus for lav båndbredde",
+        "lowBandwidthModeOn": "Aktiver modus for lav båndbredde",
         "lowerYourHand": "Senk hånden",
         "moreActions": "Flere handlinger",
         "moreOptions": "Flere alternativer",
@@ -1400,7 +1396,6 @@
         "ccButtonTooltip": "Start / Stopp undertekster",
         "expandedLabel": "Transkribering er for øyeblikket på",
         "failed": "Transkribering mislyktes",
-        "labelToolTip": "Møtet blir transkribert",
         "sourceLanguageDesc": "For øyeblikket er møtespråket satt til <b>{{sourceLanguage}}</b>. <br/> Du kan endre det ",
         "sourceLanguageHere": "her",
         "start": "Start visning av undertekster",
@@ -1425,8 +1420,6 @@
     },
     "videoStatus": {
         "adjustFor": "Juster for:",
-        "audioOnly": "LYD",
-        "audioOnlyExpanded": "Du er i modus for lav båndbredde. I denne modusen vil du kun motta lyd og skjermdeling.",
         "bestPerformance": "Beste ytelse",
         "callQuality": "Videokvalitet (0 for best ytelse, 3 for høyeste kvalitet)",
         "hd": "HD",
@@ -1434,9 +1427,11 @@
         "highDefinition": "Høy oppløsning",
         "highestQuality": "Høyeste kvalitet",
         "labelTooiltipNoVideo": "Ingen video",
-        "labelTooltipAudioOnly": "Modus for lav båndbredde aktivert",
+        "labelTooltipLowBandwidthMode": "Modus for lav båndbredde aktivert",
         "ld": "LD",
         "ldTooltip": "Ser video i lav oppløsning",
+        "lowBandwidthMode": "LYD",
+        "lowBandwidthModeExpanded": "Du er i modus for lav båndbredde. I denne modusen vil du kun motta lyd og skjermdeling.",
         "lowDefinition": "Lav oppløsning",
         "performanceSettings": "Ytelsesinnstillinger",
         "recording": "Opptak pågår",

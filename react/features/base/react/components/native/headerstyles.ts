@@ -60,7 +60,7 @@ ColorSchemeRegistry.register('Header', {
      * The top-level element of a page.
      */
     page: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         alignItems: 'stretch',
         flex: 1,
         flexDirection: 'column',

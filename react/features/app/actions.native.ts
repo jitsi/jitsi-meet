@@ -23,7 +23,8 @@ import {
 import { isPrejoinPageEnabled } from '../mobile/navigation/functions';
 import {
     goBackToRoot,
-    navigateRoot
+    navigateRoot,
+    replaceRoot
 } from '../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../mobile/navigation/routes';
 import { clearNotifications } from '../notifications/actions';
@@ -156,13 +157,13 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
 
         if (!options.hidePrejoin && isPrejoinPageEnabled(getState())) {
             if (isUnsafeRoomWarningEnabled(getState()) && isInsecureRoomName(room)) {
-                navigateRoot(screen.unsafeRoomWarning);
+                replaceRoot(screen.unsafeRoomWarning);
             } else {
-                navigateRoot(screen.preJoin);
+                replaceRoot(screen.preJoin);
             }
         } else {
             dispatch(connect());
-            navigateRoot(screen.conference.root);
+            replaceRoot(screen.conference.root);
         }
     };
 }

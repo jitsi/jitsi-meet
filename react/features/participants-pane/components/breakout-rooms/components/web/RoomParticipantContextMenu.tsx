@@ -108,10 +108,12 @@ export const RoomParticipantContextMenu = ({
 
     return isLocalModerator ? (
         <ContextMenu
+            activateFocusTrap = { true }
             entity = { entity }
             isDrawerOpen = { Boolean(entity) }
             offsetTarget = { offsetTarget }
             onClick = { lowerMenu }
+            onClickOutside = { lowerMenu }
             onDrawerClose = { onSelect }
             onMouseEnter = { onEnter }
             onMouseLeave = { onLeave }>

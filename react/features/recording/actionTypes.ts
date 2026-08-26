@@ -125,3 +125,15 @@ export const SET_START_RECORDING_INTENT = 'SET_START_RECORDING_INTENT';
  * }
  */
 export const SET_STOP_RECORDING_INTENT = 'SET_STOP_RECORDING_INTENT';
+
+/**
+ * Tracks whether a local recording is currently active in Redux state so that
+ * selectors (isRecordingRunning, getSessionStatusToShow) can react to it
+ * without polling the LocalRecordingManager singleton directly.
+ *
+ * {
+ *     type: SET_LOCAL_RECORDING_RUNNING,
+ *     running: boolean
+ * }
+ */
+export const SET_LOCAL_RECORDING_RUNNING = 'SET_LOCAL_RECORDING_RUNNING';

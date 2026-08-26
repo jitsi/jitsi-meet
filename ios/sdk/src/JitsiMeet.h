@@ -86,15 +86,9 @@ typedef NS_ENUM(NSInteger, WebRTCLoggingSeverity) {
 
 #pragma mark - Utility methods
 
-/**
- * Once  the react native bridge is destroyed you are responsible for reinstantiating it back. Use this method to do so.
- */
-- (void)instantiateReactNativeBridge;
+- (void)instantiateReactNative;
 
-/**
- * Helper method to destroy the react native bridge, cleaning up resources in the process. Once the react native bridge is destroyed you are responsible for reinstantiating it back using `instantiateReactNativeBridge` method.
- */
-- (void)destroyReactNativeBridge;
+- (void)destroyReactNative;
 
 - (JitsiMeetConferenceOptions *_Nonnull)getInitialConferenceOptions;
 

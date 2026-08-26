@@ -1,18 +1,51 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
 include ':app', ':sdk'
 
 includeBuild('../node_modules/@react-native/gradle-plugin')
 
-def autolinkingJson = file('build/generated/autolinking/autolinking.json')
-if (autolinkingJson.exists()) {
-    def json = new groovy.json.JsonSlurper().parseText(autolinkingJson.text)
-    json.dependencies.each { name, config ->
-        if (config.platforms?.android?.sourceDir) {
+// Non-free RN modules, excluded when LIBRE_BUILD is set.
+def libreExcludedModules = [
+    '@amplitude/analytics-react-native',
+    '@giphy/react-native-sdk',
+    '@react-native-google-signin/google-signin'
+]
 
-            def projectName = name.replace('@', '').replace('/', '-')
-            def sourceDir = config.platforms.android.sourceDir
-            
-            include ":$projectName"
-            project(":$projectName").projectDir = new File(sourceDir)
-        }
+// Autolinked RN module paths, consumed by sdk/build.gradle.
+gradle.ext.autolinkedProjects = []
+
+def autolinkingJson = file('build/generated/autolinking/autolinking.json')
+if (!autolinkingJson.exists()) {
+    throw new IllegalStateException(
+        "Missing ${autolinkingJson}. Run `npm run android-autolinking` before building.")
+}
+
+def json = new JsonSlurper().parseText(autolinkingJson.text)
+
+// Filtered here so the includes below and sdk/build.gradle's codegen agree.
+def autolinkingManifest = autolinkingJson
+if ((System.env.LIBRE_BUILD ?: 'false').toBoolean()) {
+    // Fail loudly if the list above was patched away.
+    if (libreExcludedModules.isEmpty()) {
+        throw new IllegalStateException('LIBRE_BUILD is set but libreExcludedModules is empty.')
+    }
+
+    libreExcludedModules.each { json.dependencies.remove(it) }
+
+    autolinkingManifest = file('build/generated/autolinking/autolinking-libre.json')
+    autolinkingManifest.text = JsonOutput.toJson(json)
+}
+gradle.ext.autolinkingManifest = autolinkingManifest
+
+json.dependencies.each { name, config ->
+    if (config.platforms?.android?.sourceDir) {
+
+        def projectName = name.replace('@', '').replace('/', '-')
+        def sourceDir = config.platforms.android.sourceDir
+
+        include ":$projectName"
+        project(":$projectName").projectDir = new File(sourceDir)
+        gradle.ext.autolinkedProjects << ":$projectName".toString()
     }
 }

@@ -704,6 +704,10 @@ local function iq_from_main_handler(event)
     local room = get_room_from_jid(room_jid_match_rewrite(room_jid));
 
     if not room then
+        if visitors_iq:get_child('disconnect') then
+            -- maybe room was already destroyed, mark as processed so we can response with ok for the iq
+            return true;
+        end
         module:log('warn', 'No room found %s in iq_from_main_handler for:%s', room_jid, visitors_iq);
         return;
     end
@@ -814,6 +818,12 @@ module:hook('iq/host', iq_from_main_handler, 10);
 -- Filters presences (if detected) that are with destination the main prosody
 function filter_stanza(stanza, session)
     if (stanza.name == 'presence' or stanza.name == 'message') and session.type ~= 'c2s' then
+
+        -- do not send anything to the main prosody if the destination is the main domain
+        if jid.host(stanza.attr.to) == main_domain then
+            return nil; -- returning nil filters the stanza
+        end
+
         -- we clone it so we do not affect broadcast using same stanza, sending it to clients
         local f_st = st.clone(stanza);
         f_st.skipMapping = true;

@@ -11,7 +11,7 @@ import {
 import { VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
 
 import { showStartRecordingNotificationWithCallback } from './actions.any';
-import { StartRecordingDialog } from './components/Recording';
+import { RecordingTranscriptionDialog } from './components/Recording';
 
 export * from './actions.any';
 
@@ -63,7 +63,7 @@ export function grantRecordingConsentAndUnmute() {
  */
 export function showStartRecordingNotification() {
     return (dispatch: IStore['dispatch']) => {
-        const openDialogCallback = () => dispatch(openDialog('StartRecordingDialog', StartRecordingDialog));
+        const openDialogCallback = () => dispatch(openDialog('RecordingTranscriptionDialog', RecordingTranscriptionDialog));
 
         dispatch(showStartRecordingNotificationWithCallback(openDialogCallback));
     };

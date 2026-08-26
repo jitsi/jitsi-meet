@@ -4,6 +4,7 @@ import { batch, useDispatch, useSelector } from 'react-redux';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IReduxState } from '../app/types';
+import { useAudioTranslationButton } from '../audio-translation/hooks.web';
 import { toggleDialog } from '../base/dialog/actions';
 import { isIosMobileBrowser, isIpadMobileBrowser } from '../base/environment/utils';
 import { HELP_BUTTON_ENABLED } from '../base/flags/constants';
@@ -36,6 +37,7 @@ import {
     isParticipantsPaneEnabled
 } from '../participants-pane/functions';
 import { useParticipantPaneButton } from '../participants-pane/hooks.web';
+import { usePipToggleButton } from '../pip/hooks';
 import { usePollsButton } from '../polls/hooks.web';
 import { addReactionToBuffer } from '../reactions/actions.any';
 import { toggleReactionsMenuVisibility } from '../reactions/actions.web';
@@ -291,6 +293,7 @@ export function useToolboxButtons(
     const tileview = useTileViewButton();
     const chat = useChatButton();
     const cc = useClosedCaptionButton();
+    const audioTranslation = useAudioTranslationButton();
     const polls = usePollsButton();
     const filesharing = useFileSharingButton();
     const recording = useRecordingButton();
@@ -309,6 +312,7 @@ export function useToolboxButtons(
     const _help = useHelpButton();
     const _invite = useInviteButton();
     const customPanel = useCustomPanelButton();
+    const togglePiPButton = usePipToggleButton();
 
     const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
         microphone,
@@ -322,10 +326,12 @@ export function useToolboxButtons(
         invite: _invite,
         tileview,
         'toggle-camera': toggleCameraButton,
+        'toggle-pip': togglePiPButton,
         videoquality: videoQuality,
         fullscreen: _fullscreen,
         security,
         closedcaptions: cc,
+        audiotranslation: audioTranslation,
         polls,
         filesharing,
         recording,

@@ -7,6 +7,12 @@ import { IToken, ITokenOptions } from './token';
 
 export type IContext = {
     /**
+     * The name (describe block title) of the suite in which a test failed. Used to skip the remaining tests in that
+     * suite while still running tests in other describe blocks in the same file.
+     */
+    failedSuite?: string;
+
+    /**
      *  The up-to-six browser instances provided by the framework. These can be initialized using
      *  ensureOneParticipant, ensureTwoParticipants, etc. from participants.ts.
      **/

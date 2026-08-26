@@ -381,6 +381,16 @@ function on_breakout_room_pre_create(event)
         breakout_room:set_subject(breakout_room.jid, main_room._data.breakout_rooms[breakout_room.jid]);
     else
         module:log('debug', 'Invalid breakout room %s will not be created.', breakout_room.jid);
+
+        -- Tell the client that the join failed. Without this reply the join presence is
+        -- dropped without an answer, and the client waits until its own timeout.
+        -- Prosody sends an error for restrict_room_creation, but that handler and this one
+        -- both use the default priority, so the order between the two is not defined.
+        if event.origin and event.stanza then
+            event.origin.send(st.error_reply(
+                event.stanza, 'cancel', 'item-not-found', 'Breakout room is invalid.'));
+        end
+
         breakout_room:destroy(main_room_jid, 'Breakout room is invalid.');
         return true;
     end

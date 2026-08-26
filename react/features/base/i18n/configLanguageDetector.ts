@@ -1,9 +1,12 @@
 import { noop } from 'lodash-es';
 
-declare let config: any;
-
 /**
  * Custom language detection, just returns the config property if any.
+ *
+ * When config.js has not yet been loaded (e.g. SSI did not inject it and we
+ * are fetching it asynchronously via appNavigate), this returns undefined so
+ * other detectors in the chain take over. Once SET_CONFIG dispatches, the
+ * i18n middleware applies defaultLanguage from the store via changeLanguage.
  */
 export default {
     cacheUserLanguage: noop,
@@ -11,10 +14,10 @@ export default {
     /**
      * Looks the language up in the config.
      *
-     * @returns {string} The default language if any.
+     * @returns {string | undefined} The default language if available.
      */
     lookup() {
-        return config.defaultLanguage;
+        return window.config?.defaultLanguage;
     },
 
     /**
