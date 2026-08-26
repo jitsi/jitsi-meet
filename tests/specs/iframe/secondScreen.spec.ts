@@ -178,11 +178,16 @@ describe('setSecondScreen iframe API command', () => {
         const changed = await p1.getIframeAPI().getEventResult('secondScreenSourceChanged');
 
         if (!changed) {
-            // No window was opened in this environment, which the previous test
-            // has already accounted for. Skip rather than return: headless
-            // cannot grant the window-management permission, so this would
-            // otherwise report green without ever touching the payload it is
-            // named for.
+            // secondScreenSourceChanged never fired, so no window was ever
+            // opened/registered in this environment. Skip rather than return:
+            // headless cannot grant the window-management permission, so this
+            // would otherwise report green without ever touching the payload
+            // it is named for.
+            //
+            // When changed is truthy the window may since have closed itself
+            // (see the next test) - that does not matter here, since this only
+            // checks the shape of the payload already recorded, not that a
+            // window is still open.
             // eslint-disable-next-line @typescript-eslint/no-invalid-this
             this.skip();
         }
@@ -196,17 +201,17 @@ describe('setSecondScreen iframe API command', () => {
     it('closes an open window and reports it', async function() {
         const { p1 } = ctx;
 
-        const changed = await p1.getIframeAPI().getEventResult('secondScreenSourceChanged');
-        const handles = await p1.driver.getWindowHandles();
-
-        if (!changed || handles.length === 1) {
-            // Nothing to close: either no window was opened in this environment
-            // (same reason as above), or it already closed itself asynchronously
-            // (e.g. a window-management-unavailable failure resolving shortly
-            // after secondScreenSourceChanged had already fired) before this
-            // test got a chance to close it. The cached event alone cannot tell
-            // the two apart from "still open", so the live handle count is
-            // checked too.
+        if ((await p1.driver.getWindowHandles()).length === 1) {
+            // Nothing to close: either no window was ever opened in this
+            // environment, or it already closed itself asynchronously (e.g. a
+            // window-management-unavailable failure resolving shortly after
+            // secondScreenSourceChanged had already fired) before this test
+            // got a chance to close it. The live handle count is the direct
+            // signal for "is there a window to close", unlike the cached event
+            // above, which stays truthy even once that window is long gone -
+            // that is what makes this a skip rather than a pass in practice on
+            // every environment CI runs today; see secondScreen.manual.md for
+            // the coverage that would otherwise exercise this path.
             // eslint-disable-next-line @typescript-eslint/no-invalid-this
             this.skip();
         }
