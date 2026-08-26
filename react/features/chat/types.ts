@@ -16,9 +16,11 @@ export type ChatMessageType =
 
 export interface IMessage {
     displayName: string;
+    editedAt?: number;
     error?: unknown;
     fileMetadata?: IFileMetadata;
     isDeleted?: boolean;
+    isEdited?: Boolean;
     isFromGuest?: boolean;
     isFromVisitor?: boolean;
     isReaction: boolean;
@@ -111,4 +113,20 @@ export interface IChatMessageProps extends WithTranslation {
      * displayed.
      */
     showTimestamp: boolean;
+}
+
+/**
+ * The shape of a single cached pending edit, keyed by messageId in Redux state.
+ */
+export interface IPendingEdit {
+    editedAt: number;
+    message: string;
+    participantId?: string;
+}
+
+/**
+ * The shape of the pendingEdits map in Redux state.
+ */
+export interface IPendingEditsMap {
+    [messageId: string]: IPendingEdit;
 }

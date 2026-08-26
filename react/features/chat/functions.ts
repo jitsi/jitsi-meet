@@ -21,8 +21,8 @@ import { isCCTabEnabled } from '../subtitles/functions.any';
 import { VIDEO_SPACE_MIN_SIZE } from '../video-layout/constants';
 import { IVisitorChatParticipant } from '../visitors/types';
 
-import { ChatTabs, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
-import { IMessage } from './types';
+import { ChatTabs, MAX_PENDING_EDITS, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
+import { IMessage, IPendingEdit, IPendingEditsMap } from './types';
 
 /**
  * An ASCII emoticon regexp array to find and replace old-style ASCII
@@ -395,6 +395,30 @@ export function isFileMessage(message: IMessage): boolean {
 }
 
 /**
+ * Inserts a pending edit into the map, evicting the oldest entry if the cap is exceeded.
+ *
+ * @param {IPendingEditsMap} pendingEdits - The current pending edits map.
+ * @param {string} messageId - The id of the message the edit targets.
+ * @param {IPendingEdit} edit - The pending edit to insert.
+ * @returns {IPendingEditsMap} The updated pending edits map.
+ */
+export function addPendingEdit(
+        pendingEdits: IPendingEditsMap,
+        messageId: string,
+        edit: IPendingEdit
+): IPendingEditsMap {
+    const next = { ...pendingEdits, [messageId]: edit };
+    const keys = Object.keys(next);
+
+    if (keys.length > MAX_PENDING_EDITS) {
+        // Object key order is insertion order for string keys in JS, so the first key is the oldest.
+        delete next[keys[0]];
+    }
+
+    return next;
+}
+
+/*
  * Returns the current chat search query.
  *
  * @param {IReduxState} state - The redux state.

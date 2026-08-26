@@ -16,6 +16,7 @@ import {
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     RETRACT_MESSAGE,
     SEND_MESSAGE,
+    SEND_MESSAGE_EDIT,
     SEND_MESSAGE_RETRACTION,
     SEND_REACTION,
     SET_CHAT_SEARCH_MATCH_INDEX,
@@ -188,6 +189,25 @@ export function sendReaction(reaction: string, messageId: string, receiverId?: s
 }
 
 /**
+ * Sends an edit for an existing chat message to everyone in the conference.
+ *
+ * @param {string} messageId - The ID of the message being edited.
+ * @param {string} message - The updated chat message.
+ * @returns {{
+ *     type: SEND_MESSAGE_EDIT,
+ *     messageId: string,
+ *     message: string
+ * }}
+ */
+export function sendMessageEdit(messageId: string, message: string) {
+    return {
+        type: SEND_MESSAGE_EDIT,
+        messageId,
+        message
+    };
+}
+
+/*
  * Sets the chat search query and resets the match index back to the first result.
  *
  * @param {string} query - The search text.
