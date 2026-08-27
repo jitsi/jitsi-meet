@@ -27,6 +27,18 @@ export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
 
 /**
+ * The type of (redux) action which signals that an external token
+ * authentication (started by opening {@code tokenAuthUrl} in the system
+ * browser) is pending or has finished. Native only.
+ *
+ * {
+ *     type: SET_TOKEN_AUTH_PENDING,
+ *     pending: boolean
+ * }
+ */
+export const SET_TOKEN_AUTH_PENDING = 'SET_TOKEN_AUTH_PENDING';
+
+/**
  * The type of (redux) action which signals that the cyclic operation of waiting
  * for conference owner has been aborted.
  *

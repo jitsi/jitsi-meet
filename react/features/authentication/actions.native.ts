@@ -7,7 +7,7 @@ import { connectionFailed } from '../base/connection/actions.native';
 import { hideDialog, openDialog } from '../base/dialog/actions';
 import { set } from '../base/redux/functions';
 
-import { CANCEL_LOGIN } from './actionTypes';
+import { CANCEL_LOGIN, SET_TOKEN_AUTH_PENDING } from './actionTypes';
 import { stopWaitForOwner } from './actions.any';
 import LoginRetryDialog from './components/native/LoginRetryDialog';
 import logger from './logger';
@@ -99,6 +99,25 @@ export function redirectToDefaultLocation() {
 }
 
 /**
+ * Sets whether an external token authentication (started by opening
+ * {@code tokenAuthUrl} in the system browser) is pending. While the flag is
+ * set, returning to the foreground without a connection means the login was
+ * abandoned and {@link LoginRetryDialog} is shown.
+ *
+ * @param {boolean} pending - Whether the external login is pending.
+ * @returns {{
+ *     type: SET_TOKEN_AUTH_PENDING,
+ *     pending: boolean
+ * }}
+ */
+export function setTokenAuthPending(pending: boolean) {
+    return {
+        type: SET_TOKEN_AUTH_PENDING,
+        pending
+    };
+}
+
+/**
  * Opens token auth URL page.
  *
  * @param {string} tokenAuthServiceUrl - Authentication service URL.
@@ -106,7 +125,17 @@ export function redirectToDefaultLocation() {
  * @returns {Function}
  */
 export function openTokenAuthUrl(tokenAuthServiceUrl: string) {
-    return () => {
+    return (dispatch: IStore['dispatch']) => {
+        dispatch(setTokenAuthPending(true));
+
+        // Show the dialog right away, behind the browser: if the login is
+        // completed, the deep link triggers a new connection attempt which
+        // dismisses it; if the login is abandoned, it is what the user finds
+        // when they return. The app may be put into picture-in-picture while
+        // the browser is up, in which case no AppState change is emitted on
+        // return, so the dialog cannot be reliably shown at that point.
+        dispatch(openLoginRetryDialog());
+
         Linking.openURL(tokenAuthServiceUrl)
             .catch(error => logger.error('Failed to open token auth URL', error));
     };

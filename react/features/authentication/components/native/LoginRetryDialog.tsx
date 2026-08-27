@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import ConfirmDialog from '../../../base/dialog/components/native/ConfirmDialog';
-import { cancelLogin, login } from '../../actions.native';
+import { cancelLogin, login, redirectToDefaultLocation } from '../../actions.native';
 
 /**
  * Dialog shown when the app returns to the foreground while an external token
@@ -21,6 +21,12 @@ export default function LoginRetryDialog(): JSX.Element {
     }, [ dispatch ]);
     const handleCancel = useCallback(() => {
         dispatch(cancelLogin());
+
+        // cancelLogin() only navigates away when the connection is still
+        // parked on passwordRequired; on WebSocket deployments that state is
+        // reset by the subsequent connection-dropped failure, so leave the
+        // dead conference screen explicitly.
+        dispatch(redirectToDefaultLocation());
 
         return true; // close dialog
     }, [ dispatch ]);

@@ -1,9 +1,10 @@
 import { CONNECTION_ESTABLISHED, CONNECTION_WILL_CONNECT } from '../base/connection/actionTypes';
 import { isDialogOpen } from '../base/dialog/functions';
+import { SET_JWT } from '../base/jwt/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { APP_STATE_CHANGED } from '../mobile/background/actionTypes';
 
-import { hideLoginRetryDialog, openLoginRetryDialog } from './actions.native';
+import { hideLoginRetryDialog, openLoginRetryDialog, setTokenAuthPending } from './actions.native';
 import LoginRetryDialog from './components/native/LoginRetryDialog';
 import { isTokenAuthEnabled } from './functions.native';
 
@@ -17,7 +18,11 @@ import './middleware.any';
  * Opening {@code tokenAuthUrl} in the system browser is fire-and-forget: if
  * the user abandons the login page and switches back to the app, no deep link
  * is ever delivered and the app keeps showing the conference screen with no
- * connection and no indication of failure.
+ * connection and no indication of failure. The pending state is tracked with
+ * an explicit flag (set when the browser is opened, cleared when a new
+ * connection attempt starts) because the connection-level error state cannot
+ * be relied upon: on WebSocket deployments the not-authorized failure is
+ * immediately followed by a connection-dropped failure which resets it.
  *
  * @param {Store} store - The redux store.
  * @returns {Function}
@@ -30,15 +35,17 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         const state = store.getState();
-        const { passwordRequired } = state['features/base/connection'];
+        const { tokenAuthPending } = state['features/authentication'];
+        const { conference, room } = state['features/base/conference'];
         const { jwt } = state['features/base/jwt'];
 
-        // passwordRequired is set when the XMPP connection was rejected with
-        // not-authorized. With token auth enabled that means the user was sent
-        // to the external login page. If the app is back in the foreground
-        // with it still set and no JWT has been delivered via a deep link,
-        // the login was abandoned and the app is not connected.
-        if (passwordRequired
+        // The app is back in the foreground on the conference screen with the
+        // external login still pending: no conference was joined and no JWT
+        // has been delivered via a deep link, so the login was abandoned and
+        // the app is not connected.
+        if (tokenAuthPending
+                && room
+                && !conference
                 && !jwt
                 && isTokenAuthEnabled(state)
                 && !isDialogOpen(store, LoginRetryDialog)) {
@@ -47,15 +54,30 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case SET_JWT:
+        // SET_JWT with no token is the periodic clearing that happens on
+        // every navigation; only a delivered token completes the login.
+        if (!action.jwt) {
+            break;
+        }
+
+    // eslint-disable-next-line no-fallthrough
     case CONNECTION_ESTABLISHED:
-    case CONNECTION_WILL_CONNECT:
-        // A deep link with a fresh JWT may be processed right after the app
-        // is foregrounded; dismiss the dialog once a new connection attempt
+    case CONNECTION_WILL_CONNECT: {
+        // The external login is no longer pending once the deep link delivers
+        // a JWT (the room may first land on the prejoin screen, where no
+        // connection attempt is started yet) or a new connection attempt
         // starts.
+        const { dispatch, getState } = store;
+
+        if (getState()['features/authentication'].tokenAuthPending) {
+            dispatch(setTokenAuthPending(false));
+        }
         if (isDialogOpen(store, LoginRetryDialog)) {
-            store.dispatch(hideLoginRetryDialog());
+            dispatch(hideLoginRetryDialog());
         }
         break;
+    }
     }
 
     return next(action);
