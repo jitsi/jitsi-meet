@@ -142,4 +142,5 @@ async function muteP1BeforeP2JoinsAndScreenshare(p2p: boolean) {
     await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1);
     await unmuteVideoAndCheck(p1, p2);
     await p2.waitForRemoteVideo(await p1.getEndpointId());
+    await p2.waitForRemoteVideoDecoding(await p1.getEndpointId());
 }

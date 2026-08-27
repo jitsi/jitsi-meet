@@ -536,6 +536,26 @@ export class Participant {
     }
 
     /**
+     * Waits until the stats report a positive framerate for the video of the given remote endpoint, which means that
+     * frames from that endpoint are actually being decoded. Receiving data is not enough on its own, when the sender
+     * uses a payload type that was not negotiated the packets are received but not a single frame gets decoded.
+     *
+     * @param {string} endpointId - The endpoint ID of the participant whose video should be decoded.
+     * @param {number} timeout - Max time to wait in ms.
+     * @returns {Promise<boolean>}
+     */
+    async waitForRemoteVideoDecoding(endpointId: string, timeout = 15_000): Promise<boolean> {
+        return this.driver.waitUntil(() => this.execute(id => {
+            const framerates: { [ssrc: string]: number; } = APP?.conference?.getStats()?.framerate?.[id] ?? {};
+
+            return Object.values(framerates).some(fps => fps > 0);
+        }, endpointId), {
+            timeout,
+            timeoutMsg: `expected video of ${endpointId} to be decoded in ${timeout / 1000}s by ${this.name}`
+        });
+    }
+
+    /**
      * Waits until there are at least [number] participants that have at least one track.
      *
      * @param {number} number - The number of remote streams to wait for.
