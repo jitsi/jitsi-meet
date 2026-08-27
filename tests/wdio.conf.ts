@@ -388,6 +388,14 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         console.log(`Running test: ${testName} via worker: ${cid} browser instances:${multiRemoteBrowser.instances.length}`);
 
+        // Log the browsers in use, the console logs of the participants are attached to the report only when a test
+        // fails, so this is the only place where a passing run records what it was executed against.
+        console.log(`Using browsers: ${multiRemoteBrowser.instances.map((instance: string) => {
+            const { browserName, browserVersion } = multiRemoteBrowser.getInstance(instance).capabilities;
+
+            return `${instance}:${browserName}/${browserVersion}`;
+        }).join(' ')}`);
+
         const globalAny: any = global;
 
         globalAny.ctx = {
