@@ -47,6 +47,7 @@ import {
     OPEN_CHAT,
     SEND_MESSAGE,
     SEND_MESSAGE_EDIT,
+    SEND_MESSAGE_MODERATION,
     SEND_MESSAGE_RETRACTION,
     SEND_REACTION,
     SET_FOCUSED_TAB
@@ -57,6 +58,7 @@ import {
     clearChatState,
     closeChat,
     editMessage,
+    moderateMessage,
     notifyPrivateRecipientsChanged,
     openChat,
     retractMessage,
@@ -72,7 +74,8 @@ import {
     MESSAGE_TYPE_ERROR,
     MESSAGE_TYPE_LOCAL,
     MESSAGE_TYPE_REMOTE,
-    MESSAGE_TYPE_SYSTEM
+    MESSAGE_TYPE_SYSTEM,
+    MODERATE_CHAT_MESSAGE
 } from './constants';
 import {
     getDisplayNameSuffix,
@@ -153,6 +156,10 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const { participant, data } = action;
 
+        if (data?.type === MODERATE_CHAT_MESSAGE) {
+            _onMessageModerated(store, data.messageId, data.moderatedBy, data.reason);
+        }
+
         if (data?.type === EDIT_CHAT_MESSAGE && data.messageId && data.message) {
             const trimmedMessage = String(data.message).slice(0, CHAR_LIMIT);
 
@@ -196,6 +203,11 @@ MiddlewareRegistry.register(store => next => action => {
 
     case NON_PARTICIPANT_MESSAGE_RECEIVED: {
         const { participantId, json: data } = action;
+
+        if (data?.type === MODERATE_CHAT_MESSAGE) {
+            _onMessageModerated(store, data.messageId, data.moderatedBy, data.reason);
+            break;
+        }
 
         if (data?.type === MESSAGE_TYPE_SYSTEM && data.message) {
             _handleReceivedMessage(store, {
@@ -272,12 +284,42 @@ MiddlewareRegistry.register(store => next => action => {
         const local = getLocalParticipant(state);
 
         if (conference && action.participant?.id && local?.id) {
+            const moderatedMessages = state['features/chat'].messages.filter(
+                (m: IMessage) =>
+                    m.isModerated
+            );
+
             const editedMessages = state['features/chat'].messages.filter(
                 (m: IMessage) =>
                     m.isEdited
                     && !m.privateMessage
                     && m.messageType === MESSAGE_TYPE_LOCAL
             );
+
+            if (moderatedMessages.length > 0) {
+                const sendWithRetry = (retries: number) => {
+                    try {
+                        moderatedMessages.forEach(message => {
+                            conference.sendPrivateTextMessage(
+                                action.participant.id,
+                                JSON.stringify({
+                                    type: MODERATE_CHAT_MESSAGE,
+                                    messageId: message.messageId,
+                                    moderatedBy: message.moderatedBy,
+                                    reason: message.moderationReason
+                                }),
+                                'json-message'
+                            );
+                        });
+                    } catch (e) {
+                        if (retries > 0) {
+                            setTimeout(() => sendWithRetry(retries - 1), 1000);
+                        }
+                    }
+                };
+
+                setTimeout(() => sendWithRetry(3), 3000);
+            }
 
             editedMessages.forEach(message => {
                 conference.sendPrivateTextMessage(
@@ -463,6 +505,20 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case SEND_MESSAGE_MODERATION: {
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+
+        if (conference) {
+            conference.moderateMessage(
+                action.message.messageId,
+                action.reason
+            );
+        }
+
+        break;
+    }
+
     case ADD_REACTION_MESSAGE: {
         if (localParticipant?.id) {
             _handleReceivedMessage(store, {
@@ -621,11 +677,16 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
     );
 
     conference.on(
+        JitsiConferenceEvents.MESSAGE_MODERATED,
+        (messageId: string, moderatorId: string, reason?: string) => {
+            _onMessageModerated(store, messageId, moderatorId, reason);
+        });
+
+    conference.on(
         JitsiConferenceEvents.MESSAGE_RETRACTED,
         (participantId: string, messageId: string) => {
             _onMessageRetracted(store, participantId, messageId);
-        }
-    );
+        });
 
     conference.on(
         JitsiConferenceEvents.CONFERENCE_ERROR, (errorType: string, error: Error) => {
@@ -690,6 +751,29 @@ function _onReactionReceived(store: IStore, { participantId, reactionList, messa
 }
 
 /**
+ * Handles a moderator message deletion.
+ *
+ * @param {Object} store - Redux store.
+ * @param {string} messageId - The id of the message which is being deleted.
+ * @param {string} moderatorId - The Id of the moderator.
+ * @param {string} reason - The reason for which message is deleted.
+ * @returns {void}
+ */
+function _onMessageModerated(store: IStore, messageId: string, moderatorId: string, reason?: string) {
+    const { messages } = store.getState()['features/chat'];
+
+    const originalMessage = messages.find(
+        message => message.messageId === messageId
+    );
+
+    if (!originalMessage) {
+        return;
+    }
+
+    store.dispatch(moderateMessage(messageId, moderatorId, reason));
+}
+
+/*
  * Handles a retracted message.
  *
  * @param {Object} store - Redux store.
