@@ -90,12 +90,15 @@ export default class AbstractMuteEveryonesVideoDialog<P extends IProps>
             exclude
         } = this.props;
 
-        dispatch(muteAllParticipants(exclude, MEDIA_TYPE.VIDEO));
+        // Change the moderation state before the participants are muted. See AbstractMuteEveryoneDialog for the
+        // reason.
         if (this.state.moderationEnabled) {
             dispatch(requestEnableVideoModeration());
         } else if (this.state.moderationEnabled !== undefined) {
             dispatch(requestDisableVideoModeration());
         }
+
+        dispatch(muteAllParticipants(exclude, MEDIA_TYPE.VIDEO));
 
         return true;
     }

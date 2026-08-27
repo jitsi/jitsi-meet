@@ -1,6 +1,7 @@
 import { IReduxState } from '../app/types';
 import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../av-moderation/constants';
 import {
+    canRejectParticipant,
     isForceMuted,
     isSupported
 } from '../av-moderation/functions';
@@ -130,9 +131,13 @@ export function getQuickActionButtonType(participant: IParticipant | undefined, 
     const isVideoMuted = isParticipantVideoMuted(participant, state);
     const isDesktopForceMuted = isForceMuted(participant, AVM_MEDIA_TYPE.DESKTOP, state);
     const isVideoForceMuted = isForceMuted(participant, AVM_MEDIA_TYPE.VIDEO, state);
+    const canRejectAudio = canRejectParticipant(participant, AVM_MEDIA_TYPE.AUDIO, state);
     const isParticipantSilent = participant?.isSilent ?? false;
 
-    if (!isAudioMuted && !isParticipantSilent) {
+    // The mute state that a participant reports can be incorrect. If the participant can be removed from the A/V
+    // moderation whitelist, keep the mute action available, because it is the action that mutes the participant on
+    // the bridge.
+    if ((!isAudioMuted || canRejectAudio) && !isParticipantSilent) {
         return QUICK_ACTION_BUTTON.MUTE;
     }
 
