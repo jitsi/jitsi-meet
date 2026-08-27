@@ -1,3 +1,14 @@
+-- This module is added under the main virtual host domain.
+-- It needs the main muc component, and optionally the breakout
+-- rooms muc component if shadow-ban should also apply there.
+--
+-- VirtualHost "jitmeet.example.com"
+--     modules_enabled = {
+--         "muc_shadow_ban"
+--     }
+--     main_muc = "conference.jitmeet.example.com"
+--     breakout_rooms_muc = "breakout.jitmeet.example.com"
+--
 local jid = require 'util.jid';
 local st = require 'util.stanza';
 
@@ -38,11 +49,12 @@ local function is_shadow_banned(room, value)
 end
 
 --
--- Permission check: moderators can always shadow-ban; otherwise defer to
--- the occupant's granted feature permissions, populated by
--- mod_jitsi_permissions.lua on session.jitsi_meet_context_features
--- (from either the JWT token's context features or the non-JWT
--- default_permissions).
+-- Permission check: based solely on the occupant's granted feature
+-- permissions, populated by mod_jitsi_permissions.lua on
+-- session.jitsi_meet_context_features (from either the JWT token's
+-- context features or the non-JWT default_permissions). Moderator
+-- role alone does not grant shadow-ban, since a moderator's JWT may
+-- not include the feature.
 --
 local sessions = prosody.full_sessions;
 
@@ -63,10 +75,6 @@ local function has_shadow_ban_permission(room, actor_jid)
 
     if not occupant then
         return false;
-    end
-
-    if occupant.role == 'moderator' then
-        return true;
     end
 
     local occupant_session = sessions[occupant.jid];
@@ -274,3 +282,47 @@ module:hook(
     handle_visitor_message,
     100
 );
+
+--
+-- Also register on the breakout rooms MUC component, since it is a
+-- separate Prosody host from main_muc and does not share its hooks.
+--
+local breakout_rooms_muc_component_config = module:get_option_string('breakout_rooms_muc', 'breakout.' .. module.host);
+
+process_host_module(breakout_rooms_muc_component_config, function(host_module, host)
+    module:log(
+        'info',
+        'Shadow-ban hooks attached to breakout rooms MUC host %s',
+        host
+    );
+
+    host_module:hook('muc-disco#info', function(event)
+        local reply = event.reply;
+
+        reply:tag('feature', { var = shadow_ban_namespace }):up();
+    end);
+
+    host_module:hook(
+        'iq-set/bare/' .. shadow_ban_namespace .. ':shadow-ban',
+        handle_shadow_ban_iq,
+        1
+    );
+
+    host_module:hook(
+        'iq-set/host/' .. shadow_ban_namespace .. ':shadow-ban',
+        handle_shadow_ban_iq,
+        1
+    );
+
+    host_module:hook(
+        'message/bare',
+        handle_message,
+        100
+    );
+
+    host_module:hook(
+        'message/host',
+        handle_message,
+        100
+    );
+end);
