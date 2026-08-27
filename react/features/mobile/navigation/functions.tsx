@@ -15,17 +15,13 @@ import { isPrejoinEnabledInConfig } from '../../prejoin/functions.native';
 
 import HeaderNavigationButton from './components/HeaderNavigationButton';
 
-
 /**
- * Close icon/text button based on platform.
- *
- * @param {Function} goBack - Goes back to the previous screen function.
- * @returns {React.Component}
+ * Screen close button component.
  */
-export function screenHeaderCloseButton(goBack: (e?: GestureResponderEvent | React.MouseEvent) => void) {
+const ScreenCloseButton = React.memo(({ goBack, isIos }: { goBack: (e?: GestureResponderEvent | React.MouseEvent) => void; isIos: boolean }) => {
     const { t } = useTranslation();
 
-    if (Platform.OS === 'ios') {
+    if (isIos) {
         return (
             <HeaderNavigationButton
                 id = { 'close-screen-button' }
@@ -40,6 +36,18 @@ export function screenHeaderCloseButton(goBack: (e?: GestureResponderEvent | Rea
             onPress = { goBack }
             src = { IconCloseLarge } />
     );
+});
+
+ScreenCloseButton.displayName = 'ScreenCloseButton';
+
+/**
+ * Close icon/text button based on platform.
+ *
+ * @param {Function} goBack - Goes back to the previous screen function.
+ * @returns {React.Component}
+ */
+export function screenHeaderCloseButton(goBack: (e?: GestureResponderEvent | React.MouseEvent) => void) {
+    return () => <ScreenCloseButton goBack = { goBack } isIos = { Platform.OS === 'ios' } />;
 }
 
 /**
@@ -58,11 +66,9 @@ export function isPrejoinPageEnabled(stateful: IStateful) {
 }
 
 /**
- * Close icon/text button for lobby screen based on platform.
- *
- * @returns {React.Component}
+ * Lobby close button component.
  */
-export function lobbyScreenHeaderCloseButton() {
+const LobbyCloseButton = React.memo(() => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const goBack = useCallback(() => {
@@ -85,4 +91,15 @@ export function lobbyScreenHeaderCloseButton() {
             onPress = { goBack }
             src = { IconCloseLarge } />
     );
+});
+
+LobbyCloseButton.displayName = 'LobbyCloseButton';
+
+/**
+ * Close icon/text button for lobby screen based on platform.
+ *
+ * @returns {React.Component}
+ */
+export function lobbyScreenHeaderCloseButton() {
+    return () => <LobbyCloseButton />;
 }
