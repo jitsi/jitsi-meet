@@ -78,7 +78,7 @@ export default class Notifications extends BasePageObject {
     dismissAnyJoinNotification() {
         return Promise.allSettled(
             [ `${JOIN_ONE_TEST_ID}-dismiss`, `${JOIN_TWO_TEST_ID}-dismiss`, `${JOIN_MULTIPLE_TEST_ID}-dismiss` ]
-                .map(id => this.participant.driver.$(`[data-testid="${id}"]`).click()));
+                .map(id => this.participant.driver.$(`#${id}"]`).click()));
     }
 
     /**
