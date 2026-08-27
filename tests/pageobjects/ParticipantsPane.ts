@@ -278,6 +278,10 @@ export default class ParticipantsPane extends BasePageObject {
      * @param participant
      */
     async waitForMuteAudioAction(participant: Participant) {
+        if (!await this.isOpen()) {
+            await this.open();
+        }
+
         const participantId = await participant.getEndpointId();
 
         await this.participant.driver.$(`#participant-item-${participantId}`).moveTo();

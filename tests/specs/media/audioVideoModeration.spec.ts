@@ -247,7 +247,6 @@ describe('Audio/video moderation', () => {
         await p2.getToolbar().clickAudioMuteButton();
         await p1.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
 
-        await p1ParticipantsPane.open();
         await p1ParticipantsPane.waitForMuteAudioAction(p2);
         await p1ParticipantsPane.muteAudio(p2);
         await p1ParticipantsPane.close();
