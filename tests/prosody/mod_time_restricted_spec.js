@@ -9,14 +9,17 @@ const CONFERENCE = 'conference.localhost';
 const JITMEET_NS = 'http://jitsi.org/jitmeet';
 
 // Mirrors conference_max_minutes = 0.125 in docker/prosody.cfg.lua:
-//   TIMEOUT   = 0.125 * 60      = 7.5 s  (room destroyed)
-//   NOTIFY_AT = floor(7.5 / 2)  = 3 s    (half-way countdown broadcast)
+//   TIMEOUT = 0.125 * 60 = 7.5 s (room destroyed)
 const DURATION_SECONDS = 7.5;
-const NOTIFY_AT_SECONDS = 3;
 
-// Wait windows with a little slack over the server-side timers.
-const NOTIFY_WAIT_MS = (NOTIFY_AT_SECONDS + 5) * 1000;
+// Wait windows with a little slack over the server-side timers. The timing
+// info is pushed on join, so it should land almost immediately.
+const NOTIFY_WAIT_MS = 5000;
 const DESTROY_WAIT_MS = (DURATION_SECONDS + 5) * 1000;
+
+// How long to let the meeting run before the late joiner arrives, so its
+// `elapsedSeconds` is provably non-zero without risking the 7.5 s destroy.
+const LATE_JOIN_DELAY_MS = 3000;
 
 let _roomCounter = 0;
 const room = () => `time-restricted-${++_roomCounter}@${CONFERENCE}`;
@@ -66,7 +69,7 @@ describe('mod_time_restricted', () => {
 
     afterEach(() => ctx.cleanup());
 
-    it('broadcasts a time_restricted json-message to occupants at the half-way point', async () => {
+    it('sends a time_restricted json-message to an occupant as soon as they join', async () => {
         const r = room();
         const focus = await ctx.connectFocus(r);
         const c = await ctx.connect();
@@ -85,15 +88,15 @@ describe('mod_time_restricted', () => {
         assert.equal(payload.durationSeconds, DURATION_SECONDS,
             'durationSeconds must be the full configured limit');
         assert.ok(
-            payload.elapsedSeconds >= 2 && payload.elapsedSeconds <= 6,
-            `elapsedSeconds should be ~half the limit, got ${payload.elapsedSeconds}`
+            payload.elapsedSeconds <= 2,
+            `a first joiner should be told the meeting just started, got ${payload.elapsedSeconds}`
         );
 
         // focus is referenced for cleanup tracking only.
         assert.ok(focus);
     });
 
-    it('sends the countdown to a participant who joins after the half-way point', async () => {
+    it('tells a late joiner how far into the meeting it already is', async () => {
         const r = room();
 
         await ctx.connectFocus(r);
@@ -101,24 +104,24 @@ describe('mod_time_restricted', () => {
         const early = await ctx.connect();
 
         await early.joinRoom(r);
-
-        // Wait for the broadcast so we know the meeting is now past its half-way point.
         await early.waitForMessage(isTimeRestrictedMessage, NOTIFY_WAIT_MS);
 
-        // A participant joining afterwards must still be told about the running
-        // countdown (the broadcast already fired before they were present).
+        // Let the meeting run a little so the late joiner's elapsed is provably
+        // ahead of the first joiner's.
+        await new Promise(resolve => setTimeout(resolve, LATE_JOIN_DELAY_MS));
+
         const late = await ctx.connect();
 
         await late.joinRoom(r);
 
-        const msg = await late.waitForMessage(isTimeRestrictedMessage, 5000);
+        const msg = await late.waitForMessage(isTimeRestrictedMessage, NOTIFY_WAIT_MS);
         const payload = payloadOf(msg);
 
         assert.equal(payload.type, 'time_restricted');
         assert.equal(payload.durationSeconds, DURATION_SECONDS);
         assert.ok(
-            payload.elapsedSeconds >= NOTIFY_AT_SECONDS,
-            `late joiner elapsedSeconds must be at/after the half-way mark, got ${payload.elapsedSeconds}`
+            payload.elapsedSeconds >= LATE_JOIN_DELAY_MS / 1000,
+            `late joiner elapsedSeconds must reflect the time already spent, got ${payload.elapsedSeconds}`
         );
     });
 

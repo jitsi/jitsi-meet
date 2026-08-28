@@ -115,6 +115,48 @@ describe('setMeetingTimer iframe API command', () => {
             { timeout: 3000, timeoutMsg: 'timer-ended notification did not clear' });
     });
 
+    it('holds the pill back for the configured suppression window', async () => {
+        // Rejoin with a suppression window: the timer runs from the moment a
+        // duration is known, but stays off screen until the meeting is that far
+        // along. This is what lets `mod_time_restricted` push the limit on join
+        // while the countdown only surfaces part-way through.
+        await ctx.p1.hangup();
+        await ensureOneParticipant({
+            configOverwrite: {
+                timeTimer: {
+                    enabled: true,
+                    suppressForSeconds: 600 // 10 min
+                }
+            }
+        }, { name: 'p1', iFrameApi: true });
+
+        const { p1 } = ctx;
+
+        await p1.switchToMainFrame();
+        await p1.getIframeAPI().executeCommand('setMeetingTimer', {
+            duration: 1800, // 30 min
+            elapsed: 0
+        });
+
+        await p1.switchToIFrame();
+
+        // Inside the window — a duration is known and the timer is running, but
+        // the pill must not be on screen yet.
+        await p1.driver.pause(1000);
+        await expect(await p1.driver.$(PILL_SELECTOR)).not.toBeDisplayed();
+
+        // Past the window (elapsed is measured from the scheduled start, so this
+        // is also the late-joiner case) — the pill appears.
+        await p1.switchToMainFrame();
+        await p1.getIframeAPI().executeCommand('setMeetingTimer', {
+            duration: 1800,
+            elapsed: 900 // 15 min in, past the 10 min suppression window
+        });
+
+        await p1.switchToIFrame();
+        await expect(await p1.driver.$(PILL_SELECTOR)).toBeDisplayed();
+    });
+
     it('ignores the command when the feature is disabled', async () => {
         // Hangup and rejoin the same conference with the default test config,
         // which disables the timer, so we can prove the command is a no-op on

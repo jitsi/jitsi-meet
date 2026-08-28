@@ -117,12 +117,13 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
         break;
     }
     case NON_PARTICIPANT_MESSAGE_RECEIVED: {
-        // The `mod_time_restricted` Prosody plugin broadcasts this at the
-        // meeting's half-way point (and to anyone joining after it) so the
-        // visible countdown reflects the server-enforced limit. It is a
-        // non-participant message because the plugin sends it from the room
-        // JID rather than from a participant. `elapsedSeconds` keeps late
-        // joiners in sync with everyone else.
+        // The `mod_time_restricted` Prosody plugin sends this to every
+        // occupant as they join, so the countdown reflects the server-enforced
+        // limit. It is a non-participant message because the plugin sends it
+        // from the room JID rather than from a participant. `elapsedSeconds`
+        // keeps late joiners in sync with everyone else. Whether the countdown
+        // is actually on screen is a separate, display-only decision — see
+        // `timeTimer.suppressForSeconds` / isTimeTimerVisible.
         const { id, json } = action;
 
         // Only honour a message that genuinely came from the room JID itself:

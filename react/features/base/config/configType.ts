@@ -742,6 +742,7 @@ export interface IConfig {
     };
     timeTimer?: {
         enabled?: boolean;
+        suppressForSeconds?: number;
     };
     tokenAuthInline?: boolean;
     tokenAuthUrl?: string;

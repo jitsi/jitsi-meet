@@ -2,9 +2,6 @@
 local MIN = module:get_option_number("conference_max_minutes", 5)
 local TIMEOUT = MIN * 60
 
--- Half the meeting; the moment we tell clients to start the visible countdown.
-local NOTIFY_AT = math.floor(TIMEOUT / 2)
-
 local is_healthcheck_room = module:require "util".is_healthcheck_room
 local st = require "util.stanza"
 local json = require "cjson.safe"
@@ -20,8 +17,8 @@ local restricted_rooms = array{};
 local TIME_RESTRICTED_MESSAGE_TYPE = 'time_restricted';
 
 -- Sends the time-timer json-message to a single occupant. `durationSeconds` is
--- the full meeting length and `elapsedSeconds` how far in we are, so a late
--- joiner lands on the same countdown everyone else already sees.
+-- the full meeting length and `elapsedSeconds` how far in we are, so every
+-- client - first joiner or last - lands on the same countdown.
 local function send_time_timer(room, to_jid)
     local elapsed = os.time() - (room.time_restricted_created or os.time());
     local body, error = json.encode({
@@ -52,20 +49,6 @@ module:hook("muc-room-created", function (event)
 
     room.time_restricted_created = os.time();
 
-    -- At the half-way point tell every occupant to start the visible countdown
-    -- for the remaining time.
-    room.notify_timer = module:add_timer(NOTIFY_AT, function()
-        if is_healthcheck_room(room.jid) then
-            return
-        end
-
-        for _, occupant in room:each_occupant() do
-            send_time_timer(room, occupant.jid);
-        end
-
-        module:log('info', "time-timer notification sent for %s", room.jid);
-    end)
-
     room.destroy_timer = module:add_timer(TIMEOUT, function()
         if is_healthcheck_room(room.jid) then
             return
@@ -79,8 +62,11 @@ module:hook("muc-room-created", function (event)
     end)
 end)
 
--- A participant joining after the half-way point missed the broadcast above;
--- give them the same countdown so everyone is in sync.
+-- Every occupant is told the meeting's limit as soon as they join, so the
+-- client holds the full picture from the start and decides for itself when to
+-- surface it (`timeTimer.suppressForSeconds` in jitsi-meet delays the visible
+-- countdown by a configurable number of seconds). `elapsedSeconds` keeps late
+-- joiners in sync with everyone else.
 module:hook("muc-occupant-joined", function (event)
     local room, occupant = event.room, event.occupant;
 
@@ -88,8 +74,11 @@ module:hook("muc-occupant-joined", function (event)
         return
     end
 
-    if room.time_restricted_created
-            and (os.time() - room.time_restricted_created) >= NOTIFY_AT then
+    -- Only for rooms this module saw created: without a creation stamp we
+    -- cannot say how far in the meeting is, and reporting elapsed = 0 for a
+    -- room that has been running for a while would be worse than saying
+    -- nothing.
+    if room.time_restricted_created then
         send_time_timer(room, occupant.jid);
     end
 end);
@@ -110,10 +99,6 @@ end, 200);
 
 module:hook('muc-room-destroyed',function(event)
     local room = event.room;
-    if room.notify_timer then
-        room.notify_timer:stop();
-        room.notify_timer = nil;
-    end
     if room.destroy_timer then
         room.destroy_timer:stop();
         room.destroy_timer = nil;

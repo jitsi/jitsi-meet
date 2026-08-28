@@ -119,6 +119,56 @@ export function isTimeTimerEnabled(state: IReduxState): boolean {
 }
 
 /**
+ * How long, in seconds of meeting time, the visible countdown is held back
+ * for. Off by default (0) — the timer shows as soon as a duration is known.
+ *
+ * The server (`mod_time_restricted`) hands every client the meeting's limit
+ * the moment they join, so a deployment that does not want the countdown on
+ * screen for the whole meeting sets `timeTimer.suppressForSeconds` and gets
+ * it revealed part-way through instead. The threshold is measured against
+ * time elapsed since the meeting's scheduled start — not since this
+ * participant joined — so the timer appears at the same moment for everyone
+ * and a late joiner past the threshold sees it immediately.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {number}
+ */
+export function getTimeTimerSuppressSeconds(state: IReduxState): number {
+    const suppressForSeconds = state['features/base/config']?.timeTimer?.suppressForSeconds;
+
+    return typeof suppressForSeconds === 'number' && suppressForSeconds > 0 ? suppressForSeconds : 0;
+}
+
+/**
+ * Whether the time-timer should currently be on screen: the feature is
+ * enabled, a timer is running for this meeting, and we are past any
+ * configured suppression window.
+ *
+ * This is the single source of truth for the pill's visibility — the info bar
+ * uses it too, because {@code TimeTimerPill} supersedes the subject and
+ * conference-timer labels and hiding all three would leave the bar empty.
+ *
+ * Note this gates the countdown display only. A meeting that runs over still
+ * raises the timer-ended notification and the overrun treatment on schedule,
+ * whatever the suppression window is.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function isTimeTimerVisible(state: IReduxState): boolean {
+    const timerState = state['features/time-timer'];
+
+    if (!isTimeTimerEnabled(state) || !timerState.running) {
+        return false;
+    }
+
+    const suppressForSeconds = getTimeTimerSuppressSeconds(state);
+
+    return suppressForSeconds <= 0
+        || getTimerVisualState(timerState).elapsedSeconds >= suppressForSeconds;
+}
+
+/**
  * Whether the meeting has run past its scheduled end and the user has not yet
  * dismissed the timer-ended notification. Drives the red border around the
  * conference grid.
