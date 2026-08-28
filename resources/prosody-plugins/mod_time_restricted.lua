@@ -2,6 +2,15 @@
 local MIN = module:get_option_number("conference_max_minutes", 5)
 local TIMEOUT = MIN * 60
 
+-- Gratis time granted past the limit so people can say their goodbyes and
+-- leave on their own instead of being cut off mid-sentence. Clients still see
+-- their countdown end at TIMEOUT - they spend the grace period in the visible
+-- over-schedule state, which is the cue to wrap up - the room is simply not
+-- torn down until it elapses. 0 (the default) destroys the room the moment the
+-- limit is reached.
+local GRACE = module:get_option_number("conference_grace_seconds", 0)
+local DESTROY_AT = TIMEOUT + GRACE
+
 local is_healthcheck_room = module:require "util".is_healthcheck_room
 local st = require "util.stanza"
 local json = require "cjson.safe"
@@ -49,7 +58,7 @@ module:hook("muc-room-created", function (event)
 
     room.time_restricted_created = os.time();
 
-    room.destroy_timer = module:add_timer(TIMEOUT, function()
+    room.destroy_timer = module:add_timer(DESTROY_AT, function()
         if is_healthcheck_room(room.jid) then
             return
         end
