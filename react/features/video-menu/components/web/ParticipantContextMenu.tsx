@@ -152,6 +152,8 @@ const ParticipantContextMenu = ({
         : participant?.id ? participantsVolume[participant?.id] : undefined) ?? 1;
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
     const isModerationSupported = useSelector((state: IReduxState) => isAvModerationSupported()(state));
+    const isShadowBanSupported = useSelector((state: IReduxState) =>
+        Boolean(state['features/base/conference'].conference?.isShadowBanSupported?.()));
     const raisedHands = hasRaisedHand(participant);
     const stageFilmstrip = useSelector(isStageFilmstripAvailable);
     const shouldDisplayVerification = useSelector((state: IReduxState) => displayVerification(state, participant?.id));
@@ -273,7 +275,10 @@ const ParticipantContextMenu = ({
         if (!disableKick) {
             buttons2.push(<KickButton { ...getButtonProps(BUTTONS.KICK) } />);
         }
-        buttons2.push(<ShadowBanButton { ...getButtonProps(BUTTONS.SHADOW_BAN) } />);
+
+        if (isShadowBanSupported) {
+            buttons2.push(<ShadowBanButton { ...getButtonProps(BUTTONS.SHADOW_BAN) } />);
+        }
 
         if (shouldDisplayVerification) {
             buttons2.push(<VerifyParticipantButton { ...getButtonProps(BUTTONS.VERIFY) } />);
