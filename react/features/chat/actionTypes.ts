@@ -64,12 +64,11 @@ export const EDIT_MESSAGE = 'EDIT_MESSAGE';
 
 /**
  * The type of the action which signals to moderate a message
- * 
+ *
  * {
  *     type: MODERATE_MESSAGE,
  *     messageId: string,
- *     moderatedBy: string,
- *     reason: string  
+ *     reason: string
  * }
  */
 export const MODERATE_MESSAGE = 'MODERATE_MESSAGE';
@@ -255,3 +254,14 @@ export const SET_CHAT_IS_RESIZING = 'SET_CHAT_IS_RESIZING';
   * }
   */
  export const NOTIFY_PRIVATE_RECIPIENTS_CHANGED = 'NOTIFY_PRIVATE_RECIPIENTS_CHANGED';
+
+/**
+ * The type of action which sets whether the server handles message moderation
+ * and editing for this room.
+ *
+ * {
+ *     type: SET_MESSAGE_MODERATION_SUPPORTED,
+ *     supported: boolean
+ * }
+ */
+export const SET_MESSAGE_MODERATION_SUPPORTED = 'SET_MESSAGE_MODERATION_SUPPORTED';

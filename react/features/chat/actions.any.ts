@@ -26,6 +26,7 @@ import {
     SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
+    SET_MESSAGE_MODERATION_SUPPORTED,
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
 import { ChatTabs } from './constants';
@@ -490,26 +491,18 @@ export function handleLobbyChatInitialized(participantId: string) {
 /**
  * Requests moderation of a chat message.
  *
- * Dispatches the network action so other participants get notified, and
- * optimistically marks the message as moderated in the local store too,
- * since MESSAGE_MODERATED isn't guaranteed to be echoed back to the sender.
+ * The room applies the moderation and echoes it back to everybody, including the
+ * sender, so there is nothing to update locally here.
  *
  * @param {IMessage} message - The message to moderate.
  * @param {string} reason - Reason to delete message.
- * @returns {Function}
+ * @returns {Object}
  */
 export function sendMessageModeration(message: IMessage, reason?: string) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const state = getState();
-        const localParticipant = getLocalParticipant(state);
-
-        dispatch({
-            type: SEND_MESSAGE_MODERATION,
-            message,
-            reason
-        });
-
-        dispatch(moderateMessage(message.messageId, localParticipant?.id, reason));
+    return {
+        type: SEND_MESSAGE_MODERATION,
+        message,
+        reason
     };
 }
 
@@ -517,15 +510,26 @@ export function sendMessageModeration(message: IMessage, reason?: string) {
  * Marks a message as moderated.
  *
  * @param {string} messageId - The moderated message id.
- * @param {string} moderatorId - The participant id of the moderator.
  * @param {string} reason - Optional moderation reason.
  * @returns {Object}
  */
-export function moderateMessage(messageId: string, moderatorId?: string, reason?: string) {
+export function moderateMessage(messageId: string, reason?: string) {
     return {
         type: MODERATE_MESSAGE,
         messageId,
-        moderatorId,
         reason
+    };
+}
+
+/**
+ * Sets whether the room handles message moderation and editing server side.
+ *
+ * @param {boolean} supported - Whether the room applies message moderation.
+ * @returns {Object}
+ */
+export function setMessageModerationSupported(supported: boolean) {
+    return {
+        type: SET_MESSAGE_MODERATION_SUPPORTED,
+        supported
     };
 }

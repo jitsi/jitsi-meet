@@ -23,6 +23,7 @@ import {
     SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
+    SET_MESSAGE_MODERATION_SUPPORTED,
     SET_PRIVATE_MESSAGE_RECIPIENT,
     SET_USER_CHAT_WIDTH
 } from './actionTypes';
@@ -33,6 +34,7 @@ import { IMessage, IPendingEditsMap } from './types';
 const DEFAULT_STATE = {
     groupChatWithPermissions: false,
     isOpen: false,
+    messageModerationSupported: false,
     messages: [],
     notifyPrivateRecipientsChangedTimestamp: undefined,
     pendingEdits: {},
@@ -63,6 +65,7 @@ export interface IChatState {
         id: string;
         name: string;
     } | ILocalParticipant;
+    messageModerationSupported: boolean;
     messages: IMessage[];
     notifyPrivateRecipientsChangedTimestamp?: number;
     pendingEdits: IPendingEditsMap;
@@ -250,7 +253,6 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
                 return {
                     ...message,
                     isModerated: true,
-                    moderatedBy: action.moderatorId,
                     moderationReason: action.reason
                 };
             }
@@ -283,6 +285,12 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             messages
         };
     }
+
+    case SET_MESSAGE_MODERATION_SUPPORTED:
+        return {
+            ...state,
+            messageModerationSupported: action.supported
+        };
 
     case SET_CHAT_SEARCH_MATCH_INDEX:
         return {
