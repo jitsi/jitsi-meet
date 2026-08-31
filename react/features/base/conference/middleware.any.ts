@@ -508,7 +508,17 @@ function _connectionFailed({ dispatch, getState }: IStore, next: Function, actio
         }
     }
 
-    if (error.name === JitsiConnectionErrors.CONFERENCE_REQUEST_FAILED) {
+    if (error.name === JitsiConnectionErrors.TIME_LIMIT_ERROR) {
+        // The room used up the time it was allowed and jicofo was refused when it
+        // tried to re-create it. Offering "Rejoin now" here (as the generic
+        // conference-request failure below does) would just replay the same
+        // refusal — the meeting is over, not temporarily unreachable.
+        dispatch(showErrorNotification({
+            descriptionKey: 'dialog.meetingTimeLimitReached',
+            hideErrorSupportLink: true,
+            titleKey: 'dialog.meetingTimeLimitReachedTitle'
+        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+    } else if (error.name === JitsiConnectionErrors.CONFERENCE_REQUEST_FAILED) {
         let notificationAction: Function = showNotification;
         const notificationProps = {
             customActionNameKey: [ 'dialog.rejoinNow' ],
