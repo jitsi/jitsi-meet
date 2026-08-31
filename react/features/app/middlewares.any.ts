@@ -22,6 +22,7 @@ import '../base/user-interaction/middleware';
 import '../breakout-rooms/middleware';
 import '../calendar-sync/middleware';
 import '../chat/middleware';
+import '../client-requirements/middleware';
 import '../conference/middleware';
 import '../connection-indicator/middleware';
 import '../device-selection/middleware';
