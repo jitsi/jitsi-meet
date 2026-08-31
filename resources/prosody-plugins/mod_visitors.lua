@@ -370,6 +370,25 @@ process_host_module(main_muc_component_config, function(host_module, host)
             module:send(fmuc_msg);
         end
     end);
+    -- forwards a moderation applied by the room to the vnodes. The hook above only
+    -- handles messages sent by an occupant; a moderation is sent by the room itself,
+    -- so mod_muc_message_moderation announces it here.
+    host_module:hook('jitsi-message-moderated', function(event)
+        local room, stanza = event.room, event.stanza;
+
+        if not visitors_nodes[room.jid] or not visitors_nodes[room.jid].nodes then
+            return;
+        end
+
+        for conference_service in pairs(visitors_nodes[room.jid].nodes) do
+            local fmuc_msg = st.clone(stanza);
+            fmuc_msg.attr.to = jid.join(jid.node(room.jid), conference_service);
+            fmuc_msg.attr.from = room_jid_match_rewrite(room.jid);
+            module:log('debug', 'Forwarding moderation to %s', fmuc_msg.attr.to);
+            module:send(fmuc_msg);
+        end
+    end);
+
     -- receiving messages from visitor nodes and forward them to local main participants
     -- and forward them to the rest of visitor nodes
     host_module:hook('muc-occupant-groupchat', function(event)
