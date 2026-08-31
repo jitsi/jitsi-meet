@@ -233,7 +233,6 @@
         "Remove": "Вилучити",
         "Share": "Поділитися",
         "Submit": "Гаразд",
-        "WaitForHostMsg": "Зустріч ще не почалася. Авторизуйтеся, якщо ви організатор, або дочекайтеся організатора.",
         "WaitingForHostTitle": "В очікуванні організатора…",
         "Yes": "Так",
         "accessibilityLabel": {
@@ -348,8 +347,6 @@
         "permissionCameraRequiredError": "Щоб брати участь у зустрічах із відео, потрібен дозвіл доступу до камери. Надайте його в налаштуваннях",
         "permissionErrorTitle": "Потрібен дозвіл доступу",
         "permissionMicRequiredError": "Щоб спілкуватися голосом під час зустрічі, потрібен доступ до мікрофона. Надайте дозвіл в налаштуваннях",
-        "popupError": "Ваш веб-браузер блокує спливне вікно вікна на цьому сайті. Дозвольте спливні вікна у налаштуваннях безпеки вашого веб-браузера та спробуйте ще раз.",
-        "popupErrorTitle": "Спливне вікно заблоковано",
         "readMore": "більше",
         "recentlyUsedObjects": "Нещодавно використані об'єкти",
         "recording": "Запис",
@@ -610,7 +607,6 @@
         "notificationLobbyDisabled": "Приймальна вимкнена учасником {{originParticipantName}}",
         "notificationLobbyEnabled": "Приймальна ввімкнена учасником {{originParticipantName}}",
         "notificationTitle": "Приймальна",
-        "passwordField": "Ввести пароль зустрічі",
         "passwordJoinButton": "Приєднатися",
         "title": "Приймальна",
         "toggleLabel": "Увімкнути приймальну"
@@ -657,13 +653,12 @@
     "me": "я",
     "notify": {
         "OldElectronAPPTitle": "Вразливість в системі безпеки!",
-        "allowAction": "Дозволити",
         "allowedUnmute": "Ви можете ввімкнути ваш мікрофон, камеру або спільний перегляд вашого екрана.",
         "audioUnmuteBlockedDescription": "Операцію ввімкнення мікрофона тимчасово заблоковано через системні обмеження.",
         "audioUnmuteBlockedTitle": "Увімкнення мікрофона заблоковано!",
         "chatMessages": "Вхідне повідомлення чату",
         "connectedOneMember": "{{name}} на зв'язку",
-        "connectedThreePlusMembers": "{{name}} та {{count}} інших учасників приєдналися до зустрічі",
+        "connectedThreePlusMembers": "{{name}} та багато інших приєдналися до зустрічі",
         "connectedTwoMembers": "{{first}} та {{second}} приєдналися до зустрічі",
         "dataChannelClosed": "Погіршення якості відео",
         "dataChannelClosedDescription": "Канал мультимедійного мосту відключено; якість відео знижена до мінімуму.",
@@ -713,7 +708,6 @@
         "newDeviceCameraTitle": "Виявлено нову камеру",
         "noiseSuppressionDesktopAudioDescription": "Придушення шуму не можна ввімкнути під час обміну аудіо. Вимкніть його та повторіть спробу.",
         "noiseSuppressionFailedTitle": "Не вдалося ввімкнути придушення шуму",
-        "noiseSuppressionNoTrackDescription": "Перевірте, що мікрофон увімкнено.",
         "noiseSuppressionStereoDescription": "Придушення шуму у форматі стерео наразі не підтримується.",
         "oldElectronClientDescription1": "Ви використовуєте стару версію клієнта Jitsi Meet, яка має відомі вразливості безпеки. Переконайтеся, що ви оновили до нашої ",
         "oldElectronClientDescription2": "останньої версії",
@@ -723,7 +717,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) вилучений іншим учасником",
         "passwordSetRemotely": "Інший учасник додав $t(lockRoomPasswordUppercase)",
         "raiseHandAction": "Підняти руку",
-        "raisedHand": "{{name}} хоче взяти слово.",
+        "raisedHand": "Хоче взяти участь.",
         "raisedHands": "{{participantName}} і ще {{raisedHands}} учасників",
         "reactionSounds": "Вимкнути звукові сповіщення",
         "reactionSoundsForAll": "Вимкнути звукові сповіщення для всіх",
@@ -795,8 +789,7 @@
             "pollOption": "Варіант відповіді {{index}}",
             "pollQuestion": "Питання",
             "questionPlaceholder": "Поставте запитання",
-            "removeOption": "Вилучити",
-            "send": "Надіслати"
+            "removeOption": "Вилучити"
         },
         "errors": {
             "notUniqueOption": "Параметри повинні бути унікальними"
@@ -929,7 +922,6 @@
         "highlightMomentSucessDescription": "Виділену подію буде додано до підсумку зустрічі.",
         "inProgress": "Триває запис або трансляція наживо",
         "linkGenerated": "Готово посилання на ваш запис.",
-        "live": "НАЖИВО",
         "localRecordingNoNotificationWarning": "Наявність посилання на запис зустрічі не анонсується іншим учасникам. Повідомте їм про це окремо.",
         "localRecordingNoVideo": "Відео не записується",
         "localRecordingStartWarning": "Зупиніть запис, перш ніж залишити зустріч, щоб зберегти його.",
@@ -946,9 +938,7 @@
         "onBy": "{{name}} увімкнув запис",
         "onlyRecordSelf": "Записувати лише мої аудіо та відео потоки",
         "pending": "Підготовка до запису зустрічі…",
-        "rec": "REC",
         "saveLocalRecording": "Зберегти файл запису локально (ТЕСТУВАННЯ)",
-        "serviceDescription": "Ваш запис буде збережено послугою запису",
         "serviceDescriptionCloud": "Хмарний запис",
         "serviceDescriptionCloudInfo": "Записані зустрічі будуть видалені автоматично через 24 години після їх запису.",
         "serviceName": "Служба запису",
@@ -958,8 +948,7 @@
         "surfaceError": "Виберіть поточну вкладку.",
         "title": "Запис",
         "unavailable": "Служба {{serviceName}} зараз недоступна. Ми працюємо над виправленням цієї помилки. Спробуйте пізніше.",
-        "unavailableTitle": "Запис недоступний",
-        "uploadToCloud": "Завантажити в хмару"
+        "unavailableTitle": "Запис недоступний"
     },
     "screenshareDisplayName": "Екран {{name}}",
     "sectionList": {
@@ -968,7 +957,6 @@
     "security": {
         "about": "Ви можете додати $t(lockRoomPassword) для захисту вашої зустрічі. Учасникам потрібно буде ввести $t(lockRoomPassword), перш ніж їм буде дозволено приєднатися до зустрічі.",
         "aboutReadOnly": "Модератори можуть додати $t(lockRoomPassword) для захисту зустрічі. Учасникам потрібно буде ввести $t(lockRoomPassword), перш ніж їм буде дозволено приєднатися до зустрічі.",
-        "insecureRoomNameWarning": "Назва кімнати не є безпечною. Сторонні люди можуть приєднатися до вашої зустрічі. Подбайте про додатковий захист вашої зустрічі за допомогою налаштувань параметрів безпеки.",
         "title": "Параметри безпеки"
     },
     "settings": {
@@ -1077,7 +1065,7 @@
     },
     "suspendedoverlay": {
         "rejoinKeyTitle": "Приєднатися знову",
-        "text": "Для відновлення зв'язку натисніть на кнопку «Приєднатися знову».",
+        "text": "Натисніть кнопку <i>Приєднатися знову</i>, щоб відновити з’єднання.",
         "title": "Зв'язок перервано. Причина: цей комп'ютер перейшов у сплячий режим."
     },
     "termsView": {
@@ -1090,7 +1078,6 @@
             "Settings": "Показати/приховати меню налаштувань",
             "audioRoute": "Вибрати звуковий пристрій",
             "boo": "невдоволення",
-            "breakoutRoom": "Приєднатися/вийти з підгрупи",
             "callQuality": "Налаштування продуктивності",
             "carmode": "Режим «За кермом»",
             "cc": "Субтитри",
@@ -1140,7 +1127,7 @@
             "muteEveryonesVideoStream": "Вимкнути камери всім",
             "noiseSuppression": "Придушення шуму",
             "openChat": "Показати чат",
-            "participants": "Показати панель учасників",
+            "participants": "Відкрити панель учасників. Учасників: {{participantsCount}}",
             "pip": "Увімкнути/вимкнути режим «Картинка в картинці».",
             "privateMessage": "Надіслати приватне повідомлення",
             "profile": "Редагувати профіль",
@@ -1268,12 +1255,8 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Субтитри",
-        "error": "Помилка послуги транскрибування. Спробуйте пізніше.",
         "expandedLabel": "Транскрибування активне",
-        "failedToStart": "Не вдалося почати транскрибування",
-        "labelToolTip": "Зустріч транскрибується",
         "off": "Транскрибування зупинено",
-        "pending": "Підготовка до транскрибування зустрічі…",
         "sourceLanguageDesc": "Поточна мова зустрічі <b>{{sourceLanguage}}</b>. <br/> Ви можете її змінити ",
         "sourceLanguageHere": "тут",
         "start": "Показувати субтитри",
@@ -1366,7 +1349,6 @@
         "webAssemblyWarning": "WebAssembly не підтримується",
         "webAssemblyWarningDescription": "WebAssembly вимкнено або не підтримується цим веб-браузером"
     },
-    "visitorsLabel": "Кількість відвідувачів: {{count}}",
     "volumeSlider": "Регулятор гучності",
     "welcomepage": {
         "accessibilityLabel": {

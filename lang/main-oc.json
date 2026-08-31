@@ -260,7 +260,6 @@
         "Remove": "Suprimir",
         "Share": "Partejar",
         "Submit": "Validar",
-        "WaitForHostMsg": "La conferéncia a pas encara començat. Se sètz l’òst volgatz ben vos identificar. Autrament esperatz qu’arribe l’òste.",
         "WaitForHostNoAuthMsg": "La conferéncia a pas encara començat perque cap de moderator es pas encara arribat. Volgatz esperar.",
         "WaitingForHostButton": "Esperar l'òste",
         "WaitingForHostTitle": "En espèra de l’òste…",
@@ -731,7 +730,6 @@
     "me": "ieu",
     "notify": {
         "OldElectronAPPTitle": "Problèma de seguretat !",
-        "allowAction": "Autorizar",
         "allowedUnmute": "Vos podètz restablir lo son del microfòn, aviar la camèra e partejar l’ecran.",
         "audioUnmuteBlockedDescription": "Las operacion de restabliment del son microfòn son estadas blocadas pel moment a causa de limitas sistèma.",
         "audioUnmuteBlockedTitle": "Restabliment del son del microfòn blocat !",
@@ -745,7 +743,6 @@
         "dataChannelClosedDescriptionWithAudio": "Lo canal pont es indisponible, alara de perturbacion de l'àudio e de la vidèo pòdon arribar.",
         "dataChannelClosedWithAudio": "La qualitat de l'àudio e de la vidèo pòt èsser deteriorada",
         "disabledIframe": "L'integracion d'iframe es sonque destinada a las demonstracion, aquesta sonada s'acabarà d'aquí {{timeout}} minutas.",
-        "disabledIframeSecondary": "L'integracion d'iframe de {{domain}} es sonque destinada a las demonstracion, aquesta sonada s'acabarà d'aquí {{timeout}} minutas. Mercés d'utilizar <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi coma servici</a> per una integracion en produccion.",
         "disconnected": "desconnectat",
         "displayNotifications": "Afichar las notificacions per",
         "dontRemindMe": "Lo me rapelar pas",
@@ -896,8 +893,7 @@
             "pollQuestion": "Question del sondatge",
             "questionPlaceholder": "Pausar una question",
             "removeOption": "Suprimir l'opcion",
-            "save": "Enregistrar",
-            "send": "Enviar"
+            "save": "Enregistrar"
         },
         "errors": {
             "notUniqueOption": "Las opcions devon èsser unicas"
@@ -1056,19 +1052,16 @@
         "recordAudioAndVideo": "Enregistrar l'àudio e la vidèo",
         "recordTranscription": "Enregistrar la transcripcion",
         "saveLocalRecording": "Salvagardar l'enregistrament local (Beta)",
-        "serviceDescription": "Vòstre enregistrament serà salvagardat pel servici dedicat",
         "serviceDescriptionCloud": "Enregistrament distant",
         "serviceDescriptionCloudInfo": "Las reünions enregistradas se suprimisson automaticament 24h après l'enregistrament.",
         "serviceName": "Servici d’enregistrament",
         "sessionAlreadyActive": "Aquesta session es ja en cors d’enregistrament o en difusion en dirèct.",
-        "showAdvancedOptions": "Opcions avançadas",
         "signIn": "Connexion",
         "signOut": "Se desconnectar",
         "surfaceError": "Seleccionatz l'onglet actual.",
         "title": "Enregistrament",
         "unavailable": "Ops ! Lo {{serviceName}} es pas disponible pel moment. Sèm a reglar aqueste problèma. Mercés de tornar ensajar mai tard.",
-        "unavailableTitle": "Enregistrament indisponible",
-        "uploadToCloud": "Enviar al cloud"
+        "unavailableTitle": "Enregistrament indisponible"
     },
     "screenshareDisplayName": "Ecran de {{name}}",
     "sectionList": {
@@ -1399,7 +1392,6 @@
         "ccButtonTooltip": "Aviar / Arrestat los sostítols",
         "expandedLabel": "La transcripcion es activada",
         "failed": "La transcipcion a pas capitat",
-        "labelToolTip": "La reünion es a èsser transcricha",
         "sourceLanguageDesc": "La lenga actuala de la reünion es definida a <b>{{sourceLanguage}}</b>.<br/>La podètz cambiar a partir d' ",
         "sourceLanguageHere": "aquí",
         "start": "Mostrar los sostítols",

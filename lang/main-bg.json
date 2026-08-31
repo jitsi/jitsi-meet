@@ -796,7 +796,7 @@
         "audioUnmuteBlockedTitle": "Включването на микрофона е блокирано!",
         "chatMessages": "Съобщения от чата",
         "connectedOneMember": "{{name}} влезе в срещата",
-        "connectedThreePlusMembers": "{{name}} и още {{count}} влязоха в срещата",
+        "connectedThreePlusMembers": "{{name}} и много други се присъединиха към срещата",
         "connectedTwoMembers": "{{first}} и {{second}} влязоха в срещата",
         "connectionFailed": "Връзката се провали. Моля, опитайте отново по-късно!",
         "dataChannelClosed": "Качеството на видеото може да бъде нарушено",
@@ -867,7 +867,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) е премахната от друг потребител",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) създадена от друг потребител",
         "raiseHandAction": "Вдигни ръка",
-        "raisedHand": "{{name}} иска думата.",
+        "raisedHand": "Иска да участва.",
         "raisedHands": "{{participantName}} и още {{raisedHands}} души",
         "reactionSounds": "Изключи звуците",
         "reactionSoundsForAll": "Изключи звуците за всички",
@@ -968,8 +968,7 @@
             "pollQuestion": "Въпрос за анкета",
             "questionPlaceholder": "Задай въпрос",
             "removeOption": "Премахни опция",
-            "save": "Запази",
-            "send": "Изпрати"
+            "save": "Запази"
         },
         "errors": {
             "notUniqueOption": "Опциите трябва да са уникални"
@@ -1128,19 +1127,16 @@
         "recordAudioAndVideo": "Записвай аудио и видео",
         "recordTranscription": "Записвай транскрипция",
         "saveLocalRecording": "Запази записа локално (Бета)",
-        "serviceDescription": "Записът Ви ще се запише от специална записваща услуга",
         "serviceDescriptionCloud": "Облачен запис",
         "serviceDescriptionCloudInfo": "Записаните срещи автоматично се изчистват 24 часа след времето на записа.",
         "serviceName": "Записваща услуга",
         "sessionAlreadyActive": "Тази сесия вече се записва или излъчва на живо.",
-        "showAdvancedOptions": "Разширени опции",
         "signIn": "Влизане",
         "signOut": "Излизане",
         "surfaceError": "Моля, изберете текущия таб.",
         "title": "Запис",
         "unavailable": "Упс! В момента {{serviceName}} е недостъпна. В момента се опитваме да решим проблема. Моля, опитайте отново малко по-късно.",
-        "unavailableTitle": "Записът е невъзможен",
-        "uploadToCloud": "Качи в облака"
+        "unavailableTitle": "Записът е невъзможен"
     },
     "screenshareDisplayName": "Екранът на {{name}}",
     "sectionList": {
@@ -1473,7 +1469,7 @@
         "silence": "Тишина",
         "speakerStats": "Статистика за говорителите",
         "startScreenSharing": "Започни споделяне на екрана",
-        "startSubtitles": "Пускане на субтитри",
+        "startSubtitles": "Субтитри • {{language}}",
         "stopAudioSharing": "Спри споделянето на аудио",
         "stopScreenSharing": "Спиране споделяне на екрана",
         "stopSharedVideo": "Спиране на видео",

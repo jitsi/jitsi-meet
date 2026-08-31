@@ -260,7 +260,6 @@
         "Remove": "Fjern",
         "Share": "Del",
         "Submit": "Send inn",
-        "WaitForHostMsg": "Konferansen har ikke startet ennå fordi ingen moderatorer har ankommet. Hvis du vil bli moderator, vennligst logg inn. Ellers, vennligst vent.",
         "WaitForHostNoAuthMsg": "Konferansen har ikke startet ennå fordi ingen moderatorer har ankommet. Vennligst vent.",
         "WaitingForHostButton": "Vent på moderator",
         "WaitingForHostTitle": "Venter på en moderator…",
@@ -731,7 +730,6 @@
     "me": "meg",
     "notify": {
         "OldElectronAPPTitle": "Sikkerhetssårbarhet!",
-        "allowAction": "Tillat",
         "allowedUnmute": "Du kan slå på mikrofonen, starte kameraet eller dele skjermen din.",
         "audioUnmuteBlockedDescription": "Slå på mikrofonen er midlertidig blokkert på grunn av systembegrensninger.",
         "audioUnmuteBlockedTitle": "Mikrofonaktivering blokkert!",
@@ -745,7 +743,6 @@
         "dataChannelClosedDescriptionWithAudio": "Brokkanalen er nede, og dermed kan det oppstå forstyrrelser i lyd og video.",
         "dataChannelClosedWithAudio": "Lyd- og videokvaliteten kan være svekket",
         "disabledIframe": "Innebygging er kun ment for demonstrasjonsformål, så denne samtalen vil kobles fra om {{timeout}} minutter.",
-        "disabledIframeSecondary": "Innebygging av {{domain}} er kun ment for demonstrasjonsformål, så denne samtalen vil kobles fra om {{timeout}} minutter. Vennligst bruk <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> for innebygging i produksjon!",
         "disconnected": "frakoblet",
         "displayNotifications": "Vis varsler for",
         "dontRemindMe": "Ikke minn meg på dette",
@@ -896,8 +893,7 @@
             "pollQuestion": "Avstemningsspørsmål",
             "questionPlaceholder": "Still et spørsmål",
             "removeOption": "Fjern alternativ",
-            "save": "Lagre",
-            "send": "Send"
+            "save": "Lagre"
         },
         "errors": {
             "notUniqueOption": "Alternativene må være unike"
@@ -1056,19 +1052,16 @@
         "recordAudioAndVideo": "Ta opp lyd og video",
         "recordTranscription": "Ta opp transkripsjon",
         "saveLocalRecording": "Lagre opptaksfilen lokalt (Beta)",
-        "serviceDescription": "Opptaket ditt vil bli lagret av opptakstjenesten",
         "serviceDescriptionCloud": "Skylagringsopptak",
         "serviceDescriptionCloudInfo": "Opptak av møter slettes automatisk 24 timer etter opptakstidspunktet.",
         "serviceName": "Opptakstjeneste",
         "sessionAlreadyActive": "Denne økten blir allerede tatt opp eller direktesendt.",
-        "showAdvancedOptions": "Avanserte alternativer",
         "signIn": "Logg inn",
         "signOut": "Logg ut",
         "surfaceError": "Vennligst velg den gjeldende fanen.",
         "title": "Opptak",
         "unavailable": "Oops! {{serviceName}} er for øyeblikket utilgjengelig. Vi jobber med å løse problemet. Vennligst prøv igjen senere.",
-        "unavailableTitle": "Opptak utilgjengelig",
-        "uploadToCloud": "Last opp til skyen"
+        "unavailableTitle": "Opptak utilgjengelig"
     },
     "screenshareDisplayName": "{{name}}s skjerm",
     "sectionList": {
@@ -1400,7 +1393,6 @@
         "ccButtonTooltip": "Start / Stopp undertekster",
         "expandedLabel": "Transkribering er for øyeblikket på",
         "failed": "Transkribering mislyktes",
-        "labelToolTip": "Møtet blir transkribert",
         "sourceLanguageDesc": "For øyeblikket er møtespråket satt til <b>{{sourceLanguage}}</b>. <br/> Du kan endre det ",
         "sourceLanguageHere": "her",
         "start": "Start visning av undertekster",

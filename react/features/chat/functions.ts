@@ -3,6 +3,7 @@ import aliases from 'react-emoji-render/data/aliases';
 // eslint-disable-next-line lines-around-comment
 // @ts-expect-error
 import emojiAsciiAliases from 'react-emoji-render/data/asciiAliases';
+import { createSelector } from 'reselect';
 
 import { IReduxState } from '../app/types';
 import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
@@ -20,8 +21,8 @@ import { isCCTabEnabled } from '../subtitles/functions.any';
 import { VIDEO_SPACE_MIN_SIZE } from '../video-layout/constants';
 import { IVisitorChatParticipant } from '../visitors/types';
 
-import { ChatTabs, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
-import { IMessage } from './types';
+import { ChatTabs, MAX_PENDING_EDITS, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
+import { IMessage, IPendingEdit, IPendingEditsMap } from './types';
 
 /**
  * An ASCII emoticon regexp array to find and replace old-style ASCII
@@ -229,6 +230,41 @@ export function getMessageText(message: IMessage): string {
         : message.message;
 }
 
+/**
+ * Escapes regexp special characters in a string.
+ *
+ * @param {string} value - The string to escape.
+ * @returns {string}
+ */
+export function escapeSearchRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Splits message text into segments, flagging which ones match the search
+ * query (case-insensitive), so callers can render matches with a highlight
+ * style. Shared between web and native so both wrap matches identically.
+ *
+ * @param {string} text - The message text.
+ * @param {string} query - The search query.
+ * @returns {Array<Object>}
+ */
+export function getHighlightSegments(text: string, query: string): Array<{ match: boolean; text: string; }> {
+    if (!query) {
+        return [ { match: false,
+            text } ];
+    }
+
+    const regexp = new RegExp(`(${escapeSearchRegExp(query)})`, 'gi');
+
+    return text
+        .split(regexp)
+        .filter(part => part.length > 0)
+        .map(part => ({
+            match: part.toLowerCase() === query.toLowerCase(),
+            text: part
+        }));
+}
 
 /**
  * Returns whether a message can be replied to.
@@ -357,3 +393,92 @@ export function getDisplayNameSuffix(message: IMessage): string {
 export function isFileMessage(message: IMessage): boolean {
     return Boolean(message?.fileMetadata);
 }
+
+/**
+ * Inserts a pending edit into the map, evicting the oldest entry if the cap is exceeded.
+ *
+ * @param {IPendingEditsMap} pendingEdits - The current pending edits map.
+ * @param {string} messageId - The id of the message the edit targets.
+ * @param {IPendingEdit} edit - The pending edit to insert.
+ * @returns {IPendingEditsMap} The updated pending edits map.
+ */
+export function addPendingEdit(
+        pendingEdits: IPendingEditsMap,
+        messageId: string,
+        edit: IPendingEdit
+): IPendingEditsMap {
+    const next = { ...pendingEdits, [messageId]: edit };
+    const keys = Object.keys(next);
+
+    if (keys.length > MAX_PENDING_EDITS) {
+        // Object key order is insertion order for string keys in JS, so the first key is the oldest.
+        delete next[keys[0]];
+    }
+
+    return next;
+}
+
+/*
+ * Returns the current chat search query.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {string}
+ */
+export function getChatSearchQuery(state: IReduxState): string {
+    return state['features/chat'].searchQuery || '';
+}
+
+/**
+ * Stable empty-array reference returned when there is no active search query, so repeated
+ * "no query" calls return the same reference instead of a new empty array each time.
+ */
+const NO_SEARCH_MATCHES: IMessage[] = [];
+
+const _getMessages = (state: IReduxState) => state['features/chat'].messages;
+
+/**
+ * Returns all messages matching the current search query, in display order.
+ * Reaction and file messages are excluded since they have no searchable text.
+ * Memoized: only recomputes when messages or the search query change.
+ *
+ * @returns {IMessage[]}
+ */
+export const getChatSearchMatches = createSelector(
+    _getMessages,
+    getChatSearchQuery,
+    (messages, searchQuery): IMessage[] => {
+        const query = searchQuery?.trim().toLowerCase();
+
+        if (!query) {
+            return NO_SEARCH_MATCHES;
+        }
+
+        return messages.filter(message =>
+            !message.isReaction
+            && !isFileMessage(message)
+            && getMessageText(message).toLowerCase().includes(query));
+    }
+);
+
+/**
+ * Returns the index of the currently focused search match.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {number}
+ */
+export function getChatSearchMatchIndex(state: IReduxState): number {
+    return state['features/chat'].searchMatchIndex || 0;
+}
+
+/**
+ * Returns the message that is the currently focused search match, if any.
+ * Memoized via getChatSearchMatches — this is called from every ChatMessage's
+ * mapStateToProps, so keeping it cheap matters.
+ *
+ * @returns {IMessage | undefined}
+ */
+export const getActiveChatSearchMatch = createSelector(
+    getChatSearchMatches,
+    getChatSearchMatchIndex,
+    (matches, index): IMessage | undefined => matches[index]
+);

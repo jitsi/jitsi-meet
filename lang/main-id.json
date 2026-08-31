@@ -260,7 +260,6 @@
         "Remove": "Hapus",
         "Share": "Bagikan",
         "Submit": "Kirim",
-        "WaitForHostMsg": "Konferensi belum dimulai karena belum ada moderator yang datang. Jika Anda ingin menjadi moderator, silakan masuk. Jika tidak, harap tunggu.",
         "WaitForHostNoAuthMsg": "Konferensi belum dimulai karena belum ada moderator yang datang. Harap tunggu.",
         "WaitingForHostButton": "Tunggu moderator",
         "WaitingForHostTitle": "Menunggu moderator…",
@@ -726,7 +725,6 @@
     "me": "saya",
     "notify": {
         "OldElectronAPPTitle": "Kerentanan keamanan!",
-        "allowAction": "Izinkan",
         "allowedUnmute": "Anda dapat mengaktifkan mikrofon Anda, memulai kamera Anda, atau berbagi layar Anda.",
         "audioUnmuteBlockedDescription": "Operasi membuka mikrofon sementara diblokir karena batasan sistem.",
         "audioUnmuteBlockedTitle": "Pembukaan mikrofon diblokir!",
@@ -739,7 +737,6 @@
         "dataChannelClosedDescriptionWithAudio": "Saluran jembatan tidak aktif dan karenanya gangguan audio dan video mungkin terjadi.",
         "dataChannelClosedWithAudio": "Kualitas audio dan video mungkin terganggu",
         "disabledIframe": "Embedding hanya ditujukan untuk tujuan demonstrasi, jadi panggilan ini akan terputus dalam {{timeout}} menit.",
-        "disabledIframeSecondary": "Embedding {{domain}} hanya ditujukan untuk tujuan demonstrasi, jadi panggilan ini akan terputus dalam {{timeout}} menit. Harap gunakan <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> untuk embedding produksi!",
         "disconnected": "terputus",
         "displayNotifications": "Tampilkan notifikasi untuk",
         "dontRemindMe": "Jangan ingatkan saya",
@@ -878,8 +875,7 @@
             "pollQuestion": "Pertanyaan jajak pendapat",
             "questionPlaceholder": "Ajukan pertanyaan",
             "removeOption": "Hapus opsi",
-            "save": "Simpan",
-            "send": "Kirim"
+            "save": "Simpan"
         },
         "errors": {
             "notUniqueOption": "Opsi harus unik"
@@ -1034,27 +1030,24 @@
         "recordAudioAndVideo": "Rekam audio dan video",
         "recordTranscription": "Rekam transkripsi",
         "saveLocalRecording": "Simpan file rekaman secara lokal (Beta)",
-        "serviceDescription": "Rekaman Anda akan disimpan oleh layanan rekaman",
         "serviceDescriptionCloud": "Rekaman cloud",
         "serviceDescriptionCloudInfo": "Pertemuan yang direkam secara otomatis dihapus 24 jam setelah waktu rekaman mereka.",
         "serviceName": "Layanan rekaman",
         "sessionAlreadyActive": "Sesi ini sudah direkam atau disiarkan langsung.",
-        "showAdvancedOptions": "Opsi Lanjutan",
         "signIn": "Masuk",
         "signOut": "Keluar",
         "surfaceError": "Harap pilih tab saat ini.",
         "title": "Rekaman",
         "unavailable": "Ups! {{serviceName}} saat ini tidak tersedia. Kami sedang berupaya menyelesaikan masalah ini. Harap coba lagi nanti.",
-        "unavailableTitle": "Rekaman tidak tersedia",
-        "uploadToCloud": "Unggah ke cloud"
+        "unavailableTitle": "Rekaman tidak tersedia"
     },
     "screenshareDisplayName": "Layar {{name}}",
     "sectionList": {
         "pullToRefresh": "Tarik untuk menyegarkan"
     },
     "security": {
-        "about": "Anda dapat menambahkan {{lockRoomPassword}} ke pertemuan Anda. Peserta perlu memberikan {{lockRoomPassword}} sebelum mereka diizinkan bergabung dengan pertemuan.",
-        "aboutReadOnly": "Peserta moderator dapat menambahkan {{lockRoomPassword}} ke pertemuan. Peserta perlu memberikan {{lockRoomPassword}} sebelum mereka diizinkan bergabung dengan pertemuan.",
+        "about": "Anda dapat menambahkan $t(lockRoomPassword) ke rapat Anda. Peserta harus memasukkan $t(lockRoomPassword) tersebut sebelum dapat bergabung ke rapat.",
+        "aboutReadOnly": "Peserta dengan peran moderator dapat menambahkan $t(lockRoomPassword) ke rapat. Peserta harus memasukkan $t(lockRoomPassword) tersebut sebelum dapat bergabung ke rapat.",
         "insecureRoomNameWarningNative": "Nama ruangan tidak aman. Peserta yang tidak diinginkan dapat bergabung dengan pertemuan Anda. {{recommendAction}} Pelajari lebih lanjut tentang mengamankan pertemuan Anda",
         "insecureRoomNameWarningWeb": "Nama ruangan tidak aman. Peserta yang tidak diinginkan dapat bergabung dengan pertemuan Anda. {{recommendAction}} Pelajari lebih lanjut tentang mengamankan pertemuan Anda <a href=\"{{securityUrl}}\" target=\"_blank\">di sini</a>.",
         "title": "Opsi Keamanan",
@@ -1237,7 +1230,7 @@
             "muteGUMPending": "Menghubungkan mikrofon Anda",
             "noiseSuppression": "Pencegahan noise",
             "openChat": "Buka obrolan",
-            "participants": "Buka panel peserta",
+            "participants": "Buka panel peserta. {{participantsCount}} peserta",
             "pip": "Alihkan ke mode Picture-in-Picture",
             "privateMessage": "Kirim pesan pribadi",
             "profile": "Edit profil Anda",
@@ -1348,7 +1341,6 @@
         "shareaudio": "Bagikan audio",
         "sharedvideo": "Bagikan video",
         "shortcuts": "Lihat pintasan",
-        "show": "Tampilkan di panggung",
         "showWhiteboard": "Tampilkan papan tulis",
         "silence": "Diam",
         "speakerStats": "Statistik Peserta",
@@ -1371,8 +1363,6 @@
     "transcribing": {
         "ccButtonTooltip": "Mulai / Berhenti menampilkan subtitle",
         "expandedLabel": "Transkripsi sedang aktif",
-        "failedToStart": "Transkripsi gagal dimulai",
-        "labelToolTip": "Pertemuan sedang ditranskripsi",
         "sourceLanguageDesc": "Saat ini bahasa pertemuan diatur ke <b>{{sourceLanguage}}</b>. <br/> Anda dapat mengubahnya dari ",
         "sourceLanguageHere": "di sini",
         "start": "Mulai menampilkan subtitle",
@@ -1475,7 +1465,6 @@
         "labelTooltip": "Jumlah pengunjung: {{count}}",
         "notification": {
             "demoteDescription": "Dikirim ke sini oleh {{actor}}, angkat tangan Anda untuk berpartisipasi",
-            "description": "Untuk berpartisipasi angkat tangan Anda",
             "noMainParticipantsDescription": "Seorang peserta perlu memulai pertemuan. Silakan coba lagi nanti.",
             "noMainParticipantsTitle": "Pertemuan ini belum dimulai.",
             "noVisitorLobby": "Anda tidak dapat bergabung saat ada lobi yang diaktifkan untuk pertemuan.",

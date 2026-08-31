@@ -218,7 +218,6 @@
         "Remove": "Ukloni",
         "Share": "Dijeli",
         "Submit": "Pošalji",
-        "WaitForHostMsg": "Konferencija još nije počela. Ako si domaćin autentificiraj se. U suprotnom, pričekaj dolazak domaćina.",
         "WaitingForHostTitle": "Čekanje na domaćina …",
         "Yes": "Da",
         "accessibilityLabel": {
@@ -282,7 +281,6 @@
         "linkMeetingTitle": "Poveži sastanak na Salesforce",
         "liveStreaming": "Prijenos uživo",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Nije moguće dok je snimanje aktivno",
-        "liveStreamingDisabledTooltip": "Pokretanje prijenosa uživo isključeno.",
         "localUserControls": "Lokalne korisničke kontrole",
         "lockMessage": "Neuspjelo zaključavanje konferencije.",
         "lockRoom": "Dodaj sastanak $t(lockRoomPassword)",
@@ -331,8 +329,6 @@
         "permissionCameraRequiredError": "Za sudjelovanje konferenciji s videom potrebna je dozvola za kameru. Dozvoli u postavkama",
         "permissionErrorTitle": "Potrebna je dozvola",
         "permissionMicRequiredError": "Za sudjelovanje konferenciji sa zvukom potrebna je dozvola za mikrofon. Dozvoli u postavkama",
-        "popupError": "Tvoj preglednik blokira skočne prozore ove stranice. Uključi skočne prozore u sigurnosnim postavkama preglednika i pokušaj ponovo.",
-        "popupErrorTitle": "Skočni prozor blokiran",
         "readMore": "više",
         "recentlyUsedObjects": "Tvoji nedavno korišteni objekti",
         "recording": "Snimanje",
@@ -433,9 +429,6 @@
     "giphy": {
         "noResults": "Nema rezultata :(",
         "search": "Traži GIPHY"
-    },
-    "helpView": {
-        "title": "Centar pomoći"
     },
     "incomingCall": {
         "answer": "Odgovori",
@@ -556,7 +549,6 @@
         "youtubeTerms": "Uvjeti YouTube usluge"
     },
     "lobby": {
-        "allow": "Dopusti",
         "backToKnockModeButton": "Zatraži pridruživanje",
         "chat": "Chat",
         "dialogTitle": "Modus predvorja",
@@ -588,7 +580,6 @@
         "notificationLobbyDisabled": "{{originParticipantName}} je isključio/la predvorje",
         "notificationLobbyEnabled": "{{originParticipantName}} je uključio/la predvorje",
         "notificationTitle": "Predvorje",
-        "passwordField": "Upiši lozinku sastanka",
         "passwordJoinButton": "Pridruži se",
         "title": "Predvorje",
         "toggleLabel": "Uključi predvorje"
@@ -635,7 +626,6 @@
     "me": "ja",
     "notify": {
         "OldElectronAPPTitle": "Sigurnosni problem!",
-        "allowAction": "Dozvoli",
         "allowedUnmute": "Možeš uključiti mikrofon, pokrenuti kameru ili dijeliti ekran.",
         "audioUnmuteBlockedDescription": "Isključivanje mikrofona je tenutačno blokirano zbog ograničenja sustava.",
         "audioUnmuteBlockedTitle": "Isključivanje mikrofona blokirano!",
@@ -687,7 +677,6 @@
         "newDeviceCameraTitle": "Otkrivena je nova kamera",
         "noiseSuppressionDesktopAudioDescription": "Suzbijanje šumova se ne može uključiti tijekom dijeljenja zvuka radne površine. Isključi suzbijanje i pokušaj ponovo.",
         "noiseSuppressionFailedTitle": "Nauspjelo pokretanje suzbijanja šumova",
-        "noiseSuppressionNoTrackDescription": "Najprije isključi zvuk tvog mikrofona.",
         "noiseSuppressionStereoDescription": "Suzbijanja šumova stereo zvuka trenutačno nije podržano.",
         "oldElectronClientDescription1": "Čini se da koristiš staru verziju klijenta Jitsi Meet koja ima poznate sigurnosne probleme. Obavezno aktualiziraj na našu ",
         "oldElectronClientDescription2": "najnoviju verziju",
@@ -765,8 +754,7 @@
             "pollOption": "Opcija ankete {{index}}",
             "pollQuestion": "Pitanje ankete",
             "questionPlaceholder": "Postavi pitanje",
-            "removeOption": "Ukloni opciju",
-            "send": "Pošalji"
+            "removeOption": "Ukloni opciju"
         },
         "errors": {
             "notUniqueOption": "Opcije moraju biti jedinstvene"
@@ -857,9 +845,6 @@
         "rejected": "Odbijen",
         "ringing": "Zvoni …"
     },
-    "privacyView": {
-        "title": "Privatnost"
-    },
     "profile": {
         "avatar": "avatar",
         "setDisplayNameLabel": "Postavi svoje prikazno ime",
@@ -902,7 +887,6 @@
         "highlightMomentSucessDescription": "Tvoj istaknuti trenutak će se dodati u sažetak sastanka.",
         "inProgress": "Snimanje ili prijenos uživo u tijeku",
         "linkGenerated": "Generirali smo poveznicu za tvoje snimanje.",
-        "live": "UŽIVO",
         "localRecordingNoNotificationWarning": "Snimanje se neće najaviti ostalim sudionicima. Morat ćeš ih obavijestiti da se sastanak snima.",
         "localRecordingNoVideo": "Video se ne snima",
         "localRecordingStartWarning": "Provjeri da je snimanje prekinuto prije napuštanja sastanka kako bi se spremilo.",
@@ -918,9 +902,7 @@
         "onBy": "{{name}} je pokrenuo/la snimanje",
         "onlyRecordSelf": "Snimi samo moje audio i videoprijenose",
         "pending": "Pripremanje snimanja sastanka …",
-        "rec": "REC",
         "saveLocalRecording": "Spremi datoteku snimanja lokalno (Beta)",
-        "serviceDescription": "Tvoje snimanje će spremiti usluga za snimanje",
         "serviceDescriptionCloud": "Snimanje u oblaku",
         "serviceDescriptionCloudInfo": "Snimljeni sastanci se automatski brišu nakon 24 sata.",
         "serviceName": "Usluga snimanja",
@@ -930,8 +912,7 @@
         "surfaceError": "Odaberi trenutačnu karticu.",
         "title": "Snimanje",
         "unavailable": "Ups! Usluga {{serviceName}} trenutačno nije dostupna. Radimo na rješavanju problema. Pokušaj kasnije ponovo.",
-        "unavailableTitle": "Snimanje nije dostupno",
-        "uploadToCloud": "Prenesi u oblak"
+        "unavailableTitle": "Snimanje nije dostupno"
     },
     "screenshareDisplayName": "Ekran od {{name}}",
     "sectionList": {
@@ -940,7 +921,6 @@
     "security": {
         "about": "Možeš dodati $t(lockRoomPassword) svom sastanku. Sudionici će morati upisati $t(lockRoomPassword) prije nego što im se omogući pridruživanje sastanku.",
         "aboutReadOnly": "Moderatori mogu dodati $t(lockRoomPassword) sastanku. Sudionici će morati upisati $t(lockRoomPassword) prije nego što im se omogući pridruživanje sastanku.",
-        "insecureRoomNameWarning": "Ime sobe nije sigurno. Neželjeni sudionici mogu se pridružiti tvojoj konferenciji. Osiguraj sastanak pomoću sigurnosne tipke.",
         "title": "Sigurnosne opcije"
     },
     "settings": {
@@ -977,7 +957,6 @@
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
         "selfView": "Pogled na sebe",
-        "sounds": "Zvukovi",
         "speakers": "Zvučnici",
         "startAudioMuted": "Svi počinju s isključenim zvukom",
         "startReactionsMuted": "Isključi zvukove reakcija za sve",
@@ -1057,7 +1036,6 @@
             "Settings": "Uključi/Isključi postavke",
             "audioRoute": "Odaberi audio uređaj",
             "boo": "Negoduj",
-            "breakoutRoom": "Pridruži se/Napusti sobu podgrupe",
             "callQuality": "Upravljaj kvalitetom videa",
             "carmode": "Automoblski modus",
             "cc": "Uključi/Isključi titlove",
@@ -1094,7 +1072,7 @@
             "muteEveryoneElsesVideoStream": "Prekini video svih drugih",
             "muteEveryonesVideoStream": "Prekini video svih",
             "noiseSuppression": "Suzbijanje šumova",
-            "participants": "Sudionici",
+            "participants": "Otvori ploču sudionika. Broj sudionika: {{participantsCount}}",
             "pip": "Uključi/Isključi modus „slika u slici”",
             "privateMessage": "Pošalji privatnu poruku",
             "profile": "Promijeni svoj profil",
@@ -1119,8 +1097,7 @@
             "toggleCamera": "Uključi/Isključi kameru",
             "toggleFilmstrip": "Uključi/Isključi slike videa",
             "videoblur": "Uključi/Isključi zamućenje videa",
-            "videomute": "Pokreni/Prekini kameru",
-            "whiteboard": "Pokaži/Sakrij ploču za prezentacije"
+            "videomute": "Pokreni/Prekini kameru"
         },
         "addPeople": "Dodaj ljude svom pozivu",
         "audioRoute": "Odaberi audio uređaj",
@@ -1200,7 +1177,7 @@
         "silence": "Tišina",
         "speakerStats": "Statistika govornika",
         "startScreenSharing": "Pokreni dijeljenje ekrana",
-        "startSubtitles": "Pokreni titlove",
+        "startSubtitles": "Titlovi • {{language}}",
         "stopAudioSharing": "Prekini dijeljenje zvuka",
         "stopScreenSharing": "Prekini dijeljenje ekrana",
         "stopSharedVideo": "Prekini video",
@@ -1214,12 +1191,8 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Pokreni/Prekini titlove",
-        "error": "Transkribiranje neuspjelo. Pokušaj ponovo.",
         "expandedLabel": "Transkribiranje je trenutačno uključeno",
-        "failedToStart": "Neuspjelo pokretanje transkribiranja",
-        "labelToolTip": "Sastanak se transkribira",
         "off": "Transkribiranje je prekinuto",
-        "pending": "Priprema za transkribiranje sastanka …",
         "sourceLanguageDesc": "Trenutačno je jezik sastanka postavljen na <b>{{sourceLanguage}}</b>. <br/> Možeš ga promijeniti ",
         "sourceLanguageHere": "ovdje",
         "start": "Počni pokazivati titlove",

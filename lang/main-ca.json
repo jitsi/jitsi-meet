@@ -218,7 +218,6 @@
         "Remove": "Elimina",
         "Share": "Comparteix",
         "Submit": "Tramet",
-        "WaitForHostMsg": "La conferència encara no ha començat. Si en sou l'amfitrió, autentiqueu-vos. Altrament, espereu que arribi l'amfitrió.",
         "WaitingForHostTitle": "S'està esperant l'amfitrió…",
         "Yes": "Sí",
         "accessibilityLabel": {
@@ -331,8 +330,6 @@
         "permissionCameraRequiredError": "Es requereix el permís de la càmera per a participar en conferències amb vídeo. Concediu-lo a Configuració",
         "permissionErrorTitle": "Cal permís",
         "permissionMicRequiredError": "Es requereix el permís del micròfon per a participar en conferències amb àudio. Concediu-lo a Configuració",
-        "popupError": "El vostre navegador bloca les finestres emergents d'aquest lloc. Habiliteu les finestres emergents a la configuració de seguretat del navegador i torneu-ho a intentar.",
-        "popupErrorTitle": "Finestres emergents blocades",
         "readMore": "més",
         "recentlyUsedObjects": "Els objectes que heu usat recentment",
         "recording": "Enregistrament",
@@ -433,9 +430,6 @@
     "giphy": {
         "noResults": "No s'ha trobat cap resultat :(",
         "search": "Cerca a GIPHY"
-    },
-    "helpView": {
-        "title": "Centre d'ajuda"
     },
     "incomingCall": {
         "answer": "Resposta",
@@ -556,7 +550,6 @@
         "youtubeTerms": "Condicions de servei de YouTube"
     },
     "lobby": {
-        "allow": "Permet",
         "backToKnockModeButton": "Demaneu per a unir-vos",
         "chat": "Xat",
         "dialogTitle": "Mode de sala d'espera",
@@ -588,7 +581,6 @@
         "notificationLobbyDisabled": "{{originParticipantName}} ha desactivat la sala d'espera",
         "notificationLobbyEnabled": "{{originParticipantName}} ha desactivat la sala d'espera",
         "notificationTitle": "Sala d'espera",
-        "passwordField": "Introduïu la contrasenya de la reunió",
         "passwordJoinButton": "Entra",
         "title": "Sala d'espera",
         "toggleLabel": "Activa la sala d'espera"
@@ -635,7 +627,6 @@
     "me": "jo",
     "notify": {
         "OldElectronAPPTitle": "Vulnerabilitat de seguretat!",
-        "allowAction": "Permet",
         "allowedUnmute": "Podeu activar el micròfon, iniciar la càmera o compartir la pantalla.",
         "audioUnmuteBlockedDescription": "L'activació del micròfon s'ha blocat temporalment per limitacions del sistema.",
         "audioUnmuteBlockedTitle": "L'activació del so del micròfon està blocada!",
@@ -689,7 +680,6 @@
         "newDeviceCameraTitle": "S'ha detectat una càmera nova",
         "noiseSuppressionDesktopAudioDescription": "La supressió de soroll no es pot activar mentre es comparteix l'àudio de l'escriptori. Desactiveu-lo i proveu una altra vegada.",
         "noiseSuppressionFailedTitle": "No s'ha pogut iniciar la supressió de soroll",
-        "noiseSuppressionNoTrackDescription": "Abans, activeu el vostre micròfon.",
         "noiseSuppressionStereoDescription": "Ara per ara, no és possible la supressió de soroll d'àudio en estèreo",
         "oldElectronClientDescription1": "Sembla que useu una versió antiga del client Jitsi Meet, que té vulnerabilitats de seguretat conegudes. Assegureu-vos d'actualitzar-lo",
         "oldElectronClientDescription2": "última construcció",
@@ -767,8 +757,7 @@
             "pollOption": "Opció d'enquesta {{index}}",
             "pollQuestion": "Pregunta de l'enquesta",
             "questionPlaceholder": "Feu una pregunta",
-            "removeOption": "Elimina l'opció",
-            "send": "Envia"
+            "removeOption": "Elimina l'opció"
         },
         "errors": {
             "notUniqueOption": "Les opcions han de ser úniques"
@@ -859,9 +848,6 @@
         "rejected": "Rebutjat",
         "ringing": "Està sonat…"
     },
-    "privacyView": {
-        "title": "Privadesa"
-    },
     "profile": {
         "avatar": "avatar",
         "setDisplayNameLabel": "Indiqueu el nom visible",
@@ -904,7 +890,6 @@
         "highlightMomentSucessDescription": "S'ha afegit el moment destacat al resum de la reunió.",
         "inProgress": "L'enregistrament o la transmissió en directe és en progrés",
         "linkGenerated": "S'ha generat un enllaç a l'enregistrament.",
-        "live": "EN DIRECTE",
         "localRecordingNoNotificationWarning": "L'enregistrament no s'anunciarà als altres participants. Els haureu d'informar que la reunió s'està enregistrant.",
         "localRecordingNoVideo": "El vídeo no s'està enregistrant",
         "localRecordingStartWarning": "Assegureu-vos que atureu l'enregistrament abans de sortir de la reunió per a poder-lo desar.",
@@ -920,9 +905,7 @@
         "onBy": "{{name}} ha iniciat l'enregistrament",
         "onlyRecordSelf": "Enregistra només el meu àudio i vídeo",
         "pending": "S'està preparant per a enregistrar la reunió…",
-        "rec": "ENREG",
         "saveLocalRecording": "Desa el fitxer de l'enregistrament en local (beta)",
-        "serviceDescription": "El servei d'enregistrament desarà el vostre enregistrament",
         "serviceDescriptionCloud": "Enregistrament al núvol",
         "serviceDescriptionCloudInfo": "Les reunions enregistrades s'esborren automàticament 24 hores després de l'enregistrament.",
         "serviceName": "Servei d'enregistrament",
@@ -932,8 +915,7 @@
         "surfaceError": "Trieu la pestanya actual.",
         "title": "Enregistrament",
         "unavailable": "Vaja! El servei  {{serviceName}} ara mateix no és disponible. Treballem per a resoldre el problema. Torneu-ho a intentar més tard.",
-        "unavailableTitle": "L'enregistrament no és disponible",
-        "uploadToCloud": "Puja al núvol"
+        "unavailableTitle": "L'enregistrament no és disponible"
     },
     "screenshareDisplayName": "Pantalla de: {{name}}",
     "sectionList": {
@@ -942,7 +924,6 @@
     "security": {
         "about": "Podeu afegir un $t(lockRoomPassword) a la reunió. Els participants hauran de proporcionar la $t(lockRoomPassword) abans de poder unir-s'hi.",
         "aboutReadOnly": "Els moderadors poden afegir una $t(lockRoomPassword) a la reunió. Caldrà que els participants proporcionin la $t(lockRoomPassword) abans per a ser autoritzats a entrar en la reunió.",
-        "insecureRoomNameWarning": "El nom de la sala no és segur. Podrien unir-s'hi participants no desitjats. Considereu d'augmentar la seguretat de la reunió usant el botó dev seguretat.",
         "title": "Opcions de seguretat"
     },
     "settings": {
@@ -979,7 +960,6 @@
         "selectCamera": "Càmera",
         "selectMic": "Micròfon",
         "selfView": "Vista pròpia",
-        "sounds": "Sons",
         "speakers": "Altaveus",
         "startAudioMuted": "Tothom comença silenciat",
         "startReactionsMuted": "Silencia els sons de reaccions per a tothom",
@@ -1060,7 +1040,6 @@
             "Settings": "Activa o desactiva la configuració",
             "audioRoute": "Seleccioneu l'aparell de so",
             "boo": "Esbroncada",
-            "breakoutRoom": "Entra o surt de la sala de descans",
             "callQuality": "Gestiona la qualitat de la trucada",
             "carmode": "Mode cotxe",
             "cc": "Activa o desactiva els subtítols",
@@ -1097,7 +1076,7 @@
             "muteEveryoneElsesVideoStream": "Atura el vídeo a tots els altres",
             "muteEveryonesVideoStream": "Atura el vídeo a tothom",
             "noiseSuppression": "Supressió de soroll",
-            "participants": "Participants",
+            "participants": "Obre el tauler de participants. {{participantsCount}} participants",
             "pip": "Activa o desactiva el mode imatge en imatge",
             "privateMessage": "Envia un missatge privat",
             "profile": "Edita el perfil",
@@ -1122,8 +1101,7 @@
             "toggleCamera": "Activa o desactiva la càmera",
             "toggleFilmstrip": "Mostra o amaga la cinta",
             "videoblur": "Activa o desactiva el desenfocament del vídeo",
-            "videomute": "Activa o desactiva la càmera",
-            "whiteboard": "Mostra o amaga la pissarra"
+            "videomute": "Activa o desactiva la càmera"
         },
         "addPeople": "Afegeix persones a la trucada",
         "audioRoute": "Seleccioneu l'aparell de so",
@@ -1203,7 +1181,7 @@
         "silence": "Silenci",
         "speakerStats": "Estadístiques de l'interlocutor",
         "startScreenSharing": "Atura la compartició de la pantalla",
-        "startSubtitles": "Inicia els subtítols",
+        "startSubtitles": "Subtítols • {{language}}",
         "stopAudioSharing": "Atura la compartició d'àudio",
         "stopScreenSharing": "Atura la compartició de la pantalla",
         "stopSharedVideo": "Atura el vídeo",
@@ -1217,12 +1195,8 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Inicia o atura els subtítols",
-        "error": "La transcripció ha fallat. Torneu-ho a intentar més tard.",
         "expandedLabel": "La transcripció està activada",
-        "failedToStart": "No s'ha pogut iniciar la transcripció",
-        "labelToolTip": "La reunió s'està transcrivint",
         "off": "La transcripció s'ha aturat",
-        "pending": "S'està preparant per a enregistrar la reunió…",
         "sourceLanguageDesc": "La llengua actual de la reunió és <b>{{sourceLanguage}}</b>. <br/> Podeu canviar-la",
         "sourceLanguageHere": "aquí",
         "start": "Activa els subtítols",

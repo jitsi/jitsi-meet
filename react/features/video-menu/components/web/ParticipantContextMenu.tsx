@@ -21,6 +21,8 @@ import { IRoom } from '../../../breakout-rooms/types';
 import { displayVerification } from '../../../e2ee/functions';
 import { setVolume } from '../../../filmstrip/actions.web';
 import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
+import SendToSecondScreenButton from '../../../multi-screen/components/SendToSecondScreenButton';
+import { ISecondScreenSource } from '../../../multi-screen/types';
 import { QUICK_ACTION_BUTTON } from '../../../participants-pane/constants';
 import { getQuickActionButtonType } from '../../../participants-pane/functions';
 import { requestRemoteControl, stopController } from '../../../remote-control/actions';
@@ -212,6 +214,13 @@ const ParticipantContextMenu = ({
         && typeof _volume === 'number'
         && !isNaN(_volume);
 
+    // Kept stable so the trigger's click handler is too; this menu re-renders
+    // while it is open.
+    const secondScreenSource: ISecondScreenSource = useMemo(
+        () => ({ media: 'camera',
+            participant: _getCurrentParticipantId() }),
+        [ _getCurrentParticipantId ]);
+
     const getButtonProps = useCallback((key: string) => {
         const notifyMode = buttonsWithNotifyClick?.get(key);
         const shouldNotifyClick = typeof notifyMode !== 'undefined';
@@ -288,6 +297,12 @@ const ParticipantContextMenu = ({
     if (stageFilmstrip) {
         buttons2.push(<TogglePinToStageButton { ...getButtonProps(BUTTONS.PIN_TO_STAGE) } />);
     }
+
+    buttons2.push(
+        <SendToSecondScreenButton
+            { ...getButtonProps(BUTTONS.SEND_TO_SECOND_SCREEN) }
+            source = { secondScreenSource } />
+    );
 
     if (enablePrivateChat) {
         buttons2.push(<PrivateMessageMenuButton { ...getButtonProps(BUTTONS.PRIVATE_MESSAGE) } />);

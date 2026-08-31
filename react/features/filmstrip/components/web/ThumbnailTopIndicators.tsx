@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -6,6 +6,8 @@ import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { isScreenShareParticipantById } from '../../../base/participants/functions';
 import ConnectionIndicator from '../../../connection-indicator/components/web/ConnectionIndicator';
+import SendToSecondScreenIcon from '../../../multi-screen/components/SendToSecondScreenIcon';
+import { ISecondScreenSource } from '../../../multi-screen/types';
 import { STATS_POPOVER_POSITION, THUMBNAIL_TYPE } from '../../constants';
 import { getIndicatorsTooltipPosition } from '../../functions.web';
 
@@ -99,6 +101,13 @@ const ThumbnailTopIndicators = ({
         (state: IReduxState) => isScreenShareParticipantById(state, participantId)
     );
 
+    // Kept stable so the trigger's click handler is too: this thumbnail
+    // re-renders on every hover and every connection-stats tick.
+    const screenshareSource: ISecondScreenSource = useMemo(
+        () => ({ participant: participantId,
+            role: 'screenshare' }),
+        [ participantId ]);
+
     if (isVirtualScreenshareParticipant) {
         return (
             <div className = { styles.container }>
@@ -110,6 +119,12 @@ const ThumbnailTopIndicators = ({
                         participantId = { participantId }
                         statsPopoverPosition = { STATS_POPOVER_POSITION[thumbnailType] } />
                 }
+
+                {/* This thumbnail has no menu to add an entry to, so the second
+                    screen gets its own button, where the menu trigger would be. */}
+                <SendToSecondScreenIcon
+                    source = { screenshareSource }
+                    visible = { isHovered } />
             </div>
         );
     }

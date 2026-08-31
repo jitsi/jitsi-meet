@@ -7,20 +7,29 @@ import { LOBBY_CHAT_INITIALIZED } from '../lobby/constants';
 import {
     ADD_MESSAGE,
     ADD_MESSAGE_REACTION,
+    CLEAR_CHAT_SEARCH,
     CLEAR_CHAT_STATE,
     CLOSE_CHAT,
     EDIT_MESSAGE,
+    MODERATE_MESSAGE,
     NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
     OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
+    RETRACT_MESSAGE,
     SEND_MESSAGE,
+    SEND_MESSAGE_EDIT,
+    SEND_MESSAGE_MODERATION,
+    SEND_MESSAGE_RETRACTION,
     SEND_REACTION,
+    SET_CHAT_SEARCH_MATCH_INDEX,
+    SET_CHAT_SEARCH_QUERY,
     SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
 import { ChatTabs } from './constants';
+import { IMessage } from './types';
 
 /**
  * Adds a chat message to the collection of messages.
@@ -93,6 +102,19 @@ export function editMessage(message: Object) {
 }
 
 /**
+ * Clears the chat search query and match index.
+ *
+ * @returns {{
+ *     type: CLEAR_CHAT_SEARCH
+ * }}
+ */
+export function clearChatSearch() {
+    return {
+        type: CLEAR_CHAT_SEARCH
+    };
+}
+
+/**
  * Clears the chat features state from Redux.
  *
  * @returns {{
@@ -138,6 +160,19 @@ export function sendMessage(message: string, ignorePrivacy = false) {
 }
 
 /**
+ * Requests retraction (delete) of a previously sent message.
+ *
+ * @param {IMessage} message - The message to retract.
+ * @returns {Object}
+ */
+export function sendMessageRetraction(message: IMessage) {
+    return {
+        type: SEND_MESSAGE_RETRACTION,
+        message
+    };
+}
+
+/**
  * Sends a reaction to a message.
  *
  * @param {string} reaction - The reaction to send.
@@ -152,6 +187,57 @@ export function sendReaction(reaction: string, messageId: string, receiverId?: s
         reaction,
         messageId,
         receiverId
+    };
+}
+
+/**
+ * Sends an edit for an existing chat message to everyone in the conference.
+ *
+ * @param {string} messageId - The ID of the message being edited.
+ * @param {string} message - The updated chat message.
+ * @returns {{
+ *     type: SEND_MESSAGE_EDIT,
+ *     messageId: string,
+ *     message: string
+ * }}
+ */
+export function sendMessageEdit(messageId: string, message: string) {
+    return {
+        type: SEND_MESSAGE_EDIT,
+        messageId,
+        message
+    };
+}
+
+/*
+ * Sets the chat search query and resets the match index back to the first result.
+ *
+ * @param {string} query - The search text.
+ * @returns {{
+ *     type: SET_CHAT_SEARCH_QUERY,
+ *     query: string
+ * }}
+ */
+export function setChatSearchQuery(query: string) {
+    return {
+        type: SET_CHAT_SEARCH_QUERY,
+        query
+    };
+}
+
+/**
+ * Sets which search match is currently focused (for prev/next navigation).
+ *
+ * @param {number} index - The index into the matches array.
+ * @returns {{
+ *     type: SET_CHAT_SEARCH_MATCH_INDEX,
+ *     index: number
+ * }}
+ */
+export function setChatSearchMatchIndex(index: number) {
+    return {
+        type: SET_CHAT_SEARCH_MATCH_INDEX,
+        index
     };
 }
 
@@ -187,6 +273,21 @@ export function setPrivateMessageRecipientById(participantId: string) {
         if (participant) {
             dispatch(setPrivateMessageRecipient(participant));
         }
+    };
+}
+
+/**
+ * Marks a message as retracted.
+ *
+ * @param {string} messageId - The retracted message id.
+ * @param {string} retractedBy - The participant ID of the user who retracted the message.
+ * @returns {Object}
+ */
+export function retractMessage(messageId: string, retractedBy: string) {
+    return {
+        type: RETRACT_MESSAGE,
+        messageId,
+        retractedBy
     };
 }
 
@@ -383,5 +484,48 @@ export function handleLobbyChatInitialized(participantId: string) {
 
         // notify other moderators.
         return conference?.sendLobbyMessage(payload);
+    };
+}
+
+/**
+ * Requests moderation of a chat message.
+ *
+ * Dispatches the network action so other participants get notified, and
+ * optimistically marks the message as moderated in the local store too,
+ * since MESSAGE_MODERATED isn't guaranteed to be echoed back to the sender.
+ *
+ * @param {IMessage} message - The message to moderate.
+ * @param {string} reason - Reason to delete message.
+ * @returns {Function}
+ */
+export function sendMessageModeration(message: IMessage, reason?: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const localParticipant = getLocalParticipant(state);
+
+        dispatch({
+            type: SEND_MESSAGE_MODERATION,
+            message,
+            reason
+        });
+
+        dispatch(moderateMessage(message.messageId, localParticipant?.id, reason));
+    };
+}
+
+/**
+ * Marks a message as moderated.
+ *
+ * @param {string} messageId - The moderated message id.
+ * @param {string} moderatorId - The participant id of the moderator.
+ * @param {string} reason - Optional moderation reason.
+ * @returns {Object}
+ */
+export function moderateMessage(messageId: string, moderatorId?: string, reason?: string) {
+    return {
+        type: MODERATE_MESSAGE,
+        messageId,
+        moderatorId,
+        reason
     };
 }

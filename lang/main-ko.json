@@ -204,7 +204,7 @@
         "yesterday": "어제"
     },
     "deepLinking": {
-        "appNotInstalled": "회의에 참여하려면 모바일 앱 설치가 필요합니다",
+        "appNotInstalled": "휴대전화에서 이 회의에 참여하려면 {{app}} 모바일 앱이 필요합니다.",
         "description": "{{app}} 데스크톱 앱에서 회의를 시작했습니다. {{app}} 웹 응용 프로그램에서 다시 시도하거나 실행하십시오.",
         "descriptionNew": "설치가 안되었나요? {{app}} 데스크톱 앱에서 회의를 시작하려고 시도했습니다. <br /><br /> 다시 시도하거나 웹에서 실행할 수 있습니다.",
         "descriptionWithoutWeb": "설치가 안되었나요? {{app}} 데스크톱 앱에서 회의를 시작하려고 시도했습니다.",
@@ -260,7 +260,6 @@
         "Remove": "제거",
         "Share": "공유",
         "Submit": "제출",
-        "WaitForHostMsg": "회의가 시작되지 않았습니다. 호스트인 경우 인증하십시오. 그렇지 않으면 호스트가 도착할 때까지 기다리십시오.",
         "WaitForHostNoAuthMsg": "회의가 시작되지 않았습니다. 호스트가 도착할 때까지 기다리십시오.",
         "WaitingForHostButton": "호스트를 기다립니다",
         "WaitingForHostTitle": "호스트를 기다리는 중…",
@@ -730,13 +729,12 @@
     "me": "나",
     "notify": {
         "OldElectronAPPTitle": "보안 취약성!",
-        "allowAction": "허용",
         "allowedUnmute": "마이크 음소거 해제, 카메라 시작 또는 화면 공유를 할 수 있습니다.",
         "audioUnmuteBlockedDescription": "시스템 제한으로 인해 마이크 음소거 해제 작업이 일시적으로 차단되었습니다.",
         "audioUnmuteBlockedTitle": "마이크 음소거 해제 차단됨!",
         "chatMessages": "채팅 메시지",
         "connectedOneMember": "{{name}}님이 회의에 참여했습니다.",
-        "connectedThreePlusMembers": "{{name}}님 외 {{count}}명이 회의에 참여했습니다.",
+        "connectedThreePlusMembers": "{{name}} 님 외 여러 명이 회의에 참여했습니다",
         "connectedTwoMembers": "{{first}}님과 {{second}}님이 회의에 참여했습니다.",
         "connectionFailed": "연결 실패. 나중에 다시 시도하십시오!",
         "dataChannelClosed": "비디오 품질이 저하될 수 있습니다",
@@ -744,7 +742,6 @@
         "dataChannelClosedDescriptionWithAudio": "브리지 채널이 다운되어 오디오 및 비디오에 장애가 발생할 수 있습니다.",
         "dataChannelClosedWithAudio": "오디오 및 비디오 품질이 저하될 수 있습니다",
         "disabledIframe": "임베딩은 데모 목적에만 사용되므로 이 통화는 {{timeout}}분 후에 연결이 끊어집니다.",
-        "disabledIframeSecondary": "{{domain}} 임베딩은 데모 목적에만 사용되므로 이 통화는 {{timeout}}분 후에 연결이 끊어집니다. 프로덕션 임베딩을 위해 <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a>를 사용하세요!",
         "disconnected": "연결이 끊김",
         "displayNotifications": "다음에 대한 알림 표시",
         "dontRemindMe": "다시 알리지 않기",
@@ -804,7 +801,7 @@
         "passwordRemovedRemotely": "다른 참가자가 $t(lockRoomPasswordUppercase)를 제거했습니다.",
         "passwordSetRemotely": "다른 참가자가 $t(lockRoomPasswordUppercase)를 설정했습니다.",
         "raiseHandAction": "손 들기",
-        "raisedHand": "{{name}}님이 말하고 싶어합니다.",
+        "raisedHand": "참여를 원합니다.",
         "raisedHands": "{{participantName}}님과 {{raisedHands}}명이 더",
         "reactionSounds": "소리 비활성화",
         "reactionSoundsForAll": "모든 사람의 소리 비활성화",
@@ -895,8 +892,7 @@
             "pollQuestion": "투표 질문",
             "questionPlaceholder": "질문을 입력하세요",
             "removeOption": "옵션 제거",
-            "save": "저장",
-            "send": "보내기"
+            "save": "저장"
         },
         "errors": {
             "notUniqueOption": "옵션은 고유해야합니다"
@@ -1055,19 +1051,16 @@
         "recordAudioAndVideo": "오디오와 비디오 녹화",
         "recordTranscription": "자막 녹화",
         "saveLocalRecording": "녹화 파일을 로컬에 저장 (베타)",
-        "serviceDescription": "녹화는 녹화 서비스에 의해 저장됩니다.",
         "serviceDescriptionCloud": "클라우드 녹화",
         "serviceDescriptionCloudInfo": "녹화된 회의는 녹화 후 24시간 후에 자동으로 삭제됩니다.",
         "serviceName": "녹화 서비스",
         "sessionAlreadyActive": "이 세션은 이미 녹화되거나 라이브 스트림 중입니다.",
-        "showAdvancedOptions": "고급 옵션",
         "signIn": "로그인",
         "signOut": "로그아웃",
         "surfaceError": "현재 탭을 선택해 주세요.",
         "title": "녹화",
         "unavailable": "죄송합니다. {{serviceName}}은 현재 사용할 수 없습니다. 저희는 문제를 해결하기 위해 노력하고 있습니다. 나중에 다시 시도 해주십시오.",
-        "unavailableTitle": "녹화를 사용할 수 없습니다",
-        "uploadToCloud": "클라우드에 업로드"
+        "unavailableTitle": "녹화를 사용할 수 없습니다"
     },
     "screenshareDisplayName": "{{name}}의 화면",
     "sectionList": {
@@ -1379,7 +1372,7 @@
         "silence": "조용히",
         "speakerStats": "접속자 통계",
         "startScreenSharing": "화면 공유 시작",
-        "startSubtitles": "자막 시작",
+        "startSubtitles": "자막 • {{language}}",
         "stopAudioSharing": "오디오 공유 중지",
         "stopScreenSharing": "화면 공유 중지",
         "stopSharedVideo": "YouTube 비디오 공유 중지",
@@ -1398,7 +1391,6 @@
         "ccButtonTooltip": "자막 시작/종료",
         "expandedLabel": "현재 스크립트 작성 중",
         "failed": "자막 작성 실패",
-        "labelToolTip": "회의가 기록되고 있습니다.",
         "sourceLanguageDesc": "현재 회의 언어는 <b>{{sourceLanguage}}</b>로 설정되어 있습니다. <br/> 변경하려면 ",
         "sourceLanguageHere": "여기에서",
         "start": "자막 표시 시작",

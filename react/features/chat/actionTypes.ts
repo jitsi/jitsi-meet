@@ -26,6 +26,15 @@ export const ADD_MESSAGE = 'ADD_MESSAGE';
 export const ADD_MESSAGE_REACTION = 'ADD_MESSAGE_REACTION';
 
 /**
+ * The type of action which clears the chat search state.
+ *
+ * {
+ *     type: CLEAR_CHAT_SEARCH
+ * }
+ */
+export const CLEAR_CHAT_SEARCH = 'CLEAR_CHAT_SEARCH';
+
+/**
  * The type of the action which signals to clear Redux.
  *
  * {
@@ -54,6 +63,18 @@ export const CLOSE_CHAT = 'CLOSE_CHAT';
 export const EDIT_MESSAGE = 'EDIT_MESSAGE';
 
 /**
+ * The type of the action which signals to moderate a message
+ * 
+ * {
+ *     type: MODERATE_MESSAGE,
+ *     messageId: string,
+ *     moderatedBy: string,
+ *     reason: string  
+ * }
+ */
+export const MODERATE_MESSAGE = 'MODERATE_MESSAGE';
+
+/**
  * The type of the action which signals to display the chat panel.
  *
  * {
@@ -75,6 +96,39 @@ export const OPEN_CHAT = 'OPEN_CHAT';
 export const SEND_MESSAGE = 'SEND_MESSAGE';
 
 /**
+ * The type of the action which signals to moderates a chat message.
+ * 
+ * {
+ *     type: SEND_MESSAGE_MODERATION,
+ *     message: IMessage,
+ *     reason: string
+ * }
+ */
+export const SEND_MESSAGE_MODERATION = 'SEND_MESSAGE_MODERATION';
+
+/*
+ * The type of the action which signals a request to retract
+ * (delete) a previously sent chat message.
+ * 
+ * {
+ *     type: SEND_MESSAGE_RETRACTION,
+ *     message: IMessage
+ * }
+ */
+export const SEND_MESSAGE_RETRACTION = 'SEND_MESSAGE_RETRACTION';
+
+/*
+ * The type of the action which signals sending an edit for an existing chat message.
+ *
+ * {
+ *     type: SEND_MESSAGE_EDIT,
+ *     messageId: string,
+ *     message: string
+ * }
+ */
+export const SEND_MESSAGE_EDIT = 'SEND_MESSAGE_EDIT';
+
+/**
  * The type of the action which signals a reaction to a message.
  *
  * {
@@ -85,6 +139,26 @@ export const SEND_MESSAGE = 'SEND_MESSAGE';
  * }
  */
 export const SEND_REACTION = 'SEND_REACTION';
+
+/**
+ * The type of action which sets the currently focused search match index.
+ *
+ * {
+ *     type: SET_CHAT_SEARCH_MATCH_INDEX,
+ *     index: number
+ * }
+ */
+export const SET_CHAT_SEARCH_MATCH_INDEX = 'SET_CHAT_SEARCH_MATCH_INDEX';
+
+/**
+ * The type of action which sets the chat search query.
+ *
+ * {
+ *     type: SET_CHAT_SEARCH_QUERY,
+ *     query: string
+ * }
+ */
+export const SET_CHAT_SEARCH_QUERY = 'SET_CHAT_SEARCH_QUERY';
 
 /**
  * The type of action which signals the initiation of sending of as private message to the
@@ -135,6 +209,15 @@ export const SET_LOBBY_CHAT_ACTIVE_STATE = 'SET_LOBBY_CHAT_ACTIVE_STATE';
  * }
  */
 export const REMOVE_LOBBY_CHAT_PARTICIPANT = 'REMOVE_LOBBY_CHAT_PARTICIPANT';
+
+/**
+ * The type of action which signals to delete your own message after sending it (self deletion).
+ * 
+ * {
+ *     type: RETRACT_MESSAGE
+ * }
+ */
+export const RETRACT_MESSAGE = 'RETRACT_MESSAGE';
 
 /**
  * The type of action which signals to set the width of the chat panel.

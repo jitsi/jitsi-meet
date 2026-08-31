@@ -1,16 +1,14 @@
 import React from 'react';
+import { ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../../app/types';
 import { translate } from '../../../../base/i18n/functions';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
-import HeaderNavigationButton
-    from '../../../../mobile/navigation/components/HeaderNavigationButton';
 import { goBack } from
     '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
-import { RECORDING_TYPES } from '../../../constants';
 import AbstractStartRecordingDialog, {
-    IProps,
-    mapStateToProps
+    mapStateToProps as abstractMapStateToProps
 } from '../AbstractStartRecordingDialog';
 import styles from '../styles.native';
 
@@ -19,102 +17,21 @@ import StartRecordingDialogContent from './StartRecordingDialogContent';
 
 /**
  * React Component for managing a recording/transcription session on native.
- * Handles both starting (when nothing is active) and managing toggles
- * (when a session is already running).
+ * Each section (audio & video recording, transcription) has its own
+ * start/stop button which applies the action immediately and navigates back.
  *
  * @augments Component
  */
 class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
 
     /**
-     * Constructor of the component.
-     *
-     * @inheritdoc
-     */
-    constructor(props: IProps) {
-        super(props);
-
-        this._onStartPress = this._onStartPress.bind(this);
-    }
-
-    /**
-     * Implements React's {@link Component#componentDidMount()}.
+     * Dismisses the screen by navigating back.
      *
      * @inheritdoc
      * @returns {void}
      */
-    override componentDidMount() {
-        super.componentDidMount();
-
-        this._updateNavigationOptions();
-    }
-
-    /**
-     * Implements React's {@link Component#componentDidUpdate()}.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    override componentDidUpdate(prevProps: IProps) {
-        super.componentDidUpdate(prevProps);
-
-        this._updateNavigationOptions();
-    }
-
-    /**
-     * Sets the header right button based on whether a session is active.
-     *
-     * @returns {void}
-     */
-    _updateNavigationOptions() {
-        const { _localRecording, _recordingRunning, _transcriptionRunning, navigation, t } = this.props;
-        const servicesRunning = Boolean(_recordingRunning || _transcriptionRunning || _localRecording);
-
-        navigation.setOptions({
-            // eslint-disable-next-line react/no-multi-comp
-            headerRight: () => (
-                <HeaderNavigationButton
-                    disabled = { servicesRunning ? !this._isChanged() : this.isStartRecordingDisabled() }
-                    label = { servicesRunning ? t('dialog.applyChanges') : t('dialog.start') }
-                    onPress = { this._onStartPress }
-                    twoActions = { true } />
-            )
-        });
-    }
-
-    /**
-     * Applies changes and navigates back.
-     *
-     * @returns {void}
-     */
-    _onStartPress() {
-        this._onSubmit() && goBack();
-    }
-
-    /**
-     * Returns true when the start button should be disabled (no-session case).
-     *
-     * @returns {boolean}
-     */
-    isStartRecordingDisabled() {
-        const {
-            isTokenValid,
-            selectedRecordingService,
-            shouldRecordAudioAndVideo,
-            shouldRecordTranscription
-        } = this.state;
-
-        if (!shouldRecordAudioAndVideo && !shouldRecordTranscription) {
-            return true;
-        }
-
-        if (selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) {
-            return false;
-        } else if (selectedRecordingService === RECORDING_TYPES.DROPBOX) {
-            return !isTokenValid;
-        }
-
-        return true;
+    override _dismiss() {
+        goBack();
     }
 
     /**
@@ -127,46 +44,74 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
             _fileRecordingsServiceEnabled,
             _fileRecordingsServiceSharingEnabled,
             _recordingRunning,
-            _transcriptionRunning
+            _transcriptionRunning,
+            recordAudioAndVideo
         } = this.props;
-        const servicesRunning = Boolean(_recordingRunning || _transcriptionRunning);
         const {
             isTokenValid,
             isValidating,
             localRecordingOnlySelf,
+            selectedLanguage,
             selectedRecordingService,
             sharingEnabled,
-            shouldRecordAudioAndVideo,
-            shouldRecordTranscription,
             spaceLeft,
             userName
         } = this.state;
 
         return (
             <JitsiScreen style = { styles.startRecodingContainer }>
-                <StartRecordingDialogContent
-                    fileRecordingsServiceEnabled = { _fileRecordingsServiceEnabled }
-                    fileRecordingsServiceSharingEnabled = { _fileRecordingsServiceSharingEnabled }
-                    integrationsEnabled = { this._areIntegrationsEnabled() }
-                    isTokenValid = { isTokenValid }
-                    isValidating = { isValidating }
-                    localRecordingOnlySelf = { localRecordingOnlySelf }
-                    onChange = { this._onSelectedRecordingServiceChanged }
-                    onLocalRecordingSelfChange = { this._onLocalRecordingSelfChange }
-                    onRecordAudioAndVideoChange = { this._onRecordAudioAndVideoChange }
-                    onSharingSettingChanged = { this._onSharingSettingChanged }
-                    onTranscriptionChange = { this._onTranscriptionChange }
-                    recordingRunning = { Boolean(_recordingRunning) }
-                    selectedRecordingService = { selectedRecordingService }
-                    servicesRunning = { servicesRunning }
-                    sharingSetting = { sharingEnabled }
-                    shouldRecordAudioAndVideo = { shouldRecordAudioAndVideo }
-                    shouldRecordTranscription = { shouldRecordTranscription }
-                    spaceLeft = { spaceLeft }
-                    userName = { userName } />
+                <ScrollView>
+                    <StartRecordingDialogContent
+                        fileRecordingsServiceEnabled = { _fileRecordingsServiceEnabled }
+                        fileRecordingsServiceSharingEnabled = { _fileRecordingsServiceSharingEnabled }
+                        integrationsEnabled = { this._areIntegrationsEnabled() }
+                        isTokenValid = { isTokenValid }
+                        isValidating = { isValidating }
+                        localRecordingOnlySelf = { localRecordingOnlySelf }
+                        onLocalRecordingSelfChange = { this._onLocalRecordingSelfChange }
+                        onRecordingServiceChange = { this._onSelectedRecordingServiceChanged }
+                        onSharingSettingChanged = { this._onSharingSettingChanged }
+                        onStartBoth = { this._onStartBothPress }
+                        onStartRecording = { this._onStartRecordingPress }
+                        onStartTranscription = { this._onStartTranscriptionPress }
+                        onStopBoth = { this._onStopBothPress }
+                        onStopRecording = { this._onStopRecordingPress }
+                        onStopTranscription = { this._onStopTranscriptionPress }
+                        onSubtitlesLanguageChange = { this._onSubtitlesLanguageChanged }
+                        recordAudioAndVideo = { recordAudioAndVideo }
+                        recordingRunning = { Boolean(_recordingRunning) }
+                        selectedLanguage = { selectedLanguage }
+                        selectedRecordingService = { selectedRecordingService }
+                        sharingSetting = { sharingEnabled }
+                        spaceLeft = { spaceLeft }
+                        startRecordingDisabled = { this._isStartRecordingDisabled() }
+                        transcriptionRunning = { Boolean(_transcriptionRunning) }
+                        userName = { userName } />
+                </ScrollView>
             </JitsiScreen>
         );
     }
+}
+
+/**
+ * Maps redux state to component props, bridging the navigation route params
+ * (native-only) into the shared {@code recordAudioAndVideo} prop.
+ *
+ * @param {Object} state - Redux state.
+ * @param {any} ownProps - Component's own props. Kept as `any`: this component is registered
+ * directly as a react-navigation Screen (see ConferenceNavigationContainer.tsx), whose generic
+ * `route`/`navigation` prop types don't compose with a narrower own-props type here without
+ * modeling the whole navigation ParamList, which AbstractStartRecordingDialog's own
+ * mapStateToProps(_ownProps: any) already opts out of for the same reason.
+ * @returns {Object}
+ */
+function mapStateToProps(state: IReduxState, ownProps: any) {
+    return {
+        ...abstractMapStateToProps(state, {
+            ...ownProps,
+            recordAudioAndVideo: ownProps.recordAudioAndVideo ?? ownProps.route?.params?.recordAudioAndVideo
+        })
+    };
 }
 
 export default translate(connect(mapStateToProps)(RecordingTranscriptionDialog));

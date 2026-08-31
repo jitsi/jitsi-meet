@@ -107,7 +107,7 @@
     },
     "chat": {
         "enter": "Vào phòng",
-        "error": "Lỗi: tin nhắn của bạn \"{{originalText}}\" không được gửi. Nguyên nhân: {{error}}",
+        "error": "Lỗi: tin nhắn của bạn chưa được gửi. Lý do: {{error}}",
         "fieldPlaceHolder": "Aa",
         "lobbyChatMessageTo": "Tin nhắn trò chuyện tại sảnh tới {{recipient}}",
         "message": "Tin nhắn",
@@ -259,8 +259,6 @@
         "Remove": "Xóa",
         "Share": "Chia sẻ",
         "Submit": "Đăng ký",
-        "WaitForHostMsg": "Cuộc họp chưa được bắt đầu. Nếu bạn là quản trị viên vui lòng xác thực. Nếu không, vui lòng đợi quản trị viên.",
-        "WaitingForHost": "Đang đợi quản trị viên…",
         "WaitingForHostButton": "Chờ người điều hành",
         "WaitingForHostTitle": "Chờ người điều hành…",
         "Yes": "Có",
@@ -317,7 +315,7 @@
         "enterDisplayName": "Nhập tên của bạn",
         "error": "Lỗi",
         "gracefulShutdown": "Dịch vụ của chúng tôi hiện đang bảo trì. Vui lòng thử lại sau.",
-        "grantModeratorDialog": "Bạn có thực sự muốn cấp quyền quản trị cho người này?",
+        "grantModeratorDialog": "Bạn có chắc chắn muốn cấp quyền điều hành cho {{participantName}} không?",
         "grantModeratorTitle": "Cấp quyền điều hành",
         "hide": "Ẩn",
         "hideShareAudioHelper": "Không hiển thị lại hộp thoại này",
@@ -329,7 +327,7 @@
         "kickParticipantButton": "Đuổi ra",
         "kickParticipantDialog": "Bạn có chắc muốn đuổi người này ra?",
         "kickParticipantTitle": "Tắt tiếng của người tham dự này?",
-        "kickTitle": "Ôi! {{Participant Display Name}} đã đuổi bạn ra khỏi cuộc họp",
+        "kickTitle": "Ôi! {{participantDisplayName}} đã đuổi bạn ra khỏi cuộc họp",
         "linkMeeting": "Liên kết cuộc họp",
         "linkMeetingTitle": "Liên kết cuộc họp với Salesforce",
         "liveStreaming": "Phát trực tuyến",
@@ -502,7 +500,7 @@
     },
     "feedback": {
         "accessibilityLabel": {
-            "yourChoice": "Lựa chọn của bạn: {{xếp hạng}}"
+            "yourChoice": "Lựa chọn của bạn: {{rating}}"
         },
         "average": "Trung bình",
         "bad": "Kém",
@@ -724,18 +722,16 @@
     "me": "Tôi",
     "notify": {
         "OldElectronAPPTitle": "Lỗ hổng bảo mật!",
-        "allowAction": "Cho phép",
         "allowedUnmute": "Bạn có thể bật âm thanh, bật camera hoặc chia sẻ màn hình của mình.",
         "audioUnmuteBlockedDescription": "Hoạt động bật âm thanh đã bị tạm thời chặn do giới hạn hệ thống.",
         "audioUnmuteBlockedTitle": "Chặn việc bật âm thanh!",
         "chatMessages": "Thông điệp trò chuyện",
         "connectedOneMember": "{{name}} đã tham gia cuộc họp",
-        "connectedThreePlusMembers": "{{name}} và {{count}} người khác đã tham gia cuộc họp",
+        "connectedThreePlusMembers": "{{name}} và nhiều người khác đã tham gia cuộc họp",
         "connectedTwoMembers": "{{first}} và {{second}} đã tham gia cuộc họp",
         "dataChannelClosed": "Chất lượng video bị suy giảm",
         "dataChannelClosedDescription": "Kênh cầu nối đã bị ngắt kết nối và do đó chất lượng video bị giới hạn ở cài đặt thấp nhất.",
         "disabledIframe": "Nhúng chỉ dành cho mục đích thử nghiệm, cuộc gọi này sẽ ngắt kết nối sau {{timeout}} phút.",
-        "disabledIframeSecondary": "Nhúng {{domain}} chỉ dành cho mục đích thử nghiệm, cuộc gọi này sẽ ngắt kết nối sau {{timeout}} phút. Vui lòng sử dụng <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> cho việc nhúng vào sản xuất!",
         "disconnected": "đã ngắt kết nối",
         "displayNotifications": "Hiển thị thông báo cho",
         "dontRemindMe": "Đừng nhắc tôi",
@@ -791,7 +787,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) đã bị xóa bởi một người tham gia khác",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) đã được thiết lập bởi một người tham gia khác",
         "raiseHandAction": "Giơ tay",
-        "raisedHand": "{{name}} muốn phát biểu.",
+        "raisedHand": "Muốn phát biểu.",
         "raisedHands": "{{participantName}} và {{raisedHands}} người nữa đã giơ tay",
         "reactionSounds": "Tắt âm",
         "reactionSoundsForAll": "Tắt âm cho tất cả",
@@ -871,8 +867,7 @@
             "pollOption": "Tùy chọn bình chọn {{index}}",
             "pollQuestion": "Câu hỏi bình chọn",
             "questionPlaceholder": "Hỏi một câu hỏi",
-            "removeOption": "Xóa tùy chọn",
-            "send": "Gửi"
+            "removeOption": "Xóa tùy chọn"
         },
         "errors": {
             "notUniqueOption": "Tùy chọn phải là duy nhất"
@@ -927,7 +922,7 @@
         "errorDialOut": "Không thể gọi ra",
         "errorDialOutDisconnected": "Không thể gọi ra. Đã ngắt kết nối",
         "errorDialOutFailed": "Không thể gọi ra. Cuộc gọi thất bại",
-        "errorDialOutStatus": "Lỗi khi lấy trạng thái gọi ra: {{status}}",
+        "errorDialOutStatus": "Lỗi khi lấy trạng thái cuộc gọi đi",
         "errorMissingName": "Vui lòng nhập tên của bạn để tham gia cuộc họp",
         "errorNoPermissions": "Bạn cần phải cho phép truy cập vào micro và camera",
         "errorStatusCode": "Lỗi khi gọi ra, mã trạng thái: {{status}}",
@@ -1027,19 +1022,16 @@
         "recordAudioAndVideo": "Ghi âm và video",
         "recordTranscription": "Ghi chú giọng nói",
         "saveLocalRecording": "Lưu tệp ghi âm cục bộ (Beta)",
-        "serviceDescription": "Ghi hình của bạn sẽ được lưu bởi dịch vụ ghi hình",
         "serviceDescriptionCloud": "Ghi âm trên đám mây",
         "serviceDescriptionCloudInfo": "Cuộc họp được ghi lại sẽ tự động xóa sau 24 giờ kể từ thời gian ghi âm.",
         "serviceName": "Dịch vụ ghi hình",
         "sessionAlreadyActive": "Phiên này đã được ghi âm hoặc phát trực tiếp.",
-        "showAdvancedOptions": "Tùy chọn nâng cao",
         "signIn": "Đăng nhập",
         "signOut": "Đăng xuất",
         "surfaceError": "Vui lòng chọn tab hiện tại.",
         "title": "Đang ghi hình",
         "unavailable": "Rất tiếc! Dịch vụ {{serviceName}} đang không sẵn sàng. Chúng tôi đang xử lý vấn đề này. Vui lòng thử lại sau.",
-        "unavailableTitle": "Ghi hình không hoạt động.",
-        "uploadToCloud": "Tải lên đám mây"
+        "unavailableTitle": "Ghi hình không hoạt động."
     },
     "screenshareDisplayName": "Màn hình của {{name}}",
     "sectionList": {
@@ -1230,7 +1222,7 @@
             "muteGUMPending": "Đang kết nối microphone của bạn",
             "noiseSuppression": "Chế độ chống ồn",
             "openChat": "Mở chat",
-            "participants": "Mở khung người tham gia",
+            "participants": "Mở bảng người tham gia. {{participantsCount}} người tham gia",
             "pip": "Bật/Tắt chế độ Hình-trong-Hình",
             "privateMessage": "Gửi tin nhắn riêng tư",
             "profile": "Chỉnh sửa hồ sơ cá nhân",
@@ -1346,7 +1338,7 @@
         "silence": "Im lặng",
         "speakerStats": "Thống kê về người tham dự",
         "startScreenSharing": "Bắt đầu chia sẻ màn hình",
-        "startSubtitles": "Bắt đầu phụ đề",
+        "startSubtitles": "Phụ đề • {{language}}",
         "stopAudioSharing": "Dừng chia sẻ âm thanh",
         "stopScreenSharing": "Dừng chia sẻ màn hình",
         "stopSharedVideo": "Dừng video",
@@ -1364,8 +1356,6 @@
     "transcribing": {
         "ccButtonTooltip": "Chạy/Dừng phụ đề",
         "expandedLabel": "Phiên âm đang bật",
-        "failedToStart": "Khởi chạy phiên âm thất bại",
-        "labelToolTip": "Cuộc họp đang được phiên âm",
         "sourceLanguageDesc": "Hiện tại ngôn ngữ của cuộc họp được đặt là <b>{{sourceLanguage}}</b>. <br/> Bạn có thể thay đổi nó từ",
         "sourceLanguageHere": "đây",
         "start": "Bắt đầu hiển thị phụ đề",
@@ -1468,7 +1458,6 @@
         "labelTooltip": "Số lượt truy cập: {{count}}",
         "notification": {
             "demoteDescription": "Được gửi đến đây bởi {{actor}}, giơ tay để tham gia",
-            "description": "Để tham gia, hãy giơ tay",
             "title": "Bạn là một khách trong cuộc họp"
         }
     },

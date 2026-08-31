@@ -257,7 +257,6 @@
         "Remove": "Fjarlægja",
         "Share": "Deila",
         "Submit": "Senda inn",
-        "WaitForHostMsg": "Fjarfundurinn er ekki byrjaður vegna þess að engir umsjónarmenn eru mættir. Ef þú vilt gerast umsjónarmaður skaltu skrá þig inn. Annars ættirðu að bíða.",
         "WaitingForHostButton": "Bíddu eftir umsjónarmanni",
         "WaitingForHostTitle": "Bíð eftir umsjónarmanni…",
         "Yes": "Já",
@@ -545,7 +544,7 @@
         "inviteTextiOSInviteUrl": "Smelltu á eftirfarandi tengil til að taka þátt: {{inviteUrl}}.",
         "inviteTextiOSJoinSilent": "Ef þú ert að hringja inn í gegnum símanúmer fjarfundar, skaltu nota þennan tengil til að taka þátt án þess að tengjast með hljóði: {{silentUrl}}.",
         "inviteTextiOSPersonal": "{{name}} er að bjóða þér á fund.",
-        "inviteTextiOSPhone": "Til að tengjast með síma skaltu nota þetta númer: {{number}},,{{conferenceID}}#\n",
+        "inviteTextiOSPhone": "Til að taka þátt í gegnum síma skaltu nota þetta númer: {{number}},,{{conferenceID}}#. Ef þú ert að leita að öðru númeri er hér heildarlistinn: {{didUrl}}.",
         "inviteURLFirstPartGeneral": "Þér hefur verið boðið að taka þátt í fundi.",
         "inviteURLFirstPartPersonal": "{{name}} er að bjóða þér á fund.\n",
         "inviteURLSecondPart": "\nTaka þátt í fundinum:\n{{url}}\n",
@@ -717,7 +716,6 @@
     "me": "ég",
     "notify": {
         "OldElectronAPPTitle": "Öryggisveikleiki!",
-        "allowAction": "Leyfa",
         "allowedUnmute": "Þú getur afþaggað hljóðnemann þinn, ræst myndavélina þína eða deilt skjánum þínum.",
         "audioUnmuteBlockedDescription": "Lokað hefur verið tímabundið fyrirá afþöggun hljóðnema vegna takmarkana í kerfinu.",
         "audioUnmuteBlockedTitle": "Lokað á afþöggun hljóðnema1",
@@ -728,7 +726,6 @@
         "dataChannelClosed": "Gæðum myndmerkis er ábótavant",
         "dataChannelClosedDescription": "Brúarrásin hefur verið aftengd og eru því gæði myndmerkis takmörkuð við lægstu stillinguna.",
         "disabledIframe": "Ívafning (embedding) er aðeins ætluð sem sýnidæmi, þannig að þetta mun aftengjast eftir {{timeout}} mínútur.",
-        "disabledIframeSecondary": "Ívafning (embedding) {{domain}} er aðeins ætluð sem sýnidæmi, þannig að þetta mun aftengjast eftir {{timeout}} mínútur. Notaðu <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi sem þjónustu</a> fyrir ívafningu í vinnuumhverfi!",
         "disconnected": "aftengt",
         "displayNotifications": "Birta tilkynningar frá",
         "dontRemindMe": "Ekki minna mig á",
@@ -860,8 +857,7 @@
             "pollOption": "Valkostur í könnun {{index}}",
             "pollQuestion": "Spurning könnunar",
             "questionPlaceholder": "Spurðu spurningar",
-            "removeOption": "Fjarlægja valkost",
-            "send": "Senda"
+            "removeOption": "Fjarlægja valkost"
         },
         "errors": {
             "notUniqueOption": "Valkostir hljóta að vera einstök"
@@ -1015,19 +1011,16 @@
         "recordAudioAndVideo": "Taka upp hljóð og myndmerki",
         "recordTranscription": "Taka upp textaumritun",
         "saveLocalRecording": "Vista upptökuskrá á eigin tölvu (Beta-prófunarútgáfa)",
-        "serviceDescription": "Upptakan þín verður vistuð af upptökuþjónustunni",
         "serviceDescriptionCloud": "Upptaka á tölvuský",
         "serviceDescriptionCloudInfo": "Upptökurm af fundum er eytt sjálfkrafa 24klst eftir upptöku þeirra.",
         "serviceName": "Upptökuþjónusta",
         "sessionAlreadyActive": "Það er þegar verið að taka upp eða streyma beint þessari setu.",
-        "showAdvancedOptions": "Ítarlegir valkostir",
         "signIn": "Skrá inn",
         "signOut": "Skrá út",
         "surfaceError": "Veldu núverandi flipa.",
         "title": "Upptaka",
         "unavailable": "Úbbs! {{serviceName}} er upptekið í augnablikinu. Við erum að vinna í þessu vandamáli. Reyndu aftur síðar.",
-        "unavailableTitle": "Upptaka er ekki tiltæk",
-        "uploadToCloud": "Senda inn á tölvuskýið"
+        "unavailableTitle": "Upptaka er ekki tiltæk"
     },
     "screenshareDisplayName": "Skjár hjá {{name}}",
     "sectionList": {
@@ -1218,7 +1211,7 @@
             "muteGUMPending": "Tengi hljóðnemann þinn",
             "noiseSuppression": "Truflanasíun",
             "openChat": "Opna spjall",
-            "participants": "Opna spjald með þátttakendum",
+            "participants": "Opna þátttakendaspjald. {{participantsCount}} þátttakendur",
             "pip": "Víxla mynd-í-mynd-ham af/á",
             "privateMessage": "Senda einkaskilaboð",
             "profile": "Breyta persónusniðinu þínu",
@@ -1351,13 +1344,9 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Hefja / Hætta birtingu skjátexta",
-        "error": "Umritun mistókst. Reyndu aftur.",
         "expandedLabel": "Umritun er virk",
-        "failedToStart": "Tókst ekki að ræsa umritun",
-        "labelToolTip": "Verið er að taka umrita (transcribe) fundinn",
         "off": "Umritun stöðvuð",
         "on": "Umritun hafin",
-        "pending": "Undirbý að taka umrita fundinn…",
         "sourceLanguageDesc": "Núna er tungumál fundarins stillt á <b>{{sourceLanguage}}</b>. <br/> Þú getur breytt því ",
         "sourceLanguageHere": "hér",
         "start": "Hefja birtingu skjátexta",
@@ -1458,7 +1447,6 @@
         "chatIndicator": "(gestur)",
         "labelTooltip": "Fjöldi gesta: {{count}}",
         "notification": {
-            "description": "Til að taka þátt skaltu rétta upp höndina",
             "title": "Þú ert gestur á fundinum"
         }
     },

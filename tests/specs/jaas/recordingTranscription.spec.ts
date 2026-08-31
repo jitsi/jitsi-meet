@@ -274,7 +274,7 @@ describe('Recording & transcription nudge notifications', () => {
 // ─── Manage-mode (session active) dialog tests ───────────────────────────────
 
 describe('Recording & transcription dialog — manage mode', () => {
-    it('dialog opens with recording toggle ON when recording is running', async () => {
+    it('recording section shows Stop when recording is running', async () => {
         if (!expectations.jaas.recordingEnabled) {
             return;
         }
@@ -293,8 +293,12 @@ describe('Recording & transcription dialog — manage mode', () => {
 
             await dialog.waitForDisplay();
 
-            expect(await dialog.isRecordingToggleChecked()).toBe(true);
-            expect(await dialog.isTranscriptionToggleChecked()).toBe(false);
+            expect(await dialog.hasStopRecordingButton()).toBe(true);
+            expect(await dialog.hasStartTranscriptionButton()).toBe(true);
+
+            // Mixed state — the footer offers both bulk actions.
+            expect(await dialog.hasStopBothButton()).toBe(true);
+            expect(await dialog.hasStartBothButton()).toBe(true);
 
             await dialog.cancel();
         } finally {
@@ -304,7 +308,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         }
     });
 
-    it('dialog opens with transcription toggle ON when transcription is running', async () => {
+    it('transcription section shows Stop when transcription is running', async () => {
         if (!expectations.jaas.transcriptionEnabled) {
             return;
         }
@@ -323,8 +327,12 @@ describe('Recording & transcription dialog — manage mode', () => {
 
             await dialog.waitForDisplay();
 
-            expect(await dialog.isTranscriptionToggleChecked()).toBe(true);
-            expect(await dialog.isRecordingToggleChecked()).toBe(false);
+            expect(await dialog.hasStopTranscriptionButton()).toBe(true);
+            expect(await dialog.hasStartRecordingButton()).toBe(true);
+
+            // Mixed state — the footer offers both bulk actions.
+            expect(await dialog.hasStopBothButton()).toBe(true);
+            expect(await dialog.hasStartBothButton()).toBe(true);
 
             await dialog.cancel();
         } finally {
@@ -334,7 +342,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         }
     });
 
-    it('dialog opens with both toggles ON when both services are running', async () => {
+    it('both sections show Stop and footer shows only "Stop both" when both run', async () => {
         if (!expectations.jaas.recordingEnabled || !expectations.jaas.transcriptionEnabled) {
             return;
         }
@@ -357,11 +365,44 @@ describe('Recording & transcription dialog — manage mode', () => {
 
             await dialog.waitForDisplay();
 
-            expect(await dialog.isRecordingToggleChecked()).toBe(true);
-            expect(await dialog.isTranscriptionToggleChecked()).toBe(true);
+            expect(await dialog.hasStopRecordingButton()).toBe(true);
+            expect(await dialog.hasStopTranscriptionButton()).toBe(true);
+            expect(await dialog.hasStopBothButton()).toBe(true);
+            expect(await dialog.hasStartBothButton()).toBe(false);
 
-            // Nothing changed yet — OK must be disabled.
-            expect(await dialog.isOkButtonEnabled()).toBe(false);
+            await dialog.cancel();
+        } finally {
+            await p.switchToMainFrame();
+            await p.getIframeAPI().executeCommand('stopRecording', 'file');
+            await waitForRecordingStopExecuted(p);
+        }
+    });
+
+    it('"Recorder follows me" is locked while recording runs', async () => {
+        if (!expectations.jaas.recordingEnabled) {
+            return;
+        }
+
+        const p = await joinAsModerator();
+
+        try {
+            await startFileRecording(p, { mode: 'file' });
+            await p.switchToIFrame();
+
+            await waitForRecordingRunning(p);
+
+            await p.getToolbar().clickRecordingButton();
+
+            const dialog = p.getRecordingTranscriptionDialog();
+
+            await dialog.waitForDisplay();
+            await dialog.toggleRecordingOptions();
+
+            // The switch only shows for moderators with a cloud service selected.
+            if (await dialog.hasFollowMeRecorderSwitch()) {
+                // The recorder cannot pick up the change mid-session.
+                expect(await dialog.isFollowMeRecorderEnabled()).toBe(false);
+            }
 
             await dialog.cancel();
         } finally {
@@ -388,20 +429,14 @@ describe('Recording & transcription dialog — manage mode', () => {
             await waitForRecordingRunning(p);
             await waitForTranscriptionRunning(p);
 
-            // Open dialog: both toggles on.
             await p.getToolbar().clickRecordingButton();
 
             const dialog = p.getRecordingTranscriptionDialog();
 
             await dialog.waitForDisplay();
 
-            // Turn transcription off, leave recording on.
-            await dialog.clickTranscriptionToggle();
-            expect(await dialog.isTranscriptionToggleChecked()).toBe(false);
-            expect(await dialog.isRecordingToggleChecked()).toBe(true);
-            expect(await dialog.isOkButtonEnabled()).toBe(true);
-
-            await dialog.confirm();
+            // Stop only transcription — the action applies immediately and closes the dialog.
+            await dialog.stopTranscription();
 
             // Transcription should stop.
             await waitForTranscriptionStopped(p);
@@ -438,20 +473,14 @@ describe('Recording & transcription dialog — manage mode', () => {
             await waitForRecordingRunning(p);
             await waitForTranscriptionRunning(p);
 
-            // Open dialog: both toggles on.
             await p.getToolbar().clickRecordingButton();
 
             const dialog = p.getRecordingTranscriptionDialog();
 
             await dialog.waitForDisplay();
 
-            // Turn recording off, leave transcription on.
-            await dialog.clickRecordingToggle();
-            expect(await dialog.isRecordingToggleChecked()).toBe(false);
-            expect(await dialog.isTranscriptionToggleChecked()).toBe(true);
-            expect(await dialog.isOkButtonEnabled()).toBe(true);
-
-            await dialog.confirm();
+            // Stop only recording — the action applies immediately and closes the dialog.
+            await dialog.stopRecording();
 
             // Recording should stop.
             await waitForRecordingStopped(p);
@@ -462,6 +491,39 @@ describe('Recording & transcription dialog — manage mode', () => {
             );
 
             expect(transcriptionStillOn).toBe(true);
+        } finally {
+            await p.switchToMainFrame();
+            await p.getIframeAPI().executeCommand('stopRecording', 'file', true);
+            await waitForRecordingStopExecuted(p, true);
+        }
+    });
+
+    it('"Stop both" stops recording and transcription together', async () => {
+        if (!expectations.jaas.recordingEnabled || !expectations.jaas.transcriptionEnabled) {
+            return;
+        }
+
+        const p = await joinAsModerator();
+
+        try {
+            await startFileRecording(p, {
+                mode: 'file',
+                transcription: true
+            });
+            await p.switchToIFrame();
+
+            await waitForRecordingRunning(p);
+            await waitForTranscriptionRunning(p);
+
+            await p.getToolbar().clickRecordingButton();
+
+            const dialog = p.getRecordingTranscriptionDialog();
+
+            await dialog.waitForDisplay();
+            await dialog.stopBoth();
+
+            await waitForRecordingStopped(p);
+            await waitForTranscriptionStopped(p);
         } finally {
             await p.switchToMainFrame();
             await p.getIframeAPI().executeCommand('stopRecording', 'file', true);

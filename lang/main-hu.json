@@ -5,15 +5,7 @@
         "countryReminder": "Ez USA-n kívüli hívás? Országhívószámmal kell kezdődnie!",
         "disabled": "Nem hívhat meg senkit.",
         "failedToAdd": "Nem sikerült a résztvevők hozzáadása",
-        "footerText": "A külső tárcsázás le van tiltva.",
-        "loading": "Személyek és telefonszámaik keresése",
-        "loadingNumber": "Telefonszám ellenőrzése",
-        "loadingPeople": "Meghívható személyek keresése",
         "noResults": "Nincs találat a keresésre",
-        "noValidNumbers": "Adjon meg egy telefonszámot",
-        "searchNumbers": "Telefonszámok hozzáadása",
-        "searchPeople": "Személyek keresése",
-        "searchPeopleAndNumbers": "Személyek keresése vagy telefonszámaik hozzáadása",
         "telephone": "Telefon: {{number}}",
         "title": "Személyek meghívása az értekezletre"
     },
@@ -86,10 +78,7 @@
     "chromeExtensionBanner": {
         "buttonText": "Chrome kiterjesztés telepítése",
         "dontShowAgain": "Ne jelenjen meg újra",
-        "installExtensionText": "Kiterjesztés telepítése a Google Calendar és az Office 365 integrációjához",
-        "raiseHandAction": "Kéz felemelése",
-        "reactionSounds": "Hangok kikapcsolása",
-        "reactionSoundsForAll": "Hangok kikapcsolása mindenkinek"
+        "installExtensionText": "Kiterjesztés telepítése a Google Calendar és az Office 365 integrációjához"
     },
     "connectingOverlay": {
         "joiningRoom": "Kapcsolódás az értekezlethez…"
@@ -107,8 +96,7 @@
         "FETCH_SESSION_ID": "Munkamenet-azonosító beszerzése…",
         "GET_SESSION_ID_ERROR": "Hiba a munkamenet-azonosítása beszerzése közben: {{code}}",
         "GOT_SESSION_ID": "Munkamenet-azonosító beszerzése… Kész",
-        "LOW_BANDWIDTH": "{{displayName}} videója le lett kapcsolva a sávszélesség csökkentése érdekében",
-        "RECONNECTING": "Hálózati hiba történt. Újracsatlakozás…"
+        "LOW_BANDWIDTH": "{{displayName}} videója le lett kapcsolva a sávszélesség csökkentése érdekében"
     },
     "connectionindicator": {
         "address": "Cím:",
@@ -151,7 +139,6 @@
         "descriptionWithoutWeb": "Semmi sem történt? Megpróbáltuk az értekezletet a {{app}} asztali alkalmazásban elindítani.",
         "downloadApp": "Applikáció letöltése",
         "launchWebButton": "Indítás weben",
-        "openApp": "Továbblépés az applikációhoz",
         "title": "Értekezlet indítása a {{app}} applikációban…",
         "tryAgainButton": "Újbóli próbálkozás az asztali változatban"
     },
@@ -180,9 +167,7 @@
         "Remove": "Eltávolítás",
         "Share": "Megosztás",
         "Submit": "Elküldés",
-        "WaitForHostMsg": "A konferencia még nem kezdődött meg. Ha Ön a házigazda, akkor hitelesítse magát. Ellenkező esetben, kérjük várjon a házigazda érkezésére.",
         "WaitForHostNoAuthMsg": "A konferencia még nem kezdődött el, mert nincs elérhető moderátor. Kérlek várj.",
-        "WaitingForHost": "Várakozás a házigazdára…",
         "Yes": "Igen",
         "accessibilityLabel": {
             "liveStreaming": "Élő közvetítés"
@@ -219,17 +204,12 @@
         "embedMeeting": "Meeting beágyazása",
         "enterDisplayName": "Adja meg a nevét",
         "error": "Hiba",
-        "externalInstallationMsg": "Telepíteni kell a munkaasztal megosztására való kiterjesztést.",
-        "externalInstallationTitle": "Kiterjesztésre van szükség",
-        "goToStore": "Ugrás az alkalmazásbolthoz",
         "gracefulShutdown": "Jelenleg a szolgáltatás karbantartás miatt nem elérhető. Később próbálja meg ismét.",
         "grantModeratorDialog": "Biztos, hogy moderátori jogokat kíván adni a következőnek: {{participantName}}?",
         "grantModeratorTitle": "Moderátori jogok megadása",
         "hideShareAudioHelper": "Ne mutassa ezt az ablakot többé",
         "incorrectPassword": "Helytelen felhasználói név és jelszó",
         "incorrectRoomLockPassword": "Helytelen jelszó",
-        "inlineInstallExtension": "Telepítés azonnal",
-        "inlineInstallationMsg": "Telepíteni kell a munkaasztal megosztására való kiterjesztést.",
         "internalError": "Hoppá! Valami elromlott. Az alábbi hiba történt: {{error}}",
         "internalErrorTitle": "Belső hiba",
         "kickMessage": "További részletek kérhetők a {{participantDisplayName}} résztvevőtől.",
@@ -238,8 +218,6 @@
         "kickParticipantTitle": "Résztvevő kirúgása?",
         "kickTitle": "Jaj! {{participantDisplayName}} kirúgta Önt az értekezletről",
         "liveStreaming": "Élő közvetítés",
-        "liveStreamingDisabledForGuestTooltip": "A vendégek nem kezdhetnek élő közvetítést.",
-        "liveStreamingDisabledTooltip": "Az élő közvetítés indítása le van tiltva.",
         "lockMessage": "A konferencia zárolása meghiúsult.",
         "lockRoom": "Értekezlet $t(lockRoomPasswordUppercase) hozzáadása",
         "lockTitle": "Zárolás meghiúsult",
@@ -268,8 +246,6 @@
         "muteEveryonesVideoTitle": "Minden résztvevő kameráját leállítja?",
         "muteParticipantBody": "Nem fogja tudni visszahangosítani, de ő önmagát bármikor vissza tudja majd hangosítani.",
         "muteParticipantButton": "Némítás",
-        "muteParticipantDialog": "Valóban elnémítható ez a résztvevő? Nem fogja tudni visszahangosítani, de ő önmagát bármikor vissza tudja majd hangosítani.",
-        "muteParticipantTitle": "Elnémítható a résztvevő?",
         "muteParticipantsVideoBody": "Ön nem tudja újra bekapcsolni a kamerát, de ők bármikor újra bekapcsolhatják.",
         "muteParticipantsVideoButton": "Kamera leállítása",
         "muteParticipantsVideoDialog": "Biztosan le akarja tiltani ennek a résztvevőnek a kameráját? Ön nem tudja újra bekapcsolni a kamerát, de ők bármikor újra bekapcsolhatják.",
@@ -280,11 +256,7 @@
         "passwordNotSupported": "Az értekezlet $t(lockRoomPassword) beállítása nem támogatott.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) nem támogatott",
         "passwordRequired": "$t(lockRoomPasswordUppercase) szükséges",
-        "popupError": "A böngésző blokkolja a felugró ablakokat ezen az oldalon. Engedélyezze a böngésző biztonsági beállításaiban a felugró ablakokat és próbálja újra.",
-        "popupErrorTitle": "Felugró ablak blokkolva",
         "recording": "Felvétel",
-        "recordingDisabledForGuestTooltip": "Vendég nem indíthat felvételt.",
-        "recordingDisabledTooltip": "Felvétel rögzítése letiltva.",
         "rejoinNow": "Újracsatlakozás azonnal",
         "remoteControlAllowedMessage": "{{user}} elfogadta az Ön távoli vezérlési kérését!",
         "remoteControlDeniedMessage": "{{user}} visszautasította az Ön távoli vezérlési kérését!",
@@ -301,10 +273,6 @@
         "reservationErrorMsg": "Hibakód: {{code}}, üzenet: {{msg}}",
         "retry": "Újra",
         "screenSharingAudio": "Hang megosztása",
-        "screenSharingFailedToInstall": "Hoppá! A képernyőmegosztó kiterjesztés telepítése meghiúsult.",
-        "screenSharingFailedToInstallTitle": "A képernyőmegosztó kiterjesztés telepítése meghiúsult",
-        "screenSharingFirefoxPermissionDeniedError": "Valami elromlott a képernyőmegosztás indítása közben. Ellenőrizze, hogy megadta-e a szükséges engedélyeket. ",
-        "screenSharingFirefoxPermissionDeniedTitle": "Hoppá! Nem sikerült a képernyőmegosztás indítása!",
         "screenSharingPermissionDeniedError": "Hoppá! Valami elromlott a képernyőmegosztás kiterjesztés jogosultságaival. Töltse újra és kísérelje meg újra.",
         "sendPrivateMessage": "Nemrég egy csak Önnek szóló üzenete érkezett. A válaszát privát üzenetként, vagy inkább az egész csoportnak akarja elküldeni?",
         "sendPrivateMessageCancel": "Küldés a csoportnak",
@@ -318,7 +286,6 @@
         "shareVideoTitle": "Videó megosztása",
         "shareYourScreen": "Képernyő megosztása",
         "shareYourScreenDisabled": "Képernyőmegosztás letiltva.",
-        "shareYourScreenDisabledForGuest": "Vendég nem végezhet képernyőmegosztást.",
         "sharedVideoLinkPlaceholder": "YouTube link vagy közvetlen videó link",
         "startLiveStreaming": "Élő közvetítés kezdése",
         "startRecording": "Felvétel indítása",
@@ -349,9 +316,6 @@
         "rateExperience": "Értékeld az értekezlet élményét",
         "veryBad": "Nagyon rossz",
         "veryGood": "Nagyon jó"
-    },
-    "helpView": {
-        "title": "Súgó"
     },
     "incomingCall": {
         "answer": "Válasz",
@@ -419,8 +383,7 @@
         "toggleParticipantsPane": "A résztvevők panel megjelenítése vagy elrejtése",
         "toggleScreensharing": "Váltás kamera és képernyőmegosztás között",
         "toggleShortcuts": "Gyorsbillentyűk megjelenítése vagy elrejtése",
-        "videoMute": "Kamera elindítása vagy leállítása",
-        "videoQuality": "Hívás minőségének kezelése"
+        "videoMute": "Kamera elindítása vagy leállítása"
     },
     "largeVideo": {
         "screenIsShared": "Ön megosztja a képernyőjét",
@@ -460,7 +423,6 @@
         "youtubeTerms": "YouTube szolgáltatási feltételek"
     },
     "lobby": {
-        "allow": "Engedélyez",
         "backToKnockModeButton": "Csatlakozási kérelem küldése",
         "chat": "Chat",
         "dialogTitle": "Lobby mód",
@@ -489,7 +451,6 @@
         "notificationLobbyDisabled": "Lobby tiltva lett {{originParticipantName}} által.",
         "notificationLobbyEnabled": "Lobby engedélyezve lett {{originParticipantName}} által.",
         "notificationTitle": "Lobby",
-        "passwordField": "Adja meg az értekezlet jelszavát",
         "passwordJoinButton": "Csatlakozás",
         "toggleLabel": "Lobby engedélyezése"
     },
@@ -534,12 +495,11 @@
     "me": "én",
     "notify": {
         "connectedOneMember": "{{name}} bekapcsolódott az értekezletbe",
-        "connectedThreePlusMembers": "{{name}} és {{count}} másik résztvevő kapcsolódott az értekezlethez",
+        "connectedThreePlusMembers": "{{name}} és még sokan mások csatlakoztak az értekezlethez",
         "connectedTwoMembers": "{{first}} és {{second}} bekapcsolódott az értekezletbe",
         "disconnected": "szétkapcsolva",
         "focus": "Konferencia fókusza",
         "focusFail": "{{component}} nem elérhető – újrapróbálkozás {{ms}} másodperc múlva",
-        "grantedTo": "Moderátori jogok biztosítva {{to}} számára!",
         "hostAskedUnmute": "Kérlek hangosítsd vissza a mikrofonod.",
         "invitedOneMember": "{{name}} meg lett hívva",
         "invitedThreePlusMembers": "{{name}} és {{count}} másik felhasználó meg lett hívva",
@@ -561,12 +521,11 @@
         "newDeviceAudioTitle": "Új hangeszköz észlelve",
         "newDeviceCameraTitle": "Új kamera észlelve",
         "noiseSuppressionFailedTitle": "Nem sikerült elindítani a zajcsökkentést",
-        "noiseSuppressionNoTrackDescription": "Kérjük, először kapcsolja ki a mikrofon némítását.",
         "noiseSuppressionStereoDescription": "A sztereó zajcsökkentés jelenleg nem támogatott.",
         "participantWantsToJoin": "Csatlakozni szeretne az értekezlethez",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) egy másik résztvevő által eltávolítva",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) egy másik résztvevő által beállítva",
-        "raisedHand": "{{name}} beszélni szeretne.",
+        "raisedHand": "Szeretne hozzászólni.",
         "somebody": "Valaki",
         "startSilentDescription": "Csatlakozzon újra a hang engedélyezéséhez",
         "startSilentTitle": "Hang nélkül csatlakozott!",
@@ -597,7 +556,6 @@
             "videoModeration": "Elindíthassák a videójukat"
         },
         "close": "Bezár",
-        "header": "Résztvevők",
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Résztvevők ({{count}})",
@@ -621,8 +579,7 @@
             "pollOption": "Opció {{index}}",
             "pollQuestion": "Szavazás kérdése",
             "questionPlaceholder": "Írja le a kérdést",
-            "removeOption": "Opció eltávolítása",
-            "send": "Küldés"
+            "removeOption": "Opció eltávolítása"
         },
         "errors": {
             "notUniqueOption": "Az opcióknak egyedinek kell lenniük"
@@ -721,7 +678,6 @@
         "expandedPending": "A felvétel elindult…",
         "failedToStart": "A felvétel indítása meghiúsult",
         "fileSharingdescription": "Felvétel megosztása az értekezlet résztvevőivel",
-        "live": "ÉLŐ",
         "localRecordingNoNotificationWarning": "A felvételt nem közöljük más résztvevőkkel. Értesítenie kell velük, hogy a találkozót rögzítették.",
         "localRecordingStartWarning": "A megbeszélésből való kilépés előtt feltétlenül állítsa le a felvételt, hogy elmentse azt.",
         "localRecordingStartWarningTitle": "Állítsa le a felvételt a mentéshez",
@@ -733,9 +689,7 @@
         "onBy": "{{name}} elindította a felvételt",
         "onlyRecordSelf": "Csak az én hang- és videófolyamomat rögzítse",
         "pending": "Értekezlet rögzítésének előkészítése…",
-        "rec": "REC",
         "saveLocalRecording": "Felvétel mentése helyileg (béta)",
-        "serviceDescription": "A felvételt a rögzítési szolgáltatás veszi fel",
         "serviceName": "Felvétel szolgáltatás",
         "signIn": "Belépés",
         "signOut": "Kilépés",
@@ -748,9 +702,7 @@
     },
     "security": {
         "about": "Hozzáadhat jelszót az értekezlethez. A résztvevőknek meg kell adniuk a jelszót, mielőtt csatlakozhatnak az értekezlethez.",
-        "aboutReadOnly": "A moderátor résztvevői hozzáadhatnak egy jelszót az értekezlethez. A résztvevőknek meg kell adniuk a jelszót, mielőtt csatlakozhatnak az értekezlethez.",
-        "header": "Biztonsági beállítások",
-        "insecureRoomNameWarning": "The room name is unsafe. Unwanted participants may join your conference. Consider securing your meeting using the security button."
+        "aboutReadOnly": "A moderátor résztvevői hozzáadhatnak egy jelszót az értekezlethez. A résztvevőknek meg kell adniuk a jelszót, mielőtt csatlakozhatnak az értekezlethez."
     },
     "settings": {
         "calendar": {
@@ -784,7 +736,6 @@
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
         "selfView": "Saját kép",
-        "sounds": "Hangok",
         "speakers": "Hangszórók",
         "startAudioMuted": "Mindenki elnémítva kezd",
         "startReactionsMuted": "Reakció hangok némítása mindenki számára",
@@ -875,7 +826,7 @@
             "muteEveryone": "Mindenki elnémítása",
             "muteEveryonesVideoStream": "Mindenki videójának leállítása",
             "noiseSuppression": "Zajcsökkentés",
-            "participants": "Résztvevők",
+            "participants": "Résztvevők panel megnyitása. {{participantsCount}} résztvevő",
             "pip": "Kép és képben mód átváltása",
             "privateMessage": "Privát üzenet küldése",
             "profile": "Adja meg a profilját",
@@ -963,12 +914,10 @@
         "silence": "Néma",
         "speakerStats": "Beszélő statisztika",
         "startScreenSharing": "Képernyőmegosztás kezdése",
-        "startSubtitles": "Feliratok kezdése",
-        "startvideoblur": "Háttér elhomályosítása",
+        "startSubtitles": "Feliratok • {{language}}",
         "stopScreenSharing": "Képernyőmegosztás leállítása",
         "stopSharedVideo": "Kamera leállítása",
         "stopSubtitles": "Felirat leállítása",
-        "stopvideoblur": "Háttér elhomályosításának letiltása",
         "surprised": "Meglepett",
         "talkWhileMutedPopup": "Úgy tűnik beszélni szeretne, de le van némítva.",
         "tileViewToggle": "Mozaikos nézet átváltása",
@@ -978,12 +927,8 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Feliratok indítása / leállítása",
-        "error": "Átírat meghiúsult. Próbálja meg ismét.",
         "expandedLabel": "Az átirat jelenleg be van kapcsolva",
-        "failedToStart": "Meghiúsult az átirat kezdése",
-        "labelToolTip": "Az értekezlet átirata elkezdődött",
         "off": "Az átirat készítése le lett állítva",
-        "pending": "Előkészület az értekezlet átiratának készítésére…",
         "start": "Felirat megjelenítésének kezdése",
         "stop": "Felirat megjelenítésének befejezése",
         "tr": "Átirat"
@@ -1016,8 +961,6 @@
         "lowBandwidthMode": "CsH",
         "lowBandwidthModeExpanded": "Jelenleg az alacsony sávszélességű mód az aktív, vagyis csak hangot lehet fogadni és képernyőmegosztást.",
         "lowDefinition": "Alacsony felbontású",
-        "onlyAudioAvailable": "„Csak hang” mód elérhető",
-        "onlyAudioSupported": "Csak a hang támogatott ebben a böngészőben.",
         "performanceSettings": "Teljesítménybeállítások",
         "sd": "SF",
         "sdTooltip": "Szabványos felbontású videó megtekintése",

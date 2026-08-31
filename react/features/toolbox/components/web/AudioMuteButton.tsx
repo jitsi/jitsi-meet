@@ -41,6 +41,10 @@ interface IProps extends AbstractAudioMuteButtonProps {
    */
     classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
+    /**
+     * Whether this instance should manage the global audio-mute keyboard shortcut.
+     */
+    registerKeyboardShortcut?: boolean;
 }
 
 /**
@@ -71,11 +75,13 @@ class AudioMuteButton extends AbstractAudioMuteButton<IProps> {
      * @returns {void}
      */
     override componentDidMount() {
-        this.props.dispatch(registerShortcut({
-            character: 'M',
-            helpDescription: 'keyboardShortcuts.mute',
-            handler: this._onKeyboardShortcut
-        }));
+        if (this.props.registerKeyboardShortcut !== false) {
+            this.props.dispatch(registerShortcut({
+                character: 'M',
+                helpDescription: 'keyboardShortcuts.mute',
+                handler: this._onKeyboardShortcut
+            }));
+        }
     }
 
     /**
@@ -85,7 +91,9 @@ class AudioMuteButton extends AbstractAudioMuteButton<IProps> {
      * @returns {void}
      */
     override componentWillUnmount() {
-        this.props.dispatch(unregisterShortcut('M'));
+        if (this.props.registerKeyboardShortcut !== false) {
+            this.props.dispatch(unregisterShortcut('M'));
+        }
     }
 
     /**

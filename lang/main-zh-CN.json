@@ -280,7 +280,6 @@
         "Submit": "提交",
         "Understand": "我已知晓，暂时保持静音",
         "UnderstandAndUnmute": "我已知晓，请为我解除静音",
-        "WaitForHostMsg": "会议尚未开始，主持人还未入会。如需成为主持人请先登录，或耐心等待会议开始。",
         "WaitForHostNoAuthMsg": "会议尚未开始，暂无主持人入会，请耐心等待",
         "WaitingForHostButton": "等待主持人",
         "WaitingForHostTitle": "正在等待主持人加入……",
@@ -480,7 +479,7 @@
         "shareScreenWarningH1": "如果你只想共享屏幕：",
         "shareScreenWarningTitle": "在共享你的屏幕之前，你需要停止共享音频",
         "shareVideoConfirmPlay": "即将打开外部网站，是否继续？",
-        "shareVideoConfirmPlayTitle": "需先停止音频共享才能分享屏幕",
+        "shareVideoConfirmPlayTitle": "{{name}} 向您分享了一个视频。",
         "shareVideoLinkError": "请提供正确的视频链接。",
         "shareVideoLinkStopped": "{{name}}向你分享了一个视频",
         "shareVideoTitle": "分享视频",
@@ -518,7 +517,7 @@
             "tokenExpired": "Token已过期。"
         },
         "tokenAuthFailedTitle": "验证失败",
-        "tokenAuthFailedWithReasons": "抱歉，你无法加入此通话，原因：",
+        "tokenAuthFailedWithReasons": "抱歉，您无权加入此通话。可能的原因：{{reason}}",
         "tokenAuthUnsupported": "Token地址不支持",
         "transcribing": "转录中",
         "unauthenticatedAccessDisabled": "此会议需要身份验证，请先登录后继续。",
@@ -796,7 +795,6 @@
         "OldElectronAPPTitle": "安全漏洞！",
         "allowAll": "允许全部",
         "allowAudio": "允许开启麦克风",
-        "allowBoth": "允许音视频",
         "allowDesktop": "允许屏幕共享",
         "allowVideo": "允许开启摄像头",
         "allowedUnmute": "你可以解除麦克风静音、启动摄像头或共享屏幕。",
@@ -979,8 +977,7 @@
             "pollQuestion": "投票内容",
             "questionPlaceholder": "请输入你的问题",
             "removeOption": "删除选项",
-            "save": "保存",
-            "send": "发布"
+            "save": "保存"
         },
         "errors": {
             "notUniqueOption": "选项必须是唯一的"
@@ -1139,19 +1136,16 @@
         "recordAudioAndVideo": "",
         "recordTranscription": "",
         "saveLocalRecording": "本地保存录制文件（测试版）",
-        "serviceDescription": "录制将由录制服务保存",
         "serviceDescriptionCloud": "云录制",
         "serviceDescriptionCloudInfo": "录制的会议将在录制后的24小时内自动清除。",
         "serviceName": "录制服务",
         "sessionAlreadyActive": "此会议已经在录制或直播中",
-        "showAdvancedOptions": "高级选项",
         "signIn": "登录",
         "signOut": "注销",
         "surfaceError": "请选择当前选项卡。",
         "title": "录制中",
         "unavailable": "糟糕！{{serviceName}}目前无法使用，我们正在努力解决这个问题，请稍后再试。",
-        "unavailableTitle": "录制不可用",
-        "uploadToCloud": "上传至云端"
+        "unavailableTitle": "录制不可用"
     },
     "screenshareDisplayName": "{{name}}的屏幕",
     "sectionList": {

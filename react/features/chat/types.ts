@@ -16,23 +16,31 @@ export type ChatMessageType =
 
 export interface IMessage {
     displayName: string;
+    editedAt?: number;
     error?: unknown;
     fileMetadata?: IFileMetadata;
+    isDeleted?: boolean;
+    isEdited?: Boolean;
     isFromGuest?: boolean;
     isFromVisitor?: boolean;
+    isModerated?: boolean;
     isReaction: boolean;
     lobbyChat: boolean;
     message: string;
     messageId: string;
     messageType: ChatMessageType;
+    moderatedBy?: string;
+    moderationReason?: string;
     participantId: string;
     privateMessage: boolean;
     reactions: Map<string, Set<string>>;
     recipient: string;
+    recipientId?: string;
     /**
      * When set, XMPP message id of the message this one replies to (XEP-0461), from lib-jitsi-meet.
      */
     replyToMessageId?: string;
+    retractedBy?: string;
     sentToVisitor?: boolean;
     timestamp: number;
 }
@@ -71,6 +79,17 @@ export interface IChatMessageProps extends WithTranslation {
     gifEnabled?: boolean;
 
     /**
+     * Case-insensitive search query whose matches in the message text should be highlighted.
+     * Left undefined/empty for no highlighting.
+     */
+    highlightQuery?: string;
+
+    /**
+     * Whether this message is the currently focused search match (for prev/next navigation).
+     */
+    isActiveMatch?: boolean;
+
+    /**
      * Whether current participant is currently knocking in the lobby room.
      */
     knocking?: boolean;
@@ -97,4 +116,20 @@ export interface IChatMessageProps extends WithTranslation {
      * displayed.
      */
     showTimestamp: boolean;
+}
+
+/**
+ * The shape of a single cached pending edit, keyed by messageId in Redux state.
+ */
+export interface IPendingEdit {
+    editedAt: number;
+    message: string;
+    participantId?: string;
+}
+
+/**
+ * The shape of the pendingEdits map in Redux state.
+ */
+export interface IPendingEditsMap {
+    [messageId: string]: IPendingEdit;
 }

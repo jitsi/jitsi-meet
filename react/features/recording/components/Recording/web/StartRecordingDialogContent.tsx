@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
-import { IconArrowDown, IconArrowRight } from '../../../../base/icons/svg';
+import { IconArrowDown } from '../../../../base/icons/svg';
 import Container from '../../../../base/react/components/web/Container';
 import Image from '../../../../base/react/components/web/Image';
 import LoadingIndicator from '../../../../base/react/components/web/LoadingIndicator';
@@ -15,331 +16,219 @@ import { RECORDING_TYPES } from '../../../constants';
 import { getRecordingDurationEstimation } from '../../../functions';
 import AbstractStartRecordingDialogContent, { mapStateToProps } from '../AbstractStartRecordingDialogContent';
 import {
-    DROPBOX_LOGO,
-    ICON_CLOUD,
     ICON_INFO,
     ICON_USERS,
-    LOCAL_RECORDING
+    startRecordingDialogStyles
 } from '../styles.web';
+
+import DropdownSelect from './DropdownSelect';
 
 const EMPTY_FUNCTION = () => {
     // empty
 };
 
 /**
- * The start recording dialog content for the mobile application.
+ * The recording & transcription dialog content for the web application.
  */
 class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
-    /**
-     * Renders the two service toggles (recording + transcription) directly,
-     * without the collapsible wrapper — used in manage mode when a session
-     * is already active.
-     *
-     * @returns {React$Component}
-     */
-    _renderSessionToggles() {
-        const {
-            _localRecordingRunning,
-            _renderRecording,
-            shouldRecordAudioAndVideo,
-            shouldRecordTranscription,
-            t
-        } = this.props;
-
-        // A participant who started a local recording must always be able to stop it,
-        // even without the JWT recording feature that _renderRecording reflects.
-        const renderRecordingToggle = _renderRecording || _localRecordingRunning;
-
-        return (
-            <>
-                { renderRecordingToggle && (
-                    <div className = 'recording-header space-top'>
-                        <label
-                            className = 'recording-title'
-                            htmlFor = 'recording-switch-audio-video'>
-                            { t('recording.recordAudioAndVideo') }
-                        </label>
-                        <Switch
-                            checked = { shouldRecordAudioAndVideo }
-                            className = 'recording-switch'
-                            id = 'recording-switch-audio-video'
-                            onChange = { this._onRecordAudioAndVideoSwitchChange } />
-                    </div>
-                ) }
-                { this._canStartTranscribing() && (
-                    <div className = 'recording-header space-top'>
-                        <label
-                            className = 'recording-title'
-                            htmlFor = 'recording-switch-transcription'>
-                            { t('recording.recordTranscription') }
-                        </label>
-                        <Switch
-                            checked = { shouldRecordTranscription }
-                            className = 'recording-switch'
-                            id = 'recording-switch-transcription'
-                            onChange = { this._onTranscriptionSwitchChange } />
-                    </div>
-                ) }
-                { !_renderRecording && this._renderLocalRecordingContent() }
-            </>
-        );
-    }
-
     override render() {
-        const {
-            _canStartTranscribing,
-            _renderRecording,
-            _transcriptionRunning,
-            fileRecordingsServiceEnabled,
-            integrationsEnabled,
-            recordingRunning
-        } = this.props;
-
-        if (recordingRunning) {
-            return (
-                <Container className = 'recording-dialog'>
-                    { this._renderSessionToggles() }
-                </Container>
-            );
-        }
-
-        const isTranscriptionOnlySession = Boolean(_transcriptionRunning) && !recordingRunning;
-
-        if (isTranscriptionOnlySession) {
-            // Transcription-only session: show the share-link toggle plus the per-capability service
-            // toggles (recording, transcription, local recording) so the participant can act on
-            // whatever they are allowed to control.
-            return (
-                <Container className = 'recording-dialog'>
-                    { this._renderFileSharingContent() }
-                    { this._renderSessionToggles() }
-                </Container>
-            );
-        }
-
-        // Cloud recording is only usable when a service (file recording or integration) is available;
-        // the JWT recording feature alone doesn't imply one. Transcription nests under the cloud
-        // options when it's supported, otherwise it shows standalone.
-        const supportsCloudRecording = _renderRecording && (fileRecordingsServiceEnabled || integrationsEnabled);
-        const showTranscription = _canStartTranscribing && !supportsCloudRecording;
+        const classes = this.props.classes ?? {};
 
         return (
-            <Container className = 'recording-dialog'>
-                { supportsCloudRecording && (
-                    <>
-                        { this._renderNoIntegrationsContent() }
-                        { this._renderFileSharingContent() }
-                        { this._renderAdvancedOptions() }
-                        { this._renderUploadToTheCloudInfo() }
-                        { this._renderIntegrationsContent() }
-                    </>
-                )}
-                { showTranscription && this._renderTranscriptionOnly() }
-                { this._renderLocalRecordingContent() }
+            <Container className = { classes.container }>
+                { this._renderRecordingSection() }
+                { this._renderTranscriptionSection() }
+                { this._renderFooter() }
             </Container>
         );
     }
 
     /**
-     * Renders the transcription toggle directly when no recording service
-     * is available but transcription is.
+     * Renders the accordion wrapping a section's options: a header with the
+     * options title, a one line summary of the current choices and a chevron,
+     * followed by the options themselves when expanded.
      *
+     * @param {Object} options - Rendering options.
      * @returns {React$Component}
      */
-    _renderTranscriptionOnly() {
-        const { shouldRecordTranscription, t } = this.props;
+    _renderAccordion({ body, expanded, id, onToggle, summary, titleKey }: {
+        body: React.ReactNode;
+        expanded: boolean;
+        id: string;
+        onToggle: () => void;
+        summary: string;
+        titleKey: string;
+    }) {
+        const { t } = this.props;
+        const classes = this.props.classes ?? {};
 
         return (
-            <div className = 'recording-header space-top'>
-                <label
-                    className = 'recording-title'
-                    htmlFor = 'recording-switch-transcription'>
-                    { t('recording.recordTranscription') }
-                </label>
-                <Switch
-                    checked = { shouldRecordTranscription }
-                    className = 'recording-switch'
-                    id = 'recording-switch-transcription'
-                    onChange = { this._onTranscriptionSwitchChange } />
-            </div>
-        );
-    }
-
-    /**
-     * Renders the switch for saving the transcription.
-     *
-     * @returns {React$Component}
-     */
-    _renderAdvancedOptions() {
-        // Recording/transcription permissions needed.
-        if (!this.props._canManageRecordingOrTranscription) {
-            return null;
-        }
-        if (!this._canStartTranscribing() && !this.props.servicesRunning) {
-            return null;
-        }
-        const { selectedRecordingService } = this.props;
-        const validService = selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE
-            || !selectedRecordingService;
-
-        if (!validService) {
-            return null;
-        }
-
-        const { showAdvancedOptions } = this.state;
-        const { _renderRecording, shouldRecordAudioAndVideo, shouldRecordTranscription, t } = this.props;
-
-        return (
-            <>
-                <div
-                    className = 'recording-header space-top'
-                    onClick = { this._onToggleShowOptions }>
-                    <label className = 'recording-title-no-space'>
-                        {t('recording.showAdvancedOptions')}
-                    </label>
+            <Container className = { classes.accordion }>
+                <button
+                    aria-controls = { `${id}-content` }
+                    aria-expanded = { expanded }
+                    className = { classes.accordionHeader }
+                    id = { id }
+                    onClick = { onToggle }
+                    type = 'button'>
+                    <Container className = { classes.accordionText }>
+                        <span className = { classes.accordionTitle }>
+                            { t(titleKey) }
+                        </span>
+                        { !expanded && (
+                            <span className = { classes.accordionSummary }>
+                                { summary }
+                            </span>
+                        ) }
+                    </Container>
                     <Icon
-                        ariaPressed = { showAdvancedOptions }
-                        onClick = { this._onToggleShowOptions }
-                        role = 'button'
-                        size = { 24 }
-                        src = { showAdvancedOptions ? IconArrowDown : IconArrowRight } />
-                </div>
-                {showAdvancedOptions && (
-                    <>
-                        <div className = 'recording-header space-top'>
-                            <label
-                                className = 'recording-title'
-                                htmlFor = 'recording-switch-transcription'>
-                                { t('recording.recordTranscription') }
-                            </label>
-                            <Switch
-                                checked = { shouldRecordTranscription }
-                                className = 'recording-switch'
-                                id = 'recording-switch-transcription'
-                                onChange = { this._onTranscriptionSwitchChange } />
-                        </div>
-                        {_renderRecording && (
-                            <div className = 'recording-header space-top'>
-                                <label
-                                    className = 'recording-title'
-                                    htmlFor = 'recording-switch-audio-video'>
-                                    { t('recording.recordAudioAndVideo') }
-                                </label>
-                                <Switch
-                                    checked = { shouldRecordAudioAndVideo }
-                                    className = 'recording-switch'
-                                    id = 'recording-switch-audio-video'
-                                    onChange = { this._onRecordAudioAndVideoSwitchChange } />
-                            </div>
-                        )}
-                    </>
-                )}
-            </>
+                        className = { `${classes.accordionChevron} ${expanded ? classes.accordionChevronOpen : ''}` }
+                        size = { 18 }
+                        src = { IconArrowDown } />
+                </button>
+                { expanded && (
+                    <div
+                        className = { classes.accordionBody }
+                        id = { `${id}-content` }>
+                        { body }
+                    </div>
+                ) }
+            </Container>
         );
     }
 
     /**
-     * Renders the content in case no integrations were enabled.
+     * Renders the audio & video recording section: the action row with the
+     * start/stop button and the options accordion holding the storage service
+     * combobox and the selected service's options.
      *
      * @returns {React$Component}
      */
-    _renderNoIntegrationsContent() {
-        if (!this._shouldRenderNoIntegrationsContent()) {
+    _renderRecordingSection() {
+        const recordingServiceOptions = this._getRecordingServiceOptions();
+
+        if (!this._shouldRenderRecordingSection(recordingServiceOptions)) {
             return null;
         }
 
         const {
-            _localRecordingAvailable,
-            integrationsEnabled,
             isValidating,
-            isVpaas,
+            onStartRecording,
+            onStopRecording,
+            recordingRunning,
             selectedRecordingService,
-            shouldRecordAudioAndVideo,
-            shouldRecordTranscription,
+            startRecordingDisabled,
             t
         } = this.props;
-
-        const switchContent
-            = integrationsEnabled || _localRecordingAvailable
-                ? (
-                    <Switch
-                        checked = { selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE
-                            && (shouldRecordAudioAndVideo || shouldRecordTranscription) }
-                        className = 'recording-switch'
-                        disabled = { isValidating }
-                        id = 'recording-switch-jitsi'
-                        onChange = { this._onRecordingServiceSwitchChange } />
-                ) : null;
-
-        const label = isVpaas ? t('recording.serviceDescriptionCloud') : t('recording.serviceDescription');
-        const jitsiContentRecordingIconContainer
-            = integrationsEnabled || _localRecordingAvailable
-                ? 'jitsi-content-recording-icon-container-with-switch'
-                : 'jitsi-content-recording-icon-container-without-switch';
-        const contentRecordingClass = isVpaas
-            ? 'cloud-content-recording-icon-container'
-            : jitsiContentRecordingIconContainer;
-        const jitsiRecordingHeaderClass = !isVpaas && 'jitsi-recording-header';
+        const { showRecordingOptions } = this.state;
+        const classes = this.props.classes ?? {};
+        const serviceOptions = recordingServiceOptions.map(service => {
+            return {
+                label: t(this._getServiceLabelKey(service)),
+                value: service
+            };
+        });
 
         return (
-            <Container
-                className = { `recording-header ${jitsiRecordingHeaderClass}` }
-                key = 'noIntegrationSetting'>
-                <Container className = { contentRecordingClass }>
-                    <Image
-                        alt = ''
-                        className = 'content-recording-icon'
-                        src = { ICON_CLOUD } />
+            <Container className = { classes.section }>
+                <Container className = { classes.header }>
+                    <label className = { classes.titleNoMargin }>
+                        { t('recording.recordAudioAndVideo') }
+                    </label>
+                    <Container className = { classes.switch }>
+                        { recordingRunning ? (
+                            <Button
+                                accessibilityLabel = { t('dialog.stopRecording') }
+                                labelKey = 'dialog.stop'
+                                onClick = { onStopRecording }
+                                testId = 'recordingDialog.stopRecording'
+                                type = { BUTTON_TYPES.DESTRUCTIVE } />
+                        ) : (
+                            <Button
+                                accessibilityLabel = { t('dialog.startRecording') }
+                                disabled = { startRecordingDisabled || isValidating }
+                                labelKey = 'dialog.start'
+                                onClick = { onStartRecording }
+                                testId = 'recordingDialog.startRecording'
+                                type = { BUTTON_TYPES.PRIMARY } />
+                        ) }
+                    </Container>
                 </Container>
-                <label
-                    className = 'recording-title'
-                    htmlFor = 'recording-switch-jitsi'>
-                    { label }
-                </label>
-                { switchContent }
+                { this._renderAccordion({
+                    body: (
+                        <>
+                            <DropdownSelect
+                                disabled = { recordingRunning || isValidating }
+                                id = 'recording-service-select'
+                                label = { t('recording.storageLocation') }
+                                onChange = { this._onRecordingServiceChange }
+                                options = { serviceOptions }
+                                value = { selectedRecordingService ?? '' } />
+                            { selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE
+                                && this._renderJitsiServiceOptions() }
+                            { selectedRecordingService === RECORDING_TYPES.DROPBOX
+                                && this._renderDropboxOptions() }
+                            { selectedRecordingService === RECORDING_TYPES.LOCAL
+                                && this._renderLocalRecordingOptions() }
+                            { this._renderFollowMeRecorder() }
+                        </>
+                    ),
+                    expanded: showRecordingOptions,
+                    id: 'recording-options',
+                    onToggle: this._onToggleRecordingOptions,
+
+                    // Only rendered by _renderAccordion while collapsed — skip computing it
+                    // (and its nested t() calls) while the section is expanded.
+                    summary: showRecordingOptions ? '' : this._getRecordingSummary(),
+                    titleKey: 'recording.recordingOptions'
+                }) }
             </Container>
         );
     }
 
     /**
-     * Renders the file recording service sharing options, if enabled.
+     * Renders the options of the Jitsi recording service: the recording link
+     * sharing switch and the vpaas storage warning.
      *
      * @returns {React$Component}
      */
-    _renderFileSharingContent() {
-        if (!this._shouldRenderFileSharingContent()) {
-            return null;
-        }
-
+    _renderJitsiServiceOptions() {
         const {
             isValidating,
             onSharingSettingChanged,
+            recordingRunning,
             sharingSetting,
             t
         } = this.props;
+        const classes = this.props.classes ?? {};
 
         return (
-            <Container
-                className = 'recording-header'
-                key = 'fileSharingSetting'>
-                <Container className = 'recording-icon-container file-sharing-icon-container'>
-                    <Image
-                        alt = ''
-                        className = 'recording-file-sharing-icon'
-                        src = { ICON_USERS } />
-                </Container>
-                <label
-                    className = 'recording-title'
-                    htmlFor = 'recording-switch-share'>
-                    { t('recording.fileSharingdescription') }
-                </label>
-                <Switch
-                    checked = { sharingSetting }
-                    className = 'recording-switch'
-                    disabled = { isValidating || !this.props.shouldRecordAudioAndVideo }
-                    id = 'recording-switch-share'
-                    onChange = { onSharingSettingChanged } />
-            </Container>
+            <>
+                { this._shouldRenderFileSharingContent() && (
+                    <Container
+                        className = { `${classes.header} ${classes.headerSpaceTop}` }
+                        key = 'fileSharingSetting'>
+                        <Container className = { `${classes.iconContainer} ${classes.fileSharingIconContainer}` }>
+                            <Image
+                                alt = ''
+                                className = { classes.fileSharingIcon }
+                                src = { ICON_USERS } />
+                        </Container>
+                        <label
+                            className = { classes.title }
+                            htmlFor = 'recording-switch-share'>
+                            { t('recording.fileSharingdescription') }
+                        </label>
+                        <Switch
+                            checked = { sharingSetting }
+                            className = { classes.switch }
+                            disabled = { isValidating || recordingRunning }
+                            id = 'recording-switch-share'
+                            onChange = { onSharingSettingChanged } />
+                    </Container>
+                ) }
+                { this._renderUploadToTheCloudInfo() }
+            </>
         );
     }
 
@@ -352,23 +241,24 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         const {
             _hideStorageWarning,
             isVpaas,
-            selectedRecordingService,
             t
         } = this.props;
 
-        if (!(isVpaas && selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) || _hideStorageWarning) {
+        if (!isVpaas || _hideStorageWarning) {
             return null;
         }
 
+        const classes = this.props.classes ?? {};
+
         return (
             <Container
-                className = 'recording-info'
+                className = { classes.info }
                 key = 'cloudUploadInfo'>
                 <Image
                     alt = ''
-                    className = 'recording-info-icon'
+                    className = { classes.infoIcon }
                     src = { ICON_INFO } />
-                <Text className = 'recording-info-title'>
+                <Text className = { classes.infoTitle }>
                     { t('recording.serviceDescriptionCloudInfo') }
                 </Text>
             </Container>
@@ -376,32 +266,51 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
     }
 
     /**
-     * Renders a spinner component.
+     * Renders the Dropbox account area: sign in button, or account info plus
+     * sign out button once authorized.
      *
      * @returns {React$Component}
      */
-    _renderSpinner() {
-        return (
-            <LoadingIndicator size = 'small' />
-        );
-    }
-
-    /**
-     * Renders the screen with the account information of a logged in user.
-     *
-     * @returns {React$Component}
-     */
-    _renderSignOut() {
+    _renderDropboxOptions() {
         const {
+            isTokenValid,
+            isValidating,
             spaceLeft,
             t,
             userName
         } = this.props;
+        const classes = this.props.classes ?? {};
+
+        if (isValidating) {
+            return (
+                <Container className = { classes.authorizationPanel }>
+                    <LoadingIndicator size = 'small' />
+                </Container>
+            );
+        }
+
+        if (!isTokenValid) {
+            return (
+                <Container className = { `${classes.header} ${classes.headerSpaceTop}` }>
+                    <span className = { classes.optionLabel }>
+                        { t('recording.dropboxSignInPrompt') }
+                    </span>
+                    <Container className = { classes.switch }>
+                        <Button
+                            accessibilityLabel = { t('recording.signIn') }
+                            labelKey = 'recording.signIn'
+                            onClick = { this._onSignIn }
+                            type = { BUTTON_TYPES.PRIMARY } />
+                    </Container>
+                </Container>
+            );
+        }
+
         const duration = getRecordingDurationEstimation(spaceLeft);
 
         return (
-            <Container>
-                <Container className = 'logged-in-panel'>
+            <Container className = { `${classes.header} ${classes.headerSpaceTop}` }>
+                <Container className = { classes.loggedInPanel }>
                     <Container>
                         <Text>
                             { t('recording.loggedIn', { userName }) }
@@ -418,192 +327,222 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                         </Text>
                     </Container>
                 </Container>
-            </Container>
-        );
-    }
-
-    /**
-     * Renders the content in case integrations were enabled.
-     *
-     * @protected
-     * @returns {React$Component}
-     */
-    _renderIntegrationsContent() {
-        if (!this._shouldRenderIntegrationsContent()) {
-            return null;
-        }
-
-        const {
-            _localRecordingAvailable,
-            fileRecordingsServiceEnabled,
-            isTokenValid,
-            isValidating,
-            selectedRecordingService,
-            t
-        } = this.props;
-        let content = null;
-        let switchContent = null;
-        let labelContent = (
-            <Text className = 'recording-title'>
-                { t('recording.authDropboxText') }
-            </Text>
-        );
-
-        if (isValidating) {
-            content = this._renderSpinner();
-            switchContent = <Container className = 'recording-switch' />;
-        } else if (isTokenValid) {
-            content = this._renderSignOut();
-            switchContent = (
-                <Container className = 'recording-switch'>
+                <Container className = { classes.switch }>
                     <Button
                         accessibilityLabel = { t('recording.signOut') }
                         labelKey = 'recording.signOut'
                         onClick = { this._onSignOut }
                         type = { BUTTON_TYPES.SECONDARY } />
                 </Container>
-            );
-
-        } else {
-            switchContent = (
-                <Container className = 'recording-switch'>
-                    <Button
-                        accessibilityLabel = { t('recording.signIn') }
-                        labelKey = 'recording.signIn'
-                        onClick = { this._onSignIn }
-                        type = { BUTTON_TYPES.PRIMARY } />
-                </Container>
-            );
-        }
-
-        if (fileRecordingsServiceEnabled || _localRecordingAvailable) {
-            switchContent = (
-                <Switch
-                    checked = { selectedRecordingService
-                        === RECORDING_TYPES.DROPBOX }
-                    className = 'recording-switch'
-                    disabled = { isValidating }
-                    id = 'recording-switch-integration'
-                    onChange = { this._onDropboxSwitchChange } />
-            );
-            labelContent = (
-                <label
-                    className = 'recording-title'
-                    htmlFor = 'recording-switch-integration'>
-                    { t('recording.authDropboxText') }
-                </label>
-            );
-        }
-
-        return (
-            <Container>
-                <Container
-                    className = { `recording-header ${this._shouldRenderNoIntegrationsContent()
-                        ? 'recording-header-line' : ''}` }>
-                    <Container
-                        className = 'recording-icon-container'>
-                        <Image
-                            alt = ''
-                            className = 'recording-icon'
-                            src = { DROPBOX_LOGO } />
-                    </Container>
-                    { labelContent }
-                    { switchContent }
-                </Container>
-                <Container className = 'authorization-panel'>
-                    { content }
-                </Container>
             </Container>
         );
     }
 
     /**
-     * Renders the content for local recordings.
+     * Renders the options for local recordings.
      *
-     * @protected
      * @returns {React$Component}
      */
-    _renderLocalRecordingContent() {
+    _renderLocalRecordingOptions() {
         const {
-            _localRecordingAvailable,
             _localRecordingNoNotification,
             _localRecordingSelfEnabled,
             isValidating,
             localRecordingOnlySelf,
             onLocalRecordingSelfChange,
-            t,
-            selectedRecordingService
+            recordingRunning,
+            t
         } = this.props;
-
-        if (!_localRecordingAvailable) {
-            return null;
-        }
+        const classes = this.props.classes ?? {};
 
         return (
             <>
-                <Container>
-                    <Container
-                        className = 'recording-header recording-header-line'>
-                        <Container
-                            className = 'recording-icon-container'>
+                { _localRecordingSelfEnabled && (
+                    <Container className = { `${classes.header} ${classes.headerSpaceTop}` }>
+                        <Container className = { `${classes.iconContainer} ${classes.fileSharingIconContainer}` }>
                             <Image
                                 alt = ''
-                                className = 'recording-icon'
-                                src = { LOCAL_RECORDING } />
+                                className = { classes.fileSharingIcon }
+                                src = { ICON_USERS } />
                         </Container>
                         <label
-                            className = 'recording-title'
-                            htmlFor = 'recording-switch-local'>
-                            { t('recording.saveLocalRecording') }
+                            className = { classes.title }
+                            htmlFor = 'recording-switch-myself'>
+                            { t('recording.onlyRecordSelf') }
                         </label>
                         <Switch
-                            checked = { selectedRecordingService
-                                === RECORDING_TYPES.LOCAL }
-                            className = 'recording-switch'
-                            disabled = { isValidating }
-                            id = 'recording-switch-local'
-                            onChange = { this._onLocalRecordingSwitchChange } />
+                            checked = { Boolean(localRecordingOnlySelf) }
+                            className = { classes.switch }
+                            disabled = { isValidating || recordingRunning }
+                            id = 'recording-switch-myself'
+                            onChange = { onLocalRecordingSelfChange ?? EMPTY_FUNCTION } />
+                    </Container>
+                ) }
+                <Text className = { `${classes.localRecordingWarning} ${classes.localRecordingWarningText}` }>
+                    { t('recording.localRecordingWarning') }
+                </Text>
+                { _localRecordingNoNotification && !localRecordingOnlySelf
+                    && <Text className = { `${classes.localRecordingWarning} ${classes.localRecordingWarningNotification}` }>
+                        { t('recording.localRecordingNoNotificationWarning') }
+                    </Text>
+                }
+            </>
+        );
+    }
+
+    /**
+     * Renders the recorder follow me switch for cloud based recordings.
+     *
+     * @returns {React$Component}
+     */
+    _renderFollowMeRecorder() {
+        if (!this._shouldRenderFollowMeRecorder()) {
+            return null;
+        }
+
+        const { t } = this.props;
+        const classes = this.props.classes ?? {};
+
+        return (
+            <Container className = { `${classes.header} ${classes.headerSpaceTop}` }>
+                <label
+                    className = { classes.optionLabel }
+                    htmlFor = 'recording-switch-follow-me'>
+                    { t('settings.followMeRecorder') }
+                </label>
+                <Switch
+                    checked = { this._isFollowMeRecorderChecked() }
+                    className = { classes.switch }
+                    disabled = { this._isFollowMeRecorderDisabled() }
+                    id = 'recording-switch-follow-me'
+                    onChange = { this._onFollowMeRecorderChange } />
+            </Container>
+        );
+    }
+
+    /**
+     * Renders the transcription section: header with the start/stop button
+     * and a collapsible area holding the language combobox.
+     *
+     * @returns {React$Component}
+     */
+    _renderTranscriptionSection() {
+        if (!this._shouldRenderTranscriptionSection()) {
+            return null;
+        }
+
+        const {
+            _availableLanguages,
+            onStartTranscription,
+            onStopTranscription,
+            selectedLanguage,
+            t,
+            transcriptionRunning
+        } = this.props;
+        const { showTranscriptionOptions } = this.state;
+        const classes = this.props.classes ?? {};
+        const languageOptions = _availableLanguages.map((lang: string) => {
+            return {
+                label: t(lang),
+                value: lang
+            };
+        });
+
+        return (
+            <Container className = { classes.section }>
+                <Container className = { classes.header }>
+                    <label className = { classes.titleNoMargin }>
+                        { t('recording.recordTranscription') }
+                    </label>
+                    <Container className = { classes.switch }>
+                        { transcriptionRunning ? (
+                            <Button
+                                accessibilityLabel = { t('dialog.stopTranscription') }
+                                labelKey = 'dialog.stop'
+                                onClick = { onStopTranscription }
+                                testId = 'recordingDialog.stopTranscription'
+                                type = { BUTTON_TYPES.DESTRUCTIVE } />
+                        ) : (
+                            <Button
+                                accessibilityLabel = { t('dialog.startTranscription') }
+                                labelKey = 'dialog.start'
+                                onClick = { onStartTranscription }
+                                testId = 'recordingDialog.startTranscription'
+                                type = { BUTTON_TYPES.PRIMARY } />
+                        ) }
                     </Container>
                 </Container>
-                {selectedRecordingService === RECORDING_TYPES.LOCAL && (
-                    <>
-                        {_localRecordingSelfEnabled && (
-                            <Container>
-                                <Container className = 'recording-header space-top'>
-                                    <Container className = 'recording-icon-container file-sharing-icon-container'>
-                                        <Image
-                                            alt = ''
-                                            className = 'recording-file-sharing-icon'
-                                            src = { ICON_USERS } />
-                                    </Container>
-                                    <label
-                                        className = 'recording-title'
-                                        htmlFor = 'recording-switch-myself'>
-                                        {t('recording.onlyRecordSelf')}
-                                    </label>
-                                    <Switch
-                                        checked = { Boolean(localRecordingOnlySelf) }
-                                        className = 'recording-switch'
-                                        disabled = { isValidating }
-                                        id = 'recording-switch-myself'
-                                        onChange = { onLocalRecordingSelfChange ?? EMPTY_FUNCTION } />
-                                </Container>
-                            </Container>
-                        )}
-                        <Text className = 'local-recording-warning text'>
-                            {t('recording.localRecordingWarning')}
-                        </Text>
-                        {_localRecordingNoNotification && !localRecordingOnlySelf
-                            && <Text className = 'local-recording-warning notification'>
-                                {t('recording.localRecordingNoNotificationWarning')}
-                            </Text>
-                        }
-                    </>
-                )}
-            </>
+                { this._renderAccordion({
+                    body: (
+                        <DropdownSelect
+                            disabled = { transcriptionRunning }
+                            id = 'transcription-language-select'
+                            label = { t('recording.transcriptionLanguage') }
+                            onChange = { this.props.onSubtitlesLanguageChange }
+                            options = { languageOptions }
+                            value = { selectedLanguage ?? '' } />
+                    ),
+                    expanded: showTranscriptionOptions,
+                    id: 'transcription-options',
+                    onToggle: this._onToggleTranscriptionOptions,
 
+                    // Only rendered by _renderAccordion while collapsed — skip computing it while
+                    // the section is expanded.
+                    summary: showTranscriptionOptions ? '' : this._getTranscriptionSummary(),
+                    titleKey: 'recording.transcriptionOptions'
+                }) }
+            </Container>
+        );
+    }
+
+    /**
+     * Renders the footer buttons acting on both services at once. When only
+     * one service is running both buttons are shown: stop both stops the
+     * running one, start both starts the missing one.
+     *
+     * @returns {React$Component}
+     */
+    _renderFooter() {
+        if (!this._shouldRenderFooter()) {
+            return null;
+        }
+
+        const {
+            isValidating,
+            onStartBoth,
+            onStopBoth,
+            recordingRunning,
+            startRecordingDisabled,
+            t,
+            transcriptionRunning
+        } = this.props;
+        const showStopBoth = recordingRunning || transcriptionRunning;
+        const showStartBoth = !recordingRunning || !transcriptionRunning;
+        const startBothDisabled = !recordingRunning && (startRecordingDisabled || isValidating);
+        const classes = this.props.classes ?? {};
+
+        return (
+            <Container className = { classes.footer }>
+                { showStopBoth && (
+                    <Button
+                        accessibilityLabel = { t('dialog.stopBoth') }
+                        labelKey = 'dialog.stopBoth'
+                        onClick = { onStopBoth }
+                        testId = 'recordingDialog.stopBoth'
+                        type = { BUTTON_TYPES.DESTRUCTIVE } />
+                ) }
+                { showStartBoth && (
+                    <Button
+                        accessibilityLabel = { t('dialog.startBoth') }
+                        disabled = { startBothDisabled }
+                        labelKey = 'dialog.startBoth'
+                        onClick = { onStartBoth }
+                        testId = 'recordingDialog.startBoth'
+                        type = { BUTTON_TYPES.PRIMARY } />
+                ) }
+            </Container>
         );
     }
 }
 
-export default translate(connect(mapStateToProps)(StartRecordingDialogContent));
+export default withStyles(translate(connect(mapStateToProps)(StartRecordingDialogContent)), startRecordingDialogStyles);
