@@ -139,7 +139,7 @@
         "moderationReason": "Reden: {{reason}}",
         "newMessages": "Nieuwe berichten",
         "nickname": {
-            "featureChat": "gesprek",
+            "featureChat": "chat",
             "featureClosedCaptions": "ondertiteling",
             "featureFileSharing": "bestandsdeling",
             "featurePolls": "peilingen",
@@ -154,14 +154,14 @@
             "titleWithPollsAndCC": "Voer een bijnaam in om chat, peilingen en ondertiteling te gebruiken",
             "titleWithPollsAndCCAndFileSharing": "Voer een bijnaam in om chat, peilingen, ondertiteling en bestanden te gebruiken"
         },
-        "noMessagesMessage": "Er zijn nog geen berichten in de vergadering. Begin hier een gesprek!",
+        "noMessagesMessage": "Er zijn nog geen berichten in de vergadering. Begin hier een chat!",
         "privateNotice": "Privébericht aan {{recipient}}",
         "search": {
             "close": "Zoeken sluiten",
             "next": "Volgende overeenkomst",
             "noResults": "Geen resultaten",
             "open": "Berichten doorzoeken",
-            "placeholder": "Gesprek doorzoeken",
+            "placeholder": "Chat doorzoeken",
             "previous": "Vorige overeenkomst",
             "resultsCount": "{{current}}/{{total}}"
         },
@@ -174,9 +174,9 @@
             "fileSharing": "Bestanden",
             "polls": "Peilingen"
         },
-        "title": "Gesprek",
+        "title": "Chat",
         "titleWithCC": "OT",
-        "titleWithFeatures": "Gesprek en",
+        "titleWithFeatures": "Chat en",
         "titleWithFileSharing": "Bestanden",
         "titleWithPolls": "Peilingen",
         "you": "U"
@@ -724,7 +724,7 @@
         "pushToTalk": "Druk om te spreken",
         "raiseHand": "Uw hand opsteken of laten zakken",
         "showSpeakerStats": "Deelnemersstatistieken weergeven",
-        "toggleChat": "Gesprek openen of sluiten",
+        "toggleChat": "Chat openen of sluiten",
         "toggleFilmstrip": "Videominiaturen weergeven of verbergen",
         "toggleParticipantsPane": "Deelnemersvenster weergeven of verbergen",
         "toggleScreensharing": "Wisselen tussen camera en schermdeling",
@@ -797,8 +797,8 @@
         "knockButton": "Vragen om deel te nemen",
         "knockTitle": "Iemand wil deelnemen aan de vergadering",
         "knockingParticipantList": "Lijst van aankloppende deelnemers",
-        "lobbyChatStartedNotification": "{{moderator}} startte een wachtruimtegesprek met {{attendee}}",
-        "lobbyChatStartedTitle": "{{moderator}} startte een wachtruimtegesprek met u.",
+        "lobbyChatStartedNotification": "{{moderator}} startte een wachtruimte-chat met {{attendee}}",
+        "lobbyChatStartedTitle": "{{moderator}} startte een wachtruimte-chat met u.",
         "lobbyClosed": "De wachtruimte is gesloten.",
         "nameField": "Voer uw naam in",
         "notificationLobbyAccessDenied": "{{targetParticipantName}} is afgewezen om deel te nemen door {{originParticipantName}}",
@@ -1754,7 +1754,7 @@
             "roomname": "Voer naam van ruimte in"
         },
         "addMeetingName": "Geef de vergadering een naam",
-        "appDescription": "U kunt nu videochatten met het gehele team. Nodig uit wie u maar wilt. {{app}} is een volledig versleutelde, 100% open-source oplossing voor videovergaderingen, die u wanneer u maar wilt gratis kunt gebruiken — zonder dat u een account nodig hebt.",
+        "appDescription": "U kunt nu een videogesprek voeren met het gehele team. Nodig uit wie u maar wilt. {{app}} is een volledig versleutelde, 100% open-source oplossing voor videovergaderingen, die u wanneer u maar wilt gratis kunt gebruiken — zonder dat u een account nodig hebt.",
         "audioVideoSwitch": {
             "audio": "Spraak",
             "video": "Video"
@@ -1787,7 +1787,7 @@
         "privacy": "Privacy",
         "recentList": "Recent",
         "recentListDelete": "Verwijderen",
-        "recentListEmpty": "Uw recent lijst is momenteel leeg. Wanneer u chat met uw team, vindt u hier al uw recente vergaderingen.",
+        "recentListEmpty": "Uw lijst met recente gesprekken is leeg. Wanneer u chat met uw team, vindt u hier al uw recente vergaderingen.",
         "recentMeetings": "Uw recente bijeenkomsten",
         "reducedUIText": "Welkom in {{app}}!",
         "roomNameAllowedChars": "Naam van vergadering mag geen van deze tekens bevatten: ?, &, :, ', \", %, #.",
