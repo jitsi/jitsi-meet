@@ -1052,19 +1052,16 @@
         "recordAudioAndVideo": "Záznam zvuku a videa",
         "recordTranscription": "Přepis záznamu",
         "saveLocalRecording": "Uložit záznamový soubor lokálně (Beta)",
-        "serviceDescription": "Nahrávací služba uloží vaši nahrávku",
         "serviceDescriptionCloud": "Cloudové nahrávání",
         "serviceDescriptionCloudInfo": "Nahrané schůzky jsou automaticky vymazány 24 hodin po jejich době záznamu.",
         "serviceName": "Nahrávací služba",
         "sessionAlreadyActive": "Tato relace se již nahrává nebo se vysílá živě.",
-        "showAdvancedOptions": "Pokročilé možnosti",
         "signIn": "Přihlásit se",
         "signOut": "Odhlásit se",
         "surfaceError": "Vyberte prosím aktuální kartu.",
         "title": "Nahrávání",
         "unavailable": "Jejda! Služba {{serviceName}} není dostupná. Problém se snažíme vyřešit. Zkuste to prosím později.",
-        "unavailableTitle": "Nahrávání nedostupné",
-        "uploadToCloud": "Nahrát do cloudu"
+        "unavailableTitle": "Nahrávání nedostupné"
     },
     "screenshareDisplayName": "Obrazovka uživatele {{name}}",
     "sectionList": {

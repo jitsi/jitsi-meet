@@ -467,7 +467,6 @@
         "on": "Gravando",
         "onBy": "{{name}} comezou a gravación",
         "pending": "Preparando a gravación da reunión…",
-        "serviceDescription": "A súa gravación será gardada polo servizo de gravación",
         "serviceName": "Servizo de gravación",
         "signIn": "Conectarse",
         "signOut": "Desconectarse",

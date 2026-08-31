@@ -766,15 +766,13 @@
         "on": "Grabando",
         "onBy": "{{name}} comenzó la grabación",
         "pending": "Preparando para grabar la reunión…",
-        "serviceDescription": "El servicio de grabación guardará la grabación",
         "serviceDescriptionCloud": "Grabación en la nube",
         "serviceName": "Servicio de grabación",
         "signIn": "Iniciar sesión",
         "signOut": "Cerrar sesión",
         "title": "Grabando",
         "unavailable": "¡Uy! {{serviceName}} actualmente no está disponible. Estamos trabajando para resolver el problema. Vuelve a intentarlo más tarde.",
-        "unavailableTitle": "Grabación no disponible",
-        "uploadToCloud": "Subir a la nube"
+        "unavailableTitle": "Grabación no disponible"
     },
     "sectionList": {
         "pullToRefresh": "Mueve el dedo para abajo para actualizar."

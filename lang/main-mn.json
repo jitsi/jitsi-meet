@@ -1159,19 +1159,16 @@
         "recordAudioAndVideo": "Дуу, видео бичих",
         "recordTranscription": "Хуулбар бичих",
         "saveLocalRecording": "Бичлэгийн файлаа өөрийн компьютерт хадгал (Beta)",
-        "serviceDescription": "Таны бичлэгийг хадгална",
         "serviceDescriptionCloud": "Клауд бичлэг",
         "serviceDescriptionCloudInfo": "Уулзалтын бичлэг хийсэн цагаас хойш 24 цагийн дараа автоматаар бичлэг устана.",
         "serviceName": "Бичлэгийн үйлчилгээ",
         "sessionAlreadyActive": "Энэ уулзалтын бичлэгийг хийсэн эсвэл шууд дамжуулсан.",
-        "showAdvancedOptions": "Нарийвчилсан сонголт",
         "signIn": "Нэвтрэх",
         "signOut": "Гарах",
         "surfaceError": "Энэ табыг сонгоно уу.",
         "title": "Бичлэг хийх",
         "unavailable": "{{serviceName}} одоогоор ажиллахгүй байна. Бид асуудлыг шийдвэрлэхээр ажиллаж байна. Дараа дахин оролдож үзнэ үү.",
-        "unavailableTitle": "Бичлэг хийх боломжгүй",
-        "uploadToCloud": "Клауд руу файл илгээх"
+        "unavailableTitle": "Бичлэг хийх боломжгүй"
     },
     "screenshareDisplayName": "{{name}}-н дэлгэц",
     "sectionList": {

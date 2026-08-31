@@ -1052,19 +1052,16 @@
         "recordAudioAndVideo": "Enregistrar l'àudio e la vidèo",
         "recordTranscription": "Enregistrar la transcripcion",
         "saveLocalRecording": "Salvagardar l'enregistrament local (Beta)",
-        "serviceDescription": "Vòstre enregistrament serà salvagardat pel servici dedicat",
         "serviceDescriptionCloud": "Enregistrament distant",
         "serviceDescriptionCloudInfo": "Las reünions enregistradas se suprimisson automaticament 24h après l'enregistrament.",
         "serviceName": "Servici d’enregistrament",
         "sessionAlreadyActive": "Aquesta session es ja en cors d’enregistrament o en difusion en dirèct.",
-        "showAdvancedOptions": "Opcions avançadas",
         "signIn": "Connexion",
         "signOut": "Se desconnectar",
         "surfaceError": "Seleccionatz l'onglet actual.",
         "title": "Enregistrament",
         "unavailable": "Ops ! Lo {{serviceName}} es pas disponible pel moment. Sèm a reglar aqueste problèma. Mercés de tornar ensajar mai tard.",
-        "unavailableTitle": "Enregistrament indisponible",
-        "uploadToCloud": "Enviar al cloud"
+        "unavailableTitle": "Enregistrament indisponible"
     },
     "screenshareDisplayName": "Ecran de {{name}}",
     "sectionList": {

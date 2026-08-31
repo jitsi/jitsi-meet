@@ -914,7 +914,6 @@
         "onlyRecordSelf": "jano wideo a zuk ze swójeje kamery nagrawaś",
         "pending": "Nagrawanje zmakanja se pśigótujo…",
         "saveLocalRecording": "nagraty material lokalnje zachowaś",
-        "serviceDescription": "Waš nagraty material se zachowajo wót nagrawajuceje słužby",
         "serviceDescriptionCloud": "nagrawanje do mrokawy (cloud)",
         "serviceDescriptionCloudInfo": "Nagraty material wulašujo se awtomatiski za 24 štundow pó dokóńcowanju nagrawanja.",
         "serviceName": "nagrawajuca słužba",
@@ -924,8 +923,7 @@
         "surfaceError": "Wuzwólśo aktuelnu kórtu (tab).",
         "title": "",
         "unavailable": "Ojej! {{serviceName}} njestoj aktuelnje k dispoziciji. My źěłamy na pórěźenju problema. Wopytajśo pózdźej hyšći raz.",
-        "unavailableTitle": "Nagrawanje njestoj k dispoziciji",
-        "uploadToCloud": "do mrokawy (cloud) kopěrowaś"
+        "unavailableTitle": "Nagrawanje njestoj k dispoziciji"
     },
     "screenshareDisplayName": "spśistupnjony monitor wót {{name}}",
     "sectionList": {

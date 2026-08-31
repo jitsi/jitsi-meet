@@ -1212,19 +1212,16 @@
         "recordAudioAndVideo": "Grabar audio y vídeo",
         "recordTranscription": "Grabar transcripción",
         "saveLocalRecording": "Guardar archivo de grabación localmente (Beta)",
-        "serviceDescription": "El servicio de grabación guardará la grabación",
         "serviceDescriptionCloud": "Grabación en la nube",
         "serviceDescriptionCloudInfo": "Las reuniones grabadas se eliminan automáticamente 24 horas después de su grabación.",
         "serviceName": "Servicio de grabación",
         "sessionAlreadyActive": "Esta sesión ya está siendo grabada o transmitida en vivo.",
-        "showAdvancedOptions": "Opciones avanzadas",
         "signIn": "Iniciar sesión",
         "signOut": "Cerrar sesión",
         "surfaceError": "Por favor, seleccione la pestaña actual.",
         "title": "Grabando",
         "unavailable": "¡Uy! {{serviceName}} actualmente no está disponible. Estamos trabajando para resolver el problema. Vuelva a intentarlo más tarde.",
-        "unavailableTitle": "Grabación no disponible",
-        "uploadToCloud": "Subir a la nube"
+        "unavailableTitle": "Grabación no disponible"
     },
     "screenshareDisplayName": "Pantalla de {{name}}",
     "sectionList": {

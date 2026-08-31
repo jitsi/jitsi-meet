@@ -1010,19 +1010,16 @@
         "recordAudioAndVideo": "Konservu kaj aŭdion kaj videon",
         "recordTranscription": "Konservu transskribon",
         "saveLocalRecording": "Konservu registraddosieron loke (Beta)",
-        "serviceDescription": "Via registraĵo estos konservita de la registra servo",
         "serviceDescriptionCloud": "Nubo registrado",
         "serviceDescriptionCloudInfo": "Registritaj renkontiĝoj estas aŭtomate forigitaj 24h post sia tempo de registrado.",
         "serviceName": "Registra servo",
         "sessionAlreadyActive": "Ĉi tiu sesio jam estas registrita aŭ vivelsendita.",
-        "showAdvancedOptions": "Detalaj agordoj",
         "signIn": "Ensaluti",
         "signOut": "Elsaluti",
         "surfaceError": "Bonvolu elekti la nunan langeton.",
         "title": "Registrado",
         "unavailable": "Oj! La {{serviceName}} estas nun nedisponebla. Ni laboras por solvi la aferon. Bonvolu reprovi poste.",
-        "unavailableTitle": "Registrado ne disponeblas",
-        "uploadToCloud": "Alŝutu en la Nubo"
+        "unavailableTitle": "Registrado ne disponeblas"
     },
     "screenshareDisplayName": "Ekrano de {{name}}",
     "sectionList": {

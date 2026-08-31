@@ -1126,19 +1126,16 @@
         "recordAudioAndVideo": "Registra s'àudio e su vìdeu",
         "recordTranscription": "Registra sa trascritzione",
         "saveLocalRecording": "Sarva s'archìviu de registratzione in locale (Beta)",
-        "serviceDescription": "Sa registratzione at a èssere sarvada dae su servìtziu de registratzione",
         "serviceDescriptionCloud": "Registratzione in sa nue",
         "serviceDescriptionCloudInfo": "Is riuniones registradas ant a èssere cantzelladas in automàticu a pustis de 24 oras de sa registratzione.",
         "serviceName": "Servìtziu de registratzione",
         "sessionAlreadyActive": "S'est giai registrende o trasmitende in direta sa sessione.",
-        "showAdvancedOptions": "Optziones avantzadas",
         "signIn": "Identìfica·ti",
         "signOut": "Essi",
         "surfaceError": "Seletziona s'ischeda atuale.",
         "title": "Registrende",
         "unavailable": "Ohia {{serviceName}} no est a disponimentu. Semus traballende pro acontzare su problema. Torra a proare a pustis.",
-        "unavailableTitle": "Sa registratzione no est a disponimentu",
-        "uploadToCloud": "Càrriga in sa nue"
+        "unavailableTitle": "Sa registratzione no est a disponimentu"
     },
     "screenshareDisplayName": "Ischermu de {{name}}",
     "sectionList": {

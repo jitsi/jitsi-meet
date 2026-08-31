@@ -1052,19 +1052,16 @@
         "recordAudioAndVideo": "Ta opp lyd og video",
         "recordTranscription": "Ta opp transkripsjon",
         "saveLocalRecording": "Lagre opptaksfilen lokalt (Beta)",
-        "serviceDescription": "Opptaket ditt vil bli lagret av opptakstjenesten",
         "serviceDescriptionCloud": "Skylagringsopptak",
         "serviceDescriptionCloudInfo": "Opptak av møter slettes automatisk 24 timer etter opptakstidspunktet.",
         "serviceName": "Opptakstjeneste",
         "sessionAlreadyActive": "Denne økten blir allerede tatt opp eller direktesendt.",
-        "showAdvancedOptions": "Avanserte alternativer",
         "signIn": "Logg inn",
         "signOut": "Logg ut",
         "surfaceError": "Vennligst velg den gjeldende fanen.",
         "title": "Opptak",
         "unavailable": "Oops! {{serviceName}} er for øyeblikket utilgjengelig. Vi jobber med å løse problemet. Vennligst prøv igjen senere.",
-        "unavailableTitle": "Opptak utilgjengelig",
-        "uploadToCloud": "Last opp til skyen"
+        "unavailableTitle": "Opptak utilgjengelig"
     },
     "screenshareDisplayName": "{{name}}s skjerm",
     "sectionList": {

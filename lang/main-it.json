@@ -1159,19 +1159,16 @@
         "recordAudioAndVideo": "Registra audio e video",
         "recordTranscription": "Registra trascrizione",
         "saveLocalRecording": "Salva localmente il file della registrazione (Beta)",
-        "serviceDescription": "La tua registrazione verrà salvata dal servizio di registrazione",
         "serviceDescriptionCloud": "Registrazione in rete",
         "serviceDescriptionCloudInfo": "Le riunioni registrate vengono automaticamente cancellate 24 ore dopo la registrazione.",
         "serviceName": "Servizio di registrazione",
         "sessionAlreadyActive": "È già in corso una registrazione o una diretta per questa riunione.",
-        "showAdvancedOptions": "Opzioni avanzate",
         "signIn": "Accedi",
         "signOut": "Disconnetti",
         "surfaceError": "Si prega di selezionare la scheda corrente.",
         "title": "Registrazione",
         "unavailable": "Ops! Il {{serviceName}} non è al momento disponibile. Stiamo lavorando per risolvere il problema. Si prega di riprovare più tardi.",
-        "unavailableTitle": "Registrazione non disponibile",
-        "uploadToCloud": "Carica nel cloud"
+        "unavailableTitle": "Registrazione non disponibile"
     },
     "screenshareDisplayName": "Schermo di {{name}}",
     "sectionList": {

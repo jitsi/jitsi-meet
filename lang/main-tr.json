@@ -1045,19 +1045,16 @@
         "recordAudioAndVideo": "Ses ve video kaydedin",
         "recordTranscription": "Transkripsiyonu kaydet",
         "saveLocalRecording": "Kayıt dosyasını yerel olarak kaydet (Beta)",
-        "serviceDescription": "Kaydınız kayıt hizmeti tarafından kaydedilecektir",
         "serviceDescriptionCloud": "Bulut kaydı",
         "serviceDescriptionCloudInfo": "Kaydedilen toplantılar, kayıt süresinden 24 saat sonra otomatik olarak temizlenir.",
         "serviceName": "Kayıt hizmeti",
         "sessionAlreadyActive": "Bu oturum zaten kaydediliyor veya canlı yayınlanıyor.",
-        "showAdvancedOptions": "Gelişmiş seçenekler",
         "signIn": "Giriş yap",
         "signOut": "Çıkış yap",
         "surfaceError": "Lütfen geçerli sekmeyi seçin",
         "title": "Kaydediliyor",
         "unavailable": "Ah! {{serviceName}} şu anda kullanılamıyor. Sorunu çözmek için çalışıyoruz. Lütfen daha sonra tekrar deneyin.",
-        "unavailableTitle": "Kayıt yapılamıyor",
-        "uploadToCloud": "Buluta yükle"
+        "unavailableTitle": "Kayıt yapılamıyor"
     },
     "screenshareDisplayName": "{{name}}'nin ekranı",
     "sectionList": {

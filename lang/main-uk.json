@@ -939,7 +939,6 @@
         "onlyRecordSelf": "Записувати лише мої аудіо та відео потоки",
         "pending": "Підготовка до запису зустрічі…",
         "saveLocalRecording": "Зберегти файл запису локально (ТЕСТУВАННЯ)",
-        "serviceDescription": "Ваш запис буде збережено послугою запису",
         "serviceDescriptionCloud": "Хмарний запис",
         "serviceDescriptionCloudInfo": "Записані зустрічі будуть видалені автоматично через 24 години після їх запису.",
         "serviceName": "Служба запису",
@@ -949,8 +948,7 @@
         "surfaceError": "Виберіть поточну вкладку.",
         "title": "Запис",
         "unavailable": "Служба {{serviceName}} зараз недоступна. Ми працюємо над виправленням цієї помилки. Спробуйте пізніше.",
-        "unavailableTitle": "Запис недоступний",
-        "uploadToCloud": "Завантажити в хмару"
+        "unavailableTitle": "Запис недоступний"
     },
     "screenshareDisplayName": "Екран {{name}}",
     "sectionList": {

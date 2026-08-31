@@ -878,7 +878,6 @@
         "onBy": "{{name}} startuje nahrawanje",
         "pending": "nahrawanje konferency so přihotuje…",
         "saveLocalRecording": "nahrawanje lokalnje składować",
-        "serviceDescription": "Waše nahrawanje so wot nahrawanskeho serwisa składuje.",
         "serviceDescriptionCloud": "nahrawanje na cloud",
         "serviceDescriptionCloudInfo": "Nahrwanja so 24 hodźin po nahrawanju awtomatisce wotstronja.",
         "serviceName": "nahrawanski serwis",
@@ -888,8 +887,7 @@
         "surfaceError": "prošu aktualny tab wužiwać",
         "title": "nahrawanje",
         "unavailable": "Ow! {{serviceName}} tuchwilu wužiwajomny njeje. Dźěłamy na rozrisanju problema. Prošu pozdźišo znowa spytać .",
-        "unavailableTitle": "nahrawanje njeje wužiwajomne",
-        "uploadToCloud": "do cloud přenošować"
+        "unavailableTitle": "nahrawanje njeje wužiwajomne"
     },
     "screenshareDisplayName": "wobrazowka wot {{name}}",
     "sectionList": {

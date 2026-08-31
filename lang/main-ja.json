@@ -832,7 +832,6 @@
         "onlyRecordSelf": "自身の音声・映像のみを録画する",
         "pending": "ミーティングの録画準備中…",
         "saveLocalRecording": "ローカルに録画を保存 (Beta)",
-        "serviceDescription": "ビデオは録画サービスで録画されます",
         "serviceDescriptionCloud": "クラウドレコーディング",
         "serviceName": "録画サービス",
         "sessionAlreadyActive": "このセッションはすでに録画またはライブ配信されています。",
@@ -840,8 +839,7 @@
         "signOut": "サインアウト",
         "title": "録画",
         "unavailable": "おっと! {{serviceName}} は現在使用できません。私たちはこの問題の解決に取り組んでいます。後でもう一度お試しください。",
-        "unavailableTitle": "録画できません",
-        "uploadToCloud": "クラウドへアップロード"
+        "unavailableTitle": "録画できません"
     },
     "sectionList": {
         "pullToRefresh": "引っ張って更新する"

@@ -1144,19 +1144,16 @@
         "recordAudioAndVideo": "ضبط صدا و تصویر",
         "recordTranscription": "ضبط رونویسی",
         "saveLocalRecording": "ذخیرهٔ پروندهٔ ضبط به صورت محلی (بتا)",
-        "serviceDescription": "ضبط شما توسط خدمتِ ضبط ذخیره خواهد شد",
         "serviceDescriptionCloud": "ضبط ابری",
         "serviceDescriptionCloudInfo": "جلسات ضبط‌شده ۲۴ ساعت پس از زمان ضبط به‌طور خودکار پاک می‌شوند.",
         "serviceName": "خدمتِ ضبط",
         "sessionAlreadyActive": "این جلسه از قبل درحال ضبط یا پخش زنده است.",
-        "showAdvancedOptions": "گزینه‌های پیشرفته",
         "signIn": "ورود",
         "signOut": "خروج",
         "surfaceError": "لطفاً زبانه کنونی را انتخاب کنید.",
         "title": "درحال ضبط",
         "unavailable": "اوه! {{serviceName}} درحال حاضر در دسترس نیست. ما درحال کار برروی حل مشکل هستیم. لطفاً بعداً دوباره امتحان کنید.",
-        "unavailableTitle": "ضبط دردسترس نیست",
-        "uploadToCloud": "بارگذاری در فضای ابری"
+        "unavailableTitle": "ضبط دردسترس نیست"
     },
     "screenshareDisplayName": "صفحهٔ {{name}}",
     "sectionList": {

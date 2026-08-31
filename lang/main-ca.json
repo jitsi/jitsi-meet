@@ -906,7 +906,6 @@
         "onlyRecordSelf": "Enregistra només el meu àudio i vídeo",
         "pending": "S'està preparant per a enregistrar la reunió…",
         "saveLocalRecording": "Desa el fitxer de l'enregistrament en local (beta)",
-        "serviceDescription": "El servei d'enregistrament desarà el vostre enregistrament",
         "serviceDescriptionCloud": "Enregistrament al núvol",
         "serviceDescriptionCloudInfo": "Les reunions enregistrades s'esborren automàticament 24 hores després de l'enregistrament.",
         "serviceName": "Servei d'enregistrament",
@@ -916,8 +915,7 @@
         "surfaceError": "Trieu la pestanya actual.",
         "title": "Enregistrament",
         "unavailable": "Vaja! El servei  {{serviceName}} ara mateix no és disponible. Treballem per a resoldre el problema. Torneu-ho a intentar més tard.",
-        "unavailableTitle": "L'enregistrament no és disponible",
-        "uploadToCloud": "Puja al núvol"
+        "unavailableTitle": "L'enregistrament no és disponible"
     },
     "screenshareDisplayName": "Pantalla de: {{name}}",
     "sectionList": {

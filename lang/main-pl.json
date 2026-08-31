@@ -945,7 +945,6 @@
         "onlyRecordSelf": "Nagrywaj tylko moje strumienie audio i wideo",
         "pending": "Przygotowanie do nagrania spotkania…",
         "saveLocalRecording": "Zapisz plik nagrania lokalnie (Beta)",
-        "serviceDescription": "Twoje nagranie zostanie zapisane przez usługę nagrywania",
         "serviceDescriptionCloud": "Nagrywanie w chmurze",
         "serviceDescriptionCloudInfo": "Nagrane spotkania są automatycznie usuwane 24 godziny po ich nagraniu.",
         "serviceName": "Usługa nagrywania",
@@ -955,8 +954,7 @@
         "surfaceError": "Proszę wybrać aktualną zakładkę.",
         "title": "Nagrywanie",
         "unavailable": "Ups! {{serviceName}} w tej chwili niedostępny. Próbujemy rozwiązać ten problem. Spróbuj ponownie później.",
-        "unavailableTitle": "Nagrywanie niedostępne",
-        "uploadToCloud": "Prześlij do chmury"
+        "unavailableTitle": "Nagrywanie niedostępne"
     },
     "screenshareDisplayName": "Ekran użytkownika {{name}}",
     "sectionList": {

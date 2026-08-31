@@ -1148,19 +1148,16 @@
         "recordAudioAndVideo": "Nauhoita ääni ja video",
         "recordTranscription": "Nauhoita transkriptio",
         "saveLocalRecording": "Tallenna nauhoitustiedosto paikallisesti (Beta)",
-        "serviceDescription": "Nauhoituspalvelu tallentaa nauhoituksen",
         "serviceDescriptionCloud": "Pilvitallenne",
         "serviceDescriptionCloudInfo": "Nauhoitetut kokoukset poistetaan automaattisesti 24 tunnin kuluttua nauhoitusajasta.",
         "serviceName": "Nauhoituspalvelu",
         "sessionAlreadyActive": "Tätä istuntoa nauhoitetaan tai suoratoistoon jo.",
-        "showAdvancedOptions": "Lisäasetukset",
         "signIn": "Kirjaudu sisään",
         "signOut": "Kirjaudu ulos",
         "surfaceError": "Valitse nykyinen välilehti.",
         "title": "Nauhoitetaan",
         "unavailable": "Hups! {{serviceName}} ei ole käytettävissä. Yritämme ratkaista ongelman. Yritä myöhemmin uudelleen.",
-        "unavailableTitle": "Nauhoitus ei käytettävissä",
-        "uploadToCloud": "Lataa pilveen"
+        "unavailableTitle": "Nauhoitus ei käytettävissä"
     },
     "screenshareDisplayName": "Käyttäjän {{name}} näyttö",
     "sectionList": {

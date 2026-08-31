@@ -5,6 +5,7 @@ import { createRecordingDialogEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
 import { IJitsiConference } from '../../../base/conference/reducer';
+import { DEFAULT_LANGUAGE } from '../../../base/i18n/i18next';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
@@ -33,6 +34,16 @@ import {
 } from '../../functions';
 import { ISessionData } from '../../reducer';
 
+/**
+ * The set of start/stop operations to apply on the running services. Each
+ * operation is applied only when its flag is true.
+ */
+interface IRecordingChanges {
+    startRecording?: boolean;
+    startTranscription?: boolean;
+    stopRecording?: boolean;
+    stopTranscription?: boolean;
+}
 
 export interface IProps extends WithTranslation {
 
@@ -143,23 +154,11 @@ export interface IProps extends WithTranslation {
      */
     dispatch: IStore['dispatch'];
 
-    /**
-     * Whether to pre-select recording when the dialog opens.
-     * Takes precedence over the running recording state when set.
-     */
-    initialRecording?: boolean;
-
-    /**
-     * Whether to pre-select transcription when the dialog opens.
-     * Overrides _autoTranscribeOnRecord when provided.
-     */
-    initialTranscription?: boolean;
-
     navigation: any;
 
     /**
-     * Pre-selects the audio/video recording toggle when no session is active.
-     * Used by the nudge flow to open the dialog with recording already checked.
+     * When false, the recording section is collapsed on open, putting the
+     * focus on the transcription section (e.g. subtitles/nudge flows).
      */
     recordAudioAndVideo?: boolean;
 }
@@ -182,6 +181,12 @@ interface IState {
     localRecordingOnlySelf: boolean;
 
     /**
+     * The language ("translation-languages:" prefixed) the transcription will
+     * be saved in.
+     */
+    selectedLanguage: string | null;
+
+    /**
      * The currently selected recording service of type: RECORDING_TYPES.
      */
     selectedRecordingService: string;
@@ -190,16 +195,6 @@ interface IState {
      * True if the user requested the service to share the recording with others.
      */
     sharingEnabled: boolean;
-
-    /**
-     * True if the user requested the service to record audio and video.
-     */
-    shouldRecordAudioAndVideo: boolean;
-
-    /**
-     * True if the user requested the service to record transcription.
-     */
-    shouldRecordTranscription: boolean;
 
     /**
      * Number of MiB of available space in user's Dropbox account.
@@ -213,7 +208,9 @@ interface IState {
 }
 
 /**
- * Component for the recording start dialog.
+ * Component for the recording & transcription dialog. Exposes independent
+ * start/stop handlers for each service plus combined "both" handlers; each
+ * handler applies its changes immediately.
  */
 class AbstractStartRecordingDialog extends Component<IProps, IState> {
     /**
@@ -225,14 +222,24 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
-        this._onSubmit = this._onSubmit.bind(this);
         this._onSelectedRecordingServiceChanged
             = this._onSelectedRecordingServiceChanged.bind(this);
         this._onSharingSettingChanged = this._onSharingSettingChanged.bind(this);
         this._toggleScreenshotCapture = this._toggleScreenshotCapture.bind(this);
         this._onLocalRecordingSelfChange = this._onLocalRecordingSelfChange.bind(this);
-        this._onTranscriptionChange = this._onTranscriptionChange.bind(this);
-        this._onRecordAudioAndVideoChange = this._onRecordAudioAndVideoChange.bind(this);
+        this._onSubtitlesLanguageChanged = this._onSubtitlesLanguageChanged.bind(this);
+        this._onStartRecording = this._onStartRecording.bind(this);
+        this._onStopRecording = this._onStopRecording.bind(this);
+        this._onStartTranscription = this._onStartTranscription.bind(this);
+        this._onStopTranscription = this._onStopTranscription.bind(this);
+        this._onStartBoth = this._onStartBoth.bind(this);
+        this._onStopBoth = this._onStopBoth.bind(this);
+        this._onStartRecordingPress = this._onStartRecordingPress.bind(this);
+        this._onStopRecordingPress = this._onStopRecordingPress.bind(this);
+        this._onStartTranscriptionPress = this._onStartTranscriptionPress.bind(this);
+        this._onStopTranscriptionPress = this._onStopTranscriptionPress.bind(this);
+        this._onStartBothPress = this._onStartBothPress.bind(this);
+        this._onStopBothPress = this._onStopBothPress.bind(this);
 
         let selectedRecordingService = '';
 
@@ -248,25 +255,15 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             selectedRecordingService = RECORDING_TYPES.LOCAL;
         }
         // If no service is available, selectedRecordingService stays '' and
-        // the Start Recording button will be disabled.
-
-        const recordingRunning = props._recordingRunning ?? false;
-        const transcriptionRunning = props._transcriptionRunning ?? false;
-        const hasActiveSession = recordingRunning || transcriptionRunning;
+        // the start recording button will be disabled.
 
         this.state = {
             isTokenValid: false,
             isValidating: false,
             userName: undefined,
             sharingEnabled: true,
-            // When a session is active derive initial toggles from running state.
-            // Explicit props (nudge flow) take priority.
-            shouldRecordAudioAndVideo: hasActiveSession
-                ? (props.initialRecording ?? recordingRunning)
-                : (props.recordAudioAndVideo ?? false),
-            shouldRecordTranscription: hasActiveSession
-                ? (props.initialTranscription ?? transcriptionRunning)
-                : (props.initialTranscription ?? props._autoTranscribeOnRecord ?? false),
+            selectedLanguage: props._subtitlesLanguage
+                ?? `translation-languages:${DEFAULT_LANGUAGE}`,
             spaceLeft: undefined,
             selectedRecordingService,
             localRecordingOnlySelf: false
@@ -346,27 +343,14 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
     }
 
     /**
-     * Handles transcription switch change.
+     * Handles transcription language changes.
      *
-     * @param {boolean} value - The new value.
+     * @param {string} selectedLanguage - The new ("translation-languages:"
+     * prefixed) language.
      * @returns {void}
      */
-    _onTranscriptionChange(value: boolean) {
-        this.setState({
-            shouldRecordTranscription: value
-        });
-    }
-
-    /**
-     * Handles audio and video switch change.
-     *
-     * @param {boolean} value - The new value.
-     * @returns {void}
-     */
-    _onRecordAudioAndVideoChange(value: boolean) {
-        this.setState({
-            shouldRecordAudioAndVideo: value
-        });
+    _onSubtitlesLanguageChanged(selectedLanguage: string) {
+        this.setState({ selectedLanguage });
     }
 
     /**
@@ -417,27 +401,112 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
     }
 
     /**
-     * Returns true when the current toggle selection differs from what is
-     * already running — i.e. there is something to apply.
+     * Returns true when the start recording button should be disabled: either
+     * no recording service is available or the selected one is not ready to
+     * be used (e.g. Dropbox without a valid sign-in).
      *
      * @returns {boolean}
      */
-    _isChanged() {
-        const { _recordingRunning = false, _transcriptionRunning = false } = this.props;
+    _isStartRecordingDisabled() {
+        const { isTokenValid, selectedRecordingService } = this.state;
 
-        return this.state.shouldRecordAudioAndVideo !== _recordingRunning
-            || this.state.shouldRecordTranscription !== _transcriptionRunning;
+        if (selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE
+                || selectedRecordingService === RECORDING_TYPES.LOCAL) {
+            return false;
+        }
+        if (selectedRecordingService === RECORDING_TYPES.DROPBOX) {
+            return !isTokenValid;
+        }
+
+        return true;
     }
 
     /**
-     * Applies recording/transcription changes by computing the delta between
-     * the current running state and the user's selection, then starting or
+     * Starts the audio & video recording. When the deployment is configured
+     * with {@code transcription.autoTranscribeOnRecord} the transcription is
+     * started along with it.
+     *
+     * @returns {boolean} - True when the action was applied.
+     */
+    _onStartRecording() {
+        const { _autoTranscribeOnRecord, _canTranscribe, _transcriptionRunning } = this.props;
+
+        return this._applyChanges({
+            startRecording: true,
+            startTranscription: _autoTranscribeOnRecord && _canTranscribe && !_transcriptionRunning
+        });
+    }
+
+    /**
+     * Stops the audio & video recording, leaving a running transcription
+     * untouched.
+     *
+     * @returns {boolean} - True when the action was applied.
+     */
+    _onStopRecording() {
+        return this._applyChanges({ stopRecording: true });
+    }
+
+    /**
+     * Starts the transcription, leaving the recording state untouched.
+     *
+     * @returns {boolean} - True when the action was applied.
+     */
+    _onStartTranscription() {
+        return this._applyChanges({ startTranscription: true });
+    }
+
+    /**
+     * Stops the transcription, leaving a running recording untouched.
+     *
+     * @returns {boolean} - True when the action was applied.
+     */
+    _onStopTranscription() {
+        return this._applyChanges({ stopTranscription: true });
+    }
+
+    /**
+     * Starts every service which is not running yet.
+     *
+     * @returns {boolean} - True when the action was applied.
+     */
+    _onStartBoth() {
+        const { _recordingRunning, _transcriptionRunning } = this.props;
+
+        return this._applyChanges({
+            startRecording: !_recordingRunning,
+            startTranscription: !_transcriptionRunning
+        });
+    }
+
+    /**
+     * Stops every running service.
+     *
+     * @returns {boolean} - True when the action was applied.
+     */
+    _onStopBoth() {
+        const { _recordingRunning, _transcriptionRunning } = this.props;
+
+        return this._applyChanges({
+            stopRecording: _recordingRunning,
+            stopTranscription: _transcriptionRunning
+        });
+    }
+
+    /**
+     * Applies the requested recording/transcription changes by starting or
      * stopping each service accordingly.
      *
-     * @returns {boolean|undefined} - True to close the dialog, undefined to
-     *   keep it open (e.g. on validation failure).
+     * @param {IRecordingChanges} changes - Which services to start/stop.
+     * @returns {boolean} - True when the changes were applied, false when the
+     * action could not be performed (e.g. validation failure).
      */
-    _onSubmit() {
+    _applyChanges({
+        startRecording = false,
+        startTranscription = false,
+        stopRecording = false,
+        stopTranscription = false
+    }: IRecordingChanges) {
         const {
             _appKey,
             _conference,
@@ -455,16 +524,10 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
 
         const {
             localRecordingOnlySelf,
+            selectedLanguage,
             selectedRecordingService,
-            sharingEnabled,
-            shouldRecordAudioAndVideo,
-            shouldRecordTranscription
+            sharingEnabled
         } = this.state;
-
-        const startRecording = !_recordingRunning && shouldRecordAudioAndVideo;
-        const stopRecording = _recordingRunning && !shouldRecordAudioAndVideo;
-        const startTranscription = !_transcriptionRunning && shouldRecordTranscription;
-        const stopTranscription = _transcriptionRunning && !shouldRecordTranscription;
 
         // Pre-seed intents synchronously — must happen before any async operations
         // so the sound/notification coordinator knows what to wait for.
@@ -542,7 +605,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
                 } else {
                     dispatch(showErrorNotification({ titleKey: 'dialog.noDropboxToken' }));
 
-                    return;
+                    return false;
                 }
                 break;
             }
@@ -558,7 +621,8 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             case RECORDING_TYPES.LOCAL: {
                 dispatch(startLocalVideoRecording(localRecordingOnlySelf));
                 _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                    isTranscribingEnabled: shouldRecordTranscription
+                    isTranscribingEnabled:
+                        startTranscription || (_transcriptionRunning && !stopTranscription)
                 });
 
                 return true;
@@ -578,19 +642,20 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
         if (startTranscription) {
             if (selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) {
                 dispatch(setRequestingSubtitles(
-                    true, _displaySubtitles, _subtitlesLanguage, true, startRecording || _recordingRunning));
+                    true, _displaySubtitles, selectedLanguage, true, startRecording || _recordingRunning));
             } else {
+                // Spread the existing metadata so that starting transcription while a non-Jitsi
+                // recording is already running does not drop isRecordingRequested — that would
+                // read as recording having stopped to the metadata listener (see the stopRecording
+                // and stopTranscription branches above, which spread for the same reason).
+                const existingRecMeta = _conference?.getMetadataHandler()?.getMetadata()[RECORDING_METADATA_ID] ?? {};
+
                 _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                    ...existingRecMeta,
+                    ...(startRecording && { isRecordingRequested: true }),
                     isTranscribingEnabled: true
                 });
             }
-        } else if (startRecording && shouldRecordTranscription
-                && selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE) {
-            // Starting recording with transcription already on — ensure metadata is consistent.
-            _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                isRecordingRequested: true,
-                isTranscribingEnabled: true
-            });
         } else if (startRecording) {
             // Recording started without a transcription change: announce it in room metadata so the
             // other participants get the recording start notification/sound (this is what the
@@ -614,6 +679,69 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
      */
     _toggleScreenshotCapture() {
         // To be implemented by subclass.
+    }
+
+    /**
+     * Dismisses the dialog/screen once an action from the list below has been applied.
+     *
+     * @returns {void}
+     */
+    _dismiss() {
+        // To be implemented by subclass.
+    }
+
+    /**
+     * Starts the recording and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStartRecordingPress() {
+        this._onStartRecording() && this._dismiss();
+    }
+
+    /**
+     * Stops the recording and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStopRecordingPress() {
+        this._onStopRecording() && this._dismiss();
+    }
+
+    /**
+     * Starts the transcription and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStartTranscriptionPress() {
+        this._onStartTranscription() && this._dismiss();
+    }
+
+    /**
+     * Stops the transcription and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStopTranscriptionPress() {
+        this._onStopTranscription() && this._dismiss();
+    }
+
+    /**
+     * Starts every service which is not running yet and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStartBothPress() {
+        this._onStartBoth() && this._dismiss();
+    }
+
+    /**
+     * Stops every running service and dismisses the dialog/screen.
+     *
+     * @returns {void}
+     */
+    _onStopBothPress() {
+        this._onStopBoth() && this._dismiss();
     }
 
     /**

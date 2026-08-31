@@ -482,7 +482,6 @@
         "on": "Înregistrare",
         "onBy": "{{name}} a pornit înregistrarea",
         "pending": "Se pregătește înregistrarea apelului video…",
-        "serviceDescription": "Înregistrarea dumneavoastră va fi salvată de serviciul înregistrare",
         "serviceName": "Serviciu înregistrare",
         "signIn": "Conectare",
         "signOut": "Deconectare",

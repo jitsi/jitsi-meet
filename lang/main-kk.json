@@ -1144,19 +1144,16 @@
         "recordAudioAndVideo": "Аудио және бейнені жазу",
         "recordTranscription": "Транскрипцияны жазу",
         "saveLocalRecording": "Жазу файлын жергілікті сақтау (Бета)",
-        "serviceDescription": "Жазбаңызды жазу қызметі сақтайды",
         "serviceDescriptionCloud": "Бұлттық жазу",
         "serviceDescriptionCloudInfo": "Жазылған жиналыстар жазылған уақытынан кейін 24 сағаттан соң автоматты түрде тазаланады.",
         "serviceName": "Жазу қызметі",
         "sessionAlreadyActive": "Бұл сессия қазірдің өзінде жазылуда немесе тікелей эфирде көрсетілуде.",
-        "showAdvancedOptions": "Қосымша опциялар",
         "signIn": "Кіру",
         "signOut": "Шығу",
         "surfaceError": "Ағымдағы қойындыны таңдаңыз.",
         "title": "Жазу",
         "unavailable": "Қап! {{serviceName}} қазіргі уақытта қолжетімсіз. Біз мәселені шешу үстіндеміз. Кейінірек қайталап көріңіз.",
-        "unavailableTitle": "Жазу қолжетімсіз",
-        "uploadToCloud": "Бұлтқа жүктеу"
+        "unavailableTitle": "Жазу қолжетімсіз"
     },
     "screenshareDisplayName": "{{name}} экраны",
     "sectionList": {

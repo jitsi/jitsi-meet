@@ -900,7 +900,6 @@
         "onlyRecordSelf": "تسجيل فقط دفق الصوت والفيديو الخاصة بي",
         "pending": "التحضير لتسجيل المُلتقى…",
         "saveLocalRecording": "حفظ ملف التسجيل محليا",
-        "serviceDescription": "ستحفظ خدمة التسجيل الفيديو المستجل",
         "serviceDescriptionCloud": "تسجيل سحابي",
         "serviceDescriptionCloudInfo": "يتم مسح المُلتقيات المسجلة تلقائيًا بعد 24 ساعة من وقت التسجيل.",
         "serviceName": "خدمة التسجيل",
@@ -910,8 +909,7 @@
         "surfaceError": "الرجاء تحديد علامة التبويب الحالية.",
         "title": "قيد التسجيل",
         "unavailable": "عجبًا! {{serviceName}} غير متاحة حاليًا. نعمل على حل المشكلة. حاول مرة أخرى لاحقًا.",
-        "unavailableTitle": "التسجيل غير متاح",
-        "uploadToCloud": "تحميل إلى السحابة"
+        "unavailableTitle": "التسجيل غير متاح"
     },
     "screenshareDisplayName": "شاشة {{name}}",
     "sectionList": {

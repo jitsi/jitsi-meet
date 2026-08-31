@@ -1008,7 +1008,6 @@
         "onlyRecordSelf": "Gravar apenas o meu fluxo de áudio e vídeo",
         "pending": "Preparando para gravar a reunião…",
         "saveLocalRecording": "Salvar o arquivo de gravação localmente (Beta)",
-        "serviceDescription": "Sua gravação será salva pelo serviço de gravação",
         "serviceDescriptionCloud": "Gravação na nuvem",
         "serviceDescriptionCloudInfo": "Reuniões gravadas são removidas automaticamente 24h após a hora da gravação.",
         "serviceName": "Serviço de gravação",
@@ -1018,8 +1017,7 @@
         "surfaceError": "Por favor selecione a aba atual.",
         "title": "Gravando",
         "unavailable": "Oops! O {{serviceName}} está indisponível. Estamos trabalhando para resolver o problema. Por favor, tente mais tarde.",
-        "unavailableTitle": "Gravação indisponível",
-        "uploadToCloud": "Enviar para a nuvem"
+        "unavailableTitle": "Gravação indisponível"
     },
     "screenshareDisplayName": "Tela: {{name}}",
     "sectionList": {

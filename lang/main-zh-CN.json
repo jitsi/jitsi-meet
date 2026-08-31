@@ -1136,19 +1136,16 @@
         "recordAudioAndVideo": "",
         "recordTranscription": "",
         "saveLocalRecording": "本地保存录制文件（测试版）",
-        "serviceDescription": "录制将由录制服务保存",
         "serviceDescriptionCloud": "云录制",
         "serviceDescriptionCloudInfo": "录制的会议将在录制后的24小时内自动清除。",
         "serviceName": "录制服务",
         "sessionAlreadyActive": "此会议已经在录制或直播中",
-        "showAdvancedOptions": "高级选项",
         "signIn": "登录",
         "signOut": "注销",
         "surfaceError": "请选择当前选项卡。",
         "title": "录制中",
         "unavailable": "糟糕！{{serviceName}}目前无法使用，我们正在努力解决这个问题，请稍后再试。",
-        "unavailableTitle": "录制不可用",
-        "uploadToCloud": "上传至云端"
+        "unavailableTitle": "录制不可用"
     },
     "screenshareDisplayName": "{{name}}的屏幕",
     "sectionList": {

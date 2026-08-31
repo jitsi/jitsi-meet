@@ -1078,19 +1078,16 @@
         "recordAudioAndVideo": "Запись аудио и видео",
         "recordTranscription": "Запись транскрипции",
         "saveLocalRecording": "Сохранить файл записи локально (Beta)",
-        "serviceDescription": "Ваша запись будет сохранена соответствующей службой",
         "serviceDescriptionCloud": "Облачная запись",
         "serviceDescriptionCloudInfo": "Сохранённые записи автоматически удаляются спуся 24 часа со старта.",
         "serviceName": "Служба записи",
         "sessionAlreadyActive": "Этот сеанс уже записывается или транслируется в прямом эфире.",
-        "showAdvancedOptions": "Расширенные настройки",
         "signIn": "Вход",
         "signOut": "Выход",
         "surfaceError": "Пожалуйста, выберите текущую вкладку.",
         "title": "Запись",
         "unavailable": "Служба {{serviceName}} сейчас недоступна. Мы работаем над исправлением этой ошибки. Пожалуйста, попробуйте позже.",
-        "unavailableTitle": "Запись невозможна",
-        "uploadToCloud": "Загрузить в облако"
+        "unavailableTitle": "Запись невозможна"
     },
     "screenshareDisplayName": "Экран {{name}}",
     "sectionList": {

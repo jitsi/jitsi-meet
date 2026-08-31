@@ -1011,19 +1011,16 @@
         "recordAudioAndVideo": "Taka upp hljóð og myndmerki",
         "recordTranscription": "Taka upp textaumritun",
         "saveLocalRecording": "Vista upptökuskrá á eigin tölvu (Beta-prófunarútgáfa)",
-        "serviceDescription": "Upptakan þín verður vistuð af upptökuþjónustunni",
         "serviceDescriptionCloud": "Upptaka á tölvuský",
         "serviceDescriptionCloudInfo": "Upptökurm af fundum er eytt sjálfkrafa 24klst eftir upptöku þeirra.",
         "serviceName": "Upptökuþjónusta",
         "sessionAlreadyActive": "Það er þegar verið að taka upp eða streyma beint þessari setu.",
-        "showAdvancedOptions": "Ítarlegir valkostir",
         "signIn": "Skrá inn",
         "signOut": "Skrá út",
         "surfaceError": "Veldu núverandi flipa.",
         "title": "Upptaka",
         "unavailable": "Úbbs! {{serviceName}} er upptekið í augnablikinu. Við erum að vinna í þessu vandamáli. Reyndu aftur síðar.",
-        "unavailableTitle": "Upptaka er ekki tiltæk",
-        "uploadToCloud": "Senda inn á tölvuskýið"
+        "unavailableTitle": "Upptaka er ekki tiltæk"
     },
     "screenshareDisplayName": "Skjár hjá {{name}}",
     "sectionList": {
