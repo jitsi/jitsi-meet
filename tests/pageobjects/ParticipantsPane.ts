@@ -274,6 +274,22 @@ export default class ParticipantsPane extends BasePageObject {
     }
 
     /**
+     * Waits for the mute audio action of a participant to be available.
+     * @param participant
+     */
+    async waitForMuteAudioAction(participant: Participant) {
+        if (!await this.isOpen()) {
+            await this.open();
+        }
+
+        const participantId = await participant.getEndpointId();
+
+        await this.participant.driver.$(`#participant-item-${participantId}`).moveTo();
+
+        await this.participant.driver.$(`button[data-testid="mute-audio-${participantId}"]`).waitForDisplayed();
+    }
+
+    /**
      * Mutes the audio of a participant.
      * @param participant
      */

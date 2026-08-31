@@ -90,12 +90,18 @@ export default class AbstractMuteEveryoneDialog<P extends IProps> extends Compon
             exclude
         } = this.props;
 
-        dispatch(muteAllParticipants(exclude, MEDIA_TYPE.AUDIO));
+        // Change the moderation state before the participants are muted. Jicofo mutes a participant on the bridge
+        // only if the participant is not allowed to unmute when jicofo receives the mute request. If the mute
+        // requests are sent first, jicofo does not know yet that moderation is enabled, thus it only forwards the
+        // mute requests to the participants. A participant that does not obey the mute request continues to send
+        // audio until the moderator mutes it a second time.
         if (this.state.audioModerationEnabled) {
             dispatch(requestEnableAudioModeration());
         } else if (this.state.audioModerationEnabled !== undefined) {
             dispatch(requestDisableAudioModeration());
         }
+
+        dispatch(muteAllParticipants(exclude, MEDIA_TYPE.AUDIO));
 
         return true;
     }
