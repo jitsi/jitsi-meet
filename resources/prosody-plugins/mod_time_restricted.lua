@@ -1,3 +1,4 @@
+--- activate under the main muc component
 
 local MIN = module:get_option_number("conference_max_minutes", 5)
 local TIMEOUT = MIN * 60

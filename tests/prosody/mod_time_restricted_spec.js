@@ -187,4 +187,96 @@ describe('mod_time_restricted', () => {
 
         assert.equal(await getRoomState(r), null, 'the room must not be re-created');
     });
+
+    // The client only trusts a `time_restricted` message because it arrives from
+    // the bare room JID: lib-jitsi-meet derives the endpoint id from the stanza's
+    // resource, and jitsi-meet's time-timer middleware ignores the message unless
+    // that id is null. These cases prove an occupant cannot manufacture such a
+    // stanza, so the guard has something real to stand on.
+    describe('spoofing by an occupant', () => {
+        const FORGED = {
+            type: 'time_restricted',
+            durationSeconds: 60,
+            elapsedSeconds: 0
+        };
+
+        // Delivery is immediate, so a short window is enough to conclude a
+        // stanza is never coming — and it keeps these cases comfortably inside
+        // the room's 10.5 s destroy.
+        const SPOOF_WAIT_MS = 2500;
+
+        /**
+         * Sets up a room with a victim and an attacker, both past their join-time
+         * `time_restricted` message so only later ones remain in the queue.
+         *
+         * @returns {Promise<object>} the room JID plus both clients.
+         */
+        async function twoOccupants() {
+            const r = room();
+
+            await ctx.connectFocus(r);
+
+            const victim = await ctx.connect();
+            const attacker = await ctx.connect();
+
+            // Default nicks only — anonymous_strict requires the MUC resource to
+            // match the JID local part, so an explicit nick would be refused.
+            await victim.joinRoom(r);
+            await victim.waitForMessage(isTimeRestrictedMessage, NOTIFY_WAIT_MS);
+
+            await attacker.joinRoom(r);
+            await attacker.waitForMessage(isTimeRestrictedMessage, NOTIFY_WAIT_MS);
+
+            return { r,
+                victim,
+                attacker };
+        }
+
+        it('stamps an occupant nick on a json-message sent to the room', async () => {
+            const { r, victim, attacker } = await twoOccupants();
+
+            await attacker.sendJsonGroupchat(r, FORGED);
+
+            // The message is delivered — nothing blocks a participant from
+            // saying whatever they like — but the MUC rewrites `from` to the
+            // sender's occupant JID. That resource is what makes the endpoint
+            // id non-null on the receiving client, and non-null is rejected.
+            const seen = await victim.waitForMessage(isTimeRestrictedMessage, SPOOF_WAIT_MS);
+
+            assert.equal(seen.attrs.from, `${r}/${attacker.nick}`,
+                'the room must attribute the message to the occupant that sent it');
+        });
+
+        it('never delivers a groupchat json-message under a forged room from', async () => {
+            const { r, victim, attacker } = await twoOccupants();
+
+            await attacker.sendJsonMessageRaw(r, FORGED, { from: r,
+                type: 'groupchat' });
+
+            // The claimed `from` is discarded: the stanza still reaches the room,
+            // stamped with the attacker's occupant JID like any other. A client
+            // cannot assert an identity, only the server can.
+            const seen = await victim.waitForMessage(isTimeRestrictedMessage, SPOOF_WAIT_MS);
+
+            assert.equal(seen.attrs.from, `${r}/${attacker.nick}`,
+                'a participant must not be able to speak as the room');
+            assert.notEqual(seen.attrs.from, r);
+        });
+
+        it('never delivers a private json-message under a forged room from', async () => {
+            const { r, victim, attacker } = await twoOccupants();
+
+            // Addressed straight at the victim's occupant JID rather than the
+            // room, which is the other way a genuine server message reaches a
+            // single client (mod_time_restricted sends exactly this shape).
+            await attacker.sendJsonMessageRaw(`${r}/${victim.nick}`, FORGED, { from: r,
+                type: 'chat' });
+
+            const seen = await victim.waitForMessage(isTimeRestrictedMessage, SPOOF_WAIT_MS);
+
+            assert.equal(seen.attrs.from, `${r}/${attacker.nick}`,
+                'a participant must not be able to private-message as the room');
+            assert.notEqual(seen.attrs.from, r);
+        });
+    });
 });
