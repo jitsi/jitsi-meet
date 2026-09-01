@@ -35,10 +35,10 @@
 --
 --    The request is honoured only when ORIG was authored by the same occupant
 --    and has not been moderated; anything else is dropped and reaches nobody.
---    The history entry's body is rewritten in place, so a late joiner receives
---    the corrected text and needs nothing further. The correction stanza itself
---    is what reaches the occupants already in the room, so nothing extra is
---    broadcast. History keeps no record of the message having been edited.
+--    An honoured correction is relayed untouched: it carries the new body and
+--    asks to be stored, so the room archives it and replays it after the message
+--    it corrects, and a client joining later applies it the same way one in the
+--    room does. Nothing here rewrites the history entry.
 --
 -- 3. Retraction (XEP-0424). The author retracts their own message with a
 --    top level:
@@ -51,17 +51,9 @@
 --    either since there is no longer anything for it to pair with. The retraction
 --    stanza itself is what reaches the occupants already in the room.
 --
--- 4. The client's own edits, which it broadcasts to the room as a json payload
---    of type EDIT_CHAT_MESSAGE rather than as a XEP-0308 correction. These are
---    picked up from 'jitsi-endpoint-message-received', where such payloads are
---    already decoded, and are treated exactly like a correction: the author is
---    checked against the history entry, the entry's body is rewritten, and an
---    edit that is not the author's own is dropped so it reaches nobody. An edit
---    of a message that has aged out of the history window is relayed untouched,
---    since no joining client will receive that message either.
---
--- Neither the moderation request nor the correction is stored in history itself;
--- the rewritten entry for the original message already carries the new state.
+-- The moderation the room broadcasts and the retraction are kept out of history:
+-- the first is already reflected in the tombstone, and the second removed the
+-- entry it referred to.
 --
 -- Rooms advertise 'muc#roominfo_messageModerationEnabled' so a client can tell
 -- whether the server is here to apply these operations, and offer the moderate
@@ -72,11 +64,12 @@
 -- room stops advertising them.
 --
 -- Load it on a visitor prosody's muc component too. There it keeps the local
--- history in step and advertises the room info field so visitors see the same
--- actions. It does not check anything that reached it from the main prosody,
--- which is where the room the occupants act in lives and where every request is
--- checked. It does check the author of a visitor's own request, since that has
--- not been past the main prosody yet at the point this node routes it.
+-- history in step for the operations that are not replayed on their own, and
+-- advertises the room info field so visitors see the same actions. It does not
+-- check anything that reached it from the main prosody, which is where the room
+-- the occupants act in lives and where every request is checked. It does check
+-- the author of a visitor's own request, since that has not been past the main
+-- prosody yet at the point this node routes it.
 --
 --   Component "conference.meet.jitsi" "muc"
 --       modules_enabled = { "muc_message_moderation" }
@@ -87,7 +80,6 @@ local st = require 'util.stanza';
 local id = require 'util.id';
 local jid = require 'util.jid';
 local datetime = require 'util.datetime';
-local json = require 'cjson.safe';
 
 local ends_with = module:require 'util'.ends_with;
 
@@ -100,9 +92,6 @@ local MODERATE_NS = 'urn:xmpp:message-moderate:1';
 local RETRACT_NS = 'urn:xmpp:message-retract:1';
 local CORRECT_NS = 'urn:xmpp:message-correct:0';
 local HINTS_NS = 'urn:xmpp:hints';
-local JITSI_JSON_NS = 'http://jitsi.org/jitmeet';
--- must match EDIT_CHAT_MESSAGE in react/features/chat/constants.ts
-local EDIT_CHAT_MESSAGE = 'editChat';
 
 -- Returns the id of the message the stanza asks to moderate and the optional
 -- reason, or nil when the stanza is not a moderation request.
@@ -140,30 +129,6 @@ function parse_correction(stanza)
     end
 
     return replace.attr.id, body;
-end
-
--- Returns the id of the message a json EDIT_CHAT_MESSAGE payload edits and the
--- new body, or nil when the stanza carries no such payload. Used where the
--- decoded 'jitsi-endpoint-message-received' is not available, which is the case
--- on a visitor node.
-function parse_json_edit(stanza)
-    local json_element = stanza:get_child('json-message', JITSI_JSON_NS);
-
-    if not json_element then
-        return nil;
-    end
-
-    local payload = json.decode(json_element:get_text() or '');
-
-    if type(payload) ~= 'table' or payload.type ~= EDIT_CHAT_MESSAGE then
-        return nil;
-    end
-
-    if type(payload.messageId) ~= 'string' or type(payload.message) ~= 'string' then
-        return nil;
-    end
-
-    return payload.messageId, payload.message;
 end
 
 -- Returns the id of the message the stanza retracts, or nil when the stanza is
@@ -222,22 +187,6 @@ function tombstone_entry(entry, by, reason, stamp)
 
     tombstone:add_child(moderated);
     entry.stanza = tombstone;
-
-    return entry;
-end
-
--- Rewrites a history entry's body in place, so a late joiner receives the current
--- text. No marker is left behind: the joining client shows the corrected message
--- as if that had always been the text, without an 'edited' hint.
-function apply_correction(entry, body)
-    local corrected = st.clone(entry.stanza);
-
-    corrected:remove_children('body');
-    corrected:remove_children('replace', CORRECT_NS);
-
-    corrected:add_child(st.stanza('body'):text(body));
-
-    entry.stanza = corrected;
 
     return entry;
 end
@@ -317,16 +266,13 @@ function handle_correction(origin, room, stanza, occupant, target_id, body)
 
             return true;
         end
-
-        apply_correction(entry, body);
     end
 
-    -- the corrected body is carried by the history entry, so the correction must
-    -- not be stored on top of it as a message of its own
-    stanza:add_child(st.stanza('no-store', { xmlns = HINTS_NS }));
+    module:log('debug', 'Relaying correction of %s from %s', target_id, occupant and occupant.nick);
 
-    -- fall through, the correction itself is what reaches the occupants already
-    -- in the room; nothing extra is broadcast
+    -- fall through. The correction carries the new body and asks to be stored, so
+    -- the room archives it and replays it to anyone joining later, in order after
+    -- the message it corrects. Nothing here has to rewrite the entry.
 end
 
 -- The author retracting their own message. The history entry is dropped, so the
@@ -355,50 +301,6 @@ function handle_retraction(origin, room, stanza, occupant, target_id)
 
     -- fall through, the retraction the client sent is what reaches the occupants
     -- in the room
-end
-
--- The client broadcasts its edits to the room as a json payload rather than as a
--- XEP-0308 correction. 'jitsi-endpoint-message-received' is where those payloads
--- are already decoded for the whole deployment, so hook that rather than
--- decoding the stanza again here. Returning true drops the message, so an edit
--- that is not the author's own reaches nobody.
-function handle_endpoint_message(event)
-    local room, stanza, occupant, message = event.room, event.stanza, event.occupant, event.message;
-
-    if type(message) ~= 'table' or message.type ~= EDIT_CHAT_MESSAGE then
-        return;
-    end
-
-    if type(message.messageId) ~= 'string' or type(message.message) ~= 'string' then
-        return;
-    end
-
-    local entry = find_history_entry(room, message.messageId);
-
-    -- Nothing in history to correct: the message has aged out of the room's
-    -- history window, so no joining client will receive it either. Relay it and
-    -- let the receiving clients apply it to their own copy as before.
-    if not entry then
-        return;
-    end
-
-    if not occupant or entry.stanza.attr.from ~= occupant.nick then
-        module:log('warn', 'Dropped edit of %s from %s, authored by %s',
-            message.messageId, occupant and occupant.nick or stanza.attr.from, entry.stanza.attr.from);
-
-        return true;
-    end
-
-    if is_entry_moderated(entry) then
-        module:log('debug', 'Dropped edit of moderated message %s', message.messageId);
-
-        return true;
-    end
-
-    apply_correction(entry, message.message);
-
-    -- fall through, the broadcast the client already sent is what updates the
-    -- occupants in the room
 end
 
 function handle_groupchat(event)
@@ -466,24 +368,6 @@ function handle_main_groupchat(event)
         return;
     end
 
-    local correct_id, body = parse_correction(stanza);
-
-    if not correct_id then
-        -- what the client actually sends today
-        correct_id, body = parse_json_edit(stanza);
-    end
-
-    if correct_id then
-        local entry = find_history_entry(room, correct_id);
-
-        if entry and not is_entry_moderated(entry) and may_apply_locally(entry, occupant) then
-            module:log('debug', 'Correcting %s in %s history', correct_id, room.jid);
-            apply_correction(entry, body);
-        end
-
-        return;
-    end
-
     -- A moderation is sent by the main room itself, so it never arrives as an
     -- occupant's stanza and nothing else routes it to the occupants here.
     if occupant then
@@ -537,7 +421,6 @@ function skip_history(event)
     local stanza = event.stanza;
 
     if stanza:get_child('apply-to', FASTEN_NS)
-        or stanza:get_child('replace', CORRECT_NS)
         or stanza:get_child('retract', RETRACT_NS) then
         return true;
     end
@@ -572,7 +455,6 @@ if main_domain then
     module:hook('muc-occupant-groupchat', handle_main_groupchat, 60);
 else
     module:hook('muc-occupant-groupchat', handle_groupchat, 10);
-    module:hook('jitsi-endpoint-message-received', handle_endpoint_message);
 end
 
 module:log('info', 'Loaded MUC message moderation and correction for %s', module.host);

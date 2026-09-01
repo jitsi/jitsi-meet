@@ -77,7 +77,6 @@ export const OPTION_GROUPCHAT = 'groupchat';
 
 export const MODERATE_CHAT_MESSAGE = 'MODERATE_CHAT_MESSAGE';
 
-export const EDIT_CHAT_MESSAGE = 'editChat';
 
 /**
  * Maximum number of pending edits are allowed.

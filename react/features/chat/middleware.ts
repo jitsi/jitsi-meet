@@ -70,7 +70,6 @@ import { ChatPrivacyDialog } from './components';
 import {
     CHAR_LIMIT,
     ChatTabs,
-    EDIT_CHAT_MESSAGE,
     INCOMING_MSG_SOUND_ID,
     LOBBY_CHAT_MESSAGE,
     MESSAGE_TYPE_ERROR,
@@ -170,19 +169,6 @@ MiddlewareRegistry.register(store => next => action => {
                     data.messageId,
                     typeof data.reason === 'string' ? data.reason.slice(0, CHAR_LIMIT) : undefined);
             }
-
-            break;
-        }
-
-        if (data?.type === EDIT_CHAT_MESSAGE && data.messageId && data.message) {
-            const trimmedMessage = String(data.message).slice(0, CHAR_LIMIT);
-
-            store.dispatch(editMessage({
-                messageId: data.messageId,
-                message: trimmedMessage,
-                editedAt: data.editedAt,
-                participantId: participant.getId()
-            }));
 
             break;
         }
@@ -302,13 +288,6 @@ MiddlewareRegistry.register(store => next => action => {
                     m.isModerated
             );
 
-            const editedMessages = state['features/chat'].messages.filter(
-                (m: IMessage) =>
-                    m.isEdited
-                    && !m.privateMessage
-                    && m.messageType === MESSAGE_TYPE_LOCAL
-            );
-
             // Only a moderator's replay is accepted by the receiving side, so don't have
             // every participant emit messages that will be dropped anyway.
             if (moderatedMessages.length > 0 && isLocalParticipantModerator(state)) {
@@ -335,18 +314,6 @@ MiddlewareRegistry.register(store => next => action => {
                 setTimeout(() => sendWithRetry(3), 3000);
             }
 
-            editedMessages.forEach(message => {
-                conference.sendPrivateTextMessage(
-                    action.participant.id,
-                    JSON.stringify({
-                        type: EDIT_CHAT_MESSAGE,
-                        messageId: message.messageId,
-                        message: message.message,
-                        editedAt: message.editedAt
-                    }),
-                    'json-message'
-                );
-            });
         }
 
         if (_shouldNotifyPrivateRecipientsChanged(store, action)) {
@@ -480,21 +447,15 @@ MiddlewareRegistry.register(store => next => action => {
         ) {
             const trimmedMessage = String(action.message).trim().slice(0, CHAR_LIMIT);
 
-            const payload = {
-                type: EDIT_CHAT_MESSAGE,
-                messageId: action.messageId,
-                message: trimmedMessage,
-                editedAt
-            };
-
             if (messageToEdit.privateMessage && messageToEdit.recipientId) {
-                conference.sendPrivateTextMessage(
+                conference.sendMessageCorrection(
+                    action.messageId,
+                    trimmedMessage,
                     messageToEdit.recipientId,
-                    JSON.stringify(payload),
-                    'json-message'
+                    messageToEdit.sentToVisitor
                 );
             } else {
-                conference.sendTextMessage(JSON.stringify(payload), 'json-message');
+                conference.sendMessageCorrection(action.messageId, trimmedMessage);
             }
 
             store.dispatch(editMessage({
@@ -658,25 +619,6 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
         JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
         (participantId: string, message: string, timestamp: number, messageId: string, displayName?: string,
                 isFromVisitor?: boolean, replyToId?: string) => {
-            try {
-                const data = JSON.parse(message);
-
-                if (data?.type === EDIT_CHAT_MESSAGE && data.messageId && data.message) {
-                    const trimmedMessage = String(data.message).slice(0, CHAR_LIMIT);
-
-                    store.dispatch(editMessage({
-                        messageId: data.messageId,
-                        message: trimmedMessage,
-                        editedAt: data.editedAt,
-                        participantId
-                    }));
-
-                    // Don't treat edit payload as a new chat message.
-                    return;
-                }
-            } catch (e) {
-                // Normal private message.
-            }
             _onConferenceMessageReceived(store, {
                 participantId,
                 message,
@@ -689,6 +631,17 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
             });
         }
     );
+
+    conference.on(
+        JitsiConferenceEvents.MESSAGE_CORRECTED,
+        (participantId: string, messageId: string, message: string, timestamp?: string) => {
+            store.dispatch(editMessage({
+                messageId,
+                message: String(message).slice(0, CHAR_LIMIT),
+                editedAt: timestamp ? new Date(timestamp).getTime() : Date.now(),
+                participantId
+            }));
+        });
 
     conference.on(
         JitsiConferenceEvents.MESSAGE_MODERATED,

@@ -488,9 +488,15 @@ end
 local function add_to_local_history(room, stanza)
     local event = { room = room; stanza = stanza; };
 
-    if module:fire_event('muc-message-is-historic', event) then
-        module:fire_event('muc-add-history', event);
+    if not module:fire_event('muc-message-is-historic', event) then
+        module:log('debug', 'Not storing %s in %s history', stanza.attr.id, room.jid);
+
+        return;
     end
+
+    module:fire_event('muc-add-history', event);
+    module:log('debug', 'Stored %s in %s history, %s entries now',
+        stanza.attr.id, room.jid, room._history and #room._history or 0);
 end
 
 -- Receives history messages from the main prosody and adds them to the local history
