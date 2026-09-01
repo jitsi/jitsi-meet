@@ -10,11 +10,17 @@ setTestProperties(__filename, {
 
 const PILL_SELECTOR = '[data-testid="time-timer-pill"]';
 
-// What mod_time_restricted broadcasts. A participant that could get this
+// The shape mod_time_restricted broadcasts. A participant that could get this
 // honoured would be able to put an arbitrary countdown on everyone's screen.
+//
+// The duration is deliberately unlike anything a deployment would enforce, so
+// it identifies the forgery: a target running mod_time_restricted pushes its
+// own (much shorter) limit on join, and these tests must tell the two apart
+// rather than assume no timer is running at all.
+const FORGED_DURATION = 1800;
 const PAYLOAD = {
     type: 'time_restricted',
-    durationSeconds: 1800,
+    durationSeconds: FORGED_DURATION,
     elapsedSeconds: 0
 };
 
@@ -23,15 +29,16 @@ const PAYLOAD = {
 const NON_PARTICIPANT_MESSAGE_RECEIVED = 'conference.non_participant_message_received';
 
 /**
- * Whether a timer is running for this participant. Read from redux rather than
- * the pill, because the pill is additionally gated by the suppression window —
- * an unstarted timer and a suppressed one look the same on screen.
+ * The duration of the timer currently running for this participant, or 0 when
+ * none is. Read from redux rather than the pill: the pill is additionally
+ * gated by the suppression window, and the duration is what tells a forged
+ * timer apart from a legitimate server-pushed one.
  *
  * @param {Participant} p - The participant.
- * @returns {Promise<boolean>}
+ * @returns {Promise<number>}
  */
-function isTimerRunning(p: Participant): Promise<boolean> {
-    return p.execute(() => APP.store.getState()['features/time-timer'].running);
+function timerDuration(p: Participant): Promise<number> {
+    return p.execute(() => APP.store.getState()['features/time-timer'].durationSeconds);
 }
 
 /**
@@ -53,31 +60,37 @@ function injectNonParticipantMessage(p: Participant, id: string | null): Promise
 describe('Time timer server message', () => {
     it('joining the meeting', async () => {
         // The default test config disables the timer, so enable it explicitly.
+        // The suppression window is pinned so the pill assertion at the end is
+        // about the timer and not about a deployment's display policy.
         await ensureTwoParticipants({
             configOverwrite: {
-                timeTimer: { enabled: true }
+                timeTimer: {
+                    enabled: true,
+                    suppressForSeconds: 0
+                }
             }
         });
 
-        const { p1 } = ctx;
-
-        expect(await isTimerRunning(p1)).toBe(false);
+        // No assertion on whether a timer is already running: a target with
+        // mod_time_restricted enabled pushes its limit to every occupant on
+        // join, and one without it leaves the timer idle. Both are fine — what
+        // the tests below check is that the forged duration is never adopted.
+        expect(await timerDuration(ctx.p1)).not.toBe(FORGED_DURATION);
     });
 
     it('ignores the payload sent as a json-message by another participant', async () => {
         const { p1, p2 } = ctx;
 
         // The realistic attack: p2 puts the exact payload into the room. The MUC
-        // stamps p2's occupant JID on it, so p1 sees it as p2's message and the
-        // timer must stay untouched.
+        // stamps p2's occupant JID on it, so p1 sees it as p2's message and must
+        // not adopt the duration it carries.
         await p2.execute(payload => {
             APP.conference._room.room.sendMessage(JSON.stringify(payload), 'json-message');
         }, PAYLOAD);
 
         await p1.driver.pause(2000);
 
-        expect(await isTimerRunning(p1)).toBe(false);
-        await expect(await p1.driver.$(PILL_SELECTOR)).not.toBeDisplayed();
+        expect(await timerDuration(p1)).not.toBe(FORGED_DURATION);
     });
 
     it('ignores a non-participant message that carries a sender id', async () => {
@@ -90,8 +103,7 @@ describe('Time timer server message', () => {
 
         await p1.driver.pause(2000);
 
-        expect(await isTimerRunning(p1)).toBe(false);
-        await expect(await p1.driver.$(PILL_SELECTOR)).not.toBeDisplayed();
+        expect(await timerDuration(p1)).not.toBe(FORGED_DURATION);
     });
 
     it('starts the timer for a message with no sender id', async () => {
@@ -103,7 +115,7 @@ describe('Time timer server message', () => {
         // because the payload or the wiring is broken.
         await injectNonParticipantMessage(p1, null);
 
-        await p1.driver.waitUntil(() => isTimerRunning(p1), {
+        await p1.driver.waitUntil(async () => await timerDuration(p1) === FORGED_DURATION, {
             timeout: 3000,
             timeoutMsg: 'a server-originated time_restricted message did not start the timer'
         });
