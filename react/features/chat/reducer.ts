@@ -205,9 +205,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             if (m.messageId === newMessage.messageId) {
                 messageExists = true;
 
-                // SECURITY: participantId must be present AND match the original
-                // author. A missing participantId must fail closed, not open.
-                if (newMessage.participantId && m.participantId !== newMessage.participantId) {
+                if (!newMessage.participantId || newMessage.participantId !== m.participantId) {
                     return m;
                 }
 
