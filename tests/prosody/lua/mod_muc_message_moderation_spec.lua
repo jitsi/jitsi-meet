@@ -232,6 +232,7 @@ local handle_groupchat = assert(_G.handle_groupchat);
 local skip_history = assert(_G.skip_history);
 local add_room_info = assert(_G.add_room_info);
 local handle_main_groupchat = assert(_G.handle_main_groupchat);
+local parse_json_edit = assert(_G.parse_json_edit);
 
 local handle_endpoint_message = assert(_G.handle_endpoint_message);
 local parse_retraction = assert(_G.parse_retraction);
@@ -302,12 +303,12 @@ end
 local function json_edit_stanza(actor, target_id, body)
     return st.message({ from = actor.jid, to = ROOM_JID, type = 'groupchat' })
         :tag('json-message', { xmlns = JITSI_JSON_NS })
-            :text('{"type":"EDIT_CHAT_MESSAGE","messageId":"' .. target_id
+            :text('{"type":"editChat","messageId":"' .. target_id
                 .. '","message":"' .. body .. '"}'):up();
 end
 
 local function edit_payload(target_id, body)
-    return { type = 'EDIT_CHAT_MESSAGE', messageId = target_id, message = body, editedAt = 1730000000 };
+    return { type = 'editChat', messageId = target_id, message = body, editedAt = 1730000000 };
 end
 
 local function history_message(actor, message_id, body)
@@ -386,9 +387,9 @@ describe('mod_muc_message_moderation', function()
             assert.equal(60, hooks['muc-occupant-groupchat'][1].priority);
         end)
 
-        it('does not check anything on a visitor node', function()
-            -- the handlers that compare an author or a role are not registered,
-            -- so a visitor's own edit is never refused locally
+        it('does not register the checking handlers on a visitor node', function()
+            -- the json edits are picked off the groupchat hook there, since the
+            -- decoded endpoint event is not guaranteed to be fired on that host
             assert.is_nil(hooks['jitsi-endpoint-message-received']);
         end)
     end)
@@ -514,6 +515,75 @@ describe('mod_muc_message_moderation', function()
                 :tag('replace', { xmlns = CORRECT_NS }):up();
 
             assert.is_nil(parse_correction(msg));
+        end)
+    end)
+
+    -- -----------------------------------------------------------------------
+    describe('parse_json_edit', function()
+
+        it('returns the target id and the new body', function()
+            local target, body = parse_json_edit(json_edit_stanza(AUTHOR, 'msg-1', 'corrected'));
+
+            assert.equal('msg-1', target);
+            assert.equal('corrected', body);
+        end)
+
+        it('ignores a stanza with no json payload', function()
+            local msg = st.message({ from = AUTHOR.jid, type = 'groupchat' }):tag('body'):text('hi'):up();
+
+            assert.is_nil(parse_json_edit(msg));
+        end)
+
+        it('ignores a payload of another type', function()
+            local msg = st.message({ from = AUTHOR.jid, to = ROOM_JID, type = 'groupchat' })
+                :tag('json-message', { xmlns = JITSI_JSON_NS })
+                    :text('{"type":"MODERATE_CHAT_MESSAGE","messageId":"msg-1"}'):up();
+
+            assert.is_nil(parse_json_edit(msg));
+        end)
+
+        it('ignores a malformed payload', function()
+            local msg = st.message({ from = AUTHOR.jid, to = ROOM_JID, type = 'groupchat' })
+                :tag('json-message', { xmlns = JITSI_JSON_NS }):text('{not json at all'):up();
+
+            assert.is_nil(parse_json_edit(msg));
+        end)
+
+        it('ignores a payload with no message text', function()
+            local msg = st.message({ from = AUTHOR.jid, to = ROOM_JID, type = 'groupchat' })
+                :tag('json-message', { xmlns = JITSI_JSON_NS })
+                    :text('{"type":"editChat","messageId":"msg-1"}'):up();
+
+            assert.is_nil(parse_json_edit(msg));
+        end)
+
+        -- The fixtures above could agree with the module on a value the client
+        -- never sends, so read the real constant and check against that.
+        it('accepts the type the client actually sends', function()
+            local source = io.open('../../react/features/chat/constants.ts');
+
+            if not source then
+                pending('react/features/chat/constants.ts not readable from here');
+                return;
+            end
+
+            local contents = source:read('*a');
+
+            source:close();
+
+            local client_type = contents:match("EDIT_CHAT_MESSAGE%s*=%s*'([^']+)'");
+
+            assert.is_string(client_type);
+
+            local msg = st.message({ from = AUTHOR.jid, to = ROOM_JID, type = 'groupchat' })
+                :tag('json-message', { xmlns = JITSI_JSON_NS })
+                    :text('{"type":"' .. client_type
+                        .. '","messageId":"msg-1","message":"corrected"}'):up();
+
+            local target, body = parse_json_edit(msg);
+
+            assert.equal('msg-1', target);
+            assert.equal('corrected', body);
         end)
     end)
 
@@ -1215,7 +1285,7 @@ describe('mod_muc_message_moderation', function()
                 room = room,
                 stanza = json_edit_stanza(AUTHOR, 'msg-1', 'x'),
                 occupant = AUTHOR.occupant,
-                message = { type = 'EDIT_CHAT_MESSAGE', message = 'corrected' }
+                message = { type = 'editChat', message = 'corrected' }
             });
 
             assert.is_nil(handled);
@@ -1230,7 +1300,7 @@ describe('mod_muc_message_moderation', function()
                 room = room,
                 stanza = json_edit_stanza(AUTHOR, 'msg-1', 'x'),
                 occupant = AUTHOR.occupant,
-                message = { type = 'EDIT_CHAT_MESSAGE', messageId = 'msg-1' }
+                message = { type = 'editChat', messageId = 'msg-1' }
             });
 
             assert.is_nil(handled);
@@ -1379,6 +1449,17 @@ describe('mod_muc_message_moderation', function()
         local MAIN_PARTICIPANT = { bare_jid = 'someone@' .. MAIN_DOMAIN };
         local FOCUS = { bare_jid = 'focus@auth.elsewhere.example.com' };
 
+        -- an occupant of this node, i.e. a visitor, whose request has not been
+        -- past the main prosody at the point this node routes it
+        local function local_occupant(nick)
+            return { bare_jid = 'visitor@' .. LOCAL_DOMAIN, nick = nick };
+        end
+
+        -- an occupant that belongs to the main prosody
+        local function main_occupant(nick)
+            return { bare_jid = 'someone@' .. MAIN_DOMAIN, nick = nick };
+        end
+
         it('routes the moderation to the occupants of this node', function()
             local room = make_room(
                 { history_message(AUTHOR, 'msg-1', 'a message') },
@@ -1434,6 +1515,102 @@ describe('mod_muc_message_moderation', function()
             });
 
             assert.equal(0, #room.broadcasts);
+        end)
+
+        it('removes the entry for a retraction forwarded from main', function()
+            local room = make_room({
+                history_message(AUTHOR, 'msg-1', 'one'),
+                history_message(AUTHOR, 'msg-2', 'two')
+            }, { VISITOR });
+
+            handle_main_groupchat({
+                room = room,
+                stanza = forwarded_retraction('msg-1'),
+                occupant = main_occupant(ROOM_JID .. '/someone')
+            });
+
+            assert.equal(1, #room._history);
+            assert.equal('msg-2', room._history[1].stanza.attr.id);
+        end)
+
+        it('corrects the entry for an edit forwarded from main', function()
+            local entry = history_message(AUTHOR, 'msg-1', 'original');
+            local room = make_room({ entry }, { VISITOR });
+
+            handle_main_groupchat({
+                room = room,
+                stanza = correction_request(AUTHOR, 'msg-1', 'corrected'),
+                occupant = main_occupant(ROOM_JID .. '/someone')
+            });
+
+            assert.equal('corrected', entry.stanza:get_child_text('body'));
+        end)
+
+        it('corrects the entry for a json edit forwarded from main', function()
+            local entry = history_message(AUTHOR, 'msg-1', 'original');
+            local room = make_room({ entry }, { VISITOR });
+
+            handle_main_groupchat({
+                room = room,
+                stanza = json_edit_stanza(AUTHOR, 'msg-1', 'corrected'),
+                occupant = main_occupant(ROOM_JID .. '/someone')
+            });
+
+            assert.equal('corrected', entry.stanza:get_child_text('body'));
+        end)
+
+        it('applies a visitor own edit when the author matches the entry', function()
+            local entry = history_message(AUTHOR, 'msg-1', 'original');
+            local room = make_room({ entry }, { VISITOR });
+
+            handle_main_groupchat({
+                room = room,
+                stanza = json_edit_stanza(AUTHOR, 'msg-1', 'corrected'),
+                occupant = local_occupant(AUTHOR.occupant.nick)
+            });
+
+            assert.equal('corrected', entry.stanza:get_child_text('body'));
+        end)
+
+        it('refuses a visitor edit of a message they did not author', function()
+            local entry = history_message(AUTHOR, 'msg-1', 'original');
+            local room = make_room({ entry }, { VISITOR });
+
+            handle_main_groupchat({
+                room = room,
+                stanza = json_edit_stanza(AUTHOR, 'msg-1', 'rewritten'),
+                occupant = local_occupant(OTHER.occupant.nick)
+            });
+
+            -- the main prosody has not seen this yet, so the author is checked here
+            assert.equal('original', entry.stanza:get_child_text('body'));
+        end)
+
+        it('refuses a visitor retraction of a message they did not author', function()
+            local room = make_room({ history_message(AUTHOR, 'msg-1', 'original') }, { VISITOR });
+
+            handle_main_groupchat({
+                room = room,
+                stanza = forwarded_retraction('msg-1'),
+                occupant = local_occupant(OTHER.occupant.nick)
+            });
+
+            assert.equal(1, #room._history);
+        end)
+
+        it('does not correct a moderated entry', function()
+            local entry = history_message(AUTHOR, 'msg-1', 'original');
+            local room = make_room({ entry }, { VISITOR });
+
+            tombstone_entry(entry, MODERATOR.occupant.nick, 'spam', FIXED_STAMP);
+
+            handle_main_groupchat({
+                room = room,
+                stanza = json_edit_stanza(AUTHOR, 'msg-1', 'putting it back'),
+                occupant = main_occupant(ROOM_JID .. '/someone')
+            });
+
+            assert.is_nil(entry.stanza:get_child('body'));
         end)
 
         it('announces it even when the message is not in the local history', function()
@@ -1506,8 +1683,10 @@ describe('mod_muc_message_moderation', function()
             assert.equal(10, hooks['muc-occupant-groupchat'][1].priority);
         end)
 
-        it('registers the endpoint message handler', function()
-            assert.is_table(hooks['jitsi-endpoint-message-received']);
+        it('registers the checking endpoint handler', function()
+            assert.equal(1, #hooks['jitsi-endpoint-message-received']);
+            assert.equal(_G.handle_endpoint_message,
+                hooks['jitsi-endpoint-message-received'][1].fn);
         end)
 
         it('does not register the visitor node handler', function()

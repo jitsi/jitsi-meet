@@ -71,11 +71,12 @@
 -- editing should be handled. Without it the client hides both actions, as the
 -- room stops advertising them.
 --
--- Load it on a visitor prosody's muc component too. There it does no checking of
--- its own: it keeps the local history in step with what the main prosody applied
--- and advertises the room info field so visitors see the same actions. Every
--- request is checked on the main prosody, which is where the room the occupants
--- act in lives.
+-- Load it on a visitor prosody's muc component too. There it keeps the local
+-- history in step and advertises the room info field so visitors see the same
+-- actions. It does not check anything that reached it from the main prosody,
+-- which is where the room the occupants act in lives and where every request is
+-- checked. It does check the author of a visitor's own request, since that has
+-- not been past the main prosody yet at the point this node routes it.
 --
 --   Component "conference.meet.jitsi" "muc"
 --       modules_enabled = { "muc_message_moderation" }
@@ -86,6 +87,7 @@ local st = require 'util.stanza';
 local id = require 'util.id';
 local jid = require 'util.jid';
 local datetime = require 'util.datetime';
+local json = require 'cjson.safe';
 
 local ends_with = module:require 'util'.ends_with;
 
@@ -99,7 +101,8 @@ local RETRACT_NS = 'urn:xmpp:message-retract:1';
 local CORRECT_NS = 'urn:xmpp:message-correct:0';
 local HINTS_NS = 'urn:xmpp:hints';
 local JITSI_JSON_NS = 'http://jitsi.org/jitmeet';
-local EDIT_CHAT_MESSAGE = 'EDIT_CHAT_MESSAGE';
+-- must match EDIT_CHAT_MESSAGE in react/features/chat/constants.ts
+local EDIT_CHAT_MESSAGE = 'editChat';
 
 -- Returns the id of the message the stanza asks to moderate and the optional
 -- reason, or nil when the stanza is not a moderation request.
@@ -137,6 +140,30 @@ function parse_correction(stanza)
     end
 
     return replace.attr.id, body;
+end
+
+-- Returns the id of the message a json EDIT_CHAT_MESSAGE payload edits and the
+-- new body, or nil when the stanza carries no such payload. Used where the
+-- decoded 'jitsi-endpoint-message-received' is not available, which is the case
+-- on a visitor node.
+function parse_json_edit(stanza)
+    local json_element = stanza:get_child('json-message', JITSI_JSON_NS);
+
+    if not json_element then
+        return nil;
+    end
+
+    local payload = json.decode(json_element:get_text() or '');
+
+    if type(payload) ~= 'table' or payload.type ~= EDIT_CHAT_MESSAGE then
+        return nil;
+    end
+
+    if type(payload.messageId) ~= 'string' or type(payload.message) ~= 'string' then
+        return nil;
+    end
+
+    return payload.messageId, payload.message;
 end
 
 -- Returns the id of the message the stanza retracts, or nil when the stanza is
@@ -400,6 +427,18 @@ function handle_groupchat(event)
     end
 end
 
+-- Whether this node may apply an operation to its own history entry. A stanza
+-- from an occupant of this node is a visitor's own request that the main prosody
+-- has not seen yet, so the author is checked against the entry. Anything else
+-- arrived from the main prosody, which has already checked it.
+function may_apply_locally(entry, occupant)
+    if not occupant or jid.host(occupant.bare_jid) ~= local_domain then
+        return true;
+    end
+
+    return entry.stanza.attr.from == occupant.nick;
+end
+
 -- On a visitor node this module only keeps the local history in step. The room
 -- that occupants act in lives on the main prosody, which has already checked the
 -- role or the authorship, so nothing is checked again here and no reply is sent.
@@ -408,8 +447,46 @@ end
 function handle_main_groupchat(event)
     local room, stanza, occupant = event.room, event.stanza, event.occupant;
 
-    -- a local occupant's own stanza is not something the main prosody vouched for
-    if occupant or stanza.attr.type ~= 'groupchat' then
+    if stanza.attr.type ~= 'groupchat' then
+        return;
+    end
+
+    -- Editing and retraction already reach the occupants of this node through the
+    -- normal forwarding, so only the local history entry needs bringing in line.
+    local retract_id = parse_retraction(stanza);
+
+    if retract_id then
+        local entry, index = find_history_entry(room, retract_id);
+
+        if entry and may_apply_locally(entry, occupant) then
+            module:log('debug', 'Removing retracted %s from %s history', retract_id, room.jid);
+            table.remove(room._history, index);
+        end
+
+        return;
+    end
+
+    local correct_id, body = parse_correction(stanza);
+
+    if not correct_id then
+        -- what the client actually sends today
+        correct_id, body = parse_json_edit(stanza);
+    end
+
+    if correct_id then
+        local entry = find_history_entry(room, correct_id);
+
+        if entry and not is_entry_moderated(entry) and may_apply_locally(entry, occupant) then
+            module:log('debug', 'Correcting %s in %s history', correct_id, room.jid);
+            apply_correction(entry, body);
+        end
+
+        return;
+    end
+
+    -- A moderation is sent by the main room itself, so it never arrives as an
+    -- occupant's stanza and nothing else routes it to the occupants here.
+    if occupant then
         return;
     end
 
@@ -450,16 +527,6 @@ function handle_main_groupchat(event)
         end
 
         return true;
-    end
-
-    local retract_id = parse_retraction(stanza);
-
-    if retract_id then
-        local entry, index = find_history_entry(room, retract_id);
-
-        if entry then
-            table.remove(room._history, index);
-        end
     end
 end
 
