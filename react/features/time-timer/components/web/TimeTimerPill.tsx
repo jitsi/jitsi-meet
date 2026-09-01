@@ -7,7 +7,7 @@ import { getConferenceName } from '../../../base/conference/functions';
 import { getLocalizedDurationFormatter } from '../../../base/i18n/dateUtil';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
-import { getTimerVisualState, isTimeTimerEnabled } from '../../functions';
+import { getTimerVisualState, isTimeTimerVisible } from '../../functions';
 
 import Disk from './Disk';
 
@@ -211,11 +211,15 @@ const useStyles = makeStyles()(theme => {
 const TimeTimerPill = () => {
     const { classes } = useStyles();
     const timerState = useSelector((state: IReduxState) => state['features/time-timer']);
-    const timerEnabled = useSelector(isTimeTimerEnabled);
+    const visible = useSelector(isTimeTimerVisible);
     const meetingName = useSelector(getConferenceName);
     const toolboxVisible = useSelector(isToolboxVisible);
 
-    if (!timerEnabled || !timerState.running) {
+    // Not enabled, no timer running, or still inside the configured
+    // `timeTimer.suppressForSeconds` window — see isTimeTimerVisible. The info
+    // bar is gated on the same selector, so the subject and conference-timer
+    // labels this pill supersedes come back while it is hidden.
+    if (!visible) {
         return null;
     }
 

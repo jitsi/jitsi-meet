@@ -1994,11 +1994,21 @@ var config = {
 
     // Meeting-pace timer shown in the conference info bar. It only appears
     // once a meeting duration is known — from a calendar event (calendar
-    // sync) or pushed at runtime via the `setMeetingTimer` iframe API
-    // command. With no such info nothing is shown, so it is enabled by
-    // default; set `enabled: false` to hide it even when that info exists.
+    // sync), the `mod_time_restricted` Prosody plugin, or pushed at runtime
+    // via the `setMeetingTimer` iframe API command. With no such info nothing
+    // is shown, so it is enabled by default; set `enabled: false` to hide it
+    // even when that info exists.
+    // `suppressForSeconds` keeps the countdown off screen for the first N
+    // seconds of the meeting even though the duration is already known, so it
+    // only appears once the meeting is far enough along to be worth pacing.
+    // It is measured from the meeting's scheduled start, not from when this
+    // participant joined, so everyone sees it appear at the same moment and a
+    // late joiner past the threshold sees it right away. 0 (the default)
+    // shows it as soon as the duration is known. It delays the countdown
+    // display only — the end-of-meeting notification is unaffected.
     // timeTimer: {
     //     enabled: true,
+    //     suppressForSeconds: 0,
     // },
 
     // Settings for the Excalidraw whiteboard integration.

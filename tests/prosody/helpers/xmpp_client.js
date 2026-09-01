@@ -661,6 +661,29 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a message carrying a <json-message> child to an arbitrary JID,
+         * with full control over the outer <message> attributes. Fire-and-forget.
+         *
+         * Use it to send what a well-behaved client never would — most usefully
+         * a stanza claiming a `from` that is not the sender's own JID, to prove
+         * the server refuses to deliver it under that identity.
+         *
+         * @param {string} to        Destination JID.
+         * @param {object} payload   JSON-serialisable value for the json-message body.
+         * @param {object} [attrs]   Extra/override attributes for the <message>.
+         */
+        sendJsonMessageRaw(to, payload, attrs = {}) {
+            return xmpp.send(
+                xml('message', { to,
+                    id: `jm-${++_counter}`,
+                    ...attrs },
+                    xml('json-message', { xmlns: 'http://jitsi.org/jitmeet' },
+                        JSON.stringify(payload))
+                )
+            );
+        },
+
+        /**
          * Grants moderator role to the occupant identified by nick.
          * The caller must be the room owner (e.g. the focus client).
          * Resolves with the server's IQ response.

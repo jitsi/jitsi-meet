@@ -424,6 +424,8 @@
         "logoutTitle": "Logout",
         "maxUsersLimitReached": "The limit for maximum number of participants has been reached. The conference is full. Please contact the meeting owner or try again later!",
         "maxUsersLimitReachedTitle": "Maximum participants limit reached",
+        "meetingTimeLimitReached": "This meeting has ended because it reached its time limit. Start a new meeting to continue.",
+        "meetingTimeLimitReachedTitle": "Meeting time limit reached",
         "micConstraintFailedError": "Your microphone does not satisfy some of the required constraints.",
         "micNotFoundError": "Microphone was not found.",
         "micNotSendingData": "Go to your computer's settings to unmute your mic and adjust its level",
