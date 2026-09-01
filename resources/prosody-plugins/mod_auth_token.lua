@@ -20,6 +20,22 @@ local measure_verify_fail = module:measure('verify_fail', 'counter');
 local measure_success = module:measure('success', 'counter');
 local measure_ban = module:measure('ban', 'counter');
 local measure_post_auth_fail = module:measure('post_auth_fail', 'counter');
+local measure_resume_room_mismatch = module:measure('resume_room_mismatch', 'counter');
+
+-- The JWT-derived authorization state that c2s-session-updated refreshes from
+-- the connection that resumes a hibernating session.
+local TOKEN_CLAIM_FIELDS = {
+    'auth_token';
+    'jitsi_meet_context_user';
+    'jitsi_meet_context_group';
+    'jitsi_meet_context_features';
+    'jitsi_meet_context_room';
+    'jitsi_meet_room';
+    'jitsi_meet_str_tenant';
+    'jitsi_meet_domain';
+    'jitsi_meet_tenant_mismatch';
+    'jitsi_meet_auth_issuer';
+};
 
 -- define auth provider
 local provider = {};
@@ -181,6 +197,24 @@ module:hook_global('c2s-session-updated', function (event)
         return;
     end
 
+    -- The room claim is scoped to a conference on muc-room-pre-create and
+    -- muc-occupant-pre-join, which do not run again for a session that is past
+    -- its join, so the claims coming from the resuming connection are scoped
+    -- here instead: the ones verified on join are snapshotted before anything
+    -- below mutates the session, and are kept when the refreshed ones do not
+    -- cover the conference the session is in. The check belongs to whichever
+    -- module owns room verification (mod_token_verification, on the MUC
+    -- component); with nothing answering the event the claims are refreshed
+    -- as they come, the same way a join is not room-checked without it.
+    local reverify_rooms = session.auth_token ~= from_session.auth_token;
+    local verified_claims = {};
+
+    if reverify_rooms then
+        for _, field in ipairs(TOKEN_CLAIM_FIELDS) do
+            verified_claims[field] = session[field];
+        end
+    end
+
     -- we care to handle sessions from other hosts (anonymous hosts)
     -- Skip if from_session was already authenticated by its own token-auth module
     -- (indicated by _jitsi_auth_done=true), to avoid a second module instance
@@ -220,4 +254,19 @@ module:hook_global('c2s-session-updated', function (event)
     session.jitsi_meet_str_tenant = from_session.jitsi_meet_str_tenant;
     session.jitsi_meet_domain = from_session.jitsi_meet_domain;
     session.jitsi_meet_tenant_mismatch = from_session.jitsi_meet_tenant_mismatch;
+
+    if reverify_rooms then
+        local result = prosody.events.fire_event('jitsi-verify-session-rooms', { session = session; });
+
+        if result and result.res == false then
+            module:log('warn',
+                'Token presented on resume does not authorize room:%s err:%s reason:%s, keeping claims from join',
+                result.room, result.error, result.reason);
+            measure_resume_room_mismatch(1);
+
+            for _, field in ipairs(TOKEN_CLAIM_FIELDS) do
+                session[field] = verified_claims[field];
+            end
+        end
+    end
 end, 1);

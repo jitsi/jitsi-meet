@@ -1063,6 +1063,25 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Leaves a MUC room (XEP-0045 §7.14) and resolves with the self
+         * unavailable presence echoed back by the room.
+         *
+         * @param {string} roomJid   e.g. 'room@conference.localhost'
+         * @param {string} [nick]    defaults to the nick used by joinRoom
+         * @param {object} [opts]
+         * @param {number} [opts.timeout=5000]
+         */
+        async leaveRoom(roomJid, nick, { timeout = 5000 } = {}) {
+            const n = nick ?? this.nick;
+
+            await xmpp.send(xml('presence', { to: `${roomJid}/${n}`,
+                type: 'unavailable' }));
+
+            return this.waitForPresenceFrom(`${roomJid}/${n}`, { type: 'unavailable',
+                timeout });
+        },
+
+        /**
          * Sends a <breakout_rooms> control message to the breakout rooms component.
          * The session must have jitsi_web_query_room set (connect with
          * params: { room: '<roomname>' }) and the sender must be a moderator
@@ -1159,22 +1178,33 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          *
          * xmpp.socket           – @xmpp/websocket Socket wrapper
          * xmpp.socket.socket    – underlying ws.WebSocket instance with terminate()
+         *
+         * @param {object} [urlParams]  Query parameters to set on the reconnect
+         *                              URL (e.g. { token: '<rotated jwt>' }).
          */
-        dropConnection() {
+        dropConnection(urlParams = {}) {
             // Patch the reconnect URL to carry ?previd=<smacks-id> so that
             // mod_jitsi_session.lua sets session.previd and mod_auth_token.lua
             // can preserve session.username across the SASL exchange, allowing
             // mod_smacks.lua's registry lookup to succeed.
+            //
+            // `urlParams` overrides query parameters on the reconnect URL only —
+            // the hibernating session keeps whatever it was given on the first
+            // connection. Use it to resume while presenting a different ?token=,
+            // which is how a client rotates its JWT across a reconnect.
             const smId = xmpp.streamManagement?.id;
 
-            if (smId) {
-                try {
-                    const serviceUrl = new URL(xmpp.options.service);
+            try {
+                const serviceUrl = new URL(xmpp.options.service);
 
+                if (smId) {
                     serviceUrl.searchParams.set('previd', smId);
-                    xmpp.options.service = serviceUrl.toString();
-                } catch { /* ignore */ }
-            }
+                }
+                for (const [ k, v ] of Object.entries(urlParams)) {
+                    serviceUrl.searchParams.set(k, v);
+                }
+                xmpp.options.service = serviceUrl.toString();
+            } catch { /* ignore */ }
             try {
                 const ws = xmpp.socket?.socket;
 
