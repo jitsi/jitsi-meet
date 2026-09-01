@@ -478,6 +478,46 @@ local function message_handler(event)
     end
 end
 
+-- Appends a stanza this node has just routed to its own occupants to the local
+-- history. Prosody only writes history from broadcast_message, and routing
+-- straight to the occupants bypasses it, so without this the history stays as the
+-- main prosody left it when this node connected and a visitor joining later sees
+-- nothing that was said since. Appends the entry directly, in the same shape
+-- prosody's own writer uses, rather than firing 'muc-add-history': the handlers
+-- on that event are meant for the room the participants act in and some of them
+-- expect a local occupant.
+local function add_to_local_history(room, stanza)
+    local history_length = room:get_historylength();
+
+    if history_length == 0 then
+        return;
+    end
+
+    -- same storage hints prosody honours
+    if stanza:get_child('no-store', 'urn:xmpp:hints')
+        or stanza:get_child('no-permanent-store', 'urn:xmpp:hints') then
+        return;
+    end
+
+    if not stanza:get_child('body') and not stanza:get_child('store', 'urn:xmpp:hints') then
+        return;
+    end
+
+    local history = room._history;
+    if not history then history = {}; room._history = history; end
+
+    local timestamp = os.time();
+    local history_stanza = st.clone(stanza);
+
+    history_stanza.attr.to = '';
+    history_stanza:tag('delay', { -- XEP-0203
+        xmlns = 'urn:xmpp:delay', from = room.jid, stamp = datetime.datetime(timestamp)
+    }):up();
+
+    table.insert(history, { stanza = history_stanza, timestamp = timestamp });
+    while #history > history_length do table.remove(history, 1) end
+end
+
 -- Receives history messages from the main prosody and adds them to the local history
 -- this happens before the first participant joins and that participant gets the history using the standard flow on join
 local function history_message_handler(event)
@@ -583,6 +623,9 @@ module:hook('muc-occupant-groupchat', function(event)
         main_message.attr.from = room_jid_match_rewrite(stanza.attr.from);
         module:send(main_message);
     end
+
+    add_to_local_history(room, stanza);
+
     stanza.attr.from = from; -- something prosody does internally
 
     return true;
