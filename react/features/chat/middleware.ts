@@ -935,12 +935,14 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
 
     if (lobbyChat) {
         _displayName = getLobbyChatDisplayName(state, participantId);
-    } else if (isFromVisitor) {
-        _displayName = getDisplayName(state, displayName);
-    } else if (!participant) {
-        _displayName = getDisplayName(state, displayName);
-    } else {
+    } else if (participant) {
+        // A resolvable, tracked participant always takes priority over the per-message isFromVisitor flag: a real
+        // visitor is never tracked as a participant (no MUC presence), so this doesn't affect genuine visitor
+        // messages, but it makes sure the sender's own known display name is always used once they're a tracked
+        // participant, regardless of what the message itself claims.
         _displayName = getParticipantDisplayName(state, participantId);
+    } else {
+        _displayName = getDisplayName(state, displayName);
     }
 
     const hasRead = participant?.local || isChatOpen;
