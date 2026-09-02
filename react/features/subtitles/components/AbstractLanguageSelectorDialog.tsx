@@ -3,15 +3,24 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState, IStore } from '../../app/types';
+import { isTranscribing } from '../../transcribing/functions';
 import { setRequestingSubtitles } from '../actions.any';
 import { getAvailableSubtitlesLanguages, isTranslationEnabled } from '../functions.any';
 
 export interface IAbstractLanguageSelectorDialogProps {
-    asyncTranscription: boolean;
     dispatch: IStore['dispatch'];
     language: string | null;
     listItems: Array<any>;
     onLanguageSelected: (e: string) => void;
+
+    /**
+     * Whether picking a language should open the recording/transcription dialog instead of applying the language.
+     *
+     * With async transcription there is no transcriber to dial: transcription is started through room metadata, from
+     * that dialog. So the first pick has to go there. Once transcription is running, picking a language just applies
+     * it, like it always has.
+     */
+    startWithRecordingDialog: boolean;
     subtitles: string;
     t: Function;
 }
@@ -47,6 +56,8 @@ const AbstractLanguageSelectorDialog = (Component: ComponentType<IAbstractLangua
     const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
     const translationEnabled = useSelector(isTranslationEnabled);
     const asyncTranscription = Boolean(conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription);
+    const transcribing = useSelector(isTranscribing);
+    const startWithRecordingDialog = asyncTranscription && !transcribing;
 
     const onLanguageSelected = useCallback((value: string) => {
         const _selectedLanguage = value === noLanguageLabel ? null : value;
@@ -62,11 +73,11 @@ const AbstractLanguageSelectorDialog = (Component: ComponentType<IAbstractLangua
 
     return (
         <Component
-            asyncTranscription = { asyncTranscription }
             dispatch = { dispatch }
             language = { language }
             listItems = { listItems }
             onLanguageSelected = { onLanguageSelected }
+            startWithRecordingDialog = { startWithRecordingDialog }
             subtitles = { selected }
             t = { t } />
     );

@@ -441,11 +441,12 @@ function _requestingSubtitlesChange(
         }
     }
 
-    if (enabled && language) {
-        conference?.setLocalParticipantProperty(
-            P_NAME_TRANSLATION_LANGUAGE,
-            language.replace('translation-languages:', ''));
-    }
+    // Advertise the requested translation language, and clear it when there is none. Clearing matters: the property
+    // is what tells the backend which languages to translate into, so leaving a stale value behind would keep a
+    // language being translated after the user switched back to the original one or turned subtitles off.
+    conference?.setLocalParticipantProperty(
+        P_NAME_TRANSLATION_LANGUAGE,
+        enabled && language ? language.replace('translation-languages:', '') : '');
 
     if (!enabled && !skipMetadataUpdate && (backendRecordingOn || forceBackendRecordingOn)
         && conference?.getMetadataHandler()?.getMetadata()[RECORDING_METADATA_ID]?.isTranscribingEnabled) {
