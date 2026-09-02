@@ -323,10 +323,15 @@ describe('mod_auth_token (claims on XEP-0198 resumption)', () => {
         assert.equal(payload.file.fileId, 'file-after-resume');
     });
 
-    it('ignores a token for another room while the session sits in a breakout room', async () => {
-        // A participant that moved into a breakout room is no longer an
-        // occupant of the main room, but the conference it belongs to — and so
-        // the room its token has to cover — is still the main room.
+    /**
+     * Sets up a meeting whose moderator has moved into a breakout room: it
+     * joins the main room, registers a breakout room, joins it and then leaves
+     * the main room, which is what the client does when switching rooms.
+     *
+     * The session is left occupying only the breakout room, while the
+     * conference its claims have to cover is still the main room.
+     */
+    async function setupBreakout() {
         const roomName = `resume-br-${++roomCounter}`;
         const mainJid = `${roomName}@${CONFERENCE}`;
         const focus = await joinWithFocus(mainJid);
@@ -361,6 +366,18 @@ describe('mod_auth_token (claims on XEP-0198 resumption)', () => {
         // Moving into a breakout room means leaving the main room.
         await moderator.leaveRoom(mainJid);
 
+        return { roomName,
+            mainJid,
+            breakoutJid,
+            moderator };
+    }
+
+    it('ignores a token for another room while the session sits in a breakout room', async () => {
+        // A participant that moved into a breakout room is no longer an
+        // occupant of the main room, but the conference it belongs to — and so
+        // the room its token has to cover — is still the main room.
+        const { roomName, moderator } = await setupBreakout();
+
         const reconnected = moderator.waitForReconnect();
 
         moderator.dropConnection({ token: tokenFor(`${roomName}-other`, { 'file-upload': true }) });
@@ -373,6 +390,37 @@ describe('mod_auth_token (claims on XEP-0198 resumption)', () => {
         assert.ok(!session.jitsi_meet_context_features?.['file-upload'],
             'features of a token that does not cover the main room must not be adopted in a breakout room');
     });
+
+    it('adopts the claims of a rotated token for the main room while the session sits in a breakout room',
+        async () => {
+            // The counterpart of the check above: the room the claims are
+            // verified against is the main room the session joined, not the
+            // breakout room it currently occupies, so a token that does cover
+            // that main room has to be adopted. Without this, a rotation that
+            // named the breakout room instead would fail closed and token
+            // rotation would silently stop working inside breakout rooms.
+            const { roomName, moderator } = await setupBreakout();
+
+            const rotatedToken = mintAsapToken({
+                room: roomName,
+                context: {
+                    user: { moderator: true },
+                    features: { 'file-upload': true }
+                }
+            });
+
+            const reconnected = moderator.waitForReconnect();
+
+            moderator.dropConnection({ token: rotatedToken });
+            await reconnected;
+
+            const session = await getSessionLive(moderator.jid);
+
+            assert.equal(session.jitsi_meet_room, roomName,
+                'the room claim of a token covering the main room must be adopted in a breakout room');
+            assert.equal(session.jitsi_meet_context_features['file-upload'], true,
+                'features of a token covering the main room must be adopted in a breakout room');
+        });
 
     it('refreshes the claims unverified when no module answers the verification event', async () => {
         // mod_token_verification owns room verification: without it a join is
