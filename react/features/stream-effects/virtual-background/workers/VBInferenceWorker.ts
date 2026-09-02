@@ -12,7 +12,7 @@
  *
  *   Main -> Worker:
  *     { type: 'init', backend: string, segWidth: number, segHeight: number,
- *       tfliteModelPath: string, tfliteWasmBase: string }
+ *       tfjsModelUrl: string, tfliteModelPath: string, tfliteWasmBase: string }
  *     { type: 'infer', bitmap: ImageBitmap }   (bitmap is transferred -- zero-copy)
  *
  *   Worker -> Main:
@@ -146,6 +146,7 @@ function workerPost(msg: any, transfer?: Transferable[]): void {
  * @param {string} data.backend - 'tflite', 'webgl', or 'webgpu'.
  * @param {number} data.segHeight - Segmentation canvas height.
  * @param {number} data.segWidth - Segmentation canvas width.
+ * @param {string} data.tfjsModelUrl - Absolute URL of the self-hosted TF.js graph model (model.json).
  * @param {string} data.tfliteModelPath - Absolute URL of the TFLite segmentation model.
  * @param {string} data.tfliteWasmBase - Base URL for tflite*.wasm binaries (trailing slash).
  * @returns {Promise<void>}
@@ -154,6 +155,7 @@ async function handleInit(data: {
     backend: BackendType;
     segHeight: number;
     segWidth: number;
+    tfjsModelUrl: string;
     tfliteModelPath: string;
     tfliteWasmBase: string;
 }): Promise<void> {
@@ -189,6 +191,12 @@ async function handleInit(data: {
  * In a Worker, TF.js automatically uses OffscreenCanvas for its WebGL context (document is
  * unavailable). Chrome does not apply tab-visibility GPU throttling to Worker GPU contexts.
  *
+ * The segmentation model is loaded from the deployment's own libs/ directory. Passing an
+ * explicit modelUrl is required: without one, the body-segmentation library fetches the model
+ * from tfhub.dev, which fails in offline/firewalled deployments — and when the network hangs
+ * instead of erroring, the fetch outlives the main thread's init timeout so the TFLite
+ * fallback below never gets a chance to run.
+ *
  * If the requested GPU backend is unavailable (no GPU, OffscreenCanvas WebGL unsupported, etc.),
  * falls back to TFLite WASM using the TFLite model path supplied in the init message. This covers
  * servers and VMs where the main-thread tier detector passes GPU checks (software rasteriser) but
@@ -198,6 +206,7 @@ async function handleInit(data: {
  * @param {string} data.backend - 'webgl' (MEDIUM tier) or 'webgpu' (HIGH tier).
  * @param {number} data.segWidth - Unused here; inference at bitmap resolution.
  * @param {number} data.segHeight - Unused here; inference at bitmap resolution.
+ * @param {string} data.tfjsModelUrl - Absolute URL of the self-hosted TF.js graph model (model.json).
  * @param {string} data.tfliteModelPath - TFLite model URL used if GPU fallback is triggered.
  * @param {string} data.tfliteWasmBase - TFLite WASM base URL used if GPU fallback is triggered.
  * @returns {Promise<void>}
@@ -206,10 +215,17 @@ async function handleInitTfjs(data: {
     backend: string;
     segHeight: number;
     segWidth: number;
+    tfjsModelUrl: string;
     tfliteModelPath: string;
     tfliteWasmBase: string;
 }): Promise<void> {
-    const { backend, tfliteModelPath, tfliteWasmBase } = data;
+    const { backend, tfjsModelUrl, tfliteModelPath, tfliteWasmBase } = data;
+
+    if (!isSameOriginUrl(tfjsModelUrl)) {
+        workerPost({ error: 'TF.js model URL must be same-origin', type: 'init_error' });
+
+        return;
+    }
 
     try {
         const backendSet = await tf.setBackend(backend);
@@ -226,7 +242,11 @@ async function handleInitTfjs(data: {
 
         segmenter = await bs.createSegmenter(
             bs.SupportedModels.MediaPipeSelfieSegmentation,
-            { modelType: 'landscape', runtime: 'tfjs' } as MediaPipeSelfieSegmentationTfjsModelConfig
+            {
+                modelType: 'landscape',
+                modelUrl: tfjsModelUrl,
+                runtime: 'tfjs'
+            } as MediaPipeSelfieSegmentationTfjsModelConfig
         );
 
         workerPost({ backend: currentBackend, segHeight: data.segHeight, segWidth: data.segWidth, type: 'init_done' });

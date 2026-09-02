@@ -125,6 +125,10 @@ export default class WorkerSegmentationBackend {
 
         const tfliteModelPath = `${base}libs/selfie_segmentation_landscape.tflite`;
 
+        // Without an explicit URL the body-segmentation library fetches from tfhub.dev,
+        // breaking offline/firewalled deployments. Deployed alongside TFLite via Makefile.
+        const tfjsModelUrl = `${base}libs/selfie_segmentation_landscape_tfjs/model.json`;
+
         logger.debug(
             `[WorkerBackend] Initialising inference worker — backend: ${this._capabilities.backend}`
             + ` | model: ${tfliteModelPath}`
@@ -135,6 +139,7 @@ export default class WorkerSegmentationBackend {
             backend: this._capabilities.backend,
             segHeight: this._capabilities.segHeight,
             segWidth: this._capabilities.segWidth,
+            tfjsModelUrl,
             tfliteModelPath,
             tfliteWasmBase: `${base}libs/`,
             type: 'init'
