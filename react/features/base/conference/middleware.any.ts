@@ -43,7 +43,7 @@ import {
 } from '../participants/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
-import { TRACK_ADDED, TRACK_REMOVED } from '../tracks/actionTypes';
+import { TRACK_ADDED, TRACK_CREATE_CANCELED, TRACK_REMOVED } from '../tracks/actionTypes';
 import { parseURIString } from '../util/uri';
 
 import {
@@ -802,7 +802,23 @@ async function _trackAddedOrRemoved(store: IStore, next: Function, action: AnyAc
                             await conference.replaceTrack(null, jitsiTrack);
                         }
                     } else {
-                        await _addLocalTracksToConference(conference, [ jitsiTrack ]);
+                        try {
+                            await _addLocalTracksToConference(conference, [ jitsiTrack ]);
+                        } catch (error) {
+                            logger.error(
+                                `Conference refused local ${track.mediaType} track, discarding it: ${error}`);
+
+                            jitsiTrack.dispose?.().catch(() => { /* may already be disposed */ });
+
+                            // Clears the pending TRACK_WILL_CREATE stub, which would otherwise block future
+                            // creation via getLocalTrack(..., includePending).
+                            store.dispatch({
+                                type: TRACK_CREATE_CANCELED,
+                                trackType: track.mediaType
+                            });
+
+                            return;
+                        }
                     }
                 }
             } else {
