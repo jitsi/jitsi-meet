@@ -115,6 +115,7 @@
         }
     },
     "chat": {
+        "delete": "Delete",
         "deleteMessage": "Delete",
         "deletedMessage": "This message was deleted.",
         "deletedMessageByMe": "You deleted this message.",

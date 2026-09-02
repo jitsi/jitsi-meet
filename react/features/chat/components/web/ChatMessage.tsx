@@ -488,7 +488,6 @@ const ChatMessage = ({
                             isLobbyMessage = { message.lobbyChat }
                             isModerated = { message.isModerated }
                             message = { message }
-                            messageId = { message.messageId }
                             onEditMessage = { handleEditMessage }
                             participantId = { message.participantId } />}
                     </div>
@@ -577,7 +576,6 @@ const ChatMessage = ({
                                     isLobbyMessage = { message.lobbyChat }
                                     isModerated = { message.isModerated }
                                     message = { message }
-                                    messageId = { message.messageId }
                                     onEditMessage = { handleEditMessage }
                                     participantId = { message.participantId } />}
                             </div>

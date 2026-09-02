@@ -27,7 +27,6 @@ export interface IProps {
     isLobbyMessage: boolean;
     isModerated?: boolean;
     message: IMessage;
-    messageId: string;
     onEditMessage?: () => void;
     participantId: string;
 }
@@ -69,7 +68,7 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const MessageMenu = ({ canEdit, message, messageId, isFromVisitor, isLobbyMessage, isModerated, enablePrivateChat, displayName, isFileMessage, onEditMessage }: IProps) => {
+const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModerated, enablePrivateChat, displayName, isFileMessage, onEditMessage }: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -80,10 +79,16 @@ const MessageMenu = ({ canEdit, message, messageId, isFromVisitor, isLobbyMessag
     const buttonRef = useRef<HTMLDivElement>(null);
 
     const isModerator = useSelector(isLocalParticipantModerator);
+    const messageModerationSupported = useSelector(
+        (state: IReduxState) => state['features/chat'].messageModerationSupported);
     const participant = useSelector((state: IReduxState) => getParticipantById(state, message.participantId));
 
+    // Editing and deleting are applied by the server, so only offer them where the
+    // room says it handles them.
+    const canEditMessage = canEdit && messageModerationSupported;
+
     // If no menu items will be shown, don't render the menu button.
-    if (!enablePrivateChat && isFileMessage && !canEdit) {
+    if (!enablePrivateChat && isFileMessage && !canEditMessage) {
         return null;
     }
 
@@ -150,9 +155,9 @@ const MessageMenu = ({ canEdit, message, messageId, isFromVisitor, isLobbyMessag
     }, [ message, handleClose ]);
 
     const handleModerateClick = useCallback(() => {
-        dispatch(sendMessageModeration({ messageId } as IMessage));
+        dispatch(sendMessageModeration(message));
         handleClose();
-    }, [ dispatch, messageId, handleClose ]);
+    }, [ dispatch, message, handleClose ]);
 
     const handleEditClick = useCallback(() => {
         onEditMessage?.();
@@ -161,7 +166,7 @@ const MessageMenu = ({ canEdit, message, messageId, isFromVisitor, isLobbyMessag
 
     const popoverContent = (
         <div className = { classes.menuPanel }>
-            {canEdit && (
+            {canEditMessage && (
                 <div
                     className = { classes.menuItem }
                     onClick = { handleEditClick }>
@@ -182,15 +187,21 @@ const MessageMenu = ({ canEdit, message, messageId, isFromVisitor, isLobbyMessag
                     {t('Copy')}
                 </div>
             )}
-            {isModerator && !isModerated && (
-                <div
-                    className = { classes.menuItem }
-                    onClick = { handleModerateClick }>
-                    {t('chat.delete')}
-                </div>
-            )}
+            {isModerator
+                && !isModerated
+                && messageModerationSupported
+                && message.messageType !== MESSAGE_TYPE_LOCAL
+                && (
+                    <div
+                        className = { classes.menuItem }
+                        onClick = { handleModerateClick }>
+                        {t('chat.delete')}
+                    </div>
+                )}
             {message.messageType === MESSAGE_TYPE_LOCAL
                 && !message.isDeleted
+                && !message.isModerated
+                && messageModerationSupported
                 && (
                     <div
                         className = { classes.menuItem }

@@ -478,6 +478,27 @@ local function message_handler(event)
     end
 end
 
+-- Adds a stanza this node has just routed to its own occupants to the local
+-- history. Prosody writes room history from broadcast_message, and routing
+-- straight to the occupants bypasses it, so without this the history stays as the
+-- main prosody left it when this node connected and a visitor joining later sees
+-- nothing that was said since. Fire prosody's own events, so the entry is built,
+-- stamped and trimmed exactly as it is in the main room and the modules hooked on
+-- them apply here too.
+local function add_to_local_history(room, stanza)
+    local event = { room = room; stanza = stanza; };
+
+    if not module:fire_event('muc-message-is-historic', event) then
+        module:log('debug', 'Not storing %s in %s history', stanza.attr.id, room.jid);
+
+        return;
+    end
+
+    module:fire_event('muc-add-history', event);
+    module:log('debug', 'Stored %s in %s history, %s entries now',
+        stanza.attr.id, room.jid, room._history and #room._history or 0);
+end
+
 -- Receives history messages from the main prosody and adds them to the local history
 -- this happens before the first participant joins and that participant gets the history using the standard flow on join
 local function history_message_handler(event)
@@ -583,6 +604,9 @@ module:hook('muc-occupant-groupchat', function(event)
         main_message.attr.from = room_jid_match_rewrite(stanza.attr.from);
         module:send(main_message);
     end
+
+    add_to_local_history(room, stanza);
+
     stanza.attr.from = from; -- something prosody does internally
 
     return true;

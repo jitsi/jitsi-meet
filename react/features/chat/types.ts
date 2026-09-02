@@ -29,7 +29,6 @@ export interface IMessage {
     message: string;
     messageId: string;
     messageType: ChatMessageType;
-    moderatedBy?: string;
     moderationReason?: string;
     participantId: string;
     privateMessage: boolean;
