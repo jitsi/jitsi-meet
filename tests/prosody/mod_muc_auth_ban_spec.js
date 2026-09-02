@@ -35,6 +35,41 @@ function createVpaasClient(token) {
     });
 }
 
+/**
+ * Asserts that a VPaaS session is banned, whichever way the ban surfaces.
+ *
+ * mod_muc_auth_ban's HTTP callback calls session:close(), and where that lands
+ * depends on when the access manager answers. Answering within the same event
+ * loop tick as the SASL auth refuses the connection outright; answering a tick
+ * later lets the session establish and then closes it. Both are the same ban,
+ * and which one happens is timing, so accept either rather than only the first.
+ *
+ * @param {string} token  A login JWT the access manager will reject.
+ * @param {string} message  Assertion message.
+ * @returns {Promise<void>}
+ */
+async function assertBanned(token, message) {
+    let client;
+
+    try {
+        client = await createVpaasClient(token);
+    } catch (e) {
+        // refused during SASL
+        assert.match(String(e), /not-allowed/, message);
+
+        return;
+    }
+
+    // established, so the close must follow
+    const disconnected = await client.waitForDisconnect(5000).then(() => true, () => false);
+
+    if (!disconnected) {
+        await client.disconnect();
+    }
+
+    assert.ok(disconnected, message);
+}
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('mod_muc_auth_ban', () => {
@@ -95,21 +130,17 @@ describe('mod_muc_auth_ban', () => {
     // ── VPaaS — access denied ─────────────────────────────────────────────────
     //
     // When access=false, mod_muc_auth_ban's HTTP callback calls session:close()
-    // and caches the token. Because the access manager runs on the same Prosody
-    // process (loopback), the callback resolves within the same event loop tick
-    // as the SASL auth, so the ban surfaces as a SASL failure rather than a
-    // post-connect disconnect.
+    // and caches the token. The access manager runs on the same Prosody process
+    // (loopback), so the callback usually resolves within the same event loop
+    // tick as the SASL auth and the ban surfaces as a SASL failure, but under
+    // load it can resolve a tick later and close an established session instead.
+    // assertBanned accepts either.
 
-    it('VPaaS user is rejected (SASL failure) when access manager returns access=false', async () => {
+    it('VPaaS user is rejected when access manager returns access=false', async () => {
         await setAccessManagerResponse({ access: false });
 
-        const token = freshToken();
-
-        await assert.rejects(
-            createVpaasClient(token),
-            /not-allowed/,
-            'VPaaS user must be rejected when access manager returns access=false'
-        );
+        await assertBanned(freshToken(),
+            'VPaaS user must be rejected when access manager returns access=false');
     });
 
     // ── Cached ban ────────────────────────────────────────────────────────────
@@ -125,11 +156,7 @@ describe('mod_muc_auth_ban', () => {
 
         const token = freshToken();
 
-        await assert.rejects(
-            createVpaasClient(token),
-            /not-allowed/,
-            'initial ban must be rejected'
-        );
+        await assertBanned(token, 'initial ban must be rejected');
 
         // Step 2: Reset the mock to allow. A fresh token must now succeed,
         // proving the cache — not the mock response — drives the next rejection.
@@ -140,11 +167,8 @@ describe('mod_muc_auth_ban', () => {
         await fresh.disconnect();
 
         // Step 3: Same banned token must still be rejected (cache wins over mock).
-        await assert.rejects(
-            createVpaasClient(token),
-            /not-allowed/,
-            'cached banned token must be rejected even when mock is reset to allow'
-        );
+        await assertBanned(token,
+            'cached banned token must be rejected even when mock is reset to allow');
     });
 
     // ── HTTP error — fail open ────────────────────────────────────────────────
