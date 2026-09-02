@@ -484,6 +484,40 @@ module:provides("http", {
             };
         end;
 
+        -- GET /test-observer/session-live?jid=user@localhost/resource
+        -- Returns the CURRENT values of the JWT-derived fields on the live c2s
+        -- session, read straight from prosody.full_sessions. Unlike
+        -- /session-info (a snapshot taken at resource-bind) this reflects
+        -- changes made after the session was established -- notably the claim
+        -- refresh performed by mod_auth_token on XEP-0198 stream resumption,
+        -- which never binds a new resource.
+        ["GET /session-live"] = function(event)
+            local params = parse_query(event.request.url.query);
+            local jid = params["jid"];
+            if not jid then
+                return { status_code = 400; body = '{"error":"missing jid param"}' };
+            end
+            local session = prosody.full_sessions[jid];
+            if not session then
+                return { status_code = 404; body = '{"error":"session not found"}' };
+            end
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = json.encode({
+                    auth_token = session.auth_token,
+                    jitsi_web_query_room = session.jitsi_web_query_room,
+                    jitsi_web_query_prefix = session.jitsi_web_query_prefix,
+                    jitsi_meet_room = session.jitsi_meet_room,
+                    jitsi_meet_domain = session.jitsi_meet_domain,
+                    jitsi_meet_str_tenant = session.jitsi_meet_str_tenant,
+                    jitsi_meet_context_user = session.jitsi_meet_context_user,
+                    jitsi_meet_context_group = session.jitsi_meet_context_group,
+                    jitsi_meet_context_features = session.jitsi_meet_context_features,
+                });
+            };
+        end;
+
         -- POST /test-observer/rooms/lobby
         -- Body: { "jid": "room@conference.localhost", "enabled": true|false }
         -- Enables or disables the lobby for the given room by firing the

@@ -5,6 +5,10 @@
 -- are exempt. Anonymous users (no token) are allowed through. When
 -- token_verification_require_token_for_moderation is set, also blocks room
 -- config IQs (e.g. granting moderator status) from unauthenticated users.
+-- Records the verified conference on the session (jitsi_meet_verified_room) and
+-- answers the 'jitsi-verify-session-rooms' event, so that a session whose JWT
+-- claims are refreshed after the join (mod_auth_token, on stream resumption) is
+-- re-checked against it.
 -- Token authentication
 -- Copyright (C) 2021-present 8x8, Inc.
 
@@ -105,6 +109,12 @@ local function verify_user(session, stanza)
         return false; -- we need to just return non nil
     end
     if DEBUG then module:log("debug", "allowed: %s to enter/create room: %s", user_jid, stanza.attr.to); end
+
+    -- Remember the conference this session was verified for, so claims that are
+    -- refreshed later (mod_auth_token, on stream resumption) can be checked
+    -- against it without going through a join again.
+    session.jitsi_meet_verified_room = jid_bare(stanza.attr.to);
+
     return true;
 end
 
@@ -127,6 +137,39 @@ module:hook("muc-occupant-pre-join", function(event)
     end
     measure_success(1);
 end, 99);
+
+-- Verifies the token claims currently on a session against the conference it
+-- was verified for on join. Fired by mod_auth_token when a connection resuming
+-- a hibernating session (XEP-0198) presents a different token, which refreshes
+-- the claims of the live session: the hooks above only run at join time, so
+-- this applies the same room check to a session that is already in a room.
+-- Answering with res=false makes mod_auth_token keep the claims that were
+-- verified on join.
+module:hook_global('jitsi-verify-session-rooms', function(event)
+    local session = event.session;
+    local room_jid = session.jitsi_meet_verified_room;
+
+    if not room_jid then
+        return;
+    end
+
+    -- Being an occupant is deliberately not required: a session that moved into
+    -- a breakout room has left the main room it joined, and that main room is
+    -- still the conference its claims have to cover. Only a room that is gone
+    -- (everyone left while the session was hibernating) is skipped.
+    if not prosody.hosts[host].modules.muc.get_room_from_jid(room_jid) then
+        return;
+    end
+
+    local res, err, reason = token_util:verify_room(session, room_jid);
+
+    if not res then
+        measure_fail(1);
+        return { res = false; room = room_jid; error = err; reason = reason; };
+    end
+
+    measure_success(1);
+end);
 
 for event_name, method in pairs {
     -- Normal room interactions
