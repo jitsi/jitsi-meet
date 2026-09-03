@@ -294,7 +294,7 @@ export function isDisplayNameVisible(state: IReduxState): boolean {
  */
 export function isAdvancedAudioSettingsEnabled(state: IReduxState): boolean {
 
-    return !browser.isWebKitBased() && Boolean(state['features/base/config']?.audioQuality?.enableAdvancedAudioSettings);
+    return !browser.isWebKitBased() && state['features/base/config']?.audioQuality?.enableAdvancedAudioSettings !== false;
 }
 
 /**
