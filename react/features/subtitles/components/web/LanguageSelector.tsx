@@ -50,11 +50,9 @@ function LanguageSelector() {
         state,
         selectedLanguage?.replace('translation-languages:', '')
     ));
-    const isAsyncTranscriptionEnabled = useSelector((state: IReduxState) =>
-        state['features/base/conference'].conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription);
     const translationEnabled = useSelector(isTranslationEnabled);
 
-    if (isAsyncTranscriptionEnabled || !translationEnabled) {
+    if (!translationEnabled) {
         return null;
     }
 
