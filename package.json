@@ -146,7 +146,7 @@
     "@eloqnt/cli": "0.6.19",
     "@eloqnt/format-i18next-json": "0.0.5",
     "@jitsi/eslint-config": "6.0.4",
-    "@react-native-community/cli": "20.0.1",
+    "@react-native-community/cli": "20.2.0",
     "@react-native-community/cli-platform-android": "20.0.1",
     "@react-native-community/cli-platform-ios": "20.0.1",
     "@react-native/babel-preset": "0.85.2",
@@ -209,7 +209,7 @@
     "webpack": "5.105.0",
     "webpack-bundle-analyzer": "4.4.2",
     "webpack-cli": "5.1.4",
-    "webpack-dev-server": "5.2.6"
+    "webpack-dev-server": "6.0.0"
   },
   "engines": {
     "node": ">=24.0.0",
