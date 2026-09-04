@@ -1,21 +1,34 @@
 import { setTestProperties } from '../../helpers/TestProperties';
 import { config as testsConfig } from '../../helpers/TestsConfig';
 import { joinMuc } from '../../helpers/joinMuc';
-import { generateToken } from '../../helpers/token';
 
 /**
- * Joins (or rejoins) p1 as a moderator with the given config.js overrides, granting the
- * recording/transcription/livestreaming JWT feature claims by default (see token.ts) so that the
- * dialog's behavior reflects only the config flags under test, not JWT feature availability.
+ * Joins (or rejoins) p1 as a moderator with the given config.js overrides, using the shared
+ * preconfigured token (see TestsConfig.ts) rather than a self-signed one. This suite only ever
+ * varies config.js, never JWT feature claims — on this (non-JaaS) tenant, getRecordButtonProps()
+ * and friends fall back to config alone once the JWT carries no feature claims, so the shared
+ * token is enough. The JWT-feature-driven side of this same dialog (only reachable on a JaaS
+ * tenant, where that config-only fallback doesn't apply) is covered separately by
+ * tests/specs/jaas/recordingDialogConfig.spec.ts.
  *
  * A fresh join is required (rather than ensureOneParticipant, which no-ops if already in the
  * conference) because each test in this file exercises a different config.js combination.
+ *
+ * Waits for p1's moderator role to actually land client-side before returning: the server grants
+ * it (the JWT's moderator claim) on every join, but the toolbar's recording button renders the
+ * non-moderator "Record" label (instead of "Record & Transcribe") until that presence update is
+ * processed — a gap the rest of this file otherwise has no reason to guard against itself.
  */
 async function joinWithConfig(configOverwrite: Record<string, unknown>): Promise<void> {
     await joinMuc({
         name: 'p1',
-        token: generateToken({ moderator: true })
+        token: testsConfig.jwt.preconfiguredToken
     }, { configOverwrite });
+
+    await ctx.p1.driver.waitUntil(() => ctx.p1.isModerator(), {
+        timeout: 5_000,
+        timeoutMsg: 'p1 did not become a moderator in time'
+    });
 }
 
 /**
@@ -53,6 +66,18 @@ async function isLocalRecordingSupportedByBrowser(): Promise<boolean> {
 
         return isSupported && embeddedOk;
     });
+}
+
+/**
+ * Whether Dropbox is configured as a recording storage integration in this deployment
+ * (config.dropbox.appKey), independent of anything this file overrides. AbstractStartRecordingDialog
+ * treats it as a fallback recording service whenever recordingService.enabled is false (and prefers
+ * it over an empty selection, though local recording still wins over it when both are available) —
+ * so wherever "is some recording service available" is checked, Dropbox has to be accounted for too
+ * on any deployment where it happens to be configured, exactly like localRecordingSupport.byBrowser.
+ */
+async function isDropboxEnabledInDeployment(): Promise<boolean> {
+    return ctx.p1.execute(() => typeof config.dropbox?.appKey === 'string');
 }
 
 /**
@@ -99,48 +124,47 @@ setTestProperties(__filename, {
 });
 
 /*
- * Full 2^4 matrix over the four independently togglable config.js flags: recordingService.enabled,
- * transcription.enabled, localRecording.disable and liveStreaming.enabled. Expected behavior for
- * each combination, derived from the source (AbstractStartRecordingDialog(Content), recording/
- * functions.ts#getRecordButtonProps, LiveStream/functions.ts#isLiveStreamingButtonVisible):
+ * Full 2^3 matrix over the three independently togglable config.js flags: recordingService.enabled,
+ * transcription.enabled and localRecording.disable. Expected behavior for each combination, derived
+ * from the source (AbstractStartRecordingDialog(Content), recording/functions.ts#getRecordButtonProps):
  *
- *  - The moderator token grants the recording/transcription/livestreaming JWT feature claims
- *    unconditionally (see joinWithConfig), so getRecordButtonProps() always takes its
- *    "isJwtFeatureEnabled(..., RECORDING)" branch once local recording is unavailable — meaning the
- *    toolbar button's visibility (and therefore whether the recording section can be inspected at
- *    all) reduces to recordingService.enabled || localRecordingAvailable, and does NOT by itself
- *    depend on transcription.enabled (that branch of the priority chain is never reached while the
- *    RECORDING claim is granted).
- *  - Whenever the dialog *can* open, the recording section always renders (same
- *    recordingService.enabled || localRecordingAvailable condition) — what changes is which
- *    storage service ends up selected by default: "Recording service" takes priority over "Local
- *    recording" in the dialog's constructor.
+ *  - Every environment this suite runs against grants the local participant a default "recording"
+ *    JWT feature claim regardless of authentication — confirmed via diagnostics logged below
+ *    (localParticipantFeatures.recording is "true" even with no token/JWT at all). getRecordButtonProps()
+ *    checks that claim *before* falling back to config-only visibility, so that fallback (which would
+ *    let transcription.enabled alone drive visibility) is unreachable here: the toolbar button's
+ *    visibility (and therefore whether the recording section can be inspected at all) reduces to
+ *    recordingService.enabled || dropboxAvailable || localRecordingAvailable, same as
+ *    recordingEnabled in getRecordButtonProps (which ORs in Dropbox too) — transcription.enabled never
+ *    factors into it.
+ *  - Whenever the dialog *can* open, the recording section renders — what changes is which storage
+ *    service ends up selected by default: "Recording service" takes priority, then "Local recording",
+ *    then "Dropbox" (see the constructor's own priority chain in AbstractStartRecordingDialog.ts).
  *  - The transcription section, its Start button, and the footer's "Start both" button are each
- *    governed purely by transcription.enabled (independent of the other three flags, since nothing
- *    is actually started in these tests).
- *  - The Live Streaming toolbar button is fully orthogonal: only liveStreaming.enabled matters.
+ *    governed purely by transcription.enabled (independent of the other two flags, since nothing is
+ *    actually started in these tests) — but only reachable at all when the dialog can open in the
+ *    first place, i.e. when some recording service is also available.
+ *
+ * The Live Streaming toolbar button is JWT-feature-gated with no config-only fallback (see
+ * LiveStream/AbstractLiveStreamButton.ts), so it can't be driven by config.js alone here — that's
+ * covered on the JaaS side instead, by tests/specs/jaas/recordingDialogConfig.spec.ts.
  *
  * localRecordingAvailable also depends on browser capabilities (MediaRecorder/File System Access
  * support) that are frequently unmet in the automated test browser — probed once up front, exactly
  * like recordingButtonVisibility.spec.ts does, so the per-combination expectations stay accurate
- * regardless of what the test browser actually supports.
+ * regardless of what the test browser actually supports. dropboxAvailable is similarly probed once,
+ * since it depends on this deployment's config rather than anything this file overrides.
  */
-describe('Recording dialog config matrix — recording × transcription × local recording × live streaming', () => {
+describe('Recording dialog config matrix — recording × transcription × local recording', () => {
     // A const-bound holder object, rather than a reassigned `let`, so the it() closures created
-    // inside the loop below don't trip @typescript-eslint/no-loop-func — only its property (set
-    // once, in 'setup', before any of the loop's tests run) actually changes.
-    const localRecordingSupport = { byBrowser: false };
+    // inside the loop below don't trip @typescript-eslint/no-loop-func — only its properties (set
+    // once, in 'setup', before any of the loop's tests run) actually change.
+    const environment = { dropboxAvailable: false, localRecordingByBrowser: false };
 
     it('setup', async () => {
-        if (!testsConfig.jwt.kid || !testsConfig.jwt.privateKeyPath) {
-            ctx.skipSuiteTests = 'JWT signing is not configured in this environment '
-                + '(JWT_KID/JWT_PRIVATE_KEY_PATH)';
-
-            return;
-        }
-
         await joinWithConfig({});
-        localRecordingSupport.byBrowser = await isLocalRecordingSupportedByBrowser();
+        environment.localRecordingByBrowser = await isLocalRecordingSupportedByBrowser();
+        environment.dropboxAvailable = await isDropboxEnabledInDeployment();
     });
 
     const BOOLEANS = [ true, false ];
@@ -148,57 +172,54 @@ describe('Recording dialog config matrix — recording × transcription × local
     for (const recordingServiceEnabled of BOOLEANS) {
         for (const transcriptionEnabled of BOOLEANS) {
             for (const localRecordingDisabled of BOOLEANS) {
-                for (const liveStreamingEnabled of BOOLEANS) {
-                    const title = `recordingService.enabled=${recordingServiceEnabled} `
-                        + `transcription.enabled=${transcriptionEnabled} `
-                        + `localRecording.disable=${localRecordingDisabled} `
-                        + `liveStreaming.enabled=${liveStreamingEnabled}`;
+                const title = `recordingService.enabled=${recordingServiceEnabled} `
+                    + `transcription.enabled=${transcriptionEnabled} `
+                    + `localRecording.disable=${localRecordingDisabled}`;
 
-                    it(title, async () => {
-                        await joinWithConfig({
-                            recordingService: { enabled: recordingServiceEnabled },
-                            transcription: { enabled: transcriptionEnabled },
-                            localRecording: { disable: localRecordingDisabled },
-                            liveStreaming: { enabled: liveStreamingEnabled }
-                        });
-
-                        const p1 = ctx.p1;
-
-                        // Orthogonal to the other three flags — always checked.
-                        expect(await p1.getToolbar().hasLiveStreamingButton()).toBe(liveStreamingEnabled);
-
-                        const localRecordingAvailable = !localRecordingDisabled && localRecordingSupport.byBrowser;
-                        const dialogCanOpen = recordingServiceEnabled || localRecordingAvailable;
-
-                        expect(await p1.getToolbar().hasRecordingButton()).toBe(dialogCanOpen);
-
-                        if (!dialogCanOpen) {
-                            // Nothing else is inspectable: the dialog cannot be opened at all.
-                            return;
-                        }
-
-                        const dialog = p1.getRecordingTranscriptionDialog();
-
-                        await p1.getToolbar().clickRecordingButton();
-                        await dialog.waitForDisplay();
-
-                        // The recording section always renders here (same condition as
-                        // dialogCanOpen); which service ends up selected is what differs.
-                        await dialog.toggleRecordingOptions();
-                        expect(await dialog.getSelectedService())
-                            .toBe(recordingServiceEnabled ? 'Recording service' : 'Local recording');
-
-                        expect(await dialog.hasTranscriptionOptions()).toBe(transcriptionEnabled);
-                        expect(await dialog.hasStartTranscriptionButton()).toBe(transcriptionEnabled);
-
-                        // The footer only makes sense when both sections are present; the recording
-                        // section is always present on this branch, so this reduces to
-                        // transcriptionEnabled.
-                        expect(await dialog.hasStartBothButton()).toBe(transcriptionEnabled);
-
-                        await dialog.cancel();
+                it(title, async () => {
+                    await joinWithConfig({
+                        recordingService: { enabled: recordingServiceEnabled },
+                        transcription: { enabled: transcriptionEnabled },
+                        localRecording: { disable: localRecordingDisabled }
                     });
-                }
+
+                    const p1 = ctx.p1;
+
+                    const localRecordingAvailable = !localRecordingDisabled && environment.localRecordingByBrowser;
+                    const dialogCanOpen
+                        = recordingServiceEnabled || localRecordingAvailable || environment.dropboxAvailable;
+
+                    expect(await p1.getToolbar().hasRecordingButton()).toBe(dialogCanOpen);
+
+                    if (!dialogCanOpen) {
+                        // Nothing else is inspectable: the dialog cannot be opened at all.
+                        return;
+                    }
+
+                    const dialog = p1.getRecordingTranscriptionDialog();
+
+                    await p1.getToolbar().clickRecordingButton();
+                    await dialog.waitForDisplay();
+
+                    // The recording section always renders here (same condition as dialogCanOpen);
+                    // which service ends up selected is what differs.
+                    await dialog.toggleRecordingOptions();
+
+                    const expectedService = recordingServiceEnabled ? 'Recording service'
+                        : localRecordingAvailable ? 'Local recording'
+                            : 'Dropbox';
+
+                    expect(await dialog.getSelectedService()).toBe(expectedService);
+
+                    expect(await dialog.hasTranscriptionOptions()).toBe(transcriptionEnabled);
+                    expect(await dialog.hasStartTranscriptionButton()).toBe(transcriptionEnabled);
+
+                    // The footer only makes sense when both sections are present; the recording
+                    // section is always present on this branch, so this reduces to transcriptionEnabled.
+                    expect(await dialog.hasStartBothButton()).toBe(transcriptionEnabled);
+
+                    await dialog.cancel();
+                });
             }
         }
     }
@@ -213,13 +234,6 @@ describe('Recording dialog config matrix — recording × transcription × local
  * "Start both" starts the missing one.
  */
 describe('Recording dialog config — mixed running state (recording vs transcription)', () => {
-    it('setup', async () => {
-        if (!testsConfig.jwt.kid || !testsConfig.jwt.privateKeyPath) {
-            ctx.skipSuiteTests = 'JWT signing is not configured in this environment '
-                + '(JWT_KID/JWT_PRIVATE_KEY_PATH)';
-        }
-    });
-
     const RUNNING_STATE_COMBINATIONS: Array<[boolean, boolean]> = [
         [ false, false ],
         [ true, false ],
@@ -254,13 +268,6 @@ describe('Recording dialog config — mixed running state (recording vs transcri
 });
 
 describe('Recording dialog config — recordingService.sharingEnabled', () => {
-    it('setup', async () => {
-        if (!testsConfig.jwt.kid || !testsConfig.jwt.privateKeyPath) {
-            ctx.skipSuiteTests = 'JWT signing is not configured in this environment '
-                + '(JWT_KID/JWT_PRIVATE_KEY_PATH)';
-        }
-    });
-
     it('sharingEnabled: true shows the "share the recording link" switch', async () => {
         await joinWithConfig({
             recordingService: {
@@ -308,13 +315,6 @@ describe('Recording dialog config — localRecording.notifyAllParticipants', () 
     let localRecordingSupported: boolean;
 
     it('setup', async () => {
-        if (!testsConfig.jwt.kid || !testsConfig.jwt.privateKeyPath) {
-            ctx.skipSuiteTests = 'JWT signing is not configured in this environment '
-                + '(JWT_KID/JWT_PRIVATE_KEY_PATH)';
-
-            return;
-        }
-
         await joinWithConfig({
             localRecording: {
                 disable: false,
