@@ -53,7 +53,7 @@
         "text-encoding": "0.0.0",
         "unorm": "0.0.0",
         "util": "0.0.0",
-        "uuid": "0.0.0",
+        "uuid": "14.0.0",
         "zxcvbn": "0.0.0"
     },
     "peerDependencies": {
