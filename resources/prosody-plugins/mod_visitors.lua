@@ -50,6 +50,11 @@ local sent_iq_cache = require 'util.cache'.new(200);
 --}
 local visitors_nodes = {};
 
+-- forward declaration; assigned below. Referenced by a closure registered on the main muc's
+-- 'room-metadata-changed' event (see process_host_module(main_muc_component_config, ...) below) so vnodes
+-- are refreshed whenever the main room's metadata (e.g. asyncTranscription) changes.
+local update_vnodes_for_room;
+
 -- sends connect or update iq
 -- @parameter type - Type of iq to send 'connect' or 'update'
 local function send_visitors_iq(conference_service, room, type)
@@ -116,6 +121,17 @@ local function send_visitors_iq(conference_service, room, type)
             end
 
             visitors_iq:tag('polls'):text(json_msg_str):up();
+        end
+    end
+
+    -- Forward the main room's metadata (e.g. asyncTranscription) so visitor nodes/clients can make the
+    -- same decisions main-room clients do (sent on both 'connect' and 'update', not just 'update').
+    if room.jitsiMetadata then
+        local json_metadata, metadata_error = json.encode(room.jitsiMetadata);
+        if json_metadata then
+            visitors_iq:tag('metadata', { xmlns = 'jitsi:visitors' }):text(json_metadata):up();
+        else
+            module:log('error', 'Error encoding metadata for room:%s error:%s', room.jid, metadata_error);
         end
     end
 
@@ -261,6 +277,14 @@ module:hook('presence/full', function(event)
 end, 900);
 
 process_host_module(main_muc_component_config, function(host_module, host)
+    -- room metadata changed (e.g. asyncTranscription) -- refresh all connected vnodes so their
+    -- mirrored room and visitor clients stay in sync with the main room. Called via a wrapper closure
+    -- (rather than passing update_vnodes_for_room directly) since it is only assigned further down in
+    -- this file, after this hook is registered.
+    host_module:hook('room-metadata-changed', function(event)
+        update_vnodes_for_room(event);
+    end);
+
     -- detects presence change in a main participant and propagate it to the used visitor nodes
     host_module:hook('muc-occupant-pre-change', function (event)
         local room, stanzaEv, occupant = event.room, event.stanza, event.dest_occupant;
@@ -560,7 +584,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
     end);
 end);
 
-local function update_vnodes_for_room(event)
+function update_vnodes_for_room(event)
     local room = event.room;
         if visitors_nodes[room.jid] then
             -- we need to update all vnodes
