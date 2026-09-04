@@ -241,22 +241,6 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
         this._onStartBothPress = this._onStartBothPress.bind(this);
         this._onStopBothPress = this._onStopBothPress.bind(this);
 
-        let selectedRecordingService = '';
-
-        if (this.props._fileRecordingsServiceEnabled) {
-            selectedRecordingService = RECORDING_TYPES.JITSI_REC_SERVICE;
-        } else if (this._areIntegrationsEnabled()) {
-            if (props._localRecordingEnabled && supportsLocalRecording()) {
-                selectedRecordingService = RECORDING_TYPES.LOCAL;
-            } else {
-                selectedRecordingService = RECORDING_TYPES.DROPBOX;
-            }
-        } else if (props._localRecordingEnabled && supportsLocalRecording()) {
-            selectedRecordingService = RECORDING_TYPES.LOCAL;
-        }
-        // If no service is available, selectedRecordingService stays '' and
-        // the start recording button will be disabled.
-
         this.state = {
             isTokenValid: false,
             isValidating: false,
@@ -265,9 +249,38 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             selectedLanguage: props._subtitlesLanguage
                 ?? `translation-languages:${DEFAULT_LANGUAGE}`,
             spaceLeft: undefined,
-            selectedRecordingService,
+            selectedRecordingService: this._getDefaultRecordingService(props),
             localRecordingOnlySelf: false
         };
+    }
+
+    /**
+     * Picks the default recording service to preselect from the given props: the file recordings
+     * service takes priority, then local recording (unless an integration is enabled and preferred
+     * instead), then Dropbox, in that order. Returns '' if none is available, in which case the
+     * start recording button is disabled.
+     *
+     * @param {IProps} props - The props to compute the default from.
+     * @returns {string} - One of RECORDING_TYPES, or ''.
+     */
+    _getDefaultRecordingService(props: IProps): string {
+        if (props._fileRecordingsServiceEnabled) {
+            return RECORDING_TYPES.JITSI_REC_SERVICE;
+        }
+
+        if (this._areIntegrationsEnabled(props)) {
+            if (props._localRecordingEnabled && supportsLocalRecording()) {
+                return RECORDING_TYPES.LOCAL;
+            }
+
+            return RECORDING_TYPES.DROPBOX;
+        }
+
+        if (props._localRecordingEnabled && supportsLocalRecording()) {
+            return RECORDING_TYPES.LOCAL;
+        }
+
+        return '';
     }
 
     /**
@@ -292,19 +305,38 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
         if (this.props._token !== prevProps._token) {
             this._onTokenUpdated();
         }
+
+        // selectedRecordingService is otherwise only ever set once, from props, in the
+        // constructor. If none of the services this dialog cares about were available/known yet
+        // at construction time (e.g. base/config hadn't finished loading when this instance
+        // mounted), it gets stuck at '' — permanently disabling the start button — even after the
+        // props that actually determine availability catch up moments later. Recompute it
+        // whenever those specific props change, but only while nothing has been selected yet, so
+        // this never overrides an explicit choice made via _onSelectedRecordingServiceChanged.
+        if (this.state.selectedRecordingService === ''
+                && (prevProps._fileRecordingsServiceEnabled !== this.props._fileRecordingsServiceEnabled
+                    || prevProps._isDropboxEnabled !== this.props._isDropboxEnabled
+                    || prevProps._localRecordingEnabled !== this.props._localRecordingEnabled)) {
+            const selectedRecordingService = this._getDefaultRecordingService(this.props);
+
+            if (selectedRecordingService) {
+                this.setState({ selectedRecordingService });
+            }
+        }
     }
 
     /**
      * Returns true if the integrations with third party services are enabled
      * and false otherwise.
      *
+     * @param {IProps} props - The props to check against; defaults to this.props.
      * @returns {boolean} - True if the integrations with third party services
      * are enabled and false otherwise.
      */
-    _areIntegrationsEnabled() {
-        return this.props._isDropboxEnabled
-            && !this.props._recordingRunning
-            && !this.props._transcriptionRunning;
+    _areIntegrationsEnabled(props: IProps = this.props) {
+        return props._isDropboxEnabled
+            && !props._recordingRunning
+            && !props._transcriptionRunning;
     }
 
     /**
