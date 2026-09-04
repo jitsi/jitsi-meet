@@ -87,7 +87,10 @@ export default class Toolbar extends BasePageObject {
     async clickRecordingButton(): Promise<void> {
         // The recording button lives in the overflow ("More actions") menu; open it, click, close
         // (matches clickSettings/clickSecurity — closeOverflowMenu is a no-op once the dialog opens).
-        return this.clickButtonInOverflowMenu(RECORDING);
+        // Match either label, same as hasRecordingButton: moderators who can't transcribe (e.g.
+        // transcription.enabled=false) get "Record" too, not just non-moderators — see
+        // AbstractRecordButton._getAccessibilityLabel()/canAddTranscriber().
+        return this.clickButtonInOverflowMenu([ RECORDING, RECORDING_NON_MODERATOR ]);
     }
 
     /**
@@ -346,18 +349,30 @@ export default class Toolbar extends BasePageObject {
 
     /**
      * Ensure the overflow menu is open and clicks on a specified button.
-     * @param accessibilityLabel The accessibility label of the button to be clicked.
+     * @param accessibilityLabel The accessibility label of the button to be clicked, or a list of
+     * candidate labels (e.g. a moderator vs. non-moderator variant) — the first one found in the
+     * DOM is clicked.
      * @private
      */
-    private async clickButtonInOverflowMenu(accessibilityLabel: string) {
+    private async clickButtonInOverflowMenu(accessibilityLabel: string | string[]) {
         await this.openOverflowMenu();
 
         // sometimes the overflow button tooltip is over the last entry in the menu,
         // so let's move focus away before clicking the button
         await this.participant.driver.$('#overflow-context-menu').moveTo();
 
-        await this.participant.log(`Clicking on: ${accessibilityLabel}`);
-        await this.getButton(accessibilityLabel).click();
+        const labels = Array.isArray(accessibilityLabel) ? accessibilityLabel : [ accessibilityLabel ];
+        let label = labels[0];
+
+        for (const candidate of labels) {
+            if (await this.getButton(candidate).isExisting()) {
+                label = candidate;
+                break;
+            }
+        }
+
+        await this.participant.log(`Clicking on: ${label}`);
+        await this.getButton(label).click();
 
         await this.closeOverflowMenu();
     }

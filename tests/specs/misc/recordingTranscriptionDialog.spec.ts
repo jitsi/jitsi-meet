@@ -73,6 +73,28 @@ describe('Recording & Transcription dialog', () => {
         await p1.getToolbar().clickRecordingButton();
         await dialog.waitForDisplay();
 
+        // Diagnostics for intermittent failures here. The Start button's enabled state is driven
+        // by AbstractStartRecordingDialog's own local `this.state.selectedRecordingService` —
+        // that's plain React state, not redux, so APP.store.getState() can't see it.
+        // state['features/recording'].selectedRecordingService (read here previously) is a
+        // write-only mirror: it's only ever set by dispatch, when a user manually changes the
+        // dropdown via _onSelectedRecordingServiceChanged, and nothing reads it back into this
+        // component — so it reads '' in this test regardless of the real bug, which is exactly
+        // why it looked identical across every prior failure and told us nothing. Read the
+        // dropdown's own rendered text instead: it's rendered straight from the real local state.
+        await dialog.toggleRecordingOptions();
+
+        const diagnostics = await p1.execute(() => ({
+            recordingServiceConfig: config.recordingService,
+            localRecordingConfig: config.localRecording,
+            reduxRecordingServiceConfig: APP.store.getState()['features/base/config'].recordingService,
+            reduxLocalRecordingConfig: APP.store.getState()['features/base/config'].localRecording,
+            hasDropboxToken: Boolean(APP.store.getState()['features/dropbox'].token)
+        }));
+        const renderedSelectedService = await dialog.getSelectedService();
+
+        await p1.log(`Recording dialog diagnostics: ${JSON.stringify({ ...diagnostics, renderedSelectedService })}`);
+
         expect(await dialog.isStartRecordingEnabled()).toBe(true);
         expect(await dialog.isStartBothEnabled()).toBe(true);
 
