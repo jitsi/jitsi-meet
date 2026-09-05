@@ -1,4 +1,4 @@
-import { NavigationContainer, Theme } from '@react-navigation/native';
+import { NavigationContainer, NavigationIndependentTree } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
@@ -58,43 +58,44 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: IProps) =
     }, [ dispatch ]);
 
     return (
-        <NavigationContainer
-            independent = { true }
-            onReady = { onReady }
-            ref = { rootNavigationRef }
-            theme = { navigationContainerTheme as Theme }>
-            <RootStack.Navigator
-                initialRouteName = { initialRouteName }>
-                <RootStack.Screen // @ts-ignore
-                    component = { WelcomePage }
-                    name = { screen.welcome.main }
-                    options = { welcomeScreenOptions } />
-                <RootStack.Screen // @ts-ignore
-                    component = { DialInSummary }
-                    name = { screen.dialInSummary }
-                    options = { dialInSummaryScreenOptions } />
-                <RootStack.Screen
-                    component = { ConnectingPage }
-                    name = { screen.connecting }
-                    options = { connectingScreenOptions } />
-                <RootStack.Screen
-                    component = { Prejoin }
-                    name = { screen.preJoin }
-                    options = { preJoinScreenOptions } />
-                <RootStack.Screen
-                    component = { UnsafeRoomWarning }
-                    name = { screen.unsafeRoomWarning }
-                    options = { unsafeMeetingScreenOptions } />
-                <RootStack.Screen
-                    component = { VisitorsQueue }
-                    name = { screen.visitorsQueue }
-                    options = { visitorsScreenOptions } />
-                <RootStack.Screen
-                    component = { ConferenceNavigationContainer }
-                    name = { screen.conference.root }
-                    options = { conferenceNavigationContainerScreenOptions } />
-            </RootStack.Navigator>
-        </NavigationContainer>
+        <NavigationIndependentTree>
+            <NavigationContainer
+                onReady = { onReady }
+                ref = { rootNavigationRef }
+                theme = { navigationContainerTheme }>
+                <RootStack.Navigator
+                    initialRouteName = { initialRouteName }>
+                    <RootStack.Screen // @ts-ignore
+                        component = { WelcomePage }
+                        name = { screen.welcome.main }
+                        options = { welcomeScreenOptions } />
+                    <RootStack.Screen // @ts-ignore
+                        component = { DialInSummary }
+                        name = { screen.dialInSummary }
+                        options = { dialInSummaryScreenOptions } />
+                    <RootStack.Screen
+                        component = { ConnectingPage }
+                        name = { screen.connecting }
+                        options = { connectingScreenOptions } />
+                    <RootStack.Screen
+                        component = { Prejoin }
+                        name = { screen.preJoin }
+                        options = { preJoinScreenOptions } />
+                    <RootStack.Screen
+                        component = { UnsafeRoomWarning }
+                        name = { screen.unsafeRoomWarning }
+                        options = { unsafeMeetingScreenOptions } />
+                    <RootStack.Screen
+                        component = { VisitorsQueue }
+                        name = { screen.visitorsQueue }
+                        options = { visitorsScreenOptions } />
+                    <RootStack.Screen
+                        component = { ConferenceNavigationContainer }
+                        name = { screen.conference.root }
+                        options = { conferenceNavigationContainerScreenOptions } />
+                </RootStack.Navigator>
+            </NavigationContainer>
+        </NavigationIndependentTree>
     );
 };
 
