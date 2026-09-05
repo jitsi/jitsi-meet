@@ -22,3 +22,8 @@ export const ENABLE_KEYBOARD_SHORTCUTS = 'ENABLE_KEYBOARD_SHORTCUTS';
  * The type of the action which signals that a keyboard shortcut should be disabled.
  */
 export const DISABLE_KEYBOARD_SHORTCUTS = 'DISABLE_KEYBOARD_SHORTCUTS';
+
+/**
+ * The type of the action which sets whether Ctrl+Alt reaction shortcut aliases are enabled.
+ */
+export const SET_CTRL_ALT_REACTION_SHORTCUTS_ENABLED = 'SET_CTRL_ALT_REACTION_SHORTCUTS_ENABLED';

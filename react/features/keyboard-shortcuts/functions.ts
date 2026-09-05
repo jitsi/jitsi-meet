@@ -1,4 +1,19 @@
 import { IReduxState } from '../app/types';
+import { browser } from '../base/lib-jitsi-meet';
+
+/**
+ * Returns whether or not Ctrl+Alt aliases for reaction shortcuts are enabled.
+ *
+ * The setting is Firefox-only and defaults to enabled for existing users whose
+ * persisted state does not contain it yet.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean} - Whether or not the aliases are enabled.
+ */
+export function areCtrlAltReactionShortcutsEnabled(state: IReduxState) {
+    return browser.isFirefox()
+        && state['features/keyboard-shortcuts'].ctrlAltReactionShortcutsEnabled !== false;
+}
 
 /**
  * Returns whether or not the keyboard shortcuts are enabled.

@@ -1,9 +1,14 @@
 import { IStateful } from '../base/app/types';
+import { browser } from '../base/lib-jitsi-meet';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import { isLocalParticipantModerator } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { getUserSelectedCameraDeviceId } from '../base/settings/functions.web';
-import { areKeyboardShortcutsEnabled, getKeyboardShortcutsHelpDescriptions } from '../keyboard-shortcuts/functions';
+import {
+    areCtrlAltReactionShortcutsEnabled,
+    areKeyboardShortcutsEnabled,
+    getKeyboardShortcutsHelpDescriptions
+} from '../keyboard-shortcuts/functions';
 import { getParticipantsPaneConfig } from '../participants-pane/functions';
 import { isPrejoinPageVisible } from '../prejoin/functions';
 
@@ -85,9 +90,11 @@ export function getShortcutsTabProps(stateful: IStateful, isDisplayedOnWelcomePa
     const state = toState(stateful);
 
     return {
+        ctrlAltReactionShortcutsEnabled: areCtrlAltReactionShortcutsEnabled(state),
         displayShortcuts: !isDisplayedOnWelcomePage && !isPrejoinPageVisible(state),
         keyboardShortcutsEnabled: areKeyboardShortcutsEnabled(state),
-        keyboardShortcutsHelpDescriptions: getKeyboardShortcutsHelpDescriptions(state)
+        keyboardShortcutsHelpDescriptions: getKeyboardShortcutsHelpDescriptions(state),
+        showCtrlAltReactionShortcuts: browser.isFirefox()
     };
 }
 
