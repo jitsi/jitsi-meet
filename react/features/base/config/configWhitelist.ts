@@ -139,6 +139,8 @@ export default [
     'e2ee',
     'e2eping',
     'enableCalendarIntegration',
+    'enableCustomPanel.enabled',
+    'enableCustomPanel.url',
     'enableDisplayNameInStats',
     'enableEmailInStats',
     'enableEncodedTransformSupport',
