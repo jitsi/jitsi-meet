@@ -1294,6 +1294,7 @@
         "desktopShareHighFpsWarning": "A higher frame rate for desktop sharing might affect your bandwidth. You need to restart the screen share for the new settings to take effect.",
         "desktopShareWarning": "You need to restart the screen share for the new settings to take effect.",
         "devices": "Devices",
+        "enableCtrlAltReactionShortcuts": "Enable Ctrl+Alt alternatives for reaction shortcuts",
         "followMe": "Everyone follows me",
         "followMeRecorder": "Recorder follows me",
         "framesPerSecond": "frames-per-second",

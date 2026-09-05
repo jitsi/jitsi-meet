@@ -19,6 +19,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
+     * Whether Ctrl+Alt aliases for reaction shortcuts are enabled or not.
+     */
+    ctrlAltReactionShortcutsEnabled: boolean;
+
+    /**
      * Whether to display the shortcuts or not.
      */
     displayShortcuts: boolean;
@@ -32,6 +37,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
      * The keyboard shortcuts descriptions.
      */
     keyboardShortcutsHelpDescriptions: Map<string, string>;
+
+    /**
+     * Whether the Ctrl+Alt reaction shortcut setting should be displayed.
+     */
+    showCtrlAltReactionShortcuts: boolean;
 }
 
 const styles = (theme: Theme) => {
@@ -66,7 +76,15 @@ const styles = (theme: Theme) => {
             backgroundColor: theme.palette.settingsShortcutKey,
             ...theme.typography.labelBold,
             padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
-            borderRadius: `${Number(theme.shape.borderRadius) / 2}px`
+            borderRadius: `${Number(theme.shape.borderRadius) / 2}px`,
+            whiteSpace: 'nowrap' as const
+        },
+
+        listItemKeys: {
+            display: 'flex',
+            flexWrap: 'wrap' as const,
+            gap: theme.spacing(1),
+            justifyContent: 'flex-end'
         }
     };
 };
@@ -87,8 +105,20 @@ class ShortcutsTab extends AbstractDialogTab<IProps, any> {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
+        this._onCtrlAltReactionShortcutsEnableChanged
+            = this._onCtrlAltReactionShortcutsEnableChanged.bind(this);
         this._onKeyboardShortcutEnableChanged = this._onKeyboardShortcutEnableChanged.bind(this);
         this._renderShortcutsListItem = this._renderShortcutsListItem.bind(this);
+    }
+
+    /**
+     * Callback invoked to select if Ctrl+Alt reaction shortcut aliases should be enabled.
+     *
+     * @param {Object} e - The change event to handle.
+     * @returns {void}
+     */
+    _onCtrlAltReactionShortcutsEnableChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
+        super._onChange({ ctrlAltReactionShortcutsEnabled: checked });
     }
 
     /**
@@ -106,11 +136,11 @@ class ShortcutsTab extends AbstractDialogTab<IProps, any> {
     /**
      * Render a keyboard shortcut with key and description.
      *
-     * @param {string} keyboardKey - The keyboard key for the shortcut.
+     * @param {string[]} keyboardKeys - The keyboard keys for the shortcut.
      * @param {string} translationKey - The translation key for the shortcut description.
      * @returns {JSX}
      */
-    _renderShortcutsListItem(keyboardKey: string, translationKey: string) {
+    _renderShortcutsListItem(keyboardKeys: string[], translationKey: string) {
         const { t } = this.props;
         const classes = withStyles.getClasses(this.props);
         let modifierKey = 'Alt';
@@ -124,15 +154,31 @@ class ShortcutsTab extends AbstractDialogTab<IProps, any> {
         return (
             <li
                 className = { classes.listItem }
-                key = { keyboardKey }>
+                key = { translationKey }>
                 <span
                     aria-label = { t(translationKey) }>
                     {t(translationKey)}
                 </span>
-                <span className = { classes.listItemKey }>
-                    {keyboardKey.startsWith(':')
-                        ? `${modifierKey} + ${keyboardKey.slice(1)}`
-                        : keyboardKey}
+                <span className = { classes.listItemKeys }>
+                    {keyboardKeys.map(keyboardKey => {
+                        let formattedKey = keyboardKey;
+
+                        if (keyboardKey.startsWith('-:')) {
+                            formattedKey = `Ctrl + ${modifierKey} + ${keyboardKey.slice(2)}`;
+                        } else if (keyboardKey.startsWith(':')) {
+                            formattedKey = `${modifierKey} + ${keyboardKey.slice(1)}`;
+                        } else if (keyboardKey.startsWith('-')) {
+                            formattedKey = `Ctrl + ${keyboardKey.slice(1)}`;
+                        }
+
+                        return (
+                            <span
+                                className = { classes.listItemKey }
+                                key = { keyboardKey }>
+                                {formattedKey}
+                            </span>
+                        );
+                    })}
                 </span>
             </li>
         );
@@ -146,15 +192,39 @@ class ShortcutsTab extends AbstractDialogTab<IProps, any> {
      */
     override render() {
         const {
+            ctrlAltReactionShortcutsEnabled,
             displayShortcuts,
             keyboardShortcutsHelpDescriptions,
             keyboardShortcutsEnabled,
+            showCtrlAltReactionShortcuts,
             t
         } = this.props;
         const classes = withStyles.getClasses(this.props);
         const shortcutDescriptions: Map<string, string> = displayShortcuts
             ? keyboardShortcutsHelpDescriptions
             : new Map();
+        const shortcutsByDescription = new Map<string, string[]>();
+
+        shortcutDescriptions.forEach((description, keyboardKey) => {
+            const keyboardKeys = shortcutsByDescription.get(description) ?? [];
+            const isReactionShortcut = description.startsWith('toolbar.reaction');
+
+            if (!isReactionShortcut || !keyboardKey.startsWith('-:') || ctrlAltReactionShortcutsEnabled) {
+                if (!keyboardKeys.includes(keyboardKey)) {
+                    keyboardKeys.push(keyboardKey);
+                }
+
+                if (isReactionShortcut && keyboardKey.startsWith(':') && ctrlAltReactionShortcutsEnabled) {
+                    const ctrlAltKeyboardKey = `-:${keyboardKey.slice(1)}`;
+
+                    if (!keyboardKeys.includes(ctrlAltKeyboardKey)) {
+                        keyboardKeys.push(ctrlAltKeyboardKey);
+                    }
+                }
+
+                shortcutsByDescription.set(description, keyboardKeys);
+            }
+        });
 
         return (
             <div className = { classes.container }>
@@ -164,10 +234,20 @@ class ShortcutsTab extends AbstractDialogTab<IProps, any> {
                     label = { t('prejoin.keyboardShortcuts') }
                     name = 'enable-keyboard-shortcuts'
                     onChange = { this._onKeyboardShortcutEnableChanged } />
+                {showCtrlAltReactionShortcuts && (
+                    <Checkbox
+                        checked = { ctrlAltReactionShortcutsEnabled }
+                        className = { classes.checkbox }
+                        disabled = { !keyboardShortcutsEnabled }
+                        label = { t('settings.enableCtrlAltReactionShortcuts') }
+                        name = 'enable-ctrl-alt-reaction-shortcuts'
+                        onChange = { this._onCtrlAltReactionShortcutsEnableChanged } />
+                )}
                 {displayShortcuts && (
                     <ul className = { classes.listContainer }>
-                        {Array.from(shortcutDescriptions)
-                            .map(description => this._renderShortcutsListItem(...description))}
+                        {Array.from(shortcutsByDescription)
+                            .map(([ description, keyboardKeys ]) =>
+                                this._renderShortcutsListItem(keyboardKeys, description))}
                     </ul>
                 )}
             </div>
