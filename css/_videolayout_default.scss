@@ -159,6 +159,23 @@
     z-index: $zindex0;
 }
 
+#etherpad-close-btn {
+    background: rgba(0, 0, 0, 0.55);
+    border: none;
+    border-radius: $borderRadius;
+    color: #fff;
+    cursor: pointer;
+    display: none;
+    font-size: 12px;
+    font-weight: bold;
+    left: 600px;
+    line-height: 1;
+    padding: 4px 9px;
+    position: fixed;
+    top: 4px;
+    z-index: $etherpadCloseBtnZ;
+}
+
 #alwaysOnTop .displayname {
     font-size: 0.875rem;
     position: inherit;

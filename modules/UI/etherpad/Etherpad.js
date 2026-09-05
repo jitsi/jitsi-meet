@@ -2,7 +2,7 @@
 
 import $ from 'jquery';
 
-import { setDocumentEditingState } from '../../../react/features/etherpad/actions';
+import { setDocumentEditingState, toggleDocument } from '../../../react/features/etherpad/actions';
 import { getSharedDocumentUrl } from '../../../react/features/etherpad/functions';
 import { getToolboxHeight } from '../../../react/features/toolbox/functions.web';
 import Filmstrip from '../videolayout/Filmstrip';
@@ -45,6 +45,15 @@ class Etherpad extends LargeContainer {
         this.container.appendChild(iframe);
 
         this.iframe = iframe;
+
+        const closeBtn = document.getElementById('etherpad-close-btn') || document.createElement('button');
+
+        closeBtn.id = 'etherpad-close-btn';
+        closeBtn.setAttribute('aria-label', 'Close shared document');
+        closeBtn.textContent = '✕';
+        closeBtn.addEventListener('click', () => APP.store.dispatch(toggleDocument()));
+        document.body.appendChild(closeBtn);
+        this.closeBtn = closeBtn;
     }
 
     /**
@@ -94,6 +103,7 @@ class Etherpad extends LargeContainer {
                 document.body.style.background = '#eeeeee';
                 $iframe.css({ visibility: 'visible' });
                 $container.css({ zIndex: 2 });
+                self.closeBtn.style.display = 'block';
 
                 APP.store.dispatch(setDocumentEditingState(true));
 
@@ -115,6 +125,7 @@ class Etherpad extends LargeContainer {
             $iframe.fadeOut(300, () => {
                 $iframe.css({ visibility: 'hidden' });
                 $container.css({ zIndex: 0 });
+                this.closeBtn.style.display = '';
 
                 APP.store.dispatch(setDocumentEditingState(false));
 
