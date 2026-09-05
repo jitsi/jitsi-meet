@@ -373,10 +373,15 @@ function occupant_joined(event)
         -- NOTE for some reason event.occupant.role is not reflecting the actual occupant role (when changed
         -- from allowners module) but iterating over room occupants returns the correct role
         for _, room_occupant in room:each_occupant() do
-            -- if it is a moderator, send the whitelist to every moderator
+            -- if it is a moderator, make sure it is whitelisted and send the whitelist to every moderator
             if room_occupant.nick == occupant.nick and room_occupant.role == 'moderator' then
+                local moderator_jid = internal_room_jid_match_rewrite(room_occupant.nick);
                 for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
-                    if room.av_moderation[mediaType] then
+                    local whitelist = room.av_moderation[mediaType];
+                    if whitelist then
+                        if not get_index_in_table(whitelist, moderator_jid) then
+                            whitelist:push(moderator_jid);
+                        end
                         notify_whitelist_change(nil, true, room, mediaType);
                     end
                 end
