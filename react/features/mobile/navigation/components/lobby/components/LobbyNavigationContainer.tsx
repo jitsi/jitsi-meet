@@ -1,6 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../../../app/types';
@@ -18,6 +19,7 @@ const LobbyStack = createStackNavigator();
 
 
 const LobbyNavigationContainer = () => {
+    const { t } = useTranslation();
     const { isLobbyChatActive }
         = useSelector((state: IReduxState) => state['features/chat']);
 
@@ -35,13 +37,19 @@ const LobbyNavigationContainer = () => {
                 <LobbyStack.Screen
                     component = { LobbyScreen }
                     name = { screen.lobby.main }
-                    options = { lobbyScreenOptions } />
+                    options = {{
+                        ...lobbyScreenOptions,
+                        title: t('lobby.title')
+                    }} />
                 {
                     isLobbyChatActive
                     && <LobbyStack.Screen
                         component = { LobbyChatScreen }
                         name = { screen.lobby.chat }
-                        options = { lobbyChatScreenOptions } />
+                        options = {{
+                            ...lobbyChatScreenOptions,
+                            title: t('lobby.chat')
+                        }} />
                 }
             </LobbyStack.Navigator>
         </NavigationContainer>
