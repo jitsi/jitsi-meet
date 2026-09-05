@@ -231,13 +231,27 @@
                     throw new Error('No authorization code received');
                 }
 
-                // Retrieve code_verifier and oauth_nonce from sessionStorage (set during login initiation)
-                const codeVerifier = sessionStorage.getItem('code_verifier');
+                // Retrieve code_verifier and oauth_nonce from sessionStorage (set during login initiation).
+                // In popup mode the values were stored in the opener's sessionStorage, not in this popup's.
+                let openerStorage = null;
+
+                try {
+                    if (window.opener && window.opener.sessionStorage) {
+                        openerStorage = window.opener.sessionStorage;
+                    }
+                } catch (e) {
+                    // Cross-origin opener – fall back to own sessionStorage.
+                }
+                const storage = openerStorage || sessionStorage;
+
+                const codeVerifier = storage.getItem('code_verifier');
+
                 if (!codeVerifier) {
                     throw new Error('No PKCE code verifier found in session');
                 }
 
-                const oauthNonce = sessionStorage.getItem('oauth_nonce');
+                const oauthNonce = storage.getItem('oauth_nonce');
+
                 if (!oauthNonce) {
                     throw new Error('No OAuth nonce found in session');
                 }
