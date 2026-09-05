@@ -7,7 +7,7 @@ import {
 } from '../../prejoin/actions.web';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { iAmVisitor } from '../../visitors/functions';
-import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED } from '../connection/actionTypes';
+import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection/actionTypes';
 import { hangup } from '../connection/actions.web';
 import { JitsiConferenceErrors, JitsiConnectionErrors, browser } from '../lib-jitsi-meet';
 import { gumPending, setInitialGUMPromise } from '../media/actions';
@@ -191,6 +191,19 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (initialGUMPromise) {
             store.dispatch(setInitialGUMPromise());
+        }
+
+        break;
+    }
+    case CONNECTION_FAILED: {
+        const { error } = action;
+        const { jwt } = getState()['features/base/jwt'];
+
+        // A JWT authentication failure is not recoverable, so leave the meeting
+        // and notify the user via a dialog (like when someone is kicked out),
+        // instead of leaving them stuck in the (never joined) conference.
+        if (error?.name === JitsiConnectionErrors.PASSWORD_REQUIRED && jwt && !error.recoverable) {
+            dispatch(hangup(true, i18next.t('dialog.tokenAuthFailedTitle'), true));
         }
 
         break;
