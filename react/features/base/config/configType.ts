@@ -319,12 +319,13 @@ export interface IConfig {
     disableAEC?: boolean;
     disableAGC?: boolean;
     disableAP?: boolean;
-
     /**
      * @deprecated Use `virtualBackground.disableAddingImages` instead.
      */
     disableAddingBackgroundImages?: boolean;
+
     disableAudioLevels?: boolean;
+    disableAutoResortParticipants?: boolean;
     disableBeforeUnloadHandlers?: boolean;
     disableCameraTintForeground?: boolean;
     disableChat?: boolean;
