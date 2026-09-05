@@ -144,6 +144,7 @@ export interface IJitsiConference {
     isLobbySupported: Function;
     isP2PActive: Function;
     isSIPCallingSupported: Function;
+    isShadowBanSupported: Function;
     join: Function;
     joinLobby: Function;
     kickParticipant: Function;
@@ -181,6 +182,7 @@ export interface IJitsiConference {
     sendTones: Function;
     sessionId: string;
     setAssumedBandwidthBps: (value: number) => void;
+    setChatShadowBan: Function;
     setDesktopSharingFrameRate: Function;
     setDisplayName: Function;
     setIsSilent: Function;

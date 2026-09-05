@@ -58,6 +58,7 @@ local function load_config()
         ['outbound-call'] = true;
         ['create-polls'] = true;
         ['send-groupchat'] = true;
+        ['shadow-ban'] = true;
         flip = true;
         ['live-translation'] = true;
         ['live-translation-subscribe'] = true;
