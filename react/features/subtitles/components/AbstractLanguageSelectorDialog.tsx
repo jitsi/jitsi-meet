@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState, IStore } from '../../app/types';
-import { isTranscribing } from '../../transcribing/functions';
+import { isRecorderTranscriptionsRunning } from '../../transcribing/functions';
 import { setRequestingSubtitles } from '../actions.any';
 import { getAvailableSubtitlesLanguages, isTranslationEnabled } from '../functions.any';
 
@@ -56,7 +56,20 @@ const AbstractLanguageSelectorDialog = (Component: ComponentType<IAbstractLangua
     const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
     const translationEnabled = useSelector(isTranslationEnabled);
     const asyncTranscription = Boolean(conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription);
-    const transcribing = useSelector(isTranscribing);
+    // isRecorderTranscriptionsRunning, not isTranscribing. isTranscribing is true in two cases: a live
+    // Jigasi transcriber is in the room, or jicofo set the `audio-recording-enabled` conference property.
+    //
+    // That property name is misleading. It reads as though it tracks recording, but jicofo sets it from
+    // one place only, setEnableTranscribing, which is driven by the room metadata
+    // (recording.isTranscribingEnabled && asyncTranscription). Starting a recording on its own never
+    // reaches it. The name is left over from the backend export being reused for recording, which also
+    // shows in jicofo's reference.conf, where the `transcription.url-template` example points at a
+    // /recorder/ path.
+    //
+    // So the property does imply the metadata flag, but the Jigasi case does not. The stricter selector
+    // keeps the explicit start dialog where the two differ, instead of letting a language pick start
+    // async transcription as a side effect of the metadata write in the subtitles middleware.
+    const transcribing = useSelector(isRecorderTranscriptionsRunning);
     const startWithRecordingDialog = asyncTranscription && !transcribing;
 
     const onLanguageSelected = useCallback((value: string) => {
