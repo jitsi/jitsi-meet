@@ -46,6 +46,56 @@ if f then
     f:close();
 end
 
+-- counts the tokens with a verified signature that flag their room claim as a
+-- Lua pattern
+local measure_regex_room_claim = module:measure('regex_room_claim', 'counter');
+
+--- Tells whether a token asks for its room claim to be used as a Lua pattern,
+-- which the context.room.regex field marks.
+-- @param room_context the context.room value from the token
+-- @return true when the room claim is a pattern
+local function is_regex_room_claim(room_context)
+    if type(room_context) ~= 'table' then
+        return false;
+    end
+
+    return room_context['regex'] == true or room_context['regex'] == 'true';
+end
+
+--- Counts the quantifiers ('*', '+', '-' and '?') in a Lua pattern.
+-- A quantifier is only special outside a character class, so the contents of
+-- a class ('[a-z]') are skipped, and so is the character after a '%' escape.
+-- @param pattern the Lua pattern to inspect
+-- @return the number of quantifiers in the pattern
+local function count_pattern_quantifiers(pattern)
+    local count = 0;
+    local index = 1;
+    local length = #pattern;
+    local in_class = false;
+
+    while index <= length do
+        local char = pattern:sub(index, index);
+
+        if char == '%' then
+            -- '%' escapes the next character, so skip both
+            index = index + 2;
+        else
+            if in_class then
+                if char == ']' then
+                    in_class = false;
+                end
+            elseif char == '[' then
+                in_class = true;
+            elseif char == '*' or char == '+' or char == '-' or char == '?' then
+                count = count + 1;
+            end
+            index = index + 1;
+        end
+    end
+
+    return count;
+end
+
 local Util = {}
 Util.__index = Util
 
@@ -102,6 +152,18 @@ function Util.new(module)
     -- whether domain name verification is enabled, by default it is enabled
     -- when disabled checking domain name and tenant if available will be skipped, we will check only room name.
     self.enableDomainVerification = module:get_option_boolean('enable_domain_verification', true);
+
+    --[[
+        A room claim that is flagged with context.room.regex is used as a Lua
+        pattern. Lua patterns backtrack, so the cost of a match grows as
+        (room name length) ^ (number of quantifiers). Both are limited to keep
+        the cost of one match bounded, because a match blocks Prosody.
+        Measured worst case with the defaults below is about 70ms; lowering
+        the quantifier limit to 2 brings that down to about 2ms.
+     --]]
+    self.regexEnabled = module:get_option_boolean('token_regex_enabled', true);
+    self.regexRoomMaxLength = module:get_option_number('token_regex_room_max_length', 128);
+    self.regexRoomMaxQuantifiers = module:get_option_number('token_regex_max_quantifiers', 3);
 
     if self.allowEmptyToken == true then
         module:log("warn", "WARNING - empty tokens allowed");
@@ -359,6 +421,14 @@ function Util:process_and_verify_token(session)
           end
           if claims["context"]["room"] ~= nil then
             session.jitsi_meet_context_room = claims["context"]["room"]
+
+            -- the signature is verified at this point, so report the tokens
+            -- that ask for their room claim to be used as a pattern
+            if is_regex_room_claim(claims["context"]["room"]) then
+                measure_regex_room_claim(1);
+                module:log('info', 'Room claim is a pattern. tenant:%s iss:%s room:%s',
+                    claims["context"]["tenant"], claims["iss"], claims["room"]);
+            end
           end
         elseif claims["user_id"] then
           session.jitsi_meet_context_user = {};
@@ -411,10 +481,17 @@ function Util:verify_room(session, room_address)
         return true;
     end
 
+    local auth_room_is_pattern = is_regex_room_claim(session.jitsi_meet_context_room);
+
     local auth_room = session.jitsi_meet_room;
     if auth_room then
         if type(auth_room) == 'string' then
-            auth_room = string.lower(auth_room);
+            -- Room names are lowercase. Lowercase a literal room claim so that
+            -- a token with uppercase letters still matches. Keep a pattern as
+            -- written: pattern classes are case-sensitive (%d vs %D).
+            if not auth_room_is_pattern then
+                auth_room = string.lower(auth_room);
+            end
         else
             module:log('warn', 'session.jitsi_meet_room not string: %s', inspect(auth_room));
         end
@@ -452,8 +529,27 @@ function Util:verify_room(session, room_address)
         end
     else
         -- no wildcard, so check room against authorized room from the token
-        if session.jitsi_meet_context_room and (session.jitsi_meet_context_room["regex"] == true or session.jitsi_meet_context_room["regex"] == "true") then
+        if auth_room_is_pattern then
+            if not self.regexEnabled then
+                module:log('warn', 'Room claim patterns are disabled, refusing the claim: %s', auth_room);
+                return false, 'invalid-regex', 'Room claim patterns are not enabled';
+            end
+
             local match_target = target_room ~= nil and target_room or room_node;
+
+            if #match_target > self.regexRoomMaxLength then
+                module:log('warn', 'Room name is longer than %s, not matching it against a pattern: %s',
+                    self.regexRoomMaxLength, match_target);
+                return false, 'invalid-regex', 'Room name is too long to match against the room claim';
+            end
+
+            local quantifiers = count_pattern_quantifiers(auth_room);
+            if quantifiers > self.regexRoomMaxQuantifiers then
+                module:log('warn', 'Room claim has %s quantifiers, more than the limit of %s: %s',
+                    quantifiers, self.regexRoomMaxQuantifiers, auth_room);
+                return false, 'invalid-regex', 'Room claim pattern is too complex';
+            end
+
             local ok, result = pcall(string.match, match_target, auth_room);
             if not ok then
                 return false, 'invalid-regex', 'Room claim is not a valid Lua pattern';
