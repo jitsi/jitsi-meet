@@ -469,6 +469,47 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a Rayo dial IQ to the given full JID, optionally carrying a
+         * <traceparent> extension (as jicofo does when tracing is enabled) and/or
+         * an X-Traceparent Rayo header (the form that survives jigasi's
+         * RayoIqProvider parsing). Fire-and-forget — mod_trace does not reply;
+         * assert on the recipient's own stanza queue (waitForIq) and/or the OTLP
+         * mock receiver.
+         *
+         * @param {string} to  Destination full JID.
+         * @param {object} [opts]
+         * @param {string} [opts.traceId]           32-hex-char trace id for a <traceparent> child.
+         *                                          Omit to send no <traceparent>.
+         * @param {string} [opts.parentId]          16-hex-char parent span id. Required when traceId is set.
+         * @param {string} [opts.xTraceparentValue] Raw value for an X-Traceparent header. Omit to send no header.
+         */
+        sendDialIq(to, { traceId, parentId, xTraceparentValue } = {}) {
+            const children = [];
+
+            if (traceId !== undefined) {
+                children.push(xml('traceparent', {
+                    // eslint-disable-next-line camelcase
+                    trace_id: traceId,
+                    // eslint-disable-next-line camelcase
+                    parent_id: parentId
+                }));
+            }
+
+            if (xTraceparentValue !== undefined) {
+                children.push(xml('header', { name: 'X-Traceparent',
+                    value: xTraceparentValue }));
+            }
+
+            return xmpp.send(
+                xml('iq', { type: 'set',
+                    to,
+                    id: `dial-${++_counter}` },
+                    xml('dial', { xmlns: 'urn:xmpp:rayo:1' }, ...children)
+                )
+            );
+        },
+
+        /**
          * Sends a disco#info IQ and resolves with the response stanza.
          * @param {string} targetJid
          */
