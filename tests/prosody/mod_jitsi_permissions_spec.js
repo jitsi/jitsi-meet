@@ -610,6 +610,46 @@ describe('mod_jitsi_permissions', () => {
             assert.strictEqual(restored.recording, false);
         });
 
+        it('does not touch the features of a session that is not in this room', async () => {
+            const roomA = nextRoom();
+            const roomB = nextRoom();
+
+            clients.push(await joinWithFocus(roomA));
+            clients.push(await joinWithFocus(roomB));
+
+            const granter = await joinAsGranter(connect, roomA);
+
+            const token = mintAsapToken({
+                room: roomB.split('@')[0],
+                context: {
+                    user: { id: 'user-other-room' },
+                    features: { recording: false }
+                }
+            });
+            const other = await connect({ params: { token } });
+
+            await other.joinRoom(roomB);
+
+            const bare = other.jid.split('/')[0];
+
+            // The granter is only a moderator of room A, and the recipient is only
+            // ever an occupant of room B. An affiliation change on room A must not
+            // reach a session that shares the same bare JID in an unrelated room.
+            const reply = await granter.sendMucAdmin(roomA, { jid: bare,
+                affiliation: 'owner' });
+
+            assert.strictEqual(reply.attrs.type, 'result');
+
+            const features = await getSessionFeatures(other.jid);
+
+            assert.ok(features !== null, 'the token features must be unchanged');
+            assert.strictEqual(features.recording, false);
+            assert.strictEqual(
+                await jibriStartErrorCondition(other, roomB),
+                'forbidden',
+                'a cross-room grant must not authorize this session in its own room');
+        });
+
     });
 
     // ── session features via HTTP ─────────────────────────────────────────────
