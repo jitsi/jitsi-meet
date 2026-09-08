@@ -39,7 +39,11 @@ const chromeArgs = [
     // Avoids - "You are checking for animations on an inactive tab, animations do not run for inactive tabs"
     // when executing waitForStable()
     '--disable-renderer-backgrounding',
-    '--use-file-for-fake-audio-capture=tests/resources/fakeAudioStream.wav'
+
+    // Absolute (__dirname-based, not CWD-relative): this is passed to Chrome, which resolves it
+    // against wherever the launching process's CWD happens to be - the repo root when running
+    // `npm test` from there, but tests/ itself when running via tests/package.json's own scripts.
+    `--use-file-for-fake-audio-capture=${path.join(__dirname, 'resources', 'fakeAudioStream.wav')}`
 ];
 
 if (process.env.RESOLVER_RULES) {
@@ -381,7 +385,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }
 
         const testFilePath = files[0].replace(/^file:\/\//, '');
-        const testName = path.relative('tests/specs', testFilePath)
+        // __dirname-based (not CWD-relative) for the same reason as the chromeArgs entry above.
+        const testName = path.relative(path.join(__dirname, 'specs'), testFilePath)
             .replace(/.spec.ts$/, '')
             .replace(/\//g, '-');
         const testProperties = await getTestProperties(testFilePath);
@@ -424,7 +429,10 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 return;
             }
 
-            const rpath = await bInstance.uploadFile('tests/resources/iframeAPITest.html');
+            // __dirname-based (not CWD-relative) for the same reason as the chromeArgs entry above -
+            // this crashed the worker outright (ENOENT) once tests started running from tests/
+            // itself instead of the repo root.
+            const rpath = await bInstance.uploadFile(path.join(__dirname, 'resources', 'iframeAPITest.html'));
 
             // @ts-ignore
             bInstance.iframePageBase = `file://${path.dirname(rpath)}`;
