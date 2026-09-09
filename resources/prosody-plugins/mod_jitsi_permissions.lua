@@ -28,6 +28,7 @@ local is_healthcheck_room = util.is_healthcheck_room;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local is_focus = util.is_focus;
 local presence_check_status = util.presence_check_status;
+local get_occupant_by_real_jid = util.get_occupant_by_real_jid;
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
@@ -49,6 +50,19 @@ end
 
 local sessions = prosody.full_sessions;
 local default_permissions;
+
+-- Returns a copy of a feature table. Sessions must not share one table, because
+-- a change to the features of one session must not change the features of
+-- another session.
+local function copy_features(features)
+    local res = {};
+
+    for k, v in pairs(features) do
+        res[k] = v;
+    end
+
+    return res;
+end
 
 local function load_config()
     default_permissions = module:get_option('jitsi_default_permissions', {
@@ -75,39 +89,59 @@ function process_set_affiliation(event)
         return;
     end
 
-    local occupant;
-    for _, o in room:each_occupant() do
-        if o.bare_jid == jid then
-            occupant = o;
-        end
-    end
-
-    if not occupant then
+    -- An affiliation belongs to a bare JID, and a bare JID can have more than one
+    -- live session (multiple devices/tabs). Resolve them all, but only touch a
+    -- session that is actually an occupant of this room or one of its own breakout
+    -- rooms: an affiliation set on this room must not reach a session that happens
+    -- to share the same bare JID while sitting in an unrelated conference.
+    local bare_session = prosody.bare_sessions[jid];
+    if not bare_session then
         return;
     end
 
-    local occupant_session = sessions[occupant.jid];
-    if not occupant_session then
-        return;
-    end
+    -- Any transition into owner is a grant. Any transition out of owner is a revoke.
+    -- This also covers the admin and outcast affiliations, which the client does not
+    -- use but which a raw stanza can set.
+    local granting = affiliation == 'owner' and previous_affiliation ~= 'owner';
+    local revoking = previous_affiliation == 'owner' and affiliation ~= 'owner';
 
-    if (previous_affiliation == 'none' or previous_affiliation == 'member') and affiliation == 'owner' then
-        occupant_session.jitsi_meet_context_features = actor_session.jitsi_meet_context_features;
-        if actor_session.jitsi_meet_context_user then
-            occupant_session.granted_jitsi_meet_context_user_id = actor_session.jitsi_meet_context_user['id']
-                or actor_session.granted_jitsi_meet_context_user_id;
-        end
-        occupant_session.granted_jitsi_meet_context_group_id = actor_session.jitsi_meet_context_group
-            or actor_session.granted_jitsi_meet_context_group_id;
-        -- even if token and features are set we may want to re-send permissions
-        occupant_session.force_permissions_update = true;
-    elseif previous_affiliation == 'owner' and ( affiliation == 'member' or affiliation == 'none' ) then
-        occupant_session.granted_jitsi_meet_context_user_id = nil;
-        occupant_session.granted_jitsi_meet_context_group_id = nil;
+    for _, occupant_session in pairs(bare_session.sessions) do
+        if get_occupant_by_real_jid(room, occupant_session.full_jid) then
+            if granting then
+                -- Keep the features the session had before the grant, so that a later
+                -- revoke can put them back. The value false marks a session that had no
+                -- features, which is not the same as a session that had an empty table.
+                if occupant_session.pre_grant_jitsi_meet_context_features == nil then
+                    occupant_session.pre_grant_jitsi_meet_context_features
+                        = occupant_session.jitsi_meet_context_features or false;
+                end
 
-        -- on revoke
-        if not occupant_session.auth_token then
-            occupant_session.jitsi_meet_context_features = nil;
+                occupant_session.jitsi_meet_context_features
+                    = copy_features(actor_session.jitsi_meet_context_features);
+                if actor_session.jitsi_meet_context_user then
+                    occupant_session.granted_jitsi_meet_context_user_id = actor_session.jitsi_meet_context_user['id']
+                        or actor_session.granted_jitsi_meet_context_user_id;
+                end
+                occupant_session.granted_jitsi_meet_context_group_id = actor_session.jitsi_meet_context_group
+                    or actor_session.granted_jitsi_meet_context_group_id;
+                -- even if token and features are set we may want to re-send permissions
+                occupant_session.force_permissions_update = true;
+            elseif revoking then
+                occupant_session.granted_jitsi_meet_context_user_id = nil;
+                occupant_session.granted_jitsi_meet_context_group_id = nil;
+
+                local pre_grant = occupant_session.pre_grant_jitsi_meet_context_features;
+
+                if pre_grant ~= nil then
+                    -- The session received a grant before. Put back the features it had
+                    -- then. A token session gets its token features again, and any other
+                    -- session gets no features and falls back to a check of its current role.
+                    occupant_session.jitsi_meet_context_features = pre_grant or nil;
+                    occupant_session.pre_grant_jitsi_meet_context_features = nil;
+                elseif not occupant_session.auth_token then
+                    occupant_session.jitsi_meet_context_features = nil;
+                end
+            end
         end
     end
 end
@@ -177,7 +211,7 @@ function filter_stanza(stanza, session)
     session.force_permissions_update = false;
 
     if not session.jitsi_meet_context_features then
-        session.jitsi_meet_context_features = default_permissions;
+        session.jitsi_meet_context_features = copy_features(default_permissions);
     end
 
     room.send_default_permissions_to[bare_to] = nil;
