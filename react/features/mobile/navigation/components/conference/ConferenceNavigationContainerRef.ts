@@ -1,4 +1,4 @@
-import { NavigationContainerRef } from '@react-navigation/native';
+import { NavigationContainerRef, StackActions } from '@react-navigation/native';
 import React from 'react';
 
 export const conferenceNavigationRef = React.createRef<NavigationContainerRef<any>>();
@@ -21,6 +21,16 @@ export function navigate(name: string, params?: Object) {
  */
 export function goBack() {
     return conferenceNavigationRef.current?.goBack();
+}
+
+/**
+ * User defined navigation action included inside the reference to the container.
+ *
+ * @param {string} name - Destination name of the route to pop back to.
+ * @returns {Function}
+ */
+export function popTo(name: string) {
+    return conferenceNavigationRef.current?.dispatch(StackActions.popTo(name));
 }
 
 /**

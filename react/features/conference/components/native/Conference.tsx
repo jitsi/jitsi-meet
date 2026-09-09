@@ -243,10 +243,11 @@ class Conference extends AbstractConference<IProps, State> {
         }
 
         if (prevProps._showLobby && !_showLobby) {
+            // popTo, because navigate no longer pops back to an existing screen.
             if (_lowBandwidthModeEnabled && _startCarMode) {
-                navigation.navigate(screen.conference.carmode);
+                navigation.popTo(screen.conference.carmode);
             } else {
-                navigation.navigate(screen.conference.main);
+                navigation.popTo(screen.conference.main);
             }
         }
     }
