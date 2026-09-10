@@ -59,6 +59,7 @@ import {
     PARTICIPANT_MUTED_US,
     PARTICIPANT_UPDATED,
     RAISE_HAND_UPDATED,
+    SET_CHAT_SHADOW_BAN,
     SET_LOCAL_PARTICIPANT_RECORDING_STATUS
 } from './actionTypes';
 import {
@@ -281,6 +282,13 @@ MiddlewareRegistry.register(store => next => action => {
         const { conference } = store.getState()['features/base/conference'];
 
         conference?.muteParticipant(action.id, action.mediaType);
+        break;
+    }
+
+    case SET_CHAT_SHADOW_BAN: {
+        const { conference } = store.getState()['features/base/conference'];
+
+        conference?.setChatShadowBan(action.id, action.enabled);
         break;
     }
 

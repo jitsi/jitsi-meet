@@ -46,6 +46,7 @@ import MuteVideoButton from './MuteVideoButton';
 import PrivateMessageMenuButton from './PrivateMessageMenuButton';
 import RemoteControlButton, { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
 import SendToRoomButton from './SendToRoomButton';
+import ShadowBanButton from './ShadowBanButton';
 import TogglePinToStageButton from './TogglePinToStageButton';
 import TranslateParticipantButton from './TranslateParticipantButton';
 import VerifyParticipantButton from './VerifyParticipantButton';
@@ -156,6 +157,8 @@ const ParticipantContextMenu = ({
         : participant?.id ? participantsVolume[participant?.id] : undefined) ?? 1;
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
     const isModerationSupported = useSelector((state: IReduxState) => isAvModerationSupported()(state));
+    const isShadowBanSupported = useSelector((state: IReduxState) =>
+        Boolean(state['features/base/conference'].conference?.isShadowBanSupported?.()));
     const raisedHands = hasRaisedHand(participant);
     const stageFilmstrip = useSelector(isStageFilmstripAvailable);
     const shouldDisplayVerification = useSelector((state: IReduxState) => displayVerification(state, participant?.id));
@@ -287,6 +290,10 @@ const ParticipantContextMenu = ({
 
         if (!disableKick) {
             buttons2.push(<KickButton { ...getButtonProps(BUTTONS.KICK) } />);
+        }
+
+        if (isShadowBanSupported) {
+            buttons2.push(<ShadowBanButton { ...getButtonProps(BUTTONS.SHADOW_BAN) } />);
         }
 
         if (shouldDisplayVerification) {

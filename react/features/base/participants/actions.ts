@@ -25,6 +25,7 @@ import {
     RAISE_HAND_CLEAR,
     RAISE_HAND_UPDATED,
     SCREENSHARE_PARTICIPANT_NAME_CHANGED,
+    SET_CHAT_SHADOW_BAN,
     SET_LOADABLE_AVATAR_URL,
     SET_LOCAL_PARTICIPANT_RECORDING_STATUS
 } from './actionTypes';
@@ -286,6 +287,25 @@ export function participantSourcesUpdated(jitsiParticipant: IJitsiParticipant) {
                 sources
             }
         });
+    };
+}
+
+/**
+ * Creates an action to enable or disable chat shadow-banning for a participant.
+ *
+ * @param {string} id - Participant's ID.
+ * @param {boolean} enabled - Whether chat shadow-banning should be enabled.
+ * @returns {{
+ *     type: SET_CHAT_SHADOW_BAN,
+ *     id: string,
+ *     enabled: boolean
+ * }}
+ */
+export function setChatShadowBan(id: string, enabled: boolean) {
+    return {
+        type: SET_CHAT_SHADOW_BAN,
+        id,
+        enabled
     };
 }
 
