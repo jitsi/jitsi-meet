@@ -89,6 +89,12 @@ var config = {
         // Enables use of getDisplayMedia in electron
         // electronUseGetDisplayMedia: false,
 
+        // Removes AV1 from the codec list on Firefox so that it is not advertised and other endpoints do not send
+        // it. Firefox stalls on AV1 streams that carry spatial layers, see
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=2071030. Note: enableAV1ForFF only changes what Firefox
+        // encodes, this also stops it being sent to Firefox.
+        // disableAV1DecodeForFF: false,
+
         // Enables AV1 codec for FF. Note: By default it is disabled.
         // enableAV1ForFF: false,
 
