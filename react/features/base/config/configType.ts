@@ -729,6 +729,7 @@ export interface IConfig {
     testing?: {
         assumeBandwidth?: boolean;
         debugAudioLevels?: boolean;
+        disableAV1DecodeForFF?: boolean;
         dumpTranscript?: boolean;
         failICE?: boolean;
         noAutoPlayVideo?: boolean;
