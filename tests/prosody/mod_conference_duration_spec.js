@@ -6,6 +6,19 @@ import { discoField } from './helpers/xmpp_utils.js';
 
 const CONFERENCE = 'conference.localhost';
 
+// created_timestamp is read from the clock of the Prosody container, and it is
+// compared here against the clock of the host. The two clocks differ, because
+// the clock of the container VM drifts. mod_conference_duration also truncates
+// the value to a whole second, which hides part of that difference, but not all
+// of it. A join early in a wall clock second then gives a value that is ahead of
+// the host clock.
+//
+// These margins allow for the difference. They stay far below what the checks
+// are for, which is a unit error: a value in seconds or in microseconds is out
+// by a factor of 1000, which is decades.
+const AHEAD_MS = 600_000;
+const BEHIND_MS = 300_000;
+
 let _roomCounter = 0;
 const room = () => `conf-duration-${++_roomCounter}@${CONFERENCE}`;
 
@@ -53,8 +66,8 @@ describe('mod_conference_duration', () => {
         const now = Date.now();
 
         assert.ok(tsNum > 0, 'timestamp must be positive');
-        assert.ok(tsNum <= now, 'timestamp must not be in the future');
-        assert.ok(tsNum > now - 30_000, 'timestamp must be recent (within last 30s)');
+        assert.ok(tsNum <= now + AHEAD_MS, 'timestamp must not be far in the future');
+        assert.ok(tsNum > now - BEHIND_MS, 'timestamp must be recent');
     });
 
     it('created_timestamp does not change when further occupants join', async () => {
