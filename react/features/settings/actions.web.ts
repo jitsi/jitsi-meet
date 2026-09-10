@@ -19,7 +19,11 @@ import { IAudioSettings } from '../base/settings/reducer';
 import { getLocalVideoTrack } from '../base/tracks/functions.web';
 import { appendURLHashParam } from '../base/util/uri';
 import { setFollowMe, setFollowMeRecorder } from '../follow-me/actions';
-import { disableKeyboardShortcuts, enableKeyboardShortcuts } from '../keyboard-shortcuts/actions';
+import {
+    disableKeyboardShortcuts,
+    enableKeyboardShortcuts,
+    setCtrlAltReactionShortcutsEnabled
+} from '../keyboard-shortcuts/actions';
 import { toggleBackgroundEffect } from '../virtual-background/actions';
 import virtualBackgroundLogger from '../virtual-background/logger';
 
@@ -328,6 +332,11 @@ export function submitShortcutsTab(newState: any) {
             } else {
                 dispatch(disableKeyboardShortcuts());
             }
+        }
+
+        if (currentState.showCtrlAltReactionShortcuts
+                && newState.ctrlAltReactionShortcutsEnabled !== currentState.ctrlAltReactionShortcutsEnabled) {
+            dispatch(setCtrlAltReactionShortcutsEnabled(newState.ctrlAltReactionShortcutsEnabled));
         }
     };
 }

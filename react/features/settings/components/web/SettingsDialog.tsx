@@ -306,6 +306,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
                 return {
                     ...newProps,
+                    ctrlAltReactionShortcutsEnabled: tabState?.ctrlAltReactionShortcutsEnabled,
                     keyboardShortcutsEnabled: tabState?.keyboardShortcutsEnabled
                 };
             },

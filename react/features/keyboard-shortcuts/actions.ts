@@ -13,6 +13,7 @@ import {
     DISABLE_KEYBOARD_SHORTCUTS,
     ENABLE_KEYBOARD_SHORTCUTS,
     REGISTER_KEYBOARD_SHORTCUT,
+    SET_CTRL_ALT_REACTION_SHORTCUTS_ENABLED,
     UNREGISTER_KEYBOARD_SHORTCUT
 } from './actionTypes';
 import { areKeyboardShortcutsEnabled, getKeyboardShortcuts } from './functions';
@@ -38,13 +39,28 @@ export const registerShortcut = (shortcut: IKeyboardShortcut): AnyAction => {
 *
 * @param {string} character - The character of the shortcut to unregister.
 * @param {boolean} altKey - Whether the shortcut used altKey.
+* @param {boolean} ctrlKey - Whether the shortcut used ctrlKey.
 * @returns {AnyAction}
 */
-export const unregisterShortcut = (character: string, altKey = false): AnyAction => {
+export const unregisterShortcut = (character: string, altKey = false, ctrlKey = false): AnyAction => {
     return {
         alt: altKey,
+        ctrl: ctrlKey,
         type: UNREGISTER_KEYBOARD_SHORTCUT,
         character
+    };
+};
+
+/**
+ * Sets whether Ctrl+Alt aliases for reaction shortcuts are enabled.
+ *
+ * @param {boolean} enabled - Whether the aliases should be enabled.
+ * @returns {AnyAction}
+ */
+export const setCtrlAltReactionShortcutsEnabled = (enabled: boolean): AnyAction => {
+    return {
+        type: SET_CTRL_ALT_REACTION_SHORTCUTS_ENABLED,
+        enabled
     };
 };
 
