@@ -111,6 +111,25 @@ VirtualHost "hs256.localhost"
 -- Second VirtualHost whose domain is listed in muc_access_whitelist on the
 -- MUC component below. Clients connecting here get JIDs like
 -- <random>@whitelist.localhost and are treated as whitelisted.
+-- VirtualHost with room-claim patterns turned off (token_regex_enabled), used
+-- to test that a token flagged with context.room.regex is refused rather than
+-- matched. mod_token_verification reads token options from the PARENT host of
+-- the MUC component, so the option must live here and not on the component.
+-- muc_mapper_domain_base is set so that verify_room builds the MUC domain of
+-- the paired component below, and not the global conference.localhost.
+-- The host deliberately sits outside .localhost: mod_muc_domain_mapper is
+-- enabled for every host and would read "conference.noregex.localhost" as the
+-- multidomain form of "[noregex]room@conference.localhost", moving the room
+-- off this component entirely.
+VirtualHost "noregex.test"
+    authentication = "token"
+    app_id = "jitsi"
+    asap_key_server = "http://localhost:5280/test-observer/asap-keys"
+    signature_algorithm = "RS256"
+    allow_empty_token = true
+    token_regex_enabled = false
+    muc_mapper_domain_base = "noregex.test"
+
 -- VirtualHost used by mod_auth_jitsi-anonymous tests.
 VirtualHost "jitsi-anonymous.localhost"
     authentication = "jitsi-anonymous"
