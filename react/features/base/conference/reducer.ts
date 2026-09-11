@@ -159,6 +159,7 @@ export interface IJitsiConference {
     off: Function;
     on: Function;
     options: any;
+    removeCommand: Function;
     removeTrack: Function;
     replaceTrack: Function;
     // Keep in sync with lib-jitsi-meet's IceRestartReason (service/RTC/IceRestartReason.ts).

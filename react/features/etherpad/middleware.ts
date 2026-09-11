@@ -1,5 +1,6 @@
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
+import { getLocalParticipant } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { sanitizeUrl } from '../base/util/uri';
@@ -24,7 +25,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const { conference } = action;
 
         conference.addCommandListener(ETHERPAD_COMMAND,
-            ({ value }: { value: string; }) => {
+            ({ value, attributes }: { value: string; attributes?: Record<string, string> }, id: string) => {
                 if (!value) {
                     return;
                 }
@@ -67,12 +68,39 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 if (typeof APP !== 'undefined') {
                     logger.log('Etherpad is enabled');
                     APP.UI.initEtherpad();
+
+                    // Auto-open for all remote participants when someone explicitly opens it
+                    if (attributes?.open === 'true') {
+                        const localParticipant = getLocalParticipant(getState());
+
+                        if (localParticipant?.id !== id) {
+                            const etherpadManager = APP.UI.getSharedDocumentManager();
+
+                            if (etherpadManager && !etherpadManager.isVisible()) {
+                                etherpadManager.toggleEtherpad();
+                            }
+                        }
+                    }
                 }
             }
         );
         break;
     }
     case TOGGLE_DOCUMENT_EDITING: {
+        const state = getState();
+        const { editing, documentUrl } = state['features/etherpad'];
+
+        // When opening, broadcast to all participants so they also open
+        if (!editing && documentUrl) {
+            const conference = getCurrentConference(state);
+
+            conference?.removeCommand(ETHERPAD_COMMAND);
+            conference?.sendCommand(ETHERPAD_COMMAND, {
+                value: documentUrl,
+                attributes: { open: 'true' }
+            });
+        }
+
         if (typeof APP !== 'undefined') {
             APP.UI.onEtherpadClicked();
         }
