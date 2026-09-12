@@ -147,6 +147,10 @@ const AudioSettingsContent = ({
         };
     }));
     const microphoneDevicesRef = useRef(microphoneDevices);
+    const audioTracksRef = useRef(audioTracks);
+
+    audioTracksRef.current = audioTracks;
+
     const { t } = useTranslation();
 
     /**
@@ -268,7 +272,7 @@ const AudioSettingsContent = ({
 
         return () => {
             _componentWasUnmounted.current = true;
-            _disposeTracks(audioTracks);
+            _disposeTracks(audioTracksRef.current);
         };
     }, []);
 
