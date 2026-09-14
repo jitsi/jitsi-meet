@@ -41,6 +41,18 @@ export const P5 = 'p5';
 export const P6 = 'p6';
 
 /**
+ * How long to wait for a script to return a result, mirroring `connectionRetryTimeout` in the wdio configs.
+ * That setting covers the classic HTTP commands, but a WebDriver BiDi script call goes over the session's
+ * websocket, where a call aimed at a browsing context that has gone away simply never gets a response. That
+ * is worse than slow: wdio's waitUntil arms its own timeout only once a condition has been evaluated, so a
+ * first evaluation that never settles hangs the wait with no error at all, and the test spends its whole
+ * mocha budget before failing with an uninformative "Timeout of 180000ms exceeded". Bounding the call keeps
+ * the failure attributable to the script that got stuck. See also switchToIFrame(), which is where such a
+ * context has been observed being pinned.
+ */
+const EXECUTE_TIMEOUT = 30_000;
+
+/**
  * Participant.
  */
 export class Participant {
@@ -143,12 +155,30 @@ export class Participant {
     async execute<ReturnValue, InnerArguments extends any[]>(
             script: string | ((...innerArgs: InnerArguments) => ReturnValue),
             ...args: InnerArguments): Promise<ReturnValue> {
+        let timer: ReturnType<typeof setTimeout> | undefined;
+
+        // @ts-ignore
+        const result = this.driver.execute(script, ...args) as Promise<ReturnValue>;
+
+        // The timeout below can win the race, and this promise then settles with nobody waiting on it.
+        // An unhandled rejection would take down the whole worker, so keep it handled.
+        result.catch(() => undefined);
+
         try {
-            // @ts-ignore
-            return await this.driver.execute(script, ...args);
+            return await Promise.race([
+                result,
+                new Promise<ReturnValue>((_, reject) => {
+                    timer = setTimeout(
+                        () => reject(new Error(
+                            `Timeout of ${EXECUTE_TIMEOUT}ms executing a script for ${this._name}.`)),
+                        EXECUTE_TIMEOUT);
+                })
+            ]);
         } catch (error) {
             console.error('An error occurred while trying to execute a script: ', error);
             throw error;
+        } finally {
+            clearTimeout(timer);
         }
     }
 
@@ -275,31 +305,41 @@ export class Participant {
             await this.switchToIFrame();
         }
 
-        if (!options.skipPrejoinButtonClick
-            // @ts-ignore
-            && !Boolean(await this.execute(() => config.prejoinConfig?.enabled === false))) {
+        if (!options.skipPrejoinButtonClick) {
             // The prejoin Join button can be in the DOM before conference.init has run and React click
             // handlers are mounted (e.g. when driver.url() returns before the page fully loads on a slow
             // remote grid, or when the iFrame API wrapper fires onload before the embedded app inits).
-            // APP.store is created during conference.init, so gate the click on it to avoid the race.
+            // APP.store is created during conference.init, so gate the click on it to avoid the race. It
+            // also has to come before the `config` probe below, which reads a global the app script
+            // defines. Failed evaluations are retried rather than propagated: this is the first script run
+            // against a freshly loaded page (or, with the iFrame API, a frame just switched into).
             await this.driver.waitUntil(
-                // @ts-ignore
-                () => this.execute(() => typeof APP !== 'undefined' && Boolean(APP.store)),
+                async () => {
+                    try {
+                        // @ts-ignore
+                        return await this.execute(() => typeof APP !== 'undefined' && Boolean(APP.store));
+                    } catch (e) {
+                        return false;
+                    }
+                },
                 {
                     timeout: 30_000,
                     timeoutMsg: `Timeout waiting for Jitsi app to initialize for ${this._name}.`
                 }
             );
 
-            // if prejoin is enabled we want to click the join button
-            const p1PreJoinScreen = this.getPreJoinScreen();
+            // @ts-ignore
+            if (!await this.execute(() => config.prejoinConfig?.enabled === false)) {
+                // if prejoin is enabled we want to click the join button
+                const p1PreJoinScreen = this.getPreJoinScreen();
 
-            await p1PreJoinScreen.waitForLoading();
+                await p1PreJoinScreen.waitForLoading();
 
-            const joinButton = p1PreJoinScreen.getJoinButton();
+                const joinButton = p1PreJoinScreen.getJoinButton();
 
-            await joinButton.waitForDisplayed();
-            await joinButton.click();
+                await joinButton.waitForDisplayed();
+                await joinButton.click();
+            }
         }
 
         if (!options.skipWaitToJoin) {
@@ -766,6 +806,24 @@ export class Participant {
         // The External API inserts the iframe asynchronously after the wrapper page loads, so wait for it to exist
         // before switching rather than failing immediately with "iframe doesn't exist" on slower backends.
         await iframe.waitForExist({ timeout: 10_000 });
+
+        // Existing is not enough to switch into it. The iframe is created with its src already set, so the element
+        // is there while its document is still the initial about:blank, and switchFrame() pins whichever browsing
+        // context it finds at that moment - it resolves iframe.contentWindow to a context id and aims every later
+        // BiDi command at that id. The app document then replaces about:blank in a context of its own (the wrapper
+        // page is served from file://, so the app is always cross origin), and a switch that lands in the window in
+        // between leaves every following script call aimed at a context that no longer exists: no response, no
+        // error, and waitUntil cannot time out while its first evaluation is still pending. Waiting for the
+        // wrapper's jitsiAPI.test, which it sets from the External API's onload, puts the switch after the app
+        // document has loaded.
+        await this.driver.waitUntil(
+            // @ts-ignore
+            () => this.execute(() => Boolean(window.jitsiAPI?.test)),
+            {
+                timeout: 30_000,
+                timeoutMsg: `Timeout waiting for the iframe API to load for ${this._name}.`
+            }
+        );
 
         await this.driver.switchFrame(iframe);
         this._inMainFrame = false;
