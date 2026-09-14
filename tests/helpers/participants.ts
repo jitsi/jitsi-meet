@@ -287,10 +287,31 @@ export async function checkSubject(participant: Participant, subject: string) {
  * Expects there was already a video by this participant and screen sharing will be the second video `-v1`.
  */
 export async function checkForScreensharingTile(sharer: Participant, observer: Participant, reverse = false) {
-    await observer.driver.$(`//span[@id='participant_${await sharer.getEndpointId()}-v1']`).waitForDisplayed({
-        timeout: 3_000,
-        reverse
-    });
+    const selector = `//span[@id='participant_${await sharer.getEndpointId()}-v1']`;
+
+    // Re-runs the selector on every poll, unlike waitForDisplayed(), which keeps checking the element it
+    // matched first. Thumbnails get replaced by React while the wait is running, and losing the matched one
+    // is not something wdio recovers from here: over WebDriver BiDi the node handle is passed to the
+    // visibility check as a script argument, so Chrome rejects it with `invalid argument - Invalid input in
+    // "arguments"/0`, which wdio's refetch-on-stale handling does not recognize as staleness. Every
+    // remaining poll then reuses the dead handle, failing the wait while a tile is on screen.
+    await observer.driver.waitUntil(
+        async () => {
+            try {
+                const displayed = await observer.driver.$(selector).isDisplayed();
+
+                return displayed !== reverse;
+            } catch (e) {
+                // Look the element up again on the next poll.
+                return false;
+            }
+        },
+        {
+            timeout: 3_000,
+            timeoutMsg: `Screensharing tile of ${sharer.name} is ${
+                reverse ? 'still displayed' : 'not displayed'} on ${observer.name}`
+        }
+    );
 }
 
 /**
