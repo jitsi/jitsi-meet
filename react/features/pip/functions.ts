@@ -16,7 +16,8 @@ import logger from './logger';
 import {
     ExtendedMediaSessionAction,
     ExtendedMediaSessionActionHandler,
-    IMediaSessionState
+    IMediaSessionState,
+    PiPMode
 } from './types';
 
 /**
@@ -673,6 +674,61 @@ function createPiPContainer(pipWindow: Window) {
  */
 export function isDocumentPiPSupported(): boolean {
     return !browser.isElectron() && 'documentPictureInPicture' in window;
+}
+
+/**
+ * Returns whether the custom Electron PiP window implementation should be
+ * used: Electron with `pip.mode` unset (window mode is the Electron default)
+ * or explicitly set to 'customWindow', and no runtime detection that the embedding
+ * app cannot create the window.
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {boolean} Whether the Electron PiP window mode is selected.
+ */
+export function isElectronPiPWindowMode(state: IReduxState): boolean {
+    if (!browser.isElectron()) {
+        return false;
+    }
+
+    if (state['features/pip']?.windowModeUnsupported) {
+        return false;
+    }
+
+    return (state['features/base/config'].pip?.mode ?? 'customWindow') === 'customWindow';
+}
+
+/**
+ * Returns whether the browser's Document Picture-in-Picture should be used:
+ * the API must be available (browsers only) and `config.pip.mode` must not
+ * request the video-element PiP instead. 'customWindow' is not available in
+ * browsers, so it resolves to the browser default (Document PiP).
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {boolean} Whether Document PiP is the selected implementation.
+ */
+export function shouldUseDocumentPiP(state: IReduxState): boolean {
+    if (!isDocumentPiPSupported()) {
+        return false;
+    }
+
+    return state['features/base/config'].pip?.mode !== 'videoPiP';
+}
+
+/**
+ * Returns the Picture-in-Picture implementation that is (or would be) used in
+ * the current environment, honoring `config.pip.mode` and the platform's
+ * capabilities; reported to embedding apps with the pipEntered and pipLeft
+ * External API events.
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {PiPMode} The active PiP mode.
+ */
+export function getPiPMode(state: IReduxState): PiPMode {
+    if (isElectronPiPWindowMode(state)) {
+        return 'customWindow';
+    }
+
+    return shouldUseDocumentPiP(state) ? 'documentPiP' : 'videoPiP';
 }
 
 // Re-export from shared file for external use.
