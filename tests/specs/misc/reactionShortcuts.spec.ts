@@ -120,7 +120,7 @@ describe('Reaction keyboard shortcut aliases', () => {
                 shortcuts.includes(`:${character}`) && !shortcuts.includes(`-:${character}`));
         });
         await p1.driver.waitUntil(async () =>
-            await getPersistedCtrlAltReactionShortcutsPreference() === false);
+            await getPersistedCtrlAltReactionShortcutsPreference() === false, { timeout: 3000 });
 
         expect(await sendCtrlAltT()).toEqual([]);
 
@@ -138,6 +138,6 @@ describe('Reaction keyboard shortcut aliases', () => {
             return REACTION_SHORTCUT_CHARACTERS.every(character => shortcuts.includes(`-:${character}`));
         });
         await p1.driver.waitUntil(async () =>
-            await getPersistedCtrlAltReactionShortcutsPreference() === true);
+            await getPersistedCtrlAltReactionShortcutsPreference() === true, { timeout: 3000 });
     });
 });
