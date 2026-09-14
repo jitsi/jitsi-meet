@@ -1,7 +1,12 @@
 import { AnyAction } from 'redux';
 
 import { IReduxState, IStore } from '../app/types';
-import { CONFERENCE_FAILED, CONFERENCE_LEFT, CONFERENCE_WILL_LEAVE } from '../base/conference/actionTypes';
+import {
+    CONFERENCE_FAILED,
+    CONFERENCE_JOINED,
+    CONFERENCE_LEFT,
+    CONFERENCE_WILL_LEAVE
+} from '../base/conference/actionTypes';
 import { browser } from '../base/lib-jitsi-meet';
 import MediaCastSender from '../base/media-cast/MediaCastSender';
 import type { MediaCastSignal } from '../base/media-cast/types.web';
@@ -15,7 +20,7 @@ import {
     HOST_DOCUMENT_PIP_OPENED,
     HOST_DOCUMENT_PIP_SIGNAL_RECEIVED
 } from './actionTypes';
-import { clearHostDocumentPiPPendingState, exitPiP } from './actions';
+import { clearHostDocumentPiPPendingState, exitPiP, setPiPDismissed } from './actions';
 import { getPiPVideoTrack, isDocumentPiPRequestPending, setDocumentPiPRequestPending } from './functions';
 import logger from './logger';
 
@@ -101,15 +106,27 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
     case HOST_DOCUMENT_PIP_SIGNAL_RECEIVED:
         mediaCastSender?.handleSignal(action.signal as MediaCastSignal);
         break;
+    case CONFERENCE_JOINED:
+        // A dismissal (closing the custom Electron PiP window) lasts for the
+        // duration of the conference; a newly joined conference starts fresh.
+        if (store.getState()['features/pip']?.dismissed) {
+            store.dispatch(setPiPDismissed(false));
+        }
+        break;
+
     case CONFERENCE_WILL_LEAVE:
     case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
         clearHostDocumentPiPPendingState();
         if (store.getState()['features/pip']?.isPiPActive) {
             store.dispatch(exitPiP());
-        } else if (isDocumentPiPRequestPending()) {
+        }
+        if (isDocumentPiPRequestPending()) {
             setDocumentPiPRequestPending(false);
             APP.API.notifyDocumentPiPClose();
+        }
+        if (store.getState()['features/pip']?.dismissed) {
+            store.dispatch(setPiPDismissed(false));
         }
         stopSender();
         break;

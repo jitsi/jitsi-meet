@@ -2485,24 +2485,51 @@ class API {
     /**
      * Notify external application (if API is enabled) that Picture-in-Picture mode was entered.
      *
+     * @param {string} mode - The PiP implementation in use: 'customWindow' (custom Electron
+     * always-on-top window), 'videoPiP' (video-element PiP) or 'documentPiP' (Document PiP).
      * @returns {void}
      */
-    notifyPictureInPictureEntered() {
-        logger.debug('Sending pip-entered event to External API');
+    notifyPictureInPictureEntered(mode) {
+        logger.debug(`Sending pip-entered event to External API (mode: ${mode})`);
         this._sendEvent({
-            name: 'pip-entered'
+            name: 'pip-entered',
+            mode
         });
     }
 
     /**
      * Notify external application (if API is enabled) that Picture-in-Picture mode was exited.
      *
+     * @param {string} mode - The PiP implementation that was in use (see
+     * notifyPictureInPictureEntered).
+     * @param {string} [reason] - Why PiP was left, when known: 'dismissed' (the user closed the
+     * custom PiP window for the rest of the conference), 'focus' (the meeting window regained
+     * focus) or 'requested' (closed programmatically).
      * @returns {void}
      */
-    notifyPictureInPictureLeft() {
-        logger.debug('Sending pip-left event to External API');
+    notifyPictureInPictureLeft(mode, reason) {
+        logger.debug(`Sending pip-left event to External API (mode: ${mode}, reason: ${reason})`);
         this._sendEvent({
-            name: 'pip-left'
+            name: 'pip-left',
+            mode,
+            reason
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the user double clicked the custom
+     * Electron PiP window (the legacy always-on-top gesture, meaning "return to the meeting").
+     * The embedding app is expected to focus the window hosting the meeting and, if needed, bring
+     * the meeting view back to the front.
+     *
+     * @param {string} mode - The PiP implementation in use (see notifyPictureInPictureEntered).
+     * @returns {void}
+     */
+    notifyPictureInPictureDoubleClicked(mode) {
+        logger.debug('Sending pip-double-clicked event to External API');
+        this._sendEvent({
+            name: 'pip-double-clicked',
+            mode
         });
     }
 
