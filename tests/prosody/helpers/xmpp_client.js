@@ -600,6 +600,32 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a one-to-one <message type='chat'> with a body to an arbitrary
+         * JID. Fire-and-forget: resolves with the stanza id once the stanza is
+         * written.
+         *
+         * Use it for what a Jitsi client never sends, most usefully a message
+         * addressed to the real JID of another client instead of to a MUC.
+         *
+         * @param {string} to     Destination JID.
+         * @param {string} [body] Message body text.
+         * @returns {Promise<string>} the stanza id.
+         */
+        async sendDirectChat(to, body) {
+            const id = `dm-${++_counter}`;
+            const children = body === undefined ? [] : [ xml('body', {}, body) ];
+
+            await xmpp.send(
+                xml('message', { to,
+                    type: 'chat',
+                    id },
+                ...children)
+            );
+
+            return id;
+        },
+
+        /**
          * Sends a MUC private message to an occupant of the room. Fire-and-forget:
          * resolves with the stanza id once the stanza is written. The MUC does not
          * reflect a private message back to the sender, so wait for the message on

@@ -43,6 +43,8 @@ VirtualHost "localhost"
         -- test-only
         "muc_password_check";
         "muc_breakout_rooms";
+        -- Rejects a message that a client addresses to the JID of an account.
+        "filter_direct_messages";
     }
 
     -- mod_muc_password_check: verify Bearer tokens with the login ASAP key server.
