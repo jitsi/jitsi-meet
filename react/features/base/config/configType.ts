@@ -87,6 +87,11 @@ export type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
     'RECORDING_ON_SOUND' |
     'TALK_WHILE_MUTED_SOUND';
 
+export interface ICustomPanelConfig {
+    enabled?: boolean;
+    url?: string;
+}
+
 export interface IDeeplinkingPlatformConfig {
     appName: string;
     appScheme: string;
@@ -286,6 +291,7 @@ export interface IConfig {
         };
     };
     corsAvatarURLs?: Array<string>;
+    customPanel?: ICustomPanelConfig;
     customParticipantMenuButtons?: Array<{ icon: string; id: string; text: string; }>;
     customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
     deeplinking?: IDeeplinkingConfig;
@@ -416,10 +422,6 @@ export interface IConfig {
     };
     enableCalendarIntegration?: boolean;
     enableClosePage?: boolean;
-    enableCustomPanel?: {
-        enabled?: boolean;
-        url?: string;
-    };
     enableDisplayNameInStats?: boolean;
     enableEmailInStats?: boolean;
     enableEncodedTransformSupport?: boolean;
