@@ -18,6 +18,37 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
     let reorderedParticipants = [];
     const { sortedRemoteVirtualScreenshareParticipants } = state['features/base/participants'];
 
+    if (state['features/base/config']?.disableAutoResortParticipants) {
+        const { fakeParticipants, remote } = state['features/base/participants'];
+        const remoteMap = new Map(remote);
+        const sharedVideos = fakeParticipants ? Array.from(fakeParticipants.keys()) : [];
+        const screenShareVirtualIds = sortedRemoteVirtualScreenshareParticipants
+            ? Array.from(sortedRemoteVirtualScreenshareParticipants.keys())
+            : [];
+        const participantsWithScreenShare = screenShareVirtualIds.reduce<string[]>((acc, screenshare) => {
+            const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
+
+            acc.push(ownerId);
+            acc.push(screenshare);
+            remoteMap.delete(ownerId);
+            remoteMap.delete(screenshare);
+
+            return acc;
+        }, []);
+
+        for (const sharedVideo of sharedVideos) {
+            remoteMap.delete(sharedVideo);
+        }
+
+        store.dispatch(setRemoteParticipants([
+            ...participantsWithScreenShare,
+            ...sharedVideos,
+            ...Array.from(remoteMap.keys())
+        ]));
+
+        return;
+    }
+
     if (!isFilmstripScrollVisible(state) && !sortedRemoteVirtualScreenshareParticipants.size && !force) {
         if (participantId) {
             const { remoteParticipants } = state['features/filmstrip'];
