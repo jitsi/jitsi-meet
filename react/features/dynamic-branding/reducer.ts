@@ -4,6 +4,7 @@ import { type Image } from '../virtual-background/constants';
 import {
     SET_DYNAMIC_BRANDING_DATA,
     SET_DYNAMIC_BRANDING_FAILED,
+    SET_DYNAMIC_BRANDING_ICONS,
     SET_DYNAMIC_BRANDING_READY,
     UNSET_DYNAMIC_BRANDING
 } from './actionTypes';
@@ -196,7 +197,6 @@ ReducerRegistry.register<IDynamicBrandingState>(STORE_NAME, (state = DEFAULT_STA
             avatarBackgrounds,
             backgroundColor,
             backgroundImageUrl,
-            brandedIcons,
             defaultBranding,
             didPageUrl,
             groupChatRequiresPermission,
@@ -219,7 +219,6 @@ ReducerRegistry.register<IDynamicBrandingState>(STORE_NAME, (state = DEFAULT_STA
             avatarBackgrounds,
             backgroundColor,
             backgroundImageUrl,
-            brandedIcons,
             defaultBranding,
             didPageUrl,
             groupChatRequiresPermission,
@@ -249,6 +248,12 @@ ReducerRegistry.register<IDynamicBrandingState>(STORE_NAME, (state = DEFAULT_STA
             useDynamicBrandingData: true
         };
     }
+    case SET_DYNAMIC_BRANDING_ICONS:
+        return {
+            ...state,
+            brandedIcons: action.icons
+        };
+
     case SET_DYNAMIC_BRANDING_READY:
         return {
             ...state,
