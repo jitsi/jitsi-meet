@@ -1376,10 +1376,18 @@ export default {
                 return;
             }
 
-            // The logic shared between RN and web.
-            commonUserJoinedHandling(APP.store, room, user);
+            // A participant whose video is hidden from the recorder is handled like a hidden participant: it is not
+            // added to the state, so it gets no tile. Its audio tracks are still added (see TRACK_ADDED below), and
+            // they are played and recorded. The optional call keeps this working with a lib-jitsi-meet release
+            // which does not have the method yet.
+            const videoHiddenFromRecorder = config.iAmRecorder && user.isVideoHiddenFromRecorder?.();
 
-            if (user.isHidden()) {
+            if (!videoHiddenFromRecorder) {
+                // The logic shared between RN and web.
+                commonUserJoinedHandling(APP.store, room, user);
+            }
+
+            if (user.isHidden() || videoHiddenFromRecorder) {
                 return;
             }
 
@@ -1389,10 +1397,14 @@ export default {
         });
 
         room.on(JitsiConferenceEvents.USER_LEFT, (id, user) => {
-            // The logic shared between RN and web.
-            commonUserLeftHandling(APP.store, room, user);
+            const videoHiddenFromRecorder = config.iAmRecorder && user.isVideoHiddenFromRecorder?.();
 
-            if (user.isHidden()) {
+            if (!videoHiddenFromRecorder) {
+                // The logic shared between RN and web.
+                commonUserLeftHandling(APP.store, room, user);
+            }
+
+            if (user.isHidden() || videoHiddenFromRecorder) {
                 return;
             }
 
@@ -1432,6 +1444,11 @@ export default {
                 const participant = room.getParticipantById(track.getParticipantId());
 
                 if (participant.isHiddenFromRecorder()) {
+                    return;
+                }
+
+                // Only the video of this participant is hidden from the recorder. Its audio is still recorded.
+                if (participant.isVideoHiddenFromRecorder?.() && track.isVideoTrack()) {
                     return;
                 }
             }
