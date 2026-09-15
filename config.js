@@ -1495,11 +1495,13 @@ var config = {
         // Object containing customized icons that should replace the default ones.
         // The keys need to be the exact same icon names used in here:
         // https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/icons/svg/index.ts
+        // The values are either URLs of svg files or the svg xml markup itself. Inline markup is
+        // applied without any extra request, so the icons show up faster.
         // To avoid having the icons trimmed or displayed in an unexpected way, please provide svg
-        // files containing svg xml icons in the size that the default icons come in.
+        // xml icons in the size that the default icons come in.
         customIcons: {
             IconArrowUp: 'https://example.com/arrow-up.svg',
-            IconDownload: 'https://example.com/download.svg',
+            IconDownload: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">...</svg>',
             IconRemoteControlStart: 'https://example.com/remote-start.svg',
         },
         // Object containing a theme's properties. It also supports partial overwrites of the main theme.
