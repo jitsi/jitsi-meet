@@ -203,14 +203,16 @@ export function submitModeratorTab(newState: any) {
                 newState.startAudioMuted, newState.startVideoMuted));
         }
 
-        if (newState.chatWithPermissionsEnabled !== currentState.chatWithPermissionsEnabled) {
+        if (newState.chatWithPermissionsEnabled !== currentState.chatWithPermissionsEnabled
+            || newState.privateChatWithPermissionsEnabled !== currentState.privateChatWithPermissionsEnabled) {
             const { conference } = getState()['features/base/conference'];
 
             const currentPermissions = conference?.getMetadataHandler().getMetadata().permissions || {};
 
             conference?.getMetadataHandler().setMetadata('permissions', {
                 ...currentPermissions,
-                groupChatRestricted: newState.chatWithPermissionsEnabled
+                groupChatRestricted: newState.chatWithPermissionsEnabled,
+                privateChatRestricted: newState.privateChatWithPermissionsEnabled
             });
         }
 

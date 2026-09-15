@@ -600,6 +600,31 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a MUC private message to an occupant of the room. Fire-and-forget:
+         * resolves with the stanza id once the stanza is written. The MUC does not
+         * reflect a private message back to the sender, so wait for the message on
+         * the recipient, or for an error reply on the sender.
+         *
+         * @param {string} roomJid  e.g. 'room@conference.localhost'
+         * @param {string} nick     MUC nick of the recipient.
+         * @param {string} [body]   message body text; omit to send body-less.
+         * @returns {Promise<string>} the stanza id.
+         */
+        async sendPrivateChat(roomJid, nick, body) {
+            const id = `pm-${++_counter}`;
+            const children = body === undefined ? [] : [ xml('body', {}, body) ];
+
+            await xmpp.send(
+                xml('message', { to: `${roomJid}/${nick}`,
+                    type: 'chat',
+                    id },
+                ...children)
+            );
+
+            return id;
+        },
+
+        /**
          * Sends a MUC groupchat message to the room. Resolves with the first
          * <message> stanza received bearing the same id — either the MUC
          * reflection (type=groupchat) or an error reply (type=error).

@@ -72,6 +72,7 @@ local function load_config()
         ['outbound-call'] = true;
         ['create-polls'] = true;
         ['send-groupchat'] = true;
+        ['send-private-message'] = true;
         flip = true;
         ['live-translation'] = true;
         ['live-translation-subscribe'] = true;

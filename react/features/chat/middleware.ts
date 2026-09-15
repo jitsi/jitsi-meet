@@ -84,6 +84,7 @@ import {
     getUnreadCount,
     isChatDisabled,
     isSendGroupChatDisabled,
+    isSendPrivateChatDisabled,
     isVisitorChatParticipant
 } from './functions';
 import logger from './logger';
@@ -242,6 +243,7 @@ MiddlewareRegistry.register(store => next => action => {
 
             if (
                 isSendGroupChatDisabled(state)
+                && !isSendPrivateChatDisabled(state)
                 && privateMessageRecipient
                 && !action.participant
             ) {
@@ -596,7 +598,12 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
                 privateMessage: false
             });
 
-            if (isSendGroupChatDisabled(store.getState()) && participantId) {
+            // Group chat is restricted for this participant, so steer the reply
+            // into a private message. Not when private messages are restricted
+            // too: that would move them into a chat they cannot send in either.
+            if (isSendGroupChatDisabled(store.getState())
+                && !isSendPrivateChatDisabled(store.getState())
+                && participantId) {
                 const participant = getParticipantById(store, participantId);
 
                 store.dispatch(setPrivateMessageRecipient(participant));

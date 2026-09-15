@@ -497,6 +497,14 @@ process_host_module(main_muc_component_config, function(host_module, host)
             -- Find the occupant
             local occupant = room:get_occupant_by_nick(to);
             if occupant then
+                -- This route does not go through the MUC, thus muc-private-message
+                -- does not fire for it. Give the filters a chance to block the
+                -- message, the same as the group-chat route above does.
+                if host_module:fire_event('jitsi-visitor-private-message-pre-route', event) then
+                    -- message filtered
+                    return true;
+                end
+
                 -- Add addresses element (XEP-0033) to store original visitor JID for reply functionality
                 stanza:tag('addresses', { xmlns = 'http://jabber.org/protocol/address' })
                   :tag('address', { type = 'ofrom', jid = stanza.attr.from }):up()

@@ -78,6 +78,7 @@ export interface IParticipantFeatures {
     'room'?: boolean | string;
     'screen-sharing'?: boolean | string;
     'send-groupchat'?: boolean | string;
+    'send-private-message'?: boolean | string;
     'sip-inbound-call'?: boolean | string;
     'sip-outbound-call'?: boolean | string;
     'transcription'?: boolean | string;
