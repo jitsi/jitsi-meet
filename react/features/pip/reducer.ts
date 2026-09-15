@@ -1,16 +1,29 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
-import { SET_PIP_ACTIVE, SET_PIP_WINDOW } from './actionTypes';
+import {
+    SET_PIP_ACTIVE,
+    SET_PIP_DISMISSED,
+    SET_PIP_WINDOW,
+    SET_PIP_WINDOW_MODE_UNSUPPORTED
+} from './actionTypes';
 
 /**
  * The default state for the pip feature.
  */
 const DEFAULT_STATE = {
+    dismissed: false,
     isPiPActive: false,
-    pipWindow: null
+    pipWindow: null,
+    windowModeUnsupported: false
 };
 
 export interface IPipState {
+    /**
+     * Whether the user dismissed PiP (closed the custom Electron PiP window
+     * with its X button or through the OS) for the rest of the conference.
+     */
+    dismissed: boolean;
+
     isPiPActive: boolean;
 
     /**
@@ -27,6 +40,13 @@ export interface IPipState {
      */
     // @ts-ignore
     pipWindow: Window | null;
+
+    /**
+     * Whether the embedding Electron app was detected to not support the
+     * custom PiP window (the popup was denied by its main process), in which
+     * case the video-element PiP is used for the rest of the session.
+     */
+    windowModeUnsupported: boolean;
 }
 
 /**
@@ -40,10 +60,22 @@ ReducerRegistry.register<IPipState>('features/pip', (state = DEFAULT_STATE, acti
             isPiPActive: action.isPiPActive
         };
 
+    case SET_PIP_DISMISSED:
+        return {
+            ...state,
+            dismissed: action.dismissed
+        };
+
     case SET_PIP_WINDOW:
         return {
             ...state,
             pipWindow: action.pipWindow
+        };
+
+    case SET_PIP_WINDOW_MODE_UNSUPPORTED:
+        return {
+            ...state,
+            windowModeUnsupported: action.unsupported
         };
 
     default:
