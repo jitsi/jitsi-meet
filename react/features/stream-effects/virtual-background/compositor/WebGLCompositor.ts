@@ -74,6 +74,18 @@ const VB_FRAGMENT_SHADER_SOURCE = `
     }
 `;
 
+// Separate shader for AR overlay pass. Runs after VB pass.
+const FILTER_FRAGMENT_SHADER_SOURCE = `
+    precision mediump float;
+
+    uniform sampler2D u_filter;
+    varying vec2 v_texCoord;
+
+    void main() {
+        gl_FragColor = texture2D(u_filter, v_texCoord);
+    }
+`;
+
 // Full-screen quad: two triangles covering clip space [-1,1].
 const QUAD_VERTICES = new Float32Array([
     -1, -1, 0, 1,
@@ -141,11 +153,18 @@ function createTexture(gl: WebGLRenderingContext): WebGLTexture {
 /**
  * WebGL-based compositor that blends camera, background, and segmentation mask
  * using a fragment shader with temporal smoothing and edge feathering (smoothstep).
+ * Optionally blends an AR overlay canvas on top using a separate pass.
  *
  * Falls back gracefully when context creation fails — callers should check
  * {@link WebGLCompositor#isAvailable} before use.
  */
 export default class WebGLCompositor implements ICompositor {
+    _aArPosition = -1;
+    _aArTexCoord = -1;
+
+    _arProgram: WebGLProgram | null = null;
+    _texAr: WebGLTexture | null = null;
+
     _canvas: HTMLCanvasElement;
     _gl: WebGLRenderingContext | null = null;
 
@@ -175,6 +194,8 @@ export default class WebGLCompositor implements ICompositor {
     _uEdgeLow: WebGLUniformLocation | null = null;
     _uMask: WebGLUniformLocation | null = null;
     _uMaskTexelSize: WebGLUniformLocation | null = null;
+
+    _uArUniform: WebGLUniformLocation | null = null;
 
     /**
      * Creates a WebGLCompositor targeting the given canvas.
@@ -223,12 +244,12 @@ export default class WebGLCompositor implements ICompositor {
 
     /**
      * Composites one frame via the {@link ICompositor} interface.
-     * Delegates to {@link compositeFromImageData}.
+     * Delegates to {@link compositeFromImageData}, and handles AR overlay pass.
      *
      * @param {CanvasImageSource} camera - Live camera frame.
      * @param {CanvasImageSource} background - Pre-rendered background.
      * @param {ImageData} maskData - Raw segmentation mask.
-     * @param {ICompositeOptions} options - Edge thresholds and blur radius.
+     * @param {ICompositeOptions} options - Edge thresholds, blur radius and AR overlay canvas.
      * @returns {void}
      */
     composite(
@@ -237,13 +258,17 @@ export default class WebGLCompositor implements ICompositor {
             maskData: ImageData,
             options: ICompositeOptions): void {
         this.compositeFromImageData(
-            camera as TexImageSource,
-            background as HTMLCanvasElement,
-            maskData,
-            options.edgeLow,
-            options.edgeHigh,
-            options.maskBlurRadius
+                camera as TexImageSource,
+                background as HTMLCanvasElement,
+                maskData,
+                options.edgeLow,
+                options.edgeHigh,
+                options.maskBlurRadius
         );
+
+        if (options.arOverlayCanvas) {
+            this._drawArOverlay(options.arOverlayCanvas);
+        }
     }
 
     /**
@@ -313,7 +338,7 @@ export default class WebGLCompositor implements ICompositor {
         gl.uniform2f(this._uMaskTexelSize, maskBlurRadius / maskData.width, maskBlurRadius / maskData.height);
         gl.uniform2f(this._uCameraTexelSize, 1.0 / this._canvas.width, 1.0 / this._canvas.height);
 
-        this._bindQuadState(gl);
+        this._bindQuadState(gl, this._aPosition, this._aTexCoord);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
@@ -342,14 +367,18 @@ export default class WebGLCompositor implements ICompositor {
         gl.deleteTexture(this._texCamera);
         gl.deleteTexture(this._texBackground);
         gl.deleteTexture(this._texMask);
+        gl.deleteTexture(this._texAr);
         gl.deleteBuffer(this._quadBuffer);
         gl.deleteProgram(this._program);
+        gl.deleteProgram(this._arProgram);
 
         this._texCamera = null;
         this._texBackground = null;
         this._texMask = null;
+        this._texAr = null;
         this._quadBuffer = null;
         this._program = null;
+        this._arProgram = null;
 
         // Explicitly release the WebGL context so it no longer counts against the browser's
         // ~16 concurrent context limit. Without this the context stays alive until GC.
@@ -383,6 +412,13 @@ export default class WebGLCompositor implements ICompositor {
             return;
         }
 
+        try {
+            this._arProgram = createProgram(gl, FILTER_FRAGMENT_SHADER_SOURCE);
+        } catch (err) {
+            logger.error('[VirtualBackground] WebGLCompositor: AR shader build failed', err);
+            this._arProgram = null;
+        }
+
         // Vertex buffer — shared position + texCoord interleaved
         this._quadBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this._quadBuffer);
@@ -393,7 +429,7 @@ export default class WebGLCompositor implements ICompositor {
 
         // Initial attribute setup — _bindQuadState() repeats this before every
         // draw call so TF.js cannot permanently corrupt our attribute state.
-        this._bindQuadState(gl);
+        this._bindQuadState(gl, this._aPosition, this._aTexCoord);
 
         // Resolve VB uniform locations.
         gl.useProgram(this._program);
@@ -405,12 +441,51 @@ export default class WebGLCompositor implements ICompositor {
         this._uEdgeLow = gl.getUniformLocation(this._program, 'u_edgeLow');
         this._uEdgeHigh = gl.getUniformLocation(this._program, 'u_edgeHigh');
 
+        if (this._arProgram) {
+            this._aArPosition = gl.getAttribLocation(this._arProgram, 'a_position');
+            this._aArTexCoord = gl.getAttribLocation(this._arProgram, 'a_texCoord');
+            gl.useProgram(this._arProgram);
+            this._uArUniform = gl.getUniformLocation(this._arProgram, 'u_filter');
+        }
+
         // Allocate textures
         this._texCamera = createTexture(gl);
         this._texBackground = createTexture(gl);
         this._texMask = createTexture(gl);
+        this._texAr = createTexture(gl);
 
         logger.info('[VirtualBackground] WebGLCompositor: initialised');
+    }
+
+    /**
+     * Draws the AR overlay to the AR texture.
+     *
+     * @private
+     * @param {HTMLCanvasElement} arOverlayCanvas - The canvas element to draw.
+     * @returns {void}
+     */
+    _drawArOverlay(arOverlayCanvas: HTMLCanvasElement): void {
+        const gl = this._gl;
+
+        if (!gl || !this._arProgram) {
+            return;
+        }
+
+        gl.useProgram(this._arProgram);
+
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+        gl.activeTexture(gl.TEXTURE3);
+        gl.bindTexture(gl.TEXTURE_2D, this._texAr);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, arOverlayCanvas);
+        gl.uniform1i(this._uArUniform, 3);
+
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+        this._bindQuadState(gl, this._aArPosition, this._aArTexCoord);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        gl.disable(gl.BLEND);
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
     }
 
     /**
@@ -427,10 +502,12 @@ export default class WebGLCompositor implements ICompositor {
         // Null the JS references so the GC can collect the wrapper objects.
         this._gl = null;
         this._program = null;
+        this._arProgram = null;
         this._quadBuffer = null;
         this._texCamera = null;
         this._texBackground = null;
         this._texMask = null;
+        this._texAr = null;
     }
 
     /**
@@ -449,20 +526,23 @@ export default class WebGLCompositor implements ICompositor {
      *
      * When the GL context is shared with TF.js, TF.js inference overwrites the
      * global vertex attribute state (bound ARRAY_BUFFER + vertexAttribPointer
-     * descriptors). Calling this before every drawArrays() restores our state
-     * without re-querying attribute locations.
+     * descriptors). The VB pass and AR pass use two different programs - Calling
+     * this before every drawArrays() restores our state without re-querying
+     * attribute locations.
      *
      * @private
      * @param {WebGLRenderingContext} gl - Active GL context.
+     * @param {number} aPosition - The position attribute location.
+     * @param {number} aTexCoord - The texture coordinate attribute location.
      * @returns {void}
      */
-    _bindQuadState(gl: WebGLRenderingContext): void {
+    _bindQuadState(gl: WebGLRenderingContext, aPosition: number, aTexCoord: number): void {
         const stride = 4 * Float32Array.BYTES_PER_ELEMENT;
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this._quadBuffer);
-        gl.enableVertexAttribArray(this._aPosition);
-        gl.vertexAttribPointer(this._aPosition, 2, gl.FLOAT, false, stride, 0);
-        gl.enableVertexAttribArray(this._aTexCoord);
-        gl.vertexAttribPointer(this._aTexCoord, 2, gl.FLOAT, false, stride, 2 * Float32Array.BYTES_PER_ELEMENT);
+        gl.enableVertexAttribArray(aPosition);
+        gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, stride, 0);
+        gl.enableVertexAttribArray(aTexCoord);
+        gl.vertexAttribPointer(aTexCoord, 2, gl.FLOAT, false, stride, 2 * Float32Array.BYTES_PER_ELEMENT);
     }
 }
