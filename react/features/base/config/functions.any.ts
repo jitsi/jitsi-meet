@@ -7,11 +7,6 @@ import { browser } from '../lib-jitsi-meet';
 import { getLocalParticipant } from '../participants/functions';
 import { isEmbedded } from '../util/embedUtils';
 import { parseURLParams } from '../util/parseURLParams';
-import {
-    appendURLParam,
-    getNormalizedRoomName,
-    parseURIString
-} from '../util/uri';
 
 import { IConfig } from './configType';
 import CONFIG_WHITELIST from './configWhitelist';
@@ -30,6 +25,10 @@ import logger from './logger';
 // do_external_connect, webpack 1 does not support tree shaking, and we don't
 // want all functions to be bundled in do_external_connect.
 export { default as getRoomName } from './getRoomName';
+
+// buildConfigURL lives in its own module so the preload bundle, which runs before the app bundle,
+// can compute the exact same config.js URL without pulling in the rest of this feature.
+export { buildConfigURL } from './buildConfigURL';
 
 /**
  * Create a "fake" configuration object for the given base URL. This is used in case the config
@@ -51,33 +50,6 @@ export function createFakeConfig(baseURL: string) {
             enabled: true
         }
     };
-}
-
-/**
- * Builds the config.js URL for a given location and optional room name.
- * Extracted to avoid duplication between app navigation (native) and shard-change reconnect (web).
- *
- * @param {URL | { href: string }} locationURL - The location URL.
- * @param {string | null | undefined} room - Optional room name to append as a query param.
- * @returns {string} The full config.js URL with room and release params appended as needed.
- */
-export function buildConfigURL(locationURL: URL, room?: string | null): string {
-    const { protocol, host, contextRoot } = parseURIString(locationURL.href);
-    const normalizedProtocol = protocol === 'http:' || protocol === 'https:' ? protocol : 'https:';
-    const baseURL = `${normalizedProtocol}//${host}${contextRoot || '/'}`;
-    let url = `${baseURL}config.js`;
-
-    if (room) {
-        url = appendURLParam(url, 'room', getNormalizedRoomName(room) ?? '');
-    }
-
-    const { release } = parseURLParams(locationURL, true, 'search');
-
-    if (release) {
-        url = appendURLParam(url, 'release', release as string);
-    }
-
-    return url;
 }
 
 /**
