@@ -9,7 +9,7 @@ import { DEFAULT_CUSTOM_PANEL_URL } from './constants';
  * @returns {boolean}
  */
 export function isCustomPanelEnabled(state: IReduxState): boolean {
-    return Boolean(state['features/base/config'].enableCustomPanel?.enabled);
+    return Boolean(state['features/base/config'].customPanel?.enabled);
 }
 
 /**
@@ -19,7 +19,7 @@ export function isCustomPanelEnabled(state: IReduxState): boolean {
  * @returns {string}
  */
 export function getCustomPanelUrl(state: IReduxState): string {
-    return state['features/base/config'].enableCustomPanel?.url ?? DEFAULT_CUSTOM_PANEL_URL;
+    return state['features/base/config'].customPanel?.url ?? DEFAULT_CUSTOM_PANEL_URL;
 }
 
 /**
@@ -28,24 +28,27 @@ export function getCustomPanelUrl(state: IReduxState): string {
  * @param {string} [url] - The base advisor URL.
  * @param {string} [jwt] - The meeting JWT.
  * @param {string} [meetingId] - The meeting unique id.
- * @param {string} [theme] - The color scheme to render ('dark' or 'light').
  * @returns {string} The full URI, or '' when no url or no jwt is provided.
  */
-export function buildCustomPanelUri(url?: string, jwt?: string, meetingId?: string, theme?: string): string {
+export function buildCustomPanelUri(url?: string, jwt?: string, meetingId?: string): string {
     if (!url || !jwt) {
         return '';
     }
 
-    const params: string[] = [ `token=${encodeURIComponent(jwt)}` ];
+    let uri;
+
+    try {
+        uri = new URL(url);
+    } catch (_) {
+        return '';
+    }
+
+    uri.searchParams.set('token', jwt);
 
     if (meetingId) {
-        params.push(`meeting=${encodeURIComponent(meetingId)}`);
+        uri.searchParams.set('meeting', meetingId);
     }
-    if (theme) {
-        params.push(`theme=${encodeURIComponent(theme)}`);
-    }
+    uri.searchParams.set('theme', 'dark');
 
-    const separator = url.includes('?') ? '&' : '?';
-
-    return `${url}${separator}${params.join('&')}`;
+    return uri.toString();
 }

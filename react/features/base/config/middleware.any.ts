@@ -99,6 +99,7 @@ function _setConfig({ dispatch, getState }: IStore, next: Function, action: AnyA
 function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: AnyAction) {
     const config: IConfig = {};
     const {
+        customPanelUrl,
         customParticipantMenuButtons,
         customToolbarButtons,
         downloadAppsUrl,
@@ -145,6 +146,10 @@ function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: A
 
     if (peopleSearchUrl) {
         config.peopleSearchUrl = peopleSearchUrl;
+    }
+
+    if (customPanelUrl) {
+        config.customPanel = { url: customPanelUrl };
     }
 
     const { enabled, iceUrl } = preCallTest;
