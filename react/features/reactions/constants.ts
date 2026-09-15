@@ -124,6 +124,11 @@ export interface IReactionEmojiProps {
 
 export const SOUNDS_THRESHOLDS = [ 1, 4, 10 ];
 
+/**
+ * The maximum number of reactions kept in the animation queue at once.
+ */
+export const MAX_REACTIONS_QUEUE_SIZE = 50;
+
 interface IReactions {
     [key: string]: {
         emoji: string;
