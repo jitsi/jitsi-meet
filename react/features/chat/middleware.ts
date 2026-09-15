@@ -83,6 +83,7 @@ import {
     getFocusedTab,
     getUnreadCount,
     isChatDisabled,
+    isGroupChatRestricted,
     isSendGroupChatDisabled,
     isSendPrivateChatDisabled,
     isVisitorChatParticipant
@@ -189,6 +190,18 @@ MiddlewareRegistry.register(store => next => action => {
             }
 
             store.dispatch(pushReactions(reactions));
+
+            // A bridge channel message does not go through the MUC, thus the
+            // server does not apply the chat restrictions of the room to it.
+            // Apply the group chat restriction here, otherwise a reaction shows
+            // in the chat of every participant while chat is restricted. The
+            // permissions of a remote participant are not known locally, thus
+            // this uses the moderator role, which is what the server gives the
+            // permissions to. The reaction itself still plays: on-screen
+            // reactions have their own moderation.
+            if (isGroupChatRestricted(state) && !participant?.isModerator?.()) {
+                break;
+            }
 
             _handleReceivedMessage(store, {
                 participantId: participant.getId(),

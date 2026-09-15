@@ -338,6 +338,17 @@ export function isSendGroupChatDisabled(state: IReduxState): boolean {
 }
 
 /**
+ * Returns whether the room restricts group chat to the participants that hold
+ * the permission for it.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function isGroupChatRestricted(state: IReduxState): boolean {
+    return Boolean(state['features/chat'].groupChatWithPermissions);
+}
+
+/**
  * Check if participant is not allowed to send private messages.
  *
  * Unlike the group chat check above, this reads the restriction from the room
