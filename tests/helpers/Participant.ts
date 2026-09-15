@@ -825,8 +825,35 @@ export class Participant {
             }
         );
 
-        await this.driver.switchFrame(iframe);
-        this._inMainFrame = false;
+        const MAX_ATTEMPTS = 3;
+
+        for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+            // Re-select the iframe right before switching rather than reusing the handle fetched above: the
+            // wait for jitsiAPI.test can itself take up to 30s, and switchFrame() pins whatever browsing
+            // context the handle resolves to at that moment, so a stale handle reintroduces the same class of
+            // bug the wait above exists to avoid.
+            await this.driver.switchFrame(this.driver.$('iframe'));
+            this._inMainFrame = false;
+
+            // A switch can still land on a context that is gone or about to be replaced a second time (e.g. an
+            // internal redirect inside the app), which looks identical from here: no response, no error. Confirm
+            // the context is actually alive before trusting it, instead of finding out via some later, unrelated
+            // timeout.
+            const alive = await this.execute(() => document.readyState === 'complete')
+                .catch(() => false);
+
+            if (alive) {
+                return;
+            }
+
+            this._inMainFrame = true;
+            await this.driver.switchFrame(null);
+
+            if (attempt === MAX_ATTEMPTS) {
+                throw new Error(`Switched into a dead iframe context for ${this._name} after ${
+                    MAX_ATTEMPTS} attempts.`);
+            }
+        }
     }
 
     /**
