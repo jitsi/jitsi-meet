@@ -60,6 +60,32 @@ function ReactionEmoji({ reaction, uid, index }: IProps) {
     }, [ animationVal ]);
 
 
+    // Memoized to avoid recreating interpolation nodes on every re-render.
+    const animatedStyle = useMemo(() => ({
+        transform: [
+            { translateY: animationVal.interpolate({
+                inputRange: [ 0, 0.70, 0.75, 1 ],
+                outputRange: [ 0, coordinates.topY * vh, coordinates.topY * vh, coordinates.bottomY * vh ]
+            })
+            }, {
+                translateX: animationVal.interpolate({
+                    inputRange: [ 0, 0.70, 0.75, 1 ],
+                    outputRange: [ 0, coordinates.topX, coordinates.topX,
+                        coordinates.topX < 0 ? -coordinates.bottomX : coordinates.bottomX ]
+                })
+            }, {
+                scale: animationVal.interpolate({
+                    inputRange: [ 0, 0.70, 0.75, 1 ],
+                    outputRange: [ 0.6, 1.5, 1.5, 1 ]
+                })
+            }
+        ],
+        opacity: animationVal.interpolate({
+            inputRange: [ 0, 0.7, 0.75, 1 ],
+            outputRange: [ 1, 1, 1, 0 ]
+        })
+    }), [ animationVal, coordinates, vh ]);
+
     if (!(reaction in REACTIONS)) {
         return null;
     }
@@ -68,28 +94,7 @@ function ReactionEmoji({ reaction, uid, index }: IProps) {
         <Animated.Text
             style = {{
                 ..._styles.emojiAnimation,
-                transform: [
-                    { translateY: animationVal.interpolate({
-                        inputRange: [ 0, 0.70, 0.75, 1 ],
-                        outputRange: [ 0, coordinates.topY * vh, coordinates.topY * vh, coordinates.bottomY * vh ]
-                    })
-                    }, {
-                        translateX: animationVal.interpolate({
-                            inputRange: [ 0, 0.70, 0.75, 1 ],
-                            outputRange: [ 0, coordinates.topX, coordinates.topX,
-                                coordinates.topX < 0 ? -coordinates.bottomX : coordinates.bottomX ]
-                        })
-                    }, {
-                        scale: animationVal.interpolate({
-                            inputRange: [ 0, 0.70, 0.75, 1 ],
-                            outputRange: [ 0.6, 1.5, 1.5, 1 ]
-                        })
-                    }
-                ],
-                opacity: animationVal.interpolate({
-                    inputRange: [ 0, 0.7, 0.75, 1 ],
-                    outputRange: [ 1, 1, 1, 0 ]
-                })
+                ...animatedStyle
             }}>
             {REACTIONS[reaction].emoji}
         </Animated.Text>
