@@ -5,6 +5,7 @@ import { VIDEO_SPACE_MIN_SIZE } from '../video-layout/constants';
 
 import { DEFAULT_CUSTOM_PANEL_WIDTH } from './constants';
 
+export * from './functions.any';
 export * from './functions.custom';
 
 /**
@@ -37,20 +38,6 @@ export function getCustomPanelOpen(state: IReduxState): boolean {
  */
 export function getCustomPanelConfiguredWidth(state: IReduxState): number {
     return state['features/custom-panel']?.width?.current ?? DEFAULT_CUSTOM_PANEL_WIDTH;
-}
-
-/**
- * Returns the current panel width (0 if closed or disabled).
- *
- * @param {IReduxState} state - The Redux state.
- * @returns {number} The panel width in pixels.
- */
-export function getCustomPanelWidth(state: IReduxState): number {
-    if (!isCustomPanelEnabled(state)) {
-        return 0;
-    }
-
-    return getCustomPanelOpen(state) ? getCustomPanelConfiguredWidth(state) : 0;
 }
 
 /**
