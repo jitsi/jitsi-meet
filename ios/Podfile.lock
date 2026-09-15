@@ -2059,7 +2059,7 @@ PODS:
     - Yoga
   - react-native-orientation-locker (1.7.0):
     - React-Core
-  - react-native-pager-view (8.0.3):
+  - react-native-pager-view (8.0.5):
     - boost
     - DoubleConversion
     - fast_float
@@ -2116,7 +2116,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-safe-area-context (5.6.1):
+  - react-native-safe-area-context (5.9.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -2134,8 +2134,8 @@ PODS:
     - React-graphics
     - React-ImageManager
     - React-jsi
-    - react-native-safe-area-context/common (= 5.6.1)
-    - react-native-safe-area-context/fabric (= 5.6.1)
+    - react-native-safe-area-context/common (= 5.9.1)
+    - react-native-safe-area-context/fabric (= 5.9.1)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -2146,7 +2146,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-safe-area-context/common (5.6.1):
+  - react-native-safe-area-context/common (5.9.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -2174,7 +2174,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-safe-area-context/fabric (5.6.1):
+  - react-native-safe-area-context/fabric (5.9.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -3027,7 +3027,7 @@ PODS:
     - React-Core
   - RNDeviceInfo (14.1.1):
     - React-Core
-  - RNGestureHandler (3.0.0):
+  - RNGestureHandler (3.2.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -3058,7 +3058,7 @@ PODS:
   - RNGoogleSignin (10.1.0):
     - GoogleSignIn (~> 7.0)
     - React-Core
-  - RNScreens (4.17.1):
+  - RNScreens (4.23.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -3085,10 +3085,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNScreens/common (= 4.17.1)
+    - RNScreens/common (= 4.23.0)
     - SocketRocket
     - Yoga
-  - RNScreens/common (4.17.1):
+  - RNScreens/common (4.23.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -3655,9 +3655,9 @@ SPEC CHECKSUMS:
   react-native-keep-awake: 129cb4bd75d0f304a479b4c4527d2994fe18e43c
   react-native-netinfo: 57447b5a45c98808f8eae292cf641f3d91d13830
   react-native-orientation-locker: cc6f357b289a2e0dd2210fea0c52cb8e0727fdaa
-  react-native-pager-view: 05683d783242b28d372d6fde6c11605b1c24e140
+  react-native-pager-view: 8e26c20fc7bb3053e8a6895e888b26ae65299307
   react-native-performance: b48d1aba7501a54af5e1a7efb0dab1ab25dc734f
-  react-native-safe-area-context: c6e2edd1c1da07bdce287fa9d9e60c5f7b514616
+  react-native-safe-area-context: 6cf08f4151132f9cf2adb948dc6c4ac387f8d30f
   react-native-screen-corner-radius: ebd0d3258fcc894571b41d25ee3db7569d375153
   react-native-slider: 34064ca1a6864d7b263e44dd76a2d794e8d26744
   react-native-video: ce907959c67ad2abaa0411082db621036944737a
@@ -3702,9 +3702,9 @@ SPEC CHECKSUMS:
   RNCClipboard: 4b58c780f63676367640f23c8e114e9bd0cf86ac
   RNDefaultPreference: ee13d69e6693d193cd223d10e15e5b3c012d31ba
   RNDeviceInfo: bcce8752b5043a623fe3c26789679b473f705d3c
-  RNGestureHandler: 8f606e053c7823429953e994c8feab9f3f57be7f
+  RNGestureHandler: a99489f6311d5e15dff575db28abc8f4e7a7802a
   RNGoogleSignin: 30e1aee80140dc0706cd78a4951c411376c88329
-  RNScreens: 833237c48c756d40764540246a501b47dadb2cac
+  RNScreens: afaf526a9c804c3b4503f950cf3e67ed81e29ada
   RNSound: b6bd5e049ad15c0b03f9dda1f817d0bb1d5e87cb
   RNSVG: 9037a5826c3e0ad3f7e2aee7607b64d6710f048e
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748

@@ -1,6 +1,6 @@
 /* eslint-disable lines-around-comment */
 
-import { NavigationContainer, Theme } from '@react-navigation/native';
+import { NavigationContainer, NavigationIndependentTree } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -116,139 +116,140 @@ const ConferenceNavigationContainer = () => {
     }
 
     return (
-        <NavigationContainer
-            independent = { true }
-            ref = { conferenceNavigationRef }
-            theme = { navigationContainerTheme as Theme }>
-            <ConferenceStack.Navigator
-                screenOptions = {{
-                    presentation: 'modal'
-                }}>
-                <ConferenceStack.Screen
-                    component = { Conference }
-                    name = { screen.conference.main }
-                    options = { conferenceScreenOptions } />
-                <ConferenceStack.Screen
-                    component = { ChatScreen }
-                    name = { chatScreenName }
-                    options = {{
-                        ...chatScreenOptions,
-                        title: chatTitle
-                    }} />
-                <ConferenceStack.Screen
-                    component = { ParticipantsPane }
-                    name = { screen.conference.participants }
-                    options = {{
-                        ...participantsScreenOptions,
-                        title: t('participantsPane.title')
-                    }} />
-                <ConferenceStack.Screen
-                    component = { SecurityDialog }
-                    name = { screen.conference.security }
-                    options = {{
-                        ...securityScreenOptions,
-                        title: t('security.title')
-                    }} />
-                <ConferenceStack.Screen
-                    component = { RecordingTranscriptionDialog }
-                    name = { screen.conference.recording }
-                    options = {{
-                        ...recordingScreenOptions,
-                        title: t('dialog.recordAndTranscribe')
-                    }} />
-                <ConferenceStack.Screen
-                    component = { StartLiveStreamDialog }
-                    name = { screen.conference.liveStream }
-                    options = {{
-                        ...liveStreamScreenOptions,
-                        title: t('liveStreaming.title')
-                    }} />
-                <ConferenceStack.Screen
-                    component = { SpeakerStats }
-                    name = { screen.conference.speakerStats }
-                    options = {{
-                        ...speakerStatsScreenOptions,
-                        title: t('speakerStats.speakerStats')
-                    }} />
-                <ConferenceStack.Screen
-                    component = { SalesforceLinkDialog }
-                    name = { screen.conference.salesforce }
-                    options = {{
-                        ...salesforceScreenOptions,
-                        title: t('notify.linkToSalesforce')
-                    }} />
-                <ConferenceStack.Screen
-                    component = { GifsMenu }
-                    name = { screen.conference.gifsMenu }
-                    options = {{
-                        ...gifsMenuOptions,
-                        title: t('notify.gifsMenu')
-                    }} />
-                <ConferenceStack.Screen
-                    component = { LobbyNavigationContainer }
-                    name = { screen.lobby.root }
-                    options = {{
-                        ...lobbyNavigationContainerScreenOptions,
-                        title: t('lobby.title')
-                    }} />
-                <ConferenceStack.Screen
-                    component = { AddPeopleDialog }
-                    name = { screen.conference.invite }
-                    options = {{
-                        ...inviteScreenOptions,
-                        title: t('addPeople.add')
-                    }} />
-                <ConferenceStack.Screen
-                    component = { SharedDocument }
-                    name = { screen.conference.sharedDocument }
-                    options = {{
-                        ...sharedDocumentScreenOptions,
-                        title: t('documentSharing.title')
-                    }} />
-                <ConferenceStack.Screen
-                    // @ts-ignore
-                    component = { SettingsNavigationContainer }
-                    name = { screen.settings.main }
-                    options = { settingsNavigationContainerScreenOptions } />
-                <ConferenceStack.Screen
-                    // @ts-ignore
-                    component = { CarMode }
-                    name = { screen.conference.carmode }
-                    options = {{
-                        ...carmodeScreenOptions,
-                        title: t('carmode.labels.title')
-                    }} />
-                <ConferenceStack.Screen
-                    component = { LanguageSelectorDialog }
-                    name = { screen.conference.subtitles }
-                    options = {{
-                        ...subtitlesScreenOptions,
-                        title: t('transcribing.subtitles')
-                    }} />
-                <ConferenceStack.Screen
-                    component = { AudioTranslationDialog }
-                    name = { screen.conference.audioTranslation }
-                    options = {{
-                        ...audioTranslationScreenOptions,
-                        title: t('toolbar.audioTranslation')
-                    }} />
-                <ConferenceStack.Screen
-                    component = { BreakoutRooms }
-                    name = { screen.conference.breakoutRooms }
-                    options = {{
-                        ...breakoutRoomsScreenOptions,
-                        title: t('breakoutRooms.title')
-                    }} />
-                <ConferenceStack.Screen
-                    // @ts-ignore
-                    component = { Whiteboard }
-                    name = { screen.conference.whiteboard }
-                    options = {{
-                        ...whiteboardScreenOptions,
-                        title: t('whiteboard.screenTitle')
-                    }} />
-            </ConferenceStack.Navigator>
-        </NavigationContainer>
+        <NavigationIndependentTree>
+            <NavigationContainer
+                ref = { conferenceNavigationRef }
+                theme = { navigationContainerTheme }>
+                <ConferenceStack.Navigator
+                    screenOptions = {{
+                        presentation: 'modal'
+                    }}>
+                    <ConferenceStack.Screen
+                        component = { Conference }
+                        name = { screen.conference.main }
+                        options = { conferenceScreenOptions } />
+                    <ConferenceStack.Screen
+                        component = { ChatScreen }
+                        name = { chatScreenName }
+                        options = {{
+                            ...chatScreenOptions,
+                            title: chatTitle
+                        }} />
+                    <ConferenceStack.Screen
+                        component = { ParticipantsPane }
+                        name = { screen.conference.participants }
+                        options = {{
+                            ...participantsScreenOptions,
+                            title: t('participantsPane.title')
+                        }} />
+                    <ConferenceStack.Screen
+                        component = { SecurityDialog }
+                        name = { screen.conference.security }
+                        options = {{
+                            ...securityScreenOptions,
+                            title: t('security.title')
+                        }} />
+                    <ConferenceStack.Screen
+                        component = { RecordingTranscriptionDialog }
+                        name = { screen.conference.recording }
+                        options = {{
+                            ...recordingScreenOptions,
+                            title: t('dialog.recordAndTranscribe')
+                        }} />
+                    <ConferenceStack.Screen
+                        component = { StartLiveStreamDialog }
+                        name = { screen.conference.liveStream }
+                        options = {{
+                            ...liveStreamScreenOptions,
+                            title: t('liveStreaming.title')
+                        }} />
+                    <ConferenceStack.Screen
+                        component = { SpeakerStats }
+                        name = { screen.conference.speakerStats }
+                        options = {{
+                            ...speakerStatsScreenOptions,
+                            title: t('speakerStats.speakerStats')
+                        }} />
+                    <ConferenceStack.Screen
+                        component = { SalesforceLinkDialog }
+                        name = { screen.conference.salesforce }
+                        options = {{
+                            ...salesforceScreenOptions,
+                            title: t('notify.linkToSalesforce')
+                        }} />
+                    <ConferenceStack.Screen
+                        component = { GifsMenu }
+                        name = { screen.conference.gifsMenu }
+                        options = {{
+                            ...gifsMenuOptions,
+                            title: t('notify.gifsMenu')
+                        }} />
+                    <ConferenceStack.Screen
+                        component = { LobbyNavigationContainer }
+                        name = { screen.lobby.root }
+                        options = {{
+                            ...lobbyNavigationContainerScreenOptions,
+                            title: t('lobby.title')
+                        }} />
+                    <ConferenceStack.Screen
+                        component = { AddPeopleDialog }
+                        name = { screen.conference.invite }
+                        options = {{
+                            ...inviteScreenOptions,
+                            title: t('addPeople.add')
+                        }} />
+                    <ConferenceStack.Screen
+                        component = { SharedDocument }
+                        name = { screen.conference.sharedDocument }
+                        options = {{
+                            ...sharedDocumentScreenOptions,
+                            title: t('documentSharing.title')
+                        }} />
+                    <ConferenceStack.Screen
+                        // @ts-ignore
+                        component = { SettingsNavigationContainer }
+                        name = { screen.settings.main }
+                        options = { settingsNavigationContainerScreenOptions } />
+                    <ConferenceStack.Screen
+                        // @ts-ignore
+                        component = { CarMode }
+                        name = { screen.conference.carmode }
+                        options = {{
+                            ...carmodeScreenOptions,
+                            title: t('carmode.labels.title')
+                        }} />
+                    <ConferenceStack.Screen
+                        component = { LanguageSelectorDialog }
+                        name = { screen.conference.subtitles }
+                        options = {{
+                            ...subtitlesScreenOptions,
+                            title: t('transcribing.subtitles')
+                        }} />
+                    <ConferenceStack.Screen
+                        component = { AudioTranslationDialog }
+                        name = { screen.conference.audioTranslation }
+                        options = {{
+                            ...audioTranslationScreenOptions,
+                            title: t('toolbar.audioTranslation')
+                        }} />
+                    <ConferenceStack.Screen
+                        component = { BreakoutRooms }
+                        name = { screen.conference.breakoutRooms }
+                        options = {{
+                            ...breakoutRoomsScreenOptions,
+                            title: t('breakoutRooms.title')
+                        }} />
+                    <ConferenceStack.Screen
+                        // @ts-ignore
+                        component = { Whiteboard }
+                        name = { screen.conference.whiteboard }
+                        options = {{
+                            ...whiteboardScreenOptions,
+                            title: t('whiteboard.screenTitle')
+                        }} />
+                </ConferenceStack.Navigator>
+            </NavigationContainer>
+        </NavigationIndependentTree>
     );
 };
 
