@@ -71,21 +71,21 @@ export function isDynamicBrandingDataLoaded(state: IReduxState) {
  * neither the other icons nor the rest of the branding. Icons that fail to load are logged
  * and left out of the result.
  *
- * @param {Record<string, string>} customIcons - Map of icon name to SVG URL.
+ * @param {Record<string, string>} customIcons - Map of icon name to SVG URL or inline SVG markup.
  * @returns {Promise<Record<string, string>>} Map of icon name to sanitized SVG XML.
  */
 export async function fetchCustomIcons(customIcons: Record<string, string>): Promise<Record<string, string>> {
     const entries = Object.entries(customIcons);
-    const results = await Promise.allSettled(entries.map(entry => fetchCustomIcon(entry[1])));
+    const results = await Promise.allSettled(entries.map(entry => loadCustomIcon(entry[1])));
     const localCustomIcons: Record<string, string> = {};
 
     results.forEach((result, index) => {
-        const [ key, url ] = entries[index];
+        const [ key, value ] = entries[index];
 
         if (result.status === 'fulfilled') {
             localCustomIcons[key] = result.value;
         } else {
-            logger.error(`Error fetching custom icon ${key} from ${url}:`, result.reason);
+            logger.error(`Error loading custom icon ${key}${isInlineSvg(value) ? '' : ` from ${value}`}:`, result.reason);
         }
     });
 
@@ -93,17 +93,33 @@ export async function fetchCustomIcons(customIcons: Record<string, string>): Pro
 }
 
 /**
- * Fetches a single icon SVG, giving up after {@link CUSTOM_ICON_FETCH_TIMEOUT}.
+ * Tells whether a custom icon value is inline SVG markup rather than a URL to fetch it from.
+ * Inline markup lets the branding payload carry the icons themselves, saving one request per icon.
  *
- * @param {string} url - The URL of the SVG.
+ * @param {string} value - The custom icon value from the branding data.
+ * @returns {boolean}
+ */
+export function isInlineSvg(value: string): boolean {
+    return value.trimStart().startsWith('<');
+}
+
+/**
+ * Resolves a single custom icon to sanitized SVG XML. Inline markup is used as is; anything else
+ * is treated as a URL and downloaded, giving up after {@link CUSTOM_ICON_FETCH_TIMEOUT}.
+ *
+ * @param {string} value - The SVG URL or inline SVG markup.
  * @returns {Promise<string>} The sanitized SVG XML.
  */
-async function fetchCustomIcon(url: string): Promise<string> {
+async function loadCustomIcon(value: string): Promise<string> {
+    if (isInlineSvg(value)) {
+        return cleanSvg(value);
+    }
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), CUSTOM_ICON_FETCH_TIMEOUT);
 
     try {
-        const response = await fetch(url, { signal: controller.signal });
+        const response = await fetch(value, { signal: controller.signal });
 
         if (!response.ok) {
             throw new Error(`Unexpected status ${response.status}`);
