@@ -25,13 +25,21 @@ async function joinWithFeatures(features: Record<string, boolean>): Promise<void
 }
 
 /**
- * Mirrors LocalRecordingManager.isSupported() plus the embedding guard that
- * supportsLocalRecording() adds — the same probe tests/specs/misc/recordingDialogConfig.spec.ts and
- * recordingButtonVisibility.spec.ts use, because these browser capability gates are frequently
- * unmet in the automated test browser regardless of any JWT feature claim.
+ * Mirrors getRecordButtonProps()'s `localRecordingEnabled` in its entirety
+ * (react/features/recording/functions.ts): the config.js `localRecording.disable` gate, plus
+ * LocalRecordingManager.isSupported() and the embedding guard that supportsLocalRecording() adds —
+ * the same probe tests/specs/misc/recordingDialogConfig.spec.ts and recordingButtonVisibility.spec.ts
+ * use, because these browser capability gates are frequently unmet in the automated test browser
+ * regardless of any JWT feature claim. The config.js gate matters here too: some deployments disable
+ * local recording outright, which is otherwise invisible to this matrix since it never sets a
+ * config.js override of its own (see the module comment below).
  */
-async function isLocalRecordingSupportedByBrowser(): Promise<boolean> {
+async function isLocalRecordingEnabled(): Promise<boolean> {
     return ctx.p1.execute(() => {
+        if (config.localRecording?.disable) {
+            return false;
+        }
+
         const browser = JitsiMeetJS.util.browser;
         const PREFERRED_MEDIA_TYPE = 'video/webm;codecs=vp8,opus';
 
@@ -80,15 +88,16 @@ setTestProperties(__filename, {
  *  - The Live Streaming toolbar button is fully orthogonal and purely JWT-gated: only the
  *    livestreaming claim matters (see LiveStream/AbstractLiveStreamButton.ts).
  *
- * localRecordingAvailable also depends on browser capabilities (MediaRecorder/File System Access
- * support) that are frequently unmet in the automated test browser — probed once up front so the
- * per-combination expectations stay accurate regardless of what the test browser actually supports.
+ * localRecordingAvailable also depends on config.js (localRecording.disable) and browser capabilities
+ * (MediaRecorder/File System Access support) that are frequently unmet in the automated test browser —
+ * probed once up front so the per-combination expectations stay accurate regardless of what the
+ * deployment/test browser actually supports.
  */
 describe('Recording dialog JWT feature matrix — recording × transcription × live streaming', () => {
     // A const-bound holder object, rather than a reassigned `let`, so the it() closures created
     // inside the loop below don't trip @typescript-eslint/no-loop-func — only its property (set
     // once, in 'setup', before any of the loop's tests run) actually changes.
-    const localRecordingSupport = { byBrowser: false };
+    const localRecordingSupport = { enabled: false };
 
     it('setup', async () => {
         if (!expectations.jaas.recordingEnabled
@@ -105,7 +114,7 @@ describe('Recording dialog JWT feature matrix — recording × transcription × 
             transcription: true,
             livestreaming: true
         });
-        localRecordingSupport.byBrowser = await isLocalRecordingSupportedByBrowser();
+        localRecordingSupport.enabled = await isLocalRecordingEnabled();
     });
 
     const BOOLEANS = [ true, false ];
@@ -128,7 +137,7 @@ describe('Recording dialog JWT feature matrix — recording × transcription × 
 
                     expect(await p1.getToolbar().hasLiveStreamingButton()).toBe(livestreamingFeature);
 
-                    const dialogCanOpen = recordingFeature || transcriptionFeature || localRecordingSupport.byBrowser;
+                    const dialogCanOpen = recordingFeature || transcriptionFeature || localRecordingSupport.enabled;
 
                     expect(await p1.getToolbar().hasRecordingButton()).toBe(dialogCanOpen);
                 });
