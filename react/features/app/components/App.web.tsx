@@ -4,6 +4,7 @@ import GlobalStyles from '../../base/ui/components/GlobalStyles.web';
 import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider.web';
 import DialogContainer from '../../base/ui/components/web/DialogContainer';
 import ChromeExtensionBanner from '../../chrome-extension-banner/components/ChromeExtensionBanner.web';
+import DynamicBrandingGate from '../../dynamic-branding/components/web/DynamicBrandingGate';
 import OverlayContainer from '../../overlay/components/web/OverlayContainer';
 import PiP from '../../pip/components/PiP';
 
@@ -46,6 +47,7 @@ export class App extends AbstractApp {
     override _createMainElement(component: React.ComponentType, props?: Object) {
         return (
             <JitsiThemeProvider>
+                <DynamicBrandingGate />
                 <GlobalStyles />
                 <ChromeExtensionBanner />
                 <PiP />

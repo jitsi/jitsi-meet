@@ -66,6 +66,33 @@ export function isDynamicBrandingDataLoaded(state: IReduxState) {
 }
 
 /**
+ * Tells whether the deployment is configured to fetch dynamic branding for the current conference.
+ *
+ * @param {Object} state - Global state of the app.
+ * @returns {boolean}
+ */
+export function isDynamicBrandingConfigured(state: IReduxState): boolean {
+    const { brandingDataUrl, dynamicBrandingUrl } = state['features/base/config'];
+
+    // Mirrors the rule getDynamicBrandingUrl uses to decide whether there is a URL to fetch.
+    return Boolean(dynamicBrandingUrl || (brandingDataUrl && extractFqnFromPath(state)));
+}
+
+/**
+ * Tells whether dynamic branding is expected but not fully applied yet: the data has not arrived
+ * (or failed) or the custom icons it asked for are still being loaded. While this is the case the
+ * UI shows the default look, which is about to change.
+ *
+ * @param {Object} state - Global state of the app.
+ * @returns {boolean}
+ */
+export function isDynamicBrandingPending(state: IReduxState): boolean {
+    const { brandedIconsPending, customizationReady } = state['features/dynamic-branding'];
+
+    return isDynamicBrandingConfigured(state) && (!customizationReady || brandedIconsPending);
+}
+
+/**
  * Loads the SVG content of the given branding icons. The icons are requested in parallel and
  * each request is bounded by {@link CUSTOM_ICON_FETCH_TIMEOUT}, so a slow or dead URL delays
  * neither the other icons nor the rest of the branding. Icons that fail to load are logged
