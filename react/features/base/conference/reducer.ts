@@ -137,6 +137,7 @@ export interface IJitsiConference {
     getTranscriptionStatus: Function;
     grantOwner: Function;
     isAVModerationSupported: Function;
+    isAudioTranslationSupported?: () => boolean;
     isE2EEEnabled: Function;
     isE2EESupported: Function;
     isEndConferenceSupported: Function;
