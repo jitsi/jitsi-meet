@@ -260,10 +260,10 @@ export const commonStyles = (theme: Theme) => {
 
             '&.disabled': {
                 cursor: 'initial !important',
-                backgroundColor: `${theme.palette.disabled01} !important`,
+                backgroundColor: `${theme.palette.ui02} !important`,
 
                 '& svg': {
-                    fill: `${theme.palette.icon03} !important`
+                    fill: `${theme.palette.textColor02} !important`
                 }
             }
         },

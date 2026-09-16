@@ -14,6 +14,8 @@ $thumbnailsBorder: 2px;
  * Toolbar
  */
 $newToolbarBackgroundColor: #131519;
+$disabledToolbarBackgroundColor: #292929;
+$disabledToolbarIconColor: #C2C2C2;
 $newToolbarSize: 48px;
 $newToolbarSizeMobile: 60px;
 $newToolbarSizeWithPadding: calc(#{$newToolbarSize} + 24px);
