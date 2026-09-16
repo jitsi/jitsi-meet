@@ -258,7 +258,7 @@
         "yes": "yes"
     },
     "customPanel": {
-        "close": "Close"
+        "title": "Copilot"
     },
     "dateUtils": {
         "earlier": "Earlier",
