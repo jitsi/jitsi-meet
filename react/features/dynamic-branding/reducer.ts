@@ -43,6 +43,16 @@ const DEFAULT_STATE = {
     backgroundImageUrl: '',
 
     /**
+     * Whether the branding data asked for custom icons whose content is still being loaded. The
+     * icons are applied separately from the rest of the branding, so this tells when the branded
+     * look is not complete yet.
+     *
+     * @public
+     * @type {boolean}
+     */
+    brandedIconsPending: false,
+
+    /**
      * Flag indicating that the branding data can be displayed.
      * This is used in order to avoid image flickering / text changing(blipping).
      *
@@ -165,6 +175,7 @@ export interface IDynamicBrandingState {
     backgroundColor: string;
     backgroundImageUrl: string;
     brandedIcons?: Record<string, string>;
+    brandedIconsPending: boolean;
     customizationFailed: boolean;
     customizationReady: boolean;
     defaultBranding: boolean;
@@ -197,6 +208,7 @@ ReducerRegistry.register<IDynamicBrandingState>(STORE_NAME, (state = DEFAULT_STA
             avatarBackgrounds,
             backgroundColor,
             backgroundImageUrl,
+            customIcons,
             defaultBranding,
             didPageUrl,
             groupChatRequiresPermission,
@@ -219,6 +231,7 @@ ReducerRegistry.register<IDynamicBrandingState>(STORE_NAME, (state = DEFAULT_STA
             avatarBackgrounds,
             backgroundColor,
             backgroundImageUrl,
+            brandedIconsPending: Boolean(customIcons),
             defaultBranding,
             didPageUrl,
             groupChatRequiresPermission,
@@ -251,7 +264,8 @@ ReducerRegistry.register<IDynamicBrandingState>(STORE_NAME, (state = DEFAULT_STA
     case SET_DYNAMIC_BRANDING_ICONS:
         return {
             ...state,
-            brandedIcons: action.icons
+            brandedIcons: action.icons,
+            brandedIconsPending: false
         };
 
     case SET_DYNAMIC_BRANDING_READY:
