@@ -151,7 +151,7 @@ const useStyles = makeStyles()(theme => {
             width: 36,
 
             '&:hover': {
-                backgroundColor: '#0262B6'
+                backgroundColor: theme.palette.prejoinActionButtonOptionsHover
             },
 
             '& svg': {
