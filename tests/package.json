@@ -13,7 +13,8 @@
         "test-grid": "DOTENV_CONFIG_PATH=.env NODE_PATH=\"$(pwd)/node_modules\" wdio run wdio.grid.conf.ts",
         "test-grid-single": "DOTENV_CONFIG_PATH=.env NODE_PATH=\"$(pwd)/node_modules\" wdio run wdio.grid.conf.ts --spec",
         "test-grid-ff": "DOTENV_CONFIG_PATH=.env NODE_PATH=\"$(pwd)/node_modules\" wdio run wdio.grid.firefox.conf.ts",
-        "test-grid-ff-single": "DOTENV_CONFIG_PATH=.env NODE_PATH=\"$(pwd)/node_modules\" wdio run wdio.grid.firefox.conf.ts --spec"
+        "test-grid-ff-single": "DOTENV_CONFIG_PATH=.env NODE_PATH=\"$(pwd)/node_modules\" wdio run wdio.grid.firefox.conf.ts --spec",
+        "test-unit": "NODE_PATH=\"$(pwd)/node_modules\" node --import tsx node_modules/mocha/bin/mocha.js \"unit/**/*.spec.ts\""
     },
     "dependencies": {
         "@braintree/sanitize-url": "7.0.0",
@@ -38,7 +39,9 @@
     "devDependencies": {
         "@types/jsonwebtoken": "9.0.7",
         "@types/mocha": "10.0.10",
-        "@types/pretty": "2.0.3"
+        "@types/pretty": "2.0.3",
+        "mocha": "10.8.2",
+        "tsx": "4.23.13"
     },
     "engines": {
         "node": ">=24.0.0",
