@@ -57,11 +57,16 @@ export function isDynamicBrandingDataLoaded(state: IReduxState) {
  * the rest of the branding. Icons that fail to load are logged and left out of the result.
  *
  * @param {Record<string, string>} customIcons - Map of icon name to SVG URL or inline SVG markup.
+ * @param {Promise<Record<string, string>>} [preloadedMarkup] - Raw markup the preload script already
+ * downloaded for some of the URL icons, keyed by icon name.
  * @returns {Promise<Record<string, string>>} Map of icon name to sanitized SVG XML.
  */
-export async function fetchCustomIcons(customIcons: Record<string, string>): Promise<Record<string, string>> {
+export async function fetchCustomIcons(
+        customIcons: Record<string, string>,
+        preloadedMarkup?: Promise<Record<string, string>>): Promise<Record<string, string>> {
+    const preloaded = await resolvePreloadedMarkup(preloadedMarkup);
     const entries = Object.entries(customIcons);
-    const results = await Promise.allSettled(entries.map(entry => loadCustomIcon(entry[1])));
+    const results = await Promise.allSettled(entries.map(([ key, value ]) => loadCustomIcon(preloaded[key] ?? value)));
     const localCustomIcons: Record<string, string> = {};
 
     results.forEach((result, index) => {
@@ -75,6 +80,28 @@ export async function fetchCustomIcons(customIcons: Record<string, string>): Pro
     });
 
     return localCustomIcons;
+}
+
+/**
+ * Waits for the icon markup the preload script downloaded, if any. A failure there is not fatal,
+ * the icons are simply downloaded again.
+ *
+ * @param {Promise<Record<string, string>>} [preloadedMarkup] - The preloaded markup, keyed by icon name.
+ * @returns {Promise<Record<string, string>>}
+ */
+async function resolvePreloadedMarkup(
+        preloadedMarkup?: Promise<Record<string, string>>): Promise<Record<string, string>> {
+    if (!preloadedMarkup) {
+        return {};
+    }
+
+    try {
+        return await preloadedMarkup;
+    } catch (err) {
+        logger.warn('Preloaded custom icons failed, fetching them again', err);
+
+        return {};
+    }
 }
 
 /**
