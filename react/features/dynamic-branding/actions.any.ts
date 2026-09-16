@@ -4,6 +4,7 @@ import { doGetJSON } from '../base/util/httpUtils';
 import {
     SET_DYNAMIC_BRANDING_DATA,
     SET_DYNAMIC_BRANDING_FAILED,
+    SET_DYNAMIC_BRANDING_ICONS,
     SET_DYNAMIC_BRANDING_READY
 } from './actionTypes';
 import { getDynamicBrandingUrl } from './functions.any';
@@ -52,6 +53,19 @@ export function setDynamicBrandingData(value: Object) {
     return {
         type: SET_DYNAMIC_BRANDING_DATA,
         value
+    };
+}
+
+/**
+ * Action used to set the loaded branded icons.
+ *
+ * @param {Record<string, string>} icons - Map of icon name to sanitized SVG XML.
+ * @returns {Object}
+ */
+export function setDynamicBrandingIcons(icons: Record<string, string>) {
+    return {
+        type: SET_DYNAMIC_BRANDING_ICONS,
+        icons
     };
 }
 

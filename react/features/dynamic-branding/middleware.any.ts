@@ -7,27 +7,27 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { toState } from '../base/redux/functions';
 
 import { SET_DYNAMIC_BRANDING_DATA, SET_DYNAMIC_BRANDING_READY } from './actionTypes';
+import { setDynamicBrandingIcons } from './actions.any';
 import { fetchCustomIcons } from './functions.any';
 import logger from './logger';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case SET_DYNAMIC_BRANDING_DATA: {
+        const result = next(action);
         const { customIcons } = action.value;
 
+        // The icons are loaded separately so the theme and the rest of the branding are
+        // applied right away instead of waiting for every SVG to arrive.
         if (customIcons) {
             fetchCustomIcons(customIcons)
-                .then(localCustomIcons => {
-                    action.value.brandedIcons = localCustomIcons;
-
-                    return next(action);
-                })
+                .then(icons => store.dispatch(setDynamicBrandingIcons(icons)))
                 .catch((error: any) => {
                     logger.error('Error fetching branded custom icons:', error);
                 });
         }
 
-        break;
+        return result;
     }
 
     case PARTICIPANT_ROLE_CHANGED: {

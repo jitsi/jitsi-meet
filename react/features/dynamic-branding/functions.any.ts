@@ -2,6 +2,7 @@ import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { toState } from '../base/redux/functions';
 
+import { CUSTOM_ICON_FETCH_TIMEOUT } from './constants';
 import { cleanSvg } from './functions';
 import logger from './logger';
 
@@ -65,29 +66,67 @@ export function isDynamicBrandingDataLoaded(state: IReduxState) {
 }
 
 /**
- * Fetch SVG XMLs from branding icons urls.
+ * Loads the SVG content of the given branding icons. The icons are requested in parallel and
+ * each request is bounded by {@link CUSTOM_ICON_FETCH_TIMEOUT}, so a slow or dead URL delays
+ * neither the other icons nor the rest of the branding. Icons that fail to load are logged
+ * and left out of the result.
  *
- * @param {Object} customIcons - The map of branded icons.
- * @returns {Object}
+ * @param {Record<string, string>} customIcons - Map of icon name to SVG URL or inline SVG markup.
+ * @returns {Promise<Record<string, string>>} Map of icon name to sanitized SVG XML.
  */
-export const fetchCustomIcons = async (customIcons: Record<string, string>) => {
+export async function fetchCustomIcons(customIcons: Record<string, string>): Promise<Record<string, string>> {
+    const entries = Object.entries(customIcons);
+    const results = await Promise.allSettled(entries.map(entry => loadCustomIcon(entry[1])));
     const localCustomIcons: Record<string, string> = {};
 
-    for (const [ key, url ] of Object.entries(customIcons)) {
-        try {
-            const response = await fetch(url);
+    results.forEach((result, index) => {
+        const [ key, value ] = entries[index];
 
-            if (response.ok) {
-                const svgXml = await response.text();
-
-                localCustomIcons[key] = cleanSvg(svgXml);
-            } else {
-                logger.error(`Failed to fetch ${url}. Status: ${response.status}`);
-            }
-        } catch (error) {
-            logger.error(`Error fetching ${url}:`, error);
+        if (result.status === 'fulfilled') {
+            localCustomIcons[key] = result.value;
+        } else {
+            logger.error(`Error loading custom icon ${key}${isInlineSvg(value) ? '' : ` from ${value}`}:`, result.reason);
         }
-    }
+    });
 
     return localCustomIcons;
-};
+}
+
+/**
+ * Tells whether a custom icon value is inline SVG markup rather than a URL to fetch it from.
+ * Inline markup lets the branding payload carry the icons themselves, saving one request per icon.
+ *
+ * @param {string} value - The custom icon value from the branding data.
+ * @returns {boolean}
+ */
+export function isInlineSvg(value: string): boolean {
+    return value.trimStart().startsWith('<');
+}
+
+/**
+ * Resolves a single custom icon to sanitized SVG XML. Inline markup is used as is; anything else
+ * is treated as a URL and downloaded, giving up after {@link CUSTOM_ICON_FETCH_TIMEOUT}.
+ *
+ * @param {string} value - The SVG URL or inline SVG markup.
+ * @returns {Promise<string>} The sanitized SVG XML.
+ */
+async function loadCustomIcon(value: string): Promise<string> {
+    if (isInlineSvg(value)) {
+        return cleanSvg(value);
+    }
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), CUSTOM_ICON_FETCH_TIMEOUT);
+
+    try {
+        const response = await fetch(value, { signal: controller.signal });
+
+        if (!response.ok) {
+            throw new Error(`Unexpected status ${response.status}`);
+        }
+
+        return cleanSvg(await response.text());
+    } finally {
+        clearTimeout(timeout);
+    }
+}
