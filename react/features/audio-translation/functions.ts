@@ -135,8 +135,8 @@ export function canManageAudioTranslation(state: IReduxState): boolean {
 }
 
 /**
- * Whether the audio-translation UI should be available to the local user: the feature must be deployed
- * ({@code config.audioTranslation.enabled}) and either the user can manage it or it is enabled for the room.
+ * Whether the audio-translation UI should be available to the local user: the feature must be enabled in config
+ * and supported by the deployment, and either the user can manage it or it is enabled for the room.
  *
  * @param {IReduxState} state - The redux state.
  * @returns {boolean}
@@ -148,6 +148,12 @@ export function isAudioTranslationAvailable(state: IReduxState): boolean {
     }
 
     if (!state['features/base/config'].audioTranslation?.enabled) {
+        return false;
+    }
+
+    // The component is advertised over service discovery, so an enabled config does not mean it is deployed.
+    // Only an explicit false hides it, so an older lib-jitsi-meet without the check stays unaffected.
+    if (state['features/base/conference'].conference?.isAudioTranslationSupported?.() === false) {
         return false;
     }
 
