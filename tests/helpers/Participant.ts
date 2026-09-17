@@ -906,10 +906,31 @@ export class Participant {
         // conference URL and puts the driver in a broken state for any subsequent ensureOneParticipant call.
         await this.switchToMainFrame();
 
-        await this.driver.url('/base.html')
+        // driver.url() can silently fail to land on /base.html (the known pre-wdio-v9.9.1 BiDi bug
+        // the catch below guards against, or any other transient navigation error) - swallowing that
+        // unconditionally previously let hangup() return as if it succeeded while the page was still
+        // on the conference. The next ensureOneParticipant call then sees alreadyOnBasePage === false
+        // and falls into the expensive switchToIFrame() fallback right when the page is least stable,
+        // which is the same class of "no response, no error" context-pinning failure documented on
+        // switchToIFrame() itself. Verify we actually got there and retry a bounded number of times
+        // instead of trusting a swallowed exception.
+        const MAX_ATTEMPTS = 3;
 
-            // This was fixed in wdio v9.9.1, we can drop once we update to that version
-            .catch(_ => {}); // eslint-disable-line @typescript-eslint/no-empty-function
+        for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+            await this.driver.url('/base.html')
+
+                // This was fixed in wdio v9.9.1, we can drop once we update to that version
+                .catch(_ => {}); // eslint-disable-line @typescript-eslint/no-empty-function
+
+            if ((await this.driver.getUrl()).endsWith('/base.html')) {
+                return;
+            }
+
+            if (attempt === MAX_ATTEMPTS) {
+                throw new Error(`${this.name} failed to navigate to /base.html after hanging up, `
+                    + `after ${MAX_ATTEMPTS} attempts.`);
+            }
+        }
     }
 
     /**
