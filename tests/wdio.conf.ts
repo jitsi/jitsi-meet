@@ -23,7 +23,7 @@ const allure = require('allure-commandline');
 // we need it to be able to reuse jitsi-meet code in tests
 require.extensions['.web.ts'] = require.extensions['.ts'];
 
-const chromeArgs = [
+export const chromeArgs = [
     '--allow-insecure-localhost',
     '--use-fake-ui-for-media-stream',
     '--use-fake-device-for-media-stream',
@@ -60,7 +60,7 @@ if (process.env.VIDEO_CAPTURE_FILE) {
     chromeArgs.push(`--use-file-for-fake-video-capture=${process.env.VIDEO_CAPTURE_FILE}`);
 }
 
-const chromePreferences = {
+export const chromePreferences = {
     'intl.accept_languages': 'en-US'
 };
 
@@ -205,7 +205,7 @@ function generateCapabilitiesFromSpecs(): { capabilities: Record<string, any>; e
 
 const { capabilities, excludedSpecs } = generateCapabilitiesFromSpecs();
 
-const TEST_RESULTS_DIR = 'test-results';
+export const TEST_RESULTS_DIR = 'test-results';
 
 const keepAlive: Array<any> = [];
 
