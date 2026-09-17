@@ -51,7 +51,9 @@ local.properties
 
 # node.js
 #
-node_modules/
+# No trailing slash: the pattern must also match a node_modules symlink, which
+# a git worktree gets when it points at the node_modules of the main checkout.
+node_modules
 npm-debug.log
 yarn-error.log
 
