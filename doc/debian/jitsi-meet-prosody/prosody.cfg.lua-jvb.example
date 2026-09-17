@@ -69,6 +69,10 @@ VirtualHost "jitmeet.example.com"
         "conference_duration";
         "muc_lobby_rooms";
         "muc_breakout_rooms";
+        -- Keeps client messages on the routes that the rooms control: a client
+        -- can address a message to a MUC or to a component, not to the JID of
+        -- an account.
+        "filter_direct_messages";
     }
     c2s_require_encryption = false
     lobby_muc = "lobby.jitmeet.example.com"

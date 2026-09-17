@@ -33,6 +33,7 @@ import { IMessage, IPendingEditsMap } from './types';
 
 const DEFAULT_STATE = {
     groupChatWithPermissions: false,
+    privateChatWithPermissions: false,
     isOpen: false,
     messageModerationSupported: false,
     messages: [],
@@ -69,6 +70,7 @@ export interface IChatState {
     messages: IMessage[];
     notifyPrivateRecipientsChangedTimestamp?: number;
     pendingEdits: IPendingEditsMap;
+    privateChatWithPermissions: boolean;
     privateMessageRecipient?: IParticipant | IVisitorChatParticipant;
     searchMatchIndex: number;
     searchQuery: string;
@@ -364,7 +366,8 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         if (metadata?.permissions) {
             return {
                 ...state,
-                groupChatWithPermissions: Boolean(metadata.permissions.groupChatRestricted)
+                groupChatWithPermissions: Boolean(metadata.permissions.groupChatRestricted),
+                privateChatWithPermissions: Boolean(metadata.permissions.privateChatRestricted)
             };
         }
 

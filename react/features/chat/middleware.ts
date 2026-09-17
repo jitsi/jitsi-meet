@@ -83,7 +83,9 @@ import {
     getFocusedTab,
     getUnreadCount,
     isChatDisabled,
+    isGroupChatRestricted,
     isSendGroupChatDisabled,
+    isSendPrivateChatDisabled,
     isVisitorChatParticipant
 } from './functions';
 import logger from './logger';
@@ -189,6 +191,18 @@ MiddlewareRegistry.register(store => next => action => {
 
             store.dispatch(pushReactions(reactions));
 
+            // A bridge channel message does not go through the MUC, thus the
+            // server does not apply the chat restrictions of the room to it.
+            // Apply the group chat restriction here, otherwise a reaction shows
+            // in the chat of every participant while chat is restricted. The
+            // permissions of a remote participant are not known locally, thus
+            // this uses the moderator role, which is what the server gives the
+            // permissions to. The reaction itself still plays: on-screen
+            // reactions have their own moderation.
+            if (isGroupChatRestricted(state) && !participant?.isModerator?.()) {
+                break;
+            }
+
             _handleReceivedMessage(store, {
                 participantId: participant.getId(),
                 message: getReactionMessageFromBuffer(reactions),
@@ -242,6 +256,7 @@ MiddlewareRegistry.register(store => next => action => {
 
             if (
                 isSendGroupChatDisabled(state)
+                && !isSendPrivateChatDisabled(state)
                 && privateMessageRecipient
                 && !action.participant
             ) {
@@ -596,7 +611,12 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
                 privateMessage: false
             });
 
-            if (isSendGroupChatDisabled(store.getState()) && participantId) {
+            // Group chat is restricted for this participant, so steer the reply
+            // into a private message. Not when private messages are restricted
+            // too: that would move them into a chat they cannot send in either.
+            if (isSendGroupChatDisabled(store.getState())
+                && !isSendPrivateChatDisabled(store.getState())
+                && participantId) {
                 const participant = getParticipantById(store, participantId);
 
                 store.dispatch(setPrivateMessageRecipient(participant));

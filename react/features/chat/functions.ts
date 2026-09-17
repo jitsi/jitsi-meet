@@ -338,6 +338,38 @@ export function isSendGroupChatDisabled(state: IReduxState): boolean {
 }
 
 /**
+ * Returns whether the room restricts group chat to the participants that hold
+ * the permission for it.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function isGroupChatRestricted(state: IReduxState): boolean {
+    return Boolean(state['features/chat'].groupChatWithPermissions);
+}
+
+/**
+ * Check if participant is not allowed to send private messages.
+ *
+ * Unlike the group chat check above, this reads the restriction from the room
+ * metadata, which is what a moderator toggles at runtime. The server applies the
+ * same check in mod_filter_messages, and pushes the permissions of a participant
+ * that it promotes to moderator, so this selector follows a promotion.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean} - Returns true if the participant is not allowed to send private messages.
+ */
+export function isSendPrivateChatDisabled(state: IReduxState): boolean {
+    const { privateChatWithPermissions } = state['features/chat'];
+
+    if (!privateChatWithPermissions) {
+        return false;
+    }
+
+    return !isJwtFeatureEnabled(state, MEET_FEATURES.SEND_PRIVATE_MESSAGE, false);
+}
+
+/**
  * Calculates the maximum width available for the chat panel based on the current window size
  * and other UI elements.
  *
