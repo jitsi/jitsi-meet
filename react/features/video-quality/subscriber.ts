@@ -508,6 +508,17 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
         }
     }
 
+    // Always prioritize active remote screen share streams in receiver constraints.
+    if (remoteScreenShares?.length) {
+        const screenshareSources = _getSourceNames(remoteScreenShares, state);
+
+        screenshareSources.forEach(source => {
+            if (!receiverConstraints.selectedSources.includes(source)) {
+                receiverConstraints.selectedSources.push(source);
+            }
+        });
+    }
+
     try {
         conference.setReceiverConstraints(receiverConstraints);
     } catch (error: any) {
