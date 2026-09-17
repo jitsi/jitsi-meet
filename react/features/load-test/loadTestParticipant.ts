@@ -14,7 +14,9 @@
  * - numClients, clientInterval: how many clients to run in this page and the delay between starting them;
  * - isHuman: whether to receive (and render) remote media, off by default;
  * - localVideo, localAudio, remoteVideo, remoteAudio, autoPlayVideo, stageView: explicit overrides of the
- *   behavior otherwise derived from the config.
+ *   behavior otherwise derived from the config;
+ * - windowWidth, windowHeight: the window size of the emulated jitsi-meet client, which decides the video sizes
+ *   it asks the bridge for (default 1280x1024, what the test suite runs Chrome with).
  */
 // @ts-expect-error
 import Logger from '@jitsi/logger';
@@ -24,6 +26,7 @@ import { parseURLParams } from '../base/util/parseURLParams';
 import { parseURIString } from '../base/util/uri';
 
 import { ILoadTestParams, LoadTestClient } from './LoadTestClient';
+import { DEFAULT_WINDOW_HEIGHT, DEFAULT_WINDOW_WIDTH } from './layout';
 
 /**
  * Applies the config.* URL parameters to the config, without the whitelist the application uses.
@@ -87,7 +90,9 @@ const {
     autoPlayVideo = config.testing?.noAutoPlayVideo !== true,
     stageView = Boolean(config.disableTileView),
     numClients = 1,
-    clientInterval = 100 // ms
+    clientInterval = 100, // ms
+    windowWidth = DEFAULT_WINDOW_WIDTH,
+    windowHeight = DEFAULT_WINDOW_HEIGHT
 } = params;
 
 const roomName: string = params.room || parseURIString(window.location.toString())?.room;
@@ -101,7 +106,9 @@ const loadTestParams: ILoadTestParams = {
     remoteAudio,
     remoteVideo,
     roomName,
-    stageView
+    stageView,
+    windowHeight,
+    windowWidth
 };
 
 let clients: LoadTestClient[] = [];

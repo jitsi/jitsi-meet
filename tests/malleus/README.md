@@ -50,6 +50,13 @@ installed on the deployment: the client is uploaded into each browser together w
 which loads `config.js` and lib-jitsi-meet from the deployment under test. `--use-lite-mode` makes the receivers
 run lib-jitsi-meet in lite mode.
 
+The client asks the bridge for the same video as a real jitsi-meet client would in the common case (no pinning,
+no screen sharing, default filmstrip): only the sources on the first page of tiles, at the quality the tile size
+for a 1280x1024 window allows, or in stage view the on-stage source at large-video quality plus the first
+filmstrip page of thumbnails, with `defaultConstraints` 0 and lastN from the config (-1 by default). The window
+size can be changed with the `windowWidth` and `windowHeight` page parameters, e.g.
+`--extra-receiver-params='windowWidth=1920&windowHeight=1080'`.
+
 The client bundle is built with `npm run build:load-test` at the repository root (into
 `build/load-test-participant.min.js`); the CLI builds it when it is missing. `--load-test-bundle` points at a
 build elsewhere, for machines that only have `tests/` installed. The bundle is deliberately not part of the

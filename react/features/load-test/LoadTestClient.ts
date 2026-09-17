@@ -2,11 +2,18 @@
 import { getLogger } from '@jitsi/logger';
 // @ts-expect-error
 import jwtDecode from 'jwt-decode';
-import { cloneDeep } from 'lodash-es';
 
 import { IConfig } from '../base/config/configType';
 
-import { limitLastN, validateLastNLimits } from './lastN';
+import {
+    DEFAULT_MAX_FULL_RESOLUTION_PARTICIPANTS,
+    DEFAULT_NUMBER_OF_VISIBLE_TILES,
+    VIDEO_QUALITY_LEVELS,
+    largeVideoHeight,
+    qualityForHeight,
+    tileViewTileHeight,
+    verticalFilmstripVisibleCount
+} from './layout';
 
 const logger = getLogger('load-test-client');
 
@@ -37,12 +44,24 @@ export interface ILoadTestParams {
 
     /** Whether to emulate stage view (the dominant speaker in high resolution) rather than tile view. */
     stageView: boolean;
+
+    /** The height of the window the emulated client is assumed to have, which decides the video sizes it asks for. */
+    windowHeight: number;
+
+    /** The width of the window the emulated client is assumed to have. */
+    windowWidth: number;
 }
 
 interface IReceiverConstraints {
-    defaultConstraints: { maxHeight?: number; };
-    lastN?: number;
+    constraints: Record<string, { maxHeight: number; }>;
+    defaultConstraints: { maxHeight: number; };
+    lastN: number;
     onStageSources: string[];
+}
+
+interface IRemoteVideoSource {
+    participantId: string;
+    sourceName: string;
 }
 
 function appendURLParam(url: string, name: string, value: string): string {
@@ -69,9 +88,13 @@ export class LoadTestClient {
     visitor = false;
 
     private dataChannelOpen = false;
+    private leaving = false;
     private onStageParticipant: string | null = null;
     private localAudio: boolean;
-    private receiverConstraints: IReceiverConstraints = { onStageSources: [], defaultConstraints: {} };
+    private receiverConstraints?: IReceiverConstraints;
+
+    /** The remote video sources, in the order they showed up: the order the filmstrip would list them in. */
+    private remoteVideoSources: IRemoteVideoSource[] = [];
 
     private readonly onConnectionSuccessBound = this.onConnectionSuccess.bind(this);
     private readonly onConnectionFailedBound = this.onConnectionFailed.bind(this);
@@ -114,59 +137,114 @@ export class LoadTestClient {
     }
 
     /**
-     * Simple emulation of jitsi-meet's receiver constraints behavior.
+     * Whether the emulated client is in stage view: when asked to, or with fewer than 3 participants, when
+     * jitsi-meet does not use tile view either.
+     *
+     * @returns {boolean}
+     */
+    private isStageView(): boolean {
+        return this.params.stageView || this.numParticipants < 3;
+    }
+
+    /**
+     * Emulation of jitsi-meet's receiver constraints (react/features/video-quality/subscriber.ts) for a client
+     * with a window of the configured size, in the common case: no pinning, no screen sharing, default filmstrip.
+     *
+     * Only the sources that would be visible get a non-zero constraint. In tile view those are the first page of
+     * tiles, at the quality the tile height allows (capped at 360 beyond maxFullResolutionParticipants). In stage
+     * view the on-stage source gets the large video quality and the first filmstrip page gets the thumbnail quality.
+     * The lastN value is what the config says, -1 by default, as in jitsi-meet.
      *
      * @param {boolean} force - Whether to send the constraints even if they did not change.
      * @returns {void}
      */
     private updateReceiverConstraints(force = false): void {
-        if (!this.dataChannelOpen || !this.room) {
+        if (!this.dataChannelOpen || !this.room || this.leaving) {
             return;
         }
 
-        let newMaxFrameHeight;
+        const { windowHeight, windowWidth } = this.params;
+        const conf = this.config as any;
+        const constraints: IReceiverConstraints = {
+            constraints: {},
+            defaultConstraints: { maxHeight: VIDEO_QUALITY_LEVELS.NONE },
+            lastN: conf.startLastN ?? conf.channelLastN ?? -1,
+            onStageSources: []
+        };
+        const maxFullResolutionParticipants
+            = conf.maxFullResolutionParticipants ?? DEFAULT_MAX_FULL_RESOLUTION_PARTICIPANTS;
 
-        if (this.params.stageView) {
-            newMaxFrameHeight = 2160;
-        } else if (this.numParticipants <= 2) {
-            newMaxFrameHeight = 720;
-        } else if (this.numParticipants <= 4) {
-            newMaxFrameHeight = 360;
-        } else {
-            newMaxFrameHeight = 180;
-        }
+        if (this.isStageView()) {
+            const onStageSource = this.onStageParticipant
+                ? this.remoteVideoSources.find(s => s.participantId === this.onStageParticipant)?.sourceName
+                : undefined;
+            const thumbnailQuality = VIDEO_QUALITY_LEVELS.LOW;
 
-        let lastN = typeof this.config.channelLastN === 'undefined' ? -1 : this.config.channelLastN;
-        const limitedLastN = limitLastN(this.numParticipants, validateLastNLimits((this.config as any).lastNLimits));
+            this.remoteVideoSources.slice(0, verticalFilmstripVisibleCount(windowHeight)).forEach(s => {
+                constraints.constraints[s.sourceName] = { maxHeight: thumbnailQuality };
+            });
 
-        if (limitedLastN !== undefined) {
-            lastN = lastN === -1 ? limitedLastN : Math.min(limitedLastN, lastN);
-        }
-
-        let onStageSource: string | undefined;
-
-        if (this.onStageParticipant) {
-            const onStageParticipantTrack = this.room.jvbJingleSession?.peerconnection
-                ?.getRemoteTracks(this.onStageParticipant)?.find((track: any) => track.getType() === 'video');
-
-            if (onStageParticipantTrack) {
-                onStageSource = onStageParticipantTrack.getSourceName();
+            if (onStageSource) {
+                constraints.constraints[onStageSource] = { maxHeight: qualityForHeight(largeVideoHeight(windowHeight)) };
+                constraints.onStageSources = [ onStageSource ];
             }
+        } else {
+            const visible = this.remoteVideoSources.slice(
+                0, conf.tileView?.numberOfVisibleTiles ?? DEFAULT_NUMBER_OF_VISIBLE_TILES);
+            let quality = qualityForHeight(tileViewTileHeight(this.numParticipants, windowWidth, windowHeight));
+
+            if (maxFullResolutionParticipants !== -1 && visible.length > maxFullResolutionParticipants
+                    && quality > VIDEO_QUALITY_LEVELS.STANDARD) {
+                quality = VIDEO_QUALITY_LEVELS.STANDARD;
+            }
+
+            visible.forEach(s => {
+                constraints.constraints[s.sourceName] = { maxHeight: quality };
+            });
         }
 
-        if (force
-            || this.receiverConstraints.lastN !== lastN
-            || this.receiverConstraints.defaultConstraints.maxHeight !== newMaxFrameHeight
-            || this.receiverConstraints.onStageSources[0] !== onStageSource) {
-            const newConstraints = cloneDeep(this.receiverConstraints);
-
-            newConstraints.lastN = lastN;
-            newConstraints.defaultConstraints.maxHeight = newMaxFrameHeight;
-            newConstraints.onStageSources = onStageSource ? [ onStageSource ] : [];
-
-            this.receiverConstraints = newConstraints;
-            this.room.setReceiverConstraints(newConstraints);
+        if (force || JSON.stringify(constraints) !== JSON.stringify(this.receiverConstraints)) {
+            this.receiverConstraints = constraints;
+            logger.log(`Participant ${this.id}: receiver constraints ${JSON.stringify(constraints)}`);
+            this.room.setReceiverConstraints(constraints);
         }
+    }
+
+    /**
+     * Records a remote video source, in filmstrip order.
+     *
+     * @param {Object} track - The remote video track.
+     * @returns {void}
+     */
+    private addRemoteVideoSource(track: any): void {
+        const sourceName = track.getSourceName();
+
+        if (sourceName && !this.remoteVideoSources.some(s => s.sourceName === sourceName)) {
+            this.remoteVideoSources.push({ participantId: track.getParticipantId(), sourceName });
+        }
+    }
+
+    /**
+     * Picks who is on stage when nobody is or when the on-stage participant left: like jitsi-meet's
+     * _electLastVisibleRemoteParticipant, the most recent remote participant with video.
+     *
+     * @returns {boolean} Whether the on stage participant changed.
+     */
+    private electOnStageParticipant(): boolean {
+        if (this.onStageParticipant && this.room.getParticipantById(this.onStageParticipant)) {
+            return false;
+        }
+
+        const last = this.remoteVideoSources[this.remoteVideoSources.length - 1];
+        const newOnStageParticipant = last?.participantId ?? null;
+
+        if (newOnStageParticipant !== this.onStageParticipant) {
+            this.onStageParticipant = newOnStageParticipant;
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -266,9 +344,21 @@ export class LoadTestClient {
     }
 
     private onDominantSpeakerChanged(selected: string, previous: string[]): void {
-        if (this.selectStageViewParticipant(selected, previous)) {
+        if (this.selectStageViewParticipant(selected, previous) && this.isStageView()) {
             this.updateReceiverConstraints();
         }
+    }
+
+    private onTrackRemoved(track: any): void {
+        if (track.isLocal() || track.getType() !== 'video') {
+            return;
+        }
+
+        const sourceName = track.getSourceName();
+
+        this.remoteVideoSources = this.remoteVideoSources.filter(s => s.sourceName !== sourceName);
+        this.electOnStageParticipant();
+        this.updateReceiverConstraints();
     }
 
     /**
@@ -314,6 +404,12 @@ export class LoadTestClient {
     }
 
     private onRemoteTrack(track: any): void {
+        if (!track.isLocal() && track.getType() === 'video') {
+            this.addRemoteVideoSource(track);
+            this.electOnStageParticipant();
+            this.updateReceiverConstraints();
+        }
+
         if (track.isLocal()
             || (track.getType() === 'video' && !this.params.remoteVideo)
             || (track.getType() === 'audio' && !this.params.remoteAudio)) {
@@ -380,6 +476,11 @@ export class LoadTestClient {
 
     private onUserLeft(id: string): void {
         this.numParticipants--;
+        this.remoteVideoSources = this.remoteVideoSources.filter(s => s.participantId !== id);
+        if (this.onStageParticipant === id) {
+            this.onStageParticipant = null;
+            this.electOnStageParticipant();
+        }
         this.setNumberOfParticipants();
 
         const tracks = this.remoteTracks[id];
@@ -503,20 +604,20 @@ export class LoadTestClient {
     }
 
     private onConnectionSuccess(): void {
-        const { roomName, stageView, localVideo } = this.params;
+        const { roomName, localVideo } = this.params;
         const events = JitsiMeetJS.events.conference;
 
         this.room = this.connection.initJitsiConference(roomName.toLowerCase(), this.config);
         this.room.on(events.STARTED_MUTED, this.onStartMuted.bind(this));
         this.room.on(events.TRACK_ADDED, this.onRemoteTrack.bind(this));
+        this.room.on(events.TRACK_REMOVED, this.onTrackRemoved.bind(this));
         this.room.on(events.CONFERENCE_JOINED, this.onConferenceJoined.bind(this));
         this.room.on(events.DATA_CHANNEL_OPENED, this.onDataChannelOpened.bind(this));
         this.room.on(events.USER_LEFT, this.onUserLeft.bind(this));
         this.room.on(events.PRIVATE_MESSAGE_RECEIVED, this.onPrivateMessage.bind(this));
         this.room.on(events.CONFERENCE_FAILED, this.onConferenceFailed.bind(this));
-        if (stageView) {
-            this.room.on(events.DOMINANT_SPEAKER_CHANGED, this.onDominantSpeakerChanged.bind(this));
-        }
+        // Stage view is also what jitsi-meet uses below 3 participants, so always follow the dominant speaker.
+        this.room.on(events.DOMINANT_SPEAKER_CHANGED, this.onDominantSpeakerChanged.bind(this));
 
         const devices: string[] = [];
 
@@ -566,6 +667,8 @@ export class LoadTestClient {
      * @returns {void}
      */
     unload(): void {
+        // Leaving removes every remote track, which would otherwise trigger a flurry of constraint updates.
+        this.leaving = true;
         this.localTracks.forEach(track => track.dispose());
         this.room?.leave();
         this.connection?.disconnect();
