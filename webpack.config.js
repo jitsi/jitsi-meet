@@ -358,6 +358,19 @@ module.exports = (_env, argv) => {
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'alwaysontop')
             ],
             performance: getPerformanceHints(perfHintOptions, 800 * 1024) },
+
+        // The load-test client used by Malleus (tests/malleus). Not part of the application: it is built only by
+        // `npm run build:load-test` (BUILD_LOAD_TEST=true) and injected into the browsers by the load tester.
+        ...process.env.BUILD_LOAD_TEST ? [ { ...config,
+            name: 'load-test',
+            entry: {
+                'load-test-participant': './react/features/load-test/loadTestParticipant.ts'
+            },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'load-test-participant')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 400 * 1024) } ] : [],
         { ...config,
             entry: {
                 'documentpip': './react/features/always-on-top/document-pip-index.tsx'
