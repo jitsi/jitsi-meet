@@ -23,5 +23,13 @@ describe('parseURLParams', () => {
                 'config.defaultLocalDisplayName': 'a=b'
             });
         });
+
+        it(`keeps percent-encoded equals signs working in ${source} values`, () => {
+            const url = `https://example.com/room${prefix}config.defaultLocalDisplayName=%22a%3Db%22`;
+
+            assert.deepEqual(parseURLParams(url, false, source), {
+                'config.defaultLocalDisplayName': 'a=b'
+            });
+        });
     }
 });
