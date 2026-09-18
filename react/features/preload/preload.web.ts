@@ -15,6 +15,10 @@ import { IJitsiMeetPreload } from './types';
  * were requested from. The app reuses a result only when it would have requested exactly the same
  * URL and handles every failure by requesting the resource itself, so nothing here may break the
  * page: there is no logging and no dependency beyond the small URL helpers shared with the app.
+ *
+ * The bundle is built without core-js polyfills (see getPreloadRules in webpack.config.js), so this
+ * file and the modules it imports must only use built-ins available on the supported browser floor.
+ * TypeScript does not flag newer ones, and a missing one would silently disable the preload.
  */
 
 const preload: IJitsiMeetPreload = {};
@@ -133,7 +137,13 @@ function preloadIcons(brandingUrl: string, data: { customIcons?: unknown; }): vo
 }
 
 // Besides starting the branding, this chain marks the published config promise as handled (see
-// preloadBranding for why that matters).
-preloadConfig()
-    .then(preloadBranding)
-    .catch(() => { /* Handled by the app, which loads the config itself. */ });
+// preloadBranding for why that matters). The chains cover the asynchronous parts; the try/catch
+// covers the synchronous ones, e.g. a built-in missing in an old browser, so that even then the
+// script fails quietly and the app simply requests everything itself.
+try {
+    preloadConfig()
+        .then(preloadBranding)
+        .catch(() => { /* Handled by the app, which loads the config itself. */ });
+} catch {
+    // Handled by the app, which loads everything itself.
+}
