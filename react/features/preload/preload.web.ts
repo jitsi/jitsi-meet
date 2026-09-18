@@ -1,10 +1,12 @@
 import { buildConfigURL } from '../base/config/buildConfigURL';
 import { IConfig } from '../base/config/configType';
 import { parseConfigInWorker } from '../base/config/parseConfigInWorker';
+import { fetchWithTimeout } from '../base/util/fetchWithTimeout';
 import { parseURIString } from '../base/util/uri';
 import { buildDynamicBrandingUrl, extractFqnFromPathname } from '../dynamic-branding/buildDynamicBrandingUrl';
 import { fetchCustomIconMarkup, isInlineSvg } from '../dynamic-branding/customIconMarkup';
 
+import { PRELOAD_FETCH_TIMEOUT } from './constants';
 import { IJitsiMeetPreload } from './types';
 
 /**
@@ -26,13 +28,15 @@ const preload: IJitsiMeetPreload = {};
 window.JitsiMeetPreload = preload;
 
 /**
- * Fetches a URL, rejecting when the response is not successful.
+ * Fetches a URL, rejecting when the response is not successful or does not arrive within
+ * {@link PRELOAD_FETCH_TIMEOUT}. The app waits on the promises published here, so an unbounded
+ * request would stall the app too; after a timeout it falls back to a request of its own.
  *
  * @param {string} url - The URL to fetch.
  * @returns {Promise<Response>}
  */
 async function fetchOk(url: string): Promise<Response> {
-    const response = await fetch(url);
+    const response = await fetchWithTimeout(url, PRELOAD_FETCH_TIMEOUT);
 
     if (!response.ok) {
         throw new Error(`Unexpected status ${response.status}`);
