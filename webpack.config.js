@@ -56,7 +56,10 @@ function getBundleAnalyzerPlugin(analyzeBundle, name) {
 /**
  * Builds the module rules for the preload script. It runs before the app bundle, in the same modern
  * browsers the app requires, so the core-js polyfills babel injects for the app would only add
- * weight to a script whose whole point is to be small and fast.
+ * weight to a script whose whole point is to be small and fast (51 KiB with them, 7 KiB without).
+ * Syntax is still transpiled for the configured targets; only polyfill injection is disabled. The
+ * flip side: the preload and the modules it imports must only use built-ins available on the
+ * supported browser floor, and nothing enforces that automatically.
  *
  * @param {Array} rules - The shared module rules.
  * @returns {Array} The rules with polyfill injection disabled.
