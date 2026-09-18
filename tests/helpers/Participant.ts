@@ -63,6 +63,16 @@ export class Participant {
      */
     private _name: string;
     private _endpointId: string;
+
+    /**
+     * The browser session this participant is bound to, when not using a multiremote instance.
+     */
+    private _driver?: WebdriverIO.Browser;
+
+    /**
+     * Whether this participant runs the load-test client rather than the full application.
+     */
+    private _loadTest: boolean;
     /**
      * The token that this participant was initialized with.
      */
@@ -143,6 +153,8 @@ export class Participant {
         this._name = options.name;
         this._token = options.token;
         this._iFrameApi = options.iFrameApi || false;
+        this._loadTest = options.loadTest || false;
+        this._driver = options.driver;
     }
 
     /**
@@ -209,7 +221,14 @@ export class Participant {
      * The driver it uses.
      */
     get driver() {
-        return multiRemoteBrowser.getInstance(this._name);
+        return this._driver ?? multiRemoteBrowser.getInstance(this._name);
+    }
+
+    /**
+     * Whether this participant runs the load-test client rather than the full application.
+     */
+    get isLoadTest() {
+        return this._loadTest;
     }
 
     /**
@@ -256,11 +275,28 @@ export class Participant {
 
         if (this._iFrameApi) {
             config.room = 'iframeAPITest.html';
+        } else if (this._loadTest) {
+            config.room = 'loadTest.html';
         }
 
         let url = urlObjectToString(config) || '';
 
-        if (this._iFrameApi) {
+        if (this._loadTest) {
+            // The uploaded wrapper page (see the malleus wdio config); it loads config.js and lib-jitsi-meet from
+            // the deployment and the uploaded client bundle, which takes the room and config from the hash.
+            const baseUrl = new URL(this.driver.options.baseUrl || '');
+            let tenant = options.tenant ?? (baseUrl.pathname.length > 1 ? baseUrl.pathname.substring(1) : '');
+
+            // The page prepends it to "config.js", so it needs the trailing slash options.tenant comes without.
+            if (tenant && !tenant.endsWith('/')) {
+                tenant += '/';
+            }
+
+            // @ts-ignore
+            url = `${this.driver.loadTestPageBase}${url}&domain="${baseUrl.host}"&room="${options.roomName}"`
+                // @ts-ignore
+                + `&tenant="${tenant}"&bundle="${this.driver.loadTestBundle}"`;
+        } else if (this._iFrameApi) {
             const baseUrl = new URL(this.driver.options.baseUrl || '');
 
             // @ts-ignore
@@ -282,8 +318,8 @@ export class Participant {
         // drop the leading '/' so we can use the tenant if any
         url = url.startsWith('/') ? url.substring(1) : url;
 
-        if (options.tenant && !this._iFrameApi) {
-            // For the iFrame API the tenant is passed in a different way.
+        if (options.tenant && !this._iFrameApi && !this._loadTest) {
+            // For the iFrame API and the load-test page the tenant is passed in a different way.
             url = `/${options.tenant}/${url}`;
         }
         if (options.urlAppendString) {
@@ -305,7 +341,7 @@ export class Participant {
             await this.switchToIFrame();
         }
 
-        if (!options.skipPrejoinButtonClick) {
+        if (!options.skipPrejoinButtonClick && !this._loadTest) {
             // The prejoin Join button can be in the DOM before conference.init has run and React click
             // handlers are mounted (e.g. when driver.url() returns before the page fully loads on a slow
             // remote grid, or when the iFrame API wrapper fires onload before the embedded app inits).
@@ -346,7 +382,15 @@ export class Participant {
             await this.waitForMucJoinedOrError();
         }
 
-        await this.postLoadProcess();
+        if (this._loadTest) {
+            // The load-test client has no UI to adjust; just record the session like postLoadProcess does.
+            await this.execute((name, sessionId, prefix) => {
+                document.title = `${name}`;
+                console.log(`${new Date().toISOString()} ${prefix} sessionId: ${sessionId}`);
+            }, this._name, this.driver.sessionId, LOG_PREFIX);
+        } else {
+            await this.postLoadProcess();
+        }
 
         return this;
     }
@@ -424,6 +468,11 @@ export class Participant {
      * Checks if the participant is in the meeting.
      */
     isInMuc() {
+        if (this._loadTest) {
+            // @ts-ignore
+            return this.execute(() => typeof APP !== 'undefined' && Boolean(APP.room?.isJoined()));
+        }
+
         return this.execute(() => typeof APP !== 'undefined' && APP.conference?.isJoined());
     }
 
@@ -433,6 +482,10 @@ export class Participant {
      */
     async waitForMucJoinedOrError(): Promise<void> {
         await this.driver.waitUntil(async () => {
+            if (this._loadTest) {
+                return await this.isInMuc();
+            }
+
             return await this.isInMuc() || await this.getPasswordDialog().isOpen()
                 || await this.getNotifications().getNotificationText(MAX_USERS_TEST_ID)
                 || await this.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TEST_ID)
@@ -874,6 +927,15 @@ export class Participant {
         console.log(`Hanging up (${this.name})`);
         if ((await this.driver.getUrl()).endsWith('/base.html')) {
             console.log(`Already hung up (${this.name})`);
+
+            return;
+        }
+
+        if (this._loadTest) {
+            // The load-test client leaves the room and disconnects from its unload handler, so navigating away
+            // is the hangup. There is no iframe to switch out of either.
+            await this.driver.url('/base.html');
+            console.log(`Hung up (${this.name})`);
 
             return;
         }
