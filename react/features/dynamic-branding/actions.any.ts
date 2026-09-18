@@ -1,5 +1,6 @@
 import { IStore } from '../app/types';
 import { doGetJSON } from '../base/util/httpUtils';
+import { takePreloadedBranding } from '../preload/functions';
 
 import {
     SET_DYNAMIC_BRANDING_DATA,
@@ -24,11 +25,11 @@ export function fetchCustomBrandingData() {
         const { customizationReady } = state['features/dynamic-branding'];
 
         if (!customizationReady) {
-            const url = await getDynamicBrandingUrl(state);
+            const url = getDynamicBrandingUrl(state);
 
             if (url) {
                 try {
-                    const res = await doGetJSON(url);
+                    const res = await fetchBrandingData(url);
 
                     return dispatch(setDynamicBrandingData(res));
                 } catch (err) {
@@ -41,6 +42,27 @@ export function fetchCustomBrandingData() {
             dispatch(setDynamicBrandingReady());
         }
     };
+}
+
+/**
+ * Fetches the branding data from the given URL, reusing the response the preload script already
+ * started downloading for it when there is one.
+ *
+ * @param {string} url - The branding URL.
+ * @returns {Promise<Object>}
+ */
+async function fetchBrandingData(url: string): Promise<Object> {
+    const preloaded = takePreloadedBranding(url);
+
+    if (preloaded) {
+        try {
+            return await preloaded;
+        } catch (err) {
+            logger.warn('Preloaded branding data failed, fetching it again', err);
+        }
+    }
+
+    return doGetJSON(url);
 }
 
 /**
