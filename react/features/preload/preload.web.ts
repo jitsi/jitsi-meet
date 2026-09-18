@@ -38,19 +38,6 @@ async function fetchOk(url: string): Promise<Response> {
 }
 
 /**
- * Keeps a failed download from surfacing as an unhandled rejection. The app observes the same
- * promise and reacts to the failure by downloading the resource itself.
- *
- * @param {Promise} promise - The download.
- * @returns {Promise} The same promise.
- */
-function ignoreFailure<T>(promise: Promise<T>): Promise<T> {
-    promise.catch(() => { /* Handled by the app. */ });
-
-    return promise;
-}
-
-/**
  * Resolves with the config: the one inlined in the page when present, otherwise the one downloaded
  * and parsed from the same URL the app would build.
  *
@@ -63,10 +50,9 @@ function preloadConfig(): Promise<IConfig> {
 
     const { room } = parseURIString(window.location.href);
     const url = buildConfigURL(new URL(window.location.href), room);
-    const promise = ignoreFailure(
-        fetchOk(url)
-            .then(response => response.text())
-            .then(parseConfigInWorker) as Promise<IConfig>);
+    const promise = fetchOk(url)
+        .then(response => response.text())
+        .then(parseConfigInWorker) as Promise<IConfig>;
 
     preload.config = {
         promise,
@@ -90,16 +76,19 @@ function preloadBranding(config: IConfig): void {
         return;
     }
 
-    const promise = ignoreFailure(fetchOk(url).then(response => response.json()));
+    const promise = fetchOk(url).then(response => response.json());
 
     preload.branding = {
         promise,
         url
     };
 
+    // Besides starting the icons, this chain marks the published promise as handled: the app may
+    // attach its own handler seconds later, or never (URL mismatch, no boot), and a failed download
+    // must not surface as an unhandled rejection.
     promise
         .then(data => preloadIcons(url, data))
-        .catch(() => { /* Handled by the app. */ });
+        .catch(() => { /* Handled by the app, which downloads the branding itself. */ });
 }
 
 /**
@@ -143,6 +132,8 @@ function preloadIcons(brandingUrl: string, data: { customIcons?: unknown; }): vo
     };
 }
 
+// Besides starting the branding, this chain marks the published config promise as handled (see
+// preloadBranding for why that matters).
 preloadConfig()
     .then(preloadBranding)
     .catch(() => { /* Handled by the app, which loads the config itself. */ });
