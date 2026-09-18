@@ -119,5 +119,111 @@ describe('mod_trace', () => {
             assert.strictEqual(span.parent_span_id, parentId,
                 'exported span must record the original parent_id as its own parent');
         });
+
+        it('leaves a dial IQ without a traceparent or X-Traceparent header unmodified and exports nothing', async () => {
+            const [ a, b ] = await connectPair('trace.localhost', clients);
+
+            await a.sendDialIq(b.jid);
+
+            const iq = await b.waitForIq(s => s.getChild('dial', 'urn:xmpp:rayo:1'));
+
+            assert.ok(!iq.getChild('dial', 'urn:xmpp:rayo:1').getChild('traceparent'));
+
+            await new Promise(r => setTimeout(r, 300));
+
+            const traces = await getOtlpTraces();
+
+            assert.strictEqual(traces.length, 0);
+        });
+
+        it('rewrites the traceparent parent_id and exports a rayo.dial span for a dial IQ with a traceparent element', async () => {
+            const [ a, b ] = await connectPair('trace.localhost', clients);
+            const traceId = 'c'.repeat(32);
+            const parentId = 'f'.repeat(16);
+
+            await a.sendDialIq(b.jid, { traceId,
+                parentId });
+
+            const iq = await b.waitForIq(s => s.getChild('dial', 'urn:xmpp:rayo:1'));
+            const dial = iq.getChild('dial', 'urn:xmpp:rayo:1');
+            const tp = dial.getChild('traceparent');
+
+            assert.ok(tp, 'traceparent element should still be present');
+            assert.strictEqual(tp.attrs.trace_id, traceId, 'trace_id must be preserved');
+            assert.notStrictEqual(tp.attrs.parent_id, parentId, 'parent_id must be rewritten to the new span id');
+            assert.match(tp.attrs.parent_id, /^[0-9a-f]{16}$/, 'rewritten parent_id must be a 16-hex-char span id');
+
+            await new Promise(r => setTimeout(r, 300));
+
+            const traces = await getOtlpTraces();
+
+            assert.strictEqual(traces.length, 1, 'exactly one export request should have been made');
+
+            const [ resourceSpan ] = traces[0].resource_spans;
+            const [ scopeSpan ] = resourceSpan.scope_spans;
+            const [ span ] = scopeSpan.spans;
+
+            assert.strictEqual(span.name, 'rayo.dial');
+            assert.strictEqual(span.trace_id, traceId);
+            assert.strictEqual(span.parent_span_id, parentId,
+                'exported span must record the original parent_id as its own parent');
+        });
+
+        it('rewrites the X-Traceparent header value and exports a rayo.dial span for a dial IQ with no traceparent element', async () => {
+            const [ a, b ] = await connectPair('trace.localhost', clients);
+            const traceId = '1'.repeat(32);
+            const parentId = '2'.repeat(16);
+            const flags = '01';
+
+            await a.sendDialIq(b.jid, { xTraceparentValue: `00-${traceId}-${parentId}-${flags}` });
+
+            const iq = await b.waitForIq(s => s.getChild('dial', 'urn:xmpp:rayo:1'));
+            const dial = iq.getChild('dial', 'urn:xmpp:rayo:1');
+            const header = dial.getChildren('header').find(h => h.attrs.name === 'X-Traceparent');
+
+            assert.ok(header, 'X-Traceparent header should still be present');
+
+            const [ , newTraceId, newParentId, newFlags ] =
+                /^00-([0-9a-f]{32})-([0-9a-f]{16})-([0-9a-f]{2})$/.exec(header.attrs.value) ?? [];
+
+            assert.strictEqual(newTraceId, traceId, 'trace_id must be preserved');
+            assert.notStrictEqual(newParentId, parentId, 'parent_id must be rewritten to the new span id');
+            assert.strictEqual(newFlags, flags, 'flags must be preserved');
+
+            await new Promise(r => setTimeout(r, 300));
+
+            const traces = await getOtlpTraces();
+
+            assert.strictEqual(traces.length, 1, 'exactly one export request should have been made');
+
+            const [ resourceSpan ] = traces[0].resource_spans;
+            const [ scopeSpan ] = resourceSpan.scope_spans;
+            const [ span ] = scopeSpan.spans;
+
+            assert.strictEqual(span.name, 'rayo.dial');
+            assert.strictEqual(span.trace_id, traceId);
+            assert.strictEqual(span.parent_span_id, parentId,
+                'exported span must record the original parent_id as its own parent');
+        });
+
+        it('leaves a malformed X-Traceparent header unmodified and exports nothing', async () => {
+            const [ a, b ] = await connectPair('trace.localhost', clients);
+            const malformedValue = '00-not-a-valid-traceparent';
+
+            await a.sendDialIq(b.jid, { xTraceparentValue: malformedValue });
+
+            const iq = await b.waitForIq(s => s.getChild('dial', 'urn:xmpp:rayo:1'));
+            const dial = iq.getChild('dial', 'urn:xmpp:rayo:1');
+            const header = dial.getChildren('header').find(h => h.attrs.name === 'X-Traceparent');
+
+            assert.ok(header, 'X-Traceparent header should still be present');
+            assert.strictEqual(header.attrs.value, malformedValue, 'malformed header value must be left untouched');
+
+            await new Promise(r => setTimeout(r, 300));
+
+            const traces = await getOtlpTraces();
+
+            assert.strictEqual(traces.length, 0, 'no span should be exported for a malformed X-Traceparent value');
+        });
     });
 });
