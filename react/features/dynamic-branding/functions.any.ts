@@ -33,9 +33,9 @@ export function extractFqnFromPath(state?: IReduxState) {
  *
  * @param {Object | Function} stateful - The redux store, state, or
  * {@code getState} function.
- * @returns {string}
+ * @returns {string | undefined} The branding URL, or undefined when no branding is configured.
  */
-export async function getDynamicBrandingUrl(stateful: IStateful) {
+export function getDynamicBrandingUrl(stateful: IStateful): string | undefined {
     const state = toState(stateful);
 
     return buildDynamicBrandingUrl(state['features/base/config'], extractFqnFromPath(state));

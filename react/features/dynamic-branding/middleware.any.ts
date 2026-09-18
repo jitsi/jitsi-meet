@@ -21,8 +21,9 @@ MiddlewareRegistry.register(store => next => action => {
         // The icons are loaded separately so the theme and the rest of the branding are
         // applied right away instead of waiting for every SVG to arrive.
         if (customIcons) {
-            getDynamicBrandingUrl(store.getState())
-                .then(url => fetchCustomIcons(customIcons, url ? takePreloadedIcons(url) : undefined))
+            const url = getDynamicBrandingUrl(store.getState());
+
+            fetchCustomIcons(customIcons, url ? takePreloadedIcons(url) : undefined)
                 .then(icons => store.dispatch(setDynamicBrandingIcons(icons)))
                 .catch((error: any) => {
                     logger.error('Error fetching branded custom icons:', error);
