@@ -1,3 +1,5 @@
+import { fetchWithTimeout } from '../base/util/fetchWithTimeout';
+
 import { CUSTOM_ICON_FETCH_TIMEOUT } from './constants';
 
 /**
@@ -20,18 +22,11 @@ export function isInlineSvg(value: string): boolean {
  * @returns {Promise<string>} The raw SVG markup.
  */
 export async function fetchCustomIconMarkup(url: string): Promise<string> {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), CUSTOM_ICON_FETCH_TIMEOUT);
+    const response = await fetchWithTimeout(url, CUSTOM_ICON_FETCH_TIMEOUT);
 
-    try {
-        const response = await fetch(url, { signal: controller.signal });
-
-        if (!response.ok) {
-            throw new Error(`Unexpected status ${response.status}`);
-        }
-
-        return await response.text();
-    } finally {
-        clearTimeout(timeout);
+    if (!response.ok) {
+        throw new Error(`Unexpected status ${response.status}`);
     }
+
+    return response.text();
 }
