@@ -24,6 +24,9 @@ MiddlewareRegistry.register(store => next => action => {
                 .then(icons => store.dispatch(setDynamicBrandingIcons(icons)))
                 .catch((error: any) => {
                     logger.error('Error fetching branded custom icons:', error);
+
+                    // Nothing is going to arrive anymore, so do not leave the icons marked as pending.
+                    store.dispatch(setDynamicBrandingIcons({}));
                 });
         }
 
