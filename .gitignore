@@ -110,7 +110,9 @@ react-native-sdk/android/src/**
 !react-native-sdk/android/src/main/java/org/jitsi/meet/sdk/JMOngoingConferenceModule.java
 !react-native-sdk/android/src/main/java/org/jitsi/meet/sdk/RNOngoingNotification.java
 react-native-sdk/images
-react-native-sdk/ios
+react-native-sdk/ios/**
+!react-native-sdk/ios/**/
+!react-native-sdk/ios/RNScreenShareEventEmitter.m
 react-native-sdk/lang
 react-native-sdk/modules
 react-native-sdk/node_modules
