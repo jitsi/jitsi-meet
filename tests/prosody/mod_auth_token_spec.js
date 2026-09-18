@@ -445,4 +445,34 @@ describe('mod_auth_token (claims on XEP-0198 resumption)', () => {
             await prosodyShell(`module:load("token_verification", "${CONFERENCE}")`);
         }
     });
+
+    it('keeps the claims it verified when the session resumes on an anonymous host', async () => {
+        // Inline authentication: a guest connects anonymously, logs in without
+        // reloading and resumes the same session presenting a token. The
+        // anonymous host has no token auth of its own, so the resuming
+        // connection carries the raw token and none of the claims, and the ones
+        // verified on this event are the only ones the session ever gets.
+
+        // The HS256 host would verify the RS256 token against its own secret and
+        // close the session; production has a single token VirtualHost.
+        await prosodyShell('module:unload("auth_token", "hs256.localhost")');
+
+        try {
+            const guest = await createXmppClient({ domain: 'jitsi-anonymous.localhost' });
+
+            clients.push(guest);
+
+            const reconnected = guest.waitForReconnect();
+
+            guest.dropConnection({ token: tokenFor(`resume-anon-${++roomCounter}`) });
+            await reconnected;
+
+            const session = await getSessionLive(guest.jid);
+
+            assert.equal(session.jitsi_meet_context_user?.id, 'user-a',
+                'the user claim of the token presented on resume must be kept');
+        } finally {
+            await prosodyShell('module:load("auth_token", "hs256.localhost")');
+        }
+    });
 });

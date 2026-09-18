@@ -244,16 +244,21 @@ module:hook_global('c2s-session-updated', function (event)
         return;
     end
 
-    -- copy all the custom fields we set in the session
-    session.auth_token = from_session.auth_token;
-    session.jitsi_meet_context_user = from_session.jitsi_meet_context_user;
-    session.jitsi_meet_context_group = from_session.jitsi_meet_context_group;
-    session.jitsi_meet_context_features = from_session.jitsi_meet_context_features;
-    session.jitsi_meet_context_room = from_session.jitsi_meet_context_room;
-    session.jitsi_meet_room = from_session.jitsi_meet_room;
-    session.jitsi_meet_str_tenant = from_session.jitsi_meet_str_tenant;
-    session.jitsi_meet_domain = from_session.jitsi_meet_domain;
-    session.jitsi_meet_tenant_mismatch = from_session.jitsi_meet_tenant_mismatch;
+    -- copy all the custom fields we set in the session, but only when from_session carries
+    -- them: a connection resumed on an anonymous host holds just the raw token (put there
+    -- by mod_jitsi_session) and no claims, so copying would discard the ones the
+    -- verification above has just put on the session.
+    if from_session._jitsi_auth_done then
+        session.auth_token = from_session.auth_token;
+        session.jitsi_meet_context_user = from_session.jitsi_meet_context_user;
+        session.jitsi_meet_context_group = from_session.jitsi_meet_context_group;
+        session.jitsi_meet_context_features = from_session.jitsi_meet_context_features;
+        session.jitsi_meet_context_room = from_session.jitsi_meet_context_room;
+        session.jitsi_meet_room = from_session.jitsi_meet_room;
+        session.jitsi_meet_str_tenant = from_session.jitsi_meet_str_tenant;
+        session.jitsi_meet_domain = from_session.jitsi_meet_domain;
+        session.jitsi_meet_tenant_mismatch = from_session.jitsi_meet_tenant_mismatch;
+    end
 
     if reverify_rooms then
         local result = prosody.events.fire_event('jitsi-verify-session-rooms', { session = session; });
