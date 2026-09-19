@@ -508,9 +508,14 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
         }
     }
 
-    // Always prioritize active remote screen share streams in receiver constraints.
+    // Prioritize the active (on stage) or most recent remote screen share stream in receiver constraints
+    // to prevent network congestion when multiple participants share screens simultaneously.
     if (remoteScreenShares?.length) {
-        const screenshareSources = _getSourceNames(remoteScreenShares, state);
+        const activeScreenshareId = remoteScreenShares.includes(largeVideoParticipantId)
+            ? largeVideoParticipantId
+            : remoteScreenShares[remoteScreenShares.length - 1];
+
+        const screenshareSources = _getSourceNames([ activeScreenshareId ], state);
 
         screenshareSources.forEach(source => {
             if (!receiverConstraints.selectedSources.includes(source)) {
