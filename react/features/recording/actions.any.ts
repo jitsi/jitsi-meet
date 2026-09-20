@@ -487,7 +487,7 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
         const { recordings } = state['features/base/config'];
         const { suggestRecording } = recordings || {};
         const recordButtonProps = getRecordButtonProps(state);
-        const isAlreadyRecording = isRecordingRunning(state) || isRecorderTranscriptionsRunning(state);
+        const isAlreadyRecording = isRecordingRunning(state);
         const wasNotificationShown = state['features/recording'].wasStartRecordingSuggested;
 
         if (!suggestRecording
