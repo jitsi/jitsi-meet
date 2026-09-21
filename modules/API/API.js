@@ -1150,6 +1150,9 @@ function initCommands() {
         case 'is-sharing-screen':
             callback(Boolean(APP.conference.isSharingScreen));
             break;
+        case 'is-lobby-enabled':
+            callback(Boolean(APP.store.getState()['features/lobby']?.lobbyEnabled));
+            break;
         case 'is-start-silent':
             callback(Boolean(APP.store.getState()['features/base/config'].startSilent));
             break;
@@ -1502,6 +1505,19 @@ class API {
         this._sendEvent({
             name: 'moderation-status-changed',
             mediaType,
+            enabled
+        });
+    }
+
+    /**
+     * Notify the external application that the lobby mode status has changed.
+     *
+     * @param {boolean} enabled - Whether or not lobby mode is enabled.
+     * @returns {void}
+     */
+    notifyLobbyModeChanged(enabled) {
+        this._sendEvent({
+            name: 'lobby-mode-changed',
             enabled
         });
     }

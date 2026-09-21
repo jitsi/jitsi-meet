@@ -238,15 +238,19 @@ export function startKnocking() {
 /**
  * Action to toggle lobby mode on or off.
  *
- * @param {boolean} enabled - The desired (new) state of the lobby mode.
+ * @param {boolean} [enabled] - The desired (new) state of the lobby mode. If undefined, toggles the current state.
  * @returns {Function}
  */
-export function toggleLobbyMode(enabled: boolean) {
+export function toggleLobbyMode(enabled?: boolean) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
         const conference = getCurrentConference(getState);
+        const shouldEnable = typeof enabled === 'undefined'
+            ? !state['features/lobby'].lobbyEnabled
+            : enabled;
 
-        if (enabled) {
-            if (isEnablingLobbyAllowed(getState())) {
+        if (shouldEnable) {
+            if (isEnablingLobbyAllowed(state)) {
                 conference?.enableLobby();
             } else {
                 logger.info('Ignoring enable lobby request because there are visitors in the call already.');
