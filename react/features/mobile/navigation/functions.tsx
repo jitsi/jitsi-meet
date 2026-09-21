@@ -41,5 +41,5 @@ export function isPrejoinPageEnabled(stateful: IStateful) {
  * @returns {React.Component}
  */
 export function lobbyScreenHeaderCloseButton() {
-    return LobbyCloseButton;
+    return () => <LobbyCloseButton />;
 }
