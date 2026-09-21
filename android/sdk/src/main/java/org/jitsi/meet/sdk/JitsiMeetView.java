@@ -18,9 +18,12 @@ package org.jitsi.meet.sdk;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -203,6 +206,15 @@ public class JitsiMeetView extends FrameLayout {
             reactSurface = (ReactSurfaceImpl) reactHost.createSurface(getContext(), appName, props);
 
             ViewGroup surfaceView = reactSurface.getView();
+
+            // Creating the surface view makes React Native read the metrics of the default
+            // display again, so this has to come after it and before anything is measured.
+            DisplayMetricsSync.apply(getContext());
+
+            if (surfaceView != null) {
+                surfaceView.addOnAttachStateChangeListener(surfaceAttachListener);
+            }
+
             if (surfaceView != null) {
                 surfaceView.setBackgroundColor(BACKGROUND_COLOR);
                 addView(surfaceView);
@@ -244,6 +256,46 @@ public class JitsiMeetView extends FrameLayout {
         props.putLong("timestamp", System.currentTimeMillis());
 
         createReactRootView("App", props);
+    }
+
+    /**
+     * React Native's own global layout listener resets the metrics to those of the default display
+     * whenever the rotation changes. Listeners run in the order they were added, so this one is
+     * added once the surface view has added React Native's: the metrics of the display this view
+     * is on always win.
+     */
+    private final ViewTreeObserver.OnGlobalLayoutListener displayMetricsListener
+        = this::syncDisplayMetrics;
+
+    private final OnAttachStateChangeListener surfaceAttachListener = new OnAttachStateChangeListener() {
+        @Override
+        public void onViewAttachedToWindow(@NonNull View v) {
+            syncDisplayMetrics();
+            v.getViewTreeObserver().addOnGlobalLayoutListener(displayMetricsListener);
+        }
+
+        @Override
+        public void onViewDetachedFromWindow(@NonNull View v) {
+            v.getViewTreeObserver().removeOnGlobalLayoutListener(displayMetricsListener);
+        }
+    };
+
+    private void syncDisplayMetrics() {
+        if (DisplayMetricsSync.apply(getContext()) && reactSurface != null) {
+            ViewGroup surfaceView = reactSurface.getView();
+
+            if (surfaceView != null) {
+                // Lays the surface out again with the new density, which also makes React Native
+                // tell JavaScript about the new Dimensions.
+                surfaceView.requestLayout();
+            }
+        }
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        syncDisplayMetrics();
     }
 
     @Override
