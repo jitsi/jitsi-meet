@@ -4,6 +4,7 @@ import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions.native';
 import { IconAI } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
@@ -37,8 +38,11 @@ class CustomPanelButton extends AbstractButton<AbstractButtonProps> {
  */
 function _mapStateToProps(state: IReduxState) {
     return {
-        // Gate on a JWT so the advisor is never reachable without a token.
-        visible: isCustomPanelEnabled(state) && Boolean(state['features/base/jwt'].jwt)
+        // Gate on a JWT so the advisor is never reachable without a token, and hide in
+        // breakout rooms since the advisor works from transcriptions that aren't available there.
+        visible: isCustomPanelEnabled(state)
+            && Boolean(state['features/base/jwt'].jwt)
+            && !isInBreakoutRoom(state)
     };
 }
 

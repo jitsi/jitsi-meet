@@ -249,6 +249,13 @@ const ConferenceNavigationContainer = () => {
                             ...whiteboardScreenOptions,
                             title: t('whiteboard.screenTitle')
                         }} />
+                    <ConferenceStack.Screen
+                        component = { CustomPanel }
+                        name = { screen.conference.customPanel }
+                        options = {{
+                            ...customPanelScreenOptions,
+                            title: t('customPanel.title')
+                        }} />
                 </ConferenceStack.Navigator>
             </NavigationContainer>
         </NavigationIndependentTree>

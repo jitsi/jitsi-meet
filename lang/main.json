@@ -258,7 +258,8 @@
         "yes": "yes"
     },
     "customPanel": {
-        "close": "Close"
+        "close": "Close",
+        "title": "Copilot"
     },
     "dateUtils": {
         "earlier": "Earlier",
