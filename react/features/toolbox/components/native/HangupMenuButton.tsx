@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { openSheet } from '../../../base/dialog/actions';
@@ -15,6 +16,7 @@ import HangupMenu from './HangupMenu';
  */
 const HangupMenuButton = (): JSX.Element => {
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
     const onSelect = useCallback(() => {
         dispatch(openSheet(HangupMenu));
@@ -22,7 +24,7 @@ const HangupMenuButton = (): JSX.Element => {
 
     return (
         <IconButton
-            accessibilityLabel = 'toolbar.accessibilityLabel.hangup'
+            accessibilityLabel = { t('toolbar.accessibilityLabel.hangup') }
             onPress = { onSelect }
             src = { IconHangup }
             type = { BUTTON_TYPES.PRIMARY } />
