@@ -41,6 +41,7 @@ const ProfileView = ({ isInWelcomePage }: {
     );
     const participant = useSelector((state: IReduxState) => getLocalParticipant(state));
     const { locationURL } = useSelector((state: IReduxState) => state['features/base/connection']);
+    const showAuthButton = !isInWelcomePage && !locationURL?.hostname?.includes('8x8.vc');
 
     const [ displayName, setDisplayName ] = useState(reduxDisplayName);
     const [ email, setEmail ] = useState(reduxEmail);
@@ -105,9 +106,7 @@ const ProfileView = ({ isInWelcomePage }: {
     useLayoutEffect(() => {
         navigation.setOptions({
             headerLeft,
-            headerRight: !isInWelcomePage
-                && !locationURL?.hostname?.includes('8x8.vc')
-                && headerRight
+            headerRight: showAuthButton ? headerRight : undefined
         });
     }, [ navigation ]);
 
