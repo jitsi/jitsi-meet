@@ -34,6 +34,8 @@ static NSString * const startRecordingAction = @"org.jitsi.meet.START_RECORDING"
 static NSString * const stopRecordingAction = @"org.jitsi.meet.STOP_RECORDING";
 static NSString * const overwriteConfigAction = @"org.jitsi.meet.OVERWRITE_CONFIG";
 static NSString * const sendCameraFacingModeMessageAction = @"org.jitsi.meet.SEND_CAMERA_FACING_MODE_MESSAGE";
+static NSString * const setE2EEEnabledAction = @"org.jitsi.meet.SET_E2EE_ENABLED";
+static NSString * const setE2EEKeyAction = @"org.jitsi.meet.SET_E2EE_KEY";
 
 @implementation ExternalAPI
 
@@ -79,7 +81,9 @@ static __weak ExternalAPI *_sharedExternalAPI = nil;
         @"START_RECORDING": startRecordingAction,
         @"STOP_RECORDING": stopRecordingAction,
         @"OVERWRITE_CONFIG": overwriteConfigAction,
-        @"SEND_CAMERA_FACING_MODE_MESSAGE": sendCameraFacingModeMessageAction
+        @"SEND_CAMERA_FACING_MODE_MESSAGE": sendCameraFacingModeMessageAction,
+        @"SET_E2EE_ENABLED": setE2EEEnabledAction,
+        @"SET_E2EE_KEY": setE2EEKeyAction
     };
 };
 
@@ -111,7 +115,9 @@ static __weak ExternalAPI *_sharedExternalAPI = nil;
               startRecordingAction,
               stopRecordingAction,
               overwriteConfigAction,
-              sendCameraFacingModeMessageAction
+              sendCameraFacingModeMessageAction,
+              setE2EEEnabledAction,
+              setE2EEKeyAction
     ];
 }
 
@@ -271,5 +277,18 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     };
     
     [self sendEventWithName:sendCameraFacingModeMessageAction body:data];
+}
+
+- (void)sendSetE2EEEnabled:(BOOL)enabled {
+    NSDictionary *data = @{ @"enabled": [NSNumber numberWithBool:enabled]};
+
+    [self sendEventWithName:setE2EEEnabledAction body:data];
+}
+
+- (void)sendSetE2EEKey:(NSString *)key {
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    data[@"key"] = key;
+
+    [self sendEventWithName:setE2EEKeyAction body:data];
 }
 @end

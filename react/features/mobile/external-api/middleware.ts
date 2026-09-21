@@ -55,6 +55,7 @@ import { ITrack } from '../../base/tracks/types';
 import { CLOSE_CHAT, OPEN_CHAT } from '../../chat/actionTypes';
 import { closeChat, openChat, sendMessage, setPrivateMessageRecipient } from '../../chat/actions.native';
 import { isEnabled as isDropboxEnabled } from '../../dropbox/functions.native';
+import { setE2EEKey, toggleE2EE } from '../../e2ee/actions';
 import { hideNotification, showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../notifications/constants';
 import { RECORDING_SESSION_UPDATED } from '../../recording/actionTypes';
@@ -409,6 +410,14 @@ function _registerForNativeEvents(store: IStore) {
         dispatch(muteLocal(muted, MEDIA_TYPE.VIDEO));
     });
 
+    eventEmitter.addListener(ExternalAPI.SET_E2EE_ENABLED, ({ enabled }: any) => {
+        dispatch(toggleE2EE(enabled));
+    });
+
+    eventEmitter.addListener(ExternalAPI.SET_E2EE_KEY, ({ key }: any) => {
+        dispatch(setE2EEKey(key));
+    });
+
     eventEmitter.addListener(ExternalAPI.SEND_ENDPOINT_TEXT_MESSAGE, ({ to, message }: any) => {
         const conference = getCurrentConference(getState());
 
@@ -651,6 +660,8 @@ function _unregisterForNativeEvents() {
     eventEmitter.removeAllListeners(ExternalAPI.HANG_UP);
     eventEmitter.removeAllListeners(ExternalAPI.SET_AUDIO_MUTED);
     eventEmitter.removeAllListeners(ExternalAPI.SET_VIDEO_MUTED);
+    eventEmitter.removeAllListeners(ExternalAPI.SET_E2EE_ENABLED);
+    eventEmitter.removeAllListeners(ExternalAPI.SET_E2EE_KEY);
     eventEmitter.removeAllListeners(ExternalAPI.SEND_ENDPOINT_TEXT_MESSAGE);
     eventEmitter.removeAllListeners(ExternalAPI.TOGGLE_SCREEN_SHARE);
     eventEmitter.removeAllListeners(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO);

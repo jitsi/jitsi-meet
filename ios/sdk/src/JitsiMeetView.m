@@ -204,6 +204,16 @@ static NSString *recordingModeToString(RecordingMode mode);
     [externalAPI sendCameraFacingModeMessage:to :facingMode];
 }
 
+- (void)setE2EEEnabled:(BOOL)enabled {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendSetE2EEEnabled:enabled];
+}
+
+- (void)setE2EEKey:(NSString * _Nonnull)key {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendSetE2EEKey:key];
+}
+
 #pragma mark Private methods
 
 - (void)registerObservers {

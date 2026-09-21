@@ -103,6 +103,8 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
         constants.put("STOP_RECORDING", BroadcastAction.Type.STOP_RECORDING.getAction());
         constants.put("OVERWRITE_CONFIG", BroadcastAction.Type.OVERWRITE_CONFIG.getAction());
         constants.put("SEND_CAMERA_FACING_MODE_MESSAGE", BroadcastAction.Type.SEND_CAMERA_FACING_MODE_MESSAGE.getAction());
+        constants.put("SET_E2EE_ENABLED", BroadcastAction.Type.SET_E2EE_ENABLED.getAction());
+        constants.put("SET_E2EE_KEY", BroadcastAction.Type.SET_E2EE_KEY.getAction());
 
         return constants;
     }
