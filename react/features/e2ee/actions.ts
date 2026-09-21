@@ -1,5 +1,6 @@
 import {
     PARTICIPANT_VERIFIED,
+    SET_E2EE_KEY,
     SET_MAX_MODE,
     SET_MEDIA_ENCRYPTION_KEY,
     START_VERIFICATION,
@@ -46,6 +47,25 @@ export function setMediaEncryptionKey(keyInfo: Object) {
     return {
         type: SET_MEDIA_ENCRYPTION_KEY,
         keyInfo
+    };
+}
+
+/**
+ * Dispatches an action to set the E2EE key (passphrase) received from an
+ * external source, e.g. the hosting application on mobile. On React Native
+ * the raw key string is passed to the conference as-is; key derivation
+ * happens on the native (lib-jitsi-meet) side.
+ *
+ * @param {string} key - The encryption key. An empty string disables E2EE.
+ * @returns {{
+ *     type: SET_E2EE_KEY,
+ *     key: string
+ * }}
+ */
+export function setE2EEKey(key: string) {
+    return {
+        type: SET_E2EE_KEY,
+        key
     };
 }
 
