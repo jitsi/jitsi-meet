@@ -89,6 +89,13 @@ export interface IConferenceMetadata {
         isRecordingRequested?: boolean;
         isTranscribingEnabled: boolean;
     };
+
+    /**
+     * Set by the settings service (via prosody) when it fell back to hardcoded defaults because
+     * one of its own upstream calls failed or timed out - meaning the settings applied to this
+     * room (e.g. lobby) may not reflect what was actually configured.
+     */
+    settingsIncomplete?: boolean;
     visitors?: {
         live: boolean;
     };
