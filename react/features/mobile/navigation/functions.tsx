@@ -41,5 +41,6 @@ export function isPrejoinPageEnabled(stateful: IStateful) {
  * @returns {React.Component}
  */
 export function lobbyScreenHeaderCloseButton() {
-    return LobbyCloseButton;
+    // eslint-disable-next-line react/no-multi-comp
+    return () => <LobbyCloseButton />;
 }

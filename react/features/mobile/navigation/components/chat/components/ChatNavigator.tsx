@@ -68,7 +68,7 @@ const ChatNavigator = () => {
                     listeners = {{
                         tabPress: () => {
                             dispatch(setFocusedTab(ChatTabs.POLLS));
-                            dispatch(resetUnreadPollsCount);
+                            dispatch(resetUnreadPollsCount());
                         }
                     }}
                     name = { screen.conference.chatTabs.tab.polls } />
