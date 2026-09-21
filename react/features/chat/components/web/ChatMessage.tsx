@@ -381,7 +381,7 @@ const ChatMessage = ({
                 <span
                     className = { classes.cancelEdit }
                     onClick = { onCancelEdit }>
-                    {t('chat.cancel', 'Cancel')}
+                    {t('dialog.Cancel')}
                 </span>
             </div>
         );
