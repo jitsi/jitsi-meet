@@ -115,11 +115,13 @@
         }
     },
     "chat": {
+        "copy": "Copy",
         "delete": "Delete",
         "deleteMessage": "Delete",
         "deletedMessage": "This message was deleted.",
         "deletedMessageByMe": "You deleted this message.",
         "disabled": "Sending chat messages is disabled.",
+        "edit": "Edit",
         "edited": "(edited)",
         "editingMessage": "Editing",
         "enter": "Enter room",
@@ -134,6 +136,7 @@
         "message": "Message",
         "messageAccessibleTitle": "{{user}} says:",
         "messageAccessibleTitleMe": "me says:",
+        "messageCopied": "Message copied",
         "messageTo": "Private message to {{recipient}}",
         "messagebox": "Type a message",
         "moderatedMessage": "Deleted by a moderator.",
@@ -156,6 +159,7 @@
             "titleWithPollsAndCCAndFileSharing": "Enter a nickname to use chat, polls, closed captions and files"
         },
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
+        "privateMessage": "Private message",
         "privateNotice": "Private message to {{recipient}}",
         "search": {
             "close": "Close search",
