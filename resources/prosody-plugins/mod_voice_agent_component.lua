@@ -83,10 +83,20 @@ local invite_count = module:measure('voice_agent_invite_rate', 'rate');
 local invite_success_count = module:measure('voice_agent_invite_success', 'rate');
 local dismiss_count = module:measure('voice_agent_dismiss_rate', 'rate');
 
+-- DEV ONLY: skip provisioning-token auth (no ASAP keyserver). Default false; never enable where
+-- untrusted callers can reach it.
+local INSECURE_SKIP_AUTH = module:get_option_boolean('voice_agent_insecure_skip_auth', false);
+
 local ASAP_KEY_SERVER = module:get_option_string('prosody_password_public_key_repo_url', '');
-local token_util = module:require 'token/util'.new(module);
-if ASAP_KEY_SERVER then
-    token_util:set_asap_key_server(ASAP_KEY_SERVER);
+local token_util;
+if INSECURE_SKIP_AUTH then
+    module:log('warn', 'voice_agent_insecure_skip_auth is ON — /voice-agent endpoints are UNAUTHENTICATED');
+else
+    token_util = module:require 'token/util'.new(module);
+    -- Empty string is truthy in Lua, so compare explicitly.
+    if ASAP_KEY_SERVER ~= '' then
+        token_util:set_asap_key_server(ASAP_KEY_SERVER);
+    end
 end
 
 local main_muc_module;
@@ -113,6 +123,9 @@ end
 
 -- Verifies the Authorization header; returns nil when authorized, or the error response.
 local function check_authorization(request)
+    if INSECURE_SKIP_AUTH then
+        return nil;
+    end
     local token = request.headers['authorization'];
     if not token then
         module:log('warn', 'Authorization header was not provided');
