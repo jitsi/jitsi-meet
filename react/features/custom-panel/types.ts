@@ -7,14 +7,14 @@
 export interface ICustomPanelEvent {
 
     /**
-     * Discriminator for the event, matched against the handler table.
-     */
-    name: string;
-
-    /**
      * Additional event-specific fields are allowed.
      */
     [key: string]: unknown;
+
+    /**
+     * Discriminator for the event, matched against the handler table.
+     */
+    name: string;
 }
 
 /**

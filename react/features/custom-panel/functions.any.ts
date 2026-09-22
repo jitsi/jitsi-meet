@@ -1,20 +1,23 @@
 import { IReduxState } from '../app/types';
 
-import { DEFAULT_CUSTOM_PANEL_WIDTH } from './constants';
+/**
+ * Returns the configured custom panel URL, or undefined when none is configured.
+ *
+ * @param {IReduxState} state - The Redux state.
+ * @returns {string | undefined} The URL to load in the custom panel iframe.
+ */
+export function getCustomPanelUrl(state: IReduxState): string | undefined {
+    return state['features/base/config'].customPanel?.url;
+}
 
 /**
- * Returns the width the custom panel takes from the video space. 0 when closed, disabled,
- * or on native, where the panel is a navigation route and its slice is never registered.
+ * Returns whether the Copilot (custom panel) is enabled via config. It needs both the
+ * flag and a URL, which comes from `config.js` or from dynamic branding. There is no
+ * default URL, so without one the panel stays hidden on both platforms.
  *
  * @param {IReduxState} state - The redux state.
- * @returns {number}
+ * @returns {boolean}
  */
-export function getCustomPanelWidth(state: IReduxState): number {
-    const panel = state['features/custom-panel'];
-
-    if (!panel?.enabled || !panel.isOpen) {
-        return 0;
-    }
-
-    return panel.width?.current ?? DEFAULT_CUSTOM_PANEL_WIDTH;
+export function isCustomPanelEnabled(state: IReduxState): boolean {
+    return Boolean(state['features/base/config'].customPanel?.enabled && getCustomPanelUrl(state));
 }

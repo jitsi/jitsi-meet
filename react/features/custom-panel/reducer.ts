@@ -17,8 +17,9 @@ import { DEFAULT_CUSTOM_PANEL_WIDTH } from './constants';
 export interface ICustomPanelState {
 
     /**
-     * Whether the custom panel feature is enabled.
-     * This can be toggled dynamically via console.
+     * Whether the custom panel button has been revealed, through the console helper
+     * or the Ctrl+Alt+E shortcut. This gates the button on top of
+     * `config.customPanel.enabled`; on its own it does not enable the feature.
      */
     enabled: boolean;
 
@@ -60,8 +61,8 @@ const DEFAULT_STATE: ICustomPanelState = {
 };
 
 /**
- * Persist only the width subtree so the user's preferred panel width
- * survives page reloads.
+ * Persist the revealed flag and the width subtree, so that both the user's preferred
+ * panel width and the revealed state survive page reloads.
  */
 PersistenceRegistry.register('features/custom-panel', {
     enabled: true,
