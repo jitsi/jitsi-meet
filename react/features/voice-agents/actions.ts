@@ -1,4 +1,4 @@
-import { SET_VOICE_AGENTS, SET_VOICE_AGENT_CONSENT } from './actionTypes';
+import { SET_VOICE_AGENTS, SET_VOICE_AGENT_CONSENT, SET_VOICE_AGENT_SPEAKING } from './actionTypes';
 import { IVoiceAgents } from './types';
 
 /**
@@ -27,5 +27,20 @@ export function setVoiceAgentConsent(agentId: string, allowed: boolean) {
         type: SET_VOICE_AGENT_CONSENT,
         agentId,
         allowed
+    };
+}
+
+/**
+ * Records whether a voice agent is currently speaking (synthetic source sending).
+ *
+ * @param {string} agentId - The agent the update applies to.
+ * @param {boolean} speaking - Whether the agent is speaking.
+ * @returns {Object}
+ */
+export function setVoiceAgentSpeaking(agentId: string, speaking: boolean) {
+    return {
+        type: SET_VOICE_AGENT_SPEAKING,
+        agentId,
+        speaking
     };
 }

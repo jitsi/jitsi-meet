@@ -1,6 +1,6 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
-import { SET_VOICE_AGENTS, SET_VOICE_AGENT_CONSENT } from './actionTypes';
+import { SET_VOICE_AGENTS, SET_VOICE_AGENT_CONSENT, SET_VOICE_AGENT_SPEAKING } from './actionTypes';
 import { isSafeAgentId, sanitizeAgents } from './functions';
 import { IVoiceAgents } from './types';
 
@@ -17,11 +17,15 @@ export interface IVoiceAgentsState {
      * re-provisioned agent with the same id asks again.
      */
     consent: { [agentId: string]: boolean; };
+
+    /** Whether each agent is speaking (synthetic source sending); drives the ring, pruned on leave. */
+    speaking: { [agentId: string]: boolean; };
 }
 
 const DEFAULT_STATE: IVoiceAgentsState = {
     agents: {},
-    consent: {}
+    consent: {},
+    speaking: {}
 };
 
 ReducerRegistry.register<IVoiceAgentsState>(
@@ -31,6 +35,7 @@ ReducerRegistry.register<IVoiceAgentsState>(
         case SET_VOICE_AGENTS: {
             const agents: IVoiceAgents = sanitizeAgents(action.agents ?? {});
             const consent: { [agentId: string]: boolean; } = {};
+            const speaking: { [agentId: string]: boolean; } = {};
 
             for (const [ agentId, allowed ] of Object.entries(state.consent)) {
                 if (agentId in agents) {
@@ -38,10 +43,17 @@ ReducerRegistry.register<IVoiceAgentsState>(
                 }
             }
 
+            for (const [ agentId, isSpeaking ] of Object.entries(state.speaking)) {
+                if (agentId in agents) {
+                    speaking[agentId] = isSpeaking;
+                }
+            }
+
             return {
                 ...state,
                 agents,
-                consent
+                consent,
+                speaking
             };
         }
         case SET_VOICE_AGENT_CONSENT: {
@@ -54,6 +66,19 @@ ReducerRegistry.register<IVoiceAgentsState>(
                 consent: {
                     ...state.consent,
                     [action.agentId]: action.allowed
+                }
+            };
+        }
+        case SET_VOICE_AGENT_SPEAKING: {
+            if (!isSafeAgentId(action.agentId) || !(action.agentId in state.agents)) {
+                return state;
+            }
+
+            return {
+                ...state,
+                speaking: {
+                    ...state.speaking,
+                    [action.agentId]: action.speaking
                 }
             };
         }

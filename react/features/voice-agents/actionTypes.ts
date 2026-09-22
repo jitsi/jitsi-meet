@@ -19,3 +19,14 @@ export const SET_VOICE_AGENTS = 'SET_VOICE_AGENTS';
  * }
  */
 export const SET_VOICE_AGENT_CONSENT = 'SET_VOICE_AGENT_CONSENT';
+
+/**
+ * The type of action which records whether a voice agent is currently speaking (synthetic source sending).
+ *
+ * {
+ *     type: SET_VOICE_AGENT_SPEAKING,
+ *     agentId: string,
+ *     speaking: boolean
+ * }
+ */
+export const SET_VOICE_AGENT_SPEAKING = 'SET_VOICE_AGENT_SPEAKING';
