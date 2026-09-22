@@ -1,26 +1,4 @@
-import { IReduxState } from '../app/types';
-
-import { DEFAULT_CUSTOM_PANEL_URL } from './constants';
-
-/**
- * Returns whether the Copilot (custom panel) is enabled via config.
- *
- * @param {IReduxState} state - The redux state.
- * @returns {boolean}
- */
-export function isCustomPanelEnabled(state: IReduxState): boolean {
-    return Boolean(state['features/base/config'].customPanel?.enabled);
-}
-
-/**
- * Returns the configured advisor URL, falling back to the default.
- *
- * @param {IReduxState} state - The redux state.
- * @returns {string}
- */
-export function getCustomPanelUrl(state: IReduxState): string {
-    return state['features/base/config'].customPanel?.url ?? DEFAULT_CUSTOM_PANEL_URL;
-}
+export * from './functions.any';
 
 /**
  * Builds the advisor URL. Returns '' without a url or jwt (no token, no access).

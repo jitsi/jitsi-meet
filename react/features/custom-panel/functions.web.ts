@@ -6,16 +6,17 @@ import { VIDEO_SPACE_MIN_SIZE } from '../video-layout/constants';
 import { DEFAULT_CUSTOM_PANEL_WIDTH } from './constants';
 
 export * from './functions.any';
-export * from './functions.custom';
 
 /**
- * Returns whether the custom panel is enabled based on Redux state.
- * The feature is disabled by default and can be enabled dynamically via console.
+ * Returns whether the custom panel button has been revealed, through the console helper
+ * or the Ctrl+Alt+E shortcut. It gates the button on top of {@link isCustomPanelEnabled},
+ * so a deployment that configures the panel does not expose it until someone asks for it.
+ * Native has no reveal step and gates on config alone.
  *
  * @param {IReduxState} state - The Redux state.
- * @returns {boolean} Whether the custom panel is enabled.
+ * @returns {boolean} Whether the custom panel button has been revealed.
  */
-export function isCustomPanelEnabled(state: IReduxState): boolean {
+export function isCustomPanelToggledOn(state: IReduxState): boolean {
     return Boolean(state['features/custom-panel']?.enabled);
 }
 
@@ -53,4 +54,22 @@ export function getCustomPanelMaxSize(state: IReduxState): number {
     const chatPanelWidth = isChatOpen ? (chatWidth?.current ?? CHAT_SIZE) : 0;
 
     return Math.max(clientWidth - chatPanelWidth - getParticipantsPaneWidth(state) - VIDEO_SPACE_MIN_SIZE, 0);
+}
+
+/**
+ * Returns the width the custom panel takes from the video space. 0 when closed, disabled,
+ * or on native, where the panel is a navigation route and its slice is never registered.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {number}
+ */
+export function getCustomPanelWidth(state: IReduxState): number {
+    const { customPanel } = state['features/base/config'];
+    const panel = state['features/custom-panel'];
+
+    if (!customPanel?.enabled || !customPanel.url || !panel?.isOpen) {
+        return 0;
+    }
+
+    return panel.width?.current ?? DEFAULT_CUSTOM_PANEL_WIDTH;
 }

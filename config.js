@@ -1112,6 +1112,18 @@ var config = {
     // type:  Array<{ icon: string; id: string; text: string; backgroundColor?: string; }>
     // customToolbarButtons: [],
 
+    // The custom panel (Copilot), rendered in a side panel on web and on its own screen
+    // on mobile. It needs both `enabled` and `url`.
+    // `url` has no default: without one the panel stays hidden on both platforms. It can
+    // also come from `customPanelUrl` in the dynamic branding data, which takes precedence
+    // over the value set here.
+    // NOTE: `url` cannot be overwritten through `configOverwrite`, because the panel
+    // receives the meeting JWT as a query parameter. Only `enabled` is whitelisted.
+    // customPanel: {
+    //     enabled: false,
+    //     url: 'https://example.com/copilot',
+    // },
+
     // Stats
     //
 
@@ -1478,6 +1490,9 @@ var config = {
         logoClickUrl: 'https://example-company.org',
         // The url used for the image used as logo
         logoImageUrl: 'https://example.com/logo-img.png',
+        // The url loaded in the custom panel (Copilot). It overwrites `customPanel.url`
+        // from this file. The panel also needs `customPanel.enabled` set to true.
+        customPanelUrl: 'https://example.com/copilot',
         // Endpoint that enables support for salesforce integration with in-meeting resource linking
         // This is required for:
         // listing the most recent records - salesforceUrl/records/recents
