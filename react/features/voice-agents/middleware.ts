@@ -4,15 +4,22 @@ import { IStore } from '../app/types';
 import { UPDATE_CONFERENCE_METADATA } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import { IJitsiConference } from '../base/conference/reducer';
+import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { participantJoined, participantLeft } from '../base/participants/actions';
 import { FakeParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { hideNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { SET_VOICE_AGENT_CONSENT } from './actionTypes';
-import { setVoiceAgentConsent, setVoiceAgents } from './actions';
-import { getConsentedAgentSourceNames, isVoiceAgentConsentRequired, sanitizeAgents } from './functions';
+import { setVoiceAgentConsent, setVoiceAgentSpeaking, setVoiceAgents } from './actions';
+import {
+    getAgentIdBySourceName,
+    getConsentedAgentSourceNames,
+    isVoiceAgentConsentRequired,
+    sanitizeAgents
+} from './functions';
 import logger from './logger';
 import { IVoiceAgents } from './types';
 
@@ -147,3 +154,36 @@ function _updateSubscription({ getState }: IStore) {
 
     conference.setAgentAudioSubscription(getConsentedAgentSourceNames(state));
 }
+
+/** The attached SYNTHETIC_SOURCE_SENDING_CHANGED listener, kept so it can be detached on conference change. */
+let sendingChangeListener: ((change: { sending: boolean; sourceName: string; timestamp: number; }) => void)
+    | undefined;
+
+/**
+ * Reflects each agent's SYNTHETIC_SOURCE_SENDING_CHANGED (sending) state into its speaking flag, which
+ * drives the speaking ring.
+ */
+StateListenerRegistry.register(
+    state => getCurrentConference(state),
+    (conference, store, previousConference) => {
+        if (previousConference && sendingChangeListener) {
+            previousConference.off(JitsiConferenceEvents.SYNTHETIC_SOURCE_SENDING_CHANGED, sendingChangeListener);
+            sendingChangeListener = undefined;
+        }
+
+        if (!conference) {
+            return;
+        }
+
+        const { dispatch, getState } = store;
+
+        sendingChangeListener = ({ sourceName, sending }) => {
+            const agentId = getAgentIdBySourceName(getState(), sourceName);
+
+            if (agentId) {
+                dispatch(setVoiceAgentSpeaking(agentId, sending));
+            }
+        };
+
+        conference.on(JitsiConferenceEvents.SYNTHETIC_SOURCE_SENDING_CHANGED, sendingChangeListener);
+    });

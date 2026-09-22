@@ -58,6 +58,36 @@ export function isVoiceAgentConsentRequired(state: IReduxState): boolean {
 }
 
 /**
+ * The agent id that owns a synthetic source name, or undefined if none advertises it.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} sourceName - The synthetic source name.
+ * @returns {string|undefined}
+ */
+export function getAgentIdBySourceName(state: IReduxState, sourceName: string): string | undefined {
+    const { agents } = state['features/voice-agents'];
+
+    for (const [ agentId, agent ] of Object.entries(agents)) {
+        if (agent.sourceName === sourceName) {
+            return agentId;
+        }
+    }
+
+    return undefined;
+}
+
+/**
+ * Whether a voice agent is currently speaking (its synthetic source is sending audio).
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string|undefined} agentId - The agent id.
+ * @returns {boolean}
+ */
+export function isVoiceAgentSpeaking(state: IReduxState, agentId?: string): boolean {
+    return Boolean(agentId && state['features/voice-agents'].speaking[agentId]);
+}
+
+/**
  * The source names of the voice agents the local participant currently receives: agents still present
  * in the room whose consent decision is 'allowed'.
  *
