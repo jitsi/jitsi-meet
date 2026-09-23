@@ -115,11 +115,13 @@
         }
     },
     "chat": {
+        "copy": "Copia",
         "delete": "Suprimeix",
         "deleteMessage": "Suprimeix",
         "deletedMessage": "Aquest missatge s'ha suprimit.",
         "deletedMessageByMe": "Heu suprimit aquest missatge.",
         "disabled": "L'enviament de missatges de xat està desactivat.",
+        "edit": "Edita",
         "edited": "(editat)",
         "editingMessage": "Edició",
         "enter": "Entra a la sala",
@@ -134,6 +136,7 @@
         "message": "Missatge",
         "messageAccessibleTitle": "{{user}} diu:",
         "messageAccessibleTitleMe": "jo dic:",
+        "messageCopied": "Missatge copiat",
         "messageTo": "Missatge privat per a {{recipient}}",
         "messagebox": "Escriviu un missatge",
         "moderatedMessage": "Eliminat per un moderador.",
@@ -156,6 +159,7 @@
             "titleWithPollsAndCCAndFileSharing": "Introduïu un sobrenom per a usar al xat, enquestes, subtítols i fitxers"
         },
         "noMessagesMessage": "Encara no hi ha cap missatge en aquesta reunió. Comenceu una conversa aquí!",
+        "privateMessage": "Missatge privat",
         "privateNotice": "Missatge privat per a {{recipient}}",
         "search": {
             "close": "Tanca la cerca",
@@ -1463,6 +1467,7 @@
             "mute": "Silencia o activa el so",
             "muteEveryone": "Silencia tothom",
             "muteEveryoneElse": "Silencia tots els altres participants",
+            "muteEveryoneElsesDesktopStream": "Atura la compartició de pantalla de tots els altres",
             "muteEveryoneElsesVideoStream": "Atura el vídeo a tots els altres",
             "muteEveryonesVideoStream": "Atura el vídeo a tothom",
             "muteGUMPending": "Connexió del micròfon",
@@ -1632,6 +1637,7 @@
         "alsoRecord": "Voleu enregistrar també aquesta reunió?",
         "ccButtonTooltip": "Inicia o atura els subtítols",
         "expandedLabel": "La transcripció està activada",
+        "expandedOff": "La transcripció s'ha aturat",
         "failed": "Ha fallat la transcripció",
         "labelTooltip": "S'està transcrivint aquest reunió",
         "labelTooltipExtra": "A més, després es disposarà d'una transcripció.",
