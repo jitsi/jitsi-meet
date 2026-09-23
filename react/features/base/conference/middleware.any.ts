@@ -521,7 +521,7 @@ function _maybeNotifySettingsIncomplete({ dispatch, getState }: IStore) {
     dispatch(showWarningNotification({
         descriptionKey: 'notify.settingsIncompleteDescription',
         titleKey: 'notify.settingsIncompleteTitle'
-    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 }
 
 /**
