@@ -223,20 +223,25 @@ const useStyles = makeStyles()(theme => {
         connectionStats: {
             fontSize: '0.75rem',
             fontWeight: 400,
-            width: '250px',
+            minWidth: '250px',
 
-            '& > ul': {
-                listStyleType: 'none',
+            '& > dl': {
                 margin: '8px',
                 padding: 0,
 
-                '& > li': {
-                    display: 'flex',
+                '& dt, & dd': {
+                    margin: 0,
+                },
 
-                    '& > label': {
-                        paddingRight: '4px',
-                        width: '50%'
-                    }
+                '& dt': {
+                    width: '50%',
+                    paddingInlineEnd: '8px',
+                    boxSizing: 'border-box',
+                },
+
+                '& > div': {
+                    display: 'flex',
+                    justifyContent: 'flex-start',
                 }
             }
         },
@@ -315,18 +320,12 @@ const ConnectionStatsList = ({
             id: string,
             classNames?: string
     ): JSX.Element => (
-        <li
+        <div
             className = { classNames }
-            key = { id } >
-            <label
-                htmlFor = { id } >
-                { label }
-            </label>
-            <output
-                id = { id } >
-                { value }
-            </output>
-        </li>
+            id = { id }>
+            <dt>{ label }</dt>
+            <dd>{ value }</dd>
+        </div>
     );
 
     const _renderResolution = (): JSX.Element => {
@@ -374,10 +373,10 @@ const ConnectionStatsList = ({
         <div
             className = { cx(classes.connectionStats, { [classes.mobile]: isMobileBrowser() }) }
             onClick = { onClick }>
-            <ul>
+            <dl>
                 {_renderResolution()}
                 {_renderFrameRate()}
-            </ul>
+            </dl>
         </div>
     </ContextMenu>);
 
@@ -603,7 +602,7 @@ const ConnectionStatsList = ({
     };
 
     const _renderAdditionalStats = (): JSX.Element => (
-        <ul>
+        <dl>
             {isLocalVideo ? _renderBandwidth() : null}
             {isLocalVideo ? _renderTransport() : null}
             {_renderRegion()}
@@ -612,7 +611,7 @@ const ConnectionStatsList = ({
             {_renderVideoSsrc()}
             {_renderParticipantId()}
             {_renderE2EEVerified()}
-        </ul>
+        </dl>
     );
 
     const _renderBitrate = (): JSX.Element => {
@@ -720,14 +719,14 @@ const ConnectionStatsList = ({
     };
 
     const _renderStatistics = (): JSX.Element => (
-        <ul>
+        <dl>
             {_renderConnectionSummary()}
             {_renderBitrate()}
             {_renderPacketLoss()}
             {_renderResolution()}
             {_renderFrameRate()}
             {_renderCodecs()}
-        </ul>
+        </dl>
     );
 
     if (isVirtualScreenshareParticipant) {
