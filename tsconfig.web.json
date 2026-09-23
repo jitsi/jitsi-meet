@@ -8,6 +8,7 @@
         "lib": [ "ES2024", "DOM" ],
         "skipLibCheck": true,
         "moduleResolution": "Bundler",
+        "isolatedModules": true,
         "strict": true,
         "noImplicitAny": true,
         "noImplicitOverride": true,
