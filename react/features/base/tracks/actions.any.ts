@@ -271,12 +271,13 @@ export function noDataFromSource(track: any) {
 }
 
 /**
- * Displays a no data from source video error if needed.
+ * Displays a no data from source error if needed.
  *
  * @param {JitsiLocalTrack} jitsiTrack - The track.
+ * @param {MediaType} [mediaType] - The media type of the track.
  * @returns {Function}
  */
-export function showNoDataFromSourceVideoError(jitsiTrack: any) {
+export function showNoDataFromSourceError(jitsiTrack: any, mediaType?: MediaType) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         let notificationInfo;
 
@@ -289,10 +290,22 @@ export function showNoDataFromSourceVideoError(jitsiTrack: any) {
         if (track.isReceivingData) {
             notificationInfo = undefined;
         } else {
-            const notificationAction = dispatch(showErrorNotification({
-                descriptionKey: 'dialog.cameraNotSendingData',
-                titleKey: 'dialog.cameraNotSendingDataTitle'
-            }));
+            const trackMediaType = mediaType || track.mediaType;
+            let notificationAction;
+
+            if (trackMediaType === MEDIA_TYPE.AUDIO) {
+                notificationAction = dispatch(showNotification({
+                    descriptionKey: 'dialog.micNotSendingData',
+                    titleKey: 'dialog.micNotSendingDataTitle'
+                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+
+                dispatch(setNoSrcDataNotificationUid(notificationAction?.uid));
+            } else {
+                notificationAction = dispatch(showErrorNotification({
+                    descriptionKey: 'dialog.cameraNotSendingData',
+                    titleKey: 'dialog.cameraNotSendingDataTitle'
+                }));
+            }
 
             notificationInfo = {
                 uid: notificationAction?.uid
@@ -438,7 +451,7 @@ export function trackAdded(track: any) {
                     noDataFromSourceNotificationInfo = { uid: notificationAction?.uid };
                 } else {
                     const timeout = setTimeout(() => dispatch(
-                        showNoDataFromSourceVideoError(track)),
+                        showNoDataFromSourceError(track, MEDIA_TYPE.VIDEO)),
                         NOTIFICATION_TIMEOUT.MEDIUM);
 
                     noDataFromSourceNotificationInfo = { timeout };
