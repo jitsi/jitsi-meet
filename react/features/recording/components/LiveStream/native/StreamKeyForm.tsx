@@ -11,6 +11,7 @@ import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 import AbstractStreamKeyForm, {
     IProps as AbstractProps
 } from '../AbstractStreamKeyForm';
+import { GOOGLE_PRIVACY_POLICY, YOUTUBE_TERMS_URL } from '../constants';
 import { getLiveStreaming } from '../functions';
 
 import styles from './styles';
@@ -77,24 +78,41 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
                     </View>
                 </View>
                 <View style = { styles.formButtonsWrapper as ViewStyle }>
-                    <Button
-                        accessibilityLabel = 'liveStreaming.streamIdHelp'
-                        labelKey = 'liveStreaming.streamIdHelp'
-                        labelStyle = { styles.buttonLabelStyle }
-                        onClick = { this._onOpenHelp }
-                        type = { BUTTON_TYPES.TERTIARY } />
-                    <Button
-                        accessibilityLabel = 'liveStreaming.youtubeTerms'
-                        labelKey = 'liveStreaming.youtubeTerms'
-                        labelStyle = { styles.buttonLabelStyle }
-                        onClick = { this._onOpenYoutubeTerms }
-                        type = { BUTTON_TYPES.TERTIARY } />
-                    <Button
-                        accessibilityLabel = 'liveStreaming.googlePrivacyPolicy'
-                        labelKey = 'liveStreaming.googlePrivacyPolicy'
-                        labelStyle = { styles.buttonLabelStyle }
-                        onClick = { this._onOpenGooglePrivacyPolicy }
-                        type = { BUTTON_TYPES.TERTIARY } />
+                    { this.props._liveStreaming.helpURL
+                        ? (
+                            <Button
+                                accessibilityLabel = 'liveStreaming.streamIdHelp'
+                                labelKey = 'liveStreaming.streamIdHelp'
+                                labelStyle = { styles.buttonLabelStyle }
+                                onClick = { this._onOpenHelp }
+                                type = { BUTTON_TYPES.TERTIARY } />
+                        ) : null }
+                    { this.props._liveStreaming.termsURL
+                        ? (
+                            <Button
+                                accessibilityLabel = { this.props._liveStreaming.termsURL === YOUTUBE_TERMS_URL
+                                    ? 'liveStreaming.youtubeTerms'
+                                    : 'liveStreaming.terms' }
+                                labelKey = { this.props._liveStreaming.termsURL === YOUTUBE_TERMS_URL
+                                    ? 'liveStreaming.youtubeTerms'
+                                    : 'liveStreaming.terms' }
+                                labelStyle = { styles.buttonLabelStyle }
+                                onClick = { this._onOpenYoutubeTerms }
+                                type = { BUTTON_TYPES.TERTIARY } />
+                        ) : null }
+                    { this.props._liveStreaming.dataPrivacyURL
+                        ? (
+                            <Button
+                                accessibilityLabel = { this.props._liveStreaming.dataPrivacyURL === GOOGLE_PRIVACY_POLICY
+                                    ? 'liveStreaming.googlePrivacyPolicy'
+                                    : 'liveStreaming.privacyPolicy' }
+                                labelKey = { this.props._liveStreaming.dataPrivacyURL === GOOGLE_PRIVACY_POLICY
+                                    ? 'liveStreaming.googlePrivacyPolicy'
+                                    : 'liveStreaming.privacyPolicy' }
+                                labelStyle = { styles.buttonLabelStyle }
+                                onClick = { this._onOpenGooglePrivacyPolicy }
+                                type = { BUTTON_TYPES.TERTIARY } />
+                        ) : null }
                 </View>
             </>
         );
