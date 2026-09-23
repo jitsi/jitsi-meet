@@ -33,7 +33,7 @@ typecheck:
 	npm run tsc:web
 
 compile: clean typecheck
-	NODE_OPTIONS=--max-old-space-size=10240 \
+	NODE_OPTIONS=--max-old-space-size=4096 \
 	$(WEBPACK)
 
 clean:
