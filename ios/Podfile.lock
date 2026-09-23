@@ -2059,7 +2059,7 @@ PODS:
     - Yoga
   - react-native-orientation-locker (1.7.0):
     - React-Core
-  - react-native-pager-view (8.0.5):
+  - react-native-pager-view (9.0.4):
     - boost
     - DoubleConversion
     - fast_float
@@ -3655,7 +3655,7 @@ SPEC CHECKSUMS:
   react-native-keep-awake: 129cb4bd75d0f304a479b4c4527d2994fe18e43c
   react-native-netinfo: 57447b5a45c98808f8eae292cf641f3d91d13830
   react-native-orientation-locker: cc6f357b289a2e0dd2210fea0c52cb8e0727fdaa
-  react-native-pager-view: 8e26c20fc7bb3053e8a6895e888b26ae65299307
+  react-native-pager-view: 05affeb838b6ec0ff63f46b426242e692a065587
   react-native-performance: b48d1aba7501a54af5e1a7efb0dab1ab25dc734f
   react-native-safe-area-context: 6cf08f4151132f9cf2adb948dc6c4ac387f8d30f
   react-native-screen-corner-radius: ebd0d3258fcc894571b41d25ee3db7569d375153
