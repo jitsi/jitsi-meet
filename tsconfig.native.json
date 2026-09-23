@@ -9,6 +9,7 @@
         "types": [ "react-native" ],
         "skipLibCheck": true,
         "moduleResolution": "Bundler",
+        "isolatedModules": true,
         "strict": true,
         "noImplicitAny": true,
         "strictPropertyInitialization": false,
