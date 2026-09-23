@@ -236,7 +236,13 @@ function getConfig(options = {}) {
                 loader: 'ts-loader',
                 options: {
                     configFile: 'tsconfig.web.json',
-                    transpileOnly: !isProduction // Skip type checking for dev builds.,
+
+                    // Only strip types here. Type checking runs once, through `tsc` (the Makefile
+                    // `typecheck` target, the `build:load-test` script and CI). With type checking
+                    // enabled, ts-loader builds and checks a full TypeScript program of the whole
+                    // tree for every bundle below, which multiplied the build time and memory by
+                    // the number of bundles.
+                    transpileOnly: true
                 }
             } ]
         },
