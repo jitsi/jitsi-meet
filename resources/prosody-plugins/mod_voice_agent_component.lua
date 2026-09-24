@@ -68,6 +68,7 @@ local JSON_CONTENT_TYPE = 'application/json';
 -- metadata broadcastable payload.
 local MAX_AGENTS_PER_ROOM = module:get_option_number('voice_agent_max_agents', 5);
 local MAX_PARAM_ENTRIES = 16;
+local MAX_PARAM_KEY_LENGTH = 128;
 local MAX_PARAM_VALUE_LENGTH = 2048;
 local MAX_DISPLAY_NAME_LENGTH = 256;
 
@@ -158,8 +159,16 @@ local function validate_string_map(value, name)
         if type(k) ~= 'string' or type(v) ~= 'string' then
             return nil, name .. ' must map strings to strings';
         end
+        if #k > MAX_PARAM_KEY_LENGTH then
+            return nil, name .. ' key too long';
+        end
         if #v > MAX_PARAM_VALUE_LENGTH then
             return nil, name .. ' value too long';
+        end
+        -- These become outbound HTTP header / URL-param content on the dial leg; reject control chars
+        -- (CR/LF) so a value cannot split or inject headers.
+        if k:find('[%c]') or v:find('[%c]') then
+            return nil, name .. ' must not contain control characters';
         end
         entries = entries + 1;
         if entries > MAX_PARAM_ENTRIES then
@@ -252,7 +261,16 @@ local function handle_invite(event)
         return { status_code = 400, body = json.encode({ error = headers_error }) };
     end
 
-    -- Convenience: map endpoint.{url,authorization} onto the proxy-facing connect headers.
+    -- The proxy-facing X-Agent-* headers may only be set through the wss-validated endpoint object below,
+    -- never as raw httpHeaders (which would bypass the scheme check).
+    if http_headers and (http_headers[ENDPOINT_URL_HEADER] or http_headers[ENDPOINT_AUTH_HEADER]) then
+        return { status_code = 400,
+            body = json.encode({ error = 'httpHeaders must not set X-Agent-* headers; use endpoint' }) };
+    end
+
+    -- Convenience: map endpoint.{url,authorization} onto the proxy-facing connect headers. This enforces the
+    -- wss:// scheme only; host-level SSRF filtering (private-range denylist, DNS resolve-and-check) is done
+    -- downstream by the opus-transcriber-proxy endpoint guard.
     if payload.endpoint ~= nil then
         if type(payload.endpoint) ~= 'table' or type(payload.endpoint.url) ~= 'string'
                 or not starts_with(payload.endpoint.url, 'wss://') then

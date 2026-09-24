@@ -244,6 +244,24 @@ describe('mod_voice_agent_component', function()
             for i = 1, 17 do big['k' .. i] = 'v'; end
             assert.are.equal(400, invite({ conference = 'r'; displayName = 'B'; httpHeaders = big }).status_code);
         end)
+
+        it('rejects a value with control characters (CRLF header injection)', function()
+            assert.are.equal(400,
+                invite({ conference = 'r'; displayName = 'B';
+                    httpHeaders = { X = 'a\r\nX-Injected: 1' } }).status_code);
+        end)
+
+        it('rejects an over-long key', function()
+            assert.are.equal(400,
+                invite({ conference = 'r'; displayName = 'B';
+                    httpHeaders = { [string.rep('k', 129)] = 'v' } }).status_code);
+        end)
+
+        it('rejects httpHeaders that set a reserved X-Agent-* header (endpoint bypass)', function()
+            assert.are.equal(400,
+                invite({ conference = 'r'; displayName = 'B';
+                    httpHeaders = { ['X-Agent-Endpoint'] = 'ws://169.254.169.254/' } }).status_code);
+        end)
     end)
 
     describe('secret segregation', function()

@@ -8,14 +8,18 @@ import { IVoiceAgents } from './types';
  */
 const UNSAFE_KEYS = new Set([ '__proto__', 'constructor', 'prototype' ]);
 
+/** Reserved id namespace for agents; requiring it stops a metadata id shadowing a real participant. */
+const AGENT_ID_PREFIX = 'agent-';
+
 /**
- * Whether an agent id is safe to use as a plain-object key.
+ * Whether an agent id is safe to mirror: it must be in the reserved `agent-` namespace and not a
+ * prototype-pollution key.
  *
  * @param {string} agentId - The agent id.
  * @returns {boolean}
  */
 export function isSafeAgentId(agentId: string): boolean {
-    return !UNSAFE_KEYS.has(agentId);
+    return agentId.startsWith(AGENT_ID_PREFIX) && !UNSAFE_KEYS.has(agentId);
 }
 
 /**
