@@ -92,7 +92,7 @@ const ClosedCaptionsTab = ({
             return (
                 <div className = { classes.emptyContent }>
                     <Button
-                        accessibilityLabel = 'Start Closed Captions'
+                        accessibilityLabel = { t('closedCaptionsTab.startClosedCaptionsButton') }
                         appearance = 'primary'
                         disabled = { isButtonPressed }
                         labelKey = 'closedCaptionsTab.startClosedCaptionsButton'

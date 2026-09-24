@@ -233,7 +233,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                     <form onSubmit = { this._onFormSubmit }>
                                         <input
                                             aria-disabled = 'false'
-                                            aria-label = 'Meeting name input'
+                                            aria-label = { t('welcomepage.accessibilityLabel.roomname') }
                                             autoFocus = { true }
                                             className = 'enter-room-input'
                                             id = 'enter_room_field'
@@ -248,7 +248,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
                                 <button
                                     aria-disabled = 'false'
-                                    aria-label = 'Start meeting'
+                                    aria-label = { t('welcomepage.startMeeting') }
                                     className = 'welcome-page-button'
                                     id = 'enter_room_button'
                                     onClick = { this._onFormSubmit }
