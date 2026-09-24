@@ -1,3 +1,17 @@
+-- USAGE / DEPLOYMENT
+--   These endpoints are meant to be used by trusted internal services (e.g.
+--   monitoring, backend services checking room occupancy) over a controlled
+--   network path. By default (enable_roomsize_token_verification = false)
+--   they have no authentication, and GET /sessions never has any. In that
+--   configuration it is NOT safe to make them publicly accessible: do not
+--   proxy them from the public web server (nginx) and do not expose Prosody's
+--   HTTP ports (5280/5281) to the internet. Restrict access at the web server
+--   or with network filters.
+--
+--   When enable_roomsize_token_verification is true, /room-size and /room
+--   require a token issued by this deployment (the virtual host token
+--   configuration) that is valid for the requested room.
+--
 -- Prosody IM
 -- Copyright (C) 2021-present 8x8, Inc.
 --
