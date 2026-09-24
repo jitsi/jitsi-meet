@@ -619,7 +619,6 @@ var config = {
     //          ultraHd: 4000000,
     //          ssHigh: 2500000
     //      },
-    //      scalabilityModeEnabled: true,
     //      useSimulcast: false,
     //      useKSVC: true
     //    },
@@ -631,8 +630,7 @@ var config = {
     //          fullHd: 3000000,
     //          ultraHd: 6000000,
     //          ssHigh: 2500000
-    //      },
-    //      scalabilityModeEnabled: true
+    //      }
     //    },
     //    vp8: {
     //      maxBitratesVideo: {
@@ -642,8 +640,7 @@ var config = {
     //          fullHd: 3000000,
     //          ultraHd: 6000000,
     //          ssHigh: 2500000
-    //      },
-    //      scalabilityModeEnabled: false
+    //      }
     //    },
     //    vp9: {
     //      maxBitratesVideo: {
@@ -654,7 +651,6 @@ var config = {
     //          ultraHd: 5000000,
     //          ssHigh: 2500000
     //      },
-    //      scalabilityModeEnabled: true,
     //      useSimulcast: false,
     //      useKSVC: true
     //    },
