@@ -985,6 +985,8 @@
         "screenSharingAudioOnlyDescription": "Please note that by sharing your screen you're affecting the \"Best performance\" mode and you will use more bandwidth.",
         "screenSharingAudioOnlyTitle": "\"Best performance\" mode",
         "selfViewTitle": "You can always un-hide the self-view from settings",
+        "settingsIncompleteDescription": "Some meeting settings could not be loaded and default values were used instead.",
+        "settingsIncompleteTitle": "Meeting settings may be incomplete",
         "somebody": "Somebody",
         "startSilentDescription": "Rejoin the meeting to enable audio",
         "startSilentTitle": "You joined with no audio output!",
