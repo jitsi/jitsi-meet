@@ -104,6 +104,21 @@ export interface IDocumentPictureInPictureEvent extends Event {
 }
 
 /**
+ * The Picture-in-Picture implementation in use, reported to the External API
+ * with the pipEntered/pipLeft events: the custom Electron always-on-top
+ * window, the browser's video-element PiP or the browser's Document PiP.
+ */
+export type PiPMode = 'customWindow' | 'documentPiP' | 'videoPiP';
+
+/**
+ * Why Picture-in-Picture was left, reported to the External API where known:
+ * the user dismissed the custom PiP window for the rest of the conference,
+ * the meeting window regained focus, or PiP was closed programmatically
+ * (toggle, hide-pip command, conference end).
+ */
+export type PiPLeaveReason = 'dismissed' | 'focus' | 'requested';
+
+/**
  * MediaSession actions supported by the PiP controls in addition to the standard action set.
  */
 export type ExtendedMediaSessionAction = 'hangup' | 'togglecamera' | 'togglemicrophone';
