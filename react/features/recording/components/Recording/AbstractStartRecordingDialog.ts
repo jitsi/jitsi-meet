@@ -26,7 +26,9 @@ import {
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../constants';
 import {
     getActiveSession,
+    getRecordingServiceOptions,
     hasRecordingOrTranscriptionFeature,
+    isLiveStreamingRunning,
     isRecordingRunning,
     isRecordingSharingEnabled,
     shouldAutoTranscribeOnRecord,
@@ -95,6 +97,11 @@ export interface IProps extends WithTranslation {
     _isDropboxEnabled: boolean;
 
     /**
+     * Whether a live stream session is currently active.
+     */
+    _isLiveStreamRunning: boolean;
+
+    /**
      * Whether the local participant is a moderator.
      */
     _isModerator: boolean;
@@ -113,6 +120,11 @@ export interface IProps extends WithTranslation {
      * The dropbox refresh token.
      */
     _rToken: string;
+
+    /**
+     * Whether the recording JWT feature is enabled.
+     */
+    _recordingFeatureEnabled: boolean;
 
     /**
      * Whether file recording is currently running.
@@ -255,32 +267,39 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
     }
 
     /**
-     * Picks the default recording service to preselect from the given props: the file recordings
-     * service takes priority, then local recording (unless an integration is enabled and preferred
-     * instead), then Dropbox, in that order. Returns '' if none is available, in which case the
-     * start recording button is disabled.
+     * Returns the recording services the participant can currently pick from, the same list the
+     * dialog content renders in the storage selector.
+     *
+     * @param {IProps} props - The props to compute the list from.
+     * @returns {Array<string>} - RECORDING_TYPES values.
+     */
+    _getRecordingServiceOptions(props: IProps): Array<string> {
+        return getRecordingServiceOptions({
+            fileRecordingsServiceEnabled: props._fileRecordingsServiceEnabled,
+            integrationsEnabled: this._areIntegrationsEnabled(props),
+            liveStreamRunning: props._isLiveStreamRunning,
+            localRecordingAvailable: props._localRecordingEnabled && supportsLocalRecording(),
+            recordingFeatureEnabled: props._recordingFeatureEnabled
+        });
+    }
+
+    /**
+     * Picks the default recording service to preselect from the given props, among the ones
+     * currently available: the file recordings service takes priority, then local recording, then
+     * Dropbox, in that order. Returns '' if none is available, in which case the start recording
+     * button is disabled.
      *
      * @param {IProps} props - The props to compute the default from.
      * @returns {string} - One of RECORDING_TYPES, or ''.
      */
     _getDefaultRecordingService(props: IProps): string {
-        if (props._fileRecordingsServiceEnabled) {
-            return RECORDING_TYPES.JITSI_REC_SERVICE;
-        }
+        const options = this._getRecordingServiceOptions(props);
 
-        if (this._areIntegrationsEnabled(props)) {
-            if (props._localRecordingEnabled && supportsLocalRecording()) {
-                return RECORDING_TYPES.LOCAL;
-            }
-
-            return RECORDING_TYPES.DROPBOX;
-        }
-
-        if (props._localRecordingEnabled && supportsLocalRecording()) {
-            return RECORDING_TYPES.LOCAL;
-        }
-
-        return '';
+        return [
+            RECORDING_TYPES.JITSI_REC_SERVICE,
+            RECORDING_TYPES.LOCAL,
+            RECORDING_TYPES.DROPBOX
+        ].find(service => options.includes(service)) ?? '';
     }
 
     /**
@@ -306,21 +325,24 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             this._onTokenUpdated();
         }
 
-        // selectedRecordingService is otherwise only ever set once, from props, in the
-        // constructor. If none of the services this dialog cares about were available/known yet
-        // at construction time (e.g. base/config hadn't finished loading when this instance
-        // mounted), it gets stuck at '' — permanently disabling the start button — even after the
-        // props that actually determine availability catch up moments later. Recompute it
-        // whenever those specific props change, but only while nothing has been selected yet, so
-        // this never overrides an explicit choice made via _onSelectedRecordingServiceChanged.
-        if (this.state.selectedRecordingService === ''
-                && (prevProps._fileRecordingsServiceEnabled !== this.props._fileRecordingsServiceEnabled
-                    || prevProps._isDropboxEnabled !== this.props._isDropboxEnabled
-                    || prevProps._localRecordingEnabled !== this.props._localRecordingEnabled)) {
-            const selectedRecordingService = this._getDefaultRecordingService(this.props);
+        // selectedRecordingService is otherwise only ever set from props in the constructor, or by
+        // an explicit choice via _onSelectedRecordingServiceChanged. The services available can
+        // change while the dialog is open: base/config may not have finished loading when this
+        // instance mounted, or a live stream may start or stop. Whenever the selection is not one
+        // of the available services, recompute the default: otherwise the storage selector shows
+        // one service while starting the recording uses another, or the start button stays
+        // disabled. An explicit choice is always among the available services, so it is kept as
+        // long as it stays available. While a recording runs the selection is left untouched, as
+        // it describes the running session.
+        if (!this.props._recordingRunning) {
+            const { selectedRecordingService } = this.state;
 
-            if (selectedRecordingService) {
-                this.setState({ selectedRecordingService });
+            if (!this._getRecordingServiceOptions(this.props).includes(selectedRecordingService)) {
+                const defaultRecordingService = this._getDefaultRecordingService(this.props);
+
+                if (defaultRecordingService !== selectedRecordingService) {
+                    this.setState({ selectedRecordingService: defaultRecordingService });
+                }
             }
         }
     }
@@ -670,21 +692,22 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
         }
 
         // === Handle transcription start ===
-        // JITSI_REC_SERVICE uses setRequestingSubtitles; other services update metadata directly.
+        // Starting transcription on its own, or along with a JITSI_REC_SERVICE recording, uses
+        // setRequestingSubtitles. Along with a recording on another service, the metadata is
+        // updated directly. The selected storage service only matters when a recording is started
+        // with it: it is not the service that gets used when transcription is started alone.
         if (startTranscription) {
-            if (selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) {
+            if (!startRecording || selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) {
                 dispatch(setRequestingSubtitles(
                     true, _displaySubtitles, selectedLanguage, true, startRecording || _recordingRunning));
             } else {
-                // Spread the existing metadata so that starting transcription while a non-Jitsi
-                // recording is already running does not drop isRecordingRequested — that would
-                // read as recording having stopped to the metadata listener (see the stopRecording
-                // and stopTranscription branches above, which spread for the same reason).
+                // Spread the existing metadata, like the stopRecording and stopTranscription
+                // branches above, so only the two intent fields change.
                 const existingRecMeta = _conference?.getMetadataHandler()?.getMetadata()[RECORDING_METADATA_ID] ?? {};
 
                 _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
                     ...existingRecMeta,
-                    ...(startRecording && { isRecordingRequested: true }),
+                    isRecordingRequested: true,
                     isTranscribingEnabled: true
                 });
             }
@@ -823,11 +846,13 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
         _fileRecordingsServiceSharingEnabled: isRecordingSharingEnabled(state),
         _isModerator: isLocalParticipantModerator(state),
         _isDropboxEnabled: isDropboxEnabled(state),
+        _isLiveStreamRunning: isLiveStreamingRunning(state),
         _localRecording: Boolean(state['features/recording'].localRecordingRunning),
         _localRecordingEnabled: !localRecording?.disable,
         _recordingRunning: canManageRecordingOrTranscription
             ? isRecordingRunning(state)
             : Boolean(state['features/recording'].localRecordingRunning),
+        _recordingFeatureEnabled: isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false),
         _rToken: state['features/dropbox'].rToken ?? '',
         _transcriptionRunning: canManageRecordingOrTranscription
             ? isRecorderTranscriptionsRunning(state)

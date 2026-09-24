@@ -16,7 +16,12 @@ import { isVpaasMeeting } from '../../../jaas/functions';
 import { getAvailableSubtitlesLanguages } from '../../../subtitles/functions.any';
 import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
 import { RECORDING_TYPES } from '../../constants';
-import { hasRecordingOrTranscriptionFeature, isLiveStreamingRunning, supportsLocalRecording } from '../../functions';
+import {
+    getRecordingServiceOptions,
+    hasRecordingOrTranscriptionFeature,
+    isLiveStreamingRunning,
+    supportsLocalRecording
+} from '../../functions';
 
 /**
  * The type of the React {@code Component} props of
@@ -363,11 +368,6 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
      * Returns the list of recording services (RECORDING_TYPES values) the
      * participant can currently pick from.
      *
-     * Cloud based services (Jitsi recording service, Dropbox) require the
-     * recording JWT feature and are unavailable while a live stream runs
-     * (both use Jibri). Dropbox is additionally unavailable while a session
-     * is running (integrationsEnabled covers that).
-     *
      * @returns {Array<string>}
      */
     _getRecordingServiceOptions(): Array<string> {
@@ -378,21 +378,14 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
             fileRecordingsServiceEnabled,
             integrationsEnabled
         } = this.props;
-        const options = [];
 
-        if (_renderRecording && !_isLiveStreamRunning) {
-            if (fileRecordingsServiceEnabled) {
-                options.push(RECORDING_TYPES.JITSI_REC_SERVICE);
-            }
-            if (integrationsEnabled) {
-                options.push(RECORDING_TYPES.DROPBOX);
-            }
-        }
-        if (_localRecordingAvailable) {
-            options.push(RECORDING_TYPES.LOCAL);
-        }
-
-        return options;
+        return getRecordingServiceOptions({
+            fileRecordingsServiceEnabled,
+            integrationsEnabled,
+            liveStreamRunning: _isLiveStreamRunning,
+            localRecordingAvailable: _localRecordingAvailable,
+            recordingFeatureEnabled: _renderRecording
+        });
     }
 
     /**
