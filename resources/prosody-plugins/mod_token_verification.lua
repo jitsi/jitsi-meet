@@ -97,8 +97,9 @@ local function verify_user(session, stanza)
             reason = 'Room and token mismatched';
         end
 
-        module:log('error', 'Token %s not allowed to join: %s err: %s reason: %s',
-                        tostring(session.auth_token), tostring(stanza.attr.to), err, reason);
+        module:log('error', 'User %s not allowed to join: %s token room: %s token sub: %s err: %s reason: %s',
+                        user_jid, tostring(stanza.attr.to), tostring(session.jitsi_meet_room),
+                        tostring(session.jitsi_meet_domain), err, reason);
 
         local response = st.error_reply(stanza, 'cancel', 'not-allowed', reason);
         if err then

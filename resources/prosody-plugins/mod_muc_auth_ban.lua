@@ -54,7 +54,7 @@ local function shouldAllow(session)
 
         -- TODO: do this only for enabled customers
         ban_check_count();
-        local function cb(content, code, response, request)
+        local function cb(content, code)
             if code == 200 then
 
                 local r = json.decode(content)
@@ -76,9 +76,8 @@ local function shouldAllow(session)
                 end
             else
                 ban_check_error_count();
-                module:log("warn", "Error code:%s contacting url:%s content:%s room:%s tenant:%s response:%s request:%s",
-                    code, ACCESS_MANAGER_URL, session.jitsi_web_query_room, session.jitsi_web_query_prefix,
-                    inspect(response), inspect(request), content);
+                module:log("warn", "Error code:%s contacting url:%s content:%s room:%s tenant:%s",
+                    code, ACCESS_MANAGER_URL, content, session.jitsi_web_query_room, session.jitsi_web_query_prefix);
             end
         end
 
