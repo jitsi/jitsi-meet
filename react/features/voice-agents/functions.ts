@@ -1,0 +1,102 @@
+import { IReduxState } from '../app/types';
+
+import { IVoiceAgents } from './types';
+
+/**
+ * Keys that must never be used as object keys, since assigning them can pollute the prototype chain.
+ * Agent ids come from room metadata (server-controlled, but treated as untrusted at this boundary).
+ */
+const UNSAFE_KEYS = new Set([ '__proto__', 'constructor', 'prototype' ]);
+
+/** Reserved id namespace for agents; requiring it stops a metadata id shadowing a real participant. */
+const AGENT_ID_PREFIX = 'agent-';
+
+/**
+ * Whether an agent id is safe to mirror: it must be in the reserved `agent-` namespace and not a
+ * prototype-pollution key.
+ *
+ * @param {string} agentId - The agent id.
+ * @returns {boolean}
+ */
+export function isSafeAgentId(agentId: string): boolean {
+    return agentId.startsWith(AGENT_ID_PREFIX) && !UNSAFE_KEYS.has(agentId);
+}
+
+/**
+ * Drops any prototype-pollution-prone keys from an agents map before it is stored or acted on.
+ *
+ * @param {IVoiceAgents} agents - The agents map from metadata.
+ * @returns {IVoiceAgents}
+ */
+export function sanitizeAgents(agents: IVoiceAgents): IVoiceAgents {
+    const safe: IVoiceAgents = {};
+
+    for (const [ agentId, agent ] of Object.entries(agents)) {
+        if (isSafeAgentId(agentId)) {
+            safe[agentId] = agent;
+        }
+    }
+
+    return safe;
+}
+
+/**
+ * Whether receiving a voice agent's media requires an explicit user consent. Defaults to true; a
+ * deployment can auto-subscribe every participant with `config.voiceAgents.requireConsent: false`.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function isVoiceAgentConsentRequired(state: IReduxState): boolean {
+    return state['features/base/config'].voiceAgents?.requireConsent !== false;
+}
+
+/**
+ * The agent id that owns a synthetic source name, or undefined if none advertises it.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} sourceName - The synthetic source name.
+ * @returns {string|undefined}
+ */
+export function getAgentIdBySourceName(state: IReduxState, sourceName: string): string | undefined {
+    const { agents } = state['features/voice-agents'];
+
+    for (const [ agentId, agent ] of Object.entries(agents)) {
+        if (agent.sourceName === sourceName) {
+            return agentId;
+        }
+    }
+
+    return undefined;
+}
+
+/**
+ * Whether a voice agent is currently speaking (its synthetic source is sending audio).
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string|undefined} agentId - The agent id.
+ * @returns {boolean}
+ */
+export function isVoiceAgentSpeaking(state: IReduxState, agentId?: string): boolean {
+    return Boolean(agentId && state['features/voice-agents'].speaking[agentId]);
+}
+
+/**
+ * The source names of the voice agents the local participant currently receives: agents still present
+ * in the room whose consent decision is 'allowed'.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {Array<string>}
+ */
+export function getConsentedAgentSourceNames(state: IReduxState): string[] {
+    const { agents, consent } = state['features/voice-agents'];
+    const sourceNames: string[] = [];
+
+    for (const [ agentId, agent ] of Object.entries(agents)) {
+        if (consent[agentId] && agent.sourceName) {
+            sourceNames.push(agent.sourceName);
+        }
+    }
+
+    return sourceNames;
+}
