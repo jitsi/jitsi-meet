@@ -5,11 +5,6 @@ export interface IVoiceAgent {
     displayName?: string;
 
     /**
-     * The metadata entry kind; always 'agent' for voice agents.
-     */
-    kind?: string;
-
-    /**
      * The agent's synthetic audio source name (by convention `<agentId>-a0`). Subscribing to it is what
      * makes the agent audible.
      */
