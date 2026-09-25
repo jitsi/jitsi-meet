@@ -88,6 +88,9 @@ local dismiss_count = module:measure('voice_agent_dismiss_rate', 'rate');
 -- untrusted callers can reach it.
 local INSECURE_SKIP_AUTH = module:get_option_boolean('voice_agent_insecure_skip_auth', false);
 
+-- DEV ONLY: allow a ws:// (cleartext) endpoint.url for local test rigs; prod always requires wss://.
+local INSECURE_ALLOW_WS_ENDPOINT = module:get_option_boolean('voice_agent_insecure_allow_ws_endpoint', false);
+
 local ASAP_KEY_SERVER = module:get_option_string('prosody_password_public_key_repo_url', '');
 local token_util;
 if INSECURE_SKIP_AUTH then
@@ -273,7 +276,8 @@ local function handle_invite(event)
     -- downstream by the opus-transcriber-proxy endpoint guard.
     if payload.endpoint ~= nil then
         if type(payload.endpoint) ~= 'table' or type(payload.endpoint.url) ~= 'string'
-                or not starts_with(payload.endpoint.url, 'wss://') then
+                or not (starts_with(payload.endpoint.url, 'wss://')
+                    or (INSECURE_ALLOW_WS_ENDPOINT and starts_with(payload.endpoint.url, 'ws://'))) then
             return { status_code = 400, body = json.encode({ error = 'endpoint.url must be a wss:// URL' }) };
         end
         http_headers = http_headers or {};
