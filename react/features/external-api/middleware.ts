@@ -29,6 +29,7 @@ import { getBaseUrl } from '../base/util/helpers';
 import { appendSuffix } from '../display-name/functions';
 import { SUBMIT_FEEDBACK_ERROR, SUBMIT_FEEDBACK_SUCCESS } from '../feedback/actionTypes';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip/actionTypes';
+import { SET_LOBBY_MODE_ENABLED } from '../lobby/actionTypes';
 import { iAmVisitor } from '../visitors/functions';
 
 import './subscriber';
@@ -255,6 +256,10 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_FILMSTRIP_VISIBLE:
         APP.API.notifyFilmstripDisplayChanged(action.visible);
+        break;
+
+    case SET_LOBBY_MODE_ENABLED:
+        APP.API.notifyLobbyModeChanged(action.enabled);
         break;
 
     case SUBMIT_FEEDBACK_ERROR:
