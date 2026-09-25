@@ -16,7 +16,7 @@ import {
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 import { INotificationProps } from '../notifications/types';
 import { setRequestingSubtitles } from '../subtitles/actions.any';
-import { isRecorderTranscriptionsRunning } from '../transcribing/functions';
+import { isRecorderTranscriptionsRunning, isSubtitlesOnlyTranscriberRunning } from '../transcribing/functions';
 
 import {
     CLEAR_RECORDING_SESSIONS,
@@ -519,7 +519,11 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
                     };
 
                     const { conference } = state['features/base/conference'];
-                    const autoTranscribeOnRecord = shouldAutoTranscribeOnRecord(state);
+
+                    // A transcriber already in the meeting, for the subtitles or a running
+                    // transcription, cannot be started again: only start the recording then.
+                    const autoTranscribeOnRecord = shouldAutoTranscribeOnRecord(state)
+                        && !isSubtitlesOnlyTranscriberRunning(state) && !isRecorderTranscriptionsRunning(state);
 
                     dispatch(setStartRecordingIntent({
                         recording: true,
@@ -532,11 +536,17 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
                     });
 
                     if (autoTranscribeOnRecord) {
-                        dispatch(setRequestingSubtitles(true, false, null, false, true));
+                        dispatch(setRequestingSubtitles(true, false, null, true, true));
                     } else {
+                        // Preserve any existing isTranscribingEnabled so a running transcription
+                        // is not signalled as stopped.
+                        const existingRecMeta
+                            = conference?.getMetadataHandler()?.getMetadata()[RECORDING_METADATA_ID] ?? {};
+
                         conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                            isRecordingRequested: true,
-                            isTranscribingEnabled: false
+                            isTranscribingEnabled: false,
+                            ...existingRecMeta,
+                            isRecordingRequested: true
                         });
                     }
                 } else {
