@@ -69,7 +69,7 @@ body.dynamic-branding-pending > * {
 }
 
 .disabled .jitsi-icon svg {
-    fill: #929292;
+    fill: $disabledToolbarIconColor;
 }
 
 .jitsi-icon.gray svg {
