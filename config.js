@@ -2090,6 +2090,9 @@ var config = {
     //     // Maximum file size limit (-1 value disables any file size limit check)
     //     maxFileSize: 50,
     // },
+
+    // Whether to require typing a confirmation text ("confirm end meeting for all") before ending the meeting for all participants.
+    // requireTypedConfirmationForEndMeeting: false,
 };
 
 // Set the default values for JaaS customers

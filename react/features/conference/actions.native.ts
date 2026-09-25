@@ -4,6 +4,16 @@ import AlertDialog from '../base/dialog/components/native/AlertDialog';
 import { getParticipantDisplayName } from '../base/participants/functions';
 
 import { DISMISS_CALENDAR_NOTIFICATION } from './actionTypes';
+import EndConferenceDialog from './components/native/EndConferenceDialog.native';
+
+/**
+ * Opens {@code EndConferenceDialog}.
+ *
+ * @returns {Function}
+ */
+export function openEndConferenceDialog() {
+    return openDialog('EndConferenceDialog', EndConferenceDialog);
+}
 
 
 /**
