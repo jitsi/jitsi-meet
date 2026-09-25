@@ -108,6 +108,17 @@ export function isRecorderTranscriptionsRunning(state: IReduxState) {
 }
 
 /**
+ * Returns true if a transcriber is in the meeting only for the subtitles, i.e. without a recorder
+ * transcription session. A recorder transcription cannot be started on top of it.
+ *
+ * @param {IReduxState} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isSubtitlesOnlyTranscriberRunning(state: IReduxState) {
+    return isTranscribing(state) && !isRecorderTranscriptionsRunning(state);
+}
+
+/**
  * Checks whether the participant can start the transcription.
  *
  * @param {IReduxState} state - The redux state.
