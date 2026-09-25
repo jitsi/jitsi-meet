@@ -655,10 +655,6 @@ export interface IConfig {
         disableRemoveRaisedHandOnFocus?: boolean;
     };
     readOnlyName?: boolean;
-    /**
-     * Whether to require typing a confirmation text before ending the meeting for all.
-     */
-    requireTypedConfirmationForEndMeeting?: boolean;
     recordingService?: {
         enabled?: boolean;
         hideStorageWarning?: boolean;
