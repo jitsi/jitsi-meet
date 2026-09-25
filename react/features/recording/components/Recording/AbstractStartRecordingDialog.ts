@@ -15,7 +15,11 @@ import { getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropb
 import { getDropboxData } from '../../../dropbox/functions.any';
 import { showErrorNotification } from '../../../notifications/actions';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
-import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
+import {
+    canAddTranscriber,
+    isRecorderTranscriptionsRunning,
+    isSubtitlesOnlyTranscriberRunning
+} from '../../../transcribing/functions';
 import {
     setSelectedRecordingService,
     setStartRecordingIntent,
@@ -145,6 +149,12 @@ export interface IProps extends WithTranslation {
      * The selected language for subtitles.
      */
     _subtitlesLanguage: string | null;
+
+    /**
+     * Whether a transcriber is in the meeting only for the subtitles, in which case a recorder
+     * transcription cannot be started.
+     */
+    _subtitlesOnlyTranscriberRunning: boolean;
 
     /**
      * The dropbox access token.
@@ -483,11 +493,17 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
      * @returns {boolean} - True when the action was applied.
      */
     _onStartRecording() {
-        const { _autoTranscribeOnRecord, _canTranscribe, _transcriptionRunning } = this.props;
+        const {
+            _autoTranscribeOnRecord,
+            _canTranscribe,
+            _subtitlesOnlyTranscriberRunning,
+            _transcriptionRunning
+        } = this.props;
 
         return this._applyChanges({
             startRecording: true,
             startTranscription: _autoTranscribeOnRecord && _canTranscribe && !_transcriptionRunning
+                && !_subtitlesOnlyTranscriberRunning
         });
     }
 
@@ -525,11 +541,11 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
      * @returns {boolean} - True when the action was applied.
      */
     _onStartBoth() {
-        const { _recordingRunning, _transcriptionRunning } = this.props;
+        const { _recordingRunning, _subtitlesOnlyTranscriberRunning, _transcriptionRunning } = this.props;
 
         return this._applyChanges({
             startRecording: !_recordingRunning,
-            startTranscription: !_transcriptionRunning
+            startTranscription: !_transcriptionRunning && !_subtitlesOnlyTranscriberRunning
         });
     }
 
@@ -864,6 +880,7 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
             isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false)
                 ? _ownProps.recordAudioAndVideo ?? recordings?.recordAudioAndVideo ?? true : false,
         _subtitlesLanguage,
+        _subtitlesOnlyTranscriberRunning: isSubtitlesOnlyTranscriberRunning(state),
         _tokenExpireDate: state['features/dropbox'].expireDate,
         _token: state['features/dropbox'].token ?? ''
     };

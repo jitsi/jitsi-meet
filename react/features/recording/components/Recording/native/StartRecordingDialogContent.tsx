@@ -423,6 +423,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
             _availableLanguages,
             _dialogStyles,
             _styles: styles,
+            _subtitlesOnlyTranscriberRunning,
             onStartTranscription,
             onStopTranscription,
             selectedLanguage,
@@ -436,6 +437,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                 { this._renderSectionHeader({
                     onButtonPress: transcriptionRunning ? onStopTranscription : onStartTranscription,
                     running: transcriptionRunning,
+                    startDisabled: _subtitlesOnlyTranscriberRunning,
                     startLabelKey: 'dialog.startTranscription',
                     stopLabelKey: 'dialog.stopTranscription',
                     titleKey: 'recording.recordTranscription'
@@ -494,6 +496,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
 
         const {
             _styles: styles,
+            _subtitlesOnlyTranscriberRunning,
             isValidating,
             onStartBoth,
             onStopBoth,
@@ -503,7 +506,8 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         } = this.props;
         const showStopBoth = recordingRunning || transcriptionRunning;
         const showStartBoth = !recordingRunning || !transcriptionRunning;
-        const startBothDisabled = !recordingRunning && (startRecordingDisabled || isValidating);
+        const startBothDisabled = _subtitlesOnlyTranscriberRunning
+            || (!recordingRunning && (startRecordingDisabled || isValidating));
 
         return (
             <View style = { styles.footer }>

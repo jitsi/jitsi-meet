@@ -14,7 +14,11 @@ import { setFollowMeRecorderExclusive } from '../../../follow-me/actions';
 import { isFollowMeActive, isFollowMeRecorderActive } from '../../../follow-me/functions';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { getAvailableSubtitlesLanguages } from '../../../subtitles/functions.any';
-import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
+import {
+    canAddTranscriber,
+    isRecorderTranscriptionsRunning,
+    isSubtitlesOnlyTranscriberRunning
+} from '../../../transcribing/functions';
 import { RECORDING_TYPES } from '../../constants';
 import {
     getRecordingServiceOptions,
@@ -115,6 +119,12 @@ export interface IProps extends WithTranslation {
      * The color-schemed stylesheet of this component.
      */
     _styles: any;
+
+    /**
+     * Whether a transcriber is in the meeting only for the subtitles, in which case a recorder
+     * transcription cannot be started.
+     */
+    _subtitlesOnlyTranscriberRunning: boolean;
 
     /**
      * Whether transcription is currently running.
@@ -654,7 +664,8 @@ export function mapStateToProps(state: IReduxState) {
         _localRecordingRunning: Boolean(state['features/recording'].localRecordingRunning),
         _localRecordingSelfEnabled: !localRecording?.disableSelfRecording,
         _localRecordingNoNotification: !localRecording?.notifyAllParticipants,
-        _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')
+        _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent'),
+        _subtitlesOnlyTranscriberRunning: isSubtitlesOnlyTranscriberRunning(state)
     };
 }
 
