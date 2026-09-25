@@ -41,16 +41,6 @@ export function sanitizeAgents(agents: IVoiceAgents): IVoiceAgents {
 }
 
 /**
- * Returns the known voice agents (mirrored from room metadata).
- *
- * @param {IReduxState} state - The redux state.
- * @returns {IVoiceAgents}
- */
-export function getVoiceAgents(state: IReduxState): IVoiceAgents {
-    return state['features/voice-agents'].agents;
-}
-
-/**
  * Whether receiving a voice agent's media requires an explicit user consent. Defaults to true; a
  * deployment can auto-subscribe every participant with `config.voiceAgents.requireConsent: false`.
  *
