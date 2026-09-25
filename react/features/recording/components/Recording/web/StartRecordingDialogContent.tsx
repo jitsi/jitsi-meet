@@ -434,7 +434,6 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
 
         const {
             _availableLanguages,
-            _e2eeEnabled,
             onStartTranscription,
             onStopTranscription,
             selectedLanguage,
@@ -443,7 +442,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         } = this.props;
         const { showTranscriptionOptions } = this.state;
         const classes = this.props.classes ?? {};
-        const e2eeReason = _e2eeEnabled ? t('transcribing.unavailableWithE2EE') : undefined;
+        const startReason = this._getStartTranscriptionReason();
         const languageOptions = _availableLanguages.map((lang: string) => {
             return {
                 label: t(lang),
@@ -466,11 +465,11 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                                 testId = 'recordingDialog.stopTranscription'
                                 type = { BUTTON_TYPES.DESTRUCTIVE } />
                         ) : (
-                            <DisabledReasonTooltip reason = { e2eeReason }>
+                            <DisabledReasonTooltip reason = { startReason }>
                                 <Button
                                     accessibilityLabel = { t('dialog.startTranscription') }
-                                    description = { e2eeReason }
-                                    disabled = { _e2eeEnabled }
+                                    description = { startReason }
+                                    disabled = { Boolean(startReason) }
                                     labelKey = 'dialog.start'
                                     onClick = { onStartTranscription }
                                     testId = 'recordingDialog.startTranscription'
@@ -503,6 +502,26 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
     }
 
     /**
+     * Returns why the transcription cannot be started, translated, when it cannot: end-to-end
+     * encryption is on, or a transcriber is already in the meeting for the subtitles.
+     *
+     * @returns {string|undefined}
+     */
+    _getStartTranscriptionReason() {
+        const { _e2eeEnabled, _subtitlesOnlyTranscriberRunning, t } = this.props;
+
+        if (_e2eeEnabled) {
+            return t('transcribing.unavailableWithE2EE');
+        }
+
+        if (_subtitlesOnlyTranscriberRunning) {
+            return t('recording.transcriptionAlreadyOn');
+        }
+
+        return undefined;
+    }
+
+    /**
      * Renders the footer buttons acting on both services at once. When only
      * one service is running both buttons are shown: stop both stops the
      * running one, start both starts the missing one.
@@ -515,7 +534,6 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         }
 
         const {
-            _e2eeEnabled,
             isValidating,
             onStartBoth,
             onStopBoth,
@@ -526,8 +544,8 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         } = this.props;
         const showStopBoth = recordingRunning || transcriptionRunning;
         const showStartBoth = !recordingRunning || !transcriptionRunning;
-        const startBothE2EEReason = !transcriptionRunning && _e2eeEnabled ? t('transcribing.unavailableWithE2EE') : undefined;
-        const startBothDisabled = Boolean(startBothE2EEReason)
+        const startBothReason = transcriptionRunning ? undefined : this._getStartTranscriptionReason();
+        const startBothDisabled = Boolean(startBothReason)
             || (!recordingRunning && (startRecordingDisabled || isValidating));
         const classes = this.props.classes ?? {};
 
@@ -542,10 +560,10 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                         type = { BUTTON_TYPES.DESTRUCTIVE } />
                 ) }
                 { showStartBoth && (
-                    <DisabledReasonTooltip reason = { startBothE2EEReason }>
+                    <DisabledReasonTooltip reason = { startBothReason }>
                         <Button
                             accessibilityLabel = { t('dialog.startBoth') }
-                            description = { startBothE2EEReason }
+                            description = { startBothReason }
                             disabled = { startBothDisabled }
                             labelKey = 'dialog.startBoth'
                             onClick = { onStartBoth }
