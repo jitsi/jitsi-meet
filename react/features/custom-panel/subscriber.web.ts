@@ -2,10 +2,11 @@
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { clientResized } from '../base/responsive-ui/actions';
+import { isInBreakoutRoom } from '../breakout-rooms/functions';
 
-import { setCustomPanelWidth } from './actions.web';
+import { close, setCustomPanelWidth } from './actions.web';
 import { DEFAULT_CUSTOM_PANEL_WIDTH } from './constants';
-import { getCustomPanelMaxSize } from './functions';
+import { getCustomPanelMaxSize } from './functions.web';
 
 /**
  * Listens for changes in the custom panel open state to recompute available
@@ -85,5 +86,17 @@ StateListenerRegistry.register(
                 // Recompute the large video size.
                 VideoLayout.onResize();
             }
+        }
+    });
+
+/**
+ * The advisor works from meeting transcriptions, which are not available in a breakout
+ * room. Close the panel when the local participant switches into one.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => Boolean(isInBreakoutRoom(state)),
+    /* listener */ (inBreakoutRoom: boolean, { dispatch }) => {
+        if (inBreakoutRoom) {
+            dispatch(close());
         }
     });
