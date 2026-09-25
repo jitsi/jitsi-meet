@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -25,6 +25,7 @@ interface IProps {
  */
 const ChatSearchBar = ({ t }: IProps) => {
     const dispatch = useDispatch();
+    const [ focused, setFocused ] = useState(false);
     const query = useSelector((state: IReduxState) => getChatSearchQuery(state));
     const matches = useSelector((state: IReduxState) => getChatSearchMatches(state));
     const matchIndex = useSelector((state: IReduxState) => getChatSearchMatchIndex(state));
@@ -52,12 +53,19 @@ const ChatSearchBar = ({ t }: IProps) => {
         dispatch(setChatSearchMatchIndex((matchIndex + 1) % matches.length));
     }, [ dispatch, matchIndex, matches.length ]);
 
+    const _onFocus = useCallback(() => setFocused(true), []);
+    const _onBlur = useCallback(() => setFocused(false), []);
+
     const _onSubmitEditing = useCallback(() => {
         _onNext();
     }, [ _onNext ]);
 
     return (
-        <View style = { styles.searchBarContainer as ViewStyle }>
+        <View
+            style = { [
+                styles.searchBarContainer,
+                focused && styles.searchBarContainerFocused
+            ] as ViewStyle[] }>
             <Input
                 clearable = { true }
                 customStyles = {{
@@ -65,7 +73,9 @@ const ChatSearchBar = ({ t }: IProps) => {
                     container: styles.searchInputContainer,
                     input: styles.searchInput
                 }}
+                onBlur = { _onBlur }
                 onChange = { _onChangeText }
+                onFocus = { _onFocus }
                 onSubmitEditing = { _onSubmitEditing }
                 placeholder = { t('chat.search.placeholder') }
                 returnKeyType = 'search'

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { Platform, TextStyle, View, ViewStyle } from 'react-native';
+import { EmitterSubscription, Keyboard, Platform, TextStyle, View, ViewStyle } from 'react-native';
 import { Text } from 'react-native-paper';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { translate } from '../../../base/i18n/functions';
+import { translate } from '../../../base/i18n/functions.native';
 import { IconSend } from '../../../base/icons/svg';
 import IconButton from '../../../base/ui/components/native/IconButton';
 import Input from '../../../base/ui/components/native/Input';
@@ -79,6 +79,8 @@ function _isSendDisabled({
  * Implements the chat input bar with text field and action(s).
  */
 class ChatInputBar extends Component<IProps, IState> {
+    _keyboardSubscriptions: EmitterSubscription[] = [];
+
     /**
      * Instantiates a new instance of the component.
      *
@@ -94,8 +96,34 @@ class ChatInputBar extends Component<IProps, IState> {
         };
 
         this._onChangeText = this._onChangeText.bind(this);
-        this._onFocused = this._onFocused.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
+    }
+
+    /**
+     * Tracks keyboard visibility (not input focus) so the bar also stays above the keyboard while the
+     * search input is focused.
+     *
+     * @inheritdoc
+     */
+    override componentDidMount() {
+        if (Platform.OS !== 'android') {
+            return;
+        }
+
+        this._keyboardSubscriptions = [
+            Keyboard.addListener('keyboardDidShow', () => this.setState({ addPadding: true })),
+            Keyboard.addListener('keyboardDidHide', () => this.setState({ addPadding: false }))
+        ];
+    }
+
+    /**
+     * Implements {@code Component#componentWillUnmount}.
+     *
+     * @inheritdoc
+     */
+    override componentWillUnmount() {
+        this._keyboardSubscriptions.forEach(subscription => subscription.remove());
+        this._keyboardSubscriptions = [];
     }
 
     /**
@@ -128,9 +156,7 @@ class ChatInputBar extends Component<IProps, IState> {
                     customStyles = {{ container: styles.customInputContainer }}
                     id = 'chat-input-messagebox'
                     multiline = { false }
-                    onBlur = { this._onFocused(false) }
                     onChange = { this._onChangeText }
-                    onFocus = { this._onFocused(true) }
                     onSubmitEditing = { this._onSubmit }
                     placeholder = { this.props.t('chat.fieldPlaceHolder') }
                     returnKeyType = 'send'
@@ -157,20 +183,6 @@ class ChatInputBar extends Component<IProps, IState> {
             message: text,
             showSend: Boolean(text)
         });
-    }
-
-    /**
-     * Constructs a callback to be used to update the padding of the field if necessary.
-     *
-     * @param {boolean} focused - True of the field is focused.
-     * @returns {Function}
-     */
-    _onFocused(focused: boolean) {
-        return () => {
-            Platform.OS === 'android' && this.setState({
-                addPadding: focused
-            });
-        };
     }
 
     /**
