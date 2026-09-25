@@ -3,6 +3,11 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 const BUBBLE_RADIUS = 8;
 
+// Matches the chat input (native Input) so both fields line up.
+const SEARCH_BAR_BORDER_WIDTH = 2;
+const SEARCH_BAR_HEIGHT = BaseTheme.spacing[7];
+const SEARCH_BAR_INNER_HEIGHT = SEARCH_BAR_HEIGHT - (2 * SEARCH_BAR_BORDER_WIDTH);
+
 const recipientContainer = {
     alignItems: 'center',
     backgroundColor: BaseTheme.palette.support05,
@@ -100,13 +105,18 @@ export default {
         backgroundColor: BaseTheme.palette.ui03,
         borderColor: BaseTheme.palette.ui03,
         borderRadius: BaseTheme.shape.borderRadius,
-        borderWidth: 2,
+        borderWidth: SEARCH_BAR_BORDER_WIDTH,
         flexDirection: 'row',
-        height: 40,
+        height: SEARCH_BAR_HEIGHT,
         marginBottom: BaseTheme.spacing[1],
-        marginHorizontal: BaseTheme.spacing[3],
+        marginHorizontal: BaseTheme.spacing[4],
         marginTop: BaseTheme.spacing[2],
-        paddingHorizontal: BaseTheme.spacing[2]
+        paddingLeft: BaseTheme.spacing[3],
+        paddingRight: BaseTheme.spacing[2]
+    },
+
+    searchBarContainerFocused: {
+        borderColor: BaseTheme.palette.focus01
     },
 
     searchBarCounter: {
@@ -124,7 +134,7 @@ export default {
 
     searchClearButton: {
         alignItems: 'center',
-        height: 40,
+        height: SEARCH_BAR_INNER_HEIGHT,
         justifyContent: 'center',
         top: 0
     },
@@ -137,7 +147,7 @@ export default {
     searchInput: {
         backgroundColor: 'transparent',
         borderWidth: 0,
-        height: 40,
+        height: SEARCH_BAR_INNER_HEIGHT,
         paddingHorizontal: 0
     },
 
