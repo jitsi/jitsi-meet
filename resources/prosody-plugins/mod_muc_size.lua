@@ -126,8 +126,9 @@ function verify_token(token, room_address)
     end
 
     if not token_util:verify_room(session, room_address) then
-        log("warn", "Token %s not allowed to join: %s",
-            tostring(token), tostring(room_address));
+        log("warn", "Token not allowed to join: %s token room: %s token sub: %s",
+            tostring(room_address), tostring(session.jitsi_meet_room),
+            tostring(session.jitsi_meet_domain));
         return false;
     end
 
