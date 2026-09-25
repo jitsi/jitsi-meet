@@ -129,13 +129,20 @@ export default class RecordingTranscriptionDialog extends BasePageObject {
         await driver.$(START_TRANSCRIPTION).moveTo();
 
         const tooltip = driver.$(TOOLTIP);
+        let text = '';
 
-        await tooltip.waitForExist({
+        // The tooltip fades in: it exists before it is visible, and getText() returns an empty
+        // string for it until then.
+        await driver.waitUntil(async () => {
+            text = await tooltip.isExisting() ? await tooltip.getText() : '';
+
+            return text !== '';
+        }, {
             timeout: 3000,
             timeoutMsg: 'Start transcription tooltip did not appear'
         });
 
-        return tooltip.getText();
+        return text;
     }
 
     /**
