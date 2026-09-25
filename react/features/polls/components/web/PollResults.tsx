@@ -121,52 +121,79 @@ const PollResults = ({
 }: AbstractProps) => {
     const { classes } = useStyles();
 
+    const handleKeyDown = React.useCallback((fn: Function): React.KeyboardEventHandler<HTMLButtonElement> =>
+        (event: React.KeyboardEvent<HTMLButtonElement>) => {
+            if (event.key === 'Enter') {
+                fn();
+            }
+        }, []);
+
     return (
         <div
+            aria-labelledby = { `poll-question-${pollId}` }
             className = { classes.container }
             id = { `poll-${pollId}` }>
             <div className = { classes.header }>
-                <div className = { classes.question }>
+                <h2
+                    className = { classes.question }
+                    id = { `poll-question-${pollId}` }>
                     {question}
-                </div>
-                <div className = { classes.creator }>
+                </h2>
+                <p className = { classes.creator }>
                     {t('polls.by', { name: creatorName })}
-                </div>
+                </p>
             </div>
-            <ul className = { classes.resultList }>
+            <ul
+                aria-label = { question }
+                className = { classes.resultList }>
                 {answers.map(({ name, percentage, voters, voterCount }, index) =>
                     (<li key = { index }>
-                        <div className = { classes.answerName }>
+                        <p className = { classes.answerName }>
                             {name}
-                        </div>
+                        </p>
                         <div
+                            aria-label = { name }
                             className = { classes.answerResultContainer }
-                            id = { `poll-result-${pollId}-${index}` }>
-                            <span className = { classes.barContainer }>
+                            id = { `poll-result-${pollId}-${index}` }
+                            role = 'group'>
+                            <div className = { classes.barContainer }>
                                 <div
+                                    aria-label = { name }
+                                    aria-valuemax = { 100 }
+                                    aria-valuemin = { 0 }
+                                    aria-valuenow = { percentage }
+                                    aria-valuetext = { t('polls.result.value', { percent: percentage }) }
                                     className = { classes.bar }
+                                    role = 'progressbar'
                                     style = {{ width: `${percentage}%` }} />
-                            </span>
-                            <div className = { classes.voteCount }>
-                                {voterCount} ({percentage}%)
                             </div>
+                            <p
+                                aria-hidden = 'true'
+                                className = { classes.voteCount }>
+                                {voterCount} ({percentage}%)
+                            </p>
                         </div>
-                        {showDetails && voters && voterCount > 0
-                        && <ul className = { classes.voters }>
-                            { voters.map(voter =>
-                                <li key = { voter.id }>{ voter.name }</li>
-                            )}
-                        </ul>}
+                        {showDetails && voters && voterCount > 0 && (
+                            <div aria-label = { `Voters for ${name}` }>
+                                <ul className = { classes.voters }>
+                                    { voters.map(voter => (
+                                        <li key = { voter.id }>{ voter.name }</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </li>)
                 )}
             </ul>
             <div className = { classes.buttonsContainer }>
                 <button
-                    onClick = { toggleIsDetailed }>
+                    onClick = { toggleIsDetailed }
+                    onKeyDown = { handleKeyDown(toggleIsDetailed) }>
                     {showDetails ? t('polls.results.hideDetailedResults') : t('polls.results.showDetailedResults')}
                 </button>
                 <button
-                    onClick = { changeVote }>
+                    onClick = { changeVote }
+                    onKeyDown = { handleKeyDown(changeVote) }>
                     {haveVoted ? t('polls.results.changeVote') : t('polls.results.vote')}
                 </button>
             </div>
