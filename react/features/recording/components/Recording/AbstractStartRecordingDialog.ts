@@ -696,10 +696,13 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
         // setRequestingSubtitles. Along with a recording on another service, the metadata is
         // updated directly. The selected storage service only matters when a recording is started
         // with it: it is not the service that gets used when transcription is started alone.
+        // isRecordingRequested is only set for a file recording: a local recording is never
+        // announced through it, and remote participants seeing it would wait for a file recording
+        // session that never comes before notifying about the transcription.
         if (startTranscription) {
             if (!startRecording || selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) {
                 dispatch(setRequestingSubtitles(
-                    true, _displaySubtitles, selectedLanguage, true, startRecording || _recordingRunning));
+                    true, _displaySubtitles, selectedLanguage, true, startRecording || Boolean(_fileRecordingSession)));
             } else {
                 // Spread the existing metadata, like the stopRecording and stopTranscription
                 // branches above, so only the two intent fields change.
