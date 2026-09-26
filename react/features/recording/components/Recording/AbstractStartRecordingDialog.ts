@@ -429,7 +429,9 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             return;
         }
 
-        if (typeof _token === 'undefined') {
+        // No token (mapStateToProps maps a missing one to '') means not signed in to Dropbox:
+        // there is nothing to validate.
+        if (!_token) {
             this.setState({
                 isTokenValid: false,
                 isValidating: false
