@@ -98,7 +98,12 @@ describe('Recording & Transcription dialog — room metadata', () => {
         await p1.getToolbar().clickRecordingButton();
         await dialog.waitForDisplay();
 
-        expect(await dialog.isStartBothEnabled()).toBe(true);
+        // Start both stays disabled while the dialog validates the Dropbox token on deployments
+        // with Dropbox enabled.
+        await p1.driver.waitUntil(() => dialog.isStartBothEnabled(), {
+            timeout: 5_000,
+            timeoutMsg: 'Start both did not become enabled'
+        });
 
         await dialog.startBoth();
 
