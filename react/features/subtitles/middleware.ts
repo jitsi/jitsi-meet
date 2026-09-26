@@ -418,19 +418,19 @@ function _requestingSubtitlesChange(
                     dispatch(setRequestingSubtitles(false, false, null));
 
                     // Clear the transcription flag written below for this request, keeping the rest
-                    // of the recording metadata (e.g. isRecordingRequested for a recording started
-                    // along with it): remote participants would otherwise keep waiting for a
-                    // transcription that is not coming before notifying about the recording.
+                    // of the recording metadata: remote participants would otherwise keep waiting
+                    // for a transcription that is not coming before notifying about the recording.
+                    // The local copy of the metadata only reflects that write once the server has
+                    // echoed it back, which may not have happened yet, so re-apply what this
+                    // request wrote rather than relying on it.
                     if (!skipMetadataUpdate && forceBackendRecordingOn) {
                         const metadataHandler = conference?.getMetadataHandler();
-                        const existingRecMeta = metadataHandler?.getMetadata()[RECORDING_METADATA_ID] ?? {};
 
-                        if (existingRecMeta.isTranscribingEnabled) {
-                            metadataHandler?.setMetadata(RECORDING_METADATA_ID, {
-                                ...existingRecMeta,
-                                isTranscribingEnabled: false
-                            });
-                        }
+                        metadataHandler?.setMetadata(RECORDING_METADATA_ID, {
+                            ...metadataHandler?.getMetadata()[RECORDING_METADATA_ID],
+                            ...(isRecordingRequested && { isRecordingRequested: true }),
+                            isTranscribingEnabled: false
+                        });
                     }
 
                     dispatch(showErrorNotification({
