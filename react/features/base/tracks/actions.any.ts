@@ -271,6 +271,40 @@ export function noDataFromSource(track: any) {
 }
 
 /**
+ * Displays a no data from source audio error if needed.
+ *
+ * @param {JitsiLocalTrack} jitsiTrack - The track.
+ * @returns {Function}
+ */
+export function showNoDataFromSourceAudioError(jitsiTrack: any) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        let notificationInfo;
+
+        const track = getTrackByJitsiTrack(getState()['features/base/tracks'], jitsiTrack);
+
+        if (!track) {
+            return;
+        }
+
+        if (track.isReceivingData) {
+            notificationInfo = undefined;
+        } else {
+            const notificationAction = dispatch(showNotification({
+                descriptionKey: 'dialog.micNotSendingData',
+                titleKey: 'dialog.micNotSendingDataTitle'
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+
+            dispatch(setNoSrcDataNotificationUid(notificationAction?.uid));
+
+            notificationInfo = {
+                uid: notificationAction?.uid
+            };
+        }
+        dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, notificationInfo));
+    };
+}
+
+/**
  * Displays a no data from source video error if needed.
  *
  * @param {JitsiLocalTrack} jitsiTrack - The track.
