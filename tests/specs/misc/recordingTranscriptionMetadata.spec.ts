@@ -69,4 +69,87 @@ describe('Recording & Transcription dialog — room metadata', () => {
             });
         });
     });
+
+    /*
+     * isTranscribingEnabled is written before the transcriber is invited. When inviting it fails,
+     * the flag has to be cleared while isRecordingRequested stays for the recording started along
+     * with it, and remote participants must stop waiting for the transcription: once the file
+     * recording session is on, they get the recording-only start notification.
+     *
+     * p1's conference.dial() is stubbed to fail and its conference.startRecording() to do nothing,
+     * so neither a transcriber nor a Jibri is involved; the file recording session turning on is
+     * then faked on p2 with the RECORDING_SESSION_UPDATED action jicofo's update would produce.
+     */
+    it('a failed transcriber invite still lets remote participants see the recording start', async () => {
+        const { p1, p2 } = ctx;
+
+        await p2.driver.waitUntil(async () => !(await p2.getRoomMetadata())?.recording?.isTranscribingEnabled, {
+            timeout: 5_000,
+            timeoutMsg: 'the room metadata of the previous test was not reset'
+        });
+
+        await p1.execute(() => {
+            APP.conference._room.dial = () => Promise.reject(new Error('simulated transcriber invite failure'));
+            APP.conference._room.startRecording = () => Promise.resolve();
+        });
+
+        const dialog = p1.getRecordingTranscriptionDialog();
+
+        await p1.getToolbar().clickRecordingButton();
+        await dialog.waitForDisplay();
+
+        expect(await dialog.isStartBothEnabled()).toBe(true);
+
+        await dialog.startBoth();
+
+        await p2.driver.waitUntil(async () => {
+            const recording = (await p2.getRoomMetadata())?.recording;
+
+            return recording?.isRecordingRequested && !recording.isTranscribingEnabled;
+        }, {
+            timeout: 5_000,
+            timeoutMsg: 'p2 did not see the transcription flag cleared with the recording still requested'
+        });
+
+        await p2.driver.waitUntil(async () => {
+            const intent = await p2.execute(() => APP.store.getState()['features/recording'].startRecordingIntent);
+
+            return intent?.recording === true && intent.transcription === false;
+        }, {
+            timeout: 5_000,
+            timeoutMsg: 'p2 is still waiting for the transcription'
+        });
+
+        const p1EndpointId = await p1.getEndpointId();
+
+        await p2.execute((initiator: string) => {
+            const { mode, status } = JitsiMeetJS.constants.recording;
+
+            APP.store.dispatch({
+                type: 'RECORDING_SESSION_UPDATED',
+                sessionData: {
+                    id: 'fake-file-recording-for-testing',
+                    initiator,
+                    mode: mode.FILE,
+                    status: status.ON
+                }
+            });
+        }, p1EndpointId);
+
+        // "recording.onBy" when p1's display name is known, "recording.on" otherwise.
+        await p2.driver.$('[data-testid="recording.onBy"], [data-testid="recording.on"]').waitForExist({
+            timeout: 5_000,
+            timeoutMsg: 'p2 did not get the recording started notification'
+        });
+        expect(await p2.driver.$(
+            '[data-testid="recording.onByWithTranscription"], [data-testid="recording.onWithTranscription"]'
+        ).isExisting()).toBe(false);
+
+        await p1.execute(() => {
+            APP.conference._room.getMetadataHandler().setMetadata('recording', {
+                isRecordingRequested: false,
+                isTranscribingEnabled: false
+            });
+        });
+    });
 });
