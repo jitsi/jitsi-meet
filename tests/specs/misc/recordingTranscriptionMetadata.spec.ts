@@ -1,6 +1,13 @@
 import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureTwoParticipants } from '../../helpers/participants';
 
+/**
+ * The recording stopped notifications, with or without the name of who stopped it and with or
+ * without transcription.
+ */
+const RECORDING_STOPPED_NOTIFICATIONS = '[data-testid="recording.offBy"], [data-testid="recording.off"], '
+    + '[data-testid="recording.offByWithTranscription"], [data-testid="recording.offWithTranscription"]';
+
 setTestProperties(__filename, {
     description: 'Room metadata written by the Recording & Transcription dialog, as seen by a remote participant',
     usesBrowsers: [ 'p1', 'p2' ]
@@ -190,6 +197,14 @@ describe('Recording & Transcription dialog — room metadata', () => {
             timeoutMsg: 'the room metadata of the previous test was not reset'
         });
 
+        // The previous test's cleanup stops its (fake) recording, which p2 notifies: wait for that
+        // notification to go away, so it is not taken for one caused by this test.
+        await p2.driver.$(RECORDING_STOPPED_NOTIFICATIONS).waitForExist({
+            reverse: true,
+            timeout: 15_000,
+            timeoutMsg: 'the recording stopped notification of the previous test did not go away'
+        });
+
         await p1.execute(() => {
             APP.conference._room.dial = () => new Promise((_resolve, reject) => {
                 // @ts-ignore
@@ -244,10 +259,7 @@ describe('Recording & Transcription dialog — room metadata', () => {
                 timeout: 5_000,
                 timeoutMsg: 'p2 is still waiting for the cancelled recording to start'
             });
-        expect(await p2.driver.$(
-            '[data-testid="recording.offBy"], [data-testid="recording.off"], '
-                + '[data-testid="recording.offByWithTranscription"], [data-testid="recording.offWithTranscription"]'
-        ).isExisting()).toBe(false);
+        expect(await p2.driver.$(RECORDING_STOPPED_NOTIFICATIONS).isExisting()).toBe(false);
 
         await p1.execute(() => {
             // @ts-ignore
