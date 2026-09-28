@@ -5,7 +5,8 @@
 -- Stubs every Prosody dependency so no Prosody installation is needed. These focus on the
 -- security-relevant validation at the provisioning boundary: ASAP auth, agentId namespacing (the
 -- reserved "agent-" prefix that makes an agent id un-collidable with a real 8-hex endpoint id),
--- prototype-pollution key rejection, string-map bounds, and jicofo-only secret segregation.
+-- prototype-pollution key rejection, string-map bounds, jicofo-only secret segregation — and the
+-- v1 contract additions: idempotent invite, get, the state lifecycle, and signed webhooks.
 -- End-to-end behaviour against a real Prosody is covered by the integration specs.
 
 -- ---------------------------------------------------------------------------
@@ -13,18 +14,41 @@
 -- ---------------------------------------------------------------------------
 
 package.preload['util.hashes'] = function()
-    return { sha256 = function() return 'deadbeefcafef00d' end };
+    return {
+        sha256 = function() return 'deadbeefcafef00d' end,
+        hmac_sha256 = function(_key, _data, _hex) return 'f00dfeed' end
+    };
 end
 package.preload['util.random'] = function()
     return { bytes = function() return 'xxxxxxxx' end };
 end
 package.preload['util.http'] = function()
-    return { formdecode = function(_) return {} end };
+    return {
+        formdecode = function(query)
+            local params = {};
+            for k, v in (query or ''):gmatch('([^&=]+)=([^&]*)') do params[k] = v; end
+            return params;
+        end
+    };
 end
 
--- cjson.safe: the handler only round-trips through decode(body)/encode(err); we inject the decoded
--- table per test via `next_decoded` so the tests don't depend on a real JSON parser.
-local next_decoded
+-- net.http: captures outbound webhook requests; `http_next_code` is the status the stub reports back.
+local http_requests = {};
+local http_next_code = 200;
+package.preload['net.http'] = function()
+    return {
+        request = function(url, ex, callback)
+            table.insert(http_requests, { url = url, ex = ex });
+            if callback then callback('', http_next_code, {}); end
+            return true;
+        end
+    };
+end
+
+-- cjson.safe: decode returns the per-test `next_decoded` table; encode records every table it is
+-- given so tests can inspect response and webhook payloads without a real JSON parser.
+local next_decoded;
+local encoded = {};
 package.preload['cjson.safe'] = function()
     return {
         decode = function(s)
@@ -33,7 +57,7 @@ package.preload['cjson.safe'] = function()
             end
             return next_decoded;
         end,
-        encode = function(_) return '{}'; end
+        encode = function(t) table.insert(encoded, t); return '{}'; end
     };
 end
 
@@ -43,6 +67,8 @@ end
 
 local token_valid = true;
 local mock_room;
+local timers = {};
+local host_hooks = {};
 
 local util_stub = {
     async_handler_wrapper = function(event, handler) return handler(event); end,
@@ -51,7 +77,9 @@ local util_stub = {
         return mock_room;
     end,
     is_healthcheck_room = function(_) return false; end,
-    process_host_module = function(_host, cb) cb({ hook = function() end; fire_event = function() end }); end,
+    process_host_module = function(_host, cb)
+        cb({ hook = function(_, name, fn) host_hooks[name] = fn; end; fire_event = function() end });
+    end,
     room_jid_match_rewrite = function(jid) return jid; end,
     starts_with = function(s, prefix) return type(s) == 'string' and s:sub(1, #prefix) == prefix; end,
     table_shallow_copy = function(t)
@@ -78,12 +106,14 @@ _G.module = {
     log = function() end,
     get_option_string = function(_, key, default)
         if key == 'muc_component' then return 'conference.localhost'; end
+        if key == 'voice_agent_webhook_secret' then return 'shh'; end
         return default;
     end,
     get_option_number = function(_, _key, default) return default; end,
     get_option_boolean = function(_, _key, default) return default; end,
     measure = function() return function() end; end,
     depends = function() end,
+    add_timer = function(_, delay, fn) table.insert(timers, { delay = delay, fn = fn }); end,
     require = function(_, name)
         if name == 'util' then return util_stub; end
         if name == 'token/util' then return token_util_stub; end
@@ -108,8 +138,10 @@ if not ok then
     return;
 end
 
-assert(routes['POST voice-agent/invite'], 'invite route not registered');
-assert(routes['POST voice-agent/dismiss'], 'dismiss route not registered');
+for _, route in ipairs({ 'POST voice-agent/invite', 'POST voice-agent/dismiss', 'GET voice-agent/list',
+                         'GET voice-agent/get', 'POST voice-agent/status' }) do
+    assert(routes[route], route .. ' route not registered');
+end
 
 -- ---------------------------------------------------------------------------
 -- Test helpers
@@ -119,20 +151,23 @@ local function fresh_room()
     return { jid = 'room1@conference.localhost', jitsiMetadata = {}, _data = {} };
 end
 
-local function invite(payload, opts)
+local function post(route, payload, opts)
     opts = opts or {};
     next_decoded = payload;
     local headers = { content_type = 'application/json' };
     if not opts.omitAuth then
         headers.authorization = 'Bearer sometoken';
     end
-    return routes['POST voice-agent/invite']({ request = { headers = headers; body = 'x' } });
+    return routes[route]({ request = { headers = headers; body = 'x' } });
 end
 
-local function dismiss(payload)
-    next_decoded = payload;
-    return routes['POST voice-agent/dismiss'](
-        { request = { headers = { content_type = 'application/json'; authorization = 'Bearer t' }; body = 'x' } });
+local function invite(payload, opts) return post('POST voice-agent/invite', payload, opts); end
+local function dismiss(payload) return post('POST voice-agent/dismiss', payload); end
+local function status(payload) return post('POST voice-agent/status', payload); end
+
+local function get(query)
+    return routes['GET voice-agent/get']({
+        request = { headers = { authorization = 'Bearer t' }; url = { query = query } } });
 end
 
 local function agent_ids(room)
@@ -140,6 +175,17 @@ local function agent_ids(room)
     for id in pairs(room.jitsiMetadata.agents or {}) do table.insert(ids, id); end
     return ids;
 end
+
+-- Every recorded webhook payload of the given event type, in emission order.
+local function webhook_payloads(event_name)
+    local out = {};
+    for _, t in ipairs(encoded) do
+        if type(t) == 'table' and t.event == event_name then table.insert(out, t); end
+    end
+    return out;
+end
+
+local CALLBACK = 'https://app.example.com/agent-events';
 
 -- ---------------------------------------------------------------------------
 -- Tests
@@ -149,6 +195,10 @@ describe('mod_voice_agent_component', function()
     before_each(function()
         token_valid = true;
         mock_room = fresh_room();
+        http_requests = {};
+        http_next_code = 200;
+        timers = {};
+        for i = #encoded, 1, -1 do encoded[i] = nil; end
     end)
 
     describe('authentication', function()
@@ -298,6 +348,168 @@ describe('mod_voice_agent_component', function()
         end)
     end)
 
+    describe('customParameters', function()
+        it('is validated like the other string maps', function()
+            assert.are.equal(400,
+                invite({ conference = 'r'; displayName = 'B'; customParameters = { k = 5 } }).status_code);
+        end)
+
+        it('is stored jicofo-only and merged into the dial urlParams (explicit urlParams win)', function()
+            invite({ conference = 'r'; displayName = 'B'; agentId = 'support';
+                urlParams = { region = 'us' }; customParameters = { campaign = '42'; region = 'ignored' } });
+            assert.is_nil(mock_room.jitsiMetadata.agents['agent-support'].customParameters);
+            assert.are.equal('42', mock_room._data.voice_agents['agent-support'].customParameters.campaign);
+
+            local extra = {};
+            host_hooks['jitsi-room-metadata-admin-extra']({ room = mock_room; extra = extra });
+            assert.are.equal('42', extra.agents['agent-support'].urlParams.campaign);
+            assert.are.equal('us', extra.agents['agent-support'].urlParams.region);
+        end)
+    end)
+
+    describe('idempotent invite', function()
+        it('returns the existing agent for an identical re-invite without duplicating it', function()
+            local first = invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                customParameters = { a = '1' } });
+            local second = invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                customParameters = { a = '1' } });
+            assert.are.equal(200, first.status_code);
+            assert.are.equal(200, second.status_code);
+            assert.are.equal(1, #agent_ids(mock_room));
+        end)
+
+        it('conflicts (409) when the same agentId is re-invited with different parameters', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            assert.are.equal(409, invite({ conference = 'r'; displayName = 'Other'; agentId = 'support' }).status_code);
+            assert.are.equal(409, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                customParameters = { a = '2' } }).status_code);
+            assert.are.equal('Bot', mock_room.jitsiMetadata.agents['agent-support'].displayName);
+        end)
+    end)
+
+    describe('state lifecycle', function()
+        it('starts an invited agent in the provisioning state', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            assert.are.equal('provisioning', mock_room.jitsiMetadata.agents['agent-support'].state);
+        end)
+
+        it('advances to connecting without a webhook', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support'; callbackUrl = CALLBACK });
+            assert.are.equal(200, status({ conference = 'r'; agentId = 'agent-support'; state = 'connecting' }).status_code);
+            assert.are.equal('connecting', mock_room.jitsiMetadata.agents['agent-support'].state);
+            assert.are.equal(0, #http_requests);
+        end)
+
+        it('advances to active and fires agent.connected', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support'; callbackUrl = CALLBACK });
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
+            assert.are.equal('active', mock_room.jitsiMetadata.agents['agent-support'].state);
+            local connected = webhook_payloads('agent.connected');
+            assert.are.equal(1, #connected);
+            assert.are.equal('agent-support', connected[1].agentId);
+            assert.are.equal('active', connected[1].state);
+        end)
+
+        it('marks failed with a reason and fires agent.failed', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support'; callbackUrl = CALLBACK });
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'failed'; reason = 'dial refused' });
+            assert.are.equal('failed', mock_room.jitsiMetadata.agents['agent-support'].state);
+            local failed = webhook_payloads('agent.failed');
+            assert.are.equal(1, #failed);
+            assert.are.equal('dial refused', failed[1].reason);
+        end)
+
+        it('tears the agent down on ended and fires agent.ended', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support'; callbackUrl = CALLBACK });
+            assert.are.equal(200, status({ conference = 'r'; agentId = 'agent-support'; state = 'ended' }).status_code);
+            assert.is_nil(mock_room.jitsiMetadata.agents['agent-support']);
+            assert.is_nil(mock_room._data.voice_agents['agent-support']);
+            assert.are.equal(1, #webhook_payloads('agent.ended'));
+        end)
+
+        it('rejects an unknown state', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            assert.are.equal(400, status({ conference = 'r'; agentId = 'agent-support'; state = 'dancing' }).status_code);
+        end)
+
+        it('returns 404 for an unknown agent', function()
+            assert.are.equal(404, status({ conference = 'r'; agentId = 'agent-nope'; state = 'active' }).status_code);
+        end)
+    end)
+
+    describe('get', function()
+        it('returns the client-facing agent', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            local res = get('conference=r&agentId=agent-support');
+            assert.are.equal(200, res.status_code);
+            local body = encoded[#encoded];
+            assert.are.equal('agent-support', body.agentId);
+            assert.are.equal('agent-support-a0', body.sourceName);
+            assert.are.equal('provisioning', body.state);
+        end)
+
+        it('returns 404 for an unknown agent and for a missing room', function()
+            assert.are.equal(404, get('conference=r&agentId=agent-nope').status_code);
+            assert.are.equal(404, get('conference=missing&agentId=agent-support').status_code);
+        end)
+    end)
+
+    describe('callbackUrl and webhooks', function()
+        it('rejects a non-https callbackUrl', function()
+            assert.are.equal(400,
+                invite({ conference = 'r'; displayName = 'B'; callbackUrl = 'http://app.example.com/hook' }).status_code);
+        end)
+
+        it('stores callbackUrl jicofo-only, never in the client-facing entry', function()
+            invite({ conference = 'r'; displayName = 'B'; agentId = 'support'; callbackUrl = CALLBACK });
+            assert.are.equal(CALLBACK, mock_room._data.voice_agents['agent-support'].callbackUrl);
+            assert.is_nil(mock_room.jitsiMetadata.agents['agent-support'].callbackUrl);
+        end)
+
+        it('sends no webhook when the agent has no callbackUrl', function()
+            invite({ conference = 'r'; displayName = 'B'; agentId = 'support' });
+            dismiss({ conference = 'r'; agentId = 'agent-support' });
+            assert.are.equal(0, #http_requests);
+        end)
+
+        it('POSTs a signed agent.ended webhook on dismiss', function()
+            invite({ conference = 'r'; displayName = 'B'; agentId = 'support'; callbackUrl = CALLBACK });
+            dismiss({ conference = 'r'; agentId = 'agent-support' });
+            assert.are.equal(1, #http_requests);
+            local req = http_requests[1];
+            assert.are.equal(CALLBACK, req.url);
+            assert.are.equal('POST', req.ex.method);
+            assert.are.equal('application/json', req.ex.headers['Content-Type']);
+            assert.are.equal('sha256=f00dfeed', req.ex.headers['X-Agent-Signature']);
+            local ended = webhook_payloads('agent.ended');
+            assert.are.equal(1, #ended);
+            assert.are.equal('agent-support', ended[1].agentId);
+            assert.are.equal('ended', ended[1].state);
+            assert.are.equal('dismissed', ended[1].reason);
+            assert.is_truthy(ended[1].timestamp);
+        end)
+
+        it('retries a failed delivery with backoff', function()
+            http_next_code = 500;
+            invite({ conference = 'r'; displayName = 'B'; agentId = 'support'; callbackUrl = CALLBACK });
+            dismiss({ conference = 'r'; agentId = 'agent-support' });
+            assert.are.equal(1, #http_requests);
+            assert.are.equal(1, #timers, 'first failure must schedule a retry');
+            timers[1].fn();
+            assert.are.equal(2, #http_requests);
+            assert.is_true(timers[2].delay > timers[1].delay, 'backoff must grow');
+        end)
+
+        it('fires agent.ended for every agent when the room is destroyed', function()
+            invite({ conference = 'r'; displayName = 'B'; agentId = 'one'; callbackUrl = CALLBACK });
+            invite({ conference = 'r'; displayName = 'B'; agentId = 'two'; callbackUrl = CALLBACK });
+            host_hooks['muc-room-destroyed']({ room = mock_room });
+            local ended = webhook_payloads('agent.ended');
+            assert.are.equal(2, #ended);
+            assert.are.equal('room-destroyed', ended[1].reason);
+        end)
+    end)
+
     describe('dismiss', function()
         it('removes an existing agent from both the client and jicofo maps', function()
             invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
@@ -305,6 +517,7 @@ describe('mod_voice_agent_component', function()
             assert.are.equal(200, res.status_code);
             assert.is_nil(mock_room.jitsiMetadata.agents['agent-support']);
             assert.is_nil(mock_room._data.voice_agents['agent-support']);
+            assert.are.equal('agent-support', encoded[#encoded].agentId, '200 body echoes the agentId');
         end)
 
         it('returns 404 for an unknown agent', function()
