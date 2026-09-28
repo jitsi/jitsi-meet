@@ -349,13 +349,16 @@ StateListenerRegistry.register(
             maybeNotifyRecordingStart(dispatch, getState);
         }
 
-        // Stopping a transcription clears the flag while the transcriber is still in the meeting.
-        // The flag cleared with no transcriber present means the transcription failed to start
-        // (e.g. the transcriber could not be invited): there is no stop to notify, and a start
-        // still waiting for it must stop doing so, so the start of a recording requested along
-        // with it is still notified.
+        // The flag cleared with no transcriber present, while a start is still waiting for the
+        // transcription or after inviting the transcriber failed here, means the transcription failed
+        // to start: there is no stop to notify, and a start still waiting for it must stop doing so,
+        // so the start of a recording requested along with it is still notified. A normal stop can
+        // also clear the flag with no transcriber present, when the transcriber left first, but
+        // then nothing is waiting for the transcription and no invite failed.
         const startIntent = getState()['features/recording'].startRecordingIntent;
-        const transcriptionStartFailed = transcriptionStopping && !isTranscribing(getState());
+        const transcriptionStartFailed = transcriptionStopping
+            && !isTranscribing(getState())
+            && (Boolean(startIntent?.transcription) || getState()['features/subtitles']._hasError);
 
         if (transcriptionStartFailed && startIntent?.transcription) {
             dispatch(setStartRecordingIntent(startIntent.recording
