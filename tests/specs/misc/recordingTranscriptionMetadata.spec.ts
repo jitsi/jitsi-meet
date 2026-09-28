@@ -8,6 +8,14 @@ import { ensureTwoParticipants } from '../../helpers/participants';
 const RECORDING_STOPPED_NOTIFICATIONS = '[data-testid="recording.offBy"], [data-testid="recording.off"], '
     + '[data-testid="recording.offByWithTranscription"], [data-testid="recording.offWithTranscription"]';
 
+/**
+ * Whether the deployment runs the transcriptions in the backend (async transcription). The client
+ * then does not invite the transcriber itself, so the invite cannot fail.
+ */
+async function isAsyncTranscription(): Promise<boolean> {
+    return Boolean((await ctx.p1.getRoomMetadata())?.asyncTranscription);
+}
+
 setTestProperties(__filename, {
     description: 'Room metadata written by the Recording & Transcription dialog, as seen by a remote participant',
     usesBrowsers: [ 'p1', 'p2' ]
@@ -87,7 +95,12 @@ describe('Recording & Transcription dialog — room metadata', () => {
      * so neither a transcriber nor a Jibri is involved; the file recording session turning on is
      * then faked on p2 with the RECORDING_SESSION_UPDATED action jicofo's update would produce.
      */
-    it('a failed transcriber invite still lets remote participants see the recording start', async () => {
+    it('a failed transcriber invite still lets remote participants see the recording start', async function() {
+        if (await isAsyncTranscription()) {
+            // eslint-disable-next-line @typescript-eslint/no-invalid-this
+            this.skip();
+        }
+
         const { p1, p2 } = ctx;
 
         await p2.driver.waitUntil(async () => !(await p2.getRoomMetadata())?.recording?.isTranscribingEnabled, {
@@ -185,7 +198,12 @@ describe('Recording & Transcription dialog — room metadata', () => {
      * p1's conference.dial() is stubbed to stay pending until the test rejects it, and the file
      * recording session the dialog needs to offer Stop recording is faked on p1.
      */
-    it('a failed transcriber invite does not restore a cancelled recording request', async () => {
+    it('a failed transcriber invite does not restore a cancelled recording request', async function() {
+        if (await isAsyncTranscription()) {
+            // eslint-disable-next-line @typescript-eslint/no-invalid-this
+            this.skip();
+        }
+
         const { p1, p2 } = ctx;
 
         await p2.driver.waitUntil(async () => {
