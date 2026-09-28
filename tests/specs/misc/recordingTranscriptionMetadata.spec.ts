@@ -150,11 +150,183 @@ describe('Recording & Transcription dialog — room metadata', () => {
             '[data-testid="recording.onByWithTranscription"], [data-testid="recording.onWithTranscription"]'
         ).isExisting()).toBe(false);
 
+        await p2.execute(() => {
+            const { mode, status } = JitsiMeetJS.constants.recording;
+
+            APP.store.dispatch({
+                type: 'RECORDING_SESSION_UPDATED',
+                sessionData: {
+                    id: 'fake-file-recording-for-testing',
+                    mode: mode.FILE,
+                    status: status.OFF
+                }
+            });
+        });
         await p1.execute(() => {
             APP.conference._room.getMetadataHandler().setMetadata('recording', {
                 isRecordingRequested: false,
                 isTranscribingEnabled: false
             });
+        });
+    });
+
+    /*
+     * When the recording is stopped while the transcriber invite is still pending, a later failure
+     * of that invite must only clear the transcription flag: it must not bring back the recording
+     * request that was cancelled meanwhile.
+     *
+     * p1's conference.dial() is stubbed to stay pending until the test rejects it, and the file
+     * recording session the dialog needs to offer Stop recording is faked on p1.
+     */
+    it('a failed transcriber invite does not restore a cancelled recording request', async () => {
+        const { p1, p2 } = ctx;
+
+        await p2.driver.waitUntil(async () => {
+            const recording = (await p2.getRoomMetadata())?.recording;
+
+            return !recording?.isTranscribingEnabled && !recording?.isRecordingRequested;
+        }, {
+            timeout: 5_000,
+            timeoutMsg: 'the room metadata of the previous test was not reset'
+        });
+
+        await p1.execute(() => {
+            APP.conference._room.dial = () => new Promise((_resolve, reject) => {
+                // @ts-ignore
+                window.rejectTranscriberInvite
+                    = () => reject(new Error('simulated transcriber invite failure'));
+            });
+            APP.conference._room.startRecording = () => Promise.resolve();
+            APP.conference._room.stopRecording = () => Promise.resolve();
+        });
+
+        const dialog = p1.getRecordingTranscriptionDialog();
+
+        await p1.getToolbar().clickRecordingButton();
+        await dialog.waitForDisplay();
+        await p1.driver.waitUntil(() => dialog.isStartBothEnabled(), {
+            timeout: 5_000,
+            timeoutMsg: 'Start both did not become enabled'
+        });
+        await dialog.startBoth();
+
+        await p2.driver.waitUntil(async () => (await p2.getRoomMetadata())?.recording?.isRecordingRequested, {
+            timeout: 5_000,
+            timeoutMsg: 'p2 did not see the recording requested'
+        });
+
+        await p1.execute(() => {
+            const { mode, status } = JitsiMeetJS.constants.recording;
+
+            APP.store.dispatch({
+                type: 'RECORDING_SESSION_UPDATED',
+                sessionData: {
+                    id: 'fake-cancelled-file-recording-for-testing',
+                    mode: mode.FILE,
+                    status: status.ON
+                }
+            });
+        });
+
+        await p1.getToolbar().clickRecordingButton();
+        await dialog.waitForDisplay();
+        await dialog.stopRecording();
+
+        await p2.driver.waitUntil(async () => !(await p2.getRoomMetadata())?.recording?.isRecordingRequested, {
+            timeout: 5_000,
+            timeoutMsg: 'p2 did not see the recording request cancelled'
+        });
+
+        await p1.execute(() => {
+            // @ts-ignore
+            window.rejectTranscriberInvite();
+        });
+        await p1.driver.waitUntil(
+            () => p1.execute(() => APP.store.getState()['features/subtitles']._hasError), {
+                timeout: 5_000,
+                timeoutMsg: 'the transcriber invite failure was not handled on p1'
+            });
+
+        // Give any metadata update sent on the failure time to reach p2.
+        await p2.driver.pause(2_000);
+
+        const recording = (await p2.getRoomMetadata())?.recording;
+
+        expect(recording?.isRecordingRequested).not.toBe(true);
+        expect(recording?.isTranscribingEnabled).not.toBe(true);
+
+        await p1.execute(() => {
+            const { mode, status } = JitsiMeetJS.constants.recording;
+
+            APP.store.dispatch({
+                type: 'RECORDING_SESSION_UPDATED',
+                sessionData: {
+                    id: 'fake-cancelled-file-recording-for-testing',
+                    mode: mode.FILE,
+                    status: status.OFF
+                }
+            });
+            APP.conference._room.getMetadataHandler().setMetadata('recording', {
+                isRecordingRequested: false,
+                isTranscribingEnabled: false
+            });
+        });
+    });
+
+    /*
+     * A normal transcription stop can clear the transcription flag after the transcriber has already
+     * left the meeting. That is still a stop, and remote participants must get the transcription
+     * stopped notification.
+     *
+     * The running transcription is faked on p2 (TRANSCRIBER_JOINED, then TRANSCRIBER_LEFT before the
+     * flag is cleared), while the flag itself is set and cleared by p1 in the real room metadata.
+     */
+    it('a transcription stop is notified when the transcriber left before the flag was cleared', async () => {
+        const { p1, p2 } = ctx;
+
+        await p2.driver.waitUntil(async () => !(await p2.getRoomMetadata())?.recording?.isTranscribingEnabled, {
+            timeout: 5_000,
+            timeoutMsg: 'the room metadata of the previous test was not reset'
+        });
+
+        // Start from no pending start/stop on p2, whatever the previous tests left behind.
+        await p2.execute(() => {
+            APP.store.dispatch({ type: 'SET_START_RECORDING_INTENT',
+                intent: null });
+            APP.store.dispatch({ type: 'SET_STOP_RECORDING_INTENT',
+                intent: null });
+        });
+
+        await p1.execute(() => {
+            APP.conference._room.getMetadataHandler().setMetadata('recording', {
+                isTranscribingEnabled: true
+            });
+        });
+        await p2.driver.waitUntil(async () => (await p2.getRoomMetadata())?.recording?.isTranscribingEnabled, {
+            timeout: 5_000,
+            timeoutMsg: 'p2 did not see the transcription flag set'
+        });
+
+        await p2.execute(() => {
+            APP.store.dispatch({ type: 'TRANSCRIBER_JOINED',
+                transcriberJID: 'fake-transcriber-for-testing' });
+        });
+        await p2.execute(() => {
+            APP.store.dispatch({ type: 'TRANSCRIBER_LEFT',
+                transcriberJID: 'fake-transcriber-for-testing',
+                abruptly: false });
+        });
+
+        await p1.execute(() => {
+            APP.conference._room.getMetadataHandler().setMetadata('recording', {
+                isRecordingRequested: false,
+                isTranscribingEnabled: false
+            });
+        });
+
+        await p2.driver.$('[data-testid="transcribing.off"]').waitForExist({
+            timeout: 5_000,
+            timeoutMsg: 'p2 did not get the transcription stopped notification'
         });
     });
 });
