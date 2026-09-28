@@ -1,11 +1,11 @@
 import { Transport } from '@jitsi/js-utils/transport';
-import { useCallback, useEffect, useRef } from 'react';
-import WebView, { WebViewMessageEvent } from 'react-native-webview';
+import { useEffect, useRef, useState } from 'react';
+import WebView from 'react-native-webview';
 
 import { goBack } from '../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 
-import ReactNativeWebViewTransportBackend from './ReactNativeWebViewTransportBackend.native';
-import { API_SCOPE, EVENT_CLOSE_PANEL } from './apiConstants';
+import ReactNativeWebViewTransportBackend, { createMessageSource } from './ReactNativeWebViewTransportBackend.native';
+import { API_SCOPE, EVENT_CLOSE_PANEL } from './constants';
 import logger from './logger';
 import { EventHandler, ICustomPanelEvent } from './types';
 
@@ -17,13 +17,13 @@ interface INavigation {
  * Owns the Transport for the advisor WebView. Mirrors `api.web.ts`, with a different
  * backend because a `MessageChannel` cannot cross the react-native-webview bridge.
  *
- * @param {string} uri - The advisor URL. The transport is recreated when it changes.
+ * @param {string} fullUrl - The advisor URL. The transport is recreated when it changes.
  * @param {INavigation} navigation - The screen's navigation object.
  * @returns {Object}
  */
-export function useCustomPanelApi(uri: string, navigation: INavigation) {
+export function useCustomPanelApi(fullUrl: string, navigation: INavigation) {
     const webViewRef = useRef<WebView>(null);
-    const backendRef = useRef<ReactNativeWebViewTransportBackend>();
+    const [ messageSource ] = useState(createMessageSource);
 
     // Initialized once, so handlers must not close over live state. `navigation.isFocused()`
     // reads through a live getState(), so capturing it here is fine.
@@ -37,14 +37,17 @@ export function useCustomPanelApi(uri: string, navigation: INavigation) {
     });
 
     useEffect(() => {
-        if (!uri) {
+        if (!fullUrl) {
             return;
         }
 
-        const backend = new ReactNativeWebViewTransportBackend({ scope: API_SCOPE });
-        const transport = new Transport({ backend });
-
-        backendRef.current = backend;
+        const transport = new Transport({
+            backend: new ReactNativeWebViewTransportBackend({
+                scope: API_SCOPE,
+                send: data => webViewRef.current?.postMessage(data),
+                subscribe: messageSource.subscribe
+            })
+        });
 
         transport.on('event', (event: ICustomPanelEvent) => {
             const handler = eventHandlersRef.current[event?.name];
@@ -55,26 +58,20 @@ export function useCustomPanelApi(uri: string, navigation: INavigation) {
                 return true;
             }
 
-            logger.debug(`Unknown event received from ${uri}: ${event?.name}`);
+            logger.debug(`Unknown event received from ${fullUrl}: ${event?.name}`);
 
             // Unprocessed events are stored and replayed to the next listener.
             return false;
         });
 
         return () => {
-            backendRef.current = undefined;
-
             // Disposes the backend too.
             transport.dispose();
         };
-    }, [ uri ]);
-
-    const onMessage = useCallback((event: WebViewMessageEvent) => {
-        backendRef.current?.onMessage(event.nativeEvent.data);
-    }, []);
+    }, [ fullUrl ]);
 
     return {
-        onMessage,
+        onMessage: messageSource.onMessage,
         webViewRef
     };
 }

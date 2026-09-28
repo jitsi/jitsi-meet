@@ -10,18 +10,18 @@ import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { close } from './actions.web';
-import { API_SCOPE, EVENT_CLOSE_PANEL } from './apiConstants';
+import { API_SCOPE, EVENT_CLOSE_PANEL } from './constants';
 import { EventHandler, ICustomPanelEvent } from './types';
 
 /**
  * Owns the Transport for the custom panel iframe. The transport is recreated on every
  * URL change and disposed on unmount.
  *
- * @param {string} iframeUrl - The current iframe URL. Its origin is the only one the
+ * @param {string} fullUrl - The current iframe URL. Its origin is the only one the
  * backend accepts a port from.
  * @returns {void}
  */
-export function useCustomPanelApi(iframeUrl: string): void {
+export function useCustomPanelApi(fullUrl: string): void {
     const dispatch = useDispatch();
 
     // Initialized once, so handlers must not close over live state. `dispatch` is stable.
@@ -32,14 +32,14 @@ export function useCustomPanelApi(iframeUrl: string): void {
     });
 
     useEffect(() => {
-        if (!iframeUrl) {
+        if (!fullUrl) {
             return;
         }
 
         let origin: string;
 
         try {
-            origin = new URL(iframeUrl).origin;
+            origin = new URL(fullUrl).origin;
         } catch {
             return;
         }
@@ -68,5 +68,5 @@ export function useCustomPanelApi(iframeUrl: string): void {
         return () => {
             transport.dispose();
         };
-    }, [ iframeUrl ]);
+    }, [ fullUrl ]);
 }

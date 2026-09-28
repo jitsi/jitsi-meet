@@ -4,6 +4,7 @@ import { getParticipantsPaneWidth } from '../participants-pane/functions';
 import { VIDEO_SPACE_MIN_SIZE } from '../video-layout/constants';
 
 import { DEFAULT_CUSTOM_PANEL_WIDTH } from './constants';
+import { isCustomPanelEnabled } from './functions.any';
 
 export * from './functions.any';
 
@@ -31,17 +32,6 @@ export function getCustomPanelOpen(state: IReduxState): boolean {
 }
 
 /**
- * Returns the current configured width of the custom panel from Redux state.
- * Falls back to the default width if no dynamic width is set.
- *
- * @param {IReduxState} state - The Redux state.
- * @returns {number} The panel width in pixels.
- */
-export function getCustomPanelConfiguredWidth(state: IReduxState): number {
-    return state['features/custom-panel']?.width?.current ?? DEFAULT_CUSTOM_PANEL_WIDTH;
-}
-
-/**
  * Calculates the maximum width available for the custom panel based on the
  * current window size and other open UI panels.
  *
@@ -64,10 +54,9 @@ export function getCustomPanelMaxSize(state: IReduxState): number {
  * @returns {number}
  */
 export function getCustomPanelWidth(state: IReduxState): number {
-    const { customPanel } = state['features/base/config'];
     const panel = state['features/custom-panel'];
 
-    if (!customPanel?.enabled || !customPanel.url || !panel?.isOpen) {
+    if (!(isCustomPanelEnabled(state)) || !getCustomPanelOpen(state)) {
         return 0;
     }
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useSelector } from 'react-redux';
@@ -8,8 +8,7 @@ import { getCurrentConference } from '../../../base/conference/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 import { useCustomPanelApi } from '../../api.native';
-import { buildCustomPanelUri, getCustomPanelOrigin, getCustomPanelUrl } from '../../functions.native';
-import logger from '../../logger';
+import { buildCustomPanelUrl, getCustomPanelOrigin, getCustomPanelUrl, onError } from '../../functions.native';
 
 import styles from './styles';
 
@@ -21,38 +20,33 @@ import styles from './styles';
  * @returns {JSX.Element | null}
  */
 const CustomPanel = ({ navigation }: { navigation: { isFocused: () => boolean; }; }): JSX.Element | null => {
-    const url = useSelector(getCustomPanelUrl);
+    const baseUrl = useSelector(getCustomPanelUrl);
     const jwt = useSelector((state: IReduxState) => state['features/base/jwt'].jwt);
     const meetingId = useSelector((state: IReduxState) => getCurrentConference(state)?.getMeetingUniqueId());
-    const uri = buildCustomPanelUri(url, jwt, meetingId);
-    const origin = useMemo(() => getCustomPanelOrigin(url), [ url ]);
-    const source = useMemo(() => ({ uri }), [ uri ]);
-    const { onMessage, webViewRef } = useCustomPanelApi(uri, navigation);
+    const fullUrl = buildCustomPanelUrl(baseUrl, jwt, meetingId);
+    const origin = getCustomPanelOrigin(baseUrl);
+    const { onMessage, webViewRef } = useCustomPanelApi(fullUrl, navigation);
 
-    const renderLoading = useCallback(() => (
+    const renderLoading = () => (
         <View style = { styles.loadingWrapper }>
             <LoadingIndicator size = 'large' />
         </View>
-    ), []);
-
-    const onError = useCallback((event: any) => {
-        logger.error('Failed to load the advisor', event.nativeEvent);
-    }, []);
+    );
 
     const onShouldStartLoadWithRequest = useCallback((request: { url: string; }) =>
         getCustomPanelOrigin(request.url) === origin
     , [ origin ]);
 
-    if (!uri) {
+    if (!fullUrl) {
         return null;
     }
 
     return (
         <JitsiScreen style = { styles.backDrop }>
             <WebView
-                domStorageEnabled = { true }
+                // Deliberately not incognito, so the advisor restores its session
+                // from storage on reopen. The token-bearing URL and its cookies/storage persist too.
                 incognito = { false }
-                javaScriptEnabled = { true }
                 nestedScrollEnabled = { true }
                 onError = { onError }
                 onMessage = { onMessage }
@@ -61,7 +55,7 @@ const CustomPanel = ({ navigation }: { navigation: { isFocused: () => boolean; }
                 ref = { webViewRef }
                 renderLoading = { renderLoading }
                 setSupportMultipleWindows = { false }
-                source = { source }
+                source = {{ uri: fullUrl }}
                 startInLoadingState = { true }
                 style = { styles.webView }
                 webviewDebuggingEnabled = { __DEV__ } />
