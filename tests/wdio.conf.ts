@@ -680,7 +680,21 @@ export const config: WebdriverIO.MultiremoteConfig = {
             // make sure all browsers are at the main app in iframe (if used), so we collect debug info
             await Promise.all(multiRemoteBrowser.instances.map(async (instance: string) => {
                 // @ts-ignore
-                await ctx[instance]?.switchToIFrame();
+                const participant = ctx[instance];
+
+                // This hook runs inside the mocha budget of the test that just failed. When the failure was
+                // switchToIFrame() giving up on a dead iframe context (3 attempts of 30s each), trying again here
+                // would spend the same again and let the mocha timeout replace the real error and the debug info
+                // with a bare "Timeout of 180000ms exceeded". Collect whatever the current context offers instead.
+                if (!participant || participant.isIframeUnreachable) {
+                    return;
+                }
+
+                try {
+                    await participant.switchToIFrame();
+                } catch (e) {
+                    console.error(`Failed to switch ${instance} into the iframe to collect debug info`, e);
+                }
             }));
 
             const allProcessing: Promise<any>[] = [];
