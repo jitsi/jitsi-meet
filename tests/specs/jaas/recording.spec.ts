@@ -63,7 +63,7 @@ describe('Recording and live-streaming', () => {
         const jaasEvent: {
             customerId: string;
             eventType: string;
-        } = await webhooksProxy.waitForEvent('RECORDING_STARTED');
+        } = await waitForRecordingStarted();
 
         expect('RECORDING_STARTED').toBe(jaasEvent.eventType);
         expect(jaasEvent.customerId).toBe(customerId);
@@ -88,6 +88,45 @@ describe('Recording and live-streaming', () => {
         expect(linkEvent.link).toStartWith('https://', 'recording link');
         expect(linkEvent.link).toContain(tenant);
         expect(linkEvent.ttl).toBeGreaterThan(0);
+    }
+
+    /**
+     * Waits for the RECORDING_STARTED webhook, but gives up as soon as the client reports that the start was
+     * refused: a refusal (e.g. "all Jibris are busy" on a busy deployment) reaches the client within a second as
+     * a recordingStatusChanged event carrying an error, and no webhook ever follows it, so waiting out the full
+     * webhook timeout only delays the failure (and the retry of the spec) by two minutes.
+     *
+     * @returns {Promise<any>} The RECORDING_STARTED event.
+     */
+    async function waitForRecordingStarted(): Promise<any> {
+        let started = false;
+        const webhook = webhooksProxy.waitForEvent('RECORDING_STARTED').finally(() => {
+            started = true;
+        });
+
+        // When the refusal wins the race below, this one keeps waiting for the rest of its timeout with nobody
+        // listening; keep the eventual rejection handled so it cannot take down the worker.
+        webhook.catch(() => undefined);
+
+        const refused = (async () => {
+            while (!started) {
+                const event = await p.getIframeAPI().getEventResult('recordingStatusChanged');
+
+                if (event?.error) {
+                    throw new Error(`Recording failed to start: ${event.error}`);
+                }
+
+                await p.driver.pause(500);
+            }
+        })();
+
+        const event = await Promise.race([ webhook, refused ]);
+
+        // The poll loop notices the webhook on its next iteration; let it finish so it does not run alongside
+        // the checks that follow.
+        await refused;
+
+        return event;
     }
 
     /**
