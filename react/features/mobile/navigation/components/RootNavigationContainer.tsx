@@ -54,11 +54,12 @@ interface IProps {
 
 
 const RootNavigationContainer = ({ dispatch, hasRoomOnLaunch, isWelcomePageAvailable }: IProps) => {
+    // Background SDK launch goes straight to conference; normal launch shows the connecting spinner.
     const initialRouteName = isWelcomePageAvailable
         ? screen.welcome.main
         : hasRoomOnLaunch
-            ? screen.conference.root  // background SDK launch: go directly to conference
-            : screen.connecting;      // normal launch: show connecting spinner
+            ? screen.conference.root
+            : screen.connecting;
     const onReady = useCallback(() => {
         dispatch({
             type: _ROOT_NAVIGATION_READY,
