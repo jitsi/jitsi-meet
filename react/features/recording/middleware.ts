@@ -69,6 +69,7 @@ import {
     TRANSCRIPTION_ON_SOUND_ID
 } from './constants';
 import {
+    getActiveSession,
     getResourceId,
     getSessionById,
     registerRecordingAudioFiles,
@@ -360,22 +361,33 @@ StateListenerRegistry.register(
             && !isTranscribing(getState())
             && (Boolean(startIntent?.transcription) || getState()['features/subtitles']._hasError);
 
-        if (transcriptionStartFailed && startIntent?.transcription) {
-            dispatch(setStartRecordingIntent(startIntent.recording
-                ? { recording: true,
-                    transcription: false }
-                : null));
+        // Likewise, the recording request withdrawn while a start is still waiting for the recording
+        // and no file recording session exists means the recording was cancelled before it started
+        // (e.g. stopped while the transcriber invite was pending): there is no stop to notify, and
+        // the start must stop waiting for it, or it would keep waiting and a later start would not
+        // be announced correctly.
+        const recordingStartCancelled = recordingStopping
+            && Boolean(startIntent?.recording)
+            && !getActiveSession(getState(), JitsiRecordingConstants.mode.FILE);
+
+        if ((transcriptionStartFailed && startIntent?.transcription) || recordingStartCancelled) {
+            const recording = Boolean(startIntent?.recording) && !recordingStartCancelled;
+            const transcription = Boolean(startIntent?.transcription) && !transcriptionStartFailed;
+
+            dispatch(setStartRecordingIntent(recording || transcription ? { recording,
+                transcription } : null));
             maybeNotifyRecordingStart(dispatch, getState);
         }
 
+        const recordingReallyStopping = recordingStopping && !recordingStartCancelled;
         const transcriptionReallyStopping = transcriptionStopping && !transcriptionStartFailed;
 
-        if (recordingStopping || transcriptionReallyStopping) {
+        if (recordingReallyStopping || transcriptionReallyStopping) {
             const existing = getState()['features/recording'].stopRecordingIntent;
 
             if (!existing) {
                 dispatch(setStopRecordingIntent({
-                    recording: recordingStopping,
+                    recording: recordingReallyStopping,
                     transcription: transcriptionReallyStopping
                 }));
             }
