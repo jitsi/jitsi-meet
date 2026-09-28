@@ -985,6 +985,8 @@
         "screenSharingAudioOnlyDescription": "Tingueu en compte que en compartir la pantalla esteu afectant el mode «Millor rendiment» i usareu més amplada de banda.",
         "screenSharingAudioOnlyTitle": "Mode «Millor rendiment»",
         "selfViewTitle": "Sempre podeu activar la vista pròpia des de la configuració",
+        "settingsIncompleteDescription": "No s'han pogut carregar alguns paràmetres de la sessió i s'han usat els valors per defecte.",
+        "settingsIncompleteTitle": "La configuració de la reunió pot ser incompleta",
         "somebody": "Algú",
         "startSilentDescription": "Torneu a entrar per a activar l'àudio",
         "startSilentTitle": "Hi heu entrat sense cap sortida d'àudio!",
