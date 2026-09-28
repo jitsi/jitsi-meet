@@ -44,6 +44,7 @@ const DEFAULT_STATE: ISettingsState = {
     userSelectedMicDeviceId: undefined,
     userSelectedAudioOutputDeviceLabel: undefined,
     userSelectedCameraDeviceLabel: undefined,
+    userSelectedLanguage: undefined,
     userSelectedNotifications: {
         'notify.chatMessages': true
     },
@@ -89,6 +90,7 @@ export interface ISettingsState {
     userSelectedAudioOutputDeviceLabel?: string;
     userSelectedCameraDeviceId?: string;
     userSelectedCameraDeviceLabel?: string;
+    userSelectedLanguage?: string;
     userSelectedMicDeviceId?: string;
     userSelectedMicDeviceLabel?: string;
     userSelectedNotifications?: {
