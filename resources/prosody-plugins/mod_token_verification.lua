@@ -48,9 +48,8 @@ if token_util == nil then
 end
 
 module:log("debug",
-    "%s - starting MUC token verifier app_id: %s app_secret: %s allow empty: %s",
-    tostring(host), tostring(token_util.appId), tostring(token_util.appSecret),
-    tostring(token_util.allowEmptyToken));
+    "%s - starting MUC token verifier app_id: %s allow empty: %s",
+    tostring(host), tostring(token_util.appId), tostring(token_util.allowEmptyToken));
 
 -- option to disable room modification (sending muc config form) for guest that do not provide token
 local require_token_for_moderation;
@@ -66,7 +65,7 @@ load_config();
 local function verify_user(session, stanza)
     if DEBUG then
         module:log("debug", "Session token: %s, session room: %s",
-            tostring(session.auth_token), tostring(session.jitsi_meet_room));
+            tostring(util.strip_jwt_signature(session.auth_token)), tostring(session.jitsi_meet_room));
     end
 
     -- token not required for admin users
@@ -97,8 +96,9 @@ local function verify_user(session, stanza)
             reason = 'Room and token mismatched';
         end
 
-        module:log('error', 'User %s not allowed to join: %s token room: %s token sub: %s err: %s reason: %s',
-                        user_jid, tostring(stanza.attr.to), tostring(session.jitsi_meet_room),
+        module:log('error', 'User %s not allowed to join: %s token: %s token room: %s token sub: %s err: %s reason: %s',
+                        user_jid, tostring(stanza.attr.to), tostring(util.strip_jwt_signature(session.auth_token)),
+                        tostring(session.jitsi_meet_room),
                         tostring(session.jitsi_meet_domain), err, reason);
 
         local response = st.error_reply(stanza, 'cancel', 'not-allowed', reason);

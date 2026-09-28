@@ -56,7 +56,7 @@ local muc_domain_prefix
 -- Load shared utility library. If it fails (e.g. a transitive dependency is
 -- missing in the current environment) log the error and fall back to inline
 -- implementations so the HTTP routes are always registered.
-local async_handler_wrapper, get_room_from_jid, build_room_address, is_focus;
+local async_handler_wrapper, get_room_from_jid, build_room_address, is_focus, strip_jwt_signature;
 local ok_util, util_or_err = pcall(function() return module:require "util" end);
 if ok_util then
     local util = util_or_err;
@@ -64,6 +64,7 @@ if ok_util then
     get_room_from_jid    = util.get_room_from_jid;
     build_room_address   = util.build_room_address;
     is_focus             = util.is_focus;
+    strip_jwt_signature  = util.strip_jwt_signature;
 else
     module:log("warn", "mod_muc_size: util.lib.lua unavailable (%s); using inline fallbacks",
         tostring(util_or_err));
@@ -85,6 +86,10 @@ else
     end;
     is_focus = function(nick)
         return string.sub(nick, -string.len("/focus")) == "/focus";
+    end;
+    strip_jwt_signature = function(token)
+        if token == nil then return nil end
+        return tostring(token):match('^([^.]*%.[^.]*)%.') or '[redacted]';
     end;
 end
 
@@ -140,8 +145,8 @@ function verify_token(token, room_address)
     end
 
     if not token_util:verify_room(session, room_address) then
-        log("warn", "Token not allowed to join: %s token room: %s token sub: %s",
-            tostring(room_address), tostring(session.jitsi_meet_room),
+        log("warn", "Token %s not allowed to join: %s token room: %s token sub: %s",
+            tostring(strip_jwt_signature(token)), tostring(room_address), tostring(session.jitsi_meet_room),
             tostring(session.jitsi_meet_domain));
         return false;
     end

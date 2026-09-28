@@ -76,8 +76,9 @@ local function shouldAllow(session)
                 end
             else
                 ban_check_error_count();
-                module:log("warn", "Error code:%s contacting url:%s content:%s room:%s tenant:%s",
-                    code, ACCESS_MANAGER_URL, content, session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+                module:log("warn", "Error code:%s contacting url:%s content:%s room:%s tenant:%s token:%s",
+                    code, ACCESS_MANAGER_URL, content, session.jitsi_web_query_room, session.jitsi_web_query_prefix,
+                    tostring(util.strip_jwt_signature(token)));
             end
         end
 

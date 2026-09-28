@@ -13,6 +13,7 @@ import {
 } from '../base/config/functions.native';
 import { connect, disconnect, setLocationURL } from '../base/connection/actions.native';
 import { JITSI_CONNECTION_URL_KEY } from '../base/connection/constants';
+import { stripJwtSignatures } from '../base/jwt/functions';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.native';
 import { createDesiredLocalTracks } from '../base/tracks/actions.native';
 import isInsecureRoomName from '../base/util/isInsecureRoomName';
@@ -48,7 +49,7 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
-    logger.info(`appNavigate to ${uri}`);
+    logger.info(`appNavigate to ${stripJwtSignatures(uri)}`);
 
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         let location = parseURIString(uri);
@@ -86,7 +87,7 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
                 const { hostname: currentHostName, pathname: currentPathName } = currentLocationURL;
 
                 if (currentHostName === hostname && currentPathName === pathname) {
-                    logger.warn(`Joining same conference using URL: ${currentLocationURL}`);
+                    logger.warn(`Joining same conference using URL: ${stripJwtSignatures(currentLocationURL)}`);
 
                     return;
                 }
@@ -198,7 +199,7 @@ export function reloadNow() {
         const newURL = addTrackStateToURL(locationURL, state);
 
         const reloadAction = () => {
-            logger.info(`Reloading the conference using URL: ${locationURL}`);
+            logger.info(`Reloading the conference using URL: ${stripJwtSignatures(locationURL)}`);
 
             dispatch(appNavigate(toURLString(newURL), {
                 hidePrejoin: true

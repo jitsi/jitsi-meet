@@ -358,6 +358,22 @@ function ends_with(str, ending)
     return ending == "" or str:sub(-#ending) == ending
 end
 
+--- Returns a JWT without its signature, safe to write to the logs.
+-- A token with a valid signature is a bearer credential. The header and
+-- the payload alone cannot be used to authenticate.
+-- @param token the JWT
+-- @return 'header.payload', nil for a nil token, or '[redacted]' when the
+-- value does not have the form of a JWT
+function strip_jwt_signature(token)
+    if token == nil then
+        return nil;
+    end
+
+    local unsigned = tostring(token):match('^([^.]*%.[^.]*)%.');
+
+    return unsigned or '[redacted]';
+end
+
 -- healthcheck rooms in jicofo starts with a string '__jicofo-health-check'
 function is_healthcheck_room(room_jid)
     return starts_with(room_jid, "__jicofo-health-check");
@@ -820,6 +836,7 @@ return {
     split_string = split_string;
     starts_with = starts_with;
     starts_with_one_of = starts_with_one_of;
+    strip_jwt_signature = strip_jwt_signature;
     table_add = table_add;
     table_compare = table_compare;
     table_shallow_copy = table_shallow_copy;
