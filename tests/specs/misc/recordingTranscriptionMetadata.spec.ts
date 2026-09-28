@@ -237,6 +237,18 @@ describe('Recording & Transcription dialog — room metadata', () => {
             timeoutMsg: 'p2 did not see the recording request cancelled'
         });
 
+        // The recording never started (p2 has no file recording session): p2 must stop waiting for
+        // it, and has no recording stop to notify.
+        await p2.driver.waitUntil(
+            async () => !await p2.execute(() => APP.store.getState()['features/recording'].startRecordingIntent), {
+                timeout: 5_000,
+                timeoutMsg: 'p2 is still waiting for the cancelled recording to start'
+            });
+        expect(await p2.driver.$(
+            '[data-testid="recording.offBy"], [data-testid="recording.off"], '
+                + '[data-testid="recording.offByWithTranscription"], [data-testid="recording.offWithTranscription"]'
+        ).isExisting()).toBe(false);
+
         await p1.execute(() => {
             // @ts-ignore
             window.rejectTranscriberInvite();
