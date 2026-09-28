@@ -9,19 +9,6 @@ import { isCustomPanelEnabled } from './functions.any';
 export * from './functions.any';
 
 /**
- * Returns whether the custom panel button has been revealed, through the console helper
- * or the Ctrl+Alt+E shortcut. It gates the button on top of {@link isCustomPanelEnabled},
- * so a deployment that configures the panel does not expose it until someone asks for it.
- * Native has no reveal step and gates on config alone.
- *
- * @param {IReduxState} state - The Redux state.
- * @returns {boolean} Whether the custom panel button has been revealed.
- */
-export function isCustomPanelToggledOn(state: IReduxState): boolean {
-    return Boolean(state['features/custom-panel']?.enabled);
-}
-
-/**
  * Returns whether the custom panel is currently open.
  *
  * @param {IReduxState} state - The Redux state.

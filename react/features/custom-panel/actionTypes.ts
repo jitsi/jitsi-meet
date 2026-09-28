@@ -9,11 +9,6 @@ export const CUSTOM_PANEL_CLOSE = 'CUSTOM_PANEL_CLOSE';
 export const CUSTOM_PANEL_OPEN = 'CUSTOM_PANEL_OPEN';
 
 /**
- * Action type to enable or disable the custom panel dynamically.
- */
-export const SET_CUSTOM_PANEL_ENABLED = 'SET_CUSTOM_PANEL_ENABLED';
-
-/**
  * Action type to set the custom panel width (responsive adjustments).
  */
 export const SET_CUSTOM_PANEL_WIDTH = 'SET_CUSTOM_PANEL_WIDTH';

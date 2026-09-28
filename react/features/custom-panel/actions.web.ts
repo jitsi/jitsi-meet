@@ -1,7 +1,6 @@
 import {
     CUSTOM_PANEL_CLOSE,
     CUSTOM_PANEL_OPEN,
-    SET_CUSTOM_PANEL_ENABLED,
     SET_CUSTOM_PANEL_IS_RESIZING,
     SET_CUSTOM_PANEL_WIDTH,
     SET_USER_CUSTOM_PANEL_WIDTH
@@ -26,19 +25,6 @@ export function close() {
 export function open() {
     return {
         type: CUSTOM_PANEL_OPEN
-    };
-}
-
-/**
- * Action to enable or disable the custom panel dynamically.
- *
- * @param {boolean} enabled - Whether the custom panel should be enabled.
- * @returns {Object} The action object.
- */
-export function setCustomPanelEnabled(enabled: boolean) {
-    return {
-        type: SET_CUSTOM_PANEL_ENABLED,
-        enabled
     };
 }
 

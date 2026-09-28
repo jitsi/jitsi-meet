@@ -4,7 +4,6 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 import {
     CUSTOM_PANEL_CLOSE,
     CUSTOM_PANEL_OPEN,
-    SET_CUSTOM_PANEL_ENABLED,
     SET_CUSTOM_PANEL_IS_RESIZING,
     SET_CUSTOM_PANEL_WIDTH,
     SET_USER_CUSTOM_PANEL_WIDTH
@@ -15,13 +14,6 @@ import { DEFAULT_CUSTOM_PANEL_WIDTH } from './constants';
  * The state of the custom panel feature.
  */
 export interface ICustomPanelState {
-
-    /**
-     * Whether the custom panel button has been revealed, through the console helper
-     * or the Ctrl+Alt+E shortcut. This gates the button on top of
-     * `config.customPanel.enabled`; on its own it does not enable the feature.
-     */
-    enabled: boolean;
 
     /**
      * Whether the custom panel is currently open.
@@ -51,7 +43,6 @@ export interface ICustomPanelState {
 }
 
 const DEFAULT_STATE: ICustomPanelState = {
-    enabled: false,
     isOpen: false,
     isResizing: false,
     width: {
@@ -61,11 +52,9 @@ const DEFAULT_STATE: ICustomPanelState = {
 };
 
 /**
- * Persist the revealed flag and the width subtree, so that both the user's preferred
- * panel width and the revealed state survive page reloads.
+ * Persist the width subtree, so the user's preferred panel width survives page reloads.
  */
 PersistenceRegistry.register('features/custom-panel', {
-    enabled: true,
     width: true
 });
 
@@ -85,12 +74,6 @@ ReducerRegistry.register(
             return {
                 ...state,
                 isOpen: true
-            };
-
-        case SET_CUSTOM_PANEL_ENABLED:
-            return {
-                ...state,
-                enabled: action.enabled
             };
 
         case SET_CUSTOM_PANEL_WIDTH:
