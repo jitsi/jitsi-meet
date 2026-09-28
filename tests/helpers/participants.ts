@@ -217,11 +217,24 @@ async function joinParticipant( // eslint-disable-line max-params
         const alreadyOnBasePage = (await p.driver.getUrl()).endsWith('/base.html');
 
         if (!alreadyOnBasePage) {
+            let inMuc = false;
+
             if (participantOptions.iFrameApi) {
-                await p.switchToIFrame();
+                // The iframe may be gone or dead by now (e.g. the participant hung up through the iframe API, which
+                // navigates the app inside it away). Then it cannot be in the meeting, and the page is reloaded
+                // below anyway; a failure to look inside is not worth failing the join over.
+                try {
+                    await p.switchToIFrame();
+                    inMuc = await p.isInMuc();
+                } catch (e: any) {
+                    console.log(`Could not check whether ${participantOptions.name} is in the meeting: ${
+                        e?.message ?? e}`);
+                }
+            } else {
+                inMuc = await p.isInMuc();
             }
 
-            if (await p.isInMuc()) {
+            if (inMuc) {
                 return p;
             }
 
