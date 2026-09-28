@@ -1378,6 +1378,9 @@ var config = {
     //     // and instead the app will continue to display in the current browser.
     //     disabled: false,
 
+    //     // whether to hide the dial-in numbers and PIN on the mobile deep linking page.
+    //     hideDialIn: false,
+
     //     // whether to hide the logo on the deep linking pages.
     //     hideLogo: false,
 
