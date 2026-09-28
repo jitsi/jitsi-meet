@@ -164,7 +164,7 @@ MiddlewareRegistry.register(store => next => action => {
             // source for it is the MESSAGE_MODERATED event from the server (XEP-0425).
             // This endpoint message path only exists so participants can bring late joiners
             // up to date, so honour it just for senders that hold the moderator role, and
-            // cap the reason the same way an edit is capped.
+            // cap the reason.
             if (participant?.isModerator?.()) {
                 _onMessageModerated(
                     store,
@@ -460,7 +460,7 @@ MiddlewareRegistry.register(store => next => action => {
             && messageToEdit.messageType === MESSAGE_TYPE_LOCAL
             && !messageToEdit.isFromVisitor
         ) {
-            const trimmedMessage = String(action.message).trim().slice(0, CHAR_LIMIT);
+            const trimmedMessage = String(action.message).trim();
 
             if (messageToEdit.privateMessage && messageToEdit.recipientId) {
                 conference.sendMessageCorrection(
@@ -657,7 +657,7 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
         (participantId: string, messageId: string, message: string, timestamp?: string) => {
             store.dispatch(editMessage({
                 messageId,
-                message: String(message).slice(0, CHAR_LIMIT),
+                message: String(message),
                 editedAt: timestamp ? new Date(timestamp).getTime() : Date.now(),
                 participantId
             }));
