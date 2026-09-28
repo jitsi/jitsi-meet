@@ -335,10 +335,7 @@ export class Participant {
 
                 await p1PreJoinScreen.waitForLoading();
 
-                const joinButton = p1PreJoinScreen.getJoinButton();
-
-                await joinButton.waitForDisplayed();
-                await joinButton.click();
+                await this._clickPrejoinJoinButton(p1PreJoinScreen);
             }
         }
 
@@ -349,6 +346,63 @@ export class Participant {
         await this.postLoadProcess();
 
         return this;
+    }
+
+    /**
+     * Clicks the prejoin Join button and verifies that the click reached the app, retrying a bounded number of
+     * times when it did not.
+     *
+     * The button is re-rendered when the initial local tracks land, a few hundred ms after conference.init on a
+     * cached page load, and a click that arrives while React is swapping the node under it is dispatched to a
+     * detached element and dropped: the WebDriver click succeeds, but the onClick handler never runs and the
+     * participant sits on the prejoin screen until the join wait times out. joiningInProgress is set synchronously
+     * by the handler (see joinConference in the prejoin actions), so it tells a click that took from one that did
+     * not. It is cleared again when the connection or the conference fails, which can happen within the window
+     * below (an invalid token, a locked room), so the connection state is consulted too: connecting, connected or
+     * failed, any of them means the click reached the app and clicking again would start a second join.
+     *
+     * @param {PreJoinScreen} prejoinScreen - The prejoin screen page object.
+     * @returns {Promise<void>}
+     */
+    private async _clickPrejoinJoinButton(prejoinScreen: PreJoinScreen): Promise<void> {
+        const MAX_ATTEMPTS = 3;
+
+        for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+            const joinButton = prejoinScreen.getJoinButton();
+
+            await joinButton.waitForDisplayed();
+            await joinButton.click();
+
+            try {
+                await this.driver.waitUntil(
+                    async () => await this.execute(() => {
+                        // @ts-ignore
+                        const state = APP.store.getState();
+                        const { connecting, connection, error } = state['features/base/connection'];
+
+                        return Boolean(state['features/prejoin']?.joiningInProgress)
+                            || !state['features/prejoin']?.showPrejoin
+                            || Boolean(connecting || connection || error)
+                            || Boolean(APP.conference?.isJoined());
+                    }),
+                    {
+                        timeout: 3000,
+                        interval: 100,
+                        timeoutMsg: `The prejoin Join click did not register for ${this._name}.`
+                    }
+                );
+
+                return;
+            } catch (e) {
+                if (attempt === MAX_ATTEMPTS) {
+                    throw new Error(
+                        `The prejoin Join click did not register for ${this._name} after ${MAX_ATTEMPTS} attempts.`);
+                }
+
+                console.log(`The prejoin Join click did not register for ${this._name} (attempt ${
+                    attempt}), clicking again.`);
+            }
+        }
     }
 
     /**
