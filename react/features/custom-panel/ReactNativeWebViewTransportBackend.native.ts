@@ -1,46 +1,82 @@
+import { WebViewMessageEvent } from 'react-native-webview';
+
 import logger from './logger';
+
+type MessageListener = (data: string) => void;
+
+interface IMessageSource {
+    onMessage: (event: WebViewMessageEvent) => void;
+    subscribe: (listener: MessageListener) => () => void;
+}
 
 interface IOptions {
 
     /**
-     * Namespaces the protocol. Messages with a different scope are dropped.
+     * Messages with a different scope are dropped.
      */
     scope: string;
+
+    /**
+     * Posts a serialized message to the WebView.
+     */
+    send: (data: string) => void;
+
+    /**
+     * Subscribes to raw WebView messages. Returns the unsubscribe function.
+     */
+    subscribe: IMessageSource['subscribe'];
 }
 
 /**
- * Carries the custom panel protocol over the react-native-webview bridge, which
- * cannot transfer a `MessagePort`. Every message carries the scope instead of a
- * one-time handshake. That is a namespace check, not an origin check.
+ * Fans the WebView `onMessage` out to subscribers, so the prop keeps one identity across transport rebuilds.
  *
- * Receive-only: the owning hook feeds messages in through {@link onMessage}, and
- * {@link send} is a stub.
+ * @returns {IMessageSource}
+ */
+export function createMessageSource(): IMessageSource {
+    const listeners = new Set<MessageListener>();
+
+    return {
+        onMessage: event => {
+            listeners.forEach(listener => listener(event.nativeEvent.data));
+        },
+        subscribe: listener => {
+            listeners.add(listener);
+
+            return () => {
+                listeners.delete(listener);
+            };
+        }
+    };
+}
+
+/**
+ * Transport backend for the advisor WebView, which cannot receive a `MessagePort`.
+ * Every message carries the scope instead, as a namespace check, not an origin check.
  */
 export default class ReactNativeWebViewTransportBackend {
-    private _disposed = false;
     private _receiveCallback?: (message: any) => void;
     private readonly _scope: string;
+    private readonly _send: (data: string) => void;
+    private readonly _unsubscribe: () => void;
 
     /**
-     * Creates a new instance.
+     * Creates a new instance and subscribes to WebView messages.
      *
      * @param {IOptions} options - The backend configuration.
      */
-    constructor({ scope }: IOptions) {
+    constructor({ scope, send, subscribe }: IOptions) {
         this._scope = scope;
+        this._send = send;
+        this._unsubscribe = subscribe(data => this._onMessage(data));
     }
 
     /**
-     * Feeds a raw bridge message into the transport.
+     * Passes a message from the WebView to the transport.
      *
-     * @param {string} data - The raw string from the WebView.
+     * @param {string} data - The raw message.
      * @returns {void}
      */
-    onMessage(data: string) {
-        if (this._disposed) {
-            return;
-        }
-
+    private _onMessage(data: string) {
         let payload: any;
 
         try {
@@ -60,17 +96,20 @@ export default class ReactNativeWebViewTransportBackend {
     }
 
     /**
-     * Required by `ITransportBackend`. The meeting sends nothing, so nothing reaches it.
+     * Sends a message to the advisor. The page gets it on `window` (iOS) or `document` (Android).
      *
-     * @param {any} message - The dropped message.
+     * @param {any} message - The message.
      * @returns {void}
      */
     send(message: any) {
-        logger.error('The custom panel bridge is receive-only; dropped', message);
+        this._send(JSON.stringify({
+            scope: this._scope,
+            ...message
+        }));
     }
 
     /**
-     * Sets the callback that receives incoming messages.
+     * Sets the callback for incoming messages.
      *
      * @param {Function} callback - The callback.
      * @returns {void}
@@ -80,13 +119,11 @@ export default class ReactNativeWebViewTransportBackend {
     }
 
     /**
-     * Disposes the backend. Later messages are dropped, because the WebView can still
-     * deliver one while the screen unmounts.
+     * Unsubscribes, so a message the WebView sends while unmounting never reaches the transport.
      *
      * @returns {void}
      */
     dispose() {
-        this._disposed = true;
-        this._receiveCallback = undefined;
+        this._unsubscribe();
     }
 }

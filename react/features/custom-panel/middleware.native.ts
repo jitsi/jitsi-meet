@@ -8,7 +8,7 @@ import { screen } from '../mobile/navigation/routes';
 
 /**
  * The advisor works from meeting transcriptions, which are not available in a breakout
- * room. Pop the Copilot screen when the local participant switches into one.
+ * room. Pop the AI Assist screen when the local participant switches into one.
  */
 StateListenerRegistry.register(
     state => Boolean(isInBreakoutRoom(state)),

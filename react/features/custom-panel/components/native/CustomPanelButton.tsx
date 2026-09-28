@@ -11,15 +11,15 @@ import { screen } from '../../../mobile/navigation/routes';
 import { isCustomPanelEnabled } from '../../functions.native';
 
 /**
- * Implements an {@link AbstractButton} to open the Copilot screen on mobile.
+ * Implements an {@link AbstractButton} to open the AI Assist screen on mobile.
  */
 class CustomPanelButton extends AbstractButton<AbstractButtonProps> {
-    override accessibilityLabel = 'toolbar.copilot';
+    override accessibilityLabel = 'toolbar.aiAssist';
     override icon = IconAI;
-    override label = 'toolbar.copilot';
+    override label = 'toolbar.aiAssist';
 
     /**
-     * Handles clicking / pressing the button — opens the Copilot screen.
+     * Handles clicking / pressing the button — opens the AI Assist screen.
      *
      * @private
      * @returns {void}

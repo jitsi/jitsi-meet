@@ -263,7 +263,7 @@
     },
     "customPanel": {
         "close": "Close",
-        "title": "Copilot"
+        "title": "AI Assist"
     },
     "dateUtils": {
         "earlier": "Earlier",
@@ -1527,6 +1527,7 @@
                 "label": "Stereo"
             }
         },
+        "aiAssist": "AI Assist",
         "audioRoute": "Select the sound device",
         "audioSettings": "Audio settings",
         "audioTranslation": "Translate audio",
@@ -1541,7 +1542,6 @@
         "closeParticipantsPane": "Close participants pane",
         "closeReactionsMenu": "Close reactions menu",
         "closedCaptions": "Closed captions",
-        "copilot": "Copilot",
         "disableNoiseSuppression": "Disable extra noise suppression",
         "disableReactionSounds": "You can disable reaction sounds for this meeting",
         "documentClose": "Close shared document",

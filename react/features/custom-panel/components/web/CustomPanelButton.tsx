@@ -26,12 +26,12 @@ interface IProps extends AbstractButtonProps {
  * Implementation of a button for toggling the custom panel.
  */
 class CustomPanelButton extends AbstractButton<IProps> {
-    override accessibilityLabel = 'toolbar.copilot';
+    override accessibilityLabel = 'toolbar.aiAssist';
     override icon = IconAI;
-    override label = 'toolbar.copilot';
+    override label = 'toolbar.aiAssist';
     override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.closeCustomPanel';
     override toggledTooltip = 'toolbar.closeCustomPanel';
-    override tooltip = 'toolbar.copilot';
+    override tooltip = 'toolbar.aiAssist';
 
     /**
      * Indicates whether this button is in toggled state or not.
