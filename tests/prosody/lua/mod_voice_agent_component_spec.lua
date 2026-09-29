@@ -16,7 +16,7 @@
 package.preload['util.hashes'] = function()
     return {
         sha256 = function() return 'deadbeefcafef00d' end,
-        hmac_sha256 = function(_key, _data, _hex) return 'f00dfeed' end
+        hmac_sha256 = function(_key, data, _hex) return 'h:' .. data end
     };
 end
 package.preload['util.random'] = function()
@@ -107,6 +107,7 @@ _G.module = {
     get_option_string = function(_, key, default)
         if key == 'muc_component' then return 'conference.localhost'; end
         if key == 'voice_agent_webhook_secret' then return 'shh'; end
+        if key == 'voice_agent_status_secret' then return 'jicofo-secret'; end
         return default;
     end,
     get_option_number = function(_, _key, default) return default; end,
@@ -156,14 +157,14 @@ local function post(route, payload, opts)
     next_decoded = payload;
     local headers = { content_type = 'application/json' };
     if not opts.omitAuth then
-        headers.authorization = 'Bearer sometoken';
+        headers.authorization = opts.token or 'Bearer sometoken';
     end
     return routes[route]({ request = { headers = headers; body = 'x' } });
 end
 
 local function invite(payload, opts) return post('POST voice-agent/invite', payload, opts); end
 local function dismiss(payload) return post('POST voice-agent/dismiss', payload); end
-local function status(payload) return post('POST voice-agent/status', payload); end
+local function status(payload, opts) return post('POST voice-agent/status', payload, opts); end
 
 local function get(query)
     return routes['GET voice-agent/get']({
@@ -480,7 +481,7 @@ describe('mod_voice_agent_component', function()
             assert.are.equal(CALLBACK, req.url);
             assert.are.equal('POST', req.ex.method);
             assert.are.equal('application/json', req.ex.headers['Content-Type']);
-            assert.are.equal('sha256=f00dfeed', req.ex.headers['X-Agent-Signature']);
+            assert.are.equal('sha256=h:{}', req.ex.headers['X-Agent-Signature']);
             local ended = webhook_payloads('agent.ended');
             assert.are.equal(1, #ended);
             assert.are.equal('agent-support', ended[1].agentId);
@@ -507,6 +508,30 @@ describe('mod_voice_agent_component', function()
             local ended = webhook_payloads('agent.ended');
             assert.are.equal(2, #ended);
             assert.are.equal('room-destroyed', ended[1].reason);
+        end)
+    end)
+
+    describe('status route auth (jicofo shared secret)', function()
+        it('accepts the configured shared secret without an ASAP token', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            token_valid = false;
+            local res = status({ conference = 'r'; agentId = 'agent-support'; state = 'active' },
+                { token = 'Bearer jicofo-secret' });
+            assert.are.equal(200, res.status_code);
+            assert.are.equal('active', mock_room.jitsiMetadata.agents['agent-support'].state);
+        end)
+
+        it('rejects a wrong shared secret', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            token_valid = false;
+            assert.are.equal(401, status({ conference = 'r'; agentId = 'agent-support'; state = 'active' },
+                { token = 'Bearer nope' }).status_code);
+        end)
+
+        it('never lets the shared secret provision agents', function()
+            token_valid = false;
+            assert.are.equal(401, invite({ conference = 'r'; displayName = 'Bot' },
+                { token = 'Bearer jicofo-secret' }).status_code);
         end)
     end)
 

@@ -39,6 +39,7 @@
 --   POST /voice-agent/status   { conference, agentId, state, reason? }
 --     internal: jicofo/JVB advance the lifecycle (connecting|active|failed|ended);
 --     active → agent.connected, failed → agent.failed, ended → teardown + agent.ended
+--     auth: ASAP, or the voice_agent_status_secret shared secret (jicofo cannot mint ASAP)
 --
 -- Webhooks: when an agent has a callbackUrl, lifecycle events are POSTed to it as
 -- { event, agentId, conference, sourceName, state, timestamp, reason? }, signed
@@ -117,6 +118,9 @@ if WEBHOOK_SECRET == '' then
     module:log('warn', 'voice_agent_webhook_secret is not set — lifecycle webhooks will be UNSIGNED');
 end
 
+-- Shared secret jicofo presents on /voice-agent/status (it cannot mint ASAP tokens); ASAP is still accepted.
+local STATUS_SECRET = module:get_option_string('voice_agent_status_secret', '');
+
 local ASAP_KEY_SERVER = module:get_option_string('prosody_password_public_key_repo_url', '');
 local token_util;
 if INSECURE_SKIP_AUTH then
@@ -171,6 +175,25 @@ local function check_authorization(request)
         return { status_code = 401 };
     end
     return nil;
+end
+
+-- Constant-time secret comparison: HMACs under a per-load random key have a fixed length and leak nothing about
+-- where a mismatch occurs, unlike a plain string compare.
+local COMPARE_KEY = random.bytes(16);
+local function secrets_equal(a, b)
+    return hashes.hmac_sha256(COMPARE_KEY, a, true) == hashes.hmac_sha256(COMPARE_KEY, b, true);
+end
+
+-- The status route is called by jicofo, which cannot mint ASAP tokens: accept the configured shared secret as a
+-- bearer there, in addition to a regular ASAP token. Never used for the provisioning routes.
+local function check_status_authorization(request)
+    if STATUS_SECRET ~= '' then
+        local token = request.headers['authorization'];
+        if type(token) == 'string' and starts_with(token, 'Bearer ') and secrets_equal(token:sub(8), STATUS_SECRET) then
+            return nil;
+        end
+    end
+    return check_authorization(request);
 end
 
 local function error_response(status_code, message)
@@ -608,7 +631,7 @@ end
 local function handle_status(event)
     local request = event.request;
 
-    local auth_error = check_authorization(request);
+    local auth_error = check_status_authorization(request);
     if auth_error then
         return auth_error;
     end
