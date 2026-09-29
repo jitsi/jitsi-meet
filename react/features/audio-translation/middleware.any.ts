@@ -117,7 +117,7 @@ StateListenerRegistry.register(
  */
 StateListenerRegistry.register(
     state => state['features/base/conference'].conference,
-    (conference, { dispatch, getState }, previousConference) => {
+    (conference, { dispatch }, previousConference) => {
         if (previousConference) {
             dispatch(clearReceivingTranslatedSources());
             dispatch(setTranslationListeners([]));
@@ -129,12 +129,6 @@ StateListenerRegistry.register(
 
         conference.on(JitsiConferenceEvents.TRANSLATED_SOURCE_SENDING_CHANGED,
             ({ sending, sourceName, timestamp }: { sending: boolean; sourceName: string; timestamp: number; }) => {
-                // The bridge currently emits only sending=true, which would leave the receiving state
-                // stuck on; ignore the events unless explicitly enabled.
-                if (!getState()['features/base/config'].audioTranslation?.enableSendingChangeEvents) {
-                    return;
-                }
-
                 dispatch(updateTranslatedSourceSending(sourceName, sending, timestamp));
             });
 
