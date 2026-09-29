@@ -120,6 +120,11 @@ local blocked_metadata_keys = module:get_option_set('room_metadata_blocked_keys'
     'visitorsEnabled',
 });
 
+-- Keys blocked by other modules, on top of the ones above. The table is shared
+-- across all hosts, so a module on any host can add to it no matter the load
+-- order, e.g. module:shared('/*/room_metadata/blocked_keys').myKey = true;
+local extra_blocked_metadata_keys = module:shared('/*/room_metadata/blocked_keys');
+
 module:log("info", "Starting room metadata for %s", muc_component_host);
 
 local main_muc_module;
@@ -346,7 +351,7 @@ function on_message(event)
         end
     end
 
-    if blocked_metadata_keys:contains(jsonData.key) then
+    if blocked_metadata_keys:contains(jsonData.key) or extra_blocked_metadata_keys[jsonData.key] then
         module:log('warn', 'Occupant %s attempted to set blocked metadata key "%s" in room:%s',
             from, jsonData.key, room.jid);
         return false;
