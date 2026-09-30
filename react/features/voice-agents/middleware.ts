@@ -18,6 +18,7 @@ import {
     getAgentIdBySourceName,
     getConsentedAgentSourceNames,
     isVoiceAgentConsentRequired,
+    pickPresentAgents,
     sanitizeAgents
 } from './functions';
 import logger from './logger';
@@ -35,8 +36,8 @@ function consentNotificationUid(agentId: string) {
 }
 
 /**
- * Middleware that mirrors the `agents` room metadata into the conference: a fake participant per agent
- * (the roster entry), a consent notification for receiving each agent's media (unless disabled via
+ * Middleware that mirrors the `agents` room metadata into the conference: a fake participant per active
+ * agent (the roster entry; an agent that is still provisioning, or whose provisioning failed, is not shown), a consent notification for receiving each agent's media (unless disabled via
  * config.voiceAgents.requireConsent), and — on consent — the subscription to the agent's synthetic audio
  * source, which is what makes the agent audible. The subscription is managed through the voice-agents
  * synthetic-audio service in lib-jitsi-meet, so it co-exists with audio translation.
@@ -47,8 +48,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case UPDATE_CONFERENCE_METADATA: {
         // Metadata is server-written but treated as untrusted here: drop prototype-pollution-prone ids
-        // before they are used as object keys / participant ids.
-        const agents: IVoiceAgents = sanitizeAgents(action.metadata?.agents ?? {});
+        // before they are used as object keys / participant ids. Only active agents count as present, so a
+        // failing one never joins and an agent whose media leg drops leaves and asks for consent again.
+        const agents: IVoiceAgents = pickPresentAgents(sanitizeAgents(action.metadata?.agents ?? {}));
 
         _agentsChanged(store, agents);
         break;
