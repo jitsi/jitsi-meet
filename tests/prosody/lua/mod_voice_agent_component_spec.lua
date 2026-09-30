@@ -34,6 +34,7 @@ end
 
 -- net.http: captures outbound webhook requests; `http_next_code` is the status the stub reports back.
 local http_requests = {};
+local metadata_events = 0;
 local http_next_code = 200;
 package.preload['net.http'] = function()
     return {
@@ -78,7 +79,9 @@ local util_stub = {
     end,
     is_healthcheck_room = function(_) return false; end,
     process_host_module = function(_host, cb)
-        cb({ hook = function(_, name, fn) host_hooks[name] = fn; end; fire_event = function() end });
+        cb({ hook = function(_, name, fn) host_hooks[name] = fn; end; fire_event = function(_, name)
+            if name == 'room-metadata-changed' then metadata_events = metadata_events + 1; end
+        end });
     end,
     room_jid_match_rewrite = function(jid) return jid; end,
     starts_with = function(s, prefix) return type(s) == 'string' and s:sub(1, #prefix) == prefix; end,
@@ -197,6 +200,7 @@ describe('mod_voice_agent_component', function()
         token_valid = true;
         mock_room = fresh_room();
         http_requests = {};
+        metadata_events = 0;
         http_next_code = 200;
         timers = {};
         for i = #encoded, 1, -1 do encoded[i] = nil; end
@@ -509,6 +513,13 @@ describe('mod_voice_agent_component', function()
             assert.are.equal(2, #ended);
             assert.are.equal('room-destroyed', ended[1].reason);
         end)
+
+        it('sends agent.ended once per agent even when the destroy hook runs twice', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support'; callbackUrl = CALLBACK });
+            host_hooks['muc-room-destroyed']({ room = mock_room });
+            host_hooks['muc-room-destroyed']({ room = mock_room });
+            assert.are.equal(1, #webhook_payloads('agent.ended'));
+        end)
     end)
 
     describe('status route auth (jicofo shared secret)', function()
@@ -532,6 +543,44 @@ describe('mod_voice_agent_component', function()
             token_valid = false;
             assert.are.equal(401, invite({ conference = 'r'; displayName = 'Bot' },
                 { token = 'Bearer jicofo-secret' }).status_code);
+        end)
+    end)
+
+    describe('status lifecycle is forward-only', function()
+        before_each(function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                callbackUrl = 'https://app.example.com/hook' });
+        end)
+
+        it('ignores a stale connecting after active and a duplicate active, sending one webhook', function()
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'connecting' });
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
+            assert.are.equal(200, status({ conference = 'r'; agentId = 'agent-support'; state = 'connecting' }).status_code);
+            assert.are.equal(200, status({ conference = 'r'; agentId = 'agent-support'; state = 'active' }).status_code);
+            assert.are.equal('active', mock_room.jitsiMetadata.agents['agent-support'].state);
+            assert.are.equal(1, #webhook_payloads('agent.connected'));
+        end)
+
+        it('still accepts failed after active', function()
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'failed'; reason = 'media leg lost' });
+            assert.are.equal('failed', mock_room.jitsiMetadata.agents['agent-support'].state);
+            assert.are.equal(1, #webhook_payloads('agent.failed'));
+        end)
+    end)
+
+    describe('re-invite after failure', function()
+        it('replaces a failed agent instead of treating it as a duplicate', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                callbackUrl = 'https://app.example.com/hook' });
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'failed'; reason = 'no bridge' });
+            metadata_events = 0;
+            local res = invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                callbackUrl = 'https://app.example.com/hook' });
+            assert.are.equal(200, res.status_code);
+            assert.are.equal('provisioning', mock_room.jitsiMetadata.agents['agent-support'].state);
+            assert.are.equal(2, metadata_events, 'removal broadcast, then the fresh entry');
+            assert.are.equal(0, #webhook_payloads('agent.ended'));
         end)
     end)
 
