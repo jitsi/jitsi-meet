@@ -1785,9 +1785,15 @@
         "upcomingMeetings": "Your upcoming meetings"
     },
     "voiceAgents": {
-        "allow": "Allow audio",
-        "consentDescription": "The agent can hear the meeting. Do you want to hear the agent's audio?",
-        "joinedTitle": "{{name}} joined as an AI agent"
+        "allow": "Allow",
+        "consentDescription": "The agent only hears participants who allow it. If you allow, it will hear you and you will hear its replies.",
+        "consentDescriptionMuted": "The agent only hears participants who allow it. If you allow, it will hear you and you will hear its replies. You are muted until you decide.",
+        "consentTitle": "{{name}} joined as an AI agent",
+        "labelTooltip": "AI agent in the meeting: {{names}}",
+        "labelTooltipAllow": "AI agent in the meeting: {{names}}. Click to let it hear you.",
+        "nativeTitle": "AI agent in the meeting",
+        "notNow": "Not now",
+        "thumbnailTooltip": "AI agent"
     },
     "whiteboard": {
         "accessibilityLabel": {

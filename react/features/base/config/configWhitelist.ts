@@ -208,6 +208,7 @@ export default [
     'prejoinConfig.hideExtraJoinButtons',
     'raisedHands',
     'recordingService',
+    'voiceAgents',
     'requireDisplayName',
     'remoteVideoMenu',
     'roomPasswordNumberOfDigits',

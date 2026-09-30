@@ -24,6 +24,7 @@ import {
     hasRaisedHand,
     isLocalScreenshareParticipant,
     isScreenShareParticipant,
+    isVoiceAgentParticipant,
     isWhiteboardParticipant
 } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
@@ -68,6 +69,7 @@ import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';
 import TranslationPendingChip from './TranslationPendingChip';
 import VirtualScreenshareParticipant from './VirtualScreenshareParticipant';
+import VoiceAgentIndicator from './VoiceAgentIndicator';
 
 /**
  * Module-scoped so the second-screen trigger's click handler stays stable
@@ -906,6 +908,7 @@ class Thumbnail extends Component<IProps, IState> {
                     className = { classes.sharedVideoTopRight }
                     source = { SHARED_VIDEO_SECOND_SCREEN_SOURCE }
                     visible = { isHovered } />
+                {isVoiceAgentParticipant(this.props._participant) && <VoiceAgentIndicator />}
                 {this.props._isAgentSpeaking && (
                     <div className = { clsx(classes.borderIndicator, 'active-speaker-indicator') } />
                 )}

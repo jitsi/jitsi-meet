@@ -1,4 +1,5 @@
 import { IReduxState } from '../app/types';
+import { iAmVisitor } from '../visitors/functions';
 
 import { IVoiceAgent, IVoiceAgents } from './types';
 
@@ -79,6 +80,44 @@ export function pickPresentAgents(agents: IVoiceAgents): IVoiceAgents {
  */
 export function isVoiceAgentConsentRequired(state: IReduxState): boolean {
     return state['features/base/config'].voiceAgents?.requireConsent !== false;
+}
+
+/**
+ * Whether the local participant must be asked before an agent may hear them. Recorders and visitors are
+ * never exported and simply receive the agent, so they are not asked.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function shouldAskForVoiceAgentConsent(state: IReduxState): boolean {
+    return isVoiceAgentConsentRequired(state)
+        && !state['features/base/config'].iAmRecorder
+        && !iAmVisitor(state);
+}
+
+/**
+ * The ids of the present agents the local participant has allowed to hear them.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {Array<string>}
+ */
+export function getAllowedAgentIds(state: IReduxState): string[] {
+    const { agents, consent } = state['features/voice-agents'];
+
+    return Object.keys(agents).filter(agentId => consent[agentId] === true);
+}
+
+/**
+ * A present agent the local participant has not allowed yet, if any (the one the meeting label offers to
+ * decide about).
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {string|undefined}
+ */
+export function getVoiceAgentAwaitingConsent(state: IReduxState): string | undefined {
+    const { agents, consent } = state['features/voice-agents'];
+
+    return Object.keys(agents).find(agentId => consent[agentId] !== true);
 }
 
 /**

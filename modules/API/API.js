@@ -144,6 +144,7 @@ import { muteAllParticipants, muteRemote } from '../../react/features/video-menu
 import { setVideoQuality } from '../../react/features/video-quality/actions';
 import { toggleBackgroundEffect, toggleBlurredBackgroundEffect } from '../../react/features/virtual-background/actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../react/features/virtual-background/constants';
+import { allowVoiceAgent, declineVoiceAgent } from '../../react/features/voice-agents/actions';
 import { toggleWhiteboard } from '../../react/features/whiteboard/actions.web';
 import { getJitsiMeetTransport } from '../transport';
 
@@ -231,6 +232,12 @@ function initCommands() {
         'grant-recording-consent': unmute => {
             unmute ? APP.store.dispatch(grantRecordingConsentAndUnmute())
                 : APP.store.dispatch(grantRecordingConsent());
+        },
+        'grant-voice-agent-consent': (id, allow = true) => {
+            const { agents, consent } = APP.store.getState()['features/voice-agents'];
+            const ids = id ? [ id ] : Object.keys(agents).filter(agentId => consent[agentId] !== true);
+
+            ids.forEach(agentId => APP.store.dispatch(allow ? allowVoiceAgent(agentId) : declineVoiceAgent(agentId)));
         },
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
@@ -2127,6 +2134,21 @@ class API {
     notifyRecordingConsentDialogOpen(open) {
         this._sendEvent({
             name: 'recording-consent-dialog-open',
+            open
+        });
+    }
+
+    /**
+     * Notify external application that the voice-agent consent dialog was opened or closed.
+     *
+     * @param {boolean} open - Whether the dialog is open.
+     * @param {string} id - The agent the dialog is about.
+     * @returns {void}
+     */
+    notifyVoiceAgentConsentDialogOpen(open, id) {
+        this._sendEvent({
+            name: 'voice-agent-consent-dialog-open',
+            id,
             open
         });
     }
