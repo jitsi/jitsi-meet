@@ -11,7 +11,8 @@ import { IconFaceSmile, IconSend } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 import { CHAT_SIZE } from '../../constants';
-import { areSmileysDisabled, isSendGroupChatDisabled } from '../../functions';
+import { areSmileysDisabled, isSendGroupChatDisabled, isSendPrivateChatDisabled } from '../../functions';
+import { IMessage } from '../../types';
 
 import SmileysPanel from './SmileysPanel';
 
@@ -64,6 +65,11 @@ interface IProps extends WithTranslation {
     _isSendGroupChatDisabled: boolean;
 
     /**
+     * Whether the local participant is not allowed to send private messages.
+     */
+    _isSendPrivateChatDisabled: boolean;
+
+    /**
      * The id of the message recipient, if any.
      */
     _privateMessageRecipientId?: string;
@@ -77,6 +83,16 @@ interface IProps extends WithTranslation {
      * Invoked to send chat messages.
      */
     dispatch: IStore['dispatch'];
+
+    /**
+     * The message currently being edited, if any.
+     */
+    editingMessage?: IMessage;
+
+    /**
+     * Callback invoked to cancel message editing.
+     */
+    onCancelEdit?: () => void;
 
     /**
      * Callback to invoke on message send.
@@ -98,6 +114,21 @@ interface IState {
      * Whether or not the smiley selector is visible.
      */
     showSmileysPanel: boolean;
+}
+
+/**
+ * Returns whether the local participant cannot send what this input would send:
+ * a private message when a recipient is selected, a group message if not.
+ *
+ * @param {IProps} props - The props of the component.
+ * @returns {boolean}
+ */
+function _isSendDisabled({
+    _isSendGroupChatDisabled,
+    _isSendPrivateChatDisabled,
+    _privateMessageRecipientId
+}: IProps): boolean {
+    return _privateMessageRecipientId ? _isSendPrivateChatDisabled : _isSendGroupChatDisabled;
 }
 
 /**
@@ -155,6 +186,12 @@ class ChatInput extends Component<IProps, IState> {
         if (prevProps._privateMessageRecipientId !== this.props._privateMessageRecipientId) {
             this._textArea?.current?.focus();
         }
+        if (prevProps.editingMessage?.messageId !== this.props.editingMessage?.messageId) {
+            this.setState({
+                message: this.props.editingMessage?.message ?? ''
+            });
+            this._focus();
+        }
     }
 
     /**
@@ -165,7 +202,7 @@ class ChatInput extends Component<IProps, IState> {
      */
     override render() {
         const classes = withStyles.getClasses(this.props);
-        const hideInput = this.props._isSendGroupChatDisabled && !this.props._privateMessageRecipientId;
+        const hideInput = _isSendDisabled(this.props);
 
         if (hideInput) {
             return (
@@ -227,13 +264,9 @@ class ChatInput extends Component<IProps, IState> {
      * @returns {void}
      */
     _onSubmitMessage() {
-        const {
-            _isSendGroupChatDisabled,
-            _privateMessageRecipientId,
-            onSend
-        } = this.props;
+        const { onSend } = this.props;
 
-        if (_isSendGroupChatDisabled && !_privateMessageRecipientId) {
+        if (_isSendDisabled(this.props)) {
             return;
         }
 
@@ -271,6 +304,16 @@ class ChatInput extends Component<IProps, IState> {
             // but input method is still processing that.
             // This is a standard behavior for some input methods
             // like entering japanese or сhinese hieroglyphs.
+            return;
+        }
+
+        if (event.key === 'Escape' && this.props.editingMessage) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            this.props.onCancelEdit?.();
+            this.setState({ message: '' });
+
             return;
         }
 
@@ -343,12 +386,12 @@ class ChatInput extends Component<IProps, IState> {
  */
 const mapStateToProps = (state: IReduxState) => {
     const { privateMessageRecipient, width } = state['features/chat'];
-    const isGroupChatDisabled = isSendGroupChatDisabled(state);
 
     return {
         _areSmileysDisabled: areSmileysDisabled(state),
         _privateMessageRecipientId: privateMessageRecipient?.id,
-        _isSendGroupChatDisabled: isGroupChatDisabled,
+        _isSendGroupChatDisabled: isSendGroupChatDisabled(state),
+        _isSendPrivateChatDisabled: isSendPrivateChatDisabled(state),
         _chatWidth: width.current ?? CHAT_SIZE,
     };
 };

@@ -1,4 +1,4 @@
-import { NavigationContainer, Theme } from '@react-navigation/native';
+import { NavigationContainer, NavigationIndependentTree } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -57,36 +57,37 @@ const SettingsNavigationContainer = ({ isInWelcomePage }: IProps) => {
     , []);
 
     return (
-        <NavigationContainer
-            independent = { true }
-            ref = { settingsNavigationContainerRef }
-            theme = { navigationContainerTheme as Theme }>
-            <SettingsStack.Navigator
-                initialRouteName = { screen.settings.main }>
-                <SettingsStack.Screen
-                    name = { screen.settings.main }
-                    options = {{
-                        ...baseSettingsScreenOptions,
-                        title: t('settings.title')
-                    }}>
-                    { SettingsScreen }
-                </SettingsStack.Screen>
-                <SettingsStack.Screen
-                    component = { ProfileScreen }
-                    name = { screen.settings.profile }
-                    options = {{
-                        ...profileSettingsScreenOptions,
-                        title: t('settingsView.profileSection')
-                    }} />
-                <SettingsStack.Screen
-                    component = { LanguageSelectScreen }
-                    name = { screen.settings.language }
-                    options = {{
-                        ...languageSelectScreenOptions,
-                        title: t('settings.language')
-                    }} />
-            </SettingsStack.Navigator>
-        </NavigationContainer>
+        <NavigationIndependentTree>
+            <NavigationContainer
+                ref = { settingsNavigationContainerRef }
+                theme = { navigationContainerTheme }>
+                <SettingsStack.Navigator
+                    initialRouteName = { screen.settings.main }>
+                    <SettingsStack.Screen
+                        name = { screen.settings.main }
+                        options = {{
+                            ...baseSettingsScreenOptions,
+                            title: t('settings.title')
+                        }}>
+                        { SettingsScreen }
+                    </SettingsStack.Screen>
+                    <SettingsStack.Screen
+                        component = { ProfileScreen }
+                        name = { screen.settings.profile }
+                        options = {{
+                            ...profileSettingsScreenOptions,
+                            title: t('settingsView.profileSection')
+                        }} />
+                    <SettingsStack.Screen
+                        component = { LanguageSelectScreen }
+                        name = { screen.settings.language }
+                        options = {{
+                            ...languageSelectScreenOptions,
+                            title: t('settings.language')
+                        }} />
+                </SettingsStack.Navigator>
+            </NavigationContainer>
+        </NavigationIndependentTree>
     );
 };
 

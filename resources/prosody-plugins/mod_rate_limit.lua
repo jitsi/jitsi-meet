@@ -197,8 +197,13 @@ local function on_login(session, ip)
 end
 
 local function filter_hook(session)
-    -- ignore outgoing sessions (s2s)
-    if session.outgoing then
+    -- ignore s2s sessions, in both directions. s2s is restricted to the hosts in
+    -- s2s_whitelist, so a rate limit adds no protection, but it can throttle a legitimate
+    -- burst of stanzas from a trusted node.
+    -- Use base_type, not type. util.session sets base_type when it creates the session and
+    -- never changes it. It sets type to 's2sin_unauthed' first, then to 's2sin' after the
+    -- session authenticates.
+    if session.base_type == 's2sin' or session.base_type == 's2sout' then
         return;
     end
 

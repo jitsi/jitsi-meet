@@ -1150,19 +1150,16 @@
         "recordAudioAndVideo": "Regjistro audio dhe video",
         "recordTranscription": "Regjistro transkriptimin",
         "saveLocalRecording": "Ruajeni lokalisht kartelën e regjistrimit (Beta)",
-        "serviceDescription": "Regjistrimi juaj do të ruhet nga shërbimi i regjistrimit",
         "serviceDescriptionCloud": "Regjistrim në re",
         "serviceDescriptionCloudInfo": "Takimet e regjistruara spastrohen automatikisht 24h pas kohës së regjistrimit të tyre.",
         "serviceName": "Shërbim regjistrimi",
         "sessionAlreadyActive": "Ky sesion po regjistrohet ose transmetohet drejtpërsëdrejti tashmë.",
-        "showAdvancedOptions": "Mundësi të mëtejshme",
         "signIn": "Hyni",
         "signOut": "Dilni",
         "surfaceError": "Ju lutemi, përdorni skedën e tanishme.",
         "title": "Regjistrim",
         "unavailable": "Hëm! {{serviceName}} s’është i passhëm aktualisht. Po punojmë për të zgjidhur problemin. Ju lutemi, riprovoni më vonë.",
-        "unavailableTitle": "Regjistrim jo i passhëm",
-        "uploadToCloud": "Ngarkojeni te reja"
+        "unavailableTitle": "Regjistrim jo i passhëm"
     },
     "screenshareDisplayName": "Skena e {{name}}",
     "sectionList": {
@@ -1307,7 +1304,6 @@
             "Settings": "Hap rregullimet",
             "audioRoute": "Përzgjidhni pajisje zëri",
             "boo": "Ya",
-            "breakoutRoom": "Hyni/Dilni nga dhomë aneks konsultimesh",
             "callQuality": "Administroni cilësi videoje",
             "carmode": "Mënyra Automjet",
             "cc": "Shfaq/Fshih titra",

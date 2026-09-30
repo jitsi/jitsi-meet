@@ -1,4 +1,5 @@
 import { Dropbox, DropboxAuth } from 'dropbox';
+import { v4 as uuidv4 } from 'uuid';
 
 import { IReduxState } from '../app/types';
 
@@ -6,16 +7,21 @@ import { IReduxState } from '../app/types';
  * Executes the oauth flow.
  *
  * @param {string} authUrl - The URL to oauth service.
+ * @param {string} redirectURI - The return URL, whose page posts the result back to us.
  * @returns {Promise<string>} - The URL with the authorization details.
  */
-function authorize(authUrl: string): Promise<string> {
-    const windowName = `oauth${Date.now()}`;
+function authorize(authUrl: string, redirectURI: string): Promise<string> {
+    const windowName = `oauth${uuidv4()}`;
+    const redirectOrigin = new URL(redirectURI).origin;
 
     return new Promise(resolve => {
         // eslint-disable-next-line prefer-const
         let popup: any;
-        const handleAuth = ({ data }: { data: { type: string; url: string; windowName: string; }; }) => {
-            if (data && data.type === 'dropbox-login' && data.windowName === windowName) {
+        const handleAuth = ({ data, origin, source }: MessageEvent) => {
+            if (source === popup
+                    && origin === redirectOrigin
+                    && data?.type === 'dropbox-login'
+                    && data.windowName === windowName) {
                 if (popup) {
                     popup.close();
                 }
@@ -55,7 +61,7 @@ export function _authorizeDropbox(
     return dropbox.getAuthenticationUrl(redirectURI, undefined, 'code', 'offline', undefined, undefined, true)
 
         // @ts-ignore
-        .then(authorize)
+        .then(authUrl => authorize(authUrl, redirectURI))
         .then(returnUrl => {
             const params = new URLSearchParams(new URL(returnUrl).search);
             const code = params.get('code');

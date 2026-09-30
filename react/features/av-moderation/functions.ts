@@ -157,6 +157,24 @@ export const shouldShowModeratedNotification = (mediaType: MediaType, state: IRe
     && !isLocalParticipantApprovedFromState(mediaType, state);
 
 /**
+ * Checks whether rejecting a participant for a media type has an effect. The mute state that a participant
+ * reports in presence is not used, because a participant can report a state that is not correct.
+ *
+ * @param {IParticipant|undefined} participant - The participant.
+ * @param {MediaType} mediaType - The media type.
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function canRejectParticipant(participant: IParticipant | undefined, mediaType: MediaType,
+        state: IReduxState) {
+    // Moderators are never subject to A/V moderation, and a participant that is already force muted has nothing
+    // left to reject.
+    return isEnabledFromState(mediaType, state)
+        && !isParticipantModerator(participant)
+        && !isForceMuted(participant, mediaType, state);
+}
+
+/**
  * Checks if a participant is force muted.
  *
  * @param {IParticipant|undefined} participant - The participant.

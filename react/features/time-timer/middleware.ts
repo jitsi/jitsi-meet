@@ -1,5 +1,5 @@
 import { IStore } from '../app/types';
-import { CONFERENCE_JOINED, CONFERENCE_LEFT } from '../base/conference/actionTypes';
+import { CONFERENCE_JOINED, CONFERENCE_LEFT, NON_PARTICIPANT_MESSAGE_RECEIVED } from '../base/conference/actionTypes';
 import { getRoomName } from '../base/conference/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { parseURIString } from '../base/util/uri';
@@ -18,6 +18,7 @@ import {
     tickTimeTimer
 } from './actions';
 import {
+    TIME_RESTRICTED_MESSAGE_TYPE,
     TIME_TIMER_NOTIFICATION_ID,
     WARNING_THRESHOLD_SECONDS
 } from './constants';
@@ -111,6 +112,35 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
                     : 0;
 
                 dispatch(startTimeTimer(calendarDurationSeconds, elapsed));
+            }
+        }
+        break;
+    }
+    case NON_PARTICIPANT_MESSAGE_RECEIVED: {
+        // The `mod_time_restricted` Prosody plugin sends this to every
+        // occupant as they join, so the countdown reflects the server-enforced
+        // limit. It is a non-participant message because the plugin sends it
+        // from the room JID rather than from a participant. `elapsedSeconds`
+        // keeps late joiners in sync with everyone else. Whether the countdown
+        // is actually on screen is a separate, display-only decision — see
+        // `timeTimer.suppressForSeconds` / isTimeTimerVisible.
+        const { id, json } = action;
+
+        // Only honour a message that genuinely came from the room JID itself:
+        // a bare JID has no resource, so the sender id is null. A message
+        // reflected from any occupant (even a hidden one) carries that
+        // occupant's nick as the id — reject those so a participant cannot
+        // forge a timer by sending this json-message into the room.
+        if (id) {
+            break;
+        }
+
+        if (json?.type === TIME_RESTRICTED_MESSAGE_TYPE && isTimeTimerEnabled(getState())) {
+            const duration = Number(json.durationSeconds);
+            const elapsed = Number(json.elapsedSeconds);
+
+            if (duration > 0) {
+                dispatch(startTimeTimer(duration, Math.max(0, elapsed || 0)));
             }
         }
         break;

@@ -1,5 +1,6 @@
-import { NativeModules } from 'react-native';
+import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import { getAppProp } from '../../base/app/functions';
 import {
     CONFERENCE_BLURRED,
@@ -13,14 +14,63 @@ import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
+import { toggleScreensharing } from '../../base/tracks/actions.native';
+import { isLocalVideoTrackDesktop } from '../../base/tracks/functions.native';
 import { READY_TO_CLOSE } from '../external-api/actionTypes';
 import { participantToParticipantInfo } from '../external-api/functions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture/actionTypes';
 
 import { isExternalAPIAvailable } from './functions';
+import logger from './logger';
 
 const externalAPIEnabled = isExternalAPIAvailable();
-const { JMOngoingConference } = NativeModules;
+const { JMOngoingConference, RNScreenShareEventEmitter } = NativeModules;
+
+let screenShareSubscription;
+
+/**
+ * Starts listening for the Darwin notifications which the iOS Broadcast Upload
+ * Extension posts when the user starts or stops a screen share.
+ *
+ * @param {Store} store - The redux store.
+ * @returns {void}
+ */
+function _registerForScreenShareEvents(store) {
+    // iOS only, and only when the RN SDK pod compiled RNScreenShareEventEmitter.
+    // NativeModules.<Name> is null for absent modules, so this also skips Android.
+    if (Platform.OS !== 'ios' || !RNScreenShareEventEmitter || screenShareSubscription) {
+        return;
+    }
+
+    const { appGroupIdentifier, screenSharingExtension } = RNScreenShareEventEmitter;
+
+    if (!appGroupIdentifier || !screenSharingExtension) {
+        logger.warn('iOS screen sharing is not configured. Your app must provide a Broadcast Upload '
+            + 'Extension and set RTCAppGroupIdentifier and RTCScreenSharingExtension in Info.plist. '
+            + 'See the react-native-sdk README, "Screen share".');
+    } else {
+        logger.info(`iOS screen sharing is set up with extension "${screenSharingExtension}" `
+            + `and app group "${appGroupIdentifier}". Please make sure your Broadcast Upload `
+            + 'Extension uses the same app group; the SDK cannot check this for you.');
+    }
+
+    // Do not gate this on an active conference. When the event arrives the extension is already
+    // running and polls the socket with no timeout; a skipped dispatch would leave the red status
+    // bar stuck with no way to stop it from the app.
+    screenShareSubscription = new NativeEventEmitter(RNScreenShareEventEmitter).addListener(
+        RNScreenShareEventEmitter.SCREEN_SHARE_TOGGLED,
+        ({ enabled }) => store.dispatch(toggleScreensharing(enabled)));
+}
+
+/**
+ * Stops listening for the iOS screen share notifications.
+ *
+ * @returns {void}
+ */
+function _unregisterForScreenShareEvents() {
+    screenShareSubscription?.remove();
+    screenShareSubscription = undefined;
+}
 
 
 /**
@@ -33,6 +83,12 @@ const { JMOngoingConference } = NativeModules;
     const rnSdkHandlers = getAppProp(store, 'rnSdkHandlers');
 
     switch (type) {
+    case APP_WILL_MOUNT:
+        _registerForScreenShareEvents(store);
+        break;
+    case APP_WILL_UNMOUNT:
+        _unregisterForScreenShareEvents();
+        break;
     case SET_AUDIO_MUTED:
         rnSdkHandlers?.onAudioMutedChanged?.(action.muted);
         break;
@@ -104,5 +160,20 @@ JMOngoingConference && !externalAPIEnabled && StateListenerRegistry.register(
             JMOngoingConference.abort();
             JMOngoingConference.launch();
         }
+    }
+);
+
+/**
+ * Notifies the SDK consumer when a screen share starts or stops, whichever way it was triggered.
+ */
+!externalAPIEnabled && StateListenerRegistry.register(
+    state => isLocalVideoTrackDesktop(state),
+    (sharing, store, previousSharing) => {
+        if (typeof previousSharing === 'undefined') {
+            // Initial invocation, nothing was toggled yet.
+            return;
+        }
+
+        getAppProp(store, 'rnSdkHandlers')?.onScreenShareToggled?.({ sharing });
     }
 );

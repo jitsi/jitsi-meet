@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { expectations } from '../../helpers/expectations';
@@ -8,7 +10,10 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
-const TEST_FILE_PATH = 'tests/resources/test-upload.txt';
+// __dirname-based (not CWD-relative) - this is a local path read on the machine running the
+// tests (uploaded to the remote grid session via wdio's own uploadFile), so it needs to resolve
+// correctly regardless of whether the process's CWD is the repo root or tests/ itself.
+const TEST_FILE_PATH = path.join(__dirname, '..', '..', 'resources', 'test-upload.txt');
 const TEST_FILE_NAME = 'test-upload.txt';
 
 describe('File sharing', () => {

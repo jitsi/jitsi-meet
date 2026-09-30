@@ -139,7 +139,6 @@ import { getLocalJitsiAudioTrackSettings } from './react/features/base/tracks/fu
 import { downloadJSON } from './react/features/base/util/downloadJSON';
 import { getJitsiMeetGlobalNSConnectionTimes } from './react/features/base/util/helpers';
 import { openLeaveReasonDialog } from './react/features/conference/actions.web';
-import { showDesktopPicker } from './react/features/desktop-picker/actions';
 import { appendSuffix } from './react/features/display-name/functions';
 import { maybeOpenFeedbackDialog, submitFeedback } from './react/features/feedback/actions';
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
@@ -169,18 +168,6 @@ import { muteLocal } from './react/features/video-menu/actions.any';
 
 const logger = Logger.getLogger('app:conference-web');
 let room;
-
-/*
- * Logic to open a desktop picker put on the window global for
- * lib-jitsi-meet to detect and invoke.
- *
- * TODO: remove once the Electron SDK supporting gDM has been out for a while.
- */
-window.JitsiMeetScreenObtainer = {
-    openDesktopPicker(options, onSourceChoose) {
-        APP.store.dispatch(showDesktopPicker(options, onSourceChoose));
-    }
-};
 
 /**
  * Known custom conference commands.
@@ -1389,10 +1376,18 @@ export default {
                 return;
             }
 
-            // The logic shared between RN and web.
-            commonUserJoinedHandling(APP.store, room, user);
+            // A participant whose video is hidden from the recorder is handled like a hidden participant: it is not
+            // added to the state, so it gets no tile. Its audio tracks are still added (see TRACK_ADDED below), and
+            // they are played and recorded. The optional call keeps this working with a lib-jitsi-meet release
+            // which does not have the method yet.
+            const videoHiddenFromRecorder = config.iAmRecorder && user.isVideoHiddenFromRecorder?.();
 
-            if (user.isHidden()) {
+            if (!videoHiddenFromRecorder) {
+                // The logic shared between RN and web.
+                commonUserJoinedHandling(APP.store, room, user);
+            }
+
+            if (user.isHidden() || videoHiddenFromRecorder) {
                 return;
             }
 
@@ -1402,10 +1397,14 @@ export default {
         });
 
         room.on(JitsiConferenceEvents.USER_LEFT, (id, user) => {
-            // The logic shared between RN and web.
-            commonUserLeftHandling(APP.store, room, user);
+            const videoHiddenFromRecorder = config.iAmRecorder && user.isVideoHiddenFromRecorder?.();
 
-            if (user.isHidden()) {
+            if (!videoHiddenFromRecorder) {
+                // The logic shared between RN and web.
+                commonUserLeftHandling(APP.store, room, user);
+            }
+
+            if (user.isHidden() || videoHiddenFromRecorder) {
                 return;
             }
 
@@ -1445,6 +1444,11 @@ export default {
                 const participant = room.getParticipantById(track.getParticipantId());
 
                 if (participant.isHiddenFromRecorder()) {
+                    return;
+                }
+
+                // Only the video of this participant is hidden from the recorder. Its audio is still recorded.
+                if (participant.isVideoHiddenFromRecorder?.() && track.isVideoTrack()) {
                     return;
                 }
             }

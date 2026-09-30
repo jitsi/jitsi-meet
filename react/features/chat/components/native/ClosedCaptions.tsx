@@ -42,8 +42,6 @@ const ClosedCaptions = ({
     const navigateToLanguageSelect = useCallback(() => {
         navigate(screen.conference.subtitles);
     }, [ navigation, screen ]);
-    const isAsyncTranscriptionEnabled = useSelector((state: IReduxState) =>
-        state['features/base/conference'].conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription);
 
     useEffect(() => {
         navigation?.setOptions({
@@ -93,20 +91,17 @@ const ClosedCaptions = ({
 
         return (
             <>
-                {
-                    // Hide the "Translate to" option when asyncTranscription is enabled
-                    !isAsyncTranscriptionEnabled && <View style = { closedCaptionsStyles.languageButtonContainer as ViewStyle }>
-                        <Text style = { closedCaptionsStyles.languageButtonText }>{ t('transcribing.translateTo') }:</Text>
-                        <TouchableHighlight onPress = { navigateToLanguageSelect }>
-                            <View style = { closedCaptionsStyles.languageButtonContent as ViewStyle }>
-                                <Text style = { closedCaptionsStyles.languageButtonText }>{ t(selectedLanguage ?? 'transcribing.subtitlesOff') }</Text>
-                                <Icon
-                                    size = { 24 }
-                                    src = { IconArrowRight } />
-                            </View>
-                        </TouchableHighlight>
-                    </View>
-                }
+                <View style = { closedCaptionsStyles.languageButtonContainer as ViewStyle }>
+                    <Text style = { closedCaptionsStyles.languageButtonText }>{ t('transcribing.translateTo') }:</Text>
+                    <TouchableHighlight onPress = { navigateToLanguageSelect }>
+                        <View style = { closedCaptionsStyles.languageButtonContent as ViewStyle }>
+                            <Text style = { closedCaptionsStyles.languageButtonText }>{ t(selectedLanguage ?? 'transcribing.subtitlesOff') }</Text>
+                            <Icon
+                                size = { 24 }
+                                src = { IconArrowRight } />
+                        </View>
+                    </TouchableHighlight>
+                </View>
                 <View style = { closedCaptionsStyles.messagesContainer as ViewStyle }>
                     <SubtitlesMessagesContainer
                         groups = { groupedSubtitles }

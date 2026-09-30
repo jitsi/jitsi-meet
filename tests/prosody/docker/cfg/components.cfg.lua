@@ -122,3 +122,15 @@ Component "conference-allowners.localhost" "muc"
     muc_mapper_domain_base = "localhost"
     muc_mapper_domain_prefix = "conference"
     allowners_moderated_rooms = { "moderated-room-1"; "moderated-room-2" }
+
+-- MUC component paired with VirtualHost "noregex.test". Its parent host
+-- (derived from the component name by mod_token_verification) sets
+-- token_regex_enabled = false, so a join whose token carries a room-claim
+-- pattern is refused with <invalid-regex/>.
+Component "conference.noregex.test" "muc"
+    storage = "memory"
+    modules_enabled = {
+        "token_verification";
+    }
+    muc_mapper_domain_base = "noregex.test"
+    muc_mapper_domain_prefix = "conference"

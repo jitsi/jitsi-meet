@@ -6,14 +6,11 @@ import { makeStyles } from 'tss-react/mui';
 import {
     approveParticipantAudio,
     approveParticipantDesktop,
-    approveParticipantVideo,
-    rejectParticipantAudio,
-    rejectParticipantDesktop,
-    rejectParticipantVideo
+    approveParticipantVideo
 } from '../../../av-moderation/actions';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import Button from '../../../base/ui/components/web/Button';
-import { muteRemote } from '../../../video-menu/actions.web';
+import { muteRemoteAndReject } from '../../../video-menu/actions.web';
 import { QUICK_ACTION_BUTTON } from '../../constants';
 
 interface IProps {
@@ -80,18 +77,15 @@ const ParticipantQuickAction = ({
     }, [ dispatch, participantID ]);
 
     const muteAudio = useCallback(() => {
-        dispatch(muteRemote(participantID, MEDIA_TYPE.AUDIO));
-        dispatch(rejectParticipantAudio(participantID));
+        dispatch(muteRemoteAndReject(participantID, MEDIA_TYPE.AUDIO));
     }, [ dispatch, participantID ]);
 
     const stopDesktop = useCallback(() => {
-        dispatch(muteRemote(participantID, MEDIA_TYPE.SCREENSHARE));
-        dispatch(rejectParticipantDesktop(participantID));
+        dispatch(muteRemoteAndReject(participantID, MEDIA_TYPE.SCREENSHARE));
     }, [ dispatch, participantID ]);
 
     const stopVideo = useCallback(() => {
-        dispatch(muteRemote(participantID, MEDIA_TYPE.VIDEO));
-        dispatch(rejectParticipantVideo(participantID));
+        dispatch(muteRemoteAndReject(participantID, MEDIA_TYPE.VIDEO));
     }, [ dispatch, participantID ]);
 
     switch (buttonType) {

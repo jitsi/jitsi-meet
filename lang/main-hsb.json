@@ -11,7 +11,6 @@
         "defaultEmail": "Waša standardna e-mejl",
         "disabled": "Wy njemóžeće žanych wobdźělnikow přeprosyć.",
         "failedToAdd": "zmylk při přidaću wobdźělnikow",
-        "footerText": "Zawołanje je deaktiwěrowane.",
         "googleEmail": "Google-e-mejl",
         "inviteMoreHeader": "Wy sće sam/a w posedźenju",
         "inviteMoreMailSubject": "so na posedźenju {{appName}} wobdźělić",
@@ -214,7 +213,6 @@
         "Remove": "wotstronić",
         "Share": "dźělić",
         "Submit": "ok",
-        "WaitForHostMsg": "Konferenca <b>{{room}}</b> njeje so hišće započała. Sće-li organizator, so prošu awtentifikujće. Hewak čakajće, doniž so organizator njezjewi.",
         "WaitingForHostTitle": "na zahajenje konferency čakać",
         "Yes": "haj",
         "accessibilityLabel": {
@@ -262,7 +260,7 @@
         "enterDisplayName": "prošu tu Waše mjeno zapodać",
         "error": "zmylk",
         "gracefulShutdown": "Hladanskich dźěłow dla njesteji serwis wokomiknje k dispoziciji. Prošu spytajće pozdźišo hišće raz.",
-        "grantModeratorDialog": "Chceće Wy tutoho wobdźělnika woprawdźe za moderatora postajić?",
+        "grantModeratorDialog": "Chceće woprawdźe {{participantName}} moderatorske prawa dać?",
         "grantModeratorTitle": "za moderatora postajić",
         "hideShareAudioHelper": "tutu informaciju wjac njepokazać",
         "incorrectPassword": "mjeno a hesło njepłaćiwe",
@@ -278,7 +276,6 @@
         "linkMeetingTitle": "konferencu ze Salesforce zwjazać",
         "liveStreaming": "live-streaming",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "za čas nahrawanja njemóžne",
-        "liveStreamingDisabledTooltip": "Startowanje live-streama je deaktiwěrowane.",
         "localUserControls": "lokalna kontrola",
         "lockMessage": "Konferenca njedaše so zawrěć.",
         "lockRoom": "konferencu$t(lockRoomPassword) přidać",
@@ -327,13 +324,10 @@
         "permissionCameraRequiredError": "Přistup na kameru je za widejowu konferencu trěbny.",
         "permissionErrorTitle": "prawo trěbne",
         "permissionMicRequiredError": "Mikrofon je za konferencu ze zwukom trěbny.",
-        "popupError": "Waš browser blokěruje pop-ups z tuteje strony. Prošu aktiwěrujće pop-ups w nastajenjach za wěstotu browsera a spytajće znowa.",
-        "popupErrorTitle": "pop-up blokěrowany",
         "readMore": "wjace",
         "recentlyUsedObjects": "sposledy wužiwane objekty",
         "recording": "nahrawanje",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "w času live-streama njemóžne",
-        "recordingDisabledTooltip": "Start nahrawanja deaktiwěrowany.",
         "rejoinNow": "nětko znowa přistupić",
         "remoteControlAllowedMessage": "{{user}} ja naprašenje wo dalokowodźenju přiwzała/a!",
         "remoteControlDeniedMessage": "{{user}} je naprašenje wo dalokowodźenju wotpokazał/a!",
@@ -429,9 +423,6 @@
     "giphy": {
         "noResults": "žane wuslědki",
         "search": "GIPHY přepytać"
-    },
-    "helpView": {
-        "title": "pomoc"
     },
     "incomingCall": {
         "answer": "wotmołwić",
@@ -546,7 +537,6 @@
         "youtubeTerms": "wuměnjenja wužiwanja na YouTube"
     },
     "lobby": {
-        "allow": "přiwzać",
         "backToKnockModeButton": "žane hesło, město toho wo přistup prosyć",
         "chat": "chat",
         "dialogTitle": "lobbyjowy modus",
@@ -578,7 +568,6 @@
         "notificationLobbyDisabled": "{{originParticipantName}} je lobby deaktiwěrował",
         "notificationLobbyEnabled": "{{originParticipantName}} je lobby aktiwěrował",
         "notificationTitle": "lobby",
-        "passwordField": "konferencne hesło zapodać",
         "passwordJoinButton": "přistupić",
         "title": "lobby",
         "toggleLabel": "lobby aktiwěrować"
@@ -624,13 +613,12 @@
     "me": "ja",
     "notify": {
         "OldElectronAPPTitle": "Problem z wěstotu!",
-        "allowAction": "dowolić",
         "allowedUnmute": "Móžeće nastajenje němosće zakónčić, kameru zaswěčić abo Wašu wobrazowku dźělić.",
         "audioUnmuteBlockedDescription": "Za škit před přećeženjom njemóže so tuchwilu nastajenje němosće zakónčić",
         "audioUnmuteBlockedTitle": "Nastajenje němosće njemóže so zakónčić.",
         "chatMessages": "chat",
         "connectedOneMember": "{{name}} so na konferency wobdźěla",
-        "connectedThreePlusMembers": "{{name}} a {{count}} druhich wosobow so na konferency wobdźěli",
+        "connectedThreePlusMembers": "{{name}} a wjele druhich su so zeńdźenju přidružili",
         "connectedTwoMembers": "{{first}} a {{second}} so na konferency wobdźěla",
         "disconnected": "přetorhnjene",
         "displayNotifications": "zdźělenki pokazać",
@@ -682,7 +670,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) bu wot druheho wobdźělnika wotstronjene",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) bu wot druheho wobdźělnika postajene",
         "raiseHandAction": "so přizjewić",
-        "raisedHand": "{{name}} chce rěčeć.",
+        "raisedHand": "Chce so wobdźělić.",
         "raisedHands": "{{participantName}} a {{raisedHands}} dalši chcedźa rěčeć.",
         "reactionSounds": "zwuki za interakciju aktiwěrować",
         "reactionSoundsForAll": "zwuki za interakciju za wšěch deaktiwěrować",
@@ -750,8 +738,7 @@
             "pollOption": "wotmołwa {{index}}",
             "pollQuestion": "prašenje",
             "questionPlaceholder": "prašenje stajić",
-            "removeOption": "wotmołwu wotstronić",
-            "send": "zestajić"
+            "removeOption": "wotmołwu wotstronić"
         },
         "errors": {
             "notUniqueOption": "opcije dyrbja jasne być"
@@ -841,9 +828,6 @@
         "rejected": "wotpokazane",
         "ringing": "zwoni …"
     },
-    "privacyView": {
-        "title": "datowy škit"
-    },
     "profile": {
         "avatar": "wobraz wužiwarja/awatar",
         "setDisplayNameLabel": "zjawne mjeno postajić",
@@ -886,7 +870,6 @@
         "highlightMomentSucessDescription": "Waš markěrowany wokomik so k zjeću konferency přida.",
         "inProgress": "nahrawanje startowane",
         "linkGenerated": "link na nahrawanje bu kreěrowany",
-        "live": "LIVE",
         "localRecordingWarning": "Kedźbujće na to, aktualny tab za prawe widejo a awdijo wužiwać.",
         "loggedIn": "přizjewjeny/a jako {{userName}} ",
         "off": "nahrawanje stopowane",
@@ -894,9 +877,7 @@
         "on": "nahrawanje",
         "onBy": "{{name}} startuje nahrawanje",
         "pending": "nahrawanje konferency so přihotuje…",
-        "rec": "NAHR",
         "saveLocalRecording": "nahrawanje lokalnje składować",
-        "serviceDescription": "Waše nahrawanje so wot nahrawanskeho serwisa składuje.",
         "serviceDescriptionCloud": "nahrawanje na cloud",
         "serviceDescriptionCloudInfo": "Nahrwanja so 24 hodźin po nahrawanju awtomatisce wotstronja.",
         "serviceName": "nahrawanski serwis",
@@ -906,8 +887,7 @@
         "surfaceError": "prošu aktualny tab wužiwać",
         "title": "nahrawanje",
         "unavailable": "Ow! {{serviceName}} tuchwilu wužiwajomny njeje. Dźěłamy na rozrisanju problema. Prošu pozdźišo znowa spytać .",
-        "unavailableTitle": "nahrawanje njeje wužiwajomne",
-        "uploadToCloud": "do cloud přenošować"
+        "unavailableTitle": "nahrawanje njeje wužiwajomne"
     },
     "screenshareDisplayName": "wobrazowka wot {{name}}",
     "sectionList": {
@@ -916,7 +896,6 @@
     "security": {
         "about": "Móžeće Wašu konferencu z hesłom škitać. Wobdźělnicy dyrbja tute zapodać, prjedy hač smědźa so na konferency wobdźělić.",
         "aboutReadOnly": " Moderatorojo móža konferencu z hesłom škitać. Wobdźělnicy dyrbja tute zapodać, prjedy hač smědźa so wobdźělić.",
-        "insecureRoomNameWarning": "Mjeno ruma je njewěste. Njewitani wobdźělnicy móhli Wašej konferency přistupić.",
         "title": "opcije wěstoty"
     },
     "settings": {
@@ -951,7 +930,6 @@
         "selectCamera": "kamera",
         "selectMic": "mikrofon",
         "selfView": "samonapohlad",
-        "sounds": "zwuki za pokazki",
         "speakers": "wótřerěčak",
         "startAudioMuted": "wšitcy wobdźělnicy němi přistupja",
         "startReactionsMuted": "zwuk za pokazki za wšěch deaktiwěrować",
@@ -1023,7 +1001,6 @@
             "Settings": "nastajenja zapnyć/hasnyć ",
             "audioRoute": "awdijowy nastroj wuzwolić",
             "boo": "buh wołać",
-            "breakoutRoom": "do breakout-rumnosće zastupić/wopušćić",
             "callQuality": "nastajenja kwality",
             "carmode": "awto modus",
             "cc": "podtitule zapnyć/hasnyć",
@@ -1058,7 +1035,7 @@
             "muteEveryoneElse": "wšěch druhich němych šaltować",
             "muteEveryoneElsesVideoStream": "wšitke druhe kamery hasnyć",
             "muteEveryonesVideoStream": "wšitke kamery hasnyć",
-            "participants": "přitomni",
+            "participants": "Taflu wobdźělnikow wočinić. {{participantsCount}} wobdźělnikow",
             "pip": "modus wobraz-we-wobrazu zapnyć/hasnyć ",
             "privateMessage": "priwatne powěsće pósłać",
             "profile": "profil wobdźěłać",
@@ -1158,7 +1135,7 @@
         "silence": "ćichota",
         "speakerStats": "statistika rěčnikow",
         "startScreenSharing": "wužiwanje monitora dowolić",
-        "startSubtitles": "podtituly startować",
+        "startSubtitles": "Podtitule • {{language}}",
         "stopAudioSharing": "dźělenje awdija skónčić",
         "stopScreenSharing": "dźělenje monitora stopować",
         "stopSharedVideo": "YouTube-widejo stopować",
@@ -1172,12 +1149,8 @@
     },
     "transcribing": {
         "ccButtonTooltip": "podtitule pokazać/hasnyć",
-        "error": "Nahrawanje njeje fungowało. Prošu spytajće znowa.",
         "expandedLabel": "transkriběrowanje je aktiwne",
-        "failedToStart": "transkriběrowanje njehodźeše so startować",
-        "labelToolTip": "konferenca so transkriběruje",
         "off": "transkriběrowanje stopowane",
-        "pending": " transkriběrowanje konferency so přihotuje…",
         "start": "pokazku podtitulow startować",
         "stop": " pokazku podtitulow stopować ",
         "tr": "TR"

@@ -257,7 +257,6 @@
         "Remove": "Remover",
         "Share": "Compartilhar",
         "Submit": "Enviar",
-        "WaitForHostMsg": "A conferência ainda não começou. Se você é o anfitrião, faça a autenticação. Do contrário, aguarde a chegada do anfitrião.",
         "WaitingForHostButton": "Aguardar por anfitrião",
         "WaitingForHostTitle": "Esperando o anfitrião…",
         "Yes": "Sim",
@@ -312,7 +311,7 @@
         "enterDisplayName": "Digite seu nome aqui",
         "error": "Erro",
         "gracefulShutdown": "Nosso serviço está em manutenção. Tente novamente mais tarde.",
-        "grantModeratorDialog": "Tem certeza que quer participar como moderador da reunião?",
+        "grantModeratorDialog": "Tem certeza de que deseja conceder direitos de moderador a {{participantName}}?",
         "grantModeratorTitle": "Permitir moderador",
         "hide": "Ocultar",
         "hideShareAudioHelper": "Não mostre este diálogo novamente",
@@ -717,18 +716,16 @@
     "me": "eu",
     "notify": {
         "OldElectronAPPTitle": "Vulnerabilidade de segurança!",
-        "allowAction": "Permitir",
         "allowedUnmute": "Você pode religar seu microfone, ativar sua câmera ou compartilhar sua tela.",
         "audioUnmuteBlockedDescription": "A liberação do microfone foi temporariamente bloqueada devido a limites do sistema.",
         "audioUnmuteBlockedTitle": "Microfone bloqueado!",
         "chatMessages": "Mensagens do chat",
         "connectedOneMember": "{{name}} entrou na reunião",
-        "connectedThreePlusMembers": "{{name}} e outros {{count}} entraram na reunião",
+        "connectedThreePlusMembers": "{{name}} e muitos outros entraram na reunião",
         "connectedTwoMembers": "{{first}} e {{second}} entraram na reunião",
         "dataChannelClosed": "Qualidade do vídeo prejudicada",
         "dataChannelClosedDescription": "O canal da ponte foi desconectado, assim a qualidade do vídeo foi limitada a sua configuração mais baixa.",
         "disabledIframe": "Incorporação destina-se apenas a fins de demonstração, assim esta chamada será desconectada em {{timeout}} minutos.",
-        "disabledIframeSecondary": "Incorporação de {{domain}} é apenas destinado para fins de demonstração, então esta chamada será desconectada em {{timeout}} minutos. Por favor use o <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> para incorporação em produção!",
         "disconnected": "desconectado",
         "displayNotifications": "Exibir notificações para",
         "dontRemindMe": "Não me lembrar",
@@ -784,7 +781,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removido por outro participante",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) definido por outro participante",
         "raiseHandAction": "Levantar a mão",
-        "raisedHand": "{{name}} gostaria de falar.",
+        "raisedHand": "Gostaria de participar.",
         "raisedHands": "{{participantName}} e {{raisedHands}} outras pessoas",
         "reactionSounds": "Desabilitar sons",
         "reactionSoundsForAll": "Desabilitar sons para todos",
@@ -859,8 +856,7 @@
             "pollOption": "Opção {{index}}",
             "pollQuestion": "Pergunta",
             "questionPlaceholder": "Faça uma pergunta",
-            "removeOption": "Remover opção",
-            "send": "Enviar"
+            "removeOption": "Remover opção"
         },
         "errors": {
             "notUniqueOption": "As opções devem ser exclusivas"
@@ -995,7 +991,6 @@
         "highlightMomentSucessDescription": "Seu momento destacado será adicionado ao sumário da reunião.",
         "inProgress": "Gravação ou live streaming em andamento",
         "linkGenerated": "Geramos um link para sua gravação.",
-        "live": "AO VIVO",
         "localRecordingNoNotificationWarning": "A gravação não será anunciada aos outros participantes. Você precisará avisá-los que a reunião está sendo gravada.",
         "localRecordingNoVideo": "O vídeo não está sendo gravado",
         "localRecordingStartWarning": "Por favor, certifique-se de ter parado a gravação antes de sair da reunião para garantir que será salva.",
@@ -1012,9 +1007,7 @@
         "onBy": "{{name}} iniciou a gravação",
         "onlyRecordSelf": "Gravar apenas o meu fluxo de áudio e vídeo",
         "pending": "Preparando para gravar a reunião…",
-        "rec": "REC",
         "saveLocalRecording": "Salvar o arquivo de gravação localmente (Beta)",
-        "serviceDescription": "Sua gravação será salva pelo serviço de gravação",
         "serviceDescriptionCloud": "Gravação na nuvem",
         "serviceDescriptionCloudInfo": "Reuniões gravadas são removidas automaticamente 24h após a hora da gravação.",
         "serviceName": "Serviço de gravação",
@@ -1024,8 +1017,7 @@
         "surfaceError": "Por favor selecione a aba atual.",
         "title": "Gravando",
         "unavailable": "Oops! O {{serviceName}} está indisponível. Estamos trabalhando para resolver o problema. Por favor, tente mais tarde.",
-        "unavailableTitle": "Gravação indisponível",
-        "uploadToCloud": "Enviar para a nuvem"
+        "unavailableTitle": "Gravação indisponível"
     },
     "screenshareDisplayName": "Tela: {{name}}",
     "sectionList": {
@@ -1216,7 +1208,7 @@
             "muteGUMPending": "Conectando seu microfone",
             "noiseSuppression": "Supressão de ruído",
             "openChat": "Abrir chat",
-            "participants": "Participantes",
+            "participants": "Abrir painel de participantes. {{participantsCount}} participantes",
             "pip": "Alternar modo Picture-in-Picture",
             "privateMessage": "Enviar mensagem privada",
             "profile": "Editar seu perfil",
@@ -1332,7 +1324,7 @@
         "silence": "Silêncio",
         "speakerStats": "Estatísticas do Apresentador",
         "startScreenSharing": "Iniciar compart. de tela",
-        "startSubtitles": "Iniciar legendas",
+        "startSubtitles": "Legendas • {{language}}",
         "stopAudioSharing": "Parar compart. de áudio",
         "stopScreenSharing": "Parar compart. de tela",
         "stopSharedVideo": "Parar vídeo",
@@ -1349,12 +1341,8 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Iniciar/parar legendas",
-        "error": "Transcrição falhou. Tente novamente.",
         "expandedLabel": "Transcrição ativada",
-        "failedToStart": "Transcrição falhou ao iniciar",
-        "labelToolTip": "A reunião esta sendo transcrita",
         "off": "Transcrição parada",
-        "pending": "Preparando a transcrição da reunião…",
         "sourceLanguageDesc": "No momento o idioma da reunião está definido para <b>{{sourceLanguage}}</b>. <br/> Você pode alterar-lo ",
         "sourceLanguageHere": "aqui",
         "start": "Exibir legendas",
@@ -1455,7 +1443,6 @@
         "chatIndicator": "(visitante)",
         "labelTooltip": "Número de visitantes: {{count}}",
         "notification": {
-            "description": "Para participar levante a mão",
             "title": "Você é um visitante na reunião"
         }
     },

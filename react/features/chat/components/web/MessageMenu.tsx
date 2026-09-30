@@ -6,22 +6,28 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { IconDotsHorizontal } from '../../../base/icons/svg';
-import { getParticipantById } from '../../../base/participants/functions';
+import { getParticipantById, isLocalParticipantModerator } from '../../../base/participants/functions';
 import Popover from '../../../base/popover/components/Popover.web';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import { copyText } from '../../../base/util/copyText.web';
+import { sendMessageModeration, sendMessageRetraction } from '../../actions.any';
 import { handleLobbyChatInitialized, openChat } from '../../actions.web';
+import { MESSAGE_TYPE_LOCAL } from '../../constants';
 import logger from '../../logger';
+import { IMessage } from '../../types';
 
 export interface IProps {
+    canEdit?: boolean;
     className?: string;
     displayName?: string;
     enablePrivateChat: boolean;
     isFileMessage?: boolean;
     isFromVisitor?: boolean;
     isLobbyMessage: boolean;
-    message: string;
+    isModerated?: boolean;
+    message: IMessage;
+    onEditMessage?: () => void;
     participantId: string;
 }
 
@@ -62,7 +68,7 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, enablePrivateChat, displayName, isFileMessage }: IProps) => {
+const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModerated, enablePrivateChat, displayName, isFileMessage, onEditMessage }: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -72,10 +78,17 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
         left: 0 });
     const buttonRef = useRef<HTMLDivElement>(null);
 
-    const participant = useSelector((state: IReduxState) => getParticipantById(state, participantId));
+    const isModerator = useSelector(isLocalParticipantModerator);
+    const messageModerationSupported = useSelector(
+        (state: IReduxState) => state['features/chat'].messageModerationSupported);
+    const participant = useSelector((state: IReduxState) => getParticipantById(state, message.participantId));
+
+    // Editing and deleting are applied by the server, so only offer them where the
+    // room says it handles them.
+    const canEditMessage = canEdit && messageModerationSupported;
 
     // If no menu items will be shown, don't render the menu button.
-    if (!enablePrivateChat && isFileMessage) {
+    if (!enablePrivateChat && isFileMessage && !canEditMessage) {
         return null;
     }
 
@@ -89,14 +102,14 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
 
     const handlePrivateClick = useCallback(() => {
         if (isLobbyMessage) {
-            dispatch(handleLobbyChatInitialized(participantId));
+            dispatch(handleLobbyChatInitialized(message.participantId));
         } else {
             // For visitor messages, participant will be undefined but we can still open chat
             // using the participantId which contains the visitor's original JID
             if (isFromVisitor) {
                 // Handle visitor participant that doesn't exist in main participant list
                 const visitorParticipant = {
-                    id: participantId,
+                    id: message.participantId,
                     name: displayName,
                     isVisitor: true
                 };
@@ -107,10 +120,10 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
             }
         }
         handleClose();
-    }, [ dispatch, isLobbyMessage, participant, participantId, displayName ]);
+    }, [ dispatch, isLobbyMessage, participant, message.participantId, displayName ]);
 
     const handleCopyClick = useCallback(() => {
-        copyText(message)
+        copyText(message.message)
             .then(success => {
                 if (success) {
                     if (buttonRef.current) {
@@ -133,24 +146,69 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
                 logger.error('Error copying text', error);
             });
         handleClose();
-    }, [ message ]);
+    }, [ message.message ]);
+
+    const handleDeleteClick = useCallback(() => {
+        dispatch(sendMessageRetraction(message));
+
+        handleClose();
+    }, [ message, handleClose ]);
+
+    const handleModerateClick = useCallback(() => {
+        dispatch(sendMessageModeration(message));
+        handleClose();
+    }, [ dispatch, message, handleClose ]);
+
+    const handleEditClick = useCallback(() => {
+        onEditMessage?.();
+        handleClose();
+    }, [ onEditMessage, handleClose ]);
 
     const popoverContent = (
         <div className = { classes.menuPanel }>
+            {canEditMessage && (
+                <div
+                    className = { classes.menuItem }
+                    onClick = { handleEditClick }>
+                    {t('chat.edit')}
+                </div>
+            )}
             {enablePrivateChat && (
                 <div
                     className = { classes.menuItem }
                     onClick = { handlePrivateClick }>
-                    {t('Private Message')}
+                    {t('chat.privateMessage')}
                 </div>
             )}
             {!isFileMessage && (
                 <div
                     className = { classes.menuItem }
                     onClick = { handleCopyClick }>
-                    {t('Copy')}
+                    {t('chat.copy')}
                 </div>
             )}
+            {isModerator
+                && !isModerated
+                && messageModerationSupported
+                && message.messageType !== MESSAGE_TYPE_LOCAL
+                && (
+                    <div
+                        className = { classes.menuItem }
+                        onClick = { handleModerateClick }>
+                        {t('chat.delete')}
+                    </div>
+                )}
+            {message.messageType === MESSAGE_TYPE_LOCAL
+                && !message.isDeleted
+                && !message.isModerated
+                && messageModerationSupported
+                && (
+                    <div
+                        className = { classes.menuItem }
+                        onClick = { handleDeleteClick }>
+                        {t('chat.deleteMessage')}
+                    </div>
+                )}
         </div>
     );
 
@@ -177,7 +235,7 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
                     className = { cx(classes.copiedMessage, { [classes.showCopiedMessage]: showCopiedMessage }) }
                     style = {{ top: `${popupPosition.top}px`,
                         left: `${popupPosition.left}px` }}>
-                    {t('Message Copied')}
+                    {t('chat.messageCopied')}
                 </div>,
                 document.body
             )}

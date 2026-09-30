@@ -19,6 +19,7 @@ const ModeratorSection = () => {
     const {
         audioModerationEnabled,
         chatWithPermissionsEnabled,
+        privateChatWithPermissionsEnabled,
         followMeActive,
         followMeEnabled,
         followMeRecorderActive,
@@ -64,6 +65,15 @@ const ModeratorSection = () => {
         });
     }, [ dispatch, conference ]);
 
+    const onPrivateChatWithPermissionsToggled = useCallback((enabled?: boolean) => {
+        const currentPermissions = conference?.getMetadataHandler().getMetadata().permissions || {};
+
+        conference?.getMetadataHandler().setMetadata('permissions', {
+            ...currentPermissions,
+            privateChatRestricted: enabled
+        });
+    }, [ dispatch, conference ]);
+
     const followMeRecorderChecked = followMeRecorderEnabled && !followMeRecorderActive;
 
     const moderationSettings = useMemo(() => {
@@ -103,10 +113,17 @@ const ModeratorSection = () => {
                 state: chatWithPermissionsEnabled,
                 onChange: onChatWithPermissionsToggled
             },
+            {
+                label: 'settings.privateChatWithPermissions',
+                state: privateChatWithPermissionsEnabled,
+                onChange: onPrivateChatWithPermissionsToggled
+            },
         ];
 
         if (disableReactionsModeration) {
-            moderation.pop();
+            // Remove the reactions entry by name. A pop() here took out whichever
+            // entry came last, which is not the reactions one.
+            return moderation.filter(({ label }) => label !== 'settings.startReactionsMuted');
         }
 
         return moderation;
@@ -120,6 +137,10 @@ const ModeratorSection = () => {
         onFollowMeToggled,
         onFollowMeRecorderToggled,
         onStartReactionsMutedToggled,
+        onChatWithPermissionsToggled,
+        onPrivateChatWithPermissionsToggled,
+        chatWithPermissionsEnabled,
+        privateChatWithPermissionsEnabled,
         startReactionsMuted ]);
 
     return (

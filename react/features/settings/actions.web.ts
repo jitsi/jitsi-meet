@@ -19,7 +19,11 @@ import { IAudioSettings } from '../base/settings/reducer';
 import { getLocalVideoTrack } from '../base/tracks/functions.web';
 import { appendURLHashParam } from '../base/util/uri';
 import { setFollowMe, setFollowMeRecorder } from '../follow-me/actions';
-import { disableKeyboardShortcuts, enableKeyboardShortcuts } from '../keyboard-shortcuts/actions';
+import {
+    disableKeyboardShortcuts,
+    enableKeyboardShortcuts,
+    setCtrlAltReactionShortcutsEnabled
+} from '../keyboard-shortcuts/actions';
 import { toggleBackgroundEffect } from '../virtual-background/actions';
 import virtualBackgroundLogger from '../virtual-background/logger';
 
@@ -199,14 +203,16 @@ export function submitModeratorTab(newState: any) {
                 newState.startAudioMuted, newState.startVideoMuted));
         }
 
-        if (newState.chatWithPermissionsEnabled !== currentState.chatWithPermissionsEnabled) {
+        if (newState.chatWithPermissionsEnabled !== currentState.chatWithPermissionsEnabled
+            || newState.privateChatWithPermissionsEnabled !== currentState.privateChatWithPermissionsEnabled) {
             const { conference } = getState()['features/base/conference'];
 
             const currentPermissions = conference?.getMetadataHandler().getMetadata().permissions || {};
 
             conference?.getMetadataHandler().setMetadata('permissions', {
                 ...currentPermissions,
-                groupChatRestricted: newState.chatWithPermissionsEnabled
+                groupChatRestricted: newState.chatWithPermissionsEnabled,
+                privateChatRestricted: newState.privateChatWithPermissionsEnabled
             });
         }
 
@@ -328,6 +334,11 @@ export function submitShortcutsTab(newState: any) {
             } else {
                 dispatch(disableKeyboardShortcuts());
             }
+        }
+
+        if (currentState.showCtrlAltReactionShortcuts
+                && newState.ctrlAltReactionShortcutsEnabled !== currentState.ctrlAltReactionShortcutsEnabled) {
+            dispatch(setCtrlAltReactionShortcutsEnabled(newState.ctrlAltReactionShortcutsEnabled));
         }
     };
 }

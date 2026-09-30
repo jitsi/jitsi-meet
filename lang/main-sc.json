@@ -108,7 +108,7 @@
     "chat": {
         "disabled": "S'imbiu de messàgios de tzarrada est disativadu.",
         "enter": "Intra a s'aposentu",
-        "error": "Faddina: su messàgiu tuo no est istadu imbiadu. Resone: {{faddina}}",
+        "error": "Faddina: su messàgiu tuo no est istadu imbiadu. Resone: {{error}}",
         "everyone": "",
         "fieldPlaceHolder": "Aa",
         "guestsChatIndicator": "",
@@ -277,7 +277,6 @@
         "Submit": "Imbia",
         "Understand": "Apo cumprèndidu. Mantene·mi a sa muda pro immoe",
         "UnderstandAndUnmute": "Apo cumprèndidu. Ativa·mi s'àudio",
-        "WaitForHostMsg": "Sa cunferèntzia no at cumintzadu. Si ses mere de custa cunferèntzia, autèntica·ti. Si nono, iseta chi arribet.",
         "WaitForHostNoAuthMsg": "Sa cunferèntzia no at ancora cumintzadu ca nissunu profilu de moderatzione est arribadu. Abeta.",
         "WaitingForHostButton": "Abeta sa moderatzione",
         "WaitingForHostTitle": "Isetende mere…",
@@ -314,9 +313,9 @@
         "cameraUnknownError": "Non si podet impreare sa càmera (resone disconnota).",
         "cameraUnsupportedResolutionError": "Sa càmera no est cumpatìbile cun sa risolutzione de vìdeu rechèdida.",
         "close": "Serra",
-        "conferenceDisconnectMsg": "Controlla sa cunfiguratzione de rete. Torrende a connètere in {seconds} segundos…",
+        "conferenceDisconnectMsg": "Podes controllare su collegamentu a sa rete. Torrende a si collegare intre {{seconds}} seg…",
         "conferenceDisconnectTitle": "Mutida disconnètida.",
-        "conferenceReloadMsg": "Semus chirchende de acontzare custu problema. Torrende a connètere in {seconds} segundos…",
+        "conferenceReloadMsg": "Semus proende a l'acontzare. Torrende a si collegare intre {{seconds}} seg…",
         "conferenceReloadTitle": "B'est istada una faddina.",
         "confirm": "Cunfirma",
         "confirmBack": "A coa",
@@ -437,7 +436,7 @@
         "remoteControlShareScreenWarning": "Si incarcas \"Permite\" as a cumpartzire s'ischermu tuo.",
         "remoteControlStopMessage": "Sessione de controllu remotu acabada.",
         "remoteControlTitle": "Controllu remotu de elaboradore",
-        "remoteUserControls": "Controllu remotu de s'utente {{username}",
+        "remoteUserControls": "Controllos de s'utente remotu {{username}}",
         "removePassword": "Boga $t(lockRoomPassword)",
         "removeSharedVideoMsg": "Seguru chi boles bogare su vìdeu chi as cumpartzidu?",
         "removeSharedVideoTitle": "Boga vìdeu cumpartzidu",
@@ -736,8 +735,8 @@
         "nameField": "Inserta su nòmin tuo",
         "notificationLobbyAccessDenied": "{{originParticipantName}} at refudadu s'intrada de {{targetParticipantName}}",
         "notificationLobbyAccessGranted": "{{originParticipantName}} at permìtidu s'intrada de {{targetParticipantName}}",
-        "notificationLobbyDisabled": "{{originParticipantName} at disativadu s'aposentu de abetu",
-        "notificationLobbyEnabled": "{{originParticipantName} at ativadu s'aposentu de abetu",
+        "notificationLobbyDisabled": "Sa sala de isetu est istada disativada dae {{originParticipantName}}",
+        "notificationLobbyEnabled": "Sa sala de isetu est istada ativada dae {{originParticipantName}}",
         "notificationTitle": "Aposentu de abetu",
         "passwordJoinButton": "Aderi",
         "title": "Aposentu de abetu",
@@ -968,8 +967,7 @@
             "pollQuestion": "Dimanda de sondàgiu",
             "questionPlaceholder": "Faghe una pregonta",
             "removeOption": "Boga s'optzione",
-            "save": "Sarva",
-            "send": "Imbia"
+            "save": "Sarva"
         },
         "errors": {
             "notUniqueOption": "Sas optziones depent èssere ùnicas"
@@ -1128,19 +1126,16 @@
         "recordAudioAndVideo": "Registra s'àudio e su vìdeu",
         "recordTranscription": "Registra sa trascritzione",
         "saveLocalRecording": "Sarva s'archìviu de registratzione in locale (Beta)",
-        "serviceDescription": "Sa registratzione at a èssere sarvada dae su servìtziu de registratzione",
         "serviceDescriptionCloud": "Registratzione in sa nue",
         "serviceDescriptionCloudInfo": "Is riuniones registradas ant a èssere cantzelladas in automàticu a pustis de 24 oras de sa registratzione.",
         "serviceName": "Servìtziu de registratzione",
         "sessionAlreadyActive": "S'est giai registrende o trasmitende in direta sa sessione.",
-        "showAdvancedOptions": "Optziones avantzadas",
         "signIn": "Identìfica·ti",
         "signOut": "Essi",
         "surfaceError": "Seletziona s'ischeda atuale.",
         "title": "Registrende",
         "unavailable": "Ohia {{serviceName}} no est a disponimentu. Semus traballende pro acontzare su problema. Torra a proare a pustis.",
-        "unavailableTitle": "Sa registratzione no est a disponimentu",
-        "uploadToCloud": "Càrriga in sa nue"
+        "unavailableTitle": "Sa registratzione no est a disponimentu"
     },
     "screenshareDisplayName": "Ischermu de {{name}}",
     "sectionList": {
@@ -1260,7 +1255,7 @@
         "search": "Chirca",
         "searchDescription": "Cumintza a iscrìere pro filtrare partetzipantes",
         "searchHint": "Chirca partetzipantes",
-        "seconds": "{count} seg",
+        "seconds": "{{count}}s",
         "speakerStats": "Istatìsticas de partetzipante",
         "speakerTime": "Tempus de partetzipante",
         "surprised": "Ispantadu"

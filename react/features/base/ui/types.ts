@@ -137,6 +137,7 @@ export interface IPalette {
     preMeetingPreview: string;
     prejoinActionButtonDanger: string;
     prejoinActionButtonDisabled: string;
+    prejoinActionButtonOptionsHover: string;
     prejoinActionButtonPrimary: string;
     prejoinActionButtonPrimaryHover: string;
     prejoinActionButtonPrimaryText: string;

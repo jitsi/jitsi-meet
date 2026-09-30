@@ -161,7 +161,7 @@ export function getModeratorTabProps(stateful: IStateful) {
         startReactionsMuted
     } = state['features/base/conference'];
     const { followMeEnabled, followMeRecorderEnabled } = state['features/follow-me'];
-    const { groupChatWithPermissions } = state['features/chat'];
+    const { groupChatWithPermissions, privateChatWithPermissions } = state['features/chat'];
     const {
         audioTranslation,
         showChatPermissionsModeratorSetting,
@@ -182,6 +182,7 @@ export function getModeratorTabProps(stateful: IStateful) {
         showAudioTranslation: Boolean(audioTranslation?.enabled),
         videoModerationEnabled: isVideoModerationEnabled,
         chatWithPermissionsEnabled: Boolean(groupChatWithPermissions),
+        privateChatWithPermissionsEnabled: Boolean(privateChatWithPermissions),
         showModeratorSettings: Boolean(conference && showModeratorSettings),
         disableReactionsModeration: Boolean(disableReactionsModeration),
         followMeActive: Boolean(conference && followMeActive),

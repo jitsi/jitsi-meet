@@ -1,3 +1,18 @@
+-- USAGE / DEPLOYMENT
+--   This is a server-to-server endpoint. It is meant to be called only by
+--   trusted backend services over a controlled network path (e.g. Prosody's
+--   HTTP port reachable only from internal hosts). It is NOT safe to make it
+--   publicly accessible: do not proxy it from the public web server (nginx)
+--   and do not expose Prosody's HTTP ports (5280/5281) to the internet.
+--
+--   The Bearer token is a system token signed with a dedicated key pair whose
+--   public keys are served from prosody_password_public_key_repo_url. That
+--   option must be set; the private key must only be available to the calling
+--   services. A valid system token authorizes the caller for every room on
+--   the deployment. It is intentionally not bound to a room: there is no
+--   room claim / room ownership check, the calling service is responsible
+--   for deciding which room it acts on.
+--
 -- HTTP module that exposes a PUT /kick-participant endpoint for removing a
 -- specific participant from a MUC room via an authenticated API call.
 -- Intended for internal system use (e.g. by a backend service), not for

@@ -23,7 +23,7 @@ const allure = require('allure-commandline');
 // we need it to be able to reuse jitsi-meet code in tests
 require.extensions['.web.ts'] = require.extensions['.ts'];
 
-const chromeArgs = [
+export const chromeArgs = [
     '--allow-insecure-localhost',
     '--use-fake-ui-for-media-stream',
     '--use-fake-device-for-media-stream',
@@ -39,7 +39,11 @@ const chromeArgs = [
     // Avoids - "You are checking for animations on an inactive tab, animations do not run for inactive tabs"
     // when executing waitForStable()
     '--disable-renderer-backgrounding',
-    '--use-file-for-fake-audio-capture=tests/resources/fakeAudioStream.wav'
+
+    // Absolute (__dirname-based, not CWD-relative): this is passed to Chrome, which resolves it
+    // against wherever the launching process's CWD happens to be - the repo root when running
+    // `npm test` from there, but tests/ itself when running via tests/package.json's own scripts.
+    `--use-file-for-fake-audio-capture=${path.join(__dirname, 'resources', 'fakeAudioStream.wav')}`
 ];
 
 if (process.env.RESOLVER_RULES) {
@@ -56,7 +60,7 @@ if (process.env.VIDEO_CAPTURE_FILE) {
     chromeArgs.push(`--use-file-for-fake-video-capture=${process.env.VIDEO_CAPTURE_FILE}`);
 }
 
-const chromePreferences = {
+export const chromePreferences = {
     'intl.accept_languages': 'en-US'
 };
 
@@ -201,9 +205,14 @@ function generateCapabilitiesFromSpecs(): { capabilities: Record<string, any>; e
 
 const { capabilities, excludedSpecs } = generateCapabilitiesFromSpecs();
 
-const TEST_RESULTS_DIR = 'test-results';
+export const TEST_RESULTS_DIR = 'test-results';
 
 const keepAlive: Array<any> = [];
+
+// Titles of the tests that failed in this worker. Recorded by afterTest and handed to the launcher
+// by the `after` hook, so onWorkerEnd can tell a clean run from a failed one even when the
+// reporters never got the chance to flush their results.
+const failedTestTitles: Array<string> = [];
 
 // Tracks browser-session lifecycle events written by each worker's
 // beforeSession/afterSession hooks. The launcher's onComplete reads it to
@@ -211,26 +220,98 @@ const keepAlive: Array<any> = [];
 const CONCURRENCY_LOG_PATH = path.join(TEST_RESULTS_DIR, 'concurrency.jsonl');
 
 /**
- * Detects the "tests completed but session teardown crashed" signature in a worker's wdio log.
- * Selenium Grid (especially with Firefox) sometimes takes longer than `connectionRetryTimeout`
- * to acknowledge session deletion; the runner exits non-zero even though the test ran fine.
+ * Path of the sentinel a worker writes once its whole spec file has finished running.
  *
- * Two variants of the same benign pattern are recognised, both gated on the suite having run to
- * completion (the `afterSuite` hook finished):
- *  1. An explicit DELETE-method WebDriverError timeout in the log tail.
- *  2. The worker was killed mid-teardown: the framework `after` hook finished and a session
- *     `deleteSession()`/`[DELETE] .../session/` was issued, then the log simply truncates with no
- *     error line ever written. This is what happens when the grid drops the worker during DELETE.
+ * Written by the framework `after` hook (which @wdio/mocha-framework runs after every test and
+ * hook, and before the runner deletes the sessions) and read by the launcher's `onWorkerEnd`: a
+ * worker that exits non-zero *with* this file present got through its whole spec file, so whatever
+ * killed it happened while tearing the session(s) down.
  *
- * Both require `afterSuite` to have finished, so every test body and hook executed; the only thing
- * left was tearing the session(s) down. A genuine test failure that managed to write results is
- * already handled earlier by the `xmlHasNamedTests` early-return in `onWorkerEnd`, so it never
- * reaches here.
+ * This has to be a file rather than something parsed out of the worker log. The worker's debug
+ * output goes to stdout, which the launcher forwards to the console; WDIO_LOG_PATH only ever
+ * receives launcher-level lines, so the hook traces a log-scraping check would need are absent.
+ *
+ * @param cid - The worker (capability) id.
+ */
+function completionSentinelPath(cid: string): string {
+    return path.join(TEST_RESULTS_DIR, `completed-${cid}.json`);
+}
+
+/**
+ * How many WebDriver BiDi commands and results to keep per browser instance for the failure report.
+ */
+const BIDI_TRACE_SIZE = 2000;
+
+/**
+ * How much of each traced BiDi command or result to keep. Script calls carry the whole wrapped function
+ * source, which is noise here; the method, target context and result are what matter.
+ */
+const BIDI_TRACE_LINE_LENGTH = 800;
+
+/**
+ * The last BiDi commands and results of each browser instance, attached to the report when a test fails.
+ *
+ * The classic WebDriver commands are already in the report (wdio logs them into the junit output), but the
+ * BiDi ones are not: the webdriver logger writes them to the worker log, which only ever receives
+ * launcher-level lines (see completionSentinelPath). Script calls and frame switches go over BiDi, and a
+ * failure like a frame switch landing on a browsing context that never answers cannot be understood
+ * without seeing which context ids were requested and what the browser reported.
+ */
+const bidiTraces = new Map<string, string[]>();
+
+/**
+ * Starts recording the BiDi traffic of a browser instance into its ring buffer.
+ *
+ * @param instance - The multiremote instance name.
+ * @param browser - The browser instance.
+ */
+function traceBidi(instance: string, browser: WebdriverIO.Browser) {
+    const trace: string[] = [];
+    const record = (direction: string, payload: unknown) => {
+        trace.push(`${new Date().toISOString()} ${direction} ${
+            JSON.stringify(payload).slice(0, BIDI_TRACE_LINE_LENGTH)}`);
+
+        if (trace.length > BIDI_TRACE_SIZE) {
+            trace.splice(0, trace.length - BIDI_TRACE_SIZE);
+        }
+    };
+
+    bidiTraces.set(instance, trace);
+
+    browser.on('bidiCommand', (command: unknown) => record('>>', command));
+    browser.on('bidiResult', (result: unknown) => record('<<', result));
+}
+
+/**
+ * Reads a worker's completion sentinel, if it wrote one.
+ *
+ * @param cid - The worker (capability) id.
+ * @returns The failed test titles and mocha failure count the worker recorded, or undefined when
+ * it never reached its `after` hook.
+ */
+function readWorkerCompletion(cid: string): { failed: Array<string>; failures: number; } | undefined {
+    try {
+        const parsed = JSON.parse(fs.readFileSync(completionSentinelPath(cid), 'utf8'));
+
+        return {
+            failed: Array.isArray(parsed.failed) ? parsed.failed : [],
+            failures: typeof parsed.failures === 'number' ? parsed.failures : 0
+        };
+    } catch {
+        // No sentinel, or it is unreadable — the worker did not finish its spec file.
+        return undefined;
+    }
+}
+
+/**
+ * Extracts the last error line from a worker's wdio log, so a synthesised report can say what
+ * actually went wrong instead of only that the worker exited non-zero.
  *
  * @param specFile - The worker's first spec file (path or URL); used to locate its wdio log.
  * @param cid - The worker (capability) id.
+ * @returns The error line, trimmed and truncated, or undefined if the log has none.
  */
-function isPostTestSessionDeleteTimeout(specFile: string | undefined, cid: string): boolean {
+function readWorkerError(specFile: string | undefined, cid: string): string | undefined {
     // @wdio/local-runner writes the worker log to `${specBaseName}-${cid}.log`, where specBaseName
     // strips only the final extension (so `displayName.spec.ts` -> `displayName.spec`), falling back
     // to `wdio-${cid}.log` when no spec is associated. Mirror that exactly so the log is found.
@@ -246,7 +327,7 @@ function isPostTestSessionDeleteTimeout(specFile: string | undefined, cid: strin
     const logPath = candidates.find(p => fs.existsSync(p));
 
     if (!logPath) {
-        return false;
+        return undefined;
     }
 
     try {
@@ -259,21 +340,14 @@ function isPostTestSessionDeleteTimeout(specFile: string | undefined, cid: strin
         fs.readSync(fd, buf, 0, tailSize, Math.max(0, stats.size - tailSize));
         fs.closeSync(fd);
 
-        const tail = buf.toString('utf8');
-        const afterSuiteFinished = tail.includes('Finished to run "afterSuite" hook');
-
-        // Variant 1: the grid was slow to ack the DELETE and the runner logged an explicit timeout.
-        const deleteTimeout = /WebDriverError:[^\n]*timeout[^\n]*method "DELETE"/i.test(tail);
-
-        // Variant 2: the worker was killed during teardown. The framework `after` hook finished and
-        // a session DELETE was issued, but the log truncates before any error is written.
-        const afterHookFinished = tail.includes('Finished to run "after" hook');
-        const deleteIssued = tail.includes('COMMAND deleteSession()')
-            || /\[DELETE\][^\n]*\/session\//.test(tail);
-
-        return afterSuiteFinished && (deleteTimeout || (afterHookFinished && deleteIssued));
+        return buf.toString('utf8')
+            .split('\n')
+            .reverse()
+            .find(line => line.includes('ERROR'))
+            ?.trim()
+            .slice(0, 500);
     } catch {
-        return false;
+        return undefined;
     }
 }
 
@@ -361,6 +435,16 @@ export const config: WebdriverIO.MultiremoteConfig = {
         } catch {
             // best effort — if we can't reset, onComplete will still parse what it sees
         }
+
+        // Drop completion sentinels left behind by an earlier run in the same workspace; a stale
+        // one would make onWorkerEnd read a genuine crash as a teardown-only crash.
+        try {
+            fs.readdirSync(TEST_RESULTS_DIR)
+                .filter(name => (/^completed-.*\.json$/).test(name))
+                .forEach(name => fs.unlinkSync(path.join(TEST_RESULTS_DIR, name)));
+        } catch {
+            // best effort — the directory may not exist yet
+        }
     },
 
     /**
@@ -381,12 +465,25 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }
 
         const testFilePath = files[0].replace(/^file:\/\//, '');
-        const testName = path.relative('tests/specs', testFilePath)
+        // __dirname-based (not CWD-relative) for the same reason as the chromeArgs entry above.
+        const testName = path.relative(path.join(__dirname, 'specs'), testFilePath)
             .replace(/.spec.ts$/, '')
             .replace(/\//g, '-');
         const testProperties = await getTestProperties(testFilePath);
 
         console.log(`Running test: ${testName} via worker: ${cid} browser instances:${multiRemoteBrowser.instances.length}`);
+
+        // Log the browsers in use, the console logs of the participants are attached to the report only when a test
+        // fails, so this is the only place where a passing run records what it was executed against.
+        console.log(`Using browsers: ${multiRemoteBrowser.instances.map((instance: string) => {
+            const { browserName, browserVersion } = multiRemoteBrowser.getInstance(instance).capabilities;
+
+            return `${instance}:${browserName}/${browserVersion}`;
+        }).join(' ')}`);
+
+        multiRemoteBrowser.instances.forEach((instance: string) => {
+            traceBidi(instance, multiRemoteBrowser.getInstance(instance));
+        });
 
         const globalAny: any = global;
 
@@ -416,7 +513,10 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 return;
             }
 
-            const rpath = await bInstance.uploadFile('tests/resources/iframeAPITest.html');
+            // __dirname-based (not CWD-relative) for the same reason as the chromeArgs entry above -
+            // this crashed the worker outright (ENOENT) once tests started running from tests/
+            // itself instead of the repo root.
+            const rpath = await bInstance.uploadFile(path.join(__dirname, 'resources', 'iframeAPITest.html'));
 
             // @ts-ignore
             bInstance.iframePageBase = `file://${path.dirname(rpath)}`;
@@ -450,14 +550,43 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }
     },
 
-    after() {
+    /**
+     * Gets executed after all tests in the spec file are done, before the sessions are deleted.
+     *
+     * @param {number} result - Mocha's number of failing tests for this spec file.
+     * @returns {void}
+     */
+    after(result) {
         const { ctx }: any = global;
 
         ctx?.webhooksProxy?.disconnect();
         keepAlive.forEach(clearInterval);
+
+        // Tell the launcher this worker got through every test and hook. If it still exits
+        // non-zero, the failure was in session teardown, which onWorkerEnd reports separately.
+        const cid = process.env.WDIO_WORKER_ID;
+
+        if (cid) {
+            try {
+                fs.writeFileSync(completionSentinelPath(cid), JSON.stringify({
+                    failed: failedTestTitles,
+                    failures: typeof result === 'number' ? result : 1
+                }));
+            } catch {
+                // best effort — without it, a teardown crash is reported as a runner crash
+            }
+        }
     },
 
     async beforeSession(c, capabilities_, spec, cid) {
+        // Clear any completion sentinel left by an earlier attempt at this spec — worker ids can
+        // be reused when a spec file is retried — so onWorkerEnd never reads a stale completion.
+        try {
+            fs.rmSync(completionSentinelPath(cid), { force: true });
+        } catch {
+            // best effort — onPrepare already cleared sentinels from previous runs
+        }
+
         // Record this worker's browser sessions opening, so the launcher's
         // onComplete can compute peak concurrent sessions across the run.
         try {
@@ -590,13 +719,31 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         if (error) {
 
+            // Record the failure for the `after` hook, so the launcher still knows this spec had
+            // failing tests if the worker dies before the reporters flush.
+            failedTestTitles.push(test.title);
+
             // Skip the remaining tests in the same describe block (but not other describe blocks in the file).
             ctx.failedSuite = test.parent;
 
             // make sure all browsers are at the main app in iframe (if used), so we collect debug info
             await Promise.all(multiRemoteBrowser.instances.map(async (instance: string) => {
                 // @ts-ignore
-                await ctx[instance]?.switchToIFrame();
+                const participant = ctx[instance];
+
+                // This hook runs inside the mocha budget of the test that just failed. When the failure was
+                // switchToIFrame() giving up on a dead iframe context (3 attempts of 30s each), trying again here
+                // would spend the same again and let the mocha timeout replace the real error and the debug info
+                // with a bare "Timeout of 180000ms exceeded". Collect whatever the current context offers instead.
+                if (!participant || participant.isIframeUnreachable) {
+                    return;
+                }
+
+                try {
+                    await participant.switchToIFrame();
+                } catch (e) {
+                    console.error(`Failed to switch ${instance} into the iframe to collect debug info`, e);
+                }
             }));
 
             const allProcessing: Promise<any>[] = [];
@@ -639,6 +786,15 @@ export const config: WebdriverIO.MultiremoteConfig = {
                         content: pretty(source),
                         type: 'text/plain' });
                 }));
+
+                const bidiTrace = bidiTraces.get(instance);
+
+                if (bidiTrace?.length) {
+                    attachments.push({
+                        filename: `${instance}-bidi-trace`,
+                        content: bidiTrace.join('\n'),
+                        type: 'text/plain' });
+                }
             });
 
             await Promise.allSettled(allProcessing);
@@ -676,11 +832,11 @@ export const config: WebdriverIO.MultiremoteConfig = {
     /**
      * Gets executed after a worker process has exited.
      * Handles three crash scenarios:
-     * 1. Session teardown crash AFTER tests completed (common with Firefox on Selenium Grid):
-     *    afterSuite ran, then the session DELETE either timed out or the worker was killed
-     *    mid-teardown, so the runner exited non-zero. Tests actually passed. We skip the misleading
-     *    "crashed" synthesis; allure already has accurate per-test results, and we summarise the
-     *    teardown anomaly in a passing JUnit entry. See isPostTestSessionDeleteTimeout.
+     * 1. Session teardown crash AFTER the spec file completed (common with Firefox on Selenium
+     *    Grid): the worker wrote its completion sentinel, then the session DELETE either timed out
+     *    or the worker was killed mid-teardown, so the runner exited non-zero. The tests themselves
+     *    ran, so we report their outcome (from the sentinel) rather than a misleading "crashed",
+     *    and record the teardown anomaly in the entry. See completionSentinelPath.
      * 2. Session DELETE timeout BEFORE tests completed: JUnit reporter never flushes,
      *    leaving a zero-byte XML. Synthesise a failure entry.
      * 3. Session INIT timeout: JUnit reporter writes a non-empty XML but with empty name/classname,
@@ -717,31 +873,46 @@ export const config: WebdriverIO.MultiremoteConfig = {
             return;
         }
 
-        // Detect the "tests passed but session teardown crashed" pattern from the worker's wdio
-        // log. Pass the raw spec path so the log file name is derived the same way
-        // @wdio/local-runner derives it (only the final extension is stripped).
-        if (isPostTestSessionDeleteTimeout(workerSpecs?.[0], cid)) {
-            const teardownName = 'Session teardown crashed after tests completed';
-            const teardownMessage
-                = `Session teardown crashed after tests completed (worker exit ${exitCode}). `
-                + 'The suite ran to completion; this entry just records the teardown anomaly.';
-            const b = junitReportBuilder.newBuilder();
+        // A worker that wrote its completion sentinel ran every test and hook in the spec file, so
+        // it died in session teardown. Report what the tests actually did. Pass the raw spec path
+        // so the log file name is derived the same way @wdio/local-runner derives it (only the
+        // final extension is stripped).
+        const completion = readWorkerCompletion(cid);
 
-            b.testSuite().name(specName).testCase()
+        if (completion) {
+            const failureCount = Math.max(completion.failures, completion.failed.length);
+            const clean = failureCount === 0;
+            const workerError = readWorkerError(workerSpecs?.[0], cid);
+            const teardownDetail = `Session teardown crashed (worker exit ${exitCode}), so the `
+                + `reporters never wrote their results.${workerError ? ` Worker error: ${workerError}` : ''}`;
+            const teardownName = clean
+                ? 'Session teardown crashed after tests completed'
+                : 'Tests failed, then session teardown crashed';
+            const teardownMessage = clean
+                ? `The spec file ran to completion with no failures. ${teardownDetail}`
+                : `The spec file ran to completion with ${failureCount} failing test(s)`
+                    + `${completion.failed.length ? ` (${completion.failed.join(', ')})` : ''}. `
+                    + teardownDetail;
+            const b = junitReportBuilder.newBuilder();
+            const testCase = b.testSuite().name(specName).testCase()
                 .name(teardownName)
                 .className(specName)
                 .standardOutput(teardownMessage);
+
+            if (!clean) {
+                testCase.failure(teardownMessage);
+            }
             b.writeTo(xmlPath);
 
             // When the worker is killed mid-teardown the reporters never flush, so allure has no
             // per-test results for this spec and it would otherwise vanish from the report. Write a
-            // passing entry so the spec stays visible with the teardown anomaly recorded. If allure
-            // already captured the per-test results (e.g. a slow-DELETE timeout after a clean
-            // flush), this is just an extra informational passing entry alongside them.
+            // single entry so the spec stays visible, carrying the outcome the worker recorded. If
+            // allure already captured the per-test results (e.g. a slow-DELETE timeout after a
+            // clean flush), this is just an extra informational entry alongside them.
             const allureResult = {
                 uuid: randomUUID(),
                 name: teardownName,
-                status: 'passed',
+                status: clean ? 'passed' : 'failed',
                 statusDetails: { message: teardownMessage },
                 stage: 'finished',
                 steps: [],
@@ -757,8 +928,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 = path.join(TEST_RESULTS_DIR, 'allure-results', `${allureResult.uuid}-result.json`);
 
             fs.writeFileSync(allurePath, JSON.stringify(allureResult));
-            console.log(`[onWorkerEnd] Worker ${cid} (${specName}): session teardown crashed after `
-                + 'afterSuite — synthesising passing JUnit + allure entry; suite ran to completion.');
+            console.log(`[onWorkerEnd] Worker ${cid} (${specName}): ${teardownName} — synthesising `
+                + `${clean ? 'passing' : 'failing'} JUnit + allure entry. ${teardownMessage}`);
 
             return;
         }

@@ -11,7 +11,6 @@
         "defaultEmail": "Vaš privzeti e-naslov",
         "disabled": "Ne morete povabiti drugih.",
         "failedToAdd": "Ni bilo mogoče dodati udeležencev",
-        "footerText": "Klicanje navzven je onemogočeno.",
         "googleEmail": "Google e-naslov",
         "inviteMoreHeader": "Sami ste v sestanku",
         "inviteMoreMailSubject": "Pridruži se {{appName}} sestanku",
@@ -182,7 +181,6 @@
         "Remove": "Odstrani",
         "Share": "Deli",
         "Submit": "Pošlji",
-        "WaitForHostMsg": "Konferenca v sobi se še ni začela. Če ste gostitelj, se prosimo prijavite, sicer pa počakajte na gostitelja srečanja.",
         "WaitingForHostTitle": "Čakanje gostitelja…",
         "Yes": "Da",
         "accessibilityLabel": {
@@ -242,7 +240,6 @@
         "kickTitle": "Auč! Uporabnik {{participantDisplayName}} vas je odstranil iz srečanja",
         "liveStreaming": "Prenos v živo",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Ni mogoče med snemanjem",
-        "liveStreamingDisabledTooltip": "Prenos v živo je onemogočen.",
         "localUserControls": "Lokalne kontrole uporabnika",
         "lockMessage": "Ni bilo mogoče zakleniti konference.",
         "lockRoom": "Dodaj geslo za srečanje",
@@ -276,8 +273,6 @@
         "muteEveryonesVideoTitle": "Ustavi video vseh udeležencev?",
         "muteParticipantBody": "Udeležencem zvoka ne boste mogli vklopiti, si ga bodo pa lahko vklopili sami.",
         "muteParticipantButton": "Utišaj",
-        "muteParticipantDialog": "Ste prepričani, da želite utišati tega udeleženca? Udeležencu zvoka ne boste mogli vklopiti nazaj, si ga bo pa lahko vklopil sam.",
-        "muteParticipantTitle": "Utišam tega udeleženca?",
         "muteParticipantsVideoBody": "Kamere ne boste mogli več vklopiti, udeleženec pa jo lahko vklopi, kadar želi.",
         "muteParticipantsVideoButton": "Ustavi video",
         "muteParticipantsVideoDialog": "Ste prepričani, da želite izklopiti kamero udeleženca? Kamere ne boste mogli več vklopiti, udeleženec pa jo lahko vklopi, kadar želi.",
@@ -291,12 +286,9 @@
         "permissionCameraRequiredError": "Dovoljenje do kamere je potrebno za konference z videem. Prosimo, dovolite jo v nastavitvah",
         "permissionErrorTitle": "Potrebno je dovoljenje",
         "permissionMicRequiredError": "Dovoljenje do mikrofona je potrebo za konference z zvokom. Prosimo, dovolite ga v nastavitvah",
-        "popupError": "Vaš brskalnik blokira pojavna (pop-up) okna na tej strani. V nastavitvah omogočite pojavna okna in poskusite ponovno.",
-        "popupErrorTitle": "Pojavna okna so blokirana",
         "readMore": "več",
         "recording": "Snemanje",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Ni mogoče med prenosom v živo",
-        "recordingDisabledTooltip": "Zagon snemanja onemogočen.",
         "rejoinNow": "Ponovno se pridruži",
         "remoteControlAllowedMessage": "Uporabnik {{user}} je sprejel vašo zahtevo za oddaljen nadzor!",
         "remoteControlDeniedMessage": "Uporabnik {{user}} je zavrnil vašo zahtevo za oddaljen nadzor!",
@@ -380,9 +372,6 @@
         "star": "Zvezdica",
         "veryBad": "Zelo slabo",
         "veryGood": "Zelo dobro"
-    },
-    "helpView": {
-        "title": "Center za pomoč"
     },
     "incomingCall": {
         "answer": "Odgovori",
@@ -494,7 +483,6 @@
         "youtubeTerms": "Pogoji uporabe YouTube"
     },
     "lobby": {
-        "allow": "Dovoli",
         "backToKnockModeButton": "Prosi za dostop",
         "dialogTitle": "Način predsobe",
         "disableDialogContent": "Način predsobe je trenutno omogočen. Ta funkcija zagotavlja, da se neželeni udeleženci ne morejo pridružiti sestanku. Želite ta način izklopiti?",
@@ -522,7 +510,6 @@
         "notificationLobbyDisabled": "{{originParticipantName}} je onemogočil/a predsobo.",
         "notificationLobbyEnabled": "{{originParticipantName}} je omogočil/a predsobo",
         "notificationTitle": "Predsoba",
-        "passwordField": "Vnesite geslo sestanka",
         "passwordJoinButton": "Pridruži se",
         "title": "Predsoba",
         "toggleLabel": "Omogoči predsobo"
@@ -568,10 +555,9 @@
     "me": "jaz",
     "notify": {
         "OldElectronAPPTitle": "Varnostna ranljivost!",
-        "allowAction": "Dovoli",
         "allowedUnmute": "Lahko vklopite mikrofon, kamero ali začnete deljenje zaslona.",
         "connectedOneMember": "Uporabnik {{name}} se je pridružil srečanju",
-        "connectedThreePlusMembers": "Uporabnik {{name}} ter še ({{count}}) drugih se je pridružilo srečanju",
+        "connectedThreePlusMembers": "{{name}} in mnogi drugi so se pridružili sestanku",
         "connectedTwoMembers": "{{first}} in {{second}} sta se pridružila srečanju",
         "disconnected": "Prekinjena",
         "focus": "Fokus konference",
@@ -608,7 +594,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) je odstranil drug udeleženec srečanja",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) je bilo nastavljeno s strani drugega udeleženca srečanja",
         "raiseHandAction": "Dvigni roko",
-        "raisedHand": "{{name}} želi govoriti.",
+        "raisedHand": "Želi sodelovati.",
         "reactionSounds": "Izklopi zvoke",
         "screenShareNoAudio": " Deljenje zvoka ni bilo omogočeno ob deljenju zaslona",
         "screenShareNoAudioTitle": "Sistemskega zvoka ni bilo mogoče deliti.",
@@ -619,7 +605,7 @@
         "suboptimalExperienceTitle": "Opozorilo brskalnika",
         "unmute": "Vklopi nazaj",
         "videoMutedRemotelyDescription": "Kadarkoli si ga lahko vklopite nazaj.",
-        "videoMutedRemotelyTitle": "Vaš video je izklopil moderator {{moderator}}"
+        "videoMutedRemotelyTitle": "Vaš video je izklopil moderator {{participantDisplayName}}"
     },
     "participantsPane": {
         "actions": {
@@ -663,8 +649,7 @@
             "pollOption": "Možnost ankete {{index}}",
             "pollQuestion": "Vprašanje ankete",
             "questionPlaceholder": "Postavi vprašanje",
-            "removeOption": "Odstrani možnost",
-            "send": "Pošlji"
+            "removeOption": "Odstrani možnost"
         },
         "errors": {
             "notUniqueOption": "Možnosti morajo biti edinstvene"
@@ -777,32 +762,26 @@
         "failedToStart": "Snemanja ni bilo mogoče začeti",
         "fileSharingdescription": "Delite snemanje z udeleženci srečanja",
         "linkGenerated": "Ustvarili smo povezava do posnetka.",
-        "live": "V ŽIVO",
         "loggedIn": "Vpisan kot {{userName}}",
         "off": "Snemanje ustavljeno",
         "offBy": "{{name}} je ustavil snemanje",
         "on": "Snemanje",
         "onBy": "{{name}} je začel snemanje",
         "pending": "Priprava snemanja srečanja…",
-        "rec": "REC",
-        "serviceDescription": "Vaš posnetek bo shranila storitev snemanja",
         "serviceDescriptionCloud": "Snemanje v oblak",
         "serviceName": "Storitev snemanja",
         "signIn": "Prijava",
         "signOut": "Odjava",
         "title": "Snemanje",
-        "unavailable": "Ups! {{ServiceName}} trenutno ni na voljo. Delamo na tem, da težavo odpravimo. Prosimo, poskusite kasneje.",
-        "unavailableTitle": "Snemanje ni mogoče",
-        "uploadToCloud": "Naloži v oblak"
+        "unavailable": "Ups! {{serviceName}} trenutno ni na voljo. Delamo na tem, da težavo odpravimo. Prosimo, poskusite kasneje.",
+        "unavailableTitle": "Snemanje ni mogoče"
     },
     "sectionList": {
         "pullToRefresh": "Potegnite za osvežitev"
     },
     "security": {
         "about": "Sestanku lahko dodate $t(lockRoomPassword). Preden se lahko udeleženci pridružijo, bodo morali vpisati $t(lockRoomPassword).",
-        "aboutReadOnly": "Moderatorji lahko sestanku dodajo $t(lockRoomPassword). Preden se lahko udeleženci pridružijo, bodo morali vpisati $t(lockRoomPassword).",
-        "insecureRoomNameWarning": "Ime sobe ni varno. Neželeni udeleženci se lahko pridružijo konferenci.",
-        "securityOptions": "Nastavitve varnosti"
+        "aboutReadOnly": "Moderatorji lahko sestanku dodajo $t(lockRoomPassword). Preden se lahko udeleženci pridružijo, bodo morali vpisati $t(lockRoomPassword)."
     },
     "settings": {
         "calendar": {
@@ -834,7 +813,6 @@
         "selectAudioOutput": "Avdio izhod",
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
-        "sounds": "Zvoki",
         "speakers": "Speakers",
         "startAudioMuted": "Vsi začnejo z utišanim mikrofonom",
         "startVideoMuted": "Vsi začnejo z izključeno kamero",
@@ -922,9 +900,7 @@
             "mute": "Preklopi utišanje mikrofona",
             "muteEveryone": "Mute everyone",
             "muteEveryoneElse": "Izklopi zvok vsem ostalim",
-            "muteEveryoneElsesVideo": "Izklopi video vsem ostalim",
-            "muteEveryonesVideo": "Izklopi video vseh udeležencev",
-            "participants": "Udeleženci",
+            "participants": "Odpri podokno z udeleženci. Število udeležencev: {{participantsCount}}",
             "pip": "Preklopi način slika-v-sliki",
             "privateMessage": "Pošlji zasebno sporočilo",
             "profile": "Uredi svoj profil",
@@ -1018,7 +994,7 @@
         "silence": "Tišina",
         "speakerStats": "Statistike govorcev",
         "startScreenSharing": "Začni deliti zaslon",
-        "startSubtitles": "Začni prikaz podnapisov",
+        "startSubtitles": "Podnapisi • {{language}}",
         "stopAudioSharing": "Izklopi deljenje zvoka",
         "stopScreenSharing": "Prekini deljenje zaslona",
         "stopSharedVideo": "Ustavi video",
@@ -1032,12 +1008,8 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Vklopi / Izklopi podnapise",
-        "error": "Prepisovanje ni uspelo. Prosim poskusite ponovno.",
         "expandedLabel": "Prepisovanje je vključeno",
-        "failedToStart": "Prepisovanja ni bilo mogoče začeti",
-        "labelToolTip": "Sestanek se prepisuje",
         "off": "Prepisovanje zaustavljeno",
-        "pending": "Priprava na prepis sestanka…",
         "start": "Začni prikazovati podnapise",
         "stop": "Prenehaj prikazovati podnapise",
         "tr": "TR"

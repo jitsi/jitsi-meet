@@ -256,6 +256,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     ...newProps,
                     audioTranslationEnabled: tabState?.audioTranslationEnabled,
                     chatWithPermissionsEnabled: tabState?.chatWithPermissionsEnabled,
+                    privateChatWithPermissionsEnabled: tabState?.privateChatWithPermissionsEnabled,
                     followMeEnabled: tabState?.followMeEnabled,
                     followMeRecorderEnabled: tabState?.followMeRecorderEnabled,
                     startAudioMuted: tabState?.startAudioMuted,
@@ -306,6 +307,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
                 return {
                     ...newProps,
+                    ctrlAltReactionShortcutsEnabled: tabState?.ctrlAltReactionShortcutsEnabled,
                     keyboardShortcutsEnabled: tabState?.keyboardShortcutsEnabled
                 };
             },

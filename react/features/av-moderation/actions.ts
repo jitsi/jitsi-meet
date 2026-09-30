@@ -2,7 +2,7 @@ import { batch } from 'react-redux';
 
 import { IStore } from '../app/types';
 import { getConferenceState } from '../base/conference/functions';
-import { getParticipantById, isParticipantModerator } from '../base/participants/functions';
+import { getParticipantById } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
 
 import {
@@ -23,7 +23,7 @@ import {
     REQUEST_ENABLE_VIDEO_MODERATION
 } from './actionTypes';
 import { MEDIA_TYPE, type MediaType } from './constants';
-import { isEnabledFromState, isForceMuted } from './functions';
+import { canRejectParticipant, isEnabledFromState, isForceMuted } from './functions';
 
 /**
  * Action used by moderator to approve audio for a participant.
@@ -106,13 +106,9 @@ export const approveParticipant = (id: string) => (dispatch: IStore['dispatch'])
 export const rejectParticipantAudio = (id: string) => (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
     const state = getState();
     const { conference } = getConferenceState(state);
-    const audioModeration = isEnabledFromState(MEDIA_TYPE.AUDIO, state);
-
     const participant = getParticipantById(state, id);
-    const isAudioForceMuted = isForceMuted(participant, MEDIA_TYPE.AUDIO, state);
-    const isModerator = isParticipantModerator(participant);
 
-    if (audioModeration && !isAudioForceMuted && !isModerator) {
+    if (canRejectParticipant(participant, MEDIA_TYPE.AUDIO, state)) {
         conference?.avModerationReject(MEDIA_TYPE.AUDIO, id);
     }
 };
@@ -126,13 +122,9 @@ export const rejectParticipantAudio = (id: string) => (dispatch: IStore['dispatc
 export const rejectParticipantDesktop = (id: string) => (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
     const state = getState();
     const { conference } = getConferenceState(state);
-    const desktopModeration = isEnabledFromState(MEDIA_TYPE.DESKTOP, state);
-
     const participant = getParticipantById(state, id);
-    const isDesktopForceMuted = isForceMuted(participant, MEDIA_TYPE.DESKTOP, state);
-    const isModerator = isParticipantModerator(participant);
 
-    if (desktopModeration && !isDesktopForceMuted && !isModerator) {
+    if (canRejectParticipant(participant, MEDIA_TYPE.DESKTOP, state)) {
         conference?.avModerationReject(MEDIA_TYPE.DESKTOP, id);
     }
 };
@@ -146,13 +138,9 @@ export const rejectParticipantDesktop = (id: string) => (dispatch: IStore['dispa
 export const rejectParticipantVideo = (id: string) => (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
     const state = getState();
     const { conference } = getConferenceState(state);
-    const videoModeration = isEnabledFromState(MEDIA_TYPE.VIDEO, state);
-
     const participant = getParticipantById(state, id);
-    const isVideoForceMuted = isForceMuted(participant, MEDIA_TYPE.VIDEO, state);
-    const isModerator = isParticipantModerator(participant);
 
-    if (videoModeration && !isVideoForceMuted && !isModerator) {
+    if (canRejectParticipant(participant, MEDIA_TYPE.VIDEO, state)) {
         conference?.avModerationReject(MEDIA_TYPE.VIDEO, id);
     }
 };

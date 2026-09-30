@@ -77,6 +77,33 @@ export function muteRemote(participantId: string, mediaType: MediaType) {
 }
 
 /**
+ * Mutes the remote participant with the given ID, and removes it from the A/V moderation whitelist.
+ *
+ * The order of the two operations is important. Jicofo mutes a participant on the bridge only if the participant
+ * is not allowed to unmute when jicofo receives the mute request. Jicofo does not calculate the mute state again
+ * when the whitelist changes. If the mute request is sent first, the participant is still on the whitelist, thus
+ * jicofo only forwards the mute request to the participant. A participant that does not obey the mute request
+ * continues to send media until the moderator mutes it a second time.
+ *
+ * @param {string} participantId - ID of the participant to mute.
+ * @param {MEDIA_TYPE} mediaType - The type of the media channel to mute.
+ * @returns {Function}
+ */
+export function muteRemoteAndReject(participantId: string, mediaType: MediaType) {
+    return (dispatch: IStore['dispatch']) => {
+        if (mediaType === MEDIA_TYPE.AUDIO) {
+            dispatch(rejectParticipantAudio(participantId));
+        } else if (mediaType === MEDIA_TYPE.VIDEO) {
+            dispatch(rejectParticipantVideo(participantId));
+        } else if (mediaType === MEDIA_TYPE.SCREENSHARE) {
+            dispatch(rejectParticipantDesktop(participantId));
+        }
+
+        dispatch(muteRemote(participantId, mediaType));
+    };
+}
+
+/**
  * Mutes all participants.
  *
  * @param {Array<string>} exclude - Array of participant IDs to not mute.
@@ -92,14 +119,7 @@ export function muteAllParticipants(exclude: Array<string>, mediaType: MediaType
                 return;
             }
 
-            dispatch(muteRemote(id, mediaType));
-            if (mediaType === MEDIA_TYPE.AUDIO) {
-                dispatch(rejectParticipantAudio(id));
-            } else if (mediaType === MEDIA_TYPE.VIDEO) {
-                dispatch(rejectParticipantVideo(id));
-            } else if (mediaType === MEDIA_TYPE.SCREENSHARE) {
-                dispatch(rejectParticipantDesktop(id));
-            }
+            dispatch(muteRemoteAndReject(id, mediaType));
         });
     };
 }

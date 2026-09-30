@@ -1202,19 +1202,16 @@
         "recordAudioAndVideo": "Kamera und Ton aufzeichnen",
         "recordTranscription": "Transkription aufzeichnen",
         "saveLocalRecording": "Aufzeichnung lokal abspeichern",
-        "serviceDescription": "Ihre Aufzeichnung wird vom Aufzeichnungsdienst gespeichert",
         "serviceDescriptionCloud": "Cloud-Aufzeichnung",
         "serviceDescriptionCloudInfo": "Aufzeichnungen werden 24 Stunden nach Aufzeichnungsende automatisch gelöscht.",
         "serviceName": "Aufnahmedienst",
         "sessionAlreadyActive": "Diese Konferenz wird bereits aufgezeichnet.",
-        "showAdvancedOptions": "Weitere Optionen",
         "signIn": "Anmelden",
         "signOut": "Abmelden",
         "surfaceError": "Bitte wählen Sie das aktuelle Tab aus.",
         "title": "Aufnahme",
         "unavailable": "Oh! Der {{serviceName}} ist aktuell nicht verfügbar. Wir arbeiten an der Behebung des Problems. Bitte versuchen Sie es später noch einmal.",
-        "unavailableTitle": "Aufnahme nicht verfügbar",
-        "uploadToCloud": "In die Cloud hochladen"
+        "unavailableTitle": "Aufnahme nicht verfügbar"
     },
     "screenshareDisplayName": "{{name}}s Bildschirmfreigabe",
     "sectionList": {

@@ -2,11 +2,10 @@ import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { IReduxState, IStore } from '../../app/types';
-import { rejectParticipantVideo } from '../../av-moderation/actions';
 import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../av-moderation/constants';
 import { isEnabledFromState } from '../../av-moderation/functions';
 import { MEDIA_TYPE } from '../../base/media/constants';
-import { muteRemote } from '../actions';
+import { muteRemoteAndReject } from '../actions';
 
 /**
  * The type of the React {@code Component} props of
@@ -59,8 +58,7 @@ export default class AbstractMuteRemoteParticipantsVideoDialog<P extends IProps 
     _onSubmit() {
         const { dispatch, participantID } = this.props;
 
-        dispatch(muteRemote(participantID, MEDIA_TYPE.VIDEO));
-        dispatch(rejectParticipantVideo(participantID));
+        dispatch(muteRemoteAndReject(participantID, MEDIA_TYPE.VIDEO));
 
         return true;
     }

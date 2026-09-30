@@ -11,7 +11,6 @@
         "defaultEmail": "Zure defektuzko eposta",
         "disabled": "Ezin duzu jendea gonbidatu.",
         "failedToAdd": "Parte-hartzaileak gehitzeak huts egin du",
-        "footerText": "Markatzea desgaituta dago.",
         "googleEmail": "Google Email",
         "inviteMoreHeader": "Bilerako partaide bakarra zara",
         "inviteMoreMailSubject": "Sartu {{appName}} bileran",
@@ -178,7 +177,6 @@
         "Remove": "Kendu",
         "Share": "Partekatu",
         "Submit": "Bidali",
-        "WaitForHostMsg": "Konferentzia oraindik ez da hasi. Ostalaria bazara, autentifikatu. Bestela, itxaron ostalaria iritsi arte.",
         "WaitingForHostTitle": "Antolatzailearen zain…",
         "Yes": "Bai",
         "accessibilityLabel": {
@@ -222,7 +220,7 @@
         "enterDisplayName": "Sartu zure izena hemen",
         "error": "Errorea",
         "gracefulShutdown": "Zerbitzua ez dago erabilgarri mantentze-lanak direla eta. Saiatu berriro beranduago.",
-        "grantModeratorDialog": "Ziur zaude partaide hau moderatzaile bihurtu nahi duzula?",
+        "grantModeratorDialog": "Ziur zaude {{participantName}}(r)i moderatzaile-eskubideak eman nahi dizkiozula?",
         "grantModeratorTitle": "Bihurtu moderatzaile",
         "incorrectPassword": "Erabiltzaile-izena edo pasahitza baliogabea",
         "incorrectRoomLockPassword": "Pasahitza baliogabea",
@@ -235,7 +233,6 @@
         "kickTitle": "Ai! {{participantDisplayName}} parte-hartzaileak bileratik bota zaitu",
         "liveStreaming": "Zuzeneko erreprodukzioa",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Ezin da egin grabazioa martxan dagoen artean",
-        "liveStreamingDisabledTooltip": "Hasi zuzeneko erreprodukzioa desgaituta.",
         "localUserControls": "Erabiltzaile lokalaren kontrolak",
         "lockMessage": "Konferentzia blokeatzeak huts egin du.",
         "lockRoom": "Gehitu bilerako $t(lockRoomPasswordUppercase)",
@@ -265,8 +262,6 @@
         "muteEveryonesVideoTitle": "Guztien kamera desaktibatu?",
         "muteParticipantBody": "Ezin izango dituzu zuk desmututu, baina beraien burua desmutututzeko aukera izango dute.",
         "muteParticipantButton": "Isilarazi",
-        "muteParticipantDialog": "Ziur parte-hartzaile hau mututu nahi duzula? Ezin izango duzu zuk desmututu, baina bereburua desmutututzeko aukera izango du.",
-        "muteParticipantTitle": "Isilarazi parte-hartzaile hau?",
         "muteParticipantsVideoBody": "Ezingo duzu berriz aktibatu baina berak edonoiz aktibatu egin ahal izango du.",
         "muteParticipantsVideoButton": "Itzali kamera",
         "muteParticipantsVideoTitle": "Parte-hartzaile honen kamera itzali?",
@@ -275,12 +270,9 @@
         "passwordNotSupported": "$t(lockRoomPassword) bilera ezartzea ez da onartzen.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) ezin da erabili",
         "passwordRequired": "$t(lockRoomPasswordUppercase) beharrezkoa da",
-        "popupError": "Zure nabigatzaileak gune honetako pop-up leihoak blokeatzen ditu. Aktibatu pop-upak arakatzailearen segurtasun-ezarpenetan eta saiatu berriro.",
-        "popupErrorTitle": "Laster-leihoa blokeatuta",
         "readMore": "more",
         "recording": "Grabatzen",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Ezin da egin zuzeneko emanaldia aktibo dagoen artean",
-        "recordingDisabledTooltip": "Hasi grabatzen desgaituta.",
         "rejoinNow": "Berriro batu",
         "remoteControlAllowedMessage": "{{user}} erabiltzaileak zure urruneko-kontrol eskaera onartu egin du!",
         "remoteControlDeniedMessage": "{{user}} erabiltzaileak ez du zure urruneko-kontrol eskaera onartu!",
@@ -349,9 +341,6 @@
         "star": "Star",
         "veryBad": "Oso Txarra",
         "veryGood": "Oso ona"
-    },
-    "helpView": {
-        "title": "Laguntza gunea"
     },
     "incomingCall": {
         "answer": "Erantzun",
@@ -458,7 +447,6 @@
         "youtubeTerms": "YouTuberen erabilpen baldintzak"
     },
     "lobby": {
-        "allow": "Baimendu",
         "backToKnockModeButton": "Ez du pasahitza erabili, baina sartzea eskatu du",
         "dialogTitle": "Itxaron-gela modua",
         "disableDialogContent": "Itxaron-gela modua aktibatuta dago. Horrela zuk nahi ez duzun erabiltzaileak sartzea eragotzi dezakezu. Desaktibatu egin nahi duzu?",
@@ -485,7 +473,6 @@
         "notificationLobbyDisabled": "{{originParticipantName}} parte-hartzaileak itxaron-gela desaktibatu egin du",
         "notificationLobbyEnabled": "{{originParticipantName}} parte-hartzaileak itxaron-gela aktibatu egin du",
         "notificationTitle": "Itxaron-gela",
-        "passwordField": "Idatzi bileraren pasahitza",
         "passwordJoinButton": "Sartu",
         "title": "Itxaron-gela",
         "toggleLabel": "Itxaron-gela aktibatu"
@@ -532,12 +519,11 @@
     "notify": {
         "OldElectronAPPTitle": "Zaharkitutako aplikazioa",
         "connectedOneMember": "{{name}} bilerara sartu da",
-        "connectedThreePlusMembers": "{{name}} eta beste {{count}} bilerara sartu dira",
+        "connectedThreePlusMembers": "{{name}} eta beste hainbat bilerara batu dira",
         "connectedTwoMembers": "{{first}} eta {{second}} bilerara sartu dira",
         "disconnected": "deskonektatuta",
         "focus": "Konferentzia fokuratu",
         "focusFail": "{{component}} ez dago eskuragarri - saiatu berriro {{ms}} segundo barru",
-        "grantedTo": "{{to}} parte-hartzaileari moderatzaile eskubideak eman zaizkio!",
         "groupTitle": "Jakinarazpenak",
         "invitedOneMember": "{{name}} gonbidatu da",
         "invitedThreePlusMembers": "{{name}} eta beste {{count}} gonbidatu dira",
@@ -557,7 +543,7 @@
         "oldElectronClientDescription3": "ORAIN!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) beste erabiltzaile batek kendu du",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) beste erabiltzaile batek ezarri du",
-        "raisedHand": "{{name}} erabiltzaileak hitz egin nahi du.",
+        "raisedHand": "Parte hartu nahiko luke.",
         "screenShareNoAudio": " Share audio box was not checked in the window selection screen.",
         "screenShareNoAudioTitle": "Share audio was not checked",
         "somebody": "Norbait",
@@ -683,15 +669,12 @@
         "expandedPending": "Grabaketa abian da…",
         "failedToStart": "Grabazioa hasteak huts egin du",
         "fileSharingdescription": "Partekatu grabazioa bileraren parte-hartzaileekin",
-        "live": "ZUZENEAN",
         "loggedIn": "{{userName}} gisa saioa hasita",
         "off": "Grabazioa gelditu da",
         "offBy": "{{name}} erabiltzaileak grabazioa gelditu du",
         "on": "Grabaketa",
         "onBy": "{{name}} erabiltzaileak grabazioa hasi du",
         "pending": "Bilera grabatzeko prestatzen…",
-        "rec": "GRB",
-        "serviceDescription": "Zure grabazioa grabazio-zerbitzuan gordeko da",
         "serviceDescriptionCloud": "Lainoko grabazioa",
         "serviceName": "Grabazio-zerbitzua",
         "signIn": "Sartu",
@@ -705,9 +688,7 @@
     },
     "security": {
         "about": "Zure bilerari $t(lockRoomPassword) gehitu diezaiokezu. Parte-hartzaileek $t(lockRoomPassword) idatzi beharko dute bilerara sartu aurretik.",
-        "aboutReadOnly": "Moderatzaileak $t(lockRoomPassword) gehitu diezaiokete bilerari. Parte-hartzaileek $t(lockRoomPassword) idatzi beharko dute bilerara sartu aurretik.",
-        "insecureRoomNameWarning": "Bileraren izena ez da segurua. Nahi ez duzun parte-hartzaileak agertu daitezke. Baloratu segurtasuna botoia erabiliz bilerari segurtasuna gehitzea.",
-        "securityOptions": "Segurtasun aukerak"
+        "aboutReadOnly": "Moderatzaileak $t(lockRoomPassword) gehitu diezaiokete bilerari. Parte-hartzaileek $t(lockRoomPassword) idatzi beharko dute bilerara sartu aurretik."
     },
     "settings": {
         "calendar": {
@@ -812,9 +793,7 @@
             "mute": "Isildu",
             "muteEveryone": "Partehartzaile guztiak isildu",
             "muteEveryoneElse": "Ixildu beste guztiak",
-            "muteEveryoneElsesVideo": "Itzali beste guztien kamera",
-            "muteEveryonesVideo": "Itzali guztien kamera",
-            "participants": "Parte-hartzaileak",
+            "participants": "Ireki parte-hartzaileen panela. {{participantsCount}} parte-hartzaile",
             "pip": "Txandakatu irudiaren irudian",
             "privateMessage": "Mezu pribatua bidali",
             "profile": "Editatu zure profila",
@@ -891,7 +870,7 @@
         "shortcuts": "Ikusi lasterbideak",
         "speakerStats": "Hizlariaren estatistikak",
         "startScreenSharing": "Hasi pantaila partekatzen",
-        "startSubtitles": "Azpitituluak hasi",
+        "startSubtitles": "Azpitituluak • {{language}}",
         "stopScreenSharing": "Gelditu pantaila partekatzea",
         "stopSharedVideo": "Bideoa gelditu",
         "stopSubtitles": "Azpitituluak gelditu",
@@ -903,12 +882,8 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Hasi / Gelditu Azpitituluak",
-        "error": "Transkripzioak huts egin du. Saiatu berriro.",
         "expandedLabel": "Transkripzioa aktibatuta",
-        "failedToStart": "Ezin da transkripzioa hasi",
-        "labelToolTip": "Bilera transkribatzen ari da",
         "off": "Transkripzioa gelditu da",
-        "pending": "Bileraren transkripzioa prestatzen…",
         "start": "Erakutsi azpitituluak",
         "stop": "Utzi azpitituluak erakusten",
         "tr": "TR"

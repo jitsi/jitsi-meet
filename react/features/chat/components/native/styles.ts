@@ -3,6 +3,11 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 const BUBBLE_RADIUS = 8;
 
+// Matches the chat input (native Input) so both fields line up.
+const SEARCH_BAR_BORDER_WIDTH = 2;
+const SEARCH_BAR_HEIGHT = BaseTheme.spacing[7];
+const SEARCH_BAR_INNER_HEIGHT = SEARCH_BAR_HEIGHT - (2 * SEARCH_BAR_BORDER_WIDTH);
+
 const recipientContainer = {
     alignItems: 'center',
     backgroundColor: BaseTheme.palette.support05,
@@ -79,6 +84,71 @@ export default {
             padding: BaseTheme.spacing[2]
         },
         underlayColor: 'transparent'
+    },
+
+    activeMatchMessageBubble: {
+        backgroundColor: BaseTheme.palette.warning02
+    },
+
+    chatMessageHighlight: {
+        backgroundColor: BaseTheme.palette.action02,
+        color: BaseTheme.palette.text01
+    },
+
+    chatMessageHighlightActive: {
+        backgroundColor: BaseTheme.palette.action01,
+        color: BaseTheme.palette.text01
+    },
+
+    searchBarContainer: {
+        alignItems: 'center',
+        backgroundColor: BaseTheme.palette.ui03,
+        borderColor: BaseTheme.palette.ui03,
+        borderRadius: BaseTheme.shape.borderRadius,
+        borderWidth: SEARCH_BAR_BORDER_WIDTH,
+        flexDirection: 'row',
+        height: SEARCH_BAR_HEIGHT,
+        marginBottom: BaseTheme.spacing[1],
+        marginHorizontal: BaseTheme.spacing[4],
+        marginTop: BaseTheme.spacing[2],
+        paddingLeft: BaseTheme.spacing[3],
+        paddingRight: BaseTheme.spacing[2]
+    },
+
+    searchBarContainerFocused: {
+        borderColor: BaseTheme.palette.focus01
+    },
+
+    searchBarCounter: {
+        ...BaseTheme.typography.labelRegular,
+        color: BaseTheme.palette.text03,
+        marginHorizontal: BaseTheme.spacing[1]
+    },
+
+    searchBarNavButton: {
+        alignItems: 'center',
+        alignSelf: 'stretch',
+        justifyContent: 'center',
+        padding: BaseTheme.spacing[1]
+    },
+
+    searchClearButton: {
+        alignItems: 'center',
+        height: SEARCH_BAR_INNER_HEIGHT,
+        justifyContent: 'center',
+        top: 0
+    },
+
+    searchInputContainer: {
+        flex: 1,
+        marginBottom: 0
+    },
+
+    searchInput: {
+        backgroundColor: 'transparent',
+        borderWidth: 0,
+        height: SEARCH_BAR_INNER_HEIGHT,
+        paddingHorizontal: 0
     },
 
     /**

@@ -1,5 +1,6 @@
 import { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
+import { config as testsConfig } from '../../helpers/TestsConfig';
 import { expectations } from '../../helpers/expectations';
 import { joinJaasMuc, generateJaasToken as t } from '../../helpers/jaas';
 
@@ -9,6 +10,25 @@ setTestProperties(__filename, {
 
 // Counter used to give each test its own room — see joinAsModerator().
 let roomCounter = 0;
+
+/**
+ * Builds a fresh, per-test room name out of ctx.roomName (see joinAsModerator()).
+ *
+ * ctx.roomName already has the environment's ROOM_NAME_SUFFIX (e.g. "_alpha-canary") appended as
+ * its trailing component (see generateRoomName() in helpers/utils.ts), and some environments rely
+ * on that suffix being the tail of the room name (e.g. to route/map the conference correctly).
+ * Simply appending "-${roomCounter}" to ctx.roomName would push the suffix out of that position,
+ * so the counter is inserted right before it instead.
+ */
+function uniqueRoomName(): string {
+    const suffix = testsConfig.roomName.suffix;
+
+    if (suffix && ctx.roomName.endsWith(`_${suffix}`)) {
+        return `${ctx.roomName.slice(0, -`_${suffix}`.length)}-${roomCounter}_${suffix}`;
+    }
+
+    return `${ctx.roomName}-${roomCounter}`;
+}
 
 /**
  * Joins a JaaS meeting as a moderator using the iFrame API wrapper.
@@ -25,7 +45,7 @@ async function joinAsModerator(): Promise<Participant> {
 
     const p = await joinJaasMuc(
         { iFrameApi: true, token: t({ moderator: true }) },
-        { roomName: `${ctx.roomName}-${roomCounter}` });
+        { roomName: uniqueRoomName() });
 
     // joinJaasMuc leaves the driver focused inside the Jitsi iframe, but the iFrame API
     // (window.jitsiAPI) lives on the wrapper page. Switch to the main frame so executeCommand()
@@ -33,6 +53,36 @@ async function joinAsModerator(): Promise<Participant> {
     await p.switchToMainFrame();
 
     return p;
+}
+
+/**
+ * Minimum wall-clock gap enforced between successive Jibri start/stop commands sent by this
+ * spec, in ms.
+ *
+ * Prosody's mod_filter_iq_jibri throttles jibri start/stop IQs per source IP
+ * (max_number_ip_attempts_per_minute, default 9/min), separately from the per-room throttle
+ * joinAsModerator()'s fresh room already dodges — a fresh room resets the room-scoped throttle
+ * only, not this one. This suite alone sends far more than 9 start/stop IQs across its tests, so
+ * without pacing it trips the per-IP throttle (observed as "policy-violation"/wait on the start
+ * or stop IQ, surfacing as a session that never actually starts or stops). 8s keeps this file's
+ * rate under the throttle's refill rate (60s / 9 ≈ 6.7s), with headroom for other jaas specs
+ * sharing the same CI egress IP.
+ */
+const MIN_JIBRI_COMMAND_GAP_MS = 8_000;
+let lastJibriCommandTime = 0;
+
+/**
+ * Waits out whatever is left of MIN_JIBRI_COMMAND_GAP_MS since the last call, then marks now as
+ * the new last call time. Await this immediately before every jibri start/stop command.
+ */
+async function paceJibriCommand(): Promise<void> {
+    const wait = MIN_JIBRI_COMMAND_GAP_MS - (Date.now() - lastJibriCommandTime);
+
+    if (wait > 0) {
+        await new Promise(resolve => setTimeout(resolve, wait));
+    }
+
+    lastJibriCommandTime = Date.now();
 }
 
 /**
@@ -49,6 +99,7 @@ async function joinAsModerator(): Promise<Participant> {
  */
 async function startFileRecording(p: Participant, options: { mode: string; transcription?: boolean; }) {
     for (let attempt = 1; attempt <= 3; attempt++) {
+        await paceJibriCommand();
         await p.getIframeAPI().executeCommand('startRecording', options);
         await p.switchToIFrame();
 
@@ -205,6 +256,7 @@ describe('Recording & transcription nudge notifications', () => {
             });
         } finally {
             await p.switchToMainFrame();
+            await paceJibriCommand();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
             await waitForRecordingStopExecuted(p);
         }
@@ -218,6 +270,7 @@ describe('Recording & transcription nudge notifications', () => {
         const p = await joinAsModerator();
 
         try {
+            await paceJibriCommand();
             await p.getIframeAPI().executeCommand('startRecording', { transcription: true });
             await p.switchToIFrame();
 
@@ -228,6 +281,7 @@ describe('Recording & transcription nudge notifications', () => {
             expect(await nudgeButton.isExisting()).toBe(true);
         } finally {
             await p.switchToMainFrame();
+            await paceJibriCommand();
             await p.getIframeAPI().executeCommand('stopRecording', 'file', true);
             await waitForRecordingStopExecuted(p, true);
         }
@@ -252,6 +306,7 @@ describe('Recording & transcription nudge notifications', () => {
             await p.switchToMainFrame();
 
             // Stop only transcription while recording keeps running.
+            await paceJibriCommand();
             await p.getIframeAPI().executeCommand('stopRecording', 'file', true);
 
             await p.switchToIFrame();
@@ -265,6 +320,7 @@ describe('Recording & transcription nudge notifications', () => {
             expect(await p.driver.$('[data-testid="recording.onWithTranscription"]').isExisting()).toBe(false);
         } finally {
             await p.switchToMainFrame();
+            await paceJibriCommand();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
             await waitForRecordingStopExecuted(p);
         }
@@ -274,7 +330,7 @@ describe('Recording & transcription nudge notifications', () => {
 // ─── Manage-mode (session active) dialog tests ───────────────────────────────
 
 describe('Recording & transcription dialog — manage mode', () => {
-    it('dialog opens with recording toggle ON when recording is running', async () => {
+    it('recording section shows Stop when recording is running', async () => {
         if (!expectations.jaas.recordingEnabled) {
             return;
         }
@@ -293,18 +349,23 @@ describe('Recording & transcription dialog — manage mode', () => {
 
             await dialog.waitForDisplay();
 
-            expect(await dialog.isRecordingToggleChecked()).toBe(true);
-            expect(await dialog.isTranscriptionToggleChecked()).toBe(false);
+            expect(await dialog.hasStopRecordingButton()).toBe(true);
+            expect(await dialog.hasStartTranscriptionButton()).toBe(true);
+
+            // Mixed state — the footer offers both bulk actions.
+            expect(await dialog.hasStopBothButton()).toBe(true);
+            expect(await dialog.hasStartBothButton()).toBe(true);
 
             await dialog.cancel();
         } finally {
             await p.switchToMainFrame();
+            await paceJibriCommand();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
             await waitForRecordingStopExecuted(p);
         }
     });
 
-    it('dialog opens with transcription toggle ON when transcription is running', async () => {
+    it('transcription section shows Stop when transcription is running', async () => {
         if (!expectations.jaas.transcriptionEnabled) {
             return;
         }
@@ -312,6 +373,7 @@ describe('Recording & transcription dialog — manage mode', () => {
         const p = await joinAsModerator();
 
         try {
+            await paceJibriCommand();
             await p.getIframeAPI().executeCommand('startRecording', { transcription: true });
             await p.switchToIFrame();
 
@@ -323,18 +385,23 @@ describe('Recording & transcription dialog — manage mode', () => {
 
             await dialog.waitForDisplay();
 
-            expect(await dialog.isTranscriptionToggleChecked()).toBe(true);
-            expect(await dialog.isRecordingToggleChecked()).toBe(false);
+            expect(await dialog.hasStopTranscriptionButton()).toBe(true);
+            expect(await dialog.hasStartRecordingButton()).toBe(true);
+
+            // Mixed state — the footer offers both bulk actions.
+            expect(await dialog.hasStopBothButton()).toBe(true);
+            expect(await dialog.hasStartBothButton()).toBe(true);
 
             await dialog.cancel();
         } finally {
             await p.switchToMainFrame();
+            await paceJibriCommand();
             await p.getIframeAPI().executeCommand('stopRecording', 'file', true);
             await waitForRecordingStopExecuted(p, true);
         }
     });
 
-    it('dialog opens with both toggles ON when both services are running', async () => {
+    it('both sections show Stop and footer shows only "Stop both" when both run', async () => {
         if (!expectations.jaas.recordingEnabled || !expectations.jaas.transcriptionEnabled) {
             return;
         }
@@ -357,15 +424,50 @@ describe('Recording & transcription dialog — manage mode', () => {
 
             await dialog.waitForDisplay();
 
-            expect(await dialog.isRecordingToggleChecked()).toBe(true);
-            expect(await dialog.isTranscriptionToggleChecked()).toBe(true);
-
-            // Nothing changed yet — OK must be disabled.
-            expect(await dialog.isOkButtonEnabled()).toBe(false);
+            expect(await dialog.hasStopRecordingButton()).toBe(true);
+            expect(await dialog.hasStopTranscriptionButton()).toBe(true);
+            expect(await dialog.hasStopBothButton()).toBe(true);
+            expect(await dialog.hasStartBothButton()).toBe(false);
 
             await dialog.cancel();
         } finally {
             await p.switchToMainFrame();
+            await paceJibriCommand();
+            await p.getIframeAPI().executeCommand('stopRecording', 'file');
+            await waitForRecordingStopExecuted(p);
+        }
+    });
+
+    it('"Recorder follows me" is locked while recording runs', async () => {
+        if (!expectations.jaas.recordingEnabled) {
+            return;
+        }
+
+        const p = await joinAsModerator();
+
+        try {
+            await startFileRecording(p, { mode: 'file' });
+            await p.switchToIFrame();
+
+            await waitForRecordingRunning(p);
+
+            await p.getToolbar().clickRecordingButton();
+
+            const dialog = p.getRecordingTranscriptionDialog();
+
+            await dialog.waitForDisplay();
+            await dialog.toggleRecordingOptions();
+
+            // The switch only shows for moderators with a cloud service selected.
+            if (await dialog.hasFollowMeRecorderSwitch()) {
+                // The recorder cannot pick up the change mid-session.
+                expect(await dialog.isFollowMeRecorderEnabled()).toBe(false);
+            }
+
+            await dialog.cancel();
+        } finally {
+            await p.switchToMainFrame();
+            await paceJibriCommand();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
             await waitForRecordingStopExecuted(p);
         }
@@ -388,20 +490,15 @@ describe('Recording & transcription dialog — manage mode', () => {
             await waitForRecordingRunning(p);
             await waitForTranscriptionRunning(p);
 
-            // Open dialog: both toggles on.
             await p.getToolbar().clickRecordingButton();
 
             const dialog = p.getRecordingTranscriptionDialog();
 
             await dialog.waitForDisplay();
 
-            // Turn transcription off, leave recording on.
-            await dialog.clickTranscriptionToggle();
-            expect(await dialog.isTranscriptionToggleChecked()).toBe(false);
-            expect(await dialog.isRecordingToggleChecked()).toBe(true);
-            expect(await dialog.isOkButtonEnabled()).toBe(true);
-
-            await dialog.confirm();
+            // Stop only transcription — the action applies immediately and closes the dialog.
+            await paceJibriCommand();
+            await dialog.stopTranscription();
 
             // Transcription should stop.
             await waitForTranscriptionStopped(p);
@@ -416,6 +513,7 @@ describe('Recording & transcription dialog — manage mode', () => {
             expect(recordingStillOn).toBe(true);
         } finally {
             await p.switchToMainFrame();
+            await paceJibriCommand();
             await p.getIframeAPI().executeCommand('stopRecording', 'file');
             await waitForRecordingStopExecuted(p);
         }
@@ -438,20 +536,15 @@ describe('Recording & transcription dialog — manage mode', () => {
             await waitForRecordingRunning(p);
             await waitForTranscriptionRunning(p);
 
-            // Open dialog: both toggles on.
             await p.getToolbar().clickRecordingButton();
 
             const dialog = p.getRecordingTranscriptionDialog();
 
             await dialog.waitForDisplay();
 
-            // Turn recording off, leave transcription on.
-            await dialog.clickRecordingToggle();
-            expect(await dialog.isRecordingToggleChecked()).toBe(false);
-            expect(await dialog.isTranscriptionToggleChecked()).toBe(true);
-            expect(await dialog.isOkButtonEnabled()).toBe(true);
-
-            await dialog.confirm();
+            // Stop only recording — the action applies immediately and closes the dialog.
+            await paceJibriCommand();
+            await dialog.stopRecording();
 
             // Recording should stop.
             await waitForRecordingStopped(p);
@@ -464,6 +557,42 @@ describe('Recording & transcription dialog — manage mode', () => {
             expect(transcriptionStillOn).toBe(true);
         } finally {
             await p.switchToMainFrame();
+            await paceJibriCommand();
+            await p.getIframeAPI().executeCommand('stopRecording', 'file', true);
+            await waitForRecordingStopExecuted(p, true);
+        }
+    });
+
+    it('"Stop both" stops recording and transcription together', async () => {
+        if (!expectations.jaas.recordingEnabled || !expectations.jaas.transcriptionEnabled) {
+            return;
+        }
+
+        const p = await joinAsModerator();
+
+        try {
+            await startFileRecording(p, {
+                mode: 'file',
+                transcription: true
+            });
+            await p.switchToIFrame();
+
+            await waitForRecordingRunning(p);
+            await waitForTranscriptionRunning(p);
+
+            await p.getToolbar().clickRecordingButton();
+
+            const dialog = p.getRecordingTranscriptionDialog();
+
+            await dialog.waitForDisplay();
+            await paceJibriCommand();
+            await dialog.stopBoth();
+
+            await waitForRecordingStopped(p);
+            await waitForTranscriptionStopped(p);
+        } finally {
+            await p.switchToMainFrame();
+            await paceJibriCommand();
             await p.getIframeAPI().executeCommand('stopRecording', 'file', true);
             await waitForRecordingStopExecuted(p, true);
         }

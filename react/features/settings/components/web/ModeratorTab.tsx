@@ -63,6 +63,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     hideChatWithPermissions: boolean;
 
     /**
+     * Whether the user has selected the private chat with permissions feature to be enabled.
+     */
+    privateChatWithPermissionsEnabled: boolean;
+
+    /**
      * Whether the audio-translation room toggle should be shown (i.e. the feature is deployed).
      */
     showAudioTranslation: boolean;
@@ -132,6 +137,7 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
         this._onFollowMeEnabledChanged = this._onFollowMeEnabledChanged.bind(this);
         this._onFollowMeRecorderEnabledChanged = this._onFollowMeRecorderEnabledChanged.bind(this);
         this._onChatWithPermissionsChanged = this._onChatWithPermissionsChanged.bind(this);
+        this._onPrivateChatWithPermissionsChanged = this._onPrivateChatWithPermissionsChanged.bind(this);
         this._onAudioTranslationEnabledChanged = this._onAudioTranslationEnabledChanged.bind(this);
     }
 
@@ -223,6 +229,17 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
     }
 
     /**
+     * Callback invoked to select if private chat with permissions should be activated.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onPrivateChatWithPermissionsChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
+        super._onChange({ privateChatWithPermissionsEnabled: checked });
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -239,6 +256,7 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
             followMeRecorderActive,
             followMeRecorderEnabled,
             hideChatWithPermissions,
+            privateChatWithPermissionsEnabled,
             showAudioTranslation,
             startAudioMuted,
             startVideoMuted,
@@ -297,6 +315,13 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
                         label = { t('settings.chatWithPermissions') }
                         name = 'chat-with-permissions'
                         onChange = { this._onChatWithPermissionsChanged } /> }
+                { !hideChatWithPermissions
+                    && <Checkbox
+                        checked = { privateChatWithPermissionsEnabled }
+                        className = { classes.checkbox }
+                        label = { t('settings.privateChatWithPermissions') }
+                        name = 'private-chat-with-permissions'
+                        onChange = { this._onPrivateChatWithPermissionsChanged } /> }
                 { showAudioTranslation
                     && <Checkbox
                         checked = { audioTranslationEnabled }

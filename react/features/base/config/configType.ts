@@ -224,7 +224,6 @@ export interface IConfig {
      */
     audioTranslation?: {
         duckedVolume?: number;
-        enableSendingChangeEvents?: boolean;
         enabled?: boolean;
     };
     /**
@@ -515,6 +514,7 @@ export interface IConfig {
      */
     hideLobbyButton?: boolean;
     hideLoginButton?: boolean;
+    hideMissingCapabilityWarnings?: boolean;
     hideParticipantsStats?: boolean;
     hideRecordingLabel?: boolean;
     hosts?: {
@@ -728,6 +728,7 @@ export interface IConfig {
     testing?: {
         assumeBandwidth?: boolean;
         debugAudioLevels?: boolean;
+        disableAV1DecodeForFF?: boolean;
         dumpTranscript?: boolean;
         failICE?: boolean;
         noAutoPlayVideo?: boolean;
@@ -742,6 +743,7 @@ export interface IConfig {
     };
     timeTimer?: {
         enabled?: boolean;
+        suppressForSeconds?: number;
     };
     tokenAuthInline?: boolean;
     tokenAuthUrl?: string;

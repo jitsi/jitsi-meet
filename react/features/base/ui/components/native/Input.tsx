@@ -56,6 +56,7 @@ interface IProps extends IInputProps {
 }
 
 interface ICustomStyles {
+    clearButton?: Object;
     container?: Object;
     input?: Object;
 }
@@ -172,7 +173,7 @@ const Input = forwardRef<TextInput, IProps>(({
             { clearable && !disabled && value !== '' && (
                 <TouchableOpacity
                     onPress = { clearInput }
-                    style = { styles.clearButton as StyleProp<ViewStyle> }>
+                    style = { [ styles.clearButton, customStyles?.clearButton ] as StyleProp<ViewStyle> }>
                     <Icon
                         size = { 22 }
                         src = { IconCloseCircle }

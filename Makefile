@@ -27,8 +27,13 @@ endif
 
 all: compile deploy
 
-compile: clean
-	NODE_OPTIONS=--max-old-space-size=8192 \
+# Type checking is done once here rather than inside ts-loader, which would repeat
+# it for every bundle (see webpack.config.js).
+typecheck:
+	npm run tsc:web
+
+compile: clean typecheck
+	NODE_OPTIONS=--max-old-space-size=4096 \
 	$(WEBPACK)
 
 clean:
@@ -55,6 +60,8 @@ deploy-appbundle:
 		$(BUILD_DIR)/face-landmarks-worker.min.js.map \
 		$(BUILD_DIR)/noise-suppressor-worklet.min.js \
 		$(BUILD_DIR)/noise-suppressor-worklet.min.js.map \
+		$(BUILD_DIR)/preload.min.js \
+		$(BUILD_DIR)/preload.min.js.map \
 		$(BUILD_DIR)/screenshot-capture-worker.min.js \
 		$(BUILD_DIR)/screenshot-capture-worker.min.js.map \
 		$(BUILD_DIR)/vb-inference-worker.min.js \
@@ -103,6 +110,11 @@ deploy-meet-models:
 	cp \
 		$(MEET_MODELS_DIR)/*.tflite \
 		$(DEPLOY_DIR)
+	mkdir -p $(DEPLOY_DIR)/selfie_segmentation_landscape_tfjs
+	cp \
+		$(MEET_MODELS_DIR)/selfie_segmentation_landscape_tfjs/model.json \
+		$(MEET_MODELS_DIR)/selfie_segmentation_landscape_tfjs/group1-shard1of1.bin \
+		$(DEPLOY_DIR)/selfie_segmentation_landscape_tfjs
 
 deploy-mediapipe-segmentation:
 	mkdir -p $(DEPLOY_DIR)/mediapipe-segmentation

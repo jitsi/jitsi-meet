@@ -2,6 +2,8 @@ import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { toState } from '../base/redux/functions';
 
+import { buildDynamicBrandingUrl, extractFqnFromPathname } from './buildDynamicBrandingUrl';
+import { fetchCustomIconMarkup, isInlineSvg } from './customIconMarkup';
 import { cleanSvg } from './functions';
 import logger from './logger';
 
@@ -23,10 +25,7 @@ export function extractFqnFromPath(state?: IReduxState) {
         return '';
     }
 
-    const parts = pathname.split('/');
-    const len = parts.length;
-
-    return parts.length > 2 ? `${parts[len - 2]}/${parts[len - 1]}` : parts[1];
+    return extractFqnFromPathname(pathname);
 }
 
 /**
@@ -34,24 +33,12 @@ export function extractFqnFromPath(state?: IReduxState) {
  *
  * @param {Object | Function} stateful - The redux store, state, or
  * {@code getState} function.
- * @returns {string}
+ * @returns {string | undefined} The branding URL, or undefined when no branding is configured.
  */
-export async function getDynamicBrandingUrl(stateful: IStateful) {
+export function getDynamicBrandingUrl(stateful: IStateful): string | undefined {
     const state = toState(stateful);
 
-    const config = state['features/base/config'];
-    const { dynamicBrandingUrl } = config;
-
-    if (dynamicBrandingUrl) {
-        return dynamicBrandingUrl;
-    }
-
-    const { brandingDataUrl: baseUrl } = config;
-    const fqn = extractFqnFromPath(state);
-
-    if (baseUrl && fqn) {
-        return `${baseUrl}?conferenceFqn=${encodeURIComponent(fqn)}`;
-    }
+    return buildDynamicBrandingUrl(state['features/base/config'], extractFqnFromPath(state));
 }
 
 /**
@@ -65,29 +52,89 @@ export function isDynamicBrandingDataLoaded(state: IReduxState) {
 }
 
 /**
- * Fetch SVG XMLs from branding icons urls.
+ * Tells whether the deployment is configured to fetch dynamic branding for the current conference.
  *
- * @param {Object} customIcons - The map of branded icons.
- * @returns {Object}
+ * @param {Object} state - Global state of the app.
+ * @returns {boolean}
  */
-export const fetchCustomIcons = async (customIcons: Record<string, string>) => {
+export function isDynamicBrandingConfigured(state: IReduxState): boolean {
+    return Boolean(getDynamicBrandingUrl(state));
+}
+
+/**
+ * Tells whether dynamic branding is expected but not fully applied yet: the data has not arrived
+ * (or failed) or the custom icons it asked for are still being loaded. While this is the case the
+ * UI shows the default look, which is about to change.
+ *
+ * @param {Object} state - Global state of the app.
+ * @returns {boolean}
+ */
+export function isDynamicBrandingPending(state: IReduxState): boolean {
+    const { brandedIconsPending, customizationReady } = state['features/dynamic-branding'];
+
+    return isDynamicBrandingConfigured(state) && (!customizationReady || brandedIconsPending);
+}
+
+/**
+ * Loads the SVG content of the given branding icons. The icons are requested in parallel and
+ * each request is bounded by a timeout, so a slow or dead URL delays neither the other icons nor
+ * the rest of the branding. Icons that fail to load are logged and left out of the result.
+ *
+ * @param {Record<string, string>} customIcons - Map of icon name to SVG URL or inline SVG markup.
+ * @param {Promise<Record<string, string>>} [preloadedMarkup] - Raw markup the preload script already
+ * downloaded for some of the URL icons, keyed by icon name.
+ * @returns {Promise<Record<string, string>>} Map of icon name to sanitized SVG XML.
+ */
+export async function fetchCustomIcons(
+        customIcons: Record<string, string>,
+        preloadedMarkup?: Promise<Record<string, string>>): Promise<Record<string, string>> {
+    const preloaded = await resolvePreloadedMarkup(preloadedMarkup);
+    const entries = Object.entries(customIcons);
+    const results = await Promise.allSettled(entries.map(([ key, value ]) => loadCustomIcon(preloaded[key] ?? value)));
     const localCustomIcons: Record<string, string> = {};
 
-    for (const [ key, url ] of Object.entries(customIcons)) {
-        try {
-            const response = await fetch(url);
+    results.forEach((result, index) => {
+        const [ key, value ] = entries[index];
 
-            if (response.ok) {
-                const svgXml = await response.text();
-
-                localCustomIcons[key] = cleanSvg(svgXml);
-            } else {
-                logger.error(`Failed to fetch ${url}. Status: ${response.status}`);
-            }
-        } catch (error) {
-            logger.error(`Error fetching ${url}:`, error);
+        if (result.status === 'fulfilled') {
+            localCustomIcons[key] = result.value;
+        } else {
+            logger.error(`Error loading custom icon ${key}${isInlineSvg(value) ? '' : ` from ${value}`}:`, result.reason);
         }
-    }
+    });
 
     return localCustomIcons;
-};
+}
+
+/**
+ * Waits for the icon markup the preload script downloaded, if any. A failure there is not fatal,
+ * the icons are simply downloaded again.
+ *
+ * @param {Promise<Record<string, string>>} [preloadedMarkup] - The preloaded markup, keyed by icon name.
+ * @returns {Promise<Record<string, string>>}
+ */
+async function resolvePreloadedMarkup(
+        preloadedMarkup?: Promise<Record<string, string>>): Promise<Record<string, string>> {
+    if (!preloadedMarkup) {
+        return {};
+    }
+
+    try {
+        return await preloadedMarkup;
+    } catch (err) {
+        logger.warn('Preloaded custom icons failed, fetching them again', err);
+
+        return {};
+    }
+}
+
+/**
+ * Resolves a single custom icon to sanitized SVG XML. Inline markup is used as is; anything else
+ * is treated as a URL and downloaded.
+ *
+ * @param {string} value - The SVG URL or inline SVG markup.
+ * @returns {Promise<string>} The sanitized SVG XML.
+ */
+async function loadCustomIcon(value: string): Promise<string> {
+    return cleanSvg(isInlineSvg(value) ? value : await fetchCustomIconMarkup(value));
+}

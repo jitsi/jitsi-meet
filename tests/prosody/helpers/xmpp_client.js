@@ -600,6 +600,57 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a one-to-one <message type='chat'> with a body to an arbitrary
+         * JID. Fire-and-forget: resolves with the stanza id once the stanza is
+         * written.
+         *
+         * Use it for what a Jitsi client never sends, most usefully a message
+         * addressed to the real JID of another client instead of to a MUC.
+         *
+         * @param {string} to     Destination JID.
+         * @param {string} [body] Message body text.
+         * @returns {Promise<string>} the stanza id.
+         */
+        async sendDirectChat(to, body) {
+            const id = `dm-${++_counter}`;
+            const children = body === undefined ? [] : [ xml('body', {}, body) ];
+
+            await xmpp.send(
+                xml('message', { to,
+                    type: 'chat',
+                    id },
+                ...children)
+            );
+
+            return id;
+        },
+
+        /**
+         * Sends a MUC private message to an occupant of the room. Fire-and-forget:
+         * resolves with the stanza id once the stanza is written. The MUC does not
+         * reflect a private message back to the sender, so wait for the message on
+         * the recipient, or for an error reply on the sender.
+         *
+         * @param {string} roomJid  e.g. 'room@conference.localhost'
+         * @param {string} nick     MUC nick of the recipient.
+         * @param {string} [body]   message body text; omit to send body-less.
+         * @returns {Promise<string>} the stanza id.
+         */
+        async sendPrivateChat(roomJid, nick, body) {
+            const id = `pm-${++_counter}`;
+            const children = body === undefined ? [] : [ xml('body', {}, body) ];
+
+            await xmpp.send(
+                xml('message', { to: `${roomJid}/${nick}`,
+                    type: 'chat',
+                    id },
+                ...children)
+            );
+
+            return id;
+        },
+
+        /**
          * Sends a MUC groupchat message to the room. Resolves with the first
          * <message> stanza received bearing the same id — either the MUC
          * reflection (type=groupchat) or an error reply (type=error).
@@ -654,6 +705,29 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
                 xml('message', { to: roomJid,
                     type: 'groupchat',
                     id: `jm-${++_counter}` },
+                    xml('json-message', { xmlns: 'http://jitsi.org/jitmeet' },
+                        JSON.stringify(payload))
+                )
+            );
+        },
+
+        /**
+         * Sends a message carrying a <json-message> child to an arbitrary JID,
+         * with full control over the outer <message> attributes. Fire-and-forget.
+         *
+         * Use it to send what a well-behaved client never would — most usefully
+         * a stanza claiming a `from` that is not the sender's own JID, to prove
+         * the server refuses to deliver it under that identity.
+         *
+         * @param {string} to        Destination JID.
+         * @param {object} payload   JSON-serialisable value for the json-message body.
+         * @param {object} [attrs]   Extra/override attributes for the <message>.
+         */
+        sendJsonMessageRaw(to, payload, attrs = {}) {
+            return xmpp.send(
+                xml('message', { to,
+                    id: `jm-${++_counter}`,
+                    ...attrs },
                     xml('json-message', { xmlns: 'http://jitsi.org/jitmeet' },
                         JSON.stringify(payload))
                 )
@@ -1040,6 +1114,25 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Leaves a MUC room (XEP-0045 §7.14) and resolves with the self
+         * unavailable presence echoed back by the room.
+         *
+         * @param {string} roomJid   e.g. 'room@conference.localhost'
+         * @param {string} [nick]    defaults to the nick used by joinRoom
+         * @param {object} [opts]
+         * @param {number} [opts.timeout=5000]
+         */
+        async leaveRoom(roomJid, nick, { timeout = 5000 } = {}) {
+            const n = nick ?? this.nick;
+
+            await xmpp.send(xml('presence', { to: `${roomJid}/${n}`,
+                type: 'unavailable' }));
+
+            return this.waitForPresenceFrom(`${roomJid}/${n}`, { type: 'unavailable',
+                timeout });
+        },
+
+        /**
          * Sends a <breakout_rooms> control message to the breakout rooms component.
          * The session must have jitsi_web_query_room set (connect with
          * params: { room: '<roomname>' }) and the sender must be a moderator
@@ -1136,22 +1229,33 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          *
          * xmpp.socket           – @xmpp/websocket Socket wrapper
          * xmpp.socket.socket    – underlying ws.WebSocket instance with terminate()
+         *
+         * @param {object} [urlParams]  Query parameters to set on the reconnect
+         *                              URL (e.g. { token: '<rotated jwt>' }).
          */
-        dropConnection() {
+        dropConnection(urlParams = {}) {
             // Patch the reconnect URL to carry ?previd=<smacks-id> so that
             // mod_jitsi_session.lua sets session.previd and mod_auth_token.lua
             // can preserve session.username across the SASL exchange, allowing
             // mod_smacks.lua's registry lookup to succeed.
+            //
+            // `urlParams` overrides query parameters on the reconnect URL only —
+            // the hibernating session keeps whatever it was given on the first
+            // connection. Use it to resume while presenting a different ?token=,
+            // which is how a client rotates its JWT across a reconnect.
             const smId = xmpp.streamManagement?.id;
 
-            if (smId) {
-                try {
-                    const serviceUrl = new URL(xmpp.options.service);
+            try {
+                const serviceUrl = new URL(xmpp.options.service);
 
+                if (smId) {
                     serviceUrl.searchParams.set('previd', smId);
-                    xmpp.options.service = serviceUrl.toString();
-                } catch { /* ignore */ }
-            }
+                }
+                for (const [ k, v ] of Object.entries(urlParams)) {
+                    serviceUrl.searchParams.set(k, v);
+                }
+                xmpp.options.service = serviceUrl.toString();
+            } catch { /* ignore */ }
             try {
                 const ws = xmpp.socket?.socket;
 

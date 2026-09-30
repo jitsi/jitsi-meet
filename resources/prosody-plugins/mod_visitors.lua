@@ -50,6 +50,11 @@ local sent_iq_cache = require 'util.cache'.new(200);
 --}
 local visitors_nodes = {};
 
+-- forward declaration; assigned below. Referenced by a closure registered on the main muc's
+-- 'room-metadata-changed' event (see process_host_module(main_muc_component_config, ...) below) so vnodes
+-- are refreshed whenever the main room's metadata (e.g. asyncTranscription) changes.
+local update_vnodes_for_room;
+
 -- sends connect or update iq
 -- @parameter type - Type of iq to send 'connect' or 'update'
 local function send_visitors_iq(conference_service, room, type)
@@ -116,6 +121,17 @@ local function send_visitors_iq(conference_service, room, type)
             end
 
             visitors_iq:tag('polls'):text(json_msg_str):up();
+        end
+    end
+
+    -- Forward the main room's metadata (e.g. asyncTranscription) so visitor nodes/clients can make the
+    -- same decisions main-room clients do (sent on both 'connect' and 'update', not just 'update').
+    if room.jitsiMetadata then
+        local json_metadata, metadata_error = json.encode(room.jitsiMetadata);
+        if json_metadata then
+            visitors_iq:tag('metadata', { xmlns = 'jitsi:visitors' }):text(json_metadata):up();
+        else
+            module:log('error', 'Error encoding metadata for room:%s error:%s', room.jid, metadata_error);
         end
     end
 
@@ -261,6 +277,14 @@ module:hook('presence/full', function(event)
 end, 900);
 
 process_host_module(main_muc_component_config, function(host_module, host)
+    -- room metadata changed (e.g. asyncTranscription) -- refresh all connected vnodes so their
+    -- mirrored room and visitor clients stay in sync with the main room. Called via a wrapper closure
+    -- (rather than passing update_vnodes_for_room directly) since it is only assigned further down in
+    -- this file, after this hook is registered.
+    host_module:hook('room-metadata-changed', function(event)
+        update_vnodes_for_room(event);
+    end);
+
     -- detects presence change in a main participant and propagate it to the used visitor nodes
     host_module:hook('muc-occupant-pre-change', function (event)
         local room, stanzaEv, occupant = event.room, event.stanza, event.dest_occupant;
@@ -370,6 +394,25 @@ process_host_module(main_muc_component_config, function(host_module, host)
             module:send(fmuc_msg);
         end
     end);
+    -- forwards a moderation applied by the room to the vnodes. The hook above only
+    -- handles messages sent by an occupant; a moderation is sent by the room itself,
+    -- so mod_muc_message_moderation announces it here.
+    host_module:hook('jitsi-message-moderated', function(event)
+        local room, stanza = event.room, event.stanza;
+
+        if not visitors_nodes[room.jid] or not visitors_nodes[room.jid].nodes then
+            return;
+        end
+
+        for conference_service in pairs(visitors_nodes[room.jid].nodes) do
+            local fmuc_msg = st.clone(stanza);
+            fmuc_msg.attr.to = jid.join(jid.node(room.jid), conference_service);
+            fmuc_msg.attr.from = room_jid_match_rewrite(room.jid);
+            module:log('debug', 'Forwarding moderation to %s', fmuc_msg.attr.to);
+            module:send(fmuc_msg);
+        end
+    end);
+
     -- receiving messages from visitor nodes and forward them to local main participants
     -- and forward them to the rest of visitor nodes
     host_module:hook('muc-occupant-groupchat', function(event)
@@ -454,6 +497,14 @@ process_host_module(main_muc_component_config, function(host_module, host)
             -- Find the occupant
             local occupant = room:get_occupant_by_nick(to);
             if occupant then
+                -- This route does not go through the MUC, thus muc-private-message
+                -- does not fire for it. Give the filters a chance to block the
+                -- message, the same as the group-chat route above does.
+                if host_module:fire_event('jitsi-visitor-private-message-pre-route', event) then
+                    -- message filtered
+                    return true;
+                end
+
                 -- Add addresses element (XEP-0033) to store original visitor JID for reply functionality
                 stanza:tag('addresses', { xmlns = 'http://jabber.org/protocol/address' })
                   :tag('address', { type = 'ofrom', jid = stanza.attr.from }):up()
@@ -541,7 +592,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
     end);
 end);
 
-local function update_vnodes_for_room(event)
+function update_vnodes_for_room(event)
     local room = event.room;
         if visitors_nodes[room.jid] then
             -- we need to update all vnodes

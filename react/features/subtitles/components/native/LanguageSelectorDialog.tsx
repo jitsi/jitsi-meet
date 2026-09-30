@@ -12,16 +12,16 @@ import LanguageList from './LanguageList';
 import styles from './styles';
 
 const LanguageSelectorDialog = (props: IAbstractLanguageSelectorDialogProps) => {
-    const { asyncTranscription, language, listItems, onLanguageSelected, subtitles } = props;
+    const { language, listItems, onLanguageSelected, startWithRecordingDialog, subtitles } = props;
 
     const onSelected = useCallback((e: string) => {
-        if (asyncTranscription) {
+        if (startWithRecordingDialog) {
             navigate(screen.conference.recording, { recordAudioAndVideo: false });
         } else {
             onLanguageSelected(e);
             goBack();
         }
-    }, [ asyncTranscription, language ]);
+    }, [ startWithRecordingDialog, language ]);
 
     return (
         <JitsiScreen

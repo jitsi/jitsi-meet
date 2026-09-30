@@ -11,7 +11,6 @@
         "defaultEmail": "あなたの既定のメール",
         "disabled": "人を招待することはできません。",
         "failedToAdd": "参加者の追加に失敗しました。",
-        "footerText": "ダイヤルアウトが無効です。",
         "googleEmail": "Gmail",
         "inviteMoreHeader": "このミーティングにいるのは、あなただけです",
         "inviteMoreMailSubject": "{{appName}} のミーティングに参加してください",
@@ -35,9 +34,6 @@
         "none": "利用可能なオーディオデバイスがありません",
         "phone": "電話",
         "speaker": "スピーカー"
-    },
-    "blankPage": {
-        "meetingEnded": "ミーティングは終了しています。"
     },
     "breakoutRooms": {
         "actions": {
@@ -205,7 +201,6 @@
         "Remove": "除去",
         "Share": "共有",
         "Submit": "投稿",
-        "WaitForHostMsg": "ミーティング はまだ開始されていません。あなたがホストの場合は、認証を行ってください。それ以外の場合は、ホストの到着をお待ちください。",
         "WaitingForHostTitle": "ホストの到着を待っています…",
         "Yes": "はい",
         "accessibilityLabel": {
@@ -265,7 +260,6 @@
         "kickTitle": "ぎゃ! {{participantDisplayName}} があなたをこのミーティングから追放しました",
         "liveStreaming": "ライブ配信",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "録画中は利用できません",
-        "liveStreamingDisabledTooltip": "ライブ配信の無効化を開始しました。",
         "localUserControls": "ローカルユーザーコントロール",
         "lockMessage": "ミーティングをロックできませんでした。",
         "lockRoom": "ミーティング $t(lockRoomPassword) を追加",
@@ -314,12 +308,9 @@
         "permissionCameraRequiredError": "ビデオを使ったミーティングに参加するにはカメラの権限が必要です。 設定で許可してください",
         "permissionErrorTitle": "アクセス権限が必要です",
         "permissionMicRequiredError": "音声付きのミーティングに参加するにはマイクの権限が必要です。 設定で許可してください",
-        "popupError": "あなたのブラウザーはこのサイトからのポップアップウィンドウをブロックしています。ブラウザーのセキュリティ設定でポップアップを有効にしてから、もう一度お試しください。",
-        "popupErrorTitle": "ポップアップがブロックされました",
         "readMore": "続き",
         "recording": "録画",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "ライブ配信がアクティブの間は録画できません",
-        "recordingDisabledTooltip": "録画の開始は無効化されています。",
         "rejoinNow": "今すぐ再参加",
         "remoteControlAllowedMessage": "{{user}} はあなたのリモートコントロール要求を受け入れました!",
         "remoteControlDeniedMessage": "{{user}} はあなたのリモートコントロール要求を拒否しました!",
@@ -404,9 +395,6 @@
         "star": "星",
         "veryBad": "とても悪い",
         "veryGood": "とても良い"
-    },
-    "helpView": {
-        "title": "ヘルプセンター"
     },
     "incomingCall": {
         "answer": "応答",
@@ -520,7 +508,6 @@
         "youtubeTerms": "YouTube サービス利用規約"
     },
     "lobby": {
-        "allow": "許可",
         "backToKnockModeButton": "参加を依頼",
         "dialogTitle": "ロビーモード",
         "disableDialogContent": "ロビーモードは現在有効です。この機能により、部外者は会議に参加できません。この機能を無効にしますか?",
@@ -548,7 +535,6 @@
         "notificationLobbyDisabled": "{{originParticipantName}} によってロビーが無効にされました",
         "notificationLobbyEnabled": "{{originParticipantName}} によってロビーが有効にされました",
         "notificationTitle": "ロビー",
-        "passwordField": "ミーティングパスワードを入力してください",
         "passwordJoinButton": "参加",
         "title": "ロビー",
         "toggleLabel": "ロビーを有効"
@@ -594,7 +580,6 @@
     "me": "自分",
     "notify": {
         "OldElectronAPPTitle": "セキュリティ上の脆弱性があります!",
-        "allowAction": "許可",
         "allowedUnmute": "マイクのミュートを解除、カメラの有効化、画面の共有ができます。",
         "audioUnmuteBlockedDescription": "マイクのミュート解除操作はシステムの制限により一時的にブロックされています。",
         "audioUnmuteBlockedTitle": "マイクミュート解除はブロックされています!",
@@ -710,8 +695,7 @@
             "pollOption": "選択肢 {{index}}",
             "pollQuestion": "投票の質問",
             "questionPlaceholder": "質問を入力してください",
-            "removeOption": "選択肢の削除",
-            "send": "送信"
+            "removeOption": "選択肢の削除"
         },
         "errors": {
             "notUniqueOption": "オプションは一意でなければなりません"
@@ -801,9 +785,6 @@
         "rejected": "拒否",
         "ringing": "呼び出し中…"
     },
-    "privacyView": {
-        "title": "プライバシー"
-    },
     "profile": {
         "avatar": "アバター",
         "setDisplayNameLabel": "表示名を設定してください",
@@ -834,7 +815,6 @@
         "highlightMomentSucessDescription": "ハイライトされた瞬間は議事録に追加されます。",
         "inProgress": "録画またはライブ配信中です",
         "linkGenerated": "あなたの録画へのリンクを生成しました。",
-        "live": "LIVE",
         "localRecordingNoNotificationWarning": "この録画は他の参加者に通知されません。このミーティングが録画されていることを他の参加者に伝えてください。",
         "localRecordingNoVideo": "ビデオは録画されません。",
         "localRecordingStartWarning": "録画を保存するためにはミーティング退出前に録画を停止してください。",
@@ -851,9 +831,7 @@
         "onBy": "{{name}} が録画を開始しました",
         "onlyRecordSelf": "自身の音声・映像のみを録画する",
         "pending": "ミーティングの録画準備中…",
-        "rec": "REC",
         "saveLocalRecording": "ローカルに録画を保存 (Beta)",
-        "serviceDescription": "ビデオは録画サービスで録画されます",
         "serviceDescriptionCloud": "クラウドレコーディング",
         "serviceName": "録画サービス",
         "sessionAlreadyActive": "このセッションはすでに録画またはライブ配信されています。",
@@ -861,8 +839,7 @@
         "signOut": "サインアウト",
         "title": "録画",
         "unavailable": "おっと! {{serviceName}} は現在使用できません。私たちはこの問題の解決に取り組んでいます。後でもう一度お試しください。",
-        "unavailableTitle": "録画できません",
-        "uploadToCloud": "クラウドへアップロード"
+        "unavailableTitle": "録画できません"
     },
     "sectionList": {
         "pullToRefresh": "引っ張って更新する"
@@ -870,7 +847,6 @@
     "security": {
         "about": "このミーティングに、$t(lockRoomPassword) を追加できます。参加者は $t(lockRoomPassword) を入力してこのミーティングへの参加が許可される必要があります。",
         "aboutReadOnly": "モデレータの参加者は、このミーティングに $t(lockRoomPassword) を追加できます。参加者は $t(lockRoomPassword) を入力してこのミーティングへの参加が許可される必要があります。",
-        "insecureRoomNameWarning": "このルーム名は安全ではありません。不要な参加者がミーティングに参加するかもしれません。セキュリティボタンを利用してミーティングの安全確保を検討しましょう。",
         "title": "セキュリティオプション"
     },
     "settings": {
@@ -904,7 +880,6 @@
         "selectCamera": "カメラ",
         "selectMic": "マイク",
         "selfView": "セルフビュー",
-        "sounds": "サウンド",
         "speakers": "スピーカー",
         "startAudioMuted": "全員がミュートで開始",
         "startReactionsMuted": "全員のリアクションサウンドをミュート",
@@ -975,7 +950,6 @@
             "Settings": "設定の切り替え",
             "audioRoute": "オーディオデバイスの選択",
             "boo": "ブーイング",
-            "breakoutRoom": "ブレイクアウトルームに参加 / 退出",
             "callQuality": "ビデオ品質の管理",
             "cc": "字幕の切り替え",
             "chat": "チャットを開く / 閉じる",
@@ -1006,7 +980,7 @@
             "muteEveryoneElse": "他の全員を無効",
             "muteEveryoneElsesVideoStream": "他の全員のビデオを停止",
             "muteEveryonesVideoStream": "全員のビデオを停止",
-            "participants": "参加者",
+            "participants": "参加者パネルを開く。参加者{{participantsCount}}人",
             "pip": "ピクチャーインピクチャーモードの切り替え",
             "privateMessage": "プライベートメッセージの送信",
             "profile": "プロフィールを編集",
@@ -1102,7 +1076,7 @@
         "silence": "沈黙",
         "speakerStats": "話者の統計",
         "startScreenSharing": "画面共有の開始",
-        "startSubtitles": "字幕の開始",
+        "startSubtitles": "字幕 • {{language}}",
         "stopAudioSharing": "音声共有の停止",
         "stopScreenSharing": "画面共有の停止",
         "stopSharedVideo": "動画の停止",
@@ -1116,12 +1090,8 @@
     },
     "transcribing": {
         "ccButtonTooltip": "字幕の表示 / 非表示",
-        "error": "文字起こしに失敗しました。もう一度お試しください。",
         "expandedLabel": "文字起こしは現在有効です",
-        "failedToStart": "文字起こしを開始できませんでした",
-        "labelToolTip": "ミーティングの文字起こしが行われています",
         "off": "文字起こしが停止されています",
-        "pending": "ミーティングの文字起こしの準備中…",
         "start": "字幕の表示を開始",
         "stop": "字幕の表示を停止",
         "tr": "TR"

@@ -1,15 +1,31 @@
 import BasePageObject from './BasePageObject';
 
 const DIALOG_TITLE = '#dialog-title';
-const OK_BUTTON = '#modal-dialog-ok-button';
 const CLOSE_BUTTON = '#modal-header-close-button';
-const RECORDING_SWITCH = '#recording-switch-audio-video';
-const TRANSCRIPTION_SWITCH = '#recording-switch-transcription';
-const RECORDING_SWITCH_LABEL = '[for="recording-switch-audio-video"]';
-const TRANSCRIPTION_SWITCH_LABEL = '[for="recording-switch-transcription"]';
+
+const START_RECORDING = '[data-testid="recordingDialog.startRecording"]';
+const STOP_RECORDING = '[data-testid="recordingDialog.stopRecording"]';
+const START_TRANSCRIPTION = '[data-testid="recordingDialog.startTranscription"]';
+const STOP_TRANSCRIPTION = '[data-testid="recordingDialog.stopTranscription"]';
+const START_BOTH = '[data-testid="recordingDialog.startBoth"]';
+const STOP_BOTH = '[data-testid="recordingDialog.stopBoth"]';
+
+const RECORDING_OPTIONS_HEADER = '#recording-options';
+const RECORDING_OPTIONS_BODY = '#recording-options-content';
+const TRANSCRIPTION_OPTIONS_HEADER = '#transcription-options';
+const SERVICE_SELECT = '#recording-service-select';
+const SERVICE_SELECT_MENU = '#recording-service-select-menu';
+const LANGUAGE_SELECT = '#transcription-language-select';
+const LANGUAGE_SELECT_MENU = '#transcription-language-select-menu';
+const FOLLOW_ME_RECORDER_SWITCH = '#recording-switch-follow-me';
+const FILE_SHARING_SWITCH = '#recording-switch-share';
+const LOCAL_RECORDING_ONLY_SELF_SWITCH = '#recording-switch-myself';
 
 /**
- * Page object for the unified Recording & Transcription dialog.
+ * Page object for the unified Recording & Transcription dialog: two sections
+ * (audio & video recording, transcription), each with its own immediate
+ * start/stop button and a collapsible options accordion, plus footer buttons
+ * acting on both services at once.
  */
 export default class RecordingTranscriptionDialog extends BasePageObject {
     /**
@@ -37,76 +53,290 @@ export default class RecordingTranscriptionDialog extends BasePageObject {
     }
 
     /**
-     * Returns the OK button text.
+     * Whether the recording section currently offers a Start button, i.e.
+     * recording is not running.
      */
-    getOkButtonText(): Promise<string> {
-        return this.participant.driver.$(OK_BUTTON).getText();
+    hasStartRecordingButton(): Promise<boolean> {
+        return this.participant.driver.$(START_RECORDING).isExisting();
     }
 
     /**
-     * Returns whether the OK button is enabled (not disabled).
+     * Whether the recording section currently offers a Stop button, i.e.
+     * recording is running.
      */
-    async isOkButtonEnabled(): Promise<boolean> {
-        return this.participant.driver.$(OK_BUTTON).isEnabled();
+    hasStopRecordingButton(): Promise<boolean> {
+        return this.participant.driver.$(STOP_RECORDING).isExisting();
     }
 
     /**
-     * Returns whether the recording (audio/video) toggle exists in the dialog.
+     * Whether the transcription section currently offers a Start button.
      */
-    hasRecordingToggle(): Promise<boolean> {
-        return this.participant.driver.$(RECORDING_SWITCH).isExisting();
+    hasStartTranscriptionButton(): Promise<boolean> {
+        return this.participant.driver.$(START_TRANSCRIPTION).isExisting();
     }
 
     /**
-     * Returns whether the transcription toggle exists in the dialog.
+     * Whether the transcription section currently offers a Stop button.
      */
-    hasTranscriptionToggle(): Promise<boolean> {
-        return this.participant.driver.$(TRANSCRIPTION_SWITCH).isExisting();
+    hasStopTranscriptionButton(): Promise<boolean> {
+        return this.participant.driver.$(STOP_TRANSCRIPTION).isExisting();
     }
 
     /**
-     * Returns whether the recording (audio/video) toggle is checked.
+     * Whether the footer shows the "Start both" button.
      */
-    isRecordingToggleChecked(): Promise<boolean> {
-        return this.participant.driver.$(RECORDING_SWITCH).isSelected();
+    hasStartBothButton(): Promise<boolean> {
+        return this.participant.driver.$(START_BOTH).isExisting();
     }
 
     /**
-     * Returns whether the transcription toggle is checked.
+     * Whether the footer shows the "Stop both" button.
      */
-    isTranscriptionToggleChecked(): Promise<boolean> {
-        return this.participant.driver.$(TRANSCRIPTION_SWITCH).isSelected();
+    hasStopBothButton(): Promise<boolean> {
+        return this.participant.driver.$(STOP_BOTH).isExisting();
     }
 
     /**
-     * Clicks the recording (audio/video) toggle by clicking its associated label.
+     * Whether the recording section Start button is enabled (a usable storage
+     * service is selected).
      */
-    async clickRecordingToggle(): Promise<void> {
-        await this.participant.log('RecordingTranscriptionDialog: clicking recording toggle');
-
-        return this.participant.driver.$(RECORDING_SWITCH_LABEL).click();
+    isStartRecordingEnabled(): Promise<boolean> {
+        return this.participant.driver.$(START_RECORDING).isEnabled();
     }
 
     /**
-     * Clicks the transcription toggle by clicking its associated label.
+     * Whether the footer "Start both" button is enabled.
      */
-    async clickTranscriptionToggle(): Promise<void> {
-        await this.participant.log('RecordingTranscriptionDialog: clicking transcription toggle');
-
-        return this.participant.driver.$(TRANSCRIPTION_SWITCH_LABEL).click();
+    isStartBothEnabled(): Promise<boolean> {
+        return this.participant.driver.$(START_BOTH).isEnabled();
     }
 
     /**
-     * Clicks the OK / "Apply changes" button to confirm.
+     * Starts the audio & video recording. The action applies immediately and
+     * closes the dialog.
      */
-    confirm(): Promise<void> {
-        return this.participant.driver.$(OK_BUTTON).click();
+    async startRecording(): Promise<void> {
+        await this.participant.log('RecordingTranscriptionDialog: clicking start recording');
+
+        return this.participant.driver.$(START_RECORDING).click();
     }
 
     /**
-     * Clicks the close (X) button to dismiss the dialog without applying changes.
+     * Stops the audio & video recording. The action applies immediately and
+     * closes the dialog.
+     */
+    async stopRecording(): Promise<void> {
+        await this.participant.log('RecordingTranscriptionDialog: clicking stop recording');
+
+        return this.participant.driver.$(STOP_RECORDING).click();
+    }
+
+    /**
+     * Starts the transcription. The action applies immediately and closes the
+     * dialog.
+     */
+    async startTranscription(): Promise<void> {
+        await this.participant.log('RecordingTranscriptionDialog: clicking start transcription');
+
+        return this.participant.driver.$(START_TRANSCRIPTION).click();
+    }
+
+    /**
+     * Stops the transcription. The action applies immediately and closes the
+     * dialog.
+     */
+    async stopTranscription(): Promise<void> {
+        await this.participant.log('RecordingTranscriptionDialog: clicking stop transcription');
+
+        return this.participant.driver.$(STOP_TRANSCRIPTION).click();
+    }
+
+    /**
+     * Starts every service which is not running yet.
+     */
+    async startBoth(): Promise<void> {
+        await this.participant.log('RecordingTranscriptionDialog: clicking start both');
+
+        return this.participant.driver.$(START_BOTH).click();
+    }
+
+    /**
+     * Stops every running service.
+     */
+    async stopBoth(): Promise<void> {
+        await this.participant.log('RecordingTranscriptionDialog: clicking stop both');
+
+        return this.participant.driver.$(STOP_BOTH).click();
+    }
+
+    /**
+     * Whether the recording options accordion exists.
+     */
+    hasRecordingOptions(): Promise<boolean> {
+        return this.participant.driver.$(RECORDING_OPTIONS_HEADER).isExisting();
+    }
+
+    /**
+     * Whether the transcription options accordion exists.
+     */
+    hasTranscriptionOptions(): Promise<boolean> {
+        return this.participant.driver.$(TRANSCRIPTION_OPTIONS_HEADER).isExisting();
+    }
+
+    /**
+     * Whether the recording options accordion is expanded.
+     */
+    async isRecordingOptionsExpanded(): Promise<boolean> {
+        return await this.participant.driver.$(RECORDING_OPTIONS_HEADER)
+            .getAttribute('aria-expanded') === 'true';
+    }
+
+    /**
+     * Whether the transcription options accordion is expanded.
+     */
+    async isTranscriptionOptionsExpanded(): Promise<boolean> {
+        return await this.participant.driver.$(TRANSCRIPTION_OPTIONS_HEADER)
+            .getAttribute('aria-expanded') === 'true';
+    }
+
+    /**
+     * Expands/collapses the recording options accordion.
+     */
+    toggleRecordingOptions(): Promise<void> {
+        return this.participant.driver.$(RECORDING_OPTIONS_HEADER).click();
+    }
+
+    /**
+     * Expands/collapses the transcription options accordion.
+     */
+    toggleTranscriptionOptions(): Promise<void> {
+        return this.participant.driver.$(TRANSCRIPTION_OPTIONS_HEADER).click();
+    }
+
+    /**
+     * Whether the storage service dropdown is visible (recording options
+     * expanded).
+     */
+    hasServiceSelect(): Promise<boolean> {
+        return this.participant.driver.$(SERVICE_SELECT).isExisting();
+    }
+
+    /**
+     * Whether the transcription language dropdown is visible (transcription
+     * options expanded).
+     */
+    hasLanguageSelect(): Promise<boolean> {
+        return this.participant.driver.$(LANGUAGE_SELECT).isExisting();
+    }
+
+    /**
+     * The currently selected storage service, as displayed on the dropdown
+     * trigger.
+     */
+    getSelectedService(): Promise<string> {
+        return this.participant.driver.$(SERVICE_SELECT).getText();
+    }
+
+    /**
+     * The currently selected transcription language, as displayed on the
+     * dropdown trigger.
+     */
+    getSelectedLanguage(): Promise<string> {
+        return this.participant.driver.$(LANGUAGE_SELECT).getText();
+    }
+
+    /**
+     * Picks a storage service by its visible label (e.g. "Recording service",
+     * "Dropbox", "Local recording"). The recording options accordion must be
+     * expanded.
+     */
+    selectService(label: string): Promise<void> {
+        return this._selectDropdownOption(SERVICE_SELECT, SERVICE_SELECT_MENU, label);
+    }
+
+    /**
+     * Picks a transcription language by its visible label (e.g. "English").
+     * The transcription options accordion must be expanded.
+     */
+    selectLanguage(label: string): Promise<void> {
+        return this._selectDropdownOption(LANGUAGE_SELECT, LANGUAGE_SELECT_MENU, label);
+    }
+
+    /**
+     * Whether the "Recorder follows me" switch is shown (moderator with a
+     * cloud based service selected).
+     */
+    hasFollowMeRecorderSwitch(): Promise<boolean> {
+        return this.participant.driver.$(FOLLOW_ME_RECORDER_SWITCH).isExisting();
+    }
+
+    /**
+     * Whether the "Recorder follows me" switch is enabled (it locks while a
+     * recording is in progress).
+     */
+    isFollowMeRecorderEnabled(): Promise<boolean> {
+        return this.participant.driver.$(FOLLOW_ME_RECORDER_SWITCH).isEnabled();
+    }
+
+    /**
+     * Whether the "Share the recording link" switch is shown (Jitsi
+     * recording service selected and sharing is enabled server-side).
+     */
+    hasFileSharingSwitch(): Promise<boolean> {
+        return this.participant.driver.$(FILE_SHARING_SWITCH).isExisting();
+    }
+
+    /**
+     * Whether the "Record only my audio and video streams" switch is shown
+     * (local recording selected).
+     */
+    hasLocalRecordingOnlySelfSwitch(): Promise<boolean> {
+        return this.participant.driver.$(LOCAL_RECORDING_ONLY_SELF_SWITCH).isExisting();
+    }
+
+    /**
+     * Toggles the "Record only my audio and video streams" switch.
+     */
+    toggleLocalRecordingOnlySelfSwitch(): Promise<void> {
+        return this.participant.driver.$(LOCAL_RECORDING_ONLY_SELF_SWITCH).click();
+    }
+
+    /**
+     * The text content of the (expanded) recording options accordion body,
+     * e.g. to check for the local-recording warning texts.
+     */
+    getRecordingOptionsBodyText(): Promise<string> {
+        return this.participant.driver.$(RECORDING_OPTIONS_BODY).getText();
+    }
+
+    /**
+     * Clicks the close (X) button to dismiss the dialog.
      */
     cancel(): Promise<void> {
         return this.participant.driver.$(CLOSE_BUTTON).click();
+    }
+
+    /**
+     * Opens the given dropdown and picks the option with the given visible
+     * label.
+     */
+    private async _selectDropdownOption(
+            triggerSelector: string, menuSelector: string, optionLabel: string): Promise<void> {
+        const driver = this.participant.driver;
+
+        await driver.$(triggerSelector).click();
+
+        await driver.$(menuSelector).waitForExist({
+            timeout: 3000,
+            timeoutMsg: 'Dropdown menu did not open'
+        });
+
+        const option = driver.$(menuSelector).$(`[role="menuitem"][aria-label="${optionLabel}"]`);
+
+        await option.waitForExist({
+            timeout: 3000,
+            timeoutMsg: `Dropdown option "${optionLabel}" not found`
+        });
+        await option.click();
     }
 }

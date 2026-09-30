@@ -95,6 +95,34 @@ local function send_transcriptions_update(room)
       }):up());
 end
 
+-- Forwards this vnode's local 'recording' metadata (isTranscribingEnabled, set by a visitor allowed via
+-- the transcription JWT feature -- see mod_filter_iq_rayo's 'jitsi-metadata-allow-moderation' hook) up to
+-- the main room, the same way send_transcriptions_update() forwards transcription-languages: as a
+-- 'visitors' IQ to the main prosody's visitors component, which applies it to the real room metadata.
+local function send_recording_metadata_update(room)
+    local recording_metadata = room.jitsiMetadata and room.jitsiMetadata.recording;
+    if not recording_metadata then
+        return;
+    end
+
+    local json_data, encode_error = json.encode(recording_metadata);
+    if not json_data then
+        module:log('error', 'Error encoding recording metadata for room:%s error:%s', room.jid, encode_error);
+        return;
+    end
+
+    local iq_id = new_id();
+    sent_iq_cache:set(iq_id, socket.gettime());
+    module:send(st.iq({
+        type = 'set',
+        to = 'visitors.'..main_domain,
+        from = local_domain,
+        id = iq_id })
+      :tag('visitors', { xmlns = 'jitsi:visitors',
+                         room = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain) })
+      :tag('recording-metadata', { xmlns = 'jitsi:visitors' }):text(json_data):up());
+end
+
 local function remove_transcription(room, occupant)
     local send_update = false;
     if room._transcription_languages then
@@ -478,6 +506,27 @@ local function message_handler(event)
     end
 end
 
+-- Adds a stanza this node has just routed to its own occupants to the local
+-- history. Prosody writes room history from broadcast_message, and routing
+-- straight to the occupants bypasses it, so without this the history stays as the
+-- main prosody left it when this node connected and a visitor joining later sees
+-- nothing that was said since. Fire prosody's own events, so the entry is built,
+-- stamped and trimmed exactly as it is in the main room and the modules hooked on
+-- them apply here too.
+local function add_to_local_history(room, stanza)
+    local event = { room = room; stanza = stanza; };
+
+    if not module:fire_event('muc-message-is-historic', event) then
+        module:log('debug', 'Not storing %s in %s history', stanza.attr.id, room.jid);
+
+        return;
+    end
+
+    module:fire_event('muc-add-history', event);
+    module:log('debug', 'Stored %s in %s history, %s entries now',
+        stanza.attr.id, room.jid, room._history and #room._history or 0);
+end
+
 -- Receives history messages from the main prosody and adds them to the local history
 -- this happens before the first participant joins and that participant gets the history using the standard flow on join
 local function history_message_handler(event)
@@ -583,6 +632,9 @@ module:hook('muc-occupant-groupchat', function(event)
         main_message.attr.from = room_jid_match_rewrite(stanza.attr.from);
         module:send(main_message);
     end
+
+    add_to_local_history(room, stanza);
+
     stanza.attr.from = from; -- something prosody does internally
 
     return true;
@@ -754,6 +806,22 @@ local function iq_from_main_handler(event)
         room._main_room_lobby_enabled = false;
     end
 
+    -- Mirror the main room's metadata (e.g. asyncTranscription) onto this vnode's room, so visitor
+    -- clients connected here see the same metadata main-room clients do. Fired as 'room-metadata-changed'
+    -- so a room_metadata_component enabled on this host (muc_component pointing at this muc) rebroadcasts
+    -- it to visitor occupants, exactly like it does for the main room.
+    local metadataEl = node:get_child('metadata', 'jitsi:visitors');
+    if metadataEl then
+        local metadataText = metadataEl:get_text();
+        local metadata, metadata_error = json.decode(metadataText);
+        if metadata then
+            room.jitsiMetadata = metadata;
+            module:fire_event('room-metadata-changed', { room = room; });
+        else
+            module:log('error', 'Failed to decode metadata for room:%s error:%s', room.jid, metadata_error);
+        end
+    end
+
     -- read the moderators list
     room.moderators_list = room.moderators_list or set.new();
     local moderators = node:get_child('moderators');
@@ -814,6 +882,15 @@ local function iq_from_main_handler(event)
     return true;
 end
 module:hook('iq/host', iq_from_main_handler, 10);
+
+-- Fired locally (by the room_metadata_component enabled on this vnode) after a client successfully
+-- writes a metadata key on this vnode's mirrored room. When it's the 'recording' key (isTranscribingEnabled,
+-- set by a visitor via the transcription JWT feature), forward it up to the main room.
+module:hook('jitsi-metadata-updated', function(event)
+    if event.key == 'recording' then
+        send_recording_metadata_update(event.room);
+    end
+end);
 
 -- Filters presences (if detected) that are with destination the main prosody
 function filter_stanza(stanza, session)

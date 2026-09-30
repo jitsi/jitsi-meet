@@ -107,7 +107,7 @@
     },
     "chat": {
         "enter": "Eniri la babilejon",
-        "error": "Eraro: via mesaĝo “{{originalText}}” ne estis sendita. Kialo: {{error}}",
+        "error": "Eraro: via mesaĝo ne estis sendita. Kialo: {{error}}",
         "fieldPlaceHolder": "Tajpu vian mesaĝon ĉi tien",
         "lobbyChatMessageTo": "Mesaĝo de atendejo al {{recipient}}",
         "message": "Mesaĝo",
@@ -204,7 +204,7 @@
     },
     "deepLinking": {
         "appNotInstalled": "Vi bezonas la aplikaĵon {{app}} por aliĝi al ĉi-tiu kunveno per via telefono.",
-        "description": "Ĉu nenio okazis? Ni provis lanĉi vian kunveno en la komputila aplikaĵo {{app}}. Provu denove aŭ lanĉu ĝin en la reta aplikaĵo {{web}}.",
+        "description": "Ĉu nenio okazis? Ni provis lanĉi vian kunsidon en la labortabla aplikaĵo {{app}}. Reprovu aŭ lanĉu ĝin en la reta aplikaĵo {{app}}.",
         "descriptionNew": "Ĉu nenio okazis? Ni provis lanĉi vian kunveno en la komputila aplikaĵo {{app}}. <br /><br /> Vi povas provi denove, au uzi la retejon.",
         "descriptionWithoutWeb": "Ĉu nenio okazis? Ni provis lanĉi vian kunveno en la komputila aplikaĵo {{app}}.",
         "downloadApp": "Elŝuti la aplikaĵon",
@@ -257,7 +257,6 @@
         "Remove": "Forigi",
         "Share": "Kundividi",
         "Submit": "Sendi",
-        "WaitForHostMsg": "La kunveno ankoraŭ ne komencis. Se vi estas la gastiganto, bonvolu aŭtentiĝi. Alikaze atendu, ĝis la gastiganto venos.",
         "WaitingForHostButton": "Atendante la gastiganton",
         "WaitingForHostTitle": "Atendante la gastiganton…",
         "Yes": "Jes",
@@ -303,10 +302,10 @@
         "dismiss": "Formeti",
         "displayNameRequired": "Saluton! Kio estas via nomo?",
         "done": "Finita",
-        "e2eeDescription": "<p>Tutvoja ĉifrado estas nuntempe <strong>EKSPERIMENTA</strong>. Bonvolu vidi <a href='https://jitsi.org/blog/e2ee/' target='_blank'>ĉi tiun artikolon</a> por detaloj.</p><br/><p>Konsciu, ke ŝalti tutvojan ĉifradon efektive malebligos servilflankajn servojn kiel ekzemple: registradon, tujan elsendfluon kaj telefonan partoprenon. Konsciu ankaŭ, ke la kunveno funkcios nur por homoj, kiuj uzas retumilon subtenantan enmetatajn fluojn.</p>",
+        "e2eeDescription": "Fin-al-fina ĉifrado estas nuntempe EKSPERIMENTA. Bonvolu memori, ke ŝalti fin-al-finan ĉifradon efektive malŝaltos servojn provizatajn de la servilo, kiel: telefona partopreno. Memoru ankaŭ, ke la kunveno funkcios nur por homoj aliĝantaj per retumiloj kun subteno por enmeteblaj fluoj.",
         "e2eeDisabledDueToMaxModeDescription": "Ne eblas ŝalti tutvoja ĉifrado pro granda kvanto da partoprenantoj en la prelego",
         "e2eeLabel": "Ŝlosilo",
-        "e2eeWarning": "<br /><p><strong>ATENTIGO:</strong> Ne ĉiuj partoprenantoj en ĉi-tiu kunveno ŝajnas havi subtenon de tutvoja ĉifrado. Se vi ŝaltos ĝin, ili ne povos vidi aŭ aŭdi vin.</p>",
+        "e2eeWarning": "AVERTO: Ŝajnas, ke ne ĉiuj partoprenantoj de ĉi tiu kunsido subtenas fin-al-finan ĉifradon. Se vi ŝaltos ĝin, ili povos nek vidi nek aŭdi vin.",
         "e2eeWillDisableDueToMaxModeDescription": "AVERTO: Tutvoja ĉifrado estos aŭtomate malŝaltita",
         "embedMeeting": "Enkorpigi kunveno",
         "enterDisplayName": "Bonvolu entajpi vian nomon ĉi-tie",
@@ -390,7 +389,7 @@
         "remoteControlShareScreenWarning": "Sciu, ke se vi premos “Permesi”, vi kunhavigos vian ekranon!",
         "remoteControlStopMessage": "Telerega seanco finita!",
         "remoteControlTitle": "Labortabla telerego",
-        "remoteUserControls": "Foraj uzantregiloj",
+        "remoteUserControls": "Regiloj de la fora uzanto {{username}}",
         "removePassword": "Forigi $t(lockRoomPassword)",
         "removeSharedVideoMsg": "Ĉu vi vere volas forigi vian kunhavatan videon?",
         "removeSharedVideoTitle": "Forigi kunhavatan videon",
@@ -496,7 +495,7 @@
     },
     "feedback": {
         "accessibilityLabel": {
-            "yourChoice": "Via takso"
+            "yourChoice": "Via elekto: {{rating}}"
         },
         "average": "Mezbona",
         "bad": "Malbona",
@@ -716,18 +715,16 @@
     "me": "mi",
     "notify": {
         "OldElectronAPPTitle": "Sekurec-vundeblo!",
-        "allowAction": "Permesu",
         "allowedUnmute": "Vi povas malsilentigi vian mikrofonon, ŝalti vian kameraon aŭ dividi vian ekranon.",
         "audioUnmuteBlockedDescription": "Microfono-malsilentiga operacion estis provizore blokita pro sistemaj limoj.",
         "audioUnmuteBlockedTitle": "Microfono-malsilentigo blokita!",
         "chatMessages": "Babilmesaĝoj",
         "connectedOneMember": "{{name}} aliĝis al la kunveno",
-        "connectedThreePlusMembers": "{{name}} kaj {{count}} aliaj aliĝis al la kunveno",
+        "connectedThreePlusMembers": "{{name}} kaj multaj aliaj aliĝis al la kunsido",
         "connectedTwoMembers": "{{first}} kaj {{second}} aliĝis al la kunveno",
         "dataChannelClosed": "Videa kvalito estas malboniĝita.",
         "dataChannelClosedDescription": "La ponta kanalo estas malkonektita, do videa kvalito restas ĉe la plej malalta grado.",
         "disabledIframe": "Enkorpigado estas nur por demonstri, do ĉi-tiu kunveno malkonektos post {{timeout}} minutoj.",
-        "disabledIframeSecondary": "Enkorpigado de {{domain}} estas nur por demonstri, do ĉi-tiu kunveno malkonektos post {{timeout}} minutoj.",
         "disconnected": "malkonektita",
         "displayNotifications": "Montru sciigojn por",
         "dontRemindMe": "Ne sciigu min",
@@ -783,7 +780,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) forigita de alia partoprenanto",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) difinita de alia partoprenanto",
         "raiseHandAction": "Levu la manon",
-        "raisedHand": "{{name}} ŝatus paroli.",
+        "raisedHand": "Deziras partopreni.",
         "raisedHands": "{{participantName}} kaj {{raisedHands}} aliaj homoj",
         "reactionSounds": "Malebligi sonojn",
         "reactionSoundsForAll": "Malebligi sonojn por ĉiuj",
@@ -859,8 +856,7 @@
             "pollOption": "Enketa opcio {{index}}",
             "pollQuestion": "Enketa demando",
             "questionPlaceholder": "Demandu",
-            "removeOption": "Forigi opcion",
-            "send": "Sendu"
+            "removeOption": "Forigi opcion"
         },
         "errors": {
             "notUniqueOption": "Ebloj devas esti unikaj"
@@ -995,7 +991,6 @@
         "highlightMomentSucessDescription": "Via emfazita momento estos aldonita al la kunveno priskribo",
         "inProgress": "Registrado aŭ vivelsendo farata",
         "linkGenerated": "Ni generis ligilon al via registrado.",
-        "live": "LIVE",
         "localRecordingNoNotificationWarning": "La registrado ne estos anoncita al aliaj partoprenantoj. Vi devos sciigi al ili, ke la renkontiĝo estas registrita.",
         "localRecordingNoVideo": "Videaĵo ne estas registrita.",
         "localRecordingStartWarning": "Bonvolu certigi, ke vi ĉesigas la registradon antaŭ ol eliri la renkontiĝon por konservi ĝin.",
@@ -1012,23 +1007,19 @@
         "onBy": "{{name}} komencis la registradon",
         "onlyRecordSelf": "Registri nur miajn aŭd- kaj videofluojn",
         "pending": "Prepariĝo por registrado de la kunveno…",
-        "rec": "REG",
         "recordAudioAndVideo": "Konservu kaj aŭdion kaj videon",
         "recordTranscription": "Konservu transskribon",
         "saveLocalRecording": "Konservu registraddosieron loke (Beta)",
-        "serviceDescription": "Via registraĵo estos konservita de la registra servo",
         "serviceDescriptionCloud": "Nubo registrado",
         "serviceDescriptionCloudInfo": "Registritaj renkontiĝoj estas aŭtomate forigitaj 24h post sia tempo de registrado.",
         "serviceName": "Registra servo",
         "sessionAlreadyActive": "Ĉi tiu sesio jam estas registrita aŭ vivelsendita.",
-        "showAdvancedOptions": "Detalaj agordoj",
         "signIn": "Ensaluti",
         "signOut": "Elsaluti",
         "surfaceError": "Bonvolu elekti la nunan langeton.",
         "title": "Registrado",
         "unavailable": "Oj! La {{serviceName}} estas nun nedisponebla. Ni laboras por solvi la aferon. Bonvolu reprovi poste.",
-        "unavailableTitle": "Registrado ne disponeblas",
-        "uploadToCloud": "Alŝutu en la Nubo"
+        "unavailableTitle": "Registrado ne disponeblas"
     },
     "screenshareDisplayName": "Ekrano de {{name}}",
     "sectionList": {
@@ -1037,7 +1028,7 @@
     "security": {
         "about": "Vi povas aldoni $t(lockRoomPassword) al via renkontiĝo. Partoprenantoj devos doni la $t(lockRoomPassword) antaŭ ol ili rajtas aliĝi al la renkontiĝo.",
         "aboutReadOnly": "Moderaciuloj povas aldoni $t(lockRoomPassword) al la renkontiĝo. Partoprenantoj devos doni la $t(lockRoomPassword) antaŭ ol ili rajtas aliĝi al la renkontiĝo.",
-        "insecureRoomNameWarningNative": "Ĉi-tiu ĉambro ne estas sekura. Nevolataj partoprenantoj povas aliĝi vian kunvenvon.",
+        "insecureRoomNameWarningNative": "La nomo de la ĉambro estas nesekura. Nedezirataj partoprenantoj povus aliĝi al via kunsido. {{recommendAction}} Lernu pli pri sekurigo de via kunsido ",
         "insecureRoomNameWarningWeb": "Ĉi-tiu ĉambro ne estas sekura. Nevolataj partoprenantoj povas aliĝi vian kunvenvon. {{recommendAction}} Lerni pli pri sekuri vian kunvenon <a href=\"{{securityUrl}}\" target=\"_blank\">ĉi-tie</a>.",
         "title": "Sekurecaj Opcioj",
         "unsafeRoomActions": {
@@ -1219,7 +1210,7 @@
             "muteGUMPending": "Konektanta vian mikrofonon",
             "noiseSuppression": "Bruo nuligo",
             "openChat": "Malfermi babilejon",
-            "participants": "Partoprenantoj",
+            "participants": "Malfermi la panelon de partoprenantoj. {{participantsCount}} partoprenantoj",
             "pip": "Baskuligi la reĝimon “bildo en bildo”",
             "privateMessage": "Sendi privatan mesaĝon",
             "profile": "Redakti vian profilon",
@@ -1335,7 +1326,7 @@
         "silence": "Silento",
         "speakerStats": "Statistikoj pri parolintoj",
         "startScreenSharing": "Komenci dividadon de ekrano",
-        "startSubtitles": "Komenci subtekstojn",
+        "startSubtitles": "Subtekstoj • {{language}}",
         "stopAudioSharing": "Ĉesu aŭddividon",
         "stopScreenSharing": "Ĉesigi dividadon de ekrano",
         "stopSharedVideo": "Haltigi videon",
@@ -1352,12 +1343,8 @@
     },
     "transcribing": {
         "ccButtonTooltip": "Komenci / Ĉesigi subtekstojn",
-        "error": "Transskribado malsukcesis. Bonvolu provi denove.",
         "expandedLabel": "Transskribado estas ŝaltita",
-        "failedToStart": "Transskribado ne sukcesis komenciĝi",
-        "labelToolTip": "La kunveno estas transskribata",
         "off": "Transskribado ĉesis",
-        "pending": "Prepariĝo por transskribado de la kunveno…",
         "sourceLanguageDesc": "La kunvenlingvo nun estas agordita al <b>{{sourceLanguage}}</b>. <br/> Vi povas ŝanĝi ĝin de ",
         "sourceLanguageHere": "ĉi tie",
         "start": "Komenci montri subtekstojn",
@@ -1458,7 +1445,6 @@
         "chatIndicator": "(vizitanto)",
         "labelTooltip": "Nombro da vizitantoj: {{count}}",
         "notification": {
-            "description": "Levu la manon por partopreni",
             "title": "Vi estas vizitanto en la kunveno"
         }
     },

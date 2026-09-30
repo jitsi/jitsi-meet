@@ -1,3 +1,24 @@
+-- USAGE / DEPLOYMENT
+--   This is a server-to-server endpoint used by the Jigasi dial-in IVR
+--   (dialplan) to check whether a room is passcode protected and to validate
+--   the passcode entered by the caller. The dialplan runs outside the shard,
+--   so the endpoint is reachable through the web server (/_api/room-info in
+--   the example nginx config), which routes the request to the shard hosting
+--   the room.
+--
+--   The module must be enabled on a dedicated VirtualHost with its own token
+--   configuration, not on the main virtual host, see jaas.cfg.lua
+--   (VirtualHost "jigasi.meet.jitsi"): tokens are verified with that host's
+--   asap_key_server / asap_accepted_issuers / asap_accepted_audiences, so
+--   login tokens of the main virtual host are not accepted. Only the dial-in
+--   service holds the private key for those tokens. A valid token authorizes
+--   the caller for every room on the deployment. It is intentionally not
+--   bound to a room: there is no room claim check.
+--
+--   Enabling the module on the main virtual host, or disabling
+--   enable_password_token_verification, makes the endpoint accept any
+--   login token (or no token), so it must not then be publicly accessible.
+--
 -- HTTP module that exposes GET and PUT endpoints at /room-info for querying
 -- and validating MUC room password information.
 --
