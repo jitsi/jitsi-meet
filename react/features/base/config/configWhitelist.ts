@@ -211,6 +211,7 @@ export default [
     'prejoinConfig.showHangUp',
     'raisedHands',
     'recordingService',
+    'voiceAgents',
     'requireDisplayName',
     'remoteVideoMenu',
     'roomPasswordNumberOfDigits',

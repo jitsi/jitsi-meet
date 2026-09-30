@@ -837,6 +837,7 @@ export interface IConfig {
      * auto-subscribe everyone.
      */
     voiceAgents?: {
+        consentLearnMoreLink?: string;
         requireConsent?: boolean;
     };
     watchRTCConfigParams?: IWatchRTCConfiguration;
