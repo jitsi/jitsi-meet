@@ -1,3 +1,4 @@
+import { PARTICIPANT_LEFT } from '../base/participants/actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
@@ -69,6 +70,12 @@ ReducerRegistry.register<IAudioTranslationState>(
                     [action.participantId]: action.language
                 }
             };
+        case PARTICIPANT_LEFT: {
+            // A per-speaker choice must not outlive the speaker, or the meeting label never clears.
+            const { [action.participant.id]: _left, ...participantLanguages } = state.participantLanguages;
+
+            return _left === undefined ? state : { ...state, participantLanguages };
+        }
         case SET_TRANSLATION_LISTENERS:
             return {
                 ...state,
