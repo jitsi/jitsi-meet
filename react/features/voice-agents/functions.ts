@@ -1,6 +1,6 @@
 import { IReduxState } from '../app/types';
 
-import { IVoiceAgents } from './types';
+import { IVoiceAgent, IVoiceAgents } from './types';
 
 /**
  * Keys that must never be used as object keys, since assigning them can pollute the prototype chain.
@@ -38,6 +38,36 @@ export function sanitizeAgents(agents: IVoiceAgents): IVoiceAgents {
     }
 
     return safe;
+}
+
+/**
+ * Whether a voice agent is present in the room: its media leg is up (state `active`). While it is being
+ * provisioned it is not shown, so an agent whose allocation fails never joins the roster or fires the join and
+ * leave notifications. A missing state (older deployments) counts as present.
+ *
+ * @param {IVoiceAgent} agent - The agent.
+ * @returns {boolean}
+ */
+export function isVoiceAgentPresent(agent: IVoiceAgent): boolean {
+    return agent.state === undefined || agent.state === 'active';
+}
+
+/**
+ * Keeps only the agents that are present in the room (see {@link isVoiceAgentPresent}).
+ *
+ * @param {IVoiceAgents} agents - The agents map from metadata.
+ * @returns {IVoiceAgents}
+ */
+export function pickPresentAgents(agents: IVoiceAgents): IVoiceAgents {
+    const present: IVoiceAgents = {};
+
+    for (const [ agentId, agent ] of Object.entries(agents)) {
+        if (isVoiceAgentPresent(agent)) {
+            present[agentId] = agent;
+        }
+    }
+
+    return present;
 }
 
 /**
