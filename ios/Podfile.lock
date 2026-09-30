@@ -3661,7 +3661,7 @@ SPEC CHECKSUMS:
   react-native-screen-corner-radius: ebd0d3258fcc894571b41d25ee3db7569d375153
   react-native-slider: 34064ca1a6864d7b263e44dd76a2d794e8d26744
   react-native-video: ce907959c67ad2abaa0411082db621036944737a
-  react-native-webrtc: da75ba1f85a36981cbcb3fdae7dfbab7ad63c040
+  react-native-webrtc: 93084d27392e7ecb816be0eb39fa85768cfe3f5b
   react-native-webview: 654f794a7686b47491cf43aa67f7f428bea00eed
   react-native-worklets-core: 28a6e2121dcf62543b703e81bc4860e9a0150cee
   React-NativeModulesApple: 4426a35571bd5b935a22766733cd8bcedb52f8de

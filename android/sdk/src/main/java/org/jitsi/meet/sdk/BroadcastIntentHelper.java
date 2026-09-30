@@ -154,4 +154,18 @@ public class BroadcastIntentHelper {
 
         return intent;
     }
+
+    public static Intent buildSetE2EEEnabledIntent(boolean enabled) {
+        Intent intent = new Intent(BroadcastAction.Type.SET_E2EE_ENABLED.getAction());
+        intent.putExtra("enabled", enabled);
+
+        return intent;
+    }
+
+    public static Intent buildSetE2EEKeyIntent(String key) {
+        Intent intent = new Intent(BroadcastAction.Type.SET_E2EE_KEY.getAction());
+        intent.putExtra("key", key);
+
+        return intent;
+    }
 }
