@@ -456,7 +456,7 @@ export class Participant {
 
             this._iframeUnreachable = false;
 
-            // Through a blank page, as joinMuc() does, so the same URL is a real load and not a no-op.
+            // Through a blank page, so the same URL is a real load and not a no-op.
             await this.driver.url('about:blank');
             await this.driver.url(url);
             await this.waitForPageToLoad();
@@ -476,17 +476,54 @@ export class Participant {
      * below (an invalid token, a locked room), so the connection state is consulted too: connecting, connected or
      * failed, any of them means the click reached the app and clicking again would start a second join.
      *
+     * A lost click does not always mean a swapped node, though: on the grid the driver has reported successful
+     * clicks on a button that stayed the same node throughout, with the handler never running and focus never
+     * leaving the display name input, i.e. the input never reached the document at all. When the node the driver
+     * clicked is still the live one, the retry dispatches the click from inside the page instead, which does not
+     * go through the driver's input pipeline. Either way the retry logs which case it saw and where focus was.
+     *
      * @param {PreJoinScreen} prejoinScreen - The prejoin screen page object.
      * @returns {Promise<void>}
      */
     private async _clickPrejoinJoinButton(prejoinScreen: PreJoinScreen): Promise<void> {
         const MAX_ATTEMPTS = 3;
+        let previousElementId: string | undefined;
 
         for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
             const joinButton = prejoinScreen.getJoinButton();
 
             await joinButton.waitForDisplayed();
-            await joinButton.click();
+
+            const elementId = await joinButton.elementId;
+            const sameNode = elementId === previousElementId;
+            let kind: string;
+
+            previousElementId = elementId;
+
+            if (!sameNode) {
+                kind = 'driver';
+                await joinButton.click();
+            } else if (attempt < MAX_ATTEMPTS) {
+                // One more driver click on the same node, this time watched from inside the page: whether any mouse
+                // event reaches the document at all tells a click lost between the driver and the browser from one
+                // the page received and dropped.
+                kind = 'driver, probed';
+                await this.execute(() => {
+                    const seen: string[] = [];
+                    const record = (e: Event) => {
+                        seen.push(`${e.type}@${(e.target as Element)?.tagName?.toLowerCase()}`);
+                        document.body.dataset.joinClickProbe = seen.join(' ');
+                    };
+
+                    document.body.dataset.joinClickProbe = '';
+                    [ 'mousedown', 'mouseup', 'click', 'keydown' ].forEach(
+                        type => document.addEventListener(type, record, true));
+                });
+                await joinButton.click();
+            } else {
+                kind = 'in-page';
+                await prejoinScreen.clickJoinButtonFromPage();
+            }
 
             try {
                 await this.driver.waitUntil(
@@ -514,8 +551,28 @@ export class Participant {
                         `The prejoin Join click did not register for ${this._name} after ${MAX_ATTEMPTS} attempts.`);
                 }
 
-                console.log(`The prejoin Join click did not register for ${this._name} (attempt ${
-                    attempt}), clicking again.`);
+                const activeElement = await this.execute(() => {
+                    const el = document.activeElement;
+
+                    if (!el) {
+                        return 'none';
+                    }
+
+                    const testId = el.getAttribute('data-testid');
+
+                    return `${el.tagName.toLowerCase()}${el.id ? `#${el.id}` : ''}${testId ? `[${testId}]` : ''}`;
+                }).catch(() => 'unknown');
+
+                const probe = await this.execute(() => document.body.dataset.joinClickProbe ?? '')
+                    .catch(() => 'unknown');
+                const message = `The prejoin Join click did not register for ${this._name} (attempt ${attempt}, ${
+                    kind} click, node ${elementId}, focus on ${activeElement}${
+                    kind === 'driver, probed' ? `, document saw [${probe}]` : ''}), clicking again.`;
+
+                console.log(message);
+
+                // Also into the browser log, which is what the CI archive keeps.
+                await logInfo(this.driver, message).catch(() => undefined);
             }
         }
     }
