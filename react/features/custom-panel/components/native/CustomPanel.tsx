@@ -8,9 +8,31 @@ import { getCurrentConference } from '../../../base/conference/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 import { useCustomPanelApi } from '../../api.native';
-import { buildCustomPanelUrl, getCustomPanelOrigin, getCustomPanelUrl, onError } from '../../functions.native';
+import { buildCustomPanelUrl, getCustomPanelOrigin, getCustomPanelUrl } from '../../functions.native';
+import logger from '../../logger';
 
 import styles from './styles';
+
+/**
+ * Renders the spinner shown while the WebView is loading.
+ *
+ * @returns {JSX.Element}
+ */
+const renderLoading = () => (
+    <View style = { styles.loadingWrapper }>
+        <LoadingIndicator size = 'large' />
+    </View>
+);
+
+/**
+ * Logs WebView load failures.
+ *
+ * @param {Object} event - The WebView error event.
+ * @returns {void}
+ */
+const onError = (event: any) => {
+    logger.error('Failed to load the advisor', event.nativeEvent);
+};
 
 /**
  * Renders the advisor web app in a WebView, loaded only with a JWT.
@@ -26,12 +48,6 @@ const CustomPanel = ({ navigation }: { navigation: { isFocused: () => boolean; }
     const fullUrl = buildCustomPanelUrl(baseUrl, jwt, meetingId);
     const origin = getCustomPanelOrigin(baseUrl);
     const { onMessage, webViewRef } = useCustomPanelApi(fullUrl, navigation);
-
-    const renderLoading = () => (
-        <View style = { styles.loadingWrapper }>
-            <LoadingIndicator size = 'large' />
-        </View>
-    );
 
     const onShouldStartLoadWithRequest = useCallback((request: { url: string; }) =>
         getCustomPanelOrigin(request.url) === origin

@@ -1407,6 +1407,7 @@
                 "label": "Stereo"
             }
         },
+        "aiAssist": "Asistent AI",
         "audioRoute": "Përzgjidhni pajisje zëri",
         "audioSettings": "Rregullime audio",
         "authenticate": "Bëni mirëfilltësimiin",
@@ -1419,7 +1420,6 @@
         "closeParticipantsPane": "Mbyllni kuadrat pjesëmarrësish",
         "closeReactionsMenu": "Mbyllni menu reagimesh",
         "closedCaptions": "Titra të mbyllur",
-        "copilot": "Copilot",
         "disableNoiseSuppression": "Çaktivizoni asgjësim ekstra zhurmash",
         "disableReactionSounds": "Mund të çaktivizoni tinguj reagimesh për këtë takim",
         "documentClose": "Mbyll dokument të ndarë",

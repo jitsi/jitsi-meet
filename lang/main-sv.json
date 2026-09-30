@@ -1412,6 +1412,7 @@
                 "label": "Stereo"
             }
         },
+        "aiAssist": "AI-assistent",
         "audioRoute": "Välj ljudenhet",
         "audioSettings": "Ljud inställningar",
         "authenticate": "Autentisera",
@@ -1424,7 +1425,6 @@
         "closeParticipantsPane": "Stäng deltagarrutan",
         "closeReactionsMenu": "Stäng meny för reaktioner",
         "closedCaptions": "Undertexter",
-        "copilot": "Copilot",
         "disableNoiseSuppression": "Inaktivera brusreducering",
         "disableReactionSounds": "Du kan inaktivera reaktionsljud för det här mötet",
         "documentClose": "Stäng delat dokument",

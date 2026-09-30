@@ -1,5 +1,7 @@
 import { IReduxState } from '../app/types';
 
+import { DEFAULT_CUSTOM_PANEL_THEME, DEFAULT_CUSTOM_PANEL_WIDTH } from './constants';
+
 /**
  * Returns the configured custom panel URL, or undefined when none is configured.
  *
@@ -31,8 +33,6 @@ export function isCustomPanelEnabled(state: IReduxState): boolean {
  * @returns {string} The full URL, or '' when no base URL or JWT is provided.
  */
 export function buildCustomPanelUrl(baseUrl?: string, jwt?: string, meetingId?: string): string {
-    const CUSTOM_PANEL_THEME = 'dark';
-
     if (!baseUrl || !jwt) {
         return '';
     }
@@ -50,7 +50,34 @@ export function buildCustomPanelUrl(baseUrl?: string, jwt?: string, meetingId?: 
     if (meetingId) {
         fullUrl.searchParams.set('meeting', meetingId);
     }
-    fullUrl.searchParams.set('theme', CUSTOM_PANEL_THEME);
+    fullUrl.searchParams.set('theme', DEFAULT_CUSTOM_PANEL_THEME);
 
     return fullUrl.toString();
+}
+
+/**
+ * Returns whether the custom panel is currently open.
+ *
+ * @param {IReduxState} state - The Redux state.
+ * @returns {boolean} Whether the custom panel is open.
+ */
+export function getCustomPanelOpen(state: IReduxState): boolean {
+    return Boolean(state['features/custom-panel']?.isOpen);
+}
+
+/**
+ * Returns the width the custom panel takes from the video space. 0 when closed, disabled,
+ * or on native, where the panel is a navigation route and its slice is never registered.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {number}
+ */
+export function getCustomPanelWidth(state: IReduxState): number {
+    const panel = state['features/custom-panel'];
+
+    if (!isCustomPanelEnabled(state) || !getCustomPanelOpen(state)) {
+        return 0;
+    }
+
+    return panel.width?.current ?? DEFAULT_CUSTOM_PANEL_WIDTH;
 }
