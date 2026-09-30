@@ -1466,6 +1466,7 @@
                 "label": "Stereo"
             }
         },
+        "aiAssist": "KI-Assistent",
         "audioRoute": "Audiogerät auswählen",
         "audioSettings": "Ton-Einstellungen",
         "audioTranslation": "Audio-Übersetzung",
@@ -1480,7 +1481,6 @@
         "closeParticipantsPane": "Anwesenheitsliste schließen",
         "closeReactionsMenu": "Interaktionsmenü schließen",
         "closedCaptions": "Untertitel",
-        "copilot": "Copilot",
         "disableNoiseSuppression": "Rauschunterdrückung deaktivieren",
         "disableReactionSounds": "Sie können die Interaktionstöne für diese Konferenz deaktivieren",
         "documentClose": "Geteiltes Dokument schließen",

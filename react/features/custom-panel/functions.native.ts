@@ -1,5 +1,3 @@
-import logger from './logger';
-
 export * from './functions.any';
 
 /**
@@ -19,13 +17,3 @@ export function getCustomPanelOrigin(url?: string): string {
         return '';
     }
 }
-
-/**
- * Logs a failed advisor load from the WebView `onError` event.
- *
- * @param {Object} event - The WebView error event.
- * @returns {void}
- */
-export const onError = (event: any) => {
-    logger.error('Failed to load the advisor', event.nativeEvent);
-};
