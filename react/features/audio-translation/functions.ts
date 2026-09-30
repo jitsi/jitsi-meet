@@ -107,20 +107,21 @@ export function getTranslationTreatment(state: IReduxState, participantId: strin
 }
 
 /**
- * Whether audio translation is currently active anywhere in the meeting: a remote participant is translating
- * the local user, translated audio is being received, or the local user has translation on.
+ * Whether audio translation is in progress in the meeting, for the conference label. Only control-plane
+ * signals count: languages participants declare, the listener counts speakers publish in room metadata, and
+ * the component's listeners push.
  *
  * @param {IReduxState} state - The redux state.
  * @returns {boolean}
  */
 export function isAudioTranslationActiveInMeeting(state: IReduxState): boolean {
-    const { language, participantLanguages, receivingSources, translationListeners }
-        = state['features/audio-translation'];
+    const { language, participantLanguages, translationListeners } = state['features/audio-translation'];
+    const listenerCounts = state['features/base/conference'].metadata?.audioTranslationListenerCounts ?? {};
 
     return translationListeners.length > 0
-        || receivingSources.length > 0
         || Boolean(language)
-        || Object.values(participantLanguages).some(lang => lang !== null);
+        || Object.values(participantLanguages).some(lang => lang !== null)
+        || Object.values(listenerCounts).some(counts => Object.values(counts).some(count => count > 0));
 }
 
 /**
