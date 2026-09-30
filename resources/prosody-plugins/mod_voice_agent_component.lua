@@ -94,6 +94,11 @@ local STATE_CONNECTING = 'connecting';
 local STATE_ACTIVE = 'active';
 local STATE_FAILED = 'failed';
 local STATE_ENDED = 'ended';
+-- Forward-only lifecycle: a report only ever moves the state forward, so a duplicate or a stale retry
+-- (a delayed 'connecting' landing after 'active') is acknowledged and ignored and each webhook fires once.
+local STATE_RANK = {
+    [STATE_PROVISIONING] = 0; [STATE_CONNECTING] = 1; [STATE_ACTIVE] = 2; [STATE_FAILED] = 3; [STATE_ENDED] = 3;
+};
 local STATUS_TRANSITIONS = {
     [STATE_CONNECTING] = true; [STATE_ACTIVE] = true; [STATE_FAILED] = true; [STATE_ENDED] = true;
 };
@@ -509,8 +514,17 @@ local function handle_invite(event)
     local voice_agents = room._data.voice_agents or {};
     local source_name = agent_id .. '-a0';
 
-    -- Idempotent on agentId: an identical re-invite returns the existing agent; a different one conflicts.
     local existing = agents[agent_id];
+    if existing and existing.state == STATE_FAILED then
+        -- A failed allocation is terminal for jicofo: re-inviting replaces the record, and the removal
+        -- broadcast clears jicofo's failure before the fresh entry is announced.
+        module:log('info', 'Replacing failed voice agent %s in room %s', agent_id, room.jid);
+        agents[agent_id] = nil;
+        voice_agents[agent_id] = nil;
+        notify_metadata_changed(room);
+        existing = nil;
+    end
+    -- Idempotent on agentId: an identical re-invite returns the existing agent; a different one conflicts.
     if existing then
         local jicofo_entry = voice_agents[agent_id] or {};
         if existing.displayName == payload.displayName
@@ -660,6 +674,11 @@ local function handle_status(event)
     if not entry then
         return error_response(404, 'Agent not found');
     end
+    if STATE_RANK[payload.state] <= (STATE_RANK[entry.state] or 0) then
+        module:log('debug', 'Ignoring stale status %s for agent %s in state %s',
+            payload.state, payload.agentId, entry.state);
+        return { status_code = 200, body = json.encode(agent_response(payload.agentId, entry)) };
+    end
     entry.state = payload.state;
     if payload.state == STATE_ACTIVE then
         send_webhook(room, payload.agentId, entry, jicofo_entry.callbackUrl, 'agent.connected');
@@ -732,9 +751,13 @@ process_host_module(muc_component_host, function(host_module)
         end
         local voice_agents = room._data.voice_agents or {};
         for agent_id, entry in pairs(agents) do
-            entry.state = STATE_ENDED;
-            send_webhook(room, agent_id, entry, (voice_agents[agent_id] or {}).callbackUrl,
-                'agent.ended', { reason = 'room-destroyed' });
+            -- The module may be loaded on several hosts (e.g. via global modules_enabled), each hooking
+            -- the same room: the first run marks the agent ended so later runs stay silent.
+            if entry.state ~= STATE_ENDED then
+                entry.state = STATE_ENDED;
+                send_webhook(room, agent_id, entry, (voice_agents[agent_id] or {}).callbackUrl,
+                    'agent.ended', { reason = 'room-destroyed' });
+            end
         end
     end);
 end);
