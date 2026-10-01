@@ -832,7 +832,9 @@ var config = {
 
     // Picture-in-Picture configuration.
     // pip: {
-    //     // Enable Picture-in-Picture for browser meetings. Opt-in, defaults to false.
+    //     // Enable Picture-in-Picture for browser meetings. Opt-in, defaults to false. This is only the default:
+    //     // unless PiP is disabled altogether, users can turn browser PiP on or off for themselves from the Config
+    //     // tab of the settings dialog and their browser remembers the choice.
     //     enableBrowserPiP: false,
     //     // Disable Picture-in-Picture entirely. Defaults to false.
     //     disabled: false,
