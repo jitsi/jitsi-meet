@@ -22,3 +22,8 @@ export const SET_USER_CUSTOM_PANEL_WIDTH = 'SET_USER_CUSTOM_PANEL_WIDTH';
  * Action type to indicate whether the custom panel is being resized.
  */
 export const SET_CUSTOM_PANEL_IS_RESIZING = 'SET_CUSTOM_PANEL_IS_RESIZING';
+
+/**
+ * Action type to set whether an advisor is deployed for the current meeting.
+ */
+export const SET_CUSTOM_PANEL_ADVISOR_AVAILABLE = 'SET_CUSTOM_PANEL_ADVISOR_AVAILABLE';

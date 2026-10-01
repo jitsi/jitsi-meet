@@ -1,3 +1,4 @@
+import './middleware.any';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import {
@@ -7,8 +8,7 @@ import {
 import { screen } from '../mobile/navigation/routes';
 
 /**
- * The advisor works from meeting transcriptions, which are not available in a breakout
- * room. Pop the AI Assist screen when the local participant switches into one.
+ * Closes the AI Assist screen on entering a breakout room, where there are no transcriptions.
  */
 StateListenerRegistry.register(
     state => Boolean(isInBreakoutRoom(state)),

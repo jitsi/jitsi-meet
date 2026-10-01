@@ -148,8 +148,18 @@ function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: A
         config.peopleSearchUrl = peopleSearchUrl;
     }
 
-    if (customPanelUrl) {
-        config.customPanel = { url: customPanelUrl };
+    const { url: panelUrl, advisorAvailabilityUrl } = customPanelUrl ?? {};
+
+    if (panelUrl || advisorAvailabilityUrl) {
+        config.customPanel = {};
+
+        if (panelUrl) {
+            config.customPanel.url = panelUrl;
+        }
+
+        if (advisorAvailabilityUrl) {
+            config.customPanel.advisorAvailabilityUrl = advisorAvailabilityUrl;
+        }
     }
 
     const { enabled, iceUrl } = preCallTest;

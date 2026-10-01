@@ -38,11 +38,7 @@ class CustomPanelButton extends AbstractButton<AbstractButtonProps> {
  */
 function _mapStateToProps(state: IReduxState) {
     return {
-        // Gate on a JWT so the advisor is never reachable without a token, and hide in
-        // breakout rooms since the advisor works from transcriptions that aren't available there.
-        visible: isCustomPanelEnabled(state)
-            && Boolean(state['features/base/jwt'].jwt)
-            && !isInBreakoutRoom(state)
+        visible: isCustomPanelEnabled(state) && !isInBreakoutRoom(state)
     };
 }
 
