@@ -1,11 +1,14 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { connect, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { isTouchDevice, shouldEnableResize } from '../../../base/environment/utils.web';
+import { IconCloseLarge } from '../../../base/icons/svg';
+import ClickableIcon from '../../../base/ui/components/web/ClickableIcon';
 import usePanelResize from '../../../base/ui/hooks/usePanelResize.web';
-import { setCustomPanelIsResizing, setUserCustomPanelWidth } from '../../actions.web';
+import { close, setCustomPanelIsResizing, setUserCustomPanelWidth } from '../../actions.web';
 import {
     CUSTOM_PANEL_DRAG_HANDLE_HEIGHT,
     CUSTOM_PANEL_DRAG_HANDLE_OFFSET,
@@ -75,6 +78,16 @@ const useStyles = makeStyles<IStylesProps>()((theme, { isResizing, isTouch, resi
             }
         },
 
+        header: {
+            alignItems: 'center',
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexShrink: 0,
+            height: '60px',
+            justifyContent: 'flex-end',
+            padding: `0 ${theme.spacing(3)}`
+        },
+
         contentContainer: {
             flex: 1,
             overflow: 'hidden',
@@ -135,6 +148,11 @@ const useStyles = makeStyles<IStylesProps>()((theme, { isResizing, isTouch, resi
 });
 
 /**
+ * Close button with `close` bound once, outside render, so no handler is recreated per render.
+ */
+const CloseButton = connect(undefined, { onClick: close })(ClickableIcon);
+
+/**
  * Custom panel container component that handles resize, close button,
  * and renders CustomPanelContent inside it.
  *
@@ -148,6 +166,7 @@ export default function CustomPanel(): JSX.Element | null {
     const isResizing = useSelector((state: IReduxState) =>
         state['features/custom-panel']?.isResizing ?? false);
     const maxPanelWidth = useSelector(getCustomPanelMaxSize);
+    const { t } = useTranslation();
 
     const isTouch = isTouchDevice();
     const resizeEnabled = shouldEnableResize();
@@ -178,6 +197,11 @@ export default function CustomPanel(): JSX.Element | null {
                 ) }
                 onPointerDown = { onDragHandlePointerDown }>
                 <div className = { cx(classes.dragHandle, 'customPanelDragHandle') } />
+            </div>
+            <div className = { classes.header }>
+                <CloseButton
+                    accessibilityLabel = { t('customPanel.close') }
+                    icon = { IconCloseLarge } />
             </div>
             <div className = { classes.contentContainer }>
                 <CustomPanelContent />
