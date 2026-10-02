@@ -5,7 +5,7 @@
 -- Stubs every Prosody dependency so no Prosody installation is needed. These focus on the
 -- security-relevant validation at the provisioning boundary: ASAP auth, agentId namespacing (the
 -- reserved "agent-" prefix that makes an agent id un-collidable with a real 8-hex endpoint id),
--- prototype-pollution key rejection, string-map bounds, jicofo-only secret segregation — and the
+-- prototype-pollution key rejection, string-map bounds, prosody-only dial-config segregation — and the
 -- v1 contract additions: idempotent invite, get, the state lifecycle, and signed webhooks.
 -- End-to-end behaviour against a real Prosody is covered by the integration specs.
 
@@ -143,7 +143,7 @@ if not ok then
 end
 
 for _, route in ipairs({ 'POST voice-agent/invite', 'POST voice-agent/dismiss', 'GET voice-agent/list',
-                         'GET voice-agent/get', 'POST voice-agent/status' }) do
+                         'GET voice-agent/get', 'POST voice-agent/status', 'GET voice-agent/dial' }) do
     assert(routes[route], route .. ' route not registered');
 end
 
@@ -165,13 +165,31 @@ local function post(route, payload, opts)
     return routes[route]({ request = { headers = headers; body = 'x' } });
 end
 
-local function invite(payload, opts) return post('POST voice-agent/invite', payload, opts); end
+local DEFAULT_ENDPOINT = { url = 'wss://agents.example.com/s' };
+
+-- Every invite needs an endpoint; tests that do not care get the default one.
+local function invite(payload, opts)
+    opts = opts or {};
+    if payload.endpoint == nil and not opts.noEndpoint then
+        payload.endpoint = DEFAULT_ENDPOINT;
+    end
+    return post('POST voice-agent/invite', payload, opts);
+end
 local function dismiss(payload) return post('POST voice-agent/dismiss', payload); end
 local function status(payload, opts) return post('POST voice-agent/status', payload, opts); end
 
 local function get(query)
     return routes['GET voice-agent/get']({
         request = { headers = { authorization = 'Bearer t' }; url = { query = query } } });
+end
+
+local function dial(query, opts)
+    opts = opts or {};
+    local headers = {};
+    if not opts.omitAuth then
+        headers.authorization = opts.token or 'Bearer t';
+    end
+    return routes['GET voice-agent/dial']({ request = { headers = headers; url = { query = query } } });
 end
 
 local function agent_ids(room)
@@ -288,62 +306,36 @@ describe('mod_voice_agent_component', function()
         end)
     end)
 
-    describe('string-map validation (urlParams / httpHeaders)', function()
+    describe('customParameters validation', function()
         it('rejects a non-string map value', function()
             assert.are.equal(400,
-                invite({ conference = 'r'; displayName = 'B'; urlParams = { k = 5 } }).status_code);
+                invite({ conference = 'r'; displayName = 'B'; customParameters = { k = 5 } }).status_code);
         end)
 
         it('rejects too many entries', function()
             local big = {};
             for i = 1, 17 do big['k' .. i] = 'v'; end
-            assert.are.equal(400, invite({ conference = 'r'; displayName = 'B'; httpHeaders = big }).status_code);
+            assert.are.equal(400,
+                invite({ conference = 'r'; displayName = 'B'; customParameters = big }).status_code);
         end)
 
-        it('rejects a value with control characters (CRLF header injection)', function()
+        it('rejects a value with control characters', function()
             assert.are.equal(400,
                 invite({ conference = 'r'; displayName = 'B';
-                    httpHeaders = { X = 'a\r\nX-Injected: 1' } }).status_code);
+                    customParameters = { X = 'a\r\nX-Injected: 1' } }).status_code);
         end)
 
         it('rejects an over-long key', function()
             assert.are.equal(400,
                 invite({ conference = 'r'; displayName = 'B';
-                    httpHeaders = { [string.rep('k', 129)] = 'v' } }).status_code);
-        end)
-
-        it('rejects httpHeaders that set a reserved X-Agent-* header (endpoint bypass)', function()
-            assert.are.equal(400,
-                invite({ conference = 'r'; displayName = 'B';
-                    httpHeaders = { ['X-Agent-Endpoint'] = 'ws://169.254.169.254/' } }).status_code);
+                    customParameters = { [string.rep('k', 129)] = 'v' } }).status_code);
         end)
     end)
 
-    describe('secret segregation', function()
-        it('keeps httpHeaders out of the client-facing entry and on the jicofo-only side', function()
-            invite({
-                conference = 'r';
-                displayName = 'Bot';
-                agentId = 'support';
-                httpHeaders = { Authorization = 'Bearer customer-secret' }
-            });
-            local client_entry = mock_room.jitsiMetadata.agents['agent-support'];
-            assert.is_nil(client_entry.httpHeaders, 'client-facing entry must not carry httpHeaders');
-            assert.are.equal('Bearer customer-secret',
-                mock_room._data.voice_agents['agent-support'].httpHeaders.Authorization);
-        end)
-
-        it('maps the endpoint.{url,authorization} convenience onto jicofo-only X-Agent headers', function()
-            invite({
-                conference = 'r';
-                displayName = 'Bot';
-                agentId = 'support';
-                endpoint = { url = 'wss://agents.example.com/s'; authorization = 'Bearer k' }
-            });
-            local headers = mock_room._data.voice_agents['agent-support'].httpHeaders;
-            assert.are.equal('wss://agents.example.com/s', headers['X-Agent-Endpoint']);
-            assert.are.equal('Bearer k', headers['X-Agent-Authorization']);
-            assert.is_nil(mock_room.jitsiMetadata.agents['agent-support'].httpHeaders);
+    describe('endpoint', function()
+        it('is required', function()
+            assert.are.equal(400,
+                invite({ conference = 'r'; displayName = 'B' }, { noEndpoint = true }).status_code);
         end)
 
         it('rejects a non-wss endpoint.url', function()
@@ -351,24 +343,60 @@ describe('mod_voice_agent_component', function()
                 conference = 'r'; displayName = 'B'; endpoint = { url = 'http://evil/s' }
             }).status_code);
         end)
-    end)
 
-    describe('customParameters', function()
-        it('is validated like the other string maps', function()
-            assert.are.equal(400,
-                invite({ conference = 'r'; displayName = 'B'; customParameters = { k = 5 } }).status_code);
+        it('rejects an endpoint.authorization with control characters', function()
+            assert.are.equal(400, invite({ conference = 'r'; displayName = 'B';
+                endpoint = { url = 'wss://agents.example.com/s'; authorization = 'Bearer k\r\nX: 1' } }).status_code);
         end)
 
-        it('is stored jicofo-only and merged into the dial urlParams (explicit urlParams win)', function()
-            invite({ conference = 'r'; displayName = 'B'; agentId = 'support';
-                urlParams = { region = 'us' }; customParameters = { campaign = '42'; region = 'ignored' } });
-            assert.is_nil(mock_room.jitsiMetadata.agents['agent-support'].customParameters);
-            assert.are.equal('42', mock_room._data.voice_agents['agent-support'].customParameters.campaign);
+        it('keeps the endpoint and its secret out of the client-facing entry', function()
+            invite({
+                conference = 'r';
+                displayName = 'Bot';
+                agentId = 'support';
+                endpoint = { url = 'wss://agents.example.com/s'; authorization = 'Bearer k' }
+            });
+            assert.is_nil(mock_room.jitsiMetadata.agents['agent-support'].endpoint);
+            local stored = mock_room._data.voice_agents['agent-support'].endpoint;
+            assert.are.equal('wss://agents.example.com/s', stored.url);
+            assert.are.equal('Bearer k', stored.authorization);
+        end)
+    end)
 
-            local extra = {};
-            host_hooks['jitsi-room-metadata-admin-extra']({ room = mock_room; extra = extra });
-            assert.are.equal('42', extra.agents['agent-support'].urlParams.campaign);
-            assert.are.equal('us', extra.agents['agent-support'].urlParams.region);
+    describe('dial (internal, fetched by the media relay)', function()
+        local function invite_support()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                endpoint = { url = 'wss://agents.example.com/s'; authorization = 'Bearer k' };
+                customParameters = { campaign = '42' } });
+        end
+
+        it('returns the endpoint and custom parameters for the status secret bearer', function()
+            invite_support();
+            local res = dial('conference=r&agentId=agent-support', { token = 'Bearer jicofo-secret' });
+            assert.are.equal(200, res.status_code);
+            local body = encoded[#encoded];
+            assert.are.equal('agent-support', body.agentId);
+            assert.are.equal('wss://agents.example.com/s', body.endpoint.url);
+            assert.are.equal('Bearer k', body.endpoint.authorization);
+            assert.are.equal('42', body.customParameters.campaign);
+            assert.is_nil(mock_room.jitsiMetadata.agents['agent-support'].customParameters);
+        end)
+
+        it('accepts an ASAP token too', function()
+            invite_support();
+            assert.are.equal(200, dial('conference=r&agentId=agent-support').status_code);
+        end)
+
+        it('rejects a missing or invalid token', function()
+            invite_support();
+            assert.are.equal(401, dial('conference=r&agentId=agent-support', { omitAuth = true }).status_code);
+            token_valid = false;
+            assert.are.equal(401, dial('conference=r&agentId=agent-support', { token = 'Bearer wrong' }).status_code);
+        end)
+
+        it('returns 404 for an unknown agent and for a missing room', function()
+            assert.are.equal(404, dial('conference=r&agentId=agent-nope').status_code);
+            assert.are.equal(404, dial('conference=missing&agentId=agent-support').status_code);
         end)
     end)
 
