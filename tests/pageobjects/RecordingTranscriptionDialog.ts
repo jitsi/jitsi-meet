@@ -20,6 +20,7 @@ const LANGUAGE_SELECT_MENU = '#transcription-language-select-menu';
 const FOLLOW_ME_RECORDER_SWITCH = '#recording-switch-follow-me';
 const FILE_SHARING_SWITCH = '#recording-switch-share';
 const LOCAL_RECORDING_ONLY_SELF_SWITCH = '#recording-switch-myself';
+const TOOLTIP = '.popover-content';
 
 /**
  * Page object for the unified Recording & Transcription dialog: two sections
@@ -109,6 +110,39 @@ export default class RecordingTranscriptionDialog extends BasePageObject {
      */
     isStartBothEnabled(): Promise<boolean> {
         return this.participant.driver.$(START_BOTH).isEnabled();
+    }
+
+    /**
+     * Whether the transcription section Start button is enabled.
+     */
+    isStartTranscriptionEnabled(): Promise<boolean> {
+        return this.participant.driver.$(START_TRANSCRIPTION).isEnabled();
+    }
+
+    /**
+     * Hovers the transcription section Start button and returns the text of the tooltip it
+     * shows.
+     */
+    async getStartTranscriptionTooltip(): Promise<string> {
+        const driver = this.participant.driver;
+
+        await driver.$(START_TRANSCRIPTION).moveTo();
+
+        const tooltip = driver.$(TOOLTIP);
+        let text = '';
+
+        // The tooltip fades in: it exists before it is visible, and getText() returns an empty
+        // string for it until then.
+        await driver.waitUntil(async () => {
+            text = await tooltip.isExisting() ? await tooltip.getText() : '';
+
+            return text !== '';
+        }, {
+            timeout: 3000,
+            timeoutMsg: 'Start transcription tooltip did not appear'
+        });
+
+        return text;
     }
 
     /**

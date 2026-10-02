@@ -1264,6 +1264,7 @@
         "storageLocation": "Storage location",
         "surfaceError": "Please select the current tab.",
         "title": "Recording",
+        "transcriptionAlreadyOn": "Transcription is already on",
         "transcriptionLanguage": "Transcription language",
         "transcriptionOptions": "Transcription options",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
