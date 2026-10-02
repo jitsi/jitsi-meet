@@ -13,6 +13,7 @@ import {
     isDocumentPiPSupported,
     renderAvatarOnCanvas,
     shouldShowPiP,
+    shouldUseDocumentPiP
 } from './functions';
 import logger from './logger';
 
@@ -258,7 +259,8 @@ export function useDocumentPiPMediaSession() {
     );
 
     const pipEnabled = useSelector(shouldShowPiP);
-    const documentPiPAvailable = pipEnabled && isDocumentPiPSupported();
+    const documentPiPSelected = useSelector(shouldUseDocumentPiP);
+    const documentPiPAvailable = pipEnabled && documentPiPSelected;
 
     useEffect(() => {
         if (!documentPiPAvailable
