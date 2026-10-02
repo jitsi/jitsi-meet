@@ -16,21 +16,20 @@
 --       kind = 'agent', displayName = <string>, sourceName = '<agentId>-a0',
 --       state = provisioning|connecting|active|failed
 --   }
--- Jicofo-only (never broadcast; merged into the admin metadata payload through
--- the 'jitsi-room-metadata-admin-extra' hook):
---   room._data.voice_agents[agentId] = { urlParams, httpHeaders, customParameters, callbackUrl }
--- jicofo receives urlParams ∪ customParameters as the dial urlParams (explicit
--- urlParams win) plus httpHeaders (carrying the X-Agent-* endpoint headers);
--- customParameters reach the agent as the media-dial query (echoed in
--- info/start). callbackUrl never leaves prosody.
+-- Prosody-only (never broadcast):
+--   room._data.voice_agents[agentId] = { endpoint = { url, authorization }, customParameters, callbackUrl }
+-- The dial config stays here: jicofo's connect carries only the conference and
+-- agent id, and the media relay fetches the endpoint by id (GET /voice-agent/dial)
+-- when the bridge connects, so no customer secret travels through room metadata,
+-- jicofo or the bridge. callbackUrl never leaves prosody.
 --
 -- ── Endpoints (contract frozen at v1.0 — see AGENT_REST_API.md) ───────────────
 -- Authentication: Authorization: Bearer <system ASAP token>, verified against
 -- prosody_password_public_key_repo_url (NOT login tokens), exactly like
 -- mod_muc_jigasi_invite.
 --
---   POST /voice-agent/invite   { conference, displayName, agentId?, endpoint?{url,authorization},
---                                urlParams?, httpHeaders?, customParameters?, callbackUrl? }
+--   POST /voice-agent/invite   { conference, displayName, agentId?, endpoint{url,authorization?},
+--                                customParameters?, callbackUrl? }
 --     → 200 { agentId, sourceName }  — idempotent on agentId: an identical re-invite
 --       returns the existing agent, a different one is 409
 --   POST /voice-agent/dismiss  { conference, agentId } → 200 { agentId }
@@ -40,6 +39,8 @@
 --     internal: jicofo/JVB advance the lifecycle (connecting|active|failed|ended);
 --     active → agent.connected, failed → agent.failed, ended → teardown + agent.ended
 --     auth: ASAP, or the voice_agent_status_secret shared secret (jicofo cannot mint ASAP)
+--   GET  /voice-agent/dial?conference=<jid>&agentId=<id>
+--     internal: the media relay fetches { agentId, endpoint, customParameters } when dialing; auth as status
 --
 -- Webhooks: when an agent has a callbackUrl, lifecycle events are POSTed to it as
 -- { event, agentId, conference, sourceName, state, timestamp, reason? }, signed
@@ -82,11 +83,6 @@ local MAX_CALLBACK_URL_LENGTH = 2048;
 
 -- Reserved namespace for agent ids, so an agent id can never equal a real participant's endpoint id.
 local AGENT_ID_PREFIX = 'agent-';
-
--- The proxy-facing connect headers the optional 'endpoint' convenience object
--- maps to (see opus-transcriber-proxy resolveAgentEndpoint).
-local ENDPOINT_URL_HEADER = 'X-Agent-Endpoint';
-local ENDPOINT_AUTH_HEADER = 'X-Agent-Authorization';
 
 -- Lifecycle states; 'ended' is terminal and removes the agent.
 local STATE_PROVISIONING = 'provisioning';
@@ -219,7 +215,7 @@ local function parse_json_request(request)
     return payload;
 end
 
--- Validates a string->string map (urlParams / httpHeaders / customParameters); returns a bounded
+-- Validates a string->string map (customParameters); returns a bounded
 -- copy, or nil plus an error message.
 local function validate_string_map(value, name)
     if value == nil then
@@ -240,8 +236,7 @@ local function validate_string_map(value, name)
         if #v > MAX_PARAM_VALUE_LENGTH then
             return nil, name .. ' value too long';
         end
-        -- These become outbound HTTP header / URL-param content on the dial leg; reject control chars
-        -- (CR/LF) so a value cannot split or inject headers.
+        -- Reject control chars (CR/LF) so a value can never split or inject a header or a log line.
         if k:find('[%c]') or v:find('[%c]') then
             return nil, name .. ' must not contain control characters';
         end
@@ -272,26 +267,22 @@ local function validate_callback_url(url)
     return url;
 end
 
--- Validates endpoint.{url,authorization}; returns the X-Agent-* headers it maps to, or nil plus an
--- error. Enforces the wss:// scheme only; host-level SSRF filtering is done downstream by the
--- opus-transcriber-proxy endpoint guard.
+-- Validates the required endpoint.{url,authorization}; returns a bounded copy, or nil plus an error.
+-- Enforces the wss:// scheme only; host-level SSRF filtering is done by the media relay's endpoint
+-- guard at dial time.
 local function validate_endpoint(endpoint)
-    if type(endpoint) ~= 'table' or type(endpoint.url) ~= 'string'
+    if type(endpoint) ~= 'table' or type(endpoint.url) ~= 'string' or #endpoint.url > MAX_PARAM_VALUE_LENGTH
+            or endpoint.url:find('[%c]')
             or not (starts_with(endpoint.url, 'wss://')
                 or (INSECURE_ALLOW_WS_ENDPOINT and starts_with(endpoint.url, 'ws://'))) then
-        return nil, 'endpoint.url must be a wss:// URL';
+        return nil, 'endpoint.url is required and must be a wss:// URL';
     end
-    local headers = { [ENDPOINT_URL_HEADER] = endpoint.url };
-    if type(endpoint.authorization) == 'string' then
-        headers[ENDPOINT_AUTH_HEADER] = endpoint.authorization;
+    local authorization = endpoint.authorization;
+    if authorization ~= nil and (type(authorization) ~= 'string' or #authorization > MAX_PARAM_VALUE_LENGTH
+            or authorization:find('[%c]')) then
+        return nil, 'Invalid endpoint.authorization';
     end
-    return headers;
-end
-
--- The proxy-facing X-Agent-* headers may only be set through the wss-validated endpoint object,
--- never as raw httpHeaders (which would bypass the scheme check).
-local function has_reserved_header(headers)
-    return headers ~= nil and (headers[ENDPOINT_URL_HEADER] ~= nil or headers[ENDPOINT_AUTH_HEADER] ~= nil);
+    return { url = endpoint.url; authorization = authorization };
 end
 
 -- Shallow equality for string maps; nil and {} compare equal.
@@ -309,21 +300,6 @@ local function maps_equal(a, b)
         end
     end
     return true;
-end
-
--- The urlParams jicofo templates into the media dial URL: customParameters overridden by explicit urlParams.
-local function dial_url_params(jicofo_entry)
-    if jicofo_entry.urlParams == nil and jicofo_entry.customParameters == nil then
-        return nil;
-    end
-    local merged = {};
-    for k, v in pairs(jicofo_entry.customParameters or {}) do
-        merged[k] = v;
-    end
-    for k, v in pairs(jicofo_entry.urlParams or {}) do
-        merged[k] = v;
-    end
-    return merged;
 end
 
 -- Resolves the room from the request payload's/query's conference JID.
@@ -479,13 +455,9 @@ local function handle_invite(event)
         agent_id = AGENT_ID_PREFIX .. hashes.sha256(random.bytes(8), true):sub(1, 8);
     end
 
-    local url_params, params_error = validate_string_map(payload.urlParams, 'urlParams');
-    if params_error then
-        return error_response(400, params_error);
-    end
-    local http_headers, headers_error = validate_string_map(payload.httpHeaders, 'httpHeaders');
-    if headers_error then
-        return error_response(400, headers_error);
+    local endpoint, endpoint_error = validate_endpoint(payload.endpoint);
+    if endpoint_error then
+        return error_response(400, endpoint_error);
     end
     local custom_params, custom_error = validate_string_map(payload.customParameters, 'customParameters');
     if custom_error then
@@ -494,19 +466,6 @@ local function handle_invite(event)
     local callback_url, callback_error = validate_callback_url(payload.callbackUrl);
     if callback_error then
         return error_response(400, callback_error);
-    end
-    if has_reserved_header(http_headers) then
-        return error_response(400, 'httpHeaders must not set X-Agent-* headers; use endpoint');
-    end
-    if payload.endpoint ~= nil then
-        local endpoint_headers, endpoint_error = validate_endpoint(payload.endpoint);
-        if endpoint_error then
-            return error_response(400, endpoint_error);
-        end
-        http_headers = http_headers or {};
-        for k, v in pairs(endpoint_headers) do
-            http_headers[k] = v;
-        end
     end
 
     room.jitsiMetadata = room.jitsiMetadata or {};
@@ -528,8 +487,7 @@ local function handle_invite(event)
     if existing then
         local jicofo_entry = voice_agents[agent_id] or {};
         if existing.displayName == payload.displayName
-                and maps_equal(jicofo_entry.urlParams, url_params)
-                and maps_equal(jicofo_entry.httpHeaders, http_headers)
+                and maps_equal(jicofo_entry.endpoint, endpoint)
                 and maps_equal(jicofo_entry.customParameters, custom_params)
                 and jicofo_entry.callbackUrl == callback_url then
             return { status_code = 200, body = json.encode({ agentId = agent_id, sourceName = source_name }) };
@@ -552,10 +510,9 @@ local function handle_invite(event)
         sourceName = source_name;
         state = STATE_PROVISIONING;
     };
-    -- Jicofo-only connect config (merged into the admin metadata payload below).
+    -- Dial config, fetched by the media relay by id; never broadcast.
     voice_agents[agent_id] = {
-        urlParams = url_params;
-        httpHeaders = http_headers;
+        endpoint = endpoint;
         customParameters = custom_params;
         callbackUrl = callback_url;
     };
@@ -689,6 +646,32 @@ local function handle_status(event)
     return { status_code = 200, body = json.encode(agent_response(payload.agentId, entry)) };
 end
 
+-- Internal: the media relay fetches the dial config by id when the bridge connects, so the customer
+-- endpoint and its secret leave prosody only for the dial itself.
+local function handle_dial(event)
+    local request = event.request;
+
+    local auth_error = check_status_authorization(request);
+    if auth_error then
+        return auth_error;
+    end
+
+    local params = query_params(request);
+    local room = find_room(params.conference);
+    if not room then
+        return error_response(404, 'Room not found');
+    end
+    local entry, jicofo_entry = get_agent(room, params.agentId);
+    if not entry or not jicofo_entry.endpoint then
+        return error_response(404, 'Agent not found');
+    end
+    return { status_code = 200, body = json.encode({
+        agentId = params.agentId;
+        endpoint = jicofo_entry.endpoint;
+        customParameters = jicofo_entry.customParameters;
+    }) };
+end
+
 module:log('info', 'Adding http handlers for /voice-agent on %s', module.host);
 module:depends('http');
 module:provides('http', {
@@ -709,39 +692,13 @@ module:provides('http', {
         ['POST voice-agent/status'] = function(event)
             return async_handler_wrapper(event, handle_status);
         end;
+        ['GET voice-agent/dial'] = function(event)
+            return async_handler_wrapper(event, handle_dial);
+        end;
     };
 });
 
 process_host_module(muc_component_host, function(host_module)
-    -- Merge the jicofo-only connect config into the admin metadata payload: jicofo
-    -- receives 'agents' entries carrying BOTH the client-facing fields and the dial
-    -- urlParams/httpHeaders; regular occupants only ever get the client-facing map
-    -- from room.jitsiMetadata (this hook fires inside the admin branch of
-    -- mod_room_metadata_component's send_metadata only).
-    host_module:hook('jitsi-room-metadata-admin-extra', function(event)
-        local room = event.room;
-        local agents = room.jitsiMetadata and room.jitsiMetadata.agents;
-        local voice_agents = room._data.voice_agents;
-        if not agents or not voice_agents or type(event.extra) ~= 'table' then
-            return nil;
-        end
-
-        local merged = {};
-        for agent_id, client_entry in pairs(agents) do
-            local entry = table_shallow_copy(client_entry);
-            local jicofo_entry = voice_agents[agent_id];
-            if jicofo_entry then
-                entry.urlParams = dial_url_params(jicofo_entry);
-                entry.httpHeaders = jicofo_entry.httpHeaders;
-            end
-            merged[agent_id] = entry;
-        end
-        -- Contribute via the accumulator (and return nil) so other admin-extra
-        -- contributors still run — a non-nil return would stop the handler chain.
-        event.extra.agents = merged;
-        return nil;
-    end);
-
     -- The conference ending takes every agent with it; make that observable to the customer.
     host_module:hook('muc-room-destroyed', function(event)
         local room = event.room;
