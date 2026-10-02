@@ -44,6 +44,7 @@ const DEFAULT_STATE: ISettingsState = {
     userSelectedMicDeviceId: undefined,
     userSelectedAudioOutputDeviceLabel: undefined,
     userSelectedCameraDeviceLabel: undefined,
+    userSelectedConfig: {},
     userSelectedLanguage: undefined,
     userSelectedNotifications: {
         'notify.chatMessages': true
@@ -90,6 +91,14 @@ export interface ISettingsState {
     userSelectedAudioOutputDeviceLabel?: string;
     userSelectedCameraDeviceId?: string;
     userSelectedCameraDeviceLabel?: string;
+
+    /**
+     * Config values the user has chosen in the Config tab of the settings dialog, keyed by the dot-separated path
+     * of the config option they override (for example `pip.enableBrowserPiP`).
+     */
+    userSelectedConfig?: {
+        [configPath: string]: boolean;
+    };
     userSelectedLanguage?: string;
     userSelectedMicDeviceId?: string;
     userSelectedMicDeviceLabel?: string;

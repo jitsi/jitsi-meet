@@ -6,6 +6,7 @@ import { IReduxState, IStore } from '../../../app/types';
 import {
     IconBell,
     IconCalendar,
+    IconCode,
     IconGear,
     IconImage,
     IconModerator,
@@ -26,6 +27,7 @@ import {
 import { checkBlurSupport, checkVirtualBackgroundEnabled } from '../../../virtual-background/functions';
 import { iAmVisitor } from '../../../visitors/functions';
 import {
+    submitConfigTab,
     submitModeratorTab,
     submitMoreTab,
     submitNotificationsTab,
@@ -35,6 +37,7 @@ import {
 } from '../../actions';
 import { SETTINGS_TABS } from '../../constants';
 import {
+    getConfigTabProps,
     getModeratorTabProps,
     getMoreTabProps,
     getNotificationsMap,
@@ -45,6 +48,7 @@ import {
 } from '../../functions';
 
 import CalendarTab from './CalendarTab';
+import ConfigTab from './ConfigTab';
 import ModeratorTab from './ModeratorTab';
 import MoreTab from './MoreTab';
 import NotificationsTab from './NotificationsTab';
@@ -143,6 +147,10 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const showNotificationsSettings = Object.keys(enabledNotifications).length > 0;
     const virtualBackgroundSupported = checkBlurSupport();
     const enableVirtualBackground = checkVirtualBackgroundEnabled(state);
+    const configTabProps = getConfigTabProps(state);
+
+    // The tab only lists config options the user may change here; without any (e.g. in Electron) it has no purpose.
+    const showConfigSettings = configTabProps.toggles.length > 0;
     const tabs: IDialogTab<any>[] = [];
     const _iAmVisitor = iAmVisitor(state);
 
@@ -335,6 +343,25 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             },
             submit: submitMoreTab,
             icon: IconGear
+        });
+    }
+
+    if (showConfigSettings) {
+        tabs.push({
+            name: SETTINGS_TABS.CONFIG,
+            component: ConfigTab,
+            labelKey: 'settings.config',
+            props: configTabProps,
+            propsUpdateFunction: (tabState: any, newProps: typeof configTabProps) => {
+                // Updates tab props, keeping users selection
+
+                return {
+                    ...newProps,
+                    values: tabState?.values ?? newProps.values
+                };
+            },
+            submit: submitConfigTab,
+            icon: IconCode
         });
     }
 

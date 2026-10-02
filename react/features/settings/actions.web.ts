@@ -36,6 +36,7 @@ import {
 import LogoutDialog from './components/web/LogoutDialog';
 import SettingsDialog from './components/web/SettingsDialog';
 import {
+    getConfigTabProps,
     getModeratorTabProps,
     getMoreTabProps,
     getNotificationsTabProps,
@@ -168,6 +169,39 @@ export function submitMoreTab(newState: any) {
         if (newState.showSubtitlesOnStage !== currentState.showSubtitlesOnStage) {
             dispatch(updateSettings({ showSubtitlesOnStage: newState.showSubtitlesOnStage }));
         }
+    };
+}
+
+/**
+ * Submits the settings from the "Config" tab of the settings dialog. Only toggles whose value differs from the
+ * effective one are stored, so a toggle the user leaves alone keeps following the deployment's default.
+ *
+ * @param {Object} newState - The new settings.
+ * @returns {Function}
+ */
+export function submitConfigTab(newState: any) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const { values: currentValues } = getConfigTabProps(state);
+        const newValues: { [configPath: string]: boolean; } = newState.values ?? {};
+        const changedValues: { [configPath: string]: boolean; } = {};
+
+        for (const configPath of Object.keys(newValues)) {
+            if (newValues[configPath] !== currentValues[configPath]) {
+                changedValues[configPath] = newValues[configPath];
+            }
+        }
+
+        if (Object.keys(changedValues).length === 0) {
+            return;
+        }
+
+        dispatch(updateSettings({
+            userSelectedConfig: {
+                ...state['features/base/settings'].userSelectedConfig,
+                ...changedValues
+            }
+        }));
     };
 }
 

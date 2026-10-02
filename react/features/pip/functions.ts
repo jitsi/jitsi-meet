@@ -11,7 +11,7 @@ import { isTrackStreamingStatusActive } from '../connection-indicator/functions'
 import { isPrejoinPageVisible } from '../prejoin/functions.any';
 
 import { toggleAudioFromPiP, toggleVideoFromPiP } from './actions';
-import { isPiPEnabled } from './external-api.shared';
+import { isPiPEnabled, isPiPSupportedByBrowser } from './external-api.shared';
 import logger from './logger';
 import {
     ExtendedMediaSessionAction,
@@ -100,10 +100,11 @@ export function shouldShowPiP(state: IReduxState): boolean {
     }
 
     // Browser PiP is opt-in: it stays disabled unless the deployment explicitly sets
-    // enableBrowserPiP: true (Electron is unaffected). This authoritative default lives here
-    // rather than in isPiPEnabled() because the external API evaluates isPiPEnabled() against
-    // only the embedder-provided config, without the deployment's config.js — it must stay
-    // permissive when the flag is absent (see isPiPEnabled()).
+    // enableBrowserPiP: true or the user turns it on in the Config tab of the settings dialog,
+    // which the settings middleware merges into this config (Electron is unaffected). This
+    // authoritative default lives here rather than in isPiPEnabled() because the external API
+    // evaluates isPiPEnabled() against only the embedder-provided config, without the
+    // deployment's config.js — it must stay permissive when the flag is absent (see isPiPEnabled()).
     if (!browser.isElectron() && pipConfig?.enableBrowserPiP !== true) {
         return false;
     }
@@ -118,6 +119,20 @@ export function shouldShowPiP(state: IReduxState): boolean {
     }
 
     return true;
+}
+
+/**
+ * Determines if the local user may turn browser Picture-in-Picture on or off from the settings dialog.
+ * That is the case outside Electron, which has its own always-on PiP flow, when the browser supports
+ * PiP and the deployment has not disabled the feature altogether with `pip.disabled`.
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {boolean} Whether the browser PiP setting applies.
+ */
+export function isBrowserPiPConfigurable(state: IReduxState): boolean {
+    const pipConfig = state['features/base/config'].pip;
+
+    return !browser.isElectron() && !pipConfig?.disabled && isPiPSupportedByBrowser();
 }
 
 /**

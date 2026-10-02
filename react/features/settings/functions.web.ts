@@ -1,4 +1,7 @@
+import { get, set } from 'lodash-es';
+
 import { IStateful } from '../base/app/types';
+import { IConfig } from '../base/config/configType';
 import { browser } from '../base/lib-jitsi-meet';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import { isLocalParticipantModerator } from '../base/participants/functions';
@@ -11,6 +14,9 @@ import {
 } from '../keyboard-shortcuts/functions';
 import { getParticipantsPaneConfig } from '../participants-pane/functions';
 import { isPrejoinPageVisible } from '../prejoin/functions';
+
+import { CONFIG_TOGGLES } from './configToggles';
+import { IConfigToggle } from './types';
 
 export * from './functions.any';
 
@@ -122,6 +128,70 @@ export function getVirtualBackgroundTabProps(stateful: IStateful, isDisplayedOnW
     return {
         options: state['features/virtual-background'],
         selectedVideoInputId
+    };
+}
+
+/**
+ * Returns the config toggles that apply to the current environment and deployment.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {IConfigToggle[]} - The applicable config toggles.
+ */
+export function getAvailableConfigToggles(stateful: IStateful): IConfigToggle[] {
+    const state = toState(stateful);
+
+    return CONFIG_TOGGLES.filter(toggle => toggle.isAvailable(state));
+}
+
+/**
+ * Returns the config values the user has chosen in the Config tab of the settings dialog as a partial config, ready
+ * to be merged into the config state. Only the values of toggles that currently apply are included, so a deployment
+ * that hides a toggle also neutralizes a value stored for it earlier.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {IConfig} - The config values chosen by the user.
+ */
+export function getUserSelectedConfig(stateful: IStateful): IConfig {
+    const state = toState(stateful);
+    const { userSelectedConfig = {} } = state['features/base/settings'];
+    const config: IConfig = {};
+
+    for (const { configPath } of getAvailableConfigToggles(state)) {
+        const value = userSelectedConfig[configPath];
+
+        if (typeof value === 'boolean') {
+            set(config, configPath, value);
+        }
+    }
+
+    return config;
+}
+
+/**
+ * Returns the properties for the "Config" tab from settings dialog from Redux
+ * state.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Object} - The properties for the "Config" tab from settings dialog.
+ */
+export function getConfigTabProps(stateful: IStateful) {
+    const state = toState(stateful);
+    const config = state['features/base/config'];
+    const toggles = getAvailableConfigToggles(state);
+    const values: { [configPath: string]: boolean; } = {};
+
+    // The config state already includes the user's choices (see the settings middleware), so reading it yields the
+    // effective value of every toggle.
+    for (const { configPath } of toggles) {
+        values[configPath] = Boolean(get(config, configPath));
+    }
+
+    return {
+        toggles,
+        values
     };
 }
 
