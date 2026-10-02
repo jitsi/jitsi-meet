@@ -1,2 +1,2 @@
-import './middleware.custom.web';
+import './middleware.any';
 import './subscriber.web';

@@ -1417,6 +1417,7 @@
                 "label": "Stereo"
             }
         },
+        "aiAssist": "Assistente IA",
         "audioRoute": "Scegli il dispositivo audio",
         "audioSettings": "Impostazioni audio",
         "authenticate": "Autenticazione",
@@ -1429,7 +1430,6 @@
         "closeParticipantsPane": "Chiudi pannello partecipanti",
         "closeReactionsMenu": "Chiudi menu reazioni",
         "closedCaptions": "Sottotitoli",
-        "copilot": "Copilot",
         "disableNoiseSuppression": "Disattiva cancellazione del rumore",
         "disableReactionSounds": "Puoi disattivare i suoni delle reazioni in questa riunione",
         "documentClose": "Chiudi documento condiviso",
