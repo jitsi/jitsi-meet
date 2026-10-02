@@ -40,6 +40,13 @@ body.welcome-page {
             margin-top: calc(20px - #{$welcomePageHeaderContainerMarginTop});
         }
 
+        .header-text-title,
+        .header-text-subtitle {
+            position: relative;
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
         .header-text-title {
             color: $welcomePageTitleColor;
             font-size: $welcomePageHeaderTextTitleFontSize;
@@ -350,5 +357,7 @@ body.welcome-page {
     .welcome-footer-row-1-text {
         max-width: 200px;
         text-align: center;
+        -webkit-user-select: text;
+        user-select: text;
     }
 }
