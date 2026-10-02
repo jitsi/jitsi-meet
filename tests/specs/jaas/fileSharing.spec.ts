@@ -33,12 +33,15 @@ describe('File sharing', () => {
         );
 
         expect(fileSharingEnabled).toBe(expectations.jaas.fileSharingEnabled);
+
+        if (!fileSharingEnabled) {
+            ctx.skipSuiteTests = 'fileSharing is not enabled in this environment';
+
+            return;
+        }
     });
 
     it('upload button enabled with file-upload feature', async () => {
-        if (!fileSharingEnabled) {
-            return;
-        }
         const panel = p1.getFileSharingPanel();
 
         await panel.open();
@@ -47,10 +50,6 @@ describe('File sharing', () => {
     });
 
     it('upload button disabled without file-upload feature', async () => {
-        if (!fileSharingEnabled) {
-            return;
-        }
-
         p2 = await joinJaasMuc({ name: 'p2', token: t({ room: ctx.roomName }) });
 
         const panel = p2.getFileSharingPanel();
@@ -61,10 +60,6 @@ describe('File sharing', () => {
     });
 
     it('user with file-upload can delete files uploaded by another participant', async () => {
-        if (!fileSharingEnabled) {
-            return;
-        }
-
         // p1 (with file-upload) uploads a file
         const p1Panel = p1.getFileSharingPanel();
 
@@ -92,10 +87,6 @@ describe('File sharing', () => {
     });
 
     it('user without file-upload can download but not delete files', async () => {
-        if (!fileSharingEnabled) {
-            return;
-        }
-
         // p1 (with file-upload) uploads a fresh file
         const p1Panel = p1.getFileSharingPanel();
 
@@ -117,10 +108,6 @@ describe('File sharing', () => {
     });
 
     it('dragging into conference opens file sharing tab', async () => {
-        if (!fileSharingEnabled) {
-            return;
-        }
-
         // p1 already has file-upload feature
         const panel = p1.getFileSharingPanel();
 
@@ -140,10 +127,6 @@ describe('File sharing', () => {
     });
 
     it('dragging on pre-join screen does not open file sharing', async () => {
-        if (!fileSharingEnabled) {
-            return;
-        }
-
         // Join with iFrame API, file-upload feature, and pre-join screen enabled — but do NOT click join
         p1 = await joinJaasMuc(
             {
