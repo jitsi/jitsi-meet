@@ -1,0 +1,36 @@
+name: Unit Tests
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'react/**'
+      - 'tests/unit/**'
+      - '.github/workflows/unit-tests.yml'
+  pull_request:
+    paths:
+      - 'react/**'
+      - 'tests/unit/**'
+      - '.github/workflows/unit-tests.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: tests/unit/package-lock.json
+
+      - name: Install test dependencies
+        run: npm ci
+        working-directory: tests/unit
+
+      - name: Run tests
+        run: npm test
+        working-directory: tests/unit
