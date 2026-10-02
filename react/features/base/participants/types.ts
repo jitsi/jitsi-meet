@@ -1,6 +1,7 @@
 import { IJitsiConference } from '../conference/reducer';
 
 export enum FakeParticipant {
+    Agent = 'Agent',
     LocalScreenShare = 'LocalScreenShare',
     RemoteScreenShare = 'RemoteScreenShare',
     SharedVideo = 'SharedVideo',
