@@ -107,7 +107,7 @@ describe('Active speaker', () => {
 
             // Mute this participant back before testing the next one
             await participant.getToolbar().clickAudioMuteButton();
-            await p1.driver.pause(2000);
+            await participant.getFilmstrip().assertAudioMuteIconIsDisplayed(participant);
         }
 
         await hangupAllParticipants();
@@ -177,7 +177,7 @@ describe('Active speaker', () => {
 
             // Mute this participant back before testing the next one
             await participant.getToolbar().clickAudioMuteButton();
-            await p1.driver.pause(1000);
+            await participant.getFilmstrip().assertAudioMuteIconIsDisplayed(participant);
         }
 
         // Clean up - stop screensharing
@@ -222,7 +222,7 @@ describe('Active speaker', () => {
             await participant.getToolbar().clickAudioUnmuteButton();
             await waitForDominantSpeaker(p1, participantId, name);
             await participant.getToolbar().clickAudioMuteButton();
-            await p1.driver.pause(1000);
+            await participant.getFilmstrip().assertAudioMuteIconIsDisplayed(participant);
         }
 
         // Now cycle through them again and verify they maintain alphabetical order (Eve, Frank, Zoe)
@@ -248,7 +248,7 @@ describe('Active speaker', () => {
 
             // Mute back
             await participant.getToolbar().clickAudioMuteButton();
-            await p1.driver.pause(1000);
+            await participant.getFilmstrip().assertAudioMuteIconIsDisplayed(participant);
         }
 
         const [ eveState, frankState, zoeState ] = states;
@@ -428,8 +428,18 @@ async function waitForDominantSpeaker(
         }
     );
 
-    // Wait a bit more for filmstrip state to update after dominant speaker changes
-    await observer.driver.pause(1000);
+    // Wait for filmstrip state to update after dominant speaker changes
+    await observer.driver.waitUntil(
+        async () => {
+            const state = await getFilmstripState(observer);
+
+            return state.dominantSpeaker === participantId;
+        },
+        {
+            timeout: 3000,
+            timeoutMsg: `Filmstrip state was not updated for dominant speaker ${participantName} (${participantId})`
+        }
+    );
 }
 
 /**
@@ -475,5 +485,19 @@ async function setAlphabeticalDisplayNames(
     await p6.setLocalDisplayName('Zoe');
 
     // Wait for display names to propagate
-    await p1.driver.pause(2000);
+    await p1.driver.waitUntil(
+        async () => {
+            const filmstrip = p1.getFilmstrip();
+            const p2Id = await p2.getEndpointId();
+            const p6Id = await p6.getEndpointId();
+            const name2 = await filmstrip.getRemoteDisplayName(p2Id);
+            const name6 = await filmstrip.getRemoteDisplayName(p6Id);
+
+            return name2 === 'Bob' && name6 === 'Zoe';
+        },
+        {
+            timeout: 5000,
+            timeoutMsg: 'Display names did not propagate to p1 within 5s'
+        }
+    );
 }
