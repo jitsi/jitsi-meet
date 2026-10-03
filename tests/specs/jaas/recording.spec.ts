@@ -182,8 +182,12 @@ describe('Recording and live-streaming', () => {
         await startRecording(true);
         await stopRecording(true);
 
-        // to avoid rate limits
-        await p.driver.pause(30000);
+        // To avoid rate limits (configurable via RECORDING_COOLDOWN_MS, default 5000ms)
+        const recordingCooldownMs = Number(process.env.RECORDING_COOLDOWN_MS ?? 5_000);
+
+        if (recordingCooldownMs > 0) {
+            await p.driver.pause(recordingCooldownMs);
+        }
     });
 
     it('start/stop recording using the iFrame function', async () => {
@@ -194,8 +198,10 @@ describe('Recording and live-streaming', () => {
         await startRecording(false);
         await stopRecording(false);
 
-        // to avoid rate limits
-        await p.driver.pause(30000);
+        // To avoid rate limits (configurable via RECORDING_COOLDOWN_MS, default 5000ms)
+        if (recordingCooldownMs > 0) {
+            await p.driver.pause(recordingCooldownMs);
+        }
     });
 
     it('start/stop live-streaming using the iFrame command', async () => {
