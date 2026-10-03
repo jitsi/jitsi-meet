@@ -24,7 +24,7 @@ import {
 } from './actionTypes';
 import {
     createLocalTracksA,
-    showNoDataFromSourceVideoError,
+    showNoDataFromSourceError,
     toggleScreensharing,
     trackMuteUnmuteFailed,
     trackNoDataFromSourceNotificationInfoChanged
@@ -177,6 +177,21 @@ MiddlewareRegistry.register(store => next => action => {
             return;
         }
 
+        if (action.muted) {
+            const localAudioTrack = getLocalTrack(store.getState()['features/base/tracks'], MEDIA_TYPE.AUDIO);
+
+            if (localAudioTrack) {
+                const { jitsiTrack, noDataFromSourceNotificationInfo = {} } = localAudioTrack;
+
+                if (noDataFromSourceNotificationInfo.timeout) {
+                    clearTimeout(noDataFromSourceNotificationInfo.timeout);
+                    store.dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, undefined));
+                }
+
+                _removeNoDataFromSourceNotification(store, localAudioTrack);
+            }
+        }
+
         _setMuted(store, action);
         break;
     }
@@ -205,8 +220,25 @@ function _handleNoDataFromSourceErrors(store: IStore, action: AnyAction) {
 
     const { jitsiTrack } = track;
 
-    if (track.mediaType === MEDIA_TYPE.AUDIO && track.isReceivingData) {
-        _removeNoDataFromSourceNotification(store, action.track);
+    if (track.mediaType === MEDIA_TYPE.AUDIO) {
+        const { noDataFromSourceNotificationInfo = {} } = track;
+
+        if (track.isReceivingData || track.muted) {
+            if (noDataFromSourceNotificationInfo.timeout) {
+                clearTimeout(noDataFromSourceNotificationInfo.timeout);
+                dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, undefined));
+            }
+
+            _removeNoDataFromSourceNotification(store, action.track);
+        } else {
+            if (noDataFromSourceNotificationInfo.timeout || noDataFromSourceNotificationInfo.uid) {
+                return;
+            }
+
+            const timeout = setTimeout(() => dispatch(showNoDataFromSourceError(jitsiTrack, MEDIA_TYPE.AUDIO)), 5000);
+
+            dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, { timeout }));
+        }
     }
 
     if (track.mediaType === MEDIA_TYPE.VIDEO) {
@@ -225,7 +257,7 @@ function _handleNoDataFromSourceErrors(store: IStore, action: AnyAction) {
                 return;
             }
 
-            const timeout = setTimeout(() => dispatch(showNoDataFromSourceVideoError(jitsiTrack)), 5000);
+            const timeout = setTimeout(() => dispatch(showNoDataFromSourceError(jitsiTrack, MEDIA_TYPE.VIDEO)), 5000);
 
             dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, { timeout }));
         }
