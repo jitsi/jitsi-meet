@@ -129,8 +129,10 @@ export async function verifyMoreNumbersPage(p: Participant) {
     const moreNumbersWindow = newWindow[0];
 
     await p.driver.switchWindow(moreNumbersWindow);
-    await browser.pause(10000);
-    await p.driver.$('.dial-in-numbers-list').waitForExist();
+    await p.driver.$('.dial-in-numbers-list').waitForExist({
+        timeout: 15_000,
+        timeoutMsg: 'Dial-in numbers list did not appear within 15 seconds'
+    });
 
     const conferenceIdMessage = p.driver.$('//div[contains(@class, "pinLabel")]');
 
