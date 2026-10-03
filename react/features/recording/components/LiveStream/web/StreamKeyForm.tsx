@@ -9,6 +9,7 @@ import AbstractStreamKeyForm, {
     IProps as AbstractProps,
     _mapStateToProps
 } from '../AbstractStreamKeyForm';
+import { GOOGLE_PRIVACY_POLICY, YOUTUBE_TERMS_URL } from '../constants';
 
 interface IProps extends AbstractProps {
 
@@ -89,20 +90,30 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
                             : null
                         }
                     </div>
-                    <a
-                        className = { classes.helperLink }
-                        href = { this.props._liveStreaming.termsURL }
-                        rel = 'noopener noreferrer'
-                        target = '_blank'>
-                        { t('liveStreaming.youtubeTerms') }
-                    </a>
-                    <a
-                        className = { classes.helperLink }
-                        href = { this.props._liveStreaming.dataPrivacyURL }
-                        rel = 'noopener noreferrer'
-                        target = '_blank'>
-                        { t('liveStreaming.googlePrivacyPolicy') }
-                    </a>
+                    { this.props._liveStreaming.termsURL
+                        ? (
+                            <a
+                                className = { classes.helperLink }
+                                href = { this.props._liveStreaming.termsURL }
+                                rel = 'noopener noreferrer'
+                                target = '_blank'>
+                                { t(this.props._liveStreaming.termsURL === YOUTUBE_TERMS_URL
+                                    ? 'liveStreaming.youtubeTerms'
+                                    : 'liveStreaming.terms') }
+                            </a>
+                        ) : null }
+                    { this.props._liveStreaming.dataPrivacyURL
+                        ? (
+                            <a
+                                className = { classes.helperLink }
+                                href = { this.props._liveStreaming.dataPrivacyURL }
+                                rel = 'noopener noreferrer'
+                                target = '_blank'>
+                                { t(this.props._liveStreaming.dataPrivacyURL === GOOGLE_PRIVACY_POLICY
+                                    ? 'liveStreaming.googlePrivacyPolicy'
+                                    : 'liveStreaming.privacyPolicy') }
+                            </a>
+                        ) : null }
                 </div>
             </div>
         );
