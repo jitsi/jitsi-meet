@@ -13,7 +13,7 @@ import {
 const styles = {
     playingOutLabel: {
         alignItems: 'center',
-        backgroundColor: BaseTheme.palette.warning01,
+        backgroundColor: BaseTheme.palette.warning03,
         borderRadius: BaseTheme.shape.borderRadius,
         flexDirection: 'row',
         marginBottom: BaseTheme.spacing[0],
@@ -40,7 +40,7 @@ const TranslationLabel = () => {
     const active = useSelector(isAudioTranslationActiveInMeeting);
     const playingOut = useSelector(isTranslationPlayingOut);
 
-    return available && active ? (
+    return available && (active || playingOut) ? (
         <Label
             icon = { IconTranslate }
             iconColor = { BaseTheme.palette.icon01 }

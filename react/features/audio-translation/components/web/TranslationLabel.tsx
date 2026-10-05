@@ -11,7 +11,7 @@ import { isAudioTranslationActiveInMeeting, isTranslationPlayingOut } from '../.
 const useStyles = makeStyles()(theme => {
     return {
         playingOut: {
-            background: theme.palette.warning01
+            background: theme.palette.warning03
         },
         translation: {
             background: theme.palette.action01
@@ -31,7 +31,8 @@ const TranslationLabel = () => {
     const active = useSelector(isAudioTranslationActiveInMeeting);
     const playingOut = useSelector(isTranslationPlayingOut);
 
-    if (!active) {
+    // playingOut can outlast the control-plane signals, and it is the one state worth waiting on.
+    if (!active && !playingOut) {
         return null;
     }
 
