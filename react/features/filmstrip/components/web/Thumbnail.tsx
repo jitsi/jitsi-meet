@@ -4,13 +4,11 @@ import { debounce } from 'lodash-es';
 import React, { Component, KeyboardEvent, RefObject, createRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { keyframes } from 'tss-react';
 import { withStyles } from 'tss-react/mui';
 
 import { createScreenSharingIssueEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
-import { isTranslationDeliveryPending } from '../../../audio-translation/functions';
 import Avatar from '../../../base/avatar/components/Avatar';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
@@ -65,7 +63,6 @@ import {
 import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';
-import TranslationPendingChip from './TranslationPendingChip';
 import VirtualScreenshareParticipant from './VirtualScreenshareParticipant';
 
 /**
@@ -215,12 +212,6 @@ export interface IProps extends WithTranslation {
     _thumbnailType: string;
 
     /**
-     * Whether translated audio from this participant is still reaching other participants, so anyone about to
-     * speak should wait. Takes precedence over the dominant-speaker ring.
-     */
-    _translationDeliveryPending: boolean;
-
-    /**
      * The video object position for the participant.
      */
     _videoObjectPosition: string;
@@ -357,29 +348,6 @@ const defaultStyles = (theme: Theme) => {
         activeSpeaker: {
             '& .active-speaker-indicator': {
                 boxShadow: `inset 0px 0px 0px 3px ${theme.palette.action01Hover} !important`
-            }
-        },
-
-        translationPending: {
-            '& .translation-pending-border': {
-                animation: `${keyframes`
-                    0% {
-                        opacity: 0.45;
-                    }
-                    50% {
-                        opacity: 1;
-                    }
-                    100% {
-                        opacity: 0.45;
-                    }
-                `} 1.6s ease-in-out infinite`,
-                outline: '3px dashed #F8AE1A',
-                outlineOffset: '-1.5px',
-
-                '@media (prefers-reduced-motion: reduce)': {
-                    animation: 'none',
-                    opacity: 0.85
-                }
             }
         },
 
@@ -950,10 +918,7 @@ class Thumbnail extends Component<IProps, IState> {
             className += ` ${classes.raisedHand}`;
         }
 
-        if (this.props._translationDeliveryPending) {
-            // Others are still hearing this speaker translated; this ring replaces the dominant-speaker one.
-            className += ` ${classes.translationPending}`;
-        } else if (!_isDominantSpeakerDisabled && _participant?.dominantSpeaker) {
+        if (!_isDominantSpeakerDisabled && _participant?.dominantSpeaker) {
             className += ` ${classes.activeSpeaker} dominant-speaker`;
         }
         if (_thumbnailType !== THUMBNAIL_TYPE.TILE && _participant?.pinned) {
@@ -1152,13 +1117,6 @@ class Thumbnail extends Component<IProps, IState> {
                     className = { clsx(classes.borderIndicator,
                     _gifSrc && classes.borderIndicatorOnTop,
                     'active-speaker-indicator') } />
-                <div
-                    className = { clsx(classes.borderIndicator,
-                    _gifSrc && classes.borderIndicatorOnTop,
-                    'translation-pending-border') } />
-                <TranslationPendingChip
-                    participantId = { id }
-                    thumbnailType = { _thumbnailType } />
                 {_gifSrc && (
                     <div
                         className = { clsx(classes.borderIndicator, classes.borderIndicatorOnTop) }
@@ -1395,7 +1353,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         _stageFilmstripLayout: isStageFilmstripAvailable(state),
         _stageParticipantsVisible: _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW,
         _shouldDisplayTintBackground: !disableTintForeground && shouldDisplayTintBackground,
-        _translationDeliveryPending: isTranslationDeliveryPending(state, id),
         _thumbnailType: tileType,
         _videoObjectPosition: getVideoObjectPosition(state, participant?.id),
         _videoTrack,

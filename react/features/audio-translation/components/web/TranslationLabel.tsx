@@ -6,10 +6,13 @@ import { makeStyles } from 'tss-react/mui';
 import { IconTranslate } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
-import { isAudioTranslationActiveInMeeting } from '../../functions';
+import { isAudioTranslationActiveInMeeting, isTranslationPlayingOut } from '../../functions';
 
 const useStyles = makeStyles()(theme => {
     return {
+        playingOut: {
+            background: theme.palette.warning01
+        },
         translation: {
             background: theme.palette.action01
         }
@@ -17,7 +20,8 @@ const useStyles = makeStyles()(theme => {
 });
 
 /**
- * Conference-header label shown while audio translation is active in the meeting.
+ * Conference-header label shown while audio translation is active in the meeting. Turns amber while a
+ * speaker's translated audio is still playing out, so everyone knows to wait before speaking.
  *
  * @returns {ReactElement|null}
  */
@@ -25,12 +29,13 @@ const TranslationLabel = () => {
     const { classes: styles } = useStyles();
     const { t } = useTranslation();
     const active = useSelector(isAudioTranslationActiveInMeeting);
+    const playingOut = useSelector(isTranslationPlayingOut);
 
     if (!active) {
         return null;
     }
 
-    const content = t('audioTranslation.labelTooltip');
+    const content = t(playingOut ? 'audioTranslation.labelTooltipPlaying' : 'audioTranslation.labelTooltip');
 
     return (
         <Tooltip
@@ -38,7 +43,7 @@ const TranslationLabel = () => {
             position = { 'bottom' }>
             <Label
                 accessibilityText = { content }
-                className = { styles.translation }
+                className = { playingOut ? styles.playingOut : styles.translation }
                 icon = { IconTranslate } />
         </Tooltip>
     );
