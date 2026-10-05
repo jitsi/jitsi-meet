@@ -61,6 +61,7 @@ describe('Polls', () => {
         await p1.getChatPanel().clickEditPollButton();
 
         await p1.getChatPanel().fillPollOption(0, ' edited!');
+        expect(await p1.getChatPanel().getOption(0)).toBe('First option edited!');
 
         await p1.getChatPanel().clickSavePollButton();
 
