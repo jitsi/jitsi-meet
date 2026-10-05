@@ -22,7 +22,7 @@ local split_string = util.split_string;
 local new_id = require 'util.id'.medium;
 local uuid_generate = require 'util.uuid'.generate;
 local json = require 'cjson.safe';
-local inspect = require 'inspect';
+local serialize = require 'util.serialization'.new('debug');
 
 -- Debug flag
 local DEBUG = false;
@@ -302,7 +302,7 @@ local function stanza_handler(event)
     local request_promotion = visitors_iq:get_child('promotion-request');
     if request_promotion then
         if not from_vnode then
-            module:log('warn', 'Received forged request_promotion message: %s %s',stanza, inspect(room._connected_vnodes));
+            module:log('warn', 'Received forged request_promotion message: %s %s',stanza, serialize(room._connected_vnodes));
             return true; -- stop processing
         end
 
@@ -338,7 +338,7 @@ local function stanza_handler(event)
     if transcription_languages
         and (transcription_languages.attr.langs or transcription_languages.attr.count) then
         if not from_vnode then
-            module:log('warn', 'Received forged transcription_languages message: %s %s',stanza, inspect(room._connected_vnodes));
+            module:log('warn', 'Received forged transcription_languages message: %s %s',stanza, serialize(room._connected_vnodes));
             return true; -- stop processing
         end
 
@@ -374,7 +374,7 @@ local function stanza_handler(event)
     if recording_metadata_el then
         if not from_vnode then
             module:log('warn', 'Received forged recording_metadata message: %s %s',
-                stanza, inspect(room._connected_vnodes));
+                stanza, serialize(room._connected_vnodes));
             return true; -- stop processing
         end
 

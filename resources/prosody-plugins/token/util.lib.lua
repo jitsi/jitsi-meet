@@ -20,7 +20,7 @@ local get_room_from_jid = main_util.get_room_from_jid;
 local cjson_safe  = require 'cjson.safe'
 local timer = require "util.timer";
 local async = require "util.async";
-local inspect = require 'inspect';
+local serialize = require 'util.serialization'.new('debug');
 
 local nr_retries = 3;
 local ssl = require "ssl";
@@ -493,7 +493,7 @@ function Util:verify_room(session, room_address)
                 auth_room = string.lower(auth_room);
             end
         else
-            module:log('warn', 'session.jitsi_meet_room not string: %s', inspect(auth_room));
+            module:log('warn', 'session.jitsi_meet_room not string: %s', serialize(auth_room));
         end
     end
 
