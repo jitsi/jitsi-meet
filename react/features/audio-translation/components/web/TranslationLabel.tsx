@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IconTranslate } from '../../../base/icons/svg';
+import { IconTranslate, IconTranslateWave } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
 import { isAudioTranslationActiveInMeeting, isTranslationPlayingOut } from '../../functions';
@@ -45,7 +45,7 @@ const TranslationLabel = () => {
             <Label
                 accessibilityText = { content }
                 className = { playingOut ? styles.playingOut : styles.translation }
-                icon = { IconTranslate } />
+                icon = { playingOut ? IconTranslateWave : IconTranslate } />
         </Tooltip>
     );
 };

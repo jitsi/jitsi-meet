@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { IconTranslate } from '../../../base/icons/svg';
+import { IconTranslate, IconTranslateWave } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/native/Label';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import {
@@ -42,7 +42,7 @@ const TranslationLabel = () => {
 
     return available && (active || playingOut) ? (
         <Label
-            icon = { IconTranslate }
+            icon = { playingOut ? IconTranslateWave : IconTranslate }
             iconColor = { BaseTheme.palette.icon01 }
             style = { playingOut ? styles.playingOutLabel : styles.translationLabel } />
     ) : null;
