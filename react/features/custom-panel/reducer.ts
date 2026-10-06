@@ -1,9 +1,11 @@
+import { CONFERENCE_LEFT } from '../base/conference/actionTypes';
 import PersistenceRegistry from '../base/redux/PersistenceRegistry';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     CUSTOM_PANEL_CLOSE,
     CUSTOM_PANEL_OPEN,
+    SET_CUSTOM_PANEL_ADVISOR_AVAILABLE,
     SET_CUSTOM_PANEL_IS_RESIZING,
     SET_CUSTOM_PANEL_WIDTH,
     SET_USER_CUSTOM_PANEL_WIDTH
@@ -14,6 +16,11 @@ import { DEFAULT_CUSTOM_PANEL_WIDTH } from './constants';
  * The state of the custom panel feature.
  */
 export interface ICustomPanelState {
+
+    /**
+     * Whether advisor-resolve confirmed an advisor for the current meeting.
+     */
+    isAdvisorAvailable: boolean;
 
     /**
      * Whether the custom panel is currently open.
@@ -43,6 +50,7 @@ export interface ICustomPanelState {
 }
 
 const DEFAULT_STATE: ICustomPanelState = {
+    isAdvisorAvailable: false,
     isOpen: false,
     isResizing: false,
     width: {
@@ -64,6 +72,12 @@ PersistenceRegistry.register('features/custom-panel', {
 ReducerRegistry.register(
     'features/custom-panel', (state: ICustomPanelState = DEFAULT_STATE, action): ICustomPanelState => {
         switch (action.type) {
+        case CONFERENCE_LEFT:
+            return {
+                ...state,
+                isAdvisorAvailable: false
+            };
+
         case CUSTOM_PANEL_CLOSE:
             return {
                 ...state,
@@ -74,6 +88,12 @@ ReducerRegistry.register(
             return {
                 ...state,
                 isOpen: true
+            };
+
+        case SET_CUSTOM_PANEL_ADVISOR_AVAILABLE:
+            return {
+                ...state,
+                isAdvisorAvailable: action.available
             };
 
         case SET_CUSTOM_PANEL_WIDTH:

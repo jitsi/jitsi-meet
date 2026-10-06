@@ -1104,15 +1104,18 @@ var config = {
     // customToolbarButtons: [],
 
     // The custom panel (AI Assist), rendered in a side panel on web and on its own screen
-    // on mobile. It needs both `enabled` and `url`.
-    // `url` has no default: without one the panel stays hidden on both platforms. It can
-    // also come from `customPanelUrl` in the dynamic branding data, which takes precedence
-    // over the value set here.
-    // NOTE: `url` cannot be overwritten through `configOverwrite`, because the panel
-    // receives the meeting JWT as a query parameter. Only `enabled` is whitelisted.
+    // on mobile. It needs `enabled`, `url`, `advisorAvailabilityUrl` and a JWT.
+    // `url` has no default: without one the panel stays hidden on both platforms.
+    // `advisorAvailabilityUrl` is called after joining with the JWT and the meeting id; the
+    // button shows only if it confirms an advisor is deployed for the meeting.
+    // Both can also come from `customPanelUrl: { url, advisorAvailabilityUrl }` in the
+    // dynamic branding data, which takes precedence over the values set here.
+    // NOTE: `url` and `advisorAvailabilityUrl` cannot be overwritten through
+    // `configOverwrite`, because both receive the meeting JWT. Only `enabled` is whitelisted.
     // customPanel: {
     //     enabled: false,
     //     url: 'https://example.com/ai-assist',
+    //     advisorAvailabilityUrl: 'https://example.com/advisor-resolve',
     // },
 
     // Stats

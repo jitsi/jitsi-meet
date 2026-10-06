@@ -88,6 +88,7 @@ export type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
     'TALK_WHILE_MUTED_SOUND';
 
 export interface ICustomPanelConfig {
+    advisorAvailabilityUrl?: string;
     enabled?: boolean;
     url?: string;
 }

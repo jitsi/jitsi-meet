@@ -13,15 +13,17 @@ export function getCustomPanelUrl(state: IReduxState): string | undefined {
 }
 
 /**
- * Returns whether AI Assist (custom panel) is enabled via config. It needs both the
- * flag and a URL, which comes from `config.js` or from dynamic branding. There is no
- * default URL, so without one the panel stays hidden on both platforms.
+ * Returns whether AI Assist (custom panel) is enabled. It needs the config flag, a URL
+ * (from `config.js` or dynamic branding), a JWT and an advisor deployed for this meeting.
  *
  * @param {IReduxState} state - The redux state.
  * @returns {boolean}
  */
 export function isCustomPanelEnabled(state: IReduxState): boolean {
-    return Boolean(state['features/base/config'].customPanel?.enabled && getCustomPanelUrl(state));
+    return Boolean(state['features/base/config'].customPanel?.enabled
+        && getCustomPanelUrl(state)
+        && state['features/base/jwt'].jwt
+        && state['features/custom-panel']?.isAdvisorAvailable);
 }
 
 /**
@@ -67,7 +69,7 @@ export function getCustomPanelOpen(state: IReduxState): boolean {
 
 /**
  * Returns the width the custom panel takes from the video space. 0 when closed, disabled,
- * or on native, where the panel is a navigation route and its slice is never registered.
+ * or on native, where the panel is a navigation route and never sets `isOpen`.
  *
  * @param {IReduxState} state - The redux state.
  * @returns {number}

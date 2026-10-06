@@ -6,6 +6,8 @@ import {
     SET_USER_CUSTOM_PANEL_WIDTH
 } from './actionTypes';
 
+export * from './actions.any';
+
 /**
  * Action to close the custom panel.
  *
