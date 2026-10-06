@@ -1,11 +1,14 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { isTouchDevice, shouldEnableResize } from '../../../base/environment/utils.web';
+import { IconCloseLarge } from '../../../base/icons/svg';
+import ClickableIcon from '../../../base/ui/components/web/ClickableIcon';
 import usePanelResize from '../../../base/ui/hooks/usePanelResize.web';
-import { setCustomPanelIsResizing, setUserCustomPanelWidth } from '../../actions.web';
+import { close, setCustomPanelIsResizing, setUserCustomPanelWidth } from '../../actions.web';
 import {
     CUSTOM_PANEL_DRAG_HANDLE_HEIGHT,
     CUSTOM_PANEL_DRAG_HANDLE_OFFSET,
@@ -73,6 +76,16 @@ const useStyles = makeStyles<IStylesProps>()((theme, { isResizing, isTouch, resi
                 width: '100%',
                 zIndex: 301
             }
+        },
+
+        header: {
+            alignItems: 'center',
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexShrink: 0,
+            height: '60px',
+            justifyContent: 'flex-end',
+            padding: `0 ${theme.spacing(3)}`
         },
 
         contentContainer: {
@@ -148,6 +161,8 @@ export default function CustomPanel(): JSX.Element | null {
     const isResizing = useSelector((state: IReduxState) =>
         state['features/custom-panel']?.isResizing ?? false);
     const maxPanelWidth = useSelector(getCustomPanelMaxSize);
+    const dispatch = useDispatch();
+    const { t } = useTranslation();
 
     const isTouch = isTouchDevice();
     const resizeEnabled = shouldEnableResize();
@@ -161,6 +176,10 @@ export default function CustomPanel(): JSX.Element | null {
         setWidth: setUserCustomPanelWidth,
         width: panelWidth
     });
+
+    const onClick = useCallback(() => {
+        dispatch(close());
+    }, [ dispatch ]);
 
     if (!enabled || !paneOpen) {
         return null;
@@ -178,6 +197,12 @@ export default function CustomPanel(): JSX.Element | null {
                 ) }
                 onPointerDown = { onDragHandlePointerDown }>
                 <div className = { cx(classes.dragHandle, 'customPanelDragHandle') } />
+            </div>
+            <div className = { classes.header }>
+                <ClickableIcon
+                    accessibilityLabel = { t('customPanel.close') }
+                    icon = { IconCloseLarge }
+                    onClick = { onClick } />
             </div>
             <div className = { classes.contentContainer }>
                 <CustomPanelContent />
