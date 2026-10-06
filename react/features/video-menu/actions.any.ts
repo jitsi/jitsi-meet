@@ -121,5 +121,9 @@ export function muteAllParticipants(exclude: Array<string>, mediaType: MediaType
 
             dispatch(muteRemoteAndReject(id, mediaType));
         });
+
+        if (!exclude.length && mediaType === MEDIA_TYPE.AUDIO) {
+            dispatch(setAudioMuted(true));
+        }
     };
 }
