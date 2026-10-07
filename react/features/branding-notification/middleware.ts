@@ -7,11 +7,12 @@ import { openURLInBrowser } from '../base/util/openURLInBrowser';
 import { showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
-import { BRANDING_NOTIFICATION_ID, BRANDING_NOTIFICATION_SHOWN } from './constants';
+import { BRANDING_NOTIFICATION_HIDDEN, BRANDING_NOTIFICATION_ID } from './constants';
 import { BRANDING_NOTIFICATION } from './extraConstants';
 
 /**
- * Middleware that shows the deploy-specific notification the first time the user joins a conference.
+ * Middleware that shows the deploy-specific notification when the user joins a conference, until the user chooses not
+ * to see it again.
  *
  * @param {IStore} store - The redux store.
  * @returns {Function}
@@ -21,22 +22,28 @@ MiddlewareRegistry.register(({ dispatch }) => next => action => {
 
     switch (action.type) {
     case CONFERENCE_JOINED: {
-        if (!BRANDING_NOTIFICATION || jitsiLocalStorage.getItem(BRANDING_NOTIFICATION_SHOWN) === BRANDING_NOTIFICATION.id) {
+        if (!BRANDING_NOTIFICATION
+                || jitsiLocalStorage.getItem(BRANDING_NOTIFICATION_HIDDEN) === BRANDING_NOTIFICATION.id) {
             break;
         }
 
-        const { actionKey, descriptionKey, id, titleKey, url } = BRANDING_NOTIFICATION;
-
-        jitsiLocalStorage.setItem(BRANDING_NOTIFICATION_SHOWN, id);
+        const { actionKey, descriptionKey, dontShowAgainKey, id, titleKey, url } = BRANDING_NOTIFICATION;
 
         dispatch(showNotification({
-            customActionHandler: [ () => {
-                openURLInBrowser(url, true);
+            customActionHandler: [
+                () => {
+                    openURLInBrowser(url, true);
 
-                return true;
-            } ],
-            customActionNameKey: [ actionKey ],
-            customActionType: [ BUTTON_TYPES.PRIMARY ],
+                    return true;
+                },
+                () => {
+                    jitsiLocalStorage.setItem(BRANDING_NOTIFICATION_HIDDEN, id);
+
+                    return true;
+                }
+            ],
+            customActionNameKey: [ actionKey, dontShowAgainKey ],
+            customActionType: [ BUTTON_TYPES.PRIMARY, BUTTON_TYPES.TERTIARY ],
             descriptionKey,
             titleKey,
             uid: BRANDING_NOTIFICATION_ID

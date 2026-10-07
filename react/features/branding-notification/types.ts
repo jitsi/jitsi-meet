@@ -11,8 +11,13 @@ export interface IBrandingNotification {
     descriptionKey: string;
 
     /**
-     * Identifies the notification. The notification is shown once for every id, so a new id shows it again to the
-     * users who have already seen the previous one.
+     * The translation key of the label of the button which hides the notification for good.
+     */
+    dontShowAgainKey: string;
+
+    /**
+     * Identifies the notification. The notification is shown until the user chooses not to see it again, so a new id
+     * shows it again to the users who have hidden the previous one.
      */
     id: string;
 
