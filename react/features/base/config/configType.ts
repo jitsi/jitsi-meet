@@ -1,3 +1,4 @@
+import { ISystemWideUserNotificationConfig } from '../../system-wide-user-notification/types';
 import { ToolbarButton } from '../../toolbox/types';
 import { ILoggingConfig } from '../logging/types';
 import { IAudioSettings } from '../settings/reducer';
@@ -725,6 +726,7 @@ export interface IConfig {
     startWithVideoMuted?: boolean;
     stereo?: boolean;
     subject?: string;
+    systemWideUserNotification?: ISystemWideUserNotificationConfig;
     testing?: {
         assumeBandwidth?: boolean;
         debugAudioLevels?: boolean;

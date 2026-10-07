@@ -1919,6 +1919,26 @@ var config = {
     // List of notifications to be disabled. Works in tandem with the above setting.
     // disabledNotifications: [],
 
+    // A notification shown to every user, with a button which opens a link. It is shown when the user joins a
+    // meeting, until the user clicks "Don't show again", and on the welcome page.
+    // systemWideUserNotification: {
+    //     // Identifies the notification. The users who chose not to see it again see it again when the id changes.
+    //     // Defaults to the url.
+    //     id: 'announcement-1',
+    //     // The link opened by the button.
+    //     url: 'https://example.com/announcement',
+    //     // The texts, by language code. A missing language or text falls back to English. The button and
+    //     // dontShowAgain texts have defaults.
+    //     labels: {
+    //         en: {
+    //             title: 'Things are changing',
+    //             description: 'Read about what is new.',
+    //             button: 'Learn more',
+    //             dontShowAgain: 'Don\'t show again',
+    //         },
+    //     },
+    // },
+
     // filmstrip: {
     //     // Disable the vertical/horizontal filmstrip.
     //     disabled: false,

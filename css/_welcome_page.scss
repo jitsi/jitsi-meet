@@ -314,6 +314,35 @@ body.welcome-page {
         &--grey {
             background: #F2F3F4;
         }
+
+        &--notification {
+            background: #444447;
+            border-left: 4px solid #0163FF;
+            box-sizing: border-box;
+            color: #fff;
+            padding: 24px 32px;
+        }
+    }
+
+    .welcome-notification-title {
+        color: #fff;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 28px;
+        margin: 0;
+    }
+
+    .welcome-notification-description {
+        font-size: 16px;
+        line-height: 24px;
+        margin: 8px 0;
+    }
+
+    .welcome-notification-link {
+        color: #4C9AFF;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: underline;
     }
 
     .welcome-footer {
