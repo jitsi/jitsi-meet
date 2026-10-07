@@ -53,6 +53,8 @@ var config = {
 
     // websocketKeepAliveUrl: 'https://jitsi-meet.example.com/' + subdir + '_unlock',
 
+    // websocketWarmUpUrl: 'https://jitsi-meet.example.com/' + subdir + 'ws-warm-up';
+
     // Whether BOSH should be preferred over WebSocket if both are configured.
     // preferBosh: false,
 
