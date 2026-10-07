@@ -26,8 +26,6 @@ import { BUTTON_TYPES } from '../../base/ui/constants.native';
 import getUnsafeRoomText from '../../base/util/getUnsafeRoomText.native';
 import WelcomePageTabs
     from '../../mobile/navigation/components/welcome/components/WelcomePageTabs';
-import WelcomePageNotification
-    from '../../system-wide-user-notification/components/native/WelcomePageNotification';
 
 import {
     IProps as AbstractProps,
@@ -359,7 +357,6 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                     {
                         this._renderHintBox()
                     }
-                    <WelcomePageNotification />
                 </SafeAreaView>
             </Animated.View>
         );
