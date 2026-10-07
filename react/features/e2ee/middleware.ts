@@ -15,7 +15,7 @@ import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound } from '../base/sounds/actions';
 
-import { PARTICIPANT_VERIFIED, SET_MEDIA_ENCRYPTION_KEY, START_VERIFICATION, TOGGLE_E2EE } from './actionTypes';
+import { PARTICIPANT_VERIFIED, SET_E2EE_KEY, SET_MEDIA_ENCRYPTION_KEY, START_VERIFICATION, TOGGLE_E2EE } from './actionTypes';
 import { setE2EEMaxMode, toggleE2EE } from './actions';
 import ParticipantVerificationDialog from './components/ParticipantVerificationDialog';
 import { E2EE_OFF_SOUND_ID, E2EE_ON_SOUND_ID, MAX_MODE } from './constants';
@@ -88,6 +88,21 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             const soundID = action.enabled ? E2EE_ON_SOUND_ID : E2EE_OFF_SOUND_ID;
 
             dispatch(playSound(soundID));
+        }
+
+        break;
+    }
+
+    case SET_E2EE_KEY: {
+        if (conference?.isE2EESupported()) {
+            const { key } = action;
+
+            if (typeof key === 'string' && key.length > 0) {
+                conference.setMediaEncryptionKey({ encryptionKey: key });
+                dispatch(toggleE2EE(true));
+            } else {
+                dispatch(toggleE2EE(false));
+            }
         }
 
         break;

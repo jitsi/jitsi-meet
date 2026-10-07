@@ -58,4 +58,6 @@ typedef NS_ENUM(NSInteger, RecordingMode) {
 - (void)stopRecording:(RecordingMode)mode :(BOOL)transcription;
 - (void)overwriteConfig:(NSDictionary * _Nonnull)config;
 - (void)sendCameraFacingModeMessage:(NSString * _Nonnull)to :(NSString * _Nullable)facingMode;
+- (void)setE2EEEnabled:(BOOL)enabled;
+- (void)setE2EEKey:(NSString * _Nonnull)key;
 @end
