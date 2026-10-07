@@ -1,10 +1,11 @@
+import { CONFERENCE_LEFT } from '../base/conference/actionTypes';
 import PersistenceRegistry from '../base/redux/PersistenceRegistry';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     CUSTOM_PANEL_CLOSE,
     CUSTOM_PANEL_OPEN,
-    SET_CUSTOM_PANEL_ENABLED,
+    SET_CUSTOM_PANEL_ADVISOR_AVAILABLE,
     SET_CUSTOM_PANEL_IS_RESIZING,
     SET_CUSTOM_PANEL_WIDTH,
     SET_USER_CUSTOM_PANEL_WIDTH
@@ -17,10 +18,9 @@ import { DEFAULT_CUSTOM_PANEL_WIDTH } from './constants';
 export interface ICustomPanelState {
 
     /**
-     * Whether the custom panel feature is enabled.
-     * This can be toggled dynamically via console.
+     * Whether advisor-resolve confirmed an advisor for the current meeting.
      */
-    enabled: boolean;
+    isAdvisorAvailable: boolean;
 
     /**
      * Whether the custom panel is currently open.
@@ -50,7 +50,7 @@ export interface ICustomPanelState {
 }
 
 const DEFAULT_STATE: ICustomPanelState = {
-    enabled: false,
+    isAdvisorAvailable: false,
     isOpen: false,
     isResizing: false,
     width: {
@@ -60,11 +60,9 @@ const DEFAULT_STATE: ICustomPanelState = {
 };
 
 /**
- * Persist only the width subtree so the user's preferred panel width
- * survives page reloads.
+ * Persist the width subtree, so the user's preferred panel width survives page reloads.
  */
 PersistenceRegistry.register('features/custom-panel', {
-    enabled: true,
     width: true
 });
 
@@ -74,6 +72,12 @@ PersistenceRegistry.register('features/custom-panel', {
 ReducerRegistry.register(
     'features/custom-panel', (state: ICustomPanelState = DEFAULT_STATE, action): ICustomPanelState => {
         switch (action.type) {
+        case CONFERENCE_LEFT:
+            return {
+                ...state,
+                isAdvisorAvailable: false
+            };
+
         case CUSTOM_PANEL_CLOSE:
             return {
                 ...state,
@@ -86,10 +90,10 @@ ReducerRegistry.register(
                 isOpen: true
             };
 
-        case SET_CUSTOM_PANEL_ENABLED:
+        case SET_CUSTOM_PANEL_ADVISOR_AVAILABLE:
             return {
                 ...state,
-                enabled: action.enabled
+                isAdvisorAvailable: action.available
             };
 
         case SET_CUSTOM_PANEL_WIDTH:

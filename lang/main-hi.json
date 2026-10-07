@@ -1468,6 +1468,7 @@
                 "label": "स्टीरियो"
             }
         },
+        "aiAssist": "एआई सहायक",
         "audioRoute": "साउंड डिवाइस का चयन करें",
         "audioSettings": "ऑडियो सेटिंग्स",
         "audioTranslation": "ऑडियो का अनुवाद करें",
@@ -1482,7 +1483,6 @@
         "closeParticipantsPane": "प्रतिभागी पैनल बंद करें",
         "closeReactionsMenu": "प्रतिक्रियाएं मेनू बंद करें",
         "closedCaptions": "क्लोज्ड कैप्शन",
-        "copilot": "कोपायलट",
         "disableNoiseSuppression": "अतिरिक्त शोर दमन अक्षम करें",
         "disableReactionSounds": "आप इस मीटिंग के लिए प्रतिक्रिया ध्वनियाँ अक्षम कर सकते हैं",
         "documentClose": "साझा किए गए दस्तावेज़ को बंद करें",

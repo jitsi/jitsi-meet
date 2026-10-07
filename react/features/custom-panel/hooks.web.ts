@@ -1,7 +1,9 @@
 import { useSelector } from 'react-redux';
 
+import { isInBreakoutRoom } from '../breakout-rooms/functions';
+
 import CustomPanelButton from './components/web/CustomPanelButton';
-import { isCustomPanelEnabled } from './functions';
+import { isCustomPanelEnabled } from './functions.web';
 
 /**
  * Configuration for the custom panel toolbar button.
@@ -13,15 +15,15 @@ const customPanel = {
 };
 
 /**
- * A hook that returns the custom panel button if the feature is enabled.
- * Uses useSelector for reactive updates when the feature is toggled dynamically.
+ * A hook that returns the custom panel button.
  *
  * @returns {Object | undefined} The button configuration or undefined if disabled.
  */
 export function useCustomPanelButton() {
     const enabled = useSelector(isCustomPanelEnabled);
+    const inBreakoutRoom = useSelector(isInBreakoutRoom);
 
-    if (enabled) {
+    if (enabled && !inBreakoutRoom) {
         return customPanel;
     }
 

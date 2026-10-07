@@ -26,6 +26,7 @@ import '../base/user-interaction/reducer';
 import '../breakout-rooms/reducer';
 import '../calendar-sync/reducer';
 import '../chat/reducer';
+import '../custom-panel/reducer';
 import '../deep-linking/reducer';
 import '../dropbox/reducer';
 import '../dynamic-branding/reducer';

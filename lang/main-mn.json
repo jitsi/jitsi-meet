@@ -1417,6 +1417,7 @@
                 "label": "Стерео"
             }
         },
+        "aiAssist": "AI туслах",
         "audioRoute": "Дууны төхөөрөмж сонгох",
         "audioSettings": "Дууны тохиргоо",
         "authenticate": "Баталгаажуулах",
@@ -1429,7 +1430,6 @@
         "closeParticipantsPane": "Оролцогчийн цонх хаах",
         "closeReactionsMenu": "Реакци цэс хаах",
         "closedCaptions": "Хаалттай тайлбар",
-        "copilot": "Copilot",
         "disableNoiseSuppression": "Шуугиан дарахыг болиулах",
         "disableReactionSounds": "Уулзалтын үеэр реакцийн чимээг хаах болно",
         "documentClose": "Хуваалцсан бичиг баримт хаах",

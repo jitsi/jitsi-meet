@@ -1516,6 +1516,7 @@
                 "label": "Stereo"
             }
         },
+        "aiAssist": "MI asistents",
         "audioRoute": "Izvēlēties audioierīci",
         "audioSettings": "Audio iestatījumi",
         "audioTranslation": "Tulkot audio",
@@ -1530,7 +1531,6 @@
         "closeParticipantsPane": "Aizvērt dalībnieku paneli",
         "closeReactionsMenu": "Aizvērt reakciju izvēlni",
         "closedCaptions": "Slēgtie subtitri",
-        "copilot": "Copilot",
         "disableNoiseSuppression": "Atspējot trokšņu slāpēšanu",
         "disableReactionSounds": "Šai sapulcei varat atspējot reakcijas skaņas",
         "documentClose": "Aizvērt kopīgoto dokumentu",

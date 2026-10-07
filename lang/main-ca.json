@@ -1526,6 +1526,7 @@
                 "label": "Estèreo"
             }
         },
+        "aiAssist": "Assistent d'IA",
         "audioRoute": "Seleccioneu l'aparell de so",
         "audioSettings": "Paràmetres d'àudio",
         "audioTranslation": "Tradueix l'àudio",
@@ -1540,7 +1541,6 @@
         "closeParticipantsPane": "Tanca la subfinestra de participants",
         "closeReactionsMenu": "Tanca el menú de reaccions",
         "closedCaptions": "Subtítols",
-        "copilot": "Copilot",
         "disableNoiseSuppression": "Desactiva la supressió de soroll",
         "disableReactionSounds": "Podeu desactivar els sons de reacció per a aquesta reunió",
         "documentClose": "Tanca el document compartit",

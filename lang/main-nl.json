@@ -1526,6 +1526,7 @@
                 "label": "Stereo"
             }
         },
+        "aiAssist": "AI-assistent",
         "audioRoute": "Het afspeelapparaat selecteren",
         "audioSettings": "Audio-instellingen",
         "audioTranslation": "Audiovertaling",
@@ -1540,7 +1541,6 @@
         "closeParticipantsPane": "Deelnemersvenster sluiten",
         "closeReactionsMenu": "Reactiemenu sluiten",
         "closedCaptions": "Ondertiteling",
-        "copilot": "Copilot",
         "disableNoiseSuppression": "Ruisonderdrukking uitschakelen",
         "disableReactionSounds": "U kunt reactiegeluiden uitschakelen voor deze vergadering",
         "documentClose": "Gedeeld document sluiten",
