@@ -71,6 +71,11 @@ describe('Polls', () => {
         const { p1 } = ctx;
 
         await p1.getChatPanel().clickSendPollButton();
+        await p1.driver.$('button=Send').waitForExist({
+            reverse: true,
+            timeout: 2000
+        });
+        expect(await p1.driver.$('button=Send').isExisting()).toBe(false);
     });
 
     it('vote on poll', async () => {
