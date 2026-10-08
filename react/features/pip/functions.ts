@@ -100,10 +100,11 @@ export function shouldShowPiP(state: IReduxState): boolean {
     }
 
     // Browser PiP is opt-in: it stays disabled unless the deployment explicitly sets
-    // enableBrowserPiP: true (Electron is unaffected). This authoritative default lives here
-    // rather than in isPiPEnabled() because the external API evaluates isPiPEnabled() against
-    // only the embedder-provided config, without the deployment's config.js — it must stay
-    // permissive when the flag is absent (see isPiPEnabled()).
+    // enableBrowserPiP: true or the user turns it on, a choice the settings middleware merges
+    // into this config (Electron is unaffected). This
+    // authoritative default lives here rather than in isPiPEnabled() because the external API
+    // evaluates isPiPEnabled() against only the embedder-provided config, without the
+    // deployment's config.js — it must stay permissive when the flag is absent (see isPiPEnabled()).
     if (!browser.isElectron() && pipConfig?.enableBrowserPiP !== true) {
         return false;
     }
