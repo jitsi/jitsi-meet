@@ -60,6 +60,7 @@ export interface IPalette {
     uiBackground: string;
     warning01: string;
     warning02: string;
+    warning03: string;
 
     // Semantic tokens (component-based, more descriptive names)
     breakoutRoomArrowBackground: string;
