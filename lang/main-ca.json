@@ -262,7 +262,8 @@
         "yes": "sí"
     },
     "customPanel": {
-        "close": "Tanca"
+        "close": "Tanca",
+        "title": "Assistent d'IA"
     },
     "dateUtils": {
         "earlier": "Abans",
@@ -1404,6 +1405,10 @@
         "rejoinKeyTitle": "Torna a entrar",
         "text": "Premeu el botó <i>Torna a entrar</i> per a tornar a connectar.",
         "title": "La videotrucada s'ha interromput perquè l'ordinador ha entrat en mode repòs."
+    },
+    "systemWideUserNotification": {
+        "button": "Més informació",
+        "dontShowAgain": "No tornis a mostrar"
     },
     "termsView": {
         "title": "Condicions"
