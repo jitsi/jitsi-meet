@@ -51,6 +51,21 @@ async function handleEffectFailure(
 }
 
 /**
+ * Handles a persistent inference failure of an effect applied outside {@link toggleBackgroundEffect}
+ * (e.g. by loadEffects): turns the background off, keeping the selection, and clears the effect.
+ *
+ * @param {Object} jitsiTrack - The local video track carrying the failed effect.
+ * @returns {Function}
+ */
+export function backgroundEffectFailed(jitsiTrack: TrackParam) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => handleEffectFailure(
+        dispatch,
+        { ...getState()['features/virtual-background'], backgroundEffectEnabled: false },
+        jitsiTrack,
+        'persistent inference failure');
+}
+
+/**
  * Signals the local participant activate the virtual background video or not.
  *
  * @param {Object} options - Represents the virtual background set options.
