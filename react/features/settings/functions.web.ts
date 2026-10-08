@@ -17,7 +17,7 @@ import { getParticipantsPaneConfig } from '../participants-pane/functions';
 import { isPrejoinPageVisible } from '../prejoin/functions';
 
 import { CONFIG_OPTIONS } from './configOptions';
-import { ConfigOption } from './types';
+import { ConfigOption, IConfigOptionValues } from './types';
 
 export * from './functions.any';
 
@@ -145,6 +145,21 @@ export function getDisabledExperimentalTabOptionIds(config: IConfig): string[] {
 }
 
 /**
+ * Returns the config options to display: those the deployment lets users decide and that apply to the current
+ * environment.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {ConfigOption[]} - The config options to display.
+ */
+export function getAvailableConfigOptions(stateful: IStateful): ConfigOption[] {
+    const state = toState(stateful);
+    const disabledIds = getDisabledExperimentalTabOptionIds(state['features/base/config']);
+
+    return CONFIG_OPTIONS.filter(option => !disabledIds.includes(option.id) && option.isAvailable(state));
+}
+
+/**
  * Returns the config values the user has chosen as a partial config, ready to be merged into the config. A value is
  * applied whether or not its option applies to the current environment, since a feature that cannot work here
  * ignores its flag anyway; only options the deployment disabled are left out.
@@ -189,6 +204,32 @@ function _toConfigPart(option: ConfigOption, value: unknown): IConfig | undefine
     case 'boolean':
         return typeof value === 'boolean' ? option.toConfig(value) : undefined;
     }
+}
+
+/**
+ * Returns the properties for the "Experimental" tab from settings dialog from Redux
+ * state.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Object} - The properties for the "Experimental" tab from settings dialog.
+ */
+export function getExperimentalTabProps(stateful: IStateful) {
+    const state = toState(stateful);
+    const config = state['features/base/config'];
+    const options = getAvailableConfigOptions(state);
+    const values: IConfigOptionValues = {};
+
+    // The config state already includes the user's choices (see the settings middleware), so reading it yields the
+    // effective value of every option.
+    for (const option of options) {
+        values[option.id] = option.getValue(config);
+    }
+
+    return {
+        options,
+        values
+    };
 }
 
 /**

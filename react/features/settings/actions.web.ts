@@ -36,6 +36,7 @@ import {
 import LogoutDialog from './components/web/LogoutDialog';
 import SettingsDialog from './components/web/SettingsDialog';
 import {
+    getExperimentalTabProps,
     getModeratorTabProps,
     getMoreTabProps,
     getNotificationsTabProps,
@@ -43,6 +44,7 @@ import {
     getShortcutsTabProps
 } from './functions.web';
 import logger from './logger';
+import { IConfigOptionValues } from './types';
 
 /**
  * Opens {@code LogoutDialog}.
@@ -168,6 +170,39 @@ export function submitMoreTab(newState: any) {
         if (newState.showSubtitlesOnStage !== currentState.showSubtitlesOnStage) {
             dispatch(updateSettings({ showSubtitlesOnStage: newState.showSubtitlesOnStage }));
         }
+    };
+}
+
+/**
+ * Submits the settings from the "Experimental" tab of the settings dialog. Only options whose value differs from the
+ * effective one are stored, so an option the user leaves alone keeps following the deployment's default.
+ *
+ * @param {Object} newState - The new settings.
+ * @returns {Function}
+ */
+export function submitExperimentalTab(newState: { values?: IConfigOptionValues; }) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const { values: currentValues } = getExperimentalTabProps(state);
+        const newValues = newState.values ?? {};
+        const changedValues: IConfigOptionValues = {};
+
+        for (const optionId of Object.keys(newValues)) {
+            if (newValues[optionId] !== currentValues[optionId]) {
+                changedValues[optionId] = newValues[optionId];
+            }
+        }
+
+        if (Object.keys(changedValues).length === 0) {
+            return;
+        }
+
+        dispatch(updateSettings({
+            userSelectedConfig: {
+                ...state['features/base/settings'].userSelectedConfig,
+                ...changedValues
+            }
+        }));
     };
 }
 
