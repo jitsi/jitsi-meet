@@ -45,7 +45,6 @@ import { ISecondScreenSource } from '../../../multi-screen/types';
 import PresenceLabel from '../../../presence-status/components/PresenceLabel';
 import { LAYOUTS } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.web';
-import { isVoiceAgentSpeaking } from '../../../voice-agents/functions';
 import { togglePinStageParticipant } from '../../actions';
 import {
     DISPLAY_MODE_TO_CLASS_NAME,
@@ -133,9 +132,6 @@ export interface IProps extends WithTranslation {
      * Used to hide the video from the vertical filmstrip.
      */
     _isActiveParticipant: boolean;
-
-    /** Whether this agent thumbnail is currently speaking (synthetic source sending); drives the ring. */
-    _isAgentSpeaking: boolean;
 
     /**
      * Indicates whether the participant associated with the thumbnail is displayed on the large video.
@@ -908,9 +904,12 @@ class Thumbnail extends Component<IProps, IState> {
                     className = { classes.sharedVideoTopRight }
                     source = { SHARED_VIDEO_SECOND_SCREEN_SOURCE }
                     visible = { isHovered } />
-                {isVoiceAgentParticipant(this.props._participant) && <VoiceAgentIndicator />}
-                {this.props._isAgentSpeaking && (
-                    <div className = { clsx(classes.borderIndicator, 'active-speaker-indicator') } />
+                {isVoiceAgentParticipant(this.props._participant) && (
+                    <>
+                        <VoiceAgentIndicator />
+                        <ThumbnailAudioIndicator _audioTrack = { this.props._audioTrack } />
+                        <div className = { clsx(classes.borderIndicator, 'active-speaker-indicator') } />
+                    </>
                 )}
             </span>
         );
@@ -964,9 +963,6 @@ class Thumbnail extends Component<IProps, IState> {
             // Others are still hearing this speaker translated; this ring replaces the dominant-speaker one.
             className += ` ${classes.translationPending}`;
         } else if (!_isDominantSpeakerDisabled && _participant?.dominantSpeaker) {
-            className += ` ${classes.activeSpeaker} dominant-speaker`;
-        } else if (this.props._isAgentSpeaking) {
-            // Agents have no bridge dominant-speaker signal; ring off their sending state instead.
             className += ` ${classes.activeSpeaker} dominant-speaker`;
         }
         if (_thumbnailType !== THUMBNAIL_TYPE.TILE && _participant?.pinned) {
@@ -1393,7 +1389,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         _defaultLocalDisplayName: defaultLocalDisplayName,
         _disableTileEnlargement: Boolean(disableTileEnlargement),
         _isActiveParticipant: isActiveParticipant,
-        _isAgentSpeaking: isVoiceAgentSpeaking(state, id),
         _isHidden: isLocal && iAmRecorder && !iAmSipGateway,
         _isLowBandwidthMode: Boolean(state['features/base/low-bandwidth-mode'].enabled),
         _isCurrentlyOnLargeVideo: participantCurrentlyOnLargeVideo,
