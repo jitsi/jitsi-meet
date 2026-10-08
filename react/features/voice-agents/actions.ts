@@ -5,7 +5,7 @@ import { hideDialog, openDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
 import { setAudioMuted, setAudioUnmutePermissions } from '../base/media/actions';
 
-import { SET_VOICE_AGENTS, SET_VOICE_AGENT_CONSENT, SET_VOICE_AGENT_SPEAKING } from './actionTypes';
+import { SET_VOICE_AGENTS, SET_VOICE_AGENT_CONSENT } from './actionTypes';
 import { VoiceAgentConsentDialog } from './components';
 import { IVoiceAgents } from './types';
 
@@ -172,17 +172,3 @@ export function setVoiceAgentConsent(agentId: string, allowed: boolean) {
     };
 }
 
-/**
- * Records whether a voice agent is currently speaking (synthetic source sending).
- *
- * @param {string} agentId - The agent the update applies to.
- * @param {boolean} speaking - Whether the agent is speaking.
- * @returns {Object}
- */
-export function setVoiceAgentSpeaking(agentId: string, speaking: boolean) {
-    return {
-        type: SET_VOICE_AGENT_SPEAKING,
-        agentId,
-        speaking
-    };
-}

@@ -1,6 +1,6 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
-import { SET_VOICE_AGENTS, SET_VOICE_AGENT_CONSENT, SET_VOICE_AGENT_SPEAKING } from './actionTypes';
+import { SET_VOICE_AGENTS, SET_VOICE_AGENT_CONSENT } from './actionTypes';
 import { isSafeAgentId, sanitizeAgents } from './functions';
 import { IVoiceAgents } from './types';
 
@@ -20,18 +20,15 @@ export interface IVoiceAgentsState {
      */
     consent: AgentFlags;
 
-    /** Whether each agent is speaking (synthetic source sending); drives the ring, pruned on leave. */
-    speaking: AgentFlags;
 }
 
 const DEFAULT_STATE: IVoiceAgentsState = {
     agents: {},
-    consent: {},
-    speaking: {}
+    consent: {}
 };
 
 /**
- * Drops entries for agents no longer present (stale consent/speaking once an agent leaves).
+ * Drops entries for agents no longer present (stale consent once an agent leaves).
  *
  * @param {AgentFlags} map - The per-agent flags to prune.
  * @param {IVoiceAgents} agents - The currently known agents.
@@ -71,17 +68,12 @@ ReducerRegistry.register<IVoiceAgentsState>(
             return {
                 ...state,
                 agents,
-                consent: pruneToAgents(state.consent, agents),
-                speaking: pruneToAgents(state.speaking, agents)
+                consent: pruneToAgents(state.consent, agents)
             };
         }
         case SET_VOICE_AGENT_CONSENT:
             return isKnownAgent(state, action.agentId)
                 ? { ...state, consent: { ...state.consent, [action.agentId]: action.allowed } }
-                : state;
-        case SET_VOICE_AGENT_SPEAKING:
-            return isKnownAgent(state, action.agentId)
-                ? { ...state, speaking: { ...state.speaking, [action.agentId]: action.speaking } }
                 : state;
         }
 
