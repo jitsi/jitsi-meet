@@ -162,11 +162,23 @@ async function getInferenceFailureState(): Promise<{
 
 /** Trips the inference breaker and checks it stays tripped with VB off. */
 async function expectBreakerToTrip(): Promise<void> {
+    // A ready processor may still be stuck on its first inference (slow on CI's software GPU), and frames
+    // queued behind it never reach the injected failure, so wait until frames are actually flowing.
+    await ctx.p1.driver.waitUntil(
+        async () => ((await getV2ProcessorState())?.frameCount ?? 0) >= 5,
+        { timeout: 60000, timeoutMsg: 'V2 effect did not process 5 frames within 60s' }
+    );
+
     await setInferenceFailures(true);
 
     try {
-        // The breaker trips after 30 consecutive failures (~1s at camera frame rate).
-        await waitForEffectEnabled(false);
+        // The breaker trips after 30 consecutive failures.
+        await waitForEffectEnabled(false, 30000).catch(async err => {
+            throw new Error(`${err.message}; state: ${JSON.stringify({
+                ...await getInferenceFailureState(),
+                processor: await getV2ProcessorState()
+            })}`);
+        });
 
         const afterTrip = await getInferenceFailureState();
 
