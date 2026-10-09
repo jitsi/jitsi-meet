@@ -832,7 +832,9 @@ var config = {
 
     // Picture-in-Picture configuration.
     // pip: {
-    //     // Enable Picture-in-Picture for browser meetings. Opt-in, defaults to false.
+    //     // Enable Picture-in-Picture for browser meetings. Opt-in, defaults to false. This is only the default:
+    //     // users can turn browser PiP on or off for themselves from the Experimental tab of the settings dialog
+    //     // and their browser remembers the choice, unless the deployment disables that (see settingsDialog below).
     //     enableBrowserPiP: false,
     //     // Disable Picture-in-Picture entirely. Defaults to false.
     //     disabled: false,
@@ -853,6 +855,14 @@ var config = {
     //             width: 284
     //         }
     //     }
+    // },
+
+    // Options related to the settings dialog.
+    // settingsDialog: {
+    //     // Options of the Experimental tab this deployment does not let users decide. A listed option is not shown
+    //     // and a choice a user saved for it earlier is ignored, so the deployment's value stands. Cannot be
+    //     // overwritten through URL parameters or the iframe API. Option ids: 'browserPiP' (pip.enableBrowserPiP).
+    //     disabledExperimentalTabOptions: [ 'browserPiP' ]
     // },
 
     // Configs for prejoin page.

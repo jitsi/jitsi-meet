@@ -711,6 +711,15 @@ export interface IConfig {
         hideLobbyButton?: boolean;
     };
     serviceUrl?: string;
+    settingsDialog?: {
+
+        /**
+         * Ids of the options of the Experimental tab this deployment does not let users decide: such an option is
+         * not displayed and a choice a user saved for it earlier is ignored, so the deployment's value stands. Not
+         * overwritable through URL parameters or the iframe API.
+         */
+        disabledExperimentalTabOptions?: Array<string>;
+    };
     sharedVideoAllowedURLDomains?: Array<string>;
     showChatPermissionsModeratorSetting?: boolean;
     sipInviteUrl?: string;
