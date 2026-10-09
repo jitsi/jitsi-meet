@@ -194,7 +194,9 @@ export default class JitsiStreamBackgroundEffect {
             this._startTimerLoop(async () => {
                 const result = await this._processor?.processFrame(this._inputVideoElement);
 
-                if (result && this._outputCanvasCtx) {
+                // A frame still in flight when stopEffect clears the input video comes back 0x0, which
+                // drawImage rejects (and the rejection would end the timer loop).
+                if (result?.width && result.height && this._outputCanvasCtx) {
                     this._outputCanvasCtx.drawImage(result, 0, 0);
                 } else if (this._outputCanvasCtx) {
                     this._outputCanvasCtx.drawImage(
