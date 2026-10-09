@@ -22,6 +22,7 @@ import {
     JIGASI_PARTICIPANT_ICON,
     MAX_DISPLAY_NAME_LENGTH,
     PARTICIPANT_ROLE,
+    VOICE_AGENT_PARTICIPANT_ICON,
     WHITEBOARD_PARTICIPANT_ICON
 } from './constants';
 import { preloadImage } from './preloadImage';
@@ -40,6 +41,9 @@ const AVATAR_CHECKER_FUNCTIONS = [
     },
     (participant: IParticipant) => {
         return isWhiteboardParticipant(participant) ? WHITEBOARD_PARTICIPANT_ICON : null;
+    },
+    (participant: IParticipant) => {
+        return isVoiceAgentParticipant(participant) ? VOICE_AGENT_PARTICIPANT_ICON : null;
     },
     (participant: IParticipant) => {
         return participant?.avatarURL ? participant.avatarURL : null;
@@ -286,6 +290,16 @@ export function isSharedVideoParticipant(participant?: IParticipant): boolean {
  */
 export function isWhiteboardParticipant(participant?: IParticipant): boolean {
     return participant?.fakeParticipant === FakeParticipant.Whiteboard;
+}
+
+/**
+ * Returns whether the fake participant is a voice agent.
+ *
+ * @param {IParticipant|undefined} participant - The participant entity.
+ * @returns {boolean} - True if it's a voice agent participant.
+ */
+export function isVoiceAgentParticipant(participant?: IParticipant): boolean {
+    return participant?.fakeParticipant === FakeParticipant.Agent;
 }
 
 /**

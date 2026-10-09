@@ -442,6 +442,15 @@ var config = {
     //    // consentLearnMoreLink: 'https://jitsi.org/meet/consent',
     // },
 
+    // Voice agents: server-side AI participants provisioned through the voice-agent API.
+    // voiceAgents: {
+    //     // Ask each participant before an agent may hear them (they are muted until they decide, and only
+    //     // participants who allow the agent hear it). Set to false to let agents in without asking.
+    //     // requireConsent: true,
+    //     // Link for the consent dialog's "Learn more" link.
+    //     // consentLearnMoreLink: 'https://jitsi.org/meet/consent',
+    // },
+
     // recordingService: {
     //     // When integrations like dropbox are enabled only that will be shown,
     //     // by enabling fileRecordingsServiceEnabled, we show both the integrations

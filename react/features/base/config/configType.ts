@@ -830,6 +830,15 @@ export interface IConfig {
         queueService: string;
         showJoinMeetingDialog?: boolean;
     };
+    /**
+     * Voice agents (bot participants). Receiving an agent's media is consent-gated by default: each
+     * participant is prompted before the agent's audio is subscribed. Set requireConsent to false to
+     * auto-subscribe everyone.
+     */
+    voiceAgents?: {
+        consentLearnMoreLink?: string;
+        requireConsent?: boolean;
+    };
     watchRTCConfigParams?: IWatchRTCConfiguration;
     webhookProxyUrl?: string;
     webrtcIceTcpDisable?: boolean;

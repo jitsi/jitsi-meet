@@ -11,6 +11,7 @@ import {
     getParticipantById,
     getParticipantDisplayName,
     isScreenShareParticipant,
+    isVoiceAgentParticipant,
     isWhiteboardParticipant
 } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
@@ -130,6 +131,7 @@ MiddlewareRegistry.register(store => next => action => {
             && !p.local
             && !isScreenShareParticipant(p)
             && !isWhiteboardParticipant(p)
+            && !isVoiceAgentParticipant(p)
             && !joinLeaveNotificationsDisabled()
             && !p.isReplacing) {
             dispatch(showParticipantJoinedNotification(
