@@ -36,9 +36,9 @@ export default class VirtualBackgroundDialog extends BaseDialog {
      */
     private async clickAndWaitChecked(selector: string, label: string): Promise<void> {
         await this.participant.log(`VirtualBackgroundDialog: clicking ${label} thumbnail`);
-        const el = this.participant.driver.$(selector);
 
-        await el.waitForClickable({ timeout: 3000, timeoutMsg: `${label} thumbnail not clickable` });
+        await this.participant.driver.$(selector)
+            .waitForClickable({ timeout: 3000, timeoutMsg: `${label} thumbnail not clickable` });
 
         // Selecting an effect makes the preview (re)load the segmentation model/wasm, which
         // saturates the main thread. Two flaky failure modes follow from that:
@@ -50,13 +50,21 @@ export default class VirtualBackgroundDialog extends BaseDialog {
         // Re-issue the click on every poll until aria-checked confirms it landed (covers 1), and
         // allow a generous timeout for the cold-start re-render under load (covers 2). The poll
         // interval is kept large so a still-pending selection is not needlessly re-triggered.
+        // The element is looked up on every poll and errors count as "not yet": a re-render can
+        // replace the node mid-poll, and a click can time out while the main thread is blocked.
         await this.participant.driver.waitUntil(
             async () => {
-                if (await el.getAttribute('aria-checked') === 'true') {
-                    return true;
-                }
+                try {
+                    const el = this.participant.driver.$(selector);
 
-                await el.click();
+                    if (await el.getAttribute('aria-checked') === 'true') {
+                        return true;
+                    }
+
+                    await el.click();
+                } catch {
+                    // Retried on the next poll.
+                }
 
                 return false;
             },
