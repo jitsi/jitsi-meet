@@ -4,7 +4,7 @@ import logger from '../../virtual-background/logger';
 import { IVirtualBackground } from '../../virtual-background/reducer';
 
 import BackgroundFrameProcessor from './BackgroundFrameProcessor';
-import { IDeviceCapabilities } from './DeviceTierDetector';
+import { BackendType, DeviceTier, IDeviceCapabilities } from './DeviceTierDetector';
 import WorkerSegmentationBackend from './backend/WorkerSegmentationBackend';
 import Canvas2DCompositor from './compositor/Canvas2DCompositor';
 import { ICompositor } from './compositor/ICompositor';
@@ -34,6 +34,19 @@ export interface IV2EffectInit {
     vbConfig?: IVirtualBackgroundAdvancedConfig;
 }
 
+/**
+ * The startup configuration a V2 effect actually runs with, for analytics.
+ */
+export interface IV2StartupConfig {
+    backend: BackendType;
+    compositor: string;
+    hardwareTier: DeviceTier;
+    pipeline: string;
+    segHeight: number;
+    segWidth: number;
+    tier: DeviceTier;
+}
+
 
 /**
  * Virtual background stream effect.
@@ -48,6 +61,7 @@ export interface IV2EffectInit {
  */
 export default class JitsiStreamBackgroundEffect {
     _backend: WorkerSegmentationBackend | null = null;
+    _compositorName: string | null = null;
     _enableV2: boolean;
     _inputVideoElement: HTMLVideoElement;
     _maskFrameTimerWorker: Worker | null = null;
@@ -82,6 +96,29 @@ export default class JitsiStreamBackgroundEffect {
     }
 
     /**
+     * The V2 startup configuration in use, including any worker fallback once {@code init} has resolved.
+     *
+     * @returns {IV2StartupConfig|undefined} Undefined for V1.
+     */
+    get v2StartupConfig(): IV2StartupConfig | undefined {
+        if (!this._backend || !this._compositorName) {
+            return undefined;
+        }
+
+        const { backend, hardwareTier, segHeight, segWidth, tier } = this._backend.capabilities;
+
+        return {
+            backend,
+            compositor: this._compositorName,
+            hardwareTier,
+            pipeline: this._pipeline ? 'insertable-streams' : 'capture-stream',
+            segHeight,
+            segWidth,
+            tier
+        };
+    }
+
+    /**
      * Creates a new background effect instance.
      *
      * @param {Object} model - Loaded TFLite WASM module (V1) or undefined (V2).
@@ -112,9 +149,11 @@ export default class JitsiStreamBackgroundEffect {
 
             if (webglCompositor.isAvailable) {
                 compositor = webglCompositor;
+                this._compositorName = 'webgl';
             } else {
                 logger.debug('[VirtualBackground] WebGL unavailable — using Canvas 2D fallback');
                 compositor = new Canvas2DCompositor();
+                this._compositorName = 'canvas-2d';
             }
 
             this._processor = new BackgroundFrameProcessor({
@@ -137,7 +176,7 @@ export default class JitsiStreamBackgroundEffect {
             logger.debug(
                 `[VirtualBackground] V2 effect created — backend: ${this._backend.capabilities.backend}`
                 + `, pipeline: ${useIS ? 'insertable-streams' : 'capture-stream'}`
-                + `, compositor: ${compositor instanceof WebGLCompositor ? 'webgl' : 'canvas-2d'}`
+                + `, compositor: ${this._compositorName}`
             );
 
             return;
