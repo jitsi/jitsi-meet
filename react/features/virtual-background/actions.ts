@@ -51,16 +51,16 @@ async function handleEffectFailure(
 }
 
 /**
- * Handles a persistent inference failure of an effect applied outside {@link toggleBackgroundEffect}
- * (e.g. by loadEffects): turns the background off, keeping the selection, and clears the effect.
+ * Handles a persistent mid-session inference failure: clears the effect and leaves the same state as
+ * selecting "None", so the dialog doesn't show a background as selected while it is off.
  *
  * @param {Object} jitsiTrack - The local video track carrying the failed effect.
  * @returns {Function}
  */
 export function backgroundEffectFailed(jitsiTrack: TrackParam) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => handleEffectFailure(
+    return (dispatch: IStore['dispatch']) => handleEffectFailure(
         dispatch,
-        { ...getState()['features/virtual-background'], backgroundEffectEnabled: false },
+        { backgroundEffectEnabled: false, selectedThumbnail: 'none' },
         jitsiTrack,
         'persistent inference failure');
 }
@@ -89,9 +89,10 @@ export function toggleBackgroundEffect(options: IVirtualBackground, jitsiTrack: 
                     const effect = await createVirtualBackgroundEffect(virtualBackground);
 
                     if (effect) {
+                        // Turn VB off rather than reverting to prevBackground, which the settings preview
+                        // may already have switched on.
                         effect.onInferenceFailure = () => {
-                            handleEffectFailure(dispatch, prevBackground, jitsiTrack,
-                                'persistent inference failure');
+                            dispatch(backgroundEffectFailed(jitsiTrack));
                         };
                     }
 
