@@ -63,6 +63,9 @@ import {
     SET_ASSUMED_BANDWIDTH_BPS,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM,
+    SET_TUTOR_MODE_AUDIO_PARTICIPANT,
+    SET_TUTOR_MODE_ENABLED,
+    SET_TUTOR_MODE_RECIPIENT,
     UPDATE_CONFERENCE_METADATA
 } from './actionTypes';
 import {
@@ -107,6 +110,16 @@ let settingsIncompleteNotificationShown = false;
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+    if (action.type === SET_TUTOR_MODE_ENABLED
+        || action.type === SET_TUTOR_MODE_AUDIO_PARTICIPANT
+        || action.type === SET_TUTOR_MODE_RECIPIENT) {
+        if (!isLocalParticipantModerator(store.getState())) {
+            logger.warn('Ignoring tutor mode action from a non-moderator.');
+
+            return action;
+        }
+    }
+
     switch (action.type) {
     case CONFERENCE_FAILED:
         return _conferenceFailed(store, next, action);

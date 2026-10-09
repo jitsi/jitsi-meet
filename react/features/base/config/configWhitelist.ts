@@ -265,5 +265,6 @@ export default [
     'watchRTCConfigParams.rtcToken',
     'webrtcIceTcpDisable',
     'webrtcIceUdpDisable',
-    'whiteboard.enabled'
+    'whiteboard.enabled',
+    'tutorMode.enabled'
 ].concat(extraConfigWhitelist).concat(isEmbedded() ? isEmbeddedConfigWhitelist : []);

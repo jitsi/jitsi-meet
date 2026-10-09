@@ -33,6 +33,9 @@ import {
     SET_ROOM,
     SET_START_MUTED_POLICY,
     SET_START_REACTIONS_MUTED,
+    SET_TUTOR_MODE_AUDIO_PARTICIPANT,
+    SET_TUTOR_MODE_ENABLED,
+    SET_TUTOR_MODE_RECIPIENT,
     UPDATE_CONFERENCE_METADATA
 } from './actionTypes';
 import { isRoomValid } from './functions';
@@ -238,6 +241,9 @@ export interface IConferenceState {
     startReactionsMuted?: boolean;
     startVideoMutedPolicy?: boolean;
     subject?: string;
+    tutorModeAudioParticipant?: string;
+    tutorModeEnabled?: boolean;
+    tutorModeRecipient?: string;
 }
 
 export interface IJitsiConferenceRoom {
@@ -344,6 +350,24 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
                 startVideoMutedPolicy: action.startVideoMutedPolicy
             };
 
+        case SET_TUTOR_MODE_ENABLED:
+            return {
+                ...state,
+                tutorModeEnabled: action.enabled,
+                ...(action.enabled
+                    ? {}
+                    : {
+                        tutorModeAudioParticipant: undefined,
+                        tutorModeRecipient: undefined
+                    })
+            };
+
+        case SET_TUTOR_MODE_AUDIO_PARTICIPANT:
+            return set(state, 'tutorModeAudioParticipant', action.participantId);
+
+        case SET_TUTOR_MODE_RECIPIENT:
+            return set(state, 'tutorModeRecipient', action.participantId);
+
         case UPDATE_CONFERENCE_METADATA:
             return {
                 ...state,
@@ -366,13 +390,16 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
  * @returns {Object} The new state after the reduction of the specified action.
  */
 function _setConfig(state: IConferenceState, { config }: { config: IConfig; }) {
-    const { localSubject, subject } = config;
+    const { localSubject, subject, tutorMode } = config;
 
     return {
         ...state,
         localSubject,
         pendingSubjectChange: subject,
-        subject: undefined
+        subject: undefined,
+        tutorModeEnabled: tutorMode?.enabled ?? false,
+        tutorModeAudioParticipant: undefined,
+        tutorModeRecipient: undefined
     };
 }
 
@@ -545,6 +572,10 @@ function _conferenceJoined(state: IConferenceState, { conference }: { conference
 function _conferenceLeftOrWillLeave(state: IConferenceState, { conference, type }:
 { conference: IJitsiConference; type: string; }) {
     const nextState = { ...state };
+
+    nextState.tutorModeEnabled = false;
+    nextState.tutorModeAudioParticipant = undefined;
+    nextState.tutorModeRecipient = undefined;
 
     // The redux action CONFERENCE_LEFT is the last time that we should be
     // hearing from a JitsiConference instance.
@@ -737,4 +768,3 @@ function _setRoom(state: IConferenceState, action: AnyAction) {
         room
     });
 }
-

@@ -68,6 +68,9 @@ import {
     SET_ROOM,
     SET_START_MUTED_POLICY,
     SET_START_REACTIONS_MUTED,
+    SET_TUTOR_MODE_AUDIO_PARTICIPANT,
+    SET_TUTOR_MODE_ENABLED,
+    SET_TUTOR_MODE_RECIPIENT,
     UPDATE_CONFERENCE_METADATA
 } from './actionTypes';
 import { setupVisitorStartupMedia } from './actions';
@@ -1073,6 +1076,47 @@ export function setAssumedBandwidthBps(assumedBandwidthBps: number) {
 }
 
 /**
+ * Enables or disables tutor mode for the current conference.
+ *
+ * Media authorization is enforced by the server; this action updates client state.
+ *
+ * @param {boolean} enabled - Whether tutor mode is enabled.
+ * @returns {Object} The tutor mode action.
+ */
+export function setTutorModeEnabled(enabled: boolean) {
+    return {
+        type: SET_TUTOR_MODE_ENABLED,
+        enabled
+    };
+}
+
+/**
+ * Selects which participant audio the tutor should hear.
+ *
+ * @param {string} [participantId] - Participant ID, or undefined for everyone.
+ * @returns {Object} The tutor audio selection action.
+ */
+export function setTutorModeAudioParticipant(participantId?: string) {
+    return {
+        type: SET_TUTOR_MODE_AUDIO_PARTICIPANT,
+        participantId
+    };
+}
+
+/**
+ * Selects which participant should hear the tutor.
+ *
+ * @param {string} [participantId] - Participant ID, or undefined for everyone.
+ * @returns {Object} The tutor recipient selection action.
+ */
+export function setTutorModeRecipient(participantId?: string) {
+    return {
+        type: SET_TUTOR_MODE_RECIPIENT,
+        participantId
+    };
+}
+
+/**
  * Redirects to a new visitor node.
  *
  * @param {string | undefined} vnode - The vnode to use or undefined if moving back to the main room.
@@ -1148,4 +1192,3 @@ export function redirect(vnode: string, focusJid: string, username: string) {
             });
     };
 }
-

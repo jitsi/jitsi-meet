@@ -249,7 +249,7 @@ export const LOCK_STATE_CHANGED = 'LOCK_STATE_CHANGED';
 export const NON_PARTICIPANT_MESSAGE_RECEIVED = 'NON_PARTICIPANT_MESSAGE_RECEIVED';
 
 /**
- * The type of (redux) action which sets the peer2peer flag for the current
+ * The type of (redux) action, which sets the peer2peer flag for the current
  * conference.
  *
  * {
@@ -358,6 +358,23 @@ export const SET_START_MUTED_POLICY = 'SET_START_MUTED_POLICY';
  * }
  */
 export const SET_ASSUMED_BANDWIDTH_BPS = 'SET_ASSUMED_BANDWIDTH_BPS';
+
+/**
+ * The type of action which enables or disables tutor mode.
+ */
+export const SET_TUTOR_MODE_ENABLED = 'SET_TUTOR_MODE_ENABLED';
+
+/**
+ * The type of action which selects the participant whose audio the tutor hears.
+ * An undefined participant ID means all participants.
+ */
+export const SET_TUTOR_MODE_AUDIO_PARTICIPANT = 'SET_TUTOR_MODE_AUDIO_PARTICIPANT';
+
+/**
+ * The type of action which selects the participant who hears the tutor.
+ * An undefined participant ID means all participants.
+ */
+export const SET_TUTOR_MODE_RECIPIENT = 'SET_TUTOR_MODE_RECIPIENT';
 
 /**
  * The type of (redux) action which updated the conference metadata.

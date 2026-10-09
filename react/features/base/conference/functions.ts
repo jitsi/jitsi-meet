@@ -49,6 +49,36 @@ const P_NAME_DIARIZE = 'diarize';
 export const getConferenceState = (state: IReduxState) => state['features/base/conference'];
 
 /**
+ * Returns whether tutor mode is enabled for the current conference.
+ *
+ * @param {IStateful} stateful - Redux state or a state accessor.
+ * @returns {boolean}
+ */
+export function isTutorModeEnabled(stateful: IStateful) {
+    return Boolean(getConferenceState(toState(stateful)).tutorModeEnabled);
+}
+
+/**
+ * Returns the participant whose audio is selected for the tutor.
+ *
+ * @param {IStateful} stateful - Redux state or a state accessor.
+ * @returns {string | undefined}
+ */
+export function getTutorModeAudioParticipant(stateful: IStateful) {
+    return getConferenceState(toState(stateful)).tutorModeAudioParticipant;
+}
+
+/**
+ * Returns the participant selected to hear the tutor.
+ *
+ * @param {IStateful} stateful - Redux state or a state accessor.
+ * @returns {string | undefined}
+ */
+export function getTutorModeRecipient(stateful: IStateful) {
+    return getConferenceState(toState(stateful)).tutorModeRecipient;
+}
+
+/**
  * Attach a set of local tracks to a conference.
  *
  * @param {JitsiConference} conference - Conference instance.

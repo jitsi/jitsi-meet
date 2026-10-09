@@ -575,6 +575,11 @@ var config = {
     // Default value for the channel "last N" attribute. -1 for unlimited.
     channelLastN: -1,
 
+    // Enables tutor-centered room mode.
+    tutorMode: {
+        enabled: false
+    },
+
     // Connection indicators
     // connectionIndicators: {
     //     autoHide: true,
@@ -1371,7 +1376,7 @@ var config = {
     //     // The desktop deeplinking config, disabled by default.
     //     desktop: {
     //         appName: 'Jitsi Meet',
-    //         appScheme: 'jitsi-meet,
+    //         appScheme: 'jitsi-meet',
     //         download: {
     //             linux:
     //               'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet-x86_64.AppImage',
@@ -1646,7 +1651,7 @@ var config = {
         //     // cost of reduced mask update frequency. Set to 1 to run inference every frame.
         //     //   1 = every frame    (24 fps mask updates, ~37 ms slack per frame)  ← default
         //     //   2 = every 2 frames (12 fps mask updates, ~74 ms slack per frame)
-        //     // inferenceStride: 1,
+        //     inferenceStride: 1,
         // },
     },
 
