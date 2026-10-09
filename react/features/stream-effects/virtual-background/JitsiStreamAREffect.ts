@@ -11,14 +11,11 @@ import logger from '../../virtual-background/logger';
 // LandMarks: https://storage.googleapis.com/mediapipe-assets/documentation/mediapipe_face_landmark_fullsize.png
 // ---------------------------------------------------------------------------
 const LM = {
-    NOSE_TIP: 4,
     NOSE_BRIDGE: 168,
     FOREHEAD: 10,
     CHIN: 152,
     LEFT_EYE_OUTER: 263,
-    LEFT_EYE_INNER: 362,
     RIGHT_EYE_OUTER: 33,
-    RIGHT_EYE_INNER: 133
 };
 
 const DEFAULT_CONFIG = {
@@ -60,7 +57,7 @@ export interface IARFilterConfig {
     /** Tooltip translation key shown in the AR filter picker UI. */
     tooltip?: string;
 
-    /** Vertical offset in world units. Positive moves the model up in canvas space. Tuned per model. */
+    /** Vertical offset as a ratio of eye-span. Positive moves the model up in canvas space. Tuned per model. */
     verticalOffset: number;
 }
 
@@ -318,14 +315,14 @@ export class JitsiStreamAREffect {
 
         const { origin, referenceSpan } = this.getFrameDataForType(rawMesh);
 
-        const targetPos = origin.clone();
-        const vertOffset = this._currentFilter?.verticalOffset ?? 0;
-
-        targetPos.y += vertOffset;
-
         const widthMultiplier = this._currentFilter?.scaleMultiplier ?? 1.0;
         const targetWidth = referenceSpan * widthMultiplier;
         const targetScale = targetWidth / (this.glbNaturalWidth + 0.0001);
+
+        const targetPos = origin.clone();
+        const vertOffsetRatio = this._currentFilter?.verticalOffset ?? 0;
+
+        targetPos.y += vertOffsetRatio * referenceSpan;
 
         const pivotDepth = this._currentFilter?.depthOffset ?? 0;
         const forwardOffset = new THREE.Vector3(0, 0, pivotDepth * targetScale).applyQuaternion(targetQuat);
