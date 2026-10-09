@@ -219,6 +219,9 @@ var config = {
 
     // Start calls with audio muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
+    // A value the user has saved in their settings from a previous meeting
+    // overrides this option, and the URL hash (#config.startWithAudioMuted=true)
+    // forces it.
     // startWithAudioMuted: false,
 
     // Enabling it (with #params) will disable local audio output of remote
@@ -384,6 +387,9 @@ var config = {
 
     // Start calls with video muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
+    // A value the user has saved in their settings from a previous meeting
+    // overrides this option, and the URL hash (#config.startWithVideoMuted=true)
+    // forces it.
     // startWithVideoMuted: false,
 
     // Desktop sharing
