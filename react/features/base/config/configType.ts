@@ -120,6 +120,7 @@ export interface IDeeplinkingConfig {
     android?: IDeeplinkingMobileConfig;
     desktop?: IDeeplinkingDesktopConfig;
     disabled?: boolean;
+    hideDialIn?: boolean;
     hideLogo?: boolean;
     ios?: IDeeplinkingMobileConfig;
 }
