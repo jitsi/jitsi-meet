@@ -575,6 +575,14 @@ var config = {
     // Default value for the channel "last N" attribute. -1 for unlimited.
     channelLastN: -1,
 
+    // Tutor-centered room mode. When enabled, non-moderator clients request only
+    // moderator audio/video from the bridge. This is a client-side integration
+    // with existing receiver subscription/constraints; deployments that require
+    // hard privacy guarantees should enforce the policy server-side.
+    // tutorMode: {
+    //     enabled: false
+    // },
+
     // Connection indicators
     // connectionIndicators: {
     //     autoHide: true,
