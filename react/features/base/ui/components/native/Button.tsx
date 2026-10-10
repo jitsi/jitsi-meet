@@ -75,7 +75,7 @@ const Button: React.FC<IProps> = ({
 
         return (
             <TouchableHighlight
-                accessibilityLabel = { accessibilityLabel }
+                accessibilityLabel = { t(accessibilityLabel ?? '') }
                 disabled = { disabled }
                 id = { id }
                 onPress = { onPress }
