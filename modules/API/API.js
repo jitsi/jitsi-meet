@@ -977,7 +977,6 @@ function initCommands() {
                 defaultTab: SETTINGS_TABS.VIRTUAL_BACKGROUND }));
         },
         'end-conference': () => {
-            APP.store.dispatch(endConference());
             const state = APP.store.getState();
             const conference = getCurrentConference(state);
 
