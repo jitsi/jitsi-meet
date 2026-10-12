@@ -39,16 +39,15 @@
         "phone": "Phone",
         "speaker": "Speaker"
     },
-    "audioOnly": {
-        "audioOnly": "Low bandwidth"
-    },
     "audioTranslation": {
         "disabledForRoom": "Audio translation has been turned off for this meeting.",
         "errorForbidden": "You don't have permission to use audio translation.",
         "errorGeneric": "Couldn't enable audio translation. Please try again.",
         "errorLimitReached": "Couldn't translate everyone at once. Turn on translation for individual participants instead.",
         "errorRoomDisabled": "Audio translation is turned off for this meeting. Enable it in Moderator settings.",
-        "errorSpeakerUnavailable": "Can't translate this participant — they're no longer in the meeting."
+        "errorSpeakerUnavailable": "Can't translate this participant — they're no longer in the meeting.",
+        "labelTooltip": "Translation in progress",
+        "labelTooltipPlaying": "Translated audio is still playing — wait before speaking"
     },
     "bandwidthSettings": {
         "assumedBandwidthBps": "e.g. 10000000 for 10 Mbps",
@@ -117,7 +116,15 @@
         }
     },
     "chat": {
+        "copy": "Copy",
+        "delete": "Delete",
+        "deleteMessage": "Delete",
+        "deletedMessage": "This message was deleted.",
+        "deletedMessageByMe": "You deleted this message.",
         "disabled": "Sending chat messages is disabled.",
+        "edit": "Edit",
+        "edited": "(edited)",
+        "editingMessage": "Editing",
         "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
         "everyone": "Everyone",
@@ -130,8 +137,11 @@
         "message": "Message",
         "messageAccessibleTitle": "{{user}} says:",
         "messageAccessibleTitleMe": "me says:",
+        "messageCopied": "Message copied",
         "messageTo": "Private message to {{recipient}}",
         "messagebox": "Type a message",
+        "moderatedMessage": "Deleted by a moderator.",
+        "moderationReason": "Reason: {{reason}}",
         "newMessages": "New messages",
         "nickname": {
             "featureChat": "chat",
@@ -150,7 +160,17 @@
             "titleWithPollsAndCCAndFileSharing": "Enter a nickname to use chat, polls, closed captions and files"
         },
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
+        "privateMessage": "Private message",
         "privateNotice": "Private message to {{recipient}}",
+        "search": {
+            "close": "Close search",
+            "next": "Next match",
+            "noResults": "No results",
+            "open": "Search messages",
+            "placeholder": "Search in chat",
+            "previous": "Previous match",
+            "resultsCount": "{{current}}/{{total}}"
+        },
         "sendButton": "Send",
         "smileysPanel": "Emoji panel",
         "systemDisplayName": "System",
@@ -173,6 +193,13 @@
         "close": "Close",
         "dontShowAgain": "Don't show me this again",
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration"
+    },
+    "clientRequirements": {
+        "rejectDescription": "This app version can not send or receive audio or video in this meeting.",
+        "rejectTitle": "An update is required",
+        "seeDetails": "See details here",
+        "warnDescription": "This app version is missing a feature that this meeting uses. Please update it.",
+        "warnTitle": "An update is recommended"
     },
     "closedCaptionsTab": {
         "emptyState": "The closed captions content will be available once a moderator starts it",
@@ -236,7 +263,8 @@
         "yes": "yes"
     },
     "customPanel": {
-        "close": "Close"
+        "close": "Close",
+        "title": "AI Assist"
     },
     "dateUtils": {
         "earlier": "Earlier",
@@ -396,6 +424,7 @@
         "lockTitle": "Lock failed",
         "login": "Login",
         "loginFailed": "Login failed.",
+        "loginNotCompleted": "Login was not completed, so you are not connected to this meeting.",
         "loginOnResume": "Your authentication session has expired. You need to login again to continue the meeting.",
         "loginPopupBlocked": "Login popup was blocked by your browser.",
         "loginQuestion": "Are you sure you want to login and leave the conference?",
@@ -403,6 +432,8 @@
         "logoutTitle": "Logout",
         "maxUsersLimitReached": "The limit for maximum number of participants has been reached. The conference is full. Please contact the meeting owner or try again later!",
         "maxUsersLimitReachedTitle": "Maximum participants limit reached",
+        "meetingTimeLimitReached": "This meeting has ended because it reached its time limit. Start a new meeting to continue.",
+        "meetingTimeLimitReachedTitle": "Meeting time limit reached",
         "micConstraintFailedError": "Your microphone does not satisfy some of the required constraints.",
         "micNotFoundError": "Microphone was not found.",
         "micNotSendingData": "Go to your computer's settings to unmute your mic and adjust its level",
@@ -524,11 +555,14 @@
         "sharedVideoLinkPlaceholder": "YouTube link or direct video link",
         "show": "Show",
         "start": "Start ",
+        "startBoth": "Start both",
         "startLiveStreaming": "Start live stream",
         "startRecording": "Start recording",
         "startRemoteControlErrorMessage": "An error occurred while trying to start the remote control session!",
         "startTranscribing": "Start transcribing",
         "startTranscription": "Start transcription",
+        "stop": "Stop",
+        "stopBoth": "Stop both",
         "stopLiveStreaming": "Stop live stream",
         "stopRecording": "Stop recording",
         "stopRecordingWarning": "Are you sure you would like to stop the recording?",
@@ -835,7 +869,25 @@
         "button": "Invite others",
         "youAreAlone": "You are the only one in the meeting"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Low bandwidth"
+    },
     "me": "me",
+    "multiScreen": {
+        "noParticipants": "No participants",
+        "openFailed": "Something went wrong. Please try again.",
+        "openFailedTitle": "Could not open the second screen",
+        "permissionDenied": "Allow this site to manage windows and try again.",
+        "popupBlocked": "Allow pop-ups for this site and try again.",
+        "removeFromSecondScreen": "Remove from second screen",
+        "sendToSecondScreen": "Show on second screen",
+        "sharedVideoError": "The shared video could not be played on this screen",
+        "sharedVideoInactive": "Share a video in the meeting to show it on the second screen",
+        "showOnStage": "Show {{name}} on the second screen",
+        "unpinFromStage": "Stop featuring {{name}} on the second screen",
+        "whiteboardInactive": "Open the whiteboard in the meeting to show it on the second screen",
+        "whiteboardTitle": "Whiteboard"
+    },
     "notify": {
         "OldElectronAPPTitle": "Security vulnerability!",
         "allowAll": "Allow All",
@@ -923,6 +975,8 @@
         "participantsWantToJoin": "Want to join the meeting",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removed by another participant",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) set by another participant",
+        "pipOpenFailedDescription": "Your browser did not allow the Picture-in-Picture window to open.",
+        "pipOpenFailedTitle": "Couldn't open Picture-in-Picture",
         "raiseHandAction": "Raise hand",
         "raisedHand": "Would like to participate.",
         "raisedHands": "{{participantName}} and {{raisedHands}} more people",
@@ -933,6 +987,8 @@
         "screenSharingAudioOnlyDescription": "Please note that by sharing your screen you're affecting the \"Best performance\" mode and you will use more bandwidth.",
         "screenSharingAudioOnlyTitle": "\"Best performance\" mode",
         "selfViewTitle": "You can always un-hide the self-view from settings",
+        "settingsIncompleteDescription": "Some meeting settings could not be loaded and default values were used instead.",
+        "settingsIncompleteTitle": "Meeting settings may be incomplete",
         "somebody": "Somebody",
         "startSilentDescription": "Rejoin the meeting to enable audio",
         "startSilentTitle": "You joined with no audio output!",
@@ -1156,6 +1212,8 @@
         "busy": "We're working on freeing recording resources. Please try again in a few minutes.",
         "busyTitle": "All recorders are currently busy",
         "copyLink": "Copy Link",
+        "dropbox": "Dropbox",
+        "dropboxSignInPrompt": "Connect to save your recording",
         "error": "Recording failed. Please try again.",
         "errorFetchingLink": "Error fetching recording link.",
         "expandedOff": "Recording has stopped",
@@ -1170,6 +1228,9 @@
         "highlightMomentSucessDescription": "Your highlighted moment will be added to the meeting summary.",
         "inProgress": "Recording or live streaming in progress",
         "linkGenerated": "We have generated a link to your recording.",
+        "linkNotShared": "Link not shared",
+        "linkShared": "Link shared with participants",
+        "localRecording": "Local recording",
         "localRecordingNoNotificationWarning": "The recording will not be announced to other participants. You will need to let them know that the meeting is recorded.",
         "localRecordingNoVideo": "Video is not being recorded",
         "localRecordingStartWarning": "Please make sure you stop the recording before exiting the meeting in order to save it.",
@@ -1180,6 +1241,7 @@
         "loggedIn": "Logged in as {{userName}}",
         "noMicPermission": "Microphone track could not be created. Please grant permission to use the microphone.",
         "noStreams": "No audio or video stream detected.",
+        "notSignedIn": "Not signed in",
         "off": "Recording stopped",
         "offBy": "{{name}} stopped the recording",
         "offByWithTranscription": "{{name}} stopped the recording and transcription",
@@ -1193,20 +1255,21 @@
         "policyError": "You tried to start a recording too quickly. Please try again later!",
         "recordAudioAndVideo": "Record audio and video",
         "recordTranscription": "Record transcription",
+        "recordingOptions": "Recording options",
         "saveLocalRecording": "Save recording file locally",
-        "serviceDescription": "Your recording will be saved by the recording service",
         "serviceDescriptionCloud": "Cloud recording",
         "serviceDescriptionCloudInfo": "Recorded meetings are automatically cleared 24h after their recording time.",
         "serviceName": "Recording service",
         "sessionAlreadyActive": "This session is already being recorded or live streamed.",
-        "showAdvancedOptions": "Advanced options",
         "signIn": "Sign in",
         "signOut": "Sign out",
+        "storageLocation": "Storage location",
         "surfaceError": "Please select the current tab.",
         "title": "Recording",
+        "transcriptionLanguage": "Transcription language",
+        "transcriptionOptions": "Transcription options",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
-        "unavailableTitle": "Recording unavailable",
-        "uploadToCloud": "Upload to the cloud"
+        "unavailableTitle": "Recording unavailable"
     },
     "screenshareDisplayName": "{{name}}'s screen",
     "sectionList": {
@@ -1216,7 +1279,7 @@
         "about": "You can add a $t(lockRoomPassword) to your meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "aboutReadOnly": "Moderator participants can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "insecureRoomNameWarningNative": "The room name is unsafe. Unwanted participants may join your meeting. {{recommendAction}} Learn more about securing your meeting ",
-        "insecureRoomNameWarningWeb": "The room name is unsafe. Unwanted participants may join your meeting. {{recommendAction}} Learn more about securing your meeting <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">here</a>.",
+        "insecureRoomNameWarningWeb": "The room name is unsafe. Unwanted participants may join your meeting. {{recommendAction}} Learn more about securing your meeting <a href=\"{{securityUrl}}\" target=\"_blank\">here</a>.",
         "title": "Security Options",
         "unsafeRoomActions": {
             "meeting": "Consider securing your meeting using the security button.",
@@ -1240,6 +1303,7 @@
         "desktopShareHighFpsWarning": "A higher frame rate for desktop sharing might affect your bandwidth. You need to restart the screen share for the new settings to take effect.",
         "desktopShareWarning": "You need to restart the screen share for the new settings to take effect.",
         "devices": "Devices",
+        "enableCtrlAltReactionShortcuts": "Enable Ctrl+Alt alternatives for reaction shortcuts",
         "followMe": "Everyone follows me",
         "followMeRecorder": "Recorder follows me",
         "framesPerSecond": "frames-per-second",
@@ -1258,6 +1322,7 @@
         "participantKnocking": "Participant entered lobby",
         "participantLeft": "Participant Left",
         "playSounds": "Play sound on",
+        "privateChatWithPermissions": "Disable private chat for non-moderators",
         "reactions": "Meeting reactions",
         "sameAsSystem": "Same as system ({{label}})",
         "selectAudioOutput": "Audio output",
@@ -1342,6 +1407,10 @@
         "text": "Press the <i>Rejoin</i> button to reconnect.",
         "title": "Your video call was interrupted because this computer went to sleep."
     },
+    "systemWideUserNotification": {
+        "button": "Learn more",
+        "dontShowAgain": "Don't show again"
+    },
     "termsView": {
         "title": "Terms"
     },
@@ -1354,7 +1423,6 @@
         "Settings": "Settings",
         "accessibilityLabel": {
             "Settings": "Open settings",
-            "audioOnly": "Toggle audio only",
             "audioRoute": "Select the sound device",
             "audioTranslation": "Translate audio",
             "boo": "Boo",
@@ -1399,6 +1467,7 @@
             "localRecording": "Toggle local recording controls",
             "lockRoom": "Toggle meeting password",
             "love": "Heart",
+            "lowBandwidthMode": "Toggle low bandwidth mode",
             "lowerHand": "Lower your hand",
             "moreActions": "More actions",
             "moreActionsMenu": "More actions menu",
@@ -1406,13 +1475,15 @@
             "mute": "Mute microphone",
             "muteEveryone": "Mute everyone",
             "muteEveryoneElse": "Mute everyone else",
+            "muteEveryoneElsesDesktopStream": "Stop everyone else's screen-sharing",
             "muteEveryoneElsesVideoStream": "Stop everyone else's video",
             "muteEveryonesVideoStream": "Stop everyone's video",
             "muteGUMPending": "Connecting your microphone",
             "noiseSuppression": "Extra noise suppression",
             "openChat": "Open chat",
             "participants": "Open participants panel. {{participantsCount}} participants",
-            "pip": "Toggle Picture-in-Picture mode",
+            "pip": "Enter Picture-in-Picture mode",
+            "pipClose": "Close Picture-in-Picture mode",
             "privateMessage": "Send private message",
             "profile": "Edit your profile",
             "raiseHand": "Raise your hand",
@@ -1461,8 +1532,7 @@
                 "label": "Stereo"
             }
         },
-        "audioOnlyOff": "Disable low bandwidth mode",
-        "audioOnlyOn": "Enable low bandwidth mode",
+        "aiAssist": "AI Assist",
         "audioRoute": "Select the sound device",
         "audioSettings": "Audio settings",
         "audioTranslation": "Translate audio",
@@ -1477,7 +1547,6 @@
         "closeParticipantsPane": "Close participants pane",
         "closeReactionsMenu": "Close reactions menu",
         "closedCaptions": "Closed captions",
-        "copilot": "Copilot",
         "disableNoiseSuppression": "Disable extra noise suppression",
         "disableReactionSounds": "You can disable reaction sounds for this meeting",
         "documentClose": "Close shared document",
@@ -1509,6 +1578,8 @@
         "login": "Log In",
         "logout": "Log Out",
         "love": "Heart",
+        "lowBandwidthModeOff": "Disable low bandwidth mode",
+        "lowBandwidthModeOn": "Enable low bandwidth mode",
         "lowerYourHand": "Lower your hand",
         "moreActions": "More actions",
         "moreOptions": "More options",
@@ -1528,6 +1599,7 @@
         "openReactionsMenu": "Open reactions menu",
         "participants": "Participants",
         "pip": "Enter Picture-in-Picture mode",
+        "pipClose": "Close Picture-in-Picture mode",
         "polls": "Polls",
         "privateMessage": "Send private message",
         "profile": "Edit your profile",
@@ -1573,6 +1645,7 @@
         "alsoRecord": "Also record this meeting?",
         "ccButtonTooltip": "Start / Stop subtitles",
         "expandedLabel": "Transcribing is currently on",
+        "expandedOff": "Transcription has stopped",
         "failed": "Transcribing failed",
         "labelTooltip": "This meeting is being transcribed.",
         "labelTooltipExtra": "In addition, a transcript will be available later.",
@@ -1607,8 +1680,6 @@
     },
     "videoStatus": {
         "adjustFor": "Adjust for:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "You are in low bandwidth mode. In this mode you will receive only audio and screen sharing.",
         "bestPerformance": "Best performance",
         "callQuality": "Video Quality (0 for best performance, 3 for highest quality)",
         "hd": "HD",
@@ -1616,9 +1687,11 @@
         "highDefinition": "High definition",
         "highestQuality": "Highest quality",
         "labelTooiltipNoVideo": "No video",
-        "labelTooltipAudioOnly": "Low bandwidth mode enabled",
+        "labelTooltipLowBandwidthMode": "Low bandwidth mode enabled",
         "ld": "LD",
         "ldTooltip": "Viewing low definition video",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "You are in low bandwidth mode. In this mode you will receive only audio and screen sharing.",
         "lowDefinition": "Low definition",
         "performanceSettings": "Performance settings",
         "recording": "This meeting is being recorded.",

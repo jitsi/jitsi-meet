@@ -20,6 +20,22 @@ local measure_verify_fail = module:measure('verify_fail', 'counter');
 local measure_success = module:measure('success', 'counter');
 local measure_ban = module:measure('ban', 'counter');
 local measure_post_auth_fail = module:measure('post_auth_fail', 'counter');
+local measure_resume_room_mismatch = module:measure('resume_room_mismatch', 'counter');
+
+-- The JWT-derived authorization state that c2s-session-updated refreshes from
+-- the connection that resumes a hibernating session.
+local TOKEN_CLAIM_FIELDS = {
+    'auth_token';
+    'jitsi_meet_context_user';
+    'jitsi_meet_context_group';
+    'jitsi_meet_context_features';
+    'jitsi_meet_context_room';
+    'jitsi_meet_room';
+    'jitsi_meet_str_tenant';
+    'jitsi_meet_domain';
+    'jitsi_meet_tenant_mismatch';
+    'jitsi_meet_auth_issuer';
+};
 
 -- define auth provider
 local provider = {};
@@ -159,6 +175,21 @@ local function anonymous(self, message)
 
 sasl.registerMechanism("ANONYMOUS", {"anonymous"}, anonymous);
 
+-- Fired by Prosody's sessionmanager.update_session() during smacks (XEP-0198) session
+-- resumption. The naming can be counter-intuitive:
+--   event.session      (session)      – the OLD hibernating session being kept alive.
+--                                       It holds all MUC state, auth state, and custom
+--                                       fields accumulated during the call.
+--   event.from_session (from_session) – the NEW incoming TCP session being absorbed and
+--                                       then retired.  It has JWT fields freshly extracted
+--                                       from the reconnect URL by mod_jitsi_session, but
+--                                       no MUC state (it never joined a room).
+-- The copies below refresh the old session's JWT claims with the latest values from the
+-- new connection (useful when the client reconnects with a rotated token).  Fields that
+-- represent runtime MUC state (e.g. jitsi_breakout_main_jid, set by
+-- mod_muc_breakout_rooms when the session joins the main room) must NOT be copied here —
+-- from_session will have nil for those, which would silently overwrite the valid value
+-- on the old session.
 module:hook_global('c2s-session-updated', function (event)
     local session, from_session = event.session, event.from_session;
 
@@ -166,8 +197,30 @@ module:hook_global('c2s-session-updated', function (event)
         return;
     end
 
+    -- The room claim is scoped to a conference on muc-room-pre-create and
+    -- muc-occupant-pre-join, which do not run again for a session that is past
+    -- its join, so the claims coming from the resuming connection are scoped
+    -- here instead: the ones verified on join are snapshotted before anything
+    -- below mutates the session, and are kept when the refreshed ones do not
+    -- cover the conference the session is in. The check belongs to whichever
+    -- module owns room verification (mod_token_verification, on the MUC
+    -- component); with nothing answering the event the claims are refreshed
+    -- as they come, the same way a join is not room-checked without it.
+    local reverify_rooms = session.auth_token ~= from_session.auth_token;
+    local verified_claims = {};
+
+    if reverify_rooms then
+        for _, field in ipairs(TOKEN_CLAIM_FIELDS) do
+            verified_claims[field] = session[field];
+        end
+    end
+
     -- we care to handle sessions from other hosts (anonymous hosts)
-    if module.host ~= event.from_session.host then
+    -- Skip if from_session was already authenticated by its own token-auth module
+    -- (indicated by _jitsi_auth_done=true), to avoid a second module instance
+    -- on a different VirtualHost (e.g. hs256.localhost) incorrectly re-verifying
+    -- a token signed for the original host and then closing the session.
+    if module.host ~= event.from_session.host and not from_session._jitsi_auth_done then
         -- Handle session updates (e.g., when a session is resumed on some anonymous host with a token we need to do all the checks here)
         session.auth_token = event.from_session.auth_token;
 
@@ -191,15 +244,34 @@ module:hook_global('c2s-session-updated', function (event)
         return;
     end
 
-    -- copy all the custom fields we set in the session
-    session.auth_token = from_session.auth_token;
-    session.jitsi_meet_context_user = from_session.jitsi_meet_context_user;
-    session.jitsi_meet_context_group = from_session.jitsi_meet_context_group;
-    session.jitsi_meet_context_features = from_session.jitsi_meet_context_features;
-    session.jitsi_meet_context_room = from_session.jitsi_meet_context_room;
-    session.jitsi_meet_room = from_session.jitsi_meet_room;
-    session.jitsi_meet_str_tenant = from_session.jitsi_meet_str_tenant;
-    session.jitsi_meet_domain = from_session.jitsi_meet_domain;
-    session.jitsi_meet_tenant_mismatch = from_session.jitsi_meet_tenant_mismatch;
-    session.jitsi_breakout_main_jid = from_session.jitsi_breakout_main_jid;
+    -- copy all the custom fields we set in the session, but only when from_session carries
+    -- them: a connection resumed on an anonymous host holds just the raw token (put there
+    -- by mod_jitsi_session) and no claims, so copying would discard the ones the
+    -- verification above has just put on the session.
+    if from_session._jitsi_auth_done then
+        session.auth_token = from_session.auth_token;
+        session.jitsi_meet_context_user = from_session.jitsi_meet_context_user;
+        session.jitsi_meet_context_group = from_session.jitsi_meet_context_group;
+        session.jitsi_meet_context_features = from_session.jitsi_meet_context_features;
+        session.jitsi_meet_context_room = from_session.jitsi_meet_context_room;
+        session.jitsi_meet_room = from_session.jitsi_meet_room;
+        session.jitsi_meet_str_tenant = from_session.jitsi_meet_str_tenant;
+        session.jitsi_meet_domain = from_session.jitsi_meet_domain;
+        session.jitsi_meet_tenant_mismatch = from_session.jitsi_meet_tenant_mismatch;
+    end
+
+    if reverify_rooms then
+        local result = prosody.events.fire_event('jitsi-verify-session-rooms', { session = session; });
+
+        if result and result.res == false then
+            module:log('warn',
+                'Token presented on resume does not authorize room:%s err:%s reason:%s, keeping claims from join',
+                result.room, result.error, result.reason);
+            measure_resume_room_mismatch(1);
+
+            for _, field in ipairs(TOKEN_CLAIM_FIELDS) do
+                session[field] = verified_claims[field];
+            end
+        end
+    end
 end, 1);

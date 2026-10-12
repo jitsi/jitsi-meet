@@ -1,4 +1,5 @@
 import { IReduxState } from '../app/types';
+import { browser } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media/constants';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { isLocalTrackMuted } from '../base/tracks/functions.any';
@@ -44,21 +45,23 @@ StateListenerRegistry.register(
     }
 );
 
-StateListenerRegistry.register(
-    /* selector */ shouldShowPiP,
-    /* listener */ (_shouldShowPiP: boolean) => {
-        const electronNS = getElectronGlobalNS();
+if (browser.isElectron()) {
+    StateListenerRegistry.register(
+        /* selector */ shouldShowPiP,
+        /* listener */ (_shouldShowPiP: boolean) => {
+            const electronNS = getElectronGlobalNS();
 
-        if (_shouldShowPiP) {
-            // Expose requestPictureInPicture for Electron main process.
-            if (!electronNS.requestPictureInPicture) {
-                logger.debug('Exposing requestPictureInPicture to Electron namespace');
-                electronNS.requestPictureInPicture = requestPictureInPicture;
+            if (_shouldShowPiP) {
+                // Expose requestPictureInPicture for Electron main process.
+                if (!electronNS.requestPictureInPicture) {
+                    logger.debug('Exposing requestPictureInPicture to Electron namespace');
+                    electronNS.requestPictureInPicture = requestPictureInPicture;
+                }
+            } else if (typeof electronNS.requestPictureInPicture === 'function') {
+                logger.debug('Removing requestPictureInPicture from Electron namespace (PiP disabled)');
+                delete electronNS.requestPictureInPicture;
             }
-        } else if (typeof electronNS.requestPictureInPicture === 'function') {
-            logger.debug('Removing requestPictureInPicture from Electron namespace (PiP disabled)');
-            delete electronNS.requestPictureInPicture;
         }
-    }
-);
+    );
+}
 

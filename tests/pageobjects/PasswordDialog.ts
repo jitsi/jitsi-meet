@@ -46,6 +46,15 @@ export default class PasswordDialog extends BaseDialog {
 
         await this.participant.driver.keys(password);
 
+        // The driver reports the keys as sent whether or not the page receives them. Say so in the log when they did
+        // not land, instead of leaving only the join timeout that follows.
+        const typed = await passwordInput.getValue();
+
+        if (typed !== password) {
+            await this.participant.log(`The password typed through the driver did not land for ${
+                this.participant.name}: the field holds "${typed}". The driver's input is not reaching the page.`);
+        }
+
         await this.clickOkButton();
     }
 }

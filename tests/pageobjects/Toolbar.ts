@@ -6,6 +6,7 @@ const RECORDING = 'Record & Transcribe';
 // Non-moderators (who can only do local recording) get a "Record" button instead of the
 // moderator's "Record & Transcribe" — see AbstractRecordButton._getAccessibilityLabel().
 const RECORDING_NON_MODERATOR = 'Record';
+const LIVE_STREAMING = 'Start live stream';
 const AUDIO_UNMUTE = 'Unmute microphone';
 const CHAT = 'Open chat';
 const CLOSE_CHAT = 'Close chat';
@@ -86,7 +87,27 @@ export default class Toolbar extends BasePageObject {
     async clickRecordingButton(): Promise<void> {
         // The recording button lives in the overflow ("More actions") menu; open it, click, close
         // (matches clickSettings/clickSecurity — closeOverflowMenu is a no-op once the dialog opens).
-        return this.clickButtonInOverflowMenu(RECORDING);
+        // Match either label, same as hasRecordingButton: moderators who can't transcribe (e.g.
+        // transcription.enabled=false) get "Record" too, not just non-moderators — see
+        // AbstractRecordButton._getAccessibilityLabel()/canAddTranscriber().
+        return this.clickButtonInOverflowMenu([ RECORDING, RECORDING_NON_MODERATOR ]);
+    }
+
+    /**
+     * Returns whether the live streaming button exists in the DOM for this participant.
+     *
+     * @returns {Promise<boolean>}
+     */
+    async hasLiveStreamingButton(): Promise<boolean> {
+        // Same reasoning as hasRecordingButton: the button lives in the overflow menu, so open it
+        // first to make sure it is in the DOM regardless of whether it got promoted to the main bar.
+        await this.openOverflowMenu();
+
+        const exists = await this.getButton(LIVE_STREAMING).isExisting();
+
+        await this.closeOverflowMenu();
+
+        return exists;
     }
 
     /**
@@ -328,18 +349,30 @@ export default class Toolbar extends BasePageObject {
 
     /**
      * Ensure the overflow menu is open and clicks on a specified button.
-     * @param accessibilityLabel The accessibility label of the button to be clicked.
+     * @param accessibilityLabel The accessibility label of the button to be clicked, or a list of
+     * candidate labels (e.g. a moderator vs. non-moderator variant) — the first one found in the
+     * DOM is clicked.
      * @private
      */
-    private async clickButtonInOverflowMenu(accessibilityLabel: string) {
+    private async clickButtonInOverflowMenu(accessibilityLabel: string | string[]) {
         await this.openOverflowMenu();
 
         // sometimes the overflow button tooltip is over the last entry in the menu,
         // so let's move focus away before clicking the button
         await this.participant.driver.$('#overflow-context-menu').moveTo();
 
-        await this.participant.log(`Clicking on: ${accessibilityLabel}`);
-        await this.getButton(accessibilityLabel).click();
+        const labels = Array.isArray(accessibilityLabel) ? accessibilityLabel : [ accessibilityLabel ];
+        let label = labels[0];
+
+        for (const candidate of labels) {
+            if (await this.getButton(candidate).isExisting()) {
+                label = candidate;
+                break;
+            }
+        }
+
+        await this.participant.log(`Clicking on: ${label}`);
+        await this.getButton(label).click();
 
         await this.closeOverflowMenu();
     }

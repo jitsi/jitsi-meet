@@ -9,7 +9,7 @@ end
 
 local json = require "cjson.safe";
 local http = require "net.http";
-local inspect = require 'inspect';
+local serialize = require 'util.serialization'.new('debug');
 
 local util = module:require 'util';
 local starts_with = util.starts_with;
@@ -54,14 +54,14 @@ local function shouldAllow(session)
 
         -- TODO: do this only for enabled customers
         ban_check_count();
-        local function cb(content, code, response, request)
+        local function cb(content, code)
             if code == 200 then
 
                 local r = json.decode(content)
                 if r ~= nil and r['access'] == false then
                     module:log("info", "User is banned room:%s tenant:%s user_id:%s group:%s",
                         session.jitsi_web_query_room, session.jitsi_web_query_prefix,
-                        inspect(session.jitsi_meet_context_user), session.jitsi_meet_context_group);
+                        serialize(session.jitsi_meet_context_user), session.jitsi_meet_context_group);
 
                     ban_check_users_banned_count();
 
@@ -76,9 +76,9 @@ local function shouldAllow(session)
                 end
             else
                 ban_check_error_count();
-                module:log("warn", "Error code:%s contacting url:%s content:%s room:%s tenant:%s response:%s request:%s",
-                    code, ACCESS_MANAGER_URL, session.jitsi_web_query_room, session.jitsi_web_query_prefix,
-                    inspect(response), inspect(request), content);
+                module:log("warn", "Error code:%s contacting url:%s content:%s room:%s tenant:%s token:%s",
+                    code, ACCESS_MANAGER_URL, content, session.jitsi_web_query_room, session.jitsi_web_query_prefix,
+                    tostring(util.strip_jwt_signature(token)));
             end
         end
 

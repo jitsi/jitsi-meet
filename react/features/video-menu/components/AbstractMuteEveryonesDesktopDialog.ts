@@ -90,12 +90,15 @@ export default class AbstractMuteEveryonesDesktopDialog<P extends IProps>
             exclude
         } = this.props;
 
-        dispatch(muteAllParticipants(exclude, MEDIA_TYPE.SCREENSHARE));
+        // Change the moderation state before the participants are muted. See AbstractMuteEveryoneDialog for the
+        // reason.
         if (this.state.moderationEnabled) {
             dispatch(requestEnableDesktopModeration());
         } else if (this.state.moderationEnabled !== undefined) {
             dispatch(requestDisableDesktopModeration());
         }
+
+        dispatch(muteAllParticipants(exclude, MEDIA_TYPE.SCREENSHARE));
 
         return true;
     }

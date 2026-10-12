@@ -255,6 +255,27 @@ describe("util.lib", function()
     end)
 
     -- -----------------------------------------------------------------------
+    describe("strip_jwt_signature", function()
+        it("returns nil for nil token", function()
+            assert.is_nil(M.strip_jwt_signature(nil))
+        end)
+
+        it("removes the signature from a JWT", function()
+            assert.equal("eyJhbGciOiJIUzI1NiJ9.eyJyb29tIjoiKiJ9",
+                M.strip_jwt_signature("eyJhbGciOiJIUzI1NiJ9.eyJyb29tIjoiKiJ9.c2lnbmF0dXJl"))
+        end)
+
+        it("keeps only the first two parts of a JWE", function()
+            assert.equal("aGVhZGVy.a2V5", M.strip_jwt_signature("aGVhZGVy.a2V5.aXY.Y2lwaGVy.dGFn"))
+        end)
+
+        it("redacts a value that is not a JWT", function()
+            assert.equal("[redacted]", M.strip_jwt_signature("not-a-jwt"))
+            assert.equal("[redacted]", M.strip_jwt_signature("header.payload"))
+        end)
+    end)
+
+    -- -----------------------------------------------------------------------
     describe("starts_with_one_of", function()
         it("returns false for nil string", function()
             assert.is_false(M.starts_with_one_of(nil, { "a" }))

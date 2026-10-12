@@ -212,21 +212,40 @@ async function joinParticipant( // eslint-disable-line max-params
     const p = ctx[participantOptions.name] as Participant;
 
     if (p) {
-        if (participantOptions.iFrameApi) {
-            await p.switchToIFrame();
-        }
+        // Skip the isInMuc check (and the iframe context switch it requires) when the participant
+        // is already on base.html — they cannot be in the MUC and there is no iframe to switch into.
+        const alreadyOnBasePage = (await p.driver.getUrl()).endsWith('/base.html');
 
-        if (await p.isInMuc()) {
-            return p;
-        }
+        if (!alreadyOnBasePage) {
+            let inMuc = false;
 
-        if (participantOptions.iFrameApi) {
-            // when loading url make sure we are on the top page context or strange errors may occur
-            await p.switchToMainFrame();
-        }
+            if (participantOptions.iFrameApi) {
+                // The iframe may be gone or dead by now (e.g. the participant hung up through the iframe API, which
+                // navigates the app inside it away). Then it cannot be in the meeting, and the page is reloaded
+                // below anyway; a failure to look inside is not worth failing the join over.
+                try {
+                    await p.switchToIFrame();
+                    inMuc = await p.isInMuc();
+                } catch (e: any) {
+                    console.log(`Could not check whether ${participantOptions.name} is in the meeting: ${
+                        e?.message ?? e}`);
+                }
+            } else {
+                inMuc = await p.isInMuc();
+            }
 
-        // Change the page so we can reload same url if we need to, base.html is supposed to be empty or close to empty
-        await p.driver.url('/base.html');
+            if (inMuc) {
+                return p;
+            }
+
+            if (participantOptions.iFrameApi) {
+                // when loading url make sure we are on the top page context or strange errors may occur
+                await p.switchToMainFrame();
+            }
+
+            // Change the page so we can reload same url if we need to, base.html is supposed to be empty or close to empty
+            await p.driver.url('/base.html');
+        }
     }
 
     const newParticipant = new Participant(participantOptions);
@@ -281,10 +300,31 @@ export async function checkSubject(participant: Participant, subject: string) {
  * Expects there was already a video by this participant and screen sharing will be the second video `-v1`.
  */
 export async function checkForScreensharingTile(sharer: Participant, observer: Participant, reverse = false) {
-    await observer.driver.$(`//span[@id='participant_${await sharer.getEndpointId()}-v1']`).waitForDisplayed({
-        timeout: 3_000,
-        reverse
-    });
+    const selector = `//span[@id='participant_${await sharer.getEndpointId()}-v1']`;
+
+    // Re-runs the selector on every poll, unlike waitForDisplayed(), which keeps checking the element it
+    // matched first. Thumbnails get replaced by React while the wait is running, and losing the matched one
+    // is not something wdio recovers from here: over WebDriver BiDi the node handle is passed to the
+    // visibility check as a script argument, so Chrome rejects it with `invalid argument - Invalid input in
+    // "arguments"/0`, which wdio's refetch-on-stale handling does not recognize as staleness. Every
+    // remaining poll then reuses the dead handle, failing the wait while a tile is on screen.
+    await observer.driver.waitUntil(
+        async () => {
+            try {
+                const displayed = await observer.driver.$(selector).isDisplayed();
+
+                return displayed !== reverse;
+            } catch (e) {
+                // Look the element up again on the next poll.
+                return false;
+            }
+        },
+        {
+            timeout: 3_000,
+            timeoutMsg: `Screensharing tile of ${sharer.name} is ${
+                reverse ? 'still displayed' : 'not displayed'} on ${observer.name}`
+        }
+    );
 }
 
 /**

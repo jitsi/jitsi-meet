@@ -5,7 +5,7 @@ import { prosodyShell } from './helpers/prosody_shell.js';
 import { createXmppClient } from './helpers/xmpp_client.js';
 
 const DOMAIN = 'shared-secret.localhost';
-const PROSODY_CFG = '/etc/prosody/prosody.cfg.lua';
+const PROSODY_CFG = '/etc/prosody/cfg/virtualhosts.cfg.lua';
 
 const SECRET = 'topsecret';
 const PREV_SECRET = 'oldsecret';

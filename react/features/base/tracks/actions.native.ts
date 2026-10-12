@@ -54,7 +54,7 @@ async function _startScreenSharing(dispatch: IStore['dispatch'], state: IReduxSt
             dispatch(addLocalTrack(track));
         }
 
-        const { enabled: audioOnly } = state['features/base/audio-only'];
+        const { enabled: audioOnly } = state['features/base/low-bandwidth-mode'];
 
         if (audioOnly) {
             dispatch(showNotification({

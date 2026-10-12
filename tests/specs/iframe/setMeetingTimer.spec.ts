@@ -13,9 +13,27 @@ const PILL_SELECTOR = '[data-testid="time-timer-pill"]';
 const ENDED_NOTIFICATION_SELECTOR = '[data-testid="timeTimer.endedTitle"]';
 const EXPIRED_BORDER_SELECTOR = '#videospace.timer-expired';
 
+// The duration these tests push through the iframe API. Distinct from any
+// server-enforced limit, so assertions can tell the two apart on a deployment
+// that runs mod_time_restricted.
+const PUSHED_DURATION = 1800;
+
 describe('setMeetingTimer iframe API command', () => {
     it('does not show the timer until a duration is pushed', async () => {
-        await ensureOneParticipant({}, { name: 'p1', iFrameApi: true });
+        // The default test config disables the timer, so enable it explicitly.
+        // `suppressForSeconds: 0` is pinned rather than left to the deployment:
+        // a target that configures a window (alpha sets 180) would otherwise
+        // hold the pill back and every pill assertion below would read as a
+        // missing timer. The suppression window has its own test further down,
+        // which sets the value it needs.
+        await ensureOneParticipant({
+            configOverwrite: {
+                timeTimer: {
+                    enabled: true,
+                    suppressForSeconds: 0
+                }
+            }
+        }, { name: 'p1', iFrameApi: true });
 
         const { p1 } = ctx;
 
@@ -23,11 +41,14 @@ describe('setMeetingTimer iframe API command', () => {
             return;
         }
 
-        // Inside the iframe — the timer is enabled by default but has no
-        // duration yet, so the pill must not render. The default meeting
-        // subject / conference-timer chrome remains in its place.
+        // Inside the iframe — nothing has pushed a duration through the API yet.
+        // This keys off the duration rather than asserting the pill is absent:
+        // a deployment that enforces its own limit (mod_time_restricted pushes
+        // one to every occupant on join) legitimately has a timer running here,
+        // and the point of this case is that the API has not set one.
         await p1.switchToIFrame();
-        await expect(await p1.driver.$(PILL_SELECTOR)).not.toBeDisplayed();
+        expect(await p1.execute(() => APP.store.getState()['features/time-timer'].durationSeconds))
+            .not.toBe(PUSHED_DURATION);
     });
 
     it('shows the timer pill when a duration is pushed via the iframe API', async () => {
@@ -110,15 +131,54 @@ describe('setMeetingTimer iframe API command', () => {
             { timeout: 3000, timeoutMsg: 'timer-ended notification did not clear' });
     });
 
-    it('ignores the command when the feature is disabled', async () => {
-        // Hangup and rejoin the same conference with `timeTimer.enabled = false`
-        // so we can prove the command is a no-op on opt-out deployments.
+    it('holds the pill back for the configured suppression window', async () => {
+        // Rejoin with a suppression window: the timer runs from the moment a
+        // duration is known, but stays off screen until the meeting is that far
+        // along. This is what lets `mod_time_restricted` push the limit on join
+        // while the countdown only surfaces part-way through.
         await ctx.p1.hangup();
         await ensureOneParticipant({
             configOverwrite: {
-                timeTimer: { enabled: false }
+                timeTimer: {
+                    enabled: true,
+                    suppressForSeconds: 600 // 10 min
+                }
             }
         }, { name: 'p1', iFrameApi: true });
+
+        const { p1 } = ctx;
+
+        await p1.switchToMainFrame();
+        await p1.getIframeAPI().executeCommand('setMeetingTimer', {
+            duration: 1800, // 30 min
+            elapsed: 0
+        });
+
+        await p1.switchToIFrame();
+
+        // Inside the window — a duration is known and the timer is running, but
+        // the pill must not be on screen yet.
+        await p1.driver.pause(1000);
+        await expect(await p1.driver.$(PILL_SELECTOR)).not.toBeDisplayed();
+
+        // Past the window (elapsed is measured from the scheduled start, so this
+        // is also the late-joiner case) — the pill appears.
+        await p1.switchToMainFrame();
+        await p1.getIframeAPI().executeCommand('setMeetingTimer', {
+            duration: 1800,
+            elapsed: 900 // 15 min in, past the 10 min suppression window
+        });
+
+        await p1.switchToIFrame();
+        await expect(await p1.driver.$(PILL_SELECTOR)).toBeDisplayed();
+    });
+
+    it('ignores the command when the feature is disabled', async () => {
+        // Hangup and rejoin the same conference with the default test config,
+        // which disables the timer, so we can prove the command is a no-op on
+        // opt-out deployments.
+        await ctx.p1.hangup();
+        await ensureOneParticipant({}, { name: 'p1', iFrameApi: true });
 
         const { p1 } = ctx;
 

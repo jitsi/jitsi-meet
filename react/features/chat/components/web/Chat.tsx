@@ -1,15 +1,15 @@
-import { throttle } from 'lodash-es';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
-import { isTouchDevice, shouldEnableResize } from '../../../base/environment/utils';
-import { translate } from '../../../base/i18n/functions';
+import { isTouchDevice, shouldEnableResize } from '../../../base/environment/utils.web';
+import { translate } from '../../../base/i18n/functions.web';
 import { IconInfo, IconMessage, IconShareDoc, IconSubtitles } from '../../../base/icons/svg';
 import { getLocalParticipant, getRemoteParticipants, isPrivateChatEnabledSelf } from '../../../base/participants/functions';
 import Select from '../../../base/ui/components/web/Select';
 import Tabs from '../../../base/ui/components/web/Tabs';
+import usePanelResize from '../../../base/ui/hooks/usePanelResize.web';
 import { arePollsDisabled } from '../../../conference/functions.any';
 import FileSharing from '../../../file-sharing/components/web/FileSharing';
 import { isFileSharingEnabled } from '../../../file-sharing/functions.any';
@@ -17,6 +17,7 @@ import PollsPane from '../../../polls/components/web/PollsPane';
 import { isCCTabEnabled } from '../../../subtitles/functions.any';
 import {
     sendMessage,
+    sendMessageEdit,
     setChatIsResizing,
     setFocusedTab,
     setPrivateMessageRecipient,
@@ -35,7 +36,7 @@ import {
     SMALL_WIDTH_THRESHOLD
 } from '../../constants';
 import { getChatMaxSize, getFocusedTab, isChatDisabled } from '../../functions';
-import { IChatProps as AbstractProps } from '../../types';
+import { IChatProps as AbstractProps, IMessage } from '../../types';
 
 import ChatHeader from './ChatHeader';
 import ChatInput from './ChatInput';
@@ -128,6 +129,8 @@ const useStyles = makeStyles<{
             position: 'relative',
             transition: _isResizing ? undefined : 'width .16s ease-in-out',
             width: `${width}px`,
+            height: '100%',
+            minHeight: 0,
             zIndex: 300,
 
             // On non-touch devices (desktop), show handle on hover
@@ -178,6 +181,7 @@ const useStyles = makeStyles<{
         chatPanel: {
             display: 'flex',
             flexDirection: 'column',
+            minHeight: 0,
 
             // extract header + tabs height
             height: 'calc(100% - 110px)'
@@ -185,7 +189,8 @@ const useStyles = makeStyles<{
 
         chatPanelNoTabs: {
             // extract header height
-            height: 'calc(100% - 60px)'
+            height: 'calc(100% - 60px)',
+            minHeight: 0
         },
 
         pollsPanel: {
@@ -281,9 +286,7 @@ const Chat = ({
     const isTouch = isTouchDevice();
     const resizeEnabled = shouldEnableResize();
     const { classes, cx } = useStyles({ _isResizing, width: _width, isTouch, resizeEnabled });
-    const [ isMouseDown, setIsMouseDown ] = useState(false);
-    const [ mousePosition, setMousePosition ] = useState<number | null>(null);
-    const [ dragChatWidth, setDragChatWidth ] = useState<number | null>(null);
+    const [ editingMessage, setEditingMessage ] = useState<IMessage | undefined>();
     const maxChatWidth = useSelector(getChatMaxSize);
     const notifyTimestamp = useSelector((state: IReduxState) =>
         state['features/chat'].notifyPrivateRecipientsChangedTimestamp
@@ -315,92 +318,18 @@ const Chat = ({
         return o;
     }, [ participants, defaultRemoteDisplayName, t, notifyTimestamp ]);
 
-    /**
-     * Handles pointer down on the drag handle.
-     * Supports both mouse and touch events via Pointer Events API.
-     *
-     * @param {React.PointerEvent} e - The pointer down event.
-     * @returns {void}
-     */
-    const onDragHandlePointerDown = useCallback((e: React.PointerEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
+    const onCancelEdit = useCallback(() => {
+        setEditingMessage(undefined);
+    }, []);
 
-        // Capture the pointer to ensure we receive all pointer events
-        // even if the pointer moves outside the element
-        (e.target as HTMLElement).setPointerCapture(e.pointerId);
-
-        // Store the initial pointer position and chat width
-        setIsMouseDown(true);
-        setMousePosition(e.clientX);
-        setDragChatWidth(_width);
-
-        // Indicate that resizing is in progress
-        dispatch(setChatIsResizing(true));
-
-        // Add visual feedback that we're dragging (cursor for mouse, not visible on touch)
-        document.body.style.cursor = 'col-resize';
-
-        // Disable text selection during resize
-        document.body.style.userSelect = 'none';
-    }, [ _width, dispatch ]);
-
-    /**
-     * Drag handle pointer up handler.
-     * Supports both mouse and touch events via Pointer Events API.
-     *
-     * @returns {void}
-     */
-    const onDragPointerUp = useCallback(() => {
-        if (isMouseDown) {
-            setIsMouseDown(false);
-            dispatch(setChatIsResizing(false));
-
-            // Restore cursor and text selection
-            document.body.style.cursor = '';
-            document.body.style.userSelect = '';
-        }
-    }, [ isMouseDown, dispatch ]);
-
-    /**
-     * Handles drag handle pointer move.
-     * Supports both mouse and touch events via Pointer Events API.
-     *
-     * @param {PointerEvent} e - The pointermove event.
-     * @returns {void}
-     */
-    const onChatResize = useCallback(throttle((e: PointerEvent) => {
-        if (isMouseDown && mousePosition !== null && dragChatWidth !== null) {
-            // For chat panel resizing on the left edge:
-            // - Dragging left (decreasing X coordinate) should make the panel wider
-            // - Dragging right (increasing X coordinate) should make the panel narrower
-            const diff = e.clientX - mousePosition;
-
-            const newWidth = Math.max(
-                Math.min(dragChatWidth + diff, maxChatWidth),
-                CHAT_SIZE
-            );
-
-            // Update the width only if it has changed
-            if (newWidth !== _width) {
-                dispatch(setUserChatWidth(newWidth));
-            }
-        }
-    }, 50, {
-        leading: true,
-        trailing: false
-    }), [ isMouseDown, mousePosition, dragChatWidth, _width, maxChatWidth, dispatch ]);
-
-    // Set up event listeners when component mounts
-    useEffect(() => {
-        document.addEventListener('pointerup', onDragPointerUp);
-        document.addEventListener('pointermove', onChatResize);
-
-        return () => {
-            document.removeEventListener('pointerup', onDragPointerUp);
-            document.removeEventListener('pointermove', onChatResize);
-        };
-    }, [ onDragPointerUp, onChatResize ]);
+    const { isMouseDown, onDragHandlePointerDown } = usePanelResize({
+        edge: 'right',
+        maxWidth: maxChatWidth,
+        minWidth: CHAT_SIZE,
+        setIsResizing: setChatIsResizing,
+        setWidth: setUserChatWidth,
+        width: _width
+    });
 
     /**
     * Sends a text message.
@@ -411,8 +340,14 @@ const Chat = ({
     * @type {Function}
     */
     const onSendMessage = useCallback((text: string) => {
+        if (editingMessage) {
+            dispatch(sendMessageEdit(editingMessage.messageId, text));
+            setEditingMessage(undefined);
+
+            return;
+        }
         dispatch(sendMessage(text));
-    }, []);
+    }, [ dispatch, editingMessage ]);
 
     /**
     * Toggles the chat window.
@@ -483,8 +418,11 @@ const Chat = ({
                     role = 'tabpanel'
                     tabIndex = { 0 }>
                     <MessageContainer
+                        editingMessage = { editingMessage }
                         isVisible = { _focusedTab === ChatTabs.CHAT }
-                        messages = { _messages } />
+                        messages = { _messages }
+                        onCancelEdit = { onCancelEdit }
+                        onEditMessage = { setEditingMessage } />
                     <MessageRecipient />
                     {isPrivateChatAllowed && (
                         <Select
@@ -495,6 +433,8 @@ const Chat = ({
                             value = { privateMessageRecipient?.id || OPTION_GROUPCHAT } />
                     )}
                     <ChatInput
+                        editingMessage = { editingMessage }
+                        onCancelEdit = { onCancelEdit }
                         onSend = { onSendMessage } />
                 </div>) }
                 { _isPollsEnabled && (

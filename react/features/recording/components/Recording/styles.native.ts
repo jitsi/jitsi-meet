@@ -4,12 +4,8 @@ import { BoxModel } from '../../../base/styles/components/styles/BoxModel';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 /* eslint-disable @typescript-eslint/no-var-requires */
-export const DROPBOX_LOGO = require('../../../../../images/dropboxLogo_square.png');
-export const ICON_CLOUD = require('../../../../../images/icon-cloud.png');
 export const ICON_INFO = require('../../../../../images/icon-info.png');
 export const ICON_USERS = require('../../../../../images/icon-users.png');
-export const LOCAL_RECORDING = require('../../../../../images/downloadLocalRecording.png');
-export const TRACK_COLOR = BaseTheme.palette.ui07;
 /* eslint-enable @typescript-eslint/no-var-requires */
 
 // XXX The "standard" {@code BoxModel.padding} has been deemed insufficient in
@@ -51,13 +47,6 @@ export default {
         paddingTop: BaseTheme.spacing[3]
     },
 
-    /**
-     * Label for the start recording button.
-     */
-    startRecordingLabel: {
-        color: BaseTheme.palette.text01,
-        marginRight: 12
-    },
     highlightButton: {
         backgroundColor: BaseTheme.palette.ui09,
         flexDirection: 'row',
@@ -111,8 +100,15 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
         flexDirection: 'column'
     },
 
-    controlDisabled: {
-        opacity: 0.5
+    footer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginHorizontal: BaseTheme.spacing[3],
+        paddingVertical: _PADDING
+    },
+
+    footerButton: {
+        marginLeft: BaseTheme.spacing[3]
     },
 
     header: {
@@ -120,9 +116,9 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
         marginHorizontal: BaseTheme.spacing[3]
     },
 
-    headerIntegrations: {
+    headerNested: {
         ...header,
-        paddingHorizontal: BaseTheme.spacing[3]
+        paddingBottom: 0
     },
 
     headerInfo: {
@@ -133,7 +129,73 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
     },
 
     loggedIn: {
-        paddingHorizontal: _PADDING
+        paddingHorizontal: _PADDING,
+        paddingVertical: BaseTheme.spacing[2]
+    },
+
+    loggedInInfo: {
+        flex: 1,
+        marginRight: BaseTheme.spacing[2]
+    },
+
+    optionLabel: {
+        flex: 1,
+        fontSize: 16,
+        marginRight: BaseTheme.spacing[2],
+        textAlign: 'left'
+    },
+
+    pickerLabel: {
+        color: BaseTheme.palette.text02,
+        flex: 1,
+        textAlign: 'left'
+    },
+
+    section: {
+        flex: 0,
+        flexDirection: 'column',
+        paddingVertical: BaseTheme.spacing[2]
+    },
+
+    accordion: {
+        backgroundColor: BaseTheme.palette.ui02,
+        borderColor: BaseTheme.palette.ui03,
+        borderRadius: 11,
+        borderWidth: 1,
+        marginHorizontal: BaseTheme.spacing[3],
+        marginTop: BaseTheme.spacing[2],
+        overflow: 'hidden'
+    },
+
+    accordionHeader: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        padding: BaseTheme.spacing[2]
+    },
+
+    accordionText: {
+        flex: 1,
+        flexDirection: 'column',
+        marginRight: BaseTheme.spacing[2]
+    },
+
+    accordionTitle: {
+        color: BaseTheme.palette.text01,
+        fontWeight: '600'
+    },
+
+    accordionSummary: {
+        color: BaseTheme.palette.text02,
+        fontSize: 12
+    },
+
+    accordionChevronOpen: {
+        transform: [ { rotate: '180deg' } ]
+    },
+
+    accordionBody: {
+        paddingBottom: BaseTheme.spacing[2],
+        paddingHorizontal: BaseTheme.spacing[2]
     },
 
     recordingIcon: {

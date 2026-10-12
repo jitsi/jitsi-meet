@@ -66,8 +66,8 @@ StateListenerRegistry.register(
  * Updates the on audio only value.
  */
 StateListenerRegistry.register(
-    /* selector */ state => state['features/base/audio-only'].enabled,
+    /* selector */ state => state['features/base/low-bandwidth-mode'].enabled,
     /* listener */ enabled => {
-        APP.API.notifyAudioOnlyChanged(enabled);
+        APP.API.notifyLowBandwidthModeChanged(enabled);
     }
 );

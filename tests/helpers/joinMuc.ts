@@ -19,9 +19,18 @@ export async function joinMuc(
     const p = ctx[name] as Participant;
 
     if (p) {
-        // Load a blank page to make sure the page is reloaded (in case the new participant uses the same URL). Using
-        // 'about:blank' was causing problems in the past, if we notice any issues we can change to "base.html".
-        await p.driver.url('about:blank');
+        // Rejoin in a fresh window and close the one the previous participant used, rather than loading the next
+        // page into it (which also made the same URL a real load). On the grid, a window that a participant had
+        // joined a conference from has been seen to stop receiving any mouse or keyboard event from the driver once
+        // the next page was loaded into it: every command succeeded, the page never saw them. Neither a blank page
+        // nor a hangup and base.html in between made a difference, so start from a window the driver has not used.
+        // The old one is closed so that the session keeps a single window, which the rest of the helpers assume.
+        const oldHandle = await p.driver.getWindowHandle();
+        const { handle: newHandle } = await p.driver.newWindow('about:blank', { type: 'tab' });
+
+        await p.driver.switchToWindow(oldHandle);
+        await p.driver.closeWindow();
+        await p.driver.switchToWindow(newHandle);
     }
 
     const newParticipant = new Participant({

@@ -9,6 +9,8 @@ import { IReduxState, IStore } from '../../app/types';
 import { getLocalizedDateFormatter } from '../../base/i18n/dateUtil';
 import { translate } from '../../base/i18n/functions';
 import NavigateSectionList from '../../base/react/components/native/NavigateSectionList';
+import { setCalendarTimerDuration } from '../../time-timer/actions';
+import { computeCalendarTimerDuration } from '../../time-timer/functions';
 import { openUpdateCalendarEventDialog, refreshCalendar } from '../actions.native';
 
 
@@ -110,6 +112,25 @@ class CalendarListContent extends Component<IProps> {
      */
     _onPress(url: string, analyticsEventName = 'meeting.tile') {
         sendAnalytics(createCalendarClickedEvent(analyticsEventName));
+
+        // Find the event being joined and, if it has a parseable start + end,
+        // record its duration for the time-timer keyed to this URL. The
+        // middleware only applies it when the joined conference matches that
+        // URL, so opening a meeting and bailing out cannot leak its duration
+        // into a different meeting joined afterwards.
+        const event = this.props._eventList?.find((e: any) => e.url === url);
+        const duration = computeCalendarTimerDuration(event);
+
+        if (duration) {
+            this.props.dispatch(setCalendarTimerDuration(
+                duration.durationSeconds,
+                {
+                    startTimeUnix: duration.startTimeUnix,
+                    url
+                }));
+        } else {
+            this.props.dispatch(setCalendarTimerDuration(undefined));
+        }
 
         this.props.dispatch(appNavigate(url));
     }

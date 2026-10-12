@@ -22,11 +22,26 @@ export function sendEvent(store: Object, name: string, data: Object) {
 }
 
 /**
- * Debounced sending of `readyToClose`.
+ * Per-store `readyToClose` senders, so one app's teardown can't drop another's.
  */
-export const _sendReadyToClose = debounce(dispatch => {
-    dispatch(readyToClose());
-}, 2500, { leading: true });
+const _readyToCloseSenders = new WeakMap<Function, Function>();
+
+/**
+ * Sends `readyToClose` once per burst of calls, with no trailing call to avoid a close() re-trigger loop.
+ *
+ * @param {Function} dispatch - The redux dispatch of the store sending the event.
+ * @returns {void}
+ */
+export function _sendReadyToClose(dispatch: Function) {
+    let send = _readyToCloseSenders.get(dispatch);
+
+    if (!send) {
+        send = debounce(() => dispatch(readyToClose()), 2500, { leading: true, trailing: false });
+        _readyToCloseSenders.set(dispatch, send);
+    }
+
+    send();
+}
 
 /**
  * Returns a participant info object based on the passed participant object from redux.

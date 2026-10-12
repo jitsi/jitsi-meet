@@ -39,9 +39,6 @@
         "phone": "Телефон",
         "speaker": "Динамик"
     },
-    "audioOnly": {
-        "audioOnly": "Төмен өткізу қабілеті"
-    },
     "bandwidthSettings": {
         "assumedBandwidthBps": "мысалы, 10 Мбит/с үшін 10000000",
         "assumedBandwidthBpsWarning": "Жоғары мәндер желілік мәселелерді тудыруы мүмкін.",
@@ -798,6 +795,9 @@
         "button": "Басқаларды шақыру",
         "youAreAlone": "Жиналыста сіз жалғызсыз"
     },
+    "lowBandwidthMode": {
+        "lowBandwidthMode": "Төмен өткізу қабілеті"
+    },
     "me": "мен",
     "notify": {
         "OldElectronAPPTitle": "Қауіпсіздік осалдығы!",
@@ -1144,19 +1144,16 @@
         "recordAudioAndVideo": "Аудио және бейнені жазу",
         "recordTranscription": "Транскрипцияны жазу",
         "saveLocalRecording": "Жазу файлын жергілікті сақтау (Бета)",
-        "serviceDescription": "Жазбаңызды жазу қызметі сақтайды",
         "serviceDescriptionCloud": "Бұлттық жазу",
         "serviceDescriptionCloudInfo": "Жазылған жиналыстар жазылған уақытынан кейін 24 сағаттан соң автоматты түрде тазаланады.",
         "serviceName": "Жазу қызметі",
         "sessionAlreadyActive": "Бұл сессия қазірдің өзінде жазылуда немесе тікелей эфирде көрсетілуде.",
-        "showAdvancedOptions": "Қосымша опциялар",
         "signIn": "Кіру",
         "signOut": "Шығу",
         "surfaceError": "Ағымдағы қойындыны таңдаңыз.",
         "title": "Жазу",
         "unavailable": "Қап! {{serviceName}} қазіргі уақытта қолжетімсіз. Біз мәселені шешу үстіндеміз. Кейінірек қайталап көріңіз.",
-        "unavailableTitle": "Жазу қолжетімсіз",
-        "uploadToCloud": "Бұлтқа жүктеу"
+        "unavailableTitle": "Жазу қолжетімсіз"
     },
     "screenshareDisplayName": "{{name}} экраны",
     "sectionList": {
@@ -1166,7 +1163,7 @@
         "about": "Жиналысыңызға $t(lockRoomPassword) қоса аласыз. Қатысушылар жиналысқа қосылуға рұқсат етілмес бұрын $t(lockRoomPassword) ұсынуы керек.",
         "aboutReadOnly": "Модератор қатысушылар жиналысқа $t(lockRoomPassword) қоса алады. Қатысушылар жиналысқа қосылуға рұқсат етілмес бұрын $t(lockRoomPassword) ұсынуы керек.",
         "insecureRoomNameWarningNative": "Бөлме аты қауіпсіз емес. Қажетсіз қатысушылар жиналысыңызға қосылуы мүмкін. {{recommendAction}} Жиналысыңызды қорғау туралы толығырақ біліңіз ",
-        "insecureRoomNameWarningWeb": "Бөлме аты қауіпсіз емес. Қажетсіз қатысушылар жиналысыңызға қосылуы мүмкін. {{recommendAction}} Жиналысыңызды қорғау туралы толығырақ <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">осында</a> біліңіз.",
+        "insecureRoomNameWarningWeb": "Бөлме аты қауіпсіз емес. Қажетсіз қатысушылар жиналысыңызға қосылуы мүмкін. {{recommendAction}} Жиналысыңызды қорғау туралы толығырақ <a href=\"{{securityUrl}}\" target=\"_blank\">осында</a> біліңіз.",
         "title": "Қауіпсіздік опциялары",
         "unsafeRoomActions": {
             "meeting": "Қауіпсіздік түймесін пайдаланып жиналысыңызды қорғауды қарастырыңыз.",
@@ -1299,7 +1296,6 @@
         "Settings": "Параметрлер",
         "accessibilityLabel": {
             "Settings": "Параметрлерді ашу",
-            "audioOnly": "Тек аудионы ауыстыру",
             "audioRoute": "Дыбыс құрылғысын таңдау",
             "boo": "Бу",
             "breakoutRooms": "Бөлек бөлмелер",
@@ -1342,6 +1338,7 @@
             "localRecording": "Жергілікті жазу басқару элементтерін ауыстыру",
             "lockRoom": "Жиналыс құпия сөзін ауыстыру",
             "love": "Жүрек",
+            "lowBandwidthMode": "Тек аудионы ауыстыру",
             "lowerHand": "Қолыңызды түсіру",
             "moreActions": "Көбірек әрекеттер",
             "moreActionsMenu": "Көбірек әрекеттер мәзірі",
@@ -1404,8 +1401,6 @@
                 "label": "Стерео"
             }
         },
-        "audioOnlyOff": "Төмен өткізу қабілеті режимін өшіру",
-        "audioOnlyOn": "Төмен өткізу қабілеті режимін қосу",
         "audioRoute": "Дыбыс құрылғысын таңдау",
         "audioSettings": "Аудио параметрлері",
         "authenticate": "Аутентификация",
@@ -1448,6 +1443,8 @@
         "login": "Кіру",
         "logout": "Шығу",
         "love": "Жүрек",
+        "lowBandwidthModeOff": "Төмен өткізу қабілеті режимін өшіру",
+        "lowBandwidthModeOn": "Төмен өткізу қабілеті режимін қосу",
         "lowerYourHand": "Қолыңызды түсіру",
         "moreActions": "Көбірек әрекеттер",
         "moreOptions": "Көбірек опциялар",
@@ -1539,8 +1536,6 @@
     },
     "videoStatus": {
         "adjustFor": "Реттеу:",
-        "audioOnly": "AUD",
-        "audioOnlyExpanded": "Сіз төмен өткізу қабілеті режиміндесіз. Бұл режимде сіз тек аудио және экран бөлісуді аласыз.",
         "bestPerformance": "Ең жақсы өнімділік",
         "callQuality": "Бейне сапасы (ең жақсы өнімділік үшін 0, ең жоғары сапа үшін 3)",
         "hd": "HD",
@@ -1548,9 +1543,11 @@
         "highDefinition": "Жоғары ажыратымдылық",
         "highestQuality": "Ең жоғары сапа",
         "labelTooiltipNoVideo": "Бейне жоқ",
-        "labelTooltipAudioOnly": "Төмен өткізу қабілеті режимі қосылған",
+        "labelTooltipLowBandwidthMode": "Төмен өткізу қабілеті режимі қосылған",
         "ld": "LD",
         "ldTooltip": "Төмен ажыратымдылықтағы бейнені көру",
+        "lowBandwidthMode": "AUD",
+        "lowBandwidthModeExpanded": "Сіз төмен өткізу қабілеті режиміндесіз. Бұл режимде сіз тек аудио және экран бөлісуді аласыз.",
         "lowDefinition": "Төмен ажыратымдылық",
         "performanceSettings": "Өнімділік параметрлері",
         "recording": "Бұл жиналыс жазылуда.",

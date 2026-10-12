@@ -69,6 +69,7 @@ import {
 import { updateLobbyParticipantOnLeave } from './actions.any';
 import { KNOCKING_PARTICIPANT_SOUND_ID } from './constants';
 import { getKnockingParticipants, showLobbyChatButton } from './functions';
+import logger from './logger';
 import { KNOCKING_PARTICIPANT_FILE } from './sounds';
 import { IKnockingParticipant } from './types';
 
@@ -405,6 +406,15 @@ function _findLoadableAvatarForKnockingParticipant(store: IStore, { id }: { id: 
  */
 function _maybeSendLobbyNotification(origin: any, message: any, { dispatch, getState }: IStore) {
     if (!origin?._id || message?.type !== 'lobby-notify') {
+        return;
+    }
+
+    // Prosody sends this notification with the moderator which performed the action as the sender, and only a
+    // moderator can enable or disable the lobby, or admit or reject a participant. Check the role, so that the
+    // client shows a notification only for an action which the sender is able to perform.
+    if (!origin.isModerator?.()) {
+        logger.warn(`Ignoring a lobby notification from a non-moderator: ${origin._id}`);
+
         return;
     }
 

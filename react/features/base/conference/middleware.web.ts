@@ -101,6 +101,18 @@ function onWakeLockReleased() {
     logger.debug('Wake lock released');
 }
 
+function onVisibilityChange() {
+    logger.debug(`Page visibility changed to: ${document.visibilityState}`);
+}
+
+function onPageHide(e: PageTransitionEvent) {
+    logger.debug(`Page hidden, persisted (BFCache freeze): ${e.persisted}`);
+}
+
+function onPageShow(e: PageTransitionEvent) {
+    logger.debug(`Page shown, persisted (BFCache restore): ${e.persisted}`);
+}
+
 MiddlewareRegistry.register(store => next => action => {
     const { dispatch, getState } = store;
     const { enableForcedReload } = getState()['features/base/config'];
@@ -108,6 +120,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_JOIN_IN_PROGRESS: {
         dispatch(setPrejoinPageVisibility(false));
+        document.addEventListener('visibilitychange', onVisibilityChange);
+        window.addEventListener('pagehide', onPageHide);
+        window.addEventListener('pageshow', onPageShow);
 
         break;
     }
@@ -157,12 +172,18 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         releaseScreenLock();
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+        window.removeEventListener('pagehide', onPageHide);
+        window.removeEventListener('pageshow', onPageShow);
 
         break;
     }
     case CONFERENCE_LEFT:
     case KICKED_OUT:
         releaseScreenLock();
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+        window.removeEventListener('pagehide', onPageHide);
+        window.removeEventListener('pageshow', onPageShow);
 
         break;
     case CONNECTION_DISCONNECTED: {

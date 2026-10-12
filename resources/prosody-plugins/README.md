@@ -95,6 +95,7 @@
 - jitsi_meet_context_features - The features from the context, added after token verify.
 - jitsi_meet_context_room - The room settings from the jwt context, added after token verify.
 - jitsi_meet_room - The room name in jwt token, added after token verify.
+- jitsi_meet_verified_room - The jid of the room the session was verified for on join. Set by mod_token_verification.lua and used to re-check claims that are refreshed later, when a resuming connection presents a different token.
 - jitsi_meet_str_tenant - The tenant in the context. Added after token verify.
 - jitsi_meet_domain - The domain in the jwt ('sub' claim). Added after token verify. Can be the domain if not tenant is used or the tenant itself in lowercase.
 - customusername - from a query parameter to be used with combination with "pre-jitsi-authentication" event to pre-set a known jid to a session.

@@ -98,6 +98,13 @@ interface IProps {
     onClick?: (e?: React.MouseEvent) => void;
 
     /**
+     * Callback invoked when a click occurs outside the menu (non-drawer path only).
+     * Prefer this over onDrawerClose for outside-click handling to avoid conflating
+     * the drawer-close and the click-outside concerns.
+     */
+    onClickOutside?: () => void;
+
+    /**
      * Callback for drawer close.
      */
     onDrawerClose?: (e?: React.MouseEvent) => void;
@@ -181,6 +188,7 @@ const ContextMenu = ({
     offsetTarget,
     onClick,
     onKeyDown,
+    onClickOutside,
     onDrawerClose,
     onMouseEnter,
     onMouseLeave,
@@ -358,8 +366,8 @@ const ContextMenu = ({
     }, [ containerRef ]);
 
     const removeFocus = useCallback(() => {
-        onDrawerClose?.();
-    }, [ onMouseLeave ]);
+        (onClickOutside ?? onDrawerClose)?.();
+    }, [ onClickOutside, onDrawerClose ]);
 
     if (_overflowDrawer && inDrawer) {
         return (<div
@@ -387,8 +395,10 @@ const ContextMenu = ({
             // to prevent UI stutter on dialog appearance. It seems the focus guards generated annoy
             // our DialogPortal positioning calculations.
             enabled = { activateFocusTrap && !isHidden }
+            noIsolation = { true }
             onClickOutside = { removeFocus }
-            onEscapeKey = { removeFocus }>
+            onEscapeKey = { removeFocus }
+            scrollLock = { false }>
             <div
                 { ...aria }
                 aria-label = { accessibilityLabel }

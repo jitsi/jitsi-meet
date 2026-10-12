@@ -115,6 +115,87 @@ async function waitForEffectEnabled(expected: boolean, timeout = 15000, stabilit
     );
 }
 
+/** Simulates a lost WebGPU device by answering every V2 'infer' request with 'infer_error'. */
+async function setInferenceFailures(enabled: boolean): Promise<void> {
+    await ctx.p1.execute((on: boolean) => {
+        const w = window as any;
+
+        if (!w.__vbInferFault) {
+            const fault = { enabled: false, inferCalls: 0 };
+            const originalPostMessage = Worker.prototype.postMessage;
+
+            w.__vbInferFault = fault;
+            Worker.prototype.postMessage = function(this: Worker, msg: any, transfer?: any) {
+                if (msg?.type === 'infer' && msg.bitmap) {
+                    fault.inferCalls++;
+                    if (fault.enabled) {
+                        msg.bitmap.close();
+                        setTimeout(() => this.dispatchEvent(new MessageEvent('message', {
+                            data: { error: 'Device is lost (injected)', type: 'infer_error' }
+                        })), 0);
+
+                        return;
+                    }
+                }
+
+                return (originalPostMessage as any).call(this, msg, transfer);
+            };
+        }
+        w.__vbInferFault.enabled = on;
+    }, enabled);
+}
+
+async function getInferenceFailureState(): Promise<{
+    effectOnTrack: boolean; errorNotifications: number; inferCalls: number; }> {
+    return ctx.p1.execute(() => {
+        const state = APP.store.getState();
+        const localVideo = state['features/base/tracks'].find((t: any) => t.local && t.mediaType === 'video');
+
+        return {
+            effectOnTrack: Boolean((localVideo?.jitsiTrack as any)?._streamEffect),
+            errorNotifications: state['features/notifications'].notifications.filter(
+                (n: any) => n.props?.titleKey === 'virtualBackground.backgroundEffectError').length,
+            inferCalls: (window as any).__vbInferFault?.inferCalls ?? 0
+        };
+    });
+}
+
+/** Trips the inference breaker and checks it stays tripped with VB off. */
+async function expectBreakerToTrip(): Promise<void> {
+    // A ready processor may still be stuck on its first inference (slow on CI's software GPU), and frames
+    // queued behind it never reach the injected failure, so wait until frames are actually flowing.
+    await ctx.p1.driver.waitUntil(
+        async () => ((await getV2ProcessorState())?.frameCount ?? 0) >= 5,
+        { timeout: 60000, timeoutMsg: 'V2 effect did not process 5 frames within 60s' }
+    );
+
+    await setInferenceFailures(true);
+
+    try {
+        // The breaker trips after 30 consecutive failures.
+        await waitForEffectEnabled(false, 30000).catch(async err => {
+            throw new Error(`${err.message}; state: ${JSON.stringify({
+                ...await getInferenceFailureState(),
+                processor: await getV2ProcessorState()
+            })}`);
+        });
+
+        const afterTrip = await getInferenceFailureState();
+
+        await ctx.p1.driver.pause(2000);
+
+        const later = await getInferenceFailureState();
+
+        expect(later.inferCalls).toBe(afterTrip.inferCalls);
+        expect(later.effectOnTrack).toBe(false);
+        expect(later.errorNotifications).toBe(1);
+        expect((await getVBState()).selectedThumbnail).toBe('none');
+    } finally {
+        // Leave inference working for later tests even if an assertion above failed.
+        await setInferenceFailures(false);
+    }
+}
+
 describe('Virtual backgrounds V2 engine', () => {
     it('joining the meeting with V2 enabled', async () => {
         await ensureOneParticipant({
@@ -332,5 +413,43 @@ describe('Virtual backgrounds V2 with insertable streams disabled', () => {
         await ctx.p1.getVirtualBackgroundDialog().clickNone();
         await ctx.p1.getVirtualBackgroundDialog().confirm();
         await waitForEffectEnabled(false);
+    });
+});
+
+describe('Virtual backgrounds V2 persistent inference failure', () => {
+    it('hangup and rejoin with V2 enabled', async () => {
+        await hangupAllParticipants();
+        await ensureOneParticipant({
+            configOverwrite: V2_CONFIG
+        });
+    });
+
+    it('enabled from the dialog — breaker stops inference and turns VB off', async () => {
+        await openVBDialog();
+        await ctx.p1.getVirtualBackgroundDialog().clickBlur();
+        await ctx.p1.getVirtualBackgroundDialog().confirm();
+        await waitForEffectEnabled(true);
+        await waitForV2EffectReady();
+
+        await expectBreakerToTrip();
+    });
+
+    it('already enabled when joining — breaker stops inference and turns VB off', async () => {
+        await openVBDialog();
+        await ctx.p1.getVirtualBackgroundDialog().clickBlur();
+        await ctx.p1.getVirtualBackgroundDialog().confirm();
+        await waitForEffectEnabled(true);
+
+        // The persisted VB state makes the rejoin create the effect via loadEffects.
+        await hangupAllParticipants();
+        await ensureOneParticipant({
+            configOverwrite: V2_CONFIG
+        });
+        await waitForEffectEnabled(true);
+
+        // The rejoin loads a fresh page, so the worker and model start cold.
+        await waitForV2EffectReady(30000);
+
+        await expectBreakerToTrip();
     });
 });

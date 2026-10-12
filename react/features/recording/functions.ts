@@ -269,7 +269,7 @@ export function getRecordButtonProps(state: IReduxState) {
     // a button can be disabled/enabled if enableFeaturesBasedOnToken
     // is on or if the livestreaming is running.
     let disabled = false;
-    let tooltip = isRecordingRunning(state) ? 'dialog.stopRecording' : 'dialog.startRecording';
+    const tooltip = isRecordingRunning(state) ? 'dialog.stopRecording' : 'dialog.startRecording';
 
     // If the containing component provides the visible prop, that is one
     // above all, but if not, the button should be autonomus and decide on
@@ -295,12 +295,6 @@ export function getRecordButtonProps(state: IReduxState) {
         // Self-hosted without JWT: fall back to server config so moderators
         // see the button when recordingService.enabled or transcription.enabled.
         visible = recordingEnabled || transcriptionEnabled;
-    }
-
-    // disable the button if the livestreaming is running.
-    if (visible && isLiveStreamingRunning(state)) {
-        disabled = true;
-        tooltip = 'dialog.recordingDisabledBecauseOfActiveLiveStreamingTooltip';
     }
 
     // disable the button if we are in a breakout room.

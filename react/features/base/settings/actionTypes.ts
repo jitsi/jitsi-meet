@@ -13,11 +13,11 @@
  *         micDeviceId: string,
  *         serverURL: string,
  *         showSubtitlesOnStage: boolean,
- *         startAudioOnly: boolean,
+ *         startLowBandwidthMode: boolean,
  *         startWithAudioMuted: boolean,
  *         startWithVideoMuted: boolean,
  *         startWithReactionsMuted: boolean
- *     }
- * }
+ *     }.
+ * }.
  */
 export const SETTINGS_UPDATED = 'SETTINGS_UPDATED';

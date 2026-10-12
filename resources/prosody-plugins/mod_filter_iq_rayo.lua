@@ -61,6 +61,15 @@ local function load_config()
 end
 load_config();
 
+-- Normalise CR and LF in values sourced outside of XML (e.g. JWT claims) to
+-- spaces before inserting them into stanza attributes. Prosody's util.stanza
+-- serializer does not escape raw control characters, so this keeps the
+-- forwarded attribute values consistent with how expat already normalises
+-- whitespace in XML-attribute-sourced values.
+local function sanitize_header_value(v)
+    return (tostring(v):gsub("[\r\n]", " "));
+end
+
 -- Header names to use to push extra data extracted from token, if any
 local OUT_INITIATOR_USER_ATTR_NAME = "X-outbound-call-initiator-user";
 local OUT_INITIATOR_GROUP_ATTR_NAME = "X-outbound-call-initiator-group";
@@ -69,6 +78,12 @@ local OUT_ROOM_PASS_ATTR_NAME = 'JvbRoomPassword';
 
 local OUTGOING_CALLS_THROTTLE_INTERVAL = 60; -- if max_number_outgoing_calls is enabled it will be
                                              -- the max number of outgoing calls a user can try for a minute
+
+-- Per-room throttle for transcription dials: at most 1 allowed per this interval (seconds).
+-- Burst requests within the window after a successful dial are dropped so that
+-- only one Jigasi transcriber is started per conference.
+local TRANSCRIPTION_THROTTLE_INTERVAL = 10;
+local transcription_room_throttles = {};
 
 -- filters rayo iq in case of requested from not jwt authenticated sessions
 -- or if the session has features in user context and it doesn't mention
@@ -153,13 +168,29 @@ module:hook("pre-iq/full", function(event)
                 end
             end
 
+            -- Per-room throttle for transcription: drop burst dials so only one
+            -- Jigasi transcriber is dispatched per conference per interval.
+            if feature == 'transcription' then
+                if not transcription_room_throttles[room_real_jid] then
+                    transcription_room_throttles[room_real_jid] = new_throttle(1, TRANSCRIPTION_THROTTLE_INTERVAL);
+                end
+                if not transcription_room_throttles[room_real_jid]:poll(1) then
+                    module:log("warn",
+                        "Filtering transcription dial for room %s - per-room throttle hit (limit: 1 per %ds)",
+                        room_real_jid, TRANSCRIPTION_THROTTLE_INTERVAL);
+                    measure_drop(1);
+                    session.send(st.error_reply(stanza, "cancel", "resource-constraint"));
+                    return true;
+                end
+            end
+
             -- now lets insert token information if any
             if session and user_id then
                 -- adds initiator user id from token
                 dial:tag("header", {
                     xmlns = "urn:xmpp:rayo:1",
                     name = OUT_INITIATOR_USER_ATTR_NAME,
-                    value = tostring(user_id)});
+                    value = sanitize_header_value(user_id)});
                 dial:up();
 
                 -- Add the initiator group information if it is present
@@ -167,7 +198,7 @@ module:hook("pre-iq/full", function(event)
                     dial:tag("header", {
                         xmlns = "urn:xmpp:rayo:1",
                         name = OUT_INITIATOR_GROUP_ATTR_NAME,
-                        value = tostring(session.jitsi_meet_context_group) });
+                        value = sanitize_header_value(session.jitsi_meet_context_group) });
                     dial:up();
                 end
             end
@@ -179,14 +210,14 @@ module:hook("pre-iq/full", function(event)
             dial:tag("header", {
                 xmlns = "urn:xmpp:rayo:1",
                 name = OUT_ROOM_NAME_ATTR_NAME,
-                value = roomName
+                value = sanitize_header_value(roomName)
             });
             dial:up();
             if roomPassword then
                 dial:tag("header", {
                     xmlns = "urn:xmpp:rayo:1",
                     name = OUT_ROOM_PASS_ATTR_NAME,
-                    value = roomPassword
+                    value = sanitize_header_value(roomPassword)
                 });
                 dial:up();
             end
@@ -245,6 +276,12 @@ function process_main_muc_loaded(main_muc, host_module)
     module:log('debug', 'Main muc loaded');
 
     main_muc_service = main_muc;
+
+    -- Clean up the per-room throttle entry when a room is destroyed so the
+    -- table does not grow without bound across many short-lived conferences.
+    host_module:hook('muc-room-destroyed', function(event)
+        transcription_room_throttles[event.room.jid] = nil;
+    end);
 end
 
 process_host_module(main_muc_component_host, function(host_module, host)

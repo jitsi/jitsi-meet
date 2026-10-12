@@ -84,7 +84,8 @@
         "react-native-video": "0.0.0",
         "react-native-webrtc": "0.0.0",
         "react-native-webview": "0.0.0",
-        "react-native-worklets-core": "0.0.0"
+        "react-native-worklets-core": "0.0.0",
+        "reselect": "0.0.0"
     },
     "devDependencies": {
         "@babel/plugin-proposal-nullish-coalescing-operator": "0.0.0",

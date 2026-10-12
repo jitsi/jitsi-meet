@@ -1,3 +1,17 @@
+-- USAGE / DEPLOYMENT
+--   These endpoints are meant to be used by trusted internal services (e.g.
+--   monitoring, backend services checking room occupancy) over a controlled
+--   network path. By default (enable_roomsize_token_verification = false)
+--   they have no authentication, and GET /sessions never has any. In that
+--   configuration it is NOT safe to make them publicly accessible: do not
+--   proxy them from the public web server (nginx) and do not expose Prosody's
+--   HTTP ports (5280/5281) to the internet. Restrict access at the web server
+--   or with network filters.
+--
+--   When enable_roomsize_token_verification is true, /room-size and /room
+--   require a token issued by this deployment (the virtual host token
+--   configuration) that is valid for the requested room.
+--
 -- Prosody IM
 -- Copyright (C) 2021-present 8x8, Inc.
 --
@@ -42,7 +56,7 @@ local muc_domain_prefix
 -- Load shared utility library. If it fails (e.g. a transitive dependency is
 -- missing in the current environment) log the error and fall back to inline
 -- implementations so the HTTP routes are always registered.
-local async_handler_wrapper, get_room_from_jid, build_room_address, is_focus;
+local async_handler_wrapper, get_room_from_jid, build_room_address, is_focus, strip_jwt_signature;
 local ok_util, util_or_err = pcall(function() return module:require "util" end);
 if ok_util then
     local util = util_or_err;
@@ -50,6 +64,7 @@ if ok_util then
     get_room_from_jid    = util.get_room_from_jid;
     build_room_address   = util.build_room_address;
     is_focus             = util.is_focus;
+    strip_jwt_signature  = util.strip_jwt_signature;
 else
     module:log("warn", "mod_muc_size: util.lib.lua unavailable (%s); using inline fallbacks",
         tostring(util_or_err));
@@ -71,6 +86,10 @@ else
     end;
     is_focus = function(nick)
         return string.sub(nick, -string.len("/focus")) == "/focus";
+    end;
+    strip_jwt_signature = function(token)
+        if token == nil then return nil end
+        return tostring(token):match('^([^.]*%.[^.]*)%.') or '[redacted]';
     end;
 end
 
@@ -126,8 +145,9 @@ function verify_token(token, room_address)
     end
 
     if not token_util:verify_room(session, room_address) then
-        log("warn", "Token %s not allowed to join: %s",
-            tostring(token), tostring(room_address));
+        log("warn", "Token %s not allowed to join: %s token room: %s token sub: %s",
+            tostring(strip_jwt_signature(token)), tostring(room_address), tostring(session.jitsi_meet_room),
+            tostring(session.jitsi_meet_domain));
         return false;
     end
 

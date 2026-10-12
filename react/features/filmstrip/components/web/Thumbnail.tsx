@@ -37,6 +37,8 @@ import { ITrack } from '../../../base/tracks/types';
 import { getVideoObjectPosition } from '../../../face-landmarks/functions';
 import { hideGif, showGif } from '../../../gifs/actions';
 import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
+import SendToSecondScreenIcon from '../../../multi-screen/components/SendToSecondScreenIcon';
+import { ISecondScreenSource } from '../../../multi-screen/types';
 import PresenceLabel from '../../../presence-status/components/PresenceLabel';
 import { LAYOUTS } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.web';
@@ -62,6 +64,12 @@ import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';
 import VirtualScreenshareParticipant from './VirtualScreenshareParticipant';
+
+/**
+ * Module-scoped so the second-screen trigger's click handler stays stable
+ * across renders.
+ */
+const SHARED_VIDEO_SECOND_SCREEN_SOURCE: ISecondScreenSource = { role: 'sharedvideo' };
 
 /**
  * The type of the React {@code Component} state of {@link Thumbnail}.
@@ -121,11 +129,6 @@ export interface IProps extends WithTranslation {
     _isActiveParticipant: boolean;
 
     /**
-     * Indicates whether audio only mode is enabled.
-     */
-    _isAudioOnly: boolean;
-
-    /**
      * Indicates whether the participant associated with the thumbnail is displayed on the large video.
      */
     _isCurrentlyOnLargeVideo: boolean;
@@ -139,6 +142,11 @@ export interface IProps extends WithTranslation {
      * Indicates whether the thumbnail should be hidden or not.
      */
     _isHidden: boolean;
+
+    /**
+     * Indicates whether audio only mode is enabled.
+     */
+    _isLowBandwidthMode: boolean;
 
     /**
      * Whether we are currently running in a mobile browser.
@@ -278,6 +286,23 @@ const defaultStyles = (theme: Theme) => {
 
         indicatorsBottomContainer: {
             bottom: 0
+        },
+
+        /**
+         * The shared-video thumbnail has no indicators row, so its second-screen
+         * trigger is placed on its own, where the menu trigger sits on the other
+         * thumbnails. Applied to the trigger itself rather than to a container
+         * around it: the trigger renders nothing at all where the feature is off,
+         * and an empty box here would still take the corner of a thumbnail that
+         * is itself the click target for pinning.
+         */
+        sharedVideoTopRight: {
+            position: 'absolute' as const,
+            top: 0,
+            right: 0,
+            padding: theme.spacing(1),
+            zIndex: 10,
+            display: 'flex'
         },
 
         indicatorsBackground: {
@@ -485,7 +510,7 @@ class Thumbnail extends Component<IProps, IState> {
      */
     _maybeSendScreenSharingIssueEvents(input: any) {
         const {
-            _isAudioOnly,
+            _isLowBandwidthMode,
             _isScreenSharing,
             _thumbnailType
         } = this.props;
@@ -495,7 +520,7 @@ class Thumbnail extends Component<IProps, IState> {
         if (!(DISPLAY_VIDEO === displayMode)
             && isTileType
             && _isScreenSharing
-            && !_isAudioOnly) {
+            && !_isLowBandwidthMode) {
             sendAnalytics(createScreenSharingIssueEvent({
                 source: 'thumbnail',
                 ...input
@@ -812,6 +837,8 @@ class Thumbnail extends Component<IProps, IState> {
      */
     _renderFakeParticipant() {
         const { _isMobile, _participant: { avatarURL, pinned, name } } = this.props;
+        const { isHovered } = this.state;
+        const classes = withStyles.getClasses(this.props);
         const styles = this._getStyles();
         const containerClassName = this._getContainerClassName();
 
@@ -839,6 +866,10 @@ class Thumbnail extends Component<IProps, IState> {
                         src = { avatarURL } />
                 )
                     : this._renderAvatar(styles.avatar)}
+                <SendToSecondScreenIcon
+                    className = { classes.sharedVideoTopRight }
+                    source = { SHARED_VIDEO_SECOND_SCREEN_SOURCE }
+                    visible = { isHovered } />
             </span>
         );
     }
@@ -1308,7 +1339,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         _disableTileEnlargement: Boolean(disableTileEnlargement),
         _isActiveParticipant: isActiveParticipant,
         _isHidden: isLocal && iAmRecorder && !iAmSipGateway,
-        _isAudioOnly: Boolean(state['features/base/audio-only'].enabled),
+        _isLowBandwidthMode: Boolean(state['features/base/low-bandwidth-mode'].enabled),
         _isCurrentlyOnLargeVideo: participantCurrentlyOnLargeVideo,
         _isDominantSpeakerDisabled: interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR,
         _isMobile,

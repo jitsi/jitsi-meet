@@ -78,6 +78,7 @@ export interface IParticipantFeatures {
     'room'?: boolean | string;
     'screen-sharing'?: boolean | string;
     'send-groupchat'?: boolean | string;
+    'send-private-message'?: boolean | string;
     'sip-inbound-call'?: boolean | string;
     'sip-outbound-call'?: boolean | string;
     'transcription'?: boolean | string;
@@ -92,9 +93,13 @@ export interface IJitsiParticipant {
     getDisplayName: () => string;
     getId: () => string;
     getJid: () => string;
+    getProperty: (name: string) => any;
     getRole: () => string;
     getSources: () => Map<string, Map<string, ISourceInfo>>;
+    isAudioMuted: () => boolean;
     isHidden: () => boolean;
+    isHiddenFromRecorder: () => boolean;
+    isVideoMuted: () => boolean;
 }
 
 export type ParticipantFeaturesKey = keyof IParticipantFeatures;

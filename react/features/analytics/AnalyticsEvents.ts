@@ -98,9 +98,9 @@ export function createApiEvent(action: string, attributes = {}) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createAudioOnlyChangedEvent(enabled: boolean) {
+export function createLowBandwidthModeChangedEvent(enabled: boolean) {
     return {
-        action: `audio.only.${enabled ? 'enabled' : 'disabled'}`
+        action: `low.bandwidth.mode.${enabled ? 'enabled' : 'disabled'}`
     };
 }
 
@@ -685,9 +685,9 @@ export function createShortcutEvent(
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createStartAudioOnlyEvent(audioOnly: boolean) {
+export function createStartLowBandwidthModeEvent(audioOnly: boolean) {
     return {
-        action: 'start.audio.only',
+        action: 'start.low.bandwidth.mode',
         attributes: {
             enabled: audioOnly
         }
@@ -954,5 +954,34 @@ export function createOpenWhiteboardEvent() {
 export function createRestrictWhiteboardEvent() {
     return {
         action: 'whiteboard.restrict'
+    };
+}
+
+/**
+ * Creates an event with the startup configuration the V2 virtual background engine is running with.
+ *
+ * @param {Object} attributes - The detected and applied tier, backend, pipeline, compositor and
+ * segmentation size.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createVirtualBackgroundV2StartedEvent(attributes: Object) {
+    return {
+        action: 'started',
+        actionSubject: 'virtual.background.v2',
+        attributes
+    };
+}
+
+/**
+ * Creates an event which indicates that the V2 virtual background engine failed to start.
+ *
+ * @param {Object} attributes - The requested startup configuration and the error.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createVirtualBackgroundV2FailedEvent(attributes: Object) {
+    return {
+        action: 'failed',
+        actionSubject: 'virtual.background.v2',
+        attributes
     };
 }

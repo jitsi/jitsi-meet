@@ -1,3 +1,11 @@
+-- USAGE / DEPLOYMENT
+--   This endpoint has no authentication and returns the TURN credentials
+--   configured in external_services. It is meant to be used only by trusted
+--   internal services over a controlled network path. It is NOT safe to make
+--   it publicly accessible: do not proxy it from the public web server
+--   (nginx) and do not expose Prosody's HTTP ports (5280/5281) to the
+--   internet. Restrict access at the web server or with network filters.
+--
 -- http endpoint to expose turn credentials for other services
 -- Copyright (C) 2023-present 8x8, Inc.
 

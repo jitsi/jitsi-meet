@@ -5,7 +5,7 @@ import { createTestContext } from './helpers/test_context.js';
 import { isAvailablePresence } from './helpers/xmpp_utils.js';
 
 const MUC = 'conference.localhost';
-const PROSODY_CFG = '/etc/prosody/prosody.cfg.lua';
+const PROSODY_CFG = '/etc/prosody/cfg/conference.cfg.lua';
 
 let _roomCounter = 0;
 const room = () => `validate-${++_roomCounter}@${MUC}`;

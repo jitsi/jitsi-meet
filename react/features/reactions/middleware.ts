@@ -38,6 +38,7 @@ import {
 import {
     ENDPOINT_REACTION_NAME,
     IMuteCommandAttributes,
+    MAX_REACTIONS_QUEUE_SIZE,
     MUTE_REACTIONS_COMMAND,
     RAISE_HAND_SOUND_ID,
     REACTIONS,
@@ -150,7 +151,9 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
                     dispatch(playSound(`${REACTIONS[reaction.reaction].soundId}${reaction.threshold}`))
                 );
             }
-            dispatch(setReactionQueue([ ...queue, ...getReactionsWithId(reactions) ]));
+            dispatch(setReactionQueue(
+                [ ...queue, ...getReactionsWithId(reactions) ].slice(-MAX_REACTIONS_QUEUE_SIZE)
+            ));
         });
         break;
     }

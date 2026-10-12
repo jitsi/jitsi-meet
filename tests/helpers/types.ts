@@ -45,10 +45,21 @@ export type IContext = {
 };
 
 export type IParticipantOptions = {
+    /**
+     * The browser session to bind the participant to. When omitted, the multiremote instance named `name`
+     * (one of p1..p6) is used. Set it for participants created outside the multiremote setup, such as
+     * load-test participants that have their own sessions or share one via tabs.
+     */
+    driver?: WebdriverIO.Browser;
     /** Whether it should use the iFrame API. */
     iFrameApi?: boolean;
-    /** Determines the browser instance to use. */
-    name: 'p1' | 'p2' | 'p3' | 'p4' | 'p5' | 'p6';
+    /**
+     * Whether the participant runs the lightweight load-test client (lib-jitsi-meet only, no UI) instead of
+     * the full Jitsi Meet application. UI-only steps (prejoin, styling, dialogs) are skipped for such participants.
+     */
+    loadTest?: boolean;
+    /** Determines the browser instance to use. Regular tests use p1..p6, load tests use generated names. */
+    name: string;
     /** An optional token to use. */
     token?: IToken;
 };

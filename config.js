@@ -89,6 +89,12 @@ var config = {
         // Enables use of getDisplayMedia in electron
         // electronUseGetDisplayMedia: false,
 
+        // Removes AV1 from the codec list on Firefox so that it is not advertised and other endpoints do not send
+        // it. Firefox stalls on AV1 streams that carry spatial layers, see
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=2071030. Note: enableAV1ForFF only changes what Firefox
+        // encodes, this also stops it being sent to Firefox.
+        // disableAV1DecodeForFF: false,
+
         // Enables AV1 codec for FF. Note: By default it is disabled.
         // enableAV1ForFF: false,
 
@@ -206,7 +212,7 @@ var config = {
 
     // Start the conference in audio only mode (no video is being received nor
     // sent).
-    // startAudioOnly: false,
+    // startLowBandwidthMode: false,
 
     // Every participant after the Nth will start audio muted.
     // startAudioMuted: 10,
@@ -226,10 +232,24 @@ var config = {
     // Beware, by doing so, you are disabling echo cancellation, noise suppression and AGC.
     // Specify enableOpusDtx to enable support for opus-dtx where
     // audio packets won’t be transmitted while participant is silent or muted.
+    // Specify enableAdvancedAudioSettings to show advanced audio settings (custom mic
+    // constraints) in the device selection dialog. Enabled by default; not available on
+    // WebKit-based browsers.
     // audioQuality: {
     //     stereo: false,
     //     opusMaxAverageBitrate: null, // Value to fit the 6000 to 510000 range.
     //     enableOpusDtx: false,
+    //     enableAdvancedAudioSettings: true,
+    // },
+
+    // Audio translation feature (requires bridge backend support).
+    // audioTranslation: {
+    //     enabled: false,
+    //
+    //     // Volume (0..1) a speaker's original audio is ducked to while its translation plays.
+    //     // Defaults to 0.15. Ignored on iOS, where the original is muted instead because the
+    //     // element volume cannot be lowered there.
+    //     duckedVolume: 0.15,
     // },
 
     // Noise suppression configuration. By default rnnoise is used. Optionally Krisp
@@ -537,7 +557,16 @@ var config = {
     //
     //     // When the backend provides diarization by setting a "speaker" field, append [Speaker N] for transcription
     //     // events from non-0 speakers.
-    //     renderTranscriptDetails: false
+    //     renderTranscriptDetails: false,
+    //
+    //     // Requests that the transcriber diarize (split by speaker) this participant's own audio, i.e. label
+    //     // segments as coming from different speakers. Enable it only for endpoints that genuinely carry
+    //     // multiple speakers on a single audio stream (conference-room systems, dial-in/PSTN legs); on a
+    //     // normal single-person stream a diarizer can spuriously split one talker into several speakers.
+    //     // The flag is advertised to jicofo in MUC presence and takes effect only at join time (it must be
+    //     // set before joining, e.g. via this config or the #config.transcription.diarize=true URL override;
+    //     // toggling it mid-call has no effect). Defaults to false.
+    //     diarize: false
 
     // },
 
@@ -585,7 +614,6 @@ var config = {
     //          ultraHd: 4000000,
     //          ssHigh: 2500000
     //      },
-    //      scalabilityModeEnabled: true,
     //      useSimulcast: false,
     //      useKSVC: true
     //    },
@@ -597,8 +625,7 @@ var config = {
     //          fullHd: 3000000,
     //          ultraHd: 6000000,
     //          ssHigh: 2500000
-    //      },
-    //      scalabilityModeEnabled: true
+    //      }
     //    },
     //    vp8: {
     //      maxBitratesVideo: {
@@ -608,8 +635,7 @@ var config = {
     //          fullHd: 3000000,
     //          ultraHd: 6000000,
     //          ssHigh: 2500000
-    //      },
-    //      scalabilityModeEnabled: false
+    //      }
     //    },
     //    vp9: {
     //      maxBitratesVideo: {
@@ -620,7 +646,6 @@ var config = {
     //          ultraHd: 5000000,
     //          ssHigh: 2500000
     //      },
-    //      scalabilityModeEnabled: true,
     //      useSimulcast: false,
     //      useKSVC: true
     //    },
@@ -668,6 +693,16 @@ var config = {
     // Enables forced reload of the client when the call is migrated as a result of
     // the bridge going down.
     // enableForcedReload: true,
+
+    // Enables in-place ICE restarts of the bridge connection (e.g. after a network change), instead of the
+    // legacy recovery flow which re-creates the whole media session. Requires support in jitsi-videobridge
+    // (default: disabled).
+    // enableIceRestart: false,
+
+    // Whether an in-place ICE restart is requested proactively when the device changes network (mobile only),
+    // instead of waiting for ICE to fail. Only has an effect when 'enableIceRestart' is enabled
+    // (default: enabled).
+    // enableIceRestartOnNetworkChange: true,
 
     // Use TURN/UDP servers for the jitsi-videobridge connection (by default
     // we filter out TURN/UDP because it is usually not needed since the
@@ -794,6 +829,31 @@ var config = {
 
     // The client id for the google APIs used for the calendar integration, youtube livestreaming, etc.
     // googleApiApplicationClientID: '<client_id>',
+
+    // Picture-in-Picture configuration.
+    // pip: {
+    //     // Enable Picture-in-Picture for browser meetings. Opt-in, defaults to false.
+    //     enableBrowserPiP: false,
+    //     // Disable Picture-in-Picture entirely. Defaults to false.
+    //     disabled: false,
+    //     // Allow Picture-in-Picture on the prejoin page. Defaults to false.
+    //     showOnPrejoin: false,
+    //     // Show the Picture-in-Picture toolbar button when supported. Defaults to true.
+    //     showToolbarButton: true,
+    //     documentPiP: {
+    //         windowOptions: {
+    //             // Hide the browser control that returns to the opener. Defaults to false.
+    //             disallowReturnToOpener: false,
+    //             // Initial window height in pixels. Defaults to 160.
+    //             height: 160,
+    //             // Prefer the default initial placement instead of reusing the previous position and size.
+    //             // Defaults to false.
+    //             preferInitialWindowPlacement: false,
+    //             // Initial window width in pixels. Defaults to 284.
+    //             width: 284
+    //         }
+    //     }
+    // },
 
     // Configs for prejoin page.
     // prejoinConfig: {
@@ -1042,6 +1102,21 @@ var config = {
     // An array with custom option buttons for the toolbar
     // type:  Array<{ icon: string; id: string; text: string; backgroundColor?: string; }>
     // customToolbarButtons: [],
+
+    // The custom panel (AI Assist), rendered in a side panel on web and on its own screen
+    // on mobile. It needs `enabled`, `url`, `advisorAvailabilityUrl` and a JWT.
+    // `url` has no default: without one the panel stays hidden on both platforms.
+    // `advisorAvailabilityUrl` is called after joining with the JWT and the meeting id; the
+    // button shows only if it confirms an advisor is deployed for the meeting.
+    // Both can also come from `customPanelUrl: { url, advisorAvailabilityUrl }` in the
+    // dynamic branding data, which takes precedence over the values set here.
+    // NOTE: `url` and `advisorAvailabilityUrl` cannot be overwritten through
+    // `configOverwrite`, because both receive the meeting JWT. Only `enabled` is whitelisted.
+    // customPanel: {
+    //     enabled: false,
+    //     url: 'https://example.com/ai-assist',
+    //     advisorAvailabilityUrl: 'https://example.com/advisor-resolve',
+    // },
 
     // Stats
     //
@@ -1409,6 +1484,9 @@ var config = {
         logoClickUrl: 'https://example-company.org',
         // The url used for the image used as logo
         logoImageUrl: 'https://example.com/logo-img.png',
+        // The url loaded in the custom panel (AI Assist). It overwrites `customPanel.url`
+        // from this file. The panel also needs `customPanel.enabled` set to true.
+        customPanelUrl: 'https://example.com/ai-assist',
         // Endpoint that enables support for salesforce integration with in-meeting resource linking
         // This is required for:
         // listing the most recent records - salesforceUrl/records/recents
@@ -1426,11 +1504,13 @@ var config = {
         // Object containing customized icons that should replace the default ones.
         // The keys need to be the exact same icon names used in here:
         // https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/icons/svg/index.ts
+        // The values are either URLs of svg files or the svg xml markup itself. Inline markup is
+        // applied without any extra request, so the icons show up faster.
         // To avoid having the icons trimmed or displayed in an unexpected way, please provide svg
-        // files containing svg xml icons in the size that the default icons come in.
+        // xml icons in the size that the default icons come in.
         customIcons: {
             IconArrowUp: 'https://example.com/arrow-up.svg',
-            IconDownload: 'https://example.com/download.svg',
+            IconDownload: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">...</svg>',
             IconRemoteControlStart: 'https://example.com/remote-start.svg',
         },
         // Object containing a theme's properties. It also supports partial overwrites of the main theme.
@@ -1620,6 +1700,11 @@ var config = {
 
     // Hides the participants stats
     // hideParticipantsStats: true,
+
+    // Hides the warning which is shown when the server signals that this client does not advertise a capability that
+    // the deployment expects (i.e. that the client needs an update). The error which is shown when the client is not
+    // allowed in the conference at all is always shown.
+    // hideMissingCapabilityWarnings: false,
 
     // Sets the conference subject
     // subject: 'Conference Subject',
@@ -1852,6 +1937,26 @@ var config = {
     // List of notifications to be disabled. Works in tandem with the above setting.
     // disabledNotifications: [],
 
+    // A notification shown to every user, with a button which opens a link. It is shown when the user joins a
+    // meeting, until the user clicks "Don't show again", and on the welcome page.
+    // systemWideUserNotification: {
+    //     // Identifies the notification. The users who chose not to see it again see it again when the id changes.
+    //     // Defaults to the url.
+    //     id: 'announcement-1',
+    //     // The link opened by the button.
+    //     url: 'https://example.com/announcement',
+    //     // The texts, by language code. A missing language or text falls back to English. The button and
+    //     // dontShowAgain texts have defaults.
+    //     labels: {
+    //         en: {
+    //             title: 'Things are changing',
+    //             description: 'Read about what is new.',
+    //             button: 'Learn more',
+    //             dontShowAgain: 'Don\'t show again',
+    //         },
+    //     },
+    // },
+
     // filmstrip: {
     //     // Disable the vertical/horizontal filmstrip.
     //     disabled: false,
@@ -1930,11 +2035,21 @@ var config = {
 
     // Meeting-pace timer shown in the conference info bar. It only appears
     // once a meeting duration is known — from a calendar event (calendar
-    // sync) or pushed at runtime via the `setMeetingTimer` iframe API
-    // command. With no such info nothing is shown, so it is enabled by
-    // default; set `enabled: false` to hide it even when that info exists.
+    // sync), the `mod_time_restricted` Prosody plugin, or pushed at runtime
+    // via the `setMeetingTimer` iframe API command. With no such info nothing
+    // is shown, so it is enabled by default; set `enabled: false` to hide it
+    // even when that info exists.
+    // `suppressForSeconds` keeps the countdown off screen for the first N
+    // seconds of the meeting even though the duration is already known, so it
+    // only appears once the meeting is far enough along to be worth pacing.
+    // It is measured from the meeting's scheduled start, not from when this
+    // participant joined, so everyone sees it appear at the same moment and a
+    // late joiner past the threshold sees it right away. 0 (the default)
+    // shows it as soon as the duration is known. It delays the countdown
+    // display only — the end-of-meeting notification is unaffected.
     // timeTimer: {
     //     enabled: true,
+    //     suppressForSeconds: 0,
     // },
 
     // Settings for the Excalidraw whiteboard integration.

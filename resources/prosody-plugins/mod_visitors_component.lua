@@ -22,7 +22,7 @@ local split_string = util.split_string;
 local new_id = require 'util.id'.medium;
 local uuid_generate = require 'util.uuid'.generate;
 local json = require 'cjson.safe';
-local inspect = require 'inspect';
+local serialize = require 'util.serialization'.new('debug');
 
 -- Debug flag
 local DEBUG = false;
@@ -302,7 +302,7 @@ local function stanza_handler(event)
     local request_promotion = visitors_iq:get_child('promotion-request');
     if request_promotion then
         if not from_vnode then
-            module:log('warn', 'Received forged request_promotion message: %s %s',stanza, inspect(room._connected_vnodes));
+            module:log('warn', 'Received forged request_promotion message: %s %s',stanza, serialize(room._connected_vnodes));
             return true; -- stop processing
         end
 
@@ -338,7 +338,7 @@ local function stanza_handler(event)
     if transcription_languages
         and (transcription_languages.attr.langs or transcription_languages.attr.count) then
         if not from_vnode then
-            module:log('warn', 'Received forged transcription_languages message: %s %s',stanza, inspect(room._connected_vnodes));
+            module:log('warn', 'Received forged transcription_languages message: %s %s',stanza, serialize(room._connected_vnodes));
             return true; -- stop processing
         end
 
@@ -363,6 +363,33 @@ local function stanza_handler(event)
         if processed then
             module:context(muc_domain_prefix..'.'..muc_domain_base)
                 :fire_event('room-metadata-changed', { room = room; });
+        end
+    end
+
+    -- A visitor (allowed via the transcription JWT feature, see mod_filter_iq_rayo's
+    -- 'jitsi-metadata-allow-moderation' hook) set 'recording' metadata (isTranscribingEnabled) on their
+    -- vnode's local mirrored room. Apply it to the real room here so jicofo (which only watches the main
+    -- room's metadata) sees it and starts async transcription.
+    local recording_metadata_el = visitors_iq:get_child('recording-metadata');
+    if recording_metadata_el then
+        if not from_vnode then
+            module:log('warn', 'Received forged recording_metadata message: %s %s',
+                stanza, serialize(room._connected_vnodes));
+            return true; -- stop processing
+        end
+
+        local data, decode_error = json.decode(recording_metadata_el:get_text());
+        if data then
+            if not room.jitsiMetadata then
+                room.jitsiMetadata = {};
+            end
+            room.jitsiMetadata.recording = data;
+            processed = true;
+
+            module:context(muc_domain_prefix..'.'..muc_domain_base)
+                :fire_event('room-metadata-changed', { room = room; });
+        else
+            module:log('error', 'Failed to decode recording metadata for room:%s error:%s', room.jid, decode_error);
         end
     end
 

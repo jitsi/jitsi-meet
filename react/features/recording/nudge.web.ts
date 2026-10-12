@@ -18,8 +18,7 @@ export function getNudge(scenario: 'recording' | 'transcription', dispatch: ISto
             descriptionText: `· ${i18next.t('recording.alsoTranscribe')}`,
             actionNameKey: 'dialog.startTranscribing',
             handler: () => dispatch(openDialog('RecordingTranscriptionDialog', RecordingTranscriptionDialog, {
-                recordAudioAndVideo: false,
-                initialTranscription: true
+                recordAudioAndVideo: false
             }))
         };
     }
@@ -27,8 +26,9 @@ export function getNudge(scenario: 'recording' | 'transcription', dispatch: ISto
     return {
         descriptionText: `· ${i18next.t('transcribing.alsoRecord')}`,
         actionNameKey: 'dialog.startRecording',
-        handler: () => dispatch(openDialog('RecordingTranscriptionDialog', RecordingTranscriptionDialog, {
-            initialRecording: true
-        }))
+
+        // recordAudioAndVideo defaults to true, which already puts the focus on the recording
+        // section, so nothing extra needs to be passed here.
+        handler: () => dispatch(openDialog('RecordingTranscriptionDialog', RecordingTranscriptionDialog))
     };
 }

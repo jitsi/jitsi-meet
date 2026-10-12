@@ -9,11 +9,12 @@ import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { StyleType } from '../../../base/styles/functions.native';
 import { TabBarLabelCounter } from '../../../mobile/navigation/components/TabBarLabelCounter';
 import { pollsStyles } from '../../../polls/components/native/styles';
-import { closeChat, sendMessage } from '../../actions.native';
+import { clearChatSearch, closeChat, sendMessage } from '../../actions.native';
 import { ChatTabs } from '../../constants';
 import { IChatProps as AbstractProps } from '../../types';
 
 import ChatInputBar from './ChatInputBar';
+import ChatSearchBar from './ChatSearchBar';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
 
@@ -71,6 +72,7 @@ class Chat extends Component<IProps> {
                 hasBottomTextInput = { true }
                 hasExtraHeaderHeight = { true }
                 style = { pollsStyles.pollPaneContainer as StyleType }>
+                <ChatSearchBar />
                 {/* @ts-ignore */}
                 <MessageContainer messages = { _messages } />
                 <MessageRecipient privateMessageRecipient = { privateMessageRecipient } />
@@ -143,7 +145,10 @@ export default translate(connect(_mapStateToProps)((props: IProps) => {
         });
 
         return () => {
-            isFocused && dispatch(closeChat());
+            if (isFocused) {
+                dispatch(closeChat());
+                dispatch(clearChatSearch());
+            }
         };
     }, [ isFocused, _unreadMessagesCount ]);
 

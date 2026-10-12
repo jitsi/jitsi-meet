@@ -1,7 +1,7 @@
 import { VIDEO_MUTE, createToolbarEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
-import { setAudioOnly } from '../base/audio-only/actions';
+import { setLowBandwidthMode } from '../base/low-bandwidth-mode/actions';
 import { setVideoMuted } from '../base/media/actions';
 import { VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
 
@@ -107,11 +107,11 @@ export function toggleToolboxVisible() {
 export function handleToggleVideoMuted(muted: boolean, showUI: boolean, ensureTrack: boolean) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const { enabled: audioOnly } = state['features/base/audio-only'];
+        const { enabled: audioOnly } = state['features/base/low-bandwidth-mode'];
 
         sendAnalytics(createToolbarEvent(VIDEO_MUTE, { enable: muted }));
         if (audioOnly) {
-            dispatch(setAudioOnly(false));
+            dispatch(setLowBandwidthMode(false));
         }
 
         dispatch(

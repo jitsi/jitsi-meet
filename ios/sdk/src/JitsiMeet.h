@@ -86,6 +86,10 @@ typedef NS_ENUM(NSInteger, WebRTCLoggingSeverity) {
 
 #pragma mark - Utility methods
 
+- (void)instantiateReactNative;
+
+- (void)destroyReactNative;
+
 - (JitsiMeetConferenceOptions *_Nonnull)getInitialConferenceOptions;
 
 - (BOOL)isCrashReportingDisabled;

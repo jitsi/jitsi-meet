@@ -81,6 +81,10 @@ module:hook("iq/full", function(event)
             room_name_header = headers["JvbRoomName"];
             room_pass_header = headers["JvbRoomPassword"];
             headers          = headers;
+            -- Raw serialized form of the stanza as util.stanza would write it
+            -- to the wire.  Used by JS tests to inspect the actual byte content
+            -- of forwarded attributes.
+            raw_xml          = tostring(stanza);
         });
     end
 end, 500);

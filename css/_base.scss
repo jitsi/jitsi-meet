@@ -44,6 +44,17 @@ body {
 }
 
 /**
+ * Hides everything on the page, including dialogs rendered straight into the body, while the dynamic
+ * branding is being applied, so the default look is never painted on branded deployments. Opacity
+ * rather than visibility so elements can still take focus meanwhile. Toggled by the dynamic-branding
+ * web middleware.
+ */
+body.dynamic-branding-pending > * {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/**
  * This will hide the focus indicator if an element receives focus via the mouse,
  * but it will still show up on keyboard focus, thus preserving accessibility.
  */

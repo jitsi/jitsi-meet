@@ -1,9 +1,11 @@
 import { IStore } from '../app/types';
 import { doGetJSON } from '../base/util/httpUtils';
+import { takePreloadedBranding } from '../preload/functions';
 
 import {
     SET_DYNAMIC_BRANDING_DATA,
     SET_DYNAMIC_BRANDING_FAILED,
+    SET_DYNAMIC_BRANDING_ICONS,
     SET_DYNAMIC_BRANDING_READY
 } from './actionTypes';
 import { getDynamicBrandingUrl } from './functions.any';
@@ -23,11 +25,11 @@ export function fetchCustomBrandingData() {
         const { customizationReady } = state['features/dynamic-branding'];
 
         if (!customizationReady) {
-            const url = await getDynamicBrandingUrl(state);
+            const url = getDynamicBrandingUrl(state);
 
             if (url) {
                 try {
-                    const res = await doGetJSON(url);
+                    const res = await fetchBrandingData(url);
 
                     return dispatch(setDynamicBrandingData(res));
                 } catch (err) {
@@ -43,6 +45,27 @@ export function fetchCustomBrandingData() {
 }
 
 /**
+ * Fetches the branding data from the given URL, reusing the response the preload script already
+ * started downloading for it when there is one.
+ *
+ * @param {string} url - The branding URL.
+ * @returns {Promise<Object>}
+ */
+async function fetchBrandingData(url: string): Promise<Object> {
+    const preloaded = takePreloadedBranding(url);
+
+    if (preloaded) {
+        try {
+            return await preloaded;
+        } catch (err) {
+            logger.warn('Preloaded branding data failed, fetching it again', err);
+        }
+    }
+
+    return doGetJSON(url);
+}
+
+/**
  * Action used to set the user customizations.
  *
  * @param {Object} value - The custom data to be set.
@@ -52,6 +75,19 @@ export function setDynamicBrandingData(value: Object) {
     return {
         type: SET_DYNAMIC_BRANDING_DATA,
         value
+    };
+}
+
+/**
+ * Action used to set the loaded branded icons.
+ *
+ * @param {Record<string, string>} icons - Map of icon name to sanitized SVG XML.
+ * @returns {Object}
+ */
+export function setDynamicBrandingIcons(icons: Record<string, string>) {
+    return {
+        type: SET_DYNAMIC_BRANDING_ICONS,
+        icons
     };
 }
 

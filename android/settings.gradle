@@ -1,11 +1,18 @@
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 include ':app', ':sdk'
 
 includeBuild('../node_modules/@react-native/gradle-plugin')
 
-// Project paths of every autolinked RN module included below.
-// sdk/build.gradle consumes this instead of hardcoding names that can drift.
+// Non-free RN modules, excluded when LIBRE_BUILD is set.
+def libreExcludedModules = [
+    '@amplitude/analytics-react-native',
+    '@giphy/react-native-sdk',
+    '@react-native-google-signin/google-signin'
+]
+
+// Autolinked RN module paths, consumed by sdk/build.gradle.
 gradle.ext.autolinkedProjects = []
 
 def autolinkingJson = file('build/generated/autolinking/autolinking.json')
@@ -15,6 +22,22 @@ if (!autolinkingJson.exists()) {
 }
 
 def json = new JsonSlurper().parseText(autolinkingJson.text)
+
+// Filtered here so the includes below and sdk/build.gradle's codegen agree.
+def autolinkingManifest = autolinkingJson
+if ((System.env.LIBRE_BUILD ?: 'false').toBoolean()) {
+    // Fail loudly if the list above was patched away.
+    if (libreExcludedModules.isEmpty()) {
+        throw new IllegalStateException('LIBRE_BUILD is set but libreExcludedModules is empty.')
+    }
+
+    libreExcludedModules.each { json.dependencies.remove(it) }
+
+    autolinkingManifest = file('build/generated/autolinking/autolinking-libre.json')
+    autolinkingManifest.text = JsonOutput.toJson(json)
+}
+gradle.ext.autolinkingManifest = autolinkingManifest
+
 json.dependencies.each { name, config ->
     if (config.platforms?.android?.sourceDir) {
 

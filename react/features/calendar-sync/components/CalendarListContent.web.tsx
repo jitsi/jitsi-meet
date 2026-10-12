@@ -7,19 +7,23 @@ import { appNavigate } from '../../app/actions.web';
 import { IReduxState, IStore } from '../../app/types';
 import MeetingsList from '../../base/react/components/web/MeetingsList';
 import { setCalendarTimerDuration } from '../../time-timer/actions';
+import { computeCalendarTimerDuration } from '../../time-timer/functions';
 
 import AddMeetingUrlButton from './AddMeetingUrlButton.web';
 import JoinButton from './JoinButton.web';
 
 /**
  * A calendar event, limited to the fields this component reads. Mirrors the
- * shape stored in {@code features/calendar-sync}: the dates are ISO strings.
+ * shape stored in {@code features/calendar-sync}: {@code startDate}/
+ * {@code endDate} are already epoch-millisecond numbers by the time an event
+ * reaches redux (parsed by {@code _parseCalendarEntry} in
+ * calendar-sync/functions.any.ts), not ISO strings.
  */
 interface ICalendarEvent {
     calendarId?: string;
-    endDate?: string;
+    endDate?: number;
     id?: string;
-    startDate?: string;
+    startDate?: number;
     title?: string;
     url?: string;
 }
@@ -138,14 +142,13 @@ class CalendarListContent extends Component<IProps> {
         // URL, so opening a meeting and bailing at prejoin cannot leak its
         // duration into a different meeting joined afterwards.
         const event: ICalendarEvent | undefined = this.props._eventList?.find(e => e.url === url);
-        const startUnix = event?.startDate ? Date.parse(event.startDate) : NaN;
-        const endUnix = event?.endDate ? Date.parse(event.endDate) : NaN;
+        const duration = computeCalendarTimerDuration(event);
 
-        if (!isNaN(startUnix) && !isNaN(endUnix) && endUnix > startUnix) {
+        if (duration) {
             this.props.dispatch(setCalendarTimerDuration(
-                Math.round((endUnix - startUnix) / 1000),
+                duration.durationSeconds,
                 {
-                    startTimeUnix: startUnix,
+                    startTimeUnix: duration.startTimeUnix,
                     url
                 }));
         } else {

@@ -4,12 +4,14 @@ import { Divider } from 'react-native-paper';
 import { connect, useSelector } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
+import AudioTranslationButton from '../../../audio-translation/components/native/AudioTranslationButton';
 import { hideSheet } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import SettingsButton from '../../../base/settings/components/native/SettingsButton';
 import BreakoutRoomsButton
     from '../../../breakout-rooms/components/native/BreakoutRoomsButton';
+import CustomPanelButton from '../../../custom-panel/components/native/CustomPanelButton';
 import SharedDocumentButton from '../../../etherpad/components/SharedDocumentButton.native';
 import ReactionMenu from '../../../reactions/components/native/ReactionMenu';
 import { shouldDisplayReactionsButtons } from '../../../reactions/functions.any';
@@ -30,8 +32,8 @@ import { getVisibleNativeButtons } from '../../functions.native';
 import { useNativeToolboxButtons } from '../../hooks.native';
 import { IToolboxNativeButton } from '../../types';
 
-import AudioOnlyButton from './AudioOnlyButton';
 import LinkToSalesforceButton from './LinkToSalesforceButton';
+import LowBandwidthModeButton from './LowBandwidthModeButton';
 import OpenCarmodeButton from './OpenCarmodeButton';
 import RaiseHandButton from './RaiseHandButton';
 
@@ -156,7 +158,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 renderFooter = { this._renderReactionMenu }>
                 <Divider style = { styles.divider as ViewStyle } />
                 <OpenCarmodeButton { ...topButtonProps } />
-                <AudioOnlyButton { ...buttonProps } />
+                <LowBandwidthModeButton { ...buttonProps } />
                 { this._renderRaiseHandButton(buttonProps) }
                 {/* @ts-ignore */}
                 <SecurityDialogButton { ...buttonProps } />
@@ -164,6 +166,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 <LiveStreamButton { ...buttonProps } />
                 <LinkToSalesforceButton { ...buttonProps } />
                 <WhiteboardButton { ...buttonProps } />
+                <CustomPanelButton { ...buttonProps } />
                 {/* @ts-ignore */}
                 <Divider style = { styles.divider as ViewStyle } />
                 {_isSharedVideoEnabled && <SharedVideoButton { ...buttonProps } />}
@@ -173,6 +176,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
                 {/* @ts-ignore */}
                 <Divider style = { styles.divider as ViewStyle } />
                 <ClosedCaptionButton { ...buttonProps } />
+                <AudioTranslationButton { ...buttonProps } />
                 <SharedDocumentButton { ...buttonProps } />
                 <SettingsButton { ...buttonProps } />
             </BottomSheet>

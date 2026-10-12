@@ -90,10 +90,7 @@ export default class FileSharingPanel extends BasePageObject {
      * @param {string} fileName - The file name to download.
      */
     async downloadFile(fileName: string): Promise<void> {
-        await this.hoverOverFileItem(fileName);
-        await this.participant.driver
-            .$(`button[aria-label="${DOWNLOAD_BUTTON_LABEL} ${fileName}"]`)
-            .click();
+        await this.clickFileActionButton(fileName, DOWNLOAD_BUTTON_LABEL);
     }
 
     /**
@@ -102,32 +99,35 @@ export default class FileSharingPanel extends BasePageObject {
      * @param {string} fileName - The file name to remove.
      */
     async removeFile(fileName: string): Promise<void> {
-        await this.hoverOverFileItem(fileName);
-        await this.participant.driver
-            .$(`button[aria-label="${REMOVE_BUTTON_LABEL} ${fileName}"]`)
-            .click();
+        await this.clickFileActionButton(fileName, REMOVE_BUTTON_LABEL);
     }
 
     /**
      * Returns whether the remove button exists in the DOM for the given file.
      * The remove button is only rendered when the participant has the 'file-upload' JWT feature.
      *
+     * Scoped to the file-sharing panel: the same FileItem is also rendered (with the same
+     * aria-labels) inside the chat panel's "user uploaded a file" notification, which stays in
+     * the DOM (just hidden) once the Files tab is selected. An unscoped selector can match that
+     * hidden copy instead of the real one.
+     *
      * @param {string} fileName - The file name.
      */
     canRemoveFile(fileName: string) {
         return this.participant.driver
-            .$(`button[aria-label="${REMOVE_BUTTON_LABEL} ${fileName}"]`)
+            .$(`#${FILE_SHARING_PANEL_ID} button[aria-label="${REMOVE_BUTTON_LABEL} ${fileName}"]`)
             .isExisting();
     }
 
     /**
-     * Returns whether the download button exists in the DOM for the given file.
+     * Returns whether the download button exists in the DOM for the given file. See
+     * canRemoveFile() for why this is scoped to the file-sharing panel.
      *
      * @param {string} fileName - The file name.
      */
     canDownloadFile(fileName: string) {
         return this.participant.driver
-            .$(`button[aria-label="${DOWNLOAD_BUTTON_LABEL} ${fileName}"]`)
+            .$(`#${FILE_SHARING_PANEL_ID} button[aria-label="${DOWNLOAD_BUTTON_LABEL} ${fileName}"]`)
             .isExisting();
     }
 
@@ -168,5 +168,38 @@ export default class FileSharingPanel extends BasePageObject {
      */
     private async hoverOverFileItem(fileName: string): Promise<void> {
         await this.participant.driver.$(`#${FILE_SHARING_PANEL_ID} [title="${fileName}"]`).moveTo();
+    }
+
+    /**
+     * Hovers over the file item and clicks one of its action buttons, retrying the hover if the
+     * button isn't clickable yet. A synthetic moveTo() does not always trigger the CSS :hover
+     * that reveals these buttons on the first attempt.
+     *
+     * The button is queried scoped to the file-sharing panel, not globally: the same FileItem
+     * (same aria-labels) is also rendered inside the chat panel's "user uploaded a file"
+     * notification, which stays in the DOM - just hidden - once the Files tab is selected. An
+     * unscoped selector can resolve to that hidden copy instead of the one just hovered, which
+     * can never become interactable no matter how long this retries.
+     *
+     * @param {string} fileName - The file name whose action button should be clicked.
+     * @param {string} label - The button's aria-label prefix (DOWNLOAD_BUTTON_LABEL or REMOVE_BUTTON_LABEL).
+     */
+    private async clickFileActionButton(fileName: string, label: string): Promise<void> {
+        await this.participant.driver.waitUntil(async () => {
+            try {
+                await this.hoverOverFileItem(fileName);
+                await this.participant.driver
+                    .$(`#${FILE_SHARING_PANEL_ID} button[aria-label="${label} ${fileName}"]`)
+                    .click();
+
+                return true;
+            } catch {
+                return false;
+            }
+        }, {
+            timeout: 10_000,
+            interval: 500,
+            timeoutMsg: `"${label}" button for "${fileName}" did not become clickable`
+        });
     }
 }

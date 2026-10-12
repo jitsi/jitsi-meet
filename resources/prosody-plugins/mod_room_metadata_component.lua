@@ -107,16 +107,24 @@ local blocked_metadata_keys = module:get_option_set('room_metadata_blocked_keys'
     'allownersEnabled',
     'asyncTranscription',
     'audioTranslationAvailable',
+    'audioTranslationListenerCounts',
+    'audioTranslationRequests',
     'conferencePresetsServiceEnabled',
     'dialinEnabled',
     'moderators',
     'participants',
     'participantsSoftLimit',
+    'recordingParams',
     'services',
     'transcriberType',
     'transcription',
     'visitorsEnabled',
 });
+
+-- Keys blocked by other modules, on top of the ones above. The table is shared
+-- across all hosts, so a module on any host can add to it no matter the load
+-- order, e.g. module:shared('/*/room_metadata/blocked_keys').myKey = true;
+local extra_blocked_metadata_keys = module:shared('/*/room_metadata/blocked_keys');
 
 module:log("info", "Starting room metadata for %s", muc_component_host);
 
@@ -192,6 +200,25 @@ function send_metadata(occupant, room, json_msg, include_services)
 
             metadata_to_send.participants = participants;
             metadata_to_send.moderators = moderators;
+
+            -- The aggregated live-translation request map is for jicofo only.
+            -- It is kept on room._data (never in jitsiMetadata) so it is never
+            -- broadcast to regular clients.
+            metadata_to_send.audioTranslationRequests = room._data.audioTranslationRequests;
+
+            -- Neutral, default-open extension point: an external module may contribute
+            -- additional jicofo-only metadata fields by returning a table from this
+            -- event -- for instance per-room translator connect headers. Fired inside
+            -- the admin branch, so injected fields reach only jicofo and are never
+            -- broadcast to client occupants. No handler means nothing is added; this
+            -- module holds no token/entitlement logic of its own.
+            local admin_extra = main_muc_module and main_muc_module:fire_event(
+                'jitsi-room-metadata-admin-extra', { room = room; });
+            if type(admin_extra) == 'table' then
+                for k, v in pairs(admin_extra) do
+                    metadata_to_send[k] = v;
+                end
+            end
 
             module:log('info', 'Sending metadata to jicofo room=%s,meeting_id=%s', room.jid, room._data.meetingId);
         else
@@ -325,7 +352,7 @@ function on_message(event)
         end
     end
 
-    if blocked_metadata_keys:contains(jsonData.key) then
+    if blocked_metadata_keys:contains(jsonData.key) or extra_blocked_metadata_keys[jsonData.key] then
         module:log('warn', 'Occupant %s attempted to set blocked metadata key "%s" in room:%s',
             from, jsonData.key, room.jid);
         return false;

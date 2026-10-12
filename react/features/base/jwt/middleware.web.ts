@@ -39,7 +39,7 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
                 locationURL,
                 {
                     audioMuted: false,
-                    audioOnlyEnabled: false,
+                    lowBandwidthModeEnabled: false,
                     skipPrejoin: true,
                     videoMuted: false
                 },

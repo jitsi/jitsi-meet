@@ -104,7 +104,12 @@ describe('Virtual backgrounds', () => {
         expect(await vbDialog.isBlurChecked()).toBe(false);
 
         await vbDialog.confirm();
-        await waitForEffectEnabled(true);
+
+        // This is the first real (non-preview) effect enable in the suite, so — like
+        // "select full blur" below — it pays the cold-start cost of spinning up the
+        // segmentation worker on the actual conference track. The default 8s timeout is
+        // tuned for a warm worker and flakes on this one.
+        await waitForEffectEnabled(true, 15000);
 
         const state = await getVBState();
 

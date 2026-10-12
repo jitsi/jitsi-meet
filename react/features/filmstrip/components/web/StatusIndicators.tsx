@@ -39,7 +39,7 @@ interface IProps {
     /**
      * The ID of the participant for which the status bar is rendered.
      */
-    participantID: String;
+    participantID: string;
 
     /**
      * The type of thumbnail.

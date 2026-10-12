@@ -26,6 +26,7 @@ import { setGifMenuVisibility } from '../gifs/actions';
 import { isGifEnabled } from '../gifs/function.any';
 import InviteButton from '../invite/components/add-people-dialog/web/InviteButton';
 import { registerShortcut, unregisterShortcut } from '../keyboard-shortcuts/actions';
+import { areCtrlAltReactionShortcutsEnabled } from '../keyboard-shortcuts/functions';
 import { useKeyboardShortcutsButton } from '../keyboard-shortcuts/hooks';
 import NoiseSuppressionButton from '../noise-suppression/components/NoiseSuppressionButton';
 import {
@@ -37,6 +38,7 @@ import {
     isParticipantsPaneEnabled
 } from '../participants-pane/functions';
 import { useParticipantPaneButton } from '../participants-pane/hooks.web';
+import { usePipToggleButton } from '../pip/hooks';
 import { usePollsButton } from '../polls/hooks.web';
 import { addReactionToBuffer } from '../reactions/actions.any';
 import { toggleReactionsMenuVisibility } from '../reactions/actions.web';
@@ -311,6 +313,7 @@ export function useToolboxButtons(
     const _help = useHelpButton();
     const _invite = useInviteButton();
     const customPanel = useCustomPanelButton();
+    const togglePiPButton = usePipToggleButton();
 
     const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
         microphone,
@@ -324,6 +327,7 @@ export function useToolboxButtons(
         invite: _invite,
         tileview,
         'toggle-camera': toggleCameraButton,
+        'toggle-pip': togglePiPButton,
         videoquality: videoQuality,
         fullscreen: _fullscreen,
         security,
@@ -377,6 +381,7 @@ export function useToolboxButtons(
 
 export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
     const dispatch = useDispatch();
+    const _ctrlAltReactionShortcutsEnabled = useSelector(areCtrlAltReactionShortcutsEnabled);
     const _isSpeakerStatsDisabled = useSelector(isSpeakerStatsDisabled);
     const _isParticipantsPaneEnabled = useSelector(isParticipantsPaneEnabled);
     const _shouldDisplayReactionsButtons = useSelector(shouldDisplayReactionsButtons);
@@ -628,6 +633,16 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
                     handler: shortcut.exec,
                     helpDescription: shortcut.helpDescription
                 }));
+
+                if (_ctrlAltReactionShortcutsEnabled) {
+                    dispatch(registerShortcut({
+                        alt: true,
+                        character: shortcut.character,
+                        ctrl: true,
+                        handler: shortcut.exec,
+                        helpDescription: shortcut.helpDescription
+                    }));
+                }
             });
 
             if (gifsEnabled) {
@@ -652,11 +667,17 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
 
             if (_shouldDisplayReactionsButtons) {
                 Object.keys(REACTIONS).map(key => REACTIONS[key].shortcutChar)
-                    .forEach(letter =>
-                        dispatch(unregisterShortcut(letter, true)));
+                    .forEach(letter => {
+                        dispatch(unregisterShortcut(letter, true));
+
+                        if (_ctrlAltReactionShortcutsEnabled) {
+                            dispatch(unregisterShortcut(letter, true, true));
+                        }
+                    });
             }
         };
     }, [
+        _ctrlAltReactionShortcutsEnabled,
         _shouldDisplayReactionsButtons,
         chatOpen,
         desktopSharingButtonDisabled,

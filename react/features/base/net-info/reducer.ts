@@ -5,6 +5,7 @@ import { assign } from '../redux/functions';
 
 import { SET_NETWORK_INFO, _STORE_NETWORK_INFO_CLEANUP } from './actionTypes';
 import { STORE_NAME } from './constants';
+import { NetworkInfo } from './types';
 
 const DEFAULT_STATE = {
     isOnline: true
@@ -13,7 +14,7 @@ const DEFAULT_STATE = {
 export interface INetInfoState {
     _cleanup?: Function;
     cellularGeneration?: NetInfoCellularGeneration;
-    details?: Object;
+    details?: NetworkInfo['details'];
     isOnline?: boolean;
     networkType?: NetInfoStateType;
 }

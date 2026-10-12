@@ -27,8 +27,7 @@
 // Audio mode
 typedef enum {
     kAudioModeDefault,
-    kAudioModeAudioCall,
-    kAudioModeVideoCall
+    kAudioModeInCall
 } JitsiMeetAudioMode;
 
 // Events
@@ -52,8 +51,7 @@ static NSString * const kDeviceTypeUnknown    = @"UNKNOWN";
 @implementation AudioMode {
     JitsiMeetAudioMode activeMode;
     RTCAudioSessionConfiguration *defaultConfig;
-    RTCAudioSessionConfiguration *audioCallConfig;
-    RTCAudioSessionConfiguration *videoCallConfig;
+    RTCAudioSessionConfiguration *inCallConfig;
     RTCAudioSessionConfiguration *earpieceConfig;
     BOOL audioDisabled;
     BOOL forceSpeaker;
@@ -75,9 +73,8 @@ RCT_EXPORT_MODULE();
 - (NSDictionary *)constantsToExport {
     return @{
         @"DEVICE_CHANGE_EVENT": kDevicesChanged,
-        @"AUDIO_CALL" : [NSNumber numberWithInt: kAudioModeAudioCall],
-        @"DEFAULT"    : [NSNumber numberWithInt: kAudioModeDefault],
-        @"VIDEO_CALL" : [NSNumber numberWithInt: kAudioModeVideoCall]
+        @"DEFAULT" : [NSNumber numberWithInt: kAudioModeDefault],
+        @"IN_CALL" : [NSNumber numberWithInt: kAudioModeInCall]
     };
 };
 
@@ -95,15 +92,10 @@ RCT_EXPORT_MODULE();
         defaultConfig.categoryOptions = 0;
         defaultConfig.mode = AVAudioSessionModeDefault;
 
-        audioCallConfig = [[RTCAudioSessionConfiguration alloc] init];
-        audioCallConfig.category = AVAudioSessionCategoryPlayAndRecord;
-        audioCallConfig.categoryOptions = AVAudioSessionCategoryOptionAllowBluetooth | AVAudioSessionCategoryOptionDefaultToSpeaker;
-        audioCallConfig.mode = AVAudioSessionModeVoiceChat;
-
-        videoCallConfig = [[RTCAudioSessionConfiguration alloc] init];
-        videoCallConfig.category = AVAudioSessionCategoryPlayAndRecord;
-        videoCallConfig.categoryOptions = AVAudioSessionCategoryOptionAllowBluetooth;
-        videoCallConfig.mode = AVAudioSessionModeVideoChat;
+        inCallConfig = [[RTCAudioSessionConfiguration alloc] init];
+        inCallConfig.category = AVAudioSessionCategoryPlayAndRecord;
+        inCallConfig.categoryOptions = AVAudioSessionCategoryOptionAllowBluetooth;
+        inCallConfig.mode = AVAudioSessionModeVideoChat;
 
         // Manually routing audio to the earpiece doesn't quite work unless one disables BT (weird, I know).
         earpieceConfig = [[RTCAudioSessionConfiguration alloc] init];
@@ -336,12 +328,10 @@ RCT_EXPORT_METHOD(updateDeviceList) {
     }
 
     switch (mode) {
-        case kAudioModeAudioCall:
-            return audioCallConfig;
         case kAudioModeDefault:
             return defaultConfig;
-        case kAudioModeVideoCall:
-            return videoCallConfig;
+        case kAudioModeInCall:
+            return inCallConfig;
         default:
             return nil;
     }

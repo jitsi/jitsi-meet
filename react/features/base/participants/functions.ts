@@ -1,7 +1,7 @@
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
 import { IReduxState, IStore } from '../../app/types';
-import { isVisitorChatParticipant } from '../../chat/functions';
+import { isSendPrivateChatDisabled, isVisitorChatParticipant } from '../../chat/functions';
 import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { isAddPeopleEnabled, isDialOutEnabled } from '../../invite/functions';
 import { toggleShareDialog } from '../../share-room/actions';
@@ -785,6 +785,13 @@ export function isPrivateChatEnabled(
     const isLocal = !isVisitorChatParticipant(participant) && participant?.local;
 
     if (isLocal && !checkSelf) {
+        return false;
+    }
+
+    // The moderator restricted private messages for this room and the local
+    // participant does not hold the permission that lifts the restriction. The
+    // server applies the same check, this only keeps the controls out of the UI.
+    if (isSendPrivateChatDisabled(state)) {
         return false;
     }
 

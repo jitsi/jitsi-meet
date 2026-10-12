@@ -35,7 +35,7 @@ const DEFAULT_STATE: ISettingsState = {
     soundsParticipantLeft: true,
     soundsTalkWhileMuted: true,
     soundsReactions: true,
-    startAudioOnly: false,
+    startLowBandwidthMode: false,
     startCarMode: false,
     startWithAudioMuted: false,
     startWithVideoMuted: false,
@@ -44,6 +44,7 @@ const DEFAULT_STATE: ISettingsState = {
     userSelectedMicDeviceId: undefined,
     userSelectedAudioOutputDeviceLabel: undefined,
     userSelectedCameraDeviceLabel: undefined,
+    userSelectedLanguage: undefined,
     userSelectedNotifications: {
         'notify.chatMessages': true
     },
@@ -81,14 +82,15 @@ export interface ISettingsState {
     soundsParticipantLeft?: boolean;
     soundsReactions?: boolean;
     soundsTalkWhileMuted?: boolean;
-    startAudioOnly?: boolean;
     startCarMode?: boolean;
+    startLowBandwidthMode?: boolean;
     startWithAudioMuted?: boolean;
     startWithVideoMuted?: boolean;
     userSelectedAudioOutputDeviceId?: string;
     userSelectedAudioOutputDeviceLabel?: string;
     userSelectedCameraDeviceId?: string;
     userSelectedCameraDeviceLabel?: string;
+    userSelectedLanguage?: string;
     userSelectedMicDeviceId?: string;
     userSelectedMicDeviceLabel?: string;
     userSelectedNotifications?: {

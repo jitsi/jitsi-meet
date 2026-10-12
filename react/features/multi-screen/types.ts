@@ -13,14 +13,19 @@ export interface ISecondScreenSource {
     media?: 'camera' | 'desktop';
 
     /**
-     * The id of an explicitly pinned participant to render.
+     * The id of an explicitly pinned participant to render. On its own it
+     * selects the stage layout with that participant featured; combined with
+     * {@code role: 'screenshare'} it names which screenshare to render, so a
+     * specific one can be shown full-bleed when several are live at once.
      */
     participant?: string;
 
     /**
-     * A role to follow: the active-speaker stage, or the current screenshare.
+     * What the window shows: the active-speaker stage, a screenshare, a tile
+     * grid of every participant, the shared whiteboard, or the video (e.g.
+     * YouTube) shared in the meeting.
      */
-    role?: 'stage' | 'screenshare';
+    role?: 'stage' | 'screenshare' | 'tile' | 'whiteboard' | 'sharedvideo';
 }
 
 /**
@@ -44,6 +49,15 @@ export interface ISecondScreenEntry {
      * reported by the Window Management API.
      */
     screenId?: number;
+
+    /**
+     * When this entry's source was last set. Used to pick which of the in-app
+     * windows to take over once every screen already has one (the least
+     * recently targeted). Absent for an entry configured by dispatching the
+     * raw action rather than through {@code setSecondScreen}, which counts as
+     * the oldest.
+     */
+    setAt?: number;
 
     /**
      * What the window renders.

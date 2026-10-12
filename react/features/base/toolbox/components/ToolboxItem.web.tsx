@@ -74,10 +74,11 @@ export default class ToolboxItem extends AbstractToolboxItem<IProps> {
         const {
             backgroundColor,
             contextMenu,
-            isMenuButton,
             disabled,
+            disableTooltip,
             elementAfter,
             icon,
+            isMenuButton,
             onClick,
             onKeyDown,
             showLabel,
@@ -99,7 +100,7 @@ export default class ToolboxItem extends AbstractToolboxItem<IProps> {
         };
 
         const elementType = showLabel ? 'li' : 'div';
-        const useTooltip = this.tooltip && this.tooltip.length > 0;
+        const useTooltip = !disableTooltip && this.tooltip && this.tooltip.length > 0;
 
         if (contextMenu) {
             return (

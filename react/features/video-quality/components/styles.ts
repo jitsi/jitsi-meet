@@ -12,7 +12,7 @@ export default createStyleSheet({
     /**
      * Style for the audio-only indicator.
      */
-    indicatorAudioOnly: {
+    indicatorLowBandwidthMode: {
         backgroundColor: AUD_LABEL_COLOR,
         borderRadius: BaseTheme.shape.borderRadius,
         height: 32

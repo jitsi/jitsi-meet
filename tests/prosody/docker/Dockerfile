@@ -21,9 +21,7 @@ USER root
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         lua-cjson \
-        lua-inspect \
         lua-luaossl \
-    && mv /usr/share/lua/5.3/inspect.lua /usr/share/lua/5.4/ \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy luarocks-installed pure-Lua libs from builder.
@@ -33,11 +31,8 @@ COPY --from=builder /usr/local/share/lua/5.4 /usr/local/share/lua/5.4
 # The tests/ directory is also copied but Prosody only loads explicitly named modules.
 COPY --chown=prosody:prosody resources/prosody-plugins/ /opt/prosody-jitsi-plugins/
 
-# inspect.lua is required by several Jitsi plugins for debug logging.
-# Provide a minimal stub so those modules load without needing luarocks.
-COPY --chown=prosody:prosody tests/prosody/docker/inspect.lua /opt/prosody-jitsi-plugins/inspect.lua
-
 COPY --chown=prosody:prosody tests/prosody/docker/prosody.cfg.lua /etc/prosody/prosody.cfg.lua
+COPY --chown=prosody:prosody tests/prosody/docker/cfg/ /etc/prosody/cfg/
 
 # Test ASAP public keys — served by mod_test_observer_http for RS256 token verification tests.
 # Two separate key pairs are used: one for login tokens (mod_auth_token) and one for system

@@ -91,26 +91,37 @@ export function getLocalizedDateFormatter(dateOrTimeStamp: Date | number) {
 }
 
 /**
- * Returns a localized duration formatter initialized with a
- * specific duration ({@code number}).
+ * Formats a duration in milliseconds as a human-readable timer string.
+ *
+ * Output depends on length.
+ * - Under 1 hour: {@code MM:SS}
+ * - 1 hour or more (under 1 day): {@code H:MM:SS}
+ * - 1 day or more: {@code Dd HH:MM:SS}.
  *
  * @private
- * @param {number} duration - The duration (ms)
- * to format.
- * @returns {Object}
+ * @param {number} duration - The duration in milliseconds to format.
+ * @returns {string} The formatted duration string.
  */
 export function getLocalizedDurationFormatter(duration: number) {
-    // If the conference is under an hour long we want to display it without
-    // showing the hour and we want to include the hour if the conference is
-    // more than an hour long
+    // Format duration with increasing precision by length: MM:SS under an hour,
+    // H:MM:SS from one hour up, and Dd HH:MM:SS once the duration reaches a day.
 
     const d = dayjs.duration(duration);
+    const totalDays = Math.floor(d.asDays());
+    const hours = d.hours();
+    const minutes = d.minutes();
+    const seconds = d.seconds();
 
-    if (d.hours() !== 0) {
-        return d.format('H:mm:ss');
+    const pad = (n: number) => String(n).padStart(2, '0');
+
+    if (totalDays > 0) {
+        return `${totalDays}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    }
+    if (hours > 0) {
+        return `${hours}:${pad(minutes)}:${pad(seconds)}`;
     }
 
-    return d.format('mm:ss');
+    return `${pad(minutes)}:${pad(seconds)}`;
 }
 
 /**

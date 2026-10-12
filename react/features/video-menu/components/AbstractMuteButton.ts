@@ -1,12 +1,14 @@
 import { createRemoteVideoMenuButtonEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
-import { rejectParticipantAudio } from '../../av-moderation/actions';
+import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../av-moderation/constants';
+import { canRejectParticipant } from '../../av-moderation/functions';
 import { IconMicSlash } from '../../base/icons/svg';
 import { MEDIA_TYPE } from '../../base/media/constants';
+import { getParticipantById } from '../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 import { isRemoteTrackMuted } from '../../base/tracks/functions.any';
-import { muteRemote } from '../actions.any';
+import { muteRemoteAndReject } from '../actions.any';
 
 export interface IProps extends AbstractButtonProps {
 
@@ -15,6 +17,11 @@ export interface IProps extends AbstractButtonProps {
      * not.
      */
     _audioTrackMuted: boolean;
+
+    /**
+     * Boolean to indicate if the participant can be removed from the A/V moderation whitelist.
+     */
+    _canReject: boolean;
 
     /**
      * The ID of the participant object that this button is supposed to
@@ -47,8 +54,7 @@ export default class AbstractMuteButton extends AbstractButton<IProps> {
                 'participant_id': participantID
             }));
 
-        dispatch(muteRemote(participantID, MEDIA_TYPE.AUDIO));
-        dispatch(rejectParticipantAudio(participantID));
+        dispatch(muteRemoteAndReject(participantID, MEDIA_TYPE.AUDIO));
     }
 
     /**
@@ -57,7 +63,7 @@ export default class AbstractMuteButton extends AbstractButton<IProps> {
      * @inheritdoc
      */
     override _isDisabled() {
-        return this.props._audioTrackMuted;
+        return this._isMuted();
     }
 
     /**
@@ -66,7 +72,19 @@ export default class AbstractMuteButton extends AbstractButton<IProps> {
      * @inheritdoc
      */
     override _isToggled() {
-        return this.props._audioTrackMuted;
+        return this._isMuted();
+    }
+
+    /**
+     * Tells if the participant must be shown as muted. A participant that can be removed from the A/V moderation
+     * whitelist is not shown as muted, because the mute state that the participant reports can be incorrect. The
+     * moderator must be able to mute the participant on the bridge.
+     *
+     * @private
+     * @returns {boolean}
+     */
+    _isMuted() {
+        return this.props._audioTrackMuted && !this.props._canReject;
     }
 }
 
@@ -77,14 +95,17 @@ export default class AbstractMuteButton extends AbstractButton<IProps> {
  * @param {Object} ownProps - Properties of component.
  * @private
  * @returns {{
- *      _audioTrackMuted: boolean
+ *      _audioTrackMuted: boolean,
+ *      _canReject: boolean
  *  }}
  */
 export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const tracks = state['features/base/tracks'];
+    const participant = getParticipantById(state, ownProps.participantID);
 
     return {
         _audioTrackMuted: isRemoteTrackMuted(
-            tracks, MEDIA_TYPE.AUDIO, ownProps.participantID)
+            tracks, MEDIA_TYPE.AUDIO, ownProps.participantID),
+        _canReject: canRejectParticipant(participant, AVM_MEDIA_TYPE.AUDIO, state)
     };
 }

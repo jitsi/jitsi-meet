@@ -68,7 +68,7 @@ android {
 def jitsiAutolinkOutDir = layout.buildDirectory.dir('generated/autolinking/src/main/jni')
 def jitsiGenerateAutolinking = tasks.register('jitsiGenerateAutolinkingNewArchitectureFiles',
         com.facebook.react.tasks.GenerateAutolinkingNewArchitecturesFileTask) {
-    autolinkInputFile.set(rootProject.file('build/generated/autolinking/autolinking.json'))
+    autolinkInputFile.set(gradle.ext.autolinkingManifest)
     generatedOutputDirectory.set(jitsiAutolinkOutDir)
 }
 
@@ -114,17 +114,9 @@ dependencies {
         (':react-native-device-info')                 : ['com.google.firebase', 'com.google.android.gms', 'com.android.installreferrer'],
         (':react-native-google-signin-google-signin') : ['com.google.android.gms', 'androidx']
     ]
-    // Only add these packages if we are NOT doing a LIBRE_BUILD
-    def rnLibreExcluded = [
-        ':amplitude-analytics-react-native',
-        ':giphy-react-native-sdk',
-        ':react-native-google-signin-google-signin'
-    ]
 
+    // LIBRE_BUILD exclusions happen in settings.gradle.
     (gradle.ext.autolinkedProjects ?: []).each { path ->
-        if (rootProject.ext.libreBuild && rnLibreExcluded.contains(path)) {
-            return
-        }
         def conf = rnApiModules.contains(path) ? 'api' : 'implementation'
         dependencies.add(conf, project(path)) {
             rnModuleExcludes.getOrDefault(path, []).each { grp -> exclude group: grp }

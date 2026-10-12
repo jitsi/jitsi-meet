@@ -1,3 +1,4 @@
+import { ISystemWideUserNotificationConfig } from '../../system-wide-user-notification/types';
 import { ToolbarButton } from '../../toolbox/types';
 import { ILoggingConfig } from '../logging/types';
 import { IAudioSettings } from '../settings/reducer';
@@ -86,6 +87,12 @@ export type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
     'RECORDING_OFF_SOUND' |
     'RECORDING_ON_SOUND' |
     'TALK_WHILE_MUTED_SOUND';
+
+export interface ICustomPanelConfig {
+    advisorAvailabilityUrl?: string;
+    enabled?: boolean;
+    url?: string;
+}
 
 export interface IDeeplinkingPlatformConfig {
     appName: string;
@@ -223,6 +230,7 @@ export interface IConfig {
      * bridge translation backend; the toolbar control is only shown when enabled.
      */
     audioTranslation?: {
+        duckedVolume?: number;
         enabled?: boolean;
     };
     /**
@@ -285,6 +293,7 @@ export interface IConfig {
         };
     };
     corsAvatarURLs?: Array<string>;
+    customPanel?: ICustomPanelConfig;
     customParticipantMenuButtons?: Array<{ icon: string; id: string; text: string; }>;
     customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
     deeplinking?: IDeeplinkingConfig;
@@ -419,6 +428,8 @@ export interface IConfig {
     enableEmailInStats?: boolean;
     enableEncodedTransformSupport?: boolean;
     enableForcedReload?: boolean;
+    enableIceRestart?: boolean;
+    enableIceRestartOnNetworkChange?: boolean;
     enableInsecureRoomNameWarning?: boolean;
     /**
      * @deprecated Use `lobby.enableChat` instead.
@@ -511,6 +522,7 @@ export interface IConfig {
      */
     hideLobbyButton?: boolean;
     hideLoginButton?: boolean;
+    hideMissingCapabilityWarnings?: boolean;
     hideParticipantsStats?: boolean;
     hideRecordingLabel?: boolean;
     hosts?: {
@@ -605,7 +617,29 @@ export interface IConfig {
     peopleSearchUrl?: string;
     pip?: {
         disabled?: boolean;
+        /**
+         * Document Picture-in-Picture configuration.
+         *
+         * @see https://developer.chrome.com/docs/web-platform/document-picture-in-picture#methods
+         */
+        documentPiP?: {
+            windowOptions?: {
+                disallowReturnToOpener?: boolean;
+                height?: number;
+                preferInitialWindowPlacement?: boolean;
+                width?: number;
+            };
+        };
+        /**
+         * Whether Picture-in-Picture is enabled for browser (non-Electron) meetings.
+         * Opt-in: defaults to false.
+         */
+        enableBrowserPiP?: boolean;
         showOnPrejoin?: boolean;
+        /**
+         * Whether to show the Picture-in-Picture toolbar button when supported.
+         */
+        showToolbarButton?: boolean;
     };
     preferBosh?: boolean;
     preferVisitor?: boolean;
@@ -690,8 +724,8 @@ export interface IConfig {
      */
     speakerStatsOrder?: Array<'role' | 'name' | 'hasLeft'>;
     startAudioMuted?: number;
-    startAudioOnly?: boolean;
     startLastN?: number;
+    startLowBandwidthMode?: boolean;
     startScreenSharing?: boolean;
     startSilent?: boolean;
     startVideoMuted?: number;
@@ -699,9 +733,11 @@ export interface IConfig {
     startWithVideoMuted?: boolean;
     stereo?: boolean;
     subject?: string;
+    systemWideUserNotification?: ISystemWideUserNotificationConfig;
     testing?: {
         assumeBandwidth?: boolean;
         debugAudioLevels?: boolean;
+        disableAV1DecodeForFF?: boolean;
         dumpTranscript?: boolean;
         failICE?: boolean;
         noAutoPlayVideo?: boolean;
@@ -716,6 +752,7 @@ export interface IConfig {
     };
     timeTimer?: {
         enabled?: boolean;
+        suppressForSeconds?: number;
     };
     tokenAuthInline?: boolean;
     tokenAuthUrl?: string;
@@ -746,6 +783,17 @@ export interface IConfig {
         autoCaptionOnTranscribe?: boolean;
         autoTranscribeOnRecord?: boolean;
         customLanguages?: object;
+
+        /**
+         * When true, advertises (via a MUC presence participant property) that this participant's audio
+         * should be diarized by the transcriber. Intended for endpoints carrying multiple speakers, e.g.
+         * conference-room systems or dial-in.
+         *
+         * Takes effect only at join time: the flag is included in the initial presence and read by jicofo
+         * when it allocates the colibri endpoint. It must be set before joining (e.g. via config or the
+         * `#config.transcription.diarize=true` URL override); toggling it during a call has no effect.
+         */
+        diarize?: boolean;
         disableClosedCaptions?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;

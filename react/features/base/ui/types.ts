@@ -60,6 +60,7 @@ export interface IPalette {
     uiBackground: string;
     warning01: string;
     warning02: string;
+    warning03: string;
 
     // Semantic tokens (component-based, more descriptive names)
     breakoutRoomArrowBackground: string;
@@ -137,6 +138,7 @@ export interface IPalette {
     preMeetingPreview: string;
     prejoinActionButtonDanger: string;
     prejoinActionButtonDisabled: string;
+    prejoinActionButtonOptionsHover: string;
     prejoinActionButtonPrimary: string;
     prejoinActionButtonPrimaryHover: string;
     prejoinActionButtonPrimaryText: string;
@@ -185,6 +187,19 @@ export interface IPalette {
     thumbnailRaisedHandIcon: string;
     thumbnailTintBackground: string;
     thumbnailVideoBackground: string;
+    timeTimerDisk: string;
+    timeTimerElapsedText: string;
+    timeTimerExpiredDisk: string;
+    timeTimerExpiredNameSegmentBackground: string;
+    timeTimerExpiredNotificationText: string;
+    timeTimerExpiredOverrunEdge: string;
+    timeTimerExpiredText: string;
+    timeTimerExpiredTimerSegmentBackground: string;
+    timeTimerNameSegmentBackground: string;
+    timeTimerTimerSegmentBackground: string;
+    timeTimerWarning: string;
+    timeTimerWarningNameSegmentBackground: string;
+    timeTimerWarningTimerSegmentBackground: string;
     toolbarButton: string;
     toolbarButtonActive: string;
     toolbarButtonHover: string;

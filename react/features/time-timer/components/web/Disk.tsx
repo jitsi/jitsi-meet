@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import { EXPIRED_DISK_COLOR, EXPIRED_OVERRUN_EDGE_COLOR } from '../../functions';
+import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 
 /**
  * SVG disk renderer used by {@code TimeTimerPill}. Draws a ring with an
@@ -122,9 +122,10 @@ const useStyles = makeStyles<{ size: number; }>()((_theme, { size }) => {
  * @returns {string}
  */
 function overrunGradient(deg: number): string {
-    return `conic-gradient(from 0deg, ${EXPIRED_DISK_COLOR} 0deg, `
-        + `${EXPIRED_OVERRUN_EDGE_COLOR} ${deg}deg, `
-        + `${EXPIRED_DISK_COLOR} ${deg}deg, ${EXPIRED_DISK_COLOR} 360deg)`;
+    const base = BaseTheme.palette.timeTimerExpiredDisk;
+    const edge = BaseTheme.palette.timeTimerExpiredOverrunEdge;
+
+    return `conic-gradient(from 0deg, ${base} 0deg, ${edge} ${deg}deg, ${base} ${deg}deg, ${base} 360deg)`;
 }
 
 /**

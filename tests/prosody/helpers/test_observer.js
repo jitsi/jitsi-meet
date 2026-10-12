@@ -285,6 +285,58 @@ export async function getRoomMetadata(roomJid) {
 }
 
 /**
+ * Returns the aggregated live-translation request map stored on room._data by
+ * mod_audio_translation_component. Reads server state directly, so it is robust
+ * against broadcast de-duplication (no broadcast fires when the aggregate is
+ * unchanged).
+ *
+ * Returns null if the room does not exist; the map is undefined when there are
+ * no subscriptions.
+ *
+ * @param {string} roomJid  e.g. 'room@conference.localhost'
+ * @returns {Promise<{jid: string, audioTranslationRequests?: object}|null>}
+ */
+export async function getAudioTranslationRequests(roomJid) {
+    const res = await fetch(
+        `${BASE}/rooms/audio-translation-requests?jid=${encodeURIComponent(roomJid)}`);
+
+    if (res.status === 404) {
+        return null;
+    }
+    if (!res.ok) {
+        throw new Error(`GET /rooms/audio-translation-requests failed: ${res.status} ${await res.text()}`);
+    }
+
+    return res.json();
+}
+
+/**
+ * Returns every OTLP ExportTraceServiceRequest body received by the mock
+ * receiver (mod_test_observer_http) so far. Used by mod_trace tests.
+ * @returns {Promise<Array<object>>}
+ */
+export async function getOtlpTraces() {
+    const res = await fetch(`${BASE}/otlp-traces`);
+
+    if (!res.ok) {
+        throw new Error(`GET /otlp-traces failed: ${res.status}`);
+    }
+
+    return res.json();
+}
+
+/**
+ * Clears the recorded OTLP export list.
+ */
+export async function clearOtlpTraces() {
+    const res = await fetch(`${BASE}/otlp-traces`, { method: 'DELETE' });
+
+    if (res.status !== 204) {
+        throw new Error(`DELETE /otlp-traces failed: ${res.status}`);
+    }
+}
+
+/**
  * Returns room state from Prosody's internal MUC state.
  * @param {string} roomJid  e.g. 'room@conference.localhost'
  * @returns {Promise<{jid: string, hidden: boolean, occupant_count: number}|null>}

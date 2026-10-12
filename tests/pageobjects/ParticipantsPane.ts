@@ -203,6 +203,11 @@ export default class ParticipantsPane extends BasePageObject {
         await meetingParticipantMoreOptions.waitForDisplayed();
         await meetingParticipantMoreOptions.waitForStable();
         await meetingParticipantMoreOptions.moveTo();
+
+        // The button is only revealed (moved into view) while its participant row is actually hovered.
+        // waitForDisplayed/waitForStable above do not guarantee that, so wait for real interactability
+        // right before clicking, retrying the hover if a re-render dropped it in the meantime.
+        await meetingParticipantMoreOptions.waitForClickable();
         await meetingParticipantMoreOptions.click();
     }
 
@@ -271,6 +276,22 @@ export default class ParticipantsPane extends BasePageObject {
 
         await rejectButton.waitForExist();
         await rejectButton.click();
+    }
+
+    /**
+     * Waits for the mute audio action of a participant to be available.
+     * @param participant
+     */
+    async waitForMuteAudioAction(participant: Participant) {
+        if (!await this.isOpen()) {
+            await this.open();
+        }
+
+        const participantId = await participant.getEndpointId();
+
+        await this.participant.driver.$(`#participant-item-${participantId}`).moveTo();
+
+        await this.participant.driver.$(`button[data-testid="mute-audio-${participantId}"]`).waitForDisplayed();
     }
 
     /**

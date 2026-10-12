@@ -12,12 +12,18 @@ import NewMessagesButton from './NewMessagesButton';
 
 interface IProps {
 
+    editingMessage?: IMessage;
     /**
      * Whether the message container is currently visible to the user.
      * Defaults to true when not provided.
      */
     isVisible?: boolean;
     messages: IMessage[];
+    onCancelEdit?: () => void;
+    /**
+     * Callback invoked when the user wants to edit a message.
+     */
+    onEditMessage?: (message: IMessage) => void;
 }
 
 interface IState {
@@ -117,8 +123,11 @@ export default class MessageContainer extends Component<IProps, IState> {
             return (
                 <ChatMessageGroup
                     className = { messageType || MESSAGE_TYPE_REMOTE }
+                    editingMessage = { this.props.editingMessage }
                     key = { index }
-                    messages = { messages } />
+                    messages = { messages }
+                    onCancelEdit = { this.props.onCancelEdit }
+                    onEditMessage = { this.props.onEditMessage } />
             );
         });
 

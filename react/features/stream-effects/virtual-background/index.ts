@@ -1,6 +1,11 @@
 /* eslint-disable lines-around-comment */
 
 import { getBaseUrl } from '../../base/util/helpers';
+import {
+    createVirtualBackgroundV2FailedEvent,
+    createVirtualBackgroundV2StartedEvent
+} from '../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../analytics/functions';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { timeout } from '../../virtual-background/functions';
@@ -25,6 +30,23 @@ let modelBuffer: ArrayBuffer;
 let tflite: any;
 let wasmCheck: any;
 let isWasmDisabled = false;
+const reportedV2Events = new Set<string>();
+
+/**
+ * Sends a V2 startup analytics event once per distinct payload, since an effect is created for every
+ * preview and track (re)creation.
+ *
+ * @param {Object} event - The analytics event.
+ * @returns {void}
+ */
+function sendV2StartupEvent(event: Object) {
+    const key = JSON.stringify(event);
+
+    if (!reportedV2Events.has(key)) {
+        reportedV2Events.add(key);
+        sendAnalytics(event);
+    }
+}
 
 /**
  * Creates a new instance of the virtual background stream effect.
@@ -42,8 +64,12 @@ export async function createVirtualBackgroundEffect(virtualBackground: IVirtualB
     }
     const fullVbConfig = APP.store.getState()['features/base/config'].virtualBackground;
 
-    if (fullVbConfig?.enableV2) {
-        const vbConfig = fullVbConfig.advanced;
+    // V2 is the default engine. V1 is only used when enableV2 is explicitly set to false.
+    // (The type of enableV2 is `boolean | undefined` per IConfig, so `undefined` picks V2.)
+    const useV2Engine = fullVbConfig?.enableV2 !== false;
+
+    if (useV2Engine) {
+        const vbConfig = fullVbConfig?.advanced;
         const capabilities = await detectDeviceTier(vbConfig);
 
         logger.info(
@@ -78,7 +104,25 @@ export async function createVirtualBackgroundEffect(virtualBackground: IVirtualB
             vbConfig
         });
 
-        await effect.init();
+        try {
+            await effect.init();
+        } catch (error: any) {
+            sendV2StartupEvent(createVirtualBackgroundV2FailedEvent({
+                ...effect.v2StartupConfig,
+                error: String(error?.message ?? error)
+            }));
+
+            throw error;
+        }
+
+        const startup = effect.v2StartupConfig;
+
+        if (startup) {
+            sendV2StartupEvent(createVirtualBackgroundV2StartedEvent({
+                ...startup,
+                workerFallback: startup.backend !== capabilities.backend
+            }));
+        }
 
         return effect;
     }

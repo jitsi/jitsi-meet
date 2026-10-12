@@ -54,7 +54,7 @@
 - (void)setConfigOverride:(NSString *_Nonnull)config withDictionary:(NSDictionary * _Nonnull)dictionary;
 - (void)setConfigOverride:(NSString *_Nonnull)config withArray:( NSArray * _Nonnull)array;
 
-- (void)setAudioOnly:(BOOL)audioOnly;
+- (void)setLowBandwidthMode:(BOOL)lowBandwidthMode;
 - (void)setAudioMuted:(BOOL)audioMuted;
 - (void)setVideoMuted:(BOOL)videoMuted;
 - (void)setCallHandle:(NSString *_Nonnull)callHandle;

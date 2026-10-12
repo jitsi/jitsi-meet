@@ -64,6 +64,13 @@ export interface IConferenceMetadata {
      * means available.
      */
     audioTranslationAvailable?: boolean;
+
+    /**
+     * Per-speaker, per-language count of participants subscribed to that speaker's translated audio, published
+     * by the audio-translation component. Combined with the bridge's synthetic-source sending state to show how
+     * many participants are still hearing a speaker.
+     */
+    audioTranslationListenerCounts?: { [senderId: string]: { [language: string]: number; }; };
     dialinEnabled?: boolean;
     files: {
         [fileId: string]: {
@@ -82,6 +89,13 @@ export interface IConferenceMetadata {
         isRecordingRequested?: boolean;
         isTranscribingEnabled: boolean;
     };
+
+    /**
+     * Set by the settings service (via prosody) when it fell back to hardcoded defaults because
+     * one of its own upstream calls failed or timed out - meaning the settings applied to this
+     * room (e.g. lobby) may not reflect what was actually configured.
+     */
+    settingsIncomplete?: boolean;
     visitors?: {
         live: boolean;
     };
@@ -96,6 +110,7 @@ export interface IConferenceMetadata {
 export interface IJitsiConference {
     addCommandListener: Function;
     addLobbyMessageListener: Function;
+    addLobbyMessageRetractionListener: Function;
     addTrack: Function;
     authenticateAndUpgradeRole: Function;
     avModerationApprove: Function;
@@ -129,9 +144,11 @@ export interface IJitsiConference {
     getTranscriptionStatus: Function;
     grantOwner: Function;
     isAVModerationSupported: Function;
+    isAudioTranslationSupported?: () => boolean;
     isE2EEEnabled: Function;
     isE2EESupported: Function;
     isEndConferenceSupported: Function;
+    isIceRestartSupported: Function;
     isLobbySupported: Function;
     isP2PActive: Function;
     isSIPCallingSupported: Function;
@@ -143,6 +160,7 @@ export interface IJitsiConference {
     lobbyDenyAccess: Function;
     lock: Function;
     markParticipantVerified: Function;
+    moderateMessage: Function;
     muteParticipant: Function;
     myLobbyUserId: Function;
     myUserId: Function;
@@ -151,6 +169,8 @@ export interface IJitsiConference {
     options: any;
     removeTrack: Function;
     replaceTrack: Function;
+    // Keep in sync with lib-jitsi-meet's IceRestartReason (service/RTC/IceRestartReason.ts).
+    restartJvbIce: (reason?: 'api' | 'ice-failed' | 'network-change') => Promise<void>;
     room: IJitsiConferenceRoom;
     sendApplicationLog: Function;
     sendCommand: Function;
@@ -159,7 +179,10 @@ export interface IJitsiConference {
     sendFaceLandmarks: (faceLandmarks: FaceLandmarks) => void;
     sendFeedback: Function;
     sendLobbyMessage: Function;
+    sendLobbyMessageRetraction: Function;
     sendMessage: Function;
+    sendMessageCorrection: Function;
+    sendMessageRetraction: Function;
     sendPrivateTextMessage: Function;
     sendReaction: Function;
     sendTextMessage: Function;
