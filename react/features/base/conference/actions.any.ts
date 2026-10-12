@@ -7,10 +7,15 @@ import { setIAmVisitor } from '../../visitors/actions';
 import { iAmVisitor } from '../../visitors/functions';
 import { overwriteConfig } from '../config/actions';
 import { getReplaceParticipant } from '../config/functions';
-import { connect, disconnect, hangup } from '../connection/actions';
+import { connect, connectionFailed, disconnect, hangup } from '../connection/actions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection/constants';
 import { hasAvailableDevices } from '../devices/functions.any';
-import JitsiMeetJS, { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';
+import JitsiMeetJS, {
+    JitsiConferenceErrors,
+    JitsiConferenceEvents,
+    JitsiConnectionErrors,
+    JitsiE2ePingEvents
+} from '../lib-jitsi-meet';
 import {
     setAudioUnmutePermissions,
     setVideoUnmutePermissions
@@ -88,6 +93,7 @@ import {
     updateTrackMuteState
 } from './functions';
 import logger from './logger';
+import { prepareNativeE2EE } from './prepareNativeE2EE';
 import { IConferenceMetadata, IJitsiConference } from './reducer';
 
 /**
@@ -642,7 +648,27 @@ export function createConference(overrideRoom?: string | String) {
             _room.domain = tmp.domain;
         }
 
-        const conference = connection.initJitsiConference(_room, getConferenceOptions(state));
+        let conference: IJitsiConference & { [JITSI_CONFERENCE_URL_KEY]?: typeof locationURL; };
+
+        try {
+            conference = connection.initJitsiConference(_room, getConferenceOptions(state));
+        } catch (error) {
+            if (state['features/base/config'].e2ee?.nativeManaged !== true) {
+                throw error;
+            }
+            // No conference instance exists to report CONFERENCE_FAILED against.
+            // An unsupported explicit request must close instead of retrying plaintext.
+            // Capture the connection before CONNECTION_FAILED clears it from Redux.
+            const disconnected = dispatch(disconnect());
+
+            dispatch(connectionFailed(connection, {
+                message: 'Native managed E2EE initialization failed',
+                name: JitsiConnectionErrors.OTHER_ERROR,
+                recoverable: false
+            }));
+
+            return disconnected;
+        }
 
         // @ts-ignore
         connection[JITSI_CONNECTION_CONFERENCE_KEY] = conference;
@@ -657,7 +683,23 @@ export function createConference(overrideRoom?: string | String) {
 
         const replaceParticipant = getReplaceParticipant(state);
 
-        conference.join(password, replaceParticipant);
+        const nativeReady = prepareNativeE2EE(conference);
+
+        if (nativeReady) {
+            return nativeReady.then(() => {
+                // A hangup or replacement while keys initialize cancels this join.
+                if (getState()['features/base/conference'].joining === conference) {
+                    conference.join(password, replaceParticipant);
+                }
+            }).catch(() => {
+                if (getState()['features/base/conference'].joining === conference) {
+                    dispatch(conferenceFailed(conference, JitsiConferenceErrors.SETTINGS_ERROR,
+                        'Native managed E2EE initialization failed'));
+                }
+            });
+        }
+
+        return conference.join(password, replaceParticipant);
     };
 }
 

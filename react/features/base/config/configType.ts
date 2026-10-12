@@ -409,6 +409,7 @@ export interface IConfig {
             tooltip?: string;
             warning?: string;
         };
+        nativeManaged?: boolean;
     };
     e2eeLabels?: {
         description?: string;
