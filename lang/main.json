@@ -1395,7 +1395,9 @@
         "seconds": "{{count}}s",
         "speakerStats": "Participants Stats",
         "speakerTime": "Speaker Time",
-        "surprised": "Surprised"
+        "surprised": "Surprised",
+        "timelineEnd": "End",
+        "timelineStart": "Start"
     },
     "startupoverlay": {
         "genericTitle": "The meeting needs to use your microphone and camera.",
