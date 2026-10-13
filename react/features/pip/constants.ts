@@ -29,13 +29,6 @@ export const DEFAULT_ELECTRON_PIP_WIDTH = 320;
 export const DEFAULT_ELECTRON_PIP_HEIGHT = 180;
 
 /**
- * How long after opening the custom Electron PiP window a premature close is
- * interpreted as "the embedding app denied the popup" (no SDK support) rather
- * than as the user dismissing the window.
- */
-export const ELECTRON_PIP_DENIAL_GRACE_MS = 1000;
-
-/**
  * Electron-only delay before reacting to window focus, so that the browser's
  * leavepictureinpicture event is processed first (see PiPVideoElement for the
  * full explanation of the underlying browser quirk).

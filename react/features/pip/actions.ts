@@ -14,15 +14,13 @@ import {
     HOST_DOCUMENT_PIP_SIGNAL_RECEIVED,
     SET_PIP_ACTIVE,
     SET_PIP_DISMISSED,
-    SET_PIP_WINDOW,
-    SET_PIP_WINDOW_MODE_UNSUPPORTED
+    SET_PIP_WINDOW
 } from './actionTypes';
 import {
     DEFAULT_DOCUMENT_PIP_HEIGHT,
     DEFAULT_DOCUMENT_PIP_WIDTH,
     DEFAULT_ELECTRON_PIP_HEIGHT,
     DEFAULT_ELECTRON_PIP_WIDTH,
-    ELECTRON_PIP_DENIAL_GRACE_MS,
     ELECTRON_PIP_WINDOW_NAME
 } from './constants';
 import {
@@ -104,23 +102,6 @@ export function setPiPDismissed(dismissed: boolean) {
 }
 
 /**
- * Action recording that the embedding Electron app denied the custom PiP
- * window popup, so the video-element PiP is used for the rest of the session.
- *
- * @param {boolean} unsupported - Whether the window mode is unsupported.
- * @returns {{
- *     type: SET_PIP_WINDOW_MODE_UNSUPPORTED,
- *     unsupported: boolean
- * }}
- */
-export function setPiPWindowModeUnsupported(unsupported: boolean) {
-    return {
-        type: SET_PIP_WINDOW_MODE_UNSUPPORTED,
-        unsupported
-    };
-}
-
-/**
  * Opens the custom Electron PiP window: a same-origin popup opened from
  * inside the meeting iframe, which the Electron SDK's main process turns into
  * a small frameless always-on-top window (the legacy always-on-top
@@ -151,69 +132,32 @@ export function openElectronPiPWindow() {
             `width=${DEFAULT_ELECTRON_PIP_WIDTH},height=${DEFAULT_ELECTRON_PIP_HEIGHT}`);
 
         if (!newPiPWindow) {
-            dispatch(handleElectronPiPWindowUnsupported());
+            // The embedding app's window-open handler denied the popup. That
+            // is an Electron SDK without PiP window support; such apps are
+            // expected to request 'videoPiP' through config.pip.mode instead.
+            logger.warn('The embedding app denied the PiP window');
 
             return;
         }
-
-        const openedAt = Date.now();
 
         initPiPWindow(newPiPWindow);
 
         newPiPWindow.addEventListener('pagehide', () => {
             // exitPiP() clears the stored reference before closing the window,
-            // so a still-matching reference means the close was not initiated
-            // by us: either the embedding app denied/killed the popup right
-            // away (no SDK support - fall back to video PiP), or the user
-            // closed it through the OS (dismiss for the rest of the meeting;
-            // the in-window X button posts the dismissal itself).
+            // so a still-matching reference means the user closed it through
+            // the OS: dismiss PiP for the rest of the meeting (the in-window X
+            // button posts the dismissal itself).
             if (getState()['features/pip'].pipWindow !== newPiPWindow) {
                 return;
             }
 
             dispatch(setPiPWindow(null));
-
-            if (Date.now() - openedAt < ELECTRON_PIP_DENIAL_GRACE_MS) {
-                dispatch(setPiPActive(false));
-                cleanupMediaSessionHandlers();
-                dispatch(handleElectronPiPWindowUnsupported());
-
-                return;
-            }
-
             dispatch(setPiPDismissed(true));
             dispatch(handlePiPLeaveEvent('dismissed'));
         });
 
         dispatch(setPiPWindow(newPiPWindow));
         dispatch(handlePipEnterEvent());
-
-        // Backstop for embedding apps that deny the popup without firing
-        // pagehide on the returned stub: detect the dead window and fall back.
-        setTimeout(() => {
-            if (getState()['features/pip'].pipWindow === newPiPWindow && newPiPWindow.closed) {
-                dispatch(setPiPWindow(null));
-                dispatch(setPiPActive(false));
-                cleanupMediaSessionHandlers();
-                dispatch(handleElectronPiPWindowUnsupported());
-            }
-        }, ELECTRON_PIP_DENIAL_GRACE_MS);
-    };
-}
-
-/**
- * Handles the embedding Electron app being unable to create the custom PiP
- * window: remembers the failure and lets the video-element PiP take over for
- * the rest of the session (the PiP video element re-enters PiP on mount when
- * the window is still unfocused).
- *
- * @returns {Function}
- */
-export function handleElectronPiPWindowUnsupported() {
-    return (dispatch: IStore['dispatch']) => {
-        logger.warn('The embedding app cannot create the PiP window; falling back to video-element PiP');
-
-        dispatch(setPiPWindowModeUnsupported(true));
     };
 }
 

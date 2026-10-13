@@ -840,7 +840,7 @@ var config = {
     //     // 'customWindow' in Electron, 'documentPiP' in browsers that support it, 'videoPiP' otherwise.
     //     // - 'customWindow': a frameless always-on-top window rendered by the meeting itself (the
     //     //   legacy always-on-top experience). Electron only; requires jitsi-meet-electron-sdk support
-    //     //   in the embedding app and falls back to 'videoPiP' when unsupported.
+    //     //   in the embedding app. Apps bundling an SDK without it should set 'videoPiP'.
     //     // - 'documentPiP': the browser's Document Picture-in-Picture window; falls back to 'videoPiP'
     //     //   where the API is unavailable.
     //     // - 'videoPiP': the video-element Picture-in-Picture, everywhere.

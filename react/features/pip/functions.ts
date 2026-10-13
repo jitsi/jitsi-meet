@@ -679,18 +679,14 @@ export function isDocumentPiPSupported(): boolean {
 /**
  * Returns whether the custom Electron PiP window implementation should be
  * used: Electron with `pip.mode` unset (window mode is the Electron default)
- * or explicitly set to 'customWindow', and no runtime detection that the embedding
- * app cannot create the window.
+ * or explicitly set to 'customWindow'. Embedding apps whose Electron SDK
+ * cannot create the window are expected to request 'videoPiP' instead.
  *
  * @param {IReduxState} state - Redux state.
  * @returns {boolean} Whether the Electron PiP window mode is selected.
  */
 export function isElectronPiPWindowMode(state: IReduxState): boolean {
     if (!browser.isElectron()) {
-        return false;
-    }
-
-    if (state['features/pip']?.windowModeUnsupported) {
         return false;
     }
 

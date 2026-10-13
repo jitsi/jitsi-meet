@@ -14,13 +14,6 @@ export const SET_PIP_WINDOW = 'SET_PIP_WINDOW';
 export const SET_PIP_DISMISSED = 'SET_PIP_DISMISSED';
 
 /**
- * Action type recording that the embedding Electron app cannot create the
- * custom PiP window (the popup was denied), so the video-element PiP is used
- * for the rest of the session.
- */
-export const SET_PIP_WINDOW_MODE_UNSUPPORTED = 'SET_PIP_WINDOW_MODE_UNSUPPORTED';
-
-/**
  * Internal action signalling that the host confirmed a Document PiP window has opened.
  */
 export const HOST_DOCUMENT_PIP_OPENED = 'HOST_DOCUMENT_PIP_OPENED';
