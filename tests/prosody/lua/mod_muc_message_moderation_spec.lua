@@ -233,6 +233,7 @@ local add_room_info = assert(_G.add_room_info);
 local handle_main_groupchat = assert(_G.handle_main_groupchat);
 
 local parse_retraction = assert(_G.parse_retraction);
+local remove_corrections = assert(_G.remove_corrections);
 
 local FASTEN_NS = 'urn:xmpp:fasten:0';
 local MODERATE_NS = 'urn:xmpp:message-moderate:1';
@@ -300,6 +301,26 @@ local function history_message(actor, message_id, body)
     msg:add_child(st.stanza('body'):text(body));
 
     return { stanza = msg, timestamp = 1000 };
+end
+
+-- A correction as the room archives it: stamped with the author's occupant nick
+-- and carrying the new body.
+local function history_correction(actor, message_id, target_id, body)
+    local msg = st.message({ from = actor.occupant.nick, to = '', type = 'groupchat', id = message_id })
+        :tag('body'):text(body):up()
+        :tag('replace', { xmlns = CORRECT_NS, id = target_id }):up();
+
+    return { stanza = msg, timestamp = 1000 };
+end
+
+local function history_ids(room)
+    local ids = {};
+
+    for _, entry in ipairs(room._history) do
+        table.insert(ids, entry.stanza.attr.id);
+    end
+
+    return ids;
 end
 
 -- occupants are only needed by the visitor node path, which routes per occupant
@@ -635,6 +656,123 @@ describe('mod_muc_message_moderation', function()
                 stanza = request,
                 occupant = MODERATOR.occupant
             }));
+        end)
+    end)
+
+    -- -----------------------------------------------------------------------
+    describe('moderation of a corrected message', function()
+
+        it('drops the stored corrections along with the body', function()
+            local room = make_room({
+                history_message(AUTHOR, 'msg-1', 'original'),
+                history_correction(AUTHOR, 'fix-1', 'msg-1', 'first edit'),
+                history_message(OTHER, 'msg-2', 'unrelated'),
+                history_correction(AUTHOR, 'fix-2', 'msg-1', 'second edit')
+            });
+
+            handle_groupchat({
+                origin = make_origin(),
+                room = room,
+                stanza = moderation_request(MODERATOR, 'msg-1', nil),
+                occupant = MODERATOR.occupant
+            });
+
+            assert.same({ 'msg-1', 'msg-2' }, history_ids(room));
+            assert.is_nil(room._history[1].stanza:get_child('body'));
+            assert.is_table(room._history[1].stanza:get_child('moderated', MODERATE_NS));
+        end)
+
+        it('drops the corrections when the original has aged out of history', function()
+            local room = make_room({
+                history_correction(AUTHOR, 'fix-1', 'aged-out', 'edited'),
+                history_message(OTHER, 'msg-2', 'unrelated')
+            });
+
+            handle_groupchat({
+                origin = make_origin(),
+                room = room,
+                stanza = moderation_request(MODERATOR, 'aged-out', nil),
+                occupant = MODERATOR.occupant
+            });
+
+            assert.same({ 'msg-2' }, history_ids(room));
+        end)
+
+        it('keeps the corrections of other messages', function()
+            local room = make_room({
+                history_message(AUTHOR, 'msg-1', 'original'),
+                history_message(AUTHOR, 'msg-2', 'another'),
+                history_correction(AUTHOR, 'fix-2', 'msg-2', 'another, edited')
+            });
+
+            handle_groupchat({
+                origin = make_origin(),
+                room = room,
+                stanza = moderation_request(MODERATOR, 'msg-1', nil),
+                occupant = MODERATOR.occupant
+            });
+
+            assert.same({ 'msg-1', 'msg-2', 'fix-2' }, history_ids(room));
+            assert.equal('another, edited', room._history[3].stanza:get_child_text('body'));
+        end)
+
+        it('leaves corrections alone when the request is rejected', function()
+            local room = make_room({
+                history_message(AUTHOR, 'msg-1', 'original'),
+                history_correction(AUTHOR, 'fix-1', 'msg-1', 'edited')
+            });
+
+            handle_groupchat({
+                origin = make_origin(),
+                room = room,
+                stanza = moderation_request(OTHER, 'msg-1', nil),
+                occupant = OTHER.occupant
+            });
+
+            assert.same({ 'msg-1', 'fix-1' }, history_ids(room));
+        end)
+    end)
+
+    -- -----------------------------------------------------------------------
+    describe('remove_corrections', function()
+
+        it('returns how many corrections were dropped', function()
+            local room = make_room({
+                history_message(AUTHOR, 'msg-1', 'original'),
+                history_correction(AUTHOR, 'fix-1', 'msg-1', 'one'),
+                history_correction(AUTHOR, 'fix-2', 'msg-1', 'two')
+            });
+
+            assert.equal(2, remove_corrections(room, 'msg-1'));
+            assert.same({ 'msg-1' }, history_ids(room));
+        end)
+
+        it('drops only the given author\'s corrections when one is passed', function()
+            local room = make_room({
+                history_correction(AUTHOR, 'fix-1', 'msg-1', 'by the author'),
+                history_correction(OTHER, 'fix-2', 'msg-1', 'by someone else')
+            });
+
+            assert.equal(1, remove_corrections(room, 'msg-1', AUTHOR.occupant.nick));
+            assert.same({ 'fix-2' }, history_ids(room));
+        end)
+
+        it('does not treat the original message as a correction', function()
+            local room = make_room({ history_message(AUTHOR, 'msg-1', 'original') });
+
+            assert.equal(0, remove_corrections(room, 'msg-1'));
+            assert.equal(1, #room._history);
+        end)
+
+        it('copes with a room that has no history', function()
+            assert.equal(0, remove_corrections(make_room(nil), 'msg-1'));
+        end)
+
+        it('copes with a nil message id', function()
+            local room = make_room({ history_correction(AUTHOR, 'fix-1', 'msg-1', 'edited') });
+
+            assert.equal(0, remove_corrections(room, nil));
+            assert.equal(1, #room._history);
         end)
     end)
 
@@ -1101,6 +1239,56 @@ describe('mod_muc_message_moderation', function()
             assert.is_nil(handled);
             assert.equal(0, #origin.sent);
         end)
+
+        it('drops the author\'s stored corrections with the entry', function()
+            local room = make_room({
+                history_message(AUTHOR, 'msg-1', 'original'),
+                history_correction(AUTHOR, 'fix-1', 'msg-1', 'first edit'),
+                history_message(OTHER, 'msg-2', 'unrelated'),
+                history_correction(AUTHOR, 'fix-2', 'msg-1', 'second edit')
+            });
+
+            handle_groupchat({
+                origin = make_origin(),
+                room = room,
+                stanza = retraction_request(AUTHOR, 'msg-1'),
+                occupant = AUTHOR.occupant
+            });
+
+            assert.same({ 'msg-2' }, history_ids(room));
+        end)
+
+        it('drops only the occupant\'s own corrections of a message that has aged out', function()
+            local room = make_room({
+                history_correction(AUTHOR, 'fix-1', 'aged-out', 'by the author'),
+                history_correction(OTHER, 'fix-2', 'aged-out', 'by someone else')
+            });
+
+            handle_groupchat({
+                origin = make_origin(),
+                room = room,
+                stanza = retraction_request(AUTHOR, 'aged-out'),
+                occupant = AUTHOR.occupant
+            });
+
+            assert.same({ 'fix-2' }, history_ids(room));
+        end)
+
+        it('leaves corrections alone when the request is rejected', function()
+            local room = make_room({
+                history_message(AUTHOR, 'msg-1', 'original'),
+                history_correction(AUTHOR, 'fix-1', 'msg-1', 'edited')
+            });
+
+            handle_groupchat({
+                origin = make_origin(),
+                room = room,
+                stanza = retraction_request(OTHER, 'msg-1'),
+                occupant = OTHER.occupant
+            });
+
+            assert.same({ 'msg-1', 'fix-1' }, history_ids(room));
+        end)
     end)
 
     -- -----------------------------------------------------------------------
@@ -1358,6 +1546,57 @@ describe('mod_muc_message_moderation', function()
 
             assert.is_true(handled);
             assert.equal(1, #room.routed);
+        end)
+
+        it('drops the local corrections for a moderation from main', function()
+            local room = make_room({
+                history_message(AUTHOR, 'msg-1', 'original'),
+                history_correction(AUTHOR, 'fix-1', 'msg-1', 'edited'),
+                history_message(OTHER, 'msg-2', 'unrelated')
+            }, { VISITOR });
+
+            handle_main_groupchat({
+                room = room,
+                stanza = forwarded_moderation('msg-1', nil, MODERATOR.occupant.nick),
+                occupant = nil
+            });
+
+            assert.same({ 'msg-1', 'msg-2' }, history_ids(room));
+            assert.is_nil(room._history[1].stanza:get_child('body'));
+        end)
+
+        it('drops the local corrections for a retraction forwarded from main', function()
+            local room = make_room({
+                history_message(AUTHOR, 'msg-1', 'original'),
+                history_correction(AUTHOR, 'fix-1', 'msg-1', 'edited'),
+                history_message(OTHER, 'msg-2', 'unrelated')
+            }, { VISITOR });
+
+            handle_main_groupchat({
+                room = room,
+                stanza = forwarded_retraction('msg-1'),
+                occupant = main_occupant(ROOM_JID .. '/someone')
+            });
+
+            assert.same({ 'msg-2' }, history_ids(room));
+        end)
+
+        it('drops only a visitor\'s own corrections for their retraction', function()
+            local visitor_nick = ROOM_JID .. '/visitor-nick';
+            local visitor_actor = { occupant = { nick = visitor_nick } };
+            local room = make_room({
+                history_message(visitor_actor, 'msg-1', 'original'),
+                history_correction(visitor_actor, 'fix-1', 'msg-1', 'edited'),
+                history_correction(OTHER, 'fix-2', 'msg-1', 'by someone else')
+            }, { VISITOR });
+
+            handle_main_groupchat({
+                room = room,
+                stanza = forwarded_retraction('msg-1'),
+                occupant = local_occupant(visitor_nick)
+            });
+
+            assert.same({ 'fix-2' }, history_ids(room));
         end)
     end)
 

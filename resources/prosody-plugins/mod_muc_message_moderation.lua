@@ -19,8 +19,9 @@
 --
 --    The request is honoured only when the sending occupant's MUC role is
 --    'moderator'. The room history entry for ORIG is replaced with a tombstone
---    (body stripped, <moderated by='...'><retracted/></moderated> added) so late
---    joiners never receive the moderated text at all, and the moderation is
+--    (body stripped, <moderated by='...'><retracted/></moderated> added) and the
+--    corrections stored for ORIG are dropped, so late joiners never receive the
+--    moderated text or any edited version of it, and the moderation is
 --    broadcast from the room JID. The occupant's own request is not relayed, the
 --    room emits its own stanza and takes 'by' from the sender's occupant JID.
 --    A message that has aged out of the history window is still moderated for
@@ -38,7 +39,8 @@
 --    An honoured correction is relayed untouched: it carries the new body and
 --    asks to be stored, so the room archives it and replays it after the message
 --    it corrects, and a client joining later applies it the same way one in the
---    room does. Nothing here rewrites the history entry.
+--    room does. Nothing here rewrites the history entry. The stored corrections
+--    are dropped again when ORIG is moderated or retracted.
 --
 -- 3. Retraction (XEP-0424). The author retracts their own message with a
 --    top level:
@@ -46,8 +48,9 @@
 --      <retract xmlns='urn:xmpp:message-retract:1' id='ORIG'/>
 --
 --    The request is honoured only when ORIG was authored by the same occupant.
---    The history entry is removed outright rather than tombstoned, so a joining
---    client never receives the message at all, and the retraction is not stored
+--    The history entry is removed outright rather than tombstoned, together with
+--    the corrections the author stored for it, so a joining client never receives
+--    the message or any edited version of it, and the retraction is not stored
 --    either since there is no longer anything for it to pair with. The retraction
 --    stanza itself is what reaches the occupants already in the room.
 --
@@ -164,6 +167,31 @@ function find_history_entry(room, message_id)
     return nil;
 end
 
+-- Drops the stored corrections of a message from the room history. With an
+-- author, only the corrections that occupant sent are dropped. Returns how many
+-- were removed.
+function remove_corrections(room, message_id, author)
+    local history = room._history;
+    local removed = 0;
+
+    if not history or not message_id then
+        return removed;
+    end
+
+    for i = #history, 1, -1 do
+        local stanza = history[i].stanza;
+        local replace = stanza and stanza:get_child('replace', CORRECT_NS);
+
+        if replace and replace.attr.id == message_id
+                and (not author or stanza.attr.from == author) then
+            table.remove(history, i);
+            removed = removed + 1;
+        end
+    end
+
+    return removed;
+end
+
 function is_entry_moderated(entry)
     return entry.stanza:get_child('moderated', MODERATE_NS) ~= nil;
 end
@@ -231,6 +259,10 @@ function handle_moderation(origin, room, stanza, occupant, target_id, reason)
         tombstone_entry(entry, occupant.nick, reason, datetime.datetime());
     end
 
+    -- The corrections are stored as messages of their own and carry the edited
+    -- body, so they go too, whether or not the original is still in history.
+    remove_corrections(room, target_id);
+
     local broadcast = build_moderation_broadcast(room, target_id, occupant.nick, reason);
 
     room:broadcast_message(broadcast);
@@ -293,6 +325,11 @@ function handle_retraction(origin, room, stanza, occupant, target_id)
 
         table.remove(room._history, index);
     end
+
+    -- The author's corrections carry the edited body and would otherwise still
+    -- be replayed. Only the occupant's own are dropped, which also covers a
+    -- message that has aged out and has no entry to check the author against.
+    remove_corrections(room, target_id, occupant and occupant.nick);
 
     -- The message is gone from history, so a stored retraction has nothing left to
     -- pair with. The client asks for it to be stored, override that.
@@ -365,6 +402,16 @@ function handle_main_groupchat(event)
             table.remove(room._history, index);
         end
 
+        -- A visitor's own request only drops their own corrections, one that
+        -- arrived from the main prosody has been checked there already.
+        local author;
+
+        if occupant and jid.host(occupant.bare_jid) == local_domain then
+            author = occupant.nick;
+        end
+
+        remove_corrections(room, retract_id, author);
+
         return;
     end
 
@@ -393,6 +440,8 @@ function handle_main_groupchat(event)
             tombstone_entry(entry, by, reason, datetime.datetime());
         end
 
+        remove_corrections(room, moderate_id);
+
         -- Announce it from this room rather than relaying what arrived. The
         -- forwarded stanza was sent by the main room, which is not an occupant
         -- here, so the from it ends up with depends on how the hop rewrites it.
@@ -414,9 +463,11 @@ function handle_main_groupchat(event)
     end
 end
 
--- Belt and braces next to the no-store hint: moderation broadcasts, corrections
--- and retractions are already reflected in the entry for the original message, or
--- in its removal, so they must not be appended to history as messages of their own.
+-- Belt and braces next to the no-store hint: moderation broadcasts and
+-- retractions are already reflected in the entry for the original message, or in
+-- its removal, so they must not be appended to history as messages of their own.
+-- Corrections are stored, and dropped again if the original is moderated or
+-- retracted.
 function skip_history(event)
     local stanza = event.stanza;
 
