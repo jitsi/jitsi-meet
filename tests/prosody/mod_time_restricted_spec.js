@@ -11,8 +11,10 @@ const JITMEET_NS = 'http://jitsi.org/jitmeet';
 // Mirrors docker/prosody.cfg.lua:
 //   conference_max_minutes  = 0.125 -> TIMEOUT = 7.5 s (the meeting's limit)
 //   conference_grace_seconds = 3    -> room destroyed at 10.5 s
+//   conference_blocked_cleanup_hours = 0.002 -> name unblocked 7.2 s after the destroy
 const DURATION_SECONDS = 7.5;
 const GRACE_SECONDS = 3;
+const BLOCKED_CLEANUP_SECONDS = 7.2;
 
 // A moment safely inside the grace window: past the limit, well before the
 // destroy. Used to prove the room outlives its limit by the granted time.
@@ -186,6 +188,36 @@ describe('mod_time_restricted', () => {
         }
 
         assert.equal(await getRoomState(r), null, 'the room must not be re-created');
+    });
+
+    it('allows re-creation once conference_blocked_cleanup_hours elapses', async () => {
+        const r = room();
+
+        await ctx.connectFocus(r);
+
+        const c = await ctx.connect();
+
+        await c.joinRoom(r);
+        await c.waitForPresence(p => p.attrs.type === 'unavailable', DESTROY_WAIT_MS);
+        const destroyedAt = Date.now();
+
+        // Slack over the cleanup period.
+        const unblockedAt = destroyedAt + ((BLOCKED_CLEANUP_SECONDS + 2) * 1000);
+
+        await new Promise(resolve => setTimeout(resolve, Math.max(0, unblockedAt - Date.now())));
+
+        const probe = await createXmppClient({ domain: 'auth.localhost',
+            username: 'focus',
+            password: 'focussecret' });
+
+        try {
+            const rejoin = await probe.joinRoom(r, 'focus', { timeout: 5000 });
+
+            assert.notEqual(rejoin.attrs.type, 'error', 're-creating the room must be allowed after the cleanup');
+            assert.ok(await getRoomState(r), 'the room must be re-created');
+        } finally {
+            await probe.disconnect();
+        }
     });
 
     // The client only trusts a `time_restricted` message because it arrives from
