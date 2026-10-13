@@ -12,13 +12,48 @@ local TIMEOUT = MIN * 60
 local GRACE = module:get_option_number("conference_grace_seconds", 0)
 local DESTROY_AT = TIMEOUT + GRACE
 
+-- Hours after which a room that reached the limit can be created again. 0 (the
+-- default) keeps the room name blocked until prosody restarts.
+local BLOCKED_CLEANUP_HOURS = module:get_option_number("conference_blocked_cleanup_hours", 0)
+local BLOCKED_CLEANUP_SECONDS = BLOCKED_CLEANUP_HOURS * 3600
+
+-- How often expired room names are dropped from the blocked list.
+local BLOCKED_SWEEP_INTERVAL = 300
+
 local is_healthcheck_room = module:require "util".is_healthcheck_room
 local st = require "util.stanza"
 local json = require "cjson.safe"
 local array = require "util.array";
 module:log('info', "loaded")
 
+-- Room JID -> the time the room was destroyed for reaching the limit.
 local restricted_rooms = array{};
+
+local function is_blocked(room_jid)
+    local blocked_at = restricted_rooms[room_jid];
+
+    if not blocked_at then
+        return false;
+    end
+
+    if BLOCKED_CLEANUP_SECONDS > 0 and os.time() - blocked_at >= BLOCKED_CLEANUP_SECONDS then
+        restricted_rooms[room_jid] = nil;
+        module:log('info', "the conference id unblocked %s", room_jid);
+        return false;
+    end
+
+    return true;
+end
+
+if BLOCKED_CLEANUP_SECONDS > 0 then
+    module:add_timer(BLOCKED_SWEEP_INTERVAL, function()
+        for room_jid in pairs(restricted_rooms) do
+            is_blocked(room_jid);
+        end
+
+        return BLOCKED_SWEEP_INTERVAL;
+    end)
+end
 
 -- The `type` the time-timer feature in jitsi-meet matches on. Sent as a
 -- json-message from the room JID so lib-jitsi-meet surfaces it as a
@@ -63,7 +98,7 @@ module:hook("muc-room-created", function (event)
         if is_healthcheck_room(room.jid) then
             return
         end
-        restricted_rooms[room.jid] = true;
+        restricted_rooms[room.jid] = os.time();
         -- %g (not %d) so a fractional conference_max_minutes does not crash the
         -- timer; for the usual whole-minute configs it renders identically.
         room:destroy(nil, string.format('This meeting reached its %g-minute time limit and has ended.', MIN));
@@ -100,7 +135,7 @@ module:hook("muc-room-pre-create", function(event)
         return
     end
 
-    if restricted_rooms[room.jid] then
+    if is_blocked(room.jid) then
         module:log('info', "the conference id blocked %s", room.jid);
         origin.send(st.error_reply(stanza, "cancel", "resource-constraint", nil, module.host));
         return true;
