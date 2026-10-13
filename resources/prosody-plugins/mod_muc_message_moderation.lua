@@ -36,6 +36,8 @@
 --
 --    The request is honoured only when ORIG was authored by the same occupant
 --    and has not been moderated; anything else is dropped and reaches nobody.
+--    When ORIG is not in history (aged out or retracted) there is nothing to
+--    check against, so the correction is relayed to the room but not stored.
 --    An honoured correction is relayed untouched: it carries the new body and
 --    asks to be stored, so the room archives it and replays it after the message
 --    it corrects, and a client joining later applies it the same way one in the
@@ -280,24 +282,33 @@ end
 function handle_correction(origin, room, stanza, occupant, target_id, body)
     local entry = find_history_entry(room, target_id);
 
-    -- With no entry the message has aged out of the room's history window, so
-    -- there is nothing to rewrite and no author to check it against. Relay it and
-    -- let the receiving clients apply it to their own copy.
-    if entry then
-        if not occupant or entry.stanza.attr.from ~= occupant.nick then
-            module:log('warn', 'Rejected correction of %s from %s, authored by %s',
-                target_id, occupant and occupant.nick, entry.stanza.attr.from);
-            origin.send(st.error_reply(stanza, 'auth', 'forbidden', 'Only the author can correct a message'));
+    -- With no entry the message has aged out of the room's history window or was
+    -- retracted, so there is no author to check it against. Relay it and let the
+    -- receiving clients apply it to their own copy, but keep it out of history:
+    -- a client joining later never receives the message it corrects anyway.
+    if not entry then
+        module:log('debug', 'Relaying correction of %s from %s without storing it, not in history',
+            target_id, occupant and occupant.nick);
 
-            return true;
-        end
+        stanza:remove_children('store', HINTS_NS);
+        stanza:add_child(st.stanza('no-store', { xmlns = HINTS_NS }));
 
-        if is_entry_moderated(entry) then
-            module:log('debug', 'Rejected correction of moderated message %s', target_id);
-            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Message has been moderated'));
+        return;
+    end
 
-            return true;
-        end
+    if not occupant or entry.stanza.attr.from ~= occupant.nick then
+        module:log('warn', 'Rejected correction of %s from %s, authored by %s',
+            target_id, occupant and occupant.nick, entry.stanza.attr.from);
+        origin.send(st.error_reply(stanza, 'auth', 'forbidden', 'Only the author can correct a message'));
+
+        return true;
+    end
+
+    if is_entry_moderated(entry) then
+        module:log('debug', 'Rejected correction of moderated message %s', target_id);
+        origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Message has been moderated'));
+
+        return true;
     end
 
     module:log('debug', 'Relaying correction of %s from %s', target_id, occupant and occupant.nick);

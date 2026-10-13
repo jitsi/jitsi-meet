@@ -984,23 +984,65 @@ describe('mod_muc_message_moderation', function()
             assert.is_nil(handled);
             assert.equal(0, #origin.sent);
             assert.equal('original', entry.stanza:get_child_text('body'));
-            -- archived like any other correction, there is just no entry here to
-            -- have checked it against
-            assert.is_nil(request:get_child('no-store', HINTS_NS));
+            assert.equal('corrected', request:get_child_text('body'));
+            -- there is no entry to check it against, so it is not archived
+            assert.is_table(request:get_child('no-store', HINTS_NS));
         end)
 
         it('relays a correction when the room has no history at all', function()
             local origin = make_origin();
+            local request = correction_request(AUTHOR, 'msg-1', 'corrected');
 
             local handled = handle_groupchat({
                 origin = origin,
                 room = make_room(nil),
-                stanza = correction_request(AUTHOR, 'msg-1', 'corrected'),
+                stanza = request,
                 occupant = AUTHOR.occupant
             });
 
             assert.is_nil(handled);
             assert.equal(0, #origin.sent);
+            assert.is_table(request:get_child('no-store', HINTS_NS));
+        end)
+
+        it('relays a correction of a retracted message without storing it', function()
+            local room = make_room({ history_message(AUTHOR, 'msg-1', 'original') });
+
+            handle_groupchat({
+                origin = make_origin(),
+                room = room,
+                stanza = retraction_request(AUTHOR, 'msg-1'),
+                occupant = AUTHOR.occupant
+            });
+
+            local origin = make_origin();
+            local request = correction_request(OTHER, 'msg-1', 'corrected');
+
+            local handled = handle_groupchat({
+                origin = origin,
+                room = room,
+                stanza = request,
+                occupant = OTHER.occupant
+            });
+
+            assert.is_nil(handled);
+            assert.equal(0, #origin.sent);
+            assert.is_table(request:get_child('no-store', HINTS_NS));
+        end)
+
+        it('replaces a store hint on a correction that is not in history', function()
+            local request = correction_request(AUTHOR, 'aged-out', 'corrected')
+                :tag('store', { xmlns = HINTS_NS }):up();
+
+            handle_groupchat({
+                origin = make_origin(),
+                room = make_room({ history_message(AUTHOR, 'msg-1', 'original') }),
+                stanza = request,
+                occupant = AUTHOR.occupant
+            });
+
+            assert.is_nil(request:get_child('store', HINTS_NS));
+            assert.equal(1, request:count_children('no-store'));
         end)
 
         it('rejects a correction of a moderated message', function()
