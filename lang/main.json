@@ -1057,6 +1057,14 @@
             "visitorsList": "Viewers ({{count}})",
             "waitingLobby": "Waiting in lobby ({{count}})"
         },
+        "indicators": {
+            "audioDominantSpeaker": "Active speaker",
+            "audioForceMuted": "Audio muted, cannot unmute",
+            "audioMuted": "Audio muted",
+            "raisedHand": "Hand raised",
+            "videoForceMuted": "Camera disabled, cannot enable",
+            "videoMuted": "Camera disabled"
+        },
         "search": "Search participants",
         "searchDescription": "Start typing to filter participants",
         "title": "Participants"
