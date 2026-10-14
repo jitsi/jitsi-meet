@@ -4,11 +4,11 @@ import { mintAsapToken } from './helpers/jwt.js';
 import { clearJibriIqs, getJibriIqs, getRoomState } from './helpers/test_observer.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
-// mod_jibri_session is loaded on the main VirtualHost (client → jicofo pass)
-// and on auth.localhost (jicofo → jibri pass). Both passes write the room's
-// meetingId to app_data.file_recording_metadata.conference_details.session_id.
-// Only the client → jicofo pass writes the initiator's identity to
-// app_data.file_recording_metadata.initiator.
+// mod_jibri_session is loaded on the main VirtualHost. On a client's jibri
+// start iq to the focus occupant it writes the room's meetingId to
+// app_data.file_recording_metadata.conference_details.session_id and the
+// initiator's identity to app_data.file_recording_metadata.initiator. Jicofo
+// copies app_data into the iq it sends to jibri.
 
 const CONFERENCE = 'conference.localhost';
 const CONFERENCE_SUB = 'conference.subdomain.localhost';
@@ -96,37 +96,6 @@ describe('mod_jibri_session', () => {
         return { client,
             focus,
             meetingId: state.meeting_id };
-    }
-
-    /**
-     * Connects a jibri (recorder@recorder.localhost) without joining a
-     * brewery room. Jicofo sends its start iq straight to the jibri's full
-     * JID, as in production.
-     *
-     * @returns {Promise<object>}
-     */
-    async function connectJibri() {
-        const jibri = await createXmppClient({
-            domain: 'recorder.localhost',
-            username: 'recorder',
-            password: 'recordersecret'
-        });
-
-        clients.push(jibri);
-
-        return jibri;
-    }
-
-    /**
-     * Waits for the start IQ jicofo sent to the jibri and returns its decoded app_data.
-     *
-     * @param {object} jibri
-     * @returns {Promise<object>}
-     */
-    async function receivedAppData(jibri) {
-        const iq = await jibri.waitForIq(s => s.getChild('jibri', 'http://jitsi.org/protocol/jibri'));
-
-        return JSON.parse(iq.getChild('jibri').attrs.app_data);
     }
 
     // ─── client → jicofo ─────────────────────────────────────────────────────
@@ -218,6 +187,45 @@ describe('mod_jibri_session', () => {
             assert.strictEqual(metadata.conference_details.session_id, meetingId);
         });
 
+        it('replaces the initiator sent by the client', async () => {
+            const room = nextRoom();
+            const { client } = await setup(room);
+
+            await client.sendJibriIq(room, 'start', 'file', {
+                appData: JSON.stringify({
+                    // eslint-disable-next-line camelcase
+                    file_recording_metadata: { initiator: { id: 'other' } }
+                })
+            });
+            const metadata = JSON.parse((await waitForJibriIq()).app_data).file_recording_metadata;
+
+            assert.deepStrictEqual(metadata.initiator, { id: 'user-1',
+                group: 'group-A' });
+        });
+
+        it('takes the room from the iq address and ignores a room attribute', async () => {
+            const otherRoom = nextRoom();
+
+            clients.push(await joinWithFocus(otherRoom));
+
+            const otherState = await getRoomState(otherRoom);
+            const room = nextRoom();
+            const { client, meetingId } = await setup(room);
+
+            assert.notStrictEqual(otherState?.meeting_id, meetingId);
+
+            await client.sendJibriIqTo(`${room}/focus`, {
+                action: 'start',
+                // eslint-disable-next-line camelcase
+                recording_mode: 'file',
+                room: otherRoom
+            });
+            const metadata = JSON.parse((await waitForJibriIq()).app_data).file_recording_metadata;
+
+            assert.strictEqual(metadata.conference_details.session_id, meetingId);
+            assert.strictEqual(metadata.initiator.id, 'user-1');
+        });
+
         it('does not touch app_data of a stop iq', async () => {
             const room = nextRoom();
             const { client } = await setup(room);
@@ -225,60 +233,6 @@ describe('mod_jibri_session', () => {
             await client.sendJibriIq(room, 'stop', 'file');
 
             assert.strictEqual((await waitForJibriIq()).app_data, undefined);
-        });
-    });
-
-    // ─── jicofo → jibri ──────────────────────────────────────────────────────
-
-    describe('jicofo-to-jibri pass (iq with a room attribute)', () => {
-
-        it('sets session_id from the room and keeps the initiator', async () => {
-            const room = nextRoom();
-            const { focus, meetingId } = await setup(room);
-            const jibri = await connectJibri();
-
-            await focus.sendJibriIqTo(jibri.jid, {
-                action: 'start',
-                room,
-                // eslint-disable-next-line camelcase
-                app_data: JSON.stringify({
-                    // eslint-disable-next-line camelcase
-                    file_recording_metadata: { initiator: { id: 'user-1' } }
-                })
-            });
-            const metadata = (await receivedAppData(jibri)).file_recording_metadata;
-
-            // eslint-disable-next-line camelcase
-            assert.deepStrictEqual(metadata.conference_details, { session_id: meetingId });
-            assert.deepStrictEqual(metadata.initiator, { id: 'user-1' });
-        });
-
-        it('keeps the session_id from the client iq when the room is not on this prosody', async () => {
-            // As when jicofo reaches jibri through a separate brewery prosody:
-            // the room named in the iq does not exist here.
-            const jibri = await connectJibri();
-            const focus = await createXmppClient({
-                domain: 'auth.localhost',
-                username: 'focus',
-                password: 'focussecret'
-            });
-
-            clients.push(focus);
-
-            const appData = JSON.stringify({
-                // eslint-disable-next-line camelcase
-                file_recording_metadata: { conference_details: { session_id: 'meeting-from-client-iq' } }
-            });
-
-            await focus.sendJibriIqTo(jibri.jid, {
-                action: 'start',
-                room: 'not-on-this-prosody@conference.localhost',
-                // eslint-disable-next-line camelcase
-                app_data: appData
-            });
-            const iq = await jibri.waitForIq(s => s.getChild('jibri', 'http://jitsi.org/protocol/jibri'));
-
-            assert.strictEqual(iq.getChild('jibri').attrs.app_data, appData);
         });
     });
 });

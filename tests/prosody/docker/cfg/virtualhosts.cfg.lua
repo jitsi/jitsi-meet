@@ -92,9 +92,6 @@ VirtualHost "localhost"
 -- from token_verification and can act as room owner on all MUC components.
 VirtualHost "auth.localhost"
     authentication = "internal_hashed"
-    -- mod_jibri_session also runs on jicofo's start iq to jibri, which carries
-    -- the room in its `room` attribute.
-    modules_enabled = { "jibri_session" }
     -- @xmpp/sasl (v0.13) does not await async SASL responses; the SCRAM-SHA-1
     -- mechanism in sasl-scram-sha-1 1.4+ is async, so the client sends an
     -- empty client-final message which Prosody rejects as malformed-request.
