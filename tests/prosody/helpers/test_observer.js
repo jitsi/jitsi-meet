@@ -339,7 +339,7 @@ export async function clearOtlpTraces() {
 /**
  * Returns room state from Prosody's internal MUC state.
  * @param {string} roomJid  e.g. 'room@conference.localhost'
- * @returns {Promise<{jid: string, hidden: boolean, occupant_count: number}|null>}
+ * @returns {Promise<{jid: string, hidden: boolean, occupant_count: number, meeting_id: string}|null>}
  */
 export async function getRoomState(roomJid) {
     const res = await fetch(`${BASE}/rooms?jid=${encodeURIComponent(roomJid)}`);
@@ -493,4 +493,33 @@ export async function endMeeting(roomJid, token, { silentReconnect = false, omit
 
     return { status: res.status,
         body: await res.text() };
+}
+
+/**
+ * Returns the Jibri IQs that reached the MUC component (i.e. passed
+ * mod_filter_iq_jibri), as recorded by mod_test_observer.
+ *
+ * @returns {Promise<Array<{from: string, to: string, action: string, recording_mode: string, app_data: string}>>}
+ */
+export async function getJibriIqs() {
+    const res = await fetch(`${BASE}/jibri-iqs`);
+
+    if (!res.ok) {
+        throw new Error(`GET /jibri-iqs failed: ${res.status}`);
+    }
+
+    return res.json();
+}
+
+/**
+ * Clears the Jibri IQs recorded by mod_test_observer.
+ *
+ * @returns {Promise<void>}
+ */
+export async function clearJibriIqs() {
+    const res = await fetch(`${BASE}/jibri-iqs`, { method: 'DELETE' });
+
+    if (!res.ok) {
+        throw new Error(`DELETE /jibri-iqs failed: ${res.status}`);
+    }
 }

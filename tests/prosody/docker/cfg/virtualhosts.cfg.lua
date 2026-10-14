@@ -23,6 +23,9 @@ VirtualHost "localhost"
         "conference_duration";
         "filter_iq_rayo";    -- priority 1 on pre-iq/full; listed before filter_iq_jibri (matches prod)
         "filter_iq_jibri";
+        -- Adds the initiator and the room's meetingId (session_id) to the
+        -- app_data of a client's jibri start iq.
+        "jibri_session";
         "muc_lobby_rooms";
         "jiconop";
         "muc_kick_participant";
@@ -85,6 +88,9 @@ VirtualHost "localhost"
 -- from token_verification and can act as room owner on all MUC components.
 VirtualHost "auth.localhost"
     authentication = "internal_hashed"
+    -- mod_jibri_session also runs on jicofo's start iq to jibri, which carries
+    -- the room in its `room` attribute.
+    modules_enabled = { "jibri_session" }
     -- @xmpp/sasl (v0.13) does not await async SASL responses; the SCRAM-SHA-1
     -- mechanism in sasl-scram-sha-1 1.4+ is async, so the client sends an
     -- empty client-final message which Prosody rejects as malformed-request.

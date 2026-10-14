@@ -301,19 +301,39 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * @param {string} roomJid         e.g. 'room@conference.localhost'
          * @param {string} action          'start' | 'stop' | 'status' etc.
          * @param {string} recordingMode   'file' (recording) | 'stream' (livestreaming)
+         * @param {object} [opts]
+         * @param {string} [opts.appData]  Raw app_data attribute value, sent as is.
          */
-        sendJibriIq(roomJid, action, recordingMode) {
+        sendJibriIq(roomJid, action, recordingMode, { appData } = {}) {
             // Directed to focus's occupant full JID so `pre-iq/full` fires on the
             // main VirtualHost where mod_filter_iq_jibri is loaded.
+            return this.sendJibriIqTo(`${roomJid}/focus`, {
+                action,
+                // eslint-disable-next-line camelcase
+                recording_mode: recordingMode,
+                // eslint-disable-next-line camelcase
+                ...appData === undefined ? {} : { app_data: appData }
+            });
+        },
+
+        /**
+         * Sends a Jibri IQ (http://jitsi.org/protocol/jibri) with the given
+         * <jibri/> attributes to any full JID, e.g. the start iq jicofo sends
+         * to a jibri, which names the room in its `room` attribute.
+         * Fire-and-forget; assert on the recipient's stanza queue (waitForIq)
+         * or the /jibri-iqs HTTP endpoint.
+         *
+         * @param {string} to           Destination full JID.
+         * @param {object} jibriAttrs   Attributes of the <jibri/> element.
+         */
+        sendJibriIqTo(to, jibriAttrs) {
             return xmpp.send(
                 xml('iq', { type: 'set',
-                    to: `${roomJid}/focus`,
+                    to,
                     id: `jibri-${++_counter}` },
                     xml('jibri', {
                         xmlns: 'http://jitsi.org/protocol/jibri',
-                        action,
-                        // eslint-disable-next-line camelcase
-                        recording_mode: recordingMode
+                        ...jibriAttrs
                     })
                 )
             );

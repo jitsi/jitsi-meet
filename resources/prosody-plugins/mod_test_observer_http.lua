@@ -649,6 +649,7 @@ module:provides("http", {
                     jid = room.jid;
                     hidden = room:get_hidden();
                     occupant_count = count;
+                    meeting_id = room._data.meetingId;
                 });
             };
         end;
