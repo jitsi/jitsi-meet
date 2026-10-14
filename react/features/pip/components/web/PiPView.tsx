@@ -171,10 +171,11 @@ function usePiPWindowHeight(pipWindow: Window | null): number {
  * Renders the participant video or avatar and the compact controls inside the PiP window, looking
  * like the legacy always-on-top window: video fills the window with no overlays, the avatar screen
  * shows the avatar with the display name underneath, and the toolbar fades in on mouse movement.
+ * Shared by the browser's Document PiP window and the custom Electron PiP window.
  *
  * @returns {React.ReactElement}
  */
-export function DocumentPiPView() {
+export function PiPView() {
     const { classes, cx } = useStyles();
     const videoRef = useRef<HTMLVideoElement>(null);
     const hideTimerRef = useRef<ReturnType<typeof setTimeout>>();

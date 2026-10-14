@@ -7,7 +7,7 @@ import { IReduxState } from '../../../app/types';
 import { exitPiP, handlePiPDoubleClick, setPiPDismissed } from '../../actions';
 import logger from '../../logger';
 
-import { DocumentPiPView } from './DocumentPiPView';
+import { PiPView } from './PiPView';
 
 const useStyles = makeStyles<void, 'dismiss'>()((_theme, _params, classes) => {
     return {
@@ -165,7 +165,7 @@ export function ElectronPiPView() {
             onPointerDown = { onPointerDown }
             onPointerMove = { onPointerMove }
             onPointerUp = { endDrag }>
-            <DocumentPiPView />
+            <PiPView />
             <button
                 aria-label = { t('dialog.close') }
                 className = { classes.dismiss }

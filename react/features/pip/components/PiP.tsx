@@ -7,8 +7,8 @@ import { isElectronPiPWindowMode, shouldShowPiP, shouldUseDocumentPiP } from '..
 import { useDocumentPiPMediaSession } from '../hooks';
 
 import PiPVideoElement from './PiPVideoElement';
-import { DocumentPiPContent } from './web/DocumentPiPContent';
 import ElectronPiPWindow from './web/ElectronPiPWindow';
+import { PiPWindowPortal } from './web/PiPWindowPortal';
 
 /**
  * Wrapper component that selects the appropriate PiP implementation.
@@ -44,7 +44,7 @@ function PiP() {
     }
 
     if (documentPiP) {
-        return <DocumentPiPContent />;
+        return <PiPWindowPortal />;
     }
 
     return <PiPVideoElement />;

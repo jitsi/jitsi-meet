@@ -4,8 +4,8 @@ import { useDispatch } from 'react-redux';
 import { handleWindowFocus, openElectronPiPWindow } from '../../actions';
 import { FOCUS_CHECK_DELAY_MS } from '../../constants';
 
-import { DocumentPiPContent } from './DocumentPiPContent';
 import { ElectronPiPView } from './ElectronPiPView';
+import { PiPWindowPortal } from './PiPWindowPortal';
 
 /**
  * Controller for the custom Electron PiP window mode: opens the PiP window
@@ -51,8 +51,8 @@ export default function ElectronPiPWindow() {
     }, [ dispatch ]);
 
     return (
-        <DocumentPiPContent>
+        <PiPWindowPortal>
             <ElectronPiPView />
-        </DocumentPiPContent>
+        </PiPWindowPortal>
     );
 }
