@@ -17,7 +17,8 @@
 --       state = provisioning|connecting|active|failed
 --   }
 -- Prosody-only (never broadcast):
---   room._data.voice_agents[agentId] = { endpoint = { url, authorization }, customParameters, callbackUrl }
+--   room._data.voice_agents[agentId] = { endpoint = { url, authorization }, customParameters, callbackUrl,
+--       mediaFormat = { encoding } }
 -- The dial config stays here: jicofo's connect carries only the conference and
 -- agent id, and the media relay fetches the endpoint by id (GET /voice-agent/dial)
 -- when the bridge connects, so no customer secret travels through room metadata,
@@ -28,19 +29,25 @@
 -- prosody_password_public_key_repo_url (NOT login tokens), exactly like
 -- mod_muc_jigasi_invite.
 --
+-- `conference` names the room as customers know it, '<tenant>/<room>' or '<room>' (plain or percent-encoded, any
+-- case), or by its JID (what jicofo and the media relay send, and the only way to name a breakout room). Every
+-- response, webhook and the dial config name it the public way, as the meeting URL spells it; never by JID.
+--
 --   POST /voice-agent/invite   { conference, displayName, agentId?, endpoint{url,authorization?},
---                                customParameters?, callbackUrl? }
+--                                customParameters?, callbackUrl?, mediaFormat?{encoding} }
+--     mediaFormat.encoding: 'audio/l16' (PCM16 24 kHz, the default) or 'audio/opus' (relayed undecoded)
 --     → 200 { agentId, sourceName }  — idempotent on agentId: an identical re-invite
 --       returns the existing agent, a different one is 409
 --   POST /voice-agent/dismiss  { conference, agentId } → 200 { agentId }
---   GET  /voice-agent/list?conference=<jid> → 200 { agents = { <agentId>: <client fields> } }
---   GET  /voice-agent/get?conference=<jid>&agentId=<id> → 200 <agent> | 404
+--   GET  /voice-agent/list?conference=<room> → 200 { agents = { <agentId>: <client fields> } }
+--   GET  /voice-agent/get?conference=<room>&agentId=<id> → 200 <agent> | 404
 --   POST /voice-agent/status   { conference, agentId, state, reason? }
 --     internal: jicofo/JVB advance the lifecycle (connecting|active|failed|ended);
 --     active → agent.connected, failed → agent.failed, ended → teardown + agent.ended
 --     auth: ASAP, or the voice_agent_status_secret shared secret (jicofo cannot mint ASAP)
 --   GET  /voice-agent/dial?conference=<jid>&agentId=<id>
---     internal: the media relay fetches { agentId, endpoint, customParameters } when dialing; auth as status
+--     internal: the media relay fetches { agentId, conference, endpoint, customParameters, mediaFormat } when dialing;
+--     auth as status
 --
 -- Webhooks: when an agent has a callbackUrl, lifecycle events are POSTed to it as
 -- { event, agentId, conference, sourceName, state, timestamp, reason? }, signed
@@ -57,6 +64,8 @@ local http = require 'net.http';
 
 local util = module:require 'util';
 local async_handler_wrapper = util.async_handler_wrapper;
+local extract_subdomain = util.extract_subdomain;
+local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local get_room_from_jid = util.get_room_from_jid;
 local is_healthcheck_room = util.is_healthcheck_room;
 local process_host_module = util.process_host_module;
@@ -69,6 +78,8 @@ if muc_component_host == nil then
     module:log('error', 'No muc_component specified. No muc to operate on!');
     return;
 end
+-- Optional: breakout rooms can be addressed by JID too.
+local breakout_rooms_component_host = module:get_option_string('breakout_rooms_component');
 
 local JSON_CONTENT_TYPE = 'application/json';
 
@@ -285,6 +296,26 @@ local function validate_endpoint(endpoint)
     return { url = endpoint.url; authorization = authorization };
 end
 
+-- Audio encodings the media relay speaks on the agent leg.
+local DEFAULT_MEDIA_ENCODING = 'audio/l16';
+local MEDIA_ENCODINGS = { ['audio/l16'] = true; ['audio/opus'] = true };
+
+-- Validates the optional mediaFormat; returns { encoding } (the default when absent), or nil plus an error.
+local function validate_media_format(media_format)
+    if media_format == nil then
+        return { encoding = DEFAULT_MEDIA_ENCODING };
+    end
+    if type(media_format) ~= 'table' or not MEDIA_ENCODINGS[media_format.encoding] then
+        return nil, 'mediaFormat.encoding must be audio/l16 or audio/opus';
+    end
+    for key in pairs(media_format) do
+        if key ~= 'encoding' then
+            return nil, 'mediaFormat supports only encoding';
+        end
+    end
+    return { encoding = media_format.encoding };
+end
+
 -- Shallow equality for string maps; nil and {} compare equal.
 local function maps_equal(a, b)
     a = a or {};
@@ -302,16 +333,72 @@ local function maps_equal(a, b)
     return true;
 end
 
--- Resolves the room from the request payload's/query's conference JID.
-local function find_room(conference)
-    if type(conference) ~= 'string' or conference == '' then
+local MAX_CONFERENCE_LENGTH = 512;
+
+local function url_decode(s)
+    return (s:gsub('%%(%x%x)', function(hex) return string.char(tonumber(hex, 16)); end));
+end
+
+-- One segment of a room name as the client stores it (getBackendSafeRoomName): lower-cased, then percent-encoded
+-- like encodeURIComponent with lower-case hex. Decoding first lets the plain and the encoded spelling meet.
+local function backend_safe(segment)
+    return (url_decode(segment):lower():gsub("[^%w%-_%.!~%*'%(%)]", function(c)
+        return string.format('%%%02x', c:byte());
+    end));
+end
+
+-- A room by the name customers know it by: '<tenant>/<room>' or '<room>', plain or percent-encoded, any case.
+local function find_room_by_name(conference)
+    local tenant, name = conference:match('^([^/]+)/([^/]+)$');
+    if not tenant then
+        if conference:find('/', 1, true) then
+            return nil;
+        end
+        name = conference;
+    end
+    return get_room_by_name_and_subdomain(backend_safe(name), tenant and backend_safe(tenant));
+end
+
+-- A room by its JID: what jicofo and the media relay send, and the only way to name a breakout room. Conference and
+-- breakout rooms only; a lobby room never hosts an agent, and its public name would be the main room's.
+local function find_room_by_jid(conference)
+    local room_jid = room_jid_match_rewrite(conference);
+    local host = room_jid:match('@([^/]+)');
+    if host == nil or (host ~= muc_component_host and host ~= breakout_rooms_component_host) then
         return nil;
     end
-    local room = get_room_from_jid(room_jid_match_rewrite(conference));
+    return get_room_from_jid(room_jid);
+end
+
+-- Resolves the room from a request's conference: its public name or its JID.
+local function find_room(conference)
+    if type(conference) ~= 'string' or conference == '' or #conference > MAX_CONFERENCE_LENGTH then
+        return nil;
+    end
+    local room;
+    if conference:find('@', 1, true) then
+        room = find_room_by_jid(conference);
+    else
+        room = find_room_by_name(conference);
+    end
     if room and is_healthcheck_room(room.jid) then
         return nil;
     end
     return room;
+end
+
+local MAX_REASON_LENGTH = 200;
+
+-- A status reason as customers (agent.failed webhook) may see it: bounded, and with any internal address, such as a
+-- bridge JID inside a jicofo allocation error, masked.
+local function public_reason(reason)
+    return (reason:sub(1, MAX_REASON_LENGTH):gsub('[%c]', ' '):gsub('%S*@%S*', '<internal>'));
+end
+
+-- The name customers know a room by: '<tenant>/<room>', or '<room>' outside a tenant. Never the MUC JID.
+local function public_room_name(room)
+    local tenant, name = extract_subdomain(room.jid:match('^([^@]+)@') or room.jid);
+    return tenant and (tenant .. '/' .. name) or name;
 end
 
 -- Returns the client-facing entry and the jicofo-only entry for an agent, or nil when unknown.
@@ -374,7 +461,7 @@ local function send_webhook(room, agent_id, entry, callback_url, event_name, ext
     local payload = {
         event = event_name;
         agentId = agent_id;
-        conference = room.jid;
+        conference = public_room_name(room);
         sourceName = entry.sourceName;
         state = entry.state;
         timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ');
@@ -467,6 +554,10 @@ local function handle_invite(event)
     if callback_error then
         return error_response(400, callback_error);
     end
+    local media_format, media_format_error = validate_media_format(payload.mediaFormat);
+    if media_format_error then
+        return error_response(400, media_format_error);
+    end
 
     room.jitsiMetadata = room.jitsiMetadata or {};
     local agents = room.jitsiMetadata.agents or {};
@@ -489,6 +580,7 @@ local function handle_invite(event)
         if existing.displayName == payload.displayName
                 and maps_equal(jicofo_entry.endpoint, endpoint)
                 and maps_equal(jicofo_entry.customParameters, custom_params)
+                and (jicofo_entry.mediaFormat or { encoding = DEFAULT_MEDIA_ENCODING }).encoding == media_format.encoding
                 and jicofo_entry.callbackUrl == callback_url then
             return { status_code = 200, body = json.encode({ agentId = agent_id, sourceName = source_name }) };
         end
@@ -515,6 +607,7 @@ local function handle_invite(event)
         endpoint = endpoint;
         customParameters = custom_params;
         callbackUrl = callback_url;
+        mediaFormat = media_format;
     };
 
     room.jitsiMetadata.agents = agents;
@@ -618,7 +711,7 @@ local function handle_status(event)
     if not STATUS_TRANSITIONS[payload.state] then
         return error_response(400, 'Invalid state');
     end
-    local reason = type(payload.reason) == 'string' and payload.reason or nil;
+    local reason = type(payload.reason) == 'string' and public_reason(payload.reason) or nil;
 
     if payload.state == STATE_ENDED then
         if not remove_agent(room, payload.agentId, reason or 'ended') then
@@ -667,8 +760,10 @@ local function handle_dial(event)
     end
     return { status_code = 200, body = json.encode({
         agentId = params.agentId;
+        conference = public_room_name(room);
         endpoint = jicofo_entry.endpoint;
         customParameters = jicofo_entry.customParameters;
+        mediaFormat = jicofo_entry.mediaFormat;
     }) };
 end
 

@@ -71,8 +71,20 @@ local mock_room;
 local timers = {};
 local host_hooks = {};
 
+-- Public room-name lookups ({ name, subdomain }) seen by the util stub.
+local name_lookups = {};
+
 local util_stub = {
     async_handler_wrapper = function(event, handler) return handler(event); end,
+    extract_subdomain = function(node)
+        local subdomain, room = node:match('^%[([^%]]+)%](.+)$');
+        return subdomain, room or node;
+    end,
+    get_room_by_name_and_subdomain = function(name, subdomain)
+        table.insert(name_lookups, { name = name, subdomain = subdomain });
+        if name == 'missing' then return nil; end
+        return mock_room;
+    end,
     get_room_from_jid = function(jid)
         if jid == 'missing' then return nil; end
         return mock_room;
@@ -109,6 +121,7 @@ _G.module = {
     log = function() end,
     get_option_string = function(_, key, default)
         if key == 'muc_component' then return 'conference.localhost'; end
+        if key == 'breakout_rooms_component' then return 'breakout.localhost'; end
         if key == 'voice_agent_webhook_secret' then return 'shh'; end
         if key == 'voice_agent_status_secret' then return 'jicofo-secret'; end
         return default;
@@ -221,7 +234,82 @@ describe('mod_voice_agent_component', function()
         metadata_events = 0;
         http_next_code = 200;
         timers = {};
+        name_lookups = {};
         for i = #encoded, 1, -1 do encoded[i] = nil; end
+    end)
+
+    describe('public room names (no MUC JIDs for customers)', function()
+        it('resolves <tenant>/<room>, lower-cased, through the tenant', function()
+            assert.are.equal(200, invite({ conference = 'Acme/Support-Room'; displayName = 'Bot' }).status_code);
+            assert.are.same({ name = 'support-room', subdomain = 'acme' }, name_lookups[1]);
+        end)
+
+        it('resolves a bare <room> outside any tenant', function()
+            assert.are.equal(200, invite({ conference = 'lobby'; displayName = 'Bot' }).status_code);
+            assert.are.same({ name = 'lobby' }, name_lookups[1]);
+        end)
+
+        it('also takes a room JID, without a name lookup', function()
+            assert.are.equal(200, invite({ conference = 'room1@conference.localhost'; displayName = 'Bot';
+                agentId = 'support' }).status_code);
+            assert.are.equal(200, dismiss({ conference = 'room1@conference.localhost'; agentId = 'agent-support' }).status_code);
+            assert.are.equal(0, #name_lookups);
+        end)
+
+        it('takes conference and breakout room JIDs, not a lobby room\'s', function()
+            assert.are.equal(200, invite({ conference = 'abc@breakout.localhost'; displayName = 'Bot';
+                agentId = 'support' }).status_code);
+            assert.are.equal(200, dial('conference=abc@breakout.localhost&agentId=agent-support').status_code);
+            assert.are.equal(404, invite({ conference = 'room1@lobby.conference.localhost'; displayName = 'Bot' }).status_code);
+            assert.are.equal(404, dial('conference=room1@lobby.conference.localhost&agentId=agent-support').status_code);
+        end)
+
+        it('spells names as the client stores them, from the plain or the encoded form', function()
+            local cases = {
+                { 'Sales Standup', 'sales%20standup' },
+                { 'sales%20STANDUP', 'sales%20standup' },
+                { 'Caf\195\169', 'caf%c3%a9' },
+                { 'caf%C3%A9', 'caf%c3%a9' },
+                { 'a+b', 'a%2bb' },
+                { '100%', '100%25' },
+                { '[t]room', '%5bt%5droom' },
+            };
+            for i, case in ipairs(cases) do
+                invite({ conference = case[1]; displayName = 'Bot' });
+                assert.are.equal(case[2], name_lookups[i].name, case[1]);
+            end
+        end)
+
+        it('rejects names with more than one tenant segment or an empty one', function()
+            for _, bad in ipairs({ 'a/b/c', '/room', 'tenant/' }) do
+                assert.are.equal(404, invite({ conference = bad; displayName = 'Bot' }).status_code, bad);
+            end
+        end)
+
+        it('masks internal addresses in a failure reason before it reaches the webhook', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support'; callbackUrl = CALLBACK });
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'failed';
+                reason = 'bridge allocation failed: Session no longer active (bridge=jvbbrewery@internal.auth.localhost/jvb-1)' },
+                { token = 'Bearer jicofo-secret' });
+            assert.are.equal('bridge allocation failed: Session no longer active <internal>',
+                webhook_payloads('agent.failed')[1].reason);
+        end)
+
+        it('names the room <tenant>/<room> in webhooks and the dial response, never by JID', function()
+            mock_room.jid = '[acme]support@conference.localhost';
+            invite({ conference = 'acme/support'; displayName = 'Bot'; agentId = 'support'; callbackUrl = CALLBACK });
+            status({ conference = '[acme]support@conference.localhost'; agentId = 'agent-support'; state = 'active' },
+                { token = 'Bearer jicofo-secret' });
+            assert.are.equal('acme/support', webhook_payloads('agent.connected')[1].conference);
+            dial('conference=[acme]support@conference.localhost&agentId=agent-support');
+            assert.are.equal('acme/support', encoded[#encoded].conference);
+        end)
+
+        it('names a room outside any tenant by its bare name', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support'; callbackUrl = CALLBACK });
+            dismiss({ conference = 'r'; agentId = 'agent-support' });
+            assert.are.equal('room1', webhook_payloads('agent.ended')[1].conference);
+        end)
     end)
 
     describe('authentication', function()
@@ -360,6 +448,44 @@ describe('mod_voice_agent_component', function()
             local stored = mock_room._data.voice_agents['agent-support'].endpoint;
             assert.are.equal('wss://agents.example.com/s', stored.url);
             assert.are.equal('Bearer k', stored.authorization);
+        end)
+    end)
+
+    describe('mediaFormat', function()
+        local function dial_body()
+            assert.are.equal(200, dial('conference=r&agentId=agent-support').status_code);
+            return encoded[#encoded];
+        end
+
+        it('defaults to PCM16 in the dial response', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            assert.are.equal('audio/l16', dial_body().mediaFormat.encoding);
+        end)
+
+        it('carries Opus to the dial response and keeps it out of the client-facing entry', function()
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                mediaFormat = { encoding = 'audio/opus' } }).status_code);
+            assert.are.equal('audio/opus', dial_body().mediaFormat.encoding);
+            assert.is_nil(mock_room.jitsiMetadata.agents['agent-support'].mediaFormat);
+        end)
+
+        it('rejects an unknown encoding, a non-object and unsupported fields', function()
+            for _, bad in ipairs({ { encoding = 'audio/pcmu' }, 'audio/opus', {},
+                    { encoding = 'audio/l16'; sampleRate = 16000 } }) do
+                assert.are.equal(400, invite({ conference = 'r'; displayName = 'Bot'; mediaFormat = bad }).status_code);
+            end
+            assert.are.equal(0, #agent_ids(mock_room));
+        end)
+
+        it('is part of the idempotency check, the default matching an explicit audio/l16', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                mediaFormat = { encoding = 'audio/l16' } }).status_code);
+            -- A record from before mediaFormat existed counts as the default.
+            mock_room._data.voice_agents['agent-support'].mediaFormat = nil;
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' }).status_code);
+            assert.are.equal(409, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                mediaFormat = { encoding = 'audio/opus' } }).status_code);
         end)
     end)
 
