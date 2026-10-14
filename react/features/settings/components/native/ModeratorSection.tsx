@@ -18,8 +18,10 @@ const ModeratorSection = () => {
     const dispatch = useDispatch();
     const {
         audioModerationEnabled,
+        breakoutRoomJoinWithPermissionsEnabled,
         chatWithPermissionsEnabled,
         privateChatWithPermissionsEnabled,
+        showBreakoutRoomJoinWithPermissions,
         followMeActive,
         followMeEnabled,
         followMeRecorderActive,
@@ -74,6 +76,15 @@ const ModeratorSection = () => {
         });
     }, [ dispatch, conference ]);
 
+    const onBreakoutRoomJoinWithPermissionsToggled = useCallback((enabled?: boolean) => {
+        const currentPermissions = conference?.getMetadataHandler().getMetadata().permissions || {};
+
+        conference?.getMetadataHandler().setMetadata('permissions', {
+            ...currentPermissions,
+            breakoutRoomJoinRestricted: enabled
+        });
+    }, [ dispatch, conference ]);
+
     const followMeRecorderChecked = followMeRecorderEnabled && !followMeRecorderActive;
 
     const moderationSettings = useMemo(() => {
@@ -118,15 +129,26 @@ const ModeratorSection = () => {
                 state: privateChatWithPermissionsEnabled,
                 onChange: onPrivateChatWithPermissionsToggled
             },
+            {
+                label: 'settings.breakoutRoomJoinWithPermissions',
+                state: breakoutRoomJoinWithPermissionsEnabled,
+                onChange: onBreakoutRoomJoinWithPermissionsToggled
+            },
         ];
 
-        if (disableReactionsModeration) {
-            // Remove the reactions entry by name. A pop() here took out whichever
+        return moderation.filter(({ label }) => {
+            // Remove the entries by name. A pop() here took out whichever
             // entry came last, which is not the reactions one.
-            return moderation.filter(({ label }) => label !== 'settings.startReactionsMuted');
-        }
+            if (label === 'settings.startReactionsMuted') {
+                return !disableReactionsModeration;
+            }
 
-        return moderation;
+            if (label === 'settings.breakoutRoomJoinWithPermissions') {
+                return showBreakoutRoomJoinWithPermissions;
+            }
+
+            return true;
+        });
     }, [ startAudioMuted,
         startVideoMuted,
         followMeEnabled,
@@ -139,8 +161,11 @@ const ModeratorSection = () => {
         onStartReactionsMutedToggled,
         onChatWithPermissionsToggled,
         onPrivateChatWithPermissionsToggled,
+        onBreakoutRoomJoinWithPermissionsToggled,
+        breakoutRoomJoinWithPermissionsEnabled,
         chatWithPermissionsEnabled,
         privateChatWithPermissionsEnabled,
+        showBreakoutRoomJoinWithPermissions,
         startReactionsMuted ]);
 
     return (

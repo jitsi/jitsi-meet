@@ -15,6 +15,11 @@ const DEFAULT_STATE = {
 };
 
 export interface IBreakoutRoomsState {
+
+    /**
+     * Whether the main room lets only moderators, and the participants they move, join breakout rooms.
+     */
+    joinRestricted?: boolean;
     roomCounter: number;
     rooms: IRooms;
     userContextCache: {
@@ -37,10 +42,13 @@ ReducerRegistry.register<IBreakoutRoomsState>(FEATURE_KEY, (state = DEFAULT_STAT
             roomCounter: action.roomCounter
         };
     case UPDATE_BREAKOUT_ROOMS: {
-        const { roomCounter, rooms, userContextCache } = action;
+        const { joinRestricted, roomCounter, rooms, userContextCache } = action;
 
         return {
             ...state,
+
+            // An update that the client sends to itself, e.g. for a changed display name, does not carry it.
+            joinRestricted: joinRestricted ?? state.joinRestricted,
             roomCounter,
             rooms,
             userContextCache: userContextCache || state.userContextCache
