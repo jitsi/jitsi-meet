@@ -456,8 +456,8 @@ var config = {
     // Voice agents: server-side AI participants provisioned through the voice-agent API.
     // voiceAgents: {
     //     // Ask each participant before an agent may hear them (they are muted until they decide, and only
-    //     // participants who allow the agent hear it). Set to false to let agents in without asking.
-    //     // requireConsent: true,
+    //     // participants who allow the agent hear it). By default agents are let in without asking.
+    //     // requireConsent: false,
     //     // Link for the consent dialog's "Learn more" link.
     //     // consentLearnMoreLink: 'https://jitsi.org/meet/consent',
     // },

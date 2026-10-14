@@ -8,7 +8,7 @@ import { IconAI } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
 import { showVoiceAgentConsentDialog } from '../../actions';
-import { getVoiceAgentAwaitingConsent } from '../../functions';
+import { getVoiceAgentAwaitingConsent, isVoiceAgentBlockedByE2EE } from '../../functions';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -30,6 +30,7 @@ const VoiceAgentLabel = () => {
     const dispatch = useDispatch();
     const agents = useSelector((state: IReduxState) => state['features/voice-agents'].agents);
     const awaiting = useSelector(getVoiceAgentAwaitingConsent);
+    const blocked = useSelector(isVoiceAgentBlockedByE2EE);
 
     const onClick = useCallback(() => {
         if (awaiting) {
@@ -44,7 +45,12 @@ const VoiceAgentLabel = () => {
         return null;
     }
 
-    const content = t(awaiting ? 'voiceAgents.labelTooltipAllow' : 'voiceAgents.labelTooltip', { names });
+    let tooltipKey = awaiting ? 'voiceAgents.labelTooltipAllow' : 'voiceAgents.labelTooltip';
+
+    if (blocked) {
+        tooltipKey = 'voiceAgents.labelTooltipE2EE';
+    }
+    const content = t(tooltipKey, { names });
 
     return (
         <Tooltip

@@ -1854,8 +1854,11 @@
         "consentDescription": "The agent only hears participants who allow it. If you allow, it will hear you and you will hear its replies.",
         "consentDescriptionMuted": "The agent only hears participants who allow it. If you allow, it will hear you and you will hear its replies. You are muted until you decide.",
         "consentTitle": "{{name}} joined as an AI agent",
+        "e2eeUnsupportedDescription": "AI agents cannot take part in end-to-end encrypted meetings. Turn off end-to-end encryption to let the agent hear and be heard.",
+        "e2eeUnsupportedTitle": "{{name}} is unavailable",
         "labelTooltip": "AI agent in the meeting: {{names}}",
         "labelTooltipAllow": "AI agent in the meeting: {{names}}. Click to let it hear you.",
+        "labelTooltipE2EE": "AI agent in the meeting: {{names}}. Unavailable while the meeting is end-to-end encrypted.",
         "nativeTitle": "AI agent in the meeting",
         "notNow": "Not now",
         "thumbnailTooltip": "AI agent"
