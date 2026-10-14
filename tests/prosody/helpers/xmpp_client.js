@@ -305,8 +305,9 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * @param {string} [opts.appData]  Raw app_data attribute value, sent as is.
          */
         sendJibriIq(roomJid, action, recordingMode, { appData } = {}) {
-            // Directed to focus's occupant full JID so `pre-iq/full` fires on the
-            // main VirtualHost where mod_filter_iq_jibri is loaded.
+            // `pre-iq/full` (mod_filter_iq_jibri, mod_jibri_session) fires on this
+            // client's own VirtualHost. Directed to focus's occupant full JID so
+            // the MUC records it and forwards it to the focus.
             return this.sendJibriIqTo(`${roomJid}/focus`, {
                 action,
                 // eslint-disable-next-line camelcase
@@ -320,8 +321,10 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * Sends a Jibri IQ (http://jitsi.org/protocol/jibri) with the given
          * <jibri/> attributes to any full JID, e.g. the start iq jicofo sends
          * to a jibri, which names the room in its `room` attribute.
-         * Fire-and-forget; assert on the recipient's stanza queue (waitForIq)
-         * or the /jibri-iqs HTTP endpoint.
+         * Fire-and-forget; assert on the recipient's stanza queue (waitForIq).
+         * The /jibri-iqs HTTP endpoint only records iqs addressed to an
+         * occupant on conference.localhost, so it never sees an iq sent to a
+         * jibri's own JID.
          *
          * @param {string} to           Destination full JID.
          * @param {object} jibriAttrs   Attributes of the <jibri/> element.

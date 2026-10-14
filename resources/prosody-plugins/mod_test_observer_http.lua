@@ -628,7 +628,7 @@ module:provides("http", {
         end;
 
         -- GET /test-observer/rooms?jid=room@conference.localhost
-        -- Returns: { jid, hidden, occupant_count }
+        -- Returns: { jid, hidden, occupant_count, meeting_id }
         ["GET /rooms"] = function(event)
             local params = parse_query(event.request.url.query);
             local room_jid = params["jid"];

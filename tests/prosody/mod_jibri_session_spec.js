@@ -5,9 +5,10 @@ import { clearJibriIqs, getJibriIqs, getRoomState } from './helpers/test_observe
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 // mod_jibri_session is loaded on the main VirtualHost (client → jicofo pass)
-// and on auth.localhost (jicofo → jibri pass). It writes the room's meetingId
-// to app_data.file_recording_metadata.conference_details.session_id and the
-// initiator's identity to app_data.file_recording_metadata.initiator.
+// and on auth.localhost (jicofo → jibri pass). Both passes write the room's
+// meetingId to app_data.file_recording_metadata.conference_details.session_id.
+// Only the client → jicofo pass writes the initiator's identity to
+// app_data.file_recording_metadata.initiator.
 
 const CONFERENCE = 'conference.localhost';
 const CONFERENCE_SUB = 'conference.subdomain.localhost';
@@ -98,8 +99,9 @@ describe('mod_jibri_session', () => {
     }
 
     /**
-     * Connects a jibri (recorder@recorder.localhost) that does not join any
-     * room, as when jicofo reaches it through a brewery.
+     * Connects a jibri (recorder@recorder.localhost) without joining a
+     * brewery room. Jicofo sends its start iq straight to the jibri's full
+     * JID, as in production.
      *
      * @returns {Promise<object>}
      */
@@ -180,14 +182,30 @@ describe('mod_jibri_session', () => {
             const room = nextRoom();
             const { client, meetingId } = await setup(room);
 
+            // Before the fix the hook threw, and prosody dropped the iq, so
+            // waitForJibriIq timed out.
             await client.sendJibriIq(room, 'start', 'file', { appData: 'null' });
             const metadata = JSON.parse((await waitForJibriIq()).app_data).file_recording_metadata;
 
             assert.strictEqual(metadata.conference_details.session_id, meetingId);
+        });
 
-            const disconnected = await client.waitForDisconnect(400).then(() => true, () => false);
+        it('replaces file_recording_metadata that is not an object', async () => {
+            const room = nextRoom();
+            const { client, meetingId } = await setup(room);
 
-            assert.strictEqual(disconnected, false, 'client session must survive app_data="null"');
+            await client.sendJibriIq(room, 'start', 'file', {
+                appData: JSON.stringify({
+                    // eslint-disable-next-line camelcase
+                    file_recording_metadata: null,
+                    other: 1
+                })
+            });
+            const appData = JSON.parse((await waitForJibriIq()).app_data);
+
+            assert.strictEqual(appData.other, 1);
+            assert.strictEqual(appData.file_recording_metadata.conference_details.session_id, meetingId);
+            assert.strictEqual(appData.file_recording_metadata.initiator.id, 'user-1');
         });
 
         it('uses the meetingId of a subdomain room', async () => {

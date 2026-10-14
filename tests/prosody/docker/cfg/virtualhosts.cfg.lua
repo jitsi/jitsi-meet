@@ -81,6 +81,10 @@ VirtualHost "localhost"
     -- Clients on whitelist.localhost bypass the lobby.
     muc_lobby_whitelist = { "whitelist.localhost" }
 
+    -- mod_filter_iq_jibri: every test client connects from the same IP, and
+    -- the jibri specs send more start/stop iqs than the default 9 per minute.
+    max_number_ip_attempts_per_minute = 100
+
 -- VirtualHost for the focus (jicofo) test helper.
 -- Clients authenticate with username "focus" and password "focussecret".
 -- The account is pre-created in the Docker image (see Dockerfile).

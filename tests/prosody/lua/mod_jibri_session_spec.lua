@@ -390,6 +390,53 @@ describe("mod_jibri_session", function()
             assert.equal('null', jibri.attr.app_data)
         end)
 
+        for _, raw in ipairs({ 'null', '123', '"text"', 'true' }) do
+            local app_data = '{"other":1,"file_recording_metadata":' .. raw .. '}'
+
+            it("replaces file_recording_metadata that is not an object (" .. raw .. ")", function()
+                mock.room_from_jid = { _data = { meetingId = 'meeting-abc' } }
+                local jibri   = make_jibri_elem({ action = 'start', app_data = app_data })
+                local session = { jitsi_meet_context_user = { id = 'user-1' } }
+                assert.has_no.errors(function()
+                    hooked_fn(make_event(make_iq(jibri, { to = ROOM_FOCUS }), session))
+                end)
+                local data = decoded_app_data(jibri)
+                assert.equal(1, data.other)
+                assert.equal('meeting-abc', data.file_recording_metadata.conference_details.session_id)
+                assert.equal('user-1', data.file_recording_metadata.initiator.id)
+            end)
+
+            it("replaces file_recording_metadata that is not an object when the room has no meetingId ("
+                    .. raw .. ")", function()
+                mock.room_from_jid = { _data = {} }
+                local jibri   = make_jibri_elem({ action = 'start', app_data = app_data })
+                local session = { jitsi_meet_context_user = { id = 'user-1' } }
+                assert.has_no.errors(function()
+                    hooked_fn(make_event(make_iq(jibri, { to = ROOM_FOCUS }), session))
+                end)
+                assert.same({ other = 1, file_recording_metadata = { initiator = { id = 'user-1' } } },
+                    decoded_app_data(jibri))
+            end)
+        end
+
+        for _, number in ipairs({ 'NaN', '1e999' }) do
+            it("keeps only the metadata it sets when app_data decodes but cannot be encoded again ("
+                    .. number .. ")", function()
+                mock.room_from_jid = { _data = { meetingId = 'meeting-abc' } }
+                local raw = '{"x":' .. number .. ',"file_recording_metadata":{"share":true,'
+                    .. '"initiator":{"id":"other"},"conference_details":{"session_id":"other"}}}'
+                local jibri   = make_jibri_elem({ action = 'start', app_data = raw })
+                local session = { jitsi_meet_context_user = { id = 'user-1' } }
+                assert.has_no.errors(function()
+                    hooked_fn(make_event(make_iq(jibri, { to = ROOM_FOCUS }), session))
+                end)
+                assert.same({ file_recording_metadata = {
+                    conference_details = { session_id = 'meeting-abc' },
+                    initiator = { id = 'user-1' },
+                } }, decoded_app_data(jibri))
+            end)
+        end
+
     end)
 
 end) -- mod_jibri_session

@@ -339,7 +339,7 @@ export async function clearOtlpTraces() {
 /**
  * Returns room state from Prosody's internal MUC state.
  * @param {string} roomJid  e.g. 'room@conference.localhost'
- * @returns {Promise<{jid: string, hidden: boolean, occupant_count: number, meeting_id: string}|null>}
+ * @returns {Promise<{jid: string, hidden: boolean, occupant_count: number, meeting_id?: string}|null>}
  */
 export async function getRoomState(roomJid) {
     const res = await fetch(`${BASE}/rooms?jid=${encodeURIComponent(roomJid)}`);
@@ -497,9 +497,10 @@ export async function endMeeting(roomJid, token, { silentReconnect = false, omit
 
 /**
  * Returns the Jibri IQs that reached the MUC component (i.e. passed
- * mod_filter_iq_jibri), as recorded by mod_test_observer.
+ * mod_filter_iq_jibri), as recorded by mod_test_observer. app_data is the
+ * value after the sender's `pre-iq/full` hooks (e.g. mod_jibri_session) ran.
  *
- * @returns {Promise<Array<{from: string, to: string, action: string, recording_mode: string, app_data: string}>>}
+ * @returns {Promise<Array<{from: string, to: string, action?: string, recording_mode?: string, app_data?: string}>>}
  */
 export async function getJibriIqs() {
     const res = await fetch(`${BASE}/jibri-iqs`);

@@ -11,7 +11,10 @@
 --   meetingId of the room the iq is addressed to.
 --
 -- Both replace anything the client sent.  conference_details is removed when
--- the room has no meetingId.  The room is taken from the iq's `to`, which is
+-- the room has no meetingId.  An app_data that is not valid JSON is left
+-- unchanged.  An app_data or file_recording_metadata that is valid JSON but
+-- not an object (null, a number, a string or a boolean) is replaced with an
+-- empty object first.  The room is taken from the iq's `to`, which is
 -- also what the MUC routes the iq by; the `room` attribute of the jibri element
 -- is ignored.  Iqs that are not addressed to a room on this prosody are left
 -- untouched.
@@ -58,19 +61,27 @@ local function attachJibriSessionId(event)
             module:log('warn', 'Failed to decode jibri app_data from %s: %s', stanza.attr.from, err);
             return;
         end
-        -- valid JSON that is not an object (e.g. 'null', which decodes to cjson.null) carries nothing
-        -- we can keep, so start from an empty object as if no app_data had been sent
+        -- valid JSON that does not decode to a table (null, which decodes to cjson.null, a number, a string or
+        -- a boolean) carries nothing we can keep, so start from an empty object as if no app_data had been sent
         if type(app_data) ~= 'table' then
-            module:log('warn', 'Replacing jibri app_data from %s that is not a JSON object', stanza.attr.from);
+            module:log('warn', 'Replacing jibri app_data of type %s from %s to %s',
+                type(app_data), stanza.attr.from, stanza.attr.to);
             app_data = {};
         end
     else
         app_data = {};
     end
-    if app_data.file_recording_metadata == nil then
-        app_data.file_recording_metadata = {};
-    end
+    -- the same for a file_recording_metadata that is not a table, which we would fail to index below
     local metadata = app_data.file_recording_metadata;
+    if metadata ~= nil and type(metadata) ~= 'table' then
+        module:log('warn', 'Replacing jibri file_recording_metadata of type %s from %s to %s',
+            type(metadata), stanza.attr.from, stanza.attr.to);
+        metadata = nil;
+    end
+    if metadata == nil then
+        metadata = {};
+        app_data.file_recording_metadata = metadata;
+    end
 
     local meeting_id = room._data.meetingId;
     if meeting_id then
@@ -98,7 +109,19 @@ local function attachJibriSessionId(event)
         metadata.initiator = nil;
     end
 
-    jibri.attr.app_data = json.encode(app_data);
+    local encoded, encode_err = json.encode(app_data);
+    if not encoded then
+        -- cjson decodes NaN, Infinity and 1e999 but cannot encode them. Keep only the metadata set here, never
+        -- the original, which could carry a client's own initiator and session_id
+        module:log('error',
+            'Failed to encode jibri app_data from %s to %s, keeping only conference_details and initiator: %s',
+            stanza.attr.from, stanza.attr.to, encode_err);
+        encoded = json.encode({ file_recording_metadata = {
+            conference_details = metadata.conference_details;
+            initiator = metadata.initiator;
+        } });
+    end
+    jibri.attr.app_data = encoded;
 end
 
 module:hook('pre-iq/full', attachJibriSessionId);
