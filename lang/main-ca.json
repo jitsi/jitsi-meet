@@ -46,7 +46,8 @@
         "errorLimitReached": "No s'ha pogut traduir tothom alhora. En el seu lloc, activeu la traducció per als participants individuals.",
         "errorRoomDisabled": "La traducció d'àudio està desactivada per a aquesta reunió. Habiliteu-la a la configuració del moderador.",
         "errorSpeakerUnavailable": "No es pot traduir aquest participant — ja no és a la reunió.",
-        "labelTooltip": "S'està traduint…"
+        "labelTooltip": "S'està traduint…",
+        "labelTooltipPlaying": "L'àudio traduït encara s'està reproduint — espereu abans de parlar"
     },
     "bandwidthSettings": {
         "assumedBandwidthBps": "p. ex. 10000000 per a 10 Mbps",
