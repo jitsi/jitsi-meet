@@ -72,14 +72,25 @@ export function pickPresentAgents(agents: IVoiceAgents): IVoiceAgents {
 }
 
 /**
- * Whether receiving a voice agent's media requires an explicit user consent. Defaults to true; a
- * deployment can auto-subscribe every participant with `config.voiceAgents.requireConsent: false`.
+ * Whether receiving a voice agent's media requires an explicit user consent. Defaults to false, so every
+ * participant is subscribed automatically; a deployment can ask first with `config.voiceAgents.requireConsent: true`.
  *
  * @param {IReduxState} state - The redux state.
  * @returns {boolean}
  */
 export function isVoiceAgentConsentRequired(state: IReduxState): boolean {
-    return state['features/base/config'].voiceAgents?.requireConsent !== false;
+    return state['features/base/config'].voiceAgents?.requireConsent === true;
+}
+
+/**
+ * Whether the meeting is end-to-end encrypted. Agents cannot take part then: the bridge would hand them
+ * ciphertext, and the audio they inject is not encrypted with the meeting's keys.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function isVoiceAgentBlockedByE2EE(state: IReduxState): boolean {
+    return Boolean(state['features/e2ee']?.enabled);
 }
 
 /**
@@ -115,6 +126,9 @@ export function getAllowedAgentIds(state: IReduxState): string[] {
  * @returns {string|undefined}
  */
 export function getVoiceAgentAwaitingConsent(state: IReduxState): string | undefined {
+    if (isVoiceAgentBlockedByE2EE(state)) {
+        return undefined;
+    }
     const { agents, consent } = state['features/voice-agents'];
 
     return Object.keys(agents).find(agentId => consent[agentId] !== true);
