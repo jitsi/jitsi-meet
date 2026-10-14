@@ -29,6 +29,7 @@ import VideoQualityDialog from '../pageobjects/VideoQualityDialog';
 import VirtualBackgroundDialog from '../pageobjects/VirtualBackgroundDialog';
 import Visitors from '../pageobjects/Visitors';
 
+import { config as testsConfig } from './TestsConfig';
 import { LOG_PREFIX, logInfo } from './browserLogger';
 import { IToken } from './token';
 import { IParticipantJoinOptions, IParticipantOptions } from './types';
@@ -342,6 +343,12 @@ export class Participant {
             } else if (baseUrl.pathname.length > 1) {
                 // remove leading slash
                 url = `${url}&tenant="${baseUrl.pathname.substring(1)}"`;
+            }
+
+            // When the conferences are pinned to a release through the room name suffix, load the external API
+            // from that release as well.
+            if (testsConfig.roomName.suffix) {
+                url = `${url}&externalApiPath="${testsConfig.roomName.suffix}"`;
             }
         }
         if (this._token?.jwt) {
