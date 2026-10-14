@@ -5,19 +5,36 @@
 --
 --   1. Client → jicofo (no `room` attr): reads the initiating user's identity
 --      from the XMPP session and writes it to
---      app_data.file_recording_metadata.initiator {id, group}.
+--      app_data.file_recording_metadata.initiator {id, group}.  The iq is
+--      addressed to the focus occupant of the room, so it also looks up that
+--      room and writes its meetingId to
+--      app_data.file_recording_metadata.conference_details.session_id.
 --
 --   2. Jicofo → jibri (`room` attr present): looks up the MUC room, reads its
 --      meetingId, and writes it to
 --      app_data.file_recording_metadata.conference_details.session_id.
+--      Jicofo copies app_data from the client's iq, so this pass only matters
+--      when jicofo reaches jibri through this prosody; when it reaches jibri
+--      through another one (e.g. a separate JVB brewery prosody) the room is
+--      not here and pass 1 has already set the session_id.
 --
 -- Must be loaded on both the main virtual host and the jicofo virtual host.
 
 local json = require 'cjson.safe';
+local jid_bare = require 'util.jid'.bare;
 
 local util = module:require 'util';
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
+
+local function set_conference_details(app_data, room_jid)
+    local room = get_room_from_jid(room_jid_match_rewrite(room_jid));
+    if not room then
+        return false;
+    end
+    app_data.file_recording_metadata.conference_details = { session_id = room._data.meetingId };
+    return true;
+end
 
 -- This needs to be attached to the main virtual host and the virtual host where jicofo is connected and authenticated.
 -- The first pass is the iq coming from the client where we get the creator and attach it to the app_data.
@@ -46,17 +63,15 @@ local stanza = event.stanza;
                 end
 
                 if jibri.attr.room then
-                    local jibri_room = jibri.attr.room;
-                    jibri_room = room_jid_match_rewrite(jibri_room)
-                    local room = get_room_from_jid(jibri_room);
-                    if room then
-                        local conference_details = {};
-                        conference_details["session_id"] = room._data.meetingId;
-                        app_data.file_recording_metadata.conference_details = conference_details;
+                    if set_conference_details(app_data, jibri.attr.room) then
                         update_app_data = true;
                     end
                 else
                     -- no room is because the iq received by the initiator in the room
+                    if stanza.attr.to and set_conference_details(app_data, jid_bare(stanza.attr.to)) then
+                        update_app_data = true;
+                    end
+
                     local session = event.origin;
                     -- if a token is provided, add data to app_data
                     if session ~= nil then

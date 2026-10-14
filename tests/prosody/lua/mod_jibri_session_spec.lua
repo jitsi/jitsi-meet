@@ -52,6 +52,14 @@ function mod_stub:log() end -- luacheck: ignore 212
 
 _G.module = mod_stub
 
+package.preload['util.jid'] = function()
+    return {
+        bare = function(jid)
+            return jid and jid:match('^([^/]+)')
+        end,
+    }
+end
+
 -- ---------------------------------------------------------------------------
 -- Load the module under test
 -- ---------------------------------------------------------------------------
@@ -80,8 +88,8 @@ local function make_jibri_elem(attrs)
     return e
 end
 
-local function make_iq(jibri_elem)
-    local s = { name = 'iq', attr = {} }
+local function make_iq(jibri_elem, attrs)
+    local s = { name = 'iq', attr = attrs or {} }
     function s:get_child(tag, ns)
         if tag == 'jibri' and ns == JIBRI_NS then return jibri_elem end
         return nil
@@ -204,6 +212,74 @@ describe("mod_jibri_session", function()
             hooked_fn(make_event(make_iq(jibri), session))
             local data = decoded_app_data(jibri)
             assert.equal('existing_value', data.file_recording_metadata.existing_field)
+            assert.equal('user-1', data.file_recording_metadata.initiator.id)
+        end)
+
+    end)
+
+    -- -----------------------------------------------------------------------
+    -- Client → jicofo pass, conference details: the iq is addressed to the
+    -- focus occupant of the room, so the module looks that room up and
+    -- attaches its meetingId as session_id. This is what reaches jibri when
+    -- jicofo talks to jibri through a different prosody, where the room is
+    -- not known and the jicofo → jibri pass cannot run.
+    -- -----------------------------------------------------------------------
+    describe("client-to-jicofo pass conference details (iq addressed to the room)", function()
+
+        local ROOM_FOCUS = 'room@conference.example.com/focus'
+
+        it("sets conference_details.session_id from the room the iq is addressed to", function()
+            mock.room_from_jid = { _data = { meetingId = 'meeting-abc' } }
+            local jibri   = make_jibri_elem({ action = 'start' })
+            local session = { jitsi_meet_context_user = { id = 'user-1' } }
+            hooked_fn(make_event(make_iq(jibri, { to = ROOM_FOCUS }), session))
+            local data = decoded_app_data(jibri)
+            assert.equal('meeting-abc', data.file_recording_metadata.conference_details.session_id)
+            assert.equal('user-1', data.file_recording_metadata.initiator.id)
+        end)
+
+        it("looks up the bare room JID, without the focus resource", function()
+            mock.room_from_jid = { _data = { meetingId = 'meeting-abc' } }
+            local jibri = make_jibri_elem({ action = 'start' })
+            hooked_fn(make_event(make_iq(jibri, { to = ROOM_FOCUS }), {}))
+            assert.equal('room@conference.example.com', mock.last_room_jid)
+        end)
+
+        it("passes the room JID through room_jid_match_rewrite before lookup", function()
+            mock.rewrite_jid   = '[sub]room@conference.example.com'
+            mock.room_from_jid = { _data = { meetingId = 'meeting-abc' } }
+            local jibri = make_jibri_elem({ action = 'start' })
+            hooked_fn(make_event(make_iq(jibri, { to = 'room@conference.sub.example.com/focus' }), {}))
+            assert.equal('[sub]room@conference.example.com', mock.last_room_jid)
+        end)
+
+        it("sets session_id even when origin (session) is nil", function()
+            mock.room_from_jid = { _data = { meetingId = 'meeting-abc' } }
+            local jibri = make_jibri_elem({ action = 'start' })
+            hooked_fn(make_event(make_iq(jibri, { to = ROOM_FOCUS }), nil))
+            local data = decoded_app_data(jibri)
+            assert.equal('meeting-abc', data.file_recording_metadata.conference_details.session_id)
+            assert.is_nil(data.file_recording_metadata.initiator)
+        end)
+
+        it("replaces conference_details supplied by the client", function()
+            mock.room_from_jid = { _data = { meetingId = 'meeting-real' } }
+            local existing = json.encode({
+                file_recording_metadata = { conference_details = { session_id = 'spoofed' } }
+            })
+            local jibri = make_jibri_elem({ action = 'start', app_data = existing })
+            hooked_fn(make_event(make_iq(jibri, { to = ROOM_FOCUS }), {}))
+            assert.equal('meeting-real',
+                decoded_app_data(jibri).file_recording_metadata.conference_details.session_id)
+        end)
+
+        it("leaves conference_details unset when the room is not found", function()
+            mock.room_from_jid = nil
+            local jibri   = make_jibri_elem({ action = 'start' })
+            local session = { jitsi_meet_context_user = { id = 'user-1' } }
+            hooked_fn(make_event(make_iq(jibri, { to = ROOM_FOCUS }), session))
+            local data = decoded_app_data(jibri)
+            assert.is_nil(data.file_recording_metadata.conference_details)
             assert.equal('user-1', data.file_recording_metadata.initiator.id)
         end)
 
