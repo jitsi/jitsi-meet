@@ -135,12 +135,6 @@ class LocaleDetector extends ReactContextBaseJavaModule implements LifecycleEven
      */
     private String getCurrentLocaleTag(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            LocaleList locales = LocaleList.getDefault();
-
-            if (locales != null && !locales.isEmpty()) {
-                return locales.get(0).toLanguageTag();
-            }
-
             Configuration systemConfig = Resources.getSystem().getConfiguration();
 
             if (systemConfig.getLocales() != null && !systemConfig.getLocales().isEmpty()) {
@@ -148,16 +142,13 @@ class LocaleDetector extends ReactContextBaseJavaModule implements LifecycleEven
             }
         }
 
-        Locale defaultLocale = Locale.getDefault();
+        Configuration systemConfig = Resources.getSystem().getConfiguration();
 
-        if (defaultLocale != null) {
-            return defaultLocale.toLanguageTag();
+        if (systemConfig.locale != null) {
+            return systemConfig.locale.toLanguageTag();
         }
 
-        Configuration config = context.getResources().getConfiguration();
-        Locale locale = config.locale != null ? config.locale : Locale.getDefault();
-
-        return locale.toLanguageTag();
+        return Locale.getDefault().toLanguageTag();
     }
 
     /**
