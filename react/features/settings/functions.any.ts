@@ -10,6 +10,7 @@ import { getLocalParticipant } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { getHideSelfView } from '../base/settings/functions.any';
 import { parseStandardURIString } from '../base/util/uri';
+import { getBreakoutRoomsConfig } from '../breakout-rooms/functions';
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive, isFollowMeRecorderActive } from '../follow-me/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
@@ -175,6 +176,9 @@ export function getModeratorTabProps(stateful: IStateful) {
     const showModeratorSettings = shouldShowModeratorSettings(state);
     const conferenceMetadata = conference?.getMetadataHandler()?.getMetadata();
     const hideChatWithPermissions = !showChatPermissionsModeratorSetting || conferenceMetadata?.allownersEnabled;
+    const { hideJoinRoomButton } = getBreakoutRoomsConfig(state);
+    const showBreakoutRoomJoinWithPermissions = Boolean(conference?.getBreakoutRooms()?.isSupported())
+        && !hideJoinRoomButton;
     const isAudioModerationEnabled = isEnabledFromState(MEDIA_TYPE.AUDIO, state);
     const isVideoModerationEnabled = isEnabledFromState(MEDIA_TYPE.VIDEO, state);
 
@@ -184,12 +188,14 @@ export function getModeratorTabProps(stateful: IStateful) {
         audioTranslationEnabled: Boolean(conference) && conferenceMetadata?.audioTranslation?.enabled !== false,
         showAudioTranslation: Boolean(audioTranslation?.enabled),
         videoModerationEnabled: isVideoModerationEnabled,
+        breakoutRoomJoinWithPermissionsEnabled: Boolean(conferenceMetadata?.permissions?.breakoutRoomJoinRestricted),
         chatWithPermissionsEnabled: Boolean(groupChatWithPermissions),
         privateChatWithPermissionsEnabled: Boolean(privateChatWithPermissions),
         sharedVideoWithPermissionsEnabled: Boolean(sharedVideoRestricted),
         showSharedVideoWithPermissions: Boolean(showSharedVideoPermissionsModeratorSetting)
             && !conferenceMetadata?.allownersEnabled
             && isSharedVideoEnabled(state),
+        showBreakoutRoomJoinWithPermissions,
         showModeratorSettings: Boolean(conference && showModeratorSettings),
         disableReactionsModeration: Boolean(disableReactionsModeration),
         followMeActive: Boolean(conference && followMeActive),

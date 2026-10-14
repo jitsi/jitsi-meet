@@ -15,7 +15,7 @@ import styles from '../../../participants-pane/components/native/styles';
 import { isBreakoutRoomRenameAllowed } from '../../../participants-pane/functions';
 import { BREAKOUT_CONTEXT_MENU_ACTIONS as ACTIONS } from '../../../participants-pane/types';
 import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../actions';
-import { getBreakoutRoomsConfig } from '../../functions';
+import { getBreakoutRoomsConfig, isBreakoutRoomJoinAllowed } from '../../functions';
 import { IRoom } from '../../types';
 
 import BreakoutRoomNamePrompt from './BreakoutRoomNamePrompt';
@@ -43,6 +43,7 @@ const BreakoutRoomContextMenu = ({ room, actions = ALL_ACTIONS }: IProps) => {
     const dispatch = useDispatch();
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const { hideJoinRoomButton } = useSelector(getBreakoutRoomsConfig);
+    const joinAllowed = useSelector(isBreakoutRoomJoinAllowed);
     const _isBreakoutRoomRenameAllowed = useSelector(isBreakoutRoomRenameAllowed);
     const { t } = useTranslation();
 
@@ -75,7 +76,7 @@ const BreakoutRoomContextMenu = ({ room, actions = ALL_ACTIONS }: IProps) => {
             addScrollViewPadding = { false }
             showSlidingView = { true }>
             {
-                !hideJoinRoomButton && actions.includes(ACTIONS.JOIN) && (
+                !hideJoinRoomButton && (joinAllowed || room?.isMainRoom) && actions.includes(ACTIONS.JOIN) && (
                     <TouchableOpacity
                         accessibilityLabel = { t('breakoutRooms.actions.join') }
                         accessibilityRole = 'button'

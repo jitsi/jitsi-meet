@@ -255,6 +255,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                 return {
                     ...newProps,
                     audioTranslationEnabled: tabState?.audioTranslationEnabled,
+                    breakoutRoomJoinWithPermissionsEnabled: tabState?.breakoutRoomJoinWithPermissionsEnabled,
                     chatWithPermissionsEnabled: tabState?.chatWithPermissionsEnabled,
                     privateChatWithPermissionsEnabled: tabState?.privateChatWithPermissionsEnabled,
                     sharedVideoWithPermissionsEnabled: tabState?.sharedVideoWithPermissionsEnabled,
