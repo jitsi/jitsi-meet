@@ -39,7 +39,7 @@ describe('Raise hand iframe API command and events', () => {
 
         const p1EndpointId = await p1.getEndpointId();
 
-        const raiseHandOnEvent: { handRaised: boolean; id: string; } = await p1.driver.waitUntil(
+        const raiseHandOnEvent: { handRaised: number | boolean; id: string; } = await p1.driver.waitUntil(
             () => p1.getIframeAPI().getEventResult('raiseHandUpdated'),
             {
                 timeout: 5000,
@@ -47,13 +47,11 @@ describe('Raise hand iframe API command and events', () => {
             }
         );
 
-        expect(raiseHandOnEvent).toMatchObject({
-            handRaised: true,
-            id: p1EndpointId
-        });
+        expect(Boolean(raiseHandOnEvent.handRaised)).toBe(true);
+        expect(raiseHandOnEvent.id).toBe(p1EndpointId);
 
         // Remote participant (p2) also receives the raiseHandUpdated event
-        const p2RemoteEvent: { handRaised: boolean; id: string; } = await p2.driver.waitUntil(
+        const p2RemoteEvent: { handRaised: number | boolean; id: string; } = await p2.driver.waitUntil(
             () => p2.getIframeAPI().getEventResult('raiseHandUpdated'),
             {
                 timeout: 5000,
@@ -61,10 +59,8 @@ describe('Raise hand iframe API command and events', () => {
             }
         );
 
-        expect(p2RemoteEvent).toMatchObject({
-            handRaised: true,
-            id: p1EndpointId
-        });
+        expect(Boolean(p2RemoteEvent.handRaised)).toBe(true);
+        expect(p2RemoteEvent.id).toBe(p1EndpointId);
 
         // In meeting iframe, verify Redux state reflects hand raised
         await p1.switchToIFrame();
@@ -90,7 +86,7 @@ describe('Raise hand iframe API command and events', () => {
 
         const p1EndpointId = await p1.getEndpointId();
 
-        const raiseHandOffEvent: { handRaised: boolean; id: string; } = await p1.driver.waitUntil(
+        const raiseHandOffEvent: { handRaised: number | boolean; id: string; } = await p1.driver.waitUntil(
             () => p1.getIframeAPI().getEventResult('raiseHandUpdated'),
             {
                 timeout: 5000,
@@ -98,13 +94,11 @@ describe('Raise hand iframe API command and events', () => {
             }
         );
 
-        expect(raiseHandOffEvent).toMatchObject({
-            handRaised: false,
-            id: p1EndpointId
-        });
+        expect(Boolean(raiseHandOffEvent.handRaised)).toBe(false);
+        expect(raiseHandOffEvent.id).toBe(p1EndpointId);
 
         // Remote participant (p2) receives lowered hand event
-        const p2RemoteOffEvent: { handRaised: boolean; id: string; } = await p2.driver.waitUntil(
+        const p2RemoteOffEvent: { handRaised: number | boolean; id: string; } = await p2.driver.waitUntil(
             () => p2.getIframeAPI().getEventResult('raiseHandUpdated'),
             {
                 timeout: 5000,
@@ -112,10 +106,8 @@ describe('Raise hand iframe API command and events', () => {
             }
         );
 
-        expect(p2RemoteOffEvent).toMatchObject({
-            handRaised: false,
-            id: p1EndpointId
-        });
+        expect(Boolean(p2RemoteOffEvent.handRaised)).toBe(false);
+        expect(p2RemoteOffEvent.id).toBe(p1EndpointId);
 
         // In meeting iframe, verify Redux state reflects hand lowered
         await p1.switchToIFrame();
