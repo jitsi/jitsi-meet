@@ -99,6 +99,7 @@ import {
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
 import { answerKnockingParticipant, toggleLobbyMode } from '../../react/features/lobby/actions';
+import { getLobbyEnabled } from '../../react/features/lobby/functions';
 import { setSecondScreen } from '../../react/features/multi-screen/actions.web';
 import { setNoiseSuppressionEnabled } from '../../react/features/noise-suppression/actions';
 import { hideNotification, showNotification } from '../../react/features/notifications/actions';
@@ -278,8 +279,8 @@ function initCommands() {
 
             APP.store.dispatch(muteRemote(participantId, muteMediaType));
         },
-        'toggle-lobby': isLobbyEnabled => {
-            APP.store.dispatch(toggleLobbyMode(isLobbyEnabled));
+        'toggle-lobby': enabled => {
+            APP.store.dispatch(toggleLobbyMode(enabled));
         },
         'password': password => {
             const { conference, passwordRequired }
@@ -1149,6 +1150,9 @@ function initCommands() {
         case 'is-sharing-screen':
             callback(Boolean(APP.conference.isSharingScreen));
             break;
+        case 'is-lobby-enabled':
+            callback(Boolean(getLobbyEnabled(APP.store.getState())));
+            break;
         case 'is-start-silent':
             callback(Boolean(APP.store.getState()['features/base/config'].startSilent));
             break;
@@ -1501,6 +1505,19 @@ class API {
         this._sendEvent({
             name: 'moderation-status-changed',
             mediaType,
+            enabled
+        });
+    }
+
+    /**
+     * Notify the external application that the lobby mode status has changed.
+     *
+     * @param {boolean} enabled - Whether or not lobby mode is enabled.
+     * @returns {void}
+     */
+    notifyLobbyModeChanged(enabled) {
+        this._sendEvent({
+            name: 'lobby-mode-changed',
             enabled
         });
     }
