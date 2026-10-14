@@ -147,6 +147,7 @@ const events = {
     'filmstrip-display-changed': 'filmstripDisplayChanged',
     'incoming-message': 'incomingMessage',
     'knocking-participant': 'knockingParticipant',
+    'lobby-mode-changed': 'lobbyModeChanged',
     'log': 'log',
     'mic-error': 'micError',
     'moderation-participant-approved': 'moderationParticipantApproved',
@@ -1286,6 +1287,18 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         return this._transport.sendRequest({
             name: 'is-moderation-on',
             mediaType
+        });
+    }
+
+    /**
+     * Returns the lobby mode status.
+     *
+     * @returns {Promise<boolean>} - Resolves with the lobby mode status and rejects on
+     * failure.
+     */
+    isLobbyEnabled() {
+        return this._transport.sendRequest({
+            name: 'is-lobby-enabled'
         });
     }
 
