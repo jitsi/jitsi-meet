@@ -7,10 +7,12 @@ import { browser } from '../base/lib-jitsi-meet';
 import { IParticipant } from '../base/participants/types';
 import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
-import { hidePiP, openDocumentPiP } from './actions';
+import { handleWindowFocus, hidePiP, openDocumentPiP, openElectronPiPWindow } from './actions';
 import PiPTriggerButton from './components/web/PiPTriggerButton';
+import { FOCUS_CHECK_DELAY_MS } from './constants';
 import {
     isDocumentPiPSupported,
+    isElectronPiPWindowMode,
     renderAvatarOnCanvas,
     shouldShowPiP,
     shouldUseDocumentPiP
@@ -314,6 +316,59 @@ export function useDocumentPiPMediaSession() {
             document.removeEventListener('visibilitychange', onVisibilityChange);
         };
     }, [ dispatch, documentPiPAvailable ]);
+}
+
+/**
+ * Drives the custom Electron PiP window the way the legacy always-on-top window
+ * behaved: it opens when the meeting window loses focus or gets hidden and
+ * closes when focus returns. The window content is rendered by PiPWindowPortal
+ * from the pipWindow this opens. Active only in Electron with config.pip.mode
+ * 'customWindow' while PiP is enabled, mirroring useDocumentPiPMediaSession for
+ * the browser's Document PiP.
+ *
+ * @returns {void}
+ */
+export function useElectronPiPWindow() {
+    const dispatch: IStore['dispatch'] = useDispatch();
+    const pipEnabled = useSelector(shouldShowPiP);
+    const electronWindowMode = useSelector(isElectronPiPWindowMode);
+    const active = pipEnabled && electronWindowMode;
+
+    useEffect(() => {
+        if (!active) {
+            return;
+        }
+
+        const onWindowBlur = () => dispatch(openElectronPiPWindow());
+        const onWindowFocus = () => {
+            // Deferred for symmetry with the video-element PiP flow, so that any
+            // pending PiP teardown events settle before the exit runs.
+            setTimeout(() => {
+                dispatch(handleWindowFocus());
+            }, FOCUS_CHECK_DELAY_MS);
+        };
+        const onVisibilityChange = () => {
+            if (document.hidden) {
+                onWindowBlur();
+            }
+        };
+
+        window.addEventListener('blur', onWindowBlur);
+        window.addEventListener('focus', onWindowFocus);
+        document.addEventListener('visibilitychange', onVisibilityChange);
+
+        // PiP may become available while the app is already in the background
+        // (e.g. the conference was joined while unfocused).
+        if (!document.hasFocus()) {
+            onWindowBlur();
+        }
+
+        return () => {
+            window.removeEventListener('blur', onWindowBlur);
+            window.removeEventListener('focus', onWindowFocus);
+            document.removeEventListener('visibilitychange', onVisibilityChange);
+        };
+    }, [ active, dispatch ]);
 }
 
 /**

@@ -4,21 +4,24 @@ import { useSelector } from 'react-redux';
 import { browser } from '../../base/lib-jitsi-meet';
 import { isEmbedded } from '../../base/util/embedUtils';
 import { isElectronPiPWindowMode, shouldShowPiP, shouldUseDocumentPiP } from '../functions';
-import { useDocumentPiPMediaSession } from '../hooks';
+import { useDocumentPiPMediaSession, useElectronPiPWindow } from '../hooks';
 
 import PiPVideoElement from './PiPVideoElement';
-import ElectronPiPWindow from './web/ElectronPiPWindow';
+import { ElectronPiPView } from './web/ElectronPiPView';
 import { PiPWindowPortal } from './web/PiPWindowPortal';
 
 /**
  * Wrapper component that selects the appropriate PiP implementation.
  * Uses Document PiP API when available, falls back to Video PiP.
  * Embedded meetings defer to the host-owned Document PiP window.
+ * Electron gets the custom always-on-top PiP window, which reuses the
+ * Document PiP window portal and view.
  *
  * @returns {React.ReactElement | null}
  */
 function PiP() {
     useDocumentPiPMediaSession();
+    useElectronPiPWindow();
 
     const showPiP = useSelector(shouldShowPiP);
     const electronWindowMode = useSelector(isElectronPiPWindowMode);
@@ -29,10 +32,13 @@ function PiP() {
     }
 
     if (browser.isElectron()) {
-        // Electron (embedded or not): the custom PiP window is the default and
-        // falls back to the video-element PiP when disabled through
-        // config.pip.mode or when the embedding app cannot create the window.
-        return electronWindowMode ? <ElectronPiPWindow /> : <PiPVideoElement />;
+        // Electron (embedded or not): the custom PiP window is the default,
+        // the video-element PiP is used when config.pip.mode asks for it.
+        // useElectronPiPWindow opens and closes the window; the portal renders
+        // the shared view wrapped with the window's gestures into it.
+        return electronWindowMode
+            ? <PiPWindowPortal><ElectronPiPView /></PiPWindowPortal>
+            : <PiPVideoElement />;
     }
 
     if (isEmbedded()) {
