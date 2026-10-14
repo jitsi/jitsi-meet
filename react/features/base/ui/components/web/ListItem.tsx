@@ -8,6 +8,11 @@ import { isMobileBrowser } from '../../../environment/utils';
 interface IProps {
 
     /**
+     * An accessible label for the list item element.
+     */
+    accessibilityLabel?: string;
+
+    /**
      * List item actions.
      */
     actions: ReactNode;
@@ -189,6 +194,7 @@ const useStyles = makeStyles()(theme => {
 });
 
 const ListItem = ({
+    accessibilityLabel,
     actions,
     className,
     defaultName,
@@ -242,7 +248,7 @@ const ListItem = ({
 
     return (
         <div
-            aria-label = { defaultName }
+            aria-label = { accessibilityLabel ?? defaultName }
             className = { cx('list-item-container',
                 classes.container,
                 isHighlighted && classes.highlighted,

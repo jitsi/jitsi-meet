@@ -181,8 +181,13 @@ function ParticipantItem({
         </>
     );
 
+    const participantLabel = `${displayName || ''}${local ? ` (${youText})` : ''}${
+        isModerator && !disableModeratorIndicator ? `, ${t('videothumbnail.moderator')}` : ''
+    }`;
+
     return (
         <ListItem
+            accessibilityLabel = { participantLabel }
             actions = { children }
             hideActions = { local }
             icon = { icon }
