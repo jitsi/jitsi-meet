@@ -15,7 +15,12 @@ describe('Raise hand iframe API command and events', () => {
     let p1: Participant, p2: Participant;
 
     it('setup', async () => {
-        p1 = await joinMuc({ name: 'p1', iFrameApi: true, token: testsConfig.jwt.preconfiguredToken });
+        p1 = await joinMuc(
+            { name: 'p1', iFrameApi: true, token: testsConfig.jwt.preconfiguredToken },
+            {
+                // p1 sends audio and becomes dominant speaker, which would lower the raised hand on its own
+                configOverwrite: { raisedHands: { disableRemoveRaisedHandOnFocus: true } }
+            });
         if (!await checkIframeApi(p1)) {
             return;
         }
