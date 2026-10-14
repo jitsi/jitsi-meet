@@ -367,6 +367,29 @@ describe("mod_jibri_session", function()
             assert.equal(raw, jibri.attr.app_data)  -- unchanged: module returned early
         end)
 
+        for _, raw in ipairs({ 'null', '123', '"text"', 'true' }) do
+            it("replaces app_data that is valid JSON but not an object (" .. raw .. ")", function()
+                mock.room_from_jid = { _data = { meetingId = 'meeting-abc' } }
+                local jibri   = make_jibri_elem({ action = 'start', app_data = raw })
+                local session = { jitsi_meet_context_user = { id = 'user-1' } }
+                assert.has_no.errors(function()
+                    hooked_fn(make_event(make_iq(jibri, { to = ROOM_FOCUS }), session))
+                end)
+                local data = decoded_app_data(jibri)
+                assert.equal('meeting-abc', data.file_recording_metadata.conference_details.session_id)
+                assert.equal('user-1', data.file_recording_metadata.initiator.id)
+            end)
+        end
+
+        it("leaves non-object app_data unchanged when the iq is not addressed to a room", function()
+            mock.room_from_jid = nil
+            local jibri = make_jibri_elem({ action = 'start', app_data = 'null' })
+            assert.has_no.errors(function()
+                hooked_fn(make_event(make_iq(jibri, { to = ROOM_FOCUS }), { jitsi_meet_context_user = { id = 'user-1' } }))
+            end)
+            assert.equal('null', jibri.attr.app_data)
+        end)
+
     end)
 
 end) -- mod_jibri_session

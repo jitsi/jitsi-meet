@@ -58,6 +58,12 @@ local function attachJibriSessionId(event)
             module:log('warn', 'Failed to decode jibri app_data from %s: %s', stanza.attr.from, err);
             return;
         end
+        -- valid JSON that is not an object (e.g. 'null', which decodes to cjson.null) carries nothing
+        -- we can keep, so start from an empty object as if no app_data had been sent
+        if type(app_data) ~= 'table' then
+            module:log('warn', 'Replacing jibri app_data from %s that is not a JSON object', stanza.attr.from);
+            app_data = {};
+        end
     else
         app_data = {};
     end
