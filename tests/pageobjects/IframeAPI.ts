@@ -88,6 +88,13 @@ export default class IframeAPI extends BasePageObject {
     }
 
     /**
+     * Returns whether lobby mode is enabled for the current conference.
+     */
+    isLobbyEnabled() {
+        return this.participant.execute(() => window.jitsiAPI.isLobbyEnabled());
+    }
+
+    /**
      * Removes the embedded Jitsi Meet conference.
      */
     dispose() {
