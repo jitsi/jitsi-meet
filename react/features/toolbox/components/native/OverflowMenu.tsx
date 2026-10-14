@@ -20,7 +20,7 @@ import RecordButton from '../../../recording/components/Recording/native/RecordB
 import SecurityDialogButton
     from '../../../security/components/security-dialog/native/SecurityDialogButton';
 import SharedVideoButton from '../../../shared-video/components/native/SharedVideoButton';
-import { isSharedVideoEnabled } from '../../../shared-video/functions';
+import { isShareVideoDisabled, isSharedVideoEnabled } from '../../../shared-video/functions';
 import SpeakerStatsButton from '../../../speaker-stats/components/native/SpeakerStatsButton';
 import { isSpeakerStatsDisabled } from '../../../speaker-stats/functions';
 import ClosedCaptionButton from '../../../subtitles/components/native/ClosedCaptionButton';
@@ -284,7 +284,7 @@ function _mapStateToProps(state: IReduxState) {
 
     return {
         _isBreakoutRoomsSupported: conference?.getBreakoutRooms()?.isSupported(),
-        _isSharedVideoEnabled: isSharedVideoEnabled(state),
+        _isSharedVideoEnabled: isSharedVideoEnabled(state) && !isShareVideoDisabled(state),
         _isSpeakerStatsDisabled: isSpeakerStatsDisabled(state),
         _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state)
     };

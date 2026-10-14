@@ -13,6 +13,7 @@ import { parseStandardURIString } from '../base/util/uri';
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive, isFollowMeRecorderActive } from '../follow-me/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
+import { isSharedVideoEnabled } from '../shared-video/functions';
 import { areClosedCaptionsEnabled } from '../subtitles/functions.any';
 import { iAmVisitor } from '../visitors/functions';
 
@@ -162,6 +163,7 @@ export function getModeratorTabProps(stateful: IStateful) {
     } = state['features/base/conference'];
     const { followMeEnabled, followMeRecorderEnabled } = state['features/follow-me'];
     const { groupChatWithPermissions, privateChatWithPermissions } = state['features/chat'];
+    const { sharedVideoRestricted } = state['features/shared-video'];
     const {
         audioTranslation,
         showChatPermissionsModeratorSetting,
@@ -183,6 +185,8 @@ export function getModeratorTabProps(stateful: IStateful) {
         videoModerationEnabled: isVideoModerationEnabled,
         chatWithPermissionsEnabled: Boolean(groupChatWithPermissions),
         privateChatWithPermissionsEnabled: Boolean(privateChatWithPermissions),
+        sharedVideoWithPermissionsEnabled: Boolean(sharedVideoRestricted),
+        showSharedVideoWithPermissions: isSharedVideoEnabled(state),
         showModeratorSettings: Boolean(conference && showModeratorSettings),
         disableReactionsModeration: Boolean(disableReactionsModeration),
         followMeActive: Boolean(conference && followMeActive),

@@ -1,6 +1,9 @@
+import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { IJitsiConference } from '../base/conference/reducer';
-import { getFakeParticipants } from '../base/participants/functions';
+import { MEET_FEATURES } from '../base/jwt/constants';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
+import { getFakeParticipants, isLocalParticipantModerator } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 
 import {
@@ -109,6 +112,30 @@ export function isSharedVideoEnabled(stateful: IStateful) {
     const { disableThirdPartyRequests = false } = state['features/base/config'];
 
     return !disableThirdPartyRequests;
+}
+
+/**
+ * Returns true if the room restricts video sharing and the local participant
+ * does not have the permission for it.
+ *
+ * The restriction is read from the room metadata, which a moderator toggles at
+ * runtime. The server applies the same check in mod_filter_messages, and pushes
+ * the permissions of a participant that it promotes to moderator, so this
+ * selector follows a promotion.
+ *
+ * A server that does not know the share-video permission yet does not push it,
+ * thus a missing permission falls back to the moderator role. Otherwise the
+ * moderator would lose video sharing as well on such a server.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function isShareVideoDisabled(state: IReduxState) {
+    if (!state['features/shared-video'].sharedVideoRestricted) {
+        return false;
+    }
+
+    return !isJwtFeatureEnabled(state, MEET_FEATURES.SHARE_VIDEO, isLocalParticipantModerator(state));
 }
 
 /**

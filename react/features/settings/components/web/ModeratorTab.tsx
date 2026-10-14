@@ -68,9 +68,19 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     privateChatWithPermissionsEnabled: boolean;
 
     /**
+     * Whether the user has selected to restrict video sharing to the participants that have the permission for it.
+     */
+    sharedVideoWithPermissionsEnabled: boolean;
+
+    /**
      * Whether the audio-translation room toggle should be shown (i.e. the feature is deployed).
      */
     showAudioTranslation: boolean;
+
+    /**
+     * Whether the shared video restriction setting should be shown (i.e. video sharing is enabled).
+     */
+    showSharedVideoWithPermissions: boolean;
 
     /**
      * Whether or not the user has selected the Start Audio Muted feature to be
@@ -138,6 +148,7 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
         this._onFollowMeRecorderEnabledChanged = this._onFollowMeRecorderEnabledChanged.bind(this);
         this._onChatWithPermissionsChanged = this._onChatWithPermissionsChanged.bind(this);
         this._onPrivateChatWithPermissionsChanged = this._onPrivateChatWithPermissionsChanged.bind(this);
+        this._onSharedVideoWithPermissionsChanged = this._onSharedVideoWithPermissionsChanged.bind(this);
         this._onAudioTranslationEnabledChanged = this._onAudioTranslationEnabledChanged.bind(this);
     }
 
@@ -240,6 +251,17 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
     }
 
     /**
+     * Callback invoked to select if video sharing with permissions should be activated.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onSharedVideoWithPermissionsChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
+        super._onChange({ sharedVideoWithPermissionsEnabled: checked });
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -257,7 +279,9 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
             followMeRecorderEnabled,
             hideChatWithPermissions,
             privateChatWithPermissionsEnabled,
+            sharedVideoWithPermissionsEnabled,
             showAudioTranslation,
+            showSharedVideoWithPermissions,
             startAudioMuted,
             startVideoMuted,
             startReactionsMuted,
@@ -322,6 +346,13 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
                         label = { t('settings.privateChatWithPermissions') }
                         name = 'private-chat-with-permissions'
                         onChange = { this._onPrivateChatWithPermissionsChanged } /> }
+                { showSharedVideoWithPermissions
+                    && <Checkbox
+                        checked = { sharedVideoWithPermissionsEnabled }
+                        className = { classes.checkbox }
+                        label = { t('settings.sharedVideoWithPermissions') }
+                        name = 'shared-video-with-permissions'
+                        onChange = { this._onSharedVideoWithPermissionsChanged } /> }
                 { showAudioTranslation
                     && <Checkbox
                         checked = { audioTranslationEnabled }

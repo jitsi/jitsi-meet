@@ -1,3 +1,4 @@
+import { UPDATE_CONFERENCE_METADATA } from '../base/conference/actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
@@ -17,6 +18,7 @@ export interface ISharedVideoState {
     confirmShowVideo?: boolean;
     muted?: boolean;
     ownerId?: string;
+    sharedVideoRestricted?: boolean;
     status?: string;
     time?: number;
     videoUrl?: string;
@@ -34,7 +36,8 @@ ReducerRegistry.register<ISharedVideoState>('features/shared-video',
     case RESET_SHARED_VIDEO_STATUS:
         return {
             ...initialState,
-            allowedUrlDomains: state.allowedUrlDomains
+            allowedUrlDomains: state.allowedUrlDomains,
+            sharedVideoRestricted: state.sharedVideoRestricted
         };
     case SET_CONFIRM_SHOW_VIDEO: {
         return {
@@ -58,6 +61,19 @@ ReducerRegistry.register<ISharedVideoState>('features/shared-video',
             ...state,
             allowedUrlDomains: action.allowedUrlDomains
         };
+    }
+
+    case UPDATE_CONFERENCE_METADATA: {
+        const { metadata } = action;
+
+        if (metadata?.permissions) {
+            return {
+                ...state,
+                sharedVideoRestricted: Boolean(metadata.permissions.sharedVideoRestricted)
+            };
+        }
+
+        return state;
     }
 
     default:

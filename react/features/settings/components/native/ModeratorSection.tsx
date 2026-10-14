@@ -20,6 +20,8 @@ const ModeratorSection = () => {
         audioModerationEnabled,
         chatWithPermissionsEnabled,
         privateChatWithPermissionsEnabled,
+        sharedVideoWithPermissionsEnabled,
+        showSharedVideoWithPermissions,
         followMeActive,
         followMeEnabled,
         followMeRecorderActive,
@@ -74,6 +76,15 @@ const ModeratorSection = () => {
         });
     }, [ dispatch, conference ]);
 
+    const onSharedVideoWithPermissionsToggled = useCallback((enabled?: boolean) => {
+        const currentPermissions = conference?.getMetadataHandler().getMetadata().permissions || {};
+
+        conference?.getMetadataHandler().setMetadata('permissions', {
+            ...currentPermissions,
+            sharedVideoRestricted: enabled
+        });
+    }, [ dispatch, conference ]);
+
     const followMeRecorderChecked = followMeRecorderEnabled && !followMeRecorderActive;
 
     const moderationSettings = useMemo(() => {
@@ -118,15 +129,26 @@ const ModeratorSection = () => {
                 state: privateChatWithPermissionsEnabled,
                 onChange: onPrivateChatWithPermissionsToggled
             },
+            {
+                label: 'settings.sharedVideoWithPermissions',
+                state: sharedVideoWithPermissionsEnabled,
+                onChange: onSharedVideoWithPermissionsToggled
+            },
         ];
 
-        if (disableReactionsModeration) {
-            // Remove the reactions entry by name. A pop() here took out whichever
+        return moderation.filter(({ label }) => {
+            // Remove the entries by name. A pop() here took out whichever
             // entry came last, which is not the reactions one.
-            return moderation.filter(({ label }) => label !== 'settings.startReactionsMuted');
-        }
+            if (label === 'settings.startReactionsMuted') {
+                return !disableReactionsModeration;
+            }
 
-        return moderation;
+            if (label === 'settings.sharedVideoWithPermissions') {
+                return showSharedVideoWithPermissions;
+            }
+
+            return true;
+        });
     }, [ startAudioMuted,
         startVideoMuted,
         followMeEnabled,
@@ -139,8 +161,11 @@ const ModeratorSection = () => {
         onStartReactionsMutedToggled,
         onChatWithPermissionsToggled,
         onPrivateChatWithPermissionsToggled,
+        onSharedVideoWithPermissionsToggled,
         chatWithPermissionsEnabled,
         privateChatWithPermissionsEnabled,
+        sharedVideoWithPermissionsEnabled,
+        showSharedVideoWithPermissions,
         startReactionsMuted ]);
 
     return (
