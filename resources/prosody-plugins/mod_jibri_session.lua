@@ -8,17 +8,21 @@
 --      app_data.file_recording_metadata.initiator {id, group}.  The iq is
 --      addressed to the focus occupant of the room, so it also looks up that
 --      room and writes its meetingId to
---      app_data.file_recording_metadata.conference_details.session_id.
+--      app_data.file_recording_metadata.conference_details.session_id.  Any
+--      conference_details sent by the client is dropped when the room is not
+--      found, so only prosody sets it.
 --
 --   2. Jicofo → jibri (`room` attr present): looks up the MUC room, reads its
 --      meetingId, and writes it to
 --      app_data.file_recording_metadata.conference_details.session_id.
---      Jicofo copies app_data from the client's iq, so this pass only matters
---      when jicofo reaches jibri through this prosody; when it reaches jibri
---      through another one (e.g. a separate JVB brewery prosody) the room is
---      not here and pass 1 has already set the session_id.
+--      Jicofo copies app_data from the client's iq, so pass 1 normally
+--      supplies the session_id and this pass sets the same value again.  When
+--      jicofo reaches jibri through another prosody (e.g. a separate JVB
+--      brewery prosody) the room is not found here and the value from pass 1
+--      is kept.
 --
--- Must be loaded on both the main virtual host and the jicofo virtual host.
+-- Must be loaded on the jicofo virtual host and on every virtual host that
+-- clients who can start a recording connect to.
 
 local json = require 'cjson.safe';
 local jid_bare = require 'util.jid'.bare;
@@ -27,18 +31,20 @@ local util = module:require 'util';
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 
+-- Sets conference_details.session_id to the meetingId of the room. Returns false and leaves app_data untouched
+-- when the room is not found or has no meetingId.
 local function set_conference_details(app_data, room_jid)
     local room = get_room_from_jid(room_jid_match_rewrite(room_jid));
-    if not room then
+    local meeting_id = room and room._data.meetingId;
+    if not meeting_id then
         return false;
     end
-    app_data.file_recording_metadata.conference_details = { session_id = room._data.meetingId };
+    app_data.file_recording_metadata.conference_details = { session_id = meeting_id };
     return true;
 end
 
--- This needs to be attached to the main virtual host and the virtual host where jicofo is connected and authenticated.
--- The first pass is the iq coming from the client where we get the creator and attach it to the app_data.
--- The second pass is jicofo approving that and inviting jibri where we attach the session_id information to app_data
+-- The first pass is the iq coming from the client where we attach the initiator and the session_id to app_data.
+-- The second pass is jicofo approving that and inviting jibri where we set the session_id again if the room is here.
 local function attachJibriSessionId(event)
 local stanza = event.stanza;
     if stanza.name == "iq" then
@@ -65,11 +71,21 @@ local stanza = event.stanza;
                 if jibri.attr.room then
                     if set_conference_details(app_data, jibri.attr.room) then
                         update_app_data = true;
+                    else
+                        module:log('debug', 'No meetingId for jibri room %s, keeping conference_details as received',
+                            jibri.attr.room);
                     end
                 else
-                    -- no room is because the iq received by the initiator in the room
+                    -- no room attr: this is the client's iq to the focus occupant of the room (room@muc/focus)
                     if stanza.attr.to and set_conference_details(app_data, jid_bare(stanza.attr.to)) then
                         update_app_data = true;
+                    else
+                        module:log('warn', 'No meetingId for jibri start from %s to %s, recording has no session_id',
+                            stanza.attr.from, stanza.attr.to);
+                        if app_data.file_recording_metadata.conference_details ~= nil then
+                            app_data.file_recording_metadata.conference_details = nil;
+                            update_app_data = true;
+                        end
                     end
 
                     local session = event.origin;

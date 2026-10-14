@@ -221,8 +221,8 @@ describe("mod_jibri_session", function()
     -- Client → jicofo pass, conference details: the iq is addressed to the
     -- focus occupant of the room, so the module looks that room up and
     -- attaches its meetingId as session_id. This is what reaches jibri when
-    -- jicofo talks to jibri through a different prosody, where the room is
-    -- not known and the jicofo → jibri pass cannot run.
+    -- jicofo talks to jibri through a different prosody, where the
+    -- jicofo → jibri pass finds no room.
     -- -----------------------------------------------------------------------
     describe("client-to-jicofo pass conference details (iq addressed to the room)", function()
 
@@ -283,6 +283,40 @@ describe("mod_jibri_session", function()
             assert.equal('user-1', data.file_recording_metadata.initiator.id)
         end)
 
+        it("leaves conference_details unset when the room has no meetingId", function()
+            mock.room_from_jid = { _data = {} }
+            local jibri   = make_jibri_elem({ action = 'start' })
+            local session = { jitsi_meet_context_user = { id = 'user-1' } }
+            hooked_fn(make_event(make_iq(jibri, { to = ROOM_FOCUS }), session))
+            local data = decoded_app_data(jibri)
+            assert.is_nil(data.file_recording_metadata.conference_details)
+            assert.equal('user-1', data.file_recording_metadata.initiator.id)
+        end)
+
+        it("drops conference_details supplied by the client when the room is not found", function()
+            mock.room_from_jid = nil
+            local existing = json.encode({
+                custom_key = 'custom_value',
+                file_recording_metadata = { conference_details = { session_id = 'spoofed' } }
+            })
+            local jibri = make_jibri_elem({ action = 'start', app_data = existing })
+            hooked_fn(make_event(make_iq(jibri, { to = ROOM_FOCUS }), nil))
+            local data = decoded_app_data(jibri)
+            assert.is_nil(data.file_recording_metadata.conference_details)
+            assert.equal('custom_value', data.custom_key)
+        end)
+
+        it("does not look up a room and drops client conference_details when the iq has no 'to'", function()
+            mock.room_from_jid = { _data = { meetingId = 'meeting-abc' } }
+            local existing = json.encode({
+                file_recording_metadata = { conference_details = { session_id = 'spoofed' } }
+            })
+            local jibri = make_jibri_elem({ action = 'start', app_data = existing })
+            hooked_fn(make_event(make_iq(jibri), nil))
+            assert.is_nil(mock.last_room_jid)
+            assert.is_nil(decoded_app_data(jibri).file_recording_metadata.conference_details)
+        end)
+
     end)
 
     -- -----------------------------------------------------------------------
@@ -304,6 +338,53 @@ describe("mod_jibri_session", function()
             local jibri = make_jibri_elem({ action = 'start', room = 'missing@conference.example.com' })
             hooked_fn(make_event(make_iq(jibri)))
             assert.is_nil(jibri.attr.app_data)
+        end)
+
+        it("keeps the session_id set by the client-to-jicofo pass when the room is not found", function()
+            mock.room_from_jid = nil
+            local existing = json.encode({
+                file_recording_metadata = { conference_details = { session_id = 'meeting-from-pass-1' } }
+            })
+            local jibri = make_jibri_elem({
+                action   = 'start',
+                room     = 'room@conference.example.com',
+                app_data = existing,
+            })
+            hooked_fn(make_event(make_iq(jibri)))
+            assert.equal(existing, jibri.attr.app_data)
+        end)
+
+        it("replaces the session_id set by the client-to-jicofo pass and keeps the initiator", function()
+            mock.room_from_jid = { _data = { meetingId = 'meeting-pass-2' } }
+            local existing = json.encode({
+                file_recording_metadata = {
+                    conference_details = { session_id = 'meeting-from-pass-1' },
+                    initiator = { id = 'user-1' },
+                }
+            })
+            local jibri = make_jibri_elem({
+                action   = 'start',
+                room     = 'room@conference.example.com',
+                app_data = existing,
+            })
+            hooked_fn(make_event(make_iq(jibri)))
+            local data = decoded_app_data(jibri)
+            assert.equal('meeting-pass-2', data.file_recording_metadata.conference_details.session_id)
+            assert.equal('user-1', data.file_recording_metadata.initiator.id)
+        end)
+
+        it("keeps the session_id set by the client-to-jicofo pass when the room has no meetingId", function()
+            mock.room_from_jid = { _data = {} }
+            local existing = json.encode({
+                file_recording_metadata = { conference_details = { session_id = 'meeting-from-pass-1' } }
+            })
+            local jibri = make_jibri_elem({
+                action   = 'start',
+                room     = 'room@conference.example.com',
+                app_data = existing,
+            })
+            hooked_fn(make_event(make_iq(jibri)))
+            assert.equal(existing, jibri.attr.app_data)
         end)
 
         it("preserves pre-existing top-level app_data keys", function()
