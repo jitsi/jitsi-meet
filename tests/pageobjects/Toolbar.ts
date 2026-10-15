@@ -19,7 +19,19 @@ const CLOSE_OVERFLOW = 'Close more actions menu';
 const PARTICIPANTS = 'Open participants pane';
 const PROFILE = 'Edit your profile';
 const RAISE_HAND = 'Raise your hand';
+const LOWER_HAND = 'Lower your hand';
+const REACTIONS_MENU = 'Reactions menu';
 const SECURITY = 'Security options';
+
+const REACTION_LABELS: Record<string, string> = {
+    boo: 'Boo',
+    clap: 'Clap',
+    laugh: 'Laugh',
+    like: 'Thumbs Up',
+    love: 'Heart',
+    silence: 'Silence',
+    surprised: 'Surprised'
+};
 const SETTINGS = 'Open settings';
 const STOP_DESKTOP = 'Stop sharing your screen';
 const ENTER_TILE_VIEW_BUTTON = 'Enter tile view';
@@ -234,6 +246,108 @@ export default class Toolbar extends BasePageObject {
         await this.participant.log('Clicking on: Raise hand Button');
 
         return this.getButton(RAISE_HAND).click();
+    }
+
+    /**
+     * Clicks on the lower hand button that lowers participant's raised hand.
+     */
+    async clickLowerHandButton(): Promise<void> {
+        await this.participant.log('Clicking on: Lower hand Button');
+
+        return this.getButton(LOWER_HAND).click();
+    }
+
+    /**
+     * Returns whether the reactions menu is open and displayed.
+     *
+     * @returns {Promise<boolean>}
+     */
+    async isReactionsMenuOpen(): Promise<boolean> {
+        return this.participant.driver.$('.reactions-menu').isDisplayed();
+    }
+
+    /**
+     * Ensures the reactions menu is displayed.
+     *
+     * @returns {Promise<void>}
+     */
+    async openReactionsMenu(): Promise<void> {
+        if (await this.isReactionsMenuOpen()) {
+            return;
+        }
+
+        // Wake the auto-hidden toolbar by hovering the local or large video container.
+        const localVideoContainer = this.participant.driver.$('span[id="localVideoContainer"]');
+
+        if (await localVideoContainer.isExisting()) {
+            await localVideoContainer.moveTo();
+        } else {
+            await this.participant.driver.$('#largeVideoContainer').moveTo();
+        }
+
+        const trigger = this.participant.driver.$(`[aria-label="${REACTIONS_MENU}"]`);
+
+        await trigger.waitForExist({ timeout: 2000 });
+        await trigger.moveTo();
+
+        if (!await this.isReactionsMenuOpen()) {
+            await trigger.click();
+        }
+
+        await this.waitForReactionsMenu(true);
+    }
+
+    /**
+     * Ensures the reactions menu is closed.
+     *
+     * @returns {Promise<void>}
+     */
+    async closeReactionsMenu(): Promise<void> {
+        if (!await this.isReactionsMenuOpen()) {
+            return;
+        }
+
+        const trigger = this.participant.driver.$(`[aria-label="${REACTIONS_MENU}"]`);
+
+        await trigger.click();
+
+        try {
+            await this.waitForReactionsMenu(false);
+        } catch {
+            await this.participant.driver.$('#largeVideoContainer').moveTo();
+            await this.waitForReactionsMenu(false);
+        }
+    }
+
+    /**
+     * Waits for the reactions menu to be visible or hidden.
+     *
+     * @param {boolean} visible - Whether the menu should be visible.
+     * @returns {Promise<void>}
+     */
+    waitForReactionsMenu(visible: boolean) {
+        return this.participant.driver.$('.reactions-menu').waitForDisplayed({
+            reverse: !visible,
+            timeout: 5000,
+            timeoutMsg: `Reactions menu is not ${visible ? 'visible' : 'hidden'}`
+        });
+    }
+
+    /**
+     * Clicks a reaction emoji in the reactions menu.
+     *
+     * @param {string} reaction - The reaction key or accessibility label.
+     * @returns {Promise<void>}
+     */
+    async clickReaction(reaction: string): Promise<void> {
+        const label = REACTION_LABELS[reaction] || reaction;
+
+        await this.openReactionsMenu();
+
+        const reactionBtn = this.participant.driver.$(`.reactions-menu [aria-label="${label}"]`);
+
+        await reactionBtn.waitForDisplayed({ timeout: 2000 });
+        await reactionBtn.click();
     }
 
     /**
