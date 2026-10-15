@@ -9,7 +9,6 @@ import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
 import { handleWindowFocus, hidePiP, openDocumentPiP, openElectronPiPWindow } from './actions';
 import PiPTriggerButton from './components/web/PiPTriggerButton';
-import { FOCUS_CHECK_DELAY_MS } from './constants';
 import {
     isDocumentPiPSupported,
     isElectronPiPWindowMode,
@@ -340,13 +339,7 @@ export function useElectronPiPWindow() {
         }
 
         const onWindowBlur = () => dispatch(openElectronPiPWindow());
-        const onWindowFocus = () => {
-            // Deferred for symmetry with the video-element PiP flow, so that any
-            // pending PiP teardown events settle before the exit runs.
-            setTimeout(() => {
-                dispatch(handleWindowFocus());
-            }, FOCUS_CHECK_DELAY_MS);
-        };
+        const onWindowFocus = () => dispatch(handleWindowFocus());
         const onVisibilityChange = () => {
             if (document.hidden) {
                 onWindowBlur();
