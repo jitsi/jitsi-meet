@@ -54,6 +54,12 @@ export interface IProps extends WithTranslation {
     disabled: boolean;
 
     /**
+     * Why the item is disabled, when it can say. Shown as its tooltip, in the overflow menu too, and given to
+     * assistive technology.
+     */
+    disabledReason?: string;
+
+    /**
      * A React Element to display at the end of {@code ToolboxItem}.
      */
     elementAfter?: ReactNode;
@@ -174,6 +180,18 @@ export default class AbstractToolboxItem<P extends IProps> extends Component<P> 
      */
     get accessibilityLabel(): string {
         return this._maybeTranslateAttribute(this.props.accessibilityLabel);
+    }
+
+    /**
+     * Helper property to get why the item is disabled, translated, if it is disabled and says why.
+     *
+     * @protected
+     * @returns {?string}
+     */
+    get disabledReason(): string | undefined {
+        const { disabled, disabledReason } = this.props;
+
+        return disabled && disabledReason ? this._maybeTranslateAttribute(disabledReason) : undefined;
     }
 
     /**

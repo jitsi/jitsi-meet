@@ -9,7 +9,7 @@ import Container from '../../../../base/react/components/web/Container';
 import Image from '../../../../base/react/components/web/Image';
 import LoadingIndicator from '../../../../base/react/components/web/LoadingIndicator';
 import Text from '../../../../base/react/components/web/Text';
-import Tooltip from '../../../../base/tooltip/components/Tooltip';
+import DisabledReasonTooltip from '../../../../base/tooltip/components/DisabledReasonTooltip';
 import Button from '../../../../base/ui/components/web/Button';
 import Switch from '../../../../base/ui/components/web/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.web';
@@ -422,19 +422,6 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
     }
 
     /**
-     * Wraps a control that end-to-end encryption disables in a tooltip saying so.
-     *
-     * @param {boolean} blocked - Whether end-to-end encryption disables the control.
-     * @param {JSX.Element} control - The control.
-     * @returns {JSX.Element}
-     */
-    _withE2EETooltip(blocked: boolean, control: JSX.Element) {
-        return blocked
-            ? <Tooltip content = { this.props.t('transcribing.unavailableWithE2EE') }>{ control }</Tooltip>
-            : control;
-    }
-
-    /**
      * Renders the transcription section: header with the start/stop button
      * and a collapsible area holding the language combobox.
      *
@@ -456,6 +443,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         } = this.props;
         const { showTranscriptionOptions } = this.state;
         const classes = this.props.classes ?? {};
+        const e2eeReason = _e2eeEnabled ? t('transcribing.unavailableWithE2EE') : undefined;
         const languageOptions = _availableLanguages.map((lang: string) => {
             return {
                 label: t(lang),
@@ -477,14 +465,17 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                                 onClick = { onStopTranscription }
                                 testId = 'recordingDialog.stopTranscription'
                                 type = { BUTTON_TYPES.DESTRUCTIVE } />
-                        ) : this._withE2EETooltip(_e2eeEnabled,
-                            <Button
-                                accessibilityLabel = { t('dialog.startTranscription') }
-                                disabled = { _e2eeEnabled }
-                                labelKey = 'dialog.start'
-                                onClick = { onStartTranscription }
-                                testId = 'recordingDialog.startTranscription'
-                                type = { BUTTON_TYPES.PRIMARY } />
+                        ) : (
+                            <DisabledReasonTooltip reason = { e2eeReason }>
+                                <Button
+                                    accessibilityLabel = { t('dialog.startTranscription') }
+                                    description = { e2eeReason }
+                                    disabled = { _e2eeEnabled }
+                                    labelKey = 'dialog.start'
+                                    onClick = { onStartTranscription }
+                                    testId = 'recordingDialog.startTranscription'
+                                    type = { BUTTON_TYPES.PRIMARY } />
+                            </DisabledReasonTooltip>
                         ) }
                     </Container>
                 </Container>
@@ -535,8 +526,8 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         } = this.props;
         const showStopBoth = recordingRunning || transcriptionRunning;
         const showStartBoth = !recordingRunning || !transcriptionRunning;
-        const startBothBlockedByE2EE = !transcriptionRunning && _e2eeEnabled;
-        const startBothDisabled = startBothBlockedByE2EE
+        const startBothE2EEReason = !transcriptionRunning && _e2eeEnabled ? t('transcribing.unavailableWithE2EE') : undefined;
+        const startBothDisabled = Boolean(startBothE2EEReason)
             || (!recordingRunning && (startRecordingDisabled || isValidating));
         const classes = this.props.classes ?? {};
 
@@ -550,14 +541,17 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                         testId = 'recordingDialog.stopBoth'
                         type = { BUTTON_TYPES.DESTRUCTIVE } />
                 ) }
-                { showStartBoth && this._withE2EETooltip(startBothBlockedByE2EE,
-                    <Button
-                        accessibilityLabel = { t('dialog.startBoth') }
-                        disabled = { startBothDisabled }
-                        labelKey = 'dialog.startBoth'
-                        onClick = { onStartBoth }
-                        testId = 'recordingDialog.startBoth'
-                        type = { BUTTON_TYPES.PRIMARY } />
+                { showStartBoth && (
+                    <DisabledReasonTooltip reason = { startBothE2EEReason }>
+                        <Button
+                            accessibilityLabel = { t('dialog.startBoth') }
+                            description = { startBothE2EEReason }
+                            disabled = { startBothDisabled }
+                            labelKey = 'dialog.startBoth'
+                            onClick = { onStartBoth }
+                            testId = 'recordingDialog.startBoth'
+                            type = { BUTTON_TYPES.PRIMARY } />
+                    </DisabledReasonTooltip>
                 ) }
             </Container>
         );

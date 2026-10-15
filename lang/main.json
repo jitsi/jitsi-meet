@@ -48,6 +48,7 @@
         "errorSpeakerUnavailable": "Can't translate this participant — they're no longer in the meeting.",
         "labelTooltip": "Translation in progress",
         "labelTooltipPlaying": "Translated audio is still playing — wait before speaking",
+        "stoppedForE2EE": "Live translation was turned off because End-to-End Encryption is on.",
         "unavailableWithE2EE": "Live translation isn't available while End-to-End Encryption is on."
     },
     "bandwidthSettings": {
@@ -1673,6 +1674,7 @@
         "sourceLanguageHere": "here",
         "start": "Start showing subtitles",
         "stop": "Stop showing subtitles",
+        "stoppedForE2EE": "Subtitles were turned off because End-to-End Encryption is on.",
         "subtitles": "Subtitles",
         "subtitlesOff": "Off",
         "tr": "TR",

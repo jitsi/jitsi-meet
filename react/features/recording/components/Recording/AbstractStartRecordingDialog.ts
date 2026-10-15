@@ -13,6 +13,7 @@ import { isLocalParticipantModerator } from '../../../base/participants/function
 import { updateDropboxToken } from '../../../dropbox/actions';
 import { getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropbox/functions';
 import { getDropboxData } from '../../../dropbox/functions.any';
+import { isE2EEOnInMeeting } from '../../../e2ee/functions';
 import { showErrorNotification } from '../../../notifications/actions';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
 import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
@@ -71,6 +72,11 @@ export interface IProps extends WithTranslation {
      * Whether subtitles should be displayed or not.
      */
     _displaySubtitles?: boolean;
+
+    /**
+     * Whether anyone in the meeting has end-to-end encryption on, which rules out starting transcription.
+     */
+    _e2eeOn: boolean;
 
     /**
      * Active FILE recording session, needed to stop recording.
@@ -535,13 +541,14 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
      */
     _applyChanges({
         startRecording = false,
-        startTranscription = false,
+        startTranscription: transcriptionRequested = false,
         stopRecording = false,
         stopTranscription = false
     }: IRecordingChanges) {
         const {
             _appKey,
             _conference,
+            _e2eeOn,
             _displaySubtitles,
             _fileRecordingSession,
             _isDropboxEnabled,
@@ -553,6 +560,9 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             _transcriptionRunning = false,
             dispatch
         } = this.props;
+
+        // Nothing server-side can transcribe end-to-end encrypted media.
+        const startTranscription = transcriptionRequested && !_e2eeOn;
 
         const {
             localRecordingOnlySelf,
@@ -815,6 +825,7 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
     return {
         _appKey: dropbox.appKey ?? '',
         _autoTranscribeOnRecord: shouldAutoTranscribeOnRecord(state),
+        _e2eeOn: isE2EEOnInMeeting(state),
         _canTranscribe: canAddTranscriber(state),
         _conference: state['features/base/conference'].conference,
         _displaySubtitles,

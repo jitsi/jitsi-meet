@@ -4,11 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import AudioTranslationDialog from '../../../audio-translation/components/web/AudioTranslationDialog';
+import { getEffectiveTranslationLanguage } from '../../../audio-translation/functions';
 import { openDialog } from '../../../base/dialog/actions';
 import { IconTranslate } from '../../../base/icons/svg';
-import Tooltip from '../../../base/tooltip/components/Tooltip';
+import DisabledReasonTooltip from '../../../base/tooltip/components/DisabledReasonTooltip';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
-import { isE2EEEnabled } from '../../../e2ee/functions';
+import { isE2EEOnInMeeting } from '../../../e2ee/functions';
 import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { IButtonProps } from '../../types';
 
@@ -23,9 +24,10 @@ const TranslateParticipantButton = ({ notifyClick, notifyMode, participantID }: 
     const dispatch = useDispatch();
     const { t } = useTranslation();
 
-    // Live translation is ruled out while end-to-end encryption is on; one already on can still be changed or off.
-    const disabled = useSelector((state: IReduxState) => isE2EEEnabled(state)
-        && !state['features/audio-translation'].participantLanguages[participantID]);
+    // Live translation is ruled out while end-to-end encryption is on; one already on can still be turned off.
+    const disabled = useSelector((state: IReduxState) => isE2EEOnInMeeting(state)
+        && !getEffectiveTranslationLanguage(state, participantID));
+    const reason = disabled ? t('audioTranslation.unavailableWithE2EE') : undefined;
 
     const _onClick = useCallback(() => {
         notifyClick?.();
@@ -35,16 +37,17 @@ const TranslateParticipantButton = ({ notifyClick, notifyMode, participantID }: 
         dispatch(openDialog('AudioTranslationDialog', AudioTranslationDialog, { participantId: participantID }));
     }, [ dispatch, notifyClick, notifyMode, participantID ]);
 
-    const item = (
-        <ContextMenuItem
-            accessibilityLabel = { t('toolbar.audioTranslation') }
-            disabled = { disabled }
-            icon = { IconTranslate }
-            onClick = { _onClick }
-            text = { t('toolbar.audioTranslation') } />
+    return (
+        <DisabledReasonTooltip reason = { reason }>
+            <ContextMenuItem
+                accessibilityLabel = { t('toolbar.audioTranslation') }
+                description = { reason }
+                disabled = { disabled }
+                icon = { IconTranslate }
+                onClick = { _onClick }
+                text = { t('toolbar.audioTranslation') } />
+        </DisabledReasonTooltip>
     );
-
-    return disabled ? <Tooltip content = { t('audioTranslation.unavailableWithE2EE') }>{ item }</Tooltip> : item;
 };
 
 export default TranslateParticipantButton;

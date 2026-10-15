@@ -7,8 +7,7 @@ import { getSoundFileSrc } from '../base/media/functions';
 import { getParticipantById, getParticipantCount, getParticipantCountWithFake } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { registerSound, unregisterSound } from '../base/sounds/actions';
-import { isAsyncTranscriptionActive } from '../transcribing/functions';
-import { isVoiceAgentInMeeting } from '../voice-agents/functions';
+import { isAsyncTranscriptionActive, isTranscribing } from '../transcribing/functions';
 
 import {
     E2EE_OFF_SOUND_ID,
@@ -123,13 +122,26 @@ export function registerE2eeAudioFiles(dispatch: IStore['dispatch'], shouldUnreg
 }
 
 /**
- * Returns whether end-to-end encryption is on for the local participant. The e2ee state only exists on web.
+ * Returns whether anyone in the meeting has end-to-end encryption on. Clients normally follow a participant who
+ * turns it on, but not with externally managed keys, past the max-mode threshold, on native (no e2ee state there)
+ * or before the follow lands, so the participants' broadcast flags are checked too.
  *
  * @param {IStateful} stateful - The redux store or {@code getState} function.
  * @returns {boolean}
  */
-export function isE2EEEnabled(stateful: IStateful) {
-    return Boolean(toState(stateful)['features/e2ee']?.enabled);
+export function isE2EEOnInMeeting(stateful: IStateful) {
+    const state = toState(stateful);
+
+    if (state['features/e2ee']?.enabled) {
+        return true;
+    }
+    for (const participant of state['features/base/participants'].remote.values()) {
+        if (participant.e2eeEnabled) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /**
@@ -144,10 +156,15 @@ export type E2EEBlockingService = 'agent' | 'transcription' | 'translation';
  * @returns {E2EEBlockingService|undefined}
  */
 export function getE2EEBlockingService(state: IReduxState): E2EEBlockingService | undefined {
-    if (isVoiceAgentInMeeting(state)) {
+    // An agent being provisioned, connecting or active; read from metadata so voice-agents can depend on this module.
+    const agents = state['features/base/conference'].metadata?.agents ?? {};
+
+    if (Object.values(agents).some(agent => agent?.state !== 'failed')) {
         return 'agent';
     }
-    if (isAsyncTranscriptionActive(state)) {
+
+    // A transcriber in the room (Jigasi) or the deployment's backend transcription.
+    if (isTranscribing(state) || isAsyncTranscriptionActive(state)) {
         return 'transcription';
     }
     if (isAudioTranslationActiveInMeeting(state)) {

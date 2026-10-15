@@ -5,9 +5,9 @@ import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../base/icons/components/Icon';
 import { IconSubtitles } from '../../../base/icons/svg';
-import Tooltip from '../../../base/tooltip/components/Tooltip';
+import DisabledReasonTooltip from '../../../base/tooltip/components/DisabledReasonTooltip';
 import Button from '../../../base/ui/components/web/Button';
-import { isE2EEEnabled } from '../../../e2ee/functions';
+import { isE2EEOnInMeeting } from '../../../e2ee/functions';
 import LanguageSelector from '../../../subtitles/components/web/LanguageSelector';
 import { ChatTabs } from '../../constants';
 import { getFocusedTab } from '../../functions';
@@ -88,26 +88,25 @@ const ClosedCaptionsTab = ({
     const { classes, theme } = useStyles();
     const { t } = useTranslation();
     const isVisible = useSelector(getFocusedTab) === ChatTabs.CLOSED_CAPTIONS;
-    const e2eeEnabled = useSelector(isE2EEEnabled);
+    const e2eeEnabled = useSelector(isE2EEOnInMeeting);
 
     if (!isTranscribing) {
         if (canStartSubtitles) {
-            const startButton = (
-                <Button
-                    accessibilityLabel = { t('closedCaptionsTab.startClosedCaptionsButton') }
-                    appearance = 'primary'
-                    disabled = { isButtonPressed || e2eeEnabled }
-                    labelKey = 'closedCaptionsTab.startClosedCaptionsButton'
-                    onClick = { startClosedCaptions }
-                    size = 'large'
-                    type = 'primary' />
-            );
+            const reason = e2eeEnabled ? t('transcribing.unavailableWithE2EE') : undefined;
 
             return (
                 <div className = { classes.emptyContent }>
-                    { e2eeEnabled
-                        ? <Tooltip content = { t('transcribing.unavailableWithE2EE') }>{ startButton }</Tooltip>
-                        : startButton }
+                    <DisabledReasonTooltip reason = { reason }>
+                        <Button
+                            accessibilityLabel = { t('closedCaptionsTab.startClosedCaptionsButton') }
+                            appearance = 'primary'
+                            description = { reason }
+                            disabled = { isButtonPressed || e2eeEnabled }
+                            labelKey = 'closedCaptionsTab.startClosedCaptionsButton'
+                            onClick = { startClosedCaptions }
+                            size = 'large'
+                            type = 'primary' />
+                    </DisabledReasonTooltip>
                 </div>
             );
         }

@@ -1,6 +1,7 @@
 import { JitsiAudioTranslationErrors, JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { isE2EEOnInMeeting } from '../e2ee/functions';
 import { showErrorNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
@@ -39,14 +40,23 @@ MiddlewareRegistry.register(store => next => action => {
     // Block enabling a translation language while a moderator has disabled the feature for the room. Managers
     // keep the translation UI even when the room flag is off, and the bridge silently drops such requests, so
     // surface a notification here instead. Disabling (language === null) is always allowed through.
+    // End-to-end encrypted media can't be translated either.
     if ((action.type === SET_AUDIO_TRANSLATION_LANGUAGE || action.type === SET_PARTICIPANT_AUDIO_TRANSLATION_LANGUAGE)
-            && action.language
-            && !isAudioTranslationRoomEnabled(store.getState())) {
-        store.dispatch(showErrorNotification({
-            titleKey: 'audioTranslation.errorRoomDisabled'
-        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+            && action.language) {
+        const state = store.getState();
+        let titleKey;
 
-        return;
+        if (isE2EEOnInMeeting(state)) {
+            titleKey = 'audioTranslation.unavailableWithE2EE';
+        } else if (!isAudioTranslationRoomEnabled(state)) {
+            titleKey = 'audioTranslation.errorRoomDisabled';
+        }
+
+        if (titleKey) {
+            store.dispatch(showErrorNotification({ titleKey }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+
+            return;
+        }
     }
 
     const result = next(action);
@@ -121,6 +131,9 @@ StateListenerRegistry.register(
         if (previousConference) {
             dispatch(clearReceivingTranslatedSources());
             dispatch(setTranslationListeners([]));
+
+            // The selection was made on the old conference and isn't applied to a new one.
+            dispatch(clearAudioTranslation());
         }
 
         if (!conference) {
@@ -164,6 +177,23 @@ StateListenerRegistry.register(
             dispatch(clearAudioTranslation());
             dispatch(showNotification({
                 titleKey: 'audioTranslation.disabledForRoom'
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        }
+    });
+
+/**
+ * E2EE came on with live translation on here (a race, or a client that doesn't block it): the translated audio can't
+ * come back any more, so turn it off and say why.
+ */
+StateListenerRegistry.register(
+    state => isE2EEOnInMeeting(state),
+    (e2eeOn, { dispatch, getState }) => {
+        const { language, participantLanguages } = getState()['features/audio-translation'];
+
+        if (e2eeOn && (language || Object.keys(participantLanguages).length > 0)) {
+            dispatch(clearAudioTranslation());
+            dispatch(showNotification({
+                titleKey: 'audioTranslation.stoppedForE2EE'
             }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
         }
     });
