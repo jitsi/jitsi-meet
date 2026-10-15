@@ -8,6 +8,7 @@ import { getParticipantById, getParticipantCount, getParticipantCountWithFake } 
 import { toState } from '../base/redux/functions';
 import { registerSound, unregisterSound } from '../base/sounds/actions';
 import { isAsyncTranscriptionActive } from '../transcribing/functions';
+import { isVoiceAgentInMeeting } from '../voice-agents/functions';
 
 import {
     E2EE_OFF_SOUND_ID,
@@ -134,7 +135,7 @@ export function isE2EEEnabled(stateful: IStateful) {
 /**
  * A server-side service that needs the media in the clear, so it and end-to-end encryption exclude each other.
  */
-export type E2EEBlockingService = 'transcription' | 'translation';
+export type E2EEBlockingService = 'agent' | 'transcription' | 'translation';
 
 /**
  * Returns the server-side service that keeps end-to-end encryption from being turned on, if any.
@@ -143,6 +144,9 @@ export type E2EEBlockingService = 'transcription' | 'translation';
  * @returns {E2EEBlockingService|undefined}
  */
 export function getE2EEBlockingService(state: IReduxState): E2EEBlockingService | undefined {
+    if (isVoiceAgentInMeeting(state)) {
+        return 'agent';
+    }
     if (isAsyncTranscriptionActive(state)) {
         return 'transcription';
     }

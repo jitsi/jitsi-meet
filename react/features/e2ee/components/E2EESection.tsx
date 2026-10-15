@@ -158,6 +158,7 @@ const E2EESection = ({
  * Why each server-side service keeps E2EE from being turned on.
  */
 const E2EE_BLOCKED_REASONS: Record<E2EEBlockingService, string> = {
+    agent: 'dialog.e2eeDisabledDueToAgentDescription',
     transcription: 'dialog.e2eeDisabledDueToTranscriptionDescription',
     translation: 'dialog.e2eeDisabledDueToTranslationDescription'
 };

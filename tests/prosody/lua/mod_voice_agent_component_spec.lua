@@ -165,7 +165,32 @@ end
 -- ---------------------------------------------------------------------------
 
 local function fresh_room()
-    return { jid = 'room1@conference.localhost', jitsiMetadata = {}, _data = {} };
+    return {
+        jid = 'room1@conference.localhost';
+        jitsiMetadata = {};
+        _data = {};
+        occupants = {};
+        each_occupant = function(self)
+            local i = 0;
+            return function()
+                i = i + 1;
+                local occupant = self.occupants[i];
+                if occupant then
+                    return occupant.nick, occupant;
+                end
+            end;
+        end;
+    };
+end
+
+-- An occupant whose presence carries the given jitsi_participant_* properties.
+local function occupant(props)
+    return {
+        nick = 'room1@conference.localhost/p' .. tostring(math.random(1e6));
+        get_presence = function()
+            return { get_child_text = function(_, name) return props[name]; end };
+        end;
+    };
 end
 
 local function post(route, payload, opts)
@@ -448,6 +473,21 @@ describe('mod_voice_agent_component', function()
             local stored = mock_room._data.voice_agents['agent-support'].endpoint;
             assert.are.equal('wss://agents.example.com/s', stored.url);
             assert.are.equal('Bearer k', stored.authorization);
+        end)
+    end)
+
+    describe('end-to-end encryption', function()
+        it('rejects an invite while anyone has end-to-end encryption on', function()
+            mock_room.occupants = { occupant({}), occupant({ ['jitsi_participant_e2ee.enabled'] = 'true' }) };
+            local res = invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            assert.are.equal(409, res.status_code);
+            assert.are.equal('End-to-end encryption is on in this meeting', encoded[#encoded].error);
+            assert.are.equal(0, #agent_ids(mock_room));
+        end)
+
+        it('accepts the invite once encryption is off again', function()
+            mock_room.occupants = { occupant({ ['jitsi_participant_e2ee.enabled'] = 'false' }) };
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' }).status_code);
         end)
     end)
 

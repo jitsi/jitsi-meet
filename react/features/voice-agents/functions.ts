@@ -83,6 +83,19 @@ export function isVoiceAgentConsentRequired(state: IReduxState): boolean {
 }
 
 /**
+ * Whether the room has an agent that is being provisioned, connecting or active (one whose provisioning failed
+ * does not count).
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function isVoiceAgentInMeeting(state: IReduxState) {
+    const agents = state['features/base/conference'].metadata?.agents ?? {};
+
+    return Object.values(agents).some(agent => agent?.state !== 'failed');
+}
+
+/**
  * Whether the meeting is end-to-end encrypted. Agents cannot take part then: the bridge would hand them
  * ciphertext, and the audio they inject is not encrypted with the meeting's keys.
  *
