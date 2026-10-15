@@ -1384,6 +1384,11 @@ var config = {
     //     // and instead the app will continue to display in the current browser.
     //     disabled: false,
 
+    //     // Whether to hide dial-in numbers and the meeting PIN on the mobile deep linking page.
+    //     // This only hides the UI; it does not disable phone access to the meeting.
+    //     // Can be overridden with #config.deeplinking.hideDialIn=true in the meeting URL.
+    //     hideDialIn: false,
+
     //     // whether to hide the logo on the deep linking pages.
     //     hideLogo: false,
 

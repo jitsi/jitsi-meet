@@ -98,7 +98,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
     const deeplinkingCfg = useSelector((state: IReduxState) =>
         state['features/base/config']?.deeplinking || {} as IDeeplinkingConfig);
-    const { hideLogo } = deeplinkingCfg;
+    const { hideDialIn, hideLogo } = deeplinkingCfg;
     const deepLinkingUrl: string = useSelector(generateDeepLinkingURL);
     const room = useSelector((state: IReduxState) => decodeURIComponent(state['features/base/conference'].room || ''));
     const url = useSelector((state: IReduxState) => state['features/base/connection'] || {});
@@ -213,13 +213,17 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
                         {t(`${_TNS}.unsupportedBrowser`)}
                     </div>
                 )}
-                <div className = { styles.separator } />
-                <DialInSummary
-                    className = 'deep-linking-dial-in'
-                    clickableNumbers = { true }
-                    hideError = { true }
-                    room = { room }
-                    url = { url } />
+                {!hideDialIn && (
+                    <>
+                        <div className = { styles.separator } />
+                        <DialInSummary
+                            className = 'deep-linking-dial-in'
+                            clickableNumbers = { true }
+                            hideError = { true }
+                            room = { room }
+                            url = { url } />
+                    </>
+                )}
             </div>
         </div>
     );
