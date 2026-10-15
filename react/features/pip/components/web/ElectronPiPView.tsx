@@ -21,22 +21,19 @@ const DISMISS_BUTTON_SIZE = 32;
  */
 const DISMISS_ICON_SIZE = 20;
 
-const useStyles = makeStyles<void, 'dismiss'>()((theme, _params, classes) => {
+const useStyles = makeStyles()(theme => {
     return {
         container: {
             height: '100%',
             position: 'relative',
             touchAction: 'none',
-            width: '100%',
-
-            [`&:hover .${classes.dismiss}`]: {
-                opacity: 1
-            }
+            width: '100%'
         },
 
-        // The legacy always-on-top dismiss button, a rounded square with an X
-        // in the top right corner revealed while hovering the window, in the
-        // theme's colors: the thumbnail background it floats over and the
+        // The legacy always-on-top dismiss button: a rounded square with an X
+        // in the top right corner, always visible (unlike the toolbar, which
+        // follows the mouse) so the way out of the window is never hidden. In
+        // the theme's colors: the thumbnail background it floats over and the
         // toolbar's hover tone.
         dismiss: {
             alignItems: 'center',
@@ -47,12 +44,10 @@ const useStyles = makeStyles<void, 'dismiss'>()((theme, _params, classes) => {
             display: 'flex',
             height: `${DISMISS_BUTTON_SIZE}px`,
             justifyContent: 'center',
-            opacity: 0,
             padding: 0,
             position: 'absolute',
             right: theme.spacing(2),
             top: theme.spacing(2),
-            transition: 'opacity 0.3s ease',
             width: `${DISMISS_BUTTON_SIZE}px`,
             zIndex: 20,
 
