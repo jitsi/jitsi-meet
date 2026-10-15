@@ -143,7 +143,11 @@ export function getVideoObjectPosition(state: IReduxState, id?: string) {
         const { right, width } = faceBox;
 
         if (right && width) {
-            return `${right - (width / 2)}% 50%`;
+            const position = right - (width / 2);
+
+            if (Number.isFinite(position)) {
+                return `${Math.min(Math.max(position, 0), 100)}% 50%`;
+            }
         }
     }
 
