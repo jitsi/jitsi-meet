@@ -141,6 +141,11 @@ const useStyles = makeStyles()(theme => {
         },
         options: {
             borderRadius: Number(theme.shape.borderRadius) / 2,
+
+            // The options area sits flush with the button's right edge, so its outer corners must follow the
+            // button's radius, which can be customized through the theme.
+            borderTopRightRadius: 'inherit',
+            borderBottomRightRadius: 'inherit',
             alignItems: 'center',
             display: 'flex',
             height: '100%',
