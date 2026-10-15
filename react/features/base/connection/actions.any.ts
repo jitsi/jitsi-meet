@@ -153,6 +153,9 @@ export function constructOptions(state: IReduxState) {
         if (options.conferenceRequestUrl) {
             options.conferenceRequestUrl = appendURLParam(options.conferenceRequestUrl, 'room', roomName ?? '');
         }
+        if (options.websocketWarmUpUrl) {
+            options.websocketWarmUpUrl = appendURLParam(options.websocketWarmUpUrl, 'room', roomName ?? '');
+        }
     }
 
     if (preferVisitor) {
