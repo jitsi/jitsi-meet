@@ -247,9 +247,20 @@ export default class MessageContainer extends Component<IProps, IState> {
      */
     _onChatScroll() {
         const firstUnreadMessage = this._findFirstUnreadMessage();
+        const nextState: Partial<IState> = {};
+
+        // Dismiss the new-messages pill once the user starts scrolling; otherwise it only clears
+        // when they scroll all the way to the bottom (via the IntersectionObserver on #messagesListEnd).
+        if (this.state.hasNewMessages) {
+            nextState.hasNewMessages = false;
+        }
 
         if (firstUnreadMessage && firstUnreadMessage.id !== this.state.lastReadMessageId) {
-            this.setState({ lastReadMessageId: firstUnreadMessage?.id });
+            nextState.lastReadMessageId = firstUnreadMessage.id;
+        }
+
+        if (Object.keys(nextState).length) {
+            this.setState(nextState as IState);
         }
     }
 
