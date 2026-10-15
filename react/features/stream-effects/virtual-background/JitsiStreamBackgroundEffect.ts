@@ -5,6 +5,7 @@ import { IVirtualBackground } from '../../virtual-background/reducer';
 
 import BackgroundFrameProcessor from './BackgroundFrameProcessor';
 import { BackendType, DeviceTier, IDeviceCapabilities } from './DeviceTierDetector';
+import { IARFilterConfig } from './JitsiStreamAREffect';
 import WorkerSegmentationBackend from './backend/WorkerSegmentationBackend';
 import Canvas2DCompositor from './compositor/Canvas2DCompositor';
 import { ICompositor } from './compositor/ICompositor';
@@ -29,6 +30,9 @@ const V1_SEG_HEIGHT = 144;
  * Presence of this object on the constructor is the V1/V2 discriminator.
  */
 export interface IV2EffectInit {
+    arFilter?: IARFilterConfig;
+    arModelPath?: string;
+    arWasmBase?: string;
     capabilities: IDeviceCapabilities;
     enableV2: boolean;
     vbConfig?: IVirtualBackgroundAdvancedConfig;
@@ -95,6 +99,10 @@ export default class JitsiStreamBackgroundEffect {
         }
     }
 
+    setARFilter(filter: IARFilterConfig): void {
+        this._processor?.setARFilter(filter);
+    }
+
     /**
      * The V2 startup configuration in use, including any worker fallback once {@code init} has resolved.
      *
@@ -139,7 +147,7 @@ export default class JitsiStreamBackgroundEffect {
         this._enableV2 = Boolean(v2Init?.enableV2);
 
         if (this._enableV2 && v2Init) {
-            const { capabilities, vbConfig } = v2Init;
+            const { arFilter, arModelPath, arWasmBase, capabilities, vbConfig } = v2Init;
 
             this._backend = new WorkerSegmentationBackend(capabilities);
 
@@ -157,6 +165,9 @@ export default class JitsiStreamBackgroundEffect {
             }
 
             this._processor = new BackgroundFrameProcessor({
+                arFilter,
+                arModelPath,
+                arWasmBase,
                 backend: this._backend,
                 compositor,
                 vbConfig,
