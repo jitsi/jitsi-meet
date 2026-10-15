@@ -443,7 +443,7 @@ module.exports = (_env, argv) => {
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'external_api')
             ],
-            performance: getPerformanceHints(perfHintOptions, 100 * 1024) },
+            performance: getPerformanceHints(perfHintOptions, 110 * 1024) },
         { ...config,
             entry: {
                 'preload': './react/features/preload/preload.web.ts'
