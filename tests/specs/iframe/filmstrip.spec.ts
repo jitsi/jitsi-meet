@@ -61,6 +61,7 @@ describe('Filmstrip iframe API command and events', () => {
         await p1.getIframeAPI().clearEventResults('filmstripDisplayChanged');
 
         await p1.switchToIFrame();
+        await p1.driver.$('body').click();
         await p1.driver.keys([ 'f' ]);
 
         await p1.switchToMainFrame();
