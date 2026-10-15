@@ -554,6 +554,7 @@ export const colorMap = {
     // Warning
     warning01: 'warning01',
     warning02: 'warning06',
+    warning03: 'warning03',
 
     // ----- Support -----
 

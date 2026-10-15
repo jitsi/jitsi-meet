@@ -36,7 +36,7 @@ local http_headers = {
     ['Content-Type'] = 'application/json'
 };
 
-local inspect = require "inspect"
+local serialize = require "util.serialization".new("debug")
 
 function table.clone(t)
   return {table.unpack(t)}
@@ -45,10 +45,10 @@ end
 local function event_cb(content_, code_, response_, request_)
     if code_ == 200 or code_ == 204 then
         module:log('debug', 'URL Callback: Code %s, Content %s, Request (host %s, path %s, body %s), Response: %s',
-                code_, content_, request_.host, request_.path, inspect(request_.body), inspect(response_));
+                code_, content_, request_.host, request_.path, serialize(request_.body), serialize(response_));
     else
         module:log('warn', 'URL Callback non successful: Code %s, Content %s, Request (%s), Response: %s',
-                code_, content_, inspect(request_), inspect(response_));
+                code_, content_, serialize(request_), serialize(response_));
     end
 end
 

@@ -65,9 +65,15 @@ export interface IConferenceMetadata {
             displayName?: string;
             kind?: string;
             sourceName?: string;
+            state?: string;
         };
     };
 
+    /**
+     * Server-controlled flag: the deployment transcribes on the backend, started through
+     * {@code recording.isTranscribingEnabled}, instead of dialing a transcriber.
+     */
+    asyncTranscription?: boolean;
     audioTranslation?: {
         enabled?: boolean;
     };

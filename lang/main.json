@@ -46,7 +46,9 @@
         "errorLimitReached": "Couldn't translate everyone at once. Turn on translation for individual participants instead.",
         "errorRoomDisabled": "Audio translation is turned off for this meeting. Enable it in Moderator settings.",
         "errorSpeakerUnavailable": "Can't translate this participant — they're no longer in the meeting.",
-        "labelTooltip": "Translation in progress"
+        "labelTooltip": "Translation in progress",
+        "labelTooltipPlaying": "Translated audio is still playing — wait before speaking",
+        "unavailableWithE2EE": "Live translation isn't available while End-to-End Encryption is on."
     },
     "bandwidthSettings": {
         "assumedBandwidthBps": "e.g. 10000000 for 10 Mbps",
@@ -262,7 +264,8 @@
         "yes": "yes"
     },
     "customPanel": {
-        "close": "Close"
+        "close": "Close",
+        "title": "AI Assist"
     },
     "dateUtils": {
         "earlier": "Earlier",
@@ -388,6 +391,8 @@
         "done": "Done",
         "e2eeDescription": "End-to-End Encryption is currently EXPERIMENTAL. Please keep in mind that turning on end-to-end encryption will effectively disable server-side provided services such as: phone participation. Also keep in mind that the meeting will only work for people joining from browsers with support for insertable streams.",
         "e2eeDisabledDueToMaxModeDescription": "Cannot enable End-to-End Encryption due to large number of participants in the conference.",
+        "e2eeDisabledDueToTranscriptionDescription": "End-to-End Encryption can't be turned on while the meeting is being transcribed.",
+        "e2eeDisabledDueToTranslationDescription": "End-to-End Encryption can't be turned on while live translation is in use.",
         "e2eeLabel": "Enable End-to-End Encryption",
         "e2eeWarning": "WARNING: Not all participants in this meeting seem to have support for End-to-End encryption. If you enable it they won't be able to see nor hear you.",
         "e2eeWillDisableDueToMaxModeDescription": "WARNING: End-to-End Encryption will be automatically disabled if more participants join the conference.",
@@ -1055,6 +1060,14 @@
             "visitorsList": "Viewers ({{count}})",
             "waitingLobby": "Waiting in lobby ({{count}})"
         },
+        "indicators": {
+            "audioDominantSpeaker": "Active speaker",
+            "audioForceMuted": "Audio muted, cannot unmute",
+            "audioMuted": "Audio muted",
+            "raisedHand": "Hand raised",
+            "videoForceMuted": "Camera disabled, cannot enable",
+            "videoMuted": "Camera disabled"
+        },
         "search": "Search participants",
         "searchDescription": "Start typing to filter participants",
         "title": "Participants"
@@ -1393,7 +1406,9 @@
         "seconds": "{{count}}s",
         "speakerStats": "Participants Stats",
         "speakerTime": "Speaker Time",
-        "surprised": "Surprised"
+        "surprised": "Surprised",
+        "timelineEnd": "End",
+        "timelineStart": "Start"
     },
     "startupoverlay": {
         "genericTitle": "The meeting needs to use your microphone and camera.",
@@ -1404,6 +1419,10 @@
         "rejoinKeyTitle": "Rejoin",
         "text": "Press the <i>Rejoin</i> button to reconnect.",
         "title": "Your video call was interrupted because this computer went to sleep."
+    },
+    "systemWideUserNotification": {
+        "button": "Learn more",
+        "dontShowAgain": "Don't show again"
     },
     "termsView": {
         "title": "Terms"
@@ -1526,6 +1545,7 @@
                 "label": "Stereo"
             }
         },
+        "aiAssist": "AI Assist",
         "audioRoute": "Select the sound device",
         "audioSettings": "Audio settings",
         "audioTranslation": "Translate audio",
@@ -1540,7 +1560,6 @@
         "closeParticipantsPane": "Close participants pane",
         "closeReactionsMenu": "Close reactions menu",
         "closedCaptions": "Closed captions",
-        "copilot": "Copilot",
         "disableNoiseSuppression": "Disable extra noise suppression",
         "disableReactionSounds": "You can disable reaction sounds for this meeting",
         "documentClose": "Close shared document",
@@ -1656,7 +1675,8 @@
         "subtitles": "Subtitles",
         "subtitlesOff": "Off",
         "tr": "TR",
-        "translateTo": "Translate to"
+        "translateTo": "Translate to",
+        "unavailableWithE2EE": "Transcription isn't available while End-to-End Encryption is on."
     },
     "unpinParticipant": "{{participantName}} - Unpin",
     "userMedia": {
@@ -1712,16 +1732,10 @@
         "mute": "Participant is muted",
         "muted": "Muted",
         "pinToStage": "Pin to stage",
-        "receivingTranslatedAudio": "You're receiving translated audio",
         "remoteControl": "Start / Stop remote control",
         "screenSharing": "Participant is sharing their screen",
         "show": "Show on stage",
         "showSelfView": "Show self view",
-        "translationEnabledForYou": "Translation enabled for you",
-        "translationOnAndReceiving": "Translation on · receiving",
-        "translationStillListening": "{{count}} participant is still hearing the translation — wait before speaking",
-        "translationStillListeningShort": "{{num}} still listening",
-        "translationStillListening_plural": "{{count}} participants are still hearing the translation — wait before speaking",
         "unpinFromStage": "Unpin",
         "verify": "Verify participant",
         "videoMuted": "Camera disabled",

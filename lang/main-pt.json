@@ -1464,6 +1464,7 @@
                 "label": "Estéreo"
             }
         },
+        "aiAssist": "Assistente de IA",
         "audioRoute": "Selecionar o dispositivo de som",
         "audioSettings": "Definições de áudio",
         "audioTranslation": "Traduzir áudio",
@@ -1478,7 +1479,6 @@
         "closeParticipantsPane": "Fechar painel de participantes",
         "closeReactionsMenu": "Fechar menu de reações",
         "closedCaptions": "Legendas ocultas",
-        "copilot": "Copilot",
         "disableNoiseSuppression": "Desativar supressão de ruído extra",
         "disableReactionSounds": "Pode desactivar os sons de reacção para esta reunião",
         "documentClose": "Fechar documento partilhado",

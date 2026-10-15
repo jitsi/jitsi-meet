@@ -51,7 +51,13 @@ ReducerRegistry.register<IAudioTranslationState>(
     (state = DEFAULT_STATE, action): IAudioTranslationState => {
         switch (action.type) {
         case CLEAR_AUDIO_TRANSLATION:
-            return DEFAULT_STATE;
+            // Only the local selection. receivingSources and translationListeners are reported by the backend
+            // and describe the whole conference, so they stay until it says otherwise.
+            return {
+                ...state,
+                language: null,
+                participantLanguages: {}
+            };
         case CLEAR_RECEIVING_TRANSLATED_SOURCES:
             return {
                 ...state,
@@ -71,10 +77,17 @@ ReducerRegistry.register<IAudioTranslationState>(
                 }
             };
         case PARTICIPANT_LEFT: {
-            // A per-speaker choice must not outlive the speaker, or the meeting label never clears.
-            const { [action.participant.id]: _left, ...participantLanguages } = state.participantLanguages;
+            // Choice and in-flight audio must not outlive the speaker: no stop event arrives for a departed
+            // endpoint, so the meeting label would never clear.
+            const { id } = action.participant;
+            const { [id]: _left, ...participantLanguages } = state.participantLanguages;
+            const receivingSources = state.receivingSources.filter(source => !source.startsWith(`${id}-`));
 
-            return _left === undefined ? state : { ...state, participantLanguages };
+            if (_left === undefined && receivingSources.length === state.receivingSources.length) {
+                return state;
+            }
+
+            return { ...state, participantLanguages, receivingSources };
         }
         case SET_TRANSLATION_LISTENERS:
             return {

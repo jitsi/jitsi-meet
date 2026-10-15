@@ -1405,6 +1405,7 @@
                 "label": "Stereo"
             }
         },
+        "aiAssist": "Tekoälyavustaja",
         "audioRoute": "Valitse äänilaite",
         "audioSettings": "Ääniasetukset",
         "authenticate": "Todenna",
@@ -1417,7 +1418,6 @@
         "closeParticipantsPane": "Sulje osallistujapaneeli",
         "closeReactionsMenu": "Sulje reaktiot-valikko",
         "closedCaptions": "Tekstitys",
-        "copilot": "Copilot",
         "disableNoiseSuppression": "Poista ylimääräinen kohinanpoisto käytöstä",
         "disableReactionSounds": "Voit poistaa reaktioäänet käytöstä tässä kokouksessa",
         "documentClose": "Sulje jaettu asiakirja",

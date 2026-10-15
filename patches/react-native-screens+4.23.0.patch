@@ -1,0 +1,15 @@
+diff --git a/node_modules/react-native-screens/ios/helpers/RNSViewInteractionManager.mm b/node_modules/react-native-screens/ios/helpers/RNSViewInteractionManager.mm
+index c2f401f..7ebd411 100644
+--- a/node_modules/react-native-screens/ios/helpers/RNSViewInteractionManager.mm
++++ b/node_modules/react-native-screens/ios/helpers/RNSViewInteractionManager.mm
+@@ -16,6 +16,10 @@
+ 
+ - (void)disableInteractionsForSubtreeWith:(UIView *)view
+ {
++  // Backport of 4.24.0 (#3631): don't block interactions on iOS 26 (jitsi-meet#17909).
++  // Can't bump to 4.24.0+: it needs Android compileSdk 36.
++  return;
++
+   UIView *current = view;
+   while (current && ![current isKindOfClass:UIWindow.class] &&
+          ![current respondsToSelector:@selector(rnscreens_disableInteractions)]) {

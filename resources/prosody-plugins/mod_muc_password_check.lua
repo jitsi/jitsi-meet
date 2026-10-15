@@ -52,7 +52,6 @@
 --
 -- Copyright (C) 2023-present 8x8, Inc.
 
-local inspect = require "inspect";
 local formdecode = require "util.http".formdecode;
 local urlencode = require "util.http".urlencode;
 local jid = require "util.jid";
@@ -190,8 +189,6 @@ function handle_validate_room_password (event)
         body = json_msg_str;
     };
 
-    -- module:log("debug","Sending response for room password validate: %s", inspect(PUT_response));
-
     return PUT_response;
 end
 
@@ -222,7 +219,6 @@ function handle_get_room_password (event)
         };
         body = json_msg_str;
     };
-    -- module:log("debug","Sending response for room password: %s", inspect(GET_response));
 
     return GET_response;
 end

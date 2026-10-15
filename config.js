@@ -1112,6 +1112,21 @@ var config = {
     // type:  Array<{ icon: string; id: string; text: string; backgroundColor?: string; }>
     // customToolbarButtons: [],
 
+    // The custom panel (AI Assist), rendered in a side panel on web and on its own screen
+    // on mobile. It needs `enabled`, `url`, `advisorAvailabilityUrl` and a JWT.
+    // `url` has no default: without one the panel stays hidden on both platforms.
+    // `advisorAvailabilityUrl` is called after joining with the JWT and the meeting id; the
+    // button shows only if it confirms an advisor is deployed for the meeting.
+    // Both can also come from `customPanelUrl: { url, advisorAvailabilityUrl }` in the
+    // dynamic branding data, which takes precedence over the values set here.
+    // NOTE: `url` and `advisorAvailabilityUrl` cannot be overwritten through
+    // `configOverwrite`, because both receive the meeting JWT. Only `enabled` is whitelisted.
+    // customPanel: {
+    //     enabled: false,
+    //     url: 'https://example.com/ai-assist',
+    //     advisorAvailabilityUrl: 'https://example.com/advisor-resolve',
+    // },
+
     // Stats
     //
 
@@ -1478,6 +1493,9 @@ var config = {
         logoClickUrl: 'https://example-company.org',
         // The url used for the image used as logo
         logoImageUrl: 'https://example.com/logo-img.png',
+        // The url loaded in the custom panel (AI Assist). It overwrites `customPanel.url`
+        // from this file. The panel also needs `customPanel.enabled` set to true.
+        customPanelUrl: 'https://example.com/ai-assist',
         // Endpoint that enables support for salesforce integration with in-meeting resource linking
         // This is required for:
         // listing the most recent records - salesforceUrl/records/recents
@@ -1927,6 +1945,26 @@ var config = {
 
     // List of notifications to be disabled. Works in tandem with the above setting.
     // disabledNotifications: [],
+
+    // A notification shown to every user, with a button which opens a link. It is shown when the user joins a
+    // meeting, until the user clicks "Don't show again", and on the welcome page.
+    // systemWideUserNotification: {
+    //     // Identifies the notification. The users who chose not to see it again see it again when the id changes.
+    //     // Defaults to the url.
+    //     id: 'announcement-1',
+    //     // The link opened by the button.
+    //     url: 'https://example.com/announcement',
+    //     // The texts, by language code. A missing language or text falls back to English. The button and
+    //     // dontShowAgain texts have defaults.
+    //     labels: {
+    //         en: {
+    //             title: 'Things are changing',
+    //             description: 'Read about what is new.',
+    //             button: 'Learn more',
+    //             dontShowAgain: 'Don\'t show again',
+    //         },
+    //     },
+    // },
 
     // filmstrip: {
     //     // Disable the vertical/horizontal filmstrip.

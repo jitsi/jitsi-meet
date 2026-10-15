@@ -81,6 +81,7 @@ export default [
     'channelLastN',
     'connectionIndicators',
     'constraints',
+    'customPanel.enabled',
     'deeplinking.disabled',
     'deeplinking.desktop.enabled',
     'defaultLocalDisplayName',

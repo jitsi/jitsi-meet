@@ -5,10 +5,16 @@ import { openDialog } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
 import { IconTranslate } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import { isE2EEEnabled } from '../../../e2ee/functions';
 
 import AudioTranslationDialog from './AudioTranslationDialog';
 
 interface IProps extends AbstractButtonProps {
+
+    /**
+     * Whether end-to-end encryption is on, which rules out live translation.
+     */
+    _e2eeEnabled: boolean;
 
     /**
      * The target language remote audio is currently translated into, or null.
@@ -44,6 +50,26 @@ class AudioTranslationButton extends AbstractButton<IProps> {
     override _isToggled() {
         return Boolean(this.props._language);
     }
+
+    /**
+     * Disabled while end-to-end encryption is on, unless a translation is already on and can be turned off.
+     *
+     * @override
+     * @returns {boolean}
+     */
+    override _isDisabled() {
+        return Boolean(this.props._e2eeEnabled) && !this._isToggled();
+    }
+
+    /**
+     * Explains why the button is disabled while end-to-end encryption is on.
+     *
+     * @override
+     * @returns {string}
+     */
+    override _getTooltip() {
+        return this._isDisabled() ? 'audioTranslation.unavailableWithE2EE' : super._getTooltip();
+    }
 }
 
 /**
@@ -54,6 +80,7 @@ class AudioTranslationButton extends AbstractButton<IProps> {
  */
 function _mapStateToProps(state: IReduxState) {
     return {
+        _e2eeEnabled: isE2EEEnabled(state),
         _language: state['features/audio-translation'].language
     };
 }

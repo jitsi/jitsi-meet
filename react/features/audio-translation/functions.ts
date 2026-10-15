@@ -6,7 +6,7 @@ import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { isLocalParticipantModerator } from '../base/participants/functions';
 import { ITrack } from '../base/tracks/types';
 
-import { DUCKED_ORIGINAL_VOLUME, TranslationTreatment } from './constants';
+import { DUCKED_ORIGINAL_VOLUME } from './constants';
 
 /**
  * Whether audio translation is enabled for the room. Driven by the {@code audioTranslation} RoomMetadata flag,
@@ -17,93 +17,6 @@ import { DUCKED_ORIGINAL_VOLUME, TranslationTreatment } from './constants';
  */
 export function isAudioTranslationRoomEnabled(state: IReduxState): boolean {
     return state['features/base/conference'].metadata?.audioTranslation?.enabled !== false;
-}
-
-/**
- * Whether the given participant is currently translating the local participant's audio, per the directed
- * {@code translationListeners} list pushed by the audio-translation component.
- *
- * @param {IReduxState} state - The redux state.
- * @param {string} participantId - The participant (endpoint) id to check.
- * @returns {boolean}
- */
-export function isParticipantAudioTranslationActive(state: IReduxState, participantId: string): boolean {
-    return state['features/audio-translation'].translationListeners.includes(participantId);
-}
-
-/**
- * The target language encoded in a translated source name — the substring after the last {@code .}.
- *
- * @param {string} sourceName - The translated source name.
- * @returns {string}
- */
-export function getSourceLanguage(sourceName: string): string {
-    const dotIndex = sourceName.lastIndexOf('.');
-
-    return dotIndex === -1 ? '' : sourceName.substring(dotIndex + 1);
-}
-
-/**
- * The owner endpoint id encoded in a translated source name — the substring before the first {@code -}.
- * Translated sources follow the {@code <endpointId>-a<idx>.<lang>} convention (endpoint ids are dash/dot-free).
- * Returns an empty string for a source without a dash.
- *
- * @param {string} sourceName - The translated source name.
- * @returns {string}
- */
-export function getSourceOwnerEndpointId(sourceName: string): string {
-    const dashIndex = sourceName.indexOf('-');
-
-    return dashIndex === -1 ? '' : sourceName.substring(0, dashIndex);
-}
-
-/**
- * Whether we are hearing the given participant translated. The bridge floods sending changes to every
- * endpoint, so {@code receivingSources} is every translated source in flight anywhere, not just ours; a
- * source counts as ours only when its language matches the one we selected for this participant.
- *
- * @param {IReduxState} state - The redux state.
- * @param {string} participantId - The participant (endpoint) id to check.
- * @returns {boolean}
- */
-export function isReceivingTranslationFrom(state: IReduxState, participantId: string): boolean {
-    const language = getEffectiveTranslationLanguage(state, participantId);
-
-    // The bridge announces sending changes to every endpoint, so a source being in flight does not mean we
-    // subscribed to it; require our own selection for this speaker to match the source's language.
-    if (!language) {
-        return false;
-    }
-
-    return state['features/audio-translation'].receivingSources
-        .some(sourceName => getSourceOwnerEndpointId(sourceName) === participantId
-            && sourceName.endsWith(`.${language}`));
-}
-
-/**
- * The audio-translation status treatment for a participant, combining whether translation is enabled for the
- * local user ({@link isParticipantAudioTranslationActive}) and whether translated audio is being received
- * ({@link isReceivingTranslationFrom}).
- *
- * @param {IReduxState} state - The redux state.
- * @param {string} participantId - The participant (endpoint) id to check.
- * @returns {TranslationTreatment}
- */
-export function getTranslationTreatment(state: IReduxState, participantId: string): TranslationTreatment {
-    const enabled = isParticipantAudioTranslationActive(state, participantId);
-    const receiving = isReceivingTranslationFrom(state, participantId);
-
-    if (enabled && receiving) {
-        return TranslationTreatment.BOTH;
-    }
-    if (enabled) {
-        return TranslationTreatment.ENABLED;
-    }
-    if (receiving) {
-        return TranslationTreatment.RECEIVING;
-    }
-
-    return TranslationTreatment.NONE;
 }
 
 /**
@@ -122,6 +35,17 @@ export function isAudioTranslationActiveInMeeting(state: IReduxState): boolean {
         || Boolean(language)
         || Object.values(participantLanguages).some(lang => lang !== null)
         || Object.values(listenerCounts).some(counts => Object.values(counts).some(count => count > 0));
+}
+
+/**
+ * Whether any speaker's translated audio is currently playing out in the meeting. The bridge floods sending
+ * changes to every endpoint, so this is conference-wide rather than specific to what we subscribed to.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function isTranslationPlayingOut(state: IReduxState): boolean {
+    return state['features/audio-translation'].receivingSources.length > 0;
 }
 
 /**
@@ -265,44 +189,3 @@ export function getDuckedVolumeForParticipant(state: IReduxState, participantId?
     return typeof userVolume === 'number' ? Math.min(userVolume, duckedVolume) : duckedVolume;
 }
 
-/**
- * The number of participants still hearing the given speaker's translated audio, as published by that
- * speaker. 0 when nothing is pending or the speaker's client does not publish the count.
- *
- * @param {IReduxState} state - The redux state.
- * @param {string} participantId - The speaker's participant id.
- * @returns {number}
- */
-export function getTranslationDeliveryPendingCount(state: IReduxState, participantId: string): number {
-    const counts = state['features/base/conference'].metadata?.audioTranslationListenerCounts?.[participantId];
-
-    if (!counts) {
-        return 0;
-    }
-
-    // Sum the subscribers of only the languages the bridge is still sending for this speaker: the in-flight
-    // language count alone undercounts (one source serves every listener of that language) and the speaker's
-    // subscriber total overcounts (a language whose stream already finished).
-    return state['features/audio-translation'].receivingSources.reduce((total, sourceName) =>
-        getSourceOwnerEndpointId(sourceName) === participantId
-            ? total + (counts[getSourceLanguage(sourceName)] ?? 0)
-            : total, 0);
-}
-
-/**
- * Whether translated audio for the given speaker is still being delivered, so others should wait before
- * speaking. Falls back to any in-flight translated source owned by the speaker, so the ring still shows when
- * the speaker's client does not publish a count.
- *
- * @param {IReduxState} state - The redux state.
- * @param {string} participantId - The speaker's participant id.
- * @returns {boolean}
- */
-export function isTranslationDeliveryPending(state: IReduxState, participantId: string): boolean {
-    if (getTranslationDeliveryPendingCount(state, participantId) > 0) {
-        return true;
-    }
-
-    return state['features/audio-translation'].receivingSources
-        .some(sourceName => getSourceOwnerEndpointId(sourceName) === participantId);
-}

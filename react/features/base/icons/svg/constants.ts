@@ -91,6 +91,7 @@ import { default as IconStop } from './stop.svg';
 import { default as IconSubtitles } from './subtitles.svg';
 import { default as IconTileView } from './tile-view.svg';
 import { default as IconTranscription } from './transcription.svg';
+import { default as IconTranslateWave } from './translate-wave.svg';
 import { default as IconTranslate } from './translate.svg';
 import { default as IconTrash } from './trash.svg';
 import { default as IconUserDeleted } from './user-deleted.svg';
@@ -189,6 +190,7 @@ export const DEFAULT_ICON: Record<string, any> = {
     IconRecord,
     IconTranscription,
     IconTranslate,
+    IconTranslateWave,
     IconRecordAccount,
     IconRecordContact,
     IconRecordLead,

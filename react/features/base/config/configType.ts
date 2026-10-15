@@ -1,3 +1,4 @@
+import { ISystemWideUserNotificationConfig } from '../../system-wide-user-notification/types';
 import { ToolbarButton } from '../../toolbox/types';
 import { ILoggingConfig } from '../logging/types';
 import { IAudioSettings } from '../settings/reducer';
@@ -86,6 +87,12 @@ export type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
     'RECORDING_OFF_SOUND' |
     'RECORDING_ON_SOUND' |
     'TALK_WHILE_MUTED_SOUND';
+
+export interface ICustomPanelConfig {
+    advisorAvailabilityUrl?: string;
+    enabled?: boolean;
+    url?: string;
+}
 
 export interface IDeeplinkingPlatformConfig {
     appName: string;
@@ -286,6 +293,7 @@ export interface IConfig {
         };
     };
     corsAvatarURLs?: Array<string>;
+    customPanel?: ICustomPanelConfig;
     customParticipantMenuButtons?: Array<{ icon: string; id: string; text: string; }>;
     customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
     deeplinking?: IDeeplinkingConfig;
@@ -725,6 +733,7 @@ export interface IConfig {
     startWithVideoMuted?: boolean;
     stereo?: boolean;
     subject?: string;
+    systemWideUserNotification?: ISystemWideUserNotificationConfig;
     testing?: {
         assumeBandwidth?: boolean;
         debugAudioLevels?: boolean;
