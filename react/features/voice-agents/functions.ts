@@ -1,4 +1,5 @@
 import { IReduxState } from '../app/types';
+import { isE2EEOnInMeeting } from '../e2ee/functions';
 import { iAmVisitor } from '../visitors/functions';
 
 import { IVoiceAgent, IVoiceAgents } from './types';
@@ -83,27 +84,14 @@ export function isVoiceAgentConsentRequired(state: IReduxState): boolean {
 }
 
 /**
- * Whether the room has an agent that is being provisioned, connecting or active (one whose provisioning failed
- * does not count).
- *
- * @param {IReduxState} state - The redux state.
- * @returns {boolean}
- */
-export function isVoiceAgentInMeeting(state: IReduxState) {
-    const agents = state['features/base/conference'].metadata?.agents ?? {};
-
-    return Object.values(agents).some(agent => agent?.state !== 'failed');
-}
-
-/**
- * Whether the meeting is end-to-end encrypted. Agents cannot take part then: the bridge would hand them
- * ciphertext, and the audio they inject is not encrypted with the meeting's keys.
+ * Whether anyone in the meeting has end-to-end encryption on. Agents cannot take part then: the bridge would hand
+ * them ciphertext, and the audio they inject is not encrypted with the meeting's keys.
  *
  * @param {IReduxState} state - The redux state.
  * @returns {boolean}
  */
 export function isVoiceAgentBlockedByE2EE(state: IReduxState): boolean {
-    return Boolean(state['features/e2ee']?.enabled);
+    return isE2EEOnInMeeting(state);
 }
 
 /**

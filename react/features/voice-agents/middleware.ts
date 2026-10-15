@@ -6,7 +6,7 @@ import { participantJoined, participantLeft } from '../base/participants/actions
 import { getParticipantById } from '../base/participants/functions';
 import { FakeParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { TOGGLE_E2EE } from '../e2ee/actionTypes';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
@@ -61,13 +61,17 @@ MiddlewareRegistry.register(store => next => action => {
         // A decision taken before the join completed may predate the presence; advertise it again.
         _syncConsent(store);
         break;
-    case TOGGLE_E2EE:
-        _e2eeChanged(store, Boolean(action.enabled));
-        break;
     }
 
     return result;
 });
+
+/**
+ * Encryption came on or went off in the meeting: the local toggle, or a participant this client doesn't follow.
+ */
+StateListenerRegistry.register(
+    state => isVoiceAgentBlockedByE2EE(state),
+    (blocked, store) => _e2eeChanged(store, blocked));
 
 /**
  * Diffs the advertised agents against the known set: asks for consent for new agents, and removes the

@@ -8,7 +8,6 @@ import { getParticipantById, getParticipantCount, getParticipantCountWithFake } 
 import { toState } from '../base/redux/functions';
 import { registerSound, unregisterSound } from '../base/sounds/actions';
 import { isAsyncTranscriptionActive, isTranscribing } from '../transcribing/functions';
-import { isVoiceAgentInMeeting } from '../voice-agents/functions';
 
 import {
     E2EE_OFF_SOUND_ID,
@@ -153,7 +152,10 @@ export type E2EEBlockingService = 'agent' | 'transcription' | 'translation';
  * @returns {E2EEBlockingService|undefined}
  */
 export function getE2EEBlockingService(state: IReduxState): E2EEBlockingService | undefined {
-    if (isVoiceAgentInMeeting(state)) {
+    // An agent being provisioned, connecting or active; read from metadata so voice-agents can depend on this module.
+    const agents = state['features/base/conference'].metadata?.agents ?? {};
+
+    if (Object.values(agents).some(agent => agent?.state !== 'failed')) {
         return 'agent';
     }
 
