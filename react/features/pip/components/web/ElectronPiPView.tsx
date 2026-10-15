@@ -4,12 +4,24 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
+import Icon from '../../../base/icons/components/Icon';
+import { IconCloseLarge } from '../../../base/icons/svg';
 import { exitPiP, handlePiPDoubleClick, setPiPDismissed } from '../../actions';
 import logger from '../../logger';
 
 import { PiPView } from './PiPView';
 
-const useStyles = makeStyles<void, 'dismiss'>()((_theme, _params, classes) => {
+/**
+ * Size of the dismiss button; matches the legacy always-on-top window.
+ */
+const DISMISS_BUTTON_SIZE = 32;
+
+/**
+ * Size of the X icon inside the dismiss button.
+ */
+const DISMISS_ICON_SIZE = 20;
+
+const useStyles = makeStyles<void, 'dismiss'>()((theme, _params, classes) => {
     return {
         container: {
             height: '100%',
@@ -22,41 +34,30 @@ const useStyles = makeStyles<void, 'dismiss'>()((_theme, _params, classes) => {
             }
         },
 
-        // Mirrors the legacy always-on-top dismiss button: a 32x32 rounded
-        // square with a white X, revealed while hovering the window.
+        // The legacy always-on-top dismiss button, a rounded square with an X
+        // in the top right corner revealed while hovering the window, in the
+        // theme's colors: the thumbnail background it floats over and the
+        // toolbar's hover tone.
         dismiss: {
             alignItems: 'center',
-            backgroundColor: '#474747',
+            backgroundColor: theme.palette.thumbnailBackground,
             border: 0,
-            borderRadius: '6px',
+            borderRadius: `${theme.shape.borderRadius}px`,
             cursor: 'pointer',
             display: 'flex',
-            height: '32px',
+            height: `${DISMISS_BUTTON_SIZE}px`,
             justifyContent: 'center',
             opacity: 0,
             padding: 0,
             position: 'absolute',
-            right: '8px',
-            top: '8px',
+            right: theme.spacing(2),
+            top: theme.spacing(2),
             transition: 'opacity 0.3s ease',
-            width: '32px',
+            width: `${DISMISS_BUTTON_SIZE}px`,
             zIndex: 20,
 
-            '&:before, &:after': {
-                backgroundColor: 'white',
-                content: '" "',
-                display: 'block',
-                height: '2px',
-                position: 'absolute',
-                width: 'calc(100% - 15px)'
-            },
-
-            '&:before': {
-                transform: 'rotate(-45deg)'
-            },
-
-            '&:after': {
-                transform: 'rotate(45deg)'
+            '&:hover': {
+                backgroundColor: theme.palette.toolboxIconHover
             }
         }
     };
@@ -94,7 +95,7 @@ interface IDragState {
  * @returns {React.ReactElement}
  */
 export function ElectronPiPView() {
-    const { classes } = useStyles();
+    const { classes, theme } = useStyles();
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const pipWindow = useSelector((state: IReduxState) => state['features/pip'].pipWindow);
@@ -169,7 +170,12 @@ export function ElectronPiPView() {
             <button
                 aria-label = { t('dialog.close') }
                 className = { classes.dismiss }
-                onClick = { onDismiss } />
+                onClick = { onDismiss }>
+                <Icon
+                    color = { theme.palette.icon01 }
+                    size = { DISMISS_ICON_SIZE }
+                    src = { IconCloseLarge } />
+            </button>
         </div>
     );
 }

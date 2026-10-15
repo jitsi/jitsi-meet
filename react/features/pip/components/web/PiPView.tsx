@@ -5,6 +5,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
 import { getLocalParticipant, getParticipantDisplayName } from '../../../base/participants/functions';
+import { getDisplayNameColor } from '../../../display-name/components/web/styles';
 import { getLargeVideoParticipant } from '../../../large-video/functions';
 import { isPrejoinPageVisible } from '../../../prejoin/functions.any';
 import HangupButton from '../../../toolbox/components/HangupButton';
@@ -14,22 +15,25 @@ import { getPiPVideoTrack, shouldShowPiPAvatar } from '../../functions';
 import logger from '../../logger';
 
 /**
- * Background of the PiP window; matches the legacy always-on-top window.
- */
-const BACKGROUND_COLOR = '#474747';
-
-/**
  * Time without mouse movement after which the toolbar fades out; matches the
  * legacy always-on-top window.
  */
 const TOOLBAR_TIMEOUT_MS = 4000;
 
 /**
- * Icon size and padding of the compact toolbar buttons; matches the legacy
- * always-on-top toolbar (22px icons with 7px padding, i.e. 36px buttons).
+ * Size of the compact toolbar buttons and of their icons; the size the main
+ * toolbar itself switches to on tiny viewports. The full-size buttons would
+ * cover a third of the default 320x180 window.
  */
+const TOOLBAR_BUTTON_SIZE = 36;
 const TOOLBAR_ICON_SIZE = 22;
-const TOOLBAR_ICON_PADDING = 7;
+
+/**
+ * Avatar sizing shared with the filmstrip thumbnail: half of the height, with
+ * room for a horizontal margin, capped at the size of the stage avatar.
+ */
+const MAX_AVATAR_SIZE = 200;
+const AVATAR_HORIZONTAL_MARGIN = 30;
 
 /**
  * Smallest avatar rendered while the window size is not known yet.
@@ -38,8 +42,10 @@ const MIN_AVATAR_SIZE = 40;
 
 const useStyles = makeStyles()(theme => {
     return {
+        // The window is a floating thumbnail of the stage participant, so it
+        // takes the thumbnail's background and custom themes apply to it too.
         container: {
-            backgroundColor: BACKGROUND_COLOR,
+            backgroundColor: theme.palette.thumbnailBackground,
             color: theme.palette.text01,
             height: '100vh',
             overflow: 'hidden',
@@ -52,7 +58,7 @@ const useStyles = makeStyles()(theme => {
             }
         },
         videoElement: {
-            backgroundColor: BACKGROUND_COLOR,
+            backgroundColor: theme.palette.thumbnailBackground,
             display: 'block',
             height: '100%',
             objectFit: 'contain',
@@ -61,7 +67,8 @@ const useStyles = makeStyles()(theme => {
 
         // The legacy avatar screen: the avatar takes half of the window height
         // and sits a quarter of the height from the top, with the display name
-        // right underneath - the only place the name is ever shown.
+        // right underneath - the only place the name is ever shown. The name
+        // uses the thumbnail's display name typography and color.
         avatarScreen: {
             height: '100%',
             paddingTop: '25vh',
@@ -72,7 +79,8 @@ const useStyles = makeStyles()(theme => {
             display: 'inline-block'
         },
         displayName: {
-            fontSize: '0.875rem',
+            ...theme.typography.labelBold,
+            color: getDisplayNameColor(theme),
             marginTop: theme.spacing(2),
             overflow: 'hidden',
             padding: `0 ${theme.spacing(2)}`,
@@ -81,32 +89,29 @@ const useStyles = makeStyles()(theme => {
             width: '100%'
         },
 
-        // The legacy compact toolbar: a small pill at the bottom center that
-        // appears on mouse movement and fades out when idle.
+        // The legacy compact toolbar placement: a pill at the bottom center
+        // that appears on mouse movement and fades out when idle. Colors and
+        // shape are the main toolbar's, through the toolbox-content-items
+        // class; only the sizes are overridden here, nested under that class
+        // where needed to take precedence over its global rules.
         toolbar: {
-            backgroundColor: theme.palette.uiBackground,
-            borderRadius: '3px',
             bottom: '10px',
-            display: 'flex',
-            flexDirection: 'row',
             left: '50%',
             opacity: 0,
-            padding: '3px',
-            pointerEvents: 'none',
             position: 'absolute',
             transform: 'translateX(-50%)',
             transition: 'opacity 0.3s ease',
             zIndex: 10,
 
-            '& .toolbox-icon': {
-                cursor: 'pointer',
-                height: `${TOOLBAR_ICON_SIZE}px`,
-                padding: `${TOOLBAR_ICON_PADDING}px`,
-                width: `${TOOLBAR_ICON_SIZE}px`,
+            '&.toolbox-content-items': {
+                padding: '3px',
+                pointerEvents: 'none'
+            },
 
-                '&.toggled': {
-                    background: 'none'
-                },
+            '& .toolbox-icon': {
+                height: `${TOOLBAR_BUTTON_SIZE}px`,
+                padding: `${(TOOLBAR_BUTTON_SIZE - TOOLBAR_ICON_SIZE) / 2}px`,
+                width: `${TOOLBAR_BUTTON_SIZE}px`,
 
                 '& svg': {
                     height: `${TOOLBAR_ICON_SIZE}px`,
@@ -133,28 +138,44 @@ const useStyles = makeStyles()(theme => {
             }
         },
         toolbarVisible: {
-            opacity: 1,
-            pointerEvents: 'auto'
+            '&.toolbox-content-items': {
+                opacity: 1,
+                pointerEvents: 'auto'
+            }
         }
     };
 });
 
 /**
- * Tracks the inner height of the PiP window so the avatar can be sized
- * relative to it, matching the legacy always-on-top proportions.
+ * The inner size of the PiP window in CSS pixels.
+ */
+interface IWindowSize {
+    height: number;
+    width: number;
+}
+
+/**
+ * Tracks the inner size of the PiP window so the avatar can be sized relative
+ * to it, like the filmstrip thumbnail sizes its avatar.
  *
  * @param {Window | null} pipWindow - The PiP window.
- * @returns {number} The window's inner height in CSS pixels.
+ * @returns {IWindowSize} The window's inner size; zero until it is known.
  */
-function usePiPWindowHeight(pipWindow: Window | null): number {
-    const [ height, setHeight ] = useState(pipWindow?.innerHeight ?? 0);
+function usePiPWindowSize(pipWindow: Window | null): IWindowSize {
+    const [ size, setSize ] = useState<IWindowSize>({
+        height: pipWindow?.innerHeight ?? 0,
+        width: pipWindow?.innerWidth ?? 0
+    });
 
     useEffect(() => {
         if (!pipWindow) {
             return;
         }
 
-        const update = () => setHeight(pipWindow.innerHeight);
+        const update = () => setSize({
+            height: pipWindow.innerHeight,
+            width: pipWindow.innerWidth
+        });
 
         update();
         pipWindow.addEventListener('resize', update);
@@ -164,13 +185,14 @@ function usePiPWindowHeight(pipWindow: Window | null): number {
         };
     }, [ pipWindow ]);
 
-    return height;
+    return size;
 }
 
 /**
- * Renders the participant video or avatar and the compact controls inside the PiP window, looking
+ * Renders the participant video or avatar and the compact controls inside the PiP window, laid out
  * like the legacy always-on-top window: video fills the window with no overlays, the avatar screen
  * shows the avatar with the display name underneath, and the toolbar fades in on mouse movement.
+ * Colors and shapes come from the theme, like the filmstrip thumbnail and the main toolbar.
  * Shared by the browser's Document PiP window and the custom Electron PiP window.
  *
  * @returns {React.ReactElement}
@@ -182,7 +204,7 @@ export function PiPView() {
     const toolbarHoveredRef = useRef(false);
     const [ toolbarVisible, setToolbarVisible ] = useState(false);
     const pipWindow = useSelector((state: IReduxState) => state['features/pip'].pipWindow);
-    const windowHeight = usePiPWindowHeight(pipWindow);
+    const { height: windowHeight, width: windowWidth } = usePiPWindowSize(pipWindow);
     const isOnPrejoin = useSelector(isPrejoinPageVisible);
     const localParticipant = useSelector((state: IReduxState) => getLocalParticipant(state));
     const largeVideoParticipant = useSelector(getLargeVideoParticipant);
@@ -191,7 +213,9 @@ export function PiPView() {
     const participantName = useSelector((state: IReduxState) =>
         participant?.id ? getParticipantDisplayName(state, participant.id) : '');
     const shouldShowAvatar = shouldShowPiPAvatar(videoTrack);
-    const avatarSize = Math.max(Math.round(windowHeight / 2), MIN_AVATAR_SIZE);
+    const avatarSize = windowHeight
+        ? Math.round(Math.min(windowHeight / 2, windowWidth - AVATAR_HORIZONTAL_MARGIN, MAX_AVATAR_SIZE))
+        : MIN_AVATAR_SIZE;
 
     /**
      * Hides the toolbar once the mouse has been idle for the legacy timeout,
@@ -268,7 +292,7 @@ export function PiPView() {
                     ref = { videoRef } />
             )}
             <div
-                className = { cx(classes.toolbar, toolbarVisible && classes.toolbarVisible) }
+                className = { cx('toolbox-content-items', classes.toolbar, toolbarVisible && classes.toolbarVisible) }
                 onMouseOut = { onToolbarMouseOut }
                 onMouseOver = { onToolbarMouseOver }>
                 <AudioMuteButton
