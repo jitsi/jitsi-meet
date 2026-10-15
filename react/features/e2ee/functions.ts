@@ -1,11 +1,13 @@
 import i18next from 'i18next';
 
 import { IReduxState, IStore } from '../app/types';
+import { isAudioTranslationActiveInMeeting } from '../audio-translation/functions';
 import { IStateful } from '../base/app/types';
 import { getSoundFileSrc } from '../base/media/functions';
 import { getParticipantById, getParticipantCount, getParticipantCountWithFake } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { registerSound, unregisterSound } from '../base/sounds/actions';
+import { isAsyncTranscriptionActive } from '../transcribing/functions';
 
 import {
     E2EE_OFF_SOUND_ID,
@@ -117,4 +119,36 @@ export function registerE2eeAudioFiles(dispatch: IStore['dispatch'], shouldUnreg
     dispatch(registerSound(
         E2EE_ON_SOUND_ID,
         getSoundFileSrc(E2EE_ON_SOUND_FILE, language)));
+}
+
+/**
+ * Returns whether end-to-end encryption is on for the local participant. The e2ee state only exists on web.
+ *
+ * @param {IStateful} stateful - The redux store or {@code getState} function.
+ * @returns {boolean}
+ */
+export function isE2EEEnabled(stateful: IStateful) {
+    return Boolean(toState(stateful)['features/e2ee']?.enabled);
+}
+
+/**
+ * A server-side service that needs the media in the clear, so it and end-to-end encryption exclude each other.
+ */
+export type E2EEBlockingService = 'transcription' | 'translation';
+
+/**
+ * Returns the server-side service that keeps end-to-end encryption from being turned on, if any.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {E2EEBlockingService|undefined}
+ */
+export function getE2EEBlockingService(state: IReduxState): E2EEBlockingService | undefined {
+    if (isAsyncTranscriptionActive(state)) {
+        return 'transcription';
+    }
+    if (isAudioTranslationActiveInMeeting(state)) {
+        return 'translation';
+    }
+
+    return undefined;
 }

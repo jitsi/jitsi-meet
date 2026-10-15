@@ -3,6 +3,7 @@ import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
 import { MEET_FEATURES } from '../../base/jwt/constants';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
+import { isE2EEEnabled } from '../../e2ee/functions';
 import { maybeShowPremiumFeatureDialog } from '../../jaas/actions';
 import { canStartSubtitles, isCCTabEnabled } from '../functions.any';
 
@@ -19,6 +20,11 @@ export interface IAbstractProps extends AbstractButtonProps {
      * without a translation language selected (i.e. the source language).
      */
     _defaultLanguage?: string;
+
+    /**
+     * Whether end-to-end encryption is on, which rules out transcription.
+     */
+    _e2eeEnabled?: boolean;
 
     /**
      * Whether the subtitles tab is enabled in the UI.
@@ -94,7 +100,8 @@ export class AbstractClosedCaptionButton
      * @returns {boolean}
      */
     override _isDisabled() {
-        return false;
+        // Subtitles already requested can still be turned off.
+        return Boolean(this.props._e2eeEnabled) && !this.props._requestingSubtitles;
     }
 
     /**
@@ -131,6 +138,7 @@ export function _abstractMapStateToProps(state: IReduxState, ownProps: IAbstract
     const { visible = canStartSubtitles(state) } = ownProps;
 
     return {
+        _e2eeEnabled: isE2EEEnabled(state),
         _isCCTabEnabled: isCCTabEnabled(state),
         _requestingSubtitles,
         _language,

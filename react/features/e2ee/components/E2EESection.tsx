@@ -6,12 +6,18 @@ import { makeStyles } from 'tss-react/mui';
 import { createE2EEEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState, IStore } from '../../app/types';
+import Tooltip from '../../base/tooltip/components/Tooltip';
 import Switch from '../../base/ui/components/web/Switch';
 import { toggleE2EE } from '../actions';
 import { MAX_MODE } from '../constants';
-import { doesEveryoneSupportE2EE } from '../functions';
+import { E2EEBlockingService, doesEveryoneSupportE2EE, getE2EEBlockingService } from '../functions';
 
 interface IProps {
+
+    /**
+     * Why turning E2EE on is blocked by a server-side service, as a translation key, if it is.
+     */
+    _blockedReason?: string;
 
     /**
      * The resource for the description, computed based on the maxMode and whether the switch is toggled or not.
@@ -77,6 +83,7 @@ const useStyles = makeStyles()(() => {
  * @returns  {JSX}
  */
 const E2EESection = ({
+    _blockedReason,
     _descriptionResource,
     _enabled,
     _e2eeLabels,
@@ -127,14 +134,32 @@ const E2EESection = ({
                 <label htmlFor = 'e2ee-section-switch'>
                     {label}
                 </label>
-                <Switch
-                    checked = { toggled }
-                    disabled = { !_enabled }
-                    id = 'e2ee-section-switch'
-                    onChange = { _onToggle } />
+                { _blockedReason ? (
+                    <Tooltip content = { t(_blockedReason) }>
+                        <Switch
+                            checked = { toggled }
+                            disabled = { true }
+                            id = 'e2ee-section-switch'
+                            onChange = { _onToggle } />
+                    </Tooltip>
+                ) : (
+                    <Switch
+                        checked = { toggled }
+                        disabled = { !_enabled }
+                        id = 'e2ee-section-switch'
+                        onChange = { _onToggle } />
+                ) }
             </div>
         </div>
     );
+};
+
+/**
+ * Why each server-side service keeps E2EE from being turned on.
+ */
+const E2EE_BLOCKED_REASONS: Record<E2EEBlockingService, string> = {
+    transcription: 'dialog.e2eeDisabledDueToTranscriptionDescription',
+    translation: 'dialog.e2eeDisabledDueToTranslationDescription'
 };
 
 /**
@@ -148,11 +173,16 @@ function mapStateToProps(state: IReduxState) {
     const { enabled: e2eeEnabled, maxMode } = state['features/e2ee'];
     const { e2ee = {} } = state['features/base/config'];
 
+    // Only turning it on is blocked; it can always be turned off.
+    const blockingService = e2eeEnabled ? undefined : getE2EEBlockingService(state);
+    const blockedReason = blockingService && E2EE_BLOCKED_REASONS[blockingService];
     let descriptionResource: string | undefined = '';
 
     if (e2ee.labels) {
         // When e2eeLabels are present, the description resource is ignored.
         descriptionResource = undefined;
+    } else if (blockedReason) {
+        descriptionResource = blockedReason;
     } else if (maxMode === MAX_MODE.THRESHOLD_EXCEEDED) {
         descriptionResource = 'dialog.e2eeDisabledDueToMaxModeDescription';
     } else if (maxMode === MAX_MODE.ENABLED) {
@@ -163,9 +193,10 @@ function mapStateToProps(state: IReduxState) {
     }
 
     return {
+        _blockedReason: blockedReason,
         _descriptionResource: descriptionResource,
         _e2eeLabels: e2ee.labels,
-        _enabled: maxMode === MAX_MODE.DISABLED || e2eeEnabled,
+        _enabled: e2eeEnabled || (maxMode === MAX_MODE.DISABLED && !blockingService),
         _toggled: e2eeEnabled,
         _everyoneSupportE2EE: Boolean(doesEveryoneSupportE2EE(state))
     };

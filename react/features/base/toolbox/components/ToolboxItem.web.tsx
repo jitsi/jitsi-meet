@@ -103,7 +103,7 @@ export default class ToolboxItem extends AbstractToolboxItem<IProps> {
         const useTooltip = !disableTooltip && this.tooltip && this.tooltip.length > 0;
 
         if (contextMenu) {
-            return (
+            const item = (
                 <ContextMenuItem
                     accessibilityLabel = { this.accessibilityLabel }
                     backgroundColor = { backgroundColor }
@@ -114,6 +114,11 @@ export default class ToolboxItem extends AbstractToolboxItem<IProps> {
                     onKeyPress = { this._onKeyPress }
                     text = { this.label } />
             );
+
+            // A menu item shows its label, not its tooltip; a disabled one still needs to say why.
+            return disabled && useTooltip
+                ? <Tooltip content = { this.tooltip ?? '' }>{ item }</Tooltip>
+                : item;
         }
         let children = (
             <Fragment>

@@ -65,12 +65,16 @@ class ClosedCaptionButton
     }
 
     /**
-     * Returns the tooltip text based on the CC tab state.
+     * Returns the tooltip text based on the CC tab state, or why the button is disabled.
      *
      * @returns {string} The tooltip text.
      */
     override _getTooltip() {
         const { _isCCTabEnabled } = this.props;
+
+        if (this._isDisabled()) {
+            return 'transcribing.unavailableWithE2EE';
+        }
 
         return _isCCTabEnabled ? 'transcribing.openClosedCaptions' : 'transcribing.ccButtonTooltip';
     }

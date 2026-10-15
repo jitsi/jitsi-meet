@@ -54,6 +54,12 @@ const DEFAULT_STATE = {
 };
 
 export interface IConferenceMetadata {
+
+    /**
+     * Server-controlled flag: the deployment transcribes on the backend, started through
+     * {@code recording.isTranscribingEnabled}, instead of dialing a transcriber.
+     */
+    asyncTranscription?: boolean;
     audioTranslation?: {
         enabled?: boolean;
     };
