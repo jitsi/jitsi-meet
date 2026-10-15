@@ -470,7 +470,8 @@ const _getMessages = (state: IReduxState) => state['features/chat'].messages;
 
 /**
  * Returns all messages matching the current search query, in display order.
- * Reaction and file messages are excluded since they have no searchable text.
+ * Reaction and file messages are excluded since they have no searchable text, and deleted or
+ * moderated messages are excluded since their original text is no longer shown.
  * Memoized: only recomputes when messages or the search query change.
  *
  * @returns {IMessage[]}
@@ -485,8 +486,12 @@ export const getChatSearchMatches = createSelector(
             return NO_SEARCH_MATCHES;
         }
 
+        // The reducer already clears the text of deleted and moderated messages; skip them
+        // here as well as a safeguard, so a removed message never shows up in the results.
         return messages.filter(message =>
             !message.isReaction
+            && !message.isDeleted
+            && !message.isModerated
             && !isFileMessage(message)
             && getMessageText(message).toLowerCase().includes(query));
     }

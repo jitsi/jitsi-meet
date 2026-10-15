@@ -211,6 +211,12 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
                     return m;
                 }
 
+                // A deleted or moderated message has had its text cleared, so an edit
+                // arriving afterwards must not bring the text back.
+                if (m.isDeleted || m.isModerated) {
+                    return m;
+                }
+
                 applied = true;
 
                 return {
@@ -250,8 +256,11 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
     case MODERATE_MESSAGE: {
         const messages = state.messages.map(message => {
             if (message.messageId === action.messageId) {
+                // Clear the text, like RETRACT_MESSAGE does, so the removed content
+                // does not stay in the state while the UI shows a placeholder.
                 return {
                     ...message,
+                    message: '',
                     isModerated: true,
                     moderationReason: action.reason
                 };
