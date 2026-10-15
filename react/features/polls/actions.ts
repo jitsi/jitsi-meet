@@ -1,6 +1,7 @@
 import {
     CHANGE_VOTE,
     CLEAR_POLLS,
+    CLOSE_POLL,
     EDIT_POLL,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
@@ -98,6 +99,22 @@ export const registerVote = (pollId: string, answers: Array<boolean> | null) => 
         answers
     };
 };
+
+/**
+ * Action to signal that a poll was closed, thus it does not take answers anymore.
+ *
+ * @param {string} pollId - The id of the poll.
+ * @returns {{
+ *     type: CLOSE_POLL,
+ *     pollId: string
+ * }}
+ */
+export function closePoll(pollId: string) {
+    return {
+        type: CLOSE_POLL,
+        pollId
+    };
+}
 
 /**
  * Action to signal the number reset of unread polls.

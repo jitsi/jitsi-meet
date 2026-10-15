@@ -19,6 +19,16 @@ export const CHANGE_VOTE = 'CHANGE_VOTE';
 export const CLEAR_POLLS = 'CLEAR_POLLS';
 
 /**
+ * The type of the action which signals that a poll was closed, thus it does not take answers anymore.
+ *
+ * {
+ *     type: CLOSE_POLL,
+ *     pollId: string
+ * }
+ */
+export const CLOSE_POLL = 'CLOSE_POLL';
+
+/**
  * The type of the action triggered when the poll is editing.
  *
  * {

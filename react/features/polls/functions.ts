@@ -1,6 +1,7 @@
 import { IReduxState } from '../app/types';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
+import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants/functions';
 import { iAmVisitor } from '../visitors/functions';
 
 import { IAnswerData } from './types';
@@ -13,7 +14,10 @@ import { IAnswerData } from './types';
  */
 export function shouldShowResults(id: string) {
     return function(state: IReduxState) {
-        return Boolean(state['features/polls']?.polls[id].showResults);
+        const poll = state['features/polls']?.polls[id];
+
+        // A closed poll does not take answers, thus everyone sees its results.
+        return Boolean(poll?.showResults || poll?.closed);
     };
 }
 
@@ -84,4 +88,24 @@ export function isCreatePollDisabled(state: IReduxState) {
     }
 
     return !isJwtFeatureEnabled(state, MEET_FEATURES.CREATE_POLLS, false);
+}
+
+/**
+ * Returns whether the local participant can close the poll: the poll is open and the local participant created it
+ * or is a moderator.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string} pollId - The id of the poll.
+ * @returns {boolean}
+ */
+export function canClosePoll(state: IReduxState, pollId: string) {
+    const poll = state['features/polls'].polls[pollId];
+    const { conference } = state['features/base/conference'];
+
+    // A lib-jitsi-meet without closePoll does not support closing polls.
+    if (!poll || poll.closed || typeof conference?.getPolls()?.closePoll !== 'function') {
+        return false;
+    }
+
+    return poll.senderId === getLocalParticipant(state)?.id || isLocalParticipantModerator(state);
 }
