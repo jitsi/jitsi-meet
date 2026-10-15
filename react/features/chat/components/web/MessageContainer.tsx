@@ -84,9 +84,7 @@ export default class MessageContainer extends Component<IProps, IState> {
     _hasInitiallyScrolled: boolean;
 
     /**
-     * Throttled scroll handler bound to {@link _updateReadStateOnScroll}. Typed as a
-     * {@code DebouncedFunc} so {@code componentWillUnmount} can {@code cancel()} any pending
-     * trailing call.
+     * Throttled scroll handler; typed as {@code DebouncedFunc} so unmount can cancel a pending trailing call.
      */
     _onChatScroll: DebouncedFunc<() => void>;
 
@@ -111,8 +109,7 @@ export default class MessageContainer extends Component<IProps, IState> {
         // Bind event handlers so they are only bound once for every instance.
         this._handleIntersectBottomList = this._handleIntersectBottomList.bind(this);
         this._findFirstUnreadMessage = this._findFirstUnreadMessage.bind(this);
-        this._isMessageVisible = this._isMessageVisible.bind(this);
-        this._onChatScroll = throttle(this._updateReadStateOnScroll.bind(this), 300, { leading: true });
+        this._onChatScroll = throttle(this._handleChatScroll.bind(this), 300, { leading: true });
         this._onGoToFirstUnreadMessage = this._onGoToFirstUnreadMessage.bind(this);
     }
 
@@ -249,39 +246,40 @@ export default class MessageContainer extends Component<IProps, IState> {
 
 
     /**
-     * Updates read state from the current scroll position. Invoked by the throttled scroll
-     * handler at most once per 300 ms (leading edge, plus a trailing call).
+     * Dismisses the new-messages pill once the first unread message has scrolled into view.
      *
      * @private
      * @returns {void}
      */
-    _updateReadStateOnScroll() {
+    _handleChatScroll() {
+        const container = this._messageListRef.current;
+
+        if (!this.state.hasNewMessages || !container) {
+            return;
+        }
+
         const firstUnreadMessage = this._findFirstUnreadMessage();
 
-        // Dismiss the pill once every unread message is in view. Guards against clearing on
-        // scrolls the user didn't make (scroll anchoring, image loads) and on the throttle's
-        // trailing call after a late remote message, which would otherwise flash the pill.
-        if (this.state.hasNewMessages && !firstUnreadMessage) {
-            this.setState({ hasNewMessages: false });
+        // Still below the viewport: the user has not reached the new messages yet.
+        if (firstUnreadMessage
+                && firstUnreadMessage.getBoundingClientRect().top >= container.getBoundingClientRect().bottom) {
+            return;
         }
 
-        if (firstUnreadMessage && firstUnreadMessage.id !== this.state.lastReadMessageId) {
-            this.setState({ lastReadMessageId: firstUnreadMessage.id });
-        }
+        this.setState({
+            hasNewMessages: false,
+            lastReadMessageId: this.props.messages.at(-1)?.messageId ?? null
+        });
     }
 
     /**
-     * Find the first unread message.
-     * Update component state and scroll to element.
+     * Scrolls to the first unread message.
      *
      * @private
      * @returns {void}
      */
     _onGoToFirstUnreadMessage() {
-        const firstUnreadMessage = this._findFirstUnreadMessage();
-
-        this.setState({ lastReadMessageId: firstUnreadMessage?.id || null });
-        this.scrollToElement(true, firstUnreadMessage as Element);
+        this.scrollToElement(true, this._findFirstUnreadMessage());
     }
 
     /**
@@ -339,48 +337,22 @@ export default class MessageContainer extends Component<IProps, IState> {
     }
 
     /**
-    * Find first unread message.
-    * MessageIsAfterLastSeenMessage filter elements which are not visible but are before the last read message.
-    *
-    * @private
-    * @returns {Element}
-    */
-    _findFirstUnreadMessage() {
-        const messagesNodeList = document.querySelectorAll('.chatmessage-wrapper');
-
-        // @ts-ignore
-        const messagesToArray = [ ...messagesNodeList ];
-
-        const previousIndex = messagesToArray.findIndex((message: Element) =>
-            message.id === this.state.lastReadMessageId);
-
-        if (previousIndex !== -1) {
-            for (let i = previousIndex; i < messagesToArray.length; i++) {
-                if (!this._isMessageVisible(messagesToArray[i])) {
-                    return messagesToArray[i];
-                }
-            }
-        }
-    }
-
-    /**
-     * Check if a message is visible in view.
+     * Returns the element of the first message after the last read one, or null if there is none.
      *
-     * @param {Element} message - The message.
-     *
-     * @returns {boolean}
+     * @private
+     * @returns {Element|null}
      */
-    _isMessageVisible(message: Element): boolean {
-        const { bottom, height, top } = message.getBoundingClientRect();
+    _findFirstUnreadMessage(): Element | null {
+        const { messages } = this.props;
 
-        if (this._messageListRef.current) {
-            const containerRect = this._messageListRef.current.getBoundingClientRect();
+        // An unknown last-read id yields index -1, so every message counts as unread.
+        const firstUnread = messages[messages.findIndex(m => m.messageId === this.state.lastReadMessageId) + 1];
 
-            return top <= containerRect.top
-                ? containerRect.top - top <= height : bottom - containerRect.bottom <= height;
+        if (!firstUnread?.messageId) {
+            return null;
         }
 
-        return false;
+        return this._messageListRef.current?.querySelector(`#${CSS.escape(firstUnread.messageId)}`) ?? null;
     }
 
     /**
