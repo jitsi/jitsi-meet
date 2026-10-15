@@ -37,7 +37,7 @@
 --                                customParameters?, callbackUrl?, mediaFormat?{encoding} }
 --     mediaFormat.encoding: 'audio/l16' (PCM16 24 kHz, the default) or 'audio/opus' (relayed undecoded)
 --     → 200 { agentId, sourceName }  — idempotent on agentId: an identical re-invite
---       returns the existing agent, a different one is 409
+--       returns the existing agent, a different one is 409; 409 too while anyone has E2EE on
 --   POST /voice-agent/dismiss  { conference, agentId } → 200 { agentId }
 --   GET  /voice-agent/list?conference=<room> → 200 { agents = { <agentId>: <client fields> } }
 --   GET  /voice-agent/get?conference=<room>&agentId=<id> → 200 <agent> | 404
@@ -294,6 +294,21 @@ local function validate_endpoint(endpoint)
         return nil, 'Invalid endpoint.authorization';
     end
     return { url = endpoint.url; authorization = authorization };
+end
+
+-- Presence property a participant's client sets while it has end-to-end encryption on.
+local E2EE_PRESENCE_PROPERTY = 'jitsi_participant_e2ee.enabled';
+
+-- Whether anyone in the room has end-to-end encryption on: the agent's media goes through the bridge, which cannot
+-- decrypt it.
+local function is_e2ee_enabled(room)
+    for _, occupant in room:each_occupant() do
+        local presence = occupant:get_presence();
+        if presence and presence:get_child_text(E2EE_PRESENCE_PROPERTY) == 'true' then
+            return true;
+        end
+    end
+    return false;
 end
 
 -- Audio encodings the media relay speaks on the agent leg.
@@ -557,6 +572,9 @@ local function handle_invite(event)
     local media_format, media_format_error = validate_media_format(payload.mediaFormat);
     if media_format_error then
         return error_response(400, media_format_error);
+    end
+    if is_e2ee_enabled(room) then
+        return error_response(409, 'End-to-end encryption is on in this meeting');
     end
 
     room.jitsiMetadata = room.jitsiMetadata or {};

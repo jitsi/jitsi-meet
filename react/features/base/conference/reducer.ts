@@ -65,6 +65,7 @@ export interface IConferenceMetadata {
             displayName?: string;
             kind?: string;
             sourceName?: string;
+            state?: string;
         };
     };
 

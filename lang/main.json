@@ -391,6 +391,7 @@
         "displayNameRequired": "Hi! What's your name?",
         "done": "Done",
         "e2eeDescription": "End-to-End Encryption is currently EXPERIMENTAL. Please keep in mind that turning on end-to-end encryption will effectively disable server-side provided services such as: phone participation. Also keep in mind that the meeting will only work for people joining from browsers with support for insertable streams.",
+        "e2eeDisabledDueToAgentDescription": "End-to-End Encryption can't be turned on while an AI agent is in the meeting.",
         "e2eeDisabledDueToMaxModeDescription": "Cannot enable End-to-End Encryption due to large number of participants in the conference.",
         "e2eeDisabledDueToTranscriptionDescription": "End-to-End Encryption can't be turned on while the meeting is being transcribed.",
         "e2eeDisabledDueToTranslationDescription": "End-to-End Encryption can't be turned on while live translation is in use.",
