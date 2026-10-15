@@ -69,6 +69,8 @@
 # WebRTC
 
 -keep class org.webrtc.** { *; }
+# org.jitsi:webrtc 155.0.0 ships Dav1dDecoderJni without Dav1dDecoder.
+-dontwarn org.webrtc.Dav1dDecoder$Natives
 -dontwarn org.chromium.build.BuildHooksAndroid
 
 # Jisti Meet SDK
