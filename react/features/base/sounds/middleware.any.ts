@@ -7,6 +7,7 @@ import { AudioSupportedLanguage } from '../media/constants';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 
+import * as SoundManager from './SoundManager';
 import { PLAY_SOUND, STOP_SOUND } from './actionTypes';
 import logger from './logger';
 
@@ -31,14 +32,24 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 /**
- * Plays sound from audio element registered in the Redux store.
+ * Plays sound using the SoundManager (WebAudio-first with HTMLAudio fallback).
  *
  * @param {Store} store - The Redux store instance.
- * @param {string} soundId - Audio element identifier.
+ * @param {string} soundId - Sound identifier.
  * @private
  * @returns {void}
  */
 function _playSound({ getState }: IStore, soundId: string) {
+    // Web platform uses SoundManager
+    if (typeof window !== 'undefined') {
+        SoundManager.playSound(soundId).catch((error: Error) => {
+            logger.warn(`Failed to play sound ${soundId}:`, error);
+        });
+
+        return;
+    }
+
+    // Native platforms fall back to the legacy approach
     const sounds = getState()['features/base/sounds'];
     const sound = sounds.get(soundId);
 
@@ -54,14 +65,22 @@ function _playSound({ getState }: IStore, soundId: string) {
 }
 
 /**
- * Stop sound from audio element registered in the Redux store.
+ * Stop sound using the SoundManager or legacy approach.
  *
  * @param {Store} store - The Redux store instance.
- * @param {string} soundId - Audio element identifier.
+ * @param {string} soundId - Sound identifier.
  * @private
  * @returns {void}
  */
 function _stopSound({ getState }: IStore, soundId: string) {
+    // Web platform uses SoundManager
+    if (typeof window !== 'undefined') {
+        SoundManager.stopSound(soundId);
+
+        return;
+    }
+
+    // Native platforms fall back to the legacy approach
     const sounds = getState()['features/base/sounds'];
     const sound = sounds.get(soundId);
 
