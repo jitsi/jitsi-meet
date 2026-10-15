@@ -27,20 +27,13 @@ describe('Tile view iframe API command and events', () => {
     });
 
     it('enters tile view via setTileView command', async () => {
-        if (!await checkIframeApi(p1)) {
-            return;
-        }
-
         await p1.switchToMainFrame();
         await p1.getIframeAPI().clearEventResults('tileViewChanged');
         await p1.getIframeAPI().executeCommand('setTileView', true);
 
-        const tileViewEvent: { enabled: boolean; } = await p1.driver.waitUntil(
-            () => p1.getIframeAPI().getEventResult('tileViewChanged'),
-            {
-                timeout: 5000,
-                timeoutMsg: 'tileViewChanged event was not received for setTileView(true)'
-            }
+        const tileViewEvent: { enabled: boolean; } = await p1.getIframeAPI().waitForEventResult(
+            'tileViewChanged',
+            'tileViewChanged event was not received for setTileView(true)'
         );
 
         expect(tileViewEvent).toEqual({ enabled: true });
@@ -50,20 +43,13 @@ describe('Tile view iframe API command and events', () => {
     });
 
     it('toggles tile view off via toggleTileView command', async () => {
-        if (!await checkIframeApi(p1)) {
-            return;
-        }
-
         await p1.switchToMainFrame();
         await p1.getIframeAPI().clearEventResults('tileViewChanged');
         await p1.getIframeAPI().executeCommand('toggleTileView');
 
-        const toggleOffEvent: { enabled: boolean; } = await p1.driver.waitUntil(
-            () => p1.getIframeAPI().getEventResult('tileViewChanged'),
-            {
-                timeout: 5000,
-                timeoutMsg: 'tileViewChanged event was not received for toggleTileView (off)'
-            }
+        const toggleOffEvent: { enabled: boolean; } = await p1.getIframeAPI().waitForEventResult(
+            'tileViewChanged',
+            'tileViewChanged event was not received for toggleTileView (off)'
         );
 
         expect(toggleOffEvent).toEqual({ enabled: false });
@@ -73,20 +59,13 @@ describe('Tile view iframe API command and events', () => {
     });
 
     it('toggles tile view back on via toggleTileView command', async () => {
-        if (!await checkIframeApi(p1)) {
-            return;
-        }
-
         await p1.switchToMainFrame();
         await p1.getIframeAPI().clearEventResults('tileViewChanged');
         await p1.getIframeAPI().executeCommand('toggleTileView');
 
-        const toggleOnEvent: { enabled: boolean; } = await p1.driver.waitUntil(
-            () => p1.getIframeAPI().getEventResult('tileViewChanged'),
-            {
-                timeout: 5000,
-                timeoutMsg: 'tileViewChanged event was not received for toggleTileView (on)'
-            }
+        const toggleOnEvent: { enabled: boolean; } = await p1.getIframeAPI().waitForEventResult(
+            'tileViewChanged',
+            'tileViewChanged event was not received for toggleTileView (on)'
         );
 
         expect(toggleOnEvent).toEqual({ enabled: true });
@@ -96,20 +75,13 @@ describe('Tile view iframe API command and events', () => {
     });
 
     it('exits tile view via setTileView(false) command', async () => {
-        if (!await checkIframeApi(p1)) {
-            return;
-        }
-
         await p1.switchToMainFrame();
         await p1.getIframeAPI().clearEventResults('tileViewChanged');
         await p1.getIframeAPI().executeCommand('setTileView', false);
 
-        const setOffEvent: { enabled: boolean; } = await p1.driver.waitUntil(
-            () => p1.getIframeAPI().getEventResult('tileViewChanged'),
-            {
-                timeout: 5000,
-                timeoutMsg: 'tileViewChanged event was not received for setTileView(false)'
-            }
+        const setOffEvent: { enabled: boolean; } = await p1.getIframeAPI().waitForEventResult(
+            'tileViewChanged',
+            'tileViewChanged event was not received for setTileView(false)'
         );
 
         expect(setOffEvent).toEqual({ enabled: false });
