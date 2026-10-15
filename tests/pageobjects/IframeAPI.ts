@@ -95,6 +95,20 @@ export default class IframeAPI extends BasePageObject {
     }
 
     /**
+     * Returns whether the local participant's audio is muted.
+     */
+    isAudioMuted() {
+        return this.participant.execute(() => window.jitsiAPI.isAudioMuted());
+    }
+
+    /**
+     * Returns whether the local participant's video is muted.
+     */
+    isVideoMuted() {
+        return this.participant.execute(() => window.jitsiAPI.isVideoMuted());
+    }
+
+    /**
      * Removes the embedded Jitsi Meet conference.
      */
     dispose() {
