@@ -103,7 +103,8 @@ export function isTranscribing(state: IReduxState) {
 export function isAsyncTranscriptionActive(state: IReduxState) {
     const { metadata } = state['features/base/conference'];
 
-    return Boolean(metadata?.asyncTranscription && metadata?.recording?.isTranscribingEnabled);
+    // Strict, as jicofo starts it only on these exact values.
+    return metadata?.asyncTranscription === true && metadata?.recording?.isTranscribingEnabled === true;
 }
 
 /**

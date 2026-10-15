@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { createE2EEEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState, IStore } from '../../app/types';
-import Tooltip from '../../base/tooltip/components/Tooltip';
+import DisabledReasonTooltip from '../../base/tooltip/components/DisabledReasonTooltip';
 import Switch from '../../base/ui/components/web/Switch';
 import { toggleE2EE } from '../actions';
 import { MAX_MODE } from '../constants';
@@ -114,7 +114,8 @@ const E2EESection = ({
         dispatch(toggleE2EE(newValue));
     }, [ toggled ]);
 
-    const description = _e2eeLabels?.description || t(_descriptionResource ?? '');
+    // A blocking service's reason wins over a deployment's own description, so it is never hidden.
+    const description = _blockedReason ? t(_blockedReason) : _e2eeLabels?.description || t(_descriptionResource ?? '');
     const label = _e2eeLabels?.label || t('dialog.e2eeLabel');
     const warning = _e2eeLabels?.warning || t('dialog.e2eeWarning');
 
@@ -134,21 +135,13 @@ const E2EESection = ({
                 <label htmlFor = 'e2ee-section-switch'>
                     {label}
                 </label>
-                { _blockedReason ? (
-                    <Tooltip content = { t(_blockedReason) }>
-                        <Switch
-                            checked = { toggled }
-                            disabled = { true }
-                            id = 'e2ee-section-switch'
-                            onChange = { _onToggle } />
-                    </Tooltip>
-                ) : (
+                <DisabledReasonTooltip reason = { _blockedReason && t(_blockedReason) }>
                     <Switch
                         checked = { toggled }
                         disabled = { !_enabled }
                         id = 'e2ee-section-switch'
                         onChange = { _onToggle } />
-                ) }
+                </DisabledReasonTooltip>
             </div>
         </div>
     );

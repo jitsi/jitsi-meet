@@ -5,7 +5,7 @@ import { openDialog } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
 import { IconTranslate } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
-import { isE2EEEnabled } from '../../../e2ee/functions';
+import { isE2EEOnInMeeting } from '../../../e2ee/functions';
 
 import AudioTranslationDialog from './AudioTranslationDialog';
 
@@ -62,13 +62,13 @@ class AudioTranslationButton extends AbstractButton<IProps> {
     }
 
     /**
-     * Explains why the button is disabled while end-to-end encryption is on.
+     * Why the button is disabled.
      *
      * @override
      * @returns {string}
      */
-    override _getTooltip() {
-        return this._isDisabled() ? 'audioTranslation.unavailableWithE2EE' : super._getTooltip();
+    override _getDisabledReason() {
+        return 'audioTranslation.unavailableWithE2EE';
     }
 }
 
@@ -80,7 +80,7 @@ class AudioTranslationButton extends AbstractButton<IProps> {
  */
 function _mapStateToProps(state: IReduxState) {
     return {
-        _e2eeEnabled: isE2EEEnabled(state),
+        _e2eeEnabled: isE2EEOnInMeeting(state),
         _language: state['features/audio-translation'].language
     };
 }
