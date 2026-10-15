@@ -1,4 +1,4 @@
-import { throttle } from 'lodash-es';
+import { DebouncedFunc, throttle } from 'lodash-es';
 import React, { Component, RefObject } from 'react';
 import { scrollIntoView } from 'seamless-scroll-polyfill';
 
@@ -83,6 +83,13 @@ export default class MessageContainer extends Component<IProps, IState> {
      */
     _hasInitiallyScrolled: boolean;
 
+    /**
+     * Throttled scroll handler bound to {@link _updateReadStateOnScroll}. Typed as a
+     * {@code DebouncedFunc} so {@code componentWillUnmount} can {@code cancel()} any pending
+     * trailing call.
+     */
+    _onChatScroll: DebouncedFunc<() => void>;
+
     static defaultProps = {
         isVisible: true,
         messages: [] as IMessage[]
@@ -105,7 +112,7 @@ export default class MessageContainer extends Component<IProps, IState> {
         this._handleIntersectBottomList = this._handleIntersectBottomList.bind(this);
         this._findFirstUnreadMessage = this._findFirstUnreadMessage.bind(this);
         this._isMessageVisible = this._isMessageVisible.bind(this);
-        this._onChatScroll = throttle(this._onChatScroll.bind(this), 300, { leading: true });
+        this._onChatScroll = throttle(this._updateReadStateOnScroll.bind(this), 300, { leading: true });
         this._onGoToFirstUnreadMessage = this._onGoToFirstUnreadMessage.bind(this);
     }
 
@@ -217,6 +224,9 @@ export default class MessageContainer extends Component<IProps, IState> {
         const target = document.querySelector('#messagesListEnd');
 
         this._bottomListObserver.unobserve(target as Element);
+
+        // Drop any trailing throttled call so it does not setState or query the DOM post-unmount.
+        this._onChatScroll.cancel();
     }
 
     /**
@@ -239,28 +249,24 @@ export default class MessageContainer extends Component<IProps, IState> {
 
 
     /**
-     * Callback invoked to listen to current scroll position and update next unread message.
-     * The callback is invoked inside a throttle with 300 ms to decrease the number of function calls.
+     * Updates read state from the current scroll position. Invoked by the throttled scroll
+     * handler at most once per 300 ms (leading edge, plus a trailing call).
      *
      * @private
      * @returns {void}
      */
-    _onChatScroll() {
+    _updateReadStateOnScroll() {
         const firstUnreadMessage = this._findFirstUnreadMessage();
-        const nextState: Partial<IState> = {};
 
-        // Dismiss the new-messages pill once the user starts scrolling; otherwise it only clears
-        // when they scroll all the way to the bottom (via the IntersectionObserver on #messagesListEnd).
-        if (this.state.hasNewMessages) {
-            nextState.hasNewMessages = false;
+        // Dismiss the pill once every unread message is in view. Guards against clearing on
+        // scrolls the user didn't make (scroll anchoring, image loads) and on the throttle's
+        // trailing call after a late remote message, which would otherwise flash the pill.
+        if (this.state.hasNewMessages && !firstUnreadMessage) {
+            this.setState({ hasNewMessages: false });
         }
 
         if (firstUnreadMessage && firstUnreadMessage.id !== this.state.lastReadMessageId) {
-            nextState.lastReadMessageId = firstUnreadMessage.id;
-        }
-
-        if (Object.keys(nextState).length) {
-            this.setState(nextState as IState);
+            this.setState({ lastReadMessageId: firstUnreadMessage.id });
         }
     }
 
