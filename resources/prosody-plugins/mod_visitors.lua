@@ -111,7 +111,8 @@ local function send_visitors_iq(conference_service, room, type)
                     senderId = poll.senderId,
                     senderName = poll.senderName,
                     question = poll.question,
-                    answers = poll.answers
+                    answers = poll.answers,
+                    singleAnswer = poll.singleAnswer
                 };
             end
 
