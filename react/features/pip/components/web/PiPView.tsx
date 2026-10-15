@@ -202,7 +202,7 @@ export function PiPView() {
     const videoRef = useRef<HTMLVideoElement>(null);
     const hideTimerRef = useRef<ReturnType<typeof setTimeout>>();
     const toolbarHoveredRef = useRef(false);
-    const [ toolbarVisible, setToolbarVisible ] = useState(false);
+    const [ toolbarVisible, setToolbarVisible ] = useState(true);
     const pipWindow = useSelector((state: IReduxState) => state['features/pip'].pipWindow);
     const { height: windowHeight, width: windowWidth } = usePiPWindowSize(pipWindow);
     const isOnPrejoin = useSelector(isPrejoinPageVisible);
@@ -246,7 +246,13 @@ export function PiPView() {
         toolbarHoveredRef.current = false;
     }, []);
 
-    useEffect(() => () => clearTimeout(hideTimerRef.current), []);
+    // Like the legacy always-on-top window, the toolbar is shown when the
+    // window opens and fades out after the idle timeout.
+    useEffect(() => {
+        scheduleToolbarHide();
+
+        return () => clearTimeout(hideTimerRef.current);
+    }, [ scheduleToolbarHide ]);
 
     useEffect(() => {
         const video = videoRef.current;
