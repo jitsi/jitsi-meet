@@ -35,6 +35,7 @@ export type AbstractProps = InputProps & {
     setAnswer: (index: number, value: IAnswerData) => void;
     setQuestion: (question: string) => void;
     setSingleAnswer: (singleAnswer: boolean) => void;
+    showSingleAnswer: boolean;
     singleAnswer: boolean;
     t: Function;
 };
@@ -89,6 +90,9 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
     const [ answers, setAnswers ] = useState(answerResults);
 
     const [ singleAnswer, setSingleAnswer ] = useState(Boolean(editingPoll?.[1].singleAnswer));
+
+    const showSingleAnswer = useSelector(
+        (state: IReduxState) => Boolean(state['features/base/config'].showPollSingleAnswerSetting));
 
     const setAnswer = useCallback((i: number, answer: IAnswerData) => {
         setAnswers(currentAnswers => {
@@ -181,6 +185,7 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
         setCreateMode = { setCreateMode }
         setQuestion = { setQuestion }
         setSingleAnswer = { setSingleAnswer }
+        showSingleAnswer = { showSingleAnswer }
         singleAnswer = { singleAnswer }
         t = { t } />);
 

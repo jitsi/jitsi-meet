@@ -79,6 +79,7 @@ const PollCreate = ({
     setCreateMode,
     setQuestion,
     setSingleAnswer,
+    showSingleAnswer,
     singleAnswer,
     t
 }: AbstractProps) => {
@@ -249,14 +250,14 @@ const PollCreate = ({
                 }
                 )}
             </ol>
-            <div className = { classes.singleAnswer }>
+            { showSingleAnswer && <div className = { classes.singleAnswer }>
                 <Checkbox
                     checked = { singleAnswer }
                     id = 'polls-single-answer'
                     label = { t('polls.create.singleAnswer') }
                     name = 'polls-single-answer'
                     onChange = { ev => setSingleAnswer(ev.target.checked) } />
-            </div>
+            </div> }
             <div className = { classes.addButtonContainer }>
                 <Button
                     accessibilityLabel = { t('polls.create.addOption') }

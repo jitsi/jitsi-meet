@@ -29,6 +29,7 @@ const PollCreate = (props: AbstractProps) => {
         setCreateMode,
         setQuestion,
         setSingleAnswer,
+        showSingleAnswer,
         singleAnswer,
         t
     } = props;
@@ -178,7 +179,7 @@ const PollCreate = (props: AbstractProps) => {
                         pollsStyles.pollCreateButtonsContainer,
                         keyboardVisible && { marginBottom: BaseTheme.spacing[8] }
                     ] as ViewStyle[] }>
-                    <View style = { pollsStyles.switchRow as ViewStyle }>
+                    { showSingleAnswer && <View style = { pollsStyles.switchRow as ViewStyle }>
                         <Switch
                             checked = { singleAnswer }
                             id = 'polls-single-answer'
@@ -186,7 +187,7 @@ const PollCreate = (props: AbstractProps) => {
                         <Text style = { pollsStyles.switchLabel as TextStyle }>
                             { t('polls.create.singleAnswer') }
                         </Text>
-                    </View>
+                    </View> }
                     <Button
                         accessibilityLabel = 'polls.create.addOption'
                         disabled = { answers.length >= ANSWERS_LIMIT }
