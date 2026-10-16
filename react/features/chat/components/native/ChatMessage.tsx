@@ -99,6 +99,7 @@ class ChatMessage extends Component<IChatMessageProps> {
                             { gifEnabled && isGifMessage(messageText)
                                 ? <GifMessage message = { messageText } />
                                 : this._renderMessageTextComponent(messageText) }
+                            { this._renderModerationReason() }
                             { this._renderPrivateNotice() }
                         </View>
                         { !message.isDeleted && !message.isModerated && this._renderPrivateReplyButton() }
@@ -226,6 +227,25 @@ class ChatMessage extends Component<IChatMessageProps> {
         return (
             <Text style = { message.lobbyChat ? styles.lobbyMsgNotice : styles.privateNotice }>
                 { getPrivateNoticeMessage(this.props.message) }
+            </Text>
+        );
+    }
+
+    /**
+     * Renders the reason a moderator gave for removing the message, if any.
+     *
+     * @returns {React.ReactElement<*> | null}
+     */
+    _renderModerationReason() {
+        const { message, t } = this.props;
+
+        if (!message.isModerated || !message.moderationReason) {
+            return null;
+        }
+
+        return (
+            <Text style = { styles.privateNotice }>
+                { t('chat.moderationReason', { reason: message.moderationReason }) }
             </Text>
         );
     }
