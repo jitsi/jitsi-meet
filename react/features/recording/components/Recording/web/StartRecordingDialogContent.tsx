@@ -9,6 +9,7 @@ import Container from '../../../../base/react/components/web/Container';
 import Image from '../../../../base/react/components/web/Image';
 import LoadingIndicator from '../../../../base/react/components/web/LoadingIndicator';
 import Text from '../../../../base/react/components/web/Text';
+import Tooltip from '../../../../base/tooltip/components/Tooltip';
 import Button from '../../../../base/ui/components/web/Button';
 import Switch from '../../../../base/ui/components/web/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.web';
@@ -433,6 +434,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
 
         const {
             _availableLanguages,
+            _subtitlesOnlyTranscriberRunning,
             onStartTranscription,
             onStopTranscription,
             selectedLanguage,
@@ -462,9 +464,10 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                                 onClick = { onStopTranscription }
                                 testId = 'recordingDialog.stopTranscription'
                                 type = { BUTTON_TYPES.DESTRUCTIVE } />
-                        ) : (
+                        ) : this._renderTranscriptionAlreadyOnTooltip(
                             <Button
                                 accessibilityLabel = { t('dialog.startTranscription') }
+                                disabled = { _subtitlesOnlyTranscriberRunning }
                                 labelKey = 'dialog.start'
                                 onClick = { onStartTranscription }
                                 testId = 'recordingDialog.startTranscription'
@@ -496,6 +499,27 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
     }
 
     /**
+     * Wraps a button that starts the transcription in a tooltip explaining why it is disabled,
+     * when a transcriber is already in the meeting for the subtitles.
+     *
+     * @param {React.ReactElement} button - The button to wrap.
+     * @returns {React.ReactElement}
+     */
+    _renderTranscriptionAlreadyOnTooltip(button: React.ReactElement) {
+        const { _subtitlesOnlyTranscriberRunning, t } = this.props;
+
+        if (!_subtitlesOnlyTranscriberRunning) {
+            return button;
+        }
+
+        return (
+            <Tooltip content = { t('recording.transcriptionAlreadyOn') }>
+                { button }
+            </Tooltip>
+        );
+    }
+
+    /**
      * Renders the footer buttons acting on both services at once. When only
      * one service is running both buttons are shown: stop both stops the
      * running one, start both starts the missing one.
@@ -508,6 +532,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         }
 
         const {
+            _subtitlesOnlyTranscriberRunning,
             isValidating,
             onStartBoth,
             onStopBoth,
@@ -518,7 +543,8 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         } = this.props;
         const showStopBoth = recordingRunning || transcriptionRunning;
         const showStartBoth = !recordingRunning || !transcriptionRunning;
-        const startBothDisabled = !recordingRunning && (startRecordingDisabled || isValidating);
+        const startBothDisabled = _subtitlesOnlyTranscriberRunning
+            || (!recordingRunning && (startRecordingDisabled || isValidating));
         const classes = this.props.classes ?? {};
 
         return (
@@ -531,7 +557,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                         testId = 'recordingDialog.stopBoth'
                         type = { BUTTON_TYPES.DESTRUCTIVE } />
                 ) }
-                { showStartBoth && (
+                { showStartBoth && this._renderTranscriptionAlreadyOnTooltip(
                     <Button
                         accessibilityLabel = { t('dialog.startBoth') }
                         disabled = { startBothDisabled }

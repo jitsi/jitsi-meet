@@ -166,6 +166,53 @@ export function supportsLocalRecording() {
 }
 
 /**
+ * Returns the list of recording services (RECORDING_TYPES values) the participant can currently
+ * pick from, in the order they are displayed. Shared by the recording dialog, which preselects one
+ * of them, and its content, which renders them, so the two can never disagree.
+ *
+ * Cloud based services (Jitsi recording service, Dropbox) require the recording JWT feature and are
+ * unavailable while a live stream runs (both use Jibri). Dropbox is additionally unavailable while a
+ * session is running (integrationsEnabled covers that).
+ *
+ * @param {Object} options - The availability of each service.
+ * @param {boolean} options.fileRecordingsServiceEnabled - Whether the file recordings service is enabled.
+ * @param {boolean} options.integrationsEnabled - Whether the third party integrations (Dropbox) are enabled.
+ * @param {boolean} options.liveStreamRunning - Whether a live stream is currently running.
+ * @param {boolean} options.localRecordingAvailable - Whether local recording is enabled and supported.
+ * @param {boolean} options.recordingFeatureEnabled - Whether the recording JWT feature is enabled.
+ * @returns {Array<string>}
+ */
+export function getRecordingServiceOptions({
+    fileRecordingsServiceEnabled,
+    integrationsEnabled,
+    liveStreamRunning,
+    localRecordingAvailable,
+    recordingFeatureEnabled
+}: {
+    fileRecordingsServiceEnabled: boolean;
+    integrationsEnabled: boolean;
+    liveStreamRunning: boolean;
+    localRecordingAvailable: boolean;
+    recordingFeatureEnabled: boolean;
+}): Array<string> {
+    const options = [];
+
+    if (recordingFeatureEnabled && !liveStreamRunning) {
+        if (fileRecordingsServiceEnabled) {
+            options.push(RECORDING_TYPES.JITSI_REC_SERVICE);
+        }
+        if (integrationsEnabled) {
+            options.push(RECORDING_TYPES.DROPBOX);
+        }
+    }
+    if (localRecordingAvailable) {
+        options.push(RECORDING_TYPES.LOCAL);
+    }
+
+    return options;
+}
+
+/**
  * Returns true if there is a cloud recording running.
  *
  * @param {IReduxState} state - The redux state to search in.

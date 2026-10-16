@@ -2,9 +2,10 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../app/types';
 import { ENDPOINT_MESSAGE_RECEIVED, NON_PARTICIPANT_MESSAGE_RECEIVED } from '../base/conference/actionTypes';
+import { IJitsiConference } from '../base/conference/reducer';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
-import JitsiMeetJS from '../base/lib-jitsi-meet';
+import JitsiMeetJS, { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { TRANSCRIBER_ID } from '../base/participants/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { showErrorNotification } from '../notifications/actions';
@@ -375,6 +376,59 @@ function _getPrimaryLanguageCode(language: string) {
 }
 
 /**
+ * How long to wait for the server to echo back the metadata update requesting the transcription,
+ * when inviting the transcriber failed before it did.
+ */
+const METADATA_ECHO_TIMEOUT = 10_000;
+
+/**
+ * Clears the recording isTranscribingEnabled flag after inviting the transcriber failed, keeping the
+ * rest of the recording metadata as it currently is: in particular isRecordingRequested, which may
+ * have changed since the transcription was requested (e.g. the recording was stopped meanwhile).
+ *
+ * The local copy of the metadata only reflects the update requesting the transcription once the
+ * server has echoed it back. When no update has been received since that request was sent, wait
+ * for the next one, which is that echo: updates are received in the order they were sent.
+ *
+ * @param {IJitsiConference} conference - The conference.
+ * @param {Object} metadataAtWrite - The local copy of the metadata right after the transcription
+ * was requested.
+ * @returns {void}
+ */
+function _clearTranscribingEnabled(conference: IJitsiConference, metadataAtWrite: object) {
+    const metadataHandler = conference.getMetadataHandler();
+    const clear = () => {
+        const recordingMetadata = metadataHandler.getMetadata()[RECORDING_METADATA_ID];
+
+        if (recordingMetadata?.isTranscribingEnabled) {
+            metadataHandler.setMetadata(RECORDING_METADATA_ID, {
+                ...recordingMetadata,
+                isTranscribingEnabled: false
+            });
+        }
+    };
+
+    if (metadataHandler.getMetadata() !== metadataAtWrite
+            || metadataHandler.getMetadata()[RECORDING_METADATA_ID]?.isTranscribingEnabled) {
+        clear();
+
+        return;
+    }
+
+    const onMetadataUpdated = () => {
+        conference.off(JitsiConferenceEvents.METADATA_UPDATED, onMetadataUpdated);
+        clear();
+    };
+
+    conference.on(JitsiConferenceEvents.METADATA_UPDATED, onMetadataUpdated);
+
+    // Stop waiting for the echo eventually; removing an already removed listener does nothing.
+    setTimeout(
+        () => conference.off(JitsiConferenceEvents.METADATA_UPDATED, onMetadataUpdated),
+        METADATA_ECHO_TIMEOUT);
+}
+
+/**
  * Toggle the local property 'requestingTranscription'. This will cause Jicofo
  * and Jigasi to decide whether the transcriber needs to be in the room.
  *
@@ -409,6 +463,10 @@ function _requestingSubtitlesChange(
     if (enabled && conference?.getTranscriptionStatus() === JitsiMeetJS.constants.transcriptionStatus.OFF
         && isJwtFeatureEnabled(getState(), MEET_FEATURES.TRANSCRIPTION, false)) {
 
+        // The local copy of the room metadata right after this request wrote isTranscribingEnabled,
+        // if it did.
+        let metadataAtWrite: object | undefined;
+
         if (!backendRecordingOn) {
             conference?.dial(TRANSCRIBER_DIAL_NUMBER)
                 .catch((e: any) => {
@@ -416,6 +474,13 @@ function _requestingSubtitlesChange(
 
                     // let's back to the correct state
                     dispatch(setRequestingSubtitles(false, false, null));
+
+                    // Clear the transcription flag written below for this request: remote
+                    // participants would otherwise keep waiting for a transcription that is not
+                    // coming before notifying about the recording.
+                    if (conference && metadataAtWrite) {
+                        _clearTranscribingEnabled(conference, metadataAtWrite);
+                    }
 
                     dispatch(showErrorNotification({
                         titleKey: 'transcribing.failed'
@@ -438,6 +503,7 @@ function _requestingSubtitlesChange(
                 isTranscribingEnabled: true,
                 ...(isRecordingRequested && { isRecordingRequested: true })
             });
+            metadataAtWrite = conference?.getMetadataHandler()?.getMetadata();
         }
     }
 
