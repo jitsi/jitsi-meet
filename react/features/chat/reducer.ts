@@ -181,6 +181,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
         return {
             ...state,
+            lastReadMessage: _getLastReadMessage(state, messages),
             messages
         };
     }
@@ -249,6 +250,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
         return {
             ...state,
+            lastReadMessage: _getLastReadMessage(state, messages),
             messages
         };
     }
@@ -271,6 +273,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
         return {
             ...state,
+            lastReadMessage: _getLastReadMessage(state, messages),
             messages
         };
     }
@@ -291,6 +294,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
         return {
             ...state,
+            lastReadMessage: _getLastReadMessage(state, messages),
             messages
         };
     }
@@ -444,3 +448,24 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
     return state;
 });
+
+/**
+ * Returns the last read message to keep in the state once some of the messages were replaced by
+ * updated copies. The last read message is compared by reference, thus it has to point to the
+ * updated copy, or it would not be found in the new list anymore and would keep the old content.
+ *
+ * @param {IChatState} state - The current chat state.
+ * @param {IMessage[]} messages - The new list of messages, mapped one to one from the current one.
+ * @returns {IMessage|undefined}
+ */
+function _getLastReadMessage(state: IChatState, messages: IMessage[]): IMessage | undefined {
+    const { lastReadMessage } = state;
+
+    if (!lastReadMessage) {
+        return lastReadMessage;
+    }
+
+    const index = state.messages.indexOf(lastReadMessage);
+
+    return index === -1 ? lastReadMessage : messages[index];
+}
