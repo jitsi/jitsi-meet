@@ -1,5 +1,6 @@
 import assert from 'assert';
 
+import { prosodyShell } from './helpers/prosody_shell.js';
 import { createXmppClient } from './helpers/xmpp_client.js';
 
 const DISCO_INFO_NS = 'http://jabber.org/protocol/disco#info';
@@ -72,5 +73,38 @@ describe('mod_jiconop', () => {
 
         assert.ok(release, 'query must contain a server/release identity');
         assert.equal(release.attrs.name, 'test-release');
+    });
+
+    it('query contains the features advertised with jitsi-add-feature', async () => {
+        const feature = 'http://jitsi.org/protocol/test#jiconop_feature';
+
+        await prosodyShell(
+            `>prosody.hosts["localhost"].events.fire_event("jitsi-add-feature", { feature = "${feature}" })`);
+
+        const { msg } = await connectAndGetJiconop();
+        const features = msg.getChild('query', DISCO_INFO_NS)
+            .getChildren('feature')
+            .map(f => f.attrs.var);
+
+        assert.ok(features.includes(feature), 'query must contain the advertised feature');
+        assert.ok(!features.includes('urn:xmpp:ping'), 'query must not contain the standard XMPP features');
+    });
+
+    it('the main host disco#info contains the features advertised with jitsi-add-feature', async () => {
+        const feature = 'http://jitsi.org/protocol/test#disco_feature';
+
+        await prosodyShell(
+            `>prosody.hosts["localhost"].events.fire_event("jitsi-add-feature", { feature = "${feature}" })`);
+
+        const c = await createXmppClient();
+
+        clients.push(c);
+
+        const reply = await c.sendDiscoInfo('localhost');
+        const features = reply.getChild('query', DISCO_INFO_NS)
+            .getChildren('feature')
+            .map(f => f.attrs.var);
+
+        assert.ok(features.includes(feature), 'disco#info must contain the advertised feature');
     });
 });
