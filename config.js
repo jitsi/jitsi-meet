@@ -160,6 +160,11 @@ var config = {
     // Shows/hides the moderator setting for chat permissions.
     // showChatPermissionsModeratorSetting: false,
 
+    // Shows/hides the moderator setting that restricts video sharing to the participants with the
+    // `share-video` permission. The restriction is enforced by the mod_filter_messages prosody module,
+    // thus enable this only when that module is loaded.
+    // showSharedVideoPermissionsModeratorSetting: false,
+
     // screenshotCapture : {
     //      Enables the screensharing capture feature.
     //      enabled: false,

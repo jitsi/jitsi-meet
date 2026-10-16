@@ -167,6 +167,7 @@ export function getModeratorTabProps(stateful: IStateful) {
     const {
         audioTranslation,
         showChatPermissionsModeratorSetting,
+        showSharedVideoPermissionsModeratorSetting,
         disableReactionsModeration
     } = state['features/base/config'];
     const followMeActive = isFollowMeActive(state);
@@ -186,7 +187,8 @@ export function getModeratorTabProps(stateful: IStateful) {
         chatWithPermissionsEnabled: Boolean(groupChatWithPermissions),
         privateChatWithPermissionsEnabled: Boolean(privateChatWithPermissions),
         sharedVideoWithPermissionsEnabled: Boolean(sharedVideoRestricted),
-        showSharedVideoWithPermissions: isSharedVideoEnabled(state),
+        showSharedVideoWithPermissions: Boolean(showSharedVideoPermissionsModeratorSetting)
+            && isSharedVideoEnabled(state),
         showModeratorSettings: Boolean(conference && showModeratorSettings),
         disableReactionsModeration: Boolean(disableReactionsModeration),
         followMeActive: Boolean(conference && followMeActive),
