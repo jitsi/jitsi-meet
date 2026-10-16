@@ -20,6 +20,7 @@ import {
 import {
     getAllowedAgentIds,
     getConsentedAgentSourceNames,
+    getNextVoiceAgentConsentRequest,
     isVoiceAgentBlockedByE2EE,
     pickPresentAgents,
     sanitizeAgents,
@@ -72,6 +73,15 @@ MiddlewareRegistry.register(store => next => action => {
 StateListenerRegistry.register(
     state => isVoiceAgentBlockedByE2EE(state),
     (blocked, store) => _e2eeChanged(store, blocked));
+
+/**
+ * Asks about agents awaiting consent, one at a time, whenever no other dialog is open.
+ */
+StateListenerRegistry.register(
+    state => getNextVoiceAgentConsentRequest(state),
+    (agentId, { dispatch }) => {
+        agentId && dispatch(requestVoiceAgentConsent(agentId));
+    });
 
 /**
  * Diffs the advertised agents against the known set: asks for consent for new agents, and removes the
@@ -164,8 +174,8 @@ function _consentChanged(store: IStore, agentId: string, allowed: boolean) {
 }
 
 /**
- * Lets a newly present agent in: asks for consent when the deployment requires it, otherwise allows it. In an
- * end-to-end encrypted meeting the agent cannot take part, so the participant is told instead.
+ * Lets a newly present agent in: allows it unless the deployment requires consent, which the consent listener
+ * then asks for. In an end-to-end encrypted meeting the agent cannot take part, so the participant is told instead.
  *
  * @param {IStore} store - The redux store.
  * @param {string} agentId - The agent.
@@ -176,9 +186,7 @@ function _admitAgent({ dispatch, getState }: IStore, agentId: string) {
 
     if (isVoiceAgentBlockedByE2EE(state)) {
         _notifyE2EEUnsupported(dispatch, state['features/voice-agents'].agents[agentId]?.displayName, agentId);
-    } else if (shouldAskForVoiceAgentConsent(state)) {
-        dispatch(requestVoiceAgentConsent(agentId));
-    } else {
+    } else if (!shouldAskForVoiceAgentConsent(state)) {
         dispatch(setVoiceAgentConsent(agentId, true));
     }
 }

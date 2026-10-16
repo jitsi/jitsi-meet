@@ -24,6 +24,11 @@ interface IProps {
      * Whether the participant was muted for the decision (initial request) or opened the dialog themselves.
      */
     forcedMute?: boolean;
+
+    /**
+     * Whether unmuting was already blocked (e.g. by the moderator) when the dialog opened; then it stays blocked.
+     */
+    unmuteWasBlocked?: boolean;
 }
 
 /**
@@ -33,7 +38,7 @@ interface IProps {
  * @param {IProps} props - The props.
  * @returns {JSX.Element}
  */
-export default function VoiceAgentConsentDialog({ agentId, audioWasMuted, forcedMute }: IProps) {
+export default function VoiceAgentConsentDialog({ agentId, audioWasMuted, forcedMute, unmuteWasBlocked }: IProps) {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const agent = useSelector((state: IReduxState) => state['features/voice-agents'].agents[agentId]);
@@ -42,16 +47,16 @@ export default function VoiceAgentConsentDialog({ agentId, audioWasMuted, forced
     const name = agent?.displayName ?? agentId;
 
     const allow = useCallback(() => {
-        dispatch(allowVoiceAgent(agentId, { audioWasMuted, forcedMute }));
+        dispatch(allowVoiceAgent(agentId, { audioWasMuted, forcedMute, unmuteWasBlocked }));
 
         return true;
-    }, [ agentId, audioWasMuted, forcedMute ]);
+    }, [ agentId, audioWasMuted, forcedMute, unmuteWasBlocked ]);
 
     const decline = useCallback(() => {
-        dispatch(declineVoiceAgent(agentId, { forcedMute }));
+        dispatch(declineVoiceAgent(agentId, { forcedMute, unmuteWasBlocked }));
 
         return true;
-    }, [ agentId, forcedMute ]);
+    }, [ agentId, forcedMute, unmuteWasBlocked ]);
 
     return (
         <ConfirmDialog
