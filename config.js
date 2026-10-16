@@ -145,6 +145,11 @@ var config = {
     // Disables polls feature.
     // disablePolls: false,
 
+    // Shows/hides the "End poll" button for the poll's creator and moderators. Closing a poll is enforced by
+    // the mod_polls_component prosody module, thus enable this only when the server runs a version of that
+    // module that supports it.
+    // showEndPollButton: false,
+
     // Disables chat feature entirely including notifications, sounds, and private messages.
     // disableChat: false,
 

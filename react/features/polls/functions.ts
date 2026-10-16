@@ -91,8 +91,8 @@ export function isCreatePollDisabled(state: IReduxState) {
 }
 
 /**
- * Returns whether the local participant can close the poll: the poll is open and the local participant created it
- * or is a moderator.
+ * Returns whether the local participant can close the poll: closing polls is enabled in the config, the poll is open
+ * and the local participant created it or is a moderator.
  *
  * @param {IReduxState} state - The redux state.
  * @param {string} pollId - The id of the poll.
@@ -101,6 +101,10 @@ export function isCreatePollDisabled(state: IReduxState) {
 export function canClosePoll(state: IReduxState, pollId: string) {
     const poll = state['features/polls'].polls[pollId];
     const { conference } = state['features/base/conference'];
+
+    if (!state['features/base/config'].showEndPollButton) {
+        return false;
+    }
 
     // A lib-jitsi-meet without closePoll does not support closing polls.
     if (!poll || poll.closed || typeof conference?.getPolls()?.closePoll !== 'function') {
