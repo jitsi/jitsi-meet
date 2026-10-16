@@ -453,14 +453,15 @@ const ChatMessage = ({
         );
     }, [ message?.reactions, isHovered, isReactionsOpen ]);
 
-    const messageText = message.isDeleted
-        ? (
-            message.messageType === MESSAGE_TYPE_LOCAL
-                ? t<string>('chat.deletedMessageByMe')
-                : t<string>('chat.deletedMessage')
-        )
-        : message.isModerated
-            ? t('chat.moderatedMessage')
+    // A moderation is shown over a retraction, as its reason is shown as well.
+    const messageText = message.isModerated
+        ? t('chat.moderatedMessage')
+        : message.isDeleted
+            ? (
+                message.messageType === MESSAGE_TYPE_LOCAL
+                    ? t<string>('chat.deletedMessageByMe')
+                    : t<string>('chat.deletedMessage')
+            )
             : getMessageText(message);
 
     const canEdit = message.messageType === MESSAGE_TYPE_LOCAL

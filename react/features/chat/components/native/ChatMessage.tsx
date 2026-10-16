@@ -81,10 +81,11 @@ class ChatMessage extends Component<IChatMessageProps> {
             messageBubbleStyle.push(styles.activeMatchMessageBubble);
         }
 
-        const messageText = message.isDeleted
-            ? this.props.t(localMessage ? 'chat.deletedMessageByMe' : 'chat.deletedMessage')
-            : message.isModerated
-                ? this.props.t('chat.moderatedMessage')
+        // A moderation is shown over a retraction, as its reason is shown as well.
+        const messageText = message.isModerated
+            ? this.props.t('chat.moderatedMessage')
+            : message.isDeleted
+                ? this.props.t(localMessage ? 'chat.deletedMessageByMe' : 'chat.deletedMessage')
                 : getMessageText(this.props.message);
 
         return (
