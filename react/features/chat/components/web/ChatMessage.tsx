@@ -507,7 +507,7 @@ const ChatMessage = ({
                         <div className = { cx('messagecontent', classes.messageContent) }>
                             {showDisplayName && _renderDisplayName()}
                             <div className = { cx('usermessage', classes.userMessage, (message.isDeleted || message.isModerated) && classes.deletedMessage) }>
-                                {!message.isModerated && isFileMessage(message) ? (
+                                {!message.isDeleted && !message.isModerated && isFileMessage(message) ? (
                                     <FileMessage
                                         message = { message }
                                         screenReaderHelpText = { message.messageType === MESSAGE_TYPE_LOCAL
