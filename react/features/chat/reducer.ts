@@ -136,8 +136,8 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
         // The message was moderated before it arrived (e.g. a moderator brought a late joiner up to
         // date before the room history was received), so it arrives already removed. The pending
-        // moderation is kept rather than consumed: message ids are chosen by the sender, so another
-        // message may arrive first with the same id, and moderating twice is harmless.
+        // moderation is kept rather than consumed, like in MODERATE_MESSAGE: message ids are chosen
+        // by the sender, so several messages may arrive with the same id, and moderating twice is harmless.
         if (pendingModeration) {
             finalMessage = {
                 ...finalMessage,
@@ -298,20 +298,25 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             return message;
         });
 
-        // Message hasn't arrived yet, cache the moderation so it is applied once it does.
+        // Cache the moderation whether or not the message has arrived yet: it is applied to the
+        // message once it does, and, as message ids are chosen by the sender, also to any later
+        // message that arrives with the same id.
+        const pendingModerations = addPendingEntry(state.pendingModerations, action.messageId, {
+            reason: action.reason
+        });
+
         if (!messageExists) {
             return {
                 ...state,
-                pendingModerations: addPendingEntry(state.pendingModerations, action.messageId, {
-                    reason: action.reason
-                })
+                pendingModerations
             };
         }
 
         return {
             ...state,
             lastReadMessage: _getLastReadMessage(state, messages),
-            messages
+            messages,
+            pendingModerations
         };
     }
 
