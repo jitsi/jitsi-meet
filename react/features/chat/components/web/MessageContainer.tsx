@@ -29,6 +29,11 @@ interface IProps {
 interface IState {
 
     /**
+     * Id of the first message that arrived while scrolled up; the new-messages pill targets it.
+     */
+    firstUnreadMessageId: string | null;
+
+    /**
      * Whether or not message container has received new messages.
      */
     hasNewMessages: boolean;
@@ -37,11 +42,6 @@ interface IState {
      * Whether or not scroll position is at the bottom of container.
      */
     isScrolledToBottom: boolean;
-
-    /**
-     * The id of the last read message.
-     */
-    lastReadMessageId: string | null;
 }
 
 /**
@@ -55,9 +55,9 @@ export default class MessageContainer extends Component<IProps, IState> {
      * and where to scroll when click on hasNewMessages button.
      */
     override state: IState = {
+        firstUnreadMessageId: null,
         hasNewMessages: false,
-        isScrolledToBottom: true,
-        lastReadMessageId: ''
+        isScrolledToBottom: true
     };
 
     /**
@@ -189,15 +189,20 @@ export default class MessageContainer extends Component<IProps, IState> {
      * @returns {void}
      */
     override componentDidUpdate(prevProps: IProps) {
-        const newMessages = this.props.messages.filter(message => !prevProps.messages.includes(message));
-        const hasLocalMessage = newMessages.map(message => message.messageType).includes(MESSAGE_TYPE_LOCAL);
+        // Diff by id: edits, reactions and moderation replace the message object without adding a message.
+        const prevIds = new Set(prevProps.messages.map(message => message.messageId));
+        const newMessages = this.props.messages.filter(message => !prevIds.has(message.messageId));
+        const hasLocalMessage = newMessages.some(message => message.messageType === MESSAGE_TYPE_LOCAL);
 
         if (newMessages.length > 0) {
             if (this.state.isScrolledToBottom || hasLocalMessage) {
                 this.scrollToElement(false, null);
             } else {
                 // eslint-disable-next-line react/no-did-update-set-state
-                this.setState({ hasNewMessages: true });
+                this.setState(prev => ({
+                    firstUnreadMessageId: prev.hasNewMessages ? prev.firstUnreadMessageId : newMessages[0].messageId,
+                    hasNewMessages: true
+                }));
             }
         }
 
@@ -260,15 +265,15 @@ export default class MessageContainer extends Component<IProps, IState> {
 
         const firstUnreadMessage = this._findFirstUnreadMessage();
 
-        // Still below the viewport: the user has not reached the new messages yet.
-        if (firstUnreadMessage
-                && firstUnreadMessage.getBoundingClientRect().top >= container.getBoundingClientRect().bottom) {
+        // Keep the pill until the first unread message is rendered and its top edge is inside the viewport.
+        if (!firstUnreadMessage
+                || firstUnreadMessage.getBoundingClientRect().top >= container.getBoundingClientRect().bottom) {
             return;
         }
 
         this.setState({
-            hasNewMessages: false,
-            lastReadMessageId: this.props.messages.at(-1)?.messageId ?? null
+            firstUnreadMessageId: null,
+            hasNewMessages: false
         });
     }
 
@@ -303,56 +308,39 @@ export default class MessageContainer extends Component<IProps, IState> {
         }
     }
 
-    /** .
-    * _HandleIntersectBottomList.
-    * When entry is intersecting with bottom of container set last message as last read message.
-    * When entry is not intersecting update only isScrolledToBottom with false value.
-    *
-    * @param {Array} entries - List of entries.
-    * @private
-    * @returns {void}
-    */
+    /**
+     * Tracks whether the bottom of the list is in view; reaching it dismisses the new-messages pill.
+     *
+     * @param {Array} entries - List of entries.
+     * @private
+     * @returns {void}
+     */
     _handleIntersectBottomList(entries: IntersectionObserverEntry[]) {
         entries.forEach((entry: IntersectionObserverEntry) => {
-            if (entry.isIntersecting && this.props.messages.length) {
-                const lastMessageIndex = this.props.messages.length - 1;
-                const lastMessage = this.props.messages[lastMessageIndex];
-                const lastReadMessageId = lastMessage.messageId;
-
-                this.setState(
-                    {
-                        isScrolledToBottom: true,
-                        hasNewMessages: false,
-                        lastReadMessageId
-                    });
-            }
-
-            if (!entry.isIntersecting) {
-                this.setState(
-                    {
-                        isScrolledToBottom: false
-                    });
+            if (entry.isIntersecting) {
+                this.setState({
+                    firstUnreadMessageId: null,
+                    hasNewMessages: false,
+                    isScrolledToBottom: true
+                });
+            } else {
+                this.setState({ isScrolledToBottom: false });
             }
         });
     }
 
     /**
-     * Returns the element of the first message after the last read one, or null if there is none.
+     * Returns the rendered element of the first unread message, or null if there is none.
      *
      * @private
      * @returns {Element|null}
      */
     _findFirstUnreadMessage(): Element | null {
-        const { messages } = this.props;
+        const { firstUnreadMessageId } = this.state;
 
-        // An unknown last-read id yields index -1, so every message counts as unread.
-        const firstUnread = messages[messages.findIndex(m => m.messageId === this.state.lastReadMessageId) + 1];
-
-        if (!firstUnread?.messageId) {
-            return null;
-        }
-
-        return this._messageListRef.current?.querySelector(`#${CSS.escape(firstUnread.messageId)}`) ?? null;
+        return firstUnreadMessageId
+            ? this._messageListRef.current?.querySelector(`#${CSS.escape(firstUnreadMessageId)}`) ?? null
+            : null;
     }
 
     /**
