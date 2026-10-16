@@ -1081,6 +1081,7 @@
         "answer": {
             "edit": "Edit",
             "send": "Send",
+            "singleAnswerHint": "Choose one answer",
             "skip": "Skip",
             "submit": "Submit"
         },
@@ -1098,7 +1099,8 @@
             "pollQuestion": "Poll Question",
             "questionPlaceholder": "Ask a question",
             "removeOption": "Remove option",
-            "save": "Save"
+            "save": "Save",
+            "singleAnswer": "Allow only one answer"
         },
         "errors": {
             "notUniqueOption": "Options must be unique"
