@@ -390,7 +390,7 @@ module.exports = (_env, argv) => {
                 })
             ],
 
-            performance: getPerformanceHints(perfHintOptions, 3.5 * 1024 * 1024) },
+            performance: getPerformanceHints(perfHintOptions, 3.6 * 1024 * 1024) },
         { ...config,
             entry: {
                 'alwaysontop': './react/features/always-on-top/index.tsx'
@@ -443,7 +443,7 @@ module.exports = (_env, argv) => {
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'external_api')
             ],
-            performance: getPerformanceHints(perfHintOptions, 100 * 1024) },
+            performance: getPerformanceHints(perfHintOptions, 110 * 1024) },
         { ...config,
             entry: {
                 'preload': './react/features/preload/preload.web.ts'

@@ -1,0 +1,834 @@
+-- mod_voice_agent_component.lua
+--
+-- HTTP module that provisions voice agents (bot participants) for a room.
+-- Intended for internal system use (the JaaS provisioning API), not for
+-- end-user clients — the same trust model as mod_muc_jigasi_invite.
+--
+-- A voice agent is not a MUC occupant: its presence is advertised to clients
+-- through room metadata (the 'agents' key), and its media runs bridge-side (a
+-- synthetic colibri2 endpoint jicofo allocates when it sees the agent in the
+-- admin-only metadata). Clients render the roster entry from the metadata and,
+-- after user consent, subscribe to the agent's audio source by name.
+--
+-- ── State ─────────────────────────────────────────────────────────────────────
+-- Client-facing (broadcast to all occupants via mod_room_metadata_component):
+--   room.jitsiMetadata.agents[agentId] = {
+--       kind = 'agent', displayName = <string>, sourceName = '<agentId>-a0',
+--       state = provisioning|connecting|active|failed
+--   }
+-- Prosody-only (never broadcast):
+--   room._data.voice_agents[agentId] = { endpoint = { url, authorization }, customParameters, callbackUrl,
+--       mediaFormat = { encoding } }
+-- The dial config stays here: jicofo's connect carries only the conference and
+-- agent id, and the media relay fetches the endpoint by id (GET /voice-agent/dial)
+-- when the bridge connects, so no customer secret travels through room metadata,
+-- jicofo or the bridge. callbackUrl never leaves prosody.
+--
+-- ── Endpoints (contract frozen at v1.0 — see AGENT_REST_API.md) ───────────────
+-- Authentication: Authorization: Bearer <system ASAP token>, verified against
+-- prosody_password_public_key_repo_url (NOT login tokens), exactly like
+-- mod_muc_jigasi_invite.
+--
+-- `conference` names the room as customers know it, '<tenant>/<room>' or '<room>' (plain or percent-encoded, any
+-- case), or by its JID (what jicofo and the media relay send, and the only way to name a breakout room). Every
+-- response, webhook and the dial config name it the public way, as the meeting URL spells it; never by JID.
+--
+--   POST /voice-agent/invite   { conference, displayName, agentId?, endpoint{url,authorization?},
+--                                customParameters?, callbackUrl?, mediaFormat?{encoding} }
+--     mediaFormat.encoding: 'audio/l16' (PCM16 24 kHz, the default) or 'audio/opus' (relayed undecoded)
+--     → 200 { agentId, sourceName }  — idempotent on agentId: an identical re-invite
+--       returns the existing agent, a different one is 409; 409 too while anyone has E2EE on
+--   POST /voice-agent/dismiss  { conference, agentId } → 200 { agentId }
+--   GET  /voice-agent/list?conference=<room> → 200 { agents = { <agentId>: <client fields> } }
+--   GET  /voice-agent/get?conference=<room>&agentId=<id> → 200 <agent> | 404
+--   POST /voice-agent/status   { conference, agentId, state, reason? }
+--     internal: jicofo/JVB advance the lifecycle (connecting|active|failed|ended);
+--     active → agent.connected, failed → agent.failed, ended → teardown + agent.ended;
+--     forward-only, so nothing follows failed; 404 once the agent is gone
+--     auth: ASAP, or the voice_agent_status_secret shared secret (jicofo cannot mint ASAP)
+--   GET  /voice-agent/dial?conference=<jid>&agentId=<id>
+--     internal: the media relay fetches { agentId, conference, endpoint, customParameters, mediaFormat } when dialing;
+--     auth as status
+--
+-- Webhooks: when an agent has a callbackUrl, lifecycle events are POSTed to it as
+-- { event, agentId, conference, sourceName, state, timestamp, reason? }, signed
+-- X-Agent-Signature: sha256=<hmac> with voice_agent_webhook_secret, retried with
+-- backoff up to voice_agent_webhook_retries times (at-least-once).
+--
+-- Copyright (C) 2026-present 8x8, Inc.
+
+local hashes = require 'util.hashes';
+local random = require 'util.random';
+local json = require 'cjson.safe';
+local http_util = require 'util.http';
+local http = require 'net.http';
+
+local util = module:require 'util';
+local async_handler_wrapper = util.async_handler_wrapper;
+local extract_subdomain = util.extract_subdomain;
+local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
+local get_room_from_jid = util.get_room_from_jid;
+local is_healthcheck_room = util.is_healthcheck_room;
+local process_host_module = util.process_host_module;
+local room_jid_match_rewrite = util.room_jid_match_rewrite;
+local starts_with = util.starts_with;
+local table_shallow_copy = util.table_shallow_copy;
+
+local muc_component_host = module:get_option_string('muc_component');
+if muc_component_host == nil then
+    module:log('error', 'No muc_component specified. No muc to operate on!');
+    return;
+end
+-- Optional: breakout rooms can be addressed by JID too.
+local breakout_rooms_component_host = module:get_option_string('breakout_rooms_component');
+
+local JSON_CONTENT_TYPE = 'application/json';
+
+-- Caps keeping a single provisioning request from bloating room state and the
+-- metadata broadcastable payload.
+local MAX_AGENTS_PER_ROOM = module:get_option_number('voice_agent_max_agents', 5);
+local MAX_PARAM_ENTRIES = 16;
+local MAX_PARAM_KEY_LENGTH = 128;
+local MAX_PARAM_VALUE_LENGTH = 2048;
+local MAX_DISPLAY_NAME_LENGTH = 256;
+local MAX_CALLBACK_URL_LENGTH = 2048;
+
+-- Reserved namespace for agent ids, so an agent id can never equal a real participant's endpoint id.
+local AGENT_ID_PREFIX = 'agent-';
+
+-- Lifecycle states; 'ended' is terminal and removes the agent.
+local STATE_PROVISIONING = 'provisioning';
+local STATE_CONNECTING = 'connecting';
+local STATE_ACTIVE = 'active';
+local STATE_FAILED = 'failed';
+local STATE_ENDED = 'ended';
+-- Forward-only lifecycle: a report only ever moves the state forward, so a duplicate or a stale retry
+-- (a delayed 'connecting' landing after 'active') is acknowledged and ignored and each webhook fires once.
+-- 'failed' and 'ended' rank alike, so an agent gets one terminal webhook from status reports.
+local STATE_RANK = {
+    [STATE_PROVISIONING] = 0; [STATE_CONNECTING] = 1; [STATE_ACTIVE] = 2; [STATE_FAILED] = 3; [STATE_ENDED] = 3;
+};
+local STATUS_TRANSITIONS = {
+    [STATE_CONNECTING] = true; [STATE_ACTIVE] = true; [STATE_FAILED] = true; [STATE_ENDED] = true;
+};
+
+local invite_count = module:measure('voice_agent_invite_rate', 'rate');
+local invite_success_count = module:measure('voice_agent_invite_success', 'rate');
+local dismiss_count = module:measure('voice_agent_dismiss_rate', 'rate');
+
+-- DEV ONLY: skip provisioning-token auth (no ASAP keyserver). Default false; never enable where
+-- untrusted callers can reach it.
+local INSECURE_SKIP_AUTH = module:get_option_boolean('voice_agent_insecure_skip_auth', false);
+
+-- DEV ONLY: allow a ws:// (cleartext) endpoint.url for local test rigs; prod always requires wss://.
+local INSECURE_ALLOW_WS_ENDPOINT = module:get_option_boolean('voice_agent_insecure_allow_ws_endpoint', false);
+
+-- DEV ONLY: allow an http:// callbackUrl for local rigs; prod always requires https://.
+local INSECURE_ALLOW_HTTP_CALLBACK = module:get_option_boolean('voice_agent_insecure_allow_http_callback', false);
+
+local WEBHOOK_SECRET = module:get_option_string('voice_agent_webhook_secret', '');
+local WEBHOOK_RETRIES = module:get_option_number('voice_agent_webhook_retries', 3);
+if WEBHOOK_SECRET == '' then
+    module:log('warn', 'voice_agent_webhook_secret is not set — lifecycle webhooks will be UNSIGNED');
+end
+
+-- Shared secret jicofo presents on /voice-agent/status (it cannot mint ASAP tokens); ASAP is still accepted.
+local STATUS_SECRET = module:get_option_string('voice_agent_status_secret', '');
+
+local ASAP_KEY_SERVER = module:get_option_string('prosody_password_public_key_repo_url', '');
+local token_util;
+if INSECURE_SKIP_AUTH then
+    module:log('warn', 'voice_agent_insecure_skip_auth is ON — /voice-agent endpoints are UNAUTHENTICATED');
+else
+    token_util = module:require 'token/util'.new(module);
+    -- Empty string is truthy in Lua, so compare explicitly.
+    if ASAP_KEY_SERVER ~= '' then
+        token_util:set_asap_key_server(ASAP_KEY_SERVER);
+    end
+end
+
+local main_muc_module;
+
+process_host_module(muc_component_host, function(host_module)
+    main_muc_module = host_module;
+end);
+
+local function is_token_valid(token)
+    if token == nil then
+        module:log('warn', 'no token provided');
+        return false;
+    end
+
+    local session = {};
+    session.auth_token = token;
+    local verified, reason, msg = token_util:process_and_verify_token(session);
+    if not verified then
+        module:log('warn', 'not a valid token %s %s', tostring(reason), tostring(msg));
+        return false;
+    end
+    return true;
+end
+
+-- Verifies the Authorization header; returns nil when authorized, or the error response.
+local function check_authorization(request)
+    if INSECURE_SKIP_AUTH then
+        return nil;
+    end
+    local token = request.headers['authorization'];
+    if not token then
+        module:log('warn', 'Authorization header was not provided');
+        return { status_code = 401 };
+    end
+    if starts_with(token, 'Bearer ') then
+        token = token:sub(8, #token);
+    else
+        module:log('warn', 'Authorization header is invalid');
+        return { status_code = 401 };
+    end
+    if not is_token_valid(token) then
+        return { status_code = 401 };
+    end
+    return nil;
+end
+
+-- Constant-time secret comparison: HMACs under a per-load random key have a fixed length and leak nothing about
+-- where a mismatch occurs, unlike a plain string compare.
+local COMPARE_KEY = random.bytes(16);
+local function secrets_equal(a, b)
+    return hashes.hmac_sha256(COMPARE_KEY, a, true) == hashes.hmac_sha256(COMPARE_KEY, b, true);
+end
+
+-- The status route is called by jicofo, which cannot mint ASAP tokens: accept the configured shared secret as a
+-- bearer there, in addition to a regular ASAP token. Never used for the provisioning routes.
+local function check_status_authorization(request)
+    if STATUS_SECRET ~= '' then
+        local token = request.headers['authorization'];
+        if type(token) == 'string' and starts_with(token, 'Bearer ') and secrets_equal(token:sub(8), STATUS_SECRET) then
+            return nil;
+        end
+    end
+    return check_authorization(request);
+end
+
+local function error_response(status_code, message)
+    return { status_code = status_code, body = json.encode({ error = message }) };
+end
+
+-- Reads a JSON request body; returns the payload, or nil plus the error response.
+local function parse_json_request(request)
+    if request.headers.content_type ~= JSON_CONTENT_TYPE or (not request.body or #request.body == 0) then
+        module:log('warn', 'Wrong content type: %s or missing payload', request.headers.content_type);
+        return nil, { status_code = 400 };
+    end
+    local payload, decode_error = json.decode(request.body);
+    if not payload then
+        module:log('warn', 'Cannot decode json error:%s', decode_error);
+        return nil, { status_code = 400 };
+    end
+    return payload;
+end
+
+-- Validates a string->string map (customParameters); returns a bounded
+-- copy, or nil plus an error message.
+local function validate_string_map(value, name)
+    if value == nil then
+        return nil;
+    end
+    if type(value) ~= 'table' then
+        return nil, name .. ' must be an object';
+    end
+    local copy = {};
+    local entries = 0;
+    for k, v in pairs(value) do
+        if type(k) ~= 'string' or type(v) ~= 'string' then
+            return nil, name .. ' must map strings to strings';
+        end
+        if #k > MAX_PARAM_KEY_LENGTH then
+            return nil, name .. ' key too long';
+        end
+        if #v > MAX_PARAM_VALUE_LENGTH then
+            return nil, name .. ' value too long';
+        end
+        -- Reject control chars (CR/LF) so a value can never split or inject a header or a log line.
+        if k:find('[%c]') or v:find('[%c]') then
+            return nil, name .. ' must not contain control characters';
+        end
+        entries = entries + 1;
+        if entries > MAX_PARAM_ENTRIES then
+            return nil, name .. ' has too many entries';
+        end
+        copy[k] = v;
+    end
+    return copy;
+end
+
+local function is_valid_display_name(name)
+    return type(name) == 'string' and name ~= '' and #name <= MAX_DISPLAY_NAME_LENGTH;
+end
+
+-- Validates callbackUrl: https:// (http:// only with the dev flag), bounded, no control chars.
+local function validate_callback_url(url)
+    if url == nil then
+        return nil;
+    end
+    if type(url) ~= 'string' or url == '' or #url > MAX_CALLBACK_URL_LENGTH or url:find('[%c]') then
+        return nil, 'Invalid callbackUrl';
+    end
+    if not (starts_with(url, 'https://') or (INSECURE_ALLOW_HTTP_CALLBACK and starts_with(url, 'http://'))) then
+        return nil, 'callbackUrl must be an https:// URL';
+    end
+    return url;
+end
+
+-- Validates the required endpoint.{url,authorization}; returns a bounded copy, or nil plus an error.
+-- Enforces the wss:// scheme only; host-level SSRF filtering is done by the media relay's endpoint
+-- guard at dial time.
+local function validate_endpoint(endpoint)
+    if type(endpoint) ~= 'table' or type(endpoint.url) ~= 'string' or #endpoint.url > MAX_PARAM_VALUE_LENGTH
+            or endpoint.url:find('[%c]')
+            or not (starts_with(endpoint.url, 'wss://')
+                or (INSECURE_ALLOW_WS_ENDPOINT and starts_with(endpoint.url, 'ws://'))) then
+        return nil, 'endpoint.url is required and must be a wss:// URL';
+    end
+    local authorization = endpoint.authorization;
+    if authorization ~= nil and (type(authorization) ~= 'string' or #authorization > MAX_PARAM_VALUE_LENGTH
+            or authorization:find('[%c]')) then
+        return nil, 'Invalid endpoint.authorization';
+    end
+    return { url = endpoint.url; authorization = authorization };
+end
+
+-- Presence property a participant's client sets while it has end-to-end encryption on.
+local E2EE_PRESENCE_PROPERTY = 'jitsi_participant_e2ee.enabled';
+
+-- Whether anyone in the room has end-to-end encryption on: the agent's media goes through the bridge, which cannot
+-- decrypt it.
+local function is_e2ee_enabled(room)
+    for _, occupant in room:each_occupant() do
+        local presence = occupant:get_presence();
+        if presence and presence:get_child_text(E2EE_PRESENCE_PROPERTY) == 'true' then
+            return true;
+        end
+    end
+    return false;
+end
+
+-- Audio encodings the media relay speaks on the agent leg.
+local DEFAULT_MEDIA_ENCODING = 'audio/l16';
+local MEDIA_ENCODINGS = { ['audio/l16'] = true; ['audio/opus'] = true };
+
+-- Validates the optional mediaFormat; returns { encoding } (the default when absent), or nil plus an error.
+local function validate_media_format(media_format)
+    if media_format == nil then
+        return { encoding = DEFAULT_MEDIA_ENCODING };
+    end
+    if type(media_format) ~= 'table' or not MEDIA_ENCODINGS[media_format.encoding] then
+        return nil, 'mediaFormat.encoding must be audio/l16 or audio/opus';
+    end
+    for key in pairs(media_format) do
+        if key ~= 'encoding' then
+            return nil, 'mediaFormat supports only encoding';
+        end
+    end
+    return { encoding = media_format.encoding };
+end
+
+-- Shallow equality for string maps; nil and {} compare equal.
+local function maps_equal(a, b)
+    a = a or {};
+    b = b or {};
+    for k, v in pairs(a) do
+        if b[k] ~= v then
+            return false;
+        end
+    end
+    for k in pairs(b) do
+        if a[k] == nil then
+            return false;
+        end
+    end
+    return true;
+end
+
+local MAX_CONFERENCE_LENGTH = 512;
+
+local function url_decode(s)
+    return (s:gsub('%%(%x%x)', function(hex) return string.char(tonumber(hex, 16)); end));
+end
+
+-- One segment of a room name as the client stores it (getBackendSafeRoomName): lower-cased, then percent-encoded
+-- like encodeURIComponent with lower-case hex. Decoding first lets the plain and the encoded spelling meet.
+local function backend_safe(segment)
+    return (url_decode(segment):lower():gsub("[^%w%-_%.!~%*'%(%)]", function(c)
+        return string.format('%%%02x', c:byte());
+    end));
+end
+
+-- A room by the name customers know it by: '<tenant>/<room>' or '<room>', plain or percent-encoded, any case.
+local function find_room_by_name(conference)
+    local tenant, name = conference:match('^([^/]+)/([^/]+)$');
+    if not tenant then
+        if conference:find('/', 1, true) then
+            return nil;
+        end
+        name = conference;
+    end
+    return get_room_by_name_and_subdomain(backend_safe(name), tenant and backend_safe(tenant));
+end
+
+-- A room by its JID: what jicofo and the media relay send, and the only way to name a breakout room. Conference and
+-- breakout rooms only; a lobby room never hosts an agent, and its public name would be the main room's.
+local function find_room_by_jid(conference)
+    local room_jid = room_jid_match_rewrite(conference);
+    local host = room_jid:match('@([^/]+)');
+    if host == nil or (host ~= muc_component_host and host ~= breakout_rooms_component_host) then
+        return nil;
+    end
+    return get_room_from_jid(room_jid);
+end
+
+-- Resolves the room from a request's conference: its public name or its JID.
+local function find_room(conference)
+    if type(conference) ~= 'string' or conference == '' or #conference > MAX_CONFERENCE_LENGTH then
+        return nil;
+    end
+    local room;
+    if conference:find('@', 1, true) then
+        room = find_room_by_jid(conference);
+    else
+        room = find_room_by_name(conference);
+    end
+    if room and is_healthcheck_room(room.jid) then
+        return nil;
+    end
+    return room;
+end
+
+local MAX_REASON_LENGTH = 200;
+
+-- A status reason as customers (agent.failed webhook) may see it: bounded, and with any internal address, such as a
+-- bridge JID inside a jicofo allocation error, masked.
+local function public_reason(reason)
+    return (reason:sub(1, MAX_REASON_LENGTH):gsub('[%c]', ' '):gsub('%S*@%S*', '<internal>'));
+end
+
+-- The name customers know a room by: '<tenant>/<room>', or '<room>' outside a tenant. Never the MUC JID.
+local function public_room_name(room)
+    local tenant, name = extract_subdomain(room.jid:match('^([^@]+)@') or room.jid);
+    return tenant and (tenant .. '/' .. name) or name;
+end
+
+-- Returns the client-facing entry and the jicofo-only entry for an agent, or nil when unknown.
+local function get_agent(room, agent_id)
+    local agents = room.jitsiMetadata and room.jitsiMetadata.agents;
+    if type(agent_id) ~= 'string' or not agents or agents[agent_id] == nil then
+        return nil;
+    end
+    local voice_agents = room._data.voice_agents or {};
+    return agents[agent_id], voice_agents[agent_id] or {};
+end
+
+local function agent_response(agent_id, entry)
+    return {
+        agentId = agent_id;
+        displayName = entry.displayName;
+        sourceName = entry.sourceName;
+        state = entry.state;
+    };
+end
+
+-- Fires the metadata rebroadcast after agent state changed.
+local function notify_metadata_changed(room)
+    if main_muc_module then
+        main_muc_module:fire_event('room-metadata-changed', { room = room; });
+    end
+end
+
+-- ── Webhooks ──────────────────────────────────────────────────────────────────
+
+local deliver_webhook;
+deliver_webhook = function(url, body, signature, attempt)
+    local headers = { ['Content-Type'] = JSON_CONTENT_TYPE };
+    if signature then
+        headers['X-Agent-Signature'] = signature;
+    end
+    local ok, err = pcall(http.request, url, { method = 'POST'; headers = headers; body = body; },
+        function(_, code)
+            if type(code) == 'number' and code >= 200 and code < 300 then
+                return;
+            end
+            if attempt < WEBHOOK_RETRIES then
+                module:add_timer(2 ^ attempt, function()
+                    deliver_webhook(url, body, signature, attempt + 1);
+                end);
+            else
+                module:log('warn', 'Webhook to %s failed after %d attempts (last status %s)',
+                    url, attempt, tostring(code));
+            end
+        end);
+    if not ok then
+        module:log('warn', 'Webhook request to %s errored: %s', url, tostring(err));
+    end
+end
+
+local function send_webhook(room, agent_id, entry, callback_url, event_name, extra)
+    if not callback_url then
+        return;
+    end
+    local payload = {
+        event = event_name;
+        agentId = agent_id;
+        conference = public_room_name(room);
+        sourceName = entry.sourceName;
+        state = entry.state;
+        timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ');
+    };
+    for k, v in pairs(extra or {}) do
+        payload[k] = v;
+    end
+    local body = json.encode(payload);
+    local signature;
+    if WEBHOOK_SECRET ~= '' then
+        signature = 'sha256=' .. hashes.hmac_sha256(WEBHOOK_SECRET, body, true);
+    end
+    deliver_webhook(callback_url, body, signature, 1);
+end
+
+-- Tears an agent down: terminal state, agent.ended webhook, removal from both maps.
+local function remove_agent(room, agent_id, reason)
+    local entry, jicofo_entry = get_agent(room, agent_id);
+    if not entry then
+        return false;
+    end
+    entry.state = STATE_ENDED;
+    send_webhook(room, agent_id, entry, jicofo_entry.callbackUrl, 'agent.ended', { reason = reason });
+    room.jitsiMetadata.agents[agent_id] = nil;
+    if room._data.voice_agents then
+        room._data.voice_agents[agent_id] = nil;
+    end
+    notify_metadata_changed(room);
+    return true;
+end
+
+-- ── Handlers ──────────────────────────────────────────────────────────────────
+
+local function handle_invite(event)
+    invite_count();
+    local request = event.request;
+
+    local auth_error = check_authorization(request);
+    if auth_error then
+        return auth_error;
+    end
+    local payload, parse_error = parse_json_request(request);
+    if not payload then
+        return parse_error;
+    end
+
+    local room = find_room(payload.conference);
+    if not room then
+        module:log('warn', 'No room found for %s', tostring(payload.conference));
+        return error_response(404, 'Room not found');
+    end
+
+    if not is_valid_display_name(payload.displayName) then
+        return error_response(400, 'Missing or invalid displayName');
+    end
+
+    -- Agent ids live in a reserved "agent-" namespace so they can NEVER equal a real participant's
+    -- endpoint id (8 hex chars) -- otherwise a caller could shadow a real participant's roster entry and
+    -- source. The prefix is enforced/normalized here (the authoritative id space), which makes the
+    -- collision impossible by construction rather than via a racy occupant check. The suffix after the
+    -- prefix is validated to a safe charset and to exclude prototype-pollution keys (defense in depth for
+    -- the client, which keys plain objects by agent id).
+    local agent_id;
+    local requested = payload.agentId;
+    if requested ~= nil then
+        if type(requested) ~= 'string' then
+            return error_response(400, 'Invalid agentId');
+        end
+        -- Accept with or without the reserved prefix; normalize to exactly one.
+        local suffix = starts_with(requested, AGENT_ID_PREFIX)
+            and requested:sub(#AGENT_ID_PREFIX + 1) or requested;
+        if not suffix:match('^[%w_-]+$') or #suffix > 48
+                or suffix == '__proto__' or suffix == 'constructor' or suffix == 'prototype' then
+            return error_response(400, 'Invalid agentId');
+        end
+        agent_id = AGENT_ID_PREFIX .. suffix;
+    else
+        agent_id = AGENT_ID_PREFIX .. hashes.sha256(random.bytes(8), true):sub(1, 8);
+    end
+
+    local endpoint, endpoint_error = validate_endpoint(payload.endpoint);
+    if endpoint_error then
+        return error_response(400, endpoint_error);
+    end
+    local custom_params, custom_error = validate_string_map(payload.customParameters, 'customParameters');
+    if custom_error then
+        return error_response(400, custom_error);
+    end
+    local callback_url, callback_error = validate_callback_url(payload.callbackUrl);
+    if callback_error then
+        return error_response(400, callback_error);
+    end
+    local media_format, media_format_error = validate_media_format(payload.mediaFormat);
+    if media_format_error then
+        return error_response(400, media_format_error);
+    end
+    if is_e2ee_enabled(room) then
+        return error_response(409, 'End-to-end encryption is on in this meeting');
+    end
+
+    room.jitsiMetadata = room.jitsiMetadata or {};
+    local agents = room.jitsiMetadata.agents or {};
+    local voice_agents = room._data.voice_agents or {};
+    local source_name = agent_id .. '-a0';
+
+    local existing = agents[agent_id];
+    if existing and existing.state == STATE_FAILED then
+        -- A failed allocation is terminal for jicofo: re-inviting replaces the record, and the removal
+        -- broadcast clears jicofo's failure before the fresh entry is announced.
+        module:log('info', 'Replacing failed voice agent %s in room %s', agent_id, room.jid);
+        agents[agent_id] = nil;
+        voice_agents[agent_id] = nil;
+        notify_metadata_changed(room);
+        existing = nil;
+    end
+    -- Idempotent on agentId: an identical re-invite returns the existing agent; a different one conflicts.
+    if existing then
+        local jicofo_entry = voice_agents[agent_id] or {};
+        if existing.displayName == payload.displayName
+                and maps_equal(jicofo_entry.endpoint, endpoint)
+                and maps_equal(jicofo_entry.customParameters, custom_params)
+                and (jicofo_entry.mediaFormat or { encoding = DEFAULT_MEDIA_ENCODING }).encoding == media_format.encoding
+                and jicofo_entry.callbackUrl == callback_url then
+            return { status_code = 200, body = json.encode({ agentId = agent_id, sourceName = source_name }) };
+        end
+        return error_response(409, 'agentId already exists with different parameters');
+    end
+
+    local count = 0;
+    for _ in pairs(agents) do
+        count = count + 1;
+    end
+    if count >= MAX_AGENTS_PER_ROOM then
+        return error_response(409, 'Too many agents in the room');
+    end
+
+    -- Client-facing entry (broadcast to every occupant).
+    agents[agent_id] = {
+        kind = 'agent';
+        displayName = payload.displayName;
+        sourceName = source_name;
+        state = STATE_PROVISIONING;
+    };
+    -- Dial config, fetched by the media relay by id; never broadcast.
+    voice_agents[agent_id] = {
+        endpoint = endpoint;
+        customParameters = custom_params;
+        callbackUrl = callback_url;
+        mediaFormat = media_format;
+    };
+
+    room.jitsiMetadata.agents = agents;
+    room._data.voice_agents = voice_agents;
+
+    module:log('info', 'Voice agent %s invited to room %s,meeting_id:%s',
+        agent_id, room.jid, room._data.meetingId);
+    notify_metadata_changed(room);
+    invite_success_count();
+
+    return { status_code = 200, body = json.encode({ agentId = agent_id, sourceName = source_name }) };
+end
+
+local function handle_dismiss(event)
+    dismiss_count();
+    local request = event.request;
+
+    local auth_error = check_authorization(request);
+    if auth_error then
+        return auth_error;
+    end
+    local payload, parse_error = parse_json_request(request);
+    if not payload then
+        return parse_error;
+    end
+
+    local room = find_room(payload.conference);
+    if not room then
+        return error_response(404, 'Room not found');
+    end
+
+    if not remove_agent(room, payload.agentId, 'dismissed') then
+        return error_response(404, 'Agent not found');
+    end
+
+    module:log('info', 'Voice agent %s dismissed from room %s,meeting_id:%s',
+        payload.agentId, room.jid, room._data.meetingId);
+
+    return { status_code = 200, body = json.encode({ agentId = payload.agentId }) };
+end
+
+local function query_params(request)
+    local query = request.url and request.url.query;
+    return query and http_util.formdecode(query) or {};
+end
+
+local function handle_list(event)
+    local request = event.request;
+
+    local auth_error = check_authorization(request);
+    if auth_error then
+        return auth_error;
+    end
+
+    local room = find_room(query_params(request).conference);
+    if not room then
+        return error_response(404, 'Room not found');
+    end
+
+    local agents = (room.jitsiMetadata and room.jitsiMetadata.agents) or {};
+    return { status_code = 200, body = json.encode({ agents = agents }) };
+end
+
+local function handle_get(event)
+    local request = event.request;
+
+    local auth_error = check_authorization(request);
+    if auth_error then
+        return auth_error;
+    end
+
+    local params = query_params(request);
+    local room = find_room(params.conference);
+    if not room then
+        return error_response(404, 'Room not found');
+    end
+    local entry = get_agent(room, params.agentId);
+    if not entry then
+        return error_response(404, 'Agent not found');
+    end
+    return { status_code = 200, body = json.encode(agent_response(params.agentId, entry)) };
+end
+
+-- Internal lifecycle reporting for jicofo/JVB; drives the client-facing state and the webhooks.
+local function handle_status(event)
+    local request = event.request;
+
+    local auth_error = check_status_authorization(request);
+    if auth_error then
+        return auth_error;
+    end
+    local payload, parse_error = parse_json_request(request);
+    if not payload then
+        return parse_error;
+    end
+
+    local room = find_room(payload.conference);
+    if not room then
+        return error_response(404, 'Room not found');
+    end
+    if not STATUS_TRANSITIONS[payload.state] then
+        return error_response(400, 'Invalid state');
+    end
+    local reason = type(payload.reason) == 'string' and public_reason(payload.reason) or nil;
+
+    local entry, jicofo_entry = get_agent(room, payload.agentId);
+    if not entry then
+        -- Also a repeated 'ended': the agent is gone, which reporters take as done.
+        return error_response(404, 'Agent not found');
+    end
+    if STATE_RANK[payload.state] <= (STATE_RANK[entry.state] or 0) then
+        module:log('debug', 'Ignoring stale status %s for agent %s in state %s',
+            payload.state, payload.agentId, entry.state);
+        return { status_code = 200, body = json.encode(agent_response(payload.agentId, entry)) };
+    end
+    if payload.state == STATE_ENDED then
+        remove_agent(room, payload.agentId, reason or 'ended');
+        return { status_code = 200, body = json.encode({ agentId = payload.agentId }) };
+    end
+    entry.state = payload.state;
+    if payload.state == STATE_ACTIVE then
+        send_webhook(room, payload.agentId, entry, jicofo_entry.callbackUrl, 'agent.connected');
+    elseif payload.state == STATE_FAILED then
+        send_webhook(room, payload.agentId, entry, jicofo_entry.callbackUrl, 'agent.failed', { reason = reason });
+    end
+    notify_metadata_changed(room);
+    return { status_code = 200, body = json.encode(agent_response(payload.agentId, entry)) };
+end
+
+-- Internal: the media relay fetches the dial config by id when the bridge connects, so the customer
+-- endpoint and its secret leave prosody only for the dial itself.
+local function handle_dial(event)
+    local request = event.request;
+
+    local auth_error = check_status_authorization(request);
+    if auth_error then
+        return auth_error;
+    end
+
+    local params = query_params(request);
+    local room = find_room(params.conference);
+    if not room then
+        return error_response(404, 'Room not found');
+    end
+    local entry, jicofo_entry = get_agent(room, params.agentId);
+    if not entry or not jicofo_entry.endpoint then
+        return error_response(404, 'Agent not found');
+    end
+    return { status_code = 200, body = json.encode({
+        agentId = params.agentId;
+        conference = public_room_name(room);
+        endpoint = jicofo_entry.endpoint;
+        customParameters = jicofo_entry.customParameters;
+        mediaFormat = jicofo_entry.mediaFormat;
+    }) };
+end
+
+module:log('info', 'Adding http handlers for /voice-agent on %s', module.host);
+module:depends('http');
+module:provides('http', {
+    default_path = '/';
+    route = {
+        ['POST voice-agent/invite'] = function(event)
+            return async_handler_wrapper(event, handle_invite);
+        end;
+        ['POST voice-agent/dismiss'] = function(event)
+            return async_handler_wrapper(event, handle_dismiss);
+        end;
+        ['GET voice-agent/list'] = function(event)
+            return async_handler_wrapper(event, handle_list);
+        end;
+        ['GET voice-agent/get'] = function(event)
+            return async_handler_wrapper(event, handle_get);
+        end;
+        ['POST voice-agent/status'] = function(event)
+            return async_handler_wrapper(event, handle_status);
+        end;
+        ['GET voice-agent/dial'] = function(event)
+            return async_handler_wrapper(event, handle_dial);
+        end;
+    };
+});
+
+process_host_module(muc_component_host, function(host_module)
+    -- The conference ending takes every agent with it; make that observable to the customer.
+    host_module:hook('muc-room-destroyed', function(event)
+        local room = event.room;
+        local agents = room.jitsiMetadata and room.jitsiMetadata.agents;
+        if not agents then
+            return;
+        end
+        local voice_agents = room._data.voice_agents or {};
+        for agent_id, entry in pairs(agents) do
+            -- The module may be loaded on several hosts (e.g. via global modules_enabled), each hooking
+            -- the same room: the first run marks the agent ended so later runs stay silent. A failed agent
+            -- already had its terminal webhook.
+            if entry.state ~= STATE_ENDED and entry.state ~= STATE_FAILED then
+                entry.state = STATE_ENDED;
+                send_webhook(room, agent_id, entry, (voice_agents[agent_id] or {}).callbackUrl,
+                    'agent.ended', { reason = 'room-destroyed' });
+            end
+        end
+    end);
+end);

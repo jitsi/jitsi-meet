@@ -391,6 +391,7 @@
         "displayNameRequired": "Hi! What's your name?",
         "done": "Done",
         "e2eeDescription": "End-to-End Encryption is currently EXPERIMENTAL. Please keep in mind that turning on end-to-end encryption will effectively disable server-side provided services such as: phone participation. Also keep in mind that the meeting will only work for people joining from browsers with support for insertable streams.",
+        "e2eeDisabledDueToAgentDescription": "End-to-End Encryption can't be turned on while an AI agent is in the meeting.",
         "e2eeDisabledDueToMaxModeDescription": "Cannot enable End-to-End Encryption due to large number of participants in the conference.",
         "e2eeDisabledDueToTranscriptionDescription": "End-to-End Encryption can't be turned on while the meeting is being transcribed.",
         "e2eeDisabledDueToTranslationDescription": "End-to-End Encryption can't be turned on while live translation is in use.",
@@ -1846,6 +1847,20 @@
         "terms": "Terms",
         "title": "Secure, fully featured, and completely free video conferencing",
         "upcomingMeetings": "Your upcoming meetings"
+    },
+    "voiceAgents": {
+        "allow": "Allow",
+        "consentDescription": "The agent only hears participants who allow it. If you allow, it will hear you and you will hear its replies.",
+        "consentDescriptionMuted": "The agent only hears participants who allow it. If you allow, it will hear you and you will hear its replies. You are muted until you decide.",
+        "consentTitle": "{{name}} joined as an AI agent",
+        "e2eeUnsupportedDescription": "AI agents cannot take part in end-to-end encrypted meetings. Turn off end-to-end encryption to let the agent hear and be heard.",
+        "e2eeUnsupportedTitle": "{{name}} is unavailable",
+        "labelTooltip": "AI agent in the meeting: {{names}}",
+        "labelTooltipAllow": "AI agent in the meeting: {{names}}. Click to let it hear you.",
+        "labelTooltipE2EE": "AI agent in the meeting: {{names}}. Unavailable while the meeting is end-to-end encrypted.",
+        "nativeTitle": "AI agent in the meeting",
+        "notNow": "Not now",
+        "thumbnailTooltip": "AI agent"
     },
     "whiteboard": {
         "accessibilityLabel": {
