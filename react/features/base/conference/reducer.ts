@@ -189,6 +189,7 @@ export interface IJitsiConference {
     sendTones: Function;
     sessionId: string;
     setAssumedBandwidthBps: (value: number) => void;
+    setAudioSubscriptionMode: Function;
     setDesktopSharingFrameRate: Function;
     setDisplayName: Function;
     setIsSilent: Function;
