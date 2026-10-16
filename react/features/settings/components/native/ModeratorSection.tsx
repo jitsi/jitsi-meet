@@ -28,6 +28,7 @@ const ModeratorSection = () => {
         followMeEnabled,
         followMeRecorderActive,
         followMeRecorderEnabled,
+        hideChatWithPermissions,
         startAudioMuted,
         startVideoMuted,
         startReactionsMuted,
@@ -177,6 +178,11 @@ const ModeratorSection = () => {
                 return showBreakoutRoomJoinWithPermissions;
             }
 
+            // Hide them as on web, e.g. when showChatPermissionsModeratorSetting is not enabled.
+            if (label === 'settings.chatWithPermissions' || label === 'settings.privateChatWithPermissions') {
+                return !hideChatWithPermissions;
+            }
+
             return true;
         });
     }, [ startAudioMuted,
@@ -184,6 +190,7 @@ const ModeratorSection = () => {
         followMeEnabled,
         followMeRecorderEnabled,
         disableReactionsModeration,
+        hideChatWithPermissions,
         onStartAudioMutedToggled,
         onStartVideoMutedToggled,
         onFollowMeToggled,
