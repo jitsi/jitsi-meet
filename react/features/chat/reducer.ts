@@ -316,8 +316,12 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
     }
 
     case RETRACT_MESSAGE: {
+        let retracted = false;
+
         const messages = state.messages.map(message => {
             if (message.messageId === action.messageId && message.participantId === action.retractedBy) {
+                retracted = true;
+
                 return {
                     ...message,
                     message: '',
@@ -328,6 +332,10 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
             return message;
         });
+
+        if (!retracted) {
+            return state;
+        }
 
         return {
             ...state,
