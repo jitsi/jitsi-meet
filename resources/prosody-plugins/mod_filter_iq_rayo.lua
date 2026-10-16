@@ -2,8 +2,9 @@
 -- on the main VirtualHost. Allows a stanza through only when the sender's JWT token
 -- grants the required feature ('outbound-call' or 'transcription'), or, absent token
 -- features, when the sender holds owner affiliation in the room. Blocked stanzas
--- receive an auth/forbidden error reply. Optionally rate-limits outgoing calls per
--- session when max_number_outgoing_calls is configured.
+-- receive an auth/forbidden error reply. When max_number_outgoing_calls is
+-- configured, it also limits the dials (outbound calls and transcriptions) that a
+-- session sends per minute, and the concurrent Jigasi sessions of a user.
 -- This module is enabled under the main virtual host.
 local new_throttle = require "util.throttle".create;
 local st = require "util.stanza";
@@ -53,8 +54,9 @@ if token_util == nil then
     return;
 end
 
--- The maximum number of simultaneous calls,
--- and also the maximum number of new calls per minute that a session is allowed to create.
+-- The maximum number of simultaneous Jigasi sessions (outbound calls and transcriptions)
+-- of a user, and also the maximum number of new dials per minute that a session is allowed
+-- to send.
 local limit_outgoing_calls;
 local function load_config()
     limit_outgoing_calls = module:get_option_number("max_number_outgoing_calls", -1);
@@ -150,8 +152,10 @@ module:hook("pre-iq/full", function(event)
                 group_id = session.granted_jitsi_meet_context_group_id;
             end
 
-            -- now lets check any limits for outgoing calls if configured
-            if feature == 'outbound-call' and limit_outgoing_calls > 0 then
+            -- now lets check any limits for dials if configured. This applies to both
+            -- outbound calls and transcriptions: each one starts a Jigasi session, and
+            -- get_concurrent_outgoing_count counts both through the initiator headers.
+            if limit_outgoing_calls > 0 then
                 if not session.dial_out_throttle then
                     -- module:log("debug", "Enabling dial-out throttle session=%s.", session);
                     session.dial_out_throttle = new_throttle(limit_outgoing_calls, OUTGOING_CALLS_THROTTLE_INTERVAL);
@@ -161,7 +165,7 @@ module:hook("pre-iq/full", function(event)
                     or get_concurrent_outgoing_count(user_id, group_id) >= limit_outgoing_calls
                 then
                     module:log("warn",
-                        "Filtering stanza dial, stanza:%s, outgoing calls limit reached", tostring(stanza));
+                        "Filtering stanza dial, stanza:%s, %s limit reached", tostring(stanza), feature);
                     measure_drop(1);
                     session.send(st.error_reply(stanza, "cancel", "resource-constraint"));
                     return true;

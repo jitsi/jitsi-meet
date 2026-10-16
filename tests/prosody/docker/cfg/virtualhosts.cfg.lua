@@ -78,6 +78,11 @@ VirtualHost "localhost"
     lobby_muc = "lobby.conference.localhost"
     breakout_rooms_muc = "breakout.conference.localhost"
 
+    -- mod_filter_iq_rayo: per-session rate (per minute) and per-user
+    -- concurrency limit for Rayo dials. Kept low so the limit can be hit
+    -- in tests with a few dials.
+    max_number_outgoing_calls = 2
+
     -- Clients on whitelist.localhost bypass the lobby.
     muc_lobby_whitelist = { "whitelist.localhost" }
 
