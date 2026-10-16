@@ -752,16 +752,12 @@ function _onReactionReceived(store: IStore, { participantId, reactionList, messa
  * @returns {void}
  */
 function _onMessageModerated(store: IStore, messageId: string, reason?: string) {
-    const { messages } = store.getState()['features/chat'];
-
-    const originalMessage = messages.find(
-        message => message.messageId === messageId
-    );
-
-    if (!originalMessage) {
+    if (typeof messageId !== 'string' || !messageId) {
         return;
     }
 
+    // The message may not have arrived yet, in which case the reducer keeps the moderation
+    // and applies it once the message arrives.
     store.dispatch(moderateMessage(messageId, reason));
 }
 

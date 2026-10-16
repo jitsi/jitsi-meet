@@ -28,8 +28,8 @@ import {
     SET_USER_CHAT_WIDTH
 } from './actionTypes';
 import { CHAT_SIZE, ChatTabs } from './constants';
-import { addPendingEdit } from './functions';
-import { IMessage, IPendingEditsMap } from './types';
+import { addPendingEntry } from './functions';
+import { IMessage, IPendingEditsMap, IPendingModerationsMap } from './types';
 
 const DEFAULT_STATE = {
     groupChatWithPermissions: false,
@@ -39,6 +39,7 @@ const DEFAULT_STATE = {
     messages: [],
     notifyPrivateRecipientsChangedTimestamp: undefined,
     pendingEdits: {},
+    pendingModerations: {},
     reactions: {},
     unreadMessagesCount: 0,
     unreadFilesCount: 0,
@@ -70,6 +71,7 @@ export interface IChatState {
     messages: IMessage[];
     notifyPrivateRecipientsChangedTimestamp?: number;
     pendingEdits: IPendingEditsMap;
+    pendingModerations: IPendingModerationsMap;
     privateChatWithPermissions: boolean;
     privateMessageRecipient?: IParticipant | IVisitorChatParticipant;
     searchMatchIndex: number;
@@ -109,6 +111,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         };
 
         const pendingEdit = action.messageId ? state.pendingEdits[action.messageId] : undefined;
+        const pendingModeration = action.messageId ? state.pendingModerations[action.messageId] : undefined;
 
         // only apply a cached pending edit if its claimed author matches
         // the author of the message that actually arrived. Prevents a forged/mismatched
@@ -116,7 +119,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         // someone else's message once it shows up.
         const pendingEditValid = pendingEdit?.participantId === action.participantId;
 
-        const finalMessage = pendingEdit && pendingEditValid
+        let finalMessage = pendingEdit && pendingEditValid
             ? {
                 ...newMessage,
                 message: pendingEdit.message,
@@ -124,6 +127,17 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
                 editedAt: pendingEdit.editedAt
             }
             : newMessage;
+
+        // The message was moderated before it arrived (e.g. a moderator brought a late joiner up to
+        // date before the room history was received), so it arrives already removed.
+        if (pendingModeration) {
+            finalMessage = {
+                ...finalMessage,
+                message: '',
+                isModerated: true,
+                moderationReason: pendingModeration.reason
+            };
+        }
 
         // React native, unlike web, needs a reverse sorted message list.
         const messages = navigator.product === 'ReactNative'
@@ -142,13 +156,20 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             delete pendingEdits[action.messageId];
         }
 
+        const pendingModerations = { ...state.pendingModerations };
+
+        if (pendingModeration && action.messageId) {
+            delete pendingModerations[action.messageId];
+        }
+
         return {
             ...state,
             lastReadMessage:
                 action.hasRead ? finalMessage : state.lastReadMessage,
             unreadMessagesCount: state.focusedTab !== ChatTabs.CHAT ? state.unreadMessagesCount + 1 : state.unreadMessagesCount,
             messages,
-            pendingEdits
+            pendingEdits,
+            pendingModerations
         };
     }
 
@@ -236,7 +257,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         if (!messageExists) {
             return {
                 ...state,
-                pendingEdits: addPendingEdit(state.pendingEdits, newMessage.messageId, {
+                pendingEdits: addPendingEntry(state.pendingEdits, newMessage.messageId, {
                     message: newMessage.message,
                     editedAt: newMessage.editedAt,
                     participantId: newMessage.participantId
@@ -256,8 +277,12 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
     }
 
     case MODERATE_MESSAGE: {
+        let messageExists = false;
+
         const messages = state.messages.map(message => {
             if (message.messageId === action.messageId) {
+                messageExists = true;
+
                 // Clear the text, like RETRACT_MESSAGE does, so the removed content
                 // does not stay in the state while the UI shows a placeholder.
                 return {
@@ -270,6 +295,16 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
             return message;
         });
+
+        // Message hasn't arrived yet, cache the moderation so it is applied once it does.
+        if (!messageExists) {
+            return {
+                ...state,
+                pendingModerations: addPendingEntry(state.pendingModerations, action.messageId, {
+                    reason: action.reason
+                })
+            };
+        }
 
         return {
             ...state,

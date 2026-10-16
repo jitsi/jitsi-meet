@@ -127,8 +127,25 @@ export interface IPendingEdit {
 }
 
 /**
+ * The shape of a single cached pending moderation, keyed by messageId in Redux state.
+ */
+export interface IPendingModeration {
+    reason?: string;
+}
+
+/**
+ * The shape of a map of entries cached for messages that have not arrived yet.
+ */
+export interface IPendingMap<T> {
+    [messageId: string]: T;
+}
+
+/**
  * The shape of the pendingEdits map in Redux state.
  */
-export interface IPendingEditsMap {
-    [messageId: string]: IPendingEdit;
-}
+export type IPendingEditsMap = IPendingMap<IPendingEdit>;
+
+/**
+ * The shape of the pendingModerations map in Redux state.
+ */
+export type IPendingModerationsMap = IPendingMap<IPendingModeration>;
