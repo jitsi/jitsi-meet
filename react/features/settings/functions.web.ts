@@ -1,4 +1,8 @@
+import { merge } from 'lodash-es';
+
+import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
+import { IConfig } from '../base/config/configType';
 import { browser } from '../base/lib-jitsi-meet';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import { isLocalParticipantModerator } from '../base/participants/functions';
@@ -11,6 +15,9 @@ import {
 } from '../keyboard-shortcuts/functions';
 import { getParticipantsPaneConfig } from '../participants-pane/functions';
 import { isPrejoinPageVisible } from '../prejoin/functions';
+
+import { CONFIG_OPTIONS } from './configOptions';
+import { ConfigOption, IConfigOptionValues } from './types';
 
 export * from './functions.any';
 
@@ -122,6 +129,106 @@ export function getVirtualBackgroundTabProps(stateful: IStateful, isDisplayedOnW
     return {
         options: state['features/virtual-background'],
         selectedVideoInputId
+    };
+}
+
+/**
+ * Returns the ids of the config options the deployment does not let users decide, read from the given config. Such
+ * an option is neither displayed nor is a value the user chose for it earlier applied, so the deployment's value
+ * stands.
+ *
+ * @param {IConfig} config - The config to read the list from.
+ * @returns {string[]} - The ids of the disabled config options.
+ */
+export function getDisabledExperimentalTabOptionIds(config: IConfig): string[] {
+    return config.settingsDialog?.disabledExperimentalTabOptions ?? [];
+}
+
+/**
+ * Returns the config options to display: those the deployment lets users decide and that apply to the current
+ * environment.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {ConfigOption[]} - The config options to display.
+ */
+export function getAvailableConfigOptions(stateful: IStateful): ConfigOption[] {
+    const state = toState(stateful);
+    const disabledIds = getDisabledExperimentalTabOptionIds(state['features/base/config']);
+
+    return CONFIG_OPTIONS.filter(option => !disabledIds.includes(option.id) && option.isAvailable(state));
+}
+
+/**
+ * Returns the config values the user has chosen as a partial config, ready to be merged into the config. A value is
+ * applied whether or not its option applies to the current environment, since a feature that cannot work here
+ * ignores its flag anyway; only options the deployment disabled are left out.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {string[]} disabledIds - The ids of the options the deployment disabled. Defaults to the list of the current
+ * config; the settings middleware passes the list of the config about to be set instead.
+ * @returns {IConfig} - The config values chosen by the user.
+ */
+export function getUserSelectedConfig(
+        state: IReduxState,
+        disabledIds: string[] = getDisabledExperimentalTabOptionIds(state['features/base/config'])): IConfig {
+    const { userSelectedConfig = {} } = state['features/base/settings'];
+    const config: IConfig = {};
+
+    for (const option of CONFIG_OPTIONS.filter(({ id }) => !disabledIds.includes(id))) {
+        const configPart = _toConfigPart(option, userSelectedConfig[option.id]);
+
+        // Merged deeply because several options may live in the same config section (e.g. pip).
+        if (configPart) {
+            merge(config, configPart);
+        }
+    }
+
+    return config;
+}
+
+/**
+ * Returns the partial config that applies a value persisted for a config option, or undefined if the value does not
+ * suit the option. The value comes from the browser's local storage, where an older version of the option or a hand
+ * edit may have left anything, so every kind of option checks it before applying it.
+ *
+ * @param {ConfigOption} option - The config option.
+ * @param {unknown} value - The value persisted for the option.
+ * @private
+ * @returns {IConfig|undefined} - The partial config that applies the value.
+ */
+function _toConfigPart(option: ConfigOption, value: unknown): IConfig | undefined {
+    // Only on/off options exist for now. The switch is deliberate: a new kind of value adds its own case here, which
+    // checks the persisted value and lets TypeScript know which type of value that kind's toConfig() takes.
+    switch (option.type) {
+    case 'boolean':
+        return typeof value === 'boolean' ? option.toConfig(value) : undefined;
+    }
+}
+
+/**
+ * Returns the properties for the "Experimental" tab from settings dialog from Redux
+ * state.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Object} - The properties for the "Experimental" tab from settings dialog.
+ */
+export function getExperimentalTabProps(stateful: IStateful) {
+    const state = toState(stateful);
+    const config = state['features/base/config'];
+    const options = getAvailableConfigOptions(state);
+    const values: IConfigOptionValues = {};
+
+    // The config state already includes the user's choices (see the settings middleware), so reading it yields the
+    // effective value of every option.
+    for (const option of options) {
+        values[option.id] = option.getValue(config);
+    }
+
+    return {
+        options,
+        values
     };
 }
 

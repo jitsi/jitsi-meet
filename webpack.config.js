@@ -390,7 +390,7 @@ module.exports = (_env, argv) => {
                 })
             ],
 
-            performance: getPerformanceHints(perfHintOptions, 3.5 * 1024 * 1024) },
+            performance: getPerformanceHints(perfHintOptions, 3.6 * 1024 * 1024) },
         { ...config,
             entry: {
                 'alwaysontop': './react/features/always-on-top/index.tsx'

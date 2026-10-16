@@ -1,10 +1,11 @@
-import { IReduxState } from '../app/types';
+import { IReduxState, IStore } from '../app/types';
 import { browser } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media/constants';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { isLocalTrackMuted } from '../base/tracks/functions.any';
 import { getElectronGlobalNS } from '../base/util/helpers';
 
+import { hidePiP } from './actions';
 import { requestPictureInPicture, shouldShowPiP, updateMediaSessionState } from './functions';
 import logger from './logger';
 
@@ -63,5 +64,19 @@ if (browser.isElectron()) {
             }
         }
     );
+} else {
+    // Closes Picture-in-Picture as soon as it is no longer allowed, e.g. when the user turns browser PiP off in the
+    // settings dialog while the PiP window is open, or when a config change disables it. Entering PiP is already
+    // refused in that case; this takes care of a PiP that is open at that moment. Electron is left out: it has its
+    // own always-on PiP flow, which the settings do not control.
+    StateListenerRegistry.register(
+        /* selector */ shouldShowPiP,
+        /* listener */ (_shouldShowPiP: boolean, store: IStore) => {
+            if (!_shouldShowPiP) {
+                // hidePiP() exits only if PiP is open or a host window is being opened, so dispatching it whenever
+                // the selector turns false, including at startup, is harmless.
+                store.dispatch(hidePiP());
+            }
+        }
+    );
 }
-
