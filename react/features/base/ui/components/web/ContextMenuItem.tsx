@@ -44,6 +44,11 @@ export interface IProps {
     customIcon?: ReactNode;
 
     /**
+     * Extra description for assistive technology, such as why the item is disabled.
+     */
+    description?: string;
+
+    /**
      * Whether or not the action is disabled.
      */
     disabled?: boolean;
@@ -190,6 +195,7 @@ const ContextMenuItem = ({
     className,
     controls,
     customIcon,
+    description,
     disabled,
     id,
     icon,
@@ -230,6 +236,7 @@ const ContextMenuItem = ({
     return (
         <div
             aria-controls = { controls }
+            aria-description = { description }
             aria-disabled = { disabled }
             aria-label = { accessibilityLabel || undefined }
             aria-selected = { role === 'tab' ? selected : undefined }

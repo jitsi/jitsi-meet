@@ -81,6 +81,7 @@ import {
 import { appendSuffix } from '../../react/features/display-name/functions';
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox/functions';
 import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/actions';
+import { getE2EEBlockingService } from '../../react/features/e2ee/functions';
 import {
     addStageParticipant,
     resizeFilmStrip,
@@ -627,6 +628,13 @@ function initCommands() {
             APP.store.dispatch(overwriteParticipantsNames(participantList));
         },
         'toggle-e2ee': enabled => {
+            const blockingService = enabled && getE2EEBlockingService(APP.store.getState());
+
+            if (blockingService) {
+                logger.warn(`Not turning on end-to-end encryption while ${blockingService} is in use`);
+
+                return;
+            }
             APP.store.dispatch(toggleE2EE(enabled));
         },
         'set-media-encryption-key': keyInfo => {
