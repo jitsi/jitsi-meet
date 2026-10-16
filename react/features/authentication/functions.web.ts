@@ -75,7 +75,7 @@ export const getTokenAuthUrl = (
         return Promise.resolve(undefined);
     }
 
-    if (url.indexOf('{state}')) {
+    if (url.includes('{state}')) {
         const state = _getTokenAuthState(
             locationURL,
             {
@@ -99,7 +99,7 @@ export const getTokenAuthUrl = (
 
     url = url.replace('{room}', roomName);
 
-    if (url.indexOf('{code_challenge}')) {
+    if (url.includes('{code_challenge}')) {
         let codeVerifier = '';
 
         // random string
