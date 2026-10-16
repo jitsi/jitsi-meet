@@ -506,7 +506,7 @@ const ChatMessage = ({
                     <div className = { classes.replyWrapper }>
                         <div className = { cx('messagecontent', classes.messageContent) }>
                             {showDisplayName && _renderDisplayName()}
-                            <div className = { cx('usermessage', classes.userMessage, message.isDeleted && message.isModerated && classes.deletedMessage) }>
+                            <div className = { cx('usermessage', classes.userMessage, (message.isDeleted || message.isModerated) && classes.deletedMessage) }>
                                 {!message.isModerated && isFileMessage(message) ? (
                                     <FileMessage
                                         message = { message }
