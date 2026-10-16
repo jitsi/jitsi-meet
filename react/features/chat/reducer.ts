@@ -110,8 +110,14 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             timestamp: action.timestamp
         };
 
-        const pendingEdit = action.messageId ? state.pendingEdits[action.messageId] : undefined;
-        const pendingModeration = action.messageId ? state.pendingModerations[action.messageId] : undefined;
+        // The message id is chosen by the sender, so only look up entries the maps hold themselves:
+        // an id such as '__proto__' must not resolve to an inherited value.
+        const pendingEdit = action.messageId
+            && Object.prototype.hasOwnProperty.call(state.pendingEdits, action.messageId)
+            ? state.pendingEdits[action.messageId] : undefined;
+        const pendingModeration = action.messageId
+            && Object.prototype.hasOwnProperty.call(state.pendingModerations, action.messageId)
+            ? state.pendingModerations[action.messageId] : undefined;
 
         // only apply a cached pending edit if its claimed author matches
         // the author of the message that actually arrived. Prevents a forged/mismatched
