@@ -761,6 +761,33 @@ describe('mod_voice_agent_component', function()
             assert.are.equal('failed', mock_room.jitsiMetadata.agents['agent-support'].state);
             assert.are.equal(1, #webhook_payloads('agent.failed'));
         end)
+
+        it('ignores ended after failed, keeping the failed record and its single terminal webhook', function()
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'failed'; reason = 'dial refused' });
+            assert.are.equal(200, status({ conference = 'r'; agentId = 'agent-support'; state = 'ended' }).status_code);
+            assert.are.equal('failed', mock_room.jitsiMetadata.agents['agent-support'].state);
+            assert.are.equal(1, #webhook_payloads('agent.failed'));
+            assert.are.equal(0, #webhook_payloads('agent.ended'));
+        end)
+
+        it('answers a repeated ended with 404, sending agent.ended once', function()
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
+            assert.are.equal(200, status({ conference = 'r'; agentId = 'agent-support'; state = 'ended' }).status_code);
+            assert.are.equal(404, status({ conference = 'r'; agentId = 'agent-support'; state = 'ended' }).status_code);
+            assert.are.equal(1, #webhook_payloads('agent.ended'));
+        end)
+
+        it('sends no agent.ended for a failed agent when the room is destroyed', function()
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'failed'; reason = 'dial refused' });
+            host_hooks['muc-room-destroyed']({ room = mock_room });
+            assert.are.equal(0, #webhook_payloads('agent.ended'));
+        end)
+
+        it('still sends agent.ended when a failed agent is dismissed', function()
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'failed'; reason = 'dial refused' });
+            assert.are.equal(200, dismiss({ conference = 'r'; agentId = 'agent-support' }).status_code);
+            assert.are.equal(1, #webhook_payloads('agent.ended'));
+        end)
     end)
 
     describe('re-invite after failure', function()

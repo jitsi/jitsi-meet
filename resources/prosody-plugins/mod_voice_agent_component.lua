@@ -43,7 +43,8 @@
 --   GET  /voice-agent/get?conference=<room>&agentId=<id> → 200 <agent> | 404
 --   POST /voice-agent/status   { conference, agentId, state, reason? }
 --     internal: jicofo/JVB advance the lifecycle (connecting|active|failed|ended);
---     active → agent.connected, failed → agent.failed, ended → teardown + agent.ended
+--     active → agent.connected, failed → agent.failed, ended → teardown + agent.ended;
+--     forward-only, so nothing follows failed; 404 once the agent is gone
 --     auth: ASAP, or the voice_agent_status_secret shared secret (jicofo cannot mint ASAP)
 --   GET  /voice-agent/dial?conference=<jid>&agentId=<id>
 --     internal: the media relay fetches { agentId, conference, endpoint, customParameters, mediaFormat } when dialing;
@@ -103,6 +104,7 @@ local STATE_FAILED = 'failed';
 local STATE_ENDED = 'ended';
 -- Forward-only lifecycle: a report only ever moves the state forward, so a duplicate or a stale retry
 -- (a delayed 'connecting' landing after 'active') is acknowledged and ignored and each webhook fires once.
+-- 'failed' and 'ended' rank alike, so an agent gets one terminal webhook from status reports.
 local STATE_RANK = {
     [STATE_PROVISIONING] = 0; [STATE_CONNECTING] = 1; [STATE_ACTIVE] = 2; [STATE_FAILED] = 3; [STATE_ENDED] = 3;
 };
@@ -731,21 +733,19 @@ local function handle_status(event)
     end
     local reason = type(payload.reason) == 'string' and public_reason(payload.reason) or nil;
 
-    if payload.state == STATE_ENDED then
-        if not remove_agent(room, payload.agentId, reason or 'ended') then
-            return error_response(404, 'Agent not found');
-        end
-        return { status_code = 200, body = json.encode({ agentId = payload.agentId }) };
-    end
-
     local entry, jicofo_entry = get_agent(room, payload.agentId);
     if not entry then
+        -- Also a repeated 'ended': the agent is gone, which reporters take as done.
         return error_response(404, 'Agent not found');
     end
     if STATE_RANK[payload.state] <= (STATE_RANK[entry.state] or 0) then
         module:log('debug', 'Ignoring stale status %s for agent %s in state %s',
             payload.state, payload.agentId, entry.state);
         return { status_code = 200, body = json.encode(agent_response(payload.agentId, entry)) };
+    end
+    if payload.state == STATE_ENDED then
+        remove_agent(room, payload.agentId, reason or 'ended');
+        return { status_code = 200, body = json.encode({ agentId = payload.agentId }) };
     end
     entry.state = payload.state;
     if payload.state == STATE_ACTIVE then
@@ -822,8 +822,9 @@ process_host_module(muc_component_host, function(host_module)
         local voice_agents = room._data.voice_agents or {};
         for agent_id, entry in pairs(agents) do
             -- The module may be loaded on several hosts (e.g. via global modules_enabled), each hooking
-            -- the same room: the first run marks the agent ended so later runs stay silent.
-            if entry.state ~= STATE_ENDED then
+            -- the same room: the first run marks the agent ended so later runs stay silent. A failed agent
+            -- already had its terminal webhook.
+            if entry.state ~= STATE_ENDED and entry.state ~= STATE_FAILED then
                 entry.state = STATE_ENDED;
                 send_webhook(room, agent_id, entry, (voice_agents[agent_id] or {}).callbackUrl,
                     'agent.ended', { reason = 'room-destroyed' });
