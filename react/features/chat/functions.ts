@@ -21,8 +21,8 @@ import { isCCTabEnabled } from '../subtitles/functions.any';
 import { VIDEO_SPACE_MIN_SIZE } from '../video-layout/constants';
 import { IVisitorChatParticipant } from '../visitors/types';
 
-import { ChatTabs, MAX_PENDING_EDITS, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
-import { IMessage, IPendingEdit, IPendingEditsMap } from './types';
+import { ChatTabs, MAX_PENDING_ENTRIES, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
+import { IMessage, IPendingMap } from './types';
 
 /**
  * An ASCII emoticon regexp array to find and replace old-style ASCII
@@ -427,22 +427,23 @@ export function isFileMessage(message: IMessage): boolean {
 }
 
 /**
- * Inserts a pending edit into the map, evicting the oldest entry if the cap is exceeded.
+ * Inserts a pending entry (an edit or a moderation for a message that has not arrived yet) into
+ * the map, evicting the oldest entry if the cap is exceeded.
  *
- * @param {IPendingEditsMap} pendingEdits - The current pending edits map.
- * @param {string} messageId - The id of the message the edit targets.
- * @param {IPendingEdit} edit - The pending edit to insert.
- * @returns {IPendingEditsMap} The updated pending edits map.
+ * @param {Object} pendingEntries - The current pending entries map.
+ * @param {string} messageId - The id of the message the entry targets.
+ * @param {Object} entry - The pending entry to insert.
+ * @returns {Object} The updated pending entries map.
  */
-export function addPendingEdit(
-        pendingEdits: IPendingEditsMap,
+export function addPendingEntry<T>(
+        pendingEntries: IPendingMap<T>,
         messageId: string,
-        edit: IPendingEdit
-): IPendingEditsMap {
-    const next = { ...pendingEdits, [messageId]: edit };
+        entry: T
+): IPendingMap<T> {
+    const next = { ...pendingEntries, [messageId]: entry };
     const keys = Object.keys(next);
 
-    if (keys.length > MAX_PENDING_EDITS) {
+    if (keys.length > MAX_PENDING_ENTRIES) {
         // Object key order is insertion order for string keys in JS, so the first key is the oldest.
         delete next[keys[0]];
     }
@@ -498,13 +499,18 @@ export const getChatSearchMatches = createSelector(
 );
 
 /**
- * Returns the index of the currently focused search match.
+ * Returns the index of the currently focused search match. The stored index is kept within the
+ * current matches, as the matches can shrink while the search is open, e.g. when the focused
+ * match is deleted or moderated.
  *
  * @param {IReduxState} state - The redux state.
  * @returns {number}
  */
 export function getChatSearchMatchIndex(state: IReduxState): number {
-    return state['features/chat'].searchMatchIndex || 0;
+    const index = state['features/chat'].searchMatchIndex || 0;
+    const { length } = getChatSearchMatches(state);
+
+    return length ? Math.min(index, length - 1) : 0;
 }
 
 /**
