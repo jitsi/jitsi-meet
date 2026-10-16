@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 
 import { SharedVideoButton } from './components';
-import { isShareVideoDisabled, isSharedVideoEnabled } from './functions';
+import { isSharedVideoButtonVisible } from './functions';
 
 const shareVideo = {
     key: 'sharedvideo',
@@ -10,16 +10,15 @@ const shareVideo = {
 };
 
 /**
- * A hook that returns the shared video button if it is enabled and the local participant may share a video,
+ * A hook that returns the shared video button if the local participant may share a video or shares one,
  * and undefined otherwise.
  *
  *  @returns {Object | undefined}
  */
 export function useSharedVideoButton() {
-    const sharedVideoEnabled = useSelector(isSharedVideoEnabled);
-    const shareVideoDisabled = useSelector(isShareVideoDisabled);
+    const sharedVideoButtonVisible = useSelector(isSharedVideoButtonVisible);
 
-    if (sharedVideoEnabled && !shareVideoDisabled) {
+    if (sharedVideoButtonVisible) {
         return shareVideo;
     }
 }

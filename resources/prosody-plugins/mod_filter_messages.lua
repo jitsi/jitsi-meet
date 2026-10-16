@@ -148,9 +148,15 @@ local function on_private_message(event)
     end
 end
 
--- Removes a shared-video command that the occupant may not send. The MUC stores
+-- Whether the element is a shared-video command other than stop. The client
+-- handles presence children by name and ignores their namespace, thus so does this.
+local function is_shared_video_share(tag)
+    return tag.name == 'shared-video' and tag.attr.state ~= 'stop';
+end
+
+-- Removes the shared-video commands that the occupant may not send. The MUC stores
 -- the presence after these events, thus a participant that joins later does not
--- receive the command either.
+-- receive them either. A stop command always passes, so the owner can stop a video.
 local function on_occupant_presence(event)
     local stanza, session, room = event.stanza, event.origin, event.room;
 
@@ -158,14 +164,23 @@ local function on_occupant_presence(event)
         return;
     end
 
-    local shared_video = stanza:get_child('shared-video');
+    local has_share = false;
 
-    if not shared_video or shared_video.attr.state == 'stop' then
-        return;
+    for _, tag in ipairs(stanza.tags) do
+        if is_shared_video_share(tag) then
+            has_share = true;
+            break;
+        end
     end
 
-    if is_blocked(room, session, 'sharedVideoRestricted', 'share-video') then
-        stanza:remove_children('shared-video');
+    if has_share and is_blocked(room, session, 'sharedVideoRestricted', 'share-video') then
+        stanza:maptags(function (tag)
+            if is_shared_video_share(tag) then
+                return nil;
+            end
+
+            return tag;
+        end);
     end
 end
 

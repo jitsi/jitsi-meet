@@ -11,7 +11,7 @@ import {
 } from './actionTypes';
 import { ShareVideoConfirmDialog, SharedVideoDialog } from './components';
 import { PLAYBACK_START, PLAYBACK_STATUSES } from './constants';
-import { isShareVideoDisabled, isSharedVideoEnabled, sendShareVideoCommand } from './functions';
+import { canShareVideo, sendShareVideoCommand } from './functions';
 
 
 /**
@@ -112,7 +112,7 @@ export function stopSharedVideo() {
  */
 export function playSharedVideo(videoUrl: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        if (!isSharedVideoEnabled(getState()) || isShareVideoDisabled(getState())) {
+        if (!canShareVideo(getState())) {
             return;
         }
         const conference = getCurrentConference(getState());

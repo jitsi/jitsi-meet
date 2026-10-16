@@ -585,6 +585,40 @@ describe('mod_filter_messages shared video', () => {
                 'a stop command must pass, so a video shared before the restriction can be stopped');
         });
 
+        it('a share after a stop in the same presence is removed when sharedVideoRestricted is true', async () => {
+            const { r, mod, sender } = await setup();
+
+            await restrictChat(mod, r, 'sharedVideoRestricted');
+
+            const from = `${r}/${sender.nick}`;
+
+            await sender.sendPresence(from, [ sharedVideoEl('stop'), sharedVideoEl('start') ]);
+
+            const received = await mod.waitForPresenceFrom(from);
+            const states = received.getChildren('shared-video').map(el => el.attrs.state);
+
+            assert.deepStrictEqual(states, [ 'stop' ], 'only the stop command must pass');
+        });
+
+        it('a shared video in another namespace is removed when sharedVideoRestricted is true', async () => {
+            const { r, mod, sender } = await setup();
+
+            await restrictChat(mod, r, 'sharedVideoRestricted');
+
+            const from = `${r}/${sender.nick}`;
+
+            await sender.sendPresence(from, [
+                xml('shared-video', { from: 'abc',
+                    state: 'start',
+                    xmlns: 'urn:example:other' }, 'https://example.com/video.mp4')
+            ]);
+
+            const received = await mod.waitForPresenceFrom(from);
+
+            assert.strictEqual(received.getChildren('shared-video').length, 0,
+                'shared-video must be removed whatever its namespace');
+        });
+
         it('occupant with share-video=true passes when sharedVideoRestricted is true', async () => {
             const { r, mod, sender } = await setup({ features: { 'share-video': true } });
 
