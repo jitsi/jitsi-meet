@@ -24,6 +24,7 @@ const ModeratorSection = () => {
         followMeEnabled,
         followMeRecorderActive,
         followMeRecorderEnabled,
+        hideChatWithPermissions,
         startAudioMuted,
         startVideoMuted,
         startReactionsMuted,
@@ -120,18 +121,26 @@ const ModeratorSection = () => {
             },
         ];
 
-        if (disableReactionsModeration) {
-            // Remove the reactions entry by name. A pop() here took out whichever
-            // entry came last, which is not the reactions one.
-            return moderation.filter(({ label }) => label !== 'settings.startReactionsMuted');
-        }
+        // Remove the entries by name. A pop() here took out whichever
+        // entry came last, which is not the reactions one.
+        return moderation.filter(({ label }) => {
+            if (label === 'settings.startReactionsMuted') {
+                return !disableReactionsModeration;
+            }
 
-        return moderation;
+            // Hide them as on web, e.g. when showChatPermissionsModeratorSetting is not enabled.
+            if (label === 'settings.chatWithPermissions' || label === 'settings.privateChatWithPermissions') {
+                return !hideChatWithPermissions;
+            }
+
+            return true;
+        });
     }, [ startAudioMuted,
         startVideoMuted,
         followMeEnabled,
         followMeRecorderEnabled,
         disableReactionsModeration,
+        hideChatWithPermissions,
         onStartAudioMutedToggled,
         onStartVideoMutedToggled,
         onFollowMeToggled,
