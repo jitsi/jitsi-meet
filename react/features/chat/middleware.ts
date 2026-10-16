@@ -959,6 +959,11 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
 
     dispatch(addMessage(newMessage));
 
+    // A message moderated before it arrived is added as removed (see the reducer), so its text must
+    // not reach the notification or the external API either.
+    const { pendingModerations } = state['features/chat'];
+    const isModerated = Boolean(messageId && Object.prototype.hasOwnProperty.call(pendingModerations, messageId));
+
     let notificationDisplayName = _displayName;
 
     // source can be 'token' or 'guest'. When it is 'guest', we append a guest indicator
@@ -970,7 +975,7 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
         notificationDisplayName = `${_displayName} ${getDisplayNameSuffix(newMessage)}`;
     }
 
-    if (shouldShowNotification) {
+    if (shouldShowNotification && !isModerated) {
         dispatch(showMessageNotification({
             title: notificationDisplayName,
             description: message,
@@ -983,7 +988,7 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
         // Logic for web only:
 
         APP.API.notifyReceivedChatMessage({
-            body: message,
+            body: isModerated ? i18next.t('chat.moderatedMessage') : message,
             from: participantId,
             nick: notificationDisplayName,
             privateMessage,
