@@ -57,7 +57,7 @@ export const getTokenAuthUrl = (
         return Promise.resolve(undefined);
     }
 
-    if (url.indexOf('{state}')) {
+    if (url.includes('{state}')) {
         const state = _getTokenAuthState(
             locationURL,
             {
