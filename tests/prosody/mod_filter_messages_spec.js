@@ -1,3 +1,4 @@
+import { xml } from '@xmpp/client';
 import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
@@ -46,8 +47,8 @@ const connectModerator = roomJid => connect(roomJid, { contextUser: { moderator:
  *
  * @param {object} mod      Moderator XMPP client (occupant of the room).
  * @param {string} roomJid  Full room JID.
- * @param {string} [key]    Permission to set: 'groupChatRestricted' (default)
- *                          or 'privateChatRestricted'.
+ * @param {string} [key]    Permission to set: 'groupChatRestricted' (default),
+ *                          'privateChatRestricted' or 'sharedVideoRestricted'.
  */
 async function restrictChat(mod, roomJid, key = 'groupChatRestricted') {
     mod.sendMetadataUpdate(METADATA_COMPONENT, roomJid, 'permissions', { [key]: true });
@@ -65,6 +66,32 @@ async function restrictChat(mod, roomJid, key = 'groupChatRestricted') {
             return false;
         }
     }, 3000);
+}
+
+/**
+ * Builds the shared-video element that the client sends in its presence.
+ *
+ * @param {string} state  Playback state, e.g. 'start' or 'stop'.
+ */
+const sharedVideoEl = (state = 'start') => xml('shared-video', { from: 'abc',
+    state,
+    time: '0' }, 'https://example.com/video.mp4');
+
+/**
+ * Sends a presence update with a shared-video element from `sender` and
+ * resolves with the copy of it that `observer` receives.
+ *
+ * @param {object} sender    Occupant that shares the video.
+ * @param {object} observer  Another occupant of the room.
+ * @param {string} roomJid   Full room JID.
+ * @param {string} [state]   Playback state of the shared video.
+ */
+async function sendSharedVideo(sender, observer, roomJid, state) {
+    const from = `${roomJid}/${sender.nick}`;
+
+    await sender.sendPresence(from, [ sharedVideoEl(state) ]);
+
+    return observer.waitForPresenceFrom(from);
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -486,5 +513,159 @@ describe('mod_filter_messages private messages', () => {
 
         assert.strictEqual(received.attrs.type, 'chat',
             'body-less message must pass through even when private chat is restricted');
+    });
+});
+
+describe('mod_filter_messages shared video', () => {
+
+    const clients = [];
+
+    afterEach(async () => {
+        await Promise.all(clients.map(c => c.disconnect()));
+        clients.length = 0;
+    });
+
+    describe('sharedVideoRestricted', () => {
+
+        /**
+         * Joins a moderator and an occupant to a fresh room and drains the
+         * join presence of the occupant on the moderator.
+         *
+         * @param {object} [opts]  Options for the occupant connection.
+         */
+        async function setup(opts) {
+            const r = nextRoom();
+            const focus = await joinWithFocus(r);
+            const mod = await connectModerator(r);
+
+            clients.push(focus, mod);
+            await mod.joinRoom(r);
+
+            const sender = opts ? await connect(r, opts) : await createXmppClient();
+
+            clients.push(sender);
+            await sender.joinRoom(r);
+
+            // Drain the presence that each of them received for the other on join.
+            await mod.waitForPresenceFrom(`${r}/${sender.nick}`);
+            await sender.waitForPresenceFrom(`${r}/${mod.nick}`);
+
+            return { r,
+                mod,
+                sender };
+        }
+
+        it('shared video passes when sharedVideoRestricted is not set', async () => {
+            const { r, mod, sender } = await setup();
+
+            const received = await sendSharedVideo(sender, mod, r);
+
+            assert.ok(received.getChild('shared-video'), 'shared-video must pass when not restricted');
+        });
+
+        it('shared video of an anonymous occupant is removed when sharedVideoRestricted is true', async () => {
+            const { r, mod, sender } = await setup();
+
+            await restrictChat(mod, r, 'sharedVideoRestricted');
+
+            const received = await sendSharedVideo(sender, mod, r);
+
+            assert.ok(!received.getChild('shared-video'), 'shared-video must be removed');
+            assert.notEqual(received.attrs.type, 'error', 'the rest of the presence must pass');
+        });
+
+        it('stop command of an anonymous occupant passes when sharedVideoRestricted is true', async () => {
+            const { r, mod, sender } = await setup();
+
+            await restrictChat(mod, r, 'sharedVideoRestricted');
+
+            const received = await sendSharedVideo(sender, mod, r, 'stop');
+
+            assert.strictEqual(received.getChild('shared-video')?.attrs.state, 'stop',
+                'a stop command must pass, so a video shared before the restriction can be stopped');
+        });
+
+        it('a share after a stop in the same presence is removed when sharedVideoRestricted is true', async () => {
+            const { r, mod, sender } = await setup();
+
+            await restrictChat(mod, r, 'sharedVideoRestricted');
+
+            const from = `${r}/${sender.nick}`;
+
+            await sender.sendPresence(from, [ sharedVideoEl('stop'), sharedVideoEl('start') ]);
+
+            const received = await mod.waitForPresenceFrom(from);
+            const states = received.getChildren('shared-video').map(el => el.attrs.state);
+
+            assert.deepStrictEqual(states, [ 'stop' ], 'only the stop command must pass');
+        });
+
+        it('a shared video in another namespace is removed when sharedVideoRestricted is true', async () => {
+            const { r, mod, sender } = await setup();
+
+            await restrictChat(mod, r, 'sharedVideoRestricted');
+
+            const from = `${r}/${sender.nick}`;
+
+            await sender.sendPresence(from, [
+                xml('shared-video', { from: 'abc',
+                    state: 'start',
+                    xmlns: 'urn:example:other' }, 'https://example.com/video.mp4')
+            ]);
+
+            const received = await mod.waitForPresenceFrom(from);
+
+            assert.strictEqual(received.getChildren('shared-video').length, 0,
+                'shared-video must be removed whatever its namespace');
+        });
+
+        it('occupant with share-video=true passes when sharedVideoRestricted is true', async () => {
+            const { r, mod, sender } = await setup({ features: { 'share-video': true } });
+
+            await restrictChat(mod, r, 'sharedVideoRestricted');
+
+            const received = await sendSharedVideo(sender, mod, r);
+
+            assert.ok(received.getChild('shared-video'), 'shared-video must pass with share-video=true');
+        });
+
+        it('occupant with share-video=false is blocked when sharedVideoRestricted is true', async () => {
+            const { r, mod, sender } = await setup({ features: { 'share-video': false } });
+
+            await restrictChat(mod, r, 'sharedVideoRestricted');
+
+            const received = await sendSharedVideo(sender, mod, r);
+
+            assert.ok(!received.getChild('shared-video'), 'shared-video must be removed with share-video=false');
+        });
+
+        it('shared video in the join presence of an anonymous occupant is removed', async () => {
+            const r = nextRoom();
+            const focus = await joinWithFocus(r);
+            const mod = await connectModerator(r);
+
+            clients.push(focus, mod);
+            await mod.joinRoom(r);
+            await restrictChat(mod, r, 'sharedVideoRestricted');
+
+            const sender = await createXmppClient();
+
+            clients.push(sender);
+            await sender.joinRoom(r, undefined, { extensions: [ sharedVideoEl() ] });
+
+            const received = await mod.waitForPresenceFrom(`${r}/${sender.nick}`);
+
+            assert.ok(!received.getChild('shared-video'), 'shared-video must be removed from the join presence');
+        });
+
+        it('moderator with no features in token passes when sharedVideoRestricted is true', async () => {
+            const { r, mod, sender } = await setup();
+
+            await restrictChat(mod, r, 'sharedVideoRestricted');
+
+            const received = await sendSharedVideo(mod, sender, r);
+
+            assert.ok(received.getChild('shared-video'), 'a moderator must keep sharing a video');
+        });
     });
 });

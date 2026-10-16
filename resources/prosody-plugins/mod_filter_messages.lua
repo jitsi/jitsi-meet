@@ -1,11 +1,13 @@
 -- Filters MUC messages when the room operator has restricted chat.
 --
--- Two independent restrictions live in the room metadata:
+-- Three independent restrictions live in the room metadata:
 --
 --   permissions.groupChatRestricted   — group-chat messages, addressed to the
 --                                       bare room JID
 --   permissions.privateChatRestricted — private messages, addressed to an
 --                                       occupant JID (room@muc/nick)
+--   permissions.sharedVideoRestricted — the shared-video command, which a
+--                                       client sends in its presence
 --
 -- When a restriction is on, a sender must have the matching feature set to true
 -- in their JWT context (session.jitsi_meet_context_features) to send a message.
@@ -14,6 +16,7 @@
 --
 --   groupChatRestricted    →  send-groupchat
 --   privateChatRestricted  →  send-private-message
+--   sharedVideoRestricted  →  share-video
 --
 -- Feature evaluation via is_feature_allowed:
 --   feature = true  in token features        →  allowed
@@ -24,6 +27,12 @@
 -- Messages without a <body> (polls, lobby notifications, etc.) are always
 -- passed through regardless of the restriction flags.
 --
+-- A presence is not rejected. The module removes the <shared-video> element
+-- from it and lets the rest of the presence through, thus the occupant stays
+-- in the room and no other participant starts the video. A <shared-video>
+-- element with state="stop" stays, so a participant can still stop a video
+-- that they shared before the restriction was set.
+--
 -- Hooks:
 --   message/bare                            — ordinary MUC group-chat messages
 --   jitsi-visitor-groupchat-pre-route       — visitor group-chat messages, routed
@@ -31,6 +40,8 @@
 --   muc-private-message                     — MUC private messages
 --   jitsi-visitor-private-message-pre-route — visitor private messages, routed
 --                                             via the visitors component
+--   muc-occupant-pre-join                   — the presence of a joining occupant
+--   muc-occupant-pre-change                 — a presence update of an occupant
 --
 -- A message that is addressed to the real JID of a participant
 -- (user@domain/resource) does not go to the MUC component, thus no hook here
@@ -137,7 +148,45 @@ local function on_private_message(event)
     end
 end
 
+-- Whether the element is a shared-video command other than stop. The client
+-- handles presence children by name and ignores their namespace, thus so does this.
+local function is_shared_video_share(tag)
+    return tag.name == 'shared-video' and tag.attr.state ~= 'stop';
+end
+
+-- Removes the shared-video commands that the occupant may not send. The MUC stores
+-- the presence after these events, thus a participant that joins later does not
+-- receive them either. A stop command always passes, so the owner can stop a video.
+local function on_occupant_presence(event)
+    local stanza, session, room = event.stanza, event.origin, event.room;
+
+    if not session or not room then
+        return;
+    end
+
+    local has_share = false;
+
+    for _, tag in ipairs(stanza.tags) do
+        if is_shared_video_share(tag) then
+            has_share = true;
+            break;
+        end
+    end
+
+    if has_share and is_blocked(room, session, 'sharedVideoRestricted', 'share-video') then
+        stanza:maptags(function (tag)
+            if is_shared_video_share(tag) then
+                return nil;
+            end
+
+            return tag;
+        end);
+    end
+end
+
 module:hook('message/bare', on_message); -- room messages
 module:hook('jitsi-visitor-groupchat-pre-route', on_message); -- visitors messages
 module:hook('muc-private-message', on_private_message); -- private messages
 module:hook('jitsi-visitor-private-message-pre-route', on_visitor_private_message); -- visitors private messages
+module:hook('muc-occupant-pre-join', on_occupant_presence); -- shared video on join
+module:hook('muc-occupant-pre-change', on_occupant_presence); -- shared video on presence update

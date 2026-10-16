@@ -1,7 +1,11 @@
 import { batch } from 'react-redux';
 
 import { IStore } from '../app/types';
-import { CONFERENCE_JOIN_IN_PROGRESS, CONFERENCE_LEFT } from '../base/conference/actionTypes';
+import {
+    CONFERENCE_JOIN_IN_PROGRESS,
+    CONFERENCE_LEFT,
+    UPDATE_CONFERENCE_METADATA
+} from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import { IJitsiConference } from '../base/conference/reducer';
 import { SET_CONFIG } from '../base/config/actionTypes';
@@ -21,7 +25,8 @@ import {
     resetSharedVideoStatus,
     setAllowedUrlDomians,
     setSharedVideoStatus,
-    showConfirmPlayingDialog
+    showConfirmPlayingDialog,
+    stopSharedVideo
 } from './actions';
 import {
     DEFAULT_ALLOWED_URL_DOMAINS,
@@ -30,7 +35,13 @@ import {
     SHARED_VIDEO,
     VIDEO_PLAYER_PARTICIPANT_NAME
 } from './constants';
-import { isSharedVideoEnabled, isSharingStatus, isURLAllowedForSharedVideo, sendShareVideoCommand } from './functions';
+import {
+    isShareVideoDisabled,
+    isSharedVideoEnabled,
+    isSharingStatus,
+    isURLAllowedForSharedVideo,
+    sendShareVideoCommand
+} from './functions';
 import logger from './logger';
 
 
@@ -143,6 +154,24 @@ MiddlewareRegistry.register(store => next => action => {
             });
         }
         break;
+    }
+    case UPDATE_CONFERENCE_METADATA: {
+        const result = next(action);
+        const state = getState();
+        const { ownerId, status } = state['features/shared-video'];
+
+        // A moderator restricted video sharing while the local participant shares a video,
+        // and the local participant does not have the permission for it.
+        if (isShareVideoDisabled(state)
+                && ownerId === getLocalParticipant(state)?.id
+                && isSharingStatus(status ?? '')) {
+            dispatch(stopSharedVideo());
+            dispatch(showWarningNotification({
+                titleKey: 'notify.sharedVideoRestricted'
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+        }
+
+        return result;
     }
     case SET_CONFIG:
     case SET_DYNAMIC_BRANDING_DATA: {
