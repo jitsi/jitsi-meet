@@ -540,14 +540,12 @@ var config = {
     //     // ./src/react/features/transcribing/transcriber-langs.json.
     //     preferredLanguage: 'en-US',
 
-    // Allows extending the list of supported transcription languages.
-    // Useful for custom transcription backends (e.g. Vosk).
-    //
-    // Example:
-    // customLanguages: {
-    //     'hsb-DE': 'Upper Sorbian (Germany)',
-    //     'dsb-DE': 'Lower Sorbian (Germany)'
-    // },
+    //     // Allows extending the list of supported transcription languages.
+    //     // Useful for custom transcription backends (e.g. Vosk).
+    //     customLanguages: {
+    //         'hsb-DE': 'Upper Sorbian (Germany)',
+    //         'dsb-DE': 'Lower Sorbian (Germany)'
+    //     },
 
     //     // Enables automatic turning on transcribing when recording is started
     //     autoTranscribeOnRecord: false,
