@@ -165,6 +165,7 @@ export function getModeratorTabProps(stateful: IStateful) {
     const { groupChatWithPermissions, privateChatWithPermissions } = state['features/chat'];
     const {
         audioTranslation,
+        showBreakoutRoomJoinPermissionsModeratorSetting,
         showChatPermissionsModeratorSetting,
         disableReactionsModeration
     } = state['features/base/config'];
@@ -174,7 +175,8 @@ export function getModeratorTabProps(stateful: IStateful) {
     const conferenceMetadata = conference?.getMetadataHandler()?.getMetadata();
     const hideChatWithPermissions = !showChatPermissionsModeratorSetting || conferenceMetadata?.allownersEnabled;
     const { hideJoinRoomButton } = getBreakoutRoomsConfig(state);
-    const showBreakoutRoomJoinWithPermissions = Boolean(conference?.getBreakoutRooms()?.isSupported())
+    const showBreakoutRoomJoinWithPermissions = Boolean(showBreakoutRoomJoinPermissionsModeratorSetting)
+        && Boolean(conference?.getBreakoutRooms()?.isSupported())
         && !hideJoinRoomButton;
     const isAudioModerationEnabled = isEnabledFromState(MEDIA_TYPE.AUDIO, state);
     const isVideoModerationEnabled = isEnabledFromState(MEDIA_TYPE.VIDEO, state);

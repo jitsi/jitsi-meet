@@ -78,7 +78,8 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     showAudioTranslation: boolean;
 
     /**
-     * Whether the breakout room join restriction setting should be shown (i.e. breakout rooms are supported).
+     * Whether the breakout room join restriction setting should be shown (i.e. it is enabled in the config and
+     * breakout rooms are supported).
      */
     showBreakoutRoomJoinWithPermissions: boolean;
 

@@ -226,6 +226,7 @@ export default [
     'screenshotCapture',
     'secondScreen',
     'securityUi',
+    'showBreakoutRoomJoinPermissionsModeratorSetting',
     'showChatPermissionsModeratorSetting',
     'speakerStats',
     'startAudioMuted',
