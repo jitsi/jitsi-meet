@@ -464,6 +464,9 @@ const ChatMessage = ({
             )
             : getMessageText(message);
 
+    // A removed file message shows the text placeholder instead of the file.
+    const showFile = !message.isDeleted && !message.isModerated && isFileMessage(message);
+
     const canEdit = message.messageType === MESSAGE_TYPE_LOCAL
         && !message.lobbyChat
         && !message.isReaction
@@ -500,7 +503,7 @@ const ChatMessage = ({
                         className,
                         message.privateMessage && 'privatemessage',
                         message.lobbyChat && !knocking && 'lobbymessage',
-                        isFileMessage(message) && 'file',
+                        showFile && 'file',
                         isActiveSearchMatch && classes.searchMatchActive
                     ) }
                     ref = { messageRef }>
@@ -508,7 +511,7 @@ const ChatMessage = ({
                         <div className = { cx('messagecontent', classes.messageContent) }>
                             {showDisplayName && _renderDisplayName()}
                             <div className = { cx('usermessage', classes.userMessage, (message.isDeleted || message.isModerated) && classes.deletedMessage) }>
-                                {!message.isDeleted && !message.isModerated && isFileMessage(message) ? (
+                                {showFile ? (
                                     <FileMessage
                                         message = { message }
                                         screenReaderHelpText = { message.messageType === MESSAGE_TYPE_LOCAL
