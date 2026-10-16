@@ -411,7 +411,6 @@ function _requestingSubtitlesChange(
     const { conference } = state['features/base/conference'];
     const backendRecordingOn = conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription;
 
-
     conference?.setLocalParticipantProperty(
         P_NAME_REQUESTING_TRANSCRIPTION,
         enabled);
