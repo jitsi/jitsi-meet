@@ -83,15 +83,16 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     showAudioTranslation: boolean;
 
     /**
+     * Whether the breakout room join restriction setting should be shown (i.e. it is enabled in the config and
+     * breakout rooms are supported).
+     */
+    showBreakoutRoomJoinWithPermissions: boolean;
+
+    /**
      * Whether the shared video restriction setting should be shown (i.e. it is enabled in the config,
      * video sharing is enabled and the room does not make every participant a moderator).
      */
     showSharedVideoWithPermissions: boolean;
-
-    /**
-     * Whether the breakout room join restriction setting should be shown (i.e. breakout rooms are supported).
-     */
-    showBreakoutRoomJoinWithPermissions: boolean;
 
     /**
      * Whether or not the user has selected the Start Audio Muted feature to be

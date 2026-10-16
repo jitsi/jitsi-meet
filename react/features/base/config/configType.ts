@@ -712,6 +712,7 @@ export interface IConfig {
     };
     serviceUrl?: string;
     sharedVideoAllowedURLDomains?: Array<string>;
+    showBreakoutRoomJoinPermissionsModeratorSetting?: boolean;
     showChatPermissionsModeratorSetting?: boolean;
     showSharedVideoPermissionsModeratorSetting?: boolean;
     sipInviteUrl?: string;
