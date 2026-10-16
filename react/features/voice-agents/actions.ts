@@ -19,6 +19,7 @@ export interface IConsentDialogProps {
     agentId?: string;
     audioWasMuted?: boolean;
     forcedMute?: boolean;
+    unmuteWasBlocked?: boolean;
 }
 
 /**
@@ -33,7 +34,8 @@ function _dialogProps(getState: IStore['getState']): IConsentDialogProps {
 
 /**
  * Asks the local participant whether a newly active voice agent may hear them. Mirrors recording consent:
- * the participant is muted, with unmuting blocked, until they decide.
+ * the participant is muted, with unmuting blocked, until they decide. The block is released on the decision
+ * only if this request took it.
  *
  * @param {string} agentId - The agent asking for consent.
  * @returns {Function}
@@ -41,15 +43,18 @@ function _dialogProps(getState: IStore['getState']): IConsentDialogProps {
 export function requestVoiceAgentConsent(agentId: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         // Captured before the forced mute so the participant's own choice can be restored on Allow.
-        const audioWasMuted = getState()['features/base/media'].audio.muted;
+        const { muted: audioWasMuted, unmuteBlocked: unmuteWasBlocked } = getState()['features/base/media'].audio;
 
         batch(() => {
-            dispatch(setAudioUnmutePermissions(true, true));
+            if (!unmuteWasBlocked) {
+                dispatch(setAudioUnmutePermissions(true, true));
+            }
             dispatch(setAudioMuted(true));
             dispatch(openDialog(DIALOG_NAME, VoiceAgentConsentDialog, {
                 agentId,
                 audioWasMuted,
-                forcedMute: true
+                forcedMute: true,
+                unmuteWasBlocked
             }));
         });
     };
@@ -81,12 +86,12 @@ export function showVoiceAgentConsentDialog(agentId: string) {
  */
 export function allowVoiceAgent(agentId: string, context?: IConsentDialogProps) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const { audioWasMuted, forcedMute } = context ?? _dialogProps(getState);
+        const { audioWasMuted, forcedMute, unmuteWasBlocked } = context ?? _dialogProps(getState);
 
         batch(() => {
             dispatch(setVoiceAgentConsent(agentId, true));
             if (forcedMute) {
-                dispatch(setAudioUnmutePermissions(false, true));
+                !unmuteWasBlocked && dispatch(setAudioUnmutePermissions(false, true));
                 dispatch(setAudioMuted(Boolean(audioWasMuted), false));
             }
             dispatch(hideDialog(DIALOG_NAME, VoiceAgentConsentDialog));
@@ -104,11 +109,11 @@ export function allowVoiceAgent(agentId: string, context?: IConsentDialogProps) 
  */
 export function declineVoiceAgent(agentId: string, context?: IConsentDialogProps) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const { forcedMute } = context ?? _dialogProps(getState);
+        const { forcedMute, unmuteWasBlocked } = context ?? _dialogProps(getState);
 
         batch(() => {
             dispatch(setVoiceAgentConsent(agentId, false));
-            if (forcedMute) {
+            if (forcedMute && !unmuteWasBlocked) {
                 dispatch(setAudioUnmutePermissions(false, true));
             }
             dispatch(hideDialog(DIALOG_NAME, VoiceAgentConsentDialog));
@@ -127,7 +132,7 @@ export function dismissVoiceAgentConsentDialog(agentId: string) {
         if (!isDialogOpen(getState(), VoiceAgentConsentDialog)) {
             return;
         }
-        const { agentId: openFor, audioWasMuted, forcedMute } = _dialogProps(getState);
+        const { agentId: openFor, audioWasMuted, forcedMute, unmuteWasBlocked } = _dialogProps(getState);
 
         if (openFor !== agentId) {
             return;
@@ -135,7 +140,7 @@ export function dismissVoiceAgentConsentDialog(agentId: string) {
 
         batch(() => {
             if (forcedMute) {
-                dispatch(setAudioUnmutePermissions(false, true));
+                !unmuteWasBlocked && dispatch(setAudioUnmutePermissions(false, true));
                 dispatch(setAudioMuted(Boolean(audioWasMuted), false));
             }
             dispatch(hideDialog(DIALOG_NAME, VoiceAgentConsentDialog));

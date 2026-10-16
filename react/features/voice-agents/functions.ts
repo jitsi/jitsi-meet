@@ -1,4 +1,6 @@
 import { IReduxState } from '../app/types';
+import { getCurrentConference } from '../base/conference/functions';
+import { isAnyDialogOpen } from '../base/dialog/functions';
 import { isE2EEOnInMeeting } from '../e2ee/functions';
 import { iAmVisitor } from '../visitors/functions';
 
@@ -133,6 +135,25 @@ export function getVoiceAgentAwaitingConsent(state: IReduxState): string | undef
     const { agents, consent } = state['features/voice-agents'];
 
     return Object.keys(agents).find(agentId => consent[agentId] !== true);
+}
+
+/**
+ * The agent to ask for consent now, if any: one agent at a time, and only while no other dialog is open, because
+ * opening over one (e.g. recording consent) would replace it and this decision would then release its mute.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {string|undefined}
+ */
+export function getNextVoiceAgentConsentRequest(state: IReduxState): string | undefined {
+    if (!getCurrentConference(state)
+            || !shouldAskForVoiceAgentConsent(state)
+            || isVoiceAgentBlockedByE2EE(state)
+            || isAnyDialogOpen(state)) {
+        return undefined;
+    }
+    const { agents, consent } = state['features/voice-agents'];
+
+    return Object.keys(agents).find(agentId => consent[agentId] === undefined);
 }
 
 
