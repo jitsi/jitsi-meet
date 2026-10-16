@@ -286,7 +286,8 @@ function _mapStateToProps(state: IReduxState, { message }: IChatMessageProps) {
     return {
         canReply: getCanReplyToMessage(state, message),
         gifEnabled: isGifEnabled(state),
-        highlightQuery: getChatSearchQuery(state),
+        // A deleted or moderated message shows a placeholder, which is not searched, so do not highlight it.
+        highlightQuery: message.isDeleted || message.isModerated ? '' : getChatSearchQuery(state),
         isActiveMatch: Boolean(activeMatch && activeMatch.messageId === message.messageId),
         knocking: state['features/lobby'].knocking
     };

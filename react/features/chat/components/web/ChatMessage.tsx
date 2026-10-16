@@ -619,7 +619,8 @@ function _mapStateToProps(state: IReduxState, { message }: IProps) {
         shouldDisplayMenuOnRight,
         enablePrivateChat,
         isActiveSearchMatch,
-        searchQuery: getChatSearchQuery(state),
+        // A deleted or moderated message shows a placeholder, which is not searched, so do not highlight it.
+        searchQuery: message.isDeleted || message.isModerated ? '' : getChatSearchQuery(state),
         knocking,
         state
     };
