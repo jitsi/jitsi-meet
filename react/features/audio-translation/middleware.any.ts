@@ -173,7 +173,8 @@ StateListenerRegistry.register(
 
         const { language, participantLanguages } = getState()['features/audio-translation'];
 
-        if (language || Object.keys(participantLanguages).length > 0) {
+        // Turning a participant off stores null, so a key alone doesn't mean anything is being translated.
+        if (language || Object.values(participantLanguages).some(Boolean)) {
             dispatch(clearAudioTranslation());
             dispatch(showNotification({
                 titleKey: 'audioTranslation.disabledForRoom'
@@ -190,7 +191,7 @@ StateListenerRegistry.register(
     (e2eeOn, { dispatch, getState }) => {
         const { language, participantLanguages } = getState()['features/audio-translation'];
 
-        if (e2eeOn && (language || Object.keys(participantLanguages).length > 0)) {
+        if (e2eeOn && (language || Object.values(participantLanguages).some(Boolean))) {
             dispatch(clearAudioTranslation());
             dispatch(showNotification({
                 titleKey: 'audioTranslation.stoppedForE2EE'

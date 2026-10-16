@@ -135,13 +135,9 @@ export function isE2EEOnInMeeting(stateful: IStateful) {
     if (state['features/e2ee']?.enabled) {
         return true;
     }
-    for (const participant of state['features/base/participants'].remote.values()) {
-        if (participant.e2eeEnabled) {
-            return true;
-        }
-    }
 
-    return false;
+    // The reducer counts the same (non-fake) participants as getParticipantCount, so this avoids a scan per dispatch.
+    return getParticipantCount(state) > state['features/base/participants'].numberOfParticipantsDisabledE2EE;
 }
 
 /**
