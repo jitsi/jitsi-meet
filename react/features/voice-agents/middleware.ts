@@ -3,12 +3,19 @@ import { CONFERENCE_JOINED, UPDATE_CONFERENCE_METADATA } from '../base/conferenc
 import { getCurrentConference } from '../base/conference/functions';
 import { IJitsiConference } from '../base/conference/reducer';
 import { participantJoined, participantLeft } from '../base/participants/actions';
+import { PARTICIPANT_JOINED_SOUND_ID, PARTICIPANT_LEFT_SOUND_ID } from '../base/participants/constants';
 import { getParticipantById } from '../base/participants/functions';
 import { FakeParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-import { showNotification } from '../notifications/actions';
+import { playSound } from '../base/sounds/actions';
+import {
+    showNotification,
+    showParticipantJoinedNotification,
+    showParticipantLeftNotification
+} from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
+import { joinLeaveNotificationsDisabled } from '../notifications/functions';
 
 import { SET_VOICE_AGENT_CONSENT } from './actionTypes';
 import {
@@ -107,6 +114,7 @@ function _agentsChanged(store: IStore, agents: IVoiceAgents) {
 
     for (const agentId of removed) {
         logger.info(`Voice agent left: ${agentId}`);
+        _announcePresence(store, previous[agentId]?.displayName ?? agentId, false);
         dispatch(dismissVoiceAgentConsentDialog(agentId));
 
         // Metadata is cleared (null) when the conference is left, at which point base/participants purges
@@ -122,6 +130,11 @@ function _agentsChanged(store: IStore, agents: IVoiceAgents) {
 
     for (const agentId of added) {
         logger.info(`Voice agent active: ${agentId} (${agents[agentId].displayName})`);
+
+        // Under E2EE the participant is told the agent is unavailable instead.
+        if (!isVoiceAgentBlockedByE2EE(state)) {
+            _announcePresence(store, agents[agentId].displayName ?? agentId, true);
+        }
         _admitAgent(store, agentId);
     }
 
@@ -188,6 +201,31 @@ function _admitAgent({ dispatch, getState }: IStore, agentId: string) {
         _notifyE2EEUnsupported(dispatch, state['features/voice-agents'].agents[agentId]?.displayName, agentId);
     } else if (!shouldAskForVoiceAgentConsent(state)) {
         dispatch(setVoiceAgentConsent(agentId, true));
+    }
+}
+
+/**
+ * Announces an agent joining or leaving the meeting like a participant, with the same notification and sound. Its
+ * tile can't drive this, since it also comes and goes with this participant's consent and E2EE.
+ *
+ * @param {IStore} store - The redux store.
+ * @param {string} name - The agent's display name.
+ * @param {boolean} joined - Whether the agent joined (or left).
+ * @returns {void}
+ */
+function _announcePresence({ dispatch, getState }: IStore, name: string, joined: boolean) {
+    const state = getState();
+    const { soundsParticipantJoined, soundsParticipantLeft } = state['features/base/settings'];
+
+    // Like participants', not for those already in the meeting when it is joined, nor on leaving it.
+    if (!state['features/base/conference'].conference) {
+        return;
+    }
+    if (!joinLeaveNotificationsDisabled()) {
+        dispatch(joined ? showParticipantJoinedNotification(name) : showParticipantLeftNotification(name));
+    }
+    if (joined ? soundsParticipantJoined : soundsParticipantLeft) {
+        dispatch(playSound(joined ? PARTICIPANT_JOINED_SOUND_ID : PARTICIPANT_LEFT_SOUND_ID));
     }
 }
 

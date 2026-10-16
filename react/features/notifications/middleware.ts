@@ -126,7 +126,8 @@ MiddlewareRegistry.register(store => next => action => {
         const { participant: p } = action;
         const { conference } = state['features/base/conference'];
 
-        // Do not display notifications for the virtual screenshare and whiteboard tiles.
+        // Do not display notifications for the virtual screenshare and whiteboard tiles, nor for agent tiles,
+        // which voice-agents announces itself.
         if (conference
             && !p.local
             && !isScreenShareParticipant(p)
@@ -148,11 +149,12 @@ MiddlewareRegistry.register(store => next => action => {
                 action.participant.id
             );
 
-            // Do not display notifications for the virtual screenshare tiles.
+            // Do not display notifications for the virtual screenshare tiles, nor for agent tiles (see above).
             if (participant
                 && !participant.local
                 && !isScreenShareParticipant(participant)
                 && !isWhiteboardParticipant(participant)
+                && !isVoiceAgentParticipant(participant)
                 && !action.participant.isReplaced) {
                 dispatch(showParticipantLeftNotification(
                     getParticipantDisplayName(state, participant.id)
