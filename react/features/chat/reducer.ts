@@ -177,7 +177,8 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         const { participantId, reactionList, messageId } = action;
 
         const messages = state.messages.map(message => {
-            if (messageId === message.messageId) {
+            // A deleted or moderated message is shown as a placeholder, so it does not take reactions.
+            if (messageId === message.messageId && !message.isDeleted && !message.isModerated) {
                 const newReactions = new Map(message.reactions);
 
                 reactionList.forEach((reaction: string) => {
