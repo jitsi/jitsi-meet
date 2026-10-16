@@ -83,7 +83,9 @@ class ChatMessage extends Component<IChatMessageProps> {
 
         const messageText = message.isDeleted
             ? this.props.t(localMessage ? 'chat.deletedMessageByMe' : 'chat.deletedMessage')
-            : getMessageText(this.props.message);
+            : message.isModerated
+                ? this.props.t('chat.moderatedMessage')
+                : getMessageText(this.props.message);
 
         return (
             <View
@@ -99,7 +101,7 @@ class ChatMessage extends Component<IChatMessageProps> {
                                 : this._renderMessageTextComponent(messageText) }
                             { this._renderPrivateNotice() }
                         </View>
-                        { !message.isDeleted && this._renderPrivateReplyButton() }
+                        { !message.isDeleted && !message.isModerated && this._renderPrivateReplyButton() }
                     </View>
                     { this._renderTimestamp() }
                 </View>

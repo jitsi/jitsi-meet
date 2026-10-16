@@ -267,13 +267,14 @@ function initCommands() {
             const muteMediaType = mediaType ? mediaType : MEDIA_TYPE.AUDIO;
             const localParticipant = getLocalParticipant(state);
 
-            // Check if targeting the local participant
+            // Check if targeting the local participant. Always mute here, never toggle, so that
+            // repeating the command on an already muted local participant does not unmute them.
             if (participantId === localParticipant?.id) {
 
                 if (muteMediaType === MEDIA_TYPE.AUDIO) {
-                    APP.conference.toggleAudioMuted(false);
+                    APP.conference.muteAudio(true);
                 } else if (muteMediaType === MEDIA_TYPE.VIDEO) {
-                    APP.conference.toggleVideoMuted(false, true);
+                    APP.conference.muteVideo(true);
                 }
 
                 return;

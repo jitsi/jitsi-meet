@@ -202,7 +202,7 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "android-autolinking": "mkdir -p android/build/generated/autolinking && npx react-native config > android/build/generated/autolinking/autolinking.json",
+    "android-autolinking": "node android/scripts/generate-autolinking.js",
     "android-clean-cmake-cache": "find android node_modules -type d -name .cxx -prune -exec rm -rf {} +",
     "lint": "eslint --ext .js,.ts,.tsx --max-warnings 0 . && tsc --noEmit",
     "lint:ci": "eslint --ext .js,.ts,.tsx --max-warnings 0 .",
