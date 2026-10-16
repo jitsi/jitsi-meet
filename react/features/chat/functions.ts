@@ -499,13 +499,18 @@ export const getChatSearchMatches = createSelector(
 );
 
 /**
- * Returns the index of the currently focused search match.
+ * Returns the index of the currently focused search match. The stored index is kept within the
+ * current matches, as the matches can shrink while the search is open, e.g. when the focused
+ * match is deleted or moderated.
  *
  * @param {IReduxState} state - The redux state.
  * @returns {number}
  */
 export function getChatSearchMatchIndex(state: IReduxState): number {
-    return state['features/chat'].searchMatchIndex || 0;
+    const index = state['features/chat'].searchMatchIndex || 0;
+    const { length } = getChatSearchMatches(state);
+
+    return length ? Math.min(index, length - 1) : 0;
 }
 
 /**
