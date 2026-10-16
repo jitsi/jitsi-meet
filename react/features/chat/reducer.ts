@@ -396,20 +396,20 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             privateMessageRecipient: undefined
         };
 
-    case REMOVE_LOBBY_CHAT_PARTICIPANT:
+    case REMOVE_LOBBY_CHAT_PARTICIPANT: {
+        const messages = action.removeLobbyChatMessages
+            ? state.messages.filter(m => !m.lobbyChat)
+            : state.messages;
+
         return {
             ...state,
-            messages: state.messages.filter(m => {
-                if (action.removeLobbyChatMessages) {
-                    return !m.lobbyChat;
-                }
-
-                return true;
-            }),
+            lastReadMessage: _getLastReadMessageAfterRemoval(state, messages),
+            messages,
             isOpen: state.isOpen && state.isLobbyChatActive ? false : state.isOpen,
             isLobbyChatActive: false,
             lobbyMessageRecipient: undefined
         };
+    }
     case UPDATE_CONFERENCE_METADATA: {
         const { metadata } = action;
 
@@ -505,4 +505,40 @@ function _getLastReadMessage(state: IChatState, messages: IMessage[]): IMessage 
     const index = state.messages.indexOf(lastReadMessage);
 
     return index === -1 ? lastReadMessage : messages[index];
+}
+
+/**
+ * Returns the last read message to keep in the state once some of the messages were removed.
+ * If the last read message itself was removed, the closest older message that is kept becomes the
+ * last read one, so the messages that were already read are not counted as unread again.
+ *
+ * @param {IChatState} state - The current chat state.
+ * @param {IMessage[]} messages - The new list of messages, a subset of the current one.
+ * @returns {IMessage|undefined}
+ */
+function _getLastReadMessageAfterRemoval(state: IChatState, messages: IMessage[]): IMessage | undefined {
+    const { lastReadMessage } = state;
+
+    if (!lastReadMessage || messages === state.messages) {
+        return lastReadMessage;
+    }
+
+    const index = state.messages.indexOf(lastReadMessage);
+
+    if (index === -1) {
+        return lastReadMessage;
+    }
+
+    const kept = new Set(messages);
+
+    // React native stores the messages in a reversed order, so the older ones come after.
+    const step = navigator.product === 'ReactNative' ? 1 : -1;
+
+    for (let i = index; i >= 0 && i < state.messages.length; i += step) {
+        if (kept.has(state.messages[i])) {
+            return state.messages[i];
+        }
+    }
+
+    return undefined;
 }
