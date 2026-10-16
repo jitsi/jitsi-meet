@@ -114,6 +114,7 @@ const events = {
     '_pip-requested': '_pipRequested',
     'pip-entered': 'pipEntered',
     'pip-left': 'pipLeft',
+    'pip-double-clicked': 'pipDoubleClicked',
     'second-screen-source-changed': 'secondScreenSourceChanged',
     'second-screen-closed': 'secondScreenClosed',
     'second-screen-error': 'secondScreenError',

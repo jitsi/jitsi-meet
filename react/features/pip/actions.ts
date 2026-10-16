@@ -13,21 +13,30 @@ import {
     HOST_DOCUMENT_PIP_OPENED,
     HOST_DOCUMENT_PIP_SIGNAL_RECEIVED,
     SET_PIP_ACTIVE,
+    SET_PIP_DISMISSED,
     SET_PIP_WINDOW
 } from './actionTypes';
-import { DEFAULT_DOCUMENT_PIP_HEIGHT, DEFAULT_DOCUMENT_PIP_WIDTH } from './constants';
+import {
+    DEFAULT_DOCUMENT_PIP_HEIGHT,
+    DEFAULT_DOCUMENT_PIP_WIDTH,
+    DEFAULT_ELECTRON_PIP_HEIGHT,
+    DEFAULT_ELECTRON_PIP_WIDTH,
+    ELECTRON_PIP_WINDOW_NAME
+} from './constants';
 import {
     cleanupMediaSessionHandlers,
     enterVideoPiP,
+    getPiPMode,
     initPiPWindow,
     isDocumentPiPRequestPending,
-    isDocumentPiPSupported,
+    isElectronPiPWindowMode,
     setDocumentPiPRequestPending,
     setupMediaSessionHandlers,
     shouldShowPiP,
+    shouldUseDocumentPiP
 } from './functions';
 import logger from './logger';
-import type { IOpenDocumentPiPOptions, IWebKitPictureInPictureVideoElement } from './types';
+import type { IOpenDocumentPiPOptions, IWebKitPictureInPictureVideoElement, PiPLeaveReason } from './types';
 
 /**
  * Whether the current host-owned request should notify the user if opening fails.
@@ -76,6 +85,83 @@ export function setPiPWindow(pipWindow: Window | null) {
 }
 
 /**
+ * Action to set whether the user dismissed PiP for the rest of the conference
+ * (by closing the custom Electron PiP window).
+ *
+ * @param {boolean} dismissed - Whether PiP is dismissed.
+ * @returns {{
+ *     type: SET_PIP_DISMISSED,
+ *     dismissed: boolean
+ * }}
+ */
+export function setPiPDismissed(dismissed: boolean) {
+    return {
+        type: SET_PIP_DISMISSED,
+        dismissed
+    };
+}
+
+/**
+ * Opens the custom Electron PiP window: a same-origin popup opened from
+ * inside the meeting iframe, which the Electron SDK's main process turns into
+ * a small frameless always-on-top window (the legacy always-on-top
+ * experience). The window content is rendered by the meeting through a React
+ * portal (see ElectronPiPWindow).
+ *
+ * @returns {Function}
+ */
+export function openElectronPiPWindow() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+
+        if (!shouldShowPiP(state) || !isElectronPiPWindowMode(state)) {
+            return;
+        }
+
+        const { dismissed, isPiPActive, pipWindow } = state['features/pip'];
+
+        if (isPiPActive || dismissed || (pipWindow && !pipWindow.closed)) {
+            return;
+        }
+
+        logger.debug('Opening the Electron PiP window');
+
+        const newPiPWindow = window.open(
+            '',
+            ELECTRON_PIP_WINDOW_NAME,
+            `width=${DEFAULT_ELECTRON_PIP_WIDTH},height=${DEFAULT_ELECTRON_PIP_HEIGHT}`);
+
+        if (!newPiPWindow) {
+            // The embedding app's window-open handler denied the popup. That
+            // is an Electron SDK without PiP window support; such apps are
+            // expected to request 'videoPiP' through config.pip.mode instead.
+            logger.warn('The embedding app denied the PiP window');
+
+            return;
+        }
+
+        initPiPWindow(newPiPWindow);
+
+        newPiPWindow.addEventListener('pagehide', () => {
+            // exitPiP() clears the stored reference before closing the window,
+            // so a still-matching reference means the user closed it through
+            // the OS: dismiss PiP for the rest of the meeting (the in-window X
+            // button posts the dismissal itself).
+            if (getState()['features/pip'].pipWindow !== newPiPWindow) {
+                return;
+            }
+
+            dispatch(setPiPWindow(null));
+            dispatch(setPiPDismissed(true));
+            dispatch(handlePiPLeaveEvent('dismissed'));
+        });
+
+        dispatch(setPiPWindow(newPiPWindow));
+        dispatch(handlePipEnterEvent());
+    };
+}
+
+/**
  * Toggles audio mute from PiP MediaSession controls.
  * Uses exact same logic as toolbar audio button including GUM pending state.
  *
@@ -111,11 +197,12 @@ export function toggleVideoFromPiP() {
  * Action to exit Picture-in-Picture mode.
  * Handles both Document PiP and Video PiP.
  *
+ * @param {PiPLeaveReason} reason - Why PiP is left; reported to embedding apps with pipLeft.
  * @returns {Function}
  */
-export function exitPiP() {
+export function exitPiP(reason: PiPLeaveReason = 'requested') {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        logger.debug('exitPiP called');
+        logger.debug(`exitPiP called (${reason})`);
         clearHostDocumentPiPPendingState();
 
         const wasActive = getState()['features/pip']?.isPiPActive;
@@ -129,16 +216,27 @@ export function exitPiP() {
             if (!pipWindow.closed) {
                 pipWindow.close();
             }
+
+            // On Electron the stored window is the custom PiP popup, whose pagehide handler
+            // reports only closes it does not own; a programmatic close finishes the leave
+            // flow here (the Document PiP window's own pagehide handler does this in browsers).
+            if (browser.isElectron()) {
+                if (wasActive) {
+                    dispatch(handlePiPLeaveEvent(reason));
+                }
+
+                return;
+            }
         }
 
-        if (isEmbedded() && isDocumentPiPSupported()) {
+        if (isEmbedded() && shouldUseDocumentPiP(getState())) {
             setDocumentPiPRequestPending(false);
             APP.API.notifyDocumentPiPClose();
 
             // hidePiP() may run while the host has not answered yet, in which case PiP never
             // opened and emitting pipLeft without a matching pipEntered would be unbalanced.
             if (wasActive) {
-                dispatch(handlePiPLeaveEvent());
+                dispatch(handlePiPLeaveEvent(reason));
             }
 
             return;
@@ -202,40 +300,64 @@ export function handleWindowFocus() {
         logger.debug(`Window focus detected, isPiPActive=${isPiPActive}`);
 
         if (isPiPActive) {
-            dispatch(exitPiP());
+            dispatch(exitPiP('focus'));
         }
     };
 }
 
 /**
- * Action to handle the browser's leavepictureinpicture event.
- * Updates state and cleans up MediaSession handlers.
+ * Action to handle leaving Picture-in-Picture (the browser's leavepictureinpicture event, the
+ * Document PiP window closing or the custom Electron PiP window closing).
+ * Updates state, cleans up MediaSession handlers and reports the leave to embedding apps.
  *
+ * @param {PiPLeaveReason} [reason] - Why PiP was left, when known.
  * @returns {Function}
  */
-export function handlePiPLeaveEvent() {
-    return (dispatch: IStore['dispatch']) => {
-        logger.log('Left Picture-in-Picture mode');
+export function handlePiPLeaveEvent(reason?: PiPLeaveReason) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const mode = getPiPMode(getState());
+
+        logger.log(`Left Picture-in-Picture mode (mode: ${mode}, reason: ${reason})`);
 
         dispatch(setPiPActive(false));
         cleanupMediaSessionHandlers();
-        APP.API.notifyPictureInPictureLeft();
+        APP.API.notifyPictureInPictureLeft(mode, reason);
     };
 }
 
 /**
- * Action to handle the browser's enterpictureinpicture event.
- * Updates state and sets up MediaSession handlers.
+ * Action to handle entering Picture-in-Picture (the browser's enterpictureinpicture event, the
+ * Document PiP window opening or the custom Electron PiP window opening).
+ * Updates state, sets up MediaSession handlers and reports the active implementation to
+ * embedding apps.
  *
  * @returns {Function}
  */
 export function handlePipEnterEvent() {
-    return (dispatch: IStore['dispatch']) => {
-        logger.log('Entered Picture-in-Picture mode');
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const mode = getPiPMode(getState());
+
+        logger.log(`Entered Picture-in-Picture mode (mode: ${mode})`);
 
         dispatch(setPiPActive(true));
         setupMediaSessionHandlers(dispatch);
-        APP.API.notifyPictureInPictureEntered();
+        APP.API.notifyPictureInPictureEntered(mode);
+    };
+}
+
+/**
+ * Reports that the user double clicked the custom Electron PiP window (the legacy always-on-top
+ * gesture, meaning "return to the meeting"). Embedding apps and the Electron SDK focus the window
+ * hosting the meeting; the resulting focus then closes the PiP window like any refocus.
+ *
+ * @returns {Function}
+ */
+export function handlePiPDoubleClick() {
+    return (_dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const mode = getPiPMode(getState());
+
+        logger.log('Picture-in-Picture window double clicked');
+        APP.API.notifyPictureInPictureDoubleClicked(mode);
     };
 }
 
@@ -258,7 +380,9 @@ export function showPiP() {
         }
 
         if (!isPiPActive) {
-            if (isDocumentPiPSupported()) {
+            if (isElectronPiPWindowMode(state)) {
+                dispatch(openElectronPiPWindow());
+            } else if (shouldUseDocumentPiP(state)) {
                 dispatch(openDocumentPiP());
             } else {
                 const videoElement = document.getElementById('pipVideo') as HTMLVideoElement;
@@ -288,7 +412,7 @@ export function hidePiP() {
         const state = getState();
         const isPiPActive = state['features/pip']?.isPiPActive;
         const embeddedRequestPending = isEmbedded()
-            && isDocumentPiPSupported()
+            && shouldUseDocumentPiP(state)
             && isDocumentPiPRequestPending();
 
         logger.debug(`hidePiP called, isPiPActive=${isPiPActive}`);
@@ -323,7 +447,11 @@ export function togglePip() {
             return;
         }
 
-        if (isDocumentPiPSupported()) {
+        if (isElectronPiPWindowMode(state)) {
+            // An explicit toggle overrides an earlier dismissal of the window.
+            dispatch(setPiPDismissed(false));
+            dispatch(openElectronPiPWindow());
+        } else if (shouldUseDocumentPiP(state)) {
             dispatch(openDocumentPiP({ notifyOnFailure: true }));
         } else {
             const videoElement = document.getElementById('pipVideo') as HTMLVideoElement;
@@ -352,9 +480,9 @@ export function openDocumentPiP(options: IOpenDocumentPiPOptions = {}) {
             return;
         }
 
-        // Electron must not change and must never ask the host for a Document PiP window; browsers
-        // without the Document PiP API fall back to the Video PiP element instead.
-        if (browser.isElectron() || !isDocumentPiPSupported()) {
+        // Electron never asks the host for a Document PiP window; browsers without the Document PiP
+        // API, or with config.pip.mode requesting the video-element PiP, use the Video PiP element.
+        if (!shouldUseDocumentPiP(state)) {
             logger.warn('Document Picture-in-Picture not supported');
 
             return;

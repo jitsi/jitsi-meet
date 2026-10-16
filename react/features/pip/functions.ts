@@ -16,7 +16,8 @@ import logger from './logger';
 import {
     ExtendedMediaSessionAction,
     ExtendedMediaSessionActionHandler,
-    IMediaSessionState
+    IMediaSessionState,
+    PiPMode
 } from './types';
 
 /**
@@ -666,13 +667,70 @@ function createPiPContainer(pipWindow: Window) {
 }
 
 /**
- * Checks if the Document Picture-in-Picture API is supported.
- * Keeps Electron on its existing Video PiP implementation.
+ * Checks if the Document Picture-in-Picture API is supported. Electron is
+ * excluded: it runs the custom PiP window or the video-element PiP.
  *
  * @returns {boolean} True if Document PiP is supported.
  */
 export function isDocumentPiPSupported(): boolean {
     return !browser.isElectron() && 'documentPictureInPicture' in window;
+}
+
+/**
+ * Returns the Picture-in-Picture implementations the current environment can
+ * run, the platform default first: the custom window in Electron, the
+ * browser's Document PiP where its API exists, and the video-element PiP
+ * everywhere.
+ *
+ * @returns {PiPMode[]} The available modes, the default first.
+ */
+function getAvailablePiPModes(): PiPMode[] {
+    if (browser.isElectron()) {
+        return [ 'customWindow', 'videoPiP' ];
+    }
+
+    return isDocumentPiPSupported() ? [ 'documentPiP', 'videoPiP' ] : [ 'videoPiP' ];
+}
+
+/**
+ * Returns the Picture-in-Picture implementation in use: `config.pip.mode` when
+ * the environment can run it, otherwise the platform default. A mode the
+ * environment cannot run (e.g. 'customWindow' in a browser or 'documentPiP' in
+ * Electron) is ignored as if it were unset; the pip subscriber logs it. The
+ * result is reported to embedding apps with the pipEntered and pipLeft
+ * External API events.
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {PiPMode} The active PiP mode.
+ */
+export function getPiPMode(state: IReduxState): PiPMode {
+    const availableModes = getAvailablePiPModes();
+    const configuredMode = state['features/base/config'].pip?.mode;
+
+    return configuredMode && availableModes.includes(configuredMode) ? configuredMode : availableModes[0];
+}
+
+/**
+ * Returns whether the custom Electron PiP window implementation is in use (see
+ * {@link getPiPMode}). Embedding apps whose Electron SDK cannot create the
+ * window are expected to request 'videoPiP' instead.
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {boolean} Whether the Electron PiP window mode is selected.
+ */
+export function isElectronPiPWindowMode(state: IReduxState): boolean {
+    return getPiPMode(state) === 'customWindow';
+}
+
+/**
+ * Returns whether the browser's Document Picture-in-Picture is in use (see
+ * {@link getPiPMode}).
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {boolean} Whether Document PiP is the selected implementation.
+ */
+export function shouldUseDocumentPiP(state: IReduxState): boolean {
+    return getPiPMode(state) === 'documentPiP';
 }
 
 // Re-export from shared file for external use.

@@ -1,16 +1,27 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
-import { SET_PIP_ACTIVE, SET_PIP_WINDOW } from './actionTypes';
+import {
+    SET_PIP_ACTIVE,
+    SET_PIP_DISMISSED,
+    SET_PIP_WINDOW
+} from './actionTypes';
 
 /**
  * The default state for the pip feature.
  */
 const DEFAULT_STATE = {
+    dismissed: false,
     isPiPActive: false,
     pipWindow: null
 };
 
 export interface IPipState {
+    /**
+     * Whether the user dismissed PiP (closed the custom Electron PiP window
+     * with its X button or through the OS) for the rest of the conference.
+     */
+    dismissed: boolean;
+
     isPiPActive: boolean;
 
     /**
@@ -38,6 +49,12 @@ ReducerRegistry.register<IPipState>('features/pip', (state = DEFAULT_STATE, acti
         return {
             ...state,
             isPiPActive: action.isPiPActive
+        };
+
+    case SET_PIP_DISMISSED:
+        return {
+            ...state,
+            dismissed: action.dismissed
         };
 
     case SET_PIP_WINDOW:
