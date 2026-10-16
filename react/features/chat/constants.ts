@@ -81,4 +81,4 @@ export const MODERATE_CHAT_MESSAGE = 'MODERATE_CHAT_MESSAGE';
 /**
  * Maximum number of pending edits, or pending moderations, kept for messages that have not arrived yet.
  */
-export const MAX_PENDING_EDITS = 200;
+export const MAX_PENDING_ENTRIES = 200;

@@ -21,7 +21,7 @@ import { isCCTabEnabled } from '../subtitles/functions.any';
 import { VIDEO_SPACE_MIN_SIZE } from '../video-layout/constants';
 import { IVisitorChatParticipant } from '../visitors/types';
 
-import { ChatTabs, MAX_PENDING_EDITS, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
+import { ChatTabs, MAX_PENDING_ENTRIES, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
 import { IMessage, IPendingMap } from './types';
 
 /**
@@ -443,7 +443,7 @@ export function addPendingEntry<T>(
     const next = { ...pendingEntries, [messageId]: entry };
     const keys = Object.keys(next);
 
-    if (keys.length > MAX_PENDING_EDITS) {
+    if (keys.length > MAX_PENDING_ENTRIES) {
         // Object key order is insertion order for string keys in JS, so the first key is the oldest.
         delete next[keys[0]];
     }
