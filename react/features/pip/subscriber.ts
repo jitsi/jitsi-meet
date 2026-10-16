@@ -1,12 +1,34 @@
-import { IReduxState } from '../app/types';
+import { IReduxState, IStore } from '../app/types';
 import { browser } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media/constants';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { isLocalTrackMuted } from '../base/tracks/functions.any';
 import { getElectronGlobalNS } from '../base/util/helpers';
 
-import { requestPictureInPicture, shouldShowPiP, updateMediaSessionState } from './functions';
+import { getPiPMode, requestPictureInPicture, shouldShowPiP, updateMediaSessionState } from './functions';
 import logger from './logger';
+import { PiPMode } from './types';
+
+/**
+ * Logs when config.pip.mode asks for an implementation this environment cannot
+ * run. The request is then resolved to the platform default as if the mode
+ * were unset, and the mode reported by the pipEntered event would otherwise be
+ * the only trace of it.
+ */
+StateListenerRegistry.register(
+    /* selector */ (state: IReduxState) => state['features/base/config'].pip?.mode,
+    /* listener */ (configuredMode: PiPMode | undefined, store: IStore) => {
+        if (!configuredMode) {
+            return;
+        }
+
+        const mode = getPiPMode(store.getState());
+
+        if (mode !== configuredMode) {
+            logger.warn(`config.pip.mode '${configuredMode}' is not available in this environment, using '${mode}'`);
+        }
+    }
+);
 
 /**
  * Listens to audio and video mute state changes when PiP is active

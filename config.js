@@ -838,11 +838,12 @@ var config = {
     //     disabled: false,
     //     // Selects the Picture-in-Picture implementation. When unset, the platform default applies:
     //     // 'customWindow' in Electron, 'documentPiP' in browsers that support it, 'videoPiP' otherwise.
+    //     // A mode the environment cannot run is ignored as if it were unset.
     //     // - 'customWindow': a frameless always-on-top window rendered by the meeting itself (the
     //     //   legacy always-on-top experience). Electron only; requires jitsi-meet-electron-sdk support
-    //     //   in the embedding app. Apps bundling an SDK without it should set 'videoPiP'.
-    //     // - 'documentPiP': the browser's Document Picture-in-Picture window; falls back to 'videoPiP'
-    //     //   where the API is unavailable.
+    //     //   in the embedding app, which is not detected: apps bundling an SDK without it should set
+    //     //   'videoPiP'.
+    //     // - 'documentPiP': the browser's Document Picture-in-Picture window. Browsers only.
     //     // - 'videoPiP': the video-element Picture-in-Picture, everywhere.
     //     mode: 'customWindow',
     //     // Allow Picture-in-Picture on the prejoin page. Defaults to false.
