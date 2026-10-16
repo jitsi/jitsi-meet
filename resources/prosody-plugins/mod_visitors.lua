@@ -111,7 +111,8 @@ local function send_visitors_iq(conference_service, room, type)
                     senderId = poll.senderId,
                     senderName = poll.senderName,
                     question = poll.question,
-                    answers = poll.answers
+                    answers = poll.answers,
+                    closed = poll.closed
                 };
             end
 
@@ -560,6 +561,19 @@ process_host_module(main_muc_component_config, function(host_module, host)
     end, -2);
 
     host_module:hook('poll-created', function (event)
+        local room = event.room;
+
+        if not visitors_nodes[room.jid] then
+            return;
+        end
+
+        -- we need to update all vnodes
+        local vnodes = visitors_nodes[room.jid].nodes;
+        for conference_service in pairs(vnodes) do
+            send_visitors_iq(conference_service, room, 'update');
+        end
+    end);
+    host_module:hook('poll-closed', function (event)
         local room = event.room;
 
         if not visitors_nodes[room.jid] then

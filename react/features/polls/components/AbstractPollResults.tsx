@@ -9,7 +9,7 @@ import { IReduxState } from '../../app/types';
 import { getParticipantById, getParticipantDisplayName } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
 import { setVoteChanging } from '../actions';
-import { getPoll } from '../functions';
+import { canClosePoll, getPoll } from '../functions';
 import { IAnswerData, IPollData, IVoterData } from '../types';
 
 /**
@@ -33,7 +33,10 @@ export type AnswerInfo = IAnswerData & {
  */
 export type AbstractProps = {
     answers: Array<AnswerInfo>;
+    canClose: boolean;
     changeVote: (e?: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => void;
+    closePoll: (e?: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => void;
+    closed: boolean;
     creatorName: string;
     haveVoted: boolean;
     pollId: string;
@@ -97,6 +100,13 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
         });
     }, [ poll.answers, showDetails ]);
 
+    const canClose = useSelector((state: IReduxState) => canClosePoll(state, pollId));
+    const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
+    const closePoll = useCallback(() => {
+        conference?.getPolls().closePoll(pollId);
+        sendAnalytics(createPollEvent('closed'));
+    }, [ conference, pollId ]);
+
     const dispatch = useDispatch();
     const changeVote = useCallback(() => {
         dispatch(setVoteChanging(pollId, true));
@@ -108,7 +118,10 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
     return (
         <Component
             answers = { answers }
+            canClose = { canClose }
             changeVote = { changeVote }
+            closePoll = { closePoll }
+            closed = { Boolean(poll.closed) }
             creatorName = { creatorName }
             haveVoted = { poll.lastVote !== null }
             pollId = { pollId }
