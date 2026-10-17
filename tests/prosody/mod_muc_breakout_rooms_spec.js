@@ -1,6 +1,7 @@
 import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
+import { prosodyShell } from './helpers/prosody_shell.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
@@ -492,6 +493,58 @@ describe('mod_muc_breakout_rooms', () => {
             const presence = await participant.joinRoom(room2);
 
             assert.strictEqual(presence.attrs.type, 'error', 'join to another room must be rejected');
+        });
+
+        it('a move is used up once the participant joined the room', async () => {
+            const { moderator, participant, room1 } = await setup(true);
+
+            await moderator.sendBreakoutRoomsMessage(BREAKOUT_MUC, OP_MOVE, {
+                participantJid: participant.jid,
+                roomJid: room1
+            });
+            await participant.waitForMessage(s => parseJsonMessage(s)?.event === OP_MOVE);
+
+            const joined = await participant.joinRoom(room1);
+
+            assert.notEqual(joined.attrs.type, 'error', 'join after a move must be allowed');
+
+            await participant.leaveRoom(room1);
+
+            const rejoined = await participant.joinRoom(room1);
+
+            assert.strictEqual(rejoined.attrs.type, 'error', 'a second join with the same move must be rejected');
+        });
+
+        it('a move is kept when another handler rejects the join', async () => {
+            const { moderator, participant, room1 } = await setup(true);
+
+            // Rejects the first join of the participant after this module allowed it, e.g. as a members-only or
+            // max-occupants check would.
+            await prosodyShell([
+                '>local st = require "util.stanza";',
+                'local rejected = false;',
+                `prosody.hosts["${BREAKOUT_MUC}"].events.add_handler("muc-occupant-pre-join", function(e)`,
+                `if not rejected and e.stanza.attr.from == "${participant.jid}" then`,
+                'rejected = true;',
+                'e.origin.send(st.error_reply(e.stanza, "cancel", "service-unavailable"));',
+                'return true;',
+                'end end, -100)'
+            ].join(' '));
+
+            await moderator.sendBreakoutRoomsMessage(BREAKOUT_MUC, OP_MOVE, {
+                participantJid: participant.jid,
+                roomJid: room1
+            });
+            await participant.waitForMessage(s => parseJsonMessage(s)?.event === OP_MOVE);
+
+            const rejected = await participant.joinRoom(room1);
+
+            assert.ok(rejected.getChild('error')?.getChild('service-unavailable'),
+                'the first join must be rejected by the other handler');
+
+            const retried = await participant.joinRoom(room1);
+
+            assert.notEqual(retried.attrs.type, 'error', 'the move must still allow the retried join');
         });
 
         it('moderator can join a breakout room when breakoutRoomJoinRestricted is true', async () => {

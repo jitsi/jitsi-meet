@@ -67,7 +67,12 @@ import {
     removeBreakoutRoom,
     sendParticipantToRoom
 } from '../../react/features/breakout-rooms/actions';
-import { getBreakoutRooms, getRoomsInfo } from '../../react/features/breakout-rooms/functions';
+import {
+    getBreakoutRooms,
+    getMainRoom,
+    getRoomsInfo,
+    isBreakoutRoomJoinAllowed
+} from '../../react/features/breakout-rooms/functions';
 import {
     sendMessage,
     setPrivateMessageRecipient,
@@ -951,6 +956,17 @@ function initCommands() {
             APP.store.dispatch(closeBreakoutRoom(roomId));
         },
         'join-breakout-room': roomId => {
+            const state = APP.store.getState();
+            const mainRoomId = getMainRoom(state)?.id;
+            const isMainRoom = !roomId || roomId === mainRoomId || roomId.split('@')[0] === mainRoomId;
+
+            // Returning to the main room is always allowed, the server rejects any other self join as well.
+            if (!isMainRoom && !isBreakoutRoomJoinAllowed(state)) {
+                logger.error('Joining breakout rooms is restricted to the rooms that a moderator assigns');
+
+                return;
+            }
+
             APP.store.dispatch(moveToRoom(roomId));
         },
         'send-participant-to-room': (participantId, roomId) => {

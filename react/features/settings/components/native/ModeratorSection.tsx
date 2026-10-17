@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -58,32 +58,42 @@ const ModeratorSection = () => {
     }, [ dispatch, updateSettings, setStartReactionsMuted ]);
 
     const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
-    const onChatWithPermissionsToggled = useCallback((enabled?: boolean) => {
-        const currentPermissions = conference?.getMetadataHandler().getMetadata().permissions || {};
+
+    // The permissions that were set but that the server has not confirmed yet. The metadata changes only
+    // when the server confirms it, thus a second toggle before that would put back the old value of the first.
+    const pendingPermissions = useRef<Record<string, boolean | undefined>>({});
+
+    useEffect(() => {
+        const confirmed = conference?.getMetadataHandler().getMetadata().permissions || {};
+
+        for (const key of Object.keys(pendingPermissions.current)) {
+            if (Boolean(confirmed[key]) === Boolean(pendingPermissions.current[key])) {
+                delete pendingPermissions.current[key];
+            }
+        }
+    }, [ conference, chatWithPermissionsEnabled, privateChatWithPermissionsEnabled,
+        breakoutRoomJoinWithPermissionsEnabled ]);
+
+    const setPermission = useCallback((key: string, enabled?: boolean) => {
+        pendingPermissions.current[key] = enabled;
 
         conference?.getMetadataHandler().setMetadata('permissions', {
-            ...currentPermissions,
-            groupChatRestricted: enabled
+            ...conference?.getMetadataHandler().getMetadata().permissions,
+            ...pendingPermissions.current
         });
-    }, [ dispatch, conference ]);
+    }, [ conference ]);
+
+    const onChatWithPermissionsToggled = useCallback((enabled?: boolean) => {
+        setPermission('groupChatRestricted', enabled);
+    }, [ setPermission ]);
 
     const onPrivateChatWithPermissionsToggled = useCallback((enabled?: boolean) => {
-        const currentPermissions = conference?.getMetadataHandler().getMetadata().permissions || {};
-
-        conference?.getMetadataHandler().setMetadata('permissions', {
-            ...currentPermissions,
-            privateChatRestricted: enabled
-        });
-    }, [ dispatch, conference ]);
+        setPermission('privateChatRestricted', enabled);
+    }, [ setPermission ]);
 
     const onBreakoutRoomJoinWithPermissionsToggled = useCallback((enabled?: boolean) => {
-        const currentPermissions = conference?.getMetadataHandler().getMetadata().permissions || {};
-
-        conference?.getMetadataHandler().setMetadata('permissions', {
-            ...currentPermissions,
-            breakoutRoomJoinRestricted: enabled
-        });
-    }, [ dispatch, conference ]);
+        setPermission('breakoutRoomJoinRestricted', enabled);
+    }, [ setPermission ]);
 
     const followMeRecorderChecked = followMeRecorderEnabled && !followMeRecorderActive;
 
