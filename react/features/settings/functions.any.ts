@@ -10,7 +10,7 @@ import { getLocalParticipant } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { getHideSelfView } from '../base/settings/functions.any';
 import { parseStandardURIString } from '../base/util/uri';
-import { getBreakoutRoomsConfig } from '../breakout-rooms/functions';
+import { getBreakoutRoomsConfig, isInBreakoutRoom } from '../breakout-rooms/functions';
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive, isFollowMeRecorderActive } from '../follow-me/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
@@ -178,9 +178,13 @@ export function getModeratorTabProps(stateful: IStateful) {
     const conferenceMetadata = conference?.getMetadataHandler()?.getMetadata();
     const hideChatWithPermissions = !showChatPermissionsModeratorSetting || conferenceMetadata?.allownersEnabled;
     const { hideJoinRoomButton } = getBreakoutRoomsConfig(state);
+    // The restriction is a setting of the main room, a breakout room has its own metadata that the server ignores
+    // for it. When everyone is an owner (allowners), nobody is restricted.
     const showBreakoutRoomJoinWithPermissions = Boolean(showBreakoutRoomJoinPermissionsModeratorSetting)
         && Boolean(conference?.getBreakoutRooms()?.isSupported())
-        && !hideJoinRoomButton;
+        && !hideJoinRoomButton
+        && !isInBreakoutRoom(state)
+        && !conferenceMetadata?.allownersEnabled;
     const isAudioModerationEnabled = isEnabledFromState(MEDIA_TYPE.AUDIO, state);
     const isVideoModerationEnabled = isEnabledFromState(MEDIA_TYPE.VIDEO, state);
 

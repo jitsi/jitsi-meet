@@ -420,6 +420,14 @@ function on_occupant_joined(event)
     local main_room, main_room_jid = get_main_room(room.jid);
     local isFocus = is_admin(occupant.bare_jid);
 
+    -- The occupant is in the room a moderator moved them to, the move is used up.
+    local real_jid = event.stanza and event.stanza.attr.from;
+    local move_request = real_jid and move_request_cache:get(real_jid);
+
+    if move_request and move_request.room_jid == room.jid then
+        move_request_cache:set(real_jid, nil);
+    end
+
     if main_room and main_room._data.breakout_rooms_active then
         if not isFocus then
             broadcast_breakout_rooms(main_room_jid);
@@ -655,7 +663,8 @@ end
 
 -- Returns true when the main room restricts joining breakout rooms and the occupant may not join the breakout room
 -- by themselves. A moderator of the main room can always join. Another occupant can join only a room that a moderator
--- moved them to. Returning to the main room is not checked here, it is always allowed.
+-- moved them to. Returning to the main room is not checked here, it is always allowed. The move is used up in
+-- on_occupant_joined, once the join succeeded, thus a join that another handler rejects can be retried.
 -- @param main_room - The main room
 -- @param room - The breakout room being joined
 -- @param from_jid - The real full JID of the occupant trying to join
@@ -671,7 +680,6 @@ function is_breakout_room_join_blocked(main_room, room, from_jid)
     local move_request = move_request_cache:get(from_jid);
 
     if move_request and move_request.room_jid == room.jid and move_request.expires >= os.time() then
-        move_request_cache:set(from_jid, nil);
         return false;
     end
 
