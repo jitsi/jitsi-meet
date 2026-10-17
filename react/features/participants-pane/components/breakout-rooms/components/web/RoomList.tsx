@@ -12,6 +12,7 @@ import {
     getBreakoutRoomsConfig,
     getCurrentRoomId,
     isAutoAssignParticipantsVisible,
+    isBreakoutRoomJoinAllowed,
     isInBreakoutRoom
 } from '../../../../../breakout-rooms/functions';
 import { IRoom } from '../../../../../breakout-rooms/types';
@@ -51,6 +52,7 @@ export const RoomList = ({ searchString }: IProps) => {
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const showAutoAssign = useSelector(isAutoAssignParticipantsVisible);
     const { hideJoinRoomButton } = useSelector(getBreakoutRoomsConfig);
+    const joinAllowed = useSelector(isBreakoutRoomJoinAllowed);
     const [ lowerMenu, raiseMenu, toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu<IRoom>();
     const [ lowerParticipantMenu, raiseParticipantMenu, toggleParticipantMenu,
         participantMenuEnter, participantMenuLeave, raiseParticipantContext ] = useContextMenu<{
@@ -88,7 +90,8 @@ export const RoomList = ({ searchString }: IProps) => {
                             searchString = { searchString }
                             toggleParticipantMenu = { toggleParticipantMenu }>
                             {!isMobileBrowser() && <>
-                                {!hideJoinRoomButton && <JoinActionButton room = { room } />}
+                                {!hideJoinRoomButton && (joinAllowed || room.isMainRoom)
+                                    && <JoinActionButton room = { room } />}
                                 {isLocalModerator && !room.isMainRoom
                                     && <RoomActionEllipsis onClick = { toggleMenu(room) } />}
                             </>}

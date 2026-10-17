@@ -1,16 +1,19 @@
 import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
+import { prosodyShell } from './helpers/prosody_shell.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
 const BREAKOUT_MUC = 'breakout.conference.localhost';
+const METADATA_COMPONENT = 'metadata.localhost';
 const JITMEET_NS = 'http://jitsi.org/jitmeet';
 
 // JSON message type constants (must match mod_muc_breakout_rooms.lua)
 const BREAKOUT_ROOMS_TYPE = 'breakout_rooms';
 const EVENT_UPDATE = 'features/breakout-rooms/update';
 const OP_ADD = 'features/breakout-rooms/add';
+const OP_MOVE = 'features/breakout-rooms/move-to-room';
 const OP_REMOVE = 'features/breakout-rooms/remove';
 const OP_RENAME = 'features/breakout-rooms/rename';
 
@@ -55,6 +58,25 @@ async function waitForBreakoutUpdate(client, timeout = 6000) {
         const p = parseJsonMessage(s);
 
         return p?.type === BREAKOUT_ROOMS_TYPE && p?.event === EVENT_UPDATE;
+    }, timeout);
+
+    return parseJsonMessage(stanza);
+}
+
+/**
+ * Waits for a breakout_rooms update broadcast that satisfies the predicate.
+ * Earlier updates that do not match are left in the queue.
+ *
+ * @param {object} client
+ * @param {Function} predicate  Receives the parsed payload.
+ * @param {number} [timeout=6000]
+ * @returns {Promise<object>}
+ */
+async function waitForBreakoutUpdateWhere(client, predicate, timeout = 6000) {
+    const stanza = await client.waitForMessage(s => {
+        const p = parseJsonMessage(s);
+
+        return p?.type === BREAKOUT_ROOMS_TYPE && p?.event === EVENT_UPDATE && predicate(p);
     }, timeout);
 
     return parseJsonMessage(stanza);
@@ -370,4 +392,167 @@ describe('mod_muc_breakout_rooms', () => {
 
     });
 
+    // -------------------------------------------------------------------------
+    // joining breakout rooms restricted to moderators and the moves they request
+    // -------------------------------------------------------------------------
+    describe('breakoutRoomJoinRestricted', () => {
+
+        /**
+         * Creates a room with a moderator, two physically created breakout rooms and an
+         * anonymous participant in the main room. Restricts joining breakout rooms when asked.
+         *
+         * @param {boolean} restricted  Whether to set permissions.breakoutRoomJoinRestricted.
+         */
+        async function setup(restricted) {
+            const name = nextRoomName();
+            const { focus, moderator } = await createRoom(name);
+
+            clients.push(focus, moderator);
+
+            await moderator.sendBreakoutRoomsMessage(BREAKOUT_MUC, OP_ADD, { subject: 'Group 1' });
+            await moderator.sendBreakoutRoomsMessage(BREAKOUT_MUC, OP_ADD, { subject: 'Group 2' });
+
+            const created = await waitForBreakoutUpdateWhere(moderator,
+                p => Object.values(p.rooms).filter(r => !r.isMainRoom).length === 2);
+            const [ room1, room2 ] = Object.values(created.rooms).filter(r => !r.isMainRoom)
+                .map(r => r.jid);
+
+            // Focus creates the breakout rooms, the component restricts room creation.
+            await focus.joinRoom(room1, 'focus');
+            await focus.joinRoom(room2, 'focus');
+
+            const participant = await createXmppClient({ params: { room: name } });
+
+            clients.push(participant);
+            await participant.joinRoom(roomJid(name));
+
+            if (restricted) {
+                moderator.sendMetadataUpdate(METADATA_COMPONENT, roomJid(name), 'permissions',
+                    { breakoutRoomJoinRestricted: true });
+
+                // The module sends the restriction with the breakout rooms update.
+                await waitForBreakoutUpdateWhere(participant, p => p.joinRestricted === true);
+            }
+
+            return { moderator,
+                participant,
+                room1,
+                room2 };
+        }
+
+        it('participant can join a breakout room when breakoutRoomJoinRestricted is not set', async () => {
+            const { participant, room1 } = await setup(false);
+
+            const presence = await participant.joinRoom(room1);
+
+            assert.notEqual(presence.attrs.type, 'error', 'join must be allowed when not restricted');
+        });
+
+        it('breakout rooms update carries joinRestricted', async () => {
+            const { moderator } = await setup(true);
+
+            const update = await waitForBreakoutUpdateWhere(moderator, p => p.joinRestricted === true);
+
+            assert.strictEqual(update.joinRestricted, true);
+        });
+
+        it('participant cannot join a breakout room by themselves when breakoutRoomJoinRestricted is true',
+            async () => {
+                const { participant, room1 } = await setup(true);
+
+                const presence = await participant.joinRoom(room1);
+
+                assert.strictEqual(presence.attrs.type, 'error', 'self join must be rejected');
+                assert.ok(presence.getChild('error')?.getChild('not-allowed'), 'expected <not-allowed/>');
+            });
+
+        it('participant can join the room a moderator moved them to when breakoutRoomJoinRestricted is true',
+            async () => {
+                const { moderator, participant, room1 } = await setup(true);
+
+                await moderator.sendBreakoutRoomsMessage(BREAKOUT_MUC, OP_MOVE, {
+                    participantJid: participant.jid,
+                    roomJid: room1
+                });
+                await participant.waitForMessage(s => parseJsonMessage(s)?.event === OP_MOVE);
+
+                const presence = await participant.joinRoom(room1);
+
+                assert.notEqual(presence.attrs.type, 'error', 'join after a move must be allowed');
+            });
+
+        it('a move to one breakout room does not allow joining another one', async () => {
+            const { moderator, participant, room1, room2 } = await setup(true);
+
+            await moderator.sendBreakoutRoomsMessage(BREAKOUT_MUC, OP_MOVE, {
+                participantJid: participant.jid,
+                roomJid: room1
+            });
+            await participant.waitForMessage(s => parseJsonMessage(s)?.event === OP_MOVE);
+
+            const presence = await participant.joinRoom(room2);
+
+            assert.strictEqual(presence.attrs.type, 'error', 'join to another room must be rejected');
+        });
+
+        it('a move is used up once the participant joined the room', async () => {
+            const { moderator, participant, room1 } = await setup(true);
+
+            await moderator.sendBreakoutRoomsMessage(BREAKOUT_MUC, OP_MOVE, {
+                participantJid: participant.jid,
+                roomJid: room1
+            });
+            await participant.waitForMessage(s => parseJsonMessage(s)?.event === OP_MOVE);
+
+            const joined = await participant.joinRoom(room1);
+
+            assert.notEqual(joined.attrs.type, 'error', 'join after a move must be allowed');
+
+            await participant.leaveRoom(room1);
+
+            const rejoined = await participant.joinRoom(room1);
+
+            assert.strictEqual(rejoined.attrs.type, 'error', 'a second join with the same move must be rejected');
+        });
+
+        it('a move is kept when another handler rejects the join', async () => {
+            const { moderator, participant, room1 } = await setup(true);
+
+            // Rejects the first join of the participant after this module allowed it, e.g. as a members-only or
+            // max-occupants check would.
+            await prosodyShell([
+                '>local st = require "util.stanza";',
+                'local rejected = false;',
+                `prosody.hosts["${BREAKOUT_MUC}"].events.add_handler("muc-occupant-pre-join", function(e)`,
+                `if not rejected and e.stanza.attr.from == "${participant.jid}" then`,
+                'rejected = true;',
+                'e.origin.send(st.error_reply(e.stanza, "cancel", "service-unavailable"));',
+                'return true;',
+                'end end, -100)'
+            ].join(' '));
+
+            await moderator.sendBreakoutRoomsMessage(BREAKOUT_MUC, OP_MOVE, {
+                participantJid: participant.jid,
+                roomJid: room1
+            });
+            await participant.waitForMessage(s => parseJsonMessage(s)?.event === OP_MOVE);
+
+            const rejected = await participant.joinRoom(room1);
+
+            assert.ok(rejected.getChild('error')?.getChild('service-unavailable'),
+                'the first join must be rejected by the other handler');
+
+            const retried = await participant.joinRoom(room1);
+
+            assert.notEqual(retried.attrs.type, 'error', 'the move must still allow the retried join');
+        });
+
+        it('moderator can join a breakout room when breakoutRoomJoinRestricted is true', async () => {
+            const { moderator, room1 } = await setup(true);
+
+            const presence = await moderator.joinRoom(room1);
+
+            assert.notEqual(presence.attrs.type, 'error', 'a moderator must keep joining breakout rooms');
+        });
+    });
 });
