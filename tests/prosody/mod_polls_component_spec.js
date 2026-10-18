@@ -511,6 +511,10 @@ describe('mod_polls_component', () => {
 
             closePoll(other, pollId);
 
+            const errorReply = await other.waitForMessage(s => s.attrs.type === 'error');
+
+            assert.ok(errorReply.getChild('error')?.getChild('not-allowed'),
+                'closing must be rejected with not-allowed');
             await assertNoPollBroadcast(creator);
         });
 
@@ -542,6 +546,10 @@ describe('mod_polls_component', () => {
 
             voter.answerPoll(POLLS_COMPONENT, pollId, [ true, false ]);
 
+            const errorReply = await voter.waitForMessage(s => s.attrs.type === 'error');
+
+            assert.ok(errorReply.getChild('error')?.getChild('not-allowed'),
+                'an answer for a closed poll must be rejected with not-allowed');
             await assertNoPollBroadcast(voter);
         });
 
