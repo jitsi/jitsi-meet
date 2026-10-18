@@ -658,6 +658,27 @@ describe('mod_filter_messages shared video', () => {
             assert.ok(!received.getChild('shared-video'), 'shared-video must be removed from the join presence');
         });
 
+        it('a participant that joins later does not get a removed shared video', async () => {
+            const { r, mod, sender } = await setup();
+
+            await restrictChat(mod, r, 'sharedVideoRestricted');
+
+            const received = await sendSharedVideo(sender, mod, r);
+
+            assert.ok(!received.getChild('shared-video'), 'shared-video must be removed');
+
+            // The MUC sends the stored presence of each occupant to a participant that joins.
+            // The whitelisted domain bypasses the occupant limit of the test MUC.
+            const late = await createXmppClient({ domain: 'whitelist.localhost' });
+
+            clients.push(late);
+            await late.joinRoom(r);
+
+            const stored = await late.waitForPresenceFrom(`${r}/${sender.nick}`);
+
+            assert.ok(!stored.getChild('shared-video'), 'the stored presence must not carry the shared video');
+        });
+
         it('moderator with no features in token passes when sharedVideoRestricted is true', async () => {
             const { r, mod, sender } = await setup();
 
