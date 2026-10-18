@@ -549,6 +549,10 @@ describe('mod_polls_component', () => {
 
             voter.answerPoll(POLLS_COMPONENT, pollId, [ true, true, false ]);
 
+            const errorReply = await voter.waitForMessage(s => s.attrs.type === 'error');
+
+            assert.ok(errorReply.getChild('error')?.getChild('bad-request'),
+                'more than one answer must be rejected with bad-request');
             await assertNoPollBroadcast(voter);
         });
 
