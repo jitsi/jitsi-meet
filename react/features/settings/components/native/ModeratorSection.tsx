@@ -63,6 +63,11 @@ const ModeratorSection = () => {
     // when the server confirms it, thus a second toggle before that would put back the old value of the first.
     const pendingPermissions = useRef<Record<string, boolean | undefined>>({});
 
+    // The pending values belong to the metadata of the conference they were set in, e.g. not to a breakout room.
+    useEffect(() => {
+        pendingPermissions.current = {};
+    }, [ conference ]);
+
     useEffect(() => {
         const confirmed = conference?.getMetadataHandler().getMetadata().permissions || {};
 
