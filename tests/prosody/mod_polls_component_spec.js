@@ -364,6 +364,33 @@ describe('mod_polls_component', () => {
             await assertNoPollBroadcast(creator);
         });
 
+        it('answer-poll with more answers than options is ignored', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const creator = await joinParticipant(r);
+
+            const pollId = nextPollId();
+
+            creator.createPoll(POLLS_COMPONENT, pollId, 'Pick one', [ { name: 'A' }, { name: 'B' } ]);
+            await waitForPollCommand(creator, 'new-poll');
+
+            creator.sendPollsMessage(POLLS_COMPONENT, JSON.stringify({
+                answers: [ true, false, true ],
+                command: 'answer-poll',
+                pollId,
+                type: 'polls'
+            }));
+
+            await assertNoPollBroadcast(creator);
+
+            // The handler must remain usable after rejecting the malformed vote.
+            creator.answerPoll(POLLS_COMPONENT, pollId, [ true, false ]);
+            const answer = await waitForPollCommand(creator, 'answer-poll');
+
+            assert.deepEqual(answer.answers, [ true, false ]);
+        });
+
         it('invalid JSON is ignored cleanly', async () => {
             const r = nextRoom();
 

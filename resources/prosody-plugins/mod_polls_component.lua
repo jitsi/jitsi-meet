@@ -274,6 +274,11 @@ end
                 return;
             end
 
+            if #data.answers > #poll.answers then
+                module:log("warn", "answering poll %s with more answers than options", data.pollId);
+                return true;
+            end
+
             local voter = occupant_details;
 
             -- Capture the voter's current vote state so we can detect changes.
