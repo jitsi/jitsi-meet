@@ -246,6 +246,37 @@ describe('mod_polls_component', () => {
             }
         });
 
+        it('an answer with more answers than the poll is rejected and keeps the previous vote', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const voter = await joinParticipant(r);
+
+            const pollId = nextPollId();
+
+            voter.createPoll(POLLS_COMPONENT, pollId, 'Pick one', [
+                { name: 'A' },
+                { name: 'B' },
+                { name: 'C' }
+            ]);
+            await waitForPollCommand(voter, 'new-poll');
+
+            voter.answerPoll(POLLS_COMPONENT, pollId, [ true, false, false ]);
+            await waitForPollCommand(voter, 'answer-poll');
+
+            voter.answerPoll(POLLS_COMPONENT, pollId, [ false, false, false, true ]);
+
+            const errorReply = await voter.waitForMessage(s => s.attrs.type === 'error');
+
+            assert.ok(errorReply.getChild('error')?.getChild('bad-request'),
+                'an answer with the wrong number of answers must be rejected with bad-request');
+            await assertNoPollBroadcast(voter);
+
+            // The first vote is still recorded, so sending it again is not a change and is not broadcast.
+            voter.answerPoll(POLLS_COMPONENT, pollId, [ true, false, false ]);
+            await assertNoPollBroadcast(voter);
+        });
+
         it('an answer for an unknown poll is ignored', async () => {
             const r = nextRoom();
 

@@ -274,6 +274,15 @@ end
                 return;
             end
 
+            -- The votes are matched to the answers by position, so a different count would leave the
+            -- voter's previous votes removed without recording or broadcasting the new ones.
+            if #data.answers ~= #poll.answers then
+                module:log('warn', 'Answer for poll %s has %d answers instead of %d', data.pollId,
+                    #data.answers, #poll.answers);
+                session.send(st.error_reply(stanza, 'cancel', 'bad-request', 'Wrong number of answers'));
+                return true;
+            end
+
             local voter = occupant_details;
 
             -- Capture the voter's current vote state so we can detect changes.
