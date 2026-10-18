@@ -3,6 +3,7 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 import {
     CHANGE_VOTE,
     CLEAR_POLLS,
+    CLOSE_POLL,
     EDIT_POLL,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
@@ -120,6 +121,24 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
                 [pollId]: {
                     ...poll,
                     answers: [ ...poll.answers ]
+                }
+            }
+        };
+    }
+
+    case CLOSE_POLL: {
+        if (!state.polls[action.pollId]) {
+            return state;
+        }
+
+        return {
+            ...state,
+            polls: {
+                ...state.polls,
+                [action.pollId]: {
+                    ...state.polls[action.pollId],
+                    changingVote: false,
+                    closed: true
                 }
             }
         };
