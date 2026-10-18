@@ -188,6 +188,7 @@ export function getModeratorTabProps(stateful: IStateful) {
         privateChatWithPermissionsEnabled: Boolean(privateChatWithPermissions),
         sharedVideoWithPermissionsEnabled: Boolean(sharedVideoRestricted),
         showSharedVideoWithPermissions: Boolean(showSharedVideoPermissionsModeratorSetting)
+            && !conferenceMetadata?.allownersEnabled
             && isSharedVideoEnabled(state),
         showModeratorSettings: Boolean(conference && showModeratorSettings),
         disableReactionsModeration: Boolean(disableReactionsModeration),

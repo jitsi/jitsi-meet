@@ -78,8 +78,8 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     showAudioTranslation: boolean;
 
     /**
-     * Whether the shared video restriction setting should be shown (i.e. it is enabled in the config
-     * and video sharing is enabled).
+     * Whether the shared video restriction setting should be shown (i.e. it is enabled in the config,
+     * video sharing is enabled and the room does not make every participant a moderator).
      */
     showSharedVideoWithPermissions: boolean;
 
