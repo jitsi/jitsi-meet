@@ -42,13 +42,14 @@ ReducerRegistry.register<IBreakoutRoomsState>(FEATURE_KEY, (state = DEFAULT_STAT
             roomCounter: action.roomCounter
         };
     case UPDATE_BREAKOUT_ROOMS: {
-        const { joinRestricted, roomCounter, rooms, userContextCache } = action;
+        const { joinRestricted, roomCounter, rooms, updatedNames, userContextCache } = action;
 
         return {
             ...state,
 
-            // An update that the client sends to itself, e.g. for a changed display name, does not carry it.
-            joinRestricted: joinRestricted ?? state.joinRestricted,
+            // The update that the client sends to itself for a changed display name does not carry it. Any update
+            // from the server does, an older server that does not send it does not restrict joining.
+            joinRestricted: updatedNames ? state.joinRestricted : Boolean(joinRestricted),
             roomCounter,
             rooms,
             userContextCache: userContextCache || state.userContextCache
