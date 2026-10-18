@@ -372,10 +372,13 @@ function on_message(event)
             return false
         end
 
-        move_request_cache:set(participant_jid, {
-            room_jid = target_room_jid,
-            expires = os.time() + MOVE_REQUEST_TTL
-        });
+        -- Returning to the main room is always allowed, only a move to a breakout room needs to be remembered.
+        if room._data.breakout_rooms[target_room_jid] then
+            move_request_cache:set(participant_jid, {
+                room_jid = target_room_jid,
+                expires = os.time() + MOVE_REQUEST_TTL
+            });
+        end
 
         send_json_msg(participant_jid, json_msg)
         return true;
