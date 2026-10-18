@@ -51,7 +51,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
 
     const poll: IPollData = useSelector(getPoll(pollId));
 
-    const { answers, lastVote, question, senderId } = poll;
+    const { answers, lastVote, question, senderId, singleAnswer } = poll;
 
     const [ checkBoxStates, setCheckBoxState ] = useState(() => {
         if (lastVote !== null) {
@@ -64,12 +64,15 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
     const participantName = useBoundSelector(getParticipantDisplayName, senderId);
 
     const setCheckbox = useCallback((index, state) => {
-        const newCheckBoxStates = [ ...checkBoxStates ];
+        // Choosing an answer of a single answer poll clears the other answers.
+        const newCheckBoxStates = singleAnswer && state
+            ? new Array(checkBoxStates.length).fill(false)
+            : [ ...checkBoxStates ];
 
         newCheckBoxStates[index] = state;
         setCheckBoxState(newCheckBoxStates);
         sendAnalytics(createPollEvent('vote.checked'));
-    }, [ checkBoxStates ]);
+    }, [ checkBoxStates, singleAnswer ]);
 
     const dispatch = useDispatch();
 
@@ -83,10 +86,10 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
     }, [ pollId, checkBoxStates, conference ]);
 
     const sendPoll = useCallback(() => {
-        conference?.getPolls().createPoll(pollId, question, answers);
+        conference?.getPolls().createPoll(pollId, question, answers, { singleAnswer });
 
         dispatch(removePoll(poll));
-    }, [ conference, question, answers ]);
+    }, [ conference, question, answers, singleAnswer ]);
 
     const skipAnswer = useCallback(() => {
         dispatch(registerVote(pollId, null));

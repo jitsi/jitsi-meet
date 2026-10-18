@@ -227,6 +227,7 @@ export default [
     'secondScreen',
     'securityUi',
     'showChatPermissionsModeratorSetting',
+    'showPollSingleAnswerSetting',
     'speakerStats',
     'startAudioMuted',
     'startLowBandwidthMode',

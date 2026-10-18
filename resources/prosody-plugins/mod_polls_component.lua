@@ -53,6 +53,10 @@ local function validate_polls(data)
             return false;
         end
 
+        if data.singleAnswer ~= nil and type(data.singleAnswer) ~= 'boolean' then
+            return false;
+        end
+
         for _, answer in ipairs(data.answers) do
             if type(answer) ~= "table" or type(answer.name) ~= "string" then
                 return false;
@@ -235,7 +239,9 @@ end
                 senderId = poll_creator.occupant_id,
                 senderName = poll_creator.occupant_name,
                 question = data.question,
-                answers = answers
+                answers = answers,
+                -- a voter can choose only one answer of such a poll
+                singleAnswer = data.singleAnswer == true or nil
             };
 
             room.polls.by_id[data.pollId] = poll
@@ -250,7 +256,8 @@ end
                     senderId = poll_creator.occupant_id,
                     senderName = poll_creator.occupant_name,
                     question = data.question,
-                    answers = compact_answers
+                    answers = compact_answers,
+                    singleAnswer = poll.singleAnswer
                 }
             }
 
@@ -258,6 +265,7 @@ end
             -- Only relay the sanitized answers (name only) so no unexpected
             -- fields from the sender's payload are forwarded to participants.
             data.answers = answers;
+            data.singleAnswer = poll.singleAnswer;
             data.senderId = poll_creator.occupant_id;
             data.type = 'polls';
             local json_msg_str, error = json.encode(data);
@@ -272,6 +280,23 @@ end
             if poll == nil then
                 module:log("warn", "answering inexistent poll %s", data.pollId);
                 return;
+            end
+
+            if poll.singleAnswer then
+                local chosen = 0;
+                for _, vote_flag in ipairs(data.answers) do
+                    if vote_flag then
+                        chosen = chosen + 1;
+                    end
+                end
+
+                if chosen > 1 then
+                    module:log('warn', 'More than one answer for single answer poll %s', data.pollId);
+                    if session.type ~= 's2sin' then
+                        session.send(st.error_reply(stanza, 'modify', 'bad-request', 'Only one answer allowed'));
+                    end
+                    return true;
+                end
             end
 
             local voter = occupant_details;
@@ -462,7 +487,8 @@ local setup_muc_component = function(host_module, host)
                 senderId = poll.senderId,
                 senderName = poll.senderName,
                 question = poll.question,
-                answers = poll.answers
+                answers = poll.answers,
+                singleAnswer = poll.singleAnswer
             };
         end
 
@@ -536,6 +562,7 @@ local setup_muc_component = function(host_module, host)
             command = 'new-poll',
             pollId = new_poll.pollId,
             question = new_poll.question,
+            singleAnswer = new_poll.singleAnswer,
             senderId = new_poll.senderId,
             roomJid = internal_room_jid_match_rewrite(room.jid),
             type = 'polls'

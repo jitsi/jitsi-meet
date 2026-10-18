@@ -422,4 +422,127 @@ describe('mod_polls_component', () => {
             await assertNoPollBroadcast(nonOccupant);
         });
     });
+
+    // ── Single answer polls ─────────────────────────────────────────────────
+
+    describe('single answer polls', () => {
+
+        /**
+         * Creates a poll by sending a raw new-poll message, so that options can be set.
+         *
+         * @param {object} client
+         * @param {string} pollId
+         * @param {object} [extra]  Extra fields of the new-poll message.
+         */
+        function createPollWith(client, pollId, extra = {}) {
+            client.sendPollsMessage(POLLS_COMPONENT, JSON.stringify({
+                answers: [ { name: 'A' }, { name: 'B' }, { name: 'C' } ],
+                command: 'new-poll',
+                pollId,
+                question: 'Pick one',
+                type: 'polls',
+                ...extra
+            }));
+        }
+
+        /**
+         * Joins a creator and a voter and creates a poll that both received.
+         *
+         * @param {object} [extra]  Extra fields of the new-poll message.
+         */
+        async function setup(extra) {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const creator = await joinParticipant(r);
+            const voter = await joinParticipant(r);
+            const pollId = nextPollId();
+
+            createPollWith(creator, pollId, extra);
+
+            const [ poll ] = await Promise.all([
+                waitForPollCommand(voter, 'new-poll'),
+                waitForPollCommand(creator, 'new-poll')
+            ]);
+
+            return { creator,
+                poll,
+                pollId,
+                r,
+                voter };
+        }
+
+        it('broadcasts singleAnswer with the new poll', async () => {
+            const { poll } = await setup({ singleAnswer: true });
+
+            assert.strictEqual(poll.singleAnswer, true);
+        });
+
+        it('a poll without singleAnswer is broadcast without it', async () => {
+            const { poll } = await setup();
+
+            assert.ok(!('singleAnswer' in poll), 'singleAnswer must not be added to a regular poll');
+        });
+
+        it('accepts one answer for a single answer poll', async () => {
+            const { pollId, voter } = await setup({ singleAnswer: true });
+
+            voter.answerPoll(POLLS_COMPONENT, pollId, [ false, true, false ]);
+
+            const answer = await waitForPollCommand(voter, 'answer-poll');
+
+            assert.deepEqual(answer.answers, [ false, true, false ]);
+        });
+
+        it('rejects more than one answer for a single answer poll', async () => {
+            const { pollId, voter } = await setup({ singleAnswer: true });
+
+            voter.answerPoll(POLLS_COMPONENT, pollId, [ true, true, false ]);
+
+            const errorReply = await voter.waitForMessage(s => s.attrs.type === 'error');
+
+            assert.ok(errorReply.getChild('error')?.getChild('bad-request'),
+                'more than one answer must be rejected with bad-request');
+            await assertNoPollBroadcast(voter);
+        });
+
+        it('still accepts several answers for a regular poll', async () => {
+            const { pollId, voter } = await setup();
+
+            voter.answerPoll(POLLS_COMPONENT, pollId, [ true, true, false ]);
+
+            const answer = await waitForPollCommand(voter, 'answer-poll');
+
+            assert.deepEqual(answer.answers, [ true, true, false ]);
+        });
+
+        it('a late joiner receives singleAnswer via old-polls', async () => {
+            // Only the creator joins first, the test rooms are limited to two participants.
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const creator = await joinParticipant(r);
+            const pollId = nextPollId();
+
+            createPollWith(creator, pollId, { singleAnswer: true });
+            await waitForPollCommand(creator, 'new-poll');
+
+            const late = await joinParticipant(r);
+            const history = await waitForPollCommand(late, 'old-polls');
+            const stored = history.polls.find(p => p.pollId === pollId);
+
+            assert.strictEqual(stored?.singleAnswer, true);
+        });
+
+        it('a new poll with a non-boolean singleAnswer is ignored', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const creator = await joinParticipant(r);
+
+            createPollWith(creator, nextPollId(), { singleAnswer: 'yes' });
+
+            await assertNoPollBroadcast(creator);
+        });
+    });
 });
