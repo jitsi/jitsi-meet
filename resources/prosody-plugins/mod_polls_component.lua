@@ -277,6 +277,7 @@ end
             if #data.answers ~= #poll.answers then
                 module:log("warn", "answering poll %s with mismatched answer count. Sender: %s",
                     data.pollId, stanza.attr.from);
+                session.send(st.error_reply(stanza, 'cancel', 'bad-request', 'Wrong number of answers'));
                 return true;
             end
 
