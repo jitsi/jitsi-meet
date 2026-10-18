@@ -41,7 +41,6 @@ export default function EndConferenceDialog(): JSX.Element {
                 translationKey: 'dialog.endConferenceButton'
             }}
             onSubmit = { onSubmit }
-            size = 'small'
             titleKey = 'dialog.endConferenceTitle'>
             <div className = { classes.description }>
                 { descriptionText }
