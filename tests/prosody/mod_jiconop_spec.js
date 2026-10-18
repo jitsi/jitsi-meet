@@ -78,6 +78,8 @@ describe('mod_jiconop', () => {
     it('query contains the features advertised with jitsi-add-feature', async () => {
         const feature = 'http://jitsi.org/protocol/test#jiconop_feature';
 
+        // Connect first, so the query is cached before the feature is added.
+        await connectAndGetJiconop();
         await prosodyShell(
             `>prosody.hosts["localhost"].events.fire_event("jitsi-add-feature", { feature = "${feature}" })`);
 
