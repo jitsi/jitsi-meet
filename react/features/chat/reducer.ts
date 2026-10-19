@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 import { UPDATE_CONFERENCE_METADATA } from '../base/conference/actionTypes';
 import { ILocalParticipant, IParticipant } from '../base/participants/types';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
@@ -97,7 +99,8 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             participantId: action.participantId,
             isEdited: Boolean(action.isEdited),
             isReaction: action.isReaction,
-            messageId: action.messageId,
+            // Reaction, system and error messages carry no id; give them one so every message is addressable.
+            messageId: action.messageId ?? uuidv4(),
             messageType: action.messageType,
             message: action.message,
             reactions: action.reactions,
