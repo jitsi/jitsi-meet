@@ -529,6 +529,43 @@ describe('mod_voice_agent_component', function()
         end)
     end)
 
+    describe('fanIn', function()
+        local function dial_body()
+            assert.are.equal(200, dial('conference=r&agentId=agent-support').status_code);
+            return encoded[#encoded];
+        end
+
+        it('defaults to per-source in the dial response', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            assert.are.equal('per-source', dial_body().fanIn);
+        end)
+
+        it('carries dominant to the dial response and keeps it out of the client-facing entry', function()
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                fanIn = 'dominant' }).status_code);
+            assert.are.equal('dominant', dial_body().fanIn);
+            assert.is_nil(mock_room.jitsiMetadata.agents['agent-support'].fanIn);
+        end)
+
+        it('rejects an unknown policy and a non-string', function()
+            for _, bad in ipairs({ 'loudest', 'Dominant', 42, { 'dominant' } }) do
+                assert.are.equal(400, invite({ conference = 'r'; displayName = 'Bot'; fanIn = bad }).status_code);
+            end
+            assert.are.equal(0, #agent_ids(mock_room));
+        end)
+
+        it('is part of the idempotency check, the default matching an explicit per-source', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                fanIn = 'per-source' }).status_code);
+            -- A record from before fanIn existed counts as the default.
+            mock_room._data.voice_agents['agent-support'].fanIn = nil;
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' }).status_code);
+            assert.are.equal(409, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';
+                fanIn = 'dominant' }).status_code);
+        end)
+    end)
+
     describe('dial (internal, fetched by the media relay)', function()
         local function invite_support()
             invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support';

@@ -18,7 +18,7 @@
 --   }
 -- Prosody-only (never broadcast):
 --   room._data.voice_agents[agentId] = { endpoint = { url, authorization }, customParameters, callbackUrl,
---       mediaFormat = { encoding } }
+--       mediaFormat = { encoding }, fanIn }
 -- The dial config stays here: jicofo's connect carries only the conference and
 -- agent id, and the media relay fetches the endpoint by id (GET /voice-agent/dial)
 -- when the bridge connects, so no customer secret travels through room metadata,
@@ -34,8 +34,10 @@
 -- response, webhook and the dial config name it the public way, as the meeting URL spells it; never by JID.
 --
 --   POST /voice-agent/invite   { conference, displayName, agentId?, endpoint{url,authorization?},
---                                customParameters?, callbackUrl?, mediaFormat?{encoding} }
+--                                customParameters?, callbackUrl?, mediaFormat?{encoding}, fanIn? }
 --     mediaFormat.encoding: 'audio/l16' (PCM16 24 kHz, the default) or 'audio/opus' (relayed undecoded)
+--     fanIn: 'per-source' (every participant's audio as its own stream, the default) or 'dominant'
+--       (only the dominant speaker's, as the bridge ranks them)
 --     → 200 { agentId, sourceName }  — idempotent on agentId: an identical re-invite
 --       returns the existing agent, a different one is 409; 409 too while anyone has E2EE on
 --   POST /voice-agent/dismiss  { conference, agentId } → 200 { agentId }
@@ -47,7 +49,8 @@
 --     forward-only, so nothing follows failed; 404 once the agent is gone
 --     auth: ASAP, or the voice_agent_status_secret shared secret (jicofo cannot mint ASAP)
 --   GET  /voice-agent/dial?conference=<jid>&agentId=<id>
---     internal: the media relay fetches { agentId, conference, endpoint, customParameters, mediaFormat } when dialing;
+--     internal: the media relay fetches { agentId, conference, endpoint, customParameters, mediaFormat, fanIn }
+--     when dialing;
 --     auth as status
 --
 -- Webhooks: when an agent has a callbackUrl, lifecycle events are POSTed to it as
@@ -333,6 +336,21 @@ local function validate_media_format(media_format)
     return { encoding = media_format.encoding };
 end
 
+-- How the media relay fans several participants' audio in to the agent.
+local DEFAULT_FAN_IN = 'per-source';
+local FAN_INS = { ['per-source'] = true; ['dominant'] = true };
+
+-- Validates the optional fanIn; returns the policy (the default when absent), or nil plus an error.
+local function validate_fan_in(fan_in)
+    if fan_in == nil then
+        return DEFAULT_FAN_IN;
+    end
+    if not FAN_INS[fan_in] then
+        return nil, 'fanIn must be per-source or dominant';
+    end
+    return fan_in;
+end
+
 -- Shallow equality for string maps; nil and {} compare equal.
 local function maps_equal(a, b)
     a = a or {};
@@ -575,6 +593,10 @@ local function handle_invite(event)
     if media_format_error then
         return error_response(400, media_format_error);
     end
+    local fan_in, fan_in_error = validate_fan_in(payload.fanIn);
+    if fan_in_error then
+        return error_response(400, fan_in_error);
+    end
     if is_e2ee_enabled(room) then
         return error_response(409, 'End-to-end encryption is on in this meeting');
     end
@@ -601,6 +623,7 @@ local function handle_invite(event)
                 and maps_equal(jicofo_entry.endpoint, endpoint)
                 and maps_equal(jicofo_entry.customParameters, custom_params)
                 and (jicofo_entry.mediaFormat or { encoding = DEFAULT_MEDIA_ENCODING }).encoding == media_format.encoding
+                and (jicofo_entry.fanIn or DEFAULT_FAN_IN) == fan_in
                 and jicofo_entry.callbackUrl == callback_url then
             return { status_code = 200, body = json.encode({ agentId = agent_id, sourceName = source_name }) };
         end
@@ -628,6 +651,7 @@ local function handle_invite(event)
         customParameters = custom_params;
         callbackUrl = callback_url;
         mediaFormat = media_format;
+        fanIn = fan_in;
     };
 
     room.jitsiMetadata.agents = agents;
@@ -782,6 +806,7 @@ local function handle_dial(event)
         endpoint = jicofo_entry.endpoint;
         customParameters = jicofo_entry.customParameters;
         mediaFormat = jicofo_entry.mediaFormat;
+        fanIn = jicofo_entry.fanIn;
     }) };
 end
 
