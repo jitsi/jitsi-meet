@@ -160,6 +160,11 @@ var config = {
     // Shows/hides the moderator setting for chat permissions.
     // showChatPermissionsModeratorSetting: false,
 
+    // Shows/hides the moderator setting that restricts joining a breakout room to the room a moderator
+    // assigns. The restriction is enforced by the mod_muc_breakout_rooms prosody module, thus enable this
+    // only when the server runs a version of that module that supports it.
+    // showBreakoutRoomJoinPermissionsModeratorSetting: false,
+
     // screenshotCapture : {
     //      Enables the screensharing capture feature.
     //      enabled: false,
