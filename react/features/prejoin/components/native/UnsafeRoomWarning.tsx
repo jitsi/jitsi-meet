@@ -53,6 +53,7 @@ const UnsafeRoomWarning: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProp
         if (Platform.OS === 'ios') {
             return (
                 <HeaderNavigationButton
+                    accessibilityLabel = { t('dialog.close') }
                     label = { t('dialog.close') }
                     onPress = { goBack } />
             );
@@ -60,6 +61,7 @@ const UnsafeRoomWarning: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProp
 
         return (
             <HeaderNavigationButton
+                accessibilityLabel = { t('dialog.close') }
                 onPress = { goBack }
                 src = { IconCloseLarge } />
         );
