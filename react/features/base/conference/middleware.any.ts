@@ -465,9 +465,13 @@ function _participantLeft({ getState }: IStore, next: Function, action: AnyActio
     const state = getState();
     const { conference } = state['features/base/conference'];
     const pinnedParticipant = getPinnedParticipant(state);
+    const { conference: leftConference, id } = action.participant;
 
-    // The reducer drops the pin together with the participant, so the id is only known before next().
-    if (conference && pinnedParticipant && pinnedParticipant.id === action.participant.id) {
+    // The reducer drops the pin together with the participant, so the id is only known before next(). A remote
+    // id is unique per JitsiConference (a leave for a previous conference may carry a current id), so match the
+    // conference as the reducer does; the local participant has no such scope.
+    if (conference && pinnedParticipant && pinnedParticipant.id === id
+            && (pinnedParticipant.local || pinnedParticipant.conference === leftConference)) {
         sendAnalytics(createPinnedEvent(
             ACTION_UNPINNED,
             pinnedParticipant.id,
