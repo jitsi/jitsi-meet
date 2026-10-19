@@ -39,7 +39,12 @@ import { validateJwt } from '../jwt/functions';
 import { JitsiConferenceErrors, JitsiConferenceEvents, JitsiConnectionErrors } from '../lib-jitsi-meet';
 import { loadConfig } from '../lib-jitsi-meet/functions';
 import { MEDIA_TYPE } from '../media/constants';
-import { PARTICIPANT_ROLE_CHANGED, PARTICIPANT_UPDATED, PIN_PARTICIPANT } from '../participants/actionTypes';
+import {
+    PARTICIPANT_LEFT,
+    PARTICIPANT_ROLE_CHANGED,
+    PARTICIPANT_UPDATED,
+    PIN_PARTICIPANT
+} from '../participants/actionTypes';
 import { PARTICIPANT_ROLE } from '../participants/constants';
 import {
     getLocalParticipant,
@@ -134,6 +139,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case P2P_STATUS_CHANGED:
         return _p2pStatusChanged(next, action);
+
+    case PARTICIPANT_LEFT:
+        return _participantLeft(store, next, action);
 
     case PARTICIPANT_ROLE_CHANGED:
         return _participantRoleChanged(store, next, action);
@@ -437,6 +445,39 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
     _maybeNotifySettingsIncomplete({ dispatch, getState });
 
     return result;
+}
+
+/**
+ * Notifies the feature base/conference that the action {@code PARTICIPANT_LEFT}
+ * is being dispatched within a specific redux store. Reports the implicit unpin
+ * of a pinned participant who leaves.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code PARTICIPANT_LEFT} which is
+ * being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _participantLeft({ getState }: IStore, next: Function, action: AnyAction) {
+    const state = getState();
+    const { conference } = state['features/base/conference'];
+    const pinnedParticipant = getPinnedParticipant(state);
+
+    // The reducer drops the pin together with the participant, so the id is only known before next().
+    if (conference && pinnedParticipant && pinnedParticipant.id === action.participant.id) {
+        sendAnalytics(createPinnedEvent(
+            ACTION_UNPINNED,
+            pinnedParticipant.id,
+            {
+                local: pinnedParticipant.local,
+                'participant_count': conference.getParticipantCount()
+            }));
+    }
+
+    return next(action);
 }
 
 /**
@@ -779,6 +820,11 @@ function _pinParticipant({ getState }: IStore, next: Function, action: AnyAction
     } else {
         participantIdForEvent
             = actionName === ACTION_PINNED ? id : pinnedParticipant?.id;
+    }
+
+    // Nobody is pinned (or the pinned participant already left), so there is no unpin to report.
+    if (!participantIdForEvent) {
+        return next(action);
     }
 
     sendAnalytics(createPinnedEvent(
