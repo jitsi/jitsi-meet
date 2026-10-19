@@ -28,8 +28,8 @@ import {
     SET_USER_CHAT_WIDTH
 } from './actionTypes';
 import { CHAT_SIZE, ChatTabs } from './constants';
-import { addPendingEdit } from './functions';
-import { IMessage, IPendingEditsMap } from './types';
+import { addPendingEntry } from './functions';
+import { IMessage, IPendingEditsMap, IPendingModerationsMap } from './types';
 
 const DEFAULT_STATE = {
     groupChatWithPermissions: false,
@@ -39,6 +39,7 @@ const DEFAULT_STATE = {
     messages: [],
     notifyPrivateRecipientsChangedTimestamp: undefined,
     pendingEdits: {},
+    pendingModerations: {},
     reactions: {},
     unreadMessagesCount: 0,
     unreadFilesCount: 0,
@@ -70,6 +71,7 @@ export interface IChatState {
     messages: IMessage[];
     notifyPrivateRecipientsChangedTimestamp?: number;
     pendingEdits: IPendingEditsMap;
+    pendingModerations: IPendingModerationsMap;
     privateChatWithPermissions: boolean;
     privateMessageRecipient?: IParticipant | IVisitorChatParticipant;
     searchMatchIndex: number;
@@ -108,7 +110,14 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             timestamp: action.timestamp
         };
 
-        const pendingEdit = action.messageId ? state.pendingEdits[action.messageId] : undefined;
+        // The message id is chosen by the sender, so only look up entries the maps hold themselves:
+        // an id such as '__proto__' must not resolve to an inherited value.
+        const pendingEdit = action.messageId
+            && Object.prototype.hasOwnProperty.call(state.pendingEdits, action.messageId)
+            ? state.pendingEdits[action.messageId] : undefined;
+        const pendingModeration = action.messageId
+            && Object.prototype.hasOwnProperty.call(state.pendingModerations, action.messageId)
+            ? state.pendingModerations[action.messageId] : undefined;
 
         // only apply a cached pending edit if its claimed author matches
         // the author of the message that actually arrived. Prevents a forged/mismatched
@@ -116,7 +125,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         // someone else's message once it shows up.
         const pendingEditValid = pendingEdit?.participantId === action.participantId;
 
-        const finalMessage = pendingEdit && pendingEditValid
+        let finalMessage = pendingEdit && pendingEditValid
             ? {
                 ...newMessage,
                 message: pendingEdit.message,
@@ -124,6 +133,19 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
                 editedAt: pendingEdit.editedAt
             }
             : newMessage;
+
+        // The message was moderated before it arrived (e.g. a moderator brought a late joiner up to
+        // date before the room history was received), so it arrives already removed. The pending
+        // moderation is kept rather than consumed, like in MODERATE_MESSAGE: message ids are chosen
+        // by the sender, so several messages may arrive with the same id, and moderating twice is harmless.
+        if (pendingModeration) {
+            finalMessage = {
+                ...finalMessage,
+                message: '',
+                isModerated: true,
+                moderationReason: pendingModeration.reason
+            };
+        }
 
         // React native, unlike web, needs a reverse sorted message list.
         const messages = navigator.product === 'ReactNative'
@@ -156,7 +178,8 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         const { participantId, reactionList, messageId } = action;
 
         const messages = state.messages.map(message => {
-            if (messageId === message.messageId) {
+            // A deleted or moderated message is shown as a placeholder, so it does not take reactions.
+            if (messageId === message.messageId && !message.isDeleted && !message.isModerated) {
                 const newReactions = new Map(message.reactions);
 
                 reactionList.forEach((reaction: string) => {
@@ -181,6 +204,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
         return {
             ...state,
+            lastReadMessage: _getLastReadMessage(state, messages),
             messages
         };
     }
@@ -235,7 +259,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         if (!messageExists) {
             return {
                 ...state,
-                pendingEdits: addPendingEdit(state.pendingEdits, newMessage.messageId, {
+                pendingEdits: addPendingEntry(state.pendingEdits, newMessage.messageId, {
                     message: newMessage.message,
                     editedAt: newMessage.editedAt,
                     participantId: newMessage.participantId
@@ -249,13 +273,18 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
         return {
             ...state,
+            lastReadMessage: _getLastReadMessage(state, messages),
             messages
         };
     }
 
     case MODERATE_MESSAGE: {
+        let messageExists = false;
+
         const messages = state.messages.map(message => {
             if (message.messageId === action.messageId) {
+                messageExists = true;
+
                 // Clear the text, like RETRACT_MESSAGE does, so the removed content
                 // does not stay in the state while the UI shows a placeholder.
                 return {
@@ -269,15 +298,35 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             return message;
         });
 
+        // Cache the moderation whether or not the message has arrived yet: it is applied to the
+        // message once it does, and, as message ids are chosen by the sender, also to any later
+        // message that arrives with the same id.
+        const pendingModerations = addPendingEntry(state.pendingModerations, action.messageId, {
+            reason: action.reason
+        });
+
+        if (!messageExists) {
+            return {
+                ...state,
+                pendingModerations
+            };
+        }
+
         return {
             ...state,
-            messages
+            lastReadMessage: _getLastReadMessage(state, messages),
+            messages,
+            pendingModerations
         };
     }
 
     case RETRACT_MESSAGE: {
+        let retracted = false;
+
         const messages = state.messages.map(message => {
             if (message.messageId === action.messageId && message.participantId === action.retractedBy) {
+                retracted = true;
+
                 return {
                     ...message,
                     message: '',
@@ -289,8 +338,13 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             return message;
         });
 
+        if (!retracted) {
+            return state;
+        }
+
         return {
             ...state,
+            lastReadMessage: _getLastReadMessage(state, messages),
             messages
         };
     }
@@ -355,20 +409,20 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             privateMessageRecipient: undefined
         };
 
-    case REMOVE_LOBBY_CHAT_PARTICIPANT:
+    case REMOVE_LOBBY_CHAT_PARTICIPANT: {
+        const messages = action.removeLobbyChatMessages
+            ? state.messages.filter(m => !m.lobbyChat)
+            : state.messages;
+
         return {
             ...state,
-            messages: state.messages.filter(m => {
-                if (action.removeLobbyChatMessages) {
-                    return !m.lobbyChat;
-                }
-
-                return true;
-            }),
+            lastReadMessage: _getLastReadMessageAfterRemoval(state, messages),
+            messages,
             isOpen: state.isOpen && state.isLobbyChatActive ? false : state.isOpen,
             isLobbyChatActive: false,
             lobbyMessageRecipient: undefined
         };
+    }
     case UPDATE_CONFERENCE_METADATA: {
         const { metadata } = action;
 
@@ -444,3 +498,60 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
     return state;
 });
+
+/**
+ * Returns the last read message to keep in the state once some of the messages were replaced by
+ * updated copies. The last read message is compared by reference, thus it has to point to the
+ * updated copy, or it would not be found in the new list anymore and would keep the old content.
+ *
+ * @param {IChatState} state - The current chat state.
+ * @param {IMessage[]} messages - The new list of messages, mapped one to one from the current one.
+ * @returns {IMessage|undefined}
+ */
+function _getLastReadMessage(state: IChatState, messages: IMessage[]): IMessage | undefined {
+    const { lastReadMessage } = state;
+
+    if (!lastReadMessage) {
+        return lastReadMessage;
+    }
+
+    const index = state.messages.indexOf(lastReadMessage);
+
+    return index === -1 ? lastReadMessage : messages[index];
+}
+
+/**
+ * Returns the last read message to keep in the state once some of the messages were removed.
+ * If the last read message itself was removed, the closest older message that is kept becomes the
+ * last read one, so the messages that were already read are not counted as unread again.
+ *
+ * @param {IChatState} state - The current chat state.
+ * @param {IMessage[]} messages - The new list of messages, a subset of the current one.
+ * @returns {IMessage|undefined}
+ */
+function _getLastReadMessageAfterRemoval(state: IChatState, messages: IMessage[]): IMessage | undefined {
+    const { lastReadMessage } = state;
+
+    if (!lastReadMessage || messages === state.messages) {
+        return lastReadMessage;
+    }
+
+    const index = state.messages.indexOf(lastReadMessage);
+
+    if (index === -1) {
+        return lastReadMessage;
+    }
+
+    const kept = new Set(messages);
+
+    // React native stores the messages in a reversed order, so the older ones come after.
+    const step = navigator.product === 'ReactNative' ? 1 : -1;
+
+    for (let i = index; i >= 0 && i < state.messages.length; i += step) {
+        if (kept.has(state.messages[i])) {
+            return state.messages[i];
+        }
+    }
+
+    return undefined;
+}
