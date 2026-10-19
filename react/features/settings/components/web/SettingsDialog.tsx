@@ -257,6 +257,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     audioTranslationEnabled: tabState?.audioTranslationEnabled,
                     chatWithPermissionsEnabled: tabState?.chatWithPermissionsEnabled,
                     privateChatWithPermissionsEnabled: tabState?.privateChatWithPermissionsEnabled,
+                    sharedVideoWithPermissionsEnabled: tabState?.sharedVideoWithPermissionsEnabled,
                     followMeEnabled: tabState?.followMeEnabled,
                     followMeRecorderEnabled: tabState?.followMeRecorderEnabled,
                     startAudioMuted: tabState?.startAudioMuted,
