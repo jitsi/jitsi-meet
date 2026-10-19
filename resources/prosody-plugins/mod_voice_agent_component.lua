@@ -44,14 +44,22 @@
 --   GET  /voice-agent/list?conference=<room> → 200 { agents = { <agentId>: <client fields> } }
 --   GET  /voice-agent/get?conference=<room>&agentId=<id> → 200 <agent> | 404
 --   POST /voice-agent/status   { conference, agentId, state, reason? }
---     internal: jicofo/JVB advance the lifecycle (connecting|active|failed|ended);
---     active → agent.connected, failed → agent.failed, ended → teardown + agent.ended;
---     forward-only, so nothing follows failed; 404 once the agent is gone
---     auth: ASAP, or the voice_agent_status_secret shared secret (jicofo cannot mint ASAP)
+--     internal: jicofo and the media relay advance the lifecycle (connecting|active|failed|ended);
+--     active → agent.connected, failed → agent.failed, ended → teardown (agent.ended unless the agent had
+--     already failed: one terminal webhook per agent); forward-only, so a stale or duplicate report is
+--     acknowledged and ignored; 404 once the agent is gone
+--     auth: ASAP, or the voice_agent_status_secret (jicofo) / voice_agent_dial_secret (relay) shared secrets
 --   GET  /voice-agent/dial?conference=<jid>&agentId=<id>
 --     internal: the media relay fetches { agentId, conference, endpoint, customParameters, mediaFormat, fanIn }
 --     when dialing;
---     auth as status
+--     auth: ASAP or voice_agent_dial_secret (falls back to voice_agent_status_secret when no dial secret is
+--     set, which lets whoever holds jicofo's secret read customer credentials; set both in production)
+--
+-- Provisioning auth needs prosody_password_public_key_repo_url: without it the module refuses to load (a meeting
+-- token would otherwise pass), unless voice_agent_insecure_skip_auth is set for a dev rig. Lifecycle webhooks need
+-- voice_agent_webhook_secret: without it an invite with a callbackUrl is refused rather than delivered unsigned.
+-- voice_agent_callback_allowed_hosts (exact host or .suffix) limits where callbacks may go; empty allows any host,
+-- so an OSS deployment that accepts invites from several customers should set it (prosody POSTs there).
 --
 -- Webhooks: when an agent has a callbackUrl, lifecycle events are POSTed to it as
 -- { event, agentId, conference, sourceName, state, timestamp, reason? }, signed
@@ -82,8 +90,11 @@ if muc_component_host == nil then
     module:log('error', 'No muc_component specified. No muc to operate on!');
     return;
 end
--- Optional: breakout rooms can be addressed by JID too.
+-- Optional: breakout rooms can be addressed by JID too, and host agents like the main room.
 local breakout_rooms_component_host = module:get_option_string('breakout_rooms_component');
+
+-- Where lifecycle webhooks may be delivered (exact host or '.suffix'); empty allows any host.
+local CALLBACK_ALLOWED_HOSTS = module:get_option_array('voice_agent_callback_allowed_hosts', {});
 
 local JSON_CONTENT_TYPE = 'application/json';
 
@@ -106,10 +117,10 @@ local STATE_ACTIVE = 'active';
 local STATE_FAILED = 'failed';
 local STATE_ENDED = 'ended';
 -- Forward-only lifecycle: a report only ever moves the state forward, so a duplicate or a stale retry
--- (a delayed 'connecting' landing after 'active') is acknowledged and ignored and each webhook fires once.
--- 'failed' and 'ended' rank alike, so an agent gets one terminal webhook from status reports.
+-- (a delayed 'connecting' landing after 'active') is acknowledged and ignored. 'ended' outranks 'failed' so a
+-- failed agent is still removed (and stops counting toward the room cap); it gets no second terminal webhook.
 local STATE_RANK = {
-    [STATE_PROVISIONING] = 0; [STATE_CONNECTING] = 1; [STATE_ACTIVE] = 2; [STATE_FAILED] = 3; [STATE_ENDED] = 3;
+    [STATE_PROVISIONING] = 0; [STATE_CONNECTING] = 1; [STATE_ACTIVE] = 2; [STATE_FAILED] = 3; [STATE_ENDED] = 4;
 };
 local STATUS_TRANSITIONS = {
     [STATE_CONNECTING] = true; [STATE_ACTIVE] = true; [STATE_FAILED] = true; [STATE_ENDED] = true;
@@ -132,22 +143,35 @@ local INSECURE_ALLOW_HTTP_CALLBACK = module:get_option_boolean('voice_agent_inse
 local WEBHOOK_SECRET = module:get_option_string('voice_agent_webhook_secret', '');
 local WEBHOOK_RETRIES = module:get_option_number('voice_agent_webhook_retries', 3);
 if WEBHOOK_SECRET == '' then
-    module:log('warn', 'voice_agent_webhook_secret is not set — lifecycle webhooks will be UNSIGNED');
+    module:log('warn', 'voice_agent_webhook_secret is not set: invites with a callbackUrl will be refused, since '
+        .. 'the webhook contract promises signed deliveries');
 end
 
 -- Shared secret jicofo presents on /voice-agent/status (it cannot mint ASAP tokens); ASAP is still accepted.
 local STATUS_SECRET = module:get_option_string('voice_agent_status_secret', '');
+-- Shared secret the media relay presents on /voice-agent/dial (and /status); separate from jicofo's so that
+-- holding jicofo's secret does not read customer credentials. Falls back to the status secret when unset.
+local DIAL_SECRET = module:get_option_string('voice_agent_dial_secret', '');
+if DIAL_SECRET == '' and STATUS_SECRET ~= '' then
+    module:log('warn', 'voice_agent_dial_secret is not set: the status secret also reads dial configs (customer '
+        .. 'endpoint credentials); set both to keep jicofo and the media relay apart');
+end
 
 local ASAP_KEY_SERVER = module:get_option_string('prosody_password_public_key_repo_url', '');
 local token_util;
 if INSECURE_SKIP_AUTH then
     module:log('warn', 'voice_agent_insecure_skip_auth is ON — /voice-agent endpoints are UNAUTHENTICATED');
 else
-    token_util = module:require 'token/util'.new(module);
     -- Empty string is truthy in Lua, so compare explicitly.
-    if ASAP_KEY_SERVER ~= '' then
-        token_util:set_asap_key_server(ASAP_KEY_SERVER);
+    if ASAP_KEY_SERVER == '' then
+        -- token/util would fall back to the host's meeting-token settings, and a meeting token must not invite
+        -- or dismiss agents, nor read dial configs. Same stance as mod_muc_jigasi_invite.
+        module:log('error', 'No prosody_password_public_key_repo_url set: provisioning tokens cannot be verified. '
+            .. 'Disabling /voice-agent (set voice_agent_insecure_skip_auth only on a dev rig).');
+        return;
     end
+    token_util = module:require 'token/util'.new(module);
+    token_util:set_asap_key_server(ASAP_KEY_SERVER);
 end
 
 local main_muc_module;
@@ -201,14 +225,34 @@ local function secrets_equal(a, b)
     return hashes.hmac_sha256(COMPARE_KEY, a, true) == hashes.hmac_sha256(COMPARE_KEY, b, true);
 end
 
--- The status route is called by jicofo, which cannot mint ASAP tokens: accept the configured shared secret as a
--- bearer there, in addition to a regular ASAP token. Never used for the provisioning routes.
-local function check_status_authorization(request)
-    if STATUS_SECRET ~= '' then
-        local token = request.headers['authorization'];
-        if type(token) == 'string' and starts_with(token, 'Bearer ') and secrets_equal(token:sub(8), STATUS_SECRET) then
-            return nil;
+-- Whether the request carries one of the given shared secrets as a bearer.
+local function bearer_matches(request, ...)
+    local token = request.headers['authorization'];
+    if type(token) ~= 'string' or not starts_with(token, 'Bearer ') then
+        return false;
+    end
+    for _, secret in ipairs({ ... }) do
+        if secret ~= '' and secrets_equal(token:sub(8), secret) then
+            return true;
         end
+    end
+    return false;
+end
+
+-- The status route is called by jicofo and the media relay, neither of which mints ASAP tokens: accept either
+-- shared secret as a bearer there, in addition to a regular ASAP token. Never used for the provisioning routes.
+local function check_status_authorization(request)
+    if bearer_matches(request, STATUS_SECRET, DIAL_SECRET) then
+        return nil;
+    end
+    return check_authorization(request);
+end
+
+-- The dial route hands out customer credentials: only the media relay's secret (or the status secret while no
+-- dial secret is configured) and ASAP are accepted; jicofo's secret alone does not read them once both are set.
+local function check_dial_authorization(request)
+    if bearer_matches(request, DIAL_SECRET ~= '' and DIAL_SECRET or STATUS_SECRET) then
+        return nil;
     end
     return check_authorization(request);
 end
@@ -265,11 +309,39 @@ local function validate_string_map(value, name)
     return copy;
 end
 
+-- Broadcast to every client, so no control characters either.
 local function is_valid_display_name(name)
-    return type(name) == 'string' and name ~= '' and #name <= MAX_DISPLAY_NAME_LENGTH;
+    return type(name) == 'string' and name ~= '' and #name <= MAX_DISPLAY_NAME_LENGTH and not name:find('[%c]');
 end
 
--- Validates callbackUrl: https:// (http:// only with the dev flag), bounded, no control chars.
+-- The host of an http(s) URL, lower-cased, or nil.
+local function url_host(url)
+    local host = url:match('^https?://([^/?#]+)');
+    if not host then
+        return nil;
+    end
+    -- Drop credentials and the port.
+    host = host:gsub('^.*@', ''):gsub(':%d+$', '');
+    return host:lower();
+end
+
+-- Whether callbacks may be delivered to this host: any host when no allowlist is configured, else an exact
+-- entry or a subdomain of a '.suffix' entry.
+local function callback_host_allowed(host)
+    if #CALLBACK_ALLOWED_HOSTS == 0 then
+        return true;
+    end
+    for _, entry in ipairs(CALLBACK_ALLOWED_HOSTS) do
+        local bare = entry:lower():gsub('^%.', '');
+        if host == bare or host:sub(-#bare - 1) == '.' .. bare then
+            return true;
+        end
+    end
+    return false;
+end
+
+-- Validates callbackUrl: https:// (http:// only with the dev flag), bounded, no control chars, a host the
+-- deployment allows, and only while deliveries can be signed.
 local function validate_callback_url(url)
     if url == nil then
         return nil;
@@ -279,6 +351,13 @@ local function validate_callback_url(url)
     end
     if not (starts_with(url, 'https://') or (INSECURE_ALLOW_HTTP_CALLBACK and starts_with(url, 'http://'))) then
         return nil, 'callbackUrl must be an https:// URL';
+    end
+    local host = url_host(url);
+    if not host or not callback_host_allowed(host) then
+        return nil, 'callbackUrl host is not allowed';
+    end
+    if WEBHOOK_SECRET == '' then
+        return nil, 'callbackUrl requires voice_agent_webhook_secret to be configured';
     end
     return url;
 end
@@ -437,13 +516,23 @@ local function public_room_name(room)
 end
 
 -- Returns the client-facing entry and the jicofo-only entry for an agent, or nil when unknown.
+-- The id as stored: invite accepts it with or without the reserved prefix, so the other routes do too.
+local function normalize_agent_id(agent_id)
+    if type(agent_id) ~= 'string' then
+        return nil;
+    end
+    return starts_with(agent_id, AGENT_ID_PREFIX) and agent_id or (AGENT_ID_PREFIX .. agent_id);
+end
+
+-- The client-facing entry and the prosody-only record of an agent, plus its normalized id; nil when unknown.
 local function get_agent(room, agent_id)
+    agent_id = normalize_agent_id(agent_id);
     local agents = room.jitsiMetadata and room.jitsiMetadata.agents;
-    if type(agent_id) ~= 'string' or not agents or agents[agent_id] == nil then
+    if agent_id == nil or not agents or agents[agent_id] == nil then
         return nil;
     end
     local voice_agents = room._data.voice_agents or {};
-    return agents[agent_id], voice_agents[agent_id] or {};
+    return agents[agent_id], voice_agents[agent_id] or {}, agent_id;
 end
 
 local function agent_response(agent_id, entry)
@@ -480,12 +569,13 @@ deliver_webhook = function(url, body, signature, attempt)
                     deliver_webhook(url, body, signature, attempt + 1);
                 end);
             else
+                -- The host only: the URL's query string may carry the customer's token.
                 module:log('warn', 'Webhook to %s failed after %d attempts (last status %s)',
-                    url, attempt, tostring(code));
+                    tostring(url_host(url)), attempt, tostring(code));
             end
         end);
     if not ok then
-        module:log('warn', 'Webhook request to %s errored: %s', url, tostring(err));
+        module:log('warn', 'Webhook request to %s errored: %s', tostring(url_host(url)), tostring(err));
     end
 end
 
@@ -512,14 +602,19 @@ local function send_webhook(room, agent_id, entry, callback_url, event_name, ext
     deliver_webhook(callback_url, body, signature, 1);
 end
 
--- Tears an agent down: terminal state, agent.ended webhook, removal from both maps.
+-- Tears an agent down: terminal state, agent.ended webhook (unless agent.failed already was its terminal
+-- webhook), removal from both maps.
 local function remove_agent(room, agent_id, reason)
-    local entry, jicofo_entry = get_agent(room, agent_id);
+    local entry, jicofo_entry, id = get_agent(room, agent_id);
     if not entry then
         return false;
     end
+    agent_id = id;
+    local already_terminal = entry.state == STATE_FAILED;
     entry.state = STATE_ENDED;
-    send_webhook(room, agent_id, entry, jicofo_entry.callbackUrl, 'agent.ended', { reason = reason });
+    if not already_terminal then
+        send_webhook(room, agent_id, entry, jicofo_entry.callbackUrl, 'agent.ended', { reason = reason });
+    end
     room.jitsiMetadata.agents[agent_id] = nil;
     if room._data.voice_agents then
         room._data.voice_agents[agent_id] = nil;
@@ -683,14 +778,15 @@ local function handle_dismiss(event)
         return error_response(404, 'Room not found');
     end
 
-    if not remove_agent(room, payload.agentId, 'dismissed') then
+    local agent_id = normalize_agent_id(payload.agentId);
+    if not agent_id or not remove_agent(room, agent_id, 'dismissed') then
         return error_response(404, 'Agent not found');
     end
 
     module:log('info', 'Voice agent %s dismissed from room %s,meeting_id:%s',
-        payload.agentId, room.jid, room._data.meetingId);
+        agent_id, room.jid, room._data.meetingId);
 
-    return { status_code = 200, body = json.encode({ agentId = payload.agentId }) };
+    return { status_code = 200, body = json.encode({ agentId = agent_id }) };
 end
 
 local function query_params(request)
@@ -728,11 +824,11 @@ local function handle_get(event)
     if not room then
         return error_response(404, 'Room not found');
     end
-    local entry = get_agent(room, params.agentId);
+    local entry, _, agent_id = get_agent(room, params.agentId);
     if not entry then
         return error_response(404, 'Agent not found');
     end
-    return { status_code = 200, body = json.encode(agent_response(params.agentId, entry)) };
+    return { status_code = 200, body = json.encode(agent_response(agent_id, entry)) };
 end
 
 -- Internal lifecycle reporting for jicofo/JVB; drives the client-facing state and the webhooks.
@@ -757,28 +853,28 @@ local function handle_status(event)
     end
     local reason = type(payload.reason) == 'string' and public_reason(payload.reason) or nil;
 
-    local entry, jicofo_entry = get_agent(room, payload.agentId);
+    local entry, jicofo_entry, agent_id = get_agent(room, payload.agentId);
     if not entry then
         -- Also a repeated 'ended': the agent is gone, which reporters take as done.
         return error_response(404, 'Agent not found');
     end
     if STATE_RANK[payload.state] <= (STATE_RANK[entry.state] or 0) then
         module:log('debug', 'Ignoring stale status %s for agent %s in state %s',
-            payload.state, payload.agentId, entry.state);
-        return { status_code = 200, body = json.encode(agent_response(payload.agentId, entry)) };
+            payload.state, agent_id, entry.state);
+        return { status_code = 200, body = json.encode(agent_response(agent_id, entry)) };
     end
     if payload.state == STATE_ENDED then
-        remove_agent(room, payload.agentId, reason or 'ended');
-        return { status_code = 200, body = json.encode({ agentId = payload.agentId }) };
+        remove_agent(room, agent_id, reason or 'ended');
+        return { status_code = 200, body = json.encode({ agentId = agent_id }) };
     end
     entry.state = payload.state;
     if payload.state == STATE_ACTIVE then
-        send_webhook(room, payload.agentId, entry, jicofo_entry.callbackUrl, 'agent.connected');
+        send_webhook(room, agent_id, entry, jicofo_entry.callbackUrl, 'agent.connected');
     elseif payload.state == STATE_FAILED then
-        send_webhook(room, payload.agentId, entry, jicofo_entry.callbackUrl, 'agent.failed', { reason = reason });
+        send_webhook(room, agent_id, entry, jicofo_entry.callbackUrl, 'agent.failed', { reason = reason });
     end
     notify_metadata_changed(room);
-    return { status_code = 200, body = json.encode(agent_response(payload.agentId, entry)) };
+    return { status_code = 200, body = json.encode(agent_response(agent_id, entry)) };
 end
 
 -- Internal: the media relay fetches the dial config by id when the bridge connects, so the customer
@@ -786,7 +882,7 @@ end
 local function handle_dial(event)
     local request = event.request;
 
-    local auth_error = check_status_authorization(request);
+    local auth_error = check_dial_authorization(request);
     if auth_error then
         return auth_error;
     end
@@ -796,12 +892,12 @@ local function handle_dial(event)
     if not room then
         return error_response(404, 'Room not found');
     end
-    local entry, jicofo_entry = get_agent(room, params.agentId);
+    local entry, jicofo_entry, agent_id = get_agent(room, params.agentId);
     if not entry or not jicofo_entry.endpoint then
         return error_response(404, 'Agent not found');
     end
     return { status_code = 200, body = json.encode({
-        agentId = params.agentId;
+        agentId = agent_id;
         conference = public_room_name(room);
         endpoint = jicofo_entry.endpoint;
         customParameters = jicofo_entry.customParameters;
@@ -836,8 +932,8 @@ module:provides('http', {
     };
 });
 
-process_host_module(muc_component_host, function(host_module)
-    -- The conference ending takes every agent with it; make that observable to the customer.
+-- The conference (or breakout room) ending takes every agent with it; make that observable to the customer.
+local function hook_room_destroyed(host_module)
     host_module:hook('muc-room-destroyed', function(event)
         local room = event.room;
         local agents = room.jitsiMetadata and room.jitsiMetadata.agents;
@@ -856,4 +952,9 @@ process_host_module(muc_component_host, function(host_module)
             end
         end
     end);
-end);
+end
+
+process_host_module(muc_component_host, hook_room_destroyed);
+if breakout_rooms_component_host then
+    process_host_module(breakout_rooms_component_host, hook_room_destroyed);
+end

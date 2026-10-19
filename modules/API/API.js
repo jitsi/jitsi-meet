@@ -237,6 +237,11 @@ function initCommands() {
         },
         'grant-voice-agent-consent': (id, allow = true) => {
             const { agents, consent } = APP.store.getState()['features/voice-agents'];
+
+            // An id that is not a present agent decides nothing (and must not touch an open dialog).
+            if (id && !Object.hasOwn(agents, id)) {
+                return;
+            }
             const ids = id ? [ id ] : Object.keys(agents).filter(agentId => consent[agentId] !== true);
 
             ids.forEach(agentId => APP.store.dispatch(allow ? allowVoiceAgent(agentId) : declineVoiceAgent(agentId)));

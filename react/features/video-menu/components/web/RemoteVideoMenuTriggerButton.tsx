@@ -6,7 +6,11 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { IconDotsHorizontal } from '../../../base/icons/svg';
-import { getLocalParticipant, getParticipantById } from '../../../base/participants/functions';
+import {
+    getLocalParticipant,
+    getParticipantById,
+    isVoiceAgentParticipant
+} from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import Popover from '../../../base/popover/components/Popover.web';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
@@ -19,6 +23,7 @@ import { renderConnectionStatus } from '../../actions.web';
 import FakeParticipantContextMenu from './FakeParticipantContextMenu';
 import ParticipantContextMenu from './ParticipantContextMenu';
 import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
+import VoiceAgentContextMenu from './VoiceAgentContextMenu';
 
 /**
  * The type of the React {@code Component} props of
@@ -159,6 +164,10 @@ const RemoteVideoMenuTriggerButton = ({
             participant: _participant,
             thumbnailMenu: true
         };
+
+        if (isVoiceAgentParticipant(_participant)) {
+            return <VoiceAgentContextMenu { ...props } />;
+        }
 
         if (_participant?.fakeParticipant) {
             return (

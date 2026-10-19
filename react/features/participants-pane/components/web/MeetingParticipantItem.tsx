@@ -9,7 +9,8 @@ import {
     getParticipantByIdOrUndefined,
     getParticipantDisplayName,
     hasRaisedHand,
-    isParticipantModerator
+    isParticipantModerator,
+    isVoiceAgentParticipant
 } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import {
@@ -231,7 +232,9 @@ function MeetingParticipantItem({
         <ParticipantItem
             actionsTrigger = { ACTION_TRIGGER.HOVER }
             {
-                ...(_participant?.fakeParticipant ? {} : {
+                // An agent is a participant without a transport: its mic (and later video) state shows like
+                // anyone's, unlike shared video's.
+                ...(_participant?.fakeParticipant && !isVoiceAgentParticipant(_participant) ? {} : {
                     audioMediaState,
                     videoMediaState: _videoMediaState
                 })
@@ -263,7 +266,8 @@ function MeetingParticipantItem({
                 </>
             }
 
-            {!overflowDrawer && (_localVideoOwner && _participant?.fakeParticipant) && (
+            {!overflowDrawer && _participant?.fakeParticipant
+                && (isVoiceAgentParticipant(_participant) || _localVideoOwner) && (
                 <ParticipantActionEllipsis
                     accessibilityLabel = { participantActionEllipsisLabel }
                     onClick = { onContextMenu } />
