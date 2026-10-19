@@ -53,6 +53,7 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<IProps> {
         navigation.setOptions({
             headerRight: () => (
                 <HeaderNavigationButton
+                    accessibilityLabel = { t('dialog.start') }
                     label = { t('dialog.start') }
                     onPress = { this._onStartPress }
                     twoActions = { true } />

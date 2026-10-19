@@ -143,6 +143,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
         navigation.setOptions({
             headerRight: () => (
                 <HeaderNavigationButton
+                    accessibilityLabel = { t('inviteDialog.send') }
                     disabled = { this._isAddDisabled() }
                     label = { t('inviteDialog.send') }
                     style = { styles.sendBtn }
@@ -163,6 +164,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
             // eslint-disable-next-line react/no-multi-comp
             headerRight: () => (
                 <HeaderNavigationButton
+                    accessibilityLabel = { t('inviteDialog.send') }
                     disabled = { this._isAddDisabled() }
                     label = { t('inviteDialog.send') }
                     onPress = { this._onInvite }
