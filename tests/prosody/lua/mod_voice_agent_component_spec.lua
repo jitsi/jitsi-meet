@@ -70,6 +70,10 @@ local token_valid = true;
 local mock_room;
 local timers = {};
 local host_hooks = {};
+-- The same hooks keyed by the host they were installed on (the module hooks the main and breakout MUC hosts).
+local host_hooks_by_host = {};
+-- module:log calls, as { level, text }.
+local logs = {};
 
 -- Public room-name lookups ({ name, subdomain }) seen by the util stub.
 local name_lookups = {};
@@ -90,8 +94,12 @@ local util_stub = {
         return mock_room;
     end,
     is_healthcheck_room = function(_) return false; end,
-    process_host_module = function(_host, cb)
-        cb({ hook = function(_, name, fn) host_hooks[name] = fn; end; fire_event = function(_, name)
+    process_host_module = function(host, cb)
+        host_hooks_by_host[host] = host_hooks_by_host[host] or {};
+        cb({ hook = function(_, name, fn)
+            host_hooks[name] = fn;
+            host_hooks_by_host[host][name] = fn;
+        end; fire_event = function(_, name)
             if name == 'room-metadata-changed' then metadata_events = metadata_events + 1; end
         end });
     end,
@@ -116,18 +124,30 @@ local token_util_stub = {
 -- Captured HTTP route handlers, filled by the module:provides stub below.
 local routes = {};
 
+-- Option values the module is loaded with; a test may reload it with overrides (see "alternate configurations").
+local option_overrides = {};
+local function option(key, default)
+    if option_overrides[key] ~= nil then return option_overrides[key]; end
+    if key == 'muc_component' then return 'conference.localhost'; end
+    if key == 'breakout_rooms_component' then return 'breakout.localhost'; end
+    if key == 'voice_agent_webhook_secret' then return 'shh'; end
+    if key == 'voice_agent_status_secret' then return 'jicofo-secret'; end
+    if key == 'voice_agent_dial_secret' then return 'relay-secret'; end
+    if key == 'prosody_password_public_key_repo_url' then return 'https://keys.example.com/'; end
+    if key == 'voice_agent_callback_allowed_hosts' then return { 'app.example.com' }; end
+    return default;
+end
+
 _G.module = {
     host = 'voiceagent.localhost',
-    log = function() end,
-    get_option_string = function(_, key, default)
-        if key == 'muc_component' then return 'conference.localhost'; end
-        if key == 'breakout_rooms_component' then return 'breakout.localhost'; end
-        if key == 'voice_agent_webhook_secret' then return 'shh'; end
-        if key == 'voice_agent_status_secret' then return 'jicofo-secret'; end
-        return default;
+    log = function(_, level, fmt, ...)
+        local ok, text = pcall(string.format, fmt, ...);
+        table.insert(logs, { level = level, text = ok and text or fmt });
     end,
+    get_option_string = function(_, key, default) return option(key, default); end,
     get_option_number = function(_, _key, default) return default; end,
-    get_option_boolean = function(_, _key, default) return default; end,
+    get_option_boolean = function(_, key, default) return option(key, default); end,
+    get_option_array = function(_, key, default) return option(key, default or {}); end,
     measure = function() return function() end; end,
     depends = function() end,
     add_timer = function(_, delay, fn) table.insert(timers, { delay = delay, fn = fn }); end,
@@ -260,6 +280,7 @@ describe('mod_voice_agent_component', function()
         http_next_code = 200;
         timers = {};
         name_lookups = {};
+        logs = {};
         for i = #encoded, 1, -1 do encoded[i] = nil; end
     end)
 
@@ -573,9 +594,9 @@ describe('mod_voice_agent_component', function()
                 customParameters = { campaign = '42' } });
         end
 
-        it('returns the endpoint and custom parameters for the status secret bearer', function()
+        it('returns the endpoint and custom parameters for the dial secret bearer', function()
             invite_support();
-            local res = dial('conference=r&agentId=agent-support', { token = 'Bearer jicofo-secret' });
+            local res = dial('conference=r&agentId=agent-support', { token = 'Bearer relay-secret' });
             assert.are.equal(200, res.status_code);
             local body = encoded[#encoded];
             assert.are.equal('agent-support', body.agentId);
@@ -588,6 +609,16 @@ describe('mod_voice_agent_component', function()
         it('accepts an ASAP token too', function()
             invite_support();
             assert.are.equal(200, dial('conference=r&agentId=agent-support').status_code);
+        end)
+
+        it('refuses jicofo\'s status secret once a dial secret is configured, while status takes either', function()
+            invite_support();
+            token_valid = false;
+            assert.are.equal(401, dial('conference=r&agentId=agent-support', { token = 'Bearer jicofo-secret' }).status_code);
+            assert.are.equal(200, status({ conference = 'r'; agentId = 'agent-support'; state = 'connecting' },
+                { token = 'Bearer relay-secret' }).status_code);
+            assert.are.equal(200, status({ conference = 'r'; agentId = 'agent-support'; state = 'active' },
+                { token = 'Bearer jicofo-secret' }).status_code);
         end)
 
         it('rejects a missing or invalid token', function()
@@ -799,12 +830,22 @@ describe('mod_voice_agent_component', function()
             assert.are.equal(1, #webhook_payloads('agent.failed'));
         end)
 
-        it('ignores ended after failed, keeping the failed record and its single terminal webhook', function()
+        it('removes a failed agent on ended, with agent.failed as its only terminal webhook', function()
             status({ conference = 'r'; agentId = 'agent-support'; state = 'failed'; reason = 'dial refused' });
             assert.are.equal(200, status({ conference = 'r'; agentId = 'agent-support'; state = 'ended' }).status_code);
-            assert.are.equal('failed', mock_room.jitsiMetadata.agents['agent-support'].state);
+            assert.is_nil(mock_room.jitsiMetadata.agents['agent-support']);
+            assert.is_nil(mock_room._data.voice_agents['agent-support']);
             assert.are.equal(1, #webhook_payloads('agent.failed'));
             assert.are.equal(0, #webhook_payloads('agent.ended'));
+        end)
+
+        it('lets a failed agent stop counting toward the room cap once ended', function()
+            for i = 1, 4 do
+                invite({ conference = 'r'; displayName = 'Bot'; agentId = 'extra' .. i });
+                status({ conference = 'r'; agentId = 'agent-extra' .. i; state = 'failed'; reason = 'x' });
+                status({ conference = 'r'; agentId = 'agent-extra' .. i; state = 'ended' });
+            end
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'fits' }).status_code);
         end)
 
         it('answers a repeated ended with 404, sending agent.ended once', function()
@@ -820,10 +861,12 @@ describe('mod_voice_agent_component', function()
             assert.are.equal(0, #webhook_payloads('agent.ended'));
         end)
 
-        it('still sends agent.ended when a failed agent is dismissed', function()
+        it('sends no second terminal webhook when a failed agent is dismissed', function()
             status({ conference = 'r'; agentId = 'agent-support'; state = 'failed'; reason = 'dial refused' });
             assert.are.equal(200, dismiss({ conference = 'r'; agentId = 'agent-support' }).status_code);
-            assert.are.equal(1, #webhook_payloads('agent.ended'));
+            assert.is_nil(mock_room.jitsiMetadata.agents['agent-support']);
+            assert.are.equal(1, #webhook_payloads('agent.failed'));
+            assert.are.equal(0, #webhook_payloads('agent.ended'));
         end)
     end)
 
@@ -854,6 +897,116 @@ describe('mod_voice_agent_component', function()
 
         it('returns 404 for an unknown agent', function()
             assert.are.equal(404, dismiss({ conference = 'r'; agentId = 'agent-nope' }).status_code);
+        end)
+    end)
+    describe('callbackUrl host allowlist and signing', function()
+        it('refuses a host outside voice_agent_callback_allowed_hosts', function()
+            assert.are.equal(400,
+                invite({ conference = 'r'; displayName = 'B'; callbackUrl = 'https://evil.example.net/hook' }).status_code);
+            assert.are.equal(400,
+                invite({ conference = 'r'; displayName = 'B'; callbackUrl = 'https://app.example.com.evil.net/hook' }).status_code);
+        end)
+
+        it('accepts the listed host and its subdomains', function()
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'B'; agentId = 'one';
+                callbackUrl = 'https://app.example.com/hook' }).status_code);
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'B'; agentId = 'two';
+                callbackUrl = 'https://eu.app.example.com:8443/hook' }).status_code);
+        end)
+
+        it('logs only the host when a delivery gives up, never the URL\'s query string', function()
+            http_next_code = 500;
+            invite({ conference = 'r'; displayName = 'B'; agentId = 'support'; callbackUrl = CALLBACK .. '?token=sekrit' });
+            dismiss({ conference = 'r'; agentId = 'agent-support' });
+            while #timers > 0 do
+                local t = table.remove(timers, 1);
+                t.fn();
+            end
+            local gave_up = false;
+            for _, entry in ipairs(logs) do
+                assert.is_nil(entry.text:find('sekrit', 1, true), 'token leaked into a log line: ' .. entry.text);
+                if entry.text:find('app.example.com', 1, true) and entry.text:find('failed after', 1, true) then
+                    gave_up = true;
+                end
+            end
+            assert.is_true(gave_up, 'expected a give-up warning naming the host');
+        end)
+    end)
+
+    describe('displayName', function()
+        it('rejects control characters, since it is broadcast to every client', function()
+            assert.are.equal(400, invite({ conference = 'r'; displayName = 'Bot\r\nX' }).status_code);
+            assert.are.equal(400, invite({ conference = 'r'; displayName = 'Bot\0' }).status_code);
+        end)
+    end)
+
+    describe('agentId normalization on every route', function()
+        it('accepts a bare id on get, status, dial and dismiss, answering with the stored id', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support'; callbackUrl = CALLBACK });
+            assert.are.equal(200, get('conference=r&agentId=support').status_code);
+            assert.are.equal('agent-support', encoded[#encoded].agentId);
+            assert.are.equal(200, status({ conference = 'r'; agentId = 'support'; state = 'active' }).status_code);
+            assert.are.equal('agent-support', encoded[#encoded].agentId);
+            assert.are.equal(200, dial('conference=r&agentId=support', { token = 'Bearer relay-secret' }).status_code);
+            assert.are.equal('agent-support', encoded[#encoded].agentId);
+            assert.are.equal(200, dismiss({ conference = 'r'; agentId = 'support' }).status_code);
+            assert.are.equal('agent-support', encoded[#encoded].agentId);
+            assert.are.equal(0, #agent_ids(mock_room));
+        end)
+    end)
+
+    describe('breakout rooms', function()
+        it('fires agent.ended when a breakout room is destroyed', function()
+            invite({ conference = 'r'; displayName = 'B'; agentId = 'support'; callbackUrl = CALLBACK });
+            local hook = host_hooks_by_host['breakout.localhost']['muc-room-destroyed'];
+            assert.is_function(hook, 'the destroy hook must be installed on the breakout host too');
+            hook({ room = mock_room });
+            assert.are.equal(1, #webhook_payloads('agent.ended'));
+        end)
+    end)
+
+    describe('alternate configurations (module reloaded)', function()
+        -- Reloads the module with option overrides into the same `routes` table, so the request helpers above
+        -- drive the reloaded module; the defaults are restored afterwards.
+        local function reload_with(overrides)
+            option_overrides = overrides;
+            for k in pairs(routes) do routes[k] = nil; end
+            logs = {};
+            assert(pcall(dofile, 'mod_voice_agent_component.lua'));
+        end
+        after_each(function()
+            reload_with({});
+        end)
+
+        it('refuses to load without an ASAP key repository, so a meeting token can never provision agents', function()
+            reload_with({ prosody_password_public_key_repo_url = '' });
+            assert.is_nil(next(routes), 'no route may be registered');
+            local said_why = false;
+            for _, entry in ipairs(logs) do
+                if entry.level == 'error' and entry.text:find('prosody_password_public_key_repo_url', 1, true) then
+                    said_why = true;
+                end
+            end
+            assert.is_true(said_why);
+        end)
+
+        it('loads without a key repository only under the insecure dev flag', function()
+            reload_with({ prosody_password_public_key_repo_url = ''; voice_agent_insecure_skip_auth = true });
+            assert.is_function(routes['POST voice-agent/invite']);
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot' }, { omitAuth = true }).status_code);
+        end)
+
+        it('refuses a callbackUrl while webhooks cannot be signed', function()
+            reload_with({ voice_agent_webhook_secret = '' });
+            assert.are.equal(400, invite({ conference = 'r'; displayName = 'B'; callbackUrl = CALLBACK }).status_code);
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'B' }).status_code);
+        end)
+
+        it('lets the status secret read dial configs only while no dial secret is set', function()
+            reload_with({ voice_agent_dial_secret = '' });
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            token_valid = false;
+            assert.are.equal(200, dial('conference=r&agentId=agent-support', { token = 'Bearer jicofo-secret' }).status_code);
         end)
     end)
 end)

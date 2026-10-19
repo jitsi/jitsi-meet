@@ -1,8 +1,8 @@
 import { IStore } from '../app/types';
-import { CONFERENCE_JOINED, UPDATE_CONFERENCE_METADATA } from '../base/conference/actionTypes';
+import { CONFERENCE_JOINED, SET_ROOM, UPDATE_CONFERENCE_METADATA } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import { IJitsiConference } from '../base/conference/reducer';
-import { participantJoined, participantLeft } from '../base/participants/actions';
+import { participantJoined, participantLeft, participantUpdated } from '../base/participants/actions';
 import { PARTICIPANT_JOINED_SOUND_ID, PARTICIPANT_LEFT_SOUND_ID } from '../base/participants/constants';
 import { getParticipantById } from '../base/participants/functions';
 import { FakeParticipant } from '../base/participants/types';
@@ -42,6 +42,9 @@ import { IVoiceAgents } from './types';
  */
 export const CONSENT_PRESENCE_PROPERTY = 'voiceAgentConsent';
 
+/** Conferences already warned about for lacking the agent audio subscription API. */
+const warnedNoSubscriptionApi = new WeakSet<object>();
+
 /**
  * Middleware that mirrors the `agents` room metadata into the conference. An active agent first asks the
  * local participant for consent; once allowed it is shown as a fake participant (the roster entry), the
@@ -55,6 +58,13 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case UPDATE_CONFERENCE_METADATA: {
+        // Cleared (null) on every conference change, a reconnect included: that removes no agent. The agents and
+        // this participant's decisions are kept, so a rejoin neither asks again nor re-announces anyone; the tiles
+        // go with the conference and CONFERENCE_JOINED puts them back.
+        if (action.metadata === null) {
+            break;
+        }
+
         // Metadata is server-written but treated as untrusted here: drop prototype-pollution-prone ids
         // before they are used as object keys / participant ids. Only active agents count as present.
         const agents: IVoiceAgents = pickPresentAgents(sanitizeAgents(action.metadata?.agents ?? {}));
@@ -62,10 +72,16 @@ MiddlewareRegistry.register(store => next => action => {
         _agentsChanged(store, agents);
         break;
     }
+    case SET_ROOM:
+        // Another room: nothing known or decided about the previous one's agents carries over.
+        store.dispatch(setVoiceAgents({}));
+        break;
     case SET_VOICE_AGENT_CONSENT:
         _consentChanged(store, action.agentId, action.allowed);
         break;
     case CONFERENCE_JOINED:
+        _syncParticipants(store);
+
         // A decision taken before the join completed may predate the presence; advertise it again.
         _syncConsent(store);
         break;
@@ -105,12 +121,21 @@ function _agentsChanged(store: IStore, agents: IVoiceAgents) {
     const conference = getCurrentConference(state);
     const added = Object.keys(agents).filter(id => !(id in previous));
     const removed = Object.keys(previous).filter(id => !(id in agents));
+    const changed = Object.keys(agents).filter(id => id in previous
+        && (previous[id].displayName !== agents[id].displayName || previous[id].sourceName !== agents[id].sourceName));
 
-    if (added.length === 0 && removed.length === 0) {
+    if (added.length === 0 && removed.length === 0 && changed.length === 0) {
         return;
     }
 
     dispatch(setVoiceAgents(agents));
+
+    for (const agentId of changed) {
+        if (conference && previous[agentId].displayName !== agents[agentId].displayName
+                && getParticipantById(state, agentId)) {
+            dispatch(participantUpdated({ conference, id: agentId, name: agents[agentId].displayName }));
+        }
+    }
 
     for (const agentId of removed) {
         logger.info(`Voice agent left: ${agentId}`);
@@ -138,9 +163,42 @@ function _agentsChanged(store: IStore, agents: IVoiceAgents) {
         _admitAgent(store, agentId);
     }
 
-    // Consent entries of removed agents were pruned by setVoiceAgents; re-advertise what is left.
-    if (removed.length > 0) {
+    // Consent entries of removed agents were pruned by setVoiceAgents, and a renamed source needs a new
+    // subscription; re-advertise what is left.
+    if (removed.length > 0 || changed.some(id => previous[id].sourceName !== agents[id].sourceName)) {
         _syncConsent(store);
+    }
+}
+
+/**
+ * Puts the agents' roster entries back after a (re)join: the tiles go with the conference, the agents and the
+ * decisions about them do not. Agents not decided about yet are let in as when they first appeared.
+ *
+ * @param {IStore} store - The redux store.
+ * @returns {void}
+ */
+function _syncParticipants(store: IStore) {
+    const { dispatch, getState } = store;
+    const state = getState();
+    const conference = getCurrentConference(state);
+
+    if (!conference) {
+        return;
+    }
+    const { agents, consent } = state['features/voice-agents'];
+    const blocked = isVoiceAgentBlockedByE2EE(state);
+
+    for (const [ agentId, agent ] of Object.entries(agents)) {
+        if (consent[agentId] === undefined) {
+            _admitAgent(store, agentId);
+        } else if (consent[agentId] === true && !blocked && !getParticipantById(state, agentId)) {
+            dispatch(participantJoined({
+                conference,
+                fakeParticipant: FakeParticipant.Agent,
+                id: agentId,
+                name: agent.displayName
+            }));
+        }
     }
 }
 
@@ -308,5 +366,8 @@ function _syncConsent({ getState }: IStore) {
 
     if (typeof conference.setAgentAudioSubscription === 'function') {
         conference.setAgentAudioSubscription(blocked ? [] : getConsentedAgentSourceNames(state));
+    } else if (!warnedNoSubscriptionApi.has(conference)) {
+        warnedNoSubscriptionApi.add(conference);
+        logger.warn('This lib-jitsi-meet has no setAgentAudioSubscription: voice agents will not be audible.');
     }
 }

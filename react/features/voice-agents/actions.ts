@@ -23,13 +23,18 @@ export interface IConsentDialogProps {
 }
 
 /**
- * The props of the currently open consent dialog, if any.
+ * The props of the open consent dialog when it is asking about this agent, else nothing: a decision about
+ * another agent (e.g. from the external API while a forced dialog is up) must not release that dialog's mute.
  *
  * @param {Function} getState - The redux getState function.
+ * @param {string} agentId - The agent the decision is about.
  * @returns {IConsentDialogProps}
  */
-function _dialogProps(getState: IStore['getState']): IConsentDialogProps {
-    return (getState()['features/base/dialog'].componentProps as IConsentDialogProps | undefined) ?? {};
+function _dialogProps(getState: IStore['getState'], agentId: string): IConsentDialogProps {
+    const state = getState();
+    const props = state['features/base/dialog'].componentProps as IConsentDialogProps | undefined;
+
+    return isDialogOpen(state, VoiceAgentConsentDialog) && props?.agentId === agentId ? props : {};
 }
 
 /**
@@ -86,7 +91,7 @@ export function showVoiceAgentConsentDialog(agentId: string) {
  */
 export function allowVoiceAgent(agentId: string, context?: IConsentDialogProps) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const { audioWasMuted, forcedMute, unmuteWasBlocked } = context ?? _dialogProps(getState);
+        const { audioWasMuted, forcedMute, unmuteWasBlocked } = context ?? _dialogProps(getState, agentId);
 
         batch(() => {
             dispatch(setVoiceAgentConsent(agentId, true));
@@ -109,7 +114,7 @@ export function allowVoiceAgent(agentId: string, context?: IConsentDialogProps) 
  */
 export function declineVoiceAgent(agentId: string, context?: IConsentDialogProps) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const { forcedMute, unmuteWasBlocked } = context ?? _dialogProps(getState);
+        const { forcedMute, unmuteWasBlocked } = context ?? _dialogProps(getState, agentId);
 
         batch(() => {
             dispatch(setVoiceAgentConsent(agentId, false));
@@ -132,7 +137,7 @@ export function dismissVoiceAgentConsentDialog(agentId: string) {
         if (!isDialogOpen(getState(), VoiceAgentConsentDialog)) {
             return;
         }
-        const { agentId: openFor, audioWasMuted, forcedMute, unmuteWasBlocked } = _dialogProps(getState);
+        const { agentId: openFor, audioWasMuted, forcedMute, unmuteWasBlocked } = _dialogProps(getState, agentId);
 
         if (openFor !== agentId) {
             return;

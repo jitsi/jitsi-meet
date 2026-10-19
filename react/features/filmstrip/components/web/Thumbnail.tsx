@@ -872,13 +872,6 @@ class Thumbnail extends Component<IProps, IState> {
                     className = { classes.sharedVideoTopRight }
                     source = { SHARED_VIDEO_SECOND_SCREEN_SOURCE }
                     visible = { isHovered } />
-                {isVoiceAgentParticipant(this.props._participant) && (
-                    <>
-                        <VoiceAgentIndicator />
-                        <ThumbnailAudioIndicator _audioTrack = { this.props._audioTrack } />
-                        <div className = { clsx(classes.borderIndicator, 'active-speaker-indicator') } />
-                    </>
-                )}
             </span>
         );
     }
@@ -1033,7 +1026,8 @@ class Thumbnail extends Component<IProps, IState> {
         const video = _videoTrack && <VideoTrack
             className = { local ? videoTrackClassName : '' }
             eventHandlers = { videoEventListeners }
-            id = { local ? 'localVideo_container' : `remoteVideo_${videoTrackId || ''}` }
+            id = { local ? 'localVideo_container'
+                : isVoiceAgentParticipant(_participant) ? `participant_${id}` : `remoteVideo_${videoTrackId || ''}` }
             muted = { local ? undefined : true }
             style = { styles.video }
             videoTrack = { _videoTrack } />;
@@ -1097,7 +1091,8 @@ class Thumbnail extends Component<IProps, IState> {
                         _thumbnailType === THUMBNAIL_TYPE.TILE && 'tile-view-mode'
                     ) }>
                     <ThumbnailTopIndicators
-                        disableConnectionIndicator = { isWhiteboardParticipant(_participant) }
+                        disableConnectionIndicator = { isWhiteboardParticipant(_participant)
+                            || isVoiceAgentParticipant(_participant) }
                         hidePopover = { this._hidePopover }
                         indicatorsClassName = { classes.indicatorsBackground }
                         isHovered = { isHovered }
@@ -1108,6 +1103,7 @@ class Thumbnail extends Component<IProps, IState> {
                         thumbnailType = { _thumbnailType } />
                 </div>
                 {_shouldDisplayTintBackground && <div className = { classes.tintBackground } />}
+                {isVoiceAgentParticipant(_participant) && <VoiceAgentIndicator />}
                 {!_gifSrc && this._renderAvatar(styles.avatar) }
                 { !local && (
                     <div className = 'presence-label-container'>
@@ -1159,8 +1155,11 @@ class Thumbnail extends Component<IProps, IState> {
             return this._renderParticipant(true);
         }
 
+        // A voice agent is a participant without a transport (a video source may follow later), so it takes the
+        // regular tile like the whiteboard does; the fake-participant tile is shared video's.
         if (fakeParticipant
             && !isWhiteboardParticipant(_participant)
+            && !isVoiceAgentParticipant(_participant)
             && !_isVirtualScreenshareParticipant
         ) {
             return this._renderFakeParticipant();
