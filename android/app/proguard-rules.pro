@@ -71,6 +71,10 @@
 -keep class org.webrtc.** { *; }
 -dontwarn org.webrtc.**
 -dontwarn org.chromium.build.BuildHooksAndroid
+# WebRTC 155+ native code looks up jni_zero classes by name.
+-keep class org.jni_zero.** { *; }
+-keep class J.N { *; }
+-dontwarn org.jni_zero.**
 
 # Jisti Meet SDK
 
