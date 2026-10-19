@@ -404,7 +404,6 @@ const ChatMessage = ({
             })
             .sort((a, b) => b.participants.size - a.participants.size);
 
-        const totalReactions = reactionsArray.reduce((sum, { participants }) => sum + participants.size, 0);
         const numReactionsDisplayed = 3;
 
         const reactionsContent = (
@@ -445,7 +444,7 @@ const ChatMessage = ({
                     )}
                     {reactionsArray.length > numReactionsDisplayed && (
                         <p className = { classes.reactionCount }>
-                            +{totalReactions - numReactionsDisplayed}
+                            +{reactionsArray.length - numReactionsDisplayed}
                         </p>
                     )}
                 </div>
