@@ -18,22 +18,23 @@ describe('Reactions and emojis', () => {
 
     it('opens and closes the reactions menu', async () => {
         const { p1 } = ctx;
+        const toolbar = p1.getToolbar();
 
-        await p1.getToolbar().openReactionsMenu();
-        expect(await p1.getToolbar().isReactionsMenuOpen()).toBe(true);
+        await toolbar.openReactionsMenu();
+        expect(await toolbar.isReactionsMenuOpen()).toBe(true);
 
-        const likeButton = p1.driver.$('.reactions-menu [aria-label="Thumbs Up"]');
-        const clapButton = p1.driver.$('.reactions-menu [aria-label="Clap"]');
-        const laughButton = p1.driver.$('.reactions-menu [aria-label="Laugh"]');
-        const heartButton = p1.driver.$('.reactions-menu [aria-label="Heart"]');
+        const likeButton = toolbar.getReactionButton('like');
+        const clapButton = toolbar.getReactionButton('clap');
+        const laughButton = toolbar.getReactionButton('laugh');
+        const loveButton = toolbar.getReactionButton('love');
 
         await likeButton.waitForDisplayed({ timeout: 2000 });
         await clapButton.waitForDisplayed({ timeout: 2000 });
         await laughButton.waitForDisplayed({ timeout: 2000 });
-        await heartButton.waitForDisplayed({ timeout: 2000 });
+        await loveButton.waitForDisplayed({ timeout: 2000 });
 
-        await p1.getToolbar().closeReactionsMenu();
-        expect(await p1.getToolbar().isReactionsMenuOpen()).toBe(false);
+        await toolbar.closeReactionsMenu();
+        expect(await toolbar.isReactionsMenuOpen()).toBe(false);
     });
 
     it('sends reaction emoji from p1 and receives on p2', async () => {
@@ -46,11 +47,23 @@ describe('Reactions and emojis', () => {
                 const buffer = APP?.store?.getState()['features/reactions']?.buffer;
                 const queue = APP?.store?.getState()['features/reactions']?.queue;
 
-                return buffer?.includes('like') || queue?.some((r: any) => r.reaction === 'like');
+                return buffer?.includes('like') || queue?.some((r: { reaction: string; }) => r.reaction === 'like');
             }),
             {
                 timeout: 3000,
                 timeoutMsg: 'Reaction "like" was not added to buffer or queue on p1'
+            }
+        );
+
+        await p2.driver.waitUntil(
+            async () => await p2.execute(() => {
+                const queue = APP?.store?.getState()['features/reactions']?.queue;
+
+                return queue?.some((r: { reaction: string; }) => r.reaction === 'like');
+            }),
+            {
+                timeout: 5000,
+                timeoutMsg: 'Remote participant p2 did not receive "like" reaction in queue'
             }
         );
 
@@ -67,18 +80,6 @@ describe('Reactions and emojis', () => {
             timeout: 5000,
             timeoutMsg: 'Remote participant p2 did not display reaction animation'
         });
-
-        await p2.driver.waitUntil(
-            async () => await p2.execute(() => {
-                const queue = APP?.store?.getState()['features/reactions']?.queue;
-
-                return queue?.some((r: any) => r.reaction === 'like');
-            }),
-            {
-                timeout: 3000,
-                timeoutMsg: 'Remote participant p2 did not receive "like" reaction in queue'
-            }
-        );
     });
 
     it('sends reaction emoji from p2 and receives on p1', async () => {
@@ -90,7 +91,7 @@ describe('Reactions and emojis', () => {
             async () => await p1.execute(() => {
                 const queue = APP?.store?.getState()['features/reactions']?.queue;
 
-                return queue?.some((r: any) => r.reaction === 'clap');
+                return queue?.some((r: { reaction: string; }) => r.reaction === 'clap');
             }),
             {
                 timeout: 5000,

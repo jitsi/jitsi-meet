@@ -258,12 +258,38 @@ export default class Toolbar extends BasePageObject {
     }
 
     /**
+     * Wakes the auto-hidden toolbar by hovering the local or large video container.
+     * @private
+     */
+    private async wakeToolbar(): Promise<void> {
+        const localVideoContainer = this.participant.driver.$('span[id="localVideoContainer"]');
+
+        if (await localVideoContainer.isExisting()) {
+            await localVideoContainer.moveTo();
+        } else {
+            await this.participant.driver.$('#largeVideoContainer').moveTo();
+        }
+    }
+
+    /**
      * Returns whether the reactions menu is open and displayed.
      *
      * @returns {Promise<boolean>}
      */
     async isReactionsMenuOpen(): Promise<boolean> {
-        return this.participant.driver.$('.reactions-menu').isDisplayed();
+        return this.participant.driver.$('.reactions-menu-container .reactions-menu').isDisplayed();
+    }
+
+    /**
+     * Returns the reaction button element for the given reaction key.
+     *
+     * @param {string} reaction - The reaction key or accessibility label.
+     * @returns {WebdriverIO.Element}
+     */
+    getReactionButton(reaction: string) {
+        const label = REACTION_LABELS[reaction] || reaction;
+
+        return this.participant.driver.$(`.reactions-menu-container .reactions-menu [aria-label="${label}"]`);
     }
 
     /**
@@ -276,23 +302,12 @@ export default class Toolbar extends BasePageObject {
             return;
         }
 
-        // Wake the auto-hidden toolbar by hovering the local or large video container.
-        const localVideoContainer = this.participant.driver.$('span[id="localVideoContainer"]');
+        await this.wakeToolbar();
 
-        if (await localVideoContainer.isExisting()) {
-            await localVideoContainer.moveTo();
-        } else {
-            await this.participant.driver.$('#largeVideoContainer').moveTo();
-        }
-
-        const trigger = this.participant.driver.$(`[aria-label="${REACTIONS_MENU}"]`);
+        const trigger = this.getButton(REACTIONS_MENU);
 
         await trigger.waitForExist({ timeout: 2000 });
-        await trigger.moveTo();
-
-        if (!await this.isReactionsMenuOpen()) {
-            await trigger.click();
-        }
+        await trigger.click();
 
         await this.waitForReactionsMenu(true);
     }
@@ -307,16 +322,9 @@ export default class Toolbar extends BasePageObject {
             return;
         }
 
-        const trigger = this.participant.driver.$(`[aria-label="${REACTIONS_MENU}"]`);
+        await this.getButton(REACTIONS_MENU).click();
 
-        await trigger.click();
-
-        try {
-            await this.waitForReactionsMenu(false);
-        } catch {
-            await this.participant.driver.$('#largeVideoContainer').moveTo();
-            await this.waitForReactionsMenu(false);
-        }
+        await this.waitForReactionsMenu(false);
     }
 
     /**
@@ -326,7 +334,7 @@ export default class Toolbar extends BasePageObject {
      * @returns {Promise<void>}
      */
     waitForReactionsMenu(visible: boolean) {
-        return this.participant.driver.$('.reactions-menu').waitForDisplayed({
+        return this.participant.driver.$('.reactions-menu-container .reactions-menu').waitForDisplayed({
             reverse: !visible,
             timeout: 5000,
             timeoutMsg: `Reactions menu is not ${visible ? 'visible' : 'hidden'}`
@@ -340,14 +348,14 @@ export default class Toolbar extends BasePageObject {
      * @returns {Promise<void>}
      */
     async clickReaction(reaction: string): Promise<void> {
-        const label = REACTION_LABELS[reaction] || reaction;
-
         await this.openReactionsMenu();
 
-        const reactionBtn = this.participant.driver.$(`.reactions-menu [aria-label="${label}"]`);
+        const reactionBtn = this.getReactionButton(reaction);
 
         await reactionBtn.waitForDisplayed({ timeout: 2000 });
         await reactionBtn.click();
+
+        await this.closeReactionsMenu();
     }
 
     /**
@@ -516,17 +524,7 @@ export default class Toolbar extends BasePageObject {
             return;
         }
 
-        // Wake the auto-hidden toolbar by hovering the local video tile; otherwise the overflow
-        // button click can fire on an invisible element and the menu never appears. When the
-        // self-view is hidden (e.g. via settings), localVideoContainer is not in the DOM, so fall
-        // back to the large video container which is always present while in conference.
-        const localVideoContainer = this.participant.driver.$('span[id="localVideoContainer"]');
-
-        if (await localVideoContainer.isExisting()) {
-            await localVideoContainer.moveTo();
-        } else {
-            await this.participant.driver.$('#largeVideoContainer').moveTo();
-        }
+        await this.wakeToolbar();
 
         await this.clickOverflowButton();
 
