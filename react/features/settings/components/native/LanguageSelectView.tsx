@@ -58,6 +58,11 @@ const LanguageSelectView = ({ goBack, isInWelcomePage }: {
                 {
                     LANGUAGES.map(language => (
                         <TouchableHighlight
+                            accessibilityRole = 'button'
+                            accessibilityState = {{
+                                disabled: currentLanguage === language,
+                                selected: currentLanguage === language
+                            }}
                             disabled = { currentLanguage === language }
                             key = { language }
                             onPress = { setLanguage(language) }>
