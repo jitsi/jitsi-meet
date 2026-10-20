@@ -61,6 +61,8 @@ export const ContextMenuMore = () => {
             addScrollViewPadding = { false }
             showSlidingView = { true }>
             <TouchableOpacity
+                accessibilityLabel = { t('participantsPane.actions.stopEveryonesVideo') }
+                accessibilityRole = 'button'
                 onPress = { muteAllVideo }
                 style = { styles.contextMenuItem as ViewStyle }>
                 <Icon
@@ -69,6 +71,8 @@ export const ContextMenuMore = () => {
                 <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.stopEveryonesVideo')}</Text>
             </TouchableOpacity>
             { moderator && raisedHandsQueue.length !== 0 && <TouchableOpacity
+                accessibilityLabel = { t('participantsPane.actions.lowerAllHands') }
+                accessibilityRole = 'button'
                 onPress = { lowerAllHands }
                 style = { styles.contextMenuItem as ViewStyle }>
                 <Icon
@@ -84,6 +88,9 @@ export const ContextMenuMore = () => {
                 </View>
                 {isAudioModerationEnabled
                     ? <TouchableOpacity
+                        accessibilityLabel = { t('participantsPane.actions.audioModeration') }
+                        accessibilityRole = 'button'
+                        accessibilityState = {{ selected: true }}
                         onPress = { disableAudioModeration }
                         style = { styles.contextMenuItem as ViewStyle }>
                         <Text style = { styles.contextMenuItemTextNoIcon }>
@@ -91,6 +98,9 @@ export const ContextMenuMore = () => {
                         </Text>
                     </TouchableOpacity>
                     : <TouchableOpacity
+                        accessibilityLabel = { t('participantsPane.actions.audioModeration') }
+                        accessibilityRole = 'button'
+                        accessibilityState = {{ selected: false }}
                         onPress = { enableAudioModeration }
                         style = { styles.contextMenuItem as ViewStyle }>
                         <Icon
@@ -102,6 +112,9 @@ export const ContextMenuMore = () => {
                     </TouchableOpacity> }
                 {isVideoModerationEnabled
                     ? <TouchableOpacity
+                        accessibilityLabel = { t('participantsPane.actions.videoModeration') }
+                        accessibilityRole = 'button'
+                        accessibilityState = {{ selected: true }}
                         onPress = { disableVideoModeration }
                         style = { styles.contextMenuItem as ViewStyle }>
                         <Text style = { styles.contextMenuItemTextNoIcon }>
@@ -109,6 +122,9 @@ export const ContextMenuMore = () => {
                         </Text>
                     </TouchableOpacity>
                     : <TouchableOpacity
+                        accessibilityLabel = { t('participantsPane.actions.videoModeration') }
+                        accessibilityRole = 'button'
+                        accessibilityState = {{ selected: false }}
                         onPress = { enableVideoModeration }
                         style = { styles.contextMenuItem as ViewStyle }>
                         <Icon
