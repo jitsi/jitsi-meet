@@ -91,6 +91,16 @@ export interface IConferenceMetadata {
             timestamp: number;
         };
     };
+
+    /**
+     * The restrictions of the room. A moderator sets them, or the server sets them from the
+     * settings of the meeting when it creates the room.
+     */
+    permissions?: {
+        groupChatRestricted?: boolean;
+        pollCreationRestricted?: boolean;
+        privateChatRestricted?: boolean;
+    };
     recording?: {
         isRecordingRequested?: boolean;
         isTranscribingEnabled: boolean;
