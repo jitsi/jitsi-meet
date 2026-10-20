@@ -689,6 +689,17 @@ local function snapshot_agents(conference)
     return agents;
 end
 
+-- The snapshot body, assembled by hand: cjson encodes an empty Lua table as {}, and the contract says `agents` is
+-- an array even when nobody is in scope.
+local function encode_snapshot(conference, agents)
+    local parts = {};
+    for _, agent in ipairs(agents) do
+        table.insert(parts, json.encode(agent));
+    end
+    return '{' .. (conference and ('"conference":' .. json.encode(conference) .. ',') or '')
+        .. '"agents":[' .. table.concat(parts, ',') .. ']}';
+end
+
 -- A comment line keeps proxies from closing an idle stream; the same tick retires streams past their max age.
 local function arm_keepalive()
     if keepalive_armed then
@@ -1079,7 +1090,7 @@ local function handle_events(event)
         end
     else
         stream_write(stream, sse_frame(event_id(event_seq), 'snapshot',
-            json.encode({ conference = conference; agents = snapshot_agents(conference); })));
+            encode_snapshot(conference, snapshot_agents(conference))));
     end
     arm_keepalive();
     module:log('debug', 'Event stream opened for %s, %d open', conference or 'every room', stream_count);
