@@ -54,6 +54,14 @@
 --     when dialing;
 --     auth: ASAP or voice_agent_dial_secret (falls back to voice_agent_status_secret when no dial secret is
 --     set, which lets whoever holds jicofo's secret read customer credentials; set both in production)
+--   GET  /voice-agent/events[?conference=<room>]
+--     a text/event-stream of the lifecycle events below, for a backend that holds one outbound connection instead
+--     of exposing a webhook: `id: <id>` / `event: agent.connected|agent.failed|agent.ended` / `data: <payload>`.
+--     A new stream first gets `snapshot` ({ conference?, agents: [ { agentId, conference, displayName, sourceName,
+--     state } ] }), unless its Last-Event-ID is still in the replay buffer, in which case it gets the events it
+--     missed instead. A keepalive comment every 15 s; closed after voice_agent_event_stream_max_age seconds
+--     (the client reconnects with Last-Event-ID); at most voice_agent_max_event_streams open at once (503)
+--     auth: ASAP, like the provisioning routes
 --
 -- Provisioning auth needs prosody_password_public_key_repo_url: without it the module refuses to load (a meeting
 -- token would otherwise pass), unless voice_agent_insecure_skip_auth is set for a dev rig. Lifecycle webhooks need
@@ -65,9 +73,10 @@
 -- { event, agentId, conference, sourceName, state, timestamp, reason? }, signed
 -- X-Agent-Signature: sha256=<hmac> with voice_agent_webhook_secret, retried with
 -- backoff up to voice_agent_webhook_retries times (at-least-once).
--- Every lifecycle event also fires the module event 'voice-agent-lifecycle' on this host, with
--- { room, agent_id, payload } and the same payload, whether or not the agent has a callbackUrl, so a
--- co-located module can deliver it another way (a hosted deployment's webhook platform, an event stream).
+-- Every lifecycle event is also written to the open event streams (GET /voice-agent/events) and fires the module
+-- event 'voice-agent-lifecycle' on this host, with { room, agent_id, payload } and the same payload, whether or
+-- not the agent has a callbackUrl, so a co-located module can deliver it another way (a hosted deployment's
+-- webhook platform).
 --
 -- Copyright (C) 2026-present 8x8, Inc.
 
@@ -104,6 +113,10 @@ local JSON_CONTENT_TYPE = 'application/json';
 -- Caps keeping a single provisioning request from bloating room state and the
 -- metadata broadcastable payload.
 local MAX_AGENTS_PER_ROOM = module:get_option_number('voice_agent_max_agents', 5);
+-- Event streams (GET /voice-agent/events): how many may be open at once (503 beyond), and the age at which one is
+-- closed so its client reconnects with Last-Event-ID, which also bounds how long an expired token keeps one open.
+local MAX_EVENT_STREAMS = module:get_option_number('voice_agent_max_event_streams', 64);
+local EVENT_STREAM_MAX_AGE = module:get_option_number('voice_agent_event_stream_max_age', 3600);
 local MAX_PARAM_ENTRIES = 16;
 local MAX_PARAM_KEY_LENGTH = 128;
 local MAX_PARAM_VALUE_LENGTH = 2048;
@@ -554,6 +567,151 @@ local function notify_metadata_changed(room)
     end
 end
 
+-- ── Event stream ──────────────────────────────────────────────────────────────
+
+-- Rooms that currently have agents, for a stream's snapshot. Weak keys: a destroyed room is forgotten.
+local rooms_with_agents = setmetatable({}, { __mode = 'k' });
+
+-- Open streams: { response, conference = <public name, or nil for every room>, opened } → true.
+local streams = {};
+local stream_count = 0;
+-- Event ids are '<epoch>-<n>'. The epoch changes with every load, so an id from before a restart never replays
+-- another process's events; clients treat the id as opaque.
+local STREAM_EPOCH = (random.bytes(4):gsub('.', function(c) return string.format('%02x', c:byte()); end));
+local event_seq = 0;
+-- The last EVENT_BUFFER_SIZE events as { seq, conference, frame }, replayed to a reconnecting stream.
+local EVENT_BUFFER_SIZE = 256;
+local event_buffer = {};
+local EVENT_STREAM_KEEPALIVE = 15;
+local keepalive_armed = false;
+
+local function event_id(seq)
+    return STREAM_EPOCH .. '-' .. seq;
+end
+
+local function sse_frame(id, event_name, data)
+    return 'id: ' .. id .. '\nevent: ' .. event_name .. '\ndata: ' .. data .. '\n\n';
+end
+
+-- One chunk of a chunked response; a stream never has a Content-Length.
+local function chunked(data)
+    return string.format('%x\r\n%s\r\n', #data, data);
+end
+
+local function close_stream(stream, why)
+    if stream.closed then
+        return;
+    end
+    stream.closed = true;
+    streams[stream] = nil;
+    stream_count = stream_count - 1;
+    local response = stream.response;
+    response.on_destroy = nil;
+    if not response.finished then
+        pcall(function()
+            response.conn:write('0\r\n\r\n');
+            response:done();
+        end);
+    end
+    module:log('debug', 'Event stream closed (%s), %d open', why, stream_count);
+end
+
+local function stream_write(stream, data)
+    if stream.closed then
+        return;
+    end
+    local ok, err = pcall(function() stream.response.conn:write(chunked(data)); end);
+    if not ok then
+        module:log('debug', 'Event stream write failed: %s', tostring(err));
+        close_stream(stream, 'write failed');
+    end
+end
+
+local function in_scope(stream, conference)
+    return stream.conference == nil or stream.conference == conference;
+end
+
+-- Records a lifecycle event (body: its encoded payload) and writes it to every stream in scope.
+local function broadcast_lifecycle(event_name, conference, body)
+    event_seq = event_seq + 1;
+    local frame = sse_frame(event_id(event_seq), event_name, body);
+    table.insert(event_buffer, { seq = event_seq; conference = conference; frame = frame; });
+    if #event_buffer > EVENT_BUFFER_SIZE then
+        table.remove(event_buffer, 1);
+    end
+    for stream in pairs(streams) do
+        if in_scope(stream, conference) then
+            stream_write(stream, frame);
+        end
+    end
+end
+
+-- The frames a stream missed since its Last-Event-ID, or nil when they cannot be known (another epoch, an id
+-- older than the buffer), in which case the stream gets a snapshot instead.
+local function missed_frames(last_event_id, conference)
+    local epoch, seq = tostring(last_event_id or ''):match('^(%x+)%-(%d+)$');
+    seq = tonumber(seq);
+    if epoch ~= STREAM_EPOCH or not seq or seq > event_seq then
+        return nil;
+    end
+    local oldest = event_buffer[1] and event_buffer[1].seq or (event_seq + 1);
+    if seq < oldest - 1 then
+        return nil;
+    end
+    local frames = {};
+    for _, entry in ipairs(event_buffer) do
+        if entry.seq > seq and (conference == nil or entry.conference == conference) then
+            table.insert(frames, entry.frame);
+        end
+    end
+    return frames;
+end
+
+-- Every agent in scope with its state, for a stream's first event; sorted so the output is stable.
+local function snapshot_agents(conference)
+    local agents = {};
+    for room in pairs(rooms_with_agents) do
+        local name = public_room_name(room);
+        if conference == nil or conference == name then
+            for agent_id, entry in pairs((room.jitsiMetadata and room.jitsiMetadata.agents) or {}) do
+                local agent = agent_response(agent_id, entry);
+                agent.conference = name;
+                table.insert(agents, agent);
+            end
+        end
+    end
+    table.sort(agents, function(a, b)
+        if a.conference ~= b.conference then
+            return a.conference < b.conference;
+        end
+        return a.agentId < b.agentId;
+    end);
+    return agents;
+end
+
+-- A comment line keeps proxies from closing an idle stream; the same tick retires streams past their max age.
+local function arm_keepalive()
+    if keepalive_armed then
+        return;
+    end
+    keepalive_armed = true;
+    module:add_timer(EVENT_STREAM_KEEPALIVE, function()
+        if next(streams) == nil then
+            keepalive_armed = false;
+            return;
+        end
+        local now = os.time();
+        for stream in pairs(streams) do
+            if now - stream.opened >= EVENT_STREAM_MAX_AGE then
+                close_stream(stream, 'max age');
+            else
+                stream_write(stream, ': keepalive\n\n');
+            end
+        end
+        return EVENT_STREAM_KEEPALIVE;
+    end);
+end
+
 -- ── Webhooks ──────────────────────────────────────────────────────────────────
 
 local deliver_webhook;
@@ -582,11 +740,10 @@ deliver_webhook = function(url, body, signature, attempt)
     end
 end
 
-local function send_webhook(callback_url, payload)
+local function send_webhook(callback_url, body)
     if not callback_url then
         return;
     end
-    local body = json.encode(payload);
     local signature;
     if WEBHOOK_SECRET ~= '' then
         signature = 'sha256=' .. hashes.hmac_sha256(WEBHOOK_SECRET, body, true);
@@ -596,9 +753,9 @@ end
 
 local LIFECYCLE_EVENT = 'voice-agent-lifecycle';
 
--- One lifecycle event, two consumers: the agent's callbackUrl when it has one, and a module event any
--- co-located module may hook to deliver it another way. The webhook body is encoded before the hooks run,
--- so they cannot alter it, and a failing hook cannot break the transition.
+-- One lifecycle event, three consumers: the agent's callbackUrl when it has one, the open event streams, and a
+-- module event any co-located module may hook to deliver it another way. The body is encoded before the hooks
+-- run, so they cannot alter it, and a failing hook cannot break the transition.
 local function notify_lifecycle(room, agent_id, entry, callback_url, event_name, extra)
     local payload = {
         event = event_name;
@@ -611,7 +768,9 @@ local function notify_lifecycle(room, agent_id, entry, callback_url, event_name,
     for k, v in pairs(extra or {}) do
         payload[k] = v;
     end
-    send_webhook(callback_url, payload);
+    local body = json.encode(payload);
+    send_webhook(callback_url, body);
+    broadcast_lifecycle(event_name, payload.conference, body);
     local ok, err = pcall(module.fire_event, module, LIFECYCLE_EVENT,
         { room = room; agent_id = agent_id; payload = payload; });
     if not ok then
@@ -635,6 +794,9 @@ local function remove_agent(room, agent_id, reason)
     room.jitsiMetadata.agents[agent_id] = nil;
     if room._data.voice_agents then
         room._data.voice_agents[agent_id] = nil;
+    end
+    if next(room.jitsiMetadata.agents) == nil then
+        rooms_with_agents[room] = nil;
     end
     notify_metadata_changed(room);
     return true;
@@ -768,6 +930,7 @@ local function handle_invite(event)
 
     room.jitsiMetadata.agents = agents;
     room._data.voice_agents = voice_agents;
+    rooms_with_agents[room] = true;
 
     module:log('info', 'Voice agent %s invited to room %s,meeting_id:%s',
         agent_id, room.jid, room._data.meetingId);
@@ -846,6 +1009,81 @@ local function handle_get(event)
         return error_response(404, 'Agent not found');
     end
     return { status_code = 200, body = json.encode(agent_response(agent_id, entry)) };
+end
+
+
+-- The public name a stream filters on. The room may not exist yet (a stream is often opened before the meeting
+-- starts), so a name that resolves to no room is normalised the way public_room_name() will spell it. A JID must
+-- resolve: one for a room that does not exist names nothing a customer could be told about.
+local function stream_conference(conference)
+    if type(conference) ~= 'string' or conference == '' or #conference > MAX_CONFERENCE_LENGTH then
+        return nil;
+    end
+    local room = find_room(conference);
+    if room then
+        return public_room_name(room);
+    end
+    if conference:find('@', 1, true) then
+        return nil;
+    end
+    local tenant, name = conference:match('^([^/]+)/([^/]+)$');
+    if tenant then
+        return backend_safe(tenant) .. '/' .. backend_safe(name);
+    end
+    if conference:find('/', 1, true) then
+        return nil;
+    end
+    return backend_safe(conference);
+end
+
+-- GET /voice-agent/events: a text/event-stream of the lifecycle events, held open until the client leaves or the
+-- stream reaches its max age. Not wrapped by async_handler_wrapper: the handler takes the response over.
+local function handle_events(event)
+    local request, response = event.request, event.response;
+
+    local auth_error = check_authorization(request);
+    if auth_error then
+        return auth_error;
+    end
+    local params = query_params(request);
+    local conference;
+    if params.conference ~= nil then
+        conference = stream_conference(params.conference);
+        if not conference then
+            return error_response(404, 'Room not found');
+        end
+    end
+    if stream_count >= MAX_EVENT_STREAMS then
+        return error_response(503, 'Too many event streams');
+    end
+
+    response.status_code = 200;
+    response.headers.content_type = 'text/event-stream';
+    response.headers.cache_control = 'no-cache';
+    response.headers.transfer_encoding = 'chunked';
+    -- nginx would otherwise hold the chunks back.
+    response.headers.x_accel_buffering = 'no';
+    response:write_headers();
+
+    local stream = { response = response; conference = conference; opened = os.time(); };
+    streams[stream] = true;
+    stream_count = stream_count + 1;
+    response.on_destroy = function()
+        close_stream(stream, 'disconnected');
+    end;
+
+    local missed = missed_frames(request.headers['last_event_id'], conference);
+    if missed then
+        for _, frame in ipairs(missed) do
+            stream_write(stream, frame);
+        end
+    else
+        stream_write(stream, sse_frame(event_id(event_seq), 'snapshot',
+            json.encode({ conference = conference; agents = snapshot_agents(conference); })));
+    end
+    arm_keepalive();
+    module:log('debug', 'Event stream opened for %s, %d open', conference or 'every room', stream_count);
+    return true;
 end
 
 -- Internal lifecycle reporting for jicofo/JVB; drives the client-facing state and the webhooks.
@@ -946,6 +1184,7 @@ module:provides('http', {
         ['GET voice-agent/dial'] = function(event)
             return async_handler_wrapper(event, handle_dial);
         end;
+        ['GET voice-agent/events'] = handle_events;
     };
 });
 
@@ -968,6 +1207,7 @@ local function hook_room_destroyed(host_module)
                     'agent.ended', { reason = 'room-destroyed' });
             end
         end
+        rooms_with_agents[room] = nil;
     end);
 end
 

@@ -152,7 +152,7 @@ _G.module = {
         table.insert(logs, { level = level, text = ok and text or fmt });
     end,
     get_option_string = function(_, key, default) return option(key, default); end,
-    get_option_number = function(_, _key, default) return default; end,
+    get_option_number = function(_, key, default) return option(key, default); end,
     get_option_boolean = function(_, key, default) return option(key, default); end,
     get_option_array = function(_, key, default) return option(key, default or {}); end,
     measure = function() return function() end; end,
@@ -183,7 +183,8 @@ if not ok then
 end
 
 for _, route in ipairs({ 'POST voice-agent/invite', 'POST voice-agent/dismiss', 'GET voice-agent/list',
-                         'GET voice-agent/get', 'POST voice-agent/status', 'GET voice-agent/dial' }) do
+                         'GET voice-agent/get', 'POST voice-agent/status', 'GET voice-agent/dial',
+                         'GET voice-agent/events' }) do
     assert(routes[route], route .. ' route not registered');
 end
 
@@ -274,12 +275,77 @@ end
 
 local CALLBACK = 'https://app.example.com/agent-events';
 
+-- A Prosody-shaped response object for the event stream: records every write and behaves like
+-- net.http.server on done()/on_destroy().
+local function sse_response()
+    local response = { status_code = 200; headers = {}; finished = false; writes = {} };
+    response.conn = { write = function(_, data) table.insert(response.writes, data); end };
+    response.write_headers = function(self) self.headers_written = true; end;
+    response.done = function(self)
+        self.finished = true;
+        if self.on_destroy then self:on_destroy(); self.on_destroy = nil; end
+    end;
+    -- What net.http.server does when the client goes away.
+    response.disconnect = function(self)
+        self.finished = true;
+        if self.on_destroy then self:on_destroy(); end
+    end;
+    return response;
+end
+
+-- Streams opened by the current test, disconnected before the next one so module state does not leak.
+local open_streams = {};
+
+-- Opens an event stream; returns the handler's result and the response it wrote to.
+local function events(query, opts)
+    opts = opts or {};
+    local headers = {};
+    if not opts.omitAuth then headers.authorization = opts.token or 'Bearer t'; end
+    if opts.lastEventId then headers.last_event_id = opts.lastEventId; end
+    local response = sse_response();
+    table.insert(open_streams, response);
+    local result = routes['GET voice-agent/events']({
+        request = { headers = headers; url = { query = query } }; response = response });
+    return result, response;
+end
+
+-- The SSE events a stream received, in order, as { id, event }; keepalive comments as { comment = true }.
+local function stream_events(response)
+    local out = {};
+    for _, w in ipairs(response.writes) do
+        local text = w:match('^%x+\r\n(.*)\r\n$');
+        if text and text:sub(1, 1) == ':' then
+            table.insert(out, { comment = true });
+        elseif text then
+            table.insert(out, { id = text:match('id: ([^\n]+)'); event = text:match('event: ([^\n]+)') });
+        end
+    end
+    return out;
+end
+
+-- The last snapshot payload the module encoded (the only encoded table with an `agents` field in these tests).
+local function last_snapshot()
+    for i = #encoded, 1, -1 do
+        local t = encoded[i];
+        if type(t) == 'table' and t.agents ~= nil then
+            return t;
+        end
+    end
+    return nil;
+end
+
 -- ---------------------------------------------------------------------------
 -- Tests
 -- ---------------------------------------------------------------------------
 
 describe('mod_voice_agent_component', function()
     before_each(function()
+        for _, response in ipairs(open_streams) do response:disconnect(); end
+        open_streams = {};
+        -- With every stream gone, a pending keepalive tick disarms itself, so the next test gets a fresh timer.
+        for _, timer in ipairs(timers) do
+            if timer.delay == 15 then pcall(timer.fn); end
+        end
         token_valid = true;
         mock_room = fresh_room();
         http_requests = {};
@@ -291,6 +357,8 @@ describe('mod_voice_agent_component', function()
         module_events = {};
         fire_event_error = false;
         for i = #encoded, 1, -1 do encoded[i] = nil; end
+        -- The module remembers rooms with agents by weak key: collect the previous test's room.
+        collectgarbage('collect');
     end)
 
     describe('public room names (no MUC JIDs for customers)', function()
@@ -853,6 +921,125 @@ describe('mod_voice_agent_component', function()
         end)
     end)
 
+    describe('event stream (GET /voice-agent/events)', function()
+        it('requires authorization', function()
+            local result, response = events('conference=r', { omitAuth = true });
+            assert.are.equal(401, result.status_code);
+            assert.are.equal(0, #response.writes);
+        end)
+
+        it('opens a chunked text/event-stream and starts with a snapshot of the agents in scope', function()
+            invite({ conference = 'r'; displayName = 'A'; agentId = 'one' });
+            invite({ conference = 'r'; displayName = 'B'; agentId = 'two' });
+            status({ conference = 'r'; agentId = 'agent-two'; state = 'active' });
+            local result, response = events('conference=r');
+            assert.is_true(result);
+            assert.is_true(response.headers_written);
+            assert.are.equal('text/event-stream', response.headers.content_type);
+            assert.are.equal('chunked', response.headers.transfer_encoding);
+            assert.are.equal('no', response.headers.x_accel_buffering);
+            local received = stream_events(response);
+            assert.are.equal(1, #received);
+            assert.are.equal('snapshot', received[1].event);
+            local snapshot = last_snapshot();
+            assert.are.equal('room1', snapshot.conference);
+            assert.are.equal(2, #snapshot.agents);
+            assert.are.equal('agent-one', snapshot.agents[1].agentId);
+            assert.are.equal('provisioning', snapshot.agents[1].state);
+            assert.are.equal('agent-two', snapshot.agents[2].agentId);
+            assert.are.equal('active', snapshot.agents[2].state);
+            assert.are.equal('room1', snapshot.agents[2].conference);
+            assert.is_nil(snapshot.agents[2].endpoint, 'a snapshot carries client fields only');
+        end)
+
+        it('writes each lifecycle event to the stream, with an opaque id', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            local _, response = events('conference=r');
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
+            dismiss({ conference = 'r'; agentId = 'agent-support' });
+            local received = stream_events(response);
+            assert.are.equal(3, #received);
+            assert.are.equal('agent.connected', received[2].event);
+            assert.are.equal('agent.ended', received[3].event);
+            assert.is_truthy(received[2].id:match('^%x+%-%d+$'));
+            assert.are_not.equal(received[2].id, received[3].id);
+        end)
+
+        it('a stream for a room that does not exist yet gets an empty snapshot and no other room\'s events', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            local result, response = events('conference=missing');
+            assert.is_true(result);
+            assert.are.equal(0, #last_snapshot().agents);
+            assert.are.equal('missing', last_snapshot().conference);
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
+            assert.are.equal(1, #stream_events(response), 'room1 events stay out of a stream for another room');
+        end)
+
+        it('a stream without a conference covers every room', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            local _, response = events(nil);
+            assert.is_nil(last_snapshot().conference);
+            assert.are.equal(1, #last_snapshot().agents);
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
+            assert.are.equal('agent.connected', stream_events(response)[2].event);
+        end)
+
+        it('rejects a JID outside the conference hosts', function()
+            assert.are.equal(404, events('conference=x@other.localhost').status_code);
+        end)
+
+        it('replays the events missed since a known Last-Event-ID instead of a snapshot', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            local _, first = events('conference=r');
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
+            local connected_id = stream_events(first)[2].id;
+            first:disconnect();
+            dismiss({ conference = 'r'; agentId = 'agent-support' });
+            local _, second = events('conference=r', { lastEventId = connected_id });
+            local received = stream_events(second);
+            assert.are.equal(1, #received);
+            assert.are.equal('agent.ended', received[1].event);
+        end)
+
+        it('sends a snapshot when the Last-Event-ID is from another epoch', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            local _, response = events('conference=r', { lastEventId = 'deadbeef-7' });
+            assert.are.equal('snapshot', stream_events(response)[1].event);
+        end)
+
+        it('forgets a stream whose client went away', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            local _, response = events('conference=r');
+            response:disconnect();
+            local before = #response.writes;
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
+            assert.are.equal(before, #response.writes);
+        end)
+
+        it('drops a room from the snapshot once its last agent is gone', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            dismiss({ conference = 'r'; agentId = 'agent-support' });
+            events('conference=r');
+            assert.are.equal(0, #last_snapshot().agents);
+        end)
+
+        it('drops a destroyed room from the snapshot', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            host_hooks['muc-room-destroyed']({ room = mock_room });
+            events(nil);
+            assert.are.equal(0, #last_snapshot().agents);
+        end)
+
+        it('keeps the stream alive with a comment on each timer tick', function()
+            local _, response = events('conference=r');
+            assert.are.equal(15, timers[#timers].delay);
+            local again = timers[#timers].fn();
+            assert.are.equal(15, again, 'the keepalive re-arms itself while streams are open');
+            local received = stream_events(response);
+            assert.is_true(received[#received].comment);
+        end)
+    end)
+
     describe('status route auth (jicofo shared secret)', function()
         it('accepts the configured shared secret without an ASAP token', function()
             invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
@@ -1045,6 +1232,20 @@ describe('mod_voice_agent_component', function()
         end
         after_each(function()
             reload_with({});
+        end)
+
+        it('refuses event streams beyond voice_agent_max_event_streams with 503', function()
+            reload_with({ voice_agent_max_event_streams = 1 });
+            assert.is_true((events('conference=r')));
+            assert.are.equal(503, events('conference=r').status_code);
+        end)
+
+        it('closes a stream past voice_agent_event_stream_max_age on the keepalive tick', function()
+            reload_with({ voice_agent_event_stream_max_age = 0 });
+            local _, response = events('conference=r');
+            timers[#timers].fn();
+            assert.is_true(response.finished);
+            assert.are.equal('0\r\n\r\n', response.writes[#response.writes]);
         end)
 
         it('refuses to load without an ASAP key repository, so a meeting token can never provision agents', function()
