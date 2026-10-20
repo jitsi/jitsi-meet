@@ -72,7 +72,7 @@ describe('Subject iframe API command and events', () => {
         await changeSubjectAndVerify('Conference Subject via Iframe API');
     });
 
-    it('updates subject to a new value via subject command', async () => {
+    it('updates meeting subject to a new value via subject command', async () => {
         await changeSubjectAndVerify('Updated Conference Subject');
     });
 });
