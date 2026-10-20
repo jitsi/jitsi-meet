@@ -69,8 +69,49 @@ describe('Participants presence', () => {
         expect((await p1.getIframeAPI().getEventResult('participantsPaneToggled'))?.open).toBe(false);
     });
 
+    it('displayName', async () => {
+        const { p1, p2 } = ctx;
+        const newName = 'AliceInWonderland';
+        const p1EndpointId = await p1.getEndpointId();
+
+        await p1.switchToMainFrame();
+        await p2.switchToMainFrame();
+        await p1.getIframeAPI().addEventListener('displayNameChange');
+        await p2.getIframeAPI().addEventListener('displayNameChange');
+        await p1.getIframeAPI().clearEventResults('displayNameChange');
+        await p2.getIframeAPI().clearEventResults('displayNameChange');
+
+        await p1.getIframeAPI().executeCommand('displayName', newName);
+
+        const p1Event: { displayname: string; formattedDisplayName: string; id: string; }
+            = await p1.getIframeAPI().waitForEventResult(
+                'displayNameChange',
+                'displayNameChange event was not received on p1'
+            );
+
+        expect(p1Event.id).toBe(p1EndpointId);
+        expect(p1Event.displayname).toBe(newName);
+
+        const p2Event: { displayname: string; formattedDisplayName: string; id: string; }
+            = await p2.getIframeAPI().waitForEventResult(
+                'displayNameChange',
+                'displayNameChange event was not received on p2'
+            );
+
+        expect(p2Event.id).toBe(p1EndpointId);
+        expect(p2Event.displayname).toBe(newName);
+
+        await p1.switchToIFrame();
+        expect(await p1.getLocalDisplayName()).toBe(newName);
+
+        await p2.switchToIFrame();
+        expect(await p2.getFilmstrip().getRemoteDisplayName(p1EndpointId)).toBe(newName);
+    });
+
     it('overwrite names', async () => {
         const { p1, p2 } = ctx;
+
+        await p1.switchToMainFrame();
 
         const p1EpId = await p1.getEndpointId();
         const p2EpId = await p2.getEndpointId();
