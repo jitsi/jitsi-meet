@@ -111,6 +111,8 @@ describe('Participants presence', () => {
     it('overwrite names', async () => {
         const { p1, p2 } = ctx;
 
+        await p1.switchToMainFrame();
+
         const p1EpId = await p1.getEndpointId();
         const p2EpId = await p2.getEndpointId();
 
