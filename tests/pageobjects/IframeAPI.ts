@@ -125,6 +125,13 @@ export default class IframeAPI extends BasePageObject {
     }
 
     /**
+     * Returns the list of breakout rooms.
+     */
+    listBreakoutRooms() {
+        return this.participant.execute(() => window.jitsiAPI.listBreakoutRooms());
+    }
+
+    /**
      * Removes the embedded Jitsi Meet conference.
      */
     dispose() {
