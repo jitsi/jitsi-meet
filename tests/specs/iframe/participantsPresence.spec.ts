@@ -95,6 +95,38 @@ describe('Participants presence', () => {
 
     });
 
+    it('email', async () => {
+        const { p1 } = ctx;
+        const testEmail = 'alice@example.com';
+        const p1EndpointId = await p1.getEndpointId();
+
+        await p1.switchToMainFrame();
+        await p1.getIframeAPI().addEventListener('emailChange');
+        await p1.getIframeAPI().clearEventResults('emailChange');
+        await p1.getIframeAPI().executeCommand('email', testEmail);
+
+        const emailEvent: { email: string; id: string; }
+            = await p1.getIframeAPI().waitForEventResult(
+                'emailChange',
+                'emailChange event was not received on p1'
+            );
+
+        expect(emailEvent.id).toBe(p1EndpointId);
+        expect(emailEvent.email).toBe(testEmail);
+
+        await p1.switchToIFrame();
+        await p1.getToolbar().clickProfileButton();
+
+        const settingsDialog = p1.getSettingsDialog();
+
+        await settingsDialog.waitForDisplay();
+        const emailValue = await settingsDialog.getEmail();
+
+        await settingsDialog.clickCloseButton();
+
+        expect(emailValue).toBe(testEmail);
+    });
+
     it('hangup', async () => {
         const { p1, p2, roomName } = ctx;
 
