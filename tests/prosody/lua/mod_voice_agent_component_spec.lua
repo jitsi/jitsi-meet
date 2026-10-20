@@ -74,6 +74,9 @@ local host_hooks = {};
 local host_hooks_by_host = {};
 -- module:log calls, as { level, text }.
 local logs = {};
+-- Module events the module fires (module:fire_event); `fire_event_error` makes the next hook fail.
+local module_events = {};
+local fire_event_error = false;
 
 -- Public room-name lookups ({ name, subdomain }) seen by the util stub.
 local name_lookups = {};
@@ -140,6 +143,10 @@ end
 
 _G.module = {
     host = 'voiceagent.localhost',
+    fire_event = function(_, name, event)
+        table.insert(module_events, { name = name, event = event });
+        if fire_event_error then error('hook failed'); end
+    end,
     log = function(_, level, fmt, ...)
         local ok, text = pcall(string.format, fmt, ...);
         table.insert(logs, { level = level, text = ok and text or fmt });
@@ -281,6 +288,8 @@ describe('mod_voice_agent_component', function()
         timers = {};
         name_lookups = {};
         logs = {};
+        module_events = {};
+        fire_event_error = false;
         for i = #encoded, 1, -1 do encoded[i] = nil; end
     end)
 
@@ -781,6 +790,66 @@ describe('mod_voice_agent_component', function()
             host_hooks['muc-room-destroyed']({ room = mock_room });
             host_hooks['muc-room-destroyed']({ room = mock_room });
             assert.are.equal(1, #webhook_payloads('agent.ended'));
+        end)
+    end)
+
+    describe('voice-agent-lifecycle module event', function()
+        local function lifecycle_events()
+            local out = {};
+            for _, e in ipairs(module_events) do
+                if e.name == 'voice-agent-lifecycle' then table.insert(out, e.event); end
+            end
+            return out;
+        end
+
+        it('fires for connected and ended with the webhook payload, without a callbackUrl', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
+            dismiss({ conference = 'r'; agentId = 'agent-support' });
+            local events = lifecycle_events();
+            assert.are.equal(2, #events);
+            assert.are.equal(mock_room, events[1].room);
+            assert.are.equal('agent-support', events[1].agent_id);
+            assert.are.equal('agent.connected', events[1].payload.event);
+            assert.are.equal('active', events[1].payload.state);
+            assert.are.equal('agent-support-a0', events[1].payload.sourceName);
+            assert.is_truthy(events[1].payload.timestamp);
+            assert.are.equal('agent.ended', events[2].payload.event);
+            assert.are.equal('dismissed', events[2].payload.reason);
+            assert.are.equal(0, #http_requests, 'no callbackUrl, no webhook');
+        end)
+
+        it('fires one terminal event: a failed agent gets no ended event on dismiss', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'failed'; reason = 'no bridge available' });
+            dismiss({ conference = 'r'; agentId = 'agent-support' });
+            local events = lifecycle_events();
+            assert.are.equal(1, #events);
+            assert.are.equal('agent.failed', events[1].payload.event);
+            assert.are.equal('no bridge available', events[1].payload.reason);
+        end)
+
+        it('fires on room destroy with the same payload as the webhook', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support'; callbackUrl = CALLBACK });
+            host_hooks['muc-room-destroyed']({ room = mock_room });
+            local events = lifecycle_events();
+            assert.are.equal(1, #events);
+            assert.are.equal('room-destroyed', events[1].payload.reason);
+            assert.are.equal(events[1].payload, webhook_payloads('agent.ended')[1]);
+        end)
+
+        it('survives a failing hook: the transition and the webhook still happen', function()
+            fire_event_error = true;
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support'; callbackUrl = CALLBACK });
+            local res = status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
+            assert.are.equal(200, res.status_code);
+            assert.are.equal('active', mock_room.jitsiMetadata.agents['agent-support'].state);
+            assert.are.equal(1, #http_requests);
+            local warned = false;
+            for _, entry in ipairs(logs) do
+                if entry.level == 'warn' and entry.text:find('voice-agent-lifecycle', 1, true) then warned = true; end
+            end
+            assert.is_true(warned, 'a failing hook must be logged');
         end)
     end)
 

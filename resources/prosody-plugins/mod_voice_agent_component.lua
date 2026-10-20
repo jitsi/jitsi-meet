@@ -65,6 +65,9 @@
 -- { event, agentId, conference, sourceName, state, timestamp, reason? }, signed
 -- X-Agent-Signature: sha256=<hmac> with voice_agent_webhook_secret, retried with
 -- backoff up to voice_agent_webhook_retries times (at-least-once).
+-- Every lifecycle event also fires the module event 'voice-agent-lifecycle' on this host, with
+-- { room, agent_id, payload } and the same payload, whether or not the agent has a callbackUrl, so a
+-- co-located module can deliver it another way (a hosted deployment's webhook platform, an event stream).
 --
 -- Copyright (C) 2026-present 8x8, Inc.
 
@@ -579,10 +582,24 @@ deliver_webhook = function(url, body, signature, attempt)
     end
 end
 
-local function send_webhook(room, agent_id, entry, callback_url, event_name, extra)
+local function send_webhook(callback_url, payload)
     if not callback_url then
         return;
     end
+    local body = json.encode(payload);
+    local signature;
+    if WEBHOOK_SECRET ~= '' then
+        signature = 'sha256=' .. hashes.hmac_sha256(WEBHOOK_SECRET, body, true);
+    end
+    deliver_webhook(callback_url, body, signature, 1);
+end
+
+local LIFECYCLE_EVENT = 'voice-agent-lifecycle';
+
+-- One lifecycle event, two consumers: the agent's callbackUrl when it has one, and a module event any
+-- co-located module may hook to deliver it another way. The webhook body is encoded before the hooks run,
+-- so they cannot alter it, and a failing hook cannot break the transition.
+local function notify_lifecycle(room, agent_id, entry, callback_url, event_name, extra)
     local payload = {
         event = event_name;
         agentId = agent_id;
@@ -594,12 +611,12 @@ local function send_webhook(room, agent_id, entry, callback_url, event_name, ext
     for k, v in pairs(extra or {}) do
         payload[k] = v;
     end
-    local body = json.encode(payload);
-    local signature;
-    if WEBHOOK_SECRET ~= '' then
-        signature = 'sha256=' .. hashes.hmac_sha256(WEBHOOK_SECRET, body, true);
+    send_webhook(callback_url, payload);
+    local ok, err = pcall(module.fire_event, module, LIFECYCLE_EVENT,
+        { room = room; agent_id = agent_id; payload = payload; });
+    if not ok then
+        module:log('warn', 'A %s hook failed: %s', LIFECYCLE_EVENT, tostring(err));
     end
-    deliver_webhook(callback_url, body, signature, 1);
 end
 
 -- Tears an agent down: terminal state, agent.ended webhook (unless agent.failed already was its terminal
@@ -613,7 +630,7 @@ local function remove_agent(room, agent_id, reason)
     local already_terminal = entry.state == STATE_FAILED;
     entry.state = STATE_ENDED;
     if not already_terminal then
-        send_webhook(room, agent_id, entry, jicofo_entry.callbackUrl, 'agent.ended', { reason = reason });
+        notify_lifecycle(room, agent_id, entry, jicofo_entry.callbackUrl, 'agent.ended', { reason = reason });
     end
     room.jitsiMetadata.agents[agent_id] = nil;
     if room._data.voice_agents then
@@ -869,9 +886,9 @@ local function handle_status(event)
     end
     entry.state = payload.state;
     if payload.state == STATE_ACTIVE then
-        send_webhook(room, agent_id, entry, jicofo_entry.callbackUrl, 'agent.connected');
+        notify_lifecycle(room, agent_id, entry, jicofo_entry.callbackUrl, 'agent.connected');
     elseif payload.state == STATE_FAILED then
-        send_webhook(room, agent_id, entry, jicofo_entry.callbackUrl, 'agent.failed', { reason = reason });
+        notify_lifecycle(room, agent_id, entry, jicofo_entry.callbackUrl, 'agent.failed', { reason = reason });
     end
     notify_metadata_changed(room);
     return { status_code = 200, body = json.encode(agent_response(agent_id, entry)) };
@@ -947,7 +964,7 @@ local function hook_room_destroyed(host_module)
             -- already had its terminal webhook.
             if entry.state ~= STATE_ENDED and entry.state ~= STATE_FAILED then
                 entry.state = STATE_ENDED;
-                send_webhook(room, agent_id, entry, (voice_agents[agent_id] or {}).callbackUrl,
+                notify_lifecycle(room, agent_id, entry, (voice_agents[agent_id] or {}).callbackUrl,
                     'agent.ended', { reason = 'room-destroyed' });
             end
         end
