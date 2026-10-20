@@ -14,7 +14,7 @@ import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 import { isE2EEOnInMeeting } from '../e2ee/functions';
 import { isVpaasMeeting } from '../jaas/functions';
-import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../transcribing/functions';
+import { canAddTranscriber, isRecorderTranscriptionsRunning, isTranscribing } from '../transcribing/functions';
 import { iAmVisitor } from '../visitors/functions';
 
 import LocalRecordingManager from './components/Recording/LocalRecordingManager';
@@ -277,7 +277,10 @@ export function canStopRecording(state: IReduxState) {
 }
 
 /**
- * Returns whether the transcription should start automatically when recording starts.
+ * Returns whether the transcription should start automatically along with a recording started now:
+ * the deployment asks for it, the participant can start it, and no transcriber is in the meeting
+ * yet. A transcriber already present, for the subtitles or for a running transcription, cannot be
+ * started again, so only the recording starts then.
  *
  * @param {Object} state - The redux state to search in.
  * @returns {boolean}
@@ -285,7 +288,10 @@ export function canStopRecording(state: IReduxState) {
 export function shouldAutoTranscribeOnRecord(state: IReduxState) {
     const { transcription } = state['features/base/config'];
 
-    return (transcription?.autoTranscribeOnRecord ?? true) && canAddTranscriber(state) && !isE2EEOnInMeeting(state);
+    return (transcription?.autoTranscribeOnRecord ?? true)
+        && canAddTranscriber(state)
+        && !isE2EEOnInMeeting(state)
+        && !isTranscribing(state);
 }
 
 /**
