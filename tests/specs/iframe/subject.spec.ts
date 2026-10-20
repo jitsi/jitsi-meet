@@ -17,7 +17,8 @@ describe('Subject iframe API command and events', () => {
     let p2: Participant;
 
     /**
-     * Executes the subject iframe API command on p1 and verifies subjectChange events and in-meeting DOM on both participants.
+     * Executes the subject iframe API command on p1 and verifies
+     * subjectChange events and in-meeting DOM on both participants.
      *
      * @param subject The expected subject text.
      */
