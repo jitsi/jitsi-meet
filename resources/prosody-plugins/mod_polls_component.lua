@@ -275,7 +275,8 @@ end
             end
 
             if #data.answers ~= #poll.answers then
-                module:log("warn", "answering poll %s with more answers than options", data.pollId);
+                module:log("warn", "answering poll %s with mismatched answer count. Sender: %s",
+                    data.pollId, stanza.attr.from);
                 return true;
             end
 
