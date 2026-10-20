@@ -837,6 +837,7 @@ export interface IConfig {
     webrtcIceUdpDisable?: boolean;
     websocket?: string;
     websocketKeepAliveUrl?: string;
+    websocketWarmUpUrl?: string;
     welcomePage?: {
         customUrl?: string;
         disabled?: boolean;
