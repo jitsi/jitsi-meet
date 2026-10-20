@@ -569,24 +569,31 @@ end
 
 -- ── Event stream ──────────────────────────────────────────────────────────────
 
+-- Stream state is shared across every host this module is loaded on (module:shared): a room's destroy hook runs in
+-- whichever instance hooked the MUC host first, while the streams were opened over HTTP on another host's
+-- instance, so a per-instance table would leave those streams without the room-destroyed events.
+local shared = module:shared('/*/voice_agent_component/event_stream');
 -- Rooms that currently have agents, for a stream's snapshot. Weak keys: a destroyed room is forgotten.
-local rooms_with_agents = setmetatable({}, { __mode = 'k' });
-
+shared.rooms = shared.rooms or setmetatable({}, { __mode = 'k' });
 -- Open streams: { response, conference = <public name, or nil for every room>, opened } → true.
-local streams = {};
-local stream_count = 0;
--- Event ids are '<epoch>-<n>'. The epoch changes with every load, so an id from before a restart never replays
--- another process's events; clients treat the id as opaque.
-local STREAM_EPOCH = (random.bytes(4):gsub('.', function(c) return string.format('%02x', c:byte()); end));
-local event_seq = 0;
+shared.streams = shared.streams or {};
+shared.count = shared.count or 0;
+-- Event ids are '<epoch>-<n>'. The epoch changes with every restart, so an id from before never replays another
+-- process's events; clients treat the id as opaque.
+shared.epoch = shared.epoch or (random.bytes(4):gsub('.', function(c) return string.format('%02x', c:byte()); end));
+shared.seq = shared.seq or 0;
 -- The last EVENT_BUFFER_SIZE events as { seq, conference, frame }, replayed to a reconnecting stream.
+shared.buffer = shared.buffer or {};
+local rooms_with_agents = shared.rooms;
+local streams = shared.streams;
+local event_buffer = shared.buffer;
 local EVENT_BUFFER_SIZE = 256;
-local event_buffer = {};
 local EVENT_STREAM_KEEPALIVE = 15;
-local keepalive_armed = false;
+-- Whether this instance owns the one keepalive timer (released on unload, see module.unload).
+local keepalive_here = false;
 
 local function event_id(seq)
-    return STREAM_EPOCH .. '-' .. seq;
+    return shared.epoch .. '-' .. seq;
 end
 
 local function sse_frame(id, event_name, data)
@@ -604,7 +611,7 @@ local function close_stream(stream, why)
     end
     stream.closed = true;
     streams[stream] = nil;
-    stream_count = stream_count - 1;
+    shared.count = shared.count - 1;
     local response = stream.response;
     response.on_destroy = nil;
     if not response.finished then
@@ -613,7 +620,7 @@ local function close_stream(stream, why)
             response:done();
         end);
     end
-    module:log('debug', 'Event stream closed (%s), %d open', why, stream_count);
+    module:log('debug', 'Event stream closed (%s), %d open', why, shared.count);
 end
 
 local function stream_write(stream, data)
@@ -633,9 +640,10 @@ end
 
 -- Records a lifecycle event (body: its encoded payload) and writes it to every stream in scope.
 local function broadcast_lifecycle(event_name, conference, body)
-    event_seq = event_seq + 1;
-    local frame = sse_frame(event_id(event_seq), event_name, body);
-    table.insert(event_buffer, { seq = event_seq; conference = conference; frame = frame; });
+    shared.seq = shared.seq + 1;
+    local seq = shared.seq;
+    local frame = sse_frame(event_id(seq), event_name, body);
+    table.insert(event_buffer, { seq = seq; conference = conference; frame = frame; });
     if #event_buffer > EVENT_BUFFER_SIZE then
         table.remove(event_buffer, 1);
     end
@@ -651,10 +659,10 @@ end
 local function missed_frames(last_event_id, conference)
     local epoch, seq = tostring(last_event_id or ''):match('^(%x+)%-(%d+)$');
     seq = tonumber(seq);
-    if epoch ~= STREAM_EPOCH or not seq or seq > event_seq then
+    if epoch ~= shared.epoch or not seq or seq > shared.seq then
         return nil;
     end
-    local oldest = event_buffer[1] and event_buffer[1].seq or (event_seq + 1);
+    local oldest = event_buffer[1] and event_buffer[1].seq or (shared.seq + 1);
     if seq < oldest - 1 then
         return nil;
     end
@@ -702,13 +710,15 @@ end
 
 -- A comment line keeps proxies from closing an idle stream; the same tick retires streams past their max age.
 local function arm_keepalive()
-    if keepalive_armed then
+    if shared.keepalive_armed then
         return;
     end
-    keepalive_armed = true;
+    shared.keepalive_armed = true;
+    keepalive_here = true;
     module:add_timer(EVENT_STREAM_KEEPALIVE, function()
         if next(streams) == nil then
-            keepalive_armed = false;
+            shared.keepalive_armed = false;
+            keepalive_here = false;
             return;
         end
         local now = os.time();
@@ -1064,7 +1074,7 @@ local function handle_events(event)
             return error_response(404, 'Room not found');
         end
     end
-    if stream_count >= MAX_EVENT_STREAMS then
+    if shared.count >= MAX_EVENT_STREAMS then
         return error_response(503, 'Too many event streams');
     end
 
@@ -1078,7 +1088,7 @@ local function handle_events(event)
 
     local stream = { response = response; conference = conference; opened = os.time(); };
     streams[stream] = true;
-    stream_count = stream_count + 1;
+    shared.count = shared.count + 1;
     response.on_destroy = function()
         close_stream(stream, 'disconnected');
     end;
@@ -1089,11 +1099,11 @@ local function handle_events(event)
             stream_write(stream, frame);
         end
     else
-        stream_write(stream, sse_frame(event_id(event_seq), 'snapshot',
+        stream_write(stream, sse_frame(event_id(shared.seq), 'snapshot',
             encode_snapshot(conference, snapshot_agents(conference))));
     end
     arm_keepalive();
-    module:log('debug', 'Event stream opened for %s, %d open', conference or 'every room', stream_count);
+    module:log('debug', 'Event stream opened for %s, %d open', conference or 'every room', shared.count);
     return true;
 end
 
@@ -1225,4 +1235,11 @@ end
 process_host_module(muc_component_host, hook_room_destroyed);
 if breakout_rooms_component_host then
     process_host_module(breakout_rooms_component_host, hook_room_destroyed);
+end
+
+-- Prosody cancels this instance's timers on unload; the shared flag must not keep claiming a keepalive that is gone.
+function module.unload()
+    if keepalive_here then
+        shared.keepalive_armed = false;
+    end
 end

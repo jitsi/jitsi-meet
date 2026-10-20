@@ -81,6 +81,8 @@ local logs = {};
 -- Module events the module fires (module:fire_event); `fire_event_error` makes the next hook fail.
 local module_events = {};
 local fire_event_error = false;
+-- module:shared() tables by path, kept across loads of the file so two loads act as two host instances.
+local shared_store = {};
 
 -- Public room-name lookups ({ name, subdomain }) seen by the util stub.
 local name_lookups = {};
@@ -150,6 +152,10 @@ _G.module = {
     fire_event = function(_, name, event)
         table.insert(module_events, { name = name, event = event });
         if fire_event_error then error('hook failed'); end
+    end,
+    shared = function(_, path)
+        shared_store[path] = shared_store[path] or {};
+        return shared_store[path];
     end,
     log = function(_, level, fmt, ...)
         local ok, text = pcall(string.format, fmt, ...);
@@ -1241,11 +1247,33 @@ describe('mod_voice_agent_component', function()
         local function reload_with(overrides)
             option_overrides = overrides;
             for k in pairs(routes) do routes[k] = nil; end
+            for k in pairs(shared_store) do shared_store[k] = nil; end
             logs = {};
             assert(pcall(dofile, 'mod_voice_agent_component.lua'));
         end
         after_each(function()
             reload_with({});
+        end)
+
+        it('shares streams across the hosts the module is loaded on: a destroy seen by another instance reaches them', function()
+            reload_with({});
+            local first = {};
+            for k, v in pairs(routes) do first[k] = v; end
+            -- A second instance (the module loaded on another host) shares the store and now owns host_hooks.
+            assert(pcall(dofile, 'mod_voice_agent_component.lua'));
+            local response = sse_response();
+            table.insert(open_streams, response);
+            assert.is_true(first['GET voice-agent/events']({
+                request = { headers = { authorization = 'Bearer t' }; url = { query = 'conference=r' } }; response = response }));
+            next_decoded = { conference = 'r'; displayName = 'Bot'; agentId = 'support'; endpoint = DEFAULT_ENDPOINT };
+            assert.are.equal(200, first['POST voice-agent/invite']({
+                request = { headers = { content_type = 'application/json'; authorization = 'Bearer t' }; body = 'x' } }).status_code);
+            host_hooks['muc-room-destroyed']({ room = mock_room });
+            local received = stream_events(response);
+            assert.are.equal('agent.ended', received[#received].event);
+            local ended = webhook_payloads('agent.ended');
+            assert.are.equal(1, #ended, 'the destroy ends the agent once across instances');
+            assert.are.equal('room-destroyed', ended[1].reason);
         end)
 
         it('refuses event streams beyond voice_agent_max_event_streams with 503', function()
