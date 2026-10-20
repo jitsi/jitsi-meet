@@ -58,7 +58,11 @@ package.preload['cjson.safe'] = function()
             end
             return next_decoded;
         end,
-        encode = function(t) table.insert(encoded, t); return '{}'; end
+        encode = function(t)
+            if type(t) == 'string' then return '"' .. t .. '"'; end
+            table.insert(encoded, t);
+            return '{}';
+        end
     };
 end
 
@@ -323,15 +327,27 @@ local function stream_events(response)
     return out;
 end
 
--- The last snapshot payload the module encoded (the only encoded table with an `agents` field in these tests).
-local function last_snapshot()
-    for i = #encoded, 1, -1 do
-        local t = encoded[i];
-        if type(t) == 'table' and t.agents ~= nil then
-            return t;
+-- The data line of the last snapshot frame a stream received (every table in it encodes as {} under the stub).
+local function snapshot_data(response)
+    local data;
+    for _, w in ipairs(response.writes) do
+        local text = w:match('^%x+\r\n(.*)\r\n$');
+        if text and text:find('event: snapshot', 1, true) then
+            data = text:match('data: ([^\n]*)');
         end
     end
-    return nil;
+    return data;
+end
+
+-- The agents the module encoded for snapshots (client fields plus `conference`), in order.
+local function snapshot_agents()
+    local out = {};
+    for _, t in ipairs(encoded) do
+        if type(t) == 'table' and t.agentId and t.conference and t.displayName and not t.event then
+            table.insert(out, t);
+        end
+    end
+    return out;
 end
 
 -- ---------------------------------------------------------------------------
@@ -941,15 +957,15 @@ describe('mod_voice_agent_component', function()
             local received = stream_events(response);
             assert.are.equal(1, #received);
             assert.are.equal('snapshot', received[1].event);
-            local snapshot = last_snapshot();
-            assert.are.equal('room1', snapshot.conference);
-            assert.are.equal(2, #snapshot.agents);
-            assert.are.equal('agent-one', snapshot.agents[1].agentId);
-            assert.are.equal('provisioning', snapshot.agents[1].state);
-            assert.are.equal('agent-two', snapshot.agents[2].agentId);
-            assert.are.equal('active', snapshot.agents[2].state);
-            assert.are.equal('room1', snapshot.agents[2].conference);
-            assert.is_nil(snapshot.agents[2].endpoint, 'a snapshot carries client fields only');
+            assert.are.equal('{"conference":"room1","agents":[{},{}]}', snapshot_data(response));
+            local agents = snapshot_agents();
+            assert.are.equal(2, #agents);
+            assert.are.equal('agent-one', agents[1].agentId);
+            assert.are.equal('provisioning', agents[1].state);
+            assert.are.equal('agent-two', agents[2].agentId);
+            assert.are.equal('active', agents[2].state);
+            assert.are.equal('room1', agents[2].conference);
+            assert.is_nil(agents[2].endpoint, 'a snapshot carries client fields only');
         end)
 
         it('writes each lifecycle event to the stream, with an opaque id', function()
@@ -969,8 +985,7 @@ describe('mod_voice_agent_component', function()
             invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
             local result, response = events('conference=missing');
             assert.is_true(result);
-            assert.are.equal(0, #last_snapshot().agents);
-            assert.are.equal('missing', last_snapshot().conference);
+            assert.are.equal('{"conference":"missing","agents":[]}', snapshot_data(response), 'an empty snapshot is still an array');
             status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
             assert.are.equal(1, #stream_events(response), 'room1 events stay out of a stream for another room');
         end)
@@ -978,8 +993,7 @@ describe('mod_voice_agent_component', function()
         it('a stream without a conference covers every room', function()
             invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
             local _, response = events(nil);
-            assert.is_nil(last_snapshot().conference);
-            assert.are.equal(1, #last_snapshot().agents);
+            assert.are.equal('{"agents":[{}]}', snapshot_data(response));
             status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
             assert.are.equal('agent.connected', stream_events(response)[2].event);
         end)
@@ -1019,15 +1033,15 @@ describe('mod_voice_agent_component', function()
         it('drops a room from the snapshot once its last agent is gone', function()
             invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
             dismiss({ conference = 'r'; agentId = 'agent-support' });
-            events('conference=r');
-            assert.are.equal(0, #last_snapshot().agents);
+            local _, response = events('conference=r');
+            assert.are.equal('{"conference":"room1","agents":[]}', snapshot_data(response));
         end)
 
         it('drops a destroyed room from the snapshot', function()
             invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
             host_hooks['muc-room-destroyed']({ room = mock_room });
-            events(nil);
-            assert.are.equal(0, #last_snapshot().agents);
+            local _, response = events(nil);
+            assert.are.equal('{"agents":[]}', snapshot_data(response));
         end)
 
         it('keeps the stream alive with a comment on each timer tick', function()
