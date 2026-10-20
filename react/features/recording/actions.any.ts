@@ -16,7 +16,7 @@ import {
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 import { INotificationProps } from '../notifications/types';
 import { setRequestingSubtitles } from '../subtitles/actions.any';
-import { isRecorderTranscriptionsRunning, isSubtitlesOnlyTranscriberRunning } from '../transcribing/functions';
+import { isRecorderTranscriptionsRunning } from '../transcribing/functions';
 
 import {
     CLEAR_RECORDING_SESSIONS,
@@ -519,11 +519,7 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
                     };
 
                     const { conference } = state['features/base/conference'];
-
-                    // A transcriber already in the meeting, for the subtitles or a running
-                    // transcription, cannot be started again: only start the recording then.
-                    const autoTranscribeOnRecord = shouldAutoTranscribeOnRecord(state)
-                        && !isSubtitlesOnlyTranscriberRunning(state) && !isRecorderTranscriptionsRunning(state);
+                    const autoTranscribeOnRecord = shouldAutoTranscribeOnRecord(state);
 
                     dispatch(setStartRecordingIntent({
                         recording: true,
