@@ -324,13 +324,16 @@ export function getPrivateNoticeMessage(message: IMessage): string {
 /**
  * Check if participant is not allowed to send group messages.
  *
+ * Group chat is restricted either by the dynamic branding or by the room metadata. The server sets
+ * the restriction in the metadata from the settings of the meeting, and a moderator can change it.
+ *
  * @param {IReduxState} state - The redux state.
  * @returns {boolean} - Returns true if the participant is not allowed to send group messages.
  */
 export function isSendGroupChatDisabled(state: IReduxState): boolean {
     const { groupChatRequiresPermission } = state['features/dynamic-branding'];
 
-    if (!groupChatRequiresPermission) {
+    if (!groupChatRequiresPermission && !isGroupChatRestricted(state)) {
         return false;
     }
 
@@ -351,8 +354,8 @@ export function isGroupChatRestricted(state: IReduxState): boolean {
 /**
  * Check if participant is not allowed to send private messages.
  *
- * Unlike the group chat check above, this reads the restriction from the room
- * metadata, which is what a moderator toggles at runtime. The server applies the
+ * This reads the restriction from the room metadata, which the server sets from
+ * the settings of the meeting and a moderator toggles at runtime. The server applies the
  * same check in mod_filter_messages, and pushes the permissions of a participant
  * that it promotes to moderator, so this selector follows a promotion.
  *
