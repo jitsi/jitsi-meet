@@ -274,7 +274,7 @@ end
                 return;
             end
 
-            if #data.answers > #poll.answers then
+            if #data.answers ~= #poll.answers then
                 module:log("warn", "answering poll %s with more answers than options", data.pollId);
                 return true;
             end
