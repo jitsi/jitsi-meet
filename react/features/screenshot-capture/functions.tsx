@@ -18,7 +18,7 @@ export function createScreenshotCaptureSummary(stateful: IStateful) {
         return Promise.reject(new Error('ScreenshotCaptureSummary not supported!'));
     }
 
-    return new ScreenshotCaptureSummary(toState(stateful));
+    return new ScreenshotCaptureSummary(stateful);
 }
 
 /**
