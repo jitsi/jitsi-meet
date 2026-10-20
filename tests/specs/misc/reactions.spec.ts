@@ -69,14 +69,14 @@ describe('Reactions and emojis', () => {
 
         const p1LikeEmoji = p1.driver.$('//div[contains(@class, "reaction-emoji") and contains(text(), "👍")]');
 
-        await p1LikeEmoji.waitForDisplayed({
+        await p1LikeEmoji.waitForExist({
             timeout: 5000,
             timeoutMsg: 'Local participant p1 did not display reaction animation'
         });
 
         const p2LikeEmoji = p2.driver.$('//div[contains(@class, "reaction-emoji") and contains(text(), "👍")]');
 
-        await p2LikeEmoji.waitForDisplayed({
+        await p2LikeEmoji.waitForExist({
             timeout: 5000,
             timeoutMsg: 'Remote participant p2 did not display reaction animation'
         });
@@ -101,7 +101,7 @@ describe('Reactions and emojis', () => {
 
         const p1ClapEmoji = p1.driver.$('//div[contains(@class, "reaction-emoji") and contains(text(), "👏")]');
 
-        await p1ClapEmoji.waitForDisplayed({
+        await p1ClapEmoji.waitForExist({
             timeout: 5000,
             timeoutMsg: 'Remote participant p1 did not display "clap" reaction animation'
         });

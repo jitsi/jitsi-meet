@@ -307,7 +307,7 @@ export default class Toolbar extends BasePageObject {
         const trigger = this.getButton(REACTIONS_MENU);
 
         await trigger.waitForExist({ timeout: 2000 });
-        await trigger.click();
+        await trigger.moveTo();
 
         await this.waitForReactionsMenu(true);
     }
