@@ -14,6 +14,8 @@ import { updateDropboxToken } from '../../../dropbox/actions';
 import { getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropbox/functions';
 import { getDropboxData } from '../../../dropbox/functions.any';
 import { isE2EEOnInMeeting } from '../../../e2ee/functions';
+import { isFollowMeActive, isFollowMeRecorderActive } from '../../../follow-me/functions';
+import { isVpaasMeeting } from '../../../jaas/functions';
 import { showErrorNotification } from '../../../notifications/actions';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
 import {
@@ -31,7 +33,6 @@ import {
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../constants';
 import {
     getActiveSession,
-    getRecordingServiceOptions,
     hasRecordingOrTranscriptionFeature,
     isLiveStreamingRunning,
     isRecordingRunning,
@@ -40,6 +41,8 @@ import {
     supportsLocalRecording
 } from '../../functions';
 import { ISessionData } from '../../reducer';
+
+import { IRecordingDialogFacts, IRecordingDialogModel, getRecordingDialogModel } from './dialogModel';
 
 /**
  * The set of start/stop operations to apply on the running services. Each
@@ -60,7 +63,7 @@ export interface IProps extends WithTranslation {
     _appKey: string;
 
     /**
-     * Requests transcribing when recording is turned on.
+     * Whether a recording started now should start the transcription along with it.
      */
     _autoTranscribeOnRecord: boolean;
 
@@ -102,6 +105,21 @@ export interface IProps extends WithTranslation {
     _fileRecordingsServiceSharingEnabled: boolean;
 
     /**
+     * Whether any moderator has the regular Follow Me feature active.
+     */
+    _followMeActive: boolean;
+
+    /**
+     * Whether any moderator has the recorder Follow Me feature active.
+     */
+    _followMeRecorderActive: boolean;
+
+    /**
+     * Whether the local participant has the recorder Follow Me setting enabled.
+     */
+    _followMeRecorderEnabled: boolean;
+
+    /**
      * If true the dropbox integration is enabled, otherwise - disabled.
      */
     _isDropboxEnabled: boolean;
@@ -117,14 +135,19 @@ export interface IProps extends WithTranslation {
     _isModerator: boolean;
 
     /**
+     * Whether the meeting is a vpaas one.
+     */
+    _isVpaas: boolean;
+
+    /**
      * Whether a local recording is currently active.
      */
     _localRecording?: boolean;
 
     /**
-     * Whether or not local recording is enabled.
+     * Whether local recording is enabled and supported here.
      */
-    _localRecordingEnabled: boolean;
+    _localRecordingAvailable: boolean;
 
     /**
      * The dropbox refresh token.
@@ -277,45 +300,57 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             selectedLanguage: props._subtitlesLanguage
                 ?? `translation-languages:${DEFAULT_LANGUAGE}`,
             spaceLeft: undefined,
-            selectedRecordingService: this._getDefaultRecordingService(props),
+            selectedRecordingService: getRecordingDialogModel(this._getFacts(props), {
+                isTokenValid: false,
+                isValidating: false,
+                selectedRecordingService: ''
+            }).recording.defaultService,
             localRecordingOnlySelf: false
         };
     }
 
     /**
-     * Returns the recording services the participant can currently pick from, the same list the
-     * dialog content renders in the storage selector.
+     * Gathers what the dialog knows from the redux state, as the input of the dialog model.
      *
-     * @param {IProps} props - The props to compute the list from.
-     * @returns {Array<string>} - RECORDING_TYPES values.
+     * @param {IProps} props - The props to read; defaults to this.props.
+     * @returns {IRecordingDialogFacts}
      */
-    _getRecordingServiceOptions(props: IProps): Array<string> {
-        return getRecordingServiceOptions({
+    _getFacts(props: IProps = this.props): IRecordingDialogFacts {
+        return {
+            autoTranscribeOnRecord: props._autoTranscribeOnRecord,
+            canTranscribe: props._canTranscribe,
+            dropboxEnabled: props._isDropboxEnabled,
+            e2eeOn: props._e2eeOn,
             fileRecordingsServiceEnabled: props._fileRecordingsServiceEnabled,
-            integrationsEnabled: this._areIntegrationsEnabled(props),
+            fileRecordingsServiceSharingEnabled: props._fileRecordingsServiceSharingEnabled,
+            followMeActive: props._followMeActive,
+            followMeRecorderActive: props._followMeRecorderActive,
+            followMeRecorderEnabled: props._followMeRecorderEnabled,
             liveStreamRunning: props._isLiveStreamRunning,
-            localRecordingAvailable: props._localRecordingEnabled && supportsLocalRecording(),
-            recordingFeatureEnabled: props._recordingFeatureEnabled
-        });
+            localRecordingAvailable: props._localRecordingAvailable,
+            moderator: props._isModerator,
+            recordingFeatureEnabled: props._recordingFeatureEnabled,
+            recordingRunning: Boolean(props._recordingRunning),
+            transcriberBusy: props._subtitlesOnlyTranscriberRunning,
+            transcriptionRunning: Boolean(props._transcriptionRunning),
+            vpaas: props._isVpaas
+        };
     }
 
     /**
-     * Picks the default recording service to preselect from the given props, among the ones
-     * currently available: the file recordings service takes priority, then local recording, then
-     * Dropbox, in that order. Returns '' if none is available, in which case the start recording
-     * button is disabled.
+     * Computes the dialog model: every decision about what is shown and what can be started, from
+     * the current props and state. Rendered by the dialog content and applied by the handlers here.
      *
-     * @param {IProps} props - The props to compute the default from.
-     * @returns {string} - One of RECORDING_TYPES, or ''.
+     * @returns {IRecordingDialogModel}
      */
-    _getDefaultRecordingService(props: IProps): string {
-        const options = this._getRecordingServiceOptions(props);
+    _getModel(): IRecordingDialogModel {
+        const { isTokenValid, isValidating, selectedRecordingService } = this.state;
 
-        return [
-            RECORDING_TYPES.JITSI_REC_SERVICE,
-            RECORDING_TYPES.LOCAL,
-            RECORDING_TYPES.DROPBOX
-        ].find(service => options.includes(service)) ?? '';
+        return getRecordingDialogModel(this._getFacts(), {
+            isTokenValid,
+            isValidating,
+            selectedRecordingService
+        });
     }
 
     /**
@@ -342,39 +377,15 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
         }
 
         // selectedRecordingService is otherwise only ever set from props in the constructor, or by
-        // an explicit choice via _onSelectedRecordingServiceChanged. The services available can
-        // change while the dialog is open: base/config may not have finished loading when this
-        // instance mounted, or a live stream may start or stop. Whenever the selection is not one
-        // of the available services, recompute the default: otherwise the storage selector shows
-        // one service while starting the recording uses another, or the start button stays
-        // disabled. An explicit choice is always among the available services, so it is kept as
-        // long as it stays available. While a recording runs the selection is left untouched, as
-        // it describes the running session.
-        if (!this.props._recordingRunning) {
-            const { selectedRecordingService } = this.state;
+        // an explicit choice via _onSelectedRecordingServiceChanged. The services offered can
+        // change while the dialog is open (base/config loaded late, a live stream started or
+        // stopped), and the model then picks another service: follow it, so the selection used to
+        // start the recording is the one the storage selector shows.
+        const { selectedService } = this._getModel().recording;
 
-            if (!this._getRecordingServiceOptions(this.props).includes(selectedRecordingService)) {
-                const defaultRecordingService = this._getDefaultRecordingService(this.props);
-
-                if (defaultRecordingService !== selectedRecordingService) {
-                    this.setState({ selectedRecordingService: defaultRecordingService });
-                }
-            }
+        if (selectedService !== this.state.selectedRecordingService) {
+            this.setState({ selectedRecordingService: selectedService });
         }
-    }
-
-    /**
-     * Returns true if the integrations with third party services are enabled
-     * and false otherwise.
-     *
-     * @param {IProps} props - The props to check against; defaults to this.props.
-     * @returns {boolean} - True if the integrations with third party services
-     * are enabled and false otherwise.
-     */
-    _areIntegrationsEnabled(props: IProps = this.props) {
-        return props._isDropboxEnabled
-            && !props._recordingRunning
-            && !props._transcriptionRunning;
     }
 
     /**
@@ -473,27 +484,6 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
     }
 
     /**
-     * Returns true when the start recording button should be disabled: either
-     * no recording service is available or the selected one is not ready to
-     * be used (e.g. Dropbox without a valid sign-in).
-     *
-     * @returns {boolean}
-     */
-    _isStartRecordingDisabled() {
-        const { isTokenValid, selectedRecordingService } = this.state;
-
-        if (selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE
-                || selectedRecordingService === RECORDING_TYPES.LOCAL) {
-            return false;
-        }
-        if (selectedRecordingService === RECORDING_TYPES.DROPBOX) {
-            return !isTokenValid;
-        }
-
-        return true;
-    }
-
-    /**
      * Starts the audio & video recording. When the deployment is configured
      * with {@code transcription.autoTranscribeOnRecord} the transcription is
      * started along with it.
@@ -501,17 +491,9 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
      * @returns {boolean} - True when the action was applied.
      */
     _onStartRecording() {
-        const {
-            _autoTranscribeOnRecord,
-            _canTranscribe,
-            _subtitlesOnlyTranscriberRunning,
-            _transcriptionRunning
-        } = this.props;
-
         return this._applyChanges({
             startRecording: true,
-            startTranscription: _autoTranscribeOnRecord && _canTranscribe && !_transcriptionRunning
-                && !_subtitlesOnlyTranscriberRunning
+            startTranscription: this._getModel().transcription.startsWithRecording
         });
     }
 
@@ -526,12 +508,13 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
     }
 
     /**
-     * Starts the transcription, leaving the recording state untouched.
+     * Starts the transcription, leaving the recording state untouched. Does nothing while the
+     * model blocks it (the start button is disabled then).
      *
      * @returns {boolean} - True when the action was applied.
      */
     _onStartTranscription() {
-        return this._applyChanges({ startTranscription: true });
+        return this._applyChanges({ startTranscription: !this._getModel().transcription.startBlocker });
     }
 
     /**
@@ -549,11 +532,11 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
      * @returns {boolean} - True when the action was applied.
      */
     _onStartBoth() {
-        const { _recordingRunning, _subtitlesOnlyTranscriberRunning, _transcriptionRunning } = this.props;
+        const { recording, transcription } = this._getModel();
 
         return this._applyChanges({
-            startRecording: !_recordingRunning,
-            startTranscription: !_transcriptionRunning && !_subtitlesOnlyTranscriberRunning
+            startRecording: !recording.running,
+            startTranscription: !transcription.running && !transcription.startBlocker
         });
     }
 
@@ -581,14 +564,13 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
      */
     _applyChanges({
         startRecording = false,
-        startTranscription: transcriptionRequested = false,
+        startTranscription = false,
         stopRecording = false,
         stopTranscription = false
     }: IRecordingChanges) {
         const {
             _appKey,
             _conference,
-            _e2eeOn,
             _displaySubtitles,
             _fileRecordingSession,
             _isDropboxEnabled,
@@ -600,9 +582,6 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             _transcriptionRunning = false,
             dispatch
         } = this.props;
-
-        // Nothing server-side can transcribe end-to-end encrypted media.
-        const startTranscription = transcriptionRequested && !_e2eeOn;
 
         const {
             localRecordingOnlySelf,
@@ -876,11 +855,15 @@ export function mapStateToProps(state: IReduxState, _ownProps: any) {
         _fileRecordingSession: getActiveSession(state, JitsiRecordingConstants.mode.FILE),
         _fileRecordingsServiceEnabled: recordingService?.enabled ?? false,
         _fileRecordingsServiceSharingEnabled: isRecordingSharingEnabled(state),
+        _followMeActive: isFollowMeActive(state),
+        _followMeRecorderActive: isFollowMeRecorderActive(state),
+        _followMeRecorderEnabled: Boolean(state['features/follow-me'].followMeRecorderEnabled),
         _isModerator: isLocalParticipantModerator(state),
         _isDropboxEnabled: isDropboxEnabled(state),
         _isLiveStreamRunning: isLiveStreamingRunning(state),
+        _isVpaas: isVpaasMeeting(state),
         _localRecording: Boolean(state['features/recording'].localRecordingRunning),
-        _localRecordingEnabled: !localRecording?.disable,
+        _localRecordingAvailable: !localRecording?.disable && supportsLocalRecording(),
         _recordingRunning: canManageRecordingOrTranscription
             ? isRecordingRunning(state)
             : Boolean(state['features/recording'].localRecordingRunning),

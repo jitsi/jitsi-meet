@@ -44,17 +44,12 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
             isValidating,
             localRecordingOnlySelf,
             selectedLanguage,
-            selectedRecordingService,
             sharingEnabled,
             spaceLeft,
             userName
         } = this.state;
         const {
             _canTranscribe,
-            _fileRecordingsServiceEnabled,
-            _fileRecordingsServiceSharingEnabled,
-            _recordingRunning,
-            _transcriptionRunning,
             recordAudioAndVideo
         } = this.props;
 
@@ -65,12 +60,10 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
                 ok = {{ hidden: true }}
                 titleKey = { _canTranscribe ? 'dialog.recordAndTranscribe' : 'toolbar.record' }>
                 <StartRecordingDialogContent
-                    fileRecordingsServiceEnabled = { _fileRecordingsServiceEnabled }
-                    fileRecordingsServiceSharingEnabled = { _fileRecordingsServiceSharingEnabled }
-                    integrationsEnabled = { this._areIntegrationsEnabled() }
                     isTokenValid = { isTokenValid }
                     isValidating = { isValidating }
                     localRecordingOnlySelf = { localRecordingOnlySelf }
+                    model = { this._getModel() }
                     onLocalRecordingSelfChange = { this._onLocalRecordingSelfChange }
                     onRecordingServiceChange = { this._onSelectedRecordingServiceChanged }
                     onSharingSettingChanged = { this._onSharingSettingChanged }
@@ -82,13 +75,9 @@ class RecordingTranscriptionDialog extends AbstractStartRecordingDialog {
                     onStopTranscription = { this._onStopTranscriptionPress }
                     onSubtitlesLanguageChange = { this._onSubtitlesLanguageChanged }
                     recordAudioAndVideo = { recordAudioAndVideo }
-                    recordingRunning = { Boolean(_recordingRunning) }
                     selectedLanguage = { selectedLanguage }
-                    selectedRecordingService = { selectedRecordingService }
                     sharingSetting = { sharingEnabled }
                     spaceLeft = { spaceLeft }
-                    startRecordingDisabled = { this._isStartRecordingDisabled() }
-                    transcriptionRunning = { Boolean(_transcriptionRunning) }
                     userName = { userName } />
             </Dialog>
         );

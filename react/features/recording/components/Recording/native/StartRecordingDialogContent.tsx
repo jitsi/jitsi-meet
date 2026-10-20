@@ -161,31 +161,21 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     _renderRecordingSection() {
-        const recordingServiceOptions = this._getRecordingServiceOptions();
+        const { _dialogStyles, _styles: styles, model, onStartRecording, onStopRecording, t } = this.props;
+        const { optionsLocked, running, selectedService, services, startBlocker, visible } = model.recording;
 
-        if (!this._shouldRenderRecordingSection(recordingServiceOptions)) {
+        if (!visible) {
             return null;
         }
 
-        const {
-            _dialogStyles,
-            _styles: styles,
-            isValidating,
-            onStartRecording,
-            onStopRecording,
-            recordingRunning,
-            selectedRecordingService,
-            startRecordingDisabled,
-            t
-        } = this.props;
         const { showRecordingOptions } = this.state;
 
         return (
             <View style = { styles.section }>
                 { this._renderSectionHeader({
-                    onButtonPress: recordingRunning ? onStopRecording : onStartRecording,
-                    running: recordingRunning,
-                    startDisabled: startRecordingDisabled || isValidating,
+                    onButtonPress: running ? onStopRecording : onStartRecording,
+                    running,
+                    startDisabled: Boolean(startBlocker),
                     startLabelKey: 'dialog.startRecording',
                     stopLabelKey: 'dialog.stopRecording',
                     titleKey: 'recording.recordAudioAndVideo'
@@ -200,18 +190,18 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                                 }}>
                                 { t('recording.storageLocation') }
                             </Text>
-                            { recordingServiceOptions.map(service => (
+                            { services.map(service => (
                                 <RecordingOptionRow
-                                    disabled = { recordingRunning || isValidating }
+                                    disabled = { optionsLocked }
                                     key = { service }
                                     label = { t(this._getServiceLabelKey(service)) }
                                     onSelect = { this._onRecordingServiceChange }
-                                    selected = { selectedRecordingService === service }
+                                    selected = { selectedService === service }
                                     value = { service } />
                             )) }
-                            { selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE
+                            { selectedService === RECORDING_TYPES.JITSI_REC_SERVICE
                                 && this._renderJitsiServiceOptions() }
-                            { selectedRecordingService === RECORDING_TYPES.DROPBOX
+                            { selectedService === RECORDING_TYPES.DROPBOX
                                 && this._renderDropboxOptions() }
                             { this._renderFollowMeRecorder() }
                         </>
@@ -238,16 +228,16 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         const {
             _dialogStyles,
             _styles: styles,
-            isValidating,
+            model,
             onSharingSettingChanged,
-            recordingRunning,
             sharingSetting,
             t
         } = this.props;
+        const { optionsLocked, showFileSharing } = model.recording;
 
         return (
             <>
-                { this._shouldRenderFileSharingContent() && (
+                { showFileSharing && (
                     <View
                         key = 'fileSharingSetting'
                         style = { styles.headerNested }>
@@ -263,7 +253,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                         </Text>
                         <Switch
                             checked = { sharingSetting }
-                            disabled = { isValidating || recordingRunning }
+                            disabled = { optionsLocked }
                             onChange = { onSharingSettingChanged }
                             style = { styles.switch } />
                     </View>
@@ -385,11 +375,12 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     _renderFollowMeRecorder() {
-        if (!this._shouldRenderFollowMeRecorder()) {
+        const { _dialogStyles, _styles: styles, model, t } = this.props;
+        const { followMeRecorderChecked, followMeRecorderDisabled, showFollowMeRecorder } = model.recording;
+
+        if (!showFollowMeRecorder) {
             return null;
         }
-
-        const { _dialogStyles, _styles: styles, t } = this.props;
 
         return (
             <View style = { styles.headerNested }>
@@ -401,8 +392,8 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                     { t('settings.followMeRecorder') }
                 </Text>
                 <Switch
-                    checked = { this._isFollowMeRecorderChecked() }
-                    disabled = { this._isFollowMeRecorderDisabled() }
+                    checked = { followMeRecorderChecked }
+                    disabled = { followMeRecorderDisabled }
                     onChange = { this._onFollowMeRecorderChange }
                     style = { styles.switch } />
             </View>
@@ -415,29 +406,30 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     _renderTranscriptionSection() {
-        if (!this._shouldRenderTranscriptionSection()) {
-            return null;
-        }
-
         const {
             _availableLanguages,
             _dialogStyles,
             _styles: styles,
-            _subtitlesOnlyTranscriberRunning,
+            model,
             onStartTranscription,
             onStopTranscription,
             selectedLanguage,
-            t,
-            transcriptionRunning
+            t
         } = this.props;
+        const { running, startBlocker, visible } = model.transcription;
+
+        if (!visible) {
+            return null;
+        }
+
         const { showLanguageList, showTranscriptionOptions } = this.state;
 
         return (
             <View style = { styles.section }>
                 { this._renderSectionHeader({
-                    onButtonPress: transcriptionRunning ? onStopTranscription : onStartTranscription,
-                    running: transcriptionRunning,
-                    startDisabled: _subtitlesOnlyTranscriberRunning,
+                    onButtonPress: running ? onStopTranscription : onStartTranscription,
+                    running,
+                    startDisabled: Boolean(startBlocker),
                     startLabelKey: 'dialog.startTranscription',
                     stopLabelKey: 'dialog.stopTranscription',
                     titleKey: 'recording.recordTranscription'
@@ -455,12 +447,12 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                                 </Text>
                                 <Icon
                                     ariaPressed = { showLanguageList }
-                                    onClick = { transcriptionRunning ? undefined : this._onToggleLanguageList }
+                                    onClick = { running ? undefined : this._onToggleLanguageList }
                                     role = 'button'
                                     size = { 24 }
                                     src = { showLanguageList ? IconArrowDown : IconArrowRight } />
                             </View>
-                            { showLanguageList && !transcriptionRunning
+                            { showLanguageList && !running
                                 && _availableLanguages.map((language: string) => (
                                     <LanguageListItem
                                         key = { language }
@@ -490,24 +482,12 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     _renderFooter() {
-        if (!this._shouldRenderFooter()) {
+        const { _styles: styles, model, onStartBoth, onStopBoth } = this.props;
+        const { showStartBoth, showStopBoth, startBothBlocker, visible } = model.footer;
+
+        if (!visible) {
             return null;
         }
-
-        const {
-            _styles: styles,
-            _subtitlesOnlyTranscriberRunning,
-            isValidating,
-            onStartBoth,
-            onStopBoth,
-            recordingRunning,
-            startRecordingDisabled,
-            transcriptionRunning
-        } = this.props;
-        const showStopBoth = recordingRunning || transcriptionRunning;
-        const showStartBoth = !recordingRunning || !transcriptionRunning;
-        const startBothDisabled = _subtitlesOnlyTranscriberRunning
-            || (!recordingRunning && (startRecordingDisabled || isValidating));
 
         return (
             <View style = { styles.footer }>
@@ -522,7 +502,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                 { showStartBoth && (
                     <Button
                         accessibilityLabel = 'dialog.startBoth'
-                        disabled = { startBothDisabled }
+                        disabled = { Boolean(startBothBlocker) }
                         labelKey = 'dialog.startBoth'
                         onClick = { onStartBoth }
                         style = { styles.footerButton }
