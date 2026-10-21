@@ -718,7 +718,7 @@ var config = {
     // Use TURN/UDP servers for the jitsi-videobridge connection (by default
     // we filter out TURN/UDP because it is usually not needed since the
     // bridge itself is reachable via UDP)
-    // useTurnUdp: false
+    // useTurnUdp: false,
 
     // Enable support for encoded transform in supported browsers. This allows
     // E2EE to work in Safari if the corresponding flag is enabled in the browser.
