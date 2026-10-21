@@ -80,6 +80,7 @@
 --
 -- Copyright (C) 2026-present 8x8, Inc.
 
+local async = require 'util.async';
 local hashes = require 'util.hashes';
 local random = require 'util.random';
 local json = require 'cjson.safe';
@@ -892,27 +893,15 @@ local function handle_invite(event)
     if fan_in_error then
         return error_response(400, fan_in_error);
     end
-    if is_e2ee_enabled(room) then
-        return error_response(409, 'End-to-end encryption is on in this meeting');
-    end
-
     room.jitsiMetadata = room.jitsiMetadata or {};
     local agents = room.jitsiMetadata.agents or {};
     local voice_agents = room._data.voice_agents or {};
     local source_name = agent_id .. '-a0';
 
     local existing = agents[agent_id];
-    if existing and existing.state == STATE_FAILED then
-        -- A failed allocation is terminal for jicofo: re-inviting replaces the record, and the removal
-        -- broadcast clears jicofo's failure before the fresh entry is announced.
-        module:log('info', 'Replacing failed voice agent %s in room %s', agent_id, room.jid);
-        agents[agent_id] = nil;
-        voice_agents[agent_id] = nil;
-        notify_metadata_changed(room);
-        existing = nil;
-    end
-    -- Idempotent on agentId: an identical re-invite returns the existing agent; a different one conflicts.
-    if existing then
+    -- Idempotent on agentId: an identical re-invite returns the existing agent, even under E2EE (a retry after a
+    -- timeout must not see a failure for a live agent); a different one conflicts. A failed agent is replaced below.
+    if existing and existing.state ~= STATE_FAILED then
         local jicofo_entry = voice_agents[agent_id] or {};
         if existing.displayName == payload.displayName
                 and maps_equal(jicofo_entry.endpoint, endpoint)
@@ -923,6 +912,20 @@ local function handle_invite(event)
             return { status_code = 200, body = json.encode({ agentId = agent_id, sourceName = source_name }) };
         end
         return error_response(409, 'agentId already exists with different parameters');
+    end
+
+    -- Before the failed record is replaced, so a refused invite leaves it as it was.
+    if is_e2ee_enabled(room) then
+        return error_response(409, 'End-to-end encryption is on in this meeting');
+    end
+
+    if existing then
+        -- A failed allocation is terminal for jicofo: re-inviting replaces the record, and the removal
+        -- broadcast clears jicofo's failure before the fresh entry is announced.
+        module:log('info', 'Replacing failed voice agent %s in room %s', agent_id, room.jid);
+        agents[agent_id] = nil;
+        voice_agents[agent_id] = nil;
+        notify_metadata_changed(room);
     end
 
     local count = 0;
@@ -1057,15 +1060,9 @@ local function stream_conference(conference)
     return backend_safe(conference);
 end
 
--- GET /voice-agent/events: a text/event-stream of the lifecycle events, held open until the client leaves or the
--- stream reaches its max age. Not wrapped by async_handler_wrapper: the handler takes the response over.
-local function handle_events(event)
-    local request, response = event.request, event.response;
-
-    local auth_error = check_authorization(request);
-    if auth_error then
-        return auth_error;
-    end
+-- Opens a lifecycle event stream on the response once the request is authorized; returns an error response instead
+-- when it cannot be opened.
+local function open_event_stream(request, response)
     local params = query_params(request);
     local conference;
     if params.conference ~= nil then
@@ -1104,6 +1101,21 @@ local function handle_events(event)
     end
     arm_keepalive();
     module:log('debug', 'Event stream opened for %s, %d open', conference or 'every room', shared.count);
+    return nil;
+end
+
+-- GET /voice-agent/events: a text/event-stream of the lifecycle events, held open until the client leaves or the
+-- stream reaches its max age. Not wrapped by async_handler_wrapper, which would end the response: the token check
+-- may fetch an ASAP key, which has to wait, so it runs in its own runner, and the stream then takes the response over.
+local function handle_events(event)
+    -- The runner only calls its function for input it is given, so the event goes in run().
+    async.runner(function(e)
+        local refused = check_authorization(e.request) or open_event_stream(e.request, e.response);
+        if refused then
+            e.response.status_code = refused.status_code;
+            e.response:send(refused.body);
+        end
+    end):run(event);
     return true;
 end
 

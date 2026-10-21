@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import Dialog from 'react-native-dialog';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
-import ConfirmDialog from '../../../base/dialog/components/native/ConfirmDialog';
-import Link from '../../../base/react/components/native/Link';
-import { allowVoiceAgent, declineVoiceAgent } from '../../actions';
+import { IReduxState } from '../../app/types';
+import ConfirmDialog from '../../base/dialog/components/native/ConfirmDialog';
+import Link from '../../base/react/components/native/Link';
+import { allowVoiceAgent, declineVoiceAgent } from '../actions';
 
 interface IProps {
 
@@ -16,19 +16,9 @@ interface IProps {
     agentId: string;
 
     /**
-     * Whether the participant was muted before the dialog forced a mute; restored on Allow.
-     */
-    audioWasMuted?: boolean;
-
-    /**
      * Whether the participant was muted for the decision (initial request) or opened the dialog themselves.
      */
     forcedMute?: boolean;
-
-    /**
-     * Whether unmuting was already blocked (e.g. by the moderator) when the dialog opened; then it stays blocked.
-     */
-    unmuteWasBlocked?: boolean;
 }
 
 /**
@@ -38,7 +28,7 @@ interface IProps {
  * @param {IProps} props - The props.
  * @returns {JSX.Element}
  */
-export default function VoiceAgentConsentDialog({ agentId, audioWasMuted, forcedMute, unmuteWasBlocked }: IProps) {
+export default function VoiceAgentConsentDialog({ agentId, forcedMute }: IProps) {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const agent = useSelector((state: IReduxState) => state['features/voice-agents'].agents[agentId]);
@@ -47,16 +37,16 @@ export default function VoiceAgentConsentDialog({ agentId, audioWasMuted, forced
     const name = agent?.displayName ?? agentId;
 
     const allow = useCallback(() => {
-        dispatch(allowVoiceAgent(agentId, { audioWasMuted, forcedMute, unmuteWasBlocked }));
+        dispatch(allowVoiceAgent(agentId));
 
         return true;
-    }, [ agentId, audioWasMuted, forcedMute, unmuteWasBlocked ]);
+    }, [ agentId ]);
 
     const decline = useCallback(() => {
-        dispatch(declineVoiceAgent(agentId, { forcedMute, unmuteWasBlocked }));
+        dispatch(declineVoiceAgent(agentId));
 
         return true;
-    }, [ agentId, forcedMute, unmuteWasBlocked ]);
+    }, [ agentId ]);
 
     return (
         <ConfirmDialog

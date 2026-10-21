@@ -21,6 +21,19 @@ export interface IVoiceAgent {
 }
 
 /**
+ * The local participant's state from before a consent request muted them, and the agent it was for.
+ */
+export interface IVoiceAgentConsentMute {
+    agentId: string;
+
+    /** Whether the participant was muted before the request. */
+    audioWasMuted: boolean;
+
+    /** Whether the request blocked unmuting itself, and so must release the block. */
+    tookBlock: boolean;
+}
+
+/**
  * The known voice agents, keyed by agent id.
  */
 export interface IVoiceAgents {

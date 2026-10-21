@@ -121,11 +121,46 @@ local util_stub = {
     end
 };
 
+-- util.async: a runner that, like Prosody's, calls its function only for input given to run(), and a waiter that,
+-- like Prosody's, fails outside a runner.
+local in_runner = false;
+package.preload['util.async'] = function()
+    return {
+        runner = function(fn)
+            return {
+                run = function(_, input)
+                    if input == nil then
+                        return;
+                    end
+                    in_runner = true;
+                    local ok, err = pcall(fn, input);
+                    in_runner = false;
+                    if not ok then error(err, 0); end
+                end
+            };
+        end,
+        waiter = function()
+            if not in_runner then
+                error('Not running in an async context');
+            end
+            return function() end, function() end;
+        end
+    };
+end
+
+-- Whether the token's signing key is in the key cache; when not, verifying it fetches the key, which waits.
+local key_cached = true;
+
 local token_util_stub = {
     new = function()
         return {
             set_asap_key_server = function() end,
-            process_and_verify_token = function() return token_valid, 'reason', 'msg'; end
+            process_and_verify_token = function()
+                if not key_cached then
+                    require('util.async').waiter();
+                end
+                return token_valid, 'reason', 'msg';
+            end
         };
     end
 };
@@ -295,6 +330,11 @@ local function sse_response()
         self.finished = true;
         if self.on_destroy then self:on_destroy(); self.on_destroy = nil; end
     end;
+    -- A plain response, as a refused request gets.
+    response.send = function(self, body)
+        self.sent = body or '';
+        self.finished = true;
+    end;
     -- What net.http.server does when the client goes away.
     response.disconnect = function(self)
         self.finished = true;
@@ -316,6 +356,10 @@ local function events(query, opts)
     table.insert(open_streams, response);
     local result = routes['GET voice-agent/events']({
         request = { headers = headers; url = { query = query } }; response = response });
+    -- The route takes every request over; a refusal is sent on the response.
+    if response.sent ~= nil then
+        return { status_code = response.status_code; body = response.sent }, response;
+    end
     return result, response;
 end
 
@@ -378,6 +422,8 @@ describe('mod_voice_agent_component', function()
         logs = {};
         module_events = {};
         fire_event_error = false;
+        key_cached = true;
+        in_runner = false;
         for i = #encoded, 1, -1 do encoded[i] = nil; end
         -- The module remembers rooms with agents by weak key: collect the previous test's room.
         collectgarbage('collect');
@@ -608,6 +654,31 @@ describe('mod_voice_agent_component', function()
         it('accepts the invite once encryption is off again', function()
             mock_room.occupants = { occupant({ ['jitsi_participant_e2ee.enabled'] = 'false' }) };
             assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' }).status_code);
+        end)
+
+        it('still answers an identical re-invite of a present agent with 200', function()
+            assert.are.equal(200, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' }).status_code);
+            mock_room.occupants = { occupant({ ['jitsi_participant_e2ee.enabled'] = 'true' }) };
+            local res = invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            assert.are.equal(200, res.status_code);
+        end)
+
+        it('reports a different re-invite as a conflict, not as encryption', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            mock_room.occupants = { occupant({ ['jitsi_participant_e2ee.enabled'] = 'true' }) };
+            local res = invite({ conference = 'r'; displayName = 'Other'; agentId = 'support' });
+            assert.are.equal(409, res.status_code);
+            assert.are.equal('agentId already exists with different parameters', encoded[#encoded].error);
+        end)
+
+        it('refuses to replace a failed agent, and keeps its record', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'failed'; reason = 'no bridge' });
+            mock_room.occupants = { occupant({ ['jitsi_participant_e2ee.enabled'] = 'true' }) };
+            local res = invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            assert.are.equal(409, res.status_code);
+            assert.are.equal('End-to-end encryption is on in this meeting', encoded[#encoded].error);
+            assert.are.equal('failed', mock_room.jitsiMetadata.agents['agent-support'].state);
         end)
     end)
 
@@ -944,6 +1015,14 @@ describe('mod_voice_agent_component', function()
     end)
 
     describe('event stream (GET /voice-agent/events)', function()
+        it('verifies the token in an async runner, so a key that is not cached yet does not fail the stream', function()
+            key_cached = false;
+            local result, response = events('conference=r');
+            assert.is_true(result);
+            assert.are.equal('text/event-stream', response.headers.content_type);
+            assert.are.equal('snapshot', stream_events(response)[1].event);
+        end)
+
         it('requires authorization', function()
             local result, response = events('conference=r', { omitAuth = true });
             assert.are.equal(401, result.status_code);

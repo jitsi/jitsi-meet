@@ -1,8 +1,8 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
-import { SET_VOICE_AGENTS, SET_VOICE_AGENT_CONSENT } from './actionTypes';
+import { SET_VOICE_AGENTS, SET_VOICE_AGENT_CONSENT, SET_VOICE_AGENT_CONSENT_MUTE } from './actionTypes';
 import { isSafeAgentId, sanitizeAgents } from './functions';
-import { IVoiceAgents } from './types';
+import { IVoiceAgentConsentMute, IVoiceAgents } from './types';
 
 type AgentFlags = { [agentId: string]: boolean; };
 
@@ -20,6 +20,12 @@ export interface IVoiceAgentsState {
      */
     consent: AgentFlags;
 
+    /**
+     * The local participant's state from before a consent request muted them. Kept until that agent is decided about
+     * or leaves, not with the dialog: another dialog can replace this one, and the request asked again must still
+     * restore the participant's own state, not the forced one.
+     */
+    consentMute?: IVoiceAgentConsentMute;
 }
 
 const DEFAULT_STATE: IVoiceAgentsState = {
@@ -75,6 +81,8 @@ ReducerRegistry.register<IVoiceAgentsState>(
             return isKnownAgent(state, action.agentId)
                 ? { ...state, consent: { ...state.consent, [action.agentId]: action.allowed } }
                 : state;
+        case SET_VOICE_AGENT_CONSENT_MUTE:
+            return { ...state, consentMute: action.consentMute };
         }
 
         return state;

@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
-import { isIosMobileBrowser } from '../../../base/environment/utils';
 import { IParticipant } from '../../../base/participants/types';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { setVolume } from '../../../filmstrip/actions.web';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
+import { hasVoiceAgentMenuItems } from '../../functions.web';
 
 import VolumeSlider from './VolumeSlider';
 
@@ -86,7 +86,6 @@ const VoiceAgentContextMenu = ({
 }: IProps) => {
     const dispatch = useDispatch();
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
-    const { startSilent } = useSelector((state: IReduxState) => state['features/base/config']);
     const { participantsVolume } = useSelector((state: IReduxState) => state['features/filmstrip']);
     const _volume = participantsVolume[participant.id] ?? 1;
 
@@ -96,11 +95,8 @@ const VoiceAgentContextMenu = ({
         dispatch(setVolume(participant.id, value));
     }, [ participant.id, dispatch ]);
 
-    const showVolumeSlider = !startSilent
-        && !isIosMobileBrowser()
-        && (_overflowDrawer || thumbnailMenu)
-        && typeof _volume === 'number'
-        && !isNaN(_volume);
+    const hasItems = useSelector((state: IReduxState) => hasVoiceAgentMenuItems(state, Boolean(thumbnailMenu)));
+    const showVolumeSlider = hasItems && typeof _volume === 'number' && !isNaN(_volume);
 
     return (
         <ContextMenu

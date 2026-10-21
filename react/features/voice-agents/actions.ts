@@ -5,36 +5,46 @@ import { hideDialog, openDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
 import { setAudioMuted, setAudioUnmutePermissions } from '../base/media/actions';
 
-import { SET_VOICE_AGENTS, SET_VOICE_AGENT_CONSENT } from './actionTypes';
-import { VoiceAgentConsentDialog } from './components';
-import { IVoiceAgents } from './types';
+import { SET_VOICE_AGENTS, SET_VOICE_AGENT_CONSENT, SET_VOICE_AGENT_CONSENT_MUTE } from './actionTypes';
+import VoiceAgentConsentDialog from './components/VoiceAgentConsentDialog';
+import { IVoiceAgentConsentMute, IVoiceAgents } from './types';
 
 const DIALOG_NAME = 'VoiceAgentConsentDialog';
 
 /**
- * How the consent dialog was opened. The dialog passes these back with the decision, because the web dialog
- * hides itself (clearing its props) before it calls the decision handlers.
+ * The props of the consent dialog.
  */
 export interface IConsentDialogProps {
     agentId?: string;
-    audioWasMuted?: boolean;
     forcedMute?: boolean;
-    unmuteWasBlocked?: boolean;
 }
 
 /**
- * The props of the open consent dialog when it is asking about this agent, else nothing: a decision about
- * another agent (e.g. from the external API while a forced dialog is up) must not release that dialog's mute.
+ * Saves, or forgets, the local participant's state from before a consent request muted them.
  *
- * @param {Function} getState - The redux getState function.
- * @param {string} agentId - The agent the decision is about.
- * @returns {IConsentDialogProps}
+ * @param {IVoiceAgentConsentMute} [consentMute] - The saved state; omitted to forget it.
+ * @returns {Object}
  */
-function _dialogProps(getState: IStore['getState'], agentId: string): IConsentDialogProps {
-    const state = getState();
-    const props = state['features/base/dialog'].componentProps as IConsentDialogProps | undefined;
+function _setConsentMute(consentMute?: IVoiceAgentConsentMute) {
+    return {
+        type: SET_VOICE_AGENT_CONSENT_MUTE,
+        consentMute
+    };
+}
 
-    return isDialogOpen(state, VoiceAgentConsentDialog) && props?.agentId === agentId ? props : {};
+/**
+ * Undoes a consent request's mute: releases the unmute block if the request took it, restores the mute state from
+ * before the request when asked to, and forgets the saved state.
+ *
+ * @param {Function} dispatch - The redux dispatch function.
+ * @param {IVoiceAgentConsentMute} consentMute - The saved state.
+ * @param {boolean} restoreMute - Whether to restore the mute state from before the request.
+ * @returns {void}
+ */
+function _releaseConsentMute(dispatch: IStore['dispatch'], consentMute: IVoiceAgentConsentMute, restoreMute: boolean) {
+    consentMute.tookBlock && dispatch(setAudioUnmutePermissions(false, true));
+    restoreMute && dispatch(setAudioMuted(consentMute.audioWasMuted, false));
+    dispatch(_setConsentMute());
 }
 
 /**
@@ -47,19 +57,26 @@ function _dialogProps(getState: IStore['getState'], agentId: string): IConsentDi
  */
 export function requestVoiceAgentConsent(agentId: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        // Captured before the forced mute so the participant's own choice can be restored on Allow.
-        const { muted: audioWasMuted, unmuteBlocked: unmuteWasBlocked } = getState()['features/base/media'].audio;
+        const state = getState();
+        const { muted, unmuteBlocked } = state['features/base/media'].audio;
+
+        // Asked again after another dialog replaced this one: the state saved before the first mute is still the
+        // participant's own.
+        const saved = state['features/voice-agents'].consentMute;
 
         batch(() => {
-            if (!unmuteWasBlocked) {
+            if (!unmuteBlocked) {
                 dispatch(setAudioUnmutePermissions(true, true));
             }
             dispatch(setAudioMuted(true));
+            dispatch(_setConsentMute({
+                agentId,
+                audioWasMuted: saved ? saved.audioWasMuted : muted,
+                tookBlock: Boolean(saved?.tookBlock) || !unmuteBlocked
+            }));
             dispatch(openDialog(DIALOG_NAME, VoiceAgentConsentDialog, {
                 agentId,
-                audioWasMuted,
-                forcedMute: true,
-                unmuteWasBlocked
+                forcedMute: true
             }));
         });
     };
@@ -83,22 +100,19 @@ export function showVoiceAgentConsentDialog(agentId: string) {
 
 /**
  * Lets the agent hear the local participant (and the participant hear the agent), restoring the mute state
- * from before the consent request.
+ * from before the consent request. A decision about another agent (e.g. from the external API while a forced
+ * request is up) leaves that request's mute alone.
  *
  * @param {string} agentId - The agent that was allowed.
- * @param {IConsentDialogProps} [context] - How the dialog was opened; read from the dialog state if omitted.
  * @returns {Function}
  */
-export function allowVoiceAgent(agentId: string, context?: IConsentDialogProps) {
+export function allowVoiceAgent(agentId: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const { audioWasMuted, forcedMute, unmuteWasBlocked } = context ?? _dialogProps(getState, agentId);
+        const { consentMute } = getState()['features/voice-agents'];
 
         batch(() => {
             dispatch(setVoiceAgentConsent(agentId, true));
-            if (forcedMute) {
-                !unmuteWasBlocked && dispatch(setAudioUnmutePermissions(false, true));
-                dispatch(setAudioMuted(Boolean(audioWasMuted), false));
-            }
+            consentMute?.agentId === agentId && _releaseConsentMute(dispatch, consentMute, true);
             dispatch(hideDialog(DIALOG_NAME, VoiceAgentConsentDialog));
         });
     };
@@ -109,47 +123,52 @@ export function allowVoiceAgent(agentId: string, context?: IConsentDialogProps) 
  * neither hears them nor is shown to them until they allow it later.
  *
  * @param {string} agentId - The agent that was declined.
- * @param {IConsentDialogProps} [context] - How the dialog was opened; read from the dialog state if omitted.
  * @returns {Function}
  */
-export function declineVoiceAgent(agentId: string, context?: IConsentDialogProps) {
+export function declineVoiceAgent(agentId: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const { forcedMute, unmuteWasBlocked } = context ?? _dialogProps(getState, agentId);
+        const { consentMute } = getState()['features/voice-agents'];
 
         batch(() => {
             dispatch(setVoiceAgentConsent(agentId, false));
-            if (forcedMute && !unmuteWasBlocked) {
-                dispatch(setAudioUnmutePermissions(false, true));
-            }
+            consentMute?.agentId === agentId && _releaseConsentMute(dispatch, consentMute, false);
             dispatch(hideDialog(DIALOG_NAME, VoiceAgentConsentDialog));
         });
     };
 }
 
 /**
- * Closes the consent dialog if it is asking about the given agent (which left), restoring the mute state.
+ * The agent left before the participant decided: restores the mute state from before its request, whether or not
+ * its dialog is still up (another dialog may have replaced it), and closes the dialog if it is asking about it.
  *
  * @param {string} agentId - The agent that left.
  * @returns {Function}
  */
 export function dismissVoiceAgentConsentDialog(agentId: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        if (!isDialogOpen(getState(), VoiceAgentConsentDialog)) {
-            return;
-        }
-        const { agentId: openFor, audioWasMuted, forcedMute, unmuteWasBlocked } = _dialogProps(getState, agentId);
-
-        if (openFor !== agentId) {
-            return;
-        }
+        const state = getState();
+        const { consentMute } = state['features/voice-agents'];
+        const props = state['features/base/dialog'].componentProps as IConsentDialogProps | undefined;
+        const open = isDialogOpen(state, VoiceAgentConsentDialog) && props?.agentId === agentId;
 
         batch(() => {
-            if (forcedMute) {
-                !unmuteWasBlocked && dispatch(setAudioUnmutePermissions(false, true));
-                dispatch(setAudioMuted(Boolean(audioWasMuted), false));
-            }
-            dispatch(hideDialog(DIALOG_NAME, VoiceAgentConsentDialog));
+            consentMute?.agentId === agentId && _releaseConsentMute(dispatch, consentMute, true);
+            open && dispatch(hideDialog(DIALOG_NAME, VoiceAgentConsentDialog));
         });
+    };
+}
+
+/**
+ * Releases the unmute block of a consent request still undecided when the room changes: its dialog is gone, and the
+ * block would keep the participant from unmuting in the next room.
+ *
+ * @returns {Function}
+ */
+export function releaseVoiceAgentConsentMute() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { consentMute } = getState()['features/voice-agents'];
+
+        consentMute && _releaseConsentMute(dispatch, consentMute, false);
     };
 }
 

@@ -2,9 +2,9 @@ import React, { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
-import Dialog from '../../../base/ui/components/web/Dialog';
-import { allowVoiceAgent, declineVoiceAgent } from '../../actions';
+import { IReduxState } from '../../app/types';
+import Dialog from '../../base/ui/components/web/Dialog';
+import { allowVoiceAgent, declineVoiceAgent } from '../actions';
 
 interface IProps {
 
@@ -14,19 +14,9 @@ interface IProps {
     agentId: string;
 
     /**
-     * Whether the participant was muted before the dialog forced a mute; restored on Allow.
-     */
-    audioWasMuted?: boolean;
-
-    /**
      * Whether the participant was muted for the decision (initial request) or opened the dialog themselves.
      */
     forcedMute?: boolean;
-
-    /**
-     * Whether unmuting was already blocked (e.g. by the moderator) when the dialog opened; then it stays blocked.
-     */
-    unmuteWasBlocked?: boolean;
 }
 
 /**
@@ -36,7 +26,7 @@ interface IProps {
  * @param {IProps} props - The props.
  * @returns {JSX.Element}
  */
-export default function VoiceAgentConsentDialog({ agentId, audioWasMuted, forcedMute, unmuteWasBlocked }: IProps) {
+export default function VoiceAgentConsentDialog({ agentId, forcedMute }: IProps) {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const agent = useSelector((state: IReduxState) => state['features/voice-agents'].agents[agentId]);
@@ -53,12 +43,12 @@ export default function VoiceAgentConsentDialog({ agentId, audioWasMuted, forced
     }, [ agentId ]);
 
     const allow = useCallback(() => {
-        dispatch(allowVoiceAgent(agentId, { audioWasMuted, forcedMute, unmuteWasBlocked }));
-    }, [ agentId, audioWasMuted, forcedMute, unmuteWasBlocked ]);
+        dispatch(allowVoiceAgent(agentId));
+    }, [ agentId ]);
 
     const decline = useCallback(() => {
-        dispatch(declineVoiceAgent(agentId, { forcedMute, unmuteWasBlocked }));
-    }, [ agentId, forcedMute, unmuteWasBlocked ]);
+        dispatch(declineVoiceAgent(agentId));
+    }, [ agentId ]);
 
     return (
         <Dialog

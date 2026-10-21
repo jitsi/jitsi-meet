@@ -20,6 +20,7 @@ import { joinLeaveNotificationsDisabled } from '../notifications/functions';
 import { SET_VOICE_AGENT_CONSENT } from './actionTypes';
 import {
     dismissVoiceAgentConsentDialog,
+    releaseVoiceAgentConsentMute,
     requestVoiceAgentConsent,
     setVoiceAgentConsent,
     setVoiceAgents
@@ -74,6 +75,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case SET_ROOM:
         // Another room: nothing known or decided about the previous one's agents carries over.
+        store.dispatch(releaseVoiceAgentConsentMute());
         store.dispatch(setVoiceAgents({}));
         break;
     case SET_VOICE_AGENT_CONSENT:
@@ -178,8 +180,7 @@ function _agentsChanged(store: IStore, agents: IVoiceAgents) {
  * @returns {void}
  */
 function _syncParticipants(store: IStore) {
-    const { dispatch, getState } = store;
-    const state = getState();
+    const state = store.getState();
     const conference = getCurrentConference(state);
 
     if (!conference) {
@@ -191,14 +192,25 @@ function _syncParticipants(store: IStore) {
     for (const [ agentId, agent ] of Object.entries(agents)) {
         if (consent[agentId] === undefined) {
             _admitAgent(store, agentId);
-        } else if (consent[agentId] === true && !blocked && !getParticipantById(state, agentId)) {
-            dispatch(participantJoined({
-                conference,
-                fakeParticipant: FakeParticipant.Agent,
-                id: agentId,
-                name: agent.displayName
-            }));
+        } else if (consent[agentId] === true && !blocked) {
+            _addAgentParticipant(store, conference, agentId, agent.displayName);
         }
+    }
+}
+
+/**
+ * Puts an agent on the roster, unless it is already there.
+ *
+ * @param {IStore} store - The redux store.
+ * @param {IJitsiConference} conference - The conference the agent is in.
+ * @param {string} agentId - The agent.
+ * @param {string} [name] - The agent's display name.
+ * @returns {void}
+ */
+function _addAgentParticipant({ dispatch, getState }: IStore, conference: IJitsiConference, agentId: string,
+        name?: string) {
+    if (!getParticipantById(getState(), agentId)) {
+        dispatch(participantJoined({ conference, fakeParticipant: FakeParticipant.Agent, id: agentId, name }));
     }
 }
 
@@ -230,14 +242,9 @@ function _consentChanged(store: IStore, agentId: string, allowed: boolean) {
         return;
     }
 
-    if (allowed && !participant) {
-        dispatch(participantJoined({
-            conference,
-            fakeParticipant: FakeParticipant.Agent,
-            id: agentId,
-            name: agent.displayName
-        }));
-    } else if (!allowed && participant) {
+    if (allowed) {
+        _addAgentParticipant(store, conference, agentId, agent.displayName);
+    } else if (participant) {
         dispatch(participantLeft(agentId, conference, { fakeParticipant: FakeParticipant.Agent }));
     }
 
@@ -313,12 +320,7 @@ function _e2eeChanged(store: IStore, enabled: boolean) {
             }
             _notifyE2EEUnsupported(dispatch, agent.displayName, agentId);
         } else if (consent[agentId] === true) {
-            dispatch(participantJoined({
-                conference,
-                fakeParticipant: FakeParticipant.Agent,
-                id: agentId,
-                name: agent.displayName
-            }));
+            _addAgentParticipant(store, conference, agentId, agent.displayName);
         } else if (consent[agentId] === undefined) {
             _admitAgent(store, agentId);
         }
