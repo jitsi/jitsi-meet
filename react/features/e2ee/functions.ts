@@ -143,7 +143,7 @@ export function isE2EEOnInMeeting(stateful: IStateful) {
 /**
  * A server-side service that needs the media in the clear, so it and end-to-end encryption exclude each other.
  */
-export type E2EEBlockingService = 'transcription' | 'translation';
+export type E2EEBlockingService = 'agent' | 'transcription' | 'translation';
 
 /**
  * Returns the server-side service that keeps end-to-end encryption from being turned on, if any.
@@ -152,6 +152,13 @@ export type E2EEBlockingService = 'transcription' | 'translation';
  * @returns {E2EEBlockingService|undefined}
  */
 export function getE2EEBlockingService(state: IReduxState): E2EEBlockingService | undefined {
+    // An agent being provisioned, connecting or active; read from metadata so voice-agents can depend on this module.
+    const agents = state['features/base/conference'].metadata?.agents ?? {};
+
+    if (Object.values(agents).some(agent => agent?.state !== 'failed')) {
+        return 'agent';
+    }
+
     // A transcriber in the room (Jigasi) or the deployment's backend transcription.
     if (isTranscribing(state) || isAsyncTranscriptionActive(state)) {
         return 'transcription';
