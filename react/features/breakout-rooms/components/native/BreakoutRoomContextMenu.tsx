@@ -77,6 +77,8 @@ const BreakoutRoomContextMenu = ({ room, actions = ALL_ACTIONS }: IProps) => {
             {
                 !hideJoinRoomButton && actions.includes(ACTIONS.JOIN) && (
                     <TouchableOpacity
+                        accessibilityLabel = { t('breakoutRooms.actions.join') }
+                        accessibilityRole = 'button'
                         onPress = { onJoinRoom }
                         style = { styles.contextMenuItem as ViewStyle }>
                         <Icon
@@ -89,6 +91,8 @@ const BreakoutRoomContextMenu = ({ room, actions = ALL_ACTIONS }: IProps) => {
             {
                 !room?.isMainRoom && actions.includes(ACTIONS.RENAME) && _isBreakoutRoomRenameAllowed
                 && <TouchableOpacity
+                    accessibilityLabel = { t('breakoutRooms.actions.rename') }
+                    accessibilityRole = 'button'
                     onPress = { onRenameBreakoutRoom }
                     style = { styles.contextMenuItem as ViewStyle }>
                     <Icon
@@ -101,6 +105,8 @@ const BreakoutRoomContextMenu = ({ room, actions = ALL_ACTIONS }: IProps) => {
                 !room?.isMainRoom && isLocalModerator && actions.includes(ACTIONS.REMOVE)
                 && (room?.participants && Object.keys(room.participants).length > 0
                     ? <TouchableOpacity
+                        accessibilityLabel = { t('breakoutRooms.actions.close') }
+                        accessibilityRole = 'button'
                         onPress = { onCloseBreakoutRoom }
                         style = { styles.contextMenuItem as ViewStyle }>
                         <Icon
@@ -109,6 +115,8 @@ const BreakoutRoomContextMenu = ({ room, actions = ALL_ACTIONS }: IProps) => {
                         <Text style = { styles.contextMenuItemText }>{t('breakoutRooms.actions.close')}</Text>
                     </TouchableOpacity>
                     : <TouchableOpacity
+                        accessibilityLabel = { t('breakoutRooms.actions.remove') }
+                        accessibilityRole = 'button'
                         onPress = { onRemoveBreakoutRoom }
                         style = { styles.contextMenuItem as ViewStyle }>
                         <Icon
