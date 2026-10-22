@@ -71,6 +71,10 @@ end
 -- ---------------------------------------------------------------------------
 
 local token_valid = true;
+-- The claims a verified token carries, as token/util puts them on the session, and what verify_room answers.
+local token_room, token_sub = '*', '*';
+local verify_room_ok = true;
+local verify_room_calls = {};
 local mock_room;
 local timers = {};
 local host_hooks = {};
@@ -154,12 +158,21 @@ local key_cached = true;
 local token_util_stub = {
     new = function()
         return {
+            enableDomainVerification = true,
+            requireRoomClaim = false,
             set_asap_key_server = function() end,
-            process_and_verify_token = function()
+            process_and_verify_token = function(_, session)
                 if not key_cached then
                     require('util.async').waiter();
                 end
+                session.jitsi_meet_room = token_room;
+                session.jitsi_meet_domain = token_sub;
                 return token_valid, 'reason', 'msg';
+            end,
+            verify_room = function(_, session, room_address)
+                table.insert(verify_room_calls, { room = room_address; token_room = session.jitsi_meet_room });
+                if verify_room_ok then return true; end
+                return false, 'room-mismatch', 'Room does not match the room from token';
             end
         };
     end
@@ -178,6 +191,7 @@ local function option(key, default)
     if key == 'voice_agent_status_secret' then return 'jicofo-secret'; end
     if key == 'voice_agent_dial_secret' then return 'relay-secret'; end
     if key == 'prosody_password_public_key_repo_url' then return 'https://keys.example.com/'; end
+    if key == 'muc_mapper_domain_base' then return 'localhost'; end
     if key == 'voice_agent_callback_allowed_hosts' then return { 'app.example.com' }; end
     return default;
 end
@@ -286,12 +300,19 @@ local function invite(payload, opts)
     end
     return post('POST voice-agent/invite', payload, opts);
 end
-local function dismiss(payload) return post('POST voice-agent/dismiss', payload); end
+local function dismiss(payload, opts) return post('POST voice-agent/dismiss', payload, opts); end
 local function status(payload, opts) return post('POST voice-agent/status', payload, opts); end
 
-local function get(query)
+local function get(query, opts)
+    opts = opts or {};
     return routes['GET voice-agent/get']({
-        request = { headers = { authorization = 'Bearer t' }; url = { query = query } } });
+        request = { headers = { authorization = opts.token or 'Bearer t' }; url = { query = query } } });
+end
+
+local function list(query, opts)
+    opts = opts or {};
+    return routes['GET voice-agent/list']({
+        request = { headers = { authorization = opts.token or 'Bearer t' }; url = { query = query } } });
 end
 
 local function dial(query, opts)
@@ -413,6 +434,9 @@ describe('mod_voice_agent_component', function()
             if timer.delay == 15 then pcall(timer.fn); end
         end
         token_valid = true;
+        token_room, token_sub = '*', '*';
+        verify_room_ok = true;
+        verify_room_calls = {};
         mock_room = fresh_room();
         http_requests = {};
         metadata_events = 0;
@@ -1320,6 +1344,67 @@ describe('mod_voice_agent_component', function()
         end)
     end)
 
+    describe('token room scope', function()
+        -- token/util's verify_room gets the token's session and the resolved room; the stub answers as the test says.
+        it('checks the token against the resolved room JID on the provisioning routes', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            assert.are.equal(mock_room.jid, verify_room_calls[1].room);
+            assert.are.equal('*', verify_room_calls[1].token_room);
+            get('conference=r&agentId=agent-support');
+            assert.are.equal(2, #verify_room_calls);
+        end)
+
+        it('refuses a token for another room with 403 on every route, changing nothing', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            verify_room_ok = false;
+            assert.are.equal(403, invite({ conference = 'r'; displayName = 'Bot'; agentId = 'other' }).status_code);
+            assert.are.equal(403, get('conference=r&agentId=agent-support').status_code);
+            assert.are.equal(403, list('conference=r').status_code);
+            assert.are.equal(403, dismiss({ conference = 'r'; agentId = 'agent-support' }).status_code);
+            assert.are.equal(403, status({ conference = 'r'; agentId = 'agent-support'; state = 'active' }).status_code);
+            assert.are.equal(403, dial('conference=r&agentId=agent-support').status_code);
+            assert.are.same({ 'agent-support' }, agent_ids(mock_room));
+            assert.are.equal('provisioning', mock_room.jitsiMetadata.agents['agent-support'].state);
+        end)
+
+        it('does not scope the shared-secret callers: jicofo and the relay act on any room', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            verify_room_ok = false;
+            assert.are.equal(200, dial('conference=r&agentId=agent-support', { token = 'Bearer relay-secret' }).status_code);
+            assert.are.equal(200, status({ conference = 'r'; agentId = 'agent-support'; state = 'active' },
+                { token = 'Bearer jicofo-secret' }).status_code);
+        end)
+
+        it('event stream: a room that exists is checked like the routes', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            verify_room_ok = false;
+            local result, response = events('conference=r');
+            assert.are.equal(403, result.status_code);
+            assert.are.equal(0, #response.writes);
+        end)
+
+        it('event stream for every room needs a token allowed every room and every tenant', function()
+            token_room = 'r';
+            assert.are.equal(403, events(nil).status_code);
+            token_room = '*';
+            token_sub = 'acme';
+            assert.are.equal(403, events(nil).status_code);
+            token_sub = '*';
+            assert.is_true((events(nil)));
+        end)
+
+        it('event stream for a room that does not exist yet: every room, within the token tenant', function()
+            token_room = '*';
+            token_sub = 'acme';
+            assert.is_true((events('conference=acme/missing')));
+            token_sub = 'other';
+            assert.are.equal(403, events('conference=acme/missing').status_code);
+            token_room = 'missing';
+            token_sub = 'acme';
+            assert.are.equal(403, events('conference=acme/missing').status_code);
+        end)
+    end)
+
     describe('alternate configurations (module reloaded)', function()
         -- Reloads the module with option overrides into the same `routes` table, so the request helpers above
         -- drive the reloaded module; the defaults are restored afterwards.
@@ -1367,6 +1452,16 @@ describe('mod_voice_agent_component', function()
             timers[#timers].fn();
             assert.is_true(response.finished);
             assert.are.equal('0\r\n\r\n', response.writes[#response.writes]);
+        end)
+
+        it('refuses to load without muc_mapper_domain_base, which the token room check resolves rooms with', function()
+            reload_with({ muc_mapper_domain_base = '' });
+            assert.is_nil(routes['POST voice-agent/invite']);
+            local logged = false;
+            for _, entry in ipairs(logs) do
+                if entry.level == 'error' and entry.text:find('muc_mapper_domain_base', 1, true) then logged = true; end
+            end
+            assert.is_true(logged, 'the missing option must be logged');
         end)
 
         it('refuses to load without an ASAP key repository, so a meeting token can never provision agents', function()
