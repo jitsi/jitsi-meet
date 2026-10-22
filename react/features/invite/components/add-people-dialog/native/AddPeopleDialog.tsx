@@ -418,9 +418,15 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
     _renderInvitedItem(flatListItem: any, index: number): ReactElement | null {
         const { item } = flatListItem;
         const renderableItem = this._getRenderableItem(flatListItem);
+        const { t } = this.props;
+        const name = renderableItem?.title || item.name || item.number || '';
+        const itemAccessibilityLabel = name ? `${t('dialog.Remove')} ${name}` : t('dialog.Remove');
 
         return (
-            <TouchableOpacity onPress = { this._onPressItem(item) } >
+            <TouchableOpacity
+                accessibilityLabel = { itemAccessibilityLabel }
+                accessibilityRole = 'button'
+                onPress = { this._onPressItem(item) } >
                 <View
                     pointerEvents = 'box-only'
                     style = { styles.itemWrapper as ViewStyle }>
@@ -474,8 +480,15 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
             return null;
         }
 
+        const isSelected = Boolean(selected);
+        const itemAccessibilityLabel = renderableItem.title || item.name || item.number || '';
+
         return (
-            <TouchableOpacity onPress = { this._onPressItem(item) } >
+            <TouchableOpacity
+                accessibilityLabel = { itemAccessibilityLabel }
+                accessibilityRole = 'button'
+                accessibilityState = {{ selected: isSelected }}
+                onPress = { this._onPressItem(item) } >
                 <View
                     pointerEvents = 'box-only'
                     style = { styles.itemWrapper as ViewStyle }>
@@ -513,6 +526,9 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      * @returns {React#Element<*>}
      */
     _renderShareMeetingButton() {
+        const { t } = this.props;
+        const shareMeetingAccessibilityLabel = t('addPeople.shareInvite');
+
         return (
             <View
                 style = { [
@@ -520,6 +536,8 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
                     this.state.bottomPadding ? styles.extraBarPadding : null
                 ] }>
                 <TouchableOpacity
+                    accessibilityLabel = { shareMeetingAccessibilityLabel }
+                    accessibilityRole = 'button'
                     onPress = { this._onShareMeeting }>
                     <Icon
                         src = { IconShare }
