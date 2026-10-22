@@ -64,7 +64,9 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
                 ...state.polls,
                 [action.poll.pollId]: action.poll
             },
-            unreadPollsCount: state.unreadPollsCount + 1
+            unreadPollsCount: action.notify
+                ? state.unreadPollsCount + 1
+                : state.unreadPollsCount
         };
     }
 
