@@ -73,8 +73,15 @@ end
 local token_valid = true;
 -- The claims a verified token carries, as token/util puts them on the session, and what verify_room answers.
 local token_room, token_sub = '*', '*';
+-- context.tenant on the token, if any.
+local token_tenant = nil;
+-- true/false, or a function(session, room_address) answering allowed, reason.
 local verify_room_ok = true;
 local verify_room_calls = {};
+-- What the module asked of set_asap_require_room_claim, in load order.
+local require_room_claim_calls = {};
+-- A breakout room the room lookups return for its JID, when a test sets one.
+local breakout_room = nil;
 local mock_room;
 local timers = {};
 local host_hooks = {};
@@ -104,6 +111,7 @@ local util_stub = {
     end,
     get_room_from_jid = function(jid)
         if jid == 'missing' then return nil; end
+        if breakout_room and jid == breakout_room.jid then return breakout_room; end
         return mock_room;
     end,
     is_healthcheck_room = function(_) return false; end,
@@ -161,16 +169,22 @@ local token_util_stub = {
             enableDomainVerification = true,
             requireRoomClaim = false,
             set_asap_key_server = function() end,
+            set_asap_require_room_claim = function(_, required)
+                table.insert(require_room_claim_calls, required);
+            end,
             process_and_verify_token = function(_, session)
                 if not key_cached then
                     require('util.async').waiter();
                 end
                 session.jitsi_meet_room = token_room;
                 session.jitsi_meet_domain = token_sub;
+                session.jitsi_meet_str_tenant = token_tenant;
                 return token_valid, 'reason', 'msg';
             end,
             verify_room = function(_, session, room_address)
-                table.insert(verify_room_calls, { room = room_address; token_room = session.jitsi_meet_room });
+                table.insert(verify_room_calls, {
+                    room = room_address; token_room = session.jitsi_meet_room; prefix = session.jitsi_web_query_prefix });
+                if type(verify_room_ok) == 'function' then return verify_room_ok(session, room_address); end
                 if verify_room_ok then return true; end
                 return false, 'room-mismatch', 'Room does not match the room from token';
             end
@@ -195,6 +209,18 @@ local function option(key, default)
     if key == 'voice_agent_callback_allowed_hosts' then return { 'app.example.com' }; end
     return default;
 end
+
+-- The main MUC service the module searches for a breakout room's main room: it holds the current mock room.
+_G.prosody = { hosts = { ['conference.localhost'] = { modules = { muc = {
+    each_room = function()
+        local done = false;
+        return function()
+            if done then return nil; end
+            done = true;
+            return mock_room;
+        end;
+    end
+} } } } };
 
 _G.module = {
     host = 'voiceagent.localhost',
@@ -435,8 +461,10 @@ describe('mod_voice_agent_component', function()
         end
         token_valid = true;
         token_room, token_sub = '*', '*';
+        token_tenant = nil;
         verify_room_ok = true;
         verify_room_calls = {};
+        breakout_room = nil;
         mock_room = fresh_room();
         http_requests = {};
         metadata_events = 0;
@@ -1375,6 +1403,36 @@ describe('mod_voice_agent_component', function()
                 { token = 'Bearer jicofo-secret' }).status_code);
         end)
 
+        it('requires a room claim whatever asap_require_room_claim says', function()
+            assert.is_true(#require_room_claim_calls > 0);
+            assert.is_true(require_room_claim_calls[#require_room_claim_calls]);
+        end)
+
+        it('checks a breakout room as its main room', function()
+            breakout_room = fresh_room();
+            breakout_room.jid = 'b1@breakout.localhost';
+            mock_room._data.breakout_rooms_active = true;
+            mock_room._data.breakout_rooms = { ['b1@breakout.localhost'] = true };
+            assert.are.equal(200, list('conference=b1@breakout.localhost').status_code);
+            assert.are.equal(mock_room.jid, verify_room_calls[1].room);
+        end)
+
+        it('refuses a breakout room whose main room cannot be found', function()
+            breakout_room = fresh_room();
+            breakout_room.jid = 'b2@breakout.localhost';
+            assert.are.equal(403, list('conference=b2@breakout.localhost').status_code);
+            assert.are.equal(0, #verify_room_calls);
+        end)
+
+        it('gives verify_room the room tenant, which it checks a context.tenant claim against', function()
+            token_tenant = 'acme';
+            list('conference=r');
+            assert.are.equal('', verify_room_calls[1].prefix);
+            mock_room.jid = '[acme]room1@conference.localhost';
+            list('conference=r');
+            assert.are.equal('acme', verify_room_calls[2].prefix);
+        end)
+
         it('event stream: a room that exists is checked like the routes', function()
             invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
             verify_room_ok = false;
@@ -1383,25 +1441,48 @@ describe('mod_voice_agent_component', function()
             assert.are.equal(0, #response.writes);
         end)
 
-        it('event stream for every room needs a token allowed every room and every tenant', function()
+        it('event stream: a token scoped to a room that exists opens it', function()
             token_room = 'r';
-            assert.are.equal(403, events(nil).status_code);
-            token_room = '*';
-            token_sub = 'acme';
-            assert.are.equal(403, events(nil).status_code);
-            token_sub = '*';
-            assert.is_true((events(nil)));
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            local result, response = events('conference=r');
+            assert.is_true(result);
+            assert.are.equal('snapshot', stream_events(response)[1].event);
         end)
 
-        it('event stream for a room that does not exist yet: every room, within the token tenant', function()
-            token_room = '*';
+        it('event stream for every room opens for a scoped token and carries only the rooms it may act on', function()
+            token_room = 'other';
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            verify_room_ok = false;
+            local result, denied = events(nil);
+            assert.is_true(result);
+            verify_room_ok = true;
+            local _, allowed = events(nil);
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
+            local seen = {};
+            for _, e in ipairs(stream_events(denied)) do if e.event then table.insert(seen, e.event); end end
+            assert.are.same({ 'snapshot' }, seen, 'nothing of a room outside the token scope');
+            assert.are.equal('agent.connected', stream_events(allowed)[2].event);
+        end)
+
+        it('event stream for a room that does not exist yet opens for a scoped token', function()
+            token_room = 'r';
             token_sub = 'acme';
             assert.is_true((events('conference=acme/missing')));
-            token_sub = 'other';
-            assert.are.equal(403, events('conference=acme/missing').status_code);
-            token_room = 'missing';
-            token_sub = 'acme';
-            assert.are.equal(403, events('conference=acme/missing').status_code);
+        end)
+
+        it('replays to a scoped token, or sends a snapshot when a missed event names a room that is gone', function()
+            token_room = 'r';
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            local _, first = events('conference=r');
+            local snapshot_id = stream_events(first)[1].id;
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
+            first:disconnect();
+            local _, replayed = events('conference=r', { lastEventId = snapshot_id });
+            assert.are.equal('agent.connected', stream_events(replayed)[1].event);
+            replayed:disconnect();
+            verify_room_ok = function() return false, 'room-does-not-exist'; end;
+            local _, fallback = events(nil, { lastEventId = snapshot_id });
+            assert.are.equal('snapshot', stream_events(fallback)[1].event);
         end)
     end)
 

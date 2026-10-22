@@ -29,7 +29,7 @@
 -- prosody_password_public_key_repo_url (NOT login tokens), like mod_muc_jigasi_invite. Unlike it, the token's
 -- room and sub claims scope the caller, as a meeting token's do: token/util's verify_room checks them against
 -- the resolved room ('*' allows every room, a '*' sub every tenant), as mod_muc_size does for its routes, and
--- a request for another room is 403.
+-- a request for another room is 403. A room claim is required; a breakout room is checked as its main room.
 --
 -- `conference` names the room as customers know it, '<tenant>/<room>' or '<room>' (plain or percent-encoded, any
 -- case), or by its JID (what jicofo and the media relay send, and the only way to name a breakout room). Every
@@ -63,8 +63,9 @@
 --     state } ] }), unless its Last-Event-ID is still in the replay buffer, in which case it gets the events it
 --     missed instead. A keepalive comment every 15 s; closed after voice_agent_event_stream_max_age seconds
 --     (the client reconnects with Last-Event-ID); at most voice_agent_max_event_streams open at once (503)
---     auth: ASAP, like the provisioning routes; a stream for every room, or for a room that does not exist yet,
---     needs the wildcard claims (there is no room to check the token against)
+--     auth: ASAP, like the provisioning routes; a named room that exists is checked like them, and a stream
+--     carries only the events of rooms the token may act on (verify_room per room). A replay naming a room that
+--     is gone, which can no longer be checked, falls back to a snapshot
 --
 -- Provisioning auth needs prosody_password_public_key_repo_url: without it the module refuses to load (a meeting
 -- token would otherwise pass), unless voice_agent_insecure_skip_auth is set for a dev rig. It also needs
@@ -193,9 +194,11 @@ else
     end
     token_util = module:require 'token/util'.new(module);
     token_util:set_asap_key_server(ASAP_KEY_SERVER);
+    -- Required here whatever asap_require_room_claim says: verify_room needs a room claim to check the tenant.
+    token_util:set_asap_require_room_claim(true);
     local muc_domain_base = module:get_option_string('muc_mapper_domain_base');
     if muc_domain_base == nil or muc_domain_base == '' then
-        -- verify_room resolves the room under this domain; without it every token check would fail closed as a 500.
+        -- verify_room resolves rooms under this domain; without it every room check would be refused.
         module:log('error', 'No muc_mapper_domain_base set: token room claims cannot be verified. '
             .. 'Disabling /voice-agent.');
         return;
@@ -287,14 +290,48 @@ local function error_response(status_code, message)
     return { status_code = status_code, body = json.encode({ error = message }) };
 end
 
--- Checks the token's room and sub claims against the room with token/util's verify_room, as mod_muc_size does for
--- its routes: '*' allows every room, a '*' sub every tenant. Shared-secret callers (jicofo, the media relay) and a
--- dev rig without auth have no session and are not scoped. Returns nil when allowed, or the error response.
+-- A breakout room's claims are its main room's, the meeting a token names; found the way mod_speakerstats_component
+-- finds it, and cached on the room object rather than in _data, which room:save() serializes.
+local function claims_room(room)
+    if room.jid:match('@([^/]+)') ~= breakout_rooms_component_host then
+        return room;
+    end
+    if room.main_room then
+        return room.main_room;
+    end
+    local host = prosody.hosts[muc_component_host];
+    local muc = host and host.modules.muc;
+    if muc then
+        for main_room in muc.each_room() do
+            if main_room._data.breakout_rooms_active and (main_room._data.breakout_rooms or {})[room.jid] then
+                room.main_room = main_room;
+                return main_room;
+            end
+        end
+    end
+    return nil;
+end
+
+-- token/util's verify_room on the room's claims room, as mod_muc_size does for its routes: '*' allows every room, a
+-- '*' sub every tenant. Returns allowed and verify_room's reason; 'room-does-not-exist' means it cannot be decided.
+local function verify_token_room(session, room)
+    local target = claims_room(room);
+    if not target then
+        return false, 'room-does-not-exist';
+    end
+    -- verify_room checks a token's context.tenant against the tenant mod_jitsi_session takes from the meeting URL.
+    local tenant = extract_subdomain(target.jid:match('^([^@]+)@') or '');
+    session.jitsi_web_query_prefix = tenant and tenant:lower() or '';
+    return token_util:verify_room(session, target.jid);
+end
+
+-- Checks the token's claims against the room. Shared-secret callers (jicofo, the media relay) and a dev rig without
+-- auth have no session and are not scoped. Returns nil when allowed, or the error response.
 local function check_room_authorization(session, room)
     if session == nil then
         return nil;
     end
-    local allowed, reason = token_util:verify_room(session, room.jid);
+    local allowed, reason = verify_token_room(session, room);
     if not allowed then
         -- verify_room answers a bare false when the claims do not name this room, with no reason to show.
         module:log('warn', 'Token not authorized for room %s%s: token room %s, sub %s', room.jid,
@@ -303,26 +340,6 @@ local function check_room_authorization(session, room)
         return error_response(403, 'Token not authorized for this room');
     end
     return nil;
-end
-
--- An event stream for every room, or for a room that does not exist yet, has no room for verify_room to check:
--- the token must then be allowed every room (a '*' room claim, or none while the deployment does not require
--- one), within its tenant when its sub names one and domain verification is on.
-local function check_stream_authorization(session, conference)
-    if session == nil then
-        return nil;
-    end
-    local room_claim, sub = session.jitsi_meet_room, session.jitsi_meet_domain;
-    local every_room = room_claim == '*' or (room_claim == nil and not token_util.requireRoomClaim);
-    local tenant = conference and conference:match('^([^/]+)/');
-    local every_tenant = not token_util.enableDomainVerification or sub == '*'
-        or (tenant ~= nil and type(sub) == 'string' and sub:lower() == tenant);
-    if every_room and every_tenant then
-        return nil;
-    end
-    module:log('warn', 'Token not authorized for an event stream on %s: token room %s, sub %s',
-        conference or 'every room', tostring(room_claim), tostring(sub));
-    return error_response(403, 'Token not authorized for this stream');
 end
 
 -- Reads a JSON request body; returns the payload, or nil plus the error response.
@@ -630,7 +647,8 @@ shared.count = shared.count or 0;
 -- process's events; clients treat the id as opaque.
 shared.epoch = shared.epoch or (random.bytes(4):gsub('.', function(c) return string.format('%02x', c:byte()); end));
 shared.seq = shared.seq or 0;
--- The last EVENT_BUFFER_SIZE events as { seq, conference, frame }, replayed to a reconnecting stream.
+-- The last EVENT_BUFFER_SIZE events as { seq, conference, room_jid, frame }, replayed to a reconnecting stream. The
+-- room is kept by JID, not by object, so the buffer never holds a destroyed room alive.
 shared.buffer = shared.buffer or {};
 local rooms_with_agents = shared.rooms;
 local streams = shared.streams;
@@ -686,17 +704,35 @@ local function in_scope(stream, conference)
     return stream.conference == nil or stream.conference == conference;
 end
 
+-- Whether a stream may carry a room's events: always without a token session (a dev rig without auth), otherwise
+-- when verify_room accepts the token for the room; cached per room. nil when it cannot be decided (the room is gone).
+local function stream_allows(stream, room)
+    if stream.session == nil then
+        return true;
+    end
+    local cached = stream.allowed[room];
+    if cached ~= nil then
+        return cached;
+    end
+    local allowed, reason = verify_token_room(stream.session, room);
+    if not allowed and reason == 'room-does-not-exist' then
+        return nil;
+    end
+    stream.allowed[room] = allowed and true or false;
+    return stream.allowed[room];
+end
+
 -- Records a lifecycle event (body: its encoded payload) and writes it to every stream in scope.
-local function broadcast_lifecycle(event_name, conference, body)
+local function broadcast_lifecycle(event_name, room, conference, body)
     shared.seq = shared.seq + 1;
     local seq = shared.seq;
     local frame = sse_frame(event_id(seq), event_name, body);
-    table.insert(event_buffer, { seq = seq; conference = conference; frame = frame; });
+    table.insert(event_buffer, { seq = seq; conference = conference; room_jid = room.jid; frame = frame; });
     if #event_buffer > EVENT_BUFFER_SIZE then
         table.remove(event_buffer, 1);
     end
     for stream in pairs(streams) do
-        if in_scope(stream, conference) then
+        if in_scope(stream, conference) and stream_allows(stream, room) then
             stream_write(stream, frame);
         end
     end
@@ -704,7 +740,7 @@ end
 
 -- The frames a stream missed since its Last-Event-ID, or nil when they cannot be known (another epoch, an id
 -- older than the buffer), in which case the stream gets a snapshot instead.
-local function missed_frames(last_event_id, conference)
+local function missed_frames(last_event_id, stream)
     local epoch, seq = tostring(last_event_id or ''):match('^(%x+)%-(%d+)$');
     seq = tonumber(seq);
     if epoch ~= shared.epoch or not seq or seq > shared.seq then
@@ -716,19 +752,27 @@ local function missed_frames(last_event_id, conference)
     end
     local frames = {};
     for _, entry in ipairs(event_buffer) do
-        if entry.seq > seq and (conference == nil or entry.conference == conference) then
-            table.insert(frames, entry.frame);
+        if entry.seq > seq and in_scope(stream, entry.conference) then
+            local room = get_room_from_jid(entry.room_jid);
+            local allowed = room and stream_allows(stream, room);
+            if allowed == nil then
+                -- A room that is gone can no longer be checked: a snapshot instead of a partial replay.
+                return nil;
+            end
+            if allowed then
+                table.insert(frames, entry.frame);
+            end
         end
     end
     return frames;
 end
 
 -- Every agent in scope with its state, for a stream's first event; sorted so the output is stable.
-local function snapshot_agents(conference)
+local function snapshot_agents(stream)
     local agents = {};
     for room in pairs(rooms_with_agents) do
         local name = public_room_name(room);
-        if conference == nil or conference == name then
+        if in_scope(stream, name) and stream_allows(stream, room) then
             for agent_id, entry in pairs((room.jitsiMetadata and room.jitsiMetadata.agents) or {}) do
                 local agent = agent_response(agent_id, entry);
                 agent.conference = name;
@@ -839,7 +883,7 @@ local function notify_lifecycle(room, agent_id, entry, callback_url, event_name,
     end
     local body = json.encode(payload);
     send_webhook(callback_url, body);
-    broadcast_lifecycle(event_name, payload.conference, body);
+    broadcast_lifecycle(event_name, room, payload.conference, body);
     local ok, err = pcall(module.fire_event, module, LIFECYCLE_EVENT,
         { room = room; agent_id = agent_id; payload = payload; });
     if not ok then
@@ -1134,10 +1178,12 @@ local function open_event_stream(request, response, session)
             return error_response(404, 'Room not found');
         end
     end
-    local scope_error = room and check_room_authorization(session, room)
-        or check_stream_authorization(session, conference);
-    if scope_error then
-        return scope_error;
+    -- A named room that exists answers like the routes; any other stream carries only the rooms the token may act on.
+    if room then
+        local room_error = check_room_authorization(session, room);
+        if room_error then
+            return room_error;
+        end
     end
     if shared.count >= MAX_EVENT_STREAMS then
         return error_response(503, 'Too many event streams');
@@ -1151,21 +1197,22 @@ local function open_event_stream(request, response, session)
     response.headers.x_accel_buffering = 'no';
     response:write_headers();
 
-    local stream = { response = response; conference = conference; opened = os.time(); };
+    local stream = { response = response; conference = conference; opened = os.time(); session = session;
+        allowed = setmetatable({}, { __mode = 'k' }); };
     streams[stream] = true;
     shared.count = shared.count + 1;
     response.on_destroy = function()
         close_stream(stream, 'disconnected');
     end;
 
-    local missed = missed_frames(request.headers['last_event_id'], conference);
+    local missed = missed_frames(request.headers['last_event_id'], stream);
     if missed then
         for _, frame in ipairs(missed) do
             stream_write(stream, frame);
         end
     else
         stream_write(stream, sse_frame(event_id(shared.seq), 'snapshot',
-            encode_snapshot(conference, snapshot_agents(conference))));
+            encode_snapshot(conference, snapshot_agents(stream))));
     end
     arm_keepalive();
     module:log('debug', 'Event stream opened for %s, %d open', conference or 'every room', shared.count);
@@ -1318,7 +1365,8 @@ local function hook_room_destroyed(host_module)
             end
         end
         rooms_with_agents[room] = nil;
-    end);
+    -- Ahead of mod_muc forgetting the room (priority 0), so streams can still check it against a token.
+    end, 1);
 end
 
 process_host_module(muc_component_host, hook_room_destroyed);
