@@ -391,6 +391,7 @@
         "displayNameRequired": "Hola! Com us dieu?",
         "done": "Fet",
         "e2eeDescription": "El xifratge d'extrem a extrem és EXPERIMENTAL. Tingueu present que l'activació del xifratge d'extrem a extrem desactivarà serveis proporcionats en la banda del servidor, com ara: enregistrament, transmissió en directe i participació telefònica. A més, la reunió només funcionarà per a les persones que usin navegadors que compatibles amb fluxos inseribles.",
+        "e2eeDisabledDueToAgentDescription": "El xifratge d'extrem a extrem no es pot activar mentre un agent d'IA està a la reunió.",
         "e2eeDisabledDueToMaxModeDescription": "No es pot activar el xifratge d'extrem a extrem a causa del gran nombre de participants en la conferència.",
         "e2eeDisabledDueToTranscriptionDescription": "El xifratge d'extrem a extrem no es pot activar mentre es transcriu la reunió.",
         "e2eeDisabledDueToTranslationDescription": "El xifratge d'extrem a extrem no es pot activar mentre s'usa la traducció en temps real.",
@@ -1795,6 +1796,20 @@
             "title": "Sou un espectador de la reunió"
         },
         "waitingMessage": "Entrareu a la reunió tan aviat com estigui en directe!"
+    },
+    "voiceAgents": {
+        "allow": "Permet",
+        "consentDescription": "L'agent només escolta els participants que ho permeten. Si ho permeteu, us escoltarà i sentireu les seves respostes.",
+        "consentDescriptionMuted": "L'agent només escolta els participants que ho permeten. Si ho permeteu, us escoltarà i sentireu les seves respostes. Esteu silenciat fins que decidiu.",
+        "consentTitle": "{{name}} s'ha unit com a agent d'IA",
+        "e2eeUnsupportedDescription": "Els agents d'IA no poden participar en reunions xifrades d'extrem a extrem. Desactiveu el xifratge d'extrem a extrem per a permetre que l'agent escolti i sigui escoltat.",
+        "e2eeUnsupportedTitle": "{{name}} no està disponible",
+        "labelTooltip": "Agent d'IA a la reunió: {{names}}",
+        "labelTooltipAllow": "Agent d'IA a la reunió: {{names}}. Feu clic per a deixar que us escolti.",
+        "labelTooltipE2EE": "Agent d'IA a la reunió: {{names}}. No disponible mentre la reunió estigui xifrada d'extrem a extrem.",
+        "nativeTitle": "Agent d'IA a la reunió",
+        "notNow": "Ara no",
+        "thumbnailTooltip": "Agent d'IA"
     },
     "volumeSlider": "Control lliscant de volum",
     "welcomepage": {
