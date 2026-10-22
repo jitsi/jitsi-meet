@@ -36,6 +36,11 @@ interface IProps extends AbstractProps, WithTranslation {
     messageKey?: string;
 
     /**
+     * Invoked when the text in the field changes.
+     */
+    onChangeText?: (value: string) => void;
+
+    /**
      * Props for the text input.
      */
     textInputProps?: Object;
@@ -144,6 +149,8 @@ class InputDialog extends AbstractDialog<IProps, IState> {
      * @returns {void}
      */
     _onChangeText(fieldValue: string) {
+        this.props.onChangeText?.(fieldValue);
+
         if (this.props.validateInput) {
             this.setState({
                 isValid: this.props.validateInput(fieldValue),
