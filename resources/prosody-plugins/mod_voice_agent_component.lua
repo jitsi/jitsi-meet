@@ -26,8 +26,10 @@
 --
 -- ── Endpoints (contract frozen at v1.0 — see AGENT_REST_API.md) ───────────────
 -- Authentication: Authorization: Bearer <system ASAP token>, verified against
--- prosody_password_public_key_repo_url (NOT login tokens), exactly like
--- mod_muc_jigasi_invite.
+-- prosody_password_public_key_repo_url (NOT login tokens), like mod_muc_jigasi_invite. Unlike it, the token's
+-- room and sub claims scope the caller, as a meeting token's do: token/util's verify_room checks them against
+-- the resolved room ('*' allows every room, a '*' sub every tenant), as mod_muc_size does for its routes, and
+-- a request for another room is 403.
 --
 -- `conference` names the room as customers know it, '<tenant>/<room>' or '<room>' (plain or percent-encoded, any
 -- case), or by its JID (what jicofo and the media relay send, and the only way to name a breakout room). Every
@@ -61,10 +63,12 @@
 --     state } ] }), unless its Last-Event-ID is still in the replay buffer, in which case it gets the events it
 --     missed instead. A keepalive comment every 15 s; closed after voice_agent_event_stream_max_age seconds
 --     (the client reconnects with Last-Event-ID); at most voice_agent_max_event_streams open at once (503)
---     auth: ASAP, like the provisioning routes
+--     auth: ASAP, like the provisioning routes; a stream for every room, or for a room that does not exist yet,
+--     needs the wildcard claims (there is no room to check the token against)
 --
 -- Provisioning auth needs prosody_password_public_key_repo_url: without it the module refuses to load (a meeting
--- token would otherwise pass), unless voice_agent_insecure_skip_auth is set for a dev rig. Lifecycle webhooks need
+-- token would otherwise pass), unless voice_agent_insecure_skip_auth is set for a dev rig. It also needs
+-- muc_mapper_domain_base, which verify_room resolves rooms with, as the token modules do. Lifecycle webhooks need
 -- voice_agent_webhook_secret: without it an invite with a callbackUrl is refused rather than delivered unsigned.
 -- voice_agent_callback_allowed_hosts (exact host or .suffix) limits where callbacks may go; empty allows any host,
 -- so an OSS deployment that accepts invites from several customers should set it (prosody POSTs there).
@@ -189,6 +193,13 @@ else
     end
     token_util = module:require 'token/util'.new(module);
     token_util:set_asap_key_server(ASAP_KEY_SERVER);
+    local muc_domain_base = module:get_option_string('muc_mapper_domain_base');
+    if muc_domain_base == nil or muc_domain_base == '' then
+        -- verify_room resolves the room under this domain; without it every token check would fail closed as a 500.
+        module:log('error', 'No muc_mapper_domain_base set: token room claims cannot be verified. '
+            .. 'Disabling /voice-agent.');
+        return;
+    end
 end
 
 local main_muc_module;
@@ -197,23 +208,20 @@ process_host_module(muc_component_host, function(host_module)
     main_muc_module = host_module;
 end);
 
-local function is_token_valid(token)
-    if token == nil then
-        module:log('warn', 'no token provided');
-        return false;
-    end
-
+-- Verifies a token; returns the session token/util filled with its claims (room, sub), or nil.
+local function verified_session(token)
     local session = {};
     session.auth_token = token;
     local verified, reason, msg = token_util:process_and_verify_token(session);
     if not verified then
         module:log('warn', 'not a valid token %s %s', tostring(reason), tostring(msg));
-        return false;
+        return nil;
     end
-    return true;
+    return session;
 end
 
--- Verifies the Authorization header; returns nil when authorized, or the error response.
+-- Verifies the Authorization header; returns nil and the token's session when authorized (no session for a dev
+-- rig without auth), or the error response.
 local function check_authorization(request)
     if INSECURE_SKIP_AUTH then
         return nil;
@@ -229,10 +237,11 @@ local function check_authorization(request)
         module:log('warn', 'Authorization header is invalid');
         return { status_code = 401 };
     end
-    if not is_token_valid(token) then
+    local session = verified_session(token);
+    if not session then
         return { status_code = 401 };
     end
-    return nil;
+    return nil, session;
 end
 
 -- Constant-time secret comparison: HMACs under a per-load random key have a fixed length and leak nothing about
@@ -276,6 +285,44 @@ end
 
 local function error_response(status_code, message)
     return { status_code = status_code, body = json.encode({ error = message }) };
+end
+
+-- Checks the token's room and sub claims against the room with token/util's verify_room, as mod_muc_size does for
+-- its routes: '*' allows every room, a '*' sub every tenant. Shared-secret callers (jicofo, the media relay) and a
+-- dev rig without auth have no session and are not scoped. Returns nil when allowed, or the error response.
+local function check_room_authorization(session, room)
+    if session == nil then
+        return nil;
+    end
+    local allowed, reason = token_util:verify_room(session, room.jid);
+    if not allowed then
+        -- verify_room answers a bare false when the claims do not name this room, with no reason to show.
+        module:log('warn', 'Token not authorized for room %s%s: token room %s, sub %s', room.jid,
+            reason and (' (' .. reason .. ')') or '', tostring(session.jitsi_meet_room),
+            tostring(session.jitsi_meet_domain));
+        return error_response(403, 'Token not authorized for this room');
+    end
+    return nil;
+end
+
+-- An event stream for every room, or for a room that does not exist yet, has no room for verify_room to check:
+-- the token must then be allowed every room (a '*' room claim, or none while the deployment does not require
+-- one), within its tenant when its sub names one and domain verification is on.
+local function check_stream_authorization(session, conference)
+    if session == nil then
+        return nil;
+    end
+    local room_claim, sub = session.jitsi_meet_room, session.jitsi_meet_domain;
+    local every_room = room_claim == '*' or (room_claim == nil and not token_util.requireRoomClaim);
+    local tenant = conference and conference:match('^([^/]+)/');
+    local every_tenant = not token_util.enableDomainVerification or sub == '*'
+        or (tenant ~= nil and type(sub) == 'string' and sub:lower() == tenant);
+    if every_room and every_tenant then
+        return nil;
+    end
+    module:log('warn', 'Token not authorized for an event stream on %s: token room %s, sub %s',
+        conference or 'every room', tostring(room_claim), tostring(sub));
+    return error_response(403, 'Token not authorized for this stream');
 end
 
 -- Reads a JSON request body; returns the payload, or nil plus the error response.
@@ -830,7 +877,7 @@ local function handle_invite(event)
     invite_count();
     local request = event.request;
 
-    local auth_error = check_authorization(request);
+    local auth_error, session = check_authorization(request);
     if auth_error then
         return auth_error;
     end
@@ -843,6 +890,10 @@ local function handle_invite(event)
     if not room then
         module:log('warn', 'No room found for %s', tostring(payload.conference));
         return error_response(404, 'Room not found');
+    end
+    local room_error = check_room_authorization(session, room);
+    if room_error then
+        return room_error;
     end
 
     if not is_valid_display_name(payload.displayName) then
@@ -968,7 +1019,7 @@ local function handle_dismiss(event)
     dismiss_count();
     local request = event.request;
 
-    local auth_error = check_authorization(request);
+    local auth_error, session = check_authorization(request);
     if auth_error then
         return auth_error;
     end
@@ -980,6 +1031,10 @@ local function handle_dismiss(event)
     local room = find_room(payload.conference);
     if not room then
         return error_response(404, 'Room not found');
+    end
+    local room_error = check_room_authorization(session, room);
+    if room_error then
+        return room_error;
     end
 
     local agent_id = normalize_agent_id(payload.agentId);
@@ -1001,7 +1056,7 @@ end
 local function handle_list(event)
     local request = event.request;
 
-    local auth_error = check_authorization(request);
+    local auth_error, session = check_authorization(request);
     if auth_error then
         return auth_error;
     end
@@ -1009,6 +1064,10 @@ local function handle_list(event)
     local room = find_room(query_params(request).conference);
     if not room then
         return error_response(404, 'Room not found');
+    end
+    local room_error = check_room_authorization(session, room);
+    if room_error then
+        return room_error;
     end
 
     local agents = (room.jitsiMetadata and room.jitsiMetadata.agents) or {};
@@ -1018,7 +1077,7 @@ end
 local function handle_get(event)
     local request = event.request;
 
-    local auth_error = check_authorization(request);
+    local auth_error, session = check_authorization(request);
     if auth_error then
         return auth_error;
     end
@@ -1027,6 +1086,10 @@ local function handle_get(event)
     local room = find_room(params.conference);
     if not room then
         return error_response(404, 'Room not found');
+    end
+    local room_error = check_room_authorization(session, room);
+    if room_error then
+        return room_error;
     end
     local entry, _, agent_id = get_agent(room, params.agentId);
     if not entry then
@@ -1045,7 +1108,7 @@ local function stream_conference(conference)
     end
     local room = find_room(conference);
     if room then
-        return public_room_name(room);
+        return public_room_name(room), room;
     end
     if conference:find('@', 1, true) then
         return nil;
@@ -1062,14 +1125,19 @@ end
 
 -- Opens a lifecycle event stream on the response once the request is authorized; returns an error response instead
 -- when it cannot be opened.
-local function open_event_stream(request, response)
+local function open_event_stream(request, response, session)
     local params = query_params(request);
-    local conference;
+    local conference, room;
     if params.conference ~= nil then
-        conference = stream_conference(params.conference);
+        conference, room = stream_conference(params.conference);
         if not conference then
             return error_response(404, 'Room not found');
         end
+    end
+    local scope_error = room and check_room_authorization(session, room)
+        or check_stream_authorization(session, conference);
+    if scope_error then
+        return scope_error;
     end
     if shared.count >= MAX_EVENT_STREAMS then
         return error_response(503, 'Too many event streams');
@@ -1110,7 +1178,8 @@ end
 local function handle_events(event)
     -- The runner only calls its function for input it is given, so the event goes in run().
     async.runner(function(e)
-        local refused = check_authorization(e.request) or open_event_stream(e.request, e.response);
+        local refused, session = check_authorization(e.request);
+        refused = refused or open_event_stream(e.request, e.response, session);
         if refused then
             e.response.status_code = refused.status_code;
             e.response:send(refused.body);
@@ -1123,7 +1192,7 @@ end
 local function handle_status(event)
     local request = event.request;
 
-    local auth_error = check_status_authorization(request);
+    local auth_error, session = check_status_authorization(request);
     if auth_error then
         return auth_error;
     end
@@ -1135,6 +1204,10 @@ local function handle_status(event)
     local room = find_room(payload.conference);
     if not room then
         return error_response(404, 'Room not found');
+    end
+    local room_error = check_room_authorization(session, room);
+    if room_error then
+        return room_error;
     end
     if not STATUS_TRANSITIONS[payload.state] then
         return error_response(400, 'Invalid state');
@@ -1170,7 +1243,7 @@ end
 local function handle_dial(event)
     local request = event.request;
 
-    local auth_error = check_dial_authorization(request);
+    local auth_error, session = check_dial_authorization(request);
     if auth_error then
         return auth_error;
     end
@@ -1179,6 +1252,10 @@ local function handle_dial(event)
     local room = find_room(params.conference);
     if not room then
         return error_response(404, 'Room not found');
+    end
+    local room_error = check_room_authorization(session, room);
+    if room_error then
+        return room_error;
     end
     local entry, jicofo_entry, agent_id = get_agent(room, params.agentId);
     if not entry or not jicofo_entry.endpoint then
