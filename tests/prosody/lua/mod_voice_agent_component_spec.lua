@@ -15,9 +15,22 @@
 
 package.preload['util.hashes'] = function()
     return {
-        sha256 = function() return 'deadbeefcafef00d' end,
+        -- Generated agent ids hash the random bytes; anything else (a token) hashes to its own key.
+        sha256 = function(data)
+            if data == 'xxxxxxxx' then return 'deadbeefcafef00d'; end
+            return (tostring(data):gsub('.', function(c) return string.format('%02x', c:byte()); end));
+        end,
         hmac_sha256 = function(_key, data, _hex) return 'h:' .. data end
     };
+end
+-- util.cache: a plain map per cache, every one registered so each test starts empty.
+local caches = {};
+package.preload['util.cache'] = function()
+    return { new = function()
+        local entries = {};
+        table.insert(caches, entries);
+        return { get = function(_, k) return entries[k]; end, set = function(_, k, v) entries[k] = v; end };
+    end };
 end
 package.preload['util.random'] = function()
     return { bytes = function() return 'xxxxxxxx' end };
@@ -82,6 +95,8 @@ local verify_room_calls = {};
 local require_room_claim_calls = {};
 -- A breakout room the room lookups return for its JID, when a test sets one.
 local breakout_room = nil;
+-- Room JIDs the lookups no longer find, as after a room is destroyed.
+local gone_rooms = {};
 local mock_room;
 local timers = {};
 local host_hooks = {};
@@ -110,7 +125,7 @@ local util_stub = {
         return mock_room;
     end,
     get_room_from_jid = function(jid)
-        if jid == 'missing' then return nil; end
+        if jid == 'missing' or gone_rooms[jid] then return nil; end
         if breakout_room and jid == breakout_room.jid then return breakout_room; end
         return mock_room;
     end,
@@ -465,6 +480,10 @@ describe('mod_voice_agent_component', function()
         verify_room_ok = true;
         verify_room_calls = {};
         breakout_room = nil;
+        gone_rooms = {};
+        for _, entries in ipairs(caches) do
+            for k in pairs(entries) do entries[k] = nil; end
+        end
         mock_room = fresh_room();
         http_requests = {};
         metadata_events = 0;
@@ -1470,19 +1489,44 @@ describe('mod_voice_agent_component', function()
             assert.is_true((events('conference=acme/missing')));
         end)
 
-        it('replays to a scoped token, or sends a snapshot when a missed event names a room that is gone', function()
+        it('replays a missed event of a room that is gone when the token was checked against it before', function()
             token_room = 'r';
             invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
             local _, first = events('conference=r');
             local snapshot_id = stream_events(first)[1].id;
-            status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
             first:disconnect();
-            local _, replayed = events('conference=r', { lastEventId = snapshot_id });
-            assert.are.equal('agent.connected', stream_events(replayed)[1].event);
-            replayed:disconnect();
-            verify_room_ok = function() return false, 'room-does-not-exist'; end;
-            local _, fallback = events(nil, { lastEventId = snapshot_id });
-            assert.are.equal('snapshot', stream_events(fallback)[1].event);
+            dismiss({ conference = 'r'; agentId = 'agent-support' });
+            gone_rooms[mock_room.jid] = true;
+            local _, second = events(nil, { lastEventId = snapshot_id });
+            local received = stream_events(second);
+            assert.are.equal(1, #received);
+            assert.are.equal('agent.ended', received[1].event);
+        end)
+
+        it('skips a missed event of a gone room a token was never checked against, without a snapshot', function()
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            local _, first = events('conference=r');
+            local snapshot_id = stream_events(first)[1].id;
+            first:disconnect();
+            dismiss({ conference = 'r'; agentId = 'agent-support' });
+            gone_rooms[mock_room.jid] = true;
+            local _, other = events(nil, { lastEventId = snapshot_id; token = 'Bearer another' });
+            assert.are.equal(0, #stream_events(other), 'neither the event nor a snapshot');
+        end)
+
+        it('replays a missed event of a room that still exists after checking it', function()
+            token_room = 'r';
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' });
+            local _, first = events('conference=r');
+            local snapshot_id = stream_events(first)[1].id;
+            first:disconnect();
+            status({ conference = 'r'; agentId = 'agent-support'; state = 'active' });
+            verify_room_ok = false;
+            local _, denied = events(nil, { lastEventId = snapshot_id; token = 'Bearer another' });
+            assert.are.equal(0, #stream_events(denied));
+            verify_room_ok = true;
+            local _, allowed = events(nil, { lastEventId = snapshot_id; token = 'Bearer third' });
+            assert.are.equal('agent.connected', stream_events(allowed)[1].event);
         end)
     end)
 
@@ -1555,6 +1599,18 @@ describe('mod_voice_agent_component', function()
                 end
             end
             assert.is_true(said_why);
+        end)
+
+        it('a dev rig without auth replays every missed event, rooms gone or not', function()
+            reload_with({ prosody_password_public_key_repo_url = ''; voice_agent_insecure_skip_auth = true });
+            invite({ conference = 'r'; displayName = 'Bot'; agentId = 'support' }, { omitAuth = true });
+            local _, first = events('conference=r', { omitAuth = true });
+            local snapshot_id = stream_events(first)[1].id;
+            first:disconnect();
+            post('POST voice-agent/dismiss', { conference = 'r'; agentId = 'agent-support' }, { omitAuth = true });
+            gone_rooms[mock_room.jid] = true;
+            local _, second = events(nil, { omitAuth = true; lastEventId = snapshot_id });
+            assert.are.equal('agent.ended', stream_events(second)[1].event);
         end)
 
         it('loads without a key repository only under the insecure dev flag', function()

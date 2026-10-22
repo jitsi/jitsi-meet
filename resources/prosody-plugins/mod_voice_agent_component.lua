@@ -64,8 +64,9 @@
 --     missed instead. A keepalive comment every 15 s; closed after voice_agent_event_stream_max_age seconds
 --     (the client reconnects with Last-Event-ID); at most voice_agent_max_event_streams open at once (503)
 --     auth: ASAP, like the provisioning routes; a named room that exists is checked like them, and a stream
---     carries only the events of rooms the token may act on (verify_room per room). A replay naming a room that
---     is gone, which can no longer be checked, falls back to a snapshot
+--     carries only the events of rooms the token may act on (verify_room per room). A replayed event of a room
+--     that is gone uses what verify_room answered for the same token while the room existed, and is skipped
+--     when that token was never checked against it
 --
 -- Provisioning auth needs prosody_password_public_key_repo_url: without it the module refuses to load (a meeting
 -- token would otherwise pass), unless voice_agent_insecure_skip_auth is set for a dev rig. It also needs
@@ -86,6 +87,7 @@
 -- Copyright (C) 2026-present 8x8, Inc.
 
 local async = require 'util.async';
+local cache_new = require 'util.cache'.new;
 local hashes = require 'util.hashes';
 local random = require 'util.random';
 local json = require 'cjson.safe';
@@ -650,9 +652,13 @@ shared.seq = shared.seq or 0;
 -- The last EVENT_BUFFER_SIZE events as { seq, conference, room_jid, frame }, replayed to a reconnecting stream. The
 -- room is kept by JID, not by object, so the buffer never holds a destroyed room alive.
 shared.buffer = shared.buffer or {};
+-- What verify_room answered for a token and a room ('<token hash> <room jid>' → boolean), kept after the room is
+-- gone so a replay can still use it.
+shared.decisions = shared.decisions or cache_new(4096);
 local rooms_with_agents = shared.rooms;
 local streams = shared.streams;
 local event_buffer = shared.buffer;
+local decisions = shared.decisions;
 local EVENT_BUFFER_SIZE = 256;
 local EVENT_STREAM_KEEPALIVE = 15;
 -- Whether this instance owns the one keepalive timer (released on unload, see module.unload).
@@ -718,8 +724,10 @@ local function stream_allows(stream, room)
     if not allowed and reason == 'room-does-not-exist' then
         return nil;
     end
-    stream.allowed[room] = allowed and true or false;
-    return stream.allowed[room];
+    allowed = allowed and true or false;
+    stream.allowed[room] = allowed;
+    decisions:set(stream.token_key .. ' ' .. room.jid, allowed);
+    return allowed;
 end
 
 -- Records a lifecycle event (body: its encoded payload) and writes it to every stream in scope.
@@ -753,11 +761,15 @@ local function missed_frames(last_event_id, stream)
     local frames = {};
     for _, entry in ipairs(event_buffer) do
         if entry.seq > seq and in_scope(stream, entry.conference) then
-            local room = get_room_from_jid(entry.room_jid);
-            local allowed = room and stream_allows(stream, room);
-            if allowed == nil then
-                -- A room that is gone can no longer be checked: a snapshot instead of a partial replay.
-                return nil;
+            local allowed = stream.session == nil;
+            if not allowed then
+                local room = get_room_from_jid(entry.room_jid);
+                allowed = room and stream_allows(stream, room);
+                if allowed == nil then
+                    -- The room is gone: what verify_room answered for this token while it existed, if it was asked.
+                    -- A room this token was never checked against is one it never knew, so it is skipped.
+                    allowed = decisions:get(stream.token_key .. ' ' .. entry.room_jid);
+                end
             end
             if allowed then
                 table.insert(frames, entry.frame);
@@ -1198,6 +1210,7 @@ local function open_event_stream(request, response, session)
     response:write_headers();
 
     local stream = { response = response; conference = conference; opened = os.time(); session = session;
+        token_key = session and hashes.sha256(session.auth_token, true);
         allowed = setmetatable({}, { __mode = 'k' }); };
     streams[stream] = true;
     shared.count = shared.count + 1;
