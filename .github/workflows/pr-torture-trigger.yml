@@ -1,0 +1,122 @@
+# Decides who can run the PR tests (pr-torture.yml) on the self-hosted runner. Two org teams,
+# named in the org variables PR_TEST_ADMIN_TEAM and PR_TEST_TRUSTED_TEAM:
+#   admins:  start the tests on any PR commenting "ok to test", force a new run with "test this please",
+#            or run them from the Actions tab for a PR number
+#   trusted: their own PRs run on every push, and they can force a new run of their own PR
+#            with "test this please"
+# Any other PR runs only when an admin starts it, and only for the commit the PR is at then.
+#
+# The authorize job never checks out the PR. pull_request_target and issue_comment run this file from
+# the default branch, a PR cannot change it.
+name: PR torture
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: 'The PR to test'
+        required: true
+        type: string
+
+permissions: {}
+
+jobs:
+  authorize:
+    if: >-
+      github.event_name != 'issue_comment' ||
+      (github.event.issue.pull_request &&
+       (contains(github.event.comment.body, 'ok to test') || contains(github.event.comment.body, 'test this please')))
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    outputs:
+      run: ${{ steps.decide.outputs.run }}
+      pr-number: ${{ steps.decide.outputs.pr-number }}
+      head-sha: ${{ steps.decide.outputs.head-sha }}
+      pr-repo-url: ${{ steps.decide.outputs.pr-repo-url }}
+      pr-branch: ${{ steps.decide.outputs.pr-branch }}
+      target-branch: ${{ steps.decide.outputs.target-branch }}
+    steps:
+      # Only reads the team memberships and the PR
+      - name: GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 #v3.3.0
+        with:
+          app-id: ${{ secrets.PR_TORTURE_APP_ID }}
+          private-key: ${{ secrets.PR_TORTURE_APP_KEY }}
+          owner: jitsi
+          repositories: ${{ github.event.repository.name }}
+          permission-members: read
+          permission-pull-requests: read
+
+      - name: Decide
+        id: decide
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          ADMIN_TEAM: ${{ vars.PR_TEST_ADMIN_TEAM }}
+          TRUSTED_TEAM: ${{ vars.PR_TEST_TRUSTED_TEAM }}
+          EVENT: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number || github.event.issue.number || inputs.pr-number }}
+          ACTOR: ${{ github.event.comment.user.login || github.actor }}
+          COMMENT: ${{ github.event.comment.body }}
+        run: |
+          in_team() {
+              [ -n "$1" ] && [ "$(gh api "orgs/jitsi/teams/$1/memberships/$2" --jq .state 2>/dev/null)" = "active" ]
+          }
+
+          PR_JSON=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER")
+          AUTHOR=$(jq -r .user.login <<< "$PR_JSON")
+
+          RUN=false
+          if [ "$EVENT" = "pull_request_target" ]; then
+              if in_team "$ADMIN_TEAM" "$AUTHOR" || in_team "$TRUSTED_TEAM" "$AUTHOR"; then
+                  RUN=true
+              fi
+          elif in_team "$ADMIN_TEAM" "$ACTOR"; then
+              RUN=true
+          elif [ "$EVENT" = "issue_comment" ] && [[ "$COMMENT" == *"test this please"* ]] \
+                  && [ "$ACTOR" = "$AUTHOR" ] && in_team "$TRUSTED_TEAM" "$ACTOR"; then
+              RUN=true
+          fi
+          echo "PR #$PR_NUMBER by $AUTHOR, $EVENT by $ACTOR: run=$RUN"
+
+          {
+              echo "run=$RUN"
+              echo "pr-number=$PR_NUMBER"
+              echo "head-sha=$(jq -r .head.sha <<< "$PR_JSON")"
+              echo "pr-repo-url=$(jq -r .head.repo.clone_url <<< "$PR_JSON")"
+              echo "pr-branch=$(jq -r .head.ref <<< "$PR_JSON")"
+              echo "target-branch=$(jq -r .base.ref <<< "$PR_JSON")"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Acknowledge the comment
+        if: github.event_name == 'issue_comment'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          REACTION: ${{ steps.decide.outputs.run == 'true' && 'rocket' || '-1' }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/issues/comments/$COMMENT_ID/reactions" -f content="$REACTION" > /dev/null
+
+  pr-torture:
+    needs: authorize
+    if: needs.authorize.outputs.run == 'true'
+    uses: ./.github/workflows/pr-torture.yml
+    with:
+      project: jitsi-meet
+      pr-repo-url: ${{ needs.authorize.outputs.pr-repo-url }}
+      pr-branch: ${{ needs.authorize.outputs.pr-branch }}
+      target-branch: ${{ needs.authorize.outputs.target-branch }}
+      pr-number: ${{ needs.authorize.outputs.pr-number }}
+      head-sha: ${{ needs.authorize.outputs.head-sha }}
+    secrets:
+      PR_TORTURE_APP_ID: ${{ secrets.PR_TORTURE_APP_ID }}
+      PR_TORTURE_APP_KEY: ${{ secrets.PR_TORTURE_APP_KEY }}
+      VOX_API_KEY: ${{ secrets.VOX_API_KEY }}
+      VOX_ACCOUNT_ID: ${{ secrets.VOX_ACCOUNT_ID }}
+      VOX_HEALTH_CHECK_IN_RULE_ID: ${{ secrets.VOX_HEALTH_CHECK_IN_RULE_ID }}

@@ -1,0 +1,111 @@
+# Runs the PR tests (jitsi-pr-testing-scripts) on the self-hosted runner on oracle-prtorture.
+# Called by pr-torture-trigger.yml here and by the same workflow in lib-jitsi-meet, jicofo,
+# jitsi-videobridge and jicoco, after it decided the PR may be tested.
+name: PR torture tests
+
+on:
+  workflow_call:
+    inputs:
+      project:
+        description: 'jitsi-meet, lib-jitsi-meet, jicofo, jitsi-videobridge or jicoco'
+        required: true
+        type: string
+      pr-repo-url:
+        required: true
+        type: string
+      pr-branch:
+        required: true
+        type: string
+      target-branch:
+        required: true
+        type: string
+      pr-number:
+        required: true
+        type: string
+      head-sha:
+        required: true
+        type: string
+      scripts-ref:
+        description: 'The branch of jitsi-pr-testing-scripts to use'
+        required: false
+        type: string
+        default: master
+    secrets:
+      PR_TORTURE_APP_ID:
+        required: true
+      PR_TORTURE_APP_KEY:
+        required: true
+      VOX_API_KEY:
+        required: false
+      VOX_ACCOUNT_ID:
+        required: false
+      VOX_HEALTH_CHECK_IN_RULE_ID:
+        required: false
+
+permissions: {}
+
+jobs:
+  pr-torture:
+    # One runner with one job at a time per repo. build-pr.sh also takes /var/lock/pr-torture, so the
+    # runs of the different repos and the ones started by Jenkins wait for each other on the machine.
+    runs-on: [self-hosted, pr-torture]
+    timeout-minutes: 120
+    concurrency:
+      group: pr-torture-${{ inputs.project }}-${{ inputs.pr-number }}
+      cancel-in-progress: true
+    env:
+      PR_TEST_WORKSPACE: ${{ github.workspace }}
+      TORTURE_REMOTE_ADDRESS: ${{ vars.PR_TORTURE_GRID_URL }}
+      PR_NUMBER: ${{ inputs.pr-number }}
+      HEAD_SHA: ${{ inputs.head-sha }}
+      SOURCE_REPO: ${{ github.repository }}
+      # Kept apart from the Jenkins builds while both run
+      BUILD_NUMBER: gha-${{ github.run_id }}
+      CHECK_NAME: ${{ inputs.project }}-PR-torture
+      # Test only the commit the PR was approved at
+      PR_TEST_REQUIRE_SHA: true
+    steps:
+      - name: GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 #v3.3.0
+        with:
+          app-id: ${{ secrets.PR_TORTURE_APP_ID }}
+          private-key: ${{ secrets.PR_TORTURE_APP_KEY }}
+          owner: jitsi
+          # The check run on the PR repo, the reports in jitsi-pr-tests-pages, the prosody tests in jitsi-meet
+          repositories: ${{ github.event.repository.name }},jitsi-pr-tests-pages,jitsi-meet
+          permission-checks: write
+          permission-contents: write
+          permission-actions: read
+
+      # The runner runs as jenkins, whose ssh key can read the scripts repo. A clone of its own,
+      # not the one in the Jenkins workspace, which Jenkins updates before taking the lock.
+      - name: Check out the PR testing scripts
+        env:
+          SCRIPTS_REF: ${{ inputs.scripts-ref }}
+        run: |
+          rm -rf jitsi-pr-testing-scripts
+          git clone --depth 1 --branch "$SCRIPTS_REF" \
+            git@github.com:jitsi/jitsi-pr-testing-scripts.git jitsi-pr-testing-scripts
+
+      - name: Build and test
+        env:
+          ACCESS_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          VOX_API_KEY: ${{ secrets.VOX_API_KEY }}
+          VOX_ACCOUNT_ID: ${{ secrets.VOX_ACCOUNT_ID }}
+          VOX_HEALTH_CHECK_IN_RULE_ID: ${{ secrets.VOX_HEALTH_CHECK_IN_RULE_ID }}
+          PROJECT: ${{ inputs.project }}
+          PR_REPO_URL: ${{ inputs.pr-repo-url }}
+          PR_BRANCH: ${{ inputs.pr-branch }}
+          TARGET_BRANCH: ${{ inputs.target-branch }}
+        run: |
+          jitsi-pr-testing-scripts/build-pr.sh "$PROJECT" "$PR_REPO_URL" "$PR_BRANCH" "$TARGET_BRANCH"
+
+      - name: Upload the test reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 #v7.0.2
+        with:
+          name: pr-torture-${{ inputs.project }}-${{ inputs.pr-number }}
+          path: release/test-reports.zip
+          if-no-files-found: ignore
