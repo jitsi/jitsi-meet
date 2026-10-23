@@ -1,7 +1,5 @@
-// @ts-ignore
 import * as THREE from 'three';
-// @ts-ignore
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 import logger from '../../virtual-background/logger';
 
@@ -42,7 +40,7 @@ export interface IARFilterConfig {
     /** MediaPipe landmark index to anchor the model to. Defaults to nose bridge (168). */
     anchorLandmark: number;
 
-    /** Depth offset along the model's local Z axis. Positive moves the model toward the viewer. Tuned per model. */
+    /** Depth offset along the model's local Z axis. Positive moves the model away from the viewer. Tuned per model. */
     depthOffset: number;
 
     /** Stable identifier used for logging and runtime switching. */
@@ -66,7 +64,7 @@ export class JitsiStreamAREffect {
 
     private scene: THREE.Scene;
     private camera: THREE.OrthographicCamera;
-    private renderer: THREE.WebGLRenderer;
+    private renderer: THREE.WebGLRenderer | null = null;
     private canvas: HTMLCanvasElement;
     private loader: GLTFLoader;
 
@@ -84,8 +82,8 @@ export class JitsiStreamAREffect {
     private smoothQuat = new THREE.Quaternion();
     private isFirstPose = true;
 
-    // Calibration state — see getFrameDataForType(). Reset whenever tracking is lost or a
-    // new filter/model is loaded, since the ratio is meaningless across sessions/models.
+    // Calibration state — see getFrameDataForType(). Reset on new filter/model load
+    // since the eye-span-to-face-height ratio is meaningless across different models.
     private _calibratedEyeToHeightRatio: number | null = null;
     private _calibrationFrameCount = 0;
 
@@ -108,15 +106,21 @@ export class JitsiStreamAREffect {
         );
         this.camera.position.z = 1000;
 
-        this.renderer = new THREE.WebGLRenderer({
-            alpha: true,
-            antialias: true,
-            canvas: this.canvas,
-            powerPreference: 'low-power'
-        });
-        this.renderer.setSize(width, height);
-        this.renderer.setPixelRatio(Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 2));
-        this.renderer.setClearColor(0x000000, 0);
+        try {
+            this.renderer = new THREE.WebGLRenderer({
+                alpha: true,
+                antialias: true,
+                canvas: this.canvas,
+                powerPreference: 'low-power'
+            });
+            this.renderer.setSize(width, height);
+            this.renderer.setPixelRatio(Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 2));
+            this.renderer.setClearColor(0x000000, 0);
+        } catch (err) {
+            logger.warn('[AR] WebGL2 context unavailable, AR will be disabled:', err);
+
+            return;
+        }
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
 
@@ -128,6 +132,15 @@ export class JitsiStreamAREffect {
         this.scene.add(directionalLight);
 
         this.loader = new GLTFLoader();
+    }
+
+    /**
+     * Returns whether the AR effect is usable (WebGL2 context was available).
+     *
+     * @returns {boolean}
+     */
+    public isAvailable(): boolean {
+        return this.renderer !== null;
     }
 
     /**
@@ -148,7 +161,7 @@ export class JitsiStreamAREffect {
 
         this.loader.load(
             url,
-            (gltf: any) => this._onGLTFLoaded(gltf, filter),
+            (gltf: GLTF) => this._onGLTFLoaded(gltf, filter),
             undefined,
             (err: any) => {
                 logger.error(`[AR] Failed to load "${filter.modelFile}":`, err);
@@ -164,7 +177,11 @@ export class JitsiStreamAREffect {
      * @param {IARFilterConfig} filter - Filter configuration this model belongs to.
      * @returns {void}
      */
-    private _onGLTFLoaded(gltf: any, filter: IARFilterConfig): void {
+    private _onGLTFLoaded(gltf: GLTF, filter: IARFilterConfig): void {
+        if (!this.renderer || this._currentFilter?.id !== filter.id) {
+            return;
+        }
+
         const rawModel = gltf.scene;
 
         const bbox = new THREE.Box3().setFromObject(rawModel);
@@ -287,6 +304,10 @@ export class JitsiStreamAREffect {
             faceLandmarks: number[][] | null,
             facialTransformationMatrix: number[] | null
     ): void {
+        if (!this.renderer) {
+            return;
+        }
+
         if (!this.pivotGroup) {
             this.renderer.render(this.scene, this.camera);
 
@@ -359,20 +380,6 @@ export class JitsiStreamAREffect {
     }
 
     /**
-     * Resets pose and calibration state. Call when the face is lost
-     * or a new filter is loaded to avoid interpolating from a stale pose.
-     *
-     * @returns {void}
-     */
-    public resetState(): void {
-        this.isFirstPose = true;
-        this._resetCalibration();
-        if (this.pivotGroup) {
-            this.pivotGroup.visible = false;
-        }
-    }
-
-    /**
      * Resizes the renderer and camera frustum to match the actual output resolution.
      * Called by BackgroundFrameProcessor whenever the source frame dimensions change.
      *
@@ -393,7 +400,7 @@ export class JitsiStreamAREffect {
         this.camera.bottom = -height / 2;
         this.camera.updateProjectionMatrix();
 
-        this.renderer.setSize(width, height);
+        this.renderer?.setSize(width, height);
     }
 
     /**
@@ -442,6 +449,10 @@ export class JitsiStreamAREffect {
      */
     public dispose(): void {
         this._disposeModel();
-        this.renderer.dispose();
+        if (this.renderer) {
+            this.renderer.dispose();
+            this.renderer.forceContextLoss();
+            this.renderer = null;
+        }
     }
 }

@@ -11,18 +11,24 @@
  * Message protocol
  *
  *   Main -> Worker:
- *     { type: 'init', backend: string, segWidth: number, segHeight: number,
+ *     { type: 'init', arEnabled: boolean, arModelPath: string, arWasmBase: string,
+ *       backend: string, segWidth: number, segHeight: number,
  *       tfjsModelUrl: string, tfliteModelPath: string, tfliteWasmBase: string }
- *     { type: 'infer', bitmap: ImageBitmap }   (bitmap is transferred -- zero-copy)
+ *     { type: 'infer', bitmap: ImageBitmap, arBitmap: ImageBitmap | null }
+ *       (bitmaps are transferred -- zero-copy)
  *
  *   Worker -> Main:
- *     { type: 'init_done', backend: string, segHeight: number, segWidth: number }
+ *     { type: 'init_done', arReady: boolean, backend: string, segHeight: number, segWidth: number }
  *       backend/segHeight/segWidth reflect the actual tier used (may differ from requested
- *       backend when the Worker fell back to TFLite because the GPU backend was unavailable)
+ *       backend when the Worker fell back to TFLite because the GPU backend was unavailable).
+ *       arReady indicates whether AR face tracking initialised successfully.
  *     { type: 'init_error', error: string }
- *     { type: 'mask', data: Uint8ClampedArray, width: number, height: number }
+ *     { type: 'ar_init_error', error: string }
+ *     { type: 'mask', data: Uint8ClampedArray, width: number, height: number,
+ *       faceLandmarks: number[][] | null, facialTransformationMatrix: number[] | null }
  *       (data.buffer is transferred -- zero-copy)
  *     { type: 'infer_error', error: string }
+ *     { type: 'ar_infer_error', error: string }
  */
 
 import '@tensorflow/tfjs-backend-webgl';
@@ -112,8 +118,6 @@ let faceLandmarker: FaceLandmarker | null = null;
 
 /** Whether AR face tracking initialised successfully for this session. */
 let arEnabled = false;
-
-let arFrameTimestamp = 0;
 
 /**
  * Type-safe postMessage wrapper for DedicatedWorkerGlobalScope.
@@ -210,6 +214,7 @@ async function handleInit(data: {
             arEnabled = false;
         }
     }
+    workerPost({ arReady: arEnabled, backend: currentBackend, segHeight: data.segHeight, segWidth: data.segWidth, type: 'init_done' });
 }
 
 /**
@@ -274,8 +279,6 @@ async function handleInitTfjs(data: {
                 runtime: 'tfjs'
             } as MediaPipeSelfieSegmentationTfjsModelConfig
         );
-
-        workerPost({ backend: currentBackend, segHeight: data.segHeight, segWidth: data.segWidth, type: 'init_done' });
     } catch (err) {
         // GPU init threw (e.g. OffscreenCanvas WebGL context creation failed) — fall back to TFLite.
         currentBackend = BackendType.TFLITE;
@@ -365,8 +368,6 @@ async function handleInitTflite(data: {
 
         tfliteReadCanvas = new OffscreenCanvas(segWidth, segHeight);
         tfliteReadCtx = tfliteReadCanvas.getContext('2d', { willReadFrequently: true });
-
-        workerPost({ backend: currentBackend, segHeight: tfliteSegHeight, segWidth: tfliteSegWidth, type: 'init_done' });
     } catch (err) {
         workerPost({ error: String(err), type: 'init_error' });
     }
@@ -419,7 +420,7 @@ async function runSegmentation(bitmap: ImageBitmap): Promise<{ data: Uint8Clampe
 /**
  * Uses mediapipe/tasks-vision.
  * Runs FaceLandmarker.detectForVideo() API to scan if there is face.
- * Returns 468-point 3D face mesh landmarks and a 4x4 facial transformation matrix for AR overlay.
+ * Returns 478-point 3D face mesh landmarks and a 4x4 facial transformation matrix for AR overlay.
  * Runs mediapipe faceLandMarker models and
  * Computes facial transformation matrix using MediaPipe Tasks Vision.
  *
@@ -433,7 +434,7 @@ async function runFaceLandmarker(bitmap: ImageBitmap): Promise<{ faceLandmarks: 
         return null;
     }
     try {
-        arFrameTimestamp += 1;
+        const arFrameTimestamp = performance.now();
         const result = faceLandmarker.detectForVideo(bitmap, arFrameTimestamp);
 
         if (!result.faceLandmarks?.length) {
@@ -454,12 +455,13 @@ async function runFaceLandmarker(bitmap: ImageBitmap): Promise<{ faceLandmarks: 
 }
 
 /**
- * Runs segmentation and (if AR is enabled) face landmark detection in parallel,
+ * Runs segmentation and (if AR is enabled) face landmark detection,
  * merges the results, and posts a single 'mask' message to the main thread.
  *
  * Delegates backend selection entirely to runSegmentation,
  * so this function won't know TF.js or TFLite produced the mask.
- * When arEnabled is false, arBitmap is ignored and the outgoing message carries null.
+ * Runs sequentially since detectForVideo is synchronous.
+ * When arEnabled is false, arBitmap is ignored and closed.
  *
  * @param {ImageBitmap} segBitmap - Pre-scaled camera frame at the tier's segmentation resolution.
  * @param {ImageBitmap|null} [arBitmap] - Pre-scaled camera frame for face landmark detection.
@@ -467,7 +469,12 @@ async function runFaceLandmarker(bitmap: ImageBitmap): Promise<{ faceLandmarks: 
  * @returns {Promise<void>} Resolves after the merged mask message is posted, or after a no-op if segmentation produced no mask.
  */
 async function handleInfer(segBitmap: ImageBitmap, arBitmap: ImageBitmap | null = null): Promise<void> {
-    const [ maskMsg, arResult ] = await Promise.all([ runSegmentation(segBitmap), arEnabled && arBitmap ? runFaceLandmarker(arBitmap) : null ]);
+    const maskMsg = await runSegmentation(segBitmap);
+    const arResult = arEnabled && arBitmap ? await runFaceLandmarker(arBitmap) : null;
+
+    if (!arEnabled && arBitmap) {
+        arBitmap.close();
+    }
 
     if (maskMsg) {
         workerPost({ ...maskMsg, facialTransformationMatrix: arResult?.facialTransformationMatrix ?? null, faceLandmarks: arResult?.faceLandmarks ?? null, type: 'mask' },

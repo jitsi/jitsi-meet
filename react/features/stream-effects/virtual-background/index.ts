@@ -1,11 +1,11 @@
 /* eslint-disable lines-around-comment */
 
-import { getBaseUrl } from '../../base/util/helpers';
 import {
     createVirtualBackgroundV2FailedEvent,
     createVirtualBackgroundV2StartedEvent
 } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
+import { getBaseUrl } from '../../base/util/helpers';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { timeout } from '../../virtual-background/functions';
@@ -13,7 +13,6 @@ import logger from '../../virtual-background/logger';
 import { IVirtualBackground } from '../../virtual-background/reducer';
 
 import { BackendType, detectDeviceTier } from './DeviceTierDetector';
-import { IARFilterConfig } from './JitsiStreamAREffect';
 import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect';
 import { AR_FILTERS } from './arFilters';
 // @ts-ignore
@@ -84,8 +83,10 @@ export async function createVirtualBackgroundEffect(virtualBackground: IVirtualB
             ? AR_FILTERS.find(f => f.id === virtualBackground.selectedARFilterId)
             : undefined;
 
-        const arFilter: IARFilterConfig | undefined = (arGated && selectedFilter)
-            ? {
+        let arFilter: { anchorLandmark: number; depthOffset: number; id: string; modelFile: string; scaleMultiplier: number; tooltip?: string; verticalOffset: number; } | undefined;
+
+        if (arGated && selectedFilter) {
+            arFilter = {
                 anchorLandmark: selectedFilter.anchorLandmark,
                 depthOffset: selectedFilter.depthOffset,
                 id: selectedFilter.id,
@@ -93,7 +94,8 @@ export async function createVirtualBackgroundEffect(virtualBackground: IVirtualB
                 scaleMultiplier: selectedFilter.scaleMultiplier,
                 tooltip: selectedFilter.tooltip,
                 verticalOffset: selectedFilter.verticalOffset
-            } : undefined;
+            };
+        }
 
         const effect = new JitsiStreamBackgroundEffect(undefined, virtualBackground, {
             arFilter,
