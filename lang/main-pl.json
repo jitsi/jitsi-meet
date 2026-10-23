@@ -210,12 +210,6 @@
         "microphonePermission": "Błąd podczas otrzymywania uprawnień do mikrofonu"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Kontrola połączeń",
-            "connectedDevices": "Połączone urządzenia:",
-            "deleteDevice": "Usuń urządzenie",
-            "pairDevice": "Sparuj urządzenie"
-        },
         "noPermission": "Nie przyznano uprawnienia",
         "previewUnavailable": "Podgląd niedostępny",
         "selectADevice": "Wybierz urządzenie",
