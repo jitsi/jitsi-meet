@@ -1,11 +1,11 @@
 /* eslint-disable lines-around-comment */
 
-import { getBaseUrl } from '../../base/util/helpers';
 import {
     createVirtualBackgroundV2FailedEvent,
     createVirtualBackgroundV2StartedEvent
 } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
+import { getBaseUrl } from '../../base/util/helpers';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { timeout } from '../../virtual-background/functions';

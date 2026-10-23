@@ -9,7 +9,7 @@ export interface IInferResult {
 }
 
 /** Options for enabling AR alongside segmentation. */
-export interface IArIninOptions {
+export interface IArInitOptions {
     enable: boolean;
     modelPath: string;
     wasmBase: string;
@@ -30,6 +30,7 @@ export interface IArIninOptions {
  * returns raw mask ImageData from each inference call.
  */
 export default class WorkerSegmentationBackend {
+    _arReady = false;
     _capabilities: IDeviceCapabilities;
     _pendingInferHandler: ((e: MessageEvent) => void) | null = null;
     _pendingInferResolve: ((value: IInferResult) => void) | null = null;
@@ -55,6 +56,15 @@ export default class WorkerSegmentationBackend {
     }
 
     /**
+     * Returns whether AR face tracking initialised successfully.
+     *
+     * @returns {boolean} True if AR is ready, false otherwise.
+     */
+    get arReady(): boolean {
+        return this._arReady;
+    }
+
+    /**
      * Creates the inference worker and sends the init message.
      *
      * The worker is loaded via an importScripts blob URL pattern (same approach as
@@ -67,11 +77,11 @@ export default class WorkerSegmentationBackend {
      * AR failing results in `null` for `facialTransformationMatrix` and `faceLandmarks`,
      * will not cause the worker to fail.
      *
-     * @param {IArIninOptions} arOptions - Options for AR (face tracking) initialization.
+     * @param {IArInitOptions} arOptions - Options for AR (face tracking) initialization.
      * @returns {Promise<void>} Resolves when the worker is ready for inference.
      * @throws {Error} When the worker signals init_error.
      */
-    async init(arOptions?: IArIninOptions): Promise<void> {
+    async init(arOptions?: IArInitOptions): Promise<void> {
         const base = getBaseUrl().replace(/\/?$/, '/');
         const workerUrl = `${base}libs/vb-inference-worker.min.js`;
 
@@ -126,6 +136,8 @@ export default class WorkerSegmentationBackend {
                         segWidth: e.data.segWidth ?? this._capabilities.segWidth
                     };
                 }
+
+                this._arReady = e.data.arReady ?? false;
 
                 logger.debug(
                     `[WorkerBackend] Inference worker ready (tier: ${this._capabilities.tier},`

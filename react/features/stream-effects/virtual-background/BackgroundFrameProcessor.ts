@@ -16,21 +16,6 @@ const BENCHMARK_LOG_INTERVAL = 60;
 const DEFAULT_TEMPORAL_BLEND_RATIO = 0.75;
 
 /**
- * Default smoothstep lower threshold for the LOW tier (TFLite selfie_segmentation_landscape).
- * The landscape model (MediaPipe 2021, 256x144) produces softer confidences than modern models:
- * hair strands typically sit in [0.10, 0.35], body/face in [0.60, 0.95], and true background
- * below 0.10. A floor of 0.10 keeps hair in the transition zone without admitting background.
- */
-const DEFAULT_EDGE_LOW_TFLITE = 0.1;
-
-/**
- * Default smoothstep upper threshold for the LOW tier. The landscape model rarely saturates
- * to 1.0 even on clear body pixels, so the upper edge sits at 0.50 — pixels with confidence
- * above this are fully opaque.
- */
-const DEFAULT_EDGE_HIGH_TFLITE = 0.5;
-
-/**
  * Default smoothstep lower threshold for MEDIUM/HIGH tiers (TF.js MediaPipe body-segmentation).
  * Background pixels near edges are typically below 0.25 and hair/edge pixels fall in 0.28-0.65.
  */
@@ -139,9 +124,8 @@ export default class BackgroundFrameProcessor {
 
         // Tier-specific edge thresholds — only used by WebGL compositor (V2).
         // V1 Canvas 2D path ignores these (mask is used as-is for alpha compositing).
-        const isTFLite = opts.backend.capabilities.backend === BackendType.TFLITE;
-        const defaultEdgeLow = isTFLite ? DEFAULT_EDGE_LOW_TFLITE : DEFAULT_EDGE_LOW_GPU;
-        const defaultEdgeHigh = isTFLite ? DEFAULT_EDGE_HIGH_TFLITE : DEFAULT_EDGE_HIGH_GPU;
+        const defaultEdgeLow = opts.vbConfig?.edgeLow ?? DEFAULT_EDGE_LOW_GPU;
+        const defaultEdgeHigh = opts.vbConfig?.edgeHigh ?? DEFAULT_EDGE_HIGH_GPU;
 
         this._edgeLow = opts.vbConfig?.edgeLow ?? defaultEdgeLow;
         this._edgeHigh = opts.vbConfig?.edgeHigh ?? defaultEdgeHigh;
@@ -155,9 +139,7 @@ export default class BackgroundFrameProcessor {
 
         this._backgroundCanvas = document.createElement('canvas');
 
-        this._arEnabled = Boolean(opts.arFilter) && !isTFLite;
-
-        if (this._arEnabled && opts.arFilter) {
+        if (opts.arFilter) {
             const baseUrl = getBaseUrl();
 
             this._arEffect = new JitsiStreamAREffect(baseUrl, AR_BITMAP_WIDTH, AR_BITMAP_HEIGHT);
@@ -175,13 +157,18 @@ export default class BackgroundFrameProcessor {
         if (this._isReady) {
             return;
         }
+        const arRequested = Boolean(this._arEffect);
+
         await this._backend.init(
-            this._arEnabled
+            arRequested
                 ? {
                     enable: true, modelPath: this._arModelPath ?? '', wasmBase: this._arWasmBase ?? ''
                 }
                 : undefined
         );
+        this._arEnabled = Boolean(this._backend.arReady ?? false)
+            && this._backend.capabilities.backend !== BackendType.TFLITE
+            && this._arEffect?.isAvailable();
         this._isReady = true;
         logger.debug('[BackgroundFrameProcessor] Backend init complete');
     }
