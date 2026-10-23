@@ -5,7 +5,6 @@ import { IVirtualBackground } from '../../virtual-background/reducer';
 
 import BackgroundFrameProcessor from './BackgroundFrameProcessor';
 import { BackendType, DeviceTier, IDeviceCapabilities } from './DeviceTierDetector';
-import { IARFilterConfig } from './JitsiStreamAREffect';
 import WorkerSegmentationBackend from './backend/WorkerSegmentationBackend';
 import Canvas2DCompositor from './compositor/Canvas2DCompositor';
 import { ICompositor } from './compositor/ICompositor';
@@ -30,7 +29,7 @@ const V1_SEG_HEIGHT = 144;
  * Presence of this object on the constructor is the V1/V2 discriminator.
  */
 export interface IV2EffectInit {
-    arFilter?: IARFilterConfig;
+    arFilter?: any;
     arModelPath?: string;
     arWasmBase?: string;
     capabilities: IDeviceCapabilities;
@@ -99,7 +98,7 @@ export default class JitsiStreamBackgroundEffect {
         }
     }
 
-    setARFilter(filter: IARFilterConfig): void {
+    setARFilter(filter: any): void {
         this._processor?.setARFilter(filter);
     }
 
