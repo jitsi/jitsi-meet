@@ -1,9 +1,10 @@
-import React, { ReactNode, useCallback, useContext, useEffect } from 'react';
+import React, { ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import { FocusOn } from 'react-focus-on';
 import { useTranslation } from 'react-i18next';
 import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
 
+import { getPopoverTrigger } from '../../../popover/functions.web';
 import { isElementInTheViewport } from '../../functions.web';
 
 import { DialogTransitionContext } from './DialogTransition';
@@ -162,6 +163,28 @@ const BaseDialog = ({
     const { isUnmounting } = useContext(DialogTransitionContext);
     const { t } = useTranslation();
 
+    // Dialogs are often opened from a popover menu which closes right after the dialog opens, so by the time the
+    // dialog closes the element which opened it is gone. Remember the popover's trigger to return the focus to it.
+    const [ popoverTrigger ] = useState(() => getPopoverTrigger(document.activeElement));
+
+    const returnFocus = useCallback((opener: Element) => {
+        // The focus lock may get activated only after the popover has closed, in which case it saw the body as focused.
+        if (!popoverTrigger || (opener.isConnected && opener !== document.body)) {
+            // If we return the focus to an element outside the viewport the page will scroll to
+            // this element which in our case is undesirable and the element is outside of the
+            // viewport on purpose (to be hidden). For example if we return the focus to the toolbox
+            // when it is hidden the whole page will move up in order to show the toolbox. This is
+            // usually followed up with displaying the toolbox (because now it is on focus) but
+            // because of the animation the whole scenario looks like jumping large video.
+            return isElementInTheViewport(opener);
+        }
+
+        // The focus lock is still being deactivated, move the focus once it is done.
+        Promise.resolve().then(() => isElementInTheViewport(popoverTrigger) && popoverTrigger.focus());
+
+        return false;
+    }, [ popoverTrigger ]);
+
     const onBackdropClick = useCallback(() => {
         !disableBackdropClose && onClose?.();
     }, [ disableBackdropClose, onClose ]);
@@ -189,16 +212,7 @@ const BaseDialog = ({
             <FocusOn
                 className = { classes.focusLock }
                 onClickOutside = { onBackdropClick }
-                returnFocus = {
-
-                    // If we return the focus to an element outside the viewport the page will scroll to
-                    // this element which in our case is undesirable and the element is outside of the
-                    // viewport on purpose (to be hidden). For example if we return the focus to the toolbox
-                    // when it is hidden the whole page will move up in order to show the toolbox. This is
-                    // usually followed up with displaying the toolbox (because now it is on focus) but
-                    // because of the animation the whole scenario looks like jumping large video.
-                    isElementInTheViewport
-                }>
+                returnFocus = { returnFocus }>
                 <div
                     aria-description = { description }
                     aria-label = { title ?? t(titleKey ?? '') }
