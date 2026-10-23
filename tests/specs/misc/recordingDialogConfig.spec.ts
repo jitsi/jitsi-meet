@@ -118,6 +118,38 @@ async function setRunningState(recordingRunning: boolean, transcriptionRunning: 
     }, recordingRunning, transcriptionRunning);
 }
 
+/**
+ * Fakes an active live stream the same way: RECORDING_SESSION_UPDATED with a STREAM session in the
+ * ON state is what the recording middleware dispatches once jicofo reports a running live stream,
+ * and isLiveStreamingRunning() only looks at the reducer's sessionDatas. No Jibri is involved.
+ */
+async function startFakeLiveStream(): Promise<void> {
+    await ctx.p1.execute(() => {
+        const { mode, status } = JitsiMeetJS.constants.recording;
+
+        APP.store.dispatch({
+            type: 'RECORDING_SESSION_UPDATED',
+            sessionData: {
+                id: 'fake-live-stream-for-testing',
+                mode: mode.STREAM,
+                status: status.ON
+            }
+        });
+    });
+}
+
+/**
+ * Fakes a transcriber that is in the meeting only for the subtitles: TRANSCRIBER_JOINED without
+ * the recording.isTranscribingEnabled metadata flag, so isTranscribing() is true while
+ * isRecorderTranscriptionsRunning() is false.
+ */
+async function setSubtitlesOnlyTranscriber(): Promise<void> {
+    await ctx.p1.execute(() => {
+        APP.store.dispatch({ type: 'TRANSCRIBER_JOINED',
+            transcriberJID: 'fake-transcriber-for-testing' });
+    });
+}
+
 setTestProperties(__filename, {
     description: 'Recording & Transcription dialog rendering across config.js flag combinations',
     usesBrowsers: [ 'p1' ]
@@ -265,6 +297,104 @@ describe('Recording dialog config — mixed running state (recording vs transcri
             await dialog.cancel();
         });
     }
+});
+
+/*
+ * A live stream and the file recordings service (or Dropbox) both use Jibri, so while a live stream
+ * runs the storage selector only offers local recording. The dialog's selected service has to follow
+ * that: the selector alone is not enough to tell, since it displays its first option whenever the
+ * selected value is not among its options. The options rendered below it are, though: the "record
+ * only myself" switch is only rendered while local recording is the selected service.
+ */
+describe('Recording dialog config — live stream running', () => {
+    const LIVE_STREAM_CONFIG = {
+        localRecording: {
+            disable: false,
+            disableSelfRecording: false
+        },
+        recordingService: { enabled: true }
+    };
+
+    let localRecordingSupported: boolean;
+
+    it('setup', async () => {
+        await joinWithConfig(LIVE_STREAM_CONFIG);
+        localRecordingSupported = await isLocalRecordingSupportedByBrowser();
+    });
+
+    it('local recording is preselected while a live stream runs', async () => {
+        if (!localRecordingSupported) {
+            return;
+        }
+
+        await joinWithConfig(LIVE_STREAM_CONFIG);
+        await startFakeLiveStream();
+
+        const dialog = ctx.p1.getRecordingTranscriptionDialog();
+
+        await ctx.p1.getToolbar().clickRecordingButton();
+        await dialog.waitForDisplay();
+        await dialog.toggleRecordingOptions();
+
+        expect(await dialog.getSelectedService()).toBe('Local recording');
+        expect(await dialog.hasLocalRecordingOnlySelfSwitch()).toBe(true);
+
+        await dialog.cancel();
+    });
+
+    it('switches to local recording when a live stream starts while the dialog is open', async () => {
+        if (!localRecordingSupported) {
+            return;
+        }
+
+        await joinWithConfig(LIVE_STREAM_CONFIG);
+
+        const dialog = ctx.p1.getRecordingTranscriptionDialog();
+
+        await ctx.p1.getToolbar().clickRecordingButton();
+        await dialog.waitForDisplay();
+        await dialog.toggleRecordingOptions();
+
+        expect(await dialog.getSelectedService()).toBe('Recording service');
+        expect(await dialog.hasLocalRecordingOnlySelfSwitch()).toBe(false);
+
+        await startFakeLiveStream();
+
+        await ctx.p1.driver.waitUntil(() => dialog.hasLocalRecordingOnlySelfSwitch(), {
+            timeout: 3000,
+            timeoutMsg: 'local recording did not become the selected service'
+        });
+        expect(await dialog.getSelectedService()).toBe('Local recording');
+
+        await dialog.cancel();
+    });
+});
+
+/*
+ * A transcriber that is in the meeting only for the subtitles cannot be turned into a recorder
+ * transcription, so the dialog does not offer starting one.
+ */
+describe('Recording dialog config — transcriber in the meeting only for the subtitles', () => {
+    it('Start transcription and Start both are disabled, with a tooltip', async () => {
+        await joinWithConfig({
+            recordingService: { enabled: true },
+            transcription: { enabled: true }
+        });
+        await setSubtitlesOnlyTranscriber();
+
+        const dialog = ctx.p1.getRecordingTranscriptionDialog();
+
+        await ctx.p1.getToolbar().clickRecordingButton();
+        await dialog.waitForDisplay();
+
+        expect(await dialog.hasStartTranscriptionButton()).toBe(true);
+        expect(await dialog.isStartTranscriptionEnabled()).toBe(false);
+        expect(await dialog.isStartBothEnabled()).toBe(false);
+        expect(await dialog.isStartRecordingEnabled()).toBe(true);
+        expect(await dialog.getStartTranscriptionTooltip()).toContain('Transcription is already on');
+
+        await dialog.cancel();
+    });
 });
 
 describe('Recording dialog config — recordingService.sharingEnabled', () => {

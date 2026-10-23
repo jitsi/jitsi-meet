@@ -6,18 +6,13 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { _abstractMapStateToProps } from '../../../base/dialog/functions';
-import { MEET_FEATURES } from '../../../base/jwt/constants';
-import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
-import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox/actions';
-import { isE2EEOnInMeeting } from '../../../e2ee/functions';
 import { setFollowMeRecorderExclusive } from '../../../follow-me/actions';
-import { isFollowMeActive, isFollowMeRecorderActive } from '../../../follow-me/functions';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { getAvailableSubtitlesLanguages } from '../../../subtitles/functions.any';
-import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
 import { RECORDING_TYPES } from '../../constants';
-import { hasRecordingOrTranscriptionFeature, isLiveStreamingRunning, supportsLocalRecording } from '../../functions';
+
+import { IRecordingDialogModel } from './dialogModel';
 
 /**
  * The type of the React {@code Component} props of
@@ -32,40 +27,9 @@ export interface IProps extends WithTranslation {
     _availableLanguages: Array<string>;
 
     /**
-     * Whether the local participant can manage recording/transcription (moderator or holds the
-     * recording/transcription feature claim).
-     */
-    _canManageRecordingOrTranscription: boolean;
-
-    /**
-     * Whether the local participant can start transcribing.
-     */
-    _canStartTranscribing: boolean;
-
-    /**
      * Style of the dialogs feature.
      */
     _dialogStyles: any;
-
-    /**
-     * Whether end-to-end encryption is on, which rules out starting transcription.
-     */
-    _e2eeEnabled: boolean;
-
-    /**
-     * Whether any moderator has the regular Follow Me feature active.
-     */
-    _followMeActive: boolean;
-
-    /**
-     * Whether any moderator has the recorder Follow Me feature active.
-     */
-    _followMeRecorderActive: boolean;
-
-    /**
-     * Whether the local participant has the recorder Follow Me setting enabled.
-     */
-    _followMeRecorderEnabled: boolean;
 
     /**
      * Whether to hide the storage warning or not.
@@ -73,34 +37,9 @@ export interface IProps extends WithTranslation {
     _hideStorageWarning: boolean;
 
     /**
-     * Whether a live stream session is currently active.
-     */
-    _isLiveStreamRunning: boolean;
-
-    /**
-     * Whether the local participant is a moderator.
-     */
-    _isModerator: boolean;
-
-    /**
-     * Whether local recording is available or not.
-     */
-    _localRecordingAvailable: boolean;
-
-    /**
-     * Whether local recording is enabled or not.
-     */
-    _localRecordingEnabled: boolean;
-
-    /**
      * Whether we won't notify the other participants about the recording.
      */
     _localRecordingNoNotification: boolean;
-
-    /**
-     * Whether a local recording is currently in progress.
-     */
-    _localRecordingRunning: boolean;
 
     /**
      * Whether self local recording is enabled or not.
@@ -108,19 +47,9 @@ export interface IProps extends WithTranslation {
     _localRecordingSelfEnabled: boolean;
 
     /**
-     * Whether to render recording.
-     */
-    _renderRecording: boolean;
-
-    /**
      * The color-schemed stylesheet of this component.
      */
     _styles: any;
-
-    /**
-     * Whether transcription is currently running.
-     */
-    _transcriptionRunning: boolean;
 
     /**
      * CSS classes object (web only).
@@ -131,23 +60,6 @@ export interface IProps extends WithTranslation {
      * The redux dispatch function.
      */
     dispatch: IStore['dispatch'];
-
-    /**
-     * Whether to show file recordings service, even if integrations
-     * are enabled.
-     */
-    fileRecordingsServiceEnabled: boolean;
-
-    /**
-     * Whether to show the possibility to share file recording with other people (e.g. Meeting participants), based on
-     * the actual implementation on the backend.
-     */
-    fileRecordingsServiceSharingEnabled: boolean;
-
-    /**
-     * If true the content related to the integrations will be shown.
-     */
-    integrationsEnabled: boolean;
 
     /**
      * <tt>true</tt> if we have valid oauth token.
@@ -168,6 +80,11 @@ export interface IProps extends WithTranslation {
      * Whether or not we should only record the local streams.
      */
     localRecordingOnlySelf?: boolean;
+
+    /**
+     * Every decision about what to show and what can be started, computed by the dialog.
+     */
+    model: IRecordingDialogModel;
 
     /**
      * Callback to change the local recording only self setting.
@@ -227,20 +144,10 @@ export interface IProps extends WithTranslation {
     recordAudioAndVideo?: boolean;
 
     /**
-     * When true, audio/video recording is specifically in progress.
-     */
-    recordingRunning: boolean;
-
-    /**
      * The ("translation-languages:" prefixed) language the transcription will
      * be saved in.
      */
     selectedLanguage: string | null;
-
-    /**
-     * The currently selected recording service of type: RECORDING_TYPES.
-     */
-    selectedRecordingService: string | null;
 
     /**
      * Boolean to set file recording sharing on or off.
@@ -251,18 +158,6 @@ export interface IProps extends WithTranslation {
      * Number of MiB of available space in user's Dropbox account.
      */
     spaceLeft?: number;
-
-    /**
-     * Whether the start recording action is currently unavailable (no usable
-     * service selected).
-     */
-    startRecordingDisabled: boolean;
-
-    /**
-     * Whether transcription is currently running (from the dialog's point of
-     * view, i.e. Only when the local participant can control it).
-     */
-    transcriptionRunning: boolean;
 
     /**
      * The display name of the user's Dropbox account.
@@ -332,8 +227,9 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
      */
     override componentDidUpdate(prevProps: IProps) {
         // Auto sign-out when the user chooses another recording service.
-        if (prevProps.selectedRecordingService === RECORDING_TYPES.DROPBOX
-                && this.props.selectedRecordingService !== RECORDING_TYPES.DROPBOX && this.props.isTokenValid) {
+        if (prevProps.model.recording.selectedService === RECORDING_TYPES.DROPBOX
+                && this.props.model.recording.selectedService !== RECORDING_TYPES.DROPBOX
+                && this.props.isTokenValid) {
             this._onSignOut();
         }
     }
@@ -363,119 +259,6 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
      */
     _onToggleLanguageList() {
         this.setState({ showLanguageList: !this.state.showLanguageList });
-    }
-
-    /**
-     * Returns the list of recording services (RECORDING_TYPES values) the
-     * participant can currently pick from.
-     *
-     * Cloud based services (Jitsi recording service, Dropbox) require the
-     * recording JWT feature and are unavailable while a live stream runs
-     * (both use Jibri). Dropbox is additionally unavailable while a session
-     * is running (integrationsEnabled covers that).
-     *
-     * @returns {Array<string>}
-     */
-    _getRecordingServiceOptions(): Array<string> {
-        const {
-            _isLiveStreamRunning,
-            _localRecordingAvailable,
-            _renderRecording,
-            fileRecordingsServiceEnabled,
-            integrationsEnabled
-        } = this.props;
-        const options = [];
-
-        if (_renderRecording && !_isLiveStreamRunning) {
-            if (fileRecordingsServiceEnabled) {
-                options.push(RECORDING_TYPES.JITSI_REC_SERVICE);
-            }
-            if (integrationsEnabled) {
-                options.push(RECORDING_TYPES.DROPBOX);
-            }
-        }
-        if (_localRecordingAvailable) {
-            options.push(RECORDING_TYPES.LOCAL);
-        }
-
-        return options;
-    }
-
-    /**
-     * Whether the audio & video recording section should be rendered.
-     *
-     * @param {Array<string>} [options] - The result of {@code _getRecordingServiceOptions()},
-     * when the caller already computed it (avoids recomputing it a second time).
-     * @returns {boolean}
-     */
-    _shouldRenderRecordingSection(options: Array<string> = this._getRecordingServiceOptions()) {
-        return this.props.recordingRunning || options.length > 0;
-    }
-
-    /**
-     * Whether the transcription section should be rendered.
-     *
-     * @returns {boolean}
-     */
-    _shouldRenderTranscriptionSection() {
-        return this._canStartTranscribing() || this.props.transcriptionRunning;
-    }
-
-    /**
-     * Whether the footer buttons (start both / stop both) should be rendered.
-     * They only make sense when the participant can act on both services.
-     *
-     * @returns {boolean}
-     */
-    _shouldRenderFooter() {
-        return this._shouldRenderRecordingSection() && this._shouldRenderTranscriptionSection();
-    }
-
-    /**
-     * Whether the file sharing content should be rendered or not.
-     *
-     * @returns {boolean}
-     */
-    _shouldRenderFileSharingContent() {
-        const {
-            fileRecordingsServiceEnabled,
-            fileRecordingsServiceSharingEnabled,
-            isVpaas,
-            selectedRecordingService
-        } = this.props;
-
-        if (!fileRecordingsServiceEnabled
-            || !fileRecordingsServiceSharingEnabled
-            || isVpaas
-            || selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Whether the recorder follow me option should be rendered: moderators
-     * only, and only for the cloud based services which spawn a recorder
-     * participant that can follow (local recordings record the own view).
-     *
-     * @returns {boolean}
-     */
-    _shouldRenderFollowMeRecorder() {
-        const { _isModerator, selectedRecordingService } = this.props;
-
-        return _isModerator
-            && (selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE
-                || selectedRecordingService === RECORDING_TYPES.DROPBOX);
-    }
-
-    /**
-     * Whether the save transcription content should be rendered or not.
-     *
-     * @returns {boolean}
-     */
-    _canStartTranscribing() {
-        return this.props._canStartTranscribing;
     }
 
     /**
@@ -509,21 +292,22 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
         const {
             isTokenValid,
             localRecordingOnlySelf,
-            selectedRecordingService,
+            model,
             sharingSetting,
             t,
             userName
         } = this.props;
+        const { followMeRecorderChecked, selectedService, showFileSharing, showFollowMeRecorder } = model.recording;
 
-        if (!selectedRecordingService) {
+        if (!selectedService) {
             return '';
         }
 
-        const parts = [ t(this._getServiceLabelKey(selectedRecordingService)) ];
+        const parts = [ t(this._getServiceLabelKey(selectedService)) ];
 
-        switch (selectedRecordingService) {
+        switch (selectedService) {
         case RECORDING_TYPES.JITSI_REC_SERVICE:
-            if (this._shouldRenderFileSharingContent()) {
+            if (showFileSharing) {
                 parts.push(t(sharingSetting ? 'recording.linkShared' : 'recording.linkNotShared'));
             }
             break;
@@ -537,7 +321,7 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
             break;
         }
 
-        if (this._shouldRenderFollowMeRecorder() && this._isFollowMeRecorderChecked()) {
+        if (showFollowMeRecorder && followMeRecorderChecked) {
             parts.push(t('settings.followMeRecorder'));
         }
 
@@ -563,9 +347,9 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
      * @returns {void}
      */
     _onRecordingServiceChange(service: string) {
-        const { isTokenValid, onRecordingServiceChange, selectedRecordingService } = this.props;
+        const { isTokenValid, model, onRecordingServiceChange } = this.props;
 
-        if (service === selectedRecordingService) {
+        if (service === model.recording.selectedService) {
             return;
         }
 
@@ -579,37 +363,13 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
     /**
      * Handler for the recorder follow me setting.
      *
-     * @param {boolean} enabled - The new value.
+     * @param {boolean} [enabled] - The new value; toggles the switch when omitted.
      * @returns {void}
      */
     _onFollowMeRecorderChange(enabled?: boolean) {
-        const value = enabled ?? !this.props._followMeRecorderEnabled;
+        const value = enabled ?? !this.props.model.recording.followMeRecorderChecked;
 
         this.props.dispatch(setFollowMeRecorderExclusive(value));
-    }
-
-    /**
-     * Whether the recorder follow me option is checked.
-     *
-     * @returns {boolean}
-     */
-    _isFollowMeRecorderChecked() {
-        const { _followMeRecorderActive, _followMeRecorderEnabled } = this.props;
-
-        return _followMeRecorderEnabled && !_followMeRecorderActive;
-    }
-
-    /**
-     * Whether the recorder follow me option is disabled: another moderator
-     * has one of the follow me modes active, or a recording is already in
-     * progress — the recorder cannot pick up the change after it started.
-     *
-     * @returns {boolean}
-     */
-    _isFollowMeRecorderDisabled() {
-        const { _followMeActive, _followMeRecorderActive, recordingRunning } = this.props;
-
-        return _followMeActive || _followMeRecorderActive || recordingRunning;
     }
 
     /**
@@ -641,31 +401,15 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
  */
 export function mapStateToProps(state: IReduxState) {
     const { localRecording, recordingService } = state['features/base/config'];
-    const _localRecordingAvailable = !localRecording?.disable && supportsLocalRecording();
-    const canManageRecordingOrTranscription
-        = isLocalParticipantModerator(state) || hasRecordingOrTranscriptionFeature(state);
-    const { followMeRecorderEnabled } = state['features/follow-me'];
     const subtitlesLanguage = state['features/subtitles']._language?.replace('translation-languages:', '');
 
+    // Presentation only: every decision about what is shown and enabled comes with the model prop.
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
         _availableLanguages: getAvailableSubtitlesLanguages(state, subtitlesLanguage)
             .map((lang: string) => `translation-languages:${lang}`),
-        _canManageRecordingOrTranscription: canManageRecordingOrTranscription,
-        _canStartTranscribing: canAddTranscriber(state),
-        _e2eeEnabled: isE2EEOnInMeeting(state),
-        _followMeActive: isFollowMeActive(state),
-        _followMeRecorderActive: isFollowMeRecorderActive(state),
-        _followMeRecorderEnabled: Boolean(followMeRecorderEnabled),
-        _isLiveStreamRunning: isLiveStreamingRunning(state),
         _hideStorageWarning: Boolean(recordingService?.hideStorageWarning),
-        _isModerator: isLocalParticipantModerator(state),
-        _renderRecording: isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false),
-        _transcriptionRunning: canManageRecordingOrTranscription ? isRecorderTranscriptionsRunning(state) : false,
-        _localRecordingAvailable,
-        _localRecordingEnabled: !localRecording?.disable,
-        _localRecordingRunning: Boolean(state['features/recording'].localRecordingRunning),
         _localRecordingSelfEnabled: !localRecording?.disableSelfRecording,
         _localRecordingNoNotification: !localRecording?.notifyAllParticipants,
         _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')
