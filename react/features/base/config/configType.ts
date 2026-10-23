@@ -442,7 +442,6 @@ export interface IConfig {
     enableSaveLogs?: boolean;
     enableTalkWhileMuted?: boolean;
     enableTcc?: boolean;
-    enableWebHIDFeature?: boolean;
     /**
      * @deprecated Use `welcomePage.disabled` instead.
      */
