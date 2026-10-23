@@ -5,6 +5,7 @@
 #   trusted: their own PRs run on every push, and they can force a new run of their own PR
 #            with "test this please"
 # Any other PR runs only when an admin starts it, and only for the commit the PR is at then.
+# The dial-in tests, which need the VoxImplant credentials, run only for PRs of admins and trusted members.
 #
 # The authorize job never checks out the PR. pull_request_target and issue_comment run this file from
 # the default branch, a PR cannot change it.
@@ -36,6 +37,7 @@ jobs:
       pull-requests: write
     outputs:
       run: ${{ steps.decide.outputs.run }}
+      author-trusted: ${{ steps.decide.outputs.author-trusted }}
       pr-number: ${{ steps.decide.outputs.pr-number }}
       head-sha: ${{ steps.decide.outputs.head-sha }}
       pr-repo-url: ${{ steps.decide.outputs.pr-repo-url }}
@@ -73,23 +75,27 @@ jobs:
           AUTHOR=$(jq -r .user.login <<< "$PR_JSON")
           STATE=$(jq -r .state <<< "$PR_JSON")
 
+          AUTHOR_TRUSTED=false
+          if in_team "$ADMIN_TEAM" "$AUTHOR" || in_team "$TRUSTED_TEAM" "$AUTHOR"; then
+              AUTHOR_TRUSTED=true
+          fi
+
           RUN=false
           if [ "$STATE" != "open" ]; then
               echo "PR #$PR_NUMBER is $STATE, not testing it"
           elif [ "$EVENT" = "pull_request_target" ]; then
-              if in_team "$ADMIN_TEAM" "$AUTHOR" || in_team "$TRUSTED_TEAM" "$AUTHOR"; then
-                  RUN=true
-              fi
+              RUN=$AUTHOR_TRUSTED
           elif in_team "$ADMIN_TEAM" "$ACTOR"; then
               RUN=true
           elif [ "$EVENT" = "issue_comment" ] && [[ "${COMMENT,,}" == *"test this please"* ]] \
                   && [ "$ACTOR" = "$AUTHOR" ] && in_team "$TRUSTED_TEAM" "$ACTOR"; then
               RUN=true
           fi
-          echo "PR #$PR_NUMBER by $AUTHOR, $EVENT by $ACTOR: run=$RUN"
+          echo "PR #$PR_NUMBER by $AUTHOR (trusted: $AUTHOR_TRUSTED), $EVENT by $ACTOR: run=$RUN"
 
           {
               echo "run=$RUN"
+              echo "author-trusted=$AUTHOR_TRUSTED"
               echo "pr-number=$PR_NUMBER"
               echo "head-sha=$(jq -r .head.sha <<< "$PR_JSON")"
               echo "pr-repo-url=$(jq -r .head.repo.clone_url <<< "$PR_JSON")"
@@ -117,6 +123,7 @@ jobs:
       target-branch: ${{ needs.authorize.outputs.target-branch }}
       pr-number: ${{ needs.authorize.outputs.pr-number }}
       head-sha: ${{ needs.authorize.outputs.head-sha }}
+      dial-in: ${{ needs.authorize.outputs.author-trusted == 'true' }}
     secrets:
       PR_TORTURE_APP_ID: ${{ secrets.PR_TORTURE_APP_ID }}
       PR_TORTURE_APP_KEY: ${{ secrets.PR_TORTURE_APP_KEY }}
