@@ -15,7 +15,7 @@ import {
     getTrackByMediaTypeAndParticipant,
     getVirtualScreenshareParticipantTrack
 } from '../../../base/tracks/functions.web';
-import ConnectionStatsTable from '../../../connection-stats/components/ConnectionStatsTable';
+import ConnectionStatsList from '../../../connection-stats/components/ConnectionStatsList';
 import { saveLogs } from '../../actions.web';
 import {
     isTrackStreamingStatusInactive,
@@ -205,7 +205,7 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<IProps, ISt
         } = this.state.stats;
 
         return (
-            <ConnectionStatsTable
+            <ConnectionStatsList
                 audioSsrc = { this.props._audioSsrc }
                 bandwidth = { bandwidth }
                 bitrate = { bitrate }
