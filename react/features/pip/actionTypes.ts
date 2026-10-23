@@ -9,6 +9,11 @@ export const SET_PIP_ACTIVE = 'SET_PIP_ACTIVE';
 export const SET_PIP_WINDOW = 'SET_PIP_WINDOW';
 
 /**
+ * Action type to set whether the user dismissed PiP for the rest of the conference.
+ */
+export const SET_PIP_DISMISSED = 'SET_PIP_DISMISSED';
+
+/**
  * Internal action signalling that the host confirmed a Document PiP window has opened.
  */
 export const HOST_DOCUMENT_PIP_OPENED = 'HOST_DOCUMENT_PIP_OPENED';

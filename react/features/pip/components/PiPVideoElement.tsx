@@ -11,16 +11,11 @@ import { getThumbnailBackgroundColor } from '../../filmstrip/functions.web';
 import { getLargeVideoParticipant } from '../../large-video/functions';
 import { isPrejoinPageVisible } from '../../prejoin/functions.any';
 import { handlePiPLeaveEvent, handlePipEnterEvent, handleWindowBlur, handleWindowFocus } from '../actions';
+import { FOCUS_CHECK_DELAY_MS } from '../constants';
 import { getPiPVideoTrack, shouldShowPiPAvatar } from '../functions';
 import { useCanvasAvatar } from '../hooks';
 import logger from '../logger';
 import type { IWebKitPictureInPictureVideoElement } from '../types';
-
-/**
- * Electron-only delay before reacting to window focus, so that the browser's
- * leavepictureinpicture event is processed first (see the comment at the usage site).
- */
-const FOCUS_CHECK_DELAY_MS = 100;
 
 /**
  * Interval between canvas frame re-publish attempts while WebKit asynchronously wires the video

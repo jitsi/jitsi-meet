@@ -635,6 +635,22 @@ export interface IConfig {
          * Opt-in: defaults to false.
          */
         enableBrowserPiP?: boolean;
+
+        /**
+         * Selects the Picture-in-Picture implementation. When unset, the
+         * platform default applies: 'customWindow' in Electron, 'documentPiP'
+         * in browsers that support it, 'videoPiP' otherwise. A mode the
+         * environment cannot run is ignored as if it were unset.
+         * - 'customWindow': a frameless always-on-top window rendered by the
+         *   meeting itself (the legacy always-on-top experience). Electron
+         *   only; requires jitsi-meet-electron-sdk support in the embedding
+         *   app, which is not detected: apps bundling an SDK without it have
+         *   to set 'videoPiP'.
+         * - 'documentPiP': the browser's Document Picture-in-Picture window.
+         *   Browsers only.
+         * - 'videoPiP': the video-element Picture-in-Picture, everywhere.
+         */
+        mode?: 'customWindow' | 'documentPiP' | 'videoPiP';
         showOnPrejoin?: boolean;
         /**
          * Whether to show the Picture-in-Picture toolbar button when supported.
