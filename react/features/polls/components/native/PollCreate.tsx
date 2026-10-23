@@ -93,6 +93,7 @@ const PollCreate = (props: AbstractProps) => {
     /* eslint-disable react/no-multi-comp */
     const createRemoveOptionButton = (onPress: () => void) => (
         <Button
+            accessibilityLabel = 'polls.create.removeOption'
             id = { t('polls.create.removeOption') }
             labelKey = 'polls.create.removeOption'
             labelStyle = { dialogStyles.optionRemoveButtonText }
