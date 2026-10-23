@@ -52,6 +52,8 @@ permissions: {}
 jobs:
   # Runs the PR code, so it gets no GitHub token that can write anything, and the VoxImplant
   # credentials only for the dial-in tests of trusted authors.
+  # The runner runs as ghrunner, the tests as jenkins (sudo, /usr/local/bin/pr-torture-run), so the PR
+  # code can't read the runner's credentials or the ssh key.
   pr-torture:
     # One runner with one job at a time per repo. build-pr.sh also takes /var/lock/pr-torture, so the
     # runs of the different repos and the ones started by Jenkins wait for each other on the machine.
@@ -61,21 +63,21 @@ jobs:
       group: pr-torture-${{ inputs.project }}-${{ inputs.pr-number }}
       cancel-in-progress: true
     env:
-      PR_TEST_WORKSPACE: ${{ github.workspace }}
+      SCRIPTS_SRC: /var/lib/pr-torture/scripts/${{ inputs.project }}
+      PR_TEST_WORKSPACE: /var/lib/pr-torture/work/${{ inputs.project }}
       TORTURE_REMOTE_ADDRESS: ${{ vars.PR_TORTURE_GRID_URL }}
       HEAD_SHA: ${{ inputs.head-sha }}
       # Test only the commit the PR was approved at
       PR_TEST_REQUIRE_SHA: true
     steps:
-      # The runner runs as jenkins, whose ssh key can read the scripts repo. A clone of its own,
-      # not the one in the Jenkins workspace, which Jenkins updates before taking the lock.
+      # With the ghrunner ssh key, a deploy key of the scripts repo
       - name: Check out the PR testing scripts
         env:
           SCRIPTS_REF: ${{ inputs.scripts-ref }}
         run: |
-          rm -rf jitsi-pr-testing-scripts
+          rm -rf "$SCRIPTS_SRC"
           git clone --depth 1 --branch "$SCRIPTS_REF" \
-            git@github.com:jitsi/jitsi-pr-testing-scripts.git jitsi-pr-testing-scripts
+            git@github.com:jitsi/jitsi-pr-testing-scripts.git "$SCRIPTS_SRC"
 
       - name: Build and test
         env:
@@ -89,17 +91,31 @@ jobs:
           PR_BRANCH: ${{ inputs.pr-branch }}
           TARGET_BRANCH: ${{ inputs.target-branch }}
         run: |
-          jitsi-pr-testing-scripts/build-pr.sh "$PROJECT" "$PR_REPO_URL" "$PR_BRANCH" "$TARGET_BRANCH"
+          sudo -n -u jenkins -H \
+            --preserve-env=PR_TEST_WORKSPACE,TORTURE_REMOTE_ADDRESS,HEAD_SHA,PR_TEST_REQUIRE_SHA,ACCESS_TOKEN,VOX_API_KEY,VOX_ACCOUNT_ID,VOX_HEALTH_CHECK_IN_RULE_ID \
+            /usr/local/bin/pr-torture-run "$SCRIPTS_SRC" "$PROJECT" "$PR_REPO_URL" "$PR_BRANCH" "$TARGET_BRANCH"
+
+      # The reports are written by the PR code: copy only regular files and directories, so a link to a
+      # file of this user doesn't end up in the uploaded artifact.
+      - name: Collect the test reports
+        if: always()
+        run: |
+          OUT="$RUNNER_TEMP/pr-torture-reports"
+          rm -rf "$OUT"
+          mkdir -p "$OUT"
+          for p in test-reports.zip chrome-chrome-reports ff-chrome-reports; do
+              if [ -e "$PR_TEST_WORKSPACE/release/$p" ] && [ ! -L "$PR_TEST_WORKSPACE/release/$p" ]; then
+                  cp -R --no-dereference "$PR_TEST_WORKSPACE/release/$p" "$OUT/" || true
+              fi
+          done
+          find "$OUT" ! -type f ! -type d -delete
 
       - name: Upload the test reports
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 #v7.0.2
         with:
           name: pr-torture-${{ inputs.project }}-${{ inputs.pr-number }}
-          path: |
-            release/test-reports.zip
-            release/chrome-chrome-reports
-            release/ff-chrome-reports
+          path: ${{ runner.temp }}/pr-torture-reports
           if-no-files-found: ignore
 
   # Publishes the reports and posts the check run, on a hosted runner, away from the PR code.
