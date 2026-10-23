@@ -162,8 +162,8 @@ class ChatInputBar extends Component<IProps, IState> {
                     returnKeyType = 'send'
                     value = { this.state.message } />
                 <IconButton
+                    accessibilityLabel = { this.props.t('chat.sendButton') }
                     disabled = { !this.state.message }
-                    id = { this.props.t('chat.sendButton') }
                     onPress = { this._onSubmit }
                     src = { IconSend }
                     style = { styles.sendButton }
