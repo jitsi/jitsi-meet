@@ -65,6 +65,8 @@ jobs:
       # Test only the commit the PR was approved at
       PR_TEST_REQUIRE_SHA: true
     steps:
+      # The PR code runs with these tokens in its environment, so none of them can write to a code repo:
+      # the check run on the PR repo and the prosody tests results in jitsi-meet
       - name: GitHub App token
         id: app-token
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 #v3.3.0
@@ -72,11 +74,20 @@ jobs:
           app-id: ${{ secrets.PR_TORTURE_APP_ID }}
           private-key: ${{ secrets.PR_TORTURE_APP_KEY }}
           owner: jitsi
-          # The check run on the PR repo, the reports in jitsi-pr-tests-pages, the prosody tests in jitsi-meet
-          repositories: ${{ github.event.repository.name }},jitsi-pr-tests-pages,jitsi-meet
+          repositories: ${{ github.event.repository.name == 'jitsi-meet' && 'jitsi-meet' || format('{0},jitsi-meet', github.event.repository.name) }}
           permission-checks: write
-          permission-contents: write
           permission-actions: read
+
+      # the reports pushed to jitsi-pr-tests-pages
+      - name: GitHub App token for the reports
+        id: pages-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 #v3.3.0
+        with:
+          app-id: ${{ secrets.PR_TORTURE_APP_ID }}
+          private-key: ${{ secrets.PR_TORTURE_APP_KEY }}
+          owner: jitsi
+          repositories: jitsi-pr-tests-pages
+          permission-contents: write
 
       # The runner runs as jenkins, whose ssh key can read the scripts repo. A clone of its own,
       # not the one in the Jenkins workspace, which Jenkins updates before taking the lock.
@@ -92,6 +103,7 @@ jobs:
         env:
           ACCESS_TOKEN: ${{ steps.app-token.outputs.token }}
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PAGES_TOKEN: ${{ steps.pages-token.outputs.token }}
           VOX_API_KEY: ${{ secrets.VOX_API_KEY }}
           VOX_ACCOUNT_ID: ${{ secrets.VOX_ACCOUNT_ID }}
           VOX_HEALTH_CHECK_IN_RULE_ID: ${{ secrets.VOX_HEALTH_CHECK_IN_RULE_ID }}

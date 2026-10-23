@@ -71,15 +71,18 @@ jobs:
 
           PR_JSON=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER")
           AUTHOR=$(jq -r .user.login <<< "$PR_JSON")
+          STATE=$(jq -r .state <<< "$PR_JSON")
 
           RUN=false
-          if [ "$EVENT" = "pull_request_target" ]; then
+          if [ "$STATE" != "open" ]; then
+              echo "PR #$PR_NUMBER is $STATE, not testing it"
+          elif [ "$EVENT" = "pull_request_target" ]; then
               if in_team "$ADMIN_TEAM" "$AUTHOR" || in_team "$TRUSTED_TEAM" "$AUTHOR"; then
                   RUN=true
               fi
           elif in_team "$ADMIN_TEAM" "$ACTOR"; then
               RUN=true
-          elif [ "$EVENT" = "issue_comment" ] && [[ "$COMMENT" == *"test this please"* ]] \
+          elif [ "$EVENT" = "issue_comment" ] && [[ "${COMMENT,,}" == *"test this please"* ]] \
                   && [ "$ACTOR" = "$AUTHOR" ] && in_team "$TRUSTED_TEAM" "$ACTOR"; then
               RUN=true
           fi
