@@ -81,7 +81,7 @@ function _toDateString(itemDate: number, t: Function) {
     } else if (date.getFullYear() !== now.getFullYear()) {
         // We only want to include the year in the date if its not the current
         // year.
-        return m.format('ddd, MMMM DD h:mm A, yyyy');
+        return m.format('ddd, MMMM DD h:mm A, YYYY');
     }
 
     return m.format('ddd, MMMM DD h:mm A');
