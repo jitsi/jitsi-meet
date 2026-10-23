@@ -166,14 +166,32 @@ jobs:
           path: jitsi-pr-testing-scripts
           persist-credentials: false
 
+      # Missing when the test job stopped before producing reports (build failure, PR not merging)
       - name: Download the test reports
+        id: download
+        continue-on-error: true
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 #v8.0.2
         with:
           name: pr-torture-${{ inputs.project }}-${{ inputs.pr-number }}
           path: release
 
       - name: Publish the reports and the check run
+        if: steps.download.outcome == 'success'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PAGES_TOKEN: ${{ steps.pages-token.outputs.token }}
         run: jitsi-pr-testing-scripts/publish-pr-results.sh
+
+      - name: Post a failed check run, there are no reports
+        if: steps.download.outcome != 'success'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          jq -n --arg name "$CHECK_NAME" --arg sha "$HEAD_SHA" --arg url "$RUN_URL" '{
+              name: $name, head_sha: $sha, status: "completed", conclusion: "failure", details_url: $url,
+              output: {
+                  title: "The PR could not be built or merged with its target branch",
+                  summary: "The tests did not run. See the build and test step of the run: \($url)"
+              }
+          }' | gh api --method POST "repos/$SOURCE_REPO/check-runs" --input - > /dev/null
