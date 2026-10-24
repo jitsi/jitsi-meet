@@ -44,7 +44,14 @@ const useStyles = makeStyles()((theme: Theme) => {
             overflow: 'hidden'
         },
         chatMessageWrapper: {
-            maxWidth: '100%'
+            maxWidth: '100%',
+
+            '&:hover, &:focus-within': {
+                '& $optionsButtonContainer': {
+                    opacity: 1,
+                    pointerEvents: 'auto'
+                }
+            }
         },
         chatMessage: {
             display: 'inline-flex',
@@ -162,7 +169,18 @@ const useStyles = makeStyles()((theme: Theme) => {
             alignItems: 'center',
             gap: theme.spacing(1),
             minWidth: '32px',
-            minHeight: '32px'
+            minHeight: '32px',
+            opacity: 0,
+            pointerEvents: 'none',
+
+            '&:focus-within': {
+                opacity: 1,
+                pointerEvents: 'auto'
+            }
+        },
+        visible: {
+            opacity: 1,
+            pointerEvents: 'auto'
         },
         displayName: {
             ...theme.typography.labelBold,
@@ -275,6 +293,7 @@ const ChatMessage = ({
 }: IProps) => {
     const { classes, cx } = useStyles();
     const [ isHovered, setIsHovered ] = useState(false);
+    const [ isFocused, setIsFocused ] = useState(false);
     const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
     const messageRef = useRef<HTMLDivElement>(null);
 
@@ -314,6 +333,16 @@ const ChatMessage = ({
 
     const handleMouseLeave = useCallback(() => {
         setIsHovered(false);
+    }, []);
+
+    const handleFocus = useCallback(() => {
+        setIsFocused(true);
+    }, []);
+
+    const handleBlur = useCallback((event: React.FocusEvent) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+            setIsFocused(false);
+        }
     }, []);
 
     const handleReactionsOpen = useCallback(() => {
@@ -477,13 +506,15 @@ const ChatMessage = ({
         <div
             className = { cx(classes.chatMessageWrapper, className) }
             id = { message.messageId }
+            onBlur = { handleBlur }
+            onFocus = { handleFocus }
             onMouseEnter = { handleMouseEnter }
             onMouseLeave = { handleMouseLeave }
             tabIndex = { -1 }>
             <div className = { classes.sideBySideContainer }>
                 {!shouldDisplayMenuOnRight && (
-                    <div className = { classes.optionsButtonContainer }>
-                        {isHovered && !message.isDeleted && !message.isModerated && <MessageMenu
+                    <div className = { cx(classes.optionsButtonContainer, (isHovered || isFocused) && classes.visible) }>
+                        {!message.isDeleted && !message.isModerated && <MessageMenu
                             canEdit = { canEdit }
                             displayName = { message.displayName }
                             enablePrivateChat = { Boolean(enablePrivateChat) }
@@ -563,15 +594,15 @@ const ChatMessage = ({
                     <div className = { classes.sideBySideContainer }>
                         {!message.privateMessage && !message.lobbyChat
                         && !message.isReaction && !message.isDeleted && !message.isModerated && <div>
-                            <div className = { classes.optionsButtonContainer }>
-                                {isHovered && <ReactButton
+                            <div className = { cx(classes.optionsButtonContainer, (isHovered || isFocused) && classes.visible) }>
+                                <ReactButton
                                     messageId = { message.messageId }
-                                    receiverId = { '' } />}
+                                    receiverId = { '' } />
                             </div>
                         </div>}
                         <div>
-                            <div className = { classes.optionsButtonContainer }>
-                                {isHovered && !message.isDeleted && !message.isModerated && <MessageMenu
+                            <div className = { cx(classes.optionsButtonContainer, (isHovered || isFocused) && classes.visible) }>
+                                {!message.isDeleted && !message.isModerated && <MessageMenu
                                     canEdit = { canEdit }
                                     displayName = { message.displayName }
                                     enablePrivateChat = { Boolean(enablePrivateChat) }
