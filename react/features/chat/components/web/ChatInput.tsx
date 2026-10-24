@@ -232,7 +232,7 @@ class ChatInput extends Component<IProps, IState> {
                         id = 'chat-input-messagebox'
                         maxRows = { 5 }
                         onChange = { this._onMessageChange }
-                        onKeyPress = { this._onDetectSubmit }
+                        onKeyDown = { this._onDetectSubmit }
                         placeholder = { this.props.t('chat.messagebox') }
                         ref = { this._textArea }
                         textarea = { true }
