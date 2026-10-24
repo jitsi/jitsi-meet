@@ -63,11 +63,11 @@ export function bootstrapCalendarIntegration() {
 
                 return dispatch(integrationToLoad._isSignedIn())
                     .then((signedIn: boolean) => {
+                        // When not signed in, keep the selected integration so
+                        // the user only has to sign in again.
                         if (signedIn) {
                             dispatch(setIntegrationReady(integrationType));
                             dispatch(updateProfile(integrationType));
-                        } else {
-                            dispatch(clearCalendarIntegration());
                         }
                     });
             });
