@@ -232,9 +232,13 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                             <div className = 'join-meeting-container'>
                                 <div className = 'enter-room-input-container'>
                                     <form onSubmit = { this._onFormSubmit }>
+                                        <label
+                                            className = 'enter-room-label'
+                                            htmlFor = 'enter_room_field'>
+                                            { t('welcomepage.roomname') }
+                                        </label>
                                         <input
                                             aria-disabled = 'false'
-                                            aria-label = { t('welcomepage.accessibilityLabel.roomname') }
                                             autoFocus = { true }
                                             className = 'enter-room-input'
                                             id = 'enter_room_field'
