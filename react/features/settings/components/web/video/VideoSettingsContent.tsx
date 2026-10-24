@@ -12,10 +12,14 @@ import Checkbox from '../../../../base/ui/components/web/Checkbox';
 import ContextMenu from '../../../../base/ui/components/web/ContextMenu';
 import ContextMenuItem from '../../../../base/ui/components/web/ContextMenuItem';
 import ContextMenuItemGroup from '../../../../base/ui/components/web/ContextMenuItemGroup';
+import Spinner from '../../../../base/ui/components/web/Spinner';
+import { createVirtualBackgroundEffect } from '../../../../stream-effects/virtual-background';
 import { checkBlurSupport, checkVirtualBackgroundEnabled } from '../../../../virtual-background/functions';
+import { IVirtualBackground } from '../../../../virtual-background/reducer';
 import { openSettingsDialog } from '../../../actions';
 import { SETTINGS_TABS } from '../../../constants';
 import { createLocalVideoTracks } from '../../../functions.web';
+import logger from '../../../logger';
 
 /**
  * The type of the React {@code Component} props of {@link VideoSettingsContent}.
@@ -61,6 +65,11 @@ export interface IProps {
      * All the camera device ids currently connected.
      */
     videoDeviceIds: string[];
+
+    /**
+     * The virtual background currently saved in redux.
+     */
+    virtualBackground: IVirtualBackground;
 
     /**
     * Whether or not the virtual background is visible.
@@ -156,6 +165,7 @@ const VideoSettingsContent = ({
     setVideoInputDevice,
     toggleVideoSettings,
     videoDeviceIds,
+    virtualBackground,
     visibleVirtualBackground
 }: IProps) => {
     const _componentWasUnmounted = useRef(false);
@@ -194,10 +204,28 @@ const VideoSettingsContent = ({
      * @returns {void}
      */
     const _setTracks = async () => {
-        _disposeTracks(trackData);
-
+        _disposeTracks(trackDataRef.current);
         const newTrackData = await createLocalVideoTracks(videoDeviceIds, 5000);
 
+        if (virtualBackground?.backgroundEffectEnabled) {
+            const selected = newTrackData.find(track =>
+                track.deviceId === currentCameraDeviceId && track.jitsiTrack)
+
+                ?? newTrackData.find(track => track.jitsiTrack);
+
+            if (selected?.jitsiTrack) {
+                try {
+                    const effect = await createVirtualBackgroundEffect(virtualBackground);
+
+                    if (effect) {
+                        await selected.jitsiTrack.setEffect(effect);
+                        await effect.initPromise;
+                    }
+                } catch (err) {
+                    logger.error('Failed to apply virtual background on camera preview', err);
+                }
+            }
+        }
         // In case the component gets unmounted before the tracks are created
         // avoid a leak by not setting the state
         if (_componentWasUnmounted.current) {
@@ -244,13 +272,26 @@ const VideoSettingsContent = ({
                 </div>
             );
         }
-
+        if (!jitsiTrack) {
+            return (
+                <div
+                    className = { classes.previewEntry }
+                    key = { key }>
+                    <div className = { classes.error }>
+                        <Spinner />
+                    </div>
+                </div>
+            );
+        }
         const previewProps: any = {
             className: classes.previewEntry,
             key,
             tabIndex
         };
-        const label = jitsiTrack?.getTrackLabel();
+        const rawLabel = jitsiTrack.getTrackLabel?.() ?? '';
+        const isDeviceId = rawLabel === deviceId
+            || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawLabel);
+        const label = videoDeviceIds.length > 1 && rawLabel && !isDeviceId ? rawLabel : '';
 
         if (isSelected) {
             previewProps['aria-checked'] = true;
@@ -339,6 +380,7 @@ const mapStateToProps = (state: IReduxState) => {
     return {
         disableLocalVideoFlip,
         localFlipX: Boolean(localFlipX),
+        virtualBackground: state['features/virtual-background'],
         visibleVirtualBackground: checkBlurSupport()
         && checkVirtualBackgroundEnabled(state)
     };

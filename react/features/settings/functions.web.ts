@@ -23,9 +23,22 @@ export * from './functions.any';
  *
  * @returns {Promise<Object[]>}
  */
-export function createLocalVideoTracks(ids: string[], timeout?: number) {
+
+interface IPreviewJitsiTrack {
+    dispose: () => void;
+    getTrackLabel?: () => string;
+    setEffect: (effect?: object) => Promise<void>;
+}
+
+export interface ILocalVideoPreviewTrack {
+    deviceId: string;
+    error?: string;
+    jitsiTrack: IPreviewJitsiTrack | null;
+}
+
+export function createLocalVideoTracks(ids: string[], timeout?: number): Promise<ILocalVideoPreviewTrack[]> {
     return Promise.all(ids.map(deviceId => createLocalTrack('video', deviceId, timeout)
-                    .then((jitsiTrack: any) => {
+                    .then((jitsiTrack: IPreviewJitsiTrack) => {
                         return {
                             jitsiTrack,
                             deviceId
