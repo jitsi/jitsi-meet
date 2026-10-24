@@ -14,7 +14,8 @@
         "test-grid-single": "DOTENV_CONFIG_PATH=.env NODE_PATH=\"$(pwd)/node_modules\" wdio run wdio.grid.conf.ts --spec",
         "test-grid-ff": "DOTENV_CONFIG_PATH=.env NODE_PATH=\"$(pwd)/node_modules\" wdio run wdio.grid.firefox.conf.ts",
         "test-grid-ff-single": "DOTENV_CONFIG_PATH=.env NODE_PATH=\"$(pwd)/node_modules\" wdio run wdio.grid.firefox.conf.ts --spec",
-        "malleus": "DOTENV_CONFIG_PATH=.env NODE_PATH=\"$(pwd)/node_modules\" tsx malleus/cli.ts"
+        "malleus": "DOTENV_CONFIG_PATH=.env NODE_PATH=\"$(pwd)/node_modules\" tsx malleus/cli.ts",
+        "unit": "tsx --import ./unit/setup.ts --test unit/*.test.ts"
     },
     "dependencies": {
         "@braintree/sanitize-url": "7.0.0",
