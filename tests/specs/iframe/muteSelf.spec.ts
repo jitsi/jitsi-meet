@@ -82,4 +82,35 @@ describe('muteRemoteParticipant iframe API command on the local participant', ()
         expect(secondEvent ? secondEvent.muted : true).toBe(true);
         expect(await iframeAPI.isVideoMuted()).toBe(true);
     });
+
+    it('toggles camera mirror via toggleCameraMirror command', async () => {
+        const iframeAPI = p1.getIframeAPI();
+
+        // Initial default state for localFlipX in redux store is true.
+        const initialFlipX = await p1.execute(() => Boolean(APP.store.getState()['features/base/settings'].localFlipX));
+
+        expect(initialFlipX).toBe(true);
+
+        // Toggle camera mirror off.
+        await iframeAPI.executeCommand('toggleCameraMirror');
+
+        await p1.driver.waitUntil(
+            async () => !await p1.execute(() => Boolean(APP.store.getState()['features/base/settings'].localFlipX)),
+            {
+                timeout: 5000,
+                timeoutMsg: 'localFlipX was not toggled to false'
+            }
+        );
+
+        // Toggle camera mirror back on.
+        await iframeAPI.executeCommand('toggleCameraMirror');
+
+        await p1.driver.waitUntil(
+            async () => await p1.execute(() => Boolean(APP.store.getState()['features/base/settings'].localFlipX)),
+            {
+                timeout: 5000,
+                timeoutMsg: 'localFlipX was not toggled to true'
+            }
+        );
+    });
 });
