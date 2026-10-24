@@ -458,7 +458,7 @@
         "muteEveryoneElsesVideoDialog": "Kamera söndürüldükdən sonra onu yenidən aça bilməyəcəksiniz, lakin onlar istənilən vaxt yenidən aça bilərlər.",
         "muteEveryoneElsesVideoTitle": "{{whom}} istisna olmaqla hər kəsin videosu dayandırılsın?",
         "muteEveryoneSelf": "özünüz",
-        "muteEveryoneStartMuted": "İndidən etibarən hər kəs səssiz başlayır",
+        "muteEveryoneStartMuted": "İndidən başlayaraq hər kəs səssiz başlayır",
         "muteEveryoneTitle": "Hər kəs səssizə alınsın?",
         "muteEveryonesDesktopDialog": "İştirakçılar istənilən vaxt ekranlarını paylaşa bilərlər.",
         "muteEveryonesDesktopDialogModerationOn": "İştirakçılar istənilən vaxt ekranlarını paylaşmaq üçün sorğu göndərə bilərlər.",
@@ -476,7 +476,7 @@
         "muteParticipantsDesktopDialogModerationOn": "Bu iştirakçının ekran paylaşımını söndürmək istədiyinizə əminsiniz? Ekranı yenidən aça bilməyəcəksiniz və onlar da aça bilməyəcəklər.",
         "muteParticipantsDesktopTitle": "Bu iştirakçının ekran paylaşımı söndürülsün?",
         "muteParticipantsVideoBody": "Kameranı yenidən aça bilməyəcəksiniz, lakin onlar istənilən vaxt yenidən aça bilərlər.",
-        "muteParticipantsVideoBodyModerationOn": "Siz kameranı yenidən aça bilməyəcəksiniz və onlar da aça bilməyəcəklər.",
+        "muteParticipantsVideoBodyModerationOn": "Siz kameranı yenidən aça bilməyəcəksiniz və onlar da edə bilməyəcəklər.",
         "muteParticipantsVideoButton": "Videonu dayandır",
         "muteParticipantsVideoDialog": "Bu iştirakçının kamerasını söndürmək istədiyinizə əminsiniz? Kameranı yenidən aça bilməyəcəksiniz, lakin onlar istənilən vaxt yenidən aça bilərlər.",
         "muteParticipantsVideoDialogModerationOn": "Bu iştirakçının kamerasını söndürmək istədiyinizə əminsiniz? Kameranı yenidən aça bilməyəcəksiniz və onlar da aça bilməyəcəklər.",
@@ -746,7 +746,7 @@
         "keyboardShortcuts": "Klaviatura qısayolları",
         "localRecording": "Yerli qeydəalma idarəetmələrini göstərin və ya gizlədin",
         "mute": "Mikrofonunuzu səssizə alın və ya səsini açın",
-        "pushToTalk": "Bas-danış",
+        "pushToTalk": "Bas və danış",
         "raiseHand": "Əlinizi qaldırın və ya endirin",
         "showSpeakerStats": "İştirakçı statistikalarını göstərin",
         "toggleChat": "Söhbəti açın və ya bağlayın",
@@ -821,7 +821,7 @@
         "joiningWithPasswordTitle": "Parol ilə qoşulunur…",
         "knockButton": "Qoşulmağı Xahiş Et",
         "knockTitle": "Kimsə görüşə qoşulmaq istəyir",
-        "knockingParticipantList": "Qapını döyən iştirakçı siyahısı",
+        "knockingParticipantList": "Sorğu göndərən iştirakçılar siyahısı",
         "lobbyChatStartedNotification": "{{moderator}}, {{attendee}} ilə gözləmə zalı söhbəti başlatdı",
         "lobbyChatStartedTitle": "{{moderator}} sizinlə gözləmə zalı söhbəti başlatdı.",
         "lobbyClosed": "Gözləmə zalı otağı bağlandı.",
@@ -875,7 +875,7 @@
         "youAreAlone": "Görüşdə yalnız sizsiniz"
     },
     "lowBandwidthMode": {
-        "lowBandwidthMode": "Aşağı zolaq rejimi"
+        "lowBandwidthMode": "Aşağı şəbəkə zolağı rejimi"
     },
     "me": "mən",
     "multiScreen": {
@@ -1213,7 +1213,7 @@
         "type": {
             "account": "Hesab",
             "contact": "Kontakt",
-            "lead": "Lid (Potensial müştəri)",
+            "lead": "Potensial müştəri",
             "opportunity": "İmkan",
             "owner": "Sahib"
         }
@@ -1222,7 +1222,7 @@
         "alsoTranscribe": "Bu görüş də transkripsiya edilsin?",
         "authDropboxText": "Dropbox-a yüklə",
         "availableSpace": "Əlçatan sahə: {{spaceLeft}} MB (təxminən {{duration}} dəqiqəlik qeyd)",
-        "beta": "BETA",
+        "beta": "Sınaq",
         "busy": "Qeydəalma resurslarını azad etmək üzərində işləyirik. Zəhmət olmasa bir neçə dəqiqə sonra yenidən cəhd edin.",
         "busyTitle": "Bütün qeydəalıcılar hazırda məşğuldur",
         "copyLink": "Keçidi Kopyala",
@@ -1297,7 +1297,7 @@
         "title": "Təhlükəsizlik Seçimləri",
         "unsafeRoomActions": {
             "meeting": "Təhlükəsizlik düyməsini istifadə edərək görüşünüzü qorumağı nəzərdən keçirin.",
-            "prejoin": "Daha unikal görüş adından istifadə etməyi nəzərdən keçirin.",
+            "prejoin": "Daha fərqli / unikal görüş adından istifadə etməyi nəzərdən keçirin.",
             "welcome": "Daha unikal görüş adından istifadə etməyi və ya təkliflərdən birini seçməyi nəzərdən keçirin."
         }
     },
@@ -1319,7 +1319,7 @@
         "devices": "Cihazlar",
         "enableCtrlAltReactionShortcuts": "Reaksiya qısayolları üçün Ctrl+Alt alternativlərini aktivləşdir",
         "followMe": "Hər kəs məni izləyir",
-        "followMeRecorder": "Qeydəalıcı məni izləyir",
+        "followMeRecorder": "Qeydəalan məni izləyir",
         "framesPerSecond": "saniyədə-kadr-sayı",
         "incomingMessage": "Gələn mesaj",
         "language": "Dil",
@@ -1366,7 +1366,7 @@
         "disableCallIntegration": "Daxili zəng inteqrasiyasını söndür",
         "disableCrashReporting": "Qəza xəbərdarlığını söndür",
         "disableCrashReportingWarning": "Qəza xəbərdarlığını söndürmək istədiyinizə əminsiniz? Tənzimləmə tətbiqi yenidən başladıldıqdan sonra tətbiq olunacaq.",
-        "disableP2P": "Tay-tuş (P2P) rejimini söndür",
+        "disableP2P": "P2P (Nöqtədən-nöqtəyə) rejimini söndür",
         "displayName": "Görünən ad",
         "displayNamePlaceholderText": "Məs: Elvin Əliyev",
         "email": "E-poçt",
@@ -1537,7 +1537,7 @@
         "addPeople": "Zənginizə adamlar əlavə edin",
         "advancedAudioSettings": {
             "aec": {
-                "label": "Aksustik əks-səda ləğvi"
+                "label": "Akustik əks-səda ləğvi"
             },
             "agc": {
                 "label": "Avtomatik güclənmə idarəetməsi"
@@ -1764,7 +1764,7 @@
         "image3": "Ağ boş otaq",
         "image4": "Qara döşəmə lampası",
         "image5": "Dağ",
-        "image6": "Meşə ",
+        "image6": "Meşə",
         "image7": "Günəşin doğuşu",
         "none": "Xeyr",
         "oldestBackgroundRemoved": "Yenisini əlavə etmək üçün ən köhnə xüsusi arxa plan silindi.",
