@@ -44,7 +44,8 @@ export function bootstrapCalendarIntegration() {
         return Promise.resolve()
             .then(() => {
                 if (googleApiApplicationClientID) {
-                    return dispatch(loadGoogleAPI());
+                    // Do not prompt for sign in here, the user does it explicitly.
+                    return dispatch(loadGoogleAPI(true));
                 }
             })
             .then(() => {
