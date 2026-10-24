@@ -82,4 +82,78 @@ describe('muteRemoteParticipant iframe API command on the local participant', ()
         expect(secondEvent ? secondEvent.muted : true).toBe(true);
         expect(await iframeAPI.isVideoMuted()).toBe(true);
     });
+
+    it('toggles audio mute status via toggleAudio command', async () => {
+        const iframeAPI = p1.getIframeAPI();
+
+        // Audio is currently muted from the previous test.
+        expect(await iframeAPI.isAudioMuted()).toBe(true);
+
+        // Toggle to unmute.
+        await iframeAPI.clearEventResults('audioMuteStatusChanged');
+        await iframeAPI.executeCommand('toggleAudio');
+
+        const unmutedEvent: { muted: boolean; } = await p1.driver.waitUntil(
+            () => iframeAPI.getEventResult('audioMuteStatusChanged'),
+            {
+                timeout: 5000,
+                timeoutMsg: 'audioMuteStatusChanged event was not received for toggleAudio (unmute)'
+            }
+        );
+
+        expect(unmutedEvent.muted).toBe(false);
+        expect(await iframeAPI.isAudioMuted()).toBe(false);
+
+        // Toggle to mute again.
+        await iframeAPI.clearEventResults('audioMuteStatusChanged');
+        await iframeAPI.executeCommand('toggleAudio');
+
+        const mutedEvent: { muted: boolean; } = await p1.driver.waitUntil(
+            () => iframeAPI.getEventResult('audioMuteStatusChanged'),
+            {
+                timeout: 5000,
+                timeoutMsg: 'audioMuteStatusChanged event was not received for toggleAudio (mute)'
+            }
+        );
+
+        expect(mutedEvent.muted).toBe(true);
+        expect(await iframeAPI.isAudioMuted()).toBe(true);
+    });
+
+    it('toggles video mute status via toggleVideo command', async () => {
+        const iframeAPI = p1.getIframeAPI();
+
+        // Video is currently muted from the previous test.
+        expect(await iframeAPI.isVideoMuted()).toBe(true);
+
+        // Toggle to unmute.
+        await iframeAPI.clearEventResults('videoMuteStatusChanged');
+        await iframeAPI.executeCommand('toggleVideo');
+
+        const unmutedEvent: { muted: boolean; } = await p1.driver.waitUntil(
+            () => iframeAPI.getEventResult('videoMuteStatusChanged'),
+            {
+                timeout: 5000,
+                timeoutMsg: 'videoMuteStatusChanged event was not received for toggleVideo (unmute)'
+            }
+        );
+
+        expect(unmutedEvent.muted).toBe(false);
+        expect(await iframeAPI.isVideoMuted()).toBe(false);
+
+        // Toggle to mute again.
+        await iframeAPI.clearEventResults('videoMuteStatusChanged');
+        await iframeAPI.executeCommand('toggleVideo');
+
+        const mutedEvent: { muted: boolean; } = await p1.driver.waitUntil(
+            () => iframeAPI.getEventResult('videoMuteStatusChanged'),
+            {
+                timeout: 5000,
+                timeoutMsg: 'videoMuteStatusChanged event was not received for toggleVideo (mute)'
+            }
+        );
+
+        expect(mutedEvent.muted).toBe(true);
+        expect(await iframeAPI.isVideoMuted()).toBe(true);
+    });
 });
