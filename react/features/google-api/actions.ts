@@ -29,9 +29,11 @@ export function getCalendarEntries(
 /**
  * Loads Google API.
  *
+ * @param {boolean} skipSignIn - Whether to skip prompting the user to sign in
+ * when not already signed in.
  * @returns {Function}
  */
-export function loadGoogleAPI() {
+export function loadGoogleAPI(skipSignIn = false) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) =>
         googleApi.get()
         .then(() => {
@@ -51,7 +53,11 @@ export function loadGoogleAPI() {
             return Promise.resolve();
         })
         .then(() => dispatch(setGoogleAPIState(GOOGLE_API_STATES.LOADED)))
-        .then(() => googleApi.signInIfNotSignedIn())
+        .then(() => {
+            if (!skipSignIn) {
+                return googleApi.signInIfNotSignedIn();
+            }
+        })
         .then(() => googleApi.isSignedIn())
         .then((isSignedIn: boolean) => {
             if (isSignedIn) {
