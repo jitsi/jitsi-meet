@@ -77,13 +77,14 @@ ReducerRegistry.register<IKeyboardShortcutsState>(STORE_NAME,
         } else if (action.ctrl) {
             shortcutKey = `-${action.character}`;
         }
+        const helpKey = state.shortcuts.get(shortcutKey)?.helpCharacter ?? shortcutKey;
         const shortcuts = new Map(state.shortcuts);
 
         shortcuts.delete(shortcutKey);
 
         const shortcutsHelp = new Map(state.shortcutsHelp);
 
-        shortcutsHelp.delete(shortcutKey);
+        shortcutsHelp.delete(helpKey);
 
         return {
             ...state,
