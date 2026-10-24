@@ -381,7 +381,7 @@ const DialogWithTabs = ({
                     )}
                     {tabs.map(tab => (
                         <div
-                            aria-labelledby = { isMobile ? undefined : `${tab.name}-button` }
+                            aria-labelledby = { isMobile ? undefined : `dialogtab-button-${tab.name}` }
                             className = { cx(classes.content, tab.name !== selectedTab && 'hide') }
                             id = { `dialogtab-content-${tab.name}` }
                             key = { tab.name }
