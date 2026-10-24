@@ -804,6 +804,9 @@ export interface IConfig {
         translationLanguagesHead?: Array<string>;
         useAppLanguage?: boolean;
     };
+    tutorMode?: {
+        enabled?: boolean;
+    };
     useHostPageLocalStorage?: boolean;
     useTurnUdp?: boolean;
     videoQuality?: {
