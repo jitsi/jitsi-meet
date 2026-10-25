@@ -89,7 +89,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
         conference?.getPolls().createPoll(pollId, question, answers, { singleAnswer });
 
         dispatch(removePoll(poll));
-    }, [ conference, question, answers, singleAnswer ]);
+    }, [ conference, dispatch, poll, pollId, question, answers, singleAnswer ]);
 
     const skipAnswer = useCallback(() => {
         dispatch(registerVote(pollId, null));
