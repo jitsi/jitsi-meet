@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import {
@@ -33,7 +33,7 @@ const ModeratorSection = () => {
         startVideoMuted,
         startReactionsMuted,
         videoModerationEnabled
-    } = useSelector((state: IReduxState) => getModeratorTabProps(state));
+    } = useSelector((state: IReduxState) => getModeratorTabProps(state), shallowEqual);
 
     const { disableReactionsModeration } = useSelector((state: IReduxState) => state['features/base/config']);
 
