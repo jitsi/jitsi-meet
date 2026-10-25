@@ -137,54 +137,39 @@ const ModeratorSection = () => {
             },
             {
                 disabled: false,
+                hidden: disableReactionsModeration,
                 label: 'settings.startReactionsMuted',
                 state: startReactionsMuted,
                 onChange: onStartReactionsMutedToggled
             },
             {
+                hidden: hideChatWithPermissions,
                 label: 'settings.chatWithPermissions',
                 state: chatWithPermissionsEnabled,
                 onChange: onChatWithPermissionsToggled
             },
             {
+                hidden: hideChatWithPermissions,
                 label: 'settings.privateChatWithPermissions',
                 state: privateChatWithPermissionsEnabled,
                 onChange: onPrivateChatWithPermissionsToggled
             },
             {
+                hidden: !showSharedVideoWithPermissions,
                 label: 'settings.sharedVideoWithPermissions',
                 state: sharedVideoWithPermissionsEnabled,
                 onChange: onSharedVideoWithPermissionsToggled
             },
             {
+                hidden: !showBreakoutRoomJoinWithPermissions,
                 label: 'settings.breakoutRoomJoinWithPermissions',
                 state: breakoutRoomJoinWithPermissionsEnabled,
                 onChange: onBreakoutRoomJoinWithPermissionsToggled
             },
         ];
 
-        return moderation.filter(({ label }) => {
-            // Remove the entries by name. A pop() here took out whichever
-            // entry came last, which is not the reactions one.
-            if (label === 'settings.startReactionsMuted') {
-                return !disableReactionsModeration;
-            }
-
-            if (label === 'settings.sharedVideoWithPermissions') {
-                return showSharedVideoWithPermissions;
-            }
-
-            if (label === 'settings.breakoutRoomJoinWithPermissions') {
-                return showBreakoutRoomJoinWithPermissions;
-            }
-
-            // Hide them as on web, e.g. when showChatPermissionsModeratorSetting is not enabled.
-            if (label === 'settings.chatWithPermissions' || label === 'settings.privateChatWithPermissions') {
-                return !hideChatWithPermissions;
-            }
-
-            return true;
-        });
+        // Hide the entries that the config or the room does not allow.
+        return moderation.filter(({ hidden }) => !hidden);
     }, [ startAudioMuted,
         startVideoMuted,
         audioModerationEnabled,
