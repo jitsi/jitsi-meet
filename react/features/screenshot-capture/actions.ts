@@ -39,7 +39,7 @@ export function toggleScreenshotCaptureSummary(enabled: boolean) {
         if (state['features/screenshot-capture'].capturesEnabled !== enabled) {
             if (!screenshotSummary) {
                 try {
-                    screenshotSummary = await createScreenshotCaptureSummary(state);
+                    screenshotSummary = await createScreenshotCaptureSummary(getState);
                 } catch (err) {
                     logger.error('Cannot create screenshotCaptureSummary', err);
                 }
