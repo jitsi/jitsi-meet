@@ -187,7 +187,12 @@ const ModeratorSection = () => {
         });
     }, [ startAudioMuted,
         startVideoMuted,
+        audioModerationEnabled,
+        videoModerationEnabled,
+        followMeActive,
         followMeEnabled,
+        followMeRecorderActive,
+        followMeRecorderChecked,
         followMeRecorderEnabled,
         disableReactionsModeration,
         hideChatWithPermissions,
