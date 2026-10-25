@@ -289,20 +289,29 @@ end
             end
 
             if poll.singleAnswer then
-                local chosen = 0;
-                for _, vote_flag in ipairs(data.answers) do
-                    if vote_flag then
-                        chosen = chosen + 1;
+                -- Keep only the first chosen answer instead of dropping the vote. The voter's
+                -- client has already registered the vote and gets no error reply, so storing and
+                -- broadcasting this one keeps every client, the voter's included, consistent with
+                -- the server, also clients that do not know about singleAnswer.
+                local kept = false;
+                local dropped = false;
+                local single = {};
+                for idx, vote_flag in ipairs(data.answers) do
+                    if vote_flag and not kept then
+                        single[idx] = true;
+                        kept = true;
+                    else
+                        if vote_flag then
+                            dropped = true;
+                        end
+                        single[idx] = false;
                     end
                 end
-
-                if chosen > 1 then
-                    module:log('warn', 'More than one answer for single answer poll %s', data.pollId);
-                    if session.type ~= 's2sin' then
-                        session.send(st.error_reply(stanza, 'modify', 'bad-request', 'Only one answer allowed'));
-                    end
-                    return true;
+                if dropped then
+                    module:log('warn', 'More than one answer for single answer poll %s, keeping the first. Sender: %s',
+                        data.pollId, stanza.attr.from);
                 end
+                data.answers = single;
             end
 
             local voter = occupant_details;

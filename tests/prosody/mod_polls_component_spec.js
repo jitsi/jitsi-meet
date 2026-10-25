@@ -544,16 +544,41 @@ describe('mod_polls_component', () => {
             assert.deepEqual(answer.answers, [ false, true, false ]);
         });
 
-        it('rejects more than one answer for a single answer poll', async () => {
-            const { pollId, voter } = await setup({ singleAnswer: true });
+        it('keeps only the first of several answers for a single answer poll', async () => {
+            const { creator, pollId, voter } = await setup({ singleAnswer: true });
 
-            voter.answerPoll(POLLS_COMPONENT, pollId, [ true, true, false ]);
+            voter.answerPoll(POLLS_COMPONENT, pollId, [ false, true, true ]);
 
-            const errorReply = await voter.waitForMessage(s => s.attrs.type === 'error');
+            const [ voterCopy, creatorCopy ] = await Promise.all([
+                waitForPollCommand(voter, 'answer-poll'),
+                waitForPollCommand(creator, 'answer-poll')
+            ]);
 
-            assert.ok(errorReply.getChild('error')?.getChild('bad-request'),
-                'more than one answer must be rejected with bad-request');
-            await assertNoPollBroadcast(voter);
+            assert.deepEqual(voterCopy.answers, [ false, true, false ],
+                'the voter must get back the vote the server kept');
+            assert.deepEqual(creatorCopy.answers, [ false, true, false ]);
+        });
+
+        it('stores only the first of several answers for a single answer poll', async () => {
+            // Only the voter joins first, the test rooms are limited to two participants.
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const voter = await joinParticipant(r);
+            const pollId = nextPollId();
+
+            createPollWith(voter, pollId, { singleAnswer: true });
+            await waitForPollCommand(voter, 'new-poll');
+
+            voter.answerPoll(POLLS_COMPONENT, pollId, [ true, false, true ]);
+            await waitForPollCommand(voter, 'answer-poll');
+
+            const late = await joinParticipant(r);
+            const history = await waitForPollCommand(late, 'old-polls');
+            const stored = history.polls.find(p => p.pollId === pollId);
+
+            assert.deepEqual(stored.answers.map(a => a.voters?.length ?? 0), [ 1, 0, 0 ],
+                'only the first chosen answer must be counted');
         });
 
         it('still accepts several answers for a regular poll', async () => {
