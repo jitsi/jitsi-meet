@@ -60,7 +60,13 @@ export const RoomList = ({ searchString }: IProps) => {
         participantName: string;
         room: IRoom;
     }>();
-    const onRaiseMenu = useCallback(room => (target: HTMLElement) => raiseMenu(room, target), [ raiseMenu ]);
+    const onRaiseMenu = useCallback(room => (target: HTMLElement) => {
+        // Joining is the only action of a participant who is not a moderator, thus with the join restriction the menu
+        // of a breakout room would be empty.
+        if (joinAllowed || room.isMainRoom) {
+            raiseMenu(room, target);
+        }
+    }, [ joinAllowed, raiseMenu ]);
 
     // close the menu when the room vanishes
     useEffect(() => {
