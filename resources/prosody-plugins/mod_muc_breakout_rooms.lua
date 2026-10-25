@@ -76,11 +76,6 @@ local switching_room_cache = cache.new(1000);
 -- How long, in seconds, a move that a moderator requested lets the participant join the target room.
 local MOVE_REQUEST_TTL = 30;
 
--- The moves that moderators requested, keyed by the real full JID of the participant. When the main room restricts
--- joining breakout rooms (permissions.breakoutRoomJoinRestricted in the room metadata), a participant who is not a
--- moderator can join a breakout room only through such a move.
-local move_request_cache = cache.new(1000);
-
 -- Utility functions
 
 function get_main_room_jid(room_jid)
@@ -105,6 +100,39 @@ function get_room_from_jid(room_jid)
         host == main_muc_component_config
         and main_muc_service.get_room_from_jid(room_jid)
         or breakout_rooms_muc_service.get_room_from_jid(room_jid);
+end
+
+-- The moves that moderators requested are kept on the main room object (main_room.move_requests, not in _data so they
+-- are not saved), keyed by the real full JID of the participant. When the main room restricts joining breakout rooms
+-- (permissions.breakoutRoomJoinRestricted in the room metadata), a participant who is not a moderator can join a
+-- breakout room only through such a move. They go away with the main room.
+
+-- Remembers that a moderator moved a participant to a breakout room. Drops the moves of the room that expired.
+-- @param main_room - The main room
+-- @param participant_jid - The real full JID of the participant
+-- @param room_jid - The breakout room the participant is moved to
+function add_move_request(main_room, participant_jid, room_jid)
+    local now = os.time();
+    local move_requests = main_room.move_requests or {};
+
+    for jid, move_request in pairs(move_requests) do
+        if move_request.expires < now then
+            move_requests[jid] = nil;
+        end
+    end
+
+    move_requests[participant_jid] = {
+        room_jid = room_jid,
+        expires = now + MOVE_REQUEST_TTL
+    };
+    main_room.move_requests = move_requests;
+end
+
+-- Returns the move a moderator requested for a participant in the main room, if any.
+-- @param main_room - The main room
+-- @param participant_jid - The real full JID of the participant
+function get_move_request(main_room, participant_jid)
+    return main_room.move_requests and main_room.move_requests[participant_jid];
 end
 
 function send_json_msg(to_jid, json_msg)
@@ -374,10 +402,7 @@ function on_message(event)
 
         -- Returning to the main room is always allowed, only a move to a breakout room needs to be remembered.
         if room._data.breakout_rooms[target_room_jid] then
-            move_request_cache:set(participant_jid, {
-                room_jid = target_room_jid,
-                expires = os.time() + MOVE_REQUEST_TTL
-            });
+            add_move_request(room, participant_jid, target_room_jid);
         end
 
         send_json_msg(participant_jid, json_msg)
@@ -425,10 +450,10 @@ function on_occupant_joined(event)
 
     -- The occupant is in the room a moderator moved them to, the move is used up.
     local real_jid = event.stanza and event.stanza.attr.from;
-    local move_request = real_jid and move_request_cache:get(real_jid);
+    local move_request = main_room and real_jid and get_move_request(main_room, real_jid);
 
     if move_request and move_request.room_jid == room.jid then
-        move_request_cache:set(real_jid, nil);
+        main_room.move_requests[real_jid] = nil;
     end
 
     if main_room and main_room._data.breakout_rooms_active then
@@ -562,6 +587,8 @@ function on_main_room_destroyed(event)
     for breakout_room_jid in pairs(main_room._data.breakout_rooms or {}) do
         destroy_breakout_room(main_room, breakout_room_jid, event.reason)
     end
+
+    main_room.move_requests = nil;
 end
 
 -- Checks for a conflict with a JID in the switching_room_cache. In case of a conflict sends an error and returns true (the join is not allowed).
@@ -680,7 +707,7 @@ function is_breakout_room_join_blocked(main_room, room, from_jid)
         return false;
     end
 
-    local move_request = move_request_cache:get(from_jid);
+    local move_request = get_move_request(main_room, from_jid);
 
     if move_request and move_request.room_jid == room.jid and move_request.expires >= os.time() then
         return false;
