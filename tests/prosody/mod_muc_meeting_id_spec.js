@@ -331,8 +331,8 @@ describe('mod_muc_meeting_id', () => {
     // room name validation
     // -------------------------------------------------------------------------
     //
-    // Rooms are created by focus, because Jicofo creates rooms for clients and
-    // is not exempt from the check.
+    // Focus creates the rooms: Jicofo creates rooms for clients, and the check
+    // does not exempt focus.
     describe('room name validation', () => {
 
         /**
@@ -349,16 +349,39 @@ describe('mod_muc_meeting_id', () => {
             return c.joinRoom(roomJid, 'focus');
         }
 
-        [ 'my%20room', 'caf%c3%a9', 'a%3fb', 'stra%c3%9fe' ].forEach(name => {
+        /**
+         * Asserts that a join presence is not an error.
+         *
+         * @param {object} presence  presence returned by joinRoom
+         * @returns {void}
+         */
+        function assertJoined(presence) {
+            assert.notStrictEqual(presence.attrs.type, 'error', `join must succeed: ${presence}`);
+        }
+
+        [
+            'my%20room',
+            'caf%c3%a9',
+            'a%3fb',
+            'stra%c3%9fe',
+            '%cf%82',
+            '%e1%be%80',
+            '%e4%bc%9a%e8%ad%b0',
+            '%f0%9f%98%80'
+        ].forEach(name => {
             it(`focus can create a room named ${name}`, async () => {
-                // connectFocus throws (timeout) if the join is blocked.
-                await ctx.connectFocus(`${name}-${++_roomCounter}@${CONFERENCE}`);
+                assertJoined(await joinAsFocus(`${name}-${++_roomCounter}@${CONFERENCE}`));
             });
         });
 
         it('focus can create a room in a vpaas tenant', async () => {
-            await ctx.connectFocus(
-                `canonical-${++_roomCounter}@conference.vpaas-magic-cookie-0123abcd.localhost`);
+            assertJoined(await joinAsFocus(
+                `canonical-${++_roomCounter}@conference.vpaas-magic-cookie-0123abcd.localhost`));
+        });
+
+        it('focus can create a room in a non-ASCII tenant', async () => {
+            // Clients do not encode the tenant, so it stays raw UTF-8.
+            assertJoined(await joinAsFocus(`canonical-${++_roomCounter}@conference.caf\u00e9.localhost`));
         });
 
         [
@@ -368,6 +391,7 @@ describe('mod_muc_meeting_id', () => {
             'a%2',
             'room+x',
             'caf%c3%89',
+            '%ef%bc%a1',
             'a%ff'
         ].forEach(name => {
             it(`focus cannot create a room named ${name}`, async () => {
@@ -393,17 +417,21 @@ describe('mod_muc_meeting_id', () => {
         });
 
         it('in log mode focus can create a room with a non-canonical name', async () => {
-            const setMode = mode => prosodyShell(
-                `>require("core.configmanager").set("${CONFERENCE}", "muc_room_name_validation", ${mode})`);
+            const setMode = async mode => {
+                await prosodyShell(
+                    `>require("core.configmanager").set("${CONFERENCE}", "muc_room_name_validation", ${mode})`);
+                await prosodyShell(`module:reload("muc_meeting_id", "${CONFERENCE}")`);
+            };
 
-            await setMode('"log"');
-            await prosodyShell(`module:reload("muc_meeting_id", "${CONFERENCE}")`);
             try {
-                await ctx.connectFocus(`log-mode-${++_roomCounter}?x@${CONFERENCE}`);
+                await setMode('"log"');
+                assertJoined(await joinAsFocus(`log-mode-${++_roomCounter}?x@${CONFERENCE}`));
             } finally {
                 await setMode('nil');
-                await prosodyShell(`module:reload("muc_meeting_id", "${CONFERENCE}")`);
             }
+
+            // A failed restore would turn the check off for later tests.
+            assertNotAllowed(await joinAsFocus(`log-mode-${++_roomCounter}?x@${CONFERENCE}`));
         });
     });
 });

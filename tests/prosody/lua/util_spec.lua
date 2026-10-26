@@ -142,6 +142,9 @@ package.preload['util.encodings'] = function()
         ['\195\137'] = '\195\169',  -- U+00C9 É -> é
         ['\195\159'] = 'ss',          -- U+00DF ß (nameprep case folding)
         ['\239\188\161'] = 'a',      -- U+FF21 fullwidth A (NFKC)
+        ['\207\130'] = '\207\131',  -- U+03C2 final sigma (nameprep case folding)
+        ['\225\190\128'] = '\225\188\128\206\185',  -- U+1F80 (nameprep case folding)
+        ['\240\157\144\128'] = 'a',  -- U+1D400 mathematical bold A (NFKC)
     }
     return {
         utf8 = { valid = function(s) return utf8.len(s) ~= nil end },
@@ -414,6 +417,8 @@ describe("util.lib", function()
                 "caf%c3%a9",
                 "a%3fb",
                 "stra%c3%9fe",
+                "%cf%82",
+                "%e1%be%80",
                 "it.is~fine!(*)",
             }) do
                 assert.is_true(M.is_canonical_room_node(name), name)
@@ -431,6 +436,7 @@ describe("util.lib", function()
                 "room+x",
                 "caf%c3%89",
                 "%ef%bc%a1",
+                "%f0%9d%90%80",
                 "a%ff",
                 "a%ed%a0%80",
                 "[tenant]room",
@@ -442,6 +448,38 @@ describe("util.lib", function()
         it("refuses nil and empty names", function()
             assert.is_false(M.is_canonical_room_node(nil))
             assert.is_false(M.is_canonical_room_node(""))
+        end)
+    end)
+
+    -- -----------------------------------------------------------------------
+    describe("is_safe_tenant_node", function()
+        it("accepts tenants from host labels", function()
+            for _, name in ipairs({
+                "vpaas-magic-cookie-0123456789abcdef",
+                "my-tenant",
+                "caf\195\169",
+            }) do
+                assert.is_true(M.is_safe_tenant_node(name), name)
+            end
+        end)
+
+        it("refuses tenants with characters that change a URL", function()
+            for _, name in ipairs({
+                "tenant?x",
+                "tenant#x",
+                "a/b",
+                "a%20b",
+                "a+b",
+                "Tenant",
+                "a\255",
+            }) do
+                assert.is_false(M.is_safe_tenant_node(name), name)
+            end
+        end)
+
+        it("refuses nil and empty tenants", function()
+            assert.is_false(M.is_safe_tenant_node(nil))
+            assert.is_false(M.is_safe_tenant_node(""))
         end)
     end)
 

@@ -397,6 +397,18 @@ local function is_canonical_room_node(name)
     return true;
 end
 
+--- Checks that a tenant name is safe in a URL path segment.
+-- Clients do not encode the tenant: it comes from a host label that nameprep already made lowercase,
+-- so non-ASCII stays raw and only ASCII outside the encodeURIComponent unreserved set is refused.
+-- @return true if the tenant is safe
+local function is_safe_tenant_node(name)
+    if not name or name == '' then
+        return false;
+    end
+
+    return not name:find("[^a-z0-9%-_%.!~%*'%(%)\128-\255]") and utf8_valid(name);
+end
+
 function starts_with(str, start)
     if not str then
         return false;
@@ -883,6 +895,7 @@ return {
     filter_identity_from_presence = filter_identity_from_presence;
     is_admin = is_admin;
     is_canonical_room_node = is_canonical_room_node;
+    is_safe_tenant_node = is_safe_tenant_node;
     is_feature_allowed = is_feature_allowed;
     is_jibri = is_jibri;
     is_healthcheck_room = is_healthcheck_room;
