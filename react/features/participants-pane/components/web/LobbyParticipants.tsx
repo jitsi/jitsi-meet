@@ -6,6 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import Avatar from '../../../base/avatar/components/Avatar';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCheck, IconCloseLarge } from '../../../base/icons/svg';
+import { onActivationKey } from '../../../base/ui/functions.web';
 import { admitMultiple } from '../../../lobby/actions.web';
 import { getKnockingParticipants, getLobbyEnabled } from '../../../lobby/functions';
 import Drawer from '../../../toolbox/components/web/Drawer';
@@ -90,7 +91,10 @@ export default function LobbyParticipants() {
                     participants.length > 1
                     && <div
                         className = { classes.link }
-                        onClick = { admitAll }>{t('participantsPane.actions.admitAll')}</div>
+                        onClick = { admitAll }
+                        onKeyDown = { onActivationKey(admitAll) }
+                        role = 'button'
+                        tabIndex = { 0 }>{t('participantsPane.actions.admitAll')}</div>
                 }
             </div>
             <LobbyParticipantItems
@@ -111,7 +115,10 @@ export default function LobbyParticipants() {
                         </li>
                         <li
                             className = { classes.drawerItem }
-                            onClick = { admit }>
+                            onClick = { admit }
+                            onKeyDown = { onActivationKey(admit) }
+                            role = 'button'
+                            tabIndex = { 0 }>
                             <Icon
                                 className = { classes.icon }
                                 size = { 20 }
@@ -120,7 +127,10 @@ export default function LobbyParticipants() {
                         </li>
                         <li
                             className = { classes.drawerItem }
-                            onClick = { reject }>
+                            onClick = { reject }
+                            onKeyDown = { onActivationKey(reject) }
+                            role = 'button'
+                            tabIndex = { 0 }>
                             <Icon
                                 className = { classes.icon }
                                 size = { 20 }

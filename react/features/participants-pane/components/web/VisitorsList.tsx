@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
+import { onActivationKey } from '../../../base/ui/functions.web';
 import { admitMultiple, goLive } from '../../../visitors/actions';
 import {
     getPromotionRequests,
@@ -112,13 +113,19 @@ export default function VisitorsList() {
                     requests.length > 1 && !showVisitorsInQueue // Go live button is with higher priority
                     && <div
                         className = { classes.link }
-                        onClick = { admitAll }>{ t('participantsPane.actions.admitAll') }</div>
+                        onClick = { admitAll }
+                        onKeyDown = { onActivationKey(admitAll) }
+                        role = 'button'
+                        tabIndex = { 0 }>{ t('participantsPane.actions.admitAll') }</div>
                 }
                 {
                     showVisitorsInQueue
                     && <div
                         className = { classes.link }
-                        onClick = { goLiveCb }>{ t('participantsPane.actions.goLive') }</div>
+                        onClick = { goLiveCb }
+                        onKeyDown = { onActivationKey(goLiveCb) }
+                        role = 'button'
+                        tabIndex = { 0 }>{ t('participantsPane.actions.goLive') }</div>
                 }
             </div>
             { requests.length > 0

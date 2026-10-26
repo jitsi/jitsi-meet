@@ -10,6 +10,7 @@ import Icon from '../../base/icons/components/Icon';
 import { IconCalendar } from '../../base/icons/svg';
 import AbstractPage from '../../base/react/components/AbstractPage';
 import Spinner from '../../base/ui/components/web/Spinner';
+import { onActivationKey } from '../../base/ui/functions.web';
 import { openSettingsDialog } from '../../settings/actions.web';
 import { SETTINGS_TABS } from '../../settings/constants';
 import { refreshCalendar } from '../actions.web';
@@ -119,14 +120,20 @@ class CalendarList extends AbstractPage<IProps> {
                     { showSettingsButton
                         && <div
                             className = 'button'
-                            onClick = { this._onOpenSettings }>
+                            onClick = { this._onOpenSettings }
+                            onKeyDown = { onActivationKey(this._onOpenSettings) }
+                            role = 'button'
+                            tabIndex = { 0 }>
                             { t('calendarSync.permissionButton') }
                         </div>
                     }
                     { showRefreshButton
                         && <div
                             className = 'button'
-                            onClick = { this._onRefreshEvents }>
+                            onClick = { this._onRefreshEvents }
+                            onKeyDown = { onActivationKey(this._onRefreshEvents) }
+                            role = 'button'
+                            tabIndex = { 0 }>
                             { t('calendarSync.refresh') }
                         </div>
                     }
@@ -160,7 +167,10 @@ class CalendarList extends AbstractPage<IProps> {
                     </p>
                     <div
                         className = 'button'
-                        onClick = { this._onRefreshEvents }>
+                        onClick = { this._onRefreshEvents }
+                        onKeyDown = { onActivationKey(this._onRefreshEvents) }
+                        role = 'button'
+                        tabIndex = { 0 }>
                         { t('calendarSync.refresh') }
                     </div>
                 </div>
