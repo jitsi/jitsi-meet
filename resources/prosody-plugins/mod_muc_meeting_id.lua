@@ -3,6 +3,10 @@
 -- a common conference identifier. Also enforces a jicofo lock: non-focus clients
 -- that try to join before jicofo (identified by nick suffix '/focus') are queued
 -- and admitted only after jicofo joins and fires the jicofo-unlock-room event.
+-- Also refuses to create a room whose name is not in the form clients send
+-- (see muc_room_name_validation). That check only runs on a MUC component
+-- that loads this module, so load it on every MUC component that hosts
+-- conference rooms, including the breakout rooms component.
 -- This module is enabled under the MUC component.
 local jid = require 'util.jid';
 local json = require 'cjson.safe';
