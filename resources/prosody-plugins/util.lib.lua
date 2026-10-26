@@ -364,6 +364,11 @@ local function is_canonical_room_node(name)
         return false;
     end
 
+    -- a browser resolves these as path segments; Jicofo and Jibri refuse them too
+    if name == '.' or name == '..' then
+        return false;
+    end
+
     if name:find('[:?#%[%]@!$&\'()*+,;=></"]') then
         return false;
     end

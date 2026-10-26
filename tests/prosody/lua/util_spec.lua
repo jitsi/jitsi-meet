@@ -445,6 +445,8 @@ describe("util.lib", function()
                 "myroom!",
                 "myroom()",
                 "myroom%2a",
+                ".",
+                "..",
             }) do
                 assert.is_false(M.is_canonical_room_node(name), name)
             end
