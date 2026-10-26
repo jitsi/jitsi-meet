@@ -477,6 +477,10 @@ describe("util.lib", function()
                 "a+b",
                 "Tenant",
                 "a\255",
+                "a.b",
+                "tenant*",
+                "tenant!",
+                "a(b)",
             }) do
                 assert.is_false(M.is_safe_tenant_node(name), name)
             end

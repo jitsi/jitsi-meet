@@ -404,16 +404,17 @@ local function is_canonical_room_node(name)
     return true;
 end
 
---- Checks that a tenant name is safe in a URL path segment.
+--- Checks that a tenant name is in the form clients use.
 -- Clients do not encode the tenant: it comes from a host label that nameprep already made lowercase,
--- so non-ASCII stays raw and only ASCII outside the encodeURIComponent unreserved set is refused.
+-- so non-ASCII stays raw. nginx decodes the tenant from the URL path and clients map "." to "_" in
+-- the MUC domain, so a tenant never contains "%" or ".". Jicofo and Jibri use the same rule.
 -- @return true if the tenant is safe
 local function is_safe_tenant_node(name)
     if not name or name == '' then
         return false;
     end
 
-    return not name:find("[^a-z0-9%-_%.!~%*'%(%)\128-\255]") and utf8_valid(name);
+    return not name:find("[^a-z0-9%-_\128-\255]") and utf8_valid(name);
 end
 
 function starts_with(str, start)
