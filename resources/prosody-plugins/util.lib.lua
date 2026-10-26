@@ -331,18 +331,8 @@ local NAMEPREP_CASEFOLD_EXCEPTIONS = {
     { 0x1FF2, 0x1FF4 }, { 0x1FF7, 0x1FF7 },
 };
 
-local function utf8_codepoint(c)
-    local b1, b2, b3, b4 = c:byte(1, 4);
-    if #c == 2 then
-        return (b1 - 0xC0) * 0x40 + (b2 - 0x80);
-    elseif #c == 3 then
-        return (b1 - 0xE0) * 0x1000 + (b2 - 0x80) * 0x40 + (b3 - 0x80);
-    end
-    return (b1 - 0xF0) * 0x40000 + (b2 - 0x80) * 0x1000 + (b3 - 0x80) * 0x40 + (b4 - 0x80);
-end
-
 local function is_nameprep_casefold_exception(c)
-    local cp = utf8_codepoint(c);
+    local cp = utf8.codepoint(c);
     for _, range in ipairs(NAMEPREP_CASEFOLD_EXCEPTIONS) do
         if cp >= range[1] and cp <= range[2] then
             return true;
@@ -353,11 +343,12 @@ end
 
 --- Checks that a room name is in the form clients send (getBackendSafeRoomName):
 -- encodeURIComponent(NFKC(decodeURIComponent(name)).toLowerCase()).toLowerCase()
--- NFKC and lowercase are checked one code point at a time with nameprep (Unicode 3.2 tables),
--- so code points assigned after Unicode 3.2 and sequences that NFKC composes are not checked.
+-- Lowercase is checked one code point at a time with nameprep (Unicode 3.2 tables), so a
+-- lowercase mapping of a code point assigned after Unicode 3.2 is not checked. NFKC is checked
+-- on each run of letters with nameprep as well, which also finds a sequence that NFKC composes.
 -- Clients also remove the characters in _ROOM_EXCLUDE_PATTERN (react/features/base/util/uri.ts)
 -- from a URL path segment before they decode it. "!", "(", ")", "*" and "'" are unreserved for
--- encodeURIComponent, so only this check refuses them: a URL for "a*" joins "a".
+-- encodeURIComponent, so a URL for "a*" joins "a": the loop below admits neither of them.
 -- @return true if the name is canonical
 local function is_canonical_room_node(name)
     if not name or name == '' then
@@ -366,10 +357,6 @@ local function is_canonical_room_node(name)
 
     -- a browser resolves these as path segments; Jicofo and Jibri refuse them too
     if name == '.' or name == '..' then
-        return false;
-    end
-
-    if name:find('[:?#%[%]@!$&\'()*+,;=></"]') then
         return false;
     end
 
@@ -398,11 +385,29 @@ local function is_canonical_room_node(name)
         return false;
     end
 
-    for c in decoded:gmatch('[\194-\244][\128-\191]*') do
-        local prepped = nameprep(c);
-        -- nil (prohibited) and '' (mapped to nothing) say nothing about case or NFKC
-        if prepped and prepped ~= '' and prepped ~= c and not is_nameprep_casefold_exception(c) then
-            return false;
+    -- a web server can decode "%2f" before it splits the path, so "a%2fb" can land in tenant "a";
+    -- Jicofo and Jibri refuse it too
+    if decoded:find('/', 1, true) then
+        return false;
+    end
+
+    -- Each run of letters, digits and non-ASCII: a combining mark composes with the letter before it.
+    for run in decoded:gmatch('[%w\128-\255]+') do
+        for c in run:gmatch('[\128-\255][\128-\191]*') do
+            local prepped = nameprep(c);
+            -- nil (prohibited) and '' (mapped to nothing) say nothing about case or NFKC
+            if prepped and prepped ~= '' and prepped ~= c and not is_nameprep_casefold_exception(c) then
+                return false;
+            end
+        end
+        -- Nameprep of the whole run differs from nameprep of its code points one by one only when a
+        -- sequence composes (e + U+0301 -> é), which NFKC does and the client did not.
+        local whole = nameprep(run);
+        if whole then
+            local by_char = run:gsub('[\128-\255][\128-\191]*', function (c) return nameprep(c) or c; end);
+            if whole ~= by_char then
+                return false;
+            end
         end
     end
 

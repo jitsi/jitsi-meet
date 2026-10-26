@@ -394,7 +394,9 @@ describe('mod_muc_meeting_id', () => {
             '%ef%bc%a1',
             'a%ff',
             'myroom*',
-            'myroom()'
+            'myroom()',
+            'cafe%cc%81',
+            'a%2fb'
         ].forEach(name => {
             it(`focus cannot create a room named ${name}`, async () => {
                 const presence = await joinAsFocus(`${name}@${CONFERENCE}`);

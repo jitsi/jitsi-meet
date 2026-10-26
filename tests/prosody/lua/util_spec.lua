@@ -136,7 +136,8 @@ package.preload['net.http']          = function() return {} end
 package.preload['net.http.server']   = function() return {} end
 package.preload['core.usermanager']  = function() return {} end
 
--- nameprep stub: maps only the code points the is_canonical_room_node tests use.
+-- nameprep stub: maps only the code points the is_canonical_room_node tests use, one code point
+-- at a time, and composes e + U+0301 like NFKC does.
 package.preload['util.encodings'] = function()
     local nameprep_map = {
         ['\195\137'] = '\195\169',  -- U+00C9 É -> é
@@ -146,9 +147,13 @@ package.preload['util.encodings'] = function()
         ['\225\190\128'] = '\225\188\128\206\185',  -- U+1F80 (nameprep case folding)
         ['\240\157\144\128'] = 'a',  -- U+1D400 mathematical bold A (NFKC)
     }
+    local function nameprep(s)
+        s = s:gsub('e\204\129', '\195\169');  -- e + U+0301 composes to é
+        return (s:gsub('[\128-\255][\128-\191]*', function (c) return nameprep_map[c] or c; end));
+    end
     return {
         utf8 = { valid = function(s) return utf8.len(s) ~= nil end },
-        stringprep = { nameprep = function(s) return nameprep_map[s] or s end },
+        stringprep = { nameprep = nameprep },
     }
 end
 
@@ -447,6 +452,10 @@ describe("util.lib", function()
                 "myroom%2a",
                 ".",
                 "..",
+                -- NFKC composes e + U+0301 to é, so the client joins caf%c3%a9
+                "cafe%cc%81",
+                -- a web server can decode %2f before it splits the path
+                "a%2fb",
             }) do
                 assert.is_false(M.is_canonical_room_node(name), name)
             end
