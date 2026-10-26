@@ -385,14 +385,16 @@ describe('mod_muc_meeting_id', () => {
         });
 
         [
-            'lockedvictim?x',
-            'victim#config.startsilent=true',
+            'myroom?x',
+            'myroom#config.startsilent=true',
             '%61',
             'a%2',
             'room+x',
             'caf%c3%89',
             '%ef%bc%a1',
-            'a%ff'
+            'a%ff',
+            'myroom*',
+            'myroom()'
         ].forEach(name => {
             it(`focus cannot create a room named ${name}`, async () => {
                 const presence = await joinAsFocus(`${name}@${CONFERENCE}`);

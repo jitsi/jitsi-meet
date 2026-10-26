@@ -351,13 +351,20 @@ local function is_nameprep_casefold_exception(c)
     return false;
 end
 
---- Checks that a room or tenant name is in the form clients send (getBackendSafeRoomName):
+--- Checks that a room name is in the form clients send (getBackendSafeRoomName):
 -- encodeURIComponent(NFKC(decodeURIComponent(name)).toLowerCase()).toLowerCase()
 -- NFKC and lowercase are checked one code point at a time with nameprep (Unicode 3.2 tables),
 -- so code points assigned after Unicode 3.2 and sequences that NFKC composes are not checked.
+-- Clients also remove the characters in _ROOM_EXCLUDE_PATTERN (react/features/base/util/uri.ts)
+-- from a URL path segment before they decode it. "!", "(", ")", "*" and "'" are unreserved for
+-- encodeURIComponent, so only this check refuses them: a URL for "a*" joins "a".
 -- @return true if the name is canonical
 local function is_canonical_room_node(name)
     if not name or name == '' then
+        return false;
+    end
+
+    if name:find('[:?#%[%]@!$&\'()*+,;=></"]') then
         return false;
     end
 
@@ -374,7 +381,7 @@ local function is_canonical_room_node(name)
                 return false;
             end
             i = i + 3;
-        elseif c:match("[a-z0-9%-_%.!~%*'%(%)]") then
+        elseif c:match("[a-z0-9%-_%.~]") then
             i = i + 1;
         else
             return false;

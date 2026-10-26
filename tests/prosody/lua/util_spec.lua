@@ -419,7 +419,7 @@ describe("util.lib", function()
                 "stra%c3%9fe",
                 "%cf%82",
                 "%e1%be%80",
-                "it.is~fine!(*)",
+                "it.is~fine",
             }) do
                 assert.is_true(M.is_canonical_room_node(name), name)
             end
@@ -427,8 +427,8 @@ describe("util.lib", function()
 
         it("refuses names not in the form clients send", function()
             for _, name in ipairs({
-                "lockedvictim?x",
-                "victim#config.startsilent=true",
+                "myroom?x",
+                "myroom#config.startsilent=true",
                 "%61",
                 "a%2",
                 "a%zz",
@@ -440,6 +440,11 @@ describe("util.lib", function()
                 "a%ff",
                 "a%ed%a0%80",
                 "[tenant]room",
+                -- clients remove these from a URL path segment, so a URL for "myroom*" joins "myroom"
+                "myroom*",
+                "myroom!",
+                "myroom()",
+                "myroom%2a",
             }) do
                 assert.is_false(M.is_canonical_room_node(name), name)
             end
