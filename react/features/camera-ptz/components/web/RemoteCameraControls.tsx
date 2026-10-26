@@ -7,6 +7,10 @@ import { IReduxState } from '../../../app/types';
 import { getParticipantDisplayName } from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
+import { FILMSTRIP_BREAKPOINT } from '../../../filmstrip/constants';
+import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
+import { LAYOUTS } from '../../../video-layout/constants';
+import { getCurrentLayout } from '../../../video-layout/functions.any';
 import { releaseCameraControl, sendCameraControl } from '../../actions.web';
 import { PTZControlState, ZOOM_RANGE } from '../../constants';
 import { getCameraPtzState } from '../../functions';
@@ -14,11 +18,32 @@ import { getCameraPtzState } from '../../functions';
 import CameraFramingMap from './CameraFramingMap';
 import CameraZoomControls from './CameraZoomControls';
 
+const OVERLAY_INSET = 16;
+
+/**
+ * Returns how much of the right edge of the stage the vertical filmstrip covers.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {number}
+ */
+function getFilmstripOverlap(state: IReduxState): number {
+    const { visible, width } = state['features/filmstrip'];
+
+    // The stage is only narrowed for a filmstrip resized past the breakpoint (see LargeVideo); below that the
+    // filmstrip floats over it.
+    if (getCurrentLayout(state) !== LAYOUTS.VERTICAL_FILMSTRIP_VIEW || !visible
+            || Number(width.current) >= FILMSTRIP_BREAKPOINT) {
+        return 0;
+    }
+
+    return getVerticalViewMaxWidth(state);
+}
+
 const useStyles = makeStyles()(theme => {
     return {
         overlay: {
             position: 'absolute',
-            inset: '16px',
+            inset: `${OVERLAY_INSET}px`,
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
@@ -82,6 +107,7 @@ const RemoteCameraControls = () => {
         (reduxState: IReduxState) => getCameraPtzState(reduxState).controller);
     const name = useSelector((reduxState: IReduxState) =>
         (target ? getParticipantDisplayName(reduxState, target) : ''));
+    const filmstripOverlap = useSelector(getFilmstripOverlap);
 
     const framing = useMemo(() => ({
         pan: values?.pan ?? 0,
@@ -115,7 +141,9 @@ const RemoteCameraControls = () => {
     }
 
     return (
-        <div className = { classes.overlay }>
+        <div
+            className = { classes.overlay }
+            style = {{ right: OVERLAY_INSET + filmstripOverlap }}>
             <div className = { classes.row }>
                 <div className = { classes.pill }>
                     <span className = { classes.dot } />
