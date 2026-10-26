@@ -136,6 +136,19 @@ package.preload['net.http']          = function() return {} end
 package.preload['net.http.server']   = function() return {} end
 package.preload['core.usermanager']  = function() return {} end
 
+-- nameprep stub: maps only the code points the is_canonical_room_node tests use.
+package.preload['util.encodings'] = function()
+    local nameprep_map = {
+        ['\195\137'] = '\195\169',  -- U+00C9 É -> é
+        ['\195\159'] = 'ss',          -- U+00DF ß (nameprep case folding)
+        ['\239\188\161'] = 'a',      -- U+FF21 fullwidth A (NFKC)
+    }
+    return {
+        utf8 = { valid = function(s) return utf8.len(s) ~= nil end },
+        stringprep = { nameprep = function(s) return nameprep_map[s] or s end },
+    }
+end
+
 -- ---------------------------------------------------------------------------
 -- Global stubs required by util.lib.lua at module load time
 --
@@ -386,6 +399,49 @@ describe("util.lib", function()
             local subdomain, room = M.extract_subdomain("[]room")
             assert.is_nil(subdomain)
             assert.equal("[]room", room)
+        end)
+    end)
+
+    -- -----------------------------------------------------------------------
+    describe("is_canonical_room_node", function()
+        it("accepts names in the form clients send", function()
+            for _, name in ipairs({
+                "myroom",
+                "__jicofo-health-check-0a1b2c3d-0000-4000-8000-000000000000",
+                "0a1b2c3d-0000-4000-8000-000000000000",
+                "vpaas-magic-cookie-0123456789abcdef",
+                "my%20room",
+                "caf%c3%a9",
+                "a%3fb",
+                "stra%c3%9fe",
+                "it.is~fine!(*)",
+            }) do
+                assert.is_true(M.is_canonical_room_node(name), name)
+            end
+        end)
+
+        it("refuses names not in the form clients send", function()
+            for _, name in ipairs({
+                "lockedvictim?x",
+                "victim#config.startsilent=true",
+                "%61",
+                "a%2",
+                "a%zz",
+                "a%3Fb",
+                "room+x",
+                "caf%c3%89",
+                "%ef%bc%a1",
+                "a%ff",
+                "a%ed%a0%80",
+                "[tenant]room",
+            }) do
+                assert.is_false(M.is_canonical_room_node(name), name)
+            end
+        end)
+
+        it("refuses nil and empty names", function()
+            assert.is_false(M.is_canonical_room_node(nil))
+            assert.is_false(M.is_canonical_room_node(""))
         end)
     end)
 

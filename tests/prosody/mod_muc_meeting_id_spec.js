@@ -1,6 +1,8 @@
+import { xml } from '@xmpp/client';
 import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
+import { prosodyShell } from './helpers/prosody_shell.js';
 import { createTestContext } from './helpers/test_context.js';
 import { getRoomState } from './helpers/test_observer.js';
 import { joinWithTranscriber } from './helpers/xmpp_client.js';
@@ -322,6 +324,86 @@ describe('mod_muc_meeting_id', () => {
                 presence.getChild('error')?.getChild('service-unavailable'),
                 'error condition must be service-unavailable'
             );
+        });
+    });
+
+    // -------------------------------------------------------------------------
+    // room name validation
+    // -------------------------------------------------------------------------
+    //
+    // Rooms are created by focus, because Jicofo creates rooms for clients and
+    // is not exempt from the check.
+    describe('room name validation', () => {
+
+        /**
+         * Joins as focus and returns the join presence, also when it is an error.
+         *
+         * @param {string} roomJid  full room JID
+         * @returns {Promise<object>}
+         */
+        async function joinAsFocus(roomJid) {
+            const c = await ctx.connect({ domain: 'auth.localhost',
+                username: 'focus',
+                password: 'focussecret' });
+
+            return c.joinRoom(roomJid, 'focus');
+        }
+
+        [ 'my%20room', 'caf%c3%a9', 'a%3fb', 'stra%c3%9fe' ].forEach(name => {
+            it(`focus can create a room named ${name}`, async () => {
+                // connectFocus throws (timeout) if the join is blocked.
+                await ctx.connectFocus(`${name}-${++_roomCounter}@${CONFERENCE}`);
+            });
+        });
+
+        it('focus can create a room in a vpaas tenant', async () => {
+            await ctx.connectFocus(
+                `canonical-${++_roomCounter}@conference.vpaas-magic-cookie-0123abcd.localhost`);
+        });
+
+        [
+            'lockedvictim?x',
+            'victim#config.startsilent=true',
+            '%61',
+            'a%2',
+            'room+x',
+            'caf%c3%89',
+            'a%ff'
+        ].forEach(name => {
+            it(`focus cannot create a room named ${name}`, async () => {
+                const presence = await joinAsFocus(`${name}@${CONFERENCE}`);
+
+                assertNotAllowed(presence);
+            });
+        });
+
+        it('focus cannot create a room named [tenant?x]room', async () => {
+            // Prosody refuses tenant?x in the external host form, so only the
+            // internal form reaches the hook. The domain mapper rewrites the
+            // error back to the external form, which joinRoom does not match.
+            const c = await ctx.connect({ domain: 'auth.localhost',
+                username: 'focus',
+                password: 'focussecret' });
+
+            await c.sendPresence(`[tenant?x]room@${CONFERENCE}/focus`,
+                [ xml('x', { xmlns: 'http://jabber.org/protocol/muc' }) ]);
+            const presence = await c.waitForPresence(s => s.attrs.type === 'error');
+
+            assertNotAllowed(presence);
+        });
+
+        it('in log mode focus can create a room with a non-canonical name', async () => {
+            const setMode = mode => prosodyShell(
+                `>require("core.configmanager").set("${CONFERENCE}", "muc_room_name_validation", ${mode})`);
+
+            await setMode('"log"');
+            await prosodyShell(`module:reload("muc_meeting_id", "${CONFERENCE}")`);
+            try {
+                await ctx.connectFocus(`log-mode-${++_roomCounter}?x@${CONFERENCE}`);
+            } finally {
+                await setMode('nil');
+                await prosodyShell(`module:reload("muc_meeting_id", "${CONFERENCE}")`);
+            }
         });
     });
 });

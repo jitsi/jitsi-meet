@@ -7,6 +7,9 @@ local cache = require "util.cache";
 local array = require "util.array";
 local is_set = require 'util.set'.is_set;
 local usermanager = require 'core.usermanager';
+local encodings = require 'util.encodings';
+local utf8_valid = encodings.utf8.valid;
+local nameprep = encodings.stringprep.nameprep;
 
 local config_global_admin_jids = module:context('*'):get_option_set('admins', {}) / jid.prep;
 local config_admin_jids = module:get_option_inherited_set('admins', {}) / jid.prep;
@@ -318,6 +321,80 @@ function extract_subdomain(room_node)
     local cache_value = { subdomain=subdomain, room=room_name, customer_id=customer_id };
     extract_subdomain_cache:set(room_node, cache_value);
     return subdomain, room_name, customer_id;
+end
+
+-- Lowercase code points that nameprep case folding changes, but JS toLowerCase() keeps.
+local NAMEPREP_CASEFOLD_EXCEPTIONS = {
+    { 0x00DF, 0x00DF }, { 0x0345, 0x0345 }, { 0x03C2, 0x03C2 },
+    { 0x1F80, 0x1F87 }, { 0x1F90, 0x1F97 }, { 0x1FA0, 0x1FA7 },
+    { 0x1FB2, 0x1FB4 }, { 0x1FB7, 0x1FB7 }, { 0x1FC2, 0x1FC4 }, { 0x1FC7, 0x1FC7 },
+    { 0x1FF2, 0x1FF4 }, { 0x1FF7, 0x1FF7 },
+};
+
+local function utf8_codepoint(c)
+    local b1, b2, b3, b4 = c:byte(1, 4);
+    if #c == 2 then
+        return (b1 - 0xC0) * 0x40 + (b2 - 0x80);
+    elseif #c == 3 then
+        return (b1 - 0xE0) * 0x1000 + (b2 - 0x80) * 0x40 + (b3 - 0x80);
+    end
+    return (b1 - 0xF0) * 0x40000 + (b2 - 0x80) * 0x1000 + (b3 - 0x80) * 0x40 + (b4 - 0x80);
+end
+
+local function is_nameprep_casefold_exception(c)
+    local cp = utf8_codepoint(c);
+    for _, range in ipairs(NAMEPREP_CASEFOLD_EXCEPTIONS) do
+        if cp >= range[1] and cp <= range[2] then
+            return true;
+        end
+    end
+    return false;
+end
+
+--- Checks that a room or tenant name is in the form clients send (getBackendSafeRoomName):
+-- encodeURIComponent(NFKC(decodeURIComponent(name)).toLowerCase()).toLowerCase()
+-- NFKC and lowercase are checked one code point at a time with nameprep (Unicode 3.2 tables),
+-- so code points assigned after Unicode 3.2 and sequences that NFKC composes are not checked.
+-- @return true if the name is canonical
+local function is_canonical_room_node(name)
+    if not name or name == '' then
+        return false;
+    end
+
+    local i = 1;
+    while i <= #name do
+        local c = name:sub(i, i);
+        if c == '%' then
+            local h = name:sub(i + 1, i + 2);
+            if not h:match('^[0-9a-f][0-9a-f]$') then
+                return false;
+            end
+            -- encodeURIComponent never encodes an unreserved char
+            if string.char(tonumber(h, 16)):match("[a-zA-Z0-9%-_%.!~%*'%(%)]") then
+                return false;
+            end
+            i = i + 3;
+        elseif c:match("[a-z0-9%-_%.!~%*'%(%)]") then
+            i = i + 1;
+        else
+            return false;
+        end
+    end
+
+    local decoded = name:gsub('%%(%x%x)', function (h) return string.char(tonumber(h, 16)); end);
+    if not utf8_valid(decoded) then
+        return false;
+    end
+
+    for c in decoded:gmatch('[\194-\244][\128-\191]*') do
+        local prepped = nameprep(c);
+        -- nil (prohibited) and '' (mapped to nothing) say nothing about case or NFKC
+        if prepped and prepped ~= '' and prepped ~= c and not is_nameprep_casefold_exception(c) then
+            return false;
+        end
+    end
+
+    return true;
 end
 
 function starts_with(str, start)
@@ -805,6 +882,7 @@ return {
     extract_subdomain = extract_subdomain;
     filter_identity_from_presence = filter_identity_from_presence;
     is_admin = is_admin;
+    is_canonical_room_node = is_canonical_room_node;
     is_feature_allowed = is_feature_allowed;
     is_jibri = is_jibri;
     is_healthcheck_room = is_healthcheck_room;

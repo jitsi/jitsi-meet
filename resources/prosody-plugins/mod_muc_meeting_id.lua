@@ -18,10 +18,14 @@ local is_healthcheck_room = main_util.is_healthcheck_room;
 local internal_room_jid_match_rewrite = main_util.internal_room_jid_match_rewrite;
 local presence_check_status = main_util.presence_check_status;
 local extract_subdomain = main_util.extract_subdomain;
+local is_canonical_room_node = main_util.is_canonical_room_node;
 local util = module:require 'util';
 local is_transcriber = util.is_transcriber;
 
 local QUEUE_MAX_SIZE = 500;
+
+-- 'enforce' refuses to create a room with a non-canonical name, 'log' only logs it.
+local room_name_validation = module:get_option_string('muc_room_name_validation', 'enforce');
 
 module:depends("jitsi_permissions");
 module:depends("jitsi_session");
@@ -46,6 +50,17 @@ module:hook('muc-room-pre-create', function (event)
         if not is_focus(stanza.attr.to) then
             module:log('info', 'Blocking non-focus from creating health-check room');
             event.origin.send(st.error_reply(stanza, 'cancel', 'service-unavailable'));
+            return true;
+        end
+    end
+
+    -- Components build meeting URLs from the room name. A name that is not in the form clients
+    -- send can resolve to a different room once it is in a URL.
+    local tenant, room_name = extract_subdomain(jid.node(stanza.attr.to));
+    if not is_canonical_room_node(room_name) or (tenant and not is_canonical_room_node(tenant)) then
+        module:log('warn', 'Room %s: name is not in canonical form', stanza.attr.to);
+        if room_name_validation ~= 'log' then
+            event.origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Invalid room name'));
             return true;
         end
     end
