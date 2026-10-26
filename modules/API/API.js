@@ -102,7 +102,7 @@ import {
 import { answerKnockingParticipant, toggleLobbyMode } from '../../react/features/lobby/actions';
 import { getLobbyEnabled } from '../../react/features/lobby/functions';
 import { setSecondScreen } from '../../react/features/multi-screen/actions.web';
-import { setNoiseSuppressionEnabled } from '../../react/features/noise-suppression/actions';
+import { setNoiseSuppressionEnabled, toggleNoiseSuppression } from '../../react/features/noise-suppression/actions';
 import { hideNotification, showNotification } from '../../react/features/notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../react/features/notifications/constants';
 import {
@@ -564,6 +564,9 @@ function initCommands() {
         },
         'set-noise-suppression-enabled': (options = {}) => {
             APP.store.dispatch(setNoiseSuppressionEnabled(options.enabled));
+        },
+        'toggle-noise-suppression': () => {
+            APP.store.dispatch(toggleNoiseSuppression());
         },
         'toggle-subtitles': () => {
             APP.store.dispatch(toggleRequestingSubtitles());
