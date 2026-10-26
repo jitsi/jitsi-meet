@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -37,11 +37,20 @@ const useStyles = makeStyles()(theme => {
             padding: '2px'
         },
         menuItem: {
-            padding: '8px 16px',
-            cursor: 'pointer',
+            background: 'none',
+            border: 0,
             color: 'white',
+            cursor: 'pointer',
+            font: 'inherit',
+            padding: '8px 16px',
+            textAlign: 'left',
+            width: '100%',
             '&:hover': {
                 backgroundColor: theme.palette.action03
+            },
+            '&:focus-visible': {
+                outline: `2px solid ${theme.palette.focus01}`,
+                outlineOffset: '-2px'
             }
         },
         menuPanel: {
@@ -73,10 +82,14 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
     const [ isPopoverOpen, setIsPopoverOpen ] = useState(false);
+    const [ shouldFocusComposer, setShouldFocusComposer ] = useState(false);
     const [ showCopiedMessage, setShowCopiedMessage ] = useState(false);
     const [ popupPosition, setPopupPosition ] = useState({ top: 0,
         left: 0 });
     const buttonRef = useRef<HTMLDivElement>(null);
+    const menuPanelRef = useRef<HTMLDivElement>(null);
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const restoreTriggerFocus = useRef(false);
 
     const isModerator = useSelector(isLocalParticipantModerator);
     const messageModerationSupported = useSelector(
@@ -87,13 +100,81 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
     // room says it handles them.
     const canEditMessage = canEdit && messageModerationSupported;
 
+    useEffect(() => {
+        if (!isPopoverOpen) {
+            return undefined;
+        }
+
+        let frame = 0;
+        const startedAt = performance.now();
+
+        const focusFirstItem = () => {
+            const panel = menuPanelRef.current;
+            const firstItem = panel?.querySelector<HTMLButtonElement>('[role="menuitem"]');
+            const active = document.activeElement;
+            const itemHasFocus = Boolean(active instanceof HTMLElement
+                && panel?.contains(active)
+                && active.getAttribute('role') === 'menuitem');
+
+            if (firstItem && !itemHasFocus && firstItem.getClientRects().length > 0) {
+                firstItem.focus();
+            }
+
+            if (performance.now() - startedAt < 300) {
+                frame = requestAnimationFrame(focusFirstItem);
+            }
+        };
+
+        frame = requestAnimationFrame(focusFirstItem);
+
+        return () => cancelAnimationFrame(frame);
+    }, [ isPopoverOpen ]);
+
+    useEffect(() => {
+        if (!shouldFocusComposer) {
+            return undefined;
+        }
+
+        const frame = requestAnimationFrame(() => {
+            document.getElementById('chat-input-messagebox')?.focus();
+            setShouldFocusComposer(false);
+        });
+
+        return () => cancelAnimationFrame(frame);
+    }, [ shouldFocusComposer ]);
+
+    useEffect(() => {
+        if (isPopoverOpen || !restoreTriggerFocus.current) {
+            return undefined;
+        }
+
+        restoreTriggerFocus.current = false;
+
+        if (shouldFocusComposer) {
+            return undefined;
+        }
+
+        const frame = requestAnimationFrame(() => {
+            triggerRef.current?.focus();
+        });
+
+        return () => cancelAnimationFrame(frame);
+    }, [ isPopoverOpen, shouldFocusComposer ]);
+
     // If no menu items will be shown, don't render the menu button.
     if (!enablePrivateChat && isFileMessage && !canEditMessage) {
         return null;
     }
 
     const handleMenuClick = useCallback(() => {
+        restoreTriggerFocus.current = true;
         setIsPopoverOpen(true);
+    }, []);
+
+    const handleTriggerKeyPress = useCallback((event: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (event.key === 'Enter') {
+            event.stopPropagation();
+        }
     }, []);
 
     const handleClose = useCallback(() => {
@@ -119,6 +200,7 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
                 dispatch(openChat(participant));
             }
         }
+        setShouldFocusComposer(true);
         handleClose();
     }, [ dispatch, isLobbyMessage, participant, message.participantId, displayName ]);
 
@@ -161,53 +243,104 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
 
     const handleEditClick = useCallback(() => {
         onEditMessage?.();
+        setShouldFocusComposer(true);
         handleClose();
     }, [ onEditMessage, handleClose ]);
 
+    const handleMenuKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Enter') {
+            const item = (event.target as HTMLElement).closest('button');
+
+            if (item instanceof HTMLButtonElement && event.currentTarget.contains(item)) {
+                event.preventDefault();
+                event.stopPropagation();
+                item.click();
+            }
+
+            return;
+        }
+
+        if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
+            return;
+        }
+
+        const items = Array.from(
+            menuPanelRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]') ?? []
+        );
+
+        if (items.length === 0) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const currentIndex = items.indexOf(document.activeElement as HTMLButtonElement);
+        const delta = event.key === 'ArrowDown' ? 1 : -1;
+        const nextIndex = currentIndex === -1
+            ? 0
+            : (currentIndex + delta + items.length) % items.length;
+
+        items[nextIndex]?.focus();
+    }, []);
+
     const popoverContent = (
-        <div className = { classes.menuPanel }>
+        <div
+            className = { classes.menuPanel }
+            onKeyDown = { handleMenuKeyDown }
+            ref = { menuPanelRef }
+            role = 'menu'>
             {canEditMessage && (
-                <div
+                <button
                     className = { classes.menuItem }
-                    onClick = { handleEditClick }>
+                    onClick = { handleEditClick }
+                    role = 'menuitem'
+                    type = 'button'>
                     {t('chat.edit')}
-                </div>
+                </button>
             )}
             {enablePrivateChat && (
-                <div
+                <button
                     className = { classes.menuItem }
-                    onClick = { handlePrivateClick }>
+                    onClick = { handlePrivateClick }
+                    role = 'menuitem'
+                    type = 'button'>
                     {t('chat.privateMessage')}
-                </div>
+                </button>
             )}
             {!isFileMessage && (
-                <div
+                <button
                     className = { classes.menuItem }
-                    onClick = { handleCopyClick }>
+                    onClick = { handleCopyClick }
+                    role = 'menuitem'
+                    type = 'button'>
                     {t('chat.copy')}
-                </div>
+                </button>
             )}
             {isModerator
                 && !isModerated
                 && messageModerationSupported
                 && message.messageType !== MESSAGE_TYPE_LOCAL
                 && (
-                    <div
+                    <button
                         className = { classes.menuItem }
-                        onClick = { handleModerateClick }>
+                        onClick = { handleModerateClick }
+                        role = 'menuitem'
+                        type = 'button'>
                         {t('chat.delete')}
-                    </div>
+                    </button>
                 )}
             {message.messageType === MESSAGE_TYPE_LOCAL
                 && !message.isDeleted
                 && !message.isModerated
                 && messageModerationSupported
                 && (
-                    <div
+                    <button
                         className = { classes.menuItem }
-                        onClick = { handleDeleteClick }>
+                        onClick = { handleDeleteClick }
+                        role = 'menuitem'
+                        type = 'button'>
                         {t('chat.deleteMessage')}
-                    </div>
+                    </button>
                 )}
         </div>
     );
@@ -226,6 +359,8 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
                         className = { classes.messageMenuButton }
                         icon = { IconDotsHorizontal }
                         onClick = { handleMenuClick }
+                        onKeyPress = { handleTriggerKeyPress }
+                        ref = { triggerRef }
                         type = { BUTTON_TYPES.TERTIARY } />
                 </Popover>
             </div>
