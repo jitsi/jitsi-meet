@@ -1900,6 +1900,8 @@ var config = {
     //     'liveStreaming.unavailableTitle', // shown when livestreaming service is not reachable
     //     'lobby.joinRejectedMessage', // shown when while in a lobby, user's request to join is rejected
     //     'lobby.notificationTitle', // shown when lobby is toggled and when join requests are allowed / denied
+    //     'notify.audioOutputChangeFailedTitle', // shown when switching the speaker fails
+    //     'notify.audioOutputDisconnectedTitle', // shown when the selected speaker is disconnected
     //     'notify.audioPlaybackBlockedTitle', // shown when the browser blocks remote audio until the user interacts
     //     'notify.audioUnmuteBlockedTitle', // shown when mic unmute blocked
     //     'notify.chatMessages', // shown when receiving chat messages while the chat window is closed
