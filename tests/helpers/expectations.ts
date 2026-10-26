@@ -38,6 +38,12 @@ const defaultExpectations = {
          * Whether the jaas account is configured with the account-level setting to allow unauthenticated users to join.
          */
         unauthenticatedJoins: false,
+        /**
+         * Where a room whose name is not in the form jitsi-meet produces is refused: 'join' when the backend refuses
+         * to create the room (the client cannot join it at all), 'recording' when the room is created but a
+         * recording request in it is refused.
+         */
+        nonCanonicalRoomNameRefusedAt: 'join',
         visitors: true
     },
     moderation: {

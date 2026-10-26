@@ -67,9 +67,13 @@ describe('Recording request for a room name in a non-canonical form', () => {
     async function expectRefused(suffix: string) {
         const result = await joinRawAndRequestRecording(other, `${ctx.roomName}${suffix}`);
 
-        // The room is refused on creation, or jicofo refuses the conference request, or jicofo refuses the
-        // recording request. All of them keep the recorder out; which one depends on the deployment.
-        expect([ 'join-refused', 'recording-refused' ]).toContain(result.outcome);
+        // The backend refuses to create the room (or jicofo refuses the conference request), or, on a deployment
+        // without that, jicofo refuses the recording request. Either keeps the recorder out, but the expectation
+        // says which one this deployment must do, so a regression in the earlier layer is detected.
+        const expected = expectations.jaas.nonCanonicalRoomNameRefusedAt === 'join'
+            ? 'join-refused' : 'recording-refused';
+
+        expect(result.outcome).toBe(expected);
 
         expect(await recorderJoined(victim)).toBe(false);
     }
@@ -99,7 +103,8 @@ describe('Recording request for a room name in a non-canonical form', () => {
 async function recorderJoined(p: Participant): Promise<boolean> {
     try {
         await p.driver.waitUntil(
-            () => p.execute(() => APP.conference._room.getParticipants().some((m: any) => m.isHidden())),
+            () => p.execute(() => APP.conference._room.getParticipants()
+                .some((m: { isHidden: () => boolean; }) => m.isHidden())),
             { timeout: RECORDER_WATCH_MS, timeoutMsg: 'no recorder joined' });
 
         return true;
@@ -123,7 +128,7 @@ async function joinRawAndRequestRecording(p: Participant, rawRoomName: string): 
         const events = JitsiMeetJS.events.conference;
         const joined = new Promise<string>(resolve => {
             conference.once(events.CONFERENCE_JOINED, () => resolve('joined'));
-            conference.once(events.CONFERENCE_FAILED, (error: string, ...args: any[]) =>
+            conference.once(events.CONFERENCE_FAILED, (error: string, ...args: unknown[]) =>
                 resolve(`${error} ${args.map(String).join(' ')}`.trim()));
         });
 
@@ -140,13 +145,13 @@ async function joinRawAndRequestRecording(p: Participant, rawRoomName: string): 
 
             try {
                 await conference.stopRecording(session.getID());
-            } catch (e: any) {
+            } catch (e: unknown) {
                 // The recording started, which is what this reports. Stopping is best effort.
             }
 
             return { outcome: 'recording-started' };
-        } catch (e: any) {
-            return { detail: String(e?.message ?? e), outcome: 'recording-refused' };
+        } catch (e: unknown) {
+            return { detail: e instanceof Error ? e.message : String(e), outcome: 'recording-refused' };
         } finally {
             conference.leave().catch(() => undefined);
         }
