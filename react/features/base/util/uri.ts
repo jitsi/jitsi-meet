@@ -163,6 +163,12 @@ export function getNormalizedRoomName(room?: string): string | undefined {
 
     // Only decoded and normalized strings can be lowercased properly.
     room = room?.toLowerCase();
+
+    // The characters which are not supported in a room name are removed from the URL path before it is decoded
+    // (see parseURIString), so a URL may still carry them percent-encoded. Remove them from the decoded name as
+    // well, so that the name has the same form regardless of how the URL spelled it. The backend refuses a room
+    // name which contains them.
+    room = room?.replace(new RegExp(_ROOM_EXCLUDE_PATTERN, 'g'), '');
     /* eslint-enable no-param-reassign */
 
     return room;
