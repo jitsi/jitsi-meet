@@ -370,8 +370,9 @@ export function getRecordingDialogModel(
         running: facts.transcriptionRunning,
         startBlocker: transcriptionStartBlocker,
 
-        // The deployment asks for it and the transcription could be started on its own right now.
-        startsWithRecording: facts.autoTranscribeOnRecord && !facts.transcriptionRunning && !transcriptionStartBlocker,
+        // shouldAutoTranscribeOnRecord() already answers no while a transcriber is in the meeting
+        // or end-to-end encryption is on: it is the one place deciding this.
+        startsWithRecording: facts.autoTranscribeOnRecord,
         visible: facts.canTranscribe || facts.transcriptionRunning
     };
 
