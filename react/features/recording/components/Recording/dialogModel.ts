@@ -378,8 +378,9 @@ export function getRecordingDialogModel(
         showStartBoth: !recording.running || !transcription.running,
         showStopBoth: recording.running || transcription.running,
 
-        // Start both starts whichever service is not running, so whatever blocks that blocks it.
-        startBothBlocker: transcription.startBlocker ?? (recording.running ? undefined : recording.startBlocker),
+        // Start both starts whichever service is not running, so only what blocks those blocks it.
+        startBothBlocker: (transcription.running ? undefined : transcription.startBlocker)
+            ?? (recording.running ? undefined : recording.startBlocker),
         visible: recording.visible && transcription.visible
     };
 
