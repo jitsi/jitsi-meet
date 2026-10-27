@@ -194,7 +194,11 @@
     "webpack": "5.105.0",
     "webpack-bundle-analyzer": "4.4.2",
     "webpack-cli": "5.1.4",
-    "webpack-dev-server": "5.2.6"
+    "webpack-dev-server": "5.2.6",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "@types/jest": "^29.5.1",
+    "jest-environment-jsdom": "^29.5.0"
   },
   "engines": {
     "node": ">=24.0.0",
@@ -216,7 +220,8 @@
     "tsc:web": "tsc --noEmit --project tsconfig.web.json",
     "tsc:native": "tsc --noEmit --project tsconfig.native.json",
     "tsc:ci": "npm run tsc:web && npm run tsc:native",
-    "validate": "npm ls"
+    "validate": "npm ls",
+    "test": "jest"
   },
   "resolutions": {
     "@types/react": "17.0.14",
