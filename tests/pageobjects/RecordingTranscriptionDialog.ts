@@ -125,24 +125,34 @@ export default class RecordingTranscriptionDialog extends BasePageObject {
      */
     async getStartTranscriptionTooltip(): Promise<string> {
         const driver = this.participant.driver;
+        const button = driver.$(START_TRANSCRIPTION);
 
-        await driver.$(START_TRANSCRIPTION).moveTo();
+        // The tooltip repeats the button's description. Tooltips render in a portal, not next to
+        // the button, so that text is what tells this one from any other popover on the page.
+        const reason = await button.getAttribute('aria-description');
 
-        const tooltip = driver.$(TOOLTIP);
-        let text = '';
+        if (!reason) {
+            throw new Error('The Start transcription button has no description to show in a tooltip');
+        }
+
+        await button.moveTo();
 
         // The tooltip fades in: it exists before it is visible, and getText() returns an empty
         // string for it until then.
         await driver.waitUntil(async () => {
-            text = await tooltip.isExisting() ? await tooltip.getText() : '';
+            for (const popover of await driver.$$(TOOLTIP)) {
+                if (await popover.getText() === reason) {
+                    return true;
+                }
+            }
 
-            return text !== '';
+            return false;
         }, {
             timeout: 3000,
             timeoutMsg: 'Start transcription tooltip did not appear'
         });
 
-        return text;
+        return reason;
     }
 
     /**

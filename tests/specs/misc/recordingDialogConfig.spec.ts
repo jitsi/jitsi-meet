@@ -139,6 +139,17 @@ async function startFakeLiveStream(): Promise<void> {
 }
 
 /**
+ * Ends the fake live stream: CLEAR_RECORDING_SESSIONS drops every session from the reducer, with no
+ * side effect (recording/middleware.ts has no case for it, unlike a session's OFF update, which
+ * would notify about a live stream stopped).
+ */
+async function stopFakeLiveStream(): Promise<void> {
+    await ctx.p1.execute(() => {
+        APP.store.dispatch({ type: 'CLEAR_RECORDING_SESSIONS' });
+    });
+}
+
+/**
  * Fakes a transcriber that is in the meeting only for the subtitles: TRANSCRIBER_JOINED without
  * the recording.isTranscribingEnabled metadata flag, so isTranscribing() is true while
  * isRecorderTranscriptionsRunning() is false.
@@ -327,7 +338,6 @@ describe('Recording dialog config — live stream running', () => {
             return;
         }
 
-        await joinWithConfig(LIVE_STREAM_CONFIG);
         await startFakeLiveStream();
 
         const dialog = ctx.p1.getRecordingTranscriptionDialog();
@@ -340,14 +350,13 @@ describe('Recording dialog config — live stream running', () => {
         expect(await dialog.hasLocalRecordingOnlySelfSwitch()).toBe(true);
 
         await dialog.cancel();
+        await stopFakeLiveStream();
     });
 
     it('switches to local recording when a live stream starts while the dialog is open', async () => {
         if (!localRecordingSupported) {
             return;
         }
-
-        await joinWithConfig(LIVE_STREAM_CONFIG);
 
         const dialog = ctx.p1.getRecordingTranscriptionDialog();
 
@@ -367,6 +376,7 @@ describe('Recording dialog config — live stream running', () => {
         expect(await dialog.getSelectedService()).toBe('Local recording');
 
         await dialog.cancel();
+        await stopFakeLiveStream();
     });
 });
 
