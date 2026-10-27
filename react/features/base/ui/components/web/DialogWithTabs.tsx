@@ -160,6 +160,8 @@ interface IProps extends IBaseProps {
     tabs: IDialogTab<any>[];
 }
 
+const getTabButtonId = (tabName?: string) => `dialogtab-button-${tabName}`;
+
 const DialogWithTabs = ({
     className,
     defaultTab,
@@ -207,7 +209,7 @@ const DialogWithTabs = ({
         if (userSelected) {
             document.querySelector<HTMLElement>(isMobile
                 ? `.${classes.title}`
-                : `#${`dialogtab-button-${selectedTab}`}`
+                : `#${getTabButtonId(selectedTab)}`
             )?.focus();
             setUserSelected(false);
         }
@@ -346,7 +348,7 @@ const DialogWithTabs = ({
                                 className = { cx(isMobile && classes.menuItemMobile) }
                                 controls = { isMobile ? undefined : `dialogtab-content-${tab.name}` }
                                 icon = { tab.icon }
-                                id = { `dialogtab-button-${tab.name}` }
+                                id = { getTabButtonId(tab.name) }
                                 key = { tab.name }
                                 onClick = { onClick(tab.name) }
                                 onKeyDown = { isMobile ? onMobileKeyDown(tab.name) : onTabKeyDown(index) }
@@ -381,7 +383,7 @@ const DialogWithTabs = ({
                     )}
                     {tabs.map(tab => (
                         <div
-                            aria-labelledby = { isMobile ? undefined : `dialogtab-button-${tab.name}` }
+                            aria-labelledby = { isMobile ? undefined : getTabButtonId(tab.name) }
                             className = { cx(classes.content, tab.name !== selectedTab && 'hide') }
                             id = { `dialogtab-content-${tab.name}` }
                             key = { tab.name }
