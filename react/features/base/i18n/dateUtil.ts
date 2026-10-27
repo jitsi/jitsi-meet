@@ -70,11 +70,11 @@ const LOCALE_MAPPING: Record<string, string> = {
     // i18next -> dayjs
     'hy': 'hy-am',
     'oc': 'oc-lnc',
-    'zhCN': 'zh-cn',
-    'zhTW': 'zh-tw',
-    'ptBR': 'pt-br',
-    'esUS': 'es-us',
-    'frCA': 'fr-ca'
+    'zh-CN': 'zh-cn',
+    'zh-TW': 'zh-tw',
+    'pt-BR': 'pt-br',
+    'es-US': 'es-us',
+    'fr-CA': 'fr-ca'
 };
 
 /**
