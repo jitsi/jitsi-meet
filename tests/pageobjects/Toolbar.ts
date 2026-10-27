@@ -17,6 +17,7 @@ const OVERFLOW_MENU = 'More actions menu';
 const OVERFLOW = 'More actions';
 const CLOSE_OVERFLOW = 'Close more actions menu';
 const PARTICIPANTS = 'Open participants pane';
+const PIP = 'Enter Picture-in-Picture mode';
 const PROFILE = 'Edit your profile';
 const RAISE_HAND = 'Raise your hand';
 const LOWER_HAND = 'Lower your hand';
@@ -103,6 +104,25 @@ export default class Toolbar extends BasePageObject {
         // transcription.enabled=false) get "Record" too, not just non-moderators — see
         // AbstractRecordButton._getAccessibilityLabel()/canAddTranscriber().
         return this.clickButtonInOverflowMenu([ RECORDING, RECORDING_NON_MODERATOR ]);
+    }
+
+    /**
+     * Returns whether the Picture-in-Picture button exists in the DOM for this participant, which is the visible
+     * effect of Picture-in-Picture being turned on.
+     *
+     * @returns {Promise<boolean>}
+     */
+    async hasPictureInPictureButton(): Promise<boolean> {
+        // The button usually lives in the overflow ("More actions") menu, so it is only in the DOM while that menu
+        // is open. isExisting() searches the whole DOM, so opening the menu first also covers the case where the
+        // button is promoted to the main toolbar.
+        await this.openOverflowMenu();
+
+        const exists = await this.getButton(PIP).isExisting();
+
+        await this.closeOverflowMenu();
+
+        return exists;
     }
 
     /**
