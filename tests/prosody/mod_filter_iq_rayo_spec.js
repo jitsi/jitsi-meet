@@ -1,3 +1,4 @@
+import { xml } from '@xmpp/client';
 import assert from 'assert';
 import http from 'http';
 
@@ -262,6 +263,157 @@ describe('mod_filter_iq_rayo (feature-based authorization)', () => {
             const second = await sendAndCollect(c, room);
 
             assert.strictEqual(second.length, 1, 'second outbound-call should also pass');
+        });
+    });
+
+    // ─── max_number_outgoing_calls (set to 2 in the test config) ────────────
+    //
+    // The option bounds every Rayo dial a session or user sends: at most N
+    // dials per minute per session, and at most N concurrent Jigasi sessions
+    // (SIP or transcriber) per user, counted through the initiator headers that
+    // Jigasi echoes back in its MUC presence.
+
+    describe('max_number_outgoing_calls', () => {
+        const LIMIT = 2;
+        const transcribeOpts = { dialTo: 'jitsi_meet_transcribe' };
+
+        /**
+         * Creates a client whose token allows any room, and joins it to `count`
+         * fresh rooms (focus joins each room first).
+         *
+         * @param {number} count
+         * @param {object} [context]  JWT context claim.
+         * @returns {Promise<{client: object, rooms: string[]}>}
+         */
+        async function setupRooms(count, context) {
+            const token = mintAsapToken({ room: '*',
+                context });
+            const c = await createXmppClient({ params: { token } });
+
+            clients.push(c);
+
+            const rooms = [];
+
+            for (let i = 0; i < count; i++) {
+                const room = nextRoom();
+                const focus = await joinWithFocus(room);
+
+                clients.push(focus);
+                await c.joinRoom(room);
+                rooms.push(room);
+            }
+
+            return { client: c,
+                rooms };
+        }
+
+        /**
+         * Joins a room as a transcriber (recorder.localhost account) whose
+         * presence carries the Jigasi initiator extension with the
+         * X-outbound-call-initiator-user header, as a real Jigasi transcriber
+         * started by `userId` does.
+         *
+         * @param {string} roomJid
+         * @param {string} userId
+         */
+        async function joinAsTranscriberStartedBy(roomJid, userId) {
+            const c = await createXmppClient({
+                domain: 'recorder.localhost',
+                username: 'transcriber',
+                password: 'transcribersecret'
+            });
+
+            clients.push(c);
+
+            const initiator = xml('initiator', { xmlns: 'http://jitsi.org/protocol/jigasi' },
+                xml('header', { xmlns: 'urn:xmpp:rayo:1',
+                    name: 'X-outbound-call-initiator-user',
+                    value: userId })
+            );
+
+            await c.joinRoom(roomJid, 'transcriber', { extensions: [ initiator ] });
+
+            return c;
+        }
+
+        /**
+         * Sends a dial that is expected to be blocked and returns the error
+         * condition name from the reply.
+         */
+        async function dialErrorCondition(client, roomJid, opts) {
+            const reply = await client.sendRayoIqAndWait(roomJid, opts);
+            const error = reply.getChild('error');
+
+            return error ? error.children[0].name : null;
+        }
+
+        it('blocks the third outbound-call dial from one session within a minute', async () => {
+            const { client: c, rooms: [ room ] } = await setupRooms(1, { features: { 'outbound-call': true } });
+
+            for (let i = 0; i < LIMIT; i++) {
+                const iqs = await sendAndCollect(c, room);
+
+                assert.strictEqual(iqs.length, 1, `dial ${i + 1} should pass`);
+            }
+
+            assert.strictEqual(await dialErrorCondition(c, room), 'resource-constraint');
+        });
+
+        it('blocks the third transcription dial from one session within a minute', async () => {
+            // One dial per room, so the per-room transcription throttle does not interfere.
+            const { client: c, rooms } = await setupRooms(LIMIT + 1, { features: { transcription: true } });
+
+            for (let i = 0; i < LIMIT; i++) {
+                const iqs = await sendAndCollect(c, rooms[i], transcribeOpts);
+
+                assert.strictEqual(iqs.length, 1, `transcription dial ${i + 1} should pass`);
+            }
+
+            assert.strictEqual(await dialErrorCondition(c, rooms[LIMIT], transcribeOpts), 'resource-constraint');
+        });
+
+        it('blocks a transcription dial when the user already has the maximum number of Jigasi sessions', async () => {
+            const userId = 'limit-user-1';
+            const { client: c, rooms } = await setupRooms(LIMIT + 1, {
+                user: { id: userId },
+                features: { transcription: true }
+            });
+
+            // Simulate LIMIT transcribers already running for this user in other rooms.
+            for (let i = 0; i < LIMIT; i++) {
+                await joinAsTranscriberStartedBy(rooms[i], userId);
+            }
+
+            assert.strictEqual(await dialErrorCondition(c, rooms[LIMIT], transcribeOpts), 'resource-constraint');
+        });
+
+        it('blocks an outbound-call dial when the user already has the maximum number of Jigasi sessions', async () => {
+            const userId = 'limit-user-2';
+            const { client: c, rooms } = await setupRooms(LIMIT + 1, {
+                user: { id: userId },
+                features: { 'outbound-call': true }
+            });
+
+            for (let i = 0; i < LIMIT; i++) {
+                await joinAsTranscriberStartedBy(rooms[i], userId);
+            }
+
+            assert.strictEqual(await dialErrorCondition(c, rooms[LIMIT]), 'resource-constraint');
+        });
+
+        it('does not count Jigasi sessions started by another user', async () => {
+            const { client: c, rooms } = await setupRooms(LIMIT + 1, {
+                user: { id: 'limit-user-3' },
+                features: { transcription: true }
+            });
+
+            for (let i = 0; i < LIMIT; i++) {
+                await joinAsTranscriberStartedBy(rooms[i], 'someone-else');
+            }
+
+            const iqs = await sendAndCollect(c, rooms[LIMIT], transcribeOpts);
+
+            assert.strictEqual(iqs.length, 1, 'dial should pass, the other sessions belong to another user');
         });
     });
 

@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
-    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 #v7.0.0
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 #v7.1.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -46,7 +46,7 @@ jobs:
         os: [macos-latest, ubuntu-latest]
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
-    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 #v7.0.0
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 #v7.1.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -63,7 +63,7 @@ jobs:
     runs-on: macos-15
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
-    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 #v7.0.0
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 #v7.1.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -78,7 +78,7 @@ jobs:
     runs-on: macos-15
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
-    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 #v7.0.0
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 #v7.1.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -94,7 +94,7 @@ jobs:
         sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
         xcodebuild -version
     - name: setup-cocoapods
-      uses: ruby/setup-ruby@a0102e0972be65f351c307e2d64b9314a57c8073  # v1
+      uses: ruby/setup-ruby@651ff0d62c5c79bed6d53ec518387aae20e72c1a  # v1
       with:
         ruby-version: '3.4'
         bundler-cache: true
@@ -129,7 +129,7 @@ jobs:
         rm -rf /host/usr/share/swift
         df -h /
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
-    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 #v7.0.0
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 #v7.1.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -157,7 +157,7 @@ jobs:
     runs-on: macos-15
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
-    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 #v7.0.0
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 #v7.1.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -179,7 +179,7 @@ jobs:
           -workspace ios/jitsi-meet.xcworkspace \
           -scheme JitsiMeetSDK
     - name: setup-cocoapods
-      uses: ruby/setup-ruby@a0102e0972be65f351c307e2d64b9314a57c8073 #v1.324.0
+      uses: ruby/setup-ruby@651ff0d62c5c79bed6d53ec518387aae20e72c1a #v1.329.0
       with:
         ruby-version: '3.4'
         bundler-cache: true
@@ -216,7 +216,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
-    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 #v7.0.0
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 #v7.1.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -234,7 +234,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
-    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 #v7.0.0
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 #v7.1.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'

@@ -301,19 +301,42 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * @param {string} roomJid         e.g. 'room@conference.localhost'
          * @param {string} action          'start' | 'stop' | 'status' etc.
          * @param {string} recordingMode   'file' (recording) | 'stream' (livestreaming)
+         * @param {object} [opts]
+         * @param {string} [opts.appData]  Raw app_data attribute value, sent as is.
          */
-        sendJibriIq(roomJid, action, recordingMode) {
-            // Directed to focus's occupant full JID so `pre-iq/full` fires on the
-            // main VirtualHost where mod_filter_iq_jibri is loaded.
+        sendJibriIq(roomJid, action, recordingMode, { appData } = {}) {
+            // `pre-iq/full` (mod_filter_iq_jibri, mod_jibri_session) fires on this
+            // client's own VirtualHost. Directed to focus's occupant full JID so
+            // the MUC records it and forwards it to the focus.
+            return this.sendJibriIqTo(`${roomJid}/focus`, {
+                action,
+                // eslint-disable-next-line camelcase
+                recording_mode: recordingMode,
+                // eslint-disable-next-line camelcase
+                ...appData === undefined ? {} : { app_data: appData }
+            });
+        },
+
+        /**
+         * Sends a Jibri IQ (http://jitsi.org/protocol/jibri) with the given
+         * <jibri/> attributes to any full JID, e.g. the start iq jicofo sends
+         * to a jibri, which names the room in its `room` attribute.
+         * Fire-and-forget; assert on the recipient's stanza queue (waitForIq).
+         * The /jibri-iqs HTTP endpoint only records iqs addressed to an
+         * occupant on conference.localhost, so it never sees an iq sent to a
+         * jibri's own JID.
+         *
+         * @param {string} to           Destination full JID.
+         * @param {object} jibriAttrs   Attributes of the <jibri/> element.
+         */
+        sendJibriIqTo(to, jibriAttrs) {
             return xmpp.send(
                 xml('iq', { type: 'set',
-                    to: `${roomJid}/focus`,
+                    to,
                     id: `jibri-${++_counter}` },
                     xml('jibri', {
                         xmlns: 'http://jitsi.org/protocol/jibri',
-                        action,
-                        // eslint-disable-next-line camelcase
-                        recording_mode: recordingMode
+                        ...jibriAttrs
                     })
                 )
             );

@@ -160,6 +160,11 @@ var config = {
     // Shows/hides the moderator setting for chat permissions.
     // showChatPermissionsModeratorSetting: false,
 
+    // Shows/hides the moderator setting that restricts video sharing to the participants with the
+    // `share-video` permission. The restriction is enforced by the mod_filter_messages prosody module,
+    // thus enable this only when that module is loaded.
+    // showSharedVideoPermissionsModeratorSetting: false,
+
     // screenshotCapture : {
     //      Enables the screensharing capture feature.
     //      enabled: false,
@@ -219,6 +224,9 @@ var config = {
 
     // Start calls with audio muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
+    // This option is not read from config.js by the main app; the value comes
+    // from the URL hash (#config.startWithAudioMuted=true) or the user's saved
+    // settings.
     // startWithAudioMuted: false,
 
     // Enabling it (with #params) will disable local audio output of remote
@@ -384,6 +392,9 @@ var config = {
 
     // Start calls with video muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
+    // This option is not read from config.js by the main app; the value comes
+    // from the URL hash (#config.startWithVideoMuted=true) or the user's saved
+    // settings.
     // startWithVideoMuted: false,
 
     // Desktop sharing
@@ -440,6 +451,15 @@ var config = {
     //    // skipConsentInMeeting: true,
     //    // Link for the recording consent dialog's "Learn more" link.
     //    // consentLearnMoreLink: 'https://jitsi.org/meet/consent',
+    // },
+
+    // Voice agents: server-side AI participants provisioned through the voice-agent API.
+    // voiceAgents: {
+    //     // Ask each participant before an agent may hear them (they are muted until they decide, and only
+    //     // participants who allow the agent hear it). By default agents are let in without asking.
+    //     // requireConsent: false,
+    //     // Link for the consent dialog's "Learn more" link.
+    //     // consentLearnMoreLink: 'https://jitsi.org/meet/consent',
     // },
 
     // recordingService: {
@@ -707,7 +727,7 @@ var config = {
     // Use TURN/UDP servers for the jitsi-videobridge connection (by default
     // we filter out TURN/UDP because it is usually not needed since the
     // bridge itself is reachable via UDP)
-    // useTurnUdp: false
+    // useTurnUdp: false,
 
     // Enable support for encoded transform in supported browsers. This allows
     // E2EE to work in Safari if the corresponding flag is enabled in the browser.

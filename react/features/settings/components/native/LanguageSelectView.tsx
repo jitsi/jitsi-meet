@@ -34,6 +34,7 @@ const LanguageSelectView = ({ goBack, isInWelcomePage }: {
 
     const headerLeft = () => (
         <HeaderNavigationButton
+            accessibilityLabel = { t('dialog.Back') }
             color = { BaseThemeNative.palette.link01 }
             onPress = { goBack }
             src = { IconArrowLeft }
@@ -58,6 +59,11 @@ const LanguageSelectView = ({ goBack, isInWelcomePage }: {
                 {
                     LANGUAGES.map(language => (
                         <TouchableHighlight
+                            accessibilityRole = 'button'
+                            accessibilityState = {{
+                                disabled: currentLanguage === language,
+                                selected: currentLanguage === language
+                            }}
                             disabled = { currentLanguage === language }
                             key = { language }
                             onPress = { setLanguage(language) }>

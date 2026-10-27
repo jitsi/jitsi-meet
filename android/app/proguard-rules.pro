@@ -68,8 +68,7 @@
 
 # WebRTC
 
--keep class org.webrtc.** { *; }
--dontwarn org.chromium.build.BuildHooksAndroid
+-dontwarn org.webrtc.Dav1dDecoder$Natives
 
 # Jisti Meet SDK
 

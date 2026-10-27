@@ -1,4 +1,5 @@
 import React, { forwardRef, useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     BlurEvent,
     FocusEvent,
@@ -91,6 +92,7 @@ const Input = forwardRef<TextInput, IProps>(({
     textContentType,
     value
 }: IProps, ref) => {
+    const { t } = useTranslation();
     const [ focused, setFocused ] = useState(false);
     const handleChange = useCallback((e: NativeSyntheticEvent<TextInputChangeEventData>) => {
         const { nativeEvent: { text } } = e;
@@ -172,6 +174,8 @@ const Input = forwardRef<TextInput, IProps>(({
                 value = { typeof value === 'number' ? `${value}` : value } />
             { clearable && !disabled && value !== '' && (
                 <TouchableOpacity
+                    accessibilityLabel = { t('inputAction.deleteInput') }
+                    accessibilityRole = 'button'
                     onPress = { clearInput }
                     style = { [ styles.clearButton, customStyles?.clearButton ] as StyleProp<ViewStyle> }>
                     <Icon

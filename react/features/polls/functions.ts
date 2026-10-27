@@ -69,6 +69,9 @@ export function hasIdenticalAnswers(currentAnswers: Array<IAnswerData>): boolean
 /**
  * Check if participant is not allowed to create polls.
  *
+ * Poll creation is restricted either by the dynamic branding or by the room metadata. The server
+ * sets the restriction in the metadata from the settings of the meeting.
+ *
  * @param {IReduxState} state - The redux state.
  * @returns {boolean} - Returns true if the participant is not allowed to create polls.
  */
@@ -78,8 +81,9 @@ export function isCreatePollDisabled(state: IReduxState) {
     }
 
     const { pollCreationRequiresPermission } = state['features/dynamic-branding'];
+    const pollCreationRestricted = state['features/base/conference'].metadata?.permissions?.pollCreationRestricted;
 
-    if (!pollCreationRequiresPermission) {
+    if (!pollCreationRequiresPermission && !pollCreationRestricted) {
         return false;
     }
 

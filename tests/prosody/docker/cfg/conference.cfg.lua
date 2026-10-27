@@ -65,9 +65,11 @@ Component "conference.localhost" "muc"
     -- mod_time_restricted (loaded on demand by mod_time_restricted_spec, not in
     -- modules_enabled, so it does not destroy other tests' rooms): a fractional
     -- limit keeps the test fast — 0.125 min = 7.5 s to the limit, plus a 3 s
-    -- wrap-up grace before the room is actually destroyed.
+    -- wrap-up grace before the room is actually destroyed. The room name is
+    -- unblocked 0.002 h = 7.2 s after the destroy.
     conference_max_minutes = 0.125
     conference_grace_seconds = 3
+    conference_blocked_cleanup_hours = 0.002
 
     -- mod_muc_limit_messages: cap per room and honour auth tokens.
     muc_limit_messages_count = 3

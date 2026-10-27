@@ -95,6 +95,19 @@ export function isTranscribing(state: IReduxState) {
 }
 
 /**
+ * Returns whether the deployment's backend (async) transcription is on for the meeting.
+ *
+ * @param {IReduxState} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isAsyncTranscriptionActive(state: IReduxState) {
+    const { metadata } = state['features/base/conference'];
+
+    // Strict, as jicofo starts it only on these exact values.
+    return metadata?.asyncTranscription === true && metadata?.recording?.isTranscribingEnabled === true;
+}
+
+/**
  * Returns true if there is a recorder transcription session running.
  * NOTE: If only the subtitles are running this function will return false.
  *

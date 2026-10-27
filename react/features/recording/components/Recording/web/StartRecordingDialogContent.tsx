@@ -9,6 +9,7 @@ import Container from '../../../../base/react/components/web/Container';
 import Image from '../../../../base/react/components/web/Image';
 import LoadingIndicator from '../../../../base/react/components/web/LoadingIndicator';
 import Text from '../../../../base/react/components/web/Text';
+import DisabledReasonTooltip from '../../../../base/tooltip/components/DisabledReasonTooltip';
 import Button from '../../../../base/ui/components/web/Button';
 import Switch from '../../../../base/ui/components/web/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.web';
@@ -433,6 +434,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
 
         const {
             _availableLanguages,
+            _e2eeEnabled,
             onStartTranscription,
             onStopTranscription,
             selectedLanguage,
@@ -441,6 +443,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         } = this.props;
         const { showTranscriptionOptions } = this.state;
         const classes = this.props.classes ?? {};
+        const e2eeReason = _e2eeEnabled ? t('transcribing.unavailableWithE2EE') : undefined;
         const languageOptions = _availableLanguages.map((lang: string) => {
             return {
                 label: t(lang),
@@ -463,12 +466,16 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                                 testId = 'recordingDialog.stopTranscription'
                                 type = { BUTTON_TYPES.DESTRUCTIVE } />
                         ) : (
-                            <Button
-                                accessibilityLabel = { t('dialog.startTranscription') }
-                                labelKey = 'dialog.start'
-                                onClick = { onStartTranscription }
-                                testId = 'recordingDialog.startTranscription'
-                                type = { BUTTON_TYPES.PRIMARY } />
+                            <DisabledReasonTooltip reason = { e2eeReason }>
+                                <Button
+                                    accessibilityLabel = { t('dialog.startTranscription') }
+                                    description = { e2eeReason }
+                                    disabled = { _e2eeEnabled }
+                                    labelKey = 'dialog.start'
+                                    onClick = { onStartTranscription }
+                                    testId = 'recordingDialog.startTranscription'
+                                    type = { BUTTON_TYPES.PRIMARY } />
+                            </DisabledReasonTooltip>
                         ) }
                     </Container>
                 </Container>
@@ -508,6 +515,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         }
 
         const {
+            _e2eeEnabled,
             isValidating,
             onStartBoth,
             onStopBoth,
@@ -518,7 +526,9 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         } = this.props;
         const showStopBoth = recordingRunning || transcriptionRunning;
         const showStartBoth = !recordingRunning || !transcriptionRunning;
-        const startBothDisabled = !recordingRunning && (startRecordingDisabled || isValidating);
+        const startBothE2EEReason = !transcriptionRunning && _e2eeEnabled ? t('transcribing.unavailableWithE2EE') : undefined;
+        const startBothDisabled = Boolean(startBothE2EEReason)
+            || (!recordingRunning && (startRecordingDisabled || isValidating));
         const classes = this.props.classes ?? {};
 
         return (
@@ -532,13 +542,16 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                         type = { BUTTON_TYPES.DESTRUCTIVE } />
                 ) }
                 { showStartBoth && (
-                    <Button
-                        accessibilityLabel = { t('dialog.startBoth') }
-                        disabled = { startBothDisabled }
-                        labelKey = 'dialog.startBoth'
-                        onClick = { onStartBoth }
-                        testId = 'recordingDialog.startBoth'
-                        type = { BUTTON_TYPES.PRIMARY } />
+                    <DisabledReasonTooltip reason = { startBothE2EEReason }>
+                        <Button
+                            accessibilityLabel = { t('dialog.startBoth') }
+                            description = { startBothE2EEReason }
+                            disabled = { startBothDisabled }
+                            labelKey = 'dialog.startBoth'
+                            onClick = { onStartBoth }
+                            testId = 'recordingDialog.startBoth'
+                            type = { BUTTON_TYPES.PRIMARY } />
+                    </DisabledReasonTooltip>
                 ) }
             </Container>
         );

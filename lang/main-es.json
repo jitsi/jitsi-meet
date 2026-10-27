@@ -46,7 +46,10 @@
         "errorLimitReached": "No se pudo traducir a todos a la vez. Active la traducción para participantes individuales.",
         "errorRoomDisabled": "La traducción de audio está desactivada para esta reunión. Actívala en los ajustes del moderador.",
         "errorSpeakerUnavailable": "No se puede traducir a este participante: ya no está en la reunión.",
-        "labelTooltip": "Traducción en progreso"
+        "labelTooltip": "Traducción en progreso",
+        "labelTooltipPlaying": "El audio traducido aún se está reproduciendo — espere antes de hablar",
+        "stoppedForE2EE": "La traducción de audio ha sido desactivada porque el cifrado de extremo a extremo está activado.",
+        "unavailableWithE2EE": "La traducción de audio no está disponible mientras el cifrado de extremo a extremo esté activado."
     },
     "bandwidthSettings": {
         "assumedBandwidthBps": "por ejemplo 10000000 para 10 Mbps",
@@ -115,11 +118,13 @@
         }
     },
     "chat": {
+        "copy": "Copiar",
         "delete": "Eliminar",
         "deleteMessage": "Eliminar",
         "deletedMessage": "Este mensaje se ha eliminado.",
         "deletedMessageByMe": "Ha eliminado este mensaje.",
         "disabled": "El envío de mensajes de chat está desactivado.",
+        "edit": "Editar",
         "edited": "(editado)",
         "editingMessage": "Editando",
         "enter": "Entrar en la sala",
@@ -134,6 +139,7 @@
         "message": "Mensaje",
         "messageAccessibleTitle": "{{user}} dice:",
         "messageAccessibleTitleMe": "yo digo:",
+        "messageCopied": "Mensaje copiado",
         "messageTo": "Mensaje privado para {{recipient}}",
         "messagebox": "Escriba un mensaje",
         "moderatedMessage": "Eliminado por un moderador.",
@@ -156,6 +162,7 @@
             "titleWithPollsAndCCAndFileSharing": "Introduzca un apodo para usar el chat, las encuestas, los subtítulos y los archivos"
         },
         "noMessagesMessage": "No hay mensajes en la reunión. ¡Inicie una conversación!",
+        "privateMessage": "Mensaje privado",
         "privateNotice": "Mensaje privado para {{recipient}}",
         "search": {
             "close": "Cerrar búsqueda",
@@ -258,7 +265,8 @@
         "yes": "sí"
     },
     "customPanel": {
-        "close": "Cerrar"
+        "close": "Cerrar",
+        "title": "Asistente de IA"
     },
     "dateUtils": {
         "earlier": "Anterior",
@@ -384,6 +392,8 @@
         "done": "Listo",
         "e2eeDescription": "El cifrado de extremo a extremo es actualmente EXPERIMENTAL. Tenga en cuenta que activarlo puede desactivar servicios como: grabación, transmisión en vivo y participación telefónica. Además, esta reunión solo funcionará con personas que se unan con un navegador.",
         "e2eeDisabledDueToMaxModeDescription": "No se puede activar el cifrado de extremo a extremo debido al gran número de participantes en la conferencia.",
+        "e2eeDisabledDueToTranscriptionDescription": "No se puede activar el cifrado de extremo a extremo mientras se está transcribiendo la reunión.",
+        "e2eeDisabledDueToTranslationDescription": "No se puede activar el cifrado de extremo a extremo mientras la traducción de audio está en uso.",
         "e2eeLabel": "Habilitar cifrado de extremo a extremo",
         "e2eeWarning": "ATENCIÓN: No todos los participantes de esta reunión admiten el cifrado de extremo a extremo. Si activa esta opción, no podrán verle ni oírle.",
         "e2eeWillDisableDueToMaxModeDescription": "ATENCIÓN: El cifrado de extremo a extremo se desactivará automáticamente si se unen más participantes a la reunión.",
@@ -981,6 +991,8 @@
         "screenSharingAudioOnlyDescription": "Tenga en cuenta que, al compartir su pantalla, afecta al modo \"Mejor rendimiento\" y usará más ancho de banda.",
         "screenSharingAudioOnlyTitle": "Modo \"Mejor rendimiento\"",
         "selfViewTitle": "Siempre puede reactivar la vista propia en los ajustes",
+        "settingsIncompleteDescription": "No se han podido cargar algunos ajustes de la reunión y se han usado los valores predeterminados.",
+        "settingsIncompleteTitle": "Es posible que los ajustes de la reunión estén incompletos",
         "somebody": "Alguien",
         "startSilentDescription": "Vuelva a unirse a la reunión para activar el audio",
         "startSilentTitle": "¡Se ha unido sin salida de audio!",
@@ -1048,6 +1060,14 @@
             "visitors": "Visitantes ({{count}})",
             "visitorsList": "Espectadores ({{count}})",
             "waitingLobby": "Esperando en la sala de espera ({{count}})"
+        },
+        "indicators": {
+            "audioDominantSpeaker": "Orador activo",
+            "audioForceMuted": "Audio silenciado, no puede quitar el silencio",
+            "audioMuted": "Audio silenciado",
+            "raisedHand": "Mano levantada",
+            "videoForceMuted": "Cámara desactivada, no puede activarla",
+            "videoMuted": "Cámara desactivada"
         },
         "search": "Buscar participantes",
         "searchDescription": "Empiece a escribir para filtrar los participantes",
@@ -1314,6 +1334,7 @@
         "participantKnocking": "Un participante ha entrado en la sala de espera",
         "participantLeft": "Un participante se ha ido",
         "playSounds": "Reproducir sonido",
+        "privateChatWithPermissions": "Desactivar el chat privado para los no moderadores",
         "reactions": "Reacciones de la reunión",
         "sameAsSystem": "Igual que el sistema ({{label}})",
         "selectAudioOutput": "Salida de audio",
@@ -1386,7 +1407,9 @@
         "seconds": "{{count}} s",
         "speakerStats": "Estadísticas de participantes",
         "speakerTime": "Tiempo hablado",
-        "surprised": "Sorprendido"
+        "surprised": "Sorprendido",
+        "timelineEnd": "Fin",
+        "timelineStart": "Inicio"
     },
     "startupoverlay": {
         "genericTitle": "La reunión debe utilizar su micrófono y su cámara.",
@@ -1397,6 +1420,10 @@
         "rejoinKeyTitle": "Reconectar",
         "text": "Pulse el botón <i>Reconectar</i> para volver a conectarse.",
         "title": "La videollamada se interrumpió porque este ordenador se suspendió."
+    },
+    "systemWideUserNotification": {
+        "button": "Más información",
+        "dontShowAgain": "No volver a mostrar"
     },
     "termsView": {
         "title": "Términos"
@@ -1462,6 +1489,7 @@
             "mute": "Silenciar micrófono",
             "muteEveryone": "Silenciar a todos",
             "muteEveryoneElse": "Silenciar a todos los demás",
+            "muteEveryoneElsesDesktopStream": "Detener el uso compartido de pantalla de todos los demás",
             "muteEveryoneElsesVideoStream": "Detener el vídeo del resto",
             "muteEveryonesVideoStream": "Detener el vídeo de todos",
             "muteGUMPending": "Conectando su micrófono",
@@ -1631,6 +1659,7 @@
         "alsoRecord": "¿También grabar esta reunión?",
         "ccButtonTooltip": "Iniciar o detener subtítulos",
         "expandedLabel": "Transcripción encendida",
+        "expandedOff": "La transcripción se ha detenido",
         "failed": "Error en la transcripción",
         "labelTooltip": "Esta reunión está siendo transcrita.",
         "labelTooltipExtra": "Además, una transcripción estará disponible más tarde.",
@@ -1644,10 +1673,12 @@
         "sourceLanguageHere": "aquí",
         "start": "Mostrar subtítulos",
         "stop": "Dejar de mostrar subtítulos",
+        "stoppedForE2EE": "Los subtítulos han sido desactivados porque el cifrado de extremo a extremo está activado.",
         "subtitles": "Subtítulos",
         "subtitlesOff": "Desactivados",
         "tr": "TR",
-        "translateTo": "Traducir a"
+        "translateTo": "Traducir a",
+        "unavailableWithE2EE": "La transcripción no está disponible mientras el cifrado de extremo a extremo esté activado."
     },
     "unpinParticipant": "{{participantName}} - Dejar de fijar",
     "userMedia": {

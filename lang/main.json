@@ -47,7 +47,9 @@
         "errorRoomDisabled": "Audio translation is turned off for this meeting. Enable it in Moderator settings.",
         "errorSpeakerUnavailable": "Can't translate this participant — they're no longer in the meeting.",
         "labelTooltip": "Translation in progress",
-        "labelTooltipPlaying": "Translated audio is still playing — wait before speaking"
+        "labelTooltipPlaying": "Translated audio is still playing — wait before speaking",
+        "stoppedForE2EE": "Live translation was turned off because End-to-End Encryption is on.",
+        "unavailableWithE2EE": "Live translation isn't available while End-to-End Encryption is on."
     },
     "bandwidthSettings": {
         "assumedBandwidthBps": "e.g. 10000000 for 10 Mbps",
@@ -389,7 +391,10 @@
         "displayNameRequired": "Hi! What's your name?",
         "done": "Done",
         "e2eeDescription": "End-to-End Encryption is currently EXPERIMENTAL. Please keep in mind that turning on end-to-end encryption will effectively disable server-side provided services such as: phone participation. Also keep in mind that the meeting will only work for people joining from browsers with support for insertable streams.",
+        "e2eeDisabledDueToAgentDescription": "End-to-End Encryption can't be turned on while an AI agent is in the meeting.",
         "e2eeDisabledDueToMaxModeDescription": "Cannot enable End-to-End Encryption due to large number of participants in the conference.",
+        "e2eeDisabledDueToTranscriptionDescription": "End-to-End Encryption can't be turned on while the meeting is being transcribed.",
+        "e2eeDisabledDueToTranslationDescription": "End-to-End Encryption can't be turned on while live translation is in use.",
         "e2eeLabel": "Enable End-to-End Encryption",
         "e2eeWarning": "WARNING: Not all participants in this meeting seem to have support for End-to-End encryption. If you enable it they won't be able to see nor hear you.",
         "e2eeWillDisableDueToMaxModeDescription": "WARNING: End-to-End Encryption will be automatically disabled if more participants join the conference.",
@@ -989,6 +994,7 @@
         "selfViewTitle": "You can always un-hide the self-view from settings",
         "settingsIncompleteDescription": "Some meeting settings could not be loaded and default values were used instead.",
         "settingsIncompleteTitle": "Meeting settings may be incomplete",
+        "sharedVideoRestricted": "A moderator turned off video sharing for non-moderators",
         "somebody": "Somebody",
         "startSilentDescription": "Rejoin the meeting to enable audio",
         "startSilentTitle": "You joined with no audio output!",
@@ -1056,6 +1062,14 @@
             "visitors": "Viewers {{count}}",
             "visitorsList": "Viewers ({{count}})",
             "waitingLobby": "Waiting in lobby ({{count}})"
+        },
+        "indicators": {
+            "audioDominantSpeaker": "Active speaker",
+            "audioForceMuted": "Audio muted, cannot unmute",
+            "audioMuted": "Audio muted",
+            "raisedHand": "Hand raised",
+            "videoForceMuted": "Camera disabled, cannot enable",
+            "videoMuted": "Camera disabled"
         },
         "search": "Search participants",
         "searchDescription": "Start typing to filter participants",
@@ -1329,6 +1343,7 @@
         "selectCamera": "Camera",
         "selectMic": "Microphone",
         "selfView": "Self view",
+        "sharedVideoWithPermissions": "Disable video sharing for non-moderators",
         "shortcuts": "Shortcuts",
         "showSubtitlesOnStage": "Show subtitles on stage",
         "speakers": "Speakers",
@@ -1395,7 +1410,9 @@
         "seconds": "{{count}}s",
         "speakerStats": "Participants Stats",
         "speakerTime": "Speaker Time",
-        "surprised": "Surprised"
+        "surprised": "Surprised",
+        "timelineEnd": "End",
+        "timelineStart": "Start"
     },
     "startupoverlay": {
         "genericTitle": "The meeting needs to use your microphone and camera.",
@@ -1659,10 +1676,12 @@
         "sourceLanguageHere": "here",
         "start": "Start showing subtitles",
         "stop": "Stop showing subtitles",
+        "stoppedForE2EE": "Subtitles were turned off because End-to-End Encryption is on.",
         "subtitles": "Subtitles",
         "subtitlesOff": "Off",
         "tr": "TR",
-        "translateTo": "Translate to"
+        "translateTo": "Translate to",
+        "unavailableWithE2EE": "Transcription isn't available while End-to-End Encryption is on."
     },
     "unpinParticipant": "{{participantName}} - Unpin",
     "userMedia": {
@@ -1779,6 +1798,20 @@
             "title": "You are a viewer in the meeting"
         },
         "waitingMessage": "You'll join the meeting as soon as it is live!"
+    },
+    "voiceAgents": {
+        "allow": "Allow",
+        "consentDescription": "The agent only hears participants who allow it. If you allow, it will hear you and you will hear its replies.",
+        "consentDescriptionMuted": "The agent only hears participants who allow it. If you allow, it will hear you and you will hear its replies. You are muted until you decide.",
+        "consentTitle": "{{name}} joined as an AI agent",
+        "e2eeUnsupportedDescription": "AI agents cannot take part in end-to-end encrypted meetings. Turn off end-to-end encryption to let the agent hear and be heard.",
+        "e2eeUnsupportedTitle": "{{name}} is unavailable",
+        "labelTooltip": "AI agent in the meeting: {{names}}",
+        "labelTooltipAllow": "AI agent in the meeting: {{names}}. Click to let it hear you.",
+        "labelTooltipE2EE": "AI agent in the meeting: {{names}}. Unavailable while the meeting is end-to-end encrypted.",
+        "nativeTitle": "AI agent in the meeting",
+        "notNow": "Not now",
+        "thumbnailTooltip": "AI agent"
     },
     "volumeSlider": "Volume slider",
     "welcomepage": {

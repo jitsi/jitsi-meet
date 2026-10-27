@@ -24,6 +24,22 @@ export default class IframeAPI extends BasePageObject {
     }
 
     /**
+     * Waits for an event result from the iframeAPI helper.
+     * @param event The event name.
+     * @param timeoutMsg Optional timeout message.
+     * @param timeout Optional timeout in milliseconds.
+     */
+    waitForEventResult<T = any>(event: string, timeoutMsg?: string, timeout = 5000): Promise<T> {
+        return this.participant.driver.waitUntil(
+            () => this.getEventResult(event),
+            {
+                timeout,
+                timeoutMsg: timeoutMsg || `${event} event was not received`
+            }
+        );
+    }
+
+    /**
      * Clears the history of an event.
      * @param event
      */
@@ -85,6 +101,27 @@ export default class IframeAPI extends BasePageObject {
      */
     isParticipantsPaneOpen() {
         return this.participant.execute(() => window.jitsiAPI.isParticipantsPaneOpen());
+    }
+
+    /**
+     * Returns whether lobby mode is enabled for the current conference.
+     */
+    isLobbyEnabled() {
+        return this.participant.execute(() => window.jitsiAPI.isLobbyEnabled());
+    }
+
+    /**
+     * Returns whether the local participant's audio is muted.
+     */
+    isAudioMuted() {
+        return this.participant.execute(() => window.jitsiAPI.isAudioMuted());
+    }
+
+    /**
+     * Returns whether the local participant's video is muted.
+     */
+    isVideoMuted() {
+        return this.participant.execute(() => window.jitsiAPI.isVideoMuted());
     }
 
     /**

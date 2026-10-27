@@ -15,17 +15,23 @@ def libreExcludedModules = [
 // Autolinked RN module paths, consumed by sdk/build.gradle.
 gradle.ext.autolinkedProjects = []
 
-def autolinkingJson = file('build/generated/autolinking/autolinking.json')
+def autolinkingJson = file('../node_modules/.jitsi/autolinking.json')
 if (!autolinkingJson.exists()) {
     throw new IllegalStateException(
         "Missing ${autolinkingJson}. Run `npm run android-autolinking` before building.")
 }
 
 def json = new JsonSlurper().parseText(autolinkingJson.text)
+def libreBuild = (System.env.LIBRE_BUILD ?: 'false').toBoolean()
+
+if (json.libreBuild && !libreBuild) {
+    logger.warn("${autolinkingJson} was generated with LIBRE_BUILD; non-free modules are excluded. " +
+        'Run `npm run android-autolinking` to include them.')
+}
 
 // Filtered here so the includes below and sdk/build.gradle's codegen agree.
 def autolinkingManifest = autolinkingJson
-if ((System.env.LIBRE_BUILD ?: 'false').toBoolean()) {
+if (libreBuild) {
     // Fail loudly if the list above was patched away.
     if (libreExcludedModules.isEmpty()) {
         throw new IllegalStateException('LIBRE_BUILD is set but libreExcludedModules is empty.')
@@ -33,7 +39,7 @@ if ((System.env.LIBRE_BUILD ?: 'false').toBoolean()) {
 
     libreExcludedModules.each { json.dependencies.remove(it) }
 
-    autolinkingManifest = file('build/generated/autolinking/autolinking-libre.json')
+    autolinkingManifest = new File(autolinkingJson.parentFile, 'autolinking-libre.json')
     autolinkingManifest.text = JsonOutput.toJson(json)
 }
 gradle.ext.autolinkingManifest = autolinkingManifest

@@ -174,9 +174,10 @@ describe('Recording and live-streaming', () => {
         await p.getIframeAPI().clearEventResults('recordingStatusChanged');
     }
 
-    it('start/stop recording using the iFrame command', async () => {
+    it('start/stop recording using the iFrame command', async function() {
         if (!recordingEnabled) {
-            return;
+            // eslint-disable-next-line @typescript-eslint/no-invalid-this
+            this.skip();
         }
 
         await startRecording(true);
@@ -186,9 +187,10 @@ describe('Recording and live-streaming', () => {
         await p.driver.pause(30000);
     });
 
-    it('start/stop recording using the iFrame function', async () => {
+    it('start/stop recording using the iFrame function', async function() {
         if (!recordingEnabled) {
-            return;
+            // eslint-disable-next-line @typescript-eslint/no-invalid-this
+            this.skip();
         }
 
         await startRecording(false);
@@ -198,9 +200,10 @@ describe('Recording and live-streaming', () => {
         await p.driver.pause(30000);
     });
 
-    it('start/stop live-streaming using the iFrame command', async () => {
+    it('start/stop live-streaming using the iFrame command', async function() {
         if (!liveStreamingEnabled) {
-            return;
+            // eslint-disable-next-line @typescript-eslint/no-invalid-this
+            this.skip();
         }
 
         await p.getIframeAPI().addEventListener('recordingStatusChanged');

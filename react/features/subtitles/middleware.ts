@@ -7,7 +7,10 @@ import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { TRANSCRIBER_ID } from '../base/participants/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { showErrorNotification } from '../notifications/actions';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { isE2EEOnInMeeting } from '../e2ee/functions';
+import { showErrorNotification, showNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { RECORDING_METADATA_ID } from '../recording/constants';
 import { maybeNotifyRecordingStart } from '../recording/middleware';
 import { TRANSCRIBER_JOINED } from '../transcribing/actionTypes';
@@ -86,6 +89,9 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState()['features/subtitles'];
         const toggledValue = !state._requestingSubtitles;
 
+        if (toggledValue && _refusedUnderE2EE(store)) {
+            return;
+        }
         _requestingSubtitlesChange(store, toggledValue, state._language);
         break;
     }
@@ -102,6 +108,9 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case SET_REQUESTING_SUBTITLES:
+        if (action.enabled && _refusedUnderE2EE(store)) {
+            return;
+        }
         _requestingSubtitlesChange(
             store, action.enabled, action.language,
             action.forceBackendRecordingOn, action.isRecordingRequested,
@@ -479,3 +488,39 @@ function _setClearerOnTranscriptMessage(
             () => dispatch(removeTranscriptMessage(transcriptMessageID)),
             REMOVE_AFTER_MS);
 }
+
+/**
+ * Refuses a subtitles request while anyone has E2EE on: nothing server-side can transcribe encrypted media. The
+ * request never reaches the reducer.
+ *
+ * @param {IStore} store - The redux store.
+ * @returns {boolean} Whether the request was refused.
+ */
+function _refusedUnderE2EE({ dispatch, getState }: IStore) {
+    if (!isE2EEOnInMeeting(getState())) {
+        return false;
+    }
+    logger.warn('Not requesting subtitles: end-to-end encryption is on');
+    dispatch(showErrorNotification({ titleKey: 'transcribing.unavailableWithE2EE' }));
+    dispatch(setSubtitlesError(true));
+
+    // A recording started alongside still gets its start notification.
+    if (getState()['features/recording'].startRecordingIntent) {
+        maybeNotifyRecordingStart(dispatch, getState);
+    }
+
+    return true;
+}
+
+/**
+ * E2EE came on with subtitles requested here (a race, or a client that doesn't block it): drop the local request.
+ * A meeting-wide transcription is left to whoever runs it.
+ */
+StateListenerRegistry.register(
+    state => isE2EEOnInMeeting(state),
+    (e2eeOn, { dispatch, getState }) => {
+        if (e2eeOn && getState()['features/subtitles']._requestingSubtitles) {
+            dispatch(setRequestingSubtitles(false, false, null, false, false, true));
+            dispatch(showNotification({ titleKey: 'transcribing.stoppedForE2EE' }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        }
+    });

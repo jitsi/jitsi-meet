@@ -26,7 +26,17 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<IState> {
             error: false
         };
 
+        this._onChangeText = this._onChangeText.bind(this);
         this._onSubmitValue = this._onSubmitValue.bind(this);
+    }
+
+    /**
+     * Callback to be invoked when the value of the link input changes.
+     *
+     * @returns {void}
+     */
+    _onChangeText() {
+        this.setState({ error: false });
     }
 
     /**
@@ -57,6 +67,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<IState> {
         return (
             <InputDialog
                 messageKey = { error ? 'dialog.sharedVideoDialogError' : undefined }
+                onChangeText = { this._onChangeText }
                 onSubmit = { this._onSubmitValue }
                 textInputProps = {{
                     autoCapitalize: 'none',
