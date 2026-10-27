@@ -149,7 +149,7 @@ const PollCreate = ({
         }
     }, []);
 
-    // Called on keypress in answer fields
+    // Called on keydown in answer fields
     const onAnswerKeyDown = useCallback((i, ev) => {
         if (checkModifiers(ev)) {
             return;
