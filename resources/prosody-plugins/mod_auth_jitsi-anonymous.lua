@@ -86,6 +86,13 @@ end
 
 sasl.registerMechanism("ANONYMOUS", {"anonymous"}, anonymous);
 
+-- The token kept above for a matching previd is meant for mod_auth_token, which verifies it
+-- when the stream is resumed (c2s-session-updated). A resumed stream never binds a resource,
+-- so a session reaching bind is a new one and its token was never verified: drop it.
+module:hook("resource-bind", function (event)
+    event.session.auth_token = nil;
+end, 100);
+
 module:hook("pre-resource-unbind", function (e)
     local error, session = e.error, e.session;
 

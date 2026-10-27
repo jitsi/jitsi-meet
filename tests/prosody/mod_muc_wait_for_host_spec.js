@@ -92,6 +92,33 @@ describe('mod_muc_wait_for_host', () => {
             );
         });
 
+        it('guest reusing its username via previd with an unverified token is blocked', async () => {
+            const r = room();
+
+            await focusJoin(r);
+
+            const first = await connect({ domain: 'jitsi-anonymous.localhost' });
+            const smId = first.smId;
+
+            first.dropConnection();
+
+            // New session (binds, no resume) with the same username and a token nothing verified.
+            const guest = await connect({ domain: 'jitsi-anonymous.localhost',
+                params: { previd: smId,
+                    token: 'not-a-jwt' } });
+
+            assert.equal(guest.jid.split('@')[0], first.jid.split('@')[0],
+                'previd must have matched the hibernating session');
+
+            const presence = await guest.joinRoom(r);
+
+            assert.equal(presence.attrs.type, 'error', 'join must be rejected');
+            assert.ok(
+                presence.getChild('error')?.getChild('registration-required'),
+                'error condition must be registration-required'
+            );
+        });
+
         it('focus joining does not satisfy the host requirement', async () => {
             const r = room();
 

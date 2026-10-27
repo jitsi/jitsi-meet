@@ -149,6 +149,23 @@ export async function getSessionFeatures(fullJid) {
 }
 
 /**
+ * Returns the current token fields (auth_token and the JWT-derived claims) of a
+ * live c2s session.
+ *
+ * @param {string} fullJid  e.g. 'abc123@localhost/res1'
+ * @returns {Promise<object>}
+ */
+export async function getSessionLive(fullJid) {
+    const res = await fetch(`${BASE}/session-live?jid=${encodeURIComponent(fullJid)}`);
+
+    if (!res.ok) {
+        throw new Error(`getSessionLive failed: ${res.status} ${await res.text()}`);
+    }
+
+    return res.json();
+}
+
+/**
  * Sets jitsi_meet_context_user and jitsi_meet_context_features on an active c2s
  * session identified by full JID. Allows tests to simulate JWT token context
  * without running a real token-auth module.

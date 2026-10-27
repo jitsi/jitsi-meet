@@ -1,5 +1,6 @@
 import assert from 'assert';
 
+import { getSessionLive } from './helpers/test_observer.js';
 import { createXmppClient } from './helpers/xmpp_client.js';
 
 describe('mod_auth_jitsi-anonymous', () => {
@@ -66,6 +67,24 @@ describe('mod_auth_jitsi-anonymous', () => {
 
         assert.equal(c2.jid.split('@')[0], username,
             'reconnecting with previd must yield the same username');
+    });
+
+    it('drops the token of a new session that reuses the username via previd', async () => {
+        const c1 = await connect();
+        const username = c1.jid.split('@')[0];
+        const smId = c1.smId;
+
+        c1.dropConnection();
+
+        // Binds a resource instead of resuming the hibernating session.
+        const c2 = await connect({ params: { previd: smId,
+            token: 'not-a-jwt' } });
+
+        assert.equal(c2.jid.split('@')[0], username, 'previd must have matched the hibernating session');
+
+        const session = await getSessionLive(c2.jid);
+
+        assert.equal(session.auth_token, undefined, 'a session that was not resumed must not keep the token');
     });
 
     it('assigns a new username when previd does not match any session', async () => {
