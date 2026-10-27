@@ -330,11 +330,12 @@ export function getRecordingDialogModel(
     });
     const defaultService = DEFAULT_SERVICE_PRIORITY.find(service => services.includes(service)) ?? '';
 
-    // An explicit choice is kept as long as it is offered. While a recording runs the selection
-    // describes the running session and is kept whatever is offered. Otherwise the services
-    // offered changed under the selection (config loaded late, a live stream started or stopped)
-    // and the default takes over, so the selector never shows one service while the recording
-    // would start on another.
+    // An explicit choice is kept as long as it is offered. Otherwise the services offered changed
+    // under the selection (config loaded late, a live stream started or stopped) and the default
+    // takes over, so the selector never shows one service while the recording would start on
+    // another. While a recording runs the selection is left alone whatever is offered: the options
+    // are locked then and no recording is going to start, so it is only the service whose options
+    // are shown, not necessarily the one recording.
     const selectedService = facts.recordingRunning || services.includes(local.selectedRecordingService)
         ? local.selectedRecordingService
         : defaultService;
