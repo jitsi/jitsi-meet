@@ -396,45 +396,70 @@ const METADATA_ECHO_TIMEOUT = 10_000;
  * have changed since the transcription was requested (e.g. the recording was stopped meanwhile).
  *
  * The local copy of the metadata only reflects the update requesting the transcription once the
- * server has echoed it back. When no update has been received since that request was sent, wait
- * for the next one, which is that echo: updates are received in the order they were sent.
+ * server has echoed it back. Until the flag shows up in the local copy, wait for the metadata
+ * updates: the one setting it is that echo, whatever other updates arrive before it. Should it not
+ * arrive in time, clear what is there anyway, so the flag does not stay set for the remote
+ * participants.
  *
  * @param {IJitsiConference} conference - The conference.
- * @param {Object} metadataAtWrite - The local copy of the metadata right after the transcription
- * was requested.
  * @returns {void}
  */
-function _clearTranscribingEnabled(conference: IJitsiConference, metadataAtWrite: object) {
+function _clearTranscribingEnabled(conference: IJitsiConference) {
     const metadataHandler = conference.getMetadataHandler();
-    const clear = () => {
-        const recordingMetadata = metadataHandler.getMetadata()[RECORDING_METADATA_ID];
 
-        if (recordingMetadata?.isTranscribingEnabled) {
-            metadataHandler.setMetadata(RECORDING_METADATA_ID, {
-                ...recordingMetadata,
-                isTranscribingEnabled: false
-            });
-        }
+    /**
+     * Whether the local copy of the metadata has the flag set.
+     *
+     * @returns {boolean}
+     */
+    const isTranscribingEnabled = () =>
+        Boolean(metadataHandler.getMetadata()[RECORDING_METADATA_ID]?.isTranscribingEnabled);
+
+    /**
+     * Clears the flag, keeping the rest of the recording metadata as the local copy has it.
+     *
+     * @returns {void}
+     */
+    const clear = () => {
+        metadataHandler.setMetadata(RECORDING_METADATA_ID, {
+            ...metadataHandler.getMetadata()[RECORDING_METADATA_ID],
+            isTranscribingEnabled: false
+        });
     };
 
-    if (metadataHandler.getMetadata() !== metadataAtWrite
-            || metadataHandler.getMetadata()[RECORDING_METADATA_ID]?.isTranscribingEnabled) {
+    if (isTranscribingEnabled()) {
         clear();
 
         return;
     }
 
+    /**
+     * Clears the flag once an update sets it in the local copy.
+     *
+     * @returns {void}
+     */
     const onMetadataUpdated = () => {
-        conference.off(JitsiConferenceEvents.METADATA_UPDATED, onMetadataUpdated);
-        clear();
+        if (isTranscribingEnabled()) {
+            stopWaiting();
+            clear();
+        }
     };
+    const timeout = setTimeout(() => {
+        stopWaiting();
+        clear();
+    }, METADATA_ECHO_TIMEOUT);
+
+    /**
+     * Stops waiting for the echo.
+     *
+     * @returns {void}
+     */
+    function stopWaiting() {
+        conference.off(JitsiConferenceEvents.METADATA_UPDATED, onMetadataUpdated);
+        clearTimeout(timeout);
+    }
 
     conference.on(JitsiConferenceEvents.METADATA_UPDATED, onMetadataUpdated);
-
-    // Stop waiting for the echo eventually; removing an already removed listener does nothing.
-    setTimeout(
-        () => conference.off(JitsiConferenceEvents.METADATA_UPDATED, onMetadataUpdated),
-        METADATA_ECHO_TIMEOUT);
 }
 
 /**
@@ -472,9 +497,8 @@ function _requestingSubtitlesChange(
     if (enabled && conference?.getTranscriptionStatus() === JitsiMeetJS.constants.transcriptionStatus.OFF
         && isJwtFeatureEnabled(getState(), MEET_FEATURES.TRANSCRIPTION, false)) {
 
-        // The local copy of the room metadata right after this request wrote isTranscribingEnabled,
-        // if it did.
-        let metadataAtWrite: object | undefined;
+        // Whether this request wrote isTranscribingEnabled to the room metadata (below).
+        let transcribingEnabledWritten = false;
 
         if (!backendRecordingOn) {
             conference?.dial(TRANSCRIBER_DIAL_NUMBER)
@@ -487,8 +511,8 @@ function _requestingSubtitlesChange(
                     // Clear the transcription flag written below for this request: remote
                     // participants would otherwise keep waiting for a transcription that is not
                     // coming before notifying about the recording.
-                    if (conference && metadataAtWrite) {
-                        _clearTranscribingEnabled(conference, metadataAtWrite);
+                    if (conference && transcribingEnabledWritten) {
+                        _clearTranscribingEnabled(conference);
                     }
 
                     dispatch(showErrorNotification({
@@ -512,7 +536,7 @@ function _requestingSubtitlesChange(
                 isTranscribingEnabled: true,
                 ...(isRecordingRequested && { isRecordingRequested: true })
             });
-            metadataAtWrite = conference?.getMetadataHandler()?.getMetadata();
+            transcribingEnabledWritten = true;
         }
     }
 
