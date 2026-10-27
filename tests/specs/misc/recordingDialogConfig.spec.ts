@@ -318,6 +318,10 @@ describe('Recording dialog config — mixed running state (recording vs transcri
  * only myself" switch is only rendered while local recording is the selected service.
  */
 describe('Recording dialog config — live stream running', () => {
+    /**
+     * Offers both the file recordings service and local recording, so the live stream has
+     * something to take away and something to leave.
+     */
     const LIVE_STREAM_CONFIG = {
         localRecording: {
             disable: false,
@@ -326,6 +330,10 @@ describe('Recording dialog config — live stream running', () => {
         recordingService: { enabled: true }
     };
 
+    /**
+     * Whether the test browser can record locally at all; without that the tests have nothing to
+     * check and skip themselves.
+     */
     let localRecordingSupported: boolean;
 
     it('setup', async () => {
