@@ -286,6 +286,10 @@ export function useDocumentPiPMediaSession() {
             });
         } catch (error) {
             logger.warn('enterpictureinpicture MediaSession action not supported:', error);
+
+            // Clearing the handler would throw the same error (e.g. Firefox) from the effect
+            // cleanup and crash the app, so there is nothing to undo.
+            return;
         }
 
         return () => {
