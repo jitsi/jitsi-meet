@@ -221,6 +221,38 @@ describe('mod_muc_wait_for_host', () => {
                 await prosodyShell('module:load("auth_token", "hs256.localhost")');
             }
         });
+
+        it('resuming with a valid token, then joining, is admitted and made owner', async () => {
+            const r = room();
+
+            await focusJoin(r);
+
+            await prosodyShell('module:unload("auth_token", "hs256.localhost")');
+
+            // A fresh module instance has an empty public key cache, so the key is
+            // fetched while the resume is processed and the connection waits on it.
+            await prosodyShell('module:reload("auth_token", "localhost")');
+
+            try {
+                const guest = await connect({ domain: ANON_DOMAIN });
+                const reconnected = guest.waitForReconnect();
+
+                guest.dropConnection({ token: mintAsapToken({ room: r.split('@')[0] }) });
+                await reconnected;
+
+                const presence = await guest.joinRoom(r);
+
+                assert.ok(isAvailablePresence(presence), 'the resumed guest must be admitted as a host');
+
+                const update = await guest.waitForPresence(
+                    p => p.getChild('x', MUC_NS)?.getChild('item')?.attrs.affiliation === 'owner'
+                );
+
+                assert.ok(update, 'the resumed guest must be made owner');
+            } finally {
+                await prosodyShell('module:load("auth_token", "hs256.localhost")');
+            }
+        });
     });
 
     // -------------------------------------------------------------------------
