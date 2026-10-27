@@ -4,6 +4,7 @@ import { getAvatarColor, getInitials } from '../base/avatar/functions';
 import { leaveConference } from '../base/conference/actions';
 import { browser } from '../base/lib-jitsi-meet';
 import { IParticipant } from '../base/participants/types';
+import { getUserSelectedConfigValue } from '../base/settings/functions.any';
 import { getLocalVideoTrack } from '../base/tracks/functions.any';
 import { getVideoTrackByParticipant } from '../base/tracks/functions.web';
 import { ITrack } from '../base/tracks/types';
@@ -11,6 +12,7 @@ import { isTrackStreamingStatusActive } from '../connection-indicator/functions'
 import { isPrejoinPageVisible } from '../prejoin/functions.any';
 
 import { toggleAudioFromPiP, toggleVideoFromPiP } from './actions';
+import { BROWSER_PIP_OPTION_ID } from './constants';
 import { isPiPEnabled } from './external-api.shared';
 import logger from './logger';
 import {
@@ -84,6 +86,20 @@ export function shouldShowPiPAvatar(videoTrack: ITrack | undefined): boolean {
 }
 
 /**
+ * Determines whether browser Picture-in-Picture is turned on. A value set by the config, from config.js, URL
+ * parameters or the iframe API, is final. When the config leaves it unset, the choice the user saved in the settings
+ * applies, and without one browser PiP stays off. Electron has its own always-on PiP flow and ignores this flag.
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {boolean} Whether browser Picture-in-Picture is turned on.
+ */
+export function isBrowserPiPTurnedOn(state: IReduxState): boolean {
+    const pipConfig = state['features/base/config'].pip;
+
+    return pipConfig?.enableBrowserPiP ?? getUserSelectedConfigValue(state, BROWSER_PIP_OPTION_ID) ?? false;
+}
+
+/**
  * Determines if PiP should be shown based on config and current app state.
  * Checks if PiP is enabled and handles prejoin page visibility.
  *
@@ -99,12 +115,11 @@ export function shouldShowPiP(state: IReduxState): boolean {
         return false;
     }
 
-    // Browser PiP is opt-in: it stays disabled unless the deployment explicitly sets
-    // enableBrowserPiP: true (Electron is unaffected). This authoritative default lives here
-    // rather than in isPiPEnabled() because the external API evaluates isPiPEnabled() against
-    // only the embedder-provided config, without the deployment's config.js — it must stay
-    // permissive when the flag is absent (see isPiPEnabled()).
-    if (!browser.isElectron() && pipConfig?.enableBrowserPiP !== true) {
+    // Browser PiP is opt-in: it stays off unless the config or the user turns it on (Electron is
+    // unaffected). This authoritative default lives here rather than in isPiPEnabled() because the
+    // external API evaluates isPiPEnabled() against only the embedder-provided config, without the
+    // deployment's config.js — it must stay permissive when the flag is absent (see isPiPEnabled()).
+    if (!browser.isElectron() && !isBrowserPiPTurnedOn(state)) {
         return false;
     }
 
