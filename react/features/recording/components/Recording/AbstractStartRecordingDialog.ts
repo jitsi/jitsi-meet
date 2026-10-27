@@ -360,9 +360,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
      * @returns {void}
      */
     override componentDidMount() {
-        if (typeof this.props._token !== 'undefined') {
-            this._onTokenUpdated();
-        }
+        this._onTokenUpdated();
     }
 
     /**
