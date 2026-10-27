@@ -13,7 +13,7 @@ import { isPrejoinPageVisible } from '../prejoin/functions.any';
 
 import { toggleAudioFromPiP, toggleVideoFromPiP } from './actions';
 import { BROWSER_PIP_OPTION_ID } from './constants';
-import { isPiPEnabled } from './external-api.shared';
+import { isPiPEnabled, isPiPSupportedByBrowser } from './external-api.shared';
 import logger from './logger';
 import {
     ExtendedMediaSessionAction,
@@ -133,6 +133,24 @@ export function shouldShowPiP(state: IReduxState): boolean {
     }
 
     return true;
+}
+
+/**
+ * Determines if the local user may choose whether browser Picture-in-Picture is on or off. That is the case outside
+ * Electron, which has its own always-on PiP flow, when the browser supports PiP, the deployment has not disabled the
+ * feature altogether with `pip.disabled` and the config leaves `pip.enableBrowserPiP` unset: a value set there, by
+ * config.js, URL parameters or the iframe API, is the deployment's or the embedder's decision and is final.
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {boolean} Whether the browser PiP setting applies.
+ */
+export function isBrowserPiPConfigurable(state: IReduxState): boolean {
+    const pipConfig = state['features/base/config'].pip;
+
+    return !browser.isElectron()
+        && !pipConfig?.disabled
+        && pipConfig?.enableBrowserPiP === undefined
+        && isPiPSupportedByBrowser();
 }
 
 /**
