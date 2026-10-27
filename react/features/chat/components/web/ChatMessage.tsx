@@ -46,7 +46,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         chatMessageWrapper: {
             maxWidth: '100%',
 
-            '&:hover, &:focus-within': {
+            '&:hover': {
                 '& $optionsButtonContainer': {
                     opacity: 1,
                     pointerEvents: 'auto'
@@ -292,8 +292,7 @@ const ChatMessage = ({
     t
 }: IProps) => {
     const { classes, cx } = useStyles();
-    const [ isHovered, setIsHovered ] = useState(false);
-    const [ isFocused, setIsFocused ] = useState(false);
+    const [ isMenuOpen, setIsMenuOpen ] = useState(false);
     const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
     const messageRef = useRef<HTMLDivElement>(null);
 
@@ -326,24 +325,6 @@ const ChatMessage = ({
     const handleEditMessage = useCallback(() => {
         onEditMessage?.(message);
     }, [ message, onEditMessage ]);
-
-    const handleMouseEnter = useCallback(() => {
-        setIsHovered(true);
-    }, []);
-
-    const handleMouseLeave = useCallback(() => {
-        setIsHovered(false);
-    }, []);
-
-    const handleFocus = useCallback(() => {
-        setIsFocused(true);
-    }, []);
-
-    const handleBlur = useCallback((event: React.FocusEvent) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node)) {
-            setIsFocused(false);
-        }
-    }, []);
 
     const handleReactionsOpen = useCallback(() => {
         setIsReactionsOpen(true);
@@ -480,7 +461,7 @@ const ChatMessage = ({
                 </div>
             </Popover>
         );
-    }, [ message?.reactions, isHovered, isReactionsOpen ]);
+    }, [ message?.reactions, isReactionsOpen ]);
 
     // A moderation is shown over a retraction, as its reason is shown as well.
     const messageText = message.isModerated
@@ -506,14 +487,14 @@ const ChatMessage = ({
         <div
             className = { cx(classes.chatMessageWrapper, className) }
             id = { message.messageId }
-            onBlur = { handleBlur }
-            onFocus = { handleFocus }
-            onMouseEnter = { handleMouseEnter }
-            onMouseLeave = { handleMouseLeave }
             tabIndex = { -1 }>
             <div className = { classes.sideBySideContainer }>
                 {!shouldDisplayMenuOnRight && (
-                    <div className = { cx(classes.optionsButtonContainer, (isHovered || isFocused) && classes.visible) }>
+                    <div
+                        className = { cx(
+                            classes.optionsButtonContainer,
+                            isMenuOpen && classes.visible
+                        ) }>
                         {!message.isDeleted && !message.isModerated && <MessageMenu
                             canEdit = { canEdit }
                             displayName = { message.displayName }
@@ -524,6 +505,7 @@ const ChatMessage = ({
                             isModerated = { message.isModerated }
                             message = { message }
                             onEditMessage = { handleEditMessage }
+                            onPopoverOpenChange = { setIsMenuOpen }
                             participantId = { message.participantId } />}
                     </div>
                 )}
@@ -594,14 +576,23 @@ const ChatMessage = ({
                     <div className = { classes.sideBySideContainer }>
                         {!message.privateMessage && !message.lobbyChat
                         && !message.isReaction && !message.isDeleted && !message.isModerated && <div>
-                            <div className = { cx(classes.optionsButtonContainer, (isHovered || isFocused) && classes.visible) }>
+                            <div
+                                className = { cx(
+                                    classes.optionsButtonContainer,
+                                    isMenuOpen && classes.visible
+                                ) }>
                                 <ReactButton
                                     messageId = { message.messageId }
+                                    onPopoverOpenChange = { setIsMenuOpen }
                                     receiverId = { '' } />
                             </div>
                         </div>}
                         <div>
-                            <div className = { cx(classes.optionsButtonContainer, (isHovered || isFocused) && classes.visible) }>
+                            <div
+                                className = { cx(
+                                    classes.optionsButtonContainer,
+                                    isMenuOpen && classes.visible
+                                ) }>
                                 {!message.isDeleted && !message.isModerated && <MessageMenu
                                     canEdit = { canEdit }
                                     displayName = { message.displayName }
@@ -612,6 +603,7 @@ const ChatMessage = ({
                                     isModerated = { message.isModerated }
                                     message = { message }
                                     onEditMessage = { handleEditMessage }
+                                    onPopoverOpenChange = { setIsMenuOpen }
                                     participantId = { message.participantId } />}
                             </div>
                         </div>

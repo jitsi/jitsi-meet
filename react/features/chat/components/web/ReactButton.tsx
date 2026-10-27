@@ -14,6 +14,7 @@ import EmojiSelector from './EmojiSelector';
 
 interface IProps {
     messageId: string;
+    onPopoverOpenChange?: (isOpen: boolean) => void;
     receiverId: string;
 }
 
@@ -35,7 +36,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
-const ReactButton = ({ messageId, receiverId }: IProps) => {
+const ReactButton = ({ messageId, onPopoverOpenChange, receiverId }: IProps) => {
     const { classes } = useStyles();
     const dispatch = useDispatch();
     const { t } = useTranslation();
@@ -48,10 +49,20 @@ const ReactButton = ({ messageId, receiverId }: IProps) => {
 
     const handleReactClick = useCallback(() => {
         setIsPopoverOpen(true);
-    }, []);
+        onPopoverOpenChange?.(true);
+    }, [ onPopoverOpenChange ]);
 
     const handleClose = useCallback(() => {
         setIsPopoverOpen(false);
+        onPopoverOpenChange?.(false);
+    }, [ onPopoverOpenChange ]);
+
+    const handleKeyPress = useCallback((event: React.KeyboardEvent) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            event.stopPropagation();
+            (event.currentTarget as HTMLElement).click();
+        }
     }, []);
 
     const handleEmojiSelect = useCallback((emoji: string) => {
@@ -67,6 +78,7 @@ const ReactButton = ({ messageId, receiverId }: IProps) => {
 
     return (
         <Popover
+            allowClick = { true }
             content = { popoverContent }
             onPopoverClose = { handleClose }
             position = 'top'
@@ -78,6 +90,7 @@ const ReactButton = ({ messageId, receiverId }: IProps) => {
                     className = { classes.reactButton }
                     icon = { IconFaceSmile }
                     onClick = { handleReactClick }
+                    onKeyPress = { handleKeyPress }
                     type = { BUTTON_TYPES.TERTIARY } />
             </div>
         </Popover>

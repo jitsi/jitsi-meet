@@ -28,6 +28,7 @@ export interface IProps {
     isModerated?: boolean;
     message: IMessage;
     onEditMessage?: () => void;
+    onPopoverOpenChange?: (isOpen: boolean) => void;
     participantId: string;
 }
 
@@ -68,7 +69,18 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModerated, enablePrivateChat, displayName, isFileMessage, onEditMessage }: IProps) => {
+const MessageMenu = ({
+    canEdit,
+    displayName,
+    enablePrivateChat,
+    isFileMessage,
+    isFromVisitor,
+    isLobbyMessage,
+    isModerated,
+    message,
+    onEditMessage,
+    onPopoverOpenChange
+}: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -87,17 +99,22 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
     // room says it handles them.
     const canEditMessage = canEdit && messageModerationSupported;
 
-    // If no menu items will be shown, don't render the menu button.
-    if (!enablePrivateChat && isFileMessage && !canEditMessage) {
-        return null;
-    }
-
     const handleMenuClick = useCallback(() => {
         setIsPopoverOpen(true);
-    }, []);
+        onPopoverOpenChange?.(true);
+    }, [ onPopoverOpenChange ]);
 
     const handleClose = useCallback(() => {
         setIsPopoverOpen(false);
+        onPopoverOpenChange?.(false);
+    }, [ onPopoverOpenChange ]);
+
+    const handleKeyPress = useCallback((event: React.KeyboardEvent) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            event.stopPropagation();
+            (event.currentTarget as HTMLElement).click();
+        }
     }, []);
 
     const handlePrivateClick = useCallback(() => {
@@ -164,6 +181,11 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
         handleClose();
     }, [ onEditMessage, handleClose ]);
 
+
+    if (!enablePrivateChat && isFileMessage && !canEditMessage) {
+        return null;
+    }
+
     const popoverContent = (
         <div className = { classes.menuPanel }>
             {canEditMessage && (
@@ -216,6 +238,7 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
         <div>
             <div ref = { buttonRef }>
                 <Popover
+                    allowClick = { true }
                     content = { popoverContent }
                     onPopoverClose = { handleClose }
                     position = 'top'
@@ -226,6 +249,7 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
                         className = { classes.messageMenuButton }
                         icon = { IconDotsHorizontal }
                         onClick = { handleMenuClick }
+                        onKeyPress = { handleKeyPress }
                         type = { BUTTON_TYPES.TERTIARY } />
                 </Popover>
             </div>
