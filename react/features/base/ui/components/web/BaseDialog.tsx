@@ -179,8 +179,11 @@ const BaseDialog = ({
             return isElementInTheViewport(opener);
         }
 
-        // The focus lock is still being deactivated, move the focus once it is done.
-        Promise.resolve().then(() => isElementInTheViewport(popoverTrigger) && popoverTrigger.focus());
+        // This runs synchronously while the focus lock is being deactivated: the dialog is still attached and the
+        // lock still handles focus events, so it would pull the focus back. Defer it the same way react-focus-lock
+        // defers its own return focus.
+        Promise.resolve().then(
+            () => isElementInTheViewport(popoverTrigger) && popoverTrigger.focus({ preventScroll: true }));
 
         return false;
     }, [ popoverTrigger ]);

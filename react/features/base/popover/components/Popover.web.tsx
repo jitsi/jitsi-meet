@@ -472,7 +472,7 @@ class Popover extends Component<IProps, IState> {
             if (this.props.visible) {
                 this._onHideDialog();
             } else {
-                this._openedWithKeyboard = true;
+                this._openedWithKeyboard = !this.props.disablePopover;
                 this._onShowDialog(e);
             }
         }
