@@ -506,6 +506,7 @@ module:provides("http", {
                 headers = { ["Content-Type"] = "application/json" };
                 body = json.encode({
                     auth_token = session.auth_token,
+                    jitsi_auth_done = session._jitsi_auth_done,
                     jitsi_web_query_room = session.jitsi_web_query_room,
                     jitsi_web_query_prefix = session.jitsi_web_query_prefix,
                     jitsi_meet_room = session.jitsi_meet_room,
