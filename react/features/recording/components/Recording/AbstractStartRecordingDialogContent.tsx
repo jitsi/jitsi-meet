@@ -221,20 +221,6 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
     }
 
     /**
-     * Implements {@code Component#componentDidUpdate}.
-     *
-     * @inheritdoc
-     */
-    override componentDidUpdate(prevProps: IProps) {
-        // Auto sign-out when the user chooses another recording service.
-        if (prevProps.model.recording.selectedService === RECORDING_TYPES.DROPBOX
-                && this.props.model.recording.selectedService !== RECORDING_TYPES.DROPBOX
-                && this.props.isTokenValid) {
-            this._onSignOut();
-        }
-    }
-
-    /**
      * Toggles the recording section options.
      *
      * @returns {void}
@@ -348,15 +334,21 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
      */
     _onRecordingServiceChange(service: string) {
         const { isTokenValid, model, onRecordingServiceChange } = this.props;
+        const { selectedService } = model.recording;
 
-        if (service === model.recording.selectedService) {
+        if (service === selectedService) {
             return;
         }
 
         onRecordingServiceChange(service);
 
+        // Sign in and out of Dropbox along with the user's choice. Only the user's: when the model
+        // moves the selection away from Dropbox on its own, because the services offered changed,
+        // the stored token is kept.
         if (service === RECORDING_TYPES.DROPBOX && !isTokenValid) {
             this._onSignIn();
+        } else if (selectedService === RECORDING_TYPES.DROPBOX && isTokenValid) {
+            this._onSignOut();
         }
     }
 
