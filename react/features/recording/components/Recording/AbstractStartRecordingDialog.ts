@@ -590,11 +590,15 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             sharingEnabled
         } = this.state;
 
+        // A local recording is not a file recording session: it is not announced through the room
+        // metadata, and the start/stop coordinator never waits for it.
+        const fileRecordingStarting = startRecording && selectedRecordingService !== RECORDING_TYPES.LOCAL;
+
         // Pre-seed intents synchronously — must happen before any async operations
         // so the sound/notification coordinator knows what to wait for.
-        if (startRecording || startTranscription) {
+        if (fileRecordingStarting || startTranscription) {
             dispatch(setStartRecordingIntent({
-                recording: startRecording,
+                recording: fileRecordingStarting,
                 transcription: startTranscription
             }));
         }
@@ -680,48 +684,37 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
                 break;
             }
             case RECORDING_TYPES.LOCAL: {
+                // The local recording middleware notifies about it on its own.
                 dispatch(startLocalVideoRecording(localRecordingOnlySelf));
-                _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                    isTranscribingEnabled:
-                        startTranscription || (_transcriptionRunning && !stopTranscription)
+                break;
+            }
+            }
+
+            if (fileRecordingStarting) {
+                sendAnalytics(createRecordingDialogEvent('start', 'confirm.button', attributes));
+                this._toggleScreenshotCapture();
+                _conference?.startRecording({
+                    mode: JitsiRecordingConstants.mode.FILE,
+                    appData
                 });
-
-                return true;
             }
-            }
-
-            sendAnalytics(createRecordingDialogEvent('start', 'confirm.button', attributes));
-            this._toggleScreenshotCapture();
-            _conference?.startRecording({
-                mode: JitsiRecordingConstants.mode.FILE,
-                appData
-            });
         }
 
         // === Handle transcription start ===
-        // Starting transcription on its own, or along with a JITSI_REC_SERVICE recording, uses
-        // setRequestingSubtitles. Along with a recording on another service, the metadata is
-        // updated directly. The selected storage service only matters when a recording is started
-        // with it: it is not the service that gets used when transcription is started alone.
-        // isRecordingRequested is only set for a file recording: a local recording is never
-        // announced through it, and remote participants seeing it would wait for a file recording
+        // Requesting the subtitles is what invites the transcriber, whatever recording starts along
+        // with it (the storage service only matters for the recording). It also writes
+        // isTranscribingEnabled to the room metadata, along with isRecordingRequested for a file
+        // recording started now or already running. A local recording is never announced through
+        // isRecordingRequested: remote participants seeing it would wait for a file recording
         // session that never comes before notifying about the transcription.
         if (startTranscription) {
-            if (!startRecording || selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) {
-                dispatch(setRequestingSubtitles(
-                    true, _displaySubtitles, selectedLanguage, true, startRecording || Boolean(_fileRecordingSession)));
-            } else {
-                // Spread the existing metadata, like the stopRecording and stopTranscription
-                // branches above, so only the two intent fields change.
-                const existingRecMeta = _conference?.getMetadataHandler()?.getMetadata()[RECORDING_METADATA_ID] ?? {};
-
-                _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                    ...existingRecMeta,
-                    isRecordingRequested: true,
-                    isTranscribingEnabled: true
-                });
-            }
-        } else if (startRecording) {
+            dispatch(setRequestingSubtitles(
+                true,
+                _displaySubtitles,
+                selectedLanguage,
+                true,
+                fileRecordingStarting || Boolean(_fileRecordingSession)));
+        } else if (fileRecordingStarting) {
             // Recording started without a transcription change: announce it in room metadata so the
             // other participants get the recording start notification/sound (this is what the
             // metadata listener turns into the remote notification). Preserve any existing
