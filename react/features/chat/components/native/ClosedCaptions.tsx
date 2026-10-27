@@ -89,11 +89,17 @@ const ClosedCaptions = ({
             );
         }
 
+        const languageButtonAccessibilityLabel
+            = `${t('transcribing.translateTo')} ${t(selectedLanguage ?? 'transcribing.subtitlesOff')}`;
+
         return (
             <>
                 <View style = { closedCaptionsStyles.languageButtonContainer as ViewStyle }>
                     <Text style = { closedCaptionsStyles.languageButtonText }>{ t('transcribing.translateTo') }:</Text>
-                    <TouchableHighlight onPress = { navigateToLanguageSelect }>
+                    <TouchableHighlight
+                        accessibilityLabel = { languageButtonAccessibilityLabel }
+                        accessibilityRole = 'button'
+                        onPress = { navigateToLanguageSelect }>
                         <View style = { closedCaptionsStyles.languageButtonContent as ViewStyle }>
                             <Text style = { closedCaptionsStyles.languageButtonText }>{ t(selectedLanguage ?? 'transcribing.subtitlesOff') }</Text>
                             <Icon

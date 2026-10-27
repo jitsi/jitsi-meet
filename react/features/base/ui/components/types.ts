@@ -13,6 +13,11 @@ export interface IButtonProps {
     autoFocus?: boolean;
 
     /**
+     * Extra description for assistive technology, such as why the button is disabled. Web only.
+     */
+    description?: string;
+
+    /**
      * Whether or not the button is disabled.
      */
     disabled?: boolean;

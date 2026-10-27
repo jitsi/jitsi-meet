@@ -121,7 +121,9 @@
     };
 
     const externalAPIScript = document.createElement('script');
-    externalAPIScript.src = `https://${domain}/${tenant}external_api.js`;
+    const externalApiPath = json.externalApiPath ? `${json.externalApiPath}/` : tenant;
+
+    externalAPIScript.src = `https://${domain}/${externalApiPath}external_api.js`;
     externalAPIScript.type = "text/javascript";
     externalAPIScript.onload = function(){
         log(`externalAPIScript.onload`);

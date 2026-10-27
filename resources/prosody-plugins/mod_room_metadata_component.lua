@@ -104,6 +104,7 @@ local extdisco_occpuant_check = module:get_option_boolean('extdisco_occpuant_che
 -- metadata message API. These are either server-controlled fields or keys whose
 -- values are assembled and injected by the server at broadcast time.
 local blocked_metadata_keys = module:get_option_set('room_metadata_blocked_keys', {
+    'agents',
     'allownersEnabled',
     'asyncTranscription',
     'audioTranslationAvailable',

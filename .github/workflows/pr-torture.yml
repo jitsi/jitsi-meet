@@ -1,0 +1,197 @@
+# Runs the PR tests (jitsi-pr-testing-scripts) on the self-hosted runner on oracle-prtorture.
+# Called by pr-torture-trigger.yml here and by the same workflow in lib-jitsi-meet, jicofo,
+# jitsi-videobridge and jicoco, after it decided the PR may be tested.
+name: PR torture tests
+
+on:
+  workflow_call:
+    inputs:
+      project:
+        description: 'jitsi-meet, lib-jitsi-meet, jicofo, jitsi-videobridge or jicoco'
+        required: true
+        type: string
+      pr-repo-url:
+        required: true
+        type: string
+      pr-branch:
+        required: true
+        type: string
+      target-branch:
+        required: true
+        type: string
+      pr-number:
+        required: true
+        type: string
+      head-sha:
+        required: true
+        type: string
+      scripts-ref:
+        description: 'The branch of jitsi-pr-testing-scripts to use'
+        required: false
+        type: string
+        default: master
+      dial-in:
+        description: 'Run the dial-in tests, they get the VoxImplant credentials (only for trusted authors)'
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      PR_TORTURE_APP_ID:
+        required: true
+      PR_TORTURE_APP_KEY:
+        required: true
+      VOX_API_KEY:
+        required: false
+      VOX_ACCOUNT_ID:
+        required: false
+      VOX_HEALTH_CHECK_IN_RULE_ID:
+        required: false
+
+permissions: {}
+
+jobs:
+  # Runs the PR code, so it gets no GitHub token that can write anything, and the VoxImplant
+  # credentials only for the dial-in tests of trusted authors.
+  # The runner runs as ghrunner, the tests as jenkins (sudo, /usr/local/bin/pr-torture-run), so the PR
+  # code can't read the runner's credentials or the ssh key.
+  pr-torture:
+    # One runner with one job at a time per repo. build-pr.sh also takes /var/lock/pr-torture, so the
+    # runs of the different repos and the ones started by Jenkins wait for each other on the machine.
+    runs-on: [self-hosted, pr-torture]
+    timeout-minutes: 120
+    concurrency:
+      group: pr-torture-${{ inputs.project }}-${{ inputs.pr-number }}
+      cancel-in-progress: true
+    env:
+      SCRIPTS_SRC: /var/lib/pr-torture/scripts/${{ inputs.project }}
+      PR_TEST_WORKSPACE: /var/lib/pr-torture/work/${{ inputs.project }}
+      TORTURE_REMOTE_ADDRESS: ${{ vars.PR_TORTURE_GRID_URL }}
+      HEAD_SHA: ${{ inputs.head-sha }}
+      # Test only the commit the PR was approved at
+      PR_TEST_REQUIRE_SHA: true
+    steps:
+      # With the ghrunner ssh key, a deploy key of the scripts repo
+      - name: Check out the PR testing scripts
+        env:
+          SCRIPTS_REF: ${{ inputs.scripts-ref }}
+        run: |
+          rm -rf "$SCRIPTS_SRC"
+          git clone --depth 1 --branch "$SCRIPTS_REF" \
+            git@github.com:jitsi/jitsi-pr-testing-scripts.git "$SCRIPTS_SRC"
+
+      - name: Build and test
+        env:
+          # No permissions, only for reading the public PRs with a higher rate limit
+          ACCESS_TOKEN: ${{ github.token }}
+          VOX_API_KEY: ${{ inputs.dial-in && secrets.VOX_API_KEY || '' }}
+          VOX_ACCOUNT_ID: ${{ inputs.dial-in && secrets.VOX_ACCOUNT_ID || '' }}
+          VOX_HEALTH_CHECK_IN_RULE_ID: ${{ inputs.dial-in && secrets.VOX_HEALTH_CHECK_IN_RULE_ID || '' }}
+          PROJECT: ${{ inputs.project }}
+          PR_REPO_URL: ${{ inputs.pr-repo-url }}
+          PR_BRANCH: ${{ inputs.pr-branch }}
+          TARGET_BRANCH: ${{ inputs.target-branch }}
+        run: |
+          sudo -n -u jenkins -H \
+            --preserve-env=PR_TEST_WORKSPACE,TORTURE_REMOTE_ADDRESS,HEAD_SHA,PR_TEST_REQUIRE_SHA,ACCESS_TOKEN,VOX_API_KEY,VOX_ACCOUNT_ID,VOX_HEALTH_CHECK_IN_RULE_ID \
+            /usr/local/bin/pr-torture-run "$SCRIPTS_SRC" "$PROJECT" "$PR_REPO_URL" "$PR_BRANCH" "$TARGET_BRANCH"
+
+      # The reports are written by the PR code: copy only regular files and directories, so a link to a
+      # file of this user doesn't end up in the uploaded artifact.
+      - name: Collect the test reports
+        if: always()
+        run: |
+          OUT="$RUNNER_TEMP/pr-torture-reports"
+          rm -rf "$OUT"
+          mkdir -p "$OUT"
+          for p in test-reports.zip chrome-chrome-reports ff-chrome-reports; do
+              if [ -e "$PR_TEST_WORKSPACE/release/$p" ] && [ ! -L "$PR_TEST_WORKSPACE/release/$p" ]; then
+                  cp -R --no-dereference "$PR_TEST_WORKSPACE/release/$p" "$OUT/" || true
+              fi
+          done
+          find "$OUT" ! -type f ! -type d -delete
+
+      - name: Upload the test reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 #v7.0.2
+        with:
+          name: pr-torture-${{ inputs.project }}-${{ inputs.pr-number }}
+          path: ${{ runner.temp }}/pr-torture-reports
+          if-no-files-found: ignore
+
+  # Publishes the reports and posts the check run, on a hosted runner, away from the PR code.
+  report:
+    needs: pr-torture
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PR_NUMBER: ${{ inputs.pr-number }}
+      HEAD_SHA: ${{ inputs.head-sha }}
+      SOURCE_REPO: ${{ github.repository }}
+      # Kept apart from the Jenkins builds while both run
+      BUILD_NUMBER: gha-${{ github.run_id }}
+      CHECK_NAME: ${{ inputs.project }}-PR-torture
+      RELEASE_DIR: ${{ github.workspace }}/release
+    steps:
+      # The check run on the PR repo, the prosody tests results in jitsi-meet, reading the scripts
+      - name: GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 #v3.3.0
+        with:
+          app-id: ${{ secrets.PR_TORTURE_APP_ID }}
+          private-key: ${{ secrets.PR_TORTURE_APP_KEY }}
+          owner: jitsi
+          repositories: ${{ github.event.repository.name == 'jitsi-meet' && 'jitsi-meet' || format('{0},jitsi-meet', github.event.repository.name) }},jitsi-pr-testing-scripts
+          permission-checks: write
+          permission-actions: read
+          permission-contents: read
+
+      # The reports pushed to jitsi-pr-tests-pages
+      - name: GitHub App token for the reports
+        id: pages-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 #v3.3.0
+        with:
+          app-id: ${{ secrets.PR_TORTURE_APP_ID }}
+          private-key: ${{ secrets.PR_TORTURE_APP_KEY }}
+          owner: jitsi
+          repositories: jitsi-pr-tests-pages
+          permission-contents: write
+
+      - name: Check out the PR testing scripts
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
+        with:
+          repository: jitsi/jitsi-pr-testing-scripts
+          ref: ${{ inputs.scripts-ref }}
+          token: ${{ steps.app-token.outputs.token }}
+          path: jitsi-pr-testing-scripts
+          persist-credentials: false
+
+      # Missing when the test job stopped before producing reports (build failure, PR not merging)
+      - name: Download the test reports
+        id: download
+        continue-on-error: true
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 #v8.0.2
+        with:
+          name: pr-torture-${{ inputs.project }}-${{ inputs.pr-number }}
+          path: release
+
+      - name: Publish the reports and the check run
+        if: steps.download.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PAGES_TOKEN: ${{ steps.pages-token.outputs.token }}
+        run: jitsi-pr-testing-scripts/publish-pr-results.sh
+
+      - name: Post a failed check run, there are no reports
+        if: steps.download.outcome != 'success'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          jq -n --arg name "$CHECK_NAME" --arg sha "$HEAD_SHA" --arg url "$RUN_URL" '{
+              name: $name, head_sha: $sha, status: "completed", conclusion: "failure", details_url: $url,
+              output: {
+                  title: "The PR could not be built or merged with its target branch",
+                  summary: "The tests did not run. See the build and test step of the run: \($url)"
+              }
+          }' | gh api --method POST "repos/$SOURCE_REPO/check-runs" --input - > /dev/null

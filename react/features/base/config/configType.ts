@@ -713,6 +713,7 @@ export interface IConfig {
     serviceUrl?: string;
     sharedVideoAllowedURLDomains?: Array<string>;
     showChatPermissionsModeratorSetting?: boolean;
+    showSharedVideoPermissionsModeratorSetting?: boolean;
     sipInviteUrl?: string;
     speakerStats?: {
         disableSearch?: boolean;
@@ -829,6 +830,14 @@ export interface IConfig {
         hideVisitorCountForVisitors?: boolean;
         queueService: string;
         showJoinMeetingDialog?: boolean;
+    };
+    /**
+     * Voice agents (bot participants). Every participant is subscribed to an agent's audio automatically;
+     * set requireConsent to true to prompt each participant before the agent may hear them or be heard.
+     */
+    voiceAgents?: {
+        consentLearnMoreLink?: string;
+        requireConsent?: boolean;
     };
     watchRTCConfigParams?: IWatchRTCConfiguration;
     webhookProxyUrl?: string;

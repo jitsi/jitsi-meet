@@ -110,12 +110,13 @@ describe('Dial-in', () => {
         await dialIn(await ctx.p1.getDialInPin());
     });
 
-    it('wait for audio from dial-in participant', async () => {
+    it('wait for audio from dial-in participant', async function() {
         const { p1 } = ctx;
 
         if (!await p1.isInMuc()) {
             // local participant did not join abort
-            return;
+            // eslint-disable-next-line @typescript-eslint/no-invalid-this
+            this.skip();
         }
 
         await waitForAudioFromDialInParticipant(p1);

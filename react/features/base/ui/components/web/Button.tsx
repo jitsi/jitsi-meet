@@ -178,6 +178,7 @@ const Button = React.forwardRef<any, any>(({
     accessibilityLabel,
     autoFocus = false,
     className,
+    description,
     disabled,
     fullWidth,
     icon,
@@ -196,6 +197,7 @@ const Button = React.forwardRef<any, any>(({
 
     return (
         <button
+            aria-description = { description }
             aria-label = { accessibilityLabel }
             autoFocus = { autoFocus }
             className = { cx(styles.button, styles[type],

@@ -54,6 +54,26 @@ const DEFAULT_STATE = {
 };
 
 export interface IConferenceMetadata {
+
+    /**
+     * The voice agents (bot participants) provisioned for the room, keyed by agent id. Written by the
+     * voice-agent prosody module; read-only for clients. An agent becomes audible only after the local
+     * participant subscribes to its source (consent-gated, see features/voice-agents).
+     */
+    agents?: {
+        [agentId: string]: {
+            displayName?: string;
+            kind?: string;
+            sourceName?: string;
+            state?: string;
+        };
+    };
+
+    /**
+     * Server-controlled flag: the deployment transcribes on the backend, started through
+     * {@code recording.isTranscribingEnabled}, instead of dialing a transcriber.
+     */
+    asyncTranscription?: boolean;
     audioTranslation?: {
         enabled?: boolean;
     };
@@ -84,6 +104,16 @@ export interface IConferenceMetadata {
             progress?: number;
             timestamp: number;
         };
+    };
+
+    /**
+     * The restrictions of the room. A moderator sets them, or the server sets them from the
+     * settings of the meeting when it creates the room.
+     */
+    permissions?: {
+        groupChatRestricted?: boolean;
+        pollCreationRestricted?: boolean;
+        privateChatRestricted?: boolean;
     };
     recording?: {
         isRecordingRequested?: boolean;
@@ -188,6 +218,7 @@ export interface IJitsiConference {
     sendTextMessage: Function;
     sendTones: Function;
     sessionId: string;
+    setAgentAudioSubscription?: (sourceNames: string[]) => void;
     setAssumedBandwidthBps: (value: number) => void;
     setDesktopSharingFrameRate: Function;
     setDisplayName: Function;

@@ -176,7 +176,9 @@ android.libraryVariants.all { def variant ->
                 "--reset-cache",
                 "--entry-file", "index.android.js",
                 "--bundle-output", jsBundleFile,
-                "--assets-dest", resourcesDir)
+                "--assets-dest", resourcesDir,
+                // Reuse the autolinking manifest instead of re-running `react-native config`.
+                "--config-cmd", "cat '${gradle.ext.autolinkingManifest}'")
 
         // Disable bundling on dev builds
         enabled !devEnabled

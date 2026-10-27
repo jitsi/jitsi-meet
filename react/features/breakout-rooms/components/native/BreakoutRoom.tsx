@@ -56,9 +56,14 @@ export const BreakoutRoom = ({ room }: IProps) => {
             room = { room } />
     ), [ room ]);
 
+    const accessibilityState = { expanded: !collapsed };
+
     return (
         <View>
             <TouchableOpacity
+                accessibilityLabel = { title }
+                accessibilityRole = 'button'
+                accessibilityState = { accessibilityState }
                 onLongPress = { _openContextMenu }
                 onPress = { _toggleCollapsed }
                 style = { styles.breakoutRoom as ViewStyle }>

@@ -46,7 +46,10 @@
         "errorLimitReached": "No s'ha pogut traduir tothom alhora. En el seu lloc, activeu la traducció per als participants individuals.",
         "errorRoomDisabled": "La traducció d'àudio està desactivada per a aquesta reunió. Habiliteu-la a la configuració del moderador.",
         "errorSpeakerUnavailable": "No es pot traduir aquest participant — ja no és a la reunió.",
-        "labelTooltip": "S'està traduint…"
+        "labelTooltip": "S'està traduint…",
+        "labelTooltipPlaying": "L'àudio traduït encara s'està reproduint — espereu abans de parlar",
+        "stoppedForE2EE": "La traducció en temps real s'ha desactivat perquè el xifratge d'extrem a extrem està activat.",
+        "unavailableWithE2EE": "La traducció en temps real no està disponible mentre estigui activat el xifratge d'extrem a extrem."
     },
     "bandwidthSettings": {
         "assumedBandwidthBps": "p. ex. 10000000 per a 10 Mbps",
@@ -388,7 +391,10 @@
         "displayNameRequired": "Hola! Com us dieu?",
         "done": "Fet",
         "e2eeDescription": "El xifratge d'extrem a extrem és EXPERIMENTAL. Tingueu present que l'activació del xifratge d'extrem a extrem desactivarà serveis proporcionats en la banda del servidor, com ara: enregistrament, transmissió en directe i participació telefònica. A més, la reunió només funcionarà per a les persones que usin navegadors que compatibles amb fluxos inseribles.",
+        "e2eeDisabledDueToAgentDescription": "El xifratge d'extrem a extrem no es pot activar mentre un agent d'IA està a la reunió.",
         "e2eeDisabledDueToMaxModeDescription": "No es pot activar el xifratge d'extrem a extrem a causa del gran nombre de participants en la conferència.",
+        "e2eeDisabledDueToTranscriptionDescription": "El xifratge d'extrem a extrem no es pot activar mentre es transcriu la reunió.",
+        "e2eeDisabledDueToTranslationDescription": "El xifratge d'extrem a extrem no es pot activar mentre s'usa la traducció en temps real.",
         "e2eeLabel": "Activa el xifratge d'extrem a extrem",
         "e2eeWarning": "ATENCIÓ: sembla que no tots els participants d'aquesta reunió tenen suport per a xifratge d'extrem a extrem. Si l'activeu no podran veure-us ni escoltar-vos.",
         "e2eeWillDisableDueToMaxModeDescription": "ATENCIÓ: el xifratge d'extrem a extrem es desactivarà automàticament si s'afegeixen més participants a la conferència.",
@@ -988,6 +994,7 @@
         "selfViewTitle": "Sempre podeu activar la vista pròpia des de la configuració",
         "settingsIncompleteDescription": "No s'han pogut carregar alguns paràmetres de la sessió i s'han usat els valors per defecte.",
         "settingsIncompleteTitle": "La configuració de la reunió pot ser incompleta",
+        "sharedVideoRestricted": "Un moderador ha desactivat la compartició de vídeo per als no moderadors",
         "somebody": "Algú",
         "startSilentDescription": "Torneu a entrar per a activar l'àudio",
         "startSilentTitle": "Hi heu entrat sense cap sortida d'àudio!",
@@ -1055,6 +1062,14 @@
             "visitors": "Espectadors {{count}}",
             "visitorsList": "Espectadors ({{count}})",
             "waitingLobby": "A la sala d'espera ({{count}})"
+        },
+        "indicators": {
+            "audioDominantSpeaker": "Altaveu actiu",
+            "audioForceMuted": "Àudio silenciat, no es pot activar el so",
+            "audioMuted": "Àudio silenciat",
+            "raisedHand": "Mà alçada",
+            "videoForceMuted": "Càmera desactivada, no es pot activar",
+            "videoMuted": "La càmera està desactivada"
         },
         "search": "Cerca participants",
         "searchDescription": "Comenceu a escriure per a filtrar els participants",
@@ -1328,6 +1343,7 @@
         "selectCamera": "Càmera",
         "selectMic": "Micròfon",
         "selfView": "Vista pròpia",
+        "sharedVideoWithPermissions": "Desactiva la compartició de vídeo per als no moderadors",
         "shortcuts": "Dreceres",
         "showSubtitlesOnStage": "Mostra els subtítols a la pantalla",
         "speakers": "Altaveus",
@@ -1394,7 +1410,9 @@
         "seconds": "{{count}}s",
         "speakerStats": "Estadístiques de l'interlocutor",
         "speakerTime": "Temps de l'interlocutor",
-        "surprised": "Sorpresa"
+        "surprised": "Sorpresa",
+        "timelineEnd": "Final",
+        "timelineStart": "Inici"
     },
     "startupoverlay": {
         "genericTitle": "La reunió requereix usar el micròfon i la càmera.",
@@ -1658,10 +1676,12 @@
         "sourceLanguageHere": "aquí",
         "start": "Activa els subtítols",
         "stop": "Desactiva els subtítols",
+        "stoppedForE2EE": "Els subtítols s'han desactivat perquè el xifratge d'extrem a extrem està activat.",
         "subtitles": "Subtítols",
         "subtitlesOff": "Inactiu",
         "tr": "TR",
-        "translateTo": "Tradueix a:"
+        "translateTo": "Tradueix a:",
+        "unavailableWithE2EE": "La transcripció no està disponible mentre estigui activat el xifratge d'extrem a extrem."
     },
     "unpinParticipant": "{{participantName}} - No fixis",
     "userMedia": {
@@ -1776,6 +1796,20 @@
             "title": "Sou un espectador de la reunió"
         },
         "waitingMessage": "Entrareu a la reunió tan aviat com estigui en directe!"
+    },
+    "voiceAgents": {
+        "allow": "Permet",
+        "consentDescription": "L'agent només escolta els participants que ho permeten. Si ho permeteu, us escoltarà i sentireu les seves respostes.",
+        "consentDescriptionMuted": "L'agent només escolta els participants que ho permeten. Si ho permeteu, us escoltarà i sentireu les seves respostes. Esteu silenciat fins que decidiu.",
+        "consentTitle": "{{name}} s'ha unit com a agent d'IA",
+        "e2eeUnsupportedDescription": "Els agents d'IA no poden participar en reunions xifrades d'extrem a extrem. Desactiveu el xifratge d'extrem a extrem per a permetre que l'agent escolti i sigui escoltat.",
+        "e2eeUnsupportedTitle": "{{name}} no està disponible",
+        "labelTooltip": "Agent d'IA a la reunió: {{names}}",
+        "labelTooltipAllow": "Agent d'IA a la reunió: {{names}}. Feu clic per a deixar que us escolti.",
+        "labelTooltipE2EE": "Agent d'IA a la reunió: {{names}}. No disponible mentre la reunió estigui xifrada d'extrem a extrem.",
+        "nativeTitle": "Agent d'IA a la reunió",
+        "notNow": "Ara no",
+        "thumbnailTooltip": "Agent d'IA"
     },
     "volumeSlider": "Control lliscant de volum",
     "welcomepage": {

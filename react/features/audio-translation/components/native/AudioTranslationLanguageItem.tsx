@@ -38,6 +38,7 @@ interface IProps {
  */
 const AudioTranslationLanguageItem = ({ code, label, onSelect, selected }: IProps) => {
     const onPress = useCallback(() => onSelect(code), [ code, onSelect ]);
+    const accessibilityState = { selected };
 
     return (
         <View style = { styles.languageItemWrapper as StyleProp<ViewStyle> }>
@@ -47,6 +48,9 @@ const AudioTranslationLanguageItem = ({ code, label, onSelect, selected }: IProp
                     src = { IconCheck } /> }
             </View>
             <TouchableHighlight
+                accessibilityLabel = { label }
+                accessibilityRole = 'button'
+                accessibilityState = { accessibilityState }
                 onPress = { onPress }
                 underlayColor = { 'transparent' }>
                 <Text style = { [ styles.languageItemText, selected && styles.selectedLanguageItemText ] }>

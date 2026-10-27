@@ -62,7 +62,7 @@ shared state over plain HTTP on port 5280.
 |---|---|
 | `GET  /test-observer/events` | Return all MUC events fired since the last clear |
 | `DELETE /test-observer/events` | Clear the event log (call in `beforeEach`) |
-| `GET  /test-observer/rooms?jid=<room-jid>` | Return live room state: `{ jid, hidden, occupant_count }` |
+| `GET  /test-observer/rooms?jid=<room-jid>` | Return live room state: `{ jid, hidden, occupant_count, meeting_id }` |
 
 ```js
 import { clearEvents, getEvents, getRoomState } from './helpers/test_observer.js';

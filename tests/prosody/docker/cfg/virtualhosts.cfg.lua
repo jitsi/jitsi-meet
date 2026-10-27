@@ -23,6 +23,9 @@ VirtualHost "localhost"
         "conference_duration";
         "filter_iq_rayo";    -- priority 1 on pre-iq/full; listed before filter_iq_jibri (matches prod)
         "filter_iq_jibri";
+        -- Adds the initiator and the room's meetingId (session_id) to the
+        -- app_data of a client's jibri start iq.
+        "jibri_session";
         "muc_lobby_rooms";
         "jiconop";
         "muc_kick_participant";
@@ -75,8 +78,17 @@ VirtualHost "localhost"
     lobby_muc = "lobby.conference.localhost"
     breakout_rooms_muc = "breakout.conference.localhost"
 
+    -- mod_filter_iq_rayo: per-session rate (per minute) and per-user
+    -- concurrency limit for Rayo dials. Kept low so the limit can be hit
+    -- in tests with a few dials.
+    max_number_outgoing_calls = 2
+
     -- Clients on whitelist.localhost bypass the lobby.
     muc_lobby_whitelist = { "whitelist.localhost" }
+
+    -- mod_filter_iq_jibri: every test client connects from the same IP, and
+    -- the jibri specs send more start/stop iqs than the default 9 per minute.
+    max_number_ip_attempts_per_minute = 100
 
 -- VirtualHost for the focus (jicofo) test helper.
 -- Clients authenticate with username "focus" and password "focussecret".

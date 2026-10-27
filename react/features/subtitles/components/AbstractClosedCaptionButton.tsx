@@ -3,6 +3,7 @@ import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
 import { MEET_FEATURES } from '../../base/jwt/constants';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
+import { isE2EEOnInMeeting } from '../../e2ee/functions';
 import { maybeShowPremiumFeatureDialog } from '../../jaas/actions';
 import { canStartSubtitles, isCCTabEnabled } from '../functions.any';
 
@@ -19,6 +20,11 @@ export interface IAbstractProps extends AbstractButtonProps {
      * without a translation language selected (i.e. the source language).
      */
     _defaultLanguage?: string;
+
+    /**
+     * Whether end-to-end encryption is on, which rules out transcription.
+     */
+    _e2eeEnabled?: boolean;
 
     /**
      * Whether the subtitles tab is enabled in the UI.
@@ -94,7 +100,22 @@ export class AbstractClosedCaptionButton
      * @returns {boolean}
      */
     override _isDisabled() {
-        return false;
+        const { _e2eeEnabled, _isCCTabEnabled, _requestingSubtitles } = this.props;
+
+        // Requested subtitles can still be turned off, and with the CC tab the button only opens the panel, whose
+        // own start button is disabled instead.
+        return Boolean(_e2eeEnabled) && !_requestingSubtitles && !_isCCTabEnabled;
+    }
+
+    /**
+     * Why the button is disabled.
+     *
+     * @override
+     * @protected
+     * @returns {string}
+     */
+    override _getDisabledReason() {
+        return 'transcribing.unavailableWithE2EE';
     }
 
     /**
@@ -131,6 +152,7 @@ export function _abstractMapStateToProps(state: IReduxState, ownProps: IAbstract
     const { visible = canStartSubtitles(state) } = ownProps;
 
     return {
+        _e2eeEnabled: isE2EEOnInMeeting(state),
         _isCCTabEnabled: isCCTabEnabled(state),
         _requestingSubtitles,
         _language,

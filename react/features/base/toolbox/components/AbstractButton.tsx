@@ -343,6 +343,16 @@ export default class AbstractButton<P extends IProps, S = any> extends Component
     }
 
     /**
+     * Why the button is disabled, as a translation key, for subclasses that can say. Only consulted while disabled.
+     *
+     * @protected
+     * @returns {string|undefined}
+     */
+    _getDisabledReason(): string | undefined {
+        return undefined;
+    }
+
+    /**
      * Helper function to be implemented by subclasses, which must return a
      * boolean value indicating if this button is disabled or not.
      *
@@ -406,6 +416,7 @@ export default class AbstractButton<P extends IProps, S = any> extends Component
         const props: any = {
             ...this.props,
             accessibilityLabel: this._getAccessibilityLabel(),
+            disabledReason: this._isDisabled() ? this._getDisabledReason() : undefined,
             elementAfter: this._getElementAfter(),
             icon: this._getIcon(),
             label: this._getLabel(),

@@ -132,17 +132,22 @@ class ChatInputBar extends Component<IProps, IState> {
      * @inheritdoc
      */
     override render() {
+        const { t } = this.props;
+
         if (_isSendDisabled(this.props)) {
             return (
                 <View
                     id = 'no-messages-message'
                     style = { styles.disabledSendWrapper as ViewStyle }>
                     <Text style = { styles.emptyComponentText as TextStyle }>
-                        { this.props.t('chat.disabled') }
+                        { t('chat.disabled') }
                     </Text>
                 </View>
             );
         }
+
+        const messageInputLabel = t('chat.fieldPlaceHolder');
+        const sendButtonLabel = t('chat.sendButton');
 
         return (
             <View
@@ -152,18 +157,20 @@ class ChatInputBar extends Component<IProps, IState> {
                     this.state.addPadding ? styles.extraBarPadding : null
                 ] as ViewStyle[] }>
                 <Input
+                    accessibilityLabel = { messageInputLabel }
                     blurOnSubmit = { false }
                     customStyles = {{ container: styles.customInputContainer }}
                     id = 'chat-input-messagebox'
                     multiline = { false }
                     onChange = { this._onChangeText }
                     onSubmitEditing = { this._onSubmit }
-                    placeholder = { this.props.t('chat.fieldPlaceHolder') }
+                    placeholder = { messageInputLabel }
                     returnKeyType = 'send'
                     value = { this.state.message } />
                 <IconButton
+                    accessibilityLabel = { sendButtonLabel }
                     disabled = { !this.state.message }
-                    id = { this.props.t('chat.sendButton') }
+                    id = { sendButtonLabel }
                     onPress = { this._onSubmit }
                     src = { IconSend }
                     style = { styles.sendButton }

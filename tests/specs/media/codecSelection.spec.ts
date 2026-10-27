@@ -80,7 +80,7 @@ describe('Codec selection', () => {
         ]);
     });
 
-    it('codec switch over', async () => {
+    it('codec switch over', async function() {
         await hangupAllParticipants();
 
         await ensureTwoParticipants({
@@ -94,7 +94,8 @@ describe('Codec selection', () => {
 
         // Disable this test on Firefox because it doesn't support VP9 encode.
         if (p1.driver.isFirefox) {
-            return;
+            // eslint-disable-next-line @typescript-eslint/no-invalid-this
+            this.skip();
         }
 
         // Check if p1 and p2 are encoding in VP9 which is the default codec.

@@ -46,7 +46,10 @@
         "errorLimitReached": "Kon niet iedereen tegelijk vertalen. Schakel vertaling in voor individuele deelnemers.",
         "errorRoomDisabled": "Audiovertaling is voor deze vergadering uitgeschakeld. Schakel het in bij Moderator-instellingen.",
         "errorSpeakerUnavailable": "Kan deze deelnemer niet vertalen — is niet langer in de vergadering.",
-        "labelTooltip": "Vertalen…"
+        "labelTooltip": "Vertalen…",
+        "labelTooltipPlaying": "De vertaalde audio wordt nog afgespeeld — wacht alstublieft met spreken",
+        "stoppedForE2EE": "Livevertaling is uitgeschakeld, omdat Eind-tot-Eind-Versleuteling is ingeschakeld.",
+        "unavailableWithE2EE": "Livevertaling is niet beschikbaar wanneer Eind-tot-Eind-Versleuteling is ingeschakeld."
     },
     "bandwidthSettings": {
         "assumedBandwidthBps": "bijv. 10000000 voor 10 Mbps",
@@ -262,7 +265,8 @@
         "yes": "ja"
     },
     "customPanel": {
-        "close": "Sluiten"
+        "close": "Sluiten",
+        "title": "AI Assistentie"
     },
     "dateUtils": {
         "earlier": "Eerder",
@@ -386,10 +390,12 @@
         "dismissAll": "Alles negeren",
         "displayNameRequired": "Hallo! Wat is uw naam?",
         "done": "Gereed",
-        "e2eeDescription": "Eind-tot-Eind-Versleuteling is momenteel EXPERIMENTEEL. Houd er rekening mee dat inschakelen van eind-tot-eind-versleuteling de door de server geleverde services zal uitschakelen zoals: opnemen, livestreamen en deelname via telefoon. Houd er ook rekening mee dat de vergadering alleen zal werken voor personen die deelnemen vanaf browsers met ondersteuning voor insertable streams.",
+        "e2eeDescription": "Eind-tot-Eind-Versleuteling is momenteel EXPERIMENTEEL. Houd er rekening mee dat inschakelen van Eind-tot-Eind-Versleuteling de door de server geleverde services zal uitschakelen zoals: opnemen, livestreamen en deelname via telefoon. Houd er ook rekening mee dat de vergadering alleen zal werken voor personen die deelnemen vanaf browsers met ondersteuning voor insertable streams.",
         "e2eeDisabledDueToMaxModeDescription": "Eind-tot-Eind-Versleuteling kan niet worden ingeschakeld vanwege het grote aantal deelnemers aan de conferentie.",
+        "e2eeDisabledDueToTranscriptionDescription": "Eind-tot-Eind-Versleuteling kan niet worden ingeschakeld terwijl de vergadering wordt getranscribeerd.",
+        "e2eeDisabledDueToTranslationDescription": "Eind-tot-Eind-Versleuteling kan niet worden ingeschakeld terwijl livevertaling wordt gebruikt.",
         "e2eeLabel": "Sleutel",
-        "e2eeWarning": "WAARSCHUWING: Niet alle deelnemers in deze vergadering lijken ondersteuning te hebben voor eind-tot-eind-versleuteling. Als u het inschakelt zullen zij u niet kunnen zien of horen.",
+        "e2eeWarning": "WAARSCHUWING: Niet alle deelnemers in deze vergadering lijken ondersteuning te hebben voor Eind-tot-Eind-Versleuteling. Als u het inschakelt zullen zij u niet kunnen zien of horen.",
         "e2eeWillDisableDueToMaxModeDescription": "WAARSCHUWING: Eind-tot-Eind-Versleuteling wordt automatisch uitgeschakeld als meer deelnemers aan de conferentie deelnemen.",
         "embedMeeting": "Vergadering insluiten",
         "enterDisplayName": "Voer hier uw naam in",
@@ -617,7 +623,7 @@
         "title": "Gedeeld Document"
     },
     "e2ee": {
-        "labelToolTip": "Audio- en Videocommunicatie in dit gesprek is eind-tot-eind-versleuteld"
+        "labelToolTip": "Audio- en Videocommunicatie in dit gesprek is Eind-tot-Eind-Versleuteld"
     },
     "embedMeeting": {
         "title": "Deze vergadering embedden"
@@ -1055,6 +1061,14 @@
             "visitorsList": "Toeschouwers ({{count}})",
             "waitingLobby": "Wachtenden in de wachtruimte ({{count}})"
         },
+        "indicators": {
+            "audioDominantSpeaker": "Actieve spreker",
+            "audioForceMuted": "Audio gedempt, kan dempen niet opheffen",
+            "audioMuted": "Audio gedempt",
+            "raisedHand": "Hand opgestoken",
+            "videoForceMuted": "Camera uitgeschakeld, kan niet inschakelen",
+            "videoMuted": "Camera uitgeschakeld"
+        },
         "search": "Deelnemers zoeken",
         "searchDescription": "Begin met typen om deelnemers te filteren",
         "title": "Deelnemers"
@@ -1393,7 +1407,9 @@
         "seconds": "{{count}}s",
         "speakerStats": "Sprekerstatistieken",
         "speakerTime": "Sprekertijd",
-        "surprised": "Verrast"
+        "surprised": "Verrast",
+        "timelineEnd": "Eind",
+        "timelineStart": "Start"
     },
     "startupoverlay": {
         "genericTitle": "De vergadering heeft toegang tot uw microfoon en camera nodig.",
@@ -1404,6 +1420,10 @@
         "rejoinKeyTitle": "Opnieuw deelnemen",
         "text": "Druk op de knop <i>Opnieuw deelnemen</i> om opnieuw verbinding te maken.",
         "title": "Uw videogesprek is onderbroken omdat deze computer op de slaapstand overging."
+    },
+    "systemWideUserNotification": {
+        "button": "Meer informatie",
+        "dontShowAgain": "Niet meer weergeven"
     },
     "termsView": {
         "title": "Voorwaarden"
@@ -1546,7 +1566,7 @@
         "documentClose": "Gedeeld document sluiten",
         "documentOpen": "Gedeeld document openen",
         "download": "Download onze apps",
-        "e2ee": "Eind-tot-eind-versleuteling",
+        "e2ee": "Eind-tot-Eind-Versleuteling",
         "embedMeeting": "Vergadering embedden",
         "enableNoiseSuppression": "Extra ruisonderdrukking inschakelen",
         "endConference": "Vergadering voor iedereen beëindigen",
@@ -1653,10 +1673,12 @@
         "sourceLanguageHere": "veranderen",
         "start": "Ondertiteling starten",
         "stop": "Ondertiteling stoppen",
+        "stoppedForE2EE": "Ondertiteling is uitgeschakeld omdat Eind-tot-Eind-Versleuteling is ingeschakeld.",
         "subtitles": "Ondertiteling",
         "subtitlesOff": "Uit",
         "tr": "TR",
-        "translateTo": "Vertalen naar"
+        "translateTo": "Vertalen naar",
+        "unavailableWithE2EE": "Transcriptie is niet beschikbaar terwijl Eind-tot-Eind-Versleuteling is ingeschakeld."
     },
     "unpinParticipant": "{{participantName}} - Losmaken",
     "userMedia": {
