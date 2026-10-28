@@ -232,6 +232,8 @@ export interface IConfig {
     audioTranslation?: {
         duckedVolume?: number;
         enabled?: boolean;
+        languages?: Array<string>;
+        languagesHead?: Array<string>;
     };
     /**
      * @deprecated Use `transcription.autoTranscribeOnRecord` instead.

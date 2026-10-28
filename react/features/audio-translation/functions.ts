@@ -6,7 +6,7 @@ import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { isLocalParticipantModerator } from '../base/participants/functions';
 import { ITrack } from '../base/tracks/types';
 
-import { DUCKED_ORIGINAL_VOLUME } from './constants';
+import { DEFAULT_TRANSLATION_LANGUAGES, DUCKED_ORIGINAL_VOLUME } from './constants';
 
 /**
  * Whether audio translation is enabled for the room. Driven by the {@code audioTranslation} RoomMetadata flag,
@@ -159,6 +159,73 @@ export function shouldDuckOriginalAudio(state: IReduxState, sourceName?: string,
     }
 
     return getTranslatedSourceNames(state).has(`${sourceName}.${language}`);
+}
+
+/**
+ * The target languages offered in the audio-translation picker, in order: {@code config.audioTranslation.languages}
+ * (else the built-in default list every provider supports), with the codes named in {@code languagesHead} moved
+ * to the top. The head only reorders: a head code that is not in the offered list is ignored, so it cannot add a
+ * language the deployment's provider may not accept. The currently selected language, if any, is kept in the
+ * list even when the configuration no longer offers it, so the picker can still show what is active. Codes are
+ * kept verbatim (they go to the bridge and on to the translation provider as-is); blanks and duplicates are
+ * dropped, and a configured list that leaves nothing behind falls back to the default list.
+ *
+ * @param {Object | undefined} config - The {@code audioTranslation} config block.
+ * @param {string | null | undefined} selectedLanguage - The language currently active for the picker's target.
+ * @returns {Array<string>} The language codes, in picker order.
+ */
+export function orderAudioTranslationLanguages(
+        config: { languages?: Array<string>; languagesHead?: Array<string>; } | undefined,
+        selectedLanguage?: string | null): Array<string> {
+    const clean = (codes: unknown): Array<string> => {
+        const seen = new Set<string>();
+        const out: Array<string> = [];
+
+        for (const code of Array.isArray(codes) ? codes : []) {
+            const trimmed = typeof code === 'string' ? code.trim() : '';
+
+            if (trimmed && !seen.has(trimmed)) {
+                seen.add(trimmed);
+                out.push(trimmed);
+            }
+        }
+
+        return out;
+    };
+    const defaults = DEFAULT_TRANSLATION_LANGUAGES.map(({ code }) => code);
+    const offered = Array.isArray(config?.languages) && config.languages.length > 0
+        ? clean(config.languages)
+        : defaults;
+    const list = offered.length > 0 ? offered : defaults;
+    const head = clean(config?.languagesHead).filter(code => list.includes(code));
+    const selected = selectedLanguage && !list.includes(selectedLanguage) ? [ selectedLanguage ] : [];
+
+    return [ ...head, ...selected, ...list.filter(code => !head.includes(code)) ];
+}
+
+/**
+ * The picker label for an audio-translation language code: the native-script label of the default list when the
+ * code is on it, else the name from the {@code translation-languages} i18n namespace
+ * (lang/translation-languages.json), else the code itself.
+ *
+ * @param {string} code - The language code.
+ * @param {Function} t - The i18n translate function.
+ * @returns {string}
+ */
+export function getAudioTranslationLanguageLabel(code: string, t: (key: string) => string): string {
+    const builtIn = DEFAULT_TRANSLATION_LANGUAGES.find(entry => entry.code === code);
+
+    if (builtIn) {
+        return builtIn.label;
+    }
+
+    // translation-languages.json keys region subtags in upper case (zh-CN); a provider code may be lower case.
+    const [ primary, ...rest ] = code.split('-');
+    const normalised = [ primary.toLowerCase(), ...rest.map(s => s.toUpperCase()) ].join('-');
+    const translated = t(`translation-languages:${normalised}`);
+
+    // i18next returns the key without its namespace when there is no translation.
+    return translated && translated !== normalised ? translated : code;
 }
 
 /**

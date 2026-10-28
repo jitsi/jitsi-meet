@@ -258,6 +258,19 @@ var config = {
     //     // Defaults to 0.15. Ignored on iOS, where the original is muted instead because the
     //     // element volume cannot be lowered there.
     //     duckedVolume: 0.15,
+    //
+    //     // Target languages offered in the audio-translation picker, as the codes the
+    //     // deployment's speech-to-speech translation provider accepts (they are sent to the
+    //     // bridge verbatim). Defaults to the 13 languages every provider supports: en, es, pt,
+    //     // fr, de, it, ru, zh, ja, ko, hi, id, vi. Extend this only if the translation service
+    //     // accepts more (xAI takes any BCP-47 tag; OpenAI only the 13): a language the provider
+    //     // rejects is dropped server-side and the picker entry produces no audio. Codes outside
+    //     // the default list are labelled from lang/translation-languages.json.
+    //     languages: [ 'en', 'es', 'fr', 'nl' ],
+    //
+    //     // Languages from the offered list to pin to the top of the picker, in this order. A head
+    //     // entry that is not in the offered list is ignored, so this only reorders.
+    //     languagesHead: [ 'en' ],
     // },
 
     // Noise suppression configuration. By default rnnoise is used. Optionally Krisp
