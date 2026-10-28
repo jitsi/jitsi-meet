@@ -29,7 +29,7 @@ interface IProps extends IChatMessageProps {
     state?: IReduxState;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles<void, 'optionsButtonContainer'>()((theme: Theme, _params, classes) => {
     return {
         chatMessageFooter: {
             display: 'flex',
@@ -45,12 +45,17 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         chatMessageWrapper: {
             maxWidth: '100%',
+            outline: 'none',
 
-            '&:hover': {
-                '& $optionsButtonContainer': {
-                    opacity: 1,
-                    pointerEvents: 'auto'
-                }
+            [`&:hover .${classes.optionsButtonContainer}`]: {
+                opacity: 1,
+                pointerEvents: 'auto'
+            },
+
+            '&.focus-visible, &:focus-visible': {
+                borderRadius: '4px',
+                outline: `2px solid ${theme.palette.focus01}`,
+                outlineOffset: '2px'
             }
         },
         chatMessage: {
@@ -171,12 +176,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             minWidth: '32px',
             minHeight: '32px',
             opacity: 0,
-            pointerEvents: 'none',
-
-            '&:focus-within': {
-                opacity: 1,
-                pointerEvents: 'auto'
-            }
+            pointerEvents: 'none'
         },
         visible: {
             opacity: 1,
@@ -292,9 +292,12 @@ const ChatMessage = ({
     t
 }: IProps) => {
     const { classes, cx } = useStyles();
+    const [ isActionNavigating, setIsActionNavigating ] = useState(false);
     const [ isMenuOpen, setIsMenuOpen ] = useState(false);
+    const [ isReactOpen, setIsReactOpen ] = useState(false);
     const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
     const messageRef = useRef<HTMLDivElement>(null);
+    const wrapperRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (!isActiveSearchMatch || !messageRef.current) {
@@ -332,6 +335,20 @@ const ChatMessage = ({
 
     const handleReactionsClose = useCallback(() => {
         setIsReactionsOpen(false);
+    }, []);
+
+    const handleMenuOpenChange = useCallback((isOpen: boolean) => {
+        setIsMenuOpen(isOpen);
+        if (isOpen) {
+            setIsReactOpen(false);
+        }
+    }, []);
+
+    const handleReactOpenChange = useCallback((isOpen: boolean) => {
+        setIsReactOpen(isOpen);
+        if (isOpen) {
+            setIsMenuOpen(false);
+        }
     }, []);
 
     /**
@@ -483,19 +500,194 @@ const ChatMessage = ({
         && !message.isFromVisitor
         && !isFileMessage(message);
 
+    const canReact = !message.privateMessage
+        && !message.lobbyChat
+        && !message.isReaction
+        && !message.isDeleted
+        && !message.isModerated;
+
+    const canShowMenu = !message.isDeleted
+        && !message.isModerated
+        && !(Boolean(enablePrivateChat) === false && isFileMessage(message) && !canEdit);
+
+    const hasActions = canReact || canShowMenu;
+
+    useEffect(() => {
+        if (!hasActions && isActionNavigating) {
+            setIsActionNavigating(false);
+        }
+    }, [ hasActions, isActionNavigating ]);
+
+    const getActionButtons = useCallback(() => {
+        if (!wrapperRef.current) {
+            return [];
+        }
+
+        const buttons = wrapperRef.current.querySelectorAll<HTMLButtonElement>(
+            `.${classes.optionsButtonContainer} button`
+        );
+
+        return Array.from(buttons);
+    }, [ classes.optionsButtonContainer ]);
+
+    useEffect(() => {
+        if (isActionNavigating && !isMenuOpen && !isReactOpen) {
+            const buttons = getActionButtons();
+
+            if (buttons.length > 0 && !buttons.includes(document.activeElement as HTMLButtonElement)) {
+                buttons[0]?.focus();
+            }
+        }
+    }, [ isActionNavigating, isMenuOpen, isReactOpen, getActionButtons ]);
+
+    const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Escape') {
+            if (isMenuOpen) {
+                event.preventDefault();
+                event.stopPropagation();
+                setIsMenuOpen(false);
+
+                return;
+            }
+
+            if (isReactOpen) {
+                event.preventDefault();
+                event.stopPropagation();
+                setIsReactOpen(false);
+
+                return;
+            }
+
+            if (isActionNavigating) {
+                event.preventDefault();
+                event.stopPropagation();
+                setIsActionNavigating(false);
+                wrapperRef.current?.focus();
+
+                return;
+            }
+        }
+
+        if (event.target === event.currentTarget) {
+            if ((event.key === 'Enter' || event.key === ' ') && hasActions) {
+                event.preventDefault();
+                event.stopPropagation();
+                setIsActionNavigating(true);
+
+                return;
+            }
+        }
+
+        if (isActionNavigating && !isMenuOpen && !isReactOpen) {
+            if (event.key === 'Tab') {
+                const buttons = getActionButtons();
+
+                if (buttons.length > 0) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const activeBtn = (document.activeElement as HTMLElement)?.closest('button');
+                    const currentIndex = activeBtn ? buttons.indexOf(activeBtn as HTMLButtonElement) : -1;
+
+                    if (event.shiftKey) {
+                        const prevIndex = currentIndex <= 0 ? buttons.length - 1 : currentIndex - 1;
+
+                        buttons[prevIndex]?.focus();
+                    } else {
+                        const nextIndex = currentIndex >= buttons.length - 1 || currentIndex === -1
+                            ? 0
+                            : currentIndex + 1;
+
+                        buttons[nextIndex]?.focus();
+                    }
+                }
+
+                return;
+            }
+
+            if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+                const buttons = getActionButtons();
+
+                if (buttons.length > 1) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const activeBtn = (document.activeElement as HTMLElement)?.closest('button');
+                    const currentIndex = activeBtn ? buttons.indexOf(activeBtn as HTMLButtonElement) : -1;
+                    const nextIndex = currentIndex >= buttons.length - 1 || currentIndex === -1
+                        ? 0
+                        : currentIndex + 1;
+
+                    buttons[nextIndex]?.focus();
+                }
+
+                return;
+            }
+
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+                const buttons = getActionButtons();
+
+                if (buttons.length > 1) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const activeBtn = (document.activeElement as HTMLElement)?.closest('button');
+                    const currentIndex = activeBtn ? buttons.indexOf(activeBtn as HTMLButtonElement) : -1;
+                    const prevIndex = currentIndex <= 0 ? buttons.length - 1 : currentIndex - 1;
+
+                    buttons[prevIndex]?.focus();
+                }
+
+                return;
+            }
+        }
+    }, [ getActionButtons, hasActions, isActionNavigating, isMenuOpen, isReactOpen ]);
+
+    const handleBlur = useCallback(() => {
+        if (isMenuOpen || isReactOpen) {
+            return;
+        }
+
+        window.setTimeout(() => {
+            if (!wrapperRef.current) {
+                return;
+            }
+
+            const active = document.activeElement;
+
+            if (active && wrapperRef.current.contains(active)) {
+                return;
+            }
+
+            if (active && (
+                active.closest('.popover')
+                || active.closest('[role="dialog"]')
+                || active.closest('[role="menu"]')
+                || active.closest('[role="toolbar"]')
+            )) {
+                return;
+            }
+
+            setIsActionNavigating(false);
+        }, 100);
+    }, [ isMenuOpen, isReactOpen ]);
+
+    const areButtonsVisible = isActionNavigating || isMenuOpen || isReactOpen;
+    const actionTabIndex = isActionNavigating ? 0 : -1;
+
     return (
         <div
             className = { cx(classes.chatMessageWrapper, className) }
             id = { message.messageId }
-            tabIndex = { -1 }>
+            onBlur = { handleBlur }
+            onKeyDown = { handleKeyDown }
+            ref = { wrapperRef }
+            tabIndex = { 0 }>
             <div className = { classes.sideBySideContainer }>
                 {!shouldDisplayMenuOnRight && (
                     <div
                         className = { cx(
                             classes.optionsButtonContainer,
-                            isMenuOpen && classes.visible
+                            areButtonsVisible && classes.visible
                         ) }>
-                        {!message.isDeleted && !message.isModerated && <MessageMenu
+                        {canShowMenu && <MessageMenu
                             canEdit = { canEdit }
                             displayName = { message.displayName }
                             enablePrivateChat = { Boolean(enablePrivateChat) }
@@ -505,8 +697,9 @@ const ChatMessage = ({
                             isModerated = { message.isModerated }
                             message = { message }
                             onEditMessage = { handleEditMessage }
-                            onPopoverOpenChange = { setIsMenuOpen }
-                            participantId = { message.participantId } />}
+                            onPopoverOpenChange = { handleMenuOpenChange }
+                            participantId = { message.participantId }
+                            tabIndex = { actionTabIndex } />}
                     </div>
                 )}
                 <div
@@ -574,26 +767,26 @@ const ChatMessage = ({
                 </div>
                 {shouldDisplayMenuOnRight && (
                     <div className = { classes.sideBySideContainer }>
-                        {!message.privateMessage && !message.lobbyChat
-                        && !message.isReaction && !message.isDeleted && !message.isModerated && <div>
+                        {canReact && <div>
                             <div
                                 className = { cx(
                                     classes.optionsButtonContainer,
-                                    isMenuOpen && classes.visible
+                                    areButtonsVisible && classes.visible
                                 ) }>
                                 <ReactButton
                                     messageId = { message.messageId }
-                                    onPopoverOpenChange = { setIsMenuOpen }
-                                    receiverId = { '' } />
+                                    onPopoverOpenChange = { handleReactOpenChange }
+                                    receiverId = { '' }
+                                    tabIndex = { actionTabIndex } />
                             </div>
                         </div>}
                         <div>
                             <div
                                 className = { cx(
                                     classes.optionsButtonContainer,
-                                    isMenuOpen && classes.visible
+                                    areButtonsVisible && classes.visible
                                 ) }>
-                                {!message.isDeleted && !message.isModerated && <MessageMenu
+                                {canShowMenu && <MessageMenu
                                     canEdit = { canEdit }
                                     displayName = { message.displayName }
                                     enablePrivateChat = { Boolean(enablePrivateChat) }
@@ -603,8 +796,9 @@ const ChatMessage = ({
                                     isModerated = { message.isModerated }
                                     message = { message }
                                     onEditMessage = { handleEditMessage }
-                                    onPopoverOpenChange = { setIsMenuOpen }
-                                    participantId = { message.participantId } />}
+                                    onPopoverOpenChange = { handleMenuOpenChange }
+                                    participantId = { message.participantId }
+                                    tabIndex = { actionTabIndex } />}
                             </div>
                         </div>
                     </div>
