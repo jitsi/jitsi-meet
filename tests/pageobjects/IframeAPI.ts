@@ -111,6 +111,14 @@ export default class IframeAPI extends BasePageObject {
     }
 
     /**
+     * Returns whether A/V moderation is enabled for the given media type.
+     * @param mediaType The media type, 'audio' (default) or 'video'.
+     */
+    isModerationOn(mediaType?: 'audio' | 'video') {
+        return this.participant.execute(type => window.jitsiAPI.isModerationOn(type), mediaType);
+    }
+
+    /**
      * Returns whether the local participant's audio is muted.
      */
     isAudioMuted() {
