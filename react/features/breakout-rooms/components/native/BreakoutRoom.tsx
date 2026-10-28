@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { FlatList, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
 import { openSheet } from '../../../base/dialog/actions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../base/icons/svg';
@@ -40,7 +41,7 @@ export const BreakoutRoom = ({ room }: IProps) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const [ collapsed, setCollapsed ] = useState(false);
-    const joinAllowed = useSelector(isBreakoutRoomJoinAllowed);
+    const joinAllowed = useSelector((state: IReduxState) => isBreakoutRoomJoinAllowed(state, room));
     const roomParticipantsNr = Object.values(room.participants || {}).length;
     const title = `${room.name || t('breakoutRooms.mainRoom')} (${roomParticipantsNr})`;
 
@@ -51,7 +52,7 @@ export const BreakoutRoom = ({ room }: IProps) => {
     const _openContextMenu = useCallback(() => {
         // Joining is the only action of a participant who is not a moderator, thus with the join restriction the menu
         // of a breakout room would be empty.
-        if (joinAllowed || room.isMainRoom) {
+        if (joinAllowed) {
             dispatch(openSheet(BreakoutRoomContextMenu, { room }));
         }
     }, [ dispatch, joinAllowed, room ]);

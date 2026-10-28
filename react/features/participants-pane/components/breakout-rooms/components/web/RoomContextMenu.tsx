@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { createBreakoutRoomsEvent } from '../../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../../analytics/functions';
+import { IReduxState } from '../../../../../app/types';
 import { openDialog } from '../../../../../base/dialog/actions';
 import { IconCloseLarge, IconEdit, IconRingGroup } from '../../../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
@@ -58,7 +59,7 @@ export const RoomContextMenu = ({
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const _isBreakoutRoomRenameAllowed = useSelector(isBreakoutRoomRenameAllowed);
     const _overflowDrawer = useSelector(showOverflowDrawer);
-    const joinAllowed = useSelector(isBreakoutRoomJoinAllowed);
+    const joinAllowed = useSelector((state: IReduxState) => isBreakoutRoomJoinAllowed(state, room));
 
     const onJoinRoom = useCallback(() => {
         sendAnalytics(createBreakoutRoomsEvent('join'));
@@ -83,7 +84,7 @@ export const RoomContextMenu = ({
     const isRoomEmpty = !(room?.participants && Object.keys(room.participants).length > 0);
 
     const actions = [
-        _overflowDrawer && (joinAllowed || room?.isMainRoom) ? {
+        _overflowDrawer && joinAllowed ? {
             accessibilityLabel: t('breakoutRooms.actions.join'),
             icon: IconRingGroup,
             onClick: onJoinRoom,

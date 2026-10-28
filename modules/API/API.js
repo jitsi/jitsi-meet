@@ -979,11 +979,10 @@ function initCommands() {
         },
         'join-breakout-room': roomId => {
             const state = APP.store.getState();
-            const mainRoomId = getMainRoom(state)?.id;
-            const isMainRoom = !roomId || roomId === mainRoomId || roomId.split('@')[0] === mainRoomId;
+            const room = roomId ? getBreakoutRooms(state)[roomId.split('@')[0]] : getMainRoom(state);
 
-            // Returning to the main room is always allowed, the server rejects any other self join as well.
-            if (!isMainRoom && !isBreakoutRoomJoinAllowed(state)) {
+            // The server rejects a join that is not allowed as well.
+            if (!isBreakoutRoomJoinAllowed(state, room)) {
                 logger.error('Joining breakout rooms is restricted to the rooms that a moderator assigns');
 
                 return;
