@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 
 import { IReduxState, IStore } from '../../app/types';
+import { getTenantTokenAuthUrl } from '../../authentication/functions';
 import { conferenceWillJoin } from '../../base/conference/actions.any';
 import { getConferenceName } from '../../base/conference/functions';
 import { IJitsiConference } from '../../base/conference/reducer';
@@ -460,7 +461,8 @@ export function _mapStateToProps(state: IReduxState) {
         _knocking: knocking,
         _lobbyChatMessages: messages,
         _lobbyMessageRecipient: lobbyMessageRecipient?.name,
-        _login: showModeratorLogin && !state['features/base/jwt'].jwt,
+        // A guest of a JaaS meeting holds a token; it may still log in when its tenant named a login service.
+        _login: showModeratorLogin && (!state['features/base/jwt'].jwt || Boolean(getTenantTokenAuthUrl(state))),
         _isLobbyChatActive: isLobbyChatActive,
         _meetingName: getConferenceName(state),
         _membersOnlyConference: membersOnly,
