@@ -3,6 +3,7 @@ import { MEDIA_TYPE } from '../av-moderation/constants';
 import { isEnabledFromState } from '../av-moderation/functions';
 import { IStateful } from '../base/app/types';
 import { isNameReadOnly } from '../base/config/functions.any';
+import { isServerFeatureSupported } from '../base/connection/functions';
 import { SERVER_URL_CHANGE_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import i18next, { DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n/i18next';
@@ -11,6 +12,7 @@ import { toState } from '../base/redux/functions';
 import { getHideSelfView } from '../base/settings/functions.any';
 import { parseStandardURIString } from '../base/util/uri';
 import { getBreakoutRoomsConfig, isInBreakoutRoom } from '../breakout-rooms/functions';
+import { CHAT_PERMISSIONS_FEATURE } from '../chat/constants';
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive, isFollowMeRecorderActive } from '../follow-me/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
@@ -176,7 +178,11 @@ export function getModeratorTabProps(stateful: IStateful) {
     const followMeRecorderActive = isFollowMeRecorderActive(state);
     const showModeratorSettings = shouldShowModeratorSettings(state);
     const conferenceMetadata = conference?.getMetadataHandler()?.getMetadata();
-    const hideChatWithPermissions = !showChatPermissionsModeratorSetting || conferenceMetadata?.allownersEnabled;
+
+    // Shown only when enabled in config.js and the server enforces the restriction.
+    const showChatWithPermissions = Boolean(showChatPermissionsModeratorSetting)
+        && isServerFeatureSupported(state, CHAT_PERMISSIONS_FEATURE);
+    const hideChatWithPermissions = !showChatWithPermissions || conferenceMetadata?.allownersEnabled;
     const { hideJoinRoomButton } = getBreakoutRoomsConfig(state);
     // The restriction is a setting of the main room, a breakout room has its own metadata that the server ignores
     // for it. When everyone is an owner (allowners), nobody is restricted.

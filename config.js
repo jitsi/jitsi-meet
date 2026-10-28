@@ -171,8 +171,8 @@ var config = {
 
     // Shows/hides the moderator settings that restrict group chat and private chat to the participants with the
     // `send-groupchat` and `send-private-message` permissions. The restrictions are enforced by the
-    // mod_filter_messages prosody module, thus enable this only when that module is loaded on the main MUC
-    // component and on the breakout rooms MUC component.
+    // mod_filter_messages prosody module, thus the settings are shown only when this is enabled and the server
+    // advertises that module (mod_features_identity loaded on the main virtual host).
     // showChatPermissionsModeratorSetting: false,
 
     // Shows/hides the moderator setting that restricts video sharing to the participants with the
