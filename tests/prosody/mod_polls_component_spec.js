@@ -609,7 +609,7 @@ describe('mod_polls_component', () => {
             assert.strictEqual(stored?.singleAnswer, true);
         });
 
-        it('a new poll with a non-boolean singleAnswer is ignored', async () => {
+        it('a new poll with a non-boolean singleAnswer is rejected', async () => {
             const r = nextRoom();
 
             await focusJoin(r);

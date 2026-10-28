@@ -308,7 +308,7 @@ end
                     end
                 end
                 if dropped then
-                    module:log('warn', 'More than one answer for single answer poll %s, keeping the first. Sender: %s',
+                    module:log('debug', 'More than one answer for single answer poll %s, keeping the first. Sender: %s',
                         data.pollId, stanza.attr.from);
                 end
                 data.answers = single;

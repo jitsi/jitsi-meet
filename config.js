@@ -147,7 +147,9 @@ var config = {
 
     // Shows/hides the "Allow only one answer" option when creating a poll. The option is sent with
     // lib-jitsi-meet's createPoll and enforced by the mod_polls_component prosody module, thus enable this
-    // only when both support it.
+    // only when both support it. With visitors, enable it only once the main and all visitor prosodies run a
+    // mod_polls_component with single answer support: an old visitor node shows checkboxes and keeps multi-answer
+    // votes locally.
     // showPollSingleAnswerSetting: false,
 
     // Disables chat feature entirely including notifications, sounds, and private messages.

@@ -83,7 +83,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
         dispatch(registerVote(pollId, checkBoxStates));
 
         return false;
-    }, [ pollId, checkBoxStates, conference ]);
+    }, [ conference, dispatch, pollId, checkBoxStates ]);
 
     const sendPoll = useCallback(() => {
         conference?.getPolls().createPoll(pollId, question, answers, { singleAnswer });
@@ -94,7 +94,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
     const skipAnswer = useCallback(() => {
         dispatch(registerVote(pollId, null));
         sendAnalytics(createPollEvent('vote.skipped'));
-    }, [ pollId ]);
+    }, [ dispatch, pollId ]);
 
     const skipChangeVote = useCallback(() => {
         dispatch(setVoteChanging(pollId, false));
