@@ -54,11 +54,20 @@
 -- Every room has its own restrictions, a breakout room as well. A moderator sets
 -- them in the room they are in.
 --
+-- Advertises CHAT_PERMISSIONS_FEATURE on the main virtual host (with
+-- mod_features_identity), so clients show the moderator setting for these
+-- restrictions only where this module enforces them.
+--
 -- Load on the MUC component and on the breakout rooms MUC component.
 local util = module:require 'util';
 local get_room_from_jid = util.get_room_from_jid;
+local process_host_module = util.process_host_module;
 local jid_bare = require 'util.jid'.bare;
 local st = require 'util.stanza';
+
+local CHAT_PERMISSIONS_FEATURE = 'http://jitsi.org/protocol/filter_messages#chat_permissions';
+
+local main_virtual_host = module:get_option_string('muc_mapper_domain_base');
 
 -- Returns true when the room restricts this kind of message and the sender does
 -- not have the feature that lifts the restriction.
@@ -223,3 +232,7 @@ module:hook('muc-private-message', on_private_message); -- private messages
 module:hook('jitsi-visitor-private-message-pre-route', on_visitor_private_message); -- visitors private messages
 module:hook('muc-occupant-pre-join', on_occupant_presence); -- shared video on join
 module:hook('muc-occupant-pre-change', on_occupant_presence); -- shared video on presence update
+
+process_host_module(main_virtual_host, function(host_module)
+    module:context(host_module.host):fire_event('jitsi-add-feature', { feature = CHAT_PERMISSIONS_FEATURE });
+end);
