@@ -264,12 +264,6 @@
         "microphonePermission": "Virhe mikrofonin käyttöoikeuksien hankkimisessa"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Puhelun hallinta",
-            "connectedDevices": "Yhdistetyt laitteet:",
-            "deleteDevice": "Poista laite",
-            "pairDevice": "Yhdistä laite"
-        },
         "noPermission": "Käyttöoikeuksia ei myönnetty",
         "previewUnavailable": "Esikatselu ei käytettävissä",
         "selectADevice": "Valitse laite",

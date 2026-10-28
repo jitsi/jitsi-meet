@@ -250,12 +250,6 @@
         "microphonePermission": "Faddina in is permissos pro su micròfonu"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Controllu de mutidas",
-            "connectedDevices": "Dispositivos connètidos:",
-            "deleteDevice": "Cantzella su dispositivu",
-            "pairDevice": "Assòtzia unu dispositivu"
-        },
         "noPermission": "No as cuntzèdidu permissos",
         "previewUnavailable": "Sa pre-visualizatzione no est a disponimentu",
         "selectADevice": "Sèbera unu dispositivu",

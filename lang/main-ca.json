@@ -305,12 +305,6 @@
         "microphonePermission": "S'ha produït un error en obtenir el permís del micròfon"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Control de trucades",
-            "connectedDevices": "Dispositius connectats:",
-            "deleteDevice": "Suprimeix el dispositiu",
-            "pairDevice": "Enllaça el dispositiu"
-        },
         "noPermission": "No s'ha concedit el permís",
         "previewUnavailable": "La previsualització no és disponible",
         "selectADevice": "Seleccioneu un aparell",

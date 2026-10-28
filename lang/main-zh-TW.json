@@ -253,12 +253,6 @@
         "microphonePermission": "取得麥克風權限時發生錯誤"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "通話控制",
-            "connectedDevices": "已連線的裝置：",
-            "deleteDevice": "刪除裝置",
-            "pairDevice": "配對裝置"
-        },
         "noPermission": "未取得權限",
         "previewUnavailable": "無法預覽",
         "selectADevice": "選擇裝置",

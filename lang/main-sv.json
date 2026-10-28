@@ -264,12 +264,6 @@
         "microphonePermission": "Fel vid begäran om åtkomst till mikrofon"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Samtalskontroll",
-            "connectedDevices": "Anslutna enheter",
-            "deleteDevice": "Radera enhet",
-            "pairDevice": "Para enhet"
-        },
         "noPermission": "Behörighet nekad",
         "previewUnavailable": "Förhandsgranskning inte tillgänglig",
         "selectADevice": "Välj en enhet",
