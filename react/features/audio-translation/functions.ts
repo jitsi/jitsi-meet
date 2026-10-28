@@ -169,17 +169,17 @@ export function shouldDuckOriginalAudio(state: IReduxState, sourceName?: string,
 const warnedDroppedCodes = new Set<string>();
 
 /**
- * Whether a configured code can produce a translated track with the current lib-jitsi-meet: the translated source
- * is named {@code <source>.<code>}, and lib-jitsi-meet's {@code getMediaTypeFromSourceName} reads the media type
- * from the last '-' of a source name, so a code with a region or script subtag ('pt-BR') makes the track fail to
- * be created while the picker shows the language as active. Until that parser handles the suffix, such codes are
- * dropped here.
+ * Whether a configured code can produce a translated track today. Two things stop a code with a region or script
+ * subtag ('pt-BR'): prosody's audio-translation component accepts only letters as a language ({@code ^%a+$}), and
+ * the translated source is named {@code <source>.<code>}, whose media type lib-jitsi-meet reads from the last '-'
+ * of the name (fixed in lib-jitsi-meet#3159). Either way the picker would show the language as active with nothing
+ * heard, so such codes are dropped here until both sides accept them.
  *
  * @param {string} code - The language code.
  * @returns {boolean}
  */
 function isUsableAudioTranslationCode(code: string): boolean {
-    return !code.includes('-');
+    return /^[A-Za-z]+$/.test(code);
 }
 
 /**
@@ -215,8 +215,8 @@ export function orderAudioTranslationLanguages(
             if (!isUsableAudioTranslationCode(trimmed)) {
                 if (!warnedDroppedCodes.has(trimmed)) {
                     warnedDroppedCodes.add(trimmed);
-                    logger.warn(`Dropping audio-translation language "${trimmed}": codes with a region or script `
-                        + 'subtag cannot be named as a translated track by lib-jitsi-meet yet');
+                    logger.warn(`Dropping audio-translation language "${trimmed}": only codes made of letters are `
+                        + 'accepted by prosody and lib-jitsi-meet today');
                 }
                 continue;
             }

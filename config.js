@@ -265,9 +265,10 @@ var config = {
     //     // 13 languages every provider supports: en, es, pt, fr, de, it, ru, zh, ja, ko, hi, id,
     //     // vi. Extend this only if the translation service accepts more: a language the
     //     // provider rejects is dropped server-side and the picker entry produces no audio.
-    //     // Only hyphen-free codes work for now: lib-jitsi-meet reads the media type from the
-    //     // last '-' of a source name, so a region or script tag such as 'pt-BR' makes the
-    //     // translated track fail to be created; such codes are dropped from the list with a
+    //     // Only codes made of letters work for now: prosody's audio-translation component
+    //     // rejects a request whose language is not ^%a+$, and lib-jitsi-meet reads the media
+    //     // type from the last '-' of a source name, so a region or script tag such as 'pt-BR'
+    //     // is refused or fails track creation; such codes are dropped from the list with a
     //     // warning. Codes outside the default list are labelled from
     //     // lang/translation-languages.json. Same keys as transcription.translationLanguages.
     //     translationLanguages: [ 'en', 'es', 'fr', 'nl' ],
