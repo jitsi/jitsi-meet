@@ -270,8 +270,10 @@ var config = {
     //     // translation for every speaker, so region or script tags ('pt-BR') and codes like
     //     // 'pt_BR' are dropped from the list with a warning. A list that is
     //     // set but leaves nothing usable offers no language at all, with a warning, rather
-    //     // than the defaults. Codes outside the default list are labelled from
-    //     // lang/translation-languages.json. Same keys as transcription.translationLanguages.
+    //     // than the defaults. Codes outside the default list are labelled with the language's
+    //     // own name where the platform has Intl.DisplayNames (browsers; the mobile apps do not),
+    //     // else with the English name from lang/translation-languages.json. Same keys as
+    //     // transcription.translationLanguages.
     //     translationLanguages: [ 'en', 'es', 'fr', 'nl' ],
     //
     //     // Languages from the offered list to pin to the top of the picker, in this order. Unlike

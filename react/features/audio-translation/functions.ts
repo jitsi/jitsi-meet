@@ -259,9 +259,49 @@ export function orderAudioTranslationLanguages(
 }
 
 /**
- * The picker label for an audio-translation language code: the native-script label of the default list when the
- * code is on it, else the name from the {@code translation-languages} i18n namespace
- * (lang/translation-languages.json), else the code itself.
+ * Own-locale language names already resolved through {@code Intl.DisplayNames}, by code. The lookups are cheap but
+ * run per row per render, and the answer for a code never changes within a session.
+ */
+const displayNameCache = new Map<string, string | undefined>();
+
+/**
+ * The name of a language in that language, from the platform's CLDR data via {@code Intl.DisplayNames}, or
+ * undefined when the API is missing (Hermes implements no {@code Intl.DisplayNames}, so this is always undefined
+ * on mobile), the code is not a valid tag, or CLDR has no name for it ({@code fallback: 'none'}). CLDR gives
+ * Latin-script names in lower case ('español'), so the first letter is upper-cased in the language's own locale.
+ *
+ * @param {string} code - The language code.
+ * @returns {string | undefined}
+ */
+function getOwnLocaleLanguageName(code: string): string | undefined {
+    if (displayNameCache.has(code)) {
+        return displayNameCache.get(code);
+    }
+
+    let name: string | undefined;
+
+    if (typeof Intl !== 'undefined' && typeof Intl.DisplayNames === 'function') {
+        try {
+            const raw = new Intl.DisplayNames([ code ], { fallback: 'none', type: 'language' }).of(code);
+
+            if (raw) {
+                name = raw.charAt(0).toLocaleUpperCase(code) + raw.slice(1);
+            }
+        } catch (_) {
+            // An invalid language tag throws RangeError; fall through to the i18n lookup.
+        }
+    }
+    displayNameCache.set(code, name);
+
+    return name;
+}
+
+/**
+ * The picker label for an audio-translation language code: the hand-written native-script label of the default
+ * list when the code is on it (the same on every platform); else the language's own name from
+ * {@code Intl.DisplayNames} where the platform has it (browsers; not Hermes, see {@link getOwnLocaleLanguageName});
+ * else the English name from the {@code translation-languages} i18n namespace (lang/translation-languages.json);
+ * else the code itself.
  *
  * @param {string} code - The language code.
  * @param {Function} t - The i18n translate function.
@@ -272,6 +312,12 @@ export function getAudioTranslationLanguageLabel(code: string, t: (key: string) 
 
     if (builtIn) {
         return builtIn.label;
+    }
+
+    const ownName = getOwnLocaleLanguageName(code);
+
+    if (ownName) {
+        return ownName;
     }
 
     // Try the code as configured first, then in BCP-47 canonical case, which is how translation-languages.json
