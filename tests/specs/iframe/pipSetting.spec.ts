@@ -1,5 +1,6 @@
 import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
+import { config as testsConfig } from '../../helpers/TestsConfig';
 import { joinMuc } from '../../helpers/joinMuc';
 
 import { checkIframeApi } from './util';
@@ -15,7 +16,7 @@ describe('Picture-in-Picture setting when embedded', () => {
     let p1: Participant;
 
     it('joining the meeting', async () => {
-        p1 = await joinMuc({ name: 'p1', iFrameApi: true }, {
+        p1 = await joinMuc({ name: 'p1', iFrameApi: true, token: testsConfig.jwt.preconfiguredToken }, {
             configOverwrite: {
                 pip: {
                     enableBrowserPiP: true,
