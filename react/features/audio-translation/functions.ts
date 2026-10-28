@@ -7,6 +7,7 @@ import { isLocalParticipantModerator } from '../base/participants/functions';
 import { ITrack } from '../base/tracks/types';
 
 import { DEFAULT_TRANSLATION_LANGUAGES, DUCKED_ORIGINAL_VOLUME } from './constants';
+import logger from './logger';
 
 /**
  * Whether audio translation is enabled for the room. Driven by the {@code audioTranslation} RoomMetadata flag,
@@ -162,21 +163,45 @@ export function shouldDuckOriginalAudio(state: IReduxState, sourceName?: string,
 }
 
 /**
- * The target languages offered in the audio-translation picker, in order: {@code config.audioTranslation.languages}
- * (else the built-in default list every provider supports), with the codes named in {@code languagesHead} moved
- * to the top. The head only reorders: a head code that is not in the offered list is ignored, so it cannot add a
- * language the deployment's provider may not accept. The currently selected language, if any, is kept in the
- * list even when the configuration no longer offers it, so the picker can still show what is active. Codes are
- * kept verbatim (they go to the bridge and on to the translation provider as-is); blanks and duplicates are
- * dropped, and a configured list that leaves nothing behind falls back to the default list.
+ * Codes already reported as dropped by {@link orderAudioTranslationLanguages}, so a misconfiguration is logged once
+ * rather than on every render.
+ */
+const warnedDroppedCodes = new Set<string>();
+
+/**
+ * Whether a configured code can produce a translated track with the current lib-jitsi-meet: the translated source
+ * is named {@code <source>.<code>}, and lib-jitsi-meet's {@code getMediaTypeFromSourceName} reads the media type
+ * from the last '-' of a source name, so a code with a region or script subtag ('pt-BR') makes the track fail to
+ * be created while the picker shows the language as active. Until that parser handles the suffix, such codes are
+ * dropped here.
+ *
+ * @param {string} code - The language code.
+ * @returns {boolean}
+ */
+function isUsableAudioTranslationCode(code: string): boolean {
+    return !code.includes('-');
+}
+
+/**
+ * The target languages offered in the audio-translation picker, in order:
+ * {@code config.audioTranslation.translationLanguages} (else the built-in default list every provider supports),
+ * with the codes named in {@code translationLanguagesHead} moved to the top. The head only reorders: a head code
+ * that is not in the offered list is ignored, so it cannot add a language the deployment's provider may not accept.
+ * The currently selected language, if any, is kept in the list even when the configuration no longer offers it,
+ * so the picker can still show what is active. Codes are kept as spelled (they go to the bridge and on to the
+ * translation provider as-is) but compared case-insensitively, so 'en' and 'EN' are one entry and a head entry
+ * matches whatever case the list uses; blanks and duplicates are dropped, codes lib-jitsi-meet cannot name a track
+ * for are dropped with a warning (see {@link isUsableAudioTranslationCode}), and a configured list that leaves
+ * nothing behind falls back to the default list.
  *
  * @param {Object | undefined} config - The {@code audioTranslation} config block.
  * @param {string | null | undefined} selectedLanguage - The language currently active for the picker's target.
  * @returns {Array<string>} The language codes, in picker order.
  */
 export function orderAudioTranslationLanguages(
-        config: { languages?: Array<string>; languagesHead?: Array<string>; } | undefined,
+        config: { translationLanguages?: Array<string>; translationLanguagesHead?: Array<string>; } | undefined,
         selectedLanguage?: string | null): Array<string> {
+    const key = (code: string) => code.toLowerCase();
     const clean = (codes: unknown): Array<string> => {
         const seen = new Set<string>();
         const out: Array<string> = [];
@@ -184,23 +209,34 @@ export function orderAudioTranslationLanguages(
         for (const code of Array.isArray(codes) ? codes : []) {
             const trimmed = typeof code === 'string' ? code.trim() : '';
 
-            if (trimmed && !seen.has(trimmed)) {
-                seen.add(trimmed);
-                out.push(trimmed);
+            if (!trimmed || seen.has(key(trimmed))) {
+                continue;
             }
+            if (!isUsableAudioTranslationCode(trimmed)) {
+                if (!warnedDroppedCodes.has(trimmed)) {
+                    warnedDroppedCodes.add(trimmed);
+                    logger.warn(`Dropping audio-translation language "${trimmed}": codes with a region or script `
+                        + 'subtag cannot be named as a translated track by lib-jitsi-meet yet');
+                }
+                continue;
+            }
+            seen.add(key(trimmed));
+            out.push(trimmed);
         }
 
         return out;
     };
     const defaults = DEFAULT_TRANSLATION_LANGUAGES.map(({ code }) => code);
-    const offered = Array.isArray(config?.languages) && config.languages.length > 0
-        ? clean(config.languages)
-        : defaults;
+    const configured = config?.translationLanguages;
+    const offered = Array.isArray(configured) && configured.length > 0 ? clean(configured) : defaults;
     const list = offered.length > 0 ? offered : defaults;
-    const head = clean(config?.languagesHead).filter(code => list.includes(code));
-    const selected = selectedLanguage && !list.includes(selectedLanguage) ? [ selectedLanguage ] : [];
+    const listKeys = new Set(list.map(key));
+    const inList = (code: string) => listKeys.has(key(code));
+    const head = clean(config?.translationLanguagesHead).filter(inList);
+    const headKeys = new Set(head.map(key));
+    const selected = selectedLanguage && !inList(selectedLanguage) ? [ selectedLanguage ] : [];
 
-    return [ ...head, ...selected, ...list.filter(code => !head.includes(code)) ];
+    return [ ...head, ...selected, ...list.filter(code => !headKeys.has(key(code))) ];
 }
 
 /**
@@ -219,13 +255,24 @@ export function getAudioTranslationLanguageLabel(code: string, t: (key: string) 
         return builtIn.label;
     }
 
-    // translation-languages.json keys region subtags in upper case (zh-CN); a provider code may be lower case.
+    // Try the code as configured first, then in BCP-47 canonical case, which is how translation-languages.json
+    // keys its entries: primary subtag lower (zh), script title case (Hans), region upper (CN).
     const [ primary, ...rest ] = code.split('-');
-    const normalised = [ primary.toLowerCase(), ...rest.map(s => s.toUpperCase()) ].join('-');
-    const translated = t(`translation-languages:${normalised}`);
+    const canonical = [
+        primary.toLowerCase(),
+        ...rest.map(s => (s.length === 4 ? `${s[0].toUpperCase()}${s.slice(1).toLowerCase()}` : s.toUpperCase()))
+    ].join('-');
 
-    // i18next returns the key without its namespace when there is no translation.
-    return translated && translated !== normalised ? translated : code;
+    for (const candidate of canonical === code ? [ code ] : [ code, canonical ]) {
+        const translated = t(`translation-languages:${candidate}`);
+
+        // i18next returns the key without its namespace when there is no translation.
+        if (translated && translated !== candidate) {
+            return translated;
+        }
+    }
+
+    return code;
 }
 
 /**

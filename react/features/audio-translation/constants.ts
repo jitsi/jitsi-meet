@@ -1,5 +1,5 @@
 /**
- * Default AI audio-translation target languages offered when config.audioTranslation.languages is unset: the
+ * Default AI audio-translation target languages offered when config.audioTranslation.translationLanguages is unset: the
  * set every speech-to-speech provider supports, as code + native-script picker label. A deployment whose
  * provider accepts more can replace the offered set in config (see orderAudioTranslationLanguages).
  */

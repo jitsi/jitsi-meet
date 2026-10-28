@@ -261,16 +261,21 @@ var config = {
     //
     //     // Target languages offered in the audio-translation picker, as the codes the
     //     // deployment's speech-to-speech translation provider accepts (they are sent to the
-    //     // bridge verbatim). Defaults to the 13 languages every provider supports: en, es, pt,
-    //     // fr, de, it, ru, zh, ja, ko, hi, id, vi. Extend this only if the translation service
-    //     // accepts more (xAI takes any BCP-47 tag; OpenAI only the 13): a language the provider
-    //     // rejects is dropped server-side and the picker entry produces no audio. Codes outside
-    //     // the default list are labelled from lang/translation-languages.json.
-    //     languages: [ 'en', 'es', 'fr', 'nl' ],
+    //     // bridge verbatim, and the translated track is named <source>.<code>). Defaults to the
+    //     // 13 languages every provider supports: en, es, pt, fr, de, it, ru, zh, ja, ko, hi, id,
+    //     // vi. Extend this only if the translation service accepts more: a language the
+    //     // provider rejects is dropped server-side and the picker entry produces no audio.
+    //     // Only hyphen-free codes work for now: lib-jitsi-meet reads the media type from the
+    //     // last '-' of a source name, so a region or script tag such as 'pt-BR' makes the
+    //     // translated track fail to be created; such codes are dropped from the list with a
+    //     // warning. Codes outside the default list are labelled from
+    //     // lang/translation-languages.json. Same keys as transcription.translationLanguages.
+    //     translationLanguages: [ 'en', 'es', 'fr', 'nl' ],
     //
-    //     // Languages from the offered list to pin to the top of the picker, in this order. A head
-    //     // entry that is not in the offered list is ignored, so this only reorders.
-    //     languagesHead: [ 'en' ],
+    //     // Languages from the offered list to pin to the top of the picker, in this order. Unlike
+    //     // transcription.translationLanguagesHead this only reorders: a head entry that is not
+    //     // in the offered list is ignored, so it cannot add a language the provider may reject.
+    //     translationLanguagesHead: [ 'en' ],
     // },
 
     // Noise suppression configuration. By default rnnoise is used. Optionally Krisp
