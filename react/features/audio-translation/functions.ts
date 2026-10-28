@@ -1,4 +1,5 @@
 import { IReduxState } from '../app/types';
+import { IConfig } from '../base/config/configType';
 import { AUDIO_TRANSLATION_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import { MEET_FEATURES } from '../base/jwt/constants';
@@ -163,45 +164,54 @@ export function shouldDuckOriginalAudio(state: IReduxState, sourceName?: string,
 }
 
 /**
- * Codes already reported as dropped by {@link orderAudioTranslationLanguages}, so a misconfiguration is logged once
- * rather than on every render.
+ * Configuration problems already logged by {@link orderAudioTranslationLanguages}, so each is reported once rather
+ * than on every render.
  */
-const warnedDroppedCodes = new Set<string>();
+const reportedConfigProblems = new Set<string>();
 
 /**
- * Whether a configured code can produce a translated track today. Two things stop a code with a region or script
- * subtag ('pt-BR'): prosody's audio-translation component accepts only letters as a language ({@code ^%a+$}), and
- * the translated source is named {@code <source>.<code>}, whose media type lib-jitsi-meet reads from the last '-'
- * of the name (fixed in lib-jitsi-meet#3159). Either way the picker would show the language as active with nothing
- * heard, so such codes are dropped here until both sides accept them.
+ * Whether a configured code can be requested as a translation language today. Prosody's audio-translation
+ * component ({@code mod_audio_translation_component.lua}, {@code is_valid_language}) accepts only ASCII letters,
+ * at most 20 of them, and rejects the whole request with {@code bad-request} on the first invalid entry, so one bad
+ * code configured for a meeting-wide language fails translation for every speaker. Region and script subtags
+ * ('pt-BR') are also what lib-jitsi-meet's source-name parser trips over (fixed in lib-jitsi-meet#3159), but the
+ * prosody check is the one that has to change before they can be offered.
  *
  * @param {string} code - The language code.
  * @returns {boolean}
  */
 function isUsableAudioTranslationCode(code: string): boolean {
-    return /^[A-Za-z]+$/.test(code);
+    return /^[a-z]{1,20}$/i.test(code);
 }
 
 /**
  * The target languages offered in the audio-translation picker, in order:
  * {@code config.audioTranslation.translationLanguages} (else the built-in default list every provider supports),
- * with the codes named in {@code translationLanguagesHead} moved to the top. The head only reorders: a head code
- * that is not in the offered list is ignored, so it cannot add a language the deployment's provider may not accept.
- * The currently selected language, if any, is kept in the list even when the configuration no longer offers it,
- * so the picker can still show what is active. Codes are kept as spelled (they go to the bridge and on to the
- * translation provider as-is) but compared case-insensitively, so 'en' and 'EN' are one entry and a head entry
- * matches whatever case the list uses; blanks and duplicates are dropped, codes lib-jitsi-meet cannot name a track
- * for are dropped with a warning (see {@link isUsableAudioTranslationCode}), and a configured list that leaves
- * nothing behind falls back to the default list.
+ * with the codes named in {@code translationLanguagesHead} moved to the top. The head only reorders: a head entry
+ * is matched to the offered list case-insensitively and takes the list's spelling, and one that is not in the list
+ * is ignored, so it can neither add a language the deployment's provider may not accept nor change the exact code
+ * sent. The currently selected language, if any, is kept in the list even when the configuration no longer offers
+ * it, so the picker can still show what is active (the rows match it by exact string). Codes are kept as spelled
+ * (they go to the bridge and on to the translation provider as-is) and deduplicated case-insensitively; blanks are
+ * dropped, and codes prosody would refuse are dropped with a warning (see {@link isUsableAudioTranslationCode}).
+ * The defaults apply only when {@code translationLanguages} is unset: a list that is set but unusable (not an
+ * array, empty, or every entry dropped) is a misconfiguration, logged once, and offers nothing rather than 13
+ * languages the deployer did not choose and the provider may not accept.
  *
- * @param {Object | undefined} config - The {@code audioTranslation} config block.
+ * @param {Object | undefined} config - The {@code audioTranslation} config block ({@code IConfig['audioTranslation']}).
  * @param {string | null | undefined} selectedLanguage - The language currently active for the picker's target.
  * @returns {Array<string>} The language codes, in picker order.
  */
 export function orderAudioTranslationLanguages(
-        config: { translationLanguages?: Array<string>; translationLanguagesHead?: Array<string>; } | undefined,
+        config: IConfig['audioTranslation'],
         selectedLanguage?: string | null): Array<string> {
     const key = (code: string) => code.toLowerCase();
+    const reportOnce = (what: string, message: string) => {
+        if (!reportedConfigProblems.has(what)) {
+            reportedConfigProblems.add(what);
+            logger.warn(message);
+        }
+    };
     const clean = (codes: unknown): Array<string> => {
         const seen = new Set<string>();
         const out: Array<string> = [];
@@ -213,11 +223,8 @@ export function orderAudioTranslationLanguages(
                 continue;
             }
             if (!isUsableAudioTranslationCode(trimmed)) {
-                if (!warnedDroppedCodes.has(trimmed)) {
-                    warnedDroppedCodes.add(trimmed);
-                    logger.warn(`Dropping audio-translation language "${trimmed}": only codes made of letters are `
-                        + 'accepted by prosody and lib-jitsi-meet today');
-                }
+                reportOnce(`code:${trimmed}`, `Dropping audio-translation language "${trimmed}": prosody accepts `
+                    + 'only codes of 1-20 ASCII letters');
                 continue;
             }
             seen.add(key(trimmed));
@@ -226,15 +233,26 @@ export function orderAudioTranslationLanguages(
 
         return out;
     };
-    const defaults = DEFAULT_TRANSLATION_LANGUAGES.map(({ code }) => code);
     const configured = config?.translationLanguages;
-    const offered = Array.isArray(configured) && configured.length > 0 ? clean(configured) : defaults;
-    const list = offered.length > 0 ? offered : defaults;
-    const listKeys = new Set(list.map(key));
-    const inList = (code: string) => listKeys.has(key(code));
-    const head = clean(config?.translationLanguagesHead).filter(inList);
+    let list: Array<string>;
+
+    if (configured === undefined) {
+        list = DEFAULT_TRANSLATION_LANGUAGES.map(({ code }) => code);
+    } else {
+        list = clean(configured);
+        if (list.length === 0) {
+            reportOnce('list', 'config.audioTranslation.translationLanguages is set but offers no usable language '
+                + `(${JSON.stringify(configured)}); the picker offers none`);
+        }
+    }
+
+    // Head entries take the list's spelling, so the head cannot change the code that is sent.
+    const byKey = new Map(list.map(code => [ key(code), code ]));
+    const head = clean(config?.translationLanguagesHead)
+        .map(code => byKey.get(key(code)))
+        .filter((code): code is string => Boolean(code));
     const headKeys = new Set(head.map(key));
-    const selected = selectedLanguage && !inList(selectedLanguage) ? [ selectedLanguage ] : [];
+    const selected = selectedLanguage && !list.includes(selectedLanguage) ? [ selectedLanguage ] : [];
 
     return [ ...head, ...selected, ...list.filter(code => !headKeys.has(key(code))) ];
 }

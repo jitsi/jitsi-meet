@@ -265,17 +265,20 @@ var config = {
     //     // 13 languages every provider supports: en, es, pt, fr, de, it, ru, zh, ja, ko, hi, id,
     //     // vi. Extend this only if the translation service accepts more: a language the
     //     // provider rejects is dropped server-side and the picker entry produces no audio.
-    //     // Only codes made of letters work for now: prosody's audio-translation component
-    //     // rejects a request whose language is not ^%a+$, and lib-jitsi-meet reads the media
-    //     // type from the last '-' of a source name, so a region or script tag such as 'pt-BR'
-    //     // is refused or fails track creation; such codes are dropped from the list with a
-    //     // warning. Codes outside the default list are labelled from
+    //     // A code must be 1-20 ASCII letters: prosody's audio-translation component refuses any
+    //     // other language with bad-request, and one bad code in a meeting-wide request fails
+    //     // translation for every speaker, so region or script tags ('pt-BR') and codes like
+    //     // 'pt_BR' are dropped from the list with a warning. (lib-jitsi-meet's source-name
+    //     // parser also needs lib-jitsi-meet#3159 before tags with '-' can work.) A list that is
+    //     // set but leaves nothing usable offers no language at all, with a warning, rather
+    //     // than the defaults. Codes outside the default list are labelled from
     //     // lang/translation-languages.json. Same keys as transcription.translationLanguages.
     //     translationLanguages: [ 'en', 'es', 'fr', 'nl' ],
     //
     //     // Languages from the offered list to pin to the top of the picker, in this order. Unlike
     //     // transcription.translationLanguagesHead this only reorders: a head entry that is not
-    //     // in the offered list is ignored, so it cannot add a language the provider may reject.
+    //     // in the offered list is ignored, so it cannot add a language the provider may reject,
+    //     // and it takes the list's spelling.
     //     translationLanguagesHead: [ 'en' ],
     // },
 
