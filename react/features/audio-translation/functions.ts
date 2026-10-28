@@ -173,9 +173,9 @@ const reportedConfigProblems = new Set<string>();
  * Whether a configured code can be requested as a translation language today. Prosody's audio-translation
  * component ({@code mod_audio_translation_component.lua}, {@code is_valid_language}) accepts only ASCII letters,
  * at most 20 of them, and rejects the whole request with {@code bad-request} on the first invalid entry, so one bad
- * code configured for a meeting-wide language fails translation for every speaker. Since v2236 the lib-jitsi-meet
- * source-name parser accepts a region or script subtag ('pt-BR'), so the prosody check is what has to change
- * before such codes can be offered.
+ * code configured for a meeting-wide language fails translation for every speaker. The lib-jitsi-meet source-name
+ * parser accepts a region or script subtag ('pt-BR'), so the prosody check is what has to change before such
+ * codes can be offered.
  *
  * @param {string} code - The language code.
  * @returns {boolean}
@@ -213,7 +213,7 @@ export function orderAudioTranslationLanguages(
             logger.warn(message);
         }
     };
-    const clean = (codes: unknown): Array<string> => {
+    const clean = (codes: unknown, what: 'language' | 'head entry'): Array<string> => {
         const seen = new Set<string>();
         const out: Array<string> = [];
 
@@ -224,7 +224,7 @@ export function orderAudioTranslationLanguages(
                 continue;
             }
             if (!isUsableAudioTranslationCode(trimmed)) {
-                reportOnce(`code:${trimmed}`, `Dropping audio-translation language "${trimmed}": prosody accepts `
+                reportOnce(`${what}:${trimmed}`, `Ignoring audio-translation ${what} "${trimmed}": prosody accepts `
                     + 'only codes of 1-20 ASCII letters');
                 continue;
             }
@@ -240,16 +240,19 @@ export function orderAudioTranslationLanguages(
     if (configured === undefined || configured === null) {
         list = DEFAULT_TRANSLATION_LANGUAGES.map(({ code }) => code);
     } else {
-        list = clean(configured);
+        list = clean(configured, 'language');
         if (list.length === 0) {
-            reportOnce('list', 'config.audioTranslation.translationLanguages is set but offers no usable language '
-                + `(${JSON.stringify(configured)}); the picker offers none`);
+            // Keyed on the value, so a different bad list on a later join in the same session is reported too.
+            const shown = JSON.stringify(configured);
+
+            reportOnce(`list:${shown}`, 'config.audioTranslation.translationLanguages is set but offers no usable '
+                + `language (${shown}); the picker offers none`);
         }
     }
 
     // Head entries take the list's spelling, so the head cannot change the code that is sent.
     const byKey = new Map(list.map(code => [ key(code), code ]));
-    const head = clean(config?.translationLanguagesHead)
+    const head = clean(config?.translationLanguagesHead, 'head entry')
         .map(code => byKey.get(key(code)))
         .filter((code): code is string => Boolean(code));
     const headKeys = new Set(head.map(key));
@@ -267,8 +270,11 @@ const displayNameCache = new Map<string, string | undefined>();
 /**
  * The name of a language in that language, from the platform's CLDR data via {@code Intl.DisplayNames}, or
  * undefined when the API is missing (Hermes implements no {@code Intl.DisplayNames}, so this is always undefined
- * on mobile), the code is not a valid tag, or CLDR has no name for it ({@code fallback: 'none'}). CLDR gives
- * Latin-script names in lower case ('español'), so the first letter is upper-cased in the language's own locale.
+ * on mobile), the code is not a valid tag, the platform has no locale data for that language, or CLDR has no name
+ * for it ({@code fallback: 'none'}). The locale-data check matters: without it the API quietly resolves to the
+ * viewer's default locale and returns the name in the viewer's language ('Klingon' for 'tlh' on an English
+ * browser), which would differ per viewer and skip the documented English fallback. CLDR gives Latin-script names
+ * in lower case ('español'), so the first letter is upper-cased in the language's own locale.
  *
  * @param {string} code - The language code.
  * @returns {string | undefined}
@@ -282,10 +288,12 @@ function getOwnLocaleLanguageName(code: string): string | undefined {
 
     if (typeof Intl !== 'undefined' && typeof Intl.DisplayNames === 'function') {
         try {
-            const raw = new Intl.DisplayNames([ code ], { fallback: 'none', type: 'language' }).of(code);
+            if (Intl.DisplayNames.supportedLocalesOf([ code ]).length > 0) {
+                const raw = new Intl.DisplayNames([ code ], { fallback: 'none', type: 'language' }).of(code);
 
-            if (raw) {
-                name = raw.charAt(0).toLocaleUpperCase(code) + raw.slice(1);
+                if (raw) {
+                    name = raw.charAt(0).toLocaleUpperCase(code) + raw.slice(1);
+                }
             }
         } catch (_) {
             // An invalid language tag throws RangeError; fall through to the i18n lookup.
@@ -320,15 +328,12 @@ export function getAudioTranslationLanguageLabel(code: string, t: (key: string) 
         return ownName;
     }
 
-    // Try the code as configured first, then in BCP-47 canonical case, which is how translation-languages.json
-    // keys its entries: primary subtag lower (zh), script title case (Hans), region upper (CN).
-    const [ primary, ...rest ] = code.split('-');
-    const canonical = [
-        primary.toLowerCase(),
-        ...rest.map(s => (s.length === 4 ? `${s[0].toUpperCase()}${s.slice(1).toLowerCase()}` : s.toUpperCase()))
-    ].join('-');
+    // Try the code as configured first, then lower-cased, which is how translation-languages.json keys the plain
+    // codes the picker can offer (isUsableAudioTranslationCode admits no subtags, so there is no region or script
+    // casing to normalise).
+    const lower = code.toLowerCase();
 
-    for (const candidate of canonical === code ? [ code ] : [ code, canonical ]) {
+    for (const candidate of lower === code ? [ code ] : [ code, lower ]) {
         const translated = t(`translation-languages:${candidate}`);
 
         // i18next returns the key without its namespace when there is no translation.

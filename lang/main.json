@@ -41,7 +41,7 @@
     },
     "audioTranslation": {
         "disabledForRoom": "Audio translation has been turned off for this meeting.",
-        "errorBadRequest": "This translation language isn't supported in this meeting. Ask your administrator to check the configured languages.",
+        "errorBadRequest": "The meeting server rejected the translation request. If this keeps happening, ask your administrator to check the configured translation languages.",
         "errorForbidden": "You don't have permission to use audio translation.",
         "errorGeneric": "Couldn't enable audio translation. Please try again.",
         "errorLimitReached": "Couldn't translate everyone at once. Turn on translation for individual participants instead.",
