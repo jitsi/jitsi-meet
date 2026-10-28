@@ -10,19 +10,23 @@
 -- Stubs for top-level `require`d Prosody libs
 -- ---------------------------------------------------------------------------
 
-package.preload['util.array'] = function() return {} end
-package.preload['net.http'] = function() return { request = function() end } end
-package.preload['util.id'] = function() return { medium = function() return 'id' end } end
-package.preload['util.uuid'] = function() return { generate = function() return 'uuid' end } end
-package.preload['cjson.safe'] = function() return { encode = function() return '{}' end, decode = function() end } end
-package.preload['util.serialization'] = function() return { new = function() return tostring end } end
-package.preload['util.cache'] = function()
+-- Installed in package.preload only while the module loads, so they do not leak into the specs that
+-- run after this one in the same busted process (e.g. one that requires the real util.stanza).
+local stubs = {}
+
+stubs['util.array'] = function() return {} end
+stubs['net.http'] = function() return { request = function() end } end
+stubs['util.id'] = function() return { medium = function() return 'id' end } end
+stubs['util.uuid'] = function() return { generate = function() return 'uuid' end } end
+stubs['cjson.safe'] = function() return { encode = function() return '{}' end, decode = function() end } end
+stubs['util.serialization'] = function() return { new = function() return tostring end } end
+stubs['util.cache'] = function()
     return { new = function()
         local entries = {}
         return { get = function(_, k) return entries[k] end, set = function(_, k, v) entries[k] = v end }
     end }
 end
-package.preload['util.jid'] = function()
+stubs['util.jid'] = function()
     local function split(j)
         if not j then return nil end
         local node, host, resource = j:match('^([^@/]+)@([^/]+)/?(.*)$')
@@ -54,7 +58,7 @@ local function new_stanza(name, attr)
 end
 
 -- An error reply records its condition and the child tags added to it.
-package.preload['util.stanza'] = function()
+stubs['util.stanza'] = function()
     return {
         iq = function(attr) return new_stanza('iq', attr) end,
         message = function(attr) return new_stanza('message', attr) end,
@@ -152,7 +156,19 @@ local function load_module(opts)
         send = function(_, stanza) table.insert(sent_stanzas, stanza) end,
     }
 
+    local saved = {}
+    for name, loader in pairs(stubs) do
+        saved[name] = { preload = package.preload[name], loaded = package.loaded[name] }
+        package.preload[name] = loader
+        package.loaded[name] = nil
+    end
+
     local ok, err = pcall(dofile, 'mod_visitors_component.lua')
+
+    for name, previous in pairs(saved) do
+        package.preload[name] = previous.preload
+        package.loaded[name] = previous.loaded
+    end
     assert(ok, err)
     assert(pre_join_fn, "mod_visitors_component did not hook 'muc-occupant-pre-join'")
     assert(stanza_fn, "mod_visitors_component did not hook 'iq/host'")
