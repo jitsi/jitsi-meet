@@ -435,9 +435,35 @@ describe('mod_muc_breakout_rooms', () => {
             }
 
             return { moderator,
+                name,
                 participant,
                 room1,
                 room2 };
+        }
+
+        /**
+         * Returns the Lua expression for the main room object of the given room name.
+         *
+         * @param {string} name  bare room name
+         * @returns {string}
+         */
+        const mainRoomLua = name => `prosody.hosts["${CONFERENCE}"].modules.muc.get_room_from_jid("${roomJid(name)}")`;
+
+        /**
+         * Asks the moderator to move the participant to the breakout room and waits until the participant gets the
+         * request.
+         *
+         * @param {object} moderator
+         * @param {object} participant
+         * @param {string} breakoutRoomJid
+         * @returns {Promise<void>}
+         */
+        async function move(moderator, participant, breakoutRoomJid) {
+            await moderator.sendBreakoutRoomsMessage(BREAKOUT_MUC, OP_MOVE, {
+                participantJid: participant.jid,
+                roomJid: breakoutRoomJid
+            });
+            await participant.waitForMessage(s => parseJsonMessage(s)?.event === OP_MOVE);
         }
 
         it('participant can join a breakout room when breakoutRoomJoinRestricted is not set', async () => {
@@ -545,6 +571,52 @@ describe('mod_muc_breakout_rooms', () => {
             const retried = await participant.joinRoom(room1);
 
             assert.notEqual(retried.attrs.type, 'error', 'the move must still allow the retried join');
+        });
+
+        it('a move in one conference does not allow joining a breakout room of another conference', async () => {
+            const other = await setup(true);
+            const { moderator, room1 } = await setup(true);
+
+            // The moderator of this conference moves the participant of the other conference to its own room.
+            await move(moderator, other.participant, room1);
+
+            const presence = await other.participant.joinRoom(other.room1);
+
+            assert.strictEqual(presence.attrs.type, 'error', 'a move in another conference must not allow the join');
+            assert.ok(presence.getChild('error')?.getChild('not-allowed'), 'expected <not-allowed/>');
+        });
+
+        it('an expired move does not allow joining the room', async () => {
+            const { moderator, name, participant, room1 } = await setup(true);
+
+            await move(moderator, participant, room1);
+
+            // Expire the move instead of waiting for it to time out.
+            await prosodyShell(`>${mainRoomLua(name)}.move_requests["${participant.jid}"].expires = 0`);
+
+            const presence = await participant.joinRoom(room1);
+
+            assert.strictEqual(presence.attrs.type, 'error', 'an expired move must not allow the join');
+            assert.ok(presence.getChild('error')?.getChild('not-allowed'), 'expected <not-allowed/>');
+        });
+
+        it('pending moves are cleared when the main room is destroyed', async () => {
+            const { moderator, name, participant, room1 } = await setup(true);
+
+            await move(moderator, participant, room1);
+
+            // Keep a reference to the room object, a new room with the same name is another object.
+            const pending = '>print("pending:" .. tostring(prosody.br_test_room.move_requests ~= nil))';
+
+            await prosodyShell(`>prosody.br_test_room = ${mainRoomLua(name)}`);
+            assert.match(await prosodyShell(pending), /pending:true/, 'the move must be pending before the destroy');
+
+            await prosodyShell('>prosody.br_test_room:destroy()');
+
+            const after = await prosodyShell(pending);
+
+            await prosodyShell('>prosody.br_test_room = nil');
+            assert.match(after, /pending:false/, 'the moves must be cleared with the main room');
         });
 
         it('moderator can join a breakout room when breakoutRoomJoinRestricted is true', async () => {
