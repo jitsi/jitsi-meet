@@ -7,6 +7,9 @@ module:hook('jitsi-add-identity', function(event)
     module:add_identity('component', event.name, event.host);
 end);
 
+-- The features already added: a module that is reloaded fires jitsi-add-feature again.
+local added_features = {};
+
 -- Other components can use the event 'jitsi-add-feature' to advertise a feature of theirs, which clients discover
 -- with the disco#info of the main virtual host (and with jiconop). A client can then enable an option only when the
 -- deployed modules support it, e.g. 'http://jitsi.org/protocol/polls#single_answer'.
@@ -17,6 +20,11 @@ module:hook('jitsi-add-feature', function(event)
         module:log('warn', 'Ignoring jitsi-add-feature without a feature');
         return;
     end
+
+    if added_features[event.feature] then
+        return;
+    end
+    added_features[event.feature] = true;
 
     module:log('info', 'Adding feature %s', event.feature);
     module:add_feature(event.feature);

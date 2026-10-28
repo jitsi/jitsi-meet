@@ -1,5 +1,7 @@
 local st = require "util.stanza";
 local ext_services = module:depends("external_services");
+local util = module:require 'util';
+local process_host_module = util.process_host_module;
 
 -- Jitsi Connection Optimization
 -- gathers needed information and pushes it with a message to clients
@@ -32,10 +34,18 @@ local JITSI_FEATURE_PREFIX = 'http://jitsi.org/protocol/';
 -- we cache the query as server identities will not change dynamically, amd use its clone every time
 local query_cache;
 
--- A module that is loaded later can advertise a feature, rebuild the query after mod_features_identity adds it.
-module:context(main_virtual_host):hook('jitsi-add-feature', function()
-    query_cache = nil;
-end, -1);
+-- A module that is loaded later can add or remove an identity or a feature (e.g. with jitsi-add-feature), rebuild
+-- the query then.
+process_host_module(main_virtual_host, function(host_module)
+    local function clear_query_cache()
+        query_cache = nil;
+    end
+
+    for _, event_name in ipairs({ 'item-added/identity', 'item-removed/identity',
+            'item-added/feature', 'item-removed/feature' }) do
+        host_module:hook(event_name, clear_query_cache);
+    end
+end);
 
 -- this is after xmpp-bind, the moment a client has resource and can be contacted
 module:hook("resource-bind", function (event)

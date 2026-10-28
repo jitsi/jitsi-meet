@@ -1,9 +1,19 @@
 import assert from 'assert';
 
+import { getContainer } from './helpers/container.js';
 import { prosodyShell } from './helpers/prosody_shell.js';
 import { createXmppClient } from './helpers/xmpp_client.js';
 
 const DISCO_INFO_NS = 'http://jabber.org/protocol/disco#info';
+
+const LOADED_FEATURE = 'http://jitsi.org/protocol/test#loaded_feature';
+
+// A module that advertises a feature when it is loaded, the way a component does it.
+const ADD_FEATURE_MODULE = `local util = module:require 'util';
+util.process_host_module('localhost', function(host_module)
+    host_module:fire_event('jitsi-add-feature', { feature = '${LOADED_FEATURE}' });
+end);
+`;
 
 describe('mod_jiconop', () => {
 
@@ -108,5 +118,31 @@ describe('mod_jiconop', () => {
             .map(f => f.attrs.var);
 
         assert.ok(features.includes(feature), 'disco#info must contain the advertised feature');
+    });
+
+    it('advertises once the feature of a module that is loaded and reloaded on a component', async () => {
+        await getContainer().exec([ 'sh', '-c',
+            `cat > /opt/prosody-jitsi-plugins/mod_test_add_feature.lua <<'EOF'\n${ADD_FEATURE_MODULE}EOF\n` ]);
+
+        // Cache the query first, the module must rebuild it.
+        await connectAndGetJiconop();
+        await prosodyShell('module:load("test_add_feature", "conference.localhost")');
+
+        const { msg } = await connectAndGetJiconop();
+        const jiconopFeatures = msg.getChild('query', DISCO_INFO_NS)
+            .getChildren('feature')
+            .map(f => f.attrs.var);
+
+        assert.ok(jiconopFeatures.includes(LOADED_FEATURE), 'query must contain the feature of the loaded module');
+
+        await prosodyShell('module:unload("test_add_feature", "conference.localhost")');
+        await prosodyShell('module:load("test_add_feature", "conference.localhost")');
+
+        // disco#info and jiconop skip duplicates, count the host items instead.
+        const output = await prosodyShell('>local n = 0; for _, f in ipairs(prosody.hosts["localhost"]'
+            + '.modules.features_identity.module:get_host_items("feature")) do '
+            + `if f == "${LOADED_FEATURE}" then n = n + 1; end end; return "count=" .. n`);
+
+        assert.match(output, /count=1\b/, 'the feature must be added once after a reload');
     });
 });
