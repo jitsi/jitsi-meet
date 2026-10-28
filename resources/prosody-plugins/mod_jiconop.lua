@@ -26,8 +26,16 @@ if release_number_config then
     module:add_identity("server", "release", release_number_config);
 end
 
+-- Only the features of jitsi modules are sent, the client discovers the standard XMPP ones when it needs them.
+local JITSI_FEATURE_PREFIX = 'http://jitsi.org/protocol/';
+
 -- we cache the query as server identities will not change dynamically, amd use its clone every time
 local query_cache;
+
+-- A module that is loaded later can advertise a feature, rebuild the query after mod_features_identity adds it.
+module:context(main_virtual_host):hook('jitsi-add-feature', function()
+    query_cache = nil;
+end, -1);
 
 -- this is after xmpp-bind, the moment a client has resource and can be contacted
 module:hook("resource-bind", function (event)
@@ -43,6 +51,13 @@ module:hook("resource-bind", function (event)
             if not done[identity_s] then
                 query:tag("identity", identity):up();
                 done[identity_s] = true;
+            end
+        end
+
+        for _,feature in ipairs(module:context(main_virtual_host):get_host_items("feature")) do
+            if not done[feature] and feature:sub(1, #JITSI_FEATURE_PREFIX) == JITSI_FEATURE_PREFIX then
+                query:tag("feature", { var = feature }):up();
+                done[feature] = true;
             end
         end
 
