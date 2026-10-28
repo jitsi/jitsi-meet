@@ -194,9 +194,10 @@ function isUsableAudioTranslationCode(code: string): boolean {
  * it, so the picker can still show what is active (the rows match it by exact string). Codes are kept as spelled
  * (they go to the bridge and on to the translation provider as-is) and deduplicated case-insensitively; blanks are
  * dropped, and codes prosody would refuse are dropped with a warning (see {@link isUsableAudioTranslationCode}).
- * The defaults apply only when {@code translationLanguages} is unset: a list that is set but unusable (not an
- * array, empty, or every entry dropped) is a misconfiguration, logged once, and offers nothing rather than 13
- * languages the deployer did not choose and the provider may not accept.
+ * The defaults apply only when {@code translationLanguages} is unset ({@code undefined}, or {@code null}, which is
+ * how a {@code configOverwrite} resets a key): a list that is set but unusable (not an array, empty, or every
+ * entry dropped) is a misconfiguration, logged once, and offers nothing rather than 13 languages the deployer did
+ * not choose and the provider may not accept.
  *
  * @param {Object | undefined} config - The {@code audioTranslation} config block ({@code IConfig['audioTranslation']}).
  * @param {string | null | undefined} selectedLanguage - The language currently active for the picker's target.
@@ -236,7 +237,7 @@ export function orderAudioTranslationLanguages(
     const configured = config?.translationLanguages;
     let list: Array<string>;
 
-    if (configured === undefined) {
+    if (configured === undefined || configured === null) {
         list = DEFAULT_TRANSLATION_LANGUAGES.map(({ code }) => code);
     } else {
         list = clean(configured);
