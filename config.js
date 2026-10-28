@@ -167,7 +167,8 @@ var config = {
 
     // Shows/hides the moderator setting that restricts joining a breakout room to the room a moderator
     // assigns. The restriction is enforced by the mod_muc_breakout_rooms prosody module, thus enable this
-    // only when the server runs a version of that module that supports it.
+    // only when the server runs a version of that module that supports it. Older clients still show Join while
+    // the restriction is on: the server refuses that join and lib-jitsi-meet moves them back to the main room.
     // showBreakoutRoomJoinPermissionsModeratorSetting: false,
 
     // screenshotCapture : {
