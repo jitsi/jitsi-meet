@@ -218,12 +218,14 @@ export function submitModeratorTab(newState: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const currentState = getModeratorTabProps(getState());
 
-        if (newState.followMeEnabled !== currentState.followMeEnabled) {
-            dispatch(setFollowMe(newState.followMeEnabled));
-        }
-
+        // The recorder mode also sets follow me, thus apply it first and compare follow me with the result.
         if (newState.followMeRecorderEnabled !== currentState.followMeRecorderEnabled) {
             dispatch(setFollowMeRecorder(newState.followMeRecorderEnabled));
+        }
+
+        if (!newState.followMeRecorderEnabled
+                && newState.followMeEnabled !== getModeratorTabProps(getState()).followMeEnabled) {
+            dispatch(setFollowMe(newState.followMeEnabled));
         }
 
         if (newState.startReactionsMuted !== currentState.startReactionsMuted) {
