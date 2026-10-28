@@ -4,6 +4,7 @@ import { getAvatarColor, getInitials } from '../base/avatar/functions';
 import { leaveConference } from '../base/conference/actions';
 import { browser } from '../base/lib-jitsi-meet';
 import { IParticipant } from '../base/participants/types';
+import { getUserSelectedConfigValue } from '../base/settings/functions.any';
 import { getLocalVideoTrack } from '../base/tracks/functions.any';
 import { getVideoTrackByParticipant } from '../base/tracks/functions.web';
 import { ITrack } from '../base/tracks/types';
@@ -11,7 +12,8 @@ import { isTrackStreamingStatusActive } from '../connection-indicator/functions'
 import { isPrejoinPageVisible } from '../prejoin/functions.any';
 
 import { toggleAudioFromPiP, toggleVideoFromPiP } from './actions';
-import { isPiPEnabled } from './external-api.shared';
+import { BROWSER_PIP_OPTION_ID } from './constants';
+import { isPiPEnabled, isPiPSupportedByBrowser } from './external-api.shared';
 import logger from './logger';
 import {
     ExtendedMediaSessionAction,
@@ -84,6 +86,20 @@ export function shouldShowPiPAvatar(videoTrack: ITrack | undefined): boolean {
 }
 
 /**
+ * Determines whether browser Picture-in-Picture is turned on. A value set by the config, from config.js, URL
+ * parameters or the iframe API, is final. When the config leaves it unset, the choice the user saved in the settings
+ * applies, and without one browser PiP stays off. Electron has its own always-on PiP flow and ignores this flag.
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {boolean} Whether browser Picture-in-Picture is turned on.
+ */
+export function isBrowserPiPTurnedOn(state: IReduxState): boolean {
+    const pipConfig = state['features/base/config'].pip;
+
+    return pipConfig?.enableBrowserPiP ?? getUserSelectedConfigValue(state, BROWSER_PIP_OPTION_ID) ?? false;
+}
+
+/**
  * Determines if PiP should be shown based on config and current app state.
  * Checks if PiP is enabled and handles prejoin page visibility.
  *
@@ -99,12 +115,11 @@ export function shouldShowPiP(state: IReduxState): boolean {
         return false;
     }
 
-    // Browser PiP is opt-in: it stays disabled unless the deployment explicitly sets
-    // enableBrowserPiP: true (Electron is unaffected). This authoritative default lives here
-    // rather than in isPiPEnabled() because the external API evaluates isPiPEnabled() against
-    // only the embedder-provided config, without the deployment's config.js — it must stay
-    // permissive when the flag is absent (see isPiPEnabled()).
-    if (!browser.isElectron() && pipConfig?.enableBrowserPiP !== true) {
+    // Browser PiP is opt-in: it stays off unless the config or the user turns it on (Electron is
+    // unaffected). This authoritative default lives here rather than in isPiPEnabled() because the
+    // external API evaluates isPiPEnabled() against only the embedder-provided config, without the
+    // deployment's config.js — it must stay permissive when the flag is absent (see isPiPEnabled()).
+    if (!browser.isElectron() && !isBrowserPiPTurnedOn(state)) {
         return false;
     }
 
@@ -118,6 +133,24 @@ export function shouldShowPiP(state: IReduxState): boolean {
     }
 
     return true;
+}
+
+/**
+ * Determines if the local user may choose whether browser Picture-in-Picture is on or off. That is the case outside
+ * Electron, which has its own always-on PiP flow, when the browser supports PiP, the deployment has not disabled the
+ * feature altogether with `pip.disabled` and the config leaves `pip.enableBrowserPiP` unset: a value set there, by
+ * config.js, URL parameters or the iframe API, is the deployment's or the embedder's decision and is final.
+ *
+ * @param {IReduxState} state - Redux state.
+ * @returns {boolean} Whether the browser PiP setting applies.
+ */
+export function isBrowserPiPConfigurable(state: IReduxState): boolean {
+    const pipConfig = state['features/base/config'].pip;
+
+    return !browser.isElectron()
+        && !pipConfig?.disabled
+        && pipConfig?.enableBrowserPiP === undefined
+        && isPiPSupportedByBrowser();
 }
 
 /**

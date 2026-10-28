@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View, ViewStyle } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -28,12 +29,20 @@ const LONG_PRESS = 'long.press';
  * @returns {JSX.Element} - The audio mute round button.
  */
 const MicrophoneButton = (): JSX.Element | null => {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const audioMuted = useSelector((state: IReduxState) => isLocalTrackMuted(state['features/base/tracks'],
         MEDIA_TYPE.AUDIO));
     const disabled = useSelector(isAudioMuteButtonDisabled);
     const enabledFlag = useSelector((state: IReduxState) => getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true));
     const [ longPress, setLongPress ] = useState(false);
+
+    const accessibilityLabelKey = audioMuted ? 'toolbar.accessibilityLabel.unmute' : 'toolbar.accessibilityLabel.mute';
+    const accessibilityLabel = t(accessibilityLabelKey);
+    const accessibilityState = {
+        disabled,
+        selected: !audioMuted
+    };
 
     const onPressIn = useCallback(() => {
         !disabled && dispatch(muteLocal(!audioMuted, MEDIA_TYPE.AUDIO));
@@ -69,6 +78,10 @@ const MicrophoneButton = (): JSX.Element | null => {
 
     return (
         <TouchableOpacity
+            accessibilityLabel = { accessibilityLabel }
+            accessibilityRole = 'button'
+            accessibilityState = { accessibilityState }
+            disabled = { disabled }
             onLongPress = { onLongPress }
             onPressIn = { onPressIn }
             onPressOut = { onPressOut } >

@@ -1,0 +1,24 @@
+name: CLA
+
+# pull_request_target runs this file from the base branch with access to the
+# secrets, also for PRs from forks. The called workflow never checks out PR code.
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+permissions: {}
+
+concurrency:
+  group: cla-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  cla:
+    if: github.repository_owner == 'jitsi'
+    uses: jitsi/.github/.github/workflows/cla-check.yml@main
+    permissions:
+      pull-requests: write
+    secrets:
+      CLA_HASH_KEY: ${{ secrets.CLA_HASH_KEY }}
+      CLA_APP_CLIENT_ID: ${{ secrets.CLA_APP_CLIENT_ID }}
+      CLA_APP_PRIVATE_KEY: ${{ secrets.CLA_APP_PRIVATE_KEY }}
