@@ -584,14 +584,6 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
                         :tag('no-main-participants', { xmlns = 'jitsi:visitors' }));
                 return true;
             end
-        elseif is_live == false
-            and session.jitsi_meet_context_user and session.jitsi_meet_context_user.role == 'visitor' then
-                -- a visitor token must not join the main room before the meeting is live
-                session.log('warn', 'Deny visitor join in the main not live meeting');
-                session.send(st.error_reply(
-                    stanza, 'cancel', 'not-allowed', 'Visitor tried to join the main room before it is live')
-                        :tag('no-main-participants', { xmlns = 'jitsi:visitors' }));
-                return true;
         elseif room._data.participants then
                 -- This is non jaas room which has a list of participants allowed to participate in the main room
                 -- but this occupant is not one of them and the room is either not live or has no participants joined

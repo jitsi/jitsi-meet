@@ -182,13 +182,6 @@ local function make_room(visitors_metadata)
     }
 end
 
-local function make_non_vpaas_room(visitors_metadata)
-    local room = make_room(visitors_metadata)
-    room.jid = 'room@' .. MUC_HOST
-    room.vpaas = false
-    return room
-end
-
 -- An incoming element with child elements.
 local function element(name, attr, children)
     local e = { name = name, attr = attr or {}, children = children or {} }
@@ -359,44 +352,6 @@ describe('mod_visitors_component muc-occupant-pre-join', function()
         end)
     end)
 
-    describe('in a non vpaas room with auto_allow_visitor_promotion enabled', function()
-        before_each(function()
-            load_module({ auto_allow_visitor_promotion = true })
-        end)
-
-        it('denies a visitor token while the room is not live', function()
-            assert_denied_no_main_participants(join(make_non_vpaas_room({ live = false }), 'visitor'))
-        end)
-
-        it('allows a visitor token when the room is live', function()
-            assert_allowed(join(make_non_vpaas_room({ live = true }), 'visitor'))
-        end)
-
-        it('allows a participant token while the room is not live', function()
-            assert_allowed(join(make_non_vpaas_room({ live = false }), 'participant'))
-        end)
-    end)
-
-    describe('in a non vpaas room without auto promotion', function()
-        before_each(function()
-            load_module({})
-        end)
-
-        it('denies a visitor token while the room is not live', function()
-            assert_denied_no_main_participants(join(make_non_vpaas_room({ live = false }), 'visitor'))
-        end)
-
-        it('denies a visitor token while the room is not live even with a list of main participants', function()
-            local room = make_non_vpaas_room({ live = false })
-            room._data.participants = { 'someone-else' }
-            room.get_members_only = function() return true end
-            assert_denied_no_main_participants(join(room, 'visitor'))
-        end)
-
-        it('allows a visitor token when live is not set and no visitor node is connected', function()
-            assert_allowed(join(make_non_vpaas_room({}), 'visitor'))
-        end)
-    end)
 end)
 
 describe('mod_visitors_component raise hand', function()
