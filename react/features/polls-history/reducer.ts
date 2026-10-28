@@ -24,13 +24,32 @@ ReducerRegistry.register<IPollsHistoryState>(STORE_NAME, (state = INITIAL_STATE,
     switch (action.type) {
 
     case REMOVE_POLL_FROM_HISTORY: {
-        if (Object.keys(state.polls[action.meetingId] ?? {})?.length === 1) {
-            delete state.polls[action.meetingId];
-        } else {
-            delete state.polls[action.meetingId]?.[action.pollId];
+        const meetingPolls = state.polls[action.meetingId];
+
+        if (!meetingPolls || !action.pollId || !(action.pollId in meetingPolls)) {
+            return state;
         }
 
-        return state;
+        if (Object.keys(meetingPolls).length <= 1) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { [action.meetingId]: _removedMeeting, ...newPolls } = state.polls;
+
+            return {
+                ...state,
+                polls: newPolls
+            };
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { [action.pollId]: _removedPoll, ...newMeetingPolls } = meetingPolls;
+
+        return {
+            ...state,
+            polls: {
+                ...state.polls,
+                [action.meetingId]: newMeetingPolls
+            }
+        };
     }
 
     case SAVE_POLL_IN_HISTORY: {
