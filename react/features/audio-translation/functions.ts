@@ -173,9 +173,9 @@ const reportedConfigProblems = new Set<string>();
  * Whether a configured code can be requested as a translation language today. Prosody's audio-translation
  * component ({@code mod_audio_translation_component.lua}, {@code is_valid_language}) accepts only ASCII letters,
  * at most 20 of them, and rejects the whole request with {@code bad-request} on the first invalid entry, so one bad
- * code configured for a meeting-wide language fails translation for every speaker. Region and script subtags
- * ('pt-BR') are also what lib-jitsi-meet's source-name parser trips over (fixed in lib-jitsi-meet#3159), but the
- * prosody check is the one that has to change before they can be offered.
+ * code configured for a meeting-wide language fails translation for every speaker. Since v2236 the lib-jitsi-meet
+ * source-name parser accepts a region or script subtag ('pt-BR'), so the prosody check is what has to change
+ * before such codes can be offered.
  *
  * @param {string} code - The language code.
  * @returns {boolean}

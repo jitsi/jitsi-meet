@@ -268,8 +268,7 @@ var config = {
     //     // A code must be 1-20 ASCII letters: prosody's audio-translation component refuses any
     //     // other language with bad-request, and one bad code in a meeting-wide request fails
     //     // translation for every speaker, so region or script tags ('pt-BR') and codes like
-    //     // 'pt_BR' are dropped from the list with a warning. (lib-jitsi-meet's source-name
-    //     // parser also needs lib-jitsi-meet#3159 before tags with '-' can work.) A list that is
+    //     // 'pt_BR' are dropped from the list with a warning. A list that is
     //     // set but leaves nothing usable offers no language at all, with a warning, rather
     //     // than the defaults. Codes outside the default list are labelled from
     //     // lang/translation-languages.json. Same keys as transcription.translationLanguages.
