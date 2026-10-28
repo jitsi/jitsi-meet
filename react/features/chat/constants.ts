@@ -9,6 +9,11 @@ export const CHAR_LIMIT = 500;
 export const CHAT_SIZE = 315;
 
 /**
+ * The feature the server advertises when it enforces the group and private chat restrictions (mod_filter_messages).
+ */
+export const CHAT_PERMISSIONS_FEATURE = 'http://jitsi.org/protocol/filter_messages#chat_permissions';
+
+/**
  * The audio ID of the audio element for which the {@link playAudio} action is
  * triggered when new chat message is received.
  *

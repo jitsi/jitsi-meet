@@ -3,6 +3,7 @@ import { MEDIA_TYPE } from '../av-moderation/constants';
 import { isEnabledFromState } from '../av-moderation/functions';
 import { IStateful } from '../base/app/types';
 import { isNameReadOnly } from '../base/config/functions.any';
+import { isServerFeatureSupported } from '../base/connection/functions';
 import { SERVER_URL_CHANGE_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import i18next, { DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n/i18next';
@@ -10,6 +11,7 @@ import { getLocalParticipant } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { getHideSelfView } from '../base/settings/functions.any';
 import { parseStandardURIString } from '../base/util/uri';
+import { CHAT_PERMISSIONS_FEATURE } from '../chat/constants';
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive, isFollowMeRecorderActive } from '../follow-me/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
@@ -171,7 +173,11 @@ export function getModeratorTabProps(stateful: IStateful) {
     const followMeRecorderActive = isFollowMeRecorderActive(state);
     const showModeratorSettings = shouldShowModeratorSettings(state);
     const conferenceMetadata = conference?.getMetadataHandler()?.getMetadata();
-    const hideChatWithPermissions = !showChatPermissionsModeratorSetting || conferenceMetadata?.allownersEnabled;
+
+    // The config.js option, when set, overrides what the server advertises.
+    const showChatWithPermissions = showChatPermissionsModeratorSetting
+        ?? isServerFeatureSupported(state, CHAT_PERMISSIONS_FEATURE);
+    const hideChatWithPermissions = !showChatWithPermissions || conferenceMetadata?.allownersEnabled;
     const isAudioModerationEnabled = isEnabledFromState(MEDIA_TYPE.AUDIO, state);
     const isVideoModerationEnabled = isEnabledFromState(MEDIA_TYPE.VIDEO, state);
 

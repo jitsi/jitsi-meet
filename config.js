@@ -157,7 +157,9 @@ var config = {
     // Disables self-view settings in UI
     // disableSelfViewSettings: false,
 
-    // Shows/hides the moderator setting for chat permissions.
+    // Shows/hides the moderator setting for chat permissions. When not set, the setting appears automatically
+    // when the server advertises support for it (mod_filter_messages loaded, with mod_features_identity on the main
+    // virtual host).
     // showChatPermissionsModeratorSetting: false,
 
     // screenshotCapture : {

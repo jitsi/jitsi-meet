@@ -18,6 +18,7 @@ import {
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
     CONNECTION_PROPERTIES_UPDATED,
+    CONNECTION_SERVER_FEATURES_UPDATED,
     CONNECTION_TOKEN_EXPIRED,
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL,
@@ -245,6 +246,13 @@ export function _connectInternal(id?: string, password?: string) {
                 JitsiConnectionEvents.CONNECTION_TOKEN_EXPIRED,
                 _onTokenExpired);
 
+            // Older lib-jitsi-meet versions don't have the event.
+            if (JitsiConnectionEvents.SERVER_FEATURES_UPDATED) {
+                connection.addEventListener(
+                    JitsiConnectionEvents.SERVER_FEATURES_UPDATED,
+                    _onServerFeaturesUpdated);
+            }
+
             /**
              * Unsubscribe the connection instance from
              * {@code CONNECTION_DISCONNECTED} and {@code CONNECTION_FAILED} events.
@@ -256,6 +264,10 @@ export function _connectInternal(id?: string, password?: string) {
                     JitsiConnectionEvents.CONNECTION_DISCONNECTED, _onConnectionDisconnected);
                 connection.removeEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _onConnectionFailed);
                 connection.removeEventListener(JitsiConnectionEvents.PROPERTIES_UPDATED, _onPropertiesUpdate);
+                if (JitsiConnectionEvents.SERVER_FEATURES_UPDATED) {
+                    connection.removeEventListener(
+                        JitsiConnectionEvents.SERVER_FEATURES_UPDATED, _onServerFeaturesUpdated);
+                }
             }
 
             /**
@@ -349,6 +361,18 @@ export function _connectInternal(id?: string, password?: string) {
                 dispatch(_propertiesUpdate(properties));
             }
 
+            /**
+             * The features the server advertises were received or changed. The listener is added before connect, so
+             * it gets them all, also when they arrive before the connection is established (jiconop).
+             *
+             * @param {Array<string>} features - All the features the server advertises.
+             * @private
+             * @returns {void}
+             */
+            function _onServerFeaturesUpdated(features: Array<string>) {
+                dispatch(_serverFeaturesUpdate(connection, features));
+            }
+
             // in case of configured http url for conference request we need the room name
             const name = getBackendSafeRoomName(state['features/base/conference'].room);
 
@@ -410,6 +434,26 @@ function _propertiesUpdate(properties: object) {
     return {
         type: CONNECTION_PROPERTIES_UPDATED,
         properties
+    };
+}
+
+/**
+ * Create an action for when the features the server advertises are received or changed.
+ *
+ * @param {JitsiConnection} connection - The {@code JitsiConnection} whose server advertises the features.
+ * @param {Array<string>} features - All the features the server advertises.
+ * @private
+ * @returns {{
+ *     type: CONNECTION_SERVER_FEATURES_UPDATED,
+ *     connection: JitsiConnection,
+ *     features: Array<string>
+ * }}
+ */
+function _serverFeaturesUpdate(connection: Object, features: Array<string>) {
+    return {
+        type: CONNECTION_SERVER_FEATURES_UPDATED,
+        connection,
+        features
     };
 }
 

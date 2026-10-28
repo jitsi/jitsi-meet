@@ -8,6 +8,7 @@ import {
     CONNECTION_DISCONNECTED,
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
+    CONNECTION_SERVER_FEATURES_UPDATED,
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL,
     SET_PREFER_VISITOR,
@@ -30,6 +31,7 @@ export interface IConnectionState {
     locationURL?: URL;
     passwordRequired?: Object;
     preferVisitor?: boolean;
+    serverFeatures?: Array<string>;
     showConnectionInfo?: boolean;
     timeEstablished?: number;
 }
@@ -49,6 +51,9 @@ ReducerRegistry.register<IConnectionState>(
 
         case CONNECTION_FAILED:
             return _connectionFailed(state, action);
+
+        case CONNECTION_SERVER_FEATURES_UPDATED:
+            return _connectionServerFeaturesUpdated(state, action);
 
         case CONNECTION_WILL_CONNECT:
             return _connectionWillConnect(state, action);
@@ -97,6 +102,7 @@ function _connectionDisconnected(
         connecting: undefined,
         connection: undefined,
         preferVisitor: undefined,
+        serverFeatures: undefined,
         timeEstablished: undefined
     });
 }
@@ -162,8 +168,32 @@ function _connectionFailed(
         passwordRequired:
             error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
                 ? connection : undefined,
-        preferVisitor
+        preferVisitor,
+        serverFeatures: undefined
     });
+}
+
+/**
+ * Reduces a specific Redux action CONNECTION_SERVER_FEATURES_UPDATED of the feature
+ * base/connection.
+ *
+ * @param {IConnectionState} state - The Redux state of the feature base/connection.
+ * @param {Action} action - The Redux action CONNECTION_SERVER_FEATURES_UPDATED to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/connection after the
+ * reduction of the specified action.
+ */
+function _connectionServerFeaturesUpdated(
+        state: IConnectionState,
+        { connection, features }: {
+            connection: Object;
+            features: Array<string>;
+        }) {
+    if (_getCurrentConnection(state) !== connection) {
+        return state;
+    }
+
+    return set(state, 'serverFeatures', features);
 }
 
 /**
@@ -188,6 +218,7 @@ function _connectionWillConnect(
         connection: undefined,
         error: undefined,
         passwordRequired: undefined,
+        serverFeatures: undefined,
         timeEstablished: undefined
     });
 }
