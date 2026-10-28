@@ -36,11 +36,20 @@
 -- (user@domain/resource) does not go to the MUC component, thus no hook here
 -- sees it.
 --
+-- Advertises CHAT_PERMISSIONS_FEATURE on the main virtual host (with
+-- mod_features_identity), so clients show the moderator setting for these
+-- restrictions only where this module enforces them.
+--
 -- Load on the MUC component.
 local util = module:require 'util';
 local get_room_from_jid = util.get_room_from_jid;
+local process_host_module = util.process_host_module;
 local jid_bare = require 'util.jid'.bare;
 local st = require 'util.stanza';
+
+local CHAT_PERMISSIONS_FEATURE = 'http://jitsi.org/protocol/filter_messages#chat_permissions';
+
+local main_virtual_host = module:get_option_string('muc_mapper_domain_base');
 
 -- Returns true when the room restricts this kind of message and the sender does
 -- not have the feature that lifts the restriction.
@@ -141,3 +150,7 @@ module:hook('message/bare', on_message); -- room messages
 module:hook('jitsi-visitor-groupchat-pre-route', on_message); -- visitors messages
 module:hook('muc-private-message', on_private_message); -- private messages
 module:hook('jitsi-visitor-private-message-pre-route', on_visitor_private_message); -- visitors private messages
+
+process_host_module(main_virtual_host, function(host_module)
+    module:context(host_module.host):fire_event('jitsi-add-feature', { feature = CHAT_PERMISSIONS_FEATURE });
+end);
