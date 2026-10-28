@@ -10,6 +10,7 @@ import {
 import { getConferenceState } from '../base/conference/functions';
 import { hangup } from '../base/connection/actions.web';
 import { openDialog } from '../base/dialog/actions';
+import { storeUserSelectedLanguage } from '../base/i18n/functions';
 import i18next from '../base/i18n/i18next';
 import { setJWT } from '../base/jwt/actions';
 import { browser } from '../base/lib-jitsi-meet';
@@ -161,6 +162,7 @@ export function submitMoreTab(newState: any) {
 
         if (newState.currentLanguage !== currentState.currentLanguage) {
             i18next.changeLanguage(newState.currentLanguage);
+            storeUserSelectedLanguage(newState.currentLanguage);
 
             const { conference } = getConferenceState(state);
 

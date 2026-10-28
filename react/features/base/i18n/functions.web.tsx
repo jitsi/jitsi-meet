@@ -1,6 +1,8 @@
 import DOMPurify from 'dompurify';
 import React from 'react';
 
+import languageDetector, { migrateLegacyLanguage } from './languageDetector';
+
 export { changeLanguageBundle, translate } from './functions.any';
 
 const SANITIZE_CONFIG = {
@@ -64,4 +66,27 @@ export function translateToHTML(t: Function, key: string, options: Record<string
 
     // eslint-disable-next-line react/no-danger
     return <span dangerouslySetInnerHTML = {{ __html: html }} />;
+}
+
+/**
+ * Resolves the language to use once config.js is known. The detection chain is run again, so a language from the
+ * URL, the one the user picked or the browser one still wins over config.defaultLanguage.
+ *
+ * @param {string} defaultLanguage - The config.defaultLanguage value, if any.
+ * @returns {string | undefined}
+ */
+export function resolveConfigLanguage(defaultLanguage?: string) {
+    migrateLegacyLanguage();
+
+    return languageDetector.detect() ?? defaultLanguage;
+}
+
+/**
+ * Stores the language the user picked, so it is restored on the next load.
+ *
+ * @param {string} language - The language the user picked.
+ * @returns {void}
+ */
+export function storeUserSelectedLanguage(language: string) {
+    languageDetector.cacheUserLanguage(language, [ 'localStorage' ]);
 }

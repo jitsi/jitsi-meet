@@ -41,6 +41,8 @@ const safeLangQueryDetector = {
  */
 const order = [
     safeLangQueryDetector.name,
+
+    // Only holds a language the user picked, see storeUserSelectedLanguage.
     'localStorage'
 ];
 
@@ -58,13 +60,41 @@ const languageDetector
     = new BrowserLanguageDetector(
         /* services */ null,
         /* options */ {
-            caches: [ 'localStorage' ],
-            lookupLocalStorage: 'language',
+            // Do not cache detected languages, or the config one would win over a later config change.
+            caches: [],
+            lookupLocalStorage: 'userSelectedLanguage',
             lookupQuerystring: 'lang',
             order
         });
 
 languageDetector.addDetector(safeLangQueryDetector);
 languageDetector.addDetector(configLanguageDetector);
+
+/**
+ * Moves the language stored under the old 'language' key, where every detected language used to be cached, to the
+ * key that holds the language the user picked. It cannot tell a pick from a cached one, so it is only kept when it
+ * differs from what is detected without it. Needs i18next to be initialized and config.js to be loaded.
+ *
+ * @returns {void}
+ */
+export function migrateLegacyLanguage() {
+    try {
+        const legacyLanguage = window.localStorage.getItem('language');
+
+        if (legacyLanguage === null) {
+            return;
+        }
+
+        window.localStorage.removeItem('language');
+
+        const lang = SUPPORTED_LANGUAGES.get(legacyLanguage.toLowerCase());
+
+        if (lang && !window.localStorage.getItem('userSelectedLanguage') && lang !== languageDetector.detect()) {
+            languageDetector.cacheUserLanguage(lang, [ 'localStorage' ]);
+        }
+    } catch {
+        // localStorage may not be available.
+    }
+}
 
 export default languageDetector;
