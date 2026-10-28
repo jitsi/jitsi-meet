@@ -4,6 +4,7 @@ import React from 'react';
 import languageDetector, { migrateLegacyLanguage } from './languageDetector';
 
 export { changeLanguageBundle, translate } from './functions.any';
+export { storeUserSelectedLanguage } from './languageDetector';
 
 const SANITIZE_CONFIG = {
     ALLOWED_TAGS: [ 'a', 'b', 'br', 'span' ],
@@ -72,21 +73,13 @@ export function translateToHTML(t: Function, key: string, options: Record<string
  * Resolves the language to use once config.js is known. The detection chain is run again, so a language from the
  * URL, the one the user picked or the browser one still wins over config.defaultLanguage.
  *
- * @param {string} defaultLanguage - The config.defaultLanguage value, if any.
- * @returns {string | undefined}
+ * @param {string} _defaultLanguage - Not used on web: configLanguageDetector reads it from window.config, which is
+ * the object SET_CONFIG carries.
+ * @returns {string}
  */
-export function resolveConfigLanguage(defaultLanguage?: string) {
+export function resolveConfigLanguage(_defaultLanguage?: string): string {
     migrateLegacyLanguage();
 
-    return languageDetector.detect() ?? defaultLanguage;
-}
-
-/**
- * Stores the language the user picked, so it is restored on the next load.
- *
- * @param {string} language - The language the user picked.
- * @returns {void}
- */
-export function storeUserSelectedLanguage(language: string) {
-    languageDetector.cacheUserLanguage(language, [ 'localStorage' ]);
+    // Falls back to DEFAULT_LANGUAGE when nothing matched.
+    return languageDetector.detect() as string;
 }

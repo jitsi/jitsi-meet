@@ -1,3 +1,4 @@
+import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import BrowserLanguageDetector from 'i18next-browser-languagedetector';
 import { noop } from 'lodash-es';
 
@@ -34,6 +35,27 @@ const safeLangQueryDetector = {
 };
 
 /**
+ * The key under which the language the user picked is stored.
+ */
+const USER_SELECTED_LANGUAGE_KEY = 'userSelectedLanguage';
+
+/**
+ * Language detector for the language the user picked in the settings. It goes through jitsiLocalStorage, so the pick
+ * also survives in embeds that keep the local storage on the host page.
+ */
+const userSelectedLanguageDetector = {
+    name: 'userSelectedLanguage',
+    cacheUserLanguage(lng: string) {
+        jitsiLocalStorage.setItem(USER_SELECTED_LANGUAGE_KEY, lng);
+    },
+    lookup() {
+        const value = jitsiLocalStorage.getItem(USER_SELECTED_LANGUAGE_KEY);
+
+        return (value && SUPPORTED_LANGUAGES.get(value.toLowerCase())) || undefined;
+    }
+};
+
+/**
  * The ordered list (by name) of language detectors to be utilized as backends
  * by the singleton language detector for Web.
  *
@@ -41,9 +63,7 @@ const safeLangQueryDetector = {
  */
 const order = [
     safeLangQueryDetector.name,
-
-    // Only holds a language the user picked, see storeUserSelectedLanguage.
-    'localStorage'
+    userSelectedLanguageDetector.name
 ];
 
 // Allow i18next to detect the system language reported by the Web browser
@@ -62,18 +82,28 @@ const languageDetector
         /* options */ {
             // Do not cache detected languages, or the config one would win over a later config change.
             caches: [],
-            lookupLocalStorage: 'userSelectedLanguage',
             lookupQuerystring: 'lang',
             order
         });
 
 languageDetector.addDetector(safeLangQueryDetector);
+languageDetector.addDetector(userSelectedLanguageDetector);
 languageDetector.addDetector(configLanguageDetector);
 
 /**
- * Moves the language stored under the old 'language' key, where every detected language used to be cached, to the
- * key that holds the language the user picked. It cannot tell a pick from a cached one, so it is only kept when it
- * differs from what is detected without it. Needs i18next to be initialized and config.js to be loaded.
+ * Stores the language the user picked, so it is restored on the next load.
+ *
+ * @param {string} language - The language the user picked.
+ * @returns {void}
+ */
+export function storeUserSelectedLanguage(language: string) {
+    languageDetector.cacheUserLanguage(language, [ userSelectedLanguageDetector.name ]);
+}
+
+/**
+ * Moves the language stored under the old 'language' key, where i18next used to cache every detected language, to
+ * the key that holds the language the user picked. It cannot tell a pick from a cached one, so it is only kept when
+ * it differs from what the browser and config give. Needs i18next to be initialized and config.js to be loaded.
  *
  * @returns {void}
  */
@@ -85,13 +115,19 @@ export function migrateLegacyLanguage() {
             return;
         }
 
-        window.localStorage.removeItem('language');
-
         const lang = SUPPORTED_LANGUAGES.get(legacyLanguage.toLowerCase());
+        const detectionOrder = order.filter(
+            name => name !== safeLangQueryDetector.name && name !== userSelectedLanguageDetector.name);
 
-        if (lang && !window.localStorage.getItem('userSelectedLanguage') && lang !== languageDetector.detect()) {
-            languageDetector.cacheUserLanguage(lang, [ 'localStorage' ]);
+        if (lang
+                && !userSelectedLanguageDetector.lookup()
+
+                // @ts-expect-error The 3.0.1 types take DetectorOptions, the code takes the detection order.
+                && lang !== languageDetector.detect(detectionOrder)) {
+            storeUserSelectedLanguage(lang);
         }
+
+        window.localStorage.removeItem('language');
     } catch {
         // localStorage may not be available.
     }
