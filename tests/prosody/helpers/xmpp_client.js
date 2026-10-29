@@ -35,16 +35,18 @@ export async function joinWithJibri(roomJid) {
  * The caller is responsible for disconnecting the returned client.
  *
  * @param {string} roomJid  full room JID, e.g. 'room@conference.localhost'
+ * @param {object} [opts]
+ * @param {Array}  [opts.extensions]  presence children, forwarded to joinRoom
  * @returns {Promise<XmppTestClient>}
  */
-export async function joinWithTranscriber(roomJid) {
+export async function joinWithTranscriber(roomJid, { extensions } = {}) {
     const c = await createXmppClient({
         domain: 'recorder.localhost',
         username: 'transcriber',
         password: 'transcribersecret'
     });
 
-    await c.joinRoom(roomJid, 'a1b2c3d4');
+    await c.joinRoom(roomJid, 'a1b2c3d4', { extensions });
 
     return c;
 }

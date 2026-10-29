@@ -34,6 +34,21 @@ async function setStrictMode(enabled) {
     await new Promise(resolve => setTimeout(resolve, 500));
 }
 
+/**
+ * Asserts that a join was rejected by the reserved-resource check, which
+ * (unlike the format and strict-mode checks) says "Reserved resource".
+ *
+ * @param {Element} presence
+ */
+function assertReservedRejection(presence) {
+    assert.equal(presence.attrs.type, 'error', 'reserved resource must be rejected');
+
+    const error = presence.getChild('error');
+
+    assert.ok(error?.getChild('not-allowed'), 'error stanza must contain <not-allowed/>');
+    assert.equal(error.getChildText('text'), 'Reserved resource', 'rejection must come from the reserved check');
+}
+
 describe('mod_muc_resource_validate', () => {
 
     let ctx;
@@ -130,19 +145,32 @@ describe('mod_muc_resource_validate', () => {
             const c = await ctx.connect();
             const presence = await c.joinRoom(r, 'transcriber');
 
-            assert.equal(presence.attrs.type, 'error',
-                'reserved resource must be rejected');
-            assert.ok(
-                presence.getChild('error')?.getChild('not-allowed'),
-                'error stanza must contain <not-allowed/>'
-            );
+            assertReservedRejection(presence);
         } finally {
             await setStrictMode(true);
         }
     });
 
-    // Jigasi with the SIP user as XMPP resource joins its transcriber as
-    // "Transcriber" (its display name); the exact match must let it in.
+    // Backend accounts (here the transcriber's, on recorder.localhost) are not
+    // anonymous, so strict mode does not apply to them; the reserved check must
+    // still reject the resource.
+    it('rejects the reserved transcriber resource for the transcriber account', async () => {
+        const r = room();
+
+        await ctx.connectFocus(r);
+        const c = await ctx.connect({
+            domain: 'recorder.localhost',
+            username: 'transcriber',
+            password: 'transcribersecret'
+        });
+        const presence = await c.joinRoom(r, 'transcriber');
+
+        assertReservedRejection(presence);
+    });
+
+    // Jigasi with org.jitsi.jigasi.USE_SIP_USER_AS_XMPP_RESOURCE joins its
+    // transcriber as "Transcriber" (its display name); the exact match must
+    // let it in.
     it('allows a reserved resource in a different case', async () => {
         const r = room();
 

@@ -3,7 +3,7 @@ import assert from 'assert';
 import http from 'http';
 
 import { mintAsapToken } from './helpers/jwt.js';
-import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
+import { createXmppClient, joinWithFocus, joinWithTranscriber } from './helpers/xmpp_client.js';
 
 let _roomCounter = 0;
 const nextRoom = () => `rayo-test-${++_roomCounter}@conference.localhost`;
@@ -317,22 +317,14 @@ describe('mod_filter_iq_rayo (feature-based authorization)', () => {
          * @param {string} userId
          */
         async function joinAsTranscriberStartedBy(roomJid, userId) {
-            const c = await createXmppClient({
-                domain: 'recorder.localhost',
-                username: 'transcriber',
-                password: 'transcribersecret'
-            });
-
-            clients.push(c);
-
             const initiator = xml('initiator', { xmlns: 'http://jitsi.org/protocol/jigasi' },
                 xml('header', { xmlns: 'urn:xmpp:rayo:1',
                     name: 'X-outbound-call-initiator-user',
                     value: userId })
             );
+            const c = await joinWithTranscriber(roomJid, { extensions: [ initiator ] });
 
-            // Jigasi joins with a random 8 hex digit resource; "transcriber" is reserved.
-            await c.joinRoom(roomJid, 'a1b2c3d4', { extensions: [ initiator ] });
+            clients.push(c);
 
             return c;
         }

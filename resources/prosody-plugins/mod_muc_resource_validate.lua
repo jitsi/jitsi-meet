@@ -6,10 +6,14 @@
 -- A valid resource consists only of alphanumerics and underscores and must
 -- NOT start with an underscore: ^[a-zA-Z0-9][a-zA-Z0-9_]*$
 --
--- Resources listed in "reserved_resources" are rejected for everyone, whatever
--- the other settings. Clients treat these IDs as coming from server components
--- (e.g. the bridge sends transcriptions as "transcriber"), so no occupant may
--- use them. The match is exact, like the clients' and the bridge's.
+-- Resources listed in "reserved_resources" are rejected for every occupant of
+-- the MUC components the module is enabled on, whether or not anonymous_strict
+-- is on and whatever the occupant's domain. Clients treat these IDs as coming
+-- from server components (e.g. the bridge sends transcriptions as
+-- "transcriber"), so no occupant may use them. The match is exact and
+-- case-sensitive, as the clients' comparison is. The occupant resource becomes
+-- the bridge endpoint ID in breakout rooms too, so enable the module on the
+-- breakout rooms component as well.
 --
 -- When "anonymous_strict" mode is enabled, users on domains whose
 -- authentication provider is considered anonymous are additionally required
@@ -29,7 +33,8 @@
 --       modules_enabled = { "muc_resource_validate" }
 --       -- Enable strict anonymous-user check
 --       anonymous_strict = true
---       -- Optional: extend the list of auth methods treated as anonymous
+--       -- Optional: replace the list of auth methods treated as anonymous
+--       -- (default: { "anonymous", "jitsi-anonymous", "token" })
 --       anonymous_auth_methods = { "anonymous", "jitsi-anonymous", "token", "custom-anon" }
 --       -- Optional: replace the list of reserved resources (default: { "transcriber" })
 --       reserved_resources = { "transcriber" }
@@ -137,7 +142,8 @@ local function reject_nick_change(event)
     end
 end
 
-module:log("info", "module loaded (anonymous_strict=%s)", tostring(anonymous_strict));
+module:log("info", "module loaded (anonymous_strict=%s, reserved_resources=%s)",
+    tostring(anonymous_strict), tostring(reserved_resources));
 
 module:hook("muc-occupant-pre-join", check_resource, 11);
 module:hook("muc-occupant-pre-change", reject_nick_change, 11);
