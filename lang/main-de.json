@@ -115,7 +115,15 @@
         }
     },
     "chat": {
+        "copy": "Kopieren",
+        "delete": "Löschen",
+        "deleteMessage": "Löschen",
+        "deletedMessage": "Diese Nachricht wurde gelöscht.",
+        "deletedMessageByMe": "Sie haben diese Nachricht gelöscht.",
         "disabled": "Chat-Nachrichten sind deaktiviert.",
+        "edit": "Bearbeiten",
+        "edited": "(bearbeitet)",
+        "editingMessage": "Bearbeiten",
         "enter": "Chat-Raum betreten",
         "error": "Fehler: Ihre Nachricht wurde nicht versendet. Grund: {{error}}",
         "everyone": "Alle",
@@ -128,8 +136,11 @@
         "message": "Nachricht",
         "messageAccessibleTitle": "{{user}} sagt:",
         "messageAccessibleTitleMe": "Ich sage:",
+        "messageCopied": "Nachricht kopiert",
         "messageTo": "Private Nachricht an {{recipient}}",
         "messagebox": "Nachricht eingeben",
+        "moderatedMessage": "Von der Moderation gelöscht.",
+        "moderationReason": "Grund: {{reason}}",
         "newMessages": "Neue Nachrichten",
         "nickname": {
             "featureChat": "Chat",
@@ -148,7 +159,17 @@
             "titleWithPollsAndCCAndFileSharing": "Geben Sie einen Alias zum Chatten, für Umfragen, Untertitel und Dateien ein"
         },
         "noMessagesMessage": "Es gibt noch keine Nachricht in dieser Konferenz. Starten Sie hier eine Unterhaltung!",
+        "privateMessage": "Private Nachricht",
         "privateNotice": "Private Nachricht an {{recipient}}",
+        "search": {
+            "close": "Suche schließen",
+            "next": "Nächster Treffer",
+            "noResults": "Keine Ergebnisse",
+            "open": "Nachrichten durchsuchen",
+            "placeholder": "Im Chat suchen",
+            "previous": "Vorheriger Treffer",
+            "resultsCount": "{{current}}/{{total}}"
+        },
         "sendButton": "Senden",
         "smileysPanel": "Emoji-Auswahl",
         "systemDisplayName": "System",
