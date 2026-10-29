@@ -4,6 +4,11 @@ VirtualHost "localhost"
     authentication = "token"
     app_id = "jitsi"
     asap_key_server = "http://localhost:5280/test-observer/asap-keys"
+    -- The login key is also served as JWKS, as deployments that use both
+    -- options do. The system HTTP API modules on this host (kick, jigasi
+    -- invite, system chat, end meeting) must still accept only tokens from
+    -- prosody_password_public_key_repo_url.
+    cache_keys_url = "http://localhost:5280/test-observer/asap-jwks.json"
     signature_algorithm = "RS256"
     allow_empty_token = true
 
