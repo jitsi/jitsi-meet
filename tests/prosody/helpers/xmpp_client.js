@@ -27,7 +27,8 @@ export async function joinWithJibri(roomJid) {
 
 /**
  * Connects as the transcriber, joins roomJid with an 8 hex digit nick (as
- * Jigasi does; 'transcriber' is a reserved resource), and returns the client. Authenticates as transcriber@recorder.localhost.
+ * Jigasi does; 'transcriber' is a reserved resource), and returns the client.
+ * Authenticates as transcriber@recorder.localhost.
  * The bare JID starts with 'transcriber@recorder.' so is_transcriber() returns
  * true, matching the default transcriber_prefixes in util.lib.lua.
  *
