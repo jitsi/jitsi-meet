@@ -42,6 +42,19 @@ import {
 import logger from './logger';
 import { ITrack, ITrackOptions } from './types';
 
+// The listeners trackAdded registers on each track, so trackRemoved removes those and not the library's own.
+const trackListeners = new WeakMap<any, Array<[ string, Function ]>>();
+
+const addTrackListener = (track: any, event: string, listener: Function) => {
+    track.on(event, listener);
+    trackListeners.set(track, [ ...trackListeners.get(track) ?? [], [ event, listener ] ]);
+};
+
+const removeTrackListeners = (track: any) => {
+    trackListeners.get(track)?.forEach(([ event, listener ]) => track.off(event, listener));
+    trackListeners.delete(track);
+};
+
 /**
  * Add a given local track to the conference.
  *
@@ -388,17 +401,22 @@ function replaceStoredTracks(oldTrack: any, newTrack: any) {
  */
 export function trackAdded(track: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        // Guard against the same track being added twice.
+        removeTrackListeners(track);
+
         // Translated audio tracks (source name <regularSourceName>.<language>) have no mute lifecycle, since
         // presence/source-info is only signaled for the original source. Skip the inert mute listener for them.
         const sourceName = track.getSourceName?.();
         const isTranslatedTrack = typeof sourceName === 'string' && sourceName.includes('.');
 
         if (!isTranslatedTrack) {
-            track.on(
+            addTrackListener(
+                track,
                 JitsiTrackEvents.TRACK_MUTE_CHANGED,
                 () => dispatch(trackMutedChanged(track)));
         }
-        track.on(
+        addTrackListener(
+            track,
             JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED,
             (type: VideoType) => dispatch(trackVideoTypeChanged(track, type)));
         const local = track.isLocal();
@@ -433,7 +451,10 @@ export function trackAdded(track: any) {
             }
 
             isReceivingData = track.isReceivingData();
-            track.on(JitsiTrackEvents.NO_DATA_FROM_SOURCE, () => dispatch(noDataFromSource({ jitsiTrack: track })));
+            addTrackListener(
+                track,
+                JitsiTrackEvents.NO_DATA_FROM_SOURCE,
+                () => dispatch(noDataFromSource({ jitsiTrack: track })));
             if (!isReceivingData) {
                 if (mediaType === MEDIA_TYPE.AUDIO) {
                     const notificationAction = dispatch(showNotification({
@@ -456,7 +477,9 @@ export function trackAdded(track: any) {
                 }
             }
 
-            track.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED,
+            addTrackListener(
+                track,
+                JitsiTrackEvents.LOCAL_TRACK_STOPPED,
                 () => {
                     logger.debug(`Local track stopped: ${track}, removing it from the conference`);
                     if (mediaType === MEDIA_TYPE.SCREENSHARE && isMacOS()) {
@@ -606,9 +629,7 @@ export function trackRemoved(track: any): {
     };
     type: 'TRACK_REMOVED';
 } {
-    track.removeAllListeners(JitsiTrackEvents.TRACK_MUTE_CHANGED);
-    track.removeAllListeners(JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED);
-    track.removeAllListeners(JitsiTrackEvents.NO_DATA_FROM_SOURCE);
+    removeTrackListeners(track);
 
     // Remove MediaStreamTrack "ended" event.
     if (navigator.product === 'ReactNative') {
