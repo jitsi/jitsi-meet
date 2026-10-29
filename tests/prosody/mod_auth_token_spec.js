@@ -324,6 +324,106 @@ describe('mod_auth_token (claims on XEP-0198 resumption)', () => {
     });
 
     /**
+     * Sets up a participant occupying two rooms, A and B, on one session, with a
+     * join token whose room claim is a pattern covering both and that grants no
+     * features. The session connects for room A, so file-sharing operations
+     * target A, where a second occupant receives the broadcasts.
+     */
+    async function setupMultiRoom() {
+        const n = ++roomCounter;
+        const roomA = `resumea${n}`;
+        const roomB = `resumeb${n}`;
+        const jidA = `${roomA}@${CONFERENCE}`;
+        const jidB = `${roomB}@${CONFERENCE}`;
+        const pattern = `^resume[ab]${n}$`;
+        const focusA = await joinWithFocus(jidA);
+        const focusB = await joinWithFocus(jidB);
+        const participant = await tokenClient(roomA, mintAsapToken({
+            room: pattern,
+            context: {
+                room: { regex: true },
+                user: { id: 'user-a',
+                    name: 'user-a' }
+            }
+        }));
+        const other = await tokenClient(roomA, tokenFor(roomA));
+
+        clients.push(focusA, focusB, participant, other);
+        await other.joinRoom(jidA);
+
+        for (const jid of [ jidA, jidB ]) {
+            const presence = await participant.joinRoom(jid);
+
+            assert.notEqual(presence.attrs.type, 'error', `participant must be able to join ${jid}`);
+        }
+
+        addFile(participant, 'baseline-multi', 'file-before-resume');
+        assertForbidden(await waitForReply(participant, 'baseline-multi'),
+            'file-upload must be refused before the token swap');
+        await assertNoBroadcast(other);
+
+        return { n,
+            roomB,
+            pattern,
+            participant,
+            other };
+    }
+
+    it('ignores features from a token that covers only one of the rooms the session occupies', async () => {
+        // B was joined last, but the session is still in A, so a token scoped
+        // to B alone does not cover every conference the session is in.
+        const { roomB, pattern, participant, other } = await setupMultiRoom();
+
+        const reconnected = participant.waitForReconnect();
+
+        participant.dropConnection({ token: tokenFor(roomB, { 'file-upload': true }) });
+        await reconnected;
+
+        const session = await getSessionLive(participant.jid);
+
+        assert.equal(session.jitsi_meet_room, pattern,
+            'room claim of a token that does not cover every joined conference must not be adopted');
+        assert.ok(!session.jitsi_meet_context_features?.['file-upload'],
+            'features of a token that does not cover every joined conference must not be adopted');
+
+        addFile(participant, 'after-multi-1', 'file-after-resume');
+        assertForbidden(await waitForReply(participant, 'after-multi-1'),
+            'file-upload must still be refused in A after resuming with a token for B only');
+        await assertNoBroadcast(other);
+    });
+
+    it('adopts the claims of a rotated token that covers all the rooms the session occupies', async () => {
+        const { n, pattern, participant, other } = await setupMultiRoom();
+
+        const rotatedToken = mintAsapToken({
+            room: pattern,
+            context: {
+                room: { regex: true },
+                user: { id: 'user-a',
+                    name: 'user-a' },
+                features: { 'file-upload': true }
+            }
+        });
+
+        const reconnected = participant.waitForReconnect();
+
+        participant.dropConnection({ token: rotatedToken });
+        await reconnected;
+
+        const session = await getSessionLive(participant.jid);
+
+        assert.equal(session.jitsi_meet_context_features['file-upload'], true,
+            `features of a token covering resumea${n} and resumeb${n} must be adopted`);
+
+        addFile(participant, 'after-multi-2', 'file-after-resume');
+
+        const payload = await waitForBroadcast(other);
+
+        assert.equal(payload.event, 'add');
+        assert.equal(payload.file.fileId, 'file-after-resume');
+    });
+
+    /**
      * Sets up a meeting whose moderator has moved into a breakout room: it
      * joins the main room, registers a breakout room, joins it and then leaves
      * the main room, which is what the client does when switching rooms.

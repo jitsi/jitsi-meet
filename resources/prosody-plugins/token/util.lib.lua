@@ -174,8 +174,16 @@ function Util.new(module)
         self.cachedKeys = {};
         local update_keys_cache;
         update_keys_cache = async.runner(function (name)
+            -- stop refreshing once set_asap_key_server() has replaced the key sources
+            if not self.cacheKeysUrl then
+                return;
+            end
             local content, code, cache_for;
             content, code, cache_for = http_get_with_retry(self.cacheKeysUrl, nr_retries);
+            if not self.cacheKeysUrl then
+                -- the key sources were replaced while fetching
+                return;
+            end
             if content ~= nil then
                 local keys_to_delete = table_shallow_copy(self.cachedKeys);
                 -- Let's convert any certificate to public key
@@ -199,6 +207,9 @@ function Util.new(module)
                 end
                 -- let's schedule the clean in an hour and a half, current tokens will be valid for an hour
                 timer.add_task(90*60, function ()
+                    if not self.cachedKeys then
+                        return;
+                    end
                     for k, _ in pairs(keys_to_delete) do
                         self.cachedKeys[k] = nil;
                     end
@@ -233,8 +244,21 @@ function Util.new(module)
     return self
 end
 
+--- Makes the given key server the only source of public keys: the JWKS
+-- (cache_keys_url) and the app_secret read from the host config are dropped.
+-- Used by the HTTP API modules that accept only tokens signed with the keys
+-- from prosody_password_public_key_repo_url.
+-- @param asapKeyServer the key server URL
 function Util:set_asap_key_server(asapKeyServer)
     self.asapKeyServer = asapKeyServer;
+    self.cacheKeysUrl = nil;
+    self.cachedKeys = nil;
+    self.appSecret = nil;
+    -- the key server serves RSA keys, an algorithm derived from app_secret does not apply
+    if not starts_with(self.signatureAlgorithm, "RS") then
+        self.signatureAlgorithm = "RS256";
+    end
+    self:clear_asap_cache();
 end
 
 function Util:set_asap_accepted_issuers(acceptedIssuers)

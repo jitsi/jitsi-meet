@@ -175,6 +175,21 @@ local function anonymous(self, message)
 
 sasl.registerMechanism("ANONYMOUS", {"anonymous"}, anonymous);
 
+-- The <resume> is processed on the async runner of the resuming connection (from_session),
+-- and the handler below can wait on it (fetching an ASAP public key that is not cached).
+-- While waiting the runner pauses the connection of the session it was created for, and
+-- resumes it once done, but by then update_session() has retired from_session and moved
+-- the connection to the hibernating session, so the connection stays paused and nothing
+-- more is read from it. Point the runner at the session that now owns the connection.
+module:hook_global('c2s-session-updated', function (event)
+    local session, from_session = event.session, event.from_session;
+    local thread = from_session.thread;
+
+    if type(thread) == 'table' and thread.data == from_session then
+        thread.data = session;
+    end
+end, 1000);
+
 -- Fired by Prosody's sessionmanager.update_session() during smacks (XEP-0198) session
 -- resumption. The naming can be counter-intuitive:
 --   event.session      (session)      – the OLD hibernating session being kept alive.

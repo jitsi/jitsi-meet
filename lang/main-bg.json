@@ -250,12 +250,6 @@
         "microphonePermission": "Грешка при получаване на разрешение за достъп до микрофона"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Управление на повикванията",
-            "connectedDevices": "Свързани устройства:",
-            "deleteDevice": "Изтрий устройство",
-            "pairDevice": "Сдвояване на устройство"
-        },
         "noPermission": "Не е получено разрешение",
         "previewUnavailable": "Няма възможност за преглед",
         "selectADevice": "Изберете устройство",

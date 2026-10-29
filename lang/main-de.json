@@ -273,12 +273,6 @@
         "microphonePermission": "Mikrofon-Zugriffsberechtigungen konnten nicht abgerufen werden"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Anrufsteuerung",
-            "connectedDevices": "Verbundene Geräte:",
-            "deleteDevice": "Gerät löschen",
-            "pairDevice": "Gerät verbinden"
-        },
         "noPermission": "Berechtigungen nicht erteilt",
         "previewUnavailable": "Keine Vorschau verfügbar",
         "selectADevice": "Ein Gerät wählen",

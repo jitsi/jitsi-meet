@@ -232,12 +232,6 @@
         "microphonePermission": "Eraro akirante permeson por mikrofono"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Voko kontrolo",
-            "connectedDevices": "Ligitaj aparatoj:",
-            "deleteDevice": "Forgesu aparaton",
-            "pairDevice": "Kuplu aparaton"
-        },
         "noPermission": "Permeso ne estis donita",
         "previewUnavailable": "Antaŭrigardo ne disponeblas",
         "selectADevice": "Elektu aparaton",

@@ -4,6 +4,11 @@ VirtualHost "localhost"
     authentication = "token"
     app_id = "jitsi"
     asap_key_server = "http://localhost:5280/test-observer/asap-keys"
+    -- The login key is also served as JWKS, as deployments that use both
+    -- options do. The system HTTP API modules on this host (kick, jigasi
+    -- invite, system chat, end meeting) must still accept only tokens from
+    -- prosody_password_public_key_repo_url.
+    cache_keys_url = "http://localhost:5280/test-observer/asap-jwks.json"
     signature_algorithm = "RS256"
     allow_empty_token = true
 
@@ -120,7 +125,9 @@ VirtualHost "hs256.localhost"
     app_secret = "testsecret"
     signature_algorithm = "HS256"
     allow_empty_token = false
-    modules_enabled = { "presence_identity" }
+    -- muc_kick_participant: a system HTTP API module on a host that has only
+    -- app_secret; it verifies tokens from prosody_password_public_key_repo_url.
+    modules_enabled = { "presence_identity"; "muc_kick_participant" }
 
 -- Second VirtualHost whose domain is listed in muc_access_whitelist on the
 -- MUC component below. Clients connecting here get JIDs like

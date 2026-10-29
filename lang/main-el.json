@@ -208,12 +208,6 @@
         "microphonePermission": "Σφάλμα κατά τη λήψη άδειας για χρήση του μικρόφωνου"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Έλεγχος κλήσης",
-            "connectedDevices": "Συνδεδεμένες συσκευές:",
-            "deleteDevice": "Αφαίρεση συσκευής",
-            "pairDevice": "Ζεύγος με συσκευή"
-        },
         "noPermission": "Δεν χορηγήθηκε άδεια",
         "previewUnavailable": "Μη διαθέσιμη προεπισκόπηση",
         "selectADevice": "Επιλέξτε μια συσκευή",

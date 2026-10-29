@@ -264,12 +264,6 @@
         "microphonePermission": "Gabim në marrje lejesh mbi mikrofonin"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Kontroll thirrjesh",
-            "connectedDevices": "Pajisje të lidhura:",
-            "deleteDevice": "Fshije pajisjen",
-            "pairDevice": "Çiftoni pajisje"
-        },
         "noPermission": "S’u akordua leje",
         "previewUnavailable": "S’bëhet dot paraparje",
         "selectADevice": "Përzgjidhni një pajisje",

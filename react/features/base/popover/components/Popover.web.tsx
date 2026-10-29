@@ -7,7 +7,7 @@ import DialogPortal from '../../../toolbox/components/web/DialogPortal';
 import Drawer from '../../../toolbox/components/web/Drawer';
 import JitsiPortal from '../../../toolbox/components/web/JitsiPortal';
 import { isElementInTheViewport } from '../../ui/functions.web';
-import { getContextMenuStyle } from '../functions.web';
+import { getContextMenuStyle, setPopoverTrigger } from '../functions.web';
 
 /**
  * The type of the React {@code Component} props of {@link Popover}.
@@ -123,7 +123,7 @@ interface IState {
      * Whether the popover should be focus locked or not.
      *
      * This is enabled if we notice the popover is interactive
-     * (trigger is click or focusable is true).
+     * (trigger is click, or focusable is true and the popover was opened with the keyboard).
      */
     enableFocusLock: boolean;
 }
@@ -152,7 +152,12 @@ class Popover extends Component<IProps, IState> {
      */
     _containerRef: React.RefObject<HTMLDivElement>;
 
-    _contextMenuRef: HTMLElement;
+    _contextMenuRef?: HTMLElement;
+
+    /**
+     * Whether the popover was opened using the keyboard.
+     */
+    _openedWithKeyboard = false;
 
     /**
      * Initializes a new {@code Popover} instance.
@@ -213,6 +218,8 @@ class Popover extends Component<IProps, IState> {
                 window.addEventListener('keydown', this._onEscKey);
             } else {
                 window.removeEventListener('keydown', this._onEscKey);
+                this._openedWithKeyboard = false;
+                this.setState({ enableFocusLock: false });
             }
         }
     }
@@ -312,6 +319,12 @@ class Popover extends Component<IProps, IState> {
                             // to prevent UI stutter on dialog appearance. It seems the focus guards generated annoy
                             // our DialogPortal positioning calculations.
                             enabled = { Boolean(this._contextMenuRef) && this.state.enableFocusLock }
+
+                            // Only lock the focus. Isolation disables the pointer events on the rest of the page,
+                            // which blocks clicks outside the popover and fires mouseleave on the element under the
+                            // mouse, closing popovers rendered only while their parent is hovered (e.g. the chat
+                            // message menu). The scroll lock would block scrolling the page, e.g. the chat.
+                            noIsolation = { true }
                             returnFocus = {
 
                                 // If we return the focus to an element outside the viewport the page will scroll to
@@ -323,6 +336,7 @@ class Popover extends Component<IProps, IState> {
                                 // large video.
                                 isElementInTheViewport
                             }
+                            scrollLock = { false }
                             shards = { this._contextMenuRef && [ this._contextMenuRef ] }>
                             {this._renderContent()}
                         </FocusOn>
@@ -349,13 +363,15 @@ class Popover extends Component<IProps, IState> {
     /**
      * Sets the context menu's ref.
      *
-     * @param {HTMLElement} elem -The html element of the context menu.
+     * @param {HTMLElement|null} elem -The html element of the context menu.
      *
      * @returns {void}
      */
-    _setContextMenuRef(elem: HTMLElement) {
+    _setContextMenuRef(elem: HTMLElement | null) {
         if (!elem || document.body.contains(elem)) {
-            this._contextMenuRef = elem;
+            this._contextMenuRef && setPopoverTrigger(this._contextMenuRef);
+            this._contextMenuRef = elem ?? undefined;
+            elem && setPopoverTrigger(elem, this._containerRef.current);
         }
     }
 
@@ -463,6 +479,7 @@ class Popover extends Component<IProps, IState> {
             if (this.props.visible) {
                 this._onHideDialog();
             } else {
+                this._openedWithKeyboard = !this.props.disablePopover;
                 this._onShowDialog(e);
             }
         }
@@ -539,13 +556,14 @@ class Popover extends Component<IProps, IState> {
      * Returns whether the popover is considered interactive or not.
      *
      * Interactive means the popover content is certainly composed of buttons, links…
-     * Non-interactive popovers are mostly tooltips.
+     * Non-interactive popovers are mostly tooltips. Popovers opened on hover are considered interactive only when
+     * opened with the keyboard, so that hovering them with the mouse doesn't move the focus.
      *
      * @private
      * @returns {boolean}
      */
     _isInteractive() {
-        return this.props.trigger === 'click' || Boolean(this.props.focusable);
+        return this.props.trigger === 'click' || (Boolean(this.props.focusable) && this._openedWithKeyboard);
     }
 
     /**

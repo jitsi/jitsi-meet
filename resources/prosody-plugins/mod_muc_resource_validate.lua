@@ -6,6 +6,15 @@
 -- A valid resource consists only of alphanumerics and underscores and must
 -- NOT start with an underscore: ^[a-zA-Z0-9][a-zA-Z0-9_]*$
 --
+-- Resources listed in "reserved_resources" are rejected for every occupant of
+-- the MUC components the module is enabled on, whether or not anonymous_strict
+-- is on and whatever the occupant's domain. Clients treat these IDs as coming
+-- from server components (e.g. the bridge sends transcriptions as
+-- "transcriber"), so no occupant may use them. The match is exact and
+-- case-sensitive, as the clients' comparison is. The occupant resource becomes
+-- the bridge endpoint ID in breakout rooms too, so enable the module on the
+-- breakout rooms component as well.
+--
 -- When "anonymous_strict" mode is enabled, users on domains whose
 -- authentication provider is considered anonymous are additionally required
 -- to use a MUC resource equal to the first 8 characters of their real JID
@@ -24,8 +33,11 @@
 --       modules_enabled = { "muc_resource_validate" }
 --       -- Enable strict anonymous-user check
 --       anonymous_strict = true
---       -- Optional: extend the list of auth methods treated as anonymous
+--       -- Optional: replace the list of auth methods treated as anonymous
+--       -- (default: { "anonymous", "jitsi-anonymous", "token" })
 --       anonymous_auth_methods = { "anonymous", "jitsi-anonymous", "token", "custom-anon" }
+--       -- Optional: replace the list of reserved resources (default: { "transcriber" })
+--       reserved_resources = { "transcriber" }
 
 local jid_split = require "util.jid".split;
 local st = require "util.stanza";
@@ -37,11 +49,14 @@ local VALID_RESOURCE_PATTERN = "^[a-zA-Z0-9][a-zA-Z0-9_]*$";
 
 local anonymous_strict;
 local anonymous_auth_methods;
+local reserved_resources;
 
 local function load_config()
     anonymous_strict = module:get_option_boolean("anonymous_strict", false);
     anonymous_auth_methods = module:get_option_set(
         "anonymous_auth_methods", { "anonymous", "jitsi-anonymous", "token" });
+
+    reserved_resources = module:get_option_set("reserved_resources", { "transcriber" });
 end
 load_config();
 
@@ -79,7 +94,15 @@ local function check_resource(event)
         return true;
     end
 
-    -- 2. Anonymous strict mode: MUC resource must equal the 8-char UUID prefix of the real JID username.
+    -- 2. Reserved resources: IDs clients attribute to server components.
+    if reserved_resources:contains(muc_resource) then
+        module:log("warn", "Rejecting join with reserved MUC resource from %s (muc_resource: %s)",
+            stanza.attr.from, muc_resource);
+        origin.send(st.error_reply(stanza, "cancel", "not-allowed", "Reserved resource"));
+        return true;
+    end
+
+    -- 3. Anonymous strict mode: MUC resource must equal the 8-char UUID prefix of the real JID username.
     if anonymous_strict and is_anonymous_domain(domain) then
         local uuid_prefix = user:sub(1, 8);
         if muc_resource ~= uuid_prefix then
@@ -119,7 +142,8 @@ local function reject_nick_change(event)
     end
 end
 
-module:log("info", "module loaded (anonymous_strict=%s)", tostring(anonymous_strict));
+module:log("info", "module loaded (anonymous_strict=%s, reserved_resources=%s)",
+    tostring(anonymous_strict), tostring(reserved_resources));
 
 module:hook("muc-occupant-pre-join", check_resource, 11);
 module:hook("muc-occupant-pre-change", reject_nick_change, 11);
