@@ -661,6 +661,13 @@ function _showRecordingErrorNotification(session: any, dispatch: IStore['dispatc
             titleKey: isStreamMode ? 'liveStreaming.inProgress' : 'recording.inProgress'
         }));
         break;
+    case JitsiMeetJS.constants.recording.error.BAD_REQUEST:
+        // The request itself is invalid, so trying again would fail in the same way.
+        dispatch(showRecordingError({
+            descriptionKey: isStreamMode ? 'liveStreaming.badRequest' : 'recording.badRequest',
+            titleKey: isStreamMode ? 'liveStreaming.failedToStart' : 'recording.failedToStart'
+        }));
+        break;
     case JitsiMeetJS.constants.recording.error.POLICY_VIOLATION:
         dispatch(showRecordingWarning({
             descriptionKey: isStreamMode ? 'liveStreaming.policyError' : 'recording.policyError',
