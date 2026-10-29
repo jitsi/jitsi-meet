@@ -62,40 +62,8 @@ local function is_regex_room_claim(room_context)
     return room_context['regex'] == true or room_context['regex'] == 'true';
 end
 
--- matches any character that is special in a Lua pattern
-local LUA_PATTERN_SPECIAL_CHARS = '[%^%$%(%)%%%.%[%]%*%+%-%?]';
-
---- Matches a room name against a room claim pattern.
--- The only special sequence in the pattern is one '.*', which matches any run
--- of characters, including an empty one. Every other character matches
--- literally, and the pattern must match the whole room name. Unlike a Lua
--- pattern, this does not backtrack, so the time it takes is linear.
--- @param pattern the room claim
--- @param room the room name
--- @return true or false, or nil and a reason when the pattern is not supported:
---         it has more than one '.*', or another Lua pattern special character
-local function match_room_pattern(pattern, room)
-    if type(pattern) ~= 'string' then
-        return nil, 'not a string';
-    end
-
-    local wildcard_start, wildcard_end = string.find(pattern, '.*', 1, true);
-    local prefix = wildcard_start and pattern:sub(1, wildcard_start - 1) or pattern;
-    local suffix = wildcard_start and pattern:sub(wildcard_end + 1) or '';
-
-    -- this also catches a second '.*'
-    if string.find(prefix, LUA_PATTERN_SPECIAL_CHARS) or string.find(suffix, LUA_PATTERN_SPECIAL_CHARS) then
-        return nil, 'more than one .* or another special character';
-    end
-
-    if not wildcard_start then
-        return room == prefix;
-    end
-
-    return #room >= #prefix + #suffix
-        and room:sub(1, #prefix) == prefix
-        and room:sub(#room - #suffix + 1) == suffix;
-end
+-- matches a room name against a room claim that is flagged as a pattern
+local match_room_pattern = module:require "token/room_pattern".match;
 
 local Util = {}
 Util.__index = Util
@@ -156,8 +124,12 @@ function Util.new(module)
 
     --[[
         A room claim that is flagged with context.room.regex is a pattern with
-        at most one '.*' (see match_room_pattern). It is not a Lua pattern,
-        so a match does not backtrack and its cost is linear.
+        at most one '.*' (see token/room_pattern.lib.lua). It is not a Lua
+        pattern, so a match does not backtrack and its cost is linear. The
+        length limit is not needed for the match time. It stays as a bound on
+        the work per join and on the size of the claim in the log: a room name
+        longer than the limit is not matched, and a pattern longer than the
+        limit plus the two characters of '.*' cannot match and is refused.
      --]]
     self.regexEnabled = module:get_option_boolean('token_regex_enabled', true);
     self.regexRoomMaxLength = module:get_option_number('token_regex_room_max_length', 128);
@@ -537,12 +509,25 @@ function Util:verify_room(session, room_address)
                 return false, 'invalid-regex', 'Room name is too long to match against the room claim';
             end
 
+            if type(auth_room) == 'string' and #auth_room > self.regexRoomMaxLength + 2 then
+                module:log('warn', 'Room claim pattern is longer than %s, refusing it: %s...',
+                    self.regexRoomMaxLength + 2, auth_room:sub(1, 32));
+                return false, 'invalid-regex', 'Room claim pattern is too long';
+            end
+
             local matches, reason = match_room_pattern(auth_room, match_target);
             if matches == nil then
-                module:log('warn', 'Room claim pattern is not supported (%s): %s', reason, auth_room);
+                module:log('warn', 'Room claim pattern is not supported (%s): %s', reason, tostring(auth_room));
                 return false, 'invalid-regex', 'Room claim pattern is not supported';
             end
-            room_to_check = matches and match_target or nil;
+
+            if not matches then
+                -- The claim is present and does not match. This is not a
+                -- missing claim, so it is refused also when the room claim is
+                -- optional (asap_require_room_claim = false).
+                return false, 'room-name-does-not-match', 'Room name does not match the room claim pattern.';
+            end
+            room_to_check = match_target;
         else
             -- not a regex
             room_to_check = auth_room;
