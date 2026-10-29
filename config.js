@@ -258,6 +258,29 @@ var config = {
     //     // Defaults to 0.15. Ignored on iOS, where the original is muted instead because the
     //     // element volume cannot be lowered there.
     //     duckedVolume: 0.15,
+    //
+    //     // Target languages offered in the audio-translation picker, as the codes the
+    //     // deployment's speech-to-speech translation provider accepts (they are sent to the
+    //     // bridge verbatim, and the translated track is named <source>.<code>). Defaults to the
+    //     // 13 languages every provider supports: en, es, pt, fr, de, it, ru, zh, ja, ko, hi, id,
+    //     // vi. Extend this only if the translation service accepts more: a language the
+    //     // provider rejects is dropped server-side and the picker entry produces no audio.
+    //     // A code must be 1-20 ASCII letters: prosody's audio-translation component refuses any
+    //     // other language with bad-request, and one bad code in a meeting-wide request fails
+    //     // translation for every speaker, so region or script tags ('pt-BR') and codes like
+    //     // 'pt_BR' are dropped from the list with a warning. A list that is
+    //     // set but leaves nothing usable offers no language at all, with a warning, rather
+    //     // than the defaults. Codes outside the default list are labelled with the language's
+    //     // own name where the platform has Intl.DisplayNames (browsers; the mobile apps do not),
+    //     // else with the English name from lang/translation-languages.json. Same keys as
+    //     // transcription.translationLanguages.
+    //     translationLanguages: [ 'en', 'es', 'fr', 'nl' ],
+    //
+    //     // Languages from the offered list to pin to the top of the picker, in this order. Unlike
+    //     // transcription.translationLanguagesHead this only reorders: a head entry that is not
+    //     // in the offered list is ignored, so it cannot add a language the provider may reject,
+    //     // and it takes the list's spelling.
+    //     translationLanguagesHead: [ 'en' ],
     // },
 
     // Noise suppression configuration. By default rnnoise is used. Optionally Krisp
@@ -758,9 +781,6 @@ var config = {
 
     // Require users to always specify a display name.
     // requireDisplayName: true,
-
-    // Enables webhid functionality for Audio.
-    // enableWebHIDFeature: false,
 
     // DEPRECATED! Use 'welcomePage.disabled' instead.
     // Whether to use a welcome page or not. In case it's false a random room

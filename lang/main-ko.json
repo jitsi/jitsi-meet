@@ -235,12 +235,6 @@
         "microphonePermission": "마이크 권한을 얻는 중 오류가 발생했습니다"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "통화 제어",
-            "connectedDevices": "연결된 장치:",
-            "deleteDevice": "장치 삭제",
-            "pairDevice": "장치 연결"
-        },
         "noPermission": "허가 거부",
         "previewUnavailable": "미리보기를 사용할 수 없음",
         "selectADevice": "장치 선택",

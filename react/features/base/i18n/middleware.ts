@@ -5,7 +5,7 @@ import { SET_CONFIG } from '../config/actionTypes';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { I18NEXT_INITIALIZED, LANGUAGE_CHANGED } from './actionTypes';
-import { changeLanguageBundle } from './functions';
+import { changeLanguageBundle, resolveConfigLanguage } from './functions';
 import i18next, { SUPPORTED_NS } from './i18next';
 import logger from './logger';
 
@@ -31,13 +31,13 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_CONFIG: {
         // When config.js is fetched asynchronously (no window.config at boot),
         // configLanguageDetector returns undefined and i18next falls back. Once
-        // the store has the config, apply its defaultLanguage if it differs
-        // from what i18next picked. A language the user picked wins over it.
-        const defaultLanguage = action.config?.defaultLanguage;
+        // the store has the config, apply its defaultLanguage unless a language
+        // with a higher priority was detected. A language the user picked wins over it.
         const { userSelectedLanguage } = store.getState()['features/base/settings'];
+        const language = resolveConfigLanguage(action.config?.defaultLanguage);
 
-        if (defaultLanguage && !userSelectedLanguage && defaultLanguage !== i18next.language) {
-            i18next.changeLanguage(defaultLanguage).catch(err => {
+        if (language && !userSelectedLanguage && language !== i18next.language) {
+            i18next.changeLanguage(language).catch(err => {
                 logger.log('Error applying defaultLanguage from config', err);
             });
         }
