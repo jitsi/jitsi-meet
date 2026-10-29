@@ -1,7 +1,9 @@
 import assert from 'assert';
 
+import { getContainer } from './helpers/container.js';
 import { mintAsapToken } from './helpers/jwt.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
+import { isAvailablePresence } from './helpers/xmpp_utils.js';
 
 // mod_av_moderation_component is loaded as the "avmoderation.localhost"
 // component (see docker/cfg/components.cfg.lua). Moderators send it
@@ -14,9 +16,29 @@ const CONFERENCE = 'conference.localhost';
 const AV_MODERATION_COMPONENT = 'avmoderation.localhost';
 const JITMEET_NS = 'http://jitsi.org/jitmeet';
 const MEDIA_TYPES = [ 'audio', 'video', 'desktop' ];
+const PROSODY_CFG = '/etc/prosody/cfg/conference.cfg.lua';
 
 let _roomCounter = 0;
 const nextRoom = () => `avmoderation-${++_roomCounter}@${CONFERENCE}`;
+
+/**
+ * Toggles anonymous_strict on mod_muc_resource_validate (see
+ * mod_muc_resource_validate_spec.js). With it off, clients may join with any
+ * format-valid MUC nick, which is the default deployment config.
+ *
+ * @param {boolean} enabled
+ */
+async function setStrictMode(enabled) {
+    const container = getContainer();
+    const from = enabled ? 'anonymous_strict = false' : 'anonymous_strict = true';
+    const to = enabled ? 'anonymous_strict = true' : 'anonymous_strict = false';
+
+    await container.exec([ 'sed', '-i', `s/${from}/${to}/`, PROSODY_CFG ]);
+    await container.exec([ 'prosodyctl', 'reload' ]);
+
+    // prosodyctl reload returns before Prosody has processed config-reloaded.
+    await new Promise(resolve => setTimeout(resolve, 500));
+}
 
 /**
  * Parses the JSON payload of an av_moderation json-message sent by the
@@ -167,13 +189,14 @@ describe('mod_av_moderation_component', () => {
      * Joins the room as an anonymous participant (affiliation none).
      *
      * @param {string} roomJid  Full room JID.
-     * @returns {Promise<object>}
+     * @param {string} [nick]   MUC nick; defaults to the UUID prefix.
+     * @returns {Promise<object>} The client, with the join presence as `presence`.
      */
-    async function joinParticipant(roomJid) {
+    async function joinParticipant(roomJid, nick) {
         const c = await createXmppClient({ params: { room: roomJid.split('@')[0] } });
 
         clients.push(c);
-        await c.joinRoom(roomJid);
+        c.presence = await c.joinRoom(roomJid, nick);
 
         return c;
     }
@@ -303,6 +326,113 @@ describe('mod_av_moderation_component', () => {
                 affiliation: 'member' });
 
             await assertNoAvModeration(focus, p => p.removed === true);
+        });
+    });
+
+    describe('occupant leave', () => {
+
+        it('does not keep the approval of a participant that left for a new occupant with its nick', async () => {
+            const r = nextRoom();
+            const focus = await focusJoin(r);
+            const moderator = await joinModerator(r, 'moderator');
+
+            await setStrictMode(false);
+            try {
+                const participant = await joinParticipant(r);
+                const participantJid = `${r}/${participant.nick}`;
+
+                await enableAll(moderator, focus);
+
+                moderator.sendAvModeration(AV_MODERATION_COMPONENT, { jidToWhitelist: participantJid,
+                    mediaType: 'audio' });
+                await waitForWhitelist(focus, 'audio', w => w.includes(participantJid));
+
+                await participant.leaveRoom(r);
+
+                const whitelist = await waitForWhitelist(focus, 'audio', () => true, { removed: true });
+
+                assert.ok(!whitelist.includes(participantJid),
+                    'audio whitelist must not keep the participant that left');
+
+                const newcomer = await joinParticipant(r, participant.nick);
+
+                assert.ok(isAvailablePresence(newcomer.presence),
+                    'the nick is free again once its occupant left');
+            } finally {
+                await setStrictMode(true);
+            }
+        });
+
+        it('does not keep a moderator that left in the whitelists for a new occupant with its nick', async () => {
+            const r = nextRoom();
+            const focus = await focusJoin(r);
+            const moderator = await joinModerator(r, 'moderator');
+            const other = await joinModerator(r, 'other');
+            const otherNick = other.nick;
+            const otherJid = `${r}/${otherNick}`;
+
+            await setStrictMode(false);
+            try {
+                await enableAll(moderator, focus);
+
+                await other.leaveRoom(r);
+
+                for (const mediaType of MEDIA_TYPES) {
+                    const whitelist = await waitForWhitelist(focus, mediaType, () => true, { removed: true });
+
+                    assert.ok(!whitelist.includes(otherJid),
+                        `${mediaType} whitelist must not keep the moderator that left`);
+                    assert.ok(whitelist.includes(`${r}/${moderator.nick}`),
+                        `${mediaType} whitelist must keep the remaining moderator`);
+                }
+
+                const newcomer = await joinParticipant(r, otherNick);
+
+                assert.ok(isAvailablePresence(newcomer.presence),
+                    'the nick is free again once its occupant left');
+            } finally {
+                await setStrictMode(true);
+            }
+        });
+
+        it('rejects a new occupant taking the nick of an approved participant in anonymous_strict mode', async () => {
+            const r = nextRoom();
+            const focus = await focusJoin(r);
+            const moderator = await joinModerator(r, 'moderator');
+            const participant = await joinParticipant(r);
+            const participantJid = `${r}/${participant.nick}`;
+
+            await enableAll(moderator, focus);
+
+            moderator.sendAvModeration(AV_MODERATION_COMPONENT, { jidToWhitelist: participantJid,
+                mediaType: 'audio' });
+            await waitForWhitelist(focus, 'audio', w => w.includes(participantJid));
+
+            await participant.leaveRoom(r);
+
+            const newcomer = await joinParticipant(r, participant.nick);
+
+            assert.equal(newcomer.presence.attrs.type, 'error');
+            assert.ok(newcomer.presence.getChild('error')?.getChild('not-allowed'),
+                'the nick of another anonymous user must be refused');
+        });
+
+        it('whitelists a moderator again when it rejoins', async () => {
+            const r = nextRoom();
+            const focus = await focusJoin(r);
+            const moderator = await joinModerator(r, 'moderator');
+            const other = await joinModerator(r, 'other');
+
+            await enableAll(moderator, focus);
+
+            await other.leaveRoom(r);
+
+            const rejoined = await joinModerator(r, 'other');
+            const rejoinedJid = `${r}/${rejoined.nick}`;
+
+            for (const mediaType of MEDIA_TYPES) {
+                await waitForWhitelist(focus, mediaType, w => w.includes(rejoinedJid));
+            }
         });
     });
 });

@@ -451,12 +451,32 @@ function occupant_affiliation_changed(event)
     end
 end
 
+-- when an occupant leaves we remove it from the whitelists, the nick is free and the next occupant
+-- using it must not inherit the approval
+function occupant_left(event)
+    local room, occupant = event.room, event.occupant;
+
+    if not room.av_moderation or is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) then
+        return;
+    end
+
+    local occupant_jid = internal_room_jid_match_rewrite(occupant.nick);
+    for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
+        local whitelist = room.av_moderation[mediaType];
+        if whitelist and remove_from_whitelist(whitelist, occupant_jid) then
+            -- notifies all moderators (including jicofo)
+            notify_whitelist_change(occupant.jid, true, room, mediaType, true);
+        end
+    end
+end
+
 -- we will receive messages from the clients
 module:hook('message/host', on_message);
 
 process_host_module(muc_component_host, function(host_module, host)
     module:log('info','Hook to muc events on %s', host);
     host_module:hook('muc-occupant-joined', occupant_joined, -2); -- make sure it runs after allowners or similar
+    host_module:hook('muc-occupant-left', occupant_left);
     host_module:hook('muc-set-affiliation', occupant_affiliation_changed, -1);
 end);
 
