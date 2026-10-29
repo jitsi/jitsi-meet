@@ -335,6 +335,7 @@ export interface IConfig {
     disableAddingBackgroundImages?: boolean;
     disableAudioLevels?: boolean;
     disableBeforeUnloadHandlers?: boolean;
+    disableCameraPtz?: boolean;
     disableCameraTintForeground?: boolean;
     disableChat?: boolean;
     disableChatSmileys?: boolean;
@@ -429,6 +430,7 @@ export interface IConfig {
     enableDisplayNameInStats?: boolean;
     enableEmailInStats?: boolean;
     enableEncodedTransformSupport?: boolean;
+    enableFarEndCameraControl?: boolean;
     enableForcedReload?: boolean;
     enableIceRestart?: boolean;
     enableIceRestartOnNetworkChange?: boolean;
@@ -591,6 +593,7 @@ export interface IConfig {
     };
     notifications?: Array<string>;
     notifyOnConferenceDestruction?: boolean;
+    offerFarEndCameraControl?: boolean;
     openSharedDocumentOnJoin?: boolean;
     opusMaxAverageBitrate?: number;
     p2p?: {

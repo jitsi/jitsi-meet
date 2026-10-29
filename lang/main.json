@@ -108,6 +108,19 @@
         "refresh": "Refresh calendar",
         "today": "Today"
     },
+    "cameraPtz": {
+        "commanded": "Commanded",
+        "controlling": "Controlling · {{name}}",
+        "done": "Done",
+        "fieldOfView": "Full field of view",
+        "framingHelp": "Drag the rectangle to command a new framing. The dashed outline holds your target while the camera travels to it.",
+        "moving": "Moving to new framing",
+        "now": "Now",
+        "onTarget": "On target",
+        "reset": "Reset framing",
+        "title": "Camera controls",
+        "zoom": "Zoom"
+    },
     "carmode": {
         "actions": {
             "selectSoundDevice": "Select sound device"
@@ -381,6 +394,7 @@
         "currentLinks": "Current Links",
         "demoteParticipantDialog": "Are you sure you want to move this participant to viewer?",
         "demoteParticipantTitle": "Move to viewer",
+        "deny": "Deny",
         "dismiss": "Dismiss",
         "dismissAll": "Dismiss All",
         "displayNameRequired": "Hi! What's your name?",
@@ -897,6 +911,8 @@
         "allowedUnmute": "You can unmute your microphone, start your camera or share your screen.",
         "audioUnmuteBlockedDescription": "Mic unmute operation has been temporarily blocked because of system limits.",
         "audioUnmuteBlockedTitle": "Mic unmute blocked!",
+        "cameraControlRequest": "Wants to pan, tilt and zoom your camera",
+        "cameraControlTaken": "{{name}} is no longer controlling your camera",
         "chatMessages": "Chat messages",
         "confirmAccountError": "Failed to confirm account",
         "confirmAccountSuccess": "Account confirmed",
@@ -1719,6 +1735,7 @@
     },
     "videothumbnail": {
         "connectionInfo": "Connection Info",
+        "controlCamera": "Control camera",
         "demote": "Move to viewer",
         "domute": "Mute",
         "domuteDesktop": "Stop screen-sharing",
@@ -1739,6 +1756,7 @@
         "screenSharing": "Participant is sharing their screen",
         "show": "Show on stage",
         "showSelfView": "Show self view",
+        "stopControllingCamera": "Stop controlling camera",
         "unpinFromStage": "Unpin",
         "verify": "Verify participant",
         "videoMuted": "Camera disabled",

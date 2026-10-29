@@ -3,6 +3,7 @@ import { IAudioSettings } from '../settings/reducer';
 
 export interface ITrackOptions {
     cameraDeviceId?: string | null;
+    cameraPtz?: boolean;
     constraints?: {
         audio?: IAudioSettings;
         video?: {

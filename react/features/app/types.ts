@@ -31,6 +31,7 @@ import { INoSrcDataState, ITracksState } from '../base/tracks/reducer';
 import { IUserInteractionState } from '../base/user-interaction/reducer';
 import { IBreakoutRoomsState } from '../breakout-rooms/reducer';
 import { ICalendarSyncState } from '../calendar-sync/reducer';
+import { ICameraPtzState } from '../camera-ptz/reducer';
 import { IChatState } from '../chat/reducer';
 import { ICustomPanelState } from '../custom-panel/reducer';
 import { IDeepLinkingState } from '../deep-linking/reducer';
@@ -125,6 +126,7 @@ export interface IReduxState {
     'features/breakout-rooms': IBreakoutRoomsState;
     'features/calendar-sync': ICalendarSyncState;
     'features/call-integration': ICallIntegrationState;
+    'features/camera-ptz': ICameraPtzState;
     'features/chat': IChatState;
     'features/custom-panel': ICustomPanelState;
     'features/deep-linking': IDeepLinkingState;

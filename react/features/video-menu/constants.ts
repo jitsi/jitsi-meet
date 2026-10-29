@@ -20,6 +20,7 @@ export const PARTICIPANT_MENU_BUTTONS = {
     ALLOW_DESKTOP: 'allow-desktop',
     ALLOW_VIDEO: 'allow-video',
     ASK_UNMUTE: 'ask-unmute',
+    CAMERA_CONTROL: 'camera-control',
     CONN_STATUS: 'conn-status',
     DEMOTE: 'demote',
     FLIP_LOCAL_VIDEO: 'flip-local-video',
