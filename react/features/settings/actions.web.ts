@@ -242,7 +242,9 @@ export function submitModeratorTab(newState: any) {
 
         if (newState.chatWithPermissionsEnabled !== currentState.chatWithPermissionsEnabled
             || newState.privateChatWithPermissionsEnabled !== currentState.privateChatWithPermissionsEnabled
-            || newState.sharedVideoWithPermissionsEnabled !== currentState.sharedVideoWithPermissionsEnabled) {
+            || newState.sharedVideoWithPermissionsEnabled !== currentState.sharedVideoWithPermissionsEnabled
+            || newState.breakoutRoomJoinWithPermissionsEnabled
+                !== currentState.breakoutRoomJoinWithPermissionsEnabled) {
             const { conference } = getState()['features/base/conference'];
 
             const currentPermissions = conference?.getMetadataHandler().getMetadata().permissions || {};
@@ -251,6 +253,7 @@ export function submitModeratorTab(newState: any) {
             // confirms it, thus a second update here would not see the first one.
             conference?.getMetadataHandler().setMetadata('permissions', {
                 ...currentPermissions,
+                breakoutRoomJoinRestricted: newState.breakoutRoomJoinWithPermissionsEnabled,
                 groupChatRestricted: newState.chatWithPermissionsEnabled,
                 privateChatRestricted: newState.privateChatWithPermissionsEnabled,
                 sharedVideoRestricted: newState.sharedVideoWithPermissionsEnabled

@@ -18,10 +18,12 @@ const ModeratorSection = () => {
     const dispatch = useDispatch();
     const {
         audioModerationEnabled,
+        breakoutRoomJoinWithPermissionsEnabled,
         chatWithPermissionsEnabled,
         privateChatWithPermissionsEnabled,
         sharedVideoWithPermissionsEnabled,
         showSharedVideoWithPermissions,
+        showBreakoutRoomJoinWithPermissions,
         followMeActive,
         followMeEnabled,
         followMeRecorderActive,
@@ -76,7 +78,8 @@ const ModeratorSection = () => {
                 delete pendingPermissions.current[key];
             }
         }
-    }, [ conference, chatWithPermissionsEnabled, privateChatWithPermissionsEnabled, sharedVideoWithPermissionsEnabled ]);
+    }, [ conference, chatWithPermissionsEnabled, privateChatWithPermissionsEnabled, sharedVideoWithPermissionsEnabled,
+        breakoutRoomJoinWithPermissionsEnabled ]);
 
     const setPermission = useCallback((key: string, enabled?: boolean) => {
         pendingPermissions.current[key] = enabled;
@@ -97,6 +100,10 @@ const ModeratorSection = () => {
 
     const onSharedVideoWithPermissionsToggled = useCallback((enabled?: boolean) => {
         setPermission('sharedVideoRestricted', enabled);
+    }, [ setPermission ]);
+
+    const onBreakoutRoomJoinWithPermissionsToggled = useCallback((enabled?: boolean) => {
+        setPermission('breakoutRoomJoinRestricted', enabled);
     }, [ setPermission ]);
 
     const followMeRecorderChecked = followMeRecorderEnabled && !followMeRecorderActive;
@@ -148,6 +155,11 @@ const ModeratorSection = () => {
                 state: sharedVideoWithPermissionsEnabled,
                 onChange: onSharedVideoWithPermissionsToggled
             },
+            {
+                label: 'settings.breakoutRoomJoinWithPermissions',
+                state: breakoutRoomJoinWithPermissionsEnabled,
+                onChange: onBreakoutRoomJoinWithPermissionsToggled
+            },
         ];
 
         return moderation.filter(({ label }) => {
@@ -159,6 +171,10 @@ const ModeratorSection = () => {
 
             if (label === 'settings.sharedVideoWithPermissions') {
                 return showSharedVideoWithPermissions;
+            }
+
+            if (label === 'settings.breakoutRoomJoinWithPermissions') {
+                return showBreakoutRoomJoinWithPermissions;
             }
 
             return true;
@@ -180,6 +196,9 @@ const ModeratorSection = () => {
         privateChatWithPermissionsEnabled,
         sharedVideoWithPermissionsEnabled,
         showSharedVideoWithPermissions,
+        onBreakoutRoomJoinWithPermissionsToggled,
+        breakoutRoomJoinWithPermissionsEnabled,
+        showBreakoutRoomJoinWithPermissions,
         startReactionsMuted ]);
 
     return (
