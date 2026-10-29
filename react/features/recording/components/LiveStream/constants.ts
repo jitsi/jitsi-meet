@@ -28,9 +28,8 @@ export const FOUR_GROUPS_DASH_SEPARATED = /^(?:[a-zA-Z0-9]{4}(?:-(?!$)|$)){4}/;
  * Default stream key or RTMP/RTMPS URL RegExp for generic live streaming.
  * Accepts:
  * - RTMP/RTMPS URLs (case-insensitive, e.g. rtmp://domain.com/live/key, RTMP://...)
- * - YouTube 4-group keys (e.g. abcd-1234-efgh-5678)
- * - Generic stream keys of at least 10 characters (allowing hyphens, underscores, dots, query parameters, etc.).
+ * - Generic stream keys of at least 6 characters (e.g. Owncast, Facebook, Twitch, allowing punctuation and query parameters).
  */
 export const STREAM_KEY_OR_URL_REGEXP
-    = /^(?:rtmps?:\/\/\S+|(?:[a-zA-Z0-9]{4}(?:-(?!$)|$)){4}|[a-zA-Z0-9_.~?=&/-]{10,})$/i;
+    = /^(?:rtmps?:\/\/\S+|[a-z0-9_.~?=&/-]{6,})$/i;
 

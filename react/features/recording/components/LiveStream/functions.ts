@@ -21,11 +21,13 @@ export function getLiveStreaming(state: IReduxState) {
     const hasGoogleApi = Boolean(googleApiApplicationClientID);
     const hasCustomTerms = Boolean(liveStreaming.termsLink);
     const hasCustomPrivacy = Boolean(liveStreaming.dataPrivacyLink);
+    const isYouTubeTerms = liveStreaming.termsLink === YOUTUBE_TERMS_URL || (hasGoogleApi && !hasCustomTerms);
+    const isGooglePrivacy = liveStreaming.dataPrivacyLink === GOOGLE_PRIVACY_POLICY || (hasGoogleApi && !hasCustomPrivacy);
 
     return {
-        dataPrivacyLabelKey: hasCustomPrivacy
-            ? 'liveStreaming.privacyPolicy'
-            : (hasGoogleApi ? 'liveStreaming.googlePrivacyPolicy' : 'liveStreaming.privacyPolicy'),
+        dataPrivacyLabelKey: isGooglePrivacy
+            ? 'liveStreaming.googlePrivacyPolicy'
+            : 'liveStreaming.privacyPolicy',
         dataPrivacyURL: sanitizeUrl(liveStreaming.dataPrivacyLink
             || (hasGoogleApi ? GOOGLE_PRIVACY_POLICY : undefined))?.toString(),
         enabled: Boolean(liveStreaming.enabled),
@@ -34,9 +36,9 @@ export function getLiveStreaming(state: IReduxState) {
             ? 'liveStreaming.enterStreamKey'
             : 'liveStreaming.enterStreamKeyGeneric',
         streamLinkRegexp: regexp || (hasGoogleApi ? FOUR_GROUPS_DASH_SEPARATED : STREAM_KEY_OR_URL_REGEXP),
-        termsLabelKey: hasCustomTerms
-            ? 'liveStreaming.terms'
-            : (hasGoogleApi ? 'liveStreaming.youtubeTerms' : 'liveStreaming.terms'),
+        termsLabelKey: isYouTubeTerms
+            ? 'liveStreaming.youtubeTerms'
+            : 'liveStreaming.terms',
         termsURL: sanitizeUrl(liveStreaming.termsLink || (hasGoogleApi ? YOUTUBE_TERMS_URL : undefined))?.toString()
     };
 }
