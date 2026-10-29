@@ -40,6 +40,9 @@ const LanguageListItem = ({ t, lang, selected, onLanguageSelected
     const onLanguageSelectedWrapper
         = useCallback(() => onLanguageSelected(lang), [ lang ]);
 
+    const label = t(lang);
+    const accessibilityState = { selected };
+
     return (
         <View style = { styles.languageItemWrapper as StyleProp<ViewStyle> }>
             <View style = { styles.iconWrapper }>
@@ -51,15 +54,16 @@ const LanguageListItem = ({ t, lang, selected, onLanguageSelected
                 }
             </View>
             <TouchableHighlight
+                accessibilityLabel = { label }
                 accessibilityRole = 'button'
-                accessibilityState = {{ selected }}
+                accessibilityState = { accessibilityState }
                 onPress = { onLanguageSelectedWrapper }
                 underlayColor = { 'transparent' } >
                 <Text
                     style = { [
                         styles.languageItemText,
                         selected && styles.activeLanguageItemText ] }>
-                    { t(lang) }
+                    { label }
                 </Text>
             </TouchableHighlight>
         </View>
