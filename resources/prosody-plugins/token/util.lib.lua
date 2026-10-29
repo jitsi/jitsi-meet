@@ -285,6 +285,10 @@ function Util:set_asap_key_server(asapKeyServer)
     self.cacheKeysUrl = nil;
     self.cachedKeys = nil;
     self.appSecret = nil;
+    -- the key server serves RSA keys, an algorithm derived from app_secret does not apply
+    if not starts_with(self.signatureAlgorithm, "RS") then
+        self.signatureAlgorithm = "RS256";
+    end
     self:clear_asap_cache();
 end
 
