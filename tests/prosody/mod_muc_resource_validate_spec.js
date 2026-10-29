@@ -115,6 +115,66 @@ describe('mod_muc_resource_validate', () => {
         );
     });
 
+    // ── Reserved resources ────────────────────────────────────────────────────
+    //
+    // Reserved resources must be rejected even when anonymous_strict is off, so
+    // these tests disable strict mode to make sure the reserved check alone
+    // rejects them.
+
+    it('rejects the reserved transcriber resource', async () => {
+        const r = room();
+
+        await ctx.connectFocus(r);
+        await setStrictMode(false);
+        try {
+            const c = await ctx.connect();
+            const presence = await c.joinRoom(r, 'transcriber');
+
+            assert.equal(presence.attrs.type, 'error',
+                'reserved resource must be rejected');
+            assert.ok(
+                presence.getChild('error')?.getChild('not-allowed'),
+                'error stanza must contain <not-allowed/>'
+            );
+        } finally {
+            await setStrictMode(true);
+        }
+    });
+
+    // Jigasi with the SIP user as XMPP resource joins its transcriber as
+    // "Transcriber" (its display name); the exact match must let it in.
+    it('allows a reserved resource in a different case', async () => {
+        const r = room();
+
+        await ctx.connectFocus(r);
+        await setStrictMode(false);
+        try {
+            const c = await ctx.connect();
+            const presence = await c.joinRoom(r, 'Transcriber');
+
+            assert.ok(isAvailablePresence(presence),
+                'reserved resource in a different case must be allowed');
+        } finally {
+            await setStrictMode(true);
+        }
+    });
+
+    it('allows a resource that only starts with a reserved one', async () => {
+        const r = room();
+
+        await ctx.connectFocus(r);
+        await setStrictMode(false);
+        try {
+            const c = await ctx.connect();
+            const presence = await c.joinRoom(r, 'transcriber2');
+
+            assert.ok(isAvailablePresence(presence),
+                'resource that only starts with a reserved one must be allowed');
+        } finally {
+            await setStrictMode(true);
+        }
+    });
+
     // ── Anonymous strict mode ─────────────────────────────────────────────────
     //
     // anonymous_strict = true is the default in the test config, so no toggle

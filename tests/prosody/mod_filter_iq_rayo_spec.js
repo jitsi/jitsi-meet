@@ -331,7 +331,8 @@ describe('mod_filter_iq_rayo (feature-based authorization)', () => {
                     value: userId })
             );
 
-            await c.joinRoom(roomJid, 'transcriber', { extensions: [ initiator ] });
+            // Jigasi joins with a random 8 hex digit resource; "transcriber" is reserved.
+            await c.joinRoom(roomJid, 'a1b2c3d4', { extensions: [ initiator ] });
 
             return c;
         }

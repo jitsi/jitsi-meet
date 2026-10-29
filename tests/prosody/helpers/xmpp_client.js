@@ -26,8 +26,8 @@ export async function joinWithJibri(roomJid) {
 }
 
 /**
- * Connects as the transcriber, joins roomJid with nick 'transcriber', and
- * returns the client. Authenticates as transcriber@recorder.localhost.
+ * Connects as the transcriber, joins roomJid with an 8 hex digit nick (as
+ * Jigasi does; 'transcriber' is a reserved resource), and returns the client. Authenticates as transcriber@recorder.localhost.
  * The bare JID starts with 'transcriber@recorder.' so is_transcriber() returns
  * true, matching the default transcriber_prefixes in util.lib.lua.
  *
@@ -43,7 +43,7 @@ export async function joinWithTranscriber(roomJid) {
         password: 'transcribersecret'
     });
 
-    await c.joinRoom(roomJid, 'transcriber');
+    await c.joinRoom(roomJid, 'a1b2c3d4');
 
     return c;
 }
