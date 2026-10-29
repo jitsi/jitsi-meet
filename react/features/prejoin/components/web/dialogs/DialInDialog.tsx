@@ -76,12 +76,16 @@ const useStyles = makeStyles()(theme => {
             },
 
             '& .prejoin-dialog-dialin-link': {
+                background: 'transparent',
+                border: 0,
                 color: '#6FB1EA',
                 cursor: 'pointer',
                 display: 'inline-block',
+                fontFamily: 'inherit',
                 fontSize: '0.875rem',
                 lineHeight: '1.5rem',
-                marginBottom: theme.spacing(4)
+                marginBottom: theme.spacing(4),
+                padding: 0
             },
             '& .prejoin-dialog-dialin-spaced-label': {
                 marginBottom: theme.spacing(3),
@@ -139,11 +143,12 @@ function DialinDialog(props: IProps) {
                 <div className = 'prejoin-dialog-dialin-num'>{passCode}</div>
             </div>
             <div>
-                <span
+                <button
                     className = 'prejoin-dialog-dialin-link'
-                    onClick = { onSmallTextClick }>
+                    onClick = { onSmallTextClick }
+                    type = 'button'>
                     {t('prejoin.viewAllNumbers')}
-                </span>
+                </button>
             </div>
             <div className = 'prejoin-dialog-delimiter' />
             <Label
