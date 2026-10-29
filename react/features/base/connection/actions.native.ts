@@ -4,9 +4,15 @@ import { getCustomerDetails } from '../../jaas/actions.any';
 import { getJaasJWT, isVpaasMeeting } from '../../jaas/functions';
 import { replaceRoot } from '../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../mobile/navigation/routes';
+import {
+    captureBackgroundConnection,
+    ensureBackgroundSession,
+    trackBackgroundDisconnect
+} from '../../virtual-background/lifecycle';
 import { setJWT } from '../jwt/actions';
 import { JitsiConnectionErrors } from '../lib-jitsi-meet';
 
+import { disconnect as disconnectInternal } from './actions.any';
 import { _connectInternal } from './actions.native';
 import logger from './logger';
 
@@ -20,7 +26,18 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function connect(id?: string, password?: string) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const canConnect = captureBackgroundConnection({ dispatch, getState });
+
+        try {
+            if (!await ensureBackgroundSession({ dispatch, getState }) || !canConnect()) {
+                return;
+            }
+        } catch (error) {
+            logger.error('Could not activate background session', error);
+
+            return;
+        }
         const state = getState();
         const { jwt } = state['features/base/jwt'];
 
@@ -31,7 +48,10 @@ export function connect(id?: string, password?: string) {
                         return getJaasJWT(state);
                     }
                 })
-                .then(j => {
+                .then(async j => {
+                    if (!canConnect() || !await ensureBackgroundSession({ dispatch, getState }) || !canConnect()) {
+                        return;
+                    }
                     j && dispatch(setJWT(j));
 
                     return dispatch(_connectInternal(id, password));
@@ -40,7 +60,7 @@ export function connect(id?: string, password?: string) {
                 });
         }
 
-        dispatch(_connectInternal(id, password))
+        return dispatch(_connectInternal(id, password))
 
         .catch(error => {
             if (error === JitsiConnectionErrors.NOT_LIVE_ERROR) {
@@ -48,6 +68,18 @@ export function connect(id?: string, password?: string) {
             }
         });
     };
+}
+
+/**
+ * Disconnects the current connection and tracks completion for background lifecycle work.
+ *
+ * @param {boolean} [isRedirect] - Whether the disconnect is part of a redirect.
+ * @param {boolean} [shouldLeave=true] - Whether to leave the conference while disconnecting.
+ * @returns {Function} A thunk that disconnects the current connection.
+ */
+export function disconnect(isRedirect?: boolean, shouldLeave = true) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) =>
+        trackBackgroundDisconnect({ dispatch, getState }, () => dispatch(disconnectInternal(isRedirect, shouldLeave)));
 }
 
 /**

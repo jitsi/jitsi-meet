@@ -30,6 +30,7 @@ import {
 import { screen } from '../mobile/navigation/routes';
 import { clearNotifications } from '../notifications/actions';
 import { isUnsafeRoomWarningEnabled } from '../prejoin/functions.native';
+import { beginBackgroundNavigation, hasBackgroundSession } from '../virtual-background/lifecycle';
 
 import { maybeRedirectToTokenAuthUrl } from './actions.any';
 import { addTrackStateToURL, getDefaultURL } from './functions.native';
@@ -86,7 +87,8 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
                 const currentLocationURL = conference?.getConnection()[JITSI_CONNECTION_URL_KEY];
                 const { hostname: currentHostName, pathname: currentPathName } = currentLocationURL;
 
-                if (currentHostName === hostname && currentPathName === pathname) {
+                if (currentHostName === hostname && currentPathName === pathname
+                        && hasBackgroundSession({ dispatch, getState })) {
                     logger.warn(`Joining same conference using URL: ${stripJwtSignatures(currentLocationURL)}`);
 
                     return;
@@ -96,9 +98,21 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
             }
         }
 
-        dispatch(disconnect());
-
         dispatch(configWillLoad(locationURL));
+
+        let isCurrentNavigation;
+
+        try {
+            isCurrentNavigation = await beginBackgroundNavigation({ dispatch, getState },
+                () => dispatch(disconnect()));
+        } catch (error) {
+            logger.error('Could not prepare background navigation', error);
+
+            return;
+        }
+        if (!isCurrentNavigation()) {
+            return;
+        }
 
         let protocol = location.protocol.toLowerCase();
 
@@ -137,7 +151,7 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
             }
         }
 
-        if (getState()['features/base/config'].locationURL !== locationURL) {
+        if (!isCurrentNavigation() || getState()['features/base/config'].locationURL !== locationURL) {
             dispatch(loadConfigError(new Error('Config no longer needed!'), locationURL));
 
             return;
