@@ -43,16 +43,21 @@ import logger from './logger';
 import { ITrack, ITrackOptions } from './types';
 
 // The listeners trackAdded registers on each track, so trackRemoved removes those and not the library's own.
-const trackListeners = new WeakMap<any, Array<[ string, Function ]>>();
+const trackListenerRemovers = new WeakMap<any, Array<() => void>>();
 
-const addTrackListener = (track: any, event: string, listener: Function) => {
-    track.on(event, listener);
-    trackListeners.set(track, [ ...trackListeners.get(track) ?? [], [ event, listener ] ]);
+const addTrackListener = (track: any, event: string, listener: (...args: any[]) => void) => {
+    let removers = trackListenerRemovers.get(track);
+
+    if (!removers) {
+        removers = [];
+        trackListenerRemovers.set(track, removers);
+    }
+    removers.push(track.addCancellableListener(event, listener));
 };
 
 const removeTrackListeners = (track: any) => {
-    trackListeners.get(track)?.forEach(([ event, listener ]) => track.off(event, listener));
-    trackListeners.delete(track);
+    trackListenerRemovers.get(track)?.forEach(remove => remove());
+    trackListenerRemovers.delete(track);
 };
 
 /**
@@ -401,9 +406,6 @@ function replaceStoredTracks(oldTrack: any, newTrack: any) {
  */
 export function trackAdded(track: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        // Guard against the same track being added twice.
-        removeTrackListeners(track);
-
         // Translated audio tracks (source name <regularSourceName>.<language>) have no mute lifecycle, since
         // presence/source-info is only signaled for the original source. Skip the inert mute listener for them.
         const sourceName = track.getSourceName?.();
