@@ -626,6 +626,7 @@
     "e2ee": {
         "labelToolTip": "Audio and Video Communication on this call is end-to-end encrypted"
     },
+    "editDisplayName": "Edit display name, {{name}}",
     "embedMeeting": {
         "title": "Embed this meeting"
     },

@@ -21,7 +21,7 @@ import { getDisplayNameColor } from './styles';
 interface IProps {
 
     /**
-     * Whether or not the display name should be editable on click.
+     * Whether or not the display name should be editable on click or from the keyboard.
      */
     allowEditing: boolean;
 
@@ -54,7 +54,12 @@ const useStyles = makeStyles()(theme => {
             color: getDisplayNameColor(theme),
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
+
+            '&:focus-visible': {
+                outline: `2px solid ${getDisplayNameColor(theme)}`,
+                outlineOffset: '-2px'
+            }
         },
 
         editDisplayName: {
@@ -116,13 +121,29 @@ const DisplayName = ({
         }
     }, [ onSubmit ]);
 
-    const onStartEditing = useCallback((e: React.MouseEvent) => {
-        if (allowEditing) {
-            e.stopPropagation();
-            setIsEditing(true);
-            setEditDisplayNameValue(configuredDisplayName);
+    const startEditing = useCallback(() => {
+        if (!allowEditing) {
+            return;
         }
-    }, [ allowEditing ]);
+
+        setIsEditing(true);
+        setEditDisplayNameValue(configuredDisplayName);
+    }, [ allowEditing, configuredDisplayName ]);
+
+    const onStartEditing = useCallback((e: React.MouseEvent) => {
+        e.stopPropagation();
+        startEditing();
+    }, [ startEditing ]);
+
+    const onDisplayNameKeyDown = useCallback((e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            startEditing();
+        }
+    }, [ startEditing ]);
+
+    const displayedName = appendSuffix(nameToDisplay, displayNameSuffix);
 
     if (allowEditing && isEditing) {
         return (
@@ -144,13 +165,19 @@ const DisplayName = ({
 
     return (
         <Tooltip
-            content = { appendSuffix(nameToDisplay, displayNameSuffix) }
+            content = { displayedName }
             position = { getIndicatorsTooltipPosition(thumbnailType) }>
             <span
+                aria-label = { allowEditing
+                    ? t('editDisplayName', { name: displayedName })
+                    : undefined }
                 className = { `displayname ${classes.displayName}` }
                 id = { elementID }
-                onClick = { onStartEditing }>
-                {appendSuffix(nameToDisplay, displayNameSuffix)}
+                onClick = { allowEditing ? onStartEditing : undefined }
+                onKeyDown = { allowEditing ? onDisplayNameKeyDown : undefined }
+                role = { allowEditing ? 'button' : undefined }
+                tabIndex = { allowEditing ? 0 : undefined }>
+                {displayedName}
             </span>
         </Tooltip>
     );
