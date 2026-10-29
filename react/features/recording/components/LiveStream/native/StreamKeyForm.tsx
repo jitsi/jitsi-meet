@@ -11,7 +11,6 @@ import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 import AbstractStreamKeyForm, {
     IProps as AbstractProps
 } from '../AbstractStreamKeyForm';
-import { GOOGLE_PRIVACY_POLICY, YOUTUBE_TERMS_URL } from '../constants';
 import { getLiveStreaming } from '../functions';
 
 import styles from './styles';
@@ -40,9 +39,9 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
-        this._onOpenGooglePrivacyPolicy = this._onOpenGooglePrivacyPolicy.bind(this);
+        this._onOpenDataPrivacy = this._onOpenDataPrivacy.bind(this);
         this._onOpenHelp = this._onOpenHelp.bind(this);
-        this._onOpenYoutubeTerms = this._onOpenYoutubeTerms.bind(this);
+        this._onOpenTerms = this._onOpenTerms.bind(this);
 
     }
 
@@ -63,7 +62,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
                             input: styles.streamKeyInput,
                             container: styles.streamKeyContainer }}
                         onChange = { this._onInputChange }
-                        placeholder = { t('liveStreaming.enterStreamKey') }
+                        placeholder = { t(this.props._liveStreaming.streamKeyPlaceholderKey) }
                         value = { this.props.value } />
                     <View style = { styles.formValidationItem as ViewStyle }>
                         {
@@ -90,27 +89,19 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
                     { this.props._liveStreaming.termsURL
                         ? (
                             <Button
-                                accessibilityLabel = { this.props._liveStreaming.termsURL === YOUTUBE_TERMS_URL
-                                    ? 'liveStreaming.youtubeTerms'
-                                    : 'liveStreaming.terms' }
-                                labelKey = { this.props._liveStreaming.termsURL === YOUTUBE_TERMS_URL
-                                    ? 'liveStreaming.youtubeTerms'
-                                    : 'liveStreaming.terms' }
+                                accessibilityLabel = { this.props._liveStreaming.termsLabelKey }
+                                labelKey = { this.props._liveStreaming.termsLabelKey }
                                 labelStyle = { styles.buttonLabelStyle }
-                                onClick = { this._onOpenYoutubeTerms }
+                                onClick = { this._onOpenTerms }
                                 type = { BUTTON_TYPES.TERTIARY } />
                         ) : null }
                     { this.props._liveStreaming.dataPrivacyURL
                         ? (
                             <Button
-                                accessibilityLabel = { this.props._liveStreaming.dataPrivacyURL === GOOGLE_PRIVACY_POLICY
-                                    ? 'liveStreaming.googlePrivacyPolicy'
-                                    : 'liveStreaming.privacyPolicy' }
-                                labelKey = { this.props._liveStreaming.dataPrivacyURL === GOOGLE_PRIVACY_POLICY
-                                    ? 'liveStreaming.googlePrivacyPolicy'
-                                    : 'liveStreaming.privacyPolicy' }
+                                accessibilityLabel = { this.props._liveStreaming.dataPrivacyLabelKey }
+                                labelKey = { this.props._liveStreaming.dataPrivacyLabelKey }
                                 labelStyle = { styles.buttonLabelStyle }
-                                onClick = { this._onOpenGooglePrivacyPolicy }
+                                onClick = { this._onOpenDataPrivacy }
                                 type = { BUTTON_TYPES.TERTIARY } />
                         ) : null }
                 </View>
@@ -119,12 +110,12 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
     }
 
     /**
-     * Opens the Google Privacy Policy web page.
+     * Opens the privacy policy web page.
      *
      * @private
      * @returns {void}
      */
-    _onOpenGooglePrivacyPolicy() {
+    _onOpenDataPrivacy() {
         const url = this.props._liveStreaming.dataPrivacyURL;
 
         if (typeof url === 'string') {
@@ -148,12 +139,12 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
     }
 
     /**
-     * Opens the YouTube terms and conditions web page.
+     * Opens the terms and conditions web page.
      *
      * @private
      * @returns {void}
      */
-    _onOpenYoutubeTerms() {
+    _onOpenTerms() {
         const url = this.props._liveStreaming.termsURL;
 
         if (typeof url === 'string') {

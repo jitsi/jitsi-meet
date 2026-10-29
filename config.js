@@ -482,6 +482,10 @@ var config = {
     // },
 
     // Customize the Live Streaming dialog. Can be modified for a non-YouTube provider.
+    // When googleApiApplicationClientID is set, termsLink and dataPrivacyLink default to YouTube/Google
+    // links, and validatorRegExpString defaults to the 4-group YouTube key format.
+    // When googleApiApplicationClientID is not set, termsLink and dataPrivacyLink are not shown by default
+    // unless configured here, and validatorRegExpString defaults to accepting RTMP/RTMPS URLs and stream keys.
     // liveStreaming: {
     //    // Whether to enable live streaming or not.
     //    enabled: false,

@@ -9,7 +9,6 @@ import AbstractStreamKeyForm, {
     IProps as AbstractProps,
     _mapStateToProps
 } from '../AbstractStreamKeyForm';
-import { GOOGLE_PRIVACY_POLICY, YOUTUBE_TERMS_URL } from '../constants';
 
 interface IProps extends AbstractProps {
 
@@ -67,7 +66,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
                     label = { t('dialog.streamKey') }
                     name = 'streamId'
                     onChange = { this._onInputChange }
-                    placeholder = { t('liveStreaming.enterStreamKey') }
+                    placeholder = { t(this.props._liveStreaming.streamKeyPlaceholderKey) }
                     type = 'text'
                     value = { value } />
                 <div className = 'form-footer'>
@@ -97,9 +96,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
                                 href = { this.props._liveStreaming.termsURL }
                                 rel = 'noopener noreferrer'
                                 target = '_blank'>
-                                { t(this.props._liveStreaming.termsURL === YOUTUBE_TERMS_URL
-                                    ? 'liveStreaming.youtubeTerms'
-                                    : 'liveStreaming.terms') }
+                                { t(this.props._liveStreaming.termsLabelKey) }
                             </a>
                         ) : null }
                     { this.props._liveStreaming.dataPrivacyURL
@@ -109,9 +106,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
                                 href = { this.props._liveStreaming.dataPrivacyURL }
                                 rel = 'noopener noreferrer'
                                 target = '_blank'>
-                                { t(this.props._liveStreaming.dataPrivacyURL === GOOGLE_PRIVACY_POLICY
-                                    ? 'liveStreaming.googlePrivacyPolicy'
-                                    : 'liveStreaming.privacyPolicy') }
+                                { t(this.props._liveStreaming.dataPrivacyLabelKey) }
                             </a>
                         ) : null }
                 </div>

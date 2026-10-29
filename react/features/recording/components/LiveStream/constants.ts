@@ -25,11 +25,12 @@ export const JITSI_LIVE_STREAMING_HELP_LINK = 'https://jitsi.org/live';
 export const FOUR_GROUPS_DASH_SEPARATED = /^(?:[a-zA-Z0-9]{4}(?:-(?!$)|$)){4}/;
 
 /**
- * Default stream key or RTMP/RTMPS URL RegExp.
+ * Default stream key or RTMP/RTMPS URL RegExp for generic live streaming.
  * Accepts:
- * - RTMP/RTMPS URLs (e.g. rtmp://domain.com/live/key, rtmps://...)
+ * - RTMP/RTMPS URLs (case-insensitive, e.g. rtmp://domain.com/live/key, RTMP://...)
  * - YouTube 4-group keys (e.g. abcd-1234-efgh-5678)
- * - Generic alphanumeric stream keys with dashes or underscores.
+ * - Generic stream keys of at least 10 characters (allowing hyphens, underscores, dots, query parameters, etc.).
  */
-export const STREAM_KEY_OR_URL_REGEXP = /^(?:rtmps?:\/\/\S+|(?:[a-zA-Z0-9]{4}(?:-(?!$)|$)){4}|[a-zA-Z0-9_\-]+)$/;
+export const STREAM_KEY_OR_URL_REGEXP
+    = /^(?:rtmps?:\/\/\S+|(?:[a-zA-Z0-9]{4}(?:-(?!$)|$)){4}|[a-zA-Z0-9_.~?=&/-]{10,})$/i;
 
