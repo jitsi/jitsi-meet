@@ -319,6 +319,12 @@ class Popover extends Component<IProps, IState> {
                             // to prevent UI stutter on dialog appearance. It seems the focus guards generated annoy
                             // our DialogPortal positioning calculations.
                             enabled = { Boolean(this._contextMenuRef) && this.state.enableFocusLock }
+
+                            // Only lock the focus. Isolation disables the pointer events on the rest of the page,
+                            // which blocks clicks outside the popover and fires mouseleave on the element under the
+                            // mouse, closing popovers rendered only while their parent is hovered (e.g. the chat
+                            // message menu). The scroll lock would block scrolling the page, e.g. the chat.
+                            noIsolation = { true }
                             returnFocus = {
 
                                 // If we return the focus to an element outside the viewport the page will scroll to
@@ -330,6 +336,7 @@ class Popover extends Component<IProps, IState> {
                                 // large video.
                                 isElementInTheViewport
                             }
+                            scrollLock = { false }
                             shards = { this._contextMenuRef && [ this._contextMenuRef ] }>
                             {this._renderContent()}
                         </FocusOn>
