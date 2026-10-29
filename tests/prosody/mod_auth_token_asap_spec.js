@@ -183,16 +183,72 @@ describe('mod_auth_token (ASAP / RS256)', () => {
         assert.ok(c.jid, 'client should have a JID');
     });
 
-    // ── Room regex claim: invalid Lua pattern ─────────────────────────────────
+    // ── Room regex claim: supported syntax ────────────────────────────────────
     //
-    // When context.room.regex == true, util.lib.lua uses the JWT room claim as
-    // a Lua pattern via string:match() inside verify_room() at MUC join time.
-    // An invalid Lua pattern (e.g. unbalanced parenthesis) must be rejected
-    // cleanly rather than crashing Prosody with a Lua error.
+    // When context.room.regex == true, verify_room() matches the JWT room claim
+    // against the room name at MUC join time. The only special sequence is one
+    // '.*', which matches any run of characters. Every other character must
+    // match literally, and the claim must match the whole room name. A claim
+    // with more than one '.*', or with any other Lua pattern character, is
+    // refused with <invalid-regex/>, which distinguishes it from a claim that
+    // was evaluated and did not match (<room-name-does-not-match/>).
 
-    it('does not crash on connect with invalid Lua regex room claim', async () => {
+    // A unique room-name suffix without digits.
+    const lettersOnly = () => Date.now()
+        .toString(36)
+        .replace(/[0-9]/g, 'x');
+
+    /**
+     * Joins roomJid with a token whose room claim is the given pattern.
+     *
+     * @param {string} roomJid - The room to join.
+     * @param {string} pattern - The room claim, flagged as a pattern.
+     * @returns {Promise<object>} The presence the join returns.
+     */
+    async function joinWithPattern(roomJid, pattern) {
+        const token = mintAsapToken({
+            room: pattern,
+            context: { room: { regex: true } }
+        });
+
+        const focus = await joinWithFocus(roomJid);
+        const c = await asapClient({ token });
+
+        clients.push(focus, c);
+
+        return c.joinRoom(roomJid);
+    }
+
+    /**
+     * Asserts that a join was refused with the given error condition.
+     *
+     * @param {object} presence - The presence the join returned.
+     * @param {string} condition - The expected error condition.
+     * @returns {void}
+     */
+    function assertJoinError(presence, condition) {
+        assert.equal(presence.attrs.type, 'error',
+            `join must be rejected: ${presence.toString()}`);
+        assert.ok(
+            presence.getChild('error')?.getChild(condition),
+            `error must contain <${condition}/>: ${presence.toString()}`
+        );
+    }
+
+    /**
+     * Asserts that a join succeeded.
+     *
+     * @param {object} presence - The presence the join returned.
+     * @returns {void}
+     */
+    function assertJoinOk(presence) {
+        assert.notEqual(presence.attrs.type, 'error',
+            `join must succeed: ${presence.toString()}`);
+    }
+
+    it('does not crash on connect with an unsupported regex room claim', async () => {
         // process_and_verify_token only stores the claim; it does not evaluate
-        // the pattern. The crash path is verify_room(), called at MUC join.
+        // the pattern. The pattern is checked in verify_room(), at MUC join.
         const token = mintAsapToken({
             room: '(invalid',
             context: { room: { regex: true } }
@@ -203,144 +259,100 @@ describe('mod_auth_token (ASAP / RS256)', () => {
         assert.ok(c.jid, 'connection must succeed: pattern not evaluated at auth time');
     });
 
-    it('rejects MUC join with invalid Lua regex room claim', async () => {
-        const CONFERENCE = 'conference.localhost';
-        const roomJid = `regex-invalid-${Date.now()}@${CONFERENCE}`;
+    it('rejects MUC join with an unbalanced capture in the regex room claim', async () => {
+        const presence = await joinWithPattern(
+            `regex-invalid-${Date.now()}@conference.localhost`, '(invalid');
 
-        // '(invalid' is an unbalanced Lua pattern capture — string:match() would
-        // raise "unfinished capture" without the pcall guard in verify_room().
-        const token = mintAsapToken({
-            room: '(invalid',
-            context: { room: { regex: true } }
-        });
-
-        const focus = await joinWithFocus(roomJid);
-        const c = await asapClient({ token });
-
-        clients.push(focus, c);
-
-        const presence = await c.joinRoom(roomJid);
-
-        assert.equal(presence.attrs.type, 'error', 'join must be rejected');
-        assert.ok(
-            presence.getChild('error')?.getChild('invalid-regex'),
-            'error must contain <invalid-regex/>'
-        );
+        assertJoinError(presence, 'invalid-regex');
     });
 
-    // ── Room regex claim: pattern is used as written ──────────────────────────
+    it('accepts MUC join when the room name starts with the prefix before .*', async () => {
+        const id = Date.now();
+
+        assertJoinOk(await joinWithPattern(`rxpre_${id}_7@conference.localhost`, `rxpre_${id}.*`));
+    });
+
+    it('accepts MUC join when the room name is exactly the prefix before .*', async () => {
+        const id = Date.now();
+
+        assertJoinOk(await joinWithPattern(`rxexact_${id}@conference.localhost`, `rxexact_${id}.*`));
+    });
+
+    it('accepts MUC join when the room name has the prefix and suffix around .*', async () => {
+        const id = Date.now();
+
+        assertJoinOk(await joinWithPattern(`rxmid_${id}_any_tail@conference.localhost`,
+            `rxmid_${id}.*_tail`));
+    });
+
+    it('accepts MUC join with a regex room claim that has no .*', async () => {
+        const id = Date.now();
+
+        assertJoinOk(await joinWithPattern(`rxlit_${id}@conference.localhost`, `rxlit_${id}`));
+    });
+
+    it('lowercases a regex room claim before it is matched', async () => {
+        // Room names are lowercase. The claim must be lowercased, the same as a
+        // claim that is not a pattern.
+        const id = Date.now();
+
+        assertJoinOk(await joinWithPattern(`rxcase_${id}_1@conference.localhost`, `RxCase_${id}.*`));
+    });
+
+    it('rejects MUC join when the prefix is not at the start of the room name', async () => {
+        const id = Date.now();
+
+        assertJoinError(await joinWithPattern(`x_rxstart_${id}@conference.localhost`, `rxstart_${id}.*`),
+            'room-name-does-not-match');
+    });
+
+    it('rejects MUC join when the room name does not end with the suffix', async () => {
+        const id = Date.now();
+
+        assertJoinError(await joinWithPattern(`rxend_${id}_tail_x@conference.localhost`, `rxend_${id}.*_tail`),
+            'room-name-does-not-match');
+    });
+
+    it('rejects MUC join when the prefix and suffix overlap in the room name', async () => {
+        // 'rxover_ab' has the prefix 'rxover_ab' and the suffix 'b', but only
+        // because they share the last 'b'. The room name is too short to hold
+        // both.
+        assertJoinError(await joinWithPattern('rxover_ab@conference.localhost', 'rxover_ab.*b'),
+            'room-name-does-not-match');
+    });
+
+    it('rejects MUC join when the regex room claim has two .*', async () => {
+        const id = Date.now();
+
+        assertJoinError(await joinWithPattern(`rxtwo_${id}_a_tail@conference.localhost`, `rxtwo_${id}.*_.*`),
+            'invalid-regex');
+    });
+
+    it('rejects MUC join when the regex room claim uses a Lua pattern class', async () => {
+        const id = Date.now();
+
+        assertJoinError(await joinWithPattern(`rxclass_${id}@conference.localhost`, 'rxclass_%d+'),
+            'invalid-regex');
+    });
+
+    it('rejects MUC join when the regex room claim has a . without *', async () => {
+        const id = Date.now();
+
+        assertJoinError(await joinWithPattern(`rxdot_${id}@conference.localhost`, `rxdot.${id}`),
+            'invalid-regex');
+    });
+
+    it('rejects MUC join when the regex room claim has a - quantifier', async () => {
+        const id = Date.now();
+
+        assertJoinError(await joinWithPattern(`rxdash-${id}@conference.localhost`, `rxdash-${id}`),
+            'invalid-regex');
+    });
+
+    // ── Room regex claim: room name length limit ──────────────────────────────
     //
-    // Lua pattern classes are case-sensitive: %d is a digit, %D is anything
-    // but a digit. verify_room() must therefore not change the case of a room
-    // claim that is flagged as a pattern.
-
-    // Letters only, so that the room name matches %D+ ("not a digit").
-    const lettersOnly = () => Date.now()
-        .toString(36)
-        .replace(/[0-9]/g, 'x');
-
-    it('accepts MUC join when the regex room claim uses an uppercase class', async () => {
-        const CONFERENCE = 'conference.localhost';
-        const roomJid = `rxcase${lettersOnly()}@${CONFERENCE}`;
-
-        const token = mintAsapToken({
-            room: 'rxcase%D+',
-            context: { room: { regex: true } }
-        });
-
-        const focus = await joinWithFocus(roomJid);
-        const c = await asapClient({ token });
-
-        clients.push(focus, c);
-
-        const presence = await c.joinRoom(roomJid);
-
-        assert.notEqual(presence.attrs.type, 'error',
-            `join must succeed: ${presence.toString()}`);
-    });
-
-    it('rejects MUC join when the room does not match the regex room claim', async () => {
-        const CONFERENCE = 'conference.localhost';
-        const roomJid = `rxcase${Date.now()}@${CONFERENCE}`;
-
-        // 'rxcase%D+' does not match a room name that ends in digits.
-        const token = mintAsapToken({
-            room: 'rxcase%D+',
-            context: { room: { regex: true } }
-        });
-
-        const focus = await joinWithFocus(roomJid);
-        const c = await asapClient({ token });
-
-        clients.push(focus, c);
-
-        const presence = await c.joinRoom(roomJid);
-
-        assert.equal(presence.attrs.type, 'error', 'join must be rejected');
-        assert.ok(
-            presence.getChild('error')?.getChild('room-name-does-not-match'),
-            'error must contain <room-name-does-not-match/>'
-        );
-    });
-
-    // ── Room regex claim: matching limits ─────────────────────────────────────
-    //
-    // Lua patterns backtrack, and one match blocks Prosody. verify_room()
-    // therefore refuses to match a room name that is longer than
-    // token_regex_room_max_length (128), or a pattern that has more than
-    // token_regex_max_quantifiers (3) quantifiers. Both refusals report
-    // <invalid-regex/>, which distinguishes them from a pattern that was
-    // evaluated and did not match (<room-name-does-not-match/>).
-
-    it('accepts MUC join when the regex room claim is at the quantifier limit', async () => {
-        const CONFERENCE = 'conference.localhost';
-        const roomJid = `rxlimit${lettersOnly()}@${CONFERENCE}`;
-
-        // Three quantifiers is the default limit, and must still be allowed.
-        const token = mintAsapToken({
-            room: 'rxlimit%D*%D*%D+',
-            context: { room: { regex: true } }
-        });
-
-        const focus = await joinWithFocus(roomJid);
-        const c = await asapClient({ token });
-
-        clients.push(focus, c);
-
-        const presence = await c.joinRoom(roomJid);
-
-        assert.notEqual(presence.attrs.type, 'error',
-            `join must succeed: ${presence.toString()}`);
-    });
-
-    it('rejects MUC join when the regex room claim has too many quantifiers', async () => {
-        const CONFERENCE = 'conference.localhost';
-
-        // Under the 128-char room-name limit, so the quantifier limit is what
-        // must reject this join.
-        const roomJid = `${'a'.repeat(90)}${lettersOnly()}@${CONFERENCE}`;
-
-        // The pathological case: four quantifiers over a long run of 'a's, and
-        // a trailing '%d' that a letters-only room name can never satisfy, so
-        // every combination is tried before the match fails.
-        const token = mintAsapToken({
-            room: 'a*a*a*a*%d',
-            context: { room: { regex: true } }
-        });
-
-        const focus = await joinWithFocus(roomJid);
-        const c = await asapClient({ token });
-
-        clients.push(focus, c);
-
-        const presence = await c.joinRoom(roomJid);
-
-        assert.equal(presence.attrs.type, 'error', 'join must be rejected');
-        assert.ok(
-            presence.getChild('error')?.getChild('invalid-regex'),
-            `pattern must be refused unevaluated: ${presence.toString()}`
-        );
-    });
+    // verify_room() refuses to match a room name that is longer than
+    // token_regex_room_max_length (128), and reports <invalid-regex/>.
 
     it('rejects MUC join when the room name is too long to match a regex claim', async () => {
         const CONFERENCE = 'conference.localhost';
@@ -382,7 +394,7 @@ describe('mod_auth_token (ASAP / RS256)', () => {
 
         // Matches the room name, so only the disabled option can reject it.
         const token = mintAsapToken({
-            room: 'rxoff%D+',
+            room: 'rxoff.*',
             context: { room: { regex: true } }
         });
 
@@ -406,7 +418,7 @@ describe('mod_auth_token (ASAP / RS256)', () => {
         const roomJid = `${roomName}@conference.localhost`;
 
         const token = mintAsapToken({
-            room: 'rxoff%D+',
+            room: 'rxoff.*',
             context: { room: { regex: true } }
         });
 
