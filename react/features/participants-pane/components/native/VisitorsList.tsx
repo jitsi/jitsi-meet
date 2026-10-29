@@ -50,7 +50,7 @@ const VisitorsList = () => {
     }
 
     return (
-        <>
+        <View style = { styles.meetingListContainer }>
             <View style = { styles.listDetails as ViewStyle } >
                 <Text style = { styles.visitorsLabel }>
                     { title }
@@ -83,7 +83,7 @@ const VisitorsList = () => {
                         request = { r } />)
                 )
             }
-        </>
+        </View>
     );
 };
 
