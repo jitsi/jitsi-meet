@@ -24,6 +24,7 @@ import { getInviteOthersControl } from '../../../share-room/functions';
 import { iAmVisitor } from '../../../visitors/functions';
 import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
 
+import CurrentVisitorsList from './CurrentVisitorsList';
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
 
@@ -123,6 +124,7 @@ const MeetingParticipantList = ({
                 /* eslint-disable react/jsx-no-bind */
                 renderItem = { renderParticipant }
                 windowSize = { 2 } />
+            <CurrentVisitorsList searchString = { searchString } />
         </View>
     );
 };
