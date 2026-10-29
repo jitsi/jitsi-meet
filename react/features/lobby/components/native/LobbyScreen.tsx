@@ -150,12 +150,14 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
     _renderParticipantForm() {
         const { t } = this.props;
         const { displayName } = this.state;
+        const nameLabel = t('lobby.nameField');
 
         return (
             <Input
+                accessibilityLabel = { nameLabel }
                 customStyles = {{ input: preJoinStyles.customInput }}
                 onChange = { this._onChangeDisplayName }
-                placeholder = { t('lobby.nameField') }
+                placeholder = { nameLabel }
                 value = { displayName } />
         );
     }
@@ -176,14 +178,16 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      */
     _renderPasswordForm() {
         const { _passwordJoinFailed, t } = this.props;
+        const passwordLabel = t('lobby.enterPasswordButton');
 
         return (
             <Input
+                accessibilityLabel = { passwordLabel }
                 autoCapitalize = 'none'
                 customStyles = {{ input: styles.customInput }}
                 error = { _passwordJoinFailed }
                 onChange = { this._onChangePassword }
-                placeholder = { t('lobby.enterPasswordButton') }
+                placeholder = { passwordLabel }
                 secureTextEntry = { true }
                 value = { this.state.password } />
         );
