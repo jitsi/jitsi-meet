@@ -335,7 +335,9 @@ describe('mod_auth_token (claims on XEP-0198 resumption)', () => {
         const roomB = `resumeb${n}`;
         const jidA = `${roomA}@${CONFERENCE}`;
         const jidB = `${roomB}@${CONFERENCE}`;
-        const pattern = `^resume[ab]${n}$`;
+
+        // one '.*' is the only pattern syntax a room claim supports
+        const pattern = `resume.*${n}`;
         const focusA = await joinWithFocus(jidA);
         const focusB = await joinWithFocus(jidB);
         const participant = await tokenClient(roomA, mintAsapToken({
