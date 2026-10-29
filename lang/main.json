@@ -757,7 +757,7 @@
     },
     "liveStreaming": {
         "badRequest": "The live stream request is not valid. Check the stream key and the stream settings.",
-        "busy":"We're working on freeing streaming resources. Please try again in a few minutes.",
+        "busy": "We're working on freeing streaming resources. Please try again in a few minutes.",
         "busyTitle": "All streamers are currently busy",
         "changeSignIn": "Switch accounts.",
         "choose": "Choose a live stream",
