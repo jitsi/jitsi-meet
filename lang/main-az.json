@@ -41,6 +41,7 @@
     },
     "audioTranslation": {
         "disabledForRoom": "Bu görüş üçün səsli tərcümə söndürülüb.",
+        "errorBadRequest": "Görüş serveri tərcümə sorğusunu rədd etdi. Əgər bu problem təkrarlanarsa, administratorunuzdan tənzimlənmiş tərcümə dillərini yoxlamağı xahiş edin",
         "errorForbidden": "Səsli tərcümədən istifadə etmək icazəniz yoxdur.",
         "errorGeneric": "Səsli tərcüməni aktivləşdirmək mümkün olmadı. Zəhmət olmasa yenidən cəhd edin.",
         "errorLimitReached": "Hər kəsi eyni anda tərcümə etmək mümkün olmadı. Əvəzində fərdi iştirakçılar üçün tərcüməni aktivləşdirin.",
@@ -305,12 +306,6 @@
         "microphonePermission": "Mikrofon icazəsi alınarkən xəta baş verdi"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Zəng idarəetməsi",
-            "connectedDevices": "Qoşulmuş cihazlar:",
-            "deleteDevice": "Cihazı sil",
-            "pairDevice": "Cihazı cütləşdir"
-        },
         "noPermission": "İcazə verilməyib",
         "previewUnavailable": "Önizləmə əlçatan deyil",
         "selectADevice": "Cihaz seçin",
