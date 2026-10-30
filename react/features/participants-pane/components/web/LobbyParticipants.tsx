@@ -39,6 +39,14 @@ const useStyles = makeStyles()(theme => {
                 background: theme.palette.participantActionButton
             }
         },
+        drawerButton: {
+            appearance: 'none',
+            background: 'none',
+            border: 0,
+            font: 'inherit',
+            textAlign: 'start',
+            width: '100%'
+        },
         icon: {
             marginRight: 16
         },
@@ -113,29 +121,29 @@ export default function LobbyParticipants() {
                                 size = { 20 } />
                             <span>{ drawerParticipant?.displayName }</span>
                         </li>
-                        <li
-                            className = { classes.drawerItem }
-                            onClick = { admit }
-                            onKeyDown = { onActivationKey(admit) }
-                            role = 'button'
-                            tabIndex = { 0 }>
-                            <Icon
-                                className = { classes.icon }
-                                size = { 20 }
-                                src = { IconCheck } />
-                            <span>{ t('participantsPane.actions.admit') }</span>
+                        <li>
+                            <button
+                                className = { `${classes.drawerItem} ${classes.drawerButton}` }
+                                onClick = { admit }
+                                type = 'button'>
+                                <Icon
+                                    className = { classes.icon }
+                                    size = { 20 }
+                                    src = { IconCheck } />
+                                <span>{ t('participantsPane.actions.admit') }</span>
+                            </button>
                         </li>
-                        <li
-                            className = { classes.drawerItem }
-                            onClick = { reject }
-                            onKeyDown = { onActivationKey(reject) }
-                            role = 'button'
-                            tabIndex = { 0 }>
-                            <Icon
-                                className = { classes.icon }
-                                size = { 20 }
-                                src = { IconCloseLarge } />
-                            <span>{ t('participantsPane.actions.reject')}</span>
+                        <li>
+                            <button
+                                className = { `${classes.drawerItem} ${classes.drawerButton}` }
+                                onClick = { reject }
+                                type = 'button'>
+                                <Icon
+                                    className = { classes.icon }
+                                    size = { 20 }
+                                    src = { IconCloseLarge } />
+                                <span>{ t('participantsPane.actions.reject')}</span>
+                            </button>
                         </li>
                     </ul>
                 </Drawer>

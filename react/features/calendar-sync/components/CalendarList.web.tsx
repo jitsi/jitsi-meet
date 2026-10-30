@@ -66,7 +66,6 @@ class CalendarList extends AbstractPage<IProps> {
         this._getRenderListEmptyComponent
             = this._getRenderListEmptyComponent.bind(this);
         this._onOpenSettings = this._onOpenSettings.bind(this);
-        this._onKeyPressOpenSettings = this._onKeyPressOpenSettings.bind(this);
         this._onRefreshEvents = this._onRefreshEvents.bind(this);
     }
 
@@ -199,7 +198,7 @@ class CalendarList extends AbstractPage<IProps> {
                 <div
                     className = 'meetings-list-empty-button'
                     onClick = { this._onOpenSettings }
-                    onKeyPress = { this._onKeyPressOpenSettings }
+                    onKeyDown = { onActivationKey(this._onOpenSettings) }
                     role = 'button'
                     tabIndex = { 0 }>
                     <Icon
@@ -222,21 +221,6 @@ class CalendarList extends AbstractPage<IProps> {
 
         this.props.dispatch(openSettingsDialog(SETTINGS_TABS.CALENDAR));
     }
-
-    /**
-     * KeyPress handler for accessibility.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onKeyPressOpenSettings(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            this._onOpenSettings();
-        }
-    }
-
 
     /**
      * Gets an updated list of calendar events.
