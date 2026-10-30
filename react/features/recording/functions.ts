@@ -214,6 +214,26 @@ export function getRecordingServiceOptions({
 }
 
 /**
+ * Returns whether this participant asks for a file recording right now: one is on, or one it
+ * requested has not started yet, and it has not stopped it since. This is what the local participant
+ * knows of its own doing, unlike the local copy of the room metadata, which only reflects a write
+ * once the server has echoed it back.
+ *
+ * @param {IReduxState} state - The redux state to search in.
+ * @returns {boolean}
+ */
+export function isFileRecordingRequested(state: IReduxState) {
+    const { startRecordingIntent, stopRecordingIntent } = state['features/recording'];
+
+    if (stopRecordingIntent?.recording) {
+        return false;
+    }
+
+    return isCloudRecordingRunning(state)
+        || Boolean(startRecordingIntent?.recording && !startRecordingIntent.recordingStarted);
+}
+
+/**
  * Returns true if there is a cloud recording running.
  *
  * @param {IReduxState} state - The redux state to search in.
