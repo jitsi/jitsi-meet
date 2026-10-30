@@ -181,27 +181,30 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
                     audioOutput: undefined,
                     videoInput: undefined
                 };
-                const currentlyUsedDeviceIds = new Set([
-                    getAudioOutputDeviceId(),
-                    settings.micDeviceId ?? getUserSelectedMicDeviceId(state),
-                    settings.cameraDeviceId ?? getUserSelectedCameraDeviceId(state)
-                ]);
+
+                const audioOutputDeviceId = getAudioOutputDeviceId();
+                const audioInputDeviceId = settings.micDeviceId ?? getUserSelectedMicDeviceId(state);
+                const videoInputDeviceId = settings.cameraDeviceId ?? getUserSelectedCameraDeviceId(state);
 
                 devices.forEach(device => {
                     const { deviceId, kind } = device;
 
-                    if (currentlyUsedDeviceIds.has(deviceId)) {
-                        switch (kind) {
-                        case 'audioinput':
+                    switch (kind) {
+                    case 'audioinput':
+                        if (deviceId === audioInputDeviceId) {
                             deviceDescriptions.audioInput = device;
-                            break;
-                        case 'audiooutput':
-                            deviceDescriptions.audioOutput = device;
-                            break;
-                        case 'videoinput':
-                            deviceDescriptions.videoInput = device;
-                            break;
                         }
+                        break;
+                    case 'audiooutput':
+                        if (deviceId === audioOutputDeviceId) {
+                            deviceDescriptions.audioOutput = device;
+                        }
+                        break;
+                    case 'videoinput':
+                        if (deviceId === videoInputDeviceId) {
+                            deviceDescriptions.videoInput = device;
+                        }
+                        break;
                     }
                 });
 
