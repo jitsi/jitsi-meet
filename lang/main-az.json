@@ -763,6 +763,7 @@
         "chooseCTA": "Yayım seçimi edin. Hazırda {{email}} olaraq daxil olmusunuz.",
         "chooseCTAWithChangeSignIn": "Yayım seçimi edin. Hazırda {{email}} olaraq daxil olmusunuz. <0>Hesabları dəyişdirin.</0>",
         "enterStreamKey": "YouTube canlı yayım açarınızı bura daxil edin.",
+        "enterStreamKeyGeneric": "Canlı yayım açarınızı və ya RTMP URL-nizi buraya daxil edin.",
         "error": "Canlı Yayım uğursuz oldu. Zəhmət olmasa yenidən cəhd edin.",
         "errorAPI": "YouTube yayımlarınıza daxil olarkən xəta baş verdi. Zəhmət olmasa yenidən daxil olmağa çalışın.",
         "errorLiveStreamNotEnabled": "{{email}} hesabında Canlı Yayım aktivləşdirilməyib. Zəhmət olmasa canlı yayımı aktivləşdirin və ya canlı yayım aktiv olan bir hesaba daxil olun.",
@@ -780,6 +781,7 @@
         "onBy": "{{name}} canlı yayımı başlatdı",
         "pending": "Canlı Yayım Başladılır…",
         "policyError": "Çox tez canlı yayım başlatmağa çalışdınız. Zəhmət olmasa bir az sonra yenidən cəhd edin!",
+        "privacyPolicy": "Məxfilik Siyasəti",
         "serviceName": "Canlı Yayım xidməti",
         "sessionAlreadyActive": "Bu sessiya artıq qeydə alınır və ya canlı yayımlanır.",
         "signIn": "Google ilə daxil olun",
@@ -788,6 +790,7 @@
         "signedInAs": "Hazırda daxil olmusunuz:",
         "start": "Canlı yayım başlat",
         "streamIdHelp": "Bu nədir?",
+        "terms": "Xidmət Şərtləri",
         "title": "Canlı Yayım",
         "unavailableTitle": "Canlı Yayım əlçatan deyil",
         "youTubeGoLiveWarning": "Avtomatik Başlat/Avtomatik Dayandır söndürülübsə, YouTube Studio-da 'Canlı Yayıma Keç' düyməsini sıxmağı unutmayın. Əks halda yayım qeydə alınmağa başlamayacaq.",
@@ -1078,6 +1081,7 @@
         "answer": {
             "edit": "Redaktə et",
             "send": "Göndər",
+            "singleAnswerHint": "Bir cavab seç",
             "skip": "Ötür",
             "submit": "Təqdim et"
         },
@@ -1095,7 +1099,8 @@
             "pollQuestion": "Sorğu Sualı",
             "questionPlaceholder": "Sual verin",
             "removeOption": "Seçimi sil",
-            "save": "Saxla"
+            "save": "Saxla",
+            "singleAnswer": "Yalnız bir cavaba icazə ver"
         },
         "errors": {
             "notUniqueOption": "Seçimlər unikal olmalıdır"
@@ -1865,8 +1870,8 @@
     },
     "whiteboard": {
         "accessibilityLabel": {
-            "heading": "Lövhə"
+            "heading": "Ağ lövhə"
         },
-        "screenTitle": "Lövhə"
+        "screenTitle": "Ağ lövhə"
     }
-    }
+}
