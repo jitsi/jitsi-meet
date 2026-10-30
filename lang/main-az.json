@@ -106,6 +106,8 @@
         "permissionButton": "Tənzimləmələri aç",
         "permissionMessage": "Tətbiqdə görüşlərinizi görmək üçün Təqvim icazəsi tələb olunur.",
         "refresh": "Təqvimi yenilə",
+        "signInAgain": "Təkrar daxil ol",
+        "signInAgainMessage": "Təqviminiz hələ də qoşuludur, lakin yaxınlaşan görüşləri görmək üçün təkrar daxil olmalısınız.",
         "today": "Bu gün"
     },
     "carmode": {
