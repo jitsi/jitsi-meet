@@ -48,14 +48,28 @@ describe('Local participant mute iframe API commands', () => {
                 timeoutMsg: `${command} getter did not reflect muted state ${expectedMuted}`
             }
         );
+
+        // Verify UI button reflects the mute state.
+        const toolbar = p1.getToolbar();
+        if (command === 'toggleAudio') {
+            if (expectedMuted) {
+                await toolbar.audioUnMuteBtn.waitForExist({ timeout: 2000, timeoutMsg: 'Audio unmute button not found after mute' });
+            } else {
+                await toolbar.audioMuteBtn.waitForExist({ timeout: 2000, timeoutMsg: 'Audio mute button not found after unmute' });
+            }
+        } else if (command === 'toggleVideo') {
+            if (expectedMuted) {
+                await toolbar.videoUnMuteBtn.waitForExist({ timeout: 2000, timeoutMsg: 'Video unmute button not found after mute' });
+            } else {
+                await toolbar.videoMuteBtn.waitForExist({ timeout: 2000, timeoutMsg: 'Video mute button not found after unmute' });
+            }
+        }
     }
 
     it('setup', async () => {
         p1 = await joinMuc({ name: 'p1', iFrameApi: true, token: testsConfig.jwt.preconfiguredToken });
 
-        if (!await checkIframeApi(p1)) {
-            return;
-        }
+        
 
         await p1.switchToMainFrame();
 
@@ -128,9 +142,7 @@ describe('Local participant mute iframe API commands', () => {
     });
 
     it('toggles audio mute status via toggleAudio command', async () => {
-        if (!await checkIframeApi(p1)) {
-            return;
-        }
+        
 
         const iframeAPI = p1.getIframeAPI();
 
@@ -154,9 +166,7 @@ describe('Local participant mute iframe API commands', () => {
     });
 
     it('toggles video mute status via toggleVideo command', async () => {
-        if (!await checkIframeApi(p1)) {
-            return;
-        }
+        
 
         const iframeAPI = p1.getIframeAPI();
 
