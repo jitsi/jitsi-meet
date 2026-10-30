@@ -1299,6 +1299,7 @@
     "settings": {
         "audio": "Səs",
         "audioTranslation": "Səsli tərcüməni aktivləşdir",
+        "breakoutRoomJoinWithPermissions": "Moderator olmayanlar üçün müzakirə otağı seçməyi qapat",
         "buttonLabel": "Tənzimləmələr",
         "calendar": {
             "about": "{{appName}} təqvim inteqrasiyası, gələcək tədbirlərinizi oxuya bilməsi üçün təqviminizə təhlükəsiz daxil olmaq məqsədilə istifadə olunur.",
