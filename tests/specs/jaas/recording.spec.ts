@@ -42,7 +42,7 @@ describe('Recording and live-streaming', () => {
     });
 
     /**
-    * Starts recording and asserts that the notification, iFrame event and JaaS webhook are received.
+     * Starts recording and asserts that the notification, iFrame event and JaaS webhook are received.
      * @param command whether to use the "command" or the "function" iFrame API.
      */
     async function startRecording(command: boolean) {
@@ -58,7 +58,26 @@ describe('Recording and live-streaming', () => {
                 mode: 'file'
             });
         }
+
+        const iFrameEvent = await p.driver.waitUntil(async () => {
+            const event = await p.getIframeAPI().getEventResult('recordingStatusChanged');
+
+            return event?.on === true || event?.error ? event : false;
+        }, {
+            timeout: 120_000,
+            timeoutMsg: 'Recording start status not received'
+        });
+
+        if (iFrameEvent.error) {
+            throw new Error(`Recording failed to start: ${iFrameEvent.error}`);
+        }
+
+        expect(iFrameEvent.mode).toBe('file');
+        expect(iFrameEvent.on).toBe(true);
+
+        await p.switchToIFrame();
         await p.getNotifications().waitForRecordingStartedNotification();
+        await p.switchToMainFrame();
 
         const jaasEvent: {
             customerId: string;
@@ -69,15 +88,6 @@ describe('Recording and live-streaming', () => {
         expect(jaasEvent.customerId).toBe(customerId);
 
         webhooksProxy.clearCache();
-
-        const iFrameEvent = await p.driver.waitUntil(() =>
-            p.getIframeAPI().getEventResult('recordingStatusChanged'), {
-            timeout: 5000,
-            timeoutMsg: 'recordingStatusChanged event not received'
-        });
-
-        expect(iFrameEvent.mode).toBe('file');
-        expect(iFrameEvent.on).toBe(true);
 
         const linkEvent = await p.driver.waitUntil(() =>
             p.getIframeAPI().getEventResult('recordingLinkAvailable'), {

@@ -98,11 +98,21 @@ export default class Notifications extends BasePageObject {
      * Waits for the notification that a recording has started.
      */
     async waitForRecordingStartedNotification() {
-        const notification = this.participant.driver.$(RECORDING_NOTIFICATION_IDS
-            .map(id => `div[data-testid="${id}"]`)
-            .join(', '));
+        await this.participant.driver.waitUntil(async () => {
+            for (const id of RECORDING_NOTIFICATION_IDS) {
+                const notification = this.participant.driver.$(`div[data-testid="${id}"]`);
 
-        await notification.waitForDisplayed({
+                if (await notification.isDisplayed()) {
+                    const text = (await notification.getText()).toLowerCase();
+
+                    if (text.includes('recording started') || text.includes('started the recording')) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }, {
             timeout: 5000,
             timeoutMsg: 'Recording started notification not displayed'
         });
