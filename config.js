@@ -145,6 +145,13 @@ var config = {
     // Disables polls feature.
     // disablePolls: false,
 
+    // Shows/hides the "Allow only one answer" option when creating a poll. The option is sent with
+    // lib-jitsi-meet's createPoll and enforced by the mod_polls_component prosody module, thus enable this
+    // only when both support it. With visitors, enable it only once the main and all visitor prosodies run a
+    // mod_polls_component with single answer support: an old visitor node shows checkboxes and keeps multi-answer
+    // votes locally.
+    // showPollSingleAnswerSetting: false,
+
     // Disables chat feature entirely including notifications, sounds, and private messages.
     // disableChat: false,
 
@@ -526,6 +533,10 @@ var config = {
     // },
 
     // Customize the Live Streaming dialog. Can be modified for a non-YouTube provider.
+    // When googleApiApplicationClientID is set, termsLink and dataPrivacyLink default to YouTube/Google
+    // links, and validatorRegExpString defaults to the 4-group YouTube key format.
+    // When googleApiApplicationClientID is not set, termsLink and dataPrivacyLink are not shown by default
+    // unless configured here, and validatorRegExpString defaults to accepting RTMP/RTMPS URLs and stream keys.
     // liveStreaming: {
     //    // Whether to enable live streaming or not.
     //    enabled: false,

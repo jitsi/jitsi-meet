@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FlatList, Platform, SafeAreaView, TextInput, View, ViewStyle } from 'react-native';
+import { FlatList, Platform, SafeAreaView, Text, TextInput, TextStyle, View, ViewStyle } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
@@ -7,6 +7,7 @@ import { useKeyboardVisible } from '../../../base/modal/hooks.native';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
+import Switch from '../../../base/ui/components/native/Switch';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { editPoll } from '../../actions';
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
@@ -27,6 +28,9 @@ const PollCreate = (props: AbstractProps) => {
         setAnswer,
         setCreateMode,
         setQuestion,
+        setSingleAnswer,
+        showSingleAnswer,
+        singleAnswer,
         t
     } = props;
 
@@ -176,6 +180,15 @@ const PollCreate = (props: AbstractProps) => {
                         pollsStyles.pollCreateButtonsContainer,
                         keyboardVisible && { marginBottom: BaseTheme.spacing[8] }
                     ] as ViewStyle[] }>
+                    { showSingleAnswer && <View style = { pollsStyles.switchRow as ViewStyle }>
+                        <Switch
+                            checked = { singleAnswer }
+                            id = 'polls-single-answer'
+                            onChange = { state => setSingleAnswer(Boolean(state)) } />
+                        <Text style = { pollsStyles.switchLabel as TextStyle }>
+                            { t('polls.create.singleAnswer') }
+                        </Text>
+                    </View> }
                     <Button
                         accessibilityLabel = 'polls.create.addOption'
                         disabled = { answers.length >= ANSWERS_LIMIT }
