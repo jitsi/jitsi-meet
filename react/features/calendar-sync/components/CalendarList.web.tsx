@@ -29,11 +29,6 @@ interface IProps extends WithTranslation {
     _calendarError?: { error: string; };
 
     /**
-     * Whether or not a calendar may be connected for fetching calendar events.
-     */
-    _hasIntegrationSelected: boolean;
-
-    /**
      * Whether or not events have been fetched from a calendar.
      */
     _hasLoadedEvents: boolean;
@@ -170,14 +165,14 @@ class CalendarList extends AbstractPage<IProps> {
     _getRenderListEmptyComponent() {
         const {
             _calendarError,
-            _hasIntegrationSelected,
             _hasLoadedEvents,
+            _integrationType,
             t
         } = this.props;
 
         if (_calendarError) {
             return this._getErrorMessage();
-        } else if (_hasIntegrationSelected && _hasLoadedEvents) {
+        } else if (_integrationType && _hasLoadedEvents) {
             return (
                 <div className = 'meetings-list-empty'>
                     <p className = 'description'>
@@ -190,7 +185,7 @@ class CalendarList extends AbstractPage<IProps> {
                     </div>
                 </div>
             );
-        } else if (_hasIntegrationSelected && !_hasLoadedEvents) {
+        } else if (_integrationType && !_hasLoadedEvents) {
             return (
                 <div className = 'meetings-list-empty'>
                     <Spinner />
@@ -272,7 +267,10 @@ class CalendarList extends AbstractPage<IProps> {
     _onSignIn() {
         const { _integrationType, dispatch } = this.props;
 
-        _integrationType && dispatch(signIn(_integrationType));
+        _integrationType && dispatch(signIn(_integrationType))
+            .catch(() => {
+                // The error is already logged by signIn.
+            });
     }
 }
 
@@ -284,7 +282,6 @@ class CalendarList extends AbstractPage<IProps> {
  * @private
  * @returns {{
  *     _calendarError: Object,
- *     _hasIntegrationSelected: boolean,
  *     _hasLoadedEvents: boolean,
  *     _integrationType: string
  * }}
@@ -299,7 +296,6 @@ function _mapStateToProps(state: IReduxState) {
 
     return {
         _calendarError: error,
-        _hasIntegrationSelected: Boolean(integrationType),
         _hasLoadedEvents: Boolean(events) || !isLoadingEvents,
         _integrationType: integrationType
     };
