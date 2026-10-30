@@ -194,21 +194,21 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
                     const { deviceId, kind } = device;
 
                     switch (kind) {
-                        case 'audioinput':
-                            if(deviceId === audioInputDeviceId) {
-                                deviceDescriptions.audioInput = device;
-                            }
-                            break;
-                        case 'audiooutput':
-                            if(deviceId === audioOutputDeviceId) {
-                                deviceDescriptions.audioOutput = device;
-                            }
-                            break;
-                        case 'videoinput':
-                            if(deviceId === videoInputDeviceId) {
-                                deviceDescriptions.videoInput = device;
-                            }
-                            break;
+                    case 'audioinput':
+                        if (deviceId === audioInputDeviceId) {
+                            deviceDescriptions.audioInput = device;
+                        }
+                        break;
+                    case 'audiooutput':
+                        if (deviceId === audioOutputDeviceId) {
+                            deviceDescriptions.audioOutput = device;
+                        }
+                        break;
+                    case 'videoinput':
+                        if (deviceId === videoInputDeviceId) {
+                            deviceDescriptions.videoInput = device;
+                        }
+                        break;
                     }
                 });
 
