@@ -2705,6 +2705,19 @@ class API {
     }
 
     /**
+     * Notify the external application (if API is enabled) when noise suppression is enabled or disabled.
+     *
+     * @param {boolean} enabled - Whether noise suppression is enabled or not.
+     * @returns {void}
+     */
+    notifyNoiseSuppressionChanged(enabled) {
+        this._sendEvent({
+            name: 'noise-suppression-changed',
+            enabled
+        });
+    }
+
+    /**
      * Disposes the allocated resources.
      *
      * @returns {void}

@@ -24,18 +24,37 @@ export function setNoiseSuppressionEnabledState(enabled: boolean): any {
 }
 
 /**
+ * The last queued noise suppression change. The enabled state is only updated once the effect has been applied to
+ * (or removed from) the local audio track, so changes are run one after another, otherwise back-to-back calls would
+ * all see the same, stale, state.
+ */
+let pendingChange: Promise<void> = Promise.resolve();
+
+/**
+ * Runs the given noise suppression change once all the previously queued ones have finished.
+ *
+ * @param {Function} change - The change to run.
+ * @returns {Promise<void>}
+ */
+function queueChange(change: () => Promise<void>): Promise<void> {
+    const result = pendingChange.then(change);
+
+    // Keep the queue going even if a change fails, the failure is still reported to the caller through result.
+    pendingChange = result.catch(() => undefined);
+
+    return result;
+}
+
+/**
  *  Enabled/disable noise suppression depending on the current state.
  *
  * @returns {Function}
  */
 export function toggleNoiseSuppression(): any {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        if (isNoiseSuppressionEnabled(getState())) {
-            dispatch(setNoiseSuppressionEnabled(false));
-        } else {
-            dispatch(setNoiseSuppressionEnabled(true));
-        }
-    };
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) =>
+
+        // The state is read only when the change runs, so that it reflects any previously queued change.
+        queueChange(() => dispatch(applyNoiseSuppressionEnabled(!isNoiseSuppressionEnabled(getState()))));
 }
 
 /**
@@ -46,6 +65,18 @@ export function toggleNoiseSuppression(): any {
  * @returns {Function}
  */
 export function setNoiseSuppressionEnabled(enabled: boolean): any {
+    return (dispatch: IStore['dispatch']) => queueChange(() => dispatch(applyNoiseSuppressionEnabled(enabled)));
+}
+
+/**
+ * Enables or disables noise suppression by applying or removing the {@link NoiseSuppressionEffect} on the local
+ * audio track. Must only be run through {@link queueChange}.
+ *
+ * @param {boolean} enabled - Enable or disable noise suppression.
+ *
+ * @returns {Function}
+ */
+function applyNoiseSuppressionEnabled(enabled: boolean): any {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
 
