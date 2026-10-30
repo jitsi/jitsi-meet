@@ -57,28 +57,35 @@ const LanguageSelectView = ({ goBack, isInWelcomePage }: {
                 bounces = { isInWelcomePage }
                 contentContainerStyle = { styles.profileView as ViewStyle }>
                 {
-                    LANGUAGES.map(language => (
-                        <TouchableHighlight
-                            accessibilityRole = 'button'
-                            accessibilityState = {{
-                                disabled: currentLanguage === language,
-                                selected: currentLanguage === language
-                            }}
-                            disabled = { currentLanguage === language }
-                            key = { language }
-                            onPress = { setLanguage(language) }>
-                            <View
-                                style = { styles.languageOption as ViewStyle }>
-                                <Text
-                                    style = { [
-                                        styles.text,
-                                        styles.fieldLabelText,
-                                        currentLanguage === language && styles.selectedLanguage ] }>
-                                    { t(`languages:${language}`) }
-                                </Text>
-                            </View>
-                        </TouchableHighlight>
-                    ))
+                    LANGUAGES.map(language => {
+                        const isSelected = currentLanguage === language;
+                        const label = t(`languages:${language}`);
+                        const accessibilityState = {
+                            disabled: isSelected,
+                            selected: isSelected
+                        };
+
+                        return (
+                            <TouchableHighlight
+                                accessibilityLabel = { label }
+                                accessibilityRole = 'button'
+                                accessibilityState = { accessibilityState }
+                                disabled = { isSelected }
+                                key = { language }
+                                onPress = { setLanguage(language) }>
+                                <View
+                                    style = { styles.languageOption as ViewStyle }>
+                                    <Text
+                                        style = { [
+                                            styles.text,
+                                            styles.fieldLabelText,
+                                            isSelected && styles.selectedLanguage ] }>
+                                        { label }
+                                    </Text>
+                                </View>
+                            </TouchableHighlight>
+                        );
+                    })
                 }
             </ScrollView>
         </JitsiScreen>
