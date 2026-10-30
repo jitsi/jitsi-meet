@@ -12,7 +12,7 @@ import AbstractPage from '../../base/react/components/AbstractPage';
 import Spinner from '../../base/ui/components/web/Spinner';
 import { openSettingsDialog } from '../../settings/actions.web';
 import { SETTINGS_TABS } from '../../settings/constants';
-import { refreshCalendar } from '../actions.web';
+import { refreshCalendar, signIn } from '../actions.web';
 import { ERRORS } from '../constants';
 
 import CalendarListContent from './CalendarListContent.web';
@@ -37,6 +37,11 @@ interface IProps extends WithTranslation {
      * Whether or not events have been fetched from a calendar.
      */
     _hasLoadedEvents: boolean;
+
+    /**
+     * The selected calendar integration type, if any.
+     */
+    _integrationType?: string;
 
     /**
      * Indicates if the list is disabled or not.
@@ -67,6 +72,7 @@ class CalendarList extends AbstractPage<IProps> {
         this._onOpenSettings = this._onOpenSettings.bind(this);
         this._onKeyPressOpenSettings = this._onKeyPressOpenSettings.bind(this);
         this._onRefreshEvents = this._onRefreshEvents.bind(this);
+        this._onSignIn = this._onSignIn.bind(this);
     }
 
     /**
@@ -95,19 +101,31 @@ class CalendarList extends AbstractPage<IProps> {
      * @returns {React$Component}
      */
     _getErrorMessage() {
-        const { _calendarError = { error: undefined }, t } = this.props;
+        const {
+            _calendarError = { error: undefined },
+            _integrationType,
+            t
+        } = this.props;
 
         let errorMessageKey = 'calendarSync.error.generic';
         let showRefreshButton = true;
         let showSettingsButton = true;
+        let showSignInButton = false;
 
         if (_calendarError.error === ERRORS.GOOGLE_APP_MISCONFIGURED) {
             errorMessageKey = 'calendarSync.error.appConfiguration';
             showRefreshButton = false;
             showSettingsButton = false;
         } else if (_calendarError.error === ERRORS.AUTH_FAILED) {
-            errorMessageKey = 'calendarSync.error.notSignedIn';
             showRefreshButton = false;
+
+            // The selected calendar is kept, so this only needs a new sign in.
+            if (_integrationType) {
+                errorMessageKey = 'calendarSync.signInAgainMessage';
+                showSignInButton = true;
+            } else {
+                errorMessageKey = 'calendarSync.error.notSignedIn';
+            }
         }
 
         return (
@@ -116,6 +134,13 @@ class CalendarList extends AbstractPage<IProps> {
                     { t(errorMessageKey) }
                 </p>
                 <div className = 'calendar-action-buttons'>
+                    { showSignInButton
+                        && <div
+                            className = 'button'
+                            onClick = { this._onSignIn }>
+                            { t('calendarSync.signInAgain') }
+                        </div>
+                    }
                     { showSettingsButton
                         && <div
                             className = 'button'
@@ -237,6 +262,18 @@ class CalendarList extends AbstractPage<IProps> {
     _onRefreshEvents() {
         this.props.dispatch(refreshCalendar(true));
     }
+
+    /**
+     * Signs in again to the selected calendar integration.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onSignIn() {
+        const { _integrationType, dispatch } = this.props;
+
+        _integrationType && dispatch(signIn(_integrationType));
+    }
 }
 
 /**
@@ -248,7 +285,8 @@ class CalendarList extends AbstractPage<IProps> {
  * @returns {{
  *     _calendarError: Object,
  *     _hasIntegrationSelected: boolean,
- *     _hasLoadedEvents: boolean
+ *     _hasLoadedEvents: boolean,
+ *     _integrationType: string
  * }}
  */
 function _mapStateToProps(state: IReduxState) {
@@ -262,7 +300,8 @@ function _mapStateToProps(state: IReduxState) {
     return {
         _calendarError: error,
         _hasIntegrationSelected: Boolean(integrationType),
-        _hasLoadedEvents: Boolean(events) || !isLoadingEvents
+        _hasLoadedEvents: Boolean(events) || !isLoadingEvents,
+        _integrationType: integrationType
     };
 }
 
