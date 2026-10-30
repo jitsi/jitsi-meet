@@ -102,7 +102,7 @@ function _handleReceivedPollsData(data: any, dispatch: IStore['dispatch'], getSt
         return;
     }
 
-    const { pollId, answers, senderId, question, history } = data;
+    const { pollId, answers, senderId, question, history, singleAnswer } = data;
     const poll = {
         changingVote: false,
         senderId,
@@ -110,6 +110,7 @@ function _handleReceivedPollsData(data: any, dispatch: IStore['dispatch'], getSt
         lastVote: null,
         question,
         answers: _sanitizeAnswers(answers),
+        singleAnswer: singleAnswer === true,
         saved: false,
         editing: false,
         pollId

@@ -53,6 +53,10 @@ local function validate_polls(data)
             return false;
         end
 
+        if data.singleAnswer ~= nil and type(data.singleAnswer) ~= 'boolean' then
+            return false;
+        end
+
         for _, answer in ipairs(data.answers) do
             if type(answer) ~= "table" or type(answer.name) ~= "string" then
                 return false;
@@ -235,7 +239,9 @@ end
                 senderId = poll_creator.occupant_id,
                 senderName = poll_creator.occupant_name,
                 question = data.question,
-                answers = answers
+                answers = answers,
+                -- a voter can choose only one answer of such a poll
+                singleAnswer = data.singleAnswer == true or nil
             };
 
             room.polls.by_id[data.pollId] = poll
@@ -250,7 +256,8 @@ end
                     senderId = poll_creator.occupant_id,
                     senderName = poll_creator.occupant_name,
                     question = data.question,
-                    answers = compact_answers
+                    answers = compact_answers,
+                    singleAnswer = poll.singleAnswer
                 }
             }
 
@@ -258,6 +265,7 @@ end
             -- Only relay the sanitized answers (name only) so no unexpected
             -- fields from the sender's payload are forwarded to participants.
             data.answers = answers;
+            data.singleAnswer = poll.singleAnswer;
             data.senderId = poll_creator.occupant_id;
             data.type = 'polls';
             local json_msg_str, error = json.encode(data);
@@ -278,6 +286,32 @@ end
                 module:log("warn", "answering poll %s with mismatched answer count. Sender: %s",
                     data.pollId, stanza.attr.from);
                 return true;
+            end
+
+            if poll.singleAnswer then
+                -- Keep only the first chosen answer instead of dropping the vote. The voter's
+                -- client has already registered the vote and gets no error reply, so storing and
+                -- broadcasting this one keeps every client, the voter's included, consistent with
+                -- the server, also clients that do not know about singleAnswer.
+                local kept = false;
+                local dropped = false;
+                local single = {};
+                for idx, vote_flag in ipairs(data.answers) do
+                    if vote_flag and not kept then
+                        single[idx] = true;
+                        kept = true;
+                    else
+                        if vote_flag then
+                            dropped = true;
+                        end
+                        single[idx] = false;
+                    end
+                end
+                if dropped then
+                    module:log('debug', 'More than one answer for single answer poll %s, keeping the first. Sender: %s',
+                        data.pollId, stanza.attr.from);
+                end
+                data.answers = single;
             end
 
             local voter = occupant_details;
@@ -468,7 +502,8 @@ local setup_muc_component = function(host_module, host)
                 senderId = poll.senderId,
                 senderName = poll.senderName,
                 question = poll.question,
-                answers = poll.answers
+                answers = poll.answers,
+                singleAnswer = poll.singleAnswer
             };
         end
 
@@ -542,6 +577,7 @@ local setup_muc_component = function(host_module, host)
             command = 'new-poll',
             pollId = new_poll.pollId,
             question = new_poll.question,
+            singleAnswer = new_poll.singleAnswer,
             senderId = new_poll.senderId,
             roomJid = internal_room_jid_match_rewrite(room.jid),
             type = 'polls'
