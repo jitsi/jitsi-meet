@@ -1,3 +1,4 @@
+import { IRooms } from '../../react/features/breakout-rooms/types';
 import { LOG_PREFIX } from '../helpers/browserLogger';
 
 import BasePageObject from './BasePageObject';
@@ -127,7 +128,7 @@ export default class IframeAPI extends BasePageObject {
     /**
      * Returns the list of breakout rooms.
      */
-    listBreakoutRooms() {
+    listBreakoutRooms(): Promise<IRooms> {
         return this.participant.execute(() => window.jitsiAPI.listBreakoutRooms());
     }
 
