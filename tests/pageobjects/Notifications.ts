@@ -16,6 +16,7 @@ const LOBBY_PARTICIPANT_ACCESS_GRANTED_TEST_ID = 'lobby.notificationLobbyAccessG
 const LOBBY_PARTICIPANT_ADMIT_TEST_ID = 'participantsPane.actions.admit';
 const LOBBY_PARTICIPANT_REJECT_TEST_ID = 'participantsPane.actions.reject';
 const RAISE_HAND_NOTIFICATION_ID = 'notify.raisedHand';
+const RECORDING_NOTIFICATION_IDS = [ 'dialog.recording', 'recording.on' ];
 const REENABLE_SELF_VIEW_CLOSE_NOTIFICATION = 'notify.selfViewTitle-dismiss';
 const REENABLE_SELF_VIEW_NOTIFICATION_ID = 'notify.selfViewTitle';
 const YOU_ARE_MUTED_TEST_ID = 'notify.mutedTitle';
@@ -91,6 +92,20 @@ export default class Notifications extends BasePageObject {
         await el.waitForExist({ timeout: 2000 });
         await el.waitForDisplayed();
 
+    }
+
+    /**
+     * Waits for the notification that a recording has started.
+     */
+    async waitForRecordingStartedNotification() {
+        const notification = this.participant.driver.$(RECORDING_NOTIFICATION_IDS
+            .map(id => `div[data-testid="${id}"]`)
+            .join(', '));
+
+        await notification.waitForDisplayed({
+            timeout: 5000,
+            timeoutMsg: 'Recording started notification not displayed'
+        });
     }
 
     /**

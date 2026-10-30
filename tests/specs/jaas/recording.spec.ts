@@ -13,8 +13,7 @@ setTestProperties(__filename, {
 
 /**
  * Tests the recording and live-streaming functionality of JaaS (including relevant webhooks) exercising the iFrame API
- * commands and functions.
- * TODO: also assert "this meeting is being recorded" notifications are show/played?
+ * commands and functions, and verifies that the recording-start notification is displayed.
  */
 describe('Recording and live-streaming', () => {
     const tenant = testsConfig.jaas.tenant;
@@ -43,7 +42,7 @@ describe('Recording and live-streaming', () => {
     });
 
     /**
-     * Starts recording and asserts that the expected iFrame and JaaS events are received.
+    * Starts recording and asserts that the notification, iFrame event and JaaS webhook are received.
      * @param command whether to use the "command" or the "function" iFrame API.
      */
     async function startRecording(command: boolean) {
@@ -59,6 +58,7 @@ describe('Recording and live-streaming', () => {
                 mode: 'file'
             });
         }
+        await p.getNotifications().waitForRecordingStartedNotification();
 
         const jaasEvent: {
             customerId: string;
