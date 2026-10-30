@@ -10,6 +10,7 @@ import Icon from '../../base/icons/components/Icon';
 import { IconCalendar } from '../../base/icons/svg';
 import AbstractPage from '../../base/react/components/AbstractPage';
 import Spinner from '../../base/ui/components/web/Spinner';
+import { onActivationKey } from '../../base/ui/functions.web';
 import { openSettingsDialog } from '../../settings/actions.web';
 import { SETTINGS_TABS } from '../../settings/constants';
 import { refreshCalendar, signIn } from '../actions.web';
@@ -65,7 +66,6 @@ class CalendarList extends AbstractPage<IProps> {
         this._getRenderListEmptyComponent
             = this._getRenderListEmptyComponent.bind(this);
         this._onOpenSettings = this._onOpenSettings.bind(this);
-        this._onKeyPressOpenSettings = this._onKeyPressOpenSettings.bind(this);
         this._onRefreshEvents = this._onRefreshEvents.bind(this);
         this._onSignIn = this._onSignIn.bind(this);
     }
@@ -139,14 +139,20 @@ class CalendarList extends AbstractPage<IProps> {
                     { showSettingsButton
                         && <div
                             className = 'button'
-                            onClick = { this._onOpenSettings }>
+                            onClick = { this._onOpenSettings }
+                            onKeyDown = { onActivationKey(this._onOpenSettings) }
+                            role = 'button'
+                            tabIndex = { 0 }>
                             { t('calendarSync.permissionButton') }
                         </div>
                     }
                     { showRefreshButton
                         && <div
                             className = 'button'
-                            onClick = { this._onRefreshEvents }>
+                            onClick = { this._onRefreshEvents }
+                            onKeyDown = { onActivationKey(this._onRefreshEvents) }
+                            role = 'button'
+                            tabIndex = { 0 }>
                             { t('calendarSync.refresh') }
                         </div>
                     }
@@ -180,7 +186,10 @@ class CalendarList extends AbstractPage<IProps> {
                     </p>
                     <div
                         className = 'button'
-                        onClick = { this._onRefreshEvents }>
+                        onClick = { this._onRefreshEvents }
+                        onKeyDown = { onActivationKey(this._onRefreshEvents) }
+                        role = 'button'
+                        tabIndex = { 0 }>
                         { t('calendarSync.refresh') }
                     </div>
                 </div>
@@ -209,7 +218,7 @@ class CalendarList extends AbstractPage<IProps> {
                 <div
                     className = 'meetings-list-empty-button'
                     onClick = { this._onOpenSettings }
-                    onKeyPress = { this._onKeyPressOpenSettings }
+                    onKeyDown = { onActivationKey(this._onOpenSettings) }
                     role = 'button'
                     tabIndex = { 0 }>
                     <Icon
@@ -232,21 +241,6 @@ class CalendarList extends AbstractPage<IProps> {
 
         this.props.dispatch(openSettingsDialog(SETTINGS_TABS.CALENDAR));
     }
-
-    /**
-     * KeyPress handler for accessibility.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onKeyPressOpenSettings(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            this._onOpenSettings();
-        }
-    }
-
 
     /**
      * Gets an updated list of calendar events.

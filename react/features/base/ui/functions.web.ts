@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Theme, adaptV4Theme, createTheme } from '@mui/material/styles';
+import type { KeyboardEvent } from 'react';
 
 import { ITypography, IPalette as Palette1 } from '../ui/types';
 
@@ -107,6 +108,23 @@ export function operatesWithEnterKey(element: Element): boolean {
     }
 
     return false;
+}
+
+/**
+ * Creates a keydown handler that calls the given callback when Enter or Space is pressed. Meant to be used together
+ * with role="button" and tabIndex={0} on clickable elements that are not native buttons.
+ *
+ * @param {Function} callback - The function to call, with the keyboard event, when the element is activated using
+ * the keyboard.
+ * @returns {Function}
+ */
+export function onActivationKey(callback: (e: KeyboardEvent) => void) {
+    return (e: KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            callback(e);
+        }
+    };
 }
 
 /**
