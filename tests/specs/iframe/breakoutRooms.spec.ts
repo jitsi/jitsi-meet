@@ -1,10 +1,10 @@
 import { expect } from '@wdio/globals';
 
+import type { IRoom } from '../../../react/features/breakout-rooms/types';
 import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { config as testsConfig } from '../../helpers/TestsConfig';
 import { joinMuc } from '../../helpers/joinMuc';
-import type { IRoom } from '../../react/features/breakout-rooms/types';
 
 import { checkIframeApi } from './util';
 
@@ -42,7 +42,7 @@ describe('Breakout rooms iframe API commands and events', () => {
         await p2.getIframeAPI().addEventListener('breakoutRoomsUpdated');
     });
 
-    it('ignores addBreakoutRoom and removeBreakoutRoom from non-moderator', async () => {
+    it('ignores addBreakoutRoom from non-moderator', async () => {
         if (!await checkIframeApi(p2)) {
             return;
         }
@@ -62,17 +62,6 @@ describe('Breakout rooms iframe API commands and events', () => {
         const roomsAfterUnauthorizedAdd = await p2.getIframeAPI().listBreakoutRooms();
 
         expect(Object.keys(roomsAfterUnauthorizedAdd)).toEqual(Object.keys(initialRooms));
-
-        // Non-moderator attempts to remove a breakout room.
-        await p2.getIframeAPI().executeCommand('removeBreakoutRoom', 'some-room-jid');
-        await p2.driver.pause(1000);
-
-        expect(await p1.getIframeAPI().getEventResult('breakoutRoomsUpdated')).toBe(false);
-        expect(await p2.getIframeAPI().getEventResult('breakoutRoomsUpdated')).toBe(false);
-
-        const roomsAfterUnauthorizedRemove = await p2.getIframeAPI().listBreakoutRooms();
-
-        expect(Object.keys(roomsAfterUnauthorizedRemove)).toEqual(Object.keys(initialRooms));
     });
 
     it('creates a breakout room via addBreakoutRoom command', async () => {
@@ -106,6 +95,33 @@ describe('Breakout rooms iframe API commands and events', () => {
         // Verify listBreakoutRooms returns the newly created breakout room.
         const listedRooms = await p1.getIframeAPI().listBreakoutRooms();
         const roomNames = Object.values(listedRooms).map(r => r.name);
+
+        expect(roomNames).toContain(ROOM_NAME);
+    });
+
+    it('ignores removeBreakoutRoom from non-moderator', async () => {
+        if (!await checkIframeApi(p2)) {
+            return;
+        }
+
+        const currentRooms = await p1.getIframeAPI().listBreakoutRooms();
+        const targetRoom = Object.values(currentRooms).find(r => r.name === ROOM_NAME);
+
+        expect(targetRoom).toBeDefined();
+
+        await p1.getIframeAPI().clearEventResults('breakoutRoomsUpdated');
+        await p2.getIframeAPI().clearEventResults('breakoutRoomsUpdated');
+
+        // Non-moderator attempts to remove the existing breakout room created by p1.
+        await p2.getIframeAPI().executeCommand('removeBreakoutRoom', targetRoom?.jid);
+        await p2.driver.pause(1000);
+
+        expect(await p1.getIframeAPI().getEventResult('breakoutRoomsUpdated')).toBe(false);
+        expect(await p2.getIframeAPI().getEventResult('breakoutRoomsUpdated')).toBe(false);
+
+        // Verify the breakout room is still listed.
+        const roomsAfterUnauthorizedRemove = await p2.getIframeAPI().listBreakoutRooms();
+        const roomNames = Object.values(roomsAfterUnauthorizedRemove).map(r => r.name);
 
         expect(roomNames).toContain(ROOM_NAME);
     });
