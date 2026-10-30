@@ -38,6 +38,8 @@ COPY --chown=prosody:prosody tests/prosody/docker/cfg/ /etc/prosody/cfg/
 # Two separate key pairs are used: one for login tokens (mod_auth_token) and one for system
 # tokens (mod_muc_end_meeting and similar HTTP API modules).
 COPY --chown=prosody:prosody tests/prosody/fixtures/test-asap-public.pem /opt/prosody-jitsi-plugins/test-asap-public.pem
+# The login public key again as JWKS, for cache_keys_url on the main VirtualHost.
+COPY --chown=prosody:prosody tests/prosody/fixtures/test-asap-jwks.json /opt/prosody-jitsi-plugins/test-asap-jwks.json
 COPY --chown=prosody:prosody tests/prosody/fixtures/test-system-asap-public.pem /opt/prosody-jitsi-plugins/test-system-asap-public.pem
 
 # Pre-create the focus admin account (focus@auth.localhost, password "focussecret").

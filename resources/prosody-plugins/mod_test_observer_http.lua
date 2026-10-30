@@ -61,6 +61,13 @@ else
     module:log("warn", "Test ASAP public key not found at %s; login ASAP key-server routes will 404", ASAP_KEY_PATH);
 end
 
+-- The login public key as a JWKS document, served for cache_keys_url.
+local ASAP_JWKS_PATH = "/opt/prosody-jitsi-plugins/test-asap-jwks.json";
+local asap_jwks = load_pem(ASAP_JWKS_PATH);
+if not asap_jwks then
+    module:log("warn", "Test ASAP JWKS not found at %s; the login JWKS route will 404", ASAP_JWKS_PATH);
+end
+
 local system_asap_public_key = load_pem(SYSTEM_ASAP_KEY_PATH);
 if system_asap_public_key then
     module:log("info", "Loaded test system ASAP public key from %s", SYSTEM_ASAP_KEY_PATH);
@@ -147,6 +154,20 @@ module:provides("http", {
                 status_code = 200;
                 headers = { ["Content-Type"] = "application/x-pem-file" };
                 body = asap_public_key;
+            };
+        end;
+
+        -- GET /test-observer/asap-jwks.json
+        -- Returns the login public key (kid "test-asap-key") as JWKS, for the
+        -- VirtualHost's cache_keys_url.
+        ["GET /asap-jwks.json"] = function()
+            if not asap_jwks then
+                return { status_code = 404; body = "jwks not found" };
+            end
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = asap_jwks;
             };
         end;
 

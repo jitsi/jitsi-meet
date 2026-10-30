@@ -34,6 +34,21 @@ async function setStrictMode(enabled) {
     await new Promise(resolve => setTimeout(resolve, 500));
 }
 
+/**
+ * Asserts that a join was rejected by the reserved-resource check, which
+ * (unlike the format and strict-mode checks) says "Reserved resource".
+ *
+ * @param {Element} presence
+ */
+function assertReservedRejection(presence) {
+    assert.equal(presence.attrs.type, 'error', 'reserved resource must be rejected');
+
+    const error = presence.getChild('error');
+
+    assert.ok(error?.getChild('not-allowed'), 'error stanza must contain <not-allowed/>');
+    assert.equal(error.getChildText('text'), 'Reserved resource', 'rejection must come from the reserved check');
+}
+
 describe('mod_muc_resource_validate', () => {
 
     let ctx;
@@ -113,6 +128,79 @@ describe('mod_muc_resource_validate', () => {
             presence.getChild('error')?.getChild('not-allowed'),
             'error stanza must contain <not-allowed/>'
         );
+    });
+
+    // ── Reserved resources ────────────────────────────────────────────────────
+    //
+    // Reserved resources must be rejected even when anonymous_strict is off, so
+    // these tests disable strict mode to make sure the reserved check alone
+    // rejects them.
+
+    it('rejects the reserved transcriber resource', async () => {
+        const r = room();
+
+        await ctx.connectFocus(r);
+        await setStrictMode(false);
+        try {
+            const c = await ctx.connect();
+            const presence = await c.joinRoom(r, 'transcriber');
+
+            assertReservedRejection(presence);
+        } finally {
+            await setStrictMode(true);
+        }
+    });
+
+    // Backend accounts (here the transcriber's, on recorder.localhost) are not
+    // anonymous, so strict mode does not apply to them; the reserved check must
+    // still reject the resource.
+    it('rejects the reserved transcriber resource for the transcriber account', async () => {
+        const r = room();
+
+        await ctx.connectFocus(r);
+        const c = await ctx.connect({
+            domain: 'recorder.localhost',
+            username: 'transcriber',
+            password: 'transcribersecret'
+        });
+        const presence = await c.joinRoom(r, 'transcriber');
+
+        assertReservedRejection(presence);
+    });
+
+    // Jigasi with org.jitsi.jigasi.USE_SIP_USER_AS_XMPP_RESOURCE joins its
+    // transcriber as "Transcriber" (its display name); the exact match must
+    // let it in.
+    it('allows a reserved resource in a different case', async () => {
+        const r = room();
+
+        await ctx.connectFocus(r);
+        await setStrictMode(false);
+        try {
+            const c = await ctx.connect();
+            const presence = await c.joinRoom(r, 'Transcriber');
+
+            assert.ok(isAvailablePresence(presence),
+                'reserved resource in a different case must be allowed');
+        } finally {
+            await setStrictMode(true);
+        }
+    });
+
+    it('allows a resource that only starts with a reserved one', async () => {
+        const r = room();
+
+        await ctx.connectFocus(r);
+        await setStrictMode(false);
+        try {
+            const c = await ctx.connect();
+            const presence = await c.joinRoom(r, 'transcriber2');
+
+            assert.ok(isAvailablePresence(presence),
+                'resource that only starts with a reserved one must be allowed');
+        } finally {
+            await setStrictMode(true);
+        }
     });
 
     // ── Anonymous strict mode ─────────────────────────────────────────────────
