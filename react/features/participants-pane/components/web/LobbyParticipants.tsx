@@ -40,12 +40,22 @@ const useStyles = makeStyles()(theme => {
             }
         },
         drawerButton: {
+            alignItems: 'center',
             appearance: 'none',
             background: 'none',
             border: 0,
-            font: 'inherit',
+            color: theme.palette.participantCounterText,
+            display: 'flex',
+            fontFamily: 'inherit',
+            padding: '12px 16px',
             textAlign: 'start',
-            width: '100%'
+            width: '100%',
+            ...theme.typography.bodyShortRegularLarge,
+
+            '&:hover': {
+                cursor: 'pointer',
+                background: theme.palette.participantActionButton
+            }
         },
         icon: {
             marginRight: 16
@@ -123,7 +133,7 @@ export default function LobbyParticipants() {
                         </li>
                         <li>
                             <button
-                                className = { `${classes.drawerItem} ${classes.drawerButton}` }
+                                className = { classes.drawerButton }
                                 onClick = { admit }
                                 type = 'button'>
                                 <Icon
@@ -135,7 +145,7 @@ export default function LobbyParticipants() {
                         </li>
                         <li>
                             <button
-                                className = { `${classes.drawerItem} ${classes.drawerButton}` }
+                                className = { classes.drawerButton }
                                 onClick = { reject }
                                 type = 'button'>
                                 <Icon
