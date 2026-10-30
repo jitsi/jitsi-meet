@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -33,13 +34,24 @@ interface IProps {
 }
 
 const AlwaysOnLabels = ({ createOnPress }: IProps) => {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const isStreaming = useSelector(isLiveStreamingRunning);
     const openHighlightDialogCallback = useCallback(() =>
         dispatch(openHighlightDialog()), [ dispatch ]);
 
+    const recordingLabel = t('videoStatus.recording');
+    const streamingLabel = t('videoStatus.streaming');
+    const transcribingLabel = t('transcribing.labelTooltip');
+    const highlightLabel = t('recording.highlight');
+    const raisedHandsLabel = t('raisedHandsLabel');
+    const translationLabel = t('audioTranslation.labelTooltip');
+    const visitorsLabel = t('visitors.labelTooltip');
+
     return (<>
         <TouchableOpacity
+            accessibilityLabel = { recordingLabel }
+            accessibilityRole = 'button'
             hitSlop = { LabelHitSlop }
             onPress = { createOnPress(LABEL_ID_RECORDING) } >
             <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />
@@ -47,33 +59,45 @@ const AlwaysOnLabels = ({ createOnPress }: IProps) => {
         {
             isStreaming
             && <TouchableOpacity
+                accessibilityLabel = { streamingLabel }
+                accessibilityRole = 'button'
                 hitSlop = { LabelHitSlop }
                 onPress = { createOnPress(LABEL_ID_STREAMING) } >
                 <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
             </TouchableOpacity>
         }
         <TouchableOpacity
+            accessibilityLabel = { transcribingLabel }
+            accessibilityRole = 'button'
             hitSlop = { LabelHitSlop }
             onPress = { createOnPress(LABEL_ID_TRANSCRIBING) } >
             <TranscribingLabel />
         </TouchableOpacity>
         <TimeTimerLabel />
         <TouchableOpacity
+            accessibilityLabel = { highlightLabel }
+            accessibilityRole = 'button'
             hitSlop = { LabelHitSlop }
             onPress = { openHighlightDialogCallback }>
             <HighlightButton />
         </TouchableOpacity>
         <TouchableOpacity
+            accessibilityLabel = { raisedHandsLabel }
+            accessibilityRole = 'button'
             hitSlop = { LabelHitSlop }
             onPress = { createOnPress(LABEL_ID_RAISED_HANDS_COUNT) } >
             <RaisedHandsCountLabel />
         </TouchableOpacity>
         <TouchableOpacity
+            accessibilityLabel = { translationLabel }
+            accessibilityRole = 'button'
             hitSlop = { LabelHitSlop }
             onPress = { createOnPress(LABEL_ID_AUDIO_TRANSLATION) } >
             <TranslationLabel />
         </TouchableOpacity>
         <TouchableOpacity
+            accessibilityLabel = { visitorsLabel }
+            accessibilityRole = 'button'
             hitSlop = { LabelHitSlop }
             onPress = { createOnPress(LABEL_ID_VISITORS_COUNT) } >
             <VisitorsCountLabel />
