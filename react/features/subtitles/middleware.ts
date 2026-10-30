@@ -5,7 +5,7 @@ import { ENDPOINT_MESSAGE_RECEIVED, NON_PARTICIPANT_MESSAGE_RECEIVED } from '../
 import { IJitsiConference } from '../base/conference/reducer';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
-import JitsiMeetJS, { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
+import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { TRANSCRIBER_ID } from '../base/participants/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
@@ -13,6 +13,7 @@ import { isE2EEOnInMeeting } from '../e2ee/functions';
 import { showErrorNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { RECORDING_METADATA_ID } from '../recording/constants';
+import { isFileRecordingRequested } from '../recording/functions';
 import { maybeNotifyRecordingStart } from '../recording/middleware';
 import { TRANSCRIBER_JOINED } from '../transcribing/actionTypes';
 
@@ -385,81 +386,28 @@ function _getPrimaryLanguageCode(language: string) {
 }
 
 /**
- * How long to wait for the server to echo back the metadata update requesting the transcription,
- * when inviting the transcriber failed before it did.
- */
-const METADATA_ECHO_TIMEOUT = 10_000;
-
-/**
- * Clears the recording isTranscribingEnabled flag after inviting the transcriber failed, keeping the
- * rest of the recording metadata as it currently is: in particular isRecordingRequested, which may
- * have changed since the transcription was requested (e.g. the recording was stopped meanwhile).
+ * Clears the recording isTranscribingEnabled flag after inviting the transcriber failed, along with
+ * what this participant currently asks of the recording: a request it made along with the
+ * transcription is kept, one it withdrew meanwhile (the recording was stopped while the invite was
+ * pending) stays withdrawn. That comes from the redux state, not from the local copy of the room
+ * metadata: the copy only reflects a write once the server echoed it back, so right after the
+ * failure it may still miss the request, or still show one already withdrawn.
  *
- * The local copy of the metadata only reflects the update requesting the transcription once the
- * server has echoed it back. Until the flag shows up in the local copy, wait for the metadata
- * updates: the one setting it is that echo, whatever other updates arrive before it. Should it not
- * arrive in time, clear what is there anyway, so the flag does not stay set for the remote
- * participants.
+ * The server applies the updates in the order they are sent, so this one lands after the one that
+ * requested the transcription, whether or not its echo has arrived yet.
  *
  * @param {IJitsiConference} conference - The conference.
+ * @param {Function} getState - The redux getState function.
  * @returns {void}
  */
-function _clearTranscribingEnabled(conference: IJitsiConference) {
+function _clearTranscribingEnabled(conference: IJitsiConference, getState: IStore['getState']) {
     const metadataHandler = conference.getMetadataHandler();
 
-    /**
-     * Whether the local copy of the metadata has the flag set.
-     *
-     * @returns {boolean}
-     */
-    const isTranscribingEnabled = () =>
-        Boolean(metadataHandler.getMetadata()[RECORDING_METADATA_ID]?.isTranscribingEnabled);
-
-    /**
-     * Clears the flag, keeping the rest of the recording metadata as the local copy has it.
-     *
-     * @returns {void}
-     */
-    const clear = () => {
-        metadataHandler.setMetadata(RECORDING_METADATA_ID, {
-            ...metadataHandler.getMetadata()[RECORDING_METADATA_ID],
-            isTranscribingEnabled: false
-        });
-    };
-
-    if (isTranscribingEnabled()) {
-        clear();
-
-        return;
-    }
-
-    /**
-     * Clears the flag once an update sets it in the local copy.
-     *
-     * @returns {void}
-     */
-    const onMetadataUpdated = () => {
-        if (isTranscribingEnabled()) {
-            stopWaiting();
-            clear();
-        }
-    };
-    const timeout = setTimeout(() => {
-        stopWaiting();
-        clear();
-    }, METADATA_ECHO_TIMEOUT);
-
-    /**
-     * Stops waiting for the echo.
-     *
-     * @returns {void}
-     */
-    function stopWaiting() {
-        conference.off(JitsiConferenceEvents.METADATA_UPDATED, onMetadataUpdated);
-        clearTimeout(timeout);
-    }
-
-    conference.on(JitsiConferenceEvents.METADATA_UPDATED, onMetadataUpdated);
+    metadataHandler.setMetadata(RECORDING_METADATA_ID, {
+        ...metadataHandler.getMetadata()[RECORDING_METADATA_ID],
+        isRecordingRequested: isFileRecordingRequested(getState()),
+        isTranscribingEnabled: false
+    });
 }
 
 /**
@@ -512,7 +460,7 @@ function _requestingSubtitlesChange(
                     // participants would otherwise keep waiting for a transcription that is not
                     // coming before notifying about the recording.
                     if (conference && transcribingEnabledWritten) {
-                        _clearTranscribingEnabled(conference);
+                        _clearTranscribingEnabled(conference, getState);
                     }
 
                     dispatch(showErrorNotification({
