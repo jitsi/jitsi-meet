@@ -66,7 +66,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
                     label = { t('dialog.streamKey') }
                     name = 'streamId'
                     onChange = { this._onInputChange }
-                    placeholder = { t('liveStreaming.enterStreamKey') }
+                    placeholder = { t(this.props._liveStreaming.streamKeyPlaceholderKey) }
                     type = 'text'
                     value = { value } />
                 <div className = 'form-footer'>
@@ -89,20 +89,26 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
                             : null
                         }
                     </div>
-                    <a
-                        className = { classes.helperLink }
-                        href = { this.props._liveStreaming.termsURL }
-                        rel = 'noopener noreferrer'
-                        target = '_blank'>
-                        { t('liveStreaming.youtubeTerms') }
-                    </a>
-                    <a
-                        className = { classes.helperLink }
-                        href = { this.props._liveStreaming.dataPrivacyURL }
-                        rel = 'noopener noreferrer'
-                        target = '_blank'>
-                        { t('liveStreaming.googlePrivacyPolicy') }
-                    </a>
+                    { this.props._liveStreaming.termsURL
+                        ? (
+                            <a
+                                className = { classes.helperLink }
+                                href = { this.props._liveStreaming.termsURL }
+                                rel = 'noopener noreferrer'
+                                target = '_blank'>
+                                { t(this.props._liveStreaming.termsLabelKey) }
+                            </a>
+                        ) : null }
+                    { this.props._liveStreaming.dataPrivacyURL
+                        ? (
+                            <a
+                                className = { classes.helperLink }
+                                href = { this.props._liveStreaming.dataPrivacyURL }
+                                rel = 'noopener noreferrer'
+                                target = '_blank'>
+                                { t(this.props._liveStreaming.dataPrivacyLabelKey) }
+                            </a>
+                        ) : null }
                 </div>
             </div>
         );
