@@ -1,5 +1,3 @@
-import { expect } from '@wdio/globals';
-
 import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureOneParticipant } from '../../helpers/participants';
@@ -62,7 +60,6 @@ describe('Camera mirror iframe API command', () => {
         const currentFlipX = await getLocalFlipX();
 
         if (currentFlipX !== initialFlipX) {
-            await p1.switchToMainFrame();
             await p1.getIframeAPI().executeCommand('toggleCameraMirror');
             await p1.driver.waitUntil(
                 async () => await getLocalFlipX() === initialFlipX,
@@ -75,10 +72,6 @@ describe('Camera mirror iframe API command', () => {
     });
 
     it('toggles camera mirror via toggleCameraMirror command', async () => {
-        if (!await checkIframeApi(p1)) {
-            return;
-        }
-
         const iframeAPI = p1.getIframeAPI();
 
         // 1. Toggle camera mirror off (relative to initial state).
@@ -93,10 +86,15 @@ describe('Camera mirror iframe API command', () => {
             }
         );
 
-        expect(await isLocalVideoFlipped()).toBe(!initialFlipX);
+        await p1.driver.waitUntil(
+            async () => await isLocalVideoFlipped() === !initialFlipX,
+            {
+                timeout: 5000,
+                timeoutMsg: 'local video flipVideoX class was not toggled'
+            }
+        );
 
         // 2. Toggle camera mirror back on (restoring initial state).
-        await p1.switchToMainFrame();
         await iframeAPI.executeCommand('toggleCameraMirror');
 
         await p1.driver.waitUntil(
@@ -107,6 +105,12 @@ describe('Camera mirror iframe API command', () => {
             }
         );
 
-        expect(await isLocalVideoFlipped()).toBe(initialFlipX);
+        await p1.driver.waitUntil(
+            async () => await isLocalVideoFlipped() === initialFlipX,
+            {
+                timeout: 5000,
+                timeoutMsg: 'local video flipVideoX class was not restored'
+            }
+        );
     });
 });
