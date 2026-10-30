@@ -36,6 +36,12 @@ interface IProps extends WithTranslation {
     _enableMicrosoftIntegration: boolean;
 
     /**
+     * Whether or not a calendar integration is selected, even if the user
+     * still has to sign in to it again.
+     */
+    _hasIntegrationSelected: boolean;
+
+    /**
      * The current calendar integration in use, if any.
      */
     _isConnectedToCalendar: boolean;
@@ -220,6 +226,7 @@ class CalendarTab extends Component<IProps, IState> {
             _appName,
             _enableGoogleIntegration,
             _enableMicrosoftIntegration,
+            _hasIntegrationSelected,
             t
         } = this.props;
         const classes = withStyles.getClasses(this.props);
@@ -242,6 +249,12 @@ class CalendarTab extends Component<IProps, IState> {
                             onClick = { this._onClickMicrosoft }
                             text = { t('settings.calendar.microsoftSignIn') } />
                     </div> }
+                { _hasIntegrationSelected
+                    && <Button
+                        className = { classes.button }
+                        id = 'calendar_logout'
+                        label = { t('settings.calendar.disconnect') }
+                        onClick = { this._onClickDisconnect } /> }
             </>
         );
     }
@@ -281,6 +294,7 @@ class CalendarTab extends Component<IProps, IState> {
  *     _appName: string,
  *     _enableGoogleIntegration: boolean,
  *     _enableMicrosoftIntegration: boolean,
+ *     _hasIntegrationSelected: boolean,
  *     _isConnectedToCalendar: boolean,
  *     _profileEmail: string
  * }}
@@ -299,6 +313,7 @@ function _mapStateToProps(state: IReduxState) {
             calendarEnabled && googleApiApplicationClientID),
         _enableMicrosoftIntegration: Boolean(
             calendarEnabled && microsoftApiApplicationClientID),
+        _hasIntegrationSelected: Boolean(calendarState.integrationType),
         _isConnectedToCalendar: calendarState.integrationReady,
         _profileEmail: calendarState.profileEmail
     };

@@ -106,6 +106,8 @@
         "permissionButton": "Open settings",
         "permissionMessage": "The Calendar permission is required to see your meetings in the app.",
         "refresh": "Refresh calendar",
+        "signInAgain": "Sign in again",
+        "signInAgainMessage": "Your calendar is still connected, but you need to sign in again to see upcoming meetings.",
         "today": "Today"
     },
     "carmode": {
