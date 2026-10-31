@@ -33,6 +33,10 @@
 -- element with state="stop" stays, so a participant can still stop a video
 -- that they shared before the restriction was set.
 --
+-- Whether or not the room restricts video sharing, the module removes a
+-- <shared-video> element whose value is the nick of an occupant of the room.
+-- The value names a video, never a participant.
+--
 -- Hooks:
 --   message/bare                            — ordinary MUC group-chat messages
 --   jitsi-visitor-groupchat-pre-route       — visitor group-chat messages, routed
@@ -154,28 +158,54 @@ local function is_shared_video_share(tag)
     return tag.name == 'shared-video' and tag.attr.state ~= 'stop';
 end
 
--- Removes the shared-video commands that the occupant may not send. The MUC stores
--- the presence after these events, thus a participant that joins later does not
--- receive them either. A stop command always passes, so the owner can stop a video.
+-- Whether the value of a shared-video element is the nick of an occupant, the
+-- sender included. The value is the URL or the YouTube id of the video, and the
+-- client adds or removes the participant whose id is that value.
+local function names_occupant(room, occupant, tag)
+    if tag.name ~= 'shared-video' then
+        return false;
+    end
+
+    local value = tag:get_text();
+
+    if not value or value == '' then
+        return false;
+    end
+
+    local nick = room.jid..'/'..value;
+
+    return nick == occupant.nick or room:get_occupant_by_nick(nick) ~= nil;
+end
+
+-- Removes the shared-video commands that the occupant may not send: any command
+-- whose value is the nick of an occupant, and a command other than stop when the
+-- room restricts video sharing. The MUC stores the presence after these events,
+-- thus a participant that joins later does not receive them either. A stop command
+-- for a video always passes, so the owner can stop a video.
 local function on_occupant_presence(event)
     local stanza, session, room = event.stanza, event.origin, event.room;
+    local occupant = event.occupant or event.dest_occupant;
 
-    if not session or not room then
+    if not session or not room or not occupant then
         return;
     end
 
-    local has_share = false;
+    local has_share, has_occupant_value = false, false;
 
     for _, tag in ipairs(stanza.tags) do
         if is_shared_video_share(tag) then
             has_share = true;
-            break;
+        end
+        if names_occupant(room, occupant, tag) then
+            has_occupant_value = true;
         end
     end
 
-    if has_share and is_blocked(room, session, 'sharedVideoRestricted', 'share-video') then
+    local remove_shares = has_share and is_blocked(room, session, 'sharedVideoRestricted', 'share-video');
+
+    if remove_shares or has_occupant_value then
         stanza:maptags(function (tag)
-            if is_shared_video_share(tag) then
+            if (remove_shares and is_shared_video_share(tag)) or names_occupant(room, occupant, tag) then
                 return nil;
             end
 

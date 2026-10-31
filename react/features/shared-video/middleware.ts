@@ -80,6 +80,15 @@ MiddlewareRegistry.register(store => next => action => {
                     return;
                 }
 
+                const videoParticipant = getParticipantById(state, value);
+
+                // The command only ever adds or removes the shared video placeholder, never another participant.
+                if (videoParticipant && videoParticipant.fakeParticipant !== FakeParticipant.SharedVideo) {
+                    logger.warn(`User with id: ${from} sent shared video command: ${sharedVideoStatus} for ${value}.`);
+
+                    return;
+                }
+
                 if (isSharingStatus(sharedVideoStatus)) {
                     // confirmShowVideo is undefined the first time we receive
                     // when confirmShowVideo is false we ignore everything except stop that resets it
@@ -113,8 +122,6 @@ MiddlewareRegistry.register(store => next => action => {
                 }
 
                 if (sharedVideoStatus === 'stop') {
-                    const videoParticipant = getParticipantById(state, value);
-
                     if (state['features/shared-video'].confirmShowVideo === false) {
                         dispatch(showWarningNotification({
                             titleKey: 'dialog.shareVideoLinkStopped',
@@ -126,9 +133,11 @@ MiddlewareRegistry.register(store => next => action => {
 
                     dispatch(hideConfirmPlayingDialog());
 
-                    dispatch(participantLeft(value, conference, {
-                        fakeParticipant: videoParticipant?.fakeParticipant
-                    }));
+                    if (videoParticipant) {
+                        dispatch(participantLeft(value, conference, {
+                            fakeParticipant: FakeParticipant.SharedVideo
+                        }));
+                    }
 
                     if (localParticipantId !== from) {
                         dispatch(resetSharedVideoStatus());
