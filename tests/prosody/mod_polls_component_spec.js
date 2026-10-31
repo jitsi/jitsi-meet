@@ -1,5 +1,7 @@
 import assert from 'assert';
 
+import { mintAsapToken } from './helpers/jwt.js';
+import { prosodyShell } from './helpers/prosody_shell.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 // mod_polls_component is loaded as the "polls.localhost" component (see
@@ -618,6 +620,414 @@ describe('mod_polls_component', () => {
             createPollWith(creator, nextPollId(), { singleAnswer: 'yes' });
 
             await assertNoPollBroadcast(creator);
+        });
+    });
+
+    // ── Closing polls ───────────────────────────────────────────────────────
+
+    describe('closing polls', () => {
+
+        /**
+         * Sends a close-poll message for the poll.
+         *
+         * @param {object} client
+         * @param {string} pollId
+         */
+        function closePoll(client, pollId) {
+            client.sendPollsMessage(POLLS_COMPONENT, JSON.stringify({
+                command: 'close-poll',
+                pollId,
+                type: 'polls'
+            }));
+        }
+
+        /**
+         * Joins a participant whose token makes them a moderator.
+         *
+         * @param {string} roomJid  Full room JID.
+         * @returns {Promise<object>}
+         */
+        async function joinModerator(roomJid) {
+            const roomName = roomJid.split('@')[0];
+            const token = mintAsapToken({ room: roomName,
+                context: { user: { moderator: true } } });
+            const c = await createXmppClient({ params: { room: roomName,
+                token } });
+
+            clients.push(c);
+            await c.joinRoom(roomJid);
+
+            return c;
+        }
+
+        /**
+         * Creates a poll from creator and waits until both clients received it.
+         *
+         * @param {object} creator
+         * @param {object} other
+         * @returns {Promise<string>} The id of the poll.
+         */
+        async function createPollFor(creator, other) {
+            const pollId = nextPollId();
+
+            creator.createPoll(POLLS_COMPONENT, pollId, 'Pick one', [ { name: 'A' }, { name: 'B' } ]);
+            await Promise.all([
+                waitForPollCommand(creator, 'new-poll'),
+                waitForPollCommand(other, 'new-poll')
+            ]);
+
+            return pollId;
+        }
+
+        it('the creator can close a poll and everyone is told', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const creator = await joinParticipant(r);
+            const other = await joinParticipant(r);
+            const pollId = await createPollFor(creator, other);
+
+            closePoll(creator, pollId);
+
+            const [ atCreator, atOther ] = await Promise.all([
+                waitForPollCommand(creator, 'close-poll'),
+                waitForPollCommand(other, 'close-poll')
+            ]);
+
+            for (const msg of [ atCreator, atOther ]) {
+                assert.equal(msg.pollId, pollId);
+                assert.ok(msg.senderId, 'close broadcast must carry the server-stamped senderId');
+                assert.ok(!('answers' in msg), 'the occupants have the answers, the close must not repeat them');
+            }
+        });
+
+        it('a close fires poll-closed for mod_visitors', async () => {
+            const events = `prosody.hosts["${CONFERENCE}"].events`;
+            const r = nextRoom();
+
+            await prosodyShell(`> local h = prosody.hosts["${CONFERENCE}"]; h.test_poll_closed = {};
+                h.test_poll_closed_handler = function(e) table.insert(h.test_poll_closed, e.pollId) end;
+                ${events}.add_handler("poll-closed", h.test_poll_closed_handler)`.replace(/\n\s*/g, ' '));
+
+            try {
+                await focusJoin(r);
+                const creator = await joinParticipant(r);
+                const pollId = nextPollId();
+
+                creator.createPoll(POLLS_COMPONENT, pollId, 'Pick one', [ { name: 'A' }, { name: 'B' } ]);
+                await waitForPollCommand(creator, 'new-poll');
+                closePoll(creator, pollId);
+                await waitForPollCommand(creator, 'close-poll');
+
+                const fired = await prosodyShell(
+                    `> return table.concat(prosody.hosts["${CONFERENCE}"].test_poll_closed, ",")`);
+
+                assert.ok(fired.includes(pollId), `poll-closed must be fired with the poll id, got: ${fired}`);
+            } finally {
+                await prosodyShell(`> local h = prosody.hosts["${CONFERENCE}"];
+                    ${events}.remove_handler("poll-closed", h.test_poll_closed_handler)`.replace(/\n\s*/g, ' '));
+            }
+        });
+
+        it('another participant cannot close the poll', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const creator = await joinParticipant(r);
+            const other = await joinParticipant(r);
+            const pollId = await createPollFor(creator, other);
+
+            closePoll(other, pollId);
+
+            const errorReply = await other.waitForMessage(s => s.attrs.type === 'error');
+
+            assert.ok(errorReply.getChild('error')?.getChild('not-allowed'),
+                'closing must be rejected with not-allowed');
+            await assertNoPollBroadcast(creator);
+        });
+
+        it('a moderator can close the poll of another participant', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const moderator = await joinModerator(r);
+            const creator = await joinParticipant(r);
+            const pollId = await createPollFor(creator, moderator);
+
+            closePoll(moderator, pollId);
+
+            const msg = await waitForPollCommand(creator, 'close-poll');
+
+            assert.equal(msg.pollId, pollId);
+        });
+
+        it('a closed poll does not take answers', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const creator = await joinParticipant(r);
+            const voter = await joinParticipant(r);
+            const pollId = await createPollFor(creator, voter);
+
+            closePoll(creator, pollId);
+            await waitForPollCommand(voter, 'close-poll');
+
+            voter.answerPoll(POLLS_COMPONENT, pollId, [ true, false ]);
+
+            const errorReply = await voter.waitForMessage(s => s.attrs.type === 'error');
+
+            assert.ok(errorReply.getChild('error')?.getChild('not-allowed'),
+                'an answer for a closed poll must be rejected with not-allowed');
+            await assertNoPollBroadcast(voter);
+        });
+
+        it('a late joiner receives the poll as closed via old-polls', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const creator = await joinParticipant(r);
+            const pollId = nextPollId();
+
+            creator.createPoll(POLLS_COMPONENT, pollId, 'Pick one', [ { name: 'A' }, { name: 'B' } ]);
+            await waitForPollCommand(creator, 'new-poll');
+            closePoll(creator, pollId);
+            await waitForPollCommand(creator, 'close-poll');
+
+            const late = await joinParticipant(r);
+            const history = await waitForPollCommand(late, 'old-polls');
+            const stored = history.polls.find(p => p.pollId === pollId);
+
+            assert.strictEqual(stored?.closed, true);
+        });
+
+        it('a close from the main prosody replaces the answers a visitor node took', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const voter = await joinParticipant(r);
+            const pollId = nextPollId();
+
+            voter.createPoll(POLLS_COMPONENT, pollId, 'Pick one', [ { name: 'A' }, { name: 'B' } ]);
+            await waitForPollCommand(voter, 'new-poll');
+            voter.answerPoll(POLLS_COMPONENT, pollId, [ true, false ]);
+            await waitForPollCommand(voter, 'answer-poll');
+
+            // The update a visitor node gets from the main prosody (mod_fmuc fires jitsi-polls-update): the poll
+            // is closed and the main prosody has no vote, as it refused the one this node took.
+            await prosodyShell(`> prosody.hosts["${CONFERENCE}"].events.fire_event("jitsi-polls-update", {
+                room = prosody.hosts["${CONFERENCE}"].modules.muc.get_room_from_jid("${r}"),
+                polls = { polls = { { pollId = "${pollId}", senderId = "main", question = "Pick one",
+                    answers = { { name = "A" }, { name = "B" } }, closed = true } } } })`.replace(/\n\s*/g, ' '));
+
+            const closed = await waitForPollCommand(voter, 'close-poll');
+
+            assert.equal(closed.pollId, pollId);
+            assert.equal(closed.answers?.length, 2, 'the close must carry the main prosody\'s answers');
+            assert.ok(!closed.answers[0].voters?.length, 'the refused vote must be gone');
+
+            const late = await joinParticipant(r);
+            const history = await waitForPollCommand(late, 'old-polls');
+            const stored = history.polls.find(p => p.pollId === pollId);
+
+            assert.strictEqual(stored?.closed, true);
+            assert.ok(!stored.answers[0].voters?.length, 'the stored poll must have the main prosody\'s answers');
+        });
+
+        it('closing an unknown poll is ignored', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const creator = await joinParticipant(r);
+
+            closePoll(creator, nextPollId());
+
+            await assertNoPollBroadcast(creator);
+        });
+    });
+
+    // ── Visitor node ────────────────────────────────────────────────────────
+
+    // polls.vnode.test runs mod_polls_component with main_domain set, as on a visitor node, for the
+    // conference.vnode.test MUC (see docker/cfg/components.cfg.lua). The main prosody's state reaches a visitor
+    // node as jitsi-polls-update, fired here from the shell.
+    describe('on a visitor node', () => {
+        const VNODE_CONFERENCE = 'conference.vnode.test';
+        const VNODE_POLLS = 'polls.vnode.test';
+
+        let _vnodeRoomCounter = 0;
+        const nextVnodeRoom = () => `polls-vnode-${++_vnodeRoomCounter}@${VNODE_CONFERENCE}`;
+
+        /**
+         * Waits for a polls message from the visitor node's component.
+         *
+         * @param {object} client
+         * @param {string} command
+         * @param {number} [timeout]
+         * @returns {Promise<object>} The parsed message.
+         */
+        async function waitForVnodeCommand(client, command, timeout = 3000) {
+            const msg = await client.waitForMessage(
+                s => s.name === 'message' && s.attrs.from === VNODE_POLLS && parsePoll(s)?.command === command,
+                timeout);
+
+            return parsePoll(msg);
+        }
+
+        /**
+         * Asserts that the client gets no polls message from the visitor node's component.
+         *
+         * @param {object} client
+         */
+        async function assertNoVnodeMessage(client) {
+            try {
+                await client.waitForMessage(s => s.name === 'message' && s.attrs.from === VNODE_POLLS, 1000);
+            } catch (err) {
+                if (err.message.includes('Timeout')) {
+                    return;
+                }
+                throw err;
+            }
+            throw new Error('received unexpected polls message from the visitor node');
+        }
+
+        /**
+         * Joins the room. With asVisitor, the occupant gets the visitor role, like the visitors that mod_fmuc
+         * lets into a visitor node's room.
+         *
+         * @param {string} roomJid
+         * @param {boolean} asVisitor
+         * @returns {Promise<object>}
+         */
+        async function joinVnode(roomJid, asVisitor) {
+            const c = await joinParticipant(roomJid);
+
+            if (asVisitor) {
+                await prosodyShell(`> prosody.hosts["${VNODE_CONFERENCE}"].modules.muc.get_room_from_jid("${roomJid}")
+                    :set_role(true, "${roomJid}/${c.nick}", "visitor")`.replace(/\n\s*/g, ' '));
+            }
+
+            return c;
+        }
+
+        /**
+         * Formats a poll as a Lua table.
+         *
+         * @param {object} poll
+         * @returns {string}
+         */
+        function luaPoll({ pollId, closed }) {
+            const answers = '{ { name = "A" }, { name = "B" } }';
+
+            return `{ pollId = "${pollId}", senderId = "main", question = "Pick one", answers = ${answers}${
+                closed ? ', closed = true' : ''} }`;
+        }
+
+        /**
+         * Fires the update that the main prosody sends with the full state of the polls.
+         *
+         * @param {string} roomJid
+         * @param {Array<object>} polls
+         */
+        async function mainUpdate(roomJid, polls) {
+            await prosodyShell(`> prosody.hosts["${VNODE_CONFERENCE}"].events.fire_event("jitsi-polls-update", {
+                room = prosody.hosts["${VNODE_CONFERENCE}"].modules.muc.get_room_from_jid("${roomJid}"),
+                polls = { polls = { ${polls.map(luaPoll).join(', ')} } } })`.replace(/\n\s*/g, ' '));
+        }
+
+        it('sends the main prosody\'s polls only to visitors', async () => {
+            const r = nextVnodeRoom();
+            const participant = await joinVnode(r, false);
+            const visitor = await joinVnode(r, true);
+            const pollId = nextPollId();
+
+            await mainUpdate(r, [ { pollId } ]);
+
+            const poll = await waitForVnodeCommand(visitor, 'new-poll');
+
+            assert.equal(poll.pollId, pollId);
+            await assertNoVnodeMessage(participant);
+        });
+
+        it('a poll closed by the main prosody does not take answers', async () => {
+            const r = nextVnodeRoom();
+
+            await joinVnode(r, false);
+            const visitor = await joinVnode(r, true);
+            const pollId = nextPollId();
+
+            await mainUpdate(r, [ { pollId } ]);
+            await waitForVnodeCommand(visitor, 'new-poll');
+            await mainUpdate(r, [ { pollId,
+                closed: true } ]);
+
+            const closed = await waitForVnodeCommand(visitor, 'close-poll');
+
+            assert.equal(closed.pollId, pollId);
+            assert.equal(closed.answers?.length, 2, 'a visitor node must send the main prosody\'s answers');
+
+            visitor.sendPollsMessage(VNODE_POLLS, JSON.stringify({
+                answers: [ true, false ],
+                command: 'answer-poll',
+                pollId,
+                type: 'polls'
+            }));
+
+            const errorReply = await visitor.waitForMessage(s => s.attrs.type === 'error');
+
+            assert.ok(errorReply.getChild('error')?.getChild('not-allowed'),
+                'an answer for a closed poll must be rejected with not-allowed');
+        });
+
+        it('refuses a close from a visitor with not-allowed', async () => {
+            const r = nextVnodeRoom();
+
+            await joinVnode(r, false);
+            const visitor = await joinVnode(r, true);
+            const pollId = nextPollId();
+
+            await mainUpdate(r, [ { pollId } ]);
+            await waitForVnodeCommand(visitor, 'new-poll');
+
+            visitor.sendPollsMessage(VNODE_POLLS, JSON.stringify({
+                command: 'close-poll',
+                pollId,
+                type: 'polls'
+            }));
+
+            const errorReply = await visitor.waitForMessage(s => s.attrs.type === 'error');
+
+            assert.ok(errorReply.getChild('error')?.getChild('not-allowed'),
+                'a visitor node must reject a close with not-allowed');
+        });
+
+        it('one update closes every poll it closed and still adds a new poll', async () => {
+            const r = nextVnodeRoom();
+
+            await joinVnode(r, false);
+            const visitor = await joinVnode(r, true);
+            const first = nextPollId();
+            const second = nextPollId();
+            const third = nextPollId();
+
+            await mainUpdate(r, [ { pollId: first } ]);
+            await waitForVnodeCommand(visitor, 'new-poll');
+            await mainUpdate(r, [ { pollId: first }, { pollId: second } ]);
+            await waitForVnodeCommand(visitor, 'new-poll');
+
+            const closes = [];
+            const closesDone = (async () => {
+                closes.push(await waitForVnodeCommand(visitor, 'close-poll'));
+                closes.push(await waitForVnodeCommand(visitor, 'close-poll'));
+            })();
+            const added = waitForVnodeCommand(visitor, 'new-poll');
+
+            await mainUpdate(r, [ { pollId: first,
+                closed: true }, { pollId: second,
+                closed: true }, { pollId: third } ]);
+            await closesDone;
+
+            assert.deepEqual(closes.map(c => c.pollId).sort(), [ first, second ].sort());
+            assert.equal((await added).pollId, third);
         });
     });
 });

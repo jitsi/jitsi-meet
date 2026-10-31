@@ -1104,8 +1104,14 @@
             "save": "Save",
             "singleAnswer": "Allow only one answer"
         },
+        "endPollDialog": {
+            "description": "Voting ends for everyone and the poll cannot be reopened.",
+            "title": "End this poll?"
+        },
         "errors": {
-            "notUniqueOption": "Options must be unique"
+            "closeFailed": "The poll could not be ended",
+            "notUniqueOption": "Options must be unique",
+            "voteNotCounted": "Your vote was not counted, the poll has ended"
         },
         "notification": {
             "description": "Open polls tab to vote",
@@ -1113,7 +1119,9 @@
         },
         "results": {
             "changeVote": "Change vote",
+            "closed": "Voting has ended",
             "empty": "There are no polls in the meeting yet.",
+            "endPoll": "End poll",
             "hideDetailedResults": "Hide details",
             "showDetailedResults": "Show details",
             "vote": "Vote"

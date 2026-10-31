@@ -59,8 +59,10 @@ const useStyles = makeStyles()(theme => {
 });
 
 const PollAnswer = ({
+    canClose,
     creatorName,
     checkBoxStates,
+    closePoll,
     poll,
     setCheckbox,
     setCreateMode,
@@ -137,6 +139,14 @@ const PollAnswer = ({
                             labelKey = { 'polls.answer.send' }
                             onClick = { sendPoll } />
                     </> : <>
+                        {
+                            canClose && <Button
+                                accessibilityLabel = { t('polls.results.endPoll') }
+                                className = { classes.buttonMargin }
+                                labelKey = { 'polls.results.endPoll' }
+                                onClick = { closePoll }
+                                type = { BUTTON_TYPES.TERTIARY } />
+                        }
                         <Button
                             accessibilityLabel = { t('polls.answer.skip') }
                             className = { classes.buttonMargin }

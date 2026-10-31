@@ -11,7 +11,7 @@ import { showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 
 import { RECEIVE_POLL } from './actionTypes';
-import { clearPolls, receiveAnswer, receivePoll } from './actions';
+import { clearPolls, receiveAnswer, receivePoll, receivePollClosed } from './actions';
 import { IAnswerData, IIncomingAnswerData } from './types';
 
 /**
@@ -58,6 +58,14 @@ StateListenerRegistry.register(
                 conference.on(JitsiConferenceEvents.POLL_ANSWER_RECEIVED, (data: any) => {
                     _handleReceivedPollsAnswer(data, dispatch, getState);
                 });
+
+                // A lib-jitsi-meet without the event does not support closing polls.
+                if (JitsiConferenceEvents.POLL_CLOSED) {
+                    conference.on(JitsiConferenceEvents.POLL_CLOSED, ({ answers, pollId }: any) => {
+                        typeof pollId === 'string' && dispatch(receivePollClosed(pollId,
+                            Array.isArray(answers) ? _sanitizeAnswers(answers) : undefined));
+                    });
+                }
             }
         }
     });
@@ -102,9 +110,10 @@ function _handleReceivedPollsData(data: any, dispatch: IStore['dispatch'], getSt
         return;
     }
 
-    const { pollId, answers, senderId, question, history, singleAnswer } = data;
+    const { pollId, answers, senderId, question, history, closed, singleAnswer } = data;
     const poll = {
         changingVote: false,
+        closed: closed === true,
         senderId,
         showResults: false,
         lastVote: null,

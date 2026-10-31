@@ -1,15 +1,21 @@
+import { createPollEvent } from '../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../analytics/functions';
+import { IStore } from '../app/types';
+import { showErrorNotification } from '../notifications/actions';
+
 import {
     CHANGE_VOTE,
     CLEAR_POLLS,
     EDIT_POLL,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
+    RECEIVE_POLL_CLOSED,
     REGISTER_VOTE,
     REMOVE_POLL,
     RESET_UNREAD_POLLS_COUNT,
     SAVE_POLL
 } from './actionTypes';
-import { IIncomingAnswerData, IPoll, IPollData } from './types';
+import { IAnswerData, IIncomingAnswerData, IPoll, IPollData } from './types';
 
 /**
  * Action to signal that existing polls needs to be cleared from state.
@@ -96,6 +102,39 @@ export const registerVote = (pollId: string, answers: Array<boolean> | null) => 
         type: REGISTER_VOTE,
         pollId,
         answers
+    };
+};
+
+/**
+ * Closes a poll, thus it does not take answers anymore. The server accepts it from the creator of the poll and from a
+ * moderator.
+ *
+ * @param {string} pollId - The id of the poll.
+ * @returns {Function}
+ */
+export const closePoll = (pollId: string) => (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    // Rejected when the server refuses the close. A lib-jitsi-meet without that error returns nothing.
+    getState()['features/base/conference'].conference?.getPolls()?.closePoll(pollId)
+        ?.catch(() => dispatch(showErrorNotification({ titleKey: 'polls.errors.closeFailed' })));
+    sendAnalytics(createPollEvent('closed'));
+};
+
+/**
+ * Action to signal that a poll was closed, thus it does not take answers anymore.
+ *
+ * @param {string} pollId - The id of the poll.
+ * @param {Array<IAnswerData>} [answers] - The answers of the poll as the server has them when it was closed.
+ * @returns {{
+ *     type: RECEIVE_POLL_CLOSED,
+ *     answers: Array<IAnswerData>,
+ *     pollId: string
+ * }}
+ */
+export const receivePollClosed = (pollId: string, answers?: Array<IAnswerData>) => {
+    return {
+        type: RECEIVE_POLL_CLOSED,
+        answers,
+        pollId
     };
 };
 
