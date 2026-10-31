@@ -29,7 +29,7 @@ interface IProps extends IChatMessageProps {
     state?: IReduxState;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles<void, 'optionsButtonContainer'>()((theme: Theme, _params, classes) => {
     return {
         chatMessageFooter: {
             display: 'flex',
@@ -44,7 +44,10 @@ const useStyles = makeStyles()((theme: Theme) => {
             overflow: 'hidden'
         },
         chatMessageWrapper: {
-            maxWidth: '100%'
+            maxWidth: '100%',
+            [`&:hover .${classes.optionsButtonContainer}, &:focus-within .${classes.optionsButtonContainer}`]: {
+                opacity: 1
+            }
         },
         chatMessage: {
             display: 'inline-flex',
@@ -162,7 +165,8 @@ const useStyles = makeStyles()((theme: Theme) => {
             alignItems: 'center',
             gap: theme.spacing(1),
             minWidth: '32px',
-            minHeight: '32px'
+            minHeight: '32px',
+            opacity: 0
         },
         displayName: {
             ...theme.typography.labelBold,
@@ -252,8 +256,12 @@ const useStyles = makeStyles()((theme: Theme) => {
             ...theme.typography.labelRegular
         },
         cancelEdit: {
+            background: 'none',
+            border: 0,
+            color: theme.palette.link01,
             cursor: 'pointer',
-            color: theme.palette.link01
+            font: 'inherit',
+            padding: 0
         },
     };
 });
@@ -274,7 +282,6 @@ const ChatMessage = ({
     t
 }: IProps) => {
     const { classes, cx } = useStyles();
-    const [ isHovered, setIsHovered ] = useState(false);
     const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
     const messageRef = useRef<HTMLDivElement>(null);
 
@@ -307,14 +314,6 @@ const ChatMessage = ({
     const handleEditMessage = useCallback(() => {
         onEditMessage?.(message);
     }, [ message, onEditMessage ]);
-
-    const handleMouseEnter = useCallback(() => {
-        setIsHovered(true);
-    }, []);
-
-    const handleMouseLeave = useCallback(() => {
-        setIsHovered(false);
-    }, []);
 
     const handleReactionsOpen = useCallback(() => {
         setIsReactionsOpen(true);
@@ -378,11 +377,12 @@ const ChatMessage = ({
         return (
             <div className = { classes.editingNotice }>
                 <span>{t('chat.editingMessage', 'Editing')}</span>
-                <span
+                <button
                     className = { classes.cancelEdit }
-                    onClick = { onCancelEdit }>
+                    onClick = { onCancelEdit }
+                    type = 'button'>
                     {t('dialog.Cancel')}
-                </span>
+                </button>
             </div>
         );
     }
@@ -451,7 +451,7 @@ const ChatMessage = ({
                 </div>
             </Popover>
         );
-    }, [ message?.reactions, isHovered, isReactionsOpen ]);
+    }, [ message?.reactions, isReactionsOpen ]);
 
     // A moderation is shown over a retraction, as its reason is shown as well.
     const messageText = message.isModerated
@@ -477,13 +477,11 @@ const ChatMessage = ({
         <div
             className = { cx(classes.chatMessageWrapper, className) }
             id = { message.messageId }
-            onMouseEnter = { handleMouseEnter }
-            onMouseLeave = { handleMouseLeave }
             tabIndex = { -1 }>
             <div className = { classes.sideBySideContainer }>
                 {!shouldDisplayMenuOnRight && (
                     <div className = { classes.optionsButtonContainer }>
-                        {isHovered && !message.isDeleted && !message.isModerated && <MessageMenu
+                        {!message.isDeleted && !message.isModerated && <MessageMenu
                             canEdit = { canEdit }
                             displayName = { message.displayName }
                             enablePrivateChat = { Boolean(enablePrivateChat) }
@@ -564,14 +562,14 @@ const ChatMessage = ({
                         {!message.privateMessage && !message.lobbyChat
                         && !message.isReaction && !message.isDeleted && !message.isModerated && <div>
                             <div className = { classes.optionsButtonContainer }>
-                                {isHovered && <ReactButton
+                                <ReactButton
                                     messageId = { message.messageId }
-                                    receiverId = { '' } />}
+                                    receiverId = { '' } />
                             </div>
                         </div>}
                         <div>
                             <div className = { classes.optionsButtonContainer }>
-                                {isHovered && !message.isDeleted && !message.isModerated && <MessageMenu
+                                {!message.isDeleted && !message.isModerated && <MessageMenu
                                     canEdit = { canEdit }
                                     displayName = { message.displayName }
                                     enablePrivateChat = { Boolean(enablePrivateChat) }
