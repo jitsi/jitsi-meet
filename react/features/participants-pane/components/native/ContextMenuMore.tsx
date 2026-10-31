@@ -7,8 +7,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import {
     requestDisableAudioModeration,
+    requestDisableDesktopModeration,
     requestDisableVideoModeration,
     requestEnableAudioModeration,
+    requestEnableDesktopModeration,
     requestEnableVideoModeration
 } from '../../../av-moderation/actions';
 import { MEDIA_TYPE } from '../../../av-moderation/constants';
@@ -49,12 +51,15 @@ export const ContextMenuMore = () => {
 
     const isAudioModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.AUDIO));
     const isVideoModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.VIDEO));
+    const isDesktopModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.DESKTOP));
 
     const disableAudioModeration = useCallback(() => dispatch(requestDisableAudioModeration()), [ dispatch ]);
     const disableVideoModeration = useCallback(() => dispatch(requestDisableVideoModeration()), [ dispatch ]);
+    const disableDesktopModeration = useCallback(() => dispatch(requestDisableDesktopModeration()), [ dispatch ]);
 
     const enableAudioModeration = useCallback(() => dispatch(requestEnableAudioModeration()), [ dispatch ]);
     const enableVideoModeration = useCallback(() => dispatch(requestEnableVideoModeration()), [ dispatch ]);
+    const enableDesktopModeration = useCallback(() => dispatch(requestEnableDesktopModeration()), [ dispatch ]);
 
     return (
         <BottomSheet
@@ -132,6 +137,30 @@ export const ContextMenuMore = () => {
                             src = { IconCheck } />
                         <Text style = { styles.contextMenuItemText }>
                             {t('participantsPane.actions.videoModeration')}
+                        </Text>
+                    </TouchableOpacity>}
+                {isDesktopModerationEnabled
+                    ? <TouchableOpacity
+                        accessibilityLabel = { t('participantsPane.actions.desktopModeration') }
+                        accessibilityRole = 'button'
+                        accessibilityState = {{ selected: true }}
+                        onPress = { disableDesktopModeration }
+                        style = { styles.contextMenuItem as ViewStyle }>
+                        <Text style = { styles.contextMenuItemTextNoIcon }>
+                            {t('participantsPane.actions.desktopModeration')}
+                        </Text>
+                    </TouchableOpacity>
+                    : <TouchableOpacity
+                        accessibilityLabel = { t('participantsPane.actions.desktopModeration') }
+                        accessibilityRole = 'button'
+                        accessibilityState = {{ selected: false }}
+                        onPress = { enableDesktopModeration }
+                        style = { styles.contextMenuItem as ViewStyle }>
+                        <Icon
+                            size = { 24 }
+                            src = { IconCheck } />
+                        <Text style = { styles.contextMenuItemText }>
+                            {t('participantsPane.actions.desktopModeration')}
                         </Text>
                     </TouchableOpacity>}
             </>}
