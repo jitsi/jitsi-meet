@@ -133,6 +133,16 @@ export default class IframeAPI extends BasePageObject {
     }
 
     /**
+     * Selects the participant to display on the large video.
+     * @param participantId The ID of the participant to select on large video, or undefined to unselect.
+     * @param videoType Optional video type ('camera' | 'desktop').
+     */
+    setLargeVideoParticipant(participantId?: string, videoType?: string) {
+        return this.participant.execute(
+            (id, type) => window.jitsiAPI.setLargeVideoParticipant(id, type), participantId, videoType);
+    }
+
+    /**
      * Removes the embedded Jitsi Meet conference.
      */
     dispose() {
