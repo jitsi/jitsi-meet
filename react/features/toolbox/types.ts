@@ -84,7 +84,8 @@ export interface ICustomToolbarButton {
     text: string;
 }
 
-export type NativeToolbarButton = 'camera' |
+export type NativeToolbarButton = 'select-background' |
+    'camera' |
     'chat' |
     'microphone' |
     'raisehand' |
