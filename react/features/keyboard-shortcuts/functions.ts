@@ -42,5 +42,14 @@ export function getKeyboardShortcuts(state: IReduxState) {
  * @returns {Map} - The keyboard shortcuts help descriptions.
  */
 export function getKeyboardShortcutsHelpDescriptions(state: IReduxState) {
-    return state['features/keyboard-shortcuts'].shortcutsHelp;
+    const shortcuts = getKeyboardShortcuts(state);
+    const shortcutsHelp = new Map<string, string>();
+
+    for (const [ key, shortcut ] of shortcuts) {
+        if (shortcut.helpDescription) {
+            shortcutsHelp.set(shortcut.helpCharacter ?? key, shortcut.helpDescription);
+        }
+    }
+
+    return shortcutsHelp;
 }

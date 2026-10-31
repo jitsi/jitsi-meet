@@ -9,6 +9,7 @@ import {
     UNREGISTER_KEYBOARD_SHORTCUT
 } from './actionTypes';
 import { IKeyboardShortcutsState } from './types';
+import { getShortcutKey } from './utils';
 
 /**
  * The redux subtree of this feature.
@@ -18,8 +19,7 @@ const STORE_NAME = 'features/keyboard-shortcuts';
 const defaultState = {
     ctrlAltReactionShortcutsEnabled: true,
     enabled: true,
-    shortcuts: new Map(),
-    shortcutsHelp: new Map()
+    shortcuts: new Map()
 };
 
 PersistenceRegistry.register(STORE_NAME, {
@@ -47,48 +47,23 @@ ReducerRegistry.register<IKeyboardShortcutsState>(STORE_NAME,
         };
     case REGISTER_KEYBOARD_SHORTCUT: {
         const { alt, character, ctrl } = action.shortcut;
-        let shortcutKey = character;
-
-        if (ctrl && alt) {
-            shortcutKey = `-:${character}`;
-        } else if (alt) {
-            shortcutKey = `:${character}`;
-        } else if (ctrl) {
-            shortcutKey = `-${character}`;
-        }
+        const shortcutKey = getShortcutKey(character, alt, ctrl);
 
         return {
             ...state,
             shortcuts: new Map(state.shortcuts)
-                .set(shortcutKey, action.shortcut),
-            shortcutsHelp: action.shortcut.helpDescription
-                ? new Map(state.shortcutsHelp)
-                .set(action.shortcut.helpCharacter ?? shortcutKey, action.shortcut.helpDescription)
-                : state.shortcutsHelp
+                .set(shortcutKey, action.shortcut)
         };
     }
     case UNREGISTER_KEYBOARD_SHORTCUT: {
-        let shortcutKey = action.character;
-
-        if (action.ctrl && action.alt) {
-            shortcutKey = `-:${action.character}`;
-        } else if (action.alt) {
-            shortcutKey = `:${action.character}`;
-        } else if (action.ctrl) {
-            shortcutKey = `-${action.character}`;
-        }
+        const shortcutKey = getShortcutKey(action.character, action.alt, action.ctrl);
         const shortcuts = new Map(state.shortcuts);
 
         shortcuts.delete(shortcutKey);
 
-        const shortcutsHelp = new Map(state.shortcutsHelp);
-
-        shortcutsHelp.delete(shortcutKey);
-
         return {
             ...state,
-            shortcuts,
-            shortcutsHelp
+            shortcuts
         };
     }
     }
