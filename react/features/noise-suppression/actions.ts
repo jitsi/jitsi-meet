@@ -1,5 +1,6 @@
 import { IStore } from '../app/types';
 import { getLocalJitsiAudioTrack } from '../base/tracks/functions';
+import { timeoutPromise } from '../base/util/timeoutPromise';
 import { showErrorNotification } from '../notifications/actions';
 import { NoiseSuppressionEffect } from '../stream-effects/noise-suppression/NoiseSuppressionEffect';
 
@@ -31,13 +32,26 @@ export function setNoiseSuppressionEnabledState(enabled: boolean): any {
 let pendingChange: Promise<void> = Promise.resolve();
 
 /**
+ * The maximum time, in milliseconds, a queued noise suppression change is waited for before moving on to the next one.
+ */
+const CHANGE_TIMEOUT = 10_000;
+
+/**
  * Runs the given noise suppression change once all the previously queued ones have finished.
  *
  * @param {Function} change - The change to run.
  * @returns {Promise<void>}
  */
 function queueChange(change: () => Promise<void>): Promise<void> {
-    const result = pendingChange.then(change);
+    // A change which never settles (e.g. the noise suppressor worklet failing to load) would otherwise block all the
+    // later changes, as well as the callers awaiting them (e.g. screen sharing with audio).
+    const result = pendingChange.then(() => timeoutPromise(change(), CHANGE_TIMEOUT).catch(error => {
+        if (error?.message !== 'timeout') {
+            throw error;
+        }
+
+        logger.error(`Noise suppression change did not complete within ${CHANGE_TIMEOUT}ms, moving on`);
+    }));
 
     // Keep the queue going even if a change fails, the failure is still reported to the caller through result.
     pendingChange = result.catch(() => undefined);
