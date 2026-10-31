@@ -133,6 +133,16 @@ export default class IframeAPI extends BasePageObject {
     }
 
     /**
+     * Sets the volume of a participant.
+     * @param participantId The ID of the participant.
+     * @param volume The volume level (between 0 and 1).
+     */
+    setParticipantVolume(participantId: string, volume: number) {
+        return this.participant.execute(
+            (id, vol) => window.jitsiAPI.setParticipantVolume(id, vol), participantId, volume);
+    }
+
+    /**
      * Removes the embedded Jitsi Meet conference.
      */
     dispose() {
