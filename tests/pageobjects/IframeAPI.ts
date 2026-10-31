@@ -133,6 +133,16 @@ export default class IframeAPI extends BasePageObject {
     }
 
     /**
+     * Sends an endpoint text message to a specific participant or to all participants.
+     * @param to The target participant ID, or empty string to send to all participants.
+     * @param text The text payload.
+     */
+    sendEndpointTextMessage(to: string, text: string) {
+        return this.participant.execute(
+            (target, msg) => window.jitsiAPI.sendEndpointTextMessage(target, msg), to, text);
+    }
+
+    /**
      * Removes the embedded Jitsi Meet conference.
      */
     dispose() {
