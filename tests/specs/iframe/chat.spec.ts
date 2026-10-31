@@ -115,6 +115,54 @@ describe('Chat', () => {
 
         await testSendGroupMessageWithChatOpen(p1, p2);
     });
+
+    it('endpoint text message', async () => {
+        await p1.switchToIFrame();
+        await p1.waitForSendReceiveData();
+        await p1.switchToMainFrame();
+
+        await p2.switchToIFrame();
+        await p2.waitForSendReceiveData();
+        await p2.switchToMainFrame();
+
+        await p1.getIframeAPI().addEventListener('endpointTextMessageReceived');
+        await p2.getIframeAPI().addEventListener('endpointTextMessageReceived');
+
+        const p1EndpointId = await p1.getEndpointId();
+        const p2EndpointId = await p2.getEndpointId();
+        const testMessage = 'Hello from p1 direct';
+
+        await p2.getIframeAPI().clearEventResults('endpointTextMessageReceived');
+        await p1.getIframeAPI().clearEventResults('endpointTextMessageReceived');
+
+        await p1.getIframeAPI().executeCommand('sendEndpointTextMessage', p2EndpointId, testMessage);
+
+        const receivedEvent = await p2.getIframeAPI().waitForEventResult(
+            'endpointTextMessageReceived',
+            'endpointTextMessageReceived event was not received by p2'
+        );
+
+        expect(receivedEvent?.data?.senderInfo?.id).toBe(p1EndpointId);
+        expect(receivedEvent?.data?.eventData?.text).toBe(testMessage);
+
+        // bidirectional reply from p2 to p1
+        const replyMessage = 'Acknowledgment reply from p2';
+
+        await p1.getIframeAPI().clearEventResults('endpointTextMessageReceived');
+
+        await p2.getIframeAPI().executeCommand('sendEndpointTextMessage', p1EndpointId, replyMessage);
+
+        const replyEvent = await p1.getIframeAPI().waitForEventResult(
+            'endpointTextMessageReceived',
+            'endpointTextMessageReceived reply was not received by p1'
+        );
+
+        expect(replyEvent?.data?.senderInfo?.id).toBe(p2EndpointId);
+        expect(replyEvent?.data?.eventData?.text).toBe(replyMessage);
+
+        await p1.getIframeAPI().clearEventResults('endpointTextMessageReceived');
+        await p2.getIframeAPI().clearEventResults('endpointTextMessageReceived');
+    });
 });
 
 /**
