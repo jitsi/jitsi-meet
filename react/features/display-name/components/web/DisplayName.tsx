@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -62,6 +62,17 @@ const useStyles = makeStyles()(theme => {
             }
         },
 
+        displayNameButton: {
+            background: 'none',
+            border: 'none',
+            margin: 0,
+            maxWidth: '100%',
+            minWidth: 0,
+            outline: 'none',
+            padding: 0,
+            textAlign: 'left'
+        },
+
         editDisplayName: {
             outline: 'none',
             border: 'none',
@@ -90,11 +101,29 @@ const DisplayName = ({
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const nameInputRef = useRef<HTMLInputElement | null>(null);
+    const displayNameRef = useRef<HTMLButtonElement>(null);
+    const restoreFocusOnCloseRef = useRef(false);
+    const cancelEditingRef = useRef(false);
 
     useEffect(() => {
         if (isEditing && nameInputRef.current) {
             nameInputRef.current.select();
         }
+    }, [ isEditing ]);
+
+    useLayoutEffect(() => {
+        if (isEditing) {
+            return;
+        }
+
+        cancelEditingRef.current = false;
+
+        if (!restoreFocusOnCloseRef.current) {
+            return;
+        }
+
+        restoreFocusOnCloseRef.current = false;
+        displayNameRef.current?.focus({ focusVisible: true });
     }, [ isEditing ]);
 
     const onClick = useCallback((e: React.MouseEvent) => {
@@ -106,6 +135,10 @@ const DisplayName = ({
     }, []);
 
     const onSubmit = useCallback(() => {
+        if (cancelEditingRef.current) {
+            return;
+        }
+
         dispatch(updateSettings({
             displayName: editDisplayNameValue
         }));
@@ -115,33 +148,41 @@ const DisplayName = ({
         nameInputRef.current = null;
     }, [ editDisplayNameValue, nameInputRef ]);
 
-    const onKeyDown = useCallback((event: React.KeyboardEvent) => {
-        if (event.key === 'Enter') {
+    const onKeyDown = useCallback((e: React.KeyboardEvent) => {
+        if(e.repeat) return;
+
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            e.stopPropagation();
+            cancelEditingRef.current = true;
+            setEditDisplayNameValue('');
+            setIsEditing(false);
+            nameInputRef.current = null;
+
+            return;
+        }
+
+        if (e.key === 'Enter') {
+            e.preventDefault();
             onSubmit();
         }
     }, [ onSubmit ]);
 
-    const startEditing = useCallback(() => {
-        if (!allowEditing) {
-            return;
-        }
-
+    const startEditing = useCallback((restoreFocus = false) => {
+        restoreFocusOnCloseRef.current = restoreFocus;
         setIsEditing(true);
         setEditDisplayNameValue(configuredDisplayName);
-    }, [ allowEditing, configuredDisplayName ]);
+    }, [ configuredDisplayName ]);
 
-    const onStartEditing = useCallback((e: React.MouseEvent) => {
+    const onStartEditing = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
-        startEditing();
+
+        startEditing(e.detail === 0);
     }, [ startEditing ]);
 
-    const onDisplayNameKeyDown = useCallback((e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            e.stopPropagation();
-            startEditing();
-        }
-    }, [ startEditing ]);
+    const onDisplayNameKeyPress = useCallback((e: React.KeyboardEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+    }, []);
 
     const displayedName = appendSuffix(nameToDisplay, displayNameSuffix);
 
@@ -167,18 +208,22 @@ const DisplayName = ({
         <Tooltip
             content = { displayedName }
             position = { getIndicatorsTooltipPosition(thumbnailType) }>
-            <span
-                aria-label = { allowEditing
-                    ? t('editDisplayName', { name: displayedName })
-                    : undefined }
-                className = { `displayname ${classes.displayName}` }
-                id = { elementID }
-                onClick = { allowEditing ? onStartEditing : undefined }
-                onKeyDown = { allowEditing ? onDisplayNameKeyDown : undefined }
-                role = { allowEditing ? 'button' : undefined }
-                tabIndex = { allowEditing ? 0 : undefined }>
-                {displayedName}
-            </span>
+            {allowEditing
+                ? <button
+                    aria-label = { t('editDisplayName', { name: displayedName }) }
+                    className = { `displayname ${classes.displayName} ${classes.displayNameButton}` }
+                    id = { elementID }
+                    onClick = { onStartEditing }
+                    onKeyPress = { onDisplayNameKeyPress }
+                    ref = { displayNameRef }
+                    type = 'button'>
+                    {displayedName}
+                </button>
+                : <span
+                    className = { `displayname ${classes.displayName}` }
+                    id = { elementID }>
+                    {displayedName}
+                </span>}
         </Tooltip>
     );
 };

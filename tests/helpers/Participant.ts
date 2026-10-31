@@ -1210,7 +1210,7 @@ export class Participant {
 
         await localVideoContainer.moveTo();
 
-        return localVideoContainer.$('span[id="localDisplayName"]');
+        return localVideoContainer.$('[id="localDisplayName"]');
     }
 
     /**
