@@ -69,6 +69,7 @@ import {
     TRANSCRIPTION_ON_SOUND_ID
 } from './constants';
 import {
+    getActiveSession,
     getResourceId,
     getSessionById,
     registerRecordingAudioFiles,
@@ -349,13 +350,48 @@ StateListenerRegistry.register(
             maybeNotifyRecordingStart(dispatch, getState);
         }
 
-        if (recordingStopping || transcriptionStopping) {
+        // The flag cleared with no transcriber present, while a start is still waiting for the
+        // transcription or after inviting the transcriber failed here, means the transcription failed
+        // to start: there is no stop to notify, and a start still waiting for it must stop doing so,
+        // so the start of a recording requested along with it is still notified. A normal stop can
+        // also clear the flag with no transcriber present, when the transcriber left first, but
+        // then nothing is waiting for the transcription and no invite failed.
+        const startIntent = getState()['features/recording'].startRecordingIntent;
+        const transcriptionStartFailed = transcriptionStopping
+            && !isTranscribing(getState())
+            && (Boolean(startIntent?.transcription) || getState()['features/subtitles']._hasError);
+
+        // Likewise, the recording request withdrawn while a start is still waiting for the recording,
+        // before any file recording session was seen on and with none active now, means the recording
+        // was cancelled before it started (e.g. stopped while the transcriber invite was pending):
+        // there is no stop to notify, and the start must stop waiting for it, or it would keep waiting
+        // and a later start would not be announced correctly. A start still waiting after its session
+        // was on (e.g. for the initiator jicofo never delivered) is not that: the request withdrawn is
+        // then a real stop, whether or not the session's off update arrived first.
+        const recordingStartCancelled = recordingStopping
+            && Boolean(startIntent?.recording)
+            && !startIntent?.recordingStarted
+            && !getActiveSession(getState(), JitsiRecordingConstants.mode.FILE);
+
+        if ((transcriptionStartFailed && startIntent?.transcription) || recordingStartCancelled) {
+            const recording = Boolean(startIntent?.recording) && !recordingStartCancelled;
+            const transcription = Boolean(startIntent?.transcription) && !transcriptionStartFailed;
+
+            dispatch(setStartRecordingIntent(recording || transcription ? { recording,
+                transcription } : null));
+            maybeNotifyRecordingStart(dispatch, getState);
+        }
+
+        const recordingReallyStopping = recordingStopping && !recordingStartCancelled;
+        const transcriptionReallyStopping = transcriptionStopping && !transcriptionStartFailed;
+
+        if (recordingReallyStopping || transcriptionReallyStopping) {
             const existing = getState()['features/recording'].stopRecordingIntent;
 
             if (!existing) {
                 dispatch(setStopRecordingIntent({
-                    recording: recordingStopping,
-                    transcription: transcriptionStopping
+                    recording: recordingReallyStopping,
+                    transcription: transcriptionReallyStopping
                 }));
             }
             maybeNotifyRecordingStop(dispatch, getState);
@@ -523,6 +559,17 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         dispatch(hidePendingRecordingNotification(mode));
 
         if (updatedSessionData?.status === ON) {
+            const startIntent = getState()['features/recording'].startRecordingIntent;
+
+            // Remember that the requested recording did start, whether or not the start can be
+            // notified yet: the metadata listener tells a stop from a cancelled start by it.
+            if (mode === JitsiRecordingConstants.mode.FILE && startIntent?.recording && !startIntent.recordingStarted) {
+                dispatch(setStartRecordingIntent({
+                    ...startIntent,
+                    recordingStarted: true
+                }));
+            }
+
             // We receive 2 updates of the session status ON. The first one is from jibri when it joins.
             // The second one is from jicofo which will deliver the initiator value. Since the start
             // recording notification uses the initiator value we skip the jibri update and show the
