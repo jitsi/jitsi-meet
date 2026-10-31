@@ -133,6 +133,13 @@ export default class IframeAPI extends BasePageObject {
     }
 
     /**
+     * Returns the current preferred video quality.
+     */
+    getVideoQuality(): Promise<number> {
+        return this.participant.execute(() => window.jitsiAPI.getVideoQuality());
+    }
+
+    /**
      * Removes the embedded Jitsi Meet conference.
      */
     dispose() {
