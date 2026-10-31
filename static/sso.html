@@ -93,7 +93,46 @@
             }
         }
 
+        /**
+         * A JaaS tenant's own login service (named in the tenant's token as context.tokenAuthUrl) logs the host in
+         * and sends the browser here with the finished token in the fragment: #jwt=<token>&nonce=<nonce>. The
+         * page that opened the popup checks the nonce against the one it sent, so a token it did not ask for is
+         * ignored. The token is only ever handed to that page, never used to load a meeting from here.
+         *
+         * @returns {boolean} Whether the fragment carried a tenant login.
+         */
+        function handleTenantLogin() {
+            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            const token = hashParams.get('jwt');
+
+            if (!token) {
+                return false;
+            }
+            history.replaceState(null, '', window.location.pathname);
+
+            const target = window.opener || (window.parent !== window ? window.parent : null);
+
+            if (!target) {
+                document.getElementById('error').textContent = 'Error: this login was not started from a meeting.';
+                document.getElementById('error').style.display = 'block';
+
+                return true;
+            }
+            target.postMessage({
+                type: 'oauth-success',
+                accessToken: token,
+                nonce: hashParams.get('nonce') || ''
+            }, window.location.origin);
+            document.getElementById('success').style.display = 'block';
+            document.getElementById('message-for-opener').style.display = 'block';
+
+            return true;
+        }
+
         async function handleAuthorizationCode() {
+            if (handleTenantLogin()) {
+                return;
+            }
             try {
                 // Parse query parameters (Authorization Code Flow uses query params, not hash)
                 const urlParams = new URLSearchParams(window.location.search);
