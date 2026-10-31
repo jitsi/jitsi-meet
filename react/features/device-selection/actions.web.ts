@@ -5,9 +5,10 @@ import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
 import {
     setAudioInputDevice,
+    setAudioOutputDevice,
     setVideoInputDevice
 } from '../base/devices/actions';
-import { getDeviceLabelById, setAudioOutputDeviceId } from '../base/devices/functions';
+import { getDeviceLabelById } from '../base/devices/functions';
 import { updateSettings } from '../base/settings/actions';
 import { toggleUpdateAudioSettings } from '../base/tracks/actions.web';
 import { getLocalJitsiAudioTrack } from '../base/tracks/functions.any';
@@ -51,19 +52,7 @@ export function submitAudioDeviceSelectionTab(newState: any, isDisplayedOnWelcom
             !== currentState.selectedAudioOutputId) {
             sendAnalytics(createDeviceChangedEvent('audio', 'output'));
 
-            setAudioOutputDeviceId(
-                newState.selectedAudioOutputId,
-                dispatch,
-                true,
-                getDeviceLabelById(getState(), newState.selectedAudioOutputId, 'audioOutput'))
-                .then(() => logger.log('changed audio output device'))
-                .catch(err => {
-                    logger.warn(
-                        'Failed to change audio output device.',
-                        'Default or previously set audio output device will',
-                        ' be used instead.',
-                        err);
-                });
+            dispatch(setAudioOutputDevice(newState.selectedAudioOutputId));
         }
 
         if (newState.noiseSuppressionEnabled !== currentState.noiseSuppressionEnabled) {

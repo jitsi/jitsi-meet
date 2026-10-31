@@ -262,8 +262,10 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
                 dispatch(setAudioInputDeviceAndUpdateSettings(deviceId));
                 break;
             case 'audiooutput':
-                dispatch(setAudioOutputDevice(deviceId));
-                break;
+                // Report whether the switch happened, not only that it was requested.
+                dispatch(setAudioOutputDevice(deviceId)).then((changed: boolean) => responseCallback(changed));
+
+                return true;
             case 'videoinput':
                 dispatch(setVideoInputDeviceAndUpdateSettings(deviceId));
                 break;
