@@ -758,7 +758,8 @@
         "showMeWhatImSharing": "Show me what I'm sharing"
     },
     "liveStreaming": {
-        "busy": "We're working on freeing streaming resources. Please try again in a few minutes.",
+        "badRequest": "The live stream request is not valid. Check the stream key and the stream settings.",
+        "busy":"We're working on freeing streaming resources. Please try again in a few minutes.",
         "busyTitle": "All streamers are currently busy",
         "changeSignIn": "Switch accounts.",
         "choose": "Choose a live stream",
@@ -1224,6 +1225,7 @@
         "alsoTranscribe": "Also transcribe this meeting?",
         "authDropboxText": "Upload to Dropbox",
         "availableSpace": "Available space: {{spaceLeft}} MB (approximately {{duration}} minutes of recording)",
+        "badRequest": "The recording settings of this meeting are not supported.",
         "beta": "BETA",
         "busy": "We're working on freeing recording resources. Please try again in a few minutes.",
         "busyTitle": "All recorders are currently busy",
