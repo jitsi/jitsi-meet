@@ -2010,14 +2010,13 @@ export default {
             promises.push(setAudioOutputPromise);
         }
 
-        // Handles the use case when the default device is changed (we are always stopping the streams because it's
+        // Handles the use case when the default device is changed (we are always stopping the stream because it's
         // simpler):
-        // If the default device is changed we need to first stop the local streams and then call GUM. Otherwise GUM
+        // If the default device is changed we need to first stop the local stream and then call GUM. Otherwise GUM
         // will return a stream using the old default device.
-        if (requestedInput.audio && localAudio) {
-            localAudio.stopStream();
-        }
-
+        // The local audio stream is not stopped here: GUM for a changed default mic is called with the real device id
+        // (see hasDefaultMicChanged below) and the old track is disposed only after it has been replaced, so the mic
+        // keeps sending if creating or replacing the new track fails.
         if (requestedInput.video && localVideo) {
             localVideo.stopStream();
         }
@@ -2108,6 +2107,14 @@ export default {
                         this.useAudioStream(track)
                             .then(() => {
                                 hasDefaultMicChanged && (track._realDeviceId = track.deviceId = 'default');
+                            })
+                            .catch(error => {
+                                logger.error(`Audio track replacement failed on device change, ${error}`);
+
+                                // The old track is still in use, release the device opened for the new one.
+                                track.dispose();
+
+                                throw error;
                             }));
                 } else {
                     promises.push(
