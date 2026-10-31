@@ -1,6 +1,7 @@
 import { IStore } from '../app/types';
 import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { MEDIA_TYPE } from '../base/media/constants';
+import { getLocalParticipant } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { SET_SCREENSHARE_CAPTURE_FRAME_RATE, SET_SCREEN_AUDIO_SHARE_STATE } from './actionTypes';
@@ -31,15 +32,20 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_SCREEN_AUDIO_SHARE_STATE: {
         const { isSharingAudio } = action;
-        const { participantId } = state['features/large-video'];
+        const localParticipantId = getLocalParticipant(state)?.id;
 
         if (isSharingAudio) {
-            logger.debug(`User with id: ${participantId} playing audio sharing.`);
-            APP.API.notifyAudioOrVideoSharingToggled(MEDIA_TYPE.AUDIO, 'playing', participantId);
+            logger.debug(`User with id: ${localParticipantId} playing audio sharing.`);
+            if (typeof APP !== 'undefined') {
+                APP.API.notifyAudioOrVideoSharingToggled(MEDIA_TYPE.AUDIO, 'playing', localParticipantId);
+            }
         } else {
-            logger.debug(`User with id: ${participantId} stop audio sharing.`);
-            APP.API.notifyAudioOrVideoSharingToggled(MEDIA_TYPE.AUDIO, 'stop', participantId);
+            logger.debug(`User with id: ${localParticipantId} stop audio sharing.`);
+            if (typeof APP !== 'undefined') {
+                APP.API.notifyAudioOrVideoSharingToggled(MEDIA_TYPE.AUDIO, 'stop', localParticipantId);
+            }
         }
+        break;
     }
     }
 
