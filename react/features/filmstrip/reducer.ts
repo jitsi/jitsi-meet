@@ -326,13 +326,16 @@ ReducerRegistry.register<IFilmstripState>(
         case PARTICIPANT_LEFT: {
             const { id, local } = action.participant;
 
-            if (local) {
+            if (local || !(id in state.participantsVolume)) {
                 return state;
             }
-            delete state.participantsVolume[id];
+
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { [id]: _removedVolume, ...participantsVolume } = state.participantsVolume;
 
             return {
-                ...state
+                ...state,
+                participantsVolume
             };
         }
         case SET_FILMSTRIP_HEIGHT:{
