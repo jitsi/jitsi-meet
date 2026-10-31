@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, View, ViewStyle } from 'react-native';
 
 import Avatar from '../../../base/avatar/components/Avatar';
@@ -37,40 +38,50 @@ interface IProps {
     participantId: string;
 }
 
-const SpeakerStatsItem = (props: IProps) =>
-    (
+const SpeakerStatsItem = (props: IProps) => {
+    const { t } = useTranslation();
+    const { displayName, dominantSpeakerTime, hasLeft, isDominantSpeaker, participantId } = props;
+    const speakerLabel = t('speakerStats.speakerStats');
+    const speakerTimeLabel = t('speakerStats.speakerTime');
+    const nameLabel = `${speakerLabel}: ${displayName}`;
+
+    return (
         <View
-            key = { props.participantId }
+            key = { participantId }
             style = { style.speakerStatsItemContainer as ViewStyle }>
             <View style = { style.speakerStatsAvatar }>
                 {
-                    props.hasLeft ? (
+                    hasLeft ? (
                         <StatelessAvatar
                             color = { BaseTheme.palette.ui05 }
-                            initials = { getInitials(props.displayName) }
+                            initials = { getInitials(displayName) }
                             size = { BaseTheme.spacing[5] } />
                     ) : (
                         <Avatar
                             className = 'userAvatar'
-                            participantId = { props.participantId }
+                            participantId = { participantId }
                             size = { BaseTheme.spacing[5] } />
                     )
                 }
             </View>
             <View style = { style.speakerStatsNameTime as ViewStyle } >
-                <Text style = { [ style.speakerStatsText, props.hasLeft && style.speakerStatsLeft ] }>
-                    {props.displayName}
+                <Text
+                    accessibilityLabel = { nameLabel }
+                    style = { [ style.speakerStatsText, hasLeft && style.speakerStatsLeft ] }>
+                    {displayName}
                 </Text>
                 <TimeElapsed
+                    accessibilityLabel = { speakerTimeLabel }
                     style = { [
                         style.speakerStatsText,
                         style.speakerStatsTime,
-                        props.isDominantSpeaker && style.speakerStatsDominant,
-                        props.hasLeft && style.speakerStatsLeft
+                        isDominantSpeaker && style.speakerStatsDominant,
+                        hasLeft && style.speakerStatsLeft
                     ] }
-                    time = { props.dominantSpeakerTime } />
+                    time = { dominantSpeakerTime } />
             </View>
         </View>
     );
+};
 
 export default SpeakerStatsItem;

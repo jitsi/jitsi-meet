@@ -11,6 +11,11 @@ import { createLocalizedTime } from '../timeFunctions';
 interface IProps extends WithTranslation {
 
     /**
+     * Optional accessibility label prefix.
+     */
+    accessibilityLabel?: string;
+
+    /**
      * Style for text.
      */
     style: Object;
@@ -36,11 +41,15 @@ class TimeElapsed extends PureComponent<IProps> {
      * @returns {ReactElement}
      */
     override render() {
-        const { style, time, t } = this.props;
+        const { accessibilityLabel, style, time, t } = this.props;
         const timeElapsed = createLocalizedTime(time, t);
+        const timeStr = timeElapsed.join(' ');
+        const label = accessibilityLabel ? `${accessibilityLabel}: ${timeStr}` : timeStr;
 
         return (
-            <Text style = { style }>
+            <Text
+                accessibilityLabel = { label }
+                style = { style }>
                 { timeElapsed }
             </Text>
         );
