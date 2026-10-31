@@ -151,6 +151,19 @@ VirtualHost "noregex.test"
     token_regex_enabled = false
     muc_mapper_domain_base = "noregex.test"
 
+-- VirtualHost with the room claim optional (asap_require_room_claim), as on
+-- meet.jit.si. A token without a room claim connects and joins any room. A
+-- room claim that is present must still match, also when it is a pattern.
+-- Same layout and .test suffix as noregex.test above.
+VirtualHost "noclaim.test"
+    authentication = "token"
+    app_id = "jitsi"
+    asap_key_server = "http://localhost:5280/test-observer/asap-keys"
+    signature_algorithm = "RS256"
+    allow_empty_token = true
+    asap_require_room_claim = false
+    muc_mapper_domain_base = "noclaim.test"
+
 -- VirtualHost used by mod_auth_jitsi-anonymous tests.
 VirtualHost "jitsi-anonymous.localhost"
     authentication = "jitsi-anonymous"

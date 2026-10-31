@@ -62,39 +62,8 @@ local function is_regex_room_claim(room_context)
     return room_context['regex'] == true or room_context['regex'] == 'true';
 end
 
---- Counts the quantifiers ('*', '+', '-' and '?') in a Lua pattern.
--- A quantifier is only special outside a character class, so the contents of
--- a class ('[a-z]') are skipped, and so is the character after a '%' escape.
--- @param pattern the Lua pattern to inspect
--- @return the number of quantifiers in the pattern
-local function count_pattern_quantifiers(pattern)
-    local count = 0;
-    local index = 1;
-    local length = #pattern;
-    local in_class = false;
-
-    while index <= length do
-        local char = pattern:sub(index, index);
-
-        if char == '%' then
-            -- '%' escapes the next character, so skip both
-            index = index + 2;
-        else
-            if in_class then
-                if char == ']' then
-                    in_class = false;
-                end
-            elseif char == '[' then
-                in_class = true;
-            elseif char == '*' or char == '+' or char == '-' or char == '?' then
-                count = count + 1;
-            end
-            index = index + 1;
-        end
-    end
-
-    return count;
-end
+-- matches a room name against a room claim that is flagged as a pattern
+local match_room_pattern = module:require "token/room_pattern".match;
 
 local Util = {}
 Util.__index = Util
@@ -154,16 +123,16 @@ function Util.new(module)
     self.enableDomainVerification = module:get_option_boolean('enable_domain_verification', true);
 
     --[[
-        A room claim that is flagged with context.room.regex is used as a Lua
-        pattern. Lua patterns backtrack, so the cost of a match grows as
-        (room name length) ^ (number of quantifiers). Both are limited to keep
-        the cost of one match bounded, because a match blocks Prosody.
-        Measured worst case with the defaults below is about 70ms; lowering
-        the quantifier limit to 2 brings that down to about 2ms.
+        A room claim that is flagged with context.room.regex is a pattern with
+        at most one '.*' (see token/room_pattern.lib.lua). It is not a Lua
+        pattern, so a match does not backtrack and its cost is linear. The
+        length limit is not needed for the match time. It stays as a bound on
+        the work per join and on the size of the claim in the log: a room name
+        longer than the limit is not matched, and a pattern longer than the
+        limit plus the two characters of '.*' cannot match and is refused.
      --]]
     self.regexEnabled = module:get_option_boolean('token_regex_enabled', true);
     self.regexRoomMaxLength = module:get_option_number('token_regex_room_max_length', 128);
-    self.regexRoomMaxQuantifiers = module:get_option_number('token_regex_max_quantifiers', 3);
 
     if self.allowEmptyToken == true then
         module:log("warn", "WARNING - empty tokens allowed");
@@ -510,12 +479,9 @@ function Util:verify_room(session, room_address)
     local auth_room = session.jitsi_meet_room;
     if auth_room then
         if type(auth_room) == 'string' then
-            -- Room names are lowercase. Lowercase a literal room claim so that
-            -- a token with uppercase letters still matches. Keep a pattern as
-            -- written: pattern classes are case-sensitive (%d vs %D).
-            if not auth_room_is_pattern then
-                auth_room = string.lower(auth_room);
-            end
+            -- Room names are lowercase. Lowercase the room claim so that a
+            -- token with uppercase letters still matches.
+            auth_room = string.lower(auth_room);
         else
             module:log('warn', 'session.jitsi_meet_room not string: %s', serialize(auth_room));
         end
@@ -567,18 +533,25 @@ function Util:verify_room(session, room_address)
                 return false, 'invalid-regex', 'Room name is too long to match against the room claim';
             end
 
-            local quantifiers = count_pattern_quantifiers(auth_room);
-            if quantifiers > self.regexRoomMaxQuantifiers then
-                module:log('warn', 'Room claim has %s quantifiers, more than the limit of %s: %s',
-                    quantifiers, self.regexRoomMaxQuantifiers, auth_room);
-                return false, 'invalid-regex', 'Room claim pattern is too complex';
+            if type(auth_room) == 'string' and #auth_room > self.regexRoomMaxLength + 2 then
+                module:log('warn', 'Room claim pattern is longer than %s, refusing it: %s...',
+                    self.regexRoomMaxLength + 2, auth_room:sub(1, 32));
+                return false, 'invalid-regex', 'Room claim pattern is too long';
             end
 
-            local ok, result = pcall(string.match, match_target, auth_room);
-            if not ok then
-                return false, 'invalid-regex', 'Room claim is not a valid Lua pattern';
+            local matches, reason = match_room_pattern(auth_room, match_target);
+            if matches == nil then
+                module:log('warn', 'Room claim pattern is not supported (%s): %s', reason, tostring(auth_room));
+                return false, 'invalid-regex', 'Room claim pattern is not supported';
             end
-            room_to_check = result;
+
+            if not matches then
+                -- The claim is present and does not match. This is not a
+                -- missing claim, so it is refused also when the room claim is
+                -- optional (asap_require_room_claim = false).
+                return false, 'room-name-does-not-match', 'Room name does not match the room claim pattern.';
+            end
+            room_to_check = match_target;
         else
             -- not a regex
             room_to_check = auth_room;
