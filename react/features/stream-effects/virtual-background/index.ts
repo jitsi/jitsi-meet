@@ -1,17 +1,20 @@
 /* eslint-disable lines-around-comment */
+
 import {
     createVirtualBackgroundV2FailedEvent,
     createVirtualBackgroundV2StartedEvent
 } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
+import { getBaseUrl } from '../../base/util/helpers';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { timeout } from '../../virtual-background/functions';
 import logger from '../../virtual-background/logger';
 import { IVirtualBackground } from '../../virtual-background/reducer';
 
-import { detectDeviceTier } from './DeviceTierDetector';
+import { BackendType, detectDeviceTier } from './DeviceTierDetector';
 import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect';
+import { AR_FILTERS } from './arFilters';
 // @ts-ignore
 import createTFLiteModule from './vendor/tflite/tflite';
 // @ts-ignore
@@ -73,7 +76,31 @@ export async function createVirtualBackgroundEffect(virtualBackground: IVirtualB
             + ` tier: ${capabilities.tier}, backend: ${capabilities.backend}`
         );
 
+        const arGated = capabilities.backend !== BackendType.TFLITE;
+        const base = getBaseUrl();
+
+        const selectedFilter = virtualBackground.selectedARFilterId
+            ? AR_FILTERS.find(f => f.id === virtualBackground.selectedARFilterId)
+            : undefined;
+
+        let arFilter: { anchorLandmark: number; depthOffset: number; id: string; modelFile: string; scaleMultiplier: number; tooltip?: string; verticalOffset: number; } | undefined;
+
+        if (arGated && selectedFilter) {
+            arFilter = {
+                anchorLandmark: selectedFilter.anchorLandmark,
+                depthOffset: selectedFilter.depthOffset,
+                id: selectedFilter.id,
+                modelFile: selectedFilter.modelFile,
+                scaleMultiplier: selectedFilter.scaleMultiplier,
+                tooltip: selectedFilter.tooltip,
+                verticalOffset: selectedFilter.verticalOffset
+            };
+        }
+
         const effect = new JitsiStreamBackgroundEffect(undefined, virtualBackground, {
+            arFilter,
+            arModelPath: arFilter ? `${base}libs/face_landmarker.task` : undefined,
+            arWasmBase: arFilter ? `${base}libs/mediapipe-vision/` : undefined,
             capabilities,
             enableV2: true,
             vbConfig
