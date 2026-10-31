@@ -99,7 +99,12 @@ const googleApi = {
                         // eslint-disable-next-line camelcase
                         client_id: clientId,
                         scope: `${scope} ${GOOGLE_SCOPE_USERINFO}`,
-                        callback: '' // defined at request time in await/promise scope.
+                        callback: '', // defined at request time in await/promise scope.
+
+                        // Called when the popup fails to open or is closed
+                        // before a response, so the pending request can fail.
+                        // eslint-disable-next-line camelcase
+                        error_callback: error => this._onTokenRequestError?.(error)
                     });
                     resolve();
                 } catch (err) {
@@ -213,10 +218,18 @@ const googleApi = {
         return this.get()
             .then(api => new Promise((resolve, reject) => {
                 try {
+                    // Settle this promise if the popup fails to open or is closed.
+                    this._onTokenRequestError = error => {
+                        logger.error('Error requesting token', error);
+                        reject(error);
+                    };
+
                     // Settle this promise in the response callback for requestAccessToken()
                     this.tokenClient.callback = resp => {
                         if (resp.error !== undefined) {
                             reject(resp);
+
+                            return;
                         }
 
                         // Get the number of seconds the token is valid for, subtract 5 minutes
@@ -233,6 +246,7 @@ const googleApi = {
                     this.tokenClient.requestAccessToken({ prompt: consent ? 'consent' : '' });
                 } catch (err) {
                     logger.error('Error requesting token', err);
+                    reject(err);
                 }
             }));
     },

@@ -190,7 +190,8 @@ class StartLiveStreamDialog
                     broadcasts: undefined,
                     errorType: undefined
                 }))
-            .then(() => this._onGetYouTubeBroadcasts());
+            .then(() => this._onGetYouTubeBroadcasts())
+            .catch((response: any) => this._parseErrorFromResponse(response));
     }
 
     /**
