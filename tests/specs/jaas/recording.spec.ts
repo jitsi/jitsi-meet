@@ -59,22 +59,6 @@ describe('Recording and live-streaming', () => {
             });
         }
 
-        const iFrameEvent = await p.driver.waitUntil(async () => {
-            const event = await p.getIframeAPI().getEventResult('recordingStatusChanged');
-
-            return event?.on === true || event?.error ? event : false;
-        }, {
-            timeout: 120_000,
-            timeoutMsg: 'Recording start status not received'
-        });
-
-        if (iFrameEvent.error) {
-            throw new Error(`Recording failed to start: ${iFrameEvent.error}`);
-        }
-
-        expect(iFrameEvent.mode).toBe('file');
-        expect(iFrameEvent.on).toBe(true);
-
         await p.switchToIFrame();
         await p.getNotifications().waitForRecordingStartedNotification();
         await p.switchToMainFrame();
@@ -86,6 +70,15 @@ describe('Recording and live-streaming', () => {
 
         expect('RECORDING_STARTED').toBe(jaasEvent.eventType);
         expect(jaasEvent.customerId).toBe(customerId);
+
+        const iFrameEvent = await p.getIframeAPI().getEventResult('recordingStatusChanged');
+
+        if (iFrameEvent.error) {
+            throw new Error(`Recording failed to start: ${iFrameEvent.error}`);
+        }
+
+        expect(iFrameEvent.mode).toBe('file');
+        expect(iFrameEvent.on).toBe(true);
 
         webhooksProxy.clearCache();
 
