@@ -8,8 +8,9 @@ import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
 import { getParticipantById, getParticipantDisplayName } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
-import { closePoll as closePollAction, setVoteChanging } from '../actions';
-import { canClosePoll, getPoll } from '../functions';
+import { setVoteChanging } from '../actions';
+import { getPoll } from '../functions';
+import { useClosePoll } from '../hooks.any';
 import { IAnswerData, IPollData, IVoterData } from '../types';
 
 /**
@@ -100,11 +101,8 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
         });
     }, [ poll.answers, showDetails ]);
 
-    const canClose = useSelector((state: IReduxState) => canClosePoll(state, pollId));
+    const { canClose, closePoll } = useClosePoll(pollId);
     const dispatch = useDispatch();
-    const closePoll = useCallback(() => {
-        dispatch(closePollAction(pollId));
-    }, [ dispatch, pollId ]);
 
     const changeVote = useCallback(() => {
         dispatch(setVoteChanging(pollId, true));

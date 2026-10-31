@@ -1,6 +1,7 @@
 import { createPollEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
+import { showErrorNotification } from '../notifications/actions';
 
 import {
     CHANGE_VOTE,
@@ -112,7 +113,9 @@ export const registerVote = (pollId: string, answers: Array<boolean> | null) => 
  * @returns {Function}
  */
 export const closePoll = (pollId: string) => (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-    getState()['features/base/conference'].conference?.getPolls().closePoll(pollId);
+    // Rejected when the server refuses the close. A lib-jitsi-meet without that error returns nothing.
+    getState()['features/base/conference'].conference?.getPolls()?.closePoll(pollId)
+        ?.catch(() => dispatch(showErrorNotification({ titleKey: 'polls.errors.closeFailed' })));
     sendAnalytics(createPollEvent('closed'));
 };
 

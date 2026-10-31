@@ -13,7 +13,7 @@ import {
     SAVE_POLL
 } from './actionTypes';
 import logger from './logger';
-import { IIncomingAnswerData, IPollData, IVoterData } from './types';
+import { IAnswerData, IIncomingAnswerData, IPollData, IVoterData } from './types';
 
 const INITIAL_STATE = {
     polls: {},
@@ -30,6 +30,30 @@ export interface IPollsState {
 }
 
 const STORE_NAME = 'features/polls';
+
+/**
+ * Returns the server's answers with the names this client has for their voters. The server stores the nick a voter
+ * had when voting, which is stale after a rename or empty without a nick.
+ *
+ * @param {Array<IAnswerData>} answers - The answers from the server.
+ * @param {Array<IAnswerData>} localAnswers - The answers this client has.
+ * @returns {Array<IAnswerData>}
+ */
+function _withLocalVoterNames(answers: Array<IAnswerData>, localAnswers: Array<IAnswerData>) {
+    const names = new Map(localAnswers.flatMap(({ voters }) => voters ?? []).map(({ id, name }) => [ id, name ]));
+
+    return answers.map(answer => {
+        return {
+            ...answer,
+            voters: answer.voters?.map(voter => {
+                return {
+                    ...voter,
+                    name: names.get(voter.id) || voter.name
+                };
+            })
+        };
+    });
+}
 
 ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action): IPollsState => {
     switch (action.type) {
@@ -127,7 +151,9 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
     }
 
     case RECEIVE_POLL_CLOSED: {
-        if (!state.polls[action.pollId]) {
+        const poll = state.polls[action.pollId];
+
+        if (!poll) {
             return state;
         }
 
@@ -136,11 +162,11 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
             polls: {
                 ...state.polls,
                 [action.pollId]: {
-                    ...state.polls[action.pollId],
+                    ...poll,
 
-                    // The answers the server has, e.g. without a vote that a visitor node took but the main node
-                    // refused because the poll was already closed.
-                    ...action.answers?.length ? { answers: action.answers } : {},
+                    // Only a visitor node sends the answers: the main prosody's, without a vote that the visitor node
+                    // took but the main one refused because the poll was already closed.
+                    ...action.answers?.length ? { answers: _withLocalVoterNames(action.answers, poll.answers) } : {},
                     changingVote: false,
                     closed: true
                 }

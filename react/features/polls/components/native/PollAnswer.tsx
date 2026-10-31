@@ -98,6 +98,15 @@ const PollAnswer = (props: AbstractProps) => {
                             type = { PRIMARY } />
                     </View>
                     : <View style = { pollsStyles.buttonRow as ViewStyle }>
+                        {
+                            canClose && <Button
+                                accessibilityLabel = 'polls.results.endPoll'
+                                id = { t('polls.results.endPoll') }
+                                labelKey = 'polls.results.endPoll'
+                                onClick = { closePoll }
+                                style = { pollsStyles.pollCreateButton }
+                                type = { TERTIARY } />
+                        }
                         <Button
                             accessibilityLabel = 'polls.answer.skip'
                             id = { t('polls.answer.skip') }
@@ -114,15 +123,6 @@ const PollAnswer = (props: AbstractProps) => {
                             style = { pollsStyles.pollCreateButton }
                             type = { PRIMARY } />
                     </View>
-            }
-            {
-                !pollSaved && canClose && <Button
-                    accessibilityLabel = 'polls.results.endPoll'
-                    id = { t('polls.results.endPoll') }
-                    labelKey = 'polls.results.endPoll'
-                    labelStyle = { pollsStyles.toggleText }
-                    onClick = { closePoll }
-                    type = { TERTIARY } />
             }
         </>
     );

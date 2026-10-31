@@ -87,6 +87,17 @@ Component "polls.localhost" "polls_component"
     muc_mapper_domain_base = "localhost"
     muc_mapper_domain_prefix = "conference"
 
+-- mod_polls_component as it runs on a visitor node (main_domain is set), on its
+-- own plain MUC so the visitor-only paths can be tested next to the main one.
+-- Not under localhost, which muc_domain_mapper would take for a tenant.
+-- The main prosody's updates are fired by the tests as jitsi-polls-update.
+Component "conference.vnode.test" "muc"
+
+Component "polls.vnode.test" "polls_component"
+    muc_mapper_domain_base = "vnode.test"
+    muc_mapper_domain_prefix = "conference"
+    main_domain = "localhost"
+
 -- Plain MUC for mod_presence_identity tests. No token verification and no
 -- muc_meeting_id lock so any client can join freely without focus.
 Component "conference-identity.localhost" "muc"

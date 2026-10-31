@@ -7,8 +7,10 @@ import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
 import { getParticipantDisplayName } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
-import { closePoll as closePollAction, registerVote, removePoll, setVoteChanging } from '../actions';
-import { canClosePoll, getPoll } from '../functions';
+import { showErrorNotification } from '../../notifications/actions';
+import { registerVote, removePoll, setVoteChanging } from '../actions';
+import { getPoll } from '../functions';
+import { useClosePoll } from '../hooks.any';
 import { IPollData } from '../types';
 
 /**
@@ -79,7 +81,9 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
     const dispatch = useDispatch();
 
     const submitAnswer = useCallback(() => {
-        conference?.getPolls().answerPoll(pollId, checkBoxStates);
+        // Rejected when the poll was closed meanwhile. A lib-jitsi-meet without that error returns nothing.
+        conference?.getPolls()?.answerPoll(pollId, checkBoxStates)
+            ?.catch(() => dispatch(showErrorNotification({ titleKey: 'polls.errors.voteNotCounted' })));
 
         sendAnalytics(createPollEvent('vote.sent'));
         dispatch(registerVote(pollId, checkBoxStates));
@@ -102,10 +106,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
         dispatch(setVoteChanging(pollId, false));
     }, [ dispatch, pollId ]);
 
-    const canClose = useSelector((state: IReduxState) => canClosePoll(state, pollId));
-    const closePoll = useCallback(() => {
-        dispatch(closePollAction(pollId));
-    }, [ dispatch, pollId ]);
+    const { canClose, closePoll } = useClosePoll(pollId);
 
     const { t } = useTranslation();
 

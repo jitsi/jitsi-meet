@@ -417,6 +417,9 @@ end
             -- A visitor node learns about a closed poll from the main prosody, see jitsi-polls-update.
             if session.type == 's2sin' or is_visitor_prosody then
                 module:log('warn', 'Poll cannot be closed from a visitor node, room:%s', room.jid);
+                if session.type ~= 's2sin' then
+                    session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll cannot be closed from a visitor node'));
+                end
                 return true;
             end
 
@@ -438,8 +441,9 @@ end
 
             poll.closed = true;
 
+            -- No answers: the occupants here have them from the answer-poll broadcasts. Only a visitor node, that
+            -- may have taken votes the main prosody refused, sends them (see jitsi-polls-update).
             local json_msg_str, error = json.encode({
-                answers = poll.answers,
                 command = 'close-poll',
                 pollId = data.pollId,
                 senderId = occupant_details.occupant_id,
@@ -581,11 +585,13 @@ local setup_muc_component = function(host_module, host)
             return;
         end
 
-        -- a poll that the main prosody closed
+        -- the polls that the main prosody closed, the update may also carry a new poll or a vote
+        local closed_any = false;
         for _, v in pairs(polls_command.polls) do
             local existing_poll = room.polls.by_id[v.pollId];
 
             if existing_poll and v.closed and not existing_poll.closed then
+                closed_any = true;
                 existing_poll.closed = true;
                 -- the main prosody's answers, without a vote taken here that it refused as the poll was closed
                 existing_poll.answers = v.answers;
@@ -597,13 +603,11 @@ local setup_muc_component = function(host_module, host)
                     roomJid = internal_room_jid_match_rewrite(room.jid),
                     type = 'polls'
                 });
-                if not json_msg_str then
+                if json_msg_str then
+                    send_polls_message_to_all(room, json_msg_str);
+                else
                     module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
-                    return;
                 end
-                send_polls_message_to_all(room, json_msg_str);
-
-                return;
             end
         end
 
@@ -621,7 +625,9 @@ local setup_muc_component = function(host_module, host)
             local updatedPoll, senderId, answers = find_updated_poll(room.polls.by_id, polls_command.polls);
 
             if not updatedPoll then
-                module:log('warn', 'no new or updated poll found in update for room %s', room.jid);
+                if not closed_any then
+                    module:log('warn', 'no new or updated poll found in update for room %s', room.jid);
+                end
                 return;
             end
 
