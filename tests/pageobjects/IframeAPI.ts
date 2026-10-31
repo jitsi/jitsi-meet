@@ -133,6 +133,21 @@ export default class IframeAPI extends BasePageObject {
     }
 
     /**
+     * Sets the preferred video quality (frame height).
+     * @param frameHeight The video frame height (e.g. 180, 360, 720).
+     */
+    setVideoQuality(frameHeight: number) {
+        return this.participant.execute(height => window.jitsiAPI.setVideoQuality(height), frameHeight);
+    }
+
+    /**
+     * Returns the current preferred video quality.
+     */
+    getVideoQuality(): Promise<number> {
+        return this.participant.execute(() => window.jitsiAPI.getVideoQuality());
+    }
+
+    /**
      * Removes the embedded Jitsi Meet conference.
      */
     dispose() {
