@@ -30,7 +30,7 @@ ReducerRegistry.register<IPollsHistoryState>(STORE_NAME, (state = INITIAL_STATE,
             return state;
         }
 
-        if (Object.keys(meetingPolls).length <= 1) {
+        if (Object.keys(meetingPolls).length === 1) {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { [action.meetingId]: _removedMeeting, ...newPolls } = state.polls;
 

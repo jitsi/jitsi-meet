@@ -29,20 +29,18 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     case REMOVE_POLL: {
         const { poll } = action;
-        const pollId = poll?.pollId ?? action.pollId;
 
-        if (meetingId && pollId) {
-            dispatch(removePollFromHistory(meetingId, pollId, poll));
+        if (meetingId) {
+            dispatch(removePollFromHistory(meetingId, poll.pollId, poll));
         }
         break;
     }
 
     case SAVE_POLL: {
         const { poll } = action;
-        const pollId = poll?.pollId ?? action.pollId;
 
-        if (meetingId && pollId) {
-            dispatch(savePollInHistory(meetingId, pollId, poll));
+        if (meetingId) {
+            dispatch(savePollInHistory(meetingId, poll.pollId, poll));
         }
         break;
     }

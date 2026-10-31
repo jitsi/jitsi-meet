@@ -65,6 +65,19 @@ export default class ChatPanel extends BasePageObject {
     }
 
     /**
+     * Waits for the new poll input to disappear.
+     */
+    async waitForNewPollInputNonExisting() {
+        await this.participant.driver.$(
+            '#polls-create-input')
+            .waitForExist({
+                reverse: true,
+                timeout: 2000,
+                timeoutMsg: 'New poll input still exists'
+            });
+    }
+
+    /**
      * Waits for the option input to be visible.
      * @param index
      */
@@ -194,6 +207,24 @@ export default class ChatPanel extends BasePageObject {
      */
     async isPollVisible(pollId: string) {
         return this.participant.driver.$(`#poll-${pollId}`).isDisplayed();
+    }
+
+    /**
+     * Clicks the close button of the given saved poll and waits for the poll to disappear.
+     * @param pollId
+     */
+    async closePoll(pollId: string) {
+        const closeButton = this.participant.driver.$(`#poll-${pollId} [aria-label="Close poll"]`);
+
+        await closeButton.scrollIntoView();
+        await closeButton.waitForClickable({ timeout: 2000 });
+        await closeButton.click();
+
+        await this.participant.driver.$(`#poll-${pollId}`).waitForExist({
+            reverse: true,
+            timeout: 3000,
+            timeoutMsg: `Poll ${pollId} still visible`
+        });
     }
 
     /**

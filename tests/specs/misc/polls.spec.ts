@@ -151,10 +151,7 @@ describe('Polls', () => {
             await p1.getChatPanel().fillPollOption(0, opt1);
             await p1.getChatPanel().fillPollOption(1, opt2);
             await p1.getChatPanel().clickSavePollButton();
-            await p1.driver.$('#polls-create-input').waitForExist({
-                reverse: true,
-                timeout: 2000
-            });
+            await p1.getChatPanel().waitForNewPollInputNonExisting();
             await p1.getChatPanel().waitForSendButton();
         };
 
@@ -202,17 +199,8 @@ describe('Polls', () => {
         expect(Object.keys(history).includes('undefined')).toBe(false);
 
         // 4. Remove Poll Alpha via UI close button.
-        const closeBtn = await p1.driver.$(`#poll-${pollAlphaId} [aria-label="Close poll"]`);
-
-        await closeBtn.scrollIntoView();
-        await closeBtn.waitForClickable({ timeout: 2000 });
-        await closeBtn.click();
-
-        await p1.driver.$(`#poll-${pollAlphaId}`).waitForExist({
-            reverse: true,
-            timeout: 3000
-        });
-        expect(await p1.driver.$(`#poll-${pollBetaId}`).isDisplayed()).toBe(true);
+        await p1.getChatPanel().closePoll(pollAlphaId);
+        expect(await p1.getChatPanel().isPollVisible(pollBetaId)).toBe(true);
 
         // 5. Verify Poll Alpha is removed from store while Poll Beta remains.
         await p1.driver.waitUntil(async () => {
