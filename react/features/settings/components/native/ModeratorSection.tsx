@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import {
@@ -28,11 +28,12 @@ const ModeratorSection = () => {
         followMeEnabled,
         followMeRecorderActive,
         followMeRecorderEnabled,
+        hideChatWithPermissions,
         startAudioMuted,
         startVideoMuted,
         startReactionsMuted,
         videoModerationEnabled
-    } = useSelector((state: IReduxState) => getModeratorTabProps(state));
+    } = useSelector((state: IReduxState) => getModeratorTabProps(state), shallowEqual);
 
     const { disableReactionsModeration } = useSelector((state: IReduxState) => state['features/base/config']);
 
@@ -140,54 +141,50 @@ const ModeratorSection = () => {
             },
             {
                 disabled: false,
+                hidden: disableReactionsModeration,
                 label: 'settings.startReactionsMuted',
                 state: startReactionsMuted,
                 onChange: onStartReactionsMutedToggled
             },
             {
+                hidden: hideChatWithPermissions,
                 label: 'settings.chatWithPermissions',
                 state: chatWithPermissionsEnabled,
                 onChange: onChatWithPermissionsToggled
             },
             {
+                hidden: hideChatWithPermissions,
                 label: 'settings.privateChatWithPermissions',
                 state: privateChatWithPermissionsEnabled,
                 onChange: onPrivateChatWithPermissionsToggled
             },
             {
+                hidden: !showSharedVideoWithPermissions,
                 label: 'settings.sharedVideoWithPermissions',
                 state: sharedVideoWithPermissionsEnabled,
                 onChange: onSharedVideoWithPermissionsToggled
             },
             {
+                hidden: !showBreakoutRoomJoinWithPermissions,
                 label: 'settings.breakoutRoomJoinWithPermissions',
                 state: breakoutRoomJoinWithPermissionsEnabled,
                 onChange: onBreakoutRoomJoinWithPermissionsToggled
             },
         ];
 
-        return moderation.filter(({ label }) => {
-            // Remove the entries by name. A pop() here took out whichever
-            // entry came last, which is not the reactions one.
-            if (label === 'settings.startReactionsMuted') {
-                return !disableReactionsModeration;
-            }
-
-            if (label === 'settings.sharedVideoWithPermissions') {
-                return showSharedVideoWithPermissions;
-            }
-
-            if (label === 'settings.breakoutRoomJoinWithPermissions') {
-                return showBreakoutRoomJoinWithPermissions;
-            }
-
-            return true;
-        });
+        // Hide the entries that the config or the room does not allow.
+        return moderation.filter(({ hidden }) => !hidden);
     }, [ startAudioMuted,
         startVideoMuted,
+        audioModerationEnabled,
+        videoModerationEnabled,
+        followMeActive,
         followMeEnabled,
+        followMeRecorderActive,
+        followMeRecorderChecked,
         followMeRecorderEnabled,
         disableReactionsModeration,
+        hideChatWithPermissions,
         onStartAudioMutedToggled,
         onStartVideoMutedToggled,
         onFollowMeToggled,
