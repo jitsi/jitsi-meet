@@ -1,16 +1,14 @@
-import { describe, it } from 'node:test';
-import assert from 'node:assert';
+import { describe, expect, it } from 'vitest';
 
-import ReducerRegistry from '../../react/features/base/redux/ReducerRegistry';
-import '../../react/features/base/known-domains/reducer';
 import { ADD_KNOWN_DOMAINS } from '../../react/features/base/known-domains/actionTypes';
 import { DEFAULT_STATE } from '../../react/features/base/known-domains/reducer';
+import ReducerRegistry from '../../react/features/base/redux/ReducerRegistry';
 
 describe('KnownDomains Reducer Unit Tests', () => {
     const reducer = ReducerRegistry._elements['features/base/known-domains'];
 
     it('is registered in ReducerRegistry', () => {
-        assert.ok(reducer, 'Reducer should be registered in ReducerRegistry');
+        expect(reducer).toBeDefined();
     });
 
     it('returns default state for unknown action', () => {
@@ -18,7 +16,7 @@ describe('KnownDomains Reducer Unit Tests', () => {
         const action = { type: 'UNKNOWN_ACTION' };
         const state = reducer(initialState, action);
 
-        assert.deepStrictEqual(state, DEFAULT_STATE);
+        expect(state).toEqual(DEFAULT_STATE);
     });
 
     it('adds new known domains and normalizes to lowercase', () => {
@@ -29,7 +27,7 @@ describe('KnownDomains Reducer Unit Tests', () => {
         };
         const state = reducer(initialState, action);
 
-        assert.deepStrictEqual(state, [
+        expect(state).toEqual([
             'meet.jit.si',
             'custom.domain.com',
             'another.domain.org'
@@ -44,7 +42,7 @@ describe('KnownDomains Reducer Unit Tests', () => {
         };
         const state = reducer(initialState, action);
 
-        assert.deepStrictEqual(state, [
+        expect(state).toEqual([
             'meet.jit.si',
             '8x8.vc',
             'new.domain.com'

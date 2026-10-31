@@ -1,26 +1,25 @@
-import { describe, it } from 'node:test';
-import assert from 'node:assert';
+import { describe, expect, it } from 'vitest';
 
-import ReducerRegistry from '../../react/features/base/redux/ReducerRegistry';
-import '../../react/features/base/jwt/reducer';
 import {
     SET_DELAYED_LOAD_OF_AVATAR_URL,
     SET_JWT,
     SET_KNOWN_AVATAR_URL
 } from '../../react/features/base/jwt/actionTypes';
+import '../../react/features/base/jwt/reducer';
+import ReducerRegistry from '../../react/features/base/redux/ReducerRegistry';
 
 describe('JWT Reducer Unit Tests', () => {
     const reducer = ReducerRegistry._elements['features/base/jwt'];
 
     it('is registered in ReducerRegistry', () => {
-        assert.ok(reducer, 'Reducer should be registered in ReducerRegistry');
+        expect(reducer).toBeDefined();
     });
 
     it('returns empty object as default state for unknown action', () => {
         const initialState = undefined;
         const state = reducer(initialState, { type: 'UNKNOWN_ACTION' });
 
-        assert.deepStrictEqual(state, {});
+        expect(state).toEqual({});
     });
 
     it('stores jwt payload on SET_JWT', () => {
@@ -36,9 +35,10 @@ describe('JWT Reducer Unit Tests', () => {
         };
 
         const nextState = reducer(initialState, action);
-        assert.strictEqual(nextState.jwt, 'mock.header.payload');
-        assert.strictEqual(nextState.tenant, 'my-tenant');
-        assert.deepStrictEqual(nextState.user, { id: 'user-123', name: 'Alice' });
+
+        expect(nextState.jwt).toBe('mock.header.payload');
+        expect(nextState.tenant).toBe('my-tenant');
+        expect(nextState.user).toEqual({ id: 'user-123', name: 'Alice' });
     });
 
     it('preserves reference when SET_JWT payload is identical', () => {
@@ -53,7 +53,8 @@ describe('JWT Reducer Unit Tests', () => {
         };
 
         const nextState = reducer(initialState, action);
-        assert.strictEqual(nextState, initialState, 'Should return original state reference if equal');
+
+        expect(nextState).toBe(initialState);
     });
 
     it('sets delayed avatar URL on SET_DELAYED_LOAD_OF_AVATAR_URL', () => {
@@ -64,8 +65,9 @@ describe('JWT Reducer Unit Tests', () => {
         };
 
         const nextState = reducer(initialState, action);
-        assert.strictEqual(nextState.delayedLoadOfAvatarUrl, 'https://example.com/avatar.png');
-        assert.strictEqual(nextState.jwt, 'token123');
+
+        expect(nextState.delayedLoadOfAvatarUrl).toBe('https://example.com/avatar.png');
+        expect(nextState.jwt).toBe('token123');
     });
 
     it('sets known avatar URL on SET_KNOWN_AVATAR_URL', () => {
@@ -76,6 +78,7 @@ describe('JWT Reducer Unit Tests', () => {
         };
 
         const nextState = reducer(initialState, action);
-        assert.strictEqual(nextState.knownAvatarUrl, 'https://example.com/known.png');
+
+        expect(nextState.knownAvatarUrl).toBe('https://example.com/known.png');
     });
 });

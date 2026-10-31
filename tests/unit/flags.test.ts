@@ -1,22 +1,21 @@
-import { describe, it } from 'node:test';
-import assert from 'node:assert';
+import { describe, expect, it } from 'vitest';
 
-import ReducerRegistry from '../../react/features/base/redux/ReducerRegistry';
-import '../../react/features/base/flags/reducer';
 import { UPDATE_FLAGS } from '../../react/features/base/flags/actionTypes';
+import '../../react/features/base/flags/reducer';
+import ReducerRegistry from '../../react/features/base/redux/ReducerRegistry';
 
 describe('Flags Reducer Unit Tests', () => {
     const reducer = ReducerRegistry._elements['features/base/flags'];
 
     it('is registered in ReducerRegistry', () => {
-        assert.ok(reducer, 'Reducer should be registered in ReducerRegistry');
+        expect(reducer).toBeDefined();
     });
 
     it('returns default state for unknown action', () => {
         const initialState = undefined;
         const state = reducer(initialState, { type: 'UNKNOWN_ACTION' });
 
-        assert.deepStrictEqual(state, {});
+        expect(state).toEqual({});
     });
 
     it('updates feature flags when UPDATE_FLAGS is dispatched', () => {
@@ -30,7 +29,8 @@ describe('Flags Reducer Unit Tests', () => {
         };
 
         const nextState = reducer(initialState, action);
-        assert.deepStrictEqual(nextState, {
+
+        expect(nextState).toEqual({
             'chat.enabled': true,
             'pip.enabled': false
         });
@@ -50,7 +50,8 @@ describe('Flags Reducer Unit Tests', () => {
         };
 
         const nextState = reducer(initialState, action);
-        assert.deepStrictEqual(nextState, {
+
+        expect(nextState).toEqual({
             'chat.enabled': false,
             'meeting-name.enabled': true,
             'recording.enabled': true
@@ -71,10 +72,7 @@ describe('Flags Reducer Unit Tests', () => {
         };
 
         const nextState = reducer(initialState, action);
-        assert.strictEqual(
-            nextState,
-            initialState,
-            'Reducer should return the exact same object reference if contents are equal'
-        );
+
+        expect(nextState).toBe(initialState);
     });
 });

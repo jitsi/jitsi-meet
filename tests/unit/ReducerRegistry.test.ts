@@ -1,5 +1,4 @@
-import { describe, it } from 'node:test';
-import assert from 'node:assert';
+import { describe, expect, it } from 'vitest';
 
 import ReducerRegistry from '../../react/features/base/redux/ReducerRegistry';
 
@@ -14,11 +13,7 @@ describe('ReducerRegistry Unit Tests', () => {
         };
 
         ReducerRegistry.register('test/dummy', dummyReducer);
-        assert.strictEqual(
-            ReducerRegistry._elements['test/dummy'],
-            dummyReducer,
-            'Reducer should be saved under the registered name'
-        );
+        expect(ReducerRegistry._elements['test/dummy']).toBe(dummyReducer);
     });
 
     it('combines registered reducers into a single root reducer', () => {
@@ -31,14 +26,17 @@ describe('ReducerRegistry Unit Tests', () => {
         });
 
         const rootReducer = ReducerRegistry.combineReducers();
-        assert.strictEqual(typeof rootReducer, 'function', 'combineReducers should return a reducer function');
+
+        expect(typeof rootReducer).toBe('function');
 
         const initialState = rootReducer(undefined, { type: '@@INIT' });
-        assert.ok(initialState['test/counter'], 'Combined state should contain test/counter');
-        assert.strictEqual(initialState['test/counter'].count, 10);
+
+        expect(initialState['test/counter']).toBeDefined();
+        expect(initialState['test/counter'].count).toBe(10);
 
         const updatedState = rootReducer(initialState, { type: 'ADD', amount: 5 });
-        assert.strictEqual(updatedState['test/counter'].count, 15);
+
+        expect(updatedState['test/counter'].count).toBe(15);
     });
 
     it('supports combining additional ad-hoc reducers', () => {
@@ -55,10 +53,12 @@ describe('ReducerRegistry Unit Tests', () => {
         });
 
         const initialState = rootReducer(undefined, { type: '@@INIT' });
-        assert.ok(initialState['test/additional'], 'Combined state should contain additional reducer');
-        assert.strictEqual(initialState['test/additional'].extra, true);
+
+        expect(initialState['test/additional']).toBeDefined();
+        expect(initialState['test/additional'].extra).toBe(true);
 
         const updatedState = rootReducer(initialState, { type: 'TOGGLE_EXTRA' });
-        assert.strictEqual(updatedState['test/additional'].extra, false);
+
+        expect(updatedState['test/additional'].extra).toBe(false);
     });
 });
