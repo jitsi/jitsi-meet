@@ -133,6 +133,16 @@ export default class IframeAPI extends BasePageObject {
     }
 
     /**
+     * Pins a participant's video onto the stage view.
+     * @param participantId The ID of the participant to pin, or undefined to unpin everyone.
+     * @param videoType Optional video type ('camera' | 'desktop').
+     */
+    pinParticipant(participantId?: string, videoType?: string) {
+        return this.participant.execute(
+            (id, type) => window.jitsiAPI.pinParticipant(id, type), participantId, videoType);
+    }
+
+    /**
      * Removes the embedded Jitsi Meet conference.
      */
     dispose() {
