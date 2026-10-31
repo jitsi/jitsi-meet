@@ -8,7 +8,7 @@ import {
 } from '../../../base/conference/actions';
 import { updateSettings } from '../../../base/settings/actions';
 import Switch from '../../../base/ui/components/native/Switch';
-import { setFollowMe, setFollowMeRecorder } from '../../../follow-me/actions';
+import { setFollowMe, setFollowMeRecorder, setFollowMeRecorderExclusive } from '../../../follow-me/actions';
 import { getModeratorTabProps } from '../../functions.native';
 
 import FormRow from './FormRow';
@@ -47,16 +47,20 @@ const ModeratorSection = () => {
     }, [ startAudioMuted, dispatch, setStartMutedPolicy ]);
 
     const onFollowMeToggled = useCallback((enabled?: boolean) => {
+        // Turning off the recorder mode also turns off follow me, thus do it first.
+        if (enabled && followMeRecorderEnabled) {
+            dispatch(setFollowMeRecorder(false));
+        }
         dispatch(setFollowMe(Boolean(enabled)));
-    }, [ dispatch, setFollowMe ]);
+    }, [ followMeRecorderEnabled, dispatch, setFollowMe, setFollowMeRecorder ]);
 
     const onFollowMeRecorderToggled = useCallback((enabled?: boolean) => {
-        dispatch(setFollowMeRecorder(Boolean(enabled)));
-    }, [ dispatch, setFollowMeRecorder ]);
+        dispatch(setFollowMeRecorderExclusive(Boolean(enabled)));
+    }, [ dispatch, setFollowMeRecorderExclusive ]);
 
     const onStartReactionsMutedToggled = useCallback((enabled?: boolean) => {
         dispatch(setStartReactionsMuted(Boolean(enabled), true));
-        dispatch(updateSettings({ soundsReactions: enabled }));
+        dispatch(updateSettings({ soundsReactions: !enabled }));
     }, [ dispatch, updateSettings, setStartReactionsMuted ]);
 
     const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);

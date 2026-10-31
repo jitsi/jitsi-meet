@@ -19,7 +19,7 @@ import { updateSettings } from '../base/settings/actions';
 import { IAudioSettings } from '../base/settings/reducer';
 import { getLocalVideoTrack } from '../base/tracks/functions.web';
 import { appendURLHashParam } from '../base/util/uri';
-import { setFollowMe, setFollowMeRecorder } from '../follow-me/actions';
+import { setFollowMe, setFollowMeRecorderExclusive } from '../follow-me/actions';
 import {
     disableKeyboardShortcuts,
     enableKeyboardShortcuts,
@@ -218,12 +218,15 @@ export function submitModeratorTab(newState: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const currentState = getModeratorTabProps(getState());
 
-        if (newState.followMeEnabled !== currentState.followMeEnabled) {
-            dispatch(setFollowMe(newState.followMeEnabled));
+        // The recorder mode also sets follow me, thus apply it first and compare follow me with the result.
+        // Turning it on also turns off follow me first, so the followers get "off" and then the recorder command.
+        if (newState.followMeRecorderEnabled !== currentState.followMeRecorderEnabled) {
+            dispatch(setFollowMeRecorderExclusive(newState.followMeRecorderEnabled));
         }
 
-        if (newState.followMeRecorderEnabled !== currentState.followMeRecorderEnabled) {
-            dispatch(setFollowMeRecorder(newState.followMeRecorderEnabled));
+        if (!newState.followMeRecorderEnabled
+                && newState.followMeEnabled !== getModeratorTabProps(getState()).followMeEnabled) {
+            dispatch(setFollowMe(newState.followMeEnabled));
         }
 
         if (newState.startReactionsMuted !== currentState.startReactionsMuted) {
