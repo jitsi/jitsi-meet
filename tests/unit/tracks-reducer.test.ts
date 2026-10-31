@@ -1,8 +1,7 @@
-import { describe, it } from 'node:test';
-import assert from 'node:assert';
+import { describe, expect, it } from 'vitest';
 
+import { PARTICIPANT_ID_CHANGED } from '../../react/features/base/participants/actionTypes';
 import ReducerRegistry from '../../react/features/base/redux/ReducerRegistry';
-import '../../react/features/base/tracks/reducer';
 import {
     SET_NO_SRC_DATA_NOTIFICATION_UID,
     TRACK_ADDED,
@@ -12,20 +11,21 @@ import {
     TRACK_UPDATED,
     TRACK_WILL_CREATE
 } from '../../react/features/base/tracks/actionTypes';
-import { PARTICIPANT_ID_CHANGED } from '../../react/features/base/participants/actionTypes';
+import '../../react/features/base/tracks/reducer';
 
 describe('Tracks Reducer Unit Tests', () => {
     const tracksReducer = ReducerRegistry._elements['features/base/tracks'];
     const noSrcDataReducer = ReducerRegistry._elements['features/base/no-src-data'];
 
     it('is registered in ReducerRegistry', () => {
-        assert.ok(tracksReducer, 'features/base/tracks should be registered');
-        assert.ok(noSrcDataReducer, 'features/base/no-src-data should be registered');
+        expect(tracksReducer).toBeDefined();
+        expect(noSrcDataReducer).toBeDefined();
     });
 
     it('returns empty array as default state', () => {
         const state = tracksReducer(undefined, { type: 'UNKNOWN_ACTION' });
-        assert.deepStrictEqual(state, []);
+
+        expect(state).toEqual([]);
     });
 
     it('adds remote track on TRACK_ADDED', () => {
@@ -37,12 +37,12 @@ describe('Tracks Reducer Unit Tests', () => {
         };
 
         const state = tracksReducer([], {
-            type: TRACK_ADDED,
-            track: mockRemoteTrack
+            track: mockRemoteTrack,
+            type: TRACK_ADDED
         });
 
-        assert.strictEqual(state.length, 1);
-        assert.strictEqual(state[0], mockRemoteTrack);
+        expect(state.length).toBe(1);
+        expect(state[0]).toBe(mockRemoteTrack);
     });
 
     it('replaces local track stub when new local track of same media type is added', () => {
@@ -62,12 +62,12 @@ describe('Tracks Reducer Unit Tests', () => {
 
         const initialState = [ localTrackStub ];
         const nextState = tracksReducer(initialState as any, {
-            type: TRACK_ADDED,
-            track: realLocalTrack
+            track: realLocalTrack,
+            type: TRACK_ADDED
         });
 
-        assert.strictEqual(nextState.length, 1);
-        assert.strictEqual(nextState[0].jitsiTrack, realLocalTrack.jitsiTrack);
+        expect(nextState.length).toBe(1);
+        expect(nextState[0].jitsiTrack).toBe(realLocalTrack.jitsiTrack);
     });
 
     it('removes track matching jitsiTrack reference on TRACK_REMOVED', () => {
@@ -76,12 +76,12 @@ describe('Tracks Reducer Unit Tests', () => {
         const initialState = [ track1, track2 ];
 
         const nextState = tracksReducer(initialState as any, {
-            type: TRACK_REMOVED,
-            track: { jitsiTrack: track1.jitsiTrack }
+            track: { jitsiTrack: track1.jitsiTrack },
+            type: TRACK_REMOVED
         });
 
-        assert.strictEqual(nextState.length, 1);
-        assert.strictEqual(nextState[0], track2);
+        expect(nextState.length).toBe(1);
+        expect(nextState[0]).toBe(track2);
     });
 
     it('updates track properties on TRACK_UPDATED', () => {
@@ -93,16 +93,16 @@ describe('Tracks Reducer Unit Tests', () => {
         const initialState = [ originalTrack ];
 
         const nextState = tracksReducer(initialState as any, {
-            type: TRACK_UPDATED,
             track: {
                 jitsiTrack: originalTrack.jitsiTrack,
                 muted: true
-            }
+            },
+            type: TRACK_UPDATED
         });
 
-        assert.strictEqual(nextState.length, 1);
-        assert.strictEqual(nextState[0].muted, true);
-        assert.strictEqual(nextState[0].videoType, 'camera');
+        expect(nextState.length).toBe(1);
+        expect(nextState[0].muted).toBe(true);
+        expect(nextState[0].videoType).toBe('camera');
     });
 
     it('updates participantId on PARTICIPANT_ID_CHANGED', () => {
@@ -113,13 +113,13 @@ describe('Tracks Reducer Unit Tests', () => {
         const initialState = [ participantTrack ];
 
         const nextState = tracksReducer(initialState as any, {
-            type: PARTICIPANT_ID_CHANGED,
+            newValue: 'new-endpoint-id',
             oldValue: 'old-endpoint-id',
-            newValue: 'new-endpoint-id'
+            type: PARTICIPANT_ID_CHANGED
         });
 
-        assert.strictEqual(nextState.length, 1);
-        assert.strictEqual(nextState[0].participantId, 'new-endpoint-id');
+        expect(nextState.length).toBe(1);
+        expect(nextState[0].participantId).toBe('new-endpoint-id');
     });
 
     it('removes local track stub on TRACK_CREATE_CANCELED and TRACK_CREATE_ERROR', () => {
@@ -128,29 +128,31 @@ describe('Tracks Reducer Unit Tests', () => {
         const initialState = [ localAudioTrack, localVideoTrack ];
 
         const stateAfterCancel = tracksReducer(initialState as any, {
-            type: TRACK_CREATE_CANCELED,
-            trackType: 'audio'
+            trackType: 'audio',
+            type: TRACK_CREATE_CANCELED
         });
-        assert.strictEqual(stateAfterCancel.length, 1);
-        assert.strictEqual(stateAfterCancel[0].mediaType, 'video');
+
+        expect(stateAfterCancel.length).toBe(1);
+        expect(stateAfterCancel[0].mediaType).toBe('video');
 
         const stateAfterError = tracksReducer(initialState as any, {
-            type: TRACK_CREATE_ERROR,
-            trackType: 'video'
+            trackType: 'video',
+            type: TRACK_CREATE_ERROR
         });
-        assert.strictEqual(stateAfterError.length, 1);
-        assert.strictEqual(stateAfterError[0].mediaType, 'audio');
+
+        expect(stateAfterError.length).toBe(1);
+        expect(stateAfterError[0].mediaType).toBe('audio');
     });
 
     it('adds pending track on TRACK_WILL_CREATE', () => {
         const pendingTrack = { local: true, mediaType: 'audio' };
         const nextState = tracksReducer([], {
-            type: TRACK_WILL_CREATE,
-            track: pendingTrack
+            track: pendingTrack,
+            type: TRACK_WILL_CREATE
         });
 
-        assert.strictEqual(nextState.length, 1);
-        assert.strictEqual(nextState[0], pendingTrack);
+        expect(nextState.length).toBe(1);
+        expect(nextState[0]).toBe(pendingTrack);
     });
 
     describe('no-src-data reducer', () => {
@@ -160,7 +162,7 @@ describe('Tracks Reducer Unit Tests', () => {
                 uid: 'notif-xyz-123'
             });
 
-            assert.strictEqual(nextState.noSrcDataNotificationUid, 'notif-xyz-123');
+            expect(nextState.noSrcDataNotificationUid).toBe('notif-xyz-123');
         });
     });
 });

@@ -1,15 +1,11 @@
-import { describe, it } from 'node:test';
-import assert from 'node:assert';
+import { describe, expect, it } from 'vitest';
 
-import ReducerRegistry from '../../react/features/base/redux/ReducerRegistry';
-import '../../react/features/base/media/reducer';
 import {
     GUM_PENDING,
     SET_AUDIO_AVAILABLE,
     SET_AUDIO_MUTED,
     SET_AUDIO_UNMUTE_PERMISSIONS,
     SET_CAMERA_FACING_MODE,
-    SET_SCREENSHARE_MUTED,
     SET_VIDEO_AVAILABLE,
     SET_VIDEO_MUTED,
     SET_VIDEO_UNMUTE_PERMISSIONS,
@@ -17,29 +13,31 @@ import {
     TOGGLE_CAMERA_FACING_MODE
 } from '../../react/features/base/media/actionTypes';
 import { CAMERA_FACING_MODE, MEDIA_TYPE } from '../../react/features/base/media/constants';
+import '../../react/features/base/media/reducer';
 import { IGUMPendingState } from '../../react/features/base/media/types';
+import ReducerRegistry from '../../react/features/base/redux/ReducerRegistry';
 
 describe('Media Reducer Unit Tests', () => {
     const reducer = ReducerRegistry._elements['features/base/media'];
 
     it('is registered in ReducerRegistry', () => {
-        assert.ok(reducer, 'Reducer should be registered under features/base/media');
+        expect(reducer).toBeDefined();
     });
 
     it('returns default initial state for audio and video', () => {
         const state = reducer(undefined, { type: 'UNKNOWN_ACTION' });
 
-        assert.ok(state.audio, 'State should have audio section');
-        assert.ok(state.video, 'State should have video section');
+        expect(state.audio).toBeDefined();
+        expect(state.video).toBeDefined();
 
-        assert.strictEqual(state.audio.available, true);
-        assert.strictEqual(state.audio.muted, false);
-        assert.strictEqual(state.audio.unmuteBlocked, false);
-        assert.strictEqual(state.audio.gumPending, IGUMPendingState.NONE);
+        expect(state.audio.available).toBe(true);
+        expect(state.audio.muted).toBe(false);
+        expect(state.audio.unmuteBlocked).toBe(false);
+        expect(state.audio.gumPending).toBe(IGUMPendingState.NONE);
 
-        assert.strictEqual(state.video.available, true);
-        assert.strictEqual(state.video.muted, 0);
-        assert.strictEqual(state.video.facingMode, CAMERA_FACING_MODE.USER);
+        expect(state.video.available).toBe(true);
+        expect(state.video.muted).toBe(0);
+        expect(state.video.facingMode).toBe(CAMERA_FACING_MODE.USER);
     });
 
     describe('audio media reducer', () => {
@@ -49,7 +47,7 @@ describe('Media Reducer Unit Tests', () => {
                 available: false
             });
 
-            assert.strictEqual(nextState.audio.available, false);
+            expect(nextState.audio.available).toBe(false);
         });
 
         it('updates audio mute state on SET_AUDIO_MUTED', () => {
@@ -58,7 +56,7 @@ describe('Media Reducer Unit Tests', () => {
                 muted: true
             });
 
-            assert.strictEqual(nextState.audio.muted, true);
+            expect(nextState.audio.muted).toBe(true);
         });
 
         it('updates audio unmute permissions on SET_AUDIO_UNMUTE_PERMISSIONS', () => {
@@ -67,67 +65,70 @@ describe('Media Reducer Unit Tests', () => {
                 blocked: true
             });
 
-            assert.strictEqual(nextState.audio.unmuteBlocked, true);
+            expect(nextState.audio.unmuteBlocked).toBe(true);
         });
 
         it('updates gumPending state for audio media type', () => {
             const nextState = reducer(undefined, {
-                type: GUM_PENDING,
                 mediaTypes: [ MEDIA_TYPE.AUDIO ],
-                status: IGUMPendingState.PENDING_UNMUTE
+                status: IGUMPendingState.PENDING_UNMUTE,
+                type: GUM_PENDING
             });
 
-            assert.strictEqual(nextState.audio.gumPending, IGUMPendingState.PENDING_UNMUTE);
+            expect(nextState.audio.gumPending).toBe(IGUMPendingState.PENDING_UNMUTE);
         });
     });
 
     describe('video media reducer', () => {
         it('updates video availability on SET_VIDEO_AVAILABLE', () => {
             const nextState = reducer(undefined, {
-                type: SET_VIDEO_AVAILABLE,
-                available: false
+                available: false,
+                type: SET_VIDEO_AVAILABLE
             });
 
-            assert.strictEqual(nextState.video.available, false);
+            expect(nextState.video.available).toBe(false);
         });
 
         it('sets camera facing mode on SET_CAMERA_FACING_MODE', () => {
             const nextState = reducer(undefined, {
-                type: SET_CAMERA_FACING_MODE,
-                cameraFacingMode: CAMERA_FACING_MODE.ENVIRONMENT
+                cameraFacingMode: CAMERA_FACING_MODE.ENVIRONMENT,
+                type: SET_CAMERA_FACING_MODE
             });
 
-            assert.strictEqual(nextState.video.facingMode, CAMERA_FACING_MODE.ENVIRONMENT);
+            expect(nextState.video.facingMode).toBe(CAMERA_FACING_MODE.ENVIRONMENT);
         });
 
         it('toggles camera facing mode between user and environment', () => {
             const toggledToEnv = reducer(undefined, {
                 type: TOGGLE_CAMERA_FACING_MODE
             });
-            assert.strictEqual(toggledToEnv.video.facingMode, CAMERA_FACING_MODE.ENVIRONMENT);
+
+            expect(toggledToEnv.video.facingMode).toBe(CAMERA_FACING_MODE.ENVIRONMENT);
 
             const toggledBackToUser = reducer(toggledToEnv, {
                 type: TOGGLE_CAMERA_FACING_MODE
             });
-            assert.strictEqual(toggledBackToUser.video.facingMode, CAMERA_FACING_MODE.USER);
+
+            expect(toggledBackToUser.video.facingMode).toBe(CAMERA_FACING_MODE.USER);
         });
 
         it('updates video mute state on SET_VIDEO_MUTED', () => {
             const nextState = reducer(undefined, {
-                type: SET_VIDEO_MUTED,
-                muted: 1
+                muted: 1,
+                type: SET_VIDEO_MUTED
             });
 
-            assert.strictEqual(nextState.video.muted, 1);
+            expect(nextState.video.muted).toBe(1);
         });
+
         it('stores custom video transform on STORE_VIDEO_TRANSFORM', () => {
             const nextState = reducer(undefined, {
-                type: STORE_VIDEO_TRANSFORM,
                 streamId: 'stream-xyz',
-                transform: { scaleX: -1 }
+                transform: { scaleX: -1 },
+                type: STORE_VIDEO_TRANSFORM
             });
 
-            assert.deepStrictEqual(nextState.video.transforms['stream-xyz'], {
+            expect(nextState.video.transforms['stream-xyz']).toEqual({
                 scaleX: -1
             });
         });
@@ -142,15 +143,15 @@ describe('Media Reducer Unit Tests', () => {
             };
 
             const nextState = reducer(initialState, {
-                type: 'TRACK_REMOVED',
                 track: {
                     jitsiTrack: {
                         getStreamId: () => 'stream-xyz'
                     }
-                }
+                },
+                type: 'TRACK_REMOVED'
             });
 
-            assert.strictEqual(nextState.video.transforms['stream-xyz'], undefined);
+            expect(nextState.video.transforms['stream-xyz']).toBeUndefined();
         });
 
         it('clears all video transforms on CONFERENCE_LEFT', () => {
@@ -167,16 +168,16 @@ describe('Media Reducer Unit Tests', () => {
                 type: 'CONFERENCE_LEFT'
             });
 
-            assert.deepStrictEqual(nextState.video.transforms, {});
+            expect(nextState.video.transforms).toEqual({});
         });
 
         it('updates video unmute blocked status on SET_VIDEO_UNMUTE_PERMISSIONS', () => {
             const nextState = reducer(undefined, {
-                type: SET_VIDEO_UNMUTE_PERMISSIONS,
-                blocked: true
+                blocked: true,
+                type: SET_VIDEO_UNMUTE_PERMISSIONS
             });
 
-            assert.strictEqual(nextState.video.unmuteBlocked, true);
+            expect(nextState.video.unmuteBlocked).toBe(true);
         });
     });
 });

@@ -1,8 +1,5 @@
-import { describe, it } from 'node:test';
-import assert from 'node:assert';
+import { describe, expect, it } from 'vitest';
 
-import ReducerRegistry from '../../react/features/base/redux/ReducerRegistry';
-import '../../react/features/base/conference/reducer';
 import {
     CONFERENCE_CONNECTION_ESTABLISHED,
     CONFERENCE_FAILED,
@@ -19,20 +16,22 @@ import {
     SET_PASSWORD,
     SET_ROOM
 } from '../../react/features/base/conference/actionTypes';
+import '../../react/features/base/conference/reducer';
+import ReducerRegistry from '../../react/features/base/redux/ReducerRegistry';
 
 describe('Conference Reducer Unit Tests', () => {
     const reducer = ReducerRegistry._elements['features/base/conference'];
 
     it('is registered in ReducerRegistry', () => {
-        assert.ok(reducer, 'Reducer should be registered under features/base/conference');
+        expect(reducer).toBeDefined();
     });
 
     it('returns default state for unknown action', () => {
         const state = reducer(undefined, { type: 'UNKNOWN_ACTION' });
 
-        assert.strictEqual(typeof state, 'object');
-        assert.strictEqual(state.conference, undefined);
-        assert.strictEqual(state.room, undefined);
+        expect(typeof state).toBe('object');
+        expect(state.conference).toBeUndefined();
+        expect(state.room).toBeUndefined();
     });
 
     it('sets room name on SET_ROOM', () => {
@@ -41,7 +40,7 @@ describe('Conference Reducer Unit Tests', () => {
             room: 'my-awesome-test-room'
         });
 
-        assert.strictEqual(state.room, 'my-awesome-test-room');
+        expect(state.room).toBe('my-awesome-test-room');
     });
 
     it('marks ICE connection established on CONFERENCE_CONNECTION_ESTABLISHED', () => {
@@ -50,7 +49,7 @@ describe('Conference Reducer Unit Tests', () => {
             type: CONFERENCE_CONNECTION_ESTABLISHED
         });
 
-        assert.strictEqual(state.iceConnected, true);
+        expect(state.iceConnected).toBe(true);
     });
 
     it('updates subject and localSubject on respective actions', () => {
@@ -58,14 +57,16 @@ describe('Conference Reducer Unit Tests', () => {
             type: CONFERENCE_SUBJECT_CHANGED,
             subject: 'Sprint Planning Meeting'
         });
-        assert.strictEqual(stateWithSubject.subject, 'Sprint Planning Meeting');
+
+        expect(stateWithSubject.subject).toBe('Sprint Planning Meeting');
 
         const stateWithLocalSubject = reducer(stateWithSubject, {
             type: CONFERENCE_LOCAL_SUBJECT_CHANGED,
             localSubject: 'Custom Local Topic'
         });
-        assert.strictEqual(stateWithLocalSubject.localSubject, 'Custom Local Topic');
-        assert.strictEqual(stateWithLocalSubject.subject, 'Sprint Planning Meeting');
+
+        expect(stateWithLocalSubject.localSubject).toBe('Custom Local Topic');
+        expect(stateWithLocalSubject.subject).toBe('Sprint Planning Meeting');
     });
 
     it('sets conference timestamp on CONFERENCE_TIMESTAMP_CHANGED', () => {
@@ -75,24 +76,26 @@ describe('Conference Reducer Unit Tests', () => {
             conferenceTimestamp: timestamp
         });
 
-        assert.strictEqual(state.conferenceTimestamp, timestamp);
+        expect(state.conferenceTimestamp).toBe(timestamp);
     });
 
     it('tracks data channel opened and closed states', () => {
         const openState = reducer(undefined, {
             type: DATA_CHANNEL_OPENED
         });
-        assert.strictEqual(openState.dataChannelOpen, true);
+
+        expect(openState.dataChannelOpen).toBe(true);
 
         const closedState = reducer(openState, {
             type: DATA_CHANNEL_CLOSED
         });
-        assert.strictEqual(closedState.dataChannelOpen, false);
+
+        expect(closedState.dataChannelOpen).toBe(false);
     });
 
     it('sets conference password on SET_PASSWORD with lock method', () => {
         const mockConference: any = {
-            lock: function() {}
+            lock: () => undefined
         };
         const state = reducer(undefined, {
             type: SET_PASSWORD,
@@ -101,13 +104,13 @@ describe('Conference Reducer Unit Tests', () => {
             password: 'secretPassword123'
         });
 
-        assert.strictEqual(state.password, 'secretPassword123');
-        assert.ok(state.locked);
+        expect(state.password).toBe('secretPassword123');
+        expect(state.locked).toBeTruthy();
     });
 
     it('sets conference password on SET_PASSWORD with join method', () => {
         const mockConference: any = {
-            join: function() {}
+            join: () => undefined
         };
         const state = reducer(undefined, {
             type: SET_PASSWORD,
@@ -116,8 +119,8 @@ describe('Conference Reducer Unit Tests', () => {
             password: 'joinPassword123'
         });
 
-        assert.strictEqual(state.password, 'joinPassword123');
-        assert.strictEqual(state.joining, mockConference);
+        expect(state.password).toBe('joinPassword123');
+        expect(state.joining).toBe(mockConference);
     });
 
     it('sets assumed bandwidth on SET_ASSUMED_BANDWIDTH_BPS', () => {
@@ -126,7 +129,7 @@ describe('Conference Reducer Unit Tests', () => {
             assumedBandwidthBps: 2000000
         });
 
-        assert.strictEqual(state.assumedBandwidthBps, 2000000);
+        expect(state.assumedBandwidthBps).toBe(2000000);
     });
 
     it('handles CONFERENCE_WILL_JOIN and CONFERENCE_JOINED lifecycle', () => {
@@ -140,15 +143,17 @@ describe('Conference Reducer Unit Tests', () => {
             type: CONFERENCE_WILL_JOIN,
             conference: mockConference
         });
-        assert.strictEqual(joiningState.joining, mockConference);
-        assert.strictEqual(joiningState.conference, undefined);
+
+        expect(joiningState.joining).toBe(mockConference);
+        expect(joiningState.conference).toBeUndefined();
 
         const joinedState = reducer(joiningState, {
             type: CONFERENCE_JOINED,
             conference: mockConference
         });
-        assert.strictEqual(joinedState.conference, mockConference);
-        assert.strictEqual(joinedState.joining, undefined);
+
+        expect(joinedState.conference).toBe(mockConference);
+        expect(joinedState.joining).toBeUndefined();
     });
 
     it('handles CONFERENCE_WILL_LEAVE and CONFERENCE_LEFT lifecycle', () => {
@@ -163,16 +168,18 @@ describe('Conference Reducer Unit Tests', () => {
             type: CONFERENCE_WILL_LEAVE,
             conference: mockConference
         });
-        assert.strictEqual(leavingState.leaving, mockConference);
+
+        expect(leavingState.leaving).toBe(mockConference);
 
         const leftState = reducer(leavingState, {
             type: CONFERENCE_LEFT,
             conference: mockConference
         });
-        assert.strictEqual(leftState.conference, undefined);
-        assert.strictEqual(leftState.leaving, undefined);
-        assert.strictEqual(leftState.iceConnected, undefined);
-        assert.strictEqual(leftState.password, undefined);
+
+        expect(leftState.conference).toBeUndefined();
+        expect(leftState.leaving).toBeUndefined();
+        expect(leftState.iceConnected).toBeUndefined();
+        expect(leftState.password).toBeUndefined();
     });
 
     it('records error and clears joining state on CONFERENCE_FAILED', () => {
@@ -189,7 +196,7 @@ describe('Conference Reducer Unit Tests', () => {
             error: mockError
         });
 
-        assert.strictEqual(failedState.error, mockError);
-        assert.strictEqual(failedState.joining, undefined);
+        expect(failedState.error).toBe(mockError);
+        expect(failedState.joining).toBeUndefined();
     });
 });
