@@ -8,7 +8,7 @@ import {
 } from '../../../base/conference/actions';
 import { updateSettings } from '../../../base/settings/actions';
 import Switch from '../../../base/ui/components/native/Switch';
-import { setFollowMe, setFollowMeRecorder } from '../../../follow-me/actions';
+import { setFollowMe, setFollowMeRecorder, setFollowMeRecorderExclusive } from '../../../follow-me/actions';
 import { getModeratorTabProps } from '../../functions.native';
 
 import FormRow from './FormRow';
@@ -53,8 +53,8 @@ const ModeratorSection = () => {
     }, [ followMeRecorderEnabled, dispatch, setFollowMe, setFollowMeRecorder ]);
 
     const onFollowMeRecorderToggled = useCallback((enabled?: boolean) => {
-        dispatch(setFollowMeRecorder(Boolean(enabled)));
-    }, [ dispatch, setFollowMeRecorder ]);
+        dispatch(setFollowMeRecorderExclusive(Boolean(enabled)));
+    }, [ dispatch, setFollowMeRecorderExclusive ]);
 
     const onStartReactionsMutedToggled = useCallback((enabled?: boolean) => {
         dispatch(setStartReactionsMuted(Boolean(enabled), true));
