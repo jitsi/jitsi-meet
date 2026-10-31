@@ -95,7 +95,9 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
 
     -- if visitors is enabled for the room
     if visitors_promotion_map[room.jid] then
-        local force_promote = auto_allow_promotion or get_visitors_room_metadata(room).autoPromote;
+        local metadata = get_visitors_room_metadata(room);
+        -- auto-allow applies only when room is live, a missing live flag means the room is live
+        local force_promote = (auto_allow_promotion or metadata.autoPromote) and metadata.live ~= false;
         if not force_promote and force_promote_requested == 'true' then
             -- Let's do the force_promote checks if requested
             -- if it is vpaas meeting we trust the moderator computation from visitor node (value of force_promote_requested)
@@ -538,7 +540,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
         local is_live = get_visitors_room_metadata(room).live;
 
         -- we skip any checks when auto-allow is enabled and room is live
-        if (auto_allow_promotion or get_visitors_room_metadata(room).autoPromote and (is_live or is_live == nil))
+        if ((auto_allow_promotion or get_visitors_room_metadata(room).autoPromote) and (is_live or is_live == nil))
             or ignore_list:contains(jid.host(stanza.attr.from)) -- jibri or other domains to ignore
             or table_find(room._data.moderators, session.jitsi_meet_context_user and session.jitsi_meet_context_user.id)
             or table_find(room._data.participants, session.jitsi_meet_context_user and session.jitsi_meet_context_user.id) then
