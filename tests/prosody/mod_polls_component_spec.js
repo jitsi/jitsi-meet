@@ -1,5 +1,7 @@
 import assert from 'assert';
 
+import { mintAsapToken } from './helpers/jwt.js';
+import { prosodyShell } from './helpers/prosody_shell.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 // mod_polls_component is loaded as the "polls.localhost" component (see
@@ -616,6 +618,199 @@ describe('mod_polls_component', () => {
             const creator = await joinParticipant(r);
 
             createPollWith(creator, nextPollId(), { singleAnswer: 'yes' });
+
+            await assertNoPollBroadcast(creator);
+        });
+    });
+
+    // ── Closing polls ───────────────────────────────────────────────────────
+
+    describe('closing polls', () => {
+
+        /**
+         * Sends a close-poll message for the poll.
+         *
+         * @param {object} client
+         * @param {string} pollId
+         */
+        function closePoll(client, pollId) {
+            client.sendPollsMessage(POLLS_COMPONENT, JSON.stringify({
+                command: 'close-poll',
+                pollId,
+                type: 'polls'
+            }));
+        }
+
+        /**
+         * Joins a participant whose token makes them a moderator.
+         *
+         * @param {string} roomJid  Full room JID.
+         * @returns {Promise<object>}
+         */
+        async function joinModerator(roomJid) {
+            const roomName = roomJid.split('@')[0];
+            const token = mintAsapToken({ room: roomName,
+                context: { user: { moderator: true } } });
+            const c = await createXmppClient({ params: { room: roomName,
+                token } });
+
+            clients.push(c);
+            await c.joinRoom(roomJid);
+
+            return c;
+        }
+
+        /**
+         * Creates a poll from creator and waits until both clients received it.
+         *
+         * @param {object} creator
+         * @param {object} other
+         * @returns {Promise<string>} The id of the poll.
+         */
+        async function createPollFor(creator, other) {
+            const pollId = nextPollId();
+
+            creator.createPoll(POLLS_COMPONENT, pollId, 'Pick one', [ { name: 'A' }, { name: 'B' } ]);
+            await Promise.all([
+                waitForPollCommand(creator, 'new-poll'),
+                waitForPollCommand(other, 'new-poll')
+            ]);
+
+            return pollId;
+        }
+
+        it('the creator can close a poll and everyone is told', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const creator = await joinParticipant(r);
+            const other = await joinParticipant(r);
+            const pollId = await createPollFor(creator, other);
+
+            closePoll(creator, pollId);
+
+            const [ atCreator, atOther ] = await Promise.all([
+                waitForPollCommand(creator, 'close-poll'),
+                waitForPollCommand(other, 'close-poll')
+            ]);
+
+            for (const msg of [ atCreator, atOther ]) {
+                assert.equal(msg.pollId, pollId);
+                assert.ok(msg.senderId, 'close broadcast must carry the server-stamped senderId');
+            }
+        });
+
+        it('another participant cannot close the poll', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const creator = await joinParticipant(r);
+            const other = await joinParticipant(r);
+            const pollId = await createPollFor(creator, other);
+
+            closePoll(other, pollId);
+
+            const errorReply = await other.waitForMessage(s => s.attrs.type === 'error');
+
+            assert.ok(errorReply.getChild('error')?.getChild('not-allowed'),
+                'closing must be rejected with not-allowed');
+            await assertNoPollBroadcast(creator);
+        });
+
+        it('a moderator can close the poll of another participant', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const moderator = await joinModerator(r);
+            const creator = await joinParticipant(r);
+            const pollId = await createPollFor(creator, moderator);
+
+            closePoll(moderator, pollId);
+
+            const msg = await waitForPollCommand(creator, 'close-poll');
+
+            assert.equal(msg.pollId, pollId);
+        });
+
+        it('a closed poll does not take answers', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const creator = await joinParticipant(r);
+            const voter = await joinParticipant(r);
+            const pollId = await createPollFor(creator, voter);
+
+            closePoll(creator, pollId);
+            await waitForPollCommand(voter, 'close-poll');
+
+            voter.answerPoll(POLLS_COMPONENT, pollId, [ true, false ]);
+
+            const errorReply = await voter.waitForMessage(s => s.attrs.type === 'error');
+
+            assert.ok(errorReply.getChild('error')?.getChild('not-allowed'),
+                'an answer for a closed poll must be rejected with not-allowed');
+            await assertNoPollBroadcast(voter);
+        });
+
+        it('a late joiner receives the poll as closed via old-polls', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const creator = await joinParticipant(r);
+            const pollId = nextPollId();
+
+            creator.createPoll(POLLS_COMPONENT, pollId, 'Pick one', [ { name: 'A' }, { name: 'B' } ]);
+            await waitForPollCommand(creator, 'new-poll');
+            closePoll(creator, pollId);
+            await waitForPollCommand(creator, 'close-poll');
+
+            const late = await joinParticipant(r);
+            const history = await waitForPollCommand(late, 'old-polls');
+            const stored = history.polls.find(p => p.pollId === pollId);
+
+            assert.strictEqual(stored?.closed, true);
+        });
+
+        it('a close from the main prosody replaces the answers a visitor node took', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const voter = await joinParticipant(r);
+            const pollId = nextPollId();
+
+            voter.createPoll(POLLS_COMPONENT, pollId, 'Pick one', [ { name: 'A' }, { name: 'B' } ]);
+            await waitForPollCommand(voter, 'new-poll');
+            voter.answerPoll(POLLS_COMPONENT, pollId, [ true, false ]);
+            await waitForPollCommand(voter, 'answer-poll');
+
+            // The update a visitor node gets from the main prosody (mod_fmuc fires jitsi-polls-update): the poll
+            // is closed and the main prosody has no vote, as it refused the one this node took.
+            await prosodyShell(`> prosody.hosts["${CONFERENCE}"].events.fire_event("jitsi-polls-update", {
+                room = prosody.hosts["${CONFERENCE}"].modules.muc.get_room_from_jid("${r}"),
+                polls = { polls = { { pollId = "${pollId}", senderId = "main", question = "Pick one",
+                    answers = { { name = "A" }, { name = "B" } }, closed = true } } } })`.replace(/\n\s*/g, ' '));
+
+            const closed = await waitForPollCommand(voter, 'close-poll');
+
+            assert.equal(closed.pollId, pollId);
+            assert.equal(closed.answers?.length, 2, 'the close must carry the main prosody\'s answers');
+            assert.ok(!closed.answers[0].voters?.length, 'the refused vote must be gone');
+
+            const late = await joinParticipant(r);
+            const history = await waitForPollCommand(late, 'old-polls');
+            const stored = history.polls.find(p => p.pollId === pollId);
+
+            assert.strictEqual(stored?.closed, true);
+            assert.ok(!stored.answers[0].voters?.length, 'the stored poll must have the main prosody\'s answers');
+        });
+
+        it('closing an unknown poll is ignored', async () => {
+            const r = nextRoom();
+
+            await focusJoin(r);
+            const creator = await joinParticipant(r);
+
+            closePoll(creator, nextPollId());
 
             await assertNoPollBroadcast(creator);
         });

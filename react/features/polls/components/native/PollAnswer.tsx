@@ -17,7 +17,9 @@ import { dialogStyles, pollsStyles } from './styles';
 
 const PollAnswer = (props: AbstractProps) => {
     const {
+        canClose,
         checkBoxStates,
+        closePoll,
         creatorName,
         poll,
         sendPoll,
@@ -30,7 +32,7 @@ const PollAnswer = (props: AbstractProps) => {
     } = props;
     const { changingVote, saved: pollSaved } = poll;
     const dispatch = useDispatch();
-    const { PRIMARY, SECONDARY } = BUTTON_TYPES;
+    const { PRIMARY, SECONDARY, TERTIARY } = BUTTON_TYPES;
 
     return (
         <>
@@ -112,6 +114,15 @@ const PollAnswer = (props: AbstractProps) => {
                             style = { pollsStyles.pollCreateButton }
                             type = { PRIMARY } />
                     </View>
+            }
+            {
+                !pollSaved && canClose && <Button
+                    accessibilityLabel = 'polls.results.endPoll'
+                    id = { t('polls.results.endPoll') }
+                    labelKey = 'polls.results.endPoll'
+                    labelStyle = { pollsStyles.toggleText }
+                    onClick = { closePoll }
+                    type = { TERTIARY } />
             }
         </>
     );

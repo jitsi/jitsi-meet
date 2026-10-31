@@ -7,8 +7,8 @@ import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
 import { getParticipantDisplayName } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
-import { registerVote, removePoll, setVoteChanging } from '../actions';
-import { getPoll } from '../functions';
+import { closePoll as closePollAction, registerVote, removePoll, setVoteChanging } from '../actions';
+import { canClosePoll, getPoll } from '../functions';
 import { IPollData } from '../types';
 
 /**
@@ -24,7 +24,9 @@ type InputProps = {
  * concrete implementations (web/native).
  **/
 export type AbstractProps = {
+    canClose: boolean;
     checkBoxStates: boolean[];
+    closePoll: () => void;
     creatorName: string;
     poll: IPollData;
     sendPoll: () => void;
@@ -100,10 +102,17 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
         dispatch(setVoteChanging(pollId, false));
     }, [ dispatch, pollId ]);
 
+    const canClose = useSelector((state: IReduxState) => canClosePoll(state, pollId));
+    const closePoll = useCallback(() => {
+        dispatch(closePollAction(pollId));
+    }, [ dispatch, pollId ]);
+
     const { t } = useTranslation();
 
     return (<Component
+        canClose = { canClose }
         checkBoxStates = { checkBoxStates }
+        closePoll = { closePoll }
         creatorName = { participantName }
         poll = { poll }
         sendPoll = { sendPoll }

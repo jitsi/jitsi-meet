@@ -1113,7 +1113,9 @@
         },
         "results": {
             "changeVote": "Change vote",
+            "closed": "Voting has ended",
             "empty": "There are no polls in the meeting yet.",
+            "endPoll": "End poll",
             "hideDetailedResults": "Hide details",
             "showDetailedResults": "Show details",
             "vote": "Vote"

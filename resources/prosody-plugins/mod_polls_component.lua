@@ -41,6 +41,9 @@ local function validate_polls(data)
     if data.type ~= 'polls' or type(data.pollId) ~= 'string' then
         return false;
     end
+    if data.command == 'close-poll' then
+        return true;
+    end
     if data.command ~= 'new-poll' and data.command ~= 'answer-poll' then
         return false;
     end
@@ -177,7 +180,8 @@ end
             return true;
         end
 
-        if not data or (data.command ~= "new-poll" and data.command ~= "answer-poll") then
+        if not data or (data.command ~= "new-poll" and data.command ~= "answer-poll"
+                and data.command ~= "close-poll") then
             return;
         end
 
@@ -280,6 +284,14 @@ end
             if poll == nil then
                 module:log("warn", "answering inexistent poll %s", data.pollId);
                 return;
+            end
+
+            if poll.closed then
+                module:log('warn', 'Answer for closed poll %s', data.pollId);
+                if session.type ~= 's2sin' then
+                    session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll is closed'));
+                end
+                return true;
             end
 
             if #data.answers ~= #poll.answers then
@@ -401,6 +413,45 @@ end
             send_polls_message_to_all(room, json_msg_str);
 
             module:context(jid.host(room.jid)):fire_event('answer-poll',  answerData);
+        elseif data.command == "close-poll" then
+            -- A visitor node learns about a closed poll from the main prosody, see jitsi-polls-update.
+            if session.type == 's2sin' or is_visitor_prosody then
+                module:log('warn', 'Poll cannot be closed from a visitor node, room:%s', room.jid);
+                return true;
+            end
+
+            local poll = room.polls.by_id[data.pollId];
+            if poll == nil then
+                module:log("warn", "closing inexistent poll %s", data.pollId);
+                return true;
+            end
+
+            -- Only the creator of the poll and a moderator can close it.
+            if poll.senderId ~= occupant_details.occupant_id and occupant.role ~= 'moderator' then
+                session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Closing the poll not allowed'));
+                return true;
+            end
+
+            if poll.closed then
+                return true;
+            end
+
+            poll.closed = true;
+
+            local json_msg_str, error = json.encode({
+                answers = poll.answers,
+                command = 'close-poll',
+                pollId = data.pollId,
+                senderId = occupant_details.occupant_id,
+                type = 'polls'
+            });
+            if not json_msg_str then
+                module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
+                return true;
+            end
+            send_polls_message_to_all(room, json_msg_str);
+
+            module:context(jid.host(room.jid)):fire_event('poll-closed', { room = room; pollId = data.pollId; });
         end
 
     return true;
@@ -503,7 +554,8 @@ local setup_muc_component = function(host_module, host)
                 senderName = poll.senderName,
                 question = poll.question,
                 answers = poll.answers,
-                singleAnswer = poll.singleAnswer
+                singleAnswer = poll.singleAnswer,
+                closed = poll.closed
             };
         end
 
@@ -527,6 +579,32 @@ local setup_muc_component = function(host_module, host)
             end
 
             return;
+        end
+
+        -- a poll that the main prosody closed
+        for _, v in pairs(polls_command.polls) do
+            local existing_poll = room.polls.by_id[v.pollId];
+
+            if existing_poll and v.closed and not existing_poll.closed then
+                existing_poll.closed = true;
+                -- the main prosody's answers, without a vote taken here that it refused as the poll was closed
+                existing_poll.answers = v.answers;
+
+                local json_msg_str, error = json.encode({
+                    answers = v.answers,
+                    command = 'close-poll',
+                    pollId = v.pollId,
+                    roomJid = internal_room_jid_match_rewrite(room.jid),
+                    type = 'polls'
+                });
+                if not json_msg_str then
+                    module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
+                    return;
+                end
+                send_polls_message_to_all(room, json_msg_str);
+
+                return;
+            end
         end
 
         -- at this point we need to find which is the new poll
@@ -578,6 +656,7 @@ local setup_muc_component = function(host_module, host)
             pollId = new_poll.pollId,
             question = new_poll.question,
             singleAnswer = new_poll.singleAnswer,
+            closed = new_poll.closed,
             senderId = new_poll.senderId,
             roomJid = internal_room_jid_match_rewrite(room.jid),
             type = 'polls'

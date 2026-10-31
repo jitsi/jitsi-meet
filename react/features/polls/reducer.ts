@@ -6,6 +6,7 @@ import {
     EDIT_POLL,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
+    RECEIVE_POLL_CLOSED,
     REGISTER_VOTE,
     REMOVE_POLL,
     RESET_UNREAD_POLLS_COUNT,
@@ -120,6 +121,28 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
                 [pollId]: {
                     ...poll,
                     answers: [ ...poll.answers ]
+                }
+            }
+        };
+    }
+
+    case RECEIVE_POLL_CLOSED: {
+        if (!state.polls[action.pollId]) {
+            return state;
+        }
+
+        return {
+            ...state,
+            polls: {
+                ...state.polls,
+                [action.pollId]: {
+                    ...state.polls[action.pollId],
+
+                    // The answers the server has, e.g. without a vote that a visitor node took but the main node
+                    // refused because the poll was already closed.
+                    ...action.answers?.length ? { answers: action.answers } : {},
+                    changingVote: false,
+                    closed: true
                 }
             }
         };
