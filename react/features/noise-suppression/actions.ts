@@ -117,6 +117,8 @@ function applyNoiseSuppressionEnabled(enabled: boolean): any {
         try {
             if (enabled) {
                 if (!canEnableNoiseSuppression(state, dispatch, localAudio)) {
+                    logger.warn('Noise suppression cannot be enabled for the current local audio track');
+
                     return;
                 }
 

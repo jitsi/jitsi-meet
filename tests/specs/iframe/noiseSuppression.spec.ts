@@ -102,6 +102,9 @@ describe('Noise suppression iframe API commands and events', () => {
         // A local audio track is needed, otherwise only the redux flag is updated and no effect is applied.
         await ensureOneParticipant({
             configOverwrite: {
+                // The tests disable audio processing by default, with it disabled Chrome's fake microphone is stereo,
+                // regardless of the requested channelCount, and noise suppression can't be enabled on stereo tracks.
+                disableAP: false,
                 startSilent: false,
                 startWithAudioMuted: false
             }
@@ -121,6 +124,11 @@ describe('Noise suppression iframe API commands and events', () => {
                 timeout: 10_000,
                 timeoutMsg: 'No local audio track was created'
             });
+
+        // Noise suppression is only supported on mono tracks, see canEnableNoiseSuppression.
+        expect(await p1.execute(() => APP.store.getState()['features/base/tracks']
+            .find((t: any) => t.local && t.mediaType === 'audio')?.jitsiTrack.getTrack().getSettings().channelCount))
+            .toBe(1);
 
         await p1.switchToMainFrame();
         await p1.getIframeAPI().addEventListener('noiseSuppressionChanged');
