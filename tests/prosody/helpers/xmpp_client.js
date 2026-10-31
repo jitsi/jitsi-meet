@@ -1140,6 +1140,25 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends an A/V moderation command to the av_moderation component, the
+         * same stanza lib-jitsi-meet AVModeration sends. Fire-and-forget —
+         * assert via the json-messages the component sends back.
+         *
+         * @param {string} componentJid  e.g. 'avmoderation.localhost'
+         * @param {object} attrs         <av_moderation> attributes, e.g.
+         *                               { enable: 'true', mediaType: 'audio' } or
+         *                               { jidToWhitelist: 'room@conference.localhost/nick', mediaType: 'audio' }
+         */
+        sendAvModeration(componentJid, attrs) {
+            return xmpp.send(
+                xml('message', { to: componentJid,
+                    id: `avm-${++_counter}` },
+                    xml('av_moderation', attrs)
+                )
+            );
+        },
+
+        /**
          * Leaves a MUC room (XEP-0045 §7.14) and resolves with the self
          * unavailable presence echoed back by the room.
          *

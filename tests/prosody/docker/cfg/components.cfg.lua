@@ -87,6 +87,16 @@ Component "polls.localhost" "polls_component"
     muc_mapper_domain_base = "localhost"
     muc_mapper_domain_prefix = "conference"
 
+-- Component for mod_av_moderation_component tests. Moderators send
+-- <av_moderation/> messages to enable moderation and approve participants; the
+-- component keeps per-room whitelists (hooked on conference.localhost through
+-- process_host_module) and sends them as json-messages to all moderators,
+-- including focus, which is how jicofo learns who may unmute.
+Component "avmoderation.localhost" "av_moderation_component"
+    muc_component = "conference.localhost"
+    muc_mapper_domain_base = "localhost"
+    muc_mapper_domain_prefix = "conference"
+
 -- Plain MUC for mod_presence_identity tests. No token verification and no
 -- muc_meeting_id lock so any client can join freely without focus.
 Component "conference-identity.localhost" "muc"
