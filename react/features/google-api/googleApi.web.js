@@ -32,7 +32,8 @@ const googleApi = {
     get() {
         const globalGoogleApi = this._getGoogleApiClient();
 
-        if (!globalGoogleApi) {
+        // Both the client library and Google Identity Services are needed.
+        if (!globalGoogleApi?.client || !this._getGoogleGISApiClient()?.accounts) {
             return this.load();
         }
 
@@ -138,7 +139,7 @@ const googleApi = {
             scriptTag.addEventListener('error', () => {
                 scriptTag.remove();
 
-                reject();
+                reject(new Error(`Failed to load ${src}`));
             });
             scriptTag.addEventListener('load', resolve);
             scriptTag.type = 'text/javascript';
@@ -150,7 +151,8 @@ const googleApi = {
     },
 
     /**
-     * Generates a script tag and downloads the Google API Client Library.
+     * Generates script tags and downloads the Google API Client Library and
+     * the Google Identity Services Library. Rejects if either fails to load.
      *
      * @returns {Promise}
      */
@@ -159,20 +161,24 @@ const googleApi = {
             return googleClientLoadPromise;
         }
 
-        googleClientLoadPromise = this._loadScriptTag(GOOGLE_API_CLIENT_LIBRARY_URL)
-            .catch(() => {
+        // Skip a library that is already loaded, e.g. when retrying after the
+        // other one failed.
+        googleClientLoadPromise = Promise.all([
+            (this._getGoogleApiClient() ? Promise.resolve() : this._loadScriptTag(GOOGLE_API_CLIENT_LIBRARY_URL))
+                .then(() => new Promise((resolve, reject) =>
+                    this._getGoogleApiClient().load('client', {
+                        callback: resolve,
+                        onerror: reject
+                    }))),
+            this._getGoogleGISApiClient()?.accounts ? Promise.resolve() : this._loadScriptTag(GOOGLE_GIS_LIBRARY_URL)
+        ])
+            .then(() => this._getGoogleApiClient())
+            .catch(error => {
+                // Allow a later call to try loading again.
                 googleClientLoadPromise = null;
-            })
-            .then(() => new Promise((resolve, reject) =>
-                this._getGoogleApiClient().load('client', {
-                    callback: resolve,
-                    onerror: reject
-                })))
-            .then(this._loadScriptTag(GOOGLE_GIS_LIBRARY_URL))
-            .catch(() => {
-                googleClientLoadPromise = null;
-            })
-            .then(() => this._getGoogleApiClient());
+
+                throw error;
+            });
 
         return googleClientLoadPromise;
     },
