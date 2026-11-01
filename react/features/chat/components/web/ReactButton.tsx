@@ -11,6 +11,7 @@ import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import { sendReaction } from '../../actions.any';
 
 import EmojiSelector from './EmojiSelector';
+import useMenuFocusTrap from './useMenuFocusTrap';
 
 interface IProps {
     messageId: string;
@@ -92,6 +93,8 @@ const ReactButton = ({ messageId, receiverId }: IProps) => {
 
         return () => cancelAnimationFrame(frame);
     }, [ isPopoverOpen ]);
+
+    useMenuFocusTrap(popoverContentRef, isPopoverOpen);
 
     const handleReactClick = useCallback(() => {
         restoreTriggerFocus.current = true;
