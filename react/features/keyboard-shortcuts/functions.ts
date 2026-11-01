@@ -32,7 +32,7 @@ export function areKeyboardShortcutsEnabled(state: IReduxState) {
  * @returns {Map} - The keyboard shortcuts map.
  */
 export function getKeyboardShortcuts(state: IReduxState) {
-    return state['features/keyboard-shortcuts'].shortcuts;
+    return state['features/keyboard-shortcuts']?.shortcuts ?? new Map();
 }
 
 /**
