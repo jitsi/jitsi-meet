@@ -17,6 +17,8 @@ import { MESSAGE_TYPE_LOCAL } from '../../constants';
 import logger from '../../logger';
 import { IMessage } from '../../types';
 
+import useMenuFocusTrap from './useMenuFocusTrap';
+
 export interface IProps {
     canEdit?: boolean;
     className?: string;
@@ -161,6 +163,8 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
         return () => cancelAnimationFrame(frame);
     }, [ isPopoverOpen, shouldFocusComposer ]);
 
+    useMenuFocusTrap(menuPanelRef, isPopoverOpen);
+    
     // If no menu items will be shown, don't render the menu button.
     if (!enablePrivateChat && isFileMessage && !canEditMessage) {
         return null;
