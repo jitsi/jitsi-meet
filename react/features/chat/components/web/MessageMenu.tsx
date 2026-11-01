@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -28,7 +28,9 @@ export interface IProps {
     isModerated?: boolean;
     message: IMessage;
     onEditMessage?: () => void;
+    onPopoverOpenChange?: (isOpen: boolean) => void;
     participantId: string;
+    tabIndex?: number;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -40,7 +42,9 @@ const useStyles = makeStyles()(theme => {
             padding: '8px 16px',
             cursor: 'pointer',
             color: 'white',
-            '&:hover': {
+            outline: 'none',
+
+            '&:hover, &:focus, &.focus-visible': {
                 backgroundColor: theme.palette.action03
             }
         },
@@ -68,7 +72,19 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModerated, enablePrivateChat, displayName, isFileMessage, onEditMessage }: IProps) => {
+const MessageMenu = ({
+    canEdit,
+    displayName,
+    enablePrivateChat,
+    isFileMessage,
+    isFromVisitor,
+    isLobbyMessage,
+    isModerated,
+    message,
+    onEditMessage,
+    onPopoverOpenChange,
+    tabIndex = -1
+}: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -77,6 +93,7 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
     const [ popupPosition, setPopupPosition ] = useState({ top: 0,
         left: 0 });
     const buttonRef = useRef<HTMLDivElement>(null);
+    const menuRef = useRef<HTMLDivElement>(null);
 
     const isModerator = useSelector(isLocalParticipantModerator);
     const messageModerationSupported = useSelector(
@@ -87,17 +104,117 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
     // room says it handles them.
     const canEditMessage = canEdit && messageModerationSupported;
 
-    // If no menu items will be shown, don't render the menu button.
-    if (!enablePrivateChat && isFileMessage && !canEditMessage) {
-        return null;
-    }
+    const popoverId = useRef(`menu-${message.messageId}`);
 
-    const handleMenuClick = useCallback(() => {
+    useEffect(() => {
+        if (isPopoverOpen) {
+            requestAnimationFrame(() => {
+                const firstItem = menuRef.current?.querySelector<HTMLElement>('[role="menuitem"]');
+
+                firstItem?.focus();
+            });
+        }
+    }, [ isPopoverOpen ]);
+
+    const handleClose = useCallback((restoreFocus = false) => {
+        setIsPopoverOpen(false);
+        onPopoverOpenChange?.(false);
+        if (restoreFocus) {
+            buttonRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
+        }
+    }, [ onPopoverOpenChange ]);
+
+    const handleOpen = useCallback(() => {
+        document.dispatchEvent(new CustomEvent('chat-popover-open', { detail: popoverId.current }));
         setIsPopoverOpen(true);
+        onPopoverOpenChange?.(true);
+    }, [ onPopoverOpenChange ]);
+
+    useEffect(() => {
+        const handleOtherOpen = (event: Event) => {
+            const customEvent = event as CustomEvent<string>;
+
+            if (customEvent.detail !== popoverId.current && isPopoverOpen) {
+                handleClose();
+            }
+        };
+
+        document.addEventListener('chat-popover-open', handleOtherOpen);
+
+        return () => {
+            document.removeEventListener('chat-popover-open', handleOtherOpen);
+        };
+    }, [ isPopoverOpen, handleClose ]);
+
+    const handleToggle = useCallback(() => {
+        if (isPopoverOpen) {
+            handleClose(true);
+        } else {
+            handleOpen();
+        }
+    }, [ isPopoverOpen, handleClose, handleOpen ]);
+
+    const handleKeyPress = useCallback((event: React.KeyboardEvent) => {
+        event.stopPropagation();
     }, []);
 
-    const handleClose = useCallback(() => {
-        setIsPopoverOpen(false);
+    const handleMenuKeyDown = useCallback((event: React.KeyboardEvent) => {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            event.stopPropagation();
+            handleClose(true);
+
+            return;
+        }
+
+        const items = Array.from(
+            menuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') || []
+        );
+
+        if (!items.length) {
+            return;
+        }
+
+        const currentIndex = items.indexOf(document.activeElement as HTMLElement);
+
+        if (event.key === 'Tab') {
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (event.shiftKey) {
+                const prevIndex = currentIndex <= 0 ? items.length - 1 : currentIndex - 1;
+
+                items[prevIndex]?.focus();
+            } else {
+                const nextIndex = currentIndex >= items.length - 1 || currentIndex === -1
+                    ? 0
+                    : currentIndex + 1;
+
+                items[nextIndex]?.focus();
+            }
+        } else if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            event.stopPropagation();
+            const nextIndex = currentIndex >= items.length - 1 || currentIndex === -1
+                ? 0
+                : currentIndex + 1;
+
+            items[nextIndex]?.focus();
+        } else if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            event.stopPropagation();
+            const prevIndex = currentIndex <= 0 ? items.length - 1 : currentIndex - 1;
+
+            items[prevIndex]?.focus();
+        }
+    }, [ handleClose ]);
+
+    const handleItemKeyDown = useCallback((action: () => void) => (event: React.KeyboardEvent) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            event.stopPropagation();
+            action();
+        }
     }, []);
 
     const handlePrivateClick = useCallback(() => {
@@ -120,7 +237,7 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
             }
         }
         handleClose();
-    }, [ dispatch, isLobbyMessage, participant, message.participantId, displayName ]);
+    }, [ dispatch, isLobbyMessage, participant, message.participantId, displayName, isFromVisitor, handleClose ]);
 
     const handleCopyClick = useCallback(() => {
         copyText(message.message)
@@ -146,13 +263,13 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
                 logger.error('Error copying text', error);
             });
         handleClose();
-    }, [ message.message ]);
+    }, [ message.message, handleClose ]);
 
     const handleDeleteClick = useCallback(() => {
         dispatch(sendMessageRetraction(message));
 
         handleClose();
-    }, [ message, handleClose ]);
+    }, [ message, handleClose, dispatch ]);
 
     const handleModerateClick = useCallback(() => {
         dispatch(sendMessageModeration(message));
@@ -164,26 +281,46 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
         handleClose();
     }, [ onEditMessage, handleClose ]);
 
+    if (!enablePrivateChat && isFileMessage && !canEditMessage) {
+        return null;
+    }
+
     const popoverContent = (
-        <div className = { classes.menuPanel }>
+        <div
+            className = { classes.menuPanel }
+            onKeyDown = { handleMenuKeyDown }
+            ref = { menuRef }
+            role = 'menu'>
             {canEditMessage && (
                 <div
+                    aria-label = { t('chat.edit') }
                     className = { classes.menuItem }
-                    onClick = { handleEditClick }>
+                    onClick = { handleEditClick }
+                    onKeyDown = { handleItemKeyDown(handleEditClick) }
+                    role = 'menuitem'
+                    tabIndex = { 0 }>
                     {t('chat.edit')}
                 </div>
             )}
             {enablePrivateChat && (
                 <div
+                    aria-label = { t('chat.privateMessage') }
                     className = { classes.menuItem }
-                    onClick = { handlePrivateClick }>
+                    onClick = { handlePrivateClick }
+                    onKeyDown = { handleItemKeyDown(handlePrivateClick) }
+                    role = 'menuitem'
+                    tabIndex = { 0 }>
                     {t('chat.privateMessage')}
                 </div>
             )}
             {!isFileMessage && (
                 <div
+                    aria-label = { t('chat.copy') }
                     className = { classes.menuItem }
-                    onClick = { handleCopyClick }>
+                    onClick = { handleCopyClick }
+                    onKeyDown = { handleItemKeyDown(handleCopyClick) }
+                    role = 'menuitem'
+                    tabIndex = { 0 }>
                     {t('chat.copy')}
                 </div>
             )}
@@ -193,8 +330,12 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
                 && message.messageType !== MESSAGE_TYPE_LOCAL
                 && (
                     <div
+                        aria-label = { t('chat.delete') }
                         className = { classes.menuItem }
-                        onClick = { handleModerateClick }>
+                        onClick = { handleModerateClick }
+                        onKeyDown = { handleItemKeyDown(handleModerateClick) }
+                        role = 'menuitem'
+                        tabIndex = { 0 }>
                         {t('chat.delete')}
                     </div>
                 )}
@@ -204,8 +345,12 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
                 && messageModerationSupported
                 && (
                     <div
+                        aria-label = { t('chat.deleteMessage') }
                         className = { classes.menuItem }
-                        onClick = { handleDeleteClick }>
+                        onClick = { handleDeleteClick }
+                        onKeyDown = { handleItemKeyDown(handleDeleteClick) }
+                        role = 'menuitem'
+                        tabIndex = { 0 }>
                         {t('chat.deleteMessage')}
                     </div>
                 )}
@@ -216,6 +361,7 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
         <div>
             <div ref = { buttonRef }>
                 <Popover
+                    allowClick = { true }
                     content = { popoverContent }
                     onPopoverClose = { handleClose }
                     position = 'top'
@@ -225,7 +371,9 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
                         accessibilityLabel = { t('toolbar.accessibilityLabel.moreOptions') }
                         className = { classes.messageMenuButton }
                         icon = { IconDotsHorizontal }
-                        onClick = { handleMenuClick }
+                        onClick = { handleToggle }
+                        onKeyPress = { handleKeyPress }
+                        tabIndex = { tabIndex }
                         type = { BUTTON_TYPES.TERTIARY } />
                 </Popover>
             </div>

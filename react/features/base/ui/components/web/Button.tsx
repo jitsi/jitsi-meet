@@ -39,6 +39,8 @@ interface IProps extends IButtonProps {
      */
     size?: 'small' | 'medium' | 'large';
 
+    tabIndex?: number;
+
     /**
      * Data test id.
      */
@@ -189,6 +191,7 @@ const Button = React.forwardRef<any, any>(({
     onClick = () => null,
     onKeyPress = () => null,
     size = 'medium',
+    tabIndex,
     testId,
     type = BUTTON_TYPES.PRIMARY
 }: IProps, ref) => {
@@ -210,6 +213,7 @@ const Button = React.forwardRef<any, any>(({
             onClick = { onClick }
             onKeyPress = { onKeyPress }
             ref = { ref }
+            tabIndex = { tabIndex }
             title = { accessibilityLabel }
             type = { isSubmit ? 'submit' : 'button' }>
             {icon && <Icon
