@@ -20,7 +20,11 @@ export function useClosePoll(pollId: string) {
     const canClose = useSelector((state: IReduxState) => canClosePoll(state, pollId));
     const closePoll = useCallback(() => {
         dispatch(openDialog('ClosePollDialog', ClosePollDialog, {
-            onSubmit: () => dispatch(closePollAction(pollId))
+            onSubmit: () => {
+                dispatch(closePollAction(pollId));
+
+                return true; // close dialog
+            }
         }));
     }, [ dispatch, pollId ]);
 

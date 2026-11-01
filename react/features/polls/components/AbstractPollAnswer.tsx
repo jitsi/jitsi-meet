@@ -8,6 +8,7 @@ import { IReduxState } from '../../app/types';
 import { getParticipantDisplayName } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
 import { showErrorNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { registerVote, removePoll, setVoteChanging } from '../actions';
 import { getPoll } from '../functions';
 import { useClosePoll } from '../hooks.any';
@@ -81,9 +82,12 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
     const dispatch = useDispatch();
 
     const submitAnswer = useCallback(() => {
-        // Rejected when the poll was closed meanwhile. A lib-jitsi-meet without that error returns nothing.
+        // Rejected with not-allowed when the poll was closed meanwhile. A lib-jitsi-meet without that error returns
+        // nothing.
         conference?.getPolls()?.answerPoll(pollId, checkBoxStates)
-            ?.catch(() => dispatch(showErrorNotification({ titleKey: 'polls.errors.voteNotCounted' })));
+            ?.catch((error: Error) => dispatch(showErrorNotification({
+                titleKey: error.message === 'not-allowed' ? 'polls.errors.voteNotCounted' : 'polls.errors.voteFailed'
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG)));
 
         sendAnalytics(createPollEvent('vote.sent'));
         dispatch(registerVote(pollId, checkBoxStates));

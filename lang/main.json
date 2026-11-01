@@ -1111,6 +1111,7 @@
         "errors": {
             "closeFailed": "The poll could not be ended",
             "notUniqueOption": "Options must be unique",
+            "voteFailed": "Your vote was not counted",
             "voteNotCounted": "Your vote was not counted, the poll has ended"
         },
         "notification": {
