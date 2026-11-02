@@ -40,7 +40,21 @@ final class BackgroundVideoProcessor implements VideoProcessor {
         try {
             try {
                 output = frameProcessor.process(frame, textureHelper, settings);
+                if (output != null) {
+                    VideoFrame normalized = matchInputSize(output, frame);
+                    if (normalized != output) {
+                        VideoFrame previous = output;
+                        output = normalized;
+                        if (previous != frame) {
+                            previous.release();
+                        }
+                    }
+                }
             } catch (RuntimeException error) {
+                if (output != null && output != frame) {
+                    output.release();
+                }
+                output = null;
                 if (session.isCurrent(settings.sessionId, generation)) {
                     session.reportUnavailable(generation);
                 }
@@ -55,6 +69,26 @@ final class BackgroundVideoProcessor implements VideoProcessor {
                 output.release();
             }
             frame.release();
+        }
+    }
+
+    private static VideoFrame matchInputSize(VideoFrame output, VideoFrame input) {
+        int width = input.getBuffer().getWidth();
+        int height = input.getBuffer().getHeight();
+        VideoFrame.Buffer buffer = output.getBuffer();
+        if (buffer.getWidth() == width && buffer.getHeight() == height) {
+            return output;
+        }
+        VideoFrame.Buffer scaled = buffer.cropAndScale(0, 0, buffer.getWidth(), buffer.getHeight(),
+            width, height);
+        if (scaled == null) {
+            throw new IllegalStateException("Processed frame scaling failed");
+        }
+        try {
+            return new VideoFrame(scaled, output.getRotation(), output.getTimestampNs());
+        } catch (RuntimeException error) {
+            scaled.release();
+            throw error;
         }
     }
 }

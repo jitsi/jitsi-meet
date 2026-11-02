@@ -7,6 +7,7 @@ import com.google.mlkit.vision.segmentation.SegmentationMask;
 
 import org.webrtc.JavaI420Buffer;
 import org.webrtc.VideoFrame;
+import org.webrtc.YuvHelper;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -19,16 +20,34 @@ final class BackgroundImageOps {
         int sourceWidth = source.getWidth();
         int sourceHeight = source.getHeight();
         int[] pixels = new int[width * height];
-        ByteBuffer yPlane = source.getDataY();
-        ByteBuffer uPlane = source.getDataU();
-        ByteBuffer vPlane = source.getDataV();
+        ByteBuffer yPlane = source.getDataY().duplicate();
+        ByteBuffer uPlane = source.getDataU().duplicate();
+        ByteBuffer vPlane = source.getDataV().duplicate();
+        byte[] yRow = new byte[sourceWidth];
+        byte[] uRow = new byte[(sourceWidth + 1) / 2];
+        byte[] vRow = new byte[uRow.length];
+        int previousY = -1;
+        int previousChromaY = -1;
         for (int y = 0; y < height; y++) {
             int sy = y * sourceHeight / height;
+            if (sy != previousY) {
+                yPlane.position(sy * source.getStrideY());
+                yPlane.get(yRow);
+                previousY = sy;
+            }
+            int chromaY = sy / 2;
+            if (chromaY != previousChromaY) {
+                uPlane.position(chromaY * source.getStrideU());
+                vPlane.position(chromaY * source.getStrideV());
+                uPlane.get(uRow);
+                vPlane.get(vRow);
+                previousChromaY = chromaY;
+            }
             for (int x = 0; x < width; x++) {
                 int sx = x * sourceWidth / width;
-                int luma = yPlane.get(sy * source.getStrideY() + sx) & 255;
-                int chromaU = uPlane.get((sy / 2) * source.getStrideU() + sx / 2) & 255;
-                int chromaV = vPlane.get((sy / 2) * source.getStrideV() + sx / 2) & 255;
+                int luma = yRow[sx] & 255;
+                int chromaU = uRow[sx / 2] & 255;
+                int chromaV = vRow[sx / 2] & 255;
                 int c = Math.max(0, luma - 16);
                 int d = chromaU - 128;
                 int e = chromaV - 128;
@@ -55,7 +74,6 @@ final class BackgroundImageOps {
         int height = foreground.getHeight();
         int[] front = new int[width * height];
         int[] back = new int[width * height];
-        int[] output = new int[width * height];
         foreground.getPixels(front, 0, width, 0, 0, width, height);
         Bitmap background = settings.background != null
             ? presetForFrame(settings.background, width, height, rotation)
@@ -77,10 +95,10 @@ final class BackgroundImageOps {
                     ux * (sampler.width - 1f) / Math.max(1, uprightWidth - 1),
                     uy * (sampler.height - 1f) / Math.max(1, uprightHeight - 1));
                 alpha = Math.min(1f, Math.max(0f, (alpha - 0.25f) / 0.5f));
-                output[y * width + x] = blend(front[y * width + x], back[y * width + x], alpha);
+                front[y * width + x] = blend(front[y * width + x], back[y * width + x], alpha);
             }
         }
-        return Bitmap.createBitmap(output, width, height, Bitmap.Config.ARGB_8888);
+        return Bitmap.createBitmap(front, width, height, Bitmap.Config.ARGB_8888);
     }
 
     private static final class MaskSampler {
@@ -197,35 +215,28 @@ final class BackgroundImageOps {
     }
 
     static JavaI420Buffer toI420(Bitmap image) {
+        if (image.getConfig() != Bitmap.Config.ARGB_8888) {
+            throw new IllegalArgumentException("ARGB_8888 bitmap required");
+        }
         int width = image.getWidth();
         int height = image.getHeight();
         JavaI420Buffer buffer = JavaI420Buffer.allocate(width, height);
-        int[] pixels = new int[width * height];
-        image.getPixels(pixels, 0, width, 0, 0, width, height);
-        ByteBuffer yPlane = buffer.getDataY();
-        ByteBuffer uPlane = buffer.getDataU();
-        ByteBuffer vPlane = buffer.getDataV();
-        for (int y = 0; y < height; y += 2) {
-            for (int x = 0; x < width; x += 2) {
-                int uSum = 0;
-                int vSum = 0;
-                int count = 0;
-                for (int dy = 0; dy < 2 && y + dy < height; dy++) {
-                    for (int dx = 0; dx < 2 && x + dx < width; dx++) {
-                        int color = pixels[(y + dy) * width + x + dx];
-                        int r = color >> 16 & 255, g = color >> 8 & 255, b = color & 255;
-                        yPlane.put((y + dy) * buffer.getStrideY() + x + dx,
-                            (byte) clamp((66 * r + 129 * g + 25 * b + 128 >> 8) + 16));
-                        uSum += clamp((-38 * r - 74 * g + 112 * b + 128 >> 8) + 128);
-                        vSum += clamp((112 * r - 94 * g - 18 * b + 128 >> 8) + 128);
-                        count++;
-                    }
-                }
-                uPlane.put(y / 2 * buffer.getStrideU() + x / 2, (byte) (uSum / count));
-                vPlane.put(y / 2 * buffer.getStrideV() + x / 2, (byte) (vSum / count));
-            }
+        try {
+            ByteBuffer pixels = ByteBuffer.allocateDirect(image.getByteCount());
+            image.copyPixelsToBuffer(pixels);
+            pixels.rewind();
+            YuvHelper.ABGRToI420(pixels, image.getRowBytes(),
+                buffer.getDataY(), buffer.getStrideY(),
+                buffer.getDataU(), buffer.getStrideU(),
+                buffer.getDataV(), buffer.getStrideV(), width, height);
+            return buffer;
+        } catch (LinkageError error) {
+            buffer.release();
+            throw new IllegalStateException("YUV conversion unavailable", error);
+        } catch (RuntimeException | Error error) {
+            buffer.release();
+            throw error;
         }
-        return buffer;
     }
 
     static VideoFrame black(int width, int height, int rotation, long timestampNs) {
