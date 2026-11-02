@@ -475,8 +475,16 @@ async function enterLobby(participant: Participant, enterDisplayName = false, us
             expect(classes).toContain('disabled');
         }
 
-        // TODO check that password is hidden as the room does not have password
-        // this check needs to be added once the functionality exists
+        const passwordButton = screen.getPasswordButton();
+
+        // check password button is visible but not displayed
+        expect(await passwordButton.isExisting()).toBe(true);
+        expect(await passwordButton.isDisplayed()).toBe(false);
+
+        // check that the display name is empty
+        const displayName = await displayNameInput.getValue();
+
+        expect(displayName).toBe('');
 
         // enter display name
         await screen.enterDisplayName(P3);
