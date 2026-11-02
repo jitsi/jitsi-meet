@@ -143,7 +143,7 @@ import { openLeaveReasonDialog } from './react/features/conference/actions.web';
 import { appendSuffix } from './react/features/display-name/functions';
 import { maybeOpenFeedbackDialog, submitFeedback } from './react/features/feedback/actions';
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
-import { setNoiseSuppressionEnabled } from './react/features/noise-suppression/actions';
+import { isNoiseSuppressionEnabled } from './react/features/noise-suppression/functions';
 import {
     hideNotification,
     showErrorNotification,
@@ -162,6 +162,7 @@ import { isScreenAudioShared } from './react/features/screen-share/functions';
 import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture/actions';
 import { setAudioSettings } from './react/features/settings/actions.web';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
+import { NoiseSuppressionEffect } from './react/features/stream-effects/noise-suppression/NoiseSuppressionEffect';
 import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
 import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
 import { transcriberJoined, transcriberLeft } from './react/features/transcribing/actions';
@@ -208,6 +209,32 @@ function isTrackHiddenFromRecorder(participant, track) {
 
     // Only the video of this participant is hidden from the recorder. Its audio is still recorded.
     return Boolean(participant.isVideoHiddenFromRecorder?.() && track.isVideoTrack());
+}
+
+/**
+ * Sequence counter to track audio input device switches and avoid out-of-order races.
+ *
+ * @private
+ * @type {number}
+ */
+let _audioDeviceSwitchSeq = 0;
+
+/**
+ * Resumes the Web Audio context of the active local audio track's effect if it was
+ * suspended by the disposal of another audio track (due to the shared AudioContext singleton).
+ *
+ * @private
+ * @returns {void}
+ */
+function _resumeActiveAudioEffectContext() {
+    const activeTrack = getLocalJitsiAudioTrack(APP.store.getState());
+    const activeEffect = activeTrack?._streamEffect;
+
+    if (activeEffect?._audioSource?.context?.state === 'suspended') {
+        activeEffect._audioSource.context.resume()?.catch(err => {
+            logger.warn('Failed to resume active audio effect context', err);
+        });
+    }
 }
 
 /**
@@ -1178,9 +1205,23 @@ export default {
      * @param {JitsiLocalTrack} newTrack - new track to use or null
      * @returns {Promise}
      */
-    useAudioStream(newTrack) {
+    useAudioStream(newTrack, switchSeq) {
         return new Promise((resolve, reject) => {
-            _replaceLocalAudioTrackQueue.enqueue(onFinish => {
+            _replaceLocalAudioTrackQueue.enqueue(async onFinish => {
+                if (typeof switchSeq === 'number' && switchSeq !== _audioDeviceSwitchSeq) {
+                    logger.info(`Discarding stale audio stream in replace queue for seq ${switchSeq}`);
+                    try {
+                        await newTrack?.dispose?.();
+                    } catch (err) {
+                        logger.warn('Failed to dispose stale audio stream in replace queue', err);
+                    }
+                    _resumeActiveAudioEffectContext();
+                    resolve();
+                    onFinish();
+
+                    return;
+                }
+
                 const oldTrack = getLocalJitsiAudioTrack(APP.store.getState());
 
                 if (oldTrack === newTrack) {
@@ -1781,9 +1822,28 @@ export default {
      */
     async onAudioDeviceChanged(micDeviceId) {
         const audioWasMuted = this.isLocalAudioMuted();
+        const switchSeq = ++_audioDeviceSwitchSeq;
 
-        // Disable noise suppression if it was enabled on the previous track.
-        await APP.store.dispatch(setNoiseSuppressionEnabled(false));
+        // Detach noise suppression from the old track without mutating the user's Redux preference.
+        const oldAudioTrack = getLocalJitsiAudioTrack(APP.store.getState());
+
+        if (oldAudioTrack) {
+            try {
+                await oldAudioTrack.setEffect(undefined);
+            } catch (error) {
+                // If another switch is already detaching the effect on this track, proceed.
+                if (error?.message !== 'setEffect already in progress!') {
+                    logger.error('Failed to remove effect from old audio track', error);
+                    APP.store.dispatch(notifyMicError(error));
+
+                    return;
+                }
+            }
+        }
+
+        if (switchSeq !== _audioDeviceSwitchSeq) {
+            return;
+        }
 
         // When the 'default' mic needs to be selected, we need to pass the real device id to gUM instead of
         // 'default' in order to get the correct MediaStreamTrack from chrome because of the following bug.
@@ -1795,11 +1855,26 @@ export default {
 
         logger.info(`Switching audio input device to ${selectedDeviceId}`);
         sendAnalytics(createDeviceChangedEvent('audio', 'input'));
-        createLocalTracksF({
+
+        return createLocalTracksF({
             devices: [ 'audio' ],
             micDeviceId: selectedDeviceId
         })
-        .then(([ stream ]) => {
+        .then(async ([ stream ]) => {
+            // If a newer audio switch was initiated while tracks were being created,
+            // dispose this stale stream and do not install it.
+            if (switchSeq !== _audioDeviceSwitchSeq) {
+                logger.info(`Discarding stale audio stream for device ${selectedDeviceId}`);
+                try {
+                    await stream.dispose();
+                } catch (err) {
+                    logger.warn('Failed to dispose stale audio stream', err);
+                }
+                _resumeActiveAudioEffectContext();
+
+                return;
+            }
+
             // if audio was muted before changing the device, mute
             // with the new device
             if (audioWasMuted) {
@@ -1810,11 +1885,43 @@ export default {
             return stream;
         })
         .then(async stream => {
+            if (!stream) {
+                return;
+            }
+
+            if (switchSeq !== _audioDeviceSwitchSeq) {
+                logger.info(`Discarding stale audio stream before mixer effect for device ${selectedDeviceId}`);
+                try {
+                    await stream.dispose();
+                } catch (err) {
+                    logger.warn('Failed to dispose stale audio stream', err);
+                }
+                _resumeActiveAudioEffectContext();
+
+                return;
+            }
+
             await this._maybeApplyAudioMixerEffect(stream);
 
-            return this.useAudioStream(stream);
+            if (switchSeq !== _audioDeviceSwitchSeq) {
+                logger.info(`Discarding stale audio stream after mixer effect for device ${selectedDeviceId}`);
+                try {
+                    await stream.dispose();
+                } catch (err) {
+                    logger.warn('Failed to dispose stale audio stream', err);
+                }
+                _resumeActiveAudioEffectContext();
+
+                return;
+            }
+
+            return this.useAudioStream(stream, switchSeq);
         })
         .then(() => {
+            if (switchSeq !== _audioDeviceSwitchSeq) {
+                return;
+            }
+
             const state = APP.store.getState();
             const localAudio = getLocalJitsiAudioTrack(state);
             const settings = getLocalJitsiAudioTrackSettings(state);
@@ -1828,9 +1935,29 @@ export default {
                 localAudio._realDeviceId = localAudio.deviceId = 'default';
             }
         })
-        .catch(err => {
+        .catch(async err => {
+            if (switchSeq !== _audioDeviceSwitchSeq) {
+                return;
+            }
             logger.error(`Failed to switch to selected audio input device ${selectedDeviceId}, error=${err}`);
             APP.store.dispatch(notifyMicError(err));
+
+            const state = APP.store.getState();
+
+            const currentLocalAudio = getLocalJitsiAudioTrack(state);
+
+            if (isNoiseSuppressionEnabled(state)
+                    && oldAudioTrack
+                    && !oldAudioTrack.disposed
+                    && currentLocalAudio === oldAudioTrack) {
+                const { noiseSuppression: nsOptions } = state['features/base/config'] || {};
+
+                try {
+                    await oldAudioTrack.setEffect(new NoiseSuppressionEffect(nsOptions));
+                } catch (restoreError) {
+                    logger.error('Failed to restore noise suppression on audio track', restoreError);
+                }
+            }
         });
     },
 
