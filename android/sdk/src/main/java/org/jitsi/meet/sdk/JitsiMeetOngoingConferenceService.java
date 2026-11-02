@@ -33,6 +33,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.facebook.react.modules.core.PermissionListener;
@@ -98,52 +99,48 @@ public class JitsiMeetOngoingConferenceService extends Service implements Ongoin
 
 
     public static void launch(Context context, HashMap<String, Object> extraData) {
-        List<String> permissionsList = new ArrayList<>();
         Activity activity = (Activity) context;
-
-        PermissionListener listener = new PermissionListener() {
-            @Override
-            public boolean onRequestPermissionsResult(int i, String[] strings, int[] results) {
-                int counter = 0;
-
-                if (results.length > 0) {
-                    for (int result : results) {
-                        if (result == PackageManager.PERMISSION_GRANTED) {
-                            counter++;
-                        }
-                    }
-
-                    if (counter == results.length){
-                        doLaunch(context, extraData);
-                        JitsiMeetLogger.w(TAG + " Service launched, permissions were granted");
-                    } else {
-                        JitsiMeetLogger.w(TAG + " Couldn't launch service, permissions were not granted");
-                    }
-                }
-
-                return true;
-            }
-        };
-
+        List<String> permissionsList = new ArrayList<>();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissionsList.add(POST_NOTIFICATIONS);
-            permissionsList.add(RECORD_AUDIO);
+            if (ContextCompat.checkSelfPermission(activity, POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                permissionsList.add(POST_NOTIFICATIONS);
+            }
+            if (ContextCompat.checkSelfPermission(activity, RECORD_AUDIO)
+                    != PackageManager.PERMISSION_GRANTED) {
+                permissionsList.add(RECORD_AUDIO);
+            }
         }
-
-        String[] permissionsArray = new String[ permissionsList.size() ];
-        permissionsArray = permissionsList.toArray( permissionsArray );
-
-        if (permissionsArray.length > 0) {
-            JitsiMeetActivityDelegate.requestPermissions(
-                activity,
-                permissionsArray,
-                PERMISSIONS_REQUEST_CODE,
-                listener
-            );
-        } else {
+        if (permissionsList.isEmpty()) {
             doLaunch(context, extraData);
             JitsiMeetLogger.w(TAG + " Service launched");
+            return;
         }
+        String[] permissionsArray = permissionsList.toArray(new String[0]);
+        PermissionListener listener = (requestCode, permissions, results) -> {
+            boolean granted = results.length == permissionsArray.length;
+            for (int result : results) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    granted = false;
+                }
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                granted = granted
+                    && ContextCompat.checkSelfPermission(activity, POST_NOTIFICATIONS)
+                        == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(activity, RECORD_AUDIO)
+                        == PackageManager.PERMISSION_GRANTED;
+            }
+            if (granted) {
+                doLaunch(context, extraData);
+                JitsiMeetLogger.w(TAG + " Service launched, permissions were granted");
+            } else {
+                JitsiMeetLogger.w(TAG + " Couldn't launch service, permissions were not granted");
+            }
+            return true;
+        };
+        JitsiMeetActivityDelegate.requestPermissions(
+            activity, permissionsArray, PERMISSIONS_REQUEST_CODE, listener);
     }
 
     public static void abort(Context context) {

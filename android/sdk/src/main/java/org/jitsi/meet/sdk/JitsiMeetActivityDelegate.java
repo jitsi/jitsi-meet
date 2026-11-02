@@ -18,11 +18,24 @@ package org.jitsi.meet.sdk;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Handler;
+import android.os.Looper;
+
+import androidx.core.content.ContextCompat;
 
 import com.facebook.react.ReactHost;
 import com.facebook.react.modules.core.PermissionListener;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.WeakHashMap;
 
 /**
  * Helper class to encapsulate the work which needs to be done on
@@ -30,11 +43,14 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
  * it.
  */
 public class JitsiMeetActivityDelegate {
-    /**
-     * Needed for making sure this class working with the "PermissionsAndroid"
-     * React Native module.
-     */
-    private static PermissionListener permissionListener;
+    private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
+    private static final ArrayDeque<PermissionRequest> permissionRequests = new ArrayDeque<>();
+    private static final List<PermissionRequest> pendingRegistrations = new ArrayList<>();
+    private static final WeakHashMap<Activity, Boolean> destroyedActivities = new WeakHashMap<>();
+    private static PermissionRequest activePermissionRequest;
+    private static boolean dispatchingPermissions;
+    private static volatile boolean permissionRequestPending;
+    private static int nextPermissionRequestCode = 0x8000;
 
     /**
      * Cached back-button handler reused across {@code onHostResume} calls so we
@@ -49,7 +65,7 @@ public class JitsiMeetActivityDelegate {
      * @return {@code true} if the permissions are being requested or {@code false} otherwise.
      */
     static boolean arePermissionsBeingRequested() {
-        return permissionListener != null;
+        return permissionRequestPending;
     }
 
     /**
@@ -99,11 +115,13 @@ public class JitsiMeetActivityDelegate {
      * @param activity {@code Activity} being destroyed.
      */
     public static void onHostDestroy(Activity activity) {
-        ReactHost reactHost = ReactHostHolder.getReactHost();
-
-        if (reactHost != null) {
-            reactHost.onHostDestroy(activity);
-        }
+        runOnMainThread(() -> {
+            cancelPermissionsFor(activity);
+            ReactHost reactHost = ReactHostHolder.getReactHost();
+            if (reactHost != null) {
+                reactHost.onHostDestroy(activity);
+            }
+        });
     }
 
     /**
@@ -165,24 +183,171 @@ public class JitsiMeetActivityDelegate {
 
     public static void onRequestPermissionsResult(
             final int requestCode, final String[] permissions, final int[] grantResults) {
-        // Invoke the callback immediately
-        if (permissionListener != null && permissionListener.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
-            permissionListener = null;
+        onRequestPermissionsResult(null, requestCode, permissions, grantResults);
+    }
+
+    public static void onRequestPermissionsResult(Activity activity, int requestCode,
+            String[] permissions, int[] grantResults) {
+        runOnMainThread(() -> {
+            PermissionRequest request = activePermissionRequest;
+            if (request == null || request.internalCode != requestCode
+                    || (activity != null && request.activity.get() != activity)
+                    || (permissions != null && permissions.length > 0
+                        && !Arrays.equals(permissions, request.permissions))) {
+                return;
+            }
+            activePermissionRequest = null;
+            updatePermissionRequestPending();
+            String[] requestedPermissions = request.permissions;
+            int[] results = grantResults != null && permissions != null
+                && permissions.length == requestedPermissions.length
+                && grantResults.length == requestedPermissions.length
+                ? grantResults : new int[0];
+            notifyPermissionListener(request, requestedPermissions, results);
+            dispatchPermissionRequests();
+        });
+    }
+
+    public static void requestPermissions(Activity activity, String[] permissions, int requestCode,
+            PermissionListener listener) {
+        if (listener == null) {
+            return;
+        }
+        PermissionRequest request = new PermissionRequest(activity,
+            permissions == null ? new String[0] : permissions.clone(), requestCode, listener);
+        synchronized (pendingRegistrations) {
+            pendingRegistrations.add(request);
+            permissionRequestPending = true;
+        }
+        runOnMainThread(() -> {
+            synchronized (pendingRegistrations) {
+                if (!pendingRegistrations.remove(request)) {
+                    return;
+                }
+            }
+            permissionRequests.add(request);
+            dispatchPermissionRequests();
+        });
+    }
+
+    private static void runOnMainThread(Runnable action) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            action.run();
+        } else {
+            MAIN_HANDLER.post(action);
         }
     }
 
-    public static void requestPermissions(Activity activity, String[] permissions, int requestCode, PermissionListener listener) {
-        permissionListener = listener;
-
-        // The RN Permissions module calls this in a non-UI thread. What we observe is a crash in ViewGroup.dispatchCancelPendingInputEvents,
-        // which is called on the calling (ie, non-UI) thread. This doesn't look very safe, so try to avoid a crash by pretending the permission
-        // was denied.
-
+    private static void dispatchPermissionRequests() {
+        if (dispatchingPermissions || activePermissionRequest != null) {
+            return;
+        }
+        dispatchingPermissions = true;
         try {
-            activity.requestPermissions(permissions, requestCode);
-        } catch (Exception e) {
-            JitsiMeetLogger.e(e, "Error requesting permissions");
-            onRequestPermissionsResult(requestCode, permissions, new int[0]);
+            while (activePermissionRequest == null && !permissionRequests.isEmpty()) {
+                PermissionRequest request = permissionRequests.remove();
+                Activity activity = request.activity.get();
+                if (activity == null || destroyedActivities.containsKey(activity)) {
+                    notifyPermissionListener(request, request.permissions, new int[0]);
+                    continue;
+                }
+                int[] grantedResults = new int[request.permissions.length];
+                boolean allGranted = true;
+                try {
+                    for (int i = 0; i < request.permissions.length; i++) {
+                        grantedResults[i] = ContextCompat.checkSelfPermission(activity, request.permissions[i]);
+                        if (grantedResults[i] != PackageManager.PERMISSION_GRANTED) {
+                            allGranted = false;
+                        }
+                    }
+                } catch (Exception error) {
+                    JitsiMeetLogger.e(error, "Error checking permissions");
+                    notifyPermissionListener(request, request.permissions, new int[0]);
+                    continue;
+                }
+                if (allGranted) {
+                    notifyPermissionListener(request, request.permissions, grantedResults);
+                    continue;
+                }
+                request.internalCode = nextPermissionRequestCode;
+                nextPermissionRequestCode = nextPermissionRequestCode == 0xffff
+                    ? 0x8000 : nextPermissionRequestCode + 1;
+                activePermissionRequest = request;
+                try {
+                    activity.requestPermissions(request.permissions, request.internalCode);
+                } catch (Exception error) {
+                    JitsiMeetLogger.e(error, "Error requesting permissions");
+                    activePermissionRequest = null;
+                    notifyPermissionListener(request, request.permissions, new int[0]);
+                }
+            }
+        } finally {
+            updatePermissionRequestPending();
+            dispatchingPermissions = false;
+        }
+    }
+
+    private static void cancelPermissionsFor(Activity activity) {
+        List<PermissionRequest> cancelled = new ArrayList<>();
+        if (activePermissionRequest != null && activePermissionRequest.activity.get() == activity) {
+            cancelled.add(activePermissionRequest);
+            activePermissionRequest = null;
+        }
+        Iterator<PermissionRequest> iterator = permissionRequests.iterator();
+        while (iterator.hasNext()) {
+            PermissionRequest request = iterator.next();
+            if (request.activity.get() == activity) {
+                cancelled.add(request);
+                iterator.remove();
+            }
+        }
+        synchronized (pendingRegistrations) {
+            destroyedActivities.put(activity, Boolean.TRUE);
+            Iterator<PermissionRequest> pending = pendingRegistrations.iterator();
+            while (pending.hasNext()) {
+                PermissionRequest request = pending.next();
+                if (request.activity.get() == activity) {
+                    cancelled.add(request);
+                    pending.remove();
+                }
+            }
+        }
+        updatePermissionRequestPending();
+        for (PermissionRequest request : cancelled) {
+            notifyPermissionListener(request, request.permissions, new int[0]);
+        }
+        dispatchPermissionRequests();
+    }
+
+    private static void updatePermissionRequestPending() {
+        synchronized (pendingRegistrations) {
+            permissionRequestPending = activePermissionRequest != null
+                || !permissionRequests.isEmpty() || !pendingRegistrations.isEmpty();
+        }
+    }
+
+    private static void notifyPermissionListener(PermissionRequest request, String[] permissions,
+            int[] grantResults) {
+        try {
+            request.listener.onRequestPermissionsResult(request.originalCode, permissions, grantResults);
+        } catch (Exception error) {
+            JitsiMeetLogger.e(error, "Error delivering permission result");
+        }
+    }
+
+    private static final class PermissionRequest {
+        final WeakReference<Activity> activity;
+        final String[] permissions;
+        final int originalCode;
+        final PermissionListener listener;
+        int internalCode;
+
+        PermissionRequest(Activity activity, String[] permissions, int originalCode,
+                PermissionListener listener) {
+            this.activity = new WeakReference<>(activity);
+            this.permissions = permissions;
+            this.originalCode = originalCode;
+            this.listener = listener;
         }
     }
 }
