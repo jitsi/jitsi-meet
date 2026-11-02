@@ -134,3 +134,13 @@ Component "conference.noregex.test" "muc"
     }
     muc_mapper_domain_base = "noregex.test"
     muc_mapper_domain_prefix = "conference"
+
+-- MUC component paired with VirtualHost "noclaim.test", where the room claim
+-- is optional (asap_require_room_claim = false).
+Component "conference.noclaim.test" "muc"
+    storage = "memory"
+    modules_enabled = {
+        "token_verification";
+    }
+    muc_mapper_domain_base = "noclaim.test"
+    muc_mapper_domain_prefix = "conference"
