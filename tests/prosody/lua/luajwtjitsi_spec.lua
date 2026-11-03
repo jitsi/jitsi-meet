@@ -1,7 +1,7 @@
 -- Unit tests for luajwtjitsi.lib.lua
 -- Run with busted from resources/prosody-plugins/:
 --   busted spec/lua/
--- Requires: basexx, lua-cjson, openssl (luarocks package 'openssl')
+-- Requires: lua-cjson, openssl (luarocks package 'openssl')
 
 -- Compatibility shim: the luarocks 'openssl' package (v0.11+) has a different
 -- API from the old 'lua-openssl' that the production code was written for.
@@ -81,6 +81,9 @@ if _ok and type(_ssl) == 'table' then
     end
 
 end
+
+-- util.encodings is prosody's native library, so it is not there outside prosody.
+require 'encodings_stub'
 
 -- Guard: skip the whole suite if the module's hard dependencies aren't installed.
 local ok, M = pcall(dofile, "luajwtjitsi.lib.lua")
@@ -181,6 +184,52 @@ describe("luajwtjitsi", function()
             end)
         end)
 
+        describe("base64url", function()
+            it("encodes and decodes the RFC 4648 test vectors without padding", function()
+                local vectors = {
+                    { '', '' }, { 'f', 'Zg' }, { 'fo', 'Zm8' }, { 'foo', 'Zm9v' },
+                    { 'foob', 'Zm9vYg' }, { 'fooba', 'Zm9vYmE' }, { 'foobar', 'Zm9vYmFy' },
+                }
+                for _, v in ipairs(vectors) do
+                    assert.equal(v[2], M.to_url64(v[1]))
+                    assert.equal(v[1], M.from_url64(v[2]))
+                end
+            end)
+
+            it("uses the url safe alphabet", function()
+                assert.equal('-_8', M.to_url64('\251\255'))
+                assert.equal('\251\255', M.from_url64('-_8'))
+            end)
+
+            it("round trips every input length", function()
+                for n = 0, 300 do
+                    local bytes = {}
+                    for i = 1, n do bytes[i] = string.char((i * 37 + n) % 256) end
+                    local raw = table.concat(bytes)
+                    assert.equal(raw, M.from_url64(M.to_url64(raw)))
+                end
+            end)
+
+            it("accepts padding", function()
+                assert.equal('a', M.from_url64('YQ=='))
+                assert.equal('ab', M.from_url64('YWI='))
+            end)
+
+            it("rejects characters outside the base64url alphabet", function()
+                for _, bad in ipairs({ 'YW+i', 'YW/i', 'YW i', 'YW.i', 'Y=Q' }) do
+                    local result, err = M.from_url64(bad)
+                    assert.is_nil(result)
+                    assert.is_string(err)
+                end
+            end)
+
+            it("rejects a length no encoder produces", function()
+                local result, err = M.from_url64('YWJjZ')
+                assert.is_nil(result)
+                assert.is_string(err)
+            end)
+        end)
+
         describe("strip_signature", function()
             it("removes the signature segment", function()
                 local result = I.strip_signature("hdr.body.sig")
@@ -219,20 +268,17 @@ describe("luajwtjitsi", function()
             end)
 
             it("returns error or throws for token with invalid base64 header", function()
-                -- Older basexx returns garbage bytes (decode attempt fails gracefully);
-                -- newer basexx returns nil causing cjson.decode to throw.  Both are
-                -- acceptable outcomes — just verify we never get a valid header back.
+                -- The header does not decode, so there must never be a header back, whether parse_token
+                -- returns an error or the JSON decoder throws on the missing input.
                 local ok, h = pcall(I.parse_token, "!!!!.body.sig")
                 if ok then
-                    assert.is_nil(h)  -- graceful nil-return path
+                    assert.is_nil(h)
                 end
-                -- if not ok: threw an error, which is also acceptable
             end)
 
             it("returns error for token with invalid JSON body", function()
-                local basexx = require 'basexx'
-                local good_hdr = basexx.to_url64('{"typ":"JWT","alg":"HS256"}')
-                local bad_body = basexx.to_url64('not-valid-json{{')
+                local good_hdr = M.to_url64('{"typ":"JWT","alg":"HS256"}')
+                local bad_body = M.to_url64('not-valid-json{{')
                 local h, b, s, err = I.parse_token(good_hdr .. '.' .. bad_body .. '.sig')
                 assert.is_nil(h)
                 assert.is_string(err)
@@ -310,9 +356,8 @@ describe("luajwtjitsi", function()
 
             it("tampered payload fails verification", function()
                 local tok = assert(M.encode(payload(), 'secret', 'HS256'))
-                local basexx = require 'basexx'
                 local parts = I.split_token(tok)
-                parts[2] = basexx.to_url64('{"sub":"hacker","exp":9999999999}')
+                parts[2] = M.to_url64('{"sub":"hacker","exp":9999999999}')
                 local body, err = M.verify(table.concat(parts, '.'), 'HS256', 'secret')
                 assert.is_nil(body)
                 assert.is_string(err)
@@ -353,6 +398,21 @@ describe("luajwtjitsi", function()
                 local body, err = M.verify(tampered, 'RS256', PUBLIC_PEM)
                 assert.is_nil(body)
                 assert.is_string(err)
+            end)
+
+            it("keeps signing and verifying with the parsed keys reused", function()
+                for i = 1, 3 do
+                    local tok = assert(M.encode(payload({ jti = tostring(i) }), PRIVATE_PEM, 'RS256'))
+                    local body = assert(M.verify(tok, 'RS256', PUBLIC_PEM))
+                    assert.equal(tostring(i), body.jti)
+                end
+            end)
+
+            it("does not verify with a key that cannot be parsed", function()
+                local tok = assert(M.encode(payload(), PRIVATE_PEM, 'RS256'))
+                local ok_parse, body = pcall(M.verify, tok, 'RS256', 'not a pem key')
+                assert.is_true(not ok_parse or body == nil)
+                assert.is_table(M.verify(tok, 'RS256', PUBLIC_PEM))
             end)
         end)
 

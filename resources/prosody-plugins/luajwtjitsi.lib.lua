@@ -1,8 +1,58 @@
 local cjson_safe  = require 'cjson.safe'
-local basexx = require 'basexx'
+local base64 = require 'util.encodings'.base64
 local digest = require 'openssl.digest'
 local hmac   = require 'openssl.hmac'
 local pkey   = require 'openssl.pkey'
+
+local url64_to_base64 = { ['-'] = '+', ['_'] = '/' }
+local base64_to_url64 = { ['+'] = '-', ['/'] = '_', ['='] = '' }
+
+-- Decodes base64url (RFC 4648, section 5) using prosody's base64 decoder, which is native code.
+-- A pure Lua decoder was a measurable share of prosody CPU when many clients connect at once.
+-- @param data The base64url encoded string, padding is optional.
+-- @return The decoded string or nil and an error message.
+local function from_url64(data)
+	data = data:gsub('=?=$', '')
+	if data:find('[^%w%-_]') then
+		return nil, 'Invalid base64url character'
+	end
+	local remainder = #data % 4
+	if remainder == 1 then
+		return nil, 'Invalid base64url length'
+	end
+	return base64.decode(data:gsub('[-_]', url64_to_base64)..string.rep('=', (4 - remainder) % 4))
+end
+
+-- Encodes data as base64url (RFC 4648, section 5) without padding.
+-- @param data The string to encode.
+-- @return The encoded string.
+local function to_url64(data)
+	return (base64.encode(data):gsub('[+/=]', base64_to_url64))
+end
+
+-- Parsing a PEM key with OpenSSL 3 takes milliseconds and the same few keys sign or verify every token,
+-- so the parsed keys are kept. The cache is dropped once it holds PKEY_CACHE_SIZE keys.
+local PKEY_CACHE_SIZE = 64
+local pkey_cache, pkey_cache_count = {}, 0
+
+-- Returns the parsed key for a PEM string.
+-- @param key The key in PEM format.
+-- @return The key object or nil when the PEM cannot be parsed.
+local function load_pkey(key)
+	local loaded = pkey_cache[key]
+	if loaded == nil then
+		loaded = pkey.new(key)
+		if loaded == nil then
+			return nil
+		end
+		if pkey_cache_count >= PKEY_CACHE_SIZE then
+			pkey_cache, pkey_cache_count = {}, 0
+		end
+		pkey_cache[key] = loaded
+		pkey_cache_count = pkey_cache_count + 1
+	end
+	return loaded
+end
 
 -- Generates an RSA signature of the data.
 -- @param data The data to be signed.
@@ -10,7 +60,7 @@ local pkey   = require 'openssl.pkey'
 -- @param algo The digest algorithm to user when generating the signature: sha256, sha384, or sha512.
 -- @return The signature or nil and an error message.
 local function signRS (data, key, algo)
-	local privkey = pkey.new(key)
+	local privkey = load_pkey(key)
 	if privkey == nil then
 		return nil, 'Not a private PEM key'
 	else
@@ -26,7 +76,7 @@ end
 -- @param algo The digest algorithm to user when generating the signature: sha256, sha384, or sha512.
 -- @return True if the signature is valid, false otherwise. Also returns false if the key is invalid.
 local function verifyRS (data, signature, key, algo)
-	local pubkey = pkey.new(key)
+	local pubkey = load_pkey(key)
 	if pubkey == nil then
 		return false
 	end
@@ -73,17 +123,17 @@ local function parse_token(token)
 		return nil, nil, nil, "Invalid token"
 	end
 
-	local header, err = cjson_safe.decode(basexx.from_url64(segments[1]))
+	local header, err = cjson_safe.decode(from_url64(segments[1]))
 	if err then
 		return nil, nil, nil, "Invalid header"
 	end
 
-	local body, err = cjson_safe.decode(basexx.from_url64(segments[2]))
+	local body, err = cjson_safe.decode(from_url64(segments[2]))
 	if err then
 		return nil, nil, nil, "Invalid body"
 	end
 
-	local sig, err = basexx.from_url64(segments[3])
+	local sig, err = from_url64(segments[3])
 	if err then
 		return nil, nil, nil, "Invalid signature"
 	end
@@ -156,8 +206,8 @@ function M.encode(data, key, alg, header)
 	end
 
 	local segments = {
-		basexx.to_url64(headerEncoded),
-		basexx.to_url64(dataEncoded)
+		to_url64(headerEncoded),
+		to_url64(dataEncoded)
 	}
 
 	local signing_input = table.concat(segments, ".")
@@ -166,7 +216,7 @@ function M.encode(data, key, alg, header)
 		return nil, error
 	end
 
-	segments[#segments+1] = basexx.to_url64(signature)
+	segments[#segments+1] = to_url64(signature)
 
 	return table.concat(segments, ".")
 end
@@ -259,6 +309,10 @@ function M.verify(token, expectedAlgo, key, acceptedIssuers, acceptedAudiences)
 
 	return body
 end
+
+-- base64url helpers, for the plugins that read token segments themselves
+M.from_url64 = from_url64
+M.to_url64 = to_url64
 
 -- Expose internals for unit testing (harmless in production).
 M._internals = {
