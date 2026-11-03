@@ -164,12 +164,16 @@ var config = {
     // Disables self-view settings in UI
     // disableSelfViewSettings: false,
 
-    // Shows/hides the moderator setting for chat permissions.
+    // Shows/hides the moderator settings that restrict group chat and private chat to the participants with the
+    // `send-groupchat` and `send-private-message` permissions. The restrictions are enforced by the
+    // mod_filter_messages prosody module, thus enable this only when that module is loaded on the main MUC
+    // component and on the breakout rooms MUC component.
     // showChatPermissionsModeratorSetting: false,
 
     // Shows/hides the moderator setting that restricts video sharing to the participants with the
     // `share-video` permission. The restriction is enforced by the mod_filter_messages prosody module,
-    // thus enable this only when that module is loaded.
+    // thus enable this only when that module is loaded on the main MUC component and on the breakout rooms MUC
+    // component.
     // showSharedVideoPermissionsModeratorSetting: false,
 
     // Shows/hides the moderator setting that restricts joining a breakout room to the room a moderator

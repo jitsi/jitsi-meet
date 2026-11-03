@@ -47,7 +47,10 @@
 -- (user@domain/resource) does not go to the MUC component, thus no hook here
 -- sees it.
 --
--- Load on the MUC component.
+-- Every room has its own restrictions, a breakout room as well. A moderator sets
+-- them in the room they are in.
+--
+-- Load on the MUC component and on the breakout rooms MUC component.
 local util = module:require 'util';
 local get_room_from_jid = util.get_room_from_jid;
 local jid_bare = require 'util.jid'.bare;
