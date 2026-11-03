@@ -1,7 +1,6 @@
 -- Token authentication
 -- Copyright (C) 2021-present 8x8, Inc.
 
-local basexx = require "basexx";
 local have_async, async = pcall(require, "util.async");
 local hex = require "util.hex";
 local jwt = module:require "luajwtjitsi";
@@ -334,7 +333,7 @@ function Util:process_and_verify_token(session)
         -- We're fetching an public key from an ASAP server
         local dotFirst = session.auth_token:find("%.");
         if not dotFirst then return false, "not-allowed", "Invalid token" end
-        local headerPartEncoded = basexx.from_url64(session.auth_token:sub(1,dotFirst-1));
+        local headerPartEncoded = jwt.from_url64(session.auth_token:sub(1,dotFirst-1));
         if not headerPartEncoded then return false, "not-allowed", "Invalid token" end
         local header, err = json_safe.decode(headerPartEncoded);
         if err then
