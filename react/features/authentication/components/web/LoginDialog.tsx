@@ -8,7 +8,7 @@ import { IConfig } from '../../../base/config/configType';
 import { connect } from '../../../base/connection/actions.web';
 import { toJid } from '../../../base/connection/functions';
 import { translate, translateToHTML } from '../../../base/i18n/functions';
-import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
+import { JitsiConferenceErrors, JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import Input from '../../../base/ui/components/web/Input';
 import {
@@ -179,7 +179,7 @@ class LoginDialog extends Component<IProps, IState> {
             t
         } = this.props;
         const { username, password } = this.state;
-        const messageOptions: { msg?: string; } = {};
+        const messageOptions: { code?: string; msg?: string; } = {};
         let messageKey;
 
         if (progress && progress < 1) {
@@ -187,7 +187,11 @@ class LoginDialog extends Component<IProps, IState> {
         } else if (error) {
             const { name } = error;
 
-            if (name === JitsiConnectionErrors.PASSWORD_REQUIRED) {
+            if (name === JitsiConferenceErrors.RESERVATION_ERROR) {
+                messageKey = 'dialog.reservationErrorMsg';
+                messageOptions.code = error.reservationErrorCode;
+                messageOptions.msg = error.message;
+            } else if (name === JitsiConnectionErrors.PASSWORD_REQUIRED) {
                 const { credentials } = error;
 
                 if (credentials
