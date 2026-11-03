@@ -47,17 +47,22 @@
 -- (user@domain/resource) does not go to the MUC component, thus no hook here
 -- sees it.
 --
--- Load on the MUC component.
+-- A breakout room has no permissions of its own, the restrictions of its main
+-- room apply to it.
+--
+-- Load on the MUC component and on the breakout rooms MUC component.
 local util = module:require 'util';
 local get_room_from_jid = util.get_room_from_jid;
+local get_room_permissions = util.get_room_permissions;
 local jid_bare = require 'util.jid'.bare;
 local st = require 'util.stanza';
 
 -- Returns true when the room restricts this kind of message and the sender does
 -- not have the feature that lifts the restriction.
 local function is_blocked(room, session, restriction, feature)
-    return room.jitsiMetadata and room.jitsiMetadata.permissions
-        and room.jitsiMetadata.permissions[restriction]
+    local permissions = get_room_permissions(room);
+
+    return permissions and permissions[restriction]
         and not is_feature_allowed(feature, session.jitsi_meet_context_features);
 end
 

@@ -13,6 +13,7 @@ local NS_NICK = 'http://jabber.org/protocol/nick';
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local get_room_from_jid = util.get_room_from_jid;
 local get_occupant_by_real_jid = util.get_occupant_by_real_jid;
+local get_room_permissions = util.get_room_permissions;
 local is_healthcheck_room = util.is_healthcheck_room;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
@@ -27,6 +28,8 @@ if not main_virtual_host then
     return;
 end
 local muc_domain_prefix = module:get_option_string('muc_mapper_domain_prefix', 'conference');
+local breakout_rooms_component_host = module:get_option_string(
+    'breakout_rooms_component', 'breakout.' .. main_virtual_host);
 
 -- this is the main virtual host of the main prosody that this vnode serves
 local main_domain = module:get_option_string('main_domain');
@@ -220,8 +223,9 @@ end
                 return true;
             end
 
-            if room.jitsiMetadata and room.jitsiMetadata.permissions
-                and room.jitsiMetadata.permissions.pollCreationRestricted
+            local permissions = get_room_permissions(room);
+
+            if permissions and permissions.pollCreationRestricted
                 and not is_feature_allowed('create-polls', session.jitsi_meet_context_features) then
                     session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Creation of polls not allowed for user'));
                     return true;
@@ -593,7 +597,7 @@ local setup_muc_component = function(host_module, host)
 end
 
 process_host_module(muc_domain_prefix..'.'..main_virtual_host, setup_muc_component);
-process_host_module('breakout.' .. main_virtual_host, setup_muc_component);
+process_host_module(breakout_rooms_component_host, setup_muc_component);
 
 process_host_module(main_virtual_host, function(host_module)
     module:context(host_module.host):fire_event('jitsi-add-identity', {

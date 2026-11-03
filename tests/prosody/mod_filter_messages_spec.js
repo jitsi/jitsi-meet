@@ -1,6 +1,7 @@
 import { xml } from '@xmpp/client';
 import assert from 'assert';
 
+import { createBreakoutRoom, joinBreakoutRoom } from './helpers/breakout_rooms.js';
 import { mintAsapToken } from './helpers/jwt.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
@@ -688,5 +689,145 @@ describe('mod_filter_messages shared video', () => {
 
             assert.ok(received.getChild('shared-video'), 'a moderator must keep sharing a video');
         });
+    });
+});
+
+describe('mod_filter_messages in breakout rooms', () => {
+
+    const clients = [];
+
+    afterEach(async () => {
+        await Promise.all(clients.map(c => c.disconnect()));
+        clients.length = 0;
+    });
+
+    /**
+     * Creates a main room with a moderator and a breakout room, and moves a
+     * receiver and a sender into the breakout room. The moderator stays in the
+     * main room. The join presence of the sender is drained on the receiver.
+     *
+     * @param {object} [senderOpts]  Options for the sender connection; an
+     *                               anonymous sender when omitted.
+     */
+    async function setup(senderOpts) {
+        const r = nextRoom();
+        const roomName = r.split('@')[0];
+        const focus = await joinWithFocus(r);
+        const mod = await connectModerator(r);
+
+        clients.push(focus, mod);
+        await mod.joinRoom(r);
+
+        const breakoutJid = await createBreakoutRoom(focus, mod);
+
+        const receiver = await createXmppClient({ params: { room: roomName } });
+        const sender = senderOpts
+            ? await connect(r, senderOpts)
+            : await createXmppClient({ params: { room: roomName } });
+
+        clients.push(receiver, sender);
+        await joinBreakoutRoom(receiver, r, breakoutJid);
+        await joinBreakoutRoom(sender, r, breakoutJid);
+        await receiver.waitForPresenceFrom(`${breakoutJid}/${sender.nick}`);
+
+        return { r,
+            breakoutJid,
+            mod,
+            receiver,
+            sender };
+    }
+
+    it('group message is delivered when groupChatRestricted is not set', async () => {
+        const { breakoutJid, receiver, sender } = await setup();
+
+        const reply = await sender.sendGroupchat(breakoutJid, 'hello');
+
+        assert.notEqual(reply.attrs.type, 'error', 'message must not be blocked when chat is unrestricted');
+        await receiver.waitForMessage(s => s.attrs.id === reply.attrs.id, 3000);
+    });
+
+    it('anonymous sender is blocked when the main room sets groupChatRestricted', async () => {
+        const { r, breakoutJid, mod, receiver, sender } = await setup();
+
+        await restrictChat(mod, r);
+
+        const reply = await sender.sendGroupchat(breakoutJid, 'blocked?');
+
+        assert.strictEqual(reply.attrs.type, 'error', 'the group message must be blocked in the breakout room');
+        assert.ok(reply.getChild('error')?.getChild('not-allowed'), 'expected <not-allowed/> error condition');
+        await assert.rejects(
+            () => receiver.waitForMessage(s => s.attrs.id === reply.attrs.id, 1000),
+            'the blocked message must not reach the other occupant'
+        );
+    });
+
+    it('sender with send-groupchat=true is allowed when the main room sets groupChatRestricted', async () => {
+        const { r, breakoutJid, mod, sender } = await setup({ features: { 'send-groupchat': true } });
+
+        await restrictChat(mod, r);
+
+        const reply = await sender.sendGroupchat(breakoutJid, 'allowed!');
+
+        assert.notEqual(reply.attrs.type, 'error', 'sender with send-groupchat=true must be allowed');
+    });
+
+    it('moderator with no features in token is allowed when the main room sets groupChatRestricted', async () => {
+        const { r, breakoutJid, mod } = await setup();
+
+        await restrictChat(mod, r);
+        await joinBreakoutRoom(mod, r, breakoutJid);
+
+        const reply = await mod.sendGroupchat(breakoutJid, 'allowed!');
+
+        assert.notEqual(reply.attrs.type, 'error', 'a moderator must keep group chat in the breakout room');
+    });
+
+    it('anonymous sender is blocked when the main room sets privateChatRestricted', async () => {
+        const { r, breakoutJid, mod, receiver, sender } = await setup();
+
+        await restrictChat(mod, r, 'privateChatRestricted');
+
+        const id = await sender.sendPrivateChat(breakoutJid, receiver.nick, 'blocked?');
+        const reply = await sender.waitForMessage(s => s.attrs.id === id, 3000);
+
+        assert.strictEqual(reply.attrs.type, 'error', 'the private message must be blocked in the breakout room');
+        assert.ok(reply.getChild('error')?.getChild('not-allowed'), 'expected <not-allowed/> error condition');
+        await assert.rejects(
+            () => receiver.waitForMessage(s => s.attrs.id === id, 1000),
+            'the blocked message must not reach the recipient'
+        );
+    });
+
+    it('sender with send-private-message=true is allowed when the main room sets privateChatRestricted', async () => {
+        const { r, breakoutJid, mod, receiver, sender }
+            = await setup({ features: { 'send-private-message': true } });
+
+        await restrictChat(mod, r, 'privateChatRestricted');
+
+        const id = await sender.sendPrivateChat(breakoutJid, receiver.nick, 'allowed!');
+        const received = await receiver.waitForMessage(s => s.attrs.id === id, 3000);
+
+        assert.strictEqual(received.getChildText('body'), 'allowed!');
+    });
+
+    it('shared video of an anonymous occupant is removed when the main room sets sharedVideoRestricted', async () => {
+        const { r, breakoutJid, mod, receiver, sender } = await setup();
+
+        await restrictChat(mod, r, 'sharedVideoRestricted');
+
+        const received = await sendSharedVideo(sender, receiver, breakoutJid);
+
+        assert.ok(!received.getChild('shared-video'), 'shared-video must be removed in the breakout room');
+        assert.notEqual(received.attrs.type, 'error', 'the rest of the presence must pass');
+    });
+
+    it('occupant with share-video=true passes when the main room sets sharedVideoRestricted', async () => {
+        const { r, breakoutJid, mod, receiver, sender } = await setup({ features: { 'share-video': true } });
+
+        await restrictChat(mod, r, 'sharedVideoRestricted');
+
+        const received = await sendSharedVideo(sender, receiver, breakoutJid);
+
+        assert.ok(received.getChild('shared-video'), 'shared-video must pass with share-video=true');
     });
 });

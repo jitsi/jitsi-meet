@@ -183,6 +183,20 @@ function get_occupant_by_real_jid(room, real_jid)
     return nil, nil;
 end
 
+-- Returns the permissions from the metadata of the room. Breakout and lobby rooms have no metadata of their own, the
+-- permissions of their main room (room.main_room_jid) apply to them.
+-- @param room the room object
+-- @return the permissions table or nil
+function get_room_permissions(room)
+    local main_room = room.main_room_jid and get_room_from_jid(room.main_room_jid);
+
+    if main_room then
+        room = main_room;
+    end
+
+    return room.jitsiMetadata and room.jitsiMetadata.permissions;
+end
+
 function async_handler_wrapper(event, handler)
     if not have_async then
         module:log("error", "requires a version of Prosody with util.async");
@@ -818,6 +832,7 @@ return {
     get_room_from_jid = get_room_from_jid;
     get_room_by_name_and_subdomain = get_room_by_name_and_subdomain;
     get_occupant_by_real_jid = get_occupant_by_real_jid;
+    get_room_permissions = get_room_permissions;
     get_sip_jibri_email_prefix = get_sip_jibri_email_prefix;
     async_handler_wrapper = async_handler_wrapper;
     build_room_address = build_room_address;

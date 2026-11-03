@@ -18,6 +18,9 @@ Component "breakout.conference.localhost" "muc"
     restrict_room_creation = true
     muc_room_locking = false
     muc_room_default_public_jids = true
+    modules_enabled = {
+        "filter_messages";
+    }
 
 -- Internal MUC used by mod_muc_jigasi_invite: the module resolves the Jigasi
 -- brewery room from this component via process_host_module. Without this
@@ -86,6 +89,7 @@ Component "audiotranslation.localhost" "audio_translation_component"
 Component "polls.localhost" "polls_component"
     muc_mapper_domain_base = "localhost"
     muc_mapper_domain_prefix = "conference"
+    breakout_rooms_component = "breakout.conference.localhost"
 
 -- Plain MUC for mod_presence_identity tests. No token verification and no
 -- muc_meeting_id lock so any client can join freely without focus.

@@ -420,6 +420,9 @@ function on_breakout_room_pre_create(event)
     -- Only allow existent breakout rooms to be started.
     -- Authorisation of breakout rooms is done by their random uuid name
     if main_room and main_room._data.breakout_rooms and main_room._data.breakout_rooms[breakout_room.jid] then
+        -- Not in _data, so it is not saved. Modules use it to apply the permissions of the main room to the
+        -- breakout room (util.get_room_permissions).
+        breakout_room.main_room_jid = main_room_jid;
         breakout_room:set_subject(breakout_room.jid, main_room._data.breakout_rooms[breakout_room.jid]);
     else
         module:log('debug', 'Invalid breakout room %s will not be created.', breakout_room.jid);

@@ -1,5 +1,7 @@
 import assert from 'assert';
 
+import { createBreakoutRoom, joinBreakoutRoom } from './helpers/breakout_rooms.js';
+import { mintAsapToken } from './helpers/jwt.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
 // mod_polls_component is loaded as the "polls.localhost" component (see
@@ -10,6 +12,7 @@ import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 // jitsi_web_query_room (set by mod_jitsi_session from the ?room= param).
 const CONFERENCE = 'conference.localhost';
 const POLLS_COMPONENT = 'polls.localhost';
+const METADATA_COMPONENT = 'metadata.localhost';
 const JITMEET_NS = 'http://jitsi.org/jitmeet';
 
 let _roomCounter = 0;
@@ -470,6 +473,124 @@ describe('mod_polls_component', () => {
             nonOccupant.createPoll(POLLS_COMPONENT, nextPollId(), 'Q', [ { name: 'A' } ]);
 
             await assertNoPollBroadcast(nonOccupant);
+        });
+    });
+
+    // ── Poll creation restriction ───────────────────────────────────────────
+
+    describe('pollCreationRestricted', () => {
+
+        /**
+         * Connects a client with a token for the room and registers it for cleanup.
+         *
+         * @param {string} roomJid  Full room JID.
+         * @param {object} context  JWT context claims.
+         * @returns {Promise<object>}
+         */
+        async function connectWithToken(roomJid, context) {
+            const roomName = roomJid.split('@')[0];
+            const token = mintAsapToken({ room: roomName,
+                context });
+            const c = await createXmppClient({ params: { room: roomName,
+                token } });
+
+            clients.push(c);
+
+            return c;
+        }
+
+        /**
+         * Restricts poll creation in the room and waits for the metadata
+         * broadcast that confirms it.
+         *
+         * @param {object} mod      Moderator, an occupant of the room.
+         * @param {string} roomJid  Full room JID.
+         */
+        async function restrictPolls(mod, roomJid) {
+            mod.sendMetadataUpdate(METADATA_COMPONENT, roomJid, 'permissions', { pollCreationRestricted: true });
+            await mod.waitForMessage(s => {
+                try {
+                    return JSON.parse(s.getChild('json-message', JITMEET_NS)?.getText())
+                        ?.metadata?.permissions?.pollCreationRestricted === true;
+                } catch {
+                    return false;
+                }
+            }, 3000);
+        }
+
+        /**
+         * Creates a room with a moderator that restricted poll creation.
+         *
+         * @returns {Promise<{r: string, focus: object, mod: object}>}
+         */
+        async function setup() {
+            const r = nextRoom();
+            const focus = await focusJoin(r);
+            const mod = await connectWithToken(r, { user: { moderator: true } });
+
+            await mod.joinRoom(r);
+            await restrictPolls(mod, r);
+
+            return { r,
+                focus,
+                mod };
+        }
+
+        /**
+         * Asserts that the poll of the creator is rejected with <not-allowed/>
+         * and is not broadcast to the other occupant.
+         *
+         * @param {object} creator  Client that creates the poll.
+         * @param {object} other    Another occupant of the same room.
+         */
+        async function assertPollRejected(creator, other) {
+            creator.createPoll(POLLS_COMPONENT, nextPollId(), 'Q', [ { name: 'A' } ]);
+
+            const reply = await creator.waitForMessage(s => s.attrs.type === 'error');
+
+            assert.ok(reply.getChild('error')?.getChild('not-allowed'), 'expected <not-allowed/> error condition');
+            await assertNoPollBroadcast(other);
+        }
+
+        it('an anonymous occupant cannot create a poll', async () => {
+            const { r, mod } = await setup();
+            const creator = await joinParticipant(r);
+
+            await assertPollRejected(creator, mod);
+        });
+
+        it('an anonymous occupant of a breakout room cannot create a poll', async () => {
+            const { r, focus, mod } = await setup();
+            const breakoutJid = await createBreakoutRoom(focus, mod);
+            const roomName = r.split('@')[0];
+            const other = await createXmppClient({ params: { room: roomName } });
+            const creator = await createXmppClient({ params: { room: roomName } });
+
+            clients.push(other, creator);
+            await joinBreakoutRoom(other, r, breakoutJid);
+            await joinBreakoutRoom(creator, r, breakoutJid);
+
+            await assertPollRejected(creator, other);
+        });
+
+        it('an occupant of a breakout room with create-polls=true can create a poll', async () => {
+            const { r, focus, mod } = await setup();
+            const breakoutJid = await createBreakoutRoom(focus, mod);
+            const roomName = r.split('@')[0];
+            const other = await createXmppClient({ params: { room: roomName } });
+            const creator = await connectWithToken(r, { features: { 'create-polls': true } });
+
+            clients.push(other);
+            await joinBreakoutRoom(other, r, breakoutJid);
+            await joinBreakoutRoom(creator, r, breakoutJid);
+
+            const pollId = nextPollId();
+
+            creator.createPoll(POLLS_COMPONENT, pollId, 'Q', [ { name: 'A' } ]);
+
+            const poll = await waitForPollCommand(other, 'new-poll');
+
+            assert.equal(poll.pollId, pollId);
         });
     });
 
