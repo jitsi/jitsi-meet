@@ -11,9 +11,9 @@ import { createLocalizedTime } from '../timeFunctions';
 interface IProps extends WithTranslation {
 
     /**
-     * Optional accessibility label prefix.
+     * Accessibility label prefix.
      */
-    accessibilityLabel?: string;
+    accessibilityLabel: string;
 
     /**
      * Style for text.
@@ -44,7 +44,7 @@ class TimeElapsed extends PureComponent<IProps> {
         const { accessibilityLabel, style, time, t } = this.props;
         const timeElapsed = createLocalizedTime(time, t);
         const timeStr = timeElapsed.join(' ');
-        const label = accessibilityLabel ? `${accessibilityLabel}: ${timeStr}` : timeStr;
+        const label = `${accessibilityLabel}: ${timeStr}`;
 
         return (
             <Text
