@@ -149,6 +149,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'audiotranslation',
     'camera',
     'chat',
+    'reactions',
     'closedcaptions',
     'custom-panel',
     'desktop',
