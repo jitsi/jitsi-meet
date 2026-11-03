@@ -22,19 +22,26 @@ import { getCurrentConference } from '../../../base/conference/functions';
 import { hideSheet, openDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import Icon from '../../../base/icons/components/Icon';
-import { IconCheck, IconRaiseHand, IconVideoOff } from '../../../base/icons/svg';
+import { IconRaiseHand, IconScreenshare, IconVideoOff } from '../../../base/icons/svg';
 import { raiseHand } from '../../../base/participants/actions';
 import { getRaiseHandsQueue, isLocalParticipantModerator } from '../../../base/participants/functions';
 import { LOWER_HAND_MESSAGE } from '../../../base/tracks/constants';
+import MuteEveryonesDesktopDialog
+    from '../../../video-menu/components/native/MuteEveryonesDesktopDialog';
 import MuteEveryonesVideoDialog
     from '../../../video-menu/components/native/MuteEveryonesVideoDialog';
 
+import ModerationRow from './ModerationRow';
 import styles from './styles';
 
 export const ContextMenuMore = () => {
     const dispatch = useDispatch();
     const muteAllVideo = useCallback(() => {
         dispatch(openDialog('MuteEveryonesVideoDialog', MuteEveryonesVideoDialog));
+        dispatch(hideSheet());
+    }, [ dispatch ]);
+    const muteAllDesktop = useCallback(() => {
+        dispatch(openDialog('MuteEveryonesDesktopDialog', MuteEveryonesDesktopDialog));
         dispatch(hideSheet());
     }, [ dispatch ]);
     const conference = useSelector(getCurrentConference);
@@ -88,6 +95,16 @@ export const ContextMenuMore = () => {
                     src = { IconVideoOff } />
                 <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.stopEveryonesVideo')}</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+                accessibilityLabel = { t('participantsPane.actions.stopEveryonesDesktop') }
+                accessibilityRole = 'button'
+                onPress = { muteAllDesktop }
+                style = { styles.contextMenuItem as ViewStyle }>
+                <Icon
+                    size = { 24 }
+                    src = { IconScreenshare } />
+                <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.stopEveryonesDesktop')}</Text>
+            </TouchableOpacity>
             { moderator && raisedHandsQueue.length !== 0 && <TouchableOpacity
                 accessibilityLabel = { t('participantsPane.actions.lowerAllHands') }
                 accessibilityRole = 'button'
@@ -104,23 +121,10 @@ export const ContextMenuMore = () => {
                 <View style = { styles.contextMenuItem as ViewStyle }>
                     <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.allow')}</Text>
                 </View>
-                {moderationActions.map(({ disable, enable, enabled, labelKey }) => (
-
-                    // Moderation on means non-moderators are not allowed, so no check and not selected.
-                    <TouchableOpacity
-                        accessibilityLabel = { t(labelKey) }
-                        accessibilityRole = 'button'
-                        accessibilityState = {{ selected: !enabled }}
-                        key = { labelKey }
-                        onPress = { () => dispatch(enabled ? disable() : enable()) }
-                        style = { styles.contextMenuItem as ViewStyle }>
-                        {!enabled && <Icon
-                            size = { 24 }
-                            src = { IconCheck } />}
-                        <Text style = { enabled ? styles.contextMenuItemTextNoIcon : styles.contextMenuItemText }>
-                            {t(labelKey)}
-                        </Text>
-                    </TouchableOpacity>
+                {moderationActions.map(action => (
+                    <ModerationRow
+                        key = { action.labelKey }
+                        { ...action } />
                 ))}
             </>}
         </BottomSheet>
