@@ -53,13 +53,26 @@ export const ContextMenuMore = () => {
     const isVideoModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.VIDEO));
     const isDesktopModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.DESKTOP));
 
-    const disableAudioModeration = useCallback(() => dispatch(requestDisableAudioModeration()), [ dispatch ]);
-    const disableVideoModeration = useCallback(() => dispatch(requestDisableVideoModeration()), [ dispatch ]);
-    const disableDesktopModeration = useCallback(() => dispatch(requestDisableDesktopModeration()), [ dispatch ]);
-
-    const enableAudioModeration = useCallback(() => dispatch(requestEnableAudioModeration()), [ dispatch ]);
-    const enableVideoModeration = useCallback(() => dispatch(requestEnableVideoModeration()), [ dispatch ]);
-    const enableDesktopModeration = useCallback(() => dispatch(requestEnableDesktopModeration()), [ dispatch ]);
+    const moderationActions = [
+        {
+            disable: requestDisableAudioModeration,
+            enable: requestEnableAudioModeration,
+            enabled: isAudioModerationEnabled,
+            labelKey: 'participantsPane.actions.audioModeration'
+        },
+        {
+            disable: requestDisableVideoModeration,
+            enable: requestEnableVideoModeration,
+            enabled: isVideoModerationEnabled,
+            labelKey: 'participantsPane.actions.videoModeration'
+        },
+        {
+            disable: requestDisableDesktopModeration,
+            enable: requestEnableDesktopModeration,
+            enabled: isDesktopModerationEnabled,
+            labelKey: 'participantsPane.actions.desktopModeration'
+        }
+    ];
 
     return (
         <BottomSheet
@@ -91,78 +104,24 @@ export const ContextMenuMore = () => {
                 <View style = { styles.contextMenuItem as ViewStyle }>
                     <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.allow')}</Text>
                 </View>
-                {isAudioModerationEnabled
-                    ? <TouchableOpacity
-                        accessibilityLabel = { t('participantsPane.actions.audioModeration') }
+                {moderationActions.map(({ disable, enable, enabled, labelKey }) => (
+
+                    // Moderation on means non-moderators are not allowed, so no check and not selected.
+                    <TouchableOpacity
+                        accessibilityLabel = { t(labelKey) }
                         accessibilityRole = 'button'
-                        accessibilityState = {{ selected: true }}
-                        onPress = { disableAudioModeration }
+                        accessibilityState = {{ selected: !enabled }}
+                        key = { labelKey }
+                        onPress = { () => dispatch(enabled ? disable() : enable()) }
                         style = { styles.contextMenuItem as ViewStyle }>
-                        <Text style = { styles.contextMenuItemTextNoIcon }>
-                            {t('participantsPane.actions.audioModeration')}
+                        {!enabled && <Icon
+                            size = { 24 }
+                            src = { IconCheck } />}
+                        <Text style = { enabled ? styles.contextMenuItemTextNoIcon : styles.contextMenuItemText }>
+                            {t(labelKey)}
                         </Text>
                     </TouchableOpacity>
-                    : <TouchableOpacity
-                        accessibilityLabel = { t('participantsPane.actions.audioModeration') }
-                        accessibilityRole = 'button'
-                        accessibilityState = {{ selected: false }}
-                        onPress = { enableAudioModeration }
-                        style = { styles.contextMenuItem as ViewStyle }>
-                        <Icon
-                            size = { 24 }
-                            src = { IconCheck } />
-                        <Text style = { styles.contextMenuItemText }>
-                            {t('participantsPane.actions.audioModeration')}
-                        </Text>
-                    </TouchableOpacity> }
-                {isVideoModerationEnabled
-                    ? <TouchableOpacity
-                        accessibilityLabel = { t('participantsPane.actions.videoModeration') }
-                        accessibilityRole = 'button'
-                        accessibilityState = {{ selected: true }}
-                        onPress = { disableVideoModeration }
-                        style = { styles.contextMenuItem as ViewStyle }>
-                        <Text style = { styles.contextMenuItemTextNoIcon }>
-                            {t('participantsPane.actions.videoModeration')}
-                        </Text>
-                    </TouchableOpacity>
-                    : <TouchableOpacity
-                        accessibilityLabel = { t('participantsPane.actions.videoModeration') }
-                        accessibilityRole = 'button'
-                        accessibilityState = {{ selected: false }}
-                        onPress = { enableVideoModeration }
-                        style = { styles.contextMenuItem as ViewStyle }>
-                        <Icon
-                            size = { 24 }
-                            src = { IconCheck } />
-                        <Text style = { styles.contextMenuItemText }>
-                            {t('participantsPane.actions.videoModeration')}
-                        </Text>
-                    </TouchableOpacity>}
-                {isDesktopModerationEnabled
-                    ? <TouchableOpacity
-                        accessibilityLabel = { t('participantsPane.actions.desktopModeration') }
-                        accessibilityRole = 'button'
-                        accessibilityState = {{ selected: true }}
-                        onPress = { disableDesktopModeration }
-                        style = { styles.contextMenuItem as ViewStyle }>
-                        <Text style = { styles.contextMenuItemTextNoIcon }>
-                            {t('participantsPane.actions.desktopModeration')}
-                        </Text>
-                    </TouchableOpacity>
-                    : <TouchableOpacity
-                        accessibilityLabel = { t('participantsPane.actions.desktopModeration') }
-                        accessibilityRole = 'button'
-                        accessibilityState = {{ selected: false }}
-                        onPress = { enableDesktopModeration }
-                        style = { styles.contextMenuItem as ViewStyle }>
-                        <Icon
-                            size = { 24 }
-                            src = { IconCheck } />
-                        <Text style = { styles.contextMenuItemText }>
-                            {t('participantsPane.actions.desktopModeration')}
-                        </Text>
-                    </TouchableOpacity>}
+                ))}
             </>}
         </BottomSheet>
     );
