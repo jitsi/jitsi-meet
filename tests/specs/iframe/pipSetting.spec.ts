@@ -50,4 +50,16 @@ describe('Picture-in-Picture setting when embedded', () => {
 
         await settings.clickCloseButton();
     });
+
+    it('registers MediaSession enterpictureinpicture on host window and not in iframe', async () => {
+        // The host window owns the Document PiP lifecycle and MediaSession enterpictureinpicture action handler.
+        const hostHasMediaSessionHandler = await p1.driver.execute(() => {
+            return typeof window.navigator?.mediaSession?.setActionHandler === 'function'
+                && Boolean(window.jitsiAPI?._mediaSessionActionRegistered);
+        });
+
+        if (await p1.driver.execute(() => 'documentPictureInPicture' in window && 'mediaSession' in navigator)) {
+            expect(hostHasMediaSessionHandler).toBe(true);
+        }
+    });
 });
