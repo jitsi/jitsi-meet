@@ -39,9 +39,14 @@ local INBOUND_SIP_JIBRI_PREFIXES = { 'inbound-sip-jibri@', 'sipjibriina@', 'sipj
 local RECORDER_PREFIXES = module:get_option_inherited_set('recorder_prefixes', { 'recorder@recorder.', 'jibria@recorder.', 'jibrib@recorder.' });
 local TRANSCRIBER_PREFIXES = module:get_option_inherited_set('transcriber_prefixes', { 'transcriber@recorder.', 'transcribera@recorder.', 'transcriberb@recorder.' });
 
-local split_subdomain_cache = cache.new(1000);
-local extract_subdomain_cache = cache.new(1000);
-local internal_room_jid_cache = cache.new(1000);
+-- The JID caches are looked up for every stanza the MUC domain mapper rewrites and hold about one entry per
+-- session on the shard, so they must be larger than the number of concurrent sessions; when they are smaller,
+-- entries are evicted before they are used again and every stanza pays for the split and match again.
+local muc_mapper_cache_size = module:get_option_number("muc_mapper_cache_size", 10000);
+
+local split_subdomain_cache = cache.new(muc_mapper_cache_size);
+local extract_subdomain_cache = cache.new(muc_mapper_cache_size);
+local internal_room_jid_cache = cache.new(muc_mapper_cache_size);
 
 local moderated_subdomains = module:get_option_set("allowners_moderated_subdomains", {})
 local moderated_rooms = module:get_option_set("allowners_moderated_rooms", {})
