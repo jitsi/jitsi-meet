@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import Icon from '../../../base/icons/components/Icon';
@@ -9,6 +9,7 @@ import { IconArrowDown, IconArrowUp } from '../../../base/icons/svg';
 import { normalizeAccents } from '../../../base/util/strings';
 import { subscribeVisitorsList } from '../../../visitors/actions';
 import {
+    getDisplayName,
     getVisitorsCount,
     getVisitorsList,
     isVisitorsListEnabled,
@@ -39,7 +40,7 @@ const CurrentVisitorsList = ({ searchString }: IProps) => {
     const featureEnabled = useSelector(isVisitorsListEnabled);
     const shouldDisplayList = useSelector(shouldDisplayCurrentVisitorsList);
     const isSubscribed = useSelector(isVisitorsListSubscribed);
-    const { defaultRemoteDisplayName } = useSelector((state: IReduxState) => state['features/base/config']);
+    const store = useStore<IReduxState>();
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [ collapsed, setCollapsed ] = useState(true);
@@ -62,20 +63,27 @@ const CurrentVisitorsList = ({ searchString }: IProps) => {
 
     const keyExtractor = useCallback((v: { id: string; }) => v.id, []);
 
+    // Resolve names once per list/search change; rows reuse them.
+    const filtered = useMemo(() => {
+        const state = store.getState();
+        const search = normalizeAccents(searchString).toLowerCase();
+
+        return visitors
+            .map(v => ({ id: v.id, name: getDisplayName(state, v.name) }))
+            .filter(v => normalizeAccents(v.name).toLowerCase().includes(search));
+    }, [ store, visitors, searchString ]);
+
+    const renderVisitor = useCallback(({ item }: { item: { id: string; name: string; }; }) => (
+        <ParticipantItem
+            displayName = { item.name }
+            participantID = { item.id } />
+    ), []);
+
     if (!shouldDisplayList) {
         return null;
     }
 
-    const getName = (name?: string) => name || defaultRemoteDisplayName || 'Fellow Jitster';
-    const filtered = visitors.filter(v => normalizeAccents(getName(v.name)).toLowerCase()
-        .includes(normalizeAccents(searchString).toLowerCase()));
     const title = t('participantsPane.headings.visitorsList', { count: visitorsCount });
-
-    const renderVisitor = ({ item }: { item: { id: string; name: string; }; }) => (
-        <ParticipantItem
-            displayName = { getName(item.name) }
-            participantID = { item.id } />
-    );
 
     return (
         <>
@@ -97,8 +105,6 @@ const CurrentVisitorsList = ({ searchString }: IProps) => {
                 && <FlatList
                     data = { filtered }
                     keyExtractor = { keyExtractor }
-
-                    /* eslint-disable-next-line react/jsx-no-bind */
                     renderItem = { renderVisitor }
                     windowSize = { 2 } />
             }
