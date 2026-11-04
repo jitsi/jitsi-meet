@@ -24,6 +24,7 @@ import { getInviteOthersControl } from '../../../share-room/functions';
 import { iAmVisitor } from '../../../visitors/functions';
 import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
 
+import CurrentVisitorsList from './CurrentVisitorsList';
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
 
@@ -38,7 +39,6 @@ interface IProps {
     participantsCount?: number;
     showInviteButton?: boolean;
     sortedParticipantIds?: Array<string>;
-    visitorsCount?: number | undefined;
 }
 
 
@@ -49,8 +49,7 @@ const MeetingParticipantList = ({
     isShareDialogVisible,
     participantsCount,
     showInviteButton,
-    sortedParticipantIds = [],
-    visitorsCount
+    sortedParticipantIds = []
 }: IProps): any => {
     const { t } = useTranslation();
 
@@ -70,9 +69,6 @@ const MeetingParticipantList = ({
         ? `${currentRoom.name} (${participantsCount})`
         : t('participantsPane.headings.participantsList',
             { count: participantsCount });
-    const visitorsLabelText = visitorsCount && visitorsCount > 0
-        ? t('participantsPane.headings.visitors', { count: visitorsCount })
-        : undefined;
 
     const renderParticipant = ({ item }: any) => (
         <MeetingParticipantItem
@@ -83,9 +79,6 @@ const MeetingParticipantList = ({
 
     return (
         <View style = { styles.meetingListContainer }>
-            <Text style = { styles.visitorsLabel as TextStyle }>
-                { visitorsLabelText }
-            </Text>
             <Text
                 style = { styles.meetingListDescription as TextStyle }>
                 { title }
@@ -123,6 +116,7 @@ const MeetingParticipantList = ({
                 /* eslint-disable react/jsx-no-bind */
                 renderItem = { renderParticipant }
                 windowSize = { 2 } />
+            <CurrentVisitorsList searchString = { searchString } />
         </View>
     );
 };
@@ -156,7 +150,6 @@ function _mapStateToProps(state: IReduxState) {
     const isAddPeopleFeatureEnabled = addPeopleFeatureControl(state);
     const participantsCount = sortedParticipantIds.length;
     const showInviteButton = shouldRenderInviteButton(state);
-    const visitorsCount = state['features/visitors']?.count || 0;
 
     return {
         currentRoom,
@@ -166,8 +159,7 @@ function _mapStateToProps(state: IReduxState) {
         isShareDialogVisible: shareDialogVisible,
         participantsCount,
         showInviteButton,
-        sortedParticipantIds,
-        visitorsCount
+        sortedParticipantIds
     };
 }
 
