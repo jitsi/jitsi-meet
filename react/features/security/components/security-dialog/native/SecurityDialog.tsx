@@ -189,6 +189,8 @@ class SecurityDialog extends PureComponent<IProps, IState> {
             return null;
         }
 
+        const lobbyLabel = t('lobby.toggleLabel');
+
         return (
             <View style = { styles.lobbyModeContainer }>
                 <View style = { styles.lobbyModeContent } >
@@ -197,9 +199,10 @@ class SecurityDialog extends PureComponent<IProps, IState> {
                     </Text>
                     <View style = { styles.lobbyModeSection as ViewStyle }>
                         <Text style = { styles.lobbyModeLabel as TextStyle } >
-                            { t('lobby.toggleLabel') }
+                            { lobbyLabel }
                         </Text>
                         <Switch
+                            accessibilityLabel = { lobbyLabel }
                             checked = { this.state.lobbyEnabled }
                             onChange = { this._onToggleLobbyMode } />
                     </View>
