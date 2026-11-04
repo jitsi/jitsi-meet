@@ -1,53 +1,35 @@
-import { RefObject, useEffect } from 'react';
+import { useCallback } from 'react';
 
 /**
- * Keeps keyboard focus inside an open menu.
- * Tab and Shift+Tab cycle through the menu's buttons. Escape is left alone so the
- * popover can close and return focus to the button that opened the menu.
+ * Keeps Tab inside an open menu.
+ * Call from the panel's onKeyDown. Escape is left alone so the popover can close.
  *
- * @param {RefObject<HTMLElement | null>} panelRef - The open menu panel.
- * @param {boolean} active - Whether the menu is open.
- * @returns {void}
+ * @returns {Function} Keydown handler for the menu panel.
  */
-function useMenuFocusTrap(panelRef: RefObject<HTMLElement | null>, active: boolean) {
-    useEffect(() => {
-        if (!active) {
-            return undefined;
+function useMenuFocusTrap() {
+    return useCallback((event: React.KeyboardEvent<HTMLElement>) => {
+        if (event.key !== 'Tab') {
+            return;
         }
 
-        const onKeyDown = (e: KeyboardEvent) => {
-            if (e.key !== 'Tab') {
-                return;
-            }
+        const items = Array.from(
+            event.currentTarget.querySelectorAll<HTMLButtonElement>('button:not([disabled])')
+        );
 
-            const panel = panelRef.current;
+        if (items.length === 0) {
+            return;
+        }
 
-            if (!panel?.isConnected) {
-                return;
-            }
+        event.preventDefault();
 
-            const items = Array.from(panel.querySelectorAll<HTMLButtonElement>('button:not([disabled])'));
+        const currentIndex = items.indexOf(document.activeElement as HTMLButtonElement);
+        const delta = event.shiftKey ? -1 : 1;
+        const nextIndex = currentIndex === -1
+            ? (event.shiftKey ? items.length - 1 : 0)
+            : (currentIndex + delta + items.length) % items.length;
 
-            if (items.length === 0) {
-                return;
-            }
-
-            e.preventDefault();
-            e.stopPropagation();
-
-            const currentIndex = items.indexOf(document.activeElement as HTMLButtonElement);
-            const delta = e.shiftKey ? -1 : 1;
-            const nextIndex = currentIndex === -1
-                ? (e.shiftKey ? items.length - 1 : 0)
-                : (currentIndex + delta + items.length) % items.length;
-
-            items[nextIndex]?.focus();
-        };
-
-        document.addEventListener('keydown', onKeyDown, true);
-
-        return () => document.removeEventListener('keydown', onKeyDown, true);
-    }, [ active, panelRef ]);
+        items[nextIndex]?.focus();
+    }, []);
 }
 
 export default useMenuFocusTrap;
