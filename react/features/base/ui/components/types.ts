@@ -94,6 +94,15 @@ export interface IInputProps {
 export interface ISwitchProps {
 
     /**
+     * Accessibility label for the toggle switch.
+     *
+     * Note: on web this prop becomes `aria-label` and overrides the associated
+     * `<label htmlFor>` element. Web callers with a visible label should omit
+     * this prop or use the same text to avoid a WCAG 2.5.3 label-in-name failure.
+     */
+    accessibilityLabel?: string;
+
+    /**
      * Whether or not the toggle is on.
      */
     checked: boolean;

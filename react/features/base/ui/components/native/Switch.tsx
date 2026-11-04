@@ -35,6 +35,7 @@ interface IProps extends ISwitchProps {
 }
 
 const Switch = ({
+    accessibilityLabel,
     checked,
     disabled,
     id,
@@ -47,6 +48,7 @@ const Switch = ({
     style
 }: IProps) => (
     <NativeSwitch
+        accessibilityLabel = { accessibilityLabel }
         disabled = { disabled }
         id = { id }
         ios_backgroundColor = { DISABLED_TRACK_COLOR }

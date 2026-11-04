@@ -245,6 +245,8 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
             t
         } = this.props;
 
+        const fileSharingLabel = t('recording.fileSharingdescription');
+
         return (
             <>
                 { this._shouldRenderFileSharingContent() && (
@@ -259,9 +261,10 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                                 ..._dialogStyles.text,
                                 ...styles.optionLabel
                             }}>
-                            { t('recording.fileSharingdescription') }
+                            { fileSharingLabel }
                         </Text>
                         <Switch
+                            accessibilityLabel = { fileSharingLabel }
                             checked = { sharingSetting }
                             disabled = { isValidating || recordingRunning }
                             onChange = { onSharingSettingChanged }
@@ -390,6 +393,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
         }
 
         const { _dialogStyles, _styles: styles, t } = this.props;
+        const followMeLabel = t('settings.followMeRecorder');
 
         return (
             <View style = { styles.headerNested }>
@@ -398,9 +402,10 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                         ..._dialogStyles.text,
                         ...styles.optionLabel
                     }}>
-                    { t('settings.followMeRecorder') }
+                    { followMeLabel }
                 </Text>
                 <Switch
+                    accessibilityLabel = { followMeLabel }
                     checked = { this._isFollowMeRecorderChecked() }
                     disabled = { this._isFollowMeRecorderDisabled() }
                     onChange = { this._onFollowMeRecorderChange }
