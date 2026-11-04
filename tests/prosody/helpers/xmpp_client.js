@@ -123,9 +123,14 @@ export async function joinWithFocus(roomJid) {
  * @param {string} [opts.username]            SASL username for PLAIN auth. When omitted,
  *                                            ANONYMOUS auth is used.
  * @param {string} [opts.password]            SASL password for PLAIN auth.
- * @returns {Promise<XmppTestClient>}
+ * @param {number} [opts.restartDelay]        Milliseconds to hold the stream restart that
+ *                                            follows SASL success, so a server-side close
+ *                                            can be made to land before resource binding.
+ * @returns {Promise<XmppTestClient>} If start() fails after the server closed the
+ *                                    stream, the rejection has `streamClosed: true`.
  */
-export async function createXmppClient({ host = 'localhost', domain, params, username, password } = {}) {
+export async function createXmppClient({ host = 'localhost', domain, params, username, password,
+    restartDelay } = {}) {
     const url = new URL(`ws://${host}:5280/xmpp-websocket`);
 
     if (params) {
@@ -145,6 +150,24 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
     // Errors surface through the xmpp.start() promise rejection instead.
     // eslint-disable-next-line no-empty-function
     xmpp.on('error', () => {});
+
+    if (restartDelay) {
+        const restart = xmpp.restart.bind(xmpp);
+
+        xmpp.restart = async () => {
+            await new Promise(resolve => setTimeout(resolve, restartDelay));
+
+            return restart();
+        };
+    }
+
+    // 'close' is the server ending the XML stream. Recorded so a start() that
+    // fails because of it can be told apart from one that never got that far.
+    let streamClosed = false;
+
+    xmpp.on('close', () => {
+        streamClosed = true;
+    });
 
     // id -> { resolve, reject, timer }
     const pendingIqs = new Map();
@@ -172,6 +195,9 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         await xmpp.start();
     } catch (err) {
         xmpp.stop().catch(Function.prototype);
+        if (streamClosed && err && typeof err === 'object') {
+            err.streamClosed = true;
+        }
         throw err;
     }
 
@@ -1024,22 +1050,36 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * mod_muc_auth_ban's async ban — which calls session:close() from
          * the HTTP callback — actually terminates the connection.
          *
+         * A server-side close shows up as 'close' (stream ended) or
+         * 'disconnect' (socket dropped); 'offline' only follows a local stop(),
+         * and @xmpp/client's reconnect never gets there on its own.
+         *
          * Rejects with a timeout error if the connection does not drop within
          * the given timeout.
          *
          * @param {number} [timeout=5000]
          */
         waitForDisconnect(timeout = 5000) {
-            return new Promise((resolve, reject) => {
-                const timer = setTimeout(
-                    () => reject(new Error('Timeout waiting for disconnect')),
-                    timeout
-                );
+            const events = [ 'close', 'disconnect', 'offline' ];
 
-                xmpp.once('offline', () => {
+            return new Promise((resolve, reject) => {
+                const timer = setTimeout(() => {
+                    events.forEach(e => xmpp.removeListener(e, onDrop));
+                    reject(new Error('Timeout waiting for disconnect'));
+                }, timeout);
+
+                /**
+                 * Settles on the first of the drop events.
+                 *
+                 * @returns {void}
+                 */
+                function onDrop() {
                     clearTimeout(timer);
+                    events.forEach(e => xmpp.removeListener(e, onDrop));
                     resolve();
-                });
+                }
+
+                events.forEach(e => xmpp.once(e, onDrop));
             });
         },
 

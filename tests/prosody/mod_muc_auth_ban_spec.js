@@ -26,10 +26,12 @@ const freshToken = () => mintAsapToken({ room: '*',
  * uses to decide whether to call the external access manager.
  *
  * @param {string} token  A valid login JWT (RS256 / HS256).
+ * @param {object} [opts]  Extra createXmppClient options.
  * @returns {Promise<XmppTestClient>}
  */
-function createVpaasClient(token) {
+function createVpaasClient(token, opts = {}) {
     return createXmppClient({
+        ...opts,
         params: { prefix: VPAAS_PREFIX,
             token }
     });
@@ -39,23 +41,34 @@ function createVpaasClient(token) {
  * Asserts that a VPaaS session is banned, whichever way the ban surfaces.
  *
  * mod_muc_auth_ban's HTTP callback calls session:close(), and where that lands
- * depends on when the access manager answers. Answering within the same event
- * loop tick as the SASL auth refuses the connection outright; answering a tick
- * later lets the session establish and then closes it. Both are the same ban,
- * and which one happens is timing, so accept either rather than only the first.
+ * depends on when the access manager answers relative to the client's session
+ * setup. All of these are the same ban, so accept any of them:
+ *
+ * - Before the client restarts the stream after SASL: the client reconnects,
+ *   and the token, now cached as banned, is refused during SASL (not-allowed).
+ * - Between SASL success and resource binding: start() rejects with a
+ *   TypeError once the server has closed the stream. Either the restart
+ *   writes to the already reset socket ("Cannot read properties of null
+ *   (reading 'write')"), or the WebSocket reports the close as an error.
+ * - After the session is online: the established session is closed.
  *
  * @param {string} token  A login JWT the access manager will reject.
  * @param {string} message  Assertion message.
+ * @param {object} [opts]  Extra createXmppClient options.
  * @returns {Promise<void>}
  */
-async function assertBanned(token, message) {
+async function assertBanned(token, message, opts) {
     let client;
 
     try {
-        client = await createVpaasClient(token);
+        client = await createVpaasClient(token, opts);
     } catch (e) {
-        // refused during SASL
-        assert.match(String(e), /not-allowed/, message);
+        if (/not-allowed/.test(String(e))) {
+            return;
+        }
+
+        // closed between SASL success and resource binding
+        assert.ok(e instanceof TypeError && e.streamClosed, `${message}: ${e}`);
 
         return;
     }
@@ -63,9 +76,8 @@ async function assertBanned(token, message) {
     // established, so the close must follow
     const disconnected = await client.waitForDisconnect(5000).then(() => true, () => false);
 
-    if (!disconnected) {
-        await client.disconnect();
-    }
+    // stop the client either way, or its reconnect retries in the background
+    await client.disconnect();
 
     assert.ok(disconnected, message);
 }
@@ -131,16 +143,36 @@ describe('mod_muc_auth_ban', () => {
     //
     // When access=false, mod_muc_auth_ban's HTTP callback calls session:close()
     // and caches the token. The access manager runs on the same Prosody process
-    // (loopback), so the callback usually resolves within the same event loop
-    // tick as the SASL auth and the ban surfaces as a SASL failure, but under
-    // load it can resolve a tick later and close an established session instead.
-    // assertBanned accepts either.
+    // (loopback), so the callback usually lands before the client restarts the
+    // stream and the client's reconnect is refused during SASL by the cache.
+    // Under load it can land mid-restart or after the session is online
+    // instead. assertBanned accepts all three.
 
     it('VPaaS user is rejected when access manager returns access=false', async () => {
         await setAccessManagerResponse({ access: false });
 
         await assertBanned(freshToken(),
             'VPaaS user must be rejected when access manager returns access=false');
+    });
+
+    // The two tests below pin the ban to one point in session setup. The mock
+    // holds its reply for 100 ms, by which time the client is normally online.
+    // Holding the client's stream restart for longer than that makes the close
+    // land after SASL success but before resource binding instead.
+
+    it('ban landing after the session is online closes it', async () => {
+        await setAccessManagerResponse({ access: false,
+            delay: 0.1 });
+
+        await assertBanned(freshToken(), 'online session must be closed by a late ban');
+    });
+
+    it('ban landing between SASL success and resource binding is a rejection', async () => {
+        await setAccessManagerResponse({ access: false,
+            delay: 0.1 });
+
+        await assertBanned(freshToken(), 'session must be rejected by a ban that lands mid-restart',
+            { restartDelay: 300 });
     });
 
     // ── Cached ban ────────────────────────────────────────────────────────────
