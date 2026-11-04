@@ -129,8 +129,10 @@ const useStyles = makeStyles()(theme => {
 });
 
 const StatelessAvatar = ({
+    accessibilityAnnounceName,
     className,
     color,
+    displayName,
     iconUser,
     id,
     initials,
@@ -143,6 +145,16 @@ const StatelessAvatar = ({
     useCORS
 }: IProps) => {
     const { classes, cx } = useStyles();
+
+    // The avatar is decorative unless a caller asks for the name to be announced. With no name to announce
+    // it stays decorative too, so we never expose an image with an empty accessible name. The same name is
+    // used for the picture, the initials and the icon fallback, so what gets announced does not depend on
+    // whether the picture loaded.
+    const announcedName = accessibilityAnnounceName && displayName ? displayName : undefined;
+    const accessibilityProps = announcedName
+        ? { 'aria-label': announcedName,
+            role: 'img' }
+        : { 'aria-hidden': true };
 
     const _getAvatarStyle = (backgroundColor?: string) => {
         return {
@@ -172,6 +184,7 @@ const StatelessAvatar = ({
     if (isIcon(url)) {
         return (
             <div
+                { ...accessibilityProps }
                 className = { cx(_getAvatarClassName(), _getBadgeClassName()) }
                 data-testid = { testId }
                 id = { id }
@@ -187,7 +200,7 @@ const StatelessAvatar = ({
         return (
             <div className = { _getBadgeClassName() }>
                 <img
-                    alt = 'avatar'
+                    alt = { announcedName ?? '' }
                     className = { _getAvatarClassName() }
                     crossOrigin = { useCORS ? '' : undefined }
                     data-testid = { testId }
@@ -202,6 +215,7 @@ const StatelessAvatar = ({
     if (initials) {
         return (
             <div
+                { ...accessibilityProps }
                 className = { cx(_getAvatarClassName(), _getBadgeClassName()) }
                 data-testid = { testId }
                 id = { id }
@@ -216,6 +230,7 @@ const StatelessAvatar = ({
     // default avatar
     return (
         <div
+            { ...accessibilityProps }
             className = { cx(_getAvatarClassName('defaultAvatar'), _getBadgeClassName()) }
             data-testid = { testId }
             id = { id }
