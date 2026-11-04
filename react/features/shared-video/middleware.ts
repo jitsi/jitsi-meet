@@ -157,9 +157,17 @@ MiddlewareRegistry.register(store => next => action => {
         const { ownerId: stateOwnerId, videoUrl: statevideoUrl } = state['features/shared-video'];
 
         if (action.participant.id === stateOwnerId) {
+            const videoParticipant = statevideoUrl ? getParticipantById(state, statevideoUrl) : undefined;
+
             batch(() => {
                 dispatch(resetSharedVideoStatus());
-                dispatch(participantLeft(statevideoUrl ?? '', conference));
+
+                // The id may belong to a participant that joined after the shared video was started with it.
+                if (videoParticipant?.fakeParticipant === FakeParticipant.SharedVideo) {
+                    dispatch(participantLeft(statevideoUrl ?? '', conference, {
+                        fakeParticipant: FakeParticipant.SharedVideo
+                    }));
+                }
             });
         }
         break;
