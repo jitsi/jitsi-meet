@@ -123,12 +123,13 @@ local function parse_token(token)
 		return nil, nil, nil, "Invalid token"
 	end
 
-	local header, err = cjson_safe.decode(from_url64(segments[1]))
+	-- The parentheses pass only the decoded string, cjson throws when it also gets the error message.
+	local header, err = cjson_safe.decode((from_url64(segments[1])))
 	if err then
 		return nil, nil, nil, "Invalid header"
 	end
 
-	local body, err = cjson_safe.decode(from_url64(segments[2]))
+	local body, err = cjson_safe.decode((from_url64(segments[2])))
 	if err then
 		return nil, nil, nil, "Invalid body"
 	end

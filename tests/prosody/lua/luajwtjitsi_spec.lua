@@ -267,13 +267,23 @@ describe("luajwtjitsi", function()
                 assert.is_string(err)
             end)
 
-            it("returns error or throws for token with invalid base64 header", function()
-                -- The header does not decode, so there must never be a header back, whether parse_token
-                -- returns an error or the JSON decoder throws on the missing input.
-                local ok, h = pcall(I.parse_token, "!!!!.body.sig")
-                if ok then
-                    assert.is_nil(h)
-                end
+            it("returns error for token with a header outside the base64url alphabet", function()
+                local h, b, s, err = I.parse_token("YW+i.body.sig")
+                assert.is_nil(h)
+                assert.equal("Invalid header", err)
+            end)
+
+            it("returns error for token with a header of impossible length", function()
+                local h, b, s, err = I.parse_token("Y.body.sig")
+                assert.is_nil(h)
+                assert.equal("Invalid header", err)
+            end)
+
+            it("returns error for token with a body that does not decode", function()
+                local good_hdr = M.to_url64('{"typ":"JWT","alg":"HS256"}')
+                local h, b, s, err = I.parse_token(good_hdr .. '.YW+i.sig')
+                assert.is_nil(h)
+                assert.equal("Invalid body", err)
             end)
 
             it("returns error for token with invalid JSON body", function()
@@ -336,6 +346,12 @@ describe("luajwtjitsi", function()
                 local body, err = M.verify("hdr.body", "HS256", "key")
                 assert.is_nil(body)
                 assert.is_string(err)
+            end)
+
+            it("token whose header does not decode returns error", function()
+                local body, err = M.verify("YW+i.body.sig", "HS256", "key")
+                assert.is_nil(body)
+                assert.equal("Invalid header", err)
             end)
         end)
 
