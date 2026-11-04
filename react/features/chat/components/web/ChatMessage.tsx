@@ -45,8 +45,17 @@ const useStyles = makeStyles<void, 'optionsButtonContainer'>()((theme: Theme, _p
         },
         chatMessageWrapper: {
             maxWidth: '100%',
-            [`&:hover .${classes.optionsButtonContainer}, &:focus-within .${classes.optionsButtonContainer}`]: {
-                opacity: 1
+            [`&:hover .${classes.optionsButtonContainer}`]: {
+                opacity: 1,
+                pointerEvents: 'auto'
+            },
+            [`&:has(:focus-visible) .${classes.optionsButtonContainer}`]: {
+                opacity: 1,
+                pointerEvents: 'auto'
+            },
+            [`& .${classes.optionsButtonContainer}:has(.chat-message-actions-open)`]: {
+                opacity: 1,
+                pointerEvents: 'auto'
             }
         },
         chatMessage: {
@@ -166,7 +175,8 @@ const useStyles = makeStyles<void, 'optionsButtonContainer'>()((theme: Theme, _p
             gap: theme.spacing(1),
             minWidth: '32px',
             minHeight: '32px',
-            opacity: 0
+            opacity: 0,
+            pointerEvents: 'none'
         },
         displayName: {
             ...theme.typography.labelBold,

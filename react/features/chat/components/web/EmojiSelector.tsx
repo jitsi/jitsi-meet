@@ -31,25 +31,17 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
+const EMOJIS = [
+    { name: 'thumbsUp', emoji: '👍', labelKey: 'toolbar.accessibilityLabel.like' },
+    { name: 'redHeart', emoji: '❤️', labelKey: 'chat.reactions.redHeart' },
+    { name: 'faceWithTearsOfJoy', emoji: '😂', labelKey: 'chat.reactions.faceWithTearsOfJoy' },
+    { name: 'faceWithOpenMouth', emoji: '😮', labelKey: 'toolbar.accessibilityLabel.surprised' },
+    { name: 'fire', emoji: '🔥', labelKey: 'chat.reactions.fire' }
+] as const;
+
 const EmojiSelector: React.FC<IProps> = ({ onSelect }) => {
     const { classes } = useStyles();
     const { t } = useTranslation();
-
-    const emojiMap: Record<string, string> = {
-        thumbsUp: '👍',
-        redHeart: '❤️',
-        faceWithTearsOfJoy: '😂',
-        faceWithOpenMouth: '😮',
-        fire: '🔥'
-    };
-    const emojiLabels: Record<string, string> = {
-        thumbsUp: t('chat.reactions.thumbsUp'),
-        redHeart: t('chat.reactions.redHeart'),
-        faceWithTearsOfJoy: t('chat.reactions.faceWithTearsOfJoy'),
-        faceWithOpenMouth: t('chat.reactions.faceWithOpenMouth'),
-        fire: t('chat.reactions.fire')
-    };
-    const emojiNames = Object.keys(emojiMap);
 
     const handleSelect = useCallback(
         (emoji: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -60,18 +52,6 @@ const EmojiSelector: React.FC<IProps> = ({ onSelect }) => {
     );
 
     const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
-        if (event.key === 'Enter') {
-            const item = (event.target as HTMLElement).closest('button');
-
-            if (item instanceof HTMLButtonElement && event.currentTarget.contains(item)) {
-                event.preventDefault();
-                event.stopPropagation();
-                item.click();
-            }
-
-            return;
-        }
-
         if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
             return;
         }
@@ -95,19 +75,20 @@ const EmojiSelector: React.FC<IProps> = ({ onSelect }) => {
 
     return (
         <div
+            aria-label = { t('toolbar.accessibilityLabel.react') }
             aria-orientation = 'horizontal'
             className = { classes.emojiGrid }
             onKeyDown = { handleKeyDown }
-            role = 'menu'>
-            {emojiNames.map(name => (
+            role = 'listbox'>
+            {EMOJIS.map(({ name, emoji, labelKey }) => (
                 <button
-                    aria-label = { emojiLabels[name] }
+                    aria-label = { t(labelKey) }
                     className = { classes.emojiButton }
                     key = { name }
-                    onClick = { handleSelect(emojiMap[name]) }
-                    role = 'menuitem'
+                    onClick = { handleSelect(emoji) }
+                    role = 'option'
                     type = 'button'>
-                    {emojiMap[name]}
+                    {emoji}
                 </button>
             ))}
         </div>
