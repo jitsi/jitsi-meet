@@ -37,7 +37,8 @@ interface IProps {
     className?: string;
 
     /**
-     * If the button is disabled or not.
+     * If the button is disabled or not. A disabled button is also taken out of the tab order,
+     * so keyboard users don't stop on a control they can't activate.
      */
     disabled?: boolean;
 
@@ -220,7 +221,7 @@ function ActionButton({
             onClick = { disabled ? undefined : onClick }
             onKeyPress = { onKeyPressHandler }
             role = 'button'
-            tabIndex = { 0 } >
+            tabIndex = { disabled ? -1 : 0 } >
             {children}
             { hasOptions
                 && <div
@@ -233,7 +234,7 @@ function ActionButton({
                     onClick = { disabled ? undefined : onOptionsClick }
                     onKeyPress = { onOptionsKeyPressHandler }
                     role = { role }
-                    tabIndex = { tabIndex }>
+                    tabIndex = { disabled ? -1 : tabIndex }>
                     <Icon
                         className = 'icon'
                         size = { 24 }
