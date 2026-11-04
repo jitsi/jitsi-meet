@@ -1053,6 +1053,9 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
          * A server-side close shows up as 'close' (stream ended) or
          * 'disconnect' (socket dropped); 'offline' only follows a local stop(),
          * and @xmpp/client's reconnect never gets there on its own.
+         * The stream restart after SASL fires neither: 'close' needs the
+         * server's stream-close element and 'disconnect' a socket close, so
+         * a live session never resolves this.
          *
          * Rejects with a timeout error if the connection does not drop within
          * the given timeout.

@@ -42,20 +42,23 @@ function createVpaasClient(token, opts = {}) {
  *
  * mod_muc_auth_ban's HTTP callback calls session:close(), and where that lands
  * depends on when the access manager answers relative to the client's session
- * setup. All of these are the same ban, so accept any of them:
+ * setup. All of these are the same ban, so accept any of them, and return
+ * which one was seen so a test that pins the timing can check it:
  *
- * - Before the client restarts the stream after SASL: the client reconnects,
- *   and the token, now cached as banned, is refused during SASL (not-allowed).
- * - Between SASL success and resource binding: start() rejects with a
- *   TypeError once the server has closed the stream. Either the restart
- *   writes to the already reset socket ("Cannot read properties of null
- *   (reading 'write')"), or the WebSocket reports the close as an error.
- * - After the session is online: the established session is closed.
+ * - 'sasl': the close lands before the client restarts the stream after SASL.
+ *   The client reconnects, and the token, now cached as banned, is refused
+ *   during SASL (not-allowed).
+ * - 'restart': the close lands between SASL success and resource binding.
+ *   start() rejects with a TypeError once the server has closed the stream.
+ *   Either the restart writes to the already reset socket ("Cannot read
+ *   properties of null (reading 'write')"), or the WebSocket reports the
+ *   close as an error.
+ * - 'online': the close lands after the session is online and ends it.
  *
  * @param {string} token  A login JWT the access manager will reject.
  * @param {string} message  Assertion message.
  * @param {object} [opts]  Extra createXmppClient options.
- * @returns {Promise<void>}
+ * @returns {Promise<'sasl'|'restart'|'online'>}
  */
 async function assertBanned(token, message, opts) {
     let client;
@@ -64,13 +67,12 @@ async function assertBanned(token, message, opts) {
         client = await createVpaasClient(token, opts);
     } catch (e) {
         if (/not-allowed/.test(String(e))) {
-            return;
+            return 'sasl';
         }
 
-        // closed between SASL success and resource binding
         assert.ok(e instanceof TypeError && e.streamClosed, `${message}: ${e}`);
 
-        return;
+        return 'restart';
     }
 
     // established, so the close must follow
@@ -80,6 +82,8 @@ async function assertBanned(token, message, opts) {
     await client.disconnect();
 
     assert.ok(disconnected, message);
+
+    return 'online';
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -158,21 +162,27 @@ describe('mod_muc_auth_ban', () => {
     // The two tests below pin the ban to one point in session setup. The mock
     // holds its reply for 100 ms, by which time the client is normally online.
     // Holding the client's stream restart for longer than that makes the close
-    // land after SASL success but before resource binding instead.
+    // land after SASL success but before resource binding instead. Each test
+    // checks the path it saw, so a timing that drifts fails rather than passes
+    // through one of the other paths.
 
     it('ban landing after the session is online closes it', async () => {
         await setAccessManagerResponse({ access: false,
             delay: 0.1 });
 
-        await assertBanned(freshToken(), 'online session must be closed by a late ban');
+        const path = await assertBanned(freshToken(), 'online session must be closed by a late ban');
+
+        assert.strictEqual(path, 'online', 'ban must land after the session is online');
     });
 
     it('ban landing between SASL success and resource binding is a rejection', async () => {
         await setAccessManagerResponse({ access: false,
             delay: 0.1 });
 
-        await assertBanned(freshToken(), 'session must be rejected by a ban that lands mid-restart',
-            { restartDelay: 300 });
+        const path = await assertBanned(freshToken(),
+            'session must be rejected by a ban that lands mid-restart', { restartDelay: 300 });
+
+        assert.strictEqual(path, 'restart', 'ban must land between SASL success and resource binding');
     });
 
     // ── Cached ban ────────────────────────────────────────────────────────────
