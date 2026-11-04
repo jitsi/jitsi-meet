@@ -318,12 +318,15 @@ const DialogWithTabs = ({
             size = 'large'
             titleKey = { titleKey }>
             {(!isMobile || !selectedTab) && (
+
+                // The container itself must not take focus. Only the selected tab is in the tab order (the
+                // tabs move focus between themselves with the arrow keys), and screen readers announce the
+                // tab list's label when focus lands on a tab, so a focus stop here is an extra, empty step.
                 <div
                     aria-label = { titleKey ? t(titleKey) : undefined }
                     aria-orientation = 'vertical'
                     className = { classes.sidebar }
-                    role = { isMobile ? undefined : 'tablist' }
-                    tabIndex = { 0 }>
+                    role = { isMobile ? undefined : 'tablist' }>
                     <div className = { classes.titleContainer }>
                         <h1
                             className = { classes.title }
