@@ -154,6 +154,7 @@ local mod = { host = "test.example.com" }
 
 mod.log = function() end
 mod.get_option_string = function(_, _key, default) return default end
+mod.get_option_number = function(_, _key, default) return default end
 
 mod.get_option_set = function(_, key, default)
     -- Populate the sets inspected by is_moderated() with test fixtures.
