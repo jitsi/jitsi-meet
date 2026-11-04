@@ -16,6 +16,7 @@ import { IPromotionRequest, IVisitorListParticipant } from './types';
 
 const DEFAULT_STATE = {
     count: 0,
+    demoteActorDisplayName: undefined,
     iAmVisitor: false,
     inQueue: false,
     inQueueCount: 0,
