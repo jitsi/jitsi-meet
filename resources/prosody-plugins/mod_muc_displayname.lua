@@ -7,7 +7,7 @@
 --    (<nick>, <email>, <stats-id>, and name/email inside <identity>) from
 --    presence stanzas before they are delivered to non-moderator occupants.
 --    Moderator recipients and self-presence are always passed through unchanged.
---    Uses session.jitsi_web_query_room / jitsi_web_query_prefix to locate the room.
+--    The room is the one the presence comes from.
 --
 -- 2. name-readonly (inbound filter on stanzas/in, priority -100):
 --    When session.jitsi_meet_context_features['name-readonly'] is true, enforces
@@ -28,14 +28,16 @@
 --
 -- Load on the MUC component.
 local filters = require 'util.filters';
+local jid = require 'util.jid';
 local st = require 'util.stanza';
 
 local util = module:require 'util';
 local filter_identity_from_presence = util.filter_identity_from_presence;
-local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
+local get_room_from_jid = util.get_room_from_jid;
 local is_admin = util.is_admin;
 local is_focus = util.is_focus;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
+local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local NICK_NS = 'http://jabber.org/protocol/nick';
 local DISPLAY_NAME_NS = 'http://jitsi.org/protocol/display-name';
 
@@ -50,11 +52,12 @@ local joining_moderator_participants = module:shared('moderators/joining_moderat
 --- Filter presence sent to non-moderator members of a room when the hideDisplayNameForGuests option is set.
 function filter_stanza_out(stanza, session)
     if stanza.name ~= 'presence' or stanza.attr.type == 'error'
-        or stanza.attr.type == 'unavailable' or is_focus(stanza.attr.from) then
+        or stanza.attr.type == 'unavailable' or not stanza.attr.from or is_focus(stanza.attr.from) then
         return stanza;
     end
 
-    local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+    -- the room the presence comes from, the from can be the virtual (tenant) address so map it to the internal one
+    local room = get_room_from_jid(room_jid_match_rewrite(jid.bare(stanza.attr.from)));
     local shouldFilter = false;
 
     if room and room._data.hideDisplayNameForGuests == true then
