@@ -78,6 +78,12 @@ local function load(options)
             end
             return default;
         end;
+        get_option_boolean = function (_, key, default)
+            if key == 'hot_path_cache_enabled' then
+                return options.enabled ~= false;
+            end
+            return default;
+        end;
         log = function (_, level, message) table.insert(logs, level .. ' ' .. message); end;
     };
     _G.module = mod;
@@ -172,6 +178,17 @@ describe("mod_hot_path_cache", function ()
             assert.equal(4, jid_lib.split_calls());
             assert.same(parts("a", "b", nil), parts(jid_lib.split("a@b")));
         end)
+    end)
+
+    it("leaves both libraries alone unless hot_path_cache_enabled is set", function ()
+        local stanza_lib, jid_lib = load({ enabled = false });
+        local s = stanza_lib.stanza("presence", "<x>");
+        tostring(s);
+        tostring(s);
+        jid_lib.bare("a@b/c");
+        jid_lib.bare("a@b/c");
+        assert.equal(2, stanza_lib.escape_calls());
+        assert.equal(2, jid_lib.split_calls());
     end)
 
     it("puts the originals back when unloaded", function ()

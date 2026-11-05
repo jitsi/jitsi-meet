@@ -9,9 +9,15 @@
 -- function when it was loaded keeps calling the original. If a local is not found, for example after a prosody
 -- upgrade, that function is left alone and a warning is logged.
 --
--- Load it as a global module:
+-- It is off by default. Load it as a global module and enable it:
 --   modules_enabled = { ...; "hot_path_cache"; }
+--   hot_path_cache_enabled = true
 module:set_global();
+
+if not module:get_option_boolean("hot_path_cache_enabled", false) then
+	module:log("info", "Not caching, hot_path_cache_enabled is not set");
+	return;
+end
 
 local st = require "util.stanza";
 local jid = require "util.jid";
