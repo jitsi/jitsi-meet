@@ -652,6 +652,16 @@ export async function createXmppClient({ host = 'localhost', domain, params, use
         },
 
         /**
+         * Sends a stanza built by the caller as is. Fire-and-forget: a reply,
+         * if any, lands in the stanza queue.
+         *
+         * @param {Element} stanza  Built with xml() from @xmpp/client.
+         */
+        sendRaw(stanza) {
+            return xmpp.send(stanza);
+        },
+
+        /**
          * Sends a one-to-one <message type='chat'> with a body to an arbitrary
          * JID. Fire-and-forget: resolves with the stanza id once the stanza is
          * written.
