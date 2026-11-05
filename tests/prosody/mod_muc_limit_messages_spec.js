@@ -16,9 +16,9 @@ const nextRoom = () => `limit-${++_counter}@${CONFERENCE}`;
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 /**
- * Connects an anonymous client to the main VirtualHost with ?room= set so that
- * session.jitsi_web_query_room is populated — required by mod_muc_limit_messages
- * to locate the room via get_room_by_name_and_subdomain.
+ * Connects an anonymous client to the main VirtualHost with ?room= set, the way
+ * the web client connects. mod_muc_limit_messages counts a message against the
+ * room it is addressed to, not against ?room=.
  *
  * @param {string} roomJid  Full room JID, e.g. 'name@conference.localhost'
  */
@@ -196,6 +196,118 @@ describe('mod_muc_limit_messages', () => {
             assert.strictEqual(reply.attrs.type, 'error',
                 `message ${i + 1} after cap must remain blocked`);
         }
+    });
+
+    // ── room the message counts against ───────────────────────────────────────
+    //
+    // A message counts against the room it is addressed to and only when the
+    // sender is an occupant of that room. The ?room= of the connection is not used.
+
+    it('messages count against the addressed room, not the ?room= of the connection', async () => {
+        const r = nextRoom();
+        const other = nextRoom();
+        const focus = await joinWithFocus(r);
+        const otherFocus = await joinWithFocus(other);
+
+        // Connected with ?room= of the other room, but joins and chats in r.
+        const sender = await connectAnon(other);
+        const otherMember = await connectAnon(other);
+
+        clients.push(focus, otherFocus, sender, otherMember);
+        await sender.joinRoom(r);
+        await otherMember.joinRoom(other);
+
+        const reply = await exhaustAndTrigger(sender, r);
+
+        assert.strictEqual(reply.attrs.type, 'error',
+            'the cap of the addressed room must apply');
+
+        const otherReply = await otherMember.sendGroupchat(other, 'other room');
+
+        assert.notEqual(otherReply.attrs.type, 'error',
+            'messages sent in r must not count against the other room');
+    });
+
+    it('messages from a connection without ?room= are counted', async () => {
+        const r = nextRoom();
+        const focus = await joinWithFocus(r);
+        const sender = await createXmppClient();
+
+        clients.push(focus, sender);
+        await sender.joinRoom(r);
+
+        const reply = await exhaustAndTrigger(sender, r);
+
+        assert.strictEqual(reply.attrs.type, 'error',
+            'the cap must apply without ?room=');
+        assert.ok(reply.getChild('error')?.getChild('not-allowed'),
+            'error condition must be <not-allowed/>');
+    });
+
+    it('the cap applies in a tenant room', async () => {
+        const name = `limit-tenant-${++_counter}`;
+        const r = `${name}@conference.subdomain.localhost`;
+        const focus = await joinWithFocus(r);
+        const sender = await createXmppClient({ params: { room: name,
+            prefix: 'subdomain' } });
+
+        clients.push(focus, sender);
+        await sender.joinRoom(r);
+
+        const reply = await exhaustAndTrigger(sender, r);
+
+        assert.strictEqual(reply.attrs.type, 'error',
+            'the cap must apply in a tenant room');
+        assert.ok(reply.getChild('error')?.getChild('not-allowed'),
+            'error condition must be <not-allowed/>');
+    });
+
+    it('messages from a non-occupant do not count toward the cap', async () => {
+        const r = nextRoom();
+        const focus = await joinWithFocus(r);
+        const member = await connectAnon(r);
+
+        // Connected with ?room= of r, but never joins it.
+        const outsider = await connectAnon(r);
+
+        clients.push(focus, member, outsider);
+        await member.joinRoom(r);
+
+        for (let i = 0; i < LIMIT + 1; i++) {
+            const reply = await outsider.sendGroupchat(r, `outside ${i + 1}`);
+
+            assert.strictEqual(reply.attrs.type, 'error',
+                `message ${i + 1} from a non-occupant must be rejected by the MUC`);
+            assert.ok(!reply.getChild('error')?.getChild('not-allowed'),
+                `message ${i + 1} must not be rejected by the cap`);
+        }
+
+        for (let i = 0; i < LIMIT; i++) {
+            const reply = await member.sendGroupchat(r, `member ${i + 1}`);
+
+            assert.notEqual(reply.attrs.type, 'error',
+                `member message ${i + 1} must pass (cap not consumed by the non-occupant)`);
+        }
+    });
+
+    it('a token from a non-occupant does not lift the cap', async () => {
+        const r = nextRoom();
+        const focus = await joinWithFocus(r);
+        const member = await connectAnon(r);
+
+        // Authenticated, connected with ?room= of r, but never joins it.
+        const outsider = await connectWithToken(r);
+
+        clients.push(focus, member, outsider);
+        await member.joinRoom(r);
+
+        await exhaustAndTrigger(member, r);
+        await outsider.sendGroupchat(r, 'outside');
+
+        const reply = await member.sendGroupchat(r, 'still capped');
+
+        assert.strictEqual(reply.attrs.type, 'error',
+            'the cap must stay in place');
     });
 
     // ── message type exemptions ───────────────────────────────────────────────
