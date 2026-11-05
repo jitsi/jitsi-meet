@@ -153,10 +153,10 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
 
             return;
         }
-        
+
         const { disableInitialGUM } = getState()['features/base/config'];
 
-        // Start muted instead of skipping creation.
+        // Mute before creating tracks.
         if (disableInitialGUM) {
             dispatch(setAudioMuted(true));
             dispatch(setVideoMuted(true));
