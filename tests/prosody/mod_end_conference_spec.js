@@ -13,24 +13,26 @@ const room = () => `end-conf-${++_roomCounter}@${CONFERENCE}`;
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 /**
- * Creates a room with:
+ * Creates a room (roomJid, a new one by default) with:
  *   - focus (joins first to satisfy the mod_muc_meeting_id jicofo lock)
  *   - moderator: a client whose token carries context.user.moderator=true,
  *     which mod_token_affiliation promotes to owner/moderator on join.
  *     The ?room= URL param sets jitsi_web_query_room so that
  *     mod_end_conference can locate the room.
  *
+ * @param {object} [opts]
+ * @param {string} [opts.roomJid]    Room JID, a new one by default.
+ * @param {string} [opts.queryRoom]  ?room= value, the room JID node by default.
  * @returns {{ roomJid, roomName, focus, moderator }}
  */
-async function createRoom() {
-    const roomJid = room();
+async function createRoom({ roomJid = room(), queryRoom } = {}) {
     const roomName = roomJid.split('@')[0];
 
     const focus = await joinWithFocus(roomJid);
 
     const token = mintAsapToken({ room: roomName,
         context: { user: { moderator: true } } });
-    const moderator = await createXmppClient({ params: { room: roomName,
+    const moderator = await createXmppClient({ params: { room: queryRoom ?? roomName,
         token } });
 
     await moderator.joinRoom(roomJid);
@@ -68,6 +70,25 @@ describe('mod_end_conference', () => {
             await moderator.sendEndConference(COMPONENT);
 
             // Room destruction triggers an unavailable presence to all occupants.
+            await moderator.waitForPresence(p => p.attrs.type === 'unavailable');
+
+            const after = await getRoomState(roomJid);
+
+            assert.strictEqual(after, null, 'room must be gone after end_conference');
+        } finally {
+            await disconnectAll(focus, moderator);
+        }
+    });
+
+    it('moderator can end a conference whose name needs percent-encoding', async () => {
+        // The web client puts the decoded name in ?room=, the room JID node is encoded.
+        const { roomJid, focus, moderator } = await createRoom({
+            roomJid: `end-conf-caf%c3%a9-${++_roomCounter}@${CONFERENCE}`,
+            queryRoom: `end-conf-café-${_roomCounter}`
+        });
+
+        try {
+            await moderator.sendEndConference(COMPONENT);
             await moderator.waitForPresence(p => p.attrs.type === 'unavailable');
 
             const after = await getRoomState(roomJid);

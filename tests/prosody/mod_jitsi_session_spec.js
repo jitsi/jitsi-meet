@@ -63,6 +63,34 @@ describe('mod_jitsi_session', () => {
         assert.equal(info.jitsi_web_query_room, 'myroom');
     });
 
+    it('percent-encodes ?room= the way the client encodes the room JID', async () => {
+        // The web client sends the decoded name, the room JID carries the encoded one.
+        const c = await createXmppClient({ params: { room: 'poc café 1234' } });
+
+        clients.push(c);
+        const info = await getSessionInfo(c.jid);
+
+        assert.equal(info.jitsi_web_query_room, 'poc%20caf%c3%a9%201234');
+    });
+
+    it('keeps an already percent-encoded ?room= unchanged', async () => {
+        const c = await createXmppClient({ params: { room: 'poc%20caf%c3%a9%201234' } });
+
+        clients.push(c);
+        const info = await getSessionInfo(c.jid);
+
+        assert.equal(info.jitsi_web_query_room, 'poc%20caf%c3%a9%201234');
+    });
+
+    it('encodes a percent sign that does not start an escape', async () => {
+        const c = await createXmppClient({ params: { room: '100%' } });
+
+        clients.push(c);
+        const info = await getSessionInfo(c.jid);
+
+        assert.equal(info.jitsi_web_query_room, '100%25');
+    });
+
     it('sets session.jitsi_web_query_prefix from ?prefix query param', async () => {
         const c = await createXmppClient({ params: { prefix: 'tenant1' } });
 
