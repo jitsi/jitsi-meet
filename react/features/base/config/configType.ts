@@ -471,6 +471,9 @@ export interface IConfig {
         enabled?: boolean;
         maxFileSize?: number;
     };
+    pdfSharing?: {
+        enabled?: boolean;
+    };
     filmstrip?: {
         alwaysShowResizeBar?: boolean;
         disableResizable?: boolean;

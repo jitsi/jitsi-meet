@@ -16,6 +16,7 @@
   "author": "",
   "readmeFilename": "README.md",
   "dependencies": {
+    "pdfjs-dist": "^3.11.174",
     "@amplitude/analytics-browser": "2.17.12",
     "@amplitude/analytics-react-native": "1.5.16",
     "@braintree/sanitize-url": "7.0.0",

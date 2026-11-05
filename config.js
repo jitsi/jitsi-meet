@@ -2076,6 +2076,12 @@ var config = {
     //     storageBackendUrl: 'https://excalidraw-s3-storage-backend.example.com',
     // },
 
+    // Settings for the PDF presentation sharing feature.
+    // pdfSharing: {
+    //     // Whether the feature is enabled or not.
+    //     enabled: false
+    // },
+
     // The watchRTC initialize config params as described :
     // https://testrtc.com/docs/installing-the-watchrtc-javascript-sdk/#h-set-up-the-sdk
     // https://www.npmjs.com/package/@testrtc/watchrtc-sdk
