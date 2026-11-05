@@ -2,9 +2,11 @@ import 'image-capture';
 
 import { createScreensharingCaptureTakenEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
-import { IReduxState } from '../app/types';
+import { IReduxState, IStore } from '../app/types';
+import { IStateful } from '../base/app/types';
 import { getCurrentConference } from '../base/conference/functions';
 import { getLocalParticipant, getRemoteParticipants } from '../base/participants/functions';
+import { toState } from '../base/redux/functions';
 import { getBaseUrl } from '../base/util/helpers';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
@@ -27,7 +29,7 @@ declare let ImageCapture: any;
  * Manipulates the original desktop stream and performs custom processing operations, if implemented.
  */
 export default class ScreenshotCaptureSummary {
-    _state: IReduxState;
+    _getState: IStore['getState'];
     _initializedRegion: boolean;
     _imageCapture: ImageCapture;
     _streamWorker: Worker;
@@ -36,10 +38,11 @@ export default class ScreenshotCaptureSummary {
     /**
      * Initializes a new {@code ScreenshotCaptureEffect} instance.
      *
-     * @param {Object} state - The redux state.
+     * @param {IStateful} stateful - The redux store, state, or
+     * {@code getState} function.
      */
-    constructor(state: IReduxState) {
-        this._state = state;
+    constructor(stateful: IStateful) {
+        this._getState = () => toState(stateful);
 
         // Bind handlers such that they access the same instance.
         this._handleWorkerAction = this._handleWorkerAction.bind(this);
@@ -65,10 +68,11 @@ export default class ScreenshotCaptureSummary {
      * @returns {void}
      */
     async _initRegionSelection() {
-        const { _screenshotHistoryRegionUrl } = this._state['features/base/config'];
-        const conference = getCurrentConference(this._state);
+        const state = this._getState();
+        const { _screenshotHistoryRegionUrl } = state['features/base/config'];
+        const conference = getCurrentConference(state);
         const sessionId = conference?.getMeetingUniqueId();
-        const { jwt } = this._state['features/base/jwt'];
+        const { jwt } = state['features/base/jwt'];
 
         if (!_screenshotHistoryRegionUrl) {
             return;
@@ -183,17 +187,18 @@ export default class ScreenshotCaptureSummary {
         this._queue.push(imageBlob);
         sendAnalytics(createScreensharingCaptureTakenEvent());
 
-        const conference = getCurrentConference(this._state);
+        const state = this._getState();
+        const conference = getCurrentConference(state);
         const sessionId = conference?.getMeetingUniqueId();
-        const { connection } = this._state['features/base/connection'];
+        const { connection } = state['features/base/connection'];
         const jid = connection?.getJid();
         const timestamp = Date.now();
-        const { jwt } = this._state['features/base/jwt'];
+        const { jwt } = state['features/base/jwt'];
         const meetingFqn = extractFqnFromPath();
-        const remoteParticipants = getRemoteParticipants(this._state);
+        const remoteParticipants = getRemoteParticipants(state);
         const participants: Array<string | undefined> = [];
 
-        participants.push(getLocalParticipant(this._state)?.id);
+        participants.push(getLocalParticipant(state)?.id);
         remoteParticipants.forEach(p => participants.push(p.id));
 
         processScreenshot(imageBlob, {
