@@ -392,13 +392,6 @@ const DialogWithTabs = ({
                             { tab.name === selectedTab && selectedTabComponent }
                         </div>
                     ))}
-                    {/* But show the close button *after* tab panels when not on mobile (using tabs).
-                    This is so that we can tab back and forth tab buttons and tab panels easily. */}
-                    {!isMobile && (
-                        <div className = { cx(classes.buttonContainer, classes.header) }>
-                            {closeIcon}
-                        </div>
-                    )}
                     <div
                         className = { cx(classes.buttonContainer, classes.footer) }>
                         <Button
@@ -413,6 +406,15 @@ const DialogWithTabs = ({
                             labelKey = { 'dialog.Ok' }
                             onClick = { onSubmit } />
                     </div>
+                    {/* The desktop Close button is rendered last, after Cancel and OK, so keyboard users reach it at
+                    the end of the dialog instead of between the tab content and the footer. CSS moves it to the
+                    top-right (classes.header has order: -1). Keeping it after the tab panels also means Tab from a
+                    selected tab still leads straight into that tab's content. */}
+                    {!isMobile && (
+                        <div className = { cx(classes.buttonContainer, classes.header) }>
+                            {closeIcon}
+                        </div>
+                    )}
                 </div>
             )}
         </BaseDialog>
