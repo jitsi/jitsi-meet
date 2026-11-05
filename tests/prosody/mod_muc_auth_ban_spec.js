@@ -49,10 +49,12 @@ function createVpaasClient(token, opts = {}) {
  *   The client reconnects, and the token, now cached as banned, is refused
  *   during SASL (not-allowed).
  * - 'restart': the close lands between SASL success and resource binding.
- *   start() rejects with a TypeError once the server has closed the stream.
- *   Either the restart writes to the already reset socket ("Cannot read
- *   properties of null (reading 'write')"), or the WebSocket reports the
- *   close as an error.
+ *   start() rejects once the server has closed the stream. Either the restart
+ *   writes to the already reset socket ("Cannot read properties of null
+ *   (reading 'write')"), the WebSocket reports the close as an error (both
+ *   TypeErrors), or the restart is written while the WebSocket is still
+ *   closing and ws fails the send ("WebSocket is not open: readyState 2
+ *   (CLOSING)", a plain Error).
  * - 'online': the close lands after the session is online and ends it.
  *
  * @param {string} token  A login JWT the access manager will reject.
@@ -70,7 +72,8 @@ async function assertBanned(token, message, opts) {
             return 'sasl';
         }
 
-        assert.ok(e instanceof TypeError && e.streamClosed, `${message}: ${e}`);
+        assert.ok(e?.streamClosed && (e instanceof TypeError || /^WebSocket is not open/.test(e.message)),
+            `${message}: ${e}`);
 
         return 'restart';
     }
