@@ -40,6 +40,11 @@ export interface IPoll {
     answers: Array<IAnswerData>;
 
     /**
+     * Whether the poll was closed, thus it does not take answers anymore.
+     */
+    closed?: boolean;
+
+    /**
      * The unique ID of this poll.
      */
     pollId: string;

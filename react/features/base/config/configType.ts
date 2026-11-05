@@ -715,6 +715,7 @@ export interface IConfig {
     sharedVideoAllowedURLDomains?: Array<string>;
     showBreakoutRoomJoinPermissionsModeratorSetting?: boolean;
     showChatPermissionsModeratorSetting?: boolean;
+    showEndPollButton?: boolean;
     showPollSingleAnswerSetting?: boolean;
     showSharedVideoPermissionsModeratorSetting?: boolean;
     sipInviteUrl?: string;

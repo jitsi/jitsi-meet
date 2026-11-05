@@ -7,8 +7,11 @@ import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
 import { getParticipantDisplayName } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
+import { showErrorNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { registerVote, removePoll, setVoteChanging } from '../actions';
 import { getPoll } from '../functions';
+import { useClosePoll } from '../hooks.any';
 import { IPollData } from '../types';
 
 /**
@@ -24,7 +27,9 @@ type InputProps = {
  * concrete implementations (web/native).
  **/
 export type AbstractProps = {
+    canClose: boolean;
     checkBoxStates: boolean[];
+    closePoll: () => void;
     creatorName: string;
     poll: IPollData;
     sendPoll: () => void;
@@ -77,7 +82,12 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
     const dispatch = useDispatch();
 
     const submitAnswer = useCallback(() => {
-        conference?.getPolls().answerPoll(pollId, checkBoxStates);
+        // Rejected with not-allowed when the poll was closed meanwhile. A lib-jitsi-meet without that error returns
+        // nothing.
+        conference?.getPolls()?.answerPoll(pollId, checkBoxStates)
+            ?.catch((error: Error) => dispatch(showErrorNotification({
+                titleKey: error.message === 'not-allowed' ? 'polls.errors.voteNotCounted' : 'polls.errors.voteFailed'
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG)));
 
         sendAnalytics(createPollEvent('vote.sent'));
         dispatch(registerVote(pollId, checkBoxStates));
@@ -100,10 +110,14 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
         dispatch(setVoteChanging(pollId, false));
     }, [ dispatch, pollId ]);
 
+    const { canClose, closePoll } = useClosePoll(pollId);
+
     const { t } = useTranslation();
 
     return (<Component
+        canClose = { canClose }
         checkBoxStates = { checkBoxStates }
+        closePoll = { closePoll }
         creatorName = { participantName }
         poll = { poll }
         sendPoll = { sendPoll }

@@ -112,7 +112,8 @@ local function send_visitors_iq(conference_service, room, type)
                     senderName = poll.senderName,
                     question = poll.question,
                     answers = poll.answers,
-                    singleAnswer = poll.singleAnswer
+                    singleAnswer = poll.singleAnswer,
+                    closed = poll.closed
                 };
             end
 
@@ -572,6 +573,10 @@ process_host_module(main_muc_component_config, function(host_module, host)
         for conference_service in pairs(vnodes) do
             send_visitors_iq(conference_service, room, 'update');
         end
+    end);
+    -- a closure as update_vnodes_for_room is only assigned further down in this file
+    host_module:hook('poll-closed', function (event)
+        update_vnodes_for_room(event);
     end);
     host_module:hook('answer-poll', function (event)
         local room, stanza = event.room, event.event.stanza;

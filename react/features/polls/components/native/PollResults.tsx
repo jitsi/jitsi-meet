@@ -20,7 +20,10 @@ import { dialogStyles, pollsStyles, resultsStyles } from './styles';
 const PollResults = (props: AbstractProps) => {
     const {
         answers,
+        canClose,
         changeVote,
+        closePoll,
+        closed,
         creatorName,
         haveVoted,
         question,
@@ -110,6 +113,11 @@ const PollResults = (props: AbstractProps) => {
                 style = { dialogStyles.questionOwnerText as TextStyle } >
                 { t('polls.by', { name: creatorName }) }
             </Text>
+            {
+                closed && <Text style = { dialogStyles.questionOwnerText as TextStyle }>
+                    { t('polls.results.closed') }
+                </Text>
+            }
             <FlatList
                 data = { answers }
                 keyExtractor = { (item, index) => index.toString() }
@@ -122,13 +130,24 @@ const PollResults = (props: AbstractProps) => {
                     labelStyle = { pollsStyles.toggleText }
                     onClick = { toggleIsDetailed }
                     type = { BUTTON_TYPES.TERTIARY } />
-                <Button
-                    accessibilityLabel = { voteLabelKey }
-                    id = { t(voteLabelKey) }
-                    labelKey = { voteLabelKey }
-                    labelStyle = { pollsStyles.toggleText }
-                    onClick = { changeVote }
-                    type = { BUTTON_TYPES.TERTIARY } />
+                {
+                    !closed && <Button
+                        accessibilityLabel = { voteLabelKey }
+                        id = { t(voteLabelKey) }
+                        labelKey = { voteLabelKey }
+                        labelStyle = { pollsStyles.toggleText }
+                        onClick = { changeVote }
+                        type = { BUTTON_TYPES.TERTIARY } />
+                }
+                {
+                    canClose && <Button
+                        accessibilityLabel = 'polls.results.endPoll'
+                        id = { t('polls.results.endPoll') }
+                        labelKey = 'polls.results.endPoll'
+                        labelStyle = { pollsStyles.toggleText }
+                        onClick = { closePoll }
+                        type = { BUTTON_TYPES.TERTIARY } />
+                }
             </View>
         </View>
     );
