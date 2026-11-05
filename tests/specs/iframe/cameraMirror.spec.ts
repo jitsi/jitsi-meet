@@ -52,25 +52,6 @@ describe('Camera mirror iframe API command', () => {
         initialFlipX = await getLocalFlipX();
     });
 
-    afterEach(async () => {
-        if (!p1) {
-            return;
-        }
-
-        const currentFlipX = await getLocalFlipX();
-
-        if (currentFlipX !== initialFlipX) {
-            await p1.getIframeAPI().executeCommand('toggleCameraMirror');
-            await p1.driver.waitUntil(
-                async () => await getLocalFlipX() === initialFlipX,
-                {
-                    timeout: 5000,
-                    timeoutMsg: 'Failed to restore initial localFlipX setting'
-                }
-            );
-        }
-    });
-
     it('toggles camera mirror via toggleCameraMirror command', async () => {
         const iframeAPI = p1.getIframeAPI();
 
