@@ -50,6 +50,11 @@ const useStyles = makeStyles()(theme => {
             }
         },
 
+        tabList: {
+            display: 'flex',
+            flexDirection: 'column'
+        },
+
         menuItemMobile: {
             paddingLeft: '24px'
         },
@@ -318,15 +323,7 @@ const DialogWithTabs = ({
             size = 'large'
             titleKey = { titleKey }>
             {(!isMobile || !selectedTab) && (
-
-                // The container itself must not take focus. Only the selected tab is in the tab order (the
-                // tabs move focus between themselves with the arrow keys), and screen readers announce the
-                // tab list's label when focus lands on a tab, so a focus stop here is an extra, empty step.
-                <div
-                    aria-label = { titleKey ? t(titleKey) : undefined }
-                    aria-orientation = 'vertical'
-                    className = { classes.sidebar }
-                    role = { isMobile ? undefined : 'tablist' }>
+                <div className = { classes.sidebar }>
                     <div className = { classes.titleContainer }>
                         <h1
                             className = { classes.title }
@@ -335,29 +332,41 @@ const DialogWithTabs = ({
                         </h1>
                         {isMobile && closeIcon}
                     </div>
-                    {tabs.map((tab, index) => {
-                        const label = t(tab.labelKey);
+                    {/* A tab list may only contain tabs, so the title and the mobile Close button stay outside
+                    of it. On mobile the items are a plain list of links to the sections, so the element has
+                    no role and the tab list attributes are left out as well. The list itself must not take
+                    focus: only the selected tab is in the tab order (the tabs move focus between themselves
+                    with the arrow keys), and screen readers announce the list's label when focus lands on a
+                    tab, so a focus stop here would be an extra, empty step. */}
+                    <div
+                        aria-label = { isMobile || !titleKey ? undefined : t(titleKey) }
+                        aria-orientation = { isMobile ? undefined : 'vertical' }
+                        className = { classes.tabList }
+                        role = { isMobile ? undefined : 'tablist' }>
+                        {tabs.map((tab, index) => {
+                            const label = t(tab.labelKey);
 
-                        /**
-                         * When not on mobile, the items behave as tabs,
-                         * that's why we set `controls`, `role` and `selected` attributes
-                         * only when not on mobile, they are useful only for the tab behavior.
-                         */
-                        return (
-                            <ContextMenuItem
-                                accessibilityLabel = { label }
-                                className = { cx(isMobile && classes.menuItemMobile) }
-                                controls = { isMobile ? undefined : `dialogtab-content-${tab.name}` }
-                                icon = { tab.icon }
-                                id = { `dialogtab-button-${tab.name}` }
-                                key = { tab.name }
-                                onClick = { onClick(tab.name) }
-                                onKeyDown = { isMobile ? onMobileKeyDown(tab.name) : onTabKeyDown(index) }
-                                role = { isMobile ? undefined : 'tab' }
-                                selected = { tab.name === selectedTab }
-                                text = { label } />
-                        );
-                    })}
+                            /**
+                             * When not on mobile, the items behave as tabs,
+                             * that's why we set `controls`, `role` and `selected` attributes
+                             * only when not on mobile, they are useful only for the tab behavior.
+                             */
+                            return (
+                                <ContextMenuItem
+                                    accessibilityLabel = { label }
+                                    className = { cx(isMobile && classes.menuItemMobile) }
+                                    controls = { isMobile ? undefined : `dialogtab-content-${tab.name}` }
+                                    icon = { tab.icon }
+                                    id = { `dialogtab-button-${tab.name}` }
+                                    key = { tab.name }
+                                    onClick = { onClick(tab.name) }
+                                    onKeyDown = { isMobile ? onMobileKeyDown(tab.name) : onTabKeyDown(index) }
+                                    role = { isMobile ? undefined : 'tab' }
+                                    selected = { tab.name === selectedTab }
+                                    text = { label } />
+                            );
+                        })}
+                    </div>
                 </div>
             )}
             {(!isMobile || selectedTab) && (
