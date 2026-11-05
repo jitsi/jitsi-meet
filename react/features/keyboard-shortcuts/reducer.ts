@@ -51,13 +51,13 @@ ReducerRegistry.register<IKeyboardShortcutsState>(STORE_NAME,
 
         return {
             ...state,
-            shortcuts: new Map(state.shortcuts ?? [])
+            shortcuts: new Map(state.shortcuts)
                 .set(shortcutKey, action.shortcut)
         };
     }
     case UNREGISTER_KEYBOARD_SHORTCUT: {
         const shortcutKey = getShortcutKey(action.character, action.alt, action.ctrl);
-        const shortcuts = new Map(state.shortcuts ?? []);
+        const shortcuts = new Map(state.shortcuts);
 
         shortcuts.delete(shortcutKey);
 
