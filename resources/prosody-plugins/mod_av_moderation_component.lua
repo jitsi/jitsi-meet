@@ -390,20 +390,50 @@ function occupant_joined(event)
     end
 end
 
--- when a occupant was granted moderator we need to update him with the whitelist
+-- Removes all occurrences of the jid from the whitelist
+-- @param whitelist the whitelist to update
+-- @param jid the jid to remove
+-- @return true if anything was removed
+function remove_from_whitelist(whitelist, jid)
+    local removed = false;
+    local index = get_index_in_table(whitelist, jid);
+    while index do
+        whitelist:pop(index);
+        removed = true;
+        index = get_index_in_table(whitelist, jid);
+    end
+    return removed;
+end
+
+-- when an occupant was granted moderator we need to update him with the whitelist,
+-- when moderator was revoked we need to remove him from the whitelist
 function occupant_affiliation_changed(event)
     local room = event.room;
-    if not room.av_moderation or is_healthcheck_room(room.jid) or is_admin(event.jid)
-        or event.affiliation ~= 'owner' then
+    if not room.av_moderation or is_healthcheck_room(room.jid) or is_admin(event.jid) then
         return;
     end
 
-    -- in any enabled media type add the new moderator to the whitelist
+    local granting = event.affiliation == 'owner';
+    local revoking = event.previous_affiliation == 'owner' and not granting;
+    if not granting and not revoking then
+        return;
+    end
+
     for _, room_occupant in room:each_occupant() do
         if room_occupant.bare_jid == event.jid then
+            local occupant_jid = internal_room_jid_match_rewrite(room_occupant.nick);
             for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
-                if room.av_moderation[mediaType] then
-                    room.av_moderation[mediaType]:push(internal_room_jid_match_rewrite(room_occupant.nick));
+                local whitelist = room.av_moderation[mediaType];
+                if whitelist then
+                    if granting then
+                        -- in any enabled media type add the new moderator to the whitelist
+                        if not get_index_in_table(whitelist, occupant_jid) then
+                            whitelist:push(occupant_jid);
+                        end
+                    elseif remove_from_whitelist(whitelist, occupant_jid) then
+                        -- notifies all moderators (including jicofo) and the occupant itself
+                        notify_whitelist_change(room_occupant.jid, true, room, mediaType, true);
+                    end
                 end
             end
         end
@@ -411,12 +441,31 @@ function occupant_affiliation_changed(event)
 
     -- the actor can be nil if is coming from allowners or similar module we want to skip it here
     -- as we will handle it in occupant_joined
-    if event.actor and event.affiliation == 'owner' then
+    if event.actor and granting then
         -- notify all moderators for the new grant moderator and the change in whitelists
         for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
             if room.av_moderation[mediaType] then
                 notify_whitelist_change(nil, true, room, mediaType);
             end
+        end
+    end
+end
+
+-- when an occupant leaves we remove it from the whitelists, the nick is free and the next occupant
+-- using it must not inherit the approval
+function occupant_left(event)
+    local room, occupant = event.room, event.occupant;
+
+    if not room.av_moderation or is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) then
+        return;
+    end
+
+    local occupant_jid = internal_room_jid_match_rewrite(occupant.nick);
+    for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
+        local whitelist = room.av_moderation[mediaType];
+        if whitelist and remove_from_whitelist(whitelist, occupant_jid) then
+            -- notifies all moderators (including jicofo)
+            notify_whitelist_change(occupant.jid, true, room, mediaType, true);
         end
     end
 end
@@ -427,6 +476,7 @@ module:hook('message/host', on_message);
 process_host_module(muc_component_host, function(host_module, host)
     module:log('info','Hook to muc events on %s', host);
     host_module:hook('muc-occupant-joined', occupant_joined, -2); -- make sure it runs after allowners or similar
+    host_module:hook('muc-occupant-left', occupant_left);
     host_module:hook('muc-set-affiliation', occupant_affiliation_changed, -1);
 end);
 
