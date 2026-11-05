@@ -5,6 +5,7 @@ import { showModeratedNotification } from '../../av-moderation/actions';
 import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../av-moderation/constants';
 import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { setNoiseSuppressionEnabled } from '../../noise-suppression/actions';
+import { isNoiseSuppressionEnabled } from '../../noise-suppression/functions';
 import { showErrorNotification, showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { stopReceiver } from '../../remote-control/actions';
@@ -85,6 +86,12 @@ export function toggleScreensharing(
  * @returns {void}
  */
 
+
+/**
+ * Tracks whether noise suppression was active before audio-only screen sharing
+ * started, so we can restore it when sharing ends.
+ */
+let _noiseSuppressionStateBeforeShare: boolean | undefined;
 
 /**
  * Applies the AudioMixer effect on the local audio track if applicable. If there is no local audio track, the desktop
@@ -206,6 +213,7 @@ async function _toggleScreenSharing(
         if (desktopAudioTrack) {
             // Noise suppression doesn't work with desktop audio because we can't chain track effects yet, disable it
             // first. We need to to wait for the effect to clear first or it might interfere with the audio mixer.
+            _noiseSuppressionStateBeforeShare = isNoiseSuppressionEnabled(state);
             await dispatch(setNoiseSuppressionEnabled(false));
             _maybeApplyAudioMixerEffect(desktopAudioTrack, state);
             dispatch(setScreenshareAudioTrack(desktopAudioTrack));
@@ -255,6 +263,16 @@ async function _toggleScreenSharing(
     } else {
         // Notify the external API.
         APP.API.notifyScreenSharingStatusChanged(enable, screensharingDetails);
+    }
+
+    // Restore noise suppression state once audio-only sharing ends. This must run after
+    // setScreenAudioShareState(false) is dispatched above so that canEnableNoiseSuppression
+    // does not see isSharingAudio as true and block the re-enable.
+    if (!enable && audioOnly) {
+        if (_noiseSuppressionStateBeforeShare) {
+            await dispatch(setNoiseSuppressionEnabled(true));
+        }
+        _noiseSuppressionStateBeforeShare = undefined;
     }
 }
 
