@@ -164,6 +164,8 @@ describe('mod_muc_domain_mapper', () => {
             const iq = await b.waitForIq(s => s.attrs.id === id);
 
             assert.equal(iq.attrs.from, a.jid);
+            assert.equal(iq.getChild('conference')?.attrs.room, CONFERENCE_SUB,
+                'the room of the <conference> child must be delivered as sent');
         });
 
     });

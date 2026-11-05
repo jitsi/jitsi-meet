@@ -573,7 +573,7 @@ describe("util.lib", function()
             end)
 
             it("does not remember a host-only JID that is not the stanza's to", function()
-                -- e.g. the room of a <conference> child in an IQ to another user
+                -- e.g. a JID taken from a child element of an IQ to another user
                 local stanza = request("roomless-8", { to = "other@test.example.com/r" })
                 M.room_jid_match_rewrite(VIRTUAL_HOST, stanza)
                 assert.equal(MUC_DOMAIN, M.internal_room_jid_match_rewrite(MUC_DOMAIN, reply("roomless-8")))

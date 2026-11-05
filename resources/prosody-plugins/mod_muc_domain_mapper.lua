@@ -25,13 +25,6 @@ function filter_stanza(stanza, session)
 
     if stanza.name == "message" or stanza.name == "iq" or stanza.name == "presence" then
         -- module:log("debug", "Filtering stanza type %s  to %s from %s",stanza.name,stanza.attr.to,stanza.attr.from);
-        if stanza.name == "iq" then
-            local conf = stanza:get_child('conference')
-            if conf then
-                -- module:log("debug", "Filtering stanza conference %s to %s from %s",conf.attr.room,stanza.attr.to,stanza.attr.from);
-                conf.attr.room = room_jid_match_rewrite(conf.attr.room)
-            end
-        end
         if stanza.attr.to then
             stanza.attr.to = room_jid_match_rewrite(stanza.attr.to, stanza)
         end
