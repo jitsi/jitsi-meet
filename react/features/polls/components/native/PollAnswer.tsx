@@ -63,6 +63,7 @@ const PollAnswer = (props: AbstractProps) => {
                             key = { index }
                             style = { pollsStyles.switchRow as ViewStyle } >
                             <Switch
+                                accessibilityLabel = { answer.name }
                                 checked = { checkBoxStates[index] }
                                 disabled = { poll.saved }
                                 id = 'answer-switch'
