@@ -73,6 +73,9 @@ local function load(options)
     local mod = {
         set_global = function () end;
         get_option_number = function (_, key, default)
+            if key == 'hot_path_cache_size' and options.invalid_cache_size then
+                return nil; -- what prosody returns for a value that is not a number
+            end
             if key == 'hot_path_cache_size' and options.cache_size then
                 return options.cache_size;
             end
@@ -168,6 +171,32 @@ describe("mod_hot_path_cache", function ()
         it("returns nothing for nil, like the original", function ()
             local _, jid_lib = load();
             assert.equal(0, select('#', jid_lib.split(nil)));
+        end)
+
+        it("does not keep JIDs longer than 3071 bytes", function ()
+            local reference = make_jid_lib();
+            local _, jid_lib = load();
+            local j = "room@conference.example.com/" .. string.rep("r", 3100);
+            assert.same(parts(reference.split(j)), parts(jid_lib.split(j)));
+            assert.same(parts(reference.split(j)), parts(jid_lib.split(j)));
+            assert.equal(2, jid_lib.split_calls());
+        end)
+
+        it("keeps a JID of exactly 3071 bytes", function ()
+            local _, jid_lib = load();
+            local prefix = "room@conference.example.com/";
+            local j = prefix .. string.rep("r", 3071 - #prefix);
+            assert.equal(3071, #j);
+            jid_lib.split(j);
+            jid_lib.split(j);
+            assert.equal(1, jid_lib.split_calls());
+        end)
+
+        it("uses the default size when hot_path_cache_size is not a number", function ()
+            local _, jid_lib = load({ invalid_cache_size = true });
+            jid_lib.split("a@b/c");
+            jid_lib.split("a@b/c");
+            assert.equal(1, jid_lib.split_calls());
         end)
 
         it("starts over when the cache is full", function ()
