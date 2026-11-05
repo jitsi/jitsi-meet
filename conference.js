@@ -2010,13 +2010,10 @@ export default {
             promises.push(setAudioOutputPromise);
         }
 
-        // Handles the use case when the default device is changed (we are always stopping the stream because it's
-        // simpler):
-        // If the default device is changed we need to first stop the local stream and then call GUM. Otherwise GUM
-        // will return a stream using the old default device.
-        // The local audio stream is not stopped here: GUM for a changed default mic is called with the real device id
-        // (see hasDefaultMicChanged below) and the old track is disposed only after it has been replaced, so the mic
-        // keeps sending if creating or replacing the new track fails.
+        // The camera is stopped before the new one is opened, some machines can't open two cameras at once.
+        // The mic is not stopped: replaceLocalTrack disposes the old audio track only after the conference has switched
+        // to the new one, so the mic keeps sending if the new track can't be created or used. For a changed default mic
+        // gUM gets the real device id (see hasDefaultMicChanged below), or is skipped if it can't be resolved.
         if (requestedInput.video && localVideo) {
             localVideo.stopStream();
         }
@@ -2101,6 +2098,25 @@ export default {
                 return Promise.reject(error);
             }
 
+            // Notifies the user and releases the device opened for a new track that failed to replace the current one.
+            // If the conference already switched to it and a later step of the replacement failed, it is the track
+            // sending now and is kept.
+            const onReplaceFailed = (track, error) => {
+                logger.error(`${track.getType()} track replacement failed on device change, ${error}`);
+                APP.store.dispatch(track.isAudioTrack() ? notifyMicError(error) : notifyCameraError(error));
+
+                const currentState = APP.store.getState();
+                const localTrack = track.isAudioTrack()
+                    ? getLocalJitsiAudioTrack(currentState) : getLocalJitsiVideoTrack(currentState);
+
+                if (!track.conference && localTrack !== track) {
+                    track.dispose()
+                        .catch(e => logger.warn(`Failed to dispose the unused ${track.getType()} track, ${e}`));
+                }
+
+                throw error;
+            };
+
             for (const track of tracks) {
                 if (track.isAudioTrack()) {
                     promises.push(
@@ -2108,23 +2124,17 @@ export default {
                             .then(() => {
                                 hasDefaultMicChanged && (track._realDeviceId = track.deviceId = 'default');
                             })
-                            .catch(error => {
-                                logger.error(`Audio track replacement failed on device change, ${error}`);
-
-                                // The old track is still in use, release the device opened for the new one.
-                                track.dispose();
-
-                                throw error;
-                            }));
+                            .catch(error => onReplaceFailed(track, error)));
                 } else {
                     promises.push(
-                        this.useVideoStream(track));
+                        this.useVideoStream(track)
+                            .catch(error => onReplaceFailed(track, error)));
                 }
             }
         }
 
         return Promise.all(promises)
-            .then(() => {
+            .finally(() => {
                 this.updateAudioIconEnabled();
                 this.updateVideoIconEnabled();
             });
