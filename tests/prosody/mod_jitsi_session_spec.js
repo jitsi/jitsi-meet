@@ -82,6 +82,25 @@ describe('mod_jitsi_session', () => {
         assert.equal(info.jitsi_web_query_room, 'poc%20caf%c3%a9%201234');
     });
 
+    it('lowercases the hex digits of existing escapes', async () => {
+        const c = await createXmppClient({ params: { room: 'caf%C3%A9' } });
+
+        clients.push(c);
+        const info = await getSessionInfo(c.jid);
+
+        assert.equal(info.jitsi_web_query_room, 'caf%c3%a9');
+    });
+
+    it('keeps the characters that encodeURIComponent keeps', async () => {
+        const room = 'a-b_c.d!e~f*g\'h(i)j';
+        const c = await createXmppClient({ params: { room } });
+
+        clients.push(c);
+        const info = await getSessionInfo(c.jid);
+
+        assert.equal(info.jitsi_web_query_room, room);
+    });
+
     it('encodes a percent sign that does not start an escape', async () => {
         const c = await createXmppClient({ params: { room: '100%' } });
 

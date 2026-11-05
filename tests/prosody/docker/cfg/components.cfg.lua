@@ -18,6 +18,12 @@ Component "breakout.conference.localhost" "muc"
     restrict_room_creation = true
     muc_room_locking = false
     muc_room_default_public_jids = true
+    modules_enabled = {
+        -- breakout messages count against the main room, same options as conference.localhost
+        "muc_limit_messages";
+    }
+    muc_limit_messages_count = 3
+    muc_limit_messages_check_token = true
 
 -- Internal MUC used by mod_muc_jigasi_invite: the module resolves the Jigasi
 -- brewery room from this component via process_host_module. Without this

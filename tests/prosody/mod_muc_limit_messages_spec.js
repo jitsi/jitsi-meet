@@ -2,9 +2,10 @@ import { xml } from '@xmpp/client';
 import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
-import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
+import { createXmppClient, joinWithFocus, joinWithTranscriber } from './helpers/xmpp_client.js';
 
 const CONFERENCE = 'conference.localhost';
+const BREAKOUT_MUC = 'breakout.conference.localhost';
 const METADATA_COMPONENT = 'metadata.localhost';
 const JITMEET_NS = 'http://jitsi.org/jitmeet';
 const LIMIT = 3;
@@ -96,6 +97,46 @@ async function unrestrictChat(mod, roomJid) {
             return false;
         }
     }, 3000);
+}
+
+/**
+ * Creates a main room with focus and a moderator, adds one breakout room and has
+ * focus create it (the breakout component restricts room creation).
+ *
+ * @returns {Promise<{ r: string, focus: object, moderator: object, breakout: string }>}
+ */
+async function createRoomWithBreakout() {
+    const r = nextRoom();
+    const focus = await joinWithFocus(r);
+    const moderator = await connectModerator(r);
+
+    await moderator.joinRoom(r);
+    await moderator.sendBreakoutRoomsMessage(BREAKOUT_MUC, 'features/breakout-rooms/add', { subject: 'Group 1' });
+
+    const isBreakoutUpdate = s => {
+        const j = s.getChild('json-message', JITMEET_NS);
+
+        if (!j) {
+            return null;
+        }
+        try {
+            const p = JSON.parse(j.getText());
+
+            return p?.type === 'breakout_rooms' && p?.event === 'features/breakout-rooms/update'
+                ? Object.values(p.rooms).find(room => !room.isMainRoom)?.jid : null;
+        } catch {
+            return null;
+        }
+    };
+    const update = await moderator.waitForMessage(s => Boolean(isBreakoutUpdate(s)), 6000);
+    const breakout = isBreakoutUpdate(update);
+
+    await focus.joinRoom(breakout, 'focus');
+
+    return { r,
+        focus,
+        moderator,
+        breakout };
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -309,6 +350,132 @@ describe('mod_muc_limit_messages', () => {
         assert.strictEqual(reply.attrs.type, 'error',
             'the cap must stay in place');
     });
+
+    it('private messages are rejected once the cap is reached', async () => {
+        const r = nextRoom();
+        const focus = await joinWithFocus(r);
+        const sender = await connectAnon(r);
+        const recipient = await connectAnon(r);
+
+        clients.push(focus, sender, recipient);
+        await sender.joinRoom(r);
+        await recipient.joinRoom(r);
+
+        await exhaustAndTrigger(sender, r);
+
+        const id = await sender.sendPrivateChat(r, recipient.nick, 'private');
+        const reply = await sender.waitForMessage(s => s.attrs.id === id && s.attrs.type === 'error');
+
+        assert.ok(reply.getChild('error')?.getChild('not-allowed'),
+            'a private message past the cap must be rejected with <not-allowed/>');
+    });
+
+    it('transcriber messages do not count toward the cap', async () => {
+        const r = nextRoom();
+        const focus = await joinWithFocus(r);
+        const sender = await connectAnon(r);
+        const transcriber = await joinWithTranscriber(r);
+
+        clients.push(focus, sender, transcriber);
+        await sender.joinRoom(r);
+
+        const result = () => xml('json-message', { xmlns: JITMEET_NS },
+            JSON.stringify({ type: 'transcription-result',
+                text: 'hello' }));
+
+        for (let i = 0; i < LIMIT + 1; i++) {
+            const reply = await transcriber.sendGroupchat(r, undefined, [ result() ]);
+
+            assert.notEqual(reply.attrs.type, 'error',
+                `transcription result ${i + 1} must be delivered`);
+        }
+
+        for (let i = 0; i < LIMIT; i++) {
+            const reply = await sender.sendGroupchat(r, `msg ${i + 1}`);
+
+            assert.notEqual(reply.attrs.type, 'error',
+                `message ${i + 1} must pass (cap not consumed by the transcriber)`);
+        }
+    });
+
+    // ── breakout rooms ────────────────────────────────────────────────────────
+    //
+    // The module is also loaded on the breakout component. Messages in a breakout
+    // room count against its main room.
+
+    it('messages in a breakout room count against the main room', async () => {
+        const { r, focus, moderator, breakout } = await createRoomWithBreakout();
+        const sender = await connectAnon(r);
+
+        clients.push(focus, moderator, sender);
+        await sender.joinRoom(r);
+
+        for (let i = 0; i < LIMIT; i++) {
+            await sender.sendGroupchat(r, `main ${i + 1}`);
+        }
+
+        await sender.joinRoom(breakout);
+
+        const reply = await sender.sendGroupchat(breakout, 'in breakout');
+
+        assert.strictEqual(reply.attrs.type, 'error',
+            'the cap of the main room must apply in its breakout room');
+        assert.ok(reply.getChild('error')?.getChild('not-allowed'),
+            'error condition must be <not-allowed/>');
+    });
+
+    it('a cap lifted in the main room is lifted in its breakout rooms', async () => {
+        const { r, focus, moderator, breakout } = await createRoomWithBreakout();
+        const sender = await connectAnon(r);
+
+        clients.push(focus, moderator, sender);
+        await sender.joinRoom(r);
+        await sender.joinRoom(breakout);
+
+        // The authenticated moderator lifts the cap of the main room.
+        const lift = await moderator.sendGroupchat(r, 'lift');
+
+        assert.notEqual(lift.attrs.type, 'error');
+
+        for (let i = 0; i < LIMIT + 1; i++) {
+            const reply = await sender.sendGroupchat(breakout, `breakout ${i + 1}`);
+
+            assert.notEqual(reply.attrs.type, 'error',
+                `breakout message ${i + 1} must pass once the main room cap is lifted`);
+        }
+    });
+
+    for (const [ label, otherQuery ] of [ [ 'with the ?room= of another conference', true ],
+        [ 'without ?room=', false ] ]) {
+        it(`breakout messages from a connection ${label} count against the main room`, async () => {
+            const { r, focus, moderator, breakout } = await createRoomWithBreakout();
+            const other = nextRoom();
+            const otherFocus = await joinWithFocus(other);
+            const otherMember = await connectAnon(other);
+            const sender = otherQuery ? await connectAnon(other) : await createXmppClient();
+
+            clients.push(focus, moderator, otherFocus, otherMember, sender);
+            await otherMember.joinRoom(other);
+            await sender.joinRoom(r);
+            await sender.joinRoom(breakout);
+
+            for (let i = 0; i < LIMIT; i++) {
+                await sender.sendGroupchat(breakout, `breakout ${i + 1}`);
+            }
+
+            const reply = await sender.sendGroupchat(r, 'main room');
+
+            assert.strictEqual(reply.attrs.type, 'error',
+                'the breakout messages must count against the main room');
+            assert.ok(reply.getChild('error')?.getChild('not-allowed'),
+                'error condition must be <not-allowed/>');
+
+            const otherReply = await otherMember.sendGroupchat(other, 'other room');
+
+            assert.notEqual(otherReply.attrs.type, 'error',
+                'the breakout messages must not count against the other conference');
+        });
+    }
 
     // ── message type exemptions ───────────────────────────────────────────────
 
