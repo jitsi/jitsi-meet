@@ -465,8 +465,9 @@ describe("util.lib", function()
             assert.equal(jid, M.room_jid_match_rewrite(jid))
         end)
 
-        it("handles host-only JID (no node) — stores id in roomless_iqs and rewrites host", function()
-            local stanza = { attr = { id = "iq-roomless-1", to = "conference.foo.test.example.com" } }
+        it("rewrites a host-only JID (no node) to the MUC domain", function()
+            local stanza = { name = "iq", attr = { type = "get", id = "iq-roomless-1",
+                from = "user@test.example.com/r", to = "conference.foo.test.example.com" } }
             local result = M.room_jid_match_rewrite("conference.foo.test.example.com", stanza)
             -- No node → only host is rewritten
             assert.equal(MUC_DOMAIN, result)
@@ -508,13 +509,83 @@ describe("util.lib", function()
             assert.equal(jid, M.internal_room_jid_match_rewrite(jid))
         end)
 
-        it("resolves a roomless IQ stored by room_jid_match_rewrite", function()
-            local stanza = { attr = { id = "iq-roomless-2", to = "conference.bar.test.example.com" } }
-            -- Trigger storage of the roomless IQ
-            M.room_jid_match_rewrite("conference.bar.test.example.com", stanza)
-            -- internal_room_jid_match_rewrite should return the stored value
-            local result = M.internal_room_jid_match_rewrite("anything@" .. MUC_DOMAIN, stanza)
-            assert.equal("conference.bar.test.example.com", result)
+        describe("roomless IQs", function()
+            local VIRTUAL_HOST = "conference.bar.test.example.com"
+            local REQUESTER = "user@test.example.com/r"
+
+            local function request(id, attrs)
+                local attr = { type = "get", id = id, from = REQUESTER, to = VIRTUAL_HOST }
+                for k, v in pairs(attrs or {}) do attr[k] = v end
+                return { name = "iq", attr = attr }
+            end
+
+            local function reply(id, attrs)
+                local attr = { type = "result", id = id, from = MUC_DOMAIN, to = REQUESTER }
+                for k, v in pairs(attrs or {}) do attr[k] = v end
+                return { name = "iq", attr = attr }
+            end
+
+            -- Sends the request through room_jid_match_rewrite the way the pre-* hook does
+            local function send(stanza)
+                M.room_jid_match_rewrite(stanza.attr.to, stanza)
+            end
+
+            it("maps the reply from the MUC host back to the virtual address, once", function()
+                send(request("roomless-1"))
+                assert.equal(VIRTUAL_HOST, M.internal_room_jid_match_rewrite(MUC_DOMAIN, reply("roomless-1")))
+                assert.equal(MUC_DOMAIN, M.internal_room_jid_match_rewrite(MUC_DOMAIN, reply("roomless-1")))
+            end)
+
+            it("maps an error reply too", function()
+                send(request("roomless-2", { type = "set" }))
+                assert.equal(VIRTUAL_HOST,
+                    M.internal_room_jid_match_rewrite(MUC_DOMAIN, reply("roomless-2", { type = "error" })))
+            end)
+
+            it("does not map a reply addressed to another session", function()
+                send(request("roomless-3"))
+                local other = reply("roomless-3", { to = "other@test.example.com/r" })
+                assert.equal(MUC_DOMAIN, M.internal_room_jid_match_rewrite(MUC_DOMAIN, other))
+                -- the entry of the requester is still there
+                assert.equal(VIRTUAL_HOST, M.internal_room_jid_match_rewrite(MUC_DOMAIN, reply("roomless-3")))
+            end)
+
+            it("does not touch a stanza from another JID that has the same id", function()
+                send(request("roomless-4"))
+                local sender = "other@test.example.com/r"
+                local stanza = { name = "iq", attr = { type = "result", id = "roomless-4", from = sender, to = REQUESTER } }
+                assert.equal(sender, M.internal_room_jid_match_rewrite(sender, stanza))
+                local message = { name = "message", attr = { id = "roomless-4", from = MUC_DOMAIN, to = REQUESTER } }
+                assert.equal(MUC_DOMAIN, M.internal_room_jid_match_rewrite(MUC_DOMAIN, message))
+            end)
+
+            it("does not map a get or set from the MUC host", function()
+                send(request("roomless-5"))
+                assert.equal(MUC_DOMAIN,
+                    M.internal_room_jid_match_rewrite(MUC_DOMAIN, reply("roomless-5", { type = "set" })))
+            end)
+
+            it("remembers only iq get and set", function()
+                send(request("roomless-6", { type = "result" }))
+                send({ name = "message", attr = { id = "roomless-7", from = REQUESTER, to = VIRTUAL_HOST } })
+                assert.equal(MUC_DOMAIN, M.internal_room_jid_match_rewrite(MUC_DOMAIN, reply("roomless-6")))
+                assert.equal(MUC_DOMAIN, M.internal_room_jid_match_rewrite(MUC_DOMAIN, reply("roomless-7")))
+            end)
+
+            it("does not remember a host-only JID that is not the stanza's to", function()
+                -- e.g. the room of a <conference> child in an IQ to another user
+                local stanza = request("roomless-8", { to = "other@test.example.com/r" })
+                M.room_jid_match_rewrite(VIRTUAL_HOST, stanza)
+                assert.equal(MUC_DOMAIN, M.internal_room_jid_match_rewrite(MUC_DOMAIN, reply("roomless-8")))
+                assert.equal(REQUESTER, M.internal_room_jid_match_rewrite(REQUESTER, stanza))
+            end)
+
+            it("does not remember a request without a from", function()
+                local stanza = request("roomless-9")
+                stanza.attr.from = nil
+                send(stanza)
+                assert.equal(MUC_DOMAIN, M.internal_room_jid_match_rewrite(MUC_DOMAIN, reply("roomless-9")))
+            end)
         end)
     end)
 

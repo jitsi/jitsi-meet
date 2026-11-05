@@ -29,7 +29,7 @@ function filter_stanza(stanza, session)
             local conf = stanza:get_child('conference')
             if conf then
                 -- module:log("debug", "Filtering stanza conference %s to %s from %s",conf.attr.room,stanza.attr.to,stanza.attr.from);
-                conf.attr.room = room_jid_match_rewrite(conf.attr.room, stanza)
+                conf.attr.room = room_jid_match_rewrite(conf.attr.room)
             end
         end
         if stanza.attr.to then
