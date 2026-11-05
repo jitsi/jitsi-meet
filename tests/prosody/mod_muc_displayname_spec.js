@@ -15,8 +15,7 @@ const nextRoom = () => `displayname-${++_counter}@${CONFERENCE}`;
 
 /**
  * Connects a client on the main VirtualHost with a given token context.
- * Always passes ?room= so that session.jitsi_web_query_room is set —
- * required by the hideDisplayNameForGuests outbound filter.
+ * Passes ?room= the way the web client connects.
  *
  * @param {string} roomJid
  * @param {object} [contextUser]  JWT context.user claims (e.g. { name: 'Alice' })
@@ -243,6 +242,72 @@ describe('mod_muc_displayname — hideDisplayNameForGuests', () => {
 
         assert.ok(nick, 'guest must see <nick> when hideDisplayNameForGuests is false');
         assert.strictEqual(nick.getText(), 'Alice');
+    });
+
+    // The room is the one the presence comes from, the ?room= of the recipient's
+    // connection does not matter.
+    for (const [ label, params ] of [
+        [ 'a ?room= of another room', { room: 'displayname-other-room' } ],
+        [ 'no ?room=', undefined ]
+    ]) {
+        it(`non-moderator connected with ${label} receives identity-stripped presence`, async () => {
+            const r = nextRoom();
+
+            const focus = await joinWithFocus(r);
+
+            await setRoomMaxOccupants(r, 10);
+
+            const guest = await createXmppClient({ params });
+
+            clients.push(focus, guest);
+            await guest.joinRoom(r);
+
+            await setHideDisplayNameForGuests(r, true);
+
+            const alice = await connect(r, { contextUser: { name: 'Alice' } });
+
+            clients.push(alice);
+            await alice.joinRoom(r, undefined, { displayName: 'Alice' });
+
+            const guestPresence = await waitForOtherPresence(guest, r, alice.nick);
+
+            assert.ok(
+                !guestPresence.getChild('nick', NICK_NS),
+                'non-moderator must not see <nick> when hideDisplayNameForGuests is true'
+            );
+        });
+    }
+
+    it('non-moderator in a tenant room receives identity-stripped presence', async () => {
+        // Clients use the tenant address, the room lives at the internal [tenant]name address.
+        const name = `displayname-tenant-${++_counter}`;
+        const r = `${name}@conference.subdomain.localhost`;
+        const internal = `[subdomain]${name}@${CONFERENCE}`;
+
+        const focus = await joinWithFocus(r);
+
+        await setRoomMaxOccupants(internal, 10);
+
+        const guest = await createXmppClient({ params: { room: name,
+            prefix: 'subdomain' } });
+
+        clients.push(focus, guest);
+        await guest.joinRoom(r);
+
+        await setHideDisplayNameForGuests(internal, true);
+
+        const alice = await createXmppClient({ params: { room: name,
+            prefix: 'subdomain' } });
+
+        clients.push(alice);
+        await alice.joinRoom(r, undefined, { displayName: 'Alice' });
+
+        const guestPresence = await waitForOtherPresence(guest, r, alice.nick);
+
+        assert.ok(
+            !guestPresence.getChild('nick', NICK_NS),
+            'non-moderator must not see <nick> when hideDisplayNameForGuests is true'
+        );
     });
 });
 

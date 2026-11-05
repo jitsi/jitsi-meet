@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { IStore } from '../../app/types';
-import { extractYoutubeIdOrURL } from '../functions';
+import { extractYoutubeIdOrURL, isURLAllowedForSharedVideo } from '../functions';
 
 /**
  * The type of the React {@code Component} props of
@@ -53,11 +53,11 @@ export default class AbstractSharedVideoDialog<S> extends Component < IProps, S 
      * @returns {boolean}
      */
     _onSetVideoLink(link: string) {
-        const { onPostSubmit } = this.props;
+        const { _allowedUrlDomains, onPostSubmit } = this.props;
 
         const id = extractYoutubeIdOrURL(link);
 
-        if (!id) {
+        if (!id || !isURLAllowedForSharedVideo(id, _allowedUrlDomains, true)) {
             return false;
         }
 

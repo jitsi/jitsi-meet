@@ -17,9 +17,22 @@ const OVERFLOW_MENU = 'More actions menu';
 const OVERFLOW = 'More actions';
 const CLOSE_OVERFLOW = 'Close more actions menu';
 const PARTICIPANTS = 'Open participants pane';
+const PIP = 'Enter Picture-in-Picture mode';
 const PROFILE = 'Edit your profile';
 const RAISE_HAND = 'Raise your hand';
+const LOWER_HAND = 'Lower your hand';
+const REACTIONS_MENU = 'Reactions menu';
 const SECURITY = 'Security options';
+
+const REACTION_LABELS: Record<string, string> = {
+    boo: 'Boo',
+    clap: 'Clap',
+    laugh: 'Laugh',
+    like: 'Thumbs Up',
+    love: 'Heart',
+    silence: 'Silence',
+    surprised: 'Surprised'
+};
 const SETTINGS = 'Open settings';
 const STOP_DESKTOP = 'Stop sharing your screen';
 const ENTER_TILE_VIEW_BUTTON = 'Enter tile view';
@@ -91,6 +104,25 @@ export default class Toolbar extends BasePageObject {
         // transcription.enabled=false) get "Record" too, not just non-moderators — see
         // AbstractRecordButton._getAccessibilityLabel()/canAddTranscriber().
         return this.clickButtonInOverflowMenu([ RECORDING, RECORDING_NON_MODERATOR ]);
+    }
+
+    /**
+     * Returns whether the Picture-in-Picture button exists in the DOM for this participant, which is the visible
+     * effect of Picture-in-Picture being turned on.
+     *
+     * @returns {Promise<boolean>}
+     */
+    async hasPictureInPictureButton(): Promise<boolean> {
+        // The button usually lives in the overflow ("More actions") menu, so it is only in the DOM while that menu
+        // is open. isExisting() searches the whole DOM, so opening the menu first also covers the case where the
+        // button is promoted to the main toolbar.
+        await this.openOverflowMenu();
+
+        const exists = await this.getButton(PIP).isExisting();
+
+        await this.closeOverflowMenu();
+
+        return exists;
     }
 
     /**
@@ -234,6 +266,116 @@ export default class Toolbar extends BasePageObject {
         await this.participant.log('Clicking on: Raise hand Button');
 
         return this.getButton(RAISE_HAND).click();
+    }
+
+    /**
+     * Clicks on the lower hand button that lowers participant's raised hand.
+     */
+    async clickLowerHandButton(): Promise<void> {
+        await this.participant.log('Clicking on: Lower hand Button');
+
+        return this.getButton(LOWER_HAND).click();
+    }
+
+    /**
+     * Wakes the auto-hidden toolbar by hovering the local or large video container.
+     * @private
+     */
+    private async wakeToolbar(): Promise<void> {
+        const localVideoContainer = this.participant.driver.$('span[id="localVideoContainer"]');
+
+        if (await localVideoContainer.isExisting()) {
+            await localVideoContainer.moveTo();
+        } else {
+            await this.participant.driver.$('#largeVideoContainer').moveTo();
+        }
+    }
+
+    /**
+     * Returns whether the reactions menu is open and displayed.
+     *
+     * @returns {Promise<boolean>}
+     */
+    async isReactionsMenuOpen(): Promise<boolean> {
+        return this.participant.driver.$('.reactions-menu-container .reactions-menu').isDisplayed();
+    }
+
+    /**
+     * Returns the reaction button element for the given reaction key.
+     *
+     * @param {string} reaction - The reaction key or accessibility label.
+     * @returns {WebdriverIO.Element}
+     */
+    getReactionButton(reaction: string) {
+        const label = REACTION_LABELS[reaction] || reaction;
+
+        return this.participant.driver.$(`.reactions-menu-container .reactions-menu [aria-label="${label}"]`);
+    }
+
+    /**
+     * Ensures the reactions menu is displayed.
+     *
+     * @returns {Promise<void>}
+     */
+    async openReactionsMenu(): Promise<void> {
+        if (await this.isReactionsMenuOpen()) {
+            return;
+        }
+
+        await this.wakeToolbar();
+
+        const trigger = this.getButton(REACTIONS_MENU);
+
+        await trigger.waitForExist({ timeout: 2000 });
+        await trigger.moveTo();
+
+        await this.waitForReactionsMenu(true);
+    }
+
+    /**
+     * Ensures the reactions menu is closed.
+     *
+     * @returns {Promise<void>}
+     */
+    async closeReactionsMenu(): Promise<void> {
+        if (!await this.isReactionsMenuOpen()) {
+            return;
+        }
+
+        await this.getButton(REACTIONS_MENU).click();
+
+        await this.waitForReactionsMenu(false);
+    }
+
+    /**
+     * Waits for the reactions menu to be visible or hidden.
+     *
+     * @param {boolean} visible - Whether the menu should be visible.
+     * @returns {Promise<void>}
+     */
+    waitForReactionsMenu(visible: boolean) {
+        return this.participant.driver.$('.reactions-menu-container .reactions-menu').waitForDisplayed({
+            reverse: !visible,
+            timeout: 5000,
+            timeoutMsg: `Reactions menu is not ${visible ? 'visible' : 'hidden'}`
+        });
+    }
+
+    /**
+     * Clicks a reaction emoji in the reactions menu.
+     *
+     * @param {string} reaction - The reaction key or accessibility label.
+     * @returns {Promise<void>}
+     */
+    async clickReaction(reaction: string): Promise<void> {
+        await this.openReactionsMenu();
+
+        const reactionBtn = this.getReactionButton(reaction);
+
+        await reactionBtn.waitForDisplayed({ timeout: 2000 });
+        await reactionBtn.click();
+
+        await this.closeReactionsMenu();
     }
 
     /**
@@ -402,17 +544,7 @@ export default class Toolbar extends BasePageObject {
             return;
         }
 
-        // Wake the auto-hidden toolbar by hovering the local video tile; otherwise the overflow
-        // button click can fire on an invisible element and the menu never appears. When the
-        // self-view is hidden (e.g. via settings), localVideoContainer is not in the DOM, so fall
-        // back to the large video container which is always present while in conference.
-        const localVideoContainer = this.participant.driver.$('span[id="localVideoContainer"]');
-
-        if (await localVideoContainer.isExisting()) {
-            await localVideoContainer.moveTo();
-        } else {
-            await this.participant.driver.$('#largeVideoContainer').moveTo();
-        }
+        await this.wakeToolbar();
 
         await this.clickOverflowButton();
 

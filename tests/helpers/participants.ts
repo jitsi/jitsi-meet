@@ -290,9 +290,13 @@ export async function checkSubject(participant: Participant, subject: string) {
     await localTile.waitForExist();
     await localTile.moveTo();
 
-    const txt = await localTile.getText();
-
-    expect(txt.startsWith(subject)).toBe(true);
+    await participant.driver.waitUntil(
+        async () => (await localTile.getText()).startsWith(subject),
+        {
+            timeout: 5000,
+            timeoutMsg: `subject was not updated to "${subject}"`
+        }
+    );
 }
 
 /**

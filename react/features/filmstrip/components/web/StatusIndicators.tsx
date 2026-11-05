@@ -4,7 +4,11 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
-import { getParticipantByIdOrUndefined, isScreenShareParticipantById } from '../../../base/participants/functions';
+import {
+    getParticipantByIdOrUndefined,
+    isScreenShareParticipantById,
+    isVoiceAgentParticipant
+} from '../../../base/participants/functions';
 import {
     getVideoTrackByParticipant,
     isLocalTrackMuted,
@@ -102,8 +106,10 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
     if (participant?.local) {
         isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
-    } else if (!participant?.fakeParticipant || isScreenShareParticipantById(state, participantID)) {
-        // remote participants excluding shared video
+    } else if (!participant?.fakeParticipant
+            || isScreenShareParticipantById(state, participantID)
+            || isVoiceAgentParticipant(participant)) {
+        // remote participants excluding shared video (an agent has an audio track like anyone else)
         const track = getVideoTrackByParticipant(state, participant);
 
         isScreenSharing = track?.videoType === 'desktop';

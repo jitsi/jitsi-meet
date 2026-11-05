@@ -6,6 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import Avatar from '../../../base/avatar/components/Avatar';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCheck, IconCloseLarge } from '../../../base/icons/svg';
+import { onActivationKey } from '../../../base/ui/functions.web';
 import { admitMultiple } from '../../../lobby/actions.web';
 import { getKnockingParticipants, getLobbyEnabled } from '../../../lobby/functions';
 import Drawer from '../../../toolbox/components/web/Drawer';
@@ -32,6 +33,24 @@ const useStyles = makeStyles()(theme => {
             '&:first-child': {
                 marginTop: '15px'
             },
+
+            '&:hover': {
+                cursor: 'pointer',
+                background: theme.palette.participantActionButton
+            }
+        },
+        drawerButton: {
+            alignItems: 'center',
+            appearance: 'none',
+            background: 'none',
+            border: 0,
+            color: theme.palette.participantCounterText,
+            display: 'flex',
+            fontFamily: 'inherit',
+            padding: '12px 16px',
+            textAlign: 'start',
+            width: '100%',
+            ...theme.typography.bodyShortRegularLarge,
 
             '&:hover': {
                 cursor: 'pointer',
@@ -90,7 +109,10 @@ export default function LobbyParticipants() {
                     participants.length > 1
                     && <div
                         className = { classes.link }
-                        onClick = { admitAll }>{t('participantsPane.actions.admitAll')}</div>
+                        onClick = { admitAll }
+                        onKeyDown = { onActivationKey(admitAll) }
+                        role = 'button'
+                        tabIndex = { 0 }>{t('participantsPane.actions.admitAll')}</div>
                 }
             </div>
             <LobbyParticipantItems
@@ -109,23 +131,29 @@ export default function LobbyParticipants() {
                                 size = { 20 } />
                             <span>{ drawerParticipant?.displayName }</span>
                         </li>
-                        <li
-                            className = { classes.drawerItem }
-                            onClick = { admit }>
-                            <Icon
-                                className = { classes.icon }
-                                size = { 20 }
-                                src = { IconCheck } />
-                            <span>{ t('participantsPane.actions.admit') }</span>
+                        <li>
+                            <button
+                                className = { classes.drawerButton }
+                                onClick = { admit }
+                                type = 'button'>
+                                <Icon
+                                    className = { classes.icon }
+                                    size = { 20 }
+                                    src = { IconCheck } />
+                                <span>{ t('participantsPane.actions.admit') }</span>
+                            </button>
                         </li>
-                        <li
-                            className = { classes.drawerItem }
-                            onClick = { reject }>
-                            <Icon
-                                className = { classes.icon }
-                                size = { 20 }
-                                src = { IconCloseLarge } />
-                            <span>{ t('participantsPane.actions.reject')}</span>
+                        <li>
+                            <button
+                                className = { classes.drawerButton }
+                                onClick = { reject }
+                                type = 'button'>
+                                <Icon
+                                    className = { classes.icon }
+                                    size = { 20 }
+                                    src = { IconCloseLarge } />
+                                <span>{ t('participantsPane.actions.reject')}</span>
+                            </button>
                         </li>
                     </ul>
                 </Drawer>

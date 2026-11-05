@@ -238,3 +238,18 @@ export const isAutoAssignParticipantsVisible = (stateful: IStateful) => {
         && Object.keys(rooms).length > 1
         && !hideAutoAssignButton;
 };
+
+/**
+ * Returns whether the local participant may join the given room by themselves. Returning to the main room is always
+ * allowed. When the main room restricts joining breakout rooms, only a moderator can join one, and another participant
+ * joins the room that a moderator moves them to.
+ *
+ * @param {IStateful} stateful - Global state.
+ * @param {IRoom} room - The room to join.
+ * @returns {boolean}
+ */
+export const isBreakoutRoomJoinAllowed = (stateful: IStateful, room?: IRoom) => {
+    const state = toState(stateful);
+
+    return Boolean(room?.isMainRoom) || !state[FEATURE_KEY].joinRestricted || isLocalParticipantModerator(state);
+};

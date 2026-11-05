@@ -211,14 +211,6 @@ function ChatHeader({ className, isCCTabEnabled, isPollsEnabled, onCancel: onCan
         };
     }, []);
 
-    // Keep matchIndex in bounds whenever the match set shrinks (new query, or a message
-    // disappearing) so `matches[matchIndex]` never reads undefined downstream.
-    useEffect(() => {
-        if (matchIndex >= matches.length && matches.length > 0) {
-            dispatch(setChatSearchMatchIndex(0));
-        }
-    }, [ matches.length, matchIndex, dispatch ]);
-
     // Close the search bar if the user switches away from the Chat tab (e.g. to Polls/CC/
     // File sharing) without closing the whole panel — search only makes sense on the Chat tab.
     useEffect(() => {

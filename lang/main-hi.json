@@ -273,12 +273,6 @@
         "microphonePermission": "माइक्रोफ़ोन अनुमति प्राप्त करने में त्रुटि"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "कॉल नियंत्रण",
-            "connectedDevices": "कनेक्टेड डिवाइस:",
-            "deleteDevice": "डिवाइस हटाएँ",
-            "pairDevice": "डिवाइस जोड़ें"
-        },
         "noPermission": "अनुमति नहीं दी गई",
         "previewUnavailable": "पूर्वदर्शन अनुपलब्ध",
         "selectADevice": "डिवाइस का चयन करें",

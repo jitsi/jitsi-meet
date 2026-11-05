@@ -261,12 +261,6 @@
         "microphonePermission": "Fejl ved at få tilladelse til bruge din mikrofon"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Opkaldskontrol",
-            "connectedDevices": "Tilsluttede enheder:",
-            "deleteDevice": "Slet enhed",
-            "pairDevice": "Par enhed"
-        },
         "noPermission": "Tilladelse ikke givet",
         "previewUnavailable": "Forhåndsvisning ikke tilgængelig",
         "selectADevice": "Vælg en enhed",

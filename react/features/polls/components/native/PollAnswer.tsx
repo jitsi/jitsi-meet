@@ -41,9 +41,15 @@ const PollAnswer = (props: AbstractProps) => {
                         t('polls.by', { name: creatorName })
                     }
                     </Text>
+                    {
+                        poll.singleAnswer && <Text style = { dialogStyles.questionOwnerText as TextStyle }>
+                            { t('polls.answer.singleAnswerHint') }
+                        </Text>
+                    }
                 </View>
                 {
                     pollSaved && <IconButton
+                        accessibilityLabel = { t('polls.closeButton') }
                         onPress = { () => dispatch(removePoll(poll)) }
                         src = { IconCloseLarge } />
                 }

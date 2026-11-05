@@ -1,7 +1,11 @@
 import { batch } from 'react-redux';
 
 import { IStore } from '../app/types';
-import { CONFERENCE_JOIN_IN_PROGRESS, CONFERENCE_LEFT } from '../base/conference/actionTypes';
+import {
+    CONFERENCE_JOIN_IN_PROGRESS,
+    CONFERENCE_LEFT,
+    UPDATE_CONFERENCE_METADATA
+} from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import { IJitsiConference } from '../base/conference/reducer';
 import { SET_CONFIG } from '../base/config/actionTypes';
@@ -21,7 +25,8 @@ import {
     resetSharedVideoStatus,
     setAllowedUrlDomians,
     setSharedVideoStatus,
-    showConfirmPlayingDialog
+    showConfirmPlayingDialog,
+    stopSharedVideo
 } from './actions';
 import {
     DEFAULT_ALLOWED_URL_DOMAINS,
@@ -30,7 +35,13 @@ import {
     SHARED_VIDEO,
     VIDEO_PLAYER_PARTICIPANT_NAME
 } from './constants';
-import { isSharedVideoEnabled, isSharingStatus, isURLAllowedForSharedVideo, sendShareVideoCommand } from './functions';
+import {
+    isShareVideoDisabled,
+    isSharedVideoEnabled,
+    isSharingStatus,
+    isURLAllowedForSharedVideo,
+    sendShareVideoCommand
+} from './functions';
 import logger from './logger';
 
 
@@ -69,6 +80,15 @@ MiddlewareRegistry.register(store => next => action => {
                     return;
                 }
 
+                const videoParticipant = getParticipantById(state, value);
+
+                // The command only ever adds or removes the shared video placeholder, never another participant.
+                if (videoParticipant && videoParticipant.fakeParticipant !== FakeParticipant.SharedVideo) {
+                    logger.warn(`User with id: ${from} sent shared video command: ${sharedVideoStatus} for ${value}.`);
+
+                    return;
+                }
+
                 if (isSharingStatus(sharedVideoStatus)) {
                     // confirmShowVideo is undefined the first time we receive
                     // when confirmShowVideo is false we ignore everything except stop that resets it
@@ -102,8 +122,6 @@ MiddlewareRegistry.register(store => next => action => {
                 }
 
                 if (sharedVideoStatus === 'stop') {
-                    const videoParticipant = getParticipantById(state, value);
-
                     if (state['features/shared-video'].confirmShowVideo === false) {
                         dispatch(showWarningNotification({
                             titleKey: 'dialog.shareVideoLinkStopped',
@@ -115,9 +133,11 @@ MiddlewareRegistry.register(store => next => action => {
 
                     dispatch(hideConfirmPlayingDialog());
 
-                    dispatch(participantLeft(value, conference, {
-                        fakeParticipant: videoParticipant?.fakeParticipant
-                    }));
+                    if (videoParticipant) {
+                        dispatch(participantLeft(value, conference, {
+                            fakeParticipant: FakeParticipant.SharedVideo
+                        }));
+                    }
 
                     if (localParticipantId !== from) {
                         dispatch(resetSharedVideoStatus());
@@ -137,12 +157,38 @@ MiddlewareRegistry.register(store => next => action => {
         const { ownerId: stateOwnerId, videoUrl: statevideoUrl } = state['features/shared-video'];
 
         if (action.participant.id === stateOwnerId) {
+            const videoParticipant = statevideoUrl ? getParticipantById(state, statevideoUrl) : undefined;
+
             batch(() => {
                 dispatch(resetSharedVideoStatus());
-                dispatch(participantLeft(statevideoUrl ?? '', conference));
+
+                // The id may belong to a participant that joined after the shared video was started with it.
+                if (videoParticipant?.fakeParticipant === FakeParticipant.SharedVideo) {
+                    dispatch(participantLeft(statevideoUrl ?? '', conference, {
+                        fakeParticipant: FakeParticipant.SharedVideo
+                    }));
+                }
             });
         }
         break;
+    }
+    case UPDATE_CONFERENCE_METADATA: {
+        const result = next(action);
+        const state = getState();
+        const { ownerId, status } = state['features/shared-video'];
+
+        // A moderator restricted video sharing while the local participant shares a video,
+        // and the local participant does not have the permission for it.
+        if (isShareVideoDisabled(state)
+                && ownerId === getLocalParticipant(state)?.id
+                && isSharingStatus(status ?? '')) {
+            dispatch(stopSharedVideo());
+            dispatch(showWarningNotification({
+                titleKey: 'notify.sharedVideoRestricted'
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+        }
+
+        return result;
     }
     case SET_CONFIG:
     case SET_DYNAMIC_BRANDING_DATA: {

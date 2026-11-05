@@ -234,12 +234,6 @@
         "microphonePermission": "Нет разрешения на доступ к микрофону"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Управление вызовами",
-            "connectedDevices": "Подключенные устройства:",
-            "deleteDevice": "Удалить устройство",
-            "pairDevice": "Сопряжение устройства"
-        },
         "noPermission": "Нет доступа",
         "previewUnavailable": "Предпросмотр недоступен",
         "selectADevice": "Выбор устройства",

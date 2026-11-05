@@ -1,6 +1,8 @@
 import assert from 'assert';
 
 import { mintAsapToken } from './helpers/jwt.js';
+import { prosodyShell } from './helpers/prosody_shell.js';
+import { getSessionLive } from './helpers/test_observer.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 import { isAvailablePresence } from './helpers/xmpp_utils.js';
 
@@ -109,6 +111,147 @@ describe('mod_muc_wait_for_host', () => {
                 presence.getChild('error')?.getChild('registration-required'),
                 'error condition must be registration-required'
             );
+        });
+    });
+
+    // -------------------------------------------------------------------------
+    // Guests on the jitsi-anonymous host (no token_verification on this MUC)
+    // -------------------------------------------------------------------------
+    describe('guest on the jitsi-anonymous host', () => {
+
+        const ANON_DOMAIN = 'jitsi-anonymous.localhost';
+
+        /**
+         * Connects an anonymous client, drops its connection so the session
+         * hibernates and returns its stream management id and username.
+         *
+         * @returns {Promise<{smId: string, username: string}>}
+         */
+        async function hibernatedSession() {
+            const c = await connect({ domain: ANON_DOMAIN });
+            const smId = c.smId;
+            const username = c.jid.split('@')[0];
+
+            c.dropConnection();
+
+            return { smId,
+                username };
+        }
+
+        /**
+         * Asserts the join was held by the lobby.
+         *
+         * @param {Element} presence - The join response.
+         * @returns {void}
+         */
+        function assertBlocked(presence) {
+            assert.equal(presence.attrs.type, 'error', 'join must be rejected');
+            assert.ok(
+                presence.getChild('error')?.getChild('registration-required'),
+                'error condition must be registration-required'
+            );
+        }
+
+        it('without previd and token is blocked', async () => {
+            const r = room();
+
+            await focusJoin(r);
+
+            const guest = await connect({ domain: ANON_DOMAIN });
+
+            assertBlocked(await guest.joinRoom(r));
+        });
+
+        it('with a matching previd and no token is blocked', async () => {
+            const r = room();
+
+            await focusJoin(r);
+
+            const { smId, username } = await hibernatedSession();
+            const guest = await connect({ domain: ANON_DOMAIN,
+                params: { previd: smId } });
+
+            assert.equal(guest.jid.split('@')[0], username, 'previd must have matched the hibernating session');
+            assertBlocked(await guest.joinRoom(r));
+        });
+
+        it('with a token and no previd is blocked', async () => {
+            const r = room();
+
+            await focusJoin(r);
+
+            const guest = await connect({ domain: ANON_DOMAIN,
+                params: { token: 'not-a-jwt' } });
+
+            assertBlocked(await guest.joinRoom(r));
+        });
+
+        it('with a matching previd and a token, binding instead of resuming, is blocked', async () => {
+            const r = room();
+
+            await focusJoin(r);
+
+            const { smId, username } = await hibernatedSession();
+            const guest = await connect({ domain: ANON_DOMAIN,
+                params: { previd: smId,
+                    token: 'not-a-jwt' } });
+
+            assert.equal(guest.jid.split('@')[0], username, 'previd must have matched the hibernating session');
+            assertBlocked(await guest.joinRoom(r));
+        });
+
+        it('resuming with a valid token leaves a verified token on the session', async () => {
+            // The HS256 host would verify the RS256 token against its own secret and
+            // close the session; production has a single token VirtualHost.
+            await prosodyShell('module:unload("auth_token", "hs256.localhost")');
+
+            try {
+                const guest = await connect({ domain: ANON_DOMAIN });
+                const reconnected = guest.waitForReconnect();
+
+                guest.dropConnection({ token: mintAsapToken({ room: room().split('@')[0] }) });
+                await reconnected;
+
+                const session = await getSessionLive(guest.jid);
+
+                // What muc_wait_for_host checks before counting the session as a host.
+                assert.ok(session.auth_token, 'the token presented on resume must be kept');
+                assert.equal(session.jitsi_auth_done, true, 'the token must be marked as verified');
+            } finally {
+                await prosodyShell('module:load("auth_token", "hs256.localhost")');
+            }
+        });
+
+        it('resuming with a valid token, then joining, is admitted and made owner', async () => {
+            const r = room();
+
+            await focusJoin(r);
+
+            await prosodyShell('module:unload("auth_token", "hs256.localhost")');
+
+            // A fresh module instance has an empty public key cache, so the key is
+            // fetched while the resume is processed and the connection waits on it.
+            await prosodyShell('module:reload("auth_token", "localhost")');
+
+            try {
+                const guest = await connect({ domain: ANON_DOMAIN });
+                const reconnected = guest.waitForReconnect();
+
+                guest.dropConnection({ token: mintAsapToken({ room: r.split('@')[0] }) });
+                await reconnected;
+
+                const presence = await guest.joinRoom(r);
+
+                assert.ok(isAvailablePresence(presence), 'the resumed guest must be admitted as a host');
+
+                const update = await guest.waitForPresence(
+                    p => p.getChild('x', MUC_NS)?.getChild('item')?.attrs.affiliation === 'owner'
+                );
+
+                assert.ok(update, 'the resumed guest must be made owner');
+            } finally {
+                await prosodyShell('module:load("auth_token", "hs256.localhost")');
+            }
         });
     });
 

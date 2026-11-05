@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     ScrollView,
     Text,
@@ -37,6 +38,7 @@ interface IProps {
 }
 
 const SettingsView = ({ isInWelcomePage }: IProps) => {
+    const { t } = useTranslation();
     const { displayName } = useSelector((state: IReduxState) => state['features/base/settings']);
     const localParticipant = useSelector((state: IReduxState) => getLocalParticipant(state));
     const showModeratorSettings = useSelector((state: IReduxState) => shouldShowModeratorSettings(state));
@@ -45,6 +47,10 @@ const SettingsView = ({ isInWelcomePage }: IProps) => {
     const addBottomInset = !isInWelcomePage;
     const localParticipantId = localParticipant?.id;
     const scrollBounces = Boolean(isInWelcomePage);
+
+    const profileAccessibilityLabel = displayName
+        ? `${displayName}, ${t('toolbar.profile')}`
+        : t('toolbar.profile');
 
     if (visible !== undefined && !visible) {
         return null;
@@ -60,6 +66,8 @@ const SettingsView = ({ isInWelcomePage }: IProps) => {
                     <TouchableHighlight
 
                         /* eslint-disable react/jsx-no-bind */
+                        accessibilityLabel = { profileAccessibilityLabel }
+                        accessibilityRole = 'button'
                         onPress = { () => navigate(screen.settings.profile) }>
                         <View
                             style = { styles.profileContainer as ViewStyle }>

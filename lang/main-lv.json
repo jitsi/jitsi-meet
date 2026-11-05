@@ -297,12 +297,6 @@
         "microphonePermission": "Iegūstot mikrofona atļauju, radās kļūdas"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Zvanu kontrole",
-            "connectedDevices": "Pieslēgtās ierīces:",
-            "deleteDevice": "Dzēst ierīci",
-            "pairDevice": "Savienot ierīci pārī"
-        },
         "noPermission": "Atļauja nav piešķirta",
         "previewUnavailable": "Priekšskats nav pieejams",
         "selectADevice": "Ierīces izvēle",

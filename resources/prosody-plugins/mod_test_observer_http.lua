@@ -21,8 +21,30 @@ local jid_lib = require "util.jid";
 --     (simulates HTTP errors; mod_muc_auth_ban fails open on non-200)
 --   non_json: true → return a 200 with a plain-text body (not valid JSON)
 --     (tests the nil-check bug: json.decode returns nil, r['access'] would crash)
+--   delay: seconds to hold the response before sending it (0 = answer at once)
 -- Reset to the default (allow, 200) between tests via POST /test-observer/access-manager.
-local access_manager_state = { access = true, status = 200, non_json = false };
+local access_manager_state = { access = true, status = 200, non_json = false, delay = 0 };
+
+local function access_manager_reply()
+    if access_manager_state.status ~= 200 then
+        return { status_code = access_manager_state.status; body = "error" };
+    end
+    if access_manager_state.non_json then
+        -- Return a 200 with a non-JSON body to exercise the nil-check
+        -- bug in mod_muc_auth_ban: json.decode returns nil, and
+        -- r['access'] would crash if the module doesn't guard for nil.
+        return {
+            status_code = 200;
+            headers = { ["Content-Type"] = "text/plain" };
+            body = "not-valid-json";
+        };
+    end
+    return {
+        status_code = 200;
+        headers = { ["Content-Type"] = "application/json" };
+        body = json.encode({ access = access_manager_state.access });
+    };
+end
 
 -- Mock OTLP trace receiver for mod_trace tests. Stores every exported
 -- resource_spans payload POSTed by the module's Exporter so tests can assert
@@ -59,6 +81,13 @@ if asap_public_key then
     module:log("info", "Loaded test ASAP public key from %s", ASAP_KEY_PATH);
 else
     module:log("warn", "Test ASAP public key not found at %s; login ASAP key-server routes will 404", ASAP_KEY_PATH);
+end
+
+-- The login public key as a JWKS document, served for cache_keys_url.
+local ASAP_JWKS_PATH = "/opt/prosody-jitsi-plugins/test-asap-jwks.json";
+local asap_jwks = load_pem(ASAP_JWKS_PATH);
+if not asap_jwks then
+    module:log("warn", "Test ASAP JWKS not found at %s; the login JWKS route will 404", ASAP_JWKS_PATH);
 end
 
 local system_asap_public_key = load_pem(SYSTEM_ASAP_KEY_PATH);
@@ -147,6 +176,20 @@ module:provides("http", {
                 status_code = 200;
                 headers = { ["Content-Type"] = "application/x-pem-file" };
                 body = asap_public_key;
+            };
+        end;
+
+        -- GET /test-observer/asap-jwks.json
+        -- Returns the login public key (kid "test-asap-key") as JWKS, for the
+        -- VirtualHost's cache_keys_url.
+        ["GET /asap-jwks.json"] = function()
+            if not asap_jwks then
+                return { status_code = 404; body = "jwks not found" };
+            end
+            return {
+                status_code = 200;
+                headers = { ["Content-Type"] = "application/json" };
+                body = asap_jwks;
             };
         end;
 
@@ -425,29 +468,28 @@ module:provides("http", {
         -- access_manager_state, or a non-200 status to simulate HTTP errors.
         -- The real access manager receives `Authorization: Bearer <token>` but
         -- this mock ignores it and returns the globally configured response.
-        ["GET /access-manager"] = function()
-            if access_manager_state.status ~= 200 then
-                return { status_code = access_manager_state.status; body = "error" };
+        ["GET /access-manager"] = function(event)
+            local reply = access_manager_reply();
+            if access_manager_state.delay <= 0 then
+                return reply;
             end
-            if access_manager_state.non_json then
-                -- Return a 200 with a non-JSON body to exercise the nil-check
-                -- bug in mod_muc_auth_ban: json.decode returns nil, and
-                -- r['access'] would crash if the module doesn't guard for nil.
-                return {
-                    status_code = 200;
-                    headers = { ["Content-Type"] = "text/plain" };
-                    body = "not-valid-json";
-                };
-            end
-            return {
-                status_code = 200;
-                headers = { ["Content-Type"] = "application/json" };
-                body = json.encode({ access = access_manager_state.access });
-            };
+
+            -- Hold the response so the ban callback lands later in the
+            -- client's session setup.
+            local response = event.response;
+            module:add_timer(access_manager_state.delay, function()
+                response.status_code = reply.status_code;
+                for k, v in pairs(reply.headers or {}) do
+                    response.headers[k:lower()] = v;
+                end
+                response:send(reply.body);
+            end);
+            return true;
         end;
 
         -- POST /test-observer/access-manager
-        -- Body: { "access": true|false, "status": <http-status-code>, "non_json": true|false }
+        -- Body: { "access": true|false, "status": <http-status-code>, "non_json": true|false,
+        --         "delay": <seconds> }
         -- Configures what the mock access manager returns.
         -- Call this from tests before connecting the client under test.
         -- Call with { "access": true, "status": 200 } to reset to the default.
@@ -461,6 +503,9 @@ module:provides("http", {
             end
             if data.non_json ~= nil then
                 access_manager_state.non_json = data.non_json;
+            end
+            if data.delay ~= nil then
+                access_manager_state.delay = tonumber(data.delay) or 0;
             end
             return { status_code = 204 };
         end;
@@ -506,6 +551,7 @@ module:provides("http", {
                 headers = { ["Content-Type"] = "application/json" };
                 body = json.encode({
                     auth_token = session.auth_token,
+                    jitsi_auth_done = session._jitsi_auth_done,
                     jitsi_web_query_room = session.jitsi_web_query_room,
                     jitsi_web_query_prefix = session.jitsi_web_query_prefix,
                     jitsi_meet_room = session.jitsi_meet_room,

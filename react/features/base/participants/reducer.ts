@@ -218,6 +218,11 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         if (state.remote.has(id)) {
             newParticipant = _participant(oldParticipant, action);
             state.remote.set(id, newParticipant);
+
+            // Keep the fake-participant index on the same object as the roster (e.g. a renamed voice agent).
+            if (newParticipant.fakeParticipant && state.fakeParticipants.has(id)) {
+                state.fakeParticipants.set(id, newParticipant);
+            }
         } else if (id === state.local?.id) {
             newParticipant = state.local = _participant(state.local, action);
         }

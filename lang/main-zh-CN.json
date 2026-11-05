@@ -253,12 +253,6 @@
         "microphonePermission": "获取麦克风权限时出错"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "呼叫控制",
-            "connectedDevices": "已连接的设备：",
-            "deleteDevice": "删除设备",
-            "pairDevice": "配对设备"
-        },
         "noPermission": "未获得授权",
         "previewUnavailable": "无法预览",
         "selectADevice": "选择设备",

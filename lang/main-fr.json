@@ -264,12 +264,6 @@
         "microphonePermission": "Erreur lors de l'obtention de la permission du microphone"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Contrôle des appels",
-            "connectedDevices": "Appareils connectés",
-            "deleteDevice": "Supprimer un appareil",
-            "pairDevice": "Connecter un appareil"
-        },
         "noPermission": "Permission non accordée",
         "previewUnavailable": "Aperçu non disponible",
         "selectADevice": "Sélectionner un périphérique",

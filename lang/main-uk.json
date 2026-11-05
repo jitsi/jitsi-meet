@@ -208,12 +208,6 @@
         "microphonePermission": "Помилка отримання дозволу доступу до мікрофона"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Налаштування зв'язку",
-            "connectedDevices": "Приєднані пристрої:",
-            "deleteDevice": "Вилучити пристрій",
-            "pairDevice": "Додати пристрій Bluetooth"
-        },
         "noPermission": "Дозвіл не надано",
         "previewUnavailable": "Перегляд недоступний",
         "selectADevice": "Виберіть пристрій",

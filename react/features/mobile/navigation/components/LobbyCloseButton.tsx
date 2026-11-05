@@ -25,6 +25,7 @@ const LobbyCloseButton = React.memo(() => {
     if (Platform.OS === 'ios') {
         return (
             <HeaderNavigationButton
+                accessibilityLabel = { t('dialog.close') }
                 id = { 'close-screen-button' }
                 label = { t('dialog.close') }
                 onPress = { goBack } />
@@ -33,6 +34,7 @@ const LobbyCloseButton = React.memo(() => {
 
     return (
         <HeaderNavigationButton
+            accessibilityLabel = { t('dialog.close') }
             id = { 'close-screen-button' }
             onPress = { goBack }
             src = { IconCloseLarge } />

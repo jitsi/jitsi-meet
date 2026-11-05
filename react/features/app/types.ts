@@ -85,7 +85,7 @@ import { IVideoQualityPersistedState, IVideoQualityState } from '../video-qualit
 import { IVideoSipGW } from '../videosipgw/reducer';
 import { IVirtualBackground } from '../virtual-background/reducer';
 import { IVisitorsState } from '../visitors/reducer';
-import { IWebHid } from '../web-hid/reducer';
+import { IVoiceAgentsState } from '../voice-agents/reducer';
 import { IWhiteboardState } from '../whiteboard/reducer';
 
 export interface IStore {
@@ -182,7 +182,7 @@ export interface IReduxState {
     'features/videosipgw': IVideoSipGW;
     'features/virtual-background': IVirtualBackground;
     'features/visitors': IVisitorsState;
-    'features/web-hid': IWebHid;
+    'features/voice-agents': IVoiceAgentsState;
     'features/whiteboard': IWhiteboardState;
 }
 

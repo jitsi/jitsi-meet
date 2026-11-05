@@ -23,6 +23,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     audioTranslationEnabled: boolean;
 
     /**
+     * Whether the user has selected that only moderators, and the participants they move, can join breakout rooms.
+     */
+    breakoutRoomJoinWithPermissionsEnabled: boolean;
+
+    /**
      * Whether the user has selected the chat with permissions feature to be enabled.
      */
     chatWithPermissionsEnabled: boolean;
@@ -68,9 +73,26 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     privateChatWithPermissionsEnabled: boolean;
 
     /**
+     * Whether the user has selected to restrict video sharing to the participants that have the permission for it.
+     */
+    sharedVideoWithPermissionsEnabled: boolean;
+
+    /**
      * Whether the audio-translation room toggle should be shown (i.e. the feature is deployed).
      */
     showAudioTranslation: boolean;
+
+    /**
+     * Whether the breakout room join restriction setting should be shown (i.e. it is enabled in the config and
+     * breakout rooms are supported).
+     */
+    showBreakoutRoomJoinWithPermissions: boolean;
+
+    /**
+     * Whether the shared video restriction setting should be shown (i.e. it is enabled in the config,
+     * video sharing is enabled and the room does not make every participant a moderator).
+     */
+    showSharedVideoWithPermissions: boolean;
 
     /**
      * Whether or not the user has selected the Start Audio Muted feature to be
@@ -138,6 +160,8 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
         this._onFollowMeRecorderEnabledChanged = this._onFollowMeRecorderEnabledChanged.bind(this);
         this._onChatWithPermissionsChanged = this._onChatWithPermissionsChanged.bind(this);
         this._onPrivateChatWithPermissionsChanged = this._onPrivateChatWithPermissionsChanged.bind(this);
+        this._onSharedVideoWithPermissionsChanged = this._onSharedVideoWithPermissionsChanged.bind(this);
+        this._onBreakoutRoomJoinWithPermissionsChanged = this._onBreakoutRoomJoinWithPermissionsChanged.bind(this);
         this._onAudioTranslationEnabledChanged = this._onAudioTranslationEnabledChanged.bind(this);
     }
 
@@ -240,6 +264,28 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
     }
 
     /**
+     * Callback invoked to select if video sharing with permissions should be activated.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onSharedVideoWithPermissionsChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
+        super._onChange({ sharedVideoWithPermissionsEnabled: checked });
+    }
+
+    /**
+     * Callback invoked to select if joining breakout rooms with permissions should be activated.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onBreakoutRoomJoinWithPermissionsChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
+        super._onChange({ breakoutRoomJoinWithPermissionsEnabled: checked });
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -249,6 +295,7 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
         const {
             audioModerationEnabled,
             audioTranslationEnabled,
+            breakoutRoomJoinWithPermissionsEnabled,
             chatWithPermissionsEnabled,
             disableReactionsModeration,
             followMeActive,
@@ -257,7 +304,10 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
             followMeRecorderEnabled,
             hideChatWithPermissions,
             privateChatWithPermissionsEnabled,
+            sharedVideoWithPermissionsEnabled,
             showAudioTranslation,
+            showSharedVideoWithPermissions,
+            showBreakoutRoomJoinWithPermissions,
             startAudioMuted,
             startVideoMuted,
             startReactionsMuted,
@@ -322,6 +372,20 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
                         label = { t('settings.privateChatWithPermissions') }
                         name = 'private-chat-with-permissions'
                         onChange = { this._onPrivateChatWithPermissionsChanged } /> }
+                { showSharedVideoWithPermissions
+                    && <Checkbox
+                        checked = { sharedVideoWithPermissionsEnabled }
+                        className = { classes.checkbox }
+                        label = { t('settings.sharedVideoWithPermissions') }
+                        name = 'shared-video-with-permissions'
+                        onChange = { this._onSharedVideoWithPermissionsChanged } /> }
+                { showBreakoutRoomJoinWithPermissions
+                    && <Checkbox
+                        checked = { breakoutRoomJoinWithPermissionsEnabled }
+                        className = { classes.checkbox }
+                        label = { t('settings.breakoutRoomJoinWithPermissions') }
+                        name = 'breakout-room-join-with-permissions'
+                        onChange = { this._onBreakoutRoomJoinWithPermissionsChanged } /> }
                 { showAudioTranslation
                     && <Checkbox
                         checked = { audioTranslationEnabled }

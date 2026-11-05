@@ -90,6 +90,7 @@ import {
     hasRaisedHand,
     isLocalParticipantModerator,
     isScreenShareParticipant,
+    isVoiceAgentParticipant,
     isWhiteboardParticipant
 } from './functions';
 import logger from './logger';
@@ -304,18 +305,21 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case PARTICIPANT_JOINED: {
-        // Do not play sounds when a screenshare or whiteboard participant tile is created for screenshare.
+        // Do not play sounds when a screenshare or whiteboard participant tile is created for screenshare, nor for
+        // agent tiles, which voice-agents announces itself.
         (!isScreenShareParticipant(action.participant)
             && !isWhiteboardParticipant(action.participant)
+            && !isVoiceAgentParticipant(action.participant)
         ) && _maybePlaySounds(store, action);
 
         return _participantJoinedOrUpdated(store, next, action);
     }
 
     case PARTICIPANT_LEFT: {
-        // Do not play sounds when a tile for screenshare or whiteboard is removed.
+        // Do not play sounds when a tile for screenshare, whiteboard or an agent is removed.
         (!isScreenShareParticipant(action.participant)
             && !isWhiteboardParticipant(action.participant)
+            && !isVoiceAgentParticipant(action.participant)
         ) && _maybePlaySounds(store, action);
 
         break;

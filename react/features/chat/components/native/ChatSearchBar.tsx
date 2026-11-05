@@ -91,6 +91,8 @@ const ChatSearchBar = ({ t }: IProps) => {
                             : t('chat.search.noResults') }
                     </Text>
                     <TouchableOpacity
+                        accessibilityLabel = { t('chat.search.previous') }
+                        accessibilityRole = 'button'
                         disabled = { !hasMatches }
                         onPress = { _onPrevious }
                         style = { styles.searchBarNavButton as ViewStyle }>
@@ -100,6 +102,8 @@ const ChatSearchBar = ({ t }: IProps) => {
                             src = { IconArrowUp } />
                     </TouchableOpacity>
                     <TouchableOpacity
+                        accessibilityLabel = { t('chat.search.next') }
+                        accessibilityRole = 'button'
                         disabled = { !hasMatches }
                         onPress = { _onNext }
                         style = { styles.searchBarNavButton as ViewStyle }>

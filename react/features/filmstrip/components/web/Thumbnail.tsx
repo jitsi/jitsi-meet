@@ -22,6 +22,7 @@ import {
     hasRaisedHand,
     isLocalScreenshareParticipant,
     isScreenShareParticipant,
+    isVoiceAgentParticipant,
     isWhiteboardParticipant
 } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
@@ -64,6 +65,7 @@ import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';
 import VirtualScreenshareParticipant from './VirtualScreenshareParticipant';
+import VoiceAgentIndicator from './VoiceAgentIndicator';
 
 /**
  * Module-scoped so the second-screen trigger's click handler stays stable
@@ -1024,7 +1026,8 @@ class Thumbnail extends Component<IProps, IState> {
         const video = _videoTrack && <VideoTrack
             className = { local ? videoTrackClassName : '' }
             eventHandlers = { videoEventListeners }
-            id = { local ? 'localVideo_container' : `remoteVideo_${videoTrackId || ''}` }
+            id = { local ? 'localVideo_container'
+                : isVoiceAgentParticipant(_participant) ? `participant_${id}` : `remoteVideo_${videoTrackId || ''}` }
             muted = { local ? undefined : true }
             style = { styles.video }
             videoTrack = { _videoTrack } />;
@@ -1088,7 +1091,8 @@ class Thumbnail extends Component<IProps, IState> {
                         _thumbnailType === THUMBNAIL_TYPE.TILE && 'tile-view-mode'
                     ) }>
                     <ThumbnailTopIndicators
-                        disableConnectionIndicator = { isWhiteboardParticipant(_participant) }
+                        disableConnectionIndicator = { isWhiteboardParticipant(_participant)
+                            || isVoiceAgentParticipant(_participant) }
                         hidePopover = { this._hidePopover }
                         indicatorsClassName = { classes.indicatorsBackground }
                         isHovered = { isHovered }
@@ -1099,6 +1103,7 @@ class Thumbnail extends Component<IProps, IState> {
                         thumbnailType = { _thumbnailType } />
                 </div>
                 {_shouldDisplayTintBackground && <div className = { classes.tintBackground } />}
+                {isVoiceAgentParticipant(_participant) && <VoiceAgentIndicator />}
                 {!_gifSrc && this._renderAvatar(styles.avatar) }
                 { !local && (
                     <div className = 'presence-label-container'>
@@ -1150,8 +1155,11 @@ class Thumbnail extends Component<IProps, IState> {
             return this._renderParticipant(true);
         }
 
+        // A voice agent is a participant without a transport (a video source may follow later), so it takes the
+        // regular tile like the whiteboard does; the fake-participant tile is shared video's.
         if (fakeParticipant
             && !isWhiteboardParticipant(_participant)
+            && !isVoiceAgentParticipant(_participant)
             && !_isVirtualScreenshareParticipant
         ) {
             return this._renderFakeParticipant();

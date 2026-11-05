@@ -34,6 +34,8 @@ const GeneralSection = () => {
         navigate(screen.settings.language);
     }, [ navigate, screen ]);
 
+    const languageAccessibilityLabel = `${t('settings.language')}, ${t(`languages:${language}`)}`;
+
     return (
         <FormSection>
             <FormRow label = 'videothumbnail.hideSelfView'>
@@ -43,7 +45,10 @@ const GeneralSection = () => {
             </FormRow>
             <FormRow label = 'settings.language'>
                 <View style = { styles.languageButtonContainer as ViewStyle }>
-                    <TouchableHighlight onPress = { navigateToLanguageSelect }>
+                    <TouchableHighlight
+                        accessibilityLabel = { languageAccessibilityLabel }
+                        accessibilityRole = 'button'
+                        onPress = { navigateToLanguageSelect }>
                         <View style = { styles.languageButton as ViewStyle }>
                             <Text
                                 style = { styles.languageText }>{t(`languages:${language}`)}</Text>

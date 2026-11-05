@@ -41,6 +41,12 @@ interface ICheckboxProps {
      * Change callback.
      */
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+
+    /**
+     * The type of the input. A radio input looks the same, with a round box, and lets the user choose only one
+     * of the inputs that share its name.
+     */
+    type?: 'checkbox' | 'radio';
 }
 
 const useStyles = makeStyles()(theme => {
@@ -71,7 +77,7 @@ const useStyles = makeStyles()(theme => {
             position: 'relative',
             cursor: 'pointer',
 
-            '& input[type="checkbox"]': {
+            '& input[type="checkbox"], & input[type="radio"]': {
                 appearance: 'none',
                 backgroundColor: 'transparent',
                 margin: '3px',
@@ -117,6 +123,10 @@ const useStyles = makeStyles()(theme => {
                 }
             },
 
+            '& input[type="radio"], & input[type="radio"]::before': {
+                borderRadius: '50%'
+            },
+
             '& .checkmark': {
                 position: 'absolute',
                 left: '3px',
@@ -129,7 +139,7 @@ const useStyles = makeStyles()(theme => {
                 width: '40px',
                 height: '40px',
 
-                '& input[type="checkbox"]': {
+                '& input[type="checkbox"], & input[type="radio"]': {
                     width: '24px',
                     height: '24px',
 
@@ -155,7 +165,8 @@ const Checkbox = ({
     id,
     label,
     name,
-    onChange
+    onChange,
+    type = 'checkbox'
 }: ICheckboxProps) => {
     const { classes: styles, cx, theme } = useStyles();
     const isMobile = isMobileBrowser();
@@ -169,7 +180,7 @@ const Checkbox = ({
                     id = { id }
                     name = { name }
                     onChange = { onChange }
-                    type = 'checkbox' />
+                    type = { type } />
                 <Icon
                     aria-hidden = { true }
                     className = 'checkmark'

@@ -70,9 +70,11 @@ local function load_config()
         recording = true;
         transcription = true;
         ['outbound-call'] = true;
+        ['sip-outbound-call'] = true;
         ['create-polls'] = true;
         ['send-groupchat'] = true;
         ['send-private-message'] = true;
+        ['share-video'] = true;
         flip = true;
         ['live-translation'] = true;
         ['live-translation-subscribe'] = true;

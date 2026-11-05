@@ -91,6 +91,7 @@ class Whiteboard extends PureComponent<IProps> {
             if (Platform.OS === 'ios') {
                 return (
                     <HeaderNavigationButton
+                        accessibilityLabel = { t('dialog.close') }
                         label = { t('dialog.close') }
                         onPress = { goBack } />
                 );
@@ -98,6 +99,7 @@ class Whiteboard extends PureComponent<IProps> {
 
             return (
                 <HeaderNavigationButton
+                    accessibilityLabel = { t('dialog.close') }
                     onPress = { goBack }
                     src = { IconCloseLarge } />
             );

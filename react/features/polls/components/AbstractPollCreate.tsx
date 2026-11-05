@@ -34,6 +34,9 @@ export type AbstractProps = InputProps & {
     removeAnswer: (index: number) => void;
     setAnswer: (index: number, value: IAnswerData) => void;
     setQuestion: (question: string) => void;
+    setSingleAnswer: (singleAnswer: boolean) => void;
+    showSingleAnswer: boolean;
+    singleAnswer: boolean;
     t: Function;
 };
 
@@ -85,6 +88,11 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
     const [ question, setQuestion ] = useState(questionResult);
 
     const [ answers, setAnswers ] = useState(answerResults);
+
+    const [ singleAnswer, setSingleAnswer ] = useState(Boolean(editingPoll?.[1].singleAnswer));
+
+    const showSingleAnswer = useSelector(
+        (state: IReduxState) => Boolean(state['features/base/config'].showPollSingleAnswerSetting));
 
     const setAnswer = useCallback((i: number, answer: IAnswerData) => {
         setAnswers(currentAnswers => {
@@ -144,6 +152,7 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
             lastVote: null,
             question,
             answers: filteredAnswers,
+            singleAnswer,
             saved: true,
             editing: false,
             pollId: editingPoll ? editingPoll[0] : pollId
@@ -153,7 +162,7 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
 
         setCreateMode(false);
 
-    }, [ conference, question, answers ]);
+    }, [ conference, question, answers, singleAnswer ]);
 
     // Check if the poll create form can be submitted i.e. if the send button should be disabled.
     const isSubmitDisabled
@@ -175,6 +184,9 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
         setAnswer = { setAnswer }
         setCreateMode = { setCreateMode }
         setQuestion = { setQuestion }
+        setSingleAnswer = { setSingleAnswer }
+        showSingleAnswer = { showSingleAnswer }
+        singleAnswer = { singleAnswer }
         t = { t } />);
 
 };

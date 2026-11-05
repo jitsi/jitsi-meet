@@ -6,6 +6,7 @@ import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
 import { IconArrowLeft } from '../../../../base/icons/svg';
 import Button from '../../../../base/ui/components/web/Button';
+import { onActivationKey } from '../../../../base/ui/functions.web';
 import { getCountryCodeFromPhone } from '../../../utils';
 import Label from '../Label';
 
@@ -141,7 +142,10 @@ function DialinDialog(props: IProps) {
             <div>
                 <span
                     className = 'prejoin-dialog-dialin-link'
-                    onClick = { onSmallTextClick }>
+                    onClick = { onSmallTextClick }
+                    onKeyDown = { onActivationKey(() => onSmallTextClick()) }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     {t('prejoin.viewAllNumbers')}
                 </span>
             </div>

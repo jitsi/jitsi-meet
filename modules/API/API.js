@@ -67,7 +67,12 @@ import {
     removeBreakoutRoom,
     sendParticipantToRoom
 } from '../../react/features/breakout-rooms/actions';
-import { getBreakoutRooms, getRoomsInfo } from '../../react/features/breakout-rooms/functions';
+import {
+    getBreakoutRooms,
+    getMainRoom,
+    getRoomsInfo,
+    isBreakoutRoomJoinAllowed
+} from '../../react/features/breakout-rooms/functions';
 import {
     sendMessage,
     setPrivateMessageRecipient,
@@ -102,7 +107,7 @@ import {
 import { answerKnockingParticipant, toggleLobbyMode } from '../../react/features/lobby/actions';
 import { getLobbyEnabled } from '../../react/features/lobby/functions';
 import { setSecondScreen } from '../../react/features/multi-screen/actions.web';
-import { setNoiseSuppressionEnabled } from '../../react/features/noise-suppression/actions';
+import { setNoiseSuppressionEnabled, toggleNoiseSuppression } from '../../react/features/noise-suppression/actions';
 import { hideNotification, showNotification } from '../../react/features/notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../react/features/notifications/constants';
 import {
@@ -146,6 +151,7 @@ import { muteAllParticipants, muteRemote } from '../../react/features/video-menu
 import { setVideoQuality } from '../../react/features/video-quality/actions';
 import { toggleBackgroundEffect, toggleBlurredBackgroundEffect } from '../../react/features/virtual-background/actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../react/features/virtual-background/constants';
+import { allowVoiceAgent, declineVoiceAgent } from '../../react/features/voice-agents/actions';
 import { toggleWhiteboard } from '../../react/features/whiteboard/actions.web';
 import { getJitsiMeetTransport } from '../transport';
 
@@ -233,6 +239,17 @@ function initCommands() {
         'grant-recording-consent': unmute => {
             unmute ? APP.store.dispatch(grantRecordingConsentAndUnmute())
                 : APP.store.dispatch(grantRecordingConsent());
+        },
+        'grant-voice-agent-consent': (id, allow = true) => {
+            const { agents, consent } = APP.store.getState()['features/voice-agents'];
+
+            // An id that is not a present agent decides nothing (and must not touch an open dialog).
+            if (id && !Object.hasOwn(agents, id)) {
+                return;
+            }
+            const ids = id ? [ id ] : Object.keys(agents).filter(agentId => consent[agentId] !== true);
+
+            ids.forEach(agentId => APP.store.dispatch(allow ? allowVoiceAgent(agentId) : declineVoiceAgent(agentId)));
         },
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
@@ -552,6 +569,9 @@ function initCommands() {
         },
         'set-noise-suppression-enabled': (options = {}) => {
             APP.store.dispatch(setNoiseSuppressionEnabled(options.enabled));
+        },
+        'toggle-noise-suppression': () => {
+            APP.store.dispatch(toggleNoiseSuppression());
         },
         'toggle-subtitles': () => {
             APP.store.dispatch(toggleRequestingSubtitles());
@@ -961,6 +981,16 @@ function initCommands() {
             APP.store.dispatch(closeBreakoutRoom(roomId));
         },
         'join-breakout-room': roomId => {
+            const state = APP.store.getState();
+            const room = roomId ? getBreakoutRooms(state)[roomId.split('@')[0]] : getMainRoom(state);
+
+            // The server rejects a join that is not allowed as well.
+            if (!isBreakoutRoomJoinAllowed(state, room)) {
+                logger.error('Joining breakout rooms is restricted to the rooms that a moderator assigns');
+
+                return;
+            }
+
             APP.store.dispatch(moveToRoom(roomId));
         },
         'send-participant-to-room': (participantId, roomId) => {
@@ -2157,6 +2187,21 @@ class API {
     }
 
     /**
+     * Notify external application that the voice-agent consent dialog was opened or closed.
+     *
+     * @param {boolean} open - Whether the dialog is open.
+     * @param {string} id - The agent the dialog is about.
+     * @returns {void}
+     */
+    notifyVoiceAgentConsentDialogOpen(open, id) {
+        this._sendEvent({
+            name: 'voice-agent-consent-dialog-open',
+            id,
+            open
+        });
+    }
+
+    /**
      * Notify external application of the current meeting requiring a password
      * to join.
      *
@@ -2670,6 +2715,19 @@ class API {
     notifyLowBandwidthModeChanged(enabled) {
         this._sendEvent({
             name: 'low-bandwidth-mode-changed',
+            enabled
+        });
+    }
+
+    /**
+     * Notify the external application (if API is enabled) when noise suppression is enabled or disabled.
+     *
+     * @param {boolean} enabled - Whether noise suppression is enabled or not.
+     * @returns {void}
+     */
+    notifyNoiseSuppressionChanged(enabled) {
+        this._sendEvent({
+            name: 'noise-suppression-changed',
             enabled
         });
     }

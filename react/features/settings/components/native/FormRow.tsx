@@ -3,6 +3,7 @@ import { WithTranslation } from 'react-i18next';
 import { Text, View, ViewStyle } from 'react-native';
 
 import { translate } from '../../../base/i18n/functions';
+import Switch from '../../../base/ui/components/native/Switch';
 
 import styles, { ANDROID_UNDERLINE_COLOR, PLACEHOLDER_COLOR } from './styles';
 
@@ -93,24 +94,33 @@ class FormRow extends Component<IProps> {
      *
      * Currently tested/supported field types:
      *     - TextInput
-     *     - Switch (needs no addition props ATM).
+     *     - Switch (receives accessibilityLabel derived from the row label).
      *
      * @param {Object} field - The field (child) component.
      * @private
      * @returns {Object}
      */
     _getDefaultFieldProps(field?: React.ReactElement) {
+        const { label, layout, t } = this.props;
+        const accessibilityLabel = field?.props?.accessibilityLabel ?? t(label);
+
         if (field?.type) { // @ts-ignore
             switch (field.type.displayName) {
             case 'TextInput':
                 return {
+                    accessibilityLabel,
                     placeholderTextColor: PLACEHOLDER_COLOR,
                     style: [
                         styles.textInputField,
-                        this.props.layout === 'column' ? styles.textInputFieldColumn : undefined
+                        layout === 'column' ? styles.textInputFieldColumn : undefined
                     ],
                     underlineColorAndroid: ANDROID_UNDERLINE_COLOR
                 };
+            }
+
+            // Native Switch has no displayName, so compare by reference
+            if (field.type === Switch) {
+                return { accessibilityLabel };
             }
         }
 

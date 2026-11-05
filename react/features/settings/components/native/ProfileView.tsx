@@ -76,6 +76,7 @@ const ProfileView = ({ isInWelcomePage }: {
 
     const headerLeft = () => (
         <HeaderNavigationButton
+            accessibilityLabel = { t('dialog.Back') }
             color = { BaseThemeNative.palette.link01 }
             onPress = { goBack }
             src = { IconArrowLeft }
@@ -87,6 +88,7 @@ const ProfileView = ({ isInWelcomePage }: {
         if (isAutenticated) {
             return (
                 <HeaderNavigationButton
+                    accessibilityLabel = { t('toolbar.logout') }
                     label = { t('toolbar.logout') }
                     onPress = { onLogout }
                     style = { styles.logBtn }
@@ -96,6 +98,7 @@ const ProfileView = ({ isInWelcomePage }: {
 
         return (
             <HeaderNavigationButton
+                accessibilityLabel = { t('toolbar.login') }
                 label = { t('toolbar.login') }
                 onPress = { onLogin }
                 style = { styles.logBtn }

@@ -1,6 +1,8 @@
 import assert from 'assert';
+import { Buffer } from 'buffer';
+import http from 'http';
 
-import { mintAsapToken, mintSystemToken } from './helpers/jwt.js';
+import { mintAsapToken, mintSystemToken, mintToken } from './helpers/jwt.js';
 import { getRoomState, kickParticipant } from './helpers/test_observer.js';
 import { createXmppClient, joinWithFocus } from './helpers/xmpp_client.js';
 
@@ -22,6 +24,41 @@ async function createRoom() {
 
     return { roomJid,
         focus };
+}
+
+/**
+ * Sends a kick request to the endpoint served on the given VirtualHost.
+ * fetch() cannot override the Host header, which Prosody routes HTTP by.
+ *
+ * @param {string} host - VirtualHost to address (Host header).
+ * @param {string} roomJid - Room JID.
+ * @param {string} participantId - Occupant nick to kick.
+ * @param {string} token - Bearer token.
+ * @returns {Promise<number>} The HTTP status.
+ */
+function kickOnHost(host, roomJid, participantId, token) {
+    const body = JSON.stringify({ participantId });
+
+    return new Promise((resolve, reject) => {
+        const req = http.request({
+            host: 'localhost',
+            port: 5280,
+            method: 'PUT',
+            path: `/kick-participant?room=${encodeURIComponent(roomJid.split('@')[0])}`,
+            headers: {
+                Host: host,
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(body),
+                Authorization: `Bearer ${token}`
+            }
+        }, res => {
+            res.resume();
+            res.on('end', () => resolve(res.statusCode));
+        });
+
+        req.on('error', reject);
+        req.end(body);
+    });
 }
 
 /**
@@ -83,6 +120,37 @@ describe('mod_muc_kick_participant', () => {
             } finally {
                 await disconnectAll(focus);
             }
+        });
+
+        // hs256.localhost has only app_secret, so its token settings default to
+        // HS256; the module must still verify the RS256 system tokens.
+        describe('on a host with only app_secret', () => {
+
+            it('accepts a system token', async () => {
+                const { roomJid, focus } = await createRoom();
+
+                try {
+                    const status = await kickOnHost('hs256.localhost', roomJid, 'no-such-occupant', mintSystemToken());
+
+                    assert.strictEqual(status, 404,
+                        'system token must pass verification and reach the occupant lookup');
+                } finally {
+                    await disconnectAll(focus);
+                }
+            });
+
+            it('returns 403 for a token signed with the host app_secret', async () => {
+                const { roomJid, focus } = await createRoom();
+
+                try {
+                    const status = await kickOnHost('hs256.localhost', roomJid, 'focus', mintToken({ room: '*' }));
+
+                    assert.strictEqual(status, 403);
+                } finally {
+                    await disconnectAll(focus);
+                }
+            });
+
         });
 
     });

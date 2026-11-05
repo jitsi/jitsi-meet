@@ -4,12 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { createBreakoutRoomsEvent } from '../../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../../analytics/functions';
+import { IReduxState } from '../../../../../app/types';
 import { openDialog } from '../../../../../base/dialog/actions';
 import { IconCloseLarge, IconEdit, IconRingGroup } from '../../../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import ContextMenu from '../../../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../../../base/ui/components/web/ContextMenuItemGroup';
 import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../../../../breakout-rooms/actions';
+import { isBreakoutRoomJoinAllowed } from '../../../../../breakout-rooms/functions';
 import { IRoom } from '../../../../../breakout-rooms/types';
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 import { isBreakoutRoomRenameAllowed } from '../../../../functions';
@@ -57,6 +59,7 @@ export const RoomContextMenu = ({
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const _isBreakoutRoomRenameAllowed = useSelector(isBreakoutRoomRenameAllowed);
     const _overflowDrawer = useSelector(showOverflowDrawer);
+    const joinAllowed = useSelector((state: IReduxState) => isBreakoutRoomJoinAllowed(state, room));
 
     const onJoinRoom = useCallback(() => {
         sendAnalytics(createBreakoutRoomsEvent('join'));
@@ -81,7 +84,7 @@ export const RoomContextMenu = ({
     const isRoomEmpty = !(room?.participants && Object.keys(room.participants).length > 0);
 
     const actions = [
-        _overflowDrawer ? {
+        _overflowDrawer && joinAllowed ? {
             accessibilityLabel: t('breakoutRooms.actions.join'),
             icon: IconRingGroup,
             onClick: onJoinRoom,

@@ -133,10 +133,8 @@ function initGlobalKeyboardShortcuts(dispatch: IStore['dispatch']) {
         for (let num = 1; num < 10; num++) {
             dispatch(registerShortcut({
                 character: `${num}`,
-
-                // only show help hint for the first shortcut
-                helpCharacter: num === 1 ? '1-9' : undefined,
-                helpDescription: num === 1 ? 'keyboardShortcuts.focusRemote' : undefined,
+                helpCharacter: '1-9',
+                helpDescription: 'keyboardShortcuts.focusRemote',
                 handler: () => {
                     dispatch(clickOnVideo(num));
                 }

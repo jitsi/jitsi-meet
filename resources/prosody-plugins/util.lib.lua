@@ -31,17 +31,24 @@ local escaped_muc_domain_prefix = muc_domain_prefix:gsub("%p", "%%%1");
 -- (e.g. extract 'foo' from 'conference.foo.example.com')
 local target_subdomain_pattern = "^"..escaped_muc_domain_prefix.."%.([^%.]+)%."..escaped_muc_domain_base;
 
--- table to store all incoming iqs without roomname in it, like discoinfo to the muc component
-local roomless_iqs = {};
-
 local OUTBOUND_SIP_JIBRI_PREFIXES = { 'outbound-sip-jibri@', 'sipjibriouta@', 'sipjibrioutb@' };
 local INBOUND_SIP_JIBRI_PREFIXES = { 'inbound-sip-jibri@', 'sipjibriina@', 'sipjibriina@' };
 local RECORDER_PREFIXES = module:get_option_inherited_set('recorder_prefixes', { 'recorder@recorder.', 'jibria@recorder.', 'jibrib@recorder.' });
 local TRANSCRIBER_PREFIXES = module:get_option_inherited_set('transcriber_prefixes', { 'transcriber@recorder.', 'transcribera@recorder.', 'transcriberb@recorder.' });
 
-local split_subdomain_cache = cache.new(1000);
-local extract_subdomain_cache = cache.new(1000);
-local internal_room_jid_cache = cache.new(1000);
+-- The JID caches are looked up for every stanza the MUC domain mapper rewrites and hold about one entry per
+-- session on the shard, so they must be larger than the number of concurrent sessions; when they are smaller,
+-- entries are evicted before they are used again and every stanza pays for the split and match again.
+local muc_mapper_cache_size = module:get_option_number("muc_mapper_cache_size", 10000);
+
+local split_subdomain_cache = cache.new(muc_mapper_cache_size);
+local extract_subdomain_cache = cache.new(muc_mapper_cache_size);
+local internal_room_jid_cache = cache.new(muc_mapper_cache_size);
+
+-- IQs sent to a host-only virtual MUC address (e.g. disco#info to conference.foo.example.com), so that the reply from
+-- the real MUC host can be given the virtual address back. Keyed by the requester's full JID and the IQ id, which
+-- is what the reply is addressed with.
+local roomless_iqs = cache.new(muc_mapper_cache_size);
 
 local moderated_subdomains = module:get_option_set("allowners_moderated_subdomains", {})
 local moderated_rooms = module:get_option_set("allowners_moderated_rooms", {})
@@ -82,8 +89,13 @@ local function room_jid_match_rewrite(room_jid, stanza)
         -- module:log("debug", "No room name provided so rewriting only host 'to' %s", room_jid);
         new_host, new_resource = muc_domain, resource;
 
-        if (stanza and stanza.attr and stanza.attr.id) then
-            roomless_iqs[stanza.attr.id] = stanza.attr.to;
+        -- Only a request addressed to the bare host is remembered, the reply to it comes from muc_domain itself
+        if stanza and stanza.name == 'iq' and not resource then
+            local attr = stanza.attr;
+            local type = attr.type;
+            if (type == 'get' or type == 'set') and attr.to == room_jid and attr.id and attr.from then
+                roomless_iqs:set(attr.from..'\0'..attr.id, room_jid);
+            end
         end
     end
 
@@ -92,11 +104,18 @@ end
 
 -- Utility function to check and convert a room JID from real [foo]room1@muc.example.com to virtual room1@muc.foo.example.com
 local function internal_room_jid_match_rewrite(room_jid, stanza)
-    -- first check for roomless_iqs
-    if (stanza and stanza.attr and stanza.attr.id and roomless_iqs[stanza.attr.id]) then
-        local result = roomless_iqs[stanza.attr.id];
-        roomless_iqs[stanza.attr.id] = nil;
-        return result;
+    -- a reply from the real MUC host to an IQ sent to a host-only virtual MUC address
+    if room_jid == muc_domain and stanza and stanza.name == 'iq' then
+        local attr = stanza.attr;
+        local type = attr.type;
+        if (type == 'result' or type == 'error') and attr.id and attr.to then
+            local key = attr.to..'\0'..attr.id;
+            local result = roomless_iqs:get(key);
+            if result then
+                roomless_iqs:set(key, nil);
+                return result;
+            end
+        end
     end
 
     local ret = internal_room_jid_cache:get(room_jid);

@@ -5,11 +5,13 @@ import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import {
     getLocalParticipant,
-    getParticipantByIdOrUndefined
+    getParticipantByIdOrUndefined,
+    isVoiceAgentParticipant
 } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import FakeParticipantContextMenu from '../../../video-menu/components/web/FakeParticipantContextMenu';
 import ParticipantContextMenu from '../../../video-menu/components/web/ParticipantContextMenu';
+import VoiceAgentContextMenu from '../../../video-menu/components/web/VoiceAgentContextMenu';
 
 interface IProps {
 
@@ -105,6 +107,10 @@ class MeetingParticipantContextMenu extends Component<IProps> {
             participant: _participant,
             thumbnailMenu: false
         };
+
+        if (isVoiceAgentParticipant(_participant)) {
+            return <VoiceAgentContextMenu { ...props } />;
+        }
 
         if (_participant?.fakeParticipant) {
             return (

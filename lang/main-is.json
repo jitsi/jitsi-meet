@@ -232,12 +232,6 @@
         "microphonePermission": "Villa við að fá heimild fyrir hljóðnema"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Stýring símtala",
-            "connectedDevices": "Tengd tæki:",
-            "deleteDevice": "Eyða tæki",
-            "pairDevice": "Para tæki"
-        },
         "noPermission": "Heimild ekki veitt",
         "previewUnavailable": "Forskoðun ekki tiltæk",
         "selectADevice": "Veldu tæki",

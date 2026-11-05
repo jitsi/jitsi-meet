@@ -1,6 +1,8 @@
 import { IStateful } from '../base/app/types';
 import { IJitsiConference } from '../base/conference/reducer';
-import { getFakeParticipants } from '../base/participants/functions';
+import { MEET_FEATURES } from '../base/jwt/constants';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
+import { getFakeParticipants, getLocalParticipant } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 
 import {
@@ -109,6 +111,58 @@ export function isSharedVideoEnabled(stateful: IStateful) {
     const { disableThirdPartyRequests = false } = state['features/base/config'];
 
     return !disableThirdPartyRequests;
+}
+
+/**
+ * Returns true if the room restricts video sharing and the local participant
+ * does not have the permission for it.
+ *
+ * The restriction is read from the room metadata, which a moderator toggles at
+ * runtime. The server applies the same check in mod_filter_messages: a
+ * participant without the share-video permission is blocked, the same as for
+ * the chat restrictions. The server pushes the default permissions of a
+ * participant that it promotes to moderator, so this selector follows a promotion.
+ *
+ * @param {IStateful} stateful - The redux store or {@code getState} function.
+ * @returns {boolean}
+ */
+export function isShareVideoDisabled(stateful: IStateful) {
+    const state = toState(stateful);
+
+    if (!state['features/shared-video'].sharedVideoRestricted) {
+        return false;
+    }
+
+    return !isJwtFeatureEnabled(state, MEET_FEATURES.SHARE_VIDEO, false);
+}
+
+/**
+ * Returns true if the local participant may share a video: video sharing is
+ * enabled and the room does not restrict it for the local participant.
+ *
+ * @param {IStateful} stateful - The redux store or {@code getState} function.
+ * @returns {boolean}
+ */
+export function canShareVideo(stateful: IStateful) {
+    const state = toState(stateful);
+
+    return isSharedVideoEnabled(state) && !isShareVideoDisabled(state);
+}
+
+/**
+ * Returns true if the shared video button should be shown. The owner of a
+ * video stops it with the same button, thus it stays visible while the local
+ * participant shares a video, also when the room restricts video sharing for them.
+ *
+ * @param {IStateful} stateful - The redux store or {@code getState} function.
+ * @returns {boolean}
+ */
+export function isSharedVideoButtonVisible(stateful: IStateful) {
+    const state = toState(stateful);
+    const { ownerId, status } = state['features/shared-video'];
+    const isLocalOwner = Boolean(ownerId) && ownerId === getLocalParticipant(state)?.id;
+
+    return canShareVideo(state) || (isSharedVideoEnabled(state) && isLocalOwner && isSharingStatus(status ?? ''));
 }
 
 /**

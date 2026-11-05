@@ -1,3 +1,3 @@
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('app:web-hid');
+export default getLogger('features/voice-agents');

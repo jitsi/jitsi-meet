@@ -235,12 +235,6 @@
         "microphonePermission": "Error memperoleh izin mikrofon"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Kontrol panggilan",
-            "connectedDevices": "Perangkat terhubung:",
-            "deleteDevice": "Hapus perangkat",
-            "pairDevice": "Pasangkan perangkat"
-        },
         "noPermission": "Izin tidak diberikan",
         "previewUnavailable": "Pratinjau tidak tersedia",
         "selectADevice": "Pilih perangkat",

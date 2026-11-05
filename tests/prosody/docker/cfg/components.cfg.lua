@@ -18,6 +18,12 @@ Component "breakout.conference.localhost" "muc"
     restrict_room_creation = true
     muc_room_locking = false
     muc_room_default_public_jids = true
+    modules_enabled = {
+        -- breakout messages count against the main room, same options as conference.localhost
+        "muc_limit_messages";
+    }
+    muc_limit_messages_count = 3
+    muc_limit_messages_check_token = true
 
 -- Internal MUC used by mod_muc_jigasi_invite: the module resolves the Jigasi
 -- brewery room from this component via process_host_module. Without this
@@ -133,4 +139,14 @@ Component "conference.noregex.test" "muc"
         "token_verification";
     }
     muc_mapper_domain_base = "noregex.test"
+    muc_mapper_domain_prefix = "conference"
+
+-- MUC component paired with VirtualHost "noclaim.test", where the room claim
+-- is optional (asap_require_room_claim = false).
+Component "conference.noclaim.test" "muc"
+    storage = "memory"
+    modules_enabled = {
+        "token_verification";
+    }
+    muc_mapper_domain_base = "noclaim.test"
     muc_mapper_domain_prefix = "conference"

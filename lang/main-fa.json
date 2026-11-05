@@ -303,12 +303,6 @@
         "microphonePermission": "خطا در گرفتن اجازهٔ میکروفن"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "کنترل تماس",
-            "connectedDevices": "دستگاه‌های متصل:",
-            "deleteDevice": "حذف دستگاه",
-            "pairDevice": "جفت‌کردن دستگاه"
-        },
         "noPermission": "دسترسی رد شد",
         "previewUnavailable": "پیش‌نمایش در دسترس نیست",
         "selectADevice": "یک دستگاه را انتخاب کنید",

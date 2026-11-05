@@ -235,12 +235,6 @@
         "microphonePermission": "Mikrofon erişim izni alınamadı"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Çağrı kontrolü",
-            "connectedDevices": "Bağlı cihazlar:",
-            "deleteDevice": "Cihazı sil",
-            "pairDevice": "Cihazı eşleştir"
-        },
         "noPermission": "İzin alınamadı",
         "previewUnavailable": "Önizleme mevcut değil",
         "selectADevice": "Bir cihaz seç",

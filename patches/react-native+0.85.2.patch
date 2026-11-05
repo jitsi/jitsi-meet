@@ -1,0 +1,211 @@
+diff --git a/node_modules/react-native/ReactCommon/react/renderer/core/ShadowNode.cpp b/node_modules/react-native/ReactCommon/react/renderer/core/ShadowNode.cpp
+index acbc5aea1..c147f3707 100644
+--- a/node_modules/react-native/ReactCommon/react/renderer/core/ShadowNode.cpp
++++ b/node_modules/react-native/ReactCommon/react/renderer/core/ShadowNode.cpp
+@@ -137,27 +137,35 @@ std::shared_ptr<ShadowNode> ShadowNode::clone(
+     const ShadowNodeFragment& fragment) const {
+   const auto& family = *family_;
+   const auto& componentDescriptor = family.componentDescriptor_;
+-  if (family.nativeProps_DEPRECATED != nullptr) {
+-    auto propsParserContext = PropsParserContext{family_->getSurfaceId(), {}};
+-    if (fragment.props == ShadowNodeFragment::propsPlaceholder()) {
+-      // Clone existing `props_` with `family.nativeProps_DEPRECATED` to apply
+-      // previously set props via `setNativeProps` API.
+-      auto props = componentDescriptor.cloneProps(
+-          propsParserContext, props_, RawProps(*family.nativeProps_DEPRECATED));
+-      auto clonedNode = componentDescriptor.cloneShadowNode(
+-          *this,
+-          {.props = props,
+-           .children = fragment.children,
+-           .state = fragment.state});
+-      return clonedNode;
+-    } else {
+-      // TODO: We might need to merge fragment.props with
+-      // `family.nativeProps_DEPRECATED`.
+-      return componentDescriptor.cloneShadowNode(*this, fragment);
++
++  std::optional<RawProps> propsOverride;
++  {
++    std::lock_guard<std::mutex> lock(family.nativePropsMutex);
++    if (family.nativeProps_DEPRECATED != nullptr) {
++      if (fragment.props == ShadowNodeFragment::propsPlaceholder()) {
++        propsOverride.emplace(*family.nativeProps_DEPRECATED);
++      } else {
++        // TODO: We might need to merge fragment.props with
++        // `family.nativeProps_DEPRECATED`.
++      }
+     }
+-  } else {
+-    return componentDescriptor.cloneShadowNode(*this, fragment);
+   }
++
++  if (propsOverride) {
++    // Clone existing `props_` with `family.nativeProps_DEPRECATED` to
++    // apply previously set props via `setNativeProps` API. The parsed
++    // result escapes the lock so the rest of the clone work runs
++    // unblocked.
++    auto propsParserContext = PropsParserContext{family_->getSurfaceId(), {}};
++    return componentDescriptor.cloneShadowNode(
++        *this,
++        {.props = componentDescriptor.cloneProps(
++             propsParserContext, props_, std::move(*propsOverride)),
++         .children = fragment.children,
++         .state = fragment.state});
++  }
++
++  return componentDescriptor.cloneShadowNode(*this, fragment);
+ }
+ 
+ std::shared_ptr<const ContextContainer> ShadowNode::getContextContainer()
+diff --git a/node_modules/react-native/ReactCommon/react/renderer/core/ShadowNodeFamily.h b/node_modules/react-native/ReactCommon/react/renderer/core/ShadowNodeFamily.h
+index 2b2ad83dd..d32b4458c 100644
+--- a/node_modules/react-native/ReactCommon/react/renderer/core/ShadowNodeFamily.h
++++ b/node_modules/react-native/ReactCommon/react/renderer/core/ShadowNodeFamily.h
+@@ -8,6 +8,7 @@
+ #pragma once
+ 
+ #include <memory>
++#include <mutex>
+ #include <shared_mutex>
+ 
+ #include <react/renderer/core/EventEmitter.h>
+@@ -114,6 +115,7 @@ class ShadowNodeFamily final : public jsi::NativeState {
+    * architecture and will be removed in the future.
+    */
+   mutable std::unique_ptr<folly::dynamic> nativeProps_DEPRECATED;
++  mutable std::mutex nativePropsMutex;
+ 
+   /**
+    * @return tag for the ShadowNodeFamily.
+diff --git a/node_modules/react-native/ReactCommon/react/renderer/uimanager/UIManager.cpp b/node_modules/react-native/ReactCommon/react/renderer/uimanager/UIManager.cpp
+index d49a86503..022be0d08 100644
+--- a/node_modules/react-native/ReactCommon/react/renderer/uimanager/UIManager.cpp
++++ b/node_modules/react-native/ReactCommon/react/renderer/uimanager/UIManager.cpp
+@@ -118,49 +118,51 @@ std::shared_ptr<ShadowNode> UIManager::cloneNode(
+ 
+   auto& componentDescriptor = shadowNode.getComponentDescriptor();
+   auto& family = shadowNode.getFamily();
+-  auto props = ShadowNodeFragment::propsPlaceholder();
+ 
++  auto props = ShadowNodeFragment::propsPlaceholder();
+   if (!rawProps.isEmpty()) {
+-    if (family.nativeProps_DEPRECATED != nullptr) {
+-      // 1. update the nativeProps_DEPRECATED props.
+-      //
+-      // In this step, we want the most recent value for the props
+-      // managed by setNativeProps.
+-      // Values in `rawProps` patch (take precedence over)
+-      // `nativeProps_DEPRECATED`. For example, if both
+-      // `nativeProps_DEPRECATED` and `rawProps` contain key 'A'.
+-      // Value from `rawProps` overrides what was previously in
+-      // `nativeProps_DEPRECATED`. Notice that the `nativeProps_DEPRECATED`
+-      // patch will not get more props from `rawProps`: if the key is not
+-      // present in `nativeProps_DEPRECATED`, it will not be added.
+-      //
+-      // The result of this operation is the new `nativeProps_DEPRECATED`.
+-      family.nativeProps_DEPRECATED =
+-          std::make_unique<folly::dynamic>(mergeDynamicProps(
+-              *family.nativeProps_DEPRECATED, // source
+-              (folly::dynamic)rawProps, // patch
+-              NullValueStrategy::Ignore));
+-
+-      // 2. Compute the final set of props.
+-      //
+-      // This step takes the new props handled by `setNativeProps` and
+-      // merges them in the `rawProps` managed by React.
+-      // The new props handled by `nativeProps` now takes precedence
+-      // on the props handled by React, as we want to make sure that
+-      // all the props are applied to the component.
+-      // We use these finalProps as source of truth for the component.
+-      auto finalProps = mergeDynamicProps(
+-          (folly::dynamic)rawProps, // source
+-          *family.nativeProps_DEPRECATED, // patch
+-          NullValueStrategy::Override);
+-
+-      // 3. Clone the props by using finalProps.
+-      props = componentDescriptor.cloneProps(
+-          propsParserContext, shadowNode.getProps(), RawProps(finalProps));
+-    } else {
+-      props = componentDescriptor.cloneProps(
+-          propsParserContext, shadowNode.getProps(), std::move(rawProps));
++    std::optional<folly::dynamic> finalProps;
++    {
++      std::lock_guard<std::mutex> lock(family.nativePropsMutex);
++      if (family.nativeProps_DEPRECATED != nullptr) {
++        // 1. update the nativeProps_DEPRECATED props.
++        //
++        // In this step, we want the most recent value for the props
++        // managed by setNativeProps.
++        // Values in `rawProps` patch (take precedence over)
++        // `nativeProps_DEPRECATED`. For example, if both
++        // `nativeProps_DEPRECATED` and `rawProps` contain key 'A'.
++        // Value from `rawProps` overrides what was previously in
++        // `nativeProps_DEPRECATED`. Notice that the `nativeProps_DEPRECATED`
++        // patch will not get more props from `rawProps`: if the key is not
++        // present in `nativeProps_DEPRECATED`, it will not be added.
++        //
++        // The result of this operation is the new `nativeProps_DEPRECATED`.
++        family.nativeProps_DEPRECATED =
++            std::make_unique<folly::dynamic>(mergeDynamicProps(
++                *family.nativeProps_DEPRECATED, // source
++                (folly::dynamic)rawProps, // patch
++                NullValueStrategy::Ignore));
++
++        // 2. Compute the final set of props.
++        //
++        // This step takes the new props handled by `setNativeProps` and
++        // merges them in the `rawProps` managed by React.
++        // The new props handled by `nativeProps` now takes precedence
++        // on the props handled by React, as we want to make sure that
++        // all the props are applied to the component.
++        // We use these finalProps as source of truth for the component.
++        finalProps = mergeDynamicProps(
++            (folly::dynamic)rawProps, // source
++            *family.nativeProps_DEPRECATED, // patch
++            NullValueStrategy::Override);
++      }
+     }
++
++    props = componentDescriptor.cloneProps(
++        propsParserContext,
++        shadowNode.getProps(),
++        finalProps ? RawProps(std::move(*finalProps)) : std::move(rawProps));
+   }
+ 
+   auto clonedShadowNode = componentDescriptor.cloneShadowNode(
+@@ -435,19 +437,22 @@ void UIManager::setNativeProps_DEPRECATED(
+     const std::shared_ptr<const ShadowNode>& shadowNode,
+     RawProps rawProps) const {
+   auto& family = shadowNode->getFamily();
+-  if (family.nativeProps_DEPRECATED) {
+-    // Values in `rawProps` patch (take precedence over)
+-    // `nativeProps_DEPRECATED`. For example, if both `nativeProps_DEPRECATED`
+-    // and `rawProps` contain key 'A'. Value from `rawProps` overrides what
+-    // was previously in `nativeProps_DEPRECATED`.
+-    family.nativeProps_DEPRECATED =
+-        std::make_unique<folly::dynamic>(mergeDynamicProps(
+-            *family.nativeProps_DEPRECATED,
+-            (folly::dynamic)rawProps,
+-            NullValueStrategy::Override));
+-  } else {
+-    family.nativeProps_DEPRECATED =
+-        std::make_unique<folly::dynamic>((folly::dynamic)rawProps);
++  {
++    std::lock_guard<std::mutex> lock(family.nativePropsMutex);
++    if (family.nativeProps_DEPRECATED) {
++      // Values in `rawProps` patch (take precedence over)
++      // `nativeProps_DEPRECATED`. For example, if both
++      // `nativeProps_DEPRECATED` and `rawProps` contain key 'A'. Value from
++      // `rawProps` overrides what was previously in `nativeProps_DEPRECATED`.
++      family.nativeProps_DEPRECATED =
++          std::make_unique<folly::dynamic>(mergeDynamicProps(
++              *family.nativeProps_DEPRECATED,
++              (folly::dynamic)rawProps,
++              NullValueStrategy::Override));
++    } else {
++      family.nativeProps_DEPRECATED =
++          std::make_unique<folly::dynamic>((folly::dynamic)rawProps);
++    }
+   }
+ 
+   shadowTreeRegistry_.visit(

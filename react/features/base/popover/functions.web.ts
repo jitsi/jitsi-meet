@@ -151,3 +151,41 @@ export const getContextMenuStyle = (triggerBounds: DOMRect,
     }
     }
 };
+
+/**
+ * Maps the portal element of an open popover to the element which triggers it.
+ */
+const popoverTriggers = new WeakMap<Element, HTMLElement>();
+
+/**
+ * Stores (or clears, if no trigger is given) the trigger of the popover rendered in the given portal element.
+ *
+ * @param {Element} portal - The element the popover content is rendered in.
+ * @param {HTMLElement} trigger - The element which triggers the popover.
+ * @returns {void}
+ */
+export function setPopoverTrigger(portal: Element, trigger?: HTMLElement | null) {
+    if (trigger) {
+        popoverTriggers.set(portal, trigger);
+    } else {
+        popoverTriggers.delete(portal);
+    }
+}
+
+/**
+ * Finds the focusable trigger of the popover which contains the given element.
+ *
+ * @param {Element} element - An element inside a popover.
+ * @returns {HTMLElement|undefined} - The element to focus in order to land back on the popover trigger.
+ */
+export function getPopoverTrigger(element?: Element | null): HTMLElement | undefined {
+    for (let current = element; current; current = current.parentElement) {
+        const trigger = popoverTriggers.get(current);
+
+        if (trigger) {
+            return trigger.matches('[tabindex]:not([tabindex="-1"]), button')
+                ? trigger
+                : trigger.querySelector<HTMLElement>('[tabindex]:not([tabindex="-1"]), button') ?? undefined;
+        }
+    }
+}

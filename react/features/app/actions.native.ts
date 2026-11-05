@@ -15,6 +15,7 @@ import { connect, disconnect, setLocationURL } from '../base/connection/actions.
 import { JITSI_CONNECTION_URL_KEY } from '../base/connection/constants';
 import { stripJwtSignatures } from '../base/jwt/functions';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.native';
+import { setAudioMuted, setVideoMuted } from '../base/media/actions';
 import { createDesiredLocalTracks } from '../base/tracks/actions.native';
 import isInsecureRoomName from '../base/util/isInsecureRoomName';
 import {
@@ -151,6 +152,14 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
             goBackToRoot(getState(), dispatch);
 
             return;
+        }
+
+        const { disableInitialGUM } = getState()['features/base/config'];
+
+        // Mute before creating tracks.
+        if (disableInitialGUM) {
+            dispatch(setAudioMuted(true));
+            dispatch(setVideoMuted(true));
         }
 
         dispatch(createDesiredLocalTracks());

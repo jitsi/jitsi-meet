@@ -10,7 +10,8 @@ import {
     getPromotionRequests,
     getVisitorsCount,
     getVisitorsInQueueCount,
-    isVisitorsLive
+    isVisitorsLive,
+    shouldDisplayCurrentVisitorsList
 } from '../../../visitors/functions';
 
 import { VisitorsItem } from './VisitorsItem';
@@ -34,15 +35,22 @@ const VisitorsList = () => {
     const visitorsInQueueCount = useSelector(getVisitorsInQueueCount);
     const isLive = useSelector(isVisitorsLive);
     const showVisitorsInQueue = visitorsInQueueCount > 0 && isLive === false;
+    const showCurrentVisitorsList = useSelector(shouldDisplayCurrentVisitorsList);
 
     if (visitorsCount <= 0 && !showVisitorsInQueue) {
         return null;
     }
 
-    let title = t('participantsPane.headings.visitors', { count: visitorsCount });
+    // The live list below already shows the viewers count.
+    if (showCurrentVisitorsList && requests.length <= 0 && !showVisitorsInQueue) {
+        return null;
+    }
+
+    let title = showCurrentVisitorsList ? '' : t('participantsPane.headings.visitors', { count: visitorsCount });
 
     if (requests.length > 0) {
-        title += t('participantsPane.headings.visitorRequests', { count: requests.length });
+        title += t(`participantsPane.headings.${showCurrentVisitorsList ? 'viewerRequests' : 'visitorRequests'}`,
+            { count: requests.length });
     }
 
     if (showVisitorsInQueue) {
@@ -50,7 +58,7 @@ const VisitorsList = () => {
     }
 
     return (
-        <>
+        <View style = { styles.meetingListContainer }>
             <View style = { styles.listDetails as ViewStyle } >
                 <Text style = { styles.visitorsLabel }>
                     { title }
@@ -83,7 +91,7 @@ const VisitorsList = () => {
                         request = { r } />)
                 )
             }
-        </>
+        </View>
     );
 };
 

@@ -20,6 +20,7 @@ export const MEET_FEATURES: Record<string, ParticipantFeaturesKey> = {
     SCREEN_SHARING: 'screen-sharing',
     SEND_GROUPCHAT: 'send-groupchat',
     SEND_PRIVATE_MESSAGE: 'send-private-message',
+    SHARE_VIDEO: 'share-video',
     LIST_VISITORS: 'list-visitors',
     SIP_INBOUND_CALL: 'sip-inbound-call',
     SIP_OUTBOUND_CALL: 'sip-outbound-call',
