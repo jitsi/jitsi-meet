@@ -38,6 +38,11 @@ const Button: React.FC<IProps> = ({
     const { DESTRUCTIVE, PRIMARY, SECONDARY, TERTIARY } = BUTTON_TYPES;
     const { CONTAINED, TEXT } = BUTTON_MODES;
 
+    // Fall back to the visible label so screen readers never get an empty
+    // accessibility label when the caller omits accessibilityLabel.
+    const a11yLabelKey = accessibilityLabel || labelKey;
+    const a11yLabel = a11yLabelKey ? t(a11yLabelKey) : undefined;
+
     let buttonLabelStyles;
     let buttonStyles;
     let color;
@@ -75,7 +80,7 @@ const Button: React.FC<IProps> = ({
 
         return (
             <TouchableHighlight
-                accessibilityLabel = { t(accessibilityLabel ?? '') }
+                accessibilityLabel = { a11yLabel }
                 disabled = { disabled }
                 id = { id }
                 onPress = { onPress }
@@ -94,7 +99,7 @@ const Button: React.FC<IProps> = ({
 
     return (
         <NativePaperButton
-            accessibilityLabel = { t(accessibilityLabel ?? '') }
+            accessibilityLabel = { a11yLabel }
             buttonColor = { color }
             children = { t(labelKey ?? '') }
             contentStyle = { [
