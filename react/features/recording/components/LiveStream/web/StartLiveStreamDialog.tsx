@@ -24,6 +24,11 @@ import AbstractStartLiveStreamDialog, {
 import StreamKeyForm from './StreamKeyForm';
 import StreamKeyPicker from './StreamKeyPicker';
 
+/**
+ * The error type used when the Google API libraries could not be loaded.
+ */
+const GOOGLE_API_LOAD_FAILED = 'googleApiLoadFailed';
+
 interface IProps extends AbstractProps {
 
     /**
@@ -118,6 +123,9 @@ class StartLiveStreamDialog
      * @returns {void}
      */
     _onInitializeGoogleApi() {
+        // Back to the spinner while retrying after a failed load.
+        this._setStateIfMounted({ errorType: undefined });
+
         this.props.dispatch(loadGoogleAPI())
         .catch((response: any) => this._parseErrorFromResponse(response));
     }
@@ -214,16 +222,25 @@ class StartLiveStreamDialog
     }
 
     /**
-     * Only show an error if an external request was made with the Google api.
+     * Only show an error if an external request was made with the Google api
+     * or the Google API libraries failed to load.
      * Do not error if the login in canceled.
      * And searches in a Google API error response for the error type.
      *
      * @param {Object} response - The Google API response that may contain an
-     * error.
+     * error, or the error for a failed load.
      * @private
      * @returns {string|null}
      */
     _parseErrorFromResponse(response: any) {
+
+        if (response instanceof Error) {
+            this._setStateIfMounted({
+                errorType: GOOGLE_API_LOAD_FAILED
+            });
+
+            return;
+        }
 
         if (!response?.result) {
             return;
@@ -304,7 +321,8 @@ class StartLiveStreamDialog
         if (this.state.errorType !== undefined) {
             googleContent = (
                 <GoogleSignInButton
-                    onClick = { this._onRequestGoogleSignIn } />
+                    onClick = { this.state.errorType === GOOGLE_API_LOAD_FAILED
+                        ? this._onInitializeGoogleApi : this._onRequestGoogleSignIn } />
             );
             helpText = this._getGoogleErrorMessageToDisplay();
         }
@@ -331,6 +349,9 @@ class StartLiveStreamDialog
         let text;
 
         switch (this.state.errorType) {
+        case GOOGLE_API_LOAD_FAILED:
+            text = this.props.t('liveStreaming.errorGoogleApiLoad');
+            break;
         case 'liveStreamingNotEnabled':
             text = this.props.t(
                 'liveStreaming.errorLiveStreamNotEnabled',
