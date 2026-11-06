@@ -377,8 +377,13 @@ StateListenerRegistry.register(
             const recording = Boolean(startIntent?.recording) && !recordingStartCancelled;
             const transcription = Boolean(startIntent?.transcription) && !transcriptionStartFailed;
 
-            dispatch(setStartRecordingIntent(recording || transcription ? { recording,
-                transcription } : null));
+            // Keep the rest of the intent, in particular recordingStarted: a recording whose
+            // session is already on stays a started one when the transcription fails beside it.
+            dispatch(setStartRecordingIntent(recording || transcription ? {
+                ...startIntent,
+                recording,
+                transcription
+            } : null));
             maybeNotifyRecordingStart(dispatch, getState);
         }
 
