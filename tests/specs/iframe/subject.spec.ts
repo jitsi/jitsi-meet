@@ -76,4 +76,51 @@ describe('Subject iframe API command and events', () => {
     it('updates meeting subject to a new value via subject command', async () => {
         await changeSubjectAndVerify('Updated Conference Subject');
     });
+    it('sets local subject via setLocalSubject command without overriding remote subject', async () => {
+        await p1.switchToMainFrame();
+        await p1.getIframeAPI().executeCommand('setLocalSubject', 'Local Only Subject for P1');
+
+        await p1.switchToIFrame();
+        await checkSubject(p1, 'Local Only Subject for P1');
+
+        // Remote participant (p2) retains the room subject and does not receive local subject.
+        await p2.switchToIFrame();
+        await checkSubject(p2, 'Updated Conference Subject');
+    });
+    it('handles local subject clearance, edge cases, and precedence with room subject', async () => {
+        // Edge case: clearing local subject via empty string should restore the room subject on p1
+        await p1.switchToMainFrame();
+        await p1.getIframeAPI().executeCommand('setLocalSubject', '');
+
+        await p1.switchToIFrame();
+        await checkSubject(p1, 'Updated Conference Subject');
+
+        // Non-moderator participant setting their own localSubject
+        await p2.switchToMainFrame();
+        await p2.getIframeAPI().executeCommand('setLocalSubject', 'Local Subject for P2');
+
+        await p2.switchToIFrame();
+        await checkSubject(p2, 'Local Subject for P2');
+
+        // p1 remains unaffected with the conference room subject
+        await p1.switchToIFrame();
+        await checkSubject(p1, 'Updated Conference Subject');
+
+        // When moderator updates the conference subject, p2 keeps their localSubject (local takes precedence)
+        await p1.switchToMainFrame();
+        await p1.getIframeAPI().executeCommand('subject', 'New Global Subject');
+
+        await p1.switchToIFrame();
+        await checkSubject(p1, 'New Global Subject');
+
+        await p2.switchToIFrame();
+        await checkSubject(p2, 'Local Subject for P2');
+
+        // Once p2 clears local subject, the latest global subject becomes visible immediately
+        await p2.switchToMainFrame();
+        await p2.getIframeAPI().executeCommand('setLocalSubject', '');
+
+        await p2.switchToIFrame();
+        await checkSubject(p2, 'New Global Subject');
+    });
 });
