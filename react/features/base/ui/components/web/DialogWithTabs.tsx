@@ -361,7 +361,8 @@ const DialogWithTabs = ({
                 <div
                     className = { classes.contentContainer }
                     tabIndex = { isMobile ? -1 : undefined }>
-                    {/* DOM order is important for keyboard users: show whole heading first when on mobile… */}
+                    {/* DOM order matters for keyboard users: on mobile the heading, Back and Close come first,
+                    so a tab's content is announced with its title before the content itself. */}
                     {isMobile && (
                         <div className = { cx(classes.buttonContainer, classes.header) }>
                             <span className = { classes.backContainer }>
