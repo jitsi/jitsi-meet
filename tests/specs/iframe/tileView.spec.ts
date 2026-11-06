@@ -10,9 +10,23 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
-describe('Tile view iframe API command and events', () => {
+describe('Tile view and pin participant iframe API commands and events', () => {
     let p1: Participant;
     let p2: Participant;
+
+    /**
+     * Waits for the pin indicator of a participant to be displayed or hidden in the meeting iframe.
+     *
+     * @param endpointId The endpoint ID of the participant.
+     * @param displayed Whether the pin indicator is expected to be displayed.
+     */
+    async function waitForPinIndicator(endpointId: string, displayed = true) {
+        await p1.driver.$(`//div[@id="pin-indicator-${endpointId}"]`).waitForDisplayed({
+            reverse: !displayed,
+            timeout: 5000,
+            timeoutMsg: `Pin indicator for ${endpointId} was ${displayed ? 'not ' : ''}displayed`
+        });
+    }
 
     it('joining the meeting', async () => {
         await ensureTwoParticipants({}, { name: 'p1', iFrameApi: true });
@@ -95,7 +109,6 @@ describe('Tile view iframe API command and events', () => {
     it('pins remote participant and exits tile view via pinParticipant command', async () => {
         const p2EndpointId = await p2.getEndpointId();
 
-        // 1. Re-enter tile view first
         await p1.switchToMainFrame();
         await p1.getIframeAPI().clearEventResults('tileViewChanged');
         await p1.getIframeAPI().executeCommand('setTileView', true);
@@ -107,11 +120,10 @@ describe('Tile view iframe API command and events', () => {
 
         expect(enterTileViewEvent).toEqual({ enabled: true });
 
-        // 2. Pin remote participant p2
         await p1.getIframeAPI().clearEventResults('tileViewChanged');
         await p1.getIframeAPI().executeCommand('pinParticipant', p2EndpointId);
 
-        // Pinning turns tile view off and fires tileViewChanged { enabled: false }
+        // Pinning a participant exits tile view.
         const exitTileViewEvent: { enabled: boolean; } = await p1.getIframeAPI().waitForEventResult(
             'tileViewChanged',
             'tileViewChanged event was not received after pinParticipant'
@@ -119,13 +131,9 @@ describe('Tile view iframe API command and events', () => {
 
         expect(exitTileViewEvent).toEqual({ enabled: false });
 
-        // 3. Verify large video and pin indicator in iframe
         await p1.switchToIFrame();
         await p1.waitForParticipantOnLargeVideo(p2EndpointId);
-        await p1.driver.$(`//div[@id="pin-indicator-${p2EndpointId}"]`).waitForDisplayed({
-            timeout: 5000,
-            timeoutMsg: `Pin indicator for remote participant ${p2EndpointId} was not displayed`
-        });
+        await waitForPinIndicator(p2EndpointId);
     });
 
     it('ignores non-existing participant id and preserves currently pinned participant', async () => {
@@ -134,12 +142,13 @@ describe('Tile view iframe API command and events', () => {
         await p1.switchToMainFrame();
         await p1.getIframeAPI().executeCommand('pinParticipant', 'non-existing-participant-id-99999');
 
+        // Commands are fire-and-forget. A request goes through the same channel, so once it is answered the
+        // command before it has been handled.
+        await p1.getIframeAPI().isAudioMuted();
+
         await p1.switchToIFrame();
         await p1.waitForParticipantOnLargeVideo(p2EndpointId);
-        await p1.driver.$(`//div[@id="pin-indicator-${p2EndpointId}"]`).waitForDisplayed({
-            timeout: 5000,
-            timeoutMsg: `Pin indicator for remote participant ${p2EndpointId} should remain displayed`
-        });
+        await waitForPinIndicator(p2EndpointId);
     });
 
     it('pins local participant via pinParticipant command', async () => {
@@ -150,16 +159,9 @@ describe('Tile view iframe API command and events', () => {
         await p1.getIframeAPI().executeCommand('pinParticipant', p1EndpointId);
 
         await p1.switchToIFrame();
-        await p1.driver.$(`//div[@id="pin-indicator-${p1EndpointId}"]`).waitForDisplayed({
-            timeout: 5000,
-            timeoutMsg: `Pin indicator for local participant ${p1EndpointId} was not displayed`
-        });
-
-        await p1.driver.$(`//div[@id="pin-indicator-${p2EndpointId}"]`).waitForDisplayed({
-            reverse: true,
-            timeout: 5000,
-            timeoutMsg: `Pin indicator for remote participant ${p2EndpointId} should no longer be displayed`
-        });
+        await p1.waitForParticipantOnLargeVideo(p1EndpointId);
+        await waitForPinIndicator(p1EndpointId);
+        await waitForPinIndicator(p2EndpointId, false);
     });
 
     it('unpins all participants via pinParticipant() without arguments', async () => {
@@ -170,16 +172,7 @@ describe('Tile view iframe API command and events', () => {
         await p1.getIframeAPI().executeCommand('pinParticipant');
 
         await p1.switchToIFrame();
-        await p1.driver.$(`//div[@id="pin-indicator-${p1EndpointId}"]`).waitForDisplayed({
-            reverse: true,
-            timeout: 5000,
-            timeoutMsg: `Pin indicator for ${p1EndpointId} should not be displayed after unpin`
-        });
-
-        await p1.driver.$(`//div[@id="pin-indicator-${p2EndpointId}"]`).waitForDisplayed({
-            reverse: true,
-            timeout: 5000,
-            timeoutMsg: `Pin indicator for ${p2EndpointId} should not be displayed after unpin`
-        });
+        await waitForPinIndicator(p1EndpointId, false);
+        await waitForPinIndicator(p2EndpointId, false);
     });
 });
