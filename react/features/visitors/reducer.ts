@@ -111,10 +111,14 @@ ReducerRegistry.register<IVisitorsState>('features/visitors', (state = DEFAULT_S
     }
     case VISITOR_PROMOTION_REQUEST: {
         const currentRequests = state.promotionRequests || [];
+        const isUpdate = currentRequests.some(r => r.from === action.request.from);
 
+        // An update from a visitor already in the list keeps its place, so requests stay in arrival order.
         return {
             ...state,
-            promotionRequests: [ ...currentRequests, action.request ]
+            promotionRequests: isUpdate
+                ? currentRequests.map(r => r.from === action.request.from ? action.request : r)
+                : [ ...currentRequests, action.request ]
         };
     }
     case CLEAR_VISITOR_PROMOTION_REQUEST: {
