@@ -146,10 +146,8 @@ function getNewVideoInputDevice(newDevices, localVideo, newLabel) {
                 userSelectedCameraDeviceLabel: localVideoDevice.label
             }));
         } else {
-            // And here we handle case when we already have some device working,
-            // but we plug-in a "preferred" (previously selected in settings, stored
-            // in local storage) device.
-            return selectedVideoInputDeviceId;
+            // Keep the currently active camera when a preferred device is
+            // reconnected. The user can switch to it from the notification.
         }
     }
 }
