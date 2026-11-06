@@ -380,12 +380,12 @@ var config = {
 
     //     // Specifies whether participants in speaker stats should be ordered or not, and with what priority.
     //     // 'role', <- Moderators on top.
-    //     // 'hasLeft', <- The ones that have left in the bottom.
     //     // 'name', <- Alphabetically by name.
+    //     // 'hasLeft', <- The ones that have left in the bottom. Always applied first, regardless of its position.
     //     order: [
     //         'role',
-    //         'hasLeft',
     //         'name',
+    //         'hasLeft',
     //     ],
     // },
 
@@ -397,8 +397,8 @@ var config = {
     // Specifies whether participants in speaker stats should be ordered or not, and with what priority
     // speakerStatsOrder: [
     //  'role', <- Moderators on top
-    //  'hasLeft', <- The ones that have left in the bottom
     //  'name', <- Alphabetically by name
+    //  'hasLeft', <- The ones that have left in the bottom. Always applied first, regardless of its position
     // ], <- the order of the array elements determines priority
 
     // How many participants while in the tile view mode, before the receiving video quality is reduced from HD to SD.

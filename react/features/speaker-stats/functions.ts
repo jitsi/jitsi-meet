@@ -38,8 +38,8 @@ export function isSpeakerStatsDisabled(state: IReduxState) {
 export function getSpeakerStatsOrder(state: IReduxState) {
     return state['features/base/config']?.speakerStats?.order ?? [
         'role',
-        'hasLeft',
-        'name'
+        'name',
+        'hasLeft'
     ];
 }
 
@@ -101,6 +101,14 @@ export function getSortedSpeakerStatsIds(state: IReduxState, stats: ISpeakerStat
      * @returns {number} - The sort order of the two participants.
      */
     function compareFn(currentParticipant: ISpeaker, nextParticipant: ISpeaker) {
+        if (orderConfig.includes('hasLeft')) {
+            if (nextParticipant.hasLeft() && !currentParticipant.hasLeft()) {
+                return -1;
+            } else if (currentParticipant.hasLeft() && !nextParticipant.hasLeft()) {
+                return 1;
+            }
+        }
+
         let result = 0;
 
         for (const sortCriteria of orderConfig) {
@@ -118,15 +126,6 @@ export function getSortedSpeakerStatsIds(state: IReduxState, stats: ISpeakerStat
                 result = (currentParticipant.displayName || '').localeCompare(
                     nextParticipant.displayName || ''
                 );
-                break;
-            case 'hasLeft':
-                if (nextParticipant.hasLeft() && !currentParticipant.hasLeft()) {
-                    result = -1;
-                } else if (currentParticipant.hasLeft() && !nextParticipant.hasLeft()) {
-                    result = 1;
-                } else {
-                    result = 0;
-                }
                 break;
             }
 

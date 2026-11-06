@@ -721,12 +721,12 @@ export interface IConfig {
     speakerStats?: {
         disableSearch?: boolean;
         disabled?: boolean;
-        order?: Array<'role' | 'hasLeft' | 'name'>;
+        order?: Array<'role' | 'name' | 'hasLeft'>;
     };
     /**
      * @deprecated Use `speakerStats.order` instead.
      */
-    speakerStatsOrder?: Array<'role' | 'hasLeft' | 'name'>;
+    speakerStatsOrder?: Array<'role' | 'name' | 'hasLeft'>;
     startAudioMuted?: number;
     startLastN?: number;
     startLowBandwidthMode?: boolean;
