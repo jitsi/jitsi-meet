@@ -47,7 +47,6 @@ const ReactButton = ({ messageId, receiverId }: IProps) => {
     }, [ dispatch, messageId, receiverId ]);
 
     const [ isPopoverOpen, setIsPopoverOpen ] = useState(false);
-    const [ isPopoverMounted, setIsPopoverMounted ] = useState(false);
     const popoverContentRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
     const restoreTriggerFocus = useRef(false);
@@ -76,12 +75,7 @@ const ReactButton = ({ messageId, receiverId }: IProps) => {
 
     const handleMenuTab = useMenuFocusTrap();
 
-    const mountPopover = useCallback(() => {
-        setIsPopoverMounted(true);
-    }, []);
-
     const handleReactClick = useCallback(() => {
-        setIsPopoverMounted(true);
         restoreTriggerFocus.current = true;
         setIsPopoverOpen(true);
     }, []);
@@ -114,7 +108,7 @@ const ReactButton = ({ messageId, receiverId }: IProps) => {
         <Button
             accessibilityLabel = { t('toolbar.accessibilityLabel.react') }
             ariaExpanded = { isPopoverOpen }
-            ariaHasPopup = 'menu'
+            ariaHasPopup = 'listbox'
             className = { classes.reactButton }
             icon = { IconFaceSmile }
             onClick = { handleReactClick }
@@ -126,19 +120,15 @@ const ReactButton = ({ messageId, receiverId }: IProps) => {
     return (
         <div
             className = { cx(classes.reactionPanelContainer,
-                isPopoverOpen && 'chat-message-actions-open') }
-            onFocus = { mountPopover }
-            onMouseEnter = { mountPopover }>
-            {isPopoverMounted ? (
-                <Popover
-                    content = { popoverContent }
-                    onPopoverClose = { handleClose }
-                    position = 'top'
-                    trigger = 'click'
-                    visible = { isPopoverOpen }>
-                    {triggerButton}
-                </Popover>
-            ) : triggerButton}
+                isPopoverOpen && 'chat-message-actions-open') }>
+            <Popover
+                content = { popoverContent }
+                onPopoverClose = { handleClose }
+                position = 'top'
+                trigger = 'click'
+                visible = { isPopoverOpen }>
+                {triggerButton}
+            </Popover>
         </div>
     );
 };

@@ -176,7 +176,9 @@ const useStyles = makeStyles<void, 'optionsButtonContainer'>()((theme: Theme, _p
             minWidth: '32px',
             minHeight: '32px',
             opacity: 0,
-            pointerEvents: 'none'
+            '@media (hover: hover)': {
+                pointerEvents: 'none'
+            }
         },
         displayName: {
             ...theme.typography.labelBold,

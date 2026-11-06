@@ -1,8 +1,14 @@
 import { RefObject, useEffect } from 'react';
 
 /**
+ * Stop retrying if an item never becomes focusable.
+ */
+const MAX_FOCUS_FRAMES = 30;
+
+/**
  * The popover portal stays visibility:hidden until onVisible, and focus() fails
- * until then. Keep retrying until an item has focus or the menu closes.
+ * until then. Keep retrying until an item has focus, the menu closes, or
+ * {@code MAX_FOCUS_FRAMES} pass.
  *
  * @param {RefObject<HTMLElement | null>} panelRef - The open menu panel.
  * @param {boolean} active - Whether the menu is open.
@@ -20,6 +26,7 @@ function useFocusFirstItem(
         }
 
         let frame = 0;
+        let frames = 0;
 
         const focusFirstItem = () => {
             const panel = panelRef.current;
@@ -35,6 +42,12 @@ function useFocusFirstItem(
 
             if (firstItem && getComputedStyle(firstItem).visibility !== 'hidden') {
                 firstItem.focus();
+            }
+
+            frames += 1;
+
+            if (frames >= MAX_FOCUS_FRAMES) {
+                return;
             }
 
             frame = requestAnimationFrame(focusFirstItem);
