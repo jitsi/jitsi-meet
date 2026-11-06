@@ -1114,8 +1114,6 @@
         "notUniqueOption": "Seçimlər unikal olmalıdır",
         "voteFailed": "Səsiniz nəzərə alınmadı",
         "voteNotCounted": "Səsiniz nəzərə alınmadı, səsvermə başa çatdı"
-        }
-
         },
         "notification": {
             "description": "Səs vermək üçün sorğular vərəqini açın",
