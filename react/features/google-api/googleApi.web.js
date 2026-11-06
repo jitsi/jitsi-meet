@@ -13,12 +13,37 @@ const GOOGLE_API_CLIENT_LIBRARY_URL = 'https://apis.google.com/js/api.js';
 const GOOGLE_GIS_LIBRARY_URL = 'https://accounts.google.com/gsi/client';
 
 /**
- * A promise for dynamically loading the Google API Client Library.
+ * How long to wait for a library to load before giving up, in milliseconds.
  *
  * @private
- * @type {Promise}
+ * @type {number}
  */
-let googleClientLoadPromise;
+const LOAD_TIMEOUT = 30000;
+
+/**
+ * How long a failed library load is reused before it can be tried again, in
+ * milliseconds. Avoids a new request for every call while a library is blocked.
+ *
+ * @private
+ * @type {number}
+ */
+const LOAD_RETRY_DELAY = 5000;
+
+/**
+ * The promises for dynamically loading the Google libraries, by library URL.
+ *
+ * @private
+ * @type {Map<string, Promise>}
+ */
+const libraryLoads = new Map();
+
+/**
+ * The URLs of the libraries whose load failed and can be tried again.
+ *
+ * @private
+ * @type {Set<string>}
+ */
+const failedLibraryLoads = new Set();
 
 /**
  * A singleton for loading and interacting with the Google API.
@@ -28,12 +53,19 @@ const googleApi = {
      * Obtains Google API Client Library, loading the library dynamically if
      * needed.
      *
+     * @param {boolean} retryFailedLoads - Whether to try a failed library load
+     * again right away, for a retry requested by the user.
      * @returns {Promise}
      */
-    get() {
+    get(retryFailedLoads = false) {
+        if (retryFailedLoads) {
+            failedLibraryLoads.forEach(url => this._clearFailedLoad(url));
+        }
+
         const globalGoogleApi = this._getGoogleApiClient();
 
-        if (!globalGoogleApi) {
+        // Both the client library and Google Identity Services are needed.
+        if (!globalGoogleApi?.client || !this._getGoogleGISApiClient()?.accounts) {
             return this.load();
         }
 
@@ -139,14 +171,23 @@ const googleApi = {
     _loadScriptTag(src) {
         return new Promise((resolve, reject) => {
             const scriptTag = document.createElement('script');
+            let timeout = null;
 
-            scriptTag.async = true;
-            scriptTag.addEventListener('error', () => {
+            const onFailure = message => {
+                clearTimeout(timeout);
                 scriptTag.remove();
 
-                reject();
+                reject(new Error(`${message} ${src}`));
+            };
+
+            timeout = setTimeout(() => onFailure('Timed out loading'), LOAD_TIMEOUT);
+
+            scriptTag.async = true;
+            scriptTag.addEventListener('error', () => onFailure('Failed to load'));
+            scriptTag.addEventListener('load', () => {
+                clearTimeout(timeout);
+                resolve();
             });
-            scriptTag.addEventListener('load', resolve);
             scriptTag.type = 'text/javascript';
 
             scriptTag.src = src;
@@ -156,31 +197,70 @@ const googleApi = {
     },
 
     /**
-     * Generates a script tag and downloads the Google API Client Library.
+     * Generates script tags and downloads the Google API Client Library and
+     * the Google Identity Services Library. Rejects if either fails to load.
+     * Each library is tracked on its own, so a retry only requests the one
+     * that failed, and not one that is still loading. A script that timed out
+     * can still run later, so a tag is only added if the library is missing.
      *
      * @returns {Promise}
      */
     load() {
-        if (googleClientLoadPromise) {
-            return googleClientLoadPromise;
+        return Promise.all([
+            this._loadLibrary(GOOGLE_API_CLIENT_LIBRARY_URL, () =>
+                (this._getGoogleApiClient() ? Promise.resolve() : this._loadScriptTag(GOOGLE_API_CLIENT_LIBRARY_URL))
+                    .then(() => new Promise((resolve, reject) =>
+                        this._getGoogleApiClient().load('client', {
+                            callback: resolve,
+                            onerror: () => reject(new Error('Failed to load the Google API client')),
+                            ontimeout: () => reject(new Error('Timed out loading the Google API client')),
+                            timeout: LOAD_TIMEOUT
+                        })))),
+            this._loadLibrary(GOOGLE_GIS_LIBRARY_URL, () => {
+                if (this._getGoogleGISApiClient()?.accounts) {
+                    return Promise.resolve();
+                }
+
+                return this._loadScriptTag(GOOGLE_GIS_LIBRARY_URL);
+            })
+        ])
+            .then(() => this._getGoogleApiClient());
+    },
+
+    /**
+     * Loads a library once. A failure is reused for a while, so a blocked
+     * library doesn't cause a new request for every call.
+     *
+     * @param {string} url - The URL of the library.
+     * @param {Function} load - Starts loading the library.
+     * @private
+     * @returns {Promise}
+     */
+    _loadLibrary(url, load) {
+        if (!libraryLoads.has(url)) {
+            libraryLoads.set(url, load().catch(error => {
+                logger.error('Error loading a Google library', error);
+                failedLibraryLoads.add(url);
+                setTimeout(() => this._clearFailedLoad(url), LOAD_RETRY_DELAY);
+
+                throw error;
+            }));
         }
 
-        googleClientLoadPromise = this._loadScriptTag(GOOGLE_API_CLIENT_LIBRARY_URL)
-            .catch(() => {
-                googleClientLoadPromise = null;
-            })
-            .then(() => new Promise((resolve, reject) =>
-                this._getGoogleApiClient().load('client', {
-                    callback: resolve,
-                    onerror: reject
-                })))
-            .then(this._loadScriptTag(GOOGLE_GIS_LIBRARY_URL))
-            .catch(() => {
-                googleClientLoadPromise = null;
-            })
-            .then(() => this._getGoogleApiClient());
+        return libraryLoads.get(url);
+    },
 
-        return googleClientLoadPromise;
+    /**
+     * Forgets a failed library load, so the next call tries it again.
+     *
+     * @param {string} url - The URL of the library.
+     * @private
+     * @returns {void}
+     */
+    _clearFailedLoad(url) {
+        if (failedLibraryLoads.delete(url)) {
+            libraryLoads.delete(url);
+        }
     },
 
     /**

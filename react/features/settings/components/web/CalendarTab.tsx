@@ -163,7 +163,10 @@ class CalendarTab extends Component<IProps, IState> {
      * @returns {void}
      */
     _attemptSignIn(type: string) {
-        this.props.dispatch(signIn(type));
+        this.props.dispatch(signIn(type))
+            .catch(() => {
+                // The error is already logged by signIn.
+            });
     }
 
     /**
