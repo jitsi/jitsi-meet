@@ -326,12 +326,11 @@ ReducerRegistry.register<IFilmstripState>(
         case PARTICIPANT_LEFT: {
             const { id, local } = action.participant;
 
-            if (local || !(id in state.participantsVolume)) {
+            const { [id]: removedVolume, ...participantsVolume } = state.participantsVolume;
+
+            if (local || removedVolume === undefined) {
                 return state;
             }
-
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { [id]: _removedVolume, ...participantsVolume } = state.participantsVolume;
 
             return {
                 ...state,
