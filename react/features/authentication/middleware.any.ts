@@ -38,7 +38,7 @@ import {
     waitForOwner
 } from './actions';
 import { LoginDialog, WaitForOwnerDialog } from './components';
-import { getTokenAuthUrl, isTokenAuthEnabled } from './functions';
+import { getTenantTokenAuthUrl, getTokenAuthUrl, isTokenAuthEnabled } from './functions';
 import logger from './logger';
 
 
@@ -270,14 +270,16 @@ function _handleLogin({ dispatch, getState }: IStore) {
         return;
     }
 
-    if (!isTokenAuthEnabled(state)) {
+    const tenantTokenAuthUrl = getTenantTokenAuthUrl(state);
+
+    if (!tenantTokenAuthUrl && !isTokenAuthEnabled(state)) {
         dispatch(openLoginDialog());
 
         return;
     }
 
     getTokenAuthUrl(
-        config,
+        tenantTokenAuthUrl ? { ...config, tokenAuthUrl: tenantTokenAuthUrl } : config,
         locationURL,
         {
             audioMuted,
@@ -296,7 +298,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
                 return;
             }
 
-            return dispatch(openTokenAuthUrl(tokenAuthServiceUrl));
+            return dispatch(openTokenAuthUrl(tokenAuthServiceUrl, Boolean(tenantTokenAuthUrl)));
         });
 }
 

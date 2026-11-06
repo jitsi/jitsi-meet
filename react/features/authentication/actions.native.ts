@@ -121,10 +121,11 @@ export function setTokenAuthPending(pending: boolean) {
  * Opens token auth URL page.
  *
  * @param {string} tokenAuthServiceUrl - Authentication service URL.
+ * @param {boolean} _tenantLogin - Unused: a JaaS tenant's own login service is only used on web.
  *
  * @returns {Function}
  */
-export function openTokenAuthUrl(tokenAuthServiceUrl: string) {
+export function openTokenAuthUrl(tokenAuthServiceUrl: string, _tenantLogin = false) {
     return (dispatch: IStore['dispatch']) => {
         dispatch(setTokenAuthPending(true));
 
