@@ -30,11 +30,13 @@ export function getCalendarEntries(
  * Loads Google API. It does not prompt the user to sign in, that has to be
  * started explicitly by the user with {@link signIn}.
  *
+ * @param {boolean} retryFailedLoads - Whether to try a failed library load
+ * again right away, for a retry requested by the user.
  * @returns {Function}
  */
-export function loadGoogleAPI() {
+export function loadGoogleAPI(retryFailedLoads = false) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) =>
-        googleApi.get()
+        googleApi.get(retryFailedLoads)
         .then(() => {
             const {
                 enableCalendarIntegration,

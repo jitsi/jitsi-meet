@@ -29,20 +29,20 @@ const LOAD_TIMEOUT = 30000;
 const LOAD_RETRY_DELAY = 5000;
 
 /**
- * A promise for dynamically loading the Google API Client Library.
+ * The promises for dynamically loading the Google libraries, by library URL.
  *
  * @private
- * @type {Promise}
+ * @type {Map<string, Promise>}
  */
-let googleClientLoadPromise;
+const libraryLoads = new Map();
 
 /**
- * A promise for dynamically loading the Google Identity Services Library.
+ * The URLs of the libraries whose load failed and can be tried again.
  *
  * @private
- * @type {Promise}
+ * @type {Set<string>}
  */
-let googleGISLoadPromise;
+const failedLibraryLoads = new Set();
 
 /**
  * A singleton for loading and interacting with the Google API.
@@ -52,9 +52,15 @@ const googleApi = {
      * Obtains Google API Client Library, loading the library dynamically if
      * needed.
      *
+     * @param {boolean} retryFailedLoads - Whether to try a failed library load
+     * again right away, for a retry requested by the user.
      * @returns {Promise}
      */
-    get() {
+    get(retryFailedLoads = false) {
+        if (retryFailedLoads) {
+            failedLibraryLoads.forEach(url => this._clearFailedLoad(url));
+        }
+
         const globalGoogleApi = this._getGoogleApiClient();
 
         // Both the client library and Google Identity Services are needed.
@@ -187,43 +193,68 @@ const googleApi = {
     /**
      * Generates script tags and downloads the Google API Client Library and
      * the Google Identity Services Library. Rejects if either fails to load.
-     * Each library has its own promise, so a retry only requests the one that
-     * failed, and not one that is still loading.
+     * Each library is tracked on its own, so a retry only requests the one
+     * that failed, and not one that is still loading. A script that timed out
+     * can still run later, so a tag is only added if the library is missing.
      *
      * @returns {Promise}
      */
     load() {
-        if (!googleClientLoadPromise) {
-            googleClientLoadPromise = this._loadScriptTag(GOOGLE_API_CLIENT_LIBRARY_URL)
-                .then(() => new Promise((resolve, reject) =>
-                    this._getGoogleApiClient().load('client', {
-                        callback: resolve,
-                        onerror: () => reject(new Error('Failed to load the Google API client')),
-                        ontimeout: () => reject(new Error('Timed out loading the Google API client')),
-                        timeout: LOAD_TIMEOUT
-                    })))
-                .catch(error => {
-                    setTimeout(() => {
-                        googleClientLoadPromise = null;
-                    }, LOAD_RETRY_DELAY);
+        return Promise.all([
+            this._loadLibrary(GOOGLE_API_CLIENT_LIBRARY_URL, () =>
+                (this._getGoogleApiClient() ? Promise.resolve() : this._loadScriptTag(GOOGLE_API_CLIENT_LIBRARY_URL))
+                    .then(() => new Promise((resolve, reject) =>
+                        this._getGoogleApiClient().load('client', {
+                            callback: resolve,
+                            onerror: () => reject(new Error('Failed to load the Google API client')),
+                            ontimeout: () => reject(new Error('Timed out loading the Google API client')),
+                            timeout: LOAD_TIMEOUT
+                        })))),
+            this._loadLibrary(GOOGLE_GIS_LIBRARY_URL, () => {
+                if (this._getGoogleGISApiClient()?.accounts) {
+                    return Promise.resolve();
+                }
 
-                    throw error;
-                });
-        }
-
-        if (!googleGISLoadPromise) {
-            googleGISLoadPromise = this._loadScriptTag(GOOGLE_GIS_LIBRARY_URL)
-                .catch(error => {
-                    setTimeout(() => {
-                        googleGISLoadPromise = null;
-                    }, LOAD_RETRY_DELAY);
-
-                    throw error;
-                });
-        }
-
-        return Promise.all([ googleClientLoadPromise, googleGISLoadPromise ])
+                return this._loadScriptTag(GOOGLE_GIS_LIBRARY_URL);
+            })
+        ])
             .then(() => this._getGoogleApiClient());
+    },
+
+    /**
+     * Loads a library once. A failure is reused for a while, so a blocked
+     * library doesn't cause a new request for every call.
+     *
+     * @param {string} url - The URL of the library.
+     * @param {Function} load - Starts loading the library.
+     * @private
+     * @returns {Promise}
+     */
+    _loadLibrary(url, load) {
+        if (!libraryLoads.has(url)) {
+            libraryLoads.set(url, load().catch(error => {
+                logger.error('Error loading a Google library', error);
+                failedLibraryLoads.add(url);
+                setTimeout(() => this._clearFailedLoad(url), LOAD_RETRY_DELAY);
+
+                throw error;
+            }));
+        }
+
+        return libraryLoads.get(url);
+    },
+
+    /**
+     * Forgets a failed library load, so the next call tries it again.
+     *
+     * @param {string} url - The URL of the library.
+     * @private
+     * @returns {void}
+     */
+    _clearFailedLoad(url) {
+        if (failedLibraryLoads.delete(url)) {
+            libraryLoads.delete(url);
+        }
     },
 
     /**

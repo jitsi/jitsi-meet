@@ -61,6 +61,7 @@ class StartLiveStreamDialog
         this._onInitializeGoogleApi = this._onInitializeGoogleApi.bind(this);
         this._onGoogleSignIn = this._onGoogleSignIn.bind(this);
         this._onRequestGoogleSignIn = this._onRequestGoogleSignIn.bind(this);
+        this._onRetryGoogleApi = this._onRetryGoogleApi.bind(this);
         this._onYouTubeBroadcastIDSelected
             = this._onYouTubeBroadcastIDSelected.bind(this);
     }
@@ -119,15 +120,28 @@ class StartLiveStreamDialog
      * If the user is already logged in, then a request for available YouTube
      * broadcasts is also made.
      *
+     * @param {boolean} retryFailedLoads - Whether to try a failed library load
+     * again right away.
      * @private
      * @returns {void}
      */
-    _onInitializeGoogleApi() {
+    _onInitializeGoogleApi(retryFailedLoads = false) {
         // Back to the spinner while retrying after a failed load.
         this._setStateIfMounted({ errorType: undefined });
 
-        this.props.dispatch(loadGoogleAPI())
-        .catch((response: any) => this._parseErrorFromResponse(response));
+        // The Google API stays unusable after this fails, whatever the reason.
+        this.props.dispatch(loadGoogleAPI(retryFailedLoads))
+        .catch(() => this._setStateIfMounted({ errorType: GOOGLE_API_LOAD_FAILED }));
+    }
+
+    /**
+     * Tries again to load the Google web client application after it failed.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onRetryGoogleApi() {
+        this._onInitializeGoogleApi(true);
     }
 
     /**
@@ -222,25 +236,16 @@ class StartLiveStreamDialog
     }
 
     /**
-     * Only show an error if an external request was made with the Google api
-     * or the Google API libraries failed to load.
+     * Only show an error if an external request was made with the Google api.
      * Do not error if the login in canceled.
      * And searches in a Google API error response for the error type.
      *
      * @param {Object} response - The Google API response that may contain an
-     * error, or the error for a failed load.
+     * error.
      * @private
      * @returns {string|null}
      */
     _parseErrorFromResponse(response: any) {
-
-        if (response instanceof Error) {
-            this._setStateIfMounted({
-                errorType: GOOGLE_API_LOAD_FAILED
-            });
-
-            return;
-        }
 
         if (!response?.result) {
             return;
@@ -322,7 +327,7 @@ class StartLiveStreamDialog
             googleContent = (
                 <GoogleSignInButton
                     onClick = { this.state.errorType === GOOGLE_API_LOAD_FAILED
-                        ? this._onInitializeGoogleApi : this._onRequestGoogleSignIn } />
+                        ? this._onRetryGoogleApi : this._onRequestGoogleSignIn } />
             );
             helpText = this._getGoogleErrorMessageToDisplay();
         }
