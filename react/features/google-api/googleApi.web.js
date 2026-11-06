@@ -2,6 +2,7 @@ import {
     API_URL_BROADCAST_STREAMS,
     API_URL_LIVE_BROADCASTS,
     DISCOVERY_DOCS,
+    GOOGLE_POPUP_CLOSED,
     GOOGLE_SCOPE_CALENDAR,
     GOOGLE_SCOPE_USERINFO,
     GOOGLE_SCOPE_YOUTUBE
@@ -99,7 +100,12 @@ const googleApi = {
                         // eslint-disable-next-line camelcase
                         client_id: clientId,
                         scope: `${scope} ${GOOGLE_SCOPE_USERINFO}`,
-                        callback: '' // defined at request time in await/promise scope.
+                        callback: '', // defined at request time in await/promise scope.
+
+                        // Called when the popup fails to open or is closed
+                        // before a response, so the pending request can fail.
+                        // eslint-disable-next-line camelcase
+                        error_callback: error => this._onTokenRequestError?.(error)
                     });
                     resolve();
                 } catch (err) {
@@ -212,11 +218,41 @@ const googleApi = {
     showAccountSelection(consent) {
         return this.get()
             .then(api => new Promise((resolve, reject) => {
+                // Whichever handler below fires first decides the outcome, the
+                // other one is ignored so a late token can't sign the user in
+                // after the request was rejected.
+                let settled = false;
+
                 try {
+                    // Settle this promise if the popup fails to open or is closed.
+                    this._onTokenRequestError = error => {
+                        if (settled) {
+                            return;
+                        }
+
+                        settled = true;
+
+                        if (error?.type === GOOGLE_POPUP_CLOSED) {
+                            logger.info('The Google sign in popup was closed');
+                        } else {
+                            logger.error('Error requesting token', error);
+                        }
+
+                        reject(error);
+                    };
+
                     // Settle this promise in the response callback for requestAccessToken()
                     this.tokenClient.callback = resp => {
+                        if (settled) {
+                            return;
+                        }
+
+                        settled = true;
+
                         if (resp.error !== undefined) {
                             reject(resp);
+
+                            return;
                         }
 
                         // Get the number of seconds the token is valid for, subtract 5 minutes
@@ -233,6 +269,7 @@ const googleApi = {
                     this.tokenClient.requestAccessToken({ prompt: consent ? 'consent' : '' });
                 } catch (err) {
                     logger.error('Error requesting token', err);
+                    reject(err);
                 }
             }));
     },

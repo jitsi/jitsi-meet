@@ -15,7 +15,11 @@ import {
     updateProfile
 } from '../../../../google-api/actions';
 import GoogleSignInButton from '../../../../google-api/components/GoogleSignInButton.web';
-import { GOOGLE_API_STATES } from '../../../../google-api/constants';
+import {
+    GOOGLE_API_STATES,
+    GOOGLE_POPUP_CLOSED,
+    GOOGLE_POPUP_FAILED_TO_OPEN
+} from '../../../../google-api/constants';
 import AbstractStartLiveStreamDialog, {
     IProps as AbstractProps,
     _mapStateToProps as _abstractMapStateToProps
@@ -145,7 +149,7 @@ class StartLiveStreamDialog
      */
     override _onGetYouTubeBroadcasts() {
         this.props.dispatch(updateProfile())
-            .catch((response: any) => this._parseErrorFromResponse(response));
+            .catch((response: any) => this._onGoogleSignInError(response));
 
         this.props.dispatch(requestAvailableYouTubeBroadcasts())
             .then((broadcasts: { boundStreamID: string; }[]) => {
@@ -171,7 +175,7 @@ class StartLiveStreamDialog
      */
     _onGoogleSignIn() {
         this.props.dispatch(signIn())
-            .catch((response: any) => this._parseErrorFromResponse(response));
+            .catch((response: any) => this._onGoogleSignInError(response));
     }
 
     /**
@@ -190,7 +194,32 @@ class StartLiveStreamDialog
                     broadcasts: undefined,
                     errorType: undefined
                 }))
-            .then(() => this._onGetYouTubeBroadcasts());
+            .then(() => this._onGetYouTubeBroadcasts())
+            .catch((response: any) => this._onGoogleSignInError(response));
+    }
+
+    /**
+     * Handles a failed Google sign in. Closing the popup is the user canceling
+     * so it is ignored, but a popup that could not be opened needs a message.
+     *
+     * @param {Object} response - The error from the sign in request.
+     * @private
+     * @returns {void}
+     */
+    _onGoogleSignInError(response: any) {
+        if (response?.type === GOOGLE_POPUP_CLOSED) {
+            return;
+        }
+
+        if (response?.type === GOOGLE_POPUP_FAILED_TO_OPEN) {
+            this._setStateIfMounted({
+                errorType: GOOGLE_POPUP_FAILED_TO_OPEN
+            });
+
+            return;
+        }
+
+        this._parseErrorFromResponse(response);
     }
 
     /**
@@ -335,6 +364,9 @@ class StartLiveStreamDialog
             text = this.props.t(
                 'liveStreaming.errorLiveStreamNotEnabled',
                 { email: this.props._googleProfileEmail });
+            break;
+        case GOOGLE_POPUP_FAILED_TO_OPEN:
+            text = this.props.t('liveStreaming.errorPopupBlocked');
             break;
         default:
             text = this.props.t('liveStreaming.errorAPI');
