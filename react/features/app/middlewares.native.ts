@@ -14,6 +14,7 @@ import '../mobile/react-native-sdk/middleware';
 import '../share-room/middleware';
 import '../shared-video/middleware';
 import '../toolbox/middleware.native';
+import '../virtual-background/middleware';
 import '../whiteboard/middleware.native';
 
 import './middlewares.any';

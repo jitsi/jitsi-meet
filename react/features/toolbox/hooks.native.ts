@@ -1,9 +1,12 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
+import { IReduxState } from '../app/types';
 import ChatButton from '../chat/components/native/ChatButton';
 import RaiseHandContainerButtons from '../reactions/components/native/RaiseHandContainerButtons';
 import TileViewButton from '../video-layout/components/TileViewButton';
+import { isBackgroundEffectsAvailable } from '../virtual-background/bridge';
+import BackgroundButton from '../virtual-background/components/native/BackgroundButton';
 import { iAmVisitor } from '../visitors/functions';
 
 import AudioMuteButton from './components/native/AudioMuteButton';
@@ -73,6 +76,8 @@ const hangup = {
 export function useNativeToolboxButtons(
         _customToolbarButtons?: ICustomToolbarButton[]): { [key: string]: IToolboxNativeButton; } {
     const _iAmVisitor = useSelector(iAmVisitor);
+    const _backgroundDisabled = useSelector((state: IReduxState) =>
+        state['features/base/config'].virtualBackground?.disabled === true);
     const _isScreenShareButtonDisabled = useSelector(isDesktopShareButtonDisabled);
 
     return useMemo(() => {
@@ -87,6 +92,13 @@ export function useNativeToolboxButtons(
         if (!_iAmVisitor) {
             buttons.microphone = microphone;
             buttons.camera = camera;
+            if (!_backgroundDisabled && isBackgroundEffectsAvailable()) {
+                buttons['select-background'] = {
+                    key: 'select-background',
+                    Content: BackgroundButton,
+                    group: 2
+                };
+            }
 
             if (!_isScreenShareButtonDisabled) {
                 buttons.desktop = screensharing;
@@ -111,5 +123,5 @@ export function useNativeToolboxButtons(
             ...buttons,
             ...customButtons
         };
-    }, [ _iAmVisitor, _isScreenShareButtonDisabled, _customToolbarButtons ]);
+    }, [ _iAmVisitor, _isScreenShareButtonDisabled, _customToolbarButtons, _backgroundDisabled ]);
 }

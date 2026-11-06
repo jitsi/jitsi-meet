@@ -36,6 +36,7 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 
 
 public class JitsiMeetView extends FrameLayout {
@@ -49,6 +50,8 @@ public class JitsiMeetView extends FrameLayout {
      * React Native surface.
      */
     private ReactSurfaceImpl reactSurface;
+    private final String backgroundOwnerId = UUID.randomUUID().toString();
+    private long backgroundOwnerRevision;
 
     /**
      * Helper method to recursively merge 2 {@link Bundle} objects representing React Native props.
@@ -128,6 +131,7 @@ public class JitsiMeetView extends FrameLayout {
      * typically in the {@code onDestroy} method.
      */
     public void dispose() {
+        BackgroundEffectsProvider.releaseOwner(getContext(), backgroundOwnerId);
         if (reactSurface != null) {
             ViewGroup surfaceView = reactSurface.getView();
             if (surfaceView != null) {
@@ -170,6 +174,7 @@ public class JitsiMeetView extends FrameLayout {
      *                when doing so.
      */
     public void join(@Nullable JitsiMeetConferenceOptions options) {
+        backgroundOwnerRevision = BackgroundEffectsProvider.claimOwner(getContext(), backgroundOwnerId);
         setProps(options != null ? options.asProps() : new Bundle());
     }
 
@@ -178,7 +183,12 @@ public class JitsiMeetView extends FrameLayout {
      * This is only meant to be used from the enclosing Activity's onDestroy.
      */
     public void abort() {
+        endBackgroundSession();
         setProps(new Bundle());
+    }
+
+    private void endBackgroundSession() {
+        backgroundOwnerRevision = BackgroundEffectsProvider.advanceOwner(getContext(), backgroundOwnerId);
     }
 
     /**
@@ -254,6 +264,8 @@ public class JitsiMeetView extends FrameLayout {
         // "imperativeness" in React Component props by defining a unique value
         // per setProps() invocation.
         props.putLong("timestamp", System.currentTimeMillis());
+        props.putString("backgroundOwnerId", backgroundOwnerId);
+        props.putLong("backgroundOwnerRevision", backgroundOwnerRevision);
 
         createReactRootView("App", props);
     }

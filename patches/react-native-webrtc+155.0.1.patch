@@ -1,0 +1,116 @@
+diff --git a/node_modules/react-native-webrtc/android/src/main/java/com/oney/WebRTCModule/GetUserMediaImpl.java b/node_modules/react-native-webrtc/android/src/main/java/com/oney/WebRTCModule/GetUserMediaImpl.java
+index a2e5098..e61bbc4 100644
+--- a/node_modules/react-native-webrtc/android/src/main/java/com/oney/WebRTCModule/GetUserMediaImpl.java
++++ b/node_modules/react-native-webrtc/android/src/main/java/com/oney/WebRTCModule/GetUserMediaImpl.java
+@@ -488,6 +488,13 @@ class GetUserMediaImpl {
+         videoCaptureController.setCapturerEventsListener(eventsEmitter);
+ 
+         VideoSource videoSource = pcFactory.createVideoSource(videoCapturer.isScreencast());
++        WebRTCModuleOptions.CameraVideoProcessorFactory cameraProcessorFactory
++                = WebRTCModuleOptions.getInstance().cameraVideoProcessorFactory;
++        if (!videoCapturer.isScreencast() && cameraProcessorFactory != null) {
++            VideoProcessor cameraProcessor = Objects.requireNonNull(
++                    cameraProcessorFactory.build(surfaceTextureHelper), "Camera video processor is required");
++            videoSource.setVideoProcessor(cameraProcessor);
++        }
+         videoCapturer.initialize(surfaceTextureHelper, reactContext, videoSource.getCapturerObserver());
+ 
+         VideoTrack track = pcFactory.createVideoTrack(id, videoSource);
+@@ -510,6 +517,10 @@ class GetUserMediaImpl {
+         TrackPrivate track = tracks.get(trackId);
+ 
+         if (track != null && track.videoCaptureController instanceof CameraCaptureController) {
++            if (WebRTCModuleOptions.getInstance().cameraVideoProcessorFactory != null) {
++                Log.w(TAG, "Camera video processor is managed natively; ignoring video effect replacement");
++                return;
++            }
+             VideoSource videoSource = (VideoSource) track.mediaSource;
+             SurfaceTextureHelper surfaceTextureHelper = track.surfaceTextureHelper;
+ 
+diff --git a/node_modules/react-native-webrtc/android/src/main/java/com/oney/WebRTCModule/WebRTCModuleOptions.java b/node_modules/react-native-webrtc/android/src/main/java/com/oney/WebRTCModule/WebRTCModuleOptions.java
+index 01d31d7..739a9c7 100644
+--- a/node_modules/react-native-webrtc/android/src/main/java/com/oney/WebRTCModule/WebRTCModuleOptions.java
++++ b/node_modules/react-native-webrtc/android/src/main/java/com/oney/WebRTCModule/WebRTCModuleOptions.java
+@@ -4,9 +4,15 @@ import org.webrtc.Loggable;
+ import org.webrtc.Logging;
+ import org.webrtc.VideoDecoderFactory;
+ import org.webrtc.VideoEncoderFactory;
++import org.webrtc.VideoProcessor;
++import org.webrtc.SurfaceTextureHelper;
+ import org.webrtc.audio.AudioDeviceModule;
+ 
+ public class WebRTCModuleOptions {
++    public interface CameraVideoProcessorFactory {
++        VideoProcessor build(SurfaceTextureHelper textureHelper);
++    }
++
+     private static WebRTCModuleOptions instance;
+ 
+     public VideoEncoderFactory videoEncoderFactory;
+@@ -16,6 +22,7 @@ public class WebRTCModuleOptions {
+     public Logging.Severity loggingSeverity;
+     public String fieldTrials;
+     public boolean enableMediaProjectionService;
++    public volatile CameraVideoProcessorFactory cameraVideoProcessorFactory;
+ 
+     public static WebRTCModuleOptions getInstance() {
+         if (instance == null) {
+diff --git a/node_modules/react-native-webrtc/ios/RCTWebRTC/VideoCaptureController.h b/node_modules/react-native-webrtc/ios/RCTWebRTC/VideoCaptureController.h
+index 7df95c9..2d8842e 100644
+--- a/node_modules/react-native-webrtc/ios/RCTWebRTC/VideoCaptureController.h
++++ b/node_modules/react-native-webrtc/ios/RCTWebRTC/VideoCaptureController.h
+@@ -10,6 +10,7 @@
+ @property(nonatomic, readonly, strong) AVCaptureDeviceFormat *selectedFormat;
+ @property(nonatomic, readonly, assign) int frameRate;
+ @property(nonatomic, assign) BOOL enableMultitaskingCameraAccess;
++@property(nonatomic, strong) id<RTCVideoCapturerDelegate> cameraVideoProcessor;
+ 
+ - (instancetype)initWithCapturer:(RTCCameraVideoCapturer *)capturer andConstraints:(NSDictionary *)constraints;
+ - (void)startCapture;
+diff --git a/node_modules/react-native-webrtc/ios/RCTWebRTC/WebRTCModule+RTCMediaStream.m b/node_modules/react-native-webrtc/ios/RCTWebRTC/WebRTCModule+RTCMediaStream.m
+index d2078d2..7a64770 100644
+--- a/node_modules/react-native-webrtc/ios/RCTWebRTC/WebRTCModule+RTCMediaStream.m
++++ b/node_modules/react-native-webrtc/ios/RCTWebRTC/WebRTCModule+RTCMediaStream.m
+@@ -133,9 +133,17 @@ - (RTCVideoTrack *)createVideoTrack:(NSDictionary *)constraints {
+ #endif
+ 
+     if (hasRuntimeVideoDevice) {
+-        RTCCameraVideoCapturer *videoCapturer = [[RTCCameraVideoCapturer alloc] initWithDelegate:videoSource];
++        id<RTCVideoCapturerDelegate> (^processorFactory)(RTCVideoSource *) =
++            [WebRTCModuleOptions sharedInstance].cameraVideoProcessorFactory;
++        id<RTCVideoCapturerDelegate> processor = processorFactory ? processorFactory(videoSource) : nil;
++        if (processorFactory && !processor) {
++            RCTLogError(@"Camera video processor could not be created; capture was not started");
++            return videoTrack;
++        }
++        RTCCameraVideoCapturer *videoCapturer = [[RTCCameraVideoCapturer alloc] initWithDelegate:processor ?: videoSource];
+         VideoCaptureController *videoCaptureController =
+             [[VideoCaptureController alloc] initWithCapturer:videoCapturer andConstraints:constraints[@"video"]];
++        videoCaptureController.cameraVideoProcessor = processor;
+         videoCaptureController.enableMultitaskingCameraAccess =
+             [WebRTCModuleOptions sharedInstance].enableMultitaskingCameraAccess;
+         videoTrack.captureController = videoCaptureController;
+@@ -479,6 +487,11 @@ - (RTCVideoTrack *)createScreenCaptureVideoTrack {
+ 
+     RTCVideoTrack *videoTrack = (RTCVideoTrack *)track;
+     RTCVideoSource *videoSource = videoTrack.source;
++    if ([videoTrack.captureController isKindOfClass:[VideoCaptureController class]]
++            && ((VideoCaptureController *)videoTrack.captureController).cameraVideoProcessor) {
++        RCTLogWarn(@"Camera video effects cannot replace the configured capture processor");
++        return;
++    }
+ 
+     NSMutableArray *processors = [[NSMutableArray alloc] init];
+     for (NSString *name in names) {
+diff --git a/node_modules/react-native-webrtc/ios/RCTWebRTC/WebRTCModuleOptions.h b/node_modules/react-native-webrtc/ios/RCTWebRTC/WebRTCModuleOptions.h
+index d821ec9..bf9d2a3 100644
+--- a/node_modules/react-native-webrtc/ios/RCTWebRTC/WebRTCModuleOptions.h
++++ b/node_modules/react-native-webrtc/ios/RCTWebRTC/WebRTCModuleOptions.h
+@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
+ @property(nonatomic, strong, nullable) NSDictionary *fieldTrials;
+ @property(nonatomic, assign) RTCLoggingSeverity loggingSeverity;
+ @property(nonatomic, assign) BOOL enableMultitaskingCameraAccess;
++@property(nonatomic, copy, nullable) id<RTCVideoCapturerDelegate> _Nullable (^cameraVideoProcessorFactory)(RTCVideoSource *videoSource);
+ 
+ #pragma mark - This class is a singleton
+ 

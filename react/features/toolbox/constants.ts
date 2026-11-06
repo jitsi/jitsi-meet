@@ -194,6 +194,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
  * @type Array<string>
  */
 export const NATIVE_TOOLBAR_BUTTONS: NativeToolbarButton[] = [
+    'select-background',
     'camera',
     'chat',
     'hangup',
