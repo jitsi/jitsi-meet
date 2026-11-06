@@ -75,29 +75,34 @@ class StreamKeyPicker extends Component<IProps, IState> {
      * @inheritdoc
      */
     override render() {
-        const { _dialogStyles, broadcasts } = this.props;
+        const { _dialogStyles, broadcasts, t } = this.props;
 
         if (!broadcasts) {
             return null;
         }
 
         if (!broadcasts.length) {
+            const manualKeyLabel = t('liveStreaming.getStreamKeyManually');
+
             return (
                 <View style = { styles.formWrapper as ViewStyle }>
                     <TouchableOpacity
+                        accessibilityLabel = { manualKeyLabel }
+                        accessibilityRole = 'link'
                         onPress = { this._onOpenYoutubeDashboard }>
                         <Text
                             style = { [
                                 _dialogStyles.text,
                                 styles.warningText
                             ] }>
-                            { this.props.t(
-                                'liveStreaming.getStreamKeyManually') }
+                            { manualKeyLabel }
                         </Text>
                     </TouchableOpacity>
                 </View>
             );
         }
+
+        const chooseLabel = t('liveStreaming.choose');
 
         return (
             <View style = { styles.formWrapper as ViewStyle }>
@@ -107,30 +112,38 @@ class StreamKeyPicker extends Component<IProps, IState> {
                             _dialogStyles.text,
                             styles.text
                         ] }>
-                        { this.props.t('liveStreaming.choose') }
+                        { chooseLabel }
                     </Text>
                 </View>
                 <View style = { styles.streamKeyPickerWrapper as ViewStyle } >
-                    { broadcasts.map((broadcast, index) =>
-                        (<TouchableHighlight
-                            activeOpacity = { ACTIVE_OPACITY }
-                            key = { index }
-                            onPress = { this._onStreamPick(broadcast.key) }
-                            style = { [
-                                styles.streamKeyPickerItem,
-                                this.state.streamKey === broadcast.key
-                                    ? styles.streamKeyPickerItemHighlight : null
-                            ] as ViewStyle[] }
-                            underlayColor = { TOUCHABLE_UNDERLAY }>
-                            <Text
+                    { broadcasts.map((broadcast, index) => {
+                        const isSelected = this.state.streamKey === broadcast.key;
+                        const accessibilityState = { selected: isSelected };
+
+                        return (
+                            <TouchableHighlight
+                                accessibilityLabel = { broadcast.title }
+                                accessibilityRole = 'button'
+                                accessibilityState = { accessibilityState }
+                                activeOpacity = { ACTIVE_OPACITY }
+                                key = { index }
+                                onPress = { this._onStreamPick(broadcast.key) }
                                 style = { [
-                                    _dialogStyles.text,
-                                    styles.text
-                                ] }>
-                                { broadcast.title }
-                            </Text>
-                        </TouchableHighlight>))
-                    }
+                                    styles.streamKeyPickerItem,
+                                    isSelected
+                                        ? styles.streamKeyPickerItemHighlight : null
+                                ] as ViewStyle[] }
+                                underlayColor = { TOUCHABLE_UNDERLAY }>
+                                <Text
+                                    style = { [
+                                        _dialogStyles.text,
+                                        styles.text
+                                    ] }>
+                                    { broadcast.title }
+                                </Text>
+                            </TouchableHighlight>
+                        );
+                    }) }
                 </View>
             </View>
         );
