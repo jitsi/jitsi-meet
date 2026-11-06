@@ -184,16 +184,19 @@ const DialogWithTabs = ({
     const [ selectedTab, setSelectedTab ] = useState<string | undefined>(defaultTab ?? tabs[0].name);
     const [ userSelected, setUserSelected ] = useState(false);
     const [ tabStates, setTabStates ] = useState(tabs.map(tab => tab.props));
-    const videoSpaceWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].videoSpaceWidth);
+    // The dialog is a modal over the whole viewport and its styles switch on a viewport media query, so the
+    // layout decision must follow the viewport too. The video space shrinks when a side panel is open, which
+    // would put the dialog in mobile mode under the desktop styles.
+    const clientWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].clientWidth);
     const [ isMobile, setIsMobile ] = useState(false);
 
     useEffect(() => {
-        if (videoSpaceWidth <= MOBILE_BREAKPOINT) {
+        if (clientWidth <= MOBILE_BREAKPOINT) {
             !isMobile && setIsMobile(true);
         } else {
             isMobile && setIsMobile(false);
         }
-    }, [ videoSpaceWidth, isMobile ]);
+    }, [ clientWidth, isMobile ]);
 
     useEffect(() => {
         if (isMobile) {
