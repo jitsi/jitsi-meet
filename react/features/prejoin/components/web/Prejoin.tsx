@@ -459,6 +459,7 @@ const Prejoin = ({
                                     { ...rest } />
                             ))}
                         </div> }
+                        headingLabel = { t('prejoin.joinOptions') }
                         onPopoverClose = { onDropdownClose }
                         position = 'bottom'
                         trigger = 'click'
