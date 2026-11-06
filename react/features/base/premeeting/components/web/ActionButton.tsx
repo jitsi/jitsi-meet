@@ -17,14 +17,15 @@ interface IProps {
     ariaDropDownLabel?: string;
 
     /**
+     * Whether the options popup is open. Rendered as aria-expanded on the options button, so screen
+     * readers announce its open/closed state instead of a pressed/unpressed toggle.
+     */
+    ariaExpanded?: boolean;
+
+    /**
      * The Label of the current element.
      */
     ariaLabel?: string;
-
-    /**
-     * To give a aria-pressed to the icon.
-     */
-    ariaPressed?: boolean;
 
     /**
      * Text of the button.
@@ -184,7 +185,7 @@ function ActionButton({
     onOptionsClick,
     tabIndex,
     role,
-    ariaPressed,
+    ariaExpanded,
     ariaLabel,
     ariaDropDownLabel
 }: IProps) {
@@ -226,9 +227,9 @@ function ActionButton({
             { hasOptions
                 && <div
                     aria-disabled = { disabled }
-                    aria-haspopup = 'true'
+                    aria-expanded = { ariaExpanded }
+                    aria-haspopup = 'dialog'
                     aria-label = { ariaDropDownLabel }
-                    aria-pressed = { ariaPressed }
                     className = { classes.options }
                     data-testid = 'prejoin.joinOptions'
                     onClick = { disabled ? undefined : onOptionsClick }
