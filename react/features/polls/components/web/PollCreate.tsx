@@ -156,7 +156,7 @@ const PollCreate = ({
         }
     }, []);
 
-    // Called on keypress in answer fields
+    // Called on keydown in answer fields
     const onAnswerKeyDown = useCallback((i, ev) => {
         if (checkModifiers(ev)) {
             return;
@@ -206,7 +206,7 @@ const PollCreate = ({
                     label = { t('polls.create.pollQuestion') }
                     maxLength = { CHAR_LIMIT }
                     onChange = { setQuestion }
-                    onKeyPress = { onQuestionKeyDown }
+                    onKeyDown = { onQuestionKeyDown }
                     placeholder = { t('polls.create.questionPlaceholder') }
                     textarea = { true }
                     value = { question } />
@@ -232,7 +232,7 @@ const PollCreate = ({
                             onChange = { name => setAnswer(i, {
                                 name
                             }) }
-                            onKeyPress = { ev => onAnswerKeyDown(i, ev) }
+                            onKeyDown = { ev => onAnswerKeyDown(i, ev) }
                             placeholder = { t('polls.create.answerPlaceholder', { index: i + 1 }) }
                             ref = { r => registerFieldRef(i, r) }
                             textarea = { true }
