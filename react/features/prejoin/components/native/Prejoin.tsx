@@ -154,6 +154,8 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         largeVideoContainerStyles = styles.largeVideoContainerWide;
     }
 
+    const enterDisplayNameLabel = t('dialog.enterDisplayName');
+
     return (
         <JitsiScreen
             addBottomPadding = { false }
@@ -186,11 +188,12 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                 </View>
                 {
                     showDisplayNameInput && <Input
+                        accessibilityLabel = { enterDisplayNameLabel }
                         customStyles = {{ input: styles.customInput }}
                         disabled = { isDisplayNameReadonly }
                         error = { showDisplayNameError }
                         onChange = { onChangeDisplayName }
-                        placeholder = { t('dialog.enterDisplayName') }
+                        placeholder = { enterDisplayNameLabel }
                         value = { displayName } />
                 }
                 {
