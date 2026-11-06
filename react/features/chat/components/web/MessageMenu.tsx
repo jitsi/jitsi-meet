@@ -85,7 +85,6 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
     const [ isPopoverOpen, setIsPopoverOpen ] = useState(false);
-    const [ isPopoverMounted, setIsPopoverMounted ] = useState(false);
     const [ shouldFocusComposer, setShouldFocusComposer ] = useState(false);
     const [ showCopiedMessage, setShowCopiedMessage ] = useState(false);
     const [ popupPosition, setPopupPosition ] = useState({ top: 0,
@@ -94,6 +93,7 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
     const menuPanelRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
     const restoreTriggerFocus = useRef(false);
+    const focusMessageOnClose = useRef(false);
 
     const isModerator = useSelector(isLocalParticipantModerator);
     const messageModerationSupported = useSelector(
@@ -125,12 +125,23 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
         }
 
         restoreTriggerFocus.current = false;
+        const focusMessage = focusMessageOnClose.current;
+
+        focusMessageOnClose.current = false;
 
         if (shouldFocusComposer) {
             return undefined;
         }
 
+        const messageId = message.messageId;
+
         const frame = requestAnimationFrame(() => {
+            if (focusMessage) {
+                document.getElementById(messageId)?.focus({ preventScroll: true });
+
+                return;
+            }
+
             const active = document.activeElement;
             const panel = menuPanelRef.current;
             const focusLost = !active || active === document.body
@@ -142,16 +153,11 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
         });
 
         return () => cancelAnimationFrame(frame);
-    }, [ isPopoverOpen, shouldFocusComposer ]);
+    }, [ isPopoverOpen, message.messageId, shouldFocusComposer ]);
 
     const handleMenuTab = useMenuFocusTrap();
 
-    const mountPopover = useCallback(() => {
-        setIsPopoverMounted(true);
-    }, []);
-
     const handleMenuClick = useCallback(() => {
-        setIsPopoverMounted(true);
         restoreTriggerFocus.current = true;
         setIsPopoverOpen(true);
     }, []);
@@ -216,14 +222,19 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
     }, [ message.message ]);
 
     const handleDeleteClick = useCallback(() => {
-        document.getElementById(message.messageId)?.focus({ preventScroll: true });
-        dispatch(sendMessageRetraction(message));
+        const messageId = message.messageId;
 
+        focusMessageOnClose.current = true;
+        dispatch(sendMessageRetraction(message));
         handleClose();
+
+        requestAnimationFrame(() => {
+            document.getElementById(messageId)?.focus({ preventScroll: true });
+        });
     }, [ message, handleClose ]);
 
     const handleModerateClick = useCallback(() => {
-        document.getElementById(message.messageId)?.focus({ preventScroll: true });
+        focusMessageOnClose.current = true;
         dispatch(sendMessageModeration(message));
         handleClose();
     }, [ dispatch, message, handleClose ]);
@@ -341,20 +352,15 @@ const MessageMenu = ({ canEdit, message, isFromVisitor, isLobbyMessage, isModera
 
     return (
         <div className = { isPopoverOpen ? 'chat-message-actions-open' : undefined }>
-            <div
-                onFocus = { mountPopover }
-                onMouseEnter = { mountPopover }
-                ref = { buttonRef }>
-                {isPopoverMounted ? (
-                    <Popover
-                        content = { popoverContent }
-                        onPopoverClose = { handleClose }
-                        position = 'top'
-                        trigger = 'click'
-                        visible = { isPopoverOpen }>
-                        {triggerButton}
-                    </Popover>
-                ) : triggerButton}
+            <div ref = { buttonRef }>
+                <Popover
+                    content = { popoverContent }
+                    onPopoverClose = { handleClose }
+                    position = 'top'
+                    trigger = 'click'
+                    visible = { isPopoverOpen }>
+                    {triggerButton}
+                </Popover>
             </div>
 
             {showCopiedMessage && ReactDOM.createPortal(
