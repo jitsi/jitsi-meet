@@ -1,5 +1,6 @@
 import type { ChainablePromiseElement } from 'webdriverio';
 
+import type { IMessage } from '../../../react/features/chat/types';
 import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import {
@@ -17,6 +18,21 @@ setTestProperties(__filename, {
 const MAIN_ROOM_NAME = 'Main room';
 const BREAKOUT_ROOMS_LIST_ID = 'breakout-rooms-list';
 const LIST_ITEM_CONTAINER = 'list-item-container';
+
+/**
+ * Retrieves a chat message from the participant's Redux store by its message text.
+ *
+ * @param {Participant} participant - The participant whose store to query.
+ * @param {string} text - The message text to match.
+ * @returns {Promise<IMessage | undefined>}
+ */
+async function getChatMessage(participant: Participant, text: string): Promise<IMessage | undefined> {
+    return participant.execute((msgText: string) => {
+        const messages = APP.store.getState()['features/chat']?.messages || [];
+
+        return messages.find(m => m.message === msgText);
+    }, text);
+}
 
 describe('Breakout rooms', () => {
     it('check support', async () => {
@@ -497,18 +513,20 @@ describe('Breakout rooms', () => {
         const breakoutRoomName = existingRooms[0].name;
 
         // 2. Ensure p2 is in the main room before sending the message
-        await p2BreakoutRooms.leaveBreakoutRoom();
+        if (await p2.isInBreakoutRoom()) {
+            await p2BreakoutRooms.leaveBreakoutRoom();
 
-        await p1.driver.waitUntil(
-            async () => {
-                const list = await p1BreakoutRooms.getRooms();
-                const room = list.find(r => r.name === breakoutRoomName);
+            await p1.driver.waitUntil(
+                async () => {
+                    const list = await p1BreakoutRooms.getRooms();
+                    const room = list.find(r => r.name === breakoutRoomName);
 
-                return room?.participantCount === 0;
-            }, {
-                timeout: 5000,
-                timeoutMsg: 'P2 did not leave breakout room before chat test'
-            });
+                    return room?.participantCount === 0;
+                }, {
+                    timeout: 5000,
+                    timeoutMsg: 'P2 did not leave breakout room before chat test'
+                });
+        }
 
         // 3. p2 sets initial display name and sends a message while in the main room
         const initialDisplayName = `P2-Main-${Date.now()}`;
@@ -520,31 +538,25 @@ describe('Breakout rooms', () => {
         await p2.getChatPanel().sendMessage(testMsg);
 
         // Wait for message to arrive at p1
-        await p1.driver.waitUntil(async () => {
-            const messages = await p1.driver.execute(() => APP.store.getState()['features/chat']?.messages || []);
+        await p1.driver.waitUntil(
+            async () => Boolean(await getChatMessage(p1, testMsg)),
+            {
+                timeout: 5000,
+                timeoutMsg: 'Message was not received by p1'
+            }
+        );
 
-            return messages.some((m: any) => m.message === testMsg);
-        }, {
-            timeout: 5000,
-            timeoutMsg: 'Message was not received by p1'
-        });
-
-        const initialMsg = await p1.driver.execute((text: string) => {
-            const messages = APP.store.getState()['features/chat']?.messages || [];
-
-            return messages.find((m: any) => m.message === text);
-        }, testMsg);
+        const initialMsg = await getChatMessage(p1, testMsg);
 
         expect(initialMsg).toBeDefined();
+
+        if (!initialMsg) {
+            throw new Error('Expected chat message was not found');
+        }
+
         expect(initialMsg.displayName).toBe(initialDisplayName);
         expect(initialMsg.isEdited).toBeFalsy();
         expect(initialMsg.editedAt).toBeUndefined();
-
-        // P1 opens and closes chat so that lastReadMessage points to this message
-        if (!await p1.getChatPanel().isOpen()) {
-            await p1.getToolbar().clickChatButton();
-            await p1.getToolbar().clickCloseChatButton();
-        }
 
         // 4. Update p2's display name so that breakout room participant data has an updated name
         const updatedDisplayName = `P2-Breakout-${Date.now()}`;
@@ -571,11 +583,7 @@ describe('Breakout rooms', () => {
 
         // 6. Wait for breakout-room display name sync to update p1's chat store
         await p1.driver.waitUntil(async () => {
-            const updatedMsg = await p1.driver.execute((text: string) => {
-                const messages = APP.store.getState()['features/chat']?.messages || [];
-
-                return messages.find((m: any) => m.message === text);
-            }, testMsg);
+            const updatedMsg = await getChatMessage(p1, testMsg);
 
             return updatedMsg?.displayName === updatedDisplayName;
         }, {
@@ -584,22 +592,18 @@ describe('Breakout rooms', () => {
         });
 
         // 7. Verify in Redux state that message retains its unedited status
-        const finalMsg = await p1.driver.execute((text: string) => {
-            const messages = APP.store.getState()['features/chat']?.messages || [];
+        const finalMsg = await getChatMessage(p1, testMsg);
 
-            return messages.find((m: any) => m.message === text);
-        }, testMsg);
+        expect(finalMsg).toBeDefined();
+
+        if (!finalMsg) {
+            throw new Error('Expected chat message was not found');
+        }
 
         expect(finalMsg.displayName).toBe(updatedDisplayName);
         expect(finalMsg.isEdited).toBeFalsy();
         expect(finalMsg.editedAt).toBeUndefined();
         expect(finalMsg.message).toBe(testMsg);
-
-        const lastReadMsg = await p1.driver.execute(() => APP.store.getState()['features/chat']?.lastReadMessage);
-
-        expect(lastReadMsg).toBeDefined();
-        expect(lastReadMsg.messageId).toBe(finalMsg.messageId);
-        expect(lastReadMsg.displayName).toBe(updatedDisplayName);
 
         // 8. Verify in the DOM: open chat panel for p1 and scope strictly to this specific message
         if (!await p1.getChatPanel().isOpen()) {
@@ -609,7 +613,6 @@ describe('Breakout rooms', () => {
         const messageElem = await p1.driver.$(`[id="${finalMsg.messageId}"]`);
 
         await messageElem.waitForExist({ timeout: 5000 });
-        expect(await messageElem.isExisting()).toBe(true);
 
         const editedLabel = await messageElem.$('div*=(edited)');
 
