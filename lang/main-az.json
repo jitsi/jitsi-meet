@@ -758,6 +758,7 @@
         "showMeWhatImSharing": "Nə paylaşdığımı mənə göstər"
     },
     "liveStreaming": {
+        "badRequest": "Canlı yayım sorğusu etibarlı deyil. Yayım açarını və yayım tənzimləmələrini yoxlayın.",
         "busy": "Yayım resurslarını azad etmək üzərində işləyirik. Zəhmət olmasa bir neçə dəqiqə sonra yenidən cəhd edin.",
         "busyTitle": "Bütün yayımçılar hazırda məşğuldur",
         "changeSignIn": "Hesabları dəyişdirin.",
@@ -1104,16 +1105,27 @@
             "save": "Saxla",
             "singleAnswer": "Yalnız bir cavaba icazə ver"
         },
+        "endPollDialog": {
+            "description": "Səsvermə hər kəs üçün başa çatır və səsvermə yenidən açıla bilməz.",
+            "title": "Bu səsverməyə son verilsin?"
+        },
         "errors": {
-            "notUniqueOption": "Seçimlər unikal olmalıdır"
+        "closeFailed": "Səsvermə sonlandırıla bilmədi",
+        "notUniqueOption": "Seçimlər unikal olmalıdır",
+        "voteFailed": "Səsiniz nəzərə alınmadı",
+        "voteNotCounted": "Səsiniz nəzərə alınmadı, səsvermə başa çatdı"
+        }
+
         },
         "notification": {
             "description": "Səs vermək üçün sorğular vərəqini açın",
             "title": "Bu görüşə yeni sorğu əlavə edildi"
         },
         "results": {
-            "changeVote": "Səsi dəyişdir",
+            "changeVote": "Səsverməni dəyişdir",
+            "closed": "Səsvermə başa çatdı",
             "empty": "Görüşdə hələ ki sorğu yoxdur.",
+            "endPoll": "Səsverməni bitir",
             "hideDetailedResults": "Təfərrüatları gizlət",
             "showDetailedResults": "Təfərrüatları göstər",
             "vote": "Səs ver"
@@ -1156,7 +1168,7 @@
         "dialInMeeting": "Görüşə telefonla qoşulun",
         "dialInPin": "Görüşə telefonla zəng edin və PIN kodu daxil edin:",
         "dialing": "Zəng edilir",
-        "doNotShow": "Bu ekranı bir daha göstərmə",
+        "doNotShow": "Bu ekranı təkrar göstərmə",
         "errorDialOut": "Zəng etmək mümkün olmadı",
         "errorDialOutDisconnected": "Zəng etmək mümkün olmadı. Bağlantı kəsildi",
         "errorDialOutFailed": "Zəng etmək mümkün olmadı. Zəng uğursuz oldu",
@@ -1224,6 +1236,7 @@
         "alsoTranscribe": "Bu görüş də transkripsiya edilsin?",
         "authDropboxText": "Dropbox-a yüklə",
         "availableSpace": "Əlçatan sahə: {{spaceLeft}} MB (təxminən {{duration}} dəqiqəlik qeyd)",
+        "badRequest": "Bu görüşün qeydəalma tənzimləmələri dəstəklənmir.",
         "beta": "Sınaq",
         "busy": "Qeydəalma resurslarını azad etmək üzərində işləyirik. Zəhmət olmasa bir neçə dəqiqə sonra yenidən cəhd edin.",
         "busyTitle": "Bütün qeydəalıcılar hazırda məşğuldur",
