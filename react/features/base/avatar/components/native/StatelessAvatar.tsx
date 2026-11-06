@@ -52,7 +52,7 @@ export default class StatelessAvatar extends Component<IProps> {
      * @inheritdoc
      */
     override render() {
-        const { initials, size, style, url } = this.props;
+        const { accessibilityAnnounceName, displayName, initials, size, style, url } = this.props;
 
         let avatar;
 
@@ -66,8 +66,20 @@ export default class StatelessAvatar extends Component<IProps> {
             avatar = this._renderDefaultAvatar();
         }
 
+        // Same rule as on web: the avatar is decorative unless a caller asks for the name to be announced,
+        // and it stays decorative when there is no name. The props sit on the wrapper so the picture, the
+        // initials and the icon fallback are announced the same way.
+        const announcedName = accessibilityAnnounceName && displayName ? displayName : undefined;
+        const accessibilityProps = announcedName
+            ? { accessibilityLabel: announcedName,
+                accessibilityRole: 'image' as const,
+                accessible: true }
+            : { accessibilityElementsHidden: true,
+                accessible: false,
+                importantForAccessibility: 'no-hide-descendants' as const };
+
         return (
-            <View>
+            <View { ...accessibilityProps }>
                 <View
                     style = { [
                         styles.avatarContainer(size) as ViewStyle,
