@@ -2,10 +2,10 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { endConference } from '../../../base/conference/actions';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
+import { openEndConferenceDialog } from '../../../conference/actions.web';
 
 import { HangupContextMenuItem } from './HangupContextMenuItem';
 
@@ -40,7 +40,7 @@ export const EndConferenceButton = (props: IProps) => {
     const _isInBreakoutRoom = useSelector(isInBreakoutRoom);
 
     const onEndConference = useCallback(() => {
-        dispatch(endConference());
+        dispatch(openEndConferenceDialog());
     }, [ dispatch ]);
 
     return (<>
