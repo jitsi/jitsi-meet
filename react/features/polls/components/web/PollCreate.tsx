@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import Button from '../../../base/ui/components/web/Button';
+import Checkbox from '../../../base/ui/components/web/Checkbox';
 import Input from '../../../base/ui/components/web/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { editPoll } from '../../actions';
@@ -44,6 +45,9 @@ const useStyles = makeStyles()(theme => {
             border: 0,
             background: 'transparent'
         },
+        singleAnswer: {
+            marginBottom: '24px'
+        },
         addButtonContainer: {
             display: 'flex'
         },
@@ -74,6 +78,9 @@ const PollCreate = ({
     setAnswer,
     setCreateMode,
     setQuestion,
+    setSingleAnswer,
+    showSingleAnswer,
+    singleAnswer,
     t
 }: AbstractProps) => {
     const { classes } = useStyles();
@@ -243,6 +250,14 @@ const PollCreate = ({
                 }
                 )}
             </ol>
+            { showSingleAnswer && <div className = { classes.singleAnswer }>
+                <Checkbox
+                    checked = { singleAnswer }
+                    id = 'polls-single-answer'
+                    label = { t('polls.create.singleAnswer') }
+                    name = 'polls-single-answer'
+                    onChange = { ev => setSingleAnswer(ev.target.checked) } />
+            </div> }
             <div className = { classes.addButtonContainer }>
                 <Button
                     accessibilityLabel = { t('polls.create.addOption') }

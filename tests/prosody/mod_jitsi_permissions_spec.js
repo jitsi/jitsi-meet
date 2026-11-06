@@ -13,7 +13,7 @@ const nextRoom = () => `permissions-${++_roomCounter}@${CONFERENCE}`;
 // Keys present in the default_permissions table in mod_jitsi_permissions.lua.
 const DEFAULT_PERMISSION_KEYS = [
     'livestreaming', 'recording', 'transcription',
-    'outbound-call', 'create-polls', 'send-groupchat', 'share-video', 'flip'
+    'outbound-call', 'sip-outbound-call', 'create-polls', 'send-groupchat', 'share-video', 'flip'
 ];
 
 /**

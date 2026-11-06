@@ -8,8 +8,9 @@ const JOIN_ONE_TEST_ID = 'notify.connectedOneMember';
 const JOIN_TWO_TEST_ID = 'notify.connectedTwoMembers';
 const LOBBY_ACCESS_DENIED_TEST_ID = 'lobby.joinRejectedMessage';
 const LOBBY_ENABLED_TEST_ID = 'lobby.notificationLobbyEnabled';
+const LOBBY_KNOCKING_PARTICIPANT_NOTIFICATION_TEST_ID = 'notify.participantWantsToJoin';
 const LOBBY_KNOCKING_PARTICIPANT_NOTIFICATION_XPATH
-    = '//div[@data-testid="notify.participantWantsToJoin"]/div/div/span';
+    = `//div[@data-testid="${LOBBY_KNOCKING_PARTICIPANT_NOTIFICATION_TEST_ID}"]/div/div/span`;
 const LOBBY_NOTIFICATIONS_TITLE_TEST_ID = 'lobby.notificationTitle';
 const LOBBY_PARTICIPANT_ACCESS_DENIED_TEST_ID = 'lobby.notificationLobbyAccessDenied';
 const LOBBY_PARTICIPANT_ACCESS_GRANTED_TEST_ID = 'lobby.notificationLobbyAccessGranted';
@@ -174,15 +175,30 @@ export default class Notifications extends BasePageObject {
     }
 
     /**
+     * Clicks an action button of the knocking participant notification, once the notification has slid in, so the
+     * click does not land on a position the button is still moving away from.
+     * @param testId
+     * @private
+     */
+    private async clickKnockingParticipantAction(testId: string) {
+        const notification
+            = this.participant.driver.$(`div[data-testid="${LOBBY_KNOCKING_PARTICIPANT_NOTIFICATION_TEST_ID}"]`);
+
+        await notification.waitForExist();
+        await notification.waitForStable();
+
+        const button = this.participant.driver.$(`[data-testid="${testId}"]`);
+
+        await button.waitForExist();
+        await button.waitForClickable();
+        await button.click();
+    }
+
+    /**
      * Admits the last knocking participant (it is the only one).
      */
-    async allowLobbyParticipant() {
-        const admitButton
-            = this.participant.driver.$(`[data-testid="${LOBBY_PARTICIPANT_ADMIT_TEST_ID}"]`);
-
-        await admitButton.waitForExist();
-        await admitButton.waitForClickable();
-        await admitButton.click();
+    allowLobbyParticipant() {
+        return this.clickKnockingParticipantAction(LOBBY_PARTICIPANT_ADMIT_TEST_ID);
     }
 
     /**
@@ -228,13 +244,8 @@ export default class Notifications extends BasePageObject {
     /**
      * Rejects the last knocking participant (it is the only one).
      */
-    async rejectLobbyParticipant() {
-        const admitButton
-            = this.participant.driver.$(`[data-testid="${LOBBY_PARTICIPANT_REJECT_TEST_ID}"]`);
-
-        await admitButton.waitForExist();
-        await admitButton.waitForClickable();
-        await admitButton.click();
+    rejectLobbyParticipant() {
+        return this.clickKnockingParticipantAction(LOBBY_PARTICIPANT_REJECT_TEST_ID);
     }
 
     /**

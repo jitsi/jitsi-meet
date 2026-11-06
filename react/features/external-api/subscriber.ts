@@ -71,3 +71,13 @@ StateListenerRegistry.register(
         APP.API.notifyLowBandwidthModeChanged(enabled);
     }
 );
+
+/**
+ * Notifies the external API when noise suppression is enabled or disabled.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/noise-suppression'].enabled,
+    /* listener */ enabled => {
+        APP.API.notifyNoiseSuppressionChanged(enabled);
+    }
+);

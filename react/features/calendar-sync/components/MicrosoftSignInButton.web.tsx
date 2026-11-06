@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { translate } from '../../base/i18n/functions';
+import { onActivationKey } from '../../base/ui/functions.web';
 
 /**
  * The type of the React {@code Component} props of
@@ -36,7 +37,10 @@ class MicrosoftSignInButton extends Component<IProps> {
         return (
             <div
                 className = 'microsoft-sign-in'
-                onClick = { this.props.onClick }>
+                onClick = { this.props.onClick }
+                onKeyDown = { onActivationKey(() => this.props.onClick()) }
+                role = 'button'
+                tabIndex = { 0 }>
                 <img
                     alt = { this.props.t('welcomepage.logo.microsoftLogo') }
                     className = 'microsoft-logo'

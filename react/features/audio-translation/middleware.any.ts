@@ -24,6 +24,10 @@ import logger from './logger';
  * fall back to {@link DEFAULT_ERROR_KEY}.
  */
 const ERROR_NOTIFICATION_KEYS: { [condition: string]: string; } = {
+    // The component refused the request itself: most often a language code it does not accept (letters only),
+    // though a malformed payload gets the same condition. Retrying cannot help, so the message says what happened
+    // and points at the configuration as the thing to check, rather than saying "try again".
+    [JitsiAudioTranslationErrors.BAD_REQUEST]: 'audioTranslation.errorBadRequest',
     [JitsiAudioTranslationErrors.FORBIDDEN]: 'audioTranslation.errorForbidden',
     [JitsiAudioTranslationErrors.SPEAKER_UNAVAILABLE]: 'audioTranslation.errorSpeakerUnavailable',
     [JitsiAudioTranslationErrors.SUBSCRIPTION_LIMIT_REACHED]: 'audioTranslation.errorLimitReached'

@@ -157,6 +157,7 @@ const events = {
     'mouse-enter': 'mouseEnter',
     'mouse-leave': 'mouseLeave',
     'mouse-move': 'mouseMove',
+    'noise-suppression-changed': 'noiseSuppressionChanged',
     'non-participant-message-received': 'nonParticipantMessageReceived',
     'notification-triggered': 'notificationTriggered',
     'outgoing-message': 'outgoingMessage',

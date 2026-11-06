@@ -3,10 +3,12 @@
 import Slider from '@react-native-community/slider';
 import { throttle } from 'lodash-es';
 import React, { PureComponent } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
+import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconVolumeUp } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
@@ -24,7 +26,7 @@ import styles from './styles';
 /**
  * The type of the React {@code Component} props of {@link VolumeSlider}.
  */
-interface IProps {
+interface IProps extends WithTranslation {
 
     /**
      * Whether the participant enters the conference silent.
@@ -100,9 +102,10 @@ class VolumeSlider extends PureComponent<IProps, IState> {
      * @returns {ReactElement}
      */
     override render() {
-        const { _startSilent } = this.props;
+        const { _startSilent, t } = this.props;
         const { volumeLevel } = this.state;
         const onVolumeChange = _startSilent ? undefined : this._onVolumeChange;
+        const sliderLabel = t('volumeSlider');
 
         return (
             <View style = { styles.volumeSliderContainer as ViewStyle } >
@@ -110,6 +113,7 @@ class VolumeSlider extends PureComponent<IProps, IState> {
                     size = { 24 }
                     src = { IconVolumeUp } />
                 <Slider
+                    accessibilityLabel = { sliderLabel }
                     maximumTrackTintColor = { BaseTheme.palette.ui10 }
                     maximumValue = { NATIVE_VOLUME_SLIDER_SCALE }
                     minimumTrackTintColor = { BaseTheme.palette.action01 }
@@ -172,4 +176,4 @@ function mapStateToProps(state: IReduxState, ownProps: IProps) {
 }
 
 // @ts-ignore
-export default connect(mapStateToProps)(VolumeSlider);
+export default translate(connect(mapStateToProps)(VolumeSlider));

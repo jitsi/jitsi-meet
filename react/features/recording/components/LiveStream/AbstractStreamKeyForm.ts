@@ -20,10 +20,13 @@ export type LiveStreaming = {
 };
 
 export type LiveStreamingProps = {
+    dataPrivacyLabelKey: string;
     dataPrivacyURL?: string;
     enabled: boolean;
     helpURL?: string;
+    streamKeyPlaceholderKey: string;
     streamLinkRegexp: RegExp;
+    termsLabelKey: string;
     termsURL?: string;
 };
 

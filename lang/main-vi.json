@@ -234,12 +234,6 @@
         "microphonePermission": "Lỗi cấp quyền micro"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Kiểm soát cuộc gọi",
-            "connectedDevices": "Các thiết bị đã được kết nối:",
-            "deleteDevice": "Xoá thiết bị",
-            "pairDevice": "Ghép nối thiết bị"
-        },
         "noPermission": "Không được cấp quyền",
         "previewUnavailable": "Xem trước không khả dụng",
         "selectADevice": "Chọn một thiết bị",

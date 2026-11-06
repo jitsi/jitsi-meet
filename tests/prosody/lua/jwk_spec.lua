@@ -1,10 +1,12 @@
 -- Unit tests for token/jwk.lib.lua
 -- Run with busted from resources/prosody-plugins/:
 --   busted spec/lua/
--- Requires: basexx  (luarocks install basexx)
 
 -- dofile resolves relative to CWD, so run from resources/prosody-plugins/.
 -- The module sets ASN1, base64_encode, and base64url_decode as globals.
+-- util.encodings is prosody's native library, so it is not there outside prosody.
+require 'encodings_stub'
+
 local M = dofile("token/jwk.lib.lua")
 local ASN1 = M.ASN1
 

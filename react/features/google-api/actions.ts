@@ -27,7 +27,8 @@ export function getCalendarEntries(
 }
 
 /**
- * Loads Google API.
+ * Loads Google API. It does not prompt the user to sign in, that has to be
+ * started explicitly by the user with {@link signIn}.
  *
  * @returns {Function}
  */
@@ -51,7 +52,6 @@ export function loadGoogleAPI() {
             return Promise.resolve();
         })
         .then(() => dispatch(setGoogleAPIState(GOOGLE_API_STATES.LOADED)))
-        .then(() => googleApi.signInIfNotSignedIn())
         .then(() => googleApi.isSignedIn())
         .then((isSignedIn: boolean) => {
             if (isSignedIn) {

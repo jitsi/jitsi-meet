@@ -1,20 +1,23 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { IconMicSlash } from '../../../base/icons/svg';
 import BaseIndicator from '../../../base/react/components/native/BaseIndicator';
 
 /**
  * Thumbnail badge for displaying the audio mute status of a participant.
+ *
+ * @returns {JSX.Element}
  */
-export default class AudioMutedIndicator extends Component<{}> {
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     */
-    override render() {
-        return (
-            <BaseIndicator icon = { IconMicSlash } />
-        );
-    }
-}
+const AudioMutedIndicator = (): JSX.Element => {
+    const { t } = useTranslation();
+    const label = t('videothumbnail.mute');
+
+    return (
+        <BaseIndicator
+            accessibilityLabel = { label }
+            icon = { IconMicSlash } />
+    );
+};
+
+export default AudioMutedIndicator;

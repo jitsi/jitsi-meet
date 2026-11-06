@@ -264,12 +264,6 @@
         "microphonePermission": "Микрофоны зөвшөөрөл авахад алдаа гарлаа"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Дуудлага хянах",
-            "connectedDevices": "Холбогдсон төхөөрөмжүүд:",
-            "deleteDevice": "Төхөөрөмж устгах",
-            "pairDevice": "Төхөөрөмж холбох"
-        },
         "noPermission": "Зөвшөөрөл өгөөгүй байна",
         "previewUnavailable": "Урьдчилан харах боломжгүй",
         "selectADevice": "Төхөөрөмж сонгоно уу",

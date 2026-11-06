@@ -22,8 +22,11 @@ const JIGASI_INVITE_URL = 'http://localhost:5280/invite-jigasi';
  *                                       body. Tests the nil-check bug:
  *                                       json.decode returns nil and the module
  *                                       must not crash on r['access'].
+ * @param {number}  [opts.delay=0]       Seconds the mock holds each response
+ *                                       before sending it, to move the ban
+ *                                       callback later in session setup.
  */
-export async function setAccessManagerResponse({ access = true, status = 200, nonJson = false } = {}) {
+export async function setAccessManagerResponse({ access = true, status = 200, nonJson = false, delay = 0 } = {}) {
     const res = await fetch(ACCESS_MANAGER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -31,7 +34,8 @@ export async function setAccessManagerResponse({ access = true, status = 200, no
             access,
             status,
             // eslint-disable-next-line camelcase
-            non_json: nonJson
+            non_json: nonJson,
+            delay
         })
     });
 
@@ -146,6 +150,23 @@ export async function getSessionFeatures(fullJid) {
     }
 
     return (await res.json()).features;
+}
+
+/**
+ * Returns the current token fields (auth_token and the JWT-derived claims) of a
+ * live c2s session.
+ *
+ * @param {string} fullJid  e.g. 'abc123@localhost/res1'
+ * @returns {Promise<object>}
+ */
+export async function getSessionLive(fullJid) {
+    const res = await fetch(`${BASE}/session-live?jid=${encodeURIComponent(fullJid)}`);
+
+    if (!res.ok) {
+        throw new Error(`getSessionLive failed: ${res.status} ${await res.text()}`);
+    }
+
+    return res.json();
 }
 
 /**

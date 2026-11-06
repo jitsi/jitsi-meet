@@ -50,6 +50,11 @@ interface IReactionStyles {
 interface IProps extends WithTranslation {
 
     /**
+     * Optional accessibility label for the button.
+     */
+    accessibilityLabel?: string;
+
+    /**
      * Component children.
      */
     children?: React.ReactNode;
@@ -76,6 +81,7 @@ interface IProps extends WithTranslation {
  * @returns {ReactElement}
  */
 function ReactionButton({
+    accessibilityLabel,
     children,
     onClick,
     styles,
@@ -90,9 +96,11 @@ function ReactionButton({
         }
     }, [ reaction ]);
 
+    const label = accessibilityLabel ?? (reaction ? t(`toolbar.accessibilityLabel.${reaction}`) : undefined);
+
     return (
         <TouchableHighlight
-            accessibilityLabel = { t(`toolbar.accessibilityLabel.${reaction}`) }
+            accessibilityLabel = { label }
             accessibilityRole = 'button'
             onPress = { onClick || _onClick }
             style = { [ styles.style, children && styles?.gifButton ] as ViewStyle[] }

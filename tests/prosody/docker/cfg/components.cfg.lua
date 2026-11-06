@@ -18,6 +18,12 @@ Component "breakout.conference.localhost" "muc"
     restrict_room_creation = true
     muc_room_locking = false
     muc_room_default_public_jids = true
+    modules_enabled = {
+        -- breakout messages count against the main room, same options as conference.localhost
+        "muc_limit_messages";
+    }
+    muc_limit_messages_count = 3
+    muc_limit_messages_check_token = true
 
 -- Internal MUC used by mod_muc_jigasi_invite: the module resolves the Jigasi
 -- brewery room from this component via process_host_module. Without this
@@ -87,6 +93,17 @@ Component "polls.localhost" "polls_component"
     muc_mapper_domain_base = "localhost"
     muc_mapper_domain_prefix = "conference"
 
+-- mod_polls_component as it runs on a visitor node (main_domain is set), on its
+-- own plain MUC so the visitor-only paths can be tested next to the main one.
+-- Not under localhost, which muc_domain_mapper would take for a tenant.
+-- The main prosody's updates are fired by the tests as jitsi-polls-update.
+Component "conference.vnode.test" "muc"
+
+Component "polls.vnode.test" "polls_component"
+    muc_mapper_domain_base = "vnode.test"
+    muc_mapper_domain_prefix = "conference"
+    main_domain = "localhost"
+
 -- Plain MUC for mod_presence_identity tests. No token verification and no
 -- muc_meeting_id lock so any client can join freely without focus.
 Component "conference-identity.localhost" "muc"
@@ -133,4 +150,14 @@ Component "conference.noregex.test" "muc"
         "token_verification";
     }
     muc_mapper_domain_base = "noregex.test"
+    muc_mapper_domain_prefix = "conference"
+
+-- MUC component paired with VirtualHost "noclaim.test", where the room claim
+-- is optional (asap_require_room_claim = false).
+Component "conference.noclaim.test" "muc"
+    storage = "memory"
+    modules_enabled = {
+        "token_verification";
+    }
+    muc_mapper_domain_base = "noclaim.test"
     muc_mapper_domain_prefix = "conference"

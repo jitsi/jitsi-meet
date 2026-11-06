@@ -41,6 +41,9 @@ local function validate_polls(data)
     if data.type ~= 'polls' or type(data.pollId) ~= 'string' then
         return false;
     end
+    if data.command == 'close-poll' then
+        return true;
+    end
     if data.command ~= 'new-poll' and data.command ~= 'answer-poll' then
         return false;
     end
@@ -50,6 +53,10 @@ local function validate_polls(data)
 
     if data.command == "new-poll" then
         if type(data.question) ~= 'string' then
+            return false;
+        end
+
+        if data.singleAnswer ~= nil and type(data.singleAnswer) ~= 'boolean' then
             return false;
         end
 
@@ -173,7 +180,8 @@ end
             return true;
         end
 
-        if not data or (data.command ~= "new-poll" and data.command ~= "answer-poll") then
+        if not data or (data.command ~= "new-poll" and data.command ~= "answer-poll"
+                and data.command ~= "close-poll") then
             return;
         end
 
@@ -235,7 +243,9 @@ end
                 senderId = poll_creator.occupant_id,
                 senderName = poll_creator.occupant_name,
                 question = data.question,
-                answers = answers
+                answers = answers,
+                -- a voter can choose only one answer of such a poll
+                singleAnswer = data.singleAnswer == true or nil
             };
 
             room.polls.by_id[data.pollId] = poll
@@ -250,7 +260,8 @@ end
                     senderId = poll_creator.occupant_id,
                     senderName = poll_creator.occupant_name,
                     question = data.question,
-                    answers = compact_answers
+                    answers = compact_answers,
+                    singleAnswer = poll.singleAnswer
                 }
             }
 
@@ -258,6 +269,7 @@ end
             -- Only relay the sanitized answers (name only) so no unexpected
             -- fields from the sender's payload are forwarded to participants.
             data.answers = answers;
+            data.singleAnswer = poll.singleAnswer;
             data.senderId = poll_creator.occupant_id;
             data.type = 'polls';
             local json_msg_str, error = json.encode(data);
@@ -274,10 +286,44 @@ end
                 return;
             end
 
+            if poll.closed then
+                module:log('warn', 'Answer for closed poll %s', data.pollId);
+                if session.type ~= 's2sin' then
+                    session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll is closed'));
+                end
+                return true;
+            end
+
             if #data.answers ~= #poll.answers then
                 module:log("warn", "answering poll %s with mismatched answer count. Sender: %s",
                     data.pollId, stanza.attr.from);
                 return true;
+            end
+
+            if poll.singleAnswer then
+                -- Keep only the first chosen answer instead of dropping the vote. The voter's
+                -- client has already registered the vote and gets no error reply, so storing and
+                -- broadcasting this one keeps every client, the voter's included, consistent with
+                -- the server, also clients that do not know about singleAnswer.
+                local kept = false;
+                local dropped = false;
+                local single = {};
+                for idx, vote_flag in ipairs(data.answers) do
+                    if vote_flag and not kept then
+                        single[idx] = true;
+                        kept = true;
+                    else
+                        if vote_flag then
+                            dropped = true;
+                        end
+                        single[idx] = false;
+                    end
+                end
+                if dropped then
+                    module:log('debug', 'More than one answer for single answer poll %s, keeping the first. Sender: %s',
+                        data.pollId, stanza.attr.from);
+                end
+                data.answers = single;
             end
 
             local voter = occupant_details;
@@ -367,6 +413,49 @@ end
             send_polls_message_to_all(room, json_msg_str);
 
             module:context(jid.host(room.jid)):fire_event('answer-poll',  answerData);
+        elseif data.command == "close-poll" then
+            -- A visitor node learns about a closed poll from the main prosody, see jitsi-polls-update.
+            if session.type == 's2sin' or is_visitor_prosody then
+                module:log('warn', 'Poll cannot be closed from a visitor node, room:%s', room.jid);
+                if session.type ~= 's2sin' then
+                    session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll cannot be closed from a visitor node'));
+                end
+                return true;
+            end
+
+            local poll = room.polls.by_id[data.pollId];
+            if poll == nil then
+                module:log("warn", "closing inexistent poll %s", data.pollId);
+                return true;
+            end
+
+            -- Only the creator of the poll and a moderator can close it.
+            if poll.senderId ~= occupant_details.occupant_id and occupant.role ~= 'moderator' then
+                session.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Closing the poll not allowed'));
+                return true;
+            end
+
+            if poll.closed then
+                return true;
+            end
+
+            poll.closed = true;
+
+            -- No answers: the occupants here have them from the answer-poll broadcasts. Only a visitor node, that
+            -- may have taken votes the main prosody refused, sends them (see jitsi-polls-update).
+            local json_msg_str, error = json.encode({
+                command = 'close-poll',
+                pollId = data.pollId,
+                senderId = occupant_details.occupant_id,
+                type = 'polls'
+            });
+            if not json_msg_str then
+                module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
+                return true;
+            end
+            send_polls_message_to_all(room, json_msg_str);
+
+            module:context(jid.host(room.jid)):fire_event('poll-closed', { room = room; pollId = data.pollId; });
         end
 
     return true;
@@ -468,7 +557,9 @@ local setup_muc_component = function(host_module, host)
                 senderId = poll.senderId,
                 senderName = poll.senderName,
                 question = poll.question,
-                answers = poll.answers
+                answers = poll.answers,
+                singleAnswer = poll.singleAnswer,
+                closed = poll.closed
             };
         end
 
@@ -494,6 +585,32 @@ local setup_muc_component = function(host_module, host)
             return;
         end
 
+        -- the polls that the main prosody closed, the update may also carry a new poll or a vote
+        local closed_any = false;
+        for _, v in pairs(polls_command.polls) do
+            local existing_poll = room.polls.by_id[v.pollId];
+
+            if existing_poll and v.closed and not existing_poll.closed then
+                closed_any = true;
+                existing_poll.closed = true;
+                -- the main prosody's answers, without a vote taken here that it refused as the poll was closed
+                existing_poll.answers = v.answers;
+
+                local json_msg_str, error = json.encode({
+                    answers = v.answers,
+                    command = 'close-poll',
+                    pollId = v.pollId,
+                    roomJid = internal_room_jid_match_rewrite(room.jid),
+                    type = 'polls'
+                });
+                if json_msg_str then
+                    send_polls_message_to_all(room, json_msg_str);
+                else
+                    module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
+                end
+            end
+        end
+
         -- at this point we need to find which is the new poll
         local new_poll;
         for _, v in pairs(polls_command.polls) do
@@ -508,7 +625,9 @@ local setup_muc_component = function(host_module, host)
             local updatedPoll, senderId, answers = find_updated_poll(room.polls.by_id, polls_command.polls);
 
             if not updatedPoll then
-                module:log('warn', 'no new or updated poll found in update for room %s', room.jid);
+                if not closed_any then
+                    module:log('warn', 'no new or updated poll found in update for room %s', room.jid);
+                end
                 return;
             end
 
@@ -542,6 +661,8 @@ local setup_muc_component = function(host_module, host)
             command = 'new-poll',
             pollId = new_poll.pollId,
             question = new_poll.question,
+            singleAnswer = new_poll.singleAnswer,
+            closed = new_poll.closed,
             senderId = new_poll.senderId,
             roomJid = internal_room_jid_match_rewrite(room.jid),
             type = 'polls'

@@ -407,6 +407,7 @@ export function createPinnedEvent(action: string, participantId: string, attribu
 /**
  * Creates a poll event.
  * The following events will be created:
+ * - poll.closed
  * - poll.created
  * - poll.vote.checked
  * - poll.vote.sent

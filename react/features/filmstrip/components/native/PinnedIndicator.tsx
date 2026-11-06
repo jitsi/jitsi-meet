@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { IconPin } from '../../../base/icons/svg';
 import BaseIndicator from '../../../base/react/components/native/BaseIndicator';
@@ -9,7 +10,12 @@ import BaseIndicator from '../../../base/react/components/native/BaseIndicator';
  * @returns {React$Element<any>}
  */
 export default function PinnedIndicator() {
+    const { t } = useTranslation();
+    const label = t('pinnedParticipant');
+
     return (
-        <BaseIndicator icon = { IconPin } />
+        <BaseIndicator
+            accessibilityLabel = { label }
+            icon = { IconPin } />
     );
 }

@@ -108,10 +108,17 @@ function ParticipantItem({
         audioIconData?.labelKey ? t(audioIconData.labelKey) : ''
     ].filter(Boolean).join(', ');
 
+    const isInteractive = Boolean(onPress);
+    const accessibilityRole = isInteractive ? 'button' : undefined;
+    const accessibilityState = { disabled: !isInteractive };
+
     return (
         <View style = { styles.participantContainer as StyleProp<ViewStyle> } >
             <TouchableOpacity
                 accessibilityLabel = { accessibleLabels }
+                accessibilityRole = { accessibilityRole }
+                accessibilityState = { accessibilityState }
+                disabled = { !isInteractive }
                 onPress = { onPress }
                 style = { styles.participantContent as StyleProp<ViewStyle> }>
                 <Avatar

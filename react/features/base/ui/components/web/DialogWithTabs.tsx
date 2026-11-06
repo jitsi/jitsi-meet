@@ -318,12 +318,15 @@ const DialogWithTabs = ({
             size = 'large'
             titleKey = { titleKey }>
             {(!isMobile || !selectedTab) && (
+
+                // The container itself must not take focus. Only the selected tab is in the tab order (the
+                // tabs move focus between themselves with the arrow keys), and screen readers announce the
+                // tab list's label when focus lands on a tab, so a focus stop here is an extra, empty step.
                 <div
                     aria-label = { titleKey ? t(titleKey) : undefined }
                     aria-orientation = 'vertical'
                     className = { classes.sidebar }
-                    role = { isMobile ? undefined : 'tablist' }
-                    tabIndex = { 0 }>
+                    role = { isMobile ? undefined : 'tablist' }>
                     <div className = { classes.titleContainer }>
                         <h1
                             className = { classes.title }
@@ -361,7 +364,8 @@ const DialogWithTabs = ({
                 <div
                     className = { classes.contentContainer }
                     tabIndex = { isMobile ? -1 : undefined }>
-                    {/* DOM order is important for keyboard users: show whole heading first when on mobile… */}
+                    {/* DOM order matters for keyboard users: on mobile the heading, Back and Close come first,
+                    so a tab's content is announced with its title before the content itself. */}
                     {isMobile && (
                         <div className = { cx(classes.buttonContainer, classes.header) }>
                             <span className = { classes.backContainer }>
@@ -389,13 +393,6 @@ const DialogWithTabs = ({
                             { tab.name === selectedTab && selectedTabComponent }
                         </div>
                     ))}
-                    {/* But show the close button *after* tab panels when not on mobile (using tabs).
-                    This is so that we can tab back and forth tab buttons and tab panels easily. */}
-                    {!isMobile && (
-                        <div className = { cx(classes.buttonContainer, classes.header) }>
-                            {closeIcon}
-                        </div>
-                    )}
                     <div
                         className = { cx(classes.buttonContainer, classes.footer) }>
                         <Button
@@ -410,6 +407,15 @@ const DialogWithTabs = ({
                             labelKey = { 'dialog.Ok' }
                             onClick = { onSubmit } />
                     </div>
+                    {/* The desktop Close button is rendered last, after Cancel and OK, so keyboard users reach it at
+                    the end of the dialog instead of between the tab content and the footer. CSS moves it to the
+                    top-right (classes.header has order: -1). Keeping it after the tab panels also means Tab from a
+                    selected tab still leads straight into that tab's content. */}
+                    {!isMobile && (
+                        <div className = { cx(classes.buttonContainer, classes.header) }>
+                            {closeIcon}
+                        </div>
+                    )}
                 </div>
             )}
         </BaseDialog>

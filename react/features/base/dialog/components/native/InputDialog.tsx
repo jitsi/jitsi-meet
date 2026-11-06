@@ -103,6 +103,7 @@ class InputDialog extends AbstractDialog<IProps, IState> {
             t,
             titleKey
         } = this.props;
+        const inputLabel = t(descriptionKey || titleKey || '');
 
         return (
             <Dialog.Container
@@ -119,6 +120,7 @@ class InputDialog extends AbstractDialog<IProps, IState> {
                     )
                 }
                 <Dialog.Input
+                    accessibilityLabel = { inputLabel }
                     autoFocus = { true }
                     onChangeText = { this._onChangeText }
                     value = { this.state.fieldValue }

@@ -7,8 +7,11 @@ import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
 import { getParticipantDisplayName } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
+import { showErrorNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { registerVote, removePoll, setVoteChanging } from '../actions';
 import { getPoll } from '../functions';
+import { useClosePoll } from '../hooks.any';
 import { IPollData } from '../types';
 
 /**
@@ -24,7 +27,9 @@ type InputProps = {
  * concrete implementations (web/native).
  **/
 export type AbstractProps = {
+    canClose: boolean;
     checkBoxStates: boolean[];
+    closePoll: () => void;
     creatorName: string;
     poll: IPollData;
     sendPoll: () => void;
@@ -51,7 +56,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
 
     const poll: IPollData = useSelector(getPoll(pollId));
 
-    const { answers, lastVote, question, senderId } = poll;
+    const { answers, lastVote, question, senderId, singleAnswer } = poll;
 
     const [ checkBoxStates, setCheckBoxState ] = useState(() => {
         if (lastVote !== null) {
@@ -64,43 +69,55 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
     const participantName = useBoundSelector(getParticipantDisplayName, senderId);
 
     const setCheckbox = useCallback((index, state) => {
-        const newCheckBoxStates = [ ...checkBoxStates ];
+        // Choosing an answer of a single answer poll clears the other answers.
+        const newCheckBoxStates = singleAnswer && state
+            ? new Array(checkBoxStates.length).fill(false)
+            : [ ...checkBoxStates ];
 
         newCheckBoxStates[index] = state;
         setCheckBoxState(newCheckBoxStates);
         sendAnalytics(createPollEvent('vote.checked'));
-    }, [ checkBoxStates ]);
+    }, [ checkBoxStates, singleAnswer ]);
 
     const dispatch = useDispatch();
 
     const submitAnswer = useCallback(() => {
-        conference?.getPolls().answerPoll(pollId, checkBoxStates);
+        // Rejected with not-allowed when the poll was closed meanwhile. A lib-jitsi-meet without that error returns
+        // nothing.
+        conference?.getPolls()?.answerPoll(pollId, checkBoxStates)
+            ?.catch((error: Error) => dispatch(showErrorNotification({
+                titleKey: error.message === 'not-allowed' ? 'polls.errors.voteNotCounted' : 'polls.errors.voteFailed'
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG)));
 
         sendAnalytics(createPollEvent('vote.sent'));
         dispatch(registerVote(pollId, checkBoxStates));
 
         return false;
-    }, [ pollId, checkBoxStates, conference ]);
+    }, [ conference, dispatch, pollId, checkBoxStates ]);
 
     const sendPoll = useCallback(() => {
-        conference?.getPolls().createPoll(pollId, question, answers);
+        conference?.getPolls().createPoll(pollId, question, answers, { singleAnswer });
 
         dispatch(removePoll(poll));
-    }, [ conference, question, answers ]);
+    }, [ conference, dispatch, poll, pollId, question, answers, singleAnswer ]);
 
     const skipAnswer = useCallback(() => {
         dispatch(registerVote(pollId, null));
         sendAnalytics(createPollEvent('vote.skipped'));
-    }, [ pollId ]);
+    }, [ dispatch, pollId ]);
 
     const skipChangeVote = useCallback(() => {
         dispatch(setVoteChanging(pollId, false));
     }, [ dispatch, pollId ]);
 
+    const { canClose, closePoll } = useClosePoll(pollId);
+
     const { t } = useTranslation();
 
     return (<Component
+        canClose = { canClose }
         checkBoxStates = { checkBoxStates }
+        closePoll = { closePoll }
         creatorName = { participantName }
         poll = { poll }
         sendPoll = { sendPoll }

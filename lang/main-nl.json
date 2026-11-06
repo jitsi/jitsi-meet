@@ -305,12 +305,6 @@
         "microphonePermission": "Fout bij verkrijgen toegangsrecht microfoon"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Gesprekscontrole",
-            "connectedDevices": "Verbonden apparaten:",
-            "deleteDevice": "Apparaat verwijderen",
-            "pairDevice": "Apparaat koppelen"
-        },
         "noPermission": "Geen toestemming verleend",
         "previewUnavailable": "Voorbeeld niet beschikbaar",
         "selectADevice": "Selecteer een apparaat",

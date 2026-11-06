@@ -59,8 +59,10 @@ const useStyles = makeStyles()(theme => {
 });
 
 const PollAnswer = ({
+    canClose,
     creatorName,
     checkBoxStates,
+    closePoll,
     poll,
     setCheckbox,
     setCreateMode,
@@ -95,6 +97,11 @@ const PollAnswer = ({
                 <div className = { classes.creator }>
                     { t('polls.by', { name: creatorName }) }
                 </div>
+                {
+                    poll.singleAnswer && <div className = { classes.creator }>
+                        { t('polls.answer.singleAnswerHint') }
+                    </div>
+                }
             </div>
             <ul className = { classes.answerList }>
                 {
@@ -108,7 +115,9 @@ const PollAnswer = ({
                                 id = { `poll-answer-checkbox-${poll.pollId}-${index}` }
                                 key = { index }
                                 label = { answer.name }
-                                onChange = { ev => setCheckbox(index, ev.target.checked) } />
+                                name = { `poll-answer-${poll.pollId}` }
+                                onChange = { ev => setCheckbox(index, ev.target.checked) }
+                                type = { poll.singleAnswer ? 'radio' : 'checkbox' } />
                         </li>
                     ))
                 }
@@ -130,6 +139,14 @@ const PollAnswer = ({
                             labelKey = { 'polls.answer.send' }
                             onClick = { sendPoll } />
                     </> : <>
+                        {
+                            canClose && <Button
+                                accessibilityLabel = { t('polls.results.endPoll') }
+                                className = { classes.buttonMargin }
+                                labelKey = { 'polls.results.endPoll' }
+                                onClick = { closePoll }
+                                type = { BUTTON_TYPES.TERTIARY } />
+                        }
                         <Button
                             accessibilityLabel = { t('polls.answer.skip') }
                             className = { classes.buttonMargin }

@@ -50,6 +50,42 @@ on:
 permissions: {}
 
 jobs:
+  # Puts the <project>-PR-torture check on the PR right away, also when the test waits for the machine.
+  # The report job completes this same check.
+  start-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      check-id: ${{ steps.check.outputs.id }}
+    steps:
+      - name: GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 #v3.3.0
+        with:
+          app-id: ${{ secrets.PR_TORTURE_APP_ID }}
+          private-key: ${{ secrets.PR_TORTURE_APP_KEY }}
+          owner: jitsi
+          repositories: ${{ github.event.repository.name }}
+          permission-checks: write
+
+      - name: Post the check run
+        id: check
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          CHECK_NAME: ${{ inputs.project }}-PR-torture
+          HEAD_SHA: ${{ inputs.head-sha }}
+          SOURCE_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          ID=$(jq -n --arg name "$CHECK_NAME" --arg sha "$HEAD_SHA" --arg url "$RUN_URL" '{
+              name: $name, head_sha: $sha, status: "in_progress", details_url: $url,
+              output: {
+                  title: "Running, or waiting for the test machine",
+                  summary: "The PR tests run on oracle-prtorture, one at a time, so they may first wait for other tests. Follow them in the run: \($url)"
+              }
+          }' | gh api --method POST "repos/$SOURCE_REPO/check-runs" --input - --jq .id)
+          echo "id=$ID" >> "$GITHUB_OUTPUT"
+
   # Runs the PR code, so it gets no GitHub token that can write anything, and the VoxImplant
   # credentials only for the dial-in tests of trusted authors.
   # The runner runs as ghrunner, the tests as jenkins (sudo, /usr/local/bin/pr-torture-run), so the PR
@@ -120,7 +156,7 @@ jobs:
 
   # Publishes the reports and posts the check run, on a hosted runner, away from the PR code.
   report:
-    needs: pr-torture
+    needs: [start-check, pr-torture]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -132,6 +168,8 @@ jobs:
       BUILD_NUMBER: gha-${{ github.run_id }}
       CHECK_NAME: ${{ inputs.project }}-PR-torture
       RELEASE_DIR: ${{ github.workspace }}/release
+      # The check run posted by start-check, completed here (a new one is created when it is missing)
+      CHECK_ID: ${{ needs.start-check.outputs.check-id }}
     steps:
       # The check run on the PR repo, the prosody tests results in jitsi-meet, reading the scripts
       - name: GitHub App token
@@ -180,7 +218,12 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PAGES_TOKEN: ${{ steps.pages-token.outputs.token }}
-        run: jitsi-pr-testing-scripts/publish-pr-results.sh
+          CHECK_RUN_ID_FILE: ${{ runner.temp }}/pr-check-id
+        run: |
+          if [ -n "$CHECK_ID" ]; then
+              echo "$CHECK_ID" > "$CHECK_RUN_ID_FILE"
+          fi
+          jitsi-pr-testing-scripts/publish-pr-results.sh
 
       - name: Post a failed check run, there are no reports
         if: steps.download.outcome != 'success'
@@ -188,10 +231,15 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          jq -n --arg name "$CHECK_NAME" --arg sha "$HEAD_SHA" --arg url "$RUN_URL" '{
+          PAYLOAD=$(jq -n --arg name "$CHECK_NAME" --arg sha "$HEAD_SHA" --arg url "$RUN_URL" '{
               name: $name, head_sha: $sha, status: "completed", conclusion: "failure", details_url: $url,
               output: {
                   title: "The PR could not be built or merged with its target branch",
                   summary: "The tests did not run. See the build and test step of the run: \($url)"
               }
-          }' | gh api --method POST "repos/$SOURCE_REPO/check-runs" --input - > /dev/null
+          }')
+          if [ -n "$CHECK_ID" ]; then
+              gh api --method PATCH "repos/$SOURCE_REPO/check-runs/$CHECK_ID" --input - <<< "$PAYLOAD" > /dev/null
+          else
+              gh api --method POST "repos/$SOURCE_REPO/check-runs" --input - <<< "$PAYLOAD" > /dev/null
+          fi

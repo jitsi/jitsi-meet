@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
+import { WithTranslation } from 'react-i18next';
 import { View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
+import { translate } from '../../../base/i18n/functions';
 import { IconRaiseHand } from '../../../base/icons/svg';
 import { getParticipantById, hasRaisedHand } from '../../../base/participants/functions';
 import BaseIndicator from '../../../base/react/components/native/BaseIndicator';
 
 import styles from './styles';
 
-export interface IProps {
+export interface IProps extends WithTranslation {
 
     /**
      * True if the hand is raised for this participant.
@@ -22,7 +24,6 @@ export interface IProps {
      */
     participantId: string;
 }
-
 
 /**
  * Thumbnail badge showing that the participant would like to speak.
@@ -50,9 +51,13 @@ class RaisedHandIndicator extends Component<IProps> {
      * @returns {React$Element<*>}
      */
     _renderIndicator() {
+        const { t } = this.props;
+        const label = t('raisedHand');
+
         return (
             <View style = { styles.raisedHandIndicator as ViewStyle }>
                 <BaseIndicator
+                    accessibilityLabel = { label }
                     icon = { IconRaiseHand }
                     iconStyle = { styles.raisedHandIcon } />
             </View>
@@ -75,4 +80,4 @@ function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     };
 }
 
-export default connect(_mapStateToProps)(RaisedHandIndicator);
+export default translate(connect(_mapStateToProps)(RaisedHandIndicator));

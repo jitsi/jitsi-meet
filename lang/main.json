@@ -41,6 +41,7 @@
     },
     "audioTranslation": {
         "disabledForRoom": "Audio translation has been turned off for this meeting.",
+        "errorBadRequest": "The meeting server rejected the translation request. If this keeps happening, ask your administrator to check the configured translation languages.",
         "errorForbidden": "You don't have permission to use audio translation.",
         "errorGeneric": "Couldn't enable audio translation. Please try again.",
         "errorLimitReached": "Couldn't translate everyone at once. Turn on translation for individual participants instead.",
@@ -105,6 +106,8 @@
         "permissionButton": "Open settings",
         "permissionMessage": "The Calendar permission is required to see your meetings in the app.",
         "refresh": "Refresh calendar",
+        "signInAgain": "Sign in again",
+        "signInAgainMessage": "Your calendar is still connected, but you need to sign in again to see upcoming meetings.",
         "today": "Today"
     },
     "carmode": {
@@ -310,12 +313,6 @@
         "microphonePermission": "Error obtaining microphone permission"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Call control",
-            "connectedDevices": "Connected devices:",
-            "deleteDevice": "Delete device",
-            "pairDevice": "Pair device"
-        },
         "noPermission": "Permission not granted",
         "previewUnavailable": "Preview unavailable",
         "selectADevice": "Select a device",
@@ -766,6 +763,7 @@
         "showMeWhatImSharing": "Show me what I'm sharing"
     },
     "liveStreaming": {
+        "badRequest": "The live stream request is not valid. Check the stream key and the stream settings.",
         "busy": "We're working on freeing streaming resources. Please try again in a few minutes.",
         "busyTitle": "All streamers are currently busy",
         "changeSignIn": "Switch accounts.",
@@ -773,6 +771,7 @@
         "chooseCTA": "Choose a streaming option. You're currently logged in as {{email}}.",
         "chooseCTAWithChangeSignIn": "Choose a streaming option. You're currently logged in as {{email}}. <0>Switch accounts.</0>",
         "enterStreamKey": "Enter your YouTube live stream key here.",
+        "enterStreamKeyGeneric": "Enter your live stream key or RTMP URL here.",
         "error": "Live Streaming failed. Please try again.",
         "errorAPI": "An error occurred while accessing your YouTube broadcasts. Please try logging in again.",
         "errorLiveStreamNotEnabled": "Live Streaming is not enabled on {{email}}. Please enable live streaming or log into an account with live streaming enabled.",
@@ -790,6 +789,7 @@
         "onBy": "{{name}} started the live streaming",
         "pending": "Starting Live Stream…",
         "policyError": "You tried to start a live stream too quickly. Please try again later!",
+        "privacyPolicy": "Privacy Policy",
         "serviceName": "Live Streaming service",
         "sessionAlreadyActive": "This session is already being recorded or live streamed.",
         "signIn": "Sign in with Google",
@@ -798,6 +798,7 @@
         "signedInAs": "You are currently signed in as:",
         "start": "Start a live stream",
         "streamIdHelp": "What's this?",
+        "terms": "Terms of service",
         "title": "Live Stream",
         "unavailableTitle": "Live Streaming unavailable",
         "youTubeGoLiveWarning": "Remember to click 'Go Live' in YouTube Studio if Auto-Start/Auto-Stop are disabled. Otherwise the stream will not begin recording.",
@@ -1088,6 +1089,7 @@
         "answer": {
             "edit": "Edit",
             "send": "Send",
+            "singleAnswerHint": "Choose one answer",
             "skip": "Skip",
             "submit": "Submit"
         },
@@ -1105,10 +1107,18 @@
             "pollQuestion": "Poll Question",
             "questionPlaceholder": "Ask a question",
             "removeOption": "Remove option",
-            "save": "Save"
+            "save": "Save",
+            "singleAnswer": "Allow only one answer"
+        },
+        "endPollDialog": {
+            "description": "Voting ends for everyone and the poll cannot be reopened.",
+            "title": "End this poll?"
         },
         "errors": {
-            "notUniqueOption": "Options must be unique"
+            "closeFailed": "The poll could not be ended",
+            "notUniqueOption": "Options must be unique",
+            "voteFailed": "Your vote was not counted",
+            "voteNotCounted": "Your vote was not counted, the poll has ended"
         },
         "notification": {
             "description": "Open polls tab to vote",
@@ -1116,7 +1126,9 @@
         },
         "results": {
             "changeVote": "Change vote",
+            "closed": "Voting has ended",
             "empty": "There are no polls in the meeting yet.",
+            "endPoll": "End poll",
             "hideDetailedResults": "Hide details",
             "showDetailedResults": "Show details",
             "vote": "Vote"
@@ -1227,6 +1239,7 @@
         "alsoTranscribe": "Also transcribe this meeting?",
         "authDropboxText": "Upload to Dropbox",
         "availableSpace": "Available space: {{spaceLeft}} MB (approximately {{duration}} minutes of recording)",
+        "badRequest": "The recording settings of this meeting are not supported.",
         "beta": "BETA",
         "busy": "We're working on freeing recording resources. Please try again in a few minutes.",
         "busyTitle": "All recorders are currently busy",
@@ -1309,6 +1322,7 @@
     "settings": {
         "audio": "Audio",
         "audioTranslation": "Enable audio translation",
+        "breakoutRoomJoinWithPermissions": "Disable choosing a breakout room for non-moderators",
         "buttonLabel": "Settings",
         "calendar": {
             "about": "The {{appName}} calendar integration is used to securely access your calendar so it can read upcoming events.",
@@ -1323,6 +1337,7 @@
         "desktopShareWarning": "You need to restart the screen share for the new settings to take effect.",
         "devices": "Devices",
         "enableCtrlAltReactionShortcuts": "Enable Ctrl+Alt alternatives for reaction shortcuts",
+        "experimental": "Experimental",
         "followMe": "Everyone follows me",
         "followMeRecorder": "Recorder follows me",
         "framesPerSecond": "frames-per-second",
@@ -1340,6 +1355,8 @@
         "participantJoined": "Participant Joined",
         "participantKnocking": "Participant entered lobby",
         "participantLeft": "Participant Left",
+        "pictureInPicture": "Picture-in-Picture",
+        "pictureInPictureDescription": "Keep the meeting visible in a small floating window when you switch to another tab or app.",
         "playSounds": "Play sound on",
         "privateChatWithPermissions": "Disable private chat for non-moderators",
         "reactions": "Meeting reactions",

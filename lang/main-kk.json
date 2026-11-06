@@ -261,12 +261,6 @@
         "microphonePermission": "Микрофон рұқсатын алу қатесі"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Қоңырауды басқару",
-            "connectedDevices": "Қосылған құрылғылар:",
-            "deleteDevice": "Құрылғыны жою",
-            "pairDevice": "Құрылғыны жұптау"
-        },
         "noPermission": "Рұқсат берілмеген",
         "previewUnavailable": "Алдын ала қарау қолжетімсіз",
         "selectADevice": "Құрылғыны таңдаңыз",

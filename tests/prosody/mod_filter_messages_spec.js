@@ -71,11 +71,12 @@ async function restrictChat(mod, roomJid, key = 'groupChatRestricted') {
 /**
  * Builds the shared-video element that the client sends in its presence.
  *
- * @param {string} state  Playback state, e.g. 'start' or 'stop'.
+ * @param {string} state    Playback state, e.g. 'start' or 'stop'.
+ * @param {string} [value]  The id of the video.
  */
-const sharedVideoEl = (state = 'start') => xml('shared-video', { from: 'abc',
+const sharedVideoEl = (state = 'start', value = 'https://example.com/video.mp4') => xml('shared-video', { from: 'abc',
     state,
-    time: '0' }, 'https://example.com/video.mp4');
+    time: '0' }, value);
 
 /**
  * Sends a presence update with a shared-video element from `sender` and
@@ -677,6 +678,88 @@ describe('mod_filter_messages shared video', () => {
             const stored = await late.waitForPresenceFrom(`${r}/${sender.nick}`);
 
             assert.ok(!stored.getChild('shared-video'), 'the stored presence must not carry the shared video');
+        });
+
+        it('stop command with the nick of another occupant is removed', async () => {
+            const { r, mod, sender } = await setup();
+            const from = `${r}/${sender.nick}`;
+
+            await sender.sendPresence(from, [ sharedVideoEl('stop', mod.nick) ]);
+
+            const received = await mod.waitForPresenceFrom(from);
+
+            assert.ok(!received.getChild('shared-video'), 'shared-video with an occupant nick must be removed');
+            assert.notEqual(received.attrs.type, 'error', 'the rest of the presence must pass');
+        });
+
+        it('stop command with the nick of the sender is removed', async () => {
+            const { r, mod, sender } = await setup();
+            const from = `${r}/${sender.nick}`;
+
+            await sender.sendPresence(from, [ sharedVideoEl('stop', sender.nick) ]);
+
+            const received = await mod.waitForPresenceFrom(from);
+
+            assert.ok(!received.getChild('shared-video'), 'shared-video with the sender nick must be removed');
+        });
+
+        it('start command with the nick of another occupant is removed', async () => {
+            const { r, mod, sender } = await setup();
+            const from = `${r}/${sender.nick}`;
+
+            await sender.sendPresence(from, [ sharedVideoEl('start', mod.nick) ]);
+
+            const received = await mod.waitForPresenceFrom(from);
+
+            assert.ok(!received.getChild('shared-video'), 'shared-video with an occupant nick must be removed');
+        });
+
+        it('only the command with an occupant nick is removed from a presence', async () => {
+            const { r, mod, sender } = await setup();
+            const from = `${r}/${sender.nick}`;
+
+            await sender.sendPresence(from, [ sharedVideoEl('stop', mod.nick), sharedVideoEl('stop') ]);
+
+            const received = await mod.waitForPresenceFrom(from);
+            const values = received.getChildren('shared-video').map(el => el.getText());
+
+            assert.deepStrictEqual(values, [ 'https://example.com/video.mp4' ], 'the stop for the video must pass');
+        });
+
+        it('command with the nick of an occupant in the join presence is removed', async () => {
+            const r = nextRoom();
+            const focus = await joinWithFocus(r);
+            const mod = await connectModerator(r);
+
+            clients.push(focus, mod);
+            await mod.joinRoom(r);
+
+            const sender = await createXmppClient();
+
+            clients.push(sender);
+            await sender.joinRoom(r, undefined, { extensions: [ sharedVideoEl('stop', mod.nick) ] });
+
+            const received = await mod.waitForPresenceFrom(`${r}/${sender.nick}`);
+
+            assert.ok(!received.getChild('shared-video'), 'shared-video must be removed from the join presence');
+        });
+
+        it('a participant that joins later does not get a command with an occupant nick', async () => {
+            const { r, mod, sender } = await setup();
+            const from = `${r}/${sender.nick}`;
+
+            await sender.sendPresence(from, [ sharedVideoEl('stop', sender.nick) ]);
+            await mod.waitForPresenceFrom(from);
+
+            // The whitelisted domain bypasses the occupant limit of the test MUC.
+            const late = await createXmppClient({ domain: 'whitelist.localhost' });
+
+            clients.push(late);
+            await late.joinRoom(r);
+
+            const stored = await late.waitForPresenceFrom(from);
+
+            assert.ok(!stored.getChild('shared-video'), 'the stored presence must not carry the command');
         });
 
         it('moderator with no features in token passes when sharedVideoRestricted is true', async () => {

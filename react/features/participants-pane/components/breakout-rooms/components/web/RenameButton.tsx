@@ -1,9 +1,11 @@
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { openDialog } from '../../../../../base/dialog/actions';
 import { IconEdit } from '../../../../../base/icons/svg';
+import { onActivationKey } from '../../../../../base/ui/functions.web';
 
 import BreakoutRoomNamePrompt from './BreakoutRoomNamePrompt';
 
@@ -32,6 +34,7 @@ interface IProps {
  */
 export default function RenameButton({ breakoutRoomJid, name }: IProps) {
     const dispatch = useDispatch();
+    const { t } = useTranslation();
     const { classes, cx } = useStyles();
     const onRename = useCallback(() => {
         dispatch(openDialog('BreakoutRoomNamePrompt', BreakoutRoomNamePrompt, {
@@ -42,8 +45,12 @@ export default function RenameButton({ breakoutRoomJid, name }: IProps) {
 
     return (
         <span
+            aria-label = { t('breakoutRooms.actions.rename') }
             className = { cx('jitsi-icon jitsi-icon-default', classes.container) }
-            onClick = { onRename }>
+            onClick = { onRename }
+            onKeyDown = { onActivationKey(onRename) }
+            role = 'button'
+            tabIndex = { 0 }>
             <IconEdit
                 height = { 16 }
                 key = { 1 }

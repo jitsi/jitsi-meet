@@ -132,6 +132,7 @@ import {
     getLocalJitsiAudioTrack,
     getLocalJitsiVideoTrack,
     getLocalVideoTrack,
+    getTrackByJitsiTrack,
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute
 } from './react/features/base/tracks/functions';
@@ -191,6 +192,22 @@ function sendData(command, value) {
 
     room.removeCommand(command);
     room.sendCommand(command, { value });
+}
+
+/**
+ * Checks if the recorder must skip a remote track of a participant.
+ *
+ * @param {JitsiParticipant} participant - The participant who owns the track.
+ * @param {JitsiRemoteTrack} track - The remote track.
+ * @returns {boolean}
+ */
+function isTrackHiddenFromRecorder(participant, track) {
+    if (participant.isHiddenFromRecorder()) {
+        return true;
+    }
+
+    // Only the video of this participant is hidden from the recorder. Its audio is still recorded.
+    return Boolean(participant.isVideoHiddenFromRecorder?.() && track.isVideoTrack());
 }
 
 /**
@@ -1387,6 +1404,16 @@ export default {
                 commonUserJoinedHandling(APP.store, room, user);
             }
 
+            // Add the tracks which the recorder skipped because their source signaling arrived before this presence
+            // (see TRACK_ADDED below). lib-jitsi-meet does not emit TRACK_ADDED again for them.
+            if (config.iAmRecorder) {
+                const tracks = APP.store.getState()['features/base/tracks'];
+
+                user.getTracks()
+                    .filter(track => !isTrackHiddenFromRecorder(user, track) && !getTrackByJitsiTrack(tracks, track))
+                    .forEach(track => APP.store.dispatch(trackAdded(track)));
+            }
+
             if (user.isHidden() || videoHiddenFromRecorder) {
                 return;
             }
@@ -1443,12 +1470,15 @@ export default {
             if (config.iAmRecorder) {
                 const participant = room.getParticipantById(track.getParticipantId());
 
-                if (participant.isHiddenFromRecorder()) {
+                // The source signaling can arrive before the presence of the participant. Then we cannot know yet
+                // if the participant is hidden from the recorder. The track is added on USER_JOINED.
+                if (!participant) {
+                    logger.info(`Track ${track.getSourceName()} added before presence, waiting for USER_JOINED`);
+
                     return;
                 }
 
-                // Only the video of this participant is hidden from the recorder. Its audio is still recorded.
-                if (participant.isVideoHiddenFromRecorder?.() && track.isVideoTrack()) {
+                if (isTrackHiddenFromRecorder(participant, track)) {
                     return;
                 }
             }
@@ -1980,14 +2010,10 @@ export default {
             promises.push(setAudioOutputPromise);
         }
 
-        // Handles the use case when the default device is changed (we are always stopping the streams because it's
-        // simpler):
-        // If the default device is changed we need to first stop the local streams and then call GUM. Otherwise GUM
-        // will return a stream using the old default device.
-        if (requestedInput.audio && localAudio) {
-            localAudio.stopStream();
-        }
-
+        // The camera is stopped before the new one is opened, some machines can't open two cameras at once.
+        // The mic is not stopped: replaceLocalTrack disposes the old audio track only after the conference has switched
+        // to the new one, so the mic keeps sending if the new track can't be created or used. For a changed default mic
+        // gUM gets the real device id (see hasDefaultMicChanged below), or is skipped if it can't be resolved.
         if (requestedInput.video && localVideo) {
             localVideo.stopStream();
         }
@@ -2072,22 +2098,43 @@ export default {
                 return Promise.reject(error);
             }
 
+            // Notifies the user and releases the device opened for a new track that failed to replace the current one.
+            // If the conference already switched to it and a later step of the replacement failed, it is the track
+            // sending now and is kept.
+            const onReplaceFailed = (track, error) => {
+                logger.error(`${track.getType()} track replacement failed on device change, ${error}`);
+                APP.store.dispatch(track.isAudioTrack() ? notifyMicError(error) : notifyCameraError(error));
+
+                const currentState = APP.store.getState();
+                const localTrack = track.isAudioTrack()
+                    ? getLocalJitsiAudioTrack(currentState) : getLocalJitsiVideoTrack(currentState);
+
+                if (!track.conference && localTrack !== track) {
+                    track.dispose()
+                        .catch(e => logger.warn(`Failed to dispose the unused ${track.getType()} track, ${e}`));
+                }
+
+                throw error;
+            };
+
             for (const track of tracks) {
                 if (track.isAudioTrack()) {
                     promises.push(
                         this.useAudioStream(track)
                             .then(() => {
                                 hasDefaultMicChanged && (track._realDeviceId = track.deviceId = 'default');
-                            }));
+                            })
+                            .catch(error => onReplaceFailed(track, error)));
                 } else {
                     promises.push(
-                        this.useVideoStream(track));
+                        this.useVideoStream(track)
+                            .catch(error => onReplaceFailed(track, error)));
                 }
             }
         }
 
         return Promise.all(promises)
-            .then(() => {
+            .finally(() => {
                 this.updateAudioIconEnabled();
                 this.updateVideoIconEnabled();
             });

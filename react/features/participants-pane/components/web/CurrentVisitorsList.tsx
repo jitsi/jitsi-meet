@@ -9,6 +9,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import Icon from '../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../base/icons/svg';
+import { onActivationKey } from '../../../base/ui/functions.web';
 import { normalizeAccents } from '../../../base/util/strings.web';
 import { subscribeVisitorsList } from '../../../visitors/actions';
 import {
@@ -142,8 +143,12 @@ export default function CurrentVisitorsList({ searchString }: IProps) {
     return (
         <div className = { classes.container }>
             <div
+                aria-expanded = { !collapsed }
                 className = { classes.heading }
-                onClick = { toggleCollapsed }>
+                onClick = { toggleCollapsed }
+                onKeyDown = { onActivationKey(toggleCollapsed) }
+                role = 'button'
+                tabIndex = { 0 }>
                 <span>{ t('participantsPane.headings.visitorsList', { count: visitorsCount }) }</span>
                 <span className = { classes.arrowContainer }>
                     <Icon

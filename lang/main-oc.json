@@ -235,12 +235,6 @@
         "microphonePermission": "Error d'obtencion de la permission pel microfòn"
     },
     "deviceSelection": {
-        "hid": {
-            "callControl": "Contraròtle de las sonadas",
-            "connectedDevices": "Aparelhs connectats :",
-            "deleteDevice": "Suprimir lo periferic",
-            "pairDevice": "Associar un aparelh"
-        },
         "noPermission": "Autorizacion pas acordada",
         "previewUnavailable": "Apercebut pas disponible",
         "selectADevice": "Seleccionatz un aparelh",

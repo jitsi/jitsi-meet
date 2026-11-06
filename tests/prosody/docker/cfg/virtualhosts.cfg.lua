@@ -4,6 +4,11 @@ VirtualHost "localhost"
     authentication = "token"
     app_id = "jitsi"
     asap_key_server = "http://localhost:5280/test-observer/asap-keys"
+    -- The login key is also served as JWKS, as deployments that use both
+    -- options do. The system HTTP API modules on this host (kick, jigasi
+    -- invite, system chat, end meeting) must still accept only tokens from
+    -- prosody_password_public_key_repo_url.
+    cache_keys_url = "http://localhost:5280/test-observer/asap-jwks.json"
     signature_algorithm = "RS256"
     allow_empty_token = true
 
@@ -120,7 +125,9 @@ VirtualHost "hs256.localhost"
     app_secret = "testsecret"
     signature_algorithm = "HS256"
     allow_empty_token = false
-    modules_enabled = { "presence_identity" }
+    -- muc_kick_participant: a system HTTP API module on a host that has only
+    -- app_secret; it verifies tokens from prosody_password_public_key_repo_url.
+    modules_enabled = { "presence_identity"; "muc_kick_participant" }
 
 -- Second VirtualHost whose domain is listed in muc_access_whitelist on the
 -- MUC component below. Clients connecting here get JIDs like
@@ -143,6 +150,19 @@ VirtualHost "noregex.test"
     allow_empty_token = true
     token_regex_enabled = false
     muc_mapper_domain_base = "noregex.test"
+
+-- VirtualHost with the room claim optional (asap_require_room_claim), as on
+-- meet.jit.si. A token without a room claim connects and joins any room. A
+-- room claim that is present must still match, also when it is a pattern.
+-- Same layout and .test suffix as noregex.test above.
+VirtualHost "noclaim.test"
+    authentication = "token"
+    app_id = "jitsi"
+    asap_key_server = "http://localhost:5280/test-observer/asap-keys"
+    signature_algorithm = "RS256"
+    allow_empty_token = true
+    asap_require_room_claim = false
+    muc_mapper_domain_base = "noclaim.test"
 
 -- VirtualHost used by mod_auth_jitsi-anonymous tests.
 VirtualHost "jitsi-anonymous.localhost"

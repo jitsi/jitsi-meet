@@ -1,4 +1,7 @@
 import { IReduxState, IStore } from '../../app/types';
+import { showModeratedNotification } from '../../av-moderation/actions';
+import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../av-moderation/constants';
+import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import JitsiMeetJS from '../lib-jitsi-meet';
@@ -22,6 +25,13 @@ export * from './actions.any';
 export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignore2?: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
+
+        // check for A/V Moderation when trying to start screen sharing
+        if (enabled && shouldShowModeratedNotification(AVM_MEDIA_TYPE.DESKTOP, state)) {
+            dispatch(showModeratedNotification(AVM_MEDIA_TYPE.DESKTOP));
+
+            return;
+        }
 
         if (enabled) {
             _startScreenSharing(dispatch, state);

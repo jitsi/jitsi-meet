@@ -1,7 +1,7 @@
 -- Loaded on the main MUC component.
 -- Holds unauthenticated guests in a persistent lobby until an authenticated host joins.
--- A "host" is any session with a JWT auth_token or with PLAIN credentials whose JID
--- domain matches muc_mapper_domain_base. Prosody admins (e.g. jicofo) bypass the check
+-- A "host" is any session with a JWT auth_token verified by mod_auth_token or with PLAIN
+-- credentials whose JID domain matches muc_mapper_domain_base. Prosody admins (e.g. jicofo) bypass the check
 -- and are not counted as hosts.
 -- When the first guest arrives before any host, a persistent lobby room is created via
 -- mod_persistent_lobby + mod_muc_lobby_rooms, and guests are held there. When an
@@ -35,6 +35,11 @@ local audit_logger = logger.make_logger('mod_'..module.name, 'audit');
 local lobby_muc_component_config = 'lobby.' .. muc_domain_base;
 local lobby_host;
 
+-- mod_auth_token marks the sessions whose token it verified, on login or on stream resumption
+local function has_verified_token(session)
+    return session and session.auth_token and session._jitsi_auth_done;
+end
+
 if not disable_auto_owners then
     module:hook('muc-occupant-joined', function (event)
         local room, occupant, session = event.room, event.occupant, event.origin;
@@ -43,7 +48,7 @@ if not disable_auto_owners then
         -- for jwt authenticated and username and password authenticated
         -- only if it is not a moderated room
         if not is_moderated_room and
-            (session.auth_token or (session.username and jid.host(occupant.bare_jid) == muc_domain_base)) then
+            (has_verified_token(session) or (session.username and jid.host(occupant.bare_jid) == muc_domain_base)) then
             room:set_affiliation(true, occupant.bare_jid, 'owner');
         end
     end, 2);
@@ -65,7 +70,7 @@ module:hook('muc-occupant-pre-join', function (event)
         -- the main virtual host that requires tokens
         if jid.host(o.bare_jid) == muc_domain_base
             -- or this is anonymous that upgraded by passing token which we validated
-            or prosody.full_sessions[o.jid].auth_token then
+            or has_verified_token(prosody.full_sessions[o.jid]) then
             room.has_host = true;
         end
     end
@@ -104,7 +109,7 @@ end);
 
 module:hook('room_has_host', function(event)
     local room, occupant, session = event.room, event.occupant, event.session;
-    if session.auth_token
+    if has_verified_token(session)
         or (session.username and jid.host(occupant.bare_jid) == muc_domain_base) then
         return true;
     end

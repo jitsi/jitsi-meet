@@ -67,7 +67,12 @@ import {
     removeBreakoutRoom,
     sendParticipantToRoom
 } from '../../react/features/breakout-rooms/actions';
-import { getBreakoutRooms, getRoomsInfo } from '../../react/features/breakout-rooms/functions';
+import {
+    getBreakoutRooms,
+    getMainRoom,
+    getRoomsInfo,
+    isBreakoutRoomJoinAllowed
+} from '../../react/features/breakout-rooms/functions';
 import {
     sendMessage,
     setPrivateMessageRecipient,
@@ -102,7 +107,7 @@ import {
 import { answerKnockingParticipant, toggleLobbyMode } from '../../react/features/lobby/actions';
 import { getLobbyEnabled } from '../../react/features/lobby/functions';
 import { setSecondScreen } from '../../react/features/multi-screen/actions.web';
-import { setNoiseSuppressionEnabled } from '../../react/features/noise-suppression/actions';
+import { setNoiseSuppressionEnabled, toggleNoiseSuppression } from '../../react/features/noise-suppression/actions';
 import { hideNotification, showNotification } from '../../react/features/notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../react/features/notifications/constants';
 import {
@@ -565,6 +570,9 @@ function initCommands() {
         'set-noise-suppression-enabled': (options = {}) => {
             APP.store.dispatch(setNoiseSuppressionEnabled(options.enabled));
         },
+        'toggle-noise-suppression': () => {
+            APP.store.dispatch(toggleNoiseSuppression());
+        },
         'toggle-subtitles': () => {
             APP.store.dispatch(toggleRequestingSubtitles());
         },
@@ -973,6 +981,16 @@ function initCommands() {
             APP.store.dispatch(closeBreakoutRoom(roomId));
         },
         'join-breakout-room': roomId => {
+            const state = APP.store.getState();
+            const room = roomId ? getBreakoutRooms(state)[roomId.split('@')[0]] : getMainRoom(state);
+
+            // The server rejects a join that is not allowed as well.
+            if (!isBreakoutRoomJoinAllowed(state, room)) {
+                logger.error('Joining breakout rooms is restricted to the rooms that a moderator assigns');
+
+                return;
+            }
+
             APP.store.dispatch(moveToRoom(roomId));
         },
         'send-participant-to-room': (participantId, roomId) => {
@@ -2697,6 +2715,19 @@ class API {
     notifyLowBandwidthModeChanged(enabled) {
         this._sendEvent({
             name: 'low-bandwidth-mode-changed',
+            enabled
+        });
+    }
+
+    /**
+     * Notify the external application (if API is enabled) when noise suppression is enabled or disabled.
+     *
+     * @param {boolean} enabled - Whether noise suppression is enabled or not.
+     * @returns {void}
+     */
+    notifyNoiseSuppressionChanged(enabled) {
+        this._sendEvent({
+            name: 'noise-suppression-changed',
             enabled
         });
     }
