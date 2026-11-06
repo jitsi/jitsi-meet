@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback } from 'react';
+import React, { ReactNode } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
@@ -12,7 +12,7 @@ interface IProps {
     OptionsIcon?: Function;
 
     /**
-     * The Label of the child element.
+     * The accessible name of the options button.
      */
     ariaDropDownLabel?: string;
 
@@ -23,7 +23,7 @@ interface IProps {
     ariaExpanded?: boolean;
 
     /**
-     * The Label of the current element.
+     * The accessible name of the main button.
      */
     ariaLabel?: string;
 
@@ -33,13 +33,13 @@ interface IProps {
     children: ReactNode;
 
     /**
-     * Text css class of the button.
+     * Extra css class for the component's container.
      */
     className?: string;
 
     /**
-     * If the button is disabled or not. A disabled button is also taken out of the tab order,
-     * so keyboard users don't stop on a control they can't activate.
+     * If the buttons are disabled or not. Native disabled buttons are not focusable and ignore clicks and
+     * key presses, so both buttons leave the tab order together with their handlers.
      */
     disabled?: boolean;
 
@@ -47,7 +47,6 @@ interface IProps {
      * If the button has options.
      */
     hasOptions?: boolean;
-
 
     /**
      * OnClick button handler.
@@ -60,88 +59,87 @@ interface IProps {
     onOptionsClick?: (e?: React.KeyboardEvent | React.MouseEvent) => void;
 
     /**
-     * To give a role to the icon.
-     */
-    role?: string;
-
-    /**
-     * To navigate with the keyboard.
-     */
-    tabIndex?: number;
-
-    /**
-     * TestId of the button. Can be used to locate element when testing UI.
+     * TestId of the main button. Can be used to locate element when testing UI.
      */
     testId?: string;
 
     /**
-     * The type of th button: primary, secondary, text.
+     * The type of the button: primary, secondary, text.
      */
     type: string;
 }
 
 const useStyles = makeStyles()(theme => {
     return {
+        container: {
+            display: 'inline-block',
+            marginBottom: '16px',
+            position: 'relative' as const,
+            width: '100%',
+
+            // The options button is a sibling of the main button, so hovering it no longer hovers the main
+            // button. Driving the hover colour from the container keeps the whole control highlighted as one.
+            '&:hover > .primary:not(:disabled)': {
+                backgroundColor: theme.palette.prejoinActionButtonPrimaryHover
+            },
+
+            '&:hover > .secondary:not(:disabled)': {
+                backgroundColor: theme.palette.prejoinActionButtonSecondaryHover
+            },
+
+            '&.text': {
+                width: 'auto',
+                margin: 0
+            },
+
+            [theme.breakpoints.down(400)]: {
+                marginBottom: 8
+            }
+        },
         actionButton: {
             ...theme.typography.bodyLongBold,
+            background: 'none',
+            border: 0,
             borderRadius: theme.shape.borderRadius,
             boxSizing: 'border-box',
             color: theme.palette.actionButtonText,
             cursor: 'pointer',
-            display: 'inline-block',
-            marginBottom: '16px',
+            display: 'block',
             padding: '7px 16px',
-            position: 'relative' as const,
             textAlign: 'center',
             width: '100%',
-            border: 0,
 
             '&.primary': {
                 background: theme.palette.prejoinActionButtonPrimary,
-                color: theme.palette.prejoinActionButtonPrimaryText,
-
-                '&:hover': {
-                    backgroundColor: theme.palette.prejoinActionButtonPrimaryHover
-                }
+                color: theme.palette.prejoinActionButtonPrimaryText
             },
 
             '&.secondary': {
                 background: theme.palette.prejoinActionButtonSecondary,
-                color: theme.palette.prejoinActionButtonSecondaryText,
-
-                '&:hover': {
-                    backgroundColor: theme.palette.prejoinActionButtonSecondaryHover
-                }
+                color: theme.palette.prejoinActionButtonSecondaryText
             },
 
             '&.text': {
                 width: 'auto',
                 fontSize: '0.875rem',
-                margin: '0',
                 padding: '0'
             },
 
-            '&.disabled': {
+            '&:disabled': {
                 background: theme.palette.prejoinActionButtonDisabled,
                 border: '1px solid #5E6D7A',
                 color: '#AFB6BC',
-                cursor: 'initial',
-
-                '.icon': {
-                    '& > svg': {
-                        fill: '#AFB6BC'
-                    }
-                }
+                cursor: 'initial'
             },
-
 
             [theme.breakpoints.down(400)]: {
                 fontSize: '1rem',
-                marginBottom: 8,
                 padding: '11px 16px'
             }
         },
         options: {
+            background: 'none',
+            border: 0,
             borderRadius: Number(theme.shape.borderRadius) / 2,
 
             // The options area sits flush with the button's right edge, so its outer corners must follow the
@@ -149,16 +147,27 @@ const useStyles = makeStyles()(theme => {
             borderTopRightRadius: 'inherit',
             borderBottomRightRadius: 'inherit',
             alignItems: 'center',
+            color: 'inherit',
+            cursor: 'pointer',
             display: 'flex',
             height: '100%',
             justifyContent: 'center',
+            padding: 0,
             position: 'absolute' as const,
             right: 0,
             top: 0,
             width: 36,
 
-            '&:hover': {
+            '&:hover:not(:disabled)': {
                 backgroundColor: theme.palette.prejoinActionButtonOptionsHover
+            },
+
+            '&:disabled': {
+                cursor: 'initial',
+
+                '& .icon > svg': {
+                    fill: '#AFB6BC'
+                }
             },
 
             '& svg': {
@@ -170,6 +179,11 @@ const useStyles = makeStyles()(theme => {
 
 /**
  * Button used for pre meeting actions.
+ *
+ * The main button and the options button are two sibling native buttons. A button nested in another button
+ * is presentational for assistive technologies, so the previous nested markup could hide the options button
+ * from screen readers. Native buttons also give the tab order, Enter/Space activation and the disabled state
+ * without custom key handling.
  *
  * @returns {ReactElement}
  */
@@ -183,64 +197,38 @@ function ActionButton({
     type = 'primary',
     onClick,
     onOptionsClick,
-    tabIndex,
-    role,
     ariaExpanded,
     ariaLabel,
     ariaDropDownLabel
 }: IProps) {
     const { classes, cx } = useStyles();
 
-    const onKeyPressHandler = useCallback(e => {
-        if (onClick && !disabled && (e.key === ' ' || e.key === 'Enter')) {
-            e.preventDefault();
-            onClick(e);
-        }
-    }, [ onClick, disabled ]);
-
-    const onOptionsKeyPressHandler = useCallback(e => {
-        if (onOptionsClick && !disabled && (e.key === ' ' || e.key === 'Enter')) {
-            e.preventDefault();
-            e.stopPropagation();
-            onOptionsClick(e);
-        }
-    }, [ onOptionsClick, disabled ]);
-
-    const containerClasses = cx(
-        classes.actionButton,
-        className && className,
-        type,
-        disabled && 'disabled'
-    );
-
     return (
-        <div
-            aria-disabled = { disabled }
-            aria-label = { ariaLabel }
-            className = { containerClasses }
-            data-testid = { testId ? testId : undefined }
-            onClick = { disabled ? undefined : onClick }
-            onKeyPress = { onKeyPressHandler }
-            role = 'button'
-            tabIndex = { disabled ? -1 : 0 } >
-            {children}
+        <div className = { cx(classes.container, className && className, type) }>
+            <button
+                aria-label = { ariaLabel }
+                className = { cx(classes.actionButton, type) }
+                data-testid = { testId ? testId : undefined }
+                disabled = { disabled }
+                onClick = { onClick }
+                type = 'button'>
+                {children}
+            </button>
             { hasOptions
-                && <div
-                    aria-disabled = { disabled }
+                && <button
                     aria-expanded = { ariaExpanded }
                     aria-haspopup = 'dialog'
                     aria-label = { ariaDropDownLabel }
                     className = { classes.options }
                     data-testid = 'prejoin.joinOptions'
-                    onClick = { disabled ? undefined : onOptionsClick }
-                    onKeyPress = { onOptionsKeyPressHandler }
-                    role = { role }
-                    tabIndex = { disabled ? -1 : tabIndex }>
+                    disabled = { disabled }
+                    onClick = { onOptionsClick }
+                    type = 'button'>
                     <Icon
                         className = 'icon'
                         size = { 24 }
                         src = { OptionsIcon } />
-                </div>
+                </button>
             }
         </div>
     );

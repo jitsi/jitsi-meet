@@ -475,8 +475,6 @@ const Prejoin = ({
                             hasOptions = { hasExtraJoinButtons }
                             onClick = { onJoinButtonClick }
                             onOptionsClick = { onOptionsClick }
-                            role = 'button'
-                            tabIndex = { 0 }
                             testId = 'prejoin.joinMeeting'
                             type = 'primary'>
                             {t('prejoin.joinMeeting')}
