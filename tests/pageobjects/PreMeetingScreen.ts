@@ -32,6 +32,10 @@ export default abstract class PreMeetingScreen extends BasePageObject {
         // element.clear does not always work, make sure we delete the content
         await displayNameInput.clearValue();
 
+        // The WebDriver "clear" command unfocuses the element afterwards. Chromedriver skips that step but
+        // geckodriver follows it, so without this click the keys below would go to the page body in Firefox.
+        await displayNameInput.click();
+
         await this.participant.driver.keys(displayName);
     }
 
