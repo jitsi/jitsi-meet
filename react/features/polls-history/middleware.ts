@@ -16,7 +16,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const pollsHistory = meetingId && state['features/polls-history'].polls?.[meetingId];
 
         if (!pollsHistory) {
-            return null;
+            break;
         }
 
         for (const key in pollsHistory) {
