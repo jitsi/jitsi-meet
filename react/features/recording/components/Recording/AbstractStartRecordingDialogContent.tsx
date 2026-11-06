@@ -11,8 +11,7 @@ import { setFollowMeRecorderExclusive } from '../../../follow-me/actions';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { getAvailableSubtitlesLanguages } from '../../../subtitles/functions.any';
 import { RECORDING_TYPES } from '../../constants';
-
-import { IRecordingDialogModel } from './dialogModel';
+import { IRecordingDialogModel } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of

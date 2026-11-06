@@ -32,7 +32,10 @@ import {
 } from '../../actions.any';
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../constants';
 import {
+    IRecordingDialogFacts,
+    IRecordingDialogModel,
     getActiveSession,
+    getRecordingDialogModel,
     hasRecordingOrTranscriptionFeature,
     isLiveStreamingRunning,
     isRecordingRunning,
@@ -41,8 +44,6 @@ import {
     supportsLocalRecording
 } from '../../functions';
 import { ISessionData } from '../../reducer';
-
-import { IRecordingDialogFacts, IRecordingDialogModel, getRecordingDialogModel } from './dialogModel';
 
 /**
  * The set of start/stop operations to apply on the running services. Each

@@ -14,9 +14,8 @@ import Button from '../../../../base/ui/components/web/Button';
 import Switch from '../../../../base/ui/components/web/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.web';
 import { RECORDING_TYPES } from '../../../constants';
-import { getRecordingDurationEstimation } from '../../../functions';
+import { START_BLOCKER_REASON_KEYS, StartBlocker, getRecordingDurationEstimation } from '../../../functions';
 import AbstractStartRecordingDialogContent, { mapStateToProps } from '../AbstractStartRecordingDialogContent';
-import { START_BLOCKER_REASON_KEYS, StartBlocker } from '../dialogModel';
 import {
     ICON_INFO,
     ICON_USERS,
