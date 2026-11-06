@@ -24,6 +24,14 @@ interface IProps {
     headingId?: string;
 
     /**
+     * String acting as the Drawer label (matches aria-label). Lets callers name the dialog when there is
+     * no DOM element to point headingId at, so screen readers don't announce an anonymous dialog.
+     *
+     * If headingId is set, this will not be used.
+     */
+    headingLabel?: string;
+
+    /**
      * Whether the drawer should be shown or not.
      */
     isOpen: boolean;
@@ -116,6 +124,7 @@ function Drawer({
     children,
     className = '',
     headingId,
+    headingLabel,
     isOpen,
     onClose
 }: IProps) {
@@ -177,7 +186,8 @@ function Drawer({
                             isElementInTheViewport
                         }>
                         <div
-                            aria-labelledby = { headingId ? `#${headingId}` : undefined }
+                            aria-label = { !headingId && headingLabel ? headingLabel : undefined }
+                            aria-labelledby = { headingId }
                             aria-modal = { true }
                             data-autofocus = { true }
                             role = 'dialog'
