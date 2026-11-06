@@ -238,6 +238,9 @@ const DialogWithTabs = ({
         }
 
         if (newTab !== null) {
+            // The dialog content can scroll, so without this the arrow key also scrolls it and the newly
+            // shown panel can appear scrolled.
+            event.preventDefault();
             onUserSelection(newTab.name);
         }
     }, [ tabs.length ]);
