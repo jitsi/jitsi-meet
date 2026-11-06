@@ -67,6 +67,8 @@ import {
     areDevicesDifferent,
     filterIgnoredDevices,
     flattenAvailableDevices,
+    formatDeviceLabel,
+    getAudioOutputDeviceId,
     getDefaultDeviceId,
     logDevices,
     setAudioOutputDeviceId
@@ -2001,9 +2003,17 @@ export default {
 
         if (typeof newDevices.audiooutput !== 'undefined') {
             const { dispatch } = APP.store;
+
+            // 'default' is only picked when the selected speaker is gone.
+            const lostOutput = newDevices.audiooutput === 'default'
+                && oldDevices.audioOutput?.find(device => device.deviceId === getAudioOutputDeviceId());
             const setAudioOutputPromise
                 = setAudioOutputDeviceId(newDevices.audiooutput, dispatch)
-                    .catch(err => {
+                    .then(() => lostOutput && dispatch(showWarningNotification({
+                        descriptionArguments: { device: formatDeviceLabel(lostOutput.label) },
+                        descriptionKey: 'notify.audioOutputDisconnectedDescription',
+                        titleKey: 'notify.audioOutputDisconnectedTitle'
+                    }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM)), err => {
                         logger.error(`Failed to set the audio output device to ${newDevices.audiooutput} - ${err}`);
                     });
 

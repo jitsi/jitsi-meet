@@ -26,15 +26,25 @@ import {
     devicePermissionsChanged,
     removePendingDeviceRequests,
     setAudioInputDevice,
+    setAudioOutputDevice,
     setVideoInputDevice
 } from './actions';
 import {
     areDeviceLabelsInitialized,
     formatDeviceLabel,
-    logDevices,
-    setAudioOutputDeviceId
+    logDevices
 } from './functions';
-import logger from './logger';
+
+// A Bluetooth headset exposes a hands-free and a stereo output in one group. Using its mic switches the link to
+// hands-free, which silences the stereo output. Labels are not standardized, so this match is best effort.
+const HANDS_FREE_LABEL = /hands-?free/i;
+
+const pickAudioOutput = (outputs: MediaDeviceInfo[], withMic: boolean) => {
+    const endpoints = outputs.filter(({ deviceId }) => deviceId !== 'default' && deviceId !== 'communications');
+    const candidates = endpoints.length ? endpoints : outputs;
+
+    return (withMic && candidates.find(({ label }) => HANDS_FREE_LABEL.test(label))) || candidates[0];
+};
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
     microphone: {
@@ -306,6 +316,11 @@ function _checkAndNotifyForNewDevice(store: IStore, newDevices: MediaDeviceInfo[
  * @private
  */
 function _useDevice({ dispatch }: IStore, devices: MediaDeviceInfo[]) {
+    // Switching to several outputs at once would leave whichever switch finished last.
+    const output = pickAudioOutput(
+        devices.filter(({ kind }) => kind === 'audiooutput'),
+        devices.some(({ kind }) => kind === 'audioinput'));
+
     devices.forEach(device => {
         switch (device.kind) {
         case 'videoinput': {
@@ -327,19 +342,7 @@ function _useDevice({ dispatch }: IStore, devices: MediaDeviceInfo[]) {
             break;
         }
         case 'audiooutput': {
-            setAudioOutputDeviceId(
-                device.deviceId,
-                dispatch,
-                true,
-                device.label)
-                .then(() => logger.log('changed audio output device'))
-                .catch(err => {
-                    logger.warn(
-                        'Failed to change audio output device.',
-                        'Default or previously set audio output device will',
-                        ' be used instead.',
-                        err);
-                });
+            device === output && dispatch(setAudioOutputDevice(device.deviceId));
             break;
         }
         }
