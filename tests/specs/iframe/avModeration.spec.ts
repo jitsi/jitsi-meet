@@ -49,6 +49,8 @@ describe('A/V moderation iframe API commands and events', () => {
      * @returns The value of audioUnmuteApproved / videoUnmuteApproved on p2, undefined when not set.
      */
     async function getP2UnmuteApproved(mediaType: MediaType): Promise<boolean | undefined> {
+        await p2.switchToIFrame();
+
         // WebDriver serializes an undefined return value as null, so normalize it back.
         const value = await p2.execute(
             type => APP.store.getState()['features/av-moderation'][`${type}UnmuteApproved`],
@@ -196,6 +198,96 @@ describe('A/V moderation iframe API commands and events', () => {
     });
 
     it('disables video moderation via toggleModeration command', async () => {
+        await disableModerationAndExpectReset('video');
+    });
+
+    it('ignores toggleModeration and approve/reject commands for audio from non-moderator', async () => {
+        // Non-moderator attempts to toggle audio moderation
+        await p1.getIframeAPI().clearEventResults('moderationStatusChanged');
+        await p2.switchToMainFrame();
+        await p2.getIframeAPI().executeCommand('toggleModeration', true, 'audio');
+        await p2.switchToIFrame();
+
+        // Give a moderationStatusChanged event that should not happen time to arrive before asserting its absence.
+        await p2.driver.pause(2000);
+        expect(await p1.getIframeAPI().getEventResult('moderationStatusChanged')).toBeFalsy();
+        expect(await p1.getIframeAPI().isModerationOn('audio')).toBe(false);
+
+        // Moderator enables audio moderation
+        await toggleModerationAndExpect(true, 'audio');
+
+        // Non-moderator attempts to approve itself
+        await p1.getIframeAPI().clearEventResults('moderationParticipantApproved');
+        await p2.switchToMainFrame();
+        await p2.getIframeAPI().executeCommand('askToUnmute', p2Id);
+        await p2.switchToIFrame();
+
+        await p2.driver.pause(2000);
+        expect(await p1.getIframeAPI().getEventResult('moderationParticipantApproved')).toBeFalsy();
+        expect(await getP2UnmuteApproved('audio')).toBeUndefined();
+
+        // Moderator approves p2 so it is no longer force muted and can be rejected
+        await p1.switchToMainFrame();
+        await p1.getIframeAPI().clearEventResults('moderationParticipantApproved');
+        await p1.getIframeAPI().executeCommand('askToUnmute', p2Id);
+        await expectParticipantModerationResult('moderationParticipantApproved', 'audio', true);
+
+        // Non-moderator attempts self-rejection while approved
+        await p1.getIframeAPI().clearEventResults('moderationParticipantRejected');
+        await p2.switchToMainFrame();
+        await p2.getIframeAPI().executeCommand('rejectParticipant', p2Id, 'audio');
+        await p2.switchToIFrame();
+
+        await p2.driver.pause(2000);
+        expect(await p1.getIframeAPI().getEventResult('moderationParticipantRejected')).toBeFalsy();
+        expect(await getP2UnmuteApproved('audio')).toBe(true);
+
+        // Clean up audio moderation
+        await disableModerationAndExpectReset('audio');
+    });
+
+    it('ignores toggleModeration, approveVideo, and rejectParticipant for video from non-moderator', async () => {
+        // Non-moderator attempts to toggle video moderation
+        await p1.getIframeAPI().clearEventResults('moderationStatusChanged');
+        await p2.switchToMainFrame();
+        await p2.getIframeAPI().executeCommand('toggleModeration', true, 'video');
+        await p2.switchToIFrame();
+
+        // Give a moderationStatusChanged event that should not happen time to arrive before asserting its absence.
+        await p2.driver.pause(2000);
+        expect(await p1.getIframeAPI().getEventResult('moderationStatusChanged')).toBeFalsy();
+        expect(await p1.getIframeAPI().isModerationOn('video')).toBe(false);
+
+        // Moderator enables video moderation
+        await toggleModerationAndExpect(true, 'video');
+
+        // Non-moderator attempts to approve itself for video
+        await p1.getIframeAPI().clearEventResults('moderationParticipantApproved');
+        await p2.switchToMainFrame();
+        await p2.getIframeAPI().executeCommand('approveVideo', p2Id);
+        await p2.switchToIFrame();
+
+        await p2.driver.pause(2000);
+        expect(await p1.getIframeAPI().getEventResult('moderationParticipantApproved')).toBeFalsy();
+        expect(await getP2UnmuteApproved('video')).toBeUndefined();
+
+        // Moderator approves p2 for video so it is no longer force muted and can be rejected
+        await p1.switchToMainFrame();
+        await p1.getIframeAPI().clearEventResults('moderationParticipantApproved');
+        await p1.getIframeAPI().executeCommand('approveVideo', p2Id);
+        await expectParticipantModerationResult('moderationParticipantApproved', 'video', true);
+
+        // Non-moderator attempts self-rejection for video while approved
+        await p1.getIframeAPI().clearEventResults('moderationParticipantRejected');
+        await p2.switchToMainFrame();
+        await p2.getIframeAPI().executeCommand('rejectParticipant', p2Id, 'video');
+        await p2.switchToIFrame();
+
+        await p2.driver.pause(2000);
+        expect(await p1.getIframeAPI().getEventResult('moderationParticipantRejected')).toBeFalsy();
+        expect(await getP2UnmuteApproved('video')).toBe(true);
+
+        // Clean up video moderation
         await disableModerationAndExpectReset('video');
     });
 });
