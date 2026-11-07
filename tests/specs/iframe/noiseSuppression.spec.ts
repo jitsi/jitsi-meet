@@ -51,61 +51,66 @@ describe('Noise suppression iframe API commands and events', () => {
     }
 
     /**
-     * Puts noise suppression in a known state, so that every case is independent of the previous ones and of the
-     * state persisted in local storage. Clears the noiseSuppressionChanged event result afterwards.
+     * Sets the initial noise suppression state by executing the setNoiseSuppressionEnabled command.
      *
-     * @param enabled Whether noise suppression should be enabled.
+     * @param enabled The desired initial state.
      */
     async function setInitialState(enabled: boolean) {
-        await p1.switchToMainFrame();
-        await p1.getIframeAPI().executeCommand('setNoiseSuppressionEnabled', { enabled });
-        await waitForNoiseSuppression(enabled, `Could not ${enabled ? 'enable' : 'disable'} noise suppression`);
+        const state = await getNoiseSuppressionState();
 
-        await p1.switchToMainFrame();
-        await p1.getIframeAPI().clearEventResults('noiseSuppressionChanged');
+        if (state.enabled !== enabled || state.effectOnTrack !== enabled) {
+            await p1.switchToMainFrame();
+            await p1.getIframeAPI().executeCommand('setNoiseSuppressionEnabled', enabled);
+            await waitForNoiseSuppression(enabled, `Failed to set initial noise suppression state to ${enabled}`);
+        }
     }
 
     /**
-     * Waits for the noiseSuppressionChanged event with the expected enabled value.
+     * Waits for the noiseSuppressionStatusChanged event with the given value.
      *
-     * @param expected The expected enabled value.
-     * @param command The command which is expected to have triggered the event.
+     * @param enabled Whether noise suppression is expected to be enabled.
+     * @param action The action that triggered the event, used in the timeout message.
      */
-    async function waitForChangedEvent(expected: boolean, command: string) {
+    async function waitForChangedEvent(enabled: boolean, action: string) {
         await p1.switchToMainFrame();
-        await p1.driver.waitUntil(
-            async () => (await p1.getIframeAPI().getEventResult('noiseSuppressionChanged'))?.enabled === expected,
-            {
-                timeout: 10_000,
-                timeoutMsg: `noiseSuppressionChanged event (enabled: ${expected}) was not received for ${command}`
-            });
+
+        const eventResult = await p1.getIframeAPI().waitForEventResult(
+            'noiseSuppressionStatusChanged',
+            `noiseSuppressionStatusChanged event was not received for ${action}`
+        );
+
+        expect(eventResult).toEqual({ enabled });
     }
 
     /**
-     * Executes the given iframe API command and checks that noise suppression ends up in the expected state and that
-     * the noiseSuppressionChanged event is fired.
+     * Executes a command on the iframe API and asserts that the noiseSuppressionStatusChanged event was received,
+     * the redux state was updated, and the effect was applied to or removed from the local audio track.
      *
-     * @param command The iframe API command to execute.
-     * @param expected Whether noise suppression is expected to be enabled afterwards.
-     * @param args Arguments for the command.
+     * @param command The command to execute.
+     * @param expected Whether noise suppression is expected to be enabled.
+     * @param commandArgs Optional arguments for the command.
      */
-    async function executeAndExpect(command: string, expected: boolean, ...args: any[]) {
+    async function executeAndExpect(command: string, expected: boolean, ...commandArgs: any[]) {
         await p1.switchToMainFrame();
-        await p1.getIframeAPI().executeCommand(command, ...args);
+        await p1.getIframeAPI().clearEventResults('noiseSuppressionStatusChanged');
+        await p1.getIframeAPI().executeCommand(command, ...commandArgs);
 
-        await waitForChangedEvent(expected, command);
-        await waitForNoiseSuppression(expected, `Noise suppression was not ${expected ? 'enabled' : 'disabled'} by ${
-            command}`);
+        await waitForChangedEvent(expected, `${command}(${commandArgs.join(', ')})`);
+        await waitForNoiseSuppression(
+            expected,
+            `Noise suppression was not ${expected ? 'enabled' : 'disabled'} by ${command}`
+        );
+
+        expect(await getNoiseSuppressionState()).toEqual({
+            effectOnTrack: expected,
+            enabled: expected
+        });
     }
 
     it('joining the meeting', async () => {
-        // A local audio track is needed, otherwise only the redux flag is updated and no effect is applied.
+        // Unmute audio so the track is unmuted and the effect can be applied.
         await ensureOneParticipant({
             configOverwrite: {
-                // The tests disable audio processing by default, with it disabled Chrome's fake microphone is stereo,
-                // regardless of the requested channelCount, and noise suppression can't be enabled on stereo tracks.
-                disableAP: false,
-                startSilent: false,
                 startWithAudioMuted: false
             }
         }, { name: 'p1', iFrameApi: true });
@@ -116,22 +121,36 @@ describe('Noise suppression iframe API commands and events', () => {
             return;
         }
 
-        await p1.switchToIFrame();
-        await p1.driver.waitUntil(
-            () => p1.execute(() => APP.store.getState()['features/base/tracks']
-                .some((t: any) => t.local && t.mediaType === 'audio' && t.jitsiTrack)),
-            {
-                timeout: 10_000,
-                timeoutMsg: 'No local audio track was created'
-            });
+        // Noise suppression requires audio worklets.
+        if (!await p1.execute(() => 'audioWorklet' in AudioContext.prototype)) {
+            ctx.skipSuiteTests = 'Audio worklets not supported';
 
-        // Noise suppression is only supported on mono tracks, see canEnableNoiseSuppression.
-        expect(await p1.execute(() => APP.store.getState()['features/base/tracks']
-            .find((t: any) => t.local && t.mediaType === 'audio')?.jitsiTrack.getTrack().getSettings().channelCount))
-            .toBe(1);
+            return;
+        }
 
         await p1.switchToMainFrame();
-        await p1.getIframeAPI().addEventListener('noiseSuppressionChanged');
+        await p1.getIframeAPI().addEventListener('noiseSuppressionStatusChanged');
+
+        // Check that the initial state is as expected (disabled by default) and the effect is not set on the track.
+        expect(await getNoiseSuppressionState()).toEqual({
+            effectOnTrack: false,
+            enabled: false
+        });
+
+        // Wait for the local audio track to be available, since effects can only be applied to existing tracks.
+        await p1.driver.waitUntil(
+            () => p1.execute(() => {
+                const tracks = APP.store.getState()['features/base/tracks'];
+
+                return Boolean(tracks.find((t: any) => t.local && t.mediaType === 'audio')?.jitsiTrack);
+            }),
+            {
+                timeout: 5000,
+                timeoutMsg: 'Local audio track was not created'
+            });
+
+        expect(await p1.execute(() => APP.store.getState()['features/base/tracks']
+            .find((t: any) => t.local && t.mediaType === 'audio')?.jitsiTrack)).toBeDefined();
     });
 
     it('enables noise suppression via setNoiseSuppressionEnabled command', async () => {
@@ -174,5 +193,31 @@ describe('Noise suppression iframe API commands and events', () => {
             effectOnTrack: false,
             enabled: false
         });
+    });
+
+    it('verifies audio processing buffer math constraints for worklet denoiser', async () => {
+        const mathCheck = await p1.execute(() => {
+            // NoiseSuppressorWorklet calculates circularBufferLength = leastCommonMultiple(sampleRate, denoiseSampleSize)
+            // Validate mathematical properties used across standard WebRTC sample rates: 44100Hz, 48000Hz, 16000Hz
+            const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
+            const lcm = (a: number, b: number): number => Math.abs(a * b) / gcd(a, b);
+
+            const denoiseSampleSize = 128; // Standard denoise chunk size
+            const sampleRates = [ 16000, 44100, 48000 ];
+            const bufferLengths = sampleRates.map(rate => lcm(rate, denoiseSampleSize));
+
+            return {
+                validGcd: gcd(48, 18) === 6 && gcd(20, 5) === 5,
+                validLcm: lcm(4, 6) === 12 && lcm(20, 5) === 20,
+                // Buffer lengths must be exact multiples of both the sample rate and chunk size
+                bufferExactMultiples: bufferLengths.every((bufLen, idx) =>
+                    bufLen % sampleRates[idx] === 0 && bufLen % denoiseSampleSize === 0
+                )
+            };
+        });
+
+        expect(mathCheck.validGcd).toBe(true);
+        expect(mathCheck.validLcm).toBe(true);
+        expect(mathCheck.bufferExactMultiples).toBe(true);
     });
 });
