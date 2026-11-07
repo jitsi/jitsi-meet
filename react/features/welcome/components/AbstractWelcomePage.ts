@@ -87,7 +87,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      * @type {Object}
      * @property {number|null} animateTimeoutId - Identifier of the letter
      * animation timeout.
-     * @property {string} generatedRoomName - Automatically generated room name.
+     * @property {boolean} generatedRoomName - Automatically generated room name.
      * @property {string} room - Room name.
      * @property {string} roomPlaceholder - Room placeholder that's used as a
      * placeholder for input.
@@ -96,7 +96,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      */
     override state: IState = {
         animateTimeoutId: undefined,
-        generatedRoomName: '',
+        generatedRoomName: false,
         generateRoomNames: undefined,
         insecureRoomName: false,
         joining: false,
@@ -238,7 +238,9 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
             insecureRoomName: Boolean(this.props._enableInsecureRoomNameWarning && value && isInsecureRoomName(value))
         });
 
-        if (!value) this._updateRoomName();
+        if (!value && this.state.generateRoomNames !== false) {
+            this._updateRoomName();
+        } 
     }
 
     /**
