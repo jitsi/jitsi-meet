@@ -57,6 +57,7 @@ export const PendingSection = (props: IProps) => {
             <View style = { styles.pendingHeader as ViewStyle }>
                 <Text style = { styles.sectionTitle }>{title}</Text>
                 <Button
+                    accessibilityLabel = 'dialog.dismissAll'
                     disabled = { rejecting }
                     labelKey = 'dialog.dismissAll'
                     onClick = { onRejectAll }
@@ -88,6 +89,7 @@ export const PendingSection = (props: IProps) => {
                                 </View>
                             ) : (
                                 <Button
+                                    accessibilityLabel = 'dialog.confirm'
                                     disabled = { confirmingId !== null }
                                     labelKey = 'dialog.confirm'
                                     /* eslint-disable-next-line react/jsx-no-bind */
@@ -120,6 +122,7 @@ export const PendingSection = (props: IProps) => {
                                 </View>
                             ) : (
                                 <Button
+                                    accessibilityLabel = 'dialog.confirm'
                                     disabled = { confirmingId !== null }
                                     labelKey = 'dialog.confirm'
                                     /* eslint-disable-next-line react/jsx-no-bind */

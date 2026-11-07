@@ -51,15 +51,20 @@ const SalesforceLinkDialog = () => {
         setSearchTerm(value);
     }, [ setSearchTerm ]);
 
-    const renderSearch = () => (
-        <View style = { styles.searchContainer as ViewStyle }>
-            <Input
-                icon = { IconSearch }
-                onChange = { handleSearchChange }
-                placeholder = { t('dialog.searchInSalesforce') }
-                value = { searchTerm } />
-        </View>
-    );
+    const renderSearch = () => {
+        const searchLabel = t('dialog.searchInSalesforce');
+
+        return (
+            <View style = { styles.searchContainer as ViewStyle }>
+                <Input
+                    accessibilityLabel = { searchLabel }
+                    icon = { IconSearch }
+                    onChange = { handleSearchChange }
+                    placeholder = { searchLabel }
+                    value = { searchTerm } />
+            </View>
+        );
+    };
 
     const renderContent = () => {
         if (isLoading) {
