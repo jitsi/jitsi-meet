@@ -35,12 +35,12 @@ function _isDisplayableCalendarEntry(entry: { allDay: boolean; attendees: Object
  *
  * XXX The function's {@code this} is the redux store.
  *
- * @param {Array<CalendarEntry>} events - The new event list.
+ * @param {Array<CalendarEntry>} events - The new event list, if it was fetched.
  * @private
  * @returns {void}
  */
-export function _updateCalendarEntries(events: Array<Object>) {
-    if (!events?.length) {
+export function _updateCalendarEntries(events?: Array<Object>) {
+    if (!events) {
         return;
     }
 
