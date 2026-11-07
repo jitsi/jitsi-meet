@@ -198,4 +198,90 @@ describe('A/V moderation iframe API commands and events', () => {
     it('disables video moderation via toggleModeration command', async () => {
         await disableModerationAndExpectReset('video');
     });
+    it('ignores toggleModeration and approve/reject commands from non-moderator', async () => {
+        await p2.switchToMainFrame();
+
+        // Non-moderator attempts to toggle audio moderation
+        await p2.getIframeAPI().executeCommand('toggleModeration', true, 'audio');
+        await p2.driver.pause(1000);
+
+        expect(await p1.getIframeAPI().isModerationOn('audio')).toBe(false);
+
+        // Moderator enables audio moderation
+        await toggleModerationAndExpect(true, 'audio');
+
+        // Non-moderator attempts to approve or reject
+        const p1Id = await p1.getEndpointId();
+
+        await p1.getIframeAPI().clearEventResults('moderationParticipantApproved');
+        await p2.getIframeAPI().executeCommand('askToUnmute', p1Id);
+        await p2.driver.pause(1000);
+
+        expect(await p1.getIframeAPI().getEventResult('moderationParticipantApproved')).toBeFalsy();
+
+        // Cleanup
+        await disableModerationAndExpectReset('audio');
+    });
+    it('ignores toggleModeration and approve/reject commands from non-moderator', async () => {
+        await p2.switchToMainFrame();
+
+        // Non-moderator attempts to toggle audio moderation
+        await p2.getIframeAPI().executeCommand('toggleModeration', true, 'audio');
+        await p2.driver.pause(1000);
+
+        expect(await p1.getIframeAPI().isModerationOn('audio')).toBe(false);
+
+        // Non-moderator attempts to toggle video moderation
+        await p2.getIframeAPI().executeCommand('toggleModeration', true, 'video');
+        await p2.driver.pause(1000);
+
+        expect(await p1.getIframeAPI().isModerationOn('video')).toBe(false);
+
+        // Moderator enables audio moderation
+        await toggleModerationAndExpect(true, 'audio');
+
+        // Non-moderator attempts to approve audio
+        const p1Id = await p1.getEndpointId();
+
+        await p1.getIframeAPI().clearEventResults('moderationParticipantApproved');
+        await p2.getIframeAPI().executeCommand('askToUnmute', p1Id);
+        await p2.driver.pause(1000);
+
+        expect(await p1.getIframeAPI().getEventResult('moderationParticipantApproved')).toBeFalsy();
+
+        // Non-moderator attempts to reject audio
+        await p1.getIframeAPI().clearEventResults('moderationParticipantRejected');
+        await p2.getIframeAPI().executeCommand('rejectParticipant', p1Id, 'audio');
+        await p2.driver.pause(1000);
+
+        expect(await p1.getIframeAPI().getEventResult('moderationParticipantRejected')).toBeFalsy();
+
+        // Clean up audio moderation
+        await disableModerationAndExpectReset('audio');
+    });
+
+    it('ignores approveVideo and rejectParticipant video from non-moderator', async () => {
+        // Moderator enables video moderation
+        await toggleModerationAndExpect(true, 'video');
+
+        await p2.switchToMainFrame();
+        const p1Id = await p1.getEndpointId();
+
+        // Non-moderator attempts to approve video
+        await p1.getIframeAPI().clearEventResults('moderationParticipantApproved');
+        await p2.getIframeAPI().executeCommand('approveVideo', p1Id);
+        await p2.driver.pause(1000);
+
+        expect(await p1.getIframeAPI().getEventResult('moderationParticipantApproved')).toBeFalsy();
+
+        // Non-moderator attempts to reject video
+        await p1.getIframeAPI().clearEventResults('moderationParticipantRejected');
+        await p2.getIframeAPI().executeCommand('rejectParticipant', p1Id, 'video');
+        await p2.driver.pause(1000);
+
+        expect(await p1.getIframeAPI().getEventResult('moderationParticipantRejected')).toBeFalsy();
+
+        // Clean up video moderation
+        await disableModerationAndExpectReset('video');
+    });
 });
