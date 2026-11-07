@@ -25,6 +25,7 @@ import {
     SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
+    SET_MESSAGE_DISPLAY_NAME,
     SET_MESSAGE_MODERATION_SUPPORTED,
     SET_PRIVATE_MESSAGE_RECIPIENT,
     SET_USER_CHAT_WIDTH
@@ -342,6 +343,38 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         });
 
         if (!retracted) {
+            return state;
+        }
+
+        return {
+            ...state,
+            lastReadMessage: _getLastReadMessage(state, messages),
+            messages
+        };
+    }
+
+    case SET_MESSAGE_DISPLAY_NAME: {
+        const { messageId, displayName } = action;
+        let hasChanged = false;
+
+        const messages = state.messages.map(m => {
+            if (m.messageId === messageId) {
+                if (m.displayName === displayName) {
+                    return m;
+                }
+
+                hasChanged = true;
+
+                return {
+                    ...m,
+                    displayName
+                };
+            }
+
+            return m;
+        });
+
+        if (!hasChanged) {
             return state;
         }
 
